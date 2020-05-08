@@ -283,6 +283,8 @@ int main(int argc, char *argv[]) {
 			setup.tests = true;
 		} else if (!std::strcmp(argv[i], "--sdl1")) {
 			setup.useSDL2 = false;
+		} else if (!std::strcmp(argv[i], "--use-canonical-lib-names")) {
+			setup.useCanonicalLibNames = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -429,6 +431,12 @@ int main(int argc, char *argv[]) {
 		// to replicate this behavior.
 		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
+	}
+
+	if (setup.useCanonicalLibNames) {
+		for (auto& lib : setup.libraries) {
+			lib = getCanonicalLibName(lib);
+		}
 	}
 
 	// Add additional project-specific library
@@ -704,49 +712,52 @@ void displayHelp(const char *exe) {
 	        " Additionally there are the following switches for changing various settings:\n"
 	        "\n"
 	        "Project specific settings:\n"
-	        " --cmake                  build CMake project files\n"
-	        " --codeblocks             build Code::Blocks project files\n"
-	        " --msvc                   build Visual Studio project files\n"
-	        " --xcode                  build XCode project files\n"
-	        " --file-prefix prefix     allow overwriting of relative file prefix in the\n"
-	        "                          MSVC project files. By default the prefix is the\n"
-	        "                          \"path\\to\\source\" argument\n"
-	        " --output-dir path        overwrite path, where the project files are placed\n"
-	        "                          By default this is \".\", i.e. the current working\n"
-	        "                          directory\n"
+	        " --cmake                    build CMake project files\n"
+	        " --codeblocks               build Code::Blocks project files\n"
+	        " --msvc                     build Visual Studio project files\n"
+	        " --xcode                    build XCode project files\n"
+	        " --file-prefix prefix       allow overwriting of relative file prefix in the\n"
+	        "                            MSVC project files. By default the prefix is the\n"
+	        "                            \"path\\to\\source\" argument\n"
+	        " --output-dir path          overwrite path, where the project files are placed\n"
+	        "                            By default this is \".\", i.e. the current working\n"
+	        "                            directory\n"
 	        "\n"
 	        "MSVC specific settings:\n"
-	        " --msvc-version version   set the targeted MSVC version. Possible values:\n";
+	        " --msvc-version version     set the targeted MSVC version. Possible values:\n";
 
 	const MSVCList msvc = getAllMSVCVersions();
 	for (MSVCList::const_iterator i = msvc.begin(); i != msvc.end(); ++i)
 		cout << "                           " << i->version << " stands for \"" << i->name << "\"\n";
 
-	cout << "                           If no version is set, the latest installed version is used\n"
-	        " --build-events           Run custom build events as part of the build\n"
-	        "                          (default: false)\n"
-	        " --installer              Create installer after the build (implies --build-events)\n"
-	        "                          (default: false)\n"
-	        " --tools                  Create project files for the devtools\n"
-	        "                          (ignores --build-events and --installer, as well as engine settings)\n"
-	        "                          (default: false)\n"
-	        " --tests                  Create project files for the tests\n"
-	        "                          (ignores --build-events and --installer, as well as engine settings)\n"
-	        "                          (default: false)\n"
+	cout << "                            If no version is set, the latest installed version is used\n"
+	        " --build-events             Run custom build events as part of the build\n"
+	        "                            (default: false)\n"
+	        " --installer                Create installer after the build (implies --build-events)\n"
+	        "                            (default: false)\n"
+	        " --tools                    Create project files for the devtools\n"
+	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
+	        "                            (default: false)\n"
+	        " --tests                    Create project files for the tests\n"
+	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
+	        "                            (default: false)\n"
+            " --use-canonical-lib-names  Use canonical library names for linking. This makes it easy to use\n"
+            "                            e.g. vcpkg-provided libraries\n"
+	        "                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
-	        " --list-engines           list all available engines and their default state\n"
-	        " --enable-engine=<name>   enable building of the engine with the name \"name\"\n"
-	        " --disable-engine=<name>  disable building of the engine with the name \"name\"\n"
-	        " --enable-all-engines     enable building of all engines\n"
-	        " --disable-all-engines    disable building of all engines\n"
+	        " --list-engines             list all available engines and their default state\n"
+	        " --enable-engine=<name>     enable building of the engine with the name \"name\"\n"
+	        " --disable-engine=<name>    disable building of the engine with the name \"name\"\n"
+	        " --enable-all-engines       enable building of all engines\n"
+	        " --disable-all-engines      disable building of all engines\n"
 	        "\n"
 	        "Optional features settings:\n"
-	        " --enable-<name>          enable inclusion of the feature \"name\"\n"
-	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
+	        " --enable-<name>            enable inclusion of the feature \"name\"\n"
+	        " --disable-<name>           disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        "SDL settings:\n"
-	        " --sdl1                   link to SDL 1.2, instead of SDL 2.0\n"
+	        " --sdl1                     link to SDL 1.2, instead of SDL 2.0\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -1111,7 +1122,30 @@ const MSVCVersion s_msvc[] = {
 	{ 15,    "Visual Studio 2017",    "12.00",            "15",    "15.0",    "v141",    "llvm"        },
 	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        }
 };
+
+const std::map<std::string, std::string> s_canonical_lib_name_map = {
+	{ "jpeg-static", "jpeg" },
+	{ "libfaad", "faad" },
+	{ "libFLAC_static", "FLAC" },
+	{ "libfluidsynth", "fluidsynth" },
+	{ "libmad", "mad" },
+	{ "libmpeg2", "mpeg2" },
+	{ "libogg_static", "ogg" },
+	{ "libtheora_static", "theora" },
+	{ "libvorbis_static", "vorbis" },
+	{ "libvorbisfile_static", "vorbisfile" },
+	{ "SDL_net", "SDL2_net" }, // Only support SDL2
+	{ "win_utf8_io_static", "FLAC" }, // This is some FLAC-specific library not needed with vcpkg, but as there's '.lib' appended to each library, we can't set it to empty, so set it to FLAC again instead
+};
 } // End of anonymous namespace
+
+std::string getCanonicalLibName(std::string lib) {
+	auto it = s_canonical_lib_name_map.find(lib);
+	if (it != s_canonical_lib_name_map.end()) {
+		return it->second;
+	}
+	return lib;
+}
 
 FeatureList getAllFeatures() {
 	const size_t featureCount = sizeof(s_features) / sizeof(s_features[0]);
