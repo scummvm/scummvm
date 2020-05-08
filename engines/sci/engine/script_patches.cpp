@@ -4511,6 +4511,71 @@ static const uint16 kq6CDPatchWallFlowerDanceFix[] = {
 	PATCH_END
 };
 
+// In room 300 at the bottom of the logic cliffs, clicking Walk while Alexander
+//  randomly wobbles on lower steps causes him to float around the room. Scripts
+//  attempt to prevent this by ignoring Walk when ego:view is 301 and ego:loop
+//  is 3, which is wobbling animation, but this is incomplete because egoWobbles
+//  also animates with view 3011. The rest of the cliff rooms directly test if
+//  egoWobbles is running and so they don't have this bug. egoWobbles isn't
+//  exported so room 300 is left testing ego's state.
+//
+// We fix this by adding the missing test for view 3011 so that the Walk verb is
+//  successfully ignored whenever egoWobbles is running.
+//
+// Applies to: All versions
+// Responsible methods: beach:doVerb, WalkFeature:doVerb
+static const uint16 kq6SignatureCliffStepFloatFix[] = {
+	0x36,                               // push
+	0x34, SIG_UINT16(0x012d),           // ldi 012d
+	0x1a,                               // eq?      [ ego:view == 301 ]
+	0x31, 0x12,                         // bnt 12   [ not wobbling ]
+	0x39, 0x03,                         // pushi 03 [ loop ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04  [ ego loop? ]
+	0x36,                               // push
+	0x35, SIG_MAGICDWORD, 0x03,         // ldi 03
+	0x1a,                               // eq?      [ ego:loop == 3 ]
+	0x31, 0x05,                         // bnt 05   [ not wobbling ]
+	0x35, 0x00,                         // ldi 00
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp      [ end of method ]
+	0x76,                               // push0    [ y ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04  [ ego y? ]
+	0x36,                               // push
+	0x35, 0x26,                         // ldi 26
+	0x22,                               // lt?      [ ego:y < 38 ]
+	SIG_ADDTOOFFSET(+17),
+	0x32,                               // jmp      [ end of method ]
+	SIG_END
+};
+
+static const uint16 kq6PatchCliffStepFloatFix[] = {
+	0x38, PATCH_UINT16(0x0bc3),         // pushi 0bc3
+	0x1a,                               // eq?      [ ego:view == 3011 ]
+	0x2f, 0x12,                         // bt 12    [ wobbling ]
+	0x60,                               // pprev
+	0x34, PATCH_UINT16(0x012d),         // ldi 012d
+	0x1a,                               // eq?      [ ego:view == 301 ]
+	0x31, 0x0d,                         // bnt 0d   [ not wobbling ]
+	0x39, 0x03,                         // pushi 03
+	0x3c,                               // dup      [ loop ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04  [ ego loop? ]
+	0x1a,                               // eq?      [ ego:loop == 3 ]
+	0x31, 0x02,                         // bnt 02   [ not wobbling ]
+	0x33, 0x1a,                         // jmp 1a   [ end of method ]
+	0x76,                               // push0    [ y ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04  [ ego y? ]
+	0x39, 0x26,                         // pushi 26
+	0x20,                               // ge?      [ 38 >= ego:y ]
+	PATCH_END
+};
+
 // KQ6 truncates messages longer than 400 characters in the CD and Mac versions.
 //  This is most prominent when reading Cassima's letter to Alexander. When the
 //  Messager class was upgraded to support audio, a 400 character buffer was
@@ -4568,7 +4633,6 @@ static const uint16 kq6PatchTruncatedMessagesFix[] = {
 	0x32, PATCH_UINT16(0x0009),         // jmp 0009
 	PATCH_END
 };
-
 
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
@@ -4987,6 +5051,7 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
+	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
