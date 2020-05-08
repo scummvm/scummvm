@@ -98,6 +98,10 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_parentScript = nullptr;
 
 	_tracingMode = false;
+
+#ifdef ENABLE_FOXTAIL
+	_needAltOpcodes = BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION);	
+#endif
 }
 
 
@@ -512,6 +516,74 @@ char *ScScript::getString() {
 	return ret;
 }
 
+#ifdef ENABLE_FOXTAIL
+//////////////////////////////////////////////////////////////////////////
+// FoxTail 1.2.896 is using unusual opcodes table, let's map them here
+// NOTE: Those opcodes are never used at FoxTail 1.2.896.4370:
+//   II_CMP_STRICT_EQ
+//   II_CMP_STRICT_NE
+//   II_DEF_CONST_VAR
+//   II_DBG_LINE
+//   II_PUSH_VAR_THIS
+//////////////////////////////////////////////////////////////////////////
+uint32 ScScript::decodeAltOpcodes(uint32 inst) {
+	if (inst > 46) {
+		return (uint32)(-1);
+	}
+
+	uint32 foxtail_1_2_896_mapping[] = {
+		II_CMP_LE,
+		II_JMP,
+		II_POP_REG1,
+		II_PUSH_BOOL,
+		II_MODULO,
+		II_POP_EMPTY,
+		II_CALL_BY_EXP,
+		II_CMP_L,
+		II_PUSH_FLOAT,
+		II_NOT,
+		II_PUSH_THIS,
+		II_PUSH_BY_EXP,
+		II_PUSH_THIS_FROM_STACK,
+		II_CMP_G,
+		II_DEF_GLOB_VAR,
+		II_PUSH_STRING,
+		II_PUSH_REG1,
+		II_DEF_VAR,
+		/* unused */ (uint32)(-1),
+		II_RET_EVENT,
+		II_PUSH_VAR_REF,
+		II_CMP_NE,
+		/* unused */ II_DBG_LINE,
+		II_OR,
+		II_POP_VAR,
+		II_AND,
+		II_EXTERNAL_CALL,
+		II_CORRECT_STACK,
+		II_RET,
+		II_DIV,
+		II_PUSH_VAR,
+		II_SUB,
+		II_CALL,
+		II_CREATE_OBJECT,
+		II_MUL,
+		II_POP_BY_EXP,
+		/*unused */ (uint32)(-1),
+		II_PUSH_NULL,
+		II_JMP_FALSE,
+		II_ADD,
+		II_CMP_GE,
+		/* unused */ (uint32)(-1),
+		/* unused */ (uint32)(-1),
+		II_PUSH_INT,
+		II_CMP_EQ,
+		II_POP_THIS,
+		II_SCOPE
+	};
+
+	return foxtail_1_2_896_mapping[inst];
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::executeInstruction() {
@@ -527,6 +599,12 @@ bool ScScript::executeInstruction() {
 	ScValue *op2;
 
 	uint32 inst = getDWORD();
+
+#ifdef ENABLE_FOXTAIL
+	if (_needAltOpcodes) {
+		inst = decodeAltOpcodes(inst);
+	}
+#endif
 
 	preInstHook(inst);
 
@@ -1315,6 +1393,9 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 
 	if (!persistMgr->getIsSaving()) {
 		_tracingMode = false;
+#ifdef ENABLE_FOXTAIL
+		_needAltOpcodes = BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION);	
+#endif
 	}
 
 	return STATUS_OK;
