@@ -108,6 +108,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("mixtures", WRAP_METHOD(Debugger, cmdMixtures));
 	registerCmd("moon", WRAP_METHOD(Debugger, cmdMoon));
 	registerCmd("opacity", WRAP_METHOD(Debugger, cmdOpacity));
+	registerCmd("overhead", WRAP_METHOD(Debugger, cmdOverhead));
 	registerCmd("reagents", WRAP_METHOD(Debugger, cmdReagents));
 	registerCmd("summon", WRAP_METHOD(Debugger, cmdSummon));
 	registerCmd("torch", WRAP_METHOD(Debugger, cmdTorch));
@@ -898,14 +899,9 @@ bool Debugger::cmdPass(int argc, const char **argv) {
 }
 
 bool Debugger::cmdPeer(int argc, const char **argv) {
-	if ((g_context->_location->_viewMode == VIEW_NORMAL) || (g_context->_location->_viewMode == VIEW_DUNGEON))
-		g_context->_location->_viewMode = VIEW_GEM;
-	else if (g_context->_location->_context == CTX_DUNGEON)
-		g_context->_location->_viewMode = VIEW_DUNGEON;
-	else
-		g_context->_location->_viewMode = VIEW_NORMAL;
+	bool useGem = (argc != 2) ? true : strToBool(argv[1]);
+	peer(useGem);
 
-	print("Toggle view");
 	return isDebuggerActive();
 }
 
@@ -1519,6 +1515,18 @@ bool Debugger::cmdMixtures(int argc, const char **argv) {
 		g_ultima->_saveGame->_mixtures[i] = 99;
 
 	print("All mixtures given");
+	return isDebuggerActive();
+}
+
+bool Debugger::cmdOverhead(int argc, const char **argv) {
+	if ((g_context->_location->_viewMode == VIEW_NORMAL) || (g_context->_location->_viewMode == VIEW_DUNGEON))
+		g_context->_location->_viewMode = VIEW_GEM;
+	else if (g_context->_location->_context == CTX_DUNGEON)
+		g_context->_location->_viewMode = VIEW_DUNGEON;
+	else
+		g_context->_location->_viewMode = VIEW_NORMAL;
+
+	print("Toggle view");
 	return isDebuggerActive();
 }
 

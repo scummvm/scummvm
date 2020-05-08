@@ -112,6 +112,7 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_CHEAT_KARMA, "CHEAT-KARMA", "List Karma", "karma", "A+k", nullptr },
 	{ KEYBIND_CHEAT_LEAVE, "CHEAT-LEAVE", "Leave Location", "leave", "A+l", nullptr },
 	{ KEYBIND_CHEAT_MIXTURES, "CHEAT-MIXTURES", "Give Mixtures", "mixtures", "A+m", nullptr },
+	{ KEYBIND_CHEAT_OVERHEAD, "CHEAT_OVERHEAD", "Toggle Overhead View", "overhead", "A+o", nullptr },
 	{ KEYBIND_CHEAT_PARTY, "CHEAT-PARTY", "Full Party", "companions", "A+p", nullptr },
 	{ KEYBIND_CHEAT_REAGENTS, "CHEAT-REAGENTS", "Give Reagents", "reagents", "A+r", nullptr },
 	{ KEYBIND_CHEAT_STATS, "CHEAT-STATS", "Full Stats", "fullstats", "A+s", nullptr },

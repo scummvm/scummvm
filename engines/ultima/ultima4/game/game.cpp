@@ -319,7 +319,6 @@ bool gamePeerCity(int city, void *data) {
 }
 
 void peer(bool useGem) {
-
 	if (useGem) {
 		if (g_ultima->_saveGame->_gems <= 0) {
 			g_screen->screenMessage("%cPeer at What?%c\n", FG_GREY, FG_WHITE);

@@ -42,6 +42,13 @@ protected:
 	int strToInt(const char *s);
 
 	/**
+	 * Converts a string to a boolean
+	 */
+	bool strToBool(const char *s) {
+		return s && tolower(*s) == 't';
+	}
+
+	/**
 	 * Split up a command string into arg values
 	 */
 	void splitString(const Common::String &str, Common::StringArray &argv);

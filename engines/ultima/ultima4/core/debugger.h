@@ -342,6 +342,11 @@ private:
 	bool cmdOpacity(int argc, const char **argv);
 
 	/**
+	 * Toggle overhead view
+	 */
+	bool cmdOverhead(int argc, const char **argv);
+
+	/**
 	 * Give all the reagents
 	 */
 	bool cmdReagents(int argc, const char **argv);
