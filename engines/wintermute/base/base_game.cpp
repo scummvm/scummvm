@@ -1432,6 +1432,19 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] ValidSaveSlotVersion
+	// Checks if given slot stores game state of compatible game version
+	// This version always returs true
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ValidSaveSlotVersion") == 0) {
+		stack->correctParams(1);
+		/* int slot = */ stack->pop()->getInt();
+		// do nothing
+		stack->pushBool(true);
+		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -3360,6 +3373,27 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 
 #ifdef ENABLE_FOXTAIL
 	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] IsNumber
+	// Used at kalimba.script to check if string token is a number
+	// If true is returned, then ToInt() is called for same parameter
+	// ToInt(string) implementation is using atoi(), so let's use it here too
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "IsNumber") == 0) {
+		stack->correctParams(1);
+		ScValue *val = stack->pop();
+		
+		bool result = false;
+		if (val->isInt() || val->isFloat()) {
+			result = true;
+		} else if (val->isString()) {
+			const char *str = val->getString();
+			result = (atoi(str) != 0) || (strcmp(str, "0") == 0);
+		}
+
+		stack->pushBool(result);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] Split
 	// Returns array of words of a string, using another as a delimeter
 	// Used to split strings by 1 character delimeter in various scripts
@@ -3391,6 +3425,29 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		}
 
 		stack->pushNative(arr, false);
+
+		delete[] copy;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] Trim / lTrim / rTrim
+	// Removes whitespaces from a string from the left & right
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Trim") == 0 || strcmp(name, "lTrim") == 0 || strcmp(name, "rTrim") == 0) {
+		stack->correctParams(1);
+		const char *str = stack->pop()->getString();
+		char *copy = new char[strlen(str) + 1];
+		strcpy(copy, str); 
+
+		char *ptr = copy;
+		if (strcmp(name, "rTrim") != 0) {
+			ptr = Common::ltrim(ptr);
+		}
+		if (strcmp(name, "lTrim") != 0) {
+			ptr = Common::rtrim(ptr);
+		}
+
+		stack->pushString(ptr);
 
 		delete[] copy;
 	}
