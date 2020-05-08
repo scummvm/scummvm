@@ -33,6 +33,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/text_renderer.h"
 
 namespace Graphics {
 
@@ -746,11 +747,12 @@ static void underlineAccelerator(ManagedSurface *dst, const Font *font, const Co
 	if (shortcutPos == -1)
 		return;
 
-	Common::U32String s(str);
+	int visualPos = getVisualPosition(str, shortcutPos);
+	Common::U32String s = Common::convertBiDiU32String(str);
 
 	// Erase characters only if it is not end of the string
-	if ((uint)(shortcutPos + 1) < s.size())
-		s.erase(shortcutPos + 1);
+	if ((uint)(visualPos + 1) < s.size())
+		s.erase(visualPos + 1);
 
 	int pos2 = font->getStringWidth(s);
 	s.deleteLastChar();
@@ -821,20 +823,17 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		int y = it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1);
 
 		if (it->unicode) {
-			Common::U32String line = convertBiDiU32String(it->unicodeText);
+			// Common::U32String line = convertBiDiU32String(it->unicodeText);
 
-			int accOff = line == it->unicodeText ? 0 : _font->getStringWidth(line);
-			if (_align == kTextAlignRight) {
-				accOff += it->bbox.width() - kMenuLeftMargin - _font->getStringWidth(line);
-			}
+			int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
 
 			// FLIP ON RENDER
 			// if (_align == kTextAlignRight) {
 			// 	x = r.right + r.left - it->bbox.width() - x;
 			// }
 
-			_font->drawString(&_screen, line, x, y, it->bbox.width(), color, _align);
-			underlineAccelerator(&_screen, _font, line, x + accOff, y, it->shortcutPos, color);
+			TextRenderer::drawU32String(&_screen, it->unicodeText, *_font, x, y, it->bbox.width(), color, _align);
+			underlineAccelerator(&_screen, _font, it->unicodeText, x + accOff, y, it->shortcutPos, color);
 		} else {
 			const Font *font = getMenuFont(it->style);
 
@@ -867,17 +866,10 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	_screen.fillRect(*r, _wm->_colorWhite);
 	_screen.frameRect(*r, _wm->_colorBlack);
 
-	if (_align != kTextAlignRight) {
-		_screen.vLine(r->right, r->top + 3, r->bottom + 1, _wm->_colorBlack);
-		_screen.vLine(r->right + 1, r->top + 3, r->bottom + 1, _wm->_colorBlack);
-		_screen.hLine(r->left + 3, r->bottom, r->right + 1, _wm->_colorBlack);
-		_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
-	} else {
-		_screen.vLine(r->left, r->top + 3, r->bottom + 1, _wm->_colorBlack);
-		_screen.vLine(r->left - 1, r->top + 3, r->bottom + 1, _wm->_colorBlack);
-		_screen.hLine(r->left - 3, r->bottom, r->right - 1, _wm->_colorBlack);
-		_screen.hLine(r->left - 3, r->bottom + 1, r->right - 1, _wm->_colorBlack);
-	}
+	_screen.vLine(r->right, r->top + 3, r->bottom + 1, _wm->_colorBlack);
+	_screen.vLine(r->right + 1, r->top + 3, r->bottom + 1, _wm->_colorBlack);
+	_screen.hLine(r->left + 3, r->bottom, r->right + 1, _wm->_colorBlack);
+	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
@@ -890,12 +882,11 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		Common::String text(menu->items[i]->text);
 		Common::String acceleratorText(getAcceleratorString(menu->items[i], ""));
 
-		Common::U32String unicodeText = convertBiDiU32String(menu->items[i]->unicodeText);
+		// Common::U32String unicodeText = convertBiDiU32String(menu->items[i]->unicodeText);
+		Common::U32String unicodeText(menu->items[i]->unicodeText);
 
-		int accOff = unicodeText == menu->items[i]->unicodeText ? 0 : _font->getStringWidth(unicodeText);
-		if (_align == kTextAlignRight) {
-			accOff += r->width() - kMenuDropdownPadding - _font->getStringWidth(unicodeText);
-		}
+		int accOff = _align == kTextAlignRight ? r->width() - _font->getStringWidth(unicodeText) : 0;
+
 
 		int shortcutPos = menu->items[i]->shortcutPos;
 
@@ -929,7 +920,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			}
 
 			if (menu->items[i]->unicode) {
-				_font->drawString(s, unicodeText, tx, ty, r->width(), color, _align);
+				TextRenderer::drawU32String(s, unicodeText, *_font, tx, ty, r->width(), color, _align);
 				underlineAccelerator(s, _font, unicodeText, tx + accOff, ty, shortcutPos, color);
 			} else {
 				const Font *font = getMenuFont(menu->items[i]->style);
