@@ -36,10 +36,10 @@ namespace Graphics {
 namespace TextRenderer {
 
 	// TODO: Add doxygen comments to this
-	void drawString(Surface *dst, const Common::String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, const Common::CodePage page, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
-	void drawU32String(Surface *dst, const Common::U32String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0);
-	void drawString(ManagedSurface *dst, const Common::String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, const Common::CodePage page, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
-	void drawU32String(ManagedSurface *dst, const Common::U32String &str, const Graphics::Font &font, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0);
+	void drawString(Surface *dst, const Graphics::Font &font, const Common::String &str, const Common::CodePage page, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
+	void drawU32String(Surface *dst, const Graphics::Font &font, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0);
+	void drawString(ManagedSurface *dst, const Graphics::Font &font, const Common::String &str, const Common::CodePage page, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true);
+	void drawU32String(ManagedSurface *dst, const Graphics::Font &font, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0);
 }
 
 } // End of namespace Graphics
