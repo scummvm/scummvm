@@ -823,13 +823,18 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		if (it->unicode) {
 			Common::U32String line = convertBiDiU32String(it->unicodeText);
 
+			int accOff = line == it->unicodeText ? 0 : _font->getStringWidth(line);
+			if (_align == kTextAlignRight) {
+				accOff += it->bbox.width() - kMenuLeftMargin - _font->getStringWidth(line);
+			}
+
 			// FLIP ON RENDER
 			// if (_align == kTextAlignRight) {
 			// 	x = r.right + r.left - it->bbox.width() - x;
 			// }
 
 			_font->drawString(&_screen, line, x, y, it->bbox.width(), color, _align);
-			underlineAccelerator(&_screen, _font, line, x, y, it->shortcutPos, color);
+			underlineAccelerator(&_screen, _font, line, x + accOff, y, it->shortcutPos, color);
 		} else {
 			const Font *font = getMenuFont(it->style);
 
@@ -886,6 +891,12 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		Common::String acceleratorText(getAcceleratorString(menu->items[i], ""));
 
 		Common::U32String unicodeText = convertBiDiU32String(menu->items[i]->unicodeText);
+
+		int accOff = unicodeText == menu->items[i]->unicodeText ? 0 : _font->getStringWidth(unicodeText);
+		if (_align == kTextAlignRight) {
+			accOff += r->width() - kMenuDropdownPadding - _font->getStringWidth(unicodeText);
+		}
+
 		int shortcutPos = menu->items[i]->shortcutPos;
 
 		int accelX = r->right - 25;
@@ -893,7 +904,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 		if (_align == kTextAlignRight) {
 			accelX = r->left + 25;
-			arrowX += r->left + 14;
+			arrowX = r->left + 14;
 		}
 
 		int color = _wm->_colorBlack;
@@ -919,7 +930,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 			if (menu->items[i]->unicode) {
 				_font->drawString(s, unicodeText, tx, ty, r->width(), color, _align);
-				underlineAccelerator(s, _font, unicodeText, tx, ty, shortcutPos, color);
+				underlineAccelerator(s, _font, unicodeText, tx + accOff, ty, shortcutPos, color);
 			} else {
 				const Font *font = getMenuFont(menu->items[i]->style);
 
