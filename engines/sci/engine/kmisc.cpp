@@ -704,10 +704,9 @@ reg_t kMacPlatform32(EngineState *s, int argc, reg_t *argv) {
 	case 11:
 		return kMakeSaveFileName(s, argc - 1, argv + 1);
 
-	// TODO: Phantasmagoria music volume adjustment [ 0-15 ]
+	// Phantasmagoria volume
 	case 12:
-		warning("Unimplemented kMacPlatform32(%d): Set volume: %d", argv[0].toUint16(), argv[1].toUint16());
-		return s->r_acc;
+		return g_sci->_soundCmd->kDoSoundMasterVolume(s, argc - 1, argv + 1);
 
 	default:
 		break;
