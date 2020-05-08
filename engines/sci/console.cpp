@@ -409,6 +409,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" dissect_script - Examines a script\n");
 	debugPrintf(" backtrace / bt - Dumps the send/self/super/call/calle/callb stack\n");
 	debugPrintf(" trace / t / s - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
+	debugPrintf(" script_objects / scro - Shows all objects inside a specfied script\n");
+	debugPrintf(" script_steps - Shows the number of executed SCI operations\n");
+	debugPrintf(" script_strings / scrs - Shows all strings inside a specified script\n");
 	debugPrintf(" stepover / p - Executes one operation, skips over call/send\n");
 	debugPrintf(" step_ret / pret - Steps forward until ret is called on the current execution stack level.\n");
 	debugPrintf(" step_event / se - Steps forward until a SCI event is received.\n");
