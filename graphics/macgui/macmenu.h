@@ -25,6 +25,7 @@
 
 #include "common/str-array.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/font.h"
 
 namespace Common {
 class U32String;
@@ -91,6 +92,7 @@ public:
 private:
 	ManagedSurface _screen;
 	ManagedSurface _tempSurface;
+	TextAlign _align;
 
 private:
 	bool checkCallback(bool unicode = false);
