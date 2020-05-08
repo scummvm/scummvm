@@ -112,7 +112,7 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 
 	widget = new ButtonWidget(0, 0, nobutton_up, nobutton_down);
 	widget->InitGump(this);
-	widget->setRelativePosition(TOP_RIGHT, -_buttonXOff, _buttonYOff);
+	widget->setRelativePosition(TOP_RIGHT, -(int)_buttonXOff, _buttonYOff);
 	_noWidget = widget->getObjId();
 }
 
