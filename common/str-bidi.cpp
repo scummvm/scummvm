@@ -68,4 +68,16 @@ U32String convertBiDiU32String(const U32String &input) {
 
 }
 
+int getVisualPosition(const U32String &str, int pos) {
+	Common::U32String suffix(str.c_str() + pos + 1);
+	Common::U32String visual_str = Common::convertBiDiU32String(str);
+	Common::U32String visual_prefix(visual_str.c_str(), suffix.size());
+	Common::U32String visual_suffix = Common::convertBiDiU32String(suffix);
+	return visual_prefix == visual_suffix ? suffix.size() : pos;
+}
+
+int getVisualPosition(const String &str, const Common::CodePage page, int logicalPos) {
+	return getVisualPosition(str.decode(page), logicalPos);
+}
+
 } // End of namespace Common

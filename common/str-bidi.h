@@ -37,6 +37,9 @@ namespace Common {
 U32String convertBiDiU32String(const U32String &input);
 String convertBiDiString(const String &input, const Common::CodePage page);
 
+int getVisualPosition(const U32String &str, int pos);
+int getVisualPosition(const String &str, const Common::CodePage page, int pos);
+
 } // End of namespace Common
 
 #endif
