@@ -58,7 +58,6 @@ static const uint16 unkArray[5] = {
 void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	short sVar2;
 	short sVar3;
-	bool shouldExit;
 	bool bVar4;
 	DragonINI *flicker;
 	uint32 origEngineFlags;
@@ -131,7 +130,6 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	textIdTbl[2] = 0x4576;
 
 	bVar4 = false;
-	shouldExit = false;
 	local_27a = 0;
 	local_278 = 0;
 	local_272 = 0;

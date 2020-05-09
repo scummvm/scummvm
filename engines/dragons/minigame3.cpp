@@ -71,7 +71,7 @@ void Minigame3::run() {
 	DragonINI *flicker;
 	uint16 origSceneId;
 	//byte auStack1584_palette[512]; //[126];
-	uint16 local_5b2;
+	//uint16 local_5b2;
 	//byte auStack1072_palette[512];
 	Actor *bunnyActorTbl[4];
 	uint16 local_228;
@@ -196,7 +196,7 @@ void Minigame3::run() {
 // TODO
 //	memcpy2(auStack1584_palette, scrFileData_maybe, 0x200);
 //	memcpy2(auStack1072_palette, scrFileData_maybe, 0x200);
-	local_5b2 = 0x7fff;
+//	local_5b2 = 0x7fff;
 //	DisableVSyncEvent();
 	int i = 0;
 	while ((int16)i < 4) {
