@@ -55,7 +55,8 @@ void Context::reset() {
 	_location = nullptr;
 
 	_lastShip = nullptr;
-	_line = _col = 0;
+	_line = 9999;
+	_col = 0;
 	_moonPhase = 0;
 	_windDirection = 0;
 	_windCounter = 0;
