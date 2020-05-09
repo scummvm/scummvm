@@ -98,9 +98,7 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	bool canLoadGameStateCurrently(bool isAutosave = false) override {
-		return canSaveGameStateCurrently(isAutosave);
-	}
+	bool canLoadGameStateCurrently(bool isAutosave = false) override;
 
 	/**
 	 * Returns true if the game can be saved

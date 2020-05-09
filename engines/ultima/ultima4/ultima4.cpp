@@ -202,6 +202,10 @@ void Ultima4Engine::setToJourneyOnwards() {
 	assert(_saveSlotToLoad);
 }
 
+bool Ultima4Engine::canLoadGameStateCurrently(bool isAutosave) {
+	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game;
+}
+
 bool Ultima4Engine::canSaveGameStateCurrently(bool isAutosave) {
 	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game
 		&& (g_context->_location->_context & CTX_CAN_SAVE_GAME);
