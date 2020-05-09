@@ -308,6 +308,13 @@ TileAnim::TileAnim(const ConfigElement &conf) : _random(0) {
 	}
 }
 
+TileAnim::~TileAnim() {
+	for (uint idx = 0; idx < _transforms.size(); ++idx)
+		delete _transforms[idx];
+	for (uint idx = 0; idx < _contexts.size(); ++idx)
+		delete _contexts[idx];
+}
+
 void TileAnim::draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir) {
 	Std::vector<TileAnimTransform *>::const_iterator t;
 	Std::vector<TileAnimContext *>::const_iterator c;

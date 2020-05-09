@@ -196,6 +196,7 @@ private:
 class TileAnim {
 public:
 	TileAnim(const ConfigElement &conf);
+	~TileAnim();
 
 	Common::String _name;
 	Std::vector<TileAnimTransform *> _transforms;
