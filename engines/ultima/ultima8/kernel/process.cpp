@@ -30,8 +30,6 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Process)
 
-DEFINE_CUSTOM_MEMORY_ALLOCATION(Process)
-
 Process::Process(ObjId it, uint16 ty)
 	: _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0) {
 	Kernel::get_instance()->assignPID(this);

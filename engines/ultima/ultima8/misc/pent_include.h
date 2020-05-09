@@ -94,31 +94,4 @@
 //
 #define CANT_HAPPEN_MSG(msg) do { assert(msg && false); } while(0)
 
-namespace Ultima {
-namespace Ultima8 {
-
-// Memory Management through Allocators
-typedef void *(*allocFunc)(size_t size);
-typedef void (*deallocFunc)(void *ptr);
-
-extern allocFunc palloc;
-extern deallocFunc pfree;
-void setAllocationFunctions(allocFunc a, deallocFunc d);
-
-#define ENABLE_CUSTOM_MEMORY_ALLOCATION()                           \
-	static void * operator new(size_t size);                        \
-	static void operator delete(void * ptr);
-
-#define DEFINE_CUSTOM_MEMORY_ALLOCATION(Classname)                  \
-	void * Classname::operator new(size_t size) {                       \
-		return palloc(size);                                 \
-	}                                                                   \
-	\
-	void Classname::operator delete(void * ptr) {                       \
-		pfree(ptr);                                          \
-	}
-
-} // End of namespace Ultima8
-} // End of namespace Ultima
-
 #endif
