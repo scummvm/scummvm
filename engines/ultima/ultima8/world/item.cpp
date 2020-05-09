@@ -83,7 +83,14 @@ Item::~Item() {
 void Item::dumpInfo() const {
 	pout << "Item " << getObjId() << " (class "
 	     << GetClassType()._className << ", shape "
-	     << getShape() << ", " << getFrame() << ", (";
+		 << getShape();
+
+	const char *ucname = GameData::get_instance()->getMainUsecode()->get_class_name(_shape);
+	if (ucname != nullptr) {
+		pout << " (uc:" << ucname << ")";
+	}
+
+	pout << ", " << getFrame() << ", (";
 
 	if (_parent) {
 		int32 gx, gy;
@@ -1049,8 +1056,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	uint32 offset = u->get_class_event(class_id, event);
 	if (!offset) return 0; // event not found
 
-	// FIXME: Disabled usecode except for Use events in crusader for now
-	if (GAME_IS_CRUSADER && event != 1) {
+	/*if (GAME_IS_CRUSADER && event != 1) {
 		if (event != 15 ||
 			(_shape != 1098 && _shape != 1227 && _shape != 1297 && _shape != 1298 && _shape != 1274
 			 && _shape != 1275 && _shape != 1301 && _shape != 1302
@@ -1059,7 +1065,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 					event, _objId, _shape);
 			return 0;
 		}
-	}
+	}*/
 
 	debug(6, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X\n",
 			_objId, _shape, event, class_id, offset);
