@@ -59,6 +59,10 @@ MapLoaders::MapLoaders() {
 }
 
 MapLoaders::~MapLoaders() {
+	// Free the loaders
+	for (iterator it = begin(); it != end(); ++it)
+		delete it->_value;
+
 	g_mapLoaders = nullptr;
 }
 

@@ -80,8 +80,7 @@ void GameController::initScreenWithoutReloadingState() {
 void GameController::init() {
 	initScreen();
 
-	// initialize the global game context, conversation and game state variables
-	g_context = new Context();
+	// initialize the state of the global game context
 	g_context->_line = TEXT_AREA_H - 1;
 	g_context->_col = 0;
 	g_context->_stats = new StatsArea();

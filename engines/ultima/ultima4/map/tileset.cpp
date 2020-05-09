@@ -38,6 +38,10 @@ TileRules::TileRules() {
 }
 
 TileRules::~TileRules() {
+	// Delete the tile rules
+	for (iterator it = begin(); it != end(); ++it)
+		delete it->_value;
+
 	g_tileRules = nullptr;
 }
 
