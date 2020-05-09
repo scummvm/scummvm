@@ -489,7 +489,7 @@ void SaveLoadChooserSimple::reflowLayout() {
 
 	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && (_thumbnailSupport || _saveDateSupport || _playTimeSupport)) {
 		int16 x, y;
-		uint16 w, h;
+		int16 w, h;
 
 		if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails");
@@ -919,10 +919,10 @@ void SaveLoadChooserGrid::reflowLayout() {
 	// HACK: The whole code below really works around the fact, that we have
 	// no easy way to dynamically layout widgets.
 	const uint16 availableWidth = getWidth() - 20;
-	uint16 availableHeight;
+	int16 availableHeight;
 
 	int16 x, y;
-	uint16 w;
+	int16 w;
 	if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight))
 		error("Could not load widget position for 'SaveLoadChooser.List'");
 

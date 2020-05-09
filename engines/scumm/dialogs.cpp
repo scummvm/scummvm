@@ -305,7 +305,7 @@ void HelpDialog::reflowLayout() {
 
 	int lineHeight = g_gui.getFontHeight();
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 
 	assert(lineHeight);
 

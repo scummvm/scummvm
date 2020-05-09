@@ -1133,7 +1133,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 
 	for (int16 viewAchieved = 1; viewAchieved >= 0; viewAchieved--) {
 		// run this twice, first view all achieved, then view all non-hidden & non-achieved
-	
+
 		for (uint16 idx = 0; idx < nMax ; idx++) {
 			bool isAchieved = AchMan.isAchieved(info.descriptions[idx].id);
 
@@ -1144,7 +1144,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			if (isAchieved) {
 				nAchieved++;
 			}
-			
+
 			if (!isAchieved && info.descriptions[idx].isHidden) {
 				nHidden++;
 				continue;
@@ -2773,7 +2773,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	// calculate shift
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 	int16 shiftUp = 0;
 	if (!showingCurrentStorage || enabled) {
 		// "storage is disabled" hint is not shown, shift everything up
@@ -2902,7 +2902,7 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 	if (!widget) return;
 
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 	if (!g_gui.xmlEval()->getWidgetData(widgetName, x, y, w, h))
 		warning("%s's position is undefined", widgetName);
 

@@ -40,9 +40,13 @@ GuiObject::~GuiObject() {
 
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
-		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {
+		int16 w, h;
+
+		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h) || w == -1 || h == -1) {
 			error("Could not load widget position for '%s'", _name.c_str());
 		}
+		_w = w;
+		_h = h;
 	}
 }
 
