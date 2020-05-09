@@ -90,6 +90,13 @@ void ActionText::start() {
 		_text = Common::String(str).decode(Common::kWindows1251);
 		break;
 
+	case Common::HE_ISR:
+		_text = Common::String(str).decode(Common::kWindows1255);
+		if (!_centered) {
+			align = Graphics::kTextAlignRight;
+		}
+		break;
+
 	case Common::EN_ANY:
 	default:
 		_text = Common::String(str);
@@ -131,6 +138,9 @@ void ActionText::end() {
 void ActionText::draw(Graphics::ManagedSurface *surface) {
 	// not working
 	Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+	if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
+		alignment = Graphics::kTextAlignRight;
+	}
 	Graphics::MacFont *font = new Graphics::MacFont();
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	Graphics::MacText text(_text, &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
