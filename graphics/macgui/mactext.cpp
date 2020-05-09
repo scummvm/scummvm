@@ -60,7 +60,7 @@ uint MacTextLine::getChunkNum(int *col) {
 	uint i;
 
 	for (i = 0; i < chunks.size(); i++) {
-		if (pos >= chunks[i].text.size()) {
+		if (pos >= (int)chunks[i].text.size()) {
 			pos -= chunks[i].text.size();
 		} else {
 			break;
@@ -495,7 +495,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 			_textLines[line].chunks[i].font = nullptr;
 
 		if (col >= 0) {
-			if (col >= _textLines[line].chunks[i].text.size()) {
+			if (col >= (int)_textLines[line].chunks[i].text.size()) {
 				col -= _textLines[line].chunks[i].text.size();
 			} else {
 				Common::U32String tmp(_textLines[line].chunks[i].text.c_str(), col);
@@ -878,7 +878,7 @@ void MacText::insertChar(byte c, int *row, int *col) {
 
 	Common::U32String newchunk(line->chunks[ch].text);
 
-	if (pos >= newchunk.size())
+	if (pos >= (int)newchunk.size())
 		newchunk += c;
 	else
 		newchunk.insertChar(c, pos);
@@ -919,7 +919,7 @@ void MacText::deletePreviousChar(int *row, int *col) {
 			_textLines[*row].firstChunk().text.clear();
 		}
 
-		for (int i = 1; i < _textLines[*row + 1].chunks.size(); i++)
+		for (uint i = 1; i < _textLines[*row + 1].chunks.size(); i++)
 			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].chunks[i]));
 
 		_textLines.remove_at(*row + 1);
@@ -984,7 +984,7 @@ void MacText::reshuffleParagraph(int *row, int *col) {
 	while (start && !_textLines[start - 1].paragraphEnd)
 		start--;
 
-	while (end < _textLines.size() - 1 && !_textLines[end].paragraphEnd) // stop at last line
+	while (end < (int)_textLines.size() - 1 && !_textLines[end].paragraphEnd) // stop at last line
 		end++;
 
 	// Get whole paragraph
