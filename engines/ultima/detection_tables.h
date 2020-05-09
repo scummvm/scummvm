@@ -186,11 +186,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			{
-				{ "eusecode.flx", 0, "c61f1dacde591cb39d452264e281f234", 1251108 },
-				{ "fusecode.flx", 0, "4017eb8678ee24af0ce8c7647a05509b", 1300957 },
-				AD_LISTEND
-			},			
+			AD_ENTRY1s("fusecode.flx", "4017eb8678ee24af0ce8c7647a05509b", 1300957),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -204,11 +200,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"Gold Edition",
-			{
-				{"eusecode.flx", 0, "c61f1dacde591cb39d452264e281f234", 1251108},
-				{"gusecode.flx", 0, "d69599a46870b66c1b7c02710ed185bd", 1378604},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("gusecode.flx", "d69599a46870b66c1b7c02710ed185bd", 1378604),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
