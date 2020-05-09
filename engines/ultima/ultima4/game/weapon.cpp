@@ -34,6 +34,9 @@ Weapons::Weapons() : _confLoaded(false) {
 }
 
 Weapons::~Weapons() {
+	for (uint idx = 0; idx < size(); ++idx)
+		delete (*this)[idx];
+
 	g_weapons = nullptr;
 }
 

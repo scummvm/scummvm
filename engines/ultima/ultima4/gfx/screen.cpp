@@ -75,6 +75,9 @@ Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
 
 Screen::~Screen() {
 	clear();
+	for (uint idx = 0; idx < _tileAnimSets.size(); ++idx)
+		delete _tileAnimSets[idx];
+
 	g_screen = nullptr;
 }
 
