@@ -325,11 +325,6 @@ void ResVmSdlGraphicsManager::saveScreenshot() {
 	}
 }
 
-bool ResVmSdlGraphicsManager::gameNeedsAspectRatioCorrection() const {
-	// ResidualVM: not use it
-	return false;
-}
-
 int ResVmSdlGraphicsManager::getGraphicsModeScale(int mode) const {
 	return -1;
 }

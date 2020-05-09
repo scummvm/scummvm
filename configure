@@ -135,7 +135,7 @@ done
 #
 #ResidualVM defaults: sdlnet=no libcurl=no flac=no seq_midi=no sndio=no timidity=no
 # a52=no theoradec=no faad=no fluidsynth=no mt32emu=no lua=no build_scalers=no
-# build_hq_scalers=no nuked_opl=no tts=no
+# build_hq_scalers=no nuked_opl=no tts=no osxdockplugin=no
 #
 # Default lib behavior yes/no/auto
 _sdl=no
@@ -156,7 +156,7 @@ _zlib=auto
 _mpeg2=auto
 _a52=no
 _sparkle=auto
-_osxdockplugin=auto
+_osxdockplugin=no
 _jpeg=auto
 _png=auto
 _theoradec=no

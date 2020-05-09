@@ -101,7 +101,7 @@ public:
 	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
-	void saveScreenshot();
+	virtual void saveScreenshot() {}
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching

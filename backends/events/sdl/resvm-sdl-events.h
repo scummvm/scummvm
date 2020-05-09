@@ -54,7 +54,7 @@ protected:
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) override;
-	bool handleKbdMouse(Common::Event &event) override;
+	bool handleKbdMouse(Common::Event &event);
 
 	/**
 	 * Update the virtual mouse according to a joystick or game controller axis position change

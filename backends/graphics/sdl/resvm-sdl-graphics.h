@@ -152,8 +152,6 @@ protected:
 
 	virtual int getGraphicsModeScale(int mode) const = 0;
 
-	virtual bool gameNeedsAspectRatioCorrection() const override;
-
 	/** Save a screenshot to the specified file */
 	virtual bool saveScreenshot(const Common::String &file) const  = 0;
 };
