@@ -150,6 +150,9 @@ void OSystem_SDL::init() {
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
 
+	// Allow the screen to turn off
+	SDL_EnableScreenSaver();
+
 	// Creates the early needed managers, if they don't exist yet
 	// (we check for this to allow subclasses to provide their own).
 	if (_mutexManager == 0)
