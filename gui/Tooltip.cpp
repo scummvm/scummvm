@@ -54,6 +54,10 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 
 	_x = MIN<int16>(parent->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
 	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
+
+	if (g_gui.useRTL())
+		_x = g_system->getOverlayWidth() - _w - _x;
+
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
@@ -86,7 +90,7 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 			ThemeEngine::kFontColorNormal,
 			false
 		);
+		}
 	}
-}
 
 }
