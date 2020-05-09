@@ -617,7 +617,7 @@ void Minigame3::run() {
 					if ((tmpValue & 0xffff) == 0) {
 						local_1be = 1;
 					} else {
-						local_1be = 0xffff;
+						local_1be = -1;
 					}
 					local_1bc = _vm->getRand(3);
 					local_1bc = local_1bc + 3;

@@ -1234,13 +1234,13 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 		if (actorf4->_sequenceID == 1) {
 			actorf4->waitUntilFlag8And4AreSet();
 			actorf4->updateSequence(2);
-			actorf5->_x_pos = 0x115;
-			actorf5->_y_pos = 0x5c;
+			actorf5->_x_pos = 277;
+			actorf5->_y_pos = 92;
 			actorf5->updateSequence(7);
 			_vm->waitForFrames(0x78);
 			actorf5->updateSequence(8);
 			actorf5->waitUntilFlag8And4AreSet();
-			actorf5->_x_pos = 0xff9c;
+			actorf5->_x_pos = -100;
 			actorf5->_y_pos = 100;
 			actorf4->updateSequence(3);
 		} else {
@@ -1248,7 +1248,7 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 				_vm->waitForFrames(0x78);
 				actorf5->updateSequence(8);
 				actorf5->waitUntilFlag8And4AreSet();
-				actorf5->_x_pos = 0xff9c;
+				actorf5->_x_pos = -100;
 				actorf5->_y_pos = 100;
 				actorf4->updateSequence(3);
 			} else {
