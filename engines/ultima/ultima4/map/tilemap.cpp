@@ -61,11 +61,9 @@ void TileMaps::loadAll() {
 }
 
 void TileMaps::unloadAll() {
-	iterator map;
-
 	// Free all the memory for the tile maps
-	for (map = begin(); map != end(); map++)
-		delete map->_value;
+	for (iterator it = begin(); it != end(); it++)
+		delete it->_value;
 
 	// Clear the map so we don't attempt to delete the memory again next time
 	clear();
