@@ -695,7 +695,8 @@ bool Map::fillMonsterTable() {
 	int nObjects = 0;
 	int i;
 
-	memset(_monsterTable, 0, MONSTERTABLE_SIZE * sizeof(SaveGameMonsterRecord));
+	for (int idx = 0; idx < MONSTERTABLE_SIZE; ++idx)
+		_monsterTable[idx].clear();
 
 	/**
 	 * First, categorize all the objects we have
