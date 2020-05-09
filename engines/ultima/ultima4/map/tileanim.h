@@ -216,6 +216,7 @@ class TileAnimSet {
 
 public:
 	TileAnimSet(const ConfigElement &conf);
+	~TileAnimSet();
 
 	/**
 	 * Returns the tile animation with the given name from the current set

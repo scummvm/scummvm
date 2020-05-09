@@ -277,6 +277,11 @@ TileAnimSet::TileAnimSet(const ConfigElement &conf) {
 	}
 }
 
+TileAnimSet::~TileAnimSet() {
+	for (TileAnimMap::iterator it = _tileAnims.begin(); it != _tileAnims.end(); ++it)
+		delete it->_value;
+}
+
 TileAnim *TileAnimSet::getByName(const Common::String &name) {
 	TileAnimMap::iterator i = _tileAnims.find(name);
 	if (i == _tileAnims.end())
