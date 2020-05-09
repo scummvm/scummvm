@@ -38,15 +38,17 @@ Context::Context() : _stats(nullptr), _aura(nullptr),
 
 Context::~Context() {
 	g_context = nullptr;
-	delete _stats;
-	delete _aura;
+	reset();
 }
 
 void Context::reset() {
 	delete _stats;
 	delete _aura;
 	delete _party;
-	delete _location;
+
+	while (_location)
+		locationFree(&_location);
+
 	_stats = nullptr;
 	_aura = nullptr;
 	_party = nullptr;
