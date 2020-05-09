@@ -66,6 +66,7 @@ class TileAnim;
 class Tile : private Uncopyable {
 public:
 	Tile(Tileset *tileset);
+	~Tile();
 
 	/**
 	 * Loads tile information.

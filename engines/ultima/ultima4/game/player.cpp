@@ -562,6 +562,8 @@ Party::Party(SaveGame *s) : _saveGame(s), _transport(0), _torchDuration(0), _act
 }
 
 Party::~Party() {
+	for (uint idx = 0; idx < _members.size(); ++idx)
+		delete _members[idx];
 }
 
 void Party::notifyOfChange(PartyMember *pm, PartyEvent::Type eventType) {

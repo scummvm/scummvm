@@ -60,6 +60,10 @@ Tile::Tile(Tileset *tileset)
 	, _animationRule("") {
 }
 
+Tile::~Tile() {
+	deleteImage();
+}
+
 void Tile::loadProperties(const ConfigElement &conf) {
 	if (conf.getName() != "tile")
 		return;
