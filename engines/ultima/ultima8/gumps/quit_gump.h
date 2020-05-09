@@ -51,12 +51,13 @@ protected:
 	void saveData(Common::WriteStream *ws) override;
 	ObjId _yesWidget, _noWidget;
 
-	uint32 _gumpShape;
-	uint32 _yesShape;
-	uint32 _noShape;
-	uint32 _askShape;
-	uint32 _buttonXOff;
-	uint32 _buttonYOff;
+	uint32 _gumpShape;	//! shape number for the dialog
+	uint32 _yesShape;	//! shape number for "yes" button
+	uint32 _noShape;	//! shape number for "no" button
+	uint32 _askShape;	//! shape number for "are you sure?"
+	uint32 _buttonXOff;	//! x offset from either edge of yes/no  buttons
+	uint32 _buttonYOff;	//! y offset from bottom of yes/no  buttons
+	uint32 _playSound;	//! sound to play on open
 };
 
 } // End of namespace Ultima8

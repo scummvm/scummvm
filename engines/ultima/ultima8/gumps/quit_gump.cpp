@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
@@ -45,7 +46,13 @@ static const int remGumpShape = 21;
 static const int remAskShapeId = 0;
 static const int remYesShapeId = 19;
 static const int remNoShapeId = 20;
+static const int remQuitSound = 0x109;
 
+static const int regGumpShape = 21;
+static const int regAskShapeId = 0;
+static const int regYesShapeId = 19;
+static const int regNoShapeId = 20;
+static const int regQuitSound = 0;  // TODO: Work out what sound id
 
 QuitGump::QuitGump(): ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
 	Mouse *mouse = Mouse::get_instance();
@@ -58,6 +65,7 @@ QuitGump::QuitGump(): ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
 		_noShape = u8NoShapeId;
 		_buttonXOff = 16;
 		_buttonYOff = 38;
+		_playSound = 0;
 	} else if (GAME_IS_REMORSE) {
 		_gumpShape = remGumpShape;
 		_askShape = remAskShapeId;
@@ -65,6 +73,16 @@ QuitGump::QuitGump(): ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
 		_noShape = remNoShapeId;
 		_buttonXOff = 55;
 		_buttonYOff = 47;
+		_playSound = remQuitSound;
+	} else if (GAME_IS_REGRET) {
+		_gumpShape = regGumpShape;
+		_askShape = regAskShapeId;
+		_yesShape = regYesShapeId;
+		_noShape = regNoShapeId;
+		// TODO: These are pretty approximate, need adjusting.
+		_buttonXOff = 50;
+		_buttonYOff = 70;
+		_playSound = regQuitSound;
 	} else {
 		error("unsupported game type");
 	}
@@ -114,6 +132,11 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	widget->InitGump(this);
 	widget->setRelativePosition(TOP_RIGHT, -(int)_buttonXOff, _buttonYOff);
 	_noWidget = widget->getObjId();
+
+	if (_playSound) {
+		AudioProcess *audioproc = AudioProcess::get_instance();
+		audioproc->playSFX(_playSound, 0x10, _objId, 1);
+	}
 }
 
 
