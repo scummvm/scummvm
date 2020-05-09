@@ -98,7 +98,7 @@ bool PtcArchive::openTranslation(const Common::String &filename) {
 		_items[translationNames[i]] = item;
 	}
 
-	if (_items[translationNames[0]]._offset == _stream->pos()) {
+	if ((int32)_items[translationNames[0]]._offset == _stream->pos()) {
 		warning("v0 translation file detected, update is needed");
 
 		return true;
