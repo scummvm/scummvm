@@ -21,13 +21,13 @@
  */
 
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/map/dungeonview.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
-#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/tileanim.h"
 #include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/views/dungeonview.h"
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/shared/std/misc.h"
 

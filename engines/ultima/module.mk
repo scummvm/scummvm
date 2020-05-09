@@ -199,7 +199,6 @@ MODULE_OBJS := \
 	ultima4/map/city.o \
 	ultima4/map/direction.o \
 	ultima4/map/dungeon.o \
-	ultima4/map/dungeonview.o \
 	ultima4/map/map_tile.o \
 	ultima4/map/movement.o \
 	ultima4/map/shrine.o \
@@ -213,6 +212,7 @@ MODULE_OBJS := \
 	ultima4/map/tileset.o \
 	ultima4/sound/music.o \
 	ultima4/sound/sound.o \
+	ultima4/views/dungeonview.o \
 	ultima4/views/imageview.o \
 	ultima4/views/menu.o \
 	ultima4/views/menuitem.o \

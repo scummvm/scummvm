@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA4_MAP_DUNGEONVIEW_H
-#define ULTIMA4_MAP_DUNGEONVIEW_H
+#ifndef ULTIMA4_VIEWS_DUNGEONVIEW_H
+#define ULTIMA4_VIEWS_DUNGEONVIEW_H
 
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/dungeon.h"
