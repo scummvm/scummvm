@@ -103,7 +103,6 @@ void Music::playMapMusic() {
 
 void Music::playMusic(const Common::String &filename) {
 	stop();
-	Common::StackLock lock(_mutex);
 
 	// First try opening the file with whatever filename is provided
 	if (startMusic(filename))
@@ -170,7 +169,6 @@ bool Music::startMusic(const Common::String &filename) {
 }
 
 void Music::stop() {
-	Common::StackLock lock(_mutex);
 	_mixer->stopHandle(_soundHandle);
 	Audio::MidiPlayer::stop();
 }
