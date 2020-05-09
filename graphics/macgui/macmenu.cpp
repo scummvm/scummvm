@@ -109,7 +109,7 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 		: BaseMacWindow(id, false, wm) {
 	_font = getMenuFont();
 
-	_align = kTextAlignRight;
+	_align = kTextAlignLeft;
 
 	_screen.create(bounds.width(), bounds.height(), PixelFormat::createFormatCLUT8());
 
@@ -192,6 +192,9 @@ static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
 	return strData.empty() ? Common::U32String() : Common::U32String(strData.data(), strData.size());
 }
 
+void MacMenu::setAlignment(Graphics::TextAlign align) {
+	_align = align;
+}
 
 MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm) {
 	Common::SeekableReadStream *menuData = exe->getResource(Common::kWinMenu, 128);
@@ -404,7 +407,6 @@ void MacMenu::calcDimensions() {
 
 		calcSubMenuBounds(_items[i]->submenu, _items[i]->bbox.left - 1, _items[i]->bbox.bottom + 1);
 
-		// FLIP ON CREATE
 		if (_align == kTextAlignRight) {
 			int right = _items[i]->bbox.right;
 			int width = right - _items[i]->bbox.left;
@@ -793,17 +795,10 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		if ((uint)_activeItem == i) {
 			Common::Rect hbox = it->bbox;
 
-			// FLIP ON RENDER
-			// if (_align == kTextAlignRight) {
-			// 	hbox.left = r.right + r.left - it->bbox.width() - hbox.left;
-			// 	hbox.right = hbox.left + it->bbox.width();
-			// }
-
 			hbox.left -= 1;
 			hbox.right += 3;
 			hbox.bottom += 1;
 
-			// FLIP ON CREATE
 			if (_align == kTextAlignRight) {
 				hbox.left -= 2;
 				hbox.right -= 2;
@@ -813,14 +808,9 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 			color = _wm->_colorWhite;
 		}
 
-		int x = it->bbox.left + kMenuLeftMargin;
-
-		// FLIP ON CREATE
-		if (_align == kTextAlignRight) {
-			x -= 2 * kMenuLeftMargin;
-		}
-
 		int y = it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1);
+		int x = _align == kTextAlignRight ? -kMenuLeftMargin : kMenuLeftMargin;
+		x += it->bbox.left;
 
 		if (it->unicode) {
 			int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
@@ -858,28 +848,22 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 	_screen.fillRect(*r, _wm->_colorWhite);
 	_screen.frameRect(*r, _wm->_colorBlack);
-
 	_screen.vLine(r->right, r->top + 3, r->bottom + 1, _wm->_colorBlack);
 	_screen.vLine(r->right + 1, r->top + 3, r->bottom + 1, _wm->_colorBlack);
 	_screen.hLine(r->left + 3, r->bottom, r->right + 1, _wm->_colorBlack);
 	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
 
-	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
-
-	if (_align == kTextAlignRight) {
-		x -= 2 * kMenuDropdownPadding;
-	}
+	int x = _align == kTextAlignRight ? -kMenuDropdownPadding : kMenuDropdownPadding;
+	x += r->left;
 
 	for (uint i = 0; i < menu->items.size(); i++) {
 		Common::String text(menu->items[i]->text);
 		Common::String acceleratorText(getAcceleratorString(menu->items[i], ""));
 
-		// Common::U32String unicodeText = convertBiDiU32String(menu->items[i]->unicodeText);
 		Common::U32String unicodeText(menu->items[i]->unicodeText);
 
 		int accOff = _align == kTextAlignRight ? r->width() - _font->getStringWidth(unicodeText) : 0;
-
 
 		int shortcutPos = menu->items[i]->shortcutPos;
 

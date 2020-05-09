@@ -55,6 +55,8 @@ public:
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 	static MacMenu *createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm);
 
+	void setAlignment(Graphics::TextAlign align);
+
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
 	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }
 
