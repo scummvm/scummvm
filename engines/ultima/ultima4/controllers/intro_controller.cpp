@@ -717,52 +717,54 @@ void IntroController::finishInitiateGame(const Common::String &nameBuffer, SexTy
 	_menuArea.disableCursor();
 
 	// show the lead up story
-	showStory();
+	if (!shouldQuit())
+		showStory();
 
 	// ask questions that determine character class
-	startQuestions();
+	if (!shouldQuit())
+		startQuestions();
 
-	// Setup savegame fields. The original wrote out multiple files and
-	// then loaded them up once the game starts. Now we're simply setting
-	// up the savegame fields and letting the game read from them later,
-	// as if a savegame had been loaded
-	SaveGame &saveGame = *g_ultima->_saveGame;
-	SaveGamePlayerRecord avatar;
-	avatar.init();
-	strncpy(avatar._name, nameBuffer.c_str(), 15);
-	avatar._name[15] = '\0';
+	if (!shouldQuit()) {
+		// Setup savegame fields. The original wrote out multiple files and
+		// then loaded them up once the game starts. Now we're simply setting
+		// up the savegame fields and letting the game read from them later,
+		// as if a savegame had been loaded
+		SaveGame &saveGame = *g_ultima->_saveGame;
+		SaveGamePlayerRecord avatar;
+		avatar.init();
+		strncpy(avatar._name, nameBuffer.c_str(), 15);
+		avatar._name[15] = '\0';
 
-	avatar._sex = sex;
-	saveGame.init(&avatar);
-	g_screen->screenHideCursor();
-	initPlayers(&saveGame);
-	saveGame._food = 30000;
-	saveGame._gold = 200;
-	saveGame._reagents[REAG_GINSENG] = 3;
-	saveGame._reagents[REAG_GARLIC] = 4;
-	saveGame._torches = 2;
+		avatar._sex = sex;
+		saveGame.init(&avatar);
+		g_screen->screenHideCursor();
+		initPlayers(&saveGame);
+		saveGame._food = 30000;
+		saveGame._gold = 200;
+		saveGame._reagents[REAG_GINSENG] = 3;
+		saveGame._reagents[REAG_GARLIC] = 4;
+		saveGame._torches = 2;
 
-	_justInitiatedNewGame = true;
+		_justInitiatedNewGame = true;
 
-	// show the text thats segues into the main game
-	showText(_binData->_introGypsy[GYP_SEGUE1]);
+		// show the text thats segues into the main game
+		showText(_binData->_introGypsy[GYP_SEGUE1]);
 #ifdef IOS_ULTIMA4
-	U4IOS::switchU4IntroControllerToContinueButton();
+		U4IOS::switchU4IntroControllerToContinueButton();
 #endif
-	ReadChoiceController pauseController("");
-	eventHandler->pushController(&pauseController);
-	pauseController.waitFor();
+		ReadChoiceController pauseController("");
+		eventHandler->pushController(&pauseController);
+		pauseController.waitFor();
 
-	showText(_binData->_introGypsy[GYP_SEGUE2]);
+		showText(_binData->_introGypsy[GYP_SEGUE2]);
 
-	eventHandler->pushController(&pauseController);
-	pauseController.waitFor();
+		eventHandler->pushController(&pauseController);
+		pauseController.waitFor();
+	}
 
 	// done: exit intro and let game begin
 	_questionArea.disableCursor();
 	EventHandler::setControllerDone();
-
-	return;
 }
 
 void IntroController::showStory() {
