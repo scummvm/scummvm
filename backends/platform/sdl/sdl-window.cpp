@@ -186,7 +186,7 @@ void SdlWindow::iconifyWindow() {
 bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 	SDL_VERSION(&info->version);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	return _window ? SDL_GetWindowWMInfo(_window, info) : false;
+	return _window ? (SDL_GetWindowWMInfo(_window, info) == SDL_TRUE) : false;
 #else
 	return SDL_GetWMInfo(info);
 #endif
