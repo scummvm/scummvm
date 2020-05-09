@@ -101,7 +101,7 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 RGBA *TileAnimTransform::loadColorFromConf(const ConfigElement &conf) {
 	RGBA *rgba;
 
-	rgba = new RGBA;
+	rgba = new RGBA();
 	rgba->r = conf.getInt("red");
 	rgba->g = conf.getInt("green");
 	rgba->b = conf.getInt("blue");
@@ -184,6 +184,11 @@ TileAnimPixelColorTransform::TileAnimPixelColorTransform(int xp, int yp, int wid
 	this->w = width;
 	this->h = height;
 	_start = _end = nullptr;
+}
+
+TileAnimPixelColorTransform::~TileAnimPixelColorTransform() {
+	delete _start;
+	delete _end;
 }
 
 bool TileAnimPixelColorTransform::drawsTile() const {
@@ -288,6 +293,8 @@ TileAnim *TileAnimSet::getByName(const Common::String &name) {
 		return nullptr;
 	return i->_value;
 }
+
+/*------------------------------------------------------------------------*/
 
 TileAnim::TileAnim(const ConfigElement &conf) : _random(0) {
 	_name = conf.getString("name");
