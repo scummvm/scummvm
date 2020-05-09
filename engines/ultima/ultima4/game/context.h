@@ -58,15 +58,20 @@ public:
 	Context();
 	~Context();
 
+	/**
+	 * Reset the context
+	 */
+	void reset();
+
+	StatsArea *_stats;
+	Aura *_aura;
 	Party *_party;
 	Location *_location;
 	int _line, _col;
-	StatsArea *_stats;
 	int _moonPhase;
 	int _windDirection;
 	int _windCounter;
 	bool _windLock;
-	Aura *_aura;
 	int _horseSpeed;
 	int _opacity;
 	TransportContext _transportContext;

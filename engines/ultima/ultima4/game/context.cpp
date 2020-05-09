@@ -21,23 +21,42 @@
  */
 
 #include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 Context *g_context;
 
-Context::Context() : _party(nullptr), _location(nullptr),
-		_line(999), _col(0), _stats(nullptr), _moonPhase(0),
-		_windDirection(0), _windCounter(0), _windLock(false),
-		_aura(nullptr), _horseSpeed(0), _opacity(0),
-		_transportContext(TRANSPORT_ANY), _lastCommandTime(0),
-		_lastShip(nullptr) {
+Context::Context() : _stats(nullptr), _aura(nullptr) {
 	g_context = this;
+	reset();
 }
 
 Context::~Context() {
 	g_context = nullptr;
+	delete _stats;
+	delete _aura;
+}
+
+void Context::reset() {
+	delete _stats;
+	delete _aura;
+	_stats = nullptr;
+	_aura = nullptr;
+
+	_party = nullptr;
+	_location = nullptr;
+	_lastShip = nullptr;
+	_line = _col = 0;
+	_moonPhase = 0;
+	_windDirection = 0;
+	_windCounter = 0;
+	_windLock = false;
+	_horseSpeed = 0;
+	_opacity = 0;
+	_lastCommandTime = 0;
+	_transportContext = TRANSPORT_ANY;
 }
 
 } // End of namespace Ultima4
