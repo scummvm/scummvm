@@ -27,6 +27,7 @@
 #include "ultima/ultima8/gumps/readable_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
@@ -64,15 +65,18 @@ void AvatarDeathProcess::run() {
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->untransformPalette(PaletteManager::Pal_Game);
 
-	ReadableGump *gump = new ReadableGump(1, 27, 11,
-	                                      _TL_("HERE LIES*THE AVATAR*REST IN PEACE"));
-	gump->InitGump(0);
-	gump->setRelativePosition(Gump::CENTER);
-	Process *gumpproc = gump->GetNotifyProcess();
-
 	Process *menuproc = new MainMenuProcess();
 	Kernel::get_instance()->addProcess(menuproc);
-	menuproc->waitFor(gumpproc);
+
+	if (GAME_IS_U8) {
+		// TODO: What should this do in crusader?
+		ReadableGump *gump = new ReadableGump(1, 27, 11,
+											  _TL_("HERE LIES*THE AVATAR*REST IN PEACE"));
+		gump->InitGump(0);
+		gump->setRelativePosition(Gump::CENTER);
+		Process *gumpproc = gump->GetNotifyProcess();
+		menuproc->waitFor(gumpproc);
+	}
 
 	// done
 	terminate();
