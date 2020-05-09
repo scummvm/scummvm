@@ -43,109 +43,101 @@ namespace Video {
 #define DC_HUFF_VAL(b, n, p) (((b) << 16) | ((n) << 8) | (p))
 #define GET_DC_BITS(x) ((x) >> 16)
 #define GET_DC_NEG(x) ((int)(((x) >> 8) & 0xff))
-#define GET_DC_POS(x) ((int)((x) & 0xff))
+#define GET_DC_POS(x) ((int)((x)&0xff))
 
 static const uint32 s_huffmanDCChromaCodes[DC_CODE_COUNT] = {
-	254, 126, 62, 30, 14, 6, 2, 1, 0
-};
+    254, 126, 62, 30, 14, 6, 2, 1, 0};
 
 static const byte s_huffmanDCChromaLengths[DC_CODE_COUNT] = {
-	8, 7, 6, 5, 4, 3, 2, 2, 2
-};
+    8, 7, 6, 5, 4, 3, 2, 2, 2};
 
 static const uint32 s_huffmanDCLumaCodes[DC_CODE_COUNT] = {
-	126, 62, 30, 14, 6, 5, 1, 0, 4
-};
+    126, 62, 30, 14, 6, 5, 1, 0, 4};
 
 static const byte s_huffmanDCLumaLengths[DC_CODE_COUNT] = {
-	7, 6, 5, 4, 3, 3, 2, 2, 3
-};
+    7, 6, 5, 4, 3, 3, 2, 2, 3};
 
 static const uint32 s_huffmanDCSymbols[DC_CODE_COUNT] = {
-	DC_HUFF_VAL(8, 255, 128), DC_HUFF_VAL(7, 127, 64), DC_HUFF_VAL(6, 63, 32),
-	DC_HUFF_VAL(5, 31, 16), DC_HUFF_VAL(4, 15, 8), DC_HUFF_VAL(3, 7, 4),
-	DC_HUFF_VAL(2, 3, 2), DC_HUFF_VAL(1, 1, 1), DC_HUFF_VAL(0, 0, 0)
-};
+    DC_HUFF_VAL(8, 255, 128), DC_HUFF_VAL(7, 127, 64), DC_HUFF_VAL(6, 63, 32),
+    DC_HUFF_VAL(5, 31, 16), DC_HUFF_VAL(4, 15, 8), DC_HUFF_VAL(3, 7, 4),
+    DC_HUFF_VAL(2, 3, 2), DC_HUFF_VAL(1, 1, 1), DC_HUFF_VAL(0, 0, 0)};
 
 // Here are the codes/lengths/symbols that are used for decoding
 // DC coefficients (version 2 and 3 frames)
 
 #define AC_CODE_COUNT 113
 #define AC_HUFF_VAL(z, a) ((z << 8) | a)
-#define ESCAPE_CODE  ((uint32)-1) // arbitrary, just so we can tell what code it is
+#define ESCAPE_CODE ((uint32)-1)  // arbitrary, just so we can tell what code it is
 #define END_OF_BLOCK ((uint32)-2) // arbitrary, just so we can tell what code it is
 #define GET_AC_ZERO_RUN(code) (code >> 8)
 #define GET_AC_COEFFICIENT(code) ((int)(code & 0xff))
 
 static const uint32 s_huffmanACCodes[AC_CODE_COUNT] = {
-	// Regular codes
-	3, 3, 4, 5, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7,
-	32, 33, 34, 35, 36, 37, 38, 39, 8, 9, 10, 11,
-	12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-	23, 24, 25, 26, 27, 28, 29, 30, 31, 16, 17,
-	18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-	29, 30, 31, 16, 17, 18, 19, 20, 21, 22, 23,
-	24, 25, 26, 27, 28, 29, 30, 31, 16, 17, 18,
-	19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-	30, 31, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-	25, 26, 27, 28, 29, 30, 31,
+    // Regular codes
+    3, 3, 4, 5, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7,
+    32, 33, 34, 35, 36, 37, 38, 39, 8, 9, 10, 11,
+    12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+    23, 24, 25, 26, 27, 28, 29, 30, 31, 16, 17,
+    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+    29, 30, 31, 16, 17, 18, 19, 20, 21, 22, 23,
+    24, 25, 26, 27, 28, 29, 30, 31, 16, 17, 18,
+    19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+    25, 26, 27, 28, 29, 30, 31,
 
-	// Escape code
-	1,
-	// End of block code
-	2
-};
+    // Escape code
+    1,
+    // End of block code
+    2};
 
 static const byte s_huffmanACLengths[AC_CODE_COUNT] = {
-	// Regular codes
-	2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
-	8, 8, 8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 10,
-	10, 10, 10, 12, 12, 12, 12, 12, 12, 12, 12,
-	12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13,
-	13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
-	13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14,
-	14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15,
-	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-	15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16,
+    // Regular codes
+    2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7,
+    8, 8, 8, 8, 8, 8, 8, 8, 10, 10, 10, 10, 10,
+    10, 10, 10, 12, 12, 12, 12, 12, 12, 12, 12,
+    12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13,
+    13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,
+    13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+    14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    16, 16, 16, 16, 16, 16,
 
-	// Escape code
-	6,
-	// End of block code
-	2
-};
+    // Escape code
+    6,
+    // End of block code
+    2};
 
 static const uint32 s_huffmanACSymbols[AC_CODE_COUNT] = {
-	// Regular codes
-	AC_HUFF_VAL(0, 1), AC_HUFF_VAL(1, 1), AC_HUFF_VAL(0, 2), AC_HUFF_VAL(2, 1), AC_HUFF_VAL(0, 3),
-	AC_HUFF_VAL(4, 1), AC_HUFF_VAL(3, 1), AC_HUFF_VAL(7, 1), AC_HUFF_VAL(6, 1), AC_HUFF_VAL(1, 2),
-	AC_HUFF_VAL(5, 1), AC_HUFF_VAL(2, 2), AC_HUFF_VAL(9, 1), AC_HUFF_VAL(0, 4), AC_HUFF_VAL(8, 1),
-	AC_HUFF_VAL(13, 1), AC_HUFF_VAL(0, 6), AC_HUFF_VAL(12, 1), AC_HUFF_VAL(11, 1), AC_HUFF_VAL(3, 2),
-	AC_HUFF_VAL(1, 3), AC_HUFF_VAL(0, 5), AC_HUFF_VAL(10, 1), AC_HUFF_VAL(16, 1), AC_HUFF_VAL(5, 2),
-	AC_HUFF_VAL(0, 7), AC_HUFF_VAL(2, 3), AC_HUFF_VAL(1, 4), AC_HUFF_VAL(15, 1), AC_HUFF_VAL(14, 1),
-	AC_HUFF_VAL(4, 2), AC_HUFF_VAL(0, 11), AC_HUFF_VAL(8, 2), AC_HUFF_VAL(4, 3), AC_HUFF_VAL(0, 10),
-	AC_HUFF_VAL(2, 4), AC_HUFF_VAL(7, 2), AC_HUFF_VAL(21, 1), AC_HUFF_VAL(20, 1), AC_HUFF_VAL(0, 9),
-	AC_HUFF_VAL(19, 1), AC_HUFF_VAL(18, 1), AC_HUFF_VAL(1, 5), AC_HUFF_VAL(3, 3), AC_HUFF_VAL(0, 8),
-	AC_HUFF_VAL(6, 2), AC_HUFF_VAL(17, 1), AC_HUFF_VAL(10, 2), AC_HUFF_VAL(9, 2), AC_HUFF_VAL(5, 3),
-	AC_HUFF_VAL(3, 4), AC_HUFF_VAL(2, 5), AC_HUFF_VAL(1, 7), AC_HUFF_VAL(1, 6), AC_HUFF_VAL(0, 15),
-	AC_HUFF_VAL(0, 14), AC_HUFF_VAL(0, 13), AC_HUFF_VAL(0, 12), AC_HUFF_VAL(26, 1), AC_HUFF_VAL(25, 1),
-	AC_HUFF_VAL(24, 1), AC_HUFF_VAL(23, 1), AC_HUFF_VAL(22, 1), AC_HUFF_VAL(0, 31), AC_HUFF_VAL(0, 30),
-	AC_HUFF_VAL(0, 29), AC_HUFF_VAL(0, 28), AC_HUFF_VAL(0, 27), AC_HUFF_VAL(0, 26), AC_HUFF_VAL(0, 25),
-	AC_HUFF_VAL(0, 24), AC_HUFF_VAL(0, 23), AC_HUFF_VAL(0, 22), AC_HUFF_VAL(0, 21), AC_HUFF_VAL(0, 20),
-	AC_HUFF_VAL(0, 19), AC_HUFF_VAL(0, 18), AC_HUFF_VAL(0, 17), AC_HUFF_VAL(0, 16), AC_HUFF_VAL(0, 40),
-	AC_HUFF_VAL(0, 39), AC_HUFF_VAL(0, 38), AC_HUFF_VAL(0, 37), AC_HUFF_VAL(0, 36), AC_HUFF_VAL(0, 35),
-	AC_HUFF_VAL(0, 34), AC_HUFF_VAL(0, 33), AC_HUFF_VAL(0, 32), AC_HUFF_VAL(1, 14), AC_HUFF_VAL(1, 13),
-	AC_HUFF_VAL(1, 12), AC_HUFF_VAL(1, 11), AC_HUFF_VAL(1, 10), AC_HUFF_VAL(1, 9), AC_HUFF_VAL(1, 8),
-	AC_HUFF_VAL(1, 18), AC_HUFF_VAL(1, 17), AC_HUFF_VAL(1, 16), AC_HUFF_VAL(1, 15), AC_HUFF_VAL(6, 3),
-	AC_HUFF_VAL(16, 2), AC_HUFF_VAL(15, 2), AC_HUFF_VAL(14, 2), AC_HUFF_VAL(13, 2), AC_HUFF_VAL(12, 2),
-	AC_HUFF_VAL(11, 2), AC_HUFF_VAL(31, 1), AC_HUFF_VAL(30, 1), AC_HUFF_VAL(29, 1), AC_HUFF_VAL(28, 1),
-	AC_HUFF_VAL(27, 1),
+    // Regular codes
+    AC_HUFF_VAL(0, 1), AC_HUFF_VAL(1, 1), AC_HUFF_VAL(0, 2), AC_HUFF_VAL(2, 1), AC_HUFF_VAL(0, 3),
+    AC_HUFF_VAL(4, 1), AC_HUFF_VAL(3, 1), AC_HUFF_VAL(7, 1), AC_HUFF_VAL(6, 1), AC_HUFF_VAL(1, 2),
+    AC_HUFF_VAL(5, 1), AC_HUFF_VAL(2, 2), AC_HUFF_VAL(9, 1), AC_HUFF_VAL(0, 4), AC_HUFF_VAL(8, 1),
+    AC_HUFF_VAL(13, 1), AC_HUFF_VAL(0, 6), AC_HUFF_VAL(12, 1), AC_HUFF_VAL(11, 1), AC_HUFF_VAL(3, 2),
+    AC_HUFF_VAL(1, 3), AC_HUFF_VAL(0, 5), AC_HUFF_VAL(10, 1), AC_HUFF_VAL(16, 1), AC_HUFF_VAL(5, 2),
+    AC_HUFF_VAL(0, 7), AC_HUFF_VAL(2, 3), AC_HUFF_VAL(1, 4), AC_HUFF_VAL(15, 1), AC_HUFF_VAL(14, 1),
+    AC_HUFF_VAL(4, 2), AC_HUFF_VAL(0, 11), AC_HUFF_VAL(8, 2), AC_HUFF_VAL(4, 3), AC_HUFF_VAL(0, 10),
+    AC_HUFF_VAL(2, 4), AC_HUFF_VAL(7, 2), AC_HUFF_VAL(21, 1), AC_HUFF_VAL(20, 1), AC_HUFF_VAL(0, 9),
+    AC_HUFF_VAL(19, 1), AC_HUFF_VAL(18, 1), AC_HUFF_VAL(1, 5), AC_HUFF_VAL(3, 3), AC_HUFF_VAL(0, 8),
+    AC_HUFF_VAL(6, 2), AC_HUFF_VAL(17, 1), AC_HUFF_VAL(10, 2), AC_HUFF_VAL(9, 2), AC_HUFF_VAL(5, 3),
+    AC_HUFF_VAL(3, 4), AC_HUFF_VAL(2, 5), AC_HUFF_VAL(1, 7), AC_HUFF_VAL(1, 6), AC_HUFF_VAL(0, 15),
+    AC_HUFF_VAL(0, 14), AC_HUFF_VAL(0, 13), AC_HUFF_VAL(0, 12), AC_HUFF_VAL(26, 1), AC_HUFF_VAL(25, 1),
+    AC_HUFF_VAL(24, 1), AC_HUFF_VAL(23, 1), AC_HUFF_VAL(22, 1), AC_HUFF_VAL(0, 31), AC_HUFF_VAL(0, 30),
+    AC_HUFF_VAL(0, 29), AC_HUFF_VAL(0, 28), AC_HUFF_VAL(0, 27), AC_HUFF_VAL(0, 26), AC_HUFF_VAL(0, 25),
+    AC_HUFF_VAL(0, 24), AC_HUFF_VAL(0, 23), AC_HUFF_VAL(0, 22), AC_HUFF_VAL(0, 21), AC_HUFF_VAL(0, 20),
+    AC_HUFF_VAL(0, 19), AC_HUFF_VAL(0, 18), AC_HUFF_VAL(0, 17), AC_HUFF_VAL(0, 16), AC_HUFF_VAL(0, 40),
+    AC_HUFF_VAL(0, 39), AC_HUFF_VAL(0, 38), AC_HUFF_VAL(0, 37), AC_HUFF_VAL(0, 36), AC_HUFF_VAL(0, 35),
+    AC_HUFF_VAL(0, 34), AC_HUFF_VAL(0, 33), AC_HUFF_VAL(0, 32), AC_HUFF_VAL(1, 14), AC_HUFF_VAL(1, 13),
+    AC_HUFF_VAL(1, 12), AC_HUFF_VAL(1, 11), AC_HUFF_VAL(1, 10), AC_HUFF_VAL(1, 9), AC_HUFF_VAL(1, 8),
+    AC_HUFF_VAL(1, 18), AC_HUFF_VAL(1, 17), AC_HUFF_VAL(1, 16), AC_HUFF_VAL(1, 15), AC_HUFF_VAL(6, 3),
+    AC_HUFF_VAL(16, 2), AC_HUFF_VAL(15, 2), AC_HUFF_VAL(14, 2), AC_HUFF_VAL(13, 2), AC_HUFF_VAL(12, 2),
+    AC_HUFF_VAL(11, 2), AC_HUFF_VAL(31, 1), AC_HUFF_VAL(30, 1), AC_HUFF_VAL(29, 1), AC_HUFF_VAL(28, 1),
+    AC_HUFF_VAL(27, 1),
 
-	// Escape code
-	ESCAPE_CODE,
-	// End of block code
-	END_OF_BLOCK
-};
+    // Escape code
+    ESCAPE_CODE,
+    // End of block code
+    END_OF_BLOCK};
 
 PSXStreamDecoder::PSXStreamDecoder(CDSpeed speed, uint32 frameCount) : _speed(speed), _frameCount(frameCount) {
 	_stream = 0;
@@ -159,10 +151,10 @@ PSXStreamDecoder::~PSXStreamDecoder() {
 
 #define RAW_CD_SECTOR_SIZE 2352
 
-#define CDXA_TYPE_MASK     0x0E
-#define CDXA_TYPE_DATA     0x08
-#define CDXA_TYPE_AUDIO    0x04
-#define CDXA_TYPE_VIDEO    0x02
+#define CDXA_TYPE_MASK 0x0E
+#define CDXA_TYPE_DATA 0x08
+#define CDXA_TYPE_AUDIO 0x04
+#define CDXA_TYPE_VIDEO 0x02
 
 bool PSXStreamDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
@@ -183,8 +175,8 @@ void PSXStreamDecoder::close() {
 	_stream = 0;
 }
 
-#define VIDEO_DATA_CHUNK_SIZE   2016
-#define VIDEO_DATA_HEADER_SIZE  56
+#define VIDEO_DATA_CHUNK_SIZE 2016
+#define VIDEO_DATA_HEADER_SIZE 56
 
 void PSXStreamDecoder::readNextPacket() {
 	Common::SeekableReadStream *sector = 0;
@@ -280,7 +272,7 @@ bool PSXStreamDecoder::useAudioSync() const {
 	return false;
 }
 
-static const byte s_syncHeader[12] = { 0x00, 0xff ,0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
+static const byte s_syncHeader[12] = {0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00};
 
 Common::SeekableReadStream *PSXStreamDecoder::readSector() {
 	assert(_stream);
@@ -296,19 +288,17 @@ Common::SeekableReadStream *PSXStreamDecoder::readSector() {
 }
 
 // Ha! It's palindromic!
-#define AUDIO_DATA_CHUNK_SIZE   2304
+#define AUDIO_DATA_CHUNK_SIZE 2304
 #define AUDIO_DATA_SAMPLE_COUNT 4032
 
 static const int s_xaTable[5][2] = {
-   {   0,   0 },
-   {  60,   0 },
-   { 115, -52 },
-   {  98, -55 },
-   { 122, -60 }
-};
+    {0, 0},
+    {60, 0},
+    {115, -52},
+    {98, -55},
+    {122, -60}};
 
-PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {
 	assert(sector);
 	_endOfTrack = false;
 
@@ -420,7 +410,6 @@ Audio::AudioStream *PSXStreamDecoder::PSXAudioTrack::getAudioStream() const {
 	return _audStream;
 }
 
-
 PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *firstSector, CDSpeed speed, int frameCount) : _nextFrameStartTime(0, speed), _frameCount(frameCount) {
 	assert(firstSector);
 
@@ -513,27 +502,25 @@ void PSXStreamDecoder::PSXVideoTrack::decodeMacroBlock(Common::BitStreamMemory16
 
 // Standard JPEG/MPEG zig zag table
 static const byte s_zigZagTable[8 * 8] = {
-	 0,  1,  5,  6, 14, 15, 27, 28,
-	 2,  4,  7, 13, 16, 26, 29, 42,
-	 3,  8, 12, 17, 25, 30, 41, 43,
-	 9, 11, 18, 24, 31, 40, 44, 53,
-	10, 19, 23, 32, 39, 45, 52, 54,
-	20, 22, 33, 38, 46, 51, 55, 60,
-	21, 34, 37, 47, 50, 56, 59, 61,
-	35, 36, 48, 49, 57, 58, 62, 63
-};
+    0, 1, 5, 6, 14, 15, 27, 28,
+    2, 4, 7, 13, 16, 26, 29, 42,
+    3, 8, 12, 17, 25, 30, 41, 43,
+    9, 11, 18, 24, 31, 40, 44, 53,
+    10, 19, 23, 32, 39, 45, 52, 54,
+    20, 22, 33, 38, 46, 51, 55, 60,
+    21, 34, 37, 47, 50, 56, 59, 61,
+    35, 36, 48, 49, 57, 58, 62, 63};
 
 // One byte different from the standard MPEG-1 table
 static const byte s_quantizationTable[8 * 8] = {
-	 2, 16, 19, 22, 26, 27, 29, 34,
-	16, 16, 22, 24, 27, 29, 34, 37,
-	19, 22, 26, 27, 29, 34, 34, 38,
-	22, 22, 26, 27, 29, 34, 37, 40,
-	22, 26, 27, 29, 32, 35, 40, 48,
-	26, 27, 29, 32, 35, 40, 48, 58,
-	26, 27, 29, 34, 38, 46, 56, 69,
-	27, 29, 35, 38, 46, 56, 69, 83
-};
+    2, 16, 19, 22, 26, 27, 29, 34,
+    16, 16, 22, 24, 27, 29, 34, 37,
+    19, 22, 26, 27, 29, 34, 34, 38,
+    22, 22, 26, 27, 29, 34, 37, 40,
+    22, 26, 27, 29, 32, 35, 40, 48,
+    26, 27, 29, 32, 35, 40, 48, 58,
+    26, 27, 29, 34, 38, 46, 56, 69,
+    27, 29, 35, 38, 46, 56, 69, 83};
 
 void PSXStreamDecoder::PSXVideoTrack::dequantizeBlock(int *coefficients, float *block, uint16 scale) {
 	// Dequantize the data, un-zig-zagging as we go along
@@ -572,8 +559,8 @@ int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStreamMemory16LEMSB *bits
 }
 
 #define BLOCK_OVERFLOW_CHECK() \
-	if (count > 63) \
-		error("PSXStreamDecoder::readAC(): Too many coefficients")
+	if (count > 63)            \
+	error("PSXStreamDecoder::readAC(): Too many coefficients")
 
 void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStreamMemory16LEMSB *bits, int *block) {
 	// Clear the block first
@@ -622,15 +609,14 @@ int PSXStreamDecoder::PSXVideoTrack::readSignedCoefficient(Common::BitStreamMemo
 // _idct8x8[x][y] = cos(((2 * x + 1) * y) * (M_PI / 16.0)) * 0.5;
 // _idct8x8[x][y] /= sqrt(2.0) if y == 0
 static const double s_idct8x8[8][8] = {
-	{ 0.353553390593274,  0.490392640201615,  0.461939766255643,  0.415734806151273,  0.353553390593274,  0.277785116509801,  0.191341716182545,  0.097545161008064 },
-	{ 0.353553390593274,  0.415734806151273,  0.191341716182545, -0.097545161008064, -0.353553390593274, -0.490392640201615, -0.461939766255643, -0.277785116509801 },
-	{ 0.353553390593274,  0.277785116509801, -0.191341716182545, -0.490392640201615, -0.353553390593274,  0.097545161008064,  0.461939766255643,  0.415734806151273 },
-	{ 0.353553390593274,  0.097545161008064, -0.461939766255643, -0.277785116509801,  0.353553390593274,  0.415734806151273, -0.191341716182545, -0.490392640201615 },
-	{ 0.353553390593274, -0.097545161008064, -0.461939766255643,  0.277785116509801,  0.353553390593274, -0.415734806151273, -0.191341716182545,  0.490392640201615 },
-	{ 0.353553390593274, -0.277785116509801, -0.191341716182545,  0.490392640201615, -0.353553390593273, -0.097545161008064,  0.461939766255643, -0.415734806151273 },
-	{ 0.353553390593274, -0.415734806151273,  0.191341716182545,  0.097545161008064, -0.353553390593274,  0.490392640201615, -0.461939766255643,  0.277785116509801 },
-	{ 0.353553390593274, -0.490392640201615,  0.461939766255643, -0.415734806151273,  0.353553390593273, -0.277785116509801,  0.191341716182545, -0.097545161008064 }
-};
+    {0.353553390593274, 0.490392640201615, 0.461939766255643, 0.415734806151273, 0.353553390593274, 0.277785116509801, 0.191341716182545, 0.097545161008064},
+    {0.353553390593274, 0.415734806151273, 0.191341716182545, -0.097545161008064, -0.353553390593274, -0.490392640201615, -0.461939766255643, -0.277785116509801},
+    {0.353553390593274, 0.277785116509801, -0.191341716182545, -0.490392640201615, -0.353553390593274, 0.097545161008064, 0.461939766255643, 0.415734806151273},
+    {0.353553390593274, 0.097545161008064, -0.461939766255643, -0.277785116509801, 0.353553390593274, 0.415734806151273, -0.191341716182545, -0.490392640201615},
+    {0.353553390593274, -0.097545161008064, -0.461939766255643, 0.277785116509801, 0.353553390593274, -0.415734806151273, -0.191341716182545, 0.490392640201615},
+    {0.353553390593274, -0.277785116509801, -0.191341716182545, 0.490392640201615, -0.353553390593273, -0.097545161008064, 0.461939766255643, -0.415734806151273},
+    {0.353553390593274, -0.415734806151273, 0.191341716182545, 0.097545161008064, -0.353553390593274, 0.490392640201615, -0.461939766255643, 0.277785116509801},
+    {0.353553390593274, -0.490392640201615, 0.461939766255643, -0.415734806151273, 0.353553390593273, -0.277785116509801, 0.191341716182545, -0.097545161008064}};
 
 void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
 	// IDCT code based on JPEG's IDCT code
@@ -642,14 +628,7 @@ void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
 	// Apply 1D IDCT to rows
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
-			tmp[y + x * 8] = dequantData[0] * s_idct8x8[x][0]
-							+ dequantData[1] * s_idct8x8[x][1]
-							+ dequantData[2] * s_idct8x8[x][2]
-							+ dequantData[3] * s_idct8x8[x][3]
-							+ dequantData[4] * s_idct8x8[x][4]
-							+ dequantData[5] * s_idct8x8[x][5]
-							+ dequantData[6] * s_idct8x8[x][6]
-							+ dequantData[7] * s_idct8x8[x][7];
+			tmp[y + x * 8] = dequantData[0] * s_idct8x8[x][0] + dequantData[1] * s_idct8x8[x][1] + dequantData[2] * s_idct8x8[x][2] + dequantData[3] * s_idct8x8[x][3] + dequantData[4] * s_idct8x8[x][4] + dequantData[5] * s_idct8x8[x][5] + dequantData[6] * s_idct8x8[x][6] + dequantData[7] * s_idct8x8[x][7];
 		}
 
 		dequantData += 8;
@@ -659,14 +638,7 @@ void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
 	for (int x = 0; x < 8; x++) {
 		const float *u = tmp + x * 8;
 		for (int y = 0; y < 8; y++) {
-			result[y * 8 + x] = u[0] * s_idct8x8[y][0]
-								+ u[1] * s_idct8x8[y][1]
-								+ u[2] * s_idct8x8[y][2]
-								+ u[3] * s_idct8x8[y][3]
-								+ u[4] * s_idct8x8[y][4]
-								+ u[5] * s_idct8x8[y][5]
-								+ u[6] * s_idct8x8[y][6]
-								+ u[7] * s_idct8x8[y][7];
+			result[y * 8 + x] = u[0] * s_idct8x8[y][0] + u[1] * s_idct8x8[y][1] + u[2] * s_idct8x8[y][2] + u[3] * s_idct8x8[y][3] + u[4] * s_idct8x8[y][4] + u[5] * s_idct8x8[y][5] + u[6] * s_idct8x8[y][6] + u[7] * s_idct8x8[y][7];
 		}
 	}
 }
@@ -695,6 +667,5 @@ void PSXStreamDecoder::PSXVideoTrack::decodeBlock(Common::BitStreamMemory16LEMSB
 			*dst++ = (int)CLIP<float>(idctData[y * 8 + x], -128.0f, 127.0f) + 128;
 	}
 }
-
 
 } // End of namespace Video

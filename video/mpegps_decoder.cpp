@@ -29,8 +29,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "video/mpegps_decoder.h"
 #include "image/codecs/mpeg.h"
+#include "video/mpegps_decoder.h"
 
 // The demuxing code is based on libav's demuxing code
 
@@ -241,7 +241,7 @@ MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::
 // --------------------------------------------------------------------------
 
 #define PREBUFFERED_PACKETS 150
-#define AUDIO_THRESHOLD     100
+#define AUDIO_THRESHOLD 100
 
 MPEGPSDecoder::MPEGPSDemuxer::MPEGPSDemuxer() {
 	_stream = 0;
@@ -402,8 +402,8 @@ int MPEGPSDecoder::MPEGPSDemuxer::readNextPacketHeader(int32 &startCode, uint32 
 
 		// Find matching stream
 		if (!((startCode >= 0x1C0 && startCode <= 0x1DF) ||
-				(startCode >= 0x1E0 && startCode <= 0x1EF) ||
-				startCode == kStartCodePrivateStream1 || startCode == 0x1FD))
+		      (startCode >= 0x1E0 && startCode <= 0x1EF) ||
+		      startCode == kStartCodePrivateStream1 || startCode == 0x1FD))
 			continue;
 
 		// Stuffing
@@ -469,7 +469,7 @@ int MPEGPSDecoder::MPEGPSDemuxer::readNextPacketHeader(int32 &startCode, uint32 
 			}
 
 			if (flags & 0x01) { // PES extension
-				byte pesExt =_stream->readByte();
+				byte pesExt = _stream->readByte();
 				headerLength--;
 
 				// Skip PES private data, program packet sequence
@@ -685,8 +685,7 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 
 // The audio code here is almost entirely based on what we do in mp3.cpp
 
-MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {
 	_audStream = Audio::makePacketizedMP3Stream(firstPacket);
 }
 
@@ -707,8 +706,7 @@ Audio::AudioStream *MPEGPSDecoder::MPEGAudioTrack::getAudioStream() const {
 
 #ifdef USE_A52
 
-MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream &firstPacket, double decibel, Audio::Mixer::SoundType soundType) :
-		AudioTrack(soundType) {
+MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream &firstPacket, double decibel, Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {
 	_audStream = Audio::makeAC3Stream(firstPacket, decibel);
 	if (!_audStream)
 		error("Could not create AC-3 stream");

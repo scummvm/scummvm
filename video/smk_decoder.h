@@ -23,12 +23,12 @@
 #ifndef VIDEO_SMK_PLAYER_H
 #define VIDEO_SMK_PLAYER_H
 
+#include "audio/mixer.h"
 #include "common/bitstream.h"
 #include "common/rational.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
-#include "audio/mixer.h"
 
 namespace Audio {
 class QueuingAudioStream;
@@ -80,7 +80,10 @@ protected:
 		~SmackerVideoTrack();
 
 		bool isRewindable() const { return true; }
-		bool rewind() { _curFrame = -1; return true; }
+		bool rewind() {
+			_curFrame = -1;
+			return true;
+		}
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
@@ -88,7 +91,10 @@ protected:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame() { return _surface; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const {
+			_dirtyPalette = false;
+			return _palette;
+		}
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		void readTrees(Common::BitStreamMemory8LSB &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
@@ -155,7 +161,6 @@ protected:
 	uint32 *_frameSizes;
 
 private:
-
 	class SmackerAudioTrack : public AudioTrack {
 	public:
 		SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType);

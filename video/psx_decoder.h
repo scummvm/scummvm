@@ -36,7 +36,7 @@ class QueuingAudioStream;
 }
 
 namespace Common {
-template <class BITSTREAM>
+template<class BITSTREAM>
 class Huffman;
 }
 

@@ -20,17 +20,17 @@
  *
  */
 
-#include "common/scummsys.h"	// for USE_THEORADEC
+#include "common/scummsys.h" // for USE_THEORADEC
 
 #ifdef USE_THEORADEC
 
 #ifndef VIDEO_THEORA_DECODER_H
 #define VIDEO_THEORA_DECODER_H
 
-#include "common/rational.h"
-#include "video/video_decoder.h"
 #include "audio/mixer.h"
+#include "common/rational.h"
 #include "graphics/surface.h"
+#include "video/video_decoder.h"
 
 #include <theora/theoradec.h>
 
@@ -47,7 +47,7 @@ class SeekableReadStream;
 namespace Audio {
 class AudioStream;
 class QueuingAudioStream;
-}
+} // namespace Audio
 
 namespace Video {
 

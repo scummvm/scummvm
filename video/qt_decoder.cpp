@@ -116,7 +116,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 		_fd->readUint32BE(); // temporal quality
 		_fd->readUint32BE(); // spacial quality
 
-		uint16 width = _fd->readUint16BE(); // width
+		uint16 width = _fd->readUint16BE();  // width
 		uint16 height = _fd->readUint16BE(); // height
 
 		// The width is most likely invalid for entries after the first one
@@ -140,7 +140,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 		}
 
 		entry->_bitsPerSample = _fd->readUint16BE(); // depth
-		entry->_colorTableId = _fd->readUint16BE(); // colortable id
+		entry->_colorTableId = _fd->readUint16BE();  // colortable id
 
 		// figure out the palette situation
 		byte colorDepth = entry->_bitsPerSample & 0x1F;
@@ -247,7 +247,7 @@ void QuickTimeDecoder::scaleSurface(const Graphics::Surface *src, Graphics::Surf
 
 	for (int32 j = 0; j < dst->h; j++)
 		for (int32 k = 0; k < dst->w; k++)
-			memcpy(dst->getBasePtr(k, j), src->getBasePtr((k * scaleFactorX).toInt() , (j * scaleFactorY).toInt()), src->format.bytesPerPixel);
+			memcpy(dst->getBasePtr(k, j), src->getBasePtr((k * scaleFactorX).toInt(), (j * scaleFactorY).toInt()), src->format.bytesPerPixel);
 }
 
 QuickTimeDecoder::VideoSampleDesc::VideoSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
@@ -267,10 +267,9 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 	_videoCodec = Image::createQuickTimeCodec(_codecTag, _parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
 }
 
-QuickTimeDecoder::AudioTrackHandler::AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack) :
-		SeekableAudioTrack(decoder->getSoundType()),
-		_decoder(decoder),
-		_audioTrack(audioTrack) {
+QuickTimeDecoder::AudioTrackHandler::AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack) : SeekableAudioTrack(decoder->getSoundType()),
+                                                                                                                     _decoder(decoder),
+                                                                                                                     _audioTrack(audioTrack) {
 }
 
 void QuickTimeDecoder::AudioTrackHandler::updateBuffer() {
@@ -317,7 +316,7 @@ void QuickTimeDecoder::VideoTrackHandler::checkEditListBounds() {
 			continue; // Ignore empty edits
 		}
 
-		if ((uint32) edit.mediaTime > mediaDuration) {
+		if ((uint32)edit.mediaTime > mediaDuration) {
 			// Check if the edit starts after the end of the media
 			// If so, mark it as empty so it is ignored
 			edit.mediaTime = -1;
@@ -515,7 +514,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	} else {
 		if (_durationOverride >= 0) {
 			// Use our own duration overridden from a media seek
- 			_nextFrameStartTime += _durationOverride;
+			_nextFrameStartTime += _durationOverride;
 			_durationOverride = -1;
 		} else {
 			_nextFrameStartTime += getFrameDuration();
@@ -585,7 +584,7 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 			// be displayed.
 			_curFrame--;
 			_nextFrameStartTime -= _durationOverride;
- 		}
+		}
 
 		// We need to put _curFrame to be the one before the one that should be displayed.
 		// Since we're on the frame that should be displaying right now, subtract one.
@@ -858,7 +857,7 @@ uint16 makeDitherColor(byte r, byte g, byte b) {
 
 // Default template to convert a dither color
 template<typename PixelInt>
-inline uint16 readDitherColor(PixelInt srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+inline uint16 readDitherColor(PixelInt srcColor, const Graphics::PixelFormat &format, const byte *palette) {
 	byte r, g, b;
 	format.colorToRGB(srcColor, r, g, b);
 	return makeDitherColor(r, g, b);
@@ -866,13 +865,13 @@ inline uint16 readDitherColor(PixelInt srcColor, const Graphics::PixelFormat& fo
 
 // Specialized version for 8bpp
 template<>
-inline uint16 readDitherColor(byte srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+inline uint16 readDitherColor(byte srcColor, const Graphics::PixelFormat &format, const byte *palette) {
 	return makeDitherColor(palette[srcColor * 3], palette[srcColor * 3 + 1], palette[srcColor * 3 + 2]);
 }
 
 template<typename PixelInt>
 void ditherFrame(const Graphics::Surface &src, Graphics::Surface &dst, const byte *ditherTable, const byte *palette = 0) {
-	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
+	static const uint16 colorTableOffsets[] = {0x0000, 0xC000, 0x4000, 0x8000};
 
 	for (int y = 0; y < dst.h; y++) {
 		const PixelInt *srcPtr = (const PixelInt *)src.getBasePtr(0, y);
