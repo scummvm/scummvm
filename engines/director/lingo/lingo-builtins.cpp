@@ -1905,6 +1905,13 @@ void LB::b_updateStage(int nargs) {
 	ARGNUMCHECK(0);
 
 	Score *score = g_director->getCurrentScore();
+
+	if (!score) {
+		warning("b_updateStage: no score");
+
+		return;
+	}
+
 	uint16 curFrame = score->getCurrentFrame();
 	Frame *frame = score->_frames[curFrame];
 
