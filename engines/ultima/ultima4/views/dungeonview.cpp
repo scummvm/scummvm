@@ -37,7 +37,7 @@ namespace Ultima4 {
 DungeonView *DungeonView::_instance = nullptr;
 
 DungeonView::DungeonView(int x, int y, int columns, int rows) : TileView(x, y, rows, columns)
-	, screen3dDungeonViewEnabled(true) {
+	, _screen3dDungeonViewEnabled(true) {
 }
 
 DungeonView *DungeonView::getInstance() {
@@ -51,7 +51,7 @@ void DungeonView::display(Context *c, TileView *view) {
 	int x, y;
 
 	// 1st-person perspective
-	if (screen3dDungeonViewEnabled) {
+	if (_screen3dDungeonViewEnabled) {
 		// Note: This shouldn't go above 4, unless we check opaque tiles each step of the way.
 		const int farthest_non_wall_tile_visibility = 4;
 
@@ -270,23 +270,27 @@ Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
 DungeonGraphicType DungeonView::tilesToGraphic(const Std::vector<MapTile> &tiles) {
 	MapTile tile = tiles.front();
 
-	static const MapTile corridor = g_context->_location->_map->_tileSet->getByName("brick_floor")->getId();
-	static const MapTile up_ladder = g_context->_location->_map->_tileSet->getByName("up_ladder")->getId();
-	static const MapTile down_ladder = g_context->_location->_map->_tileSet->getByName("down_ladder")->getId();
-	static const MapTile updown_ladder = g_context->_location->_map->_tileSet->getByName("up_down_ladder")->getId();
+	if (!_tiles._loaded) {
+		_tiles._corridor = g_context->_location->_map->_tileSet->getByName("brick_floor")->getId();
+		_tiles._upLadder = g_context->_location->_map->_tileSet->getByName("up_ladder")->getId();
+		_tiles._downLadder = g_context->_location->_map->_tileSet->getByName("down_ladder")->getId();
+		_tiles._upDownLadder = g_context->_location->_map->_tileSet->getByName("up_down_ladder")->getId();
+		_tiles._loaded = true;
+	}
+
 
 	/*
 	 * check if the dungeon tile has an annotation or object on top
 	 * (always displayed as a tile, unless a ladder)
 	 */
 	if (tiles.size() > 1) {
-		if (tile._id == up_ladder._id)
+		if (tile._id == _tiles._upLadder._id)
 			return DNGGRAPHIC_LADDERUP;
-		else if (tile._id == down_ladder._id)
+		else if (tile._id == _tiles._downLadder._id)
 			return DNGGRAPHIC_LADDERDOWN;
-		else if (tile._id == updown_ladder._id)
+		else if (tile._id == _tiles._upDownLadder._id)
 			return DNGGRAPHIC_LADDERUPDOWN;
-		else if (tile._id == corridor._id)
+		else if (tile._id == _tiles._corridor._id)
 			return DNGGRAPHIC_NONE;
 		else
 			return DNGGRAPHIC_BASETILE;

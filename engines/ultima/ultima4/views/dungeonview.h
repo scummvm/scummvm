@@ -58,9 +58,21 @@ DungeonGraphicType dungeonViewTilesToGraphic(const Std::vector<MapTile> &tiles);
  * </ul>
  */
 class DungeonView : public TileView {
+	struct MapTiles {
+		MapTile _corridor;
+		MapTile _upLadder;
+		MapTile _downLadder;
+		MapTile _upDownLadder;
+		bool _loaded;
+
+		MapTiles() : _loaded(false) {
+		}
+	};
+private:
+	bool _screen3dDungeonViewEnabled;
+	MapTiles _tiles;
 private:
 	DungeonView(int x, int y, int columns, int rows);
-	bool screen3dDungeonViewEnabled;
 public:
 	static DungeonView *_instance;
 	static DungeonView *getInstance();
@@ -74,7 +86,7 @@ public:
 	DungeonGraphicType tilesToGraphic(const Std::vector<MapTile> &tiles);
 
 	bool toggle3DDungeonView() {
-		return screen3dDungeonViewEnabled = !screen3dDungeonViewEnabled;
+		return _screen3dDungeonViewEnabled = !_screen3dDungeonViewEnabled;
 	}
 
 	Std::vector<MapTile> getTiles(int fwd, int side);
