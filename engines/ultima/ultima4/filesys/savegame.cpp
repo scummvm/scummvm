@@ -112,18 +112,15 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	// initialize our start location
 	map = mapMgr->get(MapId(_location));
 
-	// if our map is not the world map, then load our map
-	if (map->_type != Map::WORLD)
+	if (map->_type != Map::WORLD) {
+		// Set up the secondary map
 		g_game->setMap(map, 1, nullptr);
-	else
 
-	/**
-	 * Translate info from the savegame to something we can use
-	 */
-	if (g_context->_location->_prev) {
+		// Set position within map and in overworld
 		g_context->_location->_coords = _pos;
 		g_context->_location->_prev->_coords = MapCoords(_overworldPos.x, _overworldPos.y, 0);
 	} else {
+		// On overworld, simply set position
 		g_context->_location->_coords = _pos;
 	}
 
@@ -200,13 +197,15 @@ void SaveGame::synchronize(Common::Serializer &s) {
 	for (i = 0; i < SPELL_MAX; ++i)
 		s.syncAsUint16LE(_mixtures[i]);
 
-	s.syncAsUint16LE(_items);
 	s.syncAsByte(_pos.x);
 	s.syncAsByte(_pos.y);
 	s.syncAsUint16LE(_pos.z);
 	s.syncAsByte(_overworldPos.x);
 	s.syncAsByte(_overworldPos.y);
+	s.syncAsUint16LE(_orientation);
+	s.syncAsUint16LE(_location);
 
+	s.syncAsUint16LE(_items);
 	s.syncAsByte(_stones);
 	s.syncAsByte(_runes);
 	s.syncAsUint16LE(_members);
@@ -220,8 +219,6 @@ void SaveGame::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_lastReagent);
 	s.syncAsUint16LE(_lastMeditation);
 	s.syncAsUint16LE(_lastVirtue);
-	s.syncAsUint16LE(_orientation);
-	s.syncAsUint16LE(_location);
 }
 
 void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {

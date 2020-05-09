@@ -539,27 +539,29 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 			if (event._result & MOVE_TURNED) {
 				if (dirRotateCCW((Direction)g_ultima->_saveGame->_orientation) == realDir)
 					g_screen->screenMessage("Turn Left\n");
-				else g_screen->screenMessage("Turn Right\n");
+				else
+					g_screen->screenMessage("Turn Right\n");
+			} else {
+				// Show 'Advance' or 'Retreat' in dungeons
+				g_screen->screenMessage("%s\n", realDir == g_ultima->_saveGame->_orientation ? "Advance" : "Retreat");
 			}
-			/* show 'Advance' or 'Retreat' in dungeons */
-			else g_screen->screenMessage("%s\n", realDir == g_ultima->_saveGame->_orientation ? "Advance" : "Retreat");
 		}
 
 		if (event._result & MOVE_BLOCKED)
 			g_screen->screenMessage("%cBlocked!%c\n", FG_GREY, FG_WHITE);
 	}
 
-	/* if we're exiting the map, do this */
+	// If we're exiting the map, do this
 	if (event._result & MOVE_EXIT_TO_PARENT) {
 		g_screen->screenMessage("%cLeaving...%c\n", FG_GREY, FG_WHITE);
 		exitToParentMap();
 		g_music->playMapMusic();
 	}
 
-	/* check to see if we're entering a dungeon room */
+	// Check to see if we're entering a dungeon room
 	if (event._result & MOVE_SUCCEEDED) {
 		if (dungeon->currentToken() == DUNGEON_ROOM) {
-			int room = (int)dungeon->currentSubToken(); /* get room number */
+			int room = (int)dungeon->currentSubToken(); // Get room number
 
 			/**
 			 * recalculate room for the abyss -- there are 16 rooms for every 2 levels,
@@ -573,7 +575,7 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 			assert(dng);
 			dng->_currentRoom = room;
 
-			/* set the map and start combat! */
+			// Set the map and start combat!
 			CombatController *cc = new CombatController(dng->_roomMaps[room]);
 			cc->initDungeonRoom(room, dirReverse(realDir));
 			cc->begin();

@@ -273,6 +273,9 @@ struct SaveGame {
 	unsigned short _items;
 	Coords _pos;
 	Common::Point _overworldPos;
+	unsigned short _orientation;
+	unsigned short _location;
+
 	byte _stones;
 	byte _runes;
 	unsigned short _members;
@@ -289,8 +292,6 @@ struct SaveGame {
 	unsigned short _lastReagent;
 	unsigned short _lastMeditation;
 	unsigned short _lastVirtue;
-	unsigned short _orientation;
-	unsigned short _location;
 };
 
 } // End of namespace Ultima4
