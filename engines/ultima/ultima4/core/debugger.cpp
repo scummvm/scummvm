@@ -908,13 +908,14 @@ bool Debugger::cmdPeer(int argc, const char **argv) {
 bool Debugger::cmdQuitAndSave(int argc, const char **argv) {
 	print("Quit & Save...\n%d moves", g_ultima->_saveGame->_moves);
 	if (g_context->_location->_context & CTX_CAN_SAVE_GAME) {
-		if (g_ultima->saveGameDialog())
-			print("Press Alt-x to quit");
+		(void)g_ultima->saveGameDialog();
+		g_ultima->quitGame();
+
+		return false;
 	} else {
 		print("%cNot here!%c", FG_GREY, FG_WHITE);
+		return isDebuggerActive();
 	}
-
-	return isDebuggerActive();
 }
 
 bool Debugger::cmdReadyWeapon(int argc, const char **argv) {

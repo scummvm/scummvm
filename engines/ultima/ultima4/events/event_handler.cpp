@@ -149,7 +149,7 @@ void EventHandler::run() {
 		(*_updateScreen)();
 	g_screen->update();
 
-	while (!_ended && !_controllerDone) {
+	while (!_ended && !_controllerDone && !g_ultima->shouldQuit()) {
 		Common::Event event;
 		if (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
