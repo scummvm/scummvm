@@ -41,3 +41,5 @@ put the number of castMembers into field 5
 put the number of menuItems of menu "sam" into field 3
 
 put abs( the locH of sprite 2 - the mouseH) into field 4
+
+set the castNum of sprite the clickon = the number of cast "main.hi"
