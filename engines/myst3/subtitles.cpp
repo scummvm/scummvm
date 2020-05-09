@@ -246,10 +246,10 @@ void FontSubtitles::createTexture() {
 
 #ifdef USE_ICONV
 /** Return an encoding from a GDI Charset as provided to CreateFont */
-static Common::Encoding getEncodingFromCharsetCode(uint32 gdiCharset) {
+static Common::IconvEncoding getEncodingFromCharsetCode(uint32 gdiCharset) {
 	static const struct {
 		uint32 charset;
-		Common::Encoding encoding;
+		Common::IconvEncoding encoding;
 	} codepages[] = {
 			{ 128, Common::kEncodingCP932            }, // SHIFTJIS_CHARSET
 			{ 177, Common::kEncodingCP1255           }, // HEBREW_CHARSET
@@ -289,7 +289,7 @@ void FontSubtitles::drawToTexture(const Phrase *phrase) {
 		font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
 	} else {
 #ifdef USE_ICONV
-		Common::Encoding encoding = getEncodingFromCharsetCode(_fontCharsetCode);
+		Common::IconvEncoding encoding = getEncodingFromCharsetCode(_fontCharsetCode);
 		Common::U32String unicode = Common::convertToU32String(encoding, phrase->string);
 		font->drawString(_surface, unicode, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
 #else

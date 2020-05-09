@@ -36,6 +36,7 @@
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/widget.h"
+#include "gui/widgets/tab.h"
 
 #include "graphics/font.h"
 
@@ -46,19 +47,6 @@
 #ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
-
-class ConfigDialog : public GUI::OptionsDialog {
-protected:
-#ifdef GUI_ENABLE_KEYSDIALOG
-	GUI::Dialog		*_keysDialog;
-#endif
-
-public:
-	ConfigDialog(bool subtitleControls);
-	~ConfigDialog();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-};
 
 MainMenuDialog::MainMenuDialog(Engine *engine)
 	: GUI::Dialog("GlobalMenu"), _engine(engine) {
@@ -107,18 +95,16 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _c("~R~eturn to Launcher", "lowres"), 0, kRTLCmd);
 	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
 
-
-	new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
+		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
-	_optionsDialog = new ConfigDialog(_engine->hasFeature(Engine::kSupportsSubtitleOptions));
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MainMenuDialog::~MainMenuDialog() {
 	delete _aboutDialog;
-	delete _optionsDialog;
 	delete _loadDialog;
 	delete _saveDialog;
 }
@@ -134,9 +120,11 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 	case kSaveCmd:
 		save();
 		break;
-	case kOptionsCmd:
-		_optionsDialog->runModal();
+	case kOptionsCmd: {
+		GUI::ConfigDialog configDialog;
+		configDialog.runModal();
 		break;
+	}
 	case kAboutCmd:
 		_aboutDialog->runModal();
 		break;
@@ -255,6 +243,8 @@ enum {
 	kKeysCmd = 'KEYS'
 };
 
+namespace GUI {
+
 // FIXME: We use the empty string as domain name here. This tells the
 // ConfigManager to use the 'default' domain for all its actions. We do that
 // to get as close as possible to editing the 'active' settings.
@@ -280,25 +270,77 @@ enum {
 // These changes will achieve two things at once: Allow us to get rid of using
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
-ConfigDialog::ConfigDialog(bool subtitleControls)
-	: GUI::OptionsDialog("", "GlobalConfig") {
+ConfigDialog::ConfigDialog() :
+		GUI::OptionsDialog("", "GlobalConfig"),
+		_engineOptions(nullptr) {
+	assert(g_engine);
+
+	const Common::String &gameDomain = ConfMan.getActiveDomainName();
+	const MetaEngine &metaEngine = g_engine->getMetaEngine();
+
+	// GUI:  Add tab widget
+	GUI::TabWidget *tab = new GUI::TabWidget(this, "GlobalConfig.TabWidget");
+
+	//
+	// The game specific options tab
+	//
+
+	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
+
+	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
+		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GlobalConfig_Engine.Container", gameDomain);
+	}
+
+	if (_engineOptions) {
+		_engineOptions->setParentDialog(this);
+	} else {
+		tab->removeTab(tabId);
+	}
+
+	//
+	// The Audio / Subtitles tab
+	//
+
+	tab->addTab(_("Audio"), "GlobalConfig_Audio");
 
 	//
 	// Sound controllers
 	//
 
-	addVolumeControls(this, "GlobalConfig.");
+	addVolumeControls(tab, "GlobalConfig_Audio.");
 	setVolumeSettingsState(true); // could disable controls by GUI options
 
 	//
 	// Subtitle speed and toggle controllers
 	//
 
-	if (subtitleControls) {
+	if (g_engine->hasFeature(Engine::kSupportsSubtitleOptions)) {
 		// Global talkspeed range of 0-255
-		addSubtitleControls(this, "GlobalConfig.", 255);
+		addSubtitleControls(tab, "GlobalConfig_Audio.", 255);
 		setSubtitleSettingsState(true); // could disable controls by GUI options
 	}
+
+	//
+	// The Keymap tab
+	//
+
+	Common::KeymapArray keymaps = metaEngine.initKeymaps(gameDomain.c_str());
+	if (!keymaps.empty()) {
+		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
+		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
+	}
+
+	//
+	// The Achievements tab
+	//
+	Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(gameDomain);
+	if (achievementsInfo.descriptions.size() > 0) {
+		tab->addTab(_("Achievements"), "GlobalConfig_Achievements");
+		addAchievementsControls(tab, "GlobalConfig_Achievements.", achievementsInfo);
+	}
+
+	// Activate the first tab
+	tab->setActiveTab(0);
 
 	//
 	// Add the buttons
@@ -319,6 +361,23 @@ ConfigDialog::~ConfigDialog() {
 #endif
 }
 
+void ConfigDialog::build() {
+	OptionsDialog::build();
+
+	// Engine options
+	if (_engineOptions) {
+		_engineOptions->load();
+	}
+}
+
+void ConfigDialog::apply() {
+	if (_engineOptions) {
+		_engineOptions->save();
+	}
+
+	OptionsDialog::apply();
+}
+
 void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kKeysCmd:
@@ -337,3 +396,60 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 		GUI::OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
+
+ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
+		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), false, domain),
+		_options(options) {
+
+	// Note: up to 7 engine options can currently fit on screen (the most that
+	// can fit in a 320x200 screen with the classic theme).
+	// TODO: Increase this number by including the checkboxes inside a scroll
+	// widget. The appropriate number of checkboxes will need to be added to
+	// the theme files.
+
+	uint i = 1;
+	ExtraGuiOptions::const_iterator iter;
+	for (iter = _options.begin(); iter != _options.end(); ++iter, ++i) {
+		Common::String id = Common::String::format("%d", i);
+		_checkboxes.push_back(new CheckboxWidget(widgetsBoss(),
+			_dialogLayout + ".customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
+	}
+}
+
+ExtraGuiOptionsWidget::~ExtraGuiOptionsWidget() {
+}
+
+Common::String ExtraGuiOptionsWidget::dialogLayout(const Common::String &domain) {
+	if (ConfMan.getActiveDomainName().equals(domain)) {
+		return "GlobalConfig_Engine_Container";
+	} else {
+		return "GameOptions_Engine_Container";
+	}
+}
+
+void ExtraGuiOptionsWidget::load() {
+	// Set the state of engine-specific checkboxes
+	for (uint j = 0; j < _options.size(); ++j) {
+		// The default values for engine-specific checkboxes are not set when
+		// ScummVM starts, as this would require us to load and poll all of the
+		// engine plugins on startup. Thus, we set the state of each custom
+		// option checkbox to what is specified by the engine plugin, and
+		// update it only if a value has been set in the configuration of the
+		// currently selected game.
+		bool isChecked = _options[j].defaultState;
+		if (ConfMan.hasKey(_options[j].configOption, _domain))
+			isChecked = ConfMan.getBool(_options[j].configOption, _domain);
+		_checkboxes[j]->setState(isChecked);
+	}
+}
+
+bool ExtraGuiOptionsWidget::save() {
+	// Set the state of engine-specific checkboxes
+	for (uint i = 0; i < _options.size(); i++) {
+		ConfMan.setBool(_options[i].configOption, _checkboxes[i]->getState(), _domain);
+	}
+
+	return true;
+}
+
+} // End of namespace GUI

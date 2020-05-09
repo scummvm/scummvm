@@ -24,6 +24,8 @@
 #define GLOBAL_DIALOGS_H
 
 #include "gui/dialog.h"
+#include "gui/options.h"
+#include "gui/widget.h"
 
 class Engine;
 
@@ -71,10 +73,50 @@ protected:
 	GUI::ButtonWidget    *_helpButton;
 
 	GUI::Dialog          *_aboutDialog;
-	GUI::Dialog          *_optionsDialog;
 
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;
 };
+
+namespace GUI {
+
+class ConfigDialog : public OptionsDialog {
+public:
+	ConfigDialog();
+	~ConfigDialog() override;
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	// OptionsDialog API
+	void build() override;
+	void apply() override;
+
+private:
+	OptionsContainerWidget *_engineOptions;
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+	Dialog *_keysDialog;
+#endif
+};
+
+class ExtraGuiOptionsWidget : public OptionsContainerWidget {
+public:
+	ExtraGuiOptionsWidget(GuiObject *widgetsBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options);
+	~ExtraGuiOptionsWidget() override;
+
+	// OptionsContainerWidget API
+	void load() override;
+	bool save() override;
+
+private:
+	typedef Common::Array<CheckboxWidget *> CheckboxWidgetList;
+
+	static Common::String dialogLayout(const Common::String &domain);
+
+	ExtraGuiOptions _options;
+	CheckboxWidgetList _checkboxes;
+};
+
+} // End of namespace GUI
 
 #endif

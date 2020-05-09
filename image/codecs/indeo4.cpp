@@ -251,6 +251,8 @@ void Indeo4Decoder::switchBuffers() {
 	case IVI4_FRAMETYPE_INTER:
 		isPrevRef = 1;
 		break;
+	default:
+		break;
 	}
 
 	switch (_ctx._frameType) {

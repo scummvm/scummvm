@@ -25,85 +25,129 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
+#include "common/array.h"
 #include "common/events.h"
-#include "common/func.h"
-#include "common/list.h"
 #include "common/str.h"
 
 namespace Common {
 
-struct HardwareInput;
-class Keymap;
-
-#define ACTION_ID_SIZE (5)
-
 struct KeyActionEntry {
-	const KeyState ks;
 	const char *id;
+	const KeyState ks;
+	const char *defaultHwId;
 	const char *description;
 };
 
 struct Action {
 	/** unique id used for saving/loading to config */
-	char id[ACTION_ID_SIZE];
+	const char *id;
 	/** Human readable description */
 	String description;
 
-	/** Events to be sent when mapped key is pressed */
-	List<Event> events;
+	/** Event to be sent when mapped key is pressed */
+	Event event;
 
 private:
-	/** Hardware input that is mapped to this Action */
-	const HardwareInput *_hwInput;
-	Keymap *_boss;
+	Array<String> _defaultInputMapping;
+	bool _shouldTriggerOnKbdRepeats;
 
 public:
-	Action(Keymap *boss, const char *id, String des = "");
+	Action(const char *id, const String &description);
 
-	void addEvent(const Event &evt) {
-		events.push_back(evt);
+	void setEvent(const Event &evt) {
+		event = evt;
 	}
 
-	void addEvent(const EventType evtType) {
-		Event evt;
-
-		evt.type = evtType;
-		events.push_back(evt);
+	void setEvent(const EventType evtType) {
+		event = Event();
+		event.type = evtType;
 	}
 
-	void addKeyEvent(const KeyState &ks) {
-		Event evt;
-
-		evt.type = EVENT_KEYDOWN;
-		evt.kbd = ks;
-		addEvent(evt);
+	void setCustomBackendActionEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_BACKEND_ACTION_START;
+		event.customType = evtType;
 	}
 
-	void addLeftClickEvent() {
-		addEvent(EVENT_LBUTTONDOWN);
+	void setCustomBackendActionAxisEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_BACKEND_ACTION_AXIS;
+		event.customType = evtType;
 	}
 
-	void addMiddleClickEvent() {
-		addEvent(EVENT_MBUTTONDOWN);
+	void setCustomEngineActionEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_ENGINE_ACTION_START;
+		event.customType = evtType;
 	}
 
-	void addRightClickEvent() {
-		addEvent(EVENT_RBUTTONDOWN);
+	void setKeyEvent(const KeyState &ks) {
+		event = Event();
+		event.type = EVENT_KEYDOWN;
+		event.kbd = ks;
 	}
 
-	Keymap *getParent() {
-		return _boss;
+	void setLeftClickEvent() {
+		setEvent(EVENT_LBUTTONDOWN);
 	}
 
-	void mapInput(const HardwareInput *input);
-	const HardwareInput *getMappedInput() const;
+	void setMiddleClickEvent() {
+		setEvent(EVENT_MBUTTONDOWN);
+	}
+
+	void setRightClickEvent() {
+		setEvent(EVENT_RBUTTONDOWN);
+	}
+
+	void setMouseWheelUpEvent() {
+		setEvent(EVENT_WHEELUP);
+	}
+
+	void setMouseWheelDownEvent() {
+		setEvent(EVENT_WHEELDOWN);
+	}
+
+	void setX1ClickEvent() {
+		setEvent(EVENT_X1BUTTONDOWN);
+	}
+
+	void setX2ClickEvent() {
+		setEvent(EVENT_X2BUTTONDOWN);
+	}
+
+	/**
+	 * Allows an action bound to a keyboard event to be repeatedly
+	 * triggered by key repeats
+	 *
+	 * Note that key repeat events should probably not be used for anything
+	 * else than text input as they do not trigger when the action is bound
+	 * to something else than a keyboard key. Furthermore, the frequency at
+	 * which they trigger and whether they trigger at all is operating system
+	 * controlled.
+	 */
+	void allowKbdRepeats() {
+		_shouldTriggerOnKbdRepeats = true;
+	}
+
+	bool shouldTriggerOnKbdRepeats() const { return _shouldTriggerOnKbdRepeats; }
+
+	/**
+	 * Add a default input mapping for the action
+	 *
+	 * Unknown hardware inputs will be silently ignored.
+	 * Having keyboard bindings by default will not cause trouble
+	 * on devices without a keyboard.
+	 *
+	 * @param hwId Hardware input identifier as registered with the keymapper
+	 */
+	void addDefaultInputMapping(const String &hwId);
+
+	const Array<String> &getDefaultInputMapping() const {
+		return _defaultInputMapping;
+	}
 
 };
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_ACTION_H

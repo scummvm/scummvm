@@ -143,16 +143,16 @@ const char *gScummVMFeatures = ""
 	"FreeType2 "
 #endif
 
+#ifdef USE_FRIBIDI
+	"FriBiDi "
+#endif
+
 #ifdef USE_JPEG
 	"JPEG "
 #endif
 
 #ifdef USE_PNG
 	"PNG "
-#endif
-
-#ifdef ENABLE_KEYMAPPER
-	"keymapper "
 #endif
 
 #ifdef ENABLE_VKEYBD

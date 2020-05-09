@@ -94,13 +94,9 @@ enum {
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 640, 480) { // ResidualVM specific
-	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	: Dialog("Launcher") {
 
-	_w = screenW;
-	_h = screenH;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 
 	build();
 
@@ -127,7 +123,7 @@ LauncherDialog::~LauncherDialog() {
 
 void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
-	_logo = 0;
+	_logo = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
@@ -140,8 +136,8 @@ void LauncherDialog::build() {
 	// Show ScummVM version
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
-
-	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ResidualVM"), kQuitCmd);
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
+		new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ResidualVM"), kQuitCmd);
 	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ResidualVM"), kAboutCmd);
 	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ResidualVM options"), kOptionsCmd);
 	_startButton =
@@ -150,7 +146,7 @@ void LauncherDialog::build() {
 	DropdownButtonWidget *loadButton =
 	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
 #ifdef ENABLE_EVENTRECORDER
-	loadButton->appendEntry(_s("Record..."), kRecordGameCmd);
+	loadButton->appendEntry(_("Record..."), kRecordGameCmd);
 #endif
 	_loadButton = loadButton;
 
@@ -158,7 +154,7 @@ void LauncherDialog::build() {
 	if (g_system->getOverlayWidth() > 320) {
 		DropdownButtonWidget *addButton =
 			new DropdownButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(_s("Mass Add..."), kMassAddGameCmd);
+		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
 		_addButton = addButton;
 
 		_editButton =
@@ -178,9 +174,9 @@ void LauncherDialog::build() {
 	}
 
 	// Search box
-	_searchDesc = 0;
+	_searchDesc = nullptr;
 #ifndef DISABLE_FANCY_THEMES
-	_searchPic = 0;
+	_searchPic = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
 		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
@@ -188,12 +184,13 @@ void LauncherDialog::build() {
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, 0, kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, nullptr, kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", 0, kListSearchCmd);
+	_list = new ListWidget(this, "Launcher.GameList", nullptr, kListSearchCmd);
 	_list->setEditable(false);
+	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
 
 	// Populate the list
@@ -284,7 +281,7 @@ void LauncherDialog::updateListing() {
 
 		if (description.empty()) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
-			if (g.description)
+			if (!g.description.empty())
 				description = g.description;
 		}
 
@@ -296,7 +293,7 @@ void LauncherDialog::updateListing() {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
-			while (pos < size && (scumm_stricmp(description.c_str(), l[pos].c_str()) > 0))
+			while (pos < size && (scumm_compareDictionary(description.c_str(), l[pos].c_str()) > 0))
 				pos++;
 
 			color = ThemeEngine::kFontColorNormal;
@@ -361,7 +358,7 @@ void LauncherDialog::addGame() {
 					bannedDirectory += '/';
 				}
 			}
-			if (selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
+			if (selectedDirectory.size() && bannedDirectory.size() && selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
 				MessageDialog alert(_("This directory cannot be used yet, it is being downloaded into!"));
 				alert.runModal();
 				return;
@@ -440,6 +437,8 @@ void LauncherDialog::recordGame(int item) {
 	MessageDialog alert(_("Do you want to load saved game?"),
 		_("Yes"), _("No"));
 	switch(recorderDialog.runModal(_domains[item])) {
+	default:
+		// fallthrough intended
 	case RecorderDialog::kRecordDialogClose:
 		break;
 	case RecorderDialog::kRecordDialogPlayback:
@@ -512,7 +511,7 @@ void LauncherDialog::handleKeyUp(Common::KeyState state) {
 	updateButtons();
 }
 
-void LauncherDialog::handleOtherEvent(Common::Event evt) {
+void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	Dialog::handleOtherEvent(evt);
 	if (evt.type == Common::EVENT_DROP_FILE) {
 		doGameDetection(evt.path);
@@ -735,9 +734,9 @@ void LauncherDialog::reflowLayout() {
 
 		if (_logo) {
 			removeWidget(_logo);
-			_logo->setNext(0);
+			_logo->setNext(nullptr);
 			delete _logo;
-			_logo = 0;
+			_logo = nullptr;
 		}
 	}
 
@@ -748,9 +747,9 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchDesc) {
 			removeWidget(_searchDesc);
-			_searchDesc->setNext(0);
+			_searchDesc->setNext(nullptr);
 			delete _searchDesc;
-			_searchDesc = 0;
+			_searchDesc = nullptr;
 		}
 	} else {
 		if (!_searchDesc)
@@ -758,14 +757,14 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchPic) {
 			removeWidget(_searchPic);
-			_searchPic->setNext(0);
+			_searchPic->setNext(nullptr);
 			delete _searchPic;
-			_searchPic = 0;
+			_searchPic = nullptr;
 		}
 	}
 
 	removeWidget(_searchClearButton);
-	_searchClearButton->setNext(0);
+	_searchClearButton->setNext(nullptr);
 	delete _searchClearButton;
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 #endif

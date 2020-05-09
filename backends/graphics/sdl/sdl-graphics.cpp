@@ -21,10 +21,16 @@
  */
 
 #include "backends/graphics/sdl/sdl-graphics.h"
-
 #include "backends/platform/sdl/sdl-sys.h"
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/resvm-sdl-events.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
 #include "common/textconsole.h"
+#include "backends/platform/sdl/sdl.h"
+#include "common/config-manager.h"
+#include "common/fs.h"
+#include "common/textconsole.h"
+#include "common/translation.h"
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
 	: _eventSource(source), _window(window) {
@@ -72,4 +78,29 @@ bool SdlGraphicsManager::setState(const State &state) {
 		return true;
 	}
 }
+Common::Keymap *SdlGraphicsManager::getKeymap() {
+	using namespace Common;
 
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics", _("Graphics"));
+	Action *act;
+
+	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
+		act = new Action("FULS", _("Toggle fullscreen"));
+		act->addDefaultInputMapping("A+RETURN");
+		act->addDefaultInputMapping("A+KP_ENTER");
+		act->setCustomBackendActionEvent(kActionToggleFullscreen);
+		keymap->addAction(act);
+	}
+
+	act = new Action("CAPT", _("Toggle mouse capture"));
+	act->addDefaultInputMapping("C+m");
+	act->setCustomBackendActionEvent(kActionToggleMouseCapture);
+	keymap->addAction(act);
+
+	act = new Action("SCRS", _("Save screenshot"));
+	act->addDefaultInputMapping("A+s");
+	act->setCustomBackendActionEvent(kActionSaveScreenshot);
+	keymap->addAction(act);
+
+	return keymap;
+}

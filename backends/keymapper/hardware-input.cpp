@@ -22,274 +22,595 @@
 
 #include "backends/keymapper/hardware-input.h"
 
-#ifdef ENABLE_KEYMAPPER
-
 #include "backends/keymapper/keymapper.h"
+
+#include "common/tokenizer.h"
+#include "common/translation.h"
 
 namespace Common {
 
-static const KeyTableEntry defaultKeys[] = {
-	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", false},
-	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", false},
-	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", false},
-	{"RETURN", KEYCODE_RETURN, ASCII_RETURN, "Return", false},
-	{"PAUSE", KEYCODE_PAUSE, 0, "Pause", false},
-	{"ESCAPE", KEYCODE_ESCAPE, ASCII_ESCAPE, "Esc", false},
-	{"SPACE", KEYCODE_SPACE, ASCII_SPACE, "Space", false},
-	{"EXCLAIM", KEYCODE_EXCLAIM, '!', "!", false},
-	{"QUOTEDBL", KEYCODE_QUOTEDBL, '"', "\"", false},
-	{"HASH", KEYCODE_HASH, '#', "#", false},
-	{"DOLLAR", KEYCODE_DOLLAR, '$', "$", false},
-	{"AMPERSAND", KEYCODE_AMPERSAND, '&', "&", false},
-	{"QUOTE", KEYCODE_QUOTE, '\'', "'", false},
-	{"LEFTPAREN", KEYCODE_LEFTPAREN, '(', "(", false},
-	{"RIGHTPAREN", KEYCODE_RIGHTPAREN, ')', ")", false},
-	{"ASTERISK", KEYCODE_ASTERISK, '*', "*", false},
-	{"PLUS", KEYCODE_PLUS, '+', "+", false},
-	{"COMMA", KEYCODE_COMMA, ',', ",", false},
-	{"MINUS", KEYCODE_MINUS, '-', "-", false},
-	{"PERIOD", KEYCODE_PERIOD, '.', ".", false},
-	{"SLASH", KEYCODE_SLASH, '/', "/", false},
-	{"0", KEYCODE_0, '0', "0", false},
-	{"1", KEYCODE_1, '1', "1", false},
-	{"2", KEYCODE_2, '2', "2", false},
-	{"3", KEYCODE_3, '3', "3", false},
-	{"4", KEYCODE_4, '4', "4", false},
-	{"5", KEYCODE_5, '5', "5", false},
-	{"6", KEYCODE_6, '6', "6", false},
-	{"7", KEYCODE_7, '7', "7", false},
-	{"8", KEYCODE_8, '8', "8", false},
-	{"9", KEYCODE_9, '9', "9", false},
-	{"COLON", KEYCODE_COLON, ':', ":", false},
-	{"SEMICOLON", KEYCODE_SEMICOLON, ';', ";", false},
-	{"LESS", KEYCODE_LESS, '<', "<", false},
-	{"EQUALS", KEYCODE_EQUALS, '=', "=", false},
-	{"GREATER", KEYCODE_GREATER, '>', ">", false},
-	{"QUESTION", KEYCODE_QUESTION, '?', "?", false},
-	{"AT", KEYCODE_AT, '@', "@", false},
+// TODO: Maybe make 'Command' a separate mac-specific modifier so we can define
+//  defaults key bindings from the original mac game versions without binding
+//  them to the meta key on other platforms?
+#if defined(WIN32)
+#define META_KEY_NAME "Win"
+#elif defined(MACOSX) || defined(IPHONE)
+#define META_KEY_NAME "Cmd"
+#else
+#define META_KEY_NAME "Meta"
+#endif
 
-	{"LEFTBRACKET", KEYCODE_LEFTBRACKET, '[', "[", false},
-	{"BACKSLASH", KEYCODE_BACKSLASH, '\\', "\\", false},
-	{"RIGHTBRACKET", KEYCODE_RIGHTBRACKET, ']', "]", false},
-	{"CARET", KEYCODE_CARET, '^', "^", false},
-	{"UNDERSCORE", KEYCODE_UNDERSCORE, '_', "_", false},
-	{"BACKQUOTE", KEYCODE_BACKQUOTE, '`', "`", false},
-	{"a", KEYCODE_a, 'a', "a", true},
-	{"b", KEYCODE_b, 'b', "b", true},
-	{"c", KEYCODE_c, 'c', "c", true},
-	{"d", KEYCODE_d, 'd', "d", true},
-	{"e", KEYCODE_e, 'e', "e", true},
-	{"f", KEYCODE_f, 'f', "f", true},
-	{"g", KEYCODE_g, 'g', "g", true},
-	{"h", KEYCODE_h, 'h', "h", true},
-	{"i", KEYCODE_i, 'i', "i", true},
-	{"j", KEYCODE_j, 'j', "j", true},
-	{"k", KEYCODE_k, 'k', "k", true},
-	{"l", KEYCODE_l, 'l', "l", true},
-	{"m", KEYCODE_m, 'm', "m", true},
-	{"n", KEYCODE_n, 'n', "n", true},
-	{"o", KEYCODE_o, 'o', "o", true},
-	{"p", KEYCODE_p, 'p', "p", true},
-	{"q", KEYCODE_q, 'q', "q", true},
-	{"r", KEYCODE_r, 'r', "r", true},
-	{"s", KEYCODE_s, 's', "s", true},
-	{"t", KEYCODE_t, 't', "t", true},
-	{"u", KEYCODE_u, 'u', "u", true},
-	{"v", KEYCODE_v, 'v', "v", true},
-	{"w", KEYCODE_w, 'w', "w", true},
-	{"x", KEYCODE_x, 'x', "x", true},
-	{"y", KEYCODE_y, 'y', "y", true},
-	{"z", KEYCODE_z, 'z', "z", true},
-	{"DELETE", KEYCODE_DELETE, 0, "Del", false},
+const KeyTableEntry defaultKeys[] = {
+	{"BACKSPACE", KEYCODE_BACKSPACE, "Backspace"},
+	{"TAB", KEYCODE_TAB, "Tab"},
+	{"CLEAR", KEYCODE_CLEAR, "Clear"},
+	{"RETURN", KEYCODE_RETURN, "Return"},
+	{"PAUSE", KEYCODE_PAUSE, "Pause"},
+	{"ESCAPE", KEYCODE_ESCAPE, "Esc"},
+	{"SPACE", KEYCODE_SPACE, "Space"},
+	{"EXCLAIM", KEYCODE_EXCLAIM, "!"},
+	{"QUOTEDBL", KEYCODE_QUOTEDBL, "\""},
+	{"HASH", KEYCODE_HASH, "#"},
+	{"DOLLAR", KEYCODE_DOLLAR, "$"},
+	{"PERCENT", KEYCODE_PERCENT, "%"},
+	{"AMPERSAND", KEYCODE_AMPERSAND, "&"},
+	{"QUOTE", KEYCODE_QUOTE, "'"},
+	{"LEFTPAREN", KEYCODE_LEFTPAREN, "("},
+	{"RIGHTPAREN", KEYCODE_RIGHTPAREN, ")"},
+	{"ASTERISK", KEYCODE_ASTERISK, "*"},
+	{"PLUS", KEYCODE_PLUS, "+"},
+	{"COMMA", KEYCODE_COMMA, ","},
+	{"MINUS", KEYCODE_MINUS, "-"},
+	{"PERIOD", KEYCODE_PERIOD, "."},
+	{"SLASH", KEYCODE_SLASH, "/"},
+	{"0", KEYCODE_0, "0"},
+	{"1", KEYCODE_1, "1"},
+	{"2", KEYCODE_2, "2"},
+	{"3", KEYCODE_3, "3"},
+	{"4", KEYCODE_4, "4"},
+	{"5", KEYCODE_5, "5"},
+	{"6", KEYCODE_6, "6"},
+	{"7", KEYCODE_7, "7"},
+	{"8", KEYCODE_8, "8"},
+	{"9", KEYCODE_9, "9"},
+	{"COLON", KEYCODE_COLON, ":"},
+	{"SEMICOLON", KEYCODE_SEMICOLON, ";"},
+	{"LESS", KEYCODE_LESS, "<"},
+	{"EQUALS", KEYCODE_EQUALS, "="},
+	{"GREATER", KEYCODE_GREATER, ">"},
+	{"QUESTION", KEYCODE_QUESTION, "?"},
+	{"AT", KEYCODE_AT, "@"},
+
+	{"LEFTBRACKET", KEYCODE_LEFTBRACKET, "["},
+	{"BACKSLASH", KEYCODE_BACKSLASH, "\\"},
+	{"RIGHTBRACKET", KEYCODE_RIGHTBRACKET, "]"},
+	{"CARET", KEYCODE_CARET, "^"},
+	{"UNDERSCORE", KEYCODE_UNDERSCORE, "_"},
+	{"BACKQUOTE", KEYCODE_BACKQUOTE, "`"},
+	{"a", KEYCODE_a, "a"},
+	{"b", KEYCODE_b, "b"},
+	{"c", KEYCODE_c, "c"},
+	{"d", KEYCODE_d, "d"},
+	{"e", KEYCODE_e, "e"},
+	{"f", KEYCODE_f, "f"},
+	{"g", KEYCODE_g, "g"},
+	{"h", KEYCODE_h, "h"},
+	{"i", KEYCODE_i, "i"},
+	{"j", KEYCODE_j, "j"},
+	{"k", KEYCODE_k, "k"},
+	{"l", KEYCODE_l, "l"},
+	{"m", KEYCODE_m, "m"},
+	{"n", KEYCODE_n, "n"},
+	{"o", KEYCODE_o, "o"},
+	{"p", KEYCODE_p, "p"},
+	{"q", KEYCODE_q, "q"},
+	{"r", KEYCODE_r, "r"},
+	{"s", KEYCODE_s, "s"},
+	{"t", KEYCODE_t, "t"},
+	{"u", KEYCODE_u, "u"},
+	{"v", KEYCODE_v, "v"},
+	{"w", KEYCODE_w, "w"},
+	{"x", KEYCODE_x, "x"},
+	{"y", KEYCODE_y, "y"},
+	{"z", KEYCODE_z, "z"},
+	{"DELETE", KEYCODE_DELETE, "Del"},
 
 	// Numeric keypad
-	{"KP0", KEYCODE_KP0, 0, "KP0", false},
-	{"KP1", KEYCODE_KP1, 0, "KP1", false},
-	{"KP2", KEYCODE_KP2, 0, "KP2", false},
-	{"KP3", KEYCODE_KP3, 0, "KP3", false},
-	{"KP4", KEYCODE_KP4, 0, "KP4", false},
-	{"KP5", KEYCODE_KP5, 0, "KP5", false},
-	{"KP6", KEYCODE_KP6, 0, "KP6", false},
-	{"KP7", KEYCODE_KP7, 0, "KP7", false},
-	{"KP8", KEYCODE_KP8, 0, "KP8", false},
-	{"KP9", KEYCODE_KP9, 0, "KP9", false},
-	{"KP_PERIOD", KEYCODE_KP_PERIOD, 0, "KP.", false},
-	{"KP_DIVIDE", KEYCODE_KP_DIVIDE, 0, "KP/", false},
-	{"KP_MULTIPLY", KEYCODE_KP_MULTIPLY, 0, "KP*", false},
-	{"KP_MINUS", KEYCODE_KP_MINUS, 0, "KP-", false},
-	{"KP_PLUS", KEYCODE_KP_PLUS, 0, "KP+", false},
-	{"KP_ENTER", KEYCODE_KP_ENTER, 0, "KP Enter", false},
-	{"KP_EQUALS", KEYCODE_KP_EQUALS, 0, "KP=", false},
+	{"KP0", KEYCODE_KP0, "KP0"},
+	{"KP1", KEYCODE_KP1, "KP1"},
+	{"KP2", KEYCODE_KP2, "KP2"},
+	{"KP3", KEYCODE_KP3, "KP3"},
+	{"KP4", KEYCODE_KP4, "KP4"},
+	{"KP5", KEYCODE_KP5, "KP5"},
+	{"KP6", KEYCODE_KP6, "KP6"},
+	{"KP7", KEYCODE_KP7, "KP7"},
+	{"KP8", KEYCODE_KP8, "KP8"},
+	{"KP9", KEYCODE_KP9, "KP9"},
+	{"KP_PERIOD", KEYCODE_KP_PERIOD, "KP."},
+	{"KP_DIVIDE", KEYCODE_KP_DIVIDE, "KP/"},
+	{"KP_MULTIPLY", KEYCODE_KP_MULTIPLY, "KP*"},
+	{"KP_MINUS", KEYCODE_KP_MINUS, "KP-"},
+	{"KP_PLUS", KEYCODE_KP_PLUS, "KP+"},
+	{"KP_ENTER", KEYCODE_KP_ENTER, "KP Enter"},
+	{"KP_EQUALS", KEYCODE_KP_EQUALS, "KP="},
 
 	// Arrows + Home/End pad
-	{"UP", KEYCODE_UP, 0, "Up", false},
-	{"DOWN", KEYCODE_DOWN, 0, "Down", false},
-	{"RIGHT", KEYCODE_RIGHT, 0, "Right", false},
-	{"LEFT", KEYCODE_LEFT, 0, "Left", false},
-	{"INSERT", KEYCODE_INSERT, 0, "Insert", false},
-	{"HOME", KEYCODE_HOME, 0, "Home", false},
-	{"END", KEYCODE_END, 0, "End", false},
-	{"PAGEUP", KEYCODE_PAGEUP, 0, "PgUp", false},
-	{"PAGEDOWN", KEYCODE_PAGEDOWN, 0, "PgDn", false},
+	{"UP", KEYCODE_UP, "Up"},
+	{"DOWN", KEYCODE_DOWN, "Down"},
+	{"RIGHT", KEYCODE_RIGHT, "Right"},
+	{"LEFT", KEYCODE_LEFT, "Left"},
+	{"INSERT", KEYCODE_INSERT, "Insert"},
+	{"HOME", KEYCODE_HOME, "Home"},
+	{"END", KEYCODE_END, "End"},
+	{"PAGEUP", KEYCODE_PAGEUP, "PgUp"},
+	{"PAGEDOWN", KEYCODE_PAGEDOWN, "PgDn"},
 
 	// Function keys
-	{"F1", KEYCODE_F1, ASCII_F1, "F1", false},
-	{"F2", KEYCODE_F2, ASCII_F2, "F2", false},
-	{"F3", KEYCODE_F3, ASCII_F3, "F3", false},
-	{"F4", KEYCODE_F4, ASCII_F4, "F4", false},
-	{"F5", KEYCODE_F5, ASCII_F5, "F5", false},
-	{"F6", KEYCODE_F6, ASCII_F6, "F6", false},
-	{"F7", KEYCODE_F7, ASCII_F7, "F7", false},
-	{"F8", KEYCODE_F8, ASCII_F8, "F8", false},
-	{"F9", KEYCODE_F9, ASCII_F9, "F9", false},
-	{"F10", KEYCODE_F10, ASCII_F10, "F10", false},
-	{"F11", KEYCODE_F11, ASCII_F11, "F11", false},
-	{"F12", KEYCODE_F12, ASCII_F12, "F12", false},
-	{"F13", KEYCODE_F13, 0, "F13", false},
-	{"F14", KEYCODE_F14, 0, "F14", false},
-	{"F15", KEYCODE_F15, 0, "F15", false},
+	{"F1", KEYCODE_F1, "F1"},
+	{"F2", KEYCODE_F2, "F2"},
+	{"F3", KEYCODE_F3, "F3"},
+	{"F4", KEYCODE_F4, "F4"},
+	{"F5", KEYCODE_F5, "F5"},
+	{"F6", KEYCODE_F6, "F6"},
+	{"F7", KEYCODE_F7, "F7"},
+	{"F8", KEYCODE_F8, "F8"},
+	{"F9", KEYCODE_F9, "F9"},
+	{"F10", KEYCODE_F10, "F10"},
+	{"F11", KEYCODE_F11, "F11"},
+	{"F12", KEYCODE_F12, "F12"},
+	{"F13", KEYCODE_F13, "F13"},
+	{"F14", KEYCODE_F14, "F14"},
+	{"F15", KEYCODE_F15, "F15"},
+	{"F16", KEYCODE_F16, "F16"},
+	{"F17", KEYCODE_F17, "F17"},
+	{"F18", KEYCODE_F18, "F18"},
 
 	// Miscellaneous function keys
-	{"HELP", KEYCODE_HELP, 0, "Help", false},
-	{"PRINT", KEYCODE_PRINT, 0, "Print", false},
-	{"SYSREQ", KEYCODE_SYSREQ, 0, "SysRq", false},
-	{"BREAK", KEYCODE_BREAK, 0, "Break", false},
-	{"MENU", KEYCODE_MENU, 0, "Menu", false},
+	{"HELP", KEYCODE_HELP, "Help"},
+	{"PRINT", KEYCODE_PRINT, "Print"},
+	{"SYSREQ", KEYCODE_SYSREQ, "SysRq"},
+	{"BREAK", KEYCODE_BREAK, "Break"},
+	{"MENU", KEYCODE_MENU, "Menu"},
 		// Power Macintosh power key
-	{"POWER", KEYCODE_POWER, 0, "Power", false},
+	{"POWER", KEYCODE_POWER, "Power"},
 		// Some european keyboards
-	{"EURO", KEYCODE_EURO, 0, "Euro", false},
+	{"EURO", KEYCODE_EURO, "Euro"},
 		// Atari keyboard has Undo
-	{"UNDO", KEYCODE_UNDO, 0, "Undo", false},
-	{0, KEYCODE_INVALID, 0, 0, false}
+	{"UNDO", KEYCODE_UNDO, "Undo"},
+	{"SLEEP", KEYCODE_SLEEP, "Sleep"},
+	{"MUTE", KEYCODE_MUTE, "Mute"},
+	{"EJECT", KEYCODE_EJECT, "Eject"},
+	{"VOLUMEUP", KEYCODE_VOLUMEUP, "Volume Up"},
+	{"VOLUMEDOWN", KEYCODE_VOLUMEDOWN, "Volume Down"},
+	{"LEFTSOFT", KEYCODE_LEFTSOFT, "Left Soft"},
+	{"RIGHTSOFT", KEYCODE_RIGHTSOFT, "Right Soft"},
+	{"CALL", KEYCODE_CALL, "Call"},
+	{"HANGUP", KEYCODE_HANGUP, "Hang up"},
+	{"CAMERA", KEYCODE_CAMERA, "Camera"},
+	{"WWW", KEYCODE_WWW, "WWW"},
+	{"MAIL", KEYCODE_MAIL, "Mail"},
+	{"CALCULATOR", KEYCODE_CALCULATOR, "Calculator"},
+	{"CUT", KEYCODE_CUT, "Cut"},
+	{"COPY", KEYCODE_COPY, "Copy"},
+	{"PASTE", KEYCODE_PASTE, "Paste"},
+	{"SELECT", KEYCODE_SELECT, "Select"},
+	{"CANCEL", KEYCODE_CANCEL, "Cancel"},
+
+	// Action keys
+	{"AC_SEARCH", KEYCODE_AC_SEARCH, "AC Search"},
+	{"AC_HOME", KEYCODE_AC_HOME, "AC Home"},
+	{"AC_BACK", KEYCODE_AC_BACK, "AC Back"},
+	{"AC_FORWARD", KEYCODE_AC_FORWARD, "AC Forward"},
+	{"AC_STOP", KEYCODE_AC_STOP, "AC Stop"},
+	{"AC_REFRESH", KEYCODE_AC_REFRESH, "AC Refresh"},
+	{"AC_BOOKMARKS", KEYCODE_AC_BOOKMARKS, "AC Bookmarks"},
+
+	// Audio keys
+	{"AUDIONEXT", KEYCODE_AUDIONEXT, "Audio Next"},
+	{"AUDIOPREV", KEYCODE_AUDIOPREV, "Audio Previous"},
+	{"AUDIOSTOP", KEYCODE_AUDIOSTOP, "Audio Stop"},
+	{"AUDIOPLAY", KEYCODE_AUDIOPLAY, "Audio Play"},
+	{"AUDIOPAUSE", KEYCODE_AUDIOPAUSE, "Audio Pause"},
+	{"AUDIOPLAYPAUSE", KEYCODE_AUDIOPLAYPAUSE, "Audio Play/Pause"},
+	{"AUDIOMUTE", KEYCODE_AUDIOMUTE, "Audio Mute"},
+	{"AUDIOREWIND", KEYCODE_AUDIOREWIND, "Audio Rewind"},
+	{"AUDIOFASTFORWARD", KEYCODE_AUDIOFASTFORWARD, "Audio Fast-Forward"},
+
+	// Modifier keys
+	{"SCROLLOCK", KEYCODE_SCROLLOCK, "Scroll Lock"          },
+	{"CAPSLOCK",  KEYCODE_CAPSLOCK,  "Caps Lock"            },
+	{"NUMLOCK",   KEYCODE_NUMLOCK,   "Num Lock"             },
+	{"LSHIFT",    KEYCODE_LSHIFT,    "Left Shift"           },
+	{"RSHIFT",    KEYCODE_RSHIFT,    "Right Shift"          },
+	{"LALT",      KEYCODE_LALT,      "Left Alt"             },
+	{"RALT",      KEYCODE_RALT,      "Right Alt"            },
+	{"LCTRL",     KEYCODE_LCTRL,     "Left Control"         },
+	{"RCTRL",     KEYCODE_RCTRL,     "Right Control"        },
+	{"LMETA",     KEYCODE_LMETA,     "Left "  META_KEY_NAME },
+	{"RMETA",     KEYCODE_RMETA,     "Right " META_KEY_NAME },
+
+	{0, KEYCODE_INVALID, 0}
 };
 
-static const ModifierTableEntry defaultModifiers[] = {
-	{ 0, "", "", false },
-	{ KBD_CTRL, "C+", "Ctrl+", false },
-	{ KBD_ALT, "A+", "Alt+", false },
-	{ KBD_SHIFT, "", "", true },
-	{ KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", false },
-	{ KBD_SHIFT | KBD_CTRL, "S+C+", "Shift+Ctrl+", true },
-	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+", true },
-	{ 0, 0, 0, false }
+// TODO: Add NUM_LOCK
+const ModifierTableEntry defaultModifiers[] = {
+	{ KBD_CTRL,  "C", "Ctrl+"            },
+	{ KBD_SHIFT, "S", "Shift+"           },
+	{ KBD_ALT,   "A", "Alt+"             },
+	{ KBD_META,  "M", META_KEY_NAME "+"  },
+	{ 0,     nullptr, nullptr            }
 };
 
-HardwareInputSet::HardwareInputSet(bool useDefault, const KeyTableEntry *keys, const ModifierTableEntry *modifiers) {
-	if (useDefault)
-		addHardwareInputs(defaultKeys, defaultModifiers);
-	if (keys)
-		addHardwareInputs(keys, modifiers ? modifiers : defaultModifiers);
-}
+const HardwareInputTableEntry defaultMouseButtons[] = {
+    { "MOUSE_LEFT",       MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
+    { "MOUSE_RIGHT",      MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
+    { "MOUSE_MIDDLE",     MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
+    { "MOUSE_WHEEL_UP",   MOUSE_WHEEL_UP,      _s("Mouse Wheel Up")      },
+    { "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN,    _s("Mouse Wheel Down")    },
+    { "MOUSE_X1",         MOUSE_BUTTON_X1,     _s("X1 Mouse Button")     },
+    { "MOUSE_X2",         MOUSE_BUTTON_X2,     _s("X2 Mouse Button")     },
+    { nullptr,            0,                   nullptr                   }
+};
+
+const HardwareInputTableEntry defaultJoystickButtons[] = {
+    { "JOY_A",              JOYSTICK_BUTTON_A,              _s("Joy A")          },
+    { "JOY_B",              JOYSTICK_BUTTON_B,              _s("Joy B")          },
+    { "JOY_X",              JOYSTICK_BUTTON_X,              _s("Joy X")          },
+    { "JOY_Y",              JOYSTICK_BUTTON_Y,              _s("Joy Y")          },
+    { "JOY_BACK",           JOYSTICK_BUTTON_BACK,           _s("Joy Back")       },
+    { "JOY_GUIDE",          JOYSTICK_BUTTON_GUIDE,          _s("Joy Guide")      },
+    { "JOY_START",          JOYSTICK_BUTTON_START,          _s("Joy Start")      },
+    { "JOY_LEFT_STICK",     JOYSTICK_BUTTON_LEFT_STICK,     _s("Left Stick")     },
+    { "JOY_RIGHT_STICK",    JOYSTICK_BUTTON_RIGHT_STICK,    _s("Right Stick")    },
+    { "JOY_LEFT_SHOULDER",  JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("Left Shoulder")  },
+    { "JOY_RIGHT_SHOULDER", JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("Right Shoulder") },
+    { "JOY_UP",             JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")       },
+    { "JOY_DOWN",           JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")     },
+    { "JOY_LEFT",           JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")     },
+    { "JOY_RIGHT",          JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right")    },
+    { nullptr,              0,                              nullptr              }
+};
+
+const AxisTableEntry defaultJoystickAxes[] = {
+    { "JOY_LEFT_TRIGGER",  JOYSTICK_AXIS_LEFT_TRIGGER,  kAxisTypeHalf, _s("Left Trigger")  },
+    { "JOY_RIGHT_TRIGGER", JOYSTICK_AXIS_RIGHT_TRIGGER, kAxisTypeHalf, _s("Right Trigger") },
+    { "JOY_LEFT_STICK_X",  JOYSTICK_AXIS_LEFT_STICK_X,  kAxisTypeFull, _s("Left Stick X")  },
+    { "JOY_LEFT_STICK_Y",  JOYSTICK_AXIS_LEFT_STICK_Y,  kAxisTypeFull, _s("Left Stick Y")  },
+    { "JOY_RIGHT_STICK_X", JOYSTICK_AXIS_RIGHT_STICK_X, kAxisTypeFull, _s("Right Stick X") },
+    { "JOY_RIGHT_STICK_Y", JOYSTICK_AXIS_RIGHT_STICK_Y, kAxisTypeFull, _s("Right Stick Y") },
+    { nullptr,             0,                           kAxisTypeFull, nullptr             }
+};
 
 HardwareInputSet::~HardwareInputSet() {
-	List<const HardwareInput *>::const_iterator it;
-
-	for (it = _inputs.begin(); it != _inputs.end(); ++it)
-		delete *it;
 }
 
-void HardwareInputSet::addHardwareInput(const HardwareInput *input) {
-	assert(input);
-
-	debug(8, "Adding hardware input [%s][%s]", input->id.c_str(), input->description.c_str());
-
-	removeHardwareInput(input);
-
-	_inputs.push_back(input);
+KeyboardHardwareInputSet::KeyboardHardwareInputSet(const KeyTableEntry *keys, const ModifierTableEntry *modifiers) :
+		_keys(keys),
+		_modifiers(modifiers) {
+	assert(_keys);
+	assert(_modifiers);
 }
 
-const HardwareInput *HardwareInputSet::findHardwareInput(String id) const {
-	List<const HardwareInput *>::const_iterator it;
+HardwareInput KeyboardHardwareInputSet::findHardwareInput(const String &id) const {
+	StringTokenizer tokenizer(id, "+");
 
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		if ((*it)->id == id)
-			return (*it);
-	}
-	return 0;
-}
+	byte modifierFlags = 0;
 
-const HardwareInput *HardwareInputSet::findHardwareInput(const HardwareInputCode code) const {
-	List<const HardwareInput *>::const_iterator it;
+	// TODO: Normalize modifier order
+	String fullKeyDesc;
 
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		const HardwareInput *entry = *it;
-		if (entry->type == kHardwareInputTypeGeneric && entry->inputCode == code)
-			return entry;
-	}
-	return 0;
-}
+	String token;
+	while (!tokenizer.empty()) {
+		token = tokenizer.nextToken();
 
-const HardwareInput *HardwareInputSet::findHardwareInput(const KeyState& keystate) const {
-	List<const HardwareInput *>::const_iterator it;
-
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		const HardwareInput *entry = *it;
-		if (entry->type == kHardwareInputTypeKeyboard && entry->key == keystate)
-			return entry;
-	}
-	return 0;
-}
-
-void HardwareInputSet::addHardwareInputs(const HardwareInputTableEntry inputs[]) {
-	for (const HardwareInputTableEntry *entry = inputs; entry->hwId; ++entry)
-		addHardwareInput(new HardwareInput(entry->hwId, entry->code, entry->desc));
-}
-
-void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
-	const KeyTableEntry *key;
-	const ModifierTableEntry *mod;
-	char fullKeyId[50];
-	char fullKeyDesc[100];
-	uint16 ascii;
-
-	for (mod = modifiers; mod->id; mod++) {
-		for (key = keys; key->hwId; key++) {
-			ascii = key->ascii;
-
-			if (mod->shiftable && key->shiftable) {
-				snprintf(fullKeyId, 50, "%s%c", mod->id, toupper(key->hwId[0]));
-				snprintf(fullKeyDesc, 100, "%s%c", mod->desc, toupper(key->desc[0]));
-				ascii = toupper(key->ascii);
-			} else if (mod->shiftable) {
-				snprintf(fullKeyId, 50, "S+%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "Shift+%s%s", mod->desc, key->desc);
-			} else {
-				snprintf(fullKeyId, 50, "%s%s", mod->id, key->hwId);
-				snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
+		const ModifierTableEntry *modifier = nullptr;
+		for (modifier = _modifiers;  modifier->id; modifier++) {
+			if (token == modifier->id) {
+				break;
 			}
-
-			addHardwareInput(new HardwareInput(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc));
 		}
+
+		if (modifier && modifier->id) {
+			modifierFlags |= modifier->flag;
+			fullKeyDesc += modifier->desc;
+		} else {
+			// We reached the end of the modifiers, the token is a keycode
+			break;
+		}
+	}
+
+	if (!tokenizer.empty()) {
+		return HardwareInput();
+	}
+
+	const KeyTableEntry *key = nullptr;
+	for (key = _keys;  key->hwId; key++) {
+		if (token.equals(key->hwId)) {
+			break;
+		}
+	}
+
+	if (!key || !key->hwId) {
+		return HardwareInput();
+	}
+
+	const KeyState keystate = KeyState(key->keycode, 0, modifierFlags);
+	return HardwareInput::createKeyboard(id, keystate, fullKeyDesc + key->desc);
+}
+
+HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) const {
+	switch (event.type) {
+	case EVENT_KEYDOWN:
+	case EVENT_KEYUP: {
+		KeyState normalizedKeystate = normalizeKeyState(event.kbd);
+
+		const KeyTableEntry *key = nullptr;
+		for (key = _keys;  key->hwId; key++) {
+			if (normalizedKeystate.keycode == key->keycode) {
+				break;
+			}
+		}
+
+		if (!key || !key->hwId) {
+			return HardwareInput();
+		}
+
+		String id;
+		String fullKeyDesc;
+		byte modifierFlags = 0;
+
+		for (const ModifierTableEntry *modifier = _modifiers;  modifier->id; modifier++) {
+			if (normalizedKeystate.flags & modifier->flag) {
+				id += modifier->id;
+				id += "+";
+				fullKeyDesc += modifier->desc;
+				modifierFlags |= modifier->flag;
+			}
+		}
+
+		const KeyState keystate = KeyState(key->keycode, 0, modifierFlags);
+		return HardwareInput::createKeyboard(id + key->hwId, keystate, fullKeyDesc + key->desc);
+	}
+	default:
+		return HardwareInput();
 	}
 }
 
-void HardwareInputSet::removeHardwareInput(const HardwareInput *input) {
-	if (!input)
-		return;
+KeyState KeyboardHardwareInputSet::normalizeKeyState(const KeyState &keystate) {
+	KeyState normalizedKeystate = keystate;
 
-	List<const HardwareInput *>::iterator it;
+	// We ignore the sticky modifiers as they traditionally
+	// have no impact on the outcome of key presses.
+	// TODO: Maybe Num Lock should act as a modifier for the keypad.
+	normalizedKeystate.flags &= ~KBD_STICKY;
 
-	for (it = _inputs.begin(); it != _inputs.end(); ++it) {
-		const HardwareInput *entry = (*it);
-		bool match = false;
-		if (entry->id == input->id)
-			match = true;
-		else if (input->type == entry->type) {
-			if (input->type == kHardwareInputTypeGeneric && input->inputCode == entry->inputCode)
-				match = true;
-			else if (input->type == kHardwareInputTypeKeyboard && input->key == entry->key)
-				match = true;
+	// Modifier keypresses ignore the corresponding modifier flag.
+	// That way, for example, `Left Shift` is not identified
+	// as `Shift+Left Shift` by the keymapper.
+	switch (normalizedKeystate.keycode) {
+	case KEYCODE_LSHIFT:
+	case KEYCODE_RSHIFT:
+		normalizedKeystate.flags &= ~KBD_SHIFT;
+		break;
+	case KEYCODE_LCTRL:
+	case KEYCODE_RCTRL:
+		normalizedKeystate.flags &= ~KBD_CTRL;
+		break;
+	case KEYCODE_LALT:
+	case KEYCODE_RALT:
+		normalizedKeystate.flags &= ~KBD_ALT;
+		break;
+	case KEYCODE_LMETA:
+	case KEYCODE_RMETA:
+		normalizedKeystate.flags &= ~KBD_META;
+		break;
+	case KEYCODE_SCROLLOCK:
+		normalizedKeystate.flags &= ~KBD_SCRL;
+		break;
+	case KEYCODE_CAPSLOCK:
+		normalizedKeystate.flags &= ~KBD_CAPS;
+		break;
+	case KEYCODE_NUMLOCK:
+		normalizedKeystate.flags &= ~KBD_NUM;
+		break;
+	default:
+		break;
+	}
+
+	return normalizedKeystate;
+}
+
+MouseHardwareInputSet::MouseHardwareInputSet(const HardwareInputTableEntry *buttonEntries) :
+		_buttonEntries(buttonEntries) {
+	assert(_buttonEntries);
+}
+
+HardwareInput MouseHardwareInputSet::findHardwareInput(const String &id) const {
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_buttonEntries, id);
+	if (!hw || !hw->hwId) {
+		return HardwareInput();
+	}
+
+	return HardwareInput::createMouse(hw->hwId, hw->code, hw->desc);
+}
+
+HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const {
+	int button;
+	switch (event.type) {
+	case EVENT_LBUTTONDOWN:
+	case EVENT_LBUTTONUP:
+		button = MOUSE_BUTTON_LEFT;
+		break;
+	case EVENT_RBUTTONDOWN:
+	case EVENT_RBUTTONUP:
+		button = MOUSE_BUTTON_RIGHT;
+		break;
+	case EVENT_MBUTTONDOWN:
+	case EVENT_MBUTTONUP:
+		button = MOUSE_BUTTON_MIDDLE;
+		break;
+	case Common::EVENT_WHEELUP:
+		button = MOUSE_WHEEL_UP;
+		break;
+	case Common::EVENT_WHEELDOWN:
+		button = MOUSE_WHEEL_DOWN;
+		break;
+	case EVENT_X1BUTTONDOWN:
+	case EVENT_X1BUTTONUP:
+		button = MOUSE_BUTTON_X1;
+		break;
+	case EVENT_X2BUTTONDOWN:
+	case EVENT_X2BUTTONUP:
+		button = MOUSE_BUTTON_X2;
+		break;
+	default:
+		button = -1;
+		break;
+	}
+
+	if (button == -1) {
+		return HardwareInput();
+	}
+
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithCode(_buttonEntries, button);
+	if (!hw || !hw->hwId) {
+		return HardwareInput();
+	}
+
+	return HardwareInput::createMouse(hw->hwId, hw->code, hw->desc);
+}
+
+JoystickHardwareInputSet::JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries, const AxisTableEntry *axisEntries) :
+		_buttonEntries(buttonEntries),
+		_axisEntries(axisEntries) {
+	assert(_buttonEntries);
+	assert(_axisEntries);
+}
+
+HardwareInput JoystickHardwareInputSet::findHardwareInput(const String &id) const {
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_buttonEntries, id);
+	if (hw && hw->hwId) {
+		return HardwareInput::createJoystickButton(hw->hwId, hw->code, hw->desc);
+	}
+
+	bool hasHalfSuffix = id.lastChar() == '-' || id.lastChar() == '+';
+	Common::String tableId = hasHalfSuffix ? Common::String(id.c_str(), id.size() - 1) : id;
+	const AxisTableEntry *axis = AxisTableEntry::findWithId(_axisEntries, tableId);
+	if (axis && axis->hwId) {
+		if (hasHalfSuffix && axis->type == kAxisTypeHalf) {
+			return HardwareInput(); // Half axes can't be split in halves
+		} else if (!hasHalfSuffix && axis->type == kAxisTypeFull) {
+			return HardwareInput(); // For now it's only possible to bind half axes
 		}
-		if (match) {
-			debug(7, "Removing hardware input [%s] (%s) because it matches [%s] (%s)", entry->id.c_str(), entry->description.c_str(), input->id.c_str(), input->description.c_str());
-			delete entry;
-			_inputs.erase(it);
+
+		if (axis->type == kAxisTypeHalf) {
+			return HardwareInput::createJoystickHalfAxis(axis->hwId, axis->code, true, axis->desc);
+		} else {
+			bool positiveHalf = id.lastChar() == '+';
+			Common::String desc = String::format("%s%c", axis->desc, id.lastChar());
+			return HardwareInput::createJoystickHalfAxis(id, axis->code, positiveHalf, desc);
 		}
 	}
+
+	return HardwareInput();
+}
+
+HardwareInput JoystickHardwareInputSet::findHardwareInput(const Event &event) const {
+	switch (event.type) {
+	case EVENT_JOYBUTTON_DOWN:
+	case EVENT_JOYBUTTON_UP: {
+		const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithCode(_buttonEntries, event.joystick.button);
+		if (!hw || !hw->hwId) {
+			return HardwareInput();
+		}
+
+		return HardwareInput::createJoystickButton(hw->hwId, hw->code, hw->desc);
+	}
+	case EVENT_JOYAXIS_MOTION: {
+		if (ABS(event.joystick.position) < (JOYAXIS_MAX / 2)) {
+			return HardwareInput(); // Ignore incomplete presses for remapping purposes
+		}
+
+		const AxisTableEntry *hw = AxisTableEntry::findWithCode(_axisEntries, event.joystick.axis);
+		if (!hw || !hw->hwId) {
+			return HardwareInput();
+		}
+
+		if (hw->type == kAxisTypeHalf) {
+			return HardwareInput::createJoystickHalfAxis(hw->hwId, hw->code, true, hw->desc);
+		} else {
+			bool positiveHalf = event.joystick.position >= 0;
+			char halfSuffix = positiveHalf ? '+' : '-';
+			Common::String hwId = String::format("%s%c", hw->hwId, halfSuffix);
+			Common::String desc = String::format("%s%c", hw->desc, halfSuffix);
+			return HardwareInput::createJoystickHalfAxis(hwId, hw->code, positiveHalf, desc);
+		}
+	}
+
+	default:
+		return HardwareInput();
+	}
+}
+
+CustomHardwareInputSet::CustomHardwareInputSet(const HardwareInputTableEntry *hardwareEntries) :
+		_hardwareEntries(hardwareEntries) {
+	assert(_hardwareEntries);
+}
+
+HardwareInput CustomHardwareInputSet::findHardwareInput(const String &id) const {
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_hardwareEntries, id);
+	if (!hw || !hw->hwId) {
+		return HardwareInput();
+	}
+
+	return HardwareInput::createCustom(hw->hwId, hw->code, hw->desc);
+}
+
+HardwareInput CustomHardwareInputSet::findHardwareInput(const Event &event) const {
+	switch (event.type) {
+	case EVENT_CUSTOM_BACKEND_HARDWARE: {
+		const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithCode(_hardwareEntries, event.customType);
+		if (!hw || !hw->hwId) {
+			return HardwareInput();
+		}
+
+		return HardwareInput::createCustom(hw->hwId, hw->code, hw->desc);
+	}
+	default:
+		return HardwareInput();
+	}
+}
+
+CompositeHardwareInputSet::~CompositeHardwareInputSet() {
+	for (uint i = 0; i < _inputSets.size(); i++) {
+		delete _inputSets[i];
+	}
+}
+
+HardwareInput CompositeHardwareInputSet::findHardwareInput(const String &id) const {
+	for (uint i = 0; i < _inputSets.size(); i++) {
+		HardwareInput hardwareInput = _inputSets[i]->findHardwareInput(id);
+		if (hardwareInput.type != kHardwareInputTypeInvalid) {
+			return hardwareInput;
+		}
+	}
+
+	return HardwareInput();
+}
+
+HardwareInput CompositeHardwareInputSet::findHardwareInput(const Event &event) const {
+	for (uint i = 0; i < _inputSets.size(); i++) {
+		HardwareInput hardwareInput = _inputSets[i]->findHardwareInput(event);
+		if (hardwareInput.type != kHardwareInputTypeInvalid) {
+			return hardwareInput;
+		}
+	}
+
+	return HardwareInput();
+}
+
+void CompositeHardwareInputSet::addHardwareInputSet(HardwareInputSet *hardwareInputSet) {
+	_inputSets.push_back(hardwareInputSet);
 }
 
 } //namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
-

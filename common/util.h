@@ -52,7 +52,7 @@ template<typename T> inline T CLIP(T v, T amin, T amax)
 		{ if (v < amin) return amin; else if (v > amax) return amax; else return v; }
 
 /**
- * Template method which swaps the vaulues of its two parameters.
+ * Template method which swaps the values of its two parameters.
  */
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 

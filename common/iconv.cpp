@@ -29,7 +29,7 @@
 
 namespace Common {
 
-static const char **getIconvCodesForEncoding(Encoding encoding) {
+static const char **getIconvCodesForEncoding(IconvEncoding encoding) {
 	static const char *encodingCP932Codes[]  = { "cp932",  nullptr };
 	static const char *encodingCP1250Codes[] = { "cp1250", nullptr };
 	static const char *encodingCP1251Codes[] = { "cp1251", nullptr };
@@ -51,7 +51,7 @@ static const char **getIconvCodesForEncoding(Encoding encoding) {
 	error("Failed look up iconv codes for encoding '%d'", encoding);
 }
 
-U32String convertToU32String(Encoding fromEncoding, const String &string) {
+U32String convertToU32String(IconvEncoding fromEncoding, const String &string) {
 	const char **fromCodes = getIconvCodesForEncoding(fromEncoding);
 
 	// Apparently UTF-32 isn't native endian. Also, UCS−4−INTERNAL fails

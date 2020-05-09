@@ -28,11 +28,13 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "backends/events/default/default-events.h"
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/remap-dialog.h"
+#include "backends/keymapper/virtual-mouse.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
+#include "gui/debugger.h"
 #include "gui/message.h"
 
 DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
@@ -40,8 +42,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_modifierState(0),
 	_shouldQuit(false),
 	_shouldRTL(false),
-	_confirmExitDialogActive(false),
-	_shouldGenerateKeyRepeatEvents(true) {
+	_confirmExitDialogActive(false) {
 
 	assert(boss);
 
@@ -50,26 +51,22 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 
 	_dispatcher.registerObserver(this, kEventManPriority, false);
 
-	// Reset key repeat
-	_keyRepeatTime = 0;
-
 #ifdef ENABLE_VKEYBD
 	_vk = nullptr;
 #endif
-#ifdef ENABLE_KEYMAPPER
+
+	_virtualMouse = new Common::VirtualMouse(&_dispatcher);
+
 	_keymapper = new Common::Keymapper(this);
-	// EventDispatcher will automatically free the keymapper
 	_dispatcher.registerMapper(_keymapper);
-	_remap = false;
-#else
-	_dispatcher.registerMapper(new Common::DefaultEventMapper());
-#endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
+	delete _virtualMouse;
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
+	delete _keymapper;
 }
 
 void DefaultEventManager::init() {
@@ -87,9 +84,9 @@ void DefaultEventManager::init() {
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	_dispatcher.dispatch();
 
-	if (_shouldGenerateKeyRepeatEvents) {
-		handleKeyRepeat();
-	}
+	if (g_engine)
+		// Handle autosaves if enabled
+		g_engine->handleAutoSave();
 
 	if (_eventQueue.empty()) {
 		return false;
@@ -97,6 +94,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 	event = _eventQueue.pop();
 	bool forwardEvent = true;
+
+	// If the backend has the kFeatureNoQuit, replace Quit event with RTL
+	if (event.type == Common::EVENT_QUIT && g_system->hasFeature(OSystem::kFeatureNoQuit))
+		event.type = Common::EVENT_RTL;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -111,7 +112,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// key pressed. A better fix would be for engines to stop
 			// making invalid assumptions about ascii values.
 			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
-			_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
 		}
 		break;
 
@@ -169,20 +169,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		}
 		break;
 #endif
-#ifdef ENABLE_KEYMAPPER
-	case Common::EVENT_KEYMAPPER_REMAP:
-		if (!_remap) {
-			_remap = true;
-			Common::RemapDialog _remapDialog;
-			if (g_engine)
-				g_engine->pauseEngine(true);
-			_remapDialog.runModal();
-			if (g_engine)
-				g_engine->pauseEngine(false);
-			_remap = false;
-		}
-		break;
-#endif
 	case Common::EVENT_RTL:
 		if (ConfMan.getBool("confirm_exit")) {
 			if (g_engine)
@@ -214,55 +200,34 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (g_engine)
 				g_engine->pauseEngine(false);
 			_confirmExitDialogActive = false;
-		} else
+		} else {
 			_shouldQuit = true;
-
+		}
 		break;
+
+	case Common::EVENT_DEBUGGER: {
+		GUI::Debugger *debugger = g_engine ? g_engine->getOrCreateDebugger() : nullptr;
+		if (debugger) {
+			debugger->attach();
+			debugger->onFrame();
+			forwardEvent = false;
+		}
+		break;
+	}
+
+	case Common::EVENT_INPUT_CHANGED: {
+		Common::HardwareInputSet *inputSet = g_system->getHardwareInputSet();
+		Common::KeymapperDefaultBindings *backendDefaultBindings = g_system->getKeymapperDefaultBindings();
+
+		_keymapper->registerHardwareInputSet(inputSet, backendDefaultBindings);
+		break;
+	}
 
 	default:
 		break;
 	}
 
 	return forwardEvent;
-}
-
-void DefaultEventManager::handleKeyRepeat() {
-	uint32 time = g_system->getMillis(true);
-
-	if (!_eventQueue.empty()) {
-		// Peek in the event queue
-		const Common::Event &nextEvent = _eventQueue.front();
-
-		switch (nextEvent.type) {
-		case Common::EVENT_KEYDOWN:
-			// init continuous event stream
-			_currentKeyDown = nextEvent.kbd;
-			_keyRepeatTime = time + kKeyRepeatInitialDelay;
-			break;
-
-		case Common::EVENT_KEYUP:
-			if (nextEvent.kbd.keycode == _currentKeyDown.keycode) {
-				// Only stop firing events if it's the current key
-				_currentKeyDown.keycode = Common::KEYCODE_INVALID;
-			}
-			break;
-
-		default:
-			break;
-		}
-	} else {
-		// Check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != Common::KEYCODE_INVALID && _keyRepeatTime <= time) {
-			// fire event
-			Common::Event repeatEvent;
-			repeatEvent.type = Common::EVENT_KEYDOWN;
-			repeatEvent.kbdRepeat = true;
-			repeatEvent.kbd = _currentKeyDown;
-			_keyRepeatTime = time + kKeyRepeatSustainDelay;
-
-			_eventQueue.push(repeatEvent);
-		}
-	}
 }
 
 void DefaultEventManager::pushEvent(const Common::Event &event) {
@@ -306,6 +271,10 @@ void DefaultEventManager::purgeMouseEvents() {
 		case Common::EVENT_WHEELDOWN:
 		case Common::EVENT_MBUTTONDOWN:
 		case Common::EVENT_MBUTTONUP:
+		case Common::EVENT_X1BUTTONDOWN:
+		case Common::EVENT_X1BUTTONUP:
+		case Common::EVENT_X2BUTTONDOWN:
+		case Common::EVENT_X2BUTTONUP:
 		case Common::EVENT_MOUSEMOVE:
 			// do nothing
 			break;
@@ -315,6 +284,63 @@ void DefaultEventManager::purgeMouseEvents() {
 		}
 	}
 	_eventQueue = filteredQueue;
+}
+
+Common::Keymap *DefaultEventManager::getGlobalKeymap() {
+	using namespace Common;
+
+	// Now create the global keymap
+	Keymap *globalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName, _("Global"));
+
+	Action *act;
+	act = new Action("MENU", _("Global Main Menu"));
+	act->addDefaultInputMapping("C+F5");
+	act->addDefaultInputMapping("JOY_START");
+	act->setEvent(EVENT_MAINMENU);
+	globalKeymap->addAction(act);
+
+#ifdef ENABLE_VKEYBD
+	act = new Action("VIRT", _("Display keyboard"));
+	act->addDefaultInputMapping("C+F7");
+	act->addDefaultInputMapping("JOY_BACK");
+	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
+	globalKeymap->addAction(act);
+#endif
+
+	act = new Action("MUTE", _("Toggle mute"));
+	act->addDefaultInputMapping("C+u");
+	act->setEvent(EVENT_MUTE);
+	globalKeymap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setEvent(EVENT_QUIT);
+
+#if defined(MACOSX)
+	// On Macintosh, Cmd-Q quits
+	act->addDefaultInputMapping("M+q");
+#elif defined(POSIX)
+	// On other *nix systems, Control-Q quits
+	act->addDefaultInputMapping("C+q");
+#else
+	// Ctrl-z quits
+	act->addDefaultInputMapping("C+z");
+
+#ifdef WIN32
+	// On Windows, also use the default Alt-F4 quit combination
+	act->addDefaultInputMapping("A+F4");
+#endif
+#endif
+
+	globalKeymap->addAction(act);
+
+	act = new Action("DEBUGGER", _("Open Debugger"));
+	act->addDefaultInputMapping("C+A+d");
+	act->setEvent(EVENT_DEBUGGER);
+	globalKeymap->addAction(act);
+
+	_virtualMouse->addActionsToKeymap(globalKeymap);
+
+	return globalKeymap;
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

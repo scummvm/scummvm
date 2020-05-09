@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	fonts/newfont.o \
 	fonts/ttf.o \
 	fonts/winfont.o \
+	larryScale.o \
 	maccursor.o \
 	managed_surface.o \
 	nine_patch.o \

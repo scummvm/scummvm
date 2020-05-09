@@ -26,9 +26,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/fs/stdiostream.h"
-#ifdef _WIN32_WCE
-#include "backends/platform/wince/missing/fopen.h"
-#endif
 
 StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);
@@ -71,6 +68,14 @@ uint32 StdioStream::read(void *ptr, uint32 len) {
 	return fread((byte *)ptr, 1, len, (FILE *)_handle);
 }
 
+bool StdioStream::setBufferSize(uint32 bufferSize) {
+	if (bufferSize != 0) {
+		return setvbuf((FILE *)_handle, nullptr, _IOFBF, bufferSize) == 0;
+	} else {
+		return setvbuf((FILE *)_handle, nullptr, _IONBF, 0) == 0;
+	}
+}
+
 uint32 StdioStream::write(const void *ptr, uint32 len) {
 	return fwrite(ptr, 1, len, (FILE *)_handle);
 }
@@ -81,25 +86,6 @@ bool StdioStream::flush() {
 
 StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
 	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
-
-#ifdef __amigaos4__
-	//
-	// Work around for possibility that someone uses AmigaOS "newlib" build
-	// with SmartFileSystem (blocksize 512 bytes), leading to buffer size
-	// being only 512 bytes. "Clib2" sets the buffer size to 8KB, resulting
-	// smooth movie playback. This forces the buffer to be enough also when
-	// using "newlib" compile on SFS.
-	//
-	if (handle && !writeMode) {
-		setvbuf(handle, NULL, _IOFBF, 8192);
-	}
-#endif
-
-#if defined(__WII__)
-	// disable newlib's buffering, the device libraries handle caching
-	if (handle)
-		setvbuf(handle, NULL, _IONBF, 0);
-#endif
 
 	if (handle)
 		return new StdioStream(handle);

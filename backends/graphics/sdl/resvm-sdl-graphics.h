@@ -37,7 +37,7 @@ class SdlEventSource;
  *
  * Used to share reusable methods between SDL graphics managers
  */
-class ResVmSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
+class ResVmSdlGraphicsManager : public SdlGraphicsManager {
 public:
 	/**
 	 * Capabilities of the current device
@@ -101,7 +101,7 @@ public:
 	Graphics::Surface *lockScreen() override;
 	void unlockScreen() override;
 	void fillScreen(uint32 col) override;
-	void setShakePos(int shakeOffset) override;
+	void setShakePos(int shakeXOffset, int shakeYOffset) override;
 	void saveScreenshot() override;
 
 	// GraphicsManager API - Focus Rectangle
@@ -149,6 +149,10 @@ protected:
 
 	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
 	Common::Rect getPreferredFullscreenResolution();
+
+	virtual int getGraphicsModeScale(int mode) const = 0;
+
+	virtual bool gameNeedsAspectRatioCorrection() const override;
 
 	/** Save a screenshot to the specified file */
 	virtual bool saveScreenshot(const Common::String &file) const  = 0;

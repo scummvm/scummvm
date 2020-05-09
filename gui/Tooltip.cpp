@@ -32,7 +32,7 @@ namespace GUI {
 
 
 Tooltip::Tooltip() :
-	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(NULL), _xdelta(0), _ydelta(0) {
+	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(nullptr), _xdelta(0), _ydelta(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
@@ -54,6 +54,15 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 
 	_x = MIN<int16>(parent->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
 	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
+#ifdef USE_TTS
+	if (ConfMan.hasKey("tts_enabled", "residualvm") &&
+			ConfMan.getBool("tts_enabled", "residualvm")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan == nullptr)
+			return;
+		ttsMan->say(widget->getTooltip(), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	}
+#endif
 }
 
 void Tooltip::drawDialog(DrawLayer layerToDraw) {

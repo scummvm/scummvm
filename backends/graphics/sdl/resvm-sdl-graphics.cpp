@@ -23,7 +23,7 @@
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
 
 #include "backends/platform/sdl/sdl-sys.h"
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/resvm-sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 
 #include "common/config-manager.h"
@@ -197,7 +197,7 @@ void ResVmSdlGraphicsManager::setCursorPalette(const byte *colors, uint start, u
 	// ResidualVM: not use it
 }
 
-void ResVmSdlGraphicsManager::setShakePos(int shake_pos) {
+void ResVmSdlGraphicsManager::setShakePos(int shakeXOffset, int shakeYOffset) {
 	// ResidualVM: not use it
 }
 
@@ -286,39 +286,50 @@ bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 }
 
 void ResVmSdlGraphicsManager::saveScreenshot() {
-	OSystem_SDL *g_systemSdl = dynamic_cast<OSystem_SDL*>(g_system);
+	Common::String filename;
 
-	if (g_systemSdl) {
-		Common::String filename;
-		Common::String path = g_systemSdl->getScreenshotsPath();
+	Common::String screenshotsPath;
+	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+	if (sdl_g_system)
+		screenshotsPath = sdl_g_system->getScreenshotsPath();
 
-		// Find unused filename
-		int n = 0;
-		while (true) {
+	// Use the name of the running target as a base for screenshot file names
+	Common::String currentTarget = ConfMan.getActiveDomainName();
+
 #ifdef USE_PNG
-			filename = Common::String::format("residualvm%05d.png", n);
+	const char *extension = "png";
 #else
-			filename = Common::String::format("residualvm%05d.bmp", n);
+	const char *extension = "bmp";
 #endif
-			SDL_RWops *file = SDL_RWFromFile((path + filename).c_str(), "r");
-			if (!file) {
-				break;
-			}
-			SDL_RWclose(file);
 
-			++n;
-		}
+	for (int n = 0;; n++) {
+		filename = Common::String::format("resiudalvm%s%s-%05d.%s", currentTarget.empty() ? "" : "-",
+		                                  currentTarget.c_str(), n, extension);
 
-		if (saveScreenshot(path + filename)) {
-			if (path.empty())
-				debug("Saved screenshot '%s' in current directory", filename.c_str());
-			else
-				debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), path.c_str());
-		} else {
-			if (path.empty())
-				warning("Could not save screenshot in current directory");
-			else
-				warning("Could not save screenshot in directory '%s'", path.c_str());
+		Common::FSNode file = Common::FSNode(screenshotsPath + filename);
+		if (!file.exists()) {
+			break;
 		}
 	}
+
+	if (saveScreenshot(screenshotsPath + filename)) {
+		if (screenshotsPath.empty())
+			debug("Saved screenshot '%s' in current directory", filename.c_str());
+		else
+			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+	} else {
+		if (screenshotsPath.empty())
+			warning("Could not save screenshot in current directory");
+		else
+			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+	}
+}
+
+bool ResVmSdlGraphicsManager::gameNeedsAspectRatioCorrection() const {
+	// ResidualVM: not use it
+	return false;
+}
+
+int ResVmSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+	return -1;
 }

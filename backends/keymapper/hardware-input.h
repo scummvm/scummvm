@@ -25,22 +25,28 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
+#include "common/array.h"
+#include "common/events.h"
 #include "common/keyboard.h"
-#include "common/list.h"
 #include "common/str.h"
-#include "common/textconsole.h"
 
 namespace Common {
 
 typedef uint32 HardwareInputCode;
 
 enum HardwareInputType {
+	/** Empty / invalid input type */
+	kHardwareInputTypeInvalid,
+	/** Keyboard input that sends -up and -down events */
+	kHardwareInputTypeKeyboard,
+	/** Mouse input that sends -up and -down events */
+	kHardwareInputTypeMouse,
+	/** Joystick input that sends -up and -down events */
+	kHardwareInputTypeJoystickButton,
+	/** Joystick input that sends "analog" values */
+	kHardwareInputTypeJoystickHalfAxis,
 	/** Input that sends single events */
-	kHardwareInputTypeGeneric,
-	/** Input that usually send -up and -down events */
-	kHardwareInputTypeKeyboard
+	kHardwareInputTypeCustom
 };
 
 /**
@@ -53,7 +59,8 @@ struct HardwareInput {
 	/** Human readable description */
 	String description;
 
-	const HardwareInputType type;
+	/** Type tag */
+	HardwareInputType type;
 
 	/**
 	 * A platform specific unique identifier for an input event
@@ -69,17 +76,71 @@ struct HardwareInput {
 	 */
 	KeyState key;
 
-	HardwareInput(String i, HardwareInputCode ic = 0, String desc = "")
-		: id(i), inputCode(ic), description(desc), type(kHardwareInputTypeGeneric) { }
+	HardwareInput()
+		: inputCode(0), type(kHardwareInputTypeInvalid) { }
 
-	HardwareInput(String i, KeyState ky, String desc = "")
-		: id(i), key(ky), description(desc), type(kHardwareInputTypeKeyboard) { }
+	static HardwareInput createCustom(const String &i, HardwareInputCode ic, const String &desc) {
+		return createSimple(kHardwareInputTypeCustom, i, ic, desc);
+	}
+
+	static HardwareInput createKeyboard(const String &i, KeyState ky, const String &desc) {
+		HardwareInput hardwareInput;
+		hardwareInput.id = i;
+		hardwareInput.description = desc;
+		hardwareInput.type = kHardwareInputTypeKeyboard;
+		hardwareInput.inputCode = 0;
+		hardwareInput.key = ky;
+		return hardwareInput;
+	}
+
+	static HardwareInput createJoystickButton(const String &i, uint8 button, const String &desc) {
+		return createSimple(kHardwareInputTypeJoystickButton, i, button, desc);
+	}
+
+	static HardwareInput createJoystickHalfAxis(const String &i, uint8 axis, bool positiveHalf, const String &desc) {
+		return createSimple(kHardwareInputTypeJoystickHalfAxis, i, axis * 2 + (positiveHalf ? 1 : 0), desc);
+	}
+
+	static HardwareInput createMouse(const String &i, uint8 button, const String &desc) {
+		return createSimple(kHardwareInputTypeMouse, i, button, desc);
+	}
+
+private:
+	static HardwareInput createSimple(HardwareInputType type, const String &i, HardwareInputCode ic, const String &desc) {
+		HardwareInput hardwareInput;
+		hardwareInput.id = i;
+		hardwareInput.description = desc;
+		hardwareInput.type = type;
+		hardwareInput.inputCode = ic;
+		return hardwareInput;
+	}
 };
 
+/**
+ * Entry in a static table of custom backend hardware inputs
+ */
 struct HardwareInputTableEntry {
 	const char *hwId;
 	HardwareInputCode code;
 	const char *desc;
+
+	static const HardwareInputTableEntry *findWithCode(const HardwareInputTableEntry *_entries, HardwareInputCode code) {
+		for (const HardwareInputTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (hw->code == code) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
+
+	static const HardwareInputTableEntry *findWithId(const HardwareInputTableEntry *_entries, const String &id) {
+		for (const HardwareInputTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (id.equals(hw->hwId)) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
 };
 
 /**
@@ -88,9 +149,7 @@ struct HardwareInputTableEntry {
 struct KeyTableEntry {
 	const char *hwId;
 	KeyCode keycode;
-	uint16 ascii;
 	const char *desc;
-	bool shiftable;
 };
 
 /**
@@ -100,61 +159,176 @@ struct ModifierTableEntry {
 	byte flag;
 	const char *id;
 	const char *desc;
-	bool shiftable;
 };
 
+enum AxisType {
+	/** An axis that sends "analog" values from JOYAXIS_MIN to JOYAXIS_MAX. e.g. a gamepad stick axis */
+	kAxisTypeFull,
+	/** An axis that sends "analog" values from 0 to JOYAXIS_MAX. e.g. a gamepad trigger */
+	kAxisTypeHalf
+};
+
+struct AxisTableEntry {
+	const char *hwId;
+	HardwareInputCode code;
+	AxisType type;
+	const char *desc;
+
+	static const AxisTableEntry *findWithCode(const AxisTableEntry *_entries, HardwareInputCode code) {
+		for (const AxisTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (hw->code == code) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
+
+	static const AxisTableEntry *findWithId(const AxisTableEntry *_entries, const String &id) {
+		for (const AxisTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (id.equals(hw->hwId)) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
+};
+
+
 /**
- * Simple class to encapsulate a device's set of HardwareInputs.
- * Each device should instantiate this and call addHardwareInput a number of times
- * in its constructor to define the device's available keys.
+ * Interface for querying information about a hardware input device
  */
 class HardwareInputSet {
 public:
-
-	/**
-	 * Add hardware input keys to the set out of key and modifier tables.
-	 * @param useDefault	auto-add the built-in default inputs
-	 * @param keys       	table of available keys
-	 * @param modifiers  	table of available modifiers
-	 */
-	HardwareInputSet(bool useDefault = false, const KeyTableEntry keys[] = 0, const ModifierTableEntry modifiers[] = 0);
-
 	virtual ~HardwareInputSet();
 
-	void addHardwareInput(const HardwareInput *input);
-
-	const HardwareInput *findHardwareInput(String id) const;
-
-	const HardwareInput *findHardwareInput(const HardwareInputCode code) const;
-
-	const HardwareInput *findHardwareInput(const KeyState& keystate) const;
-
-	const List<const HardwareInput *> &getHardwareInputs() const { return _inputs; }
-
-	uint size() const { return _inputs.size(); }
+	/**
+	 * Retrieve a hardware input description from an unique identifier
+	 *
+	 * In case no input was found with the specified id, an empty
+	 * HardwareInput structure is return with the type set to
+	 * kHardwareInputTypeInvalid.
+	 */
+	virtual HardwareInput findHardwareInput(const String &id) const = 0;
 
 	/**
-	 * Add hardware inputs to the set out of a table.
-	 * @param inputs       table of available inputs
+	 * Retrieve a hardware input description from one of the events
+	 * produced when the input is triggered.
+	 *
+	 * In case the specified event is not produced by this device,
+	 * an empty HardwareInput structure is return with the type set to
+	 * kHardwareInputTypeInvalid.
 	 */
-	void addHardwareInputs(const HardwareInputTableEntry inputs[]);
-
-	/**
-	 * Add hardware inputs to the set out of key and modifier tables.
-	 * @param keys       table of available keys
-	 * @param modifiers  table of available modifiers
-	 */
-	void addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]);
-
-	void removeHardwareInput(const HardwareInput *input);
-
-private:
-
-	List<const HardwareInput *> _inputs;
+	virtual HardwareInput findHardwareInput(const Event &event) const = 0;
 };
 
-} // End of namespace Common
+/**
+ * A keyboard input device
+ *
+ * Describes the keys and key + modifiers combinations as HardwareInputs
+ */
+class KeyboardHardwareInputSet : public HardwareInputSet {
+public:
+	KeyboardHardwareInputSet(const KeyTableEntry *keys, const ModifierTableEntry *modifiers);
 
-#endif // #ifdef ENABLE_KEYMAPPER
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+	/** Transform a keystate into a canonical form that can be used to unambiguously identify the keypress */
+	static KeyState normalizeKeyState(const KeyState &keystate);
+
+private:
+	const KeyTableEntry *_keys;
+	const ModifierTableEntry *_modifiers;
+};
+
+/**
+ * A mouse input device
+ *
+ * Describes the mouse buttons
+ */
+class MouseHardwareInputSet : public HardwareInputSet {
+public:
+	MouseHardwareInputSet(const HardwareInputTableEntry *buttonEntries);
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+private:
+	const HardwareInputTableEntry *_buttonEntries;
+};
+
+/**
+ * A joystick input device
+ */
+class JoystickHardwareInputSet : public HardwareInputSet {
+public:
+	JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries, const AxisTableEntry *axisEntries);
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+private:
+	const HardwareInputTableEntry *_buttonEntries;
+	const AxisTableEntry *_axisEntries;
+};
+
+/**
+ * A custom backend input device
+ *
+ * @todo This is currently unused. Perhaps it should be removed.
+ */
+class CustomHardwareInputSet : public HardwareInputSet {
+public:
+	CustomHardwareInputSet(const HardwareInputTableEntry *hardwareEntries);
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+private:
+	const HardwareInputTableEntry *_hardwareEntries;
+};
+
+/**
+ * A composite input device that delegates to a set of actual input devices.
+ */
+class CompositeHardwareInputSet : public HardwareInputSet {
+public:
+	~CompositeHardwareInputSet() override;
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+	/**
+	 * Add an input device to this composite device
+	 *
+	 * Takes ownership of the hardware input set
+	 */
+	void addHardwareInputSet(HardwareInputSet *hardwareInputSet);
+
+private:
+	Array<HardwareInputSet *> _inputSets;
+};
+
+/** A standard set of keyboard keys */
+extern const KeyTableEntry defaultKeys[];
+
+/** A standard set of keyboard modifiers */
+extern const ModifierTableEntry defaultModifiers[];
+
+/** A standard set of mouse buttons */
+extern const HardwareInputTableEntry defaultMouseButtons[];
+
+/** A standard set of joystick buttons based on the ScummVM event model */
+extern const HardwareInputTableEntry defaultJoystickButtons[];
+
+/** A standard set of joystick axes based on the ScummVM event model */
+extern const AxisTableEntry defaultJoystickAxes[];
+
+} // End of namespace Common
 
 #endif // #ifndef COMMON_HARDWARE_KEY_H

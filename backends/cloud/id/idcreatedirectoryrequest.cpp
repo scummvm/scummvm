@@ -53,10 +53,10 @@ void IdCreateDirectoryRequest::start() {
 	Common::String prefix = _requestedParentPath;
 	if (prefix.size() > 7)
 		prefix.erase(7);
-	if (prefix.equalsIgnoreCase("ScummVM")) {
+	if (prefix.equalsIgnoreCase("ResidualVM")) {
 		Storage::BoolCallback callback = new Common::Callback<IdCreateDirectoryRequest, Storage::BoolResponse>(this, &IdCreateDirectoryRequest::createdBaseDirectoryCallback);
 		Networking::ErrorCallback failureCallback = new Common::Callback<IdCreateDirectoryRequest, Networking::ErrorResponse>(this, &IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback);
-		_workingRequest = _storage->createDirectory("ScummVM", callback, failureCallback);
+		_workingRequest = _storage->createDirectory("ResidualVM", callback, failureCallback);
 		return;
 	}
 

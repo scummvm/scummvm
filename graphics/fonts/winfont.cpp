@@ -77,62 +77,20 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 }
 
 bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
-	// First try loading via the NE code
-	if (loadFromNE(fileName, dirEntry))
-		return true;
-
-	// Then try loading via the PE code
-	return loadFromPE(fileName, dirEntry);
-}
-
-bool WinFont::loadFromNE(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
-	Common::NEResources exe;
-
-	if (!exe.loadFromEXE(fileName))
+	Common::WinResources *exe = Common::WinResources::createFromEXE(fileName);
+	if (!exe)
 		return false;
 
-	// Let's pull out the font directory
-	Common::SeekableReadStream *fontDirectory = exe.getResource(Common::kWinFontDir, Common::String("FONTDIR"));
-	if (!fontDirectory) {
-		warning("No font directory in '%s'", fileName.c_str());
-		return false;
-	}
-
-	uint32 fontId = getFontIndex(*fontDirectory, dirEntry);
-
-	delete fontDirectory;
-
-	// Couldn't match the face name
-	if (fontId == 0xffffffff) {
-		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(), fileName.c_str());
-		return false;
-	}
-
-	// Actually go get our font now...
-	Common::SeekableReadStream *fontStream = exe.getResource(Common::kWinFont, fontId);
-	if (!fontStream) {
-		warning("Could not find font %d in %s", fontId, fileName.c_str());
-		return false;
-	}
-
-	bool ok = loadFromFNT(*fontStream);
-	delete fontStream;
+	bool ok = loadFromEXE(exe, fileName, dirEntry);
+	delete exe;
 	return ok;
 }
 
-bool WinFont::loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
-	Common::PEResources *exe = new Common::PEResources();
-
-	if (!exe->loadFromEXE(fileName)) {
-		delete exe;
-		return false;
-	}
-
+bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry) {
 	// Let's pull out the font directory
 	Common::SeekableReadStream *fontDirectory = exe->getResource(Common::kWinFontDir, Common::String("FONTDIR"));
 	if (!fontDirectory) {
 		warning("No font directory in '%s'", fileName.c_str());
-		delete exe;
 		return false;
 	}
 
@@ -143,7 +101,6 @@ bool WinFont::loadFromPE(const Common::String &fileName, const WinFontDirEntry &
 	// Couldn't match the face name
 	if (fontId == 0xffffffff) {
 		warning("Could not find face '%s' in '%s'", dirEntry.faceName.c_str(), fileName.c_str());
-		delete exe;
 		return false;
 	}
 
@@ -151,13 +108,11 @@ bool WinFont::loadFromPE(const Common::String &fileName, const WinFontDirEntry &
 	Common::SeekableReadStream *fontStream = exe->getResource(Common::kWinFont, fontId);
 	if (!fontStream) {
 		warning("Could not find font %d in %s", fontId, fileName.c_str());
-		delete exe;
 		return false;
 	}
 
 	bool ok = loadFromFNT(*fontStream);
 	delete fontStream;
-	delete exe;
 	return ok;
 }
 

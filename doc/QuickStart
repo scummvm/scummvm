@@ -95,20 +95,21 @@ our website for that game, to ensure the issue is not already known:
 
   https://www.residualvm.org/compatibility/
 
-Please do not report bugs on games that are not listed as being
+Please do not report bugs for games that are not listed as being
 completeable in the 'Supported Games' section, or compatibility list. We
 -know- those games have bugs.
 
 Please include the following information:
-    - ResidualVM version (PLEASE test the latest git/Daily build)
-    - Bug details, including instructions on reproducing
-    - Language of game (English, German, ...)
-    - Version of game (talkie, floppy, ...)
-    - Platform and Compiler (Win32, Linux, FreeBSD, ...)
-    - Attach a savegame if possible
-    - If this bug only occurred recently, please note the last version
-      without the bug, and the first version including the bug. That way
-      we can fix it quicker by looking at the changes made.
+
+  - ResidualVM version (PLEASE test the latest git/Daily build)
+  - Bug details, including instructions on reproducing
+  - Language of game (English, German, ...)
+  - Version of game (talkie, floppy, ...)
+  - Platform and Compiler (Win32, Linux, FreeBSD, ...)
+  - Attach a saved game if possible - If this bug only occurred
+    recently, please note the last version without the bug, and the
+    first version including the bug. That way we can fix it quicker by
+    looking at the changes made.
 
 Finally, please report each issue separately; do not file multiple
 issues on the same ticket. (Otherwise, it gets difficult to track the

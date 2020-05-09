@@ -28,8 +28,12 @@
 
 #include "common/events.h"
 
-// multiplier used to increase resolution for keyboard/joystick mouse
-#define MULTIPLIER 16
+// Type names which changed between SDL 1.2 and SDL 2.
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+typedef SDLKey     SDL_Keycode;
+typedef SDLMod     SDL_Keymod;
+typedef SDL_keysym SDL_Keysym;
+#endif
 
 /**
  * The SDL event source.
@@ -47,36 +51,20 @@ public:
 	virtual bool pollEvent(Common::Event &event);
 
 	/**
-	 * Resets keyboard emulation after a video screen change
-	 */
-	virtual void resetKeyboardEmulation(int16 x_max, int16 y_max);
-
-	/**
 	 * Emulates a mouse movement that would normally be caused by a mouse warp
 	 * of the system mouse.
 	 */
 	void fakeWarpMouse(const int x, const int y);
 
+	/** Returns whether a joystick is currently connected */
+	bool isJoystickConnected() const;
+
 protected:
-	/** @name Keyboard mouse emulation
-	 * Disabled by fingolfin 2004-12-18.
-	 * I am keeping the rest of the code in for now, since the joystick
-	 * code (or rather, "hack") uses it, too.
-	 */
-	//@{
-
-	struct KbdMouse {
-		int32 x, y;
-		int16 x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, joy_x, joy_y;
-		uint32 last_time, delay_time, x_down_time, y_down_time;
-		bool modifier;
-	};
-	KbdMouse _km;
-
-	//@}
-
 	/** Scroll lock state - since SDL doesn't track it */
 	bool _scrollLock;
+
+	int _mouseX;
+	int _mouseY;
 
 	/** Joystick */
 	SDL_Joystick *_joystick;
@@ -139,15 +127,16 @@ protected:
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleSysWMEvent(SDL_Event &ev, Common::Event &event);
+	virtual int mapSDLJoystickButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
-	virtual void updateKbdMouse();
-	virtual bool handleKbdMouse(Common::Event &event);
+	virtual bool handleJoyHatMotion(SDL_Event &ev, Common::Event &event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &event);
-	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device);
+	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &device, Common::Event &event);
+	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device, Common::Event &event);
+	virtual int mapSDLControllerButtonToOSystem(Uint8 sdlButton);
 	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
 	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
 #endif
@@ -155,21 +144,10 @@ protected:
 	//@}
 
 	/**
-	 * Update the virtual mouse according to a joystick or game controller axis position change
-	 */
-	virtual bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
-
-	/**
-	 * Compute the virtual mouse movement speed factor according to the 'kbdmouse_speed' setting.
-	 * The speed factor is scaled with the display size.
-	 */
-	int16 computeJoystickMouseSpeedFactor() const;
-
-	/**
 	 * Assigns the mouse coords to the mouse event. Furthermore notify the
 	 * graphics manager about the position change.
 	 * ResidualVM addon:
-	 * The parameters relx and rely for relative mouse movement are Residual specific
+	 * The parameters relx and rely for relative mouse movement are ResidualVM specific
 	 */
 	virtual bool processMouseEvent(Common::Event &event, int x, int y, int relx = 0, int rely = 0);
 
@@ -182,17 +160,17 @@ protected:
 	/**
 	 * Maps the ASCII value of key
 	 */
-	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+	virtual int mapKey(SDL_Keycode key, SDL_Keymod mod, Uint16 unicode);
 
 	/**
 	 * Configures the key modifiers flags status
 	 */
-	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
+	virtual void SDLModToOSystemKeyFlags(SDL_Keymod mod, Common::Event &event);
 
 	/**
 	 * Translates SDL key codes to OSystem key codes
 	 */
-	Common::KeyCode SDLToOSystemKeycode(const SDLKey key);
+	Common::KeyCode SDLToOSystemKeycode(const SDL_Keycode key);
 
 	/**
 	 * Notify graphics manager of a resize request.
@@ -203,12 +181,12 @@ protected:
 	 * Extracts unicode information for the specific key sym.
 	 * May only be used for key down events.
 	 */
-	uint32 obtainUnicode(const SDL_keysym keySym);
+	uint32 obtainUnicode(const SDL_Keysym keySym);
 
 	/**
 	 * Extracts the keycode for the specified key sym.
 	 */
-	SDLKey obtainKeycode(const SDL_keysym keySym);
+	SDL_Keycode obtainKeycode(const SDL_Keysym keySym);
 
 	/**
 	 * Whether _fakeMouseMove contains an event we need to send.
@@ -221,6 +199,8 @@ protected:
 	 * window is not focused).
 	 */
 	Common::Event _fakeMouseMove;
+
+	uint8 _lastHatPosition;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/**

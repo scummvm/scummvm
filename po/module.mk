@@ -39,12 +39,12 @@ updatepot:
 	else \
 		cp $@ $@.new; \
 	fi
+	# ResidualVM specific end <-
 	if cmp $@ $@.new >/dev/null 2>&1; then \
 		rm -f $@.new; \
 	else \
 		mv -f $@.new $@; \
 	fi;
-	# ResidualVM specific end <-
 
 translations-dat: devtools/create_translations
 	devtools/create_translations/create_translations $(POFILES) $(CPFILES)

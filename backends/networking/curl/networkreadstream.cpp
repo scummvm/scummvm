@@ -63,13 +63,18 @@ int NetworkReadStream::curlProgressCallbackOlder(void *p, double dltotal, double
 	return curlProgressCallback(p, (curl_off_t)dltotal, (curl_off_t)dlnow, (curl_off_t)ultotal, (curl_off_t)ulnow);
 }
 
-void NetworkReadStream::init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
+void NetworkReadStream::resetStream() {
 	_eos = _requestComplete = false;
-	_errorBuffer = (char *)calloc(CURL_ERROR_SIZE, 1);
+	if (!_errorBuffer)
+		_errorBuffer = (char *)calloc(CURL_ERROR_SIZE, 1);
 	_sendingContentsBuffer = nullptr;
 	_sendingContentsSize = _sendingContentsPos = 0;
 	_progressDownloaded = _progressTotal = 0;
 	_bufferCopy = nullptr;
+}
+
+void NetworkReadStream::initCurl(const char *url, curl_slist *headersList) {
+	resetStream();
 
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
@@ -87,6 +92,9 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
 	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
+#if defined NINTENDO_SWITCH || defined ANDROID_PLAIN_PORT || defined PSP2
+	curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
 
 	const char *caCertPath = ConnMan.getCaCertPath();
 	if (caCertPath) {
@@ -99,6 +107,33 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	curl_easy_setopt(_easy, CURLOPT_XFERINFOFUNCTION, curlProgressCallback);
 	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
 #endif
+
+#if LIBCURL_VERSION_NUM >= 0x071900
+	// Added in libcurl 7.25.0
+	if (_keepAlive) {
+		curl_easy_setopt(_easy, CURLOPT_TCP_KEEPALIVE, 1L);
+		curl_easy_setopt(_easy, CURLOPT_TCP_KEEPIDLE, _keepAliveIdle);
+		curl_easy_setopt(_easy, CURLOPT_TCP_KEEPINTVL, _keepAliveInterval);
+	}
+#endif
+}
+
+bool NetworkReadStream::reuseCurl(const char *url, curl_slist *headersList) {
+	if (!_keepAlive) {
+		warning("NetworkReadStream: Can't reuse curl handle (was not setup as keep-alive)");
+		return false;
+	}
+
+	resetStream();
+
+	curl_easy_setopt(_easy, CURLOPT_URL, url);
+	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
+	curl_easy_setopt(_easy, CURLOPT_USERAGENT, gScummVMFullVersion); // in case headersList rewrites it
+
+	return true;
+}
+
+void NetworkReadStream::setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
 	if (uploading) {
 		curl_easy_setopt(_easy, CURLOPT_UPLOAD, 1L);
 		curl_easy_setopt(_easy, CURLOPT_READDATA, this);
@@ -123,43 +158,7 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, const byt
 	ConnMan.registerEasyHandle(_easy);
 }
 
-void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
-	_eos = _requestComplete = false;
-	_errorBuffer = (char *)calloc(CURL_ERROR_SIZE, 1);
-	_sendingContentsBuffer = nullptr;
-	_sendingContentsSize = _sendingContentsPos = 0;
-	_progressDownloaded = _progressTotal = 0;
-	_bufferCopy = nullptr;
-
-	_easy = curl_easy_init();
-	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
-	curl_easy_setopt(_easy, CURLOPT_WRITEDATA, this); //so callback can call us
-	curl_easy_setopt(_easy, CURLOPT_PRIVATE, this); //so ConnectionManager can call us when request is complete
-	curl_easy_setopt(_easy, CURLOPT_HEADER, 0L);
-	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
-	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
-	curl_easy_setopt(_easy, CURLOPT_URL, url);
-	curl_easy_setopt(_easy, CURLOPT_ERRORBUFFER, _errorBuffer);
-	curl_easy_setopt(_easy, CURLOPT_VERBOSE, 0L);
-	curl_easy_setopt(_easy, CURLOPT_FOLLOWLOCATION, 1L); //probably it's OK to have it always on
-	curl_easy_setopt(_easy, CURLOPT_HTTPHEADER, headersList);
-	curl_easy_setopt(_easy, CURLOPT_USERAGENT, gScummVMFullVersion);
-	curl_easy_setopt(_easy, CURLOPT_NOPROGRESS, 0L);
-	curl_easy_setopt(_easy, CURLOPT_PROGRESSFUNCTION, curlProgressCallbackOlder);
-	curl_easy_setopt(_easy, CURLOPT_PROGRESSDATA, this);
-
-	const char *caCertPath = ConnMan.getCaCertPath();
-	if (caCertPath) {
-		curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
-	}
-
-#if LIBCURL_VERSION_NUM >= 0x072000
-	// CURLOPT_XFERINFOFUNCTION introduced in libcurl 7.32.0
-	// CURLOPT_PROGRESSFUNCTION is used as a backup plan in case older version is used
-	curl_easy_setopt(_easy, CURLOPT_XFERINFOFUNCTION, curlProgressCallback);
-	curl_easy_setopt(_easy, CURLOPT_XFERINFODATA, this);
-#endif
-
+void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
 	// set POST multipart upload form fields/files
 	struct curl_httppost *formpost = nullptr;
 	struct curl_httppost *lastptr = nullptr;
@@ -191,23 +190,52 @@ void NetworkReadStream::init(const char *url, curl_slist *headersList, Common::H
 	}
 
 	curl_easy_setopt(_easy, CURLOPT_HTTPPOST, formpost);
-
 	ConnMan.registerEasyHandle(_easy);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) :
-		_backingStream(DisposeAfterUse::YES) {
-	init(url, headersList, (const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
+		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+	initCurl(url, headersList);
+	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) :
-		_backingStream(DisposeAfterUse::YES) {
-	init(url, headersList, formFields, formFiles);
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
+		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+	initCurl(url, headersList);
+	setupFormMultipart(formFields, formFiles);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) :
-		_backingStream(DisposeAfterUse::YES) {
-	init(url, headersList, buffer, bufferSize, uploading, usingPatch, post);
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
+		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+	initCurl(url, headersList);
+	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
+}
+
+bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch) {
+	if (!reuseCurl(url, headersList))
+		return false;
+
+	_backingStream = Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
+	return true;
+}
+
+bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles) {
+	if (!reuseCurl(url, headersList))
+		return false;
+
+	_backingStream = Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+	setupFormMultipart(formFields, formFiles);
+	return true;
+}
+
+bool NetworkReadStream::reuse(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
+	if (!reuseCurl(url, headersList))
+		return false;
+
+	_backingStream = Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
+	return true;
 }
 
 NetworkReadStream::~NetworkReadStream() {

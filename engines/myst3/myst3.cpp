@@ -1601,7 +1601,7 @@ static bool isValidSaveFileName(const Common::String &desc) {
 	return true;
 }
 
-Common::Error Myst3Engine::saveGameState(int slot, const Common::String &desc) {
+Common::Error Myst3Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	assert(!desc.empty());
 
 	if (!isValidSaveFileName(desc)) {

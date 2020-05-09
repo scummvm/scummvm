@@ -28,12 +28,13 @@
 
 namespace Common {
 class SeekableReadStream;
+class WinResources;
 }
 
 namespace Graphics {
 
 struct WinFontDirEntry {
-	WinFontDirEntry() {}
+	WinFontDirEntry() : points(0) {}
 	WinFontDirEntry(const Common::String &name, uint16 p) : faceName(name), points(p) {}
 
 	// This is really just a simple identifier to match a directory entry with
@@ -67,8 +68,7 @@ public:
 	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 private:
-	bool loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
-	bool loadFromNE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
+	bool loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry);
 
 	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
 	bool loadFromFNT(Common::SeekableReadStream &stream);
@@ -83,7 +83,7 @@ private:
 
 	uint16 _glyphCount;
 	struct GlyphEntry {
-		GlyphEntry() { bitmap = 0; }
+		GlyphEntry() { bitmap = 0; charWidth = 0; offset = 0; }
 		~GlyphEntry() { delete[] bitmap; }
 
 		uint16 charWidth;

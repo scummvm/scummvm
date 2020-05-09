@@ -1,5 +1,5 @@
 #if !defined(INCLUDED_FROM_BASE_VERSION_CPP) && !defined(RC_INVOKED)
-#error This file may only be included by base/version.cpp or dists/residualvm.rc
+#error This file may only be included by base/version.cpp or dists/scummvm.rc
 #endif
 
 // Reads revision number from file

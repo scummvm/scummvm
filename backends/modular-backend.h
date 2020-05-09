@@ -68,6 +68,7 @@ public:
 	virtual bool setGraphicsMode(int mode) override;
 	virtual int getGraphicsMode() const override;
 	virtual const GraphicsMode *getSupportedShaders() const override;
+	virtual int getDefaultShader() const override;
 	virtual int getShader() const override;
 	virtual bool setShader(int id) override;
 	virtual const GraphicsMode *getSupportedStretchModes() const override;
@@ -85,7 +86,6 @@ public:
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right); // ResidualVM specific method
 	virtual void initSizeHint(const Graphics::ModeList &modes) override;
 	virtual int getScreenChangeID() const override;
-	virtual void saveScreenshot() override; // ResidualVM specific method
 
 	virtual void beginGFXTransaction() override;
 	virtual OSystem::TransactionError endGFXTransaction() override;
@@ -98,7 +98,7 @@ public:
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col) override;
 	virtual void updateScreen() override;
-	virtual void setShakePos(int shakeOffset) override;
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) override;
 	virtual void setFocusRectangle(const Common::Rect& rect) override;
 	virtual void clearFocusRectangle() override;
 

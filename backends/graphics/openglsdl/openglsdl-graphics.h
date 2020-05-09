@@ -77,7 +77,7 @@ public:
 	// SdlGraphicsManager API
 	virtual void transformMouseCoordinates(Common::Point &point) override;
 
-	void notifyResize(const uint width, const uint height) override;
+	void notifyResize(const int width, const int height) override;
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -114,7 +114,9 @@ protected:
 	                             uint screenWidth, uint screenHeight);
 
 	// ResVmSdlGraphicsManager API
-	bool saveScreenshot(const Common::String &file) const override;
+	virtual bool saveScreenshot(const Common::String &filename) const override;
+
+	virtual int getGraphicsModeScale(int mode) const override { return 1; }
 
 	int _antialiasing;
 	bool _vsync;

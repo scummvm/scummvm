@@ -57,7 +57,7 @@ static SdlWindow_Win32 *_window;
 
 Win32UpdateManager::Win32UpdateManager(SdlWindow_Win32 *window) {
 	_window = window;
-	const char *appcastUrl = "https://www.scummvm.org/appcasts/macosx/release.xml";
+	const char *appcastUrl = "https://www.residualvm.org/appcasts/macosx/release.xml";
 	win_sparkle_set_appcast_url(appcastUrl);
 	win_sparkle_set_can_shutdown_callback(canShutdownCallback);
 	win_sparkle_set_shutdown_request_callback(shutdownRequestCallback);

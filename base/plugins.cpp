@@ -91,57 +91,61 @@ public:
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines
-//ResidualVM: disabled belows:
-//		LINK_PLUGIN(AUTO)
-//		LINK_PLUGIN(NULL)
-//		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-//		LINK_PLUGIN(WINDOWS)
-//		#endif
-//		#if defined(USE_ALSA)
-//		LINK_PLUGIN(ALSA)
-//		#endif
-//		#if defined(USE_SEQ_MIDI)
-//		LINK_PLUGIN(SEQ)
-//		#endif
-//		#if defined(USE_SNDIO)
-//		LINK_PLUGIN(SNDIO)
-//		#endif
-//		#if defined(__MINT__)
-//		LINK_PLUGIN(STMIDI)
-//		#endif
-//		#if defined(IRIX)
-//		LINK_PLUGIN(DMEDIA)
-//		#endif
-//		#if defined(__amigaos4__)
-//		LINK_PLUGIN(CAMD)
-//		#endif
-//		#if defined(MACOSX)
-//		LINK_PLUGIN(COREAUDIO)
-//		LINK_PLUGIN(COREMIDI)
-//		#endif
-//		#ifdef USE_FLUIDSYNTH
-//		LINK_PLUGIN(FLUIDSYNTH)
-//		#endif
-//		#ifdef USE_MT32EMU
-//		LINK_PLUGIN(MT32)
-//		#endif
-//		LINK_PLUGIN(ADLIB)
-//		LINK_PLUGIN(PCSPK)
-//		LINK_PLUGIN(PCJR)
-//		LINK_PLUGIN(CMS)
-//		#if defined(__ANDROID__)
-//		LINK_PLUGIN(EAS)
-//		#endif
-//		#ifndef DISABLE_SID
-//		LINK_PLUGIN(C64)
-//		#endif
-//		LINK_PLUGIN(AMIGA)
-//		LINK_PLUGIN(APPLEIIGS)
-//		LINK_PLUGIN(TOWNS)
-//		LINK_PLUGIN(PC98)
-//		#if defined(USE_TIMIDITY)
-//		LINK_PLUGIN(TIMIDITY)
-//		#endif
+/*ResidualVM: disabled belows
+		LINK_PLUGIN(AUTO)
+		LINK_PLUGIN(NULL)
+		#if defined(WIN32) && !defined(__SYMBIAN32__)
+		LINK_PLUGIN(WINDOWS)
+		#endif
+		#if defined(USE_ALSA)
+		LINK_PLUGIN(ALSA)
+		#endif
+		#if defined(USE_SEQ_MIDI)
+		LINK_PLUGIN(SEQ)
+		#endif
+		#if defined(USE_SNDIO)
+		LINK_PLUGIN(SNDIO)
+		#endif
+		#if defined(__MINT__)
+		LINK_PLUGIN(STMIDI)
+		#endif
+		#if defined(IRIX)
+		LINK_PLUGIN(DMEDIA)
+		#endif
+		#if defined(__amigaos4__)
+		LINK_PLUGIN(CAMD)
+		#endif
+		#if defined(MACOSX)
+		LINK_PLUGIN(COREAUDIO)
+		#endif
+		#ifdef USE_FLUIDSYNTH
+		LINK_PLUGIN(FLUIDSYNTH)
+		#endif
+		#ifdef USE_MT32EMU
+		LINK_PLUGIN(MT32)
+		#endif
+		#if defined(__ANDROID__)
+		LINK_PLUGIN(EAS)
+		#endif
+		LINK_PLUGIN(ADLIB)
+		LINK_PLUGIN(PCSPK)
+		LINK_PLUGIN(PCJR)
+		LINK_PLUGIN(CMS)
+		#ifndef DISABLE_SID
+		LINK_PLUGIN(C64)
+		#endif
+		LINK_PLUGIN(AMIGA)
+		LINK_PLUGIN(APPLEIIGS)
+		LINK_PLUGIN(TOWNS)
+		LINK_PLUGIN(PC98)
+		#if defined(USE_TIMIDITY)
+		LINK_PLUGIN(TIMIDITY)
+		#endif
+		#if defined(MACOSX)
+		// Keep this at the end of the list - it takes a long time to enumerate
+		// and is only for hardware midi devices
+		LINK_PLUGIN(COREMIDI)
+		#endif*/
 
 		return pl;
 	}
@@ -358,6 +362,9 @@ void PluginManagerUncached::loadFirstPlugin() {
 bool PluginManagerUncached::loadNextPlugin() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
+	if (!_currentPlugin)
+		return false;
+
 	for (++_currentPlugin; _currentPlugin != _allEnginePlugins.end(); ++_currentPlugin) {
 		if ((*_currentPlugin)->loadPlugin()) {
 			addToPluginsInMemList(*_currentPlugin);
@@ -534,7 +541,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 	DetectedGames candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
-	PluginManager::instance().loadFirstPlugin();
+	PluginMan.loadFirstPlugin();
 	do {
 		plugins = getPlugins();
 		// Iterate over all known games and for each check if it might be
@@ -550,7 +557,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 			}
 
 		}
-	} while (PluginManager::instance().loadNextPlugin());
+	} while (PluginMan.loadNextPlugin());
 
 	return DetectionResults(candidates);
 }
@@ -642,18 +649,15 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 	}
 
 	// We failed to find it using the engine ID. Scan the list of plugins
-	const PluginList &plugins = getPlugins();
-	if (!plugins.empty()) {
-		PluginMan.loadFirstPlugin();
-		do {
-			plugin = findLoadedPlugin(engineId);
-			if (plugin) {
-				// Update with new plugin file name
-				PluginMan.updateConfigWithFileName(engineId);
-				return plugin;
-			}
-		} while (PluginMan.loadNextPlugin());
-	}
+	PluginMan.loadFirstPlugin();
+	do {
+		plugin = findLoadedPlugin(engineId);
+		if (plugin) {
+			// Update with new plugin file name
+			PluginMan.updateConfigWithFileName(engineId);
+			return plugin;
+		}
+	} while (PluginMan.loadNextPlugin());
 
 	return 0;
 }

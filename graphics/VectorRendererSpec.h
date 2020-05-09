@@ -50,14 +50,14 @@ class VectorRendererSpec : public VectorRenderer {
 public:
 	VectorRendererSpec(PixelFormat format);
 
-	void drawLine(int x1, int y1, int x2, int y2);
-	void drawCircle(int x, int y, int r);
-	void drawSquare(int x, int y, int w, int h);
-	void drawRoundedSquare(int x, int y, int r, int w, int h);
-	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
-	void drawTab(int x, int y, int r, int w, int h);
+	void drawLine(int x1, int y1, int x2, int y2) override;
+	void drawCircle(int x, int y, int r) override;
+	void drawSquare(int x, int y, int w, int h) override;
+	void drawRoundedSquare(int x, int y, int r, int w, int h) override;
+	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) override;
+	void drawTab(int x, int y, int r, int w, int h) override;
 
-	void drawBeveledSquare(int x, int y, int w, int h) {
+	void drawBeveledSquare(int x, int y, int w, int h) override {
 		bool useClippingVersions = !_clippingArea.contains(Common::Rect(x, y, x + w, y + h));
 		if (useClippingVersions) {
 			drawBevelSquareAlgClip(x, y, w, h, _bevel, _bevelColor, _fgColor);
@@ -66,29 +66,29 @@ public:
 		}
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text,
-					const Common::Rect &area, Graphics::TextAlign alignH,
-					GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0));
+		const Common::Rect &area, Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
+		int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0)) override;
 
-	void setFgColor(uint8 r, uint8 g, uint8 b) { _fgColor = _format.RGBToColor(r, g, b); }
-	void setBgColor(uint8 r, uint8 g, uint8 b) { _bgColor = _format.RGBToColor(r, g, b); }
-	void setBevelColor(uint8 r, uint8 g, uint8 b) { _bevelColor = _format.RGBToColor(r, g, b); }
-	void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2);
+	void setFgColor(uint8 r, uint8 g, uint8 b) override { _fgColor = _format.RGBToColor(r, g, b); }
+	void setBgColor(uint8 r, uint8 g, uint8 b) override { _bgColor = _format.RGBToColor(r, g, b); }
+	void setBevelColor(uint8 r, uint8 g, uint8 b) override { _bevelColor = _format.RGBToColor(r, g, b); }
+	void setGradientColors(uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2) override;
 	void setClippingRect(const Common::Rect &clippingArea) override { _clippingArea = clippingArea; }
 
-	void copyFrame(OSystem *sys, const Common::Rect &r);
-	void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
+	void copyFrame(OSystem *sys, const Common::Rect &r) override;
+	void copyWholeFrame(OSystem *sys) override { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
 
-	void fillSurface();
-	void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
-	void blitSubSurface(const Graphics::Surface *source, const Common::Point &p);
-	void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p);
+	void fillSurface() override;
+	void blitSurface(const Graphics::Surface *source, const Common::Rect &r) override;
+	void blitSubSurface(const Graphics::Surface *source, const Common::Point &p) override;
+	void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) override;
 	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
 			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
 			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
 			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
-			int alpha = 255);
+			int alpha = 255) override;
 
-	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle);
+	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) override;
 
 protected:
 

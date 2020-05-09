@@ -41,19 +41,30 @@ public:
 	static StdioStream *makeFromPath(const Common::String &path, bool writeMode);
 
 	StdioStream(void *handle);
-	virtual ~StdioStream();
+	~StdioStream() override;
 
-	virtual bool err() const override;
-	virtual void clearErr() override;
-	virtual bool eos() const override;
+	bool err() const override;
+	void clearErr() override;
+	bool eos() const override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
-	virtual bool flush() override;
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
+	bool flush() override;
 
-	virtual int32 pos() const override;
-	virtual int32 size() const override;
-	virtual bool seek(int32 offs, int whence = SEEK_SET) override;
-	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
+	int32 pos() const override;
+	int32 size() const override;
+	bool seek(int32 offs, int whence = SEEK_SET) override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
+
+	/**
+	 * Configure buffered IO
+	 *
+	 * Must be called immediately after opening the file.
+	 * A buffer size of 0 disables buffering.
+	 *
+	 * @param bufferSize the size of the Stdio read / write buffer
+	 * @return success or failure
+	 */
+	bool setBufferSize(uint32 bufferSize);
 };
 
 #endif

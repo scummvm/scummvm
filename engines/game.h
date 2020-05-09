@@ -66,10 +66,12 @@ public:
 /**
  * The description of a game supported by an engine
  */
-struct QualifiedGameDescriptor : public PlainGameDescriptor {
-	const char *engineId;
+struct QualifiedGameDescriptor {
+	Common::String engineId;
+	Common::String gameId;
+	Common::String description;
 
-	QualifiedGameDescriptor();
+	QualifiedGameDescriptor() {}
 	QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd);
 };
 
@@ -119,7 +121,7 @@ struct DetectedGame {
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
-	Common::String getGUIOptions() const { return _guiOptions; }
+	const Common::String &getGUIOptions() const { return _guiOptions; }
 
 	Common::String engineId;
 

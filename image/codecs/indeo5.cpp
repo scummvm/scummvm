@@ -176,6 +176,7 @@ void Indeo5Decoder::switchBuffers() {
 		break;
 
 	case FRAMETYPE_INTER_NOREF:
+	default:
 		break;
 	}
 
@@ -192,6 +193,7 @@ void Indeo5Decoder::switchBuffers() {
 	case FRAMETYPE_INTER_SCAL:
 	case FRAMETYPE_INTER_NOREF:
 	case FRAMETYPE_NULL:
+	default:
 		break;
 	}
 }
@@ -512,6 +514,9 @@ int Indeo5Decoder::decode_gop_header() {
 				band->_dcTransform = IndeoDSP::ffIviDcSlant2d;
 				band->_scan = _ffIviDirectScan4x4;
 				band->_transformSize = 4;
+				break;
+
+			default:
 				break;
 			}
 

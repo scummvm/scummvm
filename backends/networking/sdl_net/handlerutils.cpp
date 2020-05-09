@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/unzip.h"
+#include "common/encoding.h"
 
 namespace Networking {
 
@@ -172,7 +173,17 @@ bool HandlerUtils::permittedPath(const Common::String path) {
 }
 
 Common::String HandlerUtils::toUtf8(const char *text) {
-	// FIXME: Convert the GUI to use UTF8
+#ifdef USE_TRANSLATION
+	Common::String guiEncoding = TransMan.getCurrentCharset();
+	if (guiEncoding != "ASCII") {
+		char *utf8Text = Common::Encoding::convert("utf-8", guiEncoding, text, strlen(text));
+		if (utf8Text != nullptr) {
+			Common::String str(utf8Text);
+			free(utf8Text);
+			return str;
+		}
+	}
+#endif
 	return Common::String(text);
 }
 

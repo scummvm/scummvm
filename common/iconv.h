@@ -32,7 +32,7 @@ namespace Common {
 class String;
 class U32String;
 
-enum Encoding {
+enum IconvEncoding {
 	/** Windows codepage 1250 (Eastern European, Latin alphabet) */
 	kEncodingCP1250,
 
@@ -52,7 +52,7 @@ enum Encoding {
 	kEncodingMacCentralEurope
 };
 
-U32String convertToU32String(Encoding fromEncoding, const String &string);
+U32String convertToU32String(IconvEncoding fromEncoding, const String &string);
 
 } // End of namespace Common
 

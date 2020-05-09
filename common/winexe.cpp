@@ -20,8 +20,12 @@
  *
  */
 
+#include "common/file.h"
+#include "common/memstream.h"
 #include "common/str.h"
 #include "common/winexe.h"
+#include "common/winexe_ne.h"
+#include "common/winexe_pe.h"
 
 namespace Common {
 
@@ -76,6 +80,107 @@ String WinResourceID::toString() const {
 		return String::format("0x%08x", _id);
 
 	return "";
+}
+
+bool WinResources::loadFromEXE(const String &fileName) {
+	if (fileName.empty())
+		return false;
+
+	File *file = new File();
+
+	if (!file->open(fileName)) {
+		delete file;
+		return false;
+	}
+
+	return loadFromEXE(file);
+}
+
+bool WinResources::loadFromCompressedEXE(const String &fileName) {
+	// Based on http://www.cabextract.org.uk/libmspack/doc/szdd_kwaj_format.html
+
+	// TODO: Merge this with with loadFromEXE() so the handling of the compressed
+	// EXE's is transparent
+
+	File file;
+
+	if (!file.open(fileName))
+		return false;
+
+	// First part of the signature
+	if (file.readUint32BE() != MKTAG('S','Z','D','D'))
+		return false;
+
+	// Second part of the signature
+	if (file.readUint32BE() != 0x88F02733)
+		return false;
+
+	// Compression mode must be 'A'
+	if (file.readByte() != 'A')
+		return false;
+
+	file.readByte(); // file name character change
+	uint32 unpackedLength = file.readUint32LE();
+
+	byte *window = new byte[0x1000];
+	int pos = 0x1000 - 16;
+	memset(window, 0x20, 0x1000); // Initialize to all spaces
+
+	byte *unpackedData = (byte *)malloc(unpackedLength);
+	assert(unpackedData);
+	byte *dataPos = unpackedData;
+
+	// Apply simple LZSS decompression
+	for (;;) {
+		byte controlByte = file.readByte();
+
+		if (file.eos())
+			break;
+
+		for (byte i = 0; i < 8; i++) {
+			if (controlByte & (1 << i)) {
+				*dataPos++ = window[pos++] = file.readByte();
+				pos &= 0xFFF;
+			} else {
+				int matchPos = file.readByte();
+				int matchLen = file.readByte();
+				matchPos |= (matchLen & 0xF0) << 4;
+				matchLen = (matchLen & 0xF) + 3;
+				while (matchLen--) {
+					*dataPos++ = window[pos++] = window[matchPos++];
+					pos &= 0xFFF;
+					matchPos &= 0xFFF;
+				}
+			}
+
+		}
+	}
+
+	delete[] window;
+	SeekableReadStream *stream = new MemoryReadStream(unpackedData, unpackedLength);
+
+	return loadFromEXE(stream);
+}
+
+
+WinResources *WinResources::createFromEXE(const String &fileName) {
+	WinResources *exe;
+
+	// First try loading via the NE code
+	exe = new Common::NEResources();
+	if (exe->loadFromEXE(fileName)) {
+		return exe;
+	}
+	delete exe;
+
+	// Then try loading via the PE code
+	exe = new Common::PEResources();
+	if (exe->loadFromEXE(fileName)) {
+		return exe;
+	}
+	delete exe;
+
+	return nullptr;
 }
 
 } // End of namespace Common

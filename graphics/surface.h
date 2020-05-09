@@ -327,6 +327,13 @@ public:
 
 	// See comment in graphics/surface.cpp about it
 	void move(int dx, int dy, int height);
+
+	/**
+	 * Flip the specified rect vertically.
+	 *
+	 * @param r Rect to flip
+	 */
+	void flipVertical(const Common::Rect &r);
 };
 
 /**

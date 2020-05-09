@@ -276,11 +276,14 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	if (_flippedMode)
 		glyphSource = flipCharacter(glyphSource, width);
 #endif
-	
+
+	int shadowOffset = bpp;
 	uint8 outline[18 * 18];
 	if (_drawMode == kOutlineMode) {
 		memset(outline, 0, sizeof(outline));
 		createOutline(outline, glyphSource, width, height);
+	} else if (_drawMode == kShadowLeftMode) {
+		shadowOffset = -shadowOffset;
 	}
 
 	if (bpp == 1) {
@@ -289,10 +292,10 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 			blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 1, pitch, c1);
 		} else {
 			if (_drawMode != kDefaultMode) {
-				blitCharacter<uint8>(glyphSource, width - outlineXOffset, height, ((uint8 *)dst) + 1, pitch, c2);
+				blitCharacter<uint8>(glyphSource, width - outlineXOffset, height, ((uint8 *)dst) + shadowOffset, pitch, c2);
 				blitCharacter<uint8>(glyphSource, width, height - outlineYOffset, ((uint8 *)dst) + pitch, pitch, c2);
-				if (_drawMode == kShadowMode)
-					blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8 *)dst) + pitch + 1, pitch, c2);
+				if (_drawMode != kFMTownsShadowMode)
+					blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8 *)dst) + pitch + shadowOffset, pitch, c2);
 			}
 
 			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
@@ -303,10 +306,10 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 			blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 2, pitch, c1);
 		} else {
 			if (_drawMode != kDefaultMode) {
-				blitCharacter<uint16>(glyphSource, width - outlineXOffset, height, ((uint8 *)dst) + 2, pitch, c2);
+				blitCharacter<uint16>(glyphSource, width - outlineXOffset, height, ((uint8 *)dst) + shadowOffset, pitch, c2);
 				blitCharacter<uint16>(glyphSource, width, height - outlineYOffset, ((uint8 *)dst) + pitch, pitch, c2);
-				if (_drawMode == kShadowMode)
-					blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8 *)dst) + pitch + 2, pitch, c2);
+				if (_drawMode != kFMTownsShadowMode)
+					blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8 *)dst) + pitch + shadowOffset, pitch, c2);
 			}
 
 			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1);

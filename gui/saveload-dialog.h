@@ -42,10 +42,10 @@ class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	bool _close;
 public:
 	SaveLoadCloudSyncProgressDialog(bool canRunInBackground);
-	virtual ~SaveLoadCloudSyncProgressDialog();
+	~SaveLoadCloudSyncProgressDialog() override;
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleTickle();
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleTickle() override;
 };
 #endif
 
@@ -72,20 +72,20 @@ class SaveLoadChooserDialog : protected Dialog {
 public:
 	SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode);
 	SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode);
-	virtual ~SaveLoadChooserDialog();
+	~SaveLoadChooserDialog() override;
 
-	virtual void open();
-	virtual void close();
+	void open() override;
+	void close() override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	virtual void runSaveSync(bool hasSavepathOverride);
 #endif
 
-	virtual void handleTickle();
+	void handleTickle() override;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	virtual SaveLoadChooserType getType() const = 0;
@@ -136,22 +136,22 @@ class SaveLoadChooserSimple : public SaveLoadChooserDialog {
 public:
 	SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode);
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual const Common::String &getResultString() const;
+	const Common::String &getResultString() const override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogList; }
+	SaveLoadChooserType getType() const override { return kSaveLoadDialogList; }
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-	virtual void open();
-	virtual void close();
+	void open() override;
+	void close() override;
 protected:
-	virtual void updateSaveList();
+	void updateSaveList() override;
 private:
-	virtual int runIntern();
+	int runIntern() override;
 
 	ListWidget		*_list;
 	ButtonWidget	*_chooseButton;
@@ -164,6 +164,7 @@ private:
 
 	String					_resultString;
 
+	void addThumbnailContainer();
 	void updateSelection(bool redraw);
 };
 
@@ -180,9 +181,9 @@ public:
 
 	void setTargetSlot(int slot) { _targetSlot = slot; }
 
-	virtual void open();
+	void open() override;
 protected:
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 private:
 	int _targetSlot;
 	StaticTextWidget *_title;
@@ -192,23 +193,23 @@ private:
 class SaveLoadChooserGrid : public SaveLoadChooserDialog {
 public:
 	SaveLoadChooserGrid(const Common::String &title, bool saveMode);
-	~SaveLoadChooserGrid();
+	~SaveLoadChooserGrid() override;
 
-	virtual const Common::String &getResultString() const;
+	const Common::String &getResultString() const override;
 
-	virtual void open();
+	void open() override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
-	virtual SaveLoadChooserType getType() const { return kSaveLoadDialogGrid; }
+	SaveLoadChooserType getType() const override { return kSaveLoadDialogGrid; }
 
-	virtual void close();
+	void close() override;
 protected:
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleMouseWheel(int x, int y, int direction);
-	virtual void updateSaveList();
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleMouseWheel(int x, int y, int direction) override;
+	void updateSaveList() override;
 private:
-	virtual int runIntern();
+	int runIntern() override;
 
 	uint _columns, _lines;
 	uint _entriesPerPage;
@@ -227,7 +228,7 @@ private:
 	bool selectDescription();
 
 	struct SlotButton {
-		SlotButton() : container(0), button(0), description(0) {}
+		SlotButton() : container(nullptr), button(nullptr), description(nullptr) {}
 		SlotButton(ContainerWidget *c, PicButtonWidget *b, StaticTextWidget *d) : container(c), button(b), description(d) {}
 
 		ContainerWidget  *container;

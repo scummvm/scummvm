@@ -26,6 +26,7 @@
 #include "backends/graphics/graphics.h"
 #include "backends/platform/sdl/sdl-window.h"
 
+#include "common/events.h"
 #include "common/rect.h"
 
 class SdlEventSource;
@@ -35,7 +36,7 @@ class SdlEventSource;
  *
  * It features a few extra a few extra features required by SdlEventSource.
  */
-class SdlGraphicsManager : virtual public GraphicsManager {
+class SdlGraphicsManager : virtual public GraphicsManager, public Common::EventObserver {
 public:
 	SdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
 	virtual ~SdlGraphicsManager();
@@ -74,7 +75,7 @@ public:
 	 * @param width Requested window width.
 	 * @param height Requested window height.
 	 */
-	virtual void notifyResize(const uint width, const uint height) {}
+	virtual void notifyResize(const int width, const int height) {}
 
 	/**
 	 * Transforms real screen coordinates into the current active screen
@@ -98,6 +99,9 @@ public:
 	 * should cause the event to be sent to the game.
 	 */
 	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
+
+	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
+	void saveScreenshot();
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
@@ -128,6 +132,21 @@ public:
 	 * Queries the SDL window.
 	 */
 	SdlWindow *getWindow() const { return _window; }
+
+	Common::Keymap *getKeymap();
+
+protected:
+	enum CustomEventAction {
+		kActionToggleFullscreen = 100,
+		kActionToggleMouseCapture,
+		kActionSaveScreenshot,
+		kActionToggleAspectRatioCorrection
+	};
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+public:
+	void unlockWindowSize() {}
+#endif
 
 protected:
 	SdlEventSource *_eventSource;

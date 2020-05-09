@@ -25,94 +25,60 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
+#include "backends/keymapper/hardware-input.h"
 
 #include "common/config-manager.h"
 #include "common/func.h"
 #include "common/hashmap.h"
-#include "common/keyboard.h"
+#include "common/hash-ptr.h"
 #include "common/list.h"
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/hardware-input.h"
+#include "common/str-array.h"
 
 namespace Common {
 
-/**
- * Hash function for KeyState
- */
-template<> struct Hash<KeyState>
-	: public UnaryFunction<KeyState, uint> {
+const char *const kStandardActionsKeymapName = "standard-actions";
 
-	uint operator()(const KeyState &val) const {
-		return (uint)val.keycode | ((uint)val.flags << 24);
+struct Action;
+struct Event;
+struct HardwareInput;
+class HardwareInputSet;
+class KeymapperDefaultBindings;
+
+struct HardwareInput_EqualTo {
+	bool operator()(const HardwareInput& x, const HardwareInput& y) const {
+		return (x.type == y.type)
+		        && (x.key.keycode == y.key.keycode)
+		        && (x.key.flags == y.key.flags)
+		        && (x.inputCode == y.inputCode);
+	}
+};
+
+struct HardwareInput_Hash {
+	uint operator()(const HardwareInput& x) const {
+		uint hash = 7;
+		hash = 31 * hash + x.type;
+		hash = 31 * hash + x.key.keycode;
+		hash = 31 * hash + x.key.flags;
+		hash = 31 * hash + x.inputCode;
+		return hash;
 	}
 };
 
 class Keymap {
 public:
-	Keymap(const String& name) : _name(name) {}
-	Keymap(const Keymap& km);
+	enum KeymapType {
+		kKeymapTypeGlobal,
+		kKeymapTypeGui,
+		kKeymapTypeGame
+	};
+
+	typedef Array<Action *> ActionArray;
+
+	Keymap(KeymapType type, const String &id, const String &description);
 	~Keymap();
-
-public:
-	/**
-	 * Retrieves the Action with the given id
-	 * @param id id of Action to retrieve
-	 * @return Pointer to the Action or 0 if not found
-	 */
-	Action *getAction(const char *id);
-
-	/**
-	 * Get the list of all the Actions contained in this Keymap
-	 */
-	List<Action *>& getActions() { return _actions; }
-
-	/**
-	 * Find the Action that a key is mapped to
-	 * @param key	the key that is mapped to the required Action
-	 * @return		a pointer to the Action or 0 if no
-	 */
-	Action *getMappedAction(const KeyState& ks) const;
-
-	/**
-	 * Find the Action that a generic input is mapped to
-	 * @param code	the input code that is mapped to the required Action
-	 * @return			a pointer to the Action or 0 if no
-	 */
-	Action *getMappedAction(const HardwareInputCode code) const;
-
-	void setConfigDomain(ConfigManager::Domain *dom);
-
-	/**
-	 * Load this keymap's mappings from the config manager.
-	 * @param hwInputs	the set to retrieve hardware input pointers from
-	 */
-	void loadMappings(const HardwareInputSet *hwInputs);
-
-	/**
-	 * Save this keymap's mappings to the config manager
-	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
-	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
-	 */
-	void saveMappings();
-
-	/**
-	 * Returns true if all UserAction's in Keymap are mapped, or,
-	 * all HardwareInputs from the given set have been used up.
-	 */
-	bool isComplete(const HardwareInputSet *hwInputs);
-
-	const String& getName() { return _name; }
-
-private:
-	friend struct Action;
-
-	/**
-	 * Adds a new Action to this Map,
-	 * adding it at the back of the internal array
-	 * @param action the Action to add
-	 */
-	void addAction(Action *action);
+	void setConfigDomain(ConfigManager::Domain *configDomain);
+	void setHardwareInputs(HardwareInputSet *hardwareInputSet);
+	void setBackendDefaultBindings(const KeymapperDefaultBindings *backendDefaultBindings);
 
 	/**
 	* Registers a HardwareInput to the given Action
@@ -120,7 +86,7 @@ private:
 	* @param key pointer to HardwareInput to map
 	* @see Action::mapKey
 	*/
-	void registerMapping(Action *action, const HardwareInput *input);
+	void registerMapping(Action *action, const HardwareInput &input);
 
 	/**
 	* Unregisters a HardwareInput from the given Action (if one is mapped)
@@ -129,20 +95,98 @@ private:
 	*/
 	void unregisterMapping(Action *action);
 
-	Action *findAction(const char *id);
+	/**
+	 * Reset an action's mapping to its defaults
+	 * @param action
+	 */
+	void resetMapping(Action *action);
+
+	/**
+	 * Find the hardware input an action is mapped to, if any
+	 */
+	Array<HardwareInput> getActionMapping(Action *action) const;
+
+	/**
+	 * Find the Actions that a hardware input is mapped to
+	 * @param hardwareInput	the input that is mapped to the required Action
+	 * @return		an array containing pointers to the actions
+	 */
+	ActionArray getMappedActions(const Event &event) const;
+
+	/**
+	 * Adds a new Action to this Map
+	 *
+	 * Takes ownership of the action.
+	 *
+	 * @param action the Action to add
+	 */
+	void addAction(Action *action);
+
+	/**
+	 * Get the list of all the Actions contained in this Keymap
+	 */
+	const ActionArray &getActions() const { return _actions; }
+
+	/**
+	 * Get the default input mappings for an action.
+	 *
+	 * Backend-specific mappings replace the default mappings
+	 * specified when creating the keymap.
+	 */
+	StringArray getActionDefaultMappings(Action *action);
+
+	/**
+	 * Load this keymap's mappings from the config manager.
+	 * @param hwInputs	the set to retrieve hardware input pointers from
+	 */
+	void loadMappings();
+
+	/**
+	 * Save this keymap's mappings to the config manager
+	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
+	 */
+	void saveMappings();
+
+	const String &getId() const { return _id; }
+	const String &getDescription() const { return _description; }
+	KeymapType getType() const { return _type; }
+
+	/**
+	 * Defines if the keymap is considered when mapping events
+	 */
+	bool isEnabled() const { return _enabled; }
+	void setEnabled(bool enabled) { _enabled = enabled; }
+
+	/** Helper to return an array with a single keymap element */
+	static Array<Keymap *> arrayOf(Keymap *keymap) {
+		return Array<Keymap *>(1, keymap);
+	}
+
+private:
+
 	const Action *findAction(const char *id) const;
 
-	String _name;
-	List<Action *> _actions;
-	HashMap<KeyState, Action *> _keymap;
-	HashMap<HardwareInputCode, Action *> _nonkeymap;
-	ConfigManager::Domain *_configDomain;
+	void registerMappings(Action *action, const StringArray &hwInputIds);
+	bool areMappingsIdentical(const Array<HardwareInput> &inputs, const StringArray &mapping);
 
+	typedef HashMap<HardwareInput, ActionArray, HardwareInput_Hash, HardwareInput_EqualTo> HardwareActionMap;
+
+	KeymapType _type;
+	String _id;
+	String _description;
+
+	bool _enabled;
+
+	ActionArray _actions;
+	HardwareActionMap _hwActionMap;
+
+	ConfigManager::Domain *_configDomain;
+	HardwareInputSet *_hardwareInputSet;
+	const KeymapperDefaultBindings *_backendDefaultBindings;
 };
 
+typedef Array<Keymap *> KeymapArray;
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_KEYMAP_H

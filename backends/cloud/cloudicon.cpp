@@ -85,6 +85,8 @@ void CloudIcon::update() {
 	_lastUpdateTime = currentTime;
 
 	switch (_state) {
+	default:
+		// fallthrough intended
 	case kHidden:
 		return; // Nothing to do
 	case kShown:

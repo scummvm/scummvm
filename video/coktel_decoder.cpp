@@ -2071,9 +2071,9 @@ bool VMDDecoder::readFrameTable(int &numFiles) {
 				_frames[i].parts[j].flags   = _stream->readByte();
 
 			} else if (_frames[i].parts[j].type == kPartTypeSubtitle) {
-				_frames[i].parts[j].id = _stream->readUint16LE();
+				_frames[i].parts[j].id = _stream->readByte();
 				// Speech text file name
-				_stream->skip(8);
+				_stream->skip(9);
 			} else if (_frames[i].parts[j].type == kPartTypeFile) {
 				if (!separator)
 					numFiles++;

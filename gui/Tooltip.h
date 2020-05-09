@@ -42,29 +42,29 @@ public:
 
 	void drawDialog(DrawLayer layerToDraw) override;
 
-	virtual void receivedFocus(int x = -1, int y = -1) override {}
+	void receivedFocus(int x = -1, int y = -1) override {}
 protected:
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) override {
+	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		close();
 		_parent->handleMouseDown(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
 	}
-	virtual void handleMouseUp(int x, int y, int button, int clickCount) override {
+	void handleMouseUp(int x, int y, int button, int clickCount) override {
 		close();
 		_parent->handleMouseUp(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
 	}
-	virtual void handleMouseWheel(int x, int y, int direction) override {
+	void handleMouseWheel(int x, int y, int direction) override {
 		close();
 		_parent->handleMouseWheel(x + (getAbsX() - _parent->getAbsX()), y + (getAbsX() - _parent->getAbsX()), direction);
 	}
-	virtual void handleKeyDown(Common::KeyState state) override {
+	void handleKeyDown(Common::KeyState state) override {
 		close();
 		_parent->handleKeyDown(state);
 	}
-	virtual void handleKeyUp(Common::KeyState state) override {
+	void handleKeyUp(Common::KeyState state) override {
 		close();
 		_parent->handleKeyUp(state);
 	}
-	virtual void handleMouseMoved(int x, int y, int button) override {
+	void handleMouseMoved(int x, int y, int button) override {
 		close();
 	}
 

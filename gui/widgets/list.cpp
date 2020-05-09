@@ -36,15 +36,12 @@ namespace GUI {
 ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, uint32 cmd)
 	: EditableWidget(boss, name, tooltip), _cmd(cmd) {
 
-	_scrollBar = NULL;
-
-	// This ensures that _entriesPerPage is properly initialized.
-	reflowLayout();
+	_entriesPerPage = 0;
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -62,15 +59,21 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 
 	_quickSelect = true;
 	_editColor = ThemeEngine::kFontColorNormal;
+	_dictionarySelect = false;
+
+	_lastRead = -1;
+
+	_hlLeftPadding = _hlRightPadding = 0;
+	_leftPadding = _rightPadding = 0;
+	_topPadding = _bottomPadding = 0;
+
+	_scrollBarWidth = 0;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
 	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
 
-	_scrollBar = NULL;
-
-	// This ensures that _entriesPerPage is properly initialized.
-	reflowLayout();
+	_entriesPerPage = 0;
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
@@ -93,6 +96,15 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *too
 
 	_quickSelect = true;
 	_editColor = ThemeEngine::kFontColorNormal;
+	_dictionarySelect = false;
+
+	_lastRead = -1;
+
+	_hlLeftPadding = _hlRightPadding = 0;
+	_leftPadding = _rightPadding = 0;
+	_topPadding = _bottomPadding = 0;
+
+	_scrollBarWidth = 0;
 }
 
 bool ListWidget::containsWidget(Widget *w) const {
@@ -262,6 +274,31 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
+void ListWidget::handleMouseMoved(int x, int y, int button) {
+	if (!isEnabled())
+		return;
+
+	// Determine if we are inside the widget
+	if (x < 0 || x > _w)
+		return;
+
+	// First check whether the selection changed
+	int item = findItem(x, y);
+
+	if (item != -1) {
+		if(_lastRead != item) {
+			read(_dataList[item]);
+			_lastRead = item;
+		}
+	}
+	else
+		_lastRead = -1;
+}
+
+void ListWidget::handleMouseLeft(int button) {
+	_lastRead = -1;
+}
+
 
 int ListWidget::findItem(int x, int y) const {
 	if (y < _topPadding) return -1;
@@ -273,8 +310,12 @@ int ListWidget::findItem(int x, int y) const {
 		return -1;
 }
 
-static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
+static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop, bool dictionary) {
 	int match = 0;
+	if (dictionary) {
+		x = scumm_skipArticle(x);
+		y = scumm_skipArticle(y);
+	}
 	while (*x && *y && tolower(*x) == tolower(*y)) {
 		++x;
 		++y;
@@ -310,7 +351,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			int bestMatch = 0;
 			bool stop;
 			for (StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
-				const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
+				const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
 				if (match > bestMatch || stop) {
 					_selectedItem = newSelectedItem;
 					bestMatch = match;
@@ -487,6 +528,8 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			((GUI::Dialog *)_boss)->setFocusWidget(this);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -495,7 +538,7 @@ void ListWidget::drawWidget() {
 	Common::String buffer;
 
 	// Draw a thin frame around the list.
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0,
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 	                                    ThemeEngine::kWidgetBackgroundBorder);
 
 	// Draw the list items

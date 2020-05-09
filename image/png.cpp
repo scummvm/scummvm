@@ -255,6 +255,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
+// ResidualVM specific argument: bottomUp
 bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
 #ifdef USE_PNG
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -283,11 +284,19 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 
 	png_structp pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!pngPtr) {
+		if (tmp) {
+			tmp->free();
+			delete tmp;
+		}
 		return false;
 	}
 	png_infop infoPtr = png_create_info_struct(pngPtr);
 	if (!infoPtr) {
 		png_destroy_write_struct(&pngPtr, NULL);
+		if (tmp) {
+			tmp->free();
+			delete tmp;
+		}
 		return false;
 	}
 
@@ -300,6 +309,7 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bo
 
 	Common::Array<const uint8 *> rows;
 	rows.reserve(surface->h);
+// ResidualVM specific
 	if (bottomUp) {
 		for (uint y = surface->h; y-- > 0;) {
 			rows.push_back((const uint8 *)surface->getBasePtr(0, y));

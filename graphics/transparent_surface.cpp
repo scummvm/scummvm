@@ -716,6 +716,25 @@ void TransparentSurface::applyColorKey(uint8 rKey, uint8 gKey, uint8 bKey, bool 
 	}
 }
 
+/**
+ * Sets alpha channel for all pixels to specified value
+ * @param alpha  value of the alpha channel to set
+ * @param skipTransparent  if set to true, then do not touch pixels with alpha=0
+ */
+void TransparentSurface::setAlpha(uint8 alpha, bool skipTransparent) {
+	assert(format.bytesPerPixel == 4);
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			uint32 pix = ((uint32 *)pixels)[i * w + j];
+			uint8 r, g, b, a;
+			format.colorToARGB(pix, a, r, g, b);
+			if (!skipTransparent || a)
+				a = alpha;
+			((uint32 *)pixels)[i * w + j] = format.ARGBToColor(a, r, g, b);
+		}
+	}
+}
+
 AlphaType TransparentSurface::getAlphaMode() const {
 	return _alphaMode;
 }

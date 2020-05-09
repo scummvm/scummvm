@@ -32,7 +32,7 @@ namespace Networking {
 
 CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url):
 	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr),
-	_bytesBufferSize(0), _uploading(false), _usingPatch(false) {}
+	_bytesBufferSize(0), _uploading(false), _usingPatch(false), _keepAlive(false), _keepAliveIdle(120), _keepAliveInterval(60) {}
 
 CurlRequest::~CurlRequest() {
 	delete _stream;
@@ -41,10 +41,10 @@ CurlRequest::~CurlRequest() {
 
 NetworkReadStream *CurlRequest::makeStream() {
 	if (_bytesBuffer)
-		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true);
+		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 	if (!_formFields.empty() || !_formFiles.empty())
-		return new NetworkReadStream(_url.c_str(), _headersList, _formFields, _formFiles);
-	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch);
+		return new NetworkReadStream(_url.c_str(), _headersList, _formFields, _formFiles, _keepAlive, _keepAliveIdle, _keepAliveInterval);
+	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 }
 
 void CurlRequest::handle() {
@@ -137,6 +137,16 @@ void CurlRequest::usePut() { _uploading = true; }
 
 void CurlRequest::usePatch() { _usingPatch = true; }
 
+void CurlRequest::connectionKeepAlive(long idle, long interval) {
+	_keepAlive = true;
+	_keepAliveIdle = idle;
+	_keepAliveInterval = interval;
+}
+
+void CurlRequest::connectionClose() {
+	_keepAlive = false;
+}
+
 NetworkReadStreamResponse CurlRequest::execute() {
 	if (!_stream) {
 		_stream = makeStream();
@@ -147,5 +157,11 @@ NetworkReadStreamResponse CurlRequest::execute() {
 }
 
 const NetworkReadStream *CurlRequest::getNetworkReadStream() const { return _stream; }
+
+void CurlRequest::wait(int spinlockDelay) {
+	while (state() == Networking::PROCESSING) {
+		g_system->delayMillis(spinlockDelay);
+	}
+}
 
 } // End of namespace Networking

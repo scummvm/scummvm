@@ -30,6 +30,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 #include "backends/platform/sdl/sdl-window.h"
+// ResidualVM specific code
 #include "backends/graphics/sdl/resvm-sdl-graphics.h"
 
 #include "common/array.h"
@@ -56,35 +57,37 @@ public:
 	 */
 	virtual SdlMixerManager *getMixerManager();
 
-	virtual bool hasFeature(Feature f);
+	virtual bool hasFeature(Feature f) override;
 
 	// Override functions from ModularBackend and OSystem
-	virtual void initBackend();
-	virtual void engineInit();
-	virtual void engineDone();
-	virtual void quit();
-	virtual void fatalError();
+	virtual void initBackend() override;
+	virtual void engineInit() override;
+	virtual void engineDone() override;
+	virtual void quit() override;
+	virtual void fatalError() override;
+	Common::KeymapArray getGlobalKeymaps() override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
 
 	// Logging
-	virtual void logMessage(LogMessageType::Type type, const char *message);
+	virtual void logMessage(LogMessageType::Type type, const char *message) override;
 
-	virtual Common::String getSystemLanguage() const;
+	virtual Common::String getSystemLanguage() const override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Clipboard
-	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	virtual bool hasTextInClipboard() override;
+	virtual Common::String getTextFromClipboard() override;
+	virtual bool setTextInClipboard(const Common::String &text) override;
 #endif
 
-	virtual void setWindowCaption(const char *caption);
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	virtual uint32 getMillis(bool skipRecord = false);
-	virtual void delayMillis(uint msecs);
-	virtual void getTimeAndDate(TimeDate &td) const;
-	virtual Audio::Mixer *getMixer();
-	virtual Common::TimerManager *getTimerManager();
-	virtual Common::SaveFileManager *getSavefileManager();
+	virtual void setWindowCaption(const char *caption) override;
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	virtual uint32 getMillis(bool skipRecord = false) override;
+	virtual void delayMillis(uint msecs) override;
+	virtual void getTimeAndDate(TimeDate &td) const override;
+	virtual Audio::Mixer *getMixer() override;
+	virtual Common::TimerManager *getTimerManager() override;
+	virtual Common::SaveFileManager *getSavefileManager() override;
 
 	//Screenshots
 	virtual Common::String getScreenshotsPath();
@@ -123,6 +126,7 @@ protected:
 	 * The event source we use for obtaining SDL events.
 	 */
 	SdlEventSource *_eventSource;
+	Common::EventSource *_eventSourceWrapper;
 
 	/**
 	 * The SDL output window.
@@ -137,7 +141,7 @@ protected:
 	ResVmSdlGraphicsManager::Capabilities _capabilities;
 	// End of ResidualVM specific code
 
-	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
+	virtual Common::EventSource *getDefaultEventSource() override { return _eventSource; }
 
 	/**
 	 * Initialze the SDL library.
@@ -153,6 +157,8 @@ protected:
 	virtual Common::String getDefaultLogFileName() { return Common::String(); }
 	virtual Common::WriteStream *createLogFile();
 	Backends::Log::Log *_logger;
+protected:
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;
 };
 
 #endif

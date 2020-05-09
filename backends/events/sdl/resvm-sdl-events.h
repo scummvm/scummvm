@@ -23,17 +23,49 @@
 #ifndef BACKEND_EVENTS_RESVM_SDL
 #define BACKEND_EVENTS_RESVM_SDL
 
-#include "sdl-events.h"
+#include "backends/events/sdl/sdl-events.h"
+
+// multiplier used to increase resolution for keyboard/joystick mouse
+#define MULTIPLIER 16
 
 /**
  * Custom event source for ResidualVM with true joystick support.
  */
 class ResVmSdlEventSource : public SdlEventSource {
+public:
+	ResVmSdlEventSource();
+
+	/**
+	 * Resets keyboard emulation after a video screen change
+	 */
+	void resetKeyboardEmulation(int16 x_max, int16 y_max);
+
 protected:
+	struct KbdMouse {
+		int32 x, y;
+		int16 x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, joy_x, joy_y;
+		uint32 last_time, delay_time, x_down_time, y_down_time;
+		bool modifier;
+	};
+	KbdMouse _km;
+
+	virtual void updateKbdMouse();
+
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) override;
 	bool handleKbdMouse(Common::Event &event) override;
+
+	/**
+	 * Update the virtual mouse according to a joystick or game controller axis position change
+	 */
+	virtual bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
+
+	/**
+	 * Compute the virtual mouse movement speed factor according to the 'kbdmouse_speed' setting.
+	 * The speed factor is scaled with the display size.
+	 */
+	int16 computeJoystickMouseSpeedFactor() const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) override;

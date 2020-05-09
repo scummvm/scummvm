@@ -27,12 +27,11 @@
 #include "common/queue.h"
 
 namespace Common {
-#ifdef ENABLE_KEYMAPPER
 class Keymapper;
-#endif
 #ifdef ENABLE_VKEYBD
 class VirtualKeyboard;
 #endif
+class VirtualMouse;
 }
 
 
@@ -41,10 +40,9 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	Common::VirtualKeyboard *_vk;
 #endif
 
-#ifdef ENABLE_KEYMAPPER
+	Common::VirtualMouse *_virtualMouse;
+
 	Common::Keymapper *_keymapper;
-	bool _remap;
-#endif
 
 	Common::ArtificialEventSource _artificialEventSource;
 
@@ -61,17 +59,6 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	bool _shouldRTL;
 	bool _confirmExitDialogActive;
 
-	// for continuous events (keyDown)
-	enum {
-		kKeyRepeatInitialDelay = 400,
-		kKeyRepeatSustainDelay = 100
-	};
-
-	bool _shouldGenerateKeyRepeatEvents;
-	Common::KeyState _currentKeyDown;
-	uint32 _keyRepeatTime;
-
-	void handleKeyRepeat();
 public:
 	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
@@ -91,22 +78,8 @@ public:
 	virtual void resetQuit() override { _shouldQuit = false; }
 #endif
 
-#ifdef ENABLE_KEYMAPPER
-	 // IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	 // this, please talk to tsoliman and/or LordHoto.
-	virtual Common::Keymapper *getKeymapper() override { return _keymapper; }
-#endif
-
-	/**
-	 * Controls whether repeated key down events are generated while a key is pressed
-	 *
-	 * Backends that generate their own keyboard repeat events should disable this.
-	 *
-	 * @param generateKeyRepeatEvents
-	 */
-	void setGenerateKeyRepeatEvents(bool generateKeyRepeatEvents) {
-		_shouldGenerateKeyRepeatEvents = generateKeyRepeatEvents;
-	}
+	Common::Keymapper *getKeymapper() override { return _keymapper; }
+	Common::Keymap *getGlobalKeymap() override;
 };
 
 #endif

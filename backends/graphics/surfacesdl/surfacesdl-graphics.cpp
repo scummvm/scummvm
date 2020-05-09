@@ -25,7 +25,7 @@
 #if defined(SDL_BACKEND)
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/resvm-sdl-events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "engines/engine.h"
@@ -33,6 +33,11 @@
 #include "graphics/surface.h"
 #ifdef USE_PNG
 #include "image/png.h"
+#endif
+
+// SDL surface flags which got removed in SDL2.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#define SDL_FULLSCREEN  0x40000000
 #endif
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
@@ -163,7 +168,7 @@ void SurfaceSdlGraphicsManager::createOrUpdateScreen() {
 
 	_screenChangeCount++;
 
-	_eventSource->resetKeyboardEmulation(_gameRect.getWidth() - 1, _gameRect.getHeight() - 1);
+	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(_gameRect.getWidth() - 1, _gameRect.getHeight() - 1);
 }
 
 Graphics::PixelBuffer SurfaceSdlGraphicsManager::getScreenPixelBuffer() {
@@ -271,7 +276,7 @@ void SurfaceSdlGraphicsManager::showOverlay() {
 
 	clearOverlay();
 
-	_eventSource->resetKeyboardEmulation(getOverlayWidth() - 1, getOverlayHeight() - 1);
+	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(getOverlayWidth() - 1, getOverlayHeight() - 1);
 }
 
 void SurfaceSdlGraphicsManager::hideOverlay() {
@@ -282,7 +287,7 @@ void SurfaceSdlGraphicsManager::hideOverlay() {
 
 	clearOverlay();
 
-	_eventSource->resetKeyboardEmulation(_gameRect.getWidth() - 1, _gameRect.getHeight() - 1);
+	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(_gameRect.getWidth() - 1, _gameRect.getHeight() - 1);
 }
 
 void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
@@ -472,7 +477,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
-bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const {
+bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
 	// Based on the implementation from ScummVM
 	bool success;
 	SDL_Surface *screen = nullptr;
@@ -499,7 +504,7 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const
 
 #ifdef USE_PNG
 	Common::DumpFile out;
-	if (!out.open(file)) {
+	if (!out.open(filename)) {
 		success = false;
 	} else {
 		if (SDL_LockSurface(screen) < 0) {
@@ -519,7 +524,7 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const
 		SDL_UnlockSurface(screen);
 	}
 #else
-	success = SDL_SaveBMP(screen, file.c_str()) == 0;
+	success = SDL_SaveBMP(screen, filename.c_str()) == 0;
 #endif
 
 	if (screen && screen != _screen) {
@@ -527,6 +532,10 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const
 	}
 
 	return success;
+}
+
+int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+	return 1;
 }
 
 #endif

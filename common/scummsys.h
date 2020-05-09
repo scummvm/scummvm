@@ -279,7 +279,7 @@
 		#define SCUMM_LITTLE_ENDIAN
 		#define SCUMM_NEED_ALIGNMENT
 
-	#elif defined(_WIN32_WCE) || defined(_MSC_VER) || defined(__MINGW32__)
+	#elif defined(_MSC_VER) || defined(__MINGW32__)
 
 		#define SCUMM_LITTLE_ENDIAN
 
@@ -364,7 +364,7 @@
 #endif
 
 #ifndef PLUGIN_EXPORT
-	#if defined(_MSC_VER) || defined(_WIN32_WCE) || defined(__MINGW32__)
+	#if defined(_MSC_VER) || defined(__MINGW32__)
 		#define PLUGIN_EXPORT __declspec(dllexport)
 	#else
 		#define PLUGIN_EXPORT
@@ -405,11 +405,11 @@
 	#else
 		#define STRINGBUFLEN 1024
 	#endif
-#endif
 
 // ResidualVM specific:
 #ifndef LOCAL_PI
 #define LOCAL_PI 3.14159265358979323846
+#endif
 #endif
 
 #ifndef MAXPATHLEN

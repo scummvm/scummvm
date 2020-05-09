@@ -84,7 +84,8 @@ public:
 	enum DrawingMode {
 		kDefaultMode,
 		kOutlineMode,
-		kShadowMode,
+		kShadowRightMode,
+		kShadowLeftMode,
 		kFMTownsShadowMode
 	};
 

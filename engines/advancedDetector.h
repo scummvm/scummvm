@@ -258,9 +258,9 @@ public:
 
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 protected:
 	// To be implemented by subclasses

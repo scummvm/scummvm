@@ -74,17 +74,20 @@ public:
 
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
 
-	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true, int inset = 0);
-	void addLayout(ThemeLayout::LayoutType type, int spacing, bool center = false);
-	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true, Graphics::TextAlign align = Graphics::kTextAlignLeft);
-	bool addImportedLayout(const Common::String &name);
-	void addSpace(int size);
+	ThemeEval &addDialog(const Common::String &name, const Common::String &overlays, int16 maxWidth = -1, int16 maxHeight = -1, int inset = 0);
+	ThemeEval &addLayout(ThemeLayout::LayoutType type, int spacing = -1, ThemeLayout::ItemAlign itemAlign = ThemeLayout::kItemAlignStart);
+	ThemeEval &addWidget(const Common::String &name, const Common::String &type, int w = -1, int h = -1, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	ThemeEval &addImportedLayout(const Common::String &name);
+	ThemeEval &addSpace(int size = -1);
 
-	void addPadding(int16 l, int16 r, int16 t, int16 b) { _curLayout.top()->setPadding(l, r, t, b); }
+	ThemeEval &addPadding(int16 l, int16 r, int16 t, int16 b) { _curLayout.top()->setPadding(l, r, t, b); return *this; }
 
-	void closeLayout() { _curLayout.pop(); }
-	void closeDialog() { _curLayout.pop()->reflowLayout(); _curDialog.clear(); }
+	ThemeEval &closeLayout() { _curLayout.pop(); return *this; }
+	ThemeEval &closeDialog() { _curLayout.pop(); _curDialog.clear(); return *this; }
 
+	bool hasDialog(const Common::String &name);
+
+	void reflowDialogLayout(const Common::String &name, Widget *widgetChain);
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h);
 
 	Graphics::TextAlign getWidgetTextHAlign(const Common::String &widget);

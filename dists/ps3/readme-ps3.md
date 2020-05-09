@@ -32,7 +32,7 @@ Joypad button mapping
 - R1 + Square     => Space ' '
 - Triangle        => Escape (used to skip cutscenes)
 - R1 + Triangle   => Return
-- Start           => ScummVM's global in-game menu
+- Start           => ResidualVM's global in-game menu
 - Select          => Toggle virtual keyboard
 - R1 + Select     => AGI predictive input dialog
 

@@ -28,6 +28,7 @@
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/encoding.h"
 
 #include "backends/saves/default/default-saves.h"
 
@@ -37,10 +38,14 @@
 #else
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 #endif
+
 #include "backends/events/default/default-events.h"
 // ResidualVM:
 // #include "backends/events/sdl/sdl-events.h"
+// ResidualVM:
+// #include "backends/events/sdl/legacy-sdl-events.h"
 #include "backends/events/sdl/resvm-sdl-events.h"
+#include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
@@ -78,10 +83,8 @@ OSystem_SDL::OSystem_SDL()
 	_logger(0),
 	_mixerManager(0),
 	_eventSource(0),
+	_eventSourceWrapper(nullptr),
 	_window(0) {
-
-	ConfMan.registerDefault("kbdmouse_speed", 3);
-	ConfMan.registerDefault("joystick_deadzone", 3);
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -102,6 +105,8 @@ OSystem_SDL::~OSystem_SDL() {
 	_window = 0;
 	delete _eventManager;
 	_eventManager = 0;
+	delete _eventSourceWrapper;
+	_eventSourceWrapper = nullptr;
 	delete _eventSource;
 	_eventSource = 0;
 	delete _audiocdManager;
@@ -143,16 +148,6 @@ void OSystem_SDL::init() {
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
 
-	if (!_logger)
-		_logger = new Backends::Log::Log(this);
-
-	if (_logger) {
-		Common::WriteStream *logFile = createLogFile();
-		if (logFile)
-			_logger->open(logFile);
-	}
-
-
 	// Creates the early needed managers, if they don't exist yet
 	// (we check for this to allow subclasses to provide their own).
 	if (_mutexManager == 0)
@@ -173,8 +168,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureClipboardSupport) return true;
 #endif
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
-		bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
-		return joystickSupportEnabled;
+		return _eventSource->isJoystickConnected();
 	}
 	return ModularBackend::hasFeature(f);
 }
@@ -182,6 +176,15 @@ bool OSystem_SDL::hasFeature(Feature f) {
 void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
+
+	if (!_logger)
+		_logger = new Backends::Log::Log(this);
+
+	if (_logger) {
+		Common::WriteStream *logFile = createLogFile();
+		if (logFile)
+			_logger->open(logFile);
+	}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
@@ -203,19 +206,21 @@ void OSystem_SDL::initBackend() {
 
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
-	if (_eventSource == 0)
+	if (!_eventSource)
 		_eventSource = new ResVmSdlEventSource(); // ResidualVm: was SdlEventSource
 
-	if (_eventManager == nullptr) {
-		DefaultEventManager *eventManager = new DefaultEventManager(_eventSource);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		// SDL 2 generates its own keyboard repeat events.
-		eventManager->setGenerateKeyRepeatEvents(false);
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	// SDL 1 does not generate its own keyboard repeat events.
+	assert(!_eventSourceWrapper);
+	_eventSourceWrapper = makeKeyboardRepeatingEventSource(_eventSource);
 #endif
-		_eventManager = eventManager;
+
+	if (!_eventManager) {
+		_eventManager = new DefaultEventManager(_eventSourceWrapper ? _eventSourceWrapper : _eventSource);
 	}
 
 	if (_graphicsManager == 0) {
+
 		if (_graphicsManager == 0) {
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window, _capabilities);
 		}
@@ -364,6 +369,9 @@ void OSystem_SDL::engineInit() {
 }
 
 void OSystem_SDL::engineDone() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+#endif
 #ifdef USE_TASKBAR
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
@@ -484,6 +492,28 @@ void OSystem_SDL::fatalError() {
 	exit(1);
 }
 
+Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
+	Common::KeymapArray globalMaps = ModularBackend::getGlobalKeymaps();
+
+	SdlGraphicsManager *graphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+	globalMaps.push_back(graphicsManager->getKeymap());
+
+	return globalMaps;
+}
+
+Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
+	using namespace Common;
+
+	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
+	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+
+	if (_eventSource->isJoystickConnected()) {
+		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
+	}
+
+	return inputSet;
+}
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	// First log to stdout/stderr
@@ -507,7 +537,11 @@ Common::WriteStream *OSystem_SDL::createLogFile() {
 	// of a failure, we know that no log file is open.
 	_logFilePath.clear();
 
-	Common::String logFile = getDefaultLogFileName();
+	Common::String logFile;
+	if (ConfMan.hasKey("logfile"))
+		logFile = ConfMan.get("logfile");
+	else
+		logFile = getDefaultLogFileName();
 	if (logFile.empty())
 		return nullptr;
 
@@ -671,3 +705,50 @@ Common::String OSystem_SDL::getScreenshotsPath() {
 		path += "/";
 	return path;
 }
+char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+#if SDL_VERSION_ATLEAST(1, 2, 10)
+	int zeroBytes = 1;
+	if (Common::String(from).hasPrefixIgnoreCase("utf-16"))
+		zeroBytes = 2;
+	else if (Common::String(from).hasPrefixIgnoreCase("utf-32"))
+		zeroBytes = 4;
+
+	char *result;
+	// SDL_iconv_string() takes char * instead of const char * as it's third parameter
+	// with some older versions of SDL.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	result = SDL_iconv_string(to, from, string, length + zeroBytes);
+#else
+	char *stringCopy = (char *) calloc(sizeof(char), length + zeroBytes);
+	memcpy(stringCopy, string, length);
+	result = SDL_iconv_string(to, from, stringCopy, length + zeroBytes);
+	free(stringCopy);
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
+	if (result == nullptr)
+		return nullptr;
+
+	// We need to copy the result, so that we can use SDL_free()
+	// on the string returned by SDL_iconv_string() and free()
+	// can then be used on the copyed and returned string.
+	// Sometimes free() and SDL_free() aren't compatible and
+	// using free() instead of SDL_free() can cause crashes.
+	size_t newLength = Common::Encoding::stringLength(result, to);
+	zeroBytes = 1;
+	if (Common::String(to).hasPrefixIgnoreCase("utf-16"))
+		zeroBytes = 2;
+	else if (Common::String(to).hasPrefixIgnoreCase("utf-32"))
+		zeroBytes = 4;
+	char *finalResult = (char *) malloc(newLength + zeroBytes);
+	if (!finalResult) {
+		warning("Could not allocate memory for encoding conversion");
+		SDL_free(result);
+		return nullptr;
+	}
+	memcpy(finalResult, result, newLength + zeroBytes);
+	SDL_free(result);
+	return finalResult;
+#else
+	return ModularBackend::convertEncoding(to, from, string, length);
+#endif // SDL_VERSION_ATLEAST(1, 2, 10)
+}
+

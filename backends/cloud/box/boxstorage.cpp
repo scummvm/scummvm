@@ -210,7 +210,7 @@ Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::
 	return addRequest(request);
 }
 
-Common::String BoxStorage::savesDirectoryPath() { return "scummvm/saves/"; }
+Common::String BoxStorage::savesDirectoryPath() { return "residualvm/saves/"; }
 
 BoxStorage *BoxStorage::loadFromConfig(Common::String keyPrefix) {
 	if (!ConfMan.hasKey(keyPrefix + "access_token", ConfMan.kCloudDomain)) {

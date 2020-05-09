@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/array.h" // For OSystem::getGlobalKeymaps()
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
@@ -51,17 +52,21 @@ class TaskbarManager;
 #if defined(USE_UPDATES)
 class UpdateManager;
 #endif
+#if defined(USE_TTS)
+class TextToSpeechManager;
+#endif
 #if defined(USE_SYSDIALOGS)
 class DialogManager;
 #endif
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
-#ifdef ENABLE_KEYMAPPER
 class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
-#endif
+class Encoding;
+
+typedef Array<Keymap *> KeymapArray;
 }
 
 class AudioCDManager;
@@ -109,6 +114,7 @@ enum Type {
  * control audio CD playback, and sound output.
  */
 class OSystem : Common::NonCopyable {
+	friend class Common::Encoding;
 protected:
 	OSystem();
 	virtual ~OSystem();
@@ -184,6 +190,15 @@ protected:
 	Common::UpdateManager *_updateManager;
 #endif
 
+#if defined(USE_TTS)
+	/**
+	 * No default value is provided for _textToSpeechManager by OSystem.
+	 *
+	 * @note _textToSpeechManager is deleted by the OSystem destructor.
+	 */
+	Common::TextToSpeechManager *_textToSpeechManager;
+#endif
+
 #if defined(USE_SYSDIALOGS)
 	/**
 	 * No default value is provided for _dialogManager by OSystem.
@@ -209,6 +224,10 @@ protected:
 	 * implement clipboard support.
 	 */
 	Common::String _clipboard;
+
+	// WORKAROUND. The 014bef9eab9fb409cfb3ec66830e033e4aaa29a9 triggered a bug
+	// in the osx_intel toolchain. Adding this variable fixes it.
+	bool _dummyUnused;
 
 private:
 	/**
@@ -340,25 +359,6 @@ public:
 		 */
 		kFeatureIconifyWindow,
 
-		/**
-		 * Setting the state of this feature to true tells the backend to disable
-		 * all key filtering/mapping, in cases where it would be beneficial to do so.
-		 * As an example case, this is used in the AGI engine's predictive dialog.
-		 * When the dialog is displayed this feature is set so that backends with
-		 * phone-like keypad temporarily unmap all user actions which leads to
-		 * comfortable word entry. Conversely, when the dialog exits the feature
-		 * is set to false.
-		 *
-		 * TODO: The word 'beneficial' above is very unclear. Beneficial to
-		 * whom and for what??? Just giving an example is not enough.
-		 *
-		 * TODO: Fingolfin suggests that the way the feature is used can be
-		 * generalized in this sense: Have a keyboard mapping feature, which the
-		 * engine queries for to assign keys to actions ("Here's my default key
-		 * map for these actions, what do you want them set to?").
-		 */
-		kFeatureDisableKeyFiltering,
-
 		//ResidualVM specific
 		kFeatureOpenGL,
 		// Can side textures be rendered on the side for widescreen support?
@@ -447,7 +447,12 @@ public:
 		* Supports for using the native system file browser dialog
 		* through the DialogManager.
 		*/
-		kFeatureSystemBrowserDialog
+		kFeatureSystemBrowserDialog,
+
+		/**
+		* For platforms that should not have a Quit button
+		*/
+		kFeatureNoQuit
 
 	};
 
@@ -575,7 +580,10 @@ public:
 	 * The list is terminated by an all-zero entry.
 	 * @return a list of supported graphics modes
 	 */
-	virtual const GraphicsMode *getSupportedGraphicsModes() const = 0;
+	virtual const GraphicsMode *getSupportedGraphicsModes() const {
+		static const GraphicsMode noGraphicsModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		return noGraphicsModes;
+    }
 
 	/**
 	 * !!! Not used in ResidualVM !!!
@@ -587,7 +595,7 @@ public:
 	 *
 	 * @return the ID of the 'default' graphics mode
 	 */
-	virtual int getDefaultGraphicsMode() const = 0;
+	virtual int getDefaultGraphicsMode() const { return 0; }
 
 	/**
 	 * !!! Not used in ResidualVM !!!
@@ -598,7 +606,7 @@ public:
 	 * @param mode	the ID of the new graphics mode
 	 * @return true if the switch was successful, false otherwise
 	 */
-	virtual bool setGraphicsMode(int mode) = 0;
+	virtual bool setGraphicsMode(int mode) { return (mode == 0); }
 
 	/**
 	 * !!! Not used in ResidualVM !!!
@@ -620,7 +628,7 @@ public:
 	 * Determine which graphics mode is currently active.
 	 * @return the ID of the active graphics mode
 	 */
-	virtual int getGraphicsMode() const = 0;
+	virtual int getGraphicsMode() const { return 0; }
 
 	/**
 	 * !!! Not used in ResidualVM !!!
@@ -705,6 +713,16 @@ public:
 	}
 
 	/**
+	 * Return the ID of the 'default' shader mode. What exactly this means
+	 * is up to the backend. This mode is set by the client code when no user
+	 * overrides are present (i.e. if no custom shader mode is selected via
+	 * the command line or a config file).
+	 *
+	 * @return the ID of the 'default' shader mode
+	 */
+	virtual int getDefaultShader() const { return 0; }
+
+	/**
 	 * !!! Not used in ResidualVM !!!
 	 *
 	 * Switch to the specified shader mode. If switching to the new mode
@@ -714,6 +732,20 @@ public:
 	 * @return true if the switch was successful, false otherwise
 	 */
 	virtual bool setShader(int id) { return false; }
+
+	/**
+	 * !!! Not used in ResidualVM !!!
+	 *
+	 * Switch to the shader mode with the given name. If 'name' is unknown,
+	 * or if switching to the new mode failed, this method returns false.
+	 *
+	 * @param name	the name of the new shader mode
+	 * @return true if the switch was successful, false otherwise
+	 * @note This is implemented via the setShader(int) method, as well
+	 *       as getSupportedShaders() and getDefaultShader().
+	 *       In particular, backends do not have to overload this!
+	 */
+	bool setShader(const char *name);
 
 	/**
 	 * Determine which shader is currently active.
@@ -808,7 +840,7 @@ public:
 	 * only a single screen size do not need to call this function.
 	 *
 	 * @param modes the list of graphics modes the engine will probably use.
- 	 */
+	 */
 	virtual void initSizeHint(const Graphics::ModeList &modes) {}
  
 	/**
@@ -1028,11 +1060,13 @@ public:
 	 * not cause any graphic data to be lost - that is, to restore the original
 	 * view, the game engine only has to call this method again with offset
 	 * equal to zero. No calls to copyRectToScreen are necessary.
-	 * @param shakeOffset	the shake offset
+	 * @param shakeXOffset	the shake x offset
+	 * @param shakeYOffset	the shake y offset
 	 *
-	 * @note This is currently used in the SCUMM, QUEEN and KYRA engines.
+	 * @note This is currently used in the SCUMM, QUEEN, KYRA, SCI, DREAMWEB,
+	 * SUPERNOVA, TEENAGENT, and TOLTECS engines.
 	 */
-	virtual void setShakePos(int shakeOffset) = 0;
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) = 0;
 
 	/**
 	 * !!! Not used in ResidualVM !!!
@@ -1260,11 +1294,8 @@ public:
 		return _eventManager;
 	}
 
-#ifdef ENABLE_KEYMAPPER
 	/**
 	 * Register hardware inputs with keymapper
-	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	 * this, please talk to tsoliman and/or LordHoto.
 	 *
 	 * @return HardwareInputSet with all keys and recommended mappings
 	 *
@@ -1274,8 +1305,6 @@ public:
 
 	/**
 	 * Return a platform-specific global keymap
-	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	 * this, please talk to tsoliman and/or LordHoto.
 	 *
 	 * @return Keymap with actions appropriate for the platform
 	 *
@@ -1283,19 +1312,16 @@ public:
 	 *
 	 * See keymapper documentation for further reference.
 	 */
-	virtual Common::Keymap *getGlobalKeymap() { return nullptr; }
+	virtual Common::KeymapArray getGlobalKeymaps() { return Common::KeymapArray(); }
 
 	/**
 	 * Return platform-specific default keybindings
-	 * IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
-	 * this, please talk to tsoliman and/or LordHoto.
 	 *
 	 * @return KeymapperDefaultBindings populated with keybindings
 	 *
 	 * See keymapper documentation for further reference.
 	 */
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return nullptr; }
-#endif
 	//@}
 
 
@@ -1474,6 +1500,17 @@ public:
 	}
 #endif
 
+#if defined(USE_TTS)
+	/**
+	 * Returns the TextToSpeechManager, used to handle text to speech features.
+	 *
+	 * @return the TextToSpeechManager for the current architecture
+	 */
+	virtual Common::TextToSpeechManager *getTextToSpeechManager() {
+		return _textToSpeechManager;
+	}
+#endif
+
 #if defined(USE_SYSDIALOGS)
 	/**
 	 * Returns the DialogManager, used to handle system dialogs.
@@ -1641,6 +1678,23 @@ public:
 	virtual bool isConnectionLimited();
 
 	//@}
+
+protected:
+
+	/**
+	 * This allows derived classes to implement encoding conversion using platform
+	 * specific API.
+	 * This method shouldn't be called directly. Use Common::Encoding instead.
+	 *
+	 * @param to Encoding to convert the string to
+	 * @param from Encoding to convert the string from
+	 * @param string The string that should be converted
+	 * @param length Size of the string in bytes
+	 *
+	 * @return Converted string, which must be freed by the caller (using free()
+	 * and not delete[]), or nullptr if the conversion isn't possible.
+	 */
+	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) { return nullptr; }
 };
 
 

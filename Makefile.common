@@ -13,7 +13,7 @@ all: $(EXECUTABLE).dwp
 endif
 
 ifdef USE_PANDOC
-all: README$(PANDOCEXT) NEWS$(PANDOCEXT)
+all: PANDOC_CONVERT
 endif
 
 ######################################################################
@@ -28,9 +28,9 @@ MODULES := test devtools base $(MODULES)
 
 # After the game specific modules follow the shared modules
 MODULES += \
+	engines \
 	gui \
 	backends \
-	engines \
 	video \
 	image \
 	graphics \
@@ -299,8 +299,84 @@ ifdef USE_SDL_NET
 DIST_FILES_NETWORKING:=$(addprefix $(srcdir)/dists/networking/,wwwroot.zip)
 endif
 
+# Virtual keyboard files
+DIST_FILES_VKEYBD=
+ifdef ENABLE_VKEYBD
+DIST_FILES_VKEYBD:=$(addprefix $(srcdir)/backends/vkeybd/packs/,vkeybd_default.zip vkeybd_small.zip)
+endif
+
 # Engine data files
 DIST_FILES_ENGINEDATA=
+ifdef ENABLE_ACCESS
+DIST_FILES_ENGINEDATA+=access.dat
+endif
+ifdef ENABLE_CRYO
+DIST_FILES_ENGINEDATA+=cryo.dat
+endif
+ifdef ENABLE_CRYOMNI3D
+DIST_FILES_ENGINEDATA+=cryomni3d.dat
+endif
+ifdef ENABLE_DRASCULA
+DIST_FILES_ENGINEDATA+=drascula.dat
+endif
+ifdef ENABLE_HUGO
+DIST_FILES_ENGINEDATA+=hugo.dat
+endif
+ifdef ENABLE_KYRA
+DIST_FILES_ENGINEDATA+=kyra.dat
+endif
+ifdef ENABLE_LURE
+DIST_FILES_ENGINEDATA+=lure.dat
+endif
+ifdef ENABLE_MORTEVIELLE
+DIST_FILES_ENGINEDATA+=mort.dat
+endif
+ifdef ENABLE_NEVERHOOD
+DIST_FILES_ENGINEDATA+=neverhood.dat
+endif
+ifdef ENABLE_QUEEN
+DIST_FILES_ENGINEDATA+=queen.tbl
+endif
+ifdef ENABLE_SKY
+DIST_FILES_ENGINEDATA+=sky.cpt
+endif
+ifdef ENABLE_SUPERNOVA
+DIST_FILES_ENGINEDATA+=supernova.dat
+endif
+ifdef ENABLE_TEENAGENT
+DIST_FILES_ENGINEDATA+=teenagent.dat
+endif
+ifdef ENABLE_TITANIC
+DIST_FILES_ENGINEDATA+=titanic.dat
+endif
+ifdef ENABLE_TONY
+DIST_FILES_ENGINEDATA+=tony.dat
+endif
+ifdef ENABLE_TOON
+DIST_FILES_ENGINEDATA+=toon.dat
+endif
+ifdef ENABLE_ULTIMA
+DIST_FILES_ENGINEDATA+=ultima.dat
+endif
+ifdef ENABLE_WINTERMUTE
+DIST_FILES_ENGINEDATA+=wintermute.zip
+endif
+ifdef ENABLE_MACVENTURE
+DIST_FILES_ENGINEDATA+=macventure.dat
+endif
+ifdef ENABLE_XEEN
+DIST_FILES_ENGINEDATA+=xeen.ccs
+endif
+ifdef USE_FREETYPE2
+DIST_FILES_ENGINEDATA+=fonts.dat
+endif
+DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
+
+# pred.dic is currently only used for the AGI engine
+ifdef ENABLE_AGI
+DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
+endif
+
 ifdef ENABLE_GRIM
 DIST_FILES_ENGINEDATA+=residualvm-grim-patch.lab
 endif

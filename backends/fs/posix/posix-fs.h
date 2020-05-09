@@ -70,7 +70,7 @@ public:
 	virtual Common::WriteStream *createWriteStream();
 	virtual bool createDirectory();
 
-private:
+protected:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
 	 */

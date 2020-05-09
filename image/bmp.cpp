@@ -69,8 +69,8 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	uint32 imageOffset = stream.readUint32LE();
 
 	uint32 infoSize = stream.readUint32LE();
-	if (infoSize != 40) {
-		warning("Only Windows v3 bitmaps are supported");
+	if (infoSize != 40 && infoSize != 108) {
+		warning("Only Windows v3 & v4 bitmaps are supported");
 		return false;
 	}
 
@@ -132,6 +132,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+// ResidualVM specific argument: bottomUp
 bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
@@ -169,7 +170,7 @@ bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	out.writeUint32LE(0);
 	out.writeUint32LE(0);
 
-
+// ResidualVM specific
 	if (bottomUp) {
 		for (uint y = 0; y < surface->h; ++y) {
 			out.write((const void *)surface->getBasePtr(0, y), dstPitch);

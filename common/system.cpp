@@ -31,6 +31,7 @@
 #include "common/updates.h"
 #include "common/dialogs.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
@@ -48,6 +49,9 @@ OSystem::OSystem() {
 #endif
 #if defined(USE_UPDATES)
 	_updateManager = nullptr;
+#endif
+#if defined(USE_TTS)
+	_textToSpeechManager = nullptr;
 #endif
 #if defined(USE_SYSDIALOGS)
 	_dialogManager = nullptr;
@@ -74,6 +78,11 @@ OSystem::~OSystem() {
 #if defined(USE_UPDATES)
 	delete _updateManager;
 	_updateManager = nullptr;
+#endif
+
+#if defined(USE_TTS)
+	delete _textToSpeechManager;
+	_textToSpeechManager = 0;
 #endif
 
 #if defined(USE_SYSDIALOGS)
@@ -135,6 +144,27 @@ bool OSystem::setGraphicsMode(const char *name) {
 			return setGraphicsMode(gm->id);
 		}
 		gm++;
+	}
+
+	return false;
+}
+
+bool OSystem::setShader(const char *name) {
+	if (!name)
+		return false;
+
+	// Special case for the 'default' filter
+	if (!scumm_stricmp(name, "default")) {
+		return setShader(getDefaultShader());
+	}
+
+	const GraphicsMode *sm = getSupportedShaders();
+
+	while (sm->name) {
+		if (!scumm_stricmp(sm->name, name)) {
+			return setShader(sm->id);
+		}
+		sm++;
 	}
 
 	return false;

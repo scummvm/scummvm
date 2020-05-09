@@ -54,8 +54,8 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 
 	_title = title;
 	_isDirBrowser = dirBrowser;
-	_fileList = NULL;
-	_currentPath = NULL;
+	_fileList = nullptr;
+	_currentPath = nullptr;
 	_showHidden = false;
 
 	// Headline - TODO: should be customizable during creation time
@@ -79,8 +79,8 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), 0, kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), 0, kChooseCmd);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), nullptr, kChooseCmd);
 }
 
 int BrowserDialog::runModal() {
@@ -189,7 +189,10 @@ void BrowserDialog::updateListing() {
 	_currentPath->setEditString(_node.getPath());
 
 	// We memorize the last visited path.
-	ConfMan.set("browser_lastpath", _node.getPath());
+	// Don't memorize a path that is not a directory
+	if (_node.isDirectory()) {
+		ConfMan.set("browser_lastpath", _node.getPath());
+	}
 
 	// Read in the data from the file system
 	if (!_node.getChildren(_nodeContent, Common::FSNode::kListAll, _showHidden))

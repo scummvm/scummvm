@@ -22,6 +22,8 @@
 
 #include "gui/editgamedialog.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "common/config-manager.h"
 #include "common/gui_options.h"
 #include "common/translation.h"
@@ -62,6 +64,7 @@ enum {
 	kSearchClearCmd = 'SRCL',
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
+	kCmdGlobalShaderOverride = 'OSHD',
 	kCmdGlobalAudioOverride = 'OSFX',
 	kCmdGlobalMIDIOverride = 'OMID',
 	kCmdGlobalMT32Override = 'OM32',
@@ -85,11 +88,11 @@ enum {
 */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip = 0)
+	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip = nullptr)
 		: EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
-	bool tryInsertChar(byte c, int pos) {
+	bool tryInsertChar(byte c, int pos) override {
 		if (Common::isAlnum(c) || c == '-' || c == '_') {
 			_editString.insertChar(c, pos);
 			return true;
@@ -102,15 +105,13 @@ EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	EngineMan.upgradeTargetIfNecessary(domain);
 
-	// Retrieve all game specific options.
+	_engineOptions = nullptr;
 
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
 	const Plugin *plugin = nullptr;
 	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &plugin);
-	if (plugin) {
-		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
-	} else {
+	if (!plugin) {
 		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
 	}
 
@@ -121,7 +122,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.empty() && qgd.description) {
+	if (description.empty() && !qgd.description.empty()) {
 		description = qgd.description;
 	}
 
@@ -131,7 +132,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 1) The game tab
 	//
-	tab->addTab(_("Game"));
+	tab->addTab(_("Game"), "GameOptions_Game");
 
 	// GUI:  Label & edit widget for the game ID
 	if (g_system->getOverlayWidth() > 320)
@@ -172,38 +173,76 @@ EditGameDialog::EditGameDialog(const String &domain)
 	}
 
 	//
-	// 2) The engine tab (shown only if there are custom engine options)
+	// 2) The engine tab (shown only if the engine implements one or there are custom engine options)
 	//
-	if (_engineOptions.size() > 0) {
-		tab->addTab(_("Engine"));
 
-		addEngineControls(tab, "GameOptions_Engine.", _engineOptions);
+	if (plugin) {
+		int tabId = tab->addTab(_("Engine"), "GameOptions_Engine");
+
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		metaEngine.registerDefaultSettings(_domain);
+		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GameOptions_Engine.Container", _domain);
+
+		if (_engineOptions) {
+			_engineOptions->setParentDialog(this);
+		} else {
+			tab->removeTab(tabId);
+		}
 	}
 
 	//
 	// 3) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
-	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
-	graphicsContainer->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"), "GameOptions_Graphics");
+	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", "GameOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
+	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 	graphicsContainer->setTarget(this);
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), nullptr, kCmdGlobalGraphicsOverride);
 	else
-		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), nullptr, kCmdGlobalGraphicsOverride);
 
 	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
 
 	//
+	// The shader tab (currently visible only for Vita platform), visibility checking by features
+	//
+
+	_globalShaderOverride = nullptr;
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		tab->addTab(_("Shader"), "GameOptions_Shader");
+
+		if (g_system->getOverlayWidth() > 320)
+			_globalShaderOverride = new CheckboxWidget(tab, "GameOptions_Shader.EnableTabCheckbox", _("Override global shader settings"), nullptr, kCmdGlobalShaderOverride);
+		else
+			_globalShaderOverride = new CheckboxWidget(tab, "GameOptions_Shader.EnableTabCheckbox", _c("Override global shader settings", "lowres"), nullptr, kCmdGlobalShaderOverride);
+
+		addShaderControls(tab, "GameOptions_Shader.");
+	}
+
+	//
+	// The Keymap tab
+	//
+	Common::KeymapArray keymaps;
+	if (plugin) {
+		keymaps = plugin->get<MetaEngine>().initKeymaps(domain.c_str());
+	}
+
+	if (!keymaps.empty()) {
+		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper");
+		addKeyMapperControls(tab, "GameOptions_KeyMapper.", keymaps, domain);
+	}
+
+	//
 	// 4) The audio tab
 	//
-	tab->addTab(_("Audio"));
+	tab->addTab(_("Audio"), "GameOptions_Audio");
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), 0, kCmdGlobalAudioOverride);
+		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), nullptr, kCmdGlobalAudioOverride);
 	else
-		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _c("Override global audio settings", "lowres"), 0, kCmdGlobalAudioOverride);
+		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _c("Override global audio settings", "lowres"), nullptr, kCmdGlobalAudioOverride);
 
 	addAudioControls(tab, "GameOptions_Audio.");
 	addSubtitleControls(tab, "GameOptions_Audio.");
@@ -212,28 +251,30 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 5) The volume tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Volume"));
+		tab->addTab(_("Volume"), "GameOptions_Volume");
 	else
-		tab->addTab(_c("Volume", "lowres"));
+		tab->addTab(_c("Volume", "lowres"), "GameOptions_Volume");
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), 0, kCmdGlobalVolumeOverride);
+		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), nullptr, kCmdGlobalVolumeOverride);
 	else
-		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), 0, kCmdGlobalVolumeOverride);
+		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), nullptr, kCmdGlobalVolumeOverride);
 
 	addVolumeControls(tab, "GameOptions_Volume.");
+
+	bool showMidi = !_guioptions.contains(GUIO_NOMIDI) && !_guioptions.contains(GUIO_NOMUSIC);
 
 	//
 	// 6) The MIDI tab
 	//
-	_globalMIDIOverride = NULL;
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
-		tab->addTab(_("MIDI"));
+	_globalMIDIOverride = nullptr;
+	if (showMidi) {
+		tab->addTab(_("MIDI"), "GameOptions_MIDI");
 
 		if (g_system->getOverlayWidth() > 320)
-			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
+			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), nullptr, kCmdGlobalMIDIOverride);
 		else
-			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), 0, kCmdGlobalMIDIOverride);
+			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), nullptr, kCmdGlobalMIDIOverride);
 
 		addMIDIControls(tab, "GameOptions_MIDI.");
 	}
@@ -241,14 +282,14 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 7) The MT-32 tab
 	//
-	_globalMT32Override = NULL;
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
-		tab->addTab(_("MT-32"));
+	_globalMT32Override = nullptr;
+	if (showMidi) {
+		tab->addTab(_("MT-32"), "GameOptions_MT32");
 
 		if (g_system->getOverlayWidth() > 320)
-			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
+			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), nullptr, kCmdGlobalMT32Override);
 		else
-			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
+			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), nullptr, kCmdGlobalMT32Override);
 
 		addMT32Controls(tab, "GameOptions_MT32.");
 	}
@@ -257,18 +298,18 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 8) The Paths tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Paths"));
+		tab->addTab(_("Paths"), "GameOptions_Paths");
 	else
-		tab->addTab(_c("Paths", "lowres"));
+		tab->addTab(_c("Paths", "lowres"), "GameOptions_Paths");
 
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), nullptr, kCmdGameBrowser);
 	else
-		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), 0, kCmdGameBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), nullptr, kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
@@ -289,13 +330,25 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
+	//
+	// 9) The Achievements tab
+	//
+	if (plugin) {
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
+		if (achievementsInfo.descriptions.size() > 0) {
+			tab->addTab(_("Achievements"), "GameOptions_Achievements");
+			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);
+		}
+	}
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), 0, kCloseCmd);
-	new ButtonWidget(this, "GameOptions.Ok", _("OK"), 0, kOKCmd);
+	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	new ButtonWidget(this, "GameOptions.Ok", _("OK"), nullptr, kOKCmd);
 }
 
 void EditGameDialog::setupGraphicsTab() {
@@ -327,6 +380,11 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("aspect_ratio", _domain);
 	_globalGraphicsOverride->setState(e);
 
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		e = ConfMan.hasKey("shader", _domain);
+		_globalShaderOverride->setState(e);
+	}
+
 	e = ConfMan.hasKey("music_driver", _domain) ||
 		ConfMan.hasKey("output_rate", _domain) ||
 		ConfMan.hasKey("opl_driver", _domain) ||
@@ -339,14 +397,12 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("speech_volume", _domain);
 	_globalVolumeOverride->setState(e);
 
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
+	if (!_guioptions.contains(GUIO_NOMIDI) && !_guioptions.contains(GUIO_NOMUSIC)) {
 		e = ConfMan.hasKey("soundfont", _domain) ||
 			ConfMan.hasKey("multi_midi", _domain) ||
 			ConfMan.hasKey("midi_gain", _domain);
 		_globalMIDIOverride->setState(e);
-	}
 
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		e = ConfMan.hasKey("native_mt32", _domain) ||
 			ConfMan.hasKey("enable_gs", _domain);
 		_globalMT32Override->setState(e);
@@ -367,18 +423,8 @@ void EditGameDialog::open() {
 		_langPopUp->setEnabled(false);
 	}
 
-	// Set the state of engine-specific checkboxes
-	for (uint j = 0; j < _engineOptions.size(); ++j) {
-		// The default values for engine-specific checkboxes are not set when
-		// ScummVM starts, as this would require us to load and poll all of the
-		// engine plugins on startup. Thus, we set the state of each custom
-		// option checkbox to what is specified by the engine plugin, and
-		// update it only if a value has been set in the configuration of the
-		// currently selected game.
-		bool isChecked = _engineOptions[j].defaultState;
-		if (ConfMan.hasKey(_engineOptions[j].configOption, _domain))
-			isChecked = ConfMan.getBool(_engineOptions[j].configOption, _domain);
-		_engineCheckboxes[j]->setState(isChecked);
+	if (_engineOptions) {
+		_engineOptions->load();
 	}
 
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -422,9 +468,8 @@ void EditGameDialog::apply() {
 	else
 		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
 
-	// Set the state of engine-specific checkboxes
-	for (uint i = 0; i < _engineOptions.size(); i++) {
-		ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
+	if (_engineOptions) {
+		_engineOptions->save();
 	}
 
 	OptionsDialog::apply();
@@ -436,10 +481,14 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setGraphicSettingsState(data != 0);
 		g_gui.scheduleTopDialogRedraw();
 		break;
+	case kCmdGlobalShaderOverride:
+		setShaderSettingsState(data != 0);
+		g_gui.scheduleTopDialogRedraw();
+		break;
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
 		setSubtitleSettingsState(data != 0);
-		if (_globalVolumeOverride == NULL)
+		if (_globalVolumeOverride == nullptr)
 			setVolumeSettingsState(data != 0);
 		g_gui.scheduleTopDialogRedraw();
 		break;
@@ -547,6 +596,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			}
 			ConfMan.renameGameDomain(_domain, newDomain);
 			_domain = newDomain;
+			if (_engineOptions) {
+				_engineOptions->setDomain(newDomain);
+			}
 		}
 	}
 	// fall through

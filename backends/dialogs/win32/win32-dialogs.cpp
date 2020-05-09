@@ -67,8 +67,6 @@
 #include "backends/platform/sdl/win32/win32-window.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
-#include "common/events.h"
 #include "common/translation.h"
 
 Win32DialogManager::Win32DialogManager(SdlWindow_Win32 *window) : _window(window) {
@@ -117,13 +115,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 		reinterpret_cast<void **> (&(dialog)));
 
 	if (SUCCEEDED(hr)) {
-		// If in fullscreen mode, switch to windowed mode
-		bool wasFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
-		if (wasFullscreen) {
-			g_system->beginGFXTransaction();
-			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
-			g_system->endGFXTransaction();
-		}
+		beginDialog();
 
 		// Customize dialog
 		bool showHidden = ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain);
@@ -191,12 +183,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 
 		dialog->Release();
 
-		// If we were in fullscreen mode, switch back
-		if (wasFullscreen) {
-			g_system->beginGFXTransaction();
-			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
-			g_system->endGFXTransaction();
-		}
+		endDialog();
 	}
 
 	return result;

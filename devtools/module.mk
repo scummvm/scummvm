@@ -32,7 +32,7 @@ clean-devtools:
 # Rule to explicitly rebuild the wwwroot archive
 wwwroot:
 	$(srcdir)/devtools/make-www-archive.py $(srcdir)/dists/networking/
-	
+
 
 #
 # Rules to explicitly rebuild the credits / MD5 tables.

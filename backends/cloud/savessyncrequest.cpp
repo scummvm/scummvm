@@ -217,7 +217,7 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 		if (error.response.contains("subdirectory not found")) {
 			irrecoverable = false; //base "/ScummVM/" folder not found
 		} else if (error.response.contains("no such file found in its parent directory")) {
-			irrecoverable = false; //"Saves" folder within "/ScummVM/" not found
+			irrecoverable = false; //"Saves" folder within "/ResidualVM/" not found
 		} else if (error.response.contains("itemNotFound") && error.response.contains("Item does not exist")) {
 			irrecoverable = false; //"saves" folder within application folder is not found
 		}

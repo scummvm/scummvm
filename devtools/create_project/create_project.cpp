@@ -341,17 +341,6 @@ int main(int argc, char *argv[]) {
 			cout << "    " << i->description << '\n';
 	}
 
-	// Check if the keymapper and the event recorder are enabled simultaneously
-	bool keymapperEnabled = false;
-	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
-		if (i->enable && !strcmp(i->name, "keymapper"))
-			keymapperEnabled = true;
-		if (i->enable && !strcmp(i->name, "eventrecorder") && keymapperEnabled) {
-			std::cerr << "ERROR: The keymapper and the event recorder cannot be enabled simultaneously currently, please disable one of the two\n";
-			return -1;
-		}
-	}
-
 	// Check if tools and tests are enabled simultaneously
 	if (setup.devTools && setup.tests) {
 		std::cerr << "ERROR: The tools and tests projects cannot be created simultaneously\n";
@@ -366,6 +355,7 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
+	bool backendWin32 = false;
 	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
@@ -376,42 +366,57 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
-		// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 	} else {
 		// As a last resort, select the backend files to build based on the platform used to build create_project.
 		// This is broken when cross compiling.
 #if defined(_WIN32) || defined(WIN32)
 		setup.defines.push_back("WIN32");
+		backendWin32 = true;
 #else
 		setup.defines.push_back("POSIX");
 #endif
 	}
 
-	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false;
+	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false, ttsEnabled = false;
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable) {
-			if (!strcmp(i->name, "updates"))
+			if (!updatesEnabled && !strcmp(i->name, "updates"))
 				updatesEnabled = true;
-			else if (!strcmp(i->name, "libcurl"))
+			else if (!curlEnabled && !strcmp(i->name, "libcurl"))
 				curlEnabled = true;
-			else if (!strcmp(i->name, "sdlnet"))
+			else if (!sdlnetEnabled && !strcmp(i->name, "sdlnet"))
 				sdlnetEnabled = true;
+			else if (!ttsEnabled && !strcmp(i->name, "tts"))
+				ttsEnabled = true;
 		}
 	}
 
 	if (updatesEnabled) {
 		setup.defines.push_back("USE_SPARKLE");
-		if (projectType != kProjectXcode)
+		if (backendWin32)
 			setup.libraries.push_back("winsparkle");
 		else
 			setup.libraries.push_back("sparkle");
 	}
 
-	if (curlEnabled && projectType == kProjectMSVC)
-		setup.defines.push_back("CURL_STATICLIB");
-	if (sdlnetEnabled && projectType == kProjectMSVC)
-		setup.libraries.push_back("iphlpapi");
+	if (backendWin32) {
+		if (curlEnabled) {
+			setup.defines.push_back("CURL_STATICLIB");
+			setup.libraries.push_back("ws2_32");
+			setup.libraries.push_back("wldap32");
+			setup.libraries.push_back("crypt32");
+			setup.libraries.push_back("normaliz");
+		}
+		if (sdlnetEnabled) {
+			setup.libraries.push_back("iphlpapi");
+		}
+		if (ttsEnabled) {
+			setup.libraries.push_back("sapi");
+		}
+		setup.libraries.push_back("winmm");
+	}
 
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
@@ -425,7 +430,6 @@ int main(int argc, char *argv[]) {
 		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
-	setup.libraries.push_back("winmm");
 
 	// Add additional project-specific library
 #ifdef ADDITIONAL_LIBRARY
@@ -500,8 +504,6 @@ int main(int argc, char *argv[]) {
 		// For Visual Studio, all warnings are on by default in the project files,
 		// so we pass a list of warnings to disable globally or per-project
 		//
-		// Tracker reference:
-		// https://sourceforge.net/tracker/?func=detail&aid=2909981&group_id=37116&atid=418822
 		////////////////////////////////////////////////////////////////////////////
 		//
 		// 4068 (unknown pragma)
@@ -1045,6 +1047,7 @@ const Feature s_features[] = {
 	// Libraries
 	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
 	{       "mad",         "USE_MAD", "libmad",           true,  "libmad (MP3) support" },
+	{   "fribidi",     "USE_FRIBIDI", "fribidi",          true,  "BiDi support" },
 	{       "ogg",         "USE_OGG", "libogg_static",    true,  "Ogg support" },
 	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static", true, "Vorbis support" },
 	{    "tremor",      "USE_TREMOR", "libtremor", false, "Tremor support" },
@@ -1056,8 +1059,8 @@ const Feature s_features[] = {
 	{  "freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
 	{      "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
 	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    false, "FluidSynth support" }, // ResidualVM change
-	{   "libcurl",     "USE_LIBCURL", "libcurl",          false, "libcurl support" },
-	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          false, "SDL_net support" },
+	{   "libcurl",     "USE_LIBCURL", "libcurl",          false, "libcurl support" }, // ResidualVM change
+	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          false, "SDL_net support" }, // ResidualVM change
 	{      "glew",        "USE_GLEW", "GLEW",             true,  "GLEW support" }, // ResidualVM specific
 
 	// Feature flags
@@ -1067,6 +1070,7 @@ const Feature s_features[] = {
 	{           "16bit",                 "USE_RGB_COLOR",  "", true,  "16bit color support" },
 	{         "highres",                   "USE_HIGHRES",  "", true,  "high resolution" },
 //	{         "mt32emu",                   "USE_MT32EMU",  "", true,  "integrated MT-32 emulator" }, // ResidualVM change
+//	{             "lua",                       "USE_LUA",  "", true,  "lua" },
 	{            "nasm",                      "USE_NASM",  "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{          "opengl",                    "USE_OPENGL",  "", true,  "OpenGL support" },
 	{   "openglshaders",            "USE_OPENGL_SHADERS",  "", true,  "OpenGL support (shaders)" }, // ResidualVM specific
@@ -1075,13 +1079,12 @@ const Feature s_features[] = {
 	{           "cloud",                     "USE_CLOUD",  "", true,  "Cloud integration support" },
 	{     "translation",               "USE_TRANSLATION",  "", true,  "Translation support" },
 	{          "vkeybd",                 "ENABLE_VKEYBD",  "", false, "Virtual keyboard support"},
-	{       "keymapper",              "ENABLE_KEYMAPPER",  "", false, "Keymapper support"},
 	{   "eventrecorder",          "ENABLE_EVENTRECORDER",  "", false, "Event recorder support"},
 	{         "updates",                   "USE_UPDATES",  "", false, "Updates support"},
 	{         "dialogs",                "USE_SYSDIALOGS",  "", true,  "System dialogs support"},
 	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
 	                                                                                                         // is just no current way of properly detecting this...
-	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" } // This feature is always applied in xcode projects
+	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" }, // This feature is always applied in xcode projects
 };
 
 const Tool s_tools[] = {

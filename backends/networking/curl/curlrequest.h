@@ -50,6 +50,8 @@ protected:
 	uint32 _bytesBufferSize;
 	bool _uploading; //using PUT method
 	bool _usingPatch; //using PATCH method
+	bool _keepAlive;
+	long _keepAliveIdle, _keepAliveInterval;
 
 	virtual NetworkReadStream *makeStream();
 
@@ -85,6 +87,10 @@ public:
 	/** Remembers to use PATCH method when it would create NetworkReadStream. */
 	virtual void usePatch();
 
+	/** Remembers to use Connection: keep-alive or close. */
+	virtual void connectionKeepAlive(long idle = 120, long interval = 60);
+	virtual void connectionClose();
+
 	/**
 	 * Starts this Request with ConnMan.
 	 * @return its NetworkReadStream in NetworkReadStreamResponse.
@@ -93,6 +99,9 @@ public:
 
 	/** Returns Request's NetworkReadStream. */
 	const NetworkReadStream *getNetworkReadStream() const;
+
+	/** Waits for Request to be processed. Should be called after Request is put into ConnMan. */
+	void wait(int spinlockDelay = 5);
 };
 
 } // End of namespace Networking

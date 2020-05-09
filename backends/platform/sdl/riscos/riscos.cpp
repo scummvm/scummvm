@@ -30,8 +30,6 @@
 #include "backends/fs/riscos/riscos-fs-factory.h"
 #include "backends/fs/riscos/riscos-fs.h"
 
-#include "common/config-manager.h"
-
 #include <kernel.h>
 #include <swis.h>
 
@@ -93,7 +91,7 @@ void OSystem_RISCOS::logMessage(LogMessageType::Type type, const char *message) 
 	OSystem_SDL::logMessage(type, message);
 
 	// Log messages using !Reporter, available from http://www.avisoft.force9.co.uk/Reporter.htm
-	if (!ConfMan.getBool("enable_reporter"))
+	if (!(ConfMan.hasKey("enable_reporter") && ConfMan.getBool("enable_reporter")))
 		return;
 
 	char colour;

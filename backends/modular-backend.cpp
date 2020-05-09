@@ -84,6 +84,10 @@ const OSystem::GraphicsMode *ModularBackend::getSupportedShaders() const {
 	return _graphicsManager->getSupportedShaders();
 }
 
+int ModularBackend::getDefaultShader() const {
+	return _graphicsManager->getDefaultShader();
+}
+
 bool ModularBackend::setShader(int id) {
 	return _graphicsManager->setShader(id);
 }
@@ -199,8 +203,8 @@ void ModularBackend::updateScreen() {
 #endif
 }
 
-void ModularBackend::setShakePos(int shakeOffset) {
-	_graphicsManager->setShakePos(shakeOffset);
+void ModularBackend::setShakePos(int shakeXOffset, int shakeYOffset) {
+	_graphicsManager->setShakePos(shakeXOffset, shakeYOffset);
 }
 void ModularBackend::setFocusRectangle(const Common::Rect& rect) {
 	_graphicsManager->setFocusRectangle(rect);
@@ -262,10 +266,6 @@ void ModularBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspot
 
 void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) {
 	_graphicsManager->setCursorPalette(colors, start, num);
-}
-
-void ModularBackend::saveScreenshot() {
-    _graphicsManager->saveScreenshot();
 }
 
 OSystem::MutexRef ModularBackend::createMutex() {

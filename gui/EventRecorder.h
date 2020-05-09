@@ -36,7 +36,6 @@
 #include "common/mutex.h"
 #include "common/array.h"
 #include "common/memstream.h"
-#include "backends/keymapper/keymapper.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -65,10 +64,10 @@ class WriteStream;
  *
  * TODO: Add more documentation.
  */
-class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::DefaultEventMapper {
+class EventRecorder : private Common::EventSource, public Common::Singleton<EventRecorder>, private Common::EventObserver {
 	friend class Common::Singleton<SingletonBaseType>;
 	EventRecorder();
-	~EventRecorder();
+	~EventRecorder() override;
 public:
 	/** Specify operation mode of Event Recorder */
 	enum RecordMode {
@@ -176,9 +175,8 @@ public:
 	void switchFastMode();
 
 private:
-	virtual Common::List<Common::Event> mapEvent(const Common::Event &ev, Common::EventSource *source);
-	bool notifyPoll();
-	bool pollEvent(Common::Event &ev);
+	bool pollEvent(Common::Event &ev) override;
+	bool notifyEvent(const Common::Event &event) override;
 	bool _initialized;
 	volatile uint32 _fakeTimer;
 	bool _savedState;
@@ -215,7 +213,7 @@ private:
 	bool checkGameHash(const ADGameDescription *desc);
 
 	void checkForKeyCode(const Common::Event &event);
-	bool allowMapping() const { return false; }
+	bool allowMapping() const override { return false; }
 
 	volatile uint32 _lastMillis;
 	uint32 _lastScreenshotTime;

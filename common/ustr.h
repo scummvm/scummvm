@@ -24,6 +24,7 @@
 #define COMMON_USTR_H
 
 #include "common/scummsys.h"
+#include "common/str-enc.h"
 
 namespace Common {
 
@@ -155,6 +156,14 @@ public:
 		return _str[idx];
 	}
 
+	/** Set character c at position p, replacing the previous character there. */
+	void setChar(value_type c, uint32 p) {
+		_str[p] = c;
+	}
+
+	/** Insert character c before position p. */
+	void insertChar(value_type c, uint32 p);
+
 	/**
 	 * Removes the value at position p from the string.
 	 * Using this on decomposed characters will not remove the whole
@@ -187,6 +196,7 @@ public:
 	 */
 	void toUppercase();
 
+	uint32 find(value_type x, uint32 pos = 0) const;
 	uint32 find(const U32String &str, uint32 pos = 0) const;
 
 	typedef value_type *        iterator;
@@ -214,6 +224,9 @@ public:
 		return begin() + size();
 	}
 
+    /** Python-like method **/
+    String encode(CodePage page = kUtf8) const;
+
 private:
 	void makeUnique();
 	void ensureCapacity(uint32 new_size, bool keep_old);
@@ -221,20 +234,12 @@ private:
 	void decRefCount(int *oldRefCount);
 	void initWithCStr(const value_type *str, uint32 len);
 	void initWithCStr(const char *str, uint32 len);
+
+	void encodeUTF8(String &dst) const;
+	void encodeOneByte(String &dst, CodePage page) const;
 };
 
-U32String convertUtf8ToUtf32(const String &str);
-
-enum CodePage {
-	kUtf8,
-	kWindows1250,
-	kWindows1251,
-	kWindows1252,
-	kWindows1255
-};
-
-U32String convertToU32String(const char *str, CodePage page = kUtf8);
-
+U32String operator+(const U32String &x, const U32String &y);
 } // End of namespace Common
 
 #endif

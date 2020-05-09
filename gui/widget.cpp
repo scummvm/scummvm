@@ -33,18 +33,19 @@
 
 #include "gui/dialog.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/scrollcontainer.h"
 
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss), _tooltip(tooltip),
-	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
+	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name, const char *tooltip)
 	: GuiObject(name), _type(0), _boss(boss), _tooltip(tooltip),
-	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
+	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
 	init();
 }
 
@@ -57,7 +58,7 @@ void Widget::init() {
 
 Widget::~Widget() {
 	delete _next;
-	_next = 0;
+	_next = nullptr;
 }
 
 void Widget::resize(int x, int y, int w, int h) {
@@ -114,7 +115,7 @@ void Widget::draw() {
 
 		// Draw border
 		if (_flags & WIDGET_BORDER) {
-			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0,
+			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 			                                    ThemeEngine::kWidgetBackgroundBorder);
 			_x += 4;
 			_y += 4;
@@ -168,7 +169,7 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 		}
 		w = w->_next;
 	}
-	return 0;
+	return nullptr;
 }
 
 bool Widget::containsWidgetInChain(Widget *w, Widget *search) {
@@ -192,9 +193,6 @@ void Widget::setEnabled(bool e) {
 }
 
 bool Widget::isEnabled() const {
-	if (g_gui.xmlEval()->getVar("Dialog." + _name + ".Enabled", 1) == 0) {
-		return false;
-	}
 	return ((_flags & WIDGET_ENABLED) != 0);
 }
 
@@ -238,6 +236,8 @@ uint8 Widget::parseHotkey(const Common::String &label) {
 			else
 				state = 0;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -255,6 +255,18 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 			res = res + label[i];
 
 	return res;
+}
+
+void Widget::read(Common::String str) {
+#ifdef USE_TTS
+	if (ConfMan.hasKey("tts_enabled", "residualvm") &&
+			ConfMan.getBool("tts_enabled", "residualvm")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan == nullptr)
+			return;
+		ttsMan->say(str);
+	}
+#endif
 }
 
 #pragma mark -
@@ -325,6 +337,13 @@ ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Co
 		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
+}
+
+void ButtonWidget::getMinSize(int &minWidth, int &minHeight) {
+	const Graphics::Font &font = g_gui.getFont(_font);
+
+	minWidth  = font.getStringWidth(_label);
+	minHeight = font.getFontHeight();
 }
 
 void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -462,6 +481,14 @@ void DropdownButtonWidget::reflowLayout() {
 	reset();
 }
 
+void DropdownButtonWidget::getMinSize(int &minWidth, int &minHeight) {
+	ButtonWidget::getMinSize(minWidth, minHeight);
+
+	if (minWidth >= 0) {
+		minWidth += _dropdownWidth * 2;
+	}
+}
+
 void DropdownButtonWidget::appendEntry(const Common::String &label, uint32 cmd) {
 	Entry e;
 	e.label = label;
@@ -513,12 +540,6 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
 
 	if (gfx->format.bytesPerPixel == 1) {
 		warning("PicButtonWidget::setGfx got paletted surface passed");
-		return;
-	}
-
-
-	if (gfx->w > _w || gfx->h > _h) {
-		warning("PicButtonWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
 		return;
 	}
 
@@ -785,11 +806,6 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 		return;
 	}
 
-	if (gfx->w > _w || gfx->h > _h) {
-		warning("GraphicsWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
-		return;
-	}
-
 	_gfx.copyFrom(*gfx);
 }
 
@@ -824,12 +840,16 @@ void GraphicsWidget::drawWidget() {
 
 #pragma mark -
 
-ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h) : Widget(boss, x, y, w, h) {
+ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h) :
+		Widget(boss, x, y, w, h),
+		_backgroundType(ThemeEngine::kWidgetBackgroundBorder) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kContainerWidget;
 }
 
-ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : Widget(boss, name) {
+ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) :
+		Widget(boss, name),
+		_backgroundType(ThemeEngine::kWidgetBackgroundBorder) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kContainerWidget;
 }
@@ -861,9 +881,76 @@ void ContainerWidget::removeWidget(Widget *widget) {
 	Widget::removeWidget(widget);
 }
 
+void ContainerWidget::setBackgroundType(ThemeEngine::WidgetBackground backgroundType) {
+	_backgroundType = backgroundType;
+}
+
 void ContainerWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0,
-	                                    ThemeEngine::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _backgroundType);
+}
+
+#pragma mark -
+
+OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout,
+                                               bool scrollable, const Common::String &domain) :
+		Widget(boss, name),
+		_domain(domain),
+		_dialogLayout(dialogLayout),
+		_parentDialog(nullptr),
+		_scrollContainer(nullptr) {
+
+	if (scrollable) {
+		_scrollContainer = new ScrollContainerWidget(this, 0, 0, 0, 0, kReflowCmd);
+		_scrollContainer->setTarget(this);
+		_scrollContainer->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
+	}
+}
+
+OptionsContainerWidget::~OptionsContainerWidget() {
+}
+
+void OptionsContainerWidget::reflowLayout() {
+	Widget::reflowLayout();
+
+	if (!_dialogLayout.empty()) {
+		if (!g_gui.xmlEval()->hasDialog(_dialogLayout)) {
+			defineLayout(*g_gui.xmlEval(), _dialogLayout, _name);
+		}
+
+		g_gui.xmlEval()->reflowDialogLayout(_dialogLayout, _firstWidget);
+	}
+
+	if (_scrollContainer) {
+		_scrollContainer->resize(_x, _y, _w, _h);
+	}
+
+	Widget *w = _firstWidget;
+	while (w) {
+		w->reflowLayout();
+		w = w->next();
+	}
+}
+
+bool OptionsContainerWidget::containsWidget(Widget *widget) const {
+	return containsWidgetInChain(_firstWidget, widget);
+}
+
+Widget *OptionsContainerWidget::findWidget(int x, int y) {
+	// Iterate over all child widgets and find the one which was clicked
+	return Widget::findWidgetInChain(_firstWidget, x, y);
+}
+
+void OptionsContainerWidget::removeWidget(Widget *widget) {
+	_boss->removeWidget(widget);
+	Widget::removeWidget(widget);
+}
+
+GuiObject *OptionsContainerWidget::widgetsBoss() {
+	if (_scrollContainer) {
+		return _scrollContainer;
+	}
+
+	return this;
 }
 
 } // End of namespace GUI

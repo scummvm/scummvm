@@ -657,6 +657,8 @@ bool SVQ1Decoder::svq1MotionInterBlock(Common::BitStream32BEMSB *ss, byte *curre
 	case 3:
 		putPixels16XY2C(dst, src, pitch, 16);
 		break;
+	default:
+		break;
 	}
 
 	return true;
@@ -737,6 +739,8 @@ bool SVQ1Decoder::svq1MotionInter4vBlock(Common::BitStream32BEMSB *ss, byte *cur
 		case 3:
 			putPixels8XY2C(dst, src, pitch, 8);
 			break;
+		default:
+			break;
 		}
 
 		// select next block
@@ -788,6 +792,8 @@ bool SVQ1Decoder::svq1DecodeDeltaBlock(Common::BitStream32BEMSB *ss, byte *curre
 		break;
 	case SVQ1_BLOCK_INTRA:
 		resultValid = svq1DecodeBlockIntra(ss, current, pitch);
+		break;
+	default:
 		break;
 	}
 

@@ -28,6 +28,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "common/file.h"
 #include "gui/message.h"
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
@@ -54,6 +55,29 @@ const byte MidiDriver::_gmToMt32[128] = {
 	 47,  44, 111,  45,  44,  34,  44,  30,  32,  33,  88,  34,  35,  35,  38,  33, // 5x
 	 41,  36, 100,  37,  40,  34,  43,  40,  63,  21,  99, 105, 103,  86,  55,  84, // 6x
 	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
+};
+
+// This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism 
+// to correct invalid drumkit selections. Some games rely on this mechanism to select the 
+// correct Roland GS drumkit. Use this map to emulate this mechanism.
+// E.g. correct invalid drumkit 50: _gsDrumkitFallbackMap[50] == 48
+const uint8 MidiDriver::_gsDrumkitFallbackMap[128] = {
+	 0,  0,  0,  0,  0,  0,  0,  0, // STANDARD
+	 8,  8,  8,  8,  8,  8,  8,  8, // ROOM
+	16, 16, 16, 16, 16, 16, 16, 16, // POWER
+	24, 25, 24, 24, 24, 24, 24, 24, // ELECTRONIC; TR-808 (25)
+	32, 32, 32, 32, 32, 32, 32, 32, // JAZZ
+	40, 40, 40, 40, 40, 40, 40, 40, // BRUSH
+	48, 48, 48, 48, 48, 48, 48, 48, // ORCHESTRA
+	56, 56, 56, 56, 56, 56, 56, 56, // SFX
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined (fall back to STANDARD)
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0, 127 // No drumkit defined; CM-64/32L (127)
 };
 
 static const struct {
@@ -418,3 +442,52 @@ void MidiDriver::sendGMReset() {
 	sysEx(resetSysEx, sizeof(resetSysEx));
 	g_system->delayMillis(100);
 }
+
+
+void MidiDriver_BASE::midiDumpInit() {
+// ResidualVM - not used
+}
+
+int MidiDriver_BASE::midiDumpVarLength(const uint32 &delta) {
+// ResidualVM - not used
+	return 0;
+}
+
+void MidiDriver_BASE::midiDumpDelta() {
+// ResidualVM - not used
+}
+
+void MidiDriver_BASE::midiDumpDo(uint32 b) {
+// ResidualVM - not used
+}
+
+void MidiDriver_BASE::midiDumpSysEx(const byte *msg, uint16 length) {
+// ResidualVM - not used
+}
+
+
+void MidiDriver_BASE::midiDumpFinish() {
+// ResidualVM - not used
+}
+
+MidiDriver_BASE::MidiDriver_BASE() {
+// ResidualVM - not used
+}
+
+MidiDriver_BASE::~MidiDriver_BASE() {
+// ResidualVM - not used
+}
+
+void MidiDriver_BASE::send(byte status, byte firstOp, byte secondOp) {
+	send(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+}
+
+void MidiDriver::midiDriverCommonSend(uint32 b) {
+// ResidualVM - not used
+}
+
+void MidiDriver::midiDriverCommonSysEx(const byte *msg, uint16 length) {
+// ResidualVM - not used
+}
+
+

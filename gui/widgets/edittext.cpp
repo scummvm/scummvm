@@ -90,7 +90,7 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void EditTextWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0,
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 	                                    ThemeEngine::kWidgetBackgroundEditText);
 
 	// Draw the text

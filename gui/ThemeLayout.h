@@ -35,6 +35,8 @@ struct Surface;
 
 namespace GUI {
 
+class Widget;
+
 class ThemeLayout {
 	friend class ThemeLayoutMain;
 	friend class ThemeLayoutStacked;
@@ -46,12 +48,21 @@ public:
 		kLayoutVertical,
 		kLayoutHorizontal,
 		kLayoutWidget,
-		kLayoutTabWidget
+		kLayoutTabWidget,
+		kLayoutSpace
+	};
+
+	/// Cross-direction alignment of layout children.
+	enum ItemAlign {
+		kItemAlignStart,   ///< Items are aligned to the left for vertical layouts or to the top for horizontal layouts
+		kItemAlignCenter,  ///< Items are centered in the container
+		kItemAlignEnd,     ///< Items are aligned to the right for vertical layouts or to the bottom for horizontal layouts
+		kItemAlignStretch  ///< Items are resized to match the size of the layout in the cross-direction
 	};
 
 	ThemeLayout(ThemeLayout *p) :
 		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
-		_centered(false), _defaultW(-1), _defaultH(-1),
+		_defaultW(-1), _defaultH(-1),
 		_textHAlign(Graphics::kTextAlignInvalid) {}
 
 	virtual ~ThemeLayout() {
@@ -59,9 +70,8 @@ public:
 			delete _children[i];
 	}
 
-	virtual void reflowLayout() = 0;
-
-	virtual void resetLayout() { _x = 0; _y = 0; _w = _defaultW; _h = _defaultH; }
+	virtual void reflowLayout(Widget *widgetChain) = 0;
+	virtual void resetLayout();
 
 	void addChild(ThemeLayout *child) { _children.push_back(child); }
 
@@ -92,7 +102,14 @@ protected:
 	void setHeight(int16 height) { _h = height; }
 	void setTextHAlign(Graphics::TextAlign align) { _textHAlign = align; }
 
-	virtual LayoutType getLayoutType() = 0;
+	/**
+	 * Checks if the layout element is attached to a GUI widget
+	 *
+	 * Layout elements that are not bound do not take space.
+	 */
+	virtual bool isBound(Widget *widgetChain) const { return true; }
+
+	virtual LayoutType getLayoutType() const = 0;
 
 	virtual ThemeLayout *makeClone(ThemeLayout *newParent) = 0;
 
@@ -116,56 +133,61 @@ protected:
 	int16 _x, _y, _w, _h;
 	Common::Rect _padding;
 	Common::Array<ThemeLayout *> _children;
-	bool _centered;
 	int16 _defaultW, _defaultH;
 	Graphics::TextAlign _textHAlign;
 };
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain(int16 x, int16 y, int16 w, int16 h) : ThemeLayout(0) {
-		_w = _defaultW = w;
-		_h = _defaultH = h;
-		_x = _defaultX = x;
-		_y = _defaultY = y;
+	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) :
+			ThemeLayout(nullptr),
+			_name(name),
+			_overlays(overlays),
+			_inset(inset) {
+		_w = _defaultW = width;
+		_h = _defaultH = height;
+		_x = _defaultX = -1;
+		_y = _defaultY = -1;
 	}
-	void reflowLayout();
+	void reflowLayout(Widget *widgetChain) override;
 
-	void resetLayout() {
+	void resetLayout() override {
 		ThemeLayout::resetLayout();
 		_x = _defaultX;
 		_y = _defaultY;
 	}
 
-#ifdef LAYOUT_DEBUG_DIALOG
-	const char *getName() const { return "Global Layout"; }
-#endif
+	const char *getName() const { return _name.c_str(); }
 
 protected:
-	LayoutType getLayoutType() { return kLayoutMain; }
-	ThemeLayout *makeClone(ThemeLayout *newParent) { assert(!"Do not copy Main Layouts!"); return 0; }
+	LayoutType getLayoutType() const override { return kLayoutMain; }
+	ThemeLayout *makeClone(ThemeLayout *newParent) override { assert(!"Do not copy Main Layouts!"); return nullptr; }
 
 	int16 _defaultX;
 	int16 _defaultY;
+
+	Common::String _name;
+	Common::String _overlays;
+	int _inset;
 };
 
 class ThemeLayoutStacked : public ThemeLayout {
 public:
-	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, bool center) :
-		ThemeLayout(p), _type(type) {
+	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, ItemAlign itemAlign) :
+		ThemeLayout(p), _type(type), _itemAlign(itemAlign) {
 		assert((type == kLayoutVertical) || (type == kLayoutHorizontal));
 		_spacing = spacing;
-		_centered = center;
 	}
 
-	void reflowLayout() {
+	void reflowLayout(Widget *widgetChain) override {
 		if (_type == kLayoutVertical)
-			reflowLayoutVertical();
+			reflowLayoutVertical(widgetChain);
 		else
-			reflowLayoutHorizontal();
+			reflowLayoutHorizontal(widgetChain);
 	}
-	void reflowLayoutHorizontal();
-	void reflowLayoutVertical();
+
+	void reflowLayoutHorizontal(Widget *widgetChain);
+	void reflowLayoutVertical(Widget *widgetChain);
 
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const {
@@ -178,9 +200,9 @@ protected:
 	int16 getParentWidth();
 	int16 getParentHeight();
 
-	LayoutType getLayoutType() { return _type; }
+	LayoutType getLayoutType() const override { return _type; }
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayoutStacked *n = new ThemeLayoutStacked(*this);
 		n->_parent = newParent;
 
@@ -191,6 +213,7 @@ protected:
 	}
 
 	const LayoutType _type;
+	ItemAlign _itemAlign;
 	int8 _spacing;
 };
 
@@ -203,19 +226,20 @@ public:
 		setTextHAlign(align);
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
-	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override;
+	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name) override;
 
-	void reflowLayout() {}
+	void reflowLayout(Widget *widgetChain) override;
 
-#ifdef LAYOUT_DEBUG_DIALOG
 	virtual const char *getName() const { return _name.c_str(); }
-#endif
 
 protected:
-	LayoutType getLayoutType() { return kLayoutWidget; }
+	LayoutType getLayoutType() const override { return kLayoutWidget; }
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	bool isBound(Widget *widgetChain) const override;
+	Widget *getWidget(Widget *widgetChain) const;
+
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayout *n = new ThemeLayoutWidget(*this);
 		n->_parent = newParent;
 		return n;
@@ -233,14 +257,13 @@ public:
 		_tabHeight = tabHeight;
 	}
 
-	void reflowLayout() {
+	void reflowLayout(Widget *widgetChain) override {
 		for (uint i = 0; i < _children.size(); ++i) {
-			_children[i]->resetLayout();
-			_children[i]->reflowLayout();
+			_children[i]->reflowLayout(widgetChain);
 		}
 	}
 
-	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override {
 		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h)) {
 			h -= _tabHeight;
 			return true;
@@ -250,9 +273,9 @@ public:
 	}
 
 protected:
-	LayoutType getLayoutType() { return kLayoutTabWidget; }
+	LayoutType getLayoutType() const override { return kLayoutTabWidget; }
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayoutTabWidget *n = new ThemeLayoutTabWidget(*this);
 		n->_parent = newParent;
 		return n;
@@ -271,16 +294,16 @@ public:
 		}
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) { return false; }
-	void reflowLayout() {}
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override { return false; }
+	void reflowLayout(Widget *widgetChain) override {}
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const { return "SPACE"; }
 #endif
 
 protected:
-	LayoutType getLayoutType() { return kLayoutWidget; }
+	LayoutType getLayoutType() const override { return kLayoutSpace; }
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayout *n = new ThemeLayoutSpacing(*this);
 		n->_parent = newParent;
 		return n;

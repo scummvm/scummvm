@@ -249,7 +249,7 @@ void LocalWebserver::handleClient(uint32 i) {
 	// fall through
 
 	case BAD_REQUEST:
-		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
+		setClientGetHandler(_client[i], "<html><head><title>ResidualVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
 		break;
 	case BEING_HANDLED:
 		_client[i].handle();

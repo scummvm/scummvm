@@ -280,7 +280,7 @@ int *scaleLine(int size, int srcSize) {
 	int scale = 100 * size / srcSize;
 	assert(scale > 0);
 	int *v = new int[size];
-	Common::fill(v, &v[size], 0);
+	Common::fill(v, &v[size - 1], 0);
 
 	int distCtr = 0;
 	int *destP = v;

@@ -26,7 +26,7 @@
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 
-#include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/resvm-sdl-events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "engines/engine.h"
@@ -237,7 +237,7 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 
 	_screenChangeCount++;
 
-	_eventSource->resetKeyboardEmulation(obtainedWidth - 1, obtainedHeight - 1);
+	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(obtainedWidth - 1, obtainedHeight - 1);
 
 #if !defined(AMIGAOS)
 	if (renderToFrameBuffer) {
@@ -269,7 +269,7 @@ Math::Rect2d OpenGLSdlGraphicsManager::computeGameRect(bool renderToFrameBuffer,
 	}
 }
 
-void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
+void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Get the updated size directly from SDL, in case there are multiple
 	// resize events in the message queue.
@@ -295,7 +295,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 
 	_screenChangeCount++;
 
-	_eventSource->resetKeyboardEmulation(newWidth - 1, newHeight- 1);
+	dynamic_cast<ResVmSdlEventSource *>(_eventSource)->resetKeyboardEmulation(newWidth - 1, newHeight- 1);
 #endif
 }
 
@@ -699,7 +699,7 @@ void OpenGLSdlGraphicsManager::deinitializeRenderer() {
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
-bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &file) const {
+bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
 	// Largely based on the implementation from ScummVM
 	uint width = _overlayScreen->getWidth();
 	uint height = _overlayScreen->getHeight();
@@ -708,7 +708,7 @@ bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &file) const 
 	uint lineSize = width * 3 + linePaddingSize;
 
 	Common::DumpFile out;
-	if (!out.open(file)) {
+	if (!out.open(filename)) {
 		return false;
 	}
 

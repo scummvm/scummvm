@@ -93,7 +93,9 @@ protected:
 	void closeOverlay();
 
 	// ResVmSdlGraphicsManager API
-	virtual bool saveScreenshot(const Common::String &file) const override;
+	virtual bool saveScreenshot(const Common::String &filename) const override;
+
+	virtual int getGraphicsModeScale(int mode) const override;
 };
 
 #endif

@@ -1,5 +1,6 @@
-# Special target to create an AmigaOS snapshot installation
-amigaosdist: $(EXECUTABLE)
+# Special target to create an AmigaOS snapshot installation.
+# AmigaOS shell doesn't like indented comments.
+amigaosdist: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p $(AMIGAOSPATH)
 	mkdir -p $(AMIGAOSPATH)/themes
 	mkdir -p $(AMIGAOSPATH)/extras

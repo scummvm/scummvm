@@ -106,6 +106,7 @@
 		<bitmap filename = 'cursor_small.bmp'/>
 		<bitmap filename = 'checkbox.bmp'/>
 		<bitmap filename = 'checkbox_empty.bmp'/>
+		<bitmap filename = 'checkbox_disabled.bmp'/>
 		<bitmap filename = 'radiobutton.bmp'/>
 		<bitmap filename = 'radiobutton_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
@@ -122,10 +123,6 @@
 		<bitmap filename = 'editbtn_small.bmp'/>
 		<bitmap filename = 'switchbtn_small.bmp'/>
 		<bitmap filename = 'fastreplay_small.bmp'/>
-		<bitmap filename = 'dropbox.bmp'/>
-		<bitmap filename = 'onedrive.bmp'/>
-		<bitmap filename = 'googledrive.bmp'/>
-		<bitmap filename = 'box.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -1215,6 +1212,18 @@
 					ypos = 'center'
 					padding = '0,0,0,0'
 					orientation = 'bottom'
+		/>
+	</drawdata>
+
+	<!-- Disabled selected checkbox -->
+	<drawdata id = 'checkbox_disabled_selected' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal_disabled'
+				vertical_align = 'top'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bitmap'
+					file = 'checkbox_disabled.bmp'
 		/>
 	</drawdata>
 

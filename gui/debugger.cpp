@@ -403,6 +403,8 @@ void Debugger::splitCommand(Common::String &input, int &argc, const char **argv)
 		c = (byte)*p;
 
 		switch (state) {
+		default:
+			// fallthrough intended
 		case DULL:
 			// not in a word, not in a double quoted string
 			if (isspace(c))

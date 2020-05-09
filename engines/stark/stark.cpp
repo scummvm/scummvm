@@ -428,7 +428,7 @@ bool StarkEngine::canSaveGameStateCurrently() {
 	return StarkGlobal->getLevel() && StarkGlobal->getCurrent() && StarkUserInterface->isInteractive() && !StarkUserInterface->isInSaveLoadMenuScreen();
 }
 
-Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	// Ensure the state store is up to date
 	StarkResourceProvider->commitActiveLocationsState();
 

@@ -45,7 +45,8 @@ PopUpDialog::PopUpDialog(Widget *boss, const Common::String &name, int clickX, i
 		_entriesPerColumn(1),
 		_leftPadding(0),
 		_rightPadding(0),
-		_lineHeight(kLineHeight) {
+		_lineHeight(kLineHeight),
+		_lastRead(-1) {
 	_backgroundType = ThemeEngine::kDialogBackgroundNone;
 	_w = _boss->getWidth();
 }
@@ -117,6 +118,8 @@ void PopUpDialog::open() {
 
 	// TODO - implement scrolling if we had to move the menu, or if there are too many entries
 
+	_lastRead = -1;
+
 	Dialog::open();
 }
 
@@ -127,7 +130,7 @@ void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
 	// Draw the menu border
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
 	/*if (_twoColumns)
 		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/
@@ -182,6 +185,24 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 
 	// ...and update the selection accordingly
 	setSelection(item);
+	if (_lastRead != item && _entries.size() > 0 && item != -1) {
+		read(_entries[item]);
+		_lastRead = item;
+	}
+}
+
+void PopUpDialog::handleMouseLeft(int button) {
+	_lastRead = -1;
+}
+
+void PopUpDialog::read(Common::String str) {
+#ifdef USE_TTS
+	if (ConfMan.hasKey("tts_enabled", "residualvm") &&
+			ConfMan.getBool("tts_enabled", "residualvm")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		ttsMan->say(str);
+	}
+#endif
 }
 
 void PopUpDialog::handleKeyDown(Common::KeyState state) {

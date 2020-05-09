@@ -380,6 +380,9 @@ const Graphics::Surface *SMCDecoder::decodeFrame(Common::SeekableReadStream &str
 		case 0xF0:
 			warning("0xF0 opcode seen in SMC chunk (contact the developers)");
 			break;
+
+		default:
+			break;
 		}
 	}
 

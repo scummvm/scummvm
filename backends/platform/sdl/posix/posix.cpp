@@ -38,6 +38,7 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
 #include "backends/taskbar/unity/unity-taskbar.h"
+#include "backends/dialogs/gtk/gtk-dialogs.h"
 
 #ifdef USE_LINUXCD
 #include "backends/audiocd/linux/linux-audiocd.h"
@@ -54,12 +55,11 @@
 #ifdef HAS_POSIX_SPAWN
 #include <spawn.h>
 #endif
-extern char **environ;
 
-OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
-	:
-	_baseConfigName(baseConfigName) {
-}
+#if defined(USE_SPEECH_DISPATCHER) && defined(USE_TTS)
+#include "backends/text-to-speech/linux/linux-text-to-speech.h"
+#endif
+extern char **environ;
 
 void OSystem_POSIX::init() {
 	// Initialze File System Factory
@@ -70,6 +70,11 @@ void OSystem_POSIX::init() {
 	_taskbarManager = new UnityTaskbarManager();
 #endif
 
+#if defined(USE_SYSDIALOGS) && defined(USE_GTK)
+	// Initialize dialog manager
+	_dialogManager = new GtkDialogManager();
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
@@ -78,6 +83,11 @@ void OSystem_POSIX::initBackend() {
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new POSIXSaveFileManager();
+
+#if defined(USE_SPEECH_DISPATCHER) && defined(USE_TTS)
+	// Initialize Text to Speech manager
+	_textToSpeechManager = new SpeechDispatcherManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
@@ -95,20 +105,23 @@ bool OSystem_POSIX::hasFeature(Feature f) {
 	if (f == kFeatureOpenUrl)
 		return true;
 #endif
+#if defined(USE_SYSDIALOGS) && defined(USE_GTK)
+	if (f == kFeatureSystemBrowserDialog)
+		return true;
+#endif
 	return OSystem_SDL::hasFeature(f);
 }
 
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
+	const Common::String baseConfigName = "residualvm.ini";
+
 	Common::String configFile;
 
 	Common::String prefix;
-#ifdef MACOSX
-	prefix = getenv("HOME");
-#elif !defined(SAMSUNGTV)
-	const char *envVar;
+
 	// Our old configuration file path for POSIX systems was ~/.residualvmrc.
 	// If that file exists, we still use it.
-	envVar = getenv("HOME");
+	const char *envVar = getenv("HOME");
 	if (envVar && *envVar) {
 		configFile = envVar;
 		configFile += '/';
@@ -143,14 +156,13 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	if (!prefix.empty() && Posix::assureDirectoryExists("residualvm", prefix.c_str())) {
 		prefix += "/residualvm";
 	}
-#endif
 
-	if (!prefix.empty() && (prefix.size() + 1 + _baseConfigName.size()) < MAXPATHLEN) {
+	if (!prefix.empty() && (prefix.size() + 1 + baseConfigName.size()) < MAXPATHLEN) {
 		configFile = prefix;
 		configFile += '/';
-		configFile += _baseConfigName;
+		configFile += baseConfigName;
 	} else {
-		configFile = _baseConfigName;
+		configFile = baseConfigName;
 	}
 
 	return configFile;

@@ -30,6 +30,8 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "gui/EventRecorder.h"
+#include "gui/gui-manager.h"
+#include "gui/message.h"
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
@@ -133,6 +135,10 @@ bool cleanupPirated(ADDetectedGames &matched) {
 		// We ruled out all variants and now have nothing
 		if (matched.empty()) {
 			warning("Illegitimate game copy detected. We provide no support in such cases");
+			if (GUI::GuiManager::hasInstance()) {
+				GUI::MessageDialog dialog(_("Illegitimate game copy detected. We provide no support in such cases"));
+				dialog.runModal();
+			};
 			return true;
 		}
 	}
@@ -393,22 +399,25 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 
 	debug(3, "Starting detection in dir '%s'", parent.getPath().c_str());
 
-	// Check which files are included in some ADGameDescription *and* are present.
-	// Compute MD5s and file sizes for these files.
+	// Check which files are included in some ADGameDescription *and* whether
+	// they are present. Compute MD5s and file sizes for the available files.
 	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
-			FileProperties tmp;
 
 			if (filesProps.contains(fname))
 				continue;
 
+			FileProperties tmp;
 			if (getFileProperties(parent, allFiles, *g, fname, tmp)) {
 				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
-				filesProps[fname] = tmp;
 			}
+
+			// Both positive and negative results are cached to avoid
+			// repeatedly checking for files.
+			filesProps[fname] = tmp;
 		}
 	}
 
@@ -439,7 +448,7 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = fileDesc->fileName;
 
-			if (!filesProps.contains(tstr)) {
+			if (!filesProps.contains(tstr) || filesProps[tstr].size == -1) {
 				allFilesPresent = false;
 				break;
 			}

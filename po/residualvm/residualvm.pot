@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ResidualVM 0.4.0git\n"
 "Report-Msgid-Bugs-To: https://github.com/residualvm/residualvm/issues\n"
-"POT-Creation-Date: 2019-04-27 21:32+0200\n"
+"POT-Creation-Date: 2020-05-09 19:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,93 +17,54 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:193
-msgid "Quit ResidualVM"
+#: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
+msgid "Achievements"
 msgstr ""
 
-#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:187
-msgid "About ResidualVM"
-msgstr ""
-
-#: gui/launcher.cpp:144
-msgid "Change global ResidualVM options"
-msgstr ""
-
-#: gui/launcher.cpp:508
+#: gui/launcher.cpp:491
 msgid ""
 "ResidualVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/options.cpp:1130
+#: gui/options.cpp:1226
+#, c-format
+msgid "%d hidden achievements remaining"
+msgstr ""
+
+#: gui/options.cpp:1231
+#, c-format
+msgid "Achievements unlocked: %d/%d"
+msgstr ""
+
+#: gui/options.cpp:1318
 msgid "Preserve aspect ratio"
 msgstr ""
 
-#: gui/options.cpp:1130
+#: gui/options.cpp:1318
 msgid "Preserve the aspect ratio in fullscreen mode"
 msgstr ""
 
-#: gui/options.cpp:1133
+#: gui/options.cpp:1321
 msgid "V-Sync"
 msgstr ""
 
-#: gui/options.cpp:1133
+#: gui/options.cpp:1321
 msgid "Wait for the vertical sync to refresh the screen"
 msgstr ""
 
-#: gui/options.cpp:1135
+#: gui/options.cpp:1323
 msgid "Game Renderer:"
 msgstr ""
 
-#: gui/options.cpp:1729
-msgid "Language of ResidualVM GUI"
+#: gui/options.cpp:1332
+msgid "Anti-aliasing:"
 msgstr ""
 
-#: gui/options.cpp:1756
-msgid ""
-"When starting a game, change the GUI language to the game language.That way, "
-"if a game uses the ResidualVM save and load dialogs, they are in the same "
-"language as the game."
-msgstr ""
-
-#: gui/options.cpp:1770
-msgid ""
-"Use the native system file browser instead of the ResidualVM one to select a "
-"file or directory."
-msgstr ""
-
-#: gui/options.cpp:1777
-msgid "How often to check ResidualVM updates"
-msgstr ""
-
-#: gui/updates-dialog.cpp:49
-msgid ""
-"ResidualVM now supports automatic check for updates\n"
-"which requires access to the Internet. Would you\n"
-"like to enable this feature?"
-msgstr ""
-
-#: engines/engine.cpp:544
+#: engines/engine.cpp:593
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ResidualVM. As such, it is likely to be unstable, and any saved game you "
 "make might not work in future versions of ResidualVM."
-msgstr ""
-
-#: engines/game.cpp:158
-#, c-format
-msgid ""
-"The game in '%s' seems to be an unknown game variant.\n"
-"\n"
-"Please report the following data to the ResidualVM team at %s along with the "
-"name of the game you tried to add and its version, language, etc.:"
-msgstr ""
-
-#: backends/platform/sdl/macosx/appmenu_osx.mm:189
-msgid "Hide ResidualVM"
-msgstr ""
-
-#: backends/platform/sdl/macosx/appmenu_osx.mm:202
-msgid "What's New in ResidualVM"
 msgstr ""
 
 #: engines/grim/detection.cpp:57
@@ -165,7 +126,7 @@ msgstr ""
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
-"Go to https://wiki.residualvm.org/index.php/Datafiles to see a list of the "
+"Go to http://wiki.residualvm.org/index.php/Datafiles to see a list of the "
 "needed files."
 msgstr ""
 
@@ -181,14 +142,14 @@ msgstr ""
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
-"https://www.residualvm.org/downloads/\n"
+"http://www.residualvm.org/downloads/\n"
 "and put it in the game data files directory"
 msgstr ""
 
 #: engines/grim/resource.cpp:101
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
-"Please download it from https://www.residualvm.org/downloads/\n"
+"Please download it from http://www.residualvm.org/downloads/\n"
 "and put it in the game data files directory.\n"
 "Pay attention to download the correct version according to the game's "
 "language"
@@ -227,54 +188,62 @@ msgstr ""
 msgid "Enable enable widescreen rendering in fullscreen mode."
 msgstr ""
 
-#: engines/myst3/myst3.cpp:360
+#: engines/myst3/myst3.cpp:363
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
 "Please install the official update corresponding to your game's language.\n"
 "The updates can be downloaded from:\n"
-"https://www.residualvm.org/downloads/"
+"http://www.residualvm.org/downloads/"
 msgstr ""
 
-#: engines/stark/detection.cpp:317
+#: engines/stark/detection.cpp:345
 msgid "Load modded assets"
 msgstr ""
 
-#: engines/stark/detection.cpp:318
+#: engines/stark/detection.cpp:346
 msgid "Enable loading of external replacement assets."
 msgstr ""
 
-#: engines/stark/detection.cpp:326
+#: engines/stark/detection.cpp:354
 msgid "Enable linear filtering of the backgrounds images"
 msgstr ""
 
-#: engines/stark/detection.cpp:327
+#: engines/stark/detection.cpp:355
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/stark.cpp:302
+#: engines/stark/detection.cpp:363
+msgid "Enable font anti-aliasing"
+msgstr ""
+
+#: engines/stark/detection.cpp:364
+msgid "When font anti-aliasing is enabled, the text is smoother."
+msgstr ""
+
+#: engines/stark/stark.cpp:305
 msgid "You are missing recommended data files:"
 msgstr ""
 
-#: engines/stark/stark.cpp:316
+#: engines/stark/stark.cpp:319
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
 
-#: engines/stark/stark.cpp:323
+#: engines/stark/stark.cpp:326
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
 
-#: engines/stark/stark.cpp:329
+#: engines/stark/stark.cpp:332
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
 
-#: engines/stark/stark.cpp:335
+#: engines/stark/stark.cpp:338
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""

@@ -25,84 +25,53 @@
 
 #include "common/scummsys.h"
 
-#ifdef ENABLE_KEYMAPPER
-
-#include "common/events.h"
-#include "common/list.h"
-#include "common/hashmap.h"
-#include "common/stack.h"
-#include "backends/keymapper/hardware-input.h"
 #include "backends/keymapper/keymap.h"
+
+#include "common/array.h"
+#include "common/config-manager.h"
+#include "common/events.h"
 
 namespace Common {
 
 const char *const kGuiKeymapName = "gui";
 const char *const kGlobalKeymapName = "global";
 
-class Keymapper : public Common::DefaultEventMapper {
+struct Action;
+class DelayedEventSource;
+struct HardwareInput;
+class HardwareInputSet;
+class KeymapperDefaultBindings;
+
+class Keymapper : public Common::EventMapper {
 public:
-
-	struct MapRecord {
-		Keymap* keymap;
-		bool transparent;
-		bool global;
-	};
-
-	/* Nested class that represents a set of keymaps */
-	class Domain : public HashMap<String, Keymap*,
-				IgnoreCase_Hash, IgnoreCase_EqualTo>  {
-	public:
-		Domain() : _configDomain(0) {}
-		~Domain() {
-			deleteAllKeyMaps();
-		}
-
-		void setConfigDomain(ConfigManager::Domain *confDom) {
-			_configDomain = confDom;
-		}
-		ConfigManager::Domain *getConfigDomain() {
-			return _configDomain;
-		}
-
-		void addKeymap(Keymap *map);
-
-		void deleteAllKeyMaps();
-
-		Keymap *getKeymap(const String& name);
-
-	private:
-		ConfigManager::Domain *_configDomain;
-	};
 
 	Keymapper(EventManager *eventMan);
 	~Keymapper();
 
 	// EventMapper interface
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
+	virtual List<Event> mapEvent(const Event &ev);
 
 	/**
-	 * Registers a HardwareInputSet with the Keymapper
-	 * @note should only be called once (during backend initialisation)
+	 * Registers a HardwareInputSet and platform-specific default mappings with the Keymapper
+	 *
+	 * Transfers ownership to the Keymapper
 	 */
-	void registerHardwareInputSet(HardwareInputSet *inputs);
-
-	/**
-	 * Get a list of all registered HardwareInputs
-	 */
-	const List<const HardwareInput *> &getHardwareInputs() const {
-		assert(_hardwareInputs);
-		return _hardwareInputs->getHardwareInputs();
-	}
+	void registerHardwareInputSet(HardwareInputSet *inputs, KeymapperDefaultBindings *backendDefaultBindings);
 
 	/**
 	 * Add a keymap to the global domain.
 	 * If a saved key setup exists for it in the ini file it will be used.
 	 * Else, the key setup will be automatically mapped.
+	 *
+	 * Transfers ownership of the keymap to the Keymapper
 	 */
 	void addGlobalKeymap(Keymap *keymap);
 
 	/**
 	 * Add a keymap to the game domain.
+	 *
+	 * Transfers ownership of the keymap to the Keymapper
+	 *
 	 * @see addGlobalKeyMap
 	 * @note initGame() should be called before any game keymaps are added.
 	 */
@@ -117,51 +86,26 @@ public:
 	/**
 	 * Obtain a keymap of the given name from the keymapper.
 	 * Game keymaps have priority over global keymaps
-	 * @param name		name of the keymap to return
-	 * @param global	set to true if returned keymap is global, false if game
+	 * @param id		name of the keymap to return
 	 */
-	Keymap *getKeymap(const String& name, bool *global = 0);
+	Keymap *getKeymap(const String &id) const;
 
 	/**
-	 * Push a new keymap to the top of the active stack, activating
-	 * it for use.
-	 * @param name			name of the keymap to push
-	 * @param transparent	if true keymapper will iterate down the
-	 *						stack if it cannot find a key in the new map
-	 * @return				true if successful
+	 * Obtain a list of all the keymaps registered with the keymapper
 	 */
-	bool pushKeymap(const String& name, bool transparent = false);
+	const KeymapArray &getKeymaps() const { return _keymaps; }
 
 	/**
-	 * Pop the top keymap off the active stack.
-	 * @param name	(optional) name of keymap expected to be popped
-	 * 				if provided, will not pop unless name is the same
-	 * 				as the top keymap
+	 * reload the mappings for all the keymaps from the configuration manager
 	 */
-	void popKeymap(const char *name = 0);
+	void reloadAllMappings();
 
 	/**
-	 * @brief Map a key press event.
-	 * If the active keymap contains a Action mapped to the given key, then
-	 * the Action's events are pushed into the EventManager's event queue.
-	 * @param key		key that was pressed
-	 * @param keyDown	true for key down, false for key up
-	 * @return			mapped events
+	 * Set which kind of keymap is currently used to map events
+	 *
+	 * Keymaps with the global type are always enabled
 	 */
-	List<Event> mapKey(const KeyState& key, bool keyDown);
-	List<Event> mapNonKey(const HardwareInputCode code);
-
-	/**
-	 * @brief Map a key down event.
-	 * @see mapKey
-	 */
-	List<Event> mapKeyDown(const KeyState& key);
-
-	/**
-	 * @brief Map a key up event.
-	 * @see mapKey
-	 */
-	List<Event> mapKeyUp(const KeyState& key);
+	void setEnabledKeymapType(Keymap::KeymapType type);
 
 	/**
 	 * Enable/disable the keymapper
@@ -169,72 +113,74 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
-	 * @brief Activate remapping mode
-	 * While this mode is active, any mappable event will be bound to the action
-	 * provided.
-	 * @param actionToRemap Action that is the target of the remap
+	 * Clear all the keymaps and hardware input sets
 	 */
-	void startRemappingMode(Action *actionToRemap);
+	void clear();
 
 	/**
-	 * @brief Force-stop the remapping mode
+	 * Return a HardwareInput pointer for the given event
 	 */
-	void stopRemappingMode() { _remapping = false; }
+	HardwareInput findHardwareInput(const Event &event);
 
-	/**
-	 * Query whether the keymapper is currently in the remapping mode
-	 */
-	bool isRemapping() const { return _remapping; }
-
-	/**
-	 * Return a HardwareInput pointer for the given key state
-	 */
-	const HardwareInput *findHardwareInput(const KeyState& key);
-
-	/**
-	 * Return a HardwareInput pointer for the given input code
-	 */
-	const HardwareInput *findHardwareInput(const HardwareInputCode code);
-
-	Domain& getGlobalDomain() { return _globalDomain; }
-	Domain& getGameDomain() { return _gameDomain; }
-	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
+	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
+	void reloadKeymapMappings(Keymap *keymap);
 
 private:
+	EventManager *_eventMan;
+	HardwareInputSet *_hardwareInputs;
+	KeymapperDefaultBindings *_backendDefaultBindings;
+	DelayedEventSource *_delayedEventSource;
 
 	enum IncomingEventType {
-		kIncomingKeyDown,
-		kIncomingKeyUp,
-		kIncomingNonKey
+		kIncomingEventIgnored,
+		kIncomingEventStart,
+		kIncomingEventEnd,
+		kIncomingEventInstant
 	};
 
-	void initKeymap(Domain &domain, Keymap *keymap);
-
-	Domain _globalDomain;
-	Domain _gameDomain;
-
-	HardwareInputSet *_hardwareInputs;
-
-	void pushKeymap(Keymap *newMap, bool transparent, bool global);
-
-	Action *getAction(const KeyState& key);
-	List<Event> executeAction(const Action *act, IncomingEventType incomingType = kIncomingNonKey);
-	EventType convertDownToUp(EventType eventType);
-	List<Event> remap(const Event &ev);
-
-	EventManager *_eventMan;
+	enum {
+		kJoyAxisPressedTreshold   = Common::JOYAXIS_MAX / 2,
+		kJoyAxisUnpressedTreshold = Common::JOYAXIS_MAX / 4
+	};
 
 	bool _enabled;
-	bool _remapping;
+	Keymap::KeymapType _enabledKeymapType;
 
-	Action *_actionToRemap;
-	Stack<MapRecord> _activeMaps;
-	HashMap<KeyState, Action *> _keysDown;
+	KeymapArray _keymaps;
 
+	bool _joystickAxisPreviouslyPressed[6];
+
+	bool mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Event> &mappedEvents);
+	Event executeAction(const Action *act, const Event &incomingEvent);
+	EventType convertStartToEnd(EventType eventType);
+	IncomingEventType convertToIncomingEventType(const Event &ev) const;
+
+	void hardcodedEventMapping(Event ev);
+	void resetInputState();
+};
+
+class DelayedEventSource : public EventSource {
+public:
+	// EventSource API
+	bool pollEvent(Event &event) override;
+	bool allowMapping() const override;
+
+	/**
+	 * Schedule an event to be produced after the specified delay
+	 */
+	void scheduleEvent(const Event &ev, uint32 delayMillis);
+
+private:
+	struct DelayedEventsEntry {
+		const uint32 timerOffset;
+		const Event event;
+		DelayedEventsEntry(const uint32 offset, const Event ev) : timerOffset(offset), event(ev) { }
+	};
+
+	Queue<DelayedEventsEntry> _delayedEvents;
+	uint32 _delayedEffectiveTime;
 };
 
 } // End of namespace Common
-
-#endif // #ifdef ENABLE_KEYMAPPER
 
 #endif // #ifndef COMMON_KEYMAPPER_H

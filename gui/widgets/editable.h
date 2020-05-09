@@ -60,18 +60,18 @@ protected:
 	ThemeEngine::TextInversionState  _inversion;
 
 public:
-	EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
-	EditableWidget(GuiObject *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0);
-	virtual ~EditableWidget();
+	EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = nullptr, uint32 cmd = 0);
+	EditableWidget(GuiObject *boss, const String &name, const char *tooltip = nullptr, uint32 cmd = 0);
+	~EditableWidget() override;
 
 	void init();
 
 	virtual void setEditString(const String &str);
 	virtual const String &getEditString() const		{ return _editString; }
 
-	virtual void handleTickle();
-	virtual bool handleKeyDown(Common::KeyState state);
-	virtual void reflowLayout();
+	void handleTickle() override;
+	bool handleKeyDown(Common::KeyState state) override;
+	void reflowLayout() override;
 
 	bool setCaretPos(int newPos);
 

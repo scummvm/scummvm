@@ -379,6 +379,8 @@ void TrueMotion1Decoder::decode16() {
 						OUTPUT_PIXEL_PAIR();
 					}
 					break;
+				default:
+					break;
 				}
 			} else {
 				// skip (copy) four pixels, but reassign the horizontal

@@ -272,6 +272,22 @@ T gcd(T a, T b) {
 #endif
 
 /**
+ * Get the next highest power of 2.
+ */
+template<class T>
+T nextHigher2(T v) {
+	if (v == 0)
+		return 1;
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	return ++v;
+}
+
+/**
  * Replacement algorithm for iterables.
  *
  * Replaces all occurrences of "original" in [begin, end) with occurrences of "replaced".
