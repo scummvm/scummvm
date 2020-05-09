@@ -39,19 +39,15 @@ void SaveGame::save(Common::WriteStream *stream) {
 	Common::Serializer ser(nullptr, stream);
 	assert(g_context && g_context->_location);
 
-	if (g_context->_location->_prev) {
-		_x = g_context->_location->_coords.x;
-		_y = g_context->_location->_coords.y;
-		_dngLevel = g_context->_location->_coords.z;
-		_dngX = g_context->_location->_prev->_coords.x;
-		_dngY = g_context->_location->_prev->_coords.y;
-	} else {
-		_x = g_context->_location->_coords.x;
-		_y = g_context->_location->_coords.y;
-		_dngLevel = g_context->_location->_coords.z;
-	}
-
 	_location = g_context->_location->_map->_id;
+	_pos = g_context->_location->_coords;
+
+	if (g_context->_location->_prev) {
+		_overworldPos.x = g_context->_location->_prev->_coords.x;
+		_overworldPos.y = g_context->_location->_prev->_coords.y;
+	} else {
+		_overworldPos.x = _overworldPos.y = 0;
+	}
 
 	synchronize(ser);
 
@@ -125,10 +121,10 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	 * Translate info from the savegame to something we can use
 	 */
 	if (g_context->_location->_prev) {
-		g_context->_location->_coords = MapCoords(_x, _y, _dngLevel);
-		g_context->_location->_prev->_coords = MapCoords(_dngX, _dngY);
+		g_context->_location->_coords = _pos;
+		g_context->_location->_prev->_coords = MapCoords(_overworldPos.x, _overworldPos.y, 0);
 	} else {
-		g_context->_location->_coords = MapCoords(_x, _y, (int)_dngLevel);
+		g_context->_location->_coords = _pos;
 	}
 
 	/**
@@ -205,8 +201,12 @@ void SaveGame::synchronize(Common::Serializer &s) {
 		s.syncAsUint16LE(_mixtures[i]);
 
 	s.syncAsUint16LE(_items);
-	s.syncAsByte(_x);
-	s.syncAsByte(_y);
+	s.syncAsByte(_pos.x);
+	s.syncAsByte(_pos.y);
+	s.syncAsUint16LE(_pos.z);
+	s.syncAsByte(_overworldPos.x);
+	s.syncAsByte(_overworldPos.y);
+
 	s.syncAsByte(_stones);
 	s.syncAsByte(_runes);
 	s.syncAsUint16LE(_members);
@@ -220,10 +220,7 @@ void SaveGame::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_lastReagent);
 	s.syncAsUint16LE(_lastMeditation);
 	s.syncAsUint16LE(_lastVirtue);
-	s.syncAsByte(_dngX);
-	s.syncAsByte(_dngY);
 	s.syncAsUint16LE(_orientation);
-	s.syncAsUint16LE(_dngLevel);
 	s.syncAsUint16LE(_location);
 }
 
@@ -261,8 +258,8 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 		_mixtures[i] = 0;
 
 	_items = 0;
-	_x = 0;
-	_y = 0;
+	_pos = Coords(0, 0, 0xffff);
+	_overworldPos = Common::Point();
 	_stones = 0;
 	_runes = 0;
 	_members = 1;
@@ -276,10 +273,7 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 	_lastReagent = 0;
 	_lastMeditation = 0;
 	_lastVirtue = 0;
-	_dngX = 0;
-	_dngY = 0;
 	_orientation = 0;
-	_dngLevel = 0xFFFF;
 	_location = 0;
 }
 

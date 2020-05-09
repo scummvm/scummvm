@@ -1320,8 +1320,9 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 	saveGame->_players[0]._weapon = initValuesForClass[saveGame->_players[0]._class].weapon;
 	saveGame->_players[0]._armor = initValuesForClass[saveGame->_players[0]._class].armor;
 	saveGame->_players[0]._xp = initValuesForClass[saveGame->_players[0]._class].xp;
-	saveGame->_x = initValuesForClass[saveGame->_players[0]._class].x;
-	saveGame->_y = initValuesForClass[saveGame->_players[0]._class].y;
+	saveGame->_pos.x = initValuesForClass[saveGame->_players[0]._class].x;
+	saveGame->_pos.y = initValuesForClass[saveGame->_players[0]._class].y;
+	saveGame->_pos.z = 0;
 
 	saveGame->_players[0]._str = 15;
 	saveGame->_players[0]._dex = 15;

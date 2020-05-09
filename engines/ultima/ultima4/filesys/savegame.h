@@ -23,8 +23,10 @@
 #ifndef ULTIMA4_FILESYS_SAVEGAME_H
 #define ULTIMA4_FILESYS_SAVEGAME_H
 
+#include "common/rect.h"
 #include "common/stream.h"
 #include "common/serializer.h"
+#include "ultima/ultima4/core/coords.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -269,7 +271,8 @@ struct SaveGame {
 	short _reagents[REAG_MAX];
 	short _mixtures[SPELL_MAX];
 	unsigned short _items;
-	byte _x, _y;
+	Coords _pos;
+	Common::Point _overworldPos;
 	byte _stones;
 	byte _runes;
 	unsigned short _members;
@@ -286,9 +289,7 @@ struct SaveGame {
 	unsigned short _lastReagent;
 	unsigned short _lastMeditation;
 	unsigned short _lastVirtue;
-	byte _dngX, _dngY;
 	unsigned short _orientation;
-	unsigned short _dngLevel;
 	unsigned short _location;
 };
 
