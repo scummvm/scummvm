@@ -303,7 +303,7 @@ void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *co
 	bool processed;
 
 	key = (event.kbd.ascii != 0 && event.kbd.ascii < 128) ?
-		event.kbd.ascii : event.kbd.keycode;
+		event.kbd.ascii : (int)event.kbd.keycode;
 
 	key += (event.kbd.flags & (Common::KBD_CTRL |
 		Common::KBD_ALT | Common::KBD_META)) << 16;
