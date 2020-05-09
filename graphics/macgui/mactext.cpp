@@ -23,6 +23,7 @@
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/font.h"
+#include "graphics/text_renderer.h"
 
 namespace Graphics {
 
@@ -462,7 +463,7 @@ void MacText::render(int from, int to) {
 				yOffset = maxHeightForRow - _textLines[i].chunks[j].font->getFontHeight() - 2;
 			}
 
-			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y + yOffset, w, _fgcolor);
+			TextRenderer::drawU32String(_surface, *_textLines[i].chunks[j].getFont(), _textLines[i].chunks[j].text, xOffset, _textLines[i].y + yOffset, w, _fgcolor);
 			xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 		}
 	}
