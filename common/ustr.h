@@ -25,6 +25,11 @@
 
 #include "common/scummsys.h"
 #include "common/str-enc.h"
+#include "common/textconsole.h"
+
+#ifdef USE_FRIBIDI
+#include <fribidi/fribidi.h>
+#endif
 
 namespace Common {
 
@@ -240,6 +245,15 @@ private:
 };
 
 U32String operator+(const U32String &x, const U32String &y);
+
+/*
+ * Convert logical U32String to visual U32String.
+ * Wrapper for GNU FriBidi implementation of the Unicode Bidirectional Algorithm
+ * For LTR (Left To Right) languages, returns the original input
+ * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
+ */
+U32String convertBiDiU32String(const U32String &input);
+
 } // End of namespace Common
 
 #endif

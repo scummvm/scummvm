@@ -559,6 +559,13 @@ size_t strnlen(const char *src, size_t maxSize);
  */
 String toPrintable(const String &src, bool keepNewLines = true);
 
+/*
+ * Convert logical string to visual string using given encoding code page.
+ * For LTR (Left To Right) languages, returns the original input
+ * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
+ */
+String convertBiDiString(const String &input, const Common::CodePage page);
+
 } // End of namespace Common
 
 extern int scumm_stricmp(const char *s1, const char *s2);

@@ -30,7 +30,6 @@ MODULE_OBJS := \
 	rational.o \
 	rendermode.o \
 	str.o \
-	str-bidi.o \
 	str-enc.o \
 	stream.o \
 	system.o \

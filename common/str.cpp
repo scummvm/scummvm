@@ -25,6 +25,7 @@
 #include "common/memorypool.h"
 #include "common/str.h"
 #include "common/util.h"
+#include "common/ustr.h"
 #include "common/mutex.h"
 
 namespace Common {
@@ -1261,6 +1262,10 @@ String toPrintable(const String &in, bool keepNewLines) {
 	}
 
 	return res;
+}
+
+String convertBiDiString(const String &input, const Common::CodePage page) {
+	return convertBiDiU32String(input.decode(page)).encode(page);
 }
 
 } // End of namespace Common
