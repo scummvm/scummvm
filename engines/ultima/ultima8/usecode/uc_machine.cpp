@@ -367,8 +367,8 @@ void UCMachine::execProcess(UCProcess *p) {
 				if (arg_bytes >= 4) {
 					// HACKHACKHACK to check what the argument is.
 					uint8 *args = new uint8[arg_bytes];
-					p->_stack.pop(args, arg_bytes);
-					p->_stack.addSP(-arg_bytes); // don't really pop the args
+					p->_stack.pop(args, 4);
+					p->_stack.addSP(-4); // don't really pop the args
 					ARG_UC_PTR(iptr);
 					uint16 testItemId = ptrToObject(iptr);
 					testItem = getItem(testItemId);
