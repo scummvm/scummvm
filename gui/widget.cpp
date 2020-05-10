@@ -772,7 +772,14 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void SliderWidget::drawWidget() {
-	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(_value), _state);
+	if (_useRTL) {
+		// TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly.
+		//	     Most likely, I'll draw ::Rect(_x + _w, _y, _x, _y + _h...) but I'll leave it for now, will do it when I flip individual widgets.
+		g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(getMaxValue() - _value), _state);
+	}
+	else {
+		g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(_value), _state);
+	}
 }
 
 int SliderWidget::valueToBarWidth(int value) {
