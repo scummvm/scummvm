@@ -160,11 +160,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (_vk->isDisplaying()) {
 			_vk->close(true);
 		} else {
+			PauseToken pt;
 			if (g_engine)
-				g_engine->pauseEngine(true);
+				pt = g_engine->pauseEngine();
 			_vk->show();
-			if (g_engine)
-				g_engine->pauseEngine(false);
 			forwardEvent = false;
 		}
 		break;
