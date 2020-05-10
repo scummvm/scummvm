@@ -145,9 +145,6 @@ void OSystem_SDL::init() {
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
-
-	// Allow the screen to turn off
-	SDL_EnableScreenSaver();
 #endif
 
 	// Disable OS cursor
@@ -193,6 +190,8 @@ void OSystem_SDL::initBackend() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
+	// Allow the screen to turn off
+	SDL_EnableScreenSaver();
 #else
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];
