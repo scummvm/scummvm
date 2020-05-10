@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-03-24 21:01+0000\n"
+"PO-Revision-Date: 2020-05-10 10:56+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -407,7 +407,7 @@ msgstr "Partidas:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Logros"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -917,12 +917,12 @@ msgstr "Zona inactiva del joystick:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "Quedan %d logro(s) oculto(s)"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Logros desbloqueados: %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -4526,7 +4526,7 @@ msgstr "Menú ~p~rincipal"
 
 #: engines/mohawk/dialogs.cpp:248
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "El cambio de idioma se aplicará al reiniciar el juego."
 
 #: engines/mohawk/dialogs.cpp:320
 msgid "~W~ater Effect Enabled"
@@ -4573,7 +4573,6 @@ msgid "Show options menu"
 msgstr "Mostrar menú de opciones"
 
 #: engines/mohawk/myst.cpp:613
-#, fuzzy
 msgid "Drop page"
 msgstr "~T~irar página"
 
@@ -5140,13 +5139,12 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr "Muestra los nombres de los objetos en la parte inferior de la pantalla"
 
 #: engines/scumm/detection.cpp:1376
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Usar paleta alternativa"
+msgstr "Usar paleta clásica de NES"
 
 #: engines/scumm/detection.cpp:1377
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr ""
+msgstr "Utiliza una paleta de colores más neutral y fiel a la clásica de NES"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -6124,15 +6122,15 @@ msgstr "Transferir personaje"
 
 #: engines/ultima/ultima8/meta_engine.cpp:96
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:126
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Trucos de Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Depuración de Ultima VIII"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:304
 msgid "[corrupt]"
