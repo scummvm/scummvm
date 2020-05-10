@@ -669,6 +669,58 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 			//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 			gameKeyMap->addAction(act);
 		}
+
+		if (extra.hasPrefix("1.2.896.")) {
+			act = new Action("CREDIT", _("Show game credits"));
+			act->setKeyEvent(KEYCODE_F1);
+			act->addDefaultInputMapping("F1"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("MPLAY", _("Play selected music record"));
+			act->setKeyEvent(KEYCODE_F4);
+			act->addDefaultInputMapping("F4"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("MNEXT", _("Select next music record"));
+			act->setKeyEvent(KeyState(KEYCODE_TAB, ASCII_TAB));
+			act->addDefaultInputMapping("TAB"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("NOTE1", _("Play note 1: A"));
+			act->setKeyEvent(KeyState(KEYCODE_d, 'd'));
+			act->addDefaultInputMapping("d"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("NOTE2", _("Play note 2: F#"));
+			act->setKeyEvent(KeyState(KEYCODE_f, 'f'));
+			act->addDefaultInputMapping("f"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("NOTE3", _("Play note 3: D#"));
+			act->setKeyEvent(KeyState(KEYCODE_g, 'g'));
+			act->addDefaultInputMapping("g"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("NOTE4", _("Play note 4: C#"));
+			act->setKeyEvent(KeyState(KEYCODE_h, 'h'));
+			act->addDefaultInputMapping("h"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("NOTE5", _("Play note 5: E"));
+			act->setKeyEvent(KeyState(KEYCODE_j, 'j'));
+			act->addDefaultInputMapping("j"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("NOTE6", _("Play note 6: G#"));
+			act->setKeyEvent(KeyState(KEYCODE_k, 'k'));
+			act->addDefaultInputMapping("k"); // original keyboard
+			gameKeyMap->addAction(act);
+
+			act = new Action("NOTE7", _("Play note 7: B"));
+			act->setKeyEvent(KeyState(KEYCODE_l, 'l'));
+			act->addDefaultInputMapping("l"); // original keyboard
+			gameKeyMap->addAction(act);
+		}
 	} else if (gameId == "ghostsheet") {
 		act = new Action("HINT", _("Show hints"));
 		act->setKeyEvent(KeyState(KEYCODE_TAB, ASCII_TAB));
