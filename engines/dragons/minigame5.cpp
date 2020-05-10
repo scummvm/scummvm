@@ -52,8 +52,8 @@ void Minigame5::run() {
 	DragonINI*local_78;
 	//uint16 local_76;
 	uint16 local_74;
-	uint16 local_72;
-	uint16 bombScale;
+	uint16 local_72 = 0;
+	uint16 bombScale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	Actor *bombActor;
 	Actor *flickerActor;
 	Actor *pusherActor;
@@ -61,10 +61,10 @@ void Minigame5::run() {
 	uint16 local_66;
 	Actor *wheelsActor;
 	uint16 local_62;
-	uint16 local_60;
-	uint16 local_5e;
-	short local_5c;
-	short local_5a;
+	uint16 local_60 = 0;
+	uint16 local_5e = 0;
+	short local_5c = 0;
+	short local_5a = 0;
 	uint16 currentState;
 	short local_50;
 	Actor *local_4e;
