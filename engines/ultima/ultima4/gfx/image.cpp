@@ -437,7 +437,6 @@ void Image::drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh
 		// Blitting entire surface with stretching
 		assert(rx == 0 && ry == 0);
 
-		Graphics::ManagedSurface *destSurface = getSurface(d);
 		destSurface->transBlitFrom(*_surface,
 			Common::Rect(0, 0, _surface->w, _surface->h),
 			Common::Rect(x, y, x + rw, y + rh),
