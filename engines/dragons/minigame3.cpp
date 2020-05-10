@@ -74,7 +74,7 @@ void Minigame3::run() {
 	//uint16 local_5b2;
 	//byte auStack1072_palette[512];
 	Actor *bunnyActorTbl[4];
-	uint16 local_228;
+	uint16 local_228 = 0;
 	//uint16 local_226;
 	int16 local_224;
 	Actor *tearActorTbl[8];
@@ -87,7 +87,7 @@ void Minigame3::run() {
 	Actor *tearBlinkActorTbl2[4];
 	Actor *tearBlinkActorTbl[4];
 	int16 local_1c8 = 0;
-	int16 local_1c6;
+	int16 local_1c6 = 0;
 	uint16 local_1c2;
 	int16 local_1c0;
 	int16 local_1be;
@@ -107,12 +107,12 @@ void Minigame3::run() {
 	int16 local_58;
 	int16 local_56;
 	int16 hopCounter;
-	uint16 local_50;
+	uint16 local_50 = 0;
 	BunnyStruct bunnyInfo[2];
-	uint16 local_20;
-	uint16 local_1e;
-	uint16 local_1c;
-	uint16 local_1a;
+	uint16 local_20 = 0;
+	uint16 local_1e = 0;
+	uint16 local_1c = 0;
+	uint16 local_1a = 0;
 	int16 local_16;
 	int16 local_14;
 	InventoryState origInventoryType;
