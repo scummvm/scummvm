@@ -432,7 +432,22 @@ void Image::drawOn(Image *d, int x, int y) const {
 
 void Image::drawSubRectOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {
 	Graphics::ManagedSurface *destSurface = getSurface(d);
-	destSurface->blitFrom(*_surface, Common::Rect(rx, ry, rx + rw, ry + rh), Common::Point(x, y));
+
+	if (rw > _surface->w || rh > _surface->h) {
+		// Blitting entire surface with stretching
+		assert(rx == 0 && ry == 0);
+
+		Graphics::ManagedSurface *destSurface = getSurface(d);
+		destSurface->transBlitFrom(*_surface,
+			Common::Rect(0, 0, _surface->w, _surface->h),
+			Common::Rect(x, y, x + rw, y + rh),
+			(uint)-1
+		);
+
+	} else {
+		// Blitting all or part of source surface
+		destSurface->blitFrom(*_surface, Common::Rect(rx, ry, rx + rw, ry + rh), Common::Point(x, y));
+	}
 }
 
 void Image::drawSubRectInvertedOn(Image *d, int x, int y, int rx, int ry, int rw, int rh) const {

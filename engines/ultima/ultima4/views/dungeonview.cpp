@@ -181,8 +181,7 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 		int y = SCALED((VIEWPORT_H * _tileHeight / 2) + _bounds.top + y_offset) - (scaled->height() / 8);
 
 		scaled->drawSubRectOn(this->_screen, x, y, 0, 0,
-			SCALED(_tileWidth * VIEWPORT_W + _bounds.left) - x ,
-			SCALED(_tileHeight * VIEWPORT_H + _bounds.top) - y);
+			scaled->width(), scaled->height());
 	}
 
 	delete scaled;
