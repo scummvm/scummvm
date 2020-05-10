@@ -134,7 +134,7 @@ void Input::readInput() {
 			_mouseButtons = kMouseRightUp;
 			break;
 
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 		case Common::EVENT_QUIT:
 			return;
 

@@ -47,7 +47,7 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 					return ABORT_NEXT_SCENE;
 			} else if (events.type() == Common::EVENT_LBUTTONDOWN) {
 				return ABORT_NEXT_SCENE;
-			} else if ((events.type() == Common::EVENT_QUIT) || (events.type() == Common::EVENT_RTL)) {
+			} else if ((events.type() == Common::EVENT_QUIT) || (events.type() == Common::EVENT_RETURN_TO_LAUNCHER)) {
 				return ABORT_END_INTRO;
 			} else if (events.type() == Common::EVENT_MAINMENU) {
 				return ABORT_NONE;

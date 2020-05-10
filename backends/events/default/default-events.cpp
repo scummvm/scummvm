@@ -97,7 +97,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 	// If the backend has the kFeatureNoQuit, replace Quit event with RTL
 	if (event.type == Common::EVENT_QUIT && g_system->hasFeature(OSystem::kFeatureNoQuit))
-		event.type = Common::EVENT_RTL;
+		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -150,7 +150,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (_shouldQuit)
 			event.type = Common::EVENT_QUIT;
 		else if (_shouldRTL)
-			event.type = Common::EVENT_RTL;
+			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		break;
 #ifdef ENABLE_VKEYBD
 	case Common::EVENT_VIRTUAL_KEYBOARD:
@@ -168,7 +168,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		}
 		break;
 #endif
-	case Common::EVENT_RTL:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		if (ConfMan.getBool("confirm_exit")) {
 			PauseToken pt;
 			if (g_engine)

@@ -518,7 +518,7 @@ void AGOSEngine::delay(uint amount) {
 			case Common::EVENT_RBUTTONUP:
 				_rightClick = true;
 				break;
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 			case Common::EVENT_QUIT:
 				return;
 			case Common::EVENT_WHEELUP:

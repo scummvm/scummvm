@@ -116,7 +116,7 @@ void Input::delay(uint amount) {
 				if (_dialogueRunning)
 					_talkQuit = true;
 				break;
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 			case Common::EVENT_QUIT:
 				if (_cutawayRunning)
 					_cutawayQuit = true;

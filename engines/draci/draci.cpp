@@ -357,7 +357,7 @@ void DraciEngine::handleEvents() {
 		}
 	}
 
-	// Handle EVENT_QUIT and EVENT_RTL.
+	// Handle EVENT_QUIT and EVENT_RETURN_TO_LAUNCHER.
 	if (shouldQuit()) {
 		_game->setQuit(true);
 		_script->endCurrentProgram(true);
