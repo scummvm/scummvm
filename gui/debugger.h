@@ -31,7 +31,7 @@
 #include "common/str.h"
 #include "common/str-array.h"
 
-#include "engine.h"
+#include "engines/engine.h"
 
 namespace GUI {
 

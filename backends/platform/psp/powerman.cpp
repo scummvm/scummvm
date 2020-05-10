@@ -24,7 +24,7 @@
 #include <pspthreadman.h>
 
 #include "backends/platform/psp/powerman.h"
-#include "engine.h"
+#include "engines/engine.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* can put this locally too */
 //#define __PSP_DEBUG_PRINT__

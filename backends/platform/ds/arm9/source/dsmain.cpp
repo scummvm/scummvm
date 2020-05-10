@@ -103,7 +103,7 @@
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
 #endif
-#include "engine.h"
+#include "engines/engine.h"
 
 #include "backends/plugins/ds/ds-provider.h"
 #include "backends/fs/ds/ds-fs.h"

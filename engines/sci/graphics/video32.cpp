@@ -28,7 +28,7 @@
 #endif
 #include "common/util.h"                 // for ARRAYSIZE
 #include "common/system.h"               // for g_system
-#include "engine.h"                      // for Engine, g_engine
+#include "engines/engine.h"              // for Engine, g_engine
 #include "graphics/colormasks.h"         // for createPixelFormat
 #include "graphics/palette.h"            // for PaletteManager
 #include "graphics/transparent_surface.h" // for TransparentSurface
@@ -513,7 +513,7 @@ QuickTimePlayer::QuickTimePlayer(EventManager *eventMan) :
 
 void QuickTimePlayer::play(const Common::String& fileName) {
 	_decoder.reset(new Video::QuickTimeDecoder());
-	
+
 	if (!VideoPlayer::open(fileName)) {
 		_decoder.reset();
 		return;
