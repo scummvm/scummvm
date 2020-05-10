@@ -34,6 +34,7 @@
 #include "backends/platform/3ds/sprite.h"
 #include "common/rect.h"
 #include "common/queue.h"
+#include "engines/engine.h"
 
 #define TICKS_PER_MSEC 268123
 
