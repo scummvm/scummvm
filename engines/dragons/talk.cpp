@@ -644,7 +644,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 
 TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries) {
 	bool bVar1;
-	__INT16_TYPE__ sVar2;
+	int16 sVar2;
 	uint uVar3;
 	uint uVar4;
 	uint16 y;
