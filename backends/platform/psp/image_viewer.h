@@ -54,6 +54,7 @@ private:
 	float _visibleHeight, _visibleWidth;
 	float _centerX, _centerY;
 	Event _movement;
+	PauseToken _pauseToken;
 
 	InputHandler *_inputHandler;
 	DisplayManager *_displayManager;
