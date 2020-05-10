@@ -1135,7 +1135,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 		// run this twice, first view all achieved, then view all non-hidden & non-achieved
 
 		for (uint16 idx = 0; idx < nMax ; idx++) {
-			bool isAchieved = AchMan.isAchieved(info.descriptions[idx].id);
+			int16 isAchieved = AchMan.isAchieved(info.descriptions[idx].id) ? 1 : 0;
 
 			if (isAchieved != viewAchieved) {
 				continue;
