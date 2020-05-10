@@ -167,13 +167,6 @@ repeat		{ count(); return checkImmediate(tREPEAT); }
 set			{ count(); return tSET; }
 starts		{ count(); return tSTARTS; }
 tell		{ count(); return tTELL; }
-the[ \t]+value[ \t]+of[ \t]+	{
-		count();
-
-		yylval.s = new Common::String("value");
-
-		return FBLTIN;
-	}
 the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)[ \t]	{
 		count();
 
