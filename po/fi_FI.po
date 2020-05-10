@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-03-24 21:01+0000\n"
+"PO-Revision-Date: 2020-05-10 10:56+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -406,7 +406,7 @@ msgstr "Tallennuskansio:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Saavutukset"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -913,12 +913,12 @@ msgstr "Joystickin Kuollut Alue:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d piilotettua saavutusta jäljellä"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Saavutuksia avattu: %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -4491,7 +4491,7 @@ msgstr "Päävalikko ~u~"
 
 #: engines/mohawk/dialogs.cpp:248
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "Uusi kieli otetaan käyttöön kun peli käynnistetään uudestaan."
 
 #: engines/mohawk/dialogs.cpp:320
 msgid "~W~ater Effect Enabled"
@@ -4538,9 +4538,8 @@ msgid "Show options menu"
 msgstr "Näytä asetusvalikko"
 
 #: engines/mohawk/myst.cpp:613
-#, fuzzy
 msgid "Drop page"
-msgstr "Pu~d~ota sivu"
+msgstr "Pudota sivu"
 
 #: engines/mohawk/myst.cpp:619
 msgid "Show map"
@@ -5093,13 +5092,12 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr "Näytä esineiden nimet näytön alalaidassa"
 
 #: engines/scumm/detection.cpp:1376
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Käytä vaihtoehtoista palettia"
+msgstr "Käytä NES Classic-palettia"
 
 #: engines/scumm/detection.cpp:1377
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr ""
+msgstr "Käytä neutraalimpaa väripalettia joka emuloi paremmin NES Classic:ia"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -6077,15 +6075,15 @@ msgstr "Siirrä hahmo"
 
 #: engines/ultima/ultima8/meta_engine.cpp:96
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:126
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Ultima VIII Huijaukset"
 
 #: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Ultima VIII Debug"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:304
 msgid "[corrupt]"
