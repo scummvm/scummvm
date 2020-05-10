@@ -3396,15 +3396,19 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] Split
 	// Returns array of words of a string, using another as a delimeter
-	// Used to split strings by 1 character delimeter in various scripts
-	// All the delimeters ever used in FoxTail are: " ", "@", "#", "$", "&"
-	// So, this implementation takes 1st char of delimeter string only
+	// Used to split strings by 1-2 characters delimeter in various scripts
+	// All the delimeters ever used in FoxTail are:
+	//   " ", "@", "#", "$", "&", ",", "\\", "@h", "@i", "@p", "@s"
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Split") == 0) {
 		stack->correctParams(2);
 		const char *str = stack->pop()->getString();
-		const char sep = stack->pop()->getString()[0];
-		size_t size = strlen(str) + 1;
+		Common::String sep = stack->pop()->getString();
+		uint32 size = strlen(str) + 1;
+
+		// Let's make copies before modifying stack
+		char *copy = new char[size];
+		strcpy(copy, str);
 
 		// There is no way to makeSXArray() with exactly 1 given element
 		// That's why we are creating empty Array and SXArray::push() later
@@ -3412,15 +3416,17 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		BaseScriptable *arr = makeSXArray(_gameRef, stack);
 
 		// Iterating string copy, replacing delimeter with '\0' and pushing matches
-		char *copy = new char[size];
-		strcpy(copy, str);
+		// Only non-empty matches should be pushed
 		char *begin = copy;
 		for (char *it = copy; it < copy + size; it++) {
-			if (*it == sep || *it == '\0') {
+			if (strncmp(it, sep.c_str(), sep.size()) == 0 || *it == '\0') {
 				*it = '\0';
-				stack->pushString(begin);
-				((SXArray *)arr)->push(stack->pop());
-				begin = it + 1;
+				if (it != begin) {
+					stack->pushString(begin);
+					((SXArray *)arr)->push(stack->pop());
+				}
+				begin = it + sep.size();
+				it = begin - 1;
 			}
 		}
 
