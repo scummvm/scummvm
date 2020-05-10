@@ -1397,8 +1397,8 @@ void DragonsEngine::updatePaletteCycling() {
 			if (_paletteCyclingTbl[loopIndex].updateInterval != 0) {
 				if (_paletteCyclingTbl[loopIndex].updateCounter == 0) {
 					uint16 *palette = (uint16 *)_screen->getPalette(_paletteCyclingTbl[loopIndex].paletteType);
-					int16 uVar14 = (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset;
-					int16 uVar8 = (uint)(uint16)_paletteCyclingTbl[loopIndex].endOffset;
+					int16 uVar14 = _paletteCyclingTbl[loopIndex].startOffset;
+					int16 uVar8 = _paletteCyclingTbl[loopIndex].endOffset;
 					if (uVar14 < uVar8) {
 						uint16 uVar11 = palette[uVar8];
 						int uVar15 = uVar8;
@@ -1407,7 +1407,7 @@ void DragonsEngine::updatePaletteCycling() {
 								uVar8--;
 								palette[uVar15] = palette[uVar15 - 1];
 								uVar15 = uVar8 & 0xffff;
-							} while ((uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
+							} while (_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
 						}
 						palette[(uint16)_paletteCyclingTbl[loopIndex].startOffset] = uVar11;
 						_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateInterval;
@@ -1420,7 +1420,7 @@ void DragonsEngine::updatePaletteCycling() {
 									uVar8--;
 									palette[uVar15] = palette[uVar15 + 1];
 									uVar15 = uVar8 & 0xffff;
-								} while ((uVar8 & 0xffff) < (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset);
+								} while ((uVar8 & 0xffff) < _paletteCyclingTbl[loopIndex].startOffset);
 							}
 							palette[(uint16)_paletteCyclingTbl[loopIndex].endOffset] = uVar11;
 							_paletteCyclingTbl[loopIndex].updateCounter =
