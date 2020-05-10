@@ -784,7 +784,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 
 			for (int y = 0; y < t.yStepSize; y++) {
 				for (int x = 0; x < t.xStepSize; x++) {
-					if ((x & 2) ^ (y & 2) ^ flag) {
+					if ((x & 2) ^ (y & 2) ^ (int)flag) {
 						rto.moveTo(x * t.stripSize, y * t.stripSize);
 						rects.push_back(rto);
 					}
