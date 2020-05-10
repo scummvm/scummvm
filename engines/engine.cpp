@@ -836,12 +836,8 @@ PauseToken::PauseToken() : _engine(nullptr) {}
 PauseToken::PauseToken(Engine *engine) : _engine(engine) {}
 
 void PauseToken::operator=(const PauseToken &t2) {
-	if (t2._engine == _engine) {
-		return;
-	}
-
 	if (_engine) {
-		_engine->resumeEngine();
+		error("Tried to assign to an already busy PauseToken");
 	}
 	_engine = t2._engine;
 	if (_engine) {
