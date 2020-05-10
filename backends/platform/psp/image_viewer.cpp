@@ -136,7 +136,7 @@ void ImageViewer::setVisible(bool visible) {
 
 	// from here on, we're making the loader visible
 	if (visible && g_engine) {	// we can only run the image viewer when there's an engine
-		g_engine->pauseEngine(true);
+		_pauseToken = g_engine->pauseEngine();
 
 		load(_imageNum ? _imageNum : 1); 	// load the 1st image or the current
 	}
@@ -157,7 +157,7 @@ void ImageViewer::setVisible(bool visible) {
 		setViewerButtons(false);
 
 		if (g_engine && g_engine->isPaused())
-			g_engine->pauseEngine(false);
+			_pauseToken.clear();
 	}
 	setDirty();
 }
