@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-05-10 10:56+0000\n"
+"PO-Revision-Date: 2020-05-11 02:16+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -5140,11 +5140,12 @@ msgstr "Muestra los nombres de los objetos en la parte inferior de la pantalla"
 
 #: engines/scumm/detection.cpp:1376
 msgid "Use NES Classic Palette"
-msgstr "Usar paleta clásica de NES"
+msgstr "Usar paleta de NES Classic"
 
 #: engines/scumm/detection.cpp:1377
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr "Utiliza una paleta de colores más neutral y fiel a la clásica de NES"
+msgstr ""
+"Utiliza una paleta de colores más neutral y fiel a la del sistema NES Classic"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
