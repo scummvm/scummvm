@@ -44,7 +44,7 @@ protected:
 
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music
-	void playMusic_internal(int track);
+	void playMusic_internal(int track) override;
 
 private:
 	int _currentTrack;      //! Currently playing track (don't save)

@@ -68,7 +68,7 @@ public:
 	/**
 	 * Close the currently open file
 	 */
-	void close();
+	void close() override;
 
 	/**
 	 * Differing eof that returns true when pos == size as well as beyond

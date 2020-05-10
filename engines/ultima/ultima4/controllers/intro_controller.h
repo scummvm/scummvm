@@ -98,7 +98,7 @@ public:
 	/**
 	 * Handles keystrokes during the introduction.
 	 */
-	bool keyPressed(int key);
+	bool keyPressed(int key) override;
 
 	/**
 	 * Mouse button was pressed
@@ -116,7 +116,7 @@ public:
 	 * Timer callback for the intro sequence.  Handles animating the intro
 	 * map, the beasties, etc..
 	 */
-	void timerFired();
+	void timerFired() override;
 
 	/**
 	 * Preload map tiles
@@ -128,7 +128,7 @@ public:
 	 * activated.
 	 * TODO: Reduce duped code.
 	 */
-	void update(Menu *menu, MenuEvent &event);
+	void update(Menu *menu, MenuEvent &event) override;
 	void updateConfMenu(MenuEvent &event);
 	void updateVideoMenu(MenuEvent &event);
 	void updateGfxMenu(MenuEvent &event);
