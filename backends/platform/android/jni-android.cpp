@@ -689,7 +689,10 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	if (g_engine) {
 		LOGD("pauseEngine: %d", value);
 
-		g_engine->pauseEngine(value);
+		if (value)
+			_pauseToken = g_engine->pauseEngine(value);
+		else
+			_pauseToken.clear();
 
 		/*if (value &&
 				g_engine->hasFeature(Engine::kSupportsSavingDuringRuntime) &&
