@@ -381,15 +381,15 @@ void Frame::playTransition(Score *score) {
 
 		case kTransCoverDown:								// 29
 			rto.setHeight(h);
-			rto.moveTo(0, -h + t.yStepSize * i);
+			rto.moveTo(0, t.yStepSize * i - h);
 			break;
 
 		case kTransCoverDownLeft:							// 30
-			rto.moveTo(w - t.xStepSize * i, -h + t.yStepSize * i);
+			rto.moveTo(w - t.xStepSize * i, t.yStepSize * i - h);
 			break;
 
 		case kTransCoverDownRight:							// 31
-			rto.moveTo(-w + t.xStepSize * i, -h + t.yStepSize * i);
+			rto.moveTo(t.xStepSize * i - w, t.yStepSize * i - h);
 			break;
 
 		case kTransCoverLeft:								// 32
@@ -397,7 +397,7 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransCoverRight:								// 33
-			rto.moveTo(-w + t.xStepSize * i, 0);
+			rto.moveTo(t.xStepSize * i - w, 0);
 			break;
 
 		case kTransCoverUp:									// 34
@@ -409,7 +409,7 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransCoverUpRight:							// 36
-			rto.moveTo(-w + t.xStepSize * i, h - t.yStepSize * i);
+			rto.moveTo(t.xStepSize * i - w, h - t.yStepSize * i);
 			break;
 
 		case kTransVenetianBlind:							// 37
