@@ -852,9 +852,10 @@ PauseToken::PauseToken(const PauseToken &t2) : _engine(t2._engine) {
 }
 
 void PauseToken::clear() {
-	if (_engine) {
-		_engine->resumeEngine();
+	if (!_engine) {
+		error("Tried to clear an already cleared PauseToken");
 	}
+	_engine->resumeEngine();
 	_engine = nullptr;
 }
 
