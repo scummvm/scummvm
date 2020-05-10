@@ -55,8 +55,8 @@ void Widget::init() {
 	_boss->_firstWidget = this;
 	_needsRedraw = true;
 
-	if (TransMan.getCurrentLanguage() == "C") {		// TODO: Switch to native RTL languages after testing.
-		_useRTL = true;
+	if (TransMan.getCurrentLanguage() == "C") {		// GUI TODO: Switch to native RTL languages after testing, also
+		_useRTL = true;								//			 Widgets will get _useRTL true or not from the XML parser. Look into this after the main GUI flipping.
 	}
 }
 
@@ -773,7 +773,7 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 
 void SliderWidget::drawWidget() {
 	if (_useRTL) {
-		// TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly.
+		// GUI TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly.
 		//	     Most likely, I'll draw ::Rect(_x + _w, _y, _x, _y + _h...) but I'll leave it for now, will do it when I flip individual widgets.
 		g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(getMaxValue() - _value), _state);
 	}

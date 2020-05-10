@@ -247,7 +247,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		if (this->_name == "GameOptions" || this->_name == "GlobalOptions")
 			_x = g_system->getOverlayWidth() - _w - _x;
 		else
-			; //_x -= 100;		// TODO: Can this flow be used for Tabs?
+			; //_x -= 100;		// GUI TODO: Can this flow be used for Tabs?
 	}
 	if (_x >= 0) _x += _inset;
 	if (_y >= 0) _y += _inset;
