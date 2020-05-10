@@ -368,24 +368,21 @@ void Lingo::func_cursor(int c, int m) {
 		byte *dst = assembly;
 
 		for (int y = 0; y < 16; y++) {
-			const byte *cursor, *mask;
-			bool nocursor = false;
+			const byte *cursor = nullptr, *mask = nullptr;
 
-			if (y >= score->_loadedCast->getVal(c)->_surface->h ||
-					y >= score->_loadedCast->getVal(m)->_surface->h )
-				nocursor = true;
-
-			if (!nocursor) {
+			if (y < score->_loadedCast->getVal(c)->_surface->h &&
+					y < score->_loadedCast->getVal(m)->_surface->h) {
 				cursor = (const byte *)score->_loadedCast->getVal(c)->_surface->getBasePtr(0, y);
 				mask = (const byte *)score->_loadedCast->getVal(m)->_surface->getBasePtr(0, y);
 			}
 
 			for (int x = 0; x < 16; x++) {
 				if (x >= score->_loadedCast->getVal(c)->_surface->w ||
-						x >= score->_loadedCast->getVal(m)->_surface->w )
-					nocursor = true;
+						x >= score->_loadedCast->getVal(m)->_surface->w) {
+					cursor = mask = nullptr;
+				}
 
-				if (nocursor) {
+				if (!cursor) {
 					*dst = 3;
 				} else {
 					*dst = *mask ? 3 : (*cursor ? 1 : 0);
