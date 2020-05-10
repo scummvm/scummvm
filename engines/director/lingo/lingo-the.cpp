@@ -123,7 +123,6 @@ TheEntity entities[] = {
 	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
 	{ kTheSoundEntity,		"sound",			true,  4 },	// D4
 	{ kTheSprite,			"sprite",			true,  2 },	// D4 p
-	{ kTheSqrt,				"sqrt",				false, 2 },	// D2 f
 	{ kTheStage,			"stage",			false, 4 },	//				D4 p
 	{ kTheStageBottom,		"stageBottom",		false, 2 },	// D2 f
 	{ kTheStageColor,		"stageColor",		false, 3 },	//		D3 p
@@ -462,11 +461,6 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheSprite:
 		d = getTheSprite(id, field);
-		break;
-	case kTheSqrt:
-		id.makeFloat();
-		d.type = FLOAT;
-		d.u.f = sqrt(id.u.f);
 		break;
 	case kTheStillDown:
 		d.type = INT;

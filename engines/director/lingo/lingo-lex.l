@@ -167,14 +167,6 @@ repeat		{ count(); return checkImmediate(tREPEAT); }
 set			{ count(); return tSET; }
 starts		{ count(); return tSTARTS; }
 tell		{ count(); return tTELL; }
-the[ \t]+sqrt[ \t]+of[ \t]+	{
-		count();
-
-		yylval.e[0] = g_lingo->_theEntities["sqrt"]->entity;
-		yylval.e[1] = 0;	// No field
-
-		return THEENTITYWITHID;
-	}
 the[ \t]+value[ \t]+of[ \t]+	{
 		count();
 
