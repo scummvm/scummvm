@@ -424,6 +424,7 @@ simpleexpr: INT		{
 		WRITE_UINT32(&e, $THEENTITY[0]);
 		WRITE_UINT32(&f, $THEENTITY[1]);
 		g_lingo->code2(e, f); }
+	| '(' expr[arg] ')'			{ $$ = $arg; }
 	| list
 
 expr: simpleexpr { $$ = $simpleexpr; }
@@ -475,7 +476,6 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| expr tSTARTS expr			{ g_lingo->code1(LC::c_starts); }
 	| '+' expr[arg]  %prec UNARY{ $$ = $arg; }
 	| '-' expr[arg]  %prec UNARY{ $$ = $arg; g_lingo->code1(LC::c_negate); }
-	| '(' expr[arg] ')'			{ $$ = $arg; }
 	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(LC::c_intersects); }
 	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(LC::c_within); }
 
