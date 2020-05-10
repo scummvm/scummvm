@@ -353,6 +353,14 @@ the[ \t]+[[:alpha:]]+		{
 				return THEENTITY;
 		}
 
+		if (g_lingo->_builtins.contains(ptr)) {
+			if (g_lingo->_builtins[ptr]->type == FBLTIN &&
+					g_lingo->_builtins[ptr]->nargs == 1 && g_lingo->_builtins[ptr]->maxArgs == 1) {
+				yylval.s = new Common::String(ptr);
+				return THEFBLTIN;
+			}
+		}
+
 		warning("LEXER: Unhandled the entity '%s'", ptr);
 	}
 then			{ count(); return tTHEN; }

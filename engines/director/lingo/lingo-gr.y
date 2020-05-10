@@ -107,7 +107,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<i> INT ARGC ARGCNORET
 %token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY THEMENUITEMSENTITY
 %token<f> FLOAT
-%token<s> BLTIN FBLTIN RBLTIN
+%token<s> BLTIN FBLTIN RBLTIN THEFBLTIN
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token<objectfield> THEOBJECTFIELD
@@ -438,6 +438,9 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
+	| THEFBLTIN tOF simpleexpr	{
+		$$ = g_lingo->codeFunc($THEFBLTIN, 1);
+		delete $THEFBLTIN; }
 	| THEENTITYWITHID simpleexpr {
 		$$ = g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
