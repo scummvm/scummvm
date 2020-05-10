@@ -138,7 +138,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 	uint16 *dialogTextLinePtr;
 	uint16 *puVar18;
 	uint16 *curDialogTextPtr;
-	int unaff_s4;
+	int unaff_s4 = 0;
 	uint16 uVar19;
 	short sVar20;
 	uint32 maxLineLengthMaybe;
@@ -644,7 +644,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 
 TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries) {
 	bool bVar1;
-	short sVar2;
+	__INT16_TYPE__ sVar2;
 	uint uVar3;
 	uint uVar4;
 	uint16 y;
@@ -659,7 +659,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	uint16 numEntries;
 	uint16 local_60;
 	uint16 local_58;
-	short local_50;
+	int16 local_50;
 	uint16 *local_40;
 	uint local_38;
 	bool hasDialogEntries;
@@ -777,7 +777,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 					uVar4 = FindLastPositionOf5cChar(_dat_80083104);
 					uVar4 = FUN_80031c28(_dat_80083104, local_40, uVar4 & 0xffff, 0x20);
 					_dat_80083104 = local_40;
-					if ((int)sVar2 == (uint)uVar8) {
+					if (sVar2 == uVar8) {
 						uVar7 = 0;
 						if (uVar6 < (uVar4 & 0xffff)) {
 							do {

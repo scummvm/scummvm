@@ -271,10 +271,10 @@ void SpecialOpcodes::spcCastleGardenLogic() {
 		sceneUpdater.iniIDTbl[3][0] = 0x145;
 		sceneUpdater.iniIDTbl[4][0] = 0x144;
 	} else {
-		sceneUpdater.sequenceIDTbl[0][0] = -1;
-		sceneUpdater.sequenceIDTbl[1][0] = -1;
-		sceneUpdater.sequenceIDTbl[2][0] = -1;
-		sceneUpdater.sequenceIDTbl[3][0] = -1;
+		sceneUpdater.sequenceIDTbl[0][0] = 0xffff;
+		sceneUpdater.sequenceIDTbl[1][0] = 0xffff;
+		sceneUpdater.sequenceIDTbl[2][0] = 0xffff;
+		sceneUpdater.sequenceIDTbl[3][0] = 0xffff;
 		sceneUpdater.iniIDTbl[3][0] = 0x83;
 		sceneUpdater.iniIDTbl[4][0] = 0x74;
 	}

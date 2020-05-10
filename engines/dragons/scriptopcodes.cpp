@@ -459,7 +459,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 		ini->actor->_flags |= ACTOR_FLAG_2000;
 	}
 
-	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != ini->actorResourceId) {
+	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != (uint32)ini->actorResourceId) {
 		ini->actor->_actorResource = _vm->_actorManager->getActorResource(ini->actorResourceId);
 	}
 

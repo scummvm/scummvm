@@ -437,7 +437,7 @@ void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
 
 uint16 SoundManager::getVabFromSoundId(uint16 soundId) {
 	// TODO
-	return -1;
+	return 0;
 }
 
 void SoundManager::loadMsf(uint32 sceneId) {
