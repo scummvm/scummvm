@@ -145,13 +145,13 @@ void OSystem_SDL::init() {
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
+
+	// Allow the screen to turn off
+	SDL_EnableScreenSaver();
 #endif
 
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
-
-	// Allow the screen to turn off
-	SDL_EnableScreenSaver();
 
 	// Creates the early needed managers, if they don't exist yet
 	// (we check for this to allow subclasses to provide their own).
@@ -300,6 +300,8 @@ void OSystem_SDL::initBackend() {
 void OSystem_SDL::engineInit() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	// Disable screen saver when engine starts
+	SDL_DisableScreenSaver();
 #endif
 #ifdef USE_TASKBAR
 	// Add the started engine to the list of recent tasks
@@ -308,16 +310,19 @@ void OSystem_SDL::engineInit() {
 	// Set the overlay icon the current running engine
 	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 #endif
+	_eventSource->setEngineRunning(true);
 }
 
 void OSystem_SDL::engineDone() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	SDL_EnableScreenSaver();
 #endif
 #ifdef USE_TASKBAR
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
 #endif
+	_eventSource->setEngineRunning(false);
 }
 
 void OSystem_SDL::initSDL() {

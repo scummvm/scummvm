@@ -61,7 +61,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 		Common::FSNode file = Common::FSNode(ConfMan.get("controller_map_db"));
 		if (file.exists()) {
 			if (SDL_GameControllerAddMappingsFromFile(file.getPath().c_str()) < 0)
-				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());	
+				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());
 			else {
 				loaded = true;
 				debug("Game controller DB file loaded: %s", file.getPath().c_str());
@@ -74,7 +74,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 		Common::FSNode file = dir.getChild(GAMECONTROLLERDB_FILE);
 		if (file.exists()) {
 			if (SDL_GameControllerAddMappingsFromFile(file.getPath().c_str()) < 0)
-				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());	
+				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());
 			else
 				debug("Game controller DB file loaded: %s", file.getPath().c_str());
 		}
@@ -84,7 +84,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 
 SdlEventSource::SdlEventSource()
     : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false),
-      _lastHatPosition(SDL_HAT_CENTERED), _mouseX(0), _mouseY(0)
+      _lastHatPosition(SDL_HAT_CENTERED), _mouseX(0), _mouseY(0), _engineRunning(false)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
 #endif
@@ -522,6 +522,25 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		//case SDL_WINDOWEVENT_RESIZED:
 			return handleResizeEvent(event, ev.window.data1, ev.window.data2);
 
+		case SDL_WINDOWEVENT_FOCUS_GAINED: {
+			// When we gain focus, we to update whether the display can turn off
+			// dependingif a game isn't running or not
+			event.type = Common::EVENT_FOCUS_GAINED;
+			if (_engineRunning) {
+				SDL_DisableScreenSaver();
+			} else {
+				SDL_EnableScreenSaver();
+			}
+			return true;
+		}
+
+		case SDL_WINDOWEVENT_FOCUS_LOST: {
+			// Always allow the display to turn off if ScummVM is out of focus
+			event.type = Common::EVENT_FOCUS_LOST;
+			SDL_EnableScreenSaver();
+			return true;
+		}
+
 		default:
 			return false;
 		}
@@ -929,6 +948,10 @@ bool SdlEventSource::isJoystickConnected() const {
 	        || _controller
 #endif
 	        ;
+}
+
+void SdlEventSource::setEngineRunning(const bool value) {
+	_engineRunning = value;
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
