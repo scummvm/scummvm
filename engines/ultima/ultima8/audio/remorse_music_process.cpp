@@ -133,7 +133,7 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 			return;
 		}
 
-		Audio::AudioStream *_playingStream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::YES);
+		_playingStream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::YES);
 		if (!_playingStream) {
 			error("Couldn't create stream from AMF file: %s", fname.c_str());
 			return;
