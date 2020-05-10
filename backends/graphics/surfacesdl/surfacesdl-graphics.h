@@ -75,9 +75,6 @@ public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
 
-	virtual void activateManager() override;
-	virtual void deactivateManager() override;
-
 	virtual bool hasFeature(OSystem::Feature f) const override;
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;

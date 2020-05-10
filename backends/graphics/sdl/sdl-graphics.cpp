@@ -46,9 +46,17 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 
 void SdlGraphicsManager::activateManager() {
 	_eventSource->setGraphicsManager(this);
+
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 void SdlGraphicsManager::deactivateManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher()) {
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	}
+
 	_eventSource->setGraphicsManager(0);
 }
 

@@ -199,22 +199,6 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 #endif
 }
 
-void OpenGLSdlGraphicsManager::activateManager() {
-	SdlGraphicsManager::activateManager();
-
-	// Register the graphics manager as a event observer
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
-}
-
-void OpenGLSdlGraphicsManager::deactivateManager() {
-	// Unregister the event observer
-	if (g_system->getEventManager()->getEventDispatcher()) {
-		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-	}
-
-	SdlGraphicsManager::deactivateManager();
-}
-
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
