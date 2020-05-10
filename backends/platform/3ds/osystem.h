@@ -282,6 +282,9 @@ private:
 	u16 _magX, _magY;
 	u16 _magWidth, _magHeight;
 	u16 _magCenterX, _magCenterY;
+
+	// Pause
+	PauseToken _sleepPauseToken;
 };
 
 } // namespace _3DS
