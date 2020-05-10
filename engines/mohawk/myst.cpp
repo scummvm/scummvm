@@ -700,7 +700,7 @@ bool MohawkEngine_Myst::canDoAction(MystEventAction action) {
 		return actionsAllowed && stack->getStackId() != kDemoStack;
 	default:
 		// Not implemented yet
-		assert(false);
+		error("canDoAction(): Not implemented");
 	}
 }
 
