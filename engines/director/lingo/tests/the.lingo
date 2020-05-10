@@ -45,3 +45,5 @@ put abs( the locH of sprite 2 - the mouseH) into field 4
 set the castNum of sprite the clickon = the number of cast "main.hi"
 
 set castname = the name of cast(the castnum of sprite 15)
+
+set res = the soundBusy of 1
