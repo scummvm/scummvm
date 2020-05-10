@@ -101,8 +101,9 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
 
-	_windowIsActive = true;
-	_gameIsRunning  = true;
+	_windowIsActive     = true;
+	_gameIsRunning      = true;
+	_gameJustLaunched   = true;
 
 	_vqaIsPlaying       = false;
 	_vqaStopIsRequested = false;
@@ -360,8 +361,9 @@ Common::Error BladeRunnerEngine::run() {
 	// so that the game won't exit abruptly after end credits
 	do {
 		// additional code for gracefully handling end-game after _endCredits->show()
-		_gameOver = false;
-		_gameIsRunning = true;
+		_gameOver         = false;
+		_gameIsRunning    = true;
+		_gameJustLaunched = true;
 		// reset ammo amounts
 		_settings->reset();
 		// need to clear kFlagKIAPrivacyAddon to remove Bob's Privacy Addon for KIA
@@ -1234,6 +1236,11 @@ void BladeRunnerEngine::walkingReset() {
 void BladeRunnerEngine::handleEvents() {
 	if (shouldQuit()) {
 		_gameIsRunning = false;
+		return;
+	}
+
+	if (_gameJustLaunched) {
+		_gameJustLaunched = false;
 		return;
 	}
 

@@ -207,6 +207,7 @@ public:
 	bool _actorIsSpeaking;
 	bool _actorSpeakStopIsRequested;
 	bool _gameOver;
+	bool _gameJustLaunched;
 	int  _gameAutoSaveTextId;
 	bool _gameIsAutoSaving;
 	bool _gameIsLoading;
