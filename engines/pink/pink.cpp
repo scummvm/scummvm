@@ -128,7 +128,7 @@ Common::Error Pink::PinkEngine::run() {
 
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return Common::kNoError;
 			case Common::EVENT_MOUSEMOVE:
 				_actor->onMouseMove(event.mouse);

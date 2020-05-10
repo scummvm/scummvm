@@ -316,7 +316,7 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 	int softKey;
 	while (_eventMan->pollEvent(event)) {
 		switch(event.type) {
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			quit();
 			break;
 		case Common::EVENT_KEYDOWN:

@@ -138,7 +138,7 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kRTLCmd: {
 		Common::Event eventRTL;
-		eventRTL.type = Common::EVENT_RTL;
+		eventRTL.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		g_system->getEventManager()->pushEvent(eventRTL);
 		close();
 		}

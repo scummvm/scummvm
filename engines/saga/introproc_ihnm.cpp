@@ -144,7 +144,7 @@ bool Scene::checkKey() {
 
 	while (_vm->_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 		case Common::EVENT_QUIT:
 			res = true;
 			break;

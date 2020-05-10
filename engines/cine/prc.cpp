@@ -52,7 +52,7 @@ bool loadPrc(const char *pPrcName) {
 	// This is copy protection. Used to hang the machine
 	if (!scumm_stricmp(pPrcName, COPY_PROT_FAIL_PRC_NAME)) {
 		Common::Event event;
-		event.type = Common::EVENT_RTL;
+		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		g_system->getEventManager()->pushEvent(event);
 		return false;
 	}

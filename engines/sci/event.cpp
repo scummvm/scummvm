@@ -243,7 +243,7 @@ SciEvent EventManager::getScummVMEvent() {
 
 		return noEvent;
 	}
-	if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RTL) {
+	if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 		input.type = kSciEventQuit;
 		return input;
 	}

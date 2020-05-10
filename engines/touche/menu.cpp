@@ -308,7 +308,7 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 			while (_eventMan->pollEvent(event)) {
 				const Button *button = 0;
 				switch (event.type) {
-				case Common::EVENT_RTL:
+				case Common::EVENT_RETURN_TO_LAUNCHER:
 				case Common::EVENT_QUIT:
 					menuData.quit = true;
 					menuData.exit = true;
@@ -472,7 +472,7 @@ int ToucheEngine::displayQuitDialog() {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 			case Common::EVENT_QUIT:
 				quitLoop = true;
 				ret = 1;

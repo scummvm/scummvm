@@ -160,7 +160,7 @@ public:
 		kSupportsSubtitleOptions,
 
 		/**
-		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled
+		 * 'Return to launcher' feature is supported, i.e., EVENT_RETURN_TO_LAUNCHER is handled
 		 * either directly, or indirectly (that is, the engine calls and honors
 		 * the result of the Engine::shouldQuit() method appropriately).
 		 */

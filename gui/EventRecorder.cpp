@@ -151,7 +151,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 			_nextEvent = _playbackFile->getNextEvent();
 			_timerManager->handler();
 		} else {
-			if (_nextEvent.type == Common::EVENT_RTL) {
+			if (_nextEvent.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				error("playback:action=stopplayback");
 			} else {
 				uint32 seconds = _fakeTimer / 1000;
@@ -642,7 +642,7 @@ bool EventRecorder::switchMode() {
 		Common::Error status = g_engine->saveGameState(emptySlot, saveName);
 		if (status.getCode() == Common::kNoError) {
 			Common::Event eventRTL;
-			eventRTL.type = Common::EVENT_RTL;
+			eventRTL.type = Common::EVENT_RETURN_TO_LAUNCHER;
 			g_system->getEventManager()->pushEvent(eventRTL);
 		}
 	}

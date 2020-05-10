@@ -218,7 +218,7 @@ uint Testsuite::parseEvents() {
 				break;
 
 			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return kEngineQuit;
 
 			default:

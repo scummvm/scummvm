@@ -297,7 +297,7 @@ int TeenAgentEngine::skipEvents() const {
 	while (_event->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return -1;
 		case Common::EVENT_MAINMENU:
 		case Common::EVENT_LBUTTONDOWN:
@@ -595,7 +595,7 @@ Common::Error TeenAgentEngine::run() {
 		Object *currentObject = scene->findObject(mouse);
 
 		while (_event->pollEvent(event)) {
-			if (event.type == Common::EVENT_RTL)
+			if (event.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return Common::kNoError;
 
 			if ((!_sceneBusy && inventory->processEvent(event)) || scene->processEvent(event))

@@ -2755,7 +2755,7 @@ bool ScummEngine::startManiac() {
 		// chained game.
 		Common::EventManager *eventMan = g_system->getEventManager();
 		Common::Event event;
-		event.type = Common::EVENT_RTL;
+		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		eventMan->pushEvent(event);
 		return true;
 	} else {

@@ -125,7 +125,7 @@ void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	Common::Event eventRTL;
 	switch (cmd) {
 	case kStopCmd:
-		eventRTL.type = Common::EVENT_RTL;
+		eventRTL.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		g_system->getEventManager()->pushEvent(eventRTL);
 		close();
 		break;
