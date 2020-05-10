@@ -312,7 +312,6 @@
 	</dialog>
 	<dialog name = 'GlobalOptions_Graphics_Container' overlays = 'GlobalOptions_Graphics.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<!-- ResidualVM - Unused
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
 				<widget name = 'grModePopupDesc'
 						type = 'OptionsLabel'
@@ -337,7 +336,6 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			-->
 			<widget name = 'grAspectCheckbox'
 					type = 'Checkbox'
 			/>
