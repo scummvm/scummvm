@@ -255,7 +255,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 				if (elseif == false) {
 					warning("Badly nested else");
 				}
-			} else { // check if we have tNLELSE
+			} else { // check if we have tNLELSE or \nEND
 				if (!*s) {
 					break;
 				}
@@ -263,11 +263,22 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 
 				while (*s1 && *s1 == '\n')
 					s1++;
-				tok = nexttok(s1);
+				tok = nexttok(s1, &s1);
 
 				if (tok.equalsIgnoreCase("else") && elseif) {
 					// Nothing to do here, same level
 					debugC(2, kDebugLingoParse, "tNLELSE");
+				} else if (tok.equalsIgnoreCase("end") && elseif) {
+					tok = nexttok(s1);
+
+					if (tok.equalsIgnoreCase("if")) {
+						// Nothing to do here
+						debugC(2, kDebugLingoParse, "see-end-if");
+					} else {
+						debugC(2, kDebugLingoParse, "++++ end if (no tNLELSE 2)");
+						res += " end if";
+						iflevel--;
+					}
 				} else {
 					debugC(2, kDebugLingoParse, "++++ end if (no tNLELSE)");
 					res += " end if";
