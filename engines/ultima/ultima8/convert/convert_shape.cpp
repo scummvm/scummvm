@@ -249,7 +249,7 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 			xpos += skip;
 
 			if (xpos > _width) {
-				source->skip(-1);
+				source->seek(-1, SEEK_CUR);
 				skip = _width-(xpos-skip);
 			}
 
@@ -262,8 +262,8 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 
 			// Is this required???? It seems hacky and pointless
 			if (dlen == 0 || dlen == 1) {
-				source->skip(-1);
-				rlebuf->skip(-1);
+				source->seek(-1, SEEK_CUR);
+				rlebuf->seek(-1, SEEK_CUR);
 				rlebuf->writeByte(skip+(_width-xpos));
 				break;
 			}
