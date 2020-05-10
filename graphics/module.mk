@@ -32,7 +32,6 @@ MODULE_OBJS := \
 	screen.o \
 	sjis.o \
 	surface.o \
-	text_renderer.o \
 	transform_struct.o \
 	transform_tools.o \
 	transparent_surface.o \

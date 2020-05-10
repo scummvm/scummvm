@@ -33,7 +33,6 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
-#include "graphics/text_renderer.h"
 
 namespace Graphics {
 
@@ -815,7 +814,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		if (it->unicode) {
 			int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
 
-			TextRenderer::drawU32String(&_screen, *_font, it->unicodeText, x, y, it->bbox.width(), color, _align);
+			_font->drawString(&_screen, convertBiDiU32String(it->unicodeText), x, y, it->bbox.width(), color, _align);
 			underlineAccelerator(&_screen, _font, it->unicodeText, x + accOff, y, it->shortcutPos, color);
 		} else {
 			const Font *font = getMenuFont(it->style);
@@ -897,7 +896,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			}
 
 			if (menu->items[i]->unicode) {
-				TextRenderer::drawU32String(s, *_font, unicodeText, tx, ty, r->width(), color, _align);
+				_font->drawString(s, convertBiDiU32String(unicodeText), tx, ty, r->width(), color, _align);
 				underlineAccelerator(s, _font, unicodeText, tx + accOff, ty, shortcutPos, color);
 			} else {
 				const Font *font = getMenuFont(menu->items[i]->style);
