@@ -217,7 +217,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 	assert(_children.size() <= 1);
 
 	resetLayout();
-
+	
 	if (_overlays == "screen") {
 		_x = 0;
 		_y = 0;
@@ -242,6 +242,13 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		}
 	}
 
+	// Below: Not complete. Renders dialogs okay, but can I use this for tabs?
+	if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions")) {
+		if (this->_name == "GameOptions" || this->_name == "GlobalOptions")
+			_x = g_system->getOverlayWidth() - _w - _x;
+		else
+			; //_x -= 100;		// TODO: Can this flow be used for Tabs?
+	}
 	if (_x >= 0) _x += _inset;
 	if (_y >= 0) _y += _inset;
 	if (_w >= 0) _w -= 2 * _inset;
