@@ -139,6 +139,8 @@ private:
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
 	static jstring getCurrentCharset(JNIEnv *env, jobject self);
+
+	static PauseToken _pauseToken;
 };
 
 inline bool JNI::haveSurface() {
