@@ -72,10 +72,11 @@ struct MCIToken {
 	{ kMCITokenNone, kMCITokenNone,   0, 0 }
 };
 
-void Lingo::func_mci(Common::String &s) {
+void Lingo::func_mci(const Common::String &name) {
 	Common::String params[5];
 	MCITokenType command = kMCITokenNone;
 
+	Common::String s = name;
 	s.trim();
 	s.toLowercase();
 
@@ -170,8 +171,8 @@ void Lingo::func_mci(Common::String &s) {
 	}
 }
 
-void Lingo::func_mciwait(Common::String &s) {
-	warning("STUB: MCI wait file: %s", s.c_str());
+void Lingo::func_mciwait(const Common::String &name) {
+	warning("STUB: MCI wait file: %s", name.c_str());
 }
 
 void Lingo::func_goto(Datum &frame, Datum &movie) {
@@ -181,9 +182,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 
 	if (movie.type != VOID) {
-		movie.makeString();
-
-		Common::String movieFilename = pathMakeRelative(*movie.u.s);
+		Common::String movieFilenameRaw = movie.asString();
+		Common::String movieFilename = pathMakeRelative(movieFilenameRaw);
 		Common::String cleanedFilename;
 
 		bool fileExists = false;
@@ -213,7 +213,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			}
 		}
 
-		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movie.u.s->c_str(), convertPath(*movie.u.s).c_str(),
+		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(),
 				movieFilename.c_str(), cleanedFilename.c_str());
 
 		if (!fileExists) {
@@ -235,9 +235,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		frame.makeInt();
-
-		_vm->_nextMovie.frameI = frame.u.i;
+		_vm->_nextMovie.frameI = frame.asInt();
 
 		return;
 	}
@@ -253,10 +251,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 	}
 
-	frame.makeInt();
-
 	if (_vm->getCurrentScore())
-		_vm->getCurrentScore()->setCurrentFrame(frame.u.i);
+		_vm->getCurrentScore()->setCurrentFrame(frame.asInt());
 }
 
 void Lingo::func_gotoloop() {

@@ -73,13 +73,16 @@ struct Symbol {	/* symbol table entry */
 	union {
 		int		i;			/* VAR */
 		double	f;			/* FLOAT */
-		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
+		ScriptData	*defn;	/* HANDLER */
 		void (*func)();		/* OPCODE */
 		void (*bltin)(int);	/* BUILTIN */
 		Common::String	*s;	/* STRING */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr;
 	} u;
+
+	int *refCount;
+
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
 	bool parens;	/* whether parens required or not, for builitins */
@@ -91,6 +94,8 @@ struct Symbol {	/* symbol table entry */
 	int archiveIndex; 		/* optional archive to execute with */
 
 	Symbol();
+	Symbol(const Symbol &s);
+	~Symbol();
 };
 
 struct PCell {
@@ -113,19 +118,83 @@ struct Datum {	/* interpreter stack type */
 		PropertyArray *parr; /* PARRAY */
 	} u;
 
-	Datum() { u.sym = NULL; type = VOID; }
-	Datum(int val) { u.i = val; type = INT; }
-	Datum(double val) { u.f = val; type = FLOAT; }
-	Datum(Common::String *val) { u.s = val; type = STRING; }
+	int *refCount;
 
-	double makeFloat();
-	int makeInt();
-	Common::String *makeString(bool printonly = false);
-	Common::String getPrintable() { return *makeString(true); }
+	Datum() {
+		u.sym = NULL;
+		type = VOID;
+		refCount = new int;
+		*refCount = 1;
+	}
+	Datum(const Datum &d) {
+		type = d.type;
+		u = d.u;
+		refCount = d.refCount;
+		*refCount += 1;
+	}
+	Datum(int val) {
+		u.i = val;
+		type = INT;
+		refCount = new int;
+		*refCount = 1;
+	}
+	Datum(double val) {
+		u.f = val;
+		type = FLOAT;
+		refCount = new int;
+		*refCount = 1;
+	}
+	Datum(const Common::String &val) {
+		u.s = new Common::String(val);
+		type = STRING;
+		refCount = new int;
+		*refCount = 1;
+	}
+	Datum(Common::String *val) {
+		u.s = val;
+		type = STRING;
+		refCount = new int;
+		*refCount = 1;
+	}
+	~Datum() {
+		*refCount -= 1;
+		if (*refCount <= 0) {
+			switch (type) {
+				case STRING:
+					delete u.s;
+					break;
+				case ARRAY:
+					// fallthrough
+				case POINT:
+					// fallthrough
+				case RECT:
+					delete u.farr;
+					break;
+				case PARRAY:
+					delete u.parr;
+					break;
+				case VAR:
+					// fallthrough
+				case REFERENCE:
+					// fallthrough
+				case INT:
+					// fallthrough
+				case FLOAT:
+					// fallthrough
+				default:
+					break;
+			}
+			delete refCount;
+		}
+	}
+
+	double asFloat();
+	int asInt();
+	Common::String asString(bool printonly = false);
 
 	const char *type2str(bool isk = false);
 
-	int compareTo(Datum d, bool ignoreCase = false);
+	int compareTo(Datum &d, bool ignoreCase = false);
 };
 
 struct Builtin {
@@ -225,7 +294,7 @@ public:
 	void varAssign(Datum &var, Datum &value);
 	Datum varFetch(Datum &var);
 
-	int alignTypes(Datum &d1, Datum &d2);
+	int getAlignedType(Datum &d1, Datum &d2);
 
 	void printAllVars();
 
@@ -271,8 +340,8 @@ public:
 
 	void factoryCall(Common::String &name, int nargs);
 
-	void func_mci(Common::String &s);
-	void func_mciwait(Common::String &s);
+	void func_mci(const Common::String &name);
+	void func_mciwait(const Common::String &name);
 	void func_beep(int repeats);
 	void func_goto(Datum &frame, Datum &movie);
 	void func_gotoloop();

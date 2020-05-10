@@ -315,7 +315,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *pr
 	for (int i = 0; i < nargs; i++) {
 		Datum d = _stack[_stack.size() - nargs + i];
 
-		s += d.getPrintable();
+		s += d.asString(true);
 
 		if (i != nargs - 1)
 			s += ", ";
@@ -365,125 +365,101 @@ void LB::b_abs(int nargs) {
 
 void LB::b_atan(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeFloat();
-	d.u.f = atan(d.u.f);
-	g_lingo->push(d);
+	Datum res(atan(d.asFloat()));
+	g_lingo->push(res);
 }
 
 void LB::b_cos(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeFloat();
-	d.u.f = cos(d.u.f);
-	g_lingo->push(d);
+	Datum res(cos(d.asFloat()));
+	g_lingo->push(res);
 }
 
 void LB::b_exp(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeInt(); // Lingo uses int, so we're enforcing it
-	d.makeFloat();
-	d.u.f = exp(d.u.f);
-	g_lingo->push(d);
+	// Lingo uses int, so we're enforcing it
+	Datum res(exp(d.asInt()));
+	g_lingo->push(res);
 }
 
 void LB::b_float(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeFloat();
-	g_lingo->push(d);
+	Datum res(d.asFloat());
+	g_lingo->push(res);
 }
 
 void LB::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeInt();
-	g_lingo->push(d);
+	Datum res(d.asInt());
+	g_lingo->push(res);
 }
 
 void LB::b_log(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeFloat();
-	d.u.f = log(d.u.f);
-	g_lingo->push(d);
+	Datum res(log(d.asFloat()));
+	g_lingo->push(res);
 }
 
 void LB::b_pi(int nargs) {
-	Datum d;
-	d.makeFloat();
-	d.u.f = M_PI;
-	g_lingo->push(d);
+	Datum res(M_PI);
+	g_lingo->push(res);
 }
 
 void LB::b_power(int nargs) {
 	Datum d1 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
-	d1.makeFloat();
-	d2.makeFloat();
-	d1.u.f = pow(d2.u.f, d1.u.f);
+	Datum res(pow(d2.asFloat(), d1.asFloat()));
 	g_lingo->push(d1);
 }
 
 void LB::b_random(int nargs) {
 	Datum max = g_lingo->pop();
-	Datum res;
-
-	max.makeInt();
-
-	res.u.i = g_lingo->_vm->_rnd.getRandomNumber(max.u.i - 1) + 1;
-	res.type = INT;
-
+	Datum res((int)(g_lingo->_vm->_rnd.getRandomNumber(max.asInt() - 1) + 1));
 	g_lingo->push(res);
 }
 
 void LB::b_sin(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeFloat();
-	d.u.f = sin(d.u.f);
-	g_lingo->push(d);
+	Datum res(sin(d.asFloat()));
+	g_lingo->push(res);
 }
 
 void LB::b_sqrt(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeFloat();
-	d.u.f = sqrt(d.u.f);
-	g_lingo->push(d);
+	Datum res(sqrt(d.asFloat()));
+	g_lingo->push(res);
 }
 
 void LB::b_tan(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeFloat();
-	d.u.f = tan(d.u.f);
-	g_lingo->push(d);
+	Datum res(tan(d.asFloat()));
+	g_lingo->push(res);
 }
 
 ///////////////////
 // String
 ///////////////////
 void LB::b_chars(int nargs) {
-	Datum to = g_lingo->pop();
-	Datum from = g_lingo->pop();
+	int to = g_lingo->pop().asInt();
+	int from = g_lingo->pop().asInt();
 	Datum s = g_lingo->pop();
+	TYPECHECK2(s, STRING, REFERENCE);
 
-	if (s.type == REFERENCE)
-		s.makeString();
+	Common::String src = s.asString();
 
-	TYPECHECK(s, STRING);
+	int len = strlen(src.c_str());
+	int f = MAX(0, MIN(len, from - 1));
+	int t = MAX(0, MIN(len, to));
 
-	to.makeInt();
-	from.makeInt();
-
-	int len = strlen(s.u.s->c_str());
-	int f = MAX(0, MIN(len, from.u.i - 1));
-	int t = MAX(0, MIN(len, to.u.i));
-
-	Common::String *res;
+	Common::String *result;
 	if (f > t) {
-		res = new Common::String("");
+		result = new Common::String("");
 	} else {
-		res = new Common::String(&(s.u.s->c_str()[f]), &(s.u.s->c_str()[t]));
+		result = new Common::String(&(src.c_str()[f]), &(src.c_str()[t]));
 	}
 
-	Datum ret;
-	ret.type = STRING;
-	ret.u.s = res;
-	g_lingo->push(ret);
+	Datum res(result);
+	g_lingo->push(res);
 }
 
 void LB::b_charToNum(int nargs) {
@@ -491,55 +467,50 @@ void LB::b_charToNum(int nargs) {
 
 	TYPECHECK(d, STRING);
 
-	byte chr = d.u.s->c_str()[0];
-	delete d.u.s;
+	int chr = (uint8)d.u.s->c_str()[0];
 
-	d.u.i = chr;
-	d.type = INT;
-	g_lingo->push(d);
+	Datum res(chr);
+	g_lingo->push(res);
 }
 
 void LB::b_delete(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeInt();
+	Datum res(d.asInt());
 
 	warning("STUB: b_delete");
 
-	g_lingo->push(Datum((char)d.u.i));
+	g_lingo->push(res);
 }
 
 void LB::b_hilite(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeInt();
+	Datum res(d.asInt());
 
 	warning("STUB: b_hilite");
 
-	g_lingo->push(Datum((char)d.u.i));
+	g_lingo->push(res);
 }
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
-	if (d.type == REFERENCE)
-		d.makeString();
+	TYPECHECK2(d, STRING, REFERENCE);
 
-	TYPECHECK(d, STRING);
+	int len = strlen(d.asString().c_str());
 
-	int len = strlen(d.u.s->c_str());
-	delete d.u.s;
-
-	d.u.i = len;
-	d.type = INT;
-	g_lingo->push(d);
+	Datum res(len);
+	g_lingo->push(res);
 }
 
 void LB::b_numToChar(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeInt();
+	char result[2];
+	result[0] = (char)d.asInt();
+	result[1] = 0;
 
-	g_lingo->push(Datum((char)d.u.i));
+	g_lingo->push(Datum(Common::String(result)));
 }
 
 void LB::b_offset(int nargs) {
@@ -547,11 +518,8 @@ void LB::b_offset(int nargs) {
 		b_offsetRect(nargs);
 		return;
 	}
-	Datum target = g_lingo->pop();
-	Datum source = g_lingo->pop();
-
-	target.makeString();
-	source.makeString();
+	Common::String target = g_lingo->pop().asString();
+	Common::String source = g_lingo->pop().asString();
 
 	warning("STUB: b_offset()");
 
@@ -560,15 +528,14 @@ void LB::b_offset(int nargs) {
 
 void LB::b_string(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeString();
-	g_lingo->push(d);
+	Datum res(d.asString());
+	g_lingo->push(res);
 }
 
 void LB::b_value(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeInt();
 	warning("STUB: b_value()");
-	g_lingo->push(d);
+	g_lingo->push(Datum(0));
 }
 
 ///////////////////
@@ -584,19 +551,18 @@ void LB::b_addAt(int nargs) {
 	ARGNUMCHECK(3);
 
 	Datum value = g_lingo->pop();
-	Datum index = g_lingo->pop();
+	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
 
-	TYPECHECK(index, INT);
-	if (index.type == FLOAT)
-		index.makeInt();
+	TYPECHECK2(indexD, INT, FLOAT);
+	int index = indexD.asInt();
 	TYPECHECK(list, ARRAY);
 
-	if (!((uint)index.u.i < list.u.farr->size())) {
-		for (uint i = 0; i < index.u.i-list.u.farr->size()-1; i++)
+	if (!((uint)index < list.u.farr->size())) {
+		for (uint i = 0; i < index - list.u.farr->size() - 1; i++)
 			list.u.farr->push_back(Datum(0));
 	}
-	list.u.farr->insert_at(index.u.i-1, value);
+	list.u.farr->insert_at(index - 1, value);
 }
 
 void LB::b_addProp(int nargs) {
@@ -649,21 +615,21 @@ void LB::b_count(int nargs) {
 void LB::b_deleteAt(int nargs) {
 	ARGNUMCHECK(2);
 
-	Datum index = g_lingo->pop();
+	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	if (index.type == FLOAT)
-		index.makeInt();
-	TYPECHECK(index, INT);
+	TYPECHECK2(indexD, INT, FLOAT);
+	TYPECHECK2(list, ARRAY, PARRAY);
+	int index = indexD.asInt();
 
 	switch (list.type) {
 	case ARRAY:
-		list.u.farr->remove_at(index.u.i-1);
+		list.u.farr->remove_at(index - 1);
 		break;
 	case PARRAY:
-		list.u.parr->remove_at(index.u.i-1);
+		list.u.parr->remove_at(index - 1);
 		break;
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		break;
 	}
 }
 
@@ -672,6 +638,7 @@ void LB::b_deleteProp(int nargs) {
 
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
+	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
 	case ARRAY:
@@ -682,12 +649,12 @@ void LB::b_deleteProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			list.u.parr->remove_at(index-1);
+			list.u.parr->remove_at(index - 1);
 		}
 		break;
 	}
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		break;
 	}
 }
 
@@ -711,26 +678,25 @@ void LB::b_findPos(int nargs) {
 void LB::b_findPosNear(int nargs) {
 	ARGNUMCHECK(2);
 
-	Datum prop = g_lingo->pop();
+	Common::String prop = g_lingo->pop().asString();
 	Datum list = g_lingo->pop();
-	Datum d(0);
+	Datum res(0);
 	TYPECHECK(list, PARRAY);
 
 	// FIXME: Integrate with compareTo framework
-	prop = prop.makeString();
-	prop.u.s->toLowercase();
+	prop.toLowercase();
 
 	for (uint i = 0; i < list.u.parr->size(); i++) {
 		Datum p = *list.u.parr->operator[](i).p;
-		p.makeString();
-		p.u.s->toLowercase();
-		if (p.u.s->find(prop.u.s->c_str()) == 0) {
-			d.u.i = i+1;
+		Common::String tgt = p.asString();
+		tgt.toLowercase();
+		if (tgt.find(prop.c_str()) == 0) {
+			res.u.i = i + 1;
 			break;
 		}
 	}
 
-	g_lingo->push(d);
+	g_lingo->push(res);
 }
 
 void LB::b_getaProp(int nargs) {
@@ -761,20 +727,19 @@ void LB::b_getaProp(int nargs) {
 void LB::b_getAt(int nargs) {
 	ARGNUMCHECK(2);
 
-	Datum index = g_lingo->pop();
+	Datum indexD = g_lingo->pop();
+	TYPECHECK2(indexD, INT, FLOAT);
 	Datum list = g_lingo->pop();
-	if (index.type == FLOAT)
-		index.makeInt();
-	TYPECHECK(index, INT);
+	int index = indexD.asInt();
 
 	switch (list.type) {
 	case ARRAY:
-		ARRBOUNDSCHECK(index.u.i, list);
-		g_lingo->push(list.u.farr->operator[](index.u.i-1));
+		ARRBOUNDSCHECK(index, list);
+		g_lingo->push(list.u.farr->operator[](index - 1));
 		break;
 	case PARRAY:
-		ARRBOUNDSCHECK(index.u.i, list);
-		g_lingo->push(*list.u.parr->operator[](index.u.i-1).v);
+		ARRBOUNDSCHECK(index, list);
+		g_lingo->push(*list.u.parr->operator[](index - 1).v);
 		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
@@ -826,12 +791,10 @@ void LB::b_getPos(int nargs) {
 	ARGNUMCHECK(2);
 	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
+	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
 	case ARRAY: {
-		if (val.type == FLOAT)
-			val.makeInt();
-		TYPECHECK(val, INT);
 		Datum d(0);
 		int index = LC::compareArrays(LC::eqData, list, val, true).u.i;
 		if (index > 0) {
@@ -850,7 +813,7 @@ void LB::b_getPos(int nargs) {
 		break;
 	}
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		break;
 	}
 }
 
@@ -858,6 +821,7 @@ void LB::b_getProp(int nargs) {
 	ARGNUMCHECK(2);
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
+	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
 	case ARRAY:
@@ -870,26 +834,22 @@ void LB::b_getProp(int nargs) {
 		if (index > 0) {
 			g_lingo->push(*list.u.parr->operator[](index-1).v);
 		} else {
-			error("b_getProp: Property %s not found", prop.makeString()->c_str());
+			error("b_getProp: Property %s not found", prop.asString().c_str());
 		}
 		break;
 	}
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		break;
 	}
 }
 
 void LB::b_getPropAt(int nargs) {
 	ARGNUMCHECK(2);
-	Datum index = g_lingo->pop();
+	int index = g_lingo->pop().asInt();
 	Datum list = g_lingo->pop();
 	TYPECHECK(list, PARRAY);
 
-	if (index.type == FLOAT)
-		index.makeInt();
-	TYPECHECK(index, INT);
-
-	g_lingo->push(*list.u.parr->operator[](index.u.i-1).p);
+	g_lingo->push(*list.u.parr->operator[](index-1).p);
 }
 
 void LB::b_list(int nargs) {
@@ -1010,27 +970,26 @@ void LB::b_setaProp(int nargs) {
 void LB::b_setAt(int nargs) {
 	ARGNUMCHECK(3);
 	Datum value = g_lingo->pop();
-	Datum index = g_lingo->pop();
+	int index = g_lingo->pop().asInt();
 	Datum list = g_lingo->pop();
-	if (index.type == FLOAT)
-		index.makeInt();
-	TYPECHECK(index, INT);
+
+	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
 	case ARRAY:
-		if ((uint)index.u.i < list.u.farr->size()) {
-			list.u.farr->operator[](index.u.i-1) = value;
+		if ((uint)index < list.u.farr->size()) {
+			list.u.farr->operator[](index-1) = value;
 		} else {
 			// TODO: Extend the list if we request an index beyond it
-			ARRBOUNDSCHECK(index.u.i, list);
+			ARRBOUNDSCHECK(index, list);
 		}
 		break;
 	case PARRAY:
-		ARRBOUNDSCHECK(index.u.i, list);
-		*list.u.parr->operator[](index.u.i-1).v = value;
+		ARRBOUNDSCHECK(index, list);
+		*list.u.parr->operator[](index-1).v = value;
 		break;
 	default:
-		TYPECHECK2(list, ARRAY, PARRAY);
+		break;
 	}
 }
 
@@ -1067,21 +1026,13 @@ void LB::b_closeDA(int nargs) {
 void LB::b_closeResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_closeResFile(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_closeResFile(%s)", d.asString().c_str());
 }
 
 void LB::b_closeXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_closeXlib(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_closeXlib(%s)", d.asString().c_str());
 }
 
 void LB::b_getNthFileNameInFolder(int nargs) {
@@ -1095,31 +1046,19 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 void LB::b_openDA(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_openDA(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_openDA(%s)", d.asString().c_str());
 }
 
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_openResFile(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_openResFile(%s)", d.asString().c_str());
 }
 
 void LB::b_openXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_openXlib(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_openXlib(%s)", d.asString().c_str());
 }
 
 void LB::b_saveMovie(int nargs) {
@@ -1135,31 +1074,19 @@ void LB::b_setCallBack(int nargs) {
 void LB::b_showResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_showResFile(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_showResFile(%s)", d.asString().c_str());
 }
 
 void LB::b_showXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_showXlib(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_showXlib(%s)", d.asString().c_str());
 }
 
 void LB::b_xFactoryList(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_xFactoryList(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_xFactoryList(%s)", d.asString().c_str());
 }
 
 ///////////////////
@@ -1184,15 +1111,13 @@ void LB::b_nothing(int nargs) {
 
 void LB::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeInt();
 
-	g_director->getCurrentScore()->_nextFrameTime = g_system->getMillis() + (float)d.u.i / 60 * 1000;
+	g_director->getCurrentScore()->_nextFrameTime = g_system->getMillis() + (float)d.asInt() / 60 * 1000;
 }
 
 void LB::b_do(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeString();
-	warning("STUB: b_do(%s)", d.u.s->c_str());
+	warning("STUB: b_do(%s)", d.asString().c_str());
 }
 
 void LB::b_go(int nargs) {
@@ -1350,42 +1275,34 @@ void LB::b_startTimer(int nargs) {
 ///////////////////
 void LB::b_factoryP(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeInt();
-	d.u.i = 1;
-	g_lingo->push(d);
+	Datum res(d.asInt());
+	g_lingo->push(res);
 
 	warning("STUB: b_factoryP");
 }
 
 void LB::b_floatP(int nargs) {
 	Datum d = g_lingo->pop();
-	int res = (d.type == FLOAT) ? 1 : 0;
-	d.makeInt();
-	d.u.i = res;
-	g_lingo->push(d);
+	Datum res((d.type == FLOAT) ? 1 : 0);
+	g_lingo->push(res);
 }
 
 void LB::b_ilk(int nargs) {
 	Datum d = g_lingo->pop();
-	d.u.s = new Common::String(d.type2str(true));
-	d.type = SYMBOL;
-	g_lingo->push(d);
+	Datum res(new Common::String(d.type2str(true)));
+	g_lingo->push(res);
 }
 
 void LB::b_integerp(int nargs) {
 	Datum d = g_lingo->pop();
-	int res = (d.type == INT) ? 1 : 0;
-	d.makeInt();
-	d.u.i = res;
-	g_lingo->push(d);
+	Datum res((d.type == INT) ? 1 : 0);
+	g_lingo->push(res);
 }
 
 void LB::b_objectp(int nargs) {
 	Datum d = g_lingo->pop();
-	int res = (d.type == OBJECT) ? 1 : 0;
-	d.makeInt();
-	d.u.i = res;
-	g_lingo->push(d);
+	Datum res ((d.type == OBJECT) ? 1 : 0);
+	g_lingo->push(res);
 }
 
 void LB::b_pictureP(int nargs) {
@@ -1396,26 +1313,20 @@ void LB::b_pictureP(int nargs) {
 
 void LB::b_stringp(int nargs) {
 	Datum d = g_lingo->pop();
-	int res = (d.type == STRING) ? 1 : 0;
-	d.makeInt();
-	d.u.i = res;
-	g_lingo->push(d);
+	Datum res((d.type == STRING) ? 1 : 0);
+	g_lingo->push(res);
 }
 
 void LB::b_symbolp(int nargs) {
 	Datum d = g_lingo->pop();
-	int res = (d.type == SYMBOL) ? 1 : 0;
-	d.makeInt();
-	d.u.i = res;
-	g_lingo->push(d);
+	Datum res((d.type == SYMBOL) ? 1 : 0);
+	g_lingo->push(res);
 }
 
 void LB::b_voidP(int nargs) {
 	Datum d = g_lingo->pop();
-	int res = (d.type == VOID) ? 1 : 0;
-	d.makeInt();
-	d.u.i = res;
-	g_lingo->push(d);
+	Datum res((d.type == VOID) ? 1 : 0);
+	g_lingo->push(res);
 }
 
 
@@ -1425,11 +1336,7 @@ void LB::b_voidP(int nargs) {
 void LB::b_alert(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	warning("STUB: b_alert(%s)", d.u.s->c_str());
-
-	delete d.u.s;
+	warning("STUB: b_alert(%s)", d.asString().c_str());
 }
 
 void LB::b_birth(int nargs) {
@@ -1452,13 +1359,10 @@ void LB::b_cursor(int nargs) {
 	if (d.type == ARRAY) {
 		Datum sprite = d.u.farr->operator[](0);
 		Datum mask = d.u.farr->operator[](1);
-		sprite.makeInt();
-		mask.makeInt();
 
-		g_lingo->func_cursor(sprite.u.i, mask.u.i);
+		g_lingo->func_cursor(sprite.asInt(), mask.asInt());
 	} else {
-		d.makeInt();
-		g_lingo->func_cursor(d.u.i, -1);
+		g_lingo->func_cursor(d.asInt(), -1);
 	}
 }
 
@@ -1477,10 +1381,7 @@ void LB::b_constrainH(int nargs) {
 	Datum num = g_lingo->pop();
 	Datum sprite = g_lingo->pop();
 
-	num.makeInt();
-	sprite.makeInt();
-
-	warning("STUB: b_constrainH(%d, %d)", sprite.u.i, num.u.i);
+	warning("STUB: b_constrainH(%d, %d)", sprite.asInt(), num.asInt());
 
 	g_lingo->push(Datum(0));
 }
@@ -1489,10 +1390,7 @@ void LB::b_constrainV(int nargs) {
 	Datum num = g_lingo->pop();
 	Datum sprite = g_lingo->pop();
 
-	num.makeInt();
-	sprite.makeInt();
-
-	warning("STUB: b_constrainV(%d, %d)", sprite.u.i, num.u.i);
+	warning("STUB: b_constrainV(%d, %d)", sprite.asInt(), num.asInt());
 
 	g_lingo->push(Datum(0));
 }
@@ -1549,15 +1447,15 @@ void LB::b_installMenu(int nargs) {
 	// installMenu castNum
 	Datum d = g_lingo->pop();
 
-	d.makeInt();
+	int castId = d.asInt();
 
 	if (g_director->getVersion() < 4)
-		d.u.i += g_director->getCurrentScore()->_castIDoffset;
+		castId += g_director->getCurrentScore()->_castIDoffset;
 
-	const Stxt *stxt = g_director->getCurrentScore()->_loadedStxts->getVal(d.u.i, nullptr);
+	const Stxt *stxt = g_director->getCurrentScore()->_loadedStxts->getVal(castId, nullptr);
 
 	if (!stxt) {
-		warning("installMenu: Unknown cast number #%d", d.u.i);
+		warning("installMenu: Unknown cast number #%d", castId);
 		return;
 	}
 
@@ -1682,16 +1580,14 @@ Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
 
 void LB::b_label(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeInt();
-	warning("STUB: b_label(%d)", d.u.i);
+	warning("STUB: b_label(%d)", d.asInt());
 
 	g_lingo->push(Datum(0));
 }
 
 void LB::b_marker(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeInt();
-	int marker = g_lingo->func_marker(d.u.i);
+	int marker = g_lingo->func_marker(d.asInt());
 	g_lingo->push(marker);
 }
 
@@ -1779,7 +1675,7 @@ void LB::b_puppetSprite(int nargs) {
 
 void LB::b_puppetTempo(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_puppetTempo(%d)", d.u.i);
+	warning("STUB: b_puppetTempo(%d)", d.asInt());
 }
 
 void LB::b_puppetTransition(int nargs) {
@@ -1797,12 +1693,8 @@ void LB::b_ramNeeded(int nargs) {
 
 void LB::b_rollOver(int nargs) {
 	Datum d = g_lingo->pop();
-
-	d.makeInt();
-
-	int arg = d.u.i;
-
-	d.u.i = 0; // FALSE
+	Datum res(0);
+	int arg = d.asInt();
 
 	if (!g_director->getCurrentScore()) {
 		warning("b_rollOver: Reference to an empty score");
@@ -1812,16 +1704,16 @@ void LB::b_rollOver(int nargs) {
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
 	if (arg >= (int32) frame->_sprites.size()) {
-		g_lingo->push(d);
+		g_lingo->push(res);
 		return;
 	}
 
 	Common::Point pos = g_system->getEventManager()->getMousePos();
 
 	if (frame->checkSpriteIntersection(arg, pos))
-		d.u.i = 1; // TRUE
+		res.u.i = 1; // TRUE
 
-	g_lingo->push(d);
+	g_lingo->push(res);
 }
 
 void LB::b_spriteBox(int nargs) {
@@ -1856,37 +1748,32 @@ void LB::b_zoomBox(int nargs) {
 	int delayTicks = 1;
 	if (nargs > 2) {
 		Datum d = g_lingo->pop();
-		d.makeInt();
-
-		delayTicks = d.u.i;
+		delayTicks = d.asInt();
 	}
 
-	Datum endSprite = g_lingo->pop();
-	Datum startSprite = g_lingo->pop();
-
-	startSprite.makeInt();
-	endSprite.makeInt();
+	int endSprite = g_lingo->pop().asInt();
+	int startSprite = g_lingo->pop().asInt();
 
 	Score *score = g_director->getCurrentScore();
 	uint16 curFrame = score->getCurrentFrame();
 	Frame *frame = score->_frames[curFrame];
 
-	Common::Rect *startRect = frame->getSpriteRect(startSprite.u.i);
+	Common::Rect *startRect = frame->getSpriteRect(startSprite);
 	if (!startRect) {
-		warning("b_zoomBox: unknown start sprite #%d", startSprite.u.i);
+		warning("b_zoomBox: unknown start sprite #%d", startSprite);
 		return;
 	}
 
 	// Looks for endSprite in the current frame, otherwise
 	// Looks for endSprite in the next frame
-	Common::Rect *endRect = frame->getSpriteRect(endSprite.u.i);
+	Common::Rect *endRect = frame->getSpriteRect(endSprite);
 	if (!endRect) {
 		if ((uint)curFrame + 1 < score->_frames.size())
-			score->_frames[curFrame + 1]->getSpriteRect(endSprite.u.i);
+			score->_frames[curFrame + 1]->getSpriteRect(endSprite);
 	}
 
 	if (!endRect) {
-		warning("b_zoomBox: unknown end sprite #%d", endSprite.u.i);
+		warning("b_zoomBox: unknown end sprite #%d", endSprite);
 		return;
 	}
 
@@ -1953,12 +1840,9 @@ void LB::b_moveToFront(int nargs) {
 // Point
 ///////////////////
 void LB::b_point(int nargs) {
-	Datum y = g_lingo->pop();
-	Datum x = g_lingo->pop();
+	Datum y(g_lingo->pop().asFloat());
+	Datum x(g_lingo->pop().asFloat());
 	Datum d;
-
-	x.makeFloat();
-	y.makeFloat();
 
 	d.u.farr = new DatumArray;
 
@@ -2034,17 +1918,13 @@ void LB::b_beep(int nargs) {
 void LB::b_mci(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	g_lingo->func_mci(*d.u.s);
+	g_lingo->func_mci(d.asString());
 }
 
 void LB::b_mciwait(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
-
-	g_lingo->func_mciwait(*d.u.s);
+	g_lingo->func_mciwait(d.asString());
 }
 
 void LB::b_sound(int nargs) {
@@ -2197,10 +2077,9 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 	debugC(3, kDebugLingoExec, "Stack size after call: %d", _stack.size());
 
 	if (!method.u.s->compareToIgnoreCase("mNew")) {
-		Datum d;
+		Datum d(name);
 
 		d.type = OBJECT;
-		d.u.s = new Common::String(name);
 
 		g_lingo->push(d);
 	}
@@ -2214,20 +2093,17 @@ void LB::b_cast(int nargs) {
 
 	warning("STUB: b_cast");
 
-	d.type = REFERENCE;
-	d.u.i = 0;
-
-	g_lingo->push(d);
+	Datum res(0);
+	res.type = REFERENCE;
+	g_lingo->push(res);
 }
 
 void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.u.i = g_lingo->castIdFetch(d);
-
-	d.type = REFERENCE;
-
-	g_lingo->push(d);
+	Datum res(g_lingo->castIdFetch(d));
+	res.type = REFERENCE;
+	g_lingo->push(res);
 }
 
 void LB::b_script(int nargs) {
@@ -2235,10 +2111,9 @@ void LB::b_script(int nargs) {
 
 	warning("STUB: b_script");
 
+	Datum res(0);
 	d.type = REFERENCE;
-	d.u.i = 0;
-
-	g_lingo->push(d);
+	g_lingo->push(res);
 }
 
 void LB::b_window(int nargs) {
@@ -2246,126 +2121,99 @@ void LB::b_window(int nargs) {
 
 	warning("STUB: b_window");
 
-	d.type = REFERENCE;
-	d.u.i = 0;
-
-	g_lingo->push(d);
+	Datum res(0);
+	res.type = REFERENCE;
+	g_lingo->push(res);
 }
 
 void LB::b_numberofchars(int nargs) {
 	Datum d = g_lingo->pop();
-	d.makeString();
 
-	int len = strlen(d.u.s->c_str());
-	delete d.u.s;
+	int len = strlen(d.asString().c_str());
 
-	d.u.i = len;
-	d.type = INT;
-	g_lingo->push(d);
+	Datum res(len);
+	g_lingo->push(res);
 }
 
 void LB::b_numberofitems(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
 	int numberofitems = 1;
-	Common::String contents = *d.u.s;
-	for (uint32 i = 0;  i < d.u.s->size(); i++) {
+	Common::String contents = d.asString();
+	for (uint32 i = 0;  i < contents.size(); i++) {
 		if (contents[i] == ',')
 			numberofitems++;
 	}
-	delete d.u.s;
 
-	d.u.i = numberofitems;
-	d.type = INT;
-
-	g_lingo->push(d);
+	Datum res(numberofitems);
+	g_lingo->push(res);
 }
 
 void LB::b_numberoflines(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
 	int numberoflines = 1;
-	Common::String contents = *d.u.s;
-	for (uint32 i = 0; i < d.u.s->size(); i++) {
+	Common::String contents = d.asString();
+	for (uint32 i = 0; i < contents.size(); i++) {
 		if (contents[i] == '\n')
 			numberoflines++;
 	}
-	delete d.u.s;
 
-	d.u.i = numberoflines;
-	d.type = INT;
-
-	g_lingo->push(d);
+	Datum res(numberoflines);
+	g_lingo->push(res);
 }
 
 void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
 
-	d.makeString();
 	int numberofwords = 0;
-	Common::String contents = *d.u.s;
+	Common::String contents = d.asString();
 	if (contents.empty()) {
-		d.u.i = 0;
-		d.type = INT;
-
-		g_lingo->push(d);
-
+		g_lingo->push(Datum(0));
 		return;
 	}
-	for (uint32 i = 1; i < d.u.s->size(); i++) {
+	for (uint32 i = 1; i < contents.size(); i++) {
 		if (Common::isSpace(contents[i]) && !Common::isSpace(contents[i - 1]))
 			numberofwords++;
 	}
 	// Count the last word
-	if (!Common::isSpace(contents[d.u.s->size() - 1]))
+	if (!Common::isSpace(contents[contents.size() - 1]))
 		numberofwords++;
 
-	d.u.i = numberofwords;
-	d.type = INT;
-
-	g_lingo->push(d);
+	Datum res(numberofwords);
+	g_lingo->push(res);
 }
 
 void LB::b_lastcharof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastcharof");
-	d.makeInt();
-	d.u.i = 0;
 
-	g_lingo->push(d);
+	g_lingo->push(Datum(0));
 }
 
 void LB::b_lastitemof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastitemof");
-	d.makeInt();
-	d.u.i = 0;
 
-	g_lingo->push(d);
+	g_lingo->push(Datum(0));
 }
 
 void LB::b_lastlineof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastlineof");
-	d.makeInt();
-	d.u.i = 0;
 
-	g_lingo->push(d);
+	g_lingo->push(Datum(0));
 }
 
 void LB::b_lastwordof(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_lastwordof");
-	d.makeInt();
-	d.u.i = 0;
 
-	g_lingo->push(d);
+	g_lingo->push(Datum(0));
 }
 
 } // End of namespace Director

@@ -283,9 +283,8 @@ void LC::cb_localcall() {
 
 void LC::cb_methodcall() {
 	g_lingo->readInt();
-	Datum obj = g_lingo->pop();
-	obj.makeString();
-	warning("STUB: cb_methodcall(%s)", obj.u.s->c_str());
+	Common::String name = g_lingo->pop().asString();
+	warning("STUB: cb_methodcall(%s)", name.c_str());
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
@@ -513,22 +512,21 @@ void LC::cb_varassign() {
 void LC::cb_v4theentitypush() {
 	int bank = g_lingo->readInt();
 
-	Datum firstArg = g_lingo->pop();
-	firstArg.makeInt();
+	int firstArg = g_lingo->pop().asInt();
 	Datum result;
 	result.u.s = NULL;
 	result.type = VOID;
 
-	int key = (bank << 8) + firstArg.u.i;
+	int key = (bank << 8) + firstArg;
 	if (g_lingo->_lingoV4TheEntity.contains(key)) {
-		debugC(3, kDebugLingoExec, "cb_v4theentitypush: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
+		debugC(3, kDebugLingoExec, "cb_v4theentitypush: mapping 0x%02x, 0x%02x", bank, firstArg);
 		int entity = g_lingo->_lingoV4TheEntity[key]->entity;
 		int field = g_lingo->_lingoV4TheEntity[key]->field;
 		switch (g_lingo->_lingoV4TheEntity[key]->type) {
 		case kTEANOArgs:
 			{
 				Datum id;
-				id.u.s = NULL;
+				id.u.i = 0;
 				id.type = VOID;
 				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(0x%02x, NULL, 0x%02x)", entity, field);
 				result = g_lingo->getTheEntity(entity, id, field);
@@ -559,7 +557,7 @@ void LC::cb_v4theentitypush() {
 			break;
 		}
 	} else {
-		warning("cb_v4theentitypush: unhandled mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		warning("cb_v4theentitypush: unhandled mapping 0x%02x 0x%02x", bank, firstArg);
 	}
 
 	g_lingo->push(result);
@@ -599,24 +597,23 @@ void LC::cb_v4theentitynamepush() {
 void LC::cb_v4theentityassign() {
 	int bank = g_lingo->readInt();
 
-	Datum firstArg = g_lingo->pop();
-	firstArg.makeInt();
+	int firstArg = g_lingo->pop().asInt();
 	Datum value = g_lingo->pop();
 	Datum result;
 	result.u.s = NULL;
 	result.type = VOID;
 
-	int key = (bank << 8) + firstArg.u.i;
+	int key = (bank << 8) + firstArg;
 	if (!g_lingo->_lingoV4TheEntity.contains(key)) {
-		warning("cb_v4theentityassign: unhandled mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		warning("cb_v4theentityassign: unhandled mapping 0x%02x 0x%02x", bank, firstArg);
 
 		return;
 	}
 
-	debugC(3, kDebugLingoExec, "cb_v4theentityassign: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
+	debugC(3, kDebugLingoExec, "cb_v4theentityassign: mapping 0x%02x, 0x%02x", bank, firstArg);
 
 	if (!g_lingo->_lingoV4TheEntity[key]->writable) {
-		warning("cb_v4theentityassign: non-writable mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		warning("cb_v4theentityassign: non-writable mapping 0x%02x 0x%02x", bank, firstArg);
 
 		return;
 	}

@@ -84,22 +84,22 @@ static char lowerCaseConvert[] =
 ".. aao.." // c8
 "--.....y";// d0-d8
 
-Common::String *toLowercaseMac(Common::String *s) {
-	Common::String *res = new Common::String;
-	const unsigned char *p = (const unsigned char *)s->c_str();
+Common::String toLowercaseMac(const Common::String &s) {
+	Common::String res;
+	const unsigned char *p = (const unsigned char *)s.c_str();
 
 	while (*p) {
 		if (*p >= 0x80 && *p <= 0xd8) {
 			if (lowerCaseConvert[*p - 0x80] != '.')
-				*res += lowerCaseConvert[*p - 0x80];
+				res += lowerCaseConvert[*p - 0x80];
 			else
-				*res += *p;
+				res += *p;
 		} else if (*p < 0x80) {
-			*res += tolower(*p);
+			res += tolower(*p);
 		} else {
 			warning("Unacceptable symbol in toLowercaseMac: %c", *p);
 
-			*res += *p;
+			res += *p;
 		}
 		p++;
 	}

@@ -92,7 +92,7 @@ void Lingo::printStack(const char *s, uint pc) {
 
 	for (uint i = 0; i < _stack.size(); i++) {
 		Datum d = _stack[i];
-		stack += Common::String::format("<%s> ", d.getPrintable().c_str());
+		stack += Common::String::format("<%s> ", d.asString(true).c_str());
 	}
 	debugC(5, kDebugLingoExec, "[%3d]: %s", pc, stack.c_str());
 }
@@ -506,11 +506,11 @@ int Lingo::castIdFetch(Datum &var) {
 		else
 			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
 	} else if (var.type == INT || var.type == FLOAT) {
-		var.makeInt();
-		if (!score->_loadedCast->contains(var.u.i))
-			warning("castIdFetch: reference to non-existent cast ID: %d", var.u.i);
+		int castId = var.asInt();
+		if (!score->_loadedCast->contains(castId))
+			warning("castIdFetch: reference to non-existent cast ID: %d", castId);
 		else
-			id = var.u.i;
+			id = castId;
 	} else {
 		error("castIdFetch: was expecting STRING or INT, got %s", var.type2str());
 	}
@@ -587,9 +587,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		if (cast) {
 			switch (cast->_type) {
 			case kCastText:
-				value.makeString();
-				((TextCast *)cast)->setText(value.u.s->c_str());
-				delete value.u.s;
+				((TextCast *)cast)->setText(value.asString().c_str());
 				break;
 			default:
 				warning("varAssign: Unhandled cast type %s", tag2str(cast->_type));
@@ -621,7 +619,7 @@ Datum Lingo::varFetch(Datum &var) {
 		else if (sym->type == FLOAT)
 			result.u.f = sym->u.f;
 		else if (sym->type == STRING)
-			result.u.s = new Common::String(*sym->u.s);
+			result.u.s = sym->u.s;
 		else if (sym->type == POINT)
 			result.u.farr = sym->u.farr;
 		else if (sym->type == SYMBOL)

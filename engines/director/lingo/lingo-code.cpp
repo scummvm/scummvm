@@ -226,22 +226,22 @@ void LC::c_printtop(void) {
 		}
 		break;
 	case STRING:
-		warning("%s", d.u.s->c_str());
+		warning("%s", d.asString(true).c_str());
 		break;
 	case POINT:
-		warning("point(%s, %s", (*d.u.farr)[0].getPrintable().c_str(), (*d.u.farr)[1].getPrintable().c_str());
+		warning("point(%s, %s", (*d.u.farr)[0].asString(true).c_str(), (*d.u.farr)[1].asString(true).c_str());
 		break;
 	case SYMBOL:
 		warning("%s", d.type2str(true));
 		break;
 	case OBJECT:
-		warning("#%s", d.u.s->c_str());
+		warning("#%s", d.asString(true).c_str());
 		break;
 	case ARRAY:
-		warning("%s", d.getPrintable().c_str());
+		warning("%s", d.asString(true).c_str());
 		break;
 	case PARRAY:
-		warning("%s", d.getPrintable().c_str());
+		warning("%s", d.asString(true).c_str());
 		break;
 	default:
 		warning("--unknown--");
@@ -249,10 +249,8 @@ void LC::c_printtop(void) {
 }
 
 void LC::c_intpush() {
-	Datum d;
-	d.u.i = g_lingo->readInt();
-	d.type = INT;
-	g_lingo->push(d);
+	int value = g_lingo->readInt();
+	g_lingo->push(Datum(value));
 }
 
 void LC::c_voidpush() {
@@ -263,15 +261,12 @@ void LC::c_voidpush() {
 }
 
 void LC::c_floatpush() {
-	Datum d;
-	d.u.f = g_lingo->readFloat();
-	d.type = FLOAT;
-	g_lingo->push(d);
+	double value = g_lingo->readFloat();
+	g_lingo->push(Datum(value));
 }
 
 void LC::c_stringpush() {
 	char *s = g_lingo->readString();
-
 	g_lingo->push(Datum(new Common::String(s)));
 }
 
@@ -516,7 +511,7 @@ void LC::c_swap() {
 	g_lingo->push(d1);
 }
 
-Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum, Datum), Datum d1, Datum d2) {
+Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) {
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
 	if (d1.type == ARRAY && d2.type == ARRAY) {
@@ -543,16 +538,22 @@ Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum, Datum), Datum d1, Datum d2) {
 	return res;
 }
 
-Datum LC::addData(Datum d1, Datum d2) {
+Datum LC::addData(Datum &d1, Datum &d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY) {
 		return LC::mapBinaryOp(LC::addData, d1, d2);
 	}
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.f += d2.u.f;
+
+	int alignedType = g_lingo->getAlignedType(d1, d2);
+
+	Datum result;
+	if (alignedType == FLOAT) {
+		result = Datum(d1.asFloat() + d2.asFloat());
+	} else if (alignedType == INT) {
+		result = Datum(d1.asInt() + d2.asInt());
 	} else {
-		d1.u.i += d2.u.i;
+		warning("LC::addData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
-	return d1;
+	return result;
 }
 
 void LC::c_add() {
@@ -561,16 +562,22 @@ void LC::c_add() {
 	g_lingo->push(LC::addData(d1, d2));
 }
 
-Datum LC::subData(Datum d1, Datum d2) {
+Datum LC::subData(Datum &d1, Datum &d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY) {
 		return LC::mapBinaryOp(LC::subData, d1, d2);
 	}
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.f -= d2.u.f;
+
+	int alignedType = g_lingo->getAlignedType(d1, d2);
+
+	Datum result;
+	if (alignedType == FLOAT) {
+		result = Datum(d1.asFloat() - d2.asFloat());
+	} else if (alignedType == INT) {
+		result = Datum(d1.asInt() - d2.asInt());
 	} else {
-		d1.u.i -= d2.u.i;
+		warning("LC::subData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
-	return d1;
+	return result;
 }
 
 void LC::c_sub() {
@@ -579,16 +586,22 @@ void LC::c_sub() {
 	g_lingo->push(LC::subData(d1, d2));
 }
 
-Datum LC::mulData(Datum d1, Datum d2) {
+Datum LC::mulData(Datum &d1, Datum &d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY) {
 		return LC::mapBinaryOp(LC::mulData, d1, d2);
 	}
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.f *= d2.u.f;
+
+	int alignedType = g_lingo->getAlignedType(d1, d2);
+
+	Datum result;
+	if (alignedType == FLOAT) {
+		result = Datum(d1.asFloat() * d2.asFloat());
+	} else if (alignedType == INT) {
+		result = Datum(d1.asInt() * d2.asInt());
 	} else {
-		d1.u.i *= d2.u.i;
+		warning("LC::mulData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
-	return d1;
+	return result;
 }
 
 void LC::c_mul() {
@@ -597,7 +610,7 @@ void LC::c_mul() {
 	g_lingo->push(LC::mulData(d1, d2));
 }
 
-Datum LC::divData(Datum d1, Datum d2) {
+Datum LC::divData(Datum &d1, Datum &d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY) {
 		return LC::mapBinaryOp(LC::divData, d1, d2);
 	}
@@ -606,11 +619,17 @@ Datum LC::divData(Datum d1, Datum d2) {
 			(d2.type == FLOAT && d2.u.f == 0.0))
 		error("division by zero");
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
-		d1.u.f /= d2.u.f;
+	int alignedType = g_lingo->getAlignedType(d1, d2);
+
+	Datum result;
+	if (alignedType == FLOAT) {
+		result = Datum(d1.asFloat() / d2.asFloat());
+	} else if (alignedType == INT) {
+		result = Datum(d1.asInt() / d2.asInt());
 	} else {
-		d1.u.i /= d2.u.i;
+		warning("LC::divData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
+
 	return d1;
 }
 
@@ -620,18 +639,18 @@ void LC::c_div() {
 	g_lingo->push(divData(d1, d2));
 }
 
-Datum LC::modData(Datum d1, Datum d2) {
+Datum LC::modData(Datum &d1, Datum &d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY) {
 		return LC::mapBinaryOp(LC::modData, d1, d2);
 	}
 
-	d1.makeInt();
-	d2.makeInt();
-	if (d2.u.i == 0)
+	int i1 = d1.asInt();
+	int i2 = d2.asInt();
+	if (i2 == 0)
 		error("division by zero");
 
-	d1.u.i %= d2.u.i;
-	return d1;
+	Datum res(i1 % i2);
+	return res;
 }
 
 void LC::c_mod() {
@@ -640,7 +659,7 @@ void LC::c_mod() {
 	g_lingo->push(LC::modData(d1, d2));
 }
 
-Datum LC::negateData(Datum d) {
+Datum LC::negateData(Datum &d) {
 	if (d.type == ARRAY) {
 		uint arraySize = d.u.farr->size();
 		Datum res;
@@ -652,11 +671,15 @@ Datum LC::negateData(Datum d) {
 		return res;
 	}
 
-	if (d.type == INT) {
-		d.u.i = -d.u.i;
-	} else if (d.type == FLOAT) {
-		d.u.f = -d.u.f;
+	Datum res = d;
+	if (res.type == INT) {
+		res.u.i = -res.u.i;
+	} else if (res.type == FLOAT) {
+		res.u.f = -res.u.f;
+	} else {
+		warning("LC::negateData: not supported for type %s", res.type2str());
 	}
+
 	return d;
 }
 
@@ -669,14 +692,8 @@ void LC::c_ampersand() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeString();
-	d2.makeString();
-
-	*d1.u.s += *d2.u.s;
-
-	delete d2.u.s;
-
-	g_lingo->push(d1);
+	Datum res(d1.asString() + d2.asString());
+	g_lingo->push(res);
 }
 
 void LC::c_before() {
@@ -687,70 +704,38 @@ void LC::c_after() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeString();
-	d2.makeString();
-
-	*d1.u.s = *d2.u.s + *d1.u.s;
-
-	delete d2.u.s;
-
-	g_lingo->push(d1);
+	Datum res(d2.asString() + d1.asString());
+	g_lingo->push(res);
 }
 
 void LC::c_concat() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeString();
-	d2.makeString();
-
-	*d1.u.s += " ";
-	*d1.u.s += *d2.u.s;
-
-	delete d2.u.s;
-
-	g_lingo->push(d1);
+	Datum res(d1.asString() + " " + d2.asString());
+	g_lingo->push(res);
 }
 
 void LC::c_contains() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeString();
-	d2.makeString();
+	Common::String s1 = toLowercaseMac(d1.asString());
+	Common::String s2 = toLowercaseMac(d2.asString());
 
-	Common::String *s1 = toLowercaseMac(d1.u.s);
-	Common::String *s2 = toLowercaseMac(d2.u.s);
+	int res = s1.contains(s2) ? 1 : 0;
 
-	int res = s1->contains(*s2) ? 1 : 0;
-
-	delete d1.u.s;
-	delete d2.u.s;
-	delete s1;
-	delete s2;
-
-	d1.type = INT;
-	d1.u.i = res;
-
-	g_lingo->push(d1);
+	g_lingo->push(Datum(res));
 }
 
 void LC::c_starts() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeString();
-	d2.makeString();
+	Common::String s1 = toLowercaseMac(d1.asString());
+	Common::String s2 = toLowercaseMac(d2.asString());
 
-	Common::String *s1 = toLowercaseMac(d1.u.s);
-	Common::String *s2 = toLowercaseMac(d2.u.s);
-
-	int res = s1->hasPrefix(*s2) ? 1 : 0;
-
-	delete d1.u.s;
-	delete d2.u.s;
-	delete s1;
-	delete s2;
+	int res = s1.hasPrefix(s2) ? 1 : 0;
 
 	d1.type = INT;
 	d1.u.i = res;
@@ -788,8 +773,7 @@ void LC::c_of() {
 	Datum last_char = g_lingo->pop();
 	Datum first_char = g_lingo->pop();
 
-	target.makeString();
-	Common::String result = *target.u.s;
+	Common::String result = target.asString();
 
 	if (first_line.u.i > 0) {
 		Common::String newline("\r");
@@ -975,34 +959,26 @@ void LC::c_and() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeInt();
-	d2.makeInt();
+	Datum res((d1.asInt() && d2.asInt()) ? 1 : 0);
 
-	d1.u.i = (d1.u.i && d2.u.i) ? 1 : 0;
-
-	g_lingo->push(d1);
+	g_lingo->push(res);
 }
 
 void LC::c_or() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeInt();
-	d2.makeInt();
+	Datum res((d1.asInt() || d2.asInt()) ? 1 : 0);
 
-	d1.u.i = (d1.u.i || d2.u.i) ? 1 : 0;
-
-	g_lingo->push(d1);
+	g_lingo->push(res);
 }
 
 void LC::c_not() {
 	Datum d = g_lingo->pop();
 
-	d.makeInt();
+	Datum res(~d.asInt() ? 1 : 0);
 
-	d.u.i = ~d.u.i ? 1 : 0;
-
-	g_lingo->push(d);
+	g_lingo->push(res);
 }
 
 Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location, bool value) {
@@ -1159,9 +1135,8 @@ void LC::c_jump() {
 
 void LC::c_jumpifz() {
 	uint jump = g_lingo->readInt();
-	Datum test = g_lingo->pop();
-	test.makeInt();
-	if (test.u.i == 0) {
+	int test = g_lingo->pop().asInt();
+	if (test == 0) {
 		g_lingo->_pc = jump;
 	}
 }
@@ -1174,10 +1149,9 @@ void LC::c_repeatwhilecode(void) {
 	uint end =  g_lingo->getInt(savepc + 1);
 
 	g_lingo->execute(savepc + 2);	/* condition */
-	d = g_lingo->pop();
-	d.makeInt();
+	int test = g_lingo->pop().asInt();
 
-	while (d.u.i) {
+	while (test) {
 		g_lingo->execute(body + savepc - 1);	/* body */
 		g_lingo->_nextRepeat = false;
 
@@ -1190,8 +1164,7 @@ void LC::c_repeatwhilecode(void) {
 		}
 
 		g_lingo->execute(savepc + 2);	/* condition */
-		d = g_lingo->pop();
-		d.makeInt();
+		test = g_lingo->pop().asInt();
 	}
 
 	if (!g_lingo->_returning)
@@ -1199,7 +1172,6 @@ void LC::c_repeatwhilecode(void) {
 }
 
 void LC::c_repeatwithcode(void) {
-	Datum d;
 	int savepc = g_lingo->_pc;
 
 	uint init = g_lingo->getInt(savepc);
@@ -1239,9 +1211,7 @@ void LC::c_repeatwithcode(void) {
 	}
 
 	g_lingo->execute(init + savepc - 1);	/* condition */
-	d = g_lingo->pop();
-	d.makeInt();
-	counter->u.i = d.u.i;
+	counter->u.i = g_lingo->pop().asInt();
 	counter->type = INT;
 
 	while (true) {
@@ -1258,10 +1228,9 @@ void LC::c_repeatwithcode(void) {
 
 		counter->u.i += inc;
 		g_lingo->execute(finish + savepc - 1);	/* condition */
-		d = g_lingo->pop();
-		d.makeInt();
+		int base = g_lingo->pop().asInt();
 
-		if (counter->u.i == d.u.i + inc)
+		if (counter->u.i == base + inc)
 			break;
 	}
 
@@ -1293,7 +1262,7 @@ void LC::c_ifcode(void) {
 
 	d = g_lingo->pop();
 
-	if (d.makeInt()) {
+	if (d.asInt()) {
 		debugC(8, kDebugLingoExec, "executing then");
 		g_lingo->execute(then + savepc - 1);
 	} else if (elsep) { /* else part? */
@@ -1345,7 +1314,7 @@ void LC::c_tellcode() {
 	uint start = g_lingo->_pc;
 	uint end = g_lingo->readInt() + start - 1;
 
-	warning("STUB: c_tellcode(%s)", d1.getPrintable().c_str());
+	warning("STUB: c_tellcode(%s)", d1.asString(true).c_str());
 
 	g_lingo->_pc = end;
 }
@@ -1622,10 +1591,7 @@ void LC::c_open() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	d1.makeString();
-	d2.makeString();
-
-	warning("STUB: c_open(%s, %s)", d1.u.s->c_str(), d2.u.s->c_str());
+	warning("STUB: c_open(%s, %s)", d1.asString().c_str(), d2.asString().c_str());
 }
 
 void LC::c_hilite() {

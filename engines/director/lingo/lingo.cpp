@@ -40,6 +40,8 @@ Lingo *g_lingo;
 Symbol::Symbol() {
 	type = VOID;
 	u.s = nullptr;
+	refCount = new int;
+	*refCount = 1;
 	nargs = 0;
 	maxArgs = 0;
 	parens = true;
@@ -48,6 +50,56 @@ Symbol::Symbol() {
 	varNames = nullptr;
 	ctx = nullptr;
 	archiveIndex = 0;
+}
+
+Symbol::Symbol(const Symbol &s) {
+	type = s.type;
+	u.s = s.u.s;
+	refCount = s.refCount;
+	*refCount += 1;
+	nargs = s.nargs;
+	maxArgs = s.maxArgs;
+	parens = s.parens;
+	global = s.global;
+	argNames = s.argNames;
+	varNames = s.varNames;
+	ctx = s.ctx;
+	archiveIndex = s.archiveIndex;
+}
+
+Symbol::~Symbol() {
+	*refCount -= 1;
+	if (*refCount <= 0) {
+		switch (type) {
+			case HANDLER:
+				delete u.defn;
+				break;
+			case STRING:
+				delete u.s;
+				break;
+			case ARRAY:
+				// fallthrough
+			case POINT:
+				// fallthrough
+			case RECT:
+				delete u.farr;
+				break;
+			case PARRAY:
+				delete u.parr;
+				break;
+			case VAR:
+				// fallthrough
+			case REFERENCE:
+				// fallthrough
+			case INT:
+				// fallthrough
+			case FLOAT:
+				// fallthrough
+			default:
+				break;
+		}
+		delete refCount;
+	}
 }
 
 PCell::PCell() {
@@ -347,113 +399,101 @@ void Lingo::restartLingo() {
 	// tuneousScript is not reset
 }
 
-int Lingo::alignTypes(Datum &d1, Datum &d2) {
+int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 	int opType = VOID;
 
-	if (d1.type == REFERENCE || d1.type == SYMBOL)
-		d1.makeString();
+	int d1Type = d1.type;
+	int d2Type = d2.type;
 
-	if (d2.type == REFERENCE || d2.type == SYMBOL)
-		d2.makeString();
-
-	if (d1.type == STRING) {
+	if (d1Type == STRING || d1Type == REFERENCE) {
+		Common::String src = d1.asString();
 		char *endPtr = 0;
-		double d = strtod(d1.u.s->c_str(), &endPtr);
+		strtod(src.c_str(), &endPtr);
 		if (*endPtr == 0) {
-			d1.type = FLOAT;
-			d1.u.f = d;
+			d1Type = FLOAT;
 		} else {
-			warning("Unable to parse '%s' as a number", d1.u.s->c_str());
+			warning("getAlignedType(): Unable to parse '%s' as a number", src.c_str());
 		}
 	}
-	if (d2.type == STRING) {
+	if (d2Type == STRING || d1Type == REFERENCE) {
+		Common::String src = d1.asString();
 		char *endPtr = 0;
-		double d = strtod(d2.u.s->c_str(), &endPtr);
+		strtod(src.c_str(), &endPtr);
 		if (*endPtr == 0) {
-			d2.type = FLOAT;
-			d2.u.f = d;
+			d2Type = FLOAT;
 		} else {
-			warning("Unable to parse '%s' as a number", d2.u.s->c_str());
+			warning("getAlignedType(): Unable to parse '%s' as a number", src.c_str());
 		}
 	}
 
-
-	if (d1.type == FLOAT || d2.type == FLOAT) {
+	if (d1Type == FLOAT || d2Type == FLOAT) {
 		opType = FLOAT;
-		d1.makeFloat();
-		d2.makeFloat();
-	} else if (d1.type == INT && d2.type == INT) {
+	} else if (d1Type == INT && d2Type == INT) {
 		opType = INT;
 	} else {
-		warning("No numeric type alignment available");
+		warning("getAlignedType(): No numeric type alignment available");
 	}
 
 	return opType;
 }
 
-int Datum::makeInt() {
+int Datum::asInt() {
+	int res = 0;
+
 	switch (type) {
 	case REFERENCE:
-		makeString();
 		// fallthrough
 	case STRING:
 		{
+			Common::String src = asString();
 			char *endPtr = 0;
-			int result = strtol(u.s->c_str(), &endPtr, 10);
+			int result = strtol(src.c_str(), &endPtr, 10);
 			if (*endPtr == 0) {
-				u.i = result;
+				res = result;
 			} else {
-				warning("Invalid int '%s'", u.s->c_str());
-				u.i = 0;
+				warning("Invalid int '%s'", src.c_str());
 			}
 		}
 		break;
 	case VOID:
-		u.i = 0;
-		break;
-	case INT:
 		// no-op
 		break;
+	case INT:
+		res = u.i;
+		break;
 	case FLOAT:
-		{
-			int tmp = (int)u.f;
-			u.i = tmp;
-			break;
-		}
+		res = (int)u.f;
+		break;
 	default:
-		warning("Incorrect operation makeInt() for type: %s", type2str());
+		warning("Incorrect operation asInt() for type: %s", type2str());
 	}
 
-	type = INT;
-
-	return u.i;
+	return res;
 }
 
-double Datum::makeFloat() {
+double Datum::asFloat() {
+	double res = 0.0;
+
 	switch (type) {
 	case REFERENCE:
-		makeString();
 		// fallthrough
 	case STRING:
 		{
+			Common::String src = asString();
 			char *endPtr = 0;
-			double result = strtod(u.s->c_str(), &endPtr);
+			double result = strtod(src.c_str(), &endPtr);
 			if (*endPtr == 0) {
-				u.f = result;
+				res = result;
 			} else {
-				warning("Invalid float '%s'", u.s->c_str());
-				u.f = 0.0;
+				warning("Invalid float '%s'", src.c_str());
 			}
 		}
 		break;
 	case VOID:
-		u.f = 0.0;
+		// no-op
 		break;
 	case INT:
-		{
-			double tmp = (double)u.i;
-			u.f = tmp;
-		}
+		res = (double)u.i;
 		break;
 	case FLOAT:
 		// no-op
@@ -462,54 +502,52 @@ double Datum::makeFloat() {
 		warning("Incorrect operation makeFloat() for type: %s", type2str());
 	}
 
-	type = FLOAT;
-
-	return u.f;
+	return res;
 }
 
-Common::String *Datum::makeString(bool printonly) {
-	Common::String *s = new Common::String();
+Common::String Datum::asString(bool printonly) {
+	Common::String s;
 	switch (type) {
 	case INT:
-		*s = Common::String::format("%d", u.i);
+		s = Common::String::format("%d", u.i);
 		break;
 	case ARGC:
-		*s = Common::String::format("argc: %d", u.i);
+		s = Common::String::format("argc: %d", u.i);
 		break;
 	case ARGCNORET:
-		*s = Common::String::format("argcnoret: %d", u.i);
+		s = Common::String::format("argcnoret: %d", u.i);
 		break;
 	case FLOAT:
-		*s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
+		s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		if (printonly)
-			*s += "f";		// 0.0f
+			s += "f";		// 0.0f
 		break;
 	case STRING:
 		if (!printonly) {
-			*s = *u.s;
+			s = *u.s;
 		} else {
-			*s = Common::String::format("\"%s\"", u.s->c_str());
+			s = Common::String::format("\"%s\"", u.s->c_str());
 		}
 		break;
 	case SYMBOL:
 		if (!printonly) {
-			*s = Common::String::format("#%s", u.s->c_str());
+			s = Common::String::format("#%s", u.s->c_str());
 		} else {
-			*s = Common::String::format("symbol: #%s", u.s->c_str());
+			s = Common::String::format("symbol: #%s", u.s->c_str());
 		}
 		break;
 	case OBJECT:
 		if (!printonly) {
-			*s = Common::String::format("#%s", u.s->c_str());
+			s = Common::String::format("#%s", u.s->c_str());
 		} else {
-			*s = Common::String::format("object: #%s", u.s->c_str());
+			s = Common::String::format("object: #%s", u.s->c_str());
 		}
 		break;
 	case VOID:
-		*s = "#void";
+		s = "#void";
 		break;
 	case VAR:
-		*s = Common::String::format("var: #%s", u.sym->name.c_str());
+		s = Common::String::format("var: #%s", u.sym->name.c_str());
 		break;
 	case REFERENCE:
 		{
@@ -517,15 +555,15 @@ Common::String *Datum::makeString(bool printonly) {
 			Score *score = g_director->getCurrentScore();
 
 			if (!score) {
-				warning("makeString(): No score");
-				*s = "";
+				warning("asString(): No score");
+				s = "";
 				break;
 			}
 
 			if (!score->_loadedCast->contains(idx)) {
 				if (!score->_loadedCast->contains(idx - score->_castIDoffset)) {
-					warning("makeString(): Unknown REFERENCE %d", idx);
-					*s = "";
+					warning("asString(): Unknown REFERENCE %d", idx);
+					s = "";
 					break;
 				} else {
 					idx -= 1024;
@@ -533,49 +571,43 @@ Common::String *Datum::makeString(bool printonly) {
 			}
 
 			if (!printonly) {
-				*s = ((TextCast *)score->_loadedCast->getVal(idx))->getText();
+				s = ((TextCast *)score->_loadedCast->getVal(idx))->getText();
 			} else {
-				*s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->getText().c_str());
+				s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->getText().c_str());
 			}
 		}
 		break;
 	case ARRAY:
-		*s = "[";
+		s = "[";
 
 		for (uint i = 0; i < u.farr->size(); i++) {
 			if (i > 0)
-				*s += ", ";
+				s += ", ";
 			Datum d = u.farr->operator[](i);
-			*s += *d.makeString(printonly);
+			s += d.asString(printonly);
 		}
 
-		*s += "]";
+		s += "]";
 		break;
 	case PARRAY:
-		*s = "[";
+		s = "[";
 		if (u.parr->size() == 0)
-			*s += ":";
+			s += ":";
 		for (uint i = 0; i < u.parr->size(); i++) {
 			if (i > 0)
-				*s += ", ";
+				s += ", ";
 			Datum p = *u.parr->operator[](i).p;
 			Datum v = *u.parr->operator[](i).v;
-			*s += Common::String::format("%s:%s", p.makeString(printonly)->c_str(), v.makeString(printonly)->c_str());
+			s += Common::String::format("%s:%s", p.asString(printonly).c_str(), v.asString(printonly).c_str());
 		}
 
-		*s += "]";
+		s += "]";
 		break;
 	default:
-		warning("Incorrect operation makeString() for type: %s", type2str());
+		warning("Incorrect operation asString() for type: %s", type2str());
 	}
 
-	if (printonly)
-		return s;
-
-	u.s = s;
-	type = STRING;
-
-	return u.s;
+	return s;
 }
 
 const char *Datum::type2str(bool isk) {
@@ -608,31 +640,40 @@ const char *Datum::type2str(bool isk) {
 	}
 }
 
-int Datum::compareTo(Datum d, bool ignoreCase) {
+int Datum::compareTo(Datum &d, bool ignoreCase) {
 	if (type == STRING && d.type == STRING) {
 		if (ignoreCase) {
-			return toLowercaseMac(u.s)->compareTo(*toLowercaseMac(d.u.s));
+			return toLowercaseMac(*u.s).compareTo(toLowercaseMac(*d.u.s));
 		} else {
 			return u.s->compareTo(*d.u.s);
 		}
 	} else if (type == SYMBOL && d.type == SYMBOL) {
 		// TODO: Implement union comparisons
 		return ignoreCase ? u.sym->name.compareToIgnoreCase(d.u.sym->name) : u.sym->name.compareTo(d.u.sym->name);
-	} else if (g_lingo->alignTypes(*this, d) == FLOAT) {
-		if (u.f < d.u.f) {
-			return -1;
-		} else if (u.f == d.u.f) {
-			return 0;
-		} else {
-			return 1;
-		}
 	} else {
-		if (u.i < d.u.i) {
-			return -1;
-		} else if (u.i == d.u.i) {
-			return 0;
+		int alignType = g_lingo->getAlignedType(*this, d);
+		if (alignType == FLOAT) {
+			double f1 = asFloat();
+			double f2 = d.asFloat();
+			if (f1 < f2) {
+				return -1;
+			} else if (f1 == f2) {
+				return 0;
+			} else {
+				return 1;
+			}
+		} else if (alignType == INT) {
+			double i1 = asInt();
+			double i2 = asInt();
+			if (i1 < i2) {
+				return -1;
+			} else if (i1 == i2) {
+				return 0;
+			} else {
+				return 1;
+			}
 		} else {
-			return 1;
+			error("Invalid comparison between types %s and %s", type2str(), d.type2str());
 		}
 	}
 }
