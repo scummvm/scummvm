@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-02-03 14:17+0000\n"
+"PO-Revision-Date: 2020-05-11 02:16+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-7\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.10.1\n"
+"X-Generator: Weblate 3.11\n"
 "X-Language-name: Greek\n"
 
 #: gui/about.cpp:102
@@ -34,11 +34,11 @@ msgstr "Διαθέσιμες μηχανές:"
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:85
 msgid "Show hidden files"
-msgstr "Εμφάνιση κρυφών αρχείων"
+msgstr "Προβολή κρυφών αρχείων"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "Εμφάνιση αρχείων που έχουν επισημανθεί ως κρυφά"
+msgstr "Προβολή αρχείων που έχουν επισημανθεί ως κρυφά"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
@@ -289,20 +289,17 @@ msgid "Shader"
 msgstr "Σκιαστής"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων ήχου"
+msgstr "Υπέρβαση καθολικών ρυθμίσεων ήχου"
 
 #: gui/editgamedialog.cpp:219
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων ήχου"
+msgstr "Υπέρβαση καθολικών ρυθμίσεων σκιαστή"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1739 engines/dialogs.cpp:329
-#, fuzzy
 msgid "Keymaps"
-msgstr "Αντιστοιχίσεις πλήκτρων:"
+msgstr "Αντιστοιχίσεις πλήκτρων"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1746 engines/dialogs.cpp:304
 msgid "Audio"
@@ -411,7 +408,7 @@ msgstr "Φάκελος Αποθ.:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Επιτεύγματα"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -576,13 +573,12 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "Γραφική Διεπαφή Χρήστη"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "Παρεμβολή:"
+msgstr "Αλληλεπίδραση"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -893,7 +889,7 @@ msgstr "αδυναμία αλλαγής ρύθμισης φιλτραρίσματος"
 
 #: gui/options.cpp:1067
 msgid "Show On-screen control"
-msgstr "Εμφάνιση των στοιχείων χειρισμού στην οθόνη"
+msgstr "Προβολή στοιχείων χειρισμού στην οθόνη"
 
 #: gui/options.cpp:1071
 msgid "Touchpad mouse mode"
@@ -932,12 +928,12 @@ msgstr "Περιοχή αδράνειας χειριστήριου:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "Απομένουν %d κρυμμένα επιτεύγματα"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Επιτεύγματα που κατακτήθηκαν: %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -1572,7 +1568,6 @@ msgstr ""
 "περιβάλλον διεπαφής."
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
 msgstr "Κανένα"
 
@@ -2041,6 +2036,8 @@ msgstr "<Εσφαλμένη τιμή>"
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"Ανιχνεύτηκε μη νόμιμο αντίγραφο παιχνιδιού. Δεν παρέχουμε υποστήριξη σε "
+"τέτοιες περιπτώσεις"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2202,14 +2199,12 @@ msgstr ""
 "Δείτε το αρχείο README για λεπτομέρειες."
 
 #: engines/engine.cpp:510 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Αυτόματη αποθήκευση:"
+msgstr "Αυτόματη αποθήκευση"
 
 #: engines/engine.cpp:512
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Σφάλμα στην ανάγνωση αποθηκευμένου παιχνιδιού"
+msgstr "Σφάλμα κατά την αυτόματη αποθήκευση"
 
 #: engines/engine.cpp:575
 #, c-format
@@ -2238,11 +2233,11 @@ msgstr "Εκκίνηση παρά ταύτα"
 
 #: engines/engine.cpp:735
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Η φόρτωση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 
 #: engines/engine.cpp:760
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Η αποθήκευση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2334,7 +2329,7 @@ msgstr ""
 
 #: audio/mididrv.cpp:448
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Έναρξη εξαγωγής MIDI δεδομένων"
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
@@ -2436,28 +2431,24 @@ msgid "Quit"
 msgstr "Έξοδος"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Ολικό)"
+msgstr "Καθολικό"
 
 #: backends/events/default/default-events.cpp:296
-#, fuzzy
 msgid "Global Main Menu"
-msgstr "Καθολικό μενού"
+msgstr "Καθολικό Κεντρικό Μενού"
 
 #: backends/events/default/default-events.cpp:303
 msgid "Display keyboard"
 msgstr "Προβολή πληκτρολογίου"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Εναλλαγή κράτησης ποντικιού"
+msgstr "Εναλλαγή σίγασης"
 
 #: backends/events/default/default-events.cpp:336
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Εντοπιστής σφαλμάτων"
+msgstr "Άνοιγμα αποσφαλμάτωσης"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2625,234 +2616,212 @@ msgstr "Εναλλαγή κράτησης ποντικιού"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:373
 msgid "Save screenshot"
-msgstr ""
+msgstr "Αποθήκευση στιγμιότυπου"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:379
-#, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:386
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Χρήση γραμμικού φιλτραρίσματος για την κλιμάκωση γραφικών"
+msgstr "Εναλλαγή χρήσης γραμμικού φίλτρου σε κλιμάκωση εικόνας"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:393
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Αδυναμία αλλαγής σε λειτουργία επέκτασης εικόνας '%s'."
+msgstr "Κυκλική εναλλαγή λειτουργίας εξάπλωσης εικόνας"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:399
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Αύξηση / Μείωση συντελεστή κλίμακας"
+msgstr "Αύξηση συντελεστή κλίμακας"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:405
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Αύξηση / Μείωση συντελεστή κλίμακας"
+msgstr "Μείωση συντελεστή κλίμακας"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης nearest neighbour"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης AdvMame 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:420
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:422
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:423
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης Super2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:424
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης SuperEagle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης TV 2x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης DotMatrix"
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
 msgid "Left Mouse Button"
-msgstr "Εξομοίωση αριστερού κουμπιού ποντικιού"
+msgstr "Αριστερό Κουμπί Ποντικιού"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "Εξομοίωση δεξιού κουμπιού ποντικιού"
+msgstr "Δεξί Κουμπί Ποντικιού"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
 msgid "Middle Mouse Button"
-msgstr "Εξομοίωση αριστερού κουμπιού ποντικιού"
+msgstr "Μεσαίο Κουμπί Ποντικιού"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Κύλιση Πάνω με Ποντίκι"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Κύλιση Κάτω με Ποντίκι"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Εξομοίωση αριστερού κουμπιού ποντικιού"
+msgstr "X1 Κουμπί Ποντικιού"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Εξομοίωση αριστερού κουμπιού ποντικιού"
+msgstr "X2 Κουμπί Ποντικιού"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
-msgstr ""
+msgstr "A Χειριστηρίου"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr ""
+msgstr "B Χειριστηρίου"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr ""
+msgstr "X Χειριστηρίου"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr ""
+msgstr "Y Χειριστηρίου"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
 msgid "Joy Back"
-msgstr "Προχώρησε Πίσω"
+msgstr "Back Χειριστηρίου"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr ""
+msgstr "Guide Χειριστηρίου"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
 msgid "Joy Start"
-msgstr "Ε~κ~κίνηση"
+msgstr "Start Χειριστηρίου"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
 msgid "Left Stick"
-msgstr "Αριστερό Click"
+msgstr "Αριστερός Μοχλός"
 
 #: backends/keymapper/hardware-input.cpp:264
-#, fuzzy
 msgid "Right Stick"
-msgstr "Δεξί Click"
+msgstr "Δεξιός Μοχλός"
 
 #: backends/keymapper/hardware-input.cpp:265
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Αριστερό Bumper LB"
 
 #: backends/keymapper/hardware-input.cpp:266
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Δεξί Bumper RB"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52
 msgid "D-pad Up"
-msgstr ""
+msgstr "D-pad Πάνω"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53
 msgid "D-pad Down"
-msgstr ""
+msgstr "D-pad Κάτω"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54
-#, fuzzy
 msgid "D-pad Left"
-msgstr "Ολίσθηση Αριστερά"
+msgstr "D-pad Αριστερά"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55
-#, fuzzy
 msgid "D-pad Right"
-msgstr "Ολίσθηση Δεξιά"
+msgstr "D-pad Δεξιά"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr ""
+msgstr "Αριστερή Σκανδάλη"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr ""
+msgstr "Δεξιά Σκανδάλη"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62
-#, fuzzy
 msgid "Left Stick X"
-msgstr "Αριστερό Click"
+msgstr "X άξονας Αριστερού Μοχλού"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63
-#, fuzzy
 msgid "Left Stick Y"
-msgstr "Αριστερό Click"
+msgstr "Y άξονας Αριστερού Μοχλού"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64
-#, fuzzy
 msgid "Right Stick X"
-msgstr "Δεξί Click"
+msgstr "X άξονας Δεξιού Μοχλού"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65
-#, fuzzy
 msgid "Right Stick Y"
-msgstr "Δεξί Click"
+msgstr "Υ άξονας Δεξιού Μοχλού"
 
 #: backends/keymapper/remap-widget.cpp:281
 #: backends/keymapper/remap-widget.cpp:311
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Επαναφορά αρχικών ρυθμίσεων"
 
 #: backends/keymapper/remap-widget.cpp:282
 msgid "Clear mapping"
-msgstr ""
+msgstr "Διαγραφή αντιστοίχισης"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Εικονικό ποντίκι Πάνω"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Ακύρωση λήψης"
+msgstr "Εικονικό ποντίκι Κάτω"
 
 #: backends/keymapper/virtual-mouse.cpp:164
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "Εικονικό ποντίκι Αριστερά"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "Προχώρησε Δεξιά"
+msgstr "Εικονικό ποντίκι Δεξιά"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Επιβράδυνση εικονικού ποντικιού"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -3053,92 +3022,85 @@ msgid "Use Screen:"
 msgstr "Χρήση Οθόνης:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
 msgstr "Πάνω"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
 msgstr "Κάτω"
 
 #: backends/platform/3ds/options-dialog.cpp:60
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Both"
 msgstr "Και τα δυο"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45
-#, fuzzy
 msgid "Select"
-msgstr "Ενέργεια/Επιλογή"
+msgstr "Select"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/ps3/ps3.cpp:47
-#, fuzzy
 msgid "Start"
-msgstr "Ε~κ~κίνηση"
+msgstr "Start"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-Pad X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
-msgstr ""
+msgstr "Αφή"
 
 #: backends/platform/3ds/osystem-events.cpp:310
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Λειτουργία Drag"
+msgstr "Εναλλαγή Λειτουργίας Drag"
 
 #: backends/platform/3ds/osystem-events.cpp:315
-#, fuzzy
 msgid "Toggle Magnify Mode"
-msgstr "Η Λειτουργία Μεγέθυνσης Ενεργοποιήθηκε"
+msgstr "Εναλλαγή Λειτουργίας Μεγέθυνσης"
 
 #: backends/platform/3ds/osystem-events.cpp:320
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "Άνοιγμα Ρυθμίσεων 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:350
 msgid ""
@@ -3371,43 +3333,43 @@ msgstr "Άδεια BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41
 msgid "Cross"
-msgstr ""
+msgstr "Σταυρός"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42
 msgid "Circle"
-msgstr ""
+msgstr "Κύκλος"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43
 msgid "Square"
-msgstr ""
+msgstr "Τετράγωνο"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
@@ -3901,13 +3863,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
-msgstr ""
+msgstr "Απενεργοποίηση γρήγορης εξάντλησης του McCoy"
 
 #: engines/bladerunner/detection.cpp:85
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
 msgstr ""
+"Όταν τρέχει, ο McCoy δεν θα αρχίσει να επιβραδύνει αμέσως μόλις ο παίκτης "
+"σταματήσει να κάνει κλικ με το ποντίκι"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -3921,19 +3885,19 @@ msgid ""
 msgstr ""
 "Το ScummVM διαπίστωσε ότι έχετε παλιά αποθηκευμένα παιχνίδια για το Drascula "
 "που θα πρέπει να μετατραπούν.\n"
-"Η παλιά αποθηκευμένη μορφή παιχνιδιών δεν υποστηρίζεται πλέον, οπότε δε θα "
-"είστε σε θέση να φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
+"Η παλιά αποθηκευμένη μορφή παιχνιδιών δεν υποστηρίζεται πλέον, οπότε δεν θα "
+"μπορείτε να φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
 "\n"
-"Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά την "
-"επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
+"Πατήστε OK (Εντάξει)για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά "
+"την επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
-msgstr "Χρήση λαμπερής παλέτας"
+msgstr "Χρήση λειτουργίας φωτεινής παλέτας"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
-msgstr "Προβολή γραφικών με χρήση της λαμπερής παλέτας του παιχνιδιού"
+msgstr "Προβολή γραφικών με χρήση της φωτεινής παλέτας του παιχνιδιού"
 
 #: engines/glk/glk_api.cpp:63
 msgid "[ press any key to exit ]"
@@ -4327,16 +4291,14 @@ msgstr "Αριστερό κουμπί για επίθεση, δεξί κουμπί για να πάρετε αντικείμενα"
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
 #: engines/ultima/ultima4/meta_engine.cpp:232
 #: engines/ultima/ultima8/meta_engine.cpp:101
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Αριστερό Click"
+msgstr "Αλληλεπίδραση με Αριστερό Click"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:238
 #: engines/ultima/ultima8/meta_engine.cpp:107
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Δεξί Click"
+msgstr "Αλληλεπίδραση με Δεξί Click"
 
 #: engines/kyra/engine/eobcommon.cpp:360 engines/kyra/engine/lol.cpp:498
 msgid "Move Forward"
@@ -4570,11 +4532,13 @@ msgstr "Λειτουργία παιχνιδιού για άτακτους"
 
 #: engines/mads/detection.cpp:145 engines/sherlock/detection.cpp:136
 msgid "TTS Narrator"
-msgstr ""
+msgstr "Αφηγητής Κειμένου"
 
 #: engines/mads/detection.cpp:146 engines/sherlock/detection.cpp:137
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
+"Χρήση λειτουργίας Αφήγησης Κειμένου (TTS) για την ανάγνωση περιγραφών (αν "
+"είναι διαθέσιμη)"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:110 engines/mohawk/dialogs.cpp:319
@@ -4602,7 +4566,7 @@ msgstr "~Ρ~ίξιμο Σελίδας"
 
 #: engines/mohawk/dialogs.cpp:129
 msgid "Show ~M~ap"
-msgstr "Εμφάνιση ~Χ~άρτη"
+msgstr "Προβολή ~Χ~άρτη"
 
 #: engines/mohawk/dialogs.cpp:134
 msgid "Main Men~u~"
@@ -4611,6 +4575,7 @@ msgstr "Κεντρικό Μενο~ύ~"
 #: engines/mohawk/dialogs.cpp:248
 msgid "The new language will be applied after restarting the game."
 msgstr ""
+"Η επιλογή νέας γλώσσας θα εφαρμοστεί μετά από επανεκκίνηση του παιχνιδιού."
 
 #: engines/mohawk/dialogs.cpp:320
 msgid "~W~ater Effect Enabled"
@@ -4643,31 +4608,27 @@ msgstr ""
 
 #: engines/mohawk/myst.cpp:567 engines/mohawk/riven.cpp:836
 msgid "Open main menu"
-msgstr ""
+msgstr "Άνοιγμα κεντρικού μενού"
 
 #: engines/mohawk/myst.cpp:591 engines/mohawk/riven.cpp:860
-#, fuzzy
 msgid "Load game state"
-msgstr "Φόρτωση παιχνιδιού"
+msgstr "Φόρτωση κατάστασης παιχνιδιού"
 
 #: engines/mohawk/myst.cpp:596 engines/mohawk/riven.cpp:865
-#, fuzzy
 msgid "Save game state"
-msgstr "Αποθηκευμένα παιχνίδια"
+msgstr "Αποθήκευση κατάστασης παιχνιδιού"
 
 #: engines/mohawk/myst.cpp:601 engines/mohawk/riven.cpp:870
 msgid "Show options menu"
-msgstr ""
+msgstr "Προβολή μενού επιλογών"
 
 #: engines/mohawk/myst.cpp:613
-#, fuzzy
 msgid "Drop page"
-msgstr "~Ρ~ίξιμο Σελίδας"
+msgstr "~Ρ~ίξιμο σελίδας"
 
 #: engines/mohawk/myst.cpp:619
-#, fuzzy
 msgid "Show map"
-msgstr "Εμφάνιση ~Χ~άρτη"
+msgstr "Προβολή ~Χ~άρτη"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -4732,48 +4693,40 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr "Λείπουν τα ακόλουθα αρχεία δεδομένων του Riven:\n"
 
 #: engines/mohawk/riven.cpp:882
-#, fuzzy
 msgid "Move forward"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Προχώρησε μπροστά"
 
 #: engines/mohawk/riven.cpp:888
-#, fuzzy
 msgid "Move forward left"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Προχώρησε μπροστά κι αριστερά"
 
 #: engines/mohawk/riven.cpp:892
-#, fuzzy
 msgid "Move forward right"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Προχώρησε μπροστά και δεξιά"
 
 #: engines/mohawk/riven.cpp:896
-#, fuzzy
 msgid "Move backwards"
-msgstr "Προχώρησε Πίσω"
+msgstr "Προχώρησε προς τα πίσω"
 
 #: engines/mohawk/riven.cpp:902
-#, fuzzy
 msgid "Turn left"
-msgstr "Στρίψε Αριστερά"
+msgstr "Στρίψε αριστερά"
 
 #: engines/mohawk/riven.cpp:908
-#, fuzzy
 msgid "Turn right"
-msgstr "Στρίψε Δεξιά"
+msgstr "Στρίψε δεξιά"
 
 #: engines/mohawk/riven.cpp:914
-#, fuzzy
 msgid "Look up"
-msgstr "Κοίταξε"
+msgstr "Κοίταξε πάνω"
 
 #: engines/mohawk/riven.cpp:919
-#, fuzzy
 msgid "Look down"
-msgstr "Μεγέθυνση κάτω"
+msgstr "Κοίταξε κάτω"
 
 #: engines/mohawk/riven.cpp:925
 msgid "Play intro videos"
-msgstr ""
+msgstr "Αναπαραγωγή εισαγωγικών βίντεο"
 
 #: engines/mohawk/riven_stack.cpp:204
 msgid ""
@@ -4804,7 +4757,7 @@ msgstr "Παράλειψη εικονογραφημένων σκηνών της Αίθουσας των Αρχείων"
 #: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
-"Επιτρέπει στον παίκτη να παραλείψει την εμφάνιση των εικονογραφημένων σκηνών "
+"Επιτρέπει στον παίκτη να παραλείψει την προβολή των εικονογραφημένων σκηνών "
 "της Αίθουσας των Αρχείων"
 
 #: engines/neverhood/detection.cpp:191
@@ -4911,17 +4864,15 @@ msgstr "Προβολή/Απόκρυψη Μενού Παύσης"
 
 #: engines/pegasus/pegasus.cpp:2575
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2581
-#, fuzzy
 msgid "Save Game"
-msgstr "Αποθήκευση παιχνιδιού:"
+msgstr "Αποθήκευση Παιχνιδιού"
 
 #: engines/pegasus/pegasus.cpp:2587
-#, fuzzy
 msgid "Load Game"
-msgstr "Φόρτωση παιχνιδιού"
+msgstr "Φόρτωση Παιχνιδιού"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -5140,15 +5091,16 @@ msgstr ""
 "παιχνιδιου ώστε να μην αντιμετωπίσετε απρόβλεπτα σφάλματα στην συνέχεια."
 
 #: engines/sci/sci.cpp:517
-#, fuzzy
 msgid "Download patch"
-msgstr "Μεταφόρτωση"
+msgstr "Λήψη patch"
 
 #: engines/sci/sci.cpp:518
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
+"(ή κάνετε κλικ στο κουμπί 'Λήψη patch'. Προσέξτε ότι έτσι θα γίνει μόνο λήψη "
+"και θα χρειαστεί να κάνετε τα υπόλοιπα εσείς)\n"
 
 #: engines/sci/sci.cpp:525
 msgid ""
@@ -5159,6 +5111,12 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
+"Υπάρχουν υπότιτλοι φτιαγμένοι από fans για το GK2, διαθέσιμοι χάρη σε "
+"δημιουργικά μέλη του SierraHelp.\n"
+"\n"
+"Εγκατάσταση:\n"
+"- Κάνετε λήψη του http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
+"GK2Subtitles.zip\n"
 
 #: engines/sci/sci.cpp:879
 msgid ""
@@ -5251,13 +5209,14 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr "Παρουσίαση των ονομάτων των αντικειμένων στο κάτω μέρος της οθόνης"
 
 #: engines/scumm/detection.cpp:1376
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Χρήση εναλλακτικής παλέτας"
+msgstr "Χρήση NES Classic Παλέτας"
 
 #: engines/scumm/detection.cpp:1377
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
+"Χρήσης μια παλέτας πιο ουδέτερων χρωμάτων που προσομοιώνει καλύτερα το NES "
+"Classic"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -5455,7 +5414,7 @@ msgstr "Ειδικές εντολές πληκτρολογίου:"
 
 #: engines/scumm/help.cpp:95
 msgid "Show / Hide console"
-msgstr "Εμφάνιση / Απόκρυψη κονσόλας"
+msgstr "Προβολή / Απόκρυψη κονσόλας"
 
 #: engines/scumm/help.cpp:96
 msgid "Start the debugger"
@@ -5463,7 +5422,7 @@ msgstr "Εκκίνηση του εντοπισμού σφαλμάτων"
 
 #: engines/scumm/help.cpp:97
 msgid "Show memory consumption"
-msgstr "Εμφάνιση κατανάλωσης μνήμης"
+msgstr "Προβολή κατανάλωσης μνήμης"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in fast mode (*)"
@@ -5991,7 +5950,7 @@ msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
-"Εμφάνιση των ονομάτων ενεργών σημείων μόνο αφού πατηθεί ενεργό σημείο ή "
+"Προβολή των ονομάτων ενεργών σημείων μόνο αφού πατηθεί ενεργό σημείο ή "
 "κουμπί δράσης"
 
 #: engines/sherlock/detection.cpp:105
@@ -6000,7 +5959,7 @@ msgstr "Προβολή πορτρέτων χαρακτήρων"
 
 #: engines/sherlock/detection.cpp:106
 msgid "Show portraits for the characters when conversing"
-msgstr "Εμφάνιση πορτρέτων χαρακτήρων κατά τη διάρκεια συνομιλίας"
+msgstr "Προβολή πορτρέτων χαρακτήρων κατά τη διάρκεια συνομιλίας"
 
 #: engines/sherlock/detection.cpp:115
 msgid "Slide dialogs into view"
@@ -6016,7 +5975,7 @@ msgstr "Διαφανή παράθυρα"
 
 #: engines/sherlock/detection.cpp:126
 msgid "Show windows with a partially transparent background"
-msgstr "Εμφάνιση παραθύρων με ένα μερικώς διαφανές φόντο"
+msgstr "Προβολή παραθύρων με ένα μερικώς διαφανές φόντο"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -6032,34 +5991,31 @@ msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
 
 #: engines/sky/detection.cpp:216
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "Περπάτα / Κοίτα / Μίλα"
 
 #: engines/sky/detection.cpp:228
 msgid "Confirm"
-msgstr ""
+msgstr "Επιβεβαίωση"
 
 #: engines/sky/detection.cpp:234
-#, fuzzy
 msgid "Skip / Close"
-msgstr "Παράλειψη γραμμής"
+msgstr "Παράλειψη / Κλείσιμο"
 
 #: engines/sky/detection.cpp:242
 msgid "Open control panel"
-msgstr ""
+msgstr "Άνοιγμα πίνακα ελέγχου"
 
 #: engines/sky/detection.cpp:248
 msgid "Skip line"
 msgstr "Παράλειψη γραμμής"
 
 #: engines/sky/detection.cpp:258
-#, fuzzy
 msgid "Toggle fast mode"
-msgstr "Γρήγορη λειτουργία"
+msgstr "Εναλλαγή γρήγορης λειτουργίας"
 
 #: engines/sky/detection.cpp:263
-#, fuzzy
 msgid "Toggle really fast mode"
-msgstr "Εκτέλεση σε πολύ γρήγορη λειτουργία (*)"
+msgstr "Εναλλαγή πολύ γρήγορης λειτουργίας"
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -6173,7 +6129,7 @@ msgstr "Προβολή ετικετών αντικειμένων"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "Εμφάνιση ετικετών για αντικείμενα κατά την αιώρηση του ποντικιού"
+msgstr "Προβολή ετικετών για αντικείμενα κατά την αιώρηση του ποντικιού"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
@@ -6221,51 +6177,49 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Δεν ήταν δυνατή η γρήγορη φόρτωση του αποθηκευμένου παιχνιδιού #%d"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
+msgstr "Αδυναμία εντοπισμού του αρχείου παιχνιδιού '%s'."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
+msgstr "Αδυναμία εντοπισμού του αρχείου παιχνιδιού %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου παιχνιδιού. Αναμενόμενη %d.%d "
-"αλλά βρέθηκε η %d.%d."
+"Παλιά έκδοση δεδομένων παιχνιδιού. Αναμενόμενη έκδοση είναι η %d.%d αλλά "
+"βρέθηκε η %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
-#, fuzzy
 msgid "Transfer Character"
-msgstr "Ανταλλαγή χαρακτήρα"
+msgstr "Μεταφορά Χαρακτήρα"
 
 #: engines/ultima/ultima8/meta_engine.cpp:96
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:126
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Ultima VIII Κόλπα"
 
 #: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Ultima VIII Αποσφαλμάτωση"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:304
 msgid "[corrupt]"
-msgstr ""
+msgstr "[κατεστραμμένο]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:307
 msgid "[outdated]"
-msgstr ""
+msgstr "[παλιό]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:310
-#, fuzzy
 msgid "[too modern]"
-msgstr "Λειτουργία χρώματος"
+msgstr "[πολύ καινούργιο]"
 
 #: engines/wintermute/detection.cpp:62
 msgid "Show FPS-counter"
@@ -6274,8 +6228,7 @@ msgstr "Προβολή μετρητή FPS"
 #: engines/wintermute/detection.cpp:63
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
-"Εμφάνιση του τρέχοντος αριθμού καρέ ανά δευτερόλεπτο στην επάνω αριστερή "
-"γωνία"
+"Προβολή του τρέχοντος αριθμού καρέ ανά δευτερόλεπτο στην επάνω αριστερή γωνία"
 
 #: engines/wintermute/detection.cpp:72
 msgid "Sprite bilinear filtering (SLOW)"
@@ -6290,18 +6243,16 @@ msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Το παιχνίδι αυτό απαιτεί υποστήριξη PNG, JPEG και Vorbis."
 
 #: engines/wintermute/wintermute.cpp:167
-#, fuzzy
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
-"Το παιχνίδι αυτό απαιτεί υποστήριξη 3D μοντέλων, που είναι εκτός πλαισίου "
-"στόχων του ScummVM."
+"Το παιχνίδι αυτό απαιτεί την επιμέρους μηχανή FoxTail, η οποία δεν έχει "
+"γίνει compiled."
 
 #: engines/wintermute/wintermute.cpp:178
-#, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
-"Το παιχνίδι αυτό απαιτεί υποστήριξη 3D μοντέλων, που είναι εκτός πλαισίου "
-"στόχων του ScummVM."
+"Το παιχνίδι αυτό απαιτεί την επιμέρους μηχανή HeroCraft, η οποία δεν έχει "
+"γίνει compiled."
 
 #: engines/wintermute/wintermute.cpp:189
 msgid ""
@@ -6312,7 +6263,7 @@ msgstr ""
 
 #: engines/xeen/detection.cpp:96
 msgid "Show item costs in standard inventory mode"
-msgstr "Εμφάνιση κόστους στη λειτουργία απλής παρουσίασης αντικειμένων"
+msgstr "Προβολή των τιμών στη λειτουργία απλής παρουσίασης αντικειμένων"
 
 #: engines/xeen/detection.cpp:97
 msgid ""
