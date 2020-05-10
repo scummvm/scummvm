@@ -31,6 +31,7 @@
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/array.h"
+#include "engines/engine.h"
 
 class OSystem_Android;
 
