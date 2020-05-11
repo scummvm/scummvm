@@ -241,6 +241,20 @@ EditGameDialog::EditGameDialog(const String &domain)
 	}
 
 	//
+	// The backend tab (shown only if the backend implements one)
+	//
+	int backendTabId = tab->addTab(_("Backend"), "GameOptions_Backend");
+
+	g_system->registerDefaultSettings(_domain);
+	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GameOptions_Backend.Container", _domain);
+
+	if (_backendOptions) {
+		_backendOptions->setParentDialog(this);
+	} else {
+		tab->removeTab(backendTabId);
+	}
+
+	//
 	// 4) The audio tab
 	//
 	tab->addTab(_("Audio"), "GameOptions_Audio");

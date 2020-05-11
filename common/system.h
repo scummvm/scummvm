@@ -40,6 +40,11 @@ namespace Graphics {
 struct Surface;
 }
 
+namespace GUI {
+class GuiObject;
+class OptionsContainerWidget;
+}
+
 namespace Common {
 class EventManager;
 struct Rect;
@@ -1488,6 +1493,36 @@ public:
 	 * Note that not all ports may use this.
 	 */
 	virtual Common::String getDefaultConfigFileName();
+
+	/**
+	 * Register the default values for the settings the backend uses into the
+	 * configuration manager.
+	 *
+	 * @param target    name of a config manager target
+	 */
+	virtual void registerDefaultSettings(const Common::String &target) const {}
+
+	/**
+	 * Return a GUI widget container for configuring the specified target options.
+	 *
+	 * The returned widget is shown in the Backend tab in the options dialog.
+	 * Backends can build custom options dialogs.
+	 *
+	 * Backends that don't want to have a Backend tab in the options dialog
+	 * can return nullptr.
+	 *
+	 * @param boss     the widget / dialog the returned widget is a child of
+	 * @param name     the name the returned widget must use
+	 * @param target   name of a config manager target
+	 */
+	virtual GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const { return nullptr; }
+
+	/**
+	 * Notify the backend that the settings editable from the game tab in the
+	 * options dialog may have changed and that they need to be applied if
+	 * necessary.
+	 */
+	virtual void applyBackendSettings() {}
 
 	/**
 	 * Logs a given message.

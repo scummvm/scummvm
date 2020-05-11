@@ -639,6 +639,7 @@ void Engine::openMainMenuDialog() {
 		ttsMan->popState();
 #endif
 
+	g_system->applyBackendSettings();
 	applyGameSettings();
 	syncSoundSettings();
 }

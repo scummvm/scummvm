@@ -59,6 +59,7 @@ class CommandSender;
 class GuiObject;
 class RadiobuttonGroup;
 class RadiobuttonWidget;
+class OptionsContainerWidget;
 
 class OptionsDialog : public Dialog {
 public:
@@ -246,6 +247,11 @@ protected:
 	//
 	Common::String _guioptions;
 	Common::String _guioptionsString;
+
+	//
+	// Backend controls
+	//
+	OptionsContainerWidget *_backendOptions;
 };
 
 

@@ -328,6 +328,19 @@ ConfigDialog::ConfigDialog() :
 	}
 
 	//
+	// The backend tab (shown only if the backend implements one)
+	//
+	int backendTabId = tab->addTab(_("Backend"), "GlobalConfig_Backend");
+
+	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalConfig_Backend.Container", _domain);
+
+	if (_backendOptions) {
+		_backendOptions->setParentDialog(this);
+	} else {
+		tab->removeTab(backendTabId);
+	}
+
+	//
 	// The Achievements tab
 	//
 	Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(gameDomain);
