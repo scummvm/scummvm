@@ -99,6 +99,8 @@ jmethodID JNI::_MID_AudioTrack_play = 0;
 jmethodID JNI::_MID_AudioTrack_stop = 0;
 jmethodID JNI::_MID_AudioTrack_write = 0;
 
+PauseToken _pauseToken;
+
 const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;"
 				"Ljavax/microedition/khronos/egl/EGL10;"
