@@ -89,12 +89,12 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic012(2 bytes)",
 	"int16 Item::getX(Item *)",
 	"int16 Item::getY(Item *)",
-	"void Intrinsic015(Item *, uint16 unk)",
+	"void AudioProcess::I_playSFXCru(Item *, uint16 sfxnum)",
 	"int16 Item::I_getShape(Item *)", // in STEAMBOX::func0A, is compared to 0x511 (the STEAM2 shape number) to determine direction
 	"void Intrinsic017(8 bytes)",
 	"int16 Intrinsic018(4 bytes not Item *)",
-	"byte Intrinsic019(14 bytes)",
-	"void Intrinsic01A(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"byte Item::I_legalCreateAtCoords(Item *, int16 shapeno, int16 frame, int16 x, int16 y, int16 z)", // probably, see usage in DOOR2::ordinal37
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132. Always associated with a bitwise-not or bitmask
 	"int16 Intrinsic01B(void)",
 	"byte Intrinsic01C(4 bytes)", // same coff as 112, 121
 	"int16 Intrinsic01D(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
@@ -105,7 +105,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic021(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void Intrinsic022(Item *)",
 	"int16 Intrinsic023(void)",
-	"void Intrinsic024(6 bytes)",
+	"void Intrinsic024(Item *, int16 shapeno)", // maybe setShape?
 	"void Intrinsic025(4 bytes)",
 	"int16 Item::I_getQHi(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"int16 Intrinsic027(14 bytes)",
@@ -114,12 +114,12 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void AudioProcess::I_playAmbientSFXCru(Item *, sndno)",
 	"int16 Item::I_getQLo(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"byte Intrinsic02C(4 bytes)",
-	"void Item::I_setSOMETHING_2D(Item *, uint16 unk)",
+	"void Item::I_setQHi(Item *, uint16 unk)", // probably setQHi, see usage in FREE::ordinal2E where object position is copied
 	"byte Intrinsic02E(Item *, 8 bytes)",
 	"byte Intrinsic02F(10 bytes)",
 	// 0030
 	"void Intrinsic030(4 bytes)",
-	"void Item::I_setSOMETHING_31(Item *, uint16 unk)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void Intrinsic032(12 bytes)",
 	"byte Intrinsic033(4 bytes)",
 	"int16 Intrinsic034(8 bytes)",
@@ -129,7 +129,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic038(Item *, int16)",
 	"byte Intrinsic039(4 bytes)", // same coff as 122, 12E
 	"byte Intrinsic03A(Item *, int16 unk)",
-	"void Intrinsic03B(6 bytes)",
+	"void Item::I_setQLo(Item *, int16 qlo)", // probably setQLo, see usage in FREE::ordinal2E where object position is copied
 	"int16 Intrinsic03C(4 bytes)",
 	"void Intrinsic03D(4 bytes)",
 	"void Intrinsic03E(4 bytes)",
@@ -163,7 +163,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_doSOMETHING_58(Item *, uint16 unk)",
 	"void Item::I_setFrame(Item *, frame)", // based on same coff as 002
 	"int16 Intrinsic05A(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Item *)", // I_legalCreateAtPoint ?? see PEPSIEW::use
+	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Item *)", // see PEPSIEW::use
 	"void Intrinsic05C(8 bytes)",
 	"void Intrinsic05D(void)",
 	"int16 Intrinsic05E(uint32, char *, int16 a, int16 b)", // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
@@ -178,12 +178,12 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 	Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
 	"int16 Intrinsic067(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Item::I_setQLo(Item *, uint16 qlow)", // probably, see VALUEBOX::ordinal20
-	"void Intrinsic069(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void Intrinsic06A(10 bytes)",
 	"int16 Intrinsic06B(void)",
 	"void Intrinsic06C(sometimes Item *)", // TODO: when param not item, what is it?
 	"int16 Intrinsic06D(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic06E(Item *, int16 unk)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"byte Intrinsic06F(6 bytes)",
 	// 0070
 	"byte Intrinsic070(void)",
@@ -211,7 +211,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic085(4 bytes)",
 	"int16 Intrinsic086(void)",
 	"int16 Intrinsic087(void)",
-	"void Item::I_setQHi(Item *, uint16 qhi)",
+	"void Item::I_setQHi(Item *, uint16 qhi)", // slightly suspicious of this one.. see VALUEBOX:ordinal20
 	"int16 Intrinsic089(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Intrinsic08A(12 bytes)",
 	"int16 Intrinsic08B(4 bytes)",
@@ -229,7 +229,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Intrinsic096(4 bytes)",
 	"void Intrinsic097(void)",
 	"void Intrinsic098(void)",
-	"void Intrinsic099(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void Intrinsic09A(void)",
 	"int16 Intrinsic09B(2 bytes)",
 	"int16 Intrinsic09C(4 bytes)",
@@ -256,7 +256,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 00B0
 	"int16 Intrinsic0B0(6 bytes)",
 	"int16 Intrinsic0B1(6 bytes)",
-	"void Item::I_setSOMETHING_B2(Item *, uint16 unk)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int32 I_getCurrentTimerTick(void)",
 	"void Intrinsic0B4(void)",
 	"int16 Intrinsic0B5(6 bytes)",
@@ -269,12 +269,12 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Intrinsic0BC(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Intrinsic0BD(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"void Intrinsic0BF(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	// 00C0
 	"int16 Intrinsic0C0(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
-	"void Intrinsic0C1(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic0C2(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
-	"void Intrinsic0C3(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic0C4(2 bytes)",
 	"byte Intrinsic0C5(6 bytes)",
 	"void Intrinsic0C6(14 bytes)",
@@ -314,13 +314,13 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic0E6(6 bytes)",
 	"void Intrinsic0E7(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Intrinsic0E8(6 bytes)",
-	"void Intrinsic0E9(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
 	"int16 Intrinsic0EB(void)",
 	"void Intrinsic0EC(6 bytes)",
 	"void Intrinsic0ED(6 bytes)",
 	"void Intrinsic0EE(void)",
-	"int16 Intrinsic0EF(4 bytes)",
+	"int16 Intrinsic0EF(4 bytes not Item *)",
 	// 00F0
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"byte Intrinsic0F1(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
@@ -334,39 +334,39 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Intrinsic0F9(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"byte Intrinsic0FA(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"void Intrinsic0FC(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"byte Intrinsic0FD(2 bytes)",
 	"void Intrinsic0FE(4 bytes)",
 	"int16 UCMachine::I_numToStr(int16 num)", // same as 113 based on same coff set 0FF, 113, 126
 	// 0100
 	"int16 Intrinsic100(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic101(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic102(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"byte Intrinsic103(uint16 shapenum)",
-	"void Intrinsic104(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic105(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic106(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic107(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic108(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic109(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic10A(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic10B(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic10C(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic10D(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic10E(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic10F(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	// 0110
-	"void Intrinsic110(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getSOMETHING_111(Item *)", // used to get passcode lowbyte from valueboxes..  // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"byte Intrinsic112(4 bytes)", // same coff as 01C, 121
 	"int16 UCMachine::I_numToStr(int16 num)", // based on VMAIL::func0A example usage
-	"void Intrinsic114(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getSOMETHING_115(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"byte Intrinsic116(14 bytes)",
-	"void Intrinsic117(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic118(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"void Intrinsic119(4 bytes)", // same coff as 08C, 12A
-	"void Intrinsic11A(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"byte Intrinsic11B(6 bytes)",
 	"int16 Intrinsic11C(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"int16 Intrinsic11D(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
@@ -381,7 +381,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic125(6 bytes)", // same coff as 07F, 0BA
 	"int16 UCMachine::I_numToStr(int16 num)", // same as 113 based on same coff set 0FF, 113, 126
 	"byte Intrinsic127(8 bytes)",
-	"void Intrinsic128(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic129(4 bytes)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Intrinsic12A(4 bytes)", // same coff as 08C, 119
 	"int16 Intrinsic12B(4 bytes)", // same coff as 11E
@@ -392,7 +392,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 0130
 	"void Intrinsic130(4 bytes)", // same coff as 07B
 	"void Intrinsic131(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
-	"void Intrinsic132(6 bytes)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"void Intrinsic134(2 bytes)",
 	"void UNUSEDInt135(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
