@@ -34,6 +34,23 @@
 #define CONTROLLER_BUT_VKEYBOARD SDL_CONTROLLER_BUTTON_BACK
 #endif
 
+// FIXME move joystick defines out and replace with confile file options
+// we should really allow users to map any key to a joystick button
+
+// #define JOY_INVERT_Y
+#define JOY_XAXIS 0
+#define JOY_YAXIS 1
+// buttons
+#define JOY_BUT_LMOUSE 0
+#define JOY_BUT_RMOUSE 2
+#define JOY_BUT_ESCAPE 3
+#define JOY_BUT_PERIOD 1
+#define JOY_BUT_SPACE 4
+#define JOY_BUT_F5 5
+#ifdef ENABLE_VKEYBD
+#define JOY_BUT_VKEYBOARD 7
+#endif
+
 ResVmSdlEventSource::ResVmSdlEventSource() {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
@@ -42,8 +59,57 @@ ResVmSdlEventSource::ResVmSdlEventSource() {
 	ConfMan.registerDefault("joystick_deadzone", 3);
 }
 
+bool ResVmSdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int relx, int rely) {
+	event.relMouse.x = relx;
+	event.relMouse.y = rely;
+
+	return SdlEventSource::processMouseEvent(event, x, y);
+}
+
+bool ResVmSdlEventSource::pollEvent(Common::Event &event) {
+	bool state = SdlEventSource::pollEvent(event);
+
+	// Handle mouse control via analog joystick and keyboard
+	if (state && handleKbdMouse(event)) {
+		return true;
+	}
+
+	return state;
+}
+
+bool ResVmSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
+	// update KbdMouse
+	_km.x = ev.motion.x * MULTIPLIER;
+	_km.y = ev.motion.y * MULTIPLIER;
+
+	return SdlEventSource::handleMouseMotion(ev, event);
+}
+
+bool ResVmSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+	// update KbdMouse
+	_km.x = ev.motion.x * MULTIPLIER;
+	_km.y = ev.motion.y * MULTIPLIER;
+
+	return SdlEventSource::handleMouseButtonDown(ev, event);
+}
+
+bool ResVmSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+	// update KbdMouse
+	_km.x = ev.motion.x * MULTIPLIER;
+	_km.y = ev.motion.y * MULTIPLIER;
+
+	return SdlEventSource::handleMouseButtonUp(ev, event);
+}
+
 bool ResVmSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (shouldGenerateMouseEvents()) {
+		if (ev.jbutton.button == JOY_BUT_LMOUSE) {
+			event.type = Common::EVENT_LBUTTONDOWN;
+			return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
+			event.type = Common::EVENT_RBUTTONDOWN;
+			return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		}
 		return SdlEventSource::handleJoyButtonDown(ev, event);
 	} else {
 		event.type = Common::EVENT_JOYBUTTON_DOWN;
@@ -54,6 +120,13 @@ bool ResVmSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &even
 
 bool ResVmSdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (shouldGenerateMouseEvents()) {
+		if (ev.jbutton.button == JOY_BUT_LMOUSE) {
+			event.type = Common::EVENT_LBUTTONUP;
+			return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
+			event.type = Common::EVENT_RBUTTONUP;
+			return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		}
 		return SdlEventSource::handleJoyButtonUp(ev, event);
 	} else {
 		event.type = Common::EVENT_JOYBUTTON_UP;
@@ -64,6 +137,13 @@ bool ResVmSdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event)
 
 bool ResVmSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	if (shouldGenerateMouseEvents()) {
+		if (ev.jaxis.axis == JOY_XAXIS) {
+			_km.joy_x = ev.jaxis.value;
+			return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+		} else if (ev.jaxis.axis == JOY_YAXIS) {
+			_km.joy_y = ev.jaxis.value;
+			return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+		}
 		return SdlEventSource::handleJoyAxisMotion(ev, event);
 	} else {
 		event.type = Common::EVENT_JOYAXIS_MOTION;
@@ -133,6 +213,13 @@ bool ResVmSdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Ev
 
 bool ResVmSdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {
 	if (shouldGenerateMouseEvents()) {
+		if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
+			_km.joy_x = ev.caxis.value;
+			return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+		} else if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
+			_km.joy_y = ev.caxis.value;
+			return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+		}
 		return SdlEventSource::handleControllerAxisMotion(ev, event);
 	} else {
 		// Indicates if L2/R2 are currently pushed or not

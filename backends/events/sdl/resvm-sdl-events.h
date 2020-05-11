@@ -49,12 +49,19 @@ protected:
 	};
 	KbdMouse _km;
 
-	virtual void updateKbdMouse();
+	bool pollEvent(Common::Event &event) override;
+	void updateKbdMouse() override;
+
+	bool handleMouseMotion(SDL_Event &ev, Common::Event &event) override;
+	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event) override;
+	bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event) override;
 
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) override;
-	bool handleKbdMouse(Common::Event &event);
+	bool handleKbdMouse(Common::Event &event) override;
+
+	bool processMouseEvent(Common::Event &event, int x, int y, int relx = 0, int rely = 0) override;
 
 	/**
 	 * Update the virtual mouse according to a joystick or game controller axis position change
