@@ -90,6 +90,10 @@ public:
 	int getHeight() const { return _height; }
 
 	bool useRTL() const { return _useRTL; }
+	void setOverlayParas(int l, int r);
+	int getOverlayOffset() { return _focusedWindowRightSpacing - _focusedWindowLeftSpacing; }
+	void setWindowOverlayStatus(bool value);
+	bool isWindowOverlayed() const { return _isAnotherWindowOverlayed; }
 
 	const Graphics::Font &getFont(ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return *(_theme->getFont(style)); }
 	int getFontHeight(ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getFontHeight(style); }
@@ -141,6 +145,10 @@ protected:
 	bool		_useStdCursor;
 
 	bool		_useRTL;
+	bool		_isAnotherWindowOverlayed;
+
+	int			_focusedWindowLeftSpacing;
+	int			_focusedWindowRightSpacing;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {

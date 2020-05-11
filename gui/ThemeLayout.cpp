@@ -217,7 +217,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 	assert(_children.size() <= 1);
 
 	resetLayout();
-	
+
 	if (_overlays == "screen") {
 		_x = 0;
 		_y = 0;
@@ -242,13 +242,14 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		}
 	}
 
-	// Below: Not complete. Renders dialogs okay, but can I use this for tabs?
-	if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions")) {
-		if (this->_name == "GameOptions" || this->_name == "GlobalOptions")
+	if (g_gui.useRTL()) {
+		if (this->_name == "GameOptions" || this->_name == "GlobalOptions") {
+			int oldX = _x;
 			_x = g_system->getOverlayWidth() - _w - _x;
-		else
-			; //_x -= 100;		// GUI TODO: Can this flow be used for Tabs?
+			g_gui.setOverlayParas(oldX, _x);
+		}
 	}
+
 	if (_x >= 0) _x += _inset;
 	if (_y >= 0) _y += _inset;
 	if (_w >= 0) _w -= 2 * _inset;
@@ -388,7 +389,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 			resize[rescount++] = i;
 			_children[i]->setWidth(0);
 		}
-
+		
 		_children[i]->offsetX(curX);
 
 		// Advance the horizontal offset by the width of the newest item, plus
