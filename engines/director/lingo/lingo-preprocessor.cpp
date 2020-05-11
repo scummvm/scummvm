@@ -395,12 +395,26 @@ Common::String preprocessPlay(Common::String in) {
 	Common::String res, next;
 	const char *ptr = in.c_str();
 	const char *beg = ptr;
+	const char *nextPtr;
 
 	while ((ptr = strcasestr(beg, "play")) != NULL) {
-		ptr += 5; // end of 'play'
+		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+			res += *beg++;
+			continue;
+		}
+
+		ptr += 4; // end of 'play'
 		res += Common::String(beg, ptr);
 
-		next = nexttok(ptr);
+		if (!*ptr)	// If it is end of the line
+			break;
+
+		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
+			beg = ptr;
+			continue;
+		}
+
+		next = nexttok(ptr, &nextPtr);
 
 		debugC(2, kDebugLingoParse, "PLAY: nexttok: %s", next.c_str());
 
@@ -409,6 +423,7 @@ Common::String preprocessPlay(Common::String in) {
 		}
 
 		res += *ptr++; // We advance one character, so 'one' is left
+		ptr = nextPtr;
 		beg = ptr;
 	}
 
@@ -425,12 +440,26 @@ Common::String preprocessSound(Common::String in) {
 	Common::String res, next;
 	const char *ptr = in.c_str();
 	const char *beg = ptr;
+	const char *nextPtr;
 
 	while ((ptr = strcasestr(beg, "sound")) != NULL) {
-		ptr += 6; // end of 'sound'
+		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+			res += *beg++;
+			continue;
+		}
+
+		ptr += 5; // end of 'sound'
 		res += Common::String(beg, ptr);
 
-		next = nexttok(ptr);
+		if (!*ptr)	// If it is end of the line
+			break;
+
+		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
+			beg = ptr;
+			continue;
+		}
+
+		next = nexttok(ptr, &nextPtr);
 
 		debugC(2, kDebugLingoParse, "SOUND: nexttok: %s", next.c_str());
 
@@ -448,7 +477,7 @@ Common::String preprocessSound(Common::String in) {
 		res += next;
 		if (modified)
 			res += ',';
-		ptr += next.size();
+		ptr = nextPtr;
 		beg = ptr;
 	}
 
