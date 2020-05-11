@@ -62,8 +62,8 @@ Common::String DirectorEngine::getEXEName() const {
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return false;
+		//(f == kSupportsRTL);
 }
 
 } // End of Namespace Director
