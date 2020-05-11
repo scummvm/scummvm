@@ -332,6 +332,7 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 
 			_tablesHeapPtr += size;
 			_tablesHeapCurPos += size;
+			alignTableMem();
 
 			if (_tablesHeapCurPos > _tablesHeapSize) {
 				error("loadTextIntoMem: Out of table memory");
