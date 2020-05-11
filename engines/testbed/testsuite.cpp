@@ -318,8 +318,8 @@ void Testsuite::execute() {
 		}
 
 		updateStats("Test", ((*i)->featureName).c_str(), count, numEnabledTests, pt);
-		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or RTL
-		// Check if user wants to quit/RTL/Skip next test by parsing events.
+		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or return to launcher
+		// Check if user wants to quit/return to launcher/skip next test by parsing events.
 		// Quit directly if explicitly requested
 
 		if (Engine::shouldQuit()) {
