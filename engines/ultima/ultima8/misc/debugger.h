@@ -151,7 +151,13 @@ private:
 	bool cmdToggleShowTouchingItems(int argc, const char **argv);
 	bool cmdCloseItemGumps(int argc, const char **argv);
 	bool cmdMemberVar(int argc, const char **argv);
+
+	// Avatar mover
 	bool cmdBothButtonClick(int argc, const char **argv);
+	bool cmdTurnLeft(int argc, const char **argv);
+	bool cmdTurnRight(int argc, const char **argv);
+	bool cmdMoveForward(int argc, const char **argv);
+	bool cmdMoveBack(int argc, const char **argv);
 
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);

@@ -669,6 +669,42 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 	}
 }
 
+void AvatarMoverProcess::tryTurnLeft() {
+	const MainActor *avatar = getMainActor();
+	int curdir = avatar->getDir();
+	Animation::Sequence action = avatar->getLastAnim();
+	bool moving = (action == Animation::run || action == Animation::walk);
+	checkTurn((curdir - 1 + 8) % 8, moving);
+}
+
+void AvatarMoverProcess::tryTurnRight() {
+	const MainActor *avatar = getMainActor();
+	int curdir = avatar->getDir();
+	Animation::Sequence action = avatar->getLastAnim();
+	bool moving = (action == Animation::run || action == Animation::walk);
+	checkTurn((curdir + 1) % 8, moving);
+}
+
+void AvatarMoverProcess::tryMoveForward() {
+	const MainActor *avatar = getMainActor();
+	int curdir = avatar->getDir();
+	Animation::Sequence action = avatar->getLastAnim();
+	bool moving = (action == Animation::run || action == Animation::walk);
+	if (moving)
+		return;
+	step(Animation::step, curdir, false);
+}
+
+void AvatarMoverProcess::tryMoveBack() {
+	const MainActor *avatar = getMainActor();
+	int curdir = avatar->getDir();
+	Animation::Sequence action = avatar->getLastAnim();
+	bool moving = (action == Animation::run || action == Animation::walk);
+	if (moving)
+		return;
+	step(Animation::step, (curdir + 4) % 8, false);
+}
+
 void AvatarMoverProcess::turnToDirection(int direction) {
 	MainActor *avatar = getMainActor();
 	bool combatRun = avatar->hasActorFlags(Actor::ACT_COMBATRUN);

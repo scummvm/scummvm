@@ -53,6 +53,11 @@ public:
 		_fakeBothButtonClick = true;
 	}
 
+	void tryTurnLeft();
+	void tryTurnRight();
+	void tryMoveForward();
+	void tryMoveBack();
+
 private:
 	void saveData(Common::WriteStream *ws) override;
 
