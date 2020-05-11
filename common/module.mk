@@ -30,7 +30,6 @@ MODULE_OBJS := \
 	rational.o \
 	rendermode.o \
 	str.o \
-	str-bidi.o \
 	str-enc.o \
 	stream.o \
 	system.o \
@@ -38,6 +37,7 @@ MODULE_OBJS := \
 	tokenizer.o \
 	translation.o \
 	unarj.o \
+	unicode-bidi.o \
 	unzip.o \
 	ustr.o \
 	util.o \

@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "common/str-bidi.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
