@@ -309,6 +309,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GlobalOptions_Backend' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
@@ -1032,6 +1038,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GameOptions_Backend' overlays = 'Dialog.GameOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GameOptions_Achievements' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
@@ -1365,6 +1377,12 @@
 	</dialog>
 
 	<dialog name = 'GlobalConfig_KeyMapper' overlays = 'Dialog.GlobalConfig.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalConfig_Backend' overlays = 'Dialog.GlobalConfig.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
 		</layout>

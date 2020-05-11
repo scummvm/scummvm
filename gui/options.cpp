@@ -168,6 +168,7 @@ void OptionsDialog::init() {
 	_joystickDeadzoneSlider = nullptr;
 	_joystickDeadzoneLabel = nullptr;
 	_keymapperWidget = nullptr;
+	_backendOptions = nullptr;
 	_enableGraphicSettings = false;
 	_gfxPopUp = nullptr;
 	_gfxPopUpDesc = nullptr;
@@ -283,6 +284,11 @@ void OptionsDialog::build() {
 	// Keymapper options
 	if (_keymapperWidget) {
 		_keymapperWidget->load();
+	}
+
+	// Backend options
+	if (_backendOptions) {
+		_backendOptions->load();
 	}
 
 	// Graphic options
@@ -708,6 +714,12 @@ void OptionsDialog::apply() {
 			Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 			keymapper->reloadAllMappings();
 		}
+	}
+
+	if (_backendOptions) {
+		bool changes = _backendOptions->save();
+		if (changes && _domain == Common::ConfigManager::kApplicationDomain)
+			g_system->applyBackendSettings();
 	}
 
 	// Control options
@@ -1813,6 +1825,20 @@ void GlobalOptionsDialog::build() {
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper");
 		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps, Common::ConfigManager::kKeymapperDomain);
+	}
+
+	//
+	// The backend tab (shown only if the backend implements one)
+	//
+	int backendTabId = tab->addTab(_("Backend"), "GlobalOptions_Backend");
+
+	g_system->registerDefaultSettings(_domain);
+	_backendOptions = g_system->buildBackendOptionsWidget(tab, "GlobalOptions_Backend.Container", _domain);
+
+	if (_backendOptions) {
+		_backendOptions->setParentDialog(this);
+	} else {
+		tab->removeTab(backendTabId);
 	}
 
 	//
