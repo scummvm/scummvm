@@ -75,21 +75,39 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 
 	Dialog::drawDialog(layerToDraw);
 
-	int16 textX = _x + 3; // including 2px padding and 1px original code shift
+	int16 textX = g_gui.useRTL() ? _x - 3 : _x + 3; // including 2px padding and 1px original code shift
 	int16 textY = _y + 3;
-	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
-		g_gui.theme()->drawText(
-			Common::Rect(textX, textY + num * h, textX + _w, textY + (num + 1) * h),
-			*i,
-			ThemeEngine::kStateEnabled,
-			Graphics::kTextAlignLeft,
-			ThemeEngine::kTextInversionNone,
-			0,
-			false,
-			ThemeEngine::kFontStyleTooltip,
-			ThemeEngine::kFontColorNormal,
-			false
-		);
+
+	if (g_gui.useRTL()) {
+		for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
+			g_gui.theme()->drawText(
+				Common::Rect(textX, textY + num * h, textX + _w, textY + (num + 1) * h),
+				*i,
+				ThemeEngine::kStateEnabled,
+				Graphics::kTextAlignRight,
+				ThemeEngine::kTextInversionNone,
+				0,
+				false,
+				ThemeEngine::kFontStyleTooltip,
+				ThemeEngine::kFontColorNormal,
+				false
+			);
+		}
+	}else{
+		for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
+			g_gui.theme()->drawText(
+				Common::Rect(textX, textY + num * h, textX + _w, textY + (num + 1) * h),
+				*i,
+				ThemeEngine::kStateEnabled,
+				Graphics::kTextAlignLeft,
+				ThemeEngine::kTextInversionNone,
+				0,
+				false,
+				ThemeEngine::kFontStyleTooltip,
+				ThemeEngine::kFontColorNormal,
+				false
+			);
+			}
 		}
 	}
 
