@@ -221,6 +221,7 @@ public:
 	bool _framesPerSecondMax;
 	bool _disableStaminaDrain;
 	bool _cutContent;
+	bool _validBootParam;
 
 	int _walkSoundId;
 	int _walkSoundVolume;
