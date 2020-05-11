@@ -419,10 +419,10 @@ Common::String preprocessPlay(Common::String in) {
 		debugC(2, kDebugLingoParse, "PLAY: nexttok: %s", next.c_str());
 
 		if (next.equalsIgnoreCase("done")) {
-			res += '#'; // Turn it into SYMBOL
+			res += " #"; // Turn it into SYMBOL
 		}
 
-		res += *ptr++; // We advance one character, so 'one' is left
+		res += next;
 		ptr = nextPtr;
 		beg = ptr;
 	}
