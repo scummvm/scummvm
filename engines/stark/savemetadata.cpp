@@ -42,6 +42,7 @@ SaveMetadata::SaveMetadata() :
 		saveHour(0),
 		saveMinute(0),
 		saveSecond(0),
+		isAutoSave(false),
 		gameWindowThumbnail(nullptr) {
 }
 
@@ -66,6 +67,10 @@ void SaveMetadata::saveLoad(ResourceSerializer *s) {
 
 	if (version >= 10) {
 		s->syncAsByte(saveSecond);
+	}
+
+	if (version >= 13) {
+		s->syncAsUint32LE(isAutoSave);
 	}
 }
 

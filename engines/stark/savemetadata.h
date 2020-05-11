@@ -52,6 +52,8 @@ public:
 	uint8 saveMinute;
 	uint8 saveSecond;
 
+	bool isAutoSave;
+
 	const Graphics::Surface *gameWindowThumbnail;
 
 	SaveMetadata();

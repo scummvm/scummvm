@@ -426,17 +426,14 @@ public:
 	}
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
-		SaveStateDescriptor descriptor;
-		if (slot == 0) {
-			descriptor.setWriteProtectedFlag(true);
-			descriptor.setDeletableFlag(false);
-		}
-
 		Common::String filename = StarkEngine::formatSaveName(target, slot);
 		Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
 		if (!save) {
-			return descriptor;
+			return SaveStateDescriptor();
 		}
+
+		SaveStateDescriptor descriptor;
+		descriptor.setSaveSlot(slot);
 
 		SaveMetadata metadata;
 		Common::ErrorCode readError = metadata.read(save, filename);
@@ -453,6 +450,10 @@ public:
 			descriptor.setPlayTime(metadata.totalPlayTime);
 			descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 			descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
+		}
+
+		if (metadata.version >= 13) {
+			descriptor.setAutosave(metadata.isAutoSave);
 		}
 
 		delete save;

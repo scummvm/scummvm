@@ -63,8 +63,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_frameLimiter(nullptr),
 		_console(nullptr),
 		_gameDescription(gameDesc),
-		_lastClickTime(0),
-		_lastAutoSaveTime(0) {
+		_lastClickTime(0) {
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
 	DebugMan.addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
@@ -103,7 +102,6 @@ StarkEngine::~StarkEngine() {
 Common::Error StarkEngine::run() {
 	_console = new Console();
 	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
-	_lastAutoSaveTime = _system->getMillis();
 
 	// Get the screen prepared
 	Gfx::Driver *gfx = Gfx::Driver::create();
@@ -166,10 +164,6 @@ void StarkEngine::mainLoop() {
 		if (StarkUserInterface->shouldExit()) {
 			quitGame();
 			break;
-		}
-
-		if (shouldPerformAutoSave(_lastAutoSaveTime)) {
-			tryAutoSaving();
 		}
 
 		if (StarkResourceProvider->hasLocationChangeRequest()) {
@@ -439,6 +433,11 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc, b
 		return Common::kCreatingFileFailed;
 	}
 
+	bool reuseThumbnail = StarkUserInterface->getGameWindowThumbnail() != nullptr;
+	if (!reuseThumbnail) {
+		StarkUserInterface->saveGameScreenThumbnail();
+	}
+
 	// 1. Write the header
 	SaveMetadata metadata;
 	metadata.description = desc;
@@ -447,6 +446,7 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc, b
 	metadata.locationIndex = StarkGlobal->getCurrent()->getLocation()->getIndex();
 	metadata.totalPlayTime = getTotalPlayTime();
 	metadata.gameWindowThumbnail = StarkUserInterface->getGameWindowThumbnail();
+	metadata.isAutoSave = isAutosave;
 
 	TimeDate timeDate;
 	_system->getTimeAndDate(timeDate);
@@ -464,8 +464,13 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc, b
 	// 4. Write the location stack
 	StarkResourceProvider->writeLocationStack(save);
 
+	if (!reuseThumbnail) {
+		StarkUserInterface->freeGameScreenThumbnail();
+	}
+
 	if (save->err()) {
 		warning("An error occured when writing '%s'", filename.c_str());
+		delete save;
 		return Common::kWritingFailed;
 	}
 
@@ -493,29 +498,6 @@ int StarkEngine::getSaveNameSlot(const char *target, const Common::String &saveN
 	slot[3] = '\0';
 
 	return atoi(slot);
-}
-
-void StarkEngine::tryAutoSaving() {
-	if (!canSaveGameStateCurrently()) {
-		return; // Can't save right now, try again on the next frame
-	}
-
-	_lastAutoSaveTime = _system->getMillis();
-
-	// Get a thumbnail of the game screen if we don't have one already
-	bool reuseThumbnail = StarkUserInterface->getGameWindowThumbnail() != nullptr;
-	if (!reuseThumbnail) {
-		StarkUserInterface->saveGameScreenThumbnail();
-	}
-
-	Common::Error result = saveGameState(0, "Autosave");
-	if (result.getCode() != Common::kNoError) {
-		warning("Unable to autosave: %s.", result.getDesc().c_str());
-	}
-
-	if (!reuseThumbnail) {
-		StarkUserInterface->freeGameScreenThumbnail();
-	}
 }
 
 void StarkEngine::pauseEngineIntern(bool pause) {
