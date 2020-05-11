@@ -312,7 +312,7 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 
 bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions);

@@ -96,7 +96,7 @@ bool TitanicMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Titanic::TitanicEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

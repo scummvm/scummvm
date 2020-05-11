@@ -93,7 +93,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _("~R~eturn to Launcher"), 0, kRTLCmd);
 	else
 		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _c("~R~eturn to Launcher", "lowres"), 0, kRTLCmd);
-	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
+	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsReturnToLauncher));
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
 		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);

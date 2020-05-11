@@ -259,7 +259,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 
 bool IllusionsEngine_BBDOU::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

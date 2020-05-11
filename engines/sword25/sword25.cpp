@@ -195,12 +195,12 @@ bool Sword25Engine::loadPackages() {
 
 bool Sword25Engine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsReturnToLauncher);
 	// TODO: Implement more of these features?!
 #if 0
 	return
 		(f == kSupportsSubtitleOptions) ||
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 #endif

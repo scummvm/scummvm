@@ -164,7 +164,7 @@ bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Touche::ToucheEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions);

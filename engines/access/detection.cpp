@@ -120,7 +120,7 @@ bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

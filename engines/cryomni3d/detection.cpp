@@ -67,7 +67,7 @@ Common::Language CryOmni3DEngine::getLanguage() const {
 
 bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL)
+		(f == kSupportsReturnToLauncher)
 		|| (f == kSupportsSubtitleOptions);
 }
 

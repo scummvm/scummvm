@@ -87,7 +87,7 @@ bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Wage::WageEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

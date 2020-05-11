@@ -135,7 +135,7 @@ bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsReturnToLauncher);
 }
 
 bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

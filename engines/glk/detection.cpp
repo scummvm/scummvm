@@ -162,7 +162,7 @@ bool GlkMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 	return
-	    (f == kSupportsRTL) ||
+	    (f == kSupportsReturnToLauncher) ||
 	    (f == kSupportsLoadingDuringRuntime) ||
 	    (f == kSupportsSavingDuringRuntime);
 }
@@ -287,7 +287,7 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 	Common::FSNode folder = Common::FSNode(ConfMan.get("path"));
 	Common::FSList fslist;
 	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
-	
+
 	// Iterate over the files
 	for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
 		// Run a detection on each file in the folder individually

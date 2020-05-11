@@ -110,7 +110,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 bool DraciEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsSubtitleOptions) ||
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

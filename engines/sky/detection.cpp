@@ -113,7 +113,7 @@ bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

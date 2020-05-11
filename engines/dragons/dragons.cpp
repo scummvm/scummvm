@@ -1216,7 +1216,7 @@ bool DragonsEngine::canSaveGameStateCurrently() {
 
 bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
 	return
-		// TODO (f == kSupportsRTL) ||
+		// TODO (f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

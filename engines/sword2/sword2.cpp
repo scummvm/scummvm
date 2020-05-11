@@ -117,7 +117,7 @@ bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsSubtitleOptions) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsLoadingDuringRuntime);

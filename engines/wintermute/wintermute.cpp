@@ -96,7 +96,7 @@ WintermuteEngine::~WintermuteEngine() {
 
 bool WintermuteEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
-	case kSupportsRTL:
+	case kSupportsReturnToLauncher:
 		return true;
 	case kSupportsLoadingDuringRuntime:
 		return true;

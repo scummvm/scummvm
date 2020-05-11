@@ -219,7 +219,7 @@ DrasculaEngine::~DrasculaEngine() {
 
 bool DrasculaEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime);
+		(f == kSupportsReturnToLauncher || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error DrasculaEngine::run() {

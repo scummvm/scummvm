@@ -1003,7 +1003,7 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool ScummEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions);

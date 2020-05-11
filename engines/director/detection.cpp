@@ -63,7 +63,7 @@ Common::String DirectorEngine::getEXEName() const {
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {
 	return false;
-		//(f == kSupportsRTL);
+		//(f == kSupportsReturnToLauncher);
 }
 
 } // End of Namespace Director
