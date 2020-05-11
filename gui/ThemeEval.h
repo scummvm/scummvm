@@ -88,7 +88,7 @@ public:
 	bool hasDialog(const Common::String &name);
 
 	void reflowDialogLayout(const Common::String &name, Widget *widgetChain);
-	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h);
+	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h);
 
 	Graphics::TextAlign getWidgetTextHAlign(const Common::String &widget);
 

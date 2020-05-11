@@ -50,7 +50,7 @@ void ThemeEval::reset() {
 	_layouts.clear();
 }
 
-bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h) {
 	Common::StringTokenizer tokenizer(widget, ".");
 
 	if (widget.hasPrefix("Dialog."))

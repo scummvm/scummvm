@@ -188,6 +188,8 @@ void OSystem_SDL::initBackend() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
+	// Allow the screen to turn off
+	SDL_EnableScreenSaver();
 #else
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];
@@ -340,6 +342,11 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 // End of ResidualVM specific code
 
 void OSystem_SDL::engineInit() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	// Disable screen saver when engine starts
+	SDL_DisableScreenSaver();
+#endif
 #ifdef USE_TASKBAR
 	// Add the started engine to the list of recent tasks
 	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
@@ -347,16 +354,19 @@ void OSystem_SDL::engineInit() {
 	// Set the overlay icon the current running engine
 	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 #endif
+	_eventSource->setEngineRunning(true);
 }
 
 void OSystem_SDL::engineDone() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->unlockWindowSize();
+	SDL_EnableScreenSaver();
 #endif
 #ifdef USE_TASKBAR
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
 #endif
+	_eventSource->setEngineRunning(false);
 }
 
 void OSystem_SDL::initSDL() {
