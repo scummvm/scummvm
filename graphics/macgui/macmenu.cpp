@@ -25,7 +25,7 @@
 #include "common/keyboard.h"
 #include "common/macresman.h"
 #include "common/winexe_pe.h"
-#include "common/str-bidi.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
@@ -744,12 +744,12 @@ static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int
 	drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
 }
 
-static void underlineAccelerator(ManagedSurface *dst, const Font *font, const Common::U32String &str, int x, int y, int shortcutPos, uint32 color) {
+static void underlineAccelerator(ManagedSurface *dst, const Font *font, const Common::UnicodeBiDiText &txt, int x, int y, int shortcutPos, uint32 color) {
 	if (shortcutPos == -1)
 		return;
 
-	int visualPos = getVisualPosition(str, shortcutPos);
-	Common::U32String s = Common::convertBiDiU32String(str);
+	int visualPos = txt.getVisualPosition(shortcutPos);
+	Common::U32String s(txt.visual);
 
 	// Erase characters only if it is not end of the string
 	if ((uint)(visualPos + 1) < s.size())
@@ -813,9 +813,10 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 		if (it->unicode) {
 			int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
+			Common::UnicodeBiDiText utxt(it->unicodeText);
 
-			_font->drawString(&_screen, convertBiDiU32String(it->unicodeText), x, y, it->bbox.width(), color, _align);
-			underlineAccelerator(&_screen, _font, it->unicodeText, x + accOff, y, it->shortcutPos, color);
+			_font->drawString(&_screen, utxt.visual, x, y, it->bbox.width(), color, _align);
+			underlineAccelerator(&_screen, _font, utxt, x + accOff, y, it->shortcutPos, color);
 		} else {
 			const Font *font = getMenuFont(it->style);
 
@@ -896,8 +897,9 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			}
 
 			if (menu->items[i]->unicode) {
-				_font->drawString(s, convertBiDiU32String(unicodeText), tx, ty, r->width(), color, _align);
-				underlineAccelerator(s, _font, unicodeText, tx + accOff, ty, shortcutPos, color);
+				Common::UnicodeBiDiText utxt(unicodeText);
+				_font->drawString(s, utxt.visual, tx, ty, r->width(), color, _align);
+				underlineAccelerator(s, _font, utxt, tx + accOff, ty, shortcutPos, color);
 			} else {
 				const Font *font = getMenuFont(menu->items[i]->style);
 

@@ -33,7 +33,7 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/str-bidi.h"
+#include "common/unicode-bidi.h"
 
 #ifdef USE_TRANSLATION
 

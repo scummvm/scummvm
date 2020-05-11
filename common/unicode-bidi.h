@@ -25,20 +25,30 @@
 
 #include "common/str.h"
 #include "common/ustr.h"
-#include "common/str-enc.h"
 
 namespace Common {
 
-/*
- * Wrapper for GNU FriBidi implementation of the Unicode Bidirectional Algorithm
- * For LTR (Left To Right) languages, returns the original input
- * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
- */
-U32String convertBiDiU32String(const U32String &input);
-String convertBiDiString(const String &input, const Common::CodePage page);
+class UnicodeBiDiText {
+private:
+	uint32 *_log_to_vis_index; // from fribidi conversion
+	uint32 *_vis_to_log_index; // from fribidi conversion
+	void initWithU32String(const Common::U32String &str);
+public:
+	const Common::U32String logical; // original string, ordered logically
+	Common::U32String visual; // from fribidi conversion, ordered visually
 
-int getVisualPosition(const U32String &str, int pos);
-int getVisualPosition(const String &str, const Common::CodePage page, int pos);
+	UnicodeBiDiText(const Common::U32String &str);
+	UnicodeBiDiText(const Common::String &str, const Common::CodePage page);
+	~UnicodeBiDiText();
+
+	uint32 getVisualPosition(uint32 logicalPos) const;
+	uint32 getLogicalPosition(uint32 visualPos) const;
+	uint32 size() const { return logical.size(); }
+};
+
+/* just call the constructor for convenience */
+UnicodeBiDiText convertBiDiU32String(const U32String &input);
+String convertBiDiString(const String &input, const Common::CodePage page);
 
 } // End of namespace Common
 

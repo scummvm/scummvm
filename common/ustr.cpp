@@ -23,6 +23,7 @@
 #include "common/ustr.h"
 #include "common/memorypool.h"
 #include "common/util.h"
+#include "unicode-bidi.h"
 
 namespace Common {
 
@@ -92,6 +93,10 @@ U32String::U32String(const char *beginP, const char *endP) : _size(0), _str(_sto
 
 U32String::U32String(const String &str) : _size(0), _str(_storage) {
 	initWithCStr(str.c_str(), str.size());
+}
+
+U32String::U32String(const UnicodeBiDiText &txt) : _size(0), _str(_storage) {
+	initWithCStr(txt.visual.c_str(), txt.visual.size());
 }
 
 U32String::~U32String() {
