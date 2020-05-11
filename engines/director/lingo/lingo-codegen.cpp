@@ -269,10 +269,10 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 		warning("Redefining handler '%s'", name.c_str());
 
 		// Do not attempt to remove code from built-ins
-		if (sym->type == HANDLER)
-			delete sym->u.defn;
-		else
-			sym->type = HANDLER;
+		sym->reset();
+		sym->refCount = new int;
+		*sym->refCount = 1;
+		sym->type = HANDLER;
 	}
 
 	sym->u.defn = code;
@@ -538,27 +538,20 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			return;
 		}
 
-		if ((sym->type == STRING || sym->type == VOID) && sym->u.s) // Free memory if needed
-			delete var.u.sym->u.s;
-
-		if (sym->type == POINT || sym->type == RECT || sym->type == ARRAY)
-			delete var.u.sym->u.farr;
-		else if (sym->type == PARRAY)
-			delete var.u.sym->u.parr;
-
+		sym->reset();
+		sym->refCount = value.refCount;
+		*sym->refCount += 1;
 		sym->type = value.type;
 		if (value.type == INT) {
 			sym->u.i = value.u.i;
 		} else if (value.type == FLOAT) {
 			sym->u.f = value.u.f;
 		} else if (value.type == STRING) {
-			sym->u.s = new Common::String(*value.u.s);
-			delete value.u.s;
+			sym->u.s = value.u.s;
 		} else if (value.type == POINT || value.type == ARRAY) {
-			sym->u.farr = new DatumArray(*value.u.farr);
-			delete value.u.farr;
+			sym->u.farr = value.u.farr;
 		} else if (value.type == PARRAY) {
-			sym->u.parr = new PropertyArray(*value.u.parr);
+			sym->u.parr = value.u.parr;
 		} else if (value.type == SYMBOL) {
 			sym->u.s = value.u.s;
 		} else if (value.type == OBJECT) {
@@ -575,15 +568,16 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			warning("varAssign: Assigning to a reference to an empty score");
 			return;
 		}
-		if (!score->_loadedCast->contains(var.u.i)) {
-			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
-				warning("varAssign: Unknown REFERENCE %d", var.u.i);
+		int referenceId = var.u.i;
+		if (!score->_loadedCast->contains(referenceId)) {
+			if (!score->_loadedCast->contains(referenceId - score->_castIDoffset)) {
+				warning("varAssign: Unknown REFERENCE %d", referenceId);
 				return;
 			} else {
-				var.u.i -= score->_castIDoffset;
+				referenceId -= score->_castIDoffset;
 			}
 		}
-		Cast *cast = score->_loadedCast->getVal(var.u.i);
+		Cast *cast = score->_loadedCast->getVal(referenceId);
 		if (cast) {
 			switch (cast->_type) {
 			case kCastText:
@@ -613,6 +607,9 @@ Datum Lingo::varFetch(Datum &var) {
 		}
 
 		result.type = sym->type;
+		delete result.refCount;
+		result.refCount = sym->refCount;
+		*result.refCount += 1;
 
 		if (sym->type == INT)
 			result.u.i = sym->u.i;

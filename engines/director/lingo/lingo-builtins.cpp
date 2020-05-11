@@ -714,7 +714,7 @@ void LB::b_getaProp(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			d = *list.u.parr->operator[](index-1).v;
+			d = *list.u.parr->operator[](index - 1).v;
 		}
 		g_lingo->push(d);
 		break;
@@ -777,7 +777,7 @@ void LB::b_getOne(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
 		if (index > 0) {
-			d = *list.u.parr->operator[](index-1).p;
+			d = *list.u.parr->operator[](index - 1).p;
 		}
 		g_lingo->push(d);
 		break;
@@ -791,6 +791,7 @@ void LB::b_getPos(int nargs) {
 	ARGNUMCHECK(2);
 	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
+	TYPECHECK2(val, INT, FLOAT);
 	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
@@ -832,7 +833,7 @@ void LB::b_getProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			g_lingo->push(*list.u.parr->operator[](index-1).v);
+			g_lingo->push(*list.u.parr->operator[](index - 1).v);
 		} else {
 			error("b_getProp: Property %s not found", prop.asString().c_str());
 		}
@@ -845,11 +846,14 @@ void LB::b_getProp(int nargs) {
 
 void LB::b_getPropAt(int nargs) {
 	ARGNUMCHECK(2);
-	int index = g_lingo->pop().asInt();
-	Datum list = g_lingo->pop();
-	TYPECHECK(list, PARRAY);
 
-	g_lingo->push(*list.u.parr->operator[](index-1).p);
+	Datum indexD = g_lingo->pop();
+	Datum list = g_lingo->pop();
+	TYPECHECK2(indexD, INT, FLOAT);
+	TYPECHECK(list, PARRAY);
+	int index = indexD.asInt();
+
+	g_lingo->push(*list.u.parr->operator[](index - 1).p);
 }
 
 void LB::b_list(int nargs) {
@@ -955,7 +959,7 @@ void LB::b_setaProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			*list.u.parr->operator[](index-1).v = value;
+			*list.u.parr->operator[](index - 1).v = value;
 		} else {
 			PCell cell = PCell(prop, value);
 			list.u.parr->push_back(cell);
@@ -970,15 +974,17 @@ void LB::b_setaProp(int nargs) {
 void LB::b_setAt(int nargs) {
 	ARGNUMCHECK(3);
 	Datum value = g_lingo->pop();
-	int index = g_lingo->pop().asInt();
+	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
 
+	TYPECHECK2(indexD, INT, FLOAT);
 	TYPECHECK2(list, ARRAY, PARRAY);
+	int index = indexD.asInt();
 
 	switch (list.type) {
 	case ARRAY:
 		if ((uint)index < list.u.farr->size()) {
-			list.u.farr->operator[](index-1) = value;
+			list.u.farr->operator[](index - 1) = value;
 		} else {
 			// TODO: Extend the list if we request an index beyond it
 			ARRBOUNDSCHECK(index, list);
@@ -986,7 +992,7 @@ void LB::b_setAt(int nargs) {
 		break;
 	case PARRAY:
 		ARRBOUNDSCHECK(index, list);
-		*list.u.parr->operator[](index-1).v = value;
+		*list.u.parr->operator[](index - 1).v = value;
 		break;
 	default:
 		break;
@@ -1004,7 +1010,7 @@ void LB::b_setProp(int nargs) {
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 	if (index > 0) {
-		*list.u.parr->operator[](index-1).v = value;
+		*list.u.parr->operator[](index - 1).v = value;
 	} else {
 		warning("b_setProp: Property not found");
 	}

@@ -95,6 +95,8 @@ struct Symbol {	/* symbol table entry */
 
 	Symbol();
 	Symbol(const Symbol &s);
+	Symbol& operator=(const Symbol &s);
+	void reset();
 	~Symbol();
 };
 
@@ -132,6 +134,16 @@ struct Datum {	/* interpreter stack type */
 		refCount = d.refCount;
 		*refCount += 1;
 	}
+	Datum& operator=(const Datum &d) {
+		if (this != &d) {
+			reset();
+			type = d.type;
+			u = d.u;
+			refCount = d.refCount;
+			*refCount += 1;
+		}
+		return *this;
+	}
 	Datum(int val) {
 		u.i = val;
 		type = INT;
@@ -156,7 +168,7 @@ struct Datum {	/* interpreter stack type */
 		refCount = new int;
 		*refCount = 1;
 	}
-	~Datum() {
+	void reset() {
 		*refCount -= 1;
 		if (*refCount <= 0) {
 			switch (type) {
@@ -186,6 +198,11 @@ struct Datum {	/* interpreter stack type */
 			}
 			delete refCount;
 		}
+
+	}
+
+	~Datum() {
+		reset();
 	}
 
 	double asFloat();

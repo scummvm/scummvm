@@ -67,7 +67,26 @@ Symbol::Symbol(const Symbol &s) {
 	archiveIndex = s.archiveIndex;
 }
 
-Symbol::~Symbol() {
+Symbol& Symbol::operator=(const Symbol &s) {
+	if (this != &s) {
+		reset();
+		type = s.type;
+		u.s = s.u.s;
+		refCount = s.refCount;
+		*refCount += 1;
+		nargs = s.nargs;
+		maxArgs = s.maxArgs;
+		parens = s.parens;
+		global = s.global;
+		argNames = s.argNames;
+		varNames = s.varNames;
+		ctx = s.ctx;
+		archiveIndex = s.archiveIndex;
+	}
+	return *this;
+}
+
+void Symbol::reset() {
 	*refCount -= 1;
 	if (*refCount <= 0) {
 		switch (type) {
@@ -100,6 +119,10 @@ Symbol::~Symbol() {
 		}
 		delete refCount;
 	}
+}
+
+Symbol::~Symbol() {
+	reset();
 }
 
 PCell::PCell() {
@@ -664,7 +687,7 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 			}
 		} else if (alignType == INT) {
 			double i1 = asInt();
-			double i2 = asInt();
+			double i2 = d.asInt();
 			if (i1 < i2) {
 				return -1;
 			} else if (i1 == i2) {
