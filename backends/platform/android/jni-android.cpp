@@ -690,7 +690,7 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 		LOGD("pauseEngine: %d", value);
 
 		if (value)
-			_pauseToken = g_engine->pauseEngine(value);
+			_pauseToken = g_engine->pauseEngine();
 		else
 			_pauseToken.clear();
 
