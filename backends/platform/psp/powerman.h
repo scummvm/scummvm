@@ -27,6 +27,8 @@
 #include "common/singleton.h"
 #include "common/list.h"
 
+#include "engines/engine.h"  // for PauseToken
+
 /*
  *  Implement this class (interface) if you want to use PowerManager's suspend callback functionality
  *
