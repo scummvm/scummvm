@@ -47,13 +47,13 @@ public:
 	uint16 TraceObjId(int32 mx, int32 my) override;
 	bool PointOnGump(int mx, int my) override;
 
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
-	void OnMouseUp(int button, int32 mx, int32 my) override;
-	void OnMouseClick(int button, int32 mx, int32 my) override;
-	void OnMouseDouble(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
+	void onMouseUp(int button, int32 mx, int32 my) override;
+	void onMouseClick(int button, int32 mx, int32 my) override;
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 
-	void OnMouseOver() override;
-	void OnMouseLeft() override;
+	void onMouseOver() override;
+	void onMouseLeft() override;
 
 	//! return the textwidget's vlead, or 0 for an image button
 	int getVlead();

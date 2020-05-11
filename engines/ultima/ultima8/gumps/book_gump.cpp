@@ -87,12 +87,12 @@ void BookGump::NextText() {
 	widgetR->setupNextText();
 }
 
-void BookGump::OnMouseClick(int button, int32 mx, int32 my) {
+void BookGump::onMouseClick(int button, int32 mx, int32 my) {
 	// Scroll to next text, if possible
 	NextText();
 }
 
-void BookGump::OnMouseDouble(int button, int32 mx, int32 my) {
+void BookGump::onMouseDouble(int button, int32 mx, int32 my) {
 	Close();
 }
 

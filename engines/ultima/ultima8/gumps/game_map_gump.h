@@ -68,10 +68,10 @@ public:
 	void        StopDraggingItem(Item *item, bool moved) override;
 	void        DropItem(Item *item, int mx, int my) override;
 
-	Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
-	void        OnMouseUp(int button, int32 mx, int32 my) override;
-	void        OnMouseClick(int button, int32 mx, int32 my) override;
-	void        OnMouseDouble(int button, int32 mx, int32 my) override;
+	Gump       *onMouseDown(int button, int32 mx, int32 my) override;
+	void        onMouseUp(int button, int32 mx, int32 my) override;
+	void        onMouseClick(int button, int32 mx, int32 my) override;
+	void        onMouseDouble(int button, int32 mx, int32 my) override;
 
 	void IncSortOrder(int count);
 

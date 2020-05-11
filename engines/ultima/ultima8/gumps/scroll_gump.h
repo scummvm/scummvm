@@ -41,10 +41,10 @@ public:
 	~ScrollGump() override;
 
 	// Go to the next page on mouse click
-	void OnMouseClick(int button, int32 mx, int32 my) override;
+	void onMouseClick(int button, int32 mx, int32 my) override;
 
 	// Close on double click
-	void OnMouseDouble(int button, int32 mx, int32 my) override;
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;

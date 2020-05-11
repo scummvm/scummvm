@@ -106,14 +106,14 @@ uint16 MiniStatsGump::TraceObjId(int32 mx, int32 my) {
 	return 0;
 }
 
-Gump *MiniStatsGump::OnMouseDown(int button, int32 mx, int32 my) {
+Gump *MiniStatsGump::onMouseDown(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT)
 		return this;
 
 	return nullptr;
 }
 
-void MiniStatsGump::OnMouseDouble(int button, int32 mx, int32 my) {
+void MiniStatsGump::onMouseDouble(int button, int32 mx, int32 my) {
 	// check if there already is an open PaperdollGump
 	MainActor *av = getMainActor();
 	if (!av->getGump()) {

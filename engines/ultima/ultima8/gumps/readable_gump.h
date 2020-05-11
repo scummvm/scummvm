@@ -42,7 +42,7 @@ public:
 	~ReadableGump() override;
 
 	// Close on mouse click on key press
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
 	bool OnKeyDown(int key, int mod) override;
 
 	// Init the gump, call after construction

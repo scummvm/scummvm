@@ -47,7 +47,7 @@ public:
 	Gump *FindGump(int mx, int my) override;
 	uint16 TraceObjId(int32 mx, int32 my) override;
 
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:

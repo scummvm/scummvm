@@ -300,8 +300,8 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 }
 
 
-Gump *ContainerGump::OnMouseDown(int button, int32 mx, int32 my) {
-	Gump *handled = Gump::OnMouseDown(button, mx, my);
+Gump *ContainerGump::onMouseDown(int button, int32 mx, int32 my) {
+	Gump *handled = Gump::onMouseDown(button, mx, my);
 	if (handled) return handled;
 
 	// only interested in left clicks
@@ -311,7 +311,7 @@ Gump *ContainerGump::OnMouseDown(int button, int32 mx, int32 my) {
 	return nullptr;
 }
 
-void ContainerGump::OnMouseClick(int button, int32 mx, int32 my) {
+void ContainerGump::onMouseClick(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;
@@ -330,7 +330,7 @@ void ContainerGump::OnMouseClick(int button, int32 mx, int32 my) {
 	}
 }
 
-void ContainerGump::OnMouseDouble(int button, int32 mx, int32 my) {
+void ContainerGump::onMouseDouble(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;

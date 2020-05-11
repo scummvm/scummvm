@@ -167,13 +167,13 @@ void U8SaveGump::OnFocus(bool gain) {
 	}
 }
 
-Gump *U8SaveGump::OnMouseDown(int button, int32 mx, int32 my) {
+Gump *U8SaveGump::onMouseDown(int button, int32 mx, int32 my) {
 	// take all clicks
 	return this;
 }
 
 
-void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
+void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 	if (button != Shared::BUTTON_LEFT) return;
 
 	ParentToGump(mx, my);

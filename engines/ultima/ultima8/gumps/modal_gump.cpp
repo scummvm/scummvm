@@ -88,8 +88,8 @@ void ModalGump::Close(bool no_del) {
 	Gump::Close(no_del);
 }
 
-Gump *ModalGump::OnMouseDown(int button, int32 mx, int32 my) {
-	Gump *handled = Gump::OnMouseDown(button, mx, my);
+Gump *ModalGump::onMouseDown(int button, int32 mx, int32 my) {
+	Gump *handled = Gump::onMouseDown(button, mx, my);
 	if (!handled) handled = this;
 	return handled;
 }

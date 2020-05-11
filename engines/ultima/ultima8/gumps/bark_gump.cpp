@@ -162,8 +162,8 @@ void BarkGump::run() {
 	}
 }
 
-Gump *BarkGump::OnMouseDown(int button, int32 mx, int32 my) {
-	Gump *g = ItemRelativeGump::OnMouseDown(button, mx, my);
+Gump *BarkGump::onMouseDown(int button, int32 mx, int32 my) {
+	Gump *g = ItemRelativeGump::onMouseDown(button, mx, my);
 	if (g) return g;
 
 	// Scroll to next text, if possible

@@ -68,7 +68,7 @@ public:
 
 	void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley) override;
 
-	Gump *OnMouseMotion(int32 mx, int32 my) override;
+	Gump *onMouseMotion(int32 mx, int32 my) override;
 
 	//! display the next part of the text
 	//! \return false if there is no more text to display

@@ -65,7 +65,7 @@ bool Mouse::buttonDown(Shared::MouseButton button) {
 	MButton &mbutton = _mouseButton[button];
 
 	Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
-	Gump *mousedowngump = desktopGump->OnMouseDown(button, _mousePos.x, _mousePos.y);
+	Gump *mousedowngump = desktopGump->onMouseDown(button, _mousePos.x, _mousePos.y);
 	if (mousedowngump) {
 		mbutton._downGump = mousedowngump->getObjId();
 		handled = true;
@@ -85,7 +85,7 @@ bool Mouse::buttonDown(Shared::MouseButton button) {
 				int32 mx2 = _mousePos.x, my2 = _mousePos.y;
 				Gump *parent = gump->GetParent();
 				if (parent) parent->ScreenSpaceToGump(mx2, my2);
-				gump->OnMouseDouble(button, mx2, my2);
+				gump->onMouseDouble(button, mx2, my2);
 			}
 			mbutton.setState(MBS_HANDLED);
 			mbutton._lastDown = 0;
@@ -113,7 +113,7 @@ bool Mouse::buttonUp(Shared::MouseButton button) {
 		Gump *parent = gump->GetParent();
 		if (parent)
 			parent->ScreenSpaceToGump(mx2, my2);
-		gump->OnMouseUp(button, mx2, my2);
+		gump->onMouseUp(button, mx2, my2);
 		handled = true;
 	}
 
@@ -271,7 +271,7 @@ void Mouse::setMouseCoords(int mx, int my) {
 	_mousePos.y = my;
 
 	Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
-	Gump *gump = desktopGump->OnMouseMotion(mx, my);
+	Gump *gump = desktopGump->onMouseMotion(mx, my);
 	if (gump && _mouseOverGump != gump->getObjId()) {
 		Gump *oldGump = getGump(_mouseOverGump);
 		Std::list<Gump *> oldgumplist;
@@ -303,12 +303,12 @@ void Mouse::setMouseCoords(int mx, int my) {
 
 		// send events to remaining gumps
 		for (; olditer != oldgumplist.end(); ++olditer)
-			(*olditer)->OnMouseLeft();
+			(*olditer)->onMouseLeft();
 
 		_mouseOverGump = gump->getObjId();
 
 		for (; newiter != newgumplist.end(); ++newiter)
-			(*newiter)->OnMouseOver();
+			(*newiter)->onMouseOver();
 	}
 
 	if (_dragging == DRAG_NOT) {
@@ -510,7 +510,7 @@ void Mouse::handleDelayedEvents() {
 				if (parent)
 					parent->ScreenSpaceToGump(mx, my);
 				
-				gump->OnMouseClick(button, mx, my);
+				gump->onMouseClick(button, mx, my);
 			}
 
 			_mouseButton[button]._downGump = 0;

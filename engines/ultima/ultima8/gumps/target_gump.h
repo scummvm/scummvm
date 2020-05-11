@@ -45,7 +45,7 @@ public:
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	void Close(bool no_del = false) override;
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	void OnMouseUp(int button, int32 mx, int32 my) override;
+	void onMouseUp(int button, int32 mx, int32 my) override;
 
 	INTRINSIC(I_target);
 

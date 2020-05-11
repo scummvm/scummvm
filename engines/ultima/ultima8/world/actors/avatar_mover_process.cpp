@@ -756,7 +756,7 @@ bool AvatarMoverProcess::canAttack() {
 	return (_lastFrame > _lastAttack + (25 - avatar->getDex()));
 }
 
-void AvatarMoverProcess::OnMouseDown(int button, int32 mx, int32 my) {
+void AvatarMoverProcess::onMouseDown(int button, int32 mx, int32 my) {
 	int bid = 0;
 
 	switch (button) {
@@ -779,7 +779,7 @@ void AvatarMoverProcess::OnMouseDown(int button, int32 mx, int32 my) {
 	_mouseButton[bid].clearState(MBS_HANDLED);
 }
 
-void AvatarMoverProcess::OnMouseUp(int button) {
+void AvatarMoverProcess::onMouseUp(int button) {
 	int bid = 0;
 
 	if (button == Shared::BUTTON_LEFT) {

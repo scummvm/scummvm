@@ -698,7 +698,7 @@ void Gump::StopDraggingChild(Gump *gump) {
 // Input handling
 //
 
-Gump *Gump::OnMouseDown(int button, int32 mx, int32 my) {
+Gump *Gump::onMouseDown(int button, int32 mx, int32 my) {
 	// Convert to local coords
 	ParentToGump(mx, my);
 
@@ -713,7 +713,7 @@ Gump *Gump::OnMouseDown(int button, int32 mx, int32 my) {
 		if (g->_flags & FLAG_CLOSING || g->IsHidden()) continue;
 
 		// It's got the point
-		if (g->PointOnGump(mx, my)) handled = g->OnMouseDown(button, mx, my);
+		if (g->PointOnGump(mx, my)) handled = g->onMouseDown(button, mx, my);
 
 		if (handled) break;
 	}
@@ -721,7 +721,7 @@ Gump *Gump::OnMouseDown(int button, int32 mx, int32 my) {
 	return handled;
 }
 
-Gump *Gump::OnMouseMotion(int32 mx, int32 my) {
+Gump *Gump::onMouseMotion(int32 mx, int32 my) {
 	// Convert to local coords
 	ParentToGump(mx, my);
 
@@ -736,7 +736,7 @@ Gump *Gump::OnMouseMotion(int32 mx, int32 my) {
 		if (g->_flags & FLAG_CLOSING || g->IsHidden()) continue;
 
 		// It's got the point
-		if (g->PointOnGump(mx, my)) handled = g->OnMouseMotion(mx, my);
+		if (g->PointOnGump(mx, my)) handled = g->onMouseMotion(mx, my);
 
 		if (handled) break;
 	}

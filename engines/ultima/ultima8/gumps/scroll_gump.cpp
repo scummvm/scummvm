@@ -75,12 +75,12 @@ void ScrollGump::NextText() {
 	}
 }
 
-void ScrollGump::OnMouseClick(int button, int32 mx, int32 my) {
+void ScrollGump::onMouseClick(int button, int32 mx, int32 my) {
 	// Scroll to next _text, if possible
 	NextText();
 }
 
-void ScrollGump::OnMouseDouble(int button, int32 mx, int32 my) {
+void ScrollGump::onMouseDouble(int button, int32 mx, int32 my) {
 	Close();
 }
 

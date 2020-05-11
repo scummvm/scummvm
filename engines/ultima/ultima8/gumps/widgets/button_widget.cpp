@@ -108,8 +108,8 @@ bool ButtonWidget::PointOnGump(int mx, int my) {
 	return _dims.InRect(gx, gy);
 }
 
-Gump *ButtonWidget::OnMouseDown(int button, int32 mx, int32 my) {
-	Gump *ret = Gump::OnMouseDown(button, mx, my);
+Gump *ButtonWidget::onMouseDown(int button, int32 mx, int32 my) {
+	Gump *ret = Gump::onMouseDown(button, mx, my);
 	if (ret)
 		return ret;
 	if (button == Shared::BUTTON_LEFT) {
@@ -131,7 +131,7 @@ uint16 ButtonWidget::TraceObjId(int32 mx, int32 my) {
 }
 
 
-void ButtonWidget::OnMouseUp(int button, int32 mx, int32 my) {
+void ButtonWidget::onMouseUp(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (!_mouseOver) {
 			_shape = _shapeUp;
@@ -141,17 +141,17 @@ void ButtonWidget::OnMouseUp(int button, int32 mx, int32 my) {
 	}
 }
 
-void ButtonWidget::OnMouseClick(int button, int32 mx, int32 my) {
+void ButtonWidget::onMouseClick(int button, int32 mx, int32 my) {
 	int gx = mx, gy = my;
 	if (PointOnGump(gx, gy))
 		_parent->ChildNotify(this, BUTTON_CLICK);
 }
 
-void ButtonWidget::OnMouseDouble(int button, int32 mx, int32 my) {
+void ButtonWidget::onMouseDouble(int button, int32 mx, int32 my) {
 	_parent->ChildNotify(this, BUTTON_DOUBLE);
 }
 
-void ButtonWidget::OnMouseOver() {
+void ButtonWidget::onMouseOver() {
 	if (_mouseOver) {
 		if (_textWidget) {
 			Gump *widget = getGump(_textWidget);
@@ -165,7 +165,7 @@ void ButtonWidget::OnMouseOver() {
 	}
 }
 
-void ButtonWidget::OnMouseLeft() {
+void ButtonWidget::onMouseLeft() {
 	if (_mouseOver) {
 		if (_textWidget) {
 			Gump *widget = getGump(_textWidget);

@@ -1002,7 +1002,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	// Hack - don't save mouse over status for gumps
 	Gump *gump = _mouse->getMouseOverGump();
 	if (gump)
-		gump->OnMouseLeft();
+		gump->onMouseLeft();
 
 	_mouse->pushMouseCursor();
 	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
@@ -1066,7 +1066,7 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	delete sgw;
 
 	// Restore mouse over
-	if (gump) gump->OnMouseOver();
+	if (gump) gump->onMouseOver();
 
 	pout << "Done" << Std::endl;
 

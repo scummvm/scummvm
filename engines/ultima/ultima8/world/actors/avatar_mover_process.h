@@ -40,8 +40,8 @@ public:
 
 	void run() override;
 
-	void OnMouseDown(int button, int32 mx, int32 my);
-	void OnMouseUp(int button);
+	void onMouseDown(int button, int32 mx, int32 my);
+	void onMouseUp(int button);
 
 	void resetIdleTime() {
 		_idleTime = 0;

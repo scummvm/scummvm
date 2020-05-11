@@ -180,7 +180,7 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
-Gump *EditWidget::OnMouseMotion(int32 mx, int32 my) {
+Gump *EditWidget::onMouseMotion(int32 mx, int32 my) {
 	return nullptr;
 }
 
