@@ -284,6 +284,7 @@ private:
 	u16 _magWidth, _magHeight;
 	u16 _magCenterX, _magCenterY;
 
+public:
 	// Pause
 	PauseToken _sleepPauseToken;
 };
