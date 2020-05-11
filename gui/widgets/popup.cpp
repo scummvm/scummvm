@@ -116,6 +116,9 @@ void PopUpDialog::open() {
 	else if (_y + _h >= screenH)
 		_y = screenH - 1 - _h;
 
+	if (g_gui.useRTL())
+		_x = g_system->getOverlayWidth() - _x - _w;
+
 	// TODO - implement scrolling if we had to move the menu, or if there are too many entries
 
 	_lastRead = -1;
@@ -510,6 +513,10 @@ void PopUpWidget::drawWidget() {
 	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
+
+	if (g_gui.useRTL())
+		_x = g_system->getOverlayWidth() - _x - _w;
+
 	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state);
 }
 
