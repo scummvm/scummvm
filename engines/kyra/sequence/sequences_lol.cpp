@@ -90,7 +90,7 @@ int LoLEngine::processPrologue() {
 
 		switch (selection) {
 		case -1:
-			// This is sent on RTL for example, if we would not have any
+			// This is sent on return to launcher for example, if we would not have any
 			// special case for this the default path would call quitGame
 			// and thus make the next game launched from the launcher
 			// quit instantly.

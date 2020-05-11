@@ -588,7 +588,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldReturnToLauncher())
 				break;
 #endif
-			// Reset RTL flag in case we want to load another engine
+			// Reset the return to launcher flag in case we want to load another engine
 			g_system->getEventManager()->resetReturnToLauncher();
 #ifdef FORCE_RETURN_TO_LAUNCHER
 			g_system->getEventManager()->resetQuit();

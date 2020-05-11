@@ -95,7 +95,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	event = _eventQueue.pop();
 	bool forwardEvent = true;
 
-	// If the backend has the kFeatureNoQuit, replace Quit event with RTL
+	// If the backend has the kFeatureNoQuit, replace Quit event with Return to Launcher
 	if (event.type == Common::EVENT_QUIT && g_system->hasFeature(OSystem::kFeatureNoQuit))
 		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 

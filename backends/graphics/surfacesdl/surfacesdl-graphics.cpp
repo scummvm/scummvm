@@ -390,7 +390,7 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			// OSystem_SDL::pollEvent used to update the screen change count,
 			// but actually it gives problems when a video mode was changed
 			// but OSystem_SDL::pollEvent was not called. This for example
-			// caused a crash under certain circumstances when doing an RTL.
+			// caused a crash under certain circumstances when returning to launcher.
 			// To fix this issue we update the screen change count right here.
 			_screenChangeCount++;
 		}
@@ -406,7 +406,7 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			// OSystem_SDL::pollEvent used to update the screen change count,
 			// but actually it gives problems when a video mode was changed
 			// but OSystem_SDL::pollEvent was not called. This for example
-			// caused a crash under certain circumstances when doing an RTL.
+			// caused a crash under certain circumstances when returning to launcher.
 			// To fix this issue we update the screen change count right here.
 			_screenChangeCount++;
 

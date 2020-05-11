@@ -163,7 +163,7 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	// callbacks.
 	//
 	// Another issues occurs when one plays a game with ALSA as music driver,
-	// does RTL and starts a different engine game with ALSA as music driver.
+	// returns to launcher and starts a different engine game with ALSA as music driver.
 	// In this case the MPU401 code will add different timer procs with the
 	// same name, resulting in two different callbacks added with the same
 	// name and causing installTimerProc to error out.
