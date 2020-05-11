@@ -70,6 +70,10 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	_launched = false;
 
 	_useRTL = false;
+	_isAnotherWindowOverlayed = false;
+
+	_focusedWindowLeftSpacing = 0;
+	_focusedWindowRightSpacing = 0;
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
@@ -581,8 +585,13 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	uint32 time;
 
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
-	if (_useRTL)
-		mouse.x = _system->getOverlayWidth() - mouse.x;
+	if (g_gui.useRTL()) {
+		mouse.x = g_system->getOverlayWidth() - event.mouse.x - activeDialog->_x;
+
+		if (g_gui.getOverlayOffset() != 0) {
+			mouse.x = g_gui.getOverlayOffset() + mouse.x;
+		}
+	}
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -592,10 +601,12 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		activeDialog->handleKeyUp(event.kbd);
 		break;
 	case Common::EVENT_MOUSEMOVE:
-		if (useRTL()) {
-			_globalMousePosition.x = _system->getOverlayWidth() - event.mouse.x;
-		}
-		else {
+		if (g_gui.useRTL()) {
+			_globalMousePosition.x = g_system->getOverlayWidth() - event.mouse.x;
+			if (g_gui.getOverlayOffset() != 0) {
+				_globalMousePosition.x = g_gui.getOverlayOffset() + _globalMousePosition.x;
+			}
+		} else {
 			_globalMousePosition.x = event.mouse.x;
 		}
 		_globalMousePosition.y = event.mouse.y;
@@ -658,6 +669,15 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 	_lastMousePosition.x = x;
 	_lastMousePosition.y = y;
 	_lastMousePosition.time = _system->getMillis(true);
+}
+
+void GuiManager::setOverlayParas(int l, int r) {
+	_focusedWindowLeftSpacing = l;
+	_focusedWindowRightSpacing = r;
+}
+
+void GuiManager::setWindowOverlayStatus(bool value) {
+	_isAnotherWindowOverlayed = value;
 }
 
 #ifdef USE_TTS
