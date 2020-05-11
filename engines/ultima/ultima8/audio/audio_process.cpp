@@ -479,12 +479,12 @@ void AudioProcess::stopAllExceptSpeech() {
 //
 
 uint32 AudioProcess::I_playSFX(const uint8 *args, unsigned int argsize) {
-	ARG_SINT16(_sfxNum);
+	ARG_SINT16(sfxNum);
 
-	int16 _priority = 0x60;
+	int16 priority = 0x60;
 	if (argsize >= 4) {
 		ARG_SINT16(priority_);
-		_priority = priority_;
+		priority = priority_;
 	}
 
 	ObjId objId = 0;
@@ -494,19 +494,19 @@ uint32 AudioProcess::I_playSFX(const uint8 *args, unsigned int argsize) {
 	}
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->playSFX(_sfxNum, _priority, objId, 0);
+	if (ap) ap->playSFX(sfxNum, priority, objId, 0);
 	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
 
 uint32 AudioProcess::I_playAmbientSFX(const uint8 *args, unsigned int argsize) {
-	ARG_SINT16(_sfxNum);
+	ARG_SINT16(sfxNum);
 
-	int16 _priority = 0x60;
+	int16 priority = 0x60;
 	if (argsize >= 4) {
 		ARG_SINT16(priority_);
-		_priority = priority_;
+		priority = priority_;
 	}
 
 	ObjId objId = 0;
@@ -516,11 +516,28 @@ uint32 AudioProcess::I_playAmbientSFX(const uint8 *args, unsigned int argsize) {
 	}
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->playSFX(_sfxNum, _priority, objId, -1, true);
+	if (ap) ap->playSFX(sfxNum, priority, objId, -1, true);
 	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
+
+uint32 AudioProcess::I_playSFXCru(const uint8 *args, unsigned int argsize) {
+	ARG_ITEM_FROM_PTR(item)
+	ARG_SINT16(sfxNum);
+
+	if (!item) {
+		warning("I_playSFXCru: Couldn't get item");
+	} else {
+		AudioProcess *ap = AudioProcess::get_instance();
+		if (ap)
+			ap->playSFX(sfxNum, 0x10, item->getObjId(), 0, true);
+		else
+			warning("I_playSFXCru Error: No AudioProcess");
+	}
+	return 0;
+}
+
 
 uint32 AudioProcess::I_playAmbientSFXCru(const uint8 *args, unsigned int argsize) {
 	// Similar to I_playAmbientSFX, but the params are different.

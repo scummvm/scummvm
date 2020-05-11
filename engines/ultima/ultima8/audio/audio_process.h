@@ -76,6 +76,7 @@ public:
 
 	INTRINSIC(I_playSFX);
 	INTRINSIC(I_playAmbientSFX);
+	INTRINSIC(I_playSFXCru);
 	INTRINSIC(I_playAmbientSFXCru);
 	INTRINSIC(I_isSFXPlaying);
 	INTRINSIC(I_setVolumeSFX);
