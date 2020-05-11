@@ -39,6 +39,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed freeze due to bad mob data at the top of Witches Tower
    - Fix crash loading some savegames directly from the launcher
    - Fix curing the well in Nightshadow
+   - Fix loading of wall items from savegames
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.
