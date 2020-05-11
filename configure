@@ -3707,7 +3707,7 @@ case $_backend in
 		;;
 	ps2)
 		append_var DEFINES "-D_EE"
-		append_var DEFINES "-DFORCE_RTL"
+		append_var DEFINES "-DFORCE_RETURN_TO_LAUNCHER"
 		append_var INCLUDES "-I$PS2SDK/ee/include"
 		append_var INCLUDES "-I$PS2SDK/common/include"
 		append_var INCLUDES "-I$PS2SDK/ports/include"

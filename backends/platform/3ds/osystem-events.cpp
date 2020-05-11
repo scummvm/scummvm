@@ -341,7 +341,7 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 	aptMainLoop(); // Call apt hook when necessary
 
 	// If magnify mode is on when returning to Launcher, turn it off
-	if (_eventManager->shouldRTL()) {
+	if (_eventManager->shouldReturnToLauncher()) {
 		if (_magnifyMode == MODE_MAGON) {
 			_magnifyMode = MODE_MAGOFF;
 			updateSize();

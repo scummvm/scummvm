@@ -425,7 +425,7 @@ void EventManager::updateScreen() {
 		s->_screenUpdateTime = g_system->getMillis();
 		// Throttle the checking of shouldQuit() to 60fps as well, since
 		// Engine::shouldQuit() invokes 2 virtual functions
-		// (EventManager::shouldQuit() and EventManager::shouldRTL()),
+		// (EventManager::shouldQuit() and EventManager::shouldReturnToLauncher()),
 		// which is very expensive to invoke constantly without any
 		// throttling at all.
 		if (g_engine->shouldQuit())
