@@ -444,11 +444,11 @@ void OSystem_3DS::runOptionsDialog() {
 
 	OptionsDialog dialog;
 	if (g_engine) {
-		osys->_sleepPauseToken = g_engine->pauseEngine();
+		_sleepPauseToken = g_engine->pauseEngine();
 	}
 	int result = dialog.runModal();
 	if (g_engine) {
-		osys->_sleepPauseToken.clear();
+		_sleepPauseToken.clear();
 	}
 
 	if (result > 0) {
