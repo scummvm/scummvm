@@ -327,7 +327,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const override {
 		return
-			(f == kSupportsRTL) ||
+			(f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
 			(f == kSupportsSavingDuringRuntime);
 	}

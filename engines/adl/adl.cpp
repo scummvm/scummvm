@@ -758,7 +758,7 @@ bool AdlEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsLoadingDuringRuntime:
 	case kSupportsSavingDuringRuntime:
-	case kSupportsRTL:
+	case kSupportsReturnToLauncher:
 		return true;
 	default:
 		return false;

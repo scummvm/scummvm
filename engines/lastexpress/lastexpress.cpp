@@ -310,7 +310,7 @@ void LastExpressEngine::setEventHandlers(EventHandler::EventFunction *mouse, Eve
 /// Misc Engine
 ///////////////////////////////////////////////////////////////////////////////////
 bool LastExpressEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL);
+	return (f == kSupportsReturnToLauncher);
 }
 
 } // End of namespace LastExpress

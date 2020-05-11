@@ -188,7 +188,7 @@ bool Prince::PrinceEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsRTL);
+		(f == kSupportsReturnToLauncher);
 }
 
 SaveStateList PrinceMetaEngine::listSaves(const char *target) const {

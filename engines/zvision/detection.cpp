@@ -102,7 +102,7 @@ bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool ZVision::ZVision::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

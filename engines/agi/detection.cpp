@@ -241,7 +241,7 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool AgiBase::hasFeature(EngineFeature f) const {
 	return
-	    (f == kSupportsRTL) ||
+	    (f == kSupportsReturnToLauncher) ||
 	    (f == kSupportsLoadingDuringRuntime) ||
 	    (f == kSupportsSavingDuringRuntime);
 }

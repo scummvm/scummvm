@@ -74,7 +74,7 @@ void UltimaEngine::GUIError(const Common::String &msg) {
 
 bool UltimaEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

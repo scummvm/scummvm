@@ -100,7 +100,7 @@ void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 }
 
 bool TestbedEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL) ? true : false;
+	return (f == kSupportsReturnToLauncher) ? true : false;
 }
 
 TestbedEngine::TestbedEngine(OSystem *syst)

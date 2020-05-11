@@ -79,7 +79,7 @@ TuckerEngine::~TuckerEngine() {
 
 bool TuckerEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
-	case kSupportsRTL:
+	case kSupportsReturnToLauncher:
 	case kSupportsLoadingDuringRuntime:
 	case kSupportsSavingDuringRuntime:
 		return true;

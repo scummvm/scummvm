@@ -84,7 +84,7 @@ bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Made::MadeEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsReturnToLauncher);
 }
 
 bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

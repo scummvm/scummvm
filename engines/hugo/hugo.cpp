@@ -185,7 +185,7 @@ Common::Error HugoEngine::loadGameState(int slot) {
 }
 
 bool HugoEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 const char *HugoEngine::getCopyrightString() const {

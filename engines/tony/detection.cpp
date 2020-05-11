@@ -102,7 +102,7 @@ bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

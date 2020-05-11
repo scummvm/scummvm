@@ -198,7 +198,7 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
 	return
-	    (f == kSupportsRTL) ||
+	    (f == kSupportsReturnToLauncher) ||
 	    (f == kSupportsLoadingDuringRuntime) ||
 	    (f == kSupportsSavingDuringRuntime) ||
 	    (f == kSupportsSubtitleOptions);

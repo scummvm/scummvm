@@ -305,7 +305,7 @@ void LilliputEngine::newInt8() {
 }
 
 bool LilliputEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 const char *LilliputEngine::getCopyrightString() const {

@@ -97,7 +97,7 @@ bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool MacVentureEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

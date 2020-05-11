@@ -161,7 +161,7 @@ void SupernovaEngine::init() {
 
 bool SupernovaEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
-	case kSupportsRTL:
+	case kSupportsReturnToLauncher:
 		return true;
 	case kSupportsLoadingDuringRuntime:
 		return true;

@@ -164,7 +164,7 @@ public:
 		 * either directly, or indirectly (that is, the engine calls and honors
 		 * the result of the Engine::shouldQuit() method appropriately).
 		 */
-		kSupportsRTL,
+		kSupportsReturnToLauncher,
 
 		/**
 		 * Loading savestates during runtime is supported, that is, this engine

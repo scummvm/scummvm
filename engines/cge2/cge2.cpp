@@ -183,7 +183,7 @@ void CGE2Engine::deinit() {
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime)
-		|| (f == kSupportsRTL);
+		|| (f == kSupportsReturnToLauncher);
 }
 
 Common::Error CGE2Engine::run() {
