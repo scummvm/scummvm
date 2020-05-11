@@ -492,14 +492,14 @@ public:
 	/**
 	 * Should we return to the launcher?
 	 */
-	virtual int shouldRTL() const = 0;
+	virtual int shouldReturnToLauncher() const = 0;
 
 	/**
-	 * Reset the "return to launcher" flag (as returned shouldRTL()) to false.
+	 * Reset the "return to launcher" flag (as returned shouldReturnToLauncher()) to false.
 	 * Used when we have returned to the launcher.
 	 */
-	virtual void resetRTL() = 0;
-#ifdef FORCE_RTL
+	virtual void resetReturnToLauncher() = 0;
+#ifdef FORCE_RETURN_TO_LAUNCHER
 	virtual void resetQuit() = 0;
 #endif
 	// Optional: check whether a given key is currently pressed ????

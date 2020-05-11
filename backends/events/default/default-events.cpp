@@ -41,7 +41,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_buttonState(0),
 	_modifierState(0),
 	_shouldQuit(false),
-	_shouldRTL(false),
+	_shouldReturnToLauncher(false),
 	_confirmExitDialogActive(false) {
 
 	assert(boss);
@@ -149,7 +149,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		if (_shouldQuit)
 			event.type = Common::EVENT_QUIT;
-		else if (_shouldRTL)
+		else if (_shouldReturnToLauncher)
 			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		break;
 #ifdef ENABLE_VKEYBD
@@ -174,9 +174,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (g_engine)
 				pt = g_engine->pauseEngine();
 			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
-			forwardEvent = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
+			forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
 		} else
-			_shouldRTL = true;
+			_shouldReturnToLauncher = true;
 		break;
 
 	case Common::EVENT_MUTE:

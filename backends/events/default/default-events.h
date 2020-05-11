@@ -56,7 +56,7 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	int _buttonState;
 	int _modifierState;
 	bool _shouldQuit;
-	bool _shouldRTL;
+	bool _shouldReturnToLauncher;
 	bool _confirmExitDialogActive;
 
 public:
@@ -72,9 +72,9 @@ public:
 	virtual int getButtonState() const override { return _buttonState; }
 	virtual int getModifierState() const override { return _modifierState; }
 	virtual int shouldQuit() const override { return _shouldQuit; }
-	virtual int shouldRTL() const override { return _shouldRTL; }
-	virtual void resetRTL() override { _shouldRTL = false; }
-#ifdef FORCE_RTL
+	virtual int shouldReturnToLauncher() const override { return _shouldReturnToLauncher; }
+	virtual void resetReturnToLauncher() override { _shouldReturnToLauncher = false; }
+#ifdef FORCE_RETURN_TO_LAUNCHER
 	virtual void resetQuit() override { _shouldQuit = false; }
 #endif
 

@@ -806,7 +806,7 @@ void Engine::quitGame() {
 
 bool Engine::shouldQuit() {
 	Common::EventManager *eventMan = g_system->getEventManager();
-	return (eventMan->shouldQuit() || eventMan->shouldRTL());
+	return (eventMan->shouldQuit() || eventMan->shouldReturnToLauncher());
 }
 
 GUI::Debugger *Engine::getOrCreateDebugger() {
