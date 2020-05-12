@@ -2275,6 +2275,7 @@ if test "$have_gcc" = yes ; then
 	else
 		append_var CXXFLAGS "-Wconversion"
 	fi;
+	append_var CXXFLAGS "-fno-operator-names"
 elif test "$have_icc" = yes ; then
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
