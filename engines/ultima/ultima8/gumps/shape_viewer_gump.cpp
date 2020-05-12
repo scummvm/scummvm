@@ -124,15 +124,15 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	
 	{
 		// Dump the pixel val under the mouse cursor:
-		int mx = 0;
-		int my = 0;
+		int32 mx = 0;
+		int32 my = 0;
 		char buf2[200];
 
 		Mouse::get_instance()->getMouseCoords(mx, my);
 		ScreenSpaceToGump(mx, my);
 		
-		int relx = mx - (posx - _shapeX);
-		int rely = my - (posy - _shapeY);
+		int32 relx = mx - (posx - _shapeX);
+		int32 rely = my - (posy - _shapeY);
 		if (shape_ && relx >= 0 && rely >= 0 && relx < _shapeW && rely < _shapeH) {
 			// get color
 			relx -= _shapeX;
