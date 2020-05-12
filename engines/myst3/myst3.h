@@ -91,7 +91,6 @@ protected:
 	// Engine APIs
 	virtual Common::Error run() override;
 	virtual void syncSoundSettings() override;
-	virtual GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
 	virtual void pauseEngineIntern(bool pause) override;
 
 public:
@@ -194,7 +193,6 @@ public:
 
 private:
 	OSystem *_system;
-	Console *_console;
 	const Myst3GameDescription *_gameDescription;
 
 	Node *_node;

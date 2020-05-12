@@ -64,7 +64,7 @@ namespace Myst3 {
 
 Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		Engine(syst), _system(syst), _gameDescription(version),
-		_db(0), _console(0), _scriptEngine(0),
+		_db(0), _scriptEngine(0),
 		_state(0), _node(0), _scene(0), _archiveNode(0),
 		_cursor(0), _inventory(0), _gfx(0), _menu(0),
 		_rnd(0), _sound(0), _ambient(0),
@@ -122,7 +122,6 @@ Myst3Engine::~Myst3Engine() {
 	delete _archiveNode;
 	delete _db;
 	delete _scriptEngine;
-	delete _console;
 	delete _state;
 	delete _rnd;
 	delete _sound;
@@ -159,7 +158,7 @@ Common::Error Myst3Engine::run() {
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_scriptEngine = new Script(this);
 	_db = new Database(getPlatform(), getGameLanguage(), getGameLocalizationType());
 	_state = new GameState(getPlatform(), _db);
@@ -508,12 +507,6 @@ void Myst3Engine::processInput(bool interactive) {
 				if (_cursor->isVisible() && interactive) {
 					if (_state->getLocationRoom() != kRoomMenu)
 						_menu->goToNode(kNodeMenuMain);
-				}
-				break;
-			case Common::KEYCODE_d:
-				if (event.kbd.flags & Common::KBD_CTRL) {
-					_console->attach();
-					_console->onFrame();
 				}
 				break;
 			case Common::KEYCODE_i:
