@@ -641,9 +641,9 @@ bool EventRecorder::switchMode() {
 		saveName = Common::String::format("Save %d", emptySlot + 1);
 		Common::Error status = g_engine->saveGameState(emptySlot, saveName);
 		if (status.getCode() == Common::kNoError) {
-			Common::Event eventRTL;
-			eventRTL.type = Common::EVENT_RETURN_TO_LAUNCHER;
-			g_system->getEventManager()->pushEvent(eventRTL);
+			Common::Event eventReturnToLauncher;
+			eventReturnToLauncher.type = Common::EVENT_RETURN_TO_LAUNCHER;
+			g_system->getEventManager()->pushEvent(eventReturnToLauncher);
 		}
 	}
 	ConfMan.set("record_mode", "", Common::ConfigManager::kTransientDomain);
