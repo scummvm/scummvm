@@ -91,7 +91,7 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 		while (!cmdBitStream.eos()) {
 			uint32 idx = cmdBitStream.getBits(4);
 			uint32 blocksize = BASE_LEN[idx];
-			if (idx != 0 and idx != 8) {
+			if (idx != 0 && idx != 8) {
 			   blocksize += cmdBitStream.getBits(FINE_LEN_BITS[idx]);
 			}
 			if (skipping) {
