@@ -420,6 +420,8 @@ Common::String preprocessPlay(Common::String in) {
 
 		if (next.equalsIgnoreCase("done")) {
 			res += " #"; // Turn it into SYMBOL
+		} else {
+			res += ' ';
 		}
 
 		res += next;
