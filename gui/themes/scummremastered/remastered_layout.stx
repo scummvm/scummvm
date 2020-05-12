@@ -262,7 +262,7 @@
 			</layout>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'GlobalOptions_Control' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'grOnScreenCheckbox'
@@ -1212,7 +1212,7 @@
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '10'/>
-			<widget name = 'RTL'
+			<widget name = 'ReturnToLauncher'
 					width = '150'
 					height = 'Globals.Button.Height'
 			/>
