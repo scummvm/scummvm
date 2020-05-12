@@ -528,14 +528,14 @@ void LC::cb_v4theentitypush() {
 				Datum id;
 				id.u.i = 0;
 				id.type = VOID;
-				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(0x%02x, NULL, 0x%02x)", entity, field);
+				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, VOID, %s)", g_lingo->entity2str(entity), g_lingo->field2str(field));
 				result = g_lingo->getTheEntity(entity, id, field);
 			}
 			break;
 		case kTEAItemId:
 			{
 				Datum id = g_lingo->pop();
-				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(0x%02x, id, 0x%02x)", entity, field);
+				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
 				result = g_lingo->getTheEntity(entity, id, field);
 			}
 			break;
@@ -587,7 +587,7 @@ void LC::cb_v4theentitynamepush() {
 	TheEntity *entity = g_lingo->_theEntities[name];
 
 	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: %s", name.c_str());
-	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(0x%02x, id, kTheNOField)", entity->entity);
+	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(%s, VOID, kTheNOField)", g_lingo->entity2str(entity->entity));
 	Datum result = g_lingo->getTheEntity(entity->entity, id, kTheNOField);
 
 	g_lingo->push(result);
@@ -626,14 +626,14 @@ void LC::cb_v4theentityassign() {
 			Datum id;
 			id.u.s = NULL;
 			id.type = VOID;
-			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, NULL, 0x%02x, value)", entity, field);
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, VOID, %s, %s)", g_lingo->entity2str(entity), g_lingo->field2str(field), value.asString(true).c_str());
 			g_lingo->setTheEntity(entity, id, field, value);
 		}
 		break;
 	case kTEAItemId:
 		{
 			Datum id = g_lingo->pop();
-			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, id, 0x%02x, value)", entity, field);
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, %s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field), value.asString(true).c_str());
 			g_lingo->setTheEntity(entity, id, field, value);
 		}
 		break;
