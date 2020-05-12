@@ -204,6 +204,12 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 }
 
 void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+	int len = strlen(str);
+	char rev[384] = {0};
+	for (int i = 0; i < len; i++) {
+		rev[i] = str[len - i - 1];
+	}
+	str = rev;
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
