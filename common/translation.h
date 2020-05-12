@@ -181,7 +181,6 @@ public:
 	 * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
 	 */
 	String convertBiDiString(const String &input);
-	String convertBiDiString(const String &input, const Common::Language lang);
 
 private:
 	/**

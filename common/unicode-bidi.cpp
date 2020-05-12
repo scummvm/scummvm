@@ -95,6 +95,13 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 
 }
 
+String convertBiDiString(const String &input, const Common::Language lang) {
+	if (lang != Common::HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+		return input;
+
+	return Common::convertBiDiString(input, kWindows1255);
+}
+
 String convertBiDiString(const String &input, const Common::CodePage page) {
 	return convertBiDiU32String(input.decode(page)).visual.encode(page);
 }
