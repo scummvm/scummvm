@@ -45,7 +45,6 @@ class ObjectState;
 class Set;
 class TextObject;
 class PrimitiveObject;
-class Debugger;
 class LuaBase;
 class GfxBase;
 
@@ -66,7 +65,6 @@ class GrimEngine : public Engine {
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;
-	virtual GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_debugger; }
 
 public:
 	enum EngineMode {
@@ -257,7 +255,6 @@ protected:
 	GrimGameType _gameType;
 	Common::Platform _gamePlatform;
 	Common::Language _gameLanguage;
-	Debugger *_debugger;
 	uint32 _pauseStartTime;
 };
 

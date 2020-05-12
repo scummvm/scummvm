@@ -295,11 +295,6 @@ void GrimEngine::handleControls(Common::EventType operation, const Common::KeySt
 		return;
 	}
 
-	if (key.hasFlags(Common::KBD_CTRL) && key.keycode == Common::KEYCODE_d && operation == Common::EVENT_KEYDOWN) {
-		_debugger->attach();
-		clearEventQueue();
-		return;
-	}
 	// If we're not supposed to handle the key then don't
 	if (!_controlsEnabled[key.keycode])
 		return;

@@ -87,7 +87,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0) {
 	g_grim = this;
 
-	_debugger = new Debugger();
+	setDebugger(new Debugger());
 	_gameType = gameType;
 	_gameFlags = gameFlags;
 	_gamePlatform = platform;
@@ -208,7 +208,6 @@ GrimEngine::~GrimEngine() {
 	delete g_driver;
 	g_driver = nullptr;
 	delete _iris;
-	delete _debugger;
 
 	ConfMan.flushToDisk();
 	DebugMan.clearAllDebugChannels();
@@ -818,8 +817,6 @@ void GrimEngine::mainLoop() {
 		if (g_imuse) {
 			g_imuse->refreshScripts();
 		}
-
-		_debugger->onFrame();
 
 		// Process events
 		Common::Event event;
