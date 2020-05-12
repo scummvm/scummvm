@@ -521,32 +521,28 @@ void XMLNode::freeDoc() {
 }
 
 void XMLNode::trim(Common::String &s) {
-	// Flag whether there's whitespaces at start and/or end
-	bool hasPrefixSpaces = !s.empty() && Common::isSpace(s[0]);
-	bool hasSuffixSpaces = !s.empty() && Common::isSpace(s.lastChar());
+	// Convert any CRLF to just LF
+	size_t pos;
+	while ((pos = s.find("\r\n")) != Common::String::npos)
+		s.deleteChar(pos);
 
-	// Remove the spaces
-	while (!s.empty() && Common::isSpace(s[0]))
-		s.deleteChar(0);
-	while (!s.empty() && Common::isSpace(s.lastChar()))
-		s.deleteLastChar();
+	// Then check if the string is entirely whitespace
+	bool hasContent = false;
+	for (uint idx = 0; idx < s.size() && !hasContent; ++idx)
+		hasContent = !Common::isSpace(s[idx]);
 
-	// Scan for any newlines, and if found, remove any whitespaces after them.
-	// This will properly handle indented XML
-	uint index = 0;
-	while ((index = s.findFirstOf('\n', index + 1)) != Common::String::npos) {
-		while (index < (s.size() - 1) && s[index + 1] != '\r' && s[index + 1] != '\n'
-			&& Common::isSpace(s[index + 1]))
-			s.deleteChar(index + 1);
-		if (index > 0 && s[index - 1] == '\r')
-			s.deleteChar(--index);
+	if (!hasContent) {
+		s = "";
+		return;
 	}
 
-	if (!s.empty()) {
-		if (hasPrefixSpaces)
-			s = " " + s;
-		if (hasSuffixSpaces)
-			s += " ";
+	// Remove any spaces from the very start of the string and following
+	// any linefeeds. This handles any indented text within the xml
+	for (size_t startPos = 0; startPos != Common::String::npos;
+			startPos = s.findFirstOf('\n', startPos + 1)) {
+		pos = (startPos == 0) ? 0 : startPos + 1;
+		while (pos < s.size() && s[pos] == ' ')
+			s.deleteChar(pos);
 	}
 }
 
