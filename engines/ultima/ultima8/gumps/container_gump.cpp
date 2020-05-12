@@ -234,7 +234,7 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 		topitem = p;
 	}
 
-	Gump *gump = GetRootGump()->FindGump(GameMapGump::ClassType);
+	Gump *gump = GetRootGump()->FindGump<GameMapGump>();
 	assert(gump);
 	gump->GetLocationOfItem(topitem->getObjId(), gx, gy, lerp_factor);
 

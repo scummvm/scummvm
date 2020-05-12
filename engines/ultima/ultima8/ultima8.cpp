@@ -945,7 +945,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 		// Can't save when a modal gump is open, or avatar in statsis  during cutscenes
 		return false;
 
-	if (_kernel->getRunningProcess() && _kernel->getRunningProcess()->IsOfType(StartU8Process::ClassType))
+	if (_kernel->getRunningProcess() && _kernel->getRunningProcess()->IsOfType<StartU8Process>())
 		// Don't save while starting up.
 		return false;
 

@@ -132,7 +132,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	int32 gx, gy;
 
 	if (!gump) {
-		gump = GetRootGump()->FindGump(GameMapGump::ClassType);
+		gump = GetRootGump()->FindGump<GameMapGump>();
 
 		if (!gump) {
 			perr << "ItemRelativeGump::GetItemLocation(): "

@@ -1447,7 +1447,7 @@ bool Debugger::cmdShowMenu(int argc, const char **argv) {
 bool Debugger::cmdToggleFastArea(int argc, const char **argv) {
 	Ultima8Engine *app = Ultima8Engine::get_instance();
 	Gump *desktop = app->getDesktopGump();
-	Gump *favg = desktop->FindGump(FastAreaVisGump::ClassType);
+	Gump *favg = desktop->FindGump<FastAreaVisGump>();
 
 	if (!favg) {
 		favg = new FastAreaVisGump;
@@ -1502,7 +1502,7 @@ bool Debugger::cmdPlayMusic(int argc, const char **argv) {
 bool Debugger::cmdToggleMinimap(int argc, const char **argv) {
 	Ultima8Engine *app = Ultima8Engine::get_instance();
 	Gump *desktop = app->getDesktopGump();
-	Gump *mmg = desktop->FindGump(MiniMapGump::ClassType);
+	Gump *mmg = desktop->FindGump<MiniMapGump>();
 
 	if (!mmg) {
 		mmg = new MiniMapGump(4, 4);
