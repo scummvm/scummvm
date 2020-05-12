@@ -325,6 +325,10 @@ const char *Lingo::field2str(int id) {
 }
 
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
+	if (debugChannelSet(3, kDebugLingoExec)) {
+		debugC(3, kDebugLingoExec, "Lingo::getTheEntity(%s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field));
+	}
+
 	Datum d;
 
 	switch (entity) {
@@ -480,7 +484,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 
 void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
-		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(\"%s\", %s, \"%s\", %s)", field2str(field), id.asString(true).c_str(), entity2str(entity), d.asString(true).c_str());
+		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
 	}
 
 	switch (entity) {
