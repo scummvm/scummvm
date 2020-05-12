@@ -245,7 +245,7 @@
 			</layout>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'GlobalOptions_Control' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'grOnScreenCheckbox'
@@ -1209,7 +1209,7 @@
 						width = '120'
 						height = '12'
 				/>
-				<widget name = 'RTL'
+				<widget name = 'ReturnToLauncher'
 						width = '120'
 						height = '12'
 				/>
@@ -1831,7 +1831,7 @@
 
 	<dialog name = 'DropdownDialog' overlays = 'screen_center' shading = 'luminance'>
 	</dialog>
-		
+
 	<dialog name = 'UnknownGameDialog' overlays = 'screen' inset = '8' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 0'>
 			<widget name = 'TextContainer'

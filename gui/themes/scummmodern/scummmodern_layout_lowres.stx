@@ -1208,7 +1208,7 @@
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
-			<widget name = 'RTL'
+			<widget name = 'ReturnToLauncher'
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
