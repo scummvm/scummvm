@@ -61,7 +61,6 @@ namespace Stark {
 StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
 		_frameLimiter(nullptr),
-		_console(nullptr),
 		_gameDescription(gameDesc),
 		_lastClickTime(0) {
 	// Add the available debug channels
@@ -95,12 +94,11 @@ StarkEngine::~StarkEngine() {
 
 	StarkServices::destroy();
 
-	delete _console;
 	delete _frameLimiter;
 }
 
 Common::Error StarkEngine::run() {
-	_console = new Console();
+	setDebugger(new Console());
 	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 
 	// Get the screen prepared
@@ -199,10 +197,7 @@ void StarkEngine::processEvents() {
 				continue;
 			}
 
-			if (e.kbd.keycode == Common::KEYCODE_d && (e.kbd.hasFlags(Common::KBD_CTRL))) {
-				_console->attach();
-				_console->onFrame();
-			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN || e.kbd.keycode == Common::KEYCODE_KP_ENTER)
+			if ((e.kbd.keycode == Common::KEYCODE_RETURN || e.kbd.keycode == Common::KEYCODE_KP_ENTER)
 						&& e.kbd.hasFlags(Common::KBD_ALT)) {
 					StarkGfx->toggleFullscreen();
 			} else if (e.kbd.keycode == Common::KEYCODE_p) {

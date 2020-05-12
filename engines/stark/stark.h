@@ -73,7 +73,6 @@ public:
 protected:
 	// Engine APIs
 	Common::Error run() override;
-	GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
@@ -90,7 +89,6 @@ private:
 	static void checkRecommendedDatafiles();
 
 	Gfx::FrameLimiter *_frameLimiter;
-	Console *_console;
 
 	const ADGameDescription *_gameDescription;
 
