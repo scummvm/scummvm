@@ -354,6 +354,10 @@ bool DebuggerActions::talkAt(const Coords &coords) {
 	conv._playerInput.clear();
 	talkRunConversation(conv, talker, false);
 
+	// Ensure the end of the conversation ends the line
+	if (g_context->_col != 0)
+		g_screen->screenMessage("\n");
+
 	return true;
 }
 
