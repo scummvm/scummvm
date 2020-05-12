@@ -676,7 +676,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheCastNum:
 		if (_vm->getCastMember(d.asInt())) {
-			score->loadCastInto(sprite, d.asInt());
+			sprite->_cast = _vm->getCastMember(d.asInt());
 			sprite->_castId = d.asInt();
 		}
 		break;

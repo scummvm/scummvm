@@ -981,10 +981,6 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		warning("Score::loadCastData(): size3: %x", size3);
 }
 
-void Score::loadCastInto(Sprite *sprite, int castId) {
-	sprite->_cast = _loadedCast->getVal(castId);
-}
-
 Common::Rect Score::getCastMemberInitialRect(int castId) {
 	Cast *cast = _loadedCast->getVal(castId);
 

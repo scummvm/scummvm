@@ -94,7 +94,6 @@ public:
 	void copyCastStxts();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
 
-	void loadCastInto(Sprite *sprite, int castId);
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
 
