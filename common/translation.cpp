@@ -460,15 +460,9 @@ String TranslationManager::convertBiDiString(const String &input) {
 		return input;
 	};
 
-	return TranslationManager::convertBiDiString(input, HE_ISR);
+	return Common::convertBiDiString(input, HE_ISR);
 }
 
-String TranslationManager::convertBiDiString(const String &input, const Common::Language lang) {
-	if (lang != HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
-		return input;
-
-	return Common::convertBiDiString(input, kWindows1255);
-}
 
 } // End of namespace Common
 

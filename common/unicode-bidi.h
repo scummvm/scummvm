@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "common/ustr.h"
+#include "common/language.h"
 
 namespace Common {
 
@@ -48,6 +49,7 @@ public:
 
 /* just call the constructor for convenience */
 UnicodeBiDiText convertBiDiU32String(const U32String &input);
+String convertBiDiString(const String &input, const Common::Language lang);
 String convertBiDiString(const String &input, const Common::CodePage page);
 
 } // End of namespace Common
