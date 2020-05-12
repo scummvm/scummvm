@@ -137,9 +137,9 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	case kLauncherCmd: {
-		Common::Event eventRTL;
-		eventRTL.type = Common::EVENT_RETURN_TO_LAUNCHER;
-		g_system->getEventManager()->pushEvent(eventRTL);
+		Common::Event eventReturnToLauncher;
+		eventReturnToLauncher.type = Common::EVENT_RETURN_TO_LAUNCHER;
+		g_system->getEventManager()->pushEvent(eventReturnToLauncher);
 		close();
 		}
 		break;
