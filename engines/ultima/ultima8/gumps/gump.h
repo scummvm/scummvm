@@ -108,23 +108,20 @@ public:
 	//! \param takefocus If true, set parent's _focusChild to this
 	virtual void                InitGump(Gump *newparent, bool take_focus = true);
 
-	//! Find a gump of the specified type (this or child)
-	//! \param t Type of gump to look for
+	typedef bool (Gump::*FindPredicate)() const;
+
+	//! Find a gump of that matches a predicate function (this or child)
+	//! \param predicate Function to check if a gump is a match
 	//! \param recursive Recursively search through children?
-	//! \param no_inheritance Exactly this type, or is a subclass also allowed?
 	//! \return the desired Gump, or NULL if not found
-	virtual Gump               *FindGump(const RunTimeClassType &t,
-	                                     bool recursive = true,
-	                                     bool no_inheritance = false);
+	virtual Gump               *FindGump(FindPredicate predicate, bool recursive = true);
 
 	//! Find a gump of the specified type (this or child)
 	//! \param T Type of gump to look for
 	//! \param recursive Recursively search through children?
-	//! \param no_inheritance Exactly this type, or is a subclass also allowed?
 	//! \return the desired Gump, or NULL if not found
-	template<class T> Gump     *FindGump(bool recursive = true,
-	                                     bool no_inheritance = false) {
-		return FindGump(T::ClassType, recursive, no_inheritance);
+	template<class T> Gump     *FindGump(bool recursive = true) {
+		return FindGump(&Gump::IsOfType<T>, recursive);
 	}
 
 	//! Find gump (this, child or NULL) at parent coordinates (mx,my)
