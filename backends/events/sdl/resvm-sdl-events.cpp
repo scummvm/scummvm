@@ -70,7 +70,7 @@ bool ResVmSdlEventSource::pollEvent(Common::Event &event) {
 	bool state = SdlEventSource::pollEvent(event);
 
 	// Handle mouse control via analog joystick and keyboard
-	if (state && handleKbdMouse(event)) {
+	if (!state && handleKbdMouse(event)) {
 		return true;
 	}
 
@@ -110,12 +110,9 @@ bool ResVmSdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &even
 			event.type = Common::EVENT_RBUTTONDOWN;
 			return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 		}
-		return SdlEventSource::handleJoyButtonDown(ev, event);
-	} else {
-		event.type = Common::EVENT_JOYBUTTON_DOWN;
-		event.joystick.button = ev.jbutton.button;
-		return true;
 	}
+
+	return SdlEventSource::handleJoyButtonDown(ev, event);
 }
 
 bool ResVmSdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
@@ -127,12 +124,9 @@ bool ResVmSdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event)
 			event.type = Common::EVENT_RBUTTONUP;
 			return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 		}
-		return SdlEventSource::handleJoyButtonUp(ev, event);
-	} else {
-		event.type = Common::EVENT_JOYBUTTON_UP;
-		event.joystick.button = ev.jbutton.button;
-		return true;
 	}
+
+	return SdlEventSource::handleJoyButtonUp(ev, event);
 }
 
 bool ResVmSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
@@ -144,13 +138,9 @@ bool ResVmSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &even
 			_km.joy_y = ev.jaxis.value;
 			return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
 		}
-		return SdlEventSource::handleJoyAxisMotion(ev, event);
-	} else {
-		event.type = Common::EVENT_JOYAXIS_MOTION;
-		event.joystick.axis = ev.jaxis.axis;
-		event.joystick.position = ev.jaxis.value;
-		return true;
 	}
+
+	return SdlEventSource::handleJoyAxisMotion(ev, event);
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
