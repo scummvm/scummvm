@@ -545,15 +545,15 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 
 	int alignedType = g_lingo->getAlignedType(d1, d2);
 
-	Datum result;
+	Datum res;
 	if (alignedType == FLOAT) {
-		result = Datum(d1.asFloat() + d2.asFloat());
+		res = Datum(d1.asFloat() + d2.asFloat());
 	} else if (alignedType == INT) {
-		result = Datum(d1.asInt() + d2.asInt());
+		res = Datum(d1.asInt() + d2.asInt());
 	} else {
 		warning("LC::addData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
-	return result;
+	return res;
 }
 
 void LC::c_add() {
@@ -569,15 +569,15 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 
 	int alignedType = g_lingo->getAlignedType(d1, d2);
 
-	Datum result;
+	Datum res;
 	if (alignedType == FLOAT) {
-		result = Datum(d1.asFloat() - d2.asFloat());
+		res = Datum(d1.asFloat() - d2.asFloat());
 	} else if (alignedType == INT) {
-		result = Datum(d1.asInt() - d2.asInt());
+		res = Datum(d1.asInt() - d2.asInt());
 	} else {
 		warning("LC::subData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
-	return result;
+	return res;
 }
 
 void LC::c_sub() {
@@ -593,15 +593,15 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 
 	int alignedType = g_lingo->getAlignedType(d1, d2);
 
-	Datum result;
+	Datum res;
 	if (alignedType == FLOAT) {
-		result = Datum(d1.asFloat() * d2.asFloat());
+		res = Datum(d1.asFloat() * d2.asFloat());
 	} else if (alignedType == INT) {
-		result = Datum(d1.asInt() * d2.asInt());
+		res = Datum(d1.asInt() * d2.asInt());
 	} else {
 		warning("LC::mulData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
-	return result;
+	return res;
 }
 
 void LC::c_mul() {
@@ -621,16 +621,16 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 
 	int alignedType = g_lingo->getAlignedType(d1, d2);
 
-	Datum result;
+	Datum res;
 	if (alignedType == FLOAT) {
-		result = Datum(d1.asFloat() / d2.asFloat());
+		res = Datum(d1.asFloat() / d2.asFloat());
 	} else if (alignedType == INT) {
-		result = Datum(d1.asInt() / d2.asInt());
+		res = Datum(d1.asInt() / d2.asInt());
 	} else {
 		warning("LC::divData: not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 
-	return d1;
+	return res;
 }
 
 void LC::c_div() {
@@ -680,7 +680,7 @@ Datum LC::negateData(Datum &d) {
 		warning("LC::negateData: not supported for type %s", res.type2str());
 	}
 
-	return d;
+	return res;
 }
 
 void LC::c_negate() {
