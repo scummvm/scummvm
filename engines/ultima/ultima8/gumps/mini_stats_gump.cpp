@@ -128,9 +128,7 @@ void MiniStatsGump::saveData(Common::WriteStream *ws) {
 }
 
 bool MiniStatsGump::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Gump::loadData(rs, version)) return false;
-
-	return true;
+	return Gump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8

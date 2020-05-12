@@ -618,7 +618,6 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 }
 
 void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
-	Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
 
 	// running jump
@@ -638,6 +637,7 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 	SettingManager::get_instance()->get("targetedjump", targeting);
 
 	if (targeting) {
+		Mouse *mouse = Mouse::get_instance();
 		int32 coords[3];
 		int32 mx, my;
 		mouse->getMouseCoords(mx, my);
