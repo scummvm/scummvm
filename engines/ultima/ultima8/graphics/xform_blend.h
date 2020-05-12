@@ -40,6 +40,7 @@ namespace Ultima8 {
 #endif
 
 extern const uint8 U8XFormPal[1024];
+extern const uint8 CruXFormPal[1024];
 
 inline uint32 P_FASTCALL BlendPreModulated(uint32 src, uint32 dst) {
 	uint32 r, g, b;
