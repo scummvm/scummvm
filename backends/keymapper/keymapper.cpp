@@ -234,6 +234,12 @@ bool Keymapper::mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Ev
 }
 
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
+	// ResidualVM specific START
+	if (ev.type == EVENT_JOYAXIS_MOTION) {
+		return kIncomingEventIgnored;
+	}
+	// ResidualVM specific END
+
 	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE
 	           || ev.type == EVENT_WHEELDOWN
 	           || ev.type == EVENT_WHEELUP) {
