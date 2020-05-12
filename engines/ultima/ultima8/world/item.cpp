@@ -1057,17 +1057,12 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	if (!offset) return 0; // event not found
 
 	/*if (GAME_IS_CRUSADER && event != 1) {
-		if (event != 15 ||
-			(_shape != 1098 && _shape != 1227 && _shape != 1297 && _shape != 1298 && _shape != 1274
-			 && _shape != 1275 && _shape != 1301 && _shape != 1302
-			 && _shape != 1290 && _shape != 809 && _shape != 73 && _shape != 447 && _shape != 470 && _shape != 336 && _shape != 33  && _shape != 1143  && _shape != 94  && _shape != 189 && _shape != 440 && _shape != 139 && _shape != 140 && _shape != 475  && _shape != 392  && _shape != 147  && _shape != 136)) { // run sounds for a few objects..
-			debug(6, "Cusader: not running event %d for item %d shape %d",
+		debug(6, "Crusader: not running event %d for item %d shape %d",
 					event, _objId, _shape);
-			return 0;
-		}
+		return 0;
 	}*/
 
-	debug(6, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X\n",
+	debug(6, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X",
 			_objId, _shape, event, class_id, offset);
 
 	return callUsecode(static_cast<uint16>(class_id),
@@ -2244,21 +2239,21 @@ uint32 Item::I_ask(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(itemptr); // need to store the item id at *itemptr
-	ARG_UINT16(_shape);
-	ARG_UINT16(_frame);
+	ARG_UINT16(shape);
+	ARG_UINT16(frame);
 	ARG_WORLDPOINT(point);
 
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	bool valid = cm->isValidPosition(point.getX(), point.getY(), point.getZ(),
-	                                 _shape, 0, 0, 0);
+	                                 shape, 0, 0, 0);
 	if (!valid)
 		return 0;
 
-	Item *newitem = ItemFactory::createItem(_shape, _frame, 0, 0, 0, 0, 0, true);
+	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_legalCreateAtPoint failed to create item (" << _shape
-		     << "," << _frame << ")." << Std::endl;
+		perr << "I_legalCreateAtPoint failed to create item (" << shape
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
@@ -2274,27 +2269,27 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(itemptr); // need to store the item id at *itemptr
-	ARG_UINT16(_shape);
-	ARG_UINT16(_frame);
-	ARG_UINT16(_x);
-	ARG_UINT16(_y);
-	ARG_UINT16(_z);
+	ARG_UINT16(shape);
+	ARG_UINT16(frame);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
+	ARG_UINT16(z);
 
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(_x, _y, _z, _shape, 0, 0, 0);
+	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 	if (!valid)
 		return 0;
 
 	// if yes, create it
-	Item *newitem = ItemFactory::createItem(_shape, _frame, 0, 0, 0, 0, 0, true);
+	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_legalCreateAtCoords failed to create item (" << _shape
-		     << "," << _frame << ")." << Std::endl;
+		perr << "I_legalCreateAtCoords failed to create item (" << shape
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
-	newitem->move(_x, _y, _z);
+	newitem->move(x, y, z);
 
 	uint8 buf[2];
 	buf[0] = static_cast<uint8>(objID);
@@ -2306,8 +2301,8 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 
 uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(itemptr); // need to store the item id at *itemptr
-	ARG_UINT16(_shape);
-	ARG_UINT16(_frame);
+	ARG_UINT16(shape);
+	ARG_UINT16(frame);
 	ARG_CONTAINER_FROM_ID(container);
 	ARG_UINT16(unknown); // ?
 
@@ -2319,10 +2314,10 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 	// Create an item and try to add it to the given container.
 	// If it fits, return id; otherwise return 0.
 
-	Item *newitem = ItemFactory::createItem(_shape, _frame, 0, 0, 0, 0, 0, true);
+	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_legalCreateInCont failed to create item (" << _shape
-		     << "," << _frame << ")." << Std::endl;
+		perr << "I_legalCreateInCont failed to create item (" << shape
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 
@@ -2417,10 +2412,10 @@ uint32 Item::I_isOn(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 uint32 Item::I_getFamilyOfType(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_UINT16(_shape);
+	ARG_UINT16(shape);
 
 	return GameData::get_instance()->getMainShapes()->
-	       getShapeInfo(_shape)->_family;
+	       getShapeInfo(shape)->_family;
 }
 
 uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
@@ -2434,13 +2429,13 @@ uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_create(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(itemptr); // need to store the item id at *itemptr (????)
-	ARG_UINT16(_shape);
-	ARG_UINT16(_frame);
+	ARG_UINT16(shape);
+	ARG_UINT16(frame);
 
-	Item *newitem = ItemFactory::createItem(_shape, _frame, 0, 0, 0, 0, 0, true);
+	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
-		perr << "I_create failed to create item (" << _shape
-		     << "," << _frame << ")." << Std::endl;
+		perr << "I_create failed to create item (" << shape
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
@@ -2572,15 +2567,15 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	ARG_UINT16(_x);
-	ARG_UINT16(_y);
-	ARG_UINT16(_z);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
+	ARG_UINT16(z);
 	if (!item) return 0;
 
 	//! What should this do to ethereal items?
 
-	item->move(_x, _y, _z);
-	//item->collideMove(_x, _y, _z, true, true);
+	item->move(x, y, z);
+	//item->collideMove(x, y, z, true, true);
 	return 0;
 }
 

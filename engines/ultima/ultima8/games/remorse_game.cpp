@@ -27,6 +27,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -58,11 +59,11 @@ RemorseGame::~RemorseGame() {
 static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
 	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile(path);
 	if (!pf) {
-		perr << "Unable to load static/gamepal.pal." << Std::endl;
+		perr << "Unable to load static/*.pal." << Std::endl;
 		return false;
 	}
 
-	Common::MemoryReadStream xfds(U8XFormPal, 1024);
+	Common::MemoryReadStream xfds(CruXFormPal, 1024);
 	PaletteManager::get_instance()->load(index, *pf, xfds);
 	delete pf;
 
@@ -72,6 +73,8 @@ static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
 bool RemorseGame::loadFiles() {
 	// Load palette
 	pout << "Load Palettes" << Std::endl;
+	
+	
 
 	if (!loadPalette("@game/static/gamepal.pal", PaletteManager::Pal_Game))
 		return false;
@@ -120,6 +123,9 @@ bool RemorseGame::startGame() {
 	}
 
 	World::get_instance()->switchMap(1);
+	
+	Gump *statusGump = new CruStatusGump();
+	statusGump->InitGump(nullptr);
 
 	//Ultima8Engine::get_instance()->setAvatarInStasis(true);
 	Ultima8Engine::get_instance()->setCheatMode(true);
