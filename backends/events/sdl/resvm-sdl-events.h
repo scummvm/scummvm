@@ -50,7 +50,7 @@ protected:
 	KbdMouse _km;
 
 	bool pollEvent(Common::Event &event) override;
-	void updateKbdMouse() override;
+	void updateKbdMouse();
 
 	bool handleMouseMotion(SDL_Event &ev, Common::Event &event) override;
 	bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event) override;
@@ -59,7 +59,7 @@ protected:
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) override;
-	bool handleKbdMouse(Common::Event &event) override;
+	bool handleKbdMouse(Common::Event &event);
 
 	bool processMouseEvent(Common::Event &event, int x, int y, int relx = 0, int rely = 0) override;
 
