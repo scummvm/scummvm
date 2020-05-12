@@ -27,6 +27,7 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
@@ -97,7 +98,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	Shape *shape_ = _flex->getShape(_curShape);
 	if (shape_ && _curFrame < shape_->frameCount())
 		surf->Paint(shape_, _curFrame, posx, posy);
-
+	
 	RenderedText *rendtext;
 	Font *font = FontManager::get_instance()->getGameFont(_fontNo, true);
 	if (!font)
@@ -105,39 +106,77 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 
 	unsigned int remaining;
 
-	char buf1[50];
-	char buf2[200];
-	if (!shape_) {
-		sprintf(buf1, "NULL");
-	} else {
-		sprintf(buf1, "Frame %d of %d", _curFrame+1, shape_->frameCount());
-	}
-	sprintf(buf2, "%s:  Shape %d, %s", _flexes[_curFlex].first.c_str(),
-	        _curShape, buf1);
-	rendtext = font->renderText(buf2, remaining);
-	rendtext->draw(surf, 20, 10);
-	delete rendtext;
-
-	MainShapeArchive *mainshapes = p_dynamic_cast<MainShapeArchive *>(_flex);
-	if (!mainshapes || !shape_) return;
-
-	char buf3[128];
-	char buf4[128];
-	char buf5[128];
-	char buf6[512];
-	ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
-	if (info) {
-		sprintf(buf3, "x: %d, y: %d, z: %d\n flags: 0x%04X, family: %d",
-		        info->_x, info->_y, info->_z, info->_flags, info->_family);
-		sprintf(buf4, "equip type: %d, unk. flags: 0x%02X\n weight: %d",
-		        info->_equipType, info->_unknown, info->_weight);
-		sprintf(buf5, "vol: %d\n animtype: %d, animdata: %d",
-		        info->_volume, info->_animType, info->_animData);
-		sprintf(buf6, "ShapeInfo: %s\n %s, %s\nUsecode: %s",
-		        buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(_curShape));
-		rendtext = font->renderText(buf6, remaining);
-		rendtext->draw(surf, 20, _dims.h - 58);
+	{
+		// Basic shape/frame information
+		char buf1[50];
+		char buf2[200];
+		if (!shape_) {
+			sprintf(buf1, "NULL");
+		} else {
+			sprintf(buf1, "Frame %d of %d", _curFrame+1, shape_->frameCount());
+		}
+		sprintf(buf2, "%s:  Shape %d, %s", _flexes[_curFlex].first.c_str(),
+				_curShape, buf1);
+		rendtext = font->renderText(buf2, remaining);
+		rendtext->draw(surf, 20, 10);
 		delete rendtext;
+	}
+	
+	{
+		// Dump the pixel val under the mouse cursor:
+		int mx = 0;
+		int my = 0;
+		char buf2[200];
+
+		Mouse::get_instance()->getMouseCoords(mx, my);
+		ScreenSpaceToGump(mx, my);
+		
+		int relx = mx - (posx - _shapeX);
+		int rely = my - (posy - _shapeY);
+		if (shape_ && relx >= 0 && rely >= 0 && relx < _shapeW && rely < _shapeH) {
+			// get color
+			relx -= _shapeX;
+			rely -= _shapeY;
+			const ShapeFrame *frame = shape_->getFrame(_curFrame);
+			if (frame && frame->hasPoint(relx, rely)) {
+				uint8 rawpx = frame->getPixelAtPoint(relx, rely);
+				uint8 px_r = shape_->getPalette()->_palette[rawpx * 3];
+				uint8 px_g = shape_->getPalette()->_palette[rawpx * 3 + 1];
+				uint8 px_b = shape_->getPalette()->_palette[rawpx * 3 + 2];
+				
+				sprintf(buf2, "px: (%d, %d): %d (%d, %d, %d)", relx, rely, rawpx, px_r, px_g, px_b);
+				rendtext = font->renderText(buf2, remaining);
+				rendtext->draw(surf, 20, 25);
+				delete rendtext;
+			}
+		}
+
+		
+	}
+ 
+	{
+		// Additional shapeinfo (only in main shapes archive)
+		MainShapeArchive *mainshapes = p_dynamic_cast<MainShapeArchive *>(_flex);
+		if (!mainshapes || !shape_) return;
+
+		char buf3[128];
+		char buf4[128];
+		char buf5[128];
+		char buf6[512];
+		ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
+		if (info) {
+			sprintf(buf3, "x: %d, y: %d, z: %d\n flags: 0x%04X, family: %d",
+					info->_x, info->_y, info->_z, info->_flags, info->_family);
+			sprintf(buf4, "equip type: %d, unk. flags: 0x%02X\n weight: %d",
+					info->_equipType, info->_unknown, info->_weight);
+			sprintf(buf5, "vol: %d\n animtype: %d, animdata: %d",
+					info->_volume, info->_animType, info->_animData);
+			sprintf(buf6, "ShapeInfo: %s\n %s, %s\nUsecode: %s",
+					buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(_curShape));
+			rendtext = font->renderText(buf6, remaining);
+			rendtext->draw(surf, 20, _dims.h - 58);
+			delete rendtext;
+		}
 	}
 }
 
