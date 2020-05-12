@@ -434,8 +434,6 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 		strtod(src.c_str(), &endPtr);
 		if (*endPtr == 0) {
 			d1Type = FLOAT;
-		} else {
-			warning("getAlignedType(): Unable to parse '%s' as a number", src.c_str());
 		}
 	}
 	if (d2Type == STRING || d1Type == REFERENCE) {
@@ -444,8 +442,6 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 		strtod(src.c_str(), &endPtr);
 		if (*endPtr == 0) {
 			d2Type = FLOAT;
-		} else {
-			warning("getAlignedType(): Unable to parse '%s' as a number", src.c_str());
 		}
 	}
 
@@ -453,8 +449,6 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 		opType = FLOAT;
 	} else if (d1Type == INT && d2Type == INT) {
 		opType = INT;
-	} else {
-		warning("getAlignedType(): No numeric type alignment available");
 	}
 
 	return opType;
@@ -664,18 +658,19 @@ const char *Datum::type2str(bool isk) {
 }
 
 int Datum::compareTo(Datum &d, bool ignoreCase) {
-	if (type == STRING && d.type == STRING) {
-		if (ignoreCase) {
-			return toLowercaseMac(*u.s).compareTo(toLowercaseMac(*d.u.s));
-		} else {
-			return u.s->compareTo(*d.u.s);
-		}
-	} else if (type == SYMBOL && d.type == SYMBOL) {
+	if (type == SYMBOL && d.type == SYMBOL) {
 		// TODO: Implement union comparisons
 		return ignoreCase ? u.sym->name.compareToIgnoreCase(d.u.sym->name) : u.sym->name.compareTo(d.u.sym->name);
 	} else {
 		int alignType = g_lingo->getAlignedType(*this, d);
-		if (alignType == FLOAT) {
+
+		if ((alignType == VOID && (type == STRING || d.type == STRING)) || (type == STRING && d.type == STRING)) {
+			if (ignoreCase) {
+				return toLowercaseMac(asString()).compareTo(toLowercaseMac(d.asString()));
+			} else {
+				return asString().compareTo(d.asString());
+			}
+		} else if (alignType == FLOAT) {
 			double f1 = asFloat();
 			double f2 = d.asFloat();
 			if (f1 < f2) {
