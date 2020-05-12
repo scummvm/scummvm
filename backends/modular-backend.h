@@ -26,6 +26,7 @@
 #include "backends/base-backend.h"
 
 class GraphicsManager;
+class ResVmGraphicsManager; // ResidualVM specific
 class MutexManager;
 
 /**
@@ -149,7 +150,7 @@ protected:
 	//@{
 
 	MutexManager *_mutexManager;
-	GraphicsManager *_graphicsManager;
+	ResVmGraphicsManager *_graphicsManager; // ResidualVM: was GraphicsManager
 	Audio::Mixer *_mixer;
 
 	//@}

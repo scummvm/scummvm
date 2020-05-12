@@ -23,6 +23,7 @@
 #include "backends/modular-backend.h"
 
 #include "backends/graphics/graphics.h"
+#include "backends/graphics/resvm-graphics.h" // ResidualVM specific
 #include "backends/mutex/mutex.h"
 #include "gui/EventRecorder.h"
 

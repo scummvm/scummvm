@@ -32,14 +32,19 @@
  */
 class SurfaceSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
+	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
 
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) const override;
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	virtual bool getFeatureState(OSystem::Feature f) const override;
 
 	// GraphicsManager API - Graphics mode
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
+#endif
+	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	virtual int16 getHeight() const override;
@@ -51,6 +56,7 @@ public:
 	// GraphicsManager API - Overlay
 	virtual void showOverlay() override;
 	virtual void hideOverlay() override;
+	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
 	virtual void clearOverlay() override;
 	virtual void grabOverlay(void *buf, int pitch) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
@@ -83,6 +89,17 @@ protected:
 
 	SDL_Surface *_overlayscreen;
 	bool _overlayDirty;
+	bool _overlayVisible;
+
+	Graphics::PixelFormat _overlayFormat;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _screenFormat;
+#endif
+	uint _engineRequestedWidth, _engineRequestedHeight;
+
+	bool _fullscreen;
+	bool _lockAspectRatio;
+	int _screenChangeCount;
 
 	Math::Rect2d _gameRect;
 

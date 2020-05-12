@@ -40,9 +40,9 @@
 #define SDL_FULLSCREEN  0x40000000
 #endif
 
-SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
+SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	:
-	ResVmSdlGraphicsManager(sdlEventSource, window, capabilities),
+	ResVmSdlGraphicsManager(sdlEventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
 #endif
@@ -50,8 +50,15 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_subScreen(0),
 	_overlayscreen(0),
 	_overlayDirty(true),
-	_gameRect()
-	{
+	_overlayVisible(false),
+	_fullscreen(false),
+	_lockAspectRatio(true),
+	_screenChangeCount(0),
+	_gameRect(),
+	_engineRequestedWidth(0),
+	_engineRequestedHeight(0) {
+		ConfMan.registerDefault("aspect_ratio", true);
+
 		_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
 }
 
@@ -73,7 +80,19 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFullscreenToggleKeepsContext) ||
 #endif
+		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureFullscreenMode);
+}
+
+bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
+	switch (f) {
+		case OSystem::kFeatureFullscreenMode:
+			return _fullscreen;
+		case OSystem::kFeatureAspectRatioCorrection:
+			return _lockAspectRatio;
+		default:
+			return false;
+	}
 }
 
 void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
@@ -84,8 +103,10 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 				createOrUpdateScreen();
 			}
 			break;
+		case OSystem::kFeatureAspectRatioCorrection:
+			_lockAspectRatio = enable;
+			break;
 		default:
-			ResVmSdlGraphicsManager::setFeatureState(f, enable);
 			break;
 	}
 }

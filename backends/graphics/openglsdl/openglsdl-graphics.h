@@ -39,7 +39,22 @@ namespace OpenGL {
  */
 class OpenGLSdlGraphicsManager : public ResVmSdlGraphicsManager {
 public:
-	OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities);
+	/**
+	 * Capabilities of the current device
+	 */
+	struct Capabilities {
+		/**
+		 * Is the device capable of rendering to OpenGL framebuffers
+		 */
+		bool openGLFrameBuffer;
+
+		/** Supported levels of MSAA when using the OpenGL renderers */
+		Common::Array<uint> openGLAntiAliasLevels;
+
+		Capabilities() : openGLFrameBuffer(false) {}
+	};
+
+	OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window, const Capabilities &capabilities);
 	virtual ~OpenGLSdlGraphicsManager();
 
 	// GraphicsManager API - Features
@@ -48,6 +63,10 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 
 	// GraphicsManager API - Graphics mode
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const override { return _screenFormat; }
+#endif
+	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() override;
 	virtual int16 getHeight() const override;
@@ -59,6 +78,7 @@ public:
 	// GraphicsManager API - Overlay
 	virtual void showOverlay() override;
 	virtual void hideOverlay() override;
+	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
 	virtual void clearOverlay() override;
 	virtual void grabOverlay(void *buf, int pitch) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
@@ -84,6 +104,8 @@ protected:
 	SDL_GLContext _glContext;
 	void deinitializeRenderer();
 #endif
+
+	const Capabilities &_capabilities;
 
 	Math::Rect2d _gameRect;
 
@@ -118,13 +140,24 @@ protected:
 
 	virtual int getGraphicsModeScale(int mode) const override { return 1; }
 
+	uint _engineRequestedWidth, _engineRequestedHeight;
+
+	int _screenChangeCount;
 	int _antialiasing;
 	bool _vsync;
+	bool _fullscreen;
+	bool _lockAspectRatio;
+	bool _overlayVisible;
 
 	OpenGL::TiledSurface *_overlayScreen;
 	OpenGL::TiledSurface *_overlayBackground;
 	OpenGL::Texture *_sideTextures[2];
 	OpenGL::SurfaceRenderer *_surfaceRenderer;
+
+	Graphics::PixelFormat _overlayFormat;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _screenFormat;
+#endif
 
 	void initializeOpenGLContext() const;
 	void drawOverlay();

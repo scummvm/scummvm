@@ -30,8 +30,11 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
 #include "backends/platform/sdl/sdl-window.h"
-// ResidualVM specific code
-#include "backends/graphics/sdl/resvm-sdl-graphics.h"
+// ResidualVM - Start
+#ifdef USE_OPENGL
+#include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#endif
+// ResidualVM - End
 
 #include "common/array.h"
 
@@ -92,12 +95,13 @@ public:
 	//Screenshots
 	virtual Common::String getScreenshotsPath();
 
-	// ResidualVM specific code
+	// ResidualVM - Start
+#ifdef USE_OPENGL
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
-	// ResidualVM specific code
-	virtual void launcherInitSize(uint w, uint h) override;
-	// ResidualVM specific code
 	Common::Array<uint> getSupportedAntiAliasingLevels() const;
+#endif
+	virtual void launcherInitSize(uint w, uint h) override;
+	// ResidualVM - End
 
 protected:
 	bool _inited;
@@ -133,11 +137,13 @@ protected:
 	 */
 	SdlWindow *_window;
 
-	// ResidualVM specific code
+	// ResidualVM specific code - start
+#ifdef USE_OPENGL
 	// Graphics capabilities
 	void detectFramebufferSupport();
 	void detectAntiAliasingSupport();
-	ResVmSdlGraphicsManager::Capabilities _capabilities;
+	OpenGLSdlGraphicsManager::Capabilities _capabilities;
+#endif
 	// End of ResidualVM specific code
 
 	virtual Common::EventSource *getDefaultEventSource() override { return _eventSource; }
@@ -156,6 +162,28 @@ protected:
 	virtual Common::String getDefaultLogFileName() { return Common::String(); }
 	virtual Common::WriteStream *createLogFile();
 	Backends::Log::Log *_logger;
+
+#if 0 // ResidualVM - not used
+#ifdef USE_OPENGL
+	typedef Common::Array<GraphicsMode> GraphicsModeArray;
+	GraphicsModeArray _graphicsModes;
+	Common::Array<int> _graphicsModeIds;
+	int _graphicsMode;
+	int _firstGLMode;
+	int _defaultSDLMode;
+	int _defaultGLMode;
+
+	/**
+	 * Creates the merged graphics modes list
+	 */
+	void setupGraphicsModes();
+
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual int getGraphicsMode() const override;
+#endif
+#endif // ResidulVM
 protected:
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;
 };

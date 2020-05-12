@@ -76,13 +76,6 @@ public:
 	virtual void beginGFXTransaction() = 0;
 	virtual OSystem::TransactionError endGFXTransaction() = 0;
 
-	// ResidualVM specific method
-	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) = 0;
-	// ResidualVM specific method
-	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
-	// ResidualVM specific method
-	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right) = 0;
-
 	virtual int16 getHeight() const = 0;
 	virtual int16 getWidth() const = 0;
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
@@ -109,9 +102,6 @@ public:
 	virtual void warpMouse(int x, int y) = 0;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) = 0;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) = 0;
-
-	// ResidualVM specific method
-	virtual bool lockMouse(bool lock) = 0;
 
 	virtual void displayMessageOnOSD(const char *msg) {}
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}

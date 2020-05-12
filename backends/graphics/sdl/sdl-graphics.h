@@ -23,7 +23,7 @@
 #ifndef BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 #define BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 
-#include "backends/graphics/graphics.h"
+#include "backends/graphics/resvm-graphics.h"
 #include "backends/platform/sdl/sdl-window.h"
 
 #include "common/events.h"
@@ -31,15 +31,18 @@
 
 class SdlEventSource;
 
+#if 0 // ResidualVM - not used
+#ifndef __SYMBIAN32__
+#define USE_OSD	1
+#endif
+#endif
 /**
  * Base class for a SDL based graphics manager.
- *
- * It features a few extra a few extra features required by SdlEventSource.
  */
-class SdlGraphicsManager : virtual public GraphicsManager, public Common::EventObserver {
+class SdlGraphicsManager : virtual public ResVmGraphicsManager, public Common::EventObserver {
 public:
 	SdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
-	virtual ~SdlGraphicsManager();
+	virtual ~SdlGraphicsManager() {}
 
 	/**
 	 * Makes this graphics manager active. That means it should be ready to
@@ -82,6 +85,7 @@ public:
 	 * coordinates (may be either game screen or overlay).
 	 *
 	 * @param point Mouse coordinates to transform.
+	 * !! ResidualVM specific:
 	 */
 	virtual void transformMouseCoordinates(Common::Point &point) = 0;
 
@@ -98,10 +102,19 @@ public:
 	 * @returns true if the mouse was in a valid position for the game and
 	 * should cause the event to be sent to the game.
 	 */
-	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
+	virtual bool notifyMousePosition(Common::Point &mouse) = 0; // ResidualVM specific
+
+#if 0 // ResidualVM - not used
+	virtual bool showMouse(const bool visible) override;
+#endif
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
-	virtual void saveScreenshot() {}
+	virtual void saveScreenshot() {} // ResidualVM specific
+
+#if 0 // ResidualVM - not used
+	// Override from Common::EventObserver
+	virtual bool notifyEvent(const Common::Event &event) override;
+#endif
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
@@ -119,20 +132,23 @@ public:
 	};
 
 	/**
-	 * Queries the current state of the graphic manager.
+	 * Gets the current state of the graphics manager.
 	 */
 	State getState() const;
 
 	/**
-	 * Setup a basic state of the graphic manager.
+	 * Sets up a basic state of the graphics manager.
 	 */
 	bool setState(const State &state);
 
 	/**
-	 * Queries the SDL window.
+	 * @returns the SDL window.
 	 */
 	SdlWindow *getWindow() const { return _window; }
 
+#if 0 // ResidualVM - not used
+	virtual void initSizeHint(const Graphics::ModeList &modes) override;
+#endif
 	Common::Keymap *getKeymap();
 
 protected:
@@ -141,16 +157,81 @@ protected:
 		kActionToggleMouseCapture,
 		kActionSaveScreenshot,
 		kActionToggleAspectRatioCorrection
+#if 0 // ResidualVM - not used
+		kActionToggleFilteredScaling,
+		kActionCycleStretchMode,
+		kActionIncreaseScaleFactor,
+		kActionDecreaseScaleFactor,
+		kActionSetScaleFilter1,
+		kActionSetScaleFilter2,
+		kActionSetScaleFilter3,
+		kActionSetScaleFilter4,
+		kActionSetScaleFilter5,
+		kActionSetScaleFilter6,
+		kActionSetScaleFilter7,
+		kActionSetScaleFilter8
+#endif
 	};
+
+#if 0 // ResidualVM - not used
+	virtual int getGraphicsModeScale(int mode) const = 0;
+
+	bool defaultGraphicsModeConfig() const;
+	int getGraphicsModeIdByName(const Common::String &name) const;
+
+	/**
+	 * Gets the dimensions of the window directly from SDL instead of from the
+	 * values stored by the graphics manager.
+	 */
+	void getWindowSizeFromSdl(int *width, int *height) const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		assert(_window);
+		SDL_GetWindowSize(_window->getSDLWindow(), width, height);
+#else
+		assert(_hwScreen);
+
+		if (width) {
+			*width = _hwScreen->w;
+		}
+
+		if (height) {
+			*height = _hwScreen->h;
+		}
+#endif
+	}
+
+	virtual void setSystemMousePosition(const int x, const int y) override;
+
+	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
+#endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
-	void unlockWindowSize() {}
+	void unlockWindowSize() {
+#if 0 // ResidualVM - not used
+		_allowWindowSizeReset = true;
+		_hintedWidth = 0;
+		_hintedHeight = 0;
 #endif
+	}
 
 protected:
+#if 0 // ResidualVM - not used
+	Uint32 _lastFlags;
+	bool _allowWindowSizeReset;
+	int _hintedWidth, _hintedHeight;
+
+	bool createOrUpdateWindow(const int width, const int height, const Uint32 flags);
+#endif
+#endif
+
+	SDL_Surface *_hwScreen; // ResidualVM - not used
 	SdlEventSource *_eventSource;
 	SdlWindow *_window;
+#if 0 // ResidualVM - not used
+private:
+	void toggleFullScreen();
+#endif
 };
 
 #endif
