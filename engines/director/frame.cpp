@@ -603,16 +603,11 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				break;
 			}
 		} else {
-			if (!_vm->getCurrentScore()->_loadedCast->contains(_sprites[i]->_castId)) {
-				if (!_vm->getSharedScore() || !_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
-					debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
-					continue;
-				} else {
-					debugC(1, kDebugImages, "Frame::renderSprites(): Getting cast id %d from shared cast", _sprites[i]->_castId);
-					castType = _vm->getSharedScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
-				}
+			Cast *member = _vm->getCastMember(_sprites[i]->_castId);
+			if (!member) {
+				debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
 			} else {
-				castType = _vm->getCurrentScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
+				castType = member->_type;
 			}
 		}
 
@@ -774,7 +769,14 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	// This may not be a button cast. It could be a textcast with the channel forcing it
 	// to be a checkbox or radio button!
-	ButtonCast *button = (ButtonCast *)_vm->getCurrentScore()->_loadedCast->getVal(castId);
+	Cast *member = _vm->getCastMember(castId);
+	if (!member) {
+		warning("renderButton: unknown cast id %d", castId);
+	} else if (member->_type != kCastButton) {
+		warning("renderButton: cast id %d not of type kCastButton", castId);
+		return;
+	}
+	ButtonCast *button = (ButtonCast *)member;
 
 	// Sometimes, at least in the D3 Workshop Examples, these buttons are just TextCast.
 	// If they are, then we just want to use the spriteType as the button type.

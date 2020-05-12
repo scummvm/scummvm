@@ -108,6 +108,8 @@ public:
 
 	int32 getStageColor() { return _stageColor; }
 
+	Cast *getCastMember(int castId);
+
 private:
 	void update();
 	void readVersion(uint32 rid);

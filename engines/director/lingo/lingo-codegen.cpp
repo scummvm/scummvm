@@ -507,7 +507,7 @@ int Lingo::castIdFetch(Datum &var) {
 			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
 	} else if (var.type == INT || var.type == FLOAT) {
 		int castId = var.asInt();
-		if (!score->_loadedCast->contains(castId))
+		if (!_vm->getCastMember(castId))
 			warning("castIdFetch: reference to non-existent cast ID: %d", castId);
 		else
 			id = castId;
@@ -569,24 +569,18 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			return;
 		}
 		int referenceId = var.u.i;
-		if (!score->_loadedCast->contains(referenceId)) {
-			if (!score->_loadedCast->contains(referenceId - score->_castIDoffset)) {
-				warning("varAssign: Unknown REFERENCE %d", referenceId);
-				return;
-			} else {
-				referenceId -= score->_castIDoffset;
-			}
+		Cast *member = g_director->getCastMember(referenceId);
+		if (!member) {
+			warning("varAssign: Unknown cast id %d", referenceId);
+			return;
 		}
-		Cast *cast = score->_loadedCast->getVal(referenceId);
-		if (cast) {
-			switch (cast->_type) {
-			case kCastText:
-				((TextCast *)cast)->setText(value.asString().c_str());
-				break;
-			default:
-				warning("varAssign: Unhandled cast type %s", tag2str(cast->_type));
-				break;
-			}
+		switch (member->_type) {
+		case kCastText:
+			((TextCast *)member)->setText(value.asString().c_str());
+			break;
+		default:
+			warning("varAssign: Unhandled cast type %s", tag2str(member->_type));
+			break;
 		}
 	}
 }
@@ -633,16 +627,7 @@ Datum Lingo::varFetch(Datum &var) {
 		}
 
 	} else if (var.type == REFERENCE) {
-		Score *score = g_director->getCurrentScore();
-		if (!score->_loadedCast->contains(var.u.i)) {
-			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
-				warning("varFetch: Unknown REFERENCE %d", var.u.i);
-				return result;
-			} else {
-				var.u.i -= score->_castIDoffset;
-			}
-		}
-		Cast *cast = score->_loadedCast->getVal(var.u.i);
+		Cast *cast = _vm->getCastMember(var.u.i);
 		if (cast) {
 			switch (cast->_type) {
 			case kCastText:
@@ -653,6 +638,8 @@ Datum Lingo::varFetch(Datum &var) {
 				warning("varFetch: Unhandled cast type %s", tag2str(cast->_type));
 				break;
 			}
+		} else {
+			warning("varFetch: Unknown cast id %d", var.u.i);
 		}
 
 	}

@@ -376,4 +376,15 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_lingo->_archiveIndex = 0;
 }
 
+Cast *DirectorEngine::getCastMember(int castId) {
+	Cast *result = nullptr;
+	if (_currentScore) {
+		result = _currentScore->getCastMember(castId);
+	}
+	if (result == nullptr && _sharedScore) {
+		result = _sharedScore->getCastMember(castId);
+	}
+	return result;
+}
+
 } // End of namespace Director

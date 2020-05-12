@@ -333,30 +333,31 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	func_goto(frame, movie);
 }
 
-void Lingo::func_cursor(int c, int m) {
+void Lingo::func_cursor(int cursorId, int maskId) {
 	if (_cursorOnStack) {
 		// pop cursor
 		_vm->getMacWindowManager()->popCursor();
 	}
 
-	if (m != -1) {
-		Score *score = _vm->getCurrentScore();
-		if (!score->_loadedCast->contains(c) || !score->_loadedCast->contains(m)) {
-			warning("cursor: non-existent cast reference");
+	if (maskId != -1) {
+		Cast *cursorCast = _vm->getCastMember(cursorId);
+		Cast *maskCast = _vm->getCastMember(maskId);
+		if (!cursorCast || !maskCast) {
+			warning("func_cursor(): non-existent cast reference");
 			return;
 		}
 
-		if (score->_loadedCast->getVal(c)->_type != kCastBitmap || score->_loadedCast->getVal(m)->_type != kCastBitmap) {
-			warning("cursor: wrong cast reference type");
+		if (cursorCast->_type != kCastBitmap || maskCast->_type != kCastBitmap) {
+			warning("func_cursor(): wrong cast reference type");
 			return;
 		}
 
-		if (score->_loadedCast->getVal(c)->_surface == nullptr) {
-			warning("cursor: empty sprite %d surface", c);
+		if (cursorCast->_surface == nullptr) {
+			warning("func_cursor(): empty surface for bitmap cast %d", cursorId);
 			return;
 		}
-		if (score->_loadedCast->getVal(m)->_surface == nullptr) {
-			warning("cursor: empty sprite %d surface", m);
+		if (maskCast->_surface == nullptr) {
+			warning("func_cursor(): empty surface for bitmap cast %d", maskId);
 			return;
 		}
 
@@ -366,15 +367,15 @@ void Lingo::func_cursor(int c, int m) {
 		for (int y = 0; y < 16; y++) {
 			const byte *cursor = nullptr, *mask = nullptr;
 
-			if (y < score->_loadedCast->getVal(c)->_surface->h &&
-					y < score->_loadedCast->getVal(m)->_surface->h) {
-				cursor = (const byte *)score->_loadedCast->getVal(c)->_surface->getBasePtr(0, y);
-				mask = (const byte *)score->_loadedCast->getVal(m)->_surface->getBasePtr(0, y);
+			if (y < cursorCast->_surface->h &&
+					y < maskCast->_surface->h) {
+				cursor = (const byte *)cursorCast->_surface->getBasePtr(0, y);
+				mask = (const byte *)maskCast->_surface->getBasePtr(0, y);
 			}
 
 			for (int x = 0; x < 16; x++) {
-				if (x >= score->_loadedCast->getVal(c)->_surface->w ||
-						x >= score->_loadedCast->getVal(m)->_surface->w) {
+				if (x >= cursorCast->_surface->w ||
+						x >= maskCast->_surface->w) {
 					cursor = mask = nullptr;
 				}
 
@@ -398,7 +399,7 @@ void Lingo::func_cursor(int c, int m) {
 	}
 
 	// and then push cursor.
-	switch (c) {
+	switch (cursorId) {
 	case 0:
 	case -1:
 	default:

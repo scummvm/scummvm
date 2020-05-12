@@ -116,6 +116,7 @@ public:
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
 	void clearSharedCast();
+	Cast *getCastMember(int castId);
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();

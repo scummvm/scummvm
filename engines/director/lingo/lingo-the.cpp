@@ -671,7 +671,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_bottom = d.asInt();
 		break;
 	case kTheCastNum:
-		if (score->_loadedCast->contains(d.asInt())) {
+		if (_vm->getCastMember(d.asInt())) {
 			score->loadCastInto(sprite, d.asInt());
 			sprite->_castId = d.asInt();
 		}
@@ -836,8 +836,9 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		{
 			Common::String text;
 			if (castType == kCastText) {
-				if (score->_loadedCast->contains(id) && score->_loadedCast->getVal(id)->_type == kCastText) {
-					text = ((TextCast *)score->_loadedCast->getVal(id))->getText();
+				Cast *member = _vm->getCastMember(id);
+				if (member && member->_type == kCastText) {
+					text = ((TextCast *)member)->getText();
 				} else {
 					warning("Lingo::getTheCast(): Unknown STXT cast id %d", id);
 				}
@@ -878,7 +879,12 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	CastType castType = score->_loadedCast->getVal(id)->_type;
+	Cast *member = _vm->getCastMember(id);
+	if (!member) {
+		error("Lingo::setTheCast(): Cast id %d doesn't exist", id);
+		return;
+	}
+	CastType castType = member->_type;
 	CastInfo *castInfo = score->_castsInfo[id + score->_castIDoffset];
 
 	switch (field) {
@@ -887,7 +893,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			if (castType != kCastShape) {
 				warning("Lingo::setTheCast(): Field \"%s\" of cast %d not found", field2str(field), id);
 			}
-			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
+			ShapeCast *shape = (ShapeCast *)member;
 
 			shape->_bgCol = d.asInt();
 			shape->_modified = 1;
@@ -912,7 +918,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				warning("Lingo::setTheCast(): Field \"%s\" of cast %d not found", field2str(field), id);
 				return;
 			}
-			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
+			ShapeCast *shape = (ShapeCast *)member;
 			shape->_fgCol = d.u.i;
 			shape->_modified = 1;
 		}
@@ -939,8 +945,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheText:
 		if (castType == kCastText) {
-			if (score->_loadedCast->contains(id) && score->_loadedCast->getVal(id)->_type == kCastText) {
-				((TextCast *)score->_loadedCast->getVal(id))->setText(d.asString().c_str());
+			if (member->_type == kCastText) {
+				((TextCast *)member)->setText(d.asString().c_str());
 			} else {
 				warning("Lingo::setTheCast(): Unknown STXT cast id %d", id);
 				return;

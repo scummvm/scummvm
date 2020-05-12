@@ -764,10 +764,9 @@ void Score::setSpriteCasts() {
 			if (castId == 0)
 				continue;
 
-			if (_loadedCast->contains(castId)) {
-				_frames[i]->_sprites[j]->_cast = _loadedCast->getVal(castId);
-			} else if (_vm->getSharedScore() && _vm->getSharedScore()->_loadedCast && _vm->getSharedScore()->_loadedCast->contains(castId)) {
-				_frames[i]->_sprites[j]->_cast = _vm->getSharedScore()->_loadedCast->getVal(castId);
+			Cast *member = _vm->getCastMember(castId);
+			if (member) {
+				_frames[i]->_sprites[j]->_cast = member;
 			}
 		}
 	}
@@ -948,28 +947,29 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 			break;
 		}
 
-		// FIXME. Disabled by default, requires --debugflags=bytecode for now
+		Cast *member = _loadedCast->getVal(id);
+		// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
 		if (_vm->getVersion() >= 4 && castType == kCastLingoScript && debugChannelSet(-1, kDebugBytecode)) {
 			// Try and load the compiled Lingo script associated with this cast
-			uint scriptId = ((ScriptCast *)(*_loadedCast)[id])->_id - 1;
+			uint scriptId = ((ScriptCast *)member)->_id - 1;
 			if (scriptId < _castScriptIds.size()) {
 				int resourceId = _castScriptIds[scriptId];
 				Common::SeekableSubReadStreamEndian *r;
-				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), ((ScriptCast *)_loadedCast->getVal(id))->_scriptType, id);
+				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), ((ScriptCast *)member)->_scriptType, id);
 				delete r;
 			} else {
 				warning("Score::loadCastData(): Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
 			}
 		} else {
 			if (!ci->script.empty()) {
-				if (_loadedCast->getVal(id)->_type == kCastLingoScript) {
+				if (member->_type == kCastLingoScript) {
 					// the script type here could be wrong!
 					if (ConfMan.getBool("dump_scripts"))
-						dumpScript(ci->script.c_str(), ((ScriptCast *)_loadedCast->getVal(id))->_scriptType, id);
+						dumpScript(ci->script.c_str(), ((ScriptCast *)member)->_scriptType, id);
 
-					_lingo->addCode(ci->script.c_str(), ((ScriptCast *)_loadedCast->getVal(id))->_scriptType, id);
+					_lingo->addCode(ci->script.c_str(), ((ScriptCast *)member)->_scriptType, id);
 				} else {
-					warning("Score::loadCastData(): Wrong cast type: %d", _loadedCast->getVal(id)->_type);
+					warning("Score::loadCastData(): Wrong cast type: %d", member->_type);
 				}
 			}
 		}
@@ -1779,6 +1779,15 @@ void Score::renderZoomBox(bool redraw) {
 	if (redraw) {
 		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height()); // zoomBox
 	}
+}
+
+Cast *Score::getCastMember(int castId) {
+	Cast *result = nullptr;
+
+	if (_loadedCast->contains(castId)) {
+		result = _loadedCast->getVal(castId);
+	}
+	return result;
 }
 
 } // End of namespace Director
