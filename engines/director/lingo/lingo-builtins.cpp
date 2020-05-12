@@ -558,8 +558,9 @@ void LB::b_addAt(int nargs) {
 	int index = indexD.asInt();
 	TYPECHECK(list, ARRAY);
 
-	if (!((uint)index < list.u.farr->size())) {
-		for (uint i = 0; i < index - list.u.farr->size() - 1; i++)
+	int size = list.u.farr->size();
+	if (index > size) {
+		for (int i = 0; i < index - size - 1; i++)
 			list.u.farr->push_back(Datum(0));
 	}
 	list.u.farr->insert_at(index - 1, value);
