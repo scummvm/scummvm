@@ -102,7 +102,7 @@ void CreditsGump::Close(bool no_del) {
 
 void CreditsGump::extractLine(Std::string &text_,
                               char &modifier, Std::string &line) {
-	if (!text_.empty() and (text_[0] == '+' || text_[0] == '&' || text_[0] == '}' ||
+	if (!text_.empty() && (text_[0] == '+' || text_[0] == '&' || text_[0] == '}' ||
 							text_[0] == '~' || text_[0] == '@')) {
 		modifier = text_[0];
 		text_.erase(0, 1);
