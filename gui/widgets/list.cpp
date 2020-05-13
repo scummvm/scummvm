@@ -536,6 +536,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void ListWidget::drawWidget() {
 	int i, pos, len = _list.size();
 	Common::String buffer;
+	Graphics::TextAlign alignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
 
 	// Draw a thin frame around the list.
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
@@ -557,14 +558,8 @@ void ListWidget::drawWidget() {
 		// If in numbering mode, we first print a number prefix
 		if (_numberingMode != kListNumberingOff) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
-			if (g_gui.useRTL()) {
-				g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
-										buffer, _state, Graphics::kTextAlignRight, inverted, _leftPadding, true);
-			}
-			else {
-				g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
-										buffer, _state, Graphics::kTextAlignLeft, inverted, _leftPadding, true);
-			}
+			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
+									buffer, _state, alignment, inverted, _leftPadding, true);
 			pad = 0;
 		}
 
@@ -581,24 +576,12 @@ void ListWidget::drawWidget() {
 			buffer = _editString;
 			color = _editColor;
 			adjustOffset();
-			if (g_gui.useRTL()) {
-				g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
-										Graphics::kTextAlignRight, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
-			}
-			else {
-				g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
-					                    Graphics::kTextAlignLeft, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
-			}
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
+									alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		} else {
 			buffer = _list[pos];
-			if (g_gui.useRTL()) {
-				g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
-										Graphics::kTextAlignRight, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
-			}
-			else {
-				g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
-										Graphics::kTextAlignLeft, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
-			}
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
+									alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		}
 	}
 }
