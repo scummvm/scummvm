@@ -474,6 +474,8 @@ Common::String preprocessSound(Common::String in) {
 				next.equalsIgnoreCase("stop")) {
 			res += '#'; // Turn it into SYMBOL
 			modified = true;
+		} else {
+			res += ' ';
 		}
 
 		res += next;
