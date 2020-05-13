@@ -532,13 +532,9 @@ bool Gump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	return false;
 }
 
-// Find a child gump of the specified type
-Gump *Gump::FindGump(const RunTimeClassType &t, bool recursive,
-                     bool no_inheritance) {
-	// If that is our type, then return us!
-	if (GetClassType() == t)
-		return this;
-	else if (!no_inheritance && IsOfType(t))
+// Find a child gump that matches the matching function 
+Gump *Gump::FindGump(const FindPredicate predicate, bool recursive) {
+	if ((this->*predicate)())
 		return this;
 
 	// Iterate all children
@@ -552,9 +548,7 @@ Gump *Gump::FindGump(const RunTimeClassType &t, bool recursive,
 		if (g->_flags & FLAG_CLOSING)
 			continue;
 
-		if (g->GetClassType() == t)
-			return g;
-		else if (!no_inheritance && g->IsOfType(t))
+		if ((g->*predicate)())
 			return g;
 	}
 
@@ -572,7 +566,7 @@ Gump *Gump::FindGump(const RunTimeClassType &t, bool recursive,
 		if (g->_flags & FLAG_CLOSING)
 			continue;
 
-		g = g->FindGump(t, recursive, no_inheritance);
+		g = g->FindGump(predicate, recursive);
 
 		if (g)
 			return g;

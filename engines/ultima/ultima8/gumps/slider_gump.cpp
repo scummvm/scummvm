@@ -92,7 +92,7 @@ void SliderGump::setValueFromSlider(int sliderx) {
 }
 
 void SliderGump::setSliderPos() {
-	Gump *slider = Gump::FindGump(SlidingWidget::ClassType);
+	Gump *slider = Gump::FindGump<SlidingWidget>();
 	assert(slider);
 	slider->Move(getSliderPos(), slidery);
 }
