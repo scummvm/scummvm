@@ -370,7 +370,7 @@ are included for debugging ResidualVM, this should not be necessary for
 normal play at all! However, the curious might like to know how to access
 these tool. Please use at your own risk!
 
-To enter the debug console, press `Ctrl` + `d`. Use the `help` command to
+To enter the debug console, press `Ctrl` + `Alt`  + `d`. Use the `help` command to
 display a list of the available commands. To exit, press `Escape` or type
 `exit` or `quit`.
 
