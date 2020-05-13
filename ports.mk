@@ -167,9 +167,9 @@ ifdef USE_DOCKTILEPLUGIN
 endif
 
 ifdef USE_DOCKTILEPLUGIN
-bundle: residualvm-static residualvm.docktileplugin
+bundle: residualvm-static residualvm.docktileplugin bundle-pack
 else
-bundle: residualvm-static
+bundle: residualvm-static bundle-pack
 endif
 
 iphonebundle: iphone
@@ -323,7 +323,7 @@ iphone: $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES \
 		-framework CoreFoundation -framework QuartzCore -framework Foundation \
-		-framework AudioToolbox -framework CoreAudio -lobjc -lz
+		-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration -lobjc -lz
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf
@@ -344,7 +344,7 @@ osxsnap: bundle
 	cp $(srcdir)/doc/QuickStart ./ResidualVM-snapshot/doc/QuickStart
 	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/doc/QuickStart
 # ResidualVM: missing CpMac in some cases
-#	$(XCODETOOLSPATH)/CpMac -r $(bundle_name) ./ResidualVM-snapshot/
+	cp -R $(bundle_name) ./ResidualVM-snapshot/
 # ResidualVM missing background file:
 #	cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
 #	cp $(srcdir)/dists/macosx/background.jpg ./ResidualVM-snapshot/background.jpg
@@ -357,7 +357,7 @@ osxsnap: bundle
 	rm -rf ResidualVM-snapshot
 
 publish-appcast:
-	scp dists/macosx/residualvm_appcast.xml www.residualvm.org:/var/www/appcasts/macosx/release.xml
+	cp dists/macosx/residualvm_appcast.xml www.residualvm.org:/var/www/appcasts/macosx/release.xml
 
 
 #
@@ -387,6 +387,13 @@ endif
 	@echo Now run
 	@echo "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
+# Target to create Raspberry Pi zip containig binary and specific README
+raspberrypi_dist:
+	mkdir -p $(srcdir)/residulvm-rpi
+	cp $(srcdir)/backends/platform/sdl/raspberrypi/README.RASPBERRYPI $(srcdir)/residualvm-rpi/README
+	cp $(srcdir)/residualvm $(srcdir)/residualvm-rpi
+	zip -r residualvm-rpi.zip residualvm-rpi
+	rm -f -R residualvm-rpi
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap install uninstall
