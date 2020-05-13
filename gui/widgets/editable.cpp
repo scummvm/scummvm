@@ -298,8 +298,8 @@ void EditableWidget::drawCaret(bool erase) {
 	x += getAbsX();
 	y += getAbsY();
 
-	if (_useRTL)
-		x += (_boss->getWidth() - _x - _x - _w);
+	if (g_gui.useRTL())
+		x += (g_system->getOverlayWidth() - _x - _x - _w);
 
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
 
