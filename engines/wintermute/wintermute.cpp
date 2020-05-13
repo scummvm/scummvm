@@ -161,7 +161,7 @@ int WintermuteEngine::init() {
 	}
 
 	// check dependencies for games with high resolution assets
-	#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)
+	#if !defined(USE_PNG) || !defined(USE_JPEG) || !defined(USE_VORBIS)
 		if (!(instance.getFlags() & GF_LOWSPEC_ASSETS)) {
 			GUI::MessageDialog dialog(_("This game requires PNG, JPEG and Vorbis support."));
 			dialog.runModal();
@@ -172,7 +172,7 @@ int WintermuteEngine::init() {
 	#endif
 
 	// check dependencies for games with FoxTail subengine
-	#if not defined(ENABLE_FOXTAIL)
+	#if !defined(ENABLE_FOXTAIL)
 		if (BaseEngine::isFoxTailCheck(instance.getTargetExecutable())) {
 			GUI::MessageDialog dialog(_("This game requires the FoxTail subengine, which is not compiled in."));
 			dialog.runModal();
@@ -183,7 +183,7 @@ int WintermuteEngine::init() {
 	#endif
 
 	// check dependencies for games with HeroCraft subengine
-	#if not defined(ENABLE_HEROCRAFT)
+	#if !defined(ENABLE_HEROCRAFT)
 		if (instance.getTargetExecutable() == WME_HEROCRAFT) {
 			GUI::MessageDialog dialog(_("This game requires the HeroCraft subengine, which is not compiled in."));
 			dialog.runModal();
