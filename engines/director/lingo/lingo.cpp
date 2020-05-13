@@ -569,28 +569,17 @@ Common::String Datum::asString(bool printonly) {
 	case REFERENCE:
 		{
 			int idx = u.i;
-			Score *score = g_director->getCurrentScore();
-
-			if (!score) {
-				warning("asString(): No score");
+			Cast *member = g_director->getCastMember(idx);
+			if (!member) {
+				warning("asString(): Unknown cast id %d", idx);
 				s = "";
 				break;
 			}
 
-			if (!score->_loadedCast->contains(idx)) {
-				if (!score->_loadedCast->contains(idx - score->_castIDoffset)) {
-					warning("asString(): Unknown REFERENCE %d", idx);
-					s = "";
-					break;
-				} else {
-					idx -= 1024;
-				}
-			}
-
 			if (!printonly) {
-				s = ((TextCast *)score->_loadedCast->getVal(idx))->getText();
+				s = ((TextCast *)member)->getText();
 			} else {
-				s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->getText().c_str());
+				s = Common::String::format("reference: \"%s\"", ((TextCast *)member)->getText().c_str());
 			}
 		}
 		break;

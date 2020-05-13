@@ -769,29 +769,33 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	d.type = INT;
 
 	if (!score) {
-		warning("Lingo::getTheCast(): No cast loaded");
+		warning("Lingo::getTheCast(): No score loaded");
 		return d;
 	}
 
-	CastType castType;
-	CastInfo *castInfo;
-	if (id > score->_castIDoffset) {
-		id -= score->_castIDoffset;
-	}
-
-	if (!score->_loadedCast->contains(id)) {
-		if (field == kTheLoaded)
+	Cast *member = _vm->getCastMember(id);
+	if (!member) {
+		if (field == kTheLoaded) {
 			d.u.i = 0;
-
+		} else {
+			warning("Lingo::getTheCast(): Cast %d not found", id);
+		}
 		return d;
 	}
 
-	castType = score->_loadedCast->getVal(id)->_type;
-	castInfo = score->_castsInfo[id];
-
-	//TODO: castInfo uses full offsets, so check the higher value.
-	if (castInfo == nullptr)
-		castInfo = score->_castsInfo[id + score->_castIDoffset];
+	CastType castType = member->_type;
+	CastInfo *castInfo = nullptr;
+	if (score->_castsInfo.contains(id)) {
+		castInfo = score->_castsInfo.getVal(id);
+	} else {
+		Score *shared = _vm->getSharedScore();
+		if (shared && shared->_castsInfo.contains(id)) {
+			castInfo = shared->_castsInfo.getVal(id);
+		} else {
+			warning("Lingo::getTheCast(): Cast info for %d not found", id);
+			return d;
+		}
+	}
 
 	switch (field) {
 	case kTheBackColor:
@@ -802,7 +806,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
+			ShapeCast *shape = (ShapeCast *)member;
 			d.u.i = shape->_bgCol;
 		}
 		break;
@@ -820,7 +824,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
+			ShapeCast *shape = (ShapeCast *)member;
 			d.u.i = shape->_fgCol;
 		}
 		break;
@@ -840,7 +844,6 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		{
 			Common::String text;
 			if (castType == kCastText) {
-				Cast *member = _vm->getCastMember(id);
 				if (member && member->_type == kCastText) {
 					text = ((TextCast *)member)->getText();
 				} else {
@@ -889,7 +892,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 	CastType castType = member->_type;
-	CastInfo *castInfo = score->_castsInfo[id + score->_castIDoffset];
+	CastInfo *castInfo = score->_castsInfo[id];
 
 	switch (field) {
 	case kTheBackColor:

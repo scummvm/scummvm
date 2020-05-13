@@ -1652,7 +1652,7 @@ void LB::b_puppetSound(int nargs) {
 	if (castId == 0) {
 		sound->stopSound(1);
 	} else {
-		Cast *cast = score->_loadedCast->getVal(castId);
+		Cast *cast = g_director->getCastMember(castId);
 		if (!cast) {
 			warning("b_puppetSound: attempted to play a NULL cast member");
 			return;
