@@ -109,20 +109,7 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error WintermuteEngine::run() {
-	// Initialize graphics using following:
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	if (_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS) {
-		initGraphics(320, 240, &format);
-#ifdef ENABLE_FOXTAIL
-	} else if (BaseEngine::isFoxTailCheck(_gameDescription->targetExecutable)) {
-		initGraphics(640, 360, &format);
-#endif
-	} else {
-		initGraphics(800, 600, &format);
-	}
-	if (g_system->getScreenFormat() != format) {
-		return Common::kUnsupportedColorMode;
-	}
+	g_system->setupScreen(800, 600, false, true);
 
 	// Create debugger console. It requires GFX to be initialized
 	_dbgController = new DebuggerController(this);
