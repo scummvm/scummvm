@@ -549,7 +549,8 @@ MapTile PartyMember::tileForClass(int klass) {
 /*-------------------------------------------------------------------*/
 
 Party::Party(SaveGame *s) : _saveGame(s), _transport(0), _torchDuration(0), _activePlayer(-1) {
-	if (MAP_DECEIT <= _saveGame->_location && _saveGame->_location <= MAP_ABYSS)
+	MapId map = _saveGame->_positions.back()._map;
+	if (map >= MAP_DECEIT && map <= MAP_ABYSS)
 		_torchDuration = _saveGame->_torchDuration;
 	for (int i = 0; i < _saveGame->_members; i++) {
 		// add the members to the party

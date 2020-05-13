@@ -34,6 +34,7 @@
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/map/tilemap.h"
@@ -1316,14 +1317,15 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 	saveGame->_players[0]._class = static_cast<ClassType>(_questionTree[14]);
 
 	ASSERT((int)saveGame->_players[0]._class < 8, "bad class: %d", saveGame->_players[0]._class);
+	saveGame->_positions.resize(1);
+	saveGame->_positions[0] = LocationCoords(MAP_WORLD,
+		initValuesForClass[saveGame->_players[0]._class].x,
+		initValuesForClass[saveGame->_players[0]._class].y,
+		0);
 
 	saveGame->_players[0]._weapon = initValuesForClass[saveGame->_players[0]._class].weapon;
 	saveGame->_players[0]._armor = initValuesForClass[saveGame->_players[0]._class].armor;
 	saveGame->_players[0]._xp = initValuesForClass[saveGame->_players[0]._class].xp;
-	saveGame->_pos.x = initValuesForClass[saveGame->_players[0]._class].x;
-	saveGame->_pos.y = initValuesForClass[saveGame->_players[0]._class].y;
-	saveGame->_pos.z = 0;
-
 	saveGame->_players[0]._str = 15;
 	saveGame->_players[0]._dex = 15;
 	saveGame->_players[0]._intel = 15;

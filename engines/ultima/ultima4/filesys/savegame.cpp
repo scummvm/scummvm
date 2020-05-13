@@ -39,16 +39,7 @@ void SaveGame::save(Common::WriteStream *stream) {
 	Common::Serializer ser(nullptr, stream);
 	assert(g_context && g_context->_location);
 
-	_location = g_context->_location->_map->_id;
-	_pos = g_context->_location->_coords;
-
-	if (g_context->_location->_prev) {
-		_overworldPos.x = g_context->_location->_prev->_coords.x;
-		_overworldPos.y = g_context->_location->_prev->_coords.y;
-	} else {
-		_overworldPos.x = _overworldPos.y = 0;
-	}
-
+	_positions.load();
 	synchronize(ser);
 
 	/*
@@ -109,19 +100,13 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 	// initialize the moons (must be done from the world map)
 	g_game->initMoons();
 
-	// initialize our start location
-	map = mapMgr->get(MapId(_location));
+	// initialize overworld position and any secondary map we're in
+	g_context->_location->_coords = _positions[0];
 
-	if (map->_type != Map::WORLD) {
-		// Set up the secondary map
+	for (uint idx = 1; idx < _positions.size(); ++idx) {
+		map = mapMgr->get(_positions[idx]._map);
 		g_game->setMap(map, 1, nullptr);
-
-		// Set position within map and in overworld
-		g_context->_location->_coords = _pos;
-		g_context->_location->_prev->_coords = MapCoords(_overworldPos.x, _overworldPos.y, 0);
-	} else {
-		// On overworld, simply set position
-		g_context->_location->_coords = _pos;
+		g_context->_location->_coords = _positions[idx];
 	}
 
 	/**
@@ -197,13 +182,8 @@ void SaveGame::synchronize(Common::Serializer &s) {
 	for (i = 0; i < SPELL_MAX; ++i)
 		s.syncAsUint16LE(_mixtures[i]);
 
-	s.syncAsByte(_pos.x);
-	s.syncAsByte(_pos.y);
-	s.syncAsUint16LE(_pos.z);
-	s.syncAsByte(_overworldPos.x);
-	s.syncAsByte(_overworldPos.y);
+	_positions.synchronize(s);
 	s.syncAsUint16LE(_orientation);
-	s.syncAsUint16LE(_location);
 
 	s.syncAsUint16LE(_items);
 	s.syncAsByte(_stones);
@@ -255,8 +235,6 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 		_mixtures[i] = 0;
 
 	_items = 0;
-	_pos = Coords(0, 0, 0xffff);
-	_overworldPos = Common::Point();
 	_stones = 0;
 	_runes = 0;
 	_members = 1;
@@ -271,7 +249,6 @@ void SaveGame::init(const SaveGamePlayerRecord *avatarInfo) {
 	_lastMeditation = 0;
 	_lastVirtue = 0;
 	_orientation = 0;
-	_location = 0;
 }
 
 /*-------------------------------------------------------------------*/
@@ -349,6 +326,37 @@ void SaveGameMonsterRecord::synchronize(SaveGameMonsterRecord *monsterTable, Com
 		s.syncAsByte(monsterTable[i]._unused1);
 	for (i = 0; i < MONSTERTABLE_SIZE; ++i)
 		s.syncAsByte(monsterTable[i]._unused2);
+}
+
+/*-------------------------------------------------------------------*/
+
+void LocationCoordsArray::load() {
+	clear();
+
+	for (Location *l = g_context->_location; l; l = l->_prev)
+		insert_at(0, LocationCoords(l->_map->_id, l->_coords));
+}
+
+void LocationCoords::synchronize(Common::Serializer &s) {
+	s.syncAsByte(x);
+	s.syncAsByte(y);
+	s.syncAsByte(z);
+	s.syncAsByte(_map);
+}
+
+/*-------------------------------------------------------------------*/
+
+void LocationCoordsArray::synchronize(Common::Serializer &s) {
+	byte count = size();
+	s.syncAsByte(count);
+
+	if (s.isLoading())
+		resize(count);
+
+	for (uint idx = 0; idx < count; ++idx)
+		(*this)[idx].synchronize(s);
+
+	assert(!empty() && (*this)[0]._map == MAP_WORLD);
 }
 
 } // End of namespace Ultima4

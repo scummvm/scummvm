@@ -23,10 +23,12 @@
 #ifndef ULTIMA4_FILESYS_SAVEGAME_H
 #define ULTIMA4_FILESYS_SAVEGAME_H
 
+#include "common/array.h"
 #include "common/rect.h"
 #include "common/stream.h"
 #include "common/serializer.h"
 #include "ultima/ultima4/core/coords.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -233,6 +235,36 @@ struct SaveGameMonsterRecord {
 	static void synchronize(SaveGameMonsterRecord *monsterTable, Common::Serializer &s);
 };
 
+class LocationCoords : public Coords {
+public:
+	MapId _map;
+
+	LocationCoords() : Coords(), _map(0xff) {}
+	LocationCoords(MapId map, int x, int y, int z) :
+		Coords(x, y, z), _map(map) {}
+	LocationCoords(MapId map, const Coords &pos) :
+		Coords(pos), _map(map) {}
+
+	/**
+	 * Synchronize to/from a savegame
+	 */
+	void synchronize(Common::Serializer &s);
+};
+
+class LocationCoordsArray : public Common::Array<LocationCoords> {
+public:
+
+	/**
+	 * Loads the list of map & coordinates from the game context
+	 */
+	void load();
+
+	/**
+	 * Synchronize to/from a savegame
+	 */
+	void synchronize(Common::Serializer &s);
+};
+
 /**
  * Represents the on-disk contents of PARTY.SAV.
  */
@@ -278,10 +310,8 @@ struct SaveGame {
 	short _reagents[REAG_MAX];
 	short _mixtures[SPELL_MAX];
 	unsigned short _items;
-	Coords _pos;
-	Common::Point _overworldPos;
+	LocationCoordsArray _positions;
 	unsigned short _orientation;
-	unsigned short _location;
 
 	byte _stones;
 	byte _runes;
