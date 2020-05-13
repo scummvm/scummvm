@@ -58,6 +58,7 @@
 #include "common/hash-str.h"
 #include "common/rect.h"
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-gr.h"
@@ -67,6 +68,11 @@ extern int yyparse();
 
 using namespace Director;
 void yyerror(const char *s) {
+	// Director parser till D3 was forgiving for any hanging parentheses
+	if (g_director->getVersion() < 4) {
+		//
+	}
+
 	g_lingo->_hadError = true;
 	warning("######################  LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
@@ -137,9 +143,9 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 
 %%
 
-program: program '\n' programline
-	| programline
+program: programline
 	| error	'\n'		{ yyerrok; }
+	| programline '\n' program
 
 programline: /* empty */
 	| defn
@@ -646,7 +652,6 @@ on:  tON { g_lingo->_indef = kStateInArgs; } ID { $$ = $ID; g_lingo->_currentFac
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($ID); $$ = 1; delete $ID; }
 	| argdef ',' ID			{ g_lingo->codeArg($ID); $$ = $1 + 1; delete $ID; }
-	| argdef '\n' ',' ID	{ g_lingo->codeArg($ID); $$ = $1 + 1; delete $ID; }
 
 endargdef:	/* nothing */
 	| ID					{ delete $ID; }
