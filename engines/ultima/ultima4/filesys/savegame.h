@@ -240,8 +240,8 @@ public:
 	MapId _map;
 
 	LocationCoords() : Coords(), _map(0xff) {}
-	LocationCoords(MapId map, int x, int y, int z) :
-		Coords(x, y, z), _map(map) {}
+	LocationCoords(MapId map, int x_, int y_, int z_) :
+		Coords(x_, y_, z_), _map(map) {}
 	LocationCoords(MapId map, const Coords &pos) :
 		Coords(pos), _map(map) {}
 
