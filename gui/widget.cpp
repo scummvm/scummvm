@@ -116,7 +116,14 @@ void Widget::draw() {
 		_y = getAbsY();
 
 		if (g_gui.useRTL()) {
-			_x = _boss->_w - _x - _w;
+			_x = g_system->getOverlayWidth() - _x - _w;
+
+			// if (g_gui.isWindowOverlayed()) {
+			// Can i use something better below?
+			
+			if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions")){
+				_x = _x + g_gui.getOverlayOffset();
+			}
 		}
 
 		Common::Rect oldClip = g_gui.theme()->swapClipRect(_boss->getClipRect());
@@ -512,13 +519,13 @@ void DropdownButtonWidget::clearEntries() {
 	_entries.clear();
 }
 
-void DropdownButtonWidget::drawWidget() {
-	if (_entries.empty()) {
+void DropdownButtonWidget::drawWidget() {			// These are okay, no need to flip again.
+	if (_entries.empty()) {							// GUI TODO: However, down arrow should be to the right. Figure out a way to flip the widget internally?
 		// Degrade to a regular button
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state);
 	} else {
 		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, _label,
-		                                  _state, _inButton, _inDropdown);
+										  _state, _inButton, _inDropdown);
 	}
 }
 
@@ -599,7 +606,7 @@ void PicButtonWidget::drawWidget() {
 
 		const int x = _x + (_w - gfx->w) / 2;
 		const int y = _y + (_h - gfx->h) / 2;
-
+		
 		g_gui.theme()->drawSurface(Common::Point(x, y), *gfx, _transparency);
 	}
 }
@@ -772,13 +779,15 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void SliderWidget::drawWidget() {
-	if (_useRTL) {
+	Common::Rect r1(_x, _y, _x + _w, _y + _h);
+
+	if (g_gui.useRTL() && _useRTL) {
 		// GUI TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly.
 		//	     Most likely, I'll draw ::Rect(_x + _w, _y, _x, _y + _h...) but I'll leave it for now, will do it when I flip individual widgets.
-		g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(getMaxValue() - _value), _state);
+		g_gui.theme()->drawSlider(r1, valueToBarWidth(getMaxValue() - _value), _state);
 	}
 	else {
-		g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(_value), _state);
+		g_gui.theme()->drawSlider(r1, valueToBarWidth(_value), _state);
 	}
 }
 
@@ -852,7 +861,7 @@ void GraphicsWidget::drawWidget() {
 
 		const int x = _x + (_w - _gfx.w) / 2;
 		const int y = _y + (_h - _gfx.h) / 2;
-
+		
 		g_gui.theme()->drawSurface(Common::Point(x, y), _gfx, _transparency);
 	}
 }
