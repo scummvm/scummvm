@@ -65,6 +65,7 @@
 
 extern int yylex();
 extern int yyparse();
+extern void lex_unput(int c);
 
 using namespace Director;
 void yyerror(const char *s) {
@@ -144,12 +145,12 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %%
 
 program: programline
-	| error	'\n'		{ yyerrok; }
 	| programline '\n' program
 
 programline: /* empty */
 	| defn
 	| stmt
+	| error	'\n'		{ yyerrok; lex_unput('\n'); }
 
 asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_varpush);

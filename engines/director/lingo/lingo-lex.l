@@ -21,7 +21,6 @@
  */
 
 %option noyywrap
-%option nounput
 %option noinput
 %option never-interactive
 %option case-insensitive
@@ -407,6 +406,10 @@ word			{ count(); return tWORD; }
 %%
 
 extern int yydebug;
+
+void lex_unput(int c) {
+	unput(c);
+}
 
 namespace Director {
 
