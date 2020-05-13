@@ -533,28 +533,28 @@ uint32 AudioProcess::I_playAmbientSFXCru(const uint8 *args, unsigned int argsize
 }
 
 uint32 AudioProcess::I_isSFXPlaying(const uint8 *args, unsigned int argsize) {
-	ARG_SINT16(_sfxNum);
+	ARG_SINT16(sfxNum);
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) return ap->isSFXPlaying(_sfxNum);
+	if (ap) return ap->isSFXPlaying(sfxNum);
 	else perr << "Error: No AudioProcess" << Std::endl;
 	return 0;
 }
 
 uint32 AudioProcess::I_setVolumeSFX(const uint8 *args, unsigned int /*argsize*/) {
-	// Sets _volume for last played instances of _sfxNum (???)
-	ARG_SINT16(_sfxNum);
-	ARG_UINT8(_volume);
+	// Sets volume for last played instances of sfxNum (???)
+	ARG_SINT16(sfxNum);
+	ARG_UINT8(volume);
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->setVolumeSFX(_sfxNum, _volume);
+	if (ap) ap->setVolumeSFX(sfxNum, volume);
 	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
 
 uint32 AudioProcess::I_stopSFX(const uint8 *args, unsigned int argsize) {
-	ARG_SINT16(_sfxNum);
+	ARG_SINT16(sfxNum);
 
 	ObjId objId = 0;
 	if (argsize == 4) {
@@ -563,7 +563,7 @@ uint32 AudioProcess::I_stopSFX(const uint8 *args, unsigned int argsize) {
 	}
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->stopSFX(_sfxNum, objId);
+	if (ap) ap->stopSFX(sfxNum, objId);
 	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;

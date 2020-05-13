@@ -88,13 +88,13 @@ void SpriteProcess::run() {
 	_delayCounter = (_delayCounter + 1) % _delay;
 }
 
-// createSprite(_shape, _frame, end,               _delay, _x, _y, _z);
-// createSprite(_shape, _frame, end, unk, _repeats, _delay, _x, _y, _z);
+// createSprite(shape, frame, end,               delay, x, y, z);
+// createSprite(shape, frame, end, unk, repeats, delay, x, y, z);
 uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 	int repeats = 1;
-	ARG_SINT16(_shape);
-	ARG_SINT16(_frame);
-	ARG_SINT16(_lastFrame);
+	ARG_SINT16(shape);
+	ARG_SINT16(frame);
+	ARG_SINT16(lastFrame);
 
 	if (argsize == 18) {
 		ARG_SINT16(unknown);
@@ -102,11 +102,11 @@ uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 		repeats = repeats_count;
 	}
 
-	ARG_SINT16(_delay);
-	ARG_UINT16(_x);
-	ARG_UINT16(_y);
-	ARG_UINT8(_z);
-	Process *p = new SpriteProcess(_shape, _frame, _lastFrame, repeats, _delay, _x, _y, _z);
+	ARG_SINT16(delay);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
+	ARG_UINT8(z);
+	Process *p = new SpriteProcess(shape, frame, lastFrame, repeats, delay, x, y, z);
 	return Kernel::get_instance()->addProcess(p);
 }
 

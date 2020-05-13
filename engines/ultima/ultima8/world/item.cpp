@@ -1915,10 +1915,10 @@ uint32 Item::I_getShape(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_setShape(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	ARG_UINT16(_shape);
+	ARG_UINT16(shape);
 	if (!item) return 0;
 
-	item->setShape(_shape);
+	item->setShape(shape);
 	return 0;
 }
 
@@ -1931,10 +1931,10 @@ uint32 Item::I_getFrame(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_setFrame(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	ARG_UINT16(_frame);
+	ARG_UINT16(frame);
 	if (!item) return 0;
 
-	item->setFrame(_frame);
+	item->setFrame(frame);
 	return 0;
 }
 
@@ -2468,30 +2468,30 @@ uint32 Item::I_pop(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item); // unused
-	ARG_UINT16(_x);
-	ARG_UINT16(_y);
-	ARG_UINT16(_z);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
+	ARG_UINT16(z);
 
 	World *w = World::get_instance();
 
 	if (w->etherealEmpty()) return 0; // no items left on stack
 
-	uint16 _objId = w->etherealPeek();
-	Item *item = getItem(_objId);
+	uint16 objId = w->etherealPeek();
+	Item *item = getItem(objId);
 	if (!item) {
-		w->etherealRemove(_objId);
+		w->etherealRemove(objId);
 		return 0; // top item was invalid
 	}
 
-	item->move(_x, _y, _z);
+	item->move(x, y, z);
 
 #if 0
-	perr << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << _x << "," << _y << "," << _z << ")" << Std::endl;
+	perr << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << Std::endl;
 #endif
 
 	//! Anything else?
 
-	return _objId;
+	return objId;
 }
 
 uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
@@ -2609,10 +2609,10 @@ uint32 Item::I_getMapArray(const uint8 *args, unsigned int /*argsize*/) {
 //!!! is this correct?
 uint32 Item::I_setMapArray(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	ARG_UINT16(_mapNum);
+	ARG_UINT16(mapNum);
 	if (!item) return 0;
 
-	item->setMapNum(_mapNum);
+	item->setMapNum(mapNum);
 	return 0;
 }
 
@@ -2625,26 +2625,26 @@ uint32 Item::I_getNpcNum(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	ARG_UINT16(_x);
-	ARG_UINT16(_y);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
 	if (!item) return 0;
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	return Get_WorldDirection(_y - iy, _x - ix);
+	return Get_WorldDirection(y - iy, x - ix);
 }
 
 uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	ARG_UINT16(_x);
-	ARG_UINT16(_y);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
 	if (!item) return 0;
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	return Get_WorldDirection(iy - _y, ix - _x);
+	return Get_WorldDirection(iy - y, ix - x);
 }
 
 uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -2815,15 +2815,15 @@ uint32 Item::I_explode(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 uint32 Item::I_igniteChaos(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_UINT16(_x);
-	ARG_UINT16(_y);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
 	ARG_NULL8();
 
 	UCList itemlist(2);
 	LOOPSCRIPT(script, LS_SHAPE_EQUAL(592)); // all oilflasks (CONSTANT!)
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	currentmap->areaSearch(&itemlist, script, sizeof(script), 0,
-	                       160, false, _x, _y); //! CHECKME: 160?
+	                       160, false, x, y); //! CHECKME: 160?
 
 	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
 		Item *item = getItem(itemlist.getuint16(i));
