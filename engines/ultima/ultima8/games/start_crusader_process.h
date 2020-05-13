@@ -20,41 +20,40 @@
  *
  */
 
-#ifndef ULTIMA8_GAMES_REMORSEGAME_H
-#define ULTIMA8_GAMES_REMORSEGAME_H
+#ifndef ULTIMA8_GAMES_STARTCRUSADERPROCESS_H
+#define ULTIMA8_GAMES_STARTCRUSADERPROCESS_H
 
-#include "ultima/ultima8/games/game.h"
+#include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class RemorseGame : public Game {
+class Item;
+
+class StartCrusaderProcess : public Process {
 public:
-	RemorseGame();
-	~RemorseGame() override;
-
-	//! load/init game's data files
-	bool loadFiles() override;
-
-	//! initialize new game
-	bool startGame() override;
-
-	//! start initial usecode
-	bool startInitialUsecode(int saveSlot = -1) override;
-
-	//! write game-specific savegame info (avatar stats, equipment, ...)
-	void writeSaveInfo(Common::WriteStream *ws) override;
-
-	ProcId playIntroMovie(bool fade) override;
-	ProcId playIntroMovie2(bool fade);
-	ProcId playEndgameMovie(bool fade) override;
-	void playCredits() override;
-	void playQuotes() override { };
-
-	static Game *createGame(GameInfo *info);
+	enum CruInitStage {
+		PlayFirstMovie,
+		PlaySecondMovie,
+		ShowMenu
+	};
 
 protected:
-	static Game *_game;
+	CruInitStage _initStage;
+	bool _skipStart;
+	int _saveSlot;
+
+	void saveData(Common::WriteStream *ws) override;
+public:
+	StartCrusaderProcess(int saveSlot = -1);
+
+	// p_dynamic_cast stuff
+	ENABLE_RUNTIME_CLASSTYPE()
+
+	void run() override;
+
+	bool loadData(Common::ReadStream *rs, uint32 version);
 };
 
 } // End of namespace Ultima8

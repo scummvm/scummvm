@@ -22,6 +22,7 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/remorse_game.h"
+#include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/idata_source.h"
@@ -73,8 +74,6 @@ static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
 bool RemorseGame::loadFiles() {
 	// Load palette
 	pout << "Load Palettes" << Std::endl;
-	
-	
 
 	if (!loadPalette("@game/static/gamepal.pal", PaletteManager::Pal_Game))
 		return false;
@@ -123,28 +122,13 @@ bool RemorseGame::startGame() {
 	}
 
 	World::get_instance()->switchMap(1);
-	
-	Gump *statusGump = new CruStatusGump();
-	statusGump->InitGump(nullptr);
-
-	//Ultima8Engine::get_instance()->setAvatarInStasis(true);
-	Ultima8Engine::get_instance()->setCheatMode(true);
 
 	return true;
 }
 
 bool RemorseGame::startInitialUsecode(int saveSlot) {
-	/*ProcId moviepid =*/ Game::get_instance()->playIntroMovie(false);
-	//Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
-
-	//if (movieproc) {
-	//	waitFor(movieproc);
-	//	return;
-	//}
-
-//	Process* proc = new StartCrusaderProcess();
-//	Kernel::get_instance()->addProcess(proc);
-
+	Process* proc = new StartCrusaderProcess();
+	Kernel::get_instance()->addProcess(proc);
 	return true;
 }
 
@@ -162,9 +146,13 @@ static ProcId playMovie(const char *movieID, bool fade) {
 }
 
 ProcId RemorseGame::playIntroMovie(bool fade) {
-	return playMovie("T02", fade);
-	// TODO: also play T02
+	return playMovie("T01", fade);
 }
+
+ProcId RemorseGame::playIntroMovie2(bool fade) {
+	return playMovie("T02", fade);
+}
+
 
 ProcId RemorseGame::playEndgameMovie(bool fade) {
 	return playMovie("O01", fade);

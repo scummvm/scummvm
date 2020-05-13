@@ -69,7 +69,8 @@ RemorseMusicProcess::~RemorseMusicProcess() {
 		Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 		assert(mixer);
 		mixer->stopHandle(_soundHandle);
-		delete _playingStream;
+		// FIXME: Some destruction order problem here..
+		//delete _playingStream;
 	}
 }
 

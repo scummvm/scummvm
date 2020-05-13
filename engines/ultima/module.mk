@@ -412,6 +412,7 @@ MODULE_OBJS := \
 	ultima8/games/game_data.o \
 	ultima8/games/game_info.o \
 	ultima8/games/remorse_game.o \
+	ultima8/games/start_crusader_process.o \
 	ultima8/games/start_u8_process.o \
 	ultima8/games/treasure_loader.o \
 	ultima8/games/u8_game.o \
