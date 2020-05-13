@@ -47,14 +47,12 @@ struct RunTimeClassType {
 #define ENABLE_RUNTIME_CLASSTYPE()                                              \
 	static const RunTimeClassType   ClassType;                                  \
 	virtual bool IsOfType(const RunTimeClassType & type) const override;        \
-	virtual bool IsOfType(const char * type) const override;                    \
 	template<class Type> inline bool IsOfType() const { return IsOfType(Type::ClassType); }   \
 	virtual const RunTimeClassType & GetClassType() const override { return ClassType; }
 
 #define ENABLE_RUNTIME_CLASSTYPE_BASE()                                         \
 	static const RunTimeClassType   ClassType;                                  \
 	virtual bool IsOfType(const RunTimeClassType & type) const;                 \
-	virtual bool IsOfType(const char * type) const;                             \
 	template<class Type> inline bool IsOfType() const { return IsOfType(Type::ClassType); }   \
 	virtual const RunTimeClassType & GetClassType() const { return ClassType; }
 
@@ -72,12 +70,6 @@ struct RunTimeClassType {
 	{                                                                   \
 		if (classType == ClassType) return true;                        \
 		return false;                                                   \
-	}                                                                   \
-	\
-	bool Classname::IsOfType(const char *classType) const               \
-	{                                                                   \
-		if (!Std::strcmp(classType,ClassType._className)) return true;  \
-		return false;                                                   \
 	}
 
 
@@ -93,15 +85,7 @@ struct RunTimeClassType {
 	{                                                                   \
 		if (classType == ClassType) return true;                        \
 		return ParentClassname::IsOfType(classType);                    \
-	}                                                                   \
-	\
-	bool Classname::IsOfType(const char *typeName) const                \
-	{                                                                   \
-		if (!Std::strcmp(typeName,ClassType._className)) return true;   \
-		return ParentClassname::IsOfType(typeName);                     \
 	}
-
-
 
 //
 // Define this in the source files of child classes, with 2 parents
@@ -116,16 +100,6 @@ struct RunTimeClassType {
 		typedef Parent1 P1;                                                 \
 		typedef Parent2 P2;                                                 \
 		if (type == ClassType) return true;                                 \
-		bool ret = P1::IsOfType(type);                                      \
-		if (ret) return true;                                               \
-		return P2::IsOfType(type);                                          \
-	}                                                                       \
-	\
-	bool Classname::IsOfType(const char * type) const                       \
-	{                                                                       \
-		typedef Parent1 P1;                                                 \
-		typedef Parent2 P2;                                                 \
-		if (!Std::strcmp(type,ClassType._className)) return true;           \
 		bool ret = P1::IsOfType(type);                                      \
 		if (ret) return true;                                               \
 		return P2::IsOfType(type);                                          \
