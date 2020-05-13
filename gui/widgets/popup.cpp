@@ -517,6 +517,10 @@ void PopUpWidget::drawWidget() {
 	if (g_gui.useRTL())
 		_x = g_system->getOverlayWidth() - _x - _w;
 
+	// GUI TODO: Recheck what the below line does.
+	if (this->_name.contains("GameOptions") || this->_name.contains("Options"))
+		_x = g_system->getOverlayWidth() - _w - _x;
+
 	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state);
 }
 
