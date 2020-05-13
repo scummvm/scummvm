@@ -1195,6 +1195,9 @@ StringList getFeatureLibraries(const Feature &feature) {
 		StringList fLibraries = tokenize(feature.libraries);
 		libraries.splice(libraries.end(), fLibraries);
 	}
+	// The libraries get sorted as they can get used in algorithms where ordering is a
+	// precondition, e.g. merge()
+	libraries.sort();
 
 	return libraries;
 }
