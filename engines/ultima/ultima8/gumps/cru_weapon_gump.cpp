@@ -78,7 +78,7 @@ void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	}
 
 	uint16 weapon = a->getDamageType(); // ?? TODO: Where do we store current weapon?
-	const ShapeFrame *frame = _weaponShape->getFrame(weapon);
+	/*const ShapeFrame *frame = */_weaponShape->getFrame(weapon);
 	// TODO: Paint the current weapon
 }
 

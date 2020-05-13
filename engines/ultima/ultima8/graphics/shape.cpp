@@ -173,10 +173,11 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 
 	// Skip unknown
 	if (format->_bytes_header_unk && format != &Crusader2DShapeFormat) {
-		uint32 val = ds.readX(format->_bytes_header_unk);
-		uint16 lowval = val & 0xff;
-		uint16 highval = (val >> 16) & 0xff;
-		uint32 dummy = 0 + lowval + highval + val;
+		//uint32 val =
+		ds.readX(format->_bytes_header_unk);
+		//uint16 lowval = val & 0xff;
+		//uint16 highval = (val >> 16) & 0xff;
+		//uint32 dummy = 0 + lowval + highval + val;
 	} else {
 		// Appears to be shape Width x Height for Crusader 2D shapes,
 		// not needed - we get them by frame.
@@ -197,8 +198,7 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 
 		// Skip the unknown
 		if (format->_bytes_frameheader_unk) {
-			uint32 val = ds.readX(format->_bytes_frameheader_unk);
-			uint32 dummy = 0 + val;
+			ds.readX(format->_bytes_frameheader_unk);
 		}
 
 		// Read frame_length

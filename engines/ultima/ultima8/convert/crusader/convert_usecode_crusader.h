@@ -78,7 +78,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Intrinsic008(4 bytes)",
 	"byte Item::I_getZ(Item *)",
 	"void Intrinsic00A(4 bytes)",
-	"int16 I_getSOMETHING_09(MainActor *???)",
+	"int16 I_getSOMETHING_09(MainActor *?)",
 	"void Intrinsic00C(2 bytes)",
 	"byte Intrinsic00D(6 bytes)",
 	"int16 Intrinsic00E(8 bytes)",

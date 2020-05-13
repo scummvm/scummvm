@@ -78,7 +78,7 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 	}
 
 	uint16 weapon = a->getDamageType(); // ?? TODO: Where do we store item weapon?
-	const ShapeFrame *frame = _inventoryShape->getFrame(weapon);
+	/*const ShapeFrame *frame = */_inventoryShape->getFrame(weapon);
 	// TODO: Paint the current selected item
 }
 
