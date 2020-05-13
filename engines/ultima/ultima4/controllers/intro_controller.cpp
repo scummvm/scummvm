@@ -1136,15 +1136,6 @@ void IntroController::updateInputMenu(MenuEvent &event) {
 			// save settings
 			settings.setData(_settingsChanged);
 			settings.write();
-
-#ifdef SLACK_ON_SDL_AGNOSTICISM
-			if (settings.mouseOptions.enabled) {
-				SDL_ShowCursor(SDL_ENABLE);
-			} else {
-				SDL_ShowCursor(SDL_DISABLE);
-			}
-#endif
-
 			break;
 		case CANCEL:
 			// discard settings
@@ -1434,7 +1425,7 @@ void IntroController::initTitles() {
 	eventHandler->getTimer()->reset(settings._titleSpeedOther);
 }
 
-void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration) {
+void IntroController::addTitle(int x, int y, int w, int h, AnimType method, uint32 delay, int duration) {
 	AnimElement data = {
 		x, y,               // source x and y
 		w, h,               // source width and height
@@ -1609,20 +1600,6 @@ void IntroController::getTitleSourceData() {
 	info->_image = scaled;
 }
 
-
-
-#ifdef SLACK_ON_SDL_AGNOSTICISM
-int getTicks() {
-	return SDL_GetTicks();
-}
-#elif !defined(IOS_ULTIMA4)
-static int ticks = 0;
-int getTicks() {
-	ticks += 1000;
-	return ticks;
-}
-#endif
-
 bool IntroController::updateTitle() {
 #ifdef IOS_ULTIMA4
 	static bool firstTime = true;
@@ -1634,7 +1611,7 @@ bool IntroController::updateTitle() {
 
 	int animStepTarget = 0;
 
-	int timeCurrent = getTicks();
+	uint32 timeCurrent = g_system->getMillis();
 	float timePercent = 0;
 
 	if (_title->_animStep == 0 && !_bSkipTitles) {
@@ -1717,7 +1694,7 @@ bool IntroController::updateTitle() {
 			_title->_animStep = _title->_animStepMax;
 		else {
 			_title->_animStep++;
-			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
+			_title->_timeDelay = g_system->getMillis() - _title->_timeBase + 100;
 		}
 
 		// blit src to the canvas one row at a time, bottom up
@@ -1737,7 +1714,7 @@ bool IntroController::updateTitle() {
 			_title->_animStep = _title->_animStepMax;
 		else {
 			_title->_animStep++;
-			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
+			_title->_timeDelay = g_system->getMillis() - _title->_timeBase + 100;
 		}
 
 		// blit src to the canvas one row at a time, top down
@@ -1788,7 +1765,7 @@ bool IntroController::updateTitle() {
 			_title->_animStep = _title->_animStepMax;
 		else {
 			_title->_animStep++;
-			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
+			_title->_timeDelay = g_system->getMillis() - _title->_timeBase + 100;
 		}
 
 		// blit src to the canvas one row at a time, center out
@@ -1809,7 +1786,7 @@ bool IntroController::updateTitle() {
 			_title->_animStep = _title->_animStepMax;
 		else {
 			_title->_animStep++;
-			_title->_timeDelay = getTicks() - _title->_timeBase + 100;
+			_title->_timeDelay = g_system->getMillis() - _title->_timeBase + 100;
 		}
 
 		int step = (_title->_animStep == _title->_animStepMax ? _title->_animStepMax - 1 : _title->_animStep);
@@ -1834,7 +1811,7 @@ bool IntroController::updateTitle() {
 
 
 		// create a destimage for the map tiles
-		int newtime = getTicks();
+		int newtime = g_system->getMillis();
 		if (newtime > _title->_timeDuration + 250 / 4) {
 			// grab the map from the screen
 			Image *screen = imageMgr->get("screen")->_image;

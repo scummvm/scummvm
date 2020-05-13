@@ -375,13 +375,13 @@ private:
 	struct AnimElement {
 		void shufflePlotData();
 
-		int _rx, _ry;                         // screen/source x and y
-		int _rw, _rh;                         // source width and height
+		int _rx, _ry;                        // screen/source x and y
+		int _rw, _rh;                        // source width and height
 		AnimType _method;                    // render method
 		int _animStep;                       // tracks animation position
 		int _animStepMax;
 		int _timeBase;                       // initial animation time
-		int _timeDelay;                      // delay before rendering begins
+		uint32 _timeDelay;                   // delay before rendering begins
 		int _timeDuration;                   // total animation time
 		Image *_srcImage;                    // storage for the source image
 		Image *_destImage;                   // storage for the animation frame
@@ -392,7 +392,7 @@ private:
 	/**
 	 * Add the intro element to the element list
 	 */
-	void addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration);
+	void addTitle(int x, int y, int w, int h, AnimType method, uint32 delay, int duration);
 
 	/**
 	 * The title element has finished drawing all frames, so delete, remove,

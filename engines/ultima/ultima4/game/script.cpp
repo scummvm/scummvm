@@ -359,7 +359,7 @@ Script::ReturnCode Script::execute(Shared::XMLNode *script, Shared::XMLNode *cur
 					retval = forLoop(script, current);
 					break;
 				case ACTION_RANDOM:
-					retval = random(script, current);
+					retval = randomScript(script, current);
 					break;
 				case ACTION_MOVE:
 					retval = move(script, current);
@@ -958,7 +958,7 @@ Script::ReturnCode Script::forLoop(Shared::XMLNode *script, Shared::XMLNode *cur
 	return retval;
 }
 
-Script::ReturnCode Script::random(Shared::XMLNode *script, Shared::XMLNode *current) {
+Script::ReturnCode Script::randomScript(Shared::XMLNode *script, Shared::XMLNode *current) {
 	int perc = getPropAsInt(current, "chance");
 	int num = xu4_random(100);
 	Script::ReturnCode retval = RET_OK;
