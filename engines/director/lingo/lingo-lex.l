@@ -64,8 +64,6 @@ static void count() {
 
 		p++;
 	}
-
-	g_lingo->_colnumber = strlen(p);
 }
 
 static int checkImmediate(int token) {
