@@ -27,6 +27,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/world/actors/actor_anim.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
 
@@ -57,6 +58,57 @@ AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
 	return _anims[shape]->getAction(action);
 }
 
+uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
+	if (GAME_IS_U8) {
+		return static_cast<uint32>(action);
+	} else {
+		// For crusader the actions have different IDs.  Rather than
+		// rewrite everything, we just translate them here for all the ones
+		// we want to use programmatically.  There are more, but they are
+		// called from usecode so don't need translation.
+		switch (action) {
+		case Animation::stand:
+			return 0;
+		case Animation::step:
+			return 1; // Same as walk in crusader.
+		case Animation::walk:
+			return 1;
+		case Animation::retreat:
+			return 2; // TODO: 28 is also a retreat move, which is right?
+		case Animation::run:
+			return 3;
+		case Animation::combatStand:
+			return 4; // TODO: 8, 37 is also a combat stand for other weapons?
+		// Note: 5, 6, 9, 10 == nothing (for avatar)?
+		case Animation::unreadyWeapon:
+			return 11; // TODO: 16 is also a unready-weapon move, which is right?
+		case Animation::readyWeapon:
+			return 12; // TODO: 7 is also a ready-weapon move, which is right?
+		case Animation::attack:
+			return 13;
+		// Note: 14, 17, 21, 22, 29 == nothing for avatar
+		case Animation::fallBackwards:
+			return 18;
+		case Animation::die:
+			return 20; // maybe? falls over forwards
+		case Animation::advance:
+			return 36; // TODO: 44 is also advance
+		case Animation::startKneeling:
+			return 40;
+		case Animation::stopKneeling:
+			return 41;
+		case Animation::kneel:
+			return 46; // 47 is knee with a larger weapon
+		// 48 is nothing for avatar
+		case Animation::lookLeft:
+			return 14;
+		case Animation::lookRight:
+			return 14;
+		default:
+			return static_cast<uint32>(action);;
+		}
+	}
+}
 
 void AnimDat::load(Common::SeekableReadStream *rs) {
 	AnimFrame f;

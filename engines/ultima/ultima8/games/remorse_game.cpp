@@ -117,7 +117,7 @@ bool RemorseGame::startGame() {
 	ObjectManager::get_instance()->assignActorObjId(actor, 1);
 
 	if (GAME_IS_REMORSE) {
-		actor->setLocation(60700, 59420, 16);
+		actor->setLocation(60716, 59400, 16);
 	} else {
 		actor->setLocation(58174, 56606, 16);
 	}
@@ -134,7 +134,7 @@ bool RemorseGame::startGame() {
 }
 
 bool RemorseGame::startInitialUsecode(int saveSlot) {
-	//ProcId moviepid = Game::get_instance()->playIntroMovie(false);
+	/*ProcId moviepid =*/ Game::get_instance()->playIntroMovie(false);
 	//Process *movieproc = Kernel::get_instance()->getProcess(moviepid);
 
 	//if (movieproc) {

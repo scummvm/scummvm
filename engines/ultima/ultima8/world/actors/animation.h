@@ -90,10 +90,27 @@ enum Sequence {
 	burn = 57,
 	kick = 58,
 	startBlock = 59,
-	stopBlock = 60
+	stopBlock = 60,
 	            //61: unused
 	            //62: unused
 	            //63: unused
+	// Some crusader-specific animations (some use the same IDs as above)
+	reload = 15,
+	combatRollLeft = 23,
+	combatRollRight = 24,
+	walkWithGun = 25,
+	kneelAndFire = 26,
+	slideRight = 29,
+	startRunWithLargeWeapon = 31,
+	teleportIn = 32,
+	teleportOut = 33,
+	startRunWithSmallWeapon = 34,
+	startRunWithLargeWeapon2 = 35,
+	startRun = 38,
+	stopRunningAndDrawWeapon = 39,
+	kneelAndFire2 = 42,
+	kneelAndFire3 = 43,
+	runWithLargeWeapon = 50
 };
 
 enum Result {
