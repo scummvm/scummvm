@@ -54,6 +54,7 @@ static void count() {
 	while (*p && *p != '\n' && *p != '\r') {
 		p++;
 		g_lingo->_colnumber++;
+		g_lingo->_bytenumber++;
 	}
 
 	while (*p == '\n' || *p == '\r') {
@@ -61,8 +62,8 @@ static void count() {
 			g_lingo->_linenumber++;
 			g_lingo->_colnumber = 0;
 		}
-
 		p++;
+		g_lingo->_bytenumber++;
 	}
 }
 
@@ -407,11 +408,38 @@ extern int yydebug;
 
 void lex_unput(int c) {
 	unput(c);
+	g_lingo->_bytenumber--;
+	g_lingo->_linenumber--;
+}
+
+static const char *inputbuffer;
+
+bool lex_check_parens() {
+	if (!g_lingo->_bytenumber)
+		return false;
+
+	const char *ptr = &inputbuffer[g_lingo->_bytenumber - 1];
+	bool sawparen = false;
+
+	while (*ptr && *ptr != '\n') {
+		if (*ptr == ')' || *ptr == '(')
+			sawparen = true;
+
+		if (*ptr != ')' && *ptr != '(' && *ptr != ' ' && *ptr != '\xC2')
+			return false;
+
+		ptr++;
+	}
+
+	return sawparen;
 }
 
 namespace Director {
 
 int Lingo::parse(const char *code) {
+	inputbuffer = code;
+	g_lingo->_bytenumber = 0;
+
 	YY_BUFFER_STATE bp;
 
 	if (debugChannelSet(-1, kDebugLingoParse))

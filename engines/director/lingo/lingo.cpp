@@ -82,7 +82,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_ignoreMe = false;
 	_immediateMode = false;
 
-	_linenumber = _colnumber = 0;
+	_linenumber = _colnumber = _bytenumber = 0;
 
 	_hadError = false;
 

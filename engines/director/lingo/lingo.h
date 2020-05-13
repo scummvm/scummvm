@@ -335,6 +335,7 @@ public:
 
 	int _linenumber;
 	int _colnumber;
+	int _bytenumber;
 
 	Common::String _floatPrecisionFormat;
 

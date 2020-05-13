@@ -66,12 +66,16 @@
 extern int yylex();
 extern int yyparse();
 extern void lex_unput(int c);
+extern bool lex_check_parens();
 
 using namespace Director;
 void yyerror(const char *s) {
 	// Director parser till D3 was forgiving for any hanging parentheses
-	if (g_director->getVersion() < 4) {
-		//
+	if (g_director->getVersion() <= 4) {
+		if (lex_check_parens()) {
+			warning("# LINGO: Ignoring trailing parens");
+			return;
+		}
 	}
 
 	g_lingo->_hadError = true;
