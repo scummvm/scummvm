@@ -285,6 +285,8 @@ public:
 	Std::map<Common::String, MapCoords> _labels;
 	Tileset *_tileSet;
 	TileMap *_tileMap;
+	MapTile _blank;
+
 
 	// u4dos compatibility
 	SaveGameMonsterRecord _monsterTable[MONSTERTABLE_SIZE];

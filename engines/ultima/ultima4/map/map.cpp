@@ -231,7 +231,7 @@ int MapCoords::distance(const MapCoords &c, const Map *map) const {
 Map::Map() : _id(0), _type(WORLD), _width(0), _height(0), _levels(1),
 		_chunkWidth(0), _chunkHeight(0), _offset(0), _flags(0),
 		_borderBehavior(BORDER_WRAP), _music(Music::NONE),
-		_tileSet(nullptr), _tileMap(nullptr) {
+		_tileSet(nullptr), _tileMap(nullptr), _blank(0) {
 	_annotations = new AnnotationMgr();
 }
 
@@ -279,10 +279,8 @@ const Portal *Map::portalAt(const Coords &coords, int actionFlags) {
 }
 
 MapTile *Map::getTileFromData(const Coords &coords) {
-	static MapTile blank(0);
-
 	if (MAP_IS_OOB(this, coords))
-		return &blank;
+		return &_blank;
 
 	int index = coords.x + (coords.y * _width) + (_width * _height * coords.z);
 	return &_data[index];
