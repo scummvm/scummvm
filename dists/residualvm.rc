@@ -10,21 +10,103 @@
 #define FILE 256
 #define IDI_ICON  1001
 #define IDI_COUNT 1002
+#define ID_GDF_XML __GDF_XML
 
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/residualvm.exe.manifest"
 IDI_ICON               ICON    "icons/residualvm.ico"
 IDI_COUNT              ICON    "icons/count.ico"
 
-residualvm-grim-patch.lab        FILE    "dists/engine-data/residualvm-grim-patch.lab"
-residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"
-#if PLUGIN_ENABLED_STATIC(MYST3)
-myst3.dat                        FILE    "dists/engine-data/myst3.dat"
+#if 0 // ResidualVM - not used
+ID_GDF_XML             DATA    "dists/win32/scummvm.gdf.xml"
+
+scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
+scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
+scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 #endif
-modern.zip        FILE    "gui/themes/modern.zip"
+// ResidualVM specific START
+modern.zip             FILE    "gui/themes/modern.zip"
+
+#if PLUGIN_ENABLED_STATIC(GRIM)
+residualvm-grim-patch.lab       FILE    "dists/engine-data/residualvm-grim-patch.lab"
+residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"
+#endif
+#if PLUGIN_ENABLED_STATIC(MYST3)
+myst3.dat                       FILE    "dists/engine-data/myst3.dat"
+#endif
+// ResidualVM specific END
+
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
+#ifdef USE_SDL_NET
+wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
+#endif
+#ifdef USE_FREETYPE2
+fonts.dat              FILE    "dists/engine-data/fonts.dat"
+#endif
 
+#if PLUGIN_ENABLED_STATIC(ACCESS)
+access.dat             FILE    "dists/engine-data/access.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(CRYO)
+cryo.dat               FILE    "dists/engine-data/cryo.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(CRYOMNI3D)
+cryomni3d.dat          FILE    "dists/engine-data/cryomni3d.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(DRASCULA)
+drascula.dat           FILE    "dists/engine-data/drascula.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(HUGO)
+hugo.dat               FILE    "dists/engine-data/hugo.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(KYRA)
+kyra.dat               FILE    "dists/engine-data/kyra.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(LURE)
+lure.dat               FILE    "dists/engine-data/lure.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
+mort.dat               FILE    "dists/engine-data/mort.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(NEVERHOOD)
+neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(QUEEN)
+queen.tbl              FILE    "dists/engine-data/queen.tbl"
+#endif
+#if PLUGIN_ENABLED_STATIC(SKY)
+sky.cpt                FILE    "dists/engine-data/sky.cpt"
+#endif
+#if PLUGIN_ENABLED_STATIC(SUPERNOVA)
+supernova.dat          FILE    "dists/engine-data/supernova.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TEENAGENT)
+teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TITANIC)
+titanic.dat            FILE    "dists/engine-data/titanic.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TONY)
+tony.dat               FILE    "dists/engine-data/tony.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TOON)
+toon.dat               FILE    "dists/engine-data/toon.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(ULTIMA)
+ultima.dat             FILE    "dists/engine-data/ultima.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(WINTERMUTE)
+wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
+#endif
+#if PLUGIN_ENABLED_STATIC(XEEN)
+xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
+#endif
+#if PLUGIN_ENABLED_STATIC(AGI)
+pred.dic               FILE    "dists/pred.dic"
+#endif
+
+// ResidualVM specific START
 #ifdef USE_OPENGL_SHADERS
 #if PLUGIN_ENABLED_STATIC(GRIM)
 shaders/dim.fragment             FILE    "engines/grim/shaders/dim.fragment"
@@ -71,6 +153,7 @@ shaders/stark_shadow.fragment    FILE    "engines/stark/shaders/stark_shadow.fra
 shaders/stark_shadow.vertex      FILE    "engines/stark/shaders/stark_shadow.vertex"
 #endif
 #endif
+// ResidualVM specific END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION     SCUMMVM_VER_MAJOR,SCUMMVM_VER_MINOR,SCUMMVM_VER_PATCH,0
@@ -94,7 +177,7 @@ BEGIN
             VALUE "FileDescription", "ResidualVM: A free 3D game interpreter\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "residualvm\0"
-            VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"
+            VALUE "LegalCopyright", "Copyright \xA9 2003-2020 The ResidualVM Team\nCopyright \xA9 2001-2020 The ScummVM Team\0"
             VALUE "OriginalFilename", "residualvm.exe\0"
             VALUE "ProductName", "ResidualVM\0"
             VALUE "ProductVersion", SCUMMVM_VERSION "\0"
