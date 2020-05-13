@@ -245,8 +245,8 @@ int Location::getCurrentPosition(MapCoords *coords) {
 
 MoveResult Location::move(Direction dir, bool userEvent) {
 	MoveEvent event(dir, userEvent);
-	switch (_map->_type) {
 
+	switch (_map->_type) {
 	case Map::DUNGEON:
 		moveAvatarInDungeon(event);
 		break;
@@ -265,7 +265,6 @@ MoveResult Location::move(Direction dir, bool userEvent) {
 
 	return event._result;
 }
-
 
 void locationFree(Location **stack) {
 	delete locationPop(stack);

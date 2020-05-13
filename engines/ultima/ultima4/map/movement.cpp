@@ -38,11 +38,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * Attempt to move the avatar in the given direction.  User event
- * should be set if the avatar is being moved in response to a
- * keystroke.  Returns zero if the avatar is blocked.
- */
 void moveAvatar(MoveEvent &event) {
 	MapCoords newCoords;
 	int slowed = 0;
@@ -128,9 +123,6 @@ void moveAvatar(MoveEvent &event) {
 	event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
 }
 
-/**
- * Moves the avatar while in dungeon view
- */
 void moveAvatarInDungeon(MoveEvent &event) {
 	MapCoords newCoords;
 	Direction realDir = dirNormalize((Direction)g_ultima->_saveGame->_orientation, event._dir); /* get our real direction */

@@ -49,7 +49,11 @@ enum Direction {
 #define DIR_ADD_TO_MASK(dir,mask) ((1 << (dir)) | (mask))
 #define DIR_REMOVE_FROM_MASK(dir,mask) ((~(1 << (dir))) & (mask))
 
+/**
+ * Returns the opposite direction.
+ */
 Direction dirReverse(Direction dir);
+
 Direction dirFromMask(int dir_mask);
 Direction dirRotateCW(Direction dir);
 Direction dirRotateCCW(Direction dir);

@@ -27,9 +27,6 @@
 namespace Ultima {
 namespace Ultima4 {
 
-/**
- * Returns the opposite direction.
- */
 Direction dirReverse(Direction dir) {
 	switch (dir) {
 	case DIR_NONE:

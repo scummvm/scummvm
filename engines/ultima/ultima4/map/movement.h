@@ -60,7 +60,16 @@ public:
 	MoveResult _result;          /**< how the movement was resolved */
 };
 
+/**
+ * Attempt to move the avatar in the given direction.  User event
+ * should be set if the avatar is being moved in response to a
+ * keystroke.  Returns zero if the avatar is blocked.
+ */
 void moveAvatar(MoveEvent &event);
+
+/**
+ * Moves the avatar while in dungeon view
+ */
 void moveAvatarInDungeon(MoveEvent &event);
 
 /**

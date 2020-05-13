@@ -44,9 +44,11 @@ namespace Ultima4 {
 bool MapCoords::operator==(const MapCoords &a) const {
 	return (x == a.x) && (y == a.y) && (z == a.z);
 }
+
 bool MapCoords::operator!=(const MapCoords &a) const {
 	return !operator==(a);
 }
+
 bool MapCoords::operator<(const MapCoords &a)  const {
 	if (x > a.x)
 		return false;
@@ -54,7 +56,6 @@ bool MapCoords::operator<(const MapCoords &a)  const {
 		return false;
 	return z < a.z;
 }
-
 
 MapCoords &MapCoords::wrap(const Map *map) {
 	if (map && map->_borderBehavior == Map::BORDER_WRAP) {
