@@ -26,9 +26,8 @@
 
 namespace Dragons {
 
-MidiMusicPlayer::MidiMusicPlayer(VabSound *musicVab): _musicVab(musicVab) {
+MidiMusicPlayer::MidiMusicPlayer(VabSound *musicVab): _musicVab(musicVab), _midiDataSize(0) {
 	_midiData = nullptr;
-	_midiDataSize = 0;
 	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
