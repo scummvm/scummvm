@@ -78,6 +78,7 @@ GameState::StateData::StateData() {
 	saveYear = 0;
 	saveHour = 0;
 	saveMinute = 0;
+	isAutosave = false;
 }
 
 GameState::GameState(const Common::Platform platform, Database *database):
@@ -474,6 +475,7 @@ Common::Error GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	s.syncAsByte(saveHour, 149);
 	s.syncAsByte(saveMinute, 149);
 	s.syncString(saveDescription, 149);
+	s.syncAsUint32LE(isAutosave, 150);
 
 	return Common::kNoError;
 }
@@ -547,7 +549,7 @@ Common::Error GameState::load(Common::InSaveFile *saveFile) {
 	return Common::kNoError;
 }
 
-Common::Error GameState::save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail) {
+Common::Error GameState::save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail, bool isAutosave) {
 	Common::Serializer s = Common::Serializer(0, saveFile);
 
 	// Update save creation info
@@ -559,6 +561,7 @@ Common::Error GameState::save(Common::OutSaveFile *saveFile, const Common::Strin
 	_data.saveHour = t.tm_hour;
 	_data.saveMinute = t.tm_min;
 	_data.saveDescription = description;
+	_data.isAutosave = isAutosave;
 
 	_data.gameRunning = false;
 
@@ -818,12 +821,32 @@ Common::String Saves::buildName(const char *name, Common::Platform platform) {
 	return Common::String::format(format, name);
 }
 
+struct AutosaveFirstComparator {
+	bool operator()(const Common::String &x, const Common::String &y) const {
+		if (x.hasPrefixIgnoreCase("autosave.")) {
+			return true;
+		}
+
+		if (y.hasPrefixIgnoreCase("autosave.")) {
+			return false;
+		}
+
+		return x < y;
+	}
+};
+
 Common::StringArray Saves::list(Common::SaveFileManager *saveFileManager, Common::Platform platform) {
 	Common::String searchPattern = Saves::buildName("*", platform);
 	Common::StringArray filenames = saveFileManager->listSavefiles(searchPattern);
 
 	// The saves are sorted alphabetically
-	Common::sort(filenames.begin(), filenames.end());
+	Common::sort(filenames.begin(), filenames.end(), AutosaveFirstComparator());
+
+	// The MetaEngine save system expects the Autosave to be in slot 0
+	// if we don't have an autosave (yet), insert a fake one.
+	if (!filenames.empty() && !filenames[0].hasPrefixIgnoreCase("autosave.")) {
+		filenames.insert_at(0, buildName("Autosave", platform));
+	}
 
 	return filenames;
 }

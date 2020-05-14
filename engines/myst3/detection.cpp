@@ -290,8 +290,13 @@ public:
 			saveInfos.setSaveTime(data.saveHour, data.saveMinute);
 		}
 
-		if (data.saveDescription != "")
+		if (data.saveDescription != "") {
 			saveInfos.setDescription(data.saveDescription);
+		}
+
+		if (s.getVersion() >= 150) {
+			saveInfos.setAutosave(data.isAutosave);
+		}
 
 		delete saveFile;
 

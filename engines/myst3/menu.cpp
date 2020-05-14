@@ -646,7 +646,7 @@ void PagingMenu::saveMenuSave() {
 	if (fileExists && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)) != 1)
 		return;
 
-	Common::Error saveError = _vm->saveGameState(_saveName, _saveThumbnail.get());
+	Common::Error saveError = _vm->saveGameState(_saveName, _saveThumbnail.get(), false);
 	if (saveError.getCode() != Common::kNoError) {
 		GUI::MessageDialog dialog(saveError.getDesc());
 		dialog.runModal();
@@ -998,7 +998,7 @@ void AlbumMenu::saveMenuSave() {
 	if (saveFiles.contains(selectedSave) && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)) != 1)
 		return;
 
-	Common::Error saveError = _vm->saveGameState(saveName, _saveThumbnail.get());
+	Common::Error saveError = _vm->saveGameState(saveName, _saveThumbnail.get(), false);
 	if (saveError.getCode() != Common::kNoError) {
 		GUI::MessageDialog dialog(saveError.getDesc());
 		dialog.runModal();

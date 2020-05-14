@@ -53,7 +53,7 @@ public:
 
 	void newGame();
 	Common::Error load(Common::InSaveFile *saveFile);
-	Common::Error save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail);
+	Common::Error save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail, bool isAutosave);
 
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
@@ -379,6 +379,8 @@ public:
 
 		Common::String saveDescription;
 
+		bool isAutosave;
+
 		StateData();
 		Common::Error syncWithSaveGame(Common::Serializer &s);
 	};
@@ -395,7 +397,7 @@ private:
 	const Common::Platform _platform;
 	Database *_db;
 
-	static const uint32 kSaveVersion = 149;
+	static const uint32 kSaveVersion = 150;
 
 	StateData _data;
 
