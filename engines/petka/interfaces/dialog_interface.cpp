@@ -91,9 +91,9 @@ void DialogInterface::sub_4155D0(int a) {
 	if (_field10)
 		_field10 = 0;
 	else
-		g_vm->getBigDialogue()->sub40B670(a);
+		g_vm->getBigDialogue()->next(a);
 	switch (g_vm->getBigDialogue()->opcode()) {
-	case 1: {
+	case kOpcodePlay: {
 		int talkerId2;
 		const Common::U32String *text = g_vm->getBigDialogue()->getSpeechInfo(&talkerId2, &soundName, -1);
 		g_vm->soundMgr()->removeSound(_soundName);
@@ -114,10 +114,12 @@ void DialogInterface::sub_4155D0(int a) {
 		_field18 = 1;
 		break;
 	}
-	case 3:
+	case kOpcodeMenu:
+		break;
+	case kOpcodeEnd:
 		end();
 		break;
-	case 4:
+	case kOpcode4:
 		g_vm->soundMgr()->removeSound(_soundName);
 		_talker = nullptr;
 		_field18 = 1;
