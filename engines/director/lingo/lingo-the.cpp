@@ -466,6 +466,22 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheSprite:
 		d = getTheSprite(id, field);
 		break;
+	case kTheStageBottom:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->_movieRect.bottom;
+		break;
+	case kTheStageLeft:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->_movieRect.left;
+		break;
+	case kTheStageRight:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->_movieRect.right;
+		break;
+	case kTheStageTop:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->_movieRect.top;
+		break;
 	case kTheStillDown:
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
