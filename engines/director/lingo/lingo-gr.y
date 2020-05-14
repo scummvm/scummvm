@@ -43,10 +43,10 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-%require "3.5"
+%require "3.6"
 %defines "engines/director/lingo/lingo-gr.h"
 %output "engines/director/lingo/lingo-gr.cpp"
-%define parse.error verbose
+%define parse.error custom
 %define parse.trace
 
 // %glr-parser
@@ -69,15 +69,8 @@ extern void lex_unput(int c);
 extern bool lex_check_parens();
 
 using namespace Director;
-void yyerror(const char *s) {
-	// Director parser till D3 was forgiving for any hanging parentheses
-	if (g_director->getVersion() <= 4) {
-		if (lex_check_parens()) {
-			warning("# LINGO: Ignoring trailing parens");
-			return;
-		}
-	}
 
+void yyerror(const char *s) {
 	g_lingo->_hadError = true;
 	warning("######################  LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
@@ -154,7 +147,6 @@ program: programline
 programline: /* empty */
 	| defn
 	| stmt
-	| error	'\n'		{ yyerrok; lex_unput('\n'); }
 
 asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_varpush);
@@ -437,6 +429,16 @@ simpleexpr: INT		{
 		g_lingo->code2(e, f); }
 	| '(' expr[arg] ')'			{ $$ = $arg; }
 	| list
+	| error	'\n'		{
+		// Director parser till D3 was forgiving for any hanging parentheses
+		if (g_lingo->_ignoreError) {
+			warning("# LINGO: Ignoring trailing paren");
+			g_lingo->_ignoreError = false;
+			lex_unput('\n');	// We ate '\n', so put it back, otherwise lines will be joined
+		} else {
+			yyerrok;
+		}
+	}
 
 expr: simpleexpr { $$ = $simpleexpr; }
 	| reference
@@ -703,3 +705,35 @@ proppair: SYMBOL ':' simpleexpr {
 
 
 %%
+
+int yyreport_syntax_error(const yypcontext_t *ctx) {
+	int res = 0;
+
+	if (lex_check_parens()) {
+		g_lingo->_ignoreError = true;
+		return 0;
+	}
+
+	Common::String msg = "syntax error, ";
+
+	// Report the unexpected token.
+	yysymbol_kind_t lookahead = yypcontext_token(ctx);
+	if (lookahead != YYSYMBOL_YYEMPTY)
+		msg += Common::String::format("unexpected %s", yysymbol_name(lookahead));
+
+	// Report the tokens expected at this point.
+	enum { TOKENMAX = 10 };
+	yysymbol_kind_t expected[TOKENMAX];
+
+	int n = yypcontext_expected_tokens(ctx, expected, TOKENMAX);
+	if (n < 0)
+		// Forward errors to yyparse.
+		res = n;
+	else
+		for (int i = 0; i < n; ++i)
+			msg += Common::String::format("%s %s", i == 0 ? ": expected" : " or", yysymbol_name(expected[i]));
+
+	yyerror(msg.c_str());
+
+	return res;
+}

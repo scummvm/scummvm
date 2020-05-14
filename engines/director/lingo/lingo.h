@@ -416,6 +416,11 @@ public:
 	int _linenumber;
 	int _colnumber;
 	int _bytenumber;
+	Common::String _lasttoken;
+	int _lastbytenumber;
+	Common::String _errortoken;
+	int _errorbytenumber;
+	bool _ignoreError;
 
 	Common::String _floatPrecisionFormat;
 
