@@ -88,6 +88,7 @@ void StartCrusaderProcess::run() {
 
 	if (!_skipStart) {
 		// TODO: Find the first MISS1EGG egg like in U8 - should teleport in
+		// Maybe just teleport straight to Item 9115 (class TeleportEgg, shape 404, 1, (60656,59312,16) q:99, m:0, n:0, f: 0x2000, ef:0x3 shapeinfo f:1009, fam:8, et:0)
 		/*
 		LOOPSCRIPT(script, LS_AND(LS_SHAPE_EQUAL1(73), LS_Q_EQUAL(36)));
 		currentmap->areaSearch(&uclist, script, sizeof(script),
@@ -108,7 +109,7 @@ void StartCrusaderProcess::run() {
 
 	}
 
-	MusicProcess::get_instance()->playMusic(2);
+	//MusicProcess::get_instance()->playMusic(2);
 
 	Ultima8Engine::get_instance()->setAvatarInStasis(false);
 

@@ -2167,7 +2167,7 @@ uint32 Item::I_orStatus(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(mask);
 	if (!item) return 0;
 
-	item->_flags |= mask;
+	item->setFlag(mask);
 	return 0;
 }
 
@@ -2673,6 +2673,15 @@ uint32 Item::I_getNpcNum(const uint8 *args, unsigned int /*argsize*/) {
 	return item->getNpcNum();
 }
 
+uint32 Item::I_setNpcNum(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_UINT16(npcNum);
+	if (!item) return 0;
+
+	item->setNpcNum(npcNum);
+	return 0;
+}
+
 uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(x);
@@ -2920,6 +2929,24 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 		return 1;
 	else
 		return 0;
+}
+
+uint32 Item::I_doSomethingAndSetUnkCruFlag(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+
+	// TODO: Do something.. (to match disassembly)
+
+	item->setFlag(FLG_UNK_CRU);
+	return 0;
+}
+
+uint32 Item::I_inFastArea(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+
+	if (!item)
+		return 0;
+
+	return item->hasFlags(FLG_FASTAREA);
 }
 
 } // End of namespace Ultima8

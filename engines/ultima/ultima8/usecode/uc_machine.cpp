@@ -366,13 +366,14 @@ void UCMachine::execProcess(UCProcess *p) {
 
 				if (arg_bytes >= 4) {
 					// HACKHACKHACK to check what the argument is.
-					uint8 *args = new uint8[arg_bytes];
+					uint8 *argmem = new uint8[arg_bytes];
+					uint8 *args = argmem;
 					p->_stack.pop(args, 4);
 					p->_stack.addSP(-4); // don't really pop the args
 					ARG_UC_PTR(iptr);
 					uint16 testItemId = ptrToObject(iptr);
 					testItem = getItem(testItemId);
-					delete [] args;
+					delete [] argmem;
 				}
 				perr << "Unhandled intrinsic << " << func << " \'" << _convUse->intrinsics()[func] << "\'? (";
 				if (testItem) {
@@ -2263,6 +2264,11 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
 			     << "process (pid: " << segment << ")" << Std::endl;
+			return 0;
+		} else if (proc->_stack.getSize() < offset + 2) {
+			perr << "Trying to access past end of stack offset " << offset
+			     << " (size: " << proc->_stack.getSize()
+				 << ") process (pid: " << segment << ")" << Std::endl;
 			return 0;
 		} else {
 			return proc->_stack.access2(offset);

@@ -36,6 +36,7 @@ extern uint16 encoding[256];
 uint16 shiftjis_to_ultima8(uint16 sjis);
 uint32 shiftjis_to_unicode(uint16 sjis);
 
+
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

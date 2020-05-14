@@ -43,10 +43,8 @@ CruStatGump::CruStatGump() : Gump() {
 }
 
 CruStatGump::CruStatGump(Shape *shape, int x)
-	: Gump(0, 0, 5, 5, 0) {
+	: Gump(x, 0, 5, 5, 0) {
 	_shape = shape;
-	_x = x;
-	_y = 0;
 }
 
 CruStatGump::~CruStatGump() {

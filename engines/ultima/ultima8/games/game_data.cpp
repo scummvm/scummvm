@@ -184,6 +184,7 @@ Std::string GameData::translate(const Std::string &text) {
 
 	Std::string trans;
 	config->get(key, trans);
+
 	return trans;
 }
 

@@ -38,14 +38,14 @@ Intrinsic RemorseIntrinsics[] = {
 	Ultima8Engine::I_getAlertActive,  // basically confirmed.. see eg, ALARM_NS::enterFastArea - set frame for alert siren based on value.
 	Item::I_getFrame, // ? int Intrinsic001(4 bytes)
 	Item::I_setFrame, // basically confirmed..
-	0, //int16 Item::I_getSOMETHING_03(Item *), // get passcode highbyte from valueboxes??, and called on MONSTER objects too
+	Item::I_getMapArray, // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
 	Item::I_getStatus, // probably - see usage in GATGUNEW::enterFastArea - always followed by an AND against a single bit
 	Item::I_orStatus, // probably - see usage in GATGUNEW::enterFastArea
 	0, // void Intrinsic006(6 bytes)
 	0, // ? byte Item::I_getSOMETHING_07(Item *)
-	0, // ? byte Intrinsic008(4 bytes)
+	Actor::I_isNPC, // byte Intrinsic008(Item *) // probably.. disasm checks for < 256
 	Item::I_getZ, // byte Intrinsic009(4 bytes) // probably, see PEPSIEW::use() variable names
-	0, // void Intrinsic00A(4 bytes)
+	Item::I_destroy, // void Intrinsic00A(4 bytes) // probably, often called after creating replacement object in same position eg, LUGGAGE::gotHit
 	0, // something with npcdata void Intrinsic00B(4 bytes)
 	0, // void Intrinsic00C(2 bytes)
 	0, // byte Intrinsic00D(6 bytes)
@@ -60,7 +60,7 @@ Intrinsic RemorseIntrinsics[] = {
 	AudioProcess::I_playSFXCru, // pretty sure, see SWITCH::ordinal21 which plays various sfx related to access status
 	Item::I_getShape, // in STEAMBOX::func0A, is compared to 0x511 (the STEAM2 shape number) to determine direction
 	0, // void Intrinsic017(8 bytes)
-	0, // int16 Intrinsic018(4 bytes) // FIXME: Can get stuck in a loop calling this, waiting for some status?
+	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
 	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes),  probably, see usage in DOOR2::ordinal37
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
 	0, // // different than U8's? int Intrinsic01B(void)
@@ -73,7 +73,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic021(4 bytes)
 	0, // ? Item::I_push, void Intrinsic022(4 bytes)
 	0, // int Intrinsic023(void)
-	0, // ? Item::I_setShape, // different than U8's? void Intrinsic024(6 bytes)
+	Item::I_setShape, // Probably, see PEPSIEW::gotHit
 	0, // ? Item::I_touch, void Intrinsic025(4 bytes)
 	Item::I_getQHi, // int16 Intrinsic026(Item *), // guess, based on variable name in BOUNCBOX::gotHit
 	0, // int Intrinsic027(14 bytes)
@@ -81,7 +81,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // int Intrinsic029(void)
 	AudioProcess::I_playAmbientSFXCru, // Confirmed!
 	Item::I_getQLo, // int16 Intrinsic02B(4 bytes), // guess, based on variable name in BOUNCBOX::gotHit
-	0, // byte Intrinsic02C(4 bytes)
+	Item::I_inFastArea, // byte Intrinsic02C(4 bytes) // based on disassembly - checks for flag 0x2000
 	Item::I_setQHi, // ? Item::I_setQHi, void Intrinsic02D(6 bytes) -- see usage in FREE::ordinal2E where object position is also copied
 	0, // byte Intrinsic02E(12 bytes)
 	0, // byte Intrinsic02F(10 bytes)
@@ -106,7 +106,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic040(8 bytes)
 	0, // void Intrinsic041(2 bytes)
 	0, // int Intrinsic042(6 bytes)
-	0, // void Intrinsic043(6 bytes)
+	0, // void Intrinsic043(6 bytes) // maybe stopSFX (based on coff)
 	0, // int Intrinsic044(6 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
 	0, // int Intrinsic046(6 bytes)
@@ -132,7 +132,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setFrame, // based on same coff as 002
 	0, // ? Item::I_legalCreateAtPoint, void Intrinsic05A(4 bytes)
 	Item::I_legalCreateAtPoint, // probably. see PEPSIEW::use
-	0, // void Intrinsic05C(8 bytes)
+	Item::I_getPoint, // void Intrinsic05C(8 bytes)
 	0, // void Intrinsic05D(void)
 	0, // int16 Intrinsic05E(uint32, char *, int16 a, int16 b)  // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
 	0, // void Intrinsic05F(void)
@@ -142,15 +142,15 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic062(void)
 	0, // void Intrinsic063(12 bytes)
 	0, // ? Item::I_legalCreateAtCoords, void Intrinsic064(16 bytes)
-	0, // ? Item::I_getNpcNum, int Intrinsic065(4 bytes)
+	0, // int Intrinsic065(4 bytes)
 	Item::I_getQLo, // based on same coff set as 02B
-	0, // ? Item::I_andStatus, void Intrinsic067(4 bytes)
-	Item::I_setQLo, // see VALUEBOX:ordinal20
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
+	Item::I_setNpcNum, // void Item::I_setSomething068(Item *, int16 something) , see VALUEBOX:ordinal20
 	Item::I_andStatus, // void Intrinsic069(6 bytes)
 	0, // void Intrinsic06A(10 bytes)
-	0, // ? Item::I_getNpcNum, int16 Intrinsic06B(void)
-	0, // ? Item::I_andStatus, void Intrinsic06C(4 bytes)
-	0, // void Intrinsic06D(4 bytes)
+	0, // int16 Intrinsic06B(void)
+	0, // void Intrinsic06C(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic06E(6 bytes)
 	0, // int Intrinsic06F(6 bytes)
 	// 0x070
@@ -166,7 +166,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // ? Item::I_use, // different than U8's? void Intrinsic079(6 bytes)
 	0, // void Intrinsic07A(void)
 	0, // void Intrinsic07B(4 bytes)
-	0, // void Intrinsic07C(4 bytes)
+	0, // void Intrinsic07C(4 bytes) // I_getQIfSomething, see disassembly
 	0, // ? Item::I_getQLo, void Intrinsic07D(6 bytes)
 	0, // void Intrinsic07E(4 bytes)
 	0, // void Intrinsic07F(6 bytes)
@@ -178,22 +178,22 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQLo, // based on same coff set as 02B
 	0, // void Intrinsic085(4 bytes)
 	0, // void Intrinsic086(void)
-	0, // ? Item::I_getNpcNum, void Intrinsic087(void)
-	Item::I_setQHi, // void Intrinsic088(6 bytes) // setSomethingHighByte(something *, byte highbyte) (see VALUEBOX:ordinal20)
-	0, // void Intrinsic089(4 bytes)
+	0, // void Intrinsic087(void)
+	Item::I_setMapArray, // maybe I_setNpcNum -- based on use for VALUEBOX (like getNPCNum is) and coff being right next to getNPCNum.. see VALUEBOX:ordinal20.  Could also be I_setMapArray??
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic08A(12 bytes)
-	0, // void Intrinsic08B(4 bytes)
+	Item::I_enterFastArea, // void Intrinsic08B(4 bytes) - maybe.. based on disasm
 	0, // void Intrinsic08C(4 bytes)
 	0, // void Intrinsic08D(12 bytes)
-	0, // void Intrinsic08E(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic08F(void)
 	// 0x090
 	0, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
-	0, // ? Item::I_andStatus, void Intrinsic092(void)
+	0, // I_playFlic(char *)? void Intrinsic092(void)
 	0, // void Intrinsic093(void)
 	0, // UNUSEDInt0094()
-	0, // int Intrinsic095(void)
+	0, // int Intrinsic095(void) // get global - something about keyboard (by disasm)
 	0, // void Intrinsic096(4 bytes)
 	0, // void Intrinsic097(void)
 	0, // void Intrinsic098(void)
@@ -214,11 +214,11 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // ? Item::I_getNpcNum, void Intrinsic0A6(void)
 	0, // ? Item::I_getQLo, void Intrinsic0A7(4 bytes)
 	0, // ? Item::I_getQHi, void Intrinsic0A8(4 bytes)
-	0, // call usecode event B void Intrinsic0A9(void)
-	0, // void Intrinsic0AA(2 bytes)
+	0, // I_playFlic(char *) Intrinsic0A9(void)
+	AudioProcess::I_playSFX, // void Intrinsic0AA(2 bytes)
 	0, // ? Item::I_andStatus, int Intrinsic0AB(4 bytes)
 	0, // ? Ultima8Engine::I_getCurrentTimerTick, void Intrinsic0AC(2 bytes)
-	0, // void Intrinsic0AD(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_getQLo, // based on same coff set as 02B
 	Item::I_getQHi,  // based on same coff set as 026
 	// 0x0B0
@@ -257,10 +257,10 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic0CF(6 bytes)
 	// 0x0D0
 	0, // void Intrinsic0D0(4 bytes)
-	0, // UNUSEDInt00D1()
-	0, // void Intrinsic0D2(void)
+	0, // 0D1 - I_StopAllSFX (unused so not implmeneted)
+	0, // void I_playFlic(int *item,char *flicname,word sizex,word sizey) // play flic
 	0, // UNUSEDInt00D3()
-	0, // void Intrinsic0D4(2 bytes)
+	AudioProcess::I_playSFX, // void Intrinsic0D4(2 bytes)
 	0, // void Intrinsic0D5(4 bytes)
 	0, // int Intrinsic0D6(void)
 	0, // void Intrinsic0D7(4 bytes)
@@ -294,11 +294,11 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // ? Item::I_getNpcNum, int Intrinsic0F1(6 bytes)
 	0, // void Intrinsic0F2(6 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
-	0, // ? Item::I_getQHi, void Intrinsic0F4(4 bytes)
-	0, // ? Item::I_andStatus, void Intrinsic0F5(6 bytes)
+	Item::I_getQ, // void Intrinsic0F4(4 bytes)
+	Item::I_setQ, // void Intrinsic0F5(6 bytes)
 	0, // void Intrinsic0F6(void)
 	0, // void Intrinsic0F7(12 bytes)
-	0, // void Intrinsic0F8(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic0F9(12 bytes)
 	0, // FA = integer to string int Intrinsic0FA(6 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
@@ -307,37 +307,37 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic0FE(4 bytes)
 	UCMachine::I_numToStr, // same as 113 based on same coff set 0FF, 113, 126
 	// 0x100
-	0, // ? Item::I_andStatus, void Intrinsic100(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // ? Item::I_getNpcNum, void Intrinsic101(6 bytes)
-	0, // ? Item::I_andStatus, void Intrinsic102(4 bytes)
+	Item::I_getNpcNum, // Based on variable name in TRIGGER::ordinal21
 	0, // ? Item::I_getNpcNum, // byte Intrinsic103(uint16 shapenum),
 
-	Item::I_andStatus, // ? Item::I_andStatus, void Intrinsic104(6 bytes)
-	0, // ? Item::I_getNpcNum, void Intrinsic105(4 bytes)
-	Item::I_andStatus, // ? Item::I_andStatus, void Intrinsic106(6 bytes)
-	0, // ? Item::I_getNpcNum, void Intrinsic107(4 bytes)
-	Item::I_andStatus, // ? Item::I_andStatus, void Intrinsic108(6 bytes)
-	0, // ? Item::I_getNpcNum, void Intrinsic109(4 bytes)
-	Item::I_andStatus, // ? Item::I_andStatus, void Intrinsic10A(6 bytes)
-	0, // ? Item::I_getNpcNum, void Intrinsic10B(4 bytes)
-	Item::I_andStatus, // ? Item::I_andStatus, void Intrinsic10C(6 bytes)
-	0, // ? Item::I_getNpcNum, void Intrinsic10D(4 bytes)
+	Item::I_andStatus, // void Intrinsic104(6 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
+	Item::I_andStatus, // void Intrinsic106(6 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
+	Item::I_andStatus, // void Intrinsic108(6 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
+	Item::I_andStatus, // void Intrinsic10A(6 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
+	Item::I_andStatus, // void Intrinsic10C(6 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic10E(6 bytes)
-	0, // ? Item::I_andStatus, void Intrinsic10F(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	// 0x110
-	Item::I_andStatus, // ? Item::I_getNpcNum, void Intrinsic110(6 bytes)
-	0, // int16 Intrinsic111(4 bytes)
+	Item::I_andStatus, // void Intrinsic110(6 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // ? Item::I_andStatus, byte Intrinsic112(4 bytes)
 	UCMachine::I_numToStr, // see VMAIL::func0A for example usage
 	Item::I_andStatus, // void Intrinsic114(6 bytes)
-	0, // ? Item::I_andStatus, int16 Intrinsic115(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // ? Item::I_getTypeFlag, byte Intrinsic116(14 bytes)
 	Item::I_andStatus, // ? Item::I_getNpcNum, void Intrinsic117(6 bytes)
 	0, // int16 Intrinsic118(12 bytes)
 	0, // void Intrinsic119(4 bytes)
 	Item::I_andStatus, // void Intrinsic11A(6 bytes)
 	0, // byte Intrinsic11B(6 bytes)
-	0, // int16 Intrinsic11C(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // int16 Intrinsic11D(12 bytes)
 	0, // int16 Intrinsic11E(4 bytes)
 	0, // ? Item::I_getNpcNum, byte Intrinsic11F(4 bytes)
@@ -345,13 +345,13 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic120(4 bytes)
 	0, // int Intrinsic121(4 bytes)
 	0, // int Intrinsic122(4 bytes)
-	0, // void Intrinsic123(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // ? Item::I_andStatus, void Intrinsic124(4 bytes)
 	0, // ? Item::I_getNpcNum, void Intrinsic125(6 bytes)
 	UCMachine::I_numToStr, // same as 113 based on same coff set 0FF, 113, 126
 	0, // int Intrinsic127(8 bytes)
 	Item::I_andStatus, // void Intrinsic128(6 bytes) // maybe Item::andStatus?? see ITEM::ordinal22
-	0, // void Intrinsic129(4 bytes)
+	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic12A(4 bytes)
 	0, // void Intrinsic12B(4 bytes)
 	0, // int Intrinsic12C(6 bytes)

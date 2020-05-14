@@ -493,6 +493,7 @@ public:
 	INTRINSIC(I_getMapArray);
 	INTRINSIC(I_setMapArray);
 	INTRINSIC(I_getNpcNum);
+	INTRINSIC(I_setNpcNum);
 	INTRINSIC(I_getDirToCoords);
 	INTRINSIC(I_getDirFromCoords);
 	INTRINSIC(I_getDirToItem);
@@ -533,6 +534,8 @@ public:
 	INTRINSIC(I_canReach);
 	INTRINSIC(I_getRange);
 	INTRINSIC(I_isCrusTypeNPC);
+	INTRINSIC(I_doSomethingAndSetUnkCruFlag);
+	INTRINSIC(I_inFastArea);
 
 private:
 	uint32 _shape;   // DO NOT modify this directly! Always use setShape()!
@@ -590,10 +593,11 @@ public:
 		FLG_GUMP_OPEN    = 0x0100,  //!< Item has a gump open
 		FLG_EQUIPPED     = 0x0200,  //!< Item is equipped
 		FLG_BOUNCING     = 0x0400,  //!< Item has bounced
-		FLG_ETHEREAL     = 0x0800,  //!< Item is in the ethereal list
+		FLG_ETHEREAL     = 0x0800,  //!< Item is in the ethereal list - confirmed same meaning in crusader
 		FLG_HANGING      = 0x1000,  //!< Item is suspended in the air
 		FLG_FASTAREA     = 0x2000,  //!< Item is in the fast area
-		FLG_LOW_FRICTION = 0x4000   //!< Item has low friction
+		FLG_LOW_FRICTION = 0x4000,  //!< Item has low friction
+		FLG_UNK_CRU      = 0x8000   //!< Unknown crusader flag
 	};
 
 	enum extflags {

@@ -76,15 +76,9 @@ bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) c
 	int x = (ix - iy) / 4;
 	int y = (ix + iy) / 8 - iz;
 
-	// Fall off over 350 pixels, or 700 for crusader
-	// (double resolution)..
+	// Fall off over 350 pixels
+	int limit = 350 * 350;
 
-	int limit;
-	if (GAME_IS_U8) {
-		limit = 350 * 350;
-	} else {
-		limit = 700 * 700;
-	}
 	int dist = limit - (x * x + y * y);
 	if (dist < 0) dist = 0;
 	dist = (dist * 256) / limit;

@@ -120,8 +120,10 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 	assert(mixer);
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
-	if (_playingStream)
+	if (_playingStream) {
 		delete _playingStream;
+		_playingStream = nullptr;
+	}
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.

@@ -285,7 +285,6 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	/*
 	// Crusader games use basically the same engine as ultima8, but still
 	// need a lot of work.
 
@@ -333,7 +332,6 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_CRUSADER_REG,
 		0
 	},
-	*/
 
 	// GOG Martian Dreams
 	{
