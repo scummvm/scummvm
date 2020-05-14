@@ -91,7 +91,7 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 
 	if (item->getObjId() < 256) return false; // actors don't fit in containers
 
-	Container *c = p_dynamic_cast<Container *>(item);
+	Container *c = dynamic_cast<Container *>(item);
 	if (c) {
 		// To quote Exult: "Watch for snake eating itself."
 		Container *p = this;
@@ -204,7 +204,7 @@ void Container::removeContents() {
 void Container::destroyContents() {
 	while (_contents.begin() != _contents.end()) {
 		Item *item = *(_contents.begin());
-		Container *cont = p_dynamic_cast<Container *>(item);
+		Container *cont = dynamic_cast<Container *>(item);
 		if (cont) cont->destroyContents();
 		item->destroy(true); // we destroy the item immediately
 	}
@@ -216,7 +216,7 @@ void Container::setFlagRecursively(uint32 mask) {
 	Std::list<Item *>::iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->setFlag(mask);
-		Container *cont = p_dynamic_cast<Container *>(*iter);
+		Container *cont = dynamic_cast<Container *>(*iter);
 		if (cont) cont->setFlagRecursively(mask);
 	}
 }
@@ -288,7 +288,7 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 
 		if (recurse) {
 			// recurse into child-containers
-			Container *container = p_dynamic_cast<Container *>(*iter);
+			Container *container = dynamic_cast<Container *>(*iter);
 			if (container)
 				container->containerSearch(itemlist, loopscript,
 				                           scriptsize, recurse);
@@ -320,7 +320,7 @@ bool Container::loadData(Common::ReadStream *rs, uint32 version) {
 	// read _contents
 	for (unsigned int i = 0; i < contentcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
-		Item *item = p_dynamic_cast<Item *>(obj);
+		Item *item = dynamic_cast<Item *>(obj);
 		if (!item) return false;
 
 		addItem(item);

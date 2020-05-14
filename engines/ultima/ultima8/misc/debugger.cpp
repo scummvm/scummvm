@@ -515,7 +515,7 @@ bool Debugger::cmdCheatItems(int argc, const char **argv) {
 	bagitem->setGumpLocation(70, 40);
 
 	bagitem = ItemFactory::createItem(637, 0, 0, 0, 0, 0, 0, true);
-	Container *bag = p_dynamic_cast<Container *>(bagitem);
+	Container *bag = dynamic_cast<Container *>(bagitem);
 
 	Item *reagents = ItemFactory::createItem(395, 0, 50, 0, 0, 0, 0, true);
 	reagents->moveToContainer(bag);
@@ -541,7 +541,7 @@ bool Debugger::cmdCheatItems(int argc, const char **argv) {
 
 	// theurgy foci
 	bagitem = ItemFactory::createItem(637, 0, 0, 0, 0, 0, 0, true);
-	bag = p_dynamic_cast<Container *>(bagitem);
+	bag = dynamic_cast<Container *>(bagitem);
 
 	Item *focus = ItemFactory::createItem(396, 8, 0, 0, 0, 0, 0, true);
 	focus->moveToContainer(bag);

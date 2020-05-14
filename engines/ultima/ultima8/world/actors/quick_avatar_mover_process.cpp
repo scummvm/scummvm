@@ -140,7 +140,7 @@ void QuickAvatarMoverProcess::terminateMover(int dir) {
 	Kernel *kernel = Kernel::get_instance();
 
 	QuickAvatarMoverProcess *p =
-	    p_dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(_amp[dir]));
+	    dynamic_cast<QuickAvatarMoverProcess *>(kernel->getProcess(_amp[dir]));
 
 	if (p && !p->is_terminated())
 		p->terminate();

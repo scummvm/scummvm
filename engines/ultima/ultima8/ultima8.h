@@ -180,7 +180,7 @@ public:
 	void GUIError(const Common::String &msg);
 
 	static Ultima8Engine *get_instance() {
-		return p_dynamic_cast<Ultima8Engine *>(_application);
+		return dynamic_cast<Ultima8Engine *>(_application);
 	}
 
 	void startup();

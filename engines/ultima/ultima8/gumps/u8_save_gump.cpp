@@ -201,7 +201,7 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 
 	if (_save && !_focusChild && _editWidgets[i]) {
 		_editWidgets[i]->MakeFocus();
-		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
+		PagedGump *p = dynamic_cast<PagedGump *>(_parent);
 		if (p) p->enableButtons(false);
 	}
 
@@ -223,12 +223,10 @@ void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 }
 
 void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
-	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ENTER) {
+	EditWidget *widget = dynamic_cast<EditWidget *>(child);
+	if (widget && message == EditWidget::EDIT_ENTER) {
 		// _save
 		assert(_save);
-
-		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
-		assert(widget);
 
 		Std::string name = widget->getText();
 		if (name.empty()) return;
@@ -239,7 +237,7 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		return;
 	}
 
-	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ESCAPE) {
+	if (widget && message == EditWidget::EDIT_ESCAPE) {
 		// cancel edit
 		assert(_save);
 
@@ -247,11 +245,9 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		if (_focusChild) _focusChild->OnFocus(false);
 		_focusChild = 0;
 
-		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
+		PagedGump *p = dynamic_cast<PagedGump *>(_parent);
 		if (p) p->enableButtons(true);
 
-		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
-		assert(widget);
 		widget->setText(_descriptions[widget->GetIndex() - 1]);
 
 		return;

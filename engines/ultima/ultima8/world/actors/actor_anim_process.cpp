@@ -490,7 +490,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 	Actor *a = getActor(_itemNum);
 	assert(a);
 
-	Actor *attacked = p_dynamic_cast<Actor *>(hit);
+	Actor *attacked = dynamic_cast<Actor *>(hit);
 
 	if (_itemNum == 1 && _action == Animation::attack) {
 		// some magic weapons have some special effects

@@ -156,7 +156,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
  
 	{
 		// Additional shapeinfo (only in main shapes archive)
-		MainShapeArchive *mainshapes = p_dynamic_cast<MainShapeArchive *>(_flex);
+		MainShapeArchive *mainshapes = dynamic_cast<MainShapeArchive *>(_flex);
 		if (!mainshapes || !shape_) return;
 
 		char buf3[128];

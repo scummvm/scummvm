@@ -68,7 +68,7 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void ScrollGump::NextText() {
-	TextWidget *widget = p_dynamic_cast<TextWidget *>(getGump(_textWidget));
+	TextWidget *widget = dynamic_cast<TextWidget *>(getGump(_textWidget));
 	assert(widget);
 	if (!widget->setupNextText()) {
 		Close();

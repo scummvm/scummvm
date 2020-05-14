@@ -2178,7 +2178,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 	uint16 offset = static_cast<uint16>(ptr & 0xFFFF);
 
 	if (segment >= SEG_STACK_FIRST && segment <= SEG_STACK_LAST) {
-		UCProcess *proc = p_dynamic_cast<UCProcess *>
+		UCProcess *proc = dynamic_cast<UCProcess *>
 		                  (Kernel::get_instance()->getProcess(segment));
 
 		// reference to the stack of _pid 'segment'
@@ -2215,7 +2215,7 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 	uint16 offset = static_cast<uint16>(ptr & 0xFFFF);
 
 	if (segment >= SEG_STACK_FIRST && segment <= SEG_STACK_LAST) {
-		UCProcess *proc = p_dynamic_cast<UCProcess *>
+		UCProcess *proc = dynamic_cast<UCProcess *>
 		                  (Kernel::get_instance()->getProcess(segment));
 
 		// reference to the stack of _pid 'segment'
@@ -2254,7 +2254,7 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 	uint16 segment = static_cast<uint16>(ptr >> 16);
 	uint16 offset = static_cast<uint16>(ptr);
 	if (segment >= SEG_STACK_FIRST && segment <= SEG_STACK_LAST) {
-		UCProcess *proc = p_dynamic_cast<UCProcess *>
+		UCProcess *proc = dynamic_cast<UCProcess *>
 		                  (Kernel::get_instance()->getProcess(segment));
 
 		// reference to the stack of _pid 'segment'

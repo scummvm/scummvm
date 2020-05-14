@@ -87,7 +87,7 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 int ButtonWidget::getVlead() {
 	if (_textWidget != 0) {
 		Gump *widget = getGump(_textWidget);
-		TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
+		TextWidget *txtWidget = dynamic_cast<TextWidget *>(widget);
 		assert(txtWidget);
 		return txtWidget->getVlead();
 	} else {
@@ -155,7 +155,7 @@ void ButtonWidget::onMouseOver() {
 	if (_mouseOver) {
 		if (_textWidget) {
 			Gump *widget = getGump(_textWidget);
-			TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
+			TextWidget *txtWidget = dynamic_cast<TextWidget *>(widget);
 			assert(txtWidget);
 			txtWidget->setBlendColour(_mouseOverBlendCol);
 		} else {
@@ -169,7 +169,7 @@ void ButtonWidget::onMouseLeft() {
 	if (_mouseOver) {
 		if (_textWidget) {
 			Gump *widget = getGump(_textWidget);
-			TextWidget *txtWidget = p_dynamic_cast<TextWidget *>(widget);
+			TextWidget *txtWidget = dynamic_cast<TextWidget *>(widget);
 			assert(txtWidget);
 			txtWidget->setBlendColour(0);
 		} else {

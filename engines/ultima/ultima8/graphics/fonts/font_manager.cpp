@@ -162,7 +162,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filena
 
 bool FontManager::addJPOverride(unsigned int fontnum,
                                 unsigned int jpfont, uint32 rgb) {
-	ShapeFont *jf = p_dynamic_cast<ShapeFont *>(GameData::get_instance()->getFonts()->getFont(jpfont));
+	ShapeFont *jf = dynamic_cast<ShapeFont *>(GameData::get_instance()->getFonts()->getFont(jpfont));
 	if (!jf)
 		return false;
 

@@ -794,7 +794,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 
 	if (!_textModes.empty()) {
 		while (!_textModes.empty()) {
-			gump = p_dynamic_cast<Gump *>(_objectManager->getObject(_textModes.front()));
+			gump = dynamic_cast<Gump *>(_objectManager->getObject(_textModes.front()));
 			if (gump)
 				break;
 
@@ -1371,7 +1371,7 @@ void Ultima8Engine::Error(Std::string message, Std::string title, bool exit_to_m
 }
 
 Gump *Ultima8Engine::getGump(uint16 gumpid) {
-	return p_dynamic_cast<Gump *>(ObjectManager::get_instance()->
+	return dynamic_cast<Gump *>(ObjectManager::get_instance()->
 		getObject(gumpid));
 }
 
@@ -1437,7 +1437,7 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 	_timeOffset = absoluteTime - Kernel::get_instance()->getFrameNum();
 
 	uint16 amppid = rs->readUint16LE();
-	_avatarMoverProcess = p_dynamic_cast<AvatarMoverProcess *>(Kernel::get_instance()->getProcess(amppid));
+	_avatarMoverProcess = dynamic_cast<AvatarMoverProcess *>(Kernel::get_instance()->getProcess(amppid));
 
 	int16 matrix[12];
 	for (int i = 0; i < 12; i++)
@@ -1569,7 +1569,7 @@ Gump *Ultima8Engine::getMenuGump() const {
 	if (_textModes.empty())
 		return nullptr;
 
-	return p_dynamic_cast<Gump *>(_objectManager->getObject(_textModes.front()));
+	return dynamic_cast<Gump *>(_objectManager->getObject(_textModes.front()));
 }
 
 } // End of namespace Ultima8

@@ -442,7 +442,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 	GumpToParent(px, py);
 	// see what the item is being dropped on
 	Item *targetitem = getItem(TraceObjId(px, py));
-	Container *targetcontainer = p_dynamic_cast<Container *>(targetitem);
+	Container *targetcontainer = dynamic_cast<Container *>(targetitem);
 
 
 	if (item->getShapeInfo()->hasQuantity() &&
