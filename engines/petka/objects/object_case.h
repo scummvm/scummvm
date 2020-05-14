@@ -43,6 +43,7 @@ public:
 
 public:
 	Common::Array<int> _items;
+	Common::Point _itemsLocation[6];
 	uint _clickedObjIndex;
 	int _itemIndex;
 };

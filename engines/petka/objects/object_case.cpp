@@ -34,8 +34,6 @@ namespace Petka {
 // Полоска в чемодане
 const char *const kPoloska = "\xCF\xEE\xEB\xEE\xF1\xEA\xE0\x20\xE2\x20\xF7\xE5\xEC\xEE\xE4\xE0\xED\xE5";
 
-const Common::Point itemsLocation[] = {Common::Point(120, 145), Common::Point(240, 145), Common::Point(360, 145),
-									   Common::Point(100, 220), Common::Point(240, 220), Common::Point(380, 220)};
 
 QObjectCase::QObjectCase() {
 	_itemIndex = 0;
@@ -45,6 +43,13 @@ QObjectCase::QObjectCase() {
 	_resourceId = 6000;
 	_z = 980;
 	_clickedObjIndex = -1;
+
+	_itemsLocation[0] = Common::Point(120, 145);
+	_itemsLocation[1] = Common::Point(240, 145);
+	_itemsLocation[2] = Common::Point(360, 145);
+	_itemsLocation[3] = Common::Point(100, 220);
+	_itemsLocation[4] = Common::Point(240, 220);
+	_itemsLocation[5] = Common::Point(380, 220);
 }
 
 void QObjectCase::update(int time) {
@@ -181,8 +186,8 @@ void QObjectCase::fillWithItems() {
 		obj->_z = _z + 1;
 		objs.push_back(obj);
 		g_vm->resMgr()->loadFlic(obj->_resourceId);
-		_x = itemsLocation[i - _itemIndex].x;
-		_y = itemsLocation[i - _itemIndex].y;
+		_x = _itemsLocation[i - _itemIndex].x;
+		_y = _itemsLocation[i - _itemIndex].y;
 	}
 }
 
