@@ -70,10 +70,10 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	_launched = false;
 
 	_useRTL = false;
-	_isAnotherWindowOverlayed = false;
+	_isAnotherDialogOverlayed = false;
 
-	_focusedWindowLeftSpacing = 0;
-	_focusedWindowRightSpacing = 0;
+	_topDialogLeftPadding = 0;
+	_topDialogRightPadding = 0;
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
@@ -671,13 +671,9 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 	_lastMousePosition.time = _system->getMillis(true);
 }
 
-void GuiManager::setOverlayParas(int l, int r) {
-	_focusedWindowLeftSpacing = l;
-	_focusedWindowRightSpacing = r;
-}
-
-void GuiManager::setWindowOverlayStatus(bool value) {
-	_isAnotherWindowOverlayed = value;
+void GuiManager::setDialogPaddings(int l, int r) {
+	_topDialogLeftPadding = l;
+	_topDialogRightPadding = r;
 }
 
 #ifdef USE_TTS
