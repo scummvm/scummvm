@@ -260,6 +260,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("dirtyrects", true);
 	ConfMan.registerDefault("bpp", 0);
+	ConfMan.registerDefault("vsync", true);
 // ResidualVM specific end
 
 	// Sound & Music

@@ -62,7 +62,6 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 	_engineRequestedHeight(0) {
 	ConfMan.registerDefault("antialiasing", 0);
 	ConfMan.registerDefault("aspect_ratio", true);
-	ConfMan.registerDefault("vsync", true);
 
 	_sideTextures[0] = _sideTextures[1] = nullptr;
 
