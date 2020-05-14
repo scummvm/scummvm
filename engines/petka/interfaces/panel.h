@@ -29,6 +29,8 @@ namespace Petka {
 
 class InterfacePanel : public Interface {
 public:
+	InterfacePanel();
+
 	void start() override;
 
 	void onLeftButtonDown(const Common::Point p) override;
@@ -41,7 +43,7 @@ private:
 	void updateSliders();
 	void updateSubtitles();
 
-private:
+public:
 	int _savedXOffset;
 	int _savedSceneWidth;
 	int _subtitles;
@@ -49,6 +51,7 @@ private:
 	int _musicFrame;
 	int _sfxFrame;
 	int _speedFrame;
+	Common::Point _objectPoints[24];
 };
 
 } // End of namespace Petka

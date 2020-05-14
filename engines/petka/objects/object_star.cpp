@@ -35,21 +35,6 @@ namespace Petka {
 
 const uint kFirstCursorId = 5001;
 const uint kCaseButtonIndex = 0;
-const Common::Rect kButtonsRects[] = {Common::Rect(70, 74, 112, 112),
-									  Common::Rect(68, 0, 114, 41),
-									  Common::Rect(151, 51, 180, 97),
-									  Common::Rect(138, 125, 179, 166),
-									  Common::Rect(55, 145, 96, 175),
-									  Common::Rect(11, 79, 40, 118)};
-
-static uint findButtonIndex(int16 x, int16 y) {
-	uint i = 0;
-	for (i = 0; i < sizeof(kButtonsRects) / sizeof(Common::Rect); ++i) {
-		if (kButtonsRects[i].contains(x, y))
-			return i;
-	}
-	return i;
-}
 
 QObjectStar::QObjectStar() {
 	_isShown = false;
@@ -58,6 +43,13 @@ QObjectStar::QObjectStar() {
 	_z = 999;
 	_updateZ = false;
 	_isActive = true;
+
+	_buttonRects[0] = Common::Rect(70, 74, 112, 112);
+	_buttonRects[1] = Common::Rect(68, 0, 114, 41);
+	_buttonRects[2] = Common::Rect(151, 51, 180, 97);
+	_buttonRects[3] = Common::Rect(138, 125, 179, 166);
+	_buttonRects[4] = Common::Rect(55, 145, 96, 175);
+	_buttonRects[5] = Common::Rect(11, 79, 40, 118);
 }
 
 bool QObjectStar::isInPoint(int x, int y) {
@@ -75,7 +67,7 @@ void QObjectStar::onMouseMove(int x, int y) {
 
 void QObjectStar::onClick(int x, int y) {
 	uint button = findButtonIndex(x - _x, y - _y);
-	if (button >= sizeof(kButtonsRects) / sizeof(Common::Rect)) {
+	if (button >= sizeof(_buttonRects) / sizeof(Common::Rect)) {
 		show(0);
 		return;
 	}
@@ -89,6 +81,15 @@ void QObjectStar::onClick(int x, int y) {
 		cursor->show(1);
 	}
 	show(0);
+}
+
+uint QObjectStar::findButtonIndex(int16 x, int16 y) const {
+	uint i = 0;
+	for (i = 0; i < sizeof(_buttonRects) / sizeof(Common::Rect); ++i) {
+		if (_buttonRects[i].contains(x, y))
+			return i;
+	}
+	return i;
 }
 
 }

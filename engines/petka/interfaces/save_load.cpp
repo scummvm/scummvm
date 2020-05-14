@@ -30,11 +30,17 @@
 namespace Petka {
 
 const uint kFirstSaveLoadPageId = 4990;
-const Common::Rect kSavesRects[] = {Common::Rect(43, 84, 151, 166), Common::Rect(43, 209, 151, 291),
-									Common::Rect(43, 335, 151, 417), Common::Rect(358, 75, 466, 157),
-									Common::Rect(360, 200, 468, 282), Common::Rect(359, 325, 467, 407)};
-const Common::Rect kNextPageRect(596, 403, 624, 431);
-const Common::Rect kPrevPageRect(10, 414, 38, 442);
+
+InterfaceSaveLoad::InterfaceSaveLoad() {
+	_saveRects[0] = Common::Rect(43, 84, 151, 166);
+	_saveRects[1] = Common::Rect(43, 209, 151, 291);
+	_saveRects[2] = Common::Rect(43, 335, 151, 417);
+	_saveRects[3] = Common::Rect(358, 75, 466, 157);
+	_saveRects[4] = Common::Rect(360, 200, 468, 282);
+	_saveRects[5] = Common::Rect(359, 325, 467, 407);
+	_nextPageRect = Common::Rect(596, 403, 624, 431);
+	_prevPageRect = Common::Rect(10, 414, 38, 442);
+}
 
 void InterfaceSaveLoad::startSaveLoad(bool saveMode) {
 	_loadMode = !saveMode;
@@ -65,9 +71,9 @@ void InterfaceSaveLoad::stop() {
 void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {
 	int index = findSaveLoadRectIndex(p);
 	if (index == -1) {
-		if (kPrevPageRect.contains(p) && _page > 0) {
+		if (_prevPageRect.contains(p) && _page > 0) {
 			_page--;
-		} else if (kNextPageRect.contains(p) && _page < 2) {
+		} else if (_nextPageRect.contains(p) && _page < 2) {
 			_page++;
 		}
 		stop();
@@ -83,17 +89,17 @@ void InterfaceSaveLoad::onRightButtonDown(const Common::Point p) {
 
 void InterfaceSaveLoad::onMouseMove(const Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	cursor->_animate = findSaveLoadRectIndex(p) != -1 || kNextPageRect.contains(p) || kPrevPageRect.contains(p);
+	cursor->_animate = findSaveLoadRectIndex(p) != -1 || _nextPageRect.contains(p) || _prevPageRect.contains(p);
 	cursor->setCursorPos(p.x, p.y, 0);
 }
 
 int InterfaceSaveLoad::findSaveLoadRectIndex(const Common::Point p) {
 	int i = 0;
 	do {
-		if (kSavesRects[i].contains(p)) {
+		if (_saveRects[i].contains(p)) {
 			return i;
 		}
-	} while (++i < sizeof(kSavesRects) / sizeof(Common::Rect));
+	} while (++i < sizeof(_saveRects) / sizeof(Common::Rect));
 	return -1;
 }
 

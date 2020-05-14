@@ -29,6 +29,8 @@ namespace Petka {
 
 class InterfaceSaveLoad : public Interface {
 public:
+	InterfaceSaveLoad();
+
 	void startSaveLoad(bool saveMode);
 	void stop() override;
 
@@ -43,6 +45,10 @@ private:
 	bool _loadMode;
 	uint _page;
 	int _savedCursorId;
+
+	Common::Rect _saveRects[6];
+	Common::Rect _nextPageRect;
+	Common::Rect _prevPageRect;
 };
 
 } // End of namespace Petka
