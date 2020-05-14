@@ -109,7 +109,7 @@ void Gump::SetNotifyProcess(GumpNotifyProcess *proc) {
 }
 
 GumpNotifyProcess *Gump::GetNotifyProcess() {
-	return p_dynamic_cast<GumpNotifyProcess *>(Kernel::get_instance()->
+	return dynamic_cast<GumpNotifyProcess *>(Kernel::get_instance()->
 	        getProcess(_notifier));
 }
 
@@ -856,7 +856,7 @@ bool Gump::loadData(Common::ReadStream *rs, uint32 version) {
 	uint32 childcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < childcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
-		Gump *child = p_dynamic_cast<Gump *>(obj);
+		Gump *child = dynamic_cast<Gump *>(obj);
 		if (!child) return false;
 
 		AddChild(child, false);

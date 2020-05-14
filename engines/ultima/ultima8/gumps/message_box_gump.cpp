@@ -151,7 +151,8 @@ void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*sc
 }
 
 void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {
-	if (child->IsOfType<ButtonWidget>() && msg == ButtonWidget::BUTTON_CLICK) {
+	ButtonWidget *buttonWidget = dynamic_cast<ButtonWidget *>(child);
+	if (buttonWidget && msg == ButtonWidget::BUTTON_CLICK) {
 		_processResult = child->GetIndex();
 		Close();
 	}

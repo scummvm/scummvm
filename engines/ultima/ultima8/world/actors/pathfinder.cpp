@@ -163,7 +163,7 @@ void Pathfinder::setTarget(Item *item, bool hit) {
 
 	if (hit) {
 		assert(_start._combat);
-		assert(p_dynamic_cast<Actor *>(_targetItem));
+		assert(dynamic_cast<Actor *>(_targetItem));
 		_hitMode = true;
 	} else {
 		_hitMode = false;
@@ -193,7 +193,7 @@ bool Pathfinder::checkTarget(PathNode *node) const {
 	if (_targetItem) {
 		if (_hitMode) {
 			return node->state.checkHit(_actor,
-			                            p_dynamic_cast<Actor *>(_targetItem));
+			                            dynamic_cast<Actor *>(_targetItem));
 		} else {
 			return node->state.checkItem(_targetItem, 32, 8);
 		}

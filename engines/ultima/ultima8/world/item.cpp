@@ -1149,7 +1149,7 @@ uint32 Item::callUsecodeEvent_guardianBark(int16 unk) {         // event 15
 }
 
 uint32 Item::use() {
-	Actor *actor = p_dynamic_cast<Actor *>(this);
+	Actor *actor = dynamic_cast<Actor *>(this);
 	if (actor) {
 		if (actor->isDead()) {
 			// dead actor, so open/close the dead-body-_gump
@@ -1318,7 +1318,7 @@ void Item::enterFastArea() {
 	// Call usecode
 	if (!(_flags & FLG_FASTAREA)) {
 
-		Actor *actor = p_dynamic_cast<Actor *>(this);
+		Actor *actor = dynamic_cast<Actor *>(this);
 		if (actor && actor->isDead()) {
 			// dead actor, don't call the usecode
 		} else {
@@ -1352,7 +1352,7 @@ void Item::leaveFastArea() {
 	// Kill us if we are fast only, unless we're in a container
 	if ((_flags & FLG_FAST_ONLY) && !getParent()) {
 		// destroy contents if container
-		Container *c = p_dynamic_cast<Container *>(this);
+		Container *c = dynamic_cast<Container *>(this);
 		if (c) c->destroyContents();
 
 		destroy();
@@ -1470,7 +1470,7 @@ int32 Item::ascend(int delta) {
 GravityProcess *Item::ensureGravityProcess() {
 	GravityProcess *p;
 	if (_gravityPid) {
-		p = p_dynamic_cast<GravityProcess *>(
+		p = dynamic_cast<GravityProcess *>(
 		        Kernel::get_instance()->getProcess(_gravityPid));
 	} else {
 		p = new GravityProcess(this, 0);
@@ -1602,7 +1602,7 @@ bool Item::canDrag() {
 	if (si->is_fixed()) return false;
 	if (si->_weight == 0) return false;
 
-	Actor *actor = p_dynamic_cast<Actor *>(this);
+	Actor *actor = dynamic_cast<Actor *>(this);
 	if (actor) {
 		// living actors can't be moved
 		if (!actor->isDead()) return false;
@@ -2742,7 +2742,7 @@ uint32 Item::I_getSliderInput(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_SINT16(maxval);
 	ARG_SINT16(step);
 
-	UCProcess *current = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getRunningProcess());
+	UCProcess *current = dynamic_cast<UCProcess *>(Kernel::get_instance()->getRunningProcess());
 	assert(current);
 
 //	pout << "SliderGump: min=" << minval << ", max=" << maxval << ", step=" << step << Std::endl;

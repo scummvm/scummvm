@@ -73,9 +73,9 @@ typedef uint32(*Intrinsic)(const uint8 *args, unsigned int argsize);
 
 #define ARG_EGG_FROM_PTR(x) ARG_UC_PTR(ucptr_##x); \
 	uint16 id_##x = UCMachine::ptrToObject(ucptr_##x); \
-	Egg* x = p_dynamic_cast<Egg*>(getObject(id_##x));
+	Egg* x = dynamic_cast<Egg*>(getObject(id_##x));
 #define ARG_EGG_FROM_ID(x)    ARG_OBJID(id_##x); \
-	Egg* x = p_dynamic_cast<Egg*>(getObject(id_##x));
+	Egg* x = dynamic_cast<Egg*>(getObject(id_##x));
 
 #define ARG_STRING(x) ARG_UC_PTR(ucptr_##x); \
 	uint16 id_##x = UCMachine::ptrToObject(ucptr_##x); \

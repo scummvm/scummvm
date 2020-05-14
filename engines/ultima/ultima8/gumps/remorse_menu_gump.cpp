@@ -188,7 +188,8 @@ bool RemorseMenuGump::OnKeyDown(int key, int mod) {
 }
 
 void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
-	if (child->IsOfType<ButtonWidget>() && message == ButtonWidget::BUTTON_CLICK) {
+	ButtonWidget *buttonWidget = dynamic_cast<ButtonWidget *>(child);
+	if (buttonWidget && message == ButtonWidget::BUTTON_CLICK) {
 		selectEntry(child->GetIndex());
 	}
 }

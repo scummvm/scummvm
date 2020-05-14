@@ -115,7 +115,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 bool BarkGump::NextText() {
-	TextWidget *widget = p_dynamic_cast<TextWidget *>(getGump(_textWidget));
+	TextWidget *widget = dynamic_cast<TextWidget *>(getGump(_textWidget));
 	assert(widget);
 	if (widget->setupNextText()) {
 		// This is just a hack
@@ -209,7 +209,7 @@ bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
 		_barked = "";
 	}
 
-	TextWidget *widget = p_dynamic_cast<TextWidget *>(getGump(_textWidget));
+	TextWidget *widget = dynamic_cast<TextWidget *>(getGump(_textWidget));
 	if (!widget)
 		return false;
 

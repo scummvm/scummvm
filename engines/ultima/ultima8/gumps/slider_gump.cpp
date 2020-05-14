@@ -183,7 +183,7 @@ void SliderGump::Close(bool no_del) {
 	_processResult = _value;
 
 	if (_usecodeNotifyPID) {
-		UCProcess *ucp = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(_usecodeNotifyPID));
+		UCProcess *ucp = dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(_usecodeNotifyPID));
 		assert(ucp);
 		ucp->setReturnValue(_value);
 		ucp->wakeUp(_value);

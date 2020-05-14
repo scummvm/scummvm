@@ -98,7 +98,7 @@ bool MonsterEgg::loadData(Common::ReadStream *rs, uint32 version) {
 
 uint32 MonsterEgg::I_monsterEggHatch(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	MonsterEgg *megg = p_dynamic_cast<MonsterEgg *>(item);
+	MonsterEgg *megg = dynamic_cast<MonsterEgg *>(item);
 	if (!megg) return 0;
 
 	return megg->hatch();
@@ -106,7 +106,7 @@ uint32 MonsterEgg::I_monsterEggHatch(const uint8 *args, unsigned int /*argsize*/
 
 uint32 MonsterEgg::I_getMonId(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	MonsterEgg *megg = p_dynamic_cast<MonsterEgg *>(item);
+	MonsterEgg *megg = dynamic_cast<MonsterEgg *>(item);
 	if (!megg) return 0;
 
 	return megg->getMapNum() >> 3;

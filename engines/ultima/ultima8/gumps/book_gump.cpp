@@ -75,8 +75,8 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void BookGump::NextText() {
-	TextWidget *widgetL = p_dynamic_cast<TextWidget *>(getGump(_textWidgetL));
-	TextWidget *widgetR = p_dynamic_cast<TextWidget *>(getGump(_textWidgetR));
+	TextWidget *widgetL = dynamic_cast<TextWidget *>(getGump(_textWidgetL));
+	TextWidget *widgetR = dynamic_cast<TextWidget *>(getGump(_textWidgetR));
 	assert(widgetL);
 	assert(widgetR);
 	if (!widgetR->setupNextText()) {

@@ -272,7 +272,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 			itemlist.push_back(item);
 		}
 
-		Container *c = p_dynamic_cast<Container *>(item);
+		Container *c = dynamic_cast<Container *>(item);
 		if (c) {
 			// container, so prepare to read contents
 			contdepth++;
@@ -300,7 +300,7 @@ bool Map::load(Common::ReadStream *rs, uint32 version) {
 
 	for (unsigned int i = 0; i < itemcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
-		Item *item = p_dynamic_cast<Item *>(obj);
+		Item *item = dynamic_cast<Item *>(obj);
 		if (!item) return false;
 		_dynamicItems.push_back(item);
 	}

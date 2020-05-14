@@ -345,8 +345,8 @@ void GameMapGump::onMouseClick(int button, int32 mx, int32 my) {
 //			PathfinderProcess* pfp = new PathfinderProcess(devon, objID, false);
 			Kernel::get_instance()->addProcess(pfp);
 #elif 0
-			if (p_dynamic_cast<Actor *>(item)) {
-				p_dynamic_cast<Actor *>(item)->die(0);
+			if (dynamic_cast<Actor *>(item)) {
+				dynamic_cast<Actor *>(item)->die(0);
 			} else {
 				item->destroy();
 			}
@@ -394,7 +394,7 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 			item->getLocation(xv, yv, zv);
 			item->dumpInfo();
 
-			if (p_dynamic_cast<Actor *>(item) ||
+			if (dynamic_cast<Actor *>(item) ||
 			        avatar->canReach(item, 128)) { // CONSTANT!
 				// call the 'use' event
 				item->use();

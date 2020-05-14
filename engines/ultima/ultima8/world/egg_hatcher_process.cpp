@@ -56,7 +56,7 @@ void EggHatcherProcess::run() {
 
 	for (unsigned int i = 0; i < _eggs.size(); i++) {
 		uint16 eggid = _eggs[i];
-		Egg *egg = p_dynamic_cast<Egg *>(getObject(eggid));
+		Egg *egg = dynamic_cast<Egg *>(getObject(eggid));
 		if (!egg) continue; // egg gone
 
 		int32 x, y, z;
@@ -78,7 +78,7 @@ void EggHatcherProcess::run() {
 		// if the avatar teleports, set the 'justTeleported' flag.
 		// if this is set, don't hatch any teleport _eggs
 		// unset it when you're out of range of any teleport _eggs
-		TeleportEgg *tegg = p_dynamic_cast<TeleportEgg *>(egg);
+		TeleportEgg *tegg = dynamic_cast<TeleportEgg *>(egg);
 
 		if (x1 <= ax && ax - axs < x2 && y1 <= ay && ay - ays < y2 &&
 		        z - 48 < az && az <= z + 48) { // CONSTANTS!

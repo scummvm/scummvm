@@ -54,7 +54,7 @@ void GravityProcess::init() {
 
 	item->setGravityPID(getPid());
 
-	Actor *actor = p_dynamic_cast<Actor *>(item);
+	Actor *actor = dynamic_cast<Actor *>(item);
 	if (actor) {
 		actor->setFallStart(actor->getZ());
 	}
@@ -81,7 +81,7 @@ void GravityProcess::run() {
 		return;
 	}
 
-	Actor *actor = p_dynamic_cast<Actor *>(item);
+	Actor *actor = dynamic_cast<Actor *>(item);
 	if (actor && actor->getFallStart() < actor->getZ()) {
 		actor->setFallStart(actor->getZ());
 	}
@@ -167,7 +167,7 @@ void GravityProcess::run() {
 		Item *hititem = getItem(hititemid);
 		if (!hititem)
 			return; // shouldn't happen..
-		if (_zSpeed < -2 && !p_dynamic_cast<Actor *>(item)) {
+		if (_zSpeed < -2 && !dynamic_cast<Actor *>(item)) {
 #ifdef BOUNCE_DIAG
 			pout << "item " << _itemNum << " bounce ["
 			     << Kernel::get_instance()->getFrameNum()

@@ -839,7 +839,7 @@ ProcId Actor::killAllButFallAnims(bool death) {
 	ProcessIter iter = Kernel::get_instance()->getProcessBeginIterator();
 	ProcessIter endproc = Kernel::get_instance()->getProcessEndIterator();
 	for (; iter != endproc; ++iter) {
-		ActorAnimProcess *p = p_dynamic_cast<ActorAnimProcess *>(*iter);
+		ActorAnimProcess *p = dynamic_cast<ActorAnimProcess *>(*iter);
 		if (!p) continue;
 		if (p->getItemNum() != _objId) continue;
 		if (p->is_terminated()) continue;
@@ -963,7 +963,7 @@ CombatProcess *Actor::getCombatProcess() {
 	Process *p = Kernel::get_instance()->findProcess(_objId, 0xF2); // CONSTANT!
 	if (!p)
 		return nullptr;
-	CombatProcess *cp = p_dynamic_cast<CombatProcess *>(p);
+	CombatProcess *cp = dynamic_cast<CombatProcess *>(p);
 	assert(cp);
 
 	return cp;

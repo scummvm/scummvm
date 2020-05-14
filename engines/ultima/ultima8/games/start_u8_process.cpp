@@ -78,7 +78,7 @@ void StartU8Process::run() {
 		}
 
 		uint16 objid = uclist.getuint16(0);
-		Egg *egg = p_dynamic_cast<Egg *>(getObject(objid));
+		Egg *egg = dynamic_cast<Egg *>(getObject(objid));
 		int32 ix, iy, iz;
 		egg->getLocation(ix, iy, iz);
 		// Center on egg
