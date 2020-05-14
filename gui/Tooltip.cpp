@@ -56,7 +56,7 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
 
 	if (g_gui.useRTL())
-		_x = g_system->getOverlayWidth() - _w - _x;
+		_x = g_system->getOverlayWidth() - _w - _x + g_gui.getOverlayOffset();
 
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
