@@ -266,21 +266,29 @@ Spell::Param Spells::spellGetParamType(uint spell) const {
 	return SPELL_LIST[spell]._paramType;
 }
 
+bool Spells::isDebuggerActive() const {
+	return g_ultima->getDebugger()->isActive();
+}
+
 SpellCastError Spells::spellCheckPrerequisites(uint spell, int character) {
 	ASSERT(spell < N_SPELLS, "invalid spell: %d", spell);
 	ASSERT(character >= 0 && character < g_ultima->_saveGame->_members, "character out of range: %d", character);
 
-	if (g_ultima->_saveGame->_mixtures[spell] == 0)
-		return CASTERR_NOMIX;
+	// Don't bother checking mix count and map when the spell
+	// has been manually triggered from the debugger
+	if (!isDebuggerActive()) {
+		if (g_ultima->_saveGame->_mixtures[spell] == 0)
+			return CASTERR_NOMIX;
+
+		if (g_context->_party->member(character)->getMp() < SPELL_LIST[spell]._mp)
+			return CASTERR_MPTOOLOW;
+	}
 
 	if ((g_context->_location->_context & SPELL_LIST[spell]._context) == 0)
 		return CASTERR_WRONGCONTEXT;
 
 	if ((g_context->_transportContext & SPELL_LIST[spell]._transportContext) == 0)
 		return CASTERR_FAILED;
-
-	if (g_context->_party->member(character)->getMp() < SPELL_LIST[spell]._mp)
-		return CASTERR_MPTOOLOW;
 
 	return CASTERR_NOERROR;
 }
@@ -294,8 +302,9 @@ bool Spells::spellCast(uint spell, int character, int param, SpellCastError *err
 
 	*error = spellCheckPrerequisites(spell, character);
 
-	// subtract the mixture for even trying to cast the spell
-	AdjustValueMin(g_ultima->_saveGame->_mixtures[spell], -1, 0);
+	if (!isDebuggerActive())
+		// Subtract the mixture for even trying to cast the spell
+		AdjustValueMin(g_ultima->_saveGame->_mixtures[spell], -1, 0);
 
 	if (*error != CASTERR_NOERROR)
 		return false;
@@ -306,8 +315,9 @@ bool Spells::spellCast(uint spell, int character, int param, SpellCastError *err
 		return false;
 	}
 
-	// subtract the mp needed for the spell
-	p->adjustMp(-SPELL_LIST[spell]._mp);
+	if (!isDebuggerActive())
+		// Subtract the mp needed for the spell
+		p->adjustMp(-SPELL_LIST[spell]._mp);
 
 	if (spellEffect) {
 		int time;

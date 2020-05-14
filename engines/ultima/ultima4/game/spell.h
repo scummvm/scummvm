@@ -145,6 +145,11 @@ private:
 
 	LocationContext spellGetContext(uint spell) const;
 	TransportContext spellGetTransportContext(uint spell) const;
+
+	/**
+	 * Returns true if the debugger is active
+	 */
+	bool isDebuggerActive() const;
 public:
 	/**
 	 * Constructor

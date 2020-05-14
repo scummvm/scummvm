@@ -59,6 +59,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("board", WRAP_METHOD(Debugger, cmdBoard));
 	registerCmd("camp", WRAP_METHOD(Debugger, cmdCamp));
 	registerCmd("cast", WRAP_METHOD(Debugger, cmdCastSpell));
+	registerCmd("spell", WRAP_METHOD(Debugger, cmdCastSpell));
 	registerCmd("climb", WRAP_METHOD(Debugger, cmdClimb));
 	registerCmd("descend", WRAP_METHOD(Debugger, cmdDescend));
 	registerCmd("enter", WRAP_METHOD(Debugger, cmdEnter));
@@ -308,7 +309,7 @@ bool Debugger::cmdBoard(int argc, const char **argv) {
 
 bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	int player = -1;
-	if (argc == 2)
+	if (argc >= 2)
 		player = strToInt(argv[1]);
 
 	print("Cast Spell!");
@@ -328,9 +329,22 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	// ### Put the iPad thing too.
 	U4IOS::IOSCastSpellHelper castSpellController;
 #endif
-	int spell = AlphaActionController::get('z', "Spell: ");
-	if (spell == -1)
+	int spell;
+	if (argc == 3) {
+		printN("Spell: ");
+		if (Common::isAlpha(argv[2][0])) {
+			spell = tolower(argv[2][0]) - 'a';
+		} else {
+			spell = -1;
+		}
+	} else {
+		spell = AlphaActionController::get('z', "Spell: ");
+	}
+
+	if (spell == -1) {
+		print("");
 		return isDebuggerActive();
+	}
 
 	print("%s!", g_spells->spellGetName(spell)); // Prints spell name at prompt
 
@@ -453,7 +467,7 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 	}
 	}
 
-	return isDebuggerActive();
+	return false;
 }
 
 bool Debugger::cmdCamp(int argc, const char **argv) {
