@@ -642,7 +642,22 @@ void CheckboxWidget::setState(bool state) {
 }
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state);
+	Common::Rect r1(_x, _y, _x + _w, _y + _h);
+
+	if (g_gui.useRTL() && _useRTL) {
+		Common::Rect r2 = r1;
+		const int checkBoxSize = (int)r1.height() < g_gui.getFontHeight() ? (int)r1.height() : g_gui.getFontHeight();
+
+		r1.translate(-checkBoxSize * 2, 0);
+		g_gui.theme()->drawText(r1, _label, Widget::_state, Graphics::kTextAlignRight);
+
+		r2.left = r1.right + checkBoxSize;
+		r2.right = r2.left + checkBoxSize;
+
+		g_gui.theme()->drawCheckbox(r2, _label, _state, Widget::_state, false);
+	} else {
+		g_gui.theme()->drawCheckbox(r1, _label, _state, Widget::_state);
+	}
 }
 
 #pragma mark -
@@ -711,7 +726,22 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 }
 
 void RadiobuttonWidget::drawWidget() {
-	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state);
+	Common::Rect r1(_x, _y, _x + _w, _y + _h);
+
+	if (g_gui.useRTL() && _useRTL) {
+		Common::Rect r2 = r1;
+		const int radiobuttonSize = (int)r1.height() < g_gui.getFontHeight() ? (int)r1.height() : g_gui.getFontHeight();
+
+		r1.translate(-radiobuttonSize * 2, 0);
+		g_gui.theme()->drawText(r1, _label, Widget::_state, Graphics::kTextAlignRight);
+
+		r2.left = r1.right + radiobuttonSize;
+		r2.right = r2.left + radiobuttonSize;
+
+		g_gui.theme()->drawRadiobutton(r2, _label, _state, Widget::_state, false);
+	} else {
+		g_gui.theme()->drawRadiobutton(r1, _label, _state, Widget::_state);
+	}
 }
 
 #pragma mark -
