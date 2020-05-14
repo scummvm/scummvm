@@ -748,14 +748,15 @@ bool Map::fillMonsterTable() {
 	/**
 	 * Fill in our monster table
 	 */
+	TileMap *base = g_tileMaps->get("base");
 	for (i = 0; i < MONSTERTABLE_SIZE; i++) {
 		Coords c = monsters[i]->getCoords(),
-		       prevc = monsters[i]->getPrevCoords();
+			prevc = monsters[i]->getPrevCoords();
 
-		_monsterTable[i]._tile = translateToRawTileIndex(monsters[i]->getTile());
+		_monsterTable[i]._tile = base->untranslate(monsters[i]->getTile());
 		_monsterTable[i]._x = c.x;
 		_monsterTable[i]._y = c.y;
-		_monsterTable[i]._prevTile = translateToRawTileIndex(monsters[i]->getPrevTile());
+		_monsterTable[i]._prevTile = base->untranslate(monsters[i]->getPrevTile());
 		_monsterTable[i]._prevX = prevc.x;
 		_monsterTable[i]._prevY = prevc.y;
 	}
