@@ -90,32 +90,32 @@ void Symbol::reset() {
 	*refCount -= 1;
 	if (*refCount <= 0) {
 		switch (type) {
-			case HANDLER:
-				delete u.defn;
-				break;
-			case STRING:
-				delete u.s;
-				break;
-			case ARRAY:
-				// fallthrough
-			case POINT:
-				// fallthrough
-			case RECT:
-				delete u.farr;
-				break;
-			case PARRAY:
-				delete u.parr;
-				break;
-			case VAR:
-				// fallthrough
-			case REFERENCE:
-				// fallthrough
-			case INT:
-				// fallthrough
-			case FLOAT:
-				// fallthrough
-			default:
-				break;
+		case HANDLER:
+			delete u.defn;
+			break;
+		case STRING:
+			delete u.s;
+			break;
+		case ARRAY:
+			// fallthrough
+		case POINT:
+			// fallthrough
+		case RECT:
+			delete u.farr;
+			break;
+		case PARRAY:
+			delete u.parr;
+			break;
+		case VAR:
+			// fallthrough
+		case REFERENCE:
+			// fallthrough
+		case INT:
+			// fallthrough
+		case FLOAT:
+			// fallthrough
+		default:
+			break;
 		}
 		delete refCount;
 	}
