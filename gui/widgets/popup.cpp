@@ -132,6 +132,9 @@ void PopUpDialog::reflowLayout() {
 void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
+	if (g_gui.useRTL())
+		_x = _x + g_gui.getOverlayOffset();
+
 	// Draw the menu border
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
@@ -296,7 +299,7 @@ void PopUpDialog::clearEntries() {
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		if (_twoColumns) {
+		if (_twoColumns) {							// GUI TODO: Problems with collisions in 2 coloums.
 			uint entry = (y - 2) / _lineHeight;
 			if (x > _w / 2) {
 				entry += _entriesPerColumn;
@@ -390,14 +393,24 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 	Common::String &name(_entries[entry]);
 
+	Common::Rect r1(x, y, x + w, y + _lineHeight);
+	Common::Rect r2(x + 1, y + 2, x + w, y + 2 + _lineHeight);
+	Graphics::TextAlign alignment = Graphics::TextAlign::kTextAlignLeft;
+
+	if (g_gui.useRTL()) {
+		r2.translate(-g_gui.getOverlayOffset(), 0);
+		alignment = Graphics::kTextAlignRight;
+		_leftPadding = 0;
+	}
+
 	if (name.size() == 0) {
 		// Draw a separator
-		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x + w, y + _lineHeight));
+		g_gui.theme()->drawLineSeparator(r1);
 	} else {
 		g_gui.theme()->drawText(
-			Common::Rect(x + 1, y + 2, x + w, y + 2 + _lineHeight),
+			r2,
 			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-			Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding
+			alignment, ThemeEngine::kTextInversionNone, _leftPadding
 		);
 	}
 }
@@ -516,10 +529,6 @@ void PopUpWidget::drawWidget() {
 
 	if (g_gui.useRTL())
 		_x = g_system->getOverlayWidth() - _x - _w;
-
-	// GUI TODO: Recheck what the below line does.
-	if (this->_name.contains("GameOptions") || this->_name.contains("Options"))
-		_x = g_system->getOverlayWidth() - _w - _x;
 
 	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state);
 }
