@@ -28,28 +28,72 @@
 
 namespace Petka {
 
-struct DlgOperation {
-	uint16 objId;
-	byte arg;
-	byte code;
+enum {
+	kOpcodePlay = 1,
+	kOpcodeMenu,
+	kOpcodeEnd,
+	kOpcode4
 };
 
-struct DialogHandler {
-	uint32 startOpIndex;
-	uint32 opsCount;
-	//DlgOperation *operations;
+enum {
+	kOperationBreak = 1,
+	kOperationMenu,
+	kOperationGoTo,
+	kOperationMenuRet,
+	kOperation5,
+	kOperationReturn,
+	kOperationPlay,
+	kOperationCircle,
+	kOperation9
+};
+
+struct Operation {
+	union {
+		struct {
+			byte bits;
+			uint16 bitField;
+		} menu;
+		struct {
+			uint16 opIndex;
+		} goTo;
+		struct {
+			uint16 opIndex;
+			byte bit;
+		} menuRet;
+		struct {
+			uint16 opIndex;
+			byte bit;
+		} op5;
+		struct {
+			uint16 messageIndex;
+		} play;
+		struct {
+			uint16 count;
+			byte curr;
+		} circle;
+		struct {
+			uint16 arg;
+		} op9;
+	};
+	byte type;
 };
 
 struct Dialog {
-	uint16 opcode;
-	uint16 objId;
-	uint32 startHandlerIndex;
-	Common::Array<DialogHandler> handlers;
+	uint32 startOpIndex;
+	// uint32 opsCount;
+	// Operation *ops;
 };
 
-struct ObjectDialogs {
-	uint32 objId;
+struct DialogHandler {
+	uint16 opcode;
+	uint16 objId;
+	uint32 startDialogIndex;
 	Common::Array<Dialog> dialogs;
+};
+
+struct DialogGroup {
+	uint32 objId;
+	Common::Array<DialogHandler> handlers;
 };
 
 struct SpeechInfo {
@@ -64,10 +108,12 @@ public:
 
 	uint opcode();
 
-	void sub40B670(int arg);
+	uint choicesCount();
 
-	const Dialog *findDialog(uint objId, uint opcode, bool *res) const;
-	void setDialog(uint objId, uint opcode, int index);
+	void next(int choice = -1);
+
+	const DialogHandler *findHandler(uint objId, uint opcode, bool *res) const;
+	void setHandler(uint objId, uint opcode, int index);
 
 	const Common::U32String *getSpeechInfo(int *talkerId, const char **soundName, int unk);
 
@@ -76,15 +122,16 @@ public:
 
 private:
 	void loadSpeechesInfo();
+	bool checkMenu(uint opIndex);
+	bool findOperation(uint startOpIndex, uint opType, uint *resIndex);
 
 private:
-	int *_ip;
-	int *_code;
-	uint _codeSize;
-	uint _startCodeIndex;
+	Operation *_currOp;
+	Common::Array<Operation> _ops;
+	uint _startOpIndex;
 
 	Common::Array<SpeechInfo> _speeches;
-	Common::Array<ObjectDialogs> _objDialogs;
+	Common::Array<DialogGroup> _objDialogs;
 };
 
 } // End of namespace Petka
