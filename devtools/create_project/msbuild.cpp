@@ -25,7 +25,6 @@
 
 #include <fstream>
 #include <algorithm>
-#include <array>
 
 namespace CreateProjectTool {
 
@@ -81,7 +80,10 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
-	std::array<MSVC_Architecture, 3> archs{ MSVC_Architecture::ARCH_X86, MSVC_Architecture::ARCH_AMD64, MSVC_Architecture::ARCH_ARM64 };
+	std::list<MSVC_Architecture> archs;
+	archs.push_back(MSVC_Architecture::ARCH_X86);
+	archs.push_back(MSVC_Architecture::ARCH_AMD64);
+	archs.push_back(MSVC_Architecture::ARCH_ARM64);
 
 	for (const auto& arch : archs) {
 		// NOTE: different order

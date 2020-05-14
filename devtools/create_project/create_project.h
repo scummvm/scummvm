@@ -206,7 +206,7 @@ StringList getFeatureLibraries(const FeatureList &features);
  *
  * @param features Feature for the build (this may contain features, which are *not* enabled!)
  */
-StringList getFeatureLibraries(const Feature& feature);
+StringList getFeatureLibraries(const Feature &feature);
 
 /**
  * Sets the state of a given feature. This can be used to
