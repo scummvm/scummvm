@@ -126,8 +126,6 @@ Symbol::~Symbol() {
 }
 
 PCell::PCell() {
-	p = nullptr;
-	v = nullptr;
 }
 
 PCell::PCell(Datum &prop, Datum &val) {
