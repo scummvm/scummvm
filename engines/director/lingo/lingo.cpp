@@ -644,38 +644,38 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 	if (type == SYMBOL && d.type == SYMBOL) {
 		// TODO: Implement union comparisons
 		return ignoreCase ? u.sym->name.compareToIgnoreCase(d.u.sym->name) : u.sym->name.compareTo(d.u.sym->name);
-	} else {
-		int alignType = g_lingo->getAlignedType(*this, d);
+	}
 
-		if ((alignType == VOID && (type == STRING || d.type == STRING)) || (type == STRING && d.type == STRING)) {
-			if (ignoreCase) {
-				return toLowercaseMac(asString()).compareTo(toLowercaseMac(d.asString()));
-			} else {
-				return asString().compareTo(d.asString());
-			}
-		} else if (alignType == FLOAT) {
-			double f1 = asFloat();
-			double f2 = d.asFloat();
-			if (f1 < f2) {
-				return -1;
-			} else if (f1 == f2) {
-				return 0;
-			} else {
-				return 1;
-			}
-		} else if (alignType == INT) {
-			double i1 = asInt();
-			double i2 = d.asInt();
-			if (i1 < i2) {
-				return -1;
-			} else if (i1 == i2) {
-				return 0;
-			} else {
-				return 1;
-			}
+	int alignType = g_lingo->getAlignedType(*this, d);
+
+	if ((alignType == VOID && (type == STRING || d.type == STRING)) || (type == STRING && d.type == STRING)) {
+		if (ignoreCase) {
+			return toLowercaseMac(asString()).compareTo(toLowercaseMac(d.asString()));
 		} else {
-			error("Invalid comparison between types %s and %s", type2str(), d.type2str());
+			return asString().compareTo(d.asString());
 		}
+	} else if (alignType == FLOAT) {
+		double f1 = asFloat();
+		double f2 = d.asFloat();
+		if (f1 < f2) {
+			return -1;
+		} else if (f1 == f2) {
+			return 0;
+		} else {
+			return 1;
+		}
+	} else if (alignType == INT) {
+		double i1 = asInt();
+		double i2 = d.asInt();
+		if (i1 < i2) {
+			return -1;
+		} else if (i1 == i2) {
+			return 0;
+		} else {
+			return 1;
+		}
+	} else {
+		error("Invalid comparison between types %s and %s", type2str(), d.type2str());
 	}
 }
 
