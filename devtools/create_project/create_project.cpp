@@ -434,8 +434,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (setup.useCanonicalLibNames) {
-		for (auto& lib : setup.libraries) {
-			lib = getCanonicalLibName(lib);
+		for (StringList::iterator lib = setup.libraries.begin(); lib != setup.libraries.end(); ++lib) {
+			*lib = getCanonicalLibName(*lib);
 		}
 	}
 
@@ -741,8 +741,8 @@ void displayHelp(const char *exe) {
 	        " --tests                    Create project files for the tests\n"
 	        "                            (ignores --build-events and --installer, as well as engine settings)\n"
 	        "                            (default: false)\n"
-            " --use-canonical-lib-names  Use canonical library names for linking. This makes it easy to use\n"
-            "                            e.g. vcpkg-provided libraries\n"
+	        " --use-canonical-lib-names  Use canonical library names for linking. This makes it easy to use\n"
+	        "                            e.g. vcpkg-provided libraries\n"
 	        "                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
@@ -1160,8 +1160,8 @@ std::string getMSVCConfigName(MSVC_Architecture arch) {
 }
 
 std::string getCanonicalLibName(std::string lib) {
-	auto it = s_canonical_lib_name_map.find(lib);
-	if (it != s_canonical_lib_name_map.end()) {
+	std::map<std::string, std::string>::const_iterator it = s_canonical_lib_name_map.find(lib);
+	if (it != s_canonical_lib_name_map.cend()) {
 		return it->second;
 	}
 	return lib;
@@ -1234,12 +1234,12 @@ bool getFeatureBuildState(const std::string &name, FeatureList &features) {
 BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature) {
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable && feature == i->name) {
-			StringList fribidi_libs = getFeatureLibraries(*i);
-			for (auto& lib : fribidi_libs) {
+			StringList feature_libs = getFeatureLibraries(*i);
+			for (StringList::iterator lib = feature_libs.begin(); lib != feature_libs.end(); ++lib) {
 				if (setup.useCanonicalLibNames) {
-					lib = getCanonicalLibName(lib);
+					*lib = getCanonicalLibName(*lib);
 				}
-				setup.libraries.remove(lib);
+				setup.libraries.remove(*lib);
 			}
 			if (i->define && i->define[0]) {
 				setup.defines.remove(i->define);

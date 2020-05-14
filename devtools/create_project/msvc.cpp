@@ -176,10 +176,10 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_AMD64) + getPropertiesExtension() + "\" for writing");
 
 	BuildSetup amd64setup = setup;
-	auto amd64_disabled_features_it = s_arch_disabled_features.find(MSVC_Architecture::ARCH_AMD64);
+	std::map<MSVC_Architecture, StringList>::const_iterator amd64_disabled_features_it = s_arch_disabled_features.find(MSVC_Architecture::ARCH_AMD64);
 	if (amd64_disabled_features_it != s_arch_disabled_features.end()) {
-		for (auto feature : amd64_disabled_features_it->second) {
-			amd64setup = removeFeatureFromSetup(amd64setup, feature);
+		for (StringList::const_iterator feature = amd64_disabled_features_it->second.begin(); feature != amd64_disabled_features_it->second.end(); ++feature) {
+			amd64setup = removeFeatureFromSetup(amd64setup, *feature);
 		}
 	}
 
@@ -191,10 +191,10 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(MSVC_Architecture::ARCH_ARM64) + getPropertiesExtension() + "\" for writing");
 
 	BuildSetup arm64setup = setup;
-	auto arm64_disabled_features_it = s_arch_disabled_features.find(MSVC_Architecture::ARCH_ARM64);
+	std::map<MSVC_Architecture, StringList>::const_iterator arm64_disabled_features_it = s_arch_disabled_features.find(MSVC_Architecture::ARCH_ARM64);
 	if (arm64_disabled_features_it != s_arch_disabled_features.end()) {
-		for (auto feature : arm64_disabled_features_it->second) {
-			arm64setup = removeFeatureFromSetup(arm64setup, feature);
+		for (StringList::const_iterator feature = arm64_disabled_features_it->second.begin(); feature != arm64_disabled_features_it->second.end(); ++feature) {
+			arm64setup = removeFeatureFromSetup(arm64setup, *feature);
 		}
 	}
 	outputGlobalPropFile(arm64setup, properties, MSVC_Architecture::ARCH_ARM64, arm64setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
