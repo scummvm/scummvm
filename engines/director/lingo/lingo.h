@@ -100,14 +100,6 @@ struct Symbol {	/* symbol table entry */
 	~Symbol();
 };
 
-struct PCell {
-	Datum *p;
-	Datum *v;
-
-	PCell();
-	PCell(Datum &prop, Datum &val);
-};
-
 struct Datum {	/* interpreter stack type */
 	int type;
 
@@ -206,6 +198,14 @@ struct Datum {	/* interpreter stack type */
 	const char *type2str(bool isk = false);
 
 	int compareTo(Datum &d, bool ignoreCase = false);
+};
+
+struct PCell {
+	Datum p;
+	Datum v;
+
+	PCell();
+	PCell(Datum &prop, Datum &val);
 };
 
 struct Builtin {

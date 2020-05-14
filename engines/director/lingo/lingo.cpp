@@ -131,13 +131,8 @@ PCell::PCell() {
 }
 
 PCell::PCell(Datum &prop, Datum &val) {
-	p = new Datum;
-	p->type = prop.type;
-	p->u = prop.u;
-
-	v = new Datum;
-	v->type = val.type;
-	v->u = val.u;
+	p = prop;
+	v = val;
 }
 
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
@@ -602,8 +597,8 @@ Common::String Datum::asString(bool printonly) {
 		for (uint i = 0; i < u.parr->size(); i++) {
 			if (i > 0)
 				s += ", ";
-			Datum p = *u.parr->operator[](i).p;
-			Datum v = *u.parr->operator[](i).v;
+			Datum p = u.parr->operator[](i).p;
+			Datum v = u.parr->operator[](i).v;
 			s += Common::String::format("%s:%s", p.asString(printonly).c_str(), v.asString(printonly).c_str());
 		}
 

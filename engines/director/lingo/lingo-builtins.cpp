@@ -688,7 +688,7 @@ void LB::b_findPosNear(int nargs) {
 	prop.toLowercase();
 
 	for (uint i = 0; i < list.u.parr->size(); i++) {
-		Datum p = *list.u.parr->operator[](i).p;
+		Datum p = list.u.parr->operator[](i).p;
 		Common::String tgt = p.asString();
 		tgt.toLowercase();
 		if (tgt.find(prop.c_str()) == 0) {
@@ -715,7 +715,7 @@ void LB::b_getaProp(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			d = *list.u.parr->operator[](index - 1).v;
+			d = list.u.parr->operator[](index - 1).v;
 		}
 		g_lingo->push(d);
 		break;
@@ -740,7 +740,7 @@ void LB::b_getAt(int nargs) {
 		break;
 	case PARRAY:
 		ARRBOUNDSCHECK(index, list);
-		g_lingo->push(*list.u.parr->operator[](index - 1).v);
+		g_lingo->push(list.u.parr->operator[](index - 1).v);
 		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
@@ -756,7 +756,7 @@ void LB::b_getLast(int nargs) {
 		g_lingo->push(list.u.farr->back());
 		break;
 	case PARRAY:
-		g_lingo->push(*list.u.parr->back().v);
+		g_lingo->push(list.u.parr->back().v);
 		break;
 	default:
 		TYPECHECK(list, ARRAY);
@@ -778,7 +778,7 @@ void LB::b_getOne(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
 		if (index > 0) {
-			d = *list.u.parr->operator[](index - 1).p;
+			d = list.u.parr->operator[](index - 1).p;
 		}
 		g_lingo->push(d);
 		break;
@@ -834,7 +834,7 @@ void LB::b_getProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			g_lingo->push(*list.u.parr->operator[](index - 1).v);
+			g_lingo->push(list.u.parr->operator[](index - 1).v);
 		} else {
 			error("b_getProp: Property %s not found", prop.asString().c_str());
 		}
@@ -854,7 +854,7 @@ void LB::b_getPropAt(int nargs) {
 	TYPECHECK(list, PARRAY);
 	int index = indexD.asInt();
 
-	g_lingo->push(*list.u.parr->operator[](index - 1).p);
+	g_lingo->push(list.u.parr->operator[](index - 1).p);
 }
 
 void LB::b_list(int nargs) {
@@ -960,7 +960,7 @@ void LB::b_setaProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			*list.u.parr->operator[](index - 1).v = value;
+			list.u.parr->operator[](index - 1).v = value;
 		} else {
 			PCell cell = PCell(prop, value);
 			list.u.parr->push_back(cell);
@@ -993,7 +993,7 @@ void LB::b_setAt(int nargs) {
 		break;
 	case PARRAY:
 		ARRBOUNDSCHECK(index, list);
-		*list.u.parr->operator[](index - 1).v = value;
+		list.u.parr->operator[](index - 1).v = value;
 		break;
 	default:
 		break;
@@ -1011,7 +1011,7 @@ void LB::b_setProp(int nargs) {
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 	if (index > 0) {
-		*list.u.parr->operator[](index - 1).v = value;
+		list.u.parr->operator[](index - 1).v = value;
 	} else {
 		warning("b_setProp: Property not found");
 	}

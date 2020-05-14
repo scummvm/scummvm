@@ -1011,14 +1011,14 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 			a = d1.u.farr->operator[](i);
 		} else if (d1.type == PARRAY) {
 			PCell t = d1.u.parr->operator[](i);
-			a = value ? *t.v : *t.p;
+			a = value ? t.v : t.p;
 		}
 
 		if (d2.type == ARRAY) {
 			b = d2.u.farr->operator[](i);
 		} else if (d2.type == PARRAY) {
 			PCell t = d2.u.parr->operator[](i);
-			b = value ? *t.v : *t.p;
+			b = value ? t.v : t.p;
 		}
 
 		res = compareFunc(a, b);
