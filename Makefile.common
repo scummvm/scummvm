@@ -247,6 +247,10 @@ VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
 ifdef USE_PANDOC
 # Convert README.md and NEWS.md to plain text for any platform that might require it
+PANDOC_CONVERT: README$(PANDOCEXT) NEWS$(PANDOCEXT)
+	@sed -i'' -e "s/NEWS.md/NEWS$(PANDOCEXT)/g" README$(PANDOCEXT)
+	@sed -i'' -e "s/CONTRIBUTING.md/CONTRIBUTING$(PANDOCEXT)/g" README$(PANDOCEXT)
+
 %$(PANDOCEXT): %.md
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) --metadata pagetitle=$(basename $(notdir $@)) -s -o $@ $<
