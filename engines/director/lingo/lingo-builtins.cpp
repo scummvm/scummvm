@@ -451,11 +451,11 @@ void LB::b_chars(int nargs) {
 	int f = MAX(0, MIN(len, from - 1));
 	int t = MAX(0, MIN(len, to));
 
-	Common::String *result;
+	Common::String result;
 	if (f > t) {
-		result = new Common::String("");
+		result = Common::String("");
 	} else {
-		result = new Common::String(&(src.c_str()[f]), &(src.c_str()[t]));
+		result = Common::String(&(src.c_str()[f]), &(src.c_str()[t]));
 	}
 
 	Datum res(result);
@@ -1296,7 +1296,7 @@ void LB::b_floatP(int nargs) {
 
 void LB::b_ilk(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res(new Common::String(d.type2str(true)));
+	Datum res(Common::String(d.type2str(true)));
 	g_lingo->push(res);
 }
 
@@ -2012,15 +2012,15 @@ void LB::b_soundBusy(int nargs) {
 // Constants
 ///////////////////
 void LB::b_backspace(int nargs) {
-	g_lingo->push(Datum(new Common::String("\b")));
+	g_lingo->push(Datum(Common::String("\b")));
 }
 
 void LB::b_empty(int nargs) {
-	g_lingo->push(Datum(new Common::String("")));
+	g_lingo->push(Datum(Common::String("")));
 }
 
 void LB::b_enter(int nargs) {
-	g_lingo->push(Datum(new Common::String("\n")));
+	g_lingo->push(Datum(Common::String("\n")));
 }
 
 void LB::b_false(int nargs) {
@@ -2028,15 +2028,15 @@ void LB::b_false(int nargs) {
 }
 
 void LB::b_quote(int nargs) {
-	g_lingo->push(Datum(new Common::String("\"")));
+	g_lingo->push(Datum(Common::String("\"")));
 }
 
 void LB::b_returnconst(int nargs) {
-	g_lingo->push(Datum(new Common::String("\n")));
+	g_lingo->push(Datum(Common::String("\n")));
 }
 
 void LB::b_tab(int nargs) {
-	g_lingo->push(Datum(new Common::String("\t")));
+	g_lingo->push(Datum(Common::String("\t")));
 }
 
 void LB::b_true(int nargs) {
@@ -2046,10 +2046,10 @@ void LB::b_true(int nargs) {
 void LB::b_version(int nargs) {
 	switch (g_director->getVersion()) {
 	case 3:
-		g_lingo->push(Datum(new Common::String("3.1.1"))); // Mac
+		g_lingo->push(Datum(Common::String("3.1.1"))); // Mac
 		break;
 	case 4:
-		g_lingo->push(Datum(new Common::String("4.0"))); // Mac
+		g_lingo->push(Datum(Common::String("4.0"))); // Mac
 		break;
 	default:
 		error("Unsupported Director for 'version'");

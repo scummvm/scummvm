@@ -162,12 +162,6 @@ struct Datum {	/* interpreter stack type */
 		refCount = new int;
 		*refCount = 1;
 	}
-	Datum(Common::String *val) {
-		u.s = val;
-		type = STRING;
-		refCount = new int;
-		*refCount = 1;
-	}
 	void reset() {
 		*refCount -= 1;
 		if (*refCount <= 0) {

@@ -267,7 +267,7 @@ void LC::c_floatpush() {
 
 void LC::c_stringpush() {
 	char *s = g_lingo->readString();
-	g_lingo->push(Datum(new Common::String(s)));
+	g_lingo->push(Datum(Common::String(s)));
 }
 
 void LC::c_symbolpush() {
@@ -276,7 +276,7 @@ void LC::c_symbolpush() {
 	// TODO: FIXME: Currently we push string
 	// If you change it, you must also fix func_play for "play done"
 	// command
-	Datum d(new Common::String(s));
+	Datum d = Datum(Common::String(s));
 	d.type = SYMBOL;
 
 	g_lingo->push(d);
@@ -285,7 +285,7 @@ void LC::c_symbolpush() {
 void LC::c_namepush() {
 	Datum d;
 	int i = g_lingo->readInt();
-	g_lingo->push(Datum(new Common::String(g_lingo->getName(i))));
+	g_lingo->push(Datum(Common::String(g_lingo->getName(i))));
 }
 
 void LC::c_argcpush() {
@@ -344,7 +344,7 @@ void LC::c_varpush() {
 	// In immediate mode we will push variables as strings
 	// This is used for playAccel
 	if (g_lingo->_immediateMode) {
-		g_lingo->push(Datum(new Common::String(name)));
+		g_lingo->push(Datum(Common::String(name)));
 
 		return;
 	}
