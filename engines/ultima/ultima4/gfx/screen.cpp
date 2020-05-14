@@ -465,6 +465,8 @@ void Screen::screenUpdate(TileView *view, bool showmap, bool blackout) {
 
 	if (blackout) {
 		screenEraseMapArea();
+	} else if (g_context->_location->_viewMode == VIEW_GEM) {
+		// No need to render view when cheat overhead map showing
 	} else if (g_context->_location->_map->_flags & FIRST_PERSON) {
 		DungeonViewer.display(g_context, view);
 		screenRedrawMapArea();
