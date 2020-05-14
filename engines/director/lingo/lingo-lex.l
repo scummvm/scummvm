@@ -79,12 +79,28 @@ static int checkImmediate(int token) {
 	return token;
 }
 
+static Common::String *cleanupString(const char *s) {
+	Common::String *res = new Common::String;
+
+	while (*s) {
+		if (*s == '\xC2') {
+			s++;
+			s++;
+			continue;
+		}
+		*res += *s;
+		s++;
+	}
+
+	return res;
+}
+
 %}
 
 identifier [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
-conststring \"[^\"\r\n]*\"
+conststring \"([^\"\r\n]|\xC2[\r\n])*\"
 operator [-+*/%^:,()><&\[\]]
 newline [ \t]*[\n\r]
 whitespace [ \t]
@@ -401,7 +417,7 @@ word			{ count(); return tWORD; }
 {constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
 {operator}		{ count(); return *yytext; }
 {newline}		{ count(); return '\n'; }
-{conststring}	{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
+{conststring}	{ count(); yylval.s = cleanupString(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 .				{ count(); }
 
 %%
