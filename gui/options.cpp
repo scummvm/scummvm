@@ -147,8 +147,7 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 
 OptionsDialog::~OptionsDialog() {
 	delete _subToggleGroup;
-	g_gui.setWindowOverlayStatus(false);
-	g_gui.setOverlayParas(0, 0);			// GUI TODO: This does not seem necessary, but lets be safe for now.
+	g_gui.setDialogPaddings(0, 0);
 }
 
 void OptionsDialog::init() {
@@ -216,8 +215,6 @@ void OptionsDialog::init() {
 	_subSpeedDesc = nullptr;
 	_subSpeedSlider = nullptr;
 	_subSpeedLabel = nullptr;
-
-	g_gui.setWindowOverlayStatus(true);
 
 	// Retrieve game GUI options
 	_guioptions.clear();
@@ -1832,9 +1829,8 @@ void GlobalOptionsDialog::build() {
 
 	// GUI TODO: Incomplete implementation, currently just switches to last tab.
 	if (g_gui.useRTL()) {
-		tab->setActiveTab(tab->getActiveTab());
-	}
-	else {
+		tab->setActiveTab(tab->getTabsSize() - 1);
+	} else {
 		// Activate the first tab
 		tab->setActiveTab(0);
 	}

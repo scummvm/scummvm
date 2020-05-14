@@ -246,7 +246,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		if (this->_name == "GameOptions" || this->_name == "GlobalOptions") {
 			int oldX = _x;
 			_x = g_system->getOverlayWidth() - _w - _x;
-			g_gui.setOverlayParas(oldX, _x);
+			g_gui.setDialogPaddings(oldX, _x);
 		}
 	}
 
@@ -389,7 +389,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 			resize[rescount++] = i;
 			_children[i]->setWidth(0);
 		}
-		
+
 		_children[i]->offsetX(curX);
 
 		// Advance the horizontal offset by the width of the newest item, plus
