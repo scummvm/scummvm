@@ -439,6 +439,12 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 		}
 	}
 
+	// VOID equals to 0
+	if (d1Type == VOID)
+		d1Type = INT;
+	if (d2Type == VOID)
+		d2Type = INT;
+
 	if (d1Type == FLOAT || d2Type == FLOAT) {
 		opType = FLOAT;
 	} else if (d1Type == INT && d2Type == INT) {
