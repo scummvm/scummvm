@@ -100,20 +100,18 @@ private:
 
 private:
 	class PSXAudioTrack {
-	public:
-		PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType);
-		~PSXAudioTrack();
-
-		void queueAudioFromSector(Common::SeekableReadStream *sector);
-		Audio::QueuingAudioStream *getAudioStream() {
-			return _audStream;
-		}
 	private:
-		Audio::QueuingAudioStream *_audStream;
-
 		struct ADPCMStatus {
 			int16 sample[2];
 		} _adpcmStatus[2];
+
+	public:
+		PSXAudioTrack();
+
+		Audio::QueuingAudioStream *createNewAudioStream(Common::File *fd, uint16 sectorStart, int8 startOffset, uint16 sectorEnd);
+
+	private:
+		void queueAudioFromSector(Audio::QueuingAudioStream *audStream, Common::SeekableReadStream *sector);
 	};
 };
 
