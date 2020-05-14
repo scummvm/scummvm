@@ -175,9 +175,9 @@ Direction MapCoords::pathTo(const MapCoords &c, int valid_directions, bool towar
 	// Get the new direction to move
 	if (directionsToObject > DIR_NONE)
 		return dirRandomDir(directionsToObject);
-
 	// There are no valid directions that lead to our target, just move wherever we can!
-	else return dirRandomDir(valid_directions);
+	else
+		return dirRandomDir(valid_directions);
 }
 
 Direction MapCoords::pathAway(const MapCoords &c, int valid_directions) const {
@@ -199,14 +199,16 @@ int MapCoords::movementDistance(const MapCoords &c, const Map *map) const {
 		if (me.x != c.x) {
 			if (dirmask & MASK_DIR_WEST)
 				me.move(DIR_WEST, map);
-			else me.move(DIR_EAST, map);
+			else
+				me.move(DIR_EAST, map);
 
 			dist++;
 		}
 		if (me.y != c.y) {
 			if (dirmask & MASK_DIR_NORTH)
 				me.move(DIR_NORTH, map);
-			else me.move(DIR_SOUTH, map);
+			else
+				me.move(DIR_SOUTH, map);
 
 			dist++;
 		}
@@ -710,7 +712,8 @@ bool Map::fillMonsterTable() {
 			// Whirlpools and storms are separated from other moving objects
 			if (c->getId() == WHIRLPOOL_ID || c->getId() == STORM_ID)
 				monsters.push_back(obj);
-			else other_creatures.push_back(obj);
+			else
+				other_creatures.push_back(obj);
 		} else inanimate_objects.push_back(obj);
 	}
 
@@ -767,6 +770,8 @@ MapTile Map::translateFromRawTileIndex(int raw) const {
 }
 
 uint Map::translateToRawTileIndex(MapTile &tile) const {
+	g_tileSets;
+
 	return _tileMap->untranslate(tile);
 }
 

@@ -457,7 +457,8 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 		/* FIXME: check actual damage from u4dos -- values here are guessed */
 		if (g_context->_transportContext == TRANSPORT_SHIP)
 			gameDamageShip(-1, 10);
-		else gameDamageParty(10, 25);
+		else
+			gameDamageParty(10, 25);
 
 		return true;
 	}
@@ -633,8 +634,11 @@ bool gameSpawnCreature(const Creature *m) {
 				        (m->walks() && tile->isCreatureWalkable()) ||
 				        (m->flies() && tile->isFlyable()))
 					ok = true;
-				else tries++;
-			} else ok = true;
+				else
+					tries++;
+			} else {
+				ok = true;
+			}
 		}
 
 		if (ok)
@@ -687,8 +691,11 @@ void gameDestroyAllCreatures(void) {
 				// The skull does not destroy Lord British
 				if (m->getId() != LORDBRITISH_ID)
 					current = map->removeObject(current);
-				else current++;
-			} else current++;
+				else
+					current++;
+			} else {
+				current++;
+			}
 		}
 	}
 

@@ -87,7 +87,9 @@ void Tile::loadProperties(const ConfigElement &conf) {
 		rule = g_tileRules->findByName(conf.getString("rule"));
 		if (rule == nullptr)
 			rule = g_tileRules->findByName("default");
-	} else rule = g_tileRules->findByName("default");
+	} else {
+		rule = g_tileRules->findByName("default");
+	}
 
 	// Get the number of frames the tile has
 	_frames = conf.getInt("frames", 1);

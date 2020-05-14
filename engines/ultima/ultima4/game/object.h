@@ -29,7 +29,9 @@
 namespace Ultima {
 namespace Ultima4 {
 
-typedef Std::deque<class Object *> ObjectDeque;
+class Object;
+
+typedef Std::deque<Object *> ObjectDeque;
 
 enum ObjectMovementBehavior {
 	MOVEMENT_FIXED,

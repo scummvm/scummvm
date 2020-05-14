@@ -116,7 +116,8 @@ void TileMaps::load(const ConfigElement &tilemapConf) {
 TileMap *TileMaps::get(Common::String name) {
 	if (find(name) != end())
 		return (*this)[name];
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 /*-------------------------------------------------------------------*/

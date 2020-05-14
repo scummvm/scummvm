@@ -103,18 +103,22 @@ Common::String PartyMember::translate(Std::vector<Common::String> &parts) {
 			if (parts[1] == "cure") {
 				if (getStatus() == STAT_POISONED)
 					return "true";
-				else return "false";
+				else
+					return "false";
 			} else if (parts[1] == "heal" || parts[1] == "fullheal") {
 				if (getHp() < getMaxHp())
 					return "true";
-				else return "false";
+				else
+					return "false";
 			} else if (parts[1] == "resurrect") {
 				if (getStatus() == STAT_DEAD)
 					return "true";
-				else return "false";
+				else
+					return "false";
 			}
 		}
 	}
+
 	return "";
 }
 

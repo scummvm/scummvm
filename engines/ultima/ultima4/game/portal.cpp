@@ -73,9 +73,12 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 				createDngLadder(location, action, &dngLadder);
 			else if ((action & ACTION_DESCEND) && dungeon->ladderDownAt(coords))
 				createDngLadder(location, action, &dngLadder);
-			else return 0;
+			else
+				return 0;
 			portal = &dngLadder;
-		} else return 0;
+		} else {
+			return 0;
+		}
 	}
 
 	/* conditions not met for portal to work */
@@ -98,7 +101,8 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 		case ACTION_KLIMB:
 			if (portal->_exitPortal)
 				sprintf(msg, "Klimb up!\nLeaving...\n");
-			else sprintf(msg, "Klimb up!\nTo level %d\n", portal->_start.z + 1);
+			else
+				sprintf(msg, "Klimb up!\nTo level %d\n", portal->_start.z + 1);
 			break;
 		case ACTION_ENTER:
 			switch (destination->_type) {

@@ -84,7 +84,9 @@ bool ReadStringController::keyPressed(int key) {
 				g_screen->screenShowCursor();
 			}
 		}
-	} else valid = false;
+	} else {
+		valid = false;
+	}
 
 	return valid || KeyHandler::defaultHandler(key, nullptr);
 }

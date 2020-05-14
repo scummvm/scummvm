@@ -82,7 +82,8 @@ void City::removeAllPeople() {
 	for (obj = _objects.begin(); obj != _objects.end();) {
 		if (isPerson(*obj))
 			obj = removeObject(obj);
-		else obj++;
+		else
+			obj++;
 	}
 }
 

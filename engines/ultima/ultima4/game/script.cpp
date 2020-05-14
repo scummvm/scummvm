@@ -239,7 +239,8 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 	} else {
 		if (subNodeName.empty())
 			error("Couldn't find script '%s' in %s", baseId.c_str(), filename.c_str());
-		else error("Couldn't find subscript '%s' where id='%s' in script '%s' in %s", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str(), filename.c_str());
+		else
+			error("Couldn't find subscript '%s' where id='%s' in script '%s' in %s", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str(), filename.c_str());
 	}
 
 	_state = STATE_UNLOADED;
@@ -261,7 +262,8 @@ void Script::run(const Common::String &script) {
 	if (_variables.find(_idPropName) != _variables.end()) {
 		if (_variables[_idPropName]->isSet())
 			search_id = _variables[_idPropName]->getString();
-		else search_id = "null";
+		else
+			search_id = "null";
 	}
 
 	scriptNode = find(_scriptNode, script, search_id);
@@ -436,7 +438,8 @@ void Script::_continue() {
 	/* there's no target indicated, just start where we left off! */
 	if (_target.empty())
 		execute(_currentScript, _currentItem);
-	else run(_target);
+	else
+		run(_target);
 }
 
 void Script::resetState() {
@@ -469,7 +472,8 @@ void Script::unsetVar(const Common::String &name) {
 	// Ensure that the variable at least exists, but has no value
 	if (_variables.find(name) != _variables.end())
 		_variables[name]->unset();
-	else _variables[name] = new Variable();
+	else
+		_variables[name] = new Variable();
 }
 
 Script::State Script::getState() {
@@ -688,7 +692,8 @@ void Script::translate(Common::String *text) {
 				else if (funcName == "compare") {
 					if (compare(content))
 						prop = "true";
-					else prop = "false";
+					else
+						prop = "false";
 				}
 
 				/* make the Common::String upper case */
@@ -716,7 +721,8 @@ void Script::translate(Common::String *text) {
 				else if (funcName == "isempty") {
 					if (content.empty())
 						prop = "true";
-					else prop = "false";
+					else
+						prop = "false";
 				}
 			}
 		}

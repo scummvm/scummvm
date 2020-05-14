@@ -577,7 +577,8 @@ int chars_needed(const char *s, int columnmax, int linesdesired, int *real_lines
 		lines += linecount(p.c_str(), columnmax);
 		if (lines <= linesdesired)
 			paragraphs += p + "\n";
-		else break;
+		else
+			break;
 		text = text.substr(pos + 1);
 	}
 	// Seems to be some sort of clang compilation bug in this code, that causes this addition

@@ -236,7 +236,8 @@ bool Items::isStoneInInventory(int virt) {
 	if (virt == -1)
 		return (g_ultima->_saveGame->_stones > 0);
 	/* specific test: does the party have a specific stone? */
-	else return g_ultima->_saveGame->_stones & virt;
+	else
+		return g_ultima->_saveGame->_stones & virt;
 }
 
 void Items::putStoneInInventory(int virt) {
@@ -354,10 +355,14 @@ void Items::useBBC(int item) {
 			U4IOS::testFlightPassCheckPoint("As you light the Candle the Earth Trembles!");
 #endif
 			g_ultima->_saveGame->_items |= ITEM_CANDLE_USED;
-		} else g_screen->screenMessage("\nHmm...No effect!\n");
+		} else {
+			g_screen->screenMessage("\nHmm...No effect!\n");
+		}
 	}
 	/* somewhere else */
-	else g_screen->screenMessage("\nHmm...No effect!\n");
+	else {
+		g_screen->screenMessage("\nHmm...No effect!\n");
+	}
 }
 
 void Items::useHorn(int item) {
@@ -369,7 +374,9 @@ void Items::useWheel(int item) {
 	if ((g_context->_transportContext == TRANSPORT_SHIP) && (g_ultima->_saveGame->_shipHull == 50)) {
 		g_screen->screenMessage("\nOnce mounted, the Wheel glows with a blue light!\n");
 		g_context->_party->setShipHull(99);
-	} else g_screen->screenMessage("\nHmm...No effect!\n");
+	} else {
+		g_screen->screenMessage("\nHmm...No effect!\n");
+	}
 }
 
 void Items::useSkull(int item) {
@@ -458,8 +465,9 @@ void Items::useStone(int item) {
 						stoneMask = 0; /* reset the mask so you can try again */
 						return;
 					}
-				} else error("Not in an altar room!");
-
+				} else {
+					error("Not in an altar room!");
+				}
 				/* see if we have all the stones, if not, get more names! */
 				if (attr && needStoneNames) {
 					g_screen->screenMessage("\n%c:", 'E' - needStoneNames);
@@ -504,7 +512,9 @@ void Items::useStone(int item) {
 #endif
 						g_screen->screenMessage("\nThou doth find one third of the Three Part Key!\n");
 						g_ultima->_saveGame->_items |= key;
-					} else g_screen->screenMessage("\nHmm...No effect!\n");
+					} else {
+						g_screen->screenMessage("\nHmm...No effect!\n");
+					}
 
 					stoneMask = 0; /* reset the mask so you can try again */
 				}
@@ -542,7 +552,8 @@ void Items::useStone(int item) {
 		int virtueMask = getBaseVirtues((Virtue)g_context->_location->_coords.z);
 		if (virtueMask > 0)
 			g_screen->screenMessage("\n\nAs thou doth approach, a voice rings out: What virtue dost stem from %s?\n\n", getBaseVirtueName(virtueMask));
-		else g_screen->screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
+		else
+			g_screen->screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
 #ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
@@ -572,9 +583,11 @@ void Items::useStone(int item) {
 		U4IOS::IOSConversationHelper::setIntroString("Which color?");
 #endif
 		itemHandleStones(gameGetInput());
-	} else g_screen->screenMessage("\nNo place to Use them!\n");
-	// This used to say "\nNo place to Use them!\nHmm...No effect!\n"
-	// That doesn't match U4DOS; does it match another?
+	} else {
+		g_screen->screenMessage("\nNo place to Use them!\n");
+		// This used to say "\nNo place to Use them!\nHmm...No effect!\n"
+		// That doesn't match U4DOS; does it match another?
+	}
 }
 
 void Items::useKey(int item) {

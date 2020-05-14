@@ -222,8 +222,9 @@ void dungeonSearch(void) {
 					g_screen->screenMessage("You find...\n%s!\n", item->_name);
 				(g_items->*(item->_putItemInInventory))(item->_data);
 			}
-		} else
+		} else {
 			g_screen->screenMessage("\nYou find Nothing!\n");
+		}
 	}
 
 	break;
@@ -250,7 +251,8 @@ void dungeonDrinkFountain() {
 	case FOUNTAIN_HEALING:
 		if (g_context->_party->member(player)->heal(HT_FULLHEAL))
 			g_screen->screenMessage("\nAhh-Refreshing!\n");
-		else g_screen->screenMessage("\nHmmm--No Effect!\n");
+		else
+			g_screen->screenMessage("\nHmmm--No Effect!\n");
 		break;
 
 	/* acid fountain */
@@ -263,7 +265,8 @@ void dungeonDrinkFountain() {
 	case FOUNTAIN_CURE:
 		if (g_context->_party->member(player)->heal(HT_CURE))
 			g_screen->screenMessage("\nHmmm--Delicious!\n");
-		else g_screen->screenMessage("\nHmmm--No Effect!\n");
+		else
+			g_screen->screenMessage("\nHmmm--No Effect!\n");
 		break;
 
 	/* poison fountain */
@@ -273,7 +276,9 @@ void dungeonDrinkFountain() {
 			g_context->_party->member(player)->applyEffect(EFFECT_POISON);
 			g_context->_party->member(player)->applyDamage(100); /* 100 damage to drinker also */
 			g_screen->screenMessage("\nArgh-Choke-Gasp!\n");
-		} else g_screen->screenMessage("\nHmm--No Effect!\n");
+		} else {
+			g_screen->screenMessage("\nHmm--No Effect!\n");
+		}
 		break;
 
 	default:

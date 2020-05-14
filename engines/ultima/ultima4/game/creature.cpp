@@ -808,7 +808,8 @@ void Creature::removeStatus(StatusType s) {
 	for (i = _status.begin(); i != _status.end();) {
 		if (*i == s)
 			i = _status.erase(i);
-		else i++;
+		else
+			i++;
 	}
 
 	// Just to be sure, if a player is poisoned from a savegame, then they won't have
@@ -928,7 +929,8 @@ Creature *CreatureMgr::getById(CreatureId id) {
 	CreatureMap::const_iterator i = _creatures.find(id);
 	if (i != _creatures.end())
 		return i->_value;
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 Creature *CreatureMgr::getByName(Common::String name) {
@@ -1008,7 +1010,8 @@ Creature *CreatureMgr::randomAmbushing() {
 				if (numAmbushingCreatures == randCreature)
 					return i->_value;
 				/* move on to the next creature */
-				else numAmbushingCreatures++;
+				else
+					numAmbushingCreatures++;
 			}
 		}
 	}

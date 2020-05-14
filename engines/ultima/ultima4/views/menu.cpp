@@ -243,7 +243,8 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
 	if (id >= 0)
 		mi = getItemById(id);
 	/* or use the current item */
-	else mi = *getCurrent();
+	else
+		mi = *getCurrent();
 
 	if (!mi)
 		error("Error: Unable to find menu item with id '%d'", id);

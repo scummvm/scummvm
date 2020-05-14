@@ -79,7 +79,8 @@ CombatMap *getCombatMap(Map *punknown) {
 	Map *m = punknown ? punknown : g_context->_location->_map;
 	if (!isCombatMap(m))
 		return nullptr;
-	else return dynamic_cast<CombatMap *>(m);
+	else
+		return dynamic_cast<CombatMap *>(m);
 }
 
 /**
@@ -223,7 +224,8 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 				_map->setAltarRoom(VIRT_LOVE);
 			else if (g_context->_location->_prev->_coords.x <= 2)
 				_map->setAltarRoom(VIRT_TRUTH);
-			else _map->setAltarRoom(VIRT_COURAGE);
+			else
+				_map->setAltarRoom(VIRT_COURAGE);
 		}
 
 		/* load in creatures and creature start coordinates */
@@ -377,7 +379,9 @@ void CombatController::end(bool adjustKarma) {
 
 				if (action != ACTION_NONE)
 					usePortalAt(g_context->_location, g_context->_location->_coords, action);
-			} else g_screen->screenMessage("\n");
+			} else {
+				g_screen->screenMessage("\n");
+			}
 
 			if (_exitDir != DIR_NONE) {
 				g_ultima->_saveGame->_orientation = _exitDir;  /* face the direction exiting the room */
@@ -685,7 +689,8 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 		// soundPlay(SOUND_PC_STRUCK, false);
 		if (hittile == g_tileSets->findTileByName("magic_flash")->getId())
 			g_screen->screenMessage("\n%s %cMagical Hit%c!\n", target->getName().c_str(), FG_BLUE, FG_WHITE);
-		else g_screen->screenMessage("\n%s Hit!\n", target->getName().c_str());
+		else
+			g_screen->screenMessage("\n%s Hit!\n", target->getName().c_str());
 		attacker->dealDamage(target, attacker->getDamage());
 		break;
 	}
@@ -809,7 +814,9 @@ void CombatController::finishTurn() {
 		          (_party[g_context->_party->getActivePlayer()]) && /* and the active player is still in combat */
 		          !_party[g_context->_party->getActivePlayer()]->isDisabled() && /* and the active player is not disabled */
 		          (g_context->_party->getActivePlayer() != _focus)));
-	} else g_context->_location->_map->_annotations->passTurn();
+	} else {
+		g_context->_location->_map->_annotations->passTurn();
+	}
 
 #if 0
 	if (focus != 0) {

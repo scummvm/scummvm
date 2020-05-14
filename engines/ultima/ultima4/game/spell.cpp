@@ -433,7 +433,9 @@ int Spells::spellBlink(int dir) {
 			failed = 1;
 
 		g_context->_location->_coords = coords;
-	} else failed = 1;
+	} else {
+		failed = 1;
+	}
 
 	return (failed ? 0 : 1);
 }

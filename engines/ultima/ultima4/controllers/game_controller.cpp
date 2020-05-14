@@ -251,7 +251,8 @@ void GameController::finishTurn() {
 
 		if (g_context->_party->getTorchDuration() <= 0)
 			g_screen->screenMessage("It's Dark!\n");
-		else g_context->_party->burnTorch();
+		else
+			g_context->_party->burnTorch();
 
 		/* handle dungeon traps */
 		if (dungeon->currentToken() == DUNGEON_TRAP) {
@@ -724,7 +725,9 @@ void GameController::creatureCleanup() {
 
 			/* delete the object and remove it from the map */
 			i = map->removeObject(i);
-		} else i++;
+		} else {
+			i++;
+		}
 	}
 }
 

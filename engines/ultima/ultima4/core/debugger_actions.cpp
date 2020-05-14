@@ -156,8 +156,11 @@ bool DebuggerActions::getChestTrapHandler(int player) {
 			(g_ultima->_saveGame->_players[player]._dex + 25 < xu4_random(100))) {
 			if (trapType == EFFECT_LAVA) /* bomb trap */
 				g_context->_party->applyEffect(trapType);
-			else g_context->_party->member(player)->applyEffect(trapType);
-		} else g_screen->screenMessage("Evaded!\n");
+			else
+				g_context->_party->member(player)->applyEffect(trapType);
+		} else {
+			g_screen->screenMessage("Evaded!\n");
+		}
 
 		return true;
 	}
