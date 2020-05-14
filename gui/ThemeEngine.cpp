@@ -988,7 +988,7 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 	drawDD(kDDSeparator, r);
 }
 
-void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state, bool drawText) {
 	if (!ready())
 		return;
 
@@ -1011,13 +1011,13 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 
-	if (r2.right > r2.left) {
+	if (r2.right > r2.left && drawText) {
 		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDCheckboxDefault]->_textAlignH,
 		           _widgets[dd]->_textAlignV);
 	}
 }
 
-void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state, bool drawText) {
 	if (!ready())
 		return;
 
@@ -1030,18 +1030,20 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 	if (state == kStateDisabled)
 		dd = kDDRadiobuttonDisabled;
 
-	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
+	const int radioButtonSize = MIN((int)r.height(), getFontHeight());
 
-	r2.bottom = r2.top + checkBoxSize;
-	r2.right = r2.left + checkBoxSize;
+	r2.bottom = r2.top + radioButtonSize;
+	r2.right = r2.left + radioButtonSize;
 
 	drawDD(dd, r2);
 
-	r2.left = r2.right + checkBoxSize;
+	r2.left = r2.right + radioButtonSize;
 	r2.right = MAX(r2.left, r.right);
 
-	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH,
-	           _widgets[dd]->_textAlignV);
+	if (drawText) {
+		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH,
+				   _widgets[dd]->_textAlignV);
+	}
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
