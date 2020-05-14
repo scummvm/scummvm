@@ -68,19 +68,19 @@ void FlicDecoder::load(Common::SeekableReadStream *stream, Common::SeekableReadS
 const Common::Rect &FlicDecoder::getBounds() const {
 	const Track *track = getTrack(0);
 	if (track)
-		return ((FlicVideoTrack *)track)->getBounds();
+		return ((const FlicVideoTrack *)track)->getBounds();
 }
 
 const Common::Array<Common::Rect> &FlicDecoder::getMskRects() const {
 	const Track *track = getTrack(0);
 	if (track)
-		return ((FlicVideoTrack *)track)->getMskRects();
+		return ((const FlicVideoTrack *)track)->getMskRects();
 }
 
 uint32 FlicDecoder::getTransColor(const Graphics::PixelFormat &fmt) const {
 	const Track *track = getTrack(0);
 	if (track) {
-		const FlicVideoTrack *flc = ((FlicVideoTrack *)track);
+		const FlicVideoTrack *flc = ((const FlicVideoTrack *)track);
 		byte r = flc->getPalette()[0];
 		byte g = flc->getPalette()[1];
 		byte b = flc->getPalette()[2];
@@ -109,7 +109,7 @@ void FlicDecoder::setFrame(int frame) {
 }
 
 uint FlicDecoder::getDelay() const {
-	FlicVideoTrack *flc = ((FlicVideoTrack *)getTrack(0));
+	const FlicVideoTrack *flc = ((const FlicVideoTrack *)getTrack(0));
 	if (flc)
 		return flc->getDelay();
 	return 0;
