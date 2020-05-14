@@ -97,7 +97,7 @@ Common::Error PetkaEngine::run() {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return Common::kNoError;
 			case Common::EVENT_MOUSEMOVE:
 				_qsystem->_currInterface->onMouseMove(event.mouse);
