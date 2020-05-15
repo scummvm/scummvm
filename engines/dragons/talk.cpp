@@ -348,7 +348,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			if (0x16 < (short)uVar19) {
 				uVar19 = 0x16;
 			}
-			uVar11 = sVar20 * _dat_800726ec_tfont_field0 + 3 & 0xfffe;
+			uVar11 = (sVar20 * _dat_800726ec_tfont_field0 + 3) & 0xfffe;
 			sVar20 = (short)uVar11 >> 1;
 			if ((short)x < 0x14) {
 				_dat_8008e7e8_dialogBox_x1 = (x - sVar20) + 1;
@@ -694,7 +694,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			uVar3 = (uint)uVar8;
 		} while (uVar8 < numEntries);
 	}
-	drawDialogBox(1, 0x17 - (uint) local_58 & 0xffff, 0x26, 0x18, 1);
+	drawDialogBox(1, (0x17 - (uint) local_58) & 0xffff, 0x26, 0x18, 1);
 	uVar8 = 0;
 	_vm->_cursor->updateSequenceID(3);
 	local_50 = -2;

@@ -380,8 +380,8 @@ void Minigame3::run() {
 						bunnyActorTbl[local_1a]->_y_pos = (int16)((int)bunnyInfo[local_1e].y >> 9);
 						if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->_x_pos) {
 							local_228 = local_228 + 1;
-							bunnyActorTbl[local_1a]->updateSequence((uint)local_228 + 6 & 0xffff);
-							bunnyActorTbl[local_1c]->updateSequence((uint)local_228 + 0xd & 0xffff);
+							bunnyActorTbl[local_1a]->updateSequence(((uint)local_228 + 6) & 0xffff);
+							bunnyActorTbl[local_1c]->updateSequence(((uint)local_228 + 0xd) & 0xffff);
 						}
 					}
 				}
