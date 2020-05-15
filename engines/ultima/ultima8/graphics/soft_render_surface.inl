@@ -103,7 +103,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 //	
 #ifdef NO_CLIPPING
 
-#define LINE_END_ASSIGN (0)
+#define LINE_END_ASSIGN //
 #define NOT_CLIPPED_X (1)
 #define NOT_CLIPPED_Y (1)
 #define OFFSET_PIXELS (_pixels)
