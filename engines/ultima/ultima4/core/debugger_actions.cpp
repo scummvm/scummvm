@@ -430,8 +430,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 
 		int maxlen;
 		switch (conv.getInputRequired(&maxlen)) {
-		case Conversation::INPUT_STRING:
-		{
+		case Conversation::INPUT_STRING: {
 			conv._playerInput = gameGetInput(maxlen);
 #ifdef IOS_ULTIMA4
 			g_screen->screenMessage("%s", conv.playerInput.c_str()); // Since we put this in a different window, we need to show it again.
@@ -441,8 +440,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 			showPrompt = true;
 			break;
 		}
-		case Conversation::INPUT_CHARACTER:
-		{
+		case Conversation::INPUT_CHARACTER: {
 			char message[2];
 #ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationChoiceHelper yesNoHelper;

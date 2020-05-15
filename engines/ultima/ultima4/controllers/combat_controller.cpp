@@ -644,7 +644,6 @@ bool CombatController::rangedAttack(const Coords &coords, Creature *attacker) {
 
 	/* These effects happen whether or not the opponent was hit */
 	switch (effect) {
-
 	case EFFECT_ELECTRICITY:
 		/* FIXME: are there any special effects here? */
 		soundPlay(SOUND_PC_STRUCK, false);

@@ -285,7 +285,6 @@ void PartyMember::awardXp(int xp) {
 
 bool PartyMember::heal(HealType type) {
 	switch (type) {
-
 	case HT_NONE:
 		return true;
 

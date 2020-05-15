@@ -58,7 +58,6 @@ void ImageLoader::setFromRawData(Image *image, int width, int height, int bpp, c
 	int x, y;
 
 	switch (bpp) {
-
 	case 32:
 		for (y = 0; y < height; y++) {
 			for (x = 0; x < width; x++)

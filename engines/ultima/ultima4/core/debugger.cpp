@@ -962,6 +962,7 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 		print("");
 		return isDebuggerActive();
 	}
+
 	switch (p->setWeapon(w)) {
 	case EQUIP_SUCCEEDED:
 		print("%s", w->getName().c_str());
@@ -1178,6 +1179,7 @@ bool Debugger::cmdWearArmor(int argc, const char **argv) {
 		print("");
 		return isDebuggerActive();
 	}
+
 	switch (p->setArmor(a)) {
 	case EQUIP_SUCCEEDED:
 		print("%s", a->getName().c_str());
