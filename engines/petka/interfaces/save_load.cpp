@@ -32,6 +32,10 @@ namespace Petka {
 const uint kFirstSaveLoadPageId = 4990;
 
 InterfaceSaveLoad::InterfaceSaveLoad() {
+	_page = 0;
+	_loadMode = false;
+	_savedCursorId = 0;
+
 	_saveRects[0] = Common::Rect(43, 84, 151, 166);
 	_saveRects[1] = Common::Rect(43, 209, 151, 291);
 	_saveRects[2] = Common::Rect(43, 335, 151, 417);
