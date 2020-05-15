@@ -48,6 +48,7 @@ void QObjectBG::processMessage(const QMessage &msg) {
 	switch (msg.opcode) {
 	case kSet:
 		_resourceId = msg.arg1;
+		break;
 	case kMusic:
 		_musicId = msg.arg1;
 		break;
