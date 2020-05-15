@@ -233,6 +233,8 @@ void Ultima8Engine::startup() {
 		ProcessLoader<CameraProcess>::load);
 	_kernel->addProcessLoader("MusicProcess", // parent class name for save game backwards-compatibility.
 		ProcessLoader<U8MusicProcess>::load);
+	_kernel->addProcessLoader("U8MusicProcess",
+		ProcessLoader<U8MusicProcess>::load);
 	_kernel->addProcessLoader("RemorseMusicProcess",
 		ProcessLoader<RemorseMusicProcess>::load);
 	_kernel->addProcessLoader("AudioProcess",
