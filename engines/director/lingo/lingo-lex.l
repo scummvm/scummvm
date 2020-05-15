@@ -53,13 +53,13 @@ static void count() {
 	g_lingo->_lasttoken = yytext;
 	g_lingo->_lastbytenumber = g_lingo->_bytenumber;
 
-	while (*p && *p != '\n' && *p != '\r') {
+	while (*p && *p != '\n' && *p != '\r' && *p != '\xC2') {
 		p++;
 		g_lingo->_colnumber++;
 		g_lingo->_bytenumber++;
 	}
 
-	while (*p == '\n' || *p == '\r') {
+	while (*p == '\n' || *p == '\r' || *p == '\xC2') {
 		if (*p == '\n') {
 			g_lingo->_linenumber++;
 			g_lingo->_colnumber = 0;
@@ -85,7 +85,7 @@ static Common::String *cleanupString(const char *s) {
 	while (*s) {
 		if (*s == '\xC2') {
 			s++;
-			s++;
+			*res += ' ';
 			continue;
 		}
 		*res += *s;
@@ -100,17 +100,14 @@ static Common::String *cleanupString(const char *s) {
 identifier [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
-conststring \"([^\"\r\n]|\xC2[\r\n])*\"
+conststring \"[^\"\r\n]*\"
 operator [-+*/%^:,()><&\[\]]
-newline [ \t]*[\n\r]
-whitespace [ \t]
+newline [ \t\xC2]*[\n\r]
+spc [ \t\xC2]
 
 %%
 
-{whitespace}*\xC2[\r\n]	{ count(); }
---[^\r\n]*
-^{whitespace}+	{ count(); }
-[\t]+			{ count(); return ' '; }
+{spc}+		{ count(); }
 
 [#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return SYMBOL; }	// D3, skip '#'
 
@@ -121,13 +118,13 @@ char		{ count(); return tCHAR; }		// D3
 contains	{ count(); return tCONTAINS; }
 down		{ count(); return tDOWN; }
 if			{ count(); return tIF; }
-else[ \t]+if { count(); return tELSIF; }
+else{spc}+if { count(); return tELSIF; }
 else		{ count(); return tELSE; }
-end([ \t]+{identifier})?	{
+end({spc}+{identifier})?	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'end '
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		if (!scumm_stricmp(ptr, "if"))
@@ -141,11 +138,11 @@ end([ \t]+{identifier})?	{
 
 		return ENDCLAUSE;
 	}
-^[ \t]*factory { count(); return tFACTORY; }
+^{spc}*factory { count(); return tFACTORY; }
 exit		{ count(); return tEXIT; }
 global		{ count(); return tGLOBAL; }
-go[ \t]+(to[ \t]+)?frame	{ count(); return tGO; }
-go[ \t]+(to)?	{ count(); return tGO; }
+go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
+go{spc}+(to)?	{ count(); return tGO; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS; }
 into		{ count(); return tINTO; }
@@ -154,11 +151,11 @@ item		{ count(); return tITEM; }
 line		{ count(); return tLINE; }
 loop		{ count(); return checkImmediate(tLOOP); }
 macro		{ count(); return tMACRO; }
-method[ \t]*{identifier}		{
+method{spc}+{identifier}		{
 		count();
 
 		const char *ptr = &yytext[6]; // Skip 'method '
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		yylval.s = new Common::String(ptr);
@@ -173,7 +170,7 @@ of			{ count(); return tOF; }
 on			{ count(); return tON; }		// D3
 open		{ count(); return tOPEN; }
 or			{ count(); return tOR; }
-play[ \t]+frame	{ count(); return tPLAY; }
+play{spc}+frame	{ count(); return tPLAY; }
 play		{ count(); return tPLAY; }
 playAccel	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
 previous	{ count(); return tPREVIOUS; }
@@ -183,20 +180,20 @@ repeat		{ count(); return checkImmediate(tREPEAT); }
 set			{ count(); return tSET; }
 starts		{ count(); return tSTARTS; }
 tell		{ count(); return tTELL; }
-the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)[ \t]	{
+the{spc}+number{spc}+of{spc}+[[:alpha:]]+{spc}+(in|of){spc}+ {
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t') ptr++;
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
 
 		ptr += 6; // skip 'number '
-		while (*ptr == ' ' || *ptr == '\t') ptr++;
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
 
 		ptr += 3; // Skip 'of '
-		while (*ptr == ' ' || *ptr == '\t') ptr++;
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
 
 		Common::String field;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
 			field += *ptr++;
 
 		// the number of menuItems of menu <xx>
@@ -218,7 +215,7 @@ the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)[ \t]	{
 			return LEXERROR;
 		}
 	}
-the[ \t]+last[ \t][[:alpha:]]+[ \t](in|of)[ \t]	{
+the{spc}+last{spc}+[[:alpha:]]+{spc}+(in|of){spc}+	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
@@ -240,23 +237,23 @@ the[ \t]+last[ \t][[:alpha:]]+[ \t](in|of)[ \t]	{
 			return LEXERROR;
 		}
 	}
-the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
+the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		Common::String field;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
 			field += *ptr++;
 
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		ptr += 3; // Skip 'of '
 
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		if (g_lingo->_theEntities.contains(ptr)) {
@@ -303,18 +300,18 @@ the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 
 		warning("LEXER: Unhandled the entity '%s', field '%s'", ptr, field.c_str());
 	}
-the[ \t]+[[:alpha:]]+[ \t+](date|time)		{
+the{spc}+[[:alpha:]]+{spc}+(date|time)		{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		Common::String field;
-		while (*ptr != ' ' && *ptr != '\t')
+		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
 			field += *ptr++;
 
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
@@ -337,11 +334,11 @@ the[ \t]+[[:alpha:]]+[ \t+](date|time)		{
 		else
 			return THEENTITY;
 	}
-the[ \t]+[[:alpha:]]+		{
+the{spc}+[[:alpha:]]+		{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t')
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
 		if (g_lingo->_theEntities.contains(ptr)) {
@@ -373,11 +370,11 @@ when			{ count(); return tWHEN; }
 while			{ count(); return tWHILE; }
 word			{ count(); return tWORD; }
 
-[<][>]				{ count(); return tNEQ; }
-[>][=]				{ count(); return tGE; }
-[<][=]				{ count(); return tLE; }
-[&][&]				{ count(); return tCONCAT; }
-[=]					{ count(); return tEQ; }
+[<][>]			{ count(); return tNEQ; }
+[>][=]			{ count(); return tGE; }
+[<][=]			{ count(); return tLE; }
+[&][&]			{ count(); return tCONCAT; }
+[=]				{ count(); return tEQ; }
 
 {identifier}		{
 		count();
@@ -444,7 +441,7 @@ bool lex_check_parens() {
 	const char *ptr = &inputbuffer[g_lingo->_lastbytenumber];
 
 	while (*ptr && *ptr != '\n') {
-		if (*ptr != ')' && *ptr != '(' && *ptr != ' ' && *ptr != '\xC2')
+		if (*ptr != ')' && *ptr != '(' && *ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
 			return false;
 
 		ptr++;

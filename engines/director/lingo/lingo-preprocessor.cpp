@@ -37,7 +37,7 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 	Common::String res;
 
 	// Scan first non-whitespace
-	while (*s && (*s == ' ' || *s == '\t')) // If we see a whitespace
+	while (*s && (*s == ' ' || *s == '\t' || *s == '\xC2')) // If we see a whitespace
 		s++;
 
 	if (Common::isAlnum(*s)) {
@@ -59,7 +59,7 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 	Common::String res;
 
 	// Scan first non-whitespace
-	while (s >= lineStart && (*s == ' ' || *s == '\t')) // If we see a whitespace
+	while (s >= lineStart && (*s == ' ' || *s == '\t' || *s == '\xC2')) // If we see a whitespace
 		if (s > lineStart) {
 			s--;
 		} else {
@@ -85,6 +85,25 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 	Common::String res;
 
+	// We start from processing the continuation synbols
+	// \xC2\n  ->  \xC2
+	// This will greatly simplify newline processing, still leaving
+	// the line number tracking intact
+	while (*s) {
+		if (*s == '\xC2') {
+			res += *s++;
+			if (!*s)	// Who knows, maybe it is the last symbol in the script
+				break;
+			s++;
+			continue;
+		}
+		res += *s++;
+	}
+
+	Common::String tmp(res);
+	res.clear();
+	s = tmp.c_str();
+
 	// Strip comments
 	while (*s) {
 		if (*s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
@@ -101,16 +120,16 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 			s++;
 	}
 
-	Common::String tmp(res);
+	tmp = res;
 	res.clear();
 
 	// Strip trailing whitespaces
 	s = tmp.c_str();
 	while (*s) {
-		if (*s == ' ' || *s == '\t') { // If we see a whitespace
+		if (*s == ' ' || *s == '\t' || *s == '\xC2') { // If we see a whitespace
 			const char *ps = s; // Remember where we saw it
 
-			while (*ps == ' ' || *ps == '\t')	// Scan until end of whitespaces
+			while (*ps == ' ' || *ps == '\t' || *ps == '\xC2') // Scan until end of whitespaces
 				ps++;
 
 			if (*ps) {	// Not end of the string
@@ -151,16 +170,8 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 
 		// Get next line
 		while (*s && *s != '\n') { // If we see a whitespace
-			if (*s == '\xc2') {
-				res1 += *s++;
-				if (*s == '\n') {
-					line += ' ';
-					res1 += *s++;
-				}
-			} else {
-				res1 += *s;
-				line += tolower(*s++);
-			}
+			res1 += *s;
+			line += tolower(*s++);
 		}
 		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
 
