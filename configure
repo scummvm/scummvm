@@ -1985,22 +1985,30 @@ if test "$_host_os" = android; then
 		_android_toolchain="$ANDROID_TOOLCHAIN"
 	fi
 
+	case $_host_cpu in
+	arm | i686)
+		_android_version=16
+		;;
+	aarch64 | x86_64)
+		# Platform version 21 is needed as earlier versions of platform do not support this architecture.
+		_android_version=21
+		;;
+	esac
+
 	# If CXX environment variable is not set, try to set known to work defaults
 	if test -z "$CXX"; then
 		case $_host_cpu in
 		arm)
-			_android_target="armv7a-linux-androideabi16"
+			_android_target="armv7a-linux-androideabi$_android_version"
 			;;
 		aarch64)
-			# Platform version 21 is needed as earlier versions of platform do not support this architecture.
-			_android_target="aarch64-linux-android21"
+			_android_target="aarch64-linux-android$_android_version"
 			;;
 		i686)
-			_android_target="i686-linux-android16"
+			_android_target="i686-linux-android$_android_version"
 			;;
 		x86_64)
-			# Platform version 21 is needed as earlier versions of platform do not support this architecture.
-			_android_target="x86_64-linux-android21"
+			_android_target="x86_64-linux-android$_android_version"
 			;;
 		esac
 
@@ -2017,6 +2025,9 @@ if test "$_host_os" = android; then
 	_strip="$_android_toolchain/bin/$_strip"
 	if test -z "$STRINGS"; then
 		STRINGS="$_android_toolchain/bin/$_host_alias-strings"
+	fi
+	if test -z "$PKG_CONFIG_LIBDIR"; then
+		export PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
 	fi
 fi
 
