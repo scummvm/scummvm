@@ -1594,6 +1594,7 @@ bool Debugger::cmdFullStats(int argc, const char **argv) {
 		}
 	}
 
+	g_context->_stats->update();
 	print("Full Stats given");
 	return isDebuggerActive();
 }
