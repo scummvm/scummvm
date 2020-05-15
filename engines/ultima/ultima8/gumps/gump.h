@@ -37,6 +37,10 @@ class Shape;
 class Item;
 class GumpNotifyProcess;
 
+class Gump;
+typedef bool (*FindGumpPredicate)(Gump *g);
+template<class T> inline bool IsOfType(Gump *g) { return dynamic_cast<T*>(g) != nullptr; }
+
 //
 // Class Gump
 //
@@ -108,20 +112,18 @@ public:
 	//! \param takefocus If true, set parent's _focusChild to this
 	virtual void                InitGump(Gump *newparent, bool take_focus = true);
 
-	typedef bool (Gump::*FindPredicate)() const;
-
 	//! Find a gump of that matches a predicate function (this or child)
 	//! \param predicate Function to check if a gump is a match
 	//! \param recursive Recursively search through children?
 	//! \return the desired Gump, or NULL if not found
-	virtual Gump               *FindGump(FindPredicate predicate, bool recursive = true);
+	virtual Gump               *FindGump(FindGumpPredicate predicate, bool recursive = true);
 
 	//! Find a gump of the specified type (this or child)
 	//! \param T Type of gump to look for
 	//! \param recursive Recursively search through children?
 	//! \return the desired Gump, or NULL if not found
 	template<class T> Gump     *FindGump(bool recursive = true) {
-		return FindGump(&Gump::IsOfType<T>, recursive);
+		return FindGump(&IsOfType<T>, recursive);
 	}
 
 	//! Find gump (this, child or NULL) at parent coordinates (mx,my)

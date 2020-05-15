@@ -193,10 +193,10 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 	else
 		_cachedText->drawBlended(surf, x, y, _blendColour, true);
 
-	if (_parent->IsOfType<BarkGump>())
+	if (dynamic_cast<BarkGump *>(_parent))
 		return;
 
-	if (_parent->IsOfType<ButtonWidget>() && _parent->GetParent()->IsOfType<AskGump>())
+	if (dynamic_cast<ButtonWidget *>(_parent) && dynamic_cast<AskGump *>(_parent->GetParent()))
 		return;
 
 	x = _dims.x;
