@@ -40,17 +40,11 @@ struct RunTimeClassType {
 //
 #define ENABLE_RUNTIME_CLASSTYPE()                                              \
 	static const RunTimeClassType   ClassType;                                  \
-	virtual bool IsOfType(const RunTimeClassType & type) const override;        \
-	template<class Type> inline bool IsOfType() const { return IsOfType(Type::ClassType); }   \
 	virtual const RunTimeClassType & GetClassType() const override { return ClassType; }
 
 #define ENABLE_RUNTIME_CLASSTYPE_BASE()                                         \
 	static const RunTimeClassType   ClassType;                                  \
-	virtual bool IsOfType(const RunTimeClassType & type) const;                 \
-	template<class Type> inline bool IsOfType() const { return IsOfType(Type::ClassType); }   \
 	virtual const RunTimeClassType & GetClassType() const { return ClassType; }
-
-
 
 //
 // Define this in the source files of base classes
@@ -58,14 +52,7 @@ struct RunTimeClassType {
 #define DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Classname)         \
 	const RunTimeClassType Classname::ClassType = {                 \
 	#Classname                                                      \
-    };                                                                  \
-	\
-	bool Classname::IsOfType(const RunTimeClassType &classType) const   \
-	{                                                                   \
-		if (classType == ClassType) return true;                        \
-		return false;                                                   \
-	}
-
+    };
 
 //
 // Define this in the source files of child classes, with 1 parent
@@ -73,13 +60,7 @@ struct RunTimeClassType {
 #define DEFINE_RUNTIME_CLASSTYPE_CODE(Classname,ParentClassname)    \
 	const RunTimeClassType Classname::ClassType = {                     \
 	                                                                    #Classname                                                      \
-	                                              };                                                                  \
-	\
-	bool Classname::IsOfType(const RunTimeClassType & classType) const  \
-	{                                                                   \
-		if (classType == ClassType) return true;                        \
-		return ParentClassname::IsOfType(classType);                    \
-	}
+	                                              };
 
 //
 // Define this in the source files of child classes, with 2 parents
@@ -87,18 +68,7 @@ struct RunTimeClassType {
 #define DEFINE_RUNTIME_CLASSTYPE_CODE_MULTI2(Classname,Parent1,Parent2) \
 	const RunTimeClassType Classname::ClassType = {                         \
 	                                                                        #Classname                                                          \
-	                                              };                                                                      \
-	\
-	bool Classname::IsOfType(const RunTimeClassType &type) const            \
-	{                                                                       \
-		typedef Parent1 P1;                                                 \
-		typedef Parent2 P2;                                                 \
-		if (type == ClassType) return true;                                 \
-		bool ret = P1::IsOfType(type);                                      \
-		if (ret) return true;                                               \
-		return P2::IsOfType(type);                                          \
-	}
-
+	                                              };
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

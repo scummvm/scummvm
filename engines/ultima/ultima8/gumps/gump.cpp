@@ -533,8 +533,8 @@ bool Gump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 }
 
 // Find a child gump that matches the matching function 
-Gump *Gump::FindGump(const FindPredicate predicate, bool recursive) {
-	if ((this->*predicate)())
+Gump *Gump::FindGump(const FindGumpPredicate predicate, bool recursive) {
+	if (predicate(this))
 		return this;
 
 	// Iterate all children
@@ -548,7 +548,7 @@ Gump *Gump::FindGump(const FindPredicate predicate, bool recursive) {
 		if (g->_flags & FLAG_CLOSING)
 			continue;
 
-		if ((g->*predicate)())
+		if (predicate(g))
 			return g;
 	}
 

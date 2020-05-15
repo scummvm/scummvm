@@ -947,7 +947,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 		// Can't save when a modal gump is open, or avatar in statsis  during cutscenes
 		return false;
 
-	if (_kernel->getRunningProcess() && _kernel->getRunningProcess()->IsOfType<StartU8Process>())
+	if (dynamic_cast<StartU8Process *>(_kernel->getRunningProcess()))
 		// Don't save while starting up.
 		return false;
 
@@ -1381,20 +1381,20 @@ void Ultima8Engine::addGump(Gump *gump) {
 
 	assert(_desktopGump);
 
-	if (gump->IsOfType<ShapeViewerGump>() || gump->IsOfType<MiniMapGump>() ||
-		gump->IsOfType<ScalerGump>() || gump->IsOfType<MessageBoxGump>()// ||
-		//(_ttfOverrides && (gump->IsOfType<BarkGump>() ||
-		//                gump->IsOfType<AskGump>()))
+	if (dynamic_cast<ShapeViewerGump *>(gump) || dynamic_cast<MiniMapGump *>(gump) ||
+		dynamic_cast<ScalerGump *>(gump) || dynamic_cast<MessageBoxGump *>(gump)// ||
+		//(_ttfOverrides && (dynamic_cast<BarkGump *>(gump) ||
+		//                dynamic_cast<AskGump *>(gump)))
 		) {
 		//		pout << "adding to desktopgump: "; gump->dumpInfo();
 		_desktopGump->AddChild(gump);
-	} else if (gump->IsOfType<GameMapGump>()) {
+	} else if (dynamic_cast<GameMapGump *>(gump)) {
 		//		pout << "adding to invertergump: "; gump->dumpInfo();
 		_inverterGump->AddChild(gump);
-	} else if (gump->IsOfType<InverterGump>()) {
+	} else if (dynamic_cast<InverterGump *>(gump)) {
 		//		pout << "adding to _scalerGump: "; gump->dumpInfo();
 		_scalerGump->AddChild(gump);
-	} else if (gump->IsOfType<DesktopGump>()) {
+	} else if (dynamic_cast<DesktopGump *>(gump)) {
 	} else {
 		//		pout << "adding to _scalerGump: "; gump->dumpInfo();
 		_scalerGump->AddChild(gump);
