@@ -1063,15 +1063,6 @@ void LC::c_eq() {
 }
 
 Datum LC::neqData(Datum d1, Datum d2) {
-	// Lingo doesn't bother checking list equality if the left is longer
-	if (d1.type == ARRAY && d2.type == ARRAY &&
-			d1.u.farr->size() > d2.u.farr->size()) {
-		return Datum(0);
-	}
-	if (d1.type == PARRAY && d2.type == PARRAY &&
-			d1.u.parr->size() > d2.u.parr->size()) {
-		return Datum(0);
-	}
 	if (d1.type == ARRAY || d2.type == ARRAY ||
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::neqData, d1, d2, false, true);

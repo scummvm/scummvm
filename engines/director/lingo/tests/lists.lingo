@@ -35,6 +35,9 @@ set res to a = b
 set res to a >= b
 set res to b = a
 set res to b >= a
+set b to [1]
+set res to a = b
+set res to a <> b
 
 set a to [#a:6, #b:3, #c:8, #d:5]
 set res to a = machinery
