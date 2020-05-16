@@ -1809,7 +1809,7 @@ void LB::b_updateStage(int nargs) {
 	uint16 curFrame = score->getCurrentFrame();
 	Frame *frame = score->_frames[curFrame];
 
-	frame->prepareFrame(score);
+	frame->prepareFrame(score, true);
 }
 
 

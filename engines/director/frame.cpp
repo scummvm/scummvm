@@ -526,25 +526,27 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 
 }
 
-void Frame::prepareFrame(Score *score) {
+void Frame::prepareFrame(Score *score, bool updateStageOnly) {
 	_drawRects.clear();
 	renderSprites(*score->_surface, false);
 	renderSprites(*score->_trailSurface, true);
 
-	score->renderZoomBox();
+	if (!updateStageOnly) {
+		score->renderZoomBox();
 
-	_vm->_wm->draw();
+		_vm->_wm->draw();
 
-	if (_transType != 0)
-		// TODO Handle changing area case
-		playTransition(score);
+		if (_transType != 0)
+			// TODO Handle changing area case
+			playTransition(score);
 
-	if (_sound1 != 0 || _sound2 != 0) {
-		playSoundChannel();
+		if (_sound1 != 0 || _sound2 != 0) {
+			playSoundChannel();
+		}
+
+		if (_vm->getCurrentScore()->haveZoomBox())
+			score->_backSurface->copyFrom(*score->_surface);
 	}
-
-	if (_vm->getCurrentScore()->haveZoomBox())
-		score->_backSurface->copyFrom(*score->_surface);
 
 	g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, score->_surface->getBounds().width(), score->_surface->getBounds().height());
 }

@@ -72,7 +72,7 @@ public:
 	~Frame();
 	void readChannels(Common::ReadStreamEndian *stream);
 	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
-	void prepareFrame(Score *score);
+	void prepareFrame(Score *score, bool updateStageOnly = false);
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 	Common::Rect *getSpriteRect(uint16 spriteId);
