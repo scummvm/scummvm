@@ -141,21 +141,21 @@ static struct FuncDescr {
 	{ LC::c_xpop,			"c_xpop",			""  },
 	{ LC::cb_call,			"cb_call",			"N" },
 	{ LC::cb_field,			"cb_field",			"" },
-	{ LC::cb_globalassign,	"cb_globalassign",	"i" },
-	{ LC::cb_globalpush,	"cb_globalpush",	"i" },
+	{ LC::cb_globalassign,	"cb_globalassign",	"N" },
+	{ LC::cb_globalpush,	"cb_globalpush",	"N" },
 	{ LC::cb_list,			"cb_list",			"" },
 	{ LC::cb_proplist,		"cb_proplist",		"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
-	{ LC::cb_methodcall,	"cb_methodcall",	"i" },
-	{ LC::cb_objectpush,	"cb_objectpush",	"i" },
+	{ LC::cb_methodcall,	"cb_methodcall",	"N" },
+	{ LC::cb_objectpush,	"cb_objectpush",	"N" },
 	{ LC::cb_unk,			"cb_unk",			"i" },
 	{ LC::cb_unk1,			"cb_unk1",			"ii" },
 	{ LC::cb_unk2,			"cb_unk2",			"iii" },
-	{ LC::cb_varassign,		"cb_varassign",		"i" },
-	{ LC::cb_varpush,		"cb_varpush",		"i" },
+	{ LC::cb_varassign,		"cb_varassign",		"N" },
+	{ LC::cb_varpush,		"cb_varpush",		"N" },
 	{ LC::cb_v4assign,		"cb_v4assign",		"i" },
 	{ LC::cb_v4theentitypush,"cb_v4theentitypush","i" },
-	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","i" },
+	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","N" },
 	{ LC::cb_v4theentityassign,"cb_v4theentityassign","i" },
 	{ LC::cb_zeropush,		"cb_zeropush",		"" },
 	{ LC::cb_stackpeek,		"cb_stackpeek",		"i" },
@@ -1549,7 +1549,7 @@ void LC::c_procret() {
 		return;
 	}
 
-	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size() + 1);
+	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size());
 
 	CFrame *fp = g_lingo->_callstack.back();
 	g_lingo->_callstack.pop_back();
@@ -1558,6 +1558,10 @@ void LC::c_procret() {
 	g_lingo->_currentScriptContext = fp->retctx;
 	g_lingo->_archiveIndex = fp->retarchive;
 	g_lingo->_pc = fp->retpc;
+
+	if (debugChannelSet(5, kDebugLingoExec)) {
+		g_lingo->printCallStack(g_lingo->_pc);
+	}
 
 	g_lingo->cleanLocalVars();
 
