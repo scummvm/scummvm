@@ -79,7 +79,7 @@ void VideoSystem::update() {
 		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, x, 0, width, _screen.h);
 		g_system->updateScreen();
 
-		uint32 time = g_system->getMillis();
+		time = g_system->getMillis();
 		if (time - _shakeTime > 30) {
 			_shift = !_shift;
 			_shakeTime = time;

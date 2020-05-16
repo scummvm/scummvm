@@ -69,12 +69,16 @@ const Common::Rect &FlicDecoder::getBounds() const {
 	const Track *track = getTrack(0);
 	if (track)
 		return ((const FlicVideoTrack *)track)->getBounds();
+
+	return *(new Common::Rect(0, 0));
 }
 
 const Common::Array<Common::Rect> &FlicDecoder::getMskRects() const {
 	const Track *track = getTrack(0);
 	if (track)
 		return ((const FlicVideoTrack *)track)->getMskRects();
+
+	return *(new Common::Array<Common::Rect>());
 }
 
 uint32 FlicDecoder::getTransColor(const Graphics::PixelFormat &fmt) const {
@@ -155,6 +159,8 @@ bool FlicDecoder::FlicVideoTrack::loadMsk(Common::SeekableReadStream &stream) {
 	_bounds = _bounds.findIntersectingRect(Common::Rect(0, 0, _bounds.right, 479));
 	_bounds.right++;
 	_bounds.bottom++;
+
+	return true;
 }
 
 const Common::Rect &FlicDecoder::FlicVideoTrack::getBounds() const {
