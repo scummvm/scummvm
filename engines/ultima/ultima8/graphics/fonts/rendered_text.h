@@ -57,8 +57,6 @@ public:
 		return _vLead;
 	}
 
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
 protected:
 	int _width, _height;
 	int _vLead;

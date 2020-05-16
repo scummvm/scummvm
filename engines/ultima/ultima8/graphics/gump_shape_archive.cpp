@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GumpShapeArchive)
-
 GumpShapeArchive::~GumpShapeArchive() {
 	for (unsigned int i = 0; i < _gumpItemArea.size(); ++i)
 		delete _gumpItemArea[i];

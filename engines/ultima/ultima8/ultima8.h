@@ -173,8 +173,6 @@ protected:
 public:
 	PointScaler point_scaler;
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima8Engine() override;
 	void GUIError(const Common::String &msg);

@@ -29,9 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex)
-
-
 MusicFlex::MusicFlex(Common::SeekableReadStream *rs) : Archive(rs) {
 	Std::memset(_info, 0, sizeof(SongInfo *) * 128);
 	_songs = new XMidiData *[_count];

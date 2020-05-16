@@ -70,8 +70,6 @@ public:
 		unsigned int &remaining, int32 width = 0, int32 height = 0,
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
 		Std::string::size_type cursor = Std::string::npos) override;
-
-	ENABLE_RUNTIME_CLASSTYPE()
 };
 
 } // End of namespace Ultima8

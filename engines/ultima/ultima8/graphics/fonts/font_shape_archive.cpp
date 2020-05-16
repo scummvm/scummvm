@@ -30,8 +30,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(FontShapeArchive)
-
 ShapeFont *FontShapeArchive::getFont(uint32 fontnum) {
 	return dynamic_cast<ShapeFont *>(getShape(fontnum));
 }

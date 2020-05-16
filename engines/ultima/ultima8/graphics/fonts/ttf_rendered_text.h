@@ -44,8 +44,6 @@ public:
 	void drawBlended(RenderSurface *surface, int x, int y, uint32 col,
 	                         bool destmasked = false) override;
 
-	ENABLE_RUNTIME_CLASSTYPE()
-
 protected:
 	Texture *_texture;
 	TTFont *_font;

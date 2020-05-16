@@ -31,8 +31,6 @@ namespace Ultima8 {
 
 class FlexFile : public ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	//! create FlexFile from datasource; FlexFile takes ownership of ds
 	//! and deletes it when destructed
 	explicit FlexFile(Common::SeekableReadStream *rs);

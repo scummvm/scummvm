@@ -42,8 +42,6 @@ public:
 
 class SoundFlex : protected Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	SoundFlex(Common::SeekableReadStream *rs);
 	~SoundFlex() override;
 

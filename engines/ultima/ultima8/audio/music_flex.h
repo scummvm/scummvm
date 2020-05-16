@@ -32,8 +32,6 @@ namespace Ultima8 {
 
 class MusicFlex : public Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	struct SongInfo {
 		SongInfo();
 		~SongInfo();

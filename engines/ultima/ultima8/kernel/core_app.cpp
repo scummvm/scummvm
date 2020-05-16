@@ -35,9 +35,6 @@ namespace Ultima8 {
 
 using Std::string;
 
-// p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(CoreApp)
-
 CoreApp *CoreApp::_application = nullptr;
 
 CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
