@@ -2705,6 +2705,8 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 			_scValue->setString("1.2.527");
 		} else if (BaseEngine::instance().getTargetExecutable() == FOXTAIL_1_2_896) {
 			_scValue->setString("1.2.896");
+		} else if (BaseEngine::instance().getTargetExecutable() == FOXTAIL_1_2_902) {
+			_scValue->setString("1.2.902");
 		} else {
 			_scValue->setString("UNKNOWN");
 		}
