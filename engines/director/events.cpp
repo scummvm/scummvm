@@ -62,7 +62,6 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
 		return;
 	}
-	Frame *currentFrame = sc->_frames[sc->getCurrentFrame()];
 	uint16 spriteId = 0;
 
 	Common::Point pos;
@@ -82,7 +81,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				sc->_lastRollTime =	 sc->_lastEventTime;
 
 				if (_draggingSprite) {
-					Sprite *draggedSprite = currentFrame->_sprites[_draggingSpriteId];
+					Sprite *draggedSprite = sc->_sprites[_draggingSpriteId];
 					if (draggedSprite->_moveable) {
 						pos = g_system->getEventManager()->getMousePos();
 						Common::Point delta = pos - _draggingSpritePos;
@@ -101,7 +100,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				// D3 doesn't have both mouse up and down.
 				// But we still want to know if the mouse is down for press effects.
-				spriteId = currentFrame->getSpriteIDFromPos(pos);
+				spriteId = sc->getSpriteIDFromPos(pos);
 				sc->_currentMouseDownSpriteId = spriteId;
 
 				sc->_mouseIsDown = true;
@@ -111,7 +110,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->registerEvent(kEventMouseDown);
 
-				if (currentFrame->_sprites[spriteId]->_moveable)
+				if (sc->_sprites[spriteId]->_moveable)
 					g_director->setDraggedSprite(spriteId);
 
 				break;
@@ -119,7 +118,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 			case Common::EVENT_LBUTTONUP:
 				pos = g_system->getEventManager()->getMousePos();
 
-				spriteId = currentFrame->getSpriteIDFromPos(pos);
+				spriteId = sc->getSpriteIDFromPos(pos);
 
 				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 

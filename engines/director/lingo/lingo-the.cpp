@@ -427,10 +427,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		{
 			Common::Point pos = g_system->getEventManager()->getMousePos();
 			Score *sc = _vm->getCurrentScore();
-			Frame *currentFrame = sc->_frames[sc->getCurrentFrame()];
-			uint16 spriteId = currentFrame->getSpriteIDFromPos(pos);
+			uint16 spriteId = sc->getSpriteIDFromPos(pos);
 			d.type = INT;
-			d.u.i = currentFrame->_sprites[spriteId]->_castId;
+			d.u.i = sc->_sprites[spriteId]->_castId;
 			if (d.u.i == 0)
 				d.u.i = -1;
 		}
@@ -735,6 +734,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kThePuppet:
 		sprite->_puppet = d.asInt();
+		if (!d.u.i) {
+			sprite->_currentPoint = sprite->_startPoint;
+			sprite->_dirtyBbox = sprite->_startBbox;
+		}
 		break;
 	case kTheStartTime:
 		sprite->_startTime = d.asInt();
