@@ -64,7 +64,7 @@ void ImageMgr::destroy() {
 	}
 }
 
-ImageMgr::ImageMgr() : _baseSet(nullptr) {
+ImageMgr::ImageMgr() : _baseSet(nullptr), _abyssData(nullptr) {
 	settings.addObserver(this);
 }
 
@@ -73,6 +73,8 @@ ImageMgr::~ImageMgr() {
 
 	for (Std::map<Common::String, ImageSet *>::iterator i = _imageSets.begin(); i != _imageSets.end(); i++)
 		delete i->_value;
+
+	delete[] _abyssData;
 }
 
 void ImageMgr::init() {
@@ -393,30 +395,32 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 }
 
 void ImageMgr::fixupAbyssVision(Image *im, int prescale) {
-	static uint *data = nullptr;
+	// Ignore fixups for xu4 PNG images - they're already correct
+	if (im->isIndexed())
+		return;
 
 	/*
 	 * Each VGA vision components must be XORed with all the previous
 	 * vision components to get the actual image.
 	 */
-	if (data != nullptr) {
+	if (_abyssData) {
 		for (int y = 0; y < im->height(); y++) {
 			for (int x = 0; x < im->width(); x++) {
 				uint index;
 				im->getPixelIndex(x, y, index);
-				index ^= data[y * im->width() + x];
+				index ^= _abyssData[y * im->width() + x];
 				im->putPixelIndex(x, y, index);
 			}
 		}
 	} else {
-		data = new uint[im->width() * im->height()];
+		_abyssData = new uint[im->width() * im->height()];
 	}
 
 	for (int y = 0; y < im->height(); y++) {
 		for (int x = 0; x < im->width(); x++) {
 			uint index;
 			im->getPixelIndex(x, y, index);
-			data[y * im->width() + x] = index;
+			_abyssData[y * im->width() + x] = index;
 		}
 	}
 }

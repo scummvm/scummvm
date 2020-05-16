@@ -192,6 +192,7 @@ private:
 	Std::vector<Common::String> _imageSetNames;
 	ImageSet *_baseSet;
 	ImageInfo _screenInfo;
+	uint *_abyssData;
 };
 
 #define imageMgr (ImageMgr::getInstance())
