@@ -189,6 +189,33 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		break;
 	}
 
+	if (!opened) {
+		// Try stripping all of the characters not allowed in FAT
+		convPath = stripMacPath(initialPath.c_str());
+
+		debug(2, "pathMakeRelative(): s4 %s", convPath.c_str());
+
+		if (f.open(initialPath))
+			return initialPath;
+
+		// Now try to search the file
+		while (convPath.contains('/')) {
+			int pos = convPath.find('/');
+			convPath = Common::String(&convPath.c_str()[pos + 1]);
+
+			debug(2, "pathMakeRelative(): s5 try %s", convPath.c_str());
+
+			if (!f.open(convPath))
+				continue;
+
+			debug(2, "pathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
+
+			opened = true;
+
+			break;
+		}
+	}
+
 	if (!opened && recursive) {
 		// Hmmm. We couldn't find the path as is.
 		// Let's try to translate file path into 8.3 format
@@ -215,13 +242,13 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			}
 
 			Common::String convname = convertMacFilename(component.c_str());
-			debug(2, "pathMakeRelative(): s5 %s -> %s%s", initialPath.c_str(), convPath.c_str(), convname.c_str());
+			debug(2, "pathMakeRelative(): s6 %s -> %s%s", initialPath.c_str(), convPath.c_str(), convname.c_str());
 
 			const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
 			for (int i = 0; exts[i] && addexts; ++i) {
 				Common::String newpath = convPath + convname + exts[i];
 
-				debug(2, "pathMakeRelative(): s5 try %s", newpath.c_str());
+				debug(2, "pathMakeRelative(): s6 try %s", newpath.c_str());
 
 				Common::String res = pathMakeRelative(newpath, false, false);
 
@@ -263,6 +290,32 @@ static bool myIsAlnum(byte c) {
 
 static bool myIsSpace(byte c) {
 	return c == ' ';
+}
+
+static bool myIsFATChar(byte c) {
+	return (c >= ' ' && c <= '!') || (c >= '#' && c == ')') || (c >= '-' && c <= '.') ||
+			(c >= '?' && c <= '@') || (c >= '^' && c <= '`') || c == '{' || (c >= '}' && c <= '~');
+}
+
+Common::String stripMacPath(const char *name) {
+	Common::String res;
+
+	int origlen = strlen(name);
+
+	// Remove trailing spaces
+	const char *end = &name[origlen - 1];
+	while (myIsSpace(*end))
+		end--;
+	const char *ptr = name;
+
+	while (ptr <= end) {
+		if (myIsAlnum(*ptr) || myIsFATChar(*ptr) || *ptr == '/') {
+			res += *ptr;
+		}
+		ptr++;
+	}
+
+	return res;
 }
 
 Common::String convertMacFilename(const char *name) {
