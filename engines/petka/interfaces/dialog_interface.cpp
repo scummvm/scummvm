@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "petka/interfaces/dialog_interface.h"
 #include "petka/interfaces/main.h"
 #include "petka/petka.h"
@@ -38,13 +40,13 @@ DialogInterface::DialogInterface() {
 	_field8 = 0;
 	_talker = nullptr;
 	_sender = nullptr;
-	_fieldC = 0;
+	_hasSound = 0;
 	_field10 = 1;
 }
 
 void DialogInterface::start(uint a, QMessageObject *sender) {
 	_field14 = a;
-	_fieldC = 0;
+	_hasSound = 0;
 	_field24 = 0;
 	_field4 = 0;
 	_field8 = 0;
@@ -105,12 +107,13 @@ void DialogInterface::next(int choice) {
 		if (s) {
 			s->play(0);
 		}
+		_hasSound = s != nullptr;
 		g_trackedSound = s;
 		_talker = g_vm->getQSystem()->findObject(talkerId2);
 		if (talkerId != talkerId2) {
 			sendMsg(kSay);
 		}
-		//g_vm->getQSystem()->_mainInterface->setText(info->text, _talker->_dialogColor);
+		g_vm->getQSystem()->_mainInterface->setTextPhrase(*text, _talker->_dialogColor, g_vm->_system->getScreenFormat().RGBToColor(0x7F, 0, 0));
 		_field18 = 1;
 		break;
 	}

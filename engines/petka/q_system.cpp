@@ -22,6 +22,7 @@
 
 #include "common/ini-file.h"
 #include "common/substream.h"
+#include "common/system.h"
 
 #include "graphics/colormasks.h"
 
@@ -86,7 +87,7 @@ static void readObject(QMessageObject &obj, Common::SeekableReadStream &stream,
 	if (castIni.getKey(obj._name, "all", rgbString)) {
 		int r, g, b;
 		sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
-		obj._dialogColor = Graphics::RGBToColor<Graphics::ColorMasks<888> >((byte)r, (byte)g, (byte)b);
+		obj._dialogColor = g_vm->_system->getScreenFormat().RGBToColor((byte)r, (byte)g, (byte)b);
 	}
 }
 
@@ -107,7 +108,6 @@ bool QSystem::init() {
 	namesIni.allowNonEnglishCharacters();
 	castIni.allowNonEnglishCharacters();
 	bgsIni.allowNonEnglishCharacters();
-
 
 	if (namesStream)
 		namesIni.loadFromStream(*namesStream); //fails because ini is broken for Russian letters

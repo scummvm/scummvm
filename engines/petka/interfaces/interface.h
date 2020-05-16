@@ -44,7 +44,10 @@ public:
 	virtual void onRightButtonDown(const Common::Point p) {};
 	virtual void onMouseMove(const Common::Point p) {};
 
-	void setText(const Common::U32String &text, uint32 rgb);
+	void setText(const Common::U32String &text, uint16 textColor, uint16 outlineColor);
+	void setTextPhrase(const Common::U32String &text, uint16 textColor, uint16 outlineColor);
+
+	void removeTexts();
 
 	QVisibleObject *findObject(int resourceId);
 

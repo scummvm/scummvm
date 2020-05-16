@@ -25,14 +25,24 @@
 #include "petka/q_system.h"
 #include "petka/petka.h"
 #include "petka/objects/object_cursor.h"
+#include "petka/q_manager.h"
+#include "petka/video.h"
 
 namespace Petka {
 
 Interface::Interface()
 	: _objUnderCursor(nullptr), _startIndex(0) {}
 
-void Interface::setText(const Common::U32String &text, uint32 rgb) {
-	_objs.push_back(new QText(text, rgb));
+void Interface::setText(const Common::U32String &text, uint16 textColor, uint16 outlineColor) {
+	removeTexts();
+	if (!text.empty())
+		_objs.push_back(new QText(text, textColor, outlineColor));
+}
+
+void Interface::setTextPhrase(const Common::U32String &text, uint16 textColor, uint16 outlineColor) {
+	removeTexts();
+	_objUnderCursor = nullptr;
+	_objs.push_back(new QTextPhrase(text, textColor, outlineColor));
 }
 
 QVisibleObject *Interface::findObject(int resourceId) {
@@ -52,6 +62,19 @@ void Interface::initCursor(int id, bool show, bool animate) {
 	cursor->_animate = animate;
 	cursor->_actionType = kActionLook;
 	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+}
+
+void Interface::removeTexts() {
+	for (uint i = 0; i < _objs.size();) {
+		if (_objs[i]->_resourceId == -2) {
+			g_vm->videoSystem()->addDirtyRect(((QText *)_objs[i])->getRect());
+			g_vm->resMgr()->removeResource(-2);
+			delete _objs[i];
+			_objs.remove_at(i);
+		} else {
+			++i;
+		}
+	}
 }
 
 } // End of namespace Petka

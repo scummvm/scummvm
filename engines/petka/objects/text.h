@@ -25,6 +25,9 @@
 
 #include "common/rect.h"
 #include "common/ustr.h"
+#include "common/str-array.h"
+
+#include "graphics/font.h"
 
 #include "petka/objects/object.h"
 
@@ -32,12 +35,54 @@ namespace Petka {
 
 class QText : public QVisibleObject {
 public:
-	QText(const Common::U32String &text, uint32 rgb);
+	QText(const Common::U32String &text, uint16 textColor, uint16 outlineColor);
 
 	void draw();
+	const Common::Rect &getRect();
+
+protected:
+	QText();
+
+	static void drawOutline(Graphics::Surface *surface, uint16 color);
+
+protected:
+	Common::Rect _rect;
+};
+
+class QTextPhrase : public QText {
+public:
+	QTextPhrase(const Common::U32String &phrase, uint16 textColor, uint16 outlineColor);
+
+	void draw() override;
+	void update(int time) override;
+	void onClick(int x, int y) override;
 
 private:
-	Common::Rect _rect;
+	Common::U32String _phrase;
+	int _time;
+};
+
+class QTextDescription : public QText {
+public:
+	QTextDescription(const Common::U32String &desc, uint32 frame);
+
+	void draw() override;
+	void onClick(int x, int y) override;
+};
+
+class QTextChoice : public QText {
+public:
+	QTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor);
+
+	void onMouseMove(int x, int y) override;
+	void onClick(int x, int y) override;
+
+private:
+	Common::Array<Common::Rect> _rects;
+	Common::Array<Common::U32String> _choices;
+	uint _activeChoice;
+	uint16 _choiceColor;
+	uint16 _selectedColor;
 };
 
 } // End of namespace Petka

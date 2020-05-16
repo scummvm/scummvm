@@ -46,7 +46,7 @@ public:
 public:
 	int _field4;
 	int _field8;
-	int _fieldC;
+	int _hasSound;
 	int _field10;
 	int _field14;
 	int _field18;
