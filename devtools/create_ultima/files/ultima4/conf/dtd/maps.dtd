@@ -7,7 +7,7 @@
 
 <!ELEMENT maps ( map+ ) >
 
-<!ELEMENT map ( city | compressedchunk | dungeon | moongate | portal | shrine | label )* >
+<!ELEMENT map ( city | compressedchunk | dungeon | moongate | portal | shrine | xml | label )* >
 <!ATTLIST map id                  NMTOKEN  #REQUIRED
               type                ( city | combat | dungeon | shrine | world | u3world ) #REQUIRED
               fname               NMTOKEN  #REQUIRED

@@ -62,6 +62,7 @@ struct Portal {
 	Common::String _message;
 	TransportContext _portalTransportRequisites;
 	bool _exitPortal;
+	int _tile;
 };
 
 /**

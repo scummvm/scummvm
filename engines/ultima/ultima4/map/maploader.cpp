@@ -37,6 +37,7 @@
 #include "ultima/ultima4/game/portal.h"
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/map/xml_map.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/image.h"
@@ -56,6 +57,7 @@ MapLoaders::MapLoaders() {
 	(*this)[Map::DUNGEON] = new DngMapLoader();
 	(*this)[Map::WORLD] = new WorldMapLoader();
 	(*this)[Map::COMBAT] = new ConMapLoader();
+	(*this)[Map::XML] = new XMLMapLoader();
 }
 
 MapLoaders::~MapLoaders() {
@@ -129,6 +131,8 @@ bool MapLoader::isChunkCompressed(Map *map, int chunk) {
 	}
 	return false;
 }
+
+/*-------------------------------------------------------------------*/
 
 bool CityMapLoader::load(Map *map) {
 	City *city = dynamic_cast<City *>(map);
@@ -249,6 +253,8 @@ bool CityMapLoader::load(Map *map) {
 	return true;
 }
 
+/*-------------------------------------------------------------------*/
+
 bool ConMapLoader::load(Map *map) {
 	int i;
 
@@ -285,6 +291,8 @@ bool ConMapLoader::load(Map *map) {
 
 	return true;
 }
+
+/*-------------------------------------------------------------------*/
 
 bool DngMapLoader::load(Map *map) {
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(map);
@@ -372,6 +380,8 @@ bool DngMapLoader::load(Map *map) {
 	return true;
 }
 
+/*-------------------------------------------------------------------*/
+
 void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 	dng->_roomMaps[room] = dynamic_cast<CombatMap *>(mapMgr->initMap(Map::COMBAT));
 
@@ -385,6 +395,8 @@ void DngMapLoader::initDungeonRoom(Dungeon *dng, int room) {
 	dng->_roomMaps[room]->_tileSet = g_tileSets->get("base");
 }
 
+/*-------------------------------------------------------------------*/
+
 bool WorldMapLoader::load(Map *map) {
 	Common::File *world = u4fopen(map->_fname);
 	if (!world)
@@ -395,7 +407,63 @@ bool WorldMapLoader::load(Map *map) {
 
 	u4fclose(world);
 
+	// Check for any tile overrides for the portals
+	for (uint idx = 0; idx < map->_portals.size(); ++idx) {
+		const Portal *p = map->_portals[idx];
+		if (p->_tile != -1) {
+			MapTile mt = map->translateFromRawTileIndex(p->_tile);
+			map->_data[p->_coords.x + p->_coords.y * map->_width] = mt;
+		}
+	}
+
 	return true;
+}
+
+/*-------------------------------------------------------------------*/
+
+bool XMLMapLoader::load(Map *map) {
+	XMLMap *xmlMap = dynamic_cast<XMLMap *>(map);
+	assert(xmlMap);
+	Common::String text = xmlMap->_tilesText;
+	text.trim();
+
+	// Allocate the space we need for the map data
+	map->_data.clear();
+	map->_data.resize(map->_width * map->_height);
+
+	// Split up the text lines
+	Common::StringArray lines, cols;	
+	split(text, lines, '\n');
+	assert(lines.size() == map->_height);
+
+	// Iterate through the lines
+	for (uint y = 0; y < map->_height; ++y) {
+		text = lines[y];
+		text.trim();
+		split(text, cols, ',');
+		assert(cols.size() == map->_width);
+
+		for (uint x = 0; x < map->_width; ++x) {
+			int id = atoi(cols[x].c_str());
+			MapTile mt = map->translateFromRawTileIndex(id);
+			map->_data[x + y * map->_width] = mt;
+		}
+	}
+
+	return true;
+}
+
+void XMLMapLoader::split(const Common::String &text, Common::StringArray &values, char c) {
+	values.clear();
+
+	Common::String str = text;
+	size_t pos;
+	while ((pos = str.findFirstOf(c)) != Common::String::npos) {
+		values.push_back(Common::String(str.c_str(), pos));
+		str = Common::String(str.c_str() + pos + 1);
+	}
+
+	values.push_back(str);
 }
 
 } // End of namespace Ultima4

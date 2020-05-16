@@ -208,7 +208,7 @@ void CombatController::initDungeonRoom(int room, Direction from) {
 	ASSERT(g_context->_location->_prev->_context & CTX_DUNGEON, "Error: called initDungeonRoom from non-dungeon context");
 	{
 		Dungeon *dng = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
-		assert(dng);
+		assert(dng);  
 
 		DngRoom &dngRoom = dng->_rooms[room];
 

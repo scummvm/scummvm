@@ -99,6 +99,8 @@ class Shrine;
 #define MAP_SHORE_CON 53
 #define MAP_SHORSHIP_CON 54
 #define MAP_CAMP_DNG 55
+#define MAP_CASTLE_OF_LORD_BRITISH2 100
+#define MAP_SCUMMVM 101
 
 /**
  * The map manager singleton that keeps track of all the maps.

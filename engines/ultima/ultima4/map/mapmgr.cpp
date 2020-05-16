@@ -35,6 +35,7 @@
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/map/xml_map.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/core/config.h"
@@ -116,6 +117,10 @@ Map *MapMgr::initMap(Map::Type type) {
 		map = new City();
 		break;
 
+	case Map::XML:
+		map = new XMLMap();
+		break;
+
 	default:
 		error("Error: invalid map type used");
 		break;
@@ -149,7 +154,7 @@ void MapMgr::registerMap(Map *map) {
 
 Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	Map *map;
-	static const char *mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", nullptr };
+	static const char *mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", "xml", nullptr };
 	static const char *borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", nullptr };
 
 	map = initMap(static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings)));
@@ -208,6 +213,8 @@ Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 			map->_compressedChunks.push_back(initCompressedChunkFromConf(*i));
 		else if (i->getName() == "label")
 			map->_labels.insert(initLabelFromConf(*i));
+		else if (i->getName() == "tiles" && map->_type == Map::XML)
+			static_cast<XMLMap *>(map)->_tilesText = i->getNode()->firstChild()->text();
 	}
 
 	return map;
@@ -302,6 +309,10 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 
 	portal->_exitPortal = portalConf.getBool("exits");
 
+	// Used as a shortcut for specifying the display tile
+	// for new/fan maps being added to the overworld
+	portal->_tile = portalConf.exists("tile") ? portalConf.getInt("tile") : -1;
+
 	Std::vector<ConfigElement> children = portalConf.getChildren();
 	for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
 		if (i->getName() == "retroActiveDest") {
@@ -314,6 +325,7 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 			portal->_retroActiveDest->_mapid = static_cast<MapId>(i->getInt("mapid"));
 		}
 	}
+
 	return portal;
 }
 

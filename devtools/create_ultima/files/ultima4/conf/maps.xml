@@ -41,7 +41,9 @@
         <portal x="81"  y="207" destmapid="30" startx="0" starty="0" action="enter" condition="shrine" savelocation="true" transport="footorhorse"/>
         <portal x="231" y="216" destmapid="32" startx="0" starty="0" action="enter" condition="shrine" savelocation="true" transport="footorhorse"/>
 
-        <moongate phase="0" x="224" y="133"/>
+		<portal x="102" y="105" destmapid="101"  startx="1" starty="5" action="enter" savelocation="true" transport="footorhorse" tile="5"/>
+
+		<moongate phase="0" x="224" y="133"/>
         <moongate phase="1" x="96" y="102"/>
         <moongate phase="2" x="38" y="224"/>
         <moongate phase="3" x="50" y="37"/>
@@ -406,4 +408,6 @@
     <map id="55" type="combat" fname="camp.dng" width="11" height="11" levels="1"
      borderbehavior="fixed" nolineofsight="true" music="8" tileset="base" tilemap="base"/>
 
+	<!-- Custom maps introduced under ScummVM-->
+	<xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="scummvm_map.xml"/>
 </maps>

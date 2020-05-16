@@ -113,6 +113,16 @@ public:
 	bool load(Map *map) override;
 };
 
+class XMLMapLoader : public MapLoader {
+private:
+	void split(const Common::String &text, Common::StringArray &values, char c);
+public:
+	/**
+	 * Loads the data for the map from the provided Xml
+	 */
+	bool load(Map *map) override;
+};
+
 class MapLoaders : public Std::map<Map::Type, MapLoader *, MapType_Hash> {
 public:
 	/**

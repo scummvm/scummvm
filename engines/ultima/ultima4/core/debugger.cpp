@@ -1002,6 +1002,15 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 		dungeonSearch();
 	} else if (g_context->_party->isFlying()) {
 		print("Searching...\n%cDrift only!%c", FG_GREY, FG_WHITE);
+	} else if (g_context->_location->_map->_id == MAP_SCUMMVM &&
+			g_context->_location->_coords == Coords(52, 5, 0)) {
+		// Special hack for the ScummVM easter egg map. Searching on
+		// the given tile triggers the cheat to allow teleporting
+		print("Searching...\nFound teleport point!");
+		g_game->exitToParentMap();
+		g_music->playMapMusic();
+
+		return cmdGoto(argc, argv);
 	} else {
 		print("Searching...");
 

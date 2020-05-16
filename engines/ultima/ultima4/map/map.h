@@ -140,7 +140,8 @@ public:
 		CITY,
 		SHRINE,
 		COMBAT,
-		DUNGEON
+		DUNGEON,
+		XML
 	};
 
 	enum BorderBehavior {
