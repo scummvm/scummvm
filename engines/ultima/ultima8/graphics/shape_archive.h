@@ -35,8 +35,6 @@ struct Palette;
 
 class ShapeArchive : public Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	ShapeArchive(uint16 id, Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
 		: Archive(), _id(id), _format(format), _palette(pal) { }

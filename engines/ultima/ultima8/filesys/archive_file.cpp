@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ArchiveFile)
-
 //static
 bool ArchiveFile::extractIndexFromName(const Std::string &name, uint32 &index) {
 	if (name.size() == 0) return false;

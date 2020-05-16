@@ -35,8 +35,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(Shape)
-
 Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
              const uint16 id, const uint32 shape)
 		: _flexId(id), _shapeNum(shape), _palette(nullptr) {

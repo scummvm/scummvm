@@ -42,8 +42,6 @@ public:
 	void draw(RenderSurface *surface, int x, int y, bool destmasked = false) override;
 	void drawBlended(RenderSurface *surface, int x, int y, uint32 col, bool destmasked = false) override;
 
-	ENABLE_RUNTIME_CLASSTYPE()
-
 protected:
 	Std::list<PositionedText> _lines;
 	ShapeFont *_font;

@@ -47,7 +47,6 @@ struct GameInfo;
 
 class CoreApp {
 public:
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
 	CoreApp(const Ultima::UltimaGameDescription *gameDesc);
 	virtual ~CoreApp();
 

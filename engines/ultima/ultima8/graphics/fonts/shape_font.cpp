@@ -30,9 +30,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeFont)
-
-
 ShapeFont::ShapeFont(const uint8 *data_, uint32 size_,
                      const ConvertShapeFormat *format,
                      const uint16 flexId_, const uint32 shapeNum_)

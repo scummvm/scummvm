@@ -27,10 +27,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile)
-
-
-
 FlexFile::FlexFile(Common::SeekableReadStream *rs_) : _rs(rs_), _count(0) {
 	_valid = isFlexFile(_rs);
 

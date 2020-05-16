@@ -31,8 +31,6 @@ namespace Ultima8 {
 
 class ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
 	virtual ~ArchiveFile() { }
 
 	//! Check if constructed object is indeed a valid archive

@@ -37,8 +37,6 @@ struct AnimAction;
 
 class MainShapeArchive : public ShapeArchive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	MainShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(id_, pal_, format_), _typeFlags(0), _animDat(0) { }

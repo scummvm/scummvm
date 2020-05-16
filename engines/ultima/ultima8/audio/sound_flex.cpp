@@ -32,9 +32,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex)
-
-
 SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nullptr) {
 	uint32 size;
 	uint8 *buf = getRawObject(0, &size);

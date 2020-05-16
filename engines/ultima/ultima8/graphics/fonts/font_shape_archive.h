@@ -33,8 +33,6 @@ class ShapeFont;
 
 class FontShapeArchive : public ShapeArchive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	FontShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(id_, pal_, format_) { }

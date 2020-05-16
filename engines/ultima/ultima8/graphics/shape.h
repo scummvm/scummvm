@@ -69,8 +69,6 @@ public:
 	static const ConvertShapeFormat *DetectShapeFormat(const uint8 *data, uint32 size);
 	static const ConvertShapeFormat *DetectShapeFormat(IDataSource *ds, uint32 size);
 
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
 private:
 	void loadFrames(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 

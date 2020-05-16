@@ -33,8 +33,6 @@ struct Rect;
 
 class GumpShapeArchive : public ShapeArchive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	GumpShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(id_, pal_, format_) { }

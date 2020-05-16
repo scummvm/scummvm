@@ -130,8 +130,6 @@ struct ProcessLoader {
 	}
 };
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine)
-
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(nullptr),
 		_kernel(nullptr), _objectManager(nullptr), _mouse(nullptr), _ucMachine(nullptr),
