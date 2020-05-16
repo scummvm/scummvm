@@ -137,7 +137,7 @@ SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
 		for (int i = 0; i < 0xe; i++) {
 			stream.readByte();
 		}
-		_looping = stream.readByte() & 0x10;
+		_looping = stream.readByte() & 0x10 ? 0 : 1;
 	}
 }
 
