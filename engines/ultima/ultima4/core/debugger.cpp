@@ -1400,6 +1400,8 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 	}
 
 	dest.toLowercase();
+	if (dest == "britain")
+		dest = "britannia";
 
 	bool found = false;
 	p = strToInt(dest.c_str());
