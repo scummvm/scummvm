@@ -94,9 +94,9 @@ bool QObjectCase::isInPoint(int x, int y) {
 
 void QObjectCase::onMouseMove(int x, int y) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(6009);
-	if (*(byte *)flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0) {
+	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0) {
 		if (_clickedObjIndex != 3 && _clickedObjIndex < 6 && _clickedObjIndex >= 0) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(6001 + _clickedObjIndex);
+			flc = g_vm->resMgr()->loadFlic(6001 + _clickedObjIndex);
 			flc->setFrame(1);
 			g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(0, 0), *flc);
 		}
@@ -104,14 +104,14 @@ void QObjectCase::onMouseMove(int x, int y) {
 	} else {
 		int i;
 		for (i = 0; i < 6; ++i) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(6001 + i);
+			flc = g_vm->resMgr()->loadFlic(6001 + i);
 			if (flc->getMskRects()[0].contains(Common::Point(x - _x, y))) {
 				break;
 			}
 		}
 
 		if (_clickedObjIndex != i && _clickedObjIndex < 6 && _clickedObjIndex >= 0) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(6001 + _clickedObjIndex);
+			flc = g_vm->resMgr()->loadFlic(6001 + _clickedObjIndex);
 			flc->setFrame(1);
 			g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(0, 0), *flc);
 		}
@@ -122,7 +122,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 			}
 		} else if (i != _clickedObjIndex) {
 			if ((i || g_vm->getQSystem()->_chapayev->_isShown) && (i != 2 || g_vm->getQSystem()->_room->_showMap)) {
-				FlicDecoder *flc = g_vm->resMgr()->loadFlic(6001 + i);
+				flc = g_vm->resMgr()->loadFlic(6001 + i);
 				g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(0, 0), *flc);
 				_clickedObjIndex = i;
 			} else {

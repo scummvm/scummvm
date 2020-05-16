@@ -184,7 +184,7 @@ void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 
 void InterfaceMain::onRightButtonDown(const Common::Point p) {
 	QObjectStar *star = g_vm->getQSystem()->_star.get();
-	QObjectCase *objCase = g_vm->getQSystem()->_case.get();
+	// QObjectCase *objCase = g_vm->getQSystem()->_case.get();
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	if (!star->_isActive)
 		return;

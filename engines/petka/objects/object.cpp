@@ -131,9 +131,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				break;
 			}
 			if (rMsg.opcode == kIf &&
-				(rMsg.arg1 == -1 || rMsg.arg1 != msg.arg1) &&
-				(rMsg.arg2 == -1 || rMsg.arg2 != msg.arg2) &&
-				(rMsg.arg3 == -1 || rMsg.arg3 != msg.arg3)) {
+			    (rMsg.arg1 == 0xffff || rMsg.arg1 != msg.arg1) &&
+			    (rMsg.arg2 == -1 || rMsg.arg2 != msg.arg2) &&
+			    (rMsg.arg3 == -1 || rMsg.arg3 != msg.arg3)) {
 				break;
 			}
 			if (rMsg.opcode == kRandom && rMsg.arg2 != -1) {
@@ -197,7 +197,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getQSystem()->_mainInterface->_dialog.next(-1);
 			break;
 		case kCursor:
-			if (msg.arg1 == -1) {
+			if (msg.arg1 == 0xffff) {
 				g_vm->getQSystem()->_cursor->returnInvItem();
 				g_vm->getQSystem()->_cursor->_resourceId = 5002;
 				g_vm->getQSystem()->_cursor->_actionType = 0;
@@ -289,10 +289,10 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			_isActive = false;
 			break;
 		case kJump:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+			g_vm->getQSystem()->_petka->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
 			break;
 		case kJumpVich:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == -1 ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+			g_vm->getQSystem()->_petka->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
 			break;
 		case kWalk:
 			if (!reacted) {
@@ -326,7 +326,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		}
 		case kWalkVich:
-			if (msg.arg1 == -1 || msg.arg2 == -1) {
+			if (msg.arg1 == 0xffff || msg.arg2 == -1) {
 				g_vm->getQSystem()->_chapayev->walk(msg.arg1, msg.arg2);
 			} else if (_walkX != -1) {
 				g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
@@ -380,7 +380,7 @@ bool QObject::isInPoint(int x, int y) {
 		Common::Rect rect(_x, _y, _x + flc->getWidth(), _y + flc->getHeight());
 		if (!rect.contains(x, y))
 			return false;
-		return *(byte *) flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0;
+		return *(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0;
 	}
 	return false;
 }
