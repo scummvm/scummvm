@@ -36,7 +36,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MiniStatsGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MiniStatsGump)
 
 static const int gumpshape = 33;
 static const int hpx = 6;

@@ -39,7 +39,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarMoverProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarMoverProcess)
 
 AvatarMoverProcess::AvatarMoverProcess() : Process(),
 		_lastFrame(0), _lastAttack(0), _idleTime(0),

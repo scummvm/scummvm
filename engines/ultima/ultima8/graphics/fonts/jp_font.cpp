@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Font)
+DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont)
 
 
 JPFont::JPFont(ShapeFont *jpfont, unsigned int fontnum_)

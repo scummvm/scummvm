@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ItemRelativeGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ItemRelativeGump)
 
 ItemRelativeGump::ItemRelativeGump() : Gump(), _ix(0), _iy(0) {
 }

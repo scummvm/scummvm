@@ -50,7 +50,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeViewerGump)
 
 ShapeViewerGump::ShapeViewerGump()
 	: ModalGump(), _curFlex(0), _flex(nullptr), _curShape(0), _curFrame(0),

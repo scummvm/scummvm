@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump)
 
 // TODO: Remove all the hacks
 

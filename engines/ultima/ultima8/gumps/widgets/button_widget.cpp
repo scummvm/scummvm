@@ -34,7 +34,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget)
 
 ButtonWidget::ButtonWidget() : Gump(), _shapeUp(nullptr), _shapeDown(nullptr),
 		_mouseOver(false), _origW(0), _origH(0), _frameNumUp(0),

@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump)
 
 bool DesktopGump::_fadedModal = true;
 

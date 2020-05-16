@@ -43,7 +43,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MessageBoxGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MessageBoxGump)
 
 MessageBoxGump::MessageBoxGump()
 	: ModalGump(), _titleColour(0) {

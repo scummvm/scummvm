@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TTFRenderedText, RenderedText)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TTFRenderedText)
 
 
 TTFRenderedText::TTFRenderedText(Texture *texture_, int width, int height,

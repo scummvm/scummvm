@@ -32,7 +32,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump, DesktopGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ScalerGump)
 
 ScalerGump::ScalerGump(int32 x, int32 y, int32 width, int32 height) :
 		DesktopGump(x, y, width, height),

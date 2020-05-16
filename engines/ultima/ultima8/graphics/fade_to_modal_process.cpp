@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(FadeToModalProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(FadeToModalProcess)
 
 
 FadeToModalProcess::FadeToModalProcess(ModalGump *modal)

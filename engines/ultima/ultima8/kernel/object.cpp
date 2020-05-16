@@ -32,7 +32,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Object)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Object)
 
 Object::~Object() {
 	if (_objId != 0xFFFF)

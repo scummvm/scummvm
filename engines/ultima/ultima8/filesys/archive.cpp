@@ -31,8 +31,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Archive)
+DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Archive)
 
 Archive::Archive() {
 	_count = 0;

@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump, ItemRelativeGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump)
 
 // TODO: Remove all the hacks
 

@@ -33,7 +33,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess)
 
 GravityProcess::GravityProcess()
 	: Process(), _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(0) {

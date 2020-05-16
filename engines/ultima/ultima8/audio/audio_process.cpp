@@ -41,7 +41,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess)
 
 AudioProcess *AudioProcess::_theAudioProcess = nullptr;
 

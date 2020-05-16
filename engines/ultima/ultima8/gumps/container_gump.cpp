@@ -44,7 +44,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump, ItemRelativeGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump)
 
 ContainerGump::ContainerGump()
 	: ItemRelativeGump(), _displayDragging(false), _draggingShape(0),

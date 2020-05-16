@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(QuitGump)
 
 static const int u8GumpShape = 17;
 static const int u8AskShapeId = 18;

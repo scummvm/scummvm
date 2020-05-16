@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText)
+DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText)
 
 
 JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines, int width, int height,

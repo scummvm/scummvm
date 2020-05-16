@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget)
 
 EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont_, int font,
                        int w, int h, unsigned int maxlength_, bool multiline_)

@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Archive)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex)
 
 
 MusicFlex::MusicFlex(Common::SeekableReadStream *rs) : Archive(rs) {

@@ -36,7 +36,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruStatGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruStatGump)
 
 CruStatGump::CruStatGump() : Gump() {
 

@@ -50,7 +50,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump)
 
 MenuGump::MenuGump(bool nameEntryMode_)
 	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {

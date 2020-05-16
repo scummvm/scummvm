@@ -59,7 +59,7 @@ namespace Ultima8 {
 static const unsigned int BACKPACK_SHAPE = 529;
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(Actor, Container)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Actor)
 
 Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 	  _hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),

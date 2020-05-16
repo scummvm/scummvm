@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump)
 
 ModalGump::ModalGump() : Gump() {
 

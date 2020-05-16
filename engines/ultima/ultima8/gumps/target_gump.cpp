@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TargetGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TargetGump)
 
 TargetGump::TargetGump() : ModalGump(), _targetTracing(false) {
 

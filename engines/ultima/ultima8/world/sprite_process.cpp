@@ -32,7 +32,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(SpriteProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(SpriteProcess)
 
 SpriteProcess::SpriteProcess()
 	: Process(), _shape(0), _frame(0), _firstFrame(0), _lastFrame(0),

@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess)
 
 MusicProcess *MusicProcess::_theMusicProcess = nullptr;
 

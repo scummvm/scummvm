@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess)
 
 CreateItemProcess::CreateItemProcess()
 	: Process(), _shape(0), _frame(0), _quality(0), _flags(0),

@@ -38,7 +38,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarDeathProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarDeathProcess)
 
 AvatarDeathProcess::AvatarDeathProcess() : Process() {
 	_itemNum = 1;
