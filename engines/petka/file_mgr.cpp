@@ -115,4 +115,4 @@ Common::SeekableReadStream *FileMgr::getFileStream(const Common::String &name) {
 	return nullptr;
 }
 
-} // End of namespace Pink
+} // End of namespace Petka
