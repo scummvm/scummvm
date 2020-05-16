@@ -54,7 +54,7 @@ void DialogInterface::start(uint a, QMessageObject *sender) {
 	_sender = sender;
 	_soundName.clear();
 	saveCursorState();
-	sub_4155D0(-2);
+	next(-2);
 }
 
 void DialogInterface::saveCursorState() {
@@ -74,14 +74,14 @@ void DialogInterface::restoreCursorState() {
 	cursor->_resourceId = _savedCursorId;
 }
 
-void DialogInterface::sub_4155D0(int a) {
+void DialogInterface::next(int choice) {
 	const char *soundName = nullptr;
-	if (_field14 == -1 || (a == -1 && _field18 == 2))
+	if (_field14 == -1 || (choice == -1 && _field18 == 2))
 		return;
 	if (_field18 == -1)
 		return;
 	int talkerId = -1;
-	if (a == -1 && !_field8) {
+	if (choice == -1 && !_field8) {
 		g_vm->getBigDialogue()->getSpeechInfo(&talkerId, &soundName, -1);
 	}
 	_field8 = _field4;
@@ -91,7 +91,7 @@ void DialogInterface::sub_4155D0(int a) {
 	if (_field10)
 		_field10 = 0;
 	else
-		g_vm->getBigDialogue()->next(a);
+		g_vm->getBigDialogue()->next(choice);
 	switch (g_vm->getBigDialogue()->opcode()) {
 	case kOpcodePlay: {
 		int talkerId2;

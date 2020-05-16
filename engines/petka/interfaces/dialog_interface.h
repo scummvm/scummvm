@@ -38,7 +38,7 @@ public:
 	void saveCursorState();
 	void restoreCursorState();
 
-	void sub_4155D0(int a);
+	void next(int choice);
 
 	void sendMsg(uint16 opcode);
 	void end();

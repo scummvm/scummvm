@@ -194,7 +194,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		}
 		case kContinue:
 			g_vm->getQSystem()->_mainInterface->_dialog._field4 = 0;
-			g_vm->getQSystem()->_mainInterface->_dialog.sub_4155D0(-1);
+			g_vm->getQSystem()->_mainInterface->_dialog.next(-1);
 			break;
 		case kCursor:
 			if (msg.arg1 == -1) {
