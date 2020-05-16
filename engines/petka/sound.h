@@ -70,6 +70,6 @@ private:
 	SoundsMap _sounds;
 };
 
-} // End of namespace Pink
+} // End of namespace Petka
 
 #endif
