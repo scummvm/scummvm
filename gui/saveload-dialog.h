@@ -161,6 +161,7 @@ private:
 	StaticTextWidget	*_date;
 	StaticTextWidget	*_time;
 	StaticTextWidget	*_playtime;
+	StaticTextWidget	*_pageTitle;
 
 	String					_resultString;
 
@@ -218,6 +219,7 @@ private:
 	ButtonWidget *_nextButton;
 	ButtonWidget *_prevButton;
 
+	StaticTextWidget *_pageTitle;
 	StaticTextWidget *_pageDisplay;
 
 	ContainerWidget *_newSaveContainer;
