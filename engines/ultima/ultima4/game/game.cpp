@@ -447,7 +447,6 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 	// See if the attack hits the avatar
 	Object *obj = g_context->_location->_map->objectAt(coords);
 	m = dynamic_cast<Creature *>(obj);
-	assert(m);
 
 	// Does the attack hit the avatar?
 	if (coords == g_context->_location->_coords) {
@@ -464,7 +463,7 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 	}
 	// Destroy objects that were hit
 	else if (obj) {
-		if ((obj->getType() == Object::CREATURE && m->isAttackable()) ||
+		if ((obj->getType() == Object::CREATURE && m && m->isAttackable()) ||
 		        obj->getType() == Object::UNKNOWN) {
 
 			GameController::flashTile(coords, tile, 3);
