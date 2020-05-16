@@ -395,6 +395,7 @@ bool Inventory::clearItem(uint16 iniId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (_inventoryItemTbl[i] == iniId) {
 			_inventoryItemTbl[i] = 0;
+			return true;
 		}
 	}
 	return false;
@@ -430,6 +431,15 @@ void Inventory::setPreviousState() {
 	InventoryState tmpState = _state;
 	setState(_previousState);
 	_previousState = tmpState;
+}
+
+bool Inventory::hasItem(uint16 iniId) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+		if (_inventoryItemTbl[i] == iniId) {
+			return true;
+		}
+	}
+	return false;
 }
 
 } // End of namespace Dragons

@@ -407,9 +407,11 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 				_vm->_cursor->_sequenceID = 0;
 				_vm->_cursor->_iniItemInHand = 0;
 			} else {
-				if (_vm->_inventory->clearItem(ini->id + 1)) {
+				if (_vm->_inventory->hasItem(ini->id + 1)) {
+					Actor *actor = _vm->_inventory->getInventoryItemActor(ini->id + 1);
+					_vm->_inventory->clearItem(ini->id + 1);
 					if (_vm->_inventory->getState() == InventoryOpen) {
-						ini->actor->clearFlag(ACTOR_FLAG_40);
+						actor->clearFlag(ACTOR_FLAG_40);
 					}
 				}
 			}
