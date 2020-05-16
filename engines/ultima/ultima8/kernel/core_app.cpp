@@ -36,7 +36,7 @@ namespace Ultima8 {
 using Std::string;
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CoreApp)
 
 CoreApp *CoreApp::_application = nullptr;
 

@@ -33,7 +33,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ActorBarkNotifyProcess, GumpNotifyProcess)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ActorBarkNotifyProcess)
 
 ActorBarkNotifyProcess::ActorBarkNotifyProcess()
 	: GumpNotifyProcess() {

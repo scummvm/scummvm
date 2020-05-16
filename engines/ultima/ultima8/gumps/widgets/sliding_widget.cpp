@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget)
 
 SlidingWidget::SlidingWidget()
 	: Gump() {

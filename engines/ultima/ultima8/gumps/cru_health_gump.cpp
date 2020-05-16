@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 static const uint32 HEALTH_BAR_COLOR = 0xFF003071; // RGB = (154, 4, 4)
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruHealthGump, CruStatGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruHealthGump)
 
 CruHealthGump::CruHealthGump() : CruStatGump() {
 

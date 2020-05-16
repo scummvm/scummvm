@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump, ItemRelativeGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump)
 
 AskGump::AskGump() : ItemRelativeGump(), _answers(0) {
 }

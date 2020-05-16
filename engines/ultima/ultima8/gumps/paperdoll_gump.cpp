@@ -41,7 +41,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump, ContainerGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump)
 
 
 

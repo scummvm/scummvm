@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump)
 
 CreditsGump::CreditsGump()
 	: ModalGump(), _parSkip(0), _timer(0), _title(nullptr),

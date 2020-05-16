@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget)
 
 TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0),
 		_tx(0), _ty(0), _currentStart(0), _currentEnd(0), _targetWidth(0), _targetHeight(0),

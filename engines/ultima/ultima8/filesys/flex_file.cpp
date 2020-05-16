@@ -27,7 +27,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile, ArchiveFile)
+DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile)
 
 
 

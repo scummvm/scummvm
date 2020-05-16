@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 static const uint32 ENERGY_BAR_COLOR = 0xFF9A0404; // RGB: (0, 48, 113)
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruEnergyGump, CruStatGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruEnergyGump)
 
 CruEnergyGump::CruEnergyGump() : CruStatGump() {
 

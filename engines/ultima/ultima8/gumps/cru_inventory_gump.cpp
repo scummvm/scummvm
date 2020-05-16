@@ -38,8 +38,7 @@ namespace Ultima8 {
 
 static const int INVENTORY_GUMP_SHAPE = 3;
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruInventoryGump, CruStatGump)
-
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruInventoryGump)
 CruInventoryGump::CruInventoryGump() : CruStatGump(), _inventoryShape(nullptr) {
 
 }

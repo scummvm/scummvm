@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveFile, NamedArchiveFile)
+DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveFile)
 
 
 U8SaveFile::U8SaveFile(Common::SeekableReadStream *rs_) : _rs(rs_), _count(0) {

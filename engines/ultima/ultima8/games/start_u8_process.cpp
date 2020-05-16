@@ -41,7 +41,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process)
 
 StartU8Process::StartU8Process(int saveSlot) : Process(),
 		_init(false), _saveSlot(saveSlot), _skipStart(saveSlot >= 0) {

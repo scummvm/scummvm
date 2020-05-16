@@ -32,7 +32,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump)
 
 PagedGump::PagedGump(int left, int right, int top, int shape):
 	ModalGump(0, 0, 5, 5), _leftOff(left), _rightOff(right), _topOff(top),

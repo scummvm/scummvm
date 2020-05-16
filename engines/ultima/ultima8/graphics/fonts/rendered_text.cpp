@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(RenderedText)
+DEFINE_RUNTIME_CLASSTYPE_CODE(RenderedText)
 
 RenderedText::RenderedText()
 	: _width(-1), _height(-1), _vLead(0) {

@@ -37,7 +37,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump)
 
 MovieGump::MovieGump() : ModalGump(), _player(0) {
 

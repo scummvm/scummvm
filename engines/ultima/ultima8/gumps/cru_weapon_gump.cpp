@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 static const int WEAPON_GUMP_SHAPE = 3;
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruWeaponGump, CruStatGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruWeaponGump)
 
 CruWeaponGump::CruWeaponGump() : CruStatGump(), _weaponShape(nullptr) {
 

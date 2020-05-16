@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(TargetedAnimProcess, ActorAnimProcess)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TargetedAnimProcess)
 
 TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess(),
 		_x(0), _y(0), _z(0) {

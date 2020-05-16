@@ -47,28 +47,13 @@ struct RunTimeClassType {
 	virtual const RunTimeClassType & GetClassType() const { return ClassType; }
 
 //
-// Define this in the source files of base classes
-//
-#define DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Classname)         \
-	const RunTimeClassType Classname::ClassType = {                 \
-	#Classname                                                      \
-    };
-
-//
 // Define this in the source files of child classes, with 1 parent
 //
-#define DEFINE_RUNTIME_CLASSTYPE_CODE(Classname,ParentClassname)    \
+#define DEFINE_RUNTIME_CLASSTYPE_CODE(Classname)    \
 	const RunTimeClassType Classname::ClassType = {                     \
 	                                                                    #Classname                                                      \
 	                                              };
 
-//
-// Define this in the source files of child classes, with 2 parents
-//
-#define DEFINE_RUNTIME_CLASSTYPE_CODE_MULTI2(Classname,Parent1,Parent2) \
-	const RunTimeClassType Classname::ClassType = {                         \
-	                                                                        #Classname                                                          \
-	                                              };
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

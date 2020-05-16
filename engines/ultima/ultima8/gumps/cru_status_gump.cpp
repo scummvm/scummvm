@@ -39,7 +39,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruStatusGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruStatusGump)
 
 static const int PX_FROM_BOTTOM = 2;	//! gap (y) between bottom of screen and bottom of a single item
 static const int PX_FROM_LEFT = 15;  	//! gap (x) from left of screen to weapon box

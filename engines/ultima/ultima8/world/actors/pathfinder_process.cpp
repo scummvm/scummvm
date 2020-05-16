@@ -34,7 +34,7 @@ static const unsigned int PATH_OK = 1;
 static const unsigned int PATH_FAILED = 0;
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess)
 
 PathfinderProcess::PathfinderProcess() : Process(),
 		_currentStep(0), _targetItem(0), _hitMode(false),
