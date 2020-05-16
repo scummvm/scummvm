@@ -59,6 +59,9 @@ MODULE_OBJS := \
 	base/gfx/osystem/base_surface_osystem.o \
 	base/gfx/osystem/base_render_osystem.o \
 	base/gfx/osystem/render_ticket.o \
+	base/gfx/opengl/base_surface_opengl.o \
+	base/gfx/opengl/base_render_opengl.o \
+	base/gfx/opengl/render_ticket.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
