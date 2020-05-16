@@ -35,8 +35,6 @@ struct BGInfo {
 
 class Sound;
 
-extern Sound *g_trackedSound;
-
 class InterfaceMain : public Interface {
 public:
 	InterfaceMain();

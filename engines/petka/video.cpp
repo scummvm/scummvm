@@ -51,10 +51,6 @@ void VideoSystem::update() {
 			interface->_objs[i]->update(time - _time);
 		}
 
-		if ((g_trackedSound && !g_trackedSound->isPlaying()) || !g_trackedSound) {
-			g_vm->getQSystem()->_mainInterface->_dialog.next(-1);
-		}
-
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->updateZ();
 		}
