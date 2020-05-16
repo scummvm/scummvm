@@ -74,7 +74,7 @@ public:
 	void loadPart(byte part);
 	byte getPart();
 
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 	Common::SeekableReadStream *openFile(const Common::String &name, bool addCurrentPath);
 
