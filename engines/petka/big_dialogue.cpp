@@ -308,7 +308,7 @@ void BigDialogue::next(int choice) {
 	while (true) {
 		switch (_currOp->type) {
 		case kOperationBreak:
-			while (_currOp->type != kOperationMenu && _currOp->type != kOperationCircle) {
+			while (_currOp->type != kOperationMenu || _currOp->type != kOperationCircle) {
 				_currOp--;
 			}
 			next(choice);
@@ -342,7 +342,7 @@ void BigDialogue::next(int choice) {
 			break;
 		}
 		case kOperationMenuRet:
-			_ops[_currOp->menuRet.opIndex].menu.bitField &= ~(1 << _currOp->op5.bit); // disable menu item
+			_ops[_currOp->menuRet.opIndex].menu.bitField &= ~(1 << _currOp->menuRet.bit); // disable menu item
 			checkMenu(_currOp->menuRet.opIndex);
 			_currOp += 1;
 			processed = false;
