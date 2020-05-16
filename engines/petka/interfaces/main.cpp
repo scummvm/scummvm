@@ -20,7 +20,7 @@
  *
  */
 
-#include <common/system.h>
+#include "common/system.h"
 #include "common/stream.h"
 #include "common/events.h"
 #include "common/ini-file.h"
@@ -37,6 +37,7 @@
 #include "petka/video.h"
 #include "petka/objects/object_case.h"
 #include "petka/objects/heroes.h"
+#include "petka/objects/text.h"
 
 namespace Petka {
 
@@ -218,6 +219,28 @@ void InterfaceMain::onMouseMove(const Common::Point p) {
 	}
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->setCursorPos(p.x, p.y, true);
+}
+
+void InterfaceMain::setTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor) {
+	removeTexts();
+	_objUnderCursor = nullptr;
+	_objs.push_back(new QTextChoice(choices, color, selectedColor));
+}
+
+void InterfaceMain::setTextDescription(const Common::U32String &text, int frame) {
+	removeTexts();
+	QObjectStar *star = g_vm->getQSystem()->_star.get();
+	star->_isActive = 0;
+	_objUnderCursor = nullptr;
+	_hasTextDesc = true;
+	_objs.push_back(new QTextDescription(text, frame));
+}
+
+void InterfaceMain::removeTextDescription() {
+	_hasTextDesc = false;
+	_objUnderCursor = nullptr;
+	g_vm->getQSystem()->_star->_isActive = true;
+	removeTexts();
 }
 
 } // End of namespace Petka

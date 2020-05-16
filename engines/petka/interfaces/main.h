@@ -53,10 +53,16 @@ public:
 	void onRightButtonDown(const Common::Point p) override;
 	void onMouseMove(const Common::Point p) override;
 
+	void setTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor);
+	void setTextDescription(const Common::U32String &text, int frame);
+
+	void removeTextDescription();
+
 public:
 	DialogInterface _dialog;
 	Common::Array<BGInfo> _bgs;
 	int _roomId;
+	bool _hasTextDesc;
 };
 
 } // End of namespace Petka
