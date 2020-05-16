@@ -169,7 +169,8 @@ private:
 	virtual void postInstHook(uint32 inst);
 
 #ifdef ENABLE_FOXTAIL
-	bool _needAltOpcodes;
+	TOpcodesType _opcodesType;
+	void initOpcodesType();
 	uint32 decodeAltOpcodes(uint32 inst);
 #endif
 };

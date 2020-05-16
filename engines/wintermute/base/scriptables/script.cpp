@@ -35,9 +35,15 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/ext/externals.h"
 #include "common/memstream.h"
+
+#ifdef ENABLE_FOXTAIL
+#include "engines/wintermute/base/scriptables/script_opcodes.h"
+#endif
+
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
 #endif
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScScript, false)
@@ -100,7 +106,7 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_tracingMode = false;
 
 #ifdef ENABLE_FOXTAIL
-	_needAltOpcodes = BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION);	
+	initOpcodesType();	
 #endif
 }
 
@@ -518,8 +524,16 @@ char *ScScript::getString() {
 
 #ifdef ENABLE_FOXTAIL
 //////////////////////////////////////////////////////////////////////////
-// FoxTail 1.2.896 is using unusual opcodes table, let's map them here
-// NOTE: Those opcodes are never used at FoxTail 1.2.896.4370:
+void ScScript::initOpcodesType() {
+	_opcodesType = BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_1_2_896) ? OPCODES_FOXTAIL_1_2_896 :
+	               BaseEngine::instance().isFoxTail(FOXTAIL_1_2_902, FOXTAIL_LATEST_VERSION) ? OPCODES_FOXTAIL_1_2_902 :
+	               OPCODES_UNCHANGED;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// FoxTail 1.2.896+ is using unusual opcodes tables, let's map them here
+// NOTE: Those opcodes are never used at FoxTail 1.2.896 and 1.2.902:
 //   II_CMP_STRICT_EQ
 //   II_CMP_STRICT_NE
 //   II_DEF_CONST_VAR
@@ -531,57 +545,14 @@ uint32 ScScript::decodeAltOpcodes(uint32 inst) {
 		return (uint32)(-1);
 	}
 
-	uint32 foxtail_1_2_896_mapping[] = {
-		II_CMP_LE,
-		II_JMP,
-		II_POP_REG1,
-		II_PUSH_BOOL,
-		II_MODULO,
-		II_POP_EMPTY,
-		II_CALL_BY_EXP,
-		II_CMP_L,
-		II_PUSH_FLOAT,
-		II_NOT,
-		II_PUSH_THIS,
-		II_PUSH_BY_EXP,
-		II_PUSH_THIS_FROM_STACK,
-		II_CMP_G,
-		II_DEF_GLOB_VAR,
-		II_PUSH_STRING,
-		II_PUSH_REG1,
-		II_DEF_VAR,
-		/* unused */ (uint32)(-1),
-		II_RET_EVENT,
-		II_PUSH_VAR_REF,
-		II_CMP_NE,
-		/* unused */ II_DBG_LINE,
-		II_OR,
-		II_POP_VAR,
-		II_AND,
-		II_EXTERNAL_CALL,
-		II_CORRECT_STACK,
-		II_RET,
-		II_DIV,
-		II_PUSH_VAR,
-		II_SUB,
-		II_CALL,
-		II_CREATE_OBJECT,
-		II_MUL,
-		II_POP_BY_EXP,
-		/*unused */ (uint32)(-1),
-		II_PUSH_NULL,
-		II_JMP_FALSE,
-		II_ADD,
-		II_CMP_GE,
-		/* unused */ (uint32)(-1),
-		/* unused */ (uint32)(-1),
-		II_PUSH_INT,
-		II_CMP_EQ,
-		II_POP_THIS,
-		II_SCOPE
-	};
-
-	return foxtail_1_2_896_mapping[inst];
+	switch (_opcodesType) {
+	case OPCODES_FOXTAIL_1_2_896:
+		return foxtail_1_2_896_mapping[inst];
+	case OPCODES_FOXTAIL_1_2_902:
+		return foxtail_1_2_902_mapping[inst];
+	default:
+		return inst;
+	}
 }
 #endif
 
@@ -601,7 +572,7 @@ bool ScScript::executeInstruction() {
 	uint32 inst = getDWORD();
 
 #ifdef ENABLE_FOXTAIL
-	if (_needAltOpcodes) {
+	if (_opcodesType) {
 		inst = decodeAltOpcodes(inst);
 	}
 #endif
@@ -1394,7 +1365,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		_tracingMode = false;
 #ifdef ENABLE_FOXTAIL
-		_needAltOpcodes = BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION);	
+		initOpcodesType();	
 #endif
 	}
 
