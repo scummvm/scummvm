@@ -1715,21 +1715,21 @@ void LB::b_rollOver(int nargs) {
 	Datum res(0);
 	int arg = d.asInt();
 
-	if (!g_director->getCurrentScore()) {
+	Score *score = g_director->getCurrentScore();
+
+	if (!score) {
 		warning("b_rollOver: Reference to an empty score");
 		return;
 	}
 
-	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
-
-	if (arg >= (int32) frame->_sprites.size()) {
+	if (arg >= (int32) score->_sprites.size()) {
 		g_lingo->push(res);
 		return;
 	}
 
 	Common::Point pos = g_system->getEventManager()->getMousePos();
 
-	if (frame->checkSpriteIntersection(arg, pos))
+	if (score->checkSpriteIntersection(arg, pos))
 		res.u.i = 1; // TRUE
 
 	g_lingo->push(res);
@@ -1775,9 +1775,8 @@ void LB::b_zoomBox(int nargs) {
 
 	Score *score = g_director->getCurrentScore();
 	uint16 curFrame = score->getCurrentFrame();
-	Frame *frame = score->_frames[curFrame];
 
-	Common::Rect *startRect = frame->getSpriteRect(startSprite);
+	Common::Rect *startRect = score->getSpriteRect(startSprite);
 	if (!startRect) {
 		warning("b_zoomBox: unknown start sprite #%d", startSprite);
 		return;
@@ -1785,10 +1784,10 @@ void LB::b_zoomBox(int nargs) {
 
 	// Looks for endSprite in the current frame, otherwise
 	// Looks for endSprite in the next frame
-	Common::Rect *endRect = frame->getSpriteRect(endSprite);
+	Common::Rect *endRect = score->getSpriteRect(endSprite);
 	if (!endRect) {
 		if ((uint)curFrame + 1 < score->_frames.size())
-			score->_frames[curFrame + 1]->getSpriteRect(endSprite);
+			endRect = &score->_frames[curFrame + 1]->_sprites[endSprite]->_currentBbox;
 	}
 
 	if (!endRect) {
@@ -1818,11 +1817,7 @@ void LB::b_updateStage(int nargs) {
 		return;
 	}
 
-	uint16 curFrame = score->getCurrentFrame();
-	Frame *frame = score->_frames[curFrame];
-
-	frame->prepareFrame(score, true);
-	g_director->processEvents(true);
+	score->renderFrame( score->getCurrentFrame(), false, true);
 }
 
 
