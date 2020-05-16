@@ -180,7 +180,7 @@ static struct BuiltinProto {
 	{ "HMStoFrames",	LB::b_HMStoFrames,	4, 4, false, 3, FBLTIN },	//		D3 f
 	{ "param",	 		LB::b_param,		1, 1, true,  4, FBLTIN },	//			D4 f
 	{ "printFrom",	 	LB::b_printFrom,	-1,0, false, 2, BLTIN },	// D2 c
-		// put															// D2
+	{ "put",			LB::b_put,			-1,0, false, 2, BLTIN },	// D2
 		// set															// D2
 	{ "showGlobals",	LB::b_showGlobals,	0, 0, false, 2, BLTIN },	// D2 c
 	{ "showLocals",		LB::b_showLocals,	0, 0, false, 2, BLTIN },	// D2 c
@@ -1371,6 +1371,17 @@ void LB::b_cursor(int nargs) {
 	} else {
 		g_lingo->func_cursor(d.asInt(), -1);
 	}
+}
+
+void LB::b_put(int nargs) {
+	// Prints a statement to the Message window
+	Common::String output;
+	for (int i = 0; i < nargs; i++) {
+		output += g_lingo->pop().asString();
+		if (i < nargs - 1)
+			output += " ";
+	}
+	debug("-- %s", output.c_str());
 }
 
 void LB::b_showGlobals(int nargs) {

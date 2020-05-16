@@ -93,6 +93,7 @@ namespace LB {
 	void b_HMStoFrames(int nargs);
 	void b_param(int nargs);
 	void b_printFrom(int nargs);
+	void b_put(int nargs);
 	void b_showGlobals(int nargs);
 	void b_showLocals(int nargs);
 	void b_value(int nargs);
