@@ -1376,12 +1376,13 @@ void LB::b_cursor(int nargs) {
 void LB::b_put(int nargs) {
 	// Prints a statement to the Message window
 	Common::String output;
-	for (int i = 0; i < nargs; i++) {
-		output += g_lingo->pop().asString();
-		if (i < nargs - 1)
+	for (int i = nargs - 1; i >= 0; i--) {
+		output += g_lingo->peek(i).asString();
+		if (i > 0)
 			output += " ";
 	}
 	debug("-- %s", output.c_str());
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_showGlobals(int nargs) {
