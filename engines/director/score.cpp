@@ -767,6 +767,59 @@ void Score::setSpriteCasts() {
 			Cast *member = _vm->getCastMember(castId);
 			if (member) {
 				_frames[i]->_sprites[j]->_cast = member;
+
+				CastType castType = kCastTypeNull;
+				Sprite *sprite = _frames[i]->_sprites[j];
+
+				if (_vm->getVersion() < 4) {
+					debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d type: %d", i, j, sprite->_spriteType);
+					switch (sprite->_spriteType) {
+					case kBitmapSprite:
+						castType = kCastBitmap;
+						break;
+					case kRectangleSprite:
+					case kRoundedRectangleSprite:
+					case kOvalSprite:
+					case kLineTopBottomSprite:
+					case kLineBottomTopSprite:
+					case kOutlinedRectangleSprite:
+					case kOutlinedRoundedRectangleSprite:
+					case kOutlinedOvalSprite:
+					case kCastMemberSprite:
+						if (sprite->_cast != nullptr) {
+							switch (sprite->_cast->_type) {
+							case kCastButton:
+								castType = kCastButton;
+								break;
+							default:
+								castType = kCastShape;
+								break;
+							}
+						} else {
+							castType = kCastShape;
+						}
+						break;
+					case kTextSprite:
+						castType = kCastText;
+						break;
+					case kButtonSprite:
+					case kCheckboxSprite:
+					case kRadioButtonSprite:
+						castType = kCastButton;
+						break;
+					default:
+						warning("Score::setSpriteCasts(): Unhandled sprite type %d", sprite->_spriteType);
+						break;
+					}
+				} else {
+					member = _vm->getCastMember(sprite->_castId);
+					if (!member) {
+						debugC(1, kDebugImages, "Score::setSpriteCasts(): Cast id %d not found", sprite->_castId);
+					} else {
+						castType = member->_type;
+					}
+				}
+				sprite->_castType = castType;
 			}
 		}
 	}
@@ -780,7 +833,7 @@ void Score::setSpriteBboxes() {
 			if (sp->_castId == 0)
 				continue;
 
-			CastType castType = _frames[i]->getCastType(j);
+			CastType castType = sp->_castType;
 
 			switch (castType) {
 			case kCastShape:

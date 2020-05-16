@@ -553,62 +553,6 @@ void Frame::playSoundChannel() {
 	debug(0, "STUB: playSoundChannel(), Sound1 %d Sound2 %d", _sound1, _sound2);
 }
 
-CastType Frame::getCastType(uint16 spriteId) {
-	CastType castType = kCastTypeNull;
-	Sprite *sprite = _sprites[spriteId];
-
-	if (_vm->getVersion() < 4) {
-		debugC(1, kDebugImages, "Frame::getCastType(): Channel: %d type: %d", spriteId, sprite->_spriteType);
-		switch (sprite->_spriteType) {
-		case kBitmapSprite:
-			castType = kCastBitmap;
-			break;
-		case kRectangleSprite:
-		case kRoundedRectangleSprite:
-		case kOvalSprite:
-		case kLineTopBottomSprite:
-		case kLineBottomTopSprite:
-		case kOutlinedRectangleSprite:
-		case kOutlinedRoundedRectangleSprite:
-		case kOutlinedOvalSprite:
-		case kCastMemberSprite:
-			if (sprite->_cast != nullptr) {
-				switch (sprite->_cast->_type) {
-				case kCastButton:
-					castType = kCastButton;
-					break;
-				default:
-					castType = kCastShape;
-					break;
-				}
-			} else {
-				castType = kCastShape;
-			}
-			break;
-		case kTextSprite:
-			castType = kCastText;
-			break;
-		case kButtonSprite:
-		case kCheckboxSprite:
-		case kRadioButtonSprite:
-			castType = kCastButton;
-			break;
-		default:
-			warning("Frame::getCastType(): Unhandled sprite type %d", sprite->_spriteType);
-			break;
-		}
-	} else {
-		Cast *member = _vm->getCastMember(_sprites[spriteId]->_castId);
-		if (!member) {
-			debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[spriteId]->_castId);
-		} else {
-			castType = member->_type;
-		}
-	}
-
-	return castType;
-}
-
 void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 	for (uint16 i = 0; i <= _numChannels; i++) {
 		if (!_sprites[i]->_enabled)
@@ -617,7 +561,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 		if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
 			continue;
 
-		CastType castType = getCastType(i);
+		CastType castType = _sprites[i]->_castType;
 		if (castType == kCastTypeNull)
 			continue;
 
