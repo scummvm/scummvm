@@ -378,7 +378,7 @@ void LB::b_cos(int nargs) {
 void LB::b_exp(int nargs) {
 	Datum d = g_lingo->pop();
 	// Lingo uses int, so we're enforcing it
-	Datum res(exp(d.asInt()));
+	Datum res((double)exp((double)d.asInt()));
 	g_lingo->push(res);
 }
 
@@ -401,7 +401,7 @@ void LB::b_log(int nargs) {
 }
 
 void LB::b_pi(int nargs) {
-	Datum res(M_PI);
+	Datum res((double)M_PI);
 	g_lingo->push(res);
 }
 
