@@ -92,7 +92,7 @@ public:
 	virtual Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
 
 private:

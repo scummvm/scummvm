@@ -56,7 +56,7 @@ Common::Error PetkaEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, bool isAutosave) {
 	Common::OutSaveFile *out = _saveFileMan->openForSaving(generateSaveName(slot, _targetName.c_str()));
 	if (!out)
 		return Common::kUnknownError;
