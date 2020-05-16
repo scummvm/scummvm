@@ -97,6 +97,27 @@ void Lingo::printStack(const char *s, uint pc) {
 	debugC(5, kDebugLingoExec, "[%3d]: %s", pc, stack.c_str());
 }
 
+void Lingo::printCallStack(uint pc) {
+	debugC(5, kDebugLingoExec, "Call stack:");
+	for (int i = 0; i < (int)g_lingo->_callstack.size(); i++) {
+		CFrame *frame = g_lingo->_callstack[i];
+		uint framePc = pc;
+		if (i < (int)g_lingo->_callstack.size() - 1)
+			framePc = g_lingo->_callstack[i + 1]->retpc;
+
+		if (frame->sp) {
+			debugC(5, kDebugLingoExec, "#%d %s:%d", i + 1,
+				g_lingo->_callstack[i]->sp->name.c_str(),
+				framePc
+			);
+		} else {
+			debugC(5, kDebugLingoExec, "#%d [unknown]:%d", i + 1,
+				framePc
+			);
+		}
+	}
+}
+
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 	Symbol sym;
 	Common::String res;

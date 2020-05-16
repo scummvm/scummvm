@@ -258,6 +258,7 @@ public:
 	void executeHandler(Common::String name);
 	void executeScript(ScriptType type, uint16 id, uint16 function);
 	void printStack(const char *s, uint pc);
+	void printCallStack(uint pc);
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void initBuiltIns();
