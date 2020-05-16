@@ -108,7 +108,6 @@ void DialogInterface::next(int choice) {
 			s->play(0);
 		}
 		_hasSound = s != nullptr;
-		g_trackedSound = s;
 		_talker = g_vm->getQSystem()->findObject(talkerId2);
 		if (talkerId != talkerId2) {
 			sendMsg(kSay);
