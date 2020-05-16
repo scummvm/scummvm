@@ -101,7 +101,7 @@ static struct FuncDescr {
 	{ LC::c_lt,				"c_lt",				"" },
 	{ LC::c_mod,			"c_mod",			"" },
 	{ LC::c_mul,			"c_mul",			"" },
-	{ LC::c_namepush,		"c_namepush",		"i" },
+	{ LC::c_namepush,		"c_namepush",		"N" },
 	{ LC::c_negate,			"c_negate",			"" },
 	{ LC::c_neq,			"c_neq",			"" },
 	{ LC::c_nextRepeat,		"c_nextRepeat",		"" },
@@ -976,7 +976,7 @@ void LC::c_or() {
 void LC::c_not() {
 	Datum d = g_lingo->pop();
 
-	Datum res(~d.asInt() ? 1 : 0);
+	Datum res(d.asInt() == 0 ? 1 : 0);
 
 	g_lingo->push(res);
 }
