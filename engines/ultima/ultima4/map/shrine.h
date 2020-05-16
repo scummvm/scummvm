@@ -35,6 +35,7 @@ namespace Ultima4 {
 class Shrine : public Map {
 public:
 	Shrine();
+	~Shrine() override {}
 
 	// Methods
 	Common::String  getName() override;

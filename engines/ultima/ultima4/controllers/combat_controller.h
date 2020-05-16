@@ -213,6 +213,7 @@ extern CombatController *g_combat;
 class CombatMap : public Map {
 public:
 	CombatMap();
+	~CombatMap() override {}
 
 	/**
 	 * Returns a vector containing all of the creatures on the map
