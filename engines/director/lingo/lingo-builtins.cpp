@@ -1822,6 +1822,7 @@ void LB::b_updateStage(int nargs) {
 	Frame *frame = score->_frames[curFrame];
 
 	frame->prepareFrame(score, true);
+	g_director->processEvents(true);
 }
 
 

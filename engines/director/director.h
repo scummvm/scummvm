@@ -127,7 +127,7 @@ public:
 	Archive *createArchive();
 
 	// events.cpp
-	void processEvents();
+	void processEvents(bool bufferLingoEvents = false);
 	void setDraggedSprite(uint16 id);
 	void releaseDraggedSprite();
 	uint32 getMacTicks();

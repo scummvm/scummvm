@@ -52,7 +52,7 @@ bool processQuitEvent(bool click) {
 
 uint32 DirectorEngine::getMacTicks() { return g_system->getMillis() * 60 / 1000.; }
 
-void DirectorEngine::processEvents() {
+void DirectorEngine::processEvents(bool bufferLingoEvents) {
 	Common::Event event;
 
 	uint endTime = g_system->getMillis() + 10;
@@ -108,7 +108,7 @@ void DirectorEngine::processEvents() {
 				sc->_lastClickTime = sc->_lastEventTime;
 
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
-				_lingo->processEvent(kEventMouseDown);
+				_lingo->registerEvent(kEventMouseDown);
 
 				if (currentFrame->_sprites[spriteId]->_moveable)
 					g_director->setDraggedSprite(spriteId);
@@ -125,7 +125,7 @@ void DirectorEngine::processEvents() {
 				sc->_mouseIsDown = false;
 				releaseDraggedSprite();
 
-				_lingo->processEvent(kEventMouseUp);
+				_lingo->registerEvent(kEventMouseUp);
 				sc->_currentMouseDownSpriteId = 0;
 				break;
 
@@ -152,7 +152,7 @@ void DirectorEngine::processEvents() {
 
 				sc->_lastEventTime = g_director->getMacTicks();
 				sc->_lastKeyTime = sc->_lastEventTime;
-				_lingo->processEvent(kEventKeyDown);
+				_lingo->registerEvent(kEventKeyDown);
 				break;
 
 			default:
@@ -160,11 +160,17 @@ void DirectorEngine::processEvents() {
 			}
 		}
 
+		if (!bufferLingoEvents)
+			_lingo->processEvents();
+
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 
 		if (sc->getCurrentFrame() > 0)
-			_lingo->processEvent(kEventIdle);
+			_lingo->registerEvent(kEventIdle);
+
+		if (!bufferLingoEvents)
+			_lingo->processEvents();
 	}
 }
 

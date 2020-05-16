@@ -237,6 +237,20 @@ struct CFrame {	/* proc/func call stack frame */
 	SymbolHash *localvars;
 };
 
+struct LingoEvent {
+	LEvent event;
+	ScriptType st;
+	int entityId;
+	int channelId;
+
+	LingoEvent (LEvent e, ScriptType s, int ei, int ci = -1) {
+		event = e;
+		st = s;
+		entityId = ei;
+		channelId = ci;
+	}
+};
+
 
 struct LingoArchive {
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
@@ -278,12 +292,14 @@ private:
 private:
 	void initEventHandlerTypes();
 	void primaryEventHandler(LEvent event);
-	void processInputEvent(LEvent event);
-	void processFrameEvent(LEvent event);
-	void processGenericEvent(LEvent event);
+	void registerInputEvent(LEvent event);
+	void registerFrameEvent(LEvent event);
+	void registerGenericEvent(LEvent event);
 	void runMovieScript(LEvent event);
-	void processSpriteEvent(LEvent event);
+	void registerSpriteEvent(LEvent event);
 	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
+
+	Common::Queue<LingoEvent> _eventQueue;
 
 public:
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
@@ -292,6 +308,8 @@ public:
 	Symbol *getHandler(Common::String &name);
 
 	void processEvent(LEvent event);
+	void processEvents();
+	void registerEvent(LEvent event);
 
 public:
 	void execute(uint pc);
