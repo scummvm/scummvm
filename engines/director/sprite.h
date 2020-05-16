@@ -75,6 +75,7 @@ public:
 	uint16 _castId;
 	uint16 _castIndex;
 	SpriteType _spriteType;
+	CastType _castType;
 	byte _inkData;
 	InkType _ink;
 	uint16 _trails;
