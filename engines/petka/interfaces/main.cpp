@@ -170,7 +170,7 @@ void InterfaceMain::unloadRoom(bool fromSave) {
 
 void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 	if (!g_vm->getQSystem()->_cursor->_isShown) {
-		_dialog.sub_4155D0(-1);
+		_dialog.next(-1);
 		return;
 	}
 	for (int i = _objs.size() - 1; i >= 0; --i) {

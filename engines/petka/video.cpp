@@ -52,7 +52,7 @@ void VideoSystem::update() {
 		}
 
 		if ((g_trackedSound && !g_trackedSound->isPlaying()) || !g_trackedSound) {
-			g_vm->getQSystem()->_mainInterface->_dialog.sub_4155D0(-1);
+			g_vm->getQSystem()->_mainInterface->_dialog.next(-1);
 		}
 
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
