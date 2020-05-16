@@ -98,12 +98,11 @@ void InterfaceSaveLoad::onMouseMove(const Common::Point p) {
 }
 
 int InterfaceSaveLoad::findSaveLoadRectIndex(const Common::Point p) {
-	int i = 0;
-	do {
+	for (uint i = 0; i < sizeof(_saveRects) / sizeof(Common::Rect); ++i) {
 		if (_saveRects[i].contains(p)) {
 			return i;
 		}
-	} while (++i < sizeof(_saveRects) / sizeof(Common::Rect));
+	}
 	return -1;
 }
 
