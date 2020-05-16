@@ -34,10 +34,6 @@ struct RunTimeClassType {
 	}
 };
 
-//
-// Include this in every class. It sets up the class to be able to use
-// p_dynamic_cast. Make sure this is public!
-//
 #define ENABLE_RUNTIME_CLASSTYPE()                                              \
 	static const RunTimeClassType   ClassType;                                  \
 	virtual const RunTimeClassType & GetClassType() const override { return ClassType; }
@@ -46,9 +42,6 @@ struct RunTimeClassType {
 	static const RunTimeClassType   ClassType;                                  \
 	virtual const RunTimeClassType & GetClassType() const { return ClassType; }
 
-//
-// Define this in the source files of child classes, with 1 parent
-//
 #define DEFINE_RUNTIME_CLASSTYPE_CODE(Classname)    \
 	const RunTimeClassType Classname::ClassType = {                     \
 	                                                                    #Classname                                                      \
