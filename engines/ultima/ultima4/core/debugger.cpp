@@ -1510,7 +1510,29 @@ bool Debugger::cmdLeave(int argc, const char **argv) {
 bool Debugger::cmdLocation(int argc, const char **argv) {
 	const MapCoords &pos = g_context->_location->_coords;
 
-	if (isDebuggerActive()) {
+	if (argc == 3) {
+		Coords newPos;
+
+		if (strlen(argv[1]) == 2 && strlen(argv[2]) == 2
+				&& Common::isAlpha(argv[1][0]) && Common::isAlpha(argv[1][1])
+			&& Common::isAlpha(argv[2][0]) && Common::isAlpha(argv[2][1])
+		) {
+			newPos.y = (toupper(argv[1][0]) - 'A') * 16 + (toupper(argv[1][1]) - 'A');
+			newPos.x = (toupper(argv[2][0]) - 'A') * 16 + (toupper(argv[2][1]) - 'A');
+		} else {
+			newPos.x = strToInt(argv[1]);
+			newPos.y = strToInt(argv[2]);
+		}
+
+		if (newPos.x >= 0 && newPos.y >= 0
+				&& newPos.x < (int)g_context->_location->_map->_width
+				&& newPos.y < (int)g_context->_location->_map->_height) {
+			g_context->_location->_coords = newPos;
+			return false;
+		} else {
+			print("Invalid location!");
+		}
+	} else if (isDebuggerActive()) {
 		if (g_context->_location->_map->isWorldMap())
 			print("Location: %s x: %d, y: %d",
 				"World Map", pos.x, pos.y);
