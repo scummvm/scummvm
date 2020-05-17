@@ -2208,8 +2208,8 @@ void Score::renderText(uint16 spriteId, Common::Rect *textRect) {
 
 		InkType ink = sprite->_ink;
 
-		if (spriteId == score->_currentMouseDownSpriteId)
-			ink = kInkTypeReverse;
+		// if (spriteId == score->_currentMouseDownSpriteId)
+		// 	ink = kInkTypeReverse;
 
 		inkBasedBlit(nullptr, textCast->_widget->getSurface()->rawSurface(), ink, Common::Rect(x, y, x + width, y + height), spriteId);
 
@@ -2341,8 +2341,8 @@ void Score::renderText(uint16 spriteId, Common::Rect *textRect) {
 
 	InkType ink = sprite->_ink;
 
-	if (spriteId == score->_currentMouseDownSpriteId)
-		ink = kInkTypeReverse;
+	// if (spriteId == score->_currentMouseDownSpriteId)
+	// 	ink = kInkTypeReverse;
 
 	inkBasedBlit(nullptr, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height), spriteId);
 }
@@ -2351,9 +2351,9 @@ void Score::renderBitmap(uint16 spriteId) {
 	InkType ink;
 	Sprite *sprite = _sprites[spriteId];
 
-	if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
-		ink = kInkTypeReverse;
-	else
+	// if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
+	// 	ink = kInkTypeReverse;
+	// else
 		ink = sprite->_ink;
 
 	BitmapCast *bc = (BitmapCast *)sprite->_cast;
