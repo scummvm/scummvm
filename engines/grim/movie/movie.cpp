@@ -123,6 +123,11 @@ Graphics::Surface *MoviePlayer::getDstSurface() {
 	return _externalSurface;
 }
 
+void MoviePlayer::drawMovieSubtitle() {
+	Common::StackLock lock(_frameMutex);
+	g_grim->drawMovieSubtitle();
+}
+
 void MoviePlayer::init() {
 	if (!_timerStarted) {
 		g_system->getTimerManager()->installTimerProc(&timerCallback, 10000, this, "movieLoop");

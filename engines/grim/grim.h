@@ -161,6 +161,7 @@ public:
 	bool areActorsTalking() const;
 	void immediatelyRemoveActor(Actor *actor);
 
+	void drawMovieSubtitle();
 	void setMovieSubtitle(TextObject *to);
 	void setMovieSetup();
 
