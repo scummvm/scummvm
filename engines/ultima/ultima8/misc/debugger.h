@@ -154,10 +154,14 @@ private:
 
 	// Avatar mover
 	bool cmdBothButtonClick(int argc, const char **argv);
-	bool cmdTurnLeft(int argc, const char **argv);
-	bool cmdTurnRight(int argc, const char **argv);
-	bool cmdMoveForward(int argc, const char **argv);
-	bool cmdMoveBack(int argc, const char **argv);
+	bool cmdStartTurnLeft(int argc, const char **argv);
+	bool cmdStartTurnRight(int argc, const char **argv);
+	bool cmdStartMoveForward(int argc, const char **argv);
+	bool cmdStartMoveBack(int argc, const char **argv);
+	bool cmdStopTurnLeft(int argc, const char **argv);
+	bool cmdStopTurnRight(int argc, const char **argv);
+	bool cmdStopMoveForward(int argc, const char **argv);
+	bool cmdStopMoveBack(int argc, const char **argv);
 
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);

@@ -43,7 +43,9 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarMoverProcess)
 
 AvatarMoverProcess::AvatarMoverProcess() : Process(),
 		_lastFrame(0), _lastAttack(0), _idleTime(0),
-		_lastHeadShakeAnim(Animation::lookLeft), _fakeBothButtonClick(false) {
+		_lastHeadShakeAnim(Animation::lookLeft), _fakeBothButtonClick(false),
+		_tryTurnLeft(false), _tryTurnRight(false),
+		_tryMoveForward(false), _tryMoveBack(false) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -288,6 +290,33 @@ void AvatarMoverProcess::handleCombatMode() {
 		if (checkTurn(mousedir, false))
 			return;
 
+	bool moving = (lastanim == Animation::advance || lastanim == Animation::retreat);
+	bool tryMove = _tryMoveForward || _tryMoveBack;
+
+	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
+	if (moving || !tryMove) {
+		if (_tryTurnLeft) {
+			direction = (direction + 7) % 8;
+		}
+
+		if (_tryTurnRight) {
+			direction = (direction + 1) % 8;
+		}
+	}
+
+	if (_tryMoveForward) {
+		waitFor(avatar->doAnim(Animation::advance, direction));
+		return;
+	}
+
+	if (_tryMoveBack) {
+		waitFor(avatar->doAnim(Animation::retreat, direction));
+		return;
+	}
+
+	if (checkTurn(direction, false))
+		return;
+
 	// not doing anything in particular? stand
 	// TODO: make sure falling works properly.
 	if (lastanim != Animation::combatStand) {
@@ -521,6 +550,36 @@ void AvatarMoverProcess::handleNormalMode() {
 		if (checkTurn(mousedir, false))
 			return;
 
+	bool moving = (lastanim == Animation::run || lastanim == Animation::walk);
+	bool tryMove = _tryMoveForward || _tryMoveBack;
+
+	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
+	if (moving || !tryMove) {
+		if (_tryTurnLeft) {
+			direction = (direction + 7) % 8;
+		}
+
+		if (_tryTurnRight) {
+			direction = (direction + 1) % 8;
+		}
+	}
+
+	if (_tryMoveForward) {
+		step(Animation::walk, direction);
+		return;
+	}
+
+	if (_tryMoveBack) {
+		step(Animation::walk, (direction + 4) % 8);
+		// flip to move forward once turned
+		_tryMoveBack = false;
+		_tryMoveForward = true;
+		return;
+	}
+
+	if (checkTurn(direction, moving))
+		return;
+
 	// doing another animation?
 	if (Kernel::get_instance()->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE))
 		return;
@@ -547,7 +606,18 @@ void AvatarMoverProcess::handleNormalMode() {
 				nextanim = Animation::lookLeft;
 			waitFor(avatar->doAnim(nextanim, direction));
 			_idleTime = 0;
+			return;
 		}
+	}
+
+	// if we were running, slow to a walk before stopping
+	if (lastanim == Animation::run) {
+		waitFor(avatar->doAnim(Animation::walk, direction));
+	}
+
+	// not doing anything in particular? stand
+	if (lastanim != Animation::stand) {
+		waitFor(avatar->doAnim(Animation::stand, direction));
 	}
 }
 
@@ -675,40 +745,26 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 	}
 }
 
-void AvatarMoverProcess::tryTurnLeft() {
-	const MainActor *avatar = getMainActor();
-	int curdir = avatar->getDir();
-	Animation::Sequence action = avatar->getLastAnim();
-	bool moving = (action == Animation::run || action == Animation::walk);
-	checkTurn((curdir - 1 + 8) % 8, moving);
+void AvatarMoverProcess::tryTurnLeft(bool b) {
+	_tryTurnLeft = b;
 }
 
-void AvatarMoverProcess::tryTurnRight() {
-	const MainActor *avatar = getMainActor();
-	int curdir = avatar->getDir();
-	Animation::Sequence action = avatar->getLastAnim();
-	bool moving = (action == Animation::run || action == Animation::walk);
-	checkTurn((curdir + 1) % 8, moving);
+void AvatarMoverProcess::tryTurnRight(bool b) {
+	_tryTurnRight = b;
 }
 
-void AvatarMoverProcess::tryMoveForward() {
-	const MainActor *avatar = getMainActor();
-	int curdir = avatar->getDir();
-	Animation::Sequence action = avatar->getLastAnim();
-	bool moving = (action == Animation::run || action == Animation::walk);
-	if (moving)
-		return;
-	step(Animation::step, curdir, false);
+void AvatarMoverProcess::tryMoveForward(bool b) {
+	_tryMoveForward = b;
 }
 
-void AvatarMoverProcess::tryMoveBack() {
-	const MainActor *avatar = getMainActor();
-	int curdir = avatar->getDir();
-	Animation::Sequence action = avatar->getLastAnim();
-	bool moving = (action == Animation::run || action == Animation::walk);
-	if (moving)
-		return;
-	step(Animation::step, (curdir + 4) % 8, false);
+void AvatarMoverProcess::tryMoveBack(bool b) {
+	if (b) {
+		_tryMoveBack = true;
+	}
+	else {
+		_tryMoveBack = false;
+		_tryMoveForward = false;
+	}
 }
 
 void AvatarMoverProcess::turnToDirection(int direction) {
