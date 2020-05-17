@@ -731,6 +731,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		Math::Matrix4 modelMatrix = quat.toMatrix();
 		bool hasZBuffer = g_grim->getCurrSet()->getCurrSetup()->_bkgndZBm;
 		Math::Matrix4 extraMatrix;
+		_matrixStack.top() = extraMatrix;
 
 		modelMatrix.transpose();
 		modelMatrix.setPosition(pos);
