@@ -43,7 +43,7 @@ void GuiObject::reflowLayout() {
 		int16 w, h;
 
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h) || w == -1 || h == -1) {
-			error("Could not load widget position for '%s'", _name.c_str());
+			error("Unable to load widget position for '%s'. Please check your theme files", _name.c_str());
 		}
 		_w = w;
 		_h = h;
