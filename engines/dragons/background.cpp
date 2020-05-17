@@ -257,8 +257,8 @@ void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int
 void Background::restoreTiles(uint16 layerNum, int16 x1, int16 y1, int16 w, int16 h) {
 	int16 tmw = x1 + w;
 	int16 tmh = y1 + h;
-	for (int y = 0; y < tmh; y++) {
-		for (int x = 0; x < tmw; x++) {
+	for (int y = y1; y < tmh; y++) {
+		for (int x = x1; x < tmw; x++) {
 			uint16 idx = READ_LE_UINT16(&_tileMap[layerNum].map[(y * _tileMap[layerNum].w + x) * 2]) + _tileMap[layerNum].tileIndexOffset;
 			//debug("tileIdx: %d", idx);
 			drawTileToSurface(_layerSurface[layerNum], _palette, _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
