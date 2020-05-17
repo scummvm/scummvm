@@ -305,6 +305,14 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_label = text;
 
 	_align = g_gui.xmlEval()->getWidgetTextHAlign(name);
+	if (g_gui.useRTL()) {
+		if (_align == Graphics::kTextAlignLeft) {
+			_align = Graphics::kTextAlignRight;
+		} else if (_align == Graphics::kTextAlignRight) {
+			_align = Graphics::kTextAlignLeft;
+		}
+	}
+
 	_font = font;
 }
 
