@@ -1062,7 +1062,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 		return 0;
 	}*/
 
-	debug(6, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X",
+	debug(10, "Item: %d (shape %d) calling usecode event %d @ %04X:%04X",
 			_objId, _shape, event, class_id, offset);
 
 	return callUsecode(static_cast<uint16>(class_id),
