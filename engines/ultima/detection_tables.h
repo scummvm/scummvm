@@ -85,7 +85,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("britain.ult", "304fe52ce5f34b9181052363d74d7505", 1280),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GAME_ULTIMA4,
@@ -100,7 +100,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("britain.ult", "304fe52ce5f34b9181052363d74d7505", 1280),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GAME_ULTIMA4,
