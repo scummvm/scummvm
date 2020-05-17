@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "petka/q_manager.h"
 #include "petka/flc.h"
 #include "petka/petka.h"
@@ -82,7 +84,7 @@ void InterfaceMap::start() {
 void InterfaceMap::stop() {
 	if (_objUnderCursor)
 		((QMessageObject *)_objUnderCursor)->_isShown = false;
-	//setText("", 0xFFFFC0, 0xA0A0A);
+	setText(Common::U32String(""), 0, 0);
 
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	cursor->_resourceId = _savedCursorId;
@@ -102,6 +104,7 @@ void InterfaceMap::onLeftButtonDown(const Common::Point p) {
 }
 
 void InterfaceMap::onMouseMove(const Common::Point p) {
+	QVisibleObject *oldObj = _objUnderCursor;
 	_objUnderCursor = nullptr;
 
 	bool found = false;
@@ -131,6 +134,18 @@ void InterfaceMap::onMouseMove(const Common::Point p) {
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->_isShown = true;
 	cursor->setCursorPos(p.x, p.y, 0);
+
+	if (_objUnderCursor != oldObj && _objUnderCursor) {
+		Graphics::PixelFormat fmt = g_system->getScreenFormat();
+		QMessageObject *obj = (QMessageObject *)_objUnderCursor;
+		if (!obj->_nameOnScreen.empty()) {
+			setText(obj->_nameOnScreen, fmt.RGBToColor(0xFF, 0xFF, 0xC0), fmt.RGBToColor(0xA, 0xA, 0xA));
+		} else {
+			setText(obj->_name, fmt.RGBToColor(0, 0, 0x80), fmt.RGBToColor(0xA, 0xA, 0xA));
+		}
+	} else if (oldObj && !_objUnderCursor) {
+		setText(Common::U32String(""), 0, 0);
+	}
 }
 
 } // End of namespace Petka
