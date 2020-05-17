@@ -118,8 +118,7 @@ void Widget::draw() {
 		if (g_gui.useRTL()) {
 			_x = g_system->getOverlayWidth() - _x - _w;
 
-			// if (g_gui.isWindowOverlayed()) {
-			// Can i use something better below?
+			// Can i use something better below instead of hardcoding the values?
 			
 			if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions")){
 				_x = _x + g_gui.getOverlayOffset();
@@ -533,7 +532,7 @@ void DropdownButtonWidget::drawWidget() {			// These are okay, no need to flip a
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state);
 	} else {
 		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, _label,
-										  _state, _inButton, _inDropdown);
+										  _state, _inButton, _inDropdown, (g_gui.useRTL() && _useRTL));
 	}
 }
 
