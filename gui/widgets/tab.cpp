@@ -435,11 +435,8 @@ void TabWidget::drawWidget() {
 		}
 	}
 
-	// GUI TODO: Is this necessary?
 	Common::Rect r1(_x + _bodyLP, _y + _bodyTP, _x + _w - _bodyRP, _y + _h - _bodyBP + _tabHeight);
-	if (g_gui.useRTL()) {
-		r1.translate(g_system->getOverlayWidth() - _x - _w, 0);
-	}
+
 	g_gui.theme()->drawDialogBackground(r1, _bodyBackgroundType);
 
 	Common::Rect r2(_x, _y, _x + _w, _y + _h);

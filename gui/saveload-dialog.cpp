@@ -377,7 +377,7 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	_pageTitle = new StaticTextWidget(this, "SaveLoadChooser.Title", title);
-	if(g_gui.useRTL())
+	if (g_gui.useRTL())
 		_pageTitle->setAlign(Graphics::kTextAlignRight);
 
 	// Add choice list
@@ -760,7 +760,7 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	_pageTitle = new StaticTextWidget(this, "SaveLoadChooser.Title", title);
-	if(g_gui.useRTL())
+	if (g_gui.useRTL())
 		_pageTitle->setAlign(Graphics::kTextAlignRight);
 
 	// The list widget needs to be bound so it takes space in the layout
