@@ -1023,6 +1023,8 @@ bool Debugger::cmdSearch(int argc, const char **argv) {
 					print("You find...\n%s!", item->_name);
 				(g_items->*(item->_putItemInInventory))(item->_data);
 			}
+		} else if (usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_ENTER)) {
+			print("");
 		} else {
 			print("%cNothing Here!%c", FG_GREY, FG_WHITE);
 		}
