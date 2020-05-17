@@ -40,6 +40,7 @@ class QObjectStar;
 class QObjectPetka;
 class QObjectChapayev;
 class InterfaceSaveLoad;
+class InterfaceSequence;
 class InterfaceMain;
 class InterfaceStartup;
 class InterfacePanel;
@@ -89,6 +90,7 @@ public:
 	Common::ScopedPtr<QObjectStar> _star;
 	Common::ScopedPtr<InterfaceMain> _mainInterface;
 	Common::ScopedPtr<InterfaceSaveLoad> _saveLoadInterface;
+	Common::ScopedPtr<InterfaceSequence> _sequenceInterface;
 	Common::ScopedPtr<InterfaceStartup> _startupInterface;
 	Common::ScopedPtr<InterfacePanel> _panelInterface;
 	Common::ScopedPtr<InterfaceMap> _mapInterface;

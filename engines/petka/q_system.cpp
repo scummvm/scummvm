@@ -30,6 +30,7 @@
 #include "petka/interfaces/startup.h"
 #include "petka/interfaces/main.h"
 #include "petka/interfaces/save_load.h"
+#include "petka/interfaces/sequence.h"
 #include "petka/interfaces/panel.h"
 #include "petka/interfaces/map.h"
 #include "petka/objects/object_cursor.h"
@@ -167,6 +168,7 @@ bool QSystem::init() {
 	_mainInterface.reset(new InterfaceMain());
 	_startupInterface.reset(new InterfaceStartup());
 	_saveLoadInterface.reset(new InterfaceSaveLoad());
+	_sequenceInterface.reset(new InterfaceSequence());
 	_panelInterface.reset(new InterfacePanel());
 	_mapInterface.reset(new InterfaceMap());
 	if (g_vm->getPart() == 0) {

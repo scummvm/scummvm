@@ -34,6 +34,7 @@
 #include "petka/q_system.h"
 #include "petka/q_manager.h"
 #include "petka/interfaces/main.h"
+#include "petka/interfaces/sequence.h"
 #include "petka/objects/object_bg.h"
 #include "petka/objects/heroes.h"
 
@@ -70,8 +71,10 @@ void QObjectBG::processMessage(const QMessage &msg) {
 		break;
 	}
 	case kSetSeq:
+		g_vm->getQSystem()->_sequenceInterface->start(_id);
 		break;
 	case kEndSeq:
+		g_vm->getQSystem()->_sequenceInterface->stop();
 		break;
 	}
 

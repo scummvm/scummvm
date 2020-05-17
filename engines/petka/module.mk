@@ -17,6 +17,7 @@ MODULE_OBJS = \
     interfaces/map.o \
     interfaces/panel.o \
     interfaces/save_load.o \
+    interfaces/sequence.o \
     interfaces/startup.o \
     objects/object.o \
     objects/object_bg.o \
