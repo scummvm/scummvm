@@ -64,6 +64,7 @@ void Sound::stop() {
 }
 
 void Sound::setBalance(uint16 x, uint16 width) {
+	// original scales from -12.5 db to 12.5 db
 	g_system->getMixer()->setChannelBalance(_handle, (int8)(255 * (2 * x - width) / (2 * width)));
 }
 

@@ -29,6 +29,8 @@
 #include "petka/q_system.h"
 #include "petka/big_dialogue.h"
 #include "petka/sound.h"
+#include "petka/flc.h"
+#include "petka/q_manager.h"
 
 namespace Petka {
 
@@ -110,14 +112,15 @@ void DialogInterface::next(int choice) {
 		if (prevTalkerId != currTalkerId) {
 			sendMsg(kSaid);
 		}
+		_talker = qsys->findObject(currTalkerId);
 		_soundName = g_vm->getSpeechPath() + soundName;
 		Sound *s = g_vm->soundMgr()->addSound(_soundName, Audio::Mixer::kSpeechSoundType);
 		if (s) {
-			// todo pan
+			Common::Rect bounds = g_vm->resMgr()->loadFlic(_talker->_resourceId)->getBounds();
+			s->setBalance(bounds.left + _talker->_x + bounds.width(), 640);
 			s->play(0);
 		}
 		_hasSound = s != nullptr;
-		_talker = qsys->findObject(currTalkerId);
 		if (prevTalkerId != currTalkerId) {
 			sendMsg(kSay);
 		}
