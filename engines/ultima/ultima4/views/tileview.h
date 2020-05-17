@@ -57,11 +57,15 @@ public:
 	void loadTile(MapTile &mapTile);
 	void setTileset(Tileset *tileset);
 
+	void setDest(Image *dest) {
+		_dest = dest;
+	}
 protected:
 	int _columns, _rows;
 	int _tileWidth, _tileHeight;
 	Tileset *_tileSet;
 	Image *_animated;            /**< a scratchpad image for drawing animations */
+	Image *_dest;			// Dest surface, nullptr by default for screen
 };
 
 } // End of namespace Ultima4

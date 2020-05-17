@@ -35,13 +35,15 @@
 namespace Ultima {
 namespace Ultima4 {
 
-TileView::TileView(int x, int y, int columns, int rows) : View(x, y, columns * TILE_WIDTH, rows * TILE_HEIGHT) {
+TileView::TileView(int x, int y, int columns, int rows) :
+		View(x, y, columns * TILE_WIDTH, rows * TILE_HEIGHT) {
 	_columns = columns;
 	_rows = rows;
 	_tileWidth = TILE_WIDTH;
 	_tileHeight = TILE_HEIGHT;
 	_tileSet = g_tileSets->get("base");
 	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	_dest = nullptr;
 }
 
 TileView::TileView(int x, int y, int columns, int rows, const Common::String &tileset) :
@@ -52,6 +54,7 @@ TileView::TileView(int x, int y, int columns, int rows, const Common::String &ti
 	_tileHeight = TILE_HEIGHT;
 	_tileSet = g_tileSets->get(tileset);
 	_animated = Image::create(SCALED(_tileWidth), SCALED(_tileHeight), false, Image::HARDWARE);
+	_dest = nullptr;
 }
 
 TileView::~TileView() {
@@ -90,7 +93,7 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
 
 	// Draw blackness on the tile.
-	_animated->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+	_animated->drawSubRectOn(_dest, SCALED(x * _tileWidth + _bounds.left),
 	    SCALED(y * _tileHeight + _bounds.top), 0, 0,
 	    SCALED(_tileWidth), SCALED(_tileHeight));
 
@@ -103,11 +106,11 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 		tile->getAnim()->draw(_animated, tile, mapTile, DIR_NONE);
 
 		// Then draw it to the screen
-		_animated->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+		_animated->drawSubRectOn(_dest, SCALED(x * _tileWidth + _bounds.left),
 			SCALED(y * _tileHeight + _bounds.top), 0, 0,
 			SCALED(_tileWidth), SCALED(_tileHeight));
 	} else {
-		image->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+		image->drawSubRectOn(_dest, SCALED(x * _tileWidth + _bounds.left),
 			SCALED(y * _tileHeight + _bounds.top),
 			0, SCALED(_tileHeight * mapTile._frame),
 			SCALED(_tileWidth), SCALED(_tileHeight));
@@ -124,7 +127,7 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 
 	// Clear tile contents
 	_animated->fillRect(0, 0, SCALED(_tileWidth), SCALED(_tileHeight), 0, 0, 0, 255);
-	_animated->drawSubRect(
+	_animated->drawSubRectOn(_dest,
 		SCALED(x * _tileWidth + _bounds.left), SCALED(y * _tileHeight + _bounds.top),
 		0, 0,
 		SCALED(_tileWidth), SCALED(_tileHeight)
@@ -158,7 +161,7 @@ void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
 		}
 
 		// Then draw it to the screen
-		_animated->drawSubRect(SCALED(x * _tileWidth + _bounds.left),
+		_animated->drawSubRectOn(_dest, SCALED(x * _tileWidth + _bounds.left),
 			SCALED(y * _tileHeight + _bounds.top), 0, 0,
 				SCALED(_tileWidth), SCALED(_tileHeight)
 		);

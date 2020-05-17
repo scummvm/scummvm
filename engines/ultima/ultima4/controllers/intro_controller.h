@@ -82,6 +82,7 @@ public:
 class IntroController : public Controller, public Observer<Menu *, MenuEvent &> {
 public:
 	IntroController();
+	~IntroController() override;
 
 	/**
 	 * Initializes intro state and loads in introduction graphics, text
@@ -321,6 +322,7 @@ private:
 	TextView _extendedMenuArea;
 	TextView _questionArea;
 	TileView _mapArea;
+	Image *_mapScreen;
 
 	// menus
 	Menu _mainMenu;

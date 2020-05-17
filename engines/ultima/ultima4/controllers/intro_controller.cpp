@@ -189,6 +189,10 @@ IntroController::IntroController() : Controller(1),
 		_useProfile(false) {
 	Common::fill(&_questionTree[0], &_questionTree[15], -1);
 
+	// Setup a separate image surface for rendering the animated map on
+	_mapScreen = Image::create(g_screen->w, g_screen->h, false, Image::HARDWARE);
+	_mapArea.setDest(_mapScreen);
+
 	// initialize menus
 	_confMenu.setTitle("XU4 Configuration:", 0, 0);
 	_confMenu.add(MI_CONF_VIDEO,               "\010 Video Options",              2,  2,/*'v'*/  2);
@@ -284,6 +288,10 @@ IntroController::IntroController() : Controller(1),
 	_interfaceMenu.addShortcutKey(CANCEL, ' ');
 	_interfaceMenu.setClosesMenu(USE_SETTINGS);
 	_interfaceMenu.setClosesMenu(CANCEL);
+}
+
+IntroController::~IntroController() {
+	delete _mapScreen;
 }
 
 bool IntroController::init() {
@@ -511,6 +519,14 @@ void IntroController::drawMap() {
 				   ---------------------------------------------- */
 				drawMapStatic();
 				drawMapAnimated();
+
+				_mapScreen->drawSubRect(
+					SCALED(8),
+					SCALED(13 * 8),
+					SCALED(8),
+					SCALED(13 * 8),
+					SCALED(38 * 8),
+					SCALED(10 * 8));
 
 				/* set sleep cycles */
 				_sleepCycles = _binData->_scriptTable[_scrPos] & 0xf;
@@ -1498,7 +1514,7 @@ void IntroController::getTitleSourceData() {
 		switch (_titles[i]._method) {
 		case SIGNATURE: {
 			// PLOT: "Lord British"
-			srcData = g_intro->getSigData();
+			srcData = getSigData();
 			RGBA color = info->_image->setColor(0, 255, 255);    // cyan for EGA
 			int x = 0, y = 0;
 
@@ -1810,16 +1826,13 @@ bool IntroController::updateTitle() {
 		    SCALED(_title->_srcImage->height()));
 
 
-		// create a destimage for the map tiles
+		// Create a destimage for the map tiles
 		int newtime = g_system->getMillis();
 		if (newtime > _title->_timeDuration + 250 / 4) {
-			// grab the map from the screen
-			Image *screen = imageMgr->get("screen")->_image;
+			// Draw the updated map display
+			drawMapStatic();
 
-			// draw the updated map display
-			g_intro->drawMapStatic();
-
-			screen->drawSubRectOn(
+			_mapScreen->drawSubRectOn(
 			    _title->_srcImage,
 			    SCALED(8),
 			    SCALED(8),
