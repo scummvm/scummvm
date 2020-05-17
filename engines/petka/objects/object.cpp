@@ -131,9 +131,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				break;
 			}
 			if (rMsg.opcode == kIf &&
-			    (rMsg.arg1 == 0xffff || rMsg.arg1 != msg.arg1) &&
-			    (rMsg.arg2 == -1 || rMsg.arg2 != msg.arg2) &&
-			    (rMsg.arg3 == -1 || rMsg.arg3 != msg.arg3)) {
+				((rMsg.arg1 != 0xffff && rMsg.arg1 != msg.arg1) ||
+			    (rMsg.arg2 != -1 && rMsg.arg2 != msg.arg2) ||
+			    (rMsg.arg3 != -1 && rMsg.arg3 != msg.arg3))) {
 				break;
 			}
 			if (rMsg.opcode == kRandom && rMsg.arg2 != -1) {
@@ -170,6 +170,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				break;
 			default:
 				processed = false;
+				break;
 			}
 			if (processed)
 				break;
@@ -272,6 +273,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kStop:
 			g_vm->getQSystem()->_cursor.get()->show(msg.arg1);
 			g_vm->getQSystem()->_star.get()->_isActive = msg.arg1;
+			break;
 		case kShow:
 			show(true);
 			break;
@@ -348,7 +350,6 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			for (uint j = 0; j < r.messages.size(); ++j) {
 				g_dialogReaction->messages.push_back(r.messages[j]);
 			}
-			break;
 		}
 		g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 	}
