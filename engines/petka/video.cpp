@@ -124,4 +124,8 @@ void VideoSystem::updateTime() {
 	_time = g_system->getMillis();
 }
 
+void VideoSystem::setShake(bool shake) {
+	_shake = shake;
+}
+
 }

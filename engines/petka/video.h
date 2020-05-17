@@ -39,6 +39,7 @@ public:
 	void addDirtyRect(const Common::Rect &rect);
 	void addDirtyRect(Common::Point pos, FlicDecoder &flc);
 	void addDirtyRectFromMsk(Common::Point pos, FlicDecoder &flc);
+	void setShake(bool shake);
 	const Common::List<Common::Rect> rects() const;
 	Graphics::Screen &screen();
 

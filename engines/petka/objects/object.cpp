@@ -254,6 +254,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			}
 			_notLoopedSound = msg.arg2 != 5;
 			break;
+		case kAnimate:
+			_animate = msg.arg1;
+			break;
 		case kEnd:
 			if (_reaction && _reactionResId == msg.arg1) {
 				processSavedReaction(&_reaction, this);
@@ -276,6 +279,24 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		case kShow:
 			show(true);
+			break;
+		case kShake:
+			g_vm->videoSystem()->setShake(msg.arg1);
+			break;
+		case kSystem:
+			switch (msg.arg1){
+			case 0:
+				g_vm->getQSystem()->_star->_isActive = 0;
+				break;
+			case 1:
+				g_vm->getQSystem()->_star->_isActive = 1;
+				break;
+			case 242:
+				g_system->quit();
+				break;
+			default:
+				break;
+			}
 			break;
 		case kHide:
 			show(false);
@@ -333,6 +354,22 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			} else if (_walkX != -1) {
 				g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
 			}
+			break;
+		case kDescription: {
+			Common::ScopedPtr<Common::SeekableReadStream> invStream(g_vm->openFile("invntr.txt", false));
+			Common::INIFile invIni;
+			if (invStream) {
+				Common::String desc;
+
+				invIni.loadFromStream(*invStream);
+				invIni.getKey(_name, "ALL", desc);
+
+				g_vm->getQSystem()->_mainInterface->setTextDescription(Common::U32String(desc.c_str()), msg.arg1);
+			}
+			break;
+		}
+		default:
+			debug("Opcode %d is not implemented", msg.opcode);
 			break;
 		}
 	} else {
