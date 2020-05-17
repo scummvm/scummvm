@@ -240,7 +240,7 @@ void QSystem::toggleMapInterface() {
 		if (_currInterface == _mapInterface.get()) {
 			_currInterface->stop();
 		} else if (_currInterface == _mainInterface.get()) {
-			// setText
+			_currInterface->setText(Common::U32String(""), 0, 0);
 			_mapInterface->start(0);
 		}
 	}
