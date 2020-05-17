@@ -108,6 +108,7 @@ void RemapWidget::reflowActionWidgets() {
 	int labelWidth = getWidth() - (spacing + keyButtonWidth + spacing);
 	labelWidth = MAX(0, labelWidth);
 
+	int xOffset = g_gui.getOverlayOffset();
 	uint textYOff = (buttonHeight - kLineHeight) / 2;
 
 	uint y = spacing;
@@ -130,6 +131,9 @@ void RemapWidget::reflowActionWidgets() {
 				int descriptionWidth = getWidth() - x - spacing - resetButtonWidth - spacing;
 				descriptionWidth = MAX(0, descriptionWidth);
 
+				if (g_gui.useRTL()) {
+					x = x - xOffset;
+				}
 				keymapTitle.descriptionText->resize(x, y + textYOff, descriptionWidth, kLineHeight);
 				keymapTitle.resetButton->resize(x + descriptionWidth, y, resetButtonWidth, buttonHeight);
 			}
@@ -139,9 +143,15 @@ void RemapWidget::reflowActionWidgets() {
 
 		x = spacing;
 
+		if (g_gui.useRTL()) {
+			x = x - xOffset;
+		}
 		row.keyButton->resize(x, y, keyButtonWidth, buttonHeight);
 
 		x += keyButtonWidth + spacing;
+		if (g_gui.useRTL()) {
+			x = x + spacing;		// GUI TODO: Some last characters keep getting cut off, but this may be a local testing language issue (i.e for English)
+		}
 		row.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
 
 		y += buttonHeight + spacing;
@@ -270,11 +280,13 @@ void RemapWidget::loadKeymap() {
 }
 
 void RemapWidget::refreshKeymap() {
+	Graphics::TextAlign alignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
+
 	for (uint i = 0; i < _actions.size(); i++) {
 		ActionRow &row = _actions[i];
 
 		if (!row.actionText) {
-			row.actionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, "", Graphics::kTextAlignLeft, nullptr, GUI::ThemeEngine::kFontStyleNormal);
+			row.actionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, "", alignment, nullptr, GUI::ThemeEngine::kFontStyleNormal);
 			row.actionText->setLabel(row.action->description);
 
 			row.keyButton = new GUI::DropdownButtonWidget(widgetsBoss(), 0, 0, 0, 0, "", nullptr, kRemapCmd + i);
@@ -303,7 +315,7 @@ void RemapWidget::refreshKeymap() {
 
 		KeymapTitleRow &keymapTitle = _keymapSeparators[row.keymap];
 		if (!keymapTitle.descriptionText) {
-			keymapTitle.descriptionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, row.keymap->getDescription(), Graphics::kTextAlignLeft);
+			keymapTitle.descriptionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, row.keymap->getDescription(), alignment);
 			keymapTitle.resetButton = new GUI::ButtonWidget(widgetsBoss(), 0, 0, 0, 0, "", nullptr, kResetKeymapCmd + i);
 
 			// I18N: Button to reset keymap mappings to defaults
