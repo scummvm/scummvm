@@ -137,6 +137,12 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDDropDownButtonPressedLeft,  "dropdown_button_pressed_left",  kDrawLayerForeground, kDDDropDownButtonIdle},
 	{kDDDropDownButtonPressedRight, "dropdown_button_pressed_right", kDrawLayerForeground, kDDDropDownButtonIdle},
 
+	{kDDDropDownButtonIdleRTL,			"dropdown_button_idle_rtl",				kDrawLayerBackground, kDDNone},
+	{kDDDropDownButtonHoverLeftRTL,		"dropdown_button_hover_left_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+	{kDDDropDownButtonHoverRightRTL,	"dropdown_button_hover_right_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+	{kDDDropDownButtonPressedLeftRTL,	"dropdown_button_pressed_left_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+	{kDDDropDownButtonPressedRightRTL,	"dropdown_button_pressed_right_rtl",	kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+
 	{kDDSliderFull,                 "slider_full",      kDrawLayerForeground,  kDDNone},
 	{kDDSliderHover,                "slider_hover",     kDrawLayerForeground,  kDDNone},
 	{kDDSliderDisabled,             "slider_disabled",  kDrawLayerForeground,  kDDNone},
@@ -953,23 +959,24 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 }
 
 void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::String &str,
-                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown) {
+                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl) {
 	if (!ready())
 		return;
 
 	DrawData dd;
+
 	if (buttonState == kStateHighlight && inButton)
-		dd = kDDDropDownButtonHoverLeft;
+		dd = rtl ? kDDDropDownButtonHoverLeftRTL : kDDDropDownButtonHoverLeft;
 	else if (buttonState == kStateHighlight && inDropdown)
-		dd = kDDDropDownButtonHoverRight;
+		dd = rtl ? kDDDropDownButtonHoverRightRTL : kDDDropDownButtonHoverRight;
 	else if (buttonState == kStateDisabled)
 		dd = kDDDropDownButtonDisabled;
 	else if (buttonState == kStatePressed && inButton)
-		dd = kDDDropDownButtonPressedLeft;
+		dd = rtl ? kDDDropDownButtonPressedLeftRTL : kDDDropDownButtonPressedLeft;
 	else if (buttonState == kStatePressed && inDropdown)
-		dd = kDDDropDownButtonPressedRight;
+		dd = rtl ? kDDDropDownButtonPressedRightRTL : kDDDropDownButtonPressedRight;
 	else
-		dd = kDDDropDownButtonIdle;
+		dd = rtl ? kDDDropDownButtonIdleRTL : kDDDropDownButtonIdle;
 
 	drawDD(dd, r);
 

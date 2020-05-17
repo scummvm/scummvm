@@ -880,6 +880,30 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_idle_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					fill = 'foreground'
+					shadow = '2'
+					fg_color = 'button_idle'
+					clip = '0,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_idle' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -927,6 +951,29 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_hover_left_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					fill = 'foreground'
+					fg_color = 'button_hover'
+					clip = '13,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_hover_left' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -971,6 +1018,29 @@
 					xpos = 'right'
 					ypos = 'center'
 					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_hover_right_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					fill = 'foreground'
+					fg_color = 'button_hover'
+					clip = '0,0,13,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
 					orientation = 'bottom'
 		/>
 	</drawdata>
@@ -1066,6 +1136,29 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_left_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					fill = 'foreground'
+					fg_color = 'button_pressed'
+					clip = '0,0,-13,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_pressed_left' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -1110,6 +1203,29 @@
 					xpos = 'right'
 					ypos = 'center'
 					padding = '0,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_right_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					fill = 'foreground'
+					fg_color = 'button_pressed'
+					clip = '0,0,13,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
 					orientation = 'bottom'
 		/>
 	</drawdata>

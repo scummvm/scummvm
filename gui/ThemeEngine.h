@@ -87,6 +87,12 @@ enum DrawData {
 	kDDDropDownButtonPressedLeft,
 	kDDDropDownButtonPressedRight,
 
+	kDDDropDownButtonIdleRTL,
+	kDDDropDownButtonHoverLeftRTL,
+	kDDDropDownButtonHoverRightRTL,
+	kDDDropDownButtonPressedLeftRTL,
+	kDDDropDownButtonPressedRightRTL,
+
 	kDDSliderFull,
 	kDDSliderHover,
 	kDDSliderDisabled,
@@ -409,7 +415,7 @@ public:
 	                uint16 hints = 0);
 
 	void drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::String &str,
-	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown);
+	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl = false);
 
 	void drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans = false);
 
