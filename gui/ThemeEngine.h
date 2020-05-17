@@ -416,10 +416,10 @@ public:
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled);
 
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked,
-	                  WidgetStateInfo state = kStateEnabled, bool drawText = true);
+	                  WidgetStateInfo state = kStateEnabled);
 
 	void drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked,
-	                     WidgetStateInfo state = kStateEnabled, bool drawText = true);
+	                     WidgetStateInfo state = kStateEnabled);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
 	             const Common::Array<Common::String> &tabs, int active);
