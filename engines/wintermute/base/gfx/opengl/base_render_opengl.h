@@ -129,6 +129,9 @@ private:
 	void drawFromSurface(RenderTicketOpenGL *ticket);
 	// Dirty-rects:
 	void drawFromSurface(RenderTicketOpenGL *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
+
+	void drawRenderSurface();
+
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicketOpenGL *> _renderQueue;
 

@@ -38,6 +38,8 @@
 #include "graphics/transparent_surface.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
+#include "graphics/opengl/texture.h"
+#include "graphics/opengl/surfacerenderer.h"
 
 #define DIRTY_RECT_LIMIT 800
 
@@ -62,6 +64,8 @@ BaseRenderOpenGL::BaseRenderOpenGL(BaseGame *inGame) : BaseRenderer(inGame) {
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
 	}
+
+	_disableDirtyRects = true;
 
 	_lastScreenChangeID = g_system->getScreenChangeID();
 }
@@ -123,20 +127,12 @@ bool BaseRenderOpenGL::initRenderer(int width, int height, bool windowed) {
 
 	_windowed = !ConfMan.getBool("fullscreen");
 
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	g_system->beginGFXTransaction();
-		g_system->initSize(_width, _height, &format);
-	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
-
-	if (gfxError != OSystem::kTransactionSuccess) {
-		warning("Couldn't setup GFX-backend for %dx%dx%d", _width, _height, format.bytesPerPixel * 8);
-		return STATUS_FAILED;
-	}
+	Graphics::PixelFormat format = OpenGL::Texture::getRGBAPixelFormat();
 
 	g_system->showMouse(false);
 
-	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
-	_blankSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
+	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), format);
+	_blankSurface->create(g_system->getWidth(), g_system->getHeight(), format);
 	_blankSurface->fillRect(Common::Rect(0, 0, _blankSurface->h, _blankSurface->w), _blankSurface->format.ARGBToColor(255, 0, 0, 0));
 	_active = true;
 
@@ -147,14 +143,14 @@ bool BaseRenderOpenGL::initRenderer(int width, int height, bool windowed) {
 
 bool BaseRenderOpenGL::indicatorFlip() {
 	if (_indicatorWidthDrawn > 0 && _indicatorHeight > 0) {
-		g_system->copyRectToScreen((byte *)_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
+		drawRenderSurface();
 		g_system->updateScreen();
 	}
 	return STATUS_OK;
 }
 
 bool BaseRenderOpenGL::forcedFlip() {
-	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+	drawRenderSurface();
 	g_system->updateScreen();
 	return STATUS_OK;
 }
@@ -164,6 +160,7 @@ bool BaseRenderOpenGL::flip() {
 		_skipThisFrame = false;
 		delete _dirtyRect;
 		_dirtyRect = nullptr;
+		drawRenderSurface();
 		g_system->updateScreen();
 		_needsFlip = false;
 
@@ -200,7 +197,7 @@ bool BaseRenderOpenGL::flip() {
 
 	if (_needsFlip || _disableDirtyRects || screenChanged) {
 		if (_disableDirtyRects || screenChanged) {
-			g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+			//g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
 		}
 		//  g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		delete _dirtyRect;
@@ -209,6 +206,7 @@ bool BaseRenderOpenGL::flip() {
 	}
 	_lastFrameIter = _renderQueue.end();
 
+	drawRenderSurface();
 	g_system->updateScreen();
 
 	return STATUS_OK;
@@ -482,6 +480,40 @@ void BaseRenderOpenGL::drawFromSurface(RenderTicketOpenGL *ticket, Common::Rect 
 	ticket->drawToSurface(_renderSurface, dstRect, clipRect);
 }
 
+void BaseRenderOpenGL::drawRenderSurface()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	for (int i = 0; i < _renderSurface->h; ++i)
+	{
+		for (int j = 0; j < _renderSurface->w; ++j)
+		{
+			byte* pixel = reinterpret_cast<byte*>(_renderSurface->getPixels());
+			pixel += i * _renderSurface->w * 4 + j * 4;
+
+			byte tmp = pixel[0];
+			pixel[0] = pixel[3];
+			pixel[3] = tmp;
+			tmp = pixel[1];
+			pixel[1] = pixel[2];
+			pixel[2] = tmp;
+		}
+	}
+
+	OpenGL::Texture tex(*_renderSurface);
+
+	OpenGL::SurfaceRenderer* renderer = OpenGL::createBestSurfaceRenderer();
+
+	renderer->prepareState();
+	renderer->setFlipY(true);
+	renderer->render(&tex, Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1)));
+	renderer->restorePreviousState();
+	delete renderer;
+
+	uint32 background = BYTETORGBA(0, 0, 0, 0);
+	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->w, _renderSurface->h), background);
+}
+
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOpenGL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	// This function isn't used outside of indicator-displaying, and thus quite unused in
@@ -599,6 +631,7 @@ void BaseRenderOpenGL::endSaveLoad() {
 
 	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->w, _renderSurface->h), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
 	g_system->copyRectToScreen((byte *)_renderSurface->getPixels(), _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+	drawRenderSurface();
 	g_system->updateScreen();
 }
 

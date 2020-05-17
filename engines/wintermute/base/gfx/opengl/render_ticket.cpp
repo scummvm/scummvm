@@ -108,7 +108,8 @@ bool RenderTicketOpenGL::operator==(const RenderTicketOpenGL &t) const {
 
 // Replacement for SDL2's SDL_RenderCopy
 void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface) const {
-	Graphics::TransparentSurface src(*getSurface(), false);
+	Graphics::Surface* converted_surface = getSurface()->convertTo(Graphics::PixelFormat { 4, 8, 8, 8, 8, 24, 16, 8, 0});
+	Graphics::TransparentSurface src(*converted_surface, false);
 
 	Common::Rect clipRect;
 	clipRect.setWidth(getSurface()->w);
@@ -136,10 +137,13 @@ void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface) const 
 		}
 		y += h;
 	}
+
+	delete converted_surface;
 }
 
 void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
-	Graphics::TransparentSurface src(*getSurface(), false);
+	Graphics::Surface* converted_surface = getSurface()->convertTo(Graphics::PixelFormat { 4, 8, 8, 8, 8, 24, 16, 8, 0});
+	Graphics::TransparentSurface src(*converted_surface, false);
 	bool doDelete = false;
 	if (!clipRect) {
 		doDelete = true;
@@ -201,6 +205,8 @@ void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface, Common
 	if (doDelete) {
 		delete clipRect;
 	}
+
+	delete converted_surface;
 }
 
 } // End of namespace Wintermute
