@@ -69,9 +69,11 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x45, LC::c_namepush,		"b" },
 	{ 0x46, LC::cb_objectpush,  "b" },
 	{ 0x49, LC::cb_globalpush,	"b" },
+	{ 0x4a, LC::cb_thepush,		"b" },
 	{ 0x4b, LC::cb_varpush,		"bpa" },
 	{ 0x4c, LC::cb_varpush,		"bpv" },
 	{ 0x4f, LC::cb_globalassign,"b" },
+	{ 0x50, LC::cb_theassign,	"b" },
 	{ 0x51, LC::cb_varassign,	"bpa" },
 	{ 0x52, LC::cb_varassign,	"bpv" },
 	{ 0x53, LC::c_jump,			"jb" },
@@ -81,8 +83,14 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x57, LC::cb_call,		"b" },
 	{ 0x58, LC::cb_methodcall,  "b" },
 	{ 0x59, LC::cb_v4assign,	"b" },
+	{ 0x5a, LC::cb_v4assign2,	"b" },
+	{ 0x5b, LC::cb_delete, 		"b" },
 	{ 0x5c, LC::cb_v4theentitypush, "b" },
 	{ 0x5d, LC::cb_v4theentityassign, "b" },
+	{ 0x5f, LC::cb_thepush2,	"b" },
+	{ 0x60, LC::cb_theassign2,	"b" },
+	{ 0x61, LC::cb_objectfieldpush, "b" },
+	{ 0x62, LC::cb_objectfieldassign, "b" },
 	{ 0x64, LC::cb_stackpeek, 	"b" },
 	{ 0x65, LC::cb_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "b" },
@@ -93,9 +101,11 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x85, LC::c_namepush,     "w" },
 	{ 0x86, LC::cb_objectpush,  "w" },
 	{ 0x89, LC::cb_globalpush,	"w" },
+	{ 0x8a, LC::cb_thepush,		"w" },
 	{ 0x8b, LC::cb_varpush,		"wpa" },
 	{ 0x8c, LC::cb_varpush,		"wpv" },
 	{ 0x8f, LC::cb_globalassign,"w" },
+	{ 0x90, LC::cb_theassign, 	"w" },
 	{ 0x91, LC::cb_varassign,	"wpa" },
 	{ 0x92, LC::cb_varassign,	"wpv" },
 	{ 0x93, LC::c_jump,			"jw" },
@@ -105,8 +115,13 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x97, LC::cb_call,		"w" },
 	{ 0x98, LC::cb_methodcall,  "w" },
 	{ 0x99, LC::cb_v4assign,	"w" },
+	{ 0x9a, LC::cb_v4assign2,	"w" },
 	{ 0x9c, LC::cb_v4theentitypush, "w" },
 	{ 0x9d, LC::cb_v4theentityassign, "w" },
+	{ 0x9f, LC::cb_thepush2, 	"w" },
+	{ 0xa0, LC::cb_theassign2, "w" },
+	{ 0xa1, LC::cb_objectfieldpush, "w" },
+	{ 0xa2, LC::cb_objectfieldassign, "w" },
 	{ 0xa6, LC::cb_v4theentitynamepush, "w" },
 	{ 0, 0, 0 }
 };
@@ -253,6 +268,12 @@ void LC::cb_unk2() {
 	uint arg1 = g_lingo->readInt();
 	uint arg2 = g_lingo->readInt();
 	warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
+}
+
+void LC::cb_delete() {
+	g_lingo->readInt();
+	g_lingo->printSTUBWithArglist("cb_delete", 9);
+	g_lingo->dropStack(9);
 }
 
 void LC::cb_field() {
@@ -452,6 +473,23 @@ void LC::cb_globalassign() {
 	g_lingo->varAssign(target, source);
 }
 
+void LC::cb_objectfieldassign() {
+	int fieldNameId = g_lingo->readInt();
+	Common::String fieldName = g_lingo->getName(fieldNameId);
+	Datum object = g_lingo->pop();
+	Datum value = g_lingo->pop();
+	warning("STUB: cb_objectfieldassign(%s, %s, %s)", object.asString(true).c_str(), fieldName.c_str(), value.asString(true).c_str());
+}
+
+void LC::cb_objectfieldpush() {
+	int fieldNameId = g_lingo->readInt();
+	Common::String fieldName = g_lingo->getName(fieldNameId);
+	Datum object = g_lingo->pop();
+	warning("STUB: cb_objectfieldpush(%s, %s)", object.asString(true).c_str(), fieldName.c_str());
+	Datum result;
+	result.type = VOID;
+	g_lingo->push(result);
+}
 
 void LC::cb_objectpush() {
 	int nameId = g_lingo->readInt();
@@ -462,6 +500,37 @@ void LC::cb_objectpush() {
 	g_lingo->push(result);
 }
 
+void LC::cb_theassign() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	Datum value = g_lingo->pop();
+	warning("STUB: cb_theassign(%s, %s)", name.c_str(), value.asString().c_str());
+}
+
+void LC::cb_theassign2() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	Datum value = g_lingo->pop();
+	warning("STUB: cb_theassign2(%s, %s)", name.c_str(), value.asString().c_str());
+}
+
+void LC::cb_thepush() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	warning("STUB: cb_thepush(%s)", name.c_str());
+	Datum result;
+	result.type = VOID;
+	g_lingo->push(result);
+}
+
+void LC::cb_thepush2() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	warning("STUB: cb_thepush2(%s)", name.c_str());
+	Datum result;
+	result.type = VOID;
+	g_lingo->push(result);
+}
 
 void LC::cb_varpush() {
 	int nameId = g_lingo->readInt();
@@ -506,6 +575,13 @@ void LC::cb_varassign() {
 	debugC(3, kDebugLingoExec, "cb_varassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
 	g_lingo->varAssign(target, source);
+}
+
+
+void LC::cb_v4assign2() {
+	g_lingo->readInt();
+	g_lingo->printSTUBWithArglist("cb_v4assign2", 10);
+	g_lingo->dropStack(10);
 }
 
 

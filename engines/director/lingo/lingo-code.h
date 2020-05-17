@@ -146,19 +146,27 @@ namespace LC {
 
 	// bytecode-related instructions
 	void cb_call();
+	void cb_delete();
 	void cb_field();
 	void cb_globalassign();
 	void cb_globalpush();
 	void cb_list();
 	void cb_localcall();
 	void cb_methodcall();
+	void cb_objectfieldassign();
+	void cb_objectfieldpush();
 	void cb_objectpush();
+	void cb_theassign();
+	void cb_theassign2();
+	void cb_thepush();
+	void cb_thepush2();
 	void cb_proplist();
 	void cb_stackpeek();
 	void cb_stackdrop();
 	void cb_varassign();
 	void cb_varpush();
 	void cb_v4assign();
+	void cb_v4assign2();
 	void cb_v4theentitypush();
 	void cb_v4theentitynamepush();
 	void cb_v4theentityassign();
