@@ -65,7 +65,7 @@ InterfaceMain::InterfaceMain() {
 	_objs.push_back(g_vm->getQSystem()->_star.get());
 }
 
-void InterfaceMain::start() {
+void InterfaceMain::start(int id) {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_isIniting = 0;
 

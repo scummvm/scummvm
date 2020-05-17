@@ -172,10 +172,10 @@ bool QSystem::init() {
 	_panelInterface.reset(new InterfacePanel());
 	_mapInterface.reset(new InterfaceMap());
 	if (g_vm->getPart() == 0) {
-		_startupInterface->start();
+		_startupInterface->start(0);
 		_prevInterface = _currInterface = _startupInterface.get();
 	} else {
-		_mainInterface->start();
+		_mainInterface->start(0);
 		_prevInterface = _currInterface = _mainInterface.get();
 	}
 	return true;
@@ -229,7 +229,7 @@ void QSystem::togglePanelInterface() {
 		if (_currInterface == _panelInterface.get()) {
 			_currInterface->stop();
 		} else if (_currInterface == _mainInterface.get()) {
-			_panelInterface->start();
+			_panelInterface->start(0);
 		}
 	}
 }
@@ -241,7 +241,7 @@ void QSystem::toggleMapInterface() {
 			_currInterface->stop();
 		} else if (_currInterface == _mainInterface.get()) {
 			// setText
-			_mapInterface->start();
+			_mapInterface->start(0);
 		}
 	}
 }

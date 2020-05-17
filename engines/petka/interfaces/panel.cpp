@@ -93,7 +93,7 @@ InterfacePanel::InterfacePanel() {
 
 }
 
-void InterfacePanel::start() {
+void InterfacePanel::start(int id) {
 	readSettings();
 
 	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kPanelObjName);
@@ -303,4 +303,3 @@ void InterfacePanel::applySettings() {
 } // End of namespace Petka
 
 #endif
-

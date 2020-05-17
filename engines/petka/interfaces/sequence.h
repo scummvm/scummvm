@@ -31,7 +31,7 @@ class InterfaceSequence : public Interface {
 public:
 	InterfaceSequence();
 
-	void start(int id);
+	void start(int id) override;
 	void stop() override;
 
 	void onLeftButtonDown(const Common::Point p) override;

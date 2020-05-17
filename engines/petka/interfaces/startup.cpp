@@ -49,7 +49,7 @@ enum {
 	kBackgroundId = 4980
 };
 
-void InterfaceStartup::start() {
+void InterfaceStartup::start(int id) {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_isIniting = 0;
 
@@ -133,5 +133,3 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 }
 
 } // End of namespace Petka
-
-

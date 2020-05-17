@@ -31,7 +31,7 @@ class InterfacePanel : public Interface {
 public:
 	InterfacePanel();
 
-	void start() override;
+	void start(int id) override;
 
 	void onLeftButtonDown(const Common::Point p) override;
 	void onMouseMove(const Common::Point p) override;

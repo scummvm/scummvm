@@ -29,7 +29,7 @@ namespace Petka {
 
 class InterfaceMap: public Interface {
 public:
-	void start() override;
+	void start(int id) override;
 	void stop() override;
 
 	void onLeftButtonDown(const Common::Point p) override;
@@ -46,4 +46,3 @@ private:
 } // End of namespace Petka
 
 #endif
-

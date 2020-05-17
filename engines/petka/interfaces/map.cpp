@@ -35,7 +35,7 @@ namespace Petka {
 
 const char *const mapName = "\xCA\xC0\xD0\xD2\xC0"; // КАРТА
 
-void InterfaceMap::start() {
+void InterfaceMap::start(int id) {
 	if (!g_vm->getQSystem()->_room->_showMap)
 		return;
 

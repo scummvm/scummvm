@@ -39,7 +39,7 @@ class InterfaceMain : public Interface {
 public:
 	InterfaceMain();
 
-	void start() override;
+	void start(int id) override;
 
 	void loadRoom(int id, bool fromSave);
 
