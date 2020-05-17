@@ -33,26 +33,26 @@
 namespace Petka {
 
 DialogInterface::DialogInterface() {
-	_field18 = 3;
-	_field14 = -1;
+	_state = kIdle;
+	_id = -1;
 	_field24 = 0;
-	_field4 = 0;
-	_field8 = 0;
+	_isUserMsg = 0;
+	_afterUserMsg = 0;
 	_talker = nullptr;
 	_sender = nullptr;
 	_hasSound = 0;
-	_field10 = 1;
+	_firstTime = 1;
 }
 
-void DialogInterface::start(uint a, QMessageObject *sender) {
-	_field14 = a;
+void DialogInterface::start(uint id, QMessageObject *sender) {
+	_id = id;
 	_hasSound = 0;
 	_field24 = 0;
-	_field4 = 0;
-	_field8 = 0;
+	_isUserMsg = 0;
+	_afterUserMsg = 0;
 	_talker = nullptr;
-	_field10 = 1;
-	_field18 = 3;
+	_firstTime = 1;
+	_state = kIdle;
 	_sender = sender;
 	_soundName.clear();
 	saveCursorState();
@@ -77,54 +77,85 @@ void DialogInterface::restoreCursorState() {
 }
 
 void DialogInterface::next(int choice) {
+	if (_id == -1)
+		return;
+
+	if ((choice == -1 && _state == kMenu) || (choice != -1 && _state == kPlaying))
+		return;
+
+	QSystem *qsys = g_vm->getQSystem();
+	BigDialogue *bigDialog = g_vm->getBigDialogue();
+
 	const char *soundName = nullptr;
-	if (_field14 == -1 || (choice == -1 && _field18 == 2))
-		return;
-	if (_field18 == -1)
-		return;
-	int talkerId = -1;
-	if (choice == -1 && !_field8) {
-		g_vm->getBigDialogue()->getSpeechInfo(&talkerId, &soundName, -1);
+	int prevTalkerId = -1;
+
+	if (choice == -1 && !_afterUserMsg) {
+		bigDialog->getSpeechInfo(&prevTalkerId, &soundName, -1);
 	}
-	_field8 = _field4;
-	g_vm->getQSystem()->_cursor.get()->_isShown = 0;
-	if (_field4)
+	_afterUserMsg = _isUserMsg;
+
+	qsys->_cursor->_isShown = 0;
+	if (_isUserMsg)
 		return;
-	if (_field10)
-		_field10 = 0;
+	if (_firstTime)
+		_firstTime = 0;
 	else
 		g_vm->getBigDialogue()->next(choice);
+
 	switch (g_vm->getBigDialogue()->opcode()) {
 	case kOpcodePlay: {
-		int talkerId2;
-		const Common::U32String *text = g_vm->getBigDialogue()->getSpeechInfo(&talkerId2, &soundName, -1);
+		int currTalkerId;
+		const Common::U32String *text = bigDialog->getSpeechInfo(&currTalkerId, &soundName, -1);
 		g_vm->soundMgr()->removeSound(_soundName);
-		if (talkerId != talkerId2) {
+		if (prevTalkerId != currTalkerId) {
 			sendMsg(kSaid);
 		}
 		_soundName = g_vm->getSpeechPath() + soundName;
 		Sound *s = g_vm->soundMgr()->addSound(_soundName, Audio::Mixer::kSpeechSoundType);
 		if (s) {
+			// todo pan
 			s->play(0);
 		}
 		_hasSound = s != nullptr;
-		_talker = g_vm->getQSystem()->findObject(talkerId2);
-		if (talkerId != talkerId2) {
+		_talker = qsys->findObject(currTalkerId);
+		if (prevTalkerId != currTalkerId) {
 			sendMsg(kSay);
 		}
-		g_vm->getQSystem()->_mainInterface->setTextPhrase(*text, _talker->_dialogColor, g_vm->_system->getScreenFormat().RGBToColor(0x7F, 0, 0));
-		_field18 = 1;
+		qsys->_mainInterface->setTextPhrase(*text, _talker->_dialogColor, g_system->getScreenFormat().RGBToColor(0x7F, 0, 0));
+		_state = kPlaying;
 		break;
 	}
-	case kOpcodeMenu:
+	case kOpcodeMenu: {
+		g_vm->soundMgr()->removeSound(_soundName);
+		_soundName.clear();
+		if (_talker) {
+			sendMsg(kSaid);
+			_talker = nullptr;
+		}
+		uint count = bigDialog->choicesCount();
+		if (count == 0)
+			break;
+
+		Common::Array<Common::U32String> choices;
+		for (uint i = 0; i < count; ++i) {
+			int id;
+			choices.push_back(*bigDialog->getSpeechInfo(&id, &soundName, -1));
+		}
+		qsys->_mainInterface->setTextChoice(choices, 0xFFFF, g_system->getScreenFormat().RGBToColor(0xFF, 0, 0));
+
+		qsys->_cursor->_isShown = 1;
+		_state = kMenu;
 		break;
+	}
 	case kOpcodeEnd:
 		end();
 		break;
-	case kOpcode4:
+	case kOpcodeUserMessage:
+		qsys->_mainInterface->setTextPhrase(Common::U32String(""), 0, 0);
 		g_vm->soundMgr()->removeSound(_soundName);
+		_soundName.clear();
 		_talker = nullptr;
-		_field18 = 1;
+		_state = kPlaying;
 		break;
 	default:
 		break;
@@ -141,8 +172,8 @@ void DialogInterface::end() {
 	g_vm->soundMgr()->removeSound(_soundName);
 	sendMsg(kSaid);
 	_talker = nullptr;
-	_field18 = 3;
-	_field14 = -1;
+	_state = kIdle;
+	_id = -1;
 	restoreCursorState();
 	if (g_dialogReaction)
 		processSavedReaction(&g_dialogReaction, _sender);

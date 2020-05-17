@@ -32,19 +32,19 @@ enum {
 	kOpcodePlay = 1,
 	kOpcodeMenu,
 	kOpcodeEnd,
-	kOpcode4
+	kOpcodeUserMessage
 };
 
 enum {
 	kOperationBreak = 1,
 	kOperationMenu,
 	kOperationGoTo,
-	kOperationMenuRet,
-	kOperation5,
+	kOperationDisableMenuItem,
+	kOperationEnableMenuItem,
 	kOperationReturn,
 	kOperationPlay,
 	kOperationCircle,
-	kOperation9
+	kOperationUserMessage
 };
 
 struct Operation {
@@ -59,11 +59,11 @@ struct Operation {
 		struct {
 			uint16 opIndex;
 			byte bit;
-		} menuRet;
+		} disableMenuItem;
 		struct {
 			uint16 opIndex;
 			byte bit;
-		} op5;
+		} enableMenuItem;
 		struct {
 			uint16 messageIndex;
 		} play;
@@ -73,7 +73,7 @@ struct Operation {
 		} circle;
 		struct {
 			uint16 arg;
-		} op9;
+		} userMsg;
 	};
 	byte type;
 };

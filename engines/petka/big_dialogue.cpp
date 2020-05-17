@@ -206,8 +206,8 @@ uint BigDialogue::opcode() {
 		case kOperationPlay:
 		case kOperationCircle:
 			return kOpcodePlay;
-		case kOperation9:
-			return kOpcode4;
+		case kOperationUserMessage:
+			return kOpcodeUserMessage;
 		default:
 			next();
 			break;
@@ -229,13 +229,13 @@ void BigDialogue::load(Common::ReadStream *s) {
 			_ops[i].menu.bits = (byte)op;
 			_ops[i].menu.bitField = (uint16)(op >> 8);
 			break;
-		case kOperationMenuRet:
-			_ops[i].menuRet.opIndex = (uint16)op;
-			_ops[i].menuRet.bit = (byte)(op >> 16);
+		case kOperationDisableMenuItem:
+			_ops[i].disableMenuItem.opIndex = (uint16)op;
+			_ops[i].disableMenuItem.bit = (byte)(op >> 16);
 			break;
-		case kOperation5:
-			_ops[i].op5.opIndex = (uint16)op;
-			_ops[i].op5.bit = (byte)(op >> 16);
+		case kOperationEnableMenuItem:
+			_ops[i].enableMenuItem.opIndex = (uint16)op;
+			_ops[i].enableMenuItem.bit = (byte)(op >> 16);
 			break;
 		case kOperationReturn:
 			break;
@@ -246,8 +246,8 @@ void BigDialogue::load(Common::ReadStream *s) {
 			_ops[i].circle.count = (uint16)op;
 			_ops[i].circle.curr = (byte)(op >> 16);
 			break;
-		case kOperation9:
-			_ops[i].op9.arg = (uint16)op;
+		case kOperationUserMessage:
+			_ops[i].userMsg.arg = (uint16)op;
 			break;
 		default:
 			break;
@@ -267,13 +267,13 @@ void BigDialogue::save(Common::WriteStream *s) {
 			s->writeUint16LE(_ops[i].menu.bitField);
 			s->writeByte(kOperationMenu);
 			break;
-		case kOperationMenuRet:
-			s->writeUint16LE(_ops[i].menuRet.opIndex);
-			s->writeUint16LE(MKTAG16(_ops[i].menuRet.bit, kOperationMenuRet));
+		case kOperationDisableMenuItem:
+			s->writeUint16LE(_ops[i].disableMenuItem.opIndex);
+			s->writeUint16LE(MKTAG16(_ops[i].disableMenuItem.bit, kOperationDisableMenuItem));
 			break;
-		case kOperation5:
-			s->writeUint16LE(_ops[i].op5.opIndex);
-			s->writeUint16LE(MKTAG16(_ops[i].op5.bit, kOperation5));
+		case kOperationEnableMenuItem:
+			s->writeUint16LE(_ops[i].enableMenuItem.opIndex);
+			s->writeUint16LE(MKTAG16(_ops[i].enableMenuItem.bit, kOperationEnableMenuItem));
 			break;
 		case kOperationReturn:
 			s->writeUint32LE(MKTAG(0, 0, 0, kOperationReturn));
@@ -286,9 +286,9 @@ void BigDialogue::save(Common::WriteStream *s) {
 			s->writeUint16LE(_ops[i].circle.count);
 			s->writeUint16LE(MKTAG16(_ops[i].circle.curr, kOperationPlay));
 			break;
-		case kOperation9:
-			s->writeUint16LE(_ops[i].op9.arg);
-			s->writeUint16LE(MKTAG16(0, kOperation9));
+		case kOperationUserMessage:
+			s->writeUint16LE(_ops[i].userMsg.arg);
+			s->writeUint16LE(MKTAG16(0, kOperationUserMessage));
 			break;
 		default:
 			break;
@@ -341,14 +341,14 @@ void BigDialogue::next(int choice) {
 			processed = false;
 			break;
 		}
-		case kOperationMenuRet:
-			_ops[_currOp->menuRet.opIndex].menu.bitField &= ~(1 << _currOp->menuRet.bit); // disable menu item
-			checkMenu(_currOp->menuRet.opIndex);
+		case kOperationDisableMenuItem:
+			_ops[_currOp->disableMenuItem.opIndex].menu.bitField &= ~(1 << _currOp->disableMenuItem.bit); // disable menu item
+			checkMenu(_currOp->disableMenuItem.opIndex);
 			_currOp += 1;
 			processed = false;
 			break;
-		case kOperation5:
-			_ops[_currOp->op5.opIndex].menu.bitField |= (1 << _currOp->op5.bit); // enable menu item ???
+		case kOperationEnableMenuItem:
+			_ops[_currOp->enableMenuItem.opIndex].menu.bitField |= (1 << _currOp->enableMenuItem.bit);
 			_currOp += 1;
 			processed = false;
 			break;
@@ -371,14 +371,14 @@ void BigDialogue::next(int choice) {
 			}
 			processed = false;
 			break;
-		case kOperation9:
+		case kOperationUserMessage:
 			if (processed)
 				_currOp += 1;
 			else {
 				g_vm->getQSystem()->_mainInterface->_dialog.sendMsg(kSaid);
-				g_vm->getQSystem()->_mainInterface->_dialog._field4 = 1;
+				g_vm->getQSystem()->_mainInterface->_dialog._isUserMsg = 1;
 				g_vm->getQSystem()->_mainInterface->_dialog.restoreCursorState();
-				g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, _currOp->op9.arg);
+				g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, _currOp->userMsg.arg);
 			}
 			return;
 		default:

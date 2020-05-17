@@ -27,13 +27,19 @@
 
 namespace Petka {
 
+enum State {
+	kPlaying = 1,
+	kMenu = 2,
+	kIdle = 3
+};
+
 class QMessageObject;
 
 class DialogInterface {
 public:
 	DialogInterface();
 
-	void start(uint a, QMessageObject *sender);
+	void start(uint id, QMessageObject *sender);
 
 	void saveCursorState();
 	void restoreCursorState();
@@ -44,12 +50,12 @@ public:
 	void end();
 
 public:
-	int _field4;
-	int _field8;
+	int _isUserMsg;
+	int _afterUserMsg;
 	int _hasSound;
-	int _field10;
-	int _field14;
-	int _field18;
+	int _firstTime;
+	int _id;
+	int _state;
 	int _field24;
 	Common::String _soundName;
 	int16 _savedCursorActType;
