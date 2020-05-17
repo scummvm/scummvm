@@ -171,6 +171,9 @@ void Lua_V2::StartMovie() {
 			showSubtitles = true;
 		}
 	}
+	if (g_grim->getGameFlags() & ADGF_DEMO) {
+		showSubtitles = true;
+	}
 
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
