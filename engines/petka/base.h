@@ -98,14 +98,14 @@ class QMessageObject;
 
 struct QMessage {
 	QMessage() {}
-	QMessage(uint16 objId, uint16 opcode, uint16 arg1, int16 arg2, int16 arg3, QMessageObject *sender, int unk) {
-		this->objId = objId;
-		this->opcode = opcode;
-		this->arg1 = arg1;
-		this->arg2 = arg2;
-		this->arg3 = arg3;
-		this->sender = sender;
-		this->unk = unk;
+	QMessage(uint16 _objId, uint16 _opcode, uint16 _arg1, int16 _arg2, int16 _arg3, QMessageObject *_sender, int _unk) {
+		this->objId = _objId;
+		this->opcode = _opcode;
+		this->arg1 = _arg1;
+		this->arg2 = _arg2;
+		this->arg3 = _arg3;
+		this->sender = _sender;
+		this->unk = _unk;
 	}
 
 	uint16 objId;
