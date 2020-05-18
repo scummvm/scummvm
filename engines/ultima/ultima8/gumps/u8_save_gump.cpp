@@ -65,8 +65,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	FrameID entry_id(GameData::GUMPS, 46, 0);
 	entry_id = _TL_SHP_(entry_id);
 
-	Shape *entryShape;
-	entryShape = GameData::get_instance()->getShape(entry_id);
+	const Shape *entryShape = GameData::get_instance()->getShape(entry_id);
 	const ShapeFrame *sf = entryShape->getFrame(entry_id._frameNum);
 	int entrywidth = sf->_width;
 	int entryheight = sf->_height;
@@ -290,7 +289,7 @@ void U8SaveGump::loadDescriptions() {
 		if (!saveFile)
 			continue;
 
-		SavegameReader *sg = new SavegameReader(saveFile, true);
+		const SavegameReader *sg = new SavegameReader(saveFile, true);
 		SavegameReader::State state = sg->isValid();
 		_descriptions[i] = "";
 
@@ -319,9 +318,9 @@ void U8SaveGump::loadDescriptions() {
 //static
 Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 	if (save) {
-		// can't _save if game over
+		// can't save if game over
 		// FIXME: this check should probably be in Game or GUIApp
-		MainActor *av = getMainActor();
+		const MainActor *av = getMainActor();
 		if (!av || av->hasActorFlags(Actor::ACT_DEAD))
 			return nullptr;
 	}
@@ -329,10 +328,8 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 	PagedGump *gump = new PagedGump(34, -38, 3, 35);
 	gump->InitGump(parent);
 
-	U8SaveGump *s;
-
 	for (int page = 0; page < 16; ++page) {
-		s = new U8SaveGump(save, page);
+		U8SaveGump *s = new U8SaveGump(save, page);
 		s->InitGump(gump, false);
 		gump->addPage(s);
 	}

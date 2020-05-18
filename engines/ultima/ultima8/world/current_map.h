@@ -125,7 +125,7 @@ public:
                          ObjId *roof = 0) const;
 
 	//! Scan for a valid position for item in directions orthogonal to movedir
-	bool scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
+	bool scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
 	                          int movedir, bool wantsupport,
 	                          int32 &tx, int32 &ty, int32 &tz);
 
@@ -158,7 +158,7 @@ public:
 		// Bitmask. Bit 0 is x, 1 is y, 2 is z.
 
 		// Use this func to get the interpolated location of the hit
-		void GetInterpolatedCoords(int32 out[3], int32 start[3], int32 end[3]) {
+		void GetInterpolatedCoords(int32 out[3], int32 start[3], int32 end[3]) const {
 			for (int i = 0; i < 3; i++)
 				out[i] = start[i] + ((end[i] - start[i]) * (_hitTime >= 0 ? _hitTime : 0) + (end[i] > start[i] ? 0x2000 : -0x2000)) / 0x4000;
 		}
@@ -178,7 +178,7 @@ public:
 	//!         true if any items were hit.
 	bool sweepTest(const int32 start[3], const int32 end[3],
 	               const int32 dims[3], uint32 shapeflags,
-	               ObjId item, bool solid_only, Std::list<SweepItem> *hit);
+	               ObjId item, bool solid_only, Std::list<SweepItem> *hit) const;
 
 	TeleportEgg *findDestination(uint16 id);
 

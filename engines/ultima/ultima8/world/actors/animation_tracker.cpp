@@ -168,7 +168,7 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, u
 bool AnimationTracker::step() {
 	if (_done) return false;
 
-	Actor *a = getActor(_actor);
+	const Actor *a = getActor(_actor);
 	assert(a);
 
 	if (_firstFrame)
@@ -199,7 +199,7 @@ bool AnimationTracker::step() {
 
 	_firstFrame = false;
 
-	AnimFrame &f = _animAction->frames[_dir][_currentFrame];
+	const AnimFrame &f = _animAction->frames[_dir][_currentFrame];
 
 	_shapeFrame = f._frame;
 	_flipped = f.is_flipped();
@@ -272,7 +272,7 @@ bool AnimationTracker::step() {
 
 		// Do the sweep test
 		Std::list<CurrentMap::SweepItem> collisions;
-		Std::list<CurrentMap::SweepItem>::iterator it;
+		Std::list<CurrentMap::SweepItem>::const_iterator it;
 		cm->sweepTest(start, end, dims, a->getShapeInfo()->_flags, a->getObjId(),
 		              false, &collisions);
 
@@ -417,7 +417,7 @@ bool AnimationTracker::step() {
 	return true;
 }
 
-AnimFrame *AnimationTracker::getAnimFrame() const {
+const AnimFrame *AnimationTracker::getAnimFrame() const {
 	return &_animAction->frames[_dir][_currentFrame];
 }
 

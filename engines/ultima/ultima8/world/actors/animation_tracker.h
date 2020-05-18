@@ -83,12 +83,12 @@ public:
 	}
 
 	//! get the current AnimAction
-	AnimAction *getAnimAction() const {
+	const AnimAction *getAnimAction() const {
 		return _animAction;
 	}
 
 	//! get the current AnimFrame
-	AnimFrame *getAnimFrame() const;
+	const AnimFrame *getAnimFrame() const;
 
 	void setTargetedMode(int32 x_, int32 y_, int32 z_);
 

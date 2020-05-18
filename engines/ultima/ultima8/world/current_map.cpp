@@ -697,7 +697,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 				// check xy overlap
 				if (!(x <= ix - ixd || x - xd >= ix ||
-				        y <= iy - iyd || y - yd >= iy)) {
+				      y <= iy - iyd || y - yd >= iy)) {
 					// check support
 					if (support == nullptr && si->is_solid() &&
 					        iz + izd == z) {
@@ -722,7 +722,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	return valid;
 }
 
-bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
+bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
                                       int movedir, bool wantsupport,
                                       int32 &tx, int32 &ty, int32 &tz) {
 	// TODO: clean this up. Currently the mask arrays are filled with more
@@ -890,7 +890,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
                            const int32 dims[3], uint32 shapeflags,
                            ObjId item, bool blocking_only,
-                           Std::list<SweepItem> *hit) {
+                           Std::list<SweepItem> *hit) const {
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	int minx = ((start[0] - dims[0]) / _mapChunkSize) - 1;
@@ -1085,7 +1085,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 					// Small speed up.
 					if (sw_it != hit->end()) {
-						SweepItem &si = *sw_it;
+						const SweepItem &si = *sw_it;
 						if (si._hitTime > first) sw_it = hit->begin();
 					} else
 						sw_it = hit->begin();

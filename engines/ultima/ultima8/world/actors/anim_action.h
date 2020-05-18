@@ -44,10 +44,10 @@ struct AnimFrame {
 		AFF_SPECIAL  = 0x0800
 	};
 
-	inline bool is_flipped() {
+	inline bool is_flipped() const {
 		return (_flags & AFF_FLIPPED) != 0;
 	}
-	inline int attack_range() {
+	inline int attack_range() const {
 		return ((_flags >> 2) & 0x07);
 	}
 };

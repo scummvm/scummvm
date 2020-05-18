@@ -459,7 +459,7 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	if (!tracker.init(this, anim, dir, state))
 		return Animation::FAILURE;
 
-	AnimAction *animaction = tracker.getAnimAction();
+	const AnimAction *animaction = tracker.getAnimAction();
 
 	if (!animaction) return Animation::FAILURE;
 
