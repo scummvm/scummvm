@@ -102,9 +102,18 @@ enum DrawData {
 	kDDCheckboxSelected,
 	kDDCheckboxDisabledSelected,
 
+	kDDCheckboxDefaultRTL,
+	kDDCheckboxDisabledRTL,
+	kDDCheckboxSelectedRTL,
+	kDDCheckboxDisabledSelectedRTL,
+
 	kDDRadiobuttonDefault,
 	kDDRadiobuttonDisabled,
 	kDDRadiobuttonSelected,
+
+	kDDRadiobuttonDefaultRTL,
+	kDDRadiobuttonDisabledRTL,
+	kDDRadiobuttonSelectedRTL,
 
 	kDDTabActive,
 	kDDTabInactive,
@@ -422,10 +431,10 @@ public:
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled);
 
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked,
-	                  WidgetStateInfo state = kStateEnabled);
+	                  WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked,
-	                     WidgetStateInfo state = kStateEnabled);
+	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
 	             const Common::Array<Common::String> &tabs, int active);
