@@ -526,8 +526,8 @@ void DropdownButtonWidget::clearEntries() {
 	_entries.clear();
 }
 
-void DropdownButtonWidget::drawWidget() {			// These are okay, no need to flip again.
-	if (_entries.empty()) {							// GUI TODO: However, down arrow should be to the right. Figure out a way to flip the widget internally?
+void DropdownButtonWidget::drawWidget() {
+	if (_entries.empty()) {							
 		// Degrade to a regular button
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state);
 	} else {

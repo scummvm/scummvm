@@ -1827,13 +1827,8 @@ void GlobalOptionsDialog::build() {
 	addAccessibilityControls(tab, "GlobalOptions_Accessibility.");
 #endif // USE_TTS
 
-	// GUI TODO: Incomplete implementation, currently just switches to last tab.
-	if (g_gui.useRTL()) {
-		tab->setActiveTab(tab->getTabsSize() - 1);
-	} else {
-		// Activate the first tab
-		tab->setActiveTab(0);
-	}
+	// Activate the first tab
+	tab->setActiveTab(0);
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
