@@ -29,13 +29,13 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/render_ticket.h"
-#include "engines/wintermute/base/gfx/opengl/base_surface_opengl.h"
+#include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
 #include "graphics/transform_tools.h"
 #include "common/textconsole.h"
 
 namespace Wintermute {
 
-RenderTicketOpenGL::RenderTicketOpenGL(BaseSurfaceOpenGL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct transform) :
+RenderTicketOpenGL::RenderTicketOpenGL(BaseSurfaceOpenGLTexture *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct transform) :
 	_owner(owner),
 	_srcRect(*srcRect),
 	_dstRect(*dstRect),

@@ -29,8 +29,8 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/gfx/opengl/base_surface_opengl.h"
-#include "engines/wintermute/base/gfx/opengl/base_render_opengl.h"
+#include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl_texture.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "graphics/transparent_surface.h"
@@ -43,7 +43,7 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseSurfaceOpenGL::BaseSurfaceOpenGL(BaseGame *inGame) : BaseSurface(inGame) {
+BaseSurfaceOpenGLTexture::BaseSurfaceOpenGLTexture(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
 	_alphaMask = nullptr;
 	_alphaType = Graphics::ALPHA_FULL;
@@ -54,7 +54,7 @@ BaseSurfaceOpenGL::BaseSurfaceOpenGL(BaseGame *inGame) : BaseSurface(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSurfaceOpenGL::~BaseSurfaceOpenGL() {
+BaseSurfaceOpenGLTexture::~BaseSurfaceOpenGLTexture() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
@@ -65,7 +65,7 @@ BaseSurfaceOpenGL::~BaseSurfaceOpenGL() {
 	_alphaMask = nullptr;
 
 	_gameRef->addMem(-_width * _height * 4);
-	BaseRenderOpenGL *renderer = static_cast<BaseRenderOpenGL *>(_gameRef->_renderer);
+	BaseRenderOpenGLTexture *renderer = static_cast<BaseRenderOpenGLTexture *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 }
 
@@ -103,7 +103,7 @@ Graphics::AlphaType hasTransparencyTypeOpenGL(const Graphics::Surface *surf) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceOpenGLTexture::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	/*  BaseRenderOpenGL *renderer = static_cast<BaseRenderOpenGL *>(_gameRef->_renderer); */
 	_filename = filename;
 //	const Graphics::Surface *surface = image->getSurface();
@@ -131,7 +131,7 @@ bool BaseSurfaceOpenGL::create(const Common::String &filename, bool defaultCK, b
 	return STATUS_OK;
 }
 
-bool BaseSurfaceOpenGL::finishLoad() {
+bool BaseSurfaceOpenGLTexture::finishLoad() {
 	BaseImage *image = new BaseImage();
 	if (!image->loadFile(_filename)) {
 		delete image;
@@ -212,7 +212,7 @@ bool BaseSurfaceOpenGL::finishLoad() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseSurfaceOpenGL::genAlphaMask(Graphics::Surface *surface) {
+void BaseSurfaceOpenGLTexture::genAlphaMask(Graphics::Surface *surface) {
 	warning("BaseSurfaceOpenGL::GenAlphaMask - Not ported yet");
 	return;
 	// TODO: Reimplement this
@@ -259,7 +259,7 @@ void BaseSurfaceOpenGL::genAlphaMask(Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseSurfaceOpenGL::getPixelAt(Graphics::Surface *surface, int x, int y) {
+uint32 BaseSurfaceOpenGLTexture::getPixelAt(Graphics::Surface *surface, int x, int y) {
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
 	uint8 *p = (uint8 *)surface->getBasePtr(x, y);
@@ -294,7 +294,7 @@ uint32 BaseSurfaceOpenGL::getPixelAt(Graphics::Surface *surface, int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::create(int width, int height) {
+bool BaseSurfaceOpenGLTexture::create(int width, int height) {
 	_width = width;
 	_height = height;
 
@@ -306,12 +306,12 @@ bool BaseSurfaceOpenGL::create(int width, int height) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::isTransparentAt(int x, int y) {
+bool BaseSurfaceOpenGLTexture::isTransparentAt(int x, int y) {
 	return isTransparentAtLite(x, y);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::isTransparentAtLite(int x, int y) {
+bool BaseSurfaceOpenGLTexture::isTransparentAtLite(int x, int y) {
 	if (x < 0 || x >= _surface->w || y < 0 || y >= _surface->h) {
 		return true;
 	}
@@ -331,49 +331,49 @@ bool BaseSurfaceOpenGL::isTransparentAtLite(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::startPixelOp() {
+bool BaseSurfaceOpenGLTexture::startPixelOp() {
 	//SDL_LockTexture(_texture, nullptr, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
-	BaseRenderOpenGL *renderer = static_cast<BaseRenderOpenGL *>(_gameRef->_renderer);
+	BaseRenderOpenGLTexture *renderer = static_cast<BaseRenderOpenGLTexture *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::endPixelOp() {
+bool BaseSurfaceOpenGLTexture::endPixelOp() {
 	//SDL_UnlockTexture(_texture);
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGLTexture::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY,  mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGLTexture::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOpenGLTexture::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr,  Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGLTexture::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct((int32)zoomX, (int32)zoomY, blendMode, alpha, mirrorX, mirrorY));
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGLTexture::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	_rotation = 0;
 	Graphics::TransformStruct transform;
 	if (transparent) {
@@ -386,7 +386,7 @@ bool BaseSurfaceOpenGL::displayZoom(int x, int y, Rect32 rect, float zoomX, floa
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
+bool BaseSurfaceOpenGLTexture::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
 	_rotation = (uint32)transform._angle;
 	if (transform._angle < 0.0f) {
 		warning("Negative rotation: %d %d", transform._angle, _rotation);
@@ -397,7 +397,7 @@ bool BaseSurfaceOpenGL::displayTransform(int x, int y, Rect32 rect, Rect32 newRe
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
+bool BaseSurfaceOpenGLTexture::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
 	assert(numTimesX > 0 && numTimesY > 0);
 	Graphics::TransformStruct transform(numTimesX, numTimesY);
 	return drawSprite(x, y, &rect, nullptr, transform);
@@ -405,8 +405,8 @@ bool BaseSurfaceOpenGL::displayTiled(int x, int y, Rect32 rect, int numTimesX, i
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOpenGL::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transform) {
-	BaseRenderOpenGL *renderer = static_cast<BaseRenderOpenGL *>(_gameRef->_renderer);
+bool BaseSurfaceOpenGLTexture::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, Graphics::TransformStruct transform) {
+	BaseRenderOpenGLTexture *renderer = static_cast<BaseRenderOpenGLTexture *>(_gameRef->_renderer);
 
 	if (!_loaded) {
 		finishLoad();
@@ -461,7 +461,7 @@ bool BaseSurfaceOpenGL::drawSprite(int x, int y, Rect32 *rect, Rect32 *newRect, 
 	return STATUS_OK;
 }
 
-bool BaseSurfaceOpenGL::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
+bool BaseSurfaceOpenGLTexture::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
 	if (surface.format == _surface->format && surface.pitch == _surface->pitch && surface.h == _surface->h) {
 		const byte *src = (const byte *)surface.getBasePtr(0, 0);
@@ -476,7 +476,7 @@ bool BaseSurfaceOpenGL::putSurface(const Graphics::Surface &surface, bool hasAlp
 	} else {
 		_alphaType = Graphics::ALPHA_OPAQUE;
 	}
-	BaseRenderOpenGL *renderer = static_cast<BaseRenderOpenGL *>(_gameRef->_renderer);
+	BaseRenderOpenGLTexture *renderer = static_cast<BaseRenderOpenGLTexture *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 
 	return STATUS_OK;

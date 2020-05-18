@@ -482,7 +482,7 @@ bool BaseGame::initialize1() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
-	_renderer = makeOpenGLRenderer(this);
+	_renderer = makeOpenGLTextureRenderer(this);
 	if (_renderer == nullptr) {
 		return STATUS_FAILED;
 	}

@@ -37,10 +37,10 @@
 namespace Wintermute {
 struct TransparentSurface;
 class BaseImage;
-class BaseSurfaceOpenGL : public BaseSurface {
+class BaseSurfaceOpenGLTexture : public BaseSurface {
 public:
-	BaseSurfaceOpenGL(BaseGame *inGame);
-	~BaseSurfaceOpenGL() override;
+	BaseSurfaceOpenGLTexture(BaseGame *inGame);
+	~BaseSurfaceOpenGLTexture() override;
 
 	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
 	bool create(int width, int height) override;

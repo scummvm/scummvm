@@ -230,7 +230,7 @@ private:
 };
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
-BaseRenderer *makeOpenGLRenderer(BaseGame *inGame);
+BaseRenderer *makeOpenGLTextureRenderer(BaseGame *inGame);
 
 } // End of namespace Wintermute
 

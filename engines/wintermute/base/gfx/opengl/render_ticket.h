@@ -35,7 +35,7 @@
 
 namespace Wintermute {
 
-class BaseSurfaceOpenGL;
+class BaseSurfaceOpenGLTexture;
 /**
  * A single RenderTicket.
  * A render ticket is a collection of the data and draw specifications made
@@ -51,7 +51,7 @@ class BaseSurfaceOpenGL;
  */
 class RenderTicketOpenGL {
 public:
-	RenderTicketOpenGL(BaseSurfaceOpenGL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, Graphics::TransformStruct transform);
+	RenderTicketOpenGL(BaseSurfaceOpenGLTexture *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, Graphics::TransformStruct transform);
 	RenderTicketOpenGL() : _isValid(true), _wantsDraw(false), _transform(Graphics::TransformStruct()) {}
 	~RenderTicketOpenGL();
 	const Graphics::Surface *getSurface() const { return _surface; }
@@ -67,7 +67,7 @@ public:
 
 	Graphics::TransformStruct _transform;
 
-	BaseSurfaceOpenGL *_owner;
+	BaseSurfaceOpenGLTexture *_owner;
 	bool operator==(const RenderTicketOpenGL &a) const;
 	const Common::Rect *getSrcRect() const { return &_srcRect; }
 private:

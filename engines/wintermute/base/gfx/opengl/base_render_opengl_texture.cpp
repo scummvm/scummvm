@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/gfx/opengl/base_render_opengl.h"
-#include "engines/wintermute/base/gfx/opengl/base_surface_opengl.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl_texture.h"
+#include "engines/wintermute/base/gfx/opengl/base_surface_opengl_texture.h"
 #include "engines/wintermute/base/gfx/opengl/render_ticket.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_image.h"
@@ -45,12 +45,12 @@
 
 namespace Wintermute {
 
-BaseRenderer *makeOpenGLRenderer(BaseGame *inGame) {
-	return new BaseRenderOpenGL(inGame);
+BaseRenderer *makeOpenGLTextureRenderer(BaseGame *inGame) {
+	return new BaseRenderOpenGLTexture(inGame);
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseRenderOpenGL::BaseRenderOpenGL(BaseGame *inGame) : BaseRenderer(inGame) {
+BaseRenderOpenGLTexture::BaseRenderOpenGLTexture(BaseGame *inGame) : BaseRenderer(inGame) {
 	_renderSurface = new Graphics::Surface();
 	_blankSurface = new Graphics::Surface();
 	_lastFrameIter = _renderQueue.end();
@@ -71,7 +71,7 @@ BaseRenderOpenGL::BaseRenderOpenGL(BaseGame *inGame) : BaseRenderer(inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseRenderOpenGL::~BaseRenderOpenGL() {
+BaseRenderOpenGLTexture::~BaseRenderOpenGLTexture() {
 	RenderQueueIterator it = _renderQueue.begin();
 	while (it != _renderQueue.end()) {
 		RenderTicketOpenGL *ticket = *it;
@@ -88,7 +88,7 @@ BaseRenderOpenGL::~BaseRenderOpenGL() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOpenGL::initRenderer(int width, int height, bool windowed) {
+bool BaseRenderOpenGLTexture::initRenderer(int width, int height, bool windowed) {
 	_width = width;
 	_height = height;
 	_renderRect.setWidth(_width);
@@ -141,7 +141,7 @@ bool BaseRenderOpenGL::initRenderer(int width, int height, bool windowed) {
 	return STATUS_OK;
 }
 
-bool BaseRenderOpenGL::indicatorFlip() {
+bool BaseRenderOpenGLTexture::indicatorFlip() {
 	if (_indicatorWidthDrawn > 0 && _indicatorHeight > 0) {
 		drawRenderSurface();
 		g_system->updateScreen();
@@ -149,13 +149,13 @@ bool BaseRenderOpenGL::indicatorFlip() {
 	return STATUS_OK;
 }
 
-bool BaseRenderOpenGL::forcedFlip() {
+bool BaseRenderOpenGLTexture::forcedFlip() {
 	drawRenderSurface();
 	g_system->updateScreen();
 	return STATUS_OK;
 }
 
-bool BaseRenderOpenGL::flip() {
+bool BaseRenderOpenGLTexture::flip() {
 	if (_skipThisFrame) {
 		_skipThisFrame = false;
 		delete _dirtyRect;
@@ -213,12 +213,12 @@ bool BaseRenderOpenGL::flip() {
 }
 
 //////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::onWindowChange() {
+void BaseRenderOpenGLTexture::onWindowChange() {
 	_windowed = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 }
 
 //////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::setWindowed(bool windowed) {
+void BaseRenderOpenGLTexture::setWindowed(bool windowed) {
 	ConfMan.setBool("fullscreen", !windowed);
 	g_system->beginGFXTransaction();
 	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !windowed);
@@ -226,7 +226,7 @@ void BaseRenderOpenGL::setWindowed(bool windowed) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOpenGL::fill(byte r, byte g, byte b, Common::Rect *rect) {
+bool BaseRenderOpenGLTexture::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
 	if (!_disableDirtyRects) {
 		return STATUS_OK;
@@ -247,13 +247,13 @@ bool BaseRenderOpenGL::fill(byte r, byte g, byte b, Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::fade(uint16 alpha) {
+void BaseRenderOpenGLTexture::fade(uint16 alpha) {
 	byte dwAlpha = (byte)(255 - alpha);
 	return fadeToColor(0, 0, 0, dwAlpha);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::fadeToColor(byte r, byte g, byte b, byte a) {
+void BaseRenderOpenGLTexture::fadeToColor(byte r, byte g, byte b, byte a) {
 	Common::Rect fillRect;
 
 	Rect32 rc;
@@ -283,11 +283,11 @@ void BaseRenderOpenGL::fadeToColor(byte r, byte g, byte b, byte a) {
 	//SDL_RenderFillRect(_renderer, &fillRect);
 }
 
-Graphics::PixelFormat BaseRenderOpenGL::getPixelFormat() const {
+Graphics::PixelFormat BaseRenderOpenGLTexture::getPixelFormat() const {
 	return _renderSurface->format;
 }
 
-void BaseRenderOpenGL::drawSurface(BaseSurfaceOpenGL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform) {
+void BaseRenderOpenGLTexture::drawSurface(BaseSurfaceOpenGLTexture *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform) {
 
 	if (_disableDirtyRects) {
 		RenderTicketOpenGL *ticket = new RenderTicketOpenGL(owner, surf, srcRect, dstRect, transform);
@@ -332,13 +332,13 @@ void BaseRenderOpenGL::drawSurface(BaseSurfaceOpenGL *owner, const Graphics::Sur
 	}
 }
 
-void BaseRenderOpenGL::invalidateTicket(RenderTicketOpenGL *renderTicket) {
+void BaseRenderOpenGLTexture::invalidateTicket(RenderTicketOpenGL *renderTicket) {
 	addDirtyRect(renderTicket->_dstRect);
 	renderTicket->_isValid = false;
 //	renderTicket->_canDelete = true; // TODO: Maybe readd this, to avoid even more duplicates.
 }
 
-void BaseRenderOpenGL::invalidateTicketsFromSurface(BaseSurfaceOpenGL *surf) {
+void BaseRenderOpenGLTexture::invalidateTicketsFromSurface(BaseSurfaceOpenGLTexture *surf) {
 	RenderQueueIterator it;
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		if ((*it)->_owner == surf) {
@@ -347,7 +347,7 @@ void BaseRenderOpenGL::invalidateTicketsFromSurface(BaseSurfaceOpenGL *surf) {
 	}
 }
 
-void BaseRenderOpenGL::drawFromTicket(RenderTicketOpenGL *renderTicket) {
+void BaseRenderOpenGLTexture::drawFromTicket(RenderTicketOpenGL *renderTicket) {
 	renderTicket->_wantsDraw = true;
 
 	++_lastFrameIter;
@@ -366,7 +366,7 @@ void BaseRenderOpenGL::drawFromTicket(RenderTicketOpenGL *renderTicket) {
 	}
 }
 
-void BaseRenderOpenGL::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
+void BaseRenderOpenGLTexture::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
 	RenderTicketOpenGL *renderTicket = *ticket;
 	assert(!renderTicket->_wantsDraw);
 	renderTicket->_wantsDraw = true;
@@ -383,7 +383,7 @@ void BaseRenderOpenGL::drawFromQueuedTicket(const RenderQueueIterator &ticket) {
 	}
 }
 
-void BaseRenderOpenGL::addDirtyRect(const Common::Rect &rect) {
+void BaseRenderOpenGLTexture::addDirtyRect(const Common::Rect &rect) {
 	if (!_dirtyRect) {
 		_dirtyRect = new Common::Rect(rect);
 	} else {
@@ -392,7 +392,7 @@ void BaseRenderOpenGL::addDirtyRect(const Common::Rect &rect) {
 	_dirtyRect->clip(_renderRect);
 }
 
-void BaseRenderOpenGL::drawTickets() {
+void BaseRenderOpenGLTexture::drawTickets() {
 	RenderQueueIterator it = _renderQueue.begin();
 	// Clean out the old tickets
 	// Note: We draw invalid tickets too, otherwise we wouldn't be honoring
@@ -472,15 +472,15 @@ void BaseRenderOpenGL::drawTickets() {
 }
 
 // Replacement for SDL2's SDL_RenderCopy
-void BaseRenderOpenGL::drawFromSurface(RenderTicketOpenGL *ticket) {
+void BaseRenderOpenGLTexture::drawFromSurface(RenderTicketOpenGL *ticket) {
 	ticket->drawToSurface(_renderSurface);
 }
 
-void BaseRenderOpenGL::drawFromSurface(RenderTicketOpenGL *ticket, Common::Rect *dstRect, Common::Rect *clipRect) {
+void BaseRenderOpenGLTexture::drawFromSurface(RenderTicketOpenGL *ticket, Common::Rect *dstRect, Common::Rect *clipRect) {
 	ticket->drawToSurface(_renderSurface, dstRect, clipRect);
 }
 
-void BaseRenderOpenGL::drawRenderSurface()
+void BaseRenderOpenGLTexture::drawRenderSurface()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -515,7 +515,7 @@ void BaseRenderOpenGL::drawRenderSurface()
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOpenGL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+bool BaseRenderOpenGLTexture::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	// This function isn't used outside of indicator-displaying, and thus quite unused in
 	// BaseRenderOpenGL when dirty-rects are enabled.
 	if (!_disableDirtyRects && !_indicatorDisplay) {
@@ -547,7 +547,7 @@ bool BaseRenderOpenGL::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseImage *BaseRenderOpenGL::takeScreenshot() {
+BaseImage *BaseRenderOpenGLTexture::takeScreenshot() {
 // TODO: Clip by viewport.
 	BaseImage *screenshot = new BaseImage();
 	screenshot->copyFrom(_renderSurface);
@@ -555,12 +555,12 @@ BaseImage *BaseRenderOpenGL::takeScreenshot() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::String BaseRenderOpenGL::getName() const {
+Common::String BaseRenderOpenGLTexture::getName() const {
 	return "ScummVM-OSystem-renderer";
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRenderOpenGL::setViewport(int left, int top, int right, int bottom) {
+bool BaseRenderOpenGLTexture::setViewport(int left, int top, int right, int bottom) {
 	Common::Rect rect;
 	// TODO: Hopefully this is the same logic that ScummVM uses.
 	rect.left = (int16)(left + _borderLeft);
@@ -572,7 +572,7 @@ bool BaseRenderOpenGL::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_OK;
 }
 
-Rect32 BaseRenderOpenGL::getViewPort() {
+Rect32 BaseRenderOpenGLTexture::getViewPort() {
 	Rect32 ret;
 	ret.top = _renderRect.top;
 	ret.bottom = _renderRect.bottom;
@@ -582,7 +582,7 @@ Rect32 BaseRenderOpenGL::getViewPort() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::modTargetRect(Common::Rect *rect) {
+void BaseRenderOpenGLTexture::modTargetRect(Common::Rect *rect) {
 	return;
 	int newWidth = (int16)MathUtil::roundUp(rect->width() * _ratioX);
 	int newHeight = (int16)MathUtil::roundUp(rect->height() * _ratioY);
@@ -593,28 +593,28 @@ void BaseRenderOpenGL::modTargetRect(Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::pointFromScreen(Point32 *point) {
+void BaseRenderOpenGLTexture::pointFromScreen(Point32 *point) {
 	point->x = (int16)(point->x / _ratioX - _borderLeft / _ratioX + _renderRect.left);
 	point->y = (int16)(point->y / _ratioY - _borderTop / _ratioY + _renderRect.top);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::pointToScreen(Point32 *point) {
+void BaseRenderOpenGLTexture::pointToScreen(Point32 *point) {
 	point->x = (int16)MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
 	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOpenGL::dumpData(const char *filename) {
+void BaseRenderOpenGLTexture::dumpData(const char *filename) {
 	warning("BaseRenderOpenGL::DumpData(%s) - stubbed", filename); // TODO
 }
 
-BaseSurface *BaseRenderOpenGL::createSurface() {
-	return new BaseSurfaceOpenGL(_gameRef);
+BaseSurface *BaseRenderOpenGLTexture::createSurface() {
+	return new BaseSurfaceOpenGLTexture(_gameRef);
 }
 
-void BaseRenderOpenGL::endSaveLoad() {
+void BaseRenderOpenGLTexture::endSaveLoad() {
 	BaseRenderer::endSaveLoad();
 
 	// Clear the scale-buffered tickets as we just loaded.
@@ -635,11 +635,11 @@ void BaseRenderOpenGL::endSaveLoad() {
 	g_system->updateScreen();
 }
 
-bool BaseRenderOpenGL::startSpriteBatch() {
+bool BaseRenderOpenGLTexture::startSpriteBatch() {
 	return STATUS_OK;
 }
 
-bool BaseRenderOpenGL::endSpriteBatch() {
+bool BaseRenderOpenGLTexture::endSpriteBatch() {
 	return STATUS_OK;
 }
 

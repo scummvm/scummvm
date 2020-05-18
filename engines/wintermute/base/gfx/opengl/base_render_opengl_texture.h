@@ -36,7 +36,7 @@
 #include "graphics/transform_struct.h"
 
 namespace Wintermute {
-class BaseSurfaceOpenGL;
+class BaseSurfaceOpenGLTexture;
 class RenderTicketOpenGL;
 /**
  * A 2D-renderer implementation for WME.
@@ -57,10 +57,10 @@ class RenderTicketOpenGL;
  * as well as to accomodate situations with large enough amounts of draw calls,
  * that there will be too much overhead involved with comparing the generated tickets.
  */
-class BaseRenderOpenGL : public BaseRenderer {
+class BaseRenderOpenGLTexture : public BaseRenderer {
 public:
-	BaseRenderOpenGL(BaseGame *inGame);
-	~BaseRenderOpenGL() override;
+	BaseRenderOpenGLTexture(BaseGame *inGame);
+	~BaseRenderOpenGLTexture() override;
 
 	typedef Common::List<RenderTicketOpenGL *>::iterator RenderQueueIterator;
 
@@ -82,7 +82,7 @@ public:
 	void setWindowed(bool windowed) override;
 
 	void invalidateTicket(RenderTicketOpenGL *renderTicket);
-	void invalidateTicketsFromSurface(BaseSurfaceOpenGL *surf);
+	void invalidateTicketsFromSurface(BaseSurfaceOpenGLTexture *surf);
 	/**
 	 * Insert a new ticket into the queue, adding a dirty rect
 	 * @param renderTicket the ticket to be added.
@@ -113,7 +113,7 @@ public:
 	bool startSpriteBatch() override;
 	bool endSpriteBatch() override;
 	void endSaveLoad() override;
-	void drawSurface(BaseSurfaceOpenGL *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform);
+	void drawSurface(BaseSurfaceOpenGLTexture *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform);
 	BaseSurface *createSurface() override;
 private:
 	/**
