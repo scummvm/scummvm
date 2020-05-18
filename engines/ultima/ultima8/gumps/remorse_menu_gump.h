@@ -31,6 +31,9 @@ namespace Ultima8 {
 
 class RenderedText;
 
+/**
+ * The game menu for Crusader: No Remorse.  Different enough to the U8 menu that it's implemented separately.
+ */
 class RemorseMenuGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

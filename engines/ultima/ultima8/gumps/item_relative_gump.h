@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for gumps whose location is relative to an owning item (eg, inventory, bark, etc)
+ */
 class ItemRelativeGump : public Gump {
 protected:
 	int32 _ix, _iy;

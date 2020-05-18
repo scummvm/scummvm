@@ -31,6 +31,9 @@ namespace Ultima8 {
 
 class RenderedText;
 
+/**
+ * The gump activated by 'Z', which shows the avatar with current armor, and stats
+ */
 class PaperdollGump : public ContainerGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

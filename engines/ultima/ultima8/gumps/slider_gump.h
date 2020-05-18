@@ -32,6 +32,9 @@ namespace Ultima8 {
 class UCProcess;
 class RenderedText;
 
+/**
+ * A slider that lets you choose how many things to move (eg, when moving stacked items in the backpack)
+ */
 class SliderGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

@@ -33,7 +33,9 @@ namespace Ultima8 {
 
 class ShapeArchive;
 
-
+/**
+ * A tool for viewing the shapes in the game, for debugging purposes.
+ */
 class ShapeViewerGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

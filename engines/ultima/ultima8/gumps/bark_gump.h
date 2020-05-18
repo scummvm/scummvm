@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+* Represents text which appears on the screen to show the name of an item, etc
+*/
 class BarkGump : public ItemRelativeGump {
 protected:
 	Std::string _barked;

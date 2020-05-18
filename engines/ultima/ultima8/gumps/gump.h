@@ -41,12 +41,10 @@ class Gump;
 typedef bool (*FindGumpPredicate)(Gump *g);
 template<class T> inline bool IsOfType(Gump *g) { return dynamic_cast<T*>(g) != nullptr; }
 
-//
-// Class Gump
-//
-// Desc: Base Gump Class that all other Gumps inherit from
-//
-
+/**
+ * A Gump is a single GUI element within the game, like the backpack window, menu,
+ * conversation text, etc.  Like most windowing systems, gumps nest.
+ */
 class Gump : public Object {
 protected:
 	uint16 _owner;        // Owner item

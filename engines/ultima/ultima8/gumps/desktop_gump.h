@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * A virtual gump which contains all the regular game components.
+ */
 class DesktopGump : public Gump {
 	static bool _fadedModal;
 public:

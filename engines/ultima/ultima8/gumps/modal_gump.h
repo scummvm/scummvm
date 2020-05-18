@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for any gump which blocks the game (menu, credits, movie, etc)
+ */
 class ModalGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

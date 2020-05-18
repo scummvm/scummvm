@@ -30,6 +30,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * A paper scroll (with a spell, etc)
+ */
 class ScrollGump : public ModalGump {
 	Std::string _text;
 	ObjId _textWidget;

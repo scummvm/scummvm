@@ -30,6 +30,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+* The gump to display the text of a book
+*/
 class BookGump : public ModalGump {
 	Std::string _text;
 	ObjId _textWidgetL;

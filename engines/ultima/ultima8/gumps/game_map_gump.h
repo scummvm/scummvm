@@ -33,6 +33,9 @@ namespace Ultima8 {
 class ItemSorter;
 class CameraProcess;
 
+/**
+ * The  gump which holds all the game map elements (floor, avatar, objects, etc)
+ */
 class GameMapGump : public Gump {
 protected:
 	ItemSorter *_displayList;

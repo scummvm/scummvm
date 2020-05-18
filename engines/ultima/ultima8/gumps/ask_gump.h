@@ -31,6 +31,9 @@ namespace Ultima8 {
 
 class UCList;
 
+/**
+ * Represents asking a question while talking to an NPC
+ */
 class AskGump : public ItemRelativeGump {
 	UCList *_answers;
 public:

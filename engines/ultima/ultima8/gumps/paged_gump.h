@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for gumps which have multiple pages (books, save/load game)
+ */
 class PagedGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

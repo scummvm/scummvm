@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * The tiny HP/mana bars shown on the desktop which can be activated from the paperdoll gump
+ */
 class MiniStatsGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

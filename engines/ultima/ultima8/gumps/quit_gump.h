@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * The "are you sure you want to quit?" gump
+ */
 class QuitGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

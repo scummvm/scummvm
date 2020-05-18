@@ -30,6 +30,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * The gump for popping up text in the game you can read (plaques and gravestones)
+ */
 class ReadableGump : public ModalGump {
 	uint16 _shapeNum;
 	int _fontNum;

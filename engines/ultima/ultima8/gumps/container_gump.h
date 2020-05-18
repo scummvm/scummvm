@@ -32,6 +32,9 @@ namespace Ultima8 {
 class Shape;
 class Container;
 
+/**
+ * Base gump class for all containers (backpack, barrel, etc)
+ */
 class ContainerGump : public ItemRelativeGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
