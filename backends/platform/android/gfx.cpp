@@ -46,7 +46,7 @@
 #include "graphics/opengl/context.h"
 
 #include "backends/platform/android/android.h"
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 
 static inline GLfixed xdiv(int numerator, int denominator) {
 	assert(numerator < (1 << 16));
@@ -600,7 +600,7 @@ void OSystem_Android::unlockScreen() {
 	assert(_game_texture->dirty());
 }
 
-void OSystem_Android::setShakePos(int shake_offset) {
+void OSystem_Android::setShakePos(int shakeXOffset, int shakeYOffset) {
 	/* not used in any engine */
 }
 

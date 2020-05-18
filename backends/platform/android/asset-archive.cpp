@@ -32,7 +32,7 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/asset-archive.h"
 
 #include <android/asset_manager.h>

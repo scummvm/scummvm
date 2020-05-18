@@ -16,6 +16,7 @@ import javax.microedition.khronos.egl.EGLSurface;
 
 import java.io.File;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @SuppressWarnings("JniMissingFunction")
 public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
@@ -46,6 +47,7 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 
 	// pause the engine and all native threads
 	final public native void setPause(boolean pause);
+	// ResidualVM specific method
 	final public native void enableZoning(boolean enable);
 	// Feed an event to ResidualVM.  Safe to call from other threads.
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
@@ -62,7 +64,9 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected boolean isConnectionLimited();
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
+	abstract protected void showKeyboardControl(boolean enable);
 	abstract protected String[] getSysArchives();
+	abstract protected String[] getAllStorageLocations();
 
 	public ResidualVM(AssetManager asset_manager, SurfaceHolder holder) {
 		_asset_manager = asset_manager;
@@ -142,11 +146,10 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 
 		int res = main(_args);
 
-		destroy();
-
 		deinitEGL();
 		deinitAudio();
 
+		destroy();
 		// On exit, tear everything down for a fresh restart next time.
 		System.exit(res);
 	}

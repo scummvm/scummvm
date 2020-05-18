@@ -253,7 +253,7 @@ public:
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
-	virtual void setShakePos(int shakeOffset);
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 	virtual void fillScreen(uint32 col);
 	virtual void setFocusRectangle(const Common::Rect& rect);
 	virtual void clearFocusRectangle();

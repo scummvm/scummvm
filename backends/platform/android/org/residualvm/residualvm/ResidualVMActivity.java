@@ -1,14 +1,17 @@
 package org.residualvm.residualvm;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.ClipboardManager;
@@ -25,81 +28,29 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.util.List;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ResidualVMActivity extends Activity {
 
-	public static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-	static int PERMISSION_REQUEST_REQUIRED_PERMISSIONS = 1001;
-
-	private boolean isBtnsShowing = false;
-
-public View.OnClickListener optionsBtnOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-	if(!isBtnsShowing)
-            ((HorizontalScrollView)findViewById(R.id.btns_scrollview)).setVisibility(View.VISIBLE);
-	else
-	    ((HorizontalScrollView)findViewById(R.id.btns_scrollview)).setVisibility(View.GONE);
-
-	    isBtnsShowing = !isBtnsShowing;
-
-        }
-    };
-
-    private void emulateKeyPress(int keyCode){
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, keyCode, 0, 0, 0, 0);
-		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, keyCode, 0, 0, 0, 0);
-    }
-
-public View.OnClickListener menuBtnOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        	emulateKeyPress(KeyEvent.KEYCODE_F1);
-        }
-    };
-
-public View.OnClickListener inventoryBtnOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        	emulateKeyPress(KeyEvent.KEYCODE_I);
-        }
-    };
-
-public View.OnClickListener lookAtBtnOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        	emulateKeyPress(KeyEvent.KEYCODE_E);
-        }
-    };
-
-public View.OnClickListener useBtnOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        	emulateKeyPress(KeyEvent.KEYCODE_ENTER);
-        }
-    };
-
-public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        	emulateKeyPress(KeyEvent.KEYCODE_P);
-        }
-    };
-
 	/* Establish whether the hover events are available */
 	private static boolean _hoverAvailable;
 
 	private ClipboardManager _clipboard;
+
+	/**
+	 * Id to identify an external storage read request.
+	 */
+	private static final int MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE = 100; // is an app-defined int constant. The callback method gets the result of the request.
 
 	static {
 		try {
@@ -109,6 +60,78 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 			_hoverAvailable = false;
 		}
 	}
+
+	public View.OnClickListener keyboardBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			runOnUiThread(new Runnable() {
+					public void run() {
+						toggleKeyboard();
+					}
+				});
+		}
+	};
+
+	// ResidualVM specific code start
+	// The callbacks below implement the action buttons for Grim and EMI.
+	// TODO: Replace by a more generic "touch controls" mechanism
+	private boolean isBtnsShowing = false;
+
+	public View.OnClickListener optionsBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+
+			if(!isBtnsShowing)
+				((HorizontalScrollView)findViewById(R.id.btns_scrollview)).setVisibility(View.VISIBLE);
+			else
+				((HorizontalScrollView)findViewById(R.id.btns_scrollview)).setVisibility(View.GONE);
+
+			isBtnsShowing = !isBtnsShowing;
+
+		}
+	};
+
+	private void emulateKeyPress(int keyCode){
+		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_DOWN, keyCode, 0, 0, 0, 0);
+		_residualvm.pushEvent(ResidualVMEvents.JE_KEY, KeyEvent.ACTION_UP, keyCode, 0, 0, 0, 0);
+	}
+
+	public View.OnClickListener menuBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			emulateKeyPress(KeyEvent.KEYCODE_F1);
+		}
+	};
+
+	public View.OnClickListener inventoryBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			emulateKeyPress(KeyEvent.KEYCODE_I);
+		}
+	};
+
+	public View.OnClickListener lookAtBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			emulateKeyPress(KeyEvent.KEYCODE_E);
+		}
+	};
+
+	public View.OnClickListener useBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			emulateKeyPress(KeyEvent.KEYCODE_ENTER);
+		}
+	};
+
+	public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			emulateKeyPress(KeyEvent.KEYCODE_P);
+		}
+	};
+	// ResidualVM specific code end
+
 
 	private class MyResidualVM extends ResidualVM {
 
@@ -126,9 +149,15 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		}
 
 		@Override
-		protected void displayMessageOnOSD(String msg) {
-			Log.i(LOG_TAG, "OSD: " + msg);
-			Toast.makeText(ResidualVMActivity.this, msg, Toast.LENGTH_LONG).show();
+		protected void displayMessageOnOSD(final String msg) {
+			if (msg != null) {
+				Log.i(LOG_TAG, "MessageOnOSD: " + msg + " " + getCurrentCharset());
+				runOnUiThread(new Runnable() {
+					public void run() {
+						Toast.makeText(ResidualVMActivity.this, msg, Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
 		}
 
 		@Override
@@ -174,7 +203,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 
 		@Override
 		protected boolean isConnectionLimited() {
-			WifiManager wifiMgr = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+			WifiManager wifiMgr = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 			if (wifiMgr != null && wifiMgr.isWifiEnabled()) {
 				WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
 				return (wifiInfo == null || wifiInfo.getNetworkId() == -1); //WiFi is on, but it's not connected to any network
@@ -201,8 +230,29 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		}
 
 		@Override
+		protected void showKeyboardControl(final boolean enable) {
+			runOnUiThread(new Runnable() {
+					public void run() {
+						showKeyboardView(enable);
+					}
+				});
+		}
+
+		@Override
 		protected String[] getSysArchives() {
 			return new String[0];
+		}
+
+		@Override
+		protected String[] getAllStorageLocations() {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+			    && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+			) {
+				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE);
+			} else {
+				return _externalStorage.getAllStorageLocations().toArray(new String[0]);
+			}
+			return new String[0]; // an array of zero length
 		}
 
 	}
@@ -211,48 +261,41 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 	private ResidualVMEvents _events;
 	private MouseHelper _mouseHelper;
 	private Thread _residualvm_thread;
-
-	private boolean checkPermissions() {
-		for (String permission : REQUIRED_PERMISSIONS) {
-			if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-				return false;
-			}
-		}
-		return true;
-	}
+	private ExternalStorage _externalStorage;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (checkPermissions()) {
-			launchResidualVM();
-		} else {
-			ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_REQUIRED_PERMISSIONS);
-		}
-	}
-
-
-	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		Set<String> permissionsToCheck = new HashSet<>(Arrays.asList(REQUIRED_PERMISSIONS));
-		for (int i = 0; i < permissions.length; i++) {
-			if (grantResults[i] == PackageManager.PERMISSION_GRANTED)
-				permissionsToCheck.remove(permissions[i]);
-		}
-
-		if (permissionsToCheck.isEmpty()) {
-			launchResidualVM();
-		} else {
-			// TODO
-		}
-	}
-
-	private void launchResidualVM() {
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		setContentView(R.layout.main);
 		takeKeyEvents(true);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+			&& checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+		) {
+			requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE);
+		}
+
+		// This is a common enough error that we should warn about it
+		// explicitly.
+		if (!Environment.getExternalStorageDirectory().canRead()) {
+			new AlertDialog.Builder(this)
+				.setTitle(R.string.no_sdcard_title)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setMessage(R.string.no_sdcard)
+				.setNegativeButton(R.string.quit,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+												int which) {
+								finish();
+							}
+						})
+			.show();
+
+			return;
+		}
 
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
 
@@ -267,7 +310,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		saveDir.mkdirs();
 		if (!saveDir.isDirectory()) {
 			// If it doesn't work, resort to the internal app path.
-			savePath = getDir("saves", MODE_WORLD_READABLE).getPath();
+			savePath = getDir("saves", Context.MODE_PRIVATE).getPath();
 		}
 
 		_clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
@@ -291,33 +334,22 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 
 		_events = new ResidualVMEvents(this, _residualvm, _mouseHelper);
 
-		// On screen buttons listeners
+		// On screen button listener
+		((ImageView)findViewById(R.id.show_keyboard)).setOnClickListener(keyboardBtnOnClickListener);
+		// ResidualVM specific code start
 		((ImageView)findViewById(R.id.options)).setOnClickListener(optionsBtnOnClickListener);
 		((Button)findViewById(R.id.menu_btn)).setOnClickListener(menuBtnOnClickListener);
 		((Button)findViewById(R.id.inventory_btn)).setOnClickListener(inventoryBtnOnClickListener);
 		((Button)findViewById(R.id.use_btn)).setOnClickListener(useBtnOnClickListener);
 		((Button)findViewById(R.id.pick_up_btn)).setOnClickListener(pickUpBtnOnClickListener);
 		((Button)findViewById(R.id.look_at_btn)).setOnClickListener(lookAtBtnOnClickListener);
+		// ResidualVM specific code end
 
 		main_surface.setOnKeyListener(_events);
+		main_surface.setOnTouchListener(_events);
 
 		_residualvm_thread = new Thread(_residualvm, "ResidualVM");
 		_residualvm_thread.start();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.game_menu, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.show_menu:
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -335,6 +367,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 
 		if (_residualvm != null)
 			_residualvm.setPause(false);
+		showMouseCursor(false);
 	}
 
 	@Override
@@ -345,6 +378,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 
 		if (_residualvm != null)
 			_residualvm.setPause(true);
+		showMouseCursor(true);
 	}
 
 	@Override
@@ -374,6 +408,28 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		}
 	}
 
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		switch (requestCode) {
+		case MY_PERMISSIONS_REQUEST_READ_EXT_STORAGE:
+			// If request is cancelled, the result arrays are empty.
+			if (grantResults.length > 0
+			   && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				// permission was granted
+				Log.i(ResidualVM.LOG_TAG, "Read External Storage permission was granted at Runtime");
+			} else {
+				// permission denied! We won't be able to make use of functionality depending on this permission.
+				Toast.makeText(this, "Until permission is granted, some storage locations may be inaccessible!", Toast.LENGTH_SHORT)
+				              .show();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+
 	@Override
 	public boolean onTrackballEvent(MotionEvent e) {
 		if (_events != null)
@@ -383,9 +439,9 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent e) {
+	public boolean onGenericMotionEvent(final MotionEvent e) {
 		if (_events != null)
-			return _events.onTouchEvent(e);
+			return _events.onGenericMotionEvent(e);
 
 		return false;
 	}
@@ -400,5 +456,35 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		else
 			imm.hideSoftInputFromWindow(main_surface.getWindowToken(),
 										InputMethodManager.HIDE_IMPLICIT_ONLY);
+	}
+
+	private void toggleKeyboard() {
+		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
+		InputMethodManager imm = (InputMethodManager)
+			getSystemService(INPUT_METHOD_SERVICE);
+
+		imm.toggleSoftInputFromWindow(main_surface.getWindowToken(),
+		                              InputMethodManager.SHOW_IMPLICIT,
+		                              InputMethodManager.HIDE_IMPLICIT_ONLY);
+	}
+
+	private void showKeyboardView(boolean show) {
+		ImageView keyboardBtn = (ImageView)findViewById(R.id.show_keyboard);
+
+		if (show)
+			keyboardBtn.setVisibility(View.VISIBLE);
+		else
+			keyboardBtn.setVisibility(View.GONE);
+	}
+
+	private void showMouseCursor(boolean show) {
+		/* Currently hiding the system mouse cursor is only
+		   supported on OUYA.  If other systems provide similar
+		   intents, please add them here as well */
+		Intent intent =
+			new Intent(show?
+				   "tv.ouya.controller.action.SHOW_CURSOR" :
+				   "tv.ouya.controller.action.HIDE_CURSOR");
+		sendBroadcast(intent);
 	}
 }

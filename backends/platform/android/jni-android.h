@@ -78,6 +78,8 @@ public:
 	static inline int writeAudio(JNIEnv *env, jbyteArray &data, int offset,
 									int size);
 
+	static Common::Array<Common::String> getAllStorageLocations();
+
 private:
 	static JavaVM *_vm;
 	// back pointer to (java) peer instance
@@ -102,6 +104,7 @@ private:
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_getSysArchives;
+	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;
 	static jmethodID _MID_deinitSurface;
 

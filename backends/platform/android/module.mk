@@ -1,12 +1,13 @@
 MODULE := backends/platform/android
 
 MODULE_OBJS := \
-	jni.o \
+	jni-android.o \
 	texture.o \
 	asset-archive.o \
 	android.o \
 	gfx.o \
 	events.o \
+	snprintf.o \
 	touchcontrols.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.

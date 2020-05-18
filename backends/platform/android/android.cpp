@@ -58,7 +58,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
 
 const char *android_log_tag = "ResidualVM";

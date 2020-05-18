@@ -50,7 +50,7 @@
 
 #include "backends/platform/android/texture.h"
 #include "backends/platform/android/android.h"
-#include "backends/platform/android/jni.h"
+#include "backends/platform/android/jni-android.h"
 
 // Supported GL extensions
 static bool npot_supported = false;
