@@ -697,6 +697,8 @@ void MidiDriver_AdLib::voiceOff(int voice) {
 	_voices[voice].isSustained = false;
 	setNote(voice, _voices[voice].note, 0);
 	_voices[voice].note = -1;
+	_voices[voice].channel = -1;
+	_voices[voice].mappedChannel = -1;
 	_voices[voice].age = 0;
 	queueMoveToBack(voice);
 	--_channels[channel].voices;
