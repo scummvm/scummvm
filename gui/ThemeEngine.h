@@ -129,6 +129,10 @@ enum DrawData {
 	kDDPopUpHover,
 	kDDPopUpDisabled,
 
+	kDDPopUpIdleRTL,
+	kDDPopUpHoverRTL,
+	kDDPopUpDisabledRTL,
+
 	kDDCaret,
 	kDDSeparator,
 	kDrawDataMAX,
@@ -442,7 +446,7 @@ public:
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState);
 
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax,
-	                     WidgetStateInfo state = kStateEnabled);
+	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCaret(const Common::Rect &r, bool erase);
 
