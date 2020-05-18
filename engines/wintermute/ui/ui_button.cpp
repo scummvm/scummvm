@@ -625,11 +625,11 @@ void UIButton::correctSize() {
 	}
 
 	if (_text) {
-		int textHeight;
-		if (_font) {
-			textHeight = _font->getTextHeight((byte *)_text, _width);
-		} else {
-			textHeight = _gameRef->getSystemFont()->getTextHeight((byte *)_text, _width);
+		int textHeight = 0;
+		BaseFont *font = _font ? _font : _gameRef->getSystemFont();
+
+		if (font) {
+			textHeight = font->getTextHeight((byte *)_text, _width);
 		}
 
 		if (textHeight > _height) {
