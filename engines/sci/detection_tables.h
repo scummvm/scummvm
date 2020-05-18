@@ -2765,6 +2765,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Larry 6 - German DOS Floppy - LOWRES (provided by stefan80 in bug report #11475)
+	// SCI interpreter version 1.001.113
+	{"lsl6", "", {
+		{"resource.map", 0, "fa225986ebf26056d469ee1277839ebe", 6943},
+		{"resource.000", 0, "7884a8db9253e29e6b37a2651fd90ba3", 5748608},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO_STD16 },
+
 	// Larry 6 - French DOS Floppy - LOWRES (provided by theco33)
 	// SCI interpreter version 1.001.113
 	{"lsl6", "", {
