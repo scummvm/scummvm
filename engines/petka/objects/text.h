@@ -59,7 +59,7 @@ public:
 
 private:
 	Common::U32String _phrase;
-	int _time;
+	uint _time;
 };
 
 class QTextDescription : public QText {

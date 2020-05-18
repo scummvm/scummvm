@@ -61,8 +61,8 @@ const Common::Rect &QText::getRect() {
 }
 
 void QText::drawOutline(Graphics::Surface *s, uint16 color) {
-	for (uint y = 0; y < s->h; ++y) {
-		for (uint x = 1; x < s->w - 1; ++x) {
+	for (int y = 0; y < s->h; ++y) {
+		for (int x = 1; x < s->w - 1; ++x) {
 			uint16 *pixel = (uint16 *)s->getBasePtr(x, y);
 			if (*pixel && *pixel != color) {
 				if (!pixel[-1])
@@ -73,8 +73,8 @@ void QText::drawOutline(Graphics::Surface *s, uint16 color) {
 		}
 	}
 
-	for (uint x = 0; x < s->w; ++x) {
-		for (uint y = 0; y < s->h - 1; ++y) {
+	for (int x = 0; x < s->w; ++x) {
+		for (int y = 0; y < s->h - 1; ++y) {
 			uint16 *pixel = (uint16 *)s->getBasePtr(x, y);
 			if (*pixel && *pixel != color) {
 				pixel = (uint16 *)s->getBasePtr(x, y - 1);
