@@ -69,7 +69,6 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
-	Common::Platform platform = g_sci->getPlatform();
 	uint32 deviceFlags;
 	if (g_sci->_features->generalMidiOnly()) {
 		deviceFlags = MDT_MIDI;
@@ -114,9 +113,17 @@ void SciMusic::init() {
 	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
-		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)
-			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion, platform);
-		else
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+			if (getSciVersion() <= SCI_VERSION_0_LATE)
+				_pMidiDrv = MidiPlayer_MacSci0_create(_soundVersion);
+			else
+				_pMidiDrv = MidiPlayer_MacSci1_create(_soundVersion);
+		} else if (g_sci->getPlatform() == Common::kPlatformAmiga) {
+			if (getSciVersion() <= SCI_VERSION_0_LATE)
+				_pMidiDrv = MidiPlayer_AmigaSci0_create(_soundVersion);
+			else
+				_pMidiDrv = MidiPlayer_AmigaSci1_create(_soundVersion);
+		} else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
 	case MT_PCJR:
