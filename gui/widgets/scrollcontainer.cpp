@@ -142,8 +142,11 @@ void ScrollContainerWidget::reflowLayout() {
 
 void ScrollContainerWidget::drawWidget() {
 	// GUI TODO: Recheck what the below line does.
-	if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions"))
-		_x = g_system->getOverlayWidth() - _w - _x;
+	if (g_gui.useRTL()) {
+		if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions")) {
+			_x = g_system->getOverlayWidth() - _x - _w + g_gui.getOverlayOffset();
+		}
+	}
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()), _backgroundType);
 }
