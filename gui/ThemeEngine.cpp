@@ -152,9 +152,18 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDCheckboxSelected,           "checkbox_selected",          kDrawLayerForeground,  kDDCheckboxDefault},
 	{kDDCheckboxDisabledSelected,   "checkbox_disabled_selected", kDrawLayerForeground,  kDDCheckboxDisabled},
 
+	{kDDCheckboxDefaultRTL,            "checkbox_default_rtl",           kDrawLayerBackground,   kDDNone},
+	{kDDCheckboxDisabledRTL,           "checkbox_disabled_rtl",          kDrawLayerBackground,   kDDNone},
+	{kDDCheckboxSelectedRTL,           "checkbox_selected_rtl",          kDrawLayerForeground,  kDDCheckboxDefaultRTL},
+	{kDDCheckboxDisabledSelectedRTL,   "checkbox_disabled_selected_rtl", kDrawLayerForeground,  kDDCheckboxDisabledRTL},
+
 	{kDDRadiobuttonDefault,         "radiobutton_default",      kDrawLayerBackground,   kDDNone},
 	{kDDRadiobuttonDisabled,        "radiobutton_disabled",     kDrawLayerBackground,   kDDNone},
 	{kDDRadiobuttonSelected,        "radiobutton_selected",     kDrawLayerForeground,  kDDRadiobuttonDefault},
+
+	{kDDRadiobuttonDefaultRTL,		"radiobutton_default_rtl",	kDrawLayerBackground,	kDDNone},
+	{kDDRadiobuttonDisabledRTL,		"radiobutton_disabled_rtl",	kDrawLayerBackground,	kDDNone},
+	{kDDRadiobuttonSelectedRTL,		"radiobutton_selected_rtl",	kDrawLayerForeground,	kDDRadiobuttonDefaultRTL},
 
 	{kDDTabActive,                  "tab_active",               kDrawLayerForeground,  kDDTabInactive},
 	{kDDTabInactive,                "tab_inactive",             kDrawLayerBackground,   kDDNone},
@@ -995,59 +1004,79 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 	drawDD(kDDSeparator, r);
 }
 
-void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
 	Common::Rect r2 = r;
-	DrawData dd = kDDCheckboxDefault;
+	DrawData dd = rtl ? kDDCheckboxDefaultRTL : kDDCheckboxDefault;
 
 	if (checked)
-		dd = kDDCheckboxSelected;
+		dd = rtl ? kDDCheckboxSelectedRTL : kDDCheckboxSelected;
 
 	if (state == kStateDisabled)
-		dd = checked ? kDDCheckboxDisabledSelected : kDDCheckboxDisabled;
+		dd = checked ? rtl ? kDDCheckboxDisabledSelectedRTL : kDDCheckboxDisabledSelected : rtl ? kDDCheckboxDisabledRTL : kDDCheckboxDisabled;
 
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
-
 	r2.bottom = r2.top + checkBoxSize;
-	r2.right = r2.left + checkBoxSize;
+
+	if (rtl) {
+		r2.left = r.right - checkBoxSize;
+		r2.right = r.right;
+	} else {
+		r2.right = r2.left + checkBoxSize;
+	}
 
 	drawDD(dd, r2);
 
-	r2.left = r2.right + checkBoxSize;
-	r2.right = r.right;
+	if (rtl) {
+		r2.left = r.left;
+		r2.right = r.right - (checkBoxSize * 2);
+	} else {
+		r2.left = r2.right + checkBoxSize;
+		r2.right = r.right;
+	}
 
 	if (r2.right > r2.left) {
-		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDCheckboxDefault]->_textAlignH,
+		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[dd]->_textAlignH,
 		           _widgets[dd]->_textAlignV);
 	}
 }
 
-void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
 	Common::Rect r2 = r;
-	DrawData dd = kDDRadiobuttonDefault;
+	DrawData dd = rtl ? kDDRadiobuttonDefaultRTL : kDDRadiobuttonDefault;
 
 	if (checked)
-		dd = kDDRadiobuttonSelected;
+		dd = rtl ? kDDRadiobuttonSelectedRTL : kDDRadiobuttonSelected;
 
 	if (state == kStateDisabled)
-		dd = kDDRadiobuttonDisabled;
+		dd = rtl ? kDDRadiobuttonDisabledRTL : kDDRadiobuttonDisabled;
 
 	const int radioButtonSize = MIN((int)r.height(), getFontHeight());
-
 	r2.bottom = r2.top + radioButtonSize;
-	r2.right = r2.left + radioButtonSize;
+
+	if (rtl) {
+		r2.left = r.right - radioButtonSize;
+		r2.right = r.right;
+	} else {
+		r2.right = r2.left + radioButtonSize;
+	}
 
 	drawDD(dd, r2);
 
-	r2.left = r2.right + radioButtonSize;
-	r2.right = MAX(r2.left, r.right);
+	if (rtl) {
+		r2.left = r.left;
+		r2.right = r.right - (radioButtonSize * 2);
+	} else {
+		r2.left = r2.right + radioButtonSize;
+		r2.right = MAX(r2.left, r.right);
+	}
 
-	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH,
+	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[dd]->_textAlignH,
 				_widgets[dd]->_textAlignV);
 }
 

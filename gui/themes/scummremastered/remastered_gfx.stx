@@ -1264,6 +1264,16 @@
 					file = 'checkbox_disabled.bmp'
 		/>
 	</drawdata>
+	<drawdata id = 'checkbox_disabled_selected_rtl' cache = 'false'>
+		<drawstep	func = 'bitmap'
+					file = 'checkbox_disabled.bmp'
+		/>
+		<text	font = 'text_default'
+				text_color = 'color_normal_disabled'
+				vertical_align = 'top'
+				horizontal_align = 'right'
+		/>
+	</drawdata>
 
 	<!-- Disabled checkbox -->
 	<drawdata id = 'checkbox_disabled' cache = 'false'>
@@ -1274,6 +1284,16 @@
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_empty.bmp'
+		/>
+	</drawdata>
+	<drawdata id = 'checkbox_disabled_rtl' cache = 'false'>
+		<drawstep	func = 'bitmap'
+					file = 'checkbox_empty.bmp'
+		/>
+		<text	font = 'text_default'
+				text_color = 'color_normal_disabled'
+				vertical_align = 'top'
+				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1288,6 +1308,16 @@
 					file = 'checkbox.bmp'
 		/>
 	</drawdata>
+	<drawdata id = 'checkbox_selected_rtl' cache = 'false'>
+		<drawstep	func = 'bitmap'
+					file = 'checkbox.bmp'
+		/>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'top'
+				horizontal_align = 'right'
+		/>
+	</drawdata>
 
 	<!-- Idle checkbox -->
 	<drawdata id = 'checkbox_default' cache = 'false'>
@@ -1298,6 +1328,16 @@
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_empty.bmp'
+		/>
+	</drawdata>
+	<drawdata id = 'checkbox_default_rtl' cache = 'false'>
+		<drawstep	func = 'bitmap'
+					file = 'checkbox_empty.bmp'
+		/>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'top'
+				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1312,6 +1352,16 @@
 					file = 'radiobutton_empty.bmp'
 		/>
 	</drawdata>
+	<drawdata id = 'radiobutton_default_rtl' cache = 'false'>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton_empty.bmp'
+		/>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'right'
+		/>
+	</drawdata>
 
 	<!-- Selected radiobutton -->
 	<drawdata id = 'radiobutton_selected' cache = 'false'>
@@ -1324,6 +1374,16 @@
 					file = 'radiobutton.bmp'
 		/>
 	</drawdata>
+	<drawdata id = 'radiobutton_selected_rtl' cache = 'false'>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton.bmp'
+		/>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'right'
+		/>
+	</drawdata>
 
 	<!-- Disabled radiobutton -->
 	<drawdata id = 'radiobutton_disabled' cache = 'false'>
@@ -1334,6 +1394,16 @@
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'radiobutton_empty.bmp'
+		/>
+	</drawdata>
+	<drawdata id = 'radiobutton_disabled_rtl' cache = 'false'>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton_empty.bmp'
+		/>
+		<text	font = 'text_default'
+				text_color = 'color_normal_disabled'
+				vertical_align = 'center'
+				horizontal_align = 'right'
 		/>
 	</drawdata>
 
