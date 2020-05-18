@@ -73,13 +73,11 @@ MODULE_OBJS := \
 	sound/soundcmd.o \
 	sound/sync.o \
 	sound/drivers/adlib.o \
-	sound/drivers/amigasci0.o \
-	sound/drivers/amigasci1.o \
+	sound/drivers/amigamac0.o \
+	sound/drivers/amigamac1.o \
 	sound/drivers/cms.o \
 	sound/drivers/fb01.o \
 	sound/drivers/fmtowns.o \
-	sound/drivers/macsci0.o \
-	sound/drivers/macsci1.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
 	sound/drivers/pc9801.o \

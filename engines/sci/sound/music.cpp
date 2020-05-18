@@ -69,6 +69,7 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
+	const Common::Platform platform = g_sci->getPlatform();
 	uint32 deviceFlags;
 	if (g_sci->_features->generalMidiOnly()) {
 		deviceFlags = MDT_MIDI;
@@ -86,14 +87,14 @@ void SciMusic::init() {
 	if (getSciVersion() > SCI_VERSION_0_EARLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
-	if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+	if (platform == Common::kPlatformFMTowns) {
 		if (getSciVersion() > SCI_VERSION_1_EARLY)
 			deviceFlags = MDT_TOWNS;
 		else
 			deviceFlags |= MDT_TOWNS;
 	}
 
-	if (g_sci->getPlatform() == Common::kPlatformPC98)
+	if (platform == Common::kPlatformPC98)
 		deviceFlags |= MDT_PC98;
 
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
@@ -113,16 +114,11 @@ void SciMusic::init() {
 	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		if (platform == Common::kPlatformMacintosh || platform == Common::kPlatformAmiga) {
 			if (getSciVersion() <= SCI_VERSION_0_LATE)
-				_pMidiDrv = MidiPlayer_MacSci0_create(_soundVersion);
+				_pMidiDrv = MidiPlayer_AmigaMac0_create(_soundVersion, platform);
 			else
-				_pMidiDrv = MidiPlayer_MacSci1_create(_soundVersion);
-		} else if (g_sci->getPlatform() == Common::kPlatformAmiga) {
-			if (getSciVersion() <= SCI_VERSION_0_LATE)
-				_pMidiDrv = MidiPlayer_AmigaSci0_create(_soundVersion);
-			else
-				_pMidiDrv = MidiPlayer_AmigaSci1_create(_soundVersion);
+				_pMidiDrv = MidiPlayer_AmigaMac1_create(_soundVersion, platform);
 		} else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
