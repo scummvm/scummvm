@@ -78,6 +78,10 @@ enum WMETargetExecutable {
 	WME_1_8_8,  // DEAD:CODE 2008, released as "1.8.8 beta"
 	WME_1_8_9,  // DEAD:CODE 2008, released as "1.8.9 beta"
 	WME_1_8_10, // DEAD:CODE 2009
+
+	// fork of WME_1_8_10
+	WME_ANDISHE_VARAN, // Andishe Varan Engine 1.0.0.0
+
 	WME_1_8_11, // DEAD:CODE 2009
 	WME_1_9_0,  // DEAD:CODE 2009, released as "1.9.0 beta"
 
