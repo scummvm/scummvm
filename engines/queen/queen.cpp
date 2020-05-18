@@ -355,6 +355,7 @@ Common::Error QueenEngine::run() {
 	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
+	_lastUpdateTime = _system->getMillis();
 
 	while (!shouldQuit()) {
 		if (_logic->newRoom() > 0) {
