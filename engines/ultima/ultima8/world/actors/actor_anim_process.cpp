@@ -212,7 +212,7 @@ void ActorAnimProcess::run() {
 					if (_itemNum == watchactor) {
 						pout << "Animation ["
 						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling" << Std::endl;
+						     << "] falling at end" << Std::endl;
 					}
 #endif
 					int32 dx, dy, dz;
@@ -244,7 +244,7 @@ void ActorAnimProcess::run() {
 					if (_itemNum == watchactor) {
 						pout << "Animation ["
 						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling" << Std::endl;
+						     << "] falling from blocked" << Std::endl;
 					}
 #endif
 					// no inertia here because we just crashed into something
@@ -257,7 +257,7 @@ void ActorAnimProcess::run() {
 			}
 		}
 
-		AnimFrame *curframe = _tracker->getAnimFrame();
+		const AnimFrame *curframe = _tracker->getAnimFrame();
 		if (curframe && curframe->_sfx) {
 			AudioProcess *audioproc = AudioProcess::get_instance();
 			if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
@@ -318,7 +318,7 @@ void ActorAnimProcess::run() {
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
 		     << "] showing frame (" << x << "," << y << "," << z << ")"
 		     << " shape (" << a->getShape() << "," << _tracker->getFrame()
-		     << ") sfx " << _tracker->getAnimFrame()->sfx
+		     << ") sfx " << _tracker->getAnimFrame()->_sfx
 		     << " rep " << _repeatCounter << " ";
 
 		if (_tracker->isDone()) pout << "D";
@@ -337,7 +337,7 @@ void ActorAnimProcess::run() {
 #ifdef WATCHACTOR
 			if (_itemNum == watchactor) {
 				pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-				     << "] falling" << Std::endl;
+				     << "] falling from repeat" << Std::endl;
 			}
 #endif
 
