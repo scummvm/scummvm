@@ -70,12 +70,12 @@ extern bool lex_check_parens();
 
 using namespace Director;
 
-void yyerror(const char *s) {
+static void yyerror(const char *s) {
 	g_lingo->_hadError = true;
 	warning("######################  LINGO: %s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
 
-void checkEnd(Common::String *token, const char *expect, bool required) {
+static void checkEnd(Common::String *token, const char *expect, bool required) {
 	if (required) {
 		if (token->compareToIgnoreCase(expect)) {
 			Common::String err = Common::String::format("end mismatch. Expected %s but got %s", expect, token->c_str());
@@ -83,6 +83,10 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 		}
 	}
 }
+
+static void inArgs() { g_lingo->_indef = kStateInArgs; }
+static void inDef()  { g_lingo->_indef = kStateInDef; }
+static void inNone() { g_lingo->_indef = kStateNone; }
 
 %}
 
@@ -514,9 +518,9 @@ proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 	| playfunc
 	| tEXIT tREPEAT			{ g_lingo->code1(LC::c_exitRepeat); }
 	| tEXIT					{ g_lingo->code1(LC::c_procret); }
-	| tGLOBAL { g_lingo->_indef = kStateInArgs; } globallist { g_lingo->_indef = kStateNone; }
-	| tPROPERTY { g_lingo->_indef = kStateInArgs; } propertylist { g_lingo->_indef = kStateNone; }
-	| tINSTANCE { g_lingo->_indef = kStateInArgs; } instancelist { g_lingo->_indef = kStateNone; }
+	| tGLOBAL { inArgs(); } globallist { inNone(); }
+	| tPROPERTY { inArgs(); } propertylist { inNone(); }
+	| tINSTANCE { inArgs(); } instancelist { inNone(); }
 	| BLTIN '(' arglist ')'			{
 		g_lingo->codeFunc($BLTIN, $arglist);
 		delete $BLTIN; }
@@ -621,26 +625,26 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 //
 // See also:
 //   on keyword
-defn: tMACRO { g_lingo->_indef = kStateInArgs; } ID { g_lingo->_currentFactory.clear(); }
+defn: tMACRO { inArgs(); } ID { g_lingo->_currentFactory.clear(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$ID, $begin, $argdef);
 		g_lingo->clearArgStack();
-		g_lingo->_indef = kStateNone;
+		inNone();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$2); delete $ID; }
-	| tMETHOD { g_lingo->_indef = kStateInArgs; }
+	| tMETHOD { inArgs(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
 		g_lingo->clearArgStack();
-		g_lingo->_indef = kStateNone;
+		inNone();
 		delete $tMETHOD; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
 		g_lingo->clearArgStack();
-		g_lingo->_indef = kStateNone;
+		inNone();
 		g_lingo->_ignoreMe = false;
 
 		checkEnd($ENDCLAUSE, $on->c_str(), false);
@@ -649,12 +653,12 @@ defn: tMACRO { g_lingo->_indef = kStateInArgs; } ID { g_lingo->_currentFactory.c
 	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
-		g_lingo->_indef = kStateNone;
+		inNone();
 		g_lingo->clearArgStack();
 		g_lingo->_ignoreMe = false;
 		delete $on; }
 
-on:  tON { g_lingo->_indef = kStateInArgs; } ID { $$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
+on:  tON { inArgs(); } ID { $$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($ID); $$ = 1; delete $ID; }
@@ -664,7 +668,7 @@ endargdef:	/* nothing */
 	| ID					{ delete $ID; }
 	| endargdef ',' ID		{ delete $ID; }
 
-argstore:	  /* nothing */		{ g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; }
+argstore:	  /* nothing */		{ g_lingo->codeArgStore(); inDef(); }
 
 macro: ID nonemptyarglist	{
 		g_lingo->code1(LC::c_call);
