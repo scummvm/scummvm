@@ -619,9 +619,9 @@ void GrimEngine::updateDisplayScene() {
 		}
 		// Draw Primitives
 		_iris->draw();
-		if (_movieSubtitle) {
-			_movieSubtitle->draw();
-		}
+
+		g_movie->drawMovieSubtitle();
+
 	} else if (_mode == NormalMode || _mode == OverworldMode) {
 		updateNormalMode();
 	} else if (_mode == DrawMode) {
@@ -1354,6 +1354,11 @@ void GrimEngine::setMovieSubtitle(TextObject *to) {
 		delete _movieSubtitle;
 		_movieSubtitle = to;
 	}
+}
+
+void GrimEngine::drawMovieSubtitle() {
+	if (_movieSubtitle)
+		_movieSubtitle->draw();
 }
 
 void GrimEngine::setMovieSetup() {

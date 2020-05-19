@@ -98,9 +98,30 @@ bool BinkPlayer::loadFile(const Common::String &filename) {
 	_fname = filename;
 
 	if (_demo) {
+		Common::String subname = filename + ".sub";
 		// The demo uses a .lab suffix
-		_fname += ".lab";
-		return MoviePlayer::loadFile(_fname);
+		_fname = filename + ".lab";
+		bool ret = MoviePlayer::loadFile(_fname);
+
+		// Load subtitles from adjacent .sub file, if present
+		Common::SeekableReadStream *substream = SearchMan.createReadStreamForMember(subname);
+		if (substream) {
+			TextSplitter tsSub("", substream);
+			while (!tsSub.isEof()) {
+				unsigned int start, end;
+				char textId[256];
+
+				// extract single subtitle entry
+				tsSub.scanString("%d\t%d\t%s", 3, &start, &end, textId);
+
+				Subtitle st(start, end, textId);
+				_subtitles.push_back(st);
+			}
+			delete substream;
+			_subtitleIndex = _subtitles.begin();
+		}
+
+		return ret;
 	}
 
 	_fname += ".m4b";
