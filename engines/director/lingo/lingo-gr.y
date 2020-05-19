@@ -88,6 +88,13 @@ static void inArgs() { g_lingo->_indef = kStateInArgs; }
 static void inDef()  { g_lingo->_indef = kStateInDef; }
 static void inNone() { g_lingo->_indef = kStateNone; }
 
+static void startDef() { inArgs(); }
+static void endDef() {
+	g_lingo->clearArgStack();
+	inNone();
+	g_lingo->_ignoreMe = false;
+}
+
 %}
 
 %union {
@@ -625,27 +632,23 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 //
 // See also:
 //   on keyword
-defn: tMACRO { inArgs(); } ID { g_lingo->_currentFactory.clear(); }
+defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$ID, $begin, $argdef);
-		g_lingo->clearArgStack();
-		inNone();
+		endDef();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$2); delete $ID; }
-	| tMETHOD { inArgs(); }
+	| tMETHOD { startDef(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
-		g_lingo->clearArgStack();
-		inNone();
+		endDef();
 		delete $tMETHOD; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
-		g_lingo->clearArgStack();
-		inNone();
-		g_lingo->_ignoreMe = false;
+		endDef();
 
 		checkEnd($ENDCLAUSE, $on->c_str(), false);
 		delete $on;
@@ -653,12 +656,10 @@ defn: tMACRO { inArgs(); } ID { g_lingo->_currentFactory.clear(); }
 	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
-		inNone();
-		g_lingo->clearArgStack();
-		g_lingo->_ignoreMe = false;
+		endDef();
 		delete $on; }
 
-on:  tON { inArgs(); } ID 		{
+on:  tON { startDef(); } ID 	{
 		$$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
