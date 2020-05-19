@@ -352,6 +352,7 @@ Common::Error QueenEngine::run() {
 	syncSoundSettings();
 
 	_logic->start();
+	_gameStarted = true;
 	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
@@ -364,9 +365,6 @@ Common::Error QueenEngine::run() {
 			_logic->currentRoom(_logic->newRoom());
 			_logic->changeRoom();
 			_display->fullscreen(false);
-			// From this point onwards it is safe to use the load/save
-			// menu, so consider game to be 'started'
-			_gameStarted = true;
 			if (_logic->currentRoom() == _logic->newRoom()) {
 				_logic->newRoom(0);
 			}
