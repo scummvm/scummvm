@@ -117,5 +117,57 @@ void Sprite::setPattern(uint16 pattern) {
 	}
 }
 
+void Sprite::setCast(uint16 castId) {
+	Cast *member = g_director->getCastMember(castId);
+	if (member) {
+		_cast = member;
+		_castId = castId;
+		_castType = kCastTypeNull;
+
+		if (g_director->getVersion() < 4) {
+			switch (_spriteType) {
+			case kBitmapSprite:
+				_castType = kCastBitmap;
+				break;
+			case kRectangleSprite:
+			case kRoundedRectangleSprite:
+			case kOvalSprite:
+			case kLineTopBottomSprite:
+			case kLineBottomTopSprite:
+			case kOutlinedRectangleSprite:
+			case kOutlinedRoundedRectangleSprite:
+			case kOutlinedOvalSprite:
+			case kCastMemberSprite:
+				if (_cast != nullptr) {
+					switch (_cast->_type) {
+					case kCastButton:
+						_castType = kCastButton;
+						break;
+					default:
+						_castType = kCastShape;
+						break;
+					}
+				} else {
+					_castType = kCastShape;
+				}
+				break;
+			case kTextSprite:
+				_castType = kCastText;
+				break;
+			case kButtonSprite:
+			case kCheckboxSprite:
+			case kRadioButtonSprite:
+				_castType = kCastButton;
+				break;
+			default:
+				warning("Sprite::setCast(): Unhandled sprite type %d", _spriteType);
+				break;
+			}
+		} else {
+			_castType = member->_type;
+		}
+	}
+}
+
 
 } // End of namespace Director

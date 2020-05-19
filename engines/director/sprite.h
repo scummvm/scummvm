@@ -65,6 +65,8 @@ public:
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
 
+	void setCast(uint16 castid);
+
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;
 	byte _colorcode;  // x40 editable, 0x80 moveable

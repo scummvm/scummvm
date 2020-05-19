@@ -758,71 +758,11 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::setSpriteCasts() {
-	// Set cast pointers to sprites
+	// Update sprite cache of cast pointers/info
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
-			uint16 castId = _frames[i]->_sprites[j]->_castId;
-
-			if (castId == 0)
-				continue;
-
-			Cast *member = _vm->getCastMember(castId);
-			if (member) {
-				_frames[i]->_sprites[j]->_cast = member;
-
-				CastType castType = kCastTypeNull;
-				Sprite *sprite = _frames[i]->_sprites[j];
-
-				if (_vm->getVersion() < 4) {
-					debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d type: %d", i, j, sprite->_spriteType);
-					switch (sprite->_spriteType) {
-					case kBitmapSprite:
-						castType = kCastBitmap;
-						break;
-					case kRectangleSprite:
-					case kRoundedRectangleSprite:
-					case kOvalSprite:
-					case kLineTopBottomSprite:
-					case kLineBottomTopSprite:
-					case kOutlinedRectangleSprite:
-					case kOutlinedRoundedRectangleSprite:
-					case kOutlinedOvalSprite:
-					case kCastMemberSprite:
-						if (sprite->_cast != nullptr) {
-							switch (sprite->_cast->_type) {
-							case kCastButton:
-								castType = kCastButton;
-								break;
-							default:
-								castType = kCastShape;
-								break;
-							}
-						} else {
-							castType = kCastShape;
-						}
-						break;
-					case kTextSprite:
-						castType = kCastText;
-						break;
-					case kButtonSprite:
-					case kCheckboxSprite:
-					case kRadioButtonSprite:
-						castType = kCastButton;
-						break;
-					default:
-						warning("Score::setSpriteCasts(): Unhandled sprite type %d", sprite->_spriteType);
-						break;
-					}
-				} else {
-					member = _vm->getCastMember(sprite->_castId);
-					if (!member) {
-						debugC(1, kDebugImages, "Score::setSpriteCasts(): Cast id %d not found", sprite->_castId);
-					} else {
-						castType = member->_type;
-					}
-				}
-				sprite->_castType = castType;
-			}
+			_frames[i]->_sprites[j]->setCast(_frames[i]->_sprites[j]->_castId);
+			debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d type: %d", i, j, _frames[i]->_sprites[j]->_spriteType);
 		}
 	}
 }
@@ -1990,7 +1930,7 @@ void Score::renderShape(uint16 spriteId) {
 
 	if (_vm->getVersion() >= 3 && spriteType == kCastMemberSprite) {
 		if (!sp->_cast) {
-			warning("Frame::renderShape(): kCastMemberSprite has no cast defined");
+			warning("Score::renderShape(): kCastMemberSprite has no cast defined");
 			return;
 		}
 		switch (sp->_cast->_type) {
@@ -2026,7 +1966,7 @@ void Score::renderShape(uint16 spriteId) {
 			}
 			break;
 		default:
-			warning("Frame::renderShape(): Unhandled cast type: %d", sp->_cast->_type);
+			warning("Score::renderShape(): Unhandled cast type: %d", sp->_cast->_type);
 			break;
 		}
 	}
@@ -2174,7 +2114,7 @@ void Score::renderButton(uint16 spriteId) {
 void Score::renderText(uint16 spriteId, Common::Rect *textRect) {
 	TextCast *textCast = (TextCast*)_sprites[spriteId]->_cast;
 	if (textCast == nullptr) {
-		warning("Frame::renderText(): TextCast #%d is a nullptr", spriteId);
+		warning("Score::renderText(): TextCast #%d is a nullptr", spriteId);
 		return;
 	}
 
@@ -2194,7 +2134,7 @@ void Score::renderText(uint16 spriteId, Common::Rect *textRect) {
 	}
 
 	if (width == 0 || height == 0) {
-		warning("Frame::renderText(): Requested to draw on an empty surface: %d x %d", width, height);
+		warning("Score::renderText(): Requested to draw on an empty surface: %d x %d", width, height);
 		return;
 	}
 
@@ -2301,7 +2241,7 @@ void Score::renderText(uint16 spriteId, Common::Rect *textRect) {
 				y += 2;
 				break;
 			default:
-				warning("Frame::renderText(): Expected button but got unexpected button type: %d", buttonType);
+				warning("Score::renderText(): Expected button but got unexpected button type: %d", buttonType);
 				y += 2;
 				break;
 			}
@@ -2405,7 +2345,7 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 		drawReverseSprite(spriteSurface, drawRect, spriteId);
 		break;
 	default:
-		warning("Frame::inkBasedBlit(): Unhandled ink type %d", ink);
+		warning("Score::inkBasedBlit(): Unhandled ink type %d", ink);
 		_surface->blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
 		break;
 	}
@@ -2530,7 +2470,7 @@ void Score::drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawR
 	}
 
 	if (whiteColor == -1) {
-		debugC(1, kDebugImages, "Frame::drawMatteSprite(): No white color for Matte image");
+		debugC(1, kDebugImages, "Score::drawMatteSprite(): No white color for Matte image");
 
 		for (int yy = 0; yy < srcRect.height(); yy++) {
 			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);

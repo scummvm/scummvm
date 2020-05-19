@@ -687,10 +687,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_blend = d.asInt();
 		break;
 	case kTheCastNum:
-		if (_vm->getCastMember(d.asInt())) {
-			sprite->_cast = _vm->getCastMember(d.asInt());
-			sprite->_castId = d.asInt();
-		}
+		sprite->setCast(d.asInt());
 		break;
 	case kTheConstraint:
 		sprite->_constraint = d.asInt();
