@@ -90,6 +90,7 @@ enum DrawData {
 	kDDDropDownButtonIdleRTL,
 	kDDDropDownButtonHoverLeftRTL,
 	kDDDropDownButtonHoverRightRTL,
+	kDDDropDownButtonDisabledRTL,
 	kDDDropDownButtonPressedLeftRTL,
 	kDDDropDownButtonPressedRightRTL,
 

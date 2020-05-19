@@ -527,6 +527,9 @@ void PopUpWidget::drawWidget() {
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
 
+	if (g_gui.useRTL() && _useRTL)
+		_leftPadding = 0;
+
 	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state, (g_gui.useRTL() && _useRTL));
 }
 
