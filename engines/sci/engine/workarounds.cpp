@@ -520,7 +520,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          470,   470, -1,     "<invalid name>", "notify",                          NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // same as previous, with rm470::name used for temp storage by fan patches added by GOG
 	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when finishing awari game, bug #5167
 	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    sig_uninitread_qfg3_2,     4,     4, { WORKAROUND_FAKE,   0 } }, // also when finishing awari game
-	{ GID_QFG3,          851,    32, -1,            "ProjObj", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #5282
+	{ GID_QFG3,           -1,    32, -1,            "ProjObj", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death or sword, bugs #5282, #11477
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",                   NULL,     5,     5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1,    23, -1,     "tellerControls", "dispatchEvent",                   NULL,     6,     6, { WORKAROUND_FAKE,   0 } }, // floppy version, when using keyboard controls in the conversation interface
 	{ GID_QFG4,           -1,    50, -1,     "sSearchMonster", "changeState",                     NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // CD version, when searching a chernovy or revenant with speech disabled
