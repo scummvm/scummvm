@@ -51,8 +51,6 @@ public:
 	void playCredits() override;
 	void playQuotes() override { };
 
-	static Game *createGame(GameInfo *info);
-
 protected:
 	static Game *_game;
 };

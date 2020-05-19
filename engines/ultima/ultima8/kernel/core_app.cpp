@@ -191,7 +191,7 @@ void CoreApp::killGame() {
 }
 
 
-bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
+bool CoreApp::getGameInfo(const istring &game, GameInfo *ginfo) {
 	// first try getting the information from the config file
 	// if that fails, try to autodetect it
 

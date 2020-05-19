@@ -69,7 +69,7 @@ public:
 	void startup();
 
 	//! Get current GameInfo struct
-	GameInfo *getGameInfo() const {
+	const GameInfo *getGameInfo() const {
 		return _gameInfo;
 	}
 
@@ -105,7 +105,7 @@ private:
 	//! \param game The id of the game to check (from pentagram.cfg)
 	//! \param gameinfo The GameInfo struct to fill
 	//! \return true if detected all the fields, false if detection failed
-	bool getGameInfo(istring &game, GameInfo *gameinfo);
+	bool getGameInfo(const istring &game, GameInfo *gameinfo);
 
 	//! load configuration files
 	void loadConfig();

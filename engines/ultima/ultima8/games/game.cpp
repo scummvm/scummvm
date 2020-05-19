@@ -45,7 +45,7 @@ Game::~Game() {
 
 
 // static
-Game *Game::createGame(GameInfo *info) {
+Game *Game::createGame(const GameInfo *info) {
 	switch (info->_type) {
 	case GameInfo::GAME_U8:
 		return new U8Game();

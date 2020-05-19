@@ -55,7 +55,7 @@ public:
 	virtual void playCredits() = 0;
 	virtual void playQuotes() = 0;
 
-	static Game *createGame(GameInfo *info);
+	static Game *createGame(const GameInfo *info);
 
 	INTRINSIC(I_playEndgame);
 

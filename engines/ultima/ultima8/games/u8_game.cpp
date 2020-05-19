@@ -58,7 +58,7 @@ U8Game::U8Game() : Game() {
 	settingman->setDefault("footsteps", true);
 	settingman->setDefault("targetedjump", true);
 
-	GameInfo *info = Ultima8Engine::get_instance()->getGameInfo();
+	const GameInfo *info = Ultima8Engine::get_instance()->getGameInfo();
 	if (info->_language == GameInfo::GAMELANG_JAPANESE) {
 		settingman->setDefault("textdelay", 20);
 	} else {
@@ -157,7 +157,7 @@ bool U8Game::startInitialUsecode(int saveSlot) {
 
 
 ProcId U8Game::playIntroMovie(bool fade) {
-	GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
+	const GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "U8Game::playIntro: Unknown language." << Std::endl;
@@ -191,7 +191,7 @@ ProcId U8Game::playEndgameMovie(bool fade) {
 }
 
 void U8Game::playCredits() {
-	GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
+	const GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "U8Game::playCredits: Unknown language." << Std::endl;
