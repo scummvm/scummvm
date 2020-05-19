@@ -127,6 +127,41 @@ void Wintermute::BaseRenderOpenGL3D::initLoop() {
 }
 
 bool Wintermute::BaseRenderOpenGL3D::setup2D(bool force) {
+	if (_state3D || force)
+	{
+		_state3D = false;
+
+		// some states are still missing here
+
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_STENCIL);
+		glDisable(GL_CLIP_PLANE0);
+		glDisable(GL_FOG);
+		glLightModeli(GL_LIGHT_MODEL_AMBIENT, 0);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_CCW);
+		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_BLEND);
+		glAlphaFunc(GL_GEQUAL, 0x00);
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glActiveTexture(GL_TEXTURE0);
+		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+		glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
+		glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PREVIOUS);
+		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
+		glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
+		glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_PREVIOUS);
+
+		glActiveTexture(GL_TEXTURE1);
+		glDisable(GL_TEXTURE_2D);
+
+		glActiveTexture(GL_TEXTURE0);
+	}
+
 	return true;
 }
 

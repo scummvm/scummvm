@@ -130,6 +130,7 @@ public:
 
 private:
 	bool _spriteBatchMode;
+	bool _state3D;
 };
 
 } // wintermute namespace
