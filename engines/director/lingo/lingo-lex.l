@@ -60,7 +60,7 @@ static void count() {
 	}
 
 	while (*p == '\n' || *p == '\r' || *p == '\xC2') {
-		if (*p == '\n') {
+		if (*p == '\n' || *p == '\xC2') {
 			g_lingo->_linenumber++;
 			g_lingo->_colnumber = 0;
 		}
