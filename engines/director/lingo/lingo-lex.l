@@ -70,7 +70,8 @@ static void count() {
 }
 
 static int checkImmediate(int token) {
-	if (g_lingo->_immediateMode) {
+	if (g_lingo->_immediateMode || g_lingo->_indef == kStateInArgs ||
+			g_lingo->_methodVars.contains(yytext)) {
 		yylval.s = new Common::String(yytext);
 
 		return ID;
@@ -95,6 +96,16 @@ static Common::String *cleanupString(const char *s) {
 	return res;
 }
 
+static int varCheck(int token, const char *name) {
+	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars.contains(name)) {
+		yylval.s = new Common::String(name);
+
+		return ID;
+	}
+
+	return token;
+}
+
 %}
 
 identifier [_[:alpha:]][_[:alnum:]]*
@@ -111,12 +122,12 @@ spc [ \t\xC2]
 
 [#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return SYMBOL; }	// D3, skip '#'
 
-after		{ count(); return tAFTER; }		// D3
-and			{ count(); return tAND; }
-before		{ count(); return tBEFORE; }	// D3
-char		{ count(); return tCHAR; }		// D3
-contains	{ count(); return tCONTAINS; }
-down		{ count(); return tDOWN; }
+after		{ count(); return varCheck(tAFTER, "after"); }		// D3
+and			{ count(); return varCheck(tAND, "and"); }
+before		{ count(); return varCheck(tBEFORE, "before"); }	// D3
+char		{ count(); return varCheck(tCHAR, "char"); }		// D3
+contains	{ count(); return varCheck(tCONTAINS, "contains"); }
+down		{ count(); return varCheck(tDOWN, "down"); }
 if			{ count(); return tIF; }
 else{spc}+if { count(); return tELSIF; }
 else		{ count(); return tELSE; }
@@ -134,23 +145,28 @@ end({spc}+{identifier})?	{
 		else if (!scumm_stricmp(ptr, "tell"))
 			return tENDTELL;
 
+		if (!*ptr) {	// If it is stale "end", check it
+			if (varCheck(ENDCLAUSE, "end") == ID)
+				return ID;
+		}
+
 		yylval.s = new Common::String(ptr);
 
 		return ENDCLAUSE;
 	}
 ^{spc}*factory { count(); return tFACTORY; }
-exit		{ count(); return tEXIT; }
-global		{ count(); return tGLOBAL; }
+exit		{ count(); return varCheck(tEXIT, "exit"); }
+global		{ count(); return varCheck(tGLOBAL, "global"); }
 go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
-instance	{ count(); return tINSTANCE; }
-intersects	{ count(); return tINTERSECTS; }
-into		{ count(); return tINTO; }
-in			{ count(); return tIN; }
-item		{ count(); return tITEM; }
-line		{ count(); return tLINE; }
+instance	{ count(); return varCheck(tINSTANCE, "instance"); }
+intersects	{ count(); return varCheck(tINTERSECTS, "intersects"); }
+into		{ count(); return varCheck(tINTO, "into"); }
+in			{ count(); return varCheck(tIN, "in"); }
+item		{ count(); return varCheck(tITEM, "item"); }
+line		{ count(); return varCheck(tLINE, "line"); }
 loop		{ count(); return checkImmediate(tLOOP); }
-macro		{ count(); return tMACRO; }
+macro		{ count(); return varCheck(tMACRO, "macro"); }
 method{spc}+{identifier}		{
 		count();
 
@@ -162,24 +178,24 @@ method{spc}+{identifier}		{
 
 		return tMETHOD;
 	}
-mod			{ count(); return tMOD; }
-movie		{ count(); return tMOVIE; }
-next		{ count(); return tNEXT; }
-not			{ count(); return tNOT; }
-of			{ count(); return tOF; }
-on			{ count(); return tON; }		// D3
-open		{ count(); return tOPEN; }
-or			{ count(); return tOR; }
+mod			{ count(); return varCheck(tMOD, "mod"); }
+movie		{ count(); return varCheck(tMOVIE, "movie"); }
+next		{ count(); return varCheck(tNEXT, "next"); }
+not			{ count(); return varCheck(tNOT, "not"); }
+of			{ count(); return varCheck(tOF, "of"); }
+on			{ count(); return varCheck(tON, "on"); }		// D3
+open		{ count(); return varCheck(tOPEN, "open"); }
+or			{ count(); return varCheck(tOR, "or"); }
 play{spc}+frame	{ count(); return tPLAY; }
-play		{ count(); return tPLAY; }
+play		{ count(); return varCheck(tPLAY, "play"); }
 playAccel	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
-previous	{ count(); return tPREVIOUS; }
-property	{ count(); return tPROPERTY; }	// D4
-put			{ count(); return tPUT; }
+previous	{ count(); return varCheck(tPREVIOUS, "previous"); }
+property	{ count(); return varCheck(tPROPERTY, "property"); }	// D4
+put			{ count(); return varCheck(tPUT, "put"); }
 repeat		{ count(); return checkImmediate(tREPEAT); }
-set			{ count(); return tSET; }
-starts		{ count(); return tSTARTS; }
-tell		{ count(); return tTELL; }
+set			{ count(); return varCheck(tSET, "set"); }
+starts		{ count(); return varCheck(tSTARTS, "starts"); }
+tell		{ count(); return varCheck(tTELL, "tell"); }
 the{spc}+number{spc}+of{spc}+[[:alpha:]]+{spc}+(in|of){spc}+ {
 		count();
 
@@ -362,13 +378,13 @@ the{spc}+[[:alpha:]]+		{
 		warning("LEXER: Unhandled the entity '%s'", ptr);
 	}
 then			{ count(); return tTHEN; }
-to				{ count(); return tTO; }
-sprite			{ count(); return tSPRITE; }
-with			{ count(); return tWITH; }
-within			{ count(); return tWITHIN; }
-when			{ count(); return tWHEN; }
-while			{ count(); return tWHILE; }
-word			{ count(); return tWORD; }
+to				{ count(); return varCheck(tTO, "to"); }
+sprite			{ count(); return varCheck(tSPRITE, "sprite"); }
+with			{ count(); return varCheck(tWITH, "with"); }
+within			{ count(); return varCheck(tWITHIN, "within"); }
+when			{ count(); return varCheck(tWHEN, "when"); }
+while			{ count(); return varCheck(tWHILE, "while"); }
+word			{ count(); return varCheck(tWORD, "word"); }
 
 [<][>]			{ count(); return tNEQ; }
 [>][=]			{ count(); return tGE; }
@@ -385,6 +401,11 @@ word			{ count(); return tWORD; }
 
 		// When we are defining arguments, allow any string
 		if (g_lingo->_indef == kStateInArgs)
+			return ID;
+
+		// Check that this is one of locally used names:
+		// argument, propery, instance or global
+		if (g_lingo->_methodVars.contains(yytext))
 			return ID;
 
 		// First of all, match against argument list
