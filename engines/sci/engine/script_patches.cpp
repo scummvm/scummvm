@@ -15842,6 +15842,42 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 
 #endif
 
+// Space Quest 3 has some strings hard coded in the scripts file
+// We need to patch them for the Hebrew translation
+
+// Replace "Enter input" prompt with Hebrew
+static const uint16 sq3HebrewEnterInputSignature[] = {
+	SIG_MAGICDWORD,
+	0x45, 0x6e, 0x74, 0x65, 0x72, 0x20, 0x69, 0x6e, 0x70, 0x75, 0x74, 0,
+	SIG_END
+};
+
+static const uint16 sq3HebrewEnterInputPatch[] = {
+	0xe4, 0xf7, 0xf9, 0x20, 0xf4, 0xf7, 0xe5, 0xe3, 0xe4, 0x3a, 0,
+	PATCH_END
+};
+
+// Replace "Space Quest ]I[" in status bar with Hebrew
+static const uint16 sq3HebrewStatusBarNameSignature[] = {
+	SIG_MAGICDWORD,
+	0x53, 0x70, 0x61, 0x63, 0x65, 0x20, 0x51, 0x75, 0x65, 0x73, 0x74, 0x20, 0x0b,		// "Space Quest " + special ]I[ char
+	SIG_END
+};
+
+static const uint16 sq3HebrewStatusBarNamePatch[] = {
+	0xee, 0xf1, 0xf2, 0x20, 0xe1, 0xe7, 0xec, 0xec, 0x20, 0x0b, 0x20, 0x20, 0x20,		// 'Space Quest' in Hebrew: 'Masa Bahalal ' + special ]I[ char
+	PATCH_END
+};
+
+//          script, description,                                      signature                                      patch
+static const SciScriptPatcherEntry sq3Signatures[] = {
+	{  false,   0, "Hebrew: Replace name in status bar",    1, sq3HebrewStatusBarNameSignature,                     sq3HebrewStatusBarNamePatch },
+	{  false, 996, "Hebrew: Replace 'Enter input' prompt",  1, sq3HebrewEnterInputSignature,                        sq3HebrewEnterInputPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+
+
 // ===========================================================================
 //  script 298 of sq4/floppy has an issue. object "nest" uses another property
 //   which isn't included in property count. We return 0 in that case, so that
@@ -19140,6 +19176,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 	case GID_SQ1:
 		signatureTable = sq1vgaSignatures;
 		break;
+	case GID_SQ3:
+		signatureTable = sq3Signatures;
+		break;
 	case GID_SQ4:
 		signatureTable = sq4Signatures;
 		break;
@@ -19214,6 +19253,12 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "Floppy: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 					enablePatch(signatureTable, "Floppy: fix peer bats, upper door (2/2)");
+				}
+				break;
+			case GID_SQ3:
+				if (g_sci->getLanguage() == Common::HE_ISR) {
+					enablePatch(signatureTable, "Hebrew: Replace name in status bar");
+					enablePatch(signatureTable, "Hebrew: Replace 'Enter input' prompt");
 				}
 				break;
 			case GID_SQ4:

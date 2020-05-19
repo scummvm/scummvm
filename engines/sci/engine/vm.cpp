@@ -664,7 +664,7 @@ void run_vm(EngineState *s) {
 
 		// Get opcode
 		byte extOpcode;
-		if (!vmHooks.isActive())
+		if (!vmHooks.isActive(s))
 			s->xs->addr.pc.incOffset(readPMachineInstruction(scr->getBuf(s->xs->addr.pc.getOffset()), extOpcode, opparams));
 		else {
 			int offset = readPMachineInstruction(vmHooks.data(), extOpcode, opparams);
@@ -804,7 +804,7 @@ void run_vm(EngineState *s) {
 
 		case op_bt: // 0x17 (23)
 			// Branch relative if true
-			if (!vmHooks.isActive()) {
+			if (!vmHooks.isActive(s)) {
 				if (s->r_acc.getOffset() || s->r_acc.getSegment())
 					s->xs->addr.pc.incOffset(opparams[0]);
 
@@ -819,7 +819,7 @@ void run_vm(EngineState *s) {
 
 		case op_bnt: // 0x18 (24)
 			// Branch relative if not true
-			if (!vmHooks.isActive()) {
+			if (!vmHooks.isActive(s)) {
 				if (!(s->r_acc.getOffset() || s->r_acc.getSegment()))
 					s->xs->addr.pc.incOffset(opparams[0]);
 
@@ -833,7 +833,7 @@ void run_vm(EngineState *s) {
 			break;
 
 		case op_jmp: // 0x19 (25)
-			if (!vmHooks.isActive()) {
+			if (!vmHooks.isActive(s)) {
 				s->xs->addr.pc.incOffset(opparams[0]);
 
 				if (s->xs->addr.pc.getOffset() >= local_script->getScriptSize())

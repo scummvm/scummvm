@@ -208,6 +208,29 @@ public:
 	 */
 	void lookupWord(ResultWordList &retval, const char *word, int word_len);
 
+	/**
+	 * Looks up a single word in the words list, taking into account suffixes, and updating parent_retval if finding matching prefix
+	 * Note: there is no equivalent in Sierra SCI, added to support specific languages translations
+	 * For other languages, does nothing
+	 * @param parent_retval		parent's function list of matches
+	 * @param retval			the list of matches
+	 * @param word				pointer to the word to look up
+	 * @param word_len			length of the word to look up
+	 */
+	void lookupWordPrefix(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len);
+
+	/**
+	 * Helper function for lookupWordPrefix, checking specific prefix for match
+	 * @param parent_retval		lookupWordPrefix's parent's function list of matches
+	 * @param retval			lookupWordPrefix's list of matches
+	 * @param word				pointer to the word to look up
+	 * @param word_len			length of the word to look up
+	 * @param prefix			the prefix to look for in the word
+	 * @param meaning			the meaning of that prefix
+	 * @return true on prefix match, false on prefix not matching
+	 */
+	bool lookupSpecificPrefix(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning);
+
 
 	/**
 	 * Tokenizes a string and compiles it into word_ts.
@@ -323,6 +346,11 @@ private:
 	 * @return true on success, false on failure
 	 */
 	bool loadSuffixes();
+
+	/**
+	 * Appends required suffixes for specific languages
+	 */
+	void appendSuffixes();
 
 	/**
 	 * Frees all suffixes in the given list.
