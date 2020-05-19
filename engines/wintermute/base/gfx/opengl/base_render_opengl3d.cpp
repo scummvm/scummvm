@@ -136,5 +136,65 @@ bool Wintermute::BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture& tex, cons
 bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, const Wintermute::Rect32& rect,
 												  const Wintermute::Vector2& pos, const Wintermute::Vector2& rot, const Wintermute::Vector2& scale,
 												  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	// original wme has a batch mode for sprites, we ignore this for the moment
+
+	float width = (rect.right - rect.left) * scale.x;
+	float height = (rect.bottom - rect.top) * scale.y;
+
+	float tex_left = (float) rect.left / (float) tex.getWidth();
+	float tex_top = (float) rect.top / (float) tex.getHeight();
+	float tex_right = (float) rect.right / (float) tex.getWidth();
+	float tex_bottom = (float) rect.bottom / (float) tex.getHeight();
+
+	if (mirrorX)
+	{
+
+	}
+
+	if (mirrorY)
+	{
+
+	}
+
+	// provide space for 3d position coords, 2d texture coords and a 32 bit colot value
+	int vertex_size = 24;
+	byte* vertices[vertex_size * 4];
+
+	// texture coords
+	*reinterpret_cast<float*>(vertices) = tex_left;
+	*reinterpret_cast<float*>(vertices + 4) = tex_bottom;
+	*reinterpret_cast<float*>(vertices + vertex_size) = tex_left;
+	*reinterpret_cast<float*>(vertices + vertex_size + 4) = tex_top;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size) = tex_right;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 4) = tex_bottom;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size) = tex_right;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 4) = tex_top;
+
+	// position coords
+	*reinterpret_cast<float*>(vertices + 12) = pos.x - 0.5f;
+	*reinterpret_cast<float*>(vertices + 12 + 4) = pos.y + height - 0.5f;
+	*reinterpret_cast<float*>(vertices + 12 + 8) = -0.9f;
+	*reinterpret_cast<float*>(vertices + vertex_size + 12) = pos.x -0.5f;
+	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 4) = pos.y - 0.5f;
+	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 8) = -0.9f;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12) = pos.x + width - 0.5f;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 4) = pos.y + height - 0.5f;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 8) = -0.9f;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12) = pos.x + width - 0.5f;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 4) = pos.y - 0.5;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 8) = -0.9f;
+
+	// color
+	*reinterpret_cast<uint32*>(vertices + 8) = color;
+	*reinterpret_cast<uint32*>(vertices + vertex_size + 8) = color;
+	*reinterpret_cast<uint32*>(vertices + 2 * vertex_size + 8) = color;
+	*reinterpret_cast<uint32*>(vertices + 3 * vertex_size + 8) = color;
+
+	// transform vertices here if necessary, add offset
+
+	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
+	glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
 	return true;
 }
