@@ -26,6 +26,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Wintermute:
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::displayTrans(int x, int y, Wintermute::Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	renderer->drawSprite(tex, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
@@ -34,7 +35,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Wintermut
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::display(int x, int y, Wintermute::Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(tex, rect, 100, 100, Vector2(x, y), 0, 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
+	renderer->drawSprite(tex, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
 

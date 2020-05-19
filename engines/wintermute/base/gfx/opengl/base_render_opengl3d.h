@@ -123,7 +123,7 @@ public:
 	virtual void endSaveLoad();
 
 	bool drawSprite(const OpenGL::Texture& tex, const Rect32& rect, float zoomX, float zoomY, const Vector2& pos,
-					float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 	bool drawSpriteEx(const OpenGL::Texture& tex, const Rect32& rect, const Vector2& pos, const Vector2& rot, const Vector2& scale,
 					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 

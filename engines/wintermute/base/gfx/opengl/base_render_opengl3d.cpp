@@ -181,10 +181,10 @@ void Wintermute::BaseRenderOpenGL3D::endSaveLoad() {
 }
 
 bool Wintermute::BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture& tex, const Wintermute::Rect32& rect,
-												float zoomX, float zoomY, const Wintermute::Vector2& pos, float angle,
+												float zoomX, float zoomY, const Wintermute::Vector2& pos,
 												uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
-	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, angle, color, alphaDisable, blendMode, mirrorX, mirrorY);
+	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
 bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, const Wintermute::Rect32& rect,
