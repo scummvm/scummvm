@@ -1503,8 +1503,8 @@ void castleBuildingBlackDragon2UpdateFunction() {
 			ini->counter = 0x68;
 			ini->objectState = 1;
 		} else if (ini->objectState == 1) {
-			ini->actor->updateSequence(4);
-			ini->counter = vm->getRand(0xb4);
+			vm->_dragonINIResource->getRecord(0x234)->actor->updateSequence(4);
+			ini->counter = vm->getRand(0xb4) + 900;
 			ini->objectState = 0;
 		}
 	}
