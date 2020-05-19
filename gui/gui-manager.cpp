@@ -81,7 +81,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 #ifdef USE_TRANSLATION
 	// Enable translation
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
-	if (TransMan.getCurrentLanguage() == "C") {		// GUI TODO: Change after testing.
+	if (TransMan.getCurrentLanguage() == "C" && false) {		// GUI TODO: Change this to enable RTL
 		_useRTL = true;
 	}
 #endif // USE_TRANSLATION
