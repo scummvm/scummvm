@@ -29,19 +29,16 @@ bool Wintermute::BaseRenderOpenGL3D::saveScreenShot(const Common::String& filena
 }
 
 bool Wintermute::BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
+	glViewport(left, top, right - left, bottom - top);
 	return true;
 }
 
 bool Wintermute::BaseRenderOpenGL3D::setViewport(Wintermute::Rect32* rect) {
-	return true;
+	return setViewport(rect->left, rect->top, rect->right, rect->bottom);
 }
 
 Wintermute::Rect32 Wintermute::BaseRenderOpenGL3D::getViewPort() {
 	return Rect32(0, 0, 0, 0);
-}
-
-bool Wintermute::BaseRenderOpenGL3D::setScreenViewport() {
-	return true;
 }
 
 void Wintermute::BaseRenderOpenGL3D::setWindowed(bool windowed) {
@@ -106,6 +103,8 @@ bool Wintermute::BaseRenderOpenGL3D::initRenderer(int width, int height, bool wi
 	setProjection();
 
 	_active = true;
+	// setup a proper state
+	setup2D(true);
 	return true;
 }
 
@@ -123,7 +122,7 @@ bool Wintermute::BaseRenderOpenGL3D::forcedFlip() {
 }
 
 void Wintermute::BaseRenderOpenGL3D::initLoop() {
-
+	setup2D();
 }
 
 bool Wintermute::BaseRenderOpenGL3D::setup2D(bool force) {
