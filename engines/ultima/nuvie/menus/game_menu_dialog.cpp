@@ -85,7 +85,7 @@ bool GameMenuDialog::init() {
 	button_index[++last_index] = cheats_button;
 	continue_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Back to Game", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(continue_button);
-	button_index[++last_index] = cheats_button;
+	button_index[++last_index] = continue_button;
 	quit_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Quit", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(quit_button);
 	button_index[++last_index] = quit_button;
@@ -146,8 +146,10 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 	if (caller == this) {
 		close_dialog();
 	} else if (caller == save_button) {
+		close_dialog();
 		g_engine->saveGameDialog();
 	} else if (caller == load_button) {
+		close_dialog();
 		g_engine->loadGameDialog();
 	} else if (caller == video_button) {
 		GUI_Widget *video_dialog;
