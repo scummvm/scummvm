@@ -3,6 +3,18 @@
 #include "../../../../../graphics/opengl/system_headers.h"
 #include "base_surface_opengl3d.h"
 
+namespace Wintermute {
+BaseRenderer *makeOpenGL3DRenderer(BaseGame* inGame) {
+	return new BaseRenderOpenGL3D(inGame);
+}
+
+}
+
+Wintermute::BaseRenderOpenGL3D::BaseRenderOpenGL3D(Wintermute::BaseGame* inGame)
+	: _spriteBatchMode(false) {
+
+}
+
 Wintermute::BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
 
 }
@@ -58,11 +70,6 @@ bool Wintermute::BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, ui
 
 bool Wintermute::BaseRenderOpenGL3D::windowedBlt() {
 	return true;
-}
-
-Wintermute::BaseRenderOpenGL3D::BaseRenderOpenGL3D(Wintermute::BaseGame* inGame)
-	: _spriteBatchMode(false) {
-
 }
 
 bool Wintermute::BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect* rect) {
