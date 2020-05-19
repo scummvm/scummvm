@@ -55,8 +55,8 @@ void Widget::init() {
 	_boss->_firstWidget = this;
 	_needsRedraw = true;
 
-	if (TransMan.getCurrentLanguage() == "C") {		// GUI TODO: Switch to native RTL languages after testing, also
-		_useRTL = true;								//			 Widgets will get _useRTL true or not from the XML parser.
+	if (TransMan.getCurrentLanguage() == "C" && false) {		// GUI TODO: Change this and GuiManager::GuiManager() to use RTL.
+		_useRTL = true;											// GUI TODO: Widgets will get _useRTL true or not from the XML parser.
 	}
 }
 
