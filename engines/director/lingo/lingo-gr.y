@@ -88,11 +88,21 @@ static void inArgs() { g_lingo->_indef = kStateInArgs; }
 static void inDef()  { g_lingo->_indef = kStateInDef; }
 static void inNone() { g_lingo->_indef = kStateNone; }
 
-static void startDef() { inArgs(); }
+static void startDef() {
+	inArgs();
+	g_lingo->_methodVars.clear();
+}
+
 static void endDef() {
 	g_lingo->clearArgStack();
 	inNone();
 	g_lingo->_ignoreMe = false;
+
+	g_lingo->_methodVars.clear();
+}
+
+static void mArg(Common::String *s) {
+	g_lingo->_methodVars[*s] = true;
 }
 
 %}
@@ -540,28 +550,34 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 globallist: ID					{
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString($1->c_str());
+		mArg($1);
 		delete $ID; }
 	| globallist ',' ID			{
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString($3->c_str());
+		mArg($3);
 		delete $ID; }
 
 propertylist: ID				{
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString($1->c_str());
+		mArg($1);
 		delete $ID; }
 	| propertylist ',' ID		{
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString($3->c_str());
+		mArg($3);
 		delete $ID; }
 
 instancelist: ID				{
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString($1->c_str());
+		mArg($1);
 		delete $ID; }
 	| instancelist ',' ID		{
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString($3->c_str());
+		mArg($3);
 		delete $ID; }
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -663,8 +679,8 @@ on:  tON { startDef(); } ID 	{
 		$$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
-	| ID						{ g_lingo->codeArg($ID); $$ = 1; delete $ID; }
-	| argdef ',' ID				{ g_lingo->codeArg($ID); $$ = $1 + 1; delete $ID; }
+	| ID						{ g_lingo->codeArg($ID); mArg($ID); $$ = 1; delete $ID; }
+	| argdef ',' ID				{ g_lingo->codeArg($ID); mArg($ID); $$ = $1 + 1; delete $ID; }
 
 endargdef:	/* nothing */
 	| ID						{ delete $ID; }

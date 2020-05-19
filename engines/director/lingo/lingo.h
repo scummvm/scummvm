@@ -419,6 +419,7 @@ public:
 	LexerDefineState _indef;
 	bool _ignoreMe;
 	bool _immediateMode;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methodVars;
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
