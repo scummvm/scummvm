@@ -1738,6 +1738,7 @@ void Score::startLoop() {
 	_stopPlay = false;
 	_nextFrameTime = 0;
 
+	_sprites = _frames[_currentFrame]->_sprites;
 	_lingo->processEvent(kEventStartMovie);
 
 	_sprites = _frames[_currentFrame]->_sprites;

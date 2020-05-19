@@ -37,6 +37,7 @@ Sprite::Sprite() {
 	_castId = 0;
 	_castIndex = 0;
 	_spriteType = kInactiveSprite;
+	_castType = kCastTypeNull;
 	_inkData = 0;
 	_ink = kInkTypeCopy;
 	_trails = 0;
