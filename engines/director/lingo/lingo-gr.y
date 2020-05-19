@@ -549,35 +549,35 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 
 globallist: ID					{
 		g_lingo->code1(LC::c_global);
-		g_lingo->codeString($1->c_str());
-		mArg($1);
+		g_lingo->codeString($ID->c_str());
+		mArg($ID);
 		delete $ID; }
 	| globallist ',' ID			{
 		g_lingo->code1(LC::c_global);
-		g_lingo->codeString($3->c_str());
-		mArg($3);
+		g_lingo->codeString($ID->c_str());
+		mArg($ID);
 		delete $ID; }
 
 propertylist: ID				{
 		g_lingo->code1(LC::c_property);
-		g_lingo->codeString($1->c_str());
-		mArg($1);
+		g_lingo->codeString($ID->c_str());
+		mArg($ID);
 		delete $ID; }
 	| propertylist ',' ID		{
 		g_lingo->code1(LC::c_property);
-		g_lingo->codeString($3->c_str());
-		mArg($3);
+		g_lingo->codeString($ID->c_str());
+		mArg($ID);
 		delete $ID; }
 
 instancelist: ID				{
 		g_lingo->code1(LC::c_instance);
-		g_lingo->codeString($1->c_str());
-		mArg($1);
+		g_lingo->codeString($ID->c_str());
+		mArg($ID);
 		delete $ID; }
 	| instancelist ',' ID		{
 		g_lingo->code1(LC::c_instance);
-		g_lingo->codeString($3->c_str());
-		mArg($3);
+		g_lingo->codeString($ID->c_str());
+		mArg($ID);
 		delete $ID; }
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -654,7 +654,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
 		g_lingo->define(*$ID, $begin, $argdef);
 		endDef();
 		delete $ID; }
-	| tFACTORY ID	{ g_lingo->codeFactory(*$2); delete $ID; }
+	| tFACTORY ID	{ g_lingo->codeFactory(*$ID); delete $ID; }
 	| tMETHOD { startDef(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
