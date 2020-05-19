@@ -61,6 +61,8 @@ MODULE_OBJS := \
 	base/gfx/osystem/render_ticket.o \
 	base/gfx/opengl/base_surface_opengl_texture.o \
 	base/gfx/opengl/base_render_opengl_texture.o \
+	base/gfx/opengl/base_surface_opengl3d.o \
+	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/render_ticket.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
