@@ -357,7 +357,6 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 }
 
 GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 
@@ -365,7 +364,7 @@ GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
 	ypos -= area.top;
 	if (xpos < 0 || ypos > area.top + area.height() - 10)
 		return GUI_PASS; // goes to InventoryView
-#endif
+
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6) {
 		if (y > 0) {
 			up_arrow();

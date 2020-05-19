@@ -373,14 +373,12 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		button = Shared::whichButton(event->type);
 		if (focused || HitRect(x, y)) {
 			set_mousedown(SDL_GetTicks(), button);
-
-//if !SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
-			if (button == SDL_BUTTON_WHEELUP)
+ 
+			if (button == Common::EVENT_WHEELUP)
 				return MouseWheel(0, 1);
-			else if (button == SDL_BUTTON_WHEELDOWN)
+			else if (button == Common::EVENT_WHEELDOWN)
 				return MouseWheel(0, -1);
-#endif
+
 			return(MouseDown(x, y, button));
 		}
 		break;
@@ -439,11 +437,13 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		}
 	}
 	break;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	case SDL_MOUSEWHEEL: {
-		return MouseWheel(event->wheel.x, event->wheel.y);
-	}
-#endif
+
+	case Common::EVENT_WHEELUP:
+		return MouseWheel(0, 1);
+
+	case Common::EVENT_WHEELDOWN:
+		return MouseWheel(0, -1);
+
 	default: {
 		/* Pass it along.. */;
 	}

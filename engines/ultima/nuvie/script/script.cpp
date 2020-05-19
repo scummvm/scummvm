@@ -942,10 +942,6 @@ bool Script::play_cutscene(const char *script_file) {
 	script_file_path += script_file;
 
 	ConsoleHide();
-//if !SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
-	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL * 2);
-#endif
 
 	return run_lua_file(script_file_path.c_str());
 }

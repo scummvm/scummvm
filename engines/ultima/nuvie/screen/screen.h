@@ -153,10 +153,6 @@ public:
 
 	void get_mouse_location(int *x, int *y);
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	void scale_sdl_window_coords(sint32 *x, sint32 *y);
-#endif
-
 	void set_non_square_pixels(bool value);
 
 protected:
