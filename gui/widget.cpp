@@ -56,7 +56,7 @@ void Widget::init() {
 	_needsRedraw = true;
 
 	if (TransMan.getCurrentLanguage() == "C") {		// GUI TODO: Switch to native RTL languages after testing, also
-		_useRTL = true;								//			 Widgets will get _useRTL true or not from the XML parser. Look into this after the main GUI flipping.
+		_useRTL = true;								//			 Widgets will get _useRTL true or not from the XML parser.
 	}
 }
 
@@ -304,7 +304,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_label = text;
 
 	_align = g_gui.xmlEval()->getWidgetTextHAlign(name);
-	if (g_gui.useRTL()) {
+	if (g_gui.useRTL() && _useRTL) {
 		if (_align == Graphics::kTextAlignLeft) {
 			_align = Graphics::kTextAlignRight;
 		} else if (_align == Graphics::kTextAlignRight) {
@@ -789,8 +789,7 @@ void SliderWidget::drawWidget() {
 	Common::Rect r1(_x, _y, _x + _w, _y + _h);
 
 	if (g_gui.useRTL() && _useRTL) {
-		// GUI TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly.
-		//	     Most likely, I'll draw ::Rect(_x + _w, _y, _x, _y + _h...) but I'll leave it for now, will do it when I flip individual widgets.
+		// GUI TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly (colors should be inverted).
 		g_gui.theme()->drawSlider(r1, valueToBarWidth(getMaxValue() - _value), _state);
 	}
 	else {

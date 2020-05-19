@@ -111,9 +111,6 @@ public:
 	virtual int getFirstVisible() const;
 	virtual void setFirstVisible(int tabID, bool adjustIfRoom = false);
 
-	int getTabsSize();
-	void reverseTabs();
-
 	bool containsWidget(Widget *) const override;
 
 	void reflowLayout() override;

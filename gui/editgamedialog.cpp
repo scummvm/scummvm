@@ -342,15 +342,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 		}
 	}
 
-	if (g_gui.useRTL() && false) {		// GUI TODO: Incomplete
-		// Activate the last tab - that is, the first tab for RTL users.
-		// tab->reverseTabs(); (Untested)
-		tab->setActiveTab(tab->getTabsSize()-1);
-	}
-	else {
-		// Activate the first tab
-		tab->setActiveTab(0);
-	}
+	// Activate the first tab
+	tab->setActiveTab(0);
+
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
