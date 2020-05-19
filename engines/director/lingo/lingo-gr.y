@@ -494,41 +494,41 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| expr tCONCAT expr			{ g_lingo->code1(LC::c_concat); }
 	| expr tCONTAINS expr		{ g_lingo->code1(LC::c_contains); }
 	| expr tSTARTS expr			{ g_lingo->code1(LC::c_starts); }
-	| '+' expr[arg]  %prec UNARY{ $$ = $arg; }
-	| '-' expr[arg]  %prec UNARY{ $$ = $arg; g_lingo->code1(LC::c_negate); }
-	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(LC::c_intersects); }
-	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(LC::c_within); }
+	| '+' expr[arg]  %prec UNARY	{ $$ = $arg; }
+	| '-' expr[arg]  %prec UNARY	{ $$ = $arg; g_lingo->code1(LC::c_negate); }
+	| tSPRITE expr tINTERSECTS expr { g_lingo->code1(LC::c_intersects); }
+	| tSPRITE expr tWITHIN expr		{ g_lingo->code1(LC::c_within); }
 
-chunkexpr: 	tCHAR expr tOF expr			{ g_lingo->code1(LC::c_charOf); }
-	| tCHAR expr tTO expr tOF expr		{ g_lingo->code1(LC::c_charToOf); }
-	| tITEM expr tOF expr				{ g_lingo->code1(LC::c_itemOf); }
-	| tITEM expr tTO expr tOF expr		{ g_lingo->code1(LC::c_itemToOf); }
-	| tLINE expr tOF expr				{ g_lingo->code1(LC::c_lineOf); }
-	| tLINE expr tTO expr tOF expr		{ g_lingo->code1(LC::c_lineToOf); }
-	| tWORD expr tOF expr				{ g_lingo->code1(LC::c_wordOf); }
-	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(LC::c_wordToOf); }
+chunkexpr: 	tCHAR expr tOF expr		{ g_lingo->code1(LC::c_charOf); }
+	| tCHAR expr tTO expr tOF expr	{ g_lingo->code1(LC::c_charToOf); }
+	| tITEM expr tOF expr			{ g_lingo->code1(LC::c_itemOf); }
+	| tITEM expr tTO expr tOF expr	{ g_lingo->code1(LC::c_itemToOf); }
+	| tLINE expr tOF expr			{ g_lingo->code1(LC::c_lineOf); }
+	| tLINE expr tTO expr tOF expr	{ g_lingo->code1(LC::c_lineToOf); }
+	| tWORD expr tOF expr			{ g_lingo->code1(LC::c_wordOf); }
+	| tWORD expr tTO expr tOF expr	{ g_lingo->code1(LC::c_wordToOf); }
 
 reference: 	RBLTIN simpleexpr	{
 		g_lingo->codeFunc($RBLTIN, 1);
 		delete $RBLTIN; }
 	| chunkexpr
 
-proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
+proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| gotofunc
 	| playfunc
-	| tEXIT tREPEAT			{ g_lingo->code1(LC::c_exitRepeat); }
-	| tEXIT					{ g_lingo->code1(LC::c_procret); }
-	| tGLOBAL { inArgs(); } globallist { inNone(); }
-	| tPROPERTY { inArgs(); } propertylist { inNone(); }
-	| tINSTANCE { inArgs(); } instancelist { inNone(); }
-	| BLTIN '(' arglist ')'			{
+	| tEXIT tREPEAT				{ g_lingo->code1(LC::c_exitRepeat); }
+	| tEXIT						{ g_lingo->code1(LC::c_procret); }
+	| tGLOBAL					{ inArgs(); } globallist { inNone(); }
+	| tPROPERTY					{ inArgs(); } propertylist { inNone(); }
+	| tINSTANCE					{ inArgs(); } instancelist { inNone(); }
+	| BLTIN '(' arglist ')'		{
 		g_lingo->codeFunc($BLTIN, $arglist);
 		delete $BLTIN; }
-	| BLTIN arglist			{
+	| BLTIN arglist				{
 		g_lingo->codeFunc($BLTIN, $arglist);
 		delete $BLTIN; }
-	| tOPEN expr tWITH expr	{ g_lingo->code1(LC::c_open); }
-	| tOPEN expr 			{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
+	| tOPEN expr tWITH expr		{ g_lingo->code1(LC::c_open); }
+	| tOPEN expr 				{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
 
 globallist: ID					{
 		g_lingo->code1(LC::c_global);
@@ -567,11 +567,11 @@ instancelist: ID				{
 gotofunc: tGO tLOOP				{ g_lingo->code1(LC::c_gotoloop); }
 	| tGO tNEXT					{ g_lingo->code1(LC::c_gotonext); }
 	| tGO tPREVIOUS				{ g_lingo->code1(LC::c_gotoprevious); }
-	| tGO expr 			{
+	| tGO expr 					{
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(LC::c_goto); }
-	| tGO expr gotomovie	{
+	| tGO expr gotomovie		{
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
 		g_lingo->code1(LC::c_goto); }
@@ -587,15 +587,15 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(LC::c_play); }
-	| tPLAY expr gotomovie	{
+	| tPLAY expr gotomovie		{
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
 		g_lingo->code1(LC::c_play); }
-	| tPLAY gotomovie				{
+	| tPLAY gotomovie			{
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(2);
 		g_lingo->code1(LC::c_play); }
-	| tPLAYACCEL { g_lingo->codeSetImmediate(true); } arglist	{
+	| tPLAYACCEL { g_lingo->codeSetImmediate(true); } arglist {
 		g_lingo->codeSetImmediate(false);
 		g_lingo->codeFunc($tPLAYACCEL, $arglist);
 		delete $tPLAYACCEL; }
@@ -658,19 +658,20 @@ defn: tMACRO { inArgs(); } ID { g_lingo->_currentFactory.clear(); }
 		g_lingo->_ignoreMe = false;
 		delete $on; }
 
-on:  tON { inArgs(); } ID { $$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
+on:  tON { inArgs(); } ID 		{
+		$$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
-argdef:  /* nothing */ 		{ $$ = 0; }
-	| ID					{ g_lingo->codeArg($ID); $$ = 1; delete $ID; }
-	| argdef ',' ID			{ g_lingo->codeArg($ID); $$ = $1 + 1; delete $ID; }
+argdef:  /* nothing */ 			{ $$ = 0; }
+	| ID						{ g_lingo->codeArg($ID); $$ = 1; delete $ID; }
+	| argdef ',' ID				{ g_lingo->codeArg($ID); $$ = $1 + 1; delete $ID; }
 
 endargdef:	/* nothing */
-	| ID					{ delete $ID; }
-	| endargdef ',' ID		{ delete $ID; }
+	| ID						{ delete $ID; }
+	| endargdef ',' ID			{ delete $ID; }
 
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); inDef(); }
 
-macro: ID nonemptyarglist	{
+macro: ID nonemptyarglist		{
 		g_lingo->code1(LC::c_call);
 		g_lingo->codeString($ID->c_str());
 		inst numpar = 0;
@@ -678,31 +679,31 @@ macro: ID nonemptyarglist	{
 		g_lingo->code1(numpar);
 		delete $ID; }
 
-arglist:  /* nothing */ 	{ $$ = 0; }
-	| expr					{ $$ = 1; }
-	| arglist ',' expr		{ $$ = $1 + 1; }
+arglist:  /* nothing */ 		{ $$ = 0; }
+	| expr						{ $$ = 1; }
+	| arglist ',' expr			{ $$ = $1 + 1; }
 
 nonemptyarglist:  expr			{ $$ = 1; }
 	| nonemptyarglist ',' expr	{ $$ = $1 + 1; }
 
-list: '[' valuelist ']'		{ $$ = $valuelist; }
+list: '[' valuelist ']'			{ $$ = $valuelist; }
 
-valuelist:	/* nothing */	{ $$ = g_lingo->code2(LC::c_arraypush, 0); }
-	| ':'					{ $$ = g_lingo->code2(LC::c_proparraypush, 0); }
+valuelist:	/* nothing */		{ $$ = g_lingo->code2(LC::c_arraypush, 0); }
+	| ':'						{ $$ = g_lingo->code2(LC::c_proparraypush, 0); }
 	| linearlist { $$ = g_lingo->code1(LC::c_arraypush); $$ = g_lingo->codeInt($linearlist); }
 	| proplist	 { $$ = g_lingo->code1(LC::c_proparraypush); $$ = g_lingo->codeInt($proplist); }
 
-linearlist: expr			{ $$ = 1; }
-	| linearlist ',' expr	{ $$ = $1 + 1; }
+linearlist: expr				{ $$ = 1; }
+	| linearlist ',' expr		{ $$ = $1 + 1; }
 
-proplist:  proppair			{ $$ = 1; }
-	| proplist ',' proppair	{ $$ = $1 + 1; }
+proplist:  proppair				{ $$ = 1; }
+	| proplist ',' proppair		{ $$ = $1 + 1; }
 
 proppair: SYMBOL ':' simpleexpr {
 		g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString($SYMBOL->c_str());
 		delete $SYMBOL; }
-	| STRING ':' simpleexpr {
+	| STRING ':' simpleexpr 	{
 		g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString($STRING->c_str());
 		delete $STRING; }
