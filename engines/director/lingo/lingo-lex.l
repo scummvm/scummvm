@@ -134,7 +134,7 @@ else		{ count(); return tELSE; }
 end({spc}+{identifier})?	{
 		count();
 
-		const char *ptr = &yytext[4]; // Skip 'end '
+		const char *ptr = &yytext[3]; // Skip 'end '
 		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
 			ptr++;
 
