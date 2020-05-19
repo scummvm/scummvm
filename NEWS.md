@@ -20,6 +20,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed inventory item descriptions display.
    - Added English translation.
 
+ Queen:
+   - Fixed loading a save game from the launcher.
+
  SCUMM:
    - Fixed palette issues leading to incorrect colors in MM NES intro and dark rooms.
    - Fixed the rendering of the flashlight in MM NES to match the original version.
