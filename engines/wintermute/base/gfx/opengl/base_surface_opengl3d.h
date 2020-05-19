@@ -7,13 +7,13 @@
 namespace Wintermute {
 
 class BaseGame;
+class BaseRenderOpenGL3D;
 
 class BaseSurfaceOpenGL3D : public BaseSurface {
 public:
-	BaseSurfaceOpenGL3D(BaseGame* game);
+	BaseSurfaceOpenGL3D(BaseGame* game, BaseRenderOpenGL3D* renderer);
 
 	virtual bool invalidate();
-	virtual bool prepareToDraw();
 
 	virtual bool displayHalfTrans(int x, int y, Rect32 rect);
 	virtual bool isTransparentAt(int x, int y);
@@ -46,6 +46,8 @@ public:
 
 private:
 	OpenGL::Texture tex;
+	BaseRenderOpenGL3D* renderer;
+	bool pixelOpReady;
 };
 
 }

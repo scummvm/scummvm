@@ -115,11 +115,11 @@ bool Wintermute::BaseRenderOpenGL3D::setup3D(bool force) {
 }
 
 bool Wintermute::BaseRenderOpenGL3D::setupLines() {
-
+	return true;
 }
 
 Wintermute::BaseSurface* Wintermute::BaseRenderOpenGL3D::createSurface() {
-	return new BaseSurfaceOpenGL3D(nullptr);
+	return new BaseSurfaceOpenGL3D(nullptr, this);
 }
 
 void Wintermute::BaseRenderOpenGL3D::endSaveLoad() {
