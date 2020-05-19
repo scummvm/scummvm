@@ -2,6 +2,7 @@
 
 #include "../../../../../graphics/opengl/system_headers.h"
 #include "base_surface_opengl3d.h"
+#include "math/glmath.h"
 
 namespace Wintermute {
 BaseRenderer *makeOpenGL3DRenderer(BaseGame* inGame) {
@@ -68,6 +69,21 @@ bool Wintermute::BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, ui
 	return true;
 }
 
+bool Wintermute::BaseRenderOpenGL3D::setProjection() {
+	// is the viewport already set here?
+	float viewportWidth = _viewportRect.right - _viewportRect.left;
+	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
+
+	Math::Matrix4 projMat = Math::makePerspectiveMatrix(M_PI, viewportWidth/viewportHeight, 0.9f, 1900.f);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glLoadMatrixf(projMat.getData());
+	glMatrixMode(GL_MODELVIEW);
+
+	return true;
+}
+
 bool Wintermute::BaseRenderOpenGL3D::windowedBlt() {
 	return true;
 }
@@ -86,6 +102,10 @@ bool Wintermute::BaseRenderOpenGL3D::initRenderer(int width, int height, bool wi
 	_windowed = windowed;
 	_width = width;
 	_height = height;
+
+	setProjection();
+
+	_active = true;
 	return true;
 }
 
