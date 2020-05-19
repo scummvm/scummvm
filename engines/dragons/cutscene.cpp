@@ -296,7 +296,7 @@ void CutScene::scene1() {
 		_actor_80072dec = _vm->_actorManager->loadActor(0x82, 2, 0x91, 0x113, 1);
 		_actor_80072df0 = _vm->_actorManager->loadActor(0x82, 1, 0xd0, 199, 1);
 		_actor_80072df4 = _vm->_actorManager->loadActor(0x82, 3, 0xb6, 0x113, 1);
-		_actor_80072de8 = _vm->_actorManager->loadActor(0x82, 4, 0x98, 0x40, 1);
+		_actor_80072df8 = _vm->_actorManager->loadActor(0x82, 4, 0x98, 0x40, 1);
 
 		_actor_80072de8->setFlag(ACTOR_FLAG_100);
 		_actor_80072de8->setFlag(ACTOR_FLAG_800);
@@ -322,6 +322,7 @@ void CutScene::scene1() {
 		_actor_80072df4->_walkSpeed = 0x1c000;
 		_actor_80072df4->_priorityLayer = 3;
 
+		_actor_80072df8->setFlag(ACTOR_FLAG_80);
 		_actor_80072df8->setFlag(ACTOR_FLAG_100);
 		_actor_80072df8->setFlag(ACTOR_FLAG_800);
 		_actor_80072df8->setFlag(ACTOR_FLAG_8000);
