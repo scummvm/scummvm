@@ -47,8 +47,6 @@ extern GUI_status actorViewButtonCallback(void *data);
 #define SE Game::get_game()->get_game_type()==NUVIE_GAME_SE
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
-static const uint8 ACTION_BUTTON = 3;
-
 PartyView::PartyView(Configuration *cfg) : View(cfg) {
 	player = NULL;
 	view_manager = NULL;
