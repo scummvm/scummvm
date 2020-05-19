@@ -237,8 +237,7 @@ endif
 ifdef MORPHOS
 MODULE_OBJS += \
 	fs/morphos/morphos-fs.o \
-	fs/morphos/morphos-fs-factory.o \
-	midi/camd.o
+	fs/morphos/morphos-fs-factory.o
 endif
 
 ifdef RISCOS
