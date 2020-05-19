@@ -147,7 +147,10 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 
 OptionsDialog::~OptionsDialog() {
 	delete _subToggleGroup;
-	g_gui.setDialogPaddings(0, 0);
+	if (g_gui.useRTL()) {
+		g_gui.setDialogPaddings(0, 0);
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 void OptionsDialog::init() {
