@@ -303,25 +303,6 @@ void TabWidget::setFirstVisible(int tabID, bool adjustIfRoom) {
 	g_gui.scheduleTopDialogRedraw(); // TODO: Necessary?
 }
 
-int TabWidget::getTabsSize() {
-	return _tabs.size();
-}
-
-void TabWidget::reverseTabs() {	// GUI TODO: Incomplete, will this be necessary for working on reversing the tabs?
-	TabList _tabDups;
-	const int tSize = _tabs.size();
-
-	for (uint i = 0; i < tSize; ++i) {
-		//_tabDups.insert_at(0, _tabs[i]);
-		_tabDups.push_back(_tabs.back());
-		_tabs.pop_back();
-	}
-
-	for (uint i = 0; i < _tabDups.size(); ++i) {
-		_tabs.push_back(_tabDups[i]);
-	}
-}
-
 void TabWidget::reflowLayout() {
 	Widget::reflowLayout();
 
@@ -396,7 +377,7 @@ void TabWidget::reflowLayout() {
 void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
 	Common::Array<int> widths;
-	if (g_gui.useRTL()) {		// GUI TODO: Incomplete										// Keeping this disabled means that tabs are reversed, but windows are not shown anymore.
+	if (g_gui.useRTL()) {
 		for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
 			tabs.insert_at(0, _tabs[i].title);
 			widths.insert_at(0, _tabs[i]._tabWidth);

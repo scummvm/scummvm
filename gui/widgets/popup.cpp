@@ -299,8 +299,8 @@ void PopUpDialog::clearEntries() {
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		if (_twoColumns) {							// GUI TODO: Problems with collisions in 2 coloums.
-			uint entry = (y - 2) / _lineHeight;
+		if (_twoColumns) {							// GUI TODO: Problems with collisions in 2 coloumns.
+			uint entry = (y - 2) / _lineHeight;		//			 GUI Language in Options uses this. Basically, left coloumn highlights right and vice versa.
 			if (x > _w / 2) {
 				entry += _entriesPerColumn;
 
