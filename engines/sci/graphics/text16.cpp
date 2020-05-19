@@ -22,6 +22,7 @@
 
 #include "common/util.h"
 #include "common/stack.h"
+#include "common/unicode-bidi.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -559,21 +560,55 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 			break;
 		Width(curTextLine, 0, charCount, fontId, textWidth, textHeight, true);
 		maxTextWidth = MAX<int16>(maxTextWidth, textWidth);
-		switch (alignment) {
-		case SCI_TEXT16_ALIGNMENT_RIGHT:
-			offset = rect.width() - textWidth;
-			break;
-		case SCI_TEXT16_ALIGNMENT_CENTER:
-			offset = (rect.width() - textWidth) / 2;
-			break;
-		case SCI_TEXT16_ALIGNMENT_LEFT:
-			offset = 0;
-			break;
+		if (!g_sci->isLanguageRTL()) {
+			switch (alignment) {
+			case SCI_TEXT16_ALIGNMENT_RIGHT:
+				offset = rect.width() - textWidth;
+				break;
+			case SCI_TEXT16_ALIGNMENT_CENTER:
+				offset = (rect.width() - textWidth) / 2;
+				break;
+			case SCI_TEXT16_ALIGNMENT_LEFT:
+				offset = 0;
+				break;
 
-		default:
-			warning("Invalid alignment %d used in TextBox()", alignment);
+			default:
+				warning("Invalid alignment %d used in TextBox()", alignment);
+			}
+		} else {
+			// language direction is from Right to Left
+			switch (alignment) {
+			case SCI_TEXT16_ALIGNMENT_LEFT:
+				offset = rect.width() - textWidth;
+				break;
+			case SCI_TEXT16_ALIGNMENT_CENTER:
+				offset = (rect.width() - textWidth) / 2;
+				break;
+			case SCI_TEXT16_ALIGNMENT_RIGHT:
+				offset = 0;
+				break;
+
+			default:
+				warning("Invalid alignment %d used in TextBox()", alignment);
+			}
+
+			// in the fonts, the characters have some spacing to the left, and no space to the right
+			// therefore, when we start drawing from the right, they "start from the border"
+			// e.g., in SQ3 Hebrew user's input prompt
+			// we can't make the Hebrew letters spacing in the right (in the font), because then mixed English-Hebrew text
+			// might have 2 letters stick together
+			// therefore, we shift here one pixel to the left, for the spacing
+			offset--;
 		}
 		_ports->moveTo(rect.left + offset, rect.top + hline);
+
+		Common::String textString;
+		if (g_sci->isLanguageRTL()) {
+			const char *curTextLineOrig = curTextLine;
+			Common::String textLogical = Common::String(curTextLineOrig, (uint32)charCount);
+			textString = Common::convertBiDiString(textLogical, g_sci->getLanguage());		//TODO: maybe move to Draw()?
+			curTextLine = textString.c_str();
+		}
 
 		if (show) {
 			Show(curTextLine, 0, charCount, fontId, previousPenColor);
@@ -618,8 +653,15 @@ void GfxText16::DrawString(const Common::String &text) {
 
 // we need to have a separate status drawing code
 //  In KQ4 the IV char is actually 0xA, which would otherwise get considered as linebreak and not printed
-void GfxText16::DrawStatus(const Common::String &str) {
+void GfxText16::DrawStatus(const Common::String &strOrig) {
 	uint16 curChar, charWidth;
+
+	Common::String str;
+	if (!g_sci->isLanguageRTL())
+		str = strOrig;
+	else
+		str = Common::convertBiDiString(strOrig, g_sci->getLanguage());
+
 	const byte *text = (const byte *)str.c_str();
 	uint16 textLen = str.size();
 	Common::Rect rect;

@@ -113,10 +113,16 @@ void GfxControls16::texteditCursorDraw(Common::Rect rect, const char *text, uint
 		for (i = 0; i < curPos; i++) {
 			textWidth += _text16->_font->getCharWidth((unsigned char)text[i]);
 		}
-		_texteditCursorRect.left = rect.left + textWidth;
+		if (!g_sci->isLanguageRTL())
+			_texteditCursorRect.left = rect.left + textWidth;
+		else
+			_texteditCursorRect.right = rect.right - textWidth;
 		_texteditCursorRect.top = rect.top;
 		_texteditCursorRect.bottom = _texteditCursorRect.top + _text16->_font->getHeight();
-		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : _text16->_font->getCharWidth((unsigned char)text[curPos]));
+		if (!g_sci->isLanguageRTL())
+			_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : _text16->_font->getCharWidth((unsigned char)text[curPos]));
+		else
+			_texteditCursorRect.left = _texteditCursorRect.right - (text[curPos] == 0 ? 1 : _text16->_font->getCharWidth((unsigned char)text[curPos]));
 		_paint16->invertRect(_texteditCursorRect);
 		_paint16->bitsShow(_texteditCursorRect);
 		_texteditCursorVisible = true;
@@ -184,13 +190,25 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 				cursorPos = textSize; textChanged = true;
 				break;
 			case kSciKeyLeft:
-				if (cursorPos > 0) {
-					cursorPos--; textChanged = true;
+				if (!g_sci->isLanguageRTL()) {
+					if (cursorPos > 0) {
+						cursorPos--; textChanged = true;
+					}
+				} else {
+					if (cursorPos + 1 <= textSize) {
+						cursorPos++; textChanged = true;
+					}
 				}
 				break;
 			case kSciKeyRight:
-				if (cursorPos + 1 <= textSize) {
-					cursorPos++; textChanged = true;
+				if (!g_sci->isLanguageRTL()) {
+					if (cursorPos + 1 <= textSize) {
+						cursorPos++; textChanged = true;
+					}
+				} else {
+					if (cursorPos > 0) {
+						cursorPos--; textChanged = true;
+					}
 				}
 				break;
 			case kSciKeyEtx:

@@ -61,6 +61,7 @@ struct HookEntry {
 /** Used for allGamesHooks - from it we build the specific _hooksMap */
 struct GeneralHookEntry {
 	SciGameId gameId;
+	Common::Language language;			// language to be patched. UNK_LANG means to patch all languages
 	HookHashKey key;
 	HookEntry entry;
 };
@@ -80,7 +81,7 @@ public:
 
 	byte *data();
 
-	bool isActive();
+	bool isActive(Sci::EngineState *s);
 
 	void advance(int offset);
 
@@ -90,8 +91,11 @@ private:
 
 	Common::Array<byte> _hookScriptData;
 
-	/** Used to avoid double patching in row */
+	/** Used to avoid double patching in row, and to support `call`ing */
 	reg_t _lastPc;
+
+	/** Used to avoid double patching in row */
+	bool _just_finished;
 
 	/** Location inside patch */
 	int _location;

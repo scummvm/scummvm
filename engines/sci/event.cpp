@@ -375,6 +375,10 @@ SciEvent EventManager::getScummVMEvent() {
 					input.character = 0x80 + i;
 					break;
 				}
+		} else if (g_sci->getLanguage() == Common::HE_ISR) {
+			if (input.character >= 0x05d0 && input.character <= 0x05ea)
+				// convert to WIN-1255
+				input.character = input.character - 0x05d0 + 0xe0;
 		}
 	}
 

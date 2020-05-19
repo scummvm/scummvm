@@ -22,6 +22,7 @@
 
 #include "common/hashmap.h"
 #include "common/array.h"
+#include "common/language.h"
 #include "sci/engine/vm_hooks.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/state.h"
@@ -35,7 +36,8 @@ namespace Sci {
  * This mechanism allows inserting new instructions, and not only replace existing code.
  * Note that when using hooks, the regular PC is frozen, and doesn't advance.
  * Therefore, 'jmp', 'bt' and 'bnt' are used to locally move around inside the patch.
- * call* opcodes can be used - but they should be last executed opcode, in order to successfully transfer control.
+ *
+ * (In the past there was a warning regarding 'call's - but they should work now)
  *
  ******************************************************************************************************************/
 
@@ -68,6 +70,60 @@ static const byte qfg1_die_after_running_on_ice[] = {
 	0x47, 0x00, 0x01, 0x10         // calle proc0_1
 };
 
+
+// SCI0 Hebrew translations need to modify and relocate the "Enter input:" prompt
+// currently SQ3 is the only Hebrew SCI0 game, but this patch (or similar) should work for the future games as well
+
+static const byte sci0_hebrew_input_prompt[] = {
+	// in (procedure (Print ...
+	// ...
+	// 			(#edit
+	// 				(++ paramCnt)
+	// adding:
+	//				(hDText moveTo: 104 4)
+	//				(= hDText (DText new:))
+	//				(hDText
+	//					text: ''
+	//					moveTo: 4 4
+	//					font: gDefaultFont
+	//					setSize:
+	//				)
+	//				(hDialog add: hDText)
+	0x38, 0x92, 0,			// pushi    #moveTo
+	0x39, 2,				// pushi    2
+	0x38, 210, 0,			// pushi    220		;x
+	0x39, 4, 				// pushi    4		;y
+	0x85, 1,				// lat      temp1
+	0x4a, 8,				// send     8
+	0x38, 0x59, 0,			// pushi    #new
+	0x39, 0, 				// pushi    0
+	0x51, 0xd,				// class    DText
+	0x4a, 4,				// send     4
+	0xa5, 1,				// sat      temp1
+	0x39, 0x1a,				// pushi    #text
+	0x39, 1,				// pushi    1
+	0x75, 25,				// lofss    ''	; that location has '\0'
+	0x38, 146, 0,			// pushi    146
+	0x39, 2,				// pushi    2
+	0x39, 4,				// pushi    4		;x
+	0x39, 14,				// pushi    12		;y
+	0x39, 33,				// pushi    33
+	0x39, 1,				// pushi    1
+	0x89, 0x16,				// lsg      global22
+	0x38, 144, 0,			// pushi    144
+	0x39, 0,				// pushi    0
+	0x85, 1,				// lat      temp1
+	0x4a, 24,				// send     24
+	0x38, 0x64, 0,			// pushi    #add
+	0x39, 1, 				// pushi    1
+	0x8d, 1,				// lst      temp1
+	0x85, 0,				// lat      temp0
+	0x4a, 6,				// send     6
+	0x85, 5					// lat      temp5
+};
+
+
+
 /** Write here all games hooks
  *  From this we'll build _hooksMap, which contains only relevant hooks to current game
  *  The match is performed according to PC, script number, opcode (only opcode name, as seen in ScummVM debugger),
@@ -76,9 +132,11 @@ static const byte qfg1_die_after_running_on_ice[] = {
  *  - external function ID  (and then selector is "")
  *		= in that case, if objName == "" it will be ignored, otherwise, it will be also used to match
  */
+
 static const GeneralHookEntry allGamesHooks[] = {
-	// GID, script, PC.offset, objName,  selector, externID, opcode,  hook array
-	{GID_QFG1, {58, 0x144d}, {"egoRuns", "changeState", -1 , "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}}
+	// GID, script, lang,        PC.offset, objName,  selector,  externID, opcode,  hook array
+	{GID_QFG1, Common::UNK_LANG, {58,  0x144d}, {"egoRuns", "changeState", -1 , "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}},
+	{GID_SQ3,  Common::HE_ISR,   {255, 0x1103}, {"User",    "",            -1 , "pushi", HOOKARRAY(sci0_hebrew_input_prompt)}}
 };
 
 
@@ -86,10 +144,12 @@ VmHooks::VmHooks() {
 	// build _hooksMap
 	for (uint i = 0; i < ARRAYSIZE(allGamesHooks); i++) {
 		if (allGamesHooks[i].gameId == g_sci->getGameId())
-			_hooksMap.setVal(allGamesHooks[i].key, allGamesHooks[i].entry);
+			if (allGamesHooks[i].language == g_sci->getLanguage() || allGamesHooks[i].language == Common::UNK_LANG)
+				_hooksMap.setVal(allGamesHooks[i].key, allGamesHooks[i].entry);
 	}
 
 	_lastPc = NULL_REG;
+	_just_finished = false;
 	_location = 0;
 }
 
@@ -120,12 +180,16 @@ bool hook_exec_match(Sci::EngineState *s, HookEntry entry) {
 		s->xs->debugExportId == entry.exportId && strcmp(entry.opcodeName, opcodeNames[opcode]) == 0;
 }
 
-
 void VmHooks::vm_hook_before_exec(Sci::EngineState *s) {
+	if (_just_finished) {
+		_just_finished = false;
+		_lastPc = NULL_REG;
+		return;
+	}
 	Script *scr = s->_segMan->getScript(s->xs->addr.pc.getSegment());
 	int scriptNumber = scr->getScriptNumber();
 	HookHashKey key = { scriptNumber, s->xs->addr.pc.getOffset() };
-	if (_lastPc != s->xs->addr.pc && _hooksMap.contains(key)) {
+	if (_hookScriptData.empty() && _lastPc != s->xs->addr.pc && _hooksMap.contains(key)) {
 		_lastPc = s->xs->addr.pc;
 		HookEntry entry = _hooksMap[key];
 		if (hook_exec_match(s, entry)) {
@@ -143,8 +207,9 @@ byte *VmHooks::data() {
 	return _hookScriptData.data() + _location;
 }
 
-bool VmHooks::isActive() {
-	return !_hookScriptData.empty();
+bool VmHooks::isActive(Sci::EngineState *s) {
+	// if PC has changed, then we're temporary inactive - went to some other call, or send, etc.
+	return !_hookScriptData.empty() && _lastPc == s->xs->addr.pc;
 }
 
 void VmHooks::advance(int offset) {
@@ -155,6 +220,7 @@ void VmHooks::advance(int offset) {
 		error("VmHooks: requested to change offset after end of patch");
 	else if ((uint)newLocation == _hookScriptData.size()) {
 		_hookScriptData.clear();
+		_just_finished = true;
 		_location = 0;
 	} else
 		_location = newLocation;
