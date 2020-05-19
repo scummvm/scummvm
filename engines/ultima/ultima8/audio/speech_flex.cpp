@@ -38,8 +38,11 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 	// hold multiple null-terminated strings.
 	unsigned int off = 0;
 	while (off < size) {
-		istring str(cbuf + off, size - off);
-		off += str.size() + 1;
+		unsigned int slen = 0;
+		while (off + slen < size && cbuf[off + slen])
+			slen++;
+		istring str(cbuf + off, slen);
+		off += slen + 1;
 
 		TabsToSpaces(str, 1);
 		TrimSpaces(str);
