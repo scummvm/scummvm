@@ -204,7 +204,7 @@ void SKFPlayer::run() {
 			if (musicproc) musicproc->playMusic(_events[_curEvent]->_data);
 			break;
 		case SKF_SlowStopMusic:
-			POUT("SlowStopMusic");
+//			pout << "SlowStopMusic" << Std::endl;
 			if (musicproc && !_introMusicHack) musicproc->playMusic(0);
 			break;
 		case SKF_PlaySFX:
@@ -216,7 +216,7 @@ void SKFPlayer::run() {
 			if (audioproc) audioproc->stopSFX(_events[_curEvent]->_data, 0);
 			break;
 		case SKF_SetSpeed:
-			POUT("SetSpeed " << _events[_curEvent]->_data);
+//			pout << "SetSpeed " << _events[_curEvent]->_data << Std::endl;
 //			_frameRate = _events[_curEvent]->_data;
 			break;
 		case SKF_PlaySound: {

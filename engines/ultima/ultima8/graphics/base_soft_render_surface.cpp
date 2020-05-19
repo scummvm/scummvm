@@ -248,7 +248,7 @@ BaseSoftRenderSurface::~BaseSoftRenderSurface() {
 // Desc: Prepare the surface for drawing this frame (in effect lock it for drawing)
 // Returns: Non Zero on error
 //
-ECode BaseSoftRenderSurface::BeginPainting() {
+bool BaseSoftRenderSurface::BeginPainting() {
 	if (!_lockCount) {
 
 		if (_surface) {
@@ -259,8 +259,8 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 			_pitch = _surface->pitch;
 			if (_flipped) _pitch = -_pitch;
 		} else  {
-			ECode ret = GenericLock();
-			if (ret.failed()) return ret;
+			if (!GenericLock())
+				return false;
 		}
 	}
 
@@ -269,14 +269,14 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 	if (_pixels00 == nullptr) {
 		// TODO: SetLastError(GR_SOFT_ERROR_LOCKED_NULL_PIXELS, "Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!");
 		perr << "Error: Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!" << Std::endl;
-		return GR_SOFT_ERROR_LOCKED_NULL_PIXELS;
+		return false;
 	}
 
 	// Origin offset pointers
 	SetPixelsPointer();
 
 	// No error
-	return P_NO_ERROR;
+	return true;
 }
 
 
@@ -286,12 +286,12 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 // Desc: Prepare the surface for drawing this frame (in effect lock it for drawing)
 // Returns: Non Zero on error
 //
-ECode BaseSoftRenderSurface::EndPainting() {
+bool BaseSoftRenderSurface::EndPainting() {
 	// Already Unlocked
 	if (!_lockCount) {
 		// TODO: SetLastError(GR_SOFT_ERROR_BEGIN_END_MISMATCH, "BeginPainting()/EndPainting() Mismatch!");
 		perr << "Error: BeginPainting()/EndPainting() Mismatch!" << Std::endl;
-		return GR_SOFT_ERROR_BEGIN_END_MISMATCH;
+		return false;
 	}
 
 	// Decrement counter
@@ -308,13 +308,13 @@ ECode BaseSoftRenderSurface::EndPainting() {
 			screen->update();
 
 		} else {
-			ECode ret = GenericUnlock();
-			if (ret.failed()) return ret;
+			if (!GenericUnlock())
+				return false;
 		}
 	}
 
 	// No error
-	return P_NO_ERROR;
+	return true;
 }
 
 //

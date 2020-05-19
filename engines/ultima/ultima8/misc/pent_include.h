@@ -38,53 +38,25 @@
 //
 // Strings
 //
-
 #include "ultima/ultima8/misc/istring.h"
-
-//
-// Base Errors
-//
-
-#include "ultima/ultima8/misc/errors.h"
 
 
 //
 // The Debugger
 //
-
 #include "ultima/ultima8/misc/debugger.h"
 
-
-//
-// Debugging
-//
-#ifdef DEBUG
-#  define POUT(x)       do { pout << x << Std::endl; pout.flush(); } while (0)
-#  define PERR(x)       do { perr << x << Std::endl; perr.flush(); } while (0)
-#else
-#  define POUT(x)       do { } while(0)
-#  define PERR(x)       do { } while(0)
-#endif
 
 // Two very useful macros that one should use instead of pure delete; they
 // will additionally set the old object pointer to 0, thus helping prevent
 // double deletes (note that "delete 0" is a no-op).
 #define FORGET_OBJECT(x) do { delete x; x = 0; } while(0)
-#define FORGET_ARRAY(x) do { delete [] x; x = 0; } while(0)
-
 
 //
 // Can't happen.
 // For things that really can't happen. Or shouldn't anyway.
 //
 #define CANT_HAPPEN() do { assert(false); } while(0)
-
-//
-// Can't happen return.
-// If we're guaranteed to return before this, but we want to shut the
-// compiler warning up.
-//
-#define CANT_HAPPEN_RETURN() do { assert(false); return 0; } while(0)
 
 //
 // Can't happen with a message

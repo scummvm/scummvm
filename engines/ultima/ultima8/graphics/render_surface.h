@@ -23,7 +23,6 @@
 #ifndef ULTIMA8_GRAPHICS_RENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_RENDERSURFACE_H
 
-#include "ultima/ultima8/graphics/graphics_errors.h"
 #include "graphics/pixelformat.h"
 #include "graphics/managed_surface.h"
 
@@ -88,13 +87,13 @@ public:
 
 	//! Begin painting to the buffer. MUST BE CALLED BEFORE DOING ANYTHING TO THE SURFACE!
 	// \note Can be called multiple times
-	// \return Error Code on error. Check return code.....
-	virtual ECode BeginPainting() = 0;
+	// \return true on success, false on failure
+	virtual bool BeginPainting() = 0;
 
 	//! Finish paining to the buffer.
 	// \note MUST BE CALLED FOR EACH CALL TO BeginPainting()
-	// \return Error Code on error. Check return code.....
-	virtual ECode EndPainting() = 0;
+	// \return true on success, false on failure
+	virtual bool EndPainting() = 0;
 
 	//! Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
 	// \note Do not delete the texture.
