@@ -39,10 +39,6 @@ VideoSystem::VideoSystem() :
 	_time = g_system->getMillis();
 }
 
-static bool objCmp(QVisibleObject *&l, QVisibleObject *&r) {
-	return l->_z < r->_z;
-}
-
 void VideoSystem::update() {
 	Interface *interface = g_vm->getQSystem()->_currInterface;
 	int time = g_system->getMillis();
