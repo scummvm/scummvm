@@ -1229,6 +1229,8 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 //  in each game's Messager/Narrator/Talker scripts.
 static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	// game              media             language       room   mod    n    v    c   s    workaround-type          mod    n    v    c   s tlk  idx  len  text
+	// Clicking Do on bulldozer at camp after Gonzales leaves. Message has wrong cond.
+	{ GID_ECOQUEST2,     SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  560,   1,   4,   0,  1, { MSG_WORKAROUND_REMAP,    560,   1,   4,   4,  1, 99,   0,   0, NULL } },
 	// FPFP CD has several message sequences where audio and text were left out of sync - bug #10964
 	//  Some of the texts just say "Dummy Msg" and the real values are concatenated in the first record.
 	// Lever Brothers' intro

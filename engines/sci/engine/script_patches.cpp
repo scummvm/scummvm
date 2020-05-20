@@ -1508,12 +1508,60 @@ static const uint16 ecoquest2PatchEcorderLily[] = {
 	PATCH_END
 };
 
+// Objects that you can hide behind in rooms 530 and 560 all have messages that
+//  are supposed to display when clicking Do after Gonzales leaves camp, but
+//  their doVerb methods are missing a call to super:doVerb. We fix this by
+//  patching the doVerb methods to call super:doVerb instead of doing nothing.
+//
+// Applies to: All versions
+// Responsible methods: crates:doVerb, barrel1-4:doVerb, refuse:doVerb in 530,
+//  bullldozer:doVerb, barrel1-5:doVerb, crates:doVerb in 560
+static const uint16 ecoquest2SignatureCampMessages1[] = {
+	0x30, SIG_UINT16(0x0033),           // bnt 0033 [ end of method ]
+	SIG_ADDTOOFFSET(+10),
+	0x30, SIG_UINT16(0x0026),           // bnt 0026 [ end of method ]
+	SIG_ADDTOOFFSET(+8),
+	0x30, SIG_UINT16(0x001b),           // bnt 001b [ end of method ]
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x39, SIG_MAGICDWORD, 0x03,         // pushi 03
+	0x72, SIG_UINT16(0x00cc),           // lofsa sRunHide
+	SIG_ADDTOOFFSET(+10),
+	0x38, SIG_SELECTOR16(doVerb),       // pushi doVerb
+	SIG_END
+};
+
+static const uint16 ecoquest2PatchCampMessages1[] = {
+	0x30, PATCH_UINT16(0x002a),         // bnt 002a [ super doVerb: verb ]
+	PATCH_ADDTOOFFSET(+10),
+	0x30, PATCH_UINT16(0x001d),         // bnt 001d [ super doVerb: verb ]
+	PATCH_ADDTOOFFSET(+8),
+	0x30, PATCH_UINT16(0x0012),         // bnt 0012 [ super doVerb: verb ]
+	PATCH_END
+};
+
+static const uint16 ecoquest2SignatureCampMessages2[] = {
+	0x30, SIG_UINT16(0x001b),           // bnt 001b [ end of method ]
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x39, SIG_MAGICDWORD, 0x03,         // pushi 03
+	0x72, SIG_UINT16(0x0154),           // lofsa sRunHide
+	SIG_ADDTOOFFSET(+10),
+	0x38, SIG_SELECTOR16(doVerb),       // pushi doVerb
+	SIG_END
+};
+
+static const uint16 ecoquest2PatchCampMessages2[] = {
+	0x30, PATCH_UINT16(0x0012),         // bnt 0012 [ super doVerb: verb ]
+	PATCH_END
+};
+
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
 	{  true,    50, "initial text not removed on ecorder",           1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
 	{  true,   333, "initial text not removed on ecorder tutorial",  1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	{  true,   500, "room 500 items reappear",                       1, ecoquest2SignatureRoom500Items,    ecoquest2PatchRoom500Items },
+	{  true,   530, "missing camp messages",                         6, ecoquest2SignatureCampMessages1,   ecoquest2PatchCampMessages1 },
+	{  true,   560, "missing camp messages",                         7, ecoquest2SignatureCampMessages2,   ecoquest2PatchCampMessages2 },
 	{  true,   702, "ecorder not highlighting lilies",               3, ecoquest2SignatureEcorderLily,     ecoquest2PatchEcorderLily },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
