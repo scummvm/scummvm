@@ -168,15 +168,43 @@ void InterfaceMain::unloadRoom(bool fromSave) {
 }
 
 void InterfaceMain::onLeftButtonDown(const Common::Point p) {
-	if (!g_vm->getQSystem()->_cursor->_isShown) {
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	if (!cursor->_isShown) {
 		_dialog.next(-1);
 		return;
 	}
+
 	for (int i = _objs.size() - 1; i >= 0; --i) {
 		if (_objs[i]->isInPoint(p.x, p.y)) {
 			_objs[i]->onClick(p.x, p.y);
-			break;
+			return;
 		}
+	}
+
+	switch (cursor->_actionType) {
+	case kActionWalk: {
+		QObjectPetka *petka = g_vm->getQSystem()->_petka.get();
+		if (petka->_heroReaction) {
+			for (uint i = 0; i < petka->_heroReaction->messages.size(); ++i) {
+				if (petka->_heroReaction->messages[i].opcode == kGoTo) {
+					QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev.get();
+					chapay->stopWalk();
+					break;
+				}
+			}
+			delete petka->_heroReaction;
+			petka->_heroReaction = nullptr;
+		}
+		petka->walk(p.x, p.y);
+		break;
+	}
+	case kActionObjUseChapayev: {
+		QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev.get();
+		chapay->walk(p.x, p.y);
+		break;
+	}
+	default:
+		break;
 	}
 }
 
