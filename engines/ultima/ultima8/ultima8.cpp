@@ -141,11 +141,6 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_ttfOverrides(false), _audioMixer(0), _scalerGump(nullptr),
 		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false), _alertActive(false) {
 	_application = this;
-
-	for (uint16 key = 0; key < HID_LAST; ++key) {
-		_lastDown[key] = false;
-		_down[key] = false;
-	}
 }
 
 Ultima8Engine::~Ultima8Engine() {
@@ -700,13 +695,6 @@ bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
 }
 
 void Ultima8Engine::enterTextMode(Gump *gump) {
-	for (uint16 key = 0; key < HID_LAST; ++key) {
-		if (_down[key]) {
-			_down[key] = false;
-			_lastDown[key] = false;
-		}
-	}
-
 	if (!_textModes.empty()) {
 		_textModes.remove(gump->getObjId());
 	}
@@ -719,52 +707,13 @@ void Ultima8Engine::leaveTextMode(Gump *gump) {
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
-	uint32 now = g_system->getMillis();
-	HID_Key key = HID_LAST;
-	uint16 evn = HID_EVENT_LAST;
 	bool handled = false;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
-		key = HID_translateKey(event.kbd.keycode);
-		evn = HID_translateKeyFlags(event.kbd.flags);
 		break;
 	case Common::EVENT_KEYUP:
 		// Any system keys not in the bindings can be handled here
-		break;
-
-	case Common::EVENT_LBUTTONDOWN:
-		key = HID_translateMouseButton(1);
-		evn = HID_EVENT_DEPRESS;
-		break;
-	case Common::EVENT_LBUTTONUP:
-		key = HID_translateMouseButton(1);
-		evn = HID_EVENT_RELEASE;
-		break;
-	case Common::EVENT_RBUTTONDOWN:
-		key = HID_translateMouseButton(2);
-		evn = HID_EVENT_DEPRESS;
-		break;
-	case Common::EVENT_RBUTTONUP:
-		key = HID_translateMouseButton(2);
-		evn = HID_EVENT_RELEASE;
-		break;
-	case Common::EVENT_MBUTTONDOWN:
-		key = HID_translateMouseButton(3);
-		evn = HID_EVENT_DEPRESS;
-		break;
-	case Common::EVENT_MBUTTONUP:
-		key = HID_translateMouseButton(3);
-		evn = HID_EVENT_RELEASE;
-		break;
-
-	case Common::EVENT_JOYBUTTON_DOWN:
-		key = HID_translateJoystickButton(event.joystick.button + 1);
-		evn = HID_EVENT_DEPRESS;
-		break;
-	case Common::EVENT_JOYBUTTON_UP:
-		key = HID_translateJoystickButton(event.joystick.button + 1);
-		evn = HID_EVENT_DEPRESS;
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
@@ -887,37 +836,12 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	default:
 		break;
 	}
-
-	if (_mouse->dragging() == Mouse::DRAG_NOT && !handled) {
-		if (evn == HID_EVENT_DEPRESS) {
-			_down[key] = true;
-			if (now - _lastDown[key] < DOUBLE_CLICK_TIMEOUT && _lastDown[key] != 0) {
-				_lastDown[key] = 0;
-			} else {
-				_lastDown[key] = now;
-			}
-		} else if (evn == HID_EVENT_RELEASE) {
-			_down[key] = false;
-			if (now - _lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
-				_lastDown[key] != 0) {
-				_lastDown[key] = 0;
-			}
-		}
-	}
 }
 
 void Ultima8Engine::handleDelayedEvents() {
 	uint32 now = g_system->getMillis();
 
 	_mouse->handleDelayedEvents();
-
-	for (uint16 key = 0; key < HID_LAST; ++key) {
-		if (now - _lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
-			_lastDown[key] != 0 && !_down[key]) {
-			_lastDown[key] = 0;
-		}
-	}
-
 }
 
 void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {

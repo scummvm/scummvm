@@ -42,7 +42,6 @@
 #include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/kernel/hid_keys.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/ultima8/graphics/point_scaler.h"
 #include "common/events.h"
@@ -121,8 +120,6 @@ private:
 	int32 _timeOffset;
 	bool _hasCheated;
 	bool _cheatsEnabled;
-	uint32 _lastDown[HID_LAST+1];
-	bool _down[HID_LAST+1];
 	unsigned int _inversion;
 	bool _alertActive; //!< is intruder alert active (Crusader)
 private:
