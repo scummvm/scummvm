@@ -877,6 +877,10 @@ void Score::setSpriteBboxes() {
 				int height = sp->_height;
 				int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : sp->_width;
 
+				// If one of the dimensions is invalid, invalidate whole thing
+				if (width == 0 || height == 0)
+					width = height = 0;
+
 				sp->_startBbox = Common::Rect(x, y, x + width, y + height);
 				break;
 			}
@@ -2320,6 +2324,14 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 		maskSurface = new Graphics::ManagedSurface;
 		maskSurface->create(spriteSurface.w, spriteSurface.h, Graphics::PixelFormat::createFormatCLUT8());
 		maskSurface->clear(0);
+	}
+
+	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
+
+
+	if (drawRect.isEmpty()) {
+		warning("Score::inkBasedBlit(): empty drawRect");
+		return;
 	}
 
 	maskSurface->blitFrom(*_maskSurface, drawRect, Common::Point(0, 0));
