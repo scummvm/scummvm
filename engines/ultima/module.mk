@@ -498,7 +498,6 @@ MODULE_OBJS := \
 	ultima8/gumps/widgets/text_widget.o \
 	ultima8/kernel/core_app.o \
 	ultima8/kernel/delay_process.o \
-	ultima8/kernel/hid_keys.o \
 	ultima8/kernel/kernel.o \
 	ultima8/kernel/mouse.o \
 	ultima8/kernel/object.o \
