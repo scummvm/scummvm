@@ -206,7 +206,7 @@ void QObjectCase::removeItem(int id) {
 		}
 	}
 
-	_itemIndex = _items.size() - 6 < 0 ? 0 : _items.size() - 6;
+	_itemIndex = (_items.size() < 6) ? 0 : (_items.size() - 6);
 
 	if (_isShown) {
 		show(0);
