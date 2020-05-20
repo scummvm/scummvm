@@ -1684,6 +1684,11 @@ void Score::startLoop() {
 	_sprites = _frames[_currentFrame]->_sprites;
 	renderFrame(_currentFrame, true);
 
+	if (_frames.size() <= 1) {	// We added one empty sprite
+		warning("Score::startLoop(): Movie has no frames");
+		_stopPlay = true;
+	}
+
 	while (!_stopPlay) {
 		if (_currentFrame >= _frames.size()) {
 			if (debugChannelSet(-1, kDebugNoLoop))
