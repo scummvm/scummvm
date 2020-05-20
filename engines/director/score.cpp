@@ -780,9 +780,9 @@ void Score::setSpriteBboxes() {
 			switch (castType) {
 			case kCastShape:
 				sp->_startBbox = Common::Rect(sp->_currentPoint.x,
-																			sp->_currentPoint.y,
-																			sp->_currentPoint.x + sp->_width,
-																			sp->_currentPoint.y + sp->_height);
+											  sp->_currentPoint.y,
+											  sp->_currentPoint.x + sp->_width,
+											  sp->_currentPoint.y + sp->_height);
 				break;
 			case kCastRTE:
 			case kCastText: {
