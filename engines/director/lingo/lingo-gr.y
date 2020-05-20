@@ -453,7 +453,7 @@ simpleexpr: INT		{
 	| error	'\n'		{
 		// Director parser till D3 was forgiving for any hanging parentheses
 		if (g_lingo->_ignoreError) {
-			warning("# LINGO: Ignoring trailing paren");
+			warning("# LINGO: Ignoring trailing paren before %d:%d", g_lingo->_linenumber, g_lingo->_colnumber);
 			g_lingo->_ignoreError = false;
 			lex_unput('\n');	// We ate '\n', so put it back, otherwise lines will be joined
 		} else {
