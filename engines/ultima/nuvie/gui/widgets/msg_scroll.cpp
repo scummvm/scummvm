@@ -377,7 +377,7 @@ void MsgScroll::display_string(Std::string s, Font *f, uint8 color, bool include
 
 	msg_text = new MsgText(s, f);
 	msg_text->color = color;
-	//::debug("%s", msg_text->s.c_str());
+	//::debug(1, "%s", msg_text->s.c_str());
 
 	holding_buffer.push_back(msg_text);
 
@@ -1082,7 +1082,7 @@ Std::string MsgScroll::get_input() {
 	if (input_mode == false) {
 		s.assign(input_buf);
 	}
-	//::debug("%s", s.c_str());
+	//::debug(1, "%s", s.c_str());
 
 	return s;
 }
