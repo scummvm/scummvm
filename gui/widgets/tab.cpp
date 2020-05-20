@@ -70,14 +70,17 @@ void TabWidget::init() {
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
 
+	String leftArrow = "<";
+	String rightArrow = ">";
+
 	if (g_gui.useRTL()) {							// GUI TODO: Incomplete and possibly incorrect too. Unusable atm.
-		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, ">", nullptr, kCmdLeft);
-		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, "<", nullptr, kCmdRight);
+		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, rightArrow, nullptr, kCmdLeft);
+		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, leftArrow, nullptr, kCmdRight);
 		_navLeft->setEnabled(true);
 		_navRight->setEnabled(false);
 	} else {
-		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", nullptr, kCmdLeft);
-		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", nullptr, kCmdRight);
+		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, leftArrow, nullptr, kCmdLeft);
+		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, rightArrow, nullptr, kCmdRight);
 		_navLeft->setEnabled(false);
 		_navRight->setEnabled(true);
 	}
@@ -129,6 +132,7 @@ int TabWidget::addTab(const String &title, const String &dialogName) {
 	newTab._tabWidth = newWidth;
 
 	_tabs.push_back(newTab);
+
 	int numTabs = _tabs.size();
 
 	// Activate the new tab

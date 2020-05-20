@@ -395,7 +395,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 	Common::Rect r1(x, y, x + w, y + _lineHeight);
 	Common::Rect r2(x + 1, y + 2, x + w, y + 2 + _lineHeight);
-	Graphics::TextAlign alignment = Graphics::TextAlign::kTextAlignLeft;
+	Graphics::TextAlign alignment = Graphics::kTextAlignLeft;
 
 	if (g_gui.useRTL()) {
 		r2.translate(-g_gui.getOverlayOffset(), 0);

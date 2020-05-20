@@ -344,7 +344,6 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	// Activate the first tab
 	tab->setActiveTab(0);
-
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons

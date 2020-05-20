@@ -527,7 +527,7 @@ void DropdownButtonWidget::clearEntries() {
 }
 
 void DropdownButtonWidget::drawWidget() {
-	if (_entries.empty()) {							
+	if (_entries.empty()) {
 		// Degrade to a regular button
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state);
 	} else {
@@ -613,7 +613,7 @@ void PicButtonWidget::drawWidget() {
 
 		const int x = _x + (_w - gfx->w) / 2;
 		const int y = _y + (_h - gfx->h) / 2;
-	
+
 		g_gui.theme()->drawSurface(Common::Point(x, y), *gfx, _transparency);
 	}
 }
@@ -791,8 +791,7 @@ void SliderWidget::drawWidget() {
 	if (g_gui.useRTL() && _useRTL) {
 		// GUI TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly (colors should be inverted).
 		g_gui.theme()->drawSlider(r1, valueToBarWidth(getMaxValue() - _value), _state);
-	}
-	else {
+	} else {
 		g_gui.theme()->drawSlider(r1, valueToBarWidth(_value), _state);
 	}
 }
@@ -867,7 +866,7 @@ void GraphicsWidget::drawWidget() {
 
 		const int x = _x + (_w - _gfx.w) / 2;
 		const int y = _y + (_h - _gfx.h) / 2;
-		
+
 		g_gui.theme()->drawSurface(Common::Point(x, y), _gfx, _transparency);
 	}
 }
