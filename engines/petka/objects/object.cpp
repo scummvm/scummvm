@@ -188,6 +188,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		case kSetInv:
 			g_vm->getQSystem()->_case->setInv(msg.sender->_id, msg.objId);
+			break;
 		case kAvi: {
 			Common::String videoName = g_vm->resMgr()->findResourceName((uint16) msg.arg1);
 			g_vm->playVideo(g_vm->openFile(videoName, false));
@@ -212,6 +213,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				_isActive = 0;
 			}
 			g_vm->videoSystem()->makeAllDirty();
+			break;
 		case kDialog:
 			g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 			break;
