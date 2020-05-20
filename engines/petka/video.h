@@ -44,6 +44,9 @@ public:
 	Graphics::Screen &screen();
 
 private:
+	void sort();
+
+private:
 	Graphics::Screen _screen;
 	Common::List<Common::Rect> _rects;
 	uint32 _shakeTime;

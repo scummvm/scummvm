@@ -55,7 +55,7 @@ void VideoSystem::update() {
 			interface->_objs[i]->updateZ();
 		}
 
-		Common::sort(interface->_objs.begin(), interface->_objs.end(), objCmp);
+		sort();
 
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->draw();
@@ -126,6 +126,24 @@ void VideoSystem::updateTime() {
 
 void VideoSystem::setShake(bool shake) {
 	_shake = shake;
+}
+
+void VideoSystem::sort() {
+	Common::Array<QVisibleObject *> &objs = g_vm->getQSystem()->_currInterface->_objs;
+	for (uint i = 0; i < objs.size() - 1; ++i) {
+		int minIndex = i;
+		for (uint j = i + 1; j < objs.size(); ++j) {
+			if (objs[j]->_z < objs[minIndex]->_z) {
+				minIndex = j;
+			}
+		}
+
+		if (i != minIndex) {
+			QVisibleObject *tmp = objs[i];
+			objs[i] = objs[minIndex];
+			objs[minIndex] = tmp;
+		}
+	}
 }
 
 }
