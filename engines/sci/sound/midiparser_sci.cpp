@@ -383,6 +383,16 @@ void MidiParser_SCI::resetStateTracking() {
 	}
 }
 
+void MidiParser_SCI::initTrack() {
+	if (_soundVersion > SCI_VERSION_0_LATE)
+		return;
+	// Send header data to SCI0 sound drivers. The driver function which parses the header (opcode 3)
+	// seems to be implemented at least in all SCI0_LATE drivers. The things that the individual drivers
+	// do in that init function varies.
+	if (_track->header.byteSize())
+		static_cast<MidiPlayer*>(_driver)->initTrack(_track->header);
+}
+
 void MidiParser_SCI::sendInitCommands() {
 	resetStateTracking();
 
@@ -390,20 +400,12 @@ void MidiParser_SCI::sendInitCommands() {
 	_volume = 127;
 
 	// Set initial voice count
-	if (_pSnd) {
-		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			// Send header data to SCI0 sound drivers. The driver function which parses the header (opcode 3)
-			// seems to be implemented at least in all SCI0_LATE drivers. The things that the individual drivers
-			// do in that init function varies.
-			if (_track->header.byteSize())
-				static_cast<MidiPlayer *>(_driver)->initTrack(_track->header);
-		} else {
-			for (int i = 0; i < _track->channelCount; ++i) {
-				byte voiceCount = _track->channels[i].poly;
-				byte num = _track->channels[i].number;
-				// TODO: Should we skip the control channel?
-				sendToDriver(0xB0 | num, 0x4B, voiceCount);
-			}
+	if (_pSnd && _soundVersion > SCI_VERSION_0_LATE) {
+		for (int i = 0; i < _track->channelCount; ++i) {
+			byte voiceCount = _track->channels[i].poly;
+			byte num = _track->channels[i].number;
+			// TODO: Should we skip the control channel?
+			sendToDriver(0xB0 | num, 0x4B, voiceCount);
 		}
 	}
 

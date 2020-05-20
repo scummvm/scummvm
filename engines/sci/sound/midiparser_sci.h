@@ -60,6 +60,7 @@ public:
 	bool loadMusic(byte *, uint32) override {
 		return false;
 	}
+	void initTrack();
 	void sendInitCommands();
 	void unloadMusic() override;
 	void setMasterVolume(byte masterVolume);

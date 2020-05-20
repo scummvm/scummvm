@@ -578,6 +578,12 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
 
+			// The track init always needs to be done. Otherwise some sounds will not be properly set up (bug #11476).
+			// It is also safe to do this for paused tracks, since the jumpToTick() command in line 602 will parse through
+			// the song from the beginning up to the resume position and ensure that the actual current voice mapping,
+			// instrument and volume settings etc. are correct.
+ 			pSnd->pMidiParser->initTrack();
+
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
