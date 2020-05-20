@@ -53,16 +53,12 @@ static void count() {
 	g_lingo->_lasttoken = yytext;
 	g_lingo->_lastbytenumber = g_lingo->_bytenumber;
 
-	while (*p && *p != '\n' && *p != '\r' && *p != '\xC2') {
-		p++;
-		g_lingo->_colnumber++;
-		g_lingo->_bytenumber++;
-	}
-
-	while (*p == '\n' || *p == '\r' || *p == '\xC2') {
+	while (*p) {
 		if (*p == '\n' || *p == '\xC2') {
 			g_lingo->_linenumber++;
 			g_lingo->_colnumber = 0;
+		} else {
+			g_lingo->_colnumber++;
 		}
 		p++;
 		g_lingo->_bytenumber++;
