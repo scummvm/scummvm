@@ -66,13 +66,14 @@ public:
 	bool load(Common::ReadStream *rs, uint32 version);
 
 	Object *loadObject(Common::ReadStream *rs, uint32 version);
-	Object *loadObject(Common::ReadStream *rs, Std::string classname, uint32 version);
 
 	Std::vector<Object *> _objects;
 	idMan *_objIDs;
 	idMan *_actorIDs;
 
 private:
+	Object *loadObject(Common::ReadStream *rs, Std::string classname, uint32 version);
+
 	void setupLoaders();
 
 	void addObjectLoader(Std::string classname, ObjectLoadFunc func) {
