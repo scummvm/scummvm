@@ -41,7 +41,14 @@
 namespace Petka {
 
 QObjectBG::QObjectBG() {
+	_x = 0;
+	_y = 0;
 	_z = 0;
+
+	_showMap = 1;
+
+	_fxId = 0;
+	_musicId = 0;
 }
 
 void QObjectBG::processMessage(const QMessage &msg) {
