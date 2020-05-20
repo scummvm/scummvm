@@ -1102,10 +1102,6 @@ void Ultima8Engine::resetEngine() {
 	_mouse->popAllCursors();
 	_mouse->pushMouseCursor();
 
-	// FIXME: This breaks loading processes if this process gets an ID
-	//        also present in a savegame.
-	// _kernel->addProcess(new JoystickCursorProcess(JOY1, 0, 1));
-
 	_timeOffset = -(int32)Kernel::get_instance()->getFrameNum();
 	_inversion = 0;
 	_saveCount = 0;
