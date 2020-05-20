@@ -33,6 +33,9 @@
 
 namespace Petka {
 
+const uint kShakeTime = 30;
+const int kShakeOffset = 3;
+
 VideoSystem::VideoSystem() :
 	_shake(false), _shift(false), _shakeTime(0), _time(0) {
 	makeAllDirty();
@@ -41,7 +44,7 @@ VideoSystem::VideoSystem() :
 
 void VideoSystem::update() {
 	Interface *interface = g_vm->getQSystem()->_currInterface;
-	int time = g_system->getMillis();
+	uint32 time = g_system->getMillis();
 	if (interface) {
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->update(time - _time);
@@ -57,32 +60,19 @@ void VideoSystem::update() {
 			interface->_objs[i]->draw();
 		}
 	}
+
 	_time = time;
 	_rects.clear();
 
 	if (_shake) {
-		int width = _screen.w;
-		int x =  0;
-
-		if (_shift) {
-			Graphics::Surface s;
-			s.create(3, 480, g_system->getScreenFormat());
-			g_system->copyRectToScreen(s.getPixels(), s.pitch, 0, 0, s.w, s.h);
-			width -= 3;
-			x = 3;
-		}
-
-		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, x, 0, width, _screen.h);
-		g_system->updateScreen();
-
+		g_system->setShakePos(_shift ? kShakeOffset : 0, 0);
 		time = g_system->getMillis();
-		if (time - _shakeTime > 30) {
+		if (time - _shakeTime > kShakeTime) {
 			_shift = !_shift;
 			_shakeTime = time;
 		}
-	} else {
-		_screen.update();
 	}
+	_screen.update();
 }
 
 void VideoSystem::addDirtyRect(const Common::Rect &rect) {
@@ -122,6 +112,7 @@ void VideoSystem::updateTime() {
 
 void VideoSystem::setShake(bool shake) {
 	_shake = shake;
+	g_system->setShakePos(0, 0);
 }
 
 void VideoSystem::sort() {
