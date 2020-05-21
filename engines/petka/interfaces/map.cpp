@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/str-enc.h"
 
 #include "petka/q_manager.h"
 #include "petka/flc.h"
@@ -141,9 +142,9 @@ void InterfaceMap::onMouseMove(const Common::Point p) {
 		Graphics::PixelFormat fmt = g_system->getScreenFormat();
 		QMessageObject *obj = (QMessageObject *)_objUnderCursor;
 		if (!obj->_nameOnScreen.empty()) {
-			setText(obj->_nameOnScreen, fmt.RGBToColor(0xFF, 0xFF, 0xC0), fmt.RGBToColor(0xA, 0xA, 0xA));
+			setText(Common::convertToU32String(obj->_nameOnScreen.c_str(), Common::kWindows1251), fmt.RGBToColor(0xC0, 0xFF, 0xFF), fmt.RGBToColor(0xA, 0xA, 0xA));
 		} else {
-			setText(obj->_name, fmt.RGBToColor(0, 0, 0x80), fmt.RGBToColor(0xA, 0xA, 0xA));
+			setText(Common::convertToU32String(obj->_name.c_str(), Common::kWindows1251), fmt.RGBToColor(0x80, 0, 0), fmt.RGBToColor(0xA, 0xA, 0xA));
 		}
 	} else if (oldObj && !_objUnderCursor) {
 		setText(Common::U32String(""), 0, 0);

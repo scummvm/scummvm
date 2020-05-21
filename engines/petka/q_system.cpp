@@ -82,7 +82,7 @@ static void readObject(QMessageObject &obj, Common::SeekableReadStream &stream,
 		}
 	}
 
-	//namesIni.getKey(obj._name, "all", obj._nameOnScreen);
+	namesIni.getKey(obj._name, "all", obj._nameOnScreen);
 
 	Common::String rgbString;
 	if (castIni.getKey(obj._name, "all", rgbString)) {
