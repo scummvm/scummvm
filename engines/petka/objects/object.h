@@ -97,6 +97,7 @@ public:
 	void setPos(int x, int y) override;
 	void show(bool v) override;
 	void onClick(int x, int y) override;
+	void onMouseMove(int x, int y) override;
 };
 
 extern QReaction *g_dialogReaction;

@@ -555,4 +555,8 @@ void QObject::onClick(int x, int y) {
 	}
 }
 
+void QObject::onMouseMove(int x, int y) {
+	g_vm->getQSystem()->_mainInterface->_objUnderCursor = this;
+}
+
 }

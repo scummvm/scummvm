@@ -236,15 +236,30 @@ void InterfaceMain::onRightButtonDown(const Common::Point p) {
 }
 
 void InterfaceMain::onMouseMove(const Common::Point p) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QMessageObject *prevObj = (QMessageObject *)_objUnderCursor;
 	_objUnderCursor = nullptr;
+
 	for (int i = _objs.size() - 1; i >= 0; --i) {
 		if (_objs[i]->isInPoint(p.x, p.y)) {
 			_objs[i]->onMouseMove(p.x, p.y);
 		}
 	}
+
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->setCursorPos(p.x, p.y, true);
+
+	if (prevObj != _objUnderCursor && _objUnderCursor && _dialog._state == kIdle) {
+		Graphics::PixelFormat fmt = g_system->getScreenFormat();
+		QMessageObject *obj = (QMessageObject *)_objUnderCursor;
+		if (!obj->_nameOnScreen.empty()) {
+			setText(Common::convertToU32String(obj->_nameOnScreen.c_str(), Common::kWindows1251), fmt.RGBToColor(0xC0, 0xFF, 0xFF), fmt.RGBToColor(0xA, 0xA, 0xA));
+		} else {
+			setText(Common::convertToU32String(obj->_name.c_str(), Common::kWindows1251), fmt.RGBToColor(0x80, 0, 0), fmt.RGBToColor(0xA, 0xA, 0xA));
+		}
+	} else if (prevObj && !_objUnderCursor && _dialog._state == kIdle) {
+		setText(Common::U32String(""), 0, 0);
+	}
 }
 
 void InterfaceMain::setTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor) {
