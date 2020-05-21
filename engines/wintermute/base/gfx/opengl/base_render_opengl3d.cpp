@@ -86,6 +86,16 @@ bool Wintermute::BaseRenderOpenGL3D::setProjection() {
 	return true;
 }
 
+bool Wintermute::BaseRenderOpenGL3D::setProjection2D()
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _viewportRect.width(), 0, _viewportRect.height(), -1.0, 100.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	return true;
+}
+
 bool Wintermute::BaseRenderOpenGL3D::windowedBlt() {
 	return true;
 }
@@ -165,11 +175,7 @@ bool Wintermute::BaseRenderOpenGL3D::setup2D(bool force) {
 
 		glActiveTexture(GL_TEXTURE0);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, _viewportRect.width(), 0, _viewportRect.height(), -1.0, 100.0);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		setProjection2D();
 	}
 
 	return true;

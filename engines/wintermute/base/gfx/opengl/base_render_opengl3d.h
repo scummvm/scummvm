@@ -51,6 +51,7 @@ public:
 	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
 
 	virtual bool setProjection();
+	bool setProjection2D();
 
 	virtual bool windowedBlt();
 	/**
