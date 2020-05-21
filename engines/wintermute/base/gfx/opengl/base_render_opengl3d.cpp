@@ -29,6 +29,7 @@ bool Wintermute::BaseRenderOpenGL3D::saveScreenShot(const Common::String& filena
 }
 
 bool Wintermute::BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
+	_viewportRect.setRect(left, top, right, bottom);
 	glViewport(left, top, right - left, bottom - top);
 	return true;
 }
@@ -100,7 +101,7 @@ bool Wintermute::BaseRenderOpenGL3D::initRenderer(int width, int height, bool wi
 	_width = width;
 	_height = height;
 
-	setProjection();
+	setViewport(0, 0, width, height);
 
 	_active = true;
 	// setup a proper state
