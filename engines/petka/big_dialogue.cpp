@@ -229,6 +229,9 @@ void BigDialogue::load(Common::ReadStream *s) {
 			_ops[i].menu.bits = (byte)op;
 			_ops[i].menu.bitField = (uint16)(op >> 8);
 			break;
+		case kOperationGoTo:
+			_ops[i].goTo.opIndex = (uint16)(op);
+			break;
 		case kOperationDisableMenuItem:
 			_ops[i].disableMenuItem.opIndex = (uint16)op;
 			_ops[i].disableMenuItem.bit = (byte)(op >> 16);
@@ -266,6 +269,10 @@ void BigDialogue::save(Common::WriteStream *s) {
 			s->writeByte(_ops[i].menu.bits);
 			s->writeUint16LE(_ops[i].menu.bitField);
 			s->writeByte(kOperationMenu);
+			break;
+		case kOperationGoTo:
+			s->writeUint16LE(_ops[i].goTo.opIndex);
+			s->writeUint16LE(MKTAG16(0, kOperationGoTo));
 			break;
 		case kOperationDisableMenuItem:
 			s->writeUint16LE(_ops[i].disableMenuItem.opIndex);
