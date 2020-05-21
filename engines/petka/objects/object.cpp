@@ -91,11 +91,11 @@ void processSavedReaction(QReaction **reaction, QMessageObject *sender) {
 		}
 		case kWalk:
 		case kWalkTo:
-			g_vm->getQSystem()->_petka->setReactionAfterWalk(i, &r, sender, 1);
-			break;
+			g_vm->getQSystem()->_petka->setReactionAfterWalk(i, reaction, sender, 1);
+			return;
 		case kWalkVich:
-			g_vm->getQSystem()->_chapayev->setReactionAfterWalk(i, &r, sender, 1);
-			break;
+			g_vm->getQSystem()->_chapayev->setReactionAfterWalk(i, reaction, sender, 1);
+			return;
 		default:
 			processed = false;
 			break;
