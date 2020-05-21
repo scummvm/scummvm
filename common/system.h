@@ -938,7 +938,7 @@ public:
 	 * @param shakeYOffset	the shake y offset
 	 *
 	 * @note This is currently used in the SCUMM, QUEEN, KYRA, SCI, DREAMWEB,
-	 * SUPERNOVA, TEENAGENT, TOLTECS and PETKA engines.
+	 * SUPERNOVA, TEENAGENT, TOLTECS, ULTIMA, and PETKA engines.
 	 */
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) = 0;
 
