@@ -53,6 +53,6 @@ public:
 	QMessageObject *_invObj;
 };
 
-} // End of naespace Petka
+} // End of namespace Petka
 
 #endif
