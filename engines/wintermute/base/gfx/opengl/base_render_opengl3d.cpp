@@ -270,6 +270,9 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 	float tex_right = (float) rect.right / (float) tex.getWidth();
 	float tex_bottom = (float) rect.bottom / (float) tex.getHeight();
 
+	float offset = _viewportRect.height() / 2.0f;
+	float corrected_y =  (pos.y - offset) * -1.0f + offset;
+
 	if (mirrorX)
 	{
 
@@ -300,16 +303,16 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 
 	// position coords
 	*reinterpret_cast<float*>(vertices + 12) = pos.x - 0.5f;
-	*reinterpret_cast<float*>(vertices + 12 + 4) = pos.y  + height - 0.5f;
+	*reinterpret_cast<float*>(vertices + 12 + 4) = corrected_y - 0.5f;
 	*reinterpret_cast<float*>(vertices + 12 + 8) = -1.1f;
 	*reinterpret_cast<float*>(vertices + vertex_size + 12) = pos.x -0.5f;
-	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 4) = pos.y - 0.5f;
+	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 4) = corrected_y - height - 0.5f;
 	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 8) = -1.1f;
 	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12) = pos.x + width - 0.5f;
-	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 4) = pos.y + height - 0.5f;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 4) = corrected_y - 0.5f;
 	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 8) = -1.1f;
 	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12) = pos.x + width - 0.5f;
-	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 4) = pos.y - 0.5;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 4) = corrected_y - height - 0.5;
 	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 8) = -1.1f;
 
 	// not exactly sure about the color format, but this seems to work
