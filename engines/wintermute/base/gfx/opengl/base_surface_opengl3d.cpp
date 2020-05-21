@@ -4,7 +4,7 @@
 #include "base_render_opengl3d.h"
 
 Wintermute::BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(Wintermute::BaseGame* game, BaseRenderOpenGL3D* renderer)
-	: BaseSurface(game), tex(0, 0), renderer(renderer), pixelOpReady(false)
+	: BaseSurface(game), tex(nullptr), renderer(renderer), pixelOpReady(false)
 {
 
 }
@@ -26,7 +26,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Wintermute:
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::displayTrans(int x, int y, Wintermute::Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(tex, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
+	renderer->drawSprite(*tex, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
@@ -35,7 +35,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Wintermut
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::display(int x, int y, Wintermute::Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(tex, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
+	renderer->drawSprite(*tex, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
@@ -56,7 +56,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::restore() {
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	BaseImage img;
+	BaseImage img	= BaseImage();
 	if (!img.loadFile(filename)) {
 		return false;
 	}
@@ -66,15 +66,9 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, boo
 		return false;
 	}
 
-	Graphics::Surface* tmp = img.getSurface()->convertTo(renderer->getPixelFormat(), img.getPalette());
-
-	if (tmp == nullptr)
-	{
-		return false;
-	}
-
-	tex = OpenGL::Texture(*tmp);
-	delete tmp;
+	Graphics::Surface* surf = img.getSurface()->convertTo(OpenGL::Texture::getRGBAPixelFormat(), img.getPalette());
+	tex = new OpenGL::Texture(*surf);
+	delete surf;
 
 	_filename = filename;
 
@@ -104,7 +98,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, boo
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::create(int width, int height) {
-	tex = OpenGL::Texture(width, height);
+	tex = new OpenGL::Texture(width, height);
 	_valid = true;
 	return true;
 }
@@ -122,7 +116,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g,
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::startPixelOp() {
-	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
+	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
 	return true;
 }
 
@@ -132,7 +126,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::endPixelOp() {
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
-	if (x < 0 || y < 0 || x >= tex.getWidth() || y >= tex.getHeight()) {
+	if (x < 0 || y < 0 || x >= tex->getWidth() || y >= tex->getHeight()) {
 		return false;
 	}
 
@@ -145,7 +139,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 	// assume 32 bit rgba for now
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 
-	uint32 pixel = *reinterpret_cast<uint32*>(image_data + y * tex.getWidth() * 4 + x * 4);
+	uint32 pixel = *reinterpret_cast<uint32*>(image_data + y * tex->getWidth() * 4 + x * 4);
 	pixel &= 0xFFFFFF00;
 	return pixel == 0;
 }

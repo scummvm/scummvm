@@ -38,14 +38,14 @@ public:
 	virtual bool isTransparentAtLite(int x, int y);
 
 	virtual int getWidth() {
-		return tex.getWidth();
+		return tex->getWidth();
 	}
 	virtual int getHeight() {
-		return tex.getHeight();
+		return tex->getHeight();
 	}
 
 private:
-	OpenGL::Texture tex;
+	OpenGL::Texture* tex;
 	BaseRenderOpenGL3D* renderer;
 	bool pixelOpReady;
 };
