@@ -2378,11 +2378,11 @@ void Score::drawBackgndTransSprite(const Graphics::Surface &sprite, Common::Rect
 	if (!_surface->clip(srcRect, drawRect))
 		return; // Out of screen
 
-	for (int ii = 0; ii < srcRect.height(); ii++) {
+	for (int ii = 0; ii < drawRect.height(); ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
 
-		for (int j = 0; j < srcRect.width(); j++) {
+		for (int j = 0; j < drawRect.width(); j++) {
 			if (*src != skipColor)
 				*dst = *src;
 
@@ -2399,11 +2399,11 @@ void Score::drawGhostSprite(const Graphics::Surface &sprite, Common::Rect &drawR
 		return; // Out of screen
 
 	uint8 skipColor = _vm->getPaletteColorCount() - 1;
-	for (int ii = 0; ii < srcRect.height(); ii++) {
+	for (int ii = 0; ii < drawRect.height(); ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
 
-		for (int j = 0; j < srcRect.width(); j++) {
+		for (int j = 0; j < drawRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0) && (*src != skipColor))
 				*dst = (_vm->getPaletteColorCount() - 1) - *src; // Oposite color
 
@@ -2420,12 +2420,12 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 		return; // Out of screen
 
 	uint8 skipColor = _vm->getPaletteColorCount() - 1;
-	for (int ii = 0; ii < srcRect.height(); ii++) {
+	for (int ii = 0; ii < drawRect.height(); ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
 		byte srcColor = *src;
 
-		for (int j = 0; j < srcRect.width(); j++) {
+		for (int j = 0; j < drawRect.width(); j++) {
 			if (_sprites[spriteId]->_cast->_type == kCastShape)
 				srcColor = 0x0;
 			else
@@ -2489,7 +2489,7 @@ void Score::drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawR
 	if (whiteColor == -1) {
 		debugC(1, kDebugImages, "Score::drawMatteSprite(): No white color for Matte image");
 
-		for (int yy = 0; yy < srcRect.height(); yy++) {
+		for (int yy = 0; yy < drawRect.height(); yy++) {
 			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);
 			byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + yy);
 
@@ -2510,12 +2510,12 @@ void Score::drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawR
 		}
 		ff.fillMask();
 
-		for (int yy = 0; yy < srcRect.height(); yy++) {
+		for (int yy = 0; yy < drawRect.height(); yy++) {
 			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);
 			const byte *mask = (const byte *)ff.getMask()->getBasePtr(srcRect.left, srcRect.top + yy);
 			byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + yy);
 
-			for (int xx = 0; xx < srcRect.width(); xx++, src++, dst++, mask++)
+			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, mask++)
 				if (*mask == 0)
 					*dst = *src;
 		}
