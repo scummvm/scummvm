@@ -172,20 +172,6 @@ int WintermuteEngine::init() {
 		}
 	#endif
 
-	Common::ArchiveMemberList actors3d;
-	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
-		GUI::MessageDialog dialog(
-				_("This game requires 3D characters support, which is out of ScummVM's scope."),
-				_("Start anyway"),
-				_("Cancel")
-			);
-		if (dialog.runModal() != GUI::kMessageOK) {
-			delete _game;
-			_game = nullptr;
-			return false;
-		}
-	}
-
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;
