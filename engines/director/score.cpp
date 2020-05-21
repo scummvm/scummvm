@@ -764,7 +764,7 @@ void Score::setSpriteCasts() {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			_frames[i]->_sprites[j]->setCast(_frames[i]->_sprites[j]->_castId);
-			debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d type: %d", i, j, _frames[i]->_sprites[j]->_spriteType);
+			debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d castId: %d type: %d", i, j, _frames[i]->_sprites[j]->_castId, _frames[i]->_sprites[j]->_spriteType);
 		}
 	}
 }
@@ -887,7 +887,7 @@ void Score::setSpriteBboxes() {
 				break;
 			}
 			default:
-				warning("Score::setSpriteBboxes(): Unhandled cast type: %d", castType);
+				warning("Score::setSpriteBboxes(): Unhandled cast type: %d, frame %d, channel %d", castType, i, j);
 			}
 			sp->_currentBbox = sp->_startBbox;
 			sp->_dirtyBbox = sp->_startBbox;
