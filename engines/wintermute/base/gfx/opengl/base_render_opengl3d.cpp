@@ -56,6 +56,56 @@ void Wintermute::BaseRenderOpenGL3D::fade(uint16 alpha) {
 }
 
 void Wintermute::BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	setProjection2D();
+
+	int vertex_size = 16;
+	byte vertices[4 * vertex_size];
+
+	*reinterpret_cast<float*>(vertices + 4) = _viewportRect.left;
+	*reinterpret_cast<float*>(vertices + 8) = _viewportRect.bottom;
+	*reinterpret_cast<float*>(vertices + 12) = 0.0f;
+	*reinterpret_cast<float*>(vertices + vertex_size + 4) = _viewportRect.left;
+	*reinterpret_cast<float*>(vertices + vertex_size + 8) = _viewportRect.top;
+	*reinterpret_cast<float*>(vertices + vertex_size + 12) = 0.0f;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 4) = _viewportRect.right;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 8) = _viewportRect.bottom;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12) = 0.0f;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 4) = _viewportRect.right;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 8) = _viewportRect.top;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12) = 0.0f;
+
+	*(vertices) = r;
+	*(vertices + 1) = g;
+	*(vertices + 2) = b;
+	*(vertices + 3) = a;
+	*(vertices + vertex_size) = r;
+	*(vertices + vertex_size + 1) = g;
+	*(vertices + vertex_size + 2) = b;
+	*(vertices + vertex_size + 3) = a;
+	*(vertices + 2 * vertex_size) = r;
+	*(vertices + 2 * vertex_size + 1) = g;
+	*(vertices + 2 * vertex_size + 2) = b;
+	*(vertices + 2 * vertex_size + 3) = a;
+	*(vertices + 3 * vertex_size) = r;
+	*(vertices + 3 * vertex_size + 1) = g;
+	*(vertices + 3 * vertex_size + 2) = b;
+	*(vertices + 3 * vertex_size + 3) = a;
+
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, vertex_size, vertices + 4);
+	glColorPointer(4, GL_UNSIGNED_BYTE, vertex_size, vertices);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
 	setup2D(true);
 }
 
