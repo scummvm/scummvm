@@ -39,6 +39,8 @@ void InterfaceMap::start(int id) {
 	if (!g_vm->getQSystem()->_room->_showMap)
 		return;
 
+	_objs.clear();
+
 	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(mapName);
 	_roomResID = bg->_resourceId;
 	_objs.push_back(bg);
