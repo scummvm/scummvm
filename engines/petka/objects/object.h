@@ -45,7 +45,7 @@ public:
 
 public:
 	int32 _resourceId;
-	uint32 _z;
+	int32 _z;
 };
 
 class Sound;
