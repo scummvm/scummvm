@@ -41,8 +41,8 @@ public:
 
 	void start(uint id, QMessageObject *sender);
 
-	void saveCursorState();
-	void restoreCursorState();
+	void initCursor();
+	void restoreCursor();
 
 	void next(int choice);
 

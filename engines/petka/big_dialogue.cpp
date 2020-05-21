@@ -390,7 +390,7 @@ void BigDialogue::next(int choice) {
 			else {
 				g_vm->getQSystem()->_mainInterface->_dialog.sendMsg(kSaid);
 				g_vm->getQSystem()->_mainInterface->_dialog._isUserMsg = 1;
-				g_vm->getQSystem()->_mainInterface->_dialog.restoreCursorState();
+				g_vm->getQSystem()->_mainInterface->_dialog.restoreCursor();
 				g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, _currOp->userMsg.arg);
 			}
 			return;

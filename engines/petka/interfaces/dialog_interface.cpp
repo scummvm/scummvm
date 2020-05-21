@@ -57,25 +57,30 @@ void DialogInterface::start(uint id, QMessageObject *sender) {
 	_state = kIdle;
 	_sender = sender;
 	_soundName.clear();
-	saveCursorState();
+	initCursor();
 	next(-2);
 }
 
-void DialogInterface::saveCursorState() {
+void DialogInterface::initCursor() {
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+
 	_savedCursorId = cursor->_resourceId;
+	_savedCursorActType = cursor->_actionType;
 	_wasCursorAnim = cursor->_animate;
 	_wasCursorShown = cursor->_isShown;
+
 	cursor->_isShown = false;
 	cursor->_animate = true;
 	cursor->_resourceId = 5006;
+	cursor->_actionType = kActionTalk;
 }
 
-void DialogInterface::restoreCursorState() {
+void DialogInterface::restoreCursor() {
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	cursor->_isShown = _wasCursorShown;
 	cursor->_animate = _wasCursorAnim;
 	cursor->_resourceId = _savedCursorId;
+	cursor->_actionType = _savedCursorActType;
 }
 
 void DialogInterface::next(int choice) {
@@ -178,7 +183,7 @@ void DialogInterface::end() {
 	_state = kIdle;
 	_id = -1;
 	g_vm->getQSystem()->_currInterface->removeTexts();
-	restoreCursorState();
+	restoreCursor();
 	if (g_dialogReaction)
 		processSavedReaction(&g_dialogReaction, _sender);
 	_sender = nullptr;
