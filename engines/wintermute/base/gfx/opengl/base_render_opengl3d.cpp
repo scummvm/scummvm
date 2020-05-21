@@ -72,11 +72,15 @@ bool Wintermute::BaseRenderOpenGL3D::setProjection() {
 	float viewportWidth = _viewportRect.right - _viewportRect.left;
 	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
 
-	Math::Matrix4 projMat = Math::makePerspectiveMatrix(M_PI, viewportWidth/viewportHeight, 0.9f, 1900.f);
+	float horizontal_view_angle = M_PI * 0.5f;
+	float aspect_ratio = float(viewportHeight) / float(viewportWidth);
+	float near_plane = 1.0f;
+	float far_plane = 1000.0f;
+	float right = near_plane * tanf(horizontal_view_angle * 0.5f);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glLoadMatrixf(projMat.getData());
+	glFrustum(-right, right, -right*aspect_ratio, right*aspect_ratio, near_plane, far_plane);
 	glMatrixMode(GL_MODELVIEW);
 
 	return true;
