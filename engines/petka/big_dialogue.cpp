@@ -33,6 +33,8 @@
 
 namespace Petka {
 
+const uint16 kFallback = 0xFFFE;
+
 BigDialogue::BigDialogue() {
 	_currOp = nullptr;
 	_startOpIndex = 0;
@@ -163,7 +165,7 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 				continue;
 			}
 			for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
-				if (_objDialogs[i].handlers[j].opcode == 0xFFFE) {
+				if (_objDialogs[i].handlers[j].opcode == kFallback) {
 					if (res)
 						*res = true;
 					return &_objDialogs[i].handlers[j];
@@ -173,7 +175,7 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 		}
 	}
 	for (uint i = 0; i < _objDialogs.size(); ++i) {
-		if (_objDialogs[i].objId != 0xFFFE)
+		if (_objDialogs[i].objId != kFallback)
 			continue;
 		for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
 			if (_objDialogs[i].handlers[j].opcode == opcode) {
