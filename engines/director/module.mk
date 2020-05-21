@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	frame.o \
 	graphics.o \
 	images.o \
+	ink.o \
 	movie.o \
 	resource.o \
 	score.o \
