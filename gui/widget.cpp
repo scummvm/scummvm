@@ -787,13 +787,7 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 
 void SliderWidget::drawWidget() {
 	Common::Rect r1(_x, _y, _x + _w, _y + _h);
-
-	if (g_gui.useRTL() && _useRTL) {
-		// GUI TODO: This currently draws the numbers okay (Rightmost is 0, left goes high value), but renders incorrectly (colors should be inverted).
-		g_gui.theme()->drawSlider(r1, valueToBarWidth(getMaxValue() - _value), _state);
-	} else {
-		g_gui.theme()->drawSlider(r1, valueToBarWidth(_value), _state);
-	}
+	g_gui.theme()->drawSlider(r1, valueToBarWidth(_value), _state, (g_gui.useRTL() && _useRTL));
 }
 
 int SliderWidget::valueToBarWidth(int value) {

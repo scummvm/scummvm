@@ -433,7 +433,7 @@ public:
 
 	void drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans = false);
 
-	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled);
+	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked,
 	                  WidgetStateInfo state = kStateEnabled, bool rtl = false);

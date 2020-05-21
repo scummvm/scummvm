@@ -1085,7 +1085,7 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 				_widgets[dd]->_textAlignV);
 }
 
-void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
+void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1099,6 +1099,11 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 	Common::Rect r2 = r;
 	r2.setWidth(MIN((int16)width, r.width()));
 	//	r2.top++; r2.bottom--; r2.left++; r2.right--;
+
+	if (rtl) {
+		r2.left = r.right - r2.width();
+		r2.right = r.right;
+	}
 
 	drawWidgetBackground(r, kWidgetBackgroundSlider);
 
