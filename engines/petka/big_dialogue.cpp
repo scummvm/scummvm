@@ -124,14 +124,16 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 		*talkerId = _speeches[index].speakerId;
 		return &_speeches[index].text;
 	}
-	case kOperationCircle:
+	case kOperationCircle: {
+		const uint current = _currOp->circle.curr;
 		_currOp += 1;
-		for (uint i = 0; i < _currOp->circle.count; ++i) {
+		for (uint i = 0; i < current; ++i) {
 			while (_currOp->type != kOperationBreak)
 				_currOp += 1;
 			_currOp += 1;
 		}
 		assert(_currOp->type == kOperationPlay);
+	}
 		// fall through
 	case kOperationPlay:
 		*soundName = _speeches[_currOp->play.messageIndex].soundName;
@@ -315,7 +317,7 @@ void BigDialogue::next(int choice) {
 	while (true) {
 		switch (_currOp->type) {
 		case kOperationBreak:
-			while (_currOp->type != kOperationMenu || _currOp->type != kOperationCircle) {
+			while (_currOp->type != kOperationMenu && _currOp->type != kOperationCircle) {
 				_currOp--;
 			}
 			next(choice);
