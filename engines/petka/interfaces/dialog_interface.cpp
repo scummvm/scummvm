@@ -142,7 +142,7 @@ void DialogInterface::next(int choice) {
 		Common::Array<Common::U32String> choices;
 		for (uint i = 0; i < count; ++i) {
 			int id;
-			choices.push_back(*bigDialog->getSpeechInfo(&id, &soundName, -1));
+			choices.push_back(*bigDialog->getSpeechInfo(&id, &soundName, i));
 		}
 		qsys->_mainInterface->setTextChoice(choices, 0xFFFF, g_system->getScreenFormat().RGBToColor(0xFF, 0, 0));
 
@@ -177,6 +177,7 @@ void DialogInterface::end() {
 	_talker = nullptr;
 	_state = kIdle;
 	_id = -1;
+	g_vm->getQSystem()->_currInterface->removeTexts();
 	restoreCursorState();
 	if (g_dialogReaction)
 		processSavedReaction(&g_dialogReaction, _sender);

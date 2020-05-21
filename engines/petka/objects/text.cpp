@@ -167,6 +167,7 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 	int w = 0;
 	int h = 0;
 	Common::ScopedPtr<Graphics::Font> font(Graphics::loadTTFFontFromArchive("FreeSans.ttf", 18));
+	_rects.resize(choices.size());
 	for (uint i = 0; i < _choices.size(); ++i) {
 		_rects[i] = font->getBoundingBox(_choices[i]);
 		if (_rects[i].width() > w)

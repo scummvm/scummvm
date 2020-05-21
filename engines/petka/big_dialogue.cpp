@@ -96,17 +96,17 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 		return nullptr;
 	switch (_currOp->type) {
 	case kOperationMenu: {
-		Operation *oldOp = _currOp;
+		Operation *menuOp = _currOp;
 		uint bit = 1;
 		if (_currOp->menu.bits <= choice || choice < 0) {
 			break;
 		}
 		while (true) {
 			_currOp += 1;
-			if (choice == 0 && (bit & _currOp->menu.bitField))
+			if (choice == 0 && (bit & menuOp->menu.bitField))
 				break;
 			if (_currOp->type == kOperationBreak) {
-				if (bit & _currOp->menu.bitField)
+				if (bit & menuOp->menu.bitField)
 					choice--;
 				bit *= 2;
 			}
@@ -114,12 +114,12 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 		if (_currOp->type != kOperationPlay)
 			next();
 		if (_currOp->type != kOperationPlay) {
-			_currOp = oldOp;
+			_currOp = menuOp;
 			break;
 		}
 
 		uint index = _currOp->play.messageIndex;
-		_currOp = oldOp;
+		_currOp = menuOp;
 		*soundName = _speeches[index].soundName;
 		*talkerId = _speeches[index].speakerId;
 		return &_speeches[index].text;
