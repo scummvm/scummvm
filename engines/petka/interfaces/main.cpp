@@ -239,13 +239,15 @@ void InterfaceMain::onMouseMove(const Common::Point p) {
 	QMessageObject *prevObj = (QMessageObject *)_objUnderCursor;
 	_objUnderCursor = nullptr;
 
-	for (int i = _objs.size() - 1; i >= 0; --i) {
-		if (_objs[i]->isInPoint(p.x, p.y)) {
-			_objs[i]->onMouseMove(p.x, p.y);
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	if (cursor->_isShown) {
+		for (int i = _objs.size() - 1; i >= 0; --i) {
+			if (_objs[i]->isInPoint(p.x, p.y)) {
+				_objs[i]->onMouseMove(p.x, p.y);
+			}
 		}
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->setCursorPos(p.x, p.y, true);
 
