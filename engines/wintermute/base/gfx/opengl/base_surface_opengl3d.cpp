@@ -160,6 +160,6 @@ bool Wintermute::BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 
 	uint32 pixel = *reinterpret_cast<uint32*>(image_data + y * tex->getWidth() * 4 + x * 4);
-	pixel &= 0xFFFFFF00;
+	pixel &= 0x000000FF;
 	return pixel == 0;
 }
