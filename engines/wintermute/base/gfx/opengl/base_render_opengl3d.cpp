@@ -203,6 +203,9 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 												  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
 
+	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
+	// Reset it!
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	float width = (rect.right - rect.left) * scale.x;
 	float height = (rect.bottom - rect.top) * scale.y;
 
