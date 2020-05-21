@@ -102,6 +102,8 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 		return true;
 	case kSupportsSavingDuringRuntime:
 		return true;
+	case kSupportsArbitraryResolutions:
+		return true;
 	default:
 		return false;
 	}
