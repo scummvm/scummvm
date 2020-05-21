@@ -226,43 +226,87 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 
 	// provide space for 3d position coords, 2d texture coords and a 32 bit colot value
 	int vertex_size = 24;
-	byte* vertices[vertex_size * 4];
+	byte vertices[vertex_size * 4];
+
+	for (int i = 0; i < vertex_size * 4; ++i) {
+		vertices[i] = 0;
+	}
 
 	// texture coords
 	*reinterpret_cast<float*>(vertices) = tex_left;
-	*reinterpret_cast<float*>(vertices + 4) = tex_bottom;
+	*reinterpret_cast<float*>(vertices + 4) = tex_top;
 	*reinterpret_cast<float*>(vertices + vertex_size) = tex_left;
-	*reinterpret_cast<float*>(vertices + vertex_size + 4) = tex_top;
+	*reinterpret_cast<float*>(vertices + vertex_size + 4) = tex_bottom;
 	*reinterpret_cast<float*>(vertices + 2 * vertex_size) = tex_right;
-	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 4) = tex_bottom;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 4) = tex_top;
 	*reinterpret_cast<float*>(vertices + 3 * vertex_size) = tex_right;
-	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 4) = tex_top;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 4) = tex_bottom;
 
 	// position coords
 	*reinterpret_cast<float*>(vertices + 12) = pos.x - 0.5f;
-	*reinterpret_cast<float*>(vertices + 12 + 4) = pos.y + height - 0.5f;
-	*reinterpret_cast<float*>(vertices + 12 + 8) = -0.9f;
+	*reinterpret_cast<float*>(vertices + 12 + 4) = pos.y  + height - 0.5f;
+	*reinterpret_cast<float*>(vertices + 12 + 8) = -1.1f;
 	*reinterpret_cast<float*>(vertices + vertex_size + 12) = pos.x -0.5f;
 	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 4) = pos.y - 0.5f;
-	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 8) = -0.9f;
+	*reinterpret_cast<float*>(vertices + vertex_size + 12 + 8) = -1.1f;
 	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12) = pos.x + width - 0.5f;
 	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 4) = pos.y + height - 0.5f;
-	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 8) = -0.9f;
+	*reinterpret_cast<float*>(vertices + 2 * vertex_size + 12 + 8) = -1.1f;
 	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12) = pos.x + width - 0.5f;
 	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 4) = pos.y - 0.5;
-	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 8) = -0.9f;
+	*reinterpret_cast<float*>(vertices + 3 * vertex_size + 12 + 8) = -1.1f;
 
-	// color
-	*reinterpret_cast<uint32*>(vertices + 8) = color;
-	*reinterpret_cast<uint32*>(vertices + vertex_size + 8) = color;
-	*reinterpret_cast<uint32*>(vertices + 2 * vertex_size + 8) = color;
-	*reinterpret_cast<uint32*>(vertices + 3 * vertex_size + 8) = color;
+	// not exactly sure about the color format, but this seems to work
+	byte a = RGBCOLGetA(color);
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+
+	vertices[8] = r;
+	vertices[8 + 1] = g;
+	vertices[8 + 2] = b;
+	vertices[8 + 3] = a;
+	vertices[vertex_size + 8] = r;
+	vertices[vertex_size + 8 + 1] = g;
+	vertices[vertex_size + 8 + 2] = b;
+	vertices[vertex_size + 8 + 3] = a;
+	vertices[2 * vertex_size + 8] = r;
+	vertices[2 * vertex_size + 8 + 1] = g;
+	vertices[2 * vertex_size + 8 + 2] = b;
+	vertices[2 * vertex_size + 8 + 3] = a;
+	vertices[3 * vertex_size + 8] = r;
+	vertices[3 * vertex_size + 8 + 2] = g;
+	vertices[3 * vertex_size + 8 + 2] = b;
+	vertices[3 * vertex_size + 8 + 3] = a;
 
 	// transform vertices here if necessary, add offset
 
+	if (alphaDisable)
+	{
+		glDisable(GL_ALPHA_TEST);
+	}
+
+	glEnable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, 24, vertices + 12);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 24, vertices + 8);
+	glTexCoordPointer(2, GL_FLOAT, 24, vertices);
+
 	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
-	glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
+
+	// we could do this in a vertex buffer anyways
+	//glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	if (alphaDisable)
+	{
+		glEnable(GL_ALPHA_TEST);
+	}
 
 	return true;
 }
