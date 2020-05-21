@@ -327,13 +327,14 @@ void BigDialogue::next(int choice) {
 				choice = 0;
 			if (_currOp->menu.bits <= choice)
 				choice = _currOp->menu.bits - 1;
+			uint16 bitField = _currOp->menu.bitField;
 			uint bits = _currOp->menu.bits;
 			uint bit = 1;
 			uint i = 0;
 			while (bits) {
 				if (_currOp->type == kOperationBreak) {
 					bits--;
-					if (!(bit & _currOp->menu.bitField) && i <= (uint)choice)
+					if (!(bit & bitField) && i <= (uint)choice)
 						choice++;
 					bit *= 2;
 					i++;
@@ -341,6 +342,7 @@ void BigDialogue::next(int choice) {
 				_currOp += 1;
 			}
 			_currOp += choice;
+			processed = false;
 			break;
 		}
 		case kOperationGoTo: {
