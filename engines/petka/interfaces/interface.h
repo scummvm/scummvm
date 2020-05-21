@@ -56,7 +56,7 @@ public:
 public:
 	Common::Array<QVisibleObject *> _objs;
 	QVisibleObject *_objUnderCursor;
-	int _startIndex;
+	uint _startIndex;
 };
 
 } // End of namespace Petka

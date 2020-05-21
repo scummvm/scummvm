@@ -187,7 +187,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getQSystem()->_case->removeItem(msg.objId);
 			break;
 		case kSetInv:
-			g_vm->getQSystem()->_case->setInv(msg.sender->_id, msg.objId);
+			g_vm->getQSystem()->_case->transformItem(msg.sender->_id, msg.objId);
 			break;
 		case kAvi: {
 			Common::String videoName = g_vm->resMgr()->findResourceName((uint16) msg.arg1);
