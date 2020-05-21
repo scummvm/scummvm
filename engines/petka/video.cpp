@@ -118,7 +118,7 @@ void VideoSystem::setShake(bool shake) {
 void VideoSystem::sort() {
 	Common::Array<QVisibleObject *> &objs = g_vm->getQSystem()->_currInterface->_objs;
 	for (uint i = 0; i < objs.size() - 1; ++i) {
-		int minIndex = i;
+		uint minIndex = i;
 		for (uint j = i + 1; j < objs.size(); ++j) {
 			if (objs[j]->_z < objs[minIndex]->_z) {
 				minIndex = j;
