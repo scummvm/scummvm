@@ -37,7 +37,7 @@ enum ActionType {
 	kActionObjUse
 };
 
-class QObjectCursor : public QObject {
+class QObjectCursor : public QMessageObject {
 public:
 	QObjectCursor();
 
