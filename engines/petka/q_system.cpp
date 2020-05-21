@@ -172,12 +172,11 @@ bool QSystem::init() {
 	_panelInterface.reset(new InterfacePanel());
 	_mapInterface.reset(new InterfaceMap());
 	if (g_vm->getPart() == 0) {
-		_startupInterface->start(0);
 		_prevInterface = _currInterface = _startupInterface.get();
 	} else {
-		_mainInterface->start(0);
 		_prevInterface = _currInterface = _mainInterface.get();
 	}
+	_currInterface->start(0);
 	return true;
 }
 

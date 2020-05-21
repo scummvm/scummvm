@@ -82,13 +82,13 @@ void InterfaceMain::start(int id) {
 }
 
 void InterfaceMain::loadRoom(int id, bool fromSave) {
-	stop();
+	QSystem *sys = g_vm->getQSystem();
+	sys->_currInterface->stop();
 	if (_roomId == id)
 		return;
 	unloadRoom(fromSave);
 	_roomId = id;
 	const BGInfo *info = findBGInfo(id);
-	QSystem *sys = g_vm->getQSystem();
 	QObjectBG *room = (QObjectBG *)sys->findObject(id);
 	g_vm->getQSystem()->_room = room;
 	g_vm->resMgr()->loadBitmap(room->_resourceId);
