@@ -88,7 +88,10 @@ void QText::drawOutline(Graphics::Surface *s, uint16 color) {
 	}
 }
 
-QText::QText() {}
+QText::QText() {
+	_resourceId = -2;
+	_z = 3000;
+}
 
 QTextPhrase::QTextPhrase(const Common::U32String &text, uint16 textColor, uint16 outlineColor)
 	: QText(text, textColor, outlineColor), _phrase(text), _time(0) {}
