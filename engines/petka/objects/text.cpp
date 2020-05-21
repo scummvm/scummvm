@@ -179,11 +179,10 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 
 	Graphics::Surface *s = g_vm->resMgr()->findOrCreateSurface(-2, w, h);
 
-	int x = _rect.left;
-	int y = _rect.top;
+	int y = 0;
 	for (uint i = 0; i < _choices.size(); ++i) {
-		font->drawString(s, _choices[i], 0, y - _rect.top, s->w, color);
-		_rects[i].moveTo(x, y);
+		font->drawString(s, _choices[i], 0, y, s->w, color);
+		_rects[i].moveTo(0, y);
 		y += _rects[i].height();
 	}
 }
