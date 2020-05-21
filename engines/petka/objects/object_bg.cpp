@@ -69,19 +69,16 @@ void QObjectBG::processMessage(const QMessage &msg) {
 	case kNoMap:
 		_showMap = 0;
 		break;
-	case kGoTo: {
-		g_vm->getQSystem()->_mainInterface->loadRoom(_id, false);
-		g_vm->videoSystem()->makeAllDirty();
-		QMessageObject *obj = g_vm->getQSystem()->findObject(_id);
-		g_vm->getQSystem()->_petka->setPos(obj->_walkX, obj->_walkY);
-		g_vm->getQSystem()->_chapayev->setPos(obj->_walkX, obj->_walkY - 2);
+	case kGoTo:
+		goTo();
 		break;
-	}
 	case kSetSeq:
 		g_vm->getQSystem()->_sequenceInterface->start(_id);
 		break;
 	case kEndSeq:
 		g_vm->getQSystem()->_sequenceInterface->stop();
+		break;
+	default:
 		break;
 	}
 
@@ -95,6 +92,53 @@ void QObjectBG::draw() {
 			g_vm->videoSystem()->screen().blitFrom(*s, *it, Common::Point(it->left, it->top));
 		}
 	}
+}
+
+void QObjectBG::goTo() {
+	QSystem *sys = g_vm->getQSystem();
+
+	sys->_petka->stopWalk();
+	sys->_chapayev->stopWalk();
+
+	int oldRoomId = sys->_mainInterface->_roomId;
+	sys->_mainInterface->loadRoom(_id, false);
+
+	QMessageObject *oldRoom = sys->findObject(oldRoomId);
+
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
+	Common::INIFile bgsIni;
+	bgsIni.allowNonEnglishCharacters();
+	bgsIni.loadFromStream(*bgsStream);
+
+	Common::String entranceName;
+	if (bgsIni.getKey(oldRoom->_name, _name, entranceName)) {
+		setEntrance(entranceName);
+		return;
+	}
+
+	Common::Array<QObjectBG> &bgs = sys->_bgs;
+	for (uint i = 0; i < bgs.size(); ++i) {
+		if (bgsIni.getKey(bgs[i]._name, _name, entranceName)) {
+			setEntrance(entranceName);
+			break;
+		}
+	}
+}
+
+void QObjectBG::setEntrance(const Common::String &name) {
+	QSystem *sys = g_vm->getQSystem();
+	QMessageObject *entrance = sys->findObject(name);
+	if (entrance) {
+		sys->_petka->_z = 0;
+		sys->_chapayev->_z = 0;
+
+		sys->_petka->setPos(entrance->_walkX, entrance->_walkY);
+		sys->_chapayev->setPos(entrance->_walkX, entrance->_walkY - 2);
+
+		sys->_xOffset = CLIP(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
+		sys->_field6C = sys->_xOffset;
+	}
+	g_vm->videoSystem()->makeAllDirty();
 }
 
 }

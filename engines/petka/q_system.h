@@ -103,6 +103,11 @@ public:
 	int _fxId;
 	int _musicId;
 
+	int _sceneWidth;
+	int _xOffset;
+
+	int _field6C;
+
 	QObjectBG *_room;
 };
 

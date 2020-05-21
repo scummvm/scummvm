@@ -32,6 +32,8 @@ public:
 	QObjectBG();
 	void processMessage(const QMessage &msg) override;
 	void draw() override;
+	void goTo();
+	void setEntrance(const Common::String &name);
 
 public:
 	int _showMap;
