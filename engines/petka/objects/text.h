@@ -56,6 +56,7 @@ public:
 	void draw() override;
 	void update(int time) override;
 	void onClick(int x, int y) override;
+	bool isInPoint(int x, int y) override { return true; }
 
 private:
 	Common::U32String _phrase;
@@ -68,6 +69,7 @@ public:
 
 	void draw() override;
 	void onClick(int x, int y) override;
+	bool isInPoint(int x, int y) override { return true; }
 };
 
 class QTextChoice : public QText {
@@ -76,6 +78,7 @@ public:
 
 	void onMouseMove(int x, int y) override;
 	void onClick(int x, int y) override;
+	bool isInPoint(int x, int y) override { return true; }
 
 private:
 	Common::Array<Common::Rect> _rects;
