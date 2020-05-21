@@ -231,7 +231,7 @@ Common::Error DirectorEngine::run() {
 			debug(0, "@@@@   Score name '%s' in '%s'", _currentScore->getMacName().c_str(), _currentPath.c_str());
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-			_currentScore->loadArchive();
+			bool goodMovie = _currentScore->loadArchive();
 
 			// If we came in a loop, then skip as requested
 			if (!_nextMovie.frameS.empty()) {
@@ -244,7 +244,7 @@ Common::Error DirectorEngine::run() {
 				_nextMovie.frameI = -1;
 			}
 
-			if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+			if (!debugChannelSet(-1, kDebugLingoCompileOnly) && goodMovie) {
 				debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
 
 				_currentScore->startLoop();

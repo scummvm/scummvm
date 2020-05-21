@@ -133,7 +133,7 @@ void Score::setArchive(Archive *archive) {
 	}
 }
 
-void Score::loadArchive() {
+bool Score::loadArchive() {
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
 	Common::SeekableSubReadStreamEndian *r = nullptr;
 
@@ -160,7 +160,7 @@ void Score::loadArchive() {
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
 		warning("Score::loadArchive(): Wrong movie format. VWSC resource missing");
-		return;
+		return false;
 	}
 	loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))));
 	delete r;
@@ -305,6 +305,8 @@ void Score::loadArchive() {
 
 	}
 	copyCastStxts();
+
+	return true;
 }
 
 void Score::copyCastStxts() {
