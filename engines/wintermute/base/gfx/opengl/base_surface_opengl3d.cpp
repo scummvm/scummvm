@@ -48,6 +48,8 @@ bool Wintermute::BaseSurfaceOpenGL3D::displayZoom(int x, int y, Wintermute::Rect
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::displayTiled(int x, int y, Wintermute::Rect32 rect, int numTimesX, int numTimesY) {
+	Vector2 scale(numTimesX, numTimesY);
+	renderer->drawSpriteEx(*tex, rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
 	return true;
 }
 
