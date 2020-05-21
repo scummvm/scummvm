@@ -2,6 +2,7 @@
 
 #include "../base_image.h"
 #include "base_render_opengl3d.h"
+#include "graphics/transparent_surface.h"
 
 Wintermute::BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(Wintermute::BaseGame* game, BaseRenderOpenGL3D* renderer)
 	: BaseSurface(game), tex(nullptr), renderer(renderer), pixelOpReady(false)
@@ -68,10 +69,6 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, boo
 		return false;
 	}
 
-	Graphics::Surface* surf = img.getSurface()->convertTo(OpenGL::Texture::getRGBAPixelFormat(), img.getPalette());
-	tex = new OpenGL::Texture(*surf);
-	delete surf;
-
 	_filename = filename;
 
 	if (defaultCK) {
@@ -84,6 +81,27 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, boo
 	_ckRed = ckRed;
 	_ckGreen = ckGreen;
 	_ckBlue = ckBlue;
+
+	bool needsColorKey = false;
+	bool replaceAlpha = true;
+
+	Graphics::Surface* surf = img.getSurface()->convertTo(OpenGL::Texture::getRGBAPixelFormat(), img.getPalette());
+
+	if (_filename.hasSuffix(".bmp") && img.getSurface()->format.bytesPerPixel == 4) {
+		// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
+		needsColorKey = true;
+		replaceAlpha = false;
+	} else if (img.getSurface()->format.aBits() == 0) {
+		needsColorKey = true;
+	}
+
+	if (needsColorKey) {
+		Graphics::TransparentSurface trans(*surf);
+		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
+	}
+
+	tex = new OpenGL::Texture(*surf);
+	delete surf;
 
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
 		_lifeTime = lifeTime;
