@@ -91,8 +91,8 @@ bool Wintermute::BaseRenderOpenGL3D::windowedBlt() {
 }
 
 bool Wintermute::BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect* rect) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glClearColor(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	return true;
 }
 
