@@ -49,9 +49,9 @@ public:
 	void dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	bool isValidTarget(Actor *target_);
 	bool isEnemy(Actor *target_);
 	bool inAttackRange();

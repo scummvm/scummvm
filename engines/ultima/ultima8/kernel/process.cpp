@@ -117,19 +117,6 @@ void Process::dumpInfo() const {
 	g_debugger->debugPrintf("%s\n", info.c_str());
 }
 
-void Process::save(Common::WriteStream *ws) {
-	writeProcessHeader(ws);
-	saveData(ws); // virtual
-}
-
-void Process::writeProcessHeader(Common::WriteStream *ws) {
-	const char *cname = GetClassType()._className; // virtual
-	uint16 clen = strlen(cname);
-
-	ws->writeUint16LE(clen);
-	ws->write(cname, clen);
-}
-
 void Process::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_pid);
 	ws->writeUint32LE(_flags);

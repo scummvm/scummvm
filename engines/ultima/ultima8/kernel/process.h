@@ -109,18 +109,13 @@ public:
 	//! dump some info about this process to pout
 	virtual void dumpInfo() const;
 
-	//! save this process
-	void save(Common::WriteStream *ods);
-
 	//! load Process data
 	bool loadData(Common::ReadStream *rs, uint32 version);
 
-protected:
-	//! save the Process data
+	//! save Process data
 	virtual void saveData(Common::WriteStream *ws);
 
-	void writeProcessHeader(Common::WriteStream *ods);
-
+protected:
 	//! process id
 	ProcId _pid;
 

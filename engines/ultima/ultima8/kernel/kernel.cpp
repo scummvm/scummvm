@@ -324,7 +324,12 @@ void Kernel::save(Common::WriteStream *ws) {
 	_pIDs->save(ws);
 	ws->writeUint32LE(_processes.size());
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		(*it)->save(ws);
+		const char *cname = (*it)->GetClassType()._className; // virtual
+		uint16 clen = strlen(cname);
+
+		ws->writeUint16LE(clen);
+		ws->write(cname, clen);
+		(*it)->saveData(ws);
 	}
 }
 

@@ -50,9 +50,9 @@ public:
 	INTRINSIC(I_invertScreen);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	static InverterProcess *_inverter;
 	unsigned int _targetState;
 };

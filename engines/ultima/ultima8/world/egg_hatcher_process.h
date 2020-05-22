@@ -45,9 +45,9 @@ public:
 	void addEgg(uint16 egg);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-private:
 	void saveData(Common::WriteStream *ws) override;
 
+private:
 	Std::vector<uint16> _eggs;
 };
 

@@ -74,7 +74,6 @@ protected:
 
 public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 };
 

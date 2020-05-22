@@ -57,9 +57,9 @@ public:
 	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	virtual bool init();
 
 	//! perform special action for an animation

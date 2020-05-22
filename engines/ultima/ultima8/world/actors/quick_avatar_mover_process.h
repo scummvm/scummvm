@@ -58,9 +58,9 @@ public:
 	static void startMover(int x, int y, int z, int _dir);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	int _dx, _dy, _dz, _dir;
 	static ProcId _amp[6];
 	static bool _clipping;

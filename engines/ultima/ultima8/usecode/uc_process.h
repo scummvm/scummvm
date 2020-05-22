@@ -58,9 +58,9 @@ public:
 	void dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	void load(uint16 classid_, uint16 offset_, uint32 this_ptr = 0,
 	          int thissize = 0, const uint8 *args = 0, int argsize = 0);
 	void call(uint16 classid_, uint16 offset_);

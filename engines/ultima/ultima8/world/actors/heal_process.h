@@ -41,9 +41,9 @@ public:
 	INTRINSIC(I_feedAvatar);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	void feedAvatar(uint16 food);
 
 	uint16 _healCounter;

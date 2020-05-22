@@ -41,9 +41,9 @@ public:
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	int _mapNum;
 	int _teleportId;
 };
