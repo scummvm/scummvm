@@ -252,7 +252,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 				Common::String res = pathMakeRelative(newpath, false, false);
 
-				if (!res.equals(newpath))
+				if (f.open(res))
 					return res;
 			}
 		}
