@@ -1708,6 +1708,9 @@ void Score::startLoop() {
 		if (_currentFrame < _frames.size())
 			_vm->processEvents();
 
+		if (debugChannelSet(-1, kDebugFewFramesOnly))
+			_framesRan++;
+
 		if (debugChannelSet(-1, kDebugFewFramesOnly) && _framesRan > 9) {
 			warning("Score::startLoop(): exiting due to debug few frames only");
 			break;
@@ -1829,9 +1832,6 @@ void Score::update() {
 
 	if (debugChannelSet(-1, kDebugSlow))
 		_nextFrameTime += 1000;
-
-	if (debugChannelSet(-1, kDebugFewFramesOnly))
-		_framesRan++;
 }
 
 void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) {
