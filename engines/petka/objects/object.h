@@ -63,7 +63,7 @@ public:
 	int32 _walkX;
 	int32 _walkY;
 	int32 _time;
-	int32 _field20;
+	byte _frame;
 	int32 _isShown;
 	int32 _animate;
 	int _updateZ;

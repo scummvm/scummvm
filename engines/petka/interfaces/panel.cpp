@@ -110,7 +110,7 @@ void InterfacePanel::start(int id) {
 			obj->_z = 1;
 			obj->_x = _objectPoints[j].x;
 			obj->_y = _objectPoints[j].y;
-			obj->_field20 = 1;
+			obj->_frame = 1;
 			obj->_animate = 0;
 			obj->_isShown = 1;
 			_objs.push_back(obj);
@@ -220,16 +220,16 @@ void InterfacePanel::onMouseMove(const Common::Point p) {
 	bool found = false;
 	for (uint i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
-		int frame = 1;
+		byte frame = 1;
 		if (!found && obj->isInPoint(p.x, p.y)) {
 			found = true;
 			if ((i >= kNewGameButtonIndex && i <= kSaveButtonIndex) || (i >= kDecSpeechButtonIndex && i <= kIncSpeedButtonIndex)) {
 				frame = 2;
 			}
 		}
-		if (obj->_field20 == frame)
+		if (obj->_frame == frame)
 			continue;
-		obj->_field20 = frame;
+		obj->_frame = frame;
 
 		int pointIndex;
 		switch (i) {

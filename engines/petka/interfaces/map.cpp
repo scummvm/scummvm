@@ -60,7 +60,7 @@ void InterfaceMap::start(int id) {
 			obj->_z = 1;
 			obj->_x = 0;
 			obj->_y = 0;
-			obj->_field20 = 1;
+			obj->_frame = 1;
 			obj->_animate = obj->_isShown;
 			_objs.push_back(obj);
 		}
@@ -129,11 +129,11 @@ void InterfaceMap::onMouseMove(const Common::Point p) {
 					frame = 2;
 					_objUnderCursor = obj;
 				}
-				if (obj->_field20 != frame) {
+				if (obj->_frame != frame) {
 					obj->_isShown = frame == 2;
 					flc->setFrame(1);
 					g_vm->videoSystem()->addDirtyRect(Common::Point(obj->_x, obj->_y), *flc);
-					obj->_field20 = frame;
+					obj->_frame = frame;
 				}
 			}
 		}

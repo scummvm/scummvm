@@ -402,7 +402,7 @@ void QMessageObject::show(bool v) {
 QObject::QObject() {
 	_animate = true;
 	_updateZ = true;
-	_field20 = true;
+	_frame = 1;
 	_sound = nullptr;
 	_x = 0;
 	_y = 0;
