@@ -32,7 +32,7 @@ namespace MADS {
 
 namespace Nebular {
 
-typedef struct {
+struct ForceField {
 	bool _flag;
 	int _vertical;
 	int _horizontal;
@@ -55,7 +55,7 @@ typedef struct {
 			s.syncAsSint32LE(_seqId[i]);
 		s.syncAsUint32LE(_timer);
 	};
-} ForceField;
+};
 
 class Scene3xx : public NebularScene {
 protected:
