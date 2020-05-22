@@ -214,7 +214,7 @@ QMessageObject *QSystem::findObject(const Common::String &name) {
 void QSystem::update() {
 	for (Common::List<QMessage>::iterator it = _messages.begin(); it != _messages.end();) {
 		QMessageObject *obj = findObject(it->objId);
-		if (obj) {
+		if (obj && !obj->_holdMessages) {
 			obj->processMessage(*it);
 			it = _messages.erase(it);
 		} else {
@@ -275,7 +275,7 @@ void QSystem::load(Common::ReadStream *s) {
 	uint count = s->readUint32LE();
 	for (uint i = 0; i < count; ++i) {
 		QMessageObject *obj = findObject(readString(s));
-		obj->_msgProcessingPaused = s->readUint32LE();
+		obj->_holdMessages = s->readUint32LE();
 		obj->_status = s->readUint32LE();
 		obj->_resourceId = s->readUint32LE();
 		obj->_z = s->readUint32LE();
@@ -315,7 +315,7 @@ void QSystem::save(Common::WriteStream *s) {
 	s->writeUint32LE(_allObjects.size());
 	for (uint i = 0; i < _allObjects.size(); ++i) {
 		writeString(s, _allObjects[i]->_name);
-		s->writeUint32LE(_allObjects[i]->_msgProcessingPaused);
+		s->writeUint32LE(_allObjects[i]->_holdMessages);
 		s->writeUint32LE(_allObjects[i]->_status);
 		s->writeUint32LE(_allObjects[i]->_resourceId);
 		s->writeUint32LE(_allObjects[i]->_z);

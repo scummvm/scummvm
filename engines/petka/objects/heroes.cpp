@@ -111,7 +111,7 @@ void QObjectPetka::walk(int x, int y) {
 
 			_field7C = 0;
 			_time = 0;
-			_msgProcessingPaused = true;
+			_holdMessages = true;
 		}
 	} else {
 		setPos(x, y);
@@ -216,7 +216,7 @@ void QObjectPetka::updateWalk() {
 		} else {
 			processMessage(msg);
 		}
-		_msgProcessingPaused = false;
+		_holdMessages = false;
 		g_vm->videoSystem()->makeAllDirty();
 	}
 }
@@ -250,7 +250,7 @@ void QObjectPetka::setReactionAfterWalk(uint index, QReaction **reaction, QMessa
 
 void QObjectPetka::stopWalk() {
 	_isWalking = false;
-	_msgProcessingPaused = false;
+	_holdMessages = false;
 
 	Common::List<QMessage> &list = g_vm->getQSystem()->_messages;
 	for (Common::List<QMessage>::iterator it = list.begin(); it != list.end();) {

@@ -57,7 +57,7 @@ QMessageObject::QMessageObject() {
 	_isShown = true;
 	_isActive = true;
 	_updateZ = 0;
-	_msgProcessingPaused = 0;
+	_holdMessages = false;
 	_notLoopedSound = true;
 	_startSound = false;
 	_hasSound = false;
