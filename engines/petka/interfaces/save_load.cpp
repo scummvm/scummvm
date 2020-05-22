@@ -96,7 +96,7 @@ void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {
 			_page++;
 		}
 		stop();
-		startSaveLoad(_loadMode == 0);
+		start(_loadMode ? kLoadMode : kSaveMode);
 	} else {
 
 	}

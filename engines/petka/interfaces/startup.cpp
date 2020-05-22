@@ -94,7 +94,7 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 		g_vm->playVideo(g_vm->openFile(kCreditsVideoName, false));
 		break;
 	case kLoad:
-		g_vm->getQSystem()->_saveLoadInterface->startSaveLoad(0);
+		g_vm->getQSystem()->_saveLoadInterface->start(kLoadMode);
 		break;
 	case kNewGame:
 		g_vm->loadPart(1);
