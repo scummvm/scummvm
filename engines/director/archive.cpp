@@ -20,6 +20,10 @@
  *
  */
 
+/*
+ * Test buildbot with comment
+ */
+
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
