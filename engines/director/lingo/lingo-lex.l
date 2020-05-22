@@ -155,13 +155,13 @@ exit		{ count(); return varCheck(tEXIT, "exit"); }
 global		{ count(); return varCheck(tGLOBAL, "global"); }
 go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
+go{spc}+loop	{ count(); return tGOLOOP; }
 instance	{ count(); return varCheck(tINSTANCE, "instance"); }
 intersects	{ count(); return varCheck(tINTERSECTS, "intersects"); }
 into		{ count(); return varCheck(tINTO, "into"); }
 in			{ count(); return varCheck(tIN, "in"); }
 item		{ count(); return varCheck(tITEM, "item"); }
 line		{ count(); return varCheck(tLINE, "line"); }
-loop		{ count(); return checkImmediate(tLOOP); }
 macro		{ count(); return varCheck(tMACRO, "macro"); }
 method{spc}+{identifier}		{
 		count();

@@ -92,10 +92,10 @@ extern int yydebug;
     tEXIT = 293,                   /* tEXIT  */
     tGLOBAL = 294,                 /* tGLOBAL  */
     tGO = 295,                     /* tGO  */
-    tIF = 296,                     /* tIF  */
-    tIN = 297,                     /* tIN  */
-    tINTO = 298,                   /* tINTO  */
-    tLOOP = 299,                   /* tLOOP  */
+    tGOLOOP = 296,                 /* tGOLOOP  */
+    tIF = 297,                     /* tIF  */
+    tIN = 298,                     /* tIN  */
+    tINTO = 299,                   /* tINTO  */
     tMACRO = 300,                  /* tMACRO  */
     tMOVIE = 301,                  /* tMOVIE  */
     tNEXT = 302,                   /* tNEXT  */

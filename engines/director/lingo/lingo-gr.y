@@ -137,7 +137,7 @@ static void mArg(Common::String *s) {
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token<objectfield> THEOBJECTFIELD
 %token<objectref> THEOBJECTREF
-%token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tIN tINTO tLOOP tMACRO
+%token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tGOLOOP tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
@@ -587,7 +587,7 @@ instancelist: ID				{
 // go previous
 // go to {frame} whichFrame {of movie whichMovie}
 // go to {frame whichFrame of} movie whichMovie
-gotofunc: tGO tLOOP				{ g_lingo->code1(LC::c_gotoloop); }
+gotofunc: tGOLOOP				{ g_lingo->code1(LC::c_gotoloop); }
 	| tGO tNEXT					{ g_lingo->code1(LC::c_gotonext); }
 	| tGO tPREVIOUS				{ g_lingo->code1(LC::c_gotoprevious); }
 	| tGO expr 					{
