@@ -37,23 +37,24 @@ namespace Petka {
 const char *const mapName = "\xCA\xC0\xD0\xD2\xC0"; // КАРТА
 
 void InterfaceMap::start(int id) {
-	if (!g_vm->getQSystem()->_room->_showMap)
+	QSystem *sys = g_vm->getQSystem();
+	if (!sys->_room->_showMap)
 		return;
 
 	_objs.clear();
 
-	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(mapName);
+	QObjectBG *bg = (QObjectBG *)sys->findObject(mapName);
 	_roomResID = bg->_resourceId;
 	_objs.push_back(bg);
 
-	const Common::Array<BGInfo> &infos = g_vm->getQSystem()->_mainInterface->_bgs;
+	const Common::Array<BGInfo> &infos = sys->_mainInterface->_bgs;
 
 	for (uint i = 0; i < infos.size(); ++i) {
 		if (infos[i].objId != bg->_id) {
 			continue;
 		}
 		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
-			QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].attachedObjIds[j]);
+			QMessageObject *obj = sys->findObject(infos[i].attachedObjIds[j]);
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			flc->setFrame(1);
 			obj->_z = 1;
@@ -68,7 +69,7 @@ void InterfaceMap::start(int id) {
 		break;
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = sys->_cursor.get();
 	_savedCursorId = cursor->_resourceId;
 	_savedCursorActionType = cursor->_actionType;
 
@@ -85,16 +86,24 @@ void InterfaceMap::start(int id) {
 }
 
 void InterfaceMap::stop() {
+	QSystem *sys = g_vm->getQSystem();
+	QObjectCursor *cursor = sys->_cursor.get();
+
 	if (_objUnderCursor)
 		((QMessageObject *)_objUnderCursor)->_isShown = false;
+
 	setText(Common::U32String(""), 0, 0);
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	sys->_xOffset = _savedXOffset;
+	sys->_sceneWidth = _savedSceneWidth;
+
 	cursor->_resourceId = _savedCursorId;
 	cursor->_actionType = _savedCursorActionType;
 
-	g_vm->getQSystem()->_currInterface = g_vm->getQSystem()->_prevInterface;
-	g_vm->getQSystem()->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
+	sys->_currInterface = g_vm->getQSystem()->_prevInterface;
+	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
+
+	Interface::stop();
 }
 
 void InterfaceMap::onLeftButtonDown(const Common::Point p) {

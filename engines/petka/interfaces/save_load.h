@@ -44,7 +44,11 @@ private:
 private:
 	bool _loadMode;
 	uint _page;
+
+	int _savedXOffset;
+	int _savedSceneWidth;
 	int _savedCursorId;
+	int _savedCursorType;
 
 	Common::Rect _saveRects[6];
 	Common::Rect _nextPageRect;

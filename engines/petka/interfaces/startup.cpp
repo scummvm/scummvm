@@ -132,4 +132,11 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 	cursor->setCursorPos(p.x, p.y, 0);
 }
 
+void InterfaceStartup::stop() {
+	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kStartupObjName);
+	Common::String sound = g_vm->resMgr()->findSoundName(bg->_musicId);
+	g_vm->soundMgr()->removeSound(sound);
+	Interface::stop();
+}
+
 } // End of namespace Petka

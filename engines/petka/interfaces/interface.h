@@ -38,7 +38,7 @@ public:
 	virtual ~Interface() {}
 
 	virtual void start(int id) {};
-	virtual void stop() {};
+	virtual void stop();
 
 	virtual void onLeftButtonDown(const Common::Point p) {};
 	virtual void onRightButtonDown(const Common::Point p) {};

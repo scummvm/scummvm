@@ -20,9 +20,6 @@
  *
  */
 
-#ifndef PETKA_STARTUP_H
-#define PETKA_STARTUP_H
-
 #include "common/config-manager.h"
 #include "common/system.h"
 
@@ -96,17 +93,18 @@ InterfacePanel::InterfacePanel() {
 void InterfacePanel::start(int id) {
 	readSettings();
 
+	QSystem *sys = g_vm->getQSystem();
 	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kPanelObjName);
 	_objs.push_back(bg);
-	g_vm->getQSystem()->update();
-	const Common::Array<BGInfo> &infos = g_vm->getQSystem()->_mainInterface->_bgs;
+	sys->update();
+	const Common::Array<BGInfo> &infos = sys->_mainInterface->_bgs;
 
 	for (uint i = 0; i < infos.size(); ++i) {
 		if (infos[i].objId != bg->_id) {
 			continue;
 		}
 		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
-			QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].attachedObjIds[j]);
+			QMessageObject *obj = sys->findObject(infos[i].attachedObjIds[j]);
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			flc->setFrame(1);
 			obj->_z = 1;
@@ -122,13 +120,38 @@ void InterfacePanel::start(int id) {
 		break;
 	}
 
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	_savedCursorType = cursor->_actionType;
+
 	initCursor(4901, 1, 1);
+
+	_savedSceneWidth = sys->_sceneWidth;
+	_savedXOffset = sys->_xOffset;
+
+	sys->_sceneWidth = 640;
+	sys->_xOffset = 0;
 
 	updateSliders();
 	updateSubtitles();
 
-	g_vm->getQSystem()->_currInterface = this;
+	sys->_currInterface = this;
 	g_vm->videoSystem()->makeAllDirty();
+}
+
+void InterfacePanel::stop() {
+	QSystem *sys = g_vm->getQSystem();
+	QObjectCursor *cursor = sys->_cursor.get();
+
+	sys->_xOffset = _savedXOffset;
+	sys->_sceneWidth = _savedSceneWidth;
+
+	cursor->_resourceId = _savedCursorRes;
+	cursor->_actionType = _savedCursorType;
+
+	sys->_currInterface = sys->_prevInterface;
+	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
+
+	Interface::stop();
 }
 
 void InterfacePanel::onLeftButtonDown(const Common::Point p) {
@@ -301,5 +324,3 @@ void InterfacePanel::applySettings() {
 }
 
 } // End of namespace Petka
-
-#endif

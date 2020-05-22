@@ -47,29 +47,44 @@ InterfaceSaveLoad::InterfaceSaveLoad() {
 }
 
 void InterfaceSaveLoad::startSaveLoad(bool saveMode) {
+	QSystem *sys = g_vm->getQSystem();
+	QObjectCursor *cursor = sys->_cursor.get();
+
 	_loadMode = !saveMode;
-	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject("SAVELOAD");
+
+	QObjectBG *bg = (QObjectBG *)sys->findObject("SAVELOAD");
 	_objs.push_back(bg);
 	bg->_resourceId = kFirstSaveLoadPageId + _page + (_loadMode ? 0 : 5);
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	_objs.push_back(cursor);
-	_savedCursorId = cursor->_resourceId;
-	cursor->_resourceId = 4901;
-	cursor->_isShown = 1;
-	cursor->_animate = 0;
-	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+	_savedSceneWidth = sys->_sceneWidth;
+	_savedXOffset = sys->_xOffset;
 
-	g_vm->getQSystem()->_currInterface = this;
+	sys->_sceneWidth = 640;
+	sys->_xOffset = 0;
+
+	_savedCursorId = cursor->_resourceId;
+	_savedCursorType = cursor->_actionType;
+
+	initCursor(4901, 1, 0);
+
+	sys->_currInterface = this;
 	g_vm->videoSystem()->makeAllDirty();
 }
 
 void InterfaceSaveLoad::stop() {
+	QSystem *sys = g_vm->getQSystem();
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+
+	sys->_xOffset = _savedXOffset;
+	sys->_sceneWidth = _savedSceneWidth;
+
 	cursor->_resourceId = _savedCursorId;
-	g_vm->getQSystem()->_currInterface = g_vm->getQSystem()->_prevInterface;
-	g_vm->getQSystem()->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
-	g_vm->videoSystem()->makeAllDirty();
+	cursor->_actionType = _savedCursorType;
+
+	sys->_currInterface = sys->_prevInterface;
+	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
+
+	Interface::stop();
 }
 
 void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {

@@ -30,6 +30,7 @@ namespace Petka {
 class InterfaceStartup : public Interface {
 public:
 	void start(int id) override;
+	void stop() override;
 
 	void onLeftButtonDown(const Common::Point p) override;
 	void onMouseMove(const Common::Point p) override;

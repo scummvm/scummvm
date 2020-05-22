@@ -119,6 +119,7 @@ void InterfaceSequence::stop() {
 	g_system->getMixer()->pauseAll(false);
 
 	g_vm->getQSystem()->_currInterface = g_vm->getQSystem()->_mainInterface.get();
+	Interface::stop();
 }
 
 void InterfaceSequence::onLeftButtonDown(const Common::Point p) {

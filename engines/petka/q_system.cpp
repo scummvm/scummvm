@@ -45,7 +45,8 @@ namespace Petka {
 
 QSystem::QSystem()
 	: _cursor(nullptr), _case(nullptr), _star(nullptr), _petka(nullptr), _chapayev(nullptr),
-	_mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr), _isIniting(0) {}
+	_mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr), _isIniting(0),
+	_sceneWidth(640) {}
 
 QSystem::~QSystem() {
 

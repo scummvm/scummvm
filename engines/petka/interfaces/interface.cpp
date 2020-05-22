@@ -33,6 +33,11 @@ namespace Petka {
 Interface::Interface()
 	: _objUnderCursor(nullptr), _startIndex(0) {}
 
+void Interface::stop() {
+	setText(Common::U32String(""), 0, 0);
+	g_vm->videoSystem()->makeAllDirty();
+}
+
 void Interface::setText(const Common::U32String &text, uint16 textColor, uint16 outlineColor) {
 	removeTexts();
 	if (!text.empty())

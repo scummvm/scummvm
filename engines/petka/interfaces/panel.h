@@ -32,6 +32,7 @@ public:
 	InterfacePanel();
 
 	void start(int id) override;
+	void stop() override;
 
 	void onLeftButtonDown(const Common::Point p) override;
 	void onMouseMove(const Common::Point p) override;
@@ -46,6 +47,9 @@ private:
 public:
 	int _savedXOffset;
 	int _savedSceneWidth;
+	int _savedCursorType;
+	int _savedCursorRes;
+
 	int _subtitles;
 	int _speechFrame;
 	int _musicFrame;
