@@ -118,9 +118,7 @@ void Widget::draw() {
 		if (g_gui.useRTL()) {
 			_x = g_system->getOverlayWidth() - _x - _w;
 
-			// Can i use something better below instead of hardcoding the values?
-			
-			if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions")){
+			if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions") || this->_name.contains("Browser")){
 				_x = _x + g_gui.getOverlayOffset();
 			}
 		}
