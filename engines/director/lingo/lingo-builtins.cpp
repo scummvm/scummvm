@@ -1478,7 +1478,7 @@ void LB::b_installMenu(int nargs) {
 		return;
 	}
 
-	Common::String menuStxt = g_lingo->codePreprocessor(stxt->_ptext.c_str(), true);
+	Common::String menuStxt = g_lingo->codePreprocessor(stxt->_ptext.c_str(), kNoneScript, castId, true);
 	Common::String line;
 	int linenum = -1; // We increment it before processing
 

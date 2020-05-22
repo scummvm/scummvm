@@ -82,7 +82,7 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 	return res;
 }
 
-Common::String Lingo::codePreprocessor(const char *s, bool simple) {
+Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple) {
 	Common::String res;
 
 	// We start from processing the continuation synbols
@@ -163,6 +163,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 	Common::String line, tok, res1;
 	const char *lineStart, *prevEnd;
 	int iflevel = 0;
+	int linenumber = 0;
 
 	while (*s) {
 		line.clear();
@@ -172,6 +173,9 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		while (*s && *s != '\n') { // If we see a whitespace
 			res1 += *s;
 			line += tolower(*s++);
+
+			if (*s == '\xc2')
+				linenumber++;
 		}
 		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
 
@@ -180,6 +184,8 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		res1 = preprocessSound(res1);
 
 		res += res1;
+
+		linenumber++;	// We do it here because of 'continue' statements
 
 		if (line.size() < 4) { // If line is too small, then skip it
 			if (*s)	// copy newline symbol

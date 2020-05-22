@@ -288,7 +288,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 
 	// Preprocess the code for ease of the parser
-	Common::String codeNorm = codePreprocessor(code);
+	Common::String codeNorm = codePreprocessor(code, type, id);
 	code = codeNorm.c_str();
 	begin = code;
 

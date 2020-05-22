@@ -283,7 +283,7 @@ public:
 	void runTests();
 
 public:
-	Common::String codePreprocessor(const char *s, bool simple = false);
+	Common::String codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple = false);
 
 private:
 	const char *findNextDefinition(const char *s);
