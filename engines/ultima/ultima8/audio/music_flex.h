@@ -66,10 +66,6 @@ public:
 	void uncache(uint32 index) override;
 	bool isCached(uint32 index) const override;
 
-	uint8 *getRawObject(uint32 index, uint32 *sizep = 0) {
-		return Archive::getRawObject(index, sizep);
-	}
-
 private:
 	SongInfo   *_info[128];
 	XMidiData  **_songs;
