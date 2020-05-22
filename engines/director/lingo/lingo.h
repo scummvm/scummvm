@@ -282,9 +282,14 @@ public:
 
 	void runTests();
 
+	// lingo-preprocessor.cpp
 public:
 	Common::String codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple = false);
 
+	// lingo-patcher.cpp
+	Common::String patchLingoCode(Common::String &line, ScriptType type, uint16 id, int linenumber);
+
+	// lingo.cpp
 private:
 	const char *findNextDefinition(const char *s);
 

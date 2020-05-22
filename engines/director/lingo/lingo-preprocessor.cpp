@@ -163,7 +163,7 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 	Common::String line, tok, res1;
 	const char *lineStart, *prevEnd;
 	int iflevel = 0;
-	int linenumber = 0;
+	int linenumber = 1;
 
 	while (*s) {
 		line.clear();
@@ -178,6 +178,8 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 				linenumber++;
 		}
 		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
+
+		res1 = patchLingoCode(res1, type, id, linenumber);
 
 		res1 = preprocessReturn(res1);
 		res1 = preprocessPlay(res1);
