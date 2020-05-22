@@ -76,7 +76,10 @@ void MusicFlex::cache(uint32 index) {
 	uint32 size;
 	uint8 *data = getRawObject(index, &size);
 	if (!data) {
-		error("Unable to cache song %d from sound/music.flx", index);
+		// Note: multiple sorcerer scenes (such as MALCHIR::03F2)
+		// request track 122, which is blank in the Gold Edition
+		// music flex.
+		warning("Unable to cache song %d from sound/music.flx", index);
 		return;
 	}
 	_songs[index] = new XMidiData(data, size);
