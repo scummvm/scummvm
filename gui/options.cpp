@@ -2781,10 +2781,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 	int16 shiftUp = 0;
 	if (!showingCurrentStorage || enabled) {
 		// "storage is disabled" hint is not shown, shift everything up
-		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisabledHint", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisabledHint", x, y, w, h, _useRTL))
 			warning("GlobalOptions_Cloud_Container.StorageUsernameDesc's position is undefined");
 		shiftUp = y;
-		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageUsernameDesc", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageUsernameDesc", x, y, w, h, _useRTL))
 			warning("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint's position is undefined");
 		shiftUp = y - shiftUp;
 	}
@@ -2834,10 +2834,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	int16 disconnectWidgetsAdditionalShift = 0;
 	if (!showDownloadButton) {
-		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDownloadHint", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDownloadHint", x, y, w, h, _useRTL))
 			warning("GlobalOptions_Cloud_Container.StorageDownloadHint's position is undefined");
 		disconnectWidgetsAdditionalShift = y;
-		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisconnectHint", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisconnectHint", x, y, w, h, _useRTL))
 			warning("GlobalOptions_Cloud_Container.DownloadButton's position is undefined");
 		disconnectWidgetsAdditionalShift = y - disconnectWidgetsAdditionalShift;
 	}
@@ -2884,10 +2884,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 	}
 
 	if (!shownConnectedInfo) {
-		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisabledHint", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageDisabledHint", x, y, w, h, _useRTL))
 			warning("GlobalOptions_Cloud_Container.StorageUsernameDesc's position is undefined");
 		shiftUp = y;
-		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint", x, y, w, h, _useRTL))
 			warning("GlobalOptions_Cloud_Container.StorageWizardNotConnectedHint's position is undefined");
 		shiftUp = y - shiftUp;
 
@@ -2907,7 +2907,7 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 
 	int16 x, y;
 	int16 w, h;
-	if (!g_gui.xmlEval()->getWidgetData(widgetName, x, y, w, h))
+	if (!g_gui.xmlEval()->getWidgetData(widgetName, x, y, w, h, _useRTL))
 		warning("%s's position is undefined", widgetName);
 
 	// GUI TODO: I'm not sure what's this being used for. Will this be useful when using navbars?

@@ -65,6 +65,7 @@ protected:
 
 	int16		_x, _y;
 	uint16		_w, _h;
+	bool		_useRTL;
 	const Common::String _name;
 
 	Widget		*_firstWidget;

@@ -39,13 +39,13 @@ namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss), _tooltip(tooltip),
-	  _flags(0), _hasFocus(false), _useRTL(false), _state(ThemeEngine::kStateEnabled) {
+	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name, const char *tooltip)
 	: GuiObject(name), _type(0), _boss(boss), _tooltip(tooltip),
-	  _flags(0), _hasFocus(false), _useRTL(false), _state(ThemeEngine::kStateDisabled) {
+	  _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
 	init();
 }
 
@@ -54,10 +54,6 @@ void Widget::init() {
 	_next = _boss->_firstWidget;
 	_boss->_firstWidget = this;
 	_needsRedraw = true;
-
-	if (TransMan.getCurrentLanguage() == "C" && false) {		// GUI TODO: Change this and GuiManager::GuiManager() to use RTL.
-		_useRTL = true;											// GUI TODO: Widgets will get _useRTL true or not from the XML parser.
-	}
 }
 
 Widget::~Widget() {

@@ -102,7 +102,6 @@ protected:
 	GuiObject	*_boss;
 	Widget		*_next;
 	bool		_hasFocus;
-	bool		_useRTL;
 	ThemeEngine::WidgetStateInfo _state;
 	Common::String _tooltip;
 

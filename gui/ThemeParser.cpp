@@ -713,7 +713,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			useRTL = false;
 		}
 
-		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH);
+		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH, useRTL);
 	}
 
 	return true;
