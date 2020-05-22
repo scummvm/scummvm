@@ -70,9 +70,7 @@ void InterfaceStartup::start(int id) {
 			obj->_z = 1;
 			obj->_x = 0;
 			obj->_y = 0;
-			obj->_field24 = 1;
 			obj->_field20 = 1;
-			obj->_field28 = 1;
 			obj->_animate = 0;
 			obj->_isShown = 0;
 			_objs.push_back(obj);

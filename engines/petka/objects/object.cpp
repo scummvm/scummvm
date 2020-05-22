@@ -402,14 +402,12 @@ void QMessageObject::show(bool v) {
 QObject::QObject() {
 	_animate = true;
 	_updateZ = true;
-	_field24 = true;
 	_field20 = true;
 	_sound = nullptr;
 	_x = 0;
 	_y = 0;
 	_walkX = -1;
 	_walkY = -1;
-	_field28 = 0;
 }
 
 bool QObject::isInPoint(int x, int y) {

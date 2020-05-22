@@ -110,9 +110,7 @@ void InterfacePanel::start(int id) {
 			obj->_z = 1;
 			obj->_x = _objectPoints[j].x;
 			obj->_y = _objectPoints[j].y;
-			obj->_field24 = 1;
 			obj->_field20 = 1;
-			obj->_field28 = 1;
 			obj->_animate = 0;
 			obj->_isShown = 1;
 			_objs.push_back(obj);
@@ -232,7 +230,6 @@ void InterfacePanel::onMouseMove(const Common::Point p) {
 		if (obj->_field20 == frame)
 			continue;
 		obj->_field20 = frame;
-		obj->_field24 = frame;
 
 		int pointIndex;
 		switch (i) {
