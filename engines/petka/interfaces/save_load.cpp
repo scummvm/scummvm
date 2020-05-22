@@ -46,11 +46,11 @@ InterfaceSaveLoad::InterfaceSaveLoad() {
 	_prevPageRect = Common::Rect(10, 414, 38, 442);
 }
 
-void InterfaceSaveLoad::startSaveLoad(bool saveMode) {
+void InterfaceSaveLoad::start(int id) {
 	QSystem *sys = g_vm->getQSystem();
 	QObjectCursor *cursor = sys->_cursor.get();
 
-	_loadMode = !saveMode;
+	_loadMode = (id == kLoadMode);
 
 	QObjectBG *bg = (QObjectBG *)sys->findObject("SAVELOAD");
 	_objs.push_back(bg);

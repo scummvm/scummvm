@@ -166,7 +166,7 @@ void InterfacePanel::onLeftButtonDown(const Common::Point p) {
 		g_vm->loadPart(1);
 		break;
 	case kLoadButtonIndex:
-		g_vm->getQSystem()->_saveLoadInterface->startSaveLoad(0);
+		g_vm->getQSystem()->_saveLoadInterface->start(kLoadMode);
 		break;
 	case kContinueButtonIndex:
 		stop();
@@ -175,7 +175,7 @@ void InterfacePanel::onLeftButtonDown(const Common::Point p) {
 		g_system->quit();
 		break;
 	case kSaveButtonIndex:
-		g_vm->getQSystem()->_saveLoadInterface->startSaveLoad(1);
+		g_vm->getQSystem()->_saveLoadInterface->start(kSaveMode);
 		break;
 	case kSubtitleButtonIndex:
 		_subtitles = !_subtitles;

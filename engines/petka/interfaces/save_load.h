@@ -27,11 +27,16 @@
 
 namespace Petka {
 
+enum {
+	kSaveMode,
+	kLoadMode
+};
+
 class InterfaceSaveLoad : public Interface {
 public:
 	InterfaceSaveLoad();
 
-	void startSaveLoad(bool saveMode);
+	void start(int id) override;
 	void stop() override;
 
 	void onLeftButtonDown(const Common::Point p) override;
