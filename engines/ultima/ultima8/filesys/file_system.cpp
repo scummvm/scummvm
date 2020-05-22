@@ -58,6 +58,9 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 	if (!_allowDataOverride && data)
 		return data;
 
+	if (data)
+		delete data;
+
 	Common::SeekableReadStream *readStream;
 	if (!rawOpen(readStream, vfn))
 		return nullptr;
