@@ -334,6 +334,9 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 		} else {
 			debugC(2, kDebugLingoParse, "nothing");
 		}
+
+		if (*s)	// copy newline symbol
+			res += *s++;
 	}
 
 	for (int i = 0; i < iflevel; i++) {
