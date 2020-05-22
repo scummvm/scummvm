@@ -1802,6 +1802,9 @@ void Score::update() {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
 
+			if (debugChannelSet(-1, kDebugFast))
+				_nextFrameTime = g_system->getMillis();
+
 			return;
 		} else if (tempo <= 60) {
 			// FPS
