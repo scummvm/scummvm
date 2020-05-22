@@ -141,6 +141,7 @@
 				<widget name = 'SearchPic'
 						width = '16'
 						height = '17'
+						rtl = 'no'
 				/>
 				<widget name = 'Search'
 						width = '150'
