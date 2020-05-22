@@ -46,7 +46,7 @@ typedef Common::Array<byte *> MacPatterns;
 
 namespace Director {
 
-enum DirectorGameID {
+enum DirectorGameGID {
 	GID_GENERIC,
 	GID_TEST,
 	GID_TESTALL
@@ -96,7 +96,8 @@ public:
 
 	// Detection related functions
 
-	DirectorGameID getGameID() const;
+	DirectorGameGID getGameGID() const;
+	const char *getGameId() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;

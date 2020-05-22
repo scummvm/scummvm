@@ -34,12 +34,16 @@ namespace Director {
 struct DirectorGameDescription {
 	ADGameDescription desc;
 
-	DirectorGameID gameID;
+	DirectorGameGID gameGID;
 	uint16 version;
 };
 
-DirectorGameID DirectorEngine::getGameID() const {
-	return _gameDescription->gameID;
+DirectorGameGID DirectorEngine::getGameGID() const {
+	return _gameDescription->gameGID;
+}
+
+const char *DirectorEngine::getGameId() const {
+	return _gameDescription->desc.gameId;
 }
 
 Common::Platform DirectorEngine::getPlatform() const {
@@ -169,7 +173,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 	desc->desc.guiOptions = GUIO0();
 	desc->desc.filesDescriptions[0].fileName = 0;
 	desc->version = 0;
-	desc->gameID = Director::GID_GENERIC;
+	desc->gameGID = Director::GID_GENERIC;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
