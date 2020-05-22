@@ -372,6 +372,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					ARG_UC_PTR(iptr);
 					uint16 testItemId = ptrToObject(iptr);
 					testItem = getItem(testItemId);
+					delete [] args;
 				}
 				perr << "Unhandled intrinsic << " << func << " \'" << _convUse->intrinsics()[func] << "\'? (";
 				if (testItem) {
