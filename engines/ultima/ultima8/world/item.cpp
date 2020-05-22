@@ -1736,6 +1736,14 @@ bool Item::canReach(Item *other, int range,
 	                                  getObjId(), other->getObjId());
 }
 
+
+/**
+ * A helper function to check if both frames are in the
+ * same range (inclusive) for the merge check below */
+static inline bool bothInRange(uint32 x, uint32 y, uint32 lo, uint32 hi) {
+	return (x >= lo && x <= hi && y >= lo && y <= hi);
+}
+
 bool Item::canMergeWith(Item *other) {
 	// can't merge with self
 	if (other->getObjId() == getObjId()) return false;
@@ -1751,24 +1759,52 @@ bool Item::canMergeWith(Item *other) {
 	uint32 frame2 = other->getFrame();
 	if (frame1 == frame2) return true;
 
-	// special cases: necromancy reagents, _shape 395
-	// blood: _frame 0-5
-	// bone: _frame 6-7
-	// wood: _frame 8
-	// dirt: _frame 9
-	// ex.hood: _frame 10-12
-	// blackmoor: _frame 14-15
-	if (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8) {
-		if (getShape() != 395) return false;
-
-		if (frame1 <= 5 && frame2 <= 5)
-			return true;
-		if (frame1 >= 6 && frame1 <= 7 && frame2 >= 6 && frame2 <= 7)
-			return true;
-		if (frame1 >= 10 && frame1 <= 12 && frame2 >= 10 && frame2 <= 12)
-			return true;
-		if (frame1 >= 14 && frame1 <= 15 && frame2 >= 14 && frame2 <= 15)
-			return true;
+	// special cases:
+	// necromancy reagents (shape 395)
+	// 		blood: frame 0-5
+	// 		bone: frame 6-7
+	// 		wood: frame 8
+	// 		dirt: frame 9
+	// 		ex.hood: frame 10-12
+	// 		blackmoor: frame 14-15
+	// 		dead man's elbow: frame 16-20
+	// sorcery reagents (shape 398).
+	// Disabled because the usecode doesn't support saying how many there are.
+	//		volcanic ash: frame 0-1
+	//		pumice: frame 2-5
+	//		obsidian: 6-9
+	//		iron: 10-13
+	//		brimstone: 14-17
+	// 		daemon bones: 18-20
+	// 3. ether reagents (shape 399) (also not supported in usecode)
+	//
+	if (GAME_IS_U8) {
+		if (getShape() == 395) {
+			if (bothInRange(frame1, frame2, 0, 5))
+				return true;
+			if (bothInRange(frame1, frame2, 6, 7))
+				return true;
+			if (bothInRange(frame1, frame2, 10, 12))
+				return true;
+			if (bothInRange(frame1, frame2, 14, 15))
+				return true;
+			if (bothInRange(frame1, frame2, 16, 20))
+				return true;
+		}
+		/*if (getShape() == 398) {
+			if (bothInRange(frame1, frame2, 0, 1))
+				return true;
+			if (bothInRange(frame1, frame2, 2, 5))
+				return true;
+			if (bothInRange(frame1, frame2, 6, 9))
+				return true;
+			if (bothInRange(frame1, frame2, 10, 13))
+				return true;
+			if (bothInRange(frame1, frame2, 14, 17))
+				return true;
+			if (bothInRange(frame1, frame2, 18, 20))
+				return true;
+		}*/
 	}
 	return false;
 }
