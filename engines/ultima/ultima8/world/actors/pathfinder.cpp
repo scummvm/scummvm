@@ -122,15 +122,15 @@ Pathfinder::Pathfinder() : _actor(nullptr), _targetItem(nullptr),
 
 Pathfinder::~Pathfinder() {
 #if 1
-	pout << "~Pathfinder: " << _nodeList.size() << " _nodes, "
-	     << expandednodes << " expanded _nodes in " << _expandTime << "ms." << Std::endl;
+	pout << "~Pathfinder: " << _cleanupNodes.size() << " nodes to clean up, "
+	     << expandednodes << " expanded nodes in " << _expandTime << "ms." << Std::endl;
 #endif
 
 	// clean up _nodes
-	Std::list<PathNode *>::iterator iter;
-	for (iter = _nodeList.begin(); iter != _nodeList.end(); ++iter)
+	Std::vector<PathNode *>::iterator iter;
+	for (iter = _cleanupNodes.begin(); iter != _cleanupNodes.end(); ++iter)
 		delete *iter;
-	_nodeList.clear();
+	_cleanupNodes.clear();
 }
 
 void Pathfinder::init(Actor *actor_, PathfindingState *state) {
@@ -187,7 +187,7 @@ bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
 	return false;
 }
 
-bool Pathfinder::checkTarget(PathNode *node) const {
+bool Pathfinder::checkTarget(const PathNode *node) const {
 	// TODO: these ranges are probably a bit too high,
 	// but otherwise it won't work properly yet -wjp
 	if (_targetItem) {
@@ -358,7 +358,6 @@ static void drawpath(PathNode *to, uint32 rgb, bool done) {
 void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
                          unsigned int steps) {
 	PathNode *newnode = new PathNode();
-	_nodeList.push_back(newnode); // for garbage collection
 	newnode->state = state;
 	newnode->parent = oldnode;
 	newnode->depth = oldnode->depth + 1;
@@ -536,7 +535,6 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	startnode->parent = nullptr;
 	startnode->depth = 0;
 	startnode->stepsfromparent = 0;
-	_nodeList.push_back(startnode);
 	_nodes.push(startnode);
 
 	unsigned int expandedNodes = 0;
@@ -546,7 +544,9 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	uint32 starttime = g_system->getMillis();
 
 	while (expandedNodes < NODELIMIT_MAX && !_nodes.empty() && !found) {
-		PathNode *node = _nodes.top();
+		// Take a copy here as the pop() below deletes the old node
+		PathNode *node = new PathNode(*_nodes.top());
+		_cleanupNodes.push_back(node);
 		_nodes.pop();
 
 #if 0
@@ -559,7 +559,7 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 			// done!
 
 			// find path length
-			PathNode *n = node;
+			const PathNode *n = node;
 			unsigned int length = 0;
 			while (n->parent) {
 				n = n->parent;

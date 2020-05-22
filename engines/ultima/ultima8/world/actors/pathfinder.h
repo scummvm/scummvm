@@ -96,14 +96,15 @@ protected:
 	Std::list<PathfindingState> _visited;
 	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
 
-	Std::list<PathNode *> _nodeList;
+	/** List of nodes for garbage collection later and order is not important */
+	Std::vector<PathNode *> _cleanupNodes;
 
 	bool alreadyVisited(int32 x, int32 y, int32 z) const;
 	void newNode(PathNode *oldnode, PathfindingState &state,
 				 unsigned int steps);
 	void expandNode(PathNode *node);
 	unsigned int costHeuristic(PathNode *node);
-	bool checkTarget(PathNode *node) const;
+	bool checkTarget(const PathNode *node) const;
 };
 
 } // End of namespace Ultima8
