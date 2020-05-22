@@ -243,7 +243,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 	}
 
 	if (g_gui.useRTL()) {
-		if (this->_name == "GameOptions" || this->_name == "GlobalOptions") {
+		if (this->_name == "GameOptions" || this->_name == "GlobalOptions" || this->_name == "Browser") {
 			int oldX = _x;
 			_x = g_system->getOverlayWidth() - _w - _x;
 			g_gui.setDialogPaddings(oldX, _x);

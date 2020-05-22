@@ -86,6 +86,7 @@ void TabWidget::init() {
 	}
 
 	_lastRead = -1;
+	_widthTillLastTab = 0;
 }
 
 TabWidget::~TabWidget() {
@@ -130,6 +131,7 @@ int TabWidget::addTab(const String &title, const String &dialogName) {
 	if (newWidth < _minTabWidth)
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
+	_widthTillLastTab += newWidth;
 
 	_tabs.push_back(newTab);
 
@@ -401,9 +403,14 @@ void TabWidget::drawWidget() {
 	Common::Rect r2(_x, _y, _x + _w, _y + _h);
 
 	if (g_gui.useRTL()) {
-		r2.translate(g_system->getOverlayWidth() - _x - _w + 6, 0);
+		int pad = this->getWidth() - (_x + _widthTillLastTab) + g_gui.getOverlayOffset();
+		if (pad < 0) {
+			pad = 6;
+		}
+
+		r2.translate(g_system->getOverlayWidth() - _x - _w + pad, 0);
 		if (_navButtonsVisible) {
-			r2.translate(_butW - 2, 0);
+			r2.translate(_butW - 6, 0);
 		}
 
 		drawTab = _lastVisibleTab - drawTab;
