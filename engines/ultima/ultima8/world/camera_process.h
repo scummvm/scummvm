@@ -84,9 +84,9 @@ public:
 	void terminate() override;   // Terminate NOW!
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-private:
 	void saveData(Common::WriteStream *ws) override;
 
+private:
 	int32 _sx, _sy, _sz;
 	int32 _ex, _ey, _ez;
 	int32 _time;

@@ -46,9 +46,9 @@ public:
 	INTRINSIC(I_TonysBalls);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	void explode();
 
 	int _xSpeed, _ySpeed;

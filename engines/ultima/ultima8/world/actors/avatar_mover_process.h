@@ -48,6 +48,7 @@ public:
 	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 	void setFakeBothButtonClick() {
 		_fakeBothButtonClick = true;
@@ -59,8 +60,6 @@ public:
 	void tryMoveBack(bool b);
 
 private:
-	void saveData(Common::WriteStream *ws) override;
-
 	void handleHangingMode();
 	void handleCombatMode();
 	void handleNormalMode();
