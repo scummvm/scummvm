@@ -108,18 +108,18 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 		if (obj->_resourceId != kStartupCursorId && obj->_resourceId != kBackgroundId) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			if (flc) {
-				bool clicked = false;
+				bool show = false;
 				if (!found && obj->isInPoint(p.x, p.y)) {
 					found = true;
-					clicked = true;
-					obj->_isShown = true;
+					show = true;
 					_objUnderCursor = obj;
 				}
-				obj->_isShown = clicked;
-				flc->setFrame(1);
-				Common::Rect dirty(flc->getBounds());
-				dirty.translate(obj->_x, obj->_y);
-				g_vm->videoSystem()->addDirtyRect(dirty);
+				if (obj->_isShown != show) {
+					obj->_isShown = show;
+					flc->setFrame(1);
+					Common::Rect dirty(flc->getBounds());
+					g_vm->videoSystem()->addDirtyRect(dirty);
+				}
 			}
 		}
 	}

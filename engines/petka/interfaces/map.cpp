@@ -123,17 +123,16 @@ void InterfaceMap::onMouseMove(const Common::Point p) {
 		if (obj->_resourceId != 4901 && obj->_resourceId != _roomResID) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			if (flc) {
-				int frame = 1;
+				bool show = false;
 				if (!found && obj->isInPoint(p.x, p.y)) {
 					found = true;
-					frame = 2;
+					show = true;
 					_objUnderCursor = obj;
 				}
-				if (obj->_frame != frame) {
-					obj->_isShown = frame == 2;
+				if (obj->_isShown != show) {
+					obj->_isShown = show;
 					flc->setFrame(1);
 					g_vm->videoSystem()->addDirtyRect(Common::Point(obj->_x, obj->_y), *flc);
-					obj->_frame = frame;
 				}
 			}
 		}
