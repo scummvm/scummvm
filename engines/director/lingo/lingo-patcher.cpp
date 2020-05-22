@@ -63,6 +63,11 @@ struct ScriptPatch {
 	{"warlock", kPlatformWindows, "STAMBUL/DRUNK", kMovieScript, 5,
 			5, "end if", ""},
 
+
+	// Unbalanced 'end if' at the end of the script
+	{"jman", kPlatformWindows, "mmm/TSA RR 06", kFrameScript, 26,
+			17, "end if", ""},
+
 	{nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr, nullptr}
 };
 
