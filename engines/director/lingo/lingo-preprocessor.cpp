@@ -249,6 +249,10 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 				elseif = true;
 			} else if (tok.empty()) {
 				debugC(2, kDebugLingoParse, "lonely-else");
+
+				if (*s)	// copy newline symbol
+					res += *s++;
+
 				continue;
 			}
 
