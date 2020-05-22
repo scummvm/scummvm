@@ -1718,7 +1718,7 @@ void Score::startLoop() {
 }
 
 void Score::update() {
-	if (g_system->getMillis() < _nextFrameTime) {
+	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
 		renderZoomBox(true);
 
 		if (!_vm->_newMovieStarted)
@@ -1802,9 +1802,6 @@ void Score::update() {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
 
-			if (debugChannelSet(-1, kDebugFast))
-				_nextFrameTime = g_system->getMillis();
-
 			return;
 		} else if (tempo <= 60) {
 			// FPS
@@ -1832,9 +1829,6 @@ void Score::update() {
 
 	if (debugChannelSet(-1, kDebugSlow))
 		_nextFrameTime += 1000;
-
-	if (debugChannelSet(-1, kDebugFast))
-		_nextFrameTime = g_system->getMillis();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly))
 		_framesRan++;
