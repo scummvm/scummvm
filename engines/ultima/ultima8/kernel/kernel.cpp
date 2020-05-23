@@ -324,19 +324,18 @@ void Kernel::save(Common::WriteStream *ws) {
 	_pIDs->save(ws);
 	ws->writeUint32LE(_processes.size());
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		const char *cname = (*it)->GetClassType()._className; // virtual
-		uint16 clen = strlen(cname);
+		Std::string classname = (*it)->GetClassType()._className; // virtual
 
 		Std::map<Common::String, ProcessLoadFunc>::iterator iter;
-		iter = _processLoaders.find(cname);
+		iter = _processLoaders.find(classname);
 
 		if (iter == _processLoaders.end()) {
-			perr << "Process class cannot save without registered loader: " << cname << Std::endl;
+			perr << "Process class cannot save without registered loader: " << classname << Std::endl;
 			continue;
 		}
 
-		ws->writeUint16LE(clen);
-		ws->write(cname, clen);
+		ws->writeUint16LE(classname.size());
+		ws->write(classname.c_str(), classname.size());
 		(*it)->saveData(ws);
 	}
 }
