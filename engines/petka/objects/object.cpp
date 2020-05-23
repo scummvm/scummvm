@@ -359,14 +359,15 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		case kDescription: {
 			Common::ScopedPtr<Common::SeekableReadStream> invStream(g_vm->openFile("invntr.txt", false));
-			Common::INIFile invIni;
 			if (invStream) {
 				Common::String desc;
+				Common::INIFile invIni;
 
+				invIni.allowNonEnglishCharacters();
 				invIni.loadFromStream(*invStream);
 				invIni.getKey(_name, "ALL", desc);
 
-				g_vm->getQSystem()->_mainInterface->setTextDescription(Common::U32String(desc.c_str()), msg.arg1);
+				g_vm->getQSystem()->_mainInterface->setTextDescription(Common::convertToU32String(desc.c_str(), Common::kWindows1251), msg.arg1);
 			}
 			break;
 		}

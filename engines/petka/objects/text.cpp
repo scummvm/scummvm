@@ -135,7 +135,7 @@ QTextDescription::QTextDescription(const Common::U32String &desc, uint32 frame) 
 	const Graphics::Surface *frameS = flc->getCurrentFrame();
 	Graphics::Surface *s = g_vm->resMgr()->findOrCreateSurface(-2, 640, 480);
 
-	Graphics::Surface *convS = frameS->convertTo(s->format);
+	Graphics::Surface *convS = frameS->convertTo(s->format, flc->getPalette());
 	s->copyRectToSurface(*convS, 0, 0, _rect);
 	convS->free();
 	delete convS;
