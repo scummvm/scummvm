@@ -60,8 +60,6 @@ public:
 	};
 
 private:
-	void saveData(Common::WriteStream *ws) override;
-
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music
 	void playMusic_internal(int track) override;
@@ -117,6 +115,7 @@ public:
 	void run() override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8
