@@ -1820,8 +1820,14 @@ void LB::b_updateStage(int nargs) {
 	score->renderFrame(score->getCurrentFrame(), false, true);
 	g_director->processEvents(true);
 
-	if (debugChannelSet(-1, kDebugFewFramesOnly))
+	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
 		score->_framesRan++;
+
+		if (score->_framesRan > 9) {
+			warning("b_updateStage(): exiting due to debug few frames only");
+			score->_stopPlay = true;
+		}
+	}
 }
 
 
