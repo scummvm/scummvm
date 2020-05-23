@@ -434,8 +434,9 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		return true;
 
 	if (_activeWindow != -1) {
-		if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
-				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
+		if ((_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
+				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y))
+				|| (_activeWidget && _activeWidget->isEditable())) {
 			if (_cursorIsArrow) {
 				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 				_cursorIsArrow = false;
@@ -453,7 +454,8 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		BaseMacWindow *w = *it;
 
 		if (w->hasAllFocus() || (w->isEditable() && event.type == Common::EVENT_KEYDOWN) ||
-				w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+				w->getDimensions().contains(event.mouse.x, event.mouse.y)
+				|| (_activeWidget && _activeWidget->isEditable())) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
 				setActiveWindow(w->getId());
 

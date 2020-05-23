@@ -41,6 +41,7 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusab
 	_composeSurface = nullptr;
 
 	_active = false;
+	_editable = false;
 }
 
 MacWidget::~MacWidget() {

@@ -68,6 +68,7 @@ public:
 	virtual void blit(ManagedSurface *g, Common::Rect &dest) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
 	virtual bool hasAllFocus() { return _active; }
+	virtual bool isEditable() { return _editable; }
 
 	virtual void setDimensions(const Common::Rect &r) {
 		_dims = r;
@@ -84,6 +85,7 @@ protected:
 	bool _focusable;
 	bool _contentIsDirty;
 	bool _active;
+	bool _editable;
 
 	Common::Rect _dims;
 

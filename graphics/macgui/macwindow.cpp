@@ -547,7 +547,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 		break;
 
 	case Common::EVENT_KEYDOWN:
-		if (!_editable)
+		if (!_editable && !(_wm->getActiveWidget() && _wm->getActiveWidget()->isEditable()))
 			return false;
 
 		if (_wm->getActiveWidget())
