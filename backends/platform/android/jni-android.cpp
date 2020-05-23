@@ -46,6 +46,7 @@
 #include "common/error.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/encoding.h"
 #include "engines/engine.h"
 
 #include "backends/platform/android/android.h"
@@ -84,6 +85,7 @@ jmethodID JNI::_MID_setTextInClipboard = 0;
 jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
+jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -226,8 +228,23 @@ void JNI::getDPI(float *values) {
 }
 
 void JNI::displayMessageOnOSD(const char *msg) {
+	// called from common/osd_message_queue, method: OSDMessageQueue::pollEvent()
 	JNIEnv *env = JNI::getEnv();
-	jstring java_msg = env->NewStringUTF(msg);
+	Common::String fromEncoding = "ISO-8859-1";
+#ifdef USE_TRANSLATION
+	if (TransMan.getCurrentCharset() != "ASCII") {
+		fromEncoding = TransMan.getCurrentCharset();
+	}
+#endif
+	Common::Encoding converter("UTF-8", fromEncoding.c_str());
+
+	const char *utf8Msg = converter.convert(msg, converter.stringLength(msg, fromEncoding) );
+	if (utf8Msg == nullptr) {
+		// Show a placeholder indicative of the translation error instead of silent failing
+		utf8Msg = "?";
+		LOGE("Failed to convert message to UTF-8 for OSD!");
+	}
+	jstring java_msg = env->NewStringUTF(utf8Msg);
 
 	env->CallVoidMethod(_jobj, _MID_displayMessageOnOSD, java_msg);
 
@@ -261,9 +278,8 @@ bool JNI::openUrl(const char *url) {
 }
 
 bool JNI::hasTextInClipboard() {
-	bool hasText = false;
 	JNIEnv *env = JNI::getEnv();
-	hasText = env->CallBooleanMethod(_jobj, _MID_hasTextInClipboard);
+	bool hasText = env->CallBooleanMethod(_jobj, _MID_hasTextInClipboard);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Failed to check the contents of the clipboard");
@@ -300,13 +316,12 @@ Common::String JNI::getTextFromClipboard() {
 }
 
 bool JNI::setTextInClipboard(const Common::String &text) {
-	bool success = true;
 	JNIEnv *env = JNI::getEnv();
 
 	jbyteArray javaText = env->NewByteArray(text.size());
 	env->SetByteArrayRegion(javaText, 0, text.size(), reinterpret_cast<const jbyte*>(text.c_str()));
 
-	success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
+	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Failed to add text to the clipboard");
@@ -321,9 +336,8 @@ bool JNI::setTextInClipboard(const Common::String &text) {
 }
 
 bool JNI::isConnectionLimited() {
-	bool limited = false;
 	JNIEnv *env = JNI::getEnv();
-	limited = env->CallBooleanMethod(_jobj, _MID_isConnectionLimited);
+	bool limited = env->CallBooleanMethod(_jobj, _MID_isConnectionLimited);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Failed to check whether connection's limited");
@@ -359,6 +373,19 @@ void JNI::showVirtualKeyboard(bool enable) {
 
 	if (env->ExceptionCheck()) {
 		LOGE("Error trying to show virtual keyboard");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+}
+
+void JNI::showKeyboardControl(bool enable) {
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_showKeyboardControl, enable);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error trying to show virtual keyboard control");
 
 		env->ExceptionDescribe();
 		env->ExceptionClear();
@@ -521,6 +548,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, setTextInClipboard, "([B)Z");
 	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
+	FIND_METHOD(, showKeyboardControl, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
@@ -554,7 +582,11 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	delete _asset_archive;
 	_asset_archive = 0;
 
-	delete _system;
+	// _system is a pointer of OSystem_Android <--- ModularBackend <--- BaseBacked <--- Common::OSystem
+	// It's better to call destroy() rather than just delete here
+	// to avoid mutex issues if a Common::String is used after this point
+	_system->destroy();
+
 	g_system = 0;
 	_system = 0;
 

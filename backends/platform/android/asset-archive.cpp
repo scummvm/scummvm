@@ -98,22 +98,18 @@ bool AssetInputStream::seek(int32 offset, int whence) {
 	} else if (whence == SEEK_END) {
 		_pos = _len + offset;
 	}
-	assert(_pos < _len);
+	assert(_pos <= _len);
 	_eos = false;
 	return true;
 }
 
-
-AndroidAssetArchive::AndroidAssetArchive(jobject am) {
+AndroidAssetArchive::AndroidAssetArchive(jobject am) : _hasCached(false) {
 	JNIEnv *env = JNI::getEnv();
 
 	_am = AAssetManager_fromJava(env, am);
-	_cachedMembers = NULL;
 }
 
 AndroidAssetArchive::~AndroidAssetArchive() {
-	delete _cachedMembers;
-	_cachedMembers = NULL;
 }
 
 bool AndroidAssetArchive::hasFile(const Common::String &name) const {
@@ -127,32 +123,30 @@ bool AndroidAssetArchive::hasFile(const Common::String &name) const {
 }
 
 int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) const {
-	if (_cachedMembers) {
-		member_list.insert(member_list.end(), _cachedMembers->begin(), _cachedMembers->end());
-		return _cachedMembers->size();
+	if (_hasCached) {
+		member_list.insert(member_list.end(), _cachedMembers.begin(), _cachedMembers.end());
+		return _cachedMembers.size();
 	}
 
+	// ResidualVM specific: multiple directories
 	Common::List<Common::String> dirs;
 	dirs.push_back("");
 	dirs.push_back("shaders");
 	int count = 0;
-	while (!dirs.empty()) {
-		Common::String currentDir = dirs.front();
-		dirs.pop_front();
+	for (const auto& currentDir : dirs) {
 		AAssetDir *dir = AAssetManager_openDir(_am, currentDir.c_str());
 		const char *file = AAssetDir_getNextFileName(dir);
 
 		while (file) {
-			Common::String f(file);
-			f = currentDir + f;
-			member_list.push_back(getMember(f));
+			member_list.push_back(getMember(currentDir + Common::String(file)));
 			++count;
 			file = AAssetDir_getNextFileName(dir);
 		}
 		AAssetDir_close(dir);
 	}
 
-	_cachedMembers = new Common::ArchiveMemberList(member_list);
+	_cachedMembers = Common::ArchiveMemberList(member_list);
+	_hasCached = true;
 
 	return count;
 }

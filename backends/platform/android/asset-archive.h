@@ -46,7 +46,8 @@ public:
 
 private:
 	AAssetManager *_am;
-	mutable Common::ArchiveMemberList *_cachedMembers;
+	mutable Common::ArchiveMemberList _cachedMembers;
+	mutable bool _hasCached;
 };
 
 #endif
