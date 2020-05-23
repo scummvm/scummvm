@@ -188,11 +188,14 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		case 0x70:	// XMIDI_CONTROLLER_VOICE_PROT
 		case 0x71:	// XMIDI_CONTROLLER_TIMBRE_PROT
 		case 0x72:	// XMIDI_CONTROLLER_BANK_CHANGE
+			// These controllers are handled in the Miles drivers
+			break;
+
 		case 0x73:	// XMIDI_CONTROLLER_IND_CTRL_PREFIX
 		case 0x76:	// XMIDI_CONTROLLER_CLEAR_BB_COUNT
 		case 0x78:	// XMIDI_CONTROLLER_SEQ_BRANCH_INDEX
 		default:
-			if (info.basic.param1 >= 0x6e && info.basic.param1 <= 0x78) {
+			if (info.basic.param1 >= 0x73 && info.basic.param1 <= 0x78) {
 				warning("Unsupported XMIDI controller %d (0x%2x)",
 					info.basic.param1, info.basic.param1);
 			}
