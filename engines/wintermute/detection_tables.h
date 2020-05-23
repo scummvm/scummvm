@@ -1253,12 +1253,14 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// James Peris: No License Nor Control - Definitive Edition (English) (Steam 2020-04-27)
 	WME_WINENTRY("jamesperis", "Version 1.9.1e",
-		WME_ENTRY2s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+		WME_ENTRY3s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138,
 					"parche91e.dcp", "ee21819363fb32a38b9f5fcf8545e374", 72496832), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// James Peris: No License Nor Control - Definitive Edition (Spanish) (Steam 2020-04-27)
 	WME_WINENTRY("jamesperis", "Version 1.9.1e",
-		WME_ENTRY2s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+		WME_ENTRY3s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138,
 					"parche91e.dcp", "ee21819363fb32a38b9f5fcf8545e374", 72496832), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
 
 	// James Peris: No License Nor Control (Demo) (English)
