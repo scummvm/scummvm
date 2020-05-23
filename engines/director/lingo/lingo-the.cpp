@@ -717,7 +717,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_moveable = d.asInt();
 		if (!d.u.i) {
 			sprite->_currentPoint = sprite->_startPoint;
-			sprite->_dirtyBbox = sprite->_startBbox;
 		}
 		break;
 	case kTheMovieRate:
@@ -733,7 +732,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_puppet = d.asInt();
 		if (!d.u.i) {
 			sprite->_currentPoint = sprite->_startPoint;
-			sprite->_dirtyBbox = sprite->_startBbox;
 		}
 		break;
 	case kTheStartTime:
@@ -764,6 +762,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 	}
+	sprite->_dirty = true;
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {

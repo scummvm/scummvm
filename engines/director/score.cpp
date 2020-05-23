@@ -770,12 +770,12 @@ void Score::setSpriteCasts() {
 }
 
 void Score::setSpriteBboxes() {
+	// Initialise the sprite cache for all the initial bounding boxes
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			Sprite *sp = _frames[i]->_sprites[j];
 			sp->_startBbox = sp->getBbox();
 			sp->_currentBbox = sp->_startBbox;
-			sp->_dirtyBbox = sp->_startBbox;
 		}
 	}
 }
@@ -1737,7 +1737,8 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		// - The dimensions/bounding box of the sprite has changed (_dirty flag set)
 		// - The cast member ID of the sprite has changed (_dirty flag set)
 		// - The sprite slot from the current frame is different (cast member ID or bounding box) from the cached sprite slot
-		bool needsUpdate = (currentSprite->_currentBbox != nextSprite->_currentBbox || currentSprite->_currentBbox != currentSprite->_dirtyBbox);
+		// (maybe we have to compare all the sprite attributes, not just these two?)
+		bool needsUpdate = currentSprite->_dirty || currentSprite->_castId != nextSprite->_castId || currentSprite->_currentBbox != nextSprite->_currentBbox;
 
 		if (needsUpdate || forceUpdate)
 			unrenderSprite(i);
@@ -1776,7 +1777,8 @@ void Score::unrenderSprite(uint16 spriteId) {
 		_surface->fillRect(currentSprite->_currentBbox, _stageColor);
 	}
 
-	currentSprite->_currentBbox = currentSprite->_dirtyBbox;
+	currentSprite->_currentBbox = currentSprite->getBbox();
+	currentSprite->_dirty = false;
 }
 
 void Score::renderSprite(uint16 id) {

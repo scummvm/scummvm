@@ -92,7 +92,6 @@ public:
 	Common::Point _currentPoint;
 	Common::Rect _startBbox;
 	Common::Rect _currentBbox;
-	Common::Rect _dirtyBbox;
 	uint16 _width;
 	uint16 _height;
 	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect

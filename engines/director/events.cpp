@@ -87,7 +87,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 						Common::Point delta = pos - _draggingSpritePos;
 						draggedSprite->_currentPoint.x += delta.x;
 						draggedSprite->_currentPoint.y += delta.y;
-						draggedSprite->_dirtyBbox.translate(delta.x, delta.y);
+						draggedSprite->_dirty = true;
 						_draggingSpritePos = pos;
 					} else {
 						releaseDraggedSprite();
