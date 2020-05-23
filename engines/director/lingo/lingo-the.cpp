@@ -331,6 +331,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 
 	Datum d;
 
+	if (!_vm->getCurrentScore()) {
+		warning("Lingo::getTheEntity(): Score is missing");
+		d.type = VOID;
+
+		return d;
+	}
+
 	switch (entity) {
 	case kTheCast:
 		d = getTheCast(id, field);
