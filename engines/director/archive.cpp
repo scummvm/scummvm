@@ -528,14 +528,14 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		debugCN(2, kDebugLoading, "CAS*: %d [", casSize);
 
 		for (uint i = 0; i < casSize; i++) {
-			uint32 index = casStream.readUint32BE();
-			debugCN(2, kDebugLoading, "%d ", index);
+			uint32 castIndex = casStream.readUint32BE();
+			debugCN(2, kDebugLoading, "%d ", castIndex);
 
-			if (index == 0) {
+			if (castIndex == 0) {
 				continue;
 			}
-			Resource &res = resources[index];
-			res.index = index;
+			Resource &res = resources[castIndex];
+			res.index = castIndex;
 			res.castId = i;
 			_types[castTag][res.castId] = res;
 		}
@@ -552,21 +552,21 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	debugC(2, kDebugLoading, "KEY*: unk1: %d unk2: %d unk3: %d keyCount: %d", unk1, unk2, unk3, keyCount);
 
 	for (uint32 i = 0; i < keyCount; i++) {
-		uint32 index = keyStream.readUint32();
-		uint32 id = keyStream.readUint32();
+		uint32 sectionIndex = keyStream.readUint32();
+		uint32 castIndex = keyStream.readUint32();
 		uint32 resTag = keyStream.readUint32();
 
-		debugC(2, kDebugLoading, "KEY*: index: %d id: %d resTag: %s", index, id, tag2str(resTag));
+		debugC(2, kDebugLoading, "KEY*: sectionIndex: %d castIndex: %d resTag: %s", sectionIndex, castIndex, tag2str(resTag));
 
-		Resource &res = resources[index];
-		debug(3, "Found RIFX resource: '%s' id: 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), id, res.size, res.offset, res.offset);
-		_types[resTag][id] = res;
+		Resource &res = resources[sectionIndex];
+		debug(3, "Found RIFX resource: '%s' sectionIndex: 0x%04x, castIndex: 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), sectionIndex, castIndex, res.size, res.offset, res.offset);
+		_types[resTag][castIndex] = res;
 		//_types[resTag][1024 + i + 1] = res;
 
-		if (id < 1024) {
+		if (castIndex < 1024) {
 			for (uint cast = 0; cast < _types[castTag].size(); cast++) {
-				if (_types[castTag][cast].index == id) {
-					res.index = index;
+				if (_types[castTag][cast].index == castIndex) {
+					res.index = sectionIndex;
 					_types[castTag][cast].children.push_back(res);
 					break;
 				}
