@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
 "PO-Revision-Date: 2020-05-23 16:18+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -6097,7 +6097,7 @@ msgstr "Kon opgeslagen spel #%d niet snelladen"
 #: engines/toon/toon.cpp:1527
 #, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "Kan de '%s' data file niet vinden."
+msgstr "Kan de '%s' engine data file niet vinden."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
