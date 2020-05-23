@@ -403,17 +403,20 @@ void OSystem_Android::initBackend() {
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
-	return (f == kFeatureFullscreenMode ||
-			f == kFeatureAspectRatioCorrection ||
-			f == kFeatureCursorPalette ||
-			f == kFeatureVirtualKeyboard ||
-#ifdef USE_OPENGL
-			f == kFeatureOpenGL ||
-#endif
-			f == kFeatureOverlaySupportsAlpha ||
+	if (f == kFeatureVirtualKeyboard ||
 			f == kFeatureOpenUrl ||
 			f == kFeatureTouchpadMode ||
-			f == kFeatureClipboardSupport);
+			f == kFeatureOnScreenControl ||
+			f == kFeatureFullscreenMode ||
+			f == kFeatureClipboardSupport ||
+			f == kFeatureAspectRatioCorrection ||
+			f == kFeatureCursorPalette ||
+			f == kFeatureOpenGL ||
+			f == kFeatureOverlaySupportsAlpha ||
+			f == kFeatureClipboardSupport) {
+		return true;
+	}
+	return false;
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -441,6 +444,10 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		_touchpad_mode = enable;
 		break;
+	case kFeatureOnScreenControl:
+		ConfMan.setBool("onscreen_control", enable);
+		JNI::showKeyboardControl(enable);
+		break;
 	default:
 		break;
 	}
@@ -458,6 +465,8 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return _use_mouse_palette;
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
+	case kFeatureOnScreenControl:
+		return ConfMan.getBool("onscreen_control");
 	default:
 		return false;
 	}
@@ -552,15 +561,13 @@ void OSystem_Android::getTimeAndDate(TimeDate &td) const {
 	td.tm_wday = tm.tm_wday;
 }
 
-void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s,
-												int priority) {
+void OSystem_Android::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	ENTER("");
 
 	JNI::addSysArchivesToSearchSet(s, priority);
 }
 
-void OSystem_Android::logMessage(LogMessageType::Type type,
-									const char *message) {
+void OSystem_Android::logMessage(LogMessageType::Type type, const char *message) {
 	switch (type) {
 	case LogMessageType::kInfo:
 		__android_log_write(ANDROID_LOG_INFO, android_log_tag, message);
