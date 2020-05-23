@@ -1818,7 +1818,7 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	score->renderFrame( score->getCurrentFrame(), false, true);
-	g_director->processEvents();
+	processQuitEvent();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly))
 		score->_framesRan++;
