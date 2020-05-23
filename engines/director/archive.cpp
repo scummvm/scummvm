@@ -561,15 +561,12 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Resource &res = resources[sectionIndex];
 		debug(3, "Found RIFX resource: '%s' sectionIndex: 0x%04x, castIndex: 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), sectionIndex, castIndex, res.size, res.offset, res.offset);
 		_types[resTag][castIndex] = res;
-		//_types[resTag][1024 + i + 1] = res;
 
-		if (castIndex < 1024) {
-			for (uint cast = 0; cast < _types[castTag].size(); cast++) {
-				if (_types[castTag][cast].index == castIndex) {
-					res.index = sectionIndex;
-					_types[castTag][cast].children.push_back(res);
-					break;
-				}
+		for (uint cast = 0; cast < _types[castTag].size(); cast++) {
+			if (_types[castTag][cast].index == castIndex) {
+				res.index = sectionIndex;
+				_types[castTag][cast].children.push_back(res);
+				break;
 			}
 		}
 	}
