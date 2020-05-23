@@ -81,17 +81,18 @@ protected:
 	void sendToDriver(uint32 b) override;
 	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
 public:
-	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver, int8 source = -1) {
-		_callbackProc = proc;
-		_callbackData = data;
-		_loopCount = -1;
-		_source = source;
-		_newTimbreListProc = newTimbreListProc;
-		_newTimbreListDriver = newTimbreListDriver;
+	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, XMidiNewTimbreListProc newTimbreListProc, MidiDriver_BASE *newTimbreListDriver, int8 source = -1) :
+			_callbackProc(proc),
+			_callbackData(data),
+			_newTimbreListProc(newTimbreListProc),
+			_newTimbreListDriver(newTimbreListDriver),
+			_source(source),
+			_loopCount(-1),
+			_activeTrackTimbreList(NULL),
+			_activeTrackTimbreListSize(0) {
+		memset(_loop, 0, sizeof(_loop));
 		memset(_tracksTimbreList, 0, sizeof(_tracksTimbreList));
 		memset(_tracksTimbreListSize, 0, sizeof(_tracksTimbreListSize));
-		_activeTrackTimbreList = NULL;
-		_activeTrackTimbreListSize = 0;
 	}
 	~MidiParser_XMIDI() { }
 

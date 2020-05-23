@@ -232,7 +232,7 @@ void MidiDriver_Miles_Midi::MT32SysEx(const uint32 targetAddress, const byte *da
 
 	byte   sysExMessage[270];
 	uint16 sysExPos      = 0;
-	byte   sysExByte     = 0;
+	byte   sysExByte;
 	uint16 sysExChecksum = 0;
 
 	memset(&sysExMessage, 0, sizeof(sysExMessage));
@@ -1082,12 +1082,12 @@ MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Co
 		uint32        fileDataOffset = 0;
 		uint32        fileDataLeft = 0;
 
-		byte curBankId = 0;
-		byte curPatchId = 0;
+		byte curBankId;
+		byte curPatchId;
 
 		MilesMT32InstrumentEntry *instrumentPtr = NULL;
-		uint32                    instrumentOffset = 0;
-		uint16                    instrumentDataSize = 0;
+		uint32                    instrumentOffset;
+		uint16                    instrumentDataSize;
 
 		if (!fileStream->open(instrumentDataFilename))
 			error("MILES-MDI: could not open instrument file '%s'", instrumentDataFilename.c_str());
@@ -1133,7 +1133,6 @@ MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Co
 		instrumentPtr = instrumentTablePtr;
 
 		fileDataOffset = 0;
-		fileDataLeft = fileSize;
 		while (1) {
 			curPatchId = fileDataPtr[fileDataOffset++];
 			curBankId  = fileDataPtr[fileDataOffset++];
