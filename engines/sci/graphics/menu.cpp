@@ -616,15 +616,10 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 				_menuRect.right = menuTextRect.right;
 		}
 		if ((listNr == newMenuId) || (listNr == oldMenuId)) {
-			if (!g_sci->isLanguageRTL()) {
-				menuTextRect.translate(1, 0);
-				_paint16->invertRect(menuTextRect);
-				menuTextRect.translate(-1, 0);
-			} else {
-				menuTextRect.translate(-1, 0);
-				_paint16->invertRect(menuTextRect);
-				menuTextRect.translate(1, 0);
-			}
+			int multiplier = !g_sci->isLanguageRTL() ? 1 : -1;
+			menuTextRect.translate(1 * multiplier, 0);
+			_paint16->invertRect(menuTextRect);
+			menuTextRect.translate(-1 * multiplier, 0);
 		}
 
 		listIterator++;
@@ -834,6 +829,8 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	_paint16->bitsShow(_ports->_menuRect);
 	_paint16->bitsShow(_menuRect);
 
+	int multiplier = !g_sci->isLanguageRTL() ? 1 : -1;
+
 	while (true) {
 		curEvent = _event->getSciEvent(kSciEventAny);
 
@@ -854,22 +851,12 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 					}
 					break;
 				case kSciKeyLeft:
-					if (!g_sci->isLanguageRTL()) {
-						newMenuId--;
-						newItemId = 1;
-					} else {
-						newMenuId++;
-						newItemId = 1;
-					}
+					newMenuId -= 1 * multiplier;
+					newItemId = 1;
 					break;
 				case kSciKeyRight:
-					if (!g_sci->isLanguageRTL()) {
-						newMenuId++;
-						newItemId = 1;
-					} else {
-						newMenuId--;
-						newItemId = 1;
-					}
+					newMenuId += 1 * multiplier;
+					newItemId = 1;
 					break;
 				case kSciKeyUp:
 					newItemId--;

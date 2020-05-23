@@ -265,20 +265,16 @@ void Vocabulary::appendSuffixes() {
 			else
 				cls = VOCAB_CLASS_NOUN << 4;
 
-			suffix_t suffix1 = { cls, cls, 1, 0, "\xea", "" };					// get rid of Kaf Sofit
-			_parserSuffixes.push_back(suffix1);
+			suffix_t suffixes[] = {
+				{cls, cls, 1, 0, "\xea", ""},					// get rid of Kaf Sofit
+				{cls, cls, 2, 0, "\xe9\xed", ""},				// get rid of Yud, Mem Sofit
+				{cls, cls, 2, 0, "\xe5\xfa", ""},				// get rid of Vav, Taf
+				{cls, cls, 3, 2, "\xe9\xe5\xfa", "\xe9\xfa"},	// Yud, Vav, Taf -> Yud, Taf
+				{cls, cls, 3, 2, "\xe0\xe5\xfa", "\xe0\xe4"}	// Alef, Vav, Taf -> Alef, He
+			};
 
-			suffix_t suffix2 = { cls, cls, 2, 0, "\xe9\xed", "" };				// get rid of Yud, Mem Sofit
-			_parserSuffixes.push_back(suffix2);
-
-			suffix_t suffix3 = { cls, cls, 2, 0, "\xe5\xfa", "" };				// get rid of Vav, Taf
-			_parserSuffixes.push_back(suffix3);
-
-			suffix_t suffix4 = { cls, cls, 3, 2, "\xe9\xe5\xfa", "\xe9\xfa" };	// Yud, Vav, Taf -> Yud, Taf
-			_parserSuffixes.push_back(suffix4);
-
-			suffix_t suffix5 = { cls, cls, 3, 2, "\xe0\xe5\xfa", "\xe0\xe4" };	// Alef, Vav, Taf -> Alef, He
-			_parserSuffixes.push_back(suffix5);
+			for (int j = 0; j < ARRAYSIZE(suffixes); j++)
+				_parserSuffixes.push_back(suffixes[j]);
 		}
 	}
 }
@@ -519,14 +515,16 @@ void Vocabulary::lookupWordPrefix(ResultWordListList &parent_retval, ResultWordL
 	if (--word_len <= 0)
 		return;
 
-	if (lookupSpecificPrefix(parent_retval, retval, word, word_len, 0xe1, "1hebrew1prefix1bet"))			// "Bet"
-		return;
-	if (lookupSpecificPrefix(parent_retval, retval, word, word_len, 0xe4, "the"))							// "He Hayedia"
-		return;
-	if (lookupSpecificPrefix(parent_retval, retval, word, word_len, 0xec, "1hebrew1prefix1lamed"))			// "Lamed"
-		return;
-	if (lookupSpecificPrefix(parent_retval, retval, word, word_len, 0xee, "1hebrew1prefix1mem"))			// "Mem"
-		return;
+	PrefixMeaning prefixes[] = {
+		{0xe1, "1hebrew1prefix1bet"},           // "Bet"
+		{0xe4, "the"},                          // "He Hayedia"
+		{0xec, "1hebrew1prefix1lamed"},         // "Lamed"
+		{0xee, "1hebrew1prefix1mem"}            // "Mem"
+	};
+
+	for (int i = 0; i < ARRAYSIZE(prefixes); i++)
+		if (lookupSpecificPrefix(parent_retval, retval, word, word_len, prefixes[i].prefix, prefixes[i].meaning))
+			return;
 }
 
 bool Vocabulary::lookupSpecificPrefix(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning) {
@@ -652,7 +650,7 @@ bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence
 				if (lookup_result.empty()) { // Not found?
 					lookupWordPrefix(retval, lookup_result, currentWord, wordLen);
 
-					if (lookup_result.empty()) { // Still not found? {
+					if (lookup_result.empty()) { // Still not found?
 						*error = (char *)calloc(wordLen + 1, 1);
 						strncpy(*error, currentWord, wordLen); // Set the offending word
 						retval.clear();
