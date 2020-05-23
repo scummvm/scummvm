@@ -135,7 +135,7 @@ void QObjectBG::setEntrance(const Common::String &name) {
 		sys->_petka->setPos(entrance->_walkX, entrance->_walkY);
 		sys->_chapayev->setPos(entrance->_walkX, entrance->_walkY - 2);
 
-		sys->_xOffset = CLIP(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
+		sys->_xOffset = CLIP<int32>(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
 		sys->_field6C = sys->_xOffset;
 	}
 	g_vm->videoSystem()->makeAllDirty();
