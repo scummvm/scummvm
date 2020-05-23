@@ -4,7 +4,7 @@ here=$(dirname "$0")
 
 if [ -n "$ANDROID_KEYSTORE_KEY" ]; then
 	echo ">>> Decrypting Android keystore"
-	openssl aes-256-cbc -k "$ANDROID_KEYSTORE_KEY" -in .travis/android.keystore.enc -out /tmp/android.keystore -d
+	openssl aes-256-cbc -k "$ANDROID_KEYSTORE_KEY" -in .travis/android.keystore.enc -out /tmp/android.keystore -d -md sha256 -pbkdf2
 	export KEYSTORE=/tmp/android.keystore
 	unset ANDROID_KEYSTORE_KEY
 fi
