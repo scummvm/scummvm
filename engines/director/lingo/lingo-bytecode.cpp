@@ -369,29 +369,30 @@ void LC::cb_list() {
 
 
 void LC::cb_proplist() {
-	Datum list = g_lingo->pop();
-	if (list.type != ARRAY) {
-		error("cb_proplist: first arg should be of type ARRAY, not %s", list.type2str());
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type != ARGC) && (nargs.type != ARGCNORET)) {
+		error("cb_proplist: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
-	Datum result;
-	result.type = PARRAY;
-	result.u.parr = new PropertyArray;
-	uint arraySize = list.u.farr->size();
+	int arraySize = nargs.u.i;
 	if (arraySize % 2) {
 		warning("cb_proplist: list should have an even number of entries, ignoring the last one");
 	}
+
+	Datum result;
+	result.type = PARRAY;
+	result.u.parr = new PropertyArray;
 	arraySize /= 2;
 
-	for (uint i = 0; i < arraySize; i += 1) {
-		Datum p = list.u.farr->operator[](i);
-		Datum v = list.u.farr->operator[](i + 1);
+	for (int i = 0; i < arraySize; i++) {
+		Datum p = g_lingo->pop();
+		Datum v = g_lingo->pop();
 
 		PCell cell = PCell(p, v);
 		result.u.parr->insert_at(0, cell);
 	};
-	delete list.u.farr;
-	list.u.i = 0;
-	list.type = VOID;
+
+	if (nargs.u.i % 2)
+		g_lingo->pop();
 
 	g_lingo->push(result);
 }
