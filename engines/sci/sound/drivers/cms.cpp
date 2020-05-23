@@ -31,6 +31,8 @@
 #include "sci/resource.h"
 #include "sci/util.h"
 
+#define SCI0_CMS_ORIGINAL_BUG		1
+
 namespace Sci {
 
 class MidiDriver_CMS;
@@ -115,6 +117,9 @@ private:
 	uint8 _envSLI;
 	uint8 _envPAC;
 	uint8 _envPA;
+#ifdef SCI0_CMS_ORIGINAL_BUG
+	static uint8  _envAR1;
+#endif
 
 	uint8 _envNote;
 	uint8 _envSSL;
@@ -294,9 +299,16 @@ const int CMSVoice::_frequencyTable[48] = {
 	242, 246, 250, 253
 };
 
+#ifdef SCI0_CMS_ORIGINAL_BUG
+uint8 CMSVoice_V0::_envAR1 = 0;
+#endif
+
 CMSVoice_V0::CMSVoice_V0(uint8 id, MidiDriver_CMS* driver, CMSEmulator *cms, SciSpan<const uint8>& patchData) : CMSVoice(id, driver, cms, patchData), _envState(kReady), _currentLevel(0), _strMask(0),
 	_envAR(0), _envTL(0), _envDR(0), _envSL(0), _envRR(0), _envSLI(0), _vbrOn(false), _vbrSteps(0), _vbrState(0), _vbrMod(0), _vbrCur(0), _isSecondary(id > 7),
 	_vbrPhase(0), _transOct(0), _transFreq(0), _envPAC(0), _envPA(0), _panMask(_id & 1 ? 0xF0 : 0x0F), _envSSL(0), _envNote(0xFF), _updateCMS(false) {
+#ifdef SCI0_CMS_ORIGINAL_BUG
+	_envAR1 = 0;
+#endif
 }
 
 void CMSVoice_V0::noteOn(int note, int) {
@@ -399,8 +411,15 @@ void CMSVoice_V0::update() {
 			--_envPAC;
 			break;
 		} else {
+#ifdef SCI0_CMS_ORIGINAL_BUG
+			// This is bugged in two ways. The attack rate value is misinterpreted as a int8 for the comparison (the only place in the code
+			// where it does that). And it always uses the attack rate of voice no. 1 as a modifier instead of the voice's own attack rate.
+			// Keeping these bugs will result in faithful audio. It probably even sounds as intended, since the sequencer will have likely
+			// suffered from the same bug and calculated the deltas based on that...
+			_currentLevel = ((_currentLevel >> 1) > (int8)_envAR)?((_currentLevel >> 1) - _envAR1) & 0xFF : (_envAR - _envAR1) & 0xFF;
+#else
 			_currentLevel = ((_currentLevel >> 1) > _envAR) ? ((_currentLevel >> 1) - _envAR) : 0;
-			//_currentLevel = ((_currentLevel >> 1) > (int8)_envAR) ? ((_currentLevel >> 1) - _envAR1) & 0xFF : (_envAR - _envAR1) & 0xFF;
+#endif
 			_envState = kAttack;
 		}
 		// fall through
@@ -539,6 +558,10 @@ void CMSVoice_V0::selectEnvelope(int id) {
 	_vbrCur = _vbrMod;
 	_vbrState = _vbrSteps & 0x0F;
 	_vbrPhase = 0;
+#ifdef SCI0_CMS_ORIGINAL_BUG
+	if (_id == 1)
+		_envAR1 = _envAR;
+#endif
 }
 
 const uint8 CMSVoice_V0::_volumeTable[176] = {
