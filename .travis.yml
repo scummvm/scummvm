@@ -81,6 +81,7 @@ matrix:
         - make osxsnap
         - mkdir artifacts && cp -r ResidualVM-snapshot.dmg artifacts
     - os: linux
+      dist: bionic
       name: "Android (ARM64 & ARMv7)"
       language: android
       android:
