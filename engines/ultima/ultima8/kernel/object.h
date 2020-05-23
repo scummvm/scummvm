@@ -54,9 +54,6 @@ public:
 	//! dump some info about this object to pout
 	virtual void dumpInfo() const;
 
-	//! save this object
-	void save(Common::WriteStream *ws);
-
 	//! Spawn a usecode function on this object
 	//! \param classid The usecode class to run
 	//! \param offset The offset in that class to run
@@ -68,14 +65,9 @@ public:
 	                   const uint8 *args = 0, int argsize = 0);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-
-protected:
-	//! write the Object savegame header (mainly consisting of the classname)
-	void writeObjectHeader(Common::WriteStream *ws) const;
-
-	//! save the actual Object data
 	virtual void saveData(Common::WriteStream *ws);
 
+protected:
 	ObjId _objId;
 };
 

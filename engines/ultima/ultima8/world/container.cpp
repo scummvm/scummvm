@@ -308,7 +308,7 @@ void Container::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_contents.size()));
 	Std::list<Item *>::iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		(*iter)->save(ws);
+		ObjectManager::get_instance()->saveObject(ws, *iter);
 	}
 }
 

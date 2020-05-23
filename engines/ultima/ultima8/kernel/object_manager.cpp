@@ -227,7 +227,7 @@ void ObjectManager::save(Common::WriteStream *ws) {
 		// FIXME: This leaks _objIDs. See comment in ObjectManager::load().
 		if (gump && !gump->mustSave(true)) continue;
 
-		object->save(ws);
+		saveObject(ws, object);
 	}
  
 	ws->writeUint16LE(0);
@@ -286,6 +286,15 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 	pout << "Reclaimed " << count << " _objIDs on load." << Std::endl;
 
 	return true;
+}
+
+void ObjectManager::saveObject(Common::WriteStream *ws, Object *obj) const {
+	const char *cname = obj->GetClassType()._className; // note: virtual
+	uint16 clen = strlen(cname);
+
+	ws->writeUint16LE(clen);
+	ws->write(cname, clen);
+	obj->saveData(ws);
 }
 
 Object *ObjectManager::loadObject(Common::ReadStream *rs, uint32 version) {
