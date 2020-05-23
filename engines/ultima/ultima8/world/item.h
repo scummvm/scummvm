@@ -448,6 +448,7 @@ public:
 	void dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 	// Intrinsics
 	INTRINSIC(I_touch);
@@ -565,9 +566,6 @@ protected:
 
 	ObjId _gump;             // Item's gump
 	ProcId _gravityPid;      // Item's GravityTracker (or 0)
-
-	//! save the actual Item data
-	void saveData(Common::WriteStream *ws) override;
 
 private:
 

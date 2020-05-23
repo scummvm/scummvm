@@ -49,7 +49,6 @@ public:
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 };
 

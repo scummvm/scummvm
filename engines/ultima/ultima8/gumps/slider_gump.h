@@ -59,9 +59,9 @@ public:
 	bool OnKeyDown(int key, int mod) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	int16 _min;
 	int16 _max;
 	int16 _delta;

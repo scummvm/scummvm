@@ -109,14 +109,12 @@ public:
 	void dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 	INTRINSIC(I_removeContents);
 	INTRINSIC(I_destroyContents);
 
 protected:
-	//! save Container data
-	void saveData(Common::WriteStream *ws) override;
-
 	Std::list<Item *> _contents;
 };
 

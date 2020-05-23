@@ -44,11 +44,9 @@ public:
 	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-
-	uint16 hatch() override;
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+	uint16 hatch() override;
 };
 
 } // End of namespace Ultima8

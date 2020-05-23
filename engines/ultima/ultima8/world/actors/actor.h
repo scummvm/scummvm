@@ -217,8 +217,8 @@ public:
 	void dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);
@@ -292,8 +292,6 @@ public:
 	};
 
 protected:
-	void saveData(Common::WriteStream *ws) override;
-
 	int16 _strength;
 	int16 _dexterity;
 	int16 _intelligence;

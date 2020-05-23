@@ -77,9 +77,9 @@ public:
 	void onMouseDouble(int button, int32 mx, int32 my) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	void GetItemLocation(int32 lerp_factor) override;
 
 	virtual Container *getTargetContainer(Item *item, int mx, int my);

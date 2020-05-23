@@ -50,7 +50,6 @@ public:
 	INTRINSIC(I_target);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
 private:

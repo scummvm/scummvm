@@ -67,9 +67,9 @@ public:
 	void DropItem(Item *item, int mx, int my) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	//! Paint the stats
 	void PaintStats(RenderSurface *, int32 lerp_factor);
 
