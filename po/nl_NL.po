@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-05-23 16:19+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-05-23 16:25+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -4241,16 +4241,14 @@ msgstr "Linkerknop om aan te vallen, rechterknop om voorwerpen op te pakken"
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
 #: engines/ultima/ultima4/meta_engine.cpp:232
 #: engines/ultima/ultima8/meta_engine.cpp:101
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Linker Klik"
+msgstr "Bestuur met Linker Klik"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:238
 #: engines/ultima/ultima8/meta_engine.cpp:107
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Rechter klik"
+msgstr "Bestuur met Rechter Klik"
 
 #: engines/kyra/engine/eobcommon.cpp:360 engines/kyra/engine/lol.cpp:498
 msgid "Move Forward"
@@ -4552,7 +4550,6 @@ msgid "Open main menu"
 msgstr "Open hoofd menu"
 
 #: engines/mohawk/myst.cpp:591 engines/mohawk/riven.cpp:860
-#, fuzzy
 msgid "Load game state"
 msgstr "Laad spel"
 
@@ -4646,9 +4643,8 @@ msgid "Move forward right"
 msgstr "Beweeg rechts vooruit"
 
 #: engines/mohawk/riven.cpp:896
-#, fuzzy
 msgid "Move backwards"
-msgstr "Beweeg Terug"
+msgstr "Beweeg achteruit"
 
 #: engines/mohawk/riven.cpp:902
 msgid "Turn left"
@@ -6114,7 +6110,6 @@ msgid "Transfer Character"
 msgstr "Zet personage over"
 
 #: engines/ultima/ultima8/meta_engine.cpp:96
-#, fuzzy
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
