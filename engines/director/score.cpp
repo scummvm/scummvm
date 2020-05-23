@@ -77,6 +77,7 @@ Score::Score(DirectorEngine *vm) {
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
 	_currentMouseDownSpriteId = 0;
+	_currentClickOnSpriteId = 0;
 	_mouseIsDown = false;
 	_lastEventTime = _vm->getMacTicks();
 	_lastKeyTime = _lastEventTime;

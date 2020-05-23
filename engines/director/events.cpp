@@ -102,6 +102,8 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				// But we still want to know if the mouse is down for press effects.
 				spriteId = sc->getSpriteIDFromPos(pos);
 				sc->_currentMouseDownSpriteId = spriteId;
+				if (sc->_sprites[spriteId]->_scriptId)
+					sc->_currentClickOnSpriteId = spriteId;
 
 				sc->_mouseIsDown = true;
 				sc->_lastEventTime = g_director->getMacTicks();

@@ -335,6 +335,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheCast:
 		d = getTheCast(id, field);
 		break;
+	case kTheClickOn:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->_currentClickOnSpriteId;
+		break;
 	case kTheColorDepth:
 		// bpp. 1, 2, 4, 8, 32
 		d.type = INT;

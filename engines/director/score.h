@@ -166,6 +166,7 @@ public:
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
 	uint16 _currentMouseDownSpriteId;
+	uint16 _currentClickOnSpriteId;
 	bool _mouseIsDown;
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;

@@ -174,7 +174,6 @@ void Sprite::setCast(uint16 castId) {
 Common::Rect Sprite::getBbox() {
 	Common::Rect result;
 	if (_castId == 0) {
-		warning("Sprite::getBbox(): attempted to get bbox for null cast member");
 		return result;
 	}
 
