@@ -446,7 +446,7 @@ void OSystem_Android::setupScreen(uint screenW, uint screenH, bool fullscreen, b
 	_opengl = accel3d;
 	initViewport();
 
-	_touchControls.init(this, _egl_surface_width, _egl_surface_height);
+	_touchControls.init(_egl_surface_width, _egl_surface_height);
 
 	if (_opengl) {
 		// resize game texture

@@ -22,11 +22,30 @@
 
 #if defined(__ANDROID__)
 
+// Allow use of stuff in <time.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+//
+// Disable printf override in common/forbidden.h to avoid
+// clashes with log.h from the Android SDK.
+// That header file uses
+//   __attribute__ ((format(printf, 3, 4)))
+// which gets messed up by our override mechanism; this could
+// be avoided by either changing the Android SDK to use the equally
+// legal and valid
+//   __attribute__ ((format(printf, 3, 4)))
+// or by refining our printf override to use a varadic macro
+// (which then wouldn't be portable, though).
+// Anyway, for now we just disable the printf override globally
+// for the Android port
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/fs.h"
 #include "common/stream.h"
 #include "common/archive.h"
 #include "image/tga.h"
 
+#include "backends/platform/android/android.h"
 #include "backends/platform/android/events.h"
 #include "backends/platform/android/texture.h"
 #include "backends/platform/android/touchcontrols.h"
@@ -62,7 +81,6 @@ TouchControls::TouchControls() :
 	_joystickPressing(Common::KEYCODE_INVALID),
 	_centerPressing(Common::KEYCODE_INVALID),
 	_rightPressing(Common::KEYCODE_INVALID),
-	_key_receiver(NULL),
 	_screen_width(0),
 	_screen_height(0) {
 
@@ -129,11 +147,10 @@ static GLES8888Texture *loadBuiltinTexture(const char *filename) {
 	return ret;
 }
 
-void TouchControls::init(KeyReceiver *kr, int width, int height) {
+void TouchControls::init(int width, int height) {
 	_arrows_texture = loadBuiltinTexture("arrows.tga");
 	_screen_width = width;
 	_screen_height = height;
-	_key_receiver = kr;
 }
 
 const uint _numRightKeycodes = 4;
@@ -186,13 +203,13 @@ void TouchControls::update(int ptr, int action, int x, int y) {
 		case kTouchAreaJoystick: {
 			Common::KeyCode newPressing = determineKey(dX, dY);
 			if (newPressing != _joystickPressing) {
-				_key_receiver->keyPress(_joystickPressing, KeyReceiver::UP);
-				_key_receiver->keyPress(newPressing, KeyReceiver::DOWN);
+				keyUp(_joystickPressing);
+				keyDown(newPressing);
 				_joystickPressing = newPressing;
 			} else if(abs(dY) > 150) {
-			   _key_receiver->keyPress(Common::KEYCODE_LSHIFT, KeyReceiver::DOWN);
+			   keyDown(Common::KEYCODE_LSHIFT);
 			} else if(abs(dY) <= 150){
-			   _key_receiver->keyPress(Common::KEYCODE_LSHIFT, KeyReceiver::UP);
+			   keyUp(Common::KEYCODE_LSHIFT);
 			}
 			return;
 		}
@@ -233,21 +250,21 @@ void TouchControls::update(int ptr, int action, int x, int y) {
 		case kTouchAreaJoystick:
 			pointerFor(kTouchAreaJoystick) = -1;
 			if (_joystickPressing != Common::KEYCODE_INVALID) {
-				_key_receiver->keyPress(_joystickPressing, KeyReceiver::UP);
+				keyUp(_joystickPressing);
 				_joystickPressing = Common::KEYCODE_INVALID;
-				_key_receiver->keyPress(Common::KEYCODE_LSHIFT, KeyReceiver::UP);
+				keyUp(Common::KEYCODE_LSHIFT);
 			}
 			break;
 
 		case kTouchAreaCenter:
 			pointerFor(kTouchAreaCenter) = -1;
-			_key_receiver->keyPress(_centerPressing);
+			keyPress(_centerPressing);
 			_centerPressing = Common::KEYCODE_INVALID;
 			break;
 
 		case kTouchAreaRight:
 			pointerFor(kTouchAreaRight) = -1;
-			_key_receiver->keyPress(_rightPressing);
+			keyPress(_rightPressing);
 			_rightPressing = Common::KEYCODE_INVALID;
 			break;
 
@@ -264,6 +281,26 @@ void TouchControls::update(int ptr, int action, int x, int y) {
 
 int &TouchControls::pointerFor(TouchArea ta) {
 	return _activePointers[ta - kTouchAreaNone];
+}
+
+void TouchControls::keyDown(Common::KeyCode kc) {
+	Common::Event ev;
+	ev.type = Common::EVENT_KEYDOWN;
+	ev.kbd.keycode = kc;
+	static_cast<OSystem_Android *>(g_system)->pushEvent(ev);
+}
+
+void TouchControls::keyUp(Common::KeyCode kc) {
+	Common::Event ev;
+	ev.type = Common::EVENT_KEYUP;
+	ev.kbd.keycode = kc;
+	static_cast<OSystem_Android *>(g_system)->pushEvent(ev);
+}
+
+void TouchControls::keyPress(Common::KeyCode kc) {
+	Common::Event ev;
+	ev.kbd.keycode = kc;
+	static_cast<OSystem_Android *>(g_system)->pushKeyPressEvent(ev);
 }
 
 #endif

@@ -447,10 +447,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 		}
 
+		// ResidualVM specific code start
 		if (!shouldGenerateMouseEvents()) {
-			keyPress(Common::KEYCODE_RETURN, KeyReceiver::PRESS);
+			Common::Event ev;
+			ev.kbd.keycode = Common::KEYCODE_RETURN;
+			pushKeyPressEvent(ev);
 			return;
 		}
+		// ResidualVM specific code end
 
 		e.type = Common::EVENT_MOUSEMOVE;
 
@@ -497,9 +501,13 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_DOUBLE_TAP:
+		// ResidualVM specific code start
 		if (!shouldGenerateMouseEvents()) {
-			keyPress(Common::KEYCODE_u, KeyReceiver::PRESS);
+			Common::Event ev;
+			ev.kbd.keycode = Common::KEYCODE_u;
+			pushKeyPressEvent(ev);
 		}
+		// ResidualVM specific code end
 
 		e.type = Common::EVENT_MOUSEMOVE;
 
@@ -802,18 +810,12 @@ void OSystem_Android::pushEvent(const Common::Event &event) {
 	unlockMutex(_event_queue_lock);
 }
 
-void OSystem_Android::keyPress(const Common::KeyCode keycode, const KeyReceiver::KeyPressType type) {
-	Common::Event e;
-	e.kbd.keycode = keycode;
+void OSystem_Android::pushKeyPressEvent(Common::Event &event) {
 	lockMutex(_event_queue_lock);
-	if (type == KeyReceiver::DOWN || type == KeyReceiver::PRESS) {
-		e.type = Common::EVENT_KEYDOWN;
-		_event_queue.push(e);
-	}
-	if (type == KeyReceiver::UP || type == KeyReceiver::PRESS) {
-		e.type = Common::EVENT_KEYUP;
-		_event_queue.push(e);
-	}
+	event.type = Common::EVENT_KEYDOWN;
+	_event_queue.push(event);
+	event.type = Common::EVENT_KEYUP;
+	_event_queue.push(event);
 	unlockMutex(_event_queue_lock);
 }
 

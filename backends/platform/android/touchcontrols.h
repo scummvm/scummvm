@@ -35,13 +35,12 @@ public:
 	TouchControls();
 	~TouchControls();
 
-	void init(KeyReceiver *kr, int width, int height);
+	void init(int width, int height);
 	void draw();
 	void update(int ptr, int action, int x, int y);
 
 private:
 	int _screen_width, _screen_height;
-	KeyReceiver *_key_receiver;
 
 	enum TouchArea{
 		kTouchAreaJoystick = 0xffff,
@@ -65,7 +64,9 @@ private:
 	Common::KeyCode _joystickPressing, _centerPressing, _rightPressing;
 	int &pointerFor(TouchArea ta);
 	GLESTexture *_arrows_texture;
-
+	void keyDown(Common::KeyCode kc);
+	void keyUp(Common::KeyCode kc);
+	void keyPress(Common::KeyCode kc);
 };
 
 #endif

@@ -25,13 +25,6 @@
 
 #include "common/events.h"
 
-class KeyReceiver {
-public:
-	enum KeyPressType { DOWN, UP, PRESS };
-	virtual void keyPress(const Common::KeyCode code, const KeyPressType type = PRESS) = 0;
-	virtual ~KeyReceiver() {};
-};
-
 // $ANDROID_NDK/platforms/android-9/arch-arm/usr/include/android/keycodes.h
 // http://android.git.kernel.org/?p=platform/frameworks/base.git;a=blob;f=libs/ui/Input.cpp
 // http://android.git.kernel.org/?p=platform/frameworks/base.git;a=blob;f=core/java/android/view/KeyEvent.java

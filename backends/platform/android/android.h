@@ -99,7 +99,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #endif
 
 class MutexManager;
-class OSystem_Android : public EventsBaseBackend, public PaletteManager, public KeyReceiver {
+class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -215,7 +215,6 @@ public:
 
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
-	void keyPress(const Common::KeyCode keycode, const KeyReceiver::KeyPressType type);
 	bool shouldGenerateMouseEvents();
 
 private:
@@ -278,6 +277,7 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual void pushEvent(const Common::Event &event);
+	virtual void pushKeyPressEvent(Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
