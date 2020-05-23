@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
 "PO-Revision-Date: 2020-05-23 16:18+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -917,12 +917,12 @@ msgstr "Joy Deadzone:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d verborgen prestaties over"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Prestaties behaald : %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -2979,13 +2979,11 @@ msgid "Use Screen:"
 msgstr "Gebruik Scherm:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Top"
 msgstr "Top"
 
 #: backends/platform/3ds/options-dialog.cpp:59
-#, fuzzy
 msgctxt "3ds-screen"
 msgid "Bottom"
 msgstr "Bodem"
@@ -4519,7 +4517,7 @@ msgstr "~H~oofdmenu"
 
 #: engines/mohawk/dialogs.cpp:248
 msgid "The new language will be applied after restarting the game."
-msgstr ""
+msgstr "De nieuwe taal wordt actief na een herstart van het spel."
 
 #: engines/mohawk/dialogs.cpp:320
 msgid "~W~ater Effect Enabled"
@@ -4559,23 +4557,20 @@ msgid "Load game state"
 msgstr "Laad spel"
 
 #: engines/mohawk/myst.cpp:596 engines/mohawk/riven.cpp:865
-#, fuzzy
 msgid "Save game state"
-msgstr "Opgeslagen spellen"
+msgstr "Bewaar spel"
 
 #: engines/mohawk/myst.cpp:601 engines/mohawk/riven.cpp:870
 msgid "Show options menu"
 msgstr "Toon opties menu"
 
 #: engines/mohawk/myst.cpp:613
-#, fuzzy
 msgid "Drop page"
-msgstr "Laat Pagina ~V~allen"
+msgstr "Laat pagina vallen"
 
 #: engines/mohawk/myst.cpp:619
-#, fuzzy
 msgid "Show map"
-msgstr "~T~oon Map"
+msgstr "Toon kaart"
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -4639,19 +4634,16 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr "U mist de volgende vereiste Riven gegevensbestanden:\n"
 
 #: engines/mohawk/riven.cpp:882
-#, fuzzy
 msgid "Move forward"
 msgstr "Beweeg Vooruit"
 
 #: engines/mohawk/riven.cpp:888
-#, fuzzy
 msgid "Move forward left"
-msgstr "Beweeg Vooruit"
+msgstr "Beweeg links vooruit"
 
 #: engines/mohawk/riven.cpp:892
-#, fuzzy
 msgid "Move forward right"
-msgstr "Beweeg Vooruit"
+msgstr "Beweeg rechts vooruit"
 
 #: engines/mohawk/riven.cpp:896
 #, fuzzy
@@ -4659,24 +4651,20 @@ msgid "Move backwards"
 msgstr "Beweeg Terug"
 
 #: engines/mohawk/riven.cpp:902
-#, fuzzy
 msgid "Turn left"
 msgstr "Draai Linksom"
 
 #: engines/mohawk/riven.cpp:908
-#, fuzzy
 msgid "Turn right"
 msgstr "Draai Rechtsom"
 
 #: engines/mohawk/riven.cpp:914
-#, fuzzy
 msgid "Look up"
-msgstr "Kijk"
+msgstr "Kijk omhoog"
 
 #: engines/mohawk/riven.cpp:919
-#, fuzzy
 msgid "Look down"
-msgstr "Zoom omlaag"
+msgstr "Kijk omlaag"
 
 #: engines/mohawk/riven.cpp:925
 msgid "Play intro videos"
@@ -4824,9 +4812,8 @@ msgid "Save Game"
 msgstr "Spel Opslaan"
 
 #: engines/pegasus/pegasus.cpp:2587
-#, fuzzy
 msgid "Load Game"
-msgstr "Laad spel"
+msgstr "Laad Spel"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -5039,9 +5026,8 @@ msgstr ""
 "om onverwachtse fouten en/of issues later te voorkomen."
 
 #: engines/sci/sci.cpp:517
-#, fuzzy
 msgid "Download patch"
-msgstr "Download"
+msgstr "Download patch"
 
 #: engines/sci/sci.cpp:518
 msgid ""
@@ -5150,13 +5136,14 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr "Toon de namen van de objecten onderaan het scherm"
 
 #: engines/scumm/detection.cpp:1376
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Gebruik een alternatieve palet"
+msgstr "Gebruik NES Classic palet"
 
 #: engines/scumm/detection.cpp:1377
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
+"Gebruik een meer neutrale kleurenpalet dat sterk lijkt op die van de NES "
+"Classic"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -5938,9 +5925,8 @@ msgid "Confirm"
 msgstr "Bevestig"
 
 #: engines/sky/detection.cpp:234
-#, fuzzy
 msgid "Skip / Close"
-msgstr "Regel overslaan"
+msgstr "Overslaan / Stoppen"
 
 #: engines/sky/detection.cpp:242
 msgid "Open control panel"
@@ -6109,9 +6095,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Kon opgeslagen spel #%d niet snelladen"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "Kon de '%s' engine data file niet vinden."
+msgstr "Kan de '%s' data file niet vinden."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -6124,24 +6110,23 @@ msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Verouderde versie engine data. Verwacht werd %d.%d maar vond %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
-#, fuzzy
 msgid "Transfer Character"
-msgstr "Verwissel personage"
+msgstr "Zet personage over"
 
 #: engines/ultima/ultima8/meta_engine.cpp:96
+#, fuzzy
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:126
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Ultima VIII Cheats"
 
 #: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Ultima VIII Foutopsporen"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:304
-#, fuzzy
 msgid "[corrupt]"
 msgstr "[corrupt]"
 
@@ -6150,9 +6135,8 @@ msgid "[outdated]"
 msgstr "[verouderd]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:310
-#, fuzzy
 msgid "[too modern]"
-msgstr "Kleurenmodus"
+msgstr "[te modern]"
 
 #: engines/wintermute/detection.cpp:62
 msgid "Show FPS-counter"
@@ -6175,18 +6159,12 @@ msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Dit spel vereist PNG, JPEG en Vorbis ondersteuning."
 
 #: engines/wintermute/wintermute.cpp:167
-#, fuzzy
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
-"Dit spel vereist 3D personages ondersteuning, wat niet in scope is van "
-"ScummVM."
+msgstr "Dit spel vereist de FoxTail subengine die niet meegecompileerd is."
 
 #: engines/wintermute/wintermute.cpp:178
-#, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
-"Dit spel vereist 3D personages ondersteuning, wat niet in scope is van "
-"ScummVM."
+msgstr "Dit spel vereist de HeroCraft subengine die niet meegecompileerd is."
 
 #: engines/wintermute/wintermute.cpp:189
 msgid ""
