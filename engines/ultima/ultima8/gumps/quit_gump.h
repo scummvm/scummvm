@@ -50,8 +50,9 @@ public:
 	static void verifyQuit();
 
 	bool loadData(Common::ReadStream *rs);
-protected:
 	void saveData(Common::WriteStream *ws) override;
+
+protected:
 	ObjId _yesWidget, _noWidget;
 
 	uint32 _gumpShape;	//! shape number for the dialog

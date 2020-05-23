@@ -79,6 +79,7 @@ public:
 	void IncSortOrder(int count);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 	static void Set_highlightItems(bool highlight) {
 		_highlightItems = highlight;
@@ -90,8 +91,6 @@ public:
 	void        RenderSurfaceChanged() override;
 
 protected:
-	void saveData(Common::WriteStream *ws) override;
-
 	bool _displayDragging;
 	uint32 _draggingShape;
 	uint32 _draggingFrame;

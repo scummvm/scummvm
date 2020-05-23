@@ -91,8 +91,8 @@ public:
 	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
-	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_teleportToEgg);
@@ -107,8 +107,6 @@ public:
 
 
 protected:
-	void saveData(Common::WriteStream *ws) override;
-
 	void useInventoryItem(uint32 shapenum);
 
 	bool _justTeleported;

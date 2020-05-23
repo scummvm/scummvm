@@ -53,6 +53,7 @@ public:
 	void Close(bool no_del = false) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
@@ -68,9 +69,6 @@ public:
 	}
 
 	void ChildNotify(Gump *child, uint32 msg) override;
-
-protected:
-	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

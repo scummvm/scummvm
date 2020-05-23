@@ -57,8 +57,9 @@ public:
 	}
 
 	bool loadData(Common::ReadStream *rs);
-protected:
 	void saveData(Common::WriteStream *ws) override;
+
+protected:
 	int _leftOff, _rightOff, _topOff, _gumpShape;
 	Std::vector<Gump *> _gumps;
 	Gump *_nextButton;

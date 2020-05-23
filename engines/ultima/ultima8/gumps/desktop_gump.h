@@ -49,6 +49,7 @@ public:
 	void StopDraggingChild(Gump *gump) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 	void RenderSurfaceChanged(RenderSurface *surf);
 
@@ -57,7 +58,6 @@ public:
 	}
 
 protected:
-	void saveData(Common::WriteStream *ws) override;
 	void RenderSurfaceChanged() override;
 };
 
