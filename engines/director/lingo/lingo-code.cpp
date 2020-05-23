@@ -882,7 +882,7 @@ void LC::c_of() {
 		result = result.substr(first - 1, last - first);
 	}
 
-	*target.u.s = result;
+	target = Datum(result);
 
 	g_lingo->push(target);
 }
