@@ -773,122 +773,7 @@ void Score::setSpriteBboxes() {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			Sprite *sp = _frames[i]->_sprites[j];
-
-			if (sp->_castId == 0)
-				continue;
-
-			CastType castType = sp->_castType;
-
-			switch (castType) {
-			case kCastShape:
-				sp->_startBbox = Common::Rect(sp->_currentPoint.x,
-											  sp->_currentPoint.y,
-											  sp->_currentPoint.x + sp->_width,
-											  sp->_currentPoint.y + sp->_height);
-				break;
-			case kCastRTE:
-			case kCastText: {
-				TextCast *textCast = (TextCast*)sp->_cast;
-				int x = sp->_currentPoint.x; // +rectLeft;
-				int y = sp->_currentPoint.y; // +rectTop;
-				int height = textCast->_initialRect.height(); //_sprites[spriteId]->_height;
-				int width;
-				Common::Rect *textRect = NULL;
-
-				if (_vm->getVersion() >= 4) {
-					// where does textRect come from?
-					if (textRect == NULL) {
-						width = textCast->_initialRect.right;
-					} else {
-						width = textRect->width();
-					}
-				} else {
-					width = textCast->_initialRect.width(); //_sprites[spriteId]->_width;
-				}
-
-				sp->_startBbox = Common::Rect(x, y, x + width, y + height);
-				break;
-			}
-			case kCastButton: {
-				uint16 castId = sp->_castId;
-
-				// This may not be a button cast. It could be a textcast with the
-				// channel forcing it to be a checkbox or radio button!
-				ButtonCast *button = (ButtonCast *)_vm->getCurrentScore()->_loadedCast->getVal(castId);
-
-				// Sometimes, at least in the D3 Workshop Examples, these buttons are
-				// just TextCast. If they are, then we just want to use the spriteType
-				// as the button type. If they are full-bown Cast members, then use the
-				// actual cast member type.
-				int buttonType = sp->_spriteType;
-				if (buttonType == kCastMemberSprite) {
-					switch (button->_buttonType) {
-					case kTypeCheckBox:
-						buttonType = kCheckboxSprite;
-						break;
-					case kTypeButton:
-						buttonType = kButtonSprite;
-						break;
-					case kTypeRadio:
-						buttonType = kRadioButtonSprite;
-						break;
-					}
-				}
-
-				uint32 rectLeft = button->_initialRect.left;
-				uint32 rectTop = button->_initialRect.top;
-
-				int x = sp->_currentPoint.x;
-				int y = sp->_currentPoint.y;
-
-				if (_vm->getVersion() > 3) {
-					x += rectLeft;
-					y += rectTop;
-				}
-
-				int height = button->_initialRect.height();
-				int width = button->_initialRect.width() + 3;
-
-				switch (buttonType) {
-				case kCheckboxSprite:
-					// Magic numbers: checkbox square need to move left about 5px from
-					// text and 12px side size (D4)
-					sp->_startBbox = Common::Rect(x, y + 2, x + 12, y + 14);
-					break;
-				case kButtonSprite:
-					sp->_startBbox = Common::Rect(x, y, x + width, y + height + 3);
-					break;
-				case kRadioButtonSprite:
-					sp->_startBbox = Common::Rect(x, y + 2, x + 12, y + 14);
-					break;
-				default:
-					warning("Score::setSpriteBboxes: Unknown buttonType");
-				}
-				break;
-			}
-			case kCastBitmap: {
-				BitmapCast *bc = (BitmapCast *)sp->_cast;
-
-				int32 regX = bc->_regX;
-				int32 regY = bc->_regY;
-				int32 rectLeft = bc->_initialRect.left;
-				int32 rectTop = bc->_initialRect.top;
-
-				int x = sp->_currentPoint.x - regX + rectLeft;
-				int y = sp->_currentPoint.y - regY + rectTop;
-				int height = sp->_height;
-				int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : sp->_width;
-
-				// If one of the dimensions is invalid, invalidate whole thing
-				if (width == 0 || height == 0)
-					width = height = 0;
-
-				sp->_startBbox = Common::Rect(x, y, x + width, y + height);
-				break;
-			}
-			default:
-				warning("Score::setSpriteBboxes(): Unhandled cast type: %d, frame %d, channel %d", castType, i, j);
-			}
+			sp->_startBbox = sp->getBbox();
 			sp->_currentBbox = sp->_startBbox;
 			sp->_dirtyBbox = sp->_startBbox;
 		}
@@ -1848,6 +1733,10 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		else
 			nextSprite = currentFrame->_sprites[i];
 
+		// A sprite needs to be updated if one of the following happens:
+		// - The dimensions/bounding box of the sprite has changed (_dirty flag set)
+		// - The cast member ID of the sprite has changed (_dirty flag set)
+		// - The sprite slot from the current frame is different (cast member ID or bounding box) from the cached sprite slot
 		bool needsUpdate = (currentSprite->_currentBbox != nextSprite->_currentBbox || currentSprite->_currentBbox != currentSprite->_dirtyBbox);
 
 		if (needsUpdate || forceUpdate)

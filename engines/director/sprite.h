@@ -67,6 +67,8 @@ public:
 
 	void setCast(uint16 castid);
 
+	Common::Rect getBbox();
+
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;
 	byte _colorcode;  // x40 editable, 0x80 moveable
@@ -85,6 +87,7 @@ public:
 	Cast *_cast;
 
 	byte _thickness;
+	bool _dirty;
 	Common::Point _startPoint;
 	Common::Point _currentPoint;
 	Common::Rect _startBbox;
