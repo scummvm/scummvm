@@ -84,6 +84,9 @@ void Lingo::execute(uint pc) {
 			warning("Lingo::execute(): Bad PC (%d)", _pc);
 			break;
 		}
+
+		if (_vm->getCurrentScore() && _vm->getCurrentScore()->_stopPlay)
+			break;
 	}
 }
 
