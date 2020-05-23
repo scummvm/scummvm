@@ -41,9 +41,9 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
-protected:
 	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	bool init() override;
 
 	int32 _x, _y, _z;
