@@ -818,7 +818,7 @@ void Gump::saveData(Common::WriteStream *ws) {
 	for (it = _children.begin(); it != _children.end(); ++it) {
 		if (!(*it)->mustSave(false)) continue;
 
-		(*it)->save(ws);
+		ObjectManager::get_instance()->saveObject(ws, *it);
 	}
 }
 

@@ -65,20 +65,6 @@ ProcId Object::callUsecode(uint16 classid, uint16 offset,
 	return Kernel::get_instance()->addProcess(p);
 }
 
-
-void Object::save(Common::WriteStream *ws) {
-	writeObjectHeader(ws);
-	saveData(ws); // virtual
-}
-
-void Object::writeObjectHeader(Common::WriteStream *ws) const {
-	const char *cname = GetClassType()._className; // note: virtual
-	uint16 clen = strlen(cname);
-
-	ws->writeUint16LE(clen);
-	ws->write(cname, clen);
-}
-
 void Object::saveData(Common::WriteStream *ws) {
 	// note: Object is unversioned. If we ever want to version it,
 	// increase the global savegame version

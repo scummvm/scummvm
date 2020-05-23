@@ -290,7 +290,7 @@ void Map::save(Common::WriteStream *ws) {
 
 	Std::list<Item *>::iterator iter;
 	for (iter = _dynamicItems.begin(); iter != _dynamicItems.end(); ++iter) {
-		(*iter)->save(ws);
+		ObjectManager::get_instance()->saveObject(ws, *iter);
 	}
 }
 
