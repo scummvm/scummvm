@@ -560,46 +560,37 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 			break;
 		Width(curTextLine, 0, charCount, fontId, textWidth, textHeight, true);
 		maxTextWidth = MAX<int16>(maxTextWidth, textWidth);
-		if (!g_sci->isLanguageRTL()) {
-			switch (alignment) {
-			case SCI_TEXT16_ALIGNMENT_RIGHT:
+		switch (alignment) {
+		case SCI_TEXT16_ALIGNMENT_RIGHT:
+			if (!g_sci->isLanguageRTL())
 				offset = rect.width() - textWidth;
-				break;
-			case SCI_TEXT16_ALIGNMENT_CENTER:
-				offset = (rect.width() - textWidth) / 2;
-				break;
-			case SCI_TEXT16_ALIGNMENT_LEFT:
+			else
 				offset = 0;
-				break;
-
-			default:
-				warning("Invalid alignment %d used in TextBox()", alignment);
-			}
-		} else {
-			// language direction is from Right to Left
-			switch (alignment) {
-			case SCI_TEXT16_ALIGNMENT_LEFT:
+			break;
+		case SCI_TEXT16_ALIGNMENT_CENTER:
+			offset = (rect.width() - textWidth) / 2;
+			break;
+		case SCI_TEXT16_ALIGNMENT_LEFT:
+			if (!g_sci->isLanguageRTL())
+				offset = 0;
+			else
 				offset = rect.width() - textWidth;
-				break;
-			case SCI_TEXT16_ALIGNMENT_CENTER:
-				offset = (rect.width() - textWidth) / 2;
-				break;
-			case SCI_TEXT16_ALIGNMENT_RIGHT:
-				offset = 0;
-				break;
+			break;
 
-			default:
-				warning("Invalid alignment %d used in TextBox()", alignment);
-			}
-
-			// in the fonts, the characters have some spacing to the left, and no space to the right
-			// therefore, when we start drawing from the right, they "start from the border"
-			// e.g., in SQ3 Hebrew user's input prompt
-			// we can't make the Hebrew letters spacing in the right (in the font), because then mixed English-Hebrew text
-			// might have 2 letters stick together
-			// therefore, we shift here one pixel to the left, for the spacing
-			offset--;
+		default:
+			warning("Invalid alignment %d used in TextBox()", alignment);
 		}
+
+
+		if (g_sci->isLanguageRTL())
+			// In the game fonts, characters have spacing on the left, and no spacing on the right,
+			// therefore, when we start drawing from the right, they "start from the border"
+			// e.g., in SQ3 Hebrew user's input prompt.
+			// We can't add spacing on the right of the Hebrew letters, because then characters in mixed
+			// English-Hebrew text might be stuck together.
+			// Therefore, we shift one pixel to the left, for proper spacing
+			offset--;
+
 		_ports->moveTo(rect.left + offset, rect.top + hline);
 
 		Common::String textString;

@@ -94,7 +94,7 @@ private:
 	/** Used to avoid double patching in row, and to support `call`ing */
 	reg_t _lastPc;
 
-	/** Used to avoid double patching in row */
+	/** Raised after patch has ended, to avoid confusion with situation of returning from a `call` to the patch, and continue execution of original code */
 	bool _just_finished;
 
 	/** Location inside patch */
