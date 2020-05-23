@@ -244,6 +244,7 @@ void InterfaceMain::onMouseMove(const Common::Point p) {
 		for (int i = _objs.size() - 1; i >= 0; --i) {
 			if (_objs[i]->isInPoint(p.x, p.y)) {
 				_objs[i]->onMouseMove(p.x, p.y);
+				break;
 			}
 		}
 	}
