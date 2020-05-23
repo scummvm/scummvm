@@ -71,12 +71,12 @@ QObjectCase::QObjectCase() {
 	_isShown = false;
 	_updateZ = false;
 
-	_itemsLocation[kChapayevButton] = Common::Point(120, 145);
-	_itemsLocation[kPanelButton] = Common::Point(240, 145);
-	_itemsLocation[kMapButton] = Common::Point(360, 145);
-	_itemsLocation[kCloseButton] = Common::Point(100, 220);
-	_itemsLocation[kNextPageButton] = Common::Point(240, 220);
-	_itemsLocation[kPrevPageButton] = Common::Point(380, 220);
+	_itemsLocation[0] = Common::Point(120, 145);
+	_itemsLocation[1] = Common::Point(240, 145);
+	_itemsLocation[2] = Common::Point(360, 145);
+	_itemsLocation[3] = Common::Point(100, 220);
+	_itemsLocation[4] = Common::Point(240, 220);
+	_itemsLocation[5] = Common::Point(380, 220);
 }
 
 void QObjectCase::update(int time) {
@@ -214,11 +214,11 @@ void QObjectCase::addItemObjects() {
 	const uint size = (_itemIndex + kItemsOnPage >= _items.size()) ? _items.size() : (_itemIndex + kItemsOnPage);
 	for (uint i = _itemIndex; i < size; ++i) {
 		QMessageObject *obj = g_vm->getQSystem()->findObject(_items[i]);
+		obj->_x = _itemsLocation[i - _itemIndex].x;
+		obj->_y = _itemsLocation[i - _itemIndex].y;
 		obj->_z = kItemZ;
-		objs.push_back(obj);
 		g_vm->resMgr()->loadFlic(obj->_resourceId);
-		_x = _itemsLocation[i - _itemIndex].x;
-		_y = _itemsLocation[i - _itemIndex].y;
+		objs.push_back(obj);
 	}
 }
 
