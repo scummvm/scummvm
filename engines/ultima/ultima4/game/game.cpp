@@ -244,9 +244,8 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 
 	obj = g_context->_location->_map->objectAt(coords);
 	Creature *m = dynamic_cast<Creature *>(obj);
-	assert(m);
 
-	if (obj && obj->getType() == Object::CREATURE && m->isAttackable())
+	if (obj && obj->getType() == Object::CREATURE && m && m->isAttackable())
 		validObject = true;
 	/* See if it's an object to be destroyed (the avatar cannot destroy the balloon) */
 	else if (obj &&
