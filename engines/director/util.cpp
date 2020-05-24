@@ -380,4 +380,35 @@ Common::String convertMacFilename(const char *name) {
 	return res;
 }
 
+Common::String dumpScriptName(const char *prefix, int type, int id, const char *ext) {
+	Common::String typeName;
+
+	switch (type) {
+	case kNoneScript:
+	default:
+		error("dumpScriptName(): Incorrect call (type %d)", type);
+	case kFrameScript:
+		typeName = "frame";
+		break;
+	case kMovieScript:
+		typeName = "movie";
+		break;
+	case kSpriteScript:
+		typeName = "sprite";
+		break;
+	case kCastScript:
+		typeName = "cast";
+		break;
+	case kGlobalScript:
+		typeName = "global";
+		break;
+	case kScoreScript:
+		typeName = "score";
+		break;
+	}
+
+	return Common::String::format("./dumps/%s-%s-%d.%s", prefix, typeName.c_str(), id, ext);
+}
+
+
 } // End of namespace Director

@@ -1250,37 +1250,10 @@ void Score::setStartToLabel(Common::String label) {
 
 void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 	Common::DumpFile out;
-	Common::String typeName;
-	char buf[256];
-
-	switch (type) {
-	case kNoneScript:
-	default:
-		error("Incorrect dumpScript() call (type %d)", type);
-	case kFrameScript:
-		typeName = "frame";
-		break;
-	case kMovieScript:
-		typeName = "movie";
-		break;
-	case kSpriteScript:
-		typeName = "sprite";
-		break;
-	case kCastScript:
-		typeName = "cast";
-		break;
-	case kGlobalScript:
-		typeName = "global";
-		break;
-	case kScoreScript:
-		typeName = "score";
-		break;
-	}
-
-	sprintf(buf, "./dumps/%s-%s-%d.txt", _macName.c_str(), typeName.c_str(), id);
+	Common::String buf = dumpScriptName(_macName.c_str(), type, id, "txt");
 
 	if (!out.open(buf)) {
-		warning("Can not open dump file %s", buf);
+		warning("Can not open dump file %s", buf.c_str());
 		return;
 	}
 

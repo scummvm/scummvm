@@ -112,6 +112,8 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 			error("Unhandled Windows EXE version %d", getVersion());
 		}
 	}
+
+	_mainArchive->setFileName(movie);
 }
 
 void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {

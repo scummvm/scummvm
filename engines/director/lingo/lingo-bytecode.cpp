@@ -20,9 +20,13 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/file.h"
 #include "common/substream.h"
 
 #include "director/director.h"
+#include "director/score.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-builtins.h"
@@ -959,6 +963,18 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	byte *codeStore = (byte *)malloc(codeStoreSize);
 	stream.read(codeStore, codeStoreSize);
 
+	Common::DumpFile out;
+	bool skipdump = false;
+
+	if (ConfMan.getBool("dump_scripts")) {
+		Common::String buf = dumpScriptName(_vm->getCurrentScore()->getMacName().c_str(), type, id, "lscr");
+
+		if (!out.open(buf)) {
+			warning("Can not open dump file %s", buf.c_str());
+			skipdump = true;
+		}
+	}
+
 	// read each entry in the function table.
 	stream.seek(functionsOffset);
 	for (uint16 i = 0; i < functionsCount; i++) {
@@ -1233,12 +1249,33 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			sym->nargs = argCount;
 			sym->maxArgs = argCount;
 		}
+
+		if (!skipdump && ConfMan.getBool("dump_scripts")) {
+			if (nameIndex < _archives[_archiveIndex].names.size())
+				out.writeString(Common::String::format("function %s, %d args\n", _archives[_archiveIndex].names[nameIndex].c_str(), argCount));
+			else
+				out.writeString(Common::String::format("<noname>, %d args\n", argCount));
+
+			uint pc = 0;
+			while (pc < _currentScript->size()) {
+				uint spc = pc;
+				Common::String instr = decodeInstruction(_currentScript, pc, &pc);
+				out.writeString(Common::String::format("[%5d] %s\n", spc, instr.c_str()));
+			}
+			out.writeString(Common::String::format("<end code>\n\n"));
+		}
+
 		sym->argNames = argNames;
 		sym->varNames = varNames;
 		sym->ctx = _currentScriptContext;
 		sym->archiveIndex = _archiveIndex;
 		_currentScriptContext->functions.push_back(sym);
 
+	}
+
+	if (!skipdump && ConfMan.getBool("dump_scripts")) {
+		out.flush();
+		out.close();
 	}
 
 	free(codeStore);
