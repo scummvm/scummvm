@@ -295,6 +295,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 		return;
 	}
+	sharedCast->setFileName(filename);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());

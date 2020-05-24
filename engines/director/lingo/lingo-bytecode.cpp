@@ -744,7 +744,7 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id) {
+void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id, Common::String &archName) {
 	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
 	if (getScriptContext(type, id)) {
@@ -967,11 +967,13 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	bool skipdump = false;
 
 	if (ConfMan.getBool("dump_scripts")) {
-		Common::String buf = dumpScriptName(_vm->getCurrentScore()->getMacName().c_str(), type, id, "lscr");
+		Common::String buf = dumpScriptName(archName.c_str(), type, id, "lscr");
 
 		if (!out.open(buf)) {
-			warning("Can not open dump file %s", buf.c_str());
+			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.c_str());
 			skipdump = true;
+		} else {
+			warning("Lingo::addCodeV4(): Dumping Lscr to %s", buf.c_str());
 		}
 	}
 
