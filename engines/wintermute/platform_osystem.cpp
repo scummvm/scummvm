@@ -144,25 +144,21 @@ void BasePlatform::handleEvent(Common::Event *event) {
 // Win32 API bindings
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::getCursorPos(Point32 *lpPoint) {
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-
 	Common::Point p = g_system->getEventManager()->getMousePos();
 	lpPoint->x = p.x;
 	lpPoint->y = p.y;
 
-	renderer->pointFromScreen(lpPoint);
+	_gameRef->_renderer->pointFromScreen(lpPoint);
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::setCursorPos(int x, int y) {
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-
 	Point32 p;
 	p.x = x;
 	p.y = y;
-	renderer->pointToScreen(&p);
+	_gameRef->_renderer->pointToScreen(&p);
 
 	g_system->warpMouse(x, y);
 	return true;

@@ -369,3 +369,11 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 
 	return true;
 }
+
+void Wintermute::BaseRenderOpenGL3D::pointFromScreen(Wintermute::Point32* point) {
+
+}
+
+void Wintermute::BaseRenderOpenGL3D::pointToScreen(Wintermute::Point32* point) {
+
+}

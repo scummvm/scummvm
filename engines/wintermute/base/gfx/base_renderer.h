@@ -191,6 +191,10 @@ public:
 
 	int32 getWidth() const { return _width; }
 	int32 getHeight() const { return _height; }
+
+        virtual void pointFromScreen(Point32 *point) = 0;
+        virtual void pointToScreen(Point32 *point) = 0;
+
 protected:
 	int32 _height;
 	int32 _width;
