@@ -572,15 +572,21 @@ void ListWidget::drawWidget() {
 				color = _listColors[_listIndex[pos]];
 		}
 
+		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight - 2);
+
+		if (g_gui.useRTL() && _numberingMode == kListNumberingOff && _scrollBar->isVisible()) {
+			r1.translate(_scrollBarWidth, 0);
+		}
+
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			color = _editColor;
 			adjustOffset();
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
+			g_gui.theme()->drawText(r1, buffer, _state,
 									alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		} else {
 			buffer = _list[pos];
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.right, y + fontHeight - 2), buffer, _state,
+			g_gui.theme()->drawText(r1, buffer, _state,
 									alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		}
 	}
