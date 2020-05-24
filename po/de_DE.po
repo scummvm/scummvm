@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
 "PO-Revision-Date: 2020-05-24 16:41+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -5165,7 +5165,7 @@ msgstr "Verwende die klassische NES Farbpalette"
 #: engines/scumm/detection.cpp:1377
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
-"Verwende eine neutralere Farbpalette, die den NES Classic besser emuliert"
+"Verwende eine neutralere Farbpalette, die den NES Classic genauer emuliert"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
