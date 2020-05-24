@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
 "PO-Revision-Date: 2020-05-24 16:40+0000\n"
-"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -924,7 +924,7 @@ msgstr "%d versteckte Errungeschaften übrig"
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Errungenschaften freigeschaltet:"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
