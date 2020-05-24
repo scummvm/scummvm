@@ -457,7 +457,7 @@ void QObject::draw() {
 			continue;
 		Common::Rect srcRect(destRect);
 		srcRect.translate(-_x, -_y);
-		g_vm->videoSystem()->screen().transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
+		g_vm->videoSystem()->transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
 	}
 	s->free();
 	delete s;
@@ -518,8 +518,8 @@ void QObject::update(int time) {
 void QObject::setPos(int x, int y) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc) {
-		g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(_x, _y), *flc);
-		g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(x, y), *flc);
+		g_vm->videoSystem()->addDirtyMskRects(Common::Point(_x, _y), *flc);
+		g_vm->videoSystem()->addDirtyMskRects(Common::Point(x, y), *flc);
 		_x = x;
 		_y = y;
 	}

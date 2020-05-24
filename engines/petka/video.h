@@ -29,30 +29,33 @@ namespace Petka {
 
 class FlicDecoder;
 
-class VideoSystem {
+class VideoSystem : public Graphics::Screen {
 public:
 	VideoSystem();
 
 	void updateTime();
-	void update();
-	void makeAllDirty();
-	void addDirtyRect(const Common::Rect &rect);
+	void update() override;
+
+	void addDirtyRect(const Common::Rect &rect) override;
+	void addDirtyRect(Common::Point pos, Common::Rect rect);
 	void addDirtyRect(Common::Point pos, FlicDecoder &flc);
-	void addDirtyRectFromMsk(Common::Point pos, FlicDecoder &flc);
+
+	void addDirtyMskRects(Common::Point pos, FlicDecoder &flc);
+	void addDirtyMskRects(FlicDecoder &flc);
+
 	void setShake(bool shake);
+
 	const Common::List<Common::Rect> rects() const;
-	Graphics::Screen &screen();
 
 private:
 	void sort();
 
 private:
-	Graphics::Screen _screen;
-	Common::List<Common::Rect> _rects;
 	uint32 _shakeTime;
 	uint32 _time;
 	bool _shake;
 	bool _shift;
+	bool _allowAddingRects;
 };
 
 }

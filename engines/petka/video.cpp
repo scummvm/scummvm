@@ -40,6 +40,7 @@ VideoSystem::VideoSystem() :
 	_shake(false), _shift(false), _shakeTime(0), _time(0) {
 	makeAllDirty();
 	_time = g_system->getMillis();
+	_allowAddingRects = true;
 }
 
 void VideoSystem::update() {
@@ -56,54 +57,65 @@ void VideoSystem::update() {
 
 		sort();
 
+		mergeDirtyRects();
+
+		_allowAddingRects = false;
 		for (uint i = 0; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->draw();
 		}
+		_allowAddingRects = true;
+
+		for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
+			const Common::Rect &r = *i;
+			const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
+			g_system->copyRectToScreen(srcP, pitch, r.left, r.top,
+									   r.width(), r.height());
+		}
+
+		_dirtyRects.clear();
 	}
 
 	_time = time;
-	_rects.clear();
 
 	if (_shake) {
 		g_system->setShakePos(_shift ? kShakeOffset : 0, 0);
-		time = g_system->getMillis();
 		if (time - _shakeTime > kShakeTime) {
 			_shift = !_shift;
 			_shakeTime = time;
 		}
 	}
-	_screen.update();
+
+	g_system->updateScreen();
 }
 
 void VideoSystem::addDirtyRect(const Common::Rect &rect) {
-	_rects.push_back(rect);
+	if (_allowAddingRects) {
+		Graphics::Screen::addDirtyRect(rect);
+	}
 }
 
-const Common::List<Common::Rect> VideoSystem::rects() const {
-	return _rects;
-}
-
-Graphics::Screen &VideoSystem::screen() {
-	return _screen;
-}
-
-void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
-	Common::Rect rect = flc.getBounds();
+void VideoSystem::addDirtyRect(Common::Point pos, Common::Rect rect) {
 	rect.translate(pos.x, pos.y);
 	addDirtyRect(rect);
 }
 
-void VideoSystem::addDirtyRectFromMsk(Common::Point pos, FlicDecoder &flc) {
+void VideoSystem::addDirtyRect(Common::Point pos, FlicDecoder &flc) {
+	addDirtyRect(pos, flc.getBounds());
+}
+
+void VideoSystem::addDirtyMskRects(Common::Point pos, FlicDecoder &flc) {
 	const Common::Array<Common::Rect> &rects = flc.getMskRects();
 	for (uint i = 0; i < rects.size(); ++i) {
-		Common::Rect r = rects[i];
-		r.translate(pos.x, pos.y);
-		_rects.push_back(r);
+		addDirtyRect(pos, rects[i]);
 	}
 }
 
-void VideoSystem::makeAllDirty() {
-	addDirtyRect(Common::Rect(640, 480));
+void VideoSystem::addDirtyMskRects(FlicDecoder &flc) {
+	addDirtyMskRects(Common::Point(0, 0), flc);
+}
+
+const Common::List<Common::Rect> VideoSystem::rects() const {
+	return _dirtyRects;
 }
 
 void VideoSystem::updateTime() {
