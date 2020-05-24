@@ -137,6 +137,36 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
+	{
+		{
+			"ultima6",
+			0,
+			AD_ENTRY1s("converse.a", "ae979230b97f8813bdf8f82698847435", 198627),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO0()
+		},
+		GAME_ULTIMA6,
+		0
+	},
+
+	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
+    {
+		{
+			"ultima6_enh",
+			0,
+			AD_ENTRY1s("converse.a", "ae979230b97f8813bdf8f82698847435", 198627),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO0()
+		},
+		GAME_ULTIMA6,
+		GF_VGA_ENHANCED
+	},
+
 	// PC98 Ultima 6
 	{
 		{
