@@ -94,6 +94,22 @@ namespace Sci {
 #define END kEndOfPatch
 
 #pragma mark -
+#pragma mark Leisure Suit Larry 1
+
+// LSL1 Russian contains a bad sound that uses 0xFE as a track entry terminator
+//  instead of the correct value 0xFF. This would freeze Sierra's interpreter
+//  if it parsed this entry, but that usually wouldn't happen since it would
+//  find a matching track entry with the correct terminator earlier in the list.
+//  Sound 205 is the engine noise that plays when summoning a taxi.
+static const byte lsl1RussianSound205[] = {
+	SKIP(0x31),
+	REPLACE(1, 0xFF),
+	SKIP(0x29),
+	REPLACE(1, 0xFF),
+	END
+};
+
+#pragma mark -
 #pragma mark Phantasmagoria
 
 // Phantasmagoria view 64001 contains a bad palette that overwrites parts of the
@@ -384,8 +400,9 @@ static const byte pq4EnhancedAudioToggleView[] = {
 #pragma mark Patch table
 
 static const GameResourcePatch resourcePatches[] = {
-	{ GID_PHANTASMAGORIA, Common::UNK_LANG, ResourceId(kResourceTypeView, 64001), phant1View64001Palette,     false },
-	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView, 10988), pq4EnhancedAudioToggleView, true }
+	{ GID_LSL1,           Common::RU_RUS,   ResourceId(kResourceTypeSound,   205), lsl1RussianSound205,        false },
+	{ GID_PHANTASMAGORIA, Common::UNK_LANG, ResourceId(kResourceTypeView,  64001), phant1View64001Palette,     false },
+	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView,  10988), pq4EnhancedAudioToggleView, true }
 };
 
 #pragma mark -

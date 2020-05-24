@@ -19,12 +19,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/unicode-bidi.h"
+
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/font.h"
 
 namespace Graphics {
+
+#define DEBUG 0
+
+#if DEBUG
+#define D(...)  debug(__VA_ARGS__)
+#else
+#define D(...)  ;
+#endif
 
 const Font *MacFontRun::getFont() {
 	if (font)
@@ -41,11 +51,39 @@ const Common::String MacFontRun::toString() {
 	return Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 }
 
+bool MacFontRun::equals(MacFontRun &to) {
+	return (fontId == to.fontId && textSlant == to.textSlant
+		&& fontSize == to.fontSize && palinfo1 == to.palinfo1
+		&& palinfo2 == to.palinfo2 && palinfo3 == to.palinfo3);
+}
+
+uint MacTextLine::getChunkNum(int *col) {
+	int pos = *col;
+	uint i;
+
+	for (i = 0; i < chunks.size(); i++) {
+		if (pos >= (int)chunks[i].text.size()) {
+			pos -= chunks[i].text.size();
+		} else {
+			break;
+		}
+	}
+
+	if (i == chunks.size()) {
+		i--;	// touch the last chunk
+		pos = chunks[i].text.size();
+	}
+
+	*col = pos;
+
+	return i;
+}
+
 MacText::~MacText() {
 	delete _surface;
 }
 
-MacText::MacText(Common::U32String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
 	_str = s;
 	_wm = wm;
 	_macFont = macFont;
@@ -93,7 +131,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
-		_defaultFormatting.font = NULL;
+		_defaultFormatting.font = nullptr;
 	}
 
 	_defaultFormatting.wm = wm;
@@ -119,6 +157,16 @@ void MacText::setMaxWidth(int maxWidth) {
 	_fullRefresh = true;
 }
 
+void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
+		uint16 palinfo1, uint16 palinfo2, uint16 palinfo3) {
+	_defaultFormatting.setValues(_defaultFormatting.wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+	MacFont macFont = MacFont(fontId, fontSize, textSlant);
+
+	_defaultFormatting.font = _wm->_fontMan->getFont(macFont);
+}
+
+
 static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
 	*res = 0;
 
@@ -135,39 +183,150 @@ static const Common::U32String::value_type *readHex(uint16 *res, const Common::U
 	return s;
 }
 
-void MacText::splitString(Common::U32String &str) {
-	const Common::U32String::value_type *s = str.c_str();
+// Adds the given string to the end of the last line/chunk
+// while observing the _maxWidth and keeping this chunk's
+// formatting
+void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
+	int curLine = *curLinePtr;
+	int curChunk = _textLines[curLine].chunks.size() - 1;
+	MacFontRun *chunk = &_textLines[curLine].chunks[curChunk];
 
-	Common::U32String tmp;
-	bool prevCR = false;
+	// Check if there is nothing to add, then remove the last chunk
+	// This happens when the previous run is finished only with
+	// empty formatting, or when we were adding text for the first time
+	if (chunk->text.empty() && str.empty()) {
+		D(9, "** chopChunk, replaced formatting, line %d", curLine);
+
+		_textLines[curLine].chunks.pop_back();
+
+		return;
+	}
+
+	Common::Array<Common::U32String> text;
+
+	int w = getLineWidth(curLine, true);
+
+	chunk->getFont()->wordWrapText(str, _maxWidth, text, w);
+
+	if (text.size() == 0) {
+		warning("chopChunk: too narrow width, >%d", _maxWidth);
+		chunk->text += str;
+		getLineCharWidth(curLine, true);
+
+		return;
+	}
+
+	chunk->text += text[0];
+
+	// Recalc dims
+	getLineWidth(curLine, true);
+
+	D(9, "** chopChunk, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
+
+	// We do not overlap, so we're done
+	if (text.size() == 1)
+		return;
+
+	// Now add rest of the chunks
+	MacFontRun newchunk = _textLines[curLine].chunks[curChunk];
+
+	for (uint i = 1; i < text.size(); i++) {
+		newchunk.text = text[i];
+
+		curLine++;
+		_textLines.insert_at(curLine, MacTextLine());
+		_textLines[curLine].chunks.push_back(newchunk);
+
+		D(9, "** chopChunk, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
+	}
+
+	*curLinePtr = curLine;
+}
+
+void MacText::splitString(const Common::U32String &str, int curLine) {
+	const Common::U32String::value_type *l = str.c_str();
+
+	D(9, "** splitString(\"%s\")", toPrintable(str.encode()).c_str());
+
+	if (str.empty()) {
+		debug(9, "** splitString, empty line");
+		return;
+	}
+
+	Common::U32String paragraph, tmp;
 
 	if (_textLines.empty()) {
 		_textLines.resize(1);
 		_textLines[0].chunks.push_back(_defaultFormatting);
+		D(9, "** splitString, added default formatting");
+	} else {
+		D(9, "** splitString, continuing, %d lines", _textLines.size());
 	}
 
-	int curLine = _textLines.size() - 1;
+	if (curLine == -1)
+		curLine = _textLines.size() - 1;
+
 	int curChunk = _textLines[curLine].chunks.size() - 1;
-	bool nextChunk = false;
-	MacFontRun previousFormatting;
+	MacFontRun chunk = _textLines[curLine].chunks[curChunk];
 
-	while (*s) {
-#if DEBUG
-		for (uint i = 0; i < _textLines.size(); i++) {
-			debugN(9, "%2d ", i);
+	while (*l) {
+		paragraph.clear();
 
-			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-				debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
+		// First, get the whole paragraph
+		while (*l) {
+			if (*l == '\r') {
+				l++;
 
-			debug(9, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
+				if (*l == '\n')	// Skip whole '\r\n'
+					l++;
+
+				break;
+			}
+
+			paragraph += *l++;
 		}
-#endif
 
-		if (*s == '\001') {
-			s++;
-			if (*s == '\001') {
-				// Copy it verbatim
-			} else if (*s == '\015') {
+		D(9, "** splitString, paragraph: \"%s\"", Common::toPrintable(line.encode()).c_str());
+
+		// Now process whole paragraph
+		const Common::U32String::value_type *s = paragraph.c_str();
+
+		tmp.clear();
+
+		while (*s) {
+			// Scan till next font change or end of line
+			while (*s && *s != '\001') {
+				tmp += *s;
+
+				s++;
+			}
+
+			if (*s)	// If it was \001, skip it
+				s++;
+
+			if (*s == '\001') { // \001\001 -> \001
+				tmp += *s++;
+
+				if (*s)	// Check we reached end of line
+					continue;
+			}
+
+			D(9, "** splitString, chunk: \"%s\"", Common::toPrintable(tmp.encode()).c_str());
+
+			// Okay, now we are either at the end of the line, or in the next
+			// chunk definition. That means, that we have to store the previous chunk
+			chopChunk(tmp, &curLine);
+
+			tmp.clear();
+
+			// If it is end of the line, we're done
+			if (!*s) {
+				D(9, "** splitString, end of line");
+
+				break;
+			}
+
+			if (*s == '\015') {	// binary format
 				s++;
 
 				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
@@ -177,17 +336,11 @@ void MacText::splitString(Common::U32String &str) {
 				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
 				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
 
-				debug(9, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
-				previousFormatting = _currentFormatting;
-				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				if (curLine == 0 && curChunk == 0 && tmp.empty())
-					previousFormatting = _currentFormatting;
-
-				nextChunk = true;
-			} else if (*s == '\016') {
+				chunk.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+			} else if (*s == '\016') {	// human-readable format
 				s++;
 
 				uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
@@ -199,100 +352,43 @@ void MacText::splitString(Common::U32String &str) {
 				s = readHex(&palinfo2, s, 4);
 				s = readHex(&palinfo3, s, 4);
 
-				debug(9, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
-				previousFormatting = _currentFormatting;
-				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-
-				if (curLine == 0 && curChunk == 0 && tmp.empty())
-					previousFormatting = _currentFormatting;
-
-				nextChunk = true;
+				chunk.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 			} else {
 				error("MacText: formatting error, got %02x", *s);
 			}
-		} else if (*s == '\n' && prevCR) {	// treat \r\n as one
-			prevCR = false;
 
-			s++;
-			continue;
-		} else if (*s == '\r') {
-			prevCR = true;
+			// Push new formatting
+			_textLines[curLine].chunks.push_back(chunk);
 		}
 
-		if (*s == '\r' || *s == '\n' || nextChunk) {
-			Common::Array<Common::U32String> text;
-
-			if (!nextChunk)
-				previousFormatting = _currentFormatting;
-
-			int w = getLineWidth(curLine, true);
-
-			previousFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
-			tmp.clear();
-
-			if (text.size()) {
-				for (uint i = 0; i < text.size(); i++) {
-					_textLines[curLine].chunks[curChunk].text += text[i];
-
-					if ((text.size() > 1 || !nextChunk) && !(i == text.size() - 1 && nextChunk)) {
-						curLine++;
-						_textLines.resize(curLine + 1);
-						_textLines[curLine].chunks.push_back(previousFormatting);
-						curChunk = 0;
-					}
-				}
-
-				if (nextChunk) {
-					curChunk++;
-
-					_textLines[curLine].chunks.push_back(_currentFormatting);
-				} else {
-					_textLines[curLine].chunks[0] = _currentFormatting;
-				}
-			} else {
-				if (nextChunk) { // No text, replacing formatting
-					_textLines[curLine].chunks[curChunk] = _currentFormatting;
-				} else { // Otherwise it is an empty line
-					curLine++;
-					_textLines.resize(curLine + 1);
-					_textLines[curLine].chunks.push_back(previousFormatting);
-					curChunk = 0;
-				}
-			}
-
-			if (!nextChunk) // Don't skip next character
-				s++;
-
-			nextChunk = false;
-			continue;
+		if (!*l) { // If this is end of the string, we're done here
+			break;
 		}
 
-		tmp += *s;
-		s++;
+		// Add new line
+		D(9, "** splitString: new line");
+
+		_textLines[curLine].paragraphEnd = true;
+
+		curLine++;
+		_textLines.insert_at(curLine, MacTextLine());
+		_textLines[curLine].chunks.push_back(chunk);
 	}
 
-	if (tmp.size()) {
-		Common::Array<Common::U32String> text;
-		int w = getLineWidth(curLine, true);
+#if DEBUG
+	for (uint i = 0; i < _textLines.size(); i++) {
+		debugN(9, "** splitString: %2d ", i);
 
-		_currentFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
+			debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
 
-		if (text.size())
-			_textLines[curLine].chunks[curChunk].text = text[0];
-		else
-			warning("MacText::splitString(): Font resulted in 0 width for text '%s'", tmp.encode().c_str());
-
-		if (text.size() > 1) {
-			for (uint i = 1; i < text.size(); i++) {
-				curLine++;
-				_textLines.resize(curLine + 1);
-				_textLines[curLine].chunks.push_back(_currentFormatting);
-				_textLines[curLine].chunks[0].text = text[i];
-			}
-		}
+		debugN(9, "\n");
 	}
+	debug(9, "** splitString: done");
+#endif
 }
 
 void MacText::reallocSurface() {
@@ -346,6 +442,12 @@ void MacText::render(int from, int to) {
 		else if (_textAlignment == kTextAlignCenter)
 			xOffset = (_textMaxWidth / 2) - (getLineWidth(i) / 2);
 
+		int maxHeightForRow = 0;
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (_textLines[i].chunks[j].font->getFontHeight() > maxHeightForRow)
+				maxHeightForRow = _textLines[i].chunks[j].font->getFontHeight();
+		}
+
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
 			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d",
@@ -355,7 +457,14 @@ void MacText::render(int from, int to) {
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
 
-			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y, w, _fgcolor);
+			//TODO: There might be a vertical alignment setting somewhere for differing font sizes in a single row?
+			int yOffset = 0;
+			if (_textLines[i].chunks[j].font->getFontHeight() < maxHeightForRow) {
+				//TODO: determine where the magic value 2 comes from
+				yOffset = maxHeightForRow - _textLines[i].chunks[j].font->getFontHeight() - 2;
+			}
+
+			_textLines[i].chunks[j].getFont()->drawString(_surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, _fgcolor);
 			xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 		}
 	}
@@ -370,15 +479,16 @@ void MacText::render(int from, int to) {
 	}
 }
 
-int MacText::getLineWidth(int line, bool enforce) {
+int MacText::getLineWidth(int line, bool enforce, int col) {
 	if ((uint)line >= _textLines.size())
 		return 0;
 
-	if (_textLines[line].width != -1 && !enforce)
+	if (_textLines[line].width != -1 && !enforce && col == -1)
 		return _textLines[line].width;
 
 	int width = 0;
 	int height = 0;
+	int charwidth = 0;
 
 	bool hastext = false;
 
@@ -386,8 +496,21 @@ int MacText::getLineWidth(int line, bool enforce) {
 		if (enforce)
 			_textLines[line].chunks[i].font = nullptr;
 
+		if (col >= 0) {
+			if (col >= (int)_textLines[line].chunks[i].text.size()) {
+				col -= _textLines[line].chunks[i].text.size();
+			} else {
+				Common::U32String tmp(_textLines[line].chunks[i].text.c_str(), col);
+
+				width += _textLines[line].chunks[i].getFont()->getStringWidth(tmp);
+
+				return width;
+			}
+		}
+
 		if (!_textLines[line].chunks[i].text.empty()) {
 			width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
+			charwidth += _textLines[line].chunks[i].text.size();
 			hastext = true;
 		}
 
@@ -399,6 +522,26 @@ int MacText::getLineWidth(int line, bool enforce) {
 
 	_textLines[line].width = width;
 	_textLines[line].height = height;
+	_textLines[line].charwidth = charwidth;
+
+	return width;
+}
+
+int MacText::getLineCharWidth(int line, bool enforce) {
+	if ((uint)line >= _textLines.size())
+		return 0;
+
+	if (_textLines[line].charwidth != -1 && !enforce)
+		return _textLines[line].charwidth;
+
+	int width = 0;
+
+	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
+		if (!_textLines[line].chunks[i].text.empty())
+			width += _textLines[line].chunks[i].text.size();
+	}
+
+	_textLines[line].charwidth = width;
 
 	return width;
 }
@@ -486,7 +629,7 @@ uint getNewlinesInString(const Common::U32String &str) {
 	return newLines;
 }
 
-void MacText::appendText(Common::U32String str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
+void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
@@ -508,7 +651,7 @@ void MacText::appendText(const Common::String &str, int fontId, int fontSize, in
 	appendText(Common::U32String(str), fontId, fontSize, fontSlant, skipAdd);
 }
 
-void MacText::appendTextDefault(Common::U32String str, bool skipAdd) {
+void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
@@ -538,20 +681,6 @@ void MacText::clearText() {
 	recalcDims();
 }
 
-void MacText::replaceLastLine(Common::U32String str) {
-	int oldLen = MAX<int>(0, _textLines.size() - 1);
-
-	// TODO: Recalc length, adapt to _textLines
-
-	if (_textLines.size())
-		_textLines.pop_back();
-
-	splitString(str);
-	recalcDims();
-
-	render(oldLen, _textLines.size());
-}
-
 void MacText::removeLastLine() {
 	if (!_textLines.size())
 		return;
@@ -565,6 +694,8 @@ void MacText::removeLastLine() {
 }
 
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
+	int nsx, nsy, nrow, ncol;
+
 	if (y > _textMaxHeight) {
 		x = _surface->w;
 	}
@@ -572,70 +703,100 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	y = CLIP(y, 0, _textMaxHeight);
 
 	// FIXME: We should use bsearch() here
-	*row = _textLines.size() - 1;
+	nrow = _textLines.size() - 1;
 
-	while (*row && _textLines[*row].y > y)
-		(*row)--;
+	while (nrow && _textLines[nrow].y > y)
+		(nrow)--;
 
-	*sy = _textLines[*row].y;
+	nsy = _textLines[nrow].y;
 
-	*col = 0;
+	ncol = 0;
 
 	int width = 0, pwidth = 0;
 	int mcol = 0, pmcol = 0;
 	uint chunk;
-	for (chunk = 0; chunk < _textLines[*row].chunks.size(); chunk++) {
+	for (chunk = 0; chunk < _textLines[nrow].chunks.size(); chunk++) {
 		pwidth = width;
 		pmcol = mcol;
-		if (!_textLines[*row].chunks[chunk].text.empty()) {
-			width += _textLines[*row].chunks[chunk].getFont()->getStringWidth(_textLines[*row].chunks[chunk].text);
-			mcol += _textLines[*row].chunks[chunk].text.size();
+		if (!_textLines[nrow].chunks[chunk].text.empty()) {
+			width += _textLines[nrow].chunks[chunk].getFont()->getStringWidth(_textLines[nrow].chunks[chunk].text);
+			mcol += _textLines[nrow].chunks[chunk].text.size();
 		}
 
 		if (width > x)
 			break;
 	}
 
-	if (chunk == _textLines[*row].chunks.size())
+	if (chunk == _textLines[nrow].chunks.size())
 		chunk--;
 
-	Common::U32String str = _textLines[*row].chunks[chunk].text;
+	Common::U32String str = _textLines[nrow].chunks[chunk].text;
 
-	*col = mcol;
+	ncol = mcol;
+	nsx = pwidth;
 
 	for (int i = str.size(); i >= 0; i--) {
-		int strw = _textLines[*row].chunks[chunk].getFont()->getStringWidth(str);
+		int strw = _textLines[nrow].chunks[chunk].getFont()->getStringWidth(str);
 		if (strw + pwidth < x) {
-			*col = pmcol + i;
-			*sx = strw + pwidth;
+			ncol = pmcol + i;
+			nsx = strw + pwidth;
 			break;
 		}
 
 		str.deleteLastChar();
 	}
+
+	if (sx)
+		*sx = nsx;
+	if (sy)
+		*sy = nsy;
+	if (col)
+		*col = ncol;
+	if (row)
+		*row = nrow;
 }
+
+// If adjacent chunks have same format, then skip the format definition
+// This happens when a long paragraph is split into several lines
+#define ADDFORMATTING() \
+	if (formatted) { \
+		formatting = _textLines[i].chunks[chunk].toString(); \
+		if (formatting != prevformatting) { \
+			res += formatting; \
+			prevformatting = formatting; \
+		} \
+	}
 
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
 	Common::U32String res;
 
+	if (endRow == -1)
+		endRow = _textLines.size() - 1;
+
+	if (endCol == -1)
+		endCol = getLineCharWidth(endRow);
+
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
 	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
 
+	Common::U32String formatting, prevformatting;
+
 	for (int i = startRow; i <= endRow; i++) {
+		// We requested only part of one line
 		if (i == startRow && i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
+					continue;
+
 				if (startCol <= 0) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
+					ADDFORMATTING();
 
 					if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 						res += _textLines[i].chunks[chunk].text;
 					else
 						res += Common::U32String(_textLines[i].chunks[chunk].text.c_str(), endCol);
 				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
-
+					ADDFORMATTING();
 					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol, endCol - startCol);
 				}
 
@@ -645,17 +806,17 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (endCol <= 0)
 					break;
 			}
+		// We are at the top line and it is not completely requested
 		} else if (i == startRow && startCol != 0) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (startCol <= 0) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
+					continue;
 
+				if (startCol <= 0) {
+					ADDFORMATTING();
 					res += _textLines[i].chunks[chunk].text;
 				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
-					if (formatted)
-						res += _textLines[i].chunks[chunk].toString();
-
+					ADDFORMATTING();
 					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol);
 				}
 
@@ -665,10 +826,13 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				res += '\n';
 			else
 				res += ' ';
+		// We are at the end row, and it could be not completely requested
 		} else if (i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (formatted)
-					res += _textLines[i].chunks[chunk].toString();
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
+					continue;
+
+				ADDFORMATTING();
 
 				if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 					res += _textLines[i].chunks[chunk].text;
@@ -680,11 +844,13 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (endCol <= 0)
 					break;
 			}
+		// We are in the middle of requested range, pass whole line
 		} else {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
-				if (formatted)
-					res += _textLines[i].chunks[chunk].toString();
+				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
+					continue;
 
+				ADDFORMATTING();
 				res += _textLines[i].chunks[chunk].text;
 			}
 
@@ -696,6 +862,143 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	}
 
 	return res;
+}
+
+//////////////////
+// Text editing
+void MacText::insertChar(byte c, int *row, int *col) {
+	if (_textLines.empty()) {
+		appendTextDefault(Common::String(c));
+		(*col)++;
+
+		return;
+	}
+
+	MacTextLine *line = &_textLines[*row];
+	int pos = *col;
+	uint ch = line->getChunkNum(&pos);
+
+	Common::U32String newchunk(line->chunks[ch].text);
+
+	if (pos >= (int)newchunk.size())
+		newchunk += c;
+	else
+		newchunk.insertChar(c, pos);
+	int chunkw = line->chunks[ch].getFont()->getStringWidth(newchunk);
+	int oldw = line->chunks[ch].getFont()->getStringWidth(line->chunks[ch].text);
+
+	line->chunks[ch].text = newchunk;
+	line->width = -1;	// Force recalc
+
+	(*col)++;
+
+	if (getLineWidth(*row) - oldw + chunkw > _maxWidth) { // Needs reshuffle
+		reshuffleParagraph(row, col);
+		_fullRefresh = true;
+		recalcDims();
+		render();
+	} else {
+		recalcDims();
+		render(*row, *row);
+	}
+}
+
+void MacText::deletePreviousChar(int *row, int *col) {
+	if (*col == 0 && *row == 0) // nothing to do
+		return;
+
+	if (*col == 0) { // Need to glue the lines
+		*col = getLineCharWidth(*row - 1);
+		(*row)--;
+
+		// formatting matches, glue texts as normal
+		if (_textLines[*row].lastChunk().equals(_textLines[*row + 1].firstChunk())) {
+			_textLines[*row].lastChunk().text += _textLines[*row + 1].firstChunk().text;
+			_textLines[*row + 1].firstChunk().text.clear();
+		} else {
+			// formatting doesn't match, move whole chunk
+			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].firstChunk()));
+			_textLines[*row].firstChunk().text.clear();
+		}
+
+		for (uint i = 1; i < _textLines[*row + 1].chunks.size(); i++)
+			_textLines[*row].chunks.push_back(MacFontRun(_textLines[*row + 1].chunks[i]));
+
+		_textLines.remove_at(*row + 1);
+	} else {
+		int pos = *col - 1;
+		uint ch = _textLines[*row].getChunkNum(&pos);
+
+		_textLines[*row].chunks[ch].text.deleteChar(pos);
+
+		(*col)--;
+	}
+
+	_textLines[*row].width = -1; // flush the cache
+
+	reshuffleParagraph(row, col);
+
+	_fullRefresh = true;
+	recalcDims();
+	render();
+}
+
+void MacText::addNewLine(int *row, int *col) {
+	if (_textLines.empty()) {
+		appendTextDefault(Common::String("\n"));
+		(*row)++;
+
+		return;
+	}
+
+	MacTextLine *line = &_textLines[*row];
+	int pos = *col;
+	uint ch = line->getChunkNum(&pos);
+	MacFontRun newchunk = line->chunks[ch];
+	MacTextLine newline;
+
+	newchunk.text = &line->chunks[ch].text.c_str()[pos];
+	line->chunks[ch].text = Common::U32String(line->chunks[ch].text.c_str(), pos);
+	newline.chunks.push_back(newchunk);
+
+	for (uint i = ch + 1; i < line->chunks.size(); i++) {
+		newline.chunks.push_back(MacFontRun(line->chunks[i]));
+		line->chunks[i].text.clear();
+	}
+	line->width = -1; // Drop cache
+
+	_textLines[*row].width = -1; // flush the cache
+
+	_textLines.insert_at(*row + 1, newline);
+
+	(*row)++;
+	*col = 0;
+
+	_fullRefresh = true;
+	recalcDims();
+	render();
+}
+
+void MacText::reshuffleParagraph(int *row, int *col) {
+	// First, we looking for the paragraph start and end
+	int start = *row, end = *row;
+
+	while (start && !_textLines[start - 1].paragraphEnd)
+		start--;
+
+	while (end < (int)_textLines.size() - 1 && !_textLines[end].paragraphEnd) // stop at last line
+		end++;
+
+	// Get whole paragraph
+	Common::U32String paragraph = getTextChunk(start, 0, end, -1, true, false);
+
+	// Remove it from the text
+	for (int i = start; i <= end; i++) {
+		_textLines.remove_at(start);
+	}
+
+	// And now readd it
+	splitString(paragraph, start);
 }
 
 } // End of namespace Graphics

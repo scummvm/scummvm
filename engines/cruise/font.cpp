@@ -273,7 +273,7 @@ void drawString(int32 x, int32 y, const char *string, uint8 *buffer, uint8 fontC
 
 	// Free the data
 	delete s->imagePtr;
-	delete s;
+	free(s);
 }
 
 // calculates all necessary datas and renders text

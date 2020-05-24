@@ -32,13 +32,13 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 #include "common/unzip.h"
-#include <limits.h>
 
 namespace Wintermute {
 
@@ -174,7 +174,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	BaseRenderer *renderer = _gameRef->_renderer;
 
 	// find cached surface, if exists
-	uint32 minUseTime = UINT_MAX;
+	uint32 minUseTime = INT_MAX_VALUE;
 	int minIndex = -1;
 	BaseSurface *surface = nullptr;
 	int textOffset = 0;
@@ -616,6 +616,11 @@ bool BaseFontTT::initFont() {
 		warning("BaseFontTT::InitFont - Couldn't load font: %s", _fontFile);
 	}
 	_lineHeight = _font->getFontHeight();
+#ifdef ENABLE_FOXTAIL
+	if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_896, FOXTAIL_LATEST_VERSION)) {
+		_lineHeight -= 1;
+	}
+#endif
 	return STATUS_OK;
 }
 

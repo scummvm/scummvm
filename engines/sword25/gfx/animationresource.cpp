@@ -228,7 +228,7 @@ bool AnimationResource::computeFeatures() {
 	_alphaAllowed = true;
 	_colorModulationAllowed = true;
 
-	// Alle Frame durchgehen und alle Features deaktivieren, die auch nur von einem Frame nicht unterstützt werden.
+	// Alle Frame durchgehen und alle Features deaktivieren, die auch nur von einem Frame nicht unterstÃ¼tzt werden.
 	Common::Array<Frame>::const_iterator iter = _frames.begin();
 	for (; iter != _frames.end(); ++iter) {
 		BitmapResource *pBitmap;

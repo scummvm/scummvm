@@ -68,7 +68,7 @@ public:
 	 * @param sequence    The sequence to draw
 	 * @param compartment The compartment
 	 */
-	DECLARE_FUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
+	DECLARE_VFUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 	/**
 	 * Handles entering/exiting a compartment and updates position/play animation
@@ -124,7 +124,7 @@ public:
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char *filename)
+	DECLARE_VFUNCTION_1(playSound, const char *filename)
 
 	/**
 	 * Plays sound
@@ -144,7 +144,7 @@ public:
 	 * @param savegameType The type of the savegame
 	 * @param param        The param for the savegame (EventIndex or TimeValue)
 	 */
-	DECLARE_FUNCTION_2(savegame, SavegameType savegameType, uint32 param)
+	DECLARE_VFUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
 	 * Updates the entity
@@ -152,7 +152,7 @@ public:
 	 * @param car            The car
 	 * @param entityPosition The entity position
 	 */
-	DECLARE_FUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
+	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
 	DECLARE_FUNCTION_1(function17, TimeValue timeValue)
 
@@ -172,7 +172,7 @@ public:
 	/**
 	 * Setup Chapter 1
 	 */
-	DECLARE_FUNCTION(chapter1)
+	DECLARE_VFUNCTION(chapter1)
 
 	DECLARE_FUNCTION_1(function23, TimeValue timeValue)
 	DECLARE_FUNCTION(dinner)
@@ -195,7 +195,7 @@ public:
 	/**
 	 * Setup Chapter 2
 	 */
-	DECLARE_FUNCTION(chapter2)
+	DECLARE_VFUNCTION(chapter2)
 
 	/**
 	 * Handle Chapter 2 events
@@ -209,7 +209,7 @@ public:
 	/**
 	 * Setup Chapter 3
 	 */
-	DECLARE_FUNCTION(chapter3)
+	DECLARE_VFUNCTION(chapter3)
 
 	DECLARE_FUNCTION_2(function41, CarIndex car, EntityPosition entityPosition)
 	DECLARE_FUNCTION_3(function42, CarIndex car, EntityPosition entityPosition, bool)
@@ -236,7 +236,7 @@ public:
 	/**
 	 * Setup Chapter 4
 	 */
-	DECLARE_FUNCTION(chapter4)
+	DECLARE_VFUNCTION(chapter4)
 	/**
 	 * Handle Chapter 4 events
 	 */
@@ -253,7 +253,7 @@ public:
 	/**
 	 * Setup Chapter 5
 	 */
-	DECLARE_FUNCTION(chapter5)
+	DECLARE_VFUNCTION(chapter5)
 
 	/**
 	 * Handle Chapter 5 events

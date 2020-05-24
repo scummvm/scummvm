@@ -37,24 +37,25 @@ FixedWidthFont *FixedWidthFont::Create(const Std::string &iniroot) {
 	Std::string filename;
 	if (!config->get(iniroot + "/font/path", filename)) {
 		perr << "Error: 'path' key not found in font ini" << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
-	IDataSource *ds = filesys->ReadFile(filename);
+	Common::SeekableReadStream *rs = filesys->ReadFile(filename);
 
-	if (!ds) {
+	if (!rs) {
 		perr << "Error: Unable to open file " << filename << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
-	Texture *fonttex = Texture::Create(ds, filename.c_str());
+	Texture *fonttex = Texture::Create(rs, filename.c_str());
 
 	if (!fonttex) {
 		perr << "Error: Unable to read texture " << filename << Std::endl;
-		return 0;
+		// FIXME: This leaks rs
+		return nullptr;
 	}
 
-	delete ds;
+	delete rs;
 
 	FixedWidthFont *fwf = new FixedWidthFont;
 

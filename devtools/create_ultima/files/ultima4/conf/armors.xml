@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE armors SYSTEM "dtd/armors.dtd" [
+  <!ENTITY % common SYSTEM "dtd/common.dtd">
+  %common;
+  <!ENTITY % constraint SYSTEM "dtd/constraint.dtd">
+  %constraint;
+]>
+
+<!-- $Id: armors.xml 1972 2004-07-11 23:10:39Z dougday $ -->
+<armors>
+    <armor name="Skin" defense="96"/>    
+    <armor name="Cloth" defense="128"/>    
+    <armor name="Leather" defense="144">
+        <constraint canuse="false" class="mage"/>
+    </armor>
+    <armor name="Chain Mail" defense="160">        
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="fighter"/>
+        <constraint canuse="true" class="tinker"/>
+        <constraint canuse="true" class="paladin"/>
+    </armor>
+    <armor name="Plate Mail" defense="176">        
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="fighter"/>
+        <constraint canuse="true" class="tinker"/>
+        <constraint canuse="true" class="paladin"/>
+    </armor>
+    <armor name="Magic Chain" defense="192">         
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="fighter"/>
+        <constraint canuse="true" class="paladin"/>
+    </armor>
+    <armor name="Magic Plate" defense="208">        
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="paladin"/>
+    </armor>
+    <armor name="Mystic Robe" defense="248"/>    
+</armors>

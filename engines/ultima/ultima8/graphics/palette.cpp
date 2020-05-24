@@ -28,15 +28,15 @@
 namespace Ultima {
 namespace Ultima8 {
 
-void Palette::load(IDataSource &ds, IDataSource &xformds) {
-	load(ds);
+void Palette::load(Common::ReadStream &rs, Common::ReadStream &xformrs) {
+	load(rs);
 	for (int i = 0; i < 256; i++)
-		_xform_untransformed[i] = xformds.read4();
+		_xform_untransformed[i] = xformrs.readUint32LE();
 }
 
-void Palette::load(IDataSource &ds) {
+void Palette::load(Common::ReadStream &rs) {
 	int i;
-	ds.read(_palette, 768);
+	rs.read(_palette, 768);
 
 	// convert from 0-63 to 0-255 _palette
 	for (i = 0; i < 256; i++) {

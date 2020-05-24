@@ -226,7 +226,7 @@ bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

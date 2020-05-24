@@ -20,13 +20,7 @@
  *
  */
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lauxlib.h"
-#else
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/scummsys.h"
-#include "ultima/nuvie/lua/lauxlib.h"
-#endif
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -128,6 +122,8 @@ static int nscript_get_mouse_y(lua_State *L);
 static int nscript_input_poll(lua_State *L);
 
 static int nscript_config_set(lua_State *L);
+
+static int nscript_engine_should_quit(lua_State *L);
 
 void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundManager *sm) {
 	cutScene = new ScriptCutscene(gui, cfg, sm);
@@ -245,6 +241,9 @@ void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundMana
 
 	lua_pushcfunction(L, nscript_config_set);
 	lua_setglobal(L, "config_set");
+
+	lua_pushcfunction(L, nscript_engine_should_quit);
+	lua_setglobal(L, "engine_should_quit");
 }
 
 bool nscript_new_image_var(lua_State *L, CSImage *image) {
@@ -995,7 +994,7 @@ static int nscript_input_poll(lua_State *L) {
 		poll_mouse_motion = false;
 	else
 		poll_mouse_motion = lua_toboolean(L, 1);
-	
+
 	while (Events::get()->pollEvent(event)) {
 		//FIXME do something here.
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -1048,6 +1047,11 @@ static int nscript_input_poll(lua_State *L) {
 			lua_pushinteger(L, key.keycode);
 			return 1;
 		}
+		if (event.type == Common::EVENT_QUIT) {
+			lua_pushinteger(L, 'Q');
+			return 1;
+		}
+
 		if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 			lua_pushinteger(L, 0);
 			return 1;
@@ -1073,6 +1077,12 @@ static int nscript_config_set(lua_State *L) {
 	}
 
 	return 0;
+}
+
+static int nscript_engine_should_quit(lua_State *L) {
+	int x = g_engine->shouldQuit();
+	lua_pushinteger(L, x);
+	return 1;
 }
 
 ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : GUI_Widget(NULL) {
@@ -1200,14 +1210,17 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 	if (idx >= 0) {
 		U6Lzw lzw;
 
-		U6Lib_n libN;
 		uint32 decomp_size;
 		unsigned char *buf = lzw.decompress_file(path.c_str(), decomp_size);
 		NuvieIOBuffer io;
 		io.open(buf, decomp_size, false);
-		if (libN.open(&io, 4, NUVIE_GAME_MD)) {
-			if (shp->load(&libN, (uint32)idx)) {
-				image = new CSImage(shp);
+		{
+			// Note: libN needs to be destroyed before the io object.
+			U6Lib_n libN;
+			if (libN.open(&io, 4, NUVIE_GAME_MD)) {
+				if (shp->load(&libN, (uint32)idx)) {
+					image = new CSImage(shp);
+				}
 			}
 		}
 		free(buf);
@@ -1228,8 +1241,6 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 	CSImage *image = NULL;
 
 	config_get_path(config, filename, path);
-
-
 
 	Std::vector<Std::vector<CSImage *> > v;
 	U6Lzw lzw;
@@ -1279,6 +1290,8 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 				v.push_back(v1);
 			}
 		}
+
+		lib_n.close();
 	}
 
 	if (buf)

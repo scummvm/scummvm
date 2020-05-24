@@ -60,11 +60,15 @@ enum EventType {
 	EVENT_MBUTTONUP = 14,
 
 	EVENT_MAINMENU = 15,
-	EVENT_RTL = 16,
+	EVENT_RETURN_TO_LAUNCHER = 16,
 	EVENT_MUTE = 17,
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
+
+	/** The input devices have changed, input related configuration needs to be re-applied */
+	EVENT_INPUT_CHANGED  = 35,
+
 	/**
 	 * The backend requests the agi engine's predictive dialog to be shown.
 	 * TODO: Fingolfin suggests that it would be of better value to expand
@@ -76,6 +80,7 @@ enum EventType {
 
 	EVENT_CUSTOM_BACKEND_ACTION_START = 18,
 	EVENT_CUSTOM_BACKEND_ACTION_END   = 19,
+	EVENT_CUSTOM_BACKEND_ACTION_AXIS  = 34,
 	EVENT_CUSTOM_ENGINE_ACTION_START  = 20,
 	EVENT_CUSTOM_ENGINE_ACTION_END    = 21,
 
@@ -103,7 +108,11 @@ enum EventType {
 	EVENT_X1BUTTONDOWN = 30,
 	EVENT_X1BUTTONUP = 31,
 	EVENT_X2BUTTONDOWN = 32,
-	EVENT_X2BUTTONUP = 33
+	EVENT_X2BUTTONUP = 33,
+
+	/** ScummVM has gained or lost focus */
+	EVENT_FOCUS_GAINED = 36,
+	EVENT_FOCUS_LOST = 37
 };
 
 const int16 JOYAXIS_MIN = -32768;
@@ -222,6 +231,13 @@ struct Event {
 };
 
 /**
+ * Determinates whether an event is a mouse event
+ *
+ * Mouse events have valid mouse coordinates
+ */
+bool isMouseEvent(const Event &event);
+
+/**
  * A source of Events.
  *
  * An example for this is OSystem, it provides events created by the system
@@ -229,7 +245,7 @@ struct Event {
  */
 class EventSource {
 public:
-	virtual ~EventSource() {}
+	virtual ~EventSource();
 
 	/**
 	 * Queries a event from the source.
@@ -287,7 +303,7 @@ public:
  */
 class EventObserver {
 public:
-	virtual ~EventObserver() {}
+	virtual ~EventObserver();
 
 	/**
 	 * Notifies the observer of an incoming event.
@@ -317,7 +333,7 @@ public:
  */
 class EventMapper {
 public:
-	virtual ~EventMapper() {}
+	virtual ~EventMapper();
 
 	/**
 	 * Map an incoming event to one or more action events
@@ -423,8 +439,7 @@ class Keymapper;
  */
 class EventManager : NonCopyable {
 public:
-	EventManager() {}
-	virtual ~EventManager() {}
+	virtual ~EventManager();
 
 	enum {
 		LBUTTON = 1 << MOUSE_BUTTON_LEFT,
@@ -477,14 +492,14 @@ public:
 	/**
 	 * Should we return to the launcher?
 	 */
-	virtual int shouldRTL() const = 0;
+	virtual int shouldReturnToLauncher() const = 0;
 
 	/**
-	 * Reset the "return to launcher" flag (as returned shouldRTL()) to false.
+	 * Reset the "return to launcher" flag (as returned shouldReturnToLauncher()) to false.
 	 * Used when we have returned to the launcher.
 	 */
-	virtual void resetRTL() = 0;
-#ifdef FORCE_RTL
+	virtual void resetReturnToLauncher() = 0;
+#ifdef FORCE_RETURN_TO_LAUNCHER
 	virtual void resetQuit() = 0;
 #endif
 	// Optional: check whether a given key is currently pressed ????
@@ -524,6 +539,14 @@ public:
 protected:
 	EventDispatcher _dispatcher;
 };
+
+/**
+ * Wrap an event source so the key down events are repeated while
+ * keys are held down.
+ *
+ * Does not take ownership of the wrapped EventSource.
+ */
+EventSource *makeKeyboardRepeatingEventSource(EventSource *eventSource);
 
 } // End of namespace Common
 

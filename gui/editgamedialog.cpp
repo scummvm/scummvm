@@ -64,6 +64,7 @@ enum {
 	kSearchClearCmd = 'SRCL',
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
+	kCmdGlobalShaderOverride = 'OSHD',
 	kCmdGlobalAudioOverride = 'OSFX',
 	kCmdGlobalMIDIOverride = 'OMID',
 	kCmdGlobalMT32Override = 'OM32',
@@ -104,15 +105,13 @@ EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	EngineMan.upgradeTargetIfNecessary(domain);
 
-	// Retrieve all game specific options.
+	_engineOptions = nullptr;
 
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
 	const Plugin *plugin = nullptr;
 	QualifiedGameDescriptor qgd = EngineMan.findTarget(domain, &plugin);
-	if (plugin) {
-		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
-	} else {
+	if (!plugin) {
 		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
 	}
 
@@ -174,12 +173,21 @@ EditGameDialog::EditGameDialog(const String &domain)
 	}
 
 	//
-	// 2) The engine tab (shown only if there are custom engine options)
+	// 2) The engine tab (shown only if the engine implements one or there are custom engine options)
 	//
-	if (_engineOptions.size() > 0) {
-		tab->addTab(_("Engine"), "GameOptions_Engine");
 
-		addEngineControls(tab, "GameOptions_Engine.", _engineOptions);
+	if (plugin) {
+		int tabId = tab->addTab(_("Engine"), "GameOptions_Engine");
+
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		metaEngine.registerDefaultSettings(_domain);
+		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GameOptions_Engine.Container", _domain);
+
+		if (_engineOptions) {
+			_engineOptions->setParentDialog(this);
+		} else {
+			tab->removeTab(tabId);
+		}
 	}
 
 	//
@@ -196,6 +204,22 @@ EditGameDialog::EditGameDialog(const String &domain)
 		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), nullptr, kCmdGlobalGraphicsOverride);
 
 	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
+
+	//
+	// The shader tab (currently visible only for Vita platform), visibility checking by features
+	//
+
+	_globalShaderOverride = nullptr;
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		tab->addTab(_("Shader"), "GameOptions_Shader");
+
+		if (g_system->getOverlayWidth() > 320)
+			_globalShaderOverride = new CheckboxWidget(tab, "GameOptions_Shader.EnableTabCheckbox", _("Override global shader settings"), nullptr, kCmdGlobalShaderOverride);
+		else
+			_globalShaderOverride = new CheckboxWidget(tab, "GameOptions_Shader.EnableTabCheckbox", _c("Override global shader settings", "lowres"), nullptr, kCmdGlobalShaderOverride);
+
+		addShaderControls(tab, "GameOptions_Shader.");
+	}
 
 	//
 	// The Keymap tab
@@ -306,6 +330,18 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
+	//
+	// 9) The Achievements tab
+	//
+	if (plugin) {
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
+		if (achievementsInfo.descriptions.size() > 0) {
+			tab->addTab(_("Achievements"), "GameOptions_Achievements");
+			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);
+		}
+	}
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
@@ -343,6 +379,11 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("fullscreen", _domain) ||
 		ConfMan.hasKey("aspect_ratio", _domain);
 	_globalGraphicsOverride->setState(e);
+
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		e = ConfMan.hasKey("shader", _domain);
+		_globalShaderOverride->setState(e);
+	}
 
 	e = ConfMan.hasKey("music_driver", _domain) ||
 		ConfMan.hasKey("output_rate", _domain) ||
@@ -382,18 +423,8 @@ void EditGameDialog::open() {
 		_langPopUp->setEnabled(false);
 	}
 
-	// Set the state of engine-specific checkboxes
-	for (uint j = 0; j < _engineOptions.size(); ++j) {
-		// The default values for engine-specific checkboxes are not set when
-		// ScummVM starts, as this would require us to load and poll all of the
-		// engine plugins on startup. Thus, we set the state of each custom
-		// option checkbox to what is specified by the engine plugin, and
-		// update it only if a value has been set in the configuration of the
-		// currently selected game.
-		bool isChecked = _engineOptions[j].defaultState;
-		if (ConfMan.hasKey(_engineOptions[j].configOption, _domain))
-			isChecked = ConfMan.getBool(_engineOptions[j].configOption, _domain);
-		_engineCheckboxes[j]->setState(isChecked);
+	if (_engineOptions) {
+		_engineOptions->load();
 	}
 
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -437,9 +468,8 @@ void EditGameDialog::apply() {
 	else
 		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
 
-	// Set the state of engine-specific checkboxes
-	for (uint i = 0; i < _engineOptions.size(); i++) {
-		ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
+	if (_engineOptions) {
+		_engineOptions->save();
 	}
 
 	OptionsDialog::apply();
@@ -449,6 +479,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kCmdGlobalGraphicsOverride:
 		setGraphicSettingsState(data != 0);
+		g_gui.scheduleTopDialogRedraw();
+		break;
+	case kCmdGlobalShaderOverride:
+		setShaderSettingsState(data != 0);
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalAudioOverride:
@@ -562,6 +596,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			}
 			ConfMan.renameGameDomain(_domain, newDomain);
 			_domain = newDomain;
+			if (_engineOptions) {
+				_engineOptions->setDomain(newDomain);
+			}
 		}
 	}
 	// fall through

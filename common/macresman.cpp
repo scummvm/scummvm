@@ -52,7 +52,7 @@ MacResManager::MacResManager() {
 
 	_mode = kResForkNone;
 
-	_resForkOffset = 0;
+	_resForkOffset = -1;
 	_resForkSize = 0;
 
 	_dataOffset = 0;
@@ -62,8 +62,6 @@ MacResManager::MacResManager() {
 	_resMap.reset();
 	_resTypes = nullptr;
 	_resLists = nullptr;
-
-	close();
 }
 
 MacResManager::~MacResManager() {

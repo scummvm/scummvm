@@ -29,7 +29,7 @@
 namespace Glk {
 namespace Frotz {
 
-const Header::StoryEntry Header::RECORDS[25] = {
+const Header::StoryEntry Header::RECORDS[26] = {
 	{       SHERLOCK,  21, "871214" },
 	{       SHERLOCK,  26, "880127" },
 	{    BEYOND_ZORK,  47, "870915" },
@@ -54,6 +54,7 @@ const Header::StoryEntry Header::RECORDS[25] = {
 	{ LURKING_HORROR, 203, "870506" },
 	{ LURKING_HORROR, 219, "870912" },
 	{ LURKING_HORROR, 221, "870918" },
+	{      MILLIWAYS, 184, "890412" },
 	{        UNKNOWN,   0, "------" }
 };
 

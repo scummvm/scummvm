@@ -34,12 +34,16 @@ namespace Director {
 struct DirectorGameDescription {
 	ADGameDescription desc;
 
-	DirectorGameID gameID;
+	DirectorGameGID gameGID;
 	uint16 version;
 };
 
-DirectorGameID DirectorEngine::getGameID() const {
-	return _gameDescription->gameID;
+DirectorGameGID DirectorEngine::getGameGID() const {
+	return _gameDescription->gameGID;
+}
+
+const char *DirectorEngine::getGameId() const {
+	return _gameDescription->desc.gameId;
 }
 
 Common::Platform DirectorEngine::getPlatform() const {
@@ -62,8 +66,8 @@ Common::String DirectorEngine::getEXEName() const {
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return false;
+		//(f == kSupportsReturnToLauncher);
 }
 
 } // End of Namespace Director
@@ -74,6 +78,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "directortest-all",	"Macromedia Director All Movies Test Target" },
 	{ "theapartment",	"The Apartment, Interactive demo" },
 	{ "gundam0079",	"Gundam 0079: The War for Earth" },
+	{ "ironhelix",	"Iron Helix" },
 	{ "jewels",		"Jewels of the Oracle" },
 	{ "jman",		"The Journeyman Project" },
 	{ "majestic",	"Majestic Part I: Alien Encounter" },
@@ -168,7 +173,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 	desc->desc.guiOptions = GUIO0();
 	desc->desc.filesDescriptions[0].fileName = 0;
 	desc->version = 0;
-	desc->gameID = Director::GID_GENERIC;
+	desc->gameGID = Director::GID_GENERIC;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())

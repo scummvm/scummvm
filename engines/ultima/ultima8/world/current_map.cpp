@@ -42,24 +42,16 @@
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-using Std::list; // too messy otherwise
-typedef list<Item *> item_list;
+typedef Std::list<Item *> item_list;
 
-const int INT_MAX_VALUE = 0x7fffffff;
+static const int INT_MAX_VALUE = 0x7fffffff;
 
 CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	  _fastXMin(-1), _fastYMin(-1), _fastXMax(-1), _fastYMax(-1) {
-	_items = new list<Item *> *[MAP_NUM_CHUNKS];
-	_fast = new uint32*[MAP_NUM_CHUNKS];
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		_items[i] = new list<Item *>[MAP_NUM_CHUNKS];
-		_fast[i] = new uint32[MAP_NUM_CHUNKS / 32];
 		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 
@@ -75,13 +67,6 @@ CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 
 CurrentMap::~CurrentMap() {
 //	clear();
-
-	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		delete[] _items[i];
-		delete[] _fast[i];
-	}
-	delete[] _items;
-	delete[] _fast;
 }
 
 void CurrentMap::clear() {
@@ -96,7 +81,7 @@ void CurrentMap::clear() {
 	}
 
 	_fastXMin =  _fastYMin = _fastXMax = _fastYMax = -1;
-	_currentMap = 0;
+	_currentMap = nullptr;
 
 	Process *ehp = Kernel::get_instance()->getProcess(_eggHatcher);
 	if (ehp)
@@ -105,7 +90,7 @@ void CurrentMap::clear() {
 }
 
 uint32 CurrentMap::getNum() const {
-	if (_currentMap == 0)
+	if (_currentMap == nullptr)
 		return 0;
 
 	return _currentMap->_mapNum;
@@ -135,24 +120,23 @@ void CurrentMap::writeback() {
 				item->clearExtFlag(Item::EXT_INCURMAP);
 
 				// delete all _fast only and disposable _items
-				if ((item->getFlags() & Item::FLG_FAST_ONLY) ||
-				        (item->getFlags() & Item::FLG_DISPOSABLE)) {
+				if (item->hasFlags(Item::FLG_FAST_ONLY | Item::FLG_DISPOSABLE)) {
 					delete item;
 					continue;
 				}
 
 				// Reset the egg
-				Egg *egg = p_dynamic_cast<Egg *>(item);
+				Egg *egg = dynamic_cast<Egg *>(item);
 				if (egg) {
 					egg->reset();
 				}
 
 				// this item isn't from the Map. (like NPCs)
-				if (item->getFlags() & Item::FLG_IN_NPC_LIST)
+				if (item->hasFlags(Item::FLG_IN_NPC_LIST))
 					continue;
 
 				item->clearObjId();
-				if (item->getExtFlags() & Item::EXT_FIXED) {
+				if (item->hasExtFlags(Item::EXT_FIXED)) {
 					// item came from fixed
 					_currentMap->_fixedItems.push_back(item);
 				} else {
@@ -170,7 +154,7 @@ void CurrentMap::writeback() {
 	_eggHatcher = 0;
 }
 
-void CurrentMap::loadItems(list<Item *> itemlist, bool callCacheIn) {
+void CurrentMap::loadItems(Std::list<Item *> itemlist, bool callCacheIn) {
 	item_list::iterator iter;
 	for (iter = itemlist.begin(); iter != itemlist.end(); ++iter) {
 		Item *item = *iter;
@@ -190,7 +174,7 @@ void CurrentMap::loadItems(list<Item *> itemlist, bool callCacheIn) {
 
 void CurrentMap::loadMap(Map *map) {
 	// don't call the cachein events at startup or when loading a savegame
-	bool callCacheIn = (_currentMap != 0);
+	bool callCacheIn = (_currentMap != nullptr);
 
 	_currentMap = map;
 
@@ -253,9 +237,9 @@ void CurrentMap::addItem(Item *item) {
 	_items[cx][cy].push_front(item);
 	item->setExtFlag(Item::EXT_INCURMAP);
 
-	Egg *egg = p_dynamic_cast<Egg *>(item);
+	Egg *egg = dynamic_cast<Egg *>(item);
 	if (egg) {
-		EggHatcherProcess *ehp = p_dynamic_cast<EggHatcherProcess *>(Kernel::get_instance()->getProcess(_eggHatcher));
+		EggHatcherProcess *ehp = dynamic_cast<EggHatcherProcess *>(Kernel::get_instance()->getProcess(_eggHatcher));
 		assert(ehp);
 		ehp->addEgg(egg);
 	}
@@ -279,9 +263,9 @@ void CurrentMap::addItemToEnd(Item *item) {
 	_items[cx][cy].push_back(item);
 	item->setExtFlag(Item::EXT_INCURMAP);
 
-	Egg *egg = p_dynamic_cast<Egg *>(item);
+	Egg *egg = dynamic_cast<Egg *>(item);
 	if (egg) {
-		EggHatcherProcess *ehp = p_dynamic_cast<EggHatcherProcess *>(Kernel::get_instance()->getProcess(_eggHatcher));
+		EggHatcherProcess *ehp = dynamic_cast<EggHatcherProcess *>(Kernel::get_instance()->getProcess(_eggHatcher));
 		assert(ehp);
 		ehp->addEgg(egg);
 	}
@@ -353,29 +337,14 @@ static inline void CalcFastAreaLimits(int32 &sx_limit,
 }
 
 void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 to_x, int32 to_y, int32 to_z) {
-	int x_min = from_x;
-	int x_max = to_x;
+	int x_min = MIN(from_x, to_x);
+	int x_max = MAX(from_x, to_x);
 
-	if (x_max < x_min)  {
-		x_min = to_x;
-		x_max = from_x;
-	}
+	int y_min = MIN(from_y, to_y);
+	int y_max = MAX(from_y, to_y);
 
-	int y_min = from_y;
-	int y_max = to_y;
-
-	if (y_max < y_min)  {
-		y_min = to_y;
-		y_max = from_y;
-	}
-
-	int z_min = from_z;
-	int z_max = to_z;
-
-	if (z_max < z_min)  {
-		z_min = to_z;
-		z_max = from_z;
-	}
+	int z_min = MIN(from_z, to_z);
+	int z_max = MAX(from_z, to_z);
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
 	Rect dims;
@@ -421,7 +390,8 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 			bool currently_fast = isChunkFast(cx, cy);
 
 			// Don't do anything, they are the same
-			if (want_fast == currently_fast) continue;
+			if (want_fast == currently_fast)
+				continue;
 
 			// leave _fast area
 			if (!want_fast) unsetChunkFast(cx, cy);
@@ -452,31 +422,33 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	}
 }
 
+void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const {
+	minx = CLIP(minx, 0, MAP_NUM_CHUNKS - 1);
+	maxx = CLIP(maxx, 0, MAP_NUM_CHUNKS - 1);
+	miny = CLIP(miny, 0, MAP_NUM_CHUNKS - 1);
+	maxy = CLIP(maxy, 0, MAP_NUM_CHUNKS - 1);
+}
+
 void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
                             uint32 scriptsize, const Item *check, uint16 range,
-                            bool recurse, int32 x, int32 y) {
-	int32 z;
-	int32 xd = 0, yd = 0, zd = 0;
+                            bool recurse, int32 x, int32 y) const {
+	int32 xd = 0, yd = 0;
 
 	// if item != 0, search an area around item. Otherwise, search an area
 	// around (x,y)
 	if (check) {
+		int32 z, zd;
 		check->getLocationAbsolute(x, y, z);
 		check->getFootpadWorld(xd, yd, zd);
 	}
 
-	Rect searchrange(x - xd - range, y - yd - range, 2 * range + xd, 2 * range + yd);
+	const Rect searchrange(x - xd - range, y - yd - range, 2 * range + xd, 2 * range + yd);
 
-	int minx, miny, maxx, maxy;
-
-	minx = ((x - xd - range) / _mapChunkSize) - 1;
-	maxx = ((x + range) / _mapChunkSize) + 1;
-	miny = ((y - yd - range) / _mapChunkSize) - 1;
-	maxy = ((y + range) / _mapChunkSize) + 1;
-	if (minx < 0) minx = 0;
-	if (maxx >= MAP_NUM_CHUNKS) maxx = MAP_NUM_CHUNKS - 1;
-	if (miny < 0) miny = 0;
-	if (maxy >= MAP_NUM_CHUNKS) maxy = MAP_NUM_CHUNKS - 1;
+	int minx = ((x - xd - range) / _mapChunkSize) - 1;
+	int maxx = ((x + range) / _mapChunkSize) + 1;
+	int miny = ((y - yd - range) / _mapChunkSize) - 1;
+	int maxy = ((y + range) / _mapChunkSize) + 1;
+	clipMapChunks(minx, maxx, miny, maxy);
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
@@ -486,31 +458,25 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				const Item *item = *iter;
 
-				if (item->getExtFlags() & Item::EXT_SPRITE) continue;
+				if (item->hasExtFlags(Item::EXT_SPRITE))
+					continue;
 
 				// check if item is in range?
 				int32 ix, iy, iz;
 				item->getLocation(ix, iy, iz);
 
-				const ShapeInfo *info = item->getShapeInfo();
-				int32 ixd, iyd;
+				int32 ixd, iyd, izd;
+				item->getFootpadWorld(ixd, iyd, izd);
 
-				//!! constants
-				if (item->getFlags() & Item::FLG_FLIPPED) {
-					ixd = 32 * info->_y;
-					iyd = 32 * info->_x;
-				} else {
-					ixd = 32 * info->_x;
-					iyd = 32 * info->_y;
-				}
+				const Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
 
-				Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
-
-				if (!itemrect.Overlaps(searchrange)) continue;
+				if (!itemrect.Overlaps(searchrange))
+					continue;
 
 				// check item against loopscript
-				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
-					uint16 objid = (*iter)->getObjId();
+				if (item->checkLoopScript(loopscript, scriptsize)) {
+					assert(itemlist->getElementSize() == 2);
+					uint16 objid = item->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
 					buf[1] = static_cast<uint8>(objid >> 8);
@@ -519,7 +485,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				if (recurse) {
 					// recurse into child-containers
-					Container *container = p_dynamic_cast<Container *>(*iter);
+					const Container *container = dynamic_cast<const Container *>(item);
 					if (container)
 						container->containerSearch(itemlist, loopscript,
 						                           scriptsize, recurse);
@@ -531,7 +497,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
                                uint32 scriptsize, const Item *check,
-							   bool above, bool below, bool recurse) {
+							   bool above, bool below, bool recurse) const {
 	int32 origin[3];
 	int32 dims[3];
 	check->getLocationAbsolute(origin[0], origin[1], origin[2]);
@@ -543,31 +509,28 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
                                uint32 scriptsize, ObjId check,
                                int32 origin[3], int32 dims[3],
-                               bool above, bool below, bool recurse) {
-	Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
+                               bool above, bool below, bool recurse) const {
+	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
 	                 dims[0], dims[1]);
 
-	int32 minx, miny, maxx, maxy;
+	int minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
+	int maxx = ((origin[0]) / _mapChunkSize) + 1;
+	int miny = ((origin[1] - dims[1]) / _mapChunkSize) - 1;
+	int maxy = ((origin[1]) / _mapChunkSize) + 1;
+	clipMapChunks(minx, maxx, miny, maxy);
 
-	minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
-	maxx = ((origin[0]) / _mapChunkSize) + 1;
-	miny = ((origin[1] - dims[1]) / _mapChunkSize) - 1;
-	maxy = ((origin[1]) / _mapChunkSize) + 1;
-	if (minx < 0) minx = 0;
-	if (maxx >= MAP_NUM_CHUNKS) maxx = MAP_NUM_CHUNKS - 1;
-	if (miny < 0) miny = 0;
-	if (maxy >= MAP_NUM_CHUNKS) maxy = MAP_NUM_CHUNKS - 1;
-
-	for (int32 cx = minx; cx <= maxx; cx++) {
-		for (int32 cy = miny; cy <= maxy; cy++) {
-			item_list::iterator iter;
+	for (int cx = minx; cx <= maxx; cx++) {
+		for (int cy = miny; cy <= maxy; cy++) {
+			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
 
-				Item *item = *iter;
+				const Item *item = *iter;
 
-				if (item->getObjId() == check) continue;
-				if (item->getExtFlags() & Item::EXT_SPRITE) continue;
+				if (item->getObjId() == check)
+					continue;
+				if (item->hasExtFlags(Item::EXT_SPRITE))
+					continue;
 
 				// check if item is in range?
 				int32 ix, iy, iz;
@@ -575,9 +538,10 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 				int32 ixd, iyd, izd;
 				item->getFootpadWorld(ixd, iyd, izd);
 
-				Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
+				const Rect itemrect(ix - ixd, iy - iyd, ixd, iyd);
 
-				if (!itemrect.Overlaps(searchrange)) continue;
+				if (!itemrect.Overlaps(searchrange))
+					continue;
 
 				bool ok = false;
 
@@ -595,11 +559,13 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 						surfaceSearch(itemlist, loopscript, scriptsize, item, false, true, true);
 				}
 
-				if (!ok) continue;
+				if (!ok)
+					continue;
 
 				// check item against loopscript
-				if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
-					uint16 objid = (*iter)->getObjId();
+				if (item->checkLoopScript(loopscript, scriptsize)) {
+					assert(itemlist->getElementSize() == 2);
+					uint16 objid = item->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
 					buf[1] = static_cast<uint8>(objid >> 8);
@@ -616,7 +582,7 @@ TeleportEgg *CurrentMap::findDestination(uint16 id) {
 			item_list::iterator iter;
 			for (iter = _items[i][j].begin();
 			        iter != _items[i][j].end(); ++iter) {
-				TeleportEgg *egg = p_dynamic_cast<TeleportEgg *>(*iter);
+				TeleportEgg *egg = dynamic_cast<TeleportEgg *>(*iter);
 				if (egg) {
 					if (!egg->isTeleporter() && egg->getTeleportId() == id)
 						return egg;
@@ -624,20 +590,25 @@ TeleportEgg *CurrentMap::findDestination(uint16 id) {
 			}
 		}
 	}
-	return 0;
+	return nullptr;
 }
+
+const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
+	if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
+		return nullptr;
+	return &_items[gx][gy];
+}
+
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shape,
                                  ObjId item, const Item **support,
                                  ObjId *roof) const {
-	int xd, yd, zd;
 	const ShapeInfo *si = GameData::get_instance()->
 	                getMainShapes()->getShapeInfo(shape);
-	//!! constants
-	xd = si->_x * 32;
-	yd = si->_y * 32;
-	zd = si->_z * 8;
+	int32 xd, yd, zd;
+	// Note: this assumes the shape to be placed is not flipped
+	si->getFootpadWorld(xd, yd, zd, 0);
 
 	return isValidPosition(x, y, z,
 	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
@@ -668,29 +639,26 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	bool valid = true;
-	const Item *support = 0;
+	const Item *support = nullptr;
 	ObjId roof = 0;
-	int32 roofz = 1 << 24; //!! semi-constant
+	int32 roofz = INT_MAX_VALUE;
 
-	int minx, miny, maxx, maxy;
-
-	minx = ((x - xd) / _mapChunkSize) - 1;
-	maxx = (x / _mapChunkSize) + 1;
-	miny = ((y - yd) / _mapChunkSize) - 1;
-	maxy = (y / _mapChunkSize) + 1;
-	if (minx < 0) minx = 0;
-	if (maxx >= MAP_NUM_CHUNKS) maxx = MAP_NUM_CHUNKS - 1;
-	if (miny < 0) miny = 0;
-	if (maxy >= MAP_NUM_CHUNKS) maxy = MAP_NUM_CHUNKS - 1;
+	int minx = ((x - xd) / _mapChunkSize) - 1;
+	int maxx = (x / _mapChunkSize) + 1;
+	int miny = ((y - yd) / _mapChunkSize) - 1;
+	int maxy = (y / _mapChunkSize) + 1;
+	clipMapChunks(minx, maxx, miny, maxy);
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
+				 iter != _items[cx][cy].end(); ++iter) {
 				const Item *item = *iter;
-				if (item->getObjId() == item_) continue;
-				if (item->getExtFlags() & Item::EXT_SPRITE) continue;
+				if (item->getObjId() == item_)
+					continue;
+				if (item->hasExtFlags(Item::EXT_SPRITE))
+					continue;
 
 				ShapeInfo *si = item->getShapeInfo();
 				//!! need to check is_sea() and is_land() maybe?
@@ -698,7 +666,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 					continue; // not an interesting item
 
 				int32 ix, iy, iz, ixd, iyd, izd;
-				si->getFootpadWorld(ixd, iyd, izd, item->getFlags() & Item::FLG_FLIPPED);
+				item->getFootpadWorld(ixd, iyd, izd);
 				item->getLocation(ix, iy, iz);
 
 #if 0
@@ -729,9 +697,9 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 				// check xy overlap
 				if (!(x <= ix - ixd || x - xd >= ix ||
-				        y <= iy - iyd || y - yd >= iy)) {
+				      y <= iy - iyd || y - yd >= iy)) {
 					// check support
-					if (support == 0 && si->is_solid() &&
+					if (support == nullptr && si->is_solid() &&
 					        iz + izd == z) {
 						support = item;
 					}
@@ -754,28 +722,25 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	return valid;
 }
 
-bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
+bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
                                       int movedir, bool wantsupport,
                                       int32 &tx, int32 &ty, int32 &tz) {
 	// TODO: clean this up. Currently the mask arrays are filled with more
 	// data than is actually used.
-
-	uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
-	static uint32 validmask[17];
-	static uint32 supportmask[17];
+	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING) & item->getShapeInfo()->_flags;
 
 	int searchdir = (movedir + 2) % 4;
 
-	int xdir = (x_fact[searchdir] != 0) ? 1 : 0;
-	int ydir = (y_fact[searchdir] != 0) ? 1 : 0;
+	bool xdir = (x_fact[searchdir] != 0);
+	bool ydir = (y_fact[searchdir] != 0);
 
 	// mark everything as valid, but without support
+	uint32 validmask[17];
+	uint32 supportmask[17];
 	for (int i = 0; i < 17; ++i) {
 		validmask[i] = 0x1FFFF;
 		supportmask[i] = 0;
 	}
-
-	blockflagmask &= item->getShapeInfo()->_flags;
 
 	int32 xd, yd, zd;
 	item->getFootpadWorld(xd, yd, zd);
@@ -790,27 +755,24 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 	// next, we'll loop over all objects in the area, and mark the areas
 	// overlapped and supported by each object
 
-	int minx, miny, maxx, maxy;
-
-	minx = ((x - xd) / _mapChunkSize) - 1;
-	maxx = (x / _mapChunkSize) + 1;
-	miny = ((y - yd) / _mapChunkSize) - 1;
-	maxy = (y / _mapChunkSize) + 1;
-	if (minx < 0) minx = 0;
-	if (maxx >= MAP_NUM_CHUNKS) maxx = MAP_NUM_CHUNKS - 1;
-	if (miny < 0) miny = 0;
-	if (maxy >= MAP_NUM_CHUNKS) maxy = MAP_NUM_CHUNKS - 1;
+	int minx = ((x - xd) / _mapChunkSize) - 1;
+	int maxx = (x / _mapChunkSize) + 1;
+	int miny = ((y - yd) / _mapChunkSize) - 1;
+	int maxy = (y / _mapChunkSize) + 1;
+	clipMapChunks(minx, maxx, miny, maxy);
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::iterator iter;
+			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
-				Item *citem = *iter;
-				if (citem->getObjId() == item->getObjId()) continue;
-				if (citem->getExtFlags() & Item::EXT_SPRITE) continue;
+				const Item *citem = *iter;
+				if (citem->getObjId() == item->getObjId())
+					continue;
+				if (citem->hasExtFlags(Item::EXT_SPRITE))
+					continue;
 
-				ShapeInfo *si = citem->getShapeInfo();
+				const ShapeInfo *si = citem->getShapeInfo();
 				//!! need to check is_sea() and is_land() maybe?
 				if (!(si->_flags & blockflagmask))
 					continue; // not an interesting item
@@ -832,8 +794,10 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 
 				int minh = -100;
 				int maxh = 100;
-				if (!xdir && (sminx > 0 || smaxx < 0)) continue;
-				if (!ydir && (sminy > 0 || smaxy < 0)) continue;
+				if (!xdir && (sminx > 0 || smaxx < 0))
+					continue;
+				if (!ydir && (sminy > 0 || smaxy < 0))
+					continue;
 
 				if (xdir && minh < sminx)
 					minh = sminx;
@@ -926,46 +890,41 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
                            const int32 dims[3], uint32 shapeflags,
                            ObjId item, bool blocking_only,
-                           Std::list<SweepItem> *hit) {
+                           Std::list<SweepItem> *hit) const {
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
-	int i;
-
-	int minx, miny, maxx, maxy;
-	minx = ((start[0] - dims[0]) / _mapChunkSize) - 1;
-	maxx = (start[0] / _mapChunkSize) + 1;
-	miny = ((start[1] - dims[1]) / _mapChunkSize) - 1;
-	maxy = (start[1] / _mapChunkSize) + 1;
+	int minx = ((start[0] - dims[0]) / _mapChunkSize) - 1;
+	int maxx = (start[0] / _mapChunkSize) + 1;
+	int miny = ((start[1] - dims[1]) / _mapChunkSize) - 1;
+	int maxy = (start[1] / _mapChunkSize) + 1;
 
 	{
-		int dminx, dminy, dmaxx, dmaxy;
-		dminx = ((end[0] - dims[0]) / _mapChunkSize) - 1;
-		dmaxx = (end[0] / _mapChunkSize) + 1;
-		dminy = ((end[1] - dims[1]) / _mapChunkSize) - 1;
-		dmaxy = (end[1] / _mapChunkSize) + 1;
-		if (dminx < minx) minx = dminx;
-		if (dmaxx > maxx) maxx = dmaxx;
-		if (dminy < miny) miny = dminy;
-		if (dmaxy > maxy) maxy = dmaxy;
+		int dminx = ((end[0] - dims[0]) / _mapChunkSize) - 1;
+		int dmaxx = (end[0] / _mapChunkSize) + 1;
+		int dminy = ((end[1] - dims[1]) / _mapChunkSize) - 1;
+		int dmaxy = (end[1] / _mapChunkSize) + 1;
+		if (dminx < minx)
+			minx = dminx;
+		if (dmaxx > maxx)
+			maxx = dmaxx;
+		if (dminy < miny)
+			miny = dminy;
+		if (dmaxy > maxy)
+			maxy = dmaxy;
 	}
 
-	if (minx < 0) minx = 0;
-	if (maxx >= MAP_NUM_CHUNKS) maxx = MAP_NUM_CHUNKS - 1;
-	if (miny < 0) miny = 0;
-	if (maxy >= MAP_NUM_CHUNKS) maxy = MAP_NUM_CHUNKS - 1;
+	clipMapChunks(minx, maxx, miny, maxy);
 
-	// Get velocity of item
+	// Get velocity, extents, and centre of item
 	int32 vel[3];
 	int32 ext[3];
-	for (i = 0; i < 3; i++) {
+	int32 centre[3];
+	for (int i = 0; i < 3; i++) {
 		vel[i] = end[i] - start[i];
 		ext[i] = dims[i] / 2;
+		centre[i] = start[i] - ext[i];
 	}
-
-	// Centre of object
-	int32 centre[3];
-	centre[0] = start[0] - ext[0];
-	centre[1] = start[1] - ext[1];
+	// Z is opposite direction to x and y..
 	centre[2] = start[2] + ext[2];
 
 //	pout << "Sweeping from (" << -ext[0] << ", " << -ext[1] << ", " << -ext[2] << ")" << Std::endl;
@@ -978,12 +937,14 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::iterator iter;
+			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
-				Item *other_item = *iter;
-				if (other_item->getObjId() == item) continue;
-				if (other_item->getExtFlags() & Item::EXT_SPRITE) continue;
+				const Item *other_item = *iter;
+				if (other_item->getObjId() == item)
+					continue;
+				if (other_item->hasExtFlags(Item::EXT_SPRITE))
+					continue;
 
 				uint32 othershapeflags = other_item->getShapeInfo()->_flags;
 				bool blocking = (othershapeflags & shapeflags &
@@ -1016,6 +977,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 					continue;
 				}
 
+				// Make oext the distance to midpoint in each dim
 				oext[0] /= 2;
 				oext[1] /= 2;
 				oext[2] /= 2;
@@ -1036,7 +998,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				//find the possible first and last times
 				//of overlap along each axis
-				for (i = 0 ; i < 3; i++) {
+				for (int i = 0 ; i < 3; i++) {
 					int32 A_max = ext[i];
 					int32 A_min = -ext[i];
 					int32 B_max = other[i] + oext[i];
@@ -1052,23 +1014,28 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 						        (i == 2 && ext[i] == 0 && oext[i] == 0 &&
 						         oext[0] == 64 && oext[1] == 64))
 							touch = true; // touch at start
-						if (A_min + vel[i] == B_max) touch = true; // touch at end
+						if (A_min + vel[i] == B_max)
+							touch = true; // touch at end
 
 						// - want to know when rear of A passes front of B
 						u_0[i] = ((B_max - A_min) * 0x4000) / vel[i];
 						// - want to know when front of A passes rear of B
 						u_1[i] = ((B_min - A_max) * 0x4000) / vel[i];
 					} else if (vel[i] > 0 && A_min <= B_max) { // A_min<=B_max not required
-						if (A_min == B_max) touch = true; // touch at start
-						if (A_max + vel[i] == B_min) touch = true; // touch at end
+						if (A_min == B_max)
+							touch = true; // touch at start
+						if (A_max + vel[i] == B_min)
+							touch = true; // touch at end
 
 						// + want to know when front of A passes rear of B
 						u_0[i] = ((B_min - A_max) * 0x4000) / vel[i];
 						// + want to know when rear of A passes front of B
 						u_1[i] = ((B_max - A_min) * 0x4000) / vel[i];
 					} else if (vel[i] == 0 && A_max >= B_min && A_min <= B_max) {
-						if (A_min == B_max || A_max == B_min) touch = true;
-						if (i == 2 && A_min == B_max) touch_floor = true;
+						if (A_min == B_max || A_max == B_min)
+							touch = true;
+						if (i == 2 && A_min == B_max)
+							touch_floor = true;
 
 						u_0[i] = -1;
 						u_1[i] = 0x4000;
@@ -1095,7 +1062,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				// store directions in which we're being blocked
 				uint8 dirs = 0;
-				for (i = 0; i <= 2; ++i) {
+				for (int i = 0; i <= 2; ++i) {
 					if (first == u_0[i])
 						dirs |= (1 << i);
 				}
@@ -1106,7 +1073,8 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				if (first <= last) {
 					//pout << "Hit item " << other_item->getObjId() << " at first: " << first << "  last: " << last << Std::endl;
 
-					if (!hit) return true;
+					if (!hit)
+						return true;
 
 					// Clamp
 					if (first < -1) first = -1;
@@ -1117,13 +1085,14 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 					// Small speed up.
 					if (sw_it != hit->end()) {
-						SweepItem &si = *sw_it;
+						const SweepItem &si = *sw_it;
 						if (si._hitTime > first) sw_it = hit->begin();
 					} else
 						sw_it = hit->begin();
 
 					for (; sw_it != hit->end(); ++sw_it)
-						if ((*sw_it)._hitTime > first) break;
+						if ((*sw_it)._hitTime > first)
+							break;
 
 					// Now add it
 					sw_it = hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
@@ -1141,8 +1110,8 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 }
 
 
-Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) {
-	Item *top = 0;
+const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) {
+	const Item *top = nullptr;
 
 	if (ztop < zbot) {
 		int32 temp = ztop;
@@ -1150,42 +1119,43 @@ Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId i
 		zbot = temp;
 	}
 
-	int minx, miny, maxx, maxy;
-	minx = (x / _mapChunkSize);
-	maxx = (x / _mapChunkSize) + 1;
-	miny = (y / _mapChunkSize);
-	maxy = (y / _mapChunkSize) + 1;
-	if (minx < 0) minx = 0;
-	if (maxx >= MAP_NUM_CHUNKS) maxx = MAP_NUM_CHUNKS - 1;
-	if (miny < 0) miny = 0;
-	if (maxy >= MAP_NUM_CHUNKS) maxy = MAP_NUM_CHUNKS - 1;
+	int minx = (x / _mapChunkSize);
+	int maxx = (x / _mapChunkSize) + 1;
+	int miny = (y / _mapChunkSize);
+	int maxy = (y / _mapChunkSize) + 1;
+	clipMapChunks(minx, maxx, miny, maxy);
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::iterator iter;
+			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
-				Item *item = *iter;
-				if (item->getObjId() == ignore) continue;
-				if (item->getExtFlags() & Item::EXT_SPRITE) continue;
+				const Item *item = *iter;
+				if (item->getObjId() == ignore)
+					continue;
+				if (item->hasExtFlags(Item::EXT_SPRITE))
+					continue;
 
-				ShapeInfo *si = item->getShapeInfo();
+				const ShapeInfo *si = item->getShapeInfo();
 				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent()) continue;
 
 				int32 ix, iy, iz, ixd, iyd, izd;
 				item->getLocation(ix, iy, iz);
 				item->getFootpadWorld(ixd, iyd, izd);
 
-				if ((ix - ixd) >= x || ix <= x) continue;
-				if ((iy - iyd) >= y || iy <= y) continue;
-				if (iz >= ztop || (iz + izd) <= zbot) continue;
+				if ((ix - ixd) >= x || ix <= x)
+					continue;
+				if ((iy - iyd) >= y || iy <= y)
+					continue;
+				if (iz >= ztop || (iz + izd) <= zbot)
+					continue;
 
 				if (top) {
 					int32 tix, tiy, tiz, tixd, tiyd, tizd;
 					top->getLocation(tix, tiy, tiz);
 					top->getFootpadWorld(tixd, tiyd, tizd);
 
-					if ((tiz + tizd) < (iz + izd)) top = 0;
+					if ((tiz + tizd) < (iz + izd)) top = nullptr;
 				}
 
 				if (!top) top = item;
@@ -1198,23 +1168,24 @@ Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId i
 void CurrentMap::setWholeMapFast() {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; ++j) {
-			if (!isChunkFast(j, i)) setChunkFast(j, i);
+			if (!isChunkFast(j, i))
+				setChunkFast(j, i);
 		}
 	}
 }
 
-void CurrentMap::save(ODataSource *ods) {
+void CurrentMap::save(Common::WriteStream *ws) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			ods->write4(_fast[i][j]);
+			ws->writeUint32LE(_fast[i][j]);
 		}
 	}
 }
 
-bool CurrentMap::load(IDataSource *ids, uint32 version) {
+bool CurrentMap::load(Common::ReadStream *rs, uint32 version) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; ++i) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS / 32; ++j) {
-			_fast[i][j] = ids->read4();
+			_fast[i][j] = rs->readUint32LE();
 		}
 	}
 
@@ -1236,7 +1207,7 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(unk2); // looks like it could be an objid
 	ARG_UINT16(unk3); // always zero
 
-	CurrentMap *cm = World::get_instance()->getCurrentMap();
+	const CurrentMap *cm = World::get_instance()->getCurrentMap();
 	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 
 	if (valid)

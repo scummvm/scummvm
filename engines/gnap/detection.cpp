@@ -69,6 +69,14 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
+	{
+		"gnap", "",
+		{
+			{"stock_n.dat", 0, "9729e1c77a74f2f23c53596fae385bfa", 13428133},
+			AD_LISTEND
+		},
+		Common::PL_POL, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
+	},
 
 	AD_TABLE_END_MARKER
 };
@@ -114,7 +122,7 @@ bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

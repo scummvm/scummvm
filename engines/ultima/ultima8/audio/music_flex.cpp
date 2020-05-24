@@ -24,16 +24,15 @@
 
 #include "ultima/ultima8/audio/music_flex.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Archive)
-
-
-MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds) {
-	_songs = 0;
+MusicFlex::MusicFlex(Common::SeekableReadStream *rs) : Archive(rs) {
 	Std::memset(_info, 0, sizeof(SongInfo *) * 128);
+	_songs = new XMidiData *[_count];
+	Std::memset(_songs, 0, sizeof(XMidiData *) * _count);
 	loadSongInfo();
 }
 
@@ -41,10 +40,10 @@ MusicFlex::~MusicFlex() {
 	uint32 i;
 	for (i = 0; i < 128; i++) {
 		delete _info[i];
-		_info[i] = 0;
 	}
-
-	Archive::uncache();
+	for (i = 0; i < _count; i++) {
+		delete _songs[i];
+	}
 	delete [] _songs;
 }
 
@@ -56,29 +55,51 @@ MusicFlex::SongInfo::SongInfo() : _numMeasures(0), _loopJump(0) {
 MusicFlex::SongInfo::~SongInfo() {
 	for (int i = 0; i < 128; i++) {
 		delete [] _transitions[i];
-		_transitions[i] = 0;
 	}
 }
 
+MusicFlex::XMidiData *MusicFlex::getXMidi(uint32 index) {
+	if (index >= _count)
+		return nullptr;
+	cache(index);
+	return _songs[index];
+}
+
+const MusicFlex::SongInfo *MusicFlex::getSongInfo(uint32 index) const {
+	if (index > 127)
+		return nullptr;
+	return _info[index];
+}
+
 void MusicFlex::cache(uint32 index) {
-	// Caching not currently supported
+	if (index >= _count) return;
+	uint32 size;
+	uint8 *data = getRawObject(index, &size);
+	if (!data) {
+		// Note: multiple sorcerer scenes (such as MALCHIR::03F2)
+		// request track 122, which is blank in the Gold Edition
+		// music flex.
+		warning("Unable to cache song %d from sound/music.flx", index);
+		return;
+	}
+	_songs[index] = new XMidiData(data, size);
 }
 
 void MusicFlex::uncache(uint32 index) {
-	// Caching not currently supported
+	if (index >= _count) return;
+	delete _songs[index];
+	_songs[index] = nullptr;
 }
 
 bool MusicFlex::isCached(uint32 index) const {
 	if (index >= _count) return false;
-	if (!_songs) return false;
-
-	return (_songs[index] != 0);
+	return (_songs[index] != nullptr);
 }
 
-IDataSource *MusicFlex::getAdlibTimbres() {
+Common::SeekableReadStream *MusicFlex::getAdlibTimbres() {
 	uint32 size;
 	const uint8 *data = getRawObject(259, &size);
-	return new IBufferDataSource(data, size, false, true);
+	return new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
 
 void MusicFlex::loadSongInfo() {
@@ -86,7 +107,7 @@ void MusicFlex::loadSongInfo() {
 	const uint8 *buf = getRawObject(0, &size);
 
 	if (!buf || !size) {
-		error("Unable to load song _info from sound/music.flx");
+		error("Unable to load song info from sound/music.flx");
 	}
 	IBufferDataSource ds(buf, size);
 	Std::string line;

@@ -64,11 +64,11 @@ public:
 	bool skip(uint32 offset) override {
 		return _innerStream->skip(offset);
 	}
-	char *readLine(char *s, size_t bufSize) override {
-		return _innerStream->readLine(s, bufSize);
+	char *readLine(char *s, size_t bufSize, bool handleCR = true) override {
+		return _innerStream->readLine(s, bufSize, handleCR);
 	}
-	Common::String readLine() override {
-		return _innerStream->readLine();
+	Common::String readLine(bool handleCR = true) override {
+		return _innerStream->readLine(handleCR);
 	}
 };
 

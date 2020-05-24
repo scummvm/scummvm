@@ -384,7 +384,12 @@ void SceneScriptUG16::dialogueWithLuther() {
 		Actor_Says(kActorLuther, 390, 23);
 		Actor_Says(kActorLance, 410, 14);
 		Actor_Says(kActorLance, 420, 17);
+#if BLADERUNNER_ORIGINAL_BUGS
+		// This quote is repeated (also used in RUNCITER question
+		// "That probably had something to do with you guys getting fired."
+		// It makes little sense to be here.
 		Actor_Says(kActorMcCoy, 5835, 13);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Delay(1000);
 		Item_Pickup_Spin_Effect(kModelAnimationFolder, 239, 454);
 		Actor_Voice_Over(2740, kActorVoiceOver);

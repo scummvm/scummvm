@@ -30,7 +30,7 @@ namespace Ultima8 {
 
 using Std::string;
 
-ConfigFileManager *ConfigFileManager::_configFileManager = 0;
+ConfigFileManager *ConfigFileManager::_configFileManager = nullptr;
 
 ConfigFileManager::ConfigFileManager() {
 	debugN(MM_INFO, "Creating ConfigFileManager...\n");
@@ -43,7 +43,7 @@ ConfigFileManager::~ConfigFileManager() {
 
 	ConfMan.flushToDisk();
 	clear();
-	_configFileManager = 0;
+	_configFileManager = nullptr;
 }
 
 bool ConfigFileManager::readConfigFile(string fname, istring root,
@@ -106,7 +106,7 @@ void ConfigFileManager::clearRoot(istring root) {
 }
 
 bool ConfigFileManager::exists(istring key) {
-	return ConfMan.hasKey(key) || (findKeyINI(key) != 0);
+	return ConfMan.hasKey(key) || (findKeyINI(key) != nullptr);
 }
 
 bool ConfigFileManager::get(istring key, string &ret) {
@@ -275,7 +275,7 @@ INIFile *ConfigFileManager::findKeyINI(istring key) {
 			return (*i);
 	}
 
-	return 0;
+	return nullptr;
 }
 
 INIFile *ConfigFileManager::findWriteINI(istring key) {
@@ -285,7 +285,7 @@ INIFile *ConfigFileManager::findWriteINI(istring key) {
 			return (*i);
 	}
 
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Ultima8

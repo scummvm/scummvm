@@ -358,6 +358,10 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kCloseCmd:
 		close();
 		break;
+	case kCloseWithResultCmd:
+		setResult(data);
+		close();
+		break;
 	default:
 		break;
 	}

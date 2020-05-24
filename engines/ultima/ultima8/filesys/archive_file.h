@@ -29,12 +29,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 class ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
 	virtual ~ArchiveFile() { }
 
 	//! Check if constructed object is indeed a valid archive
@@ -80,13 +76,13 @@ public:
 	//! \param index index of object to get size of
 	virtual uint32 getSize(const Std::string &name) const = 0;
 
-	//! Get object as an IDataSource
-	//! Delete the IDataSource afterwards; that will delete the data as well
-	IDataSource *getDataSource(uint32 index, bool is_text = false);
+	//! Get object as a Common::SeekableReadStream
+	//! Delete the SeekableReadStream afterwards; that will delete the data as well
+	Common::SeekableReadStream *getDataSource(uint32 index, bool is_text = false);
 
-	//! Get named object as an IDataSource
-	//! Delete the IDataSource afterwards; that will delete the data as well
-	IDataSource *getDataSource(const Std::string &name, bool is_text = false);
+	//! Get named as a Common::SeekableReadStream
+	//! Delete the SeekableReadStream afterwards; that will delete the data as well
+	Common::SeekableReadStream *getDataSource(const Std::string &name, bool is_text = false);
 
 	//! Get upper bound for number of objects.
 	//! In an indexed file this is (probably) the highest index plus one,

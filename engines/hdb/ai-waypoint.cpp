@@ -346,7 +346,7 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 		if (ok) {
 			e = findEntity(x1, y1);
 			if (e == _player)
-				e = NULL;
+				e = nullptr;
 			else if (g_hdb->_map->laserBeamExist(x1, y1)) {
 				*x2 = x1 - xVel;
 				*y2 = y1 - yVel;

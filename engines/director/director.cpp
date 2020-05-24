@@ -56,6 +56,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugFast, "fast", "Fast (no delay) playback");
 	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
 	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
+	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
 
 	g_director = this;
 
@@ -86,6 +87,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_wm = nullptr;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	// Meet Mediaband could have up to 5 levels of directories
+	SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 5);
+
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
@@ -99,16 +104,22 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_draggingSprite = false;
 	_draggingSpriteId = 0;
+
+	_newMovieStarted = true;
 }
 
 DirectorEngine::~DirectorEngine() {
 	delete _sharedScore;
 	delete _currentScore;
 
-	cleanupMainArchive();
+	if (_macBinary) {
+		delete _macBinary;
+		_macBinary = nullptr;
+	}
 
 	delete _soundManager;
 	delete _lingo;
+	delete _wm;
 }
 
 Common::Error DirectorEngine::run() {
@@ -123,12 +134,13 @@ Common::Error DirectorEngine::run() {
 	_macBinary = nullptr;
 	_soundManager = nullptr;
 
-	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode);
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
+							| Graphics::kWMModeManualDrawWidgets);
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
 
-	if (getGameID() == GID_TEST) {
+	if (getGameGID() == GID_TEST) {
 		_mainArchive = nullptr;
 		_currentScore = nullptr;
 
@@ -140,7 +152,7 @@ Common::Error DirectorEngine::run() {
 		_lingo->runTests();
 
 		return Common::kNoError;
-	} else if (getGameID() == GID_TESTALL) {
+	} else if (getGameGID() == GID_TESTALL) {
 		enqueueAllMovies();
 	}
 
@@ -169,11 +181,16 @@ Common::Error DirectorEngine::run() {
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
 
-	if (getGameID() == GID_TESTALL)  {
+	if (getGameGID() == GID_TESTALL)  {
 		_nextMovie = getNextMovieFromQueue();
 		loadInitialMovie(_nextMovie.movie);
 	} else {
 		loadInitialMovie(getEXEName());
+
+		if (!_mainArchive) {
+			warning("Cannot open main movie");
+			return Common::kNoGameDataFoundError;
+		}
 
 		// Let's check if it is a projector file
 		// So far tested with Spaceship Warlock, D2
@@ -218,35 +235,43 @@ Common::Error DirectorEngine::run() {
 			debug(0, "@@@@   Score name '%s' in '%s'", _currentScore->getMacName().c_str(), _currentPath.c_str());
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-			_currentScore->loadArchive();
+			bool goodMovie = _currentScore->loadArchive();
+
+			// If we came in a loop, then skip as requested
+			if (!_nextMovie.frameS.empty()) {
+				_currentScore->setStartToLabel(_nextMovie.frameS);
+				_nextMovie.frameS.clear();
+			}
+
+			if (_nextMovie.frameI != -1) {
+				_currentScore->setCurrentFrame(_nextMovie.frameI);
+				_nextMovie.frameI = -1;
+			}
+
+			if (!debugChannelSet(-1, kDebugLingoCompileOnly) && goodMovie) {
+				debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+
+				_currentScore->startLoop();
+
+				debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+			}
 		}
 
-		// If we came in a loop, then skip as requested
-		if (!_nextMovie.frameS.empty()) {
-			_currentScore->setStartToLabel(_nextMovie.frameS);
-			_nextMovie.frameS.clear();
-		}
-
-		if (_nextMovie.frameI != -1) {
-			_currentScore->setCurrentFrame(_nextMovie.frameI);
-			_nextMovie.frameI = -1;
-		}
-
-		if (!debugChannelSet(-1, kDebugLingoCompileOnly) && _currentScore) {
-			debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
-
-			_currentScore->startLoop();
-
-			debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
-		}
-
-		if (getGameID() == GID_TESTALL) {
+		if (getGameGID() == GID_TESTALL) {
 			_nextMovie = getNextMovieFromQueue();
 		}
 
 		// If a loop was requested, do it
 		if (!_nextMovie.movie.empty()) {
 			_lingo->restartLingo();
+
+			// Persist screen between the movies
+			// TODO: this is a workaround until the rendering pipeline is reworked
+			if (_currentScore && _currentScore->_surface) {
+				_backSurface.copyFrom(*_currentScore->_surface);
+
+				_newMovieStarted = true;
+			}
 
 			delete _currentScore;
 			_currentScore = nullptr;
@@ -260,7 +285,7 @@ Common::Error DirectorEngine::run() {
 			if (!mov) {
 				warning("nextMovie: No score is loaded");
 
-				if (getGameID() == GID_TESTALL) {
+				if (getGameGID() == GID_TESTALL) {
 					loop = true;
 					continue;
 				}
@@ -324,7 +349,10 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 void DirectorEngine::enqueueAllMovies() {
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::FSList files;
-	dir.getChildren(files, Common::FSNode::kListFilesOnly);
+	if (!dir.getChildren(files, Common::FSNode::kListFilesOnly)) {
+		warning("DirectorEngine::enqueueAllMovies(): Failed inquiring file list");
+		return;
+	}
 
 	for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file)
 		_movieQueue.push_back((*file).getName());

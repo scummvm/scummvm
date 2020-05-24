@@ -33,7 +33,7 @@ struct TextureBitmap : public Texture {
 	TextureBitmap() : Texture() {}
 
 	// False on Error
-	bool Read(IDataSource *ds) override;
+	bool Read(Common::SeekableReadStream *rs) override;
 };
 
 } // End of namespace Ultima8

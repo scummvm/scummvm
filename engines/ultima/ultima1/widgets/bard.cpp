@@ -82,6 +82,7 @@ bool Bard::subtractHitPoints(uint amount) {
 	bool result = Person::subtractHitPoints(amount);
 	if (result) {
 		Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
+		assert(map);
 		addInfoMsg(_game->_res->FOUND_KEY);
 		map->_castleKey = 1;
 	}

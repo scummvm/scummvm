@@ -29,9 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-class ODataSource;
-
 // A little-endian stack for use with usecode
 class BaseUCStack {
 protected:
@@ -122,7 +119,7 @@ public:
 	}
 
 	//
-	// Access a value from a location in the stacck
+	// Access a value from a location in the stack
 	//
 
 	inline uint8 access1(const uint32 offset) const {
@@ -173,8 +170,8 @@ public:
 
 #ifdef USE_DYNAMIC_UCSTACK
 #define UCStack DynamicUCStack
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ws);
+	bool load(Common::ReadStream *rs, uint32 version);
 #endif
 };
 
@@ -185,8 +182,8 @@ public:
 	UCStack() : BaseUCStack(0x1000, _bufArray) { }
 	~UCStack() override { }
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ws);
+	bool load(Common::ReadStream *rs, uint32 version);
 };
 #endif
 

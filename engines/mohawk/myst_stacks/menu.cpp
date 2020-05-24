@@ -108,7 +108,7 @@ uint16 Menu::getVar(uint16 var) {
 }
 
 void Menu::o_menuInit(uint16 var, const ArgumentsArray &args) {
-	_vm->pauseEngine(true);
+	_pauseToken = _vm->pauseEngine();
 
 	if (_inGame) {
 		_wasCursorVisible = CursorMan.isVisible();
@@ -285,7 +285,7 @@ void Menu::o_menuLoad(uint16 var, const ArgumentsArray &args) {
 		return;
 	}
 
-	_vm->runLoadDialog();
+	_vm->loadGameDialog();
 }
 
 void Menu::o_menuSave(uint16 var, const ArgumentsArray &args) {
@@ -293,7 +293,7 @@ void Menu::o_menuSave(uint16 var, const ArgumentsArray &args) {
 		return;
 	}
 
-	_vm->runSaveDialog();
+	_vm->saveGameDialog();
 }
 
 void Menu::o_menuNew(uint16 var, const ArgumentsArray &args) {
@@ -330,7 +330,7 @@ void Menu::o_menuExit(uint16 var, const ArgumentsArray &args) {
 
 	CursorMan.showMouse(_wasCursorVisible);
 
-	_vm->pauseEngine(false);
+	_pauseToken.clear();
 }
 
 void Menu::o_playIntroMovies(uint16 var, const ArgumentsArray &args) {

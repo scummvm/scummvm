@@ -34,7 +34,7 @@ class WinResources;
 namespace Graphics {
 
 struct WinFontDirEntry {
-	WinFontDirEntry() {}
+	WinFontDirEntry() : points(0) {}
 	WinFontDirEntry(const Common::String &name, uint16 p) : faceName(name), points(p) {}
 
 	// This is really just a simple identifier to match a directory entry with
@@ -83,7 +83,7 @@ private:
 
 	uint16 _glyphCount;
 	struct GlyphEntry {
-		GlyphEntry() { bitmap = 0; }
+		GlyphEntry() { bitmap = 0; charWidth = 0; offset = 0; }
 		~GlyphEntry() { delete[] bitmap; }
 
 		uint16 charWidth;

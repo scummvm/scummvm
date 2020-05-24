@@ -188,6 +188,8 @@ public:
 
 	Graphics::Surface  _surfaceFront;
 	Graphics::Surface  _surfaceBack;
+	bool               _surfaceFrontCreated;
+	bool               _surfaceBackCreated;
 
 	ZBuffer           *_zbuffer;
 
@@ -205,6 +207,7 @@ public:
 	bool _actorIsSpeaking;
 	bool _actorSpeakStopIsRequested;
 	bool _gameOver;
+	bool _gameJustLaunched;
 	int  _gameAutoSaveTextId;
 	bool _gameIsAutoSaving;
 	bool _gameIsLoading;
@@ -218,6 +221,7 @@ public:
 	bool _framesPerSecondMax;
 	bool _disableStaminaDrain;
 	bool _cutContent;
+	bool _validBootParam;
 
 	int _walkSoundId;
 	int _walkSoundVolume;

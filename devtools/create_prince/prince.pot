@@ -4695,11 +4695,11 @@ msgid "#E3"
 msgstr ""
 
 #: dialog0146.txt:100401
-msgid "#X1"
+msgid "#E3"
 msgstr ""
 
 #: dialog0146.txt:100501
-msgid "#B1"
+msgid "#X1"
 msgstr ""
 
 #: dialog0146.txt:100601
@@ -4707,6 +4707,10 @@ msgid "#B1"
 msgstr ""
 
 #: dialog0146.txt:100701
+msgid "#B1"
+msgstr ""
+
+#: dialog0146.txt:100801
 msgid "#B1"
 msgstr ""
 
@@ -9234,6 +9238,10 @@ msgstr ""
 msgid "OTHER: No, ale może jeszcze będą z ciebie ludzie."
 msgstr ""
 
+#: invtxt.txt:0
+msgid "homunkulus - Nie jest najmądrzejszy, ale przynajmniej|jest magiczny."
+msgstr ""
+
 #: invtxt.txt:1
 msgid "eliksir nieśmiertelności - Aż trudno uwierzyć, że coś takiego|naprawdę istnieje."
 msgstr ""
@@ -10998,12 +11006,68 @@ msgstr ""
 msgid "Młyn - "
 msgstr ""
 
+#: mob.lst:51001
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51002
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51003
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51004
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51005
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51006
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51007
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51008
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51009
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51010
+msgid " - "
+msgstr " - "
+
 #: mob.lst:52001
-msgid "powrót - "
+msgid "dźwignia - "
 msgstr ""
 
 #: mob.lst:52002
+msgid "przycisk - "
+msgstr ""
+
+#: mob.lst:52003
 msgid "powrót - "
+msgstr ""
+
+#: mob.lst:52004
+msgid "powrót - "
+msgstr ""
+
+#: mob.lst:58001
+msgid " - "
+msgstr " - "
+
+#: variatxt.txt:9
+msgid "Nie mogę tego wząć."
 msgstr ""
 
 #: variatxt.txt:10

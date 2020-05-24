@@ -29,11 +29,18 @@ namespace LC {
 	void c_xpop();
 	void c_printtop();
 
+	Datum mapBinaryOp(Datum (*func)(Datum &, Datum &), Datum &d1, Datum &d2);
+	Datum addData(Datum &d1, Datum &d2);
 	void c_add();
+	Datum subData(Datum &d1, Datum &d2);
 	void c_sub();
+	Datum mulData(Datum &d1, Datum &d2);
 	void c_mul();
+	Datum divData(Datum &d1, Datum &d2);
 	void c_div();
+	Datum modData(Datum &d1, Datum &d2);
 	void c_mod();
+	Datum negateData(Datum &d1);
 	void c_negate();
 
 	void c_and();
@@ -78,6 +85,7 @@ namespace LC {
 	void c_swap();
 
 	void c_theentitypush();
+	void c_themenuentitypush();
 	void c_theentityassign();
 	void c_themenuitementityassign();
 	void c_objectfieldpush();
@@ -93,11 +101,18 @@ namespace LC {
 	void c_tell();
 	void c_telldone();
 	void c_exitRepeat();
+	Datum compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location = false, bool value = false);
+	Datum eqData(Datum d1, Datum d2);
 	void c_eq();
+	Datum neqData(Datum d1, Datum d2);
 	void c_neq();
+	Datum gtData(Datum d1, Datum d2);
 	void c_gt();
+	Datum ltData(Datum d1, Datum d2);
 	void c_lt();
+	Datum geData(Datum d1, Datum d2);
 	void c_ge();
+	Datum leData(Datum d1, Datum d2);
 	void c_le();
 	void c_jump();
 	void c_jumpifz();
@@ -120,7 +135,6 @@ namespace LC {
 	void c_property();
 
 	void c_play();
-	void c_playdone();
 
 	void c_open();
 	void c_hilite();
@@ -132,16 +146,27 @@ namespace LC {
 
 	// bytecode-related instructions
 	void cb_call();
+	void cb_delete();
 	void cb_field();
 	void cb_globalassign();
 	void cb_globalpush();
 	void cb_list();
 	void cb_localcall();
 	void cb_methodcall();
+	void cb_objectfieldassign();
+	void cb_objectfieldpush();
 	void cb_objectpush();
+	void cb_theassign();
+	void cb_theassign2();
+	void cb_thepush();
+	void cb_thepush2();
+	void cb_proplist();
+	void cb_stackpeek();
+	void cb_stackdrop();
 	void cb_varassign();
 	void cb_varpush();
 	void cb_v4assign();
+	void cb_v4assign2();
 	void cb_v4theentitypush();
 	void cb_v4theentitynamepush();
 	void cb_v4theentityassign();

@@ -55,7 +55,7 @@ public:
 	void update();
 private:
 	void cleanup();
-	void convertToWideChar(uint16 *destBuf, byte *text, uint16 maxLength);
+	void convertToWideChar(uint16 *destBuf, const byte *text, uint16 maxLength);
 };
 
 } // End of namespace Dragons

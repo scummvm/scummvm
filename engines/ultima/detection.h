@@ -24,6 +24,7 @@
 #define ULTIMA_DETECTION
 
 #include "engines/advancedDetector.h"
+#include "backends/keymapper/keymapper.h"
 
 #define MAX_SAVES 99
 
@@ -42,8 +43,10 @@ enum GameId {
 	GAME_ULTIMA_UNDERWORLD1,
 	GAME_ULTIMA_UNDERWORLD2,
 	GAME_ULTIMA7,
-	GAME_ULTIMA8
-	// There is no game after Ultima 8. Nope.. none at all.
+	GAME_ULTIMA8,
+	GAME_CRUSADER_REG,
+	GAME_CRUSADER_REM
+	// There is no ultima game after Ultima 8. Nope.. none at all.
 };
 
 enum UltimaGameFeatures {
@@ -56,9 +59,14 @@ struct UltimaGameDescription {
 	uint32 features;
 };
 
-} // End of namespace Ultima8
+} // End of namespace Ultima
 
 class UltimaMetaEngine : public AdvancedMetaEngine {
+private:
+	/**
+	 * Gets the game Id given a target string
+	 */
+	static Common::String getGameId(const char *target);
 public:
 	UltimaMetaEngine();
 	~UltimaMetaEngine() override {}
@@ -85,6 +93,11 @@ public:
 	 * Return a list of all save states associated with the given target.
 	 */
 	SaveStateList listSaves(const char *target) const override;
+
+	/**
+	 * Initialize keymaps
+	 */
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif

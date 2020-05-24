@@ -22,72 +22,170 @@
 
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/hash-ptr.h"
+#include "common/hash-str.h"
+#ifdef USE_FREETYPE2
+#include "graphics/fonts/ttf.h"
+#endif
 #include "graphics/managed_surface.h"
 
 #include "cryomni3d/font_manager.h"
+#include "cryomni3d/fonts/cryoextfont.h"
+#include "cryomni3d/fonts/cryofont.h"
 
 namespace CryOmni3D {
 
 FontManager::FontManager() : _currentFont(nullptr), _transparentBackground(false),
-	_spaceWidth(0), _charSpacing(0), _lineHeight(30), _foreColor(0), _blockTextRemaining(nullptr) {
+	_spaceWidth(0), _charSpacing(0), _lineHeight(30), _foreColor(0), _blockTextRemaining(nullptr),
+	_useSpaceDelimiter(true), _keepASCIIjoined(true), _codepage(Common::kCodePageInvalid),
+	_toUnicode(false) {
 }
 
 FontManager::~FontManager() {
-	for (Common::Array<Font *>::iterator it = _fonts.begin(); it != _fonts.end(); it++) {
+	Common::HashMap<Graphics::Font *, bool> deletedFonts;
+	for (Common::Array<Graphics::Font *>::iterator it = _fonts.begin(); it != _fonts.end(); it++) {
+		if (deletedFonts.find(*it) != deletedFonts.end()) {
+			// Already deleted
+			continue;
+		}
+
+		deletedFonts[*it] = true;
 		delete *it;
 	}
 }
 
-void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles) {
-	_fonts.reserve(_fonts.size() + fontFiles.size());
+void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles,
+                            Common::CodePage codepage) {
+	assert(codepage != Common::kCodePageInvalid);
+	_codepage = codepage;
+	setupWrapParameters();
+
+	// Cryo fonts are never in Unicode
+	_toUnicode = false;
+
+	_fonts.clear();
+	_fonts.reserve(fontFiles.size());
+
+	Common::HashMap<Common::String, Graphics::Font *> fontsCache;
 
 	for (Common::Array<Common::String>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
 	        it++) {
-		Common::File font_fl;
-		//debug("Open font file %s", it->c_str());
-		if (!font_fl.open(*it)) {
-			error("Can't open file %s", it->c_str());
+		Graphics::Font *fontEntry = fontsCache.getVal(*it, nullptr);
+		if (fontEntry) {
+			_fonts.push_back(fontEntry);
+			continue;
 		}
-		loadFont(font_fl);
+
+		// New font
+
+		// For now only support CP950 in extended cryo font
+		if (_codepage == Common::kWindows950) {
+			CryoExtFont *font = new CryoExtFont();
+			font->load(*it, _codepage);
+			_fonts.push_back(font);
+			fontsCache[*it] = font;
+		} else {
+			CryoFont *font = new CryoFont();
+			font->load(*it);
+			_fonts.push_back(font);
+			fontsCache[*it] = font;
+		}
 	}
 }
 
-void FontManager::loadFont(Common::ReadStream &font_fl) {
-	byte magic[8];
+void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage codepage) {
+#ifdef USE_FREETYPE2
+	assert(codepage != Common::kCodePageInvalid);
+	_codepage = codepage;
+	setupWrapParameters();
 
-	font_fl.read(magic, sizeof(magic));
-	if (memcmp(magic, "CRYOFONT", 8)) {
-		error("Invalid font magic");
+	// Freetype2 is configured to use Unicode
+	_toUnicode = true;
+
+	_fonts.clear();
+
+	Common::File list;
+
+	if (!list.open(ttfList)) {
+		error("can't open file %s", ttfList.c_str());
 	}
 
-	// 3 unknown uint16
-	(void) font_fl.readUint16BE();
-	(void) font_fl.readUint16BE();
-	(void) font_fl.readUint16BE();
+	Common::String line = list.readLine();
+	uint32 num = atoi(line.c_str());
 
-	Font *font = new Font();
+	_fonts.reserve(num);
 
-	font->maxHeight = font_fl.readSint16BE();
-	//debug("Max char height %d", font.maxHeight);
+	for (uint i = 0; i < num; i++) {
+		line = list.readLine();
+		if (line.size() == 0) {
+			error("Invalid font list: missing line");
+		}
 
-	font_fl.read(font->comment, sizeof(font->comment));
-	//debug("Comment %s", font.comment);
+		uint32 sharpFile = line.find("#");
+		if (sharpFile == Common::String::npos) {
+			error("Invalid font list: missing #");
+		}
+		uint32 sharpFlags = line.find("#", sharpFile + 1);
+		if (sharpFlags == Common::String::npos) {
+			error("Invalid font list: missing #");
+		}
 
-	for (uint i = 0; i < Font::kCharactersCount; i++) {
-		uint16 h = font_fl.readUint16BE();
-		uint16 w = font_fl.readUint16BE();
-		uint sz = font->chars[i].setup(w, h);
-		//debug("Char %d sz %dx%d %d", i, w, h, sz);
-		font->chars[i].offX = font_fl.readSint16BE();
-		font->chars[i].offY = font_fl.readSint16BE();
-		font->chars[i].printedWidth = font_fl.readUint16BE();
-		//debug("Char %d offX %d offY %d PW %d", i, font.chars[i].offX, font.chars[i].offY, font.chars[i].printedWidth);
+		Common::String fontFace(line.begin(), line.begin() + sharpFile);
+		Common::U32String uniFontFace = fontFace.decode(codepage);
+		Common::String fontFile(line.begin() + sharpFile + 1, line.begin() + sharpFlags);
+		Common::String sizeFlags(line.begin() + sharpFlags + 1, line.end());
 
-		font_fl.read(font->chars[i].data, sz);
-		//debug("Char %d read %d", i, v);
+		uint32 size = atoi(sizeFlags.c_str());
+		bool bold = sizeFlags.contains('B');
+		bool italic = sizeFlags.contains('I');
+
+		Common::Array<Common::String> fontFiles;
+		fontFiles.push_back(fontFile);
+
+		// Use 96 dpi as it's the default under Windows
+		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -(int)size,
+		                       96, Graphics::kTTFRenderModeMonochrome);
+		if (!font) {
+			error("Can't find required face (line %u) in %s", i, fontFile.c_str());
+		}
+		_fonts.push_back(font);
+	}
+#else
+	error("TrueType support not compiled in");
+#endif
+}
+
+Common::U32String FontManager::toU32(const Common::String &str) const {
+	assert(_codepage != Common::kCodePageInvalid);
+
+	if (_toUnicode) {
+		return str.decode(_codepage);
 	}
 
-	_fonts.push_back(font);
+	switch (_codepage) {
+	case Common::kUtf8:
+		error("UTF-8 not supported");
+	case Common::kWindows932:
+	case Common::kWindows949:
+	case Common::kWindows950: {
+		/* if high-order bit is 1, then character is 2 bytes else it's 1 byte
+		 * We don't check validity of the codepoint */
+		Common::U32String ret;
+		for (uint32 i = 0; i < str.size(); i++) {
+			uint32 c = (byte)str[i];
+			if ((c & 0x80) && (i + 1 < str.size())) {
+				c <<= 8;
+				i++;
+				c |= str[i] & 0xff;
+			}
+			ret += c;
+		}
+		return ret;
+	}
+	default:
+		// All other codepages are SBCS: one byte is one character
+		return str;
+	}
 }
 
 void FontManager::setCurrentFont(int currentFont) {
@@ -101,82 +199,42 @@ void FontManager::setCurrentFont(int currentFont) {
 }
 
 void FontManager::setSpaceWidth(uint additionalSpace) {
+	// For now space character is still the same in all encodings: 0x20
 	if (_currentFont) {
-		_spaceWidth = additionalSpace + _currentFont->chars[0].printedWidth;
+		_spaceWidth = additionalSpace + _currentFont->getCharWidth(' ');
 	} else {
 		_spaceWidth = 0;
 	}
 }
 
 uint FontManager::displayStr_(uint x, uint y,
-                              const Common::String &text) const {
+                              const Common::U32String &text) const {
 	uint offset = 0;
-	for (Common::String::const_iterator it = text.begin(); it != text.end(); it++) {
-		offset += displayChar(x + offset, y, *it);
+	for (Common::U32String::const_iterator it = text.begin(); it != text.end(); it++) {
+		_currentFont->drawChar(_currentSurface, *it, x + offset, y, _foreColor);
+		offset += _currentFont->getCharWidth(*it) + _charSpacing;
 	}
 	return offset;
 }
 
-uint FontManager::displayChar(uint x, uint y, unsigned char c) const {
-	if (!_currentFont) {
-		error("There is no current font");
-	}
-	if (!_currentSurface) {
-		error("There is no current surface");
-	}
-
-	if (c < ' ' || c >= 255) {
-		c = '?';
-	}
-	c -= 32;
-
-	const Character &char_ = _currentFont->chars[c];
-	int realX = x + char_.offX;
-	int realY = y + char_.offY + _currentFont->maxHeight - 2;
-
-	if (!_transparentBackground) {
-		_currentSurface->fillRect(Common::Rect(realX, realY, realX + char_.w, realY + char_.h), 0xff);
-	}
-	Graphics::Surface src;
-	src.init(char_.w, char_.h, char_.w, char_.data, Graphics::PixelFormat::createFormatCLUT8());
-	_currentSurface->transBlitFrom(src, Common::Point(realX, realY), 0, false, _foreColor);
-
-	// WORKAROUND: in Versailles game the space width is calculated differently in this function and in the getStrWidth one, let's try to be consistent
-#define KEEP_SPACE_BUG
-#ifndef KEEP_SPACE_BUG
-	if (c == 0) {
-		return _spaceWidth;
-	} else {
-		return _charSpacing + char_.printedWidth;
-	}
-#else
-	return _charSpacing + char_.printedWidth;
-#endif
-}
-
-uint FontManager::getStrWidth(const Common::String &text) const {
+uint FontManager::getStrWidth(const Common::U32String &text) const {
 	uint width = 0;
-	for (Common::String::const_iterator it = text.begin(); it != text.end(); it++) {
-		unsigned char c = *it;
+	for (Common::U32String::const_iterator it = text.begin(); it != text.end(); it++) {
+		uint32 c = *it;
 		if (c == ' ') {
 			width += _spaceWidth;
 		} else {
-			if (c < ' ' || c >= 255) {
-				c = '?';
-			}
-			c -= 32;
-			width += _charSpacing;
-			width += _currentFont->chars[c].printedWidth;
+			width += _currentFont->getCharWidth(*it) + _charSpacing;
 		}
 	}
 	return width;
 }
 
-bool FontManager::displayBlockText(const Common::String &text,
-                                   Common::String::const_iterator begin) {
+bool FontManager::displayBlockText(const Common::U32String &text,
+                                   Common::U32String::const_iterator begin) {
 	bool notEnoughSpace = false;
-	Common::String::const_iterator ptr = begin;
-	Common::Array<Common::String> words;
+	Common::U32String::const_iterator ptr = begin;
+	Common::Array<Common::U32String> words;
 
 	if (begin != text.end()) {
 		_blockTextRemaining = nullptr;
@@ -193,7 +251,7 @@ bool FontManager::displayBlockText(const Common::String &text,
 			} else {
 				spaceWidthPerWord = (double)spacesWidth / (double)words.size();
 			}
-			Common::Array<Common::String>::const_iterator word;
+			Common::Array<Common::U32String>::const_iterator word;
 			uint word_i;
 			for (word = words.begin(), word_i = 0; word != words.end(); word++, word_i++) {
 				_blockPos.x += displayStr_(_blockPos.x, _blockPos.y, *word);
@@ -218,22 +276,22 @@ bool FontManager::displayBlockText(const Common::String &text,
 	return notEnoughSpace;
 }
 
-uint FontManager::getLinesCount(const Common::String &text, uint width) {
+uint FontManager::getLinesCount(const Common::U32String &text, uint width) {
 	if (text.size() == 0) {
 		// One line even if it's empty
 		return 1;
 	}
-	if (text.size() > 1024) {
+	if (text.size() >= 1024) {
 		// Too long text, be lazy
 		return getStrWidth(text) / width + 3;
 	}
 
 	uint lineCount = 0;
-	Common::String::const_iterator textP = text.begin();
+	Common::U32String::const_iterator textP = text.begin();
 	uint len = text.size();
 
 	while (len > 0) {
-		Common::String buffer;
+		Common::U32String buffer;
 		uint lineWidth = 0;
 		lineCount++;
 		while (lineWidth < width && len > 0 && *textP != '\r') {
@@ -244,20 +302,34 @@ uint FontManager::getLinesCount(const Common::String &text, uint width) {
 
 		if (lineWidth >= width) {
 			// We overrun the line, get backwards
-			while (buffer.size()) {
-				if (buffer[buffer.size() - 1] == ' ') {
-					break;
+			if (_useSpaceDelimiter) {
+				uint bufferSize = buffer.size();
+				while (buffer.size()) {
+					if (buffer[buffer.size() - 1] == ' ') {
+						break;
+					}
+					buffer.deleteLastChar();
+					textP--;
+					len++;
 				}
-				buffer.deleteLastChar();
-				textP--;
-				len++;
-			}
-			if (!buffer.size()) {
-				// Word was too long: fail
-				return 0;
-			}
-			if (*textP == ' ') {
-				textP++;
+				if (!buffer.size()) {
+					// Word was too long: fail
+					// Split in middle of something
+					textP += bufferSize - 1;
+					len -= bufferSize - 1;
+				}
+				if (*textP == ' ') {
+					textP++;
+				}
+			} else {
+				if (buffer.size()) {
+					buffer.deleteLastChar();
+					textP--;
+					len++;
+				} else {
+					// fail
+					return 0;
+				}
 			}
 			// Continue with next line
 			continue;
@@ -276,14 +348,14 @@ uint FontManager::getLinesCount(const Common::String &text, uint width) {
 	return lineCount;
 }
 
-void FontManager::calculateWordWrap(const Common::String &text,
-                                    Common::String::const_iterator *position, uint *finalPos, bool *hasCr,
-                                    Common::Array<Common::String> &words) const {
+void FontManager::calculateWordWrap(const Common::U32String &text,
+                                    Common::U32String::const_iterator *position, uint *finalPos, bool *hasCr,
+                                    Common::Array<Common::U32String> &words) const {
 	*hasCr = false;
 	uint offset = 0;
 	bool wordWrap = false;
 	uint lineWidth = _blockRect.right - _blockRect.left;
-	Common::String::const_iterator ptr = *position;
+	Common::U32String::const_iterator ptr = *position;
 
 	words.clear();
 
@@ -296,9 +368,9 @@ void FontManager::calculateWordWrap(const Common::String &text,
 	}
 
 	while (!wordWrap) {
-		Common::String::const_iterator begin = ptr;
-		for (; ptr != text.end() && *ptr != '\r' && *ptr != ' '; ptr++) { }
-		Common::String word(begin, ptr);
+		Common::U32String::const_iterator begin = ptr;
+		for (; ptr != text.end() && *ptr != '\r' && (!_useSpaceDelimiter || *ptr != ' '); ptr++) { }
+		Common::U32String word(begin, ptr);
 		uint width = getStrWidth(word);
 		if (width + offset >= lineWidth) {
 			wordWrap = true;
@@ -317,24 +389,72 @@ void FontManager::calculateWordWrap(const Common::String &text,
 
 	if (words.size() > 0) {
 		offset -= _spaceWidth;
-	}
+	} /**/ else {
+		// couldn't get a word (too long): we are at start of line
+		Common::U32String::const_iterator begin = ptr;
+		// Start with one character
+		for (ptr++; ptr != text.end(); ptr++) {
+			Common::U32String word(begin, ptr);
+			uint width = getStrWidth(word);
+			if (width >= lineWidth) {
+				break;
+			}
+			offset = width;
+		}
+		// We overran: go back
+		if (ptr != begin) {
+			ptr--;
+		}
+		if (_keepASCIIjoined) {
+			Common::U32String::const_iterator end = ptr;
+			// Until now ptr was pointing after the last character
+			// As we want to look at it, go back
+			if (ptr != begin) {
+				ptr--;
+			}
+			for (; ptr != begin; ptr--) {
+				// Try to split at space or non-ASCII character
+				if (*ptr >= 0x80) {
+					break;
+				}
+				if (Common::isSpace(*ptr)) {
+					break;
+				}
+			}
+			if (ptr == begin) {
+				// Too bad: we have to split in middle of something
+				ptr = end;
+			} else {
+				// Go back just after last character
+				ptr++;
+			}
+		}
+		Common::U32String word(begin, ptr);
+		words.push_back(word);
+	} /**/
 	*finalPos = offset;
 	*position = ptr;
 }
 
-FontManager::Character::Character() : h(0), w(0), offX(0), offY(0), printedWidth(0), data(0) {
-}
-
-FontManager::Character::~Character() {
-	delete[] data;
-}
-
-uint FontManager::Character::setup(uint16 width, uint16 height) {
-	w = width;
-	h = height;
-	uint sz = w * h;
-	data = new byte[sz];
-	return sz;
+void FontManager::setupWrapParameters() {
+	switch (_codepage) {
+	case Common::kWindows932:
+		_useSpaceDelimiter = true;
+		_keepASCIIjoined = false;
+		break;
+	case Common::kWindows949:
+		_useSpaceDelimiter = true;
+		_keepASCIIjoined = false;
+		break;
+	case Common::kWindows950:
+		_useSpaceDelimiter = false;
+		_keepASCIIjoined = true;
+		break;
+	default:
+		_useSpaceDelimiter = true;
+		_keepASCIIjoined = false;
+		break;
+	}
 }
 
 } // End of namespace CryOmni3D

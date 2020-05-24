@@ -27,14 +27,11 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(ClearFeignDeathProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ClearFeignDeathProcess)
 
 ClearFeignDeathProcess::ClearFeignDeathProcess() : Process() {
 
@@ -65,12 +62,12 @@ void ClearFeignDeathProcess::run() {
 	terminate();
 }
 
-void ClearFeignDeathProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void ClearFeignDeathProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 }
 
-bool ClearFeignDeathProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool ClearFeignDeathProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

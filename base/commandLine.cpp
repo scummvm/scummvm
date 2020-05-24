@@ -87,6 +87,9 @@ static const char HELP_STRING[] =
 #endif
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
+#if defined(SDL_BACKEND)
+	"  -l, --logfile=PATH       Use alternate path for log file\n"
+#endif
 	"  -p, --path=PATH          Path to where the game is installed\n"
 	"  -x, --save-slot[=NUM]    Save game slot to load (default: autosave)\n"
 	"  -f, --fullscreen         Force full-screen mode\n"
@@ -222,6 +225,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("render_mode", "default");
 	ConfMan.registerDefault("desired_screen_aspect_ratio", "auto");
 	ConfMan.registerDefault("stretch_mode", "default");
+	ConfMan.registerDefault("shader", "default");
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -280,7 +284,7 @@ void registerDefaults() {
 #endif
 
 	// Miscellaneous
-	ConfMan.registerDefault("joystick_num", -1);
+	ConfMan.registerDefault("joystick_num", 0);
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
@@ -543,6 +547,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('c', "config")
 			END_OPTION
 
+#if defined(SDL_BACKEND)
+			DO_OPTION('l', "logfile")
+			END_OPTION
+#endif
+
 			DO_OPTION_INT('b', "boot-param")
 			END_OPTION
 
@@ -588,6 +597,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("stretch-mode")
+			END_OPTION
+
+			DO_LONG_OPTION("shader")
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")

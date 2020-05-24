@@ -191,7 +191,7 @@ bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

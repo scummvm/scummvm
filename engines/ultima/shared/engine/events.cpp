@@ -34,7 +34,7 @@ namespace Shared {
 
 EventsManager::EventsManager(EventsCallback *callback) : _callback(callback), _playTime(0),
 		_gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _buttonsDown(0),
-		_specialButtons(0) {
+		_specialButtons(0), _priorFrameTime(0) {
 }
 
 void EventsManager::showCursor() {

@@ -81,31 +81,31 @@ public:
 			if (!(scale_bits & (1 << y_factor))) return false;
 		}
 
-		if (RenderSurface::_format.s_bytes_per_pixel == 4) {
+		if (RenderSurface::_format.bytesPerPixel == 4) {
 			if (texture->_format == TEX_FMT_NATIVE || (texture->_format == TEX_FMT_STANDARD &&
-			        RenderSurface::_format.a_mask == TEX32_A_MASK && RenderSurface::_format.r_mask == TEX32_R_MASK &&
-			        RenderSurface::_format.g_mask == TEX32_G_MASK && RenderSurface::_format.b_mask == TEX32_B_MASK)) {
-				if (RenderSurface::_format.a_mask == 0xFF000000) {
-					if (!Scale32_A888) return 0;
+			        RenderSurface::_format.aMask == TEX32_A_MASK && RenderSurface::_format.rMask == TEX32_R_MASK &&
+			        RenderSurface::_format.gMask == TEX32_G_MASK && RenderSurface::_format.bMask == TEX32_B_MASK)) {
+				if (RenderSurface::_format.aMask == 0xFF000000) {
+					if (!Scale32_A888) return false;
 					return Scale32_A888(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
-				} else if (RenderSurface::_format.a_mask == 0x000000FF) {
-					if (!Scale32_888A) return 0;
+				} else if (RenderSurface::_format.aMask == 0x000000FF) {
+					if (!Scale32_888A) return false;
 					return Scale32_888A(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 				} else {
-					if (!Scale32Nat) return 0;
+					if (!Scale32Nat) return false;
 					return Scale32Nat(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 				}
 			} else if (texture->_format == TEX_FMT_STANDARD) {
-				if (!Scale32Sta) return 0;
+				if (!Scale32Sta) return false;
 				return Scale32Sta(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			}
 		}
-		if (RenderSurface::_format.s_bytes_per_pixel == 2) {
+		if (RenderSurface::_format.bytesPerPixel == 2) {
 			if (texture->_format == TEX_FMT_NATIVE) {
-				if (!Scale16Nat) return 0;
+				if (!Scale16Nat) return false;
 				return Scale16Nat(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			} else if (texture->_format == TEX_FMT_STANDARD) {
-				if (!Scale16Sta) return 0;
+				if (!Scale16Sta) return false;
 				return Scale16Sta(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			}
 		}

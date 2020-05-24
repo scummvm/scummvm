@@ -31,9 +31,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Archive)
-
 Archive::Archive() {
 	_count = 0;
 }
@@ -45,14 +42,12 @@ Archive::~Archive() {
 }
 
 
-Archive::Archive(ArchiveFile *af) {
-	_count = 0;
+Archive::Archive(ArchiveFile *af) : _count(0) {
 	addSource(af);
 }
 
-Archive::Archive(IDataSource *ids) {
-	_count = 0;
-	addSource(ids);
+Archive::Archive(Common::SeekableReadStream *rs) : _count(0) {
+	addSource(rs);
 }
 
 bool Archive::addSource(ArchiveFile *af) {
@@ -64,15 +59,15 @@ bool Archive::addSource(ArchiveFile *af) {
 	return true;
 }
 
-bool Archive::addSource(IDataSource *ids) {
-	ArchiveFile *s = 0;
+bool Archive::addSource(Common::SeekableReadStream *rs) {
+	ArchiveFile *s = nullptr;
 
-	if (!ids) return false;
+	if (!rs) return false;
 
-	if (FlexFile::isFlexFile(ids)) {
-		s = new FlexFile(ids);
-	} else if (U8SaveFile::isU8SaveFile(ids)) {
-		s = new U8SaveFile(ids);
+	if (FlexFile::isFlexFile(rs)) {
+		s = new FlexFile(rs);
+	} else if (U8SaveFile::isU8SaveFile(rs)) {
+		s = new U8SaveFile(rs);
 	}
 
 	if (!s) return false;
@@ -96,7 +91,8 @@ void Archive::uncache() {
 
 uint8 *Archive::getRawObject(uint32 index, uint32 *sizep) {
 	ArchiveFile *f = findArchiveFile(index);
-	if (!f) return 0;
+	if (!f)
+		return nullptr;
 
 	return f->getObject(index, sizep);
 }
@@ -115,7 +111,7 @@ ArchiveFile *Archive::findArchiveFile(uint32 index) const {
 			return _sources[n - i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Ultima8

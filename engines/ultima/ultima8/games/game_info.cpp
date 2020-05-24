@@ -23,9 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/games/game_info.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {
@@ -169,7 +167,7 @@ bool GameInfo::match(GameInfo &other, bool ignoreMD5) const {
 	return (Std::memcmp(_md5, other._md5, 16) == 0);
 }
 
-void GameInfo::save(ODataSource *ods) {
+void GameInfo::save(Common::WriteStream *ws) {
 	unsigned int l = static_cast<unsigned int>(_language);
 	assert(l < (sizeof(gamelangs) / sizeof(gamelangs[0])) - 1);
 	unsigned int t = static_cast<unsigned int>(_type);
@@ -184,7 +182,7 @@ void GameInfo::save(ODataSource *ods) {
 	Std::string md5Str = getPrintableMD5();
 
 	Std::string d = game + "," + lang + "," + ver + "," + md5Str + "\n";
-	ods->write(d.c_str(), d.size());
+	ws->write(d.c_str(), d.size());
 }
 
 bool GameInfo::load(IDataSource *ids, uint32 version_) {

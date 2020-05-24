@@ -50,6 +50,10 @@ enum {
 	JE_JOYSTICK = 15,
 	JE_MMB_DOWN = 16,
 	JE_MMB_UP = 17,
+	JE_BMB_DOWN = 18,
+	JE_BMB_UP = 19,
+	JE_FMB_DOWN = 20,
+	JE_FMB_UP = 21,
 	JE_QUIT = 0x1000
 };
 

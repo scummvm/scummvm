@@ -32,10 +32,8 @@ namespace Ultima8 {
 class Debugger;
 class Process;
 class idMan;
-class IDataSource;
-class ODataSource;
 
-typedef Process *(*ProcessLoadFunc)(IDataSource *, uint32 version);
+typedef Process *(*ProcessLoadFunc)(Common::ReadStream *rs, uint32 version);
 typedef Std::list<Process *>::const_iterator ProcessIter;
 typedef Std::list<Process *>::iterator ProcessIterator;
 
@@ -98,8 +96,8 @@ public:
 	void kernelStats();
 	void processTypes();
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ws);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 	void pause() {
 		_paused++;
@@ -130,7 +128,7 @@ public:
 	INTRINSIC(I_getNumProcesses);
 	INTRINSIC(I_resetRef);
 private:
-	Process *loadProcess(IDataSource *ids, uint32 version);
+	Process *loadProcess(Common::ReadStream *rs, uint32 version);
 
 	Std::list<Process *> _processes;
 	idMan   *_pIDs;
@@ -149,22 +147,6 @@ private:
 
 	static Kernel *_kernel;
 };
-
-// a bit of a hack to prevent having to write a load function for
-// every process
-template<class T>
-struct ProcessLoader {
-	static Process *load(IDataSource *ids, uint32 version) {
-		T *p = new T();
-		bool ok = p->loadData(ids, version);
-		if (!ok) {
-			delete p;
-			p = 0;
-		}
-		return p;
-	}
-};
-
 
 extern uint getRandom();
 

@@ -30,6 +30,7 @@
 #include "graphics/nine_patch.h"
 #include "graphics/palette.h"
 
+#include "graphics/macgui/macwidget.h"
 #include "graphics/macgui/macwindowborder.h"
 
 namespace Graphics {
@@ -63,19 +64,11 @@ enum WindowClick {
 }
 using namespace MacWindowConstants;
 
-struct WidgetInfo {
-	Common::Rect bbox;
-	MacWidget *widget;
-
-	WidgetInfo(MacWidget *widget_, int x, int y);
-	~WidgetInfo();
-};
-
 /**
  * Abstract class that defines common functionality for all window classes.
  * It supports event callbacks and drawing.
  */
-class BaseMacWindow {
+class BaseMacWindow : public MacWidget {
 public:
 	/**
 	 * Base constructor.
@@ -85,12 +78,6 @@ public:
 	 */
 	BaseMacWindow(int id, bool editable, MacWindowManager *wm);
 	virtual ~BaseMacWindow() {}
-
-	/**
-	 * Accessor method for the complete dimensions of the window.
-	 * @return Dimensions of the window (including border) relative to the WM's screen.
-	 */
-	const Common::Rect &getDimensions() { return _dims; }
 
 	/**
 	 * Accessor method to the id of the window.
@@ -115,20 +102,7 @@ public:
 	 * Method to access the entire surface of the window (e.g. to draw an image).
 	 * @return A pointer to the entire surface of the window.
 	 */
-	ManagedSurface *getSurface() { return &_surface; }
-
-	/**
-	 * Abstract method for indicating whether the window is active or inactive.
-	 * Used by the WM to handle focus on windows, etc.
-	 * @param active Desired state of the window.
-	 */
-	virtual void setActive(bool active) = 0;
-
-	/**
-	 * Method for marking the window for redraw.
-	 * @param dirty True if the window needs to be redrawn.
-	 */
-	void setDirty(bool dirty) { _contentIsDirty = dirty; }
+	ManagedSurface *getWindowSurface() { return &_surface; }
 
 	/**
 	 * Method called to draw the window into the target surface.
@@ -148,8 +122,6 @@ public:
 	 */
 	virtual bool processEvent(Common::Event &event) = 0;
 
-	virtual bool hasAllFocus() = 0;
-
 	/**
 	 * Set the callback that will be used when an event needs to be processed.
 	 * @param callback A function pointer to a function that accepts:
@@ -159,8 +131,6 @@ public:
 	 */
 	void setCallback(bool (*callback)(WindowClick, Common::Event &, void *), void *data) { _callback = callback; _dataPtr = data; }
 
-	void addWidget(MacWidget *widget, int x, int y);
-
 protected:
 	int _id;
 	WindowType _type;
@@ -168,14 +138,9 @@ protected:
 	bool _editable;
 
 	ManagedSurface _surface;
-	bool _contentIsDirty;
-
-	Common::Rect _dims;
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
-
-	Common::List<WidgetInfo *> _widgets;
 
 public:
 	MacWindowManager *_wm;
@@ -220,7 +185,7 @@ public:
 	 * of the window, although move() and resize() might be more comfortable.
 	 * @param r The desired dimensions of the window.
 	 */
-	void setDimensions(const Common::Rect &r);
+	virtual void setDimensions(const Common::Rect &r) override;
 
 	/**
 	 * Accessor to retrieve the dimensions of the inner surface of the window
@@ -242,14 +207,17 @@ public:
 	 * @param g See BaseMacWindow.
 	 * @param forceRedraw If true, the borders are guarranteed to redraw.
 	 */
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+
+	virtual bool draw(bool forceRedraw = false) override;
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
 	/**
 	 * Mutator to change the active state of the window.
 	 * Most often called from the WM.
 	 * @param active Target state.
 	 */
-	void setActive(bool active);
+	virtual void setActive(bool active) override;
 	/**
 	 * Accessor to determine whether a window is active.
 	 * @return True if the window is active.
@@ -276,8 +244,8 @@ public:
 	/**
 	 * See BaseMacWindow.
 	 */
-	virtual bool processEvent(Common::Event &event);
-	bool hasAllFocus() { return _beingDragged || _beingResized; }
+	virtual bool processEvent(Common::Event &event) override;
+	virtual bool hasAllFocus() override { return _beingDragged || _beingResized; }
 
 	/**
 	 * Set arbitrary border from a BMP data stream, with custom border offsets.
@@ -292,6 +260,7 @@ public:
 	 */
 	void loadBorder(Common::SeekableReadStream &file, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
 	void setBorder(TransparentSurface *border, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void disableBorder();
 
 	/**
 	 * Indicate whether the window can be closed (false by default).
@@ -319,7 +288,6 @@ protected:
 
 protected:
 	ManagedSurface _borderSurface;
-	ManagedSurface _composeSurface;
 
 	bool _borderIsDirty;
 
@@ -331,7 +299,6 @@ private:
 
 	bool _scrollable;
 	bool _resizable;
-	bool _active;
 
 	bool _closeable;
 

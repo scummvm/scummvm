@@ -32,17 +32,19 @@ namespace Director {
 int castNumToNum(const char *str);
 char *numToCastNum(int num);
 
-Common::String *toLowercaseMac(Common::String *s);
+Common::String toLowercaseMac(const Common::String &s);
 
 Common::String convertPath(Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
-Common::String pathMakeRelative(Common::String path, bool recursive = true);
+Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true);
+
+Common::String stripMacPath(const char *name);
 
 Common::String convertMacFilename(const char *name);
 
-void processQuitEvent(); // events.cpp
+bool processQuitEvent(bool click = false); // events.cpp
 
 } // End of namespace Director
 

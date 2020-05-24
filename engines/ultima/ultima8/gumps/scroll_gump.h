@@ -30,6 +30,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * A paper scroll (with a spell, etc)
+ */
 class ScrollGump : public ModalGump {
 	Std::string _text;
 	ObjId _textWidget;
@@ -41,10 +44,10 @@ public:
 	~ScrollGump() override;
 
 	// Go to the next page on mouse click
-	void OnMouseClick(int button, int32 mx, int32 my) override;
+	void onMouseClick(int button, int32 mx, int32 my) override;
 
 	// Close on double click
-	void OnMouseDouble(int button, int32 mx, int32 my) override;
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -55,9 +58,9 @@ protected:
 	void NextText();
 
 public:
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

@@ -308,6 +308,7 @@ void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 
 void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 	assert(channel <= 15);
+	bool standard_midi_controller = true;
 
 	switch (control) {
 	case 0x07:
@@ -340,6 +341,8 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 		_channels[channel].hold = value;
 		break;
 	case 0x4b:	// voice mapping
+		// this is an internal Sierra command, and shouldn't be sent to the real MIDI driver - fixing #11409
+		standard_midi_controller = false;
 		break;
 	case 0x4e:	// velocity
 		break;
@@ -349,7 +352,8 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 		break;
 	}
 
-	_driver->send(0xb0 | channel, control, value);
+	if (standard_midi_controller)
+		_driver->send(0xb0 | channel, control, value);
 }
 
 void MidiPlayer_Midi::setPatch(int channel, int patch) {

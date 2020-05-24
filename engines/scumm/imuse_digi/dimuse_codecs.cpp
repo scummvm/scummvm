@@ -357,7 +357,7 @@ int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inpu
 		for (z = 1; z < outputSize; z++)
 			p[z] += p[z - 1];
 
-		t_table = (byte *)malloc(outputSize);
+		t_table = (byte *)calloc(outputSize, 1);
 		assert(t_table);
 
 		src = compOutput;

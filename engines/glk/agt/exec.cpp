@@ -695,7 +695,7 @@ void gen_sysmsg(int msgid, const char *s, int context, const char *pword)
 		if (err_ptr[msgid - 1].size <= 0
 		        && msgid > OLD_MAX_STD_MSG && msgid <= MAX_NUM_ERR) {
 			msgid = stdmsg_fallback[msgid - OLD_MAX_STD_MSG - 1];
-			if (DEBUG_SMSG) rprintf("==> %3d");
+			if (DEBUG_SMSG) rprintf("==> %3d", msgid);
 		}
 		if (msgid != 0 && err_ptr[msgid - 1].size > 0) {
 			if (DEBUG_SMSG) rprintf(" : From gamefile\n");

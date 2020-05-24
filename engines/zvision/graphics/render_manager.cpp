@@ -992,6 +992,7 @@ bool RenderManager::askQuestion(const Common::String &str) {
 				// Spanish: si/no
 				// French Nemesis: F4/any other key
 				// French ZGI: oui/non
+				// TODO: Handle this using the keymapper
 				switch (evnt.kbd.keycode) {
 				case Common::KEYCODE_y:
 					if (_engine->getLanguage() == Common::EN_ANY)

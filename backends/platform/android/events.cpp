@@ -475,6 +475,60 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		return;
 
+	case JE_MMB_DOWN:
+		e.type = Common::EVENT_MBUTTONDOWN;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_MMB_UP:
+		e.type = Common::EVENT_MBUTTONUP;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_BMB_DOWN:
+		e.type = Common::EVENT_X1BUTTONDOWN;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_BMB_UP:
+		e.type = Common::EVENT_X1BUTTONUP;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_FMB_DOWN:
+		e.type = Common::EVENT_X2BUTTONDOWN;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_FMB_UP:
+		e.type = Common::EVENT_X2BUTTONUP;
+		e.mouse.x = arg1;
+		e.mouse.y = arg2;
+
+		pushEvent(e);
+
+		return;
+
 	case JE_GAMEPAD:
 		switch (arg1) {
 		case JACTION_DOWN:
@@ -547,18 +601,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		return;
 
-	case JE_MMB_DOWN:
-		e.type = Common::EVENT_MAINMENU;
-
-		pushEvent(e);
-
-		return;
-
-	case JE_MMB_UP:
-		// No action
-
-		return;
-
 	case JE_QUIT:
 		e.type = Common::EVENT_QUIT;
 
@@ -617,17 +659,9 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 	unlockMutex(_event_queue_lock);
 
-	switch (event.type) {
-	case Common::EVENT_MOUSEMOVE:
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
+	if (Common::isMouseEvent(event)) {
 		if (_graphicsManager)
 			return dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->notifyMousePosition(event.mouse);
-		break;
-	default:
-		break;
 	}
 
 	return true;

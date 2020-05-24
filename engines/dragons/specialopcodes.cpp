@@ -271,10 +271,10 @@ void SpecialOpcodes::spcCastleGardenLogic() {
 		sceneUpdater.iniIDTbl[3][0] = 0x145;
 		sceneUpdater.iniIDTbl[4][0] = 0x144;
 	} else {
-		sceneUpdater.sequenceIDTbl[0][0] = -1;
-		sceneUpdater.sequenceIDTbl[1][0] = -1;
-		sceneUpdater.sequenceIDTbl[2][0] = -1;
-		sceneUpdater.sequenceIDTbl[3][0] = -1;
+		sceneUpdater.sequenceIDTbl[0][0] = 0xffff;
+		sceneUpdater.sequenceIDTbl[1][0] = 0xffff;
+		sceneUpdater.sequenceIDTbl[2][0] = 0xffff;
+		sceneUpdater.sequenceIDTbl[3][0] = 0xffff;
 		sceneUpdater.iniIDTbl[3][0] = 0x83;
 		sceneUpdater.iniIDTbl[4][0] = 0x74;
 	}
@@ -315,11 +315,11 @@ void SpecialOpcodes::spcUnkA() {
 }
 
 void SpecialOpcodes::spcUnkC() {
-	//TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 }
 
 void SpecialOpcodes::spcFadeScreen() {
-	_vm->call_fade_related_1f();
+	_vm->fadeFromBlack();
 }
 
 void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
@@ -329,8 +329,8 @@ void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
 }
 
 void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
-	_vm->setSceneUpdateFunction(NULL);
-	_vm->_sound->PauseCDMusic();
+	_vm->clearSceneUpdateFunction();
+	_vm->_sound->resumeMusic();
 	if ((_dat_80083148 != 0) || (_uint16_t_80083154 != 0)) {
 		//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	}
@@ -480,7 +480,7 @@ void SpecialOpcodes::spcActivatePizzaMakerActor() {
 
 void SpecialOpcodes::spcDeactivatePizzaMakerActor() {
 	if (_vm->getSceneUpdateFunction() == pizzaUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 	}
 }
 
@@ -545,7 +545,7 @@ void SpecialOpcodes::spcMenInMinesSceneLogic() {
 
 void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
 	if (_vm->getSceneUpdateFunction() == menInMinesSceneUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 		if (0x3c < _specialOpCounter) {
 			_specialOpCounter = 0x3c;
 		}
@@ -566,7 +566,7 @@ void SpecialOpcodes::spcMonksAtBarSceneLogic() {
 
 void SpecialOpcodes::spcStopMonksAtBarSceneLogic() {
 	if (_vm->getSceneUpdateFunction() == monksAtBarSceneUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 		if ((_dat_80083148 != 0) && (_uint16_t_80083154 != 0)) {
 			//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 		}
@@ -594,7 +594,7 @@ void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 	_dat_80083148 = 0;
 	_vm->_dragonINIResource->getRecord(0x96)->actor->updateSequence(0);
 	if (_vm->getSceneUpdateFunction() == flameEscapeSceneUpdateFunction) {
-		_vm->setSceneUpdateFunction(NULL);
+		_vm->clearSceneUpdateFunction();
 	}
 }
 
@@ -919,7 +919,7 @@ void SpecialOpcodes::spcCastleBuildBlackDragonSceneLogic() {
 }
 
 void SpecialOpcodes::spcStopSceneUpdateFunction() {
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 }
 
 void SpecialOpcodes::spcSetInventorySequenceTo5() {
@@ -981,7 +981,7 @@ void SpecialOpcodes::panCamera(int16 mode) {
 
 	if (mode == 1) {
 		_vm->getINI(0x2ab)->objectState = _vm->_scene->_camera.x;
-		_vm->_dragonINIResource->setFlickerRecord(NULL);
+		_vm->_dragonINIResource->setFlickerRecord(nullptr);
 		iVar2 = (int) _vm->_scene->_camera.x;
 		iVar1 = iVar2;
 		while (iVar1 <= (_vm->_scene->getStageWidth() - 320)) {
@@ -1043,7 +1043,7 @@ void SpecialOpcodes::spc82CallResetDataMaybe() {
 }
 
 void SpecialOpcodes::spcStopScreenShakeUpdater() {
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 	_vm->_screen->setScreenShakeOffset(0, 0);
 }
 
@@ -1118,17 +1118,19 @@ void SpecialOpcodes::spcKnightsSavedAgainCutScene() {
 }
 
 void SpecialOpcodes::spcTransitionToMap() {
-	//TODO map transition
-//	DAT_8006a422 = 0;
-//	DAT_8006a424 = 0;
-//	cursorSequenceId = 0;
-//	_vm->waitForFrames();
-//	engine_flags_maybe = engine_flags_maybe | 0x20000000;
-//	FUN_80023b34(0, 0, 1);
+	_vm->_scene->setMgLayerPriority(0);
+	_vm->_scene->setFgLayerPriority(0);
+	_vm->_cursor->updateSequenceID(0);
+	_vm->waitForFrames(1);
+	_vm->setFlags(ENGINE_FLAG_20000000);
+	mapTransition(1);
 }
 
 void SpecialOpcodes::spcTransitionFromMap() {
-	//TODO map transition
+	mapTransition(0);
+	_vm->_scene->setMgLayerPriority(2);
+	_vm->_scene->setFgLayerPriority(3);
+	_vm->clearFlags(ENGINE_FLAG_20000000);
 }
 
 void SpecialOpcodes::spcCaveOfDilemmaSceneLogic() {
@@ -1136,12 +1138,11 @@ void SpecialOpcodes::spcCaveOfDilemmaSceneLogic() {
 }
 
 void SpecialOpcodes::spcFadeCreditsToBackStageScene() {
-//	call_fade_related();
+	_vm->fadeToBlackExcludingFont();
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
 	_vm->_scene->_camera.x = 0x140;
 	_vm->waitForFrames(0x3c);
-//	Call_SomeShadeTexThingB1E();
-//TODO
+	_vm->fadeFromBlackExcludingFont();
 }
 
 void SpecialOpcodes::spcRunCredits() {
@@ -1170,7 +1171,7 @@ void SpecialOpcodes::spcRunCredits() {
 }
 
 void SpecialOpcodes::spcEndCreditsAndRestartGame() {
-//	call_fade_related();
+	_vm->fadeToBlackExcludingFont();
 //	_volumeSFX = 0;
 //	setCDAVolumes();
 	while (_vm->_credits->isRunning()) {
@@ -1233,13 +1234,13 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 		if (actorf4->_sequenceID == 1) {
 			actorf4->waitUntilFlag8And4AreSet();
 			actorf4->updateSequence(2);
-			actorf5->_x_pos = 0x115;
-			actorf5->_y_pos = 0x5c;
+			actorf5->_x_pos = 277;
+			actorf5->_y_pos = 92;
 			actorf5->updateSequence(7);
 			_vm->waitForFrames(0x78);
 			actorf5->updateSequence(8);
 			actorf5->waitUntilFlag8And4AreSet();
-			actorf5->_x_pos = 0xff9c;
+			actorf5->_x_pos = -100;
 			actorf5->_y_pos = 100;
 			actorf4->updateSequence(3);
 		} else {
@@ -1247,7 +1248,7 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 				_vm->waitForFrames(0x78);
 				actorf5->updateSequence(8);
 				actorf5->waitUntilFlag8And4AreSet();
-				actorf5->_x_pos = 0xff9c;
+				actorf5->_x_pos = -100;
 				actorf5->_y_pos = 100;
 				actorf4->updateSequence(3);
 			} else {
@@ -1268,7 +1269,7 @@ void SpecialOpcodes::clearSceneUpdateFunction() {
 	if (sceneUpdater.sequenceID != -1) {
 		_vm->getINI(sceneUpdater.iniID)->actor->updateSequence(sceneUpdater.sequenceID);
 	}
-	_vm->setSceneUpdateFunction(NULL);
+	_vm->clearSceneUpdateFunction();
 }
 
 void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences,
@@ -1306,6 +1307,107 @@ int16 SpecialOpcodes::getSpecialOpCounter() {
 
 void SpecialOpcodes::setSpecialOpCounter(int16 newValue) {
 	_specialOpCounter = newValue;
+}
+
+void SpecialOpcodes::mapTransition(uint16 mode) {
+	const uint16 mapLookupTbl[26] = {
+			160,    100,     45,    100,
+			105,    170,     14,     87,
+			 83,     33,     86,    100,
+			 25,    180,    161,    156,
+			195,     47,    287,     35,
+			292,     80,    202,    182,
+			127,     78
+	};
+
+	const uint16 mapSceneIdTbl[13] = {
+			0,
+			0xa, 0x15, 0x1a,
+			0x1b, 0x1c, 0x1e,
+			0x20, 0x23, 0x25,
+			0x2d, 0x30, 0x31
+	};
+
+	uint16 targetLocation = _vm->getINI(0x1e)->objectState;
+	if (targetLocation == 0) {
+		targetLocation = 0xc;
+		for (int i = 1; i < 0xd; i++) {
+			if (_vm->_scene->_mapTransitionEffectSceneID < mapSceneIdTbl[i]) {
+				targetLocation = i - 1;
+				break;
+			}
+		}
+	}
+
+	_vm->_cursor->updatePosition(mapLookupTbl[targetLocation * 2], mapLookupTbl[targetLocation * 2 + 1]);
+	_vm->setFlags(ENGINE_FLAG_20);
+
+	int16 cursorX = _vm->_cursor->_x;
+	int16 cursorY = _vm->_cursor->_y;
+
+	int32 topIncrement = (cursorY << 0x10) >> 4;
+	int32 bottomIncrement = (DRAGONS_SCREEN_HEIGHT - cursorY) * 0x10000 >> 4;
+	int32 rightIncrement = (DRAGONS_SCREEN_WIDTH - cursorX) * 0x10000 >> 4;
+
+	if (mode == 0) { //Close map
+		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0x140,0,0x140,0,0,0,1,4,0));
+		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,200,0x140,200,0x140,200,0,200,1,4,0));
+		FlatQuad *leftQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0,0,0,200,0,200,1,4,0));
+		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0x140,0,0x140,0,0x140,200,0x140,200,1,4,0));
+		int32 topY = topQuad->points[3].y << 0x10;
+		int32 bottomY = bottomQuad->points[0].y << 0x10;
+		int32 rightX = rightQuad->points[0].x << 0x10;
+		int32 leftX = leftQuad->points[1].x << 0x10;
+
+		while (topY < (cursorY << 0x10)) {
+			topY = topY + topIncrement;
+			bottomY = bottomY - bottomIncrement;
+			leftX = leftX + cursorX * 0x1000;
+			topQuad->points[3].y = topY >> 0x10;
+			topQuad->points[2].y = topY >> 0x10;
+			bottomQuad->points[0].y = bottomY >> 0x10;
+			bottomQuad->points[1].y = bottomY >> 0x10;
+			leftQuad->points[1].x = leftX >> 0x10;
+			leftQuad->points[3].x = leftX >> 0x10;
+			rightX = rightX - rightIncrement;
+			rightQuad->points[0].x = rightX >> 0x10;
+			rightQuad->points[2].x = rightX >> 0x10;
+			_vm->waitForFrames(1);
+		}
+
+		_vm->fadeToBlack();
+	} else if (mode == 1) { // Open map
+		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0x140,0,0x140,cursorY,0,cursorY,1,4,0));
+		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, cursorY, 0x140, cursorY, 0x140, 200, 0, 200, 1, 4, 0));
+		FlatQuad *leftQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, 0, cursorX, 0, cursorX, 200, 0, 200, 1, 4, 0));
+		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(cursorX,0,0x140,0,0x140,200,cursorX,200,1,4,0));
+		int32 topY = topQuad->points[3].y << 0x10;
+		int32 bottomY = bottomQuad->points[0].y << 0x10;
+		int32 leftX = leftQuad->points[1].x << 0x10;
+		int32 rightX = rightQuad->points[0].x << 0x10;
+		_vm->waitForFrames(2);
+		bool hasDoneFade = false;
+		while (0 < topY) {
+			topY = topY - topIncrement;
+			bottomY = bottomY + bottomIncrement;
+			leftX = leftX + cursorX * -0x1000;
+			topQuad->points[3].y = topY >> 0x10;
+			topQuad->points[2].y = topY >> 0x10;
+			bottomQuad->points[0].y = bottomY >> 0x10;
+			bottomQuad->points[1].y = bottomY >> 0x10;
+			leftQuad->points[1].x = leftX >> 0x10;
+			leftQuad->points[3].x = leftX >> 0x10;
+			rightX = rightX + rightIncrement;
+			rightQuad->points[0].x = rightX >> 0x10;
+			rightQuad->points[2].x = rightX >> 0x10;
+			_vm->waitForFrames(1);
+			if (!hasDoneFade) {
+				_vm->fadeFromBlack();
+				hasDoneFade = true;
+			}
+		}
+	}
+	_vm->_screen->clearAllFlatQuads();
 }
 
 void pizzaUpdateFunction() {
@@ -1401,8 +1503,8 @@ void castleBuildingBlackDragon2UpdateFunction() {
 			ini->counter = 0x68;
 			ini->objectState = 1;
 		} else if (ini->objectState == 1) {
-			ini->actor->updateSequence(4);
-			ini->counter = vm->getRand(0xb4);
+			vm->_dragonINIResource->getRecord(0x234)->actor->updateSequence(4);
+			ini->counter = vm->getRand(0xb4) + 900;
 			ini->objectState = 0;
 		}
 	}

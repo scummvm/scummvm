@@ -24,14 +24,19 @@
 #include "mohawk/dialogs.h"
 
 #include "gui/gui-manager.h"
+#include "gui/message.h"
 #include "gui/saveload.h"
+#include "gui/ThemeEval.h"
 #include "gui/widget.h"
 #include "gui/widgets/popup.h"
+
+#include "common/gui_options.h"
 #include "common/system.h"
 #include "common/translation.h"
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
+#include "mohawk/myst_actions.h"
 #include "mohawk/myst_scripts.h"
 #endif
 
@@ -80,263 +85,328 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 }
 
 enum {
-	kZipCmd = 'ZIPM',
-	kTransCmd = 'TRAN',
-	kWaterCmd = 'WATR',
 	kDropCmd = 'DROP',
-	kMapCmd = 'SMAP',
-	kMenuCmd = 'MENU',
-	kSaveCmd = 'SAVE',
-	kLoadCmd = 'LOAD',
-	kQuitCmd = 'QUIT'
+	kMapCmd  = 'SMAP',
+	kMenuCmd = 'MENU'
 };
-
-#if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
-
-MohawkOptionsDialog::MohawkOptionsDialog() :
-		GUI::Dialog(0, 0, 360, 200) {
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
-}
-
-MohawkOptionsDialog::~MohawkOptionsDialog() {
-}
-
-void MohawkOptionsDialog::reflowLayout() {
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	// Center the dialog
-	_x = (screenW - getWidth()) / 2;
-	_y = (screenH - getHeight()) / 2;
-
-	GUI::Dialog::reflowLayout();
-}
-
-
-void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-		case GUI::kCloseCmd:
-			close();
-			break;
-		default:
-			GUI::Dialog::handleCommand(sender, cmd, data);
-	}
-}
-
-#endif
 
 #ifdef ENABLE_MYST
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) :
-		MohawkOptionsDialog(),
-		_vm(vm),
-		_canDropPage(false),
-		_canShowMap(false),
-		_canReturnToMenu(false),
-		_loadSlot(-1),
-		_saveSlot(-1) {
+MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, "MystOptionsDialog", false, domain),
+		_zipModeCheckbox(nullptr),
+		_transitionsCheckbox(nullptr),
+		_mystFlyByCheckbox(nullptr),
+		_languagePopUp(nullptr),
+		_dropPageButton(nullptr),
+		_showMapButton(nullptr),
+		_returnToMenuButton(nullptr) {
+	Common::String guiOptions = ConfMan.get("guioptions", _domain);
+	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
+	bool isME = checkGameGUIOption(GAMEOPTION_ME, guiOptions);
 
-	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
-	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
-	_quitButton = new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
-
-	// I18N: Option for fast scene switching
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
-	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~T~ransitions Enabled"), nullptr, kTransCmd);
-	// I18N: Drop book page
-	_dropPageButton = new GUI::ButtonWidget(this, 15, 60, 100, 25, _("~D~rop Page"), nullptr, kDropCmd);
-
-	// Myst ME only has maps
-	if (_vm->getFeatures() & GF_ME)
-		_showMapButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Show ~M~ap"), nullptr, kMapCmd);
-	else
-		_showMapButton = nullptr;
-
-	// Myst demo only has a menu
-	if (_vm->getFeatures() & GF_DEMO)
-		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Main Men~u~"), nullptr, kMenuCmd);
-	else
-		_returnToMenuButton = nullptr;
-
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-}
-
-MystOptionsDialog::~MystOptionsDialog() {
-	delete _loadDialog;
-	delete _saveDialog;
-}
-
-void MystOptionsDialog::open() {
-	MohawkOptionsDialog::open();
-
-	_dropPageButton->setEnabled(_canDropPage);
-
-	if (_showMapButton) {
-		_showMapButton->setEnabled(_canShowMap);
+	if (!isDemo) {
+		// I18N: Option for fast scene switching
+		_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystOptionsDialog.ZipMode", _("~Z~ip Mode Activated"));
 	}
 
-	if (_returnToMenuButton) {
-		// Return to menu button is not enabled on the menu
-		_returnToMenuButton->setEnabled(_canReturnToMenu);
+	_transitionsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystOptionsDialog.Transistions", _("~T~ransitions Enabled"));
+
+	if (isME) {
+		_mystFlyByCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystOptionsDialog.PlayMystFlyBy", _("Play the Myst fly by movie"),
+		                                             _("The Myst fly by movie was not played by the original engine."));
 	}
 
-	// Zip mode is disabled in the demo
-	if (_vm->getFeatures() & GF_DEMO)
-		_zipModeCheckbox->setEnabled(false);
+	if (isInGame()) {
+		MohawkEngine_Myst *vm = static_cast<MohawkEngine_Myst *>(g_engine);
+		assert(vm);
 
-	if (_vm->getFeatures() & GF_25TH) {
-		// The 25th anniversary version has a main menu, no need to show these buttons here
-		_loadButton->setVisible(false);
-		_saveButton->setVisible(false);
-		_quitButton->setVisible(false);
-	}
+		// I18N: Drop book page
+		_dropPageButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.DropPage", _("~D~rop Page"), nullptr, kDropCmd);
 
-	_loadSlot = -1;
-	_saveSlot = -1;
-	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
-	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
-}
-
-void MystOptionsDialog::save() {
-	_saveSlot = _saveDialog->runModalWithCurrentTarget();
-
-	if (_saveSlot >= 0) {
-		_saveDescription = _saveDialog->getResultString();
-		if (_saveDescription.empty()) {
-			// If the user was lazy and entered no save name, come up with a default name.
-			_saveDescription = _saveDialog->createDefaultSaveDescription(_saveSlot);
+		// Myst ME only has maps
+		if (vm->isGameVariant(GF_ME)) {
+			_showMapButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.ShowMap", _("Show ~M~ap"), nullptr, kMapCmd);
 		}
 
-		close();
+		// Myst demo only has a menu
+		if (vm->isGameVariant(GF_DEMO)) {
+			_returnToMenuButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.MainMenu", _("Main Men~u~"), nullptr, kMenuCmd);
+		}
+
+		if (vm->isGameVariant(GF_25TH)) {
+			GUI::StaticTextWidget *languageCaption = new GUI::StaticTextWidget(widgetsBoss(), "MystOptionsDialog.LanguageDesc", _("Language:"));
+			languageCaption->setAlign(Graphics::kTextAlignRight);
+
+			_languagePopUp = new GUI::PopUpWidget(widgetsBoss(), "MystOptionsDialog.Language");
+
+			const MystLanguage *languages = MohawkEngine_Myst::listLanguages();
+			while (languages->language != Common::UNK_LANG) {
+				_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
+				languages++;
+			}
+		}
 	}
 }
 
-void MystOptionsDialog::load() {
-	// Do not load the game state from insite the dialog loop to
-	// avoid mouse cursor glitches (see bug #7164). Instead store
-	// the slot to load and let the code exectuting the dialog do
-	// the load after the dialog finished running.
-	_loadSlot = _loadDialog->runModalWithCurrentTarget();
-
-	if (_loadSlot >= 0)
-		close();
+MystOptionsWidget::~MystOptionsWidget() {
 }
 
-void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void MystOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+	            .addLayout(GUI::ThemeLayout::kLayoutVertical)
+	                .addPadding(16, 16, 16, 16)
+	                .addWidget("ZipMode", "Checkbox")
+	                .addWidget("Transistions", "Checkbox")
+	                .addWidget("PlayMystFlyBy", "Checkbox")
+	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                    .addPadding(0, 0, 0, 0)
+	                    .addWidget("LanguageDesc", "OptionsLabel")
+	                    .addWidget("Language", "PopUp")
+	                .closeLayout()
+	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                    .addPadding(0, 0, 16, 0)
+	                    .addSpace()
+	                    .addWidget("DropPage", "Button")
+	                    .addWidget("ShowMap",  "Button")
+	                    .addWidget("MainMenu", "Button")
+	                    .addSpace()
+	                .closeLayout()
+	            .closeLayout()
+	        .closeDialog();
+}
+
+bool MystOptionsWidget::isInGame() const {
+	return _domain.equals(ConfMan.getActiveDomainName());
+}
+
+void MystOptionsWidget::load() {
+	if (_zipModeCheckbox) {
+		_zipModeCheckbox->setState(ConfMan.getBool("zip_mode", _domain));
+	}
+
+	_transitionsCheckbox->setState(ConfMan.getBool("transition_mode", _domain));
+
+	if (_mystFlyByCheckbox) {
+		_mystFlyByCheckbox->setState(ConfMan.getBool("playmystflyby", _domain));
+	}
+
+	if (_languagePopUp) {
+		Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
+		const MystLanguage *languageDesc = MohawkEngine_Myst::getLanguageDesc(language);
+		if (languageDesc) {
+			_languagePopUp->setSelectedTag(languageDesc->language);
+		}
+	}
+
+	if (isInGame()) {
+		MohawkEngine_Myst *vm = static_cast<MohawkEngine_Myst *>(g_engine);
+		assert(vm);
+
+		_dropPageButton->setEnabled(vm->canDoAction(kMystActionDropPage));
+
+		if (_showMapButton) {
+			_showMapButton->setEnabled(vm->canDoAction(kMystActionShowMap));
+		}
+
+		if (_returnToMenuButton) {
+			// Return to menu button is not enabled on the menu
+			_returnToMenuButton->setEnabled(vm->canDoAction(kMystActionOpenMainMenu));
+		}
+	}
+}
+
+bool MystOptionsWidget::save() {
+	if (_zipModeCheckbox) {
+		ConfMan.setBool("zip_mode", _zipModeCheckbox->getState(), _domain);
+	}
+
+	ConfMan.setBool("transition_mode", _transitionsCheckbox->getState(), _domain);
+
+	if (_mystFlyByCheckbox) {
+		ConfMan.setBool("playmystflyby", _mystFlyByCheckbox->getState(), _domain);
+	}
+
+	if (_languagePopUp) {
+		MohawkEngine_Myst *vm = static_cast<MohawkEngine_Myst *>(g_engine);
+		assert(vm);
+
+		int32 selectedLanguage = _languagePopUp->getSelectedTag();
+		const MystLanguage *languageDesc = nullptr;
+		if (selectedLanguage >= 0) {
+			languageDesc = MohawkEngine_Myst::getLanguageDesc(static_cast<Common::Language>(selectedLanguage));
+		}
+
+		Common::Language newLanguage = Common::UNK_LANG;
+		if (languageDesc != nullptr) {
+			newLanguage = languageDesc->language;
+			ConfMan.set("language", Common::getLanguageCode(languageDesc->language));
+		}
+
+		Common::Language currentLanguage = vm->getLanguage();
+		if (newLanguage != currentLanguage && vm->isGameStarted()) {
+			GUI::MessageDialog dialog(_("The new language will be applied after restarting the game."));
+			dialog.runModal();
+		}
+	}
+
+	return true;
+}
+
+void MystOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	assert(_parentDialog);
+
+	GUI::CommandSender dialog(_parentDialog);
+
 	switch (cmd) {
-	case kLoadCmd:
-		load();
-		break;
-	case kSaveCmd:
-		save();
-		break;
 	case kDropCmd:
-		setResult(kActionDropPage);
-		close();
+		dialog.sendCommand(GUI::kCloseWithResultCmd, kMystActionDropPage);
 		break;
 	case kMapCmd:
-		setResult(kActionShowMap);
-		close();
+		dialog.sendCommand(GUI::kCloseWithResultCmd, kMystActionShowMap);
 		break;
 	case kMenuCmd:
-		setResult(kActionGoToMenu);
-		close();
-		break;
-	case kQuitCmd:
-		setResult(kActionShowCredits);
-		close();
-		break;
-	case GUI::kOKCmd:
-		setResult(kActionSaveSettings);
-		close();
+		dialog.sendCommand(GUI::kCloseWithResultCmd, kMystActionOpenMainMenu);
 		break;
 	default:
-		MohawkOptionsDialog::handleCommand(sender, cmd, data);
+		OptionsContainerWidget::handleCommand(sender, cmd, data);
 	}
 }
 
-void MystOptionsDialog::setCanDropPage(bool canDropPage) {
-	_canDropPage = canDropPage;
+MystMenuDialog::MystMenuDialog(Engine *engine) :
+		MainMenuDialog(engine) {
 }
 
-void MystOptionsDialog::setCanShowMap(bool canShowMap) {
-	_canShowMap = canShowMap;
+MystMenuDialog::~MystMenuDialog() {
 }
 
-void MystOptionsDialog::setCanReturnToMenu(bool canReturnToMenu) {
-	_canReturnToMenu = canReturnToMenu;
-}
+void MystMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	MohawkEngine_Myst *vm = static_cast<MohawkEngine_Myst *>(_engine);
+	assert(vm);
 
-bool MystOptionsDialog::getZipMode() const {
-	return _zipModeCheckbox->getState();
-}
-
-void MystOptionsDialog::setZipMode(bool enabled) {
-	_zipModeCheckbox->setState(enabled);
-}
-
-bool MystOptionsDialog::getTransitions() const {
-	return _transitionsCheckbox->getState();
-}
-
-void MystOptionsDialog::setTransitions(bool enabled) {
-	_transitionsCheckbox->setState(enabled);
+	switch (cmd) {
+	case kOptionsCmd: {
+		GUI::ConfigDialog configDialog;
+		int result = configDialog.runModal();
+		if (result > kMystActionNone && result <= kMystActionLast) {
+			close();
+			MystEventAction action = static_cast<MystEventAction>(result);
+			vm->scheduleAction(action);
+		}
+		break;
+	}
+	case kQuitCmd:
+		close();
+		vm->saveAutosaveIfEnabled();
+		vm->runCredits();
+		break;
+	default:
+		MainMenuDialog::handleCommand(sender, cmd, data);
+		break;
+	}
 }
 
 #endif
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsDialog::RivenOptionsDialog() : MohawkOptionsDialog() {
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
-	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
+RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, "RivenOptionsDialog", false, domain),
+		_languagePopUp(nullptr) {
+	Common::String guiOptions = ConfMan.get("guioptions", domain);
+	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
 
-	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 60, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
-	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 60, 120, 20);
+	_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.ZipMode", _("~Z~ip Mode Activated"));
+	_waterEffectCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "RivenOptionsDialog.WaterEffect", _("~W~ater Effect Enabled"));
+
+	GUI::StaticTextWidget *transitionModeCaption = new GUI::StaticTextWidget(widgetsBoss(), "RivenOptionsDialog.TransistionsDesc", _("Transitions:"));
+	transitionModeCaption->setAlign(Graphics::kTextAlignRight);
+
+	_transitionModePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Transistions");
 	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
 	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
 	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
 	_transitionModePopUp->appendEntry(_("Best"), kRivenTransitionModeBest);
-}
 
-RivenOptionsDialog::~RivenOptionsDialog() {
-}
+	// Only the 25th anniversary edition is multi-language
+	// Only allow changing the language at run-time, so that there is only one
+	//  language selection drop down in the edit game dialog.
+	if (is25th && g_engine) {
+		bool canChangeLanguage = true;
+		MohawkEngine_Riven *vm = static_cast<MohawkEngine_Riven *>(g_engine);
+		canChangeLanguage = vm->isInteractive() || vm->isInMainMenu();
 
-bool RivenOptionsDialog::getZipMode() const {
-	return _zipModeCheckbox->getState();
-}
+		GUI::StaticTextWidget *languageCaption = new GUI::StaticTextWidget(widgetsBoss(), "RivenOptionsDialog.LanguageDesc", _("Language:"));
+		languageCaption->setAlign(Graphics::kTextAlignRight);
 
-void RivenOptionsDialog::setZipMode(bool enabled) {
-	_zipModeCheckbox->setState(enabled);
-}
+		_languagePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Language");
+		_languagePopUp->setEnabled(canChangeLanguage);
 
-bool RivenOptionsDialog::getWaterEffect() const {
-	return _waterEffectCheckbox->getState();
-}
-
-void RivenOptionsDialog::setWaterEffect(bool enabled) {
-	_waterEffectCheckbox->setState(enabled);
-}
-
-uint32 RivenOptionsDialog::getTransitions() const {
-	return _transitionModePopUp->getSelectedTag();
-}
-
-void RivenOptionsDialog::setTransitions(uint32 mode) {
-	_transitionModePopUp->setSelectedTag(mode);
-}
-
-void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-	case GUI::kOKCmd:
-		setResult(1);
-		close();
-		break;
-	default:
-		MohawkOptionsDialog::handleCommand(sender, cmd, data);
+		const RivenLanguage *languages = MohawkEngine_Riven::listLanguages();
+		while (languages->language != Common::UNK_LANG) {
+			_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
+			languages++;
+		}
 	}
+}
+
+RivenOptionsWidget::~RivenOptionsWidget() {
+}
+
+void RivenOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
+	            .addPadding(16, 16, 16, 16)
+	            .addWidget("ZipMode", "Checkbox")
+	            .addWidget("WaterEffect", "Checkbox")
+	            .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                .addPadding(0, 0, 0, 0)
+	                .addWidget("TransistionsDesc", "OptionsLabel")
+	                .addWidget("Transistions", "PopUp")
+	            .closeLayout()
+	            .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	                .addPadding(0, 0, 0, 0)
+	                .addWidget("LanguageDesc", "OptionsLabel")
+	                .addWidget("Language", "PopUp")
+	            .closeLayout()
+	        .closeLayout()
+	    .closeDialog();
+}
+
+void RivenOptionsWidget::load() {
+	_zipModeCheckbox->setState(ConfMan.getBool("zip_mode", _domain));
+	_waterEffectCheckbox->setState(ConfMan.getBool("water_effects", _domain));
+
+	uint32 transitions = ConfMan.getInt("transition_mode", _domain);
+	_transitionModePopUp->setSelectedTag(RivenGraphics::sanitizeTransitionMode(transitions));
+
+	if (_languagePopUp) {
+		Common::Language language = Common::parseLanguage(ConfMan.get("language", _domain));
+		const RivenLanguage *languageDesc = MohawkEngine_Riven::getLanguageDesc(language);
+		if (languageDesc) {
+			_languagePopUp->setSelectedTag(languageDesc->language);
+		}
+	}
+}
+
+bool RivenOptionsWidget::save() {
+	ConfMan.setBool("zip_mode", _zipModeCheckbox->getState(), _domain);
+	ConfMan.setBool("water_effects", _waterEffectCheckbox->getState(), _domain);
+	ConfMan.setInt("transition_mode", _transitionModePopUp->getSelectedTag(), _domain);
+
+	if (_languagePopUp) {
+		int32 selectedLanguage = _languagePopUp->getSelectedTag();
+		const RivenLanguage *languageDesc = nullptr;
+		if (selectedLanguage >= 0) {
+			languageDesc = MohawkEngine_Riven::getLanguageDesc(static_cast<Common::Language>(selectedLanguage));
+		}
+
+		if (languageDesc != nullptr) {
+			ConfMan.set("language", Common::getLanguageCode(languageDesc->language));
+		}
+	}
+
+	return true;
 }
 
 #endif

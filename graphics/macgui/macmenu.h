@@ -25,6 +25,7 @@
 
 #include "common/str-array.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/font.h"
 
 namespace Common {
 class U32String;
@@ -54,6 +55,8 @@ public:
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 	static MacMenu *createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm);
 
+	void setAlignment(Graphics::TextAlign align);
+
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
 	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }
 
@@ -70,16 +73,16 @@ public:
 
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
 
-	bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(bool forceRedraw = false) { return false; }
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) {}
+
 	bool processEvent(Common::Event &event);
 
 	void enableCommand(int menunum, int action, bool state);
 	void enableCommand(const char *menuitem, const char *menuaction, bool state);
 	void enableCommand(const Common::U32String &menuitem, const Common::U32String &menuaction, bool state);
 	void disableAllMenus();
-
-	void setActive(bool active) { _menuActivated = active; }
-	bool hasAllFocus() { return _menuActivated; }
 
 	bool isVisible() { return _isVisible; }
 	void setVisible(bool visible) { _isVisible = visible; _contentIsDirty = true; }
@@ -91,6 +94,7 @@ public:
 private:
 	ManagedSurface _screen;
 	ManagedSurface _tempSurface;
+	TextAlign _align;
 
 private:
 	bool checkCallback(bool unicode = false);
@@ -118,7 +122,6 @@ private:
 
 	const Font *_font;
 
-	bool _menuActivated;
 	bool _isVisible;
 
 	bool _dimensionsDirty;

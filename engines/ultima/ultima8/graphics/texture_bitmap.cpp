@@ -31,8 +31,7 @@ namespace Ultima8 {
 //
 // Read from a Data Source
 //
-bool TextureBitmap::Read(IDataSource *ds) {
-	Common::SeekableReadStream *rs = ds->GetRawStream();
+bool TextureBitmap::Read(Common::SeekableReadStream *rs) {
 	Image::BitmapDecoder decoder;
 
 	if (!decoder.loadStream(*rs))

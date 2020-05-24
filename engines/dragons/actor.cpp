@@ -73,7 +73,7 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 			return actor;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Actor *ActorManager::getActor(uint16 actorId) {
@@ -133,7 +133,7 @@ Actor *ActorManager::getActorByDisplayOrder(uint16 position) {
 }
 
 Actor::Actor(uint16 id) : _actorID(id) {
-	_actorResource = NULL;
+	_actorResource = nullptr;
 	_resourceID = -1;
 	_seqCodeIp = 0;
 	_priorityLayer = 3;
@@ -144,8 +144,23 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	_walkSpeed = 0;
 	_flags = 0;
 	_frame_flags = 0;
-	_frame = NULL;
-	_surface = NULL;
+	_frame = nullptr;
+	_surface = nullptr;
+
+	_actorFileDictionaryIndex = 0;
+	_sequenceTimerMaxValue = 0;
+	_scale = 0x100;
+	_sequenceTimer = 0;
+	_sequenceID = 0;
+	_direction = 0;
+	_xShl16 = 0;
+	_yShl16 = 0;
+	_walkSlopeX = 0;
+	_walkSlopeY = 0;
+	_walkPointsIndex = 0;
+	_finalWalkDestX = 0;
+	_finalWalkDestY = 0;
+	_field_7a = 0;
 }
 
 void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
@@ -188,7 +203,7 @@ void Actor::loadFrame(uint16 frameOffset) {
 		_frame_flags &= ~ACTOR_FRAME_FLAG_2;
 	}
 
-	_surface = _actorResource->loadFrame(*_frame, NULL); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : NULL);
+	_surface = _actorResource->loadFrame(*_frame, nullptr); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : nullptr);
 
 	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, _frame->width, _frame->height);
 
@@ -199,8 +214,8 @@ void Actor::loadFrame(uint16 frameOffset) {
 void Actor::freeFrame() {
 	delete _frame;
 	delete _surface;
-	_frame = NULL;
-	_surface = NULL;
+	_frame = nullptr;
+	_surface = nullptr;
 }
 
 byte *Actor::getSeqIpAtOffset(uint32 offset) {
@@ -212,7 +227,7 @@ void Actor::reset_maybe() {
 	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
 	freeFrame();
 	delete _actorResource;
-	_actorResource = NULL;
+	_actorResource = nullptr;
 }
 
 uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {

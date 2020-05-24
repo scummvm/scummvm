@@ -144,7 +144,7 @@ uint bufferChangeCase(uint32 *buf, uint len, uint numchars, BufferChangeCase des
 			finallen = len;
 		if (finallen)
 			memcpy(buf, newoutbuf, finallen * sizeof(uint));
-		free(newoutbuf);
+		delete[] newoutbuf;
 	}
 
 	return outcount;

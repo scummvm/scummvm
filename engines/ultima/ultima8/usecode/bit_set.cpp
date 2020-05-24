@@ -23,18 +23,14 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/bit_set.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-BitSet::BitSet() : _size(0), _bytes(0), _data(0) {
+BitSet::BitSet() : _size(0), _bytes(0), _data(nullptr) {
 }
 
 
-BitSet::BitSet(unsigned int size) {
-	_data = 0;
+BitSet::BitSet(unsigned int size) : _data(nullptr) {
 	setSize(size);
 }
 
@@ -46,7 +42,6 @@ void BitSet::setSize(unsigned int size) {
 	if (_data) delete[] _data;
 
 	_size = size;
-	_bytes = 0;
 	_bytes = _size / 8;
 	if (_size % 8 != 0) _bytes++;
 
@@ -117,15 +112,15 @@ void BitSet::setBits(unsigned int pos, unsigned int n, uint32 bits) {
 	_data[lastbyte] |= (bits >> shift) & lastmask;
 }
 
-void BitSet::save(ODataSource *ods) {
-	ods->write4(_size);
-	ods->write(_data, _bytes);
+void BitSet::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_size);
+	ws->write(_data, _bytes);
 }
 
-bool BitSet::load(IDataSource *ids, uint32 version) {
-	uint32 s = ids->read4();
+bool BitSet::load(Common::ReadStream *rs, uint32 version) {
+	uint32 s = rs->readUint32LE();
 	setSize(s);
-	ids->read(_data, _bytes);
+	rs->read(_data, _bytes);
 
 	return true;
 }

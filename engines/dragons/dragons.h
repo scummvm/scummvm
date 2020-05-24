@@ -117,6 +117,7 @@ class Inventory;
 class Scene;
 class Screen;
 class ActorManager;
+class Actor;
 class SequenceOpcodes;
 class ScriptOpcodes;
 class Talk;
@@ -124,6 +125,24 @@ class SoundManager;
 class StrPlayer;
 struct DragonINI;
 
+struct LoadingScreenState {
+	Actor *flames[10];
+	uint16 quads[10];
+	int16 baseYOffset;
+	int16 flameOffsetIdx;
+	int16 loadingFlamesUpdateCounter;
+	int16 loadingFlamesRiseCounter;
+
+	LoadingScreenState() {
+		baseYOffset = 0;
+		flameOffsetIdx = 0;
+		loadingFlamesUpdateCounter = 0;
+		loadingFlamesRiseCounter = 0;
+
+		memset(flames, 0, ARRAYSIZE(flames)*sizeof(flames[0]));
+		memset(quads, 0, ARRAYSIZE(quads)*sizeof(quads[0]));
+	}
+};
 
 class DragonsEngine : public Engine {
 public:
@@ -172,6 +191,8 @@ private:
 
 	uint32 _randomState;
 
+	LoadingScreenState *_loadingScreenState;
+
 	// input
 	bool _leftMouseButtonUp;
 	bool _leftMouseButtonDown;
@@ -194,6 +215,7 @@ private:
 
 	bool _debugMode;
 	bool _isGamePaused;
+	bool _inMenu;
 
 	void (*_sceneUpdateFunction)();
 	void (*_vsyncUpdateFunction)();
@@ -239,21 +261,27 @@ public:
 
 	void playOrStopSound(uint16 soundId);
 
-	//TODO what are these functions really doing?
-	void call_fade_related_1f();
-	void fade_related(uint32 flags);
+	void fadeFromBlack();
+	void fadeFromBlackExcludingFont();
+	void fadeFromBlack(uint32 flags);
+
+	void fadeToBlack();
+	void fadeToBlackExcludingFont();
+	void fadeToBlack(uint32 flags);
 
 	uint16 ipt_img_file_related();
 	void performAction();
 
 	void reset_screen_maybe();
 
+	void init();
 	void loadScene(uint16 sceneId);
 
 	void reset();
 
 	void runSceneUpdaterFunction();
 	void setSceneUpdateFunction(void (*newUpdateFunction)());
+	void clearSceneUpdateFunction();
 	void (*getSceneUpdateFunction())();
 
 	void setVsyncUpdateFunction(void (*newUpdateFunction)());
@@ -280,6 +308,10 @@ public:
 	uint16 getRand(uint16 max);
 
 	void setupPalette1();
+
+	bool isInMenu();
+
+	void loadingScreenUpdate();
 
 	//TODO this logic should probably go in its own class.
 	uint32 getBigFileInfoTblFromDragonEXE();
@@ -317,6 +349,10 @@ private:
 	void SomeInitSound_fun_8003f64c();
 
 	void initSubtitleFlag();
+
+	void loadingScreen();
+
+	void mainMenu();
 };
 
 DragonsEngine *getEngine();

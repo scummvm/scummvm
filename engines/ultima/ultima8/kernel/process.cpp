@@ -23,16 +23,12 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Process)
-
-DEFINE_CUSTOM_MEMORY_ALLOCATION(Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Process)
 
 Process::Process(ObjId it, uint16 ty)
 	: _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0) {
@@ -69,9 +65,12 @@ void Process::wakeUp(uint32 result_) {
 	_flags &= ~PROC_SUSPENDED;
 
 	Kernel::get_instance()->setNextProcess(this);
+
+	onWakeUp();
 }
 
 void Process::waitFor(ProcId pid_) {
+	assert(pid_ != _pid);
 	if (pid_) {
 		Kernel *kernel = Kernel::get_instance();
 
@@ -85,6 +84,7 @@ void Process::waitFor(ProcId pid_) {
 }
 
 void Process::waitFor(Process *proc) {
+	assert(this != proc);
 	ProcId pid_ = 0;
 	if (proc) pid_ = proc->getPid();
 
@@ -117,40 +117,40 @@ void Process::dumpInfo() const {
 	g_debugger->debugPrintf("%s\n", info.c_str());
 }
 
-void Process::save(ODataSource *ods) {
-	writeProcessHeader(ods);
-	saveData(ods); // virtual
+void Process::save(Common::WriteStream *ws) {
+	writeProcessHeader(ws);
+	saveData(ws); // virtual
 }
 
-void Process::writeProcessHeader(ODataSource *ods) {
+void Process::writeProcessHeader(Common::WriteStream *ws) {
 	const char *cname = GetClassType()._className; // virtual
 	uint16 clen = strlen(cname);
 
-	ods->write2(clen);
-	ods->write(cname, clen);
+	ws->writeUint16LE(clen);
+	ws->write(cname, clen);
 }
 
-void Process::saveData(ODataSource *ods) {
-	ods->write2(_pid);
-	ods->write4(_flags);
-	ods->write2(_itemNum);
-	ods->write2(_type);
-	ods->write4(_result);
-	ods->write4(static_cast<uint32>(_waiting.size()));
+void Process::saveData(Common::WriteStream *ws) {
+	ws->writeUint16LE(_pid);
+	ws->writeUint32LE(_flags);
+	ws->writeUint16LE(_itemNum);
+	ws->writeUint16LE(_type);
+	ws->writeUint32LE(_result);
+	ws->writeUint32LE(static_cast<uint32>(_waiting.size()));
 	for (unsigned int i = 0; i < _waiting.size(); ++i)
-		ods->write2(_waiting[i]);
+		ws->writeUint16LE(_waiting[i]);
 }
 
-bool Process::loadData(IDataSource *ids, uint32 version) {
-	_pid = ids->read2();
-	_flags = ids->read4();
-	_itemNum = ids->read2();
-	_type = ids->read2();
-	_result = ids->read4();
-	uint32 waitcount = ids->read4();
+bool Process::loadData(Common::ReadStream *rs, uint32 version) {
+	_pid = rs->readUint16LE();
+	_flags = rs->readUint32LE();
+	_itemNum = rs->readUint16LE();
+	_type = rs->readUint16LE();
+	_result = rs->readUint32LE();
+	uint32 waitcount = rs->readUint32LE();
 	_waiting.resize(waitcount);
 	for (unsigned int i = 0; i < waitcount; ++i)
-		_waiting[i] = ids->read2();
+		_waiting[i] = rs->readUint16LE();
 
 	return true;
 }

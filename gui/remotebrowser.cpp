@@ -186,7 +186,7 @@ void RemoteBrowserDialog::goUp() {
 	listDirectory(Cloud::StorageFile(path, 0, 0, true));
 }
 
-void RemoteBrowserDialog::listDirectory(Cloud::StorageFile node) {
+void RemoteBrowserDialog::listDirectory(const Cloud::StorageFile &node) {
 	if (_navigationLocked || _workingRequest)
 		return;
 

@@ -142,7 +142,7 @@ void Lingo::primaryEventHandler(LEvent event) {
 #endif
 }
 
-void Lingo::processInputEvent(LEvent event) {
+void Lingo::registerInputEvent(LEvent event) {
 	/* When the mouseDown or mouseUp occurs over a sprite, the message
 	 * goes first to the sprite script, then to the script of the cast
 	 * member, to the frame script and finally to the movie scripts.
@@ -169,23 +169,25 @@ void Lingo::processInputEvent(LEvent event) {
 	if (_vm->getVersion() > 3) {
 		if (true) {
 			// TODO: Check whether occurring over a sprite
-			processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
+			_eventQueue.push(LingoEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId));
 		}
-		processEvent(event, kCastScript, currentFrame->_sprites[spriteId]->_castId);
-		processEvent(event, kFrameScript, score->_frames[score->getCurrentFrame()]->_actionId);
+		_eventQueue.push(LingoEvent(event, kCastScript, currentFrame->_sprites[spriteId]->_castId));
+		_eventQueue.push(LingoEvent(event, kFrameScript, score->_frames[score->getCurrentFrame()]->_actionId));
 		// TODO: Is the kFrameScript call above correct?
 	} else if (event == kEventMouseUp) {
 		// Frame script overrides sprite script
 		if (!currentFrame->_sprites[spriteId]->_scriptId) {
-			processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
-			processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
+			_eventQueue.push(LingoEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset));
+			_eventQueue.push(LingoEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset));
 		} else {
-			processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
+			_eventQueue.push(LingoEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId, spriteId));
 		}
+	} else if (event == kEventMouseDown) {
+		_eventQueue.push(LingoEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset));
 	}
 	if (event == kEventKeyDown) {
 		// TODO: is the above condition necessary or useful?
-		processEvent(event, kGlobalScript, 0);
+		_eventQueue.push(LingoEvent(event, kGlobalScript, 0));
 	}
 
 	runMovieScript(event);
@@ -202,13 +204,13 @@ void Lingo::runMovieScript(LEvent event) {
 
 	for (ScriptContextHash::iterator it = _archives[_archiveIndex].scriptContexts[kMovieScript].begin();
 			it != _archives[_archiveIndex].scriptContexts[kMovieScript].end(); ++it) {
-		processEvent(event, kMovieScript, it->_key);
+		_eventQueue.push(LingoEvent(event, kMovieScript, it->_key));
 		// TODO: How do know which script handles the message?
 	}
 	debugC(9, kDebugEvents, "STUB: processEvent(event, kMovieScript, ?)");
 }
 
-void Lingo::processFrameEvent(LEvent event) {
+void Lingo::registerFrameEvent(LEvent event) {
 	/* [in D4] the enterFrame, exitFrame, idle and timeout messages
 	 * are sent to a frame script and then a movie script.	If the
 	 * current frame has no frame script when the event occurs, the
@@ -236,31 +238,30 @@ void Lingo::processFrameEvent(LEvent event) {
 		assert(score->_frames[score->getCurrentFrame()] != nullptr);
 		entity = score->_frames[score->getCurrentFrame()]->_actionId;
 	}
-	processEvent(event, kFrameScript, entity);
+	_eventQueue.push(LingoEvent(event, kFrameScript, entity));
 
 	runMovieScript(event);
 }
 
-void Lingo::processGenericEvent(LEvent event) {
+void Lingo::registerGenericEvent(LEvent event) {
 	// Movie Script
-	int id = -1;
 	if (event == kEventStart || event == kEventPrepareMovie ||
-		event == kEventStartMovie || event == kEventStopMovie)
-		id = 0;
+			event == kEventStartMovie || event == kEventStopMovie)
+		; // we're OK
 	else
 		warning("STUB: processGenericEvent called for unprocessed event, additional logic probably needed");
 
 	runMovieScript(event);
 }
 
-void Lingo::processSpriteEvent(LEvent event) {
+void Lingo::registerSpriteEvent(LEvent event) {
 	Score *score = _vm->getCurrentScore();
 	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
 	if (event == kEventBeginSprite) {
 		// TODO: Check if this is also possibly a kSpriteScript?
 		for (uint16 i = 0; i <= score->_numChannelsDisplayed; i++)
 			if (currentFrame->_sprites[i]->_enabled)
-				processEvent(event, kCastScript, currentFrame->_sprites[i]->_scriptId);
+				_eventQueue.push(LingoEvent(event, kCastScript, currentFrame->_sprites[i]->_scriptId));
 
 	} else {
 		warning("STUB: processSpriteEvent called for something else than kEventBeginSprite, additional logic probably needed");
@@ -268,20 +269,20 @@ void Lingo::processSpriteEvent(LEvent event) {
 
 }
 
-void Lingo::processEvent(LEvent event) {
+void Lingo::registerEvent(LEvent event) {
 	switch (event) {
 		case kEventKeyUp:
 		case kEventKeyDown:
 		case kEventMouseUp:
 		case kEventMouseDown:
-			processInputEvent(event);
+			registerInputEvent(event);
 			break;
 
 		case kEventIdle:
 		case kEventEnterFrame:
 		case kEventExitFrame:
 		case kEventNone:
-			processFrameEvent(event);
+			registerFrameEvent(event);
 			break;
 
 		case kEventStart:
@@ -289,20 +290,32 @@ void Lingo::processEvent(LEvent event) {
 		case kEventStopMovie:
 		case kEventTimeout:
 		case kEventPrepareMovie:
-			processGenericEvent(event);
+			registerGenericEvent(event);
 			break;
 		case kEventBeginSprite:
-			processSpriteEvent(event);
+			registerSpriteEvent(event);
 			break;
 
 		default:
-			warning("processEvent: Unhandled event %s", _eventHandlerTypes[event]);
+			warning("registerEvent: Unhandled event %s", _eventHandlerTypes[event]);
 	}
 
 	_dontPassEvent = false;
 }
 
-void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
+void Lingo::processEvent(LEvent event) {
+	registerEvent(event);
+	processEvents();
+}
+
+void Lingo::processEvents() {
+	while (!_eventQueue.empty()) {
+		LingoEvent el = _eventQueue.pop();
+		processEvent(el.event, el.st, el.entityId, el.channelId);
+	}
+}
+
+void Lingo::processEvent(LEvent event, ScriptType st, int entityId, int channelId) {
 	if (entityId < 0)
 		return;
 
@@ -312,6 +325,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
 	_currentEntityId = entityId;
+	_currentChannelId = channelId;
 
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);

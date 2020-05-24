@@ -271,7 +271,7 @@ void Console::attach(const char *entry) {
 }
 
 void Console::preEnter() {
-	_engine->pauseEngine(true);
+	GUI::Debugger::preEnter();
 }
 
 extern void playVideo(Video::VideoDecoder &videoDecoder);
@@ -299,7 +299,7 @@ void Console::postEnter() {
 		_videoFrameDelay = 0;
 	}
 
-	_engine->pauseEngine(false);
+	GUI::Debugger::postEnter();
 }
 
 bool Console::cmdHelp(int argc, const char **argv) {
@@ -433,6 +433,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("\n");
 	debugPrintf("VM:\n");
 	debugPrintf(" script_steps - Shows the number of executed SCI operations\n");
+	debugPrintf(" script_objects / scro - Shows all objects inside a specified script\n");
+	debugPrintf(" script_strings / scrs - Shows all strings inside a specified script\n");
+	debugPrintf(" script_said - Shows all said - strings inside a specified script\n");
 	debugPrintf(" vm_varlist / vmvarlist / vl - Shows the addresses of variables in the VM\n");
 	debugPrintf(" vm_vars / vmvars / vv - Displays or changes variables in the VM\n");
 	debugPrintf(" stack - Lists the specified number of stack elements\n");
@@ -2705,24 +2708,22 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	SoundResource *soundRes = new SoundResource(number, _engine->getResMan(), _engine->_features->detectDoSoundType());
+	SoundResource soundRes(number, _engine->getResMan(), _engine->_features->detectDoSoundType());
 
-	if (!soundRes) {
+	if (!soundRes.exists()) {
 		debugPrintf("Not a sound resource!\n");
 		return true;
 	}
 
-	SoundResource::Track *track = soundRes->getDigitalTrack();
+	SoundResource::Track *track = soundRes.getDigitalTrack();
 	if (!track || track->digitalChannelNr == -1) {
 		debugPrintf("Valid song, but not a sample.\n");
-		delete soundRes;
 		return true;
 	}
 
 	debugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 
-	delete soundRes;
 	return true;
 }
 

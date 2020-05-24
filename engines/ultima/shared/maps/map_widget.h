@@ -68,7 +68,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapWidget(Game *game, MapBase *map) : _game(game), _map(map) {}
+	MapWidget(Game *game, MapBase *map) : _game(game), _map(map), _direction(DIR_NONE) {}
 	MapWidget(Game *game, MapBase *map, const Point &pt, Direction dir = DIR_NONE) : _game(game), _map(map), _position(pt), _direction(dir) {}
 	MapWidget(Game *game, MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
 		_game(game), _map(map), _name(name), _position(pt), _direction(dir) {}

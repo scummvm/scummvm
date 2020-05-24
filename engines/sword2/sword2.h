@@ -140,6 +140,8 @@ private:
 	// Original game platform (PC/PSX)
 	static Common::Platform _platform;
 
+	PauseToken _gamePauseToken;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;

@@ -29,8 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-bool TexturePNG::Read(IDataSource *ds) {
-	Common::SeekableReadStream *rs = ds->GetRawStream();
+bool TexturePNG::Read(Common::SeekableReadStream *rs) {
 	Image::PNGDecoder decoder;
 
 	if (!decoder.loadStream(*rs))

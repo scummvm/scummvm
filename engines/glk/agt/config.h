@@ -173,7 +173,6 @@ namespace AGT {
 #ifdef __STRICT_ANSI__
 #define NEED_STR_CMP
 #define NEED_STRN_CMP
-#undef HAVE_STRDUP
 #endif
 
 #ifndef fix_ascii

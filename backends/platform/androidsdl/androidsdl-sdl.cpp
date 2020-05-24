@@ -110,8 +110,6 @@ void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 		ConfMan.setBool("swap_menu_and_back_buttons", enable);
 		swapMenuAndBackButtons(enable);
 		break;
-	case kFeatureFullscreenMode:
-		break;
 	default:
 		OSystem_POSIX::setFeatureState(f, enable);
 		break;
@@ -128,9 +126,6 @@ bool OSystem_ANDROIDSDL::getFeatureState(Feature f) {
 		break;
 	case kFeatureSwapMenuAndBackButtons:
 		return ConfMan.getBool("swap_menu_and_back_buttons");
-		break;
-	case kFeatureFullscreenMode:
-		return true;
 		break;
 	default:
 		return OSystem_POSIX::getFeatureState(f);

@@ -128,7 +128,7 @@ Common::Error Pink::PinkEngine::run() {
 
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return Common::kNoError;
 			case Common::EVENT_MOUSEMOVE:
 				_actor->onMouseMove(event.mouse);
@@ -157,11 +157,6 @@ Common::Error Pink::PinkEngine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-void PinkEngine::pauseEngine(void *engine, bool pause) {
-	PinkEngine *vm = (PinkEngine*)engine;
-	vm->pauseEngineIntern(pause);
 }
 
 void PinkEngine::load(Archive &archive) {
@@ -269,11 +264,8 @@ bool PinkEngine::loadCursors() {
 }
 
 void PinkEngine::setCursor(uint cursorIndex) {
-	Graphics::Cursor *cursor = _cursors[cursorIndex]->cursors[0].cursor;
-	_system->setCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
-	_system->setMouseCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
-							cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
-	_system->showMouse(true);
+	CursorMan.replaceCursor(_cursors[cursorIndex]->cursors[0].cursor);
+	CursorMan.showMouse(true);
 }
 
 bool PinkEngine::canLoadGameStateCurrently() {
@@ -286,7 +278,7 @@ bool PinkEngine::canSaveGameStateCurrently() {
 
 bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 	return
-		f == kSupportsRTL ||
+		f == kSupportsReturnToLauncher ||
 		f == kSupportsLoadingDuringRuntime ||
 		f == kSupportsSavingDuringRuntime;
 }

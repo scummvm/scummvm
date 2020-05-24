@@ -29,8 +29,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Item;
-class IDataSource;
-class ODataSource;
 
 class Map {
 	friend class CurrentMap;
@@ -40,22 +38,26 @@ public:
 
 	void clear();
 
-	void loadNonFixed(IDataSource *ds);
-	void loadFixed(IDataSource *ds);
+	void loadNonFixed(Common::SeekableReadStream *rs);
+	void loadFixed(Common::SeekableReadStream *rs);
 	void unloadFixed();
 
 	bool isEmpty() const {
 		return _fixedItems.size() == 0 && _dynamicItems.size() == 0;
 	}
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ods);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
 
 	// load items from something formatted like 'fixed.dat'
-	void loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
+	void loadFixedFormatObjects(Std::list<Item *> &itemlist,
+								Common::SeekableReadStream *rs,
 	                            uint32 extendedflags);
+
+	// Add a fixed item to patch game data errors
+	void addMapFix(uint32 shape, uint32 frame, int32 x, int32 y, int32 z);
 
 	// Q: How should we store the items in a map.
 	// It might make things more efficient if we order them by 'chunk'

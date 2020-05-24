@@ -243,7 +243,12 @@ void SceneScriptMA02::talkWithRajif() {
 	Actor_Says(kActorMcCoy, 2370, 13);
 	Actor_Says(kActorRajif, 10, 13);
 	Actor_Says(kActorMcCoy, 2375, 13);
-	Actor_Says(kActorRajif, 20, 13);
+	if (_vm->_cutContent) {
+		Actor_Says_With_Pause(kActorRajif, 20, 0.0f, 13);
+		Actor_Says(kActorRajif, 30, 13);
+	} else {
+		Actor_Says(kActorRajif, 20, 13);
+	}
 	Actor_Says(kActorMcCoy, 2380, 13);
 	Sound_Play(kSfxSHOTCOK1, 100, 0, 100, 50);
 	Actor_Says(kActorRajif, 40, 13);

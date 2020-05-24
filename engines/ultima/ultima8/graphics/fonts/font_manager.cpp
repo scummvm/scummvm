@@ -40,7 +40,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-FontManager *FontManager::_fontManager = 0;
+FontManager *FontManager::_fontManager = nullptr;
 
 FontManager::FontManager(bool ttf_antialiasing_) : _ttfAntialiasing(ttf_antialiasing_) {
 	debugN(MM_INFO, "Creating Font Manager...\n");
@@ -66,7 +66,7 @@ FontManager::~FontManager() {
 	_ttfFonts.clear();
 
 	assert(_fontManager == this);
-	_fontManager = 0;
+	_fontManager = nullptr;
 }
 
 // Reset the font manager
@@ -86,7 +86,7 @@ Font *FontManager::getGameFont(unsigned int fontnum,
 
 Font *FontManager::getTTFont(unsigned int fontnum) {
 	if (fontnum >= _ttFonts.size())
-		return 0;
+		return nullptr;
 	return _ttFonts[fontnum];
 }
 
@@ -102,21 +102,20 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 	if (iter != _ttfFonts.end())
 		return iter->_value;
 
-	IDataSource *fontids;
+	Common::SeekableReadStream *fontids;
 	fontids = FileSystem::get_instance()->ReadFile("@data/" + filename);
 	if (!fontids) {
 		perr << "Failed to open TTF: @data/" << filename << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
 	// open font using ScummVM TTF API
-	// Note: The RWops and IDataSource will be deleted by the TTF_Font
-	Common::SeekableReadStream *rs = fontids->GetRawStream();
-	Graphics::Font *font = Graphics::loadTTFFont(*rs, pointsize);
+	// Note: The RWops and ReadStream will be deleted by the TTF_Font
+	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize);
 
 	if (!font) {
 		perr << "Failed to open TTF: @data/" << filename << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
 	_ttfFonts[id] = font;
@@ -163,7 +162,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filena
 
 bool FontManager::addJPOverride(unsigned int fontnum,
                                 unsigned int jpfont, uint32 rgb) {
-	ShapeFont *jf = p_dynamic_cast<ShapeFont *>(GameData::get_instance()->getFonts()->getFont(jpfont));
+	ShapeFont *jf = dynamic_cast<ShapeFont *>(GameData::get_instance()->getFonts()->getFont(jpfont));
 	if (!jf)
 		return false;
 

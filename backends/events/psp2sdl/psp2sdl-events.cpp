@@ -44,6 +44,11 @@ PSP2EventSource::PSP2EventSource() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
 		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 			_finger[port][i].id = -1;
+			_finger[port][i].timeLastDown = 0;
+			_finger[port][i].lastX = 0;
+			_finger[port][i].lastY = 0;
+			_finger[port][i].lastDownX = 0;
+			_finger[port][i].lastDownY = 0;
 		}
 		_multiFingerDragging[port] = DRAG_NONE;
 	}
@@ -103,8 +108,8 @@ void PSP2EventSource::preprocessFingerDown(SDL_Event *event) {
 	// id (for multitouch)
 	SDL_FingerID id = event->tfinger.fingerId;
 
-	int x = _km.x / MULTIPLIER;
-	int y = _km.y / MULTIPLIER;
+	int x = _mouseX;
+	int y = _mouseY;
 
 	if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
@@ -147,8 +152,8 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 		}
 	}
 
-	int x = _km.x / MULTIPLIER;
-	int y = _km.y / MULTIPLIER;
+	int x = _mouseX;
+	int y = _mouseY;
 
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 		if (_finger[port][i].id == id) {
@@ -219,8 +224,10 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 	}
 
 	if (numFingersDown >= 1) {
-		int x = _km.x / MULTIPLIER;
-		int y = _km.y / MULTIPLIER;
+		int x = _mouseX;
+		int y = _mouseY;
+		int xMax = _graphicsManager->getWindowWidth()  - 1;
+		int yMax = _graphicsManager->getWindowHeight() - 1;
 
 		if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
@@ -267,23 +274,23 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 
 			// convert touch events to relative mouse pointer events
 			// track sub-pixel relative finger motion using the MULTIPLIER
-			_hiresDX += (event->tfinger.dx * 1.25 * speedFactor * _km.x_max * MULTIPLIER);
-			_hiresDY += (event->tfinger.dy * 1.25 * speedFactor * _km.y_max * MULTIPLIER);
+			_hiresDX += (event->tfinger.dx * 1.25 * speedFactor * xMax * MULTIPLIER);
+			_hiresDY += (event->tfinger.dy * 1.25 * speedFactor * yMax * MULTIPLIER);
 			int xRel = _hiresDX / MULTIPLIER;
 			int yRel = _hiresDY / MULTIPLIER;
-			x = (_km.x / MULTIPLIER) + xRel;
-			y = (_km.y / MULTIPLIER) + yRel;
+			x = _mouseX + xRel;
+			y = _mouseY + yRel;
 			_hiresDX %= MULTIPLIER;
 			_hiresDY %= MULTIPLIER;
 		}
 
-		if (x > _km.x_max) {
-			x = _km.x_max;
+		if (x > xMax) {
+			x = xMax;
 		} else if (x < 0) {
 			x = 0;
 		}
-		if (y > _km.y_max) {
-			y = _km.y_max;
+		if (y > yMax) {
+			y = yMax;
 		} else if (y < 0) {
 			y = 0;
 		}
@@ -311,8 +318,8 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 				if (numFingersDownLong >= 2) {
 					// starting drag, so push mouse down at current location (back) 
 					// or location of "oldest" finger (front)
-					int mouseDownX = _km.x / MULTIPLIER;
-					int mouseDownY = _km.y / MULTIPLIER;
+					int mouseDownX = _mouseX;
+					int mouseDownY = _mouseY;
 					if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 						for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 							if (_finger[port][i].id == id) {
@@ -372,8 +379,8 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 }
 
 void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
-	int screenH = _km.y_max;
-	int screenW = _km.x_max;
+	int screenH = _graphicsManager->getWindowHeight();
+	int screenW = _graphicsManager->getWindowWidth();
 
 	const int dispW = TOUCHSCREEN_WIDTH;
 	const int dispH = TOUCHSCREEN_HEIGHT;
@@ -395,8 +402,8 @@ void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *ga
 	float dispTouchX = (touchX * (float)dispW);
 	float dispTouchY = (touchY * (float)dispH);
 
-	*gameX = CLIP((int)((dispTouchX - x) / sx), 0, (int)_km.x_max);
-	*gameY = CLIP((int)((dispTouchY - y) / sy), 0, (int)_km.y_max);
+	*gameX = CLIP((int)((dispTouchX - x) / sx), 0, screenW - 1);
+	*gameY = CLIP((int)((dispTouchY - y) / sy), 0, screenH - 1);
 }
 
 void PSP2EventSource::finishSimulatedMouseClicks() {
@@ -414,8 +421,8 @@ void PSP2EventSource::finishSimulatedMouseClicks() {
 					SDL_Event ev;
 					ev.type = SDL_MOUSEBUTTONUP;
 					ev.button.button = simulatedButton;
-					ev.button.x = _km.x / MULTIPLIER;
-					ev.button.y = _km.y / MULTIPLIER;
+					ev.button.x = _mouseX;
+					ev.button.y = _mouseY;
 					SDL_PushEvent(&ev);
 
 					_simulatedClickStartTime[port][i] = 0;

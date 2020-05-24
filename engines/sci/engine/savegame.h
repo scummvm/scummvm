@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      45 - Sync stopAfterFading
  *      44 - GK2+SCI3 audio resource locks
  *      43 - stop saving SCI3 mustSetViewVisible array
  *      42 - SCI3 robots and VM objects
@@ -69,7 +70,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 44,
+	CURRENT_SAVEGAME_VERSION = 45,
 	MINIMUM_SAVEGAME_VERSION = 14
 #ifdef ENABLE_SCI32
 	,
@@ -97,11 +98,22 @@ struct SavegameMetadata {
 };
 
 /**
+* Saves a game state to the hard disk in a portable way.
+* @param s			The state to save
+* @param saveId		The id of the savegame
+* @param savename	The description of the savegame
+* @param version	The version string of the game
+* @return true on success, false otherwise
+*/
+bool gamestate_save(EngineState *s, int saveId, const Common::String &savename, const Common::String &version);
+
+/**
  * Saves a game state to the hard disk in a portable way.
  * @param s			The state to save
  * @param save		The stream to save to
  * @param savename	The description of the savegame
- * @return 0 on success, 1 otherwise
+ * @param version	The version string of the game
+ * @return true on success, false otherwise
  */
 bool gamestate_save(EngineState *s, Common::WriteStream *save, const Common::String &savename, const Common::String &version);
 
@@ -109,9 +121,17 @@ bool gamestate_save(EngineState *s, Common::WriteStream *save, const Common::Str
 void gamestate_afterRestoreFixUp(EngineState *s, int savegameId);
 
 /**
+* Restores a game state from a directory.
+* @param s			An older state from the same game
+* @param saveId		The id of the savegame to restore from
+* @return true on success, false otherwise
+*/
+bool gamestate_restore(EngineState *s, int saveId);
+
+/**
  * Restores a game state from a directory.
  * @param s			An older state from the same game
- * @param dirname	The subdirectory to restore from
+ * @param save		The stream to restore from
  */
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *save);
 

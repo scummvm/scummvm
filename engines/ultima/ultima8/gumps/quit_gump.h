@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * The "are you sure you want to quit?" gump
+ */
 class QuitGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -46,10 +49,18 @@ public:
 
 	static void verifyQuit();
 
-	bool loadData(IDataSource *ids);
+	bool loadData(Common::ReadStream *rs);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 	ObjId _yesWidget, _noWidget;
+
+	uint32 _gumpShape;	//! shape number for the dialog
+	uint32 _yesShape;	//! shape number for "yes" button
+	uint32 _noShape;	//! shape number for "no" button
+	uint32 _askShape;	//! shape number for "are you sure?"
+	uint32 _buttonXOff;	//! x offset from either edge of yes/no  buttons
+	uint32 _buttonYOff;	//! y offset from bottom of yes/no  buttons
+	uint32 _playSound;	//! sound to play on open
 };
 
 } // End of namespace Ultima8

@@ -246,6 +246,8 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 			Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
 
+			bool fontFamilyUsed = false;
+
 			for (uint i = 0; i < assoc->size(); i++) {
 				debug(8, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant,
 										(*assoc)[i]._fontID);
@@ -265,6 +267,8 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 					continue;
 				}
 
+				fontFamilyUsed = true;
+
 				font = new Graphics::MacFONTFont;
 				font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
 
@@ -282,6 +286,9 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			}
 
 			delete fond;
+
+			if (!fontFamilyUsed)
+				delete fontFamily;
 		}
 	}
 }
@@ -461,7 +468,8 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 			break;
 		}
 
-		if (sizes[i]->getSize() > macFont.getSize() && candidate && sizes[i]->getSize() < candidate->getSize())
+		if ((!candidate && sizes[i]->getSize() > macFont.getSize())
+				|| (candidate && sizes[i]->getSize() < candidate->getSize()))
 			candidate = sizes[i];
 
 		if (sizes[i]->getSize() > maxSize->getSize())
@@ -481,14 +489,15 @@ void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 	debugN("Found font substitute for font '%s' ", getFontName(toFont).c_str());
 	debug("as '%s'", getFontName(fromFont).c_str());
 
-	bool bold = false, italic = false;
+	bool bold = false, italic = false, outline = false;
 
 	if (fromFont.getSlant() == kMacFontRegular) {
-		bold = toFont.getSlant() == kMacFontBold;
-		italic = toFont.getSlant() == kMacFontItalic;
+		bold = toFont.getSlant() & kMacFontBold;
+		italic = toFont.getSlant() & kMacFontItalic;
+		outline = toFont.getSlant() & kMacFontOutline;
 	}
 
-	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFont.getFont(), toFont.getSize(), bold, italic);
+	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFont.getFont(), toFont.getSize(), bold, italic, outline);
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont).c_str());

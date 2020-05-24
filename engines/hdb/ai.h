@@ -467,12 +467,12 @@ struct AIEntity {
 		state = STATE_NONE;
 		dir = DIR_NONE;
 
-		draw = NULL;
+		draw = nullptr;
 
-		aiInit = aiInit2 = NULL;
-		aiAction = NULL;
-		aiUse = NULL;
-		aiDraw = NULL;
+		aiInit = aiInit2 = nullptr;
+		aiAction = nullptr;
+		aiUse = nullptr;
+		aiDraw = nullptr;
 
 		level = 0;
 		value1 = value2 = 0;
@@ -495,52 +495,52 @@ struct AIEntity {
 
 		blinkFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			blinkGfx[i] = NULL;
+			blinkGfx[i] = nullptr;
 		}
 
 		special1Frames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			special1Gfx[i] = NULL;
+			special1Gfx[i] = nullptr;
 		}
 
 		standdownFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			standdownGfx[i] = NULL;
+			standdownGfx[i] = nullptr;
 		}
 
 		standupFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			standupGfx[i] = NULL;
+			standupGfx[i] = nullptr;
 		}
 
 		standleftFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			standleftGfx[i] = NULL;
+			standleftGfx[i] = nullptr;
 		}
 
 		standrightFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			standrightGfx[i] = NULL;
+			standrightGfx[i] = nullptr;
 		}
 
 		movedownFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			movedownGfx[i] = NULL;
+			movedownGfx[i] = nullptr;
 		}
 
 		moveupFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			moveupGfx[i] = NULL;
+			moveupGfx[i] = nullptr;
 		}
 
 		moveleftFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			moveleftGfx[i] = NULL;
+			moveleftGfx[i] = nullptr;
 		}
 
 		moverightFrames = 0;
 		for (int i = 0; i < kMaxAnimFrames; i++) {
-			moverightGfx[i] = NULL;
+			moverightGfx[i] = nullptr;
 		}
 	}
 
@@ -583,7 +583,7 @@ struct AIEntLevel2 {
 	void(*aiDraw)(AIEntity *e, int x, int y);
 	uint32 stunnedWait;
 
-	AIEntLevel2() : x(0), y(0), draw(NULL), e(NULL), aiDraw(NULL), stunnedWait(0) {}
+	AIEntLevel2() : x(0), y(0), draw(nullptr), e(nullptr), aiDraw(nullptr), stunnedWait(0) {}
 };
 
 struct AnimTarget {
@@ -598,7 +598,7 @@ struct AnimTarget {
 
 	AnimTarget() : x(0), y(0), start(0), end(0), vel(0), animCycle(0), animFrame(0), killAuto(false), inMap(false) {
 		for (int i = 0; i < kMaxAnimTFrames; i++) {
-			gfxList[i] = NULL;
+			gfxList[i] = nullptr;
 		}
 	}
 };
@@ -628,7 +628,7 @@ struct DlvEnt {
 
 	char id[32];
 
-	DlvEnt() : itemGfx(NULL), destGfx(NULL) {
+	DlvEnt() : itemGfx(nullptr), destGfx(nullptr) {
 		itemTextName[0] = 0;
 		itemGfxName[0] = 0;
 		destTextName[0] = 0;
@@ -636,8 +636,8 @@ struct DlvEnt {
 	}
 
 	~DlvEnt() {
-		itemGfx = NULL;
-		destGfx = NULL;
+		itemGfx = nullptr;
+		destGfx = nullptr;
 	}
 };
 
@@ -802,7 +802,7 @@ struct CineCommand {
 	Picture *pic;
 
 	CineCommand() : cmdType(C_NO_COMMAND), x(0.0), y(0.0), x2(0.0), y2(0.0), xv(0.0), yv(0.0),
-				start(0), end(0), delay(0), speed(0), title(NULL), string(NULL), id(NULL), e(NULL), pic(NULL) {}
+				start(0), end(0), delay(0), speed(0), title(nullptr), string(nullptr), id(nullptr), e(nullptr), pic(nullptr) {}
 };
 
 struct CineBlit {
@@ -812,7 +812,7 @@ struct CineBlit {
 	const char *id;
 	bool masked;
 
-	CineBlit() : x(0), y(0), pic(NULL), name(NULL), id(NULL), masked(false) {}
+	CineBlit() : x(0), y(0), pic(nullptr), name(nullptr), id(nullptr), masked(false) {}
 };
 
 #define onEvenTile(x, y)		( !(x & 31) && !(y & 31) )
@@ -827,7 +827,7 @@ struct CineBlit {
 				e->animFrame = 0; \
 		} \
 	}
-#define spawnBlocking(x, y, level)	g_hdb->_ai->spawn(AI_NONE, DIR_NONE, x, y, NULL, NULL, NULL, DIR_NONE, level, 0, 0, 0)
+#define spawnBlocking(x, y, level)	g_hdb->_ai->spawn(AI_NONE, DIR_NONE, x, y, nullptr, nullptr, nullptr, DIR_NONE, level, 0, 0, 0)
 
 class AI {
 public:

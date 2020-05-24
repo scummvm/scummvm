@@ -23,11 +23,7 @@
 #ifndef NUVIE_SCRIPT_SCRIPT_CUTSCENE_H
 #define NUVIE_SCRIPT_SCRIPT_CUTSCENE_H
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lua.h"
-#else
-#include "ultima/nuvie/lua/lua.h"
-#endif
 
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"

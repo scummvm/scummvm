@@ -195,7 +195,7 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 	bool saveFailed = false;
 
-	pauseEngine(true);
+	PauseToken pt = pauseEngine();
 
 	Common::WriteStream *out = openSaveFileForWriting(slot, compat, filename);
 	if (!out) {
@@ -214,8 +214,6 @@ bool ScummEngine::saveState(int slot, bool compat, Common::String &filename) {
 		debug(1, "State save as '%s' FAILED", filename.c_str());
 	else
 		debug(1, "State saved as '%s'", filename.c_str());
-
-	pauseEngine(false);
 
 	return !saveFailed;
 }

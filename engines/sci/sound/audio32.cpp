@@ -36,7 +36,7 @@
 #include "common/system.h"          // for OSystem, g_system
 #include "common/textconsole.h"     // for warning
 #include "common/types.h"           // for Flag::NO
-#include "engine.h"                 // for Engine, g_engine
+#include "engines/engine.h"         // for Engine, g_engine
 #include "sci/console.h"            // for Console
 #include "sci/engine/features.h"    // for GameFeatures
 #include "sci/engine/guest_additions.h" // for GuestAdditions

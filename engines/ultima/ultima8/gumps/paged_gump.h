@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for gumps which have multiple pages (books, save/load game)
+ */
 class PagedGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -53,9 +56,9 @@ public:
 		_buttonsEnabled = enabled;
 	}
 
-	bool loadData(IDataSource *ids);
+	bool loadData(Common::ReadStream *rs);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 	int _leftOff, _rightOff, _topOff, _gumpShape;
 	Std::vector<Gump *> _gumps;
 	Gump *_nextButton;

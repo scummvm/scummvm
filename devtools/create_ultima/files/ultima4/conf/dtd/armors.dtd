@@ -1,0 +1,7 @@
+<!-- $Id: armors.dtd 1904 2004-05-23 05:25:40Z andrewtaylor $ -->
+
+<!ELEMENT armors ( armor+ ) >
+
+<!ELEMENT armor ( constraint* ) >
+<!ATTLIST armor name       CDATA   #REQUIRED
+                defense    NMTOKEN #REQUIRED>

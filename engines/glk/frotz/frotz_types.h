@@ -85,6 +85,7 @@ enum Story {
 	ARTHUR,
 	JOURNEY,
 	LURKING_HORROR,
+	MILLIWAYS,
 	UNKNOWN
 };
 

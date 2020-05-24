@@ -40,16 +40,26 @@ public:
 
 	void run() override;
 
-	void OnMouseDown(int button, int32 mx, int32 my);
-	void OnMouseUp(int button);
+	void onMouseDown(int button, int32 mx, int32 my);
+	void onMouseUp(int button);
 
 	void resetIdleTime() {
 		_idleTime = 0;
 	}
 
-	bool loadData(IDataSource *ids, uint32 version);
-protected:
-	void saveData(ODataSource *ods) override;
+	bool loadData(Common::ReadStream *rs, uint32 version);
+
+	void setFakeBothButtonClick() {
+		_fakeBothButtonClick = true;
+	}
+
+	void tryTurnLeft(bool b);
+	void tryTurnRight(bool b);
+	void tryMoveForward(bool b);
+	void tryMoveBack(bool b);
+
+private:
+	void saveData(Common::WriteStream *ws) override;
 
 	void handleHangingMode();
 	void handleCombatMode();
@@ -70,7 +80,15 @@ protected:
 	uint32 _idleTime;
 	Animation::Sequence _lastHeadShakeAnim;
 
+	//! A fake "both button" event has been requested
+	bool _fakeBothButtonClick;
+	
 	MButton _mouseButton[2];
+
+	bool _tryTurnLeft;
+	bool _tryTurnRight;
+	bool _tryMoveForward;
+	bool _tryMoveBack;
 };
 
 } // End of namespace Ultima8

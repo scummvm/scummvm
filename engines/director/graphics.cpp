@@ -699,6 +699,53 @@ static byte director3QuickDrawPatterns[][8] = {
 	{ 0xFF, 0x2A, 0xFF, 0xC8, 0xFF, 0x65, 0xFF, 0x9D }
 };
 
+static const byte mouseUp[] = {
+	3, 3, 3, 3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 0, 0, 3, 3, 0, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 0, 3, 3, 0, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 0, 0, 0, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 1, 1, 1, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 1, 1, 1, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 0, 0, 0, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3
+};
+
+static const byte mouseDown[] = {
+	3, 3, 3, 3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 0, 0, 3, 3, 0, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 0, 3, 3, 0, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 0, 0, 0, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 0, 0, 0, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 0, 0, 0, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 0, 0, 0, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 0, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3,
+	3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3
+};
+
+/**
+ * The sprites colors are in reverse order with respect to the ids in director.
+ * The palette is in reverse order, this eases the code for loading files.
+ * All other color ids can be converted with: 255 - colorId.
+ **/
+uint32 DirectorEngine::transformColor(uint32 color) {
+	return 255 - color;
+}
+
 void DirectorEngine::loadPatterns() {
 	for (int i = 0; i < ARRAYSIZE(director3Patterns); i++)
 		_director3Patterns.push_back(director3Patterns[i]);
@@ -785,7 +832,7 @@ void DirectorEngine::testFontScaling() {
 
 			for (x = x1; x < x1 + 6; x++)
 				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = 255 - (i * 16 + j);
+					*((byte *)surface.getBasePtr(x, y)) = transformColor(i * 16 + j);
 		}
 	}
 
@@ -824,6 +871,22 @@ void DirectorEngine::testFonts() {
 	}
 
 	delete fontFile;
+}
+
+void DirectorEngine::setCursor(int type) {
+	switch (type) {
+	case kCursorDefault:
+		_wm->popCursor();
+		break;
+
+	case kCursorMouseDown:
+		_wm->pushCustomCursor(mouseDown, 16, 16, 0, 0, 3);
+		break;
+
+	case kCursorMouseUp:
+		_wm->pushCustomCursor(mouseUp, 16, 16, 0, 0, 3);
+		break;
+	}
 }
 
 }

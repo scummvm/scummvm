@@ -25,15 +25,12 @@
 
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
-
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump)
 
 ModalGump::ModalGump() : Gump() {
 
@@ -91,18 +88,18 @@ void ModalGump::Close(bool no_del) {
 	Gump::Close(no_del);
 }
 
-Gump *ModalGump::OnMouseDown(int button, int32 mx, int32 my) {
-	Gump *handled = Gump::OnMouseDown(button, mx, my);
+Gump *ModalGump::onMouseDown(int button, int32 mx, int32 my) {
+	Gump *handled = Gump::onMouseDown(button, mx, my);
 	if (!handled) handled = this;
 	return handled;
 }
 
 
-void ModalGump::saveData(ODataSource *ods) {
+void ModalGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
-bool ModalGump::loadData(IDataSource *ids, uint32 version) {
+bool ModalGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 	return false;
 }

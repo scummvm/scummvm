@@ -28,11 +28,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
-//
-// The resizable gump is a gump that can doesn't have a static size.
-//
-// An example of such would be the Console and the GameMap gumps
-//
+/**
+ * Base class for gumps that can doesn't have a static size.
+ * An example of such would be the Console and the GameMap gumps
+ */
 class ResizableGump : public Gump {
 public:
 	ResizableGump(int x, int y, int width, int height);

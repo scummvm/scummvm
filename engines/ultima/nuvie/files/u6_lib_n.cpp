@@ -29,11 +29,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Lib_n::U6Lib_n() {
-	num_offsets = 0;
-	items = NULL;
-	data = NULL;
-	del_data = false;
+U6Lib_n::U6Lib_n() : num_offsets(0), items(NULL), data(NULL),
+	del_data(false), filesize(0), game_type(NUVIE_GAME_U6), lib_size(0) {
 }
 
 

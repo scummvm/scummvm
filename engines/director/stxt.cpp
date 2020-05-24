@@ -34,6 +34,16 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 	uint32 dataLen = textStream.readUint32();
 	Common::String text;
 
+	_fontId = 0;
+	_fontSize = 12;
+	_textType = kTextTypeFixed;
+	_textAlign = kTextAlignLeft;
+	_textShadow = kSizeNone;
+	_textSlant = 0;
+	_palinfo1 = _palinfo2 = _palinfo3 = 0;
+	_unk1f = _unk2f = 0;
+	_unk3f = 0;
+
 	for (uint32 i = 0; i < strLen; i++) {
 		byte ch = textStream.readByte();
 		if (ch == 0x0d) {

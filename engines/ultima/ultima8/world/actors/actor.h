@@ -126,8 +126,8 @@ public:
 		_unk0C = b;
 	}
 
-	uint32 getActorFlags() const {
-		return _actorFlags;
+	bool hasActorFlags(uint32 flags) const {
+		return (_actorFlags & flags) != 0;
 	}
 	void setActorFlag(uint32 mask) {
 		_actorFlags |= mask;
@@ -216,7 +216,7 @@ public:
 
 	void dumpInfo() const override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -292,7 +292,7 @@ public:
 	};
 
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	int16 _strength;
 	int16 _dexterity;

@@ -22,7 +22,7 @@
 
 /*
  * This code is based on original Sfinx source code
- * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
+ * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
 #include "cge2/cge2.h"
@@ -132,7 +132,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Sfinx (C) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
+		return "Sfinx (C) 1994-1997 Janusz B. Wisniewski and L.K. Avalon";
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;

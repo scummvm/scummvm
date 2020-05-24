@@ -24,8 +24,6 @@
 
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -74,7 +72,7 @@ void UCList::unionStringList(UCList &l) {
 	l.free(); // NB: do _not_ free the strings in l, since they're in this one
 }
 
-void UCList::substractStringList(const UCList &l) {
+void UCList::subtractStringList(const UCList &l) {
 	for (unsigned int i = 0; i < l._size; i++)
 		removeString(l.getStringIndex(i));
 }
@@ -116,18 +114,18 @@ void UCList::removeString(uint16 s, bool nodel) {
 	}
 }
 
-void UCList::save(ODataSource *ods) {
-	ods->write4(_elementSize);
-	ods->write4(_size);
-	ods->write(&(_elements[0]), _size * _elementSize);
+void UCList::save(Common::WriteStream *ws) const {
+	ws->writeUint32LE(_elementSize);
+	ws->writeUint32LE(_size);
+	ws->write(&(_elements[0]), _size * _elementSize);
 }
 
 
-bool UCList::load(IDataSource *ids, uint32 version) {
-	_elementSize = ids->read4();
-	_size = ids->read4();
+bool UCList::load(Common::ReadStream *rs, uint32 version) {
+	_elementSize = rs->readUint32LE();
+	_size = rs->readUint32LE();
 	_elements.resize(_size * _elementSize);
-	ids->read(&(_elements[0]), _size * _elementSize);
+	rs->read(&(_elements[0]), _size * _elementSize);
 
 	return true;
 }

@@ -100,7 +100,6 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("filtering", true);
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 2);
-	ConfMan.registerDefault("shader", 0);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 	ConfMan.registerDefault("frontpanel_touchpad_mode", false);
 
@@ -114,9 +113,6 @@ void OSystem_PSP2::initBackend() {
 	}
 	if (!ConfMan.hasKey("filtering")) {
 		ConfMan.setBool("filtering", true);
-	}
-	if (!ConfMan.hasKey("shader")) {
-		ConfMan.setInt("shader", 2);
 	}
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
 		ConfMan.setBool("touchpad_mouse_mode", false);
@@ -165,8 +161,6 @@ void OSystem_PSP2::setFeatureState(Feature f, bool enable) {
 	case kFeatureTouchpadMode:
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 		break;
-	case kFeatureFullscreenMode:
-		break;
 	default:
 		OSystem_SDL::setFeatureState(f, enable);
 		break;
@@ -177,9 +171,6 @@ bool OSystem_PSP2::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureTouchpadMode:
 		return ConfMan.getBool("touchpad_mouse_mode");
-		break;
-	case kFeatureFullscreenMode:
-		return true;
 		break;
 	default:
 		return OSystem_SDL::getFeatureState(f);

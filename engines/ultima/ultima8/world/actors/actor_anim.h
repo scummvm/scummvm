@@ -39,7 +39,8 @@ public:
 	}
 
 	AnimAction *getAction(unsigned int n) {
-		if (n >= _actions.size()) return 0;
+		if (n >= _actions.size())
+			return nullptr;
 		return _actions[n];
 	}
 

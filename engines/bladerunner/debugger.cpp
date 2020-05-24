@@ -664,6 +664,43 @@ const struct SceneList {
 	{ 0, NULL, 0, 0 }
 };
 
+// Auxialliary method to validate chapter, set and scene combination
+// and if the triad is valid, then load that scene
+bool Debugger::dbgAttemptToLoadChapterSetScene(int chapterId, int setId, int sceneId) {
+	if (chapterId < 1 || chapterId > 5) {
+		debugPrintf("chapterID must be between 1 and 5\n");
+		return false;
+	}
+
+	int chapterIdNormalized = chapterId;
+
+	if (chapterId == 3 || chapterId == 5) {
+		chapterIdNormalized = chapterId - 1;
+	}
+
+	// Sanity check
+	uint i;
+	for (i = 0; sceneList[i].chapter != 0; ++i) {
+		if (sceneList[i].chapter == chapterIdNormalized &&
+		    sceneList[i].set == setId &&
+		    sceneList[i].scene == sceneId
+		) {
+			break;
+		}
+	}
+
+	if (sceneList[i].chapter == 0) { // end of list
+		debugPrintf("chapterId, setId and sceneId combination is not valid.\n");
+		return false;
+	}
+
+	if (chapterId != _vm->_settings->getChapter()) {
+		_vm->_settings->setChapter(chapterId);
+	}
+	_vm->_settings->setNewSetAndScene(setId, sceneId);
+	return true;
+}
+
 bool Debugger::cmdScene(int argc, const char **argv) {
 	if (argc != 0 && argc > 4) {
 		debugPrintf("Changes set and scene.\n");
@@ -677,38 +714,7 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 		int setId = atoi(argv[2]);
 		int sceneId = atoi(argv[3]);
 
-		if (chapterId < 1 || chapterId > 5) {
-			debugPrintf("chapterID must be between 1 and 5\n");
-			return true;
-		}
-
-		int chapterIdNormalized = chapterId;
-
-		if (chapterId == 3 || chapterId == 5) {
-			chapterIdNormalized = chapterId - 1;
-		}
-
-		// Sanity check
-		uint i;
-		for (i = 0; sceneList[i].chapter != 0; ++i) {
-			if (sceneList[i].chapter == chapterIdNormalized &&
-			    sceneList[i].set == setId &&
-			    sceneList[i].scene == sceneId
-			) {
-				break;
-			}
-		}
-
-		if (sceneList[i].chapter == 0) { // end of list
-			debugPrintf("chapterId, setId and sceneId combination is not valid.\n");
-			return true;
-		}
-
-		if (chapterId != _vm->_settings->getChapter()) {
-			_vm->_settings->setChapter(chapterId);
-		}
-		_vm->_settings->setNewSetAndScene(setId, sceneId);
-		return false;
+		return !dbgAttemptToLoadChapterSetScene(chapterId, setId, sceneId);
 	} else if (argc > 1) {
 		int chapterId = 0;
 		Common::String sceneName;

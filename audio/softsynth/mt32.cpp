@@ -114,25 +114,25 @@ private:
 	int _outputRate;
 
 protected:
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 public:
 	MidiDriver_MT32(Audio::Mixer *mixer);
 	virtual ~MidiDriver_MT32();
 
-	int open();
-	void close();
+	int open() override;
+	void close() override;
 	void send(uint32 b) override;
-	void setPitchBendRange(byte channel, uint range);
-	void sysEx(const byte *msg, uint16 length);
+	void setPitchBendRange(byte channel, uint range) override;
+	void sysEx(const byte *msg, uint16 length) override;
 
-	uint32 property(int prop, uint32 param);
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	uint32 property(int prop, uint32 param) override;
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override;
 
 	// AudioStream API
-	bool isStereo() const { return true; }
-	int getRate() const { return _outputRate; }
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _outputRate; }
 };
 
 ////////////////////////////////////////

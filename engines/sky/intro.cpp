@@ -930,7 +930,7 @@ bool Intro::escDelay(uint32 msecs) {
 			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				if (event.customType == kSkyActionSkip)
 					return false;
-			} else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL) {
+			} else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				return false;
 			}
 		}

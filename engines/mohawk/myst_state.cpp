@@ -95,9 +95,6 @@ void MystGameState::reset() {
 	_globals.u1 = 1;
 	_globals.ending = kDniNotVisited;
 
-	_globals.zipMode = ConfMan.getBool("zip_mode");
-	_globals.transitions = ConfMan.getBool("transition_mode");
-
 	// Library Bookcase Door - Default to Up
 	_myst.libraryBookcaseDoor = 1;
 	// Dock Imager Numeric Selection - Default to 67
@@ -216,7 +213,7 @@ bool MystGameState::saveState(int slot) {
 	debugC(kDebugSaveLoad, "Saving game to '%s'", filename.c_str());
 
 	Common::Serializer s(nullptr, saveFile);
-	syncGameState(s, _vm->getFeatures() & GF_ME);
+	syncGameState(s, _vm->isGameVariant(GF_ME));
 	saveFile->finalize();
 	delete saveFile;
 
@@ -535,7 +532,7 @@ void MystGameState::addZipDest(MystStack stack, uint16 view) {
 	ZipDests *zipDests = nullptr;
 
 	// The demo has no zip dest storage
-	if (_vm->getFeatures() & GF_DEMO)
+	if (_vm->isGameVariant(GF_DEMO))
 		return;
 
 	// Select stack
@@ -577,11 +574,11 @@ void MystGameState::addZipDest(MystStack stack, uint16 view) {
 
 bool MystGameState::isReachableZipDest(MystStack stack, uint16 view) {
 	// Zip mode enabled
-	if (!_globals.zipMode)
+	if (!ConfMan.getBool("zip_mode"))
 		return false;
 
 	// The demo has no zip dest storage
-	if (_vm->getFeatures() & GF_DEMO)
+	if (_vm->isGameVariant(GF_DEMO))
 		return false;
 
 	// Select stack

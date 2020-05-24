@@ -34,8 +34,6 @@ class Item;
 class UCList;
 class TeleportEgg;
 class EggHatcherProcess;
-class IDataSource;
-class ODataSource;
 
 #define MAP_NUM_CHUNKS  64
 
@@ -86,18 +84,18 @@ public:
 	//! \param y y coordinate of search center if item is 0.
 	void areaSearch(UCList *itemlist, const uint8 *loopscript,
 	                uint32 scriptsize, const Item *item, uint16 range,
-					bool recurse, int32 x = 0, int32 y = 0);
+					bool recurse, int32 x = 0, int32 y = 0) const;
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 	                   uint32 scriptsize, const Item *item, bool above,
-					   bool below, bool recurse = false);
+					   bool below, bool recurse = false) const;
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 	                   uint32 scriptsize, ObjId id,
 	                   int32 origin[3], int32 dims[2],
-	                   bool above, bool below, bool recurse = false);
+	                   bool above, bool below, bool recurse = false) const;
 
 	// Collision detection. Returns true if the box [x,y,z]-[x-xd,y-yd,z+zd]
 	// does not collide with any solid items.
@@ -127,7 +125,7 @@ public:
                          ObjId *roof = 0) const;
 
 	//! Scan for a valid position for item in directions orthogonal to movedir
-	bool scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
+	bool scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
 	                          int movedir, bool wantsupport,
 	                          int32 &tx, int32 &ty, int32 &tz);
 
@@ -160,7 +158,7 @@ public:
 		// Bitmask. Bit 0 is x, 1 is y, 2 is z.
 
 		// Use this func to get the interpolated location of the hit
-		void GetInterpolatedCoords(int32 out[3], int32 start[3], int32 end[3]) {
+		void GetInterpolatedCoords(int32 out[3], int32 start[3], int32 end[3]) const {
 			for (int i = 0; i < 3; i++)
 				out[i] = start[i] + ((end[i] - start[i]) * (_hitTime >= 0 ? _hitTime : 0) + (end[i] > start[i] ? 0x2000 : -0x2000)) / 0x4000;
 		}
@@ -180,19 +178,14 @@ public:
 	//!         true if any items were hit.
 	bool sweepTest(const int32 start[3], const int32 end[3],
 	               const int32 dims[3], uint32 shapeflags,
-	               ObjId item, bool solid_only, Std::list<SweepItem> *hit);
+	               ObjId item, bool solid_only, Std::list<SweepItem> *hit) const;
 
 	TeleportEgg *findDestination(uint16 id);
 
 	// Not allowed to modify the list. Remember to use const_iterator
-	const Std::list<Item *> *getItemList(int32 gx, int32 gy) {
-		// CONSTANTS!
-		if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
-			return 0;
-		return &_items[gx][gy];
-	}
+	const Std::list<Item *> *getItemList(int32 gx, int32 gy) const;
 
-	bool isChunkFast(int32 cx, int32 cy) {
+	bool isChunkFast(int32 cx, int32 cy) const {
 		// CONSTANTS!
 		if (cx < 0 || cy < 0 || cx >= MAP_NUM_CHUNKS || cy >= MAP_NUM_CHUNKS)
 			return false;
@@ -200,13 +193,13 @@ public:
 	}
 
 	// A simple trace to find the top item at a specific xy point
-	Item *traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags);
+	const Item *traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags);
 
 	// Set the entire map as being 'fast'
 	void setWholeMapFast();
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ws);
+	bool load(Common::ReadStream *rs, uint32 version);
 
 	INTRINSIC(I_canExistAt);
 
@@ -214,16 +207,19 @@ private:
 	void loadItems(Std::list<Item *> itemlist, bool callCacheIn);
 	void createEggHatcher();
 
+	//! clip the given map chunk numbers to iterate over them safely
+	void clipMapChunks(int &minx, int &maxx, int &miny, int &maxy) const;
+
 	Map *_currentMap;
 
 	// item lists. Lots of them :-)
 	// items[x][y]
-	Std::list<Item *> **_items;
+	Std::list<Item *> _items[MAP_NUM_CHUNKS][MAP_NUM_CHUNKS];
 
 	ProcId _eggHatcher;
 
 	// Fast area bit masks -> fast[ry][rx/32]&(1<<(rx&31));
-	uint32 **_fast;
+	uint32 _fast[MAP_NUM_CHUNKS][MAP_NUM_CHUNKS / 32];
 	int32 _fastXMin, _fastYMin, _fastXMax, _fastYMax;
 
 	int _mapChunkSize;

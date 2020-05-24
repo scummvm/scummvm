@@ -88,6 +88,9 @@ void EngineState::reset(bool isRestoring) {
 
 	_delayedRestoreGameId = -1;
 
+	_kq7MacSaveGameId = -1;
+	_kq7MacSaveGameDescription.clear();
+
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
 	stack_base = 0;

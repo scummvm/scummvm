@@ -24,15 +24,13 @@
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/target_gump.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump)
 
 bool DesktopGump::_fadedModal = true;
 
@@ -63,8 +61,8 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 		if (!g->IsClosing()) {
 			// If background blanking on modal is enabled...
 			// Background is partially transparent
-			if (_fadedModal && g->IsOfType<ModalGump>() &&
-			        !g->IsOfType<TargetGump>() && !g->IsHidden())
+			if (_fadedModal && dynamic_cast<ModalGump *>(g) &&
+			        !dynamic_cast<TargetGump *>(g) && !g->IsHidden())
 				surf->FillBlended(0x7F000000, 0, 0, _dims.w, _dims.h);
 
 			g->Paint(surf, lerp_factor, scaled);
@@ -111,11 +109,11 @@ void DesktopGump::RenderSurfaceChanged() {
 	Gump::RenderSurfaceChanged();
 }
 
-void DesktopGump::saveData(ODataSource *ods) {
+void DesktopGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save DesktopGump");
 }
 
-bool DesktopGump::loadData(IDataSource *ids, uint32 version) {
+bool DesktopGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to save DesktopGump");
 
 	return false;

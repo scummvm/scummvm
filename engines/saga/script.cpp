@@ -979,10 +979,11 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 
 	// now data contains last string index
 
-	if (_vm->getFeatures() & GF_ITE_DOS_DEMO) {
+	if (_vm->getFeatures() & GF_ITE_DOS_DEMO || _vm->getPlatform() == Common::kPlatformPC98) {
+		int offset = (_vm->getPlatform() == Common::kPlatformPC98) ? 295 : 288;
 		if ((_vm->_scene->currentSceneNumber() == ITE_DEFAULT_SCENE) &&
-			(iparam1 >= 288) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + 288))) {
-			sampleResourceId = RID_SCENE1_VOICE_START + iparam1 - 288;
+			(iparam1 >= offset) && (iparam1 <= (RID_SCENE1_VOICE_END - RID_SCENE1_VOICE_START + offset))) {
+			sampleResourceId = RID_SCENE1_VOICE_START + iparam1 - offset;
 		}
 	} else {
 		if (thread->_voiceLUT->size() > uint16(first))

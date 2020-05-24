@@ -47,9 +47,6 @@
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -60,24 +57,23 @@ static const int watchactor = WATCHACTOR;
 #endif
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess)
 
-ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(0) {
-
+ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
+	_dir(0), _action(Animation::walk), _steps(0), _firstFrame(true),
+	_currentStep(0), _repeatCounter(0), _animAborted(false),
+	_attackedSomething(false) {
 }
 
-ActorAnimProcess::ActorAnimProcess(Actor *actor_, Animation::Sequence action_,
-                                   uint32 dir_, uint32 steps_) {
-	assert(actor_);
-	_itemNum = actor_->getObjId();
-	_dir = dir_;
-	_action = action_;
-	_steps = steps_;
+ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
+                                   uint32 dir, uint32 steps) :
+		_dir(dir), _action(action), _steps(steps), _tracker(nullptr),
+		_firstFrame(true), _currentStep(0), _repeatCounter(0),
+		_animAborted(false), _attackedSomething(false)  {
+	assert(actor);
+	_itemNum = actor->getObjId();
 
-	_type = 0x00F0; // CONSTANT !
-	_firstFrame = true;
-	_tracker = 0;
-	_currentStep = 0;
+	_type = ACTOR_ANIM_PROC_TYPE;
 }
 
 bool ActorAnimProcess::init() {
@@ -96,13 +92,13 @@ bool ActorAnimProcess::init() {
 		return false;
 	}
 
-	if (!(actor->getFlags() & Item::FLG_FASTAREA)) {
+	if (!actor->hasFlags(Item::FLG_FASTAREA)) {
 		// not in the fast area? Can't play an animation then.
 		// (If we do, the actor will likely fall because the floor is gone.)
 		return false;
 	}
 
-	if (actor->getActorFlags() & Actor::ACT_ANIMLOCK) {
+	if (actor->hasActorFlags(Actor::ACT_ANIMLOCK)) {
 		//! What do we do if actor was already animating?
 		//! don't do this animation or kill the previous one?
 		//! Or maybe wait until the previous one finishes?
@@ -117,7 +113,7 @@ bool ActorAnimProcess::init() {
 	_tracker = new AnimationTracker();
 	if (!_tracker->init(actor, _action, _dir)) {
 		delete _tracker;
-		_tracker = 0;
+		_tracker = nullptr;
 		return false;
 	}
 
@@ -169,7 +165,7 @@ void ActorAnimProcess::run() {
 
 	_firstFrame = false;
 
-	if (!(a->getFlags() & Item::FLG_FASTAREA)) {
+	if (!a->hasFlags(Item::FLG_FASTAREA)) {
 		// not in the fast area? Kill the animation then.
 		//! TODO: Decide if this is the right move.
 		//  Animation could do one of three things: pause, move
@@ -216,7 +212,7 @@ void ActorAnimProcess::run() {
 					if (_itemNum == watchactor) {
 						pout << "Animation ["
 						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling" << Std::endl;
+						     << "] falling at end" << Std::endl;
 					}
 #endif
 					int32 dx, dy, dz;
@@ -248,7 +244,7 @@ void ActorAnimProcess::run() {
 					if (_itemNum == watchactor) {
 						pout << "Animation ["
 						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling" << Std::endl;
+						     << "] falling from blocked" << Std::endl;
 					}
 #endif
 					// no inertia here because we just crashed into something
@@ -261,7 +257,7 @@ void ActorAnimProcess::run() {
 			}
 		}
 
-		AnimFrame *curframe = _tracker->getAnimFrame();
+		const AnimFrame *curframe = _tracker->getAnimFrame();
 		if (curframe && curframe->_sfx) {
 			AudioProcess *audioproc = AudioProcess::get_instance();
 			if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
@@ -305,7 +301,7 @@ void ActorAnimProcess::run() {
 	}
 
 	// Did we just leave the fast area?
-	if (!(a->getFlags() & Item::FLG_FASTAREA)) {
+	if (!a->hasFlags(Item::FLG_FASTAREA)) {
 #ifdef WATCHACTOR
 		if (_itemNum == watchactor)
 			pout << "Animation ["
@@ -322,7 +318,7 @@ void ActorAnimProcess::run() {
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
 		     << "] showing frame (" << x << "," << y << "," << z << ")"
 		     << " shape (" << a->getShape() << "," << _tracker->getFrame()
-		     << ") sfx " << _tracker->getAnimFrame()->sfx
+		     << ") sfx " << _tracker->getAnimFrame()->_sfx
 		     << " rep " << _repeatCounter << " ";
 
 		if (_tracker->isDone()) pout << "D";
@@ -341,7 +337,7 @@ void ActorAnimProcess::run() {
 #ifdef WATCHACTOR
 			if (_itemNum == watchactor) {
 				pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-				     << "] falling" << Std::endl;
+				     << "] falling from repeat" << Std::endl;
 			}
 #endif
 
@@ -372,7 +368,7 @@ void ActorAnimProcess::doSpecial() {
 
 	// ghosts
 	if (a->getShape() == 0x19b) {
-		Actor *hostile = 0;
+		Actor *hostile = nullptr;
 		if (_action == Animation::attack) {
 			// fireball on attack
 			unsigned int skullcount = a->countNearby(0x19d, 6 * 256);
@@ -494,7 +490,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 	Actor *a = getActor(_itemNum);
 	assert(a);
 
-	Actor *attacked = p_dynamic_cast<Actor *>(hit);
+	Actor *attacked = dynamic_cast<Actor *>(hit);
 
 	if (_itemNum == 1 && _action == Animation::attack) {
 		// some magic weapons have some special effects
@@ -516,7 +512,7 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			break;
 		case 0x330: { // Slayer
 			// if we killed somebody, thunder&lightning
-			if (attacked && (attacked->getActorFlags() & Actor::ACT_DEAD)) {
+			if (attacked && attacked->hasActorFlags(Actor::ACT_DEAD)) {
 				// calling intrinsic...
 				PaletteFaderProcess::I_lightningBolt(0, 0);
 				int sfx;
@@ -635,44 +631,44 @@ void ActorAnimProcess::dumpInfo() const {
 	pout << "_action: " << _action << ", _dir: " << _dir << Std::endl;
 }
 
-void ActorAnimProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void ActorAnimProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
 	uint8 ff = _firstFrame ? 1 : 0;
-	ods->write1(ff);
+	ws->writeByte(ff);
 	uint8 ab = _animAborted ? 1 : 0;
-	ods->write1(ab);
+	ws->writeByte(ab);
 	uint8 attacked = _attackedSomething ? 1 : 0;
-	ods->write1(attacked);
-	ods->write1(static_cast<uint8>(_dir));
-	ods->write2(static_cast<uint16>(_action));
-	ods->write2(static_cast<uint16>(_steps));
-	ods->write2(static_cast<uint16>(_repeatCounter));
-	ods->write2(static_cast<uint16>(_currentStep));
+	ws->writeByte(attacked);
+	ws->writeByte(static_cast<uint8>(_dir));
+	ws->writeUint16LE(static_cast<uint16>(_action));
+	ws->writeUint16LE(static_cast<uint16>(_steps));
+	ws->writeUint16LE(static_cast<uint16>(_repeatCounter));
+	ws->writeUint16LE(static_cast<uint16>(_currentStep));
 
 	if (_tracker) {
-		ods->write1(1);
-		_tracker->save(ods);
+		ws->writeByte(1);
+		_tracker->save(ws);
 	} else
-		ods->write1(0);
+		ws->writeByte(0);
 }
 
-bool ActorAnimProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool ActorAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_firstFrame = (ids->read1() != 0);
-	_animAborted = (ids->read1() != 0);
-	_attackedSomething = (ids->read1() != 0);
-	_dir = ids->read1();
-	_action = static_cast<Animation::Sequence>(ids->read2());
-	_steps = ids->read2();
-	_repeatCounter = ids->read2();
-	_currentStep = ids->read2();
+	_firstFrame = (rs->readByte() != 0);
+	_animAborted = (rs->readByte() != 0);
+	_attackedSomething = (rs->readByte() != 0);
+	_dir = rs->readByte();
+	_action = static_cast<Animation::Sequence>(rs->readUint16LE());
+	_steps = rs->readUint16LE();
+	_repeatCounter = rs->readUint16LE();
+	_currentStep = rs->readUint16LE();
 
-	assert(_tracker == 0);
-	if (ids->read1() != 0) {
+	assert(_tracker == nullptr);
+	if (rs->readByte() != 0) {
 		_tracker = new AnimationTracker();
-		if (!_tracker->load(ids, version))
+		if (!_tracker->load(rs, version))
 			return false;
 	}
 

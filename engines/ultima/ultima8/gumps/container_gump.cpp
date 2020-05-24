@@ -41,23 +41,22 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump, ItemRelativeGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump)
 
 ContainerGump::ContainerGump()
-	: ItemRelativeGump(), _displayDragging(false) {
+	: ItemRelativeGump(), _displayDragging(false), _draggingShape(0),
+	  _draggingFrame(0), _draggingFlags(0), _draggingX(0), _draggingY(0) {
 
 }
 
 ContainerGump::ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
                              uint32 flags, int32 layer)
 	: ItemRelativeGump(0, 0, 5, 5, owner, flags, layer),
-	  _displayDragging(false) {
+	  _displayDragging(false), _draggingShape(0), _draggingFrame(0),
+	  _draggingFlags(0), _draggingX(0), _draggingY(0) {
 	_shape = shape;
 	_frameNum = frameNum;
 }
@@ -66,11 +65,7 @@ ContainerGump::~ContainerGump() {
 }
 
 void ContainerGump::InitGump(Gump *newparent, bool take_focus) {
-	ShapeFrame *sf = _shape->getFrame(_frameNum);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 
 	// Wait with ItemRelativeGump initialization until we calculated our size.
 	ItemRelativeGump::InitGump(newparent, take_focus);
@@ -165,7 +160,8 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 
 	Container *c = getContainer(_owner);
 
-	if (!c) return 0; // Container gone!?
+	if (!c)
+		return 0; // Container gone!?
 
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
@@ -180,9 +176,9 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 
 		int32 itemx, itemy;
 		getItemCoords(item, itemx, itemy);
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
-		ShapeFrame *frame = s->getFrame(item->getFrame());
+		const ShapeFrame *frame = s->getFrame(item->getFrame());
 
 		if (frame->hasPoint(mx - itemx, my - itemy)) {
 			// found it
@@ -198,6 +194,7 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 bool ContainerGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                       int32 lerp_factor) {
 	Item *item = getItem(itemid);
+	if (!item) return false;
 	Item *parent_ = item->getParentAsContainer();
 	if (!parent_) return false;
 	if (parent_->getObjId() != _owner) return false;
@@ -237,7 +234,7 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 		topitem = p;
 	}
 
-	Gump *gump = GetRootGump()->FindGump(GameMapGump::ClassType);
+	Gump *gump = GetRootGump()->FindGump<GameMapGump>();
 	assert(gump);
 	gump->GetLocationOfItem(topitem->getObjId(), gx, gy, lerp_factor);
 
@@ -285,14 +282,14 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 	Container *targetcontainer = getContainer(TraceObjId(px, py));
 
 	if (targetcontainer && targetcontainer->getObjId() == item->getObjId())
-		targetcontainer = 0;
+		targetcontainer = nullptr;
 
 	if (targetcontainer) {
 		ShapeInfo *targetinfo = targetcontainer->getShapeInfo();
 		if ((targetcontainer->getObjId() == item->getObjId()) ||
 		        targetinfo->is_land() ||
-		        (targetcontainer->getFlags() & Item::FLG_IN_NPC_LIST)) {
-			targetcontainer = 0;
+		        targetcontainer->hasFlags(Item::FLG_IN_NPC_LIST)) {
+			targetcontainer = nullptr;
 		}
 	}
 
@@ -303,18 +300,18 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 }
 
 
-Gump *ContainerGump::OnMouseDown(int button, int32 mx, int32 my) {
-	Gump *handled = Gump::OnMouseDown(button, mx, my);
+Gump *ContainerGump::onMouseDown(int button, int32 mx, int32 my) {
+	Gump *handled = Gump::onMouseDown(button, mx, my);
 	if (handled) return handled;
 
 	// only interested in left clicks
 	if (button == Shared::BUTTON_LEFT)
 		return this;
 
-	return 0;
+	return nullptr;
 }
 
-void ContainerGump::OnMouseClick(int button, int32 mx, int32 my) {
+void ContainerGump::onMouseClick(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;
@@ -333,7 +330,7 @@ void ContainerGump::OnMouseClick(int button, int32 mx, int32 my) {
 	}
 }
 
-void ContainerGump::OnMouseDouble(int button, int32 mx, int32 my) {
+void ContainerGump::onMouseDouble(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;
@@ -406,9 +403,9 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	_draggingX = mx - _itemArea.x - dox;
 	_draggingY = my - _itemArea.y - doy;
 
-	Shape *sh = item->getShapeObject();
+	const Shape *sh = item->getShapeObject();
 	assert(sh);
-	ShapeFrame *fr = sh->getFrame(_draggingFrame);
+	const ShapeFrame *fr = sh->getFrame(_draggingFrame);
 	assert(fr);
 
 	if (_draggingX - fr->_xoff < 0 ||
@@ -445,14 +442,14 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 	GumpToParent(px, py);
 	// see what the item is being dropped on
 	Item *targetitem = getItem(TraceObjId(px, py));
-	Container *targetcontainer = p_dynamic_cast<Container *>(targetitem);
+	Container *targetcontainer = dynamic_cast<Container *>(targetitem);
 
 
 	if (item->getShapeInfo()->hasQuantity() &&
 	        item->getQuality() > 1) {
 		// more than one, so see if we should ask if we should split it up
 
-		Item *splittarget = 0;
+		Item *splittarget = nullptr;
 
 		// also try to combine
 		if (targetitem && item->canMergeWith(targetitem)) {
@@ -504,7 +501,6 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 
 			// combined, so delete item
 			item->destroy();
-			item = 0;
 			return;
 		}
 	}
@@ -538,22 +534,22 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 	}
 }
 
-void ContainerGump::saveData(ODataSource *ods) {
-	ItemRelativeGump::saveData(ods);
+void ContainerGump::saveData(Common::WriteStream *ws) {
+	ItemRelativeGump::saveData(ws);
 
-	ods->write4(static_cast<uint32>(_itemArea.x));
-	ods->write4(static_cast<uint32>(_itemArea.y));
-	ods->write4(static_cast<uint32>(_itemArea.w));
-	ods->write4(static_cast<uint32>(_itemArea.h));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.x));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.y));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.w));
+	ws->writeUint32LE(static_cast<uint32>(_itemArea.h));
 }
 
-bool ContainerGump::loadData(IDataSource *ids, uint32 version) {
-	if (!ItemRelativeGump::loadData(ids, version)) return false;
+bool ContainerGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ItemRelativeGump::loadData(rs, version)) return false;
 
-	int32 iax = static_cast<int32>(ids->read4());
-	int32 iay = static_cast<int32>(ids->read4());
-	int32 iaw = static_cast<int32>(ids->read4());
-	int32 iah = static_cast<int32>(ids->read4());
+	int32 iax = static_cast<int32>(rs->readUint32LE());
+	int32 iay = static_cast<int32>(rs->readUint32LE());
+	int32 iaw = static_cast<int32>(rs->readUint32LE());
+	int32 iah = static_cast<int32>(rs->readUint32LE());
 	_itemArea.Set(iax, iay, iaw, iah);
 
 	return true;

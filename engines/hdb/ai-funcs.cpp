@@ -61,13 +61,13 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	e->animFrame = 0;
 
 	if (funcInit)
-		strcpy(e->luaFuncInit, funcInit);
+		Common::strlcpy(e->luaFuncInit, funcInit, 32);
 
 	if (funcAction)
-		strcpy(e->luaFuncAction, funcAction);
+		Common::strlcpy(e->luaFuncAction, funcAction, 32);
 
 	if (funcUse)
-		strcpy(e->luaFuncUse, funcUse);
+		Common::strlcpy(e->luaFuncUse, funcUse, 32);
 
 	if (e->luaFuncInit[0] == '*')
 		e->luaFuncInit[0] = 0;
@@ -81,7 +81,7 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	e->blinkFrames = 0;
 
 	if (!cacheEntGfx(e, (bool)callInit))
-		return NULL;
+		return nullptr;
 	else
 		_ents->push_back(e);
 
@@ -436,10 +436,10 @@ bool AI::cacheEntGfx(AIEntity *e, bool initFlag) {
 					const char *str1 = g_hdb->_lua->getStringOffStack();
 					const char *str2 = g_hdb->_lua->getStringOffStack();
 					if (str1)
-						strcpy(e->entityName, str1);
+						Common::strlcpy(e->entityName, str1, 32);
 
 					if (str2)
-						strcpy(e->printedName, str2);
+						Common::strlcpy(e->printedName, str2, 32);
 				}
 			} else if (e->aiInit2)
 				e->aiInit2(e);
@@ -522,7 +522,7 @@ AIEntity *AI::locateEntity(const char *luaName) {
 		if (Common::matchString((*it)->entityName, luaName))
 			return *it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 AIEntity *AI::findEntity(int x, int y) {
@@ -539,7 +539,7 @@ AIEntity *AI::findEntity(int x, int y) {
 	if (g_hdb->_map->laserBeamExist(x, y))
 		return &_dummyLaser;
 
-	return NULL;
+	return nullptr;
 }
 
 AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
@@ -556,7 +556,7 @@ AIEntity *AI::findEntityIgnore(int x, int y, AIEntity *ignore) {
 	if (g_hdb->_map->laserBeamExist(x, y) && ignore->type != AI_LASERBEAM)
 		return &_dummyLaser;
 
-	return NULL;
+	return nullptr;
 }
 
 AIEntity *AI::findEntityType(AIType type, int x, int y) {
@@ -573,7 +573,7 @@ AIEntity *AI::findEntityType(AIType type, int x, int y) {
 	if (g_hdb->_map->laserBeamExist(x, y) && type == AI_LASERBEAM)
 		return &_dummyLaser;
 
-	return NULL;
+	return nullptr;
 }
 
 void AI::getEntityXY(const char *entName, int *x, int *y) {
@@ -721,8 +721,8 @@ void AI::initAllEnts() {
 		(*it)->aiInit((*it));
 		if ((*it)->luaFuncInit[0]) {
 			if (g_hdb->_lua->callFunction((*it)->luaFuncInit, 2)) {
-				strcpy((*it)->entityName, g_hdb->_lua->getStringOffStack());
-				strcpy((*it)->printedName, g_hdb->_lua->getStringOffStack());
+				Common::strlcpy((*it)->entityName, g_hdb->_lua->getStringOffStack(), 32);
+				Common::strlcpy((*it)->printedName, g_hdb->_lua->getStringOffStack(), 32);
 			} else
 				warning("'%s' doesn't exists", (*it)->luaFuncInit);
 		}
@@ -733,16 +733,16 @@ void AI::initAllEnts() {
 
 		// Clear out all ptrs in entity before writing
 		for (int j = 0; j < kMaxAnimFrames; j++) {
-			temp->blinkGfx[j] = NULL;
-			temp->movedownGfx[j] = NULL;
-			temp->moveupGfx[j] = NULL;
-			temp->moveleftGfx[j] = NULL;
-			temp->moverightGfx[j] = NULL;
-			temp->standdownGfx[j] = NULL;
-			temp->standupGfx[j] = NULL;
-			temp->standleftGfx[j] = NULL;
-			temp->standrightGfx[j] = NULL;
-			temp->special1Gfx[j] = NULL;
+			temp->blinkGfx[j] = nullptr;
+			temp->movedownGfx[j] = nullptr;
+			temp->moveupGfx[j] = nullptr;
+			temp->moveleftGfx[j] = nullptr;
+			temp->moverightGfx[j] = nullptr;
+			temp->standdownGfx[j] = nullptr;
+			temp->standupGfx[j] = nullptr;
+			temp->standleftGfx[j] = nullptr;
+			temp->standrightGfx[j] = nullptr;
+			temp->special1Gfx[j] = nullptr;
 		}
 
 		temp->blinkFrames = 0;
@@ -755,9 +755,9 @@ void AI::initAllEnts() {
 		temp->standleftFrames = 0;
 		temp->standrightFrames = 0;
 
-		temp->draw = NULL;
-		temp->aiDraw = NULL;
-		temp->aiAction = temp->aiInit = temp->aiUse = NULL;
+		temp->draw = nullptr;
+		temp->aiDraw = nullptr;
+		temp->aiAction = temp->aiInit = temp->aiUse = nullptr;
 
 		cacheEntGfx(temp, false);
 	}
@@ -994,7 +994,7 @@ void AI::animateEntity(AIEntity *e) {
 					case ITEM_GEM_RED:
 					case AI_GOODFAIRY:
 					case AI_BADFAIRY:
-						hit = NULL;
+						hit = nullptr;
 						break;
 					default:
 						break;
@@ -1771,11 +1771,11 @@ void AI::drawEnts(int x, int y, int w, int h) {
 				break;
 			default:
 				if (e->level == 2 && _numLevel2Ents < kMaxLevel2Ents) {
-					_entsLevel2[_numLevel2Ents].aiDraw = NULL;
+					_entsLevel2[_numLevel2Ents].aiDraw = nullptr;
 					_entsLevel2[_numLevel2Ents].draw = e->draw;
 					_entsLevel2[_numLevel2Ents].x = e->x - x + e->drawXOff;
 					_entsLevel2[_numLevel2Ents].y = e->y - y + e->drawYOff;
-					_entsLevel2[_numLevel2Ents].e = NULL;
+					_entsLevel2[_numLevel2Ents].e = nullptr;
 					_entsLevel2[_numLevel2Ents].stunnedWait = e->stunnedWait;
 					_numLevel2Ents++;
 					debugN(5, "not trying to draw...");
@@ -2021,9 +2021,9 @@ AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 		// If player and entity are not at the same level, are they on stairs?
 		if (hit->level != level) {
 			if (level == 1 && !(bgFlags & kFlagStairTop))
-				hit = NULL;
+				hit = nullptr;
 			else if (level == 2 && !(bgFlags & kFlagStairBot))
-				hit = NULL;
+				hit = nullptr;
 		}
 	}
 
@@ -2036,7 +2036,7 @@ AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 		if (bgFlags & (kFlagWater | kFlagSlime)) {
 			if (hit && hit->state == STATE_FLOATING) {
 				*result = 1;
-				return NULL;
+				return nullptr;
 			} else
 				*result = 0;
 			return hit;
@@ -2057,7 +2057,7 @@ AIEntity *AI::legalMove(int tileX, int tileY, int level, int *result) {
 		if (bgFlags & (kFlagWater | kFlagSlime | kFlagPlummet)) {
 			if (hit && hit->state == STATE_FLOATING) {
 				*result = 1;
-				return NULL;
+				return nullptr;
 			} else
 				*result = 0;
 			return hit;
@@ -2102,7 +2102,7 @@ AIEntity *AI::playerCollision(int topBorder, int bottomBorder, int leftBorder, i
 		if (e->x > (_player->x - 32 - leftBorder) && e->x < (_player->x + 32 + rightBorder) && e->y >(_player->y - 32 - topBorder) && e->y < (_player->y + 32 + bottomBorder))
 			return e;
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool AI::checkPlayerTileCollision(int x, int y) {
@@ -2479,7 +2479,7 @@ void AI::movePlayer(uint16 buttons) {
 					_player->animFrame = 0;
 					_player->animDelay = _player->animCycle;
 					spawn(AI_SLUG_ATTACK, _player->dir, _player->tileX, _player->tileY,
-						NULL, NULL, NULL, DIR_NONE, _player->level, 0, 0, 1);
+						nullptr, nullptr, nullptr, DIR_NONE, _player->level, 0, 0, 1);
 				}
 				break;
 
@@ -2499,7 +2499,7 @@ void AI::movePlayer(uint16 buttons) {
 			nx = _player->tileX + xv;
 			ny = _player->tileY + yv;
 
-			spawn(AI_GEM_ATTACK, _player->dir, nx, ny, NULL, NULL, NULL, DIR_NONE, _player->level, amt == 1, 0, 1);
+			spawn(AI_GEM_ATTACK, _player->dir, nx, ny, nullptr, nullptr, nullptr, DIR_NONE, _player->level, amt == 1, 0, 1);
 			setGemAmount(amt - 1);
 			animGrabbing();
 			return;
@@ -2576,7 +2576,7 @@ void AI::movePlayer(uint16 buttons) {
 	int moveOK;
 	AIEntity *hit = legalMove(nx, ny, _player->level, &moveOK);
 	if (hit && walkThroughEnt(hit->type))
-		hit = NULL;
+		hit = nullptr;
 
 	if (hit || !moveOK) {
 		lookAtXY(nx, ny);

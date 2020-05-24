@@ -139,7 +139,6 @@ source common\error.cpp
 source common\quicktime.cpp
 
 // Special for graphics
-source backends\graphics\symbiansdl\symbiansdl-graphics.cpp
 source backends\graphics\surfacesdl\surfacesdl-graphics.cpp
 source engines\obsolete.cpp
 

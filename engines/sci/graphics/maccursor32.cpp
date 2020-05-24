@@ -34,8 +34,6 @@ void GfxMacCursor32::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
 }
 
 void GfxMacCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo) {
-	hide();
-
 	_cursorInfo.resourceId = viewId;
 	_cursorInfo.loopNo = loopNo;
 	_cursorInfo.celNo = celNo;
@@ -67,6 +65,8 @@ void GfxMacCursor32::setView(const GuiResourceId viewId, const int16 loopNo, con
 		delete macCursor;
 		return;
 	}
+
+	hide();
 
 	CursorMan.disableCursorPalette(false);
 	CursorMan.replaceCursor(macCursor);

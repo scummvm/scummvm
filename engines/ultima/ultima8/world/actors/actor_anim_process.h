@@ -44,6 +44,8 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
+	static const uint16 ACTOR_ANIM_PROC_TYPE = 0x00F0;
+
 	void run() override;
 
 	void terminate() override;
@@ -54,9 +56,9 @@ public:
 		return _action;
 	}
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	virtual bool init();
 

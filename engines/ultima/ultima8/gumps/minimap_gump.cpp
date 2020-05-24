@@ -36,7 +36,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MiniMapGump)
 
 MiniMapGump::MiniMapGump(int x, int y) :
 	Gump(x, y, MAP_NUM_CHUNKS * 2 + 2, MAP_NUM_CHUNKS * 2 + 2, 0,
@@ -46,7 +46,7 @@ MiniMapGump::MiniMapGump(int x, int y) :
 		TEX_FMT_NATIVE);
 }
 
-MiniMapGump::MiniMapGump() : Gump() {
+MiniMapGump::MiniMapGump() : Gump() , _lastMapNum(0){
 }
 
 MiniMapGump::~MiniMapGump(void) {
@@ -144,7 +144,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 }
 
 uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
-	Item *item = currentmap->traceTopItem(x, y, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
+	const Item *item = currentmap->traceTopItem(x, y, 1 << 15, -1, 0, ShapeInfo::SI_ROOF | ShapeInfo::SI_OCCL | ShapeInfo::SI_LAND | ShapeInfo::SI_SEA);
 
 	if (item) {
 		int32 ix, iy, iz, idx, idy, idz;
@@ -154,11 +154,11 @@ uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
 		ix -= x;
 		iy -= y;
 
-		Shape *sh = item->getShapeObject();
+		const Shape *sh = item->getShapeObject();
 		if (!sh)
 			return 0;
 
-		ShapeFrame *frame = sh->getFrame(item->getFrame());
+		const ShapeFrame *frame = sh->getFrame(item->getFrame());
 		if (!frame)
 			return 0;
 
@@ -195,12 +195,12 @@ uint32 MiniMapGump::sampleAtPoint(int x, int y, CurrentMap *currentmap) {
 	}
 }
 
-void MiniMapGump::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void MiniMapGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
-bool MiniMapGump::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version))
+bool MiniMapGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version))
 		return false;
 
 	_lastMapNum = 0;

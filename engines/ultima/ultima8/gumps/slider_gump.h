@@ -32,6 +32,9 @@ namespace Ultima8 {
 class UCProcess;
 class RenderedText;
 
+/**
+ * A slider that lets you choose how many things to move (eg, when moving stacked items in the backpack)
+ */
 class SliderGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -55,9 +58,9 @@ public:
 
 	bool OnKeyDown(int key, int mod) override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	int16 _min;
 	int16 _max;

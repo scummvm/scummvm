@@ -79,49 +79,49 @@ public:
 	/**
 	    @brief Setzt den Alphawert der Animation.
 	    @param Alpha der neue Alphawert der Animation (0 = keine Deckung, 255 = volle Deckung).
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurÃ¼ckgibt.
 	*/
 	void setAlpha(int alpha);
 
 	/**
 	    @brief Setzt die Modulationfarbe der Animation.
 	    @param Color eine 24-Bit Farbe, die die Modulationsfarbe der Animation festlegt.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurÃ¼ckgibt.
 	*/
 	void setModulationColor(uint modulationColor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Animation.
 	    @param ScaleFactor der Faktor um den die Animation in beide Richtungen gestreckt werden soll.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	void setScaleFactor(float scaleFactor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Animation auf der X-Achse.
 	    @param ScaleFactor der Faktor um den die Animation in Richtungen der X-Achse gestreckt werden soll.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	void setScaleFactorX(float scaleFactorX);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Animation auf der Y-Achse.
 	    @param ScaleFactor der Faktor um den die Animation in Richtungen der Y-Achse gestreckt werden soll.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	void setScaleFactorY(float scaleFactorY);
 
 	/**
-	@brief Gibt den Skalierungsfakter der Animation auf der X-Achse zurück.
-	@remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	@brief Gibt den Skalierungsfakter der Animation auf der X-Achse zurÃ¼ck.
+	@remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	float getScaleFactorX() const {
 		return _scaleFactorX;
 	}
 
 	/**
-	@brief Gibt den Skalierungsfakter der Animation auf der Y-Achse zurück.
-	@remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	@brief Gibt den Skalierungsfakter der Animation auf der Y-Achse zurÃ¼ck.
+	@remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	float getScaleFactorY() const {
 		return _scaleFactorY;
@@ -179,18 +179,18 @@ private:
 
 	/**
 	    @brief Lockt alle Frames.
-	    @return Gibt false zurück, falls nicht alle Frames gelockt werden konnten.
+	    @return Gibt false zurÃ¼ck, falls nicht alle Frames gelockt werden konnten.
 	*/
 	bool lockAllFrames();
 
 	/**
 	    @brief Unlockt alle Frames.
-	    @return Gibt false zurück, falls nicht alles Frames freigegeben werden konnten.
+	    @return Gibt false zurÃ¼ck, falls nicht alles Frames freigegeben werden konnten.
 	*/
 	bool unlockAllFrames();
 
 	/**
-	    @brief Diese Methode aktualisiert die Parameter (Größe, Position) der Animation anhand des aktuellen Frames.
+	    @brief Diese Methode aktualisiert die Parameter (GrÃ¶ÃŸe, Position) der Animation anhand des aktuellen Frames.
 
 	    Diese Methode muss bei jedem Framewechsel aufgerufen werden damit der RenderObject-Manager immer aktuelle Daten hat.
 	*/

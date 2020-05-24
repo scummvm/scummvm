@@ -275,7 +275,7 @@ bool LureMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Lure::LureEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

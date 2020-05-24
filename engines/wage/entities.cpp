@@ -383,6 +383,11 @@ Chr::Chr(Common::String name, Common::SeekableReadStream *data) {
 	delete data;
 }
 
+Chr::~Chr() {
+	delete _weapon1;
+	delete _weapon2;
+}
+
 void Chr::resetState() {
 	_context._statVariables[PHYS_STR_BAS] = _context._statVariables[PHYS_STR_CUR] = _physicalStrength;
 	_context._statVariables[PHYS_HIT_BAS] = _context._statVariables[PHYS_HIT_CUR] = _physicalHp;

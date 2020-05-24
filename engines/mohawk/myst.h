@@ -25,6 +25,7 @@
 
 #include "mohawk/console.h"
 #include "mohawk/mohawk.h"
+#include "mohawk/myst_actions.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/video.h"
 
@@ -41,7 +42,8 @@ class MystGraphics;
 class MystScriptParser;
 class MystConsole;
 class MystGameState;
-class MystOptionsDialog;
+struct MystLanguage;
+class MystOptionsWidget;
 class MystSound;
 class MystArea;
 class MystAreaImageSwitch;
@@ -184,7 +186,8 @@ public:
 	 * When the game is interactive, the user can interact with the game world
 	 * and perform other operations such as loading saved games, ...
 	 */
-	bool isInteractive();
+	bool isInteractive() const;
+	bool isGameStarted() const;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
@@ -194,16 +197,24 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override;
+	static void registerDefaultSettings();
+	void applyGameSettings() override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
 	void resumeFromMainMenu();
 
-	void runLoadDialog();
-	void runSaveDialog();
 	void runOptionsDialog();
+	void runCredits();
+
+	bool canDoAction(MystEventAction action);
+	void doAction(MystEventAction action);
+	void scheduleAction(MystEventAction action);
+
+	static const MystLanguage *listLanguages();
+	static const MystLanguage *getLanguageDesc(Common::Language language);
+	Common::Language getLanguage() const override;
 
 private:
-	MystOptionsDialog *_optionsDialog;
 	ResourceCache _cache;
 
 	MystScriptParserPtr _prevStack;
@@ -215,7 +226,6 @@ private:
 	void pauseEngineIntern(bool pause) override;
 
 	void goToMainMenu();
-	bool isGameStarted() const;
 
 	void dropPage();
 
@@ -232,6 +242,14 @@ private:
 
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
+
+	Common::Language _currentLanguage;
+	MystEventAction _scheduledAction;
+};
+
+struct MystLanguage {
+	Common::Language language;
+	const char *archiveSuffix;
 };
 
 } // End of namespace Mohawk

@@ -80,9 +80,9 @@ static void splitSearchPath(const Common::String &path, Common::String &director
 static void doSearch(lua_State *L, const Common::String &path, uint type) {
 	PackageManager *pPM = getPM();
 
-	// Der Packagemanager-Service muss den Suchstring und den Pfad getrennt übergeben bekommen.
-	// Um die Benutzbarkeit zu verbessern sollen Skriptprogrammierer dieses als ein Pfad übergeben können.
-	// Daher muss der übergebene Pfad am letzten Slash aufgesplittet werden.
+	// Der Packagemanager-Service muss den Suchstring und den Pfad getrennt Ã¼bergeben bekommen.
+	// Um die Benutzbarkeit zu verbessern sollen Skriptprogrammierer dieses als ein Pfad Ã¼bergeben kÃ¶nnen.
+	// Daher muss der Ã¼bergebene Pfad am letzten Slash aufgesplittet werden.
 	Common::String directory;
 	Common::String filter;
 	splitSearchPath(path, directory, filter);
@@ -90,7 +90,7 @@ static void doSearch(lua_State *L, const Common::String &path, uint type) {
 	// Ergebnistable auf dem Lua-Stack erstellen
 	lua_newtable(L);
 
-	// Suche durchführen und die Namen aller gefundenen Dateien in die Ergebnistabelle einfügen.
+	// Suche durchfÃ¼hren und die Namen aller gefundenen Dateien in die Ergebnistabelle einfÃ¼gen.
 	// Als Indizes werden fortlaufende Nummern verwandt.
 	uint resultNr = 1;
 	Common::ArchiveMemberList list;

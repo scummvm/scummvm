@@ -30,13 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-RenderSurface::Format   RenderSurface::_format = {
-	0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0
-};
+RenderSurface::U8PixelFormat RenderSurface::_format;
 
 uint8 RenderSurface::_gamma10toGamma22[256];
 uint8 RenderSurface::_gamma22toGamma10[256];
@@ -87,7 +81,7 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 	RenderSurface *surf;
 
 	// TODO: Change this
-	if (_format.s_bpp == 32) surf = new SoftRenderSurface<uint32>(width, height);
+	if (_format.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(width, height);
 	else surf = new SoftRenderSurface<uint16>(width, height);
 	return surf;
 }

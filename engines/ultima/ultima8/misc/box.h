@@ -35,7 +35,6 @@ struct Box {
 	Box() : _x(0), _y(0), _z(0), _xd(0), _yd(0), _zd(0) {}
 	Box(int nx, int ny, int nz, int nxd, int nyd, int nzd)
 		: _x(nx), _y(ny), _z(nz), _xd(nxd), _yd(nyd), _zd(nzd) {}
-	Box(const Box &o) : _x(o._x), _y(o._y), _z(o._z), _xd(o._xd), _yd(o._yd), _zd(o._zd) {}
 
 	void    Set(int nx, int ny, int nz, int nxd, int nyd, int nzd) {
 		_x = nx;
@@ -56,8 +55,8 @@ struct Box {
 
 	// Check to see if a point is within the Box
 	bool    InBox(int px, int py, int pz) const {
-		return (px >= (_x - _xd) && py >= (_y - _yd) && pz >= _z &&
-		        px < _x && py < _y && pz < (_z + _zd));
+		return (px > (_x - _xd) && py > (_y - _yd) && pz >= _z &&
+		        px <= _x && py <= _y && pz < (_z + _zd));
 	}
 
 	// Move the Box (Relative)
@@ -99,6 +98,7 @@ struct Box {
 		return (_x == o._x && _y == o._y && _z == o._z &&
 		        _xd == o._xd && _yd == o._yd && _zd == o._zd);
 	}
+
 };
 
 } // End of namespace Ultima8

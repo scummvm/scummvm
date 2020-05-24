@@ -191,7 +191,7 @@ public:
 	bool startMap(const char *name);
 
 	void changeMap(const char *name) {
-		strcpy(_changeMapname, name);
+		Common::strlcpy(_changeMapname, name, 64);
 		_changeLevel = true;
 	}
 
@@ -293,7 +293,7 @@ public:
 	void setInMapName(const char *name);
 
 	void changeLevel(const char *name) {
-		strcpy(_changeMapname, name);
+		Common::strlcpy(_changeMapname, name, 64);
 		_changeLevel = true;
 	}
 

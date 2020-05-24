@@ -181,58 +181,66 @@ enum TransitionType {
 	kTransWipeLeft,
 	kTransWipeDown,
 	kTransWipeUp,
-	kTransCenterOutHorizontal,
+	kTransCenterOutHorizontal,	// 5
 	kTransEdgesInHorizontal,
 	kTransCenterOutVertical,
 	kTransEdgesInVertical,
 	kTransCenterOutSquare,
-	kTransEdgesInSquare,
+	kTransEdgesInSquare,		// 10
 	kTransPushLeft,
 	kTransPushRight,
 	kTransPushDown,
 	kTransPushUp,
-	kTransRevealUp,
+	kTransRevealUp,				// 15
 	kTransRevealUpRight,
 	kTransRevealRight,
-	kTransRevealDown,
 	kTransRevealDownRight,
-	kTransRevealDownLeft,
+	kTransRevealDown,
+	kTransRevealDownLeft,		// 20
 	kTransRevealLeft,
 	kTransRevealUpLeft,
 	kTransDissolvePixelsFast,
 	kTransDissolveBoxyRects,
-	kTransDissolveBoxySquares,
+	kTransDissolveBoxySquares,	// 25
 	kTransDissolvePatterns,
 	kTransRandomRows,
 	kTransRandomColumns,
 	kTransCoverDown,
-	kTransCoverDownLeft,
+	kTransCoverDownLeft,		// 30
 	kTransCoverDownRight,
 	kTransCoverLeft,
 	kTransCoverRight,
 	kTransCoverUp,
-	kTransCoverUpLeft,
+	kTransCoverUpLeft,			// 35
 	kTransCoverUpRight,
-	kTransTypeVenitianBlind,
-	kTransTypeCheckerboard,
-	kTransTypeStripsBottomBuildLeft,
-	kTransTypeStripsBottomBuildRight,
-	kTransTypeStripsLeftBuildDown,
-	kTransTypeStripsLeftBuildUp,
-	kTransTypeStripsRightBuildDown,
-	kTransTypeStripsRightBuildUp,
-	kTransTypeStripsTopBuildLeft,
-	kTransTypeStripsTopBuildRight,
+	kTransVenetianBlind,
+	kTransCheckerboard,
+	kTransStripsBottomBuildLeft,
+	kTransStripsBottomBuildRight,	// 40
+	kTransStripsLeftBuildDown,
+	kTransStripsLeftBuildUp,
+	kTransStripsRightBuildDown,
+	kTransStripsRightBuildUp,
+	kTransStripsTopBuildLeft,		// 45
+	kTransStripsTopBuildRight,
 	kTransZoomOpen,
 	kTransZoomClose,
 	kTransVerticalBinds,
-	kTransDissolveBitsTrans,
+	kTransDissolveBitsFast,	// 50
 	kTransDissolvePixels,
 	kTransDissolveBits
 };
 
+enum {
+	kCursorDefault,
+	kCursorMouseDown,
+	kCursorMouseUp
+};
+
 struct Datum;
+struct PCell;
 typedef Common::Array<Datum> DatumArray;
+typedef Common::Array<PCell> PropertyArray;
 
 const char *scriptType2str(ScriptType scr);
 

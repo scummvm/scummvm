@@ -1402,7 +1402,7 @@ const SoundLookUp soundList[] =  {
 	{DEMO_SCIENTIST_01,		DEMO_SCIENTIST_01_MP3,		"DEMO_SCIENTIST_01"},
 	{DEMO_SCIENTIST_02,		DEMO_SCIENTIST_02_MP3,		"DEMO_SCIENTIST_02"},
 
-	{LAST_SOUND,			NULL,						NULL}
+	{LAST_SOUND,			nullptr,						nullptr}
 };
 
 Sound::Sound() {
@@ -1441,8 +1441,6 @@ void Sound::init() {
 		}
 		debug(9, "Registering sound: sName: %s, \tsLuaName: %s, \tExtension: %s", soundList[index].name, soundList[index].luaName, _soundCache[index].ext == SNDTYPE_MP3 ? "MP3" : "WAV");
 		index++;
-		if (index >= kMaxSounds)
-			error("Reached MAX_SOUNDS in Sound::Init() !");
 	}
 	_numSounds = index;
 
@@ -1757,7 +1755,7 @@ void Sound::beginMusic(SoundType song, bool fadeIn, int ramp) {
 		if (_song2.isPlaying()) {
 			_song2.fadeOut(ramp);
 		}
-		
+
 		_song1.playSong(song, fadeIn, ramp);
 	}
 	else if (!_song2.isPlaying()) {

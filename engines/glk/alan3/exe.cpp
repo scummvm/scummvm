@@ -213,17 +213,17 @@ void quitGame(CONTEXT) {
 		if (!flag)
 			CALL1(terminate, 0)
 
-		if (strcasecmp(buf, "restart") == 0) {
+		if (scumm_stricmp(buf, "restart") == 0) {
 			LONG_JUMP_LABEL("restart")
 
-		} else if (strcasecmp(buf, "restore") == 0) {
+		} else if (scumm_stricmp(buf, "restore") == 0) {
 			g_vm->loadGame();
 			return;
 
-		} else if (strcasecmp(buf, "quit") == 0) {
+		} else if (scumm_stricmp(buf, "quit") == 0) {
 			CALL1(terminate, 0)
 
-		} else if (strcasecmp(buf, "undo") == 0) {
+		} else if (scumm_stricmp(buf, "undo") == 0) {
 			if (gameStateChanged) {
 				rememberCommands();
 				rememberGameState();
@@ -345,8 +345,8 @@ static char *stripCharsFromStringForwards(int count, char *initialString, char *
 		stripPosition = strlen(initialString);
 	else
 		stripPosition = count;
-	rest = strdup(&initialString[stripPosition]);
-	strippedString = strdup(initialString);
+	rest = scumm_strdup(&initialString[stripPosition]);
+	strippedString = scumm_strdup(initialString);
 	strippedString[stripPosition] = '\0';
 	*theRest = rest;
 	return strippedString;
@@ -362,8 +362,8 @@ static char *stripCharsFromStringBackwards(Aint count, char *initialString, char
 		stripPosition = 0;
 	else
 		stripPosition = strlen(initialString) - count;
-	strippedString = strdup(&initialString[stripPosition]);
-	rest = strdup(initialString);
+	strippedString = scumm_strdup(&initialString[stripPosition]);
+	rest = scumm_strdup(initialString);
 	rest[stripPosition] = '\0';
 	*theRest = rest;
 	return strippedString;
@@ -408,7 +408,7 @@ static char *stripWordsFromStringForwards(Aint count, char *initialString, char 
 	stripped[position] = '\0';
 
 	skippedChars = countLeadingBlanks(initialString, position);
-	*theRest = strdup(&initialString[position + skippedChars]);
+	*theRest = scumm_strdup(&initialString[position + skippedChars]);
 
 	return (stripped);
 }
@@ -465,7 +465,7 @@ static char *stripWordsFromStringBackwards(Aint count, char *initialString, char
 		skippedChars = countTrailingBlanks(initialString, position - 1);
 		position -= skippedChars;
 	}
-	*theRest = strdup(initialString);
+	*theRest = scumm_strdup(initialString);
 	(*theRest)[position] = '\0';
 	return (stripped);
 }
@@ -584,9 +584,9 @@ int randomInteger(int from, int to) {
 		if (to == from)
 			return to;
 		else if (to > from)
-			return (rand() / 10) % (to - from + 1) + from;
+			return (g_vm->getRandomNumber(0x7fffffff) / 10) % (to - from + 1) + from;
 		else
-			return (rand() / 10) % (from - to + 1) + to;
+			return (g_vm->getRandomNumber(0x7fffffff) / 10) % (from - to + 1) + to;
 	}
 }
 

@@ -32,15 +32,17 @@ StrPlayer::StrPlayer(DragonsEngine *vm, Screen *screen) : _vm(vm), _screen(scree
 
 void StrPlayer::playVideo(const Common::String &filename) {
 	bool skipped = false;
-	Common::Rect srcRect(0, 0, DRAGONS_SCREEN_WIDTH, DRAGONS_SCREEN_HEIGHT);
-	_decoder->loadFile(filename);
+
+	if (!_decoder->loadFile(filename)) {
+		error("Error playing video from %s", filename.c_str());
+	}
 	_decoder->start();
 
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo() && !skipped) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
 			if (frame) {
-				_screen->copyRectToSurface(*frame, 0, 0, srcRect);
+				_screen->copyRectToSurface(*frame, 0, 0, Common::Rect(frame->w, frame->h));
 				_screen->updateScreen();
 			}
 		}
@@ -56,6 +58,10 @@ void StrPlayer::playVideo(const Common::String &filename) {
 	}
 	_screen->clearScreen();
 	_decoder->close();
+}
+
+StrPlayer::~StrPlayer() {
+	delete _decoder;
 }
 
 } // End of namespace Dragons

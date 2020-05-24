@@ -75,12 +75,6 @@ void ActionText::toConsole() const {
 		  _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textRGB, _backgroundRGB);
 }
 
-static const byte noborderData[3][3] = {
-	{ 0, 1, 0 },
-	{ 1, 0, 1 },
-	{ 0, 1, 0 },
-};
-
 void ActionText::start() {
 	findColorsInPalette();
 	Director *director = _actor->getPage()->getGame()->getDirector();
@@ -94,6 +88,13 @@ void ActionText::start() {
 	switch(_actor->getPage()->getGame()->getLanguage()) {
 	case Common::RU_RUS:
 		_text = Common::String(str).decode(Common::kWindows1251);
+		break;
+
+	case Common::HE_ISR:
+		_text = Common::String(str).decode(Common::kWindows1255);
+		if (!_centered) {
+			align = Graphics::kTextAlignRight;
+		}
 		break;
 
 	case Common::EN_ANY:
@@ -111,24 +112,11 @@ void ActionText::start() {
 		Graphics::MacFont *font = new Graphics::MacFont;
 		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
 														  _xRight - _xLeft, align, nullptr, false);
+		_txtWnd->disableBorder();
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 		_txtWnd->setEditable(false);
 		_txtWnd->setSelectable(false);
-
-		Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
-		noborder->create(3, 3, noborder->getSupportedPixelFormat());
-		uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
-		uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
-
-		for (int y = 0; y < 3; y++)
-			for (int x = 0; x < 3; x++)
-				*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
-
-		_txtWnd->setBorder(noborder, true);
-
-		Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
-		_txtWnd->setBorder(noborder2, false);
 
 		_txtWnd->appendText(_text, font);
 
@@ -150,6 +138,9 @@ void ActionText::end() {
 void ActionText::draw(Graphics::ManagedSurface *surface) {
 	// not working
 	Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+	if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
+		alignment = Graphics::kTextAlignRight;
+	}
 	Graphics::MacFont *font = new Graphics::MacFont();
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	Graphics::MacText text(_text, &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);

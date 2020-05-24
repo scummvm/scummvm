@@ -415,6 +415,109 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		GType_VERSAILLES,
 		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES | GF_VERSAILLES_LINK_STANDARD,
 	},
+
+	// Versailles 1685
+	// Chinese Windows compressed from DVD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("PROGRAM.Z", "37f3d691e90e17b78050d6a91f7e0377", 242583),
+			Common::ZH_TWN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Chinese Windows from DVD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("VERSAILL.EXE", "5209e7c9b20612467af7e9745758ee72", 352256),
+			Common::ZH_TWN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Korean Windows compressed from DVD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("PROGRAM.Z", "ffb7599d042fb71f22ab4d76a2e0147f", 244155),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Korean Windows from DVD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("VERSAILL.EXE", "549c588e05df8d42b531ffc9b2796303", 355840),
+			Common::KO_KOR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Japanese Windows compressed from DVD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("PROGRAM.Z", "1944d7c30dbb25ab10f684422e196c16", 248700),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
+	// Versailles 1685
+	// Japanese Windows from DVD
+	// From lePhilousophe
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY_DEF("VERSAILL.EXE", "b7dadaf14cc5783e235125f9d6f6adea", 358912),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		/* GF_VERSAILLES_FONTS_ | */ GF_VERSAILLES_AUDIOPADDING_YES,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

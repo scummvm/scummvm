@@ -23,17 +23,16 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
+#include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump, ItemRelativeGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump)
 
 AskGump::AskGump() : ItemRelativeGump(), _answers(0) {
 }
@@ -52,22 +51,7 @@ AskGump::~AskGump() {
 // Init the gump, call after construction
 void AskGump::InitGump(Gump *newparent, bool take_focus) {
 	// OK, this is a bit of a hack, but it's how it has to be
-	int fontnum;
-	if (_owner == 1) fontnum = 6;
-	else if (_owner > 256) fontnum = 8;
-	else switch (_owner % 3) {
-		case 1:
-			fontnum = 5;
-			break;
-
-		case 2:
-			fontnum = 7;
-			break;
-
-		default:
-			fontnum = 0;
-			break;
-		}
+	int fontnum = BarkGump::dialogFontForActor(_owner);
 
 	int px = 0, py = 0;
 
@@ -117,17 +101,17 @@ void AskGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-void AskGump::saveData(ODataSource *ods) {
-	ItemRelativeGump::saveData(ods);
+void AskGump::saveData(Common::WriteStream *ws) {
+	ItemRelativeGump::saveData(ws);
 
-	_answers->save(ods);
+	_answers->save(ws);
 }
 
-bool AskGump::loadData(IDataSource *ids, uint32 version) {
-	if (!ItemRelativeGump::loadData(ids, version)) return false;
+bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ItemRelativeGump::loadData(rs, version)) return false;
 
 	_answers = new UCList(2);
-	_answers->load(ids, version);
+	_answers->load(rs, version);
 
 	// HACK ALERT
 	int px = 0, py = 0;
@@ -138,12 +122,12 @@ bool AskGump::loadData(IDataSource *ids, uint32 version) {
 
 	for (unsigned int i = 0; i < _answers->getSize(); ++i) {
 
-		ButtonWidget *child = 0;
+		ButtonWidget *child = nullptr;
 
 		Std::list<Gump *>::iterator it;
 		for (it = _children.begin(); it != _children.end(); ++it) {
 			if ((*it)->GetIndex() != (int)i) continue;
-			child = p_dynamic_cast<ButtonWidget *>(*it);
+			child = dynamic_cast<ButtonWidget *>(*it);
 			if (!child) continue;
 		}
 

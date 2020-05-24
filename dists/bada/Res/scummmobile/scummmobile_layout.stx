@@ -650,7 +650,7 @@
 			/>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' center = 'true'>
 			<widget name = 'Logo'
@@ -688,7 +688,7 @@
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '10'/>
-			<widget name = 'RTL'
+			<widget name = 'ReturnToLauncher'
 					width = '190'
 					height = 'Globals.Button.Height'
 			/>

@@ -32,7 +32,7 @@
 /*
     BS_RenderObject
     ---------------
-    Dieses ist die Klasse die sämtliche sichtbaren Objekte beschreibt. Alle anderen sichtbaren Objekte müssen von ihr abgeleitet werden.
+    Dieses ist die Klasse die sÃ¤mtliche sichtbaren Objekte beschreibt. Alle anderen sichtbaren Objekte mÃ¼ssen von ihr abgeleitet werden.
     Diese Klasse erledigt Aufgaben wie: minimales Neuzeichnen, Renderreihenfolge, Objekthierachie.
     Alle BS_RenderObject Instanzen werden von einem BS_RenderObjectManager in einem Baum verwaltet.
 
@@ -63,9 +63,9 @@ class Text;
 
 // Klassendefinition
 /**
-    @brief  Dieses ist die Klasse die sämtliche sichtbaren Objekte beschreibt.
+    @brief  Dieses ist die Klasse die sÃ¤mtliche sichtbaren Objekte beschreibt.
 
-    Alle anderen sichtbaren Objekte müssen von ihr abgeleitet werden.
+    Alle anderen sichtbaren Objekte mÃ¼ssen von ihr abgeleitet werden.
     Diese Klasse erledigt Aufgaben wie: minimales Neuzeichnen, Renderreihenfolge, Objekthierachie.
     Alle BS_RenderObject Instanzen werden von einem BS_RenderObjektManager in einem Baum verwaltet.
  */
@@ -81,7 +81,7 @@ public:
 		TYPE_DYNAMICBITMAP,
 		/// Eine Animation. Siehe BS_Animation.
 		TYPE_ANIMATION,
-		/// Eine farbige Fläche. Siehe BS_Panel.
+		/// Eine farbige FlÃ¤che. Siehe BS_Panel.
 		TYPE_PANEL,
 		/// Ein Text. Siehe BS_Text.
 		TYPE_TEXT,
@@ -95,41 +95,41 @@ public:
 	/**
 	    @brief Erzeugt ein Bitmap als Kinderobjekt des Renderobjektes.
 	    @param FileName der Dateiname der Quellbilddatei
-	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
-	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurÃ¼ck.<br>
+	            Falls ein Fehler aufgetreten ist wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Bitmap> addBitmap(const Common::String &fileName);
 	/**
-	    @brief Erzeugt ein veränderbares Bitmap als Kinderobjekt des Renderobjektes.
+	    @brief Erzeugt ein verÃ¤nderbares Bitmap als Kinderobjekt des Renderobjektes.
 	    @param Width die Breite des Bitmaps
-	    @param Height die Höhe des Bitmaps
-	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
-	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @param Height die HÃ¶he des Bitmaps
+	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurÃ¼ck.<br>
+	            Falls ein Fehler aufgetreten ist wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Bitmap> addDynamicBitmap(uint width, uint height);
 	/**
 	    @brief Erzeugt eine Animation auf Basis einer Animationsdatei als Kinderobjekt des Renderobjektes.
 	    @param FileName der Dateiname der Quelldatei
-	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
-	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurÃ¼ck.<br>
+	            Falls ein Fehler aufgetreten ist wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Animation> addAnimation(const Common::String &fileName);
 	/**
 	    @brief Erzeugt eine Animation auf Basis eines Animationstemplate als Kinderobjekt des Renderobjektes.
 	    @param pAnimationTemplate ein Pointer auf das Animationstemplate
-	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
-	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
-	    @remark Das Renderobjekt übernimmt die Verwaltung des Animationstemplate.
+	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurÃ¼ck.<br>
+	            Falls ein Fehler aufgetreten ist wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
+	    @remark Das Renderobjekt Ã¼bernimmt die Verwaltung des Animationstemplate.
 	*/
 	RenderObjectPtr<Animation> addAnimation(const AnimationTemplate &animationTemplate);
 	/**
 	    @brief Erzeugt ein neues Farbpanel als Kinderobjekt des Renderobjektes.
 	    @param Width die Breite des Panels
-	    @param Height die Höhe des Panels
+	    @param Height die HÃ¶he des Panels
 	    @param Color die Farbe des Panels.<br>
 	           Der Standardwert ist Schwarz (BS_RGB(0, 0, 0)).
-	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
-	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurÃ¼ck.<br>
+	            Falls ein Fehler aufgetreten ist wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 
 	RenderObjectPtr<Panel> addPanel(int width, int height, uint color = 0xff000000);
@@ -138,17 +138,17 @@ public:
 	    @param Font der Dateiname des zu verwendenen Fonts
 	    @param Text der anzuzeigende Text.<br>
 	                Der Standardwert ist "".
-	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
-	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurÃ¼ck.<br>
+	            Falls ein Fehler aufgetreten ist wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Text> addText(const Common::String &font, const Common::String &text = "");
 
 	// Cast-Methoden
 	// -------------
 	/**
-	    @brief Castet das Objekt zu einem BS_Bitmap-Objekt wenn zulässig.
-	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
-	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @brief Castet das Objekt zu einem BS_Bitmap-Objekt wenn zulÃ¤ssig.
+	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurÃ¼ck.<br>
+	            Falls der Cast nicht zulÃ¤ssig ist, wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Bitmap> toBitmap() {
 		if (_type == TYPE_STATICBITMAP || _type == TYPE_DYNAMICBITMAP)
@@ -157,9 +157,9 @@ public:
 			return RenderObjectPtr<Bitmap>();
 	}
 	/**
-	    @brief Castet das Objekt zu einem BS_Animation-Objekt wenn zulässig.
-	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
-	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @brief Castet das Objekt zu einem BS_Animation-Objekt wenn zulÃ¤ssig.
+	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurÃ¼ck.<br>
+	            Falls der Cast nicht zulÃ¤ssig ist, wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Animation> toAnimation() {
 		if (_type == TYPE_ANIMATION)
@@ -168,9 +168,9 @@ public:
 			return RenderObjectPtr<Animation>();
 	}
 	/**
-	    @brief Castet das Objekt zu einem BS_Panel-Objekt wenn zulässig.
-	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
-	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @brief Castet das Objekt zu einem BS_Panel-Objekt wenn zulÃ¤ssig.
+	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurÃ¼ck.<br>
+	            Falls der Cast nicht zulÃ¤ssig ist, wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Panel> toPanel() {
 		if (_type == TYPE_PANEL)
@@ -179,9 +179,9 @@ public:
 			return RenderObjectPtr<Panel>();
 	}
 	/**
-	    @brief Castet das Object zu einem BS_Text-Objekt wenn zulässig.
-	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurück.<br>
-	            Falls der Cast nicht zulässig ist, wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
+	    @brief Castet das Object zu einem BS_Text-Objekt wenn zulÃ¤ssig.
+	    @return Gibt einen BS_RenderObjectPtr auf das Objekt zurÃ¼ck.<br>
+	            Falls der Cast nicht zulÃ¤ssig ist, wird ein ungÃ¼ltiger BS_RenderObjectPtr zurÃ¼ckgegeben.
 	*/
 	RenderObjectPtr<Text> toText() {
 		if (_type == TYPE_TEXT)
@@ -198,15 +198,15 @@ public:
 	    @param pParent ein Pointer auf das Elternobjekt des neuen Objektes im Objektbaum.<br>
 	                   Der Pointer darf nicht NULL sein.
 	    @param Type der Objekttyp<br>
-	                Der Typ BS_RenderObject::TYPE_ROOT ist nicht zulässig. Wurzelknoten müssen mit dem alternativen Konstruktor erzeugt
+	                Der Typ BS_RenderObject::TYPE_ROOT ist nicht zulÃ¤ssig. Wurzelknoten mÃ¼ssen mit dem alternativen Konstruktor erzeugt
 	                werden.
 	    @param Handle das Handle, welches dem Objekt zugewiesen werden soll.<br>
-	                Dieser Parameter erzwingt ein bestimmtes Handle für das neue Objekt, oder wählt automatisch ein Handle, wenn der Parameter 0 ist.
-	                Ist das gewünschte Handle bereits vergeben, gibt GetInitSuccess() false zurück.<br>
+	                Dieser Parameter erzwingt ein bestimmtes Handle fÃ¼r das neue Objekt, oder wÃ¤hlt automatisch ein Handle, wenn der Parameter 0 ist.
+	                Ist das gewÃ¼nschte Handle bereits vergeben, gibt GetInitSuccess() false zurÃ¼ck.<br>
 	                Der Standardwert ist 0.
-	    @remark Nach dem Aufruf des Konstruktors kann über die Methode GetInitSuccess() abgefragt werden, ob die Konstruktion erfolgreich war.<br>
-	            Es ist nicht notwendig alle BS_RenderObject Instanzen einzeln zu löschen. Dieses geschiet automatisch beim Löschen eines
-	            Vorfahren oder beim Löschen des zuständigen BS_RenderObjectManager.
+	    @remark Nach dem Aufruf des Konstruktors kann Ã¼ber die Methode GetInitSuccess() abgefragt werden, ob die Konstruktion erfolgreich war.<br>
+	            Es ist nicht notwendig alle BS_RenderObject Instanzen einzeln zu lÃ¶schen. Dieses geschiet automatisch beim LÃ¶schen eines
+	            Vorfahren oder beim LÃ¶schen des zustÃ¤ndigen BS_RenderObjectManager.
 	 */
 	RenderObject(RenderObjectPtr<RenderObject> pParent, TYPES type, uint handle = 0);
 	virtual ~RenderObject();
@@ -218,7 +218,7 @@ public:
 
 	/**
 	    @brief Rendert des Objekt und alle seine Unterobjekte.
-	    @return Gibt false zurück, falls beim Rendern ein Fehler aufgetreten ist.
+	    @return Gibt false zurÃ¼ck, falls beim Rendern ein Fehler aufgetreten ist.
 	    @remark Vor jedem Aufruf dieser Methode muss ein Aufruf von UpdateObjectState() erfolgt sein.
 	            Dieses kann entweder direkt geschehen oder durch den Aufruf von UpdateObjectState() an einem Vorfahren-Objekt.<br>
 	            Diese Methode darf nur von BS_RenderObjectManager aufgerufen werden.
@@ -228,12 +228,12 @@ public:
 	/**
 	    @brief Bereitet das Objekt und alle seine Unterobjekte auf einen Rendervorgang vor.
 	           Hierbei werden alle Dirty-Rectangles berechnet und die Renderreihenfolge aktualisiert.
-	    @return Gibt false zurück, falls ein Fehler aufgetreten ist.
+	    @return Gibt false zurÃ¼ck, falls ein Fehler aufgetreten ist.
 	    @remark Diese Methode darf nur von BS_RenderObjectManager aufgerufen werden.
 	 */
 	bool updateObjectState();
 	/**
-	    @brief Löscht alle Kinderobjekte.
+	    @brief LÃ¶scht alle Kinderobjekte.
 	*/
 	void deleteAllChildren();
 
@@ -258,9 +258,9 @@ public:
 	/**
 	    @brief Setzt den Z-Wert des Objektes.
 	    @param Z der neue Z-Wert des Objektes relativ zum Elternobjekt<br>
-	             Negative Z-Werte sind nicht zulässig.
-	    @remark Der Z-Wert legt die Renderreihenfolge der Objekte fest. Objekte mit niedrigem Z-Wert werden vor Objekten mit höherem
-	            Z-Wert gezeichnet. Je höher der Z-Wert desto weiter "vorne" liegt ein Objekt also.<br>
+	             Negative Z-Werte sind nicht zulÃ¤ssig.
+	    @remark Der Z-Wert legt die Renderreihenfolge der Objekte fest. Objekte mit niedrigem Z-Wert werden vor Objekten mit hÃ¶herem
+	            Z-Wert gezeichnet. Je hÃ¶her der Z-Wert desto weiter "vorne" liegt ein Objekt also.<br>
 	            Wie alle andere Attribute ist auch dieses relativ zum Elternobjekt, ein Kinderobjekt kann also nie unter seinem
 	            Elternobjekt liegen, auch wenn es einen Z-Wert von 0 hat.
 	 */
@@ -272,33 +272,33 @@ public:
 	 */
 	virtual void setVisible(bool visible);
 	/**
-	    @brief Gibt die Position des Objektes auf der X-Achse relativ zum Elternobjekt zurück.
+	    @brief Gibt die Position des Objektes auf der X-Achse relativ zum Elternobjekt zurÃ¼ck.
 	 */
 	virtual int getX() const {
 		return _x;
 	}
 	/**
-	    @brief Gibt die Position des Objektes auf der Y-Achse relativ zum Elternobjekt zurück.
+	    @brief Gibt die Position des Objektes auf der Y-Achse relativ zum Elternobjekt zurÃ¼ck.
 	 */
 	virtual int getY() const {
 		return _y;
 	}
 	/**
-	    @brief Gibt die absolute Position des Objektes auf der X-Achse zurück.
+	    @brief Gibt die absolute Position des Objektes auf der X-Achse zurÃ¼ck.
 	*/
 	virtual int getAbsoluteX() const {
 		return _absoluteX;
 	}
 	/**
-	    @brief Gibt die absolute Position des Objektes auf der Y-Achse zurück.
+	    @brief Gibt die absolute Position des Objektes auf der Y-Achse zurÃ¼ck.
 	*/
 	virtual int getAbsoluteY() const {
 		return _absoluteY;
 	}
 	/**
-	    @brief Gibt den Z-Wert des Objektes relativ zum Elternobjekt zurück.
-	    @remark Der Z-Wert legt die Renderreihenfolge der Objekte fest. Objekte mit niedrigem Z-Wert werden vor Objekten mit höherem
-	            Z-Wert gezeichnet. Je höher der Z-Wert desto weiter "vorne" liegt ein Objekt also.<br>
+	    @brief Gibt den Z-Wert des Objektes relativ zum Elternobjekt zurÃ¼ck.
+	    @remark Der Z-Wert legt die Renderreihenfolge der Objekte fest. Objekte mit niedrigem Z-Wert werden vor Objekten mit hÃ¶herem
+	            Z-Wert gezeichnet. Je hÃ¶her der Z-Wert desto weiter "vorne" liegt ein Objekt also.<br>
 	            Wie alle andere Attribute ist auch dieses relativ zum Elternobjekt, ein Kinderobjekt kann also nie unter seinem
 	            Elternobjekt liegen, auch wenn es einen Z-Wert von 0 hat.
 	 */
@@ -311,53 +311,53 @@ public:
 	}
 
 	/**
-	    @brief Gibt die Breite des Objektes zurück.
+	    @brief Gibt die Breite des Objektes zurÃ¼ck.
 	 */
 	int         getWidth() const {
 		return _width;
 	}
 	/**
-	    @brief Gibt die Höhe des Objektes zurück.
+	    @brief Gibt die HÃ¶he des Objektes zurÃ¼ck.
 	 */
 	int         getHeight() const {
 		return _height;
 	}
 	/**
-	    @brief Gibt den Sichtbarkeitszustand des Objektes zurück.
-	    @return Gibt den Sichtbarkeitszustand des Objektes zurück.<br>
+	    @brief Gibt den Sichtbarkeitszustand des Objektes zurÃ¼ck.
+	    @return Gibt den Sichtbarkeitszustand des Objektes zurÃ¼ck.<br>
 	            true entspricht sichtbar, false entspricht unsichtbar.
 	 */
 	bool        isVisible() const {
 		return _visible;
 	}
 	/**
-	    @brief Gibt den Typ des Objektes zurück.
+	    @brief Gibt den Typ des Objektes zurÃ¼ck.
 	 */
 	TYPES       getType() const {
 		return _type;
 	}
 	/**
-	    @brief Gibt zurück, ob das Objekt erfolgreich initialisiert wurde.
-	    @remark Hässlicher Workaround um das Problem, dass Konstruktoren keine Rückgabewerte haben.
+	    @brief Gibt zurÃ¼ck, ob das Objekt erfolgreich initialisiert wurde.
+	    @remark HÃ¤sslicher Workaround um das Problem, dass Konstruktoren keine RÃ¼ckgabewerte haben.
 	 */
 	bool        getInitSuccess() const {
 		return _initSuccess;
 	}
 	/**
-	    @brief Gibt die Bounding-Box des Objektes zurück.
+	    @brief Gibt die Bounding-Box des Objektes zurÃ¼ck.
 	    @remark Diese Angabe erfolgt ausnahmsweise in Bildschirmkoordianten und nicht relativ zum Elternobjekt.
 	 */
 	const Common::Rect  &getBbox() const {
 		return _bbox;
 	}
 	/**
-	    @brief Stellt sicher, dass das Objekt im nächsten Frame neu gezeichnet wird.
+	    @brief Stellt sicher, dass das Objekt im nÃ¤chsten Frame neu gezeichnet wird.
 	*/
 	void forceRefresh() {
 		_refreshForced = true;
 	}
 	/**
-	    @brief Gibt das Handle des Objekte zurück.
+	    @brief Gibt das Handle des Objekte zurÃ¼ck.
 	*/
 	uint32 getHandle() const {
 		return _handle;
@@ -395,14 +395,14 @@ protected:
 	int32       _absoluteY;    ///< Die absolute Y-Position des Objektes
 	int32		_absoluteZ;
 	int32       _width;        ///< Die Breite des Objektes
-	int32       _height;       ///< Die Höhe des Objektes
+	int32       _height;       ///< Die HÃ¶he des Objektes
 	bool        _visible;      ///< Ist true, wenn das Objekt sichtbar ist
-	bool        _childChanged; ///< Ist true, wenn sich ein Kinderobjekt verändert hat
+	bool        _childChanged; ///< Ist true, wenn sich ein Kinderobjekt verÃ¤ndert hat
 	TYPES       _type;         ///< Der Objekttyp
 	bool        _initSuccess;  ///< Ist true, wenn Objekt erfolgreich intialisiert werden konnte
 	Common::Rect _bbox;         ///< Die Bounding-Box des Objektes in Bildschirmkoordinaten
 
-	// Kopien der Variablen, die für die Errechnung des Dirty-Rects und zur Bestimmung der Objektveränderung notwendig sind
+	// Kopien der Variablen, die fÃ¼r die Errechnung des Dirty-Rects und zur Bestimmung der ObjektverÃ¤nderung notwendig sind
 	Common::Rect     _oldBbox;
 	int32       _oldX;
 	int32       _oldY;
@@ -422,12 +422,12 @@ protected:
 	// Render-Methode
 	// --------------
 	/**
-	    @brief Einschubmethode, die den tatsächlichen Redervorgang durchführt.
+	    @brief Einschubmethode, die den tatsÃ¤chlichen Redervorgang durchfÃ¼hrt.
 
 	    Diese Methode wird von Render() aufgerufen um das Objekt darzustellen.
 	    Diese Methode sollte von allen Klassen implementiert werden, die von BS_RederObject erben, um das Zeichnen umzusetzen.
 
-	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
+	    @return Gibt false zurÃ¼ck, falls das Rendern fehlgeschlagen ist.
 	    @remark
 	 */
 	virtual bool doRender(RectangleList *updateRects) = 0; // { return true; }
@@ -436,8 +436,8 @@ protected:
 	// ---------------------------
 	// Der Baum legt die hierachische Ordnung der BS_RenderObjects fest.
 	// Alle Eigenschaften wie X, Y, Z und Visible eines BS_RenderObjects sind relativ zu denen seines Vaters.
-	// Außerdem sind die Objekte von links nach rechts in ihrer Renderreihenfolge sortiert.
-	// Das primäre Sortierkriterium ist hierbei der Z-Wert und das sekundäre der Y-Wert (von oben nach unten).
+	// AuÃŸerdem sind die Objekte von links nach rechts in ihrer Renderreihenfolge sortiert.
+	// Das primÃ¤re Sortierkriterium ist hierbei der Z-Wert und das sekundÃ¤re der Y-Wert (von oben nach unten).
 	// Beispiel:
 	//                  Screen
 	//                 /  |   \.
@@ -447,11 +447,11 @@ protected:
 	//     Background Interface   Maus
 	//      /   \      /  |   \.
 	//    /      \    /   |    \.
-	// George   Tür Icn1 Icn2 Icn3
+	// George   TÃ¼r Icn1 Icn2 Icn3
 	//
-	// Wenn jetzt das Interface mit SetVisible() ausgeblendet würde, verschwinden auch die Icons, die sich im Interface
+	// Wenn jetzt das Interface mit SetVisible() ausgeblendet wÃ¼rde, verschwinden auch die Icons, die sich im Interface
 	// befinden.
-	// Wenn der Hintergrund bewegt wird (Scrolling), bewegen sich auch die darauf befindlichen Gegenstände und Personen.
+	// Wenn der Hintergrund bewegt wird (Scrolling), bewegen sich auch die darauf befindlichen GegenstÃ¤nde und Personen.
 
 	/// Ein Pointer auf das Elternobjekt.
 	RenderObjectPtr<RenderObject> _parentPtr;
@@ -459,20 +459,20 @@ protected:
 	RENDEROBJECT_LIST           _children;
 
 	/**
-	    @brief Gibt einen Pointer auf den BS_RenderObjektManager zurück, der das Objekt verwaltet.
+	    @brief Gibt einen Pointer auf den BS_RenderObjektManager zurÃ¼ck, der das Objekt verwaltet.
 	 */
 	RenderObjectManager *getManager() const {
 		return _managerPtr;
 	}
 	/**
-	    @brief Fügt dem Objekt ein neues Kinderobjekt hinzu.
-	    @param pObject ein Pointer auf das einzufügende Objekt
-	    @return Gibt false zurück, falls das Objekt nicht eingefügt werden konnte.
+	    @brief FÃ¼gt dem Objekt ein neues Kinderobjekt hinzu.
+	    @param pObject ein Pointer auf das einzufÃ¼gende Objekt
+	    @return Gibt false zurÃ¼ck, falls das Objekt nicht eingefÃ¼gt werden konnte.
 	*/
 	bool addObject(RenderObjectPtr<RenderObject> pObject);
 
 private:
-	/// Ist true, wenn das Objekt in nächsten Frame neu gezeichnet werden soll
+	/// Ist true, wenn das Objekt in nÃ¤chsten Frame neu gezeichnet werden soll
 	bool _refreshForced;
 
 	uint32 _handle;
@@ -480,7 +480,7 @@ private:
 	/**
 	    @brief Entfernt ein Objekt aus der Kinderliste.
 	    @param pObject ein Pointer auf das zu entfernende Objekt
-	    @return Gibt false zurück, falls das zu entfernende Objekt nicht in der Liste gefunden werden konnte.
+	    @return Gibt false zurÃ¼ck, falls das zu entfernende Objekt nicht in der Liste gefunden werden konnte.
 	 */
 	bool detatchChildren(RenderObjectPtr<RenderObject> pObject);
 	/**
@@ -489,12 +489,12 @@ private:
 	void updateBoxes();
 	/**
 	    @brief Berechnet die Bounding-Box des Objektes.
-	    @return Gibt die Bounding-Box des Objektes in Bildschirmkoordinaten zurück.
+	    @return Gibt die Bounding-Box des Objektes in Bildschirmkoordinaten zurÃ¼ck.
 	*/
 	Common::Rect calcBoundingBox() const;
 	/**
 	    @brief Berechnet das Dirty-Rectangle des Objektes.
-	    @return Gibt das Dirty-Rectangle des Objektes in Bildschirmkoordinaten zurück.
+	    @return Gibt das Dirty-Rectangle des Objektes in Bildschirmkoordinaten zurÃ¼ck.
 	*/
 	Common::Rect calcDirtyRect() const;
 	/**
@@ -517,18 +517,18 @@ private:
 	 */
 	void sortRenderObjects();
 	/**
-	    @brief Validiert den Zustand eines Objektes nachdem die durch die Veränderung verursachten Folgen abgearbeitet wurden.
+	    @brief Validiert den Zustand eines Objektes nachdem die durch die VerÃ¤nderung verursachten Folgen abgearbeitet wurden.
 	 */
 	void validateObject();
 	/**
 	    @brief Berechnet die absolute Position des Objektes und aller seiner Kinderobjekte neu.
 
-	    Diese Methode muss aufgerufen werden, wann immer sich die Position des Objektes verändert. Damit die Kinderobjekte immer die
+	    Diese Methode muss aufgerufen werden, wann immer sich die Position des Objektes verÃ¤ndert. Damit die Kinderobjekte immer die
 	    richtige absolute Position haben.
 	*/
 	void updateAbsolutePos();
 	/**
-	    @brief Teilt dem Objekt mit, dass sich eines seiner Kinderobjekte dahingehend verändert hat, die eine erneute Bestimmung der
+	    @brief Teilt dem Objekt mit, dass sich eines seiner Kinderobjekte dahingehend verÃ¤ndert hat, die eine erneute Bestimmung der
 	           Rendereihenfolge verlangt.
 	*/
 	void signalChildChange() {
@@ -538,12 +538,12 @@ private:
 	    @brief Berechnet des Schnittrechteck der Bounding-Box des Objektes mit einem anderen Objekt.
 	    @param pObjekt ein Pointer auf das Objekt mit dem geschnitten werden soll
 	    @param Result das Ergebnisrechteck
-	    @return Gibt false zurück, falls sich die Objekte gar nicht schneiden.
+	    @return Gibt false zurÃ¼ck, falls sich die Objekte gar nicht schneiden.
 	 */
 	bool getObjectIntersection(RenderObjectPtr<RenderObject> pObject, Common::Rect &result);
 	/**
 	    @brief Vergleichsoperator der auf Objektpointern basiert statt auf Objekten.
-	    @remark Diese Methode wird fürs Sortieren der Kinderliste nach der Rendereihenfolge benutzt.
+	    @remark Diese Methode wird fÃ¼rs Sortieren der Kinderliste nach der Rendereihenfolge benutzt.
 	*/
 	static bool greater(const RenderObjectPtr<RenderObject> lhs, const RenderObjectPtr<RenderObject> rhs);
 };

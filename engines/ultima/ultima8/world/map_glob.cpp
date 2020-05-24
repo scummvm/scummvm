@@ -33,23 +33,22 @@ MapGlob::MapGlob() {
 
 
 MapGlob::~MapGlob() {
-	_contents.clear();
 }
 
-void MapGlob::read(IDataSource *ds) {
-	unsigned int itemcount = ds->read2();
-	assert(ds->getSize() >= 2 + itemcount * 6);
+void MapGlob::read(Common::SeekableReadStream *rs) {
+	unsigned int itemcount = rs->readUint16LE();
+	assert(rs->size() >= static_cast<int32>(2 + itemcount * 6));
 	_contents.clear();
 	_contents.resize(itemcount);
 
 	for (unsigned int i = 0; i < itemcount; ++i) {
 		GlobItem item;
 
-		item.x = ds->read1();
-		item.y = ds->read1();
-		item.z = ds->read1();
-		item.shape = ds->read2();
-		item.frame = ds->read1();
+		item.x = rs->readByte();
+		item.y = rs->readByte();
+		item.z = rs->readByte();
+		item.shape = rs->readUint16LE();
+		item.frame = rs->readByte();
 
 		_contents[i] = item;
 	}

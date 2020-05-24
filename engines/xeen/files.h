@@ -244,13 +244,18 @@ public:
 class XeenSerializer : public Common::Serializer {
 private:
 	Common::SeekableReadStream *_in;
+	int _filesize;
 public:
 	XeenSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) :
-		Common::Serializer(in, out), _in(in) {}
+		Common::Serializer(in, out), _in(in), _filesize(-1) {}
 
 	SYNC_AS(Sint8, Byte, int8, 1)
 
-	bool finished() const { return _in != nullptr && _in->pos() >= _in->size(); }
+	bool finished() {
+		if (_in && _filesize == -1)
+			_filesize = _in->size();
+		return _in != nullptr && _in->pos() >= _filesize;
+	}
 };
 
 /**

@@ -23,19 +23,20 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/audio/u8_music_process.h"
+#include "ultima/ultima8/audio/remorse_music_process.h"
 #include "ultima/ultima8/audio/audio_channel.h"
 #include "ultima/ultima8/audio/midi_player.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "audio/decoders/raw.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-AudioMixer *AudioMixer::_audioMixer = 0;
+AudioMixer *AudioMixer::_audioMixer = nullptr;
 
-AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(0) {
+AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(nullptr) {
 	_audioMixer = this;
 	
 	_channels.resize(CHANNEL_COUNT);
@@ -52,7 +53,11 @@ void AudioMixer::createProcesses() {
 	kernel->addProcess(new AudioProcess());
 
 	// Create the Music Process
-	kernel->addProcess(new MusicProcess(_midiPlayer));
+	if (GAME_IS_U8) {
+		kernel->addProcess(new U8MusicProcess(_midiPlayer));
+	} else if (GAME_IS_CRUSADER) {
+		kernel->addProcess(new RemorseMusicProcess());
+	}
 }
 
 AudioMixer::~AudioMixer(void) {

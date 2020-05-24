@@ -47,7 +47,6 @@ struct GameInfo;
 
 class CoreApp {
 public:
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
 	CoreApp(const Ultima::UltimaGameDescription *gameDesc);
 	virtual ~CoreApp();
 
@@ -70,31 +69,14 @@ public:
 	void startup();
 
 	//! Get current GameInfo struct
-	GameInfo *getGameInfo() const {
+	const GameInfo *getGameInfo() const {
 		return _gameInfo;
 	}
 
 	//! Get GameInfo for other configured game, or 0 for an invalid name.
 	GameInfo *getGameInfo(istring game) const;
 
-	virtual void helpMe();
-
-	bool help() const {
-		return _oHelp;
-	};
-	bool quiet() const {
-		return _oQuiet;
-	};
-	bool vquiet() const {
-		return _oVQuiet;
-	};
-
 protected:
-
-	//! Declare commandline arguments.
-	//! Should call parent class' DeclareArgs().
-	virtual void DeclareArgs();
-
 	bool _isRunning;
 
 	typedef Std::map<Common::String, GameInfo *, Common::IgnoreCase_Hash> GameMap;
@@ -123,7 +105,7 @@ private:
 	//! \param game The id of the game to check (from pentagram.cfg)
 	//! \param gameinfo The GameInfo struct to fill
 	//! \return true if detected all the fields, false if detection failed
-	bool getGameInfo(istring &game, GameInfo *gameinfo);
+	bool getGameInfo(const istring &game, GameInfo *gameinfo);
 
 	//! load configuration files
 	void loadConfig();
@@ -132,7 +114,7 @@ protected:
 	void setupGameList();
 
 	//! return default game
-	//! \return 0 if no default game (implies go to Pentagram Menu)
+	//! \return nullptr if no default game (implies go to Pentagram Menu)
 	GameInfo *getDefaultGame();
 
 	//! Setup up a game
@@ -145,11 +127,6 @@ protected:
 	//! Setup the virtual game paths for the current game (set in gameinfo)
 	//! Specifically, @game and @work
 	void setupGamePaths(GameInfo *gameinfo);
-
-	Std::string _oGameName;
-	bool _oHelp;
-	bool _oQuiet;
-	bool _oVQuiet;
 };
 
 } // End of namespace Ultima8

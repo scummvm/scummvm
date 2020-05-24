@@ -58,16 +58,14 @@ bool UltimaEngine::initialize() {
 	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
 		return true;
 
-	// Try and open the data archive
+	// Try and set up the data archive
 	Common::String errorMsg;
-	_dataArchive = UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg);
-	if (_dataArchive) {
-		SearchMan.add("data", _dataArchive);
-		return true;
-	} else {
+	if (!UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg)) {
 		GUIError(errorMsg);
 		return false;
 	}
+
+	return true;
 }
 
 void UltimaEngine::GUIError(const Common::String &msg) {
@@ -76,7 +74,7 @@ void UltimaEngine::GUIError(const Common::String &msg) {
 
 bool UltimaEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

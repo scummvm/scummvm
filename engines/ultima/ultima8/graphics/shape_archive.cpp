@@ -30,14 +30,13 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeArchive, Archive)
-
 ShapeArchive::~ShapeArchive() {
 	Archive::uncache();
 }
 
 Shape *ShapeArchive::getShape(uint32 shapenum) {
-	if (shapenum >= _count) return 0;
+	if (shapenum >= _count)
+		return nullptr;
 	cache(shapenum);
 
 	return _shapes[shapenum];
@@ -77,14 +76,14 @@ void ShapeArchive::uncache(uint32 shapenum) {
 	if (_shapes.empty()) return;
 
 	delete _shapes[shapenum];
-	_shapes[shapenum] = 0;
+	_shapes[shapenum] = nullptr;
 }
 
 bool ShapeArchive::isCached(uint32 shapenum) const {
 	if (shapenum >= _count) return false;
 	if (_shapes.empty()) return false;
 
-	return (_shapes[shapenum] != 0);
+	return (_shapes[shapenum] != nullptr);
 }
 
 } // End of namespace Ultima8

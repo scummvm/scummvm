@@ -142,7 +142,6 @@ SOURCE common\error.cpp
 SOURCE common\quicktime.cpp
 
 // Special for graphics
-SOURCE backends\graphics\symbiansdl\symbiansdl-graphics.cpp
 SOURCE backends\graphics\surfacesdl\surfacesdl-graphics.cpp
 SOURCE engines\obsolete.cpp
 

@@ -100,8 +100,12 @@ public:
 	 * is looked up in this array using the target's pixel color. In other
 	 * words,
 	 * `target = _remaps[remapEndColor - source].remapColors[target]`.
+	 *
+	 * Mac SSCI includes entry 236 in the non-remapped range at the cost of one
+	 * remap entry and so the Mac remap range starts at 237. The final entry in
+	 * this array, and the others in this class, is not used by PC games.
 	 */
-	uint8 _remapColors[236];
+	uint8 _remapColors[237];
 
 	/**
 	 * Resets this SingleRemap's color information to default values.
@@ -130,26 +134,26 @@ private:
 	 * The colors from the current GfxPalette32 palette before this SingleRemap
 	 * is applied.
 	 */
-	Color _originalColors[236];
+	Color _originalColors[237];
 
 	/**
 	 * Map of colors that changed in `_originalColors` when this SingleRemap was
 	 * updated. This map is transient and gets reset to `false` after the
 	 * SingleRemap finishes updating.
 	 */
-	bool _originalColorsChanged[236];
+	bool _originalColorsChanged[237];
 
 	/**
 	 * The ideal target RGB color values for each generated remap color.
 	 */
-	Color _idealColors[236];
+	Color _idealColors[237];
 
 	/**
 	 * Map of colors that changed in `_idealColors` when this SingleRemap was
 	 * updated. This map is transient and gets reset to `false` after the
 	 * SingleRemap finishes applying.
 	 */
-	bool _idealColorsChanged[236];
+	bool _idealColorsChanged[237];
 
 	/**
 	 * When applying a SingleRemap, finding an appropriate color in the palette
@@ -159,7 +163,7 @@ private:
 	 * application and avoid triggering an expensive redraw of the entire screen
 	 * if the new palette value only changed slightly.
 	 */
-	int _matchDistances[236];
+	int _matchDistances[237];
 
 	/**
 	 * Computes the final target values for a range remap and applies them
@@ -322,7 +326,7 @@ public:
 		// surface filled with a skip color of 255. In SSCI, this causes the
 		// remapped color to be read from some statically allocated, never
 		// written memory and so always ends up being 0 (black).
-		if (targetColor >= ARRAYSIZE(singleRemap._remapColors)) {
+		if (targetColor >= _remapStartColor) {
 			return 0;
 		}
 		return singleRemap._remapColors[targetColor];
@@ -343,7 +347,7 @@ private:
 	/**
 	 * The first index of the remap area in the system palette.
 	 */
-	const uint8 _remapStartColor;
+	uint8 _remapStartColor;
 
 	/**
 	 * The last index of the remap area in the system palette.

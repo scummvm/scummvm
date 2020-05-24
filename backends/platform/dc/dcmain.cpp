@@ -90,8 +90,11 @@ static bool find_track(int track, int &first_sec, int &last_sec)
   return false;
 }
 
-bool DCCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
-	DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate);
+bool DCCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType) {
+	// Prefer emulation
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
+		return true;
 
 	// If we're playing now return here
 	if (isPlaying()) {

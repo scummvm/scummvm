@@ -284,7 +284,7 @@ unsigned char *U6Lzw::decompress_file(Std::string filename, uint32 &destination_
 //       destination_buffer_size = this->get_uncompressed_file_size(input_file);
 
 		// create the buffers
-		source_buffer = (unsigned char *)malloc(sizeof(unsigned char *) * source_buffer_size);
+		source_buffer = (unsigned char *)malloc(sizeof(unsigned char) * source_buffer_size);
 //       destination_buffer = (unsigned char *)malloc(sizeof(unsigned char *) * destination_buffer_size);
 
 		// read the input file into the source buffer

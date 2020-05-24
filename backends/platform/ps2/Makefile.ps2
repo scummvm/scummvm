@@ -6,7 +6,7 @@
 # Scummvm engine config: choose which engines are enabled
 ENABLE_AGI = $(ENABLED)
 ENABLE_AGOS = $(ENABLED)
-ENABLE_AGOS2 = 1 
+ENABLE_AGOS2 = 1
 # ENABLE_AVALANCHE = $(ENABLED)
 ENABLE_CGE = $(ENABLED)
 ENABLE_CINE = $(ENABLED)
@@ -98,7 +98,7 @@ FLAGS += -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-unused-paramete
 CFLAGS = $(FLAGS) -std=c99
 CXXFLAGS = $(FLAGS) -Wnon-virtual-dtor -Wno-reorder -fno-exceptions -fno-rtti
 
-DEFINES  = -D_EE -D__PLAYSTATION2__ -D__NEW_PS2SDK__ -DUSE_ZLIB -DFORCE_RTL -DDATA_PATH=\"host:data\"
+DEFINES  = -D_EE -D__PLAYSTATION2__ -D__NEW_PS2SDK__ -DUSE_ZLIB -DFORCE_RETURN_TO_LAUNCHER -DDATA_PATH=\"host:data\"
 DEFINES += -DDISABLE_SAVEGAME_SORTING -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL -DDISABLE_SID -DDISABLE_NES_APU
 # DEFINES += -DLOGORRHEIC
 

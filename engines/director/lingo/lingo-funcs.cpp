@@ -72,10 +72,11 @@ struct MCIToken {
 	{ kMCITokenNone, kMCITokenNone,   0, 0 }
 };
 
-void Lingo::func_mci(Common::String &s) {
+void Lingo::func_mci(const Common::String &name) {
 	Common::String params[5];
 	MCITokenType command = kMCITokenNone;
 
+	Common::String s = name;
 	s.trim();
 	s.toLowercase();
 
@@ -170,8 +171,8 @@ void Lingo::func_mci(Common::String &s) {
 	}
 }
 
-void Lingo::func_mciwait(Common::String &s) {
-	warning("STUB: MCI wait file: %s", s.c_str());
+void Lingo::func_mciwait(const Common::String &name) {
+	warning("STUB: MCI wait file: %s", name.c_str());
 }
 
 void Lingo::func_goto(Datum &frame, Datum &movie) {
@@ -181,9 +182,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 
 	if (movie.type != VOID) {
-		movie.toString();
-
-		Common::String movieFilename = pathMakeRelative(*movie.u.s);
+		Common::String movieFilenameRaw = movie.asString();
+		Common::String movieFilename = pathMakeRelative(movieFilenameRaw);
 		Common::String cleanedFilename;
 
 		bool fileExists = false;
@@ -213,7 +213,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			}
 		}
 
-		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movie.u.s->c_str(), convertPath(*movie.u.s).c_str(),
+		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(),
 				movieFilename.c_str(), cleanedFilename.c_str());
 
 		if (!fileExists) {
@@ -235,9 +235,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		frame.toInt();
-
-		_vm->_nextMovie.frameI = frame.u.i;
+		_vm->_nextMovie.frameI = frame.asInt();
 
 		return;
 	}
@@ -253,10 +251,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 	}
 
-	frame.toInt();
-
 	if (_vm->getCurrentScore())
-		_vm->getCurrentScore()->setCurrentFrame(frame.u.i);
+		_vm->getCurrentScore()->setCurrentFrame(frame.asInt());
 }
 
 void Lingo::func_gotoloop() {
@@ -295,6 +291,36 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		return;
 	}
 
+	// play #done
+	if (frame.type == SYMBOL) {
+		if (!frame.u.s->equals("done")) {
+			warning("Lingo::func_play: unknown symbol: #%s", frame.u.s->c_str());
+			return;
+		}
+		if (_vm->_movieStack.empty()) {	// No op if no nested movies
+			return;
+		}
+		ref = _vm->_movieStack.back();
+
+		_vm->_movieStack.pop_back();
+
+		Datum m, f;
+
+		if (ref.movie.empty()) {
+			m.type = VOID;
+		} else {
+			m.type = STRING;
+			m.u.s = new Common::String(ref.movie);
+		}
+
+		f.type = INT;
+		f.u.i = ref.frameI;
+
+		func_goto(f, m);
+
+		return;
+	}
+
 	if (!_vm->getCurrentScore()) {
 		warning("Lingo::func_play(): no score");
 		return;
@@ -307,50 +333,31 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	func_goto(frame, movie);
 }
 
-void Lingo::func_playdone() {
-	MovieReference ref = _vm->_movieStack.back();
-
-	_vm->_movieStack.pop_back();
-
-	Datum m, f;
-
-	if (ref.movie.empty()) {
-		m.type = VOID;
-	} else {
-		m.type = STRING;
-		m.u.s = new Common::String(ref.movie);
-	}
-
-	f.type = INT;
-	f.u.i = ref.frameI;
-
-	func_goto(f, m);
-}
-
-void Lingo::func_cursor(int c, int m) {
+void Lingo::func_cursor(int cursorId, int maskId) {
 	if (_cursorOnStack) {
 		// pop cursor
 		_vm->getMacWindowManager()->popCursor();
 	}
 
-	if (m != -1) {
-		Score *score = _vm->getCurrentScore();
-		if (!score->_loadedCast->contains(c) || !score->_loadedCast->contains(m)) {
-			warning("cursor: non-existent cast reference");
+	if (maskId != -1) {
+		Cast *cursorCast = _vm->getCastMember(cursorId);
+		Cast *maskCast = _vm->getCastMember(maskId);
+		if (!cursorCast || !maskCast) {
+			warning("func_cursor(): non-existent cast reference");
 			return;
 		}
 
-		if (score->_loadedCast->getVal(c)->_type != kCastBitmap || score->_loadedCast->getVal(m)->_type != kCastBitmap) {
-			warning("cursor: wrong cast reference type");
+		if (cursorCast->_type != kCastBitmap || maskCast->_type != kCastBitmap) {
+			warning("func_cursor(): wrong cast reference type");
 			return;
 		}
 
-		if (score->_loadedCast->getVal(c)->_surface == nullptr) {
-			warning("cursor: empty sprite %d surface", c);
+		if (cursorCast->_surface == nullptr) {
+			warning("func_cursor(): empty surface for bitmap cast %d", cursorId);
 			return;
 		}
-		if (score->_loadedCast->getVal(m)->_surface == nullptr) {
-			warning("cursor: empty sprite %d surface", m);
+		if (maskCast->_surface == nullptr) {
+			warning("func_cursor(): empty surface for bitmap cast %d", maskId);
 			return;
 		}
 
@@ -358,24 +365,21 @@ void Lingo::func_cursor(int c, int m) {
 		byte *dst = assembly;
 
 		for (int y = 0; y < 16; y++) {
-			const byte *cursor, *mask;
-			bool nocursor = false;
+			const byte *cursor = nullptr, *mask = nullptr;
 
-			if (y >= score->_loadedCast->getVal(c)->_surface->h ||
-					y >= score->_loadedCast->getVal(m)->_surface->h )
-				nocursor = true;
-
-			if (!nocursor) {
-				cursor = (const byte *)score->_loadedCast->getVal(c)->_surface->getBasePtr(0, y);
-				mask = (const byte *)score->_loadedCast->getVal(m)->_surface->getBasePtr(0, y);
+			if (y < cursorCast->_surface->h &&
+					y < maskCast->_surface->h) {
+				cursor = (const byte *)cursorCast->_surface->getBasePtr(0, y);
+				mask = (const byte *)maskCast->_surface->getBasePtr(0, y);
 			}
 
 			for (int x = 0; x < 16; x++) {
-				if (x >= score->_loadedCast->getVal(c)->_surface->w ||
-						x >= score->_loadedCast->getVal(m)->_surface->w )
-					nocursor = true;
+				if (x >= cursorCast->_surface->w ||
+						x >= maskCast->_surface->w) {
+					cursor = mask = nullptr;
+				}
 
-				if (nocursor) {
+				if (!cursor) {
 					*dst = 3;
 				} else {
 					*dst = *mask ? 3 : (*cursor ? 1 : 0);
@@ -386,13 +390,16 @@ void Lingo::func_cursor(int c, int m) {
 			}
 		}
 
-		_vm->getMacWindowManager()->pushCustomCursor(assembly, 16, 16, 3);
+		warning("STUB: func_cursor(): Hotspot is the registration point of the cast member");
+		_vm->getMacWindowManager()->pushCustomCursor(assembly, 16, 16, 1, 1, 3);
+
+		free(assembly);
 
 		return;
 	}
 
 	// and then push cursor.
-	switch (c) {
+	switch (cursorId) {
 	case 0:
 	case -1:
 	default:

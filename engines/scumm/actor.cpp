@@ -2859,7 +2859,10 @@ void ScummEngine::actorTalk(const byte *msg) {
 	}
 
 	if (_game.heversion >= 72 || getTalkingActor() > 0x7F) {
-		_charsetColor = (byte)_string[0].color;
+		if (_game.platform == Common::kPlatformNES)
+			_charsetColor = 0; // NES MM intro color is always 0
+		else
+			_charsetColor = (byte)_string[0].color;
 	} else if (_game.platform == Common::kPlatformNES) {
 		if (_NES_lastTalkingActor != getTalkingActor())
 			_NES_talkColor ^= 1;

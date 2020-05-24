@@ -101,7 +101,7 @@ void AI::processCines() {
 				memset(func, 0, 64);
 
 				if (_cine[i]->title)
-					strcpy(func, _cine[i]->title);
+					Common::strlcpy(func, _cine[i]->title, 64);
 
 				cineCleanup();
 				if (func[0])
@@ -291,7 +291,7 @@ void AI::processCines() {
 			break;
 		case C_DIALOG:
 			if (_cine[i]->start) {
-				g_hdb->_window->openDialog(_cine[i]->title, -1, _cine[i]->string, 0, NULL);
+				g_hdb->_window->openDialog(_cine[i]->title, -1, _cine[i]->string, 0, nullptr);
 				g_hdb->_window->setDialogDelay(_cine[i]->delay);
 				_cine[i]->start = 0;
 			} else if (g_hdb->_window->getDialogDelay() < g_hdb->getTimeSlice())
@@ -314,7 +314,7 @@ void AI::processCines() {
 		case C_DRAWPIC:
 			{
 				Picture *p = cineFindInBlitList(_cine[i]->id);
-				if (p == NULL) {
+				if (p == nullptr) {
 					p = g_hdb->_gfx->loadPic(_cine[i]->string);
 					cineAddToFreeList(p);
 					cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, false);
@@ -327,7 +327,7 @@ void AI::processCines() {
 		case C_DRAWMASKEDPIC:
 			{
 				Picture *p = cineFindInBlitList(_cine[i]->id);
-				if (p == NULL) {
+				if (p == nullptr) {
 					p = g_hdb->_gfx->loadPic(_cine[i]->string);
 					cineAddToFreeList(p);
 					cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, true);
@@ -515,7 +515,7 @@ Picture *AI::cineFindInBlitList(const char *name) {
 		if (Common::matchString(_cineBlitList[i]->id, name, true))
 			return _cineBlitList[i]->pic;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AI::cineRemoveFromBlitList(const char *name) {
@@ -525,7 +525,7 @@ void AI::cineRemoveFromBlitList(const char *name) {
 			for (; i < _numCineBlitList - 1; i++)
 				_cineBlitList[i] = _cineBlitList[i + 1];
 			_numCineBlitList--;
-			_cineBlitList[_numCineBlitList] = NULL;
+			_cineBlitList[_numCineBlitList] = nullptr;
 			return;
 		}
 	}

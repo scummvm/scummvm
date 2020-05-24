@@ -53,7 +53,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	U1MapTile() : Shared::Maps::MapTile(), _item(0), _locationNum(-1) {}
+	U1MapTile() : Shared::Maps::MapTile(), _item(0), _locationNum(-1), _map(nullptr) {}
 
 	/**
 	 * Set the active map

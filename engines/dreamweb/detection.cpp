@@ -111,7 +111,7 @@ bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	switch(f) {
-	case kSupportsRTL:
+	case kSupportsReturnToLauncher:
 		return true;
 	case kSupportsSubtitleOptions:
 		return _gameDescription->desc.flags & ADGF_CD;

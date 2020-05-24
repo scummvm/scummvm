@@ -5,6 +5,8 @@ MODULE_OBJS := \
 	shared/actions/action.o \
 	shared/actions/huh.o \
 	shared/actions/pass.o \
+	shared/conf/xml_node.o \
+	shared/conf/xml_tree.o \
 	shared/core/base_object.o \
 	shared/core/character.o \
 	shared/core/file.o \
@@ -132,6 +134,94 @@ MODULE_OBJS := \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o \
+	ultima4/controllers/alpha_action_controller.o \
+	ultima4/controllers/camp_controller.o \
+	ultima4/controllers/combat_controller.o \
+	ultima4/controllers/controller.o \
+	ultima4/controllers/game_controller.o \
+	ultima4/controllers/inn_controller.o \
+	ultima4/controllers/intro_controller.o \
+	ultima4/controllers/key_handler_controller.o \
+	ultima4/controllers/menu_controller.o \
+	ultima4/controllers/read_choice_controller.o \
+	ultima4/controllers/read_dir_controller.o \
+	ultima4/controllers/read_int_controller.o \
+	ultima4/controllers/read_player_controller.o \
+	ultima4/controllers/read_string_controller.o \
+	ultima4/controllers/reagents_menu_controller.o \
+	ultima4/controllers/wait_controller.o \
+	ultima4/controllers/ztats_controller.o \
+	ultima4/conversation/conversation.o \
+	ultima4/conversation/dialogueloader.o \
+	ultima4/conversation/dialogueloader_hw.o \
+	ultima4/conversation/dialogueloader_lb.o \
+	ultima4/conversation/dialogueloader_tlk.o \
+	ultima4/core/lzw/hash.o \
+	ultima4/core/lzw/lzw.o \
+	ultima4/core/lzw/u4decode.o \
+	ultima4/core/config.o \
+	ultima4/core/debugger.o \
+	ultima4/core/debugger_actions.o \
+	ultima4/core/settings.o \
+	ultima4/core/utils.o \
+	ultima4/events/event_handler.o \
+	ultima4/events/timed_event_mgr.o \
+	ultima4/filesys/filesystem.o \
+	ultima4/filesys/rle.o \
+	ultima4/filesys/savegame.o \
+	ultima4/filesys/u4file.o \
+	ultima4/game/armor.o \
+	ultima4/game/aura.o \
+	ultima4/game/codex.o \
+	ultima4/game/context.o \
+	ultima4/game/creature.o \
+	ultima4/game/death.o \
+	ultima4/game/game.o \
+	ultima4/game/item.o \
+	ultima4/game/moongate.o \
+	ultima4/game/names.o \
+	ultima4/game/object.o \
+	ultima4/game/person.o \
+	ultima4/game/player.o \
+	ultima4/game/portal.o \
+	ultima4/game/script.o \
+	ultima4/game/spell.o \
+	ultima4/game/weapon.o \
+	ultima4/gfx/image.o \
+	ultima4/gfx/imageloader.o \
+	ultima4/gfx/imageloader_fmtowns.o \
+	ultima4/gfx/imageloader_png.o \
+	ultima4/gfx/imageloader_u4.o \
+	ultima4/gfx/imagemgr.o \
+	ultima4/gfx/scale.o \
+	ultima4/gfx/screen.o \
+	ultima4/map/annotation.o \
+	ultima4/map/city.o \
+	ultima4/map/direction.o \
+	ultima4/map/dungeon.o \
+	ultima4/map/map_tile.o \
+	ultima4/map/movement.o \
+	ultima4/map/shrine.o \
+	ultima4/map/location.o \
+	ultima4/map/map.o \
+	ultima4/map/maploader.o \
+	ultima4/map/mapmgr.o \
+	ultima4/map/tile.o \
+	ultima4/map/tileanim.o \
+	ultima4/map/tilemap.o \
+	ultima4/map/tileset.o \
+	ultima4/sound/music.o \
+	ultima4/sound/sound.o \
+	ultima4/views/dungeonview.o \
+	ultima4/views/imageview.o \
+	ultima4/views/menu.o \
+	ultima4/views/menuitem.o \
+	ultima4/views/stats.o \
+	ultima4/views/textview.o \
+	ultima4/views/tileview.o \
+	ultima4/views/view.o \
+	ultima4/meta_engine.o \
+	ultima4/ultima4.o \
 	nuvie/meta_engine.o \
 	nuvie/nuvie.o \
 	nuvie/actors/actor.o \
@@ -142,8 +232,6 @@ MODULE_OBJS := \
 	nuvie/actors/wou_actor.o \
 	nuvie/conf/configuration.o \
 	nuvie/conf/misc.o \
-	nuvie/conf/xml_node.o \
-	nuvie/conf/xml_tree.o \
 	nuvie/core/anim_manager.o \
 	nuvie/core/book.o \
 	nuvie/core/converse.o \
@@ -291,39 +379,7 @@ MODULE_OBJS := \
 	nuvie/views/sun_moon_strip_widget.o \
 	nuvie/views/vew.o \
 	nuvie/views/view_manager.o \
-	nuvie/lua/lapi.o \
-	nuvie/lua/lauxlib.o \
-	nuvie/lua/lbaselib.o \
-	nuvie/lua/lbitlib.o \
-	nuvie/lua/lcode.o \
-	nuvie/lua/lcorolib.o \
-	nuvie/lua/lctype.o \
-	nuvie/lua/ldblib.o \
-	nuvie/lua/ldebug.o \
-	nuvie/lua/ldo.o \
-	nuvie/lua/ldump.o \
-	nuvie/lua/lfunc.o \
-	nuvie/lua/lgc.o \
-	nuvie/lua/linit.o \
-	nuvie/lua/liolib.o \
-	nuvie/lua/llex.o \
-	nuvie/lua/lmathlib.o \
-	nuvie/lua/lmem.o \
-	nuvie/lua/loadlib.o \
-	nuvie/lua/lobject.o \
-	nuvie/lua/lopcodes.o \
-	nuvie/lua/loslib.o \
-	nuvie/lua/lparser.o \
-	nuvie/lua/lstate.o \
-	nuvie/lua/lstring.o \
-	nuvie/lua/lstrlib.o \
-	nuvie/lua/ltable.o \
-	nuvie/lua/ltablib.o \
-	nuvie/lua/ltm.o \
-	nuvie/lua/lundump.o \
-	nuvie/lua/lvm.o \
-	nuvie/lua/lzio.o \
-	nuvie/lua/scummvm_file.o \
+	ultima8/meta_engine.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
 	ultima8/audio/audio_mixer.o \
@@ -333,9 +389,11 @@ MODULE_OBJS := \
 	ultima8/audio/music_flex.o \
 	ultima8/audio/music_process.o \
 	ultima8/audio/raw_audio_sample.o \
+	ultima8/audio/remorse_music_process.o \
 	ultima8/audio/sonarc_audio_sample.o \
 	ultima8/audio/sound_flex.o \
 	ultima8/audio/speech_flex.o \
+	ultima8/audio/u8_music_process.o \
 	ultima8/conf/config_file_manager.o \
 	ultima8/conf/ini_file.o \
 	ultima8/conf/setting_manager.o \
@@ -354,12 +412,15 @@ MODULE_OBJS := \
 	ultima8/games/game_data.o \
 	ultima8/games/game_info.o \
 	ultima8/games/remorse_game.o \
+	ultima8/games/start_crusader_process.o \
 	ultima8/games/start_u8_process.o \
 	ultima8/games/treasure_loader.o \
 	ultima8/games/u8_game.o \
 	ultima8/graphics/anim_dat.o \
+	ultima8/graphics/avi_player.o \
 	ultima8/graphics/base_soft_render_surface.o \
 	ultima8/graphics/frame_id.o \
+	ultima8/graphics/fade_to_modal_process.o \
 	ultima8/graphics/gump_shape_archive.o \
 	ultima8/graphics/inverter_process.o \
 	ultima8/graphics/main_shape_archive.o \
@@ -367,6 +428,7 @@ MODULE_OBJS := \
 	ultima8/graphics/palette_fader_process.o \
 	ultima8/graphics/palette_manager.o \
 	ultima8/graphics/point_scaler.o \
+	ultima8/graphics/raw_shape_frame.o \
 	ultima8/graphics/render_surface.o \
 	ultima8/graphics/shape.o \
 	ultima8/graphics/shape_archive.o \
@@ -394,11 +456,16 @@ MODULE_OBJS := \
 	ultima8/graphics/fonts/tt_font.o \
 	ultima8/gumps/ask_gump.o \
 	ultima8/gumps/bark_gump.o \
-	ultima8/gumps/bind_gump.o \
 	ultima8/gumps/book_gump.o \
 	ultima8/gumps/container_gump.o \
-	ultima8/gumps/controls_gump.o \
 	ultima8/gumps/credits_gump.o \
+	ultima8/gumps/cru_ammo_gump.o \
+	ultima8/gumps/cru_energy_gump.o \
+	ultima8/gumps/cru_health_gump.o \
+	ultima8/gumps/cru_inventory_gump.o \
+	ultima8/gumps/cru_stat_gump.o \
+	ultima8/gumps/cru_status_gump.o \
+	ultima8/gumps/cru_weapon_gump.o \
 	ultima8/gumps/desktop_gump.o \
 	ultima8/gumps/fast_area_vis_gump.o \
 	ultima8/gumps/game_map_gump.o \
@@ -413,12 +480,11 @@ MODULE_OBJS := \
 	ultima8/gumps/mini_stats_gump.o \
 	ultima8/gumps/modal_gump.o \
 	ultima8/gumps/movie_gump.o \
-	ultima8/gumps/options_gump.o \
 	ultima8/gumps/paged_gump.o \
 	ultima8/gumps/paperdoll_gump.o \
-	ultima8/gumps/pentagram_menu_gump.o \
 	ultima8/gumps/quit_gump.o \
 	ultima8/gumps/readable_gump.o \
+	ultima8/gumps/remorse_menu_gump.o \
 	ultima8/gumps/resizable_gump.o \
 	ultima8/gumps/scaler_gump.o \
 	ultima8/gumps/scroll_gump.o \
@@ -428,30 +494,20 @@ MODULE_OBJS := \
 	ultima8/gumps/u8_save_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \
-	ultima8/gumps/widgets/game_widget.o \
 	ultima8/gumps/widgets/sliding_widget.o \
 	ultima8/gumps/widgets/text_widget.o \
-	ultima8/kernel/allocator.o \
 	ultima8/kernel/core_app.o \
 	ultima8/kernel/delay_process.o \
-	ultima8/kernel/hid_keys.o \
-	ultima8/kernel/hid_manager.o \
 	ultima8/kernel/kernel.o \
-	ultima8/kernel/memory_manager.o \
 	ultima8/kernel/mouse.o \
 	ultima8/kernel/object.o \
 	ultima8/kernel/object_manager.o \
-	ultima8/kernel/pool.o \
 	ultima8/kernel/process.o \
-	ultima8/kernel/segmented_allocator.o \
-	ultima8/kernel/segmented_pool.o \
 	ultima8/misc/args.o \
 	ultima8/misc/debugger.o \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \
 	ultima8/misc/istring.o \
-	ultima8/misc/md5.o \
-	ultima8/misc/pent_include.o \
 	ultima8/misc/util.o \
 	ultima8/usecode/bit_set.o \
 	ultima8/usecode/uc_list.o \

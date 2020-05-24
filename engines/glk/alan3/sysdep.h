@@ -44,24 +44,6 @@ namespace Alan3 {
 #define GLK
 #define HAVE_GLK
 
-#undef isspace
-#define isspace Common::isSpace
-#undef isdigit
-#define isdigit Common::isDigit
-#undef isalpha
-#define isalpha Common::isAlpha
-#undef stricmp
-#define stricmp scumm_stricmp
-#undef strdup
-#define strdup scumm_strdup
-#undef strcasecmp
-#define strcasecmp scumm_stricmp
-#undef strncasecmp
-#define strncasecmp scumm_strnicmp
-#undef rand
-#define rand() g_vm->getRandomNumber(0x7fffffff)
-
-
 /*----------------------------------------------------------------------
 
   Below follows OS and compiler dependent settings. They should not be

@@ -27,10 +27,13 @@
 #include "ultima/ultima8/graphics/texture_png.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 
-#include <cstring>
-
 namespace Ultima {
 namespace Ultima8 {
+
+
+Texture::Texture() : _format(TEX_FMT_STANDARD), _glTex(0),
+	_next(nullptr), _wlog2(-1), _hlog2(-1) {
+}
 
 //
 // Destructor
@@ -44,9 +47,9 @@ Texture::~Texture() {
 #define TRY_TYPE(TextureType)               \
 	tex = new TextureType();                    \
 	/* If read failed, delete the texture. */   \
-	if (!tex->Read(ds)) {                       \
+	if (!tex->Read(rs)) {                       \
 		delete tex;                             \
-		tex = 0;                                \
+		tex = nullptr;                          \
 	}                                           \
 	else {                                      \
 		/* Worked so return it */               \
@@ -63,7 +66,7 @@ void Texture::create(uint16 width, uint16 height, TextureFormat textureFormat) {
 // Create a texture from a Data Source
 // (filename is used to help detection of type)
 //
-Texture *Texture::Create(IDataSource *ds, const char *filename) {
+Texture *Texture::Create(Common::SeekableReadStream *rs, const char *filename) {
 	Texture *tex;
 
 	if (filename) {
@@ -87,7 +90,7 @@ Texture *Texture::Create(IDataSource *ds, const char *filename) {
 	TRY_TYPE(TextureTarga);
 
 	// Couldn't find it
-	return 0;
+	return nullptr;
 }
 
 void Texture::loadSurface(const Graphics::Surface *surf) {
@@ -115,6 +118,35 @@ void Texture::loadSurface(const Graphics::Surface *surf) {
 		}
 	}
 }
+
+void Texture::loadSurface8Bit(const Graphics::Surface *surf, const byte *pal) {
+	assert(surf->format.bytesPerPixel == 1 && pal);
+	create(surf->w, surf->h, Texture::getPixelFormat());
+	this->_format = TEX_FMT_STANDARD;
+	this->_wlog2 = -1;
+	this->_hlog2 = -1;
+
+	// Repack RGBA
+	uint32 *buffer = (uint32 *)getPixels();
+	uint32 i = 0;
+	const byte a = 0xff;
+	for (int y = 0; y < surf->h; ++y) {
+		const byte *srcP = (const byte *)surf->getBasePtr(0, y);
+
+		for (int x = 0; x < surf->w; ++x, srcP++) {
+			const byte p = *srcP;
+			const byte r = pal[p*3+0];
+			const byte g = pal[p*3+1];
+			const byte b = pal[p*3+2];
+
+			buffer[i++] = (r << TEX32_R_SHIFT)
+				| (g << TEX32_G_SHIFT)
+				| (b << TEX32_B_SHIFT)
+				| (a << TEX32_A_SHIFT);
+		}
+	}
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

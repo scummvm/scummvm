@@ -239,8 +239,8 @@ public:
 	converse_value read(uint32 advance = 1);
 	converse_value read2();
 	converse_value read4();
-	converse_value peek(uint32 skip = 0) {
-		return ((converse_value) * (buf_pt + skip));
+	converse_value peek(uint32 displacement = 0) {
+		return ((converse_value) * (buf_pt + displacement));
 	}
 
 	/* Writing */

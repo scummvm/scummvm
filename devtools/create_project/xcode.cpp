@@ -30,6 +30,11 @@
 #include <sstream>
 #include <iomanip>
 #include <CommonCrypto/CommonCrypto.h>
+
+// If we want to unset the sdk version in the executable to work around bug #11430
+// (blury display on retina screens when building with SDK 10.14+).
+// This workaround only works with Xcode 11+.
+//#define MACOSX_NO_SDKVERSION
 #endif
 
 namespace CreateProjectTool {
@@ -399,16 +404,16 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 	// Nothing to do here
 }
 
-#define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
+#define DEF_SYSFRAMEWORK(framework) { properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++); }
 
-#define DEF_SYSTBD(lib) properties[lib".tbd"] = FileProperty("sourcecode.text-based-dylib-definition", lib".tbd", "usr/lib/" lib ".tbd", "SDKROOT"); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".tbd"), lib".tbd", fwOrder++);
+#define DEF_SYSTBD(lib) { properties[lib".tbd"] = FileProperty("sourcecode.text-based-dylib-definition", lib".tbd", "usr/lib/" lib ".tbd", "SDKROOT"); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".tbd"), lib".tbd", fwOrder++); }
 
-#define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
+#define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) { properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++); }
 
-#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH("/usr/local/lib/" lib ".a", lib, true)
+#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH(lib ".a", lib, false)
 
 
 /**
@@ -470,6 +475,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		DEF_LOCALLIB_STATIC("libmad");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+		DEF_LOCALLIB_STATIC("libfribidi");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		DEF_LOCALLIB_STATIC("libpng");
 	}
@@ -493,13 +501,15 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (setup.useSDL2) {
 		DEF_LOCALLIB_STATIC("libSDL2main");
 		DEF_LOCALLIB_STATIC("libSDL2");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
 			DEF_LOCALLIB_STATIC("libSDL2_net");
+		}
 	} else {
 		DEF_LOCALLIB_STATIC("libSDLmain");
 		DEF_LOCALLIB_STATIC("libSDL");
-		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
+		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET")) {
 			DEF_LOCALLIB_STATIC("libSDL_net");
+		}
 	}
 
 	frameworksGroup->_properties["children"] = children;
@@ -561,6 +571,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_iOS.push_back("libmad.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+		frameworks_iOS.push_back("libfribidi.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
@@ -641,6 +654,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_MAD")) {
 		frameworks_osx.push_back("libmad.a");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
+		frameworks_osx.push_back("libfribidi.a");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_osx.push_back("libpng.a");
 	}
@@ -665,12 +681,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_osx.push_back("libSDL2main.a");
 		frameworks_osx.push_back("libSDL2.a");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
-			frameworks_iOS.push_back("libSDL2_net.a");
+			frameworks_osx.push_back("libSDL2_net.a");
 	} else {
 		frameworks_osx.push_back("libSDLmain.a");
 		frameworks_osx.push_back("libSDL.a");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
-			frameworks_iOS.push_back("libSDL_net.a");
+			frameworks_osx.push_back("libSDL_net.a");
 	}
 
 	order = 0;
@@ -928,6 +944,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ValueList scummvm_WarningCFlags;
 	scummvm_WarningCFlags.push_back("-Wno-multichar");
 	scummvm_WarningCFlags.push_back("-Wno-undefined-var-template");
+	scummvm_WarningCFlags.push_back("-Wc++11-extensions");
 	ADD_SETTING_LIST(scummvm_Debug, "WARNING_CFLAGS", scummvm_WarningCFlags, kSettingsQuoteVariable | kSettingsAsList, 5);
 	ValueList scummvm_defines(_defines);
 	REMOVE_DEFINE(scummvm_defines, "MACOSX");
@@ -1088,6 +1105,19 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
 	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", PROJECT_NAME);
+	ValueList scummvmOSX_LinkerFlags;
+#ifdef MACOSX_NO_SDKVERSION
+	scummvmOSX_LinkerFlags.push_back("-Xlinker");
+	scummvmOSX_LinkerFlags.push_back("-platform_version");
+	scummvmOSX_LinkerFlags.push_back("-Xlinker");
+	scummvmOSX_LinkerFlags.push_back("macos");
+	scummvmOSX_LinkerFlags.push_back("-Xlinker");
+	// Since the option can only be used with Xcode 11, assume the min version targetted is 10.14
+	scummvmOSX_LinkerFlags.push_back("10.14");
+	scummvmOSX_LinkerFlags.push_back("-Xlinker");
+	scummvmOSX_LinkerFlags.push_back("0.0.0");
+	ADD_SETTING_LIST(scummvmOSX_Debug, "OTHER_LDFLAGS", scummvmOSX_LinkerFlags, kSettingsAsList, 5);
+#endif
 
 	scummvmOSX_Debug_Object->addProperty("name", "Debug", "", kSettingsNoValue);
 	scummvmOSX_Debug_Object->_properties["buildSettings"] = scummvmOSX_Debug;
@@ -1101,6 +1131,9 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvmOSX_Release, "WRAPPER_EXTENSION", "app");
 	REMOVE_SETTING(scummvmOSX_Release, "DEBUG_INFORMATION_FORMAT");
 	ADD_SETTING_QUOTE(scummvmOSX_Release, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
+#ifdef MACOSX_NO_SDKVERSION
+	ADD_SETTING_LIST(scummvmOSX_Release, "OTHER_LDFLAGS", scummvmOSX_LinkerFlags, kSettingsAsList, 5);
+#endif
 
 	scummvmOSX_Release_Object->addProperty("name", "Release", "", kSettingsNoValue);
 	scummvmOSX_Release_Object->_properties["buildSettings"] = scummvmOSX_Release;

@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+* Represents text which appears on the screen to show the name of an item, etc
+*/
 class BarkGump : public ItemRelativeGump {
 protected:
 	Std::string _barked;
@@ -49,10 +52,13 @@ public:
 	void        run() override;
 
 	// Got to the next page on mouse click
-	Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump       *onMouseDown(int button, int32 mx, int32 my) override;
 
 	// Init the gump, call after construction
 	void        InitGump(Gump *newparent, bool take_focus = true) override;
+
+	/// Get the font that should be used from dialog from this actor
+	static int dialogFontForActor(uint16 actor);
 
 protected:
 	//! show next text.
@@ -62,9 +68,9 @@ protected:
 	int _textDelay;
 
 public:
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

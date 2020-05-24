@@ -50,6 +50,7 @@ const LanguageDescription g_languages[] = {
 	{    "kr", "ko_KR", "Korean", KO_KOR },
 	{    "lv", "lv_LV", "Latvian", LV_LAT },
 	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR },
+	{    "fa", "fa_IR", "Persian (Iran)", FA_IRN },
 	{    "pl", "pl_PL", "Polish", PL_POL },
 	{    "br", "pt_BR", "Portuguese (Brazil)", PT_BRA },
 	{    "pt", "pt_PT", "Portuguese (Portugal)", PT_POR },
@@ -59,6 +60,7 @@ const LanguageDescription g_languages[] = {
 	{    "se", "sv_SE", "Swedish", SE_SWE },
 	{    "tr", "tr_TR", "Turkish", TR_TUR },
 	{    "uk", "uk_UA", "Ukrainian", UA_UKR },
+	{    "sr", "sr_SP", "Serbian", SR_SER },
 	{ nullptr, nullptr, nullptr, UNK_LANG }
 };
 

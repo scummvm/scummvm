@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for gumps whose location is relative to an owning item (eg, inventory, bark, etc)
+ */
 class ItemRelativeGump : public Gump {
 protected:
 	int32 _ix, _iy;
@@ -53,9 +56,9 @@ public:
 
 	void        Move(int32 x, int32 y) override;
 
-	bool                loadData(IDataSource *ids, uint32 version);
+	bool                loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void        saveData(ODataSource *ods) override;
+	void        saveData(Common::WriteStream *ws) override;
 
 	virtual void        GetItemLocation(int32 lerp_factor);
 

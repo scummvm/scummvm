@@ -37,8 +37,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TTFont, Font)
-
 // various unicode characters which look like small black circles
 static const uint16 BULLETS[] = { 0x2022, 0x30FB, 0x25CF, 0 };
 

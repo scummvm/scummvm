@@ -141,9 +141,10 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDSliderHover,                "slider_hover",     kDrawLayerForeground,  kDDNone},
 	{kDDSliderDisabled,             "slider_disabled",  kDrawLayerForeground,  kDDNone},
 
-	{kDDCheckboxDefault,            "checkbox_default",         kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxDisabled,           "checkbox_disabled",        kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxSelected,           "checkbox_selected",        kDrawLayerForeground,  kDDCheckboxDefault},
+	{kDDCheckboxDefault,            "checkbox_default",           kDrawLayerBackground,   kDDNone},
+	{kDDCheckboxDisabled,           "checkbox_disabled",          kDrawLayerBackground,   kDDNone},
+	{kDDCheckboxSelected,           "checkbox_selected",          kDrawLayerForeground,  kDDCheckboxDefault},
+	{kDDCheckboxDisabledSelected,   "checkbox_disabled_selected", kDrawLayerForeground,  kDDCheckboxDisabled},
 
 	{kDDRadiobuttonDefault,         "radiobutton_default",      kDrawLayerBackground,   kDDNone},
 	{kDDRadiobuttonDisabled,        "radiobutton_disabled",     kDrawLayerBackground,   kDDNone},
@@ -919,7 +920,11 @@ void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect 
 		restoreBackground(dirty);
 
 	_vectorRenderer->setFgColor(_textColors[color]->r, _textColors[color]->g, _textColors[color]->b);
+#ifdef USE_TRANSLATION
+	_vectorRenderer->drawString(_texts[type]->_fontPtr, TransMan.convertBiDiString(text), area, alignH, alignV, deltax, ellipsis, dirty);
+#else
 	_vectorRenderer->drawString(_texts[type]->_fontPtr, text, area, alignH, alignV, deltax, ellipsis, dirty);
+#endif
 
 	addDirtyRect(dirty);
 }
@@ -994,7 +999,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 		dd = kDDCheckboxSelected;
 
 	if (state == kStateDisabled)
-		dd = kDDCheckboxDisabled;
+		dd = checked ? kDDCheckboxDisabledSelected : kDDCheckboxDisabled;
 
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
@@ -1337,7 +1342,7 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
  * Screen/overlay management
  *********************************************************/
 void ThemeEngine::copyBackBufferToScreen() {
-	memcpy(_screen.getPixels(), _backBuffer.getPixels(), _screen.pitch * _screen.h);
+	memcpy(_screen.getPixels(), _backBuffer.getPixels(), (size_t)(_screen.pitch * _screen.h));
 }
 
 void ThemeEngine::updateScreen() {
@@ -1713,7 +1718,9 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 		Common::FSNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
 			return false;
-		stream.open(headerfile);
+
+		if (!stream.open(headerfile))
+			return false;
 	}
 
 	if (stream.isOpen()) {

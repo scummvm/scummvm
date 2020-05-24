@@ -22,11 +22,14 @@
 
 #include "common/substream.h"
 #include "graphics/surface.h"
+#include "graphics/macgui/maceditabletext.h"
+#include "image/image_decoder.h"
 
 #include "director/director.h"
 #include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/score.h"
+#include "director/sound.h"
 #include "director/stxt.h"
 
 namespace Director {
@@ -34,12 +37,16 @@ namespace Director {
 Cast::Cast() {
 	_type = kCastTypeNull;
 	_surface = nullptr;
+	_widget = nullptr;
+
+	_img = nullptr;
 
 	_modified = true;
 }
 
 Cast::~Cast() {
-	delete _surface;
+	if (_img)
+		delete _img;
 }
 
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
@@ -119,6 +126,19 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		stream.readUint32();
 	}
 	_tag = castTag;
+}
+
+SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
+	_type = kCastSound;
+	_audio = nullptr;
+	_looping = 0;
+
+	if (version == 4) {
+		for (int i = 0; i < 0xe; i++) {
+			stream.readByte();
+		}
+		_looping = stream.readByte() & 0x10 ? 0 : 1;
+	}
 }
 
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor) {
@@ -236,9 +256,12 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 	}
 
 	_cachedMacText = new CachedMacText(this, _bgcolor, version, -1, g_director->_wm);
-	// TODO Destroy me
 
 	_modified = false;
+}
+
+TextCast::~TextCast() {
+	delete _cachedMacText;
 }
 
 void TextCast::importStxt(const Stxt *stxt) {
@@ -270,6 +293,18 @@ void TextCast::setText(const char *text) {
 	_ptext = _ftext = text;
 
 	_cachedMacText->forceDirty();
+
+	if (_widget) {
+		((Graphics::MacEditableText *)_widget)->clearText();
+		((Graphics::MacEditableText *)_widget)->appendTextDefault(_ftext);
+	}
+}
+
+Common::String TextCast::getText() {
+	if (_widget)
+		_ptext = ((Graphics::MacEditableText *)_widget)->getEditedString().encode();
+
+	return _ptext;
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
@@ -285,8 +320,9 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Score::readRect(stream);
 		_pattern = stream.readUint16BE();
-		_fgCol = (127 - stream.readByte()) & 0xff; // -128 -> 0, 127 -> 256
-		_bgCol = (127 - stream.readByte()) & 0xff;
+		// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
+		_fgCol = g_director->transformColor((128 + stream.readByte()) & 0xff);
+		_bgCol = g_director->transformColor((128 + stream.readByte()) & 0xff);
 		_fillType = stream.readByte();
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
@@ -297,8 +333,8 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Score::readRect(stream);
 		_pattern = stream.readUint16BE();
-		_fgCol = 0xff - (uint8)stream.readByte();
-		_bgCol = 0xff - (uint8)stream.readByte();
+		_fgCol = g_director->transformColor((uint8)stream.readByte());
+		_bgCol = g_director->transformColor((uint8)stream.readByte());
 		_fillType = stream.readByte();
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
@@ -330,7 +366,7 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 	_type = kCastButton;
 
 	if (version < 4) {
-		_buttonType = static_cast<ButtonType>(stream.readUint16BE());
+		_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 	} else {
 		stream.readByte();
 		stream.readByte();
@@ -402,6 +438,8 @@ void RTECast::loadChunks() {
 	buffer[rte1->size()] = '\n';
 	buffer[rte1->size() + 1] = '\0';
 	_loadedText->getVal(id)->importRTE(buffer);
+
+	delete rte1;
 #endif
 }
 

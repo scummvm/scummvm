@@ -23,6 +23,6 @@
 #ifndef CREATE_ULTIMA_H
 #define CREATE_ULTIMA_H
 
-extern void error(const char *s, ...);
+extern void error(const char *s);
 
 #endif

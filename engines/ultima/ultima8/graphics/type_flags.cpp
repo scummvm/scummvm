@@ -46,11 +46,11 @@ ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {
 	if (shapenum < _shapeInfo.size())
 		return &(_shapeInfo[shapenum]);
 	else
-		return 0;
+		return nullptr;
 }
 
 
-void TypeFlags::load(IDataSource *ds) {
+void TypeFlags::load(Common::SeekableReadStream *rs) {
 	// TODO: detect U8/crusader format somehow?!
 	// (Or probably pass it as parameter)
 	// The 'parsing' below is only for U8
@@ -60,7 +60,7 @@ void TypeFlags::load(IDataSource *ds) {
 		blocksize = 9;
 	}
 
-	uint32 size = ds->getSize();
+	uint32 size = rs->size();
 	uint32 count = size / blocksize;
 
 	_shapeInfo.clear();
@@ -68,7 +68,7 @@ void TypeFlags::load(IDataSource *ds) {
 
 	for (uint32 i = 0; i < count; ++i) {
 		uint8 data[9];
-		ds->read(data, blocksize);
+		rs->read(data, blocksize);
 
 		ShapeInfo si;
 		si._flags = 0;
@@ -136,6 +136,8 @@ void TypeFlags::load(IDataSource *ds) {
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
+			si._unknown = ((data[4] & 0xF0) << 24) & (data[5] << 16) & (data[7] << 8) & data[8];
+
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
 			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
 			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
@@ -145,12 +147,20 @@ void TypeFlags::load(IDataSource *ds) {
 			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRUSUNK66;
 			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRUSUNK67;
 
-			si._animType = 0;
+			// FIXME: this is not exactly right, but it is close and at
+			// least it animates the main items that need
+			// continuously animating
+			si._animType = (data[4] & 0xF0) >> 4;
+			if (si._animType == 4) {
+				// FIXME: Only one object (Shape 360, a small glowing
+				// reactor) has this type what should it do?
+				si._animType = 1;
+			}
 
 		}
 
-		si._weaponInfo = 0;
-		si._armourInfo = 0;
+		si._weaponInfo = nullptr;
+		si._armourInfo = nullptr;
 
 		_shapeInfo[i] = si;
 	}

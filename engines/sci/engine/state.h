@@ -136,6 +136,10 @@ public:
 	// see detection.cpp / SciEngine::loadGameState()
 	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
 
+	// see kmisc.cpp / kMacPlatform32
+	int _kq7MacSaveGameId; // the saved game id to use when saving (might not exist yet)
+	Common::String _kq7MacSaveGameDescription; // description to use when saving game
+
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
 	bool _cursorWorkaroundActive; // Refer to GfxCursor::setPosition()

@@ -35,6 +35,7 @@ class ShapeFont : public Font, public Shape {
 	int _baseLine;
 	int _vLead;
 	int _hLead;
+	bool _crusaderCharMap;
 
 public:
 	ShapeFont(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
@@ -60,6 +61,8 @@ public:
 		_hLead = hl;
 	}
 
+	int charToFrameNum(char c) const;
+
 	void getStringSize(const Std::string &text,
 		int32 &width, int32 &height) override;
 
@@ -67,8 +70,6 @@ public:
 		unsigned int &remaining, int32 width = 0, int32 height = 0,
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
 		Std::string::size_type cursor = Std::string::npos) override;
-
-	ENABLE_RUNTIME_CLASSTYPE()
 };
 
 } // End of namespace Ultima8

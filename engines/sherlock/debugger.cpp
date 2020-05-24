@@ -57,7 +57,7 @@ void Debugger::postEnter() {
 		_3doPlayMovieFile.clear();
 	}
 
-	_vm->pauseEngine(false);
+	GUI::Debugger::postEnter();
 }
 
 int Debugger::strToInt(const char *s) {

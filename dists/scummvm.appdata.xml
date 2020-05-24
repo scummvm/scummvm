@@ -4,18 +4,24 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <name>ScummVM</name>
-  <summary>Interpreter for several adventure games</summary>
+  <summary>Interpreter for numerous adventure games and role-playing games</summary>
   <description>
     <p>
-      ScummVM is an interpreter that will play graphic adventure games written
-      for LucasArts' SCUMM virtual machine (such as Day of the Tentacle and
-      Monkey Island), Sierra's AGI adventures (such as early King's Quest and
-      Space Quest games), Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files,
-      Revolution Software's Beneath a Steel Sky and Broken Sword 1, 2 and 2.5,
-      Interactive Binary Illusions' Flight of the Amazon Queen,
-      Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth, Westwood's
-      Legend of Kyrandia, and various others.
-    </p>
+      ScummVM is a program which allows you to run a wide variety of classic
+      graphical point-and-click adventure games and role-playing games,
+      provided you already have their data files.
+
+      The clever part about this: ScummVM just replaces the executables shipped with the game,
+      allowing you to play them on systems for which they were never designed!
+
+      Currently, ScummVM supports a huge library of adventures with over 250 games in total.
+      It supports many classics published by legendary studios like LucasArts, Sierra On-Line,
+      Revolution Software, Cyan, Inc. and Westwood Studios.
+
+      Next to ground-breaking titles like the Monkey Island series, Broken Sword,
+      Myst, Blade Runner and countless other games you will find
+      some really obscure adventures and truly hidden gems to explore.
+    </p
   </description>
   <screenshots>
     <screenshot type="default">

@@ -22,7 +22,7 @@
 
 /*
  * This code is based on original Soltys source code
- * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
+ * Copyright (c) 1994-1995 Janusz B. Wisniewski and L.K. Avalon
  */
 
 #ifndef CGE_TEXT_H

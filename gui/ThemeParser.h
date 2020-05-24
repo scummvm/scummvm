@@ -185,7 +185,6 @@ protected:
 				XML_PROP(overlays, true)
 				XML_PROP(size, false)
 				XML_PROP(shading, false)
-				XML_PROP(enabled, false)
 				XML_PROP(resolution, false)
 				XML_PROP(inset, false)
 				XML_KEY(layout)
@@ -203,7 +202,6 @@ protected:
 						XML_PROP(width, false)
 						XML_PROP(height, false)
 						XML_PROP(type, false)
-						XML_PROP(enabled, false)
 						XML_PROP(textalign, false)
 					KEY_END()
 

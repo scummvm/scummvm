@@ -32,6 +32,9 @@ namespace Ultima8 {
 class Shape;
 class Container;
 
+/**
+ * Base gump class for all containers (backpack, barrel, etc)
+ */
 class ContainerGump : public ItemRelativeGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -69,13 +72,13 @@ public:
 	void StopDraggingItem(Item *item, bool moved) override;
 	void DropItem(Item *item, int mx, int my) override;
 
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
-	void OnMouseClick(int button, int32 mx, int32 my) override;
-	void OnMouseDouble(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
+	void onMouseClick(int button, int32 mx, int32 my) override;
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 	void GetItemLocation(int32 lerp_factor) override;
 

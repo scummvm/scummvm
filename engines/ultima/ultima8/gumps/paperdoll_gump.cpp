@@ -37,13 +37,11 @@
 #include "ultima/ultima8/gumps/mini_stats_gump.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump, ContainerGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump)
 
 
 
@@ -102,7 +100,6 @@ PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
 PaperdollGump::~PaperdollGump() {
 	for (int i = 0; i < 14; ++i) { // ! constant
 		delete _cachedText[i];
-		_cachedText[i] = 0;
 	}
 }
 
@@ -232,7 +229,8 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 	Actor *a = getActor(_owner);
 
-	if (!a) return 0; // Container gone!?
+	if (!a)
+		return 0; // Container gone!?
 
 	for (int i = 1; i <= 6; ++i) {
 		Item *item = getItem(a->getEquip(i));
@@ -243,9 +241,9 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 		itemy = equipcoords[i].y;
 		itemx += _itemArea.x;
 		itemy += _itemArea.y;
-		Shape *s = item->getShapeObject();
+		const Shape *s = item->getShapeObject();
 		assert(s);
-		ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
+		const ShapeFrame *frame = s->getFrame(item->getFrame() + 1);
 
 		if (frame->hasPoint(mx - itemx, my - itemy)) {
 			// found it
@@ -268,9 +266,11 @@ bool PaperdollGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                       int32 lerp_factor) {
 
 	Item *item = getItem(itemid);
-	Item *parent_ = item->getParentAsContainer();
-	if (!parent_) return false;
-	if (parent_->getObjId() != _owner) return false;
+	if (!item)
+		return false; // item gone - shouldn't happen?
+	Item *parent = item->getParentAsContainer();
+	if (!parent || parent->getObjId() != _owner)
+		return false;
 
 	//!!! need to use lerp_factor
 
@@ -298,9 +298,9 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	bool ret = ContainerGump::StartDraggingItem(item, mx, my);
 
 	// set dragging offset to center of item
-	Shape *s = item->getShapeObject();
+	const Shape *s = item->getShapeObject();
 	assert(s);
-	ShapeFrame *frame = s->getFrame(item->getFrame());
+	const ShapeFrame *frame = s->getFrame(item->getFrame());
 	assert(frame);
 
 	Mouse::get_instance()->setDraggingOffset(frame->_width / 2 - frame->_xoff,
@@ -346,8 +346,7 @@ bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 		_draggingY = equipcoords[equiptype].y;
 	} else {
 		// drop in backpack
-
-		if (!backpack->CanAddItem(item, true)) {
+		if (backpack && !backpack->CanAddItem(item, true)) {
 			_displayDragging = false;
 			return false;
 		}
@@ -386,7 +385,7 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 	        message == ButtonWidget::BUTTON_CLICK) {
 		// check if there already is an open MiniStatsGump
 		Gump *desktop = Ultima8Engine::get_instance()->getDesktopGump();
-		Gump *statsgump = desktop->FindGump(MiniStatsGump::ClassType);
+		Gump *statsgump = desktop->FindGump<MiniStatsGump>();
 
 		if (!statsgump) {
 			Gump *gump = new MiniStatsGump(0, 0);
@@ -410,16 +409,16 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 }
 
 
-void PaperdollGump::saveData(ODataSource *ods) {
-	ContainerGump::saveData(ods);
+void PaperdollGump::saveData(Common::WriteStream *ws) {
+	ContainerGump::saveData(ws);
 
-	ods->write2(_statButtonId);
+	ws->writeUint16LE(_statButtonId);
 }
 
-bool PaperdollGump::loadData(IDataSource *ids, uint32 version) {
-	if (!ContainerGump::loadData(ids, version)) return false;
+bool PaperdollGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ContainerGump::loadData(rs, version)) return false;
 
-	_statButtonId = ids->read2();
+	_statButtonId = rs->readUint16LE();
 
 	return true;
 }

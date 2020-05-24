@@ -150,9 +150,6 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev,
 			_dragging = true;
 			event.type = Common::EVENT_LBUTTONDOWN;
 			processMouseEvent(event, _curX, _curY);
-			// update KbdMouse
-			_km.x = _curX * MULTIPLIER;
-			_km.y = _curY * MULTIPLIER;
 		}
 		// If we're not in trackpad mode, move the cursor to the tap
 		if (!_trackpadMode) {
@@ -161,17 +158,11 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev,
 			// If we're already clicking, hold it until after the move.
 			if (event.type == Common::EVENT_LBUTTONDOWN) {
 				processMouseEvent(event, _curX, _curY);
-				// update KbdMouse
-				_km.x = _curX * MULTIPLIER;
-				_km.y = _curY * MULTIPLIER;
 				g_system->getEventManager()->pushEvent(event);
 			}
 			// Move the mouse
 			event.type = Common::EVENT_MOUSEMOVE;
 			processMouseEvent(event, _curX, _curY);
-			// update KbdMouse
-			_km.x = _curX * MULTIPLIER;
-			_km.y = _curY * MULTIPLIER;
 		}
 		// Watch for a double-tap-triggered drag
 		_dragStartTime = g_system->getMillis();
@@ -200,9 +191,6 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 		if (ev.button.which == 0 && _dragging) {
 			event.type = Common::EVENT_LBUTTONUP;
 			processMouseEvent(event, _curX, _curY);
-			// update KbdMouse
-			_km.x = _curX * MULTIPLIER;
-			_km.y = _curY * MULTIPLIER;
 			_dragging = false;
 		} else {
 			// If it was the first finger and the click hasn't been
@@ -211,9 +199,6 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 					!_fingerDown[1] && !_fingerDown[2]) {
 				event.type = Common::EVENT_LBUTTONUP;
 				processMouseEvent(event, _curX, _curY);
-				// update KbdMouse
-				_km.x = _curX * MULTIPLIER;
-				_km.y = _curY * MULTIPLIER;
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_LBUTTONDOWN;
 				if (_queuedDragTime > 0)
@@ -224,9 +209,6 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 				// right mouse click.
 				event.type = Common::EVENT_RBUTTONDOWN;
 				processMouseEvent(event, _curX, _curY);
-				// update KbdMouse
-				_km.x = _curX * MULTIPLIER;
-				_km.y = _curY * MULTIPLIER;
 				_queuedRUpTime = g_system->getMillis() + QUEUED_RUP_DELAY;
 			} else if (ev.button.which == 2 &&
 					_fingerDown[0] && _fingerDown[1]) {
@@ -235,9 +217,6 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 				// as a right click.
 				event.type = Common::EVENT_MBUTTONUP;
 				processMouseEvent(event, _curX, _curY);
-				// update KbdMouse
-				_km.x = _curX * MULTIPLIER;
-				_km.y = _curY * MULTIPLIER;
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_MBUTTONDOWN;
 				_fingerDown[1] = false;
@@ -284,9 +263,6 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev,
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
 				processMouseEvent(event, _curX, _curY);
-				// update KbdMouse
-				_km.x = _curX * MULTIPLIER;
-				_km.y = _curY * MULTIPLIER;
 			}
 			break;
 		case 1:
@@ -431,18 +407,12 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 	} else if (_queuedRUpTime != 0 && curTime >= _queuedRUpTime) {
 		event.type = Common::EVENT_RBUTTONUP;
 		processMouseEvent(event, _curX, _curY);
-		// update KbdMouse
-		_km.x = _curX * MULTIPLIER;
-		_km.y = _curY * MULTIPLIER;
 		_queuedRUpTime = 0;
 		return true;
 	} else if (_queuedDragTime != 0 && curTime >= _queuedDragTime) {
 		event.type = Common::EVENT_LBUTTONDOWN;
 		_dragging = true;
 		processMouseEvent(event, _curX, _curY);
-		// update KbdMouse
-		_km.x = _curX * MULTIPLIER;
-		_km.y = _curY * MULTIPLIER;
 		_queuedDragTime = 0;
 		return true;
 	}

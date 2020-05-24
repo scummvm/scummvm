@@ -64,7 +64,7 @@ protected:
 
 	void updateListing();
 	void goUp();
-	void listDirectory(Cloud::StorageFile node);
+	void listDirectory(const Cloud::StorageFile &node);
 	void directoryListedCallback(Cloud::Storage::ListDirectoryResponse response);
 	void directoryListedErrorCallback(Networking::ErrorResponse error);
 

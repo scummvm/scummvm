@@ -37,14 +37,12 @@
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(GrantPeaceProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(GrantPeaceProcess)
 
 GrantPeaceProcess::GrantPeaceProcess() : Process(), _haveTarget(false) {
 }
@@ -151,9 +149,9 @@ void GrantPeaceProcess::run() {
 	} else {
 		// not undead
 
-		if (!(target->getActorFlags() & (Actor::ACT_DEAD |
-		                                 Actor::ACT_IMMORTAL |
-		                                 Actor::ACT_INVINCIBLE))) {
+		if (!target->hasActorFlags(Actor::ACT_DEAD |
+								   Actor::ACT_IMMORTAL |
+								   Actor::ACT_INVINCIBLE)) {
 			if (getRandom() % 10 == 0) {
 				target->receiveHit(_itemNum, 8, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
@@ -218,17 +216,17 @@ uint32 GrantPeaceProcess::I_castGrantPeace(const uint8 *args,
 	return 0;
 }
 
-void GrantPeaceProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void GrantPeaceProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
 	uint8 ht = _haveTarget ? 1 : 0;
-	ods->write1(ht);
+	ws->writeByte(ht);
 }
 
-bool GrantPeaceProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool GrantPeaceProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_haveTarget = (ids->read1() != 0);
+	_haveTarget = (rs->readByte() != 0);
 
 	return true;
 }

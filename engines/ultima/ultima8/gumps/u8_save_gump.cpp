@@ -35,8 +35,6 @@
 #include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "common/savefile.h"
 #include "common/translation.h"
 
@@ -45,7 +43,7 @@ namespace Ultima8 {
 
 static const int entryfont = 4;
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveGump)
 
 U8SaveGump::U8SaveGump(bool saveMode, int page)
 	: Gump(0, 0, 5, 5), _save(saveMode), _page(page) {
@@ -67,9 +65,8 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 	FrameID entry_id(GameData::GUMPS, 46, 0);
 	entry_id = _TL_SHP_(entry_id);
 
-	Shape *entryShape;
-	entryShape = GameData::get_instance()->getShape(entry_id);
-	ShapeFrame *sf = entryShape->getFrame(entry_id._frameNum);
+	const Shape *entryShape = GameData::get_instance()->getShape(entry_id);
+	const ShapeFrame *sf = entryShape->getFrame(entry_id._frameNum);
 	int entrywidth = sf->_width;
 	int entryheight = sf->_height;
 
@@ -169,13 +166,13 @@ void U8SaveGump::OnFocus(bool gain) {
 	}
 }
 
-Gump *U8SaveGump::OnMouseDown(int button, int32 mx, int32 my) {
+Gump *U8SaveGump::onMouseDown(int button, int32 mx, int32 my) {
 	// take all clicks
 	return this;
 }
 
 
-void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
+void U8SaveGump::onMouseClick(int button, int32 mx, int32 my) {
 	if (button != Shared::BUTTON_LEFT) return;
 
 	ParentToGump(mx, my);
@@ -203,7 +200,7 @@ void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
 
 	if (_save && !_focusChild && _editWidgets[i]) {
 		_editWidgets[i]->MakeFocus();
-		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
+		PagedGump *p = dynamic_cast<PagedGump *>(_parent);
 		if (p) p->enableButtons(false);
 	}
 
@@ -225,12 +222,10 @@ void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
 }
 
 void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
-	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ENTER) {
+	EditWidget *widget = dynamic_cast<EditWidget *>(child);
+	if (widget && message == EditWidget::EDIT_ENTER) {
 		// _save
 		assert(_save);
-
-		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
-		assert(widget);
 
 		Std::string name = widget->getText();
 		if (name.empty()) return;
@@ -241,7 +236,7 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		return;
 	}
 
-	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ESCAPE) {
+	if (widget && message == EditWidget::EDIT_ESCAPE) {
 		// cancel edit
 		assert(_save);
 
@@ -249,11 +244,9 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		if (_focusChild) _focusChild->OnFocus(false);
 		_focusChild = 0;
 
-		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
+		PagedGump *p = dynamic_cast<PagedGump *>(_parent);
 		if (p) p->enableButtons(true);
 
-		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
-		assert(widget);
 		widget->setText(_descriptions[widget->GetIndex() - 1]);
 
 		return;
@@ -296,7 +289,7 @@ void U8SaveGump::loadDescriptions() {
 		if (!saveFile)
 			continue;
 
-		SavegameReader *sg = new SavegameReader(saveFile, true);
+		const SavegameReader *sg = new SavegameReader(saveFile, true);
 		SavegameReader::State state = sg->isValid();
 		_descriptions[i] = "";
 
@@ -325,19 +318,18 @@ void U8SaveGump::loadDescriptions() {
 //static
 Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 	if (save) {
-		// can't _save if game over
+		// can't save if game over
 		// FIXME: this check should probably be in Game or GUIApp
-		MainActor *av = getMainActor();
-		if (!av || (av->getActorFlags() & Actor::ACT_DEAD)) return 0;
+		const MainActor *av = getMainActor();
+		if (!av || av->hasActorFlags(Actor::ACT_DEAD))
+			return nullptr;
 	}
 
 	PagedGump *gump = new PagedGump(34, -38, 3, 35);
 	gump->InitGump(parent);
 
-	U8SaveGump *s;
-
 	for (int page = 0; page < 16; ++page) {
-		s = new U8SaveGump(save, page);
+		U8SaveGump *s = new U8SaveGump(save, page);
 		s->InitGump(gump, false);
 		gump->addPage(s);
 	}

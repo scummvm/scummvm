@@ -407,9 +407,11 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 				_vm->_cursor->_sequenceID = 0;
 				_vm->_cursor->_iniItemInHand = 0;
 			} else {
-				if (_vm->_inventory->clearItem(ini->id + 1)) {
+				if (_vm->_inventory->hasItem(ini->id + 1)) {
+					Actor *actor = _vm->_inventory->getInventoryItemActor(ini->id + 1);
+					_vm->_inventory->clearItem(ini->id + 1);
 					if (_vm->_inventory->getState() == InventoryOpen) {
-						ini->actor->clearFlag(ACTOR_FLAG_40);
+						actor->clearFlag(ACTOR_FLAG_40);
 					}
 				}
 			}
@@ -459,7 +461,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 		ini->actor->_flags |= ACTOR_FLAG_2000;
 	}
 
-	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != ini->actorResourceId) {
+	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != (uint32)ini->actorResourceId) {
 		ini->actor->_actorResource = _vm->_actorManager->getActorResource(ini->actorResourceId);
 	}
 
@@ -475,10 +477,10 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opPlayMusic(ScriptOpCall &scriptOpCall) {
-	//byte *code = scriptOpCall._code;
-	scriptOpCall._code += 4;
+	ARG_SKIP(2);
+	ARG_INT16(songNumber);
 	if (scriptOpCall._field8 == 0) {
-		//TODO play music here.
+		_vm->_sound->playMusic(songNumber);
 	}
 }
 
@@ -532,7 +534,7 @@ void ScriptOpcodes::opPreLoadSceneData(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(sceneId);
 
-	_vm->_sound->PauseCDMusic();
+	_vm->_sound->resumeMusic();
 	_vm->_isLoadingDialogAudio = true;
 
 	if (sceneId >= 2) {
@@ -545,7 +547,7 @@ void ScriptOpcodes::opPauseCurrentSpeechAndFetchNextDialog(ScriptOpCall &scriptO
 	ARG_UINT32(textIndex);
 
 	if (scriptOpCall._field8 == 0) {
-		_vm->_sound->PauseCDMusic();
+		_vm->_sound->resumeMusic();
 		//The original starts seeking the CD-ROM here for the `textIndex` dialog but we don't need to do that.
 	}
 }
@@ -903,12 +905,11 @@ void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 		return;
 	}
 
-	//TODO fade_related_calls_with_1f();
-	_vm->setSceneUpdateFunction(NULL);
-	_vm->_sound->PauseCDMusic();
+	_vm->fadeToBlack();
+	_vm->clearSceneUpdateFunction();
+	_vm->_sound->resumeMusic();
 
 	if (newSceneID != 0) {
-		// load scene here.
 		_vm->_scene->_mapTransitionEffectSceneID = _vm->_scene->getSceneId();
 		_vm->_scene->setSceneId(newSceneID);
 		_vm->_flickerInitialSceneDirection = flickerDirection;
@@ -1052,7 +1053,7 @@ void ScriptOpcodes::setVariable(ScriptOpCall &scriptOpCall) {
 					s2 -= s1;
 				} else {
 					if (fieldB == 3) {
-						s2 = _vm->getRand(s1);
+						s2 = _vm->getRand(MAX<int16>(1, s1));
 					}
 				}
 			}
@@ -1214,7 +1215,7 @@ void ScriptOpcodes::opShowActor(ScriptOpCall &scriptOpCall) {
 	}
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
-	ini->actor->setFlag(ACTOR_FLAG_400);
+	ini->actor->clearFlag(ACTOR_FLAG_400);
 }
 
 void ScriptOpcodes::opHideActor(ScriptOpCall &scriptOpCall) {

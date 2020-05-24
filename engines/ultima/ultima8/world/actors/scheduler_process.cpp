@@ -27,14 +27,11 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(SchedulerProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(SchedulerProcess)
 
 SchedulerProcess::SchedulerProcess() : Process() {
 	_lastRun = 0;
@@ -80,18 +77,18 @@ void SchedulerProcess::run() {
 	}
 }
 
-void SchedulerProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void SchedulerProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->write4(_lastRun);
-	ods->write2(_nextActor);
+	ws->writeUint32LE(_lastRun);
+	ws->writeUint16LE(_nextActor);
 }
 
-bool SchedulerProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool SchedulerProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_lastRun = ids->read4();
-	_nextActor = ids->read2();
+	_lastRun = rs->readUint32LE();
+	_nextActor = rs->readUint16LE();
 
 	return true;
 }

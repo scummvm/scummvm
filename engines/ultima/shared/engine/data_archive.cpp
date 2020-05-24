@@ -21,6 +21,7 @@
  */
 
 #include "ultima/shared/engine/data_archive.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/unzip.h"
@@ -54,18 +55,32 @@ public:
 	}
 };
 
+/*-------------------------------------------------------------------*/
 
-UltimaDataArchive *UltimaDataArchive::load(const Common::String &subfolder,
+bool UltimaDataArchive::load(const Common::String &subfolder,
 		int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg) {
 	Common::Archive *dataArchive = nullptr;
 	Common::File f;
 
-	if (!Common::File::exists(DATA_FILENAME) ||
-		(dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
-		!f.open(Common::String::format("%s/version.txt", subfolder.c_str()), *dataArchive)) {
-		delete dataArchive;
-		errorMsg = Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME);
-		return nullptr;
+#ifndef RELEASE_BUILD
+	Common::FSNode folder;
+	if (ConfMan.hasKey("extrapath")) {
+		if ((folder = Common::FSNode(ConfMan.get("extrapath"))).exists()
+				&& (folder = folder.getChild("files")).exists()
+				&& (folder = folder.getChild(subfolder)).exists()) {
+			f.open(folder.getChild("version.txt"));
+		}
+	}
+
+#endif
+	if (!f.isOpen()) {
+		if (!Common::File::exists(DATA_FILENAME) ||
+			(dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
+			!f.open(Common::String::format("%s/version.txt", subfolder.c_str()), *dataArchive)) {
+			delete dataArchive;
+			errorMsg = Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME);
+			return false;
+		}
 	}
 
 	// Validate the version
@@ -83,12 +98,23 @@ UltimaDataArchive *UltimaDataArchive::load(const Common::String &subfolder,
 		delete dataArchive;
 		errorMsg = Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
 			reqMajorVersion, reqMinorVersion, major, minor);
-		return nullptr;
+		return false;
 	}
 
 	// It was all validated correctly
-	return new UltimaDataArchive(dataArchive, subfolder);
+	Common::Archive *archive;
+#ifndef RELEASE_BUILD
+	if (!dataArchive)
+		archive = new UltimaDataArchiveProxy(folder);
+	else
+#endif
+		archive = new UltimaDataArchive(dataArchive, subfolder);
+
+	SearchMan.add("data", archive);
+	return true;
 }
+
+/*-------------------------------------------------------------------*/
 
 bool UltimaDataArchive::hasFile(const Common::String &name) const {
 	if (!name.hasPrefixIgnoreCase(_publicFolder))
@@ -148,6 +174,45 @@ Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const C
 
 	return nullptr;
 }
+
+/*-------------------------------------------------------------------*/
+
+#ifndef RELEASE_BUILD
+
+const Common::ArchiveMemberPtr UltimaDataArchiveProxy::getMember(const Common::String &name) const {
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+Common::SeekableReadStream *UltimaDataArchiveProxy::createReadStreamForMember(const Common::String &name) const {
+	if (hasFile(name))
+		return getNode(name).createReadStream();
+
+	return nullptr;
+}
+
+Common::FSNode UltimaDataArchiveProxy::getNode(const Common::String &name) const {
+	Common::String remainingName = name.substr(_publicFolder.size());
+	Common::FSNode node = _folder;
+	size_t pos;
+	
+	while ((pos = remainingName.findFirstOf('/')) != Common::String::npos) {
+		node = node.getChild(remainingName.substr(0, pos));
+		if (!node.exists())
+			return node;
+
+		remainingName = remainingName.substr(pos + 1);
+	}
+
+	if (!remainingName.empty())
+		node = node.getChild(remainingName);
+
+	return node;	
+}
+
+#endif
 
 } // End of namespace Shared
 } // End of namespace Ultima

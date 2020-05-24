@@ -992,12 +992,12 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 }
 
 void AGOSEngine::pause() {
-	pauseEngine(true);
+	PauseToken pt = pauseEngine();
 
 	while (_pause && !shouldQuit()) {
 		delay(1);
 		if (_keyPressed.keycode == Common::KEYCODE_PAUSE) {
-			pauseEngine(false);
+			pt.clear();
 			_keyPressed.reset();
 		}
 	}

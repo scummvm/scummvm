@@ -520,7 +520,7 @@ void interpret(CONTEXT, Aaddr adr) {
 			case I_DUPSTR:
 				if (traceInstructionOption)
 					printf("DUPSTR\t\t\t\t\t\t");
-				push(stack, toAptr(strdup((char *)fromAptr(top(stack)))));
+				push(stack, toAptr(scumm_strdup((char *)fromAptr(top(stack)))));
 				break;
 
 			case I_POP: {

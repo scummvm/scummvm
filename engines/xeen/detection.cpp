@@ -154,7 +154,7 @@ bool XeenMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Xeen::XeenEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

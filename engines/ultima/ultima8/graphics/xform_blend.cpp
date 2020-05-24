@@ -46,6 +46,26 @@ const uint8 U8XFormPal[1024] = {
 	0,  0,  0,  0
 };
 
+// TODO: Only eyeballed these, should try and make it more exact to original.
+const uint8 CruXFormPal[1024] = {
+	0,  0,  0,  0,
+	0,  0,  0,  0,
+	0,  0,  0,  0,
+	0,  0,  0,  0,
+	0,  0,  0,  0,
+	0,  0,  0,  0,
+	0,  0,  0,  0,
+	0,  0,  0,  0,
+	48, 48, 48, 80, // (green->dark grey)
+	24, 24, 24, 80, // (black->vdark grey)
+	64, 64, 24, 64, // (yellow)
+	80, 80, 80, 80,
+	48, 48, 48, 140, // (*->grey)
+	24, 24, 24, 140, // (*->dark grey) 13
+	10, 10, 10, 140, // (*->vdark grey) 14
+	0,  0,  0,  0
+};
+
 #if 0
 //
 // XFORM Blend Funcs

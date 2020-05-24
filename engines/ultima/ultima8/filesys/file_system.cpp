@@ -33,7 +33,7 @@ namespace Ultima8 {
 
 using Std::string;
 
-FileSystem *FileSystem::_fileSystem = 0;
+FileSystem *FileSystem::_fileSystem = nullptr;
 
 FileSystem::FileSystem(bool noforced)
 	: _noForcedVPaths(noforced), _allowDataOverride(true) {
@@ -46,36 +46,37 @@ FileSystem::FileSystem(bool noforced)
 FileSystem::~FileSystem() {
 	debugN(MM_INFO, "Destroying FileSystem...\n");
 
-	_fileSystem = 0;
+	_fileSystem = nullptr;
 }
 
 
 // Open a streaming file as readable. Streamed (0 on failure)
 IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
-	string filename = vfn;
-
 	IDataSource *data = checkBuiltinData(vfn, is_text);
 
 	// allow data-override?
 	if (!_allowDataOverride && data)
 		return data;
 
+	if (data)
+		delete data;
+
 	Common::SeekableReadStream *readStream;
-	if (!rawOpen(readStream, filename))
-		return 0;
+	if (!rawOpen(readStream, vfn))
+		return nullptr;
 
 	return new IFileDataSource(readStream);
 }
 
 // Open a streaming file as writeable. Streamed (0 on failure)
-ODataSource *FileSystem::WriteFile(const string &vfn, bool is_text) {
+Common::WriteStream *FileSystem::WriteFile(const string &vfn, bool is_text) {
 	string filename = vfn;
 	Common::WriteStream *writeStream;
 
 	if (!rawOpen(writeStream, filename))
-		return 0;
+		return nullptr;
 
-	return new OFileDataSource(writeStream);
+	return writeStream;
 }
 
 bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
@@ -86,8 +87,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 	if (name.hasPrefix("@data/")) {
 		// It's a file specifically from the ultima.dat file
 		f = new Common::File();
-		if (f->open(Common::String::format("data/%s", name.substr(6).c_str()),
-			*Ultima8Engine::get_instance()->getDataArchive())) {
+		if (f->open(Common::String::format("data/%s", name.substr(6).c_str()))) {
 			in = f;
 			return true;
 		}
@@ -102,7 +102,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
 
 		in = g_system->getSavefileManager()->openForLoading(saveFilename);
-		return in != 0;
+		return in != nullptr;
 	}
 
 	if (!rewrite_virtual_path(name))
@@ -134,7 +134,7 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveStateName(slotNumber);
 
 		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
-		return out != 0;
+		return out != nullptr;
 	} else {
 		return false;
 	}
@@ -257,22 +257,22 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 
 IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) {
 	// Is it a Memory file?
-	Std::map<Common::String, MemoryFile *>::iterator mf = _memoryFiles.find(vfn);
+	Std::map<Common::String, MemoryFile *>::const_iterator mf = _memoryFiles.find(vfn);
 
 	if (mf != _memoryFiles.end())
 		return new IBufferDataSource(mf->_value->_data,
 		                             mf->_value->_len, is_text);
 
-	return 0;
+	return nullptr;
 }
 
-bool FileSystem::rewrite_virtual_path(string &vfn) {
+bool FileSystem::rewrite_virtual_path(string &vfn) const {
 	bool ret = false;
 	string::size_type pos = vfn.size();
 
 	while ((pos = vfn.rfind('/', pos)) != Std::string::npos) {
 //		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << Std::endl;
-		Std::map<Common::String, string>::iterator p = _virtualPaths.find(
+		Std::map<Common::String, string>::const_iterator p = _virtualPaths.find(
 		            vfn.substr(0, pos));
 
 		if (p != _virtualPaths.end()) {
@@ -306,15 +306,6 @@ bool FileSystem::IsDir(const string &path) {
 bool FileSystem::MkDir(const string &path) {
 	Common::FSNode newDir(path);
 	return newDir.createDirectory();
-}
-
-/*
- *  Get the current users pentagram home path
- */
-
-Std::string FileSystem::getHomePath() {
-	Common::FSNode gameDir = Ultima8Engine::get_instance()->getGameDirectory();
-	return gameDir.getPath();
 }
 
 } // End of namespace Ultima8

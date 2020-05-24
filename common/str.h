@@ -156,6 +156,8 @@ public:
 	bool equalsIgnoreCase(const char *x) const;
 	int compareTo(const char *x) const;             // strcmp clone
 	int compareToIgnoreCase(const char *x) const;   // stricmp clone
+	int compareDictionary(const String &x) const;
+	int compareDictionary(const char *x) const;
 
 	bool hasSuffix(const String &x) const;
 	bool hasSuffix(const char *x) const;
@@ -340,7 +342,7 @@ public:
 	size_t findLastOf(const String &chars, size_t pos = npos) const {
 		return findLastOf(chars.c_str(), pos);
 	}
- 
+
 	/** Find first character in the string that's not the specified character */
 	size_t findFirstNotOf(char c, size_t pos = 0) const;
 
@@ -562,5 +564,8 @@ String toPrintable(const String &src, bool keepNewLines = true);
 extern int scumm_stricmp(const char *s1, const char *s2);
 extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
 extern char *scumm_strdup(const char *in);
+
+extern int scumm_compareDictionary(const char *s1, const char *s2);
+extern const char *scumm_skipArticle(const char *s1);
 
 #endif

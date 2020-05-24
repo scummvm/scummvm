@@ -92,6 +92,17 @@ MODULE_OBJS := \
 	base/saveload.o \
 	base/save_thumb_helper.o \
 	base/timer.o \
+	ext/dll_dlltest.o \
+	ext/dll_geturl.o \
+	ext/dll_httpconnect.o \
+	ext/dll_img.o \
+	ext/dll_installutil.o \
+	ext/dll_kernel32.o \
+	ext/dll_shell32.o \
+	ext/dll_tools.o \
+	ext/wme_3fstatistics.o \
+	ext/wme_galaxy.o \
+	ext/wme_steam.o \
 	debugger/breakpoint.o \
 	debugger/debugger_controller.o \
 	debugger/error.o \

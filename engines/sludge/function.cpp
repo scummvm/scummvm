@@ -763,8 +763,11 @@ LoadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 	buildFunc->calledBy = NULL;
 	if (stream->readByte()) {
 		buildFunc->calledBy = loadFunction(stream);
-		if (!buildFunc->calledBy)
+		if (!buildFunc->calledBy) {
+			delete buildFunc;
+
 			return NULL;
+		}
 	}
 
 	buildFunc->timeLeft = stream->readUint32LE();

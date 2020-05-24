@@ -423,7 +423,10 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 
 	_res->createResource(rtBuffer, slot + 1, size);
 	vs->setPixels(getResourceAddress(rtBuffer, slot + 1));
-	memset(vs->getBasePtr(0, 0), 0, size);	// reset background
+	if (_game.platform == Common::kPlatformNES)
+		memset(vs->getBasePtr(0, 0), 0x1d, size);	// reset background (MM NES)
+	else
+		memset(vs->getBasePtr(0, 0), 0, size);		// reset background
 
 	if (twobufs) {
 		vs->backBuf = _res->createResource(rtBuffer, slot + 5, size);
@@ -636,6 +639,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	int pitch = vs->pitch;
 	vsPitch = vs->pitch - width * vs->format.bytesPerPixel;
 
+	// In MM NES If we're repainting the entire screen, just make everything black
+	if ((_game.platform == Common::kPlatformNES) && width == 256 && height == 240) {
+		byte blackbuf[256 * 240];
+		memset(blackbuf, 0x1d, 256 * 240);
+		_system->copyRectToScreen(blackbuf, pitch, x, y, width, height);
+		return;
+	}
 
 	if (_game.version < 7) {
 		// For The Dig, FT and COMI, we just blit everything to the screen at once.
@@ -1036,6 +1046,11 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 			backColor = _roomPalette[backColor];
 	}
 
+	// MM NES background color is 0x1d
+	if (_game.platform == Common::kPlatformNES) {
+		backColor = 0x1d;
+	}
+
 	// Convert 'rect' to local (virtual screen) coordinates
 	rect.top -= vs->topline;
 	rect.bottom -= vs->topline;
@@ -1116,7 +1131,10 @@ void ScummEngine::restoreCharsetBg() {
 			}
 		} else {
 			// Clear area
-			memset(screenBuf, 0, vs->h * vs->pitch);
+			if (_game.platform == Common::kPlatformNES)
+				memset(screenBuf, 0x1d, vs->h * vs->pitch);
+			else
+				memset(screenBuf, 0, vs->h * vs->pitch);
 		}
 
 		if (vs->hasTwoBuffers) {
@@ -1227,11 +1245,15 @@ static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth) {
 #if defined(SCUMM_NEED_ALIGNMENT)
 		memset(dst, 0, 8 * bitDepth);
 #else
-		((uint32 *)dst)[0] = 0;
-		((uint32 *)dst)[1] = 0;
-		if (bitDepth == 2) {
-			((uint32 *)dst)[2] = 0;
-			((uint32 *)dst)[3] = 0;
+		if (g_scumm->_game.platform == Common::kPlatformNES) {
+			memset(dst, 0x1d, 8);
+		} else {
+			((uint32*)dst)[0] = 0;
+			((uint32*)dst)[1] = 0;
+			if (bitDepth == 2) {
+				((uint32*)dst)[2] = 0;
+				((uint32*)dst)[3] = 0;
+			}
 		}
 #endif
 		dst += dstPitch;
@@ -1404,6 +1426,11 @@ void ScummEngine_v5::clearFlashlight() {
 void ScummEngine_v5::drawFlashlight() {
 	int i, j, x, y;
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	byte backgroundColor = 0;
+
+	// NES uses 0x1d for black
+	if (g_scumm->_game.platform == Common::kPlatformNES)
+		backgroundColor = 0x1d;
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlight.isDrawn) {
@@ -1411,7 +1438,7 @@ void ScummEngine_v5::drawFlashlight() {
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 
 		if (_flashlight.buffer) {
-			fill(_flashlight.buffer, vs->pitch, 0, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
+			fill(_flashlight.buffer, vs->pitch, backgroundColor, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 		}
 		_flashlight.isDrawn = false;
 	}
@@ -1460,9 +1487,8 @@ void ScummEngine_v5::drawFlashlight() {
 
 	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 
-	// C64 does not round the flashlight
-	if (_game.platform != Common::kPlatformC64) {
-
+	// C64 & NES does not round the flashlight
+	if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformNES) {
 		// Round the corners. To do so, we simply hard-code a set of nicely
 		// rounded corners.
 		static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
@@ -1481,10 +1507,10 @@ void ScummEngine_v5::drawFlashlight() {
 					WRITE_UINT16(&_flashlight.buffer[maxrow + maxcol - 2 * j], 0);
 				}
 				else {
-					_flashlight.buffer[minrow + j] = 0;
-					_flashlight.buffer[minrow + maxcol - j] = 0;
-					_flashlight.buffer[maxrow + j] = 0;
-					_flashlight.buffer[maxrow + maxcol - j] = 0;
+					_flashlight.buffer[minrow + j] = backgroundColor;
+					_flashlight.buffer[minrow + maxcol - j] = backgroundColor;
+					_flashlight.buffer[maxrow + j] = backgroundColor;
+					_flashlight.buffer[maxrow + maxcol - j] = backgroundColor;
 				}
 			}
 		}
@@ -2562,10 +2588,6 @@ void ScummEngine::NES_loadCostumeSet(int n) {
 	byte *palette = getResourceAddress(rtCostume, v1MMNEScostTables[n][5]) + 2;
 	for (i = 0; i < 16; i++) {
 		byte c = *palette++;
-		if (c == 0x1D)	// HACK - switch around colors 0x00 and 0x1D
-			c = 0;		// so we don't need a zillion extra checks
-		else if (c == 0)// for determining the proper background color
-			c = 0x1D;
 		_NESPalette[1][i] = c;
 	}
 
@@ -2588,14 +2610,6 @@ void GdiNES::decodeNESGfx(const byte *room) {
 	decodeNESTileData(_vm->getResourceAddress(rtCostume, 37 + tileset), _vm->_NESPatTable[1] + _vm->_NESBaseTiles * 16);
 	for (i = 0; i < 16; i++) {
 		byte c = *gdata++;
-		if (c == 0x0D)
-			c = 0x1D;
-
-		if (c == 0x1D)	 // HACK - switch around colors 0x00 and 0x1D
-			c = 0;		 // so we don't need a zillion extra checks
-		else if (c == 0) // for determining the proper background color
-			c = 0x1D;
-
 		_vm->_NESPalette[0][i] = c;
 	}
 	for (i = 0; i < 16; i++) {
@@ -2726,9 +2740,17 @@ void GdiNES::decodeNESObject(const byte *ptr, int xpos, int ypos, int width, int
 }
 
 void GdiNES::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height) {
+	const byte darkPalette[16] = { 0x2d,0x1d,0x3d,0x20, 0x2d,0x1d,0x3d,0x20, 0x2d,0x1d,0x3d,0x20, 0x2d,0x1d,0x3d,0x20 };
+	const byte* stripPalette;
 	top /= 8;
 	height /= 8;
 	int x = stripnr + 2;	// NES version has a 2 tile gap on each edge
+
+	// MM NES does not paint the background when lit with a flashlight
+	if (_vm->isLightOn())
+		stripPalette = _vm->_NESPalette[0];
+	else
+		stripPalette = darkPalette;
 
 	if (_objectMode)
 		x += _NES.objX; // for objects, need to start at the left edge of the object, not the screen
@@ -2744,7 +2766,7 @@ void GdiNES::drawStripNES(byte *dst, byte *mask, int dstPitch, int stripnr, int 
 			byte c0 = _vm->_NESPatTable[1][tile * 16 + i];
 			byte c1 = _vm->_NESPatTable[1][tile * 16 + i + 8];
 			for (int j = 0; j < 8; j++)
-				dst[j] = _vm->_NESPalette[0][((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
+				dst[j] = stripPalette[((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) | (palette << 2)];
 			dst += dstPitch;
 			*mask = c0 | c1;
 			mask += _numStrips;
@@ -3817,7 +3839,10 @@ void ScummEngine::fadeOut(int effect) {
 	// when bypassed of FT and TheDig.
 	if ((_game.version == 7 || _screenEffectFlag) && effect != 0) {
 		// Fill screen 0 with black
-		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
+		if (_game.platform == Common::kPlatformNES)
+			memset(vs->getPixels(0, 0), 0x1d, vs->pitch * vs->h);
+		else
+			memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 
 		// Fade to black with the specified effect, if any.
 		switch (effect) {

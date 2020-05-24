@@ -32,14 +32,10 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/ultima8/world/get_object.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg)
 
 MonsterEgg::MonsterEgg() {
 }
@@ -90,19 +86,19 @@ uint16 MonsterEgg::hatch() {
 	return objID;
 }
 
-void MonsterEgg::saveData(ODataSource *ods) {
-	Item::saveData(ods);
+void MonsterEgg::saveData(Common::WriteStream *ws) {
+	Item::saveData(ws);
 }
 
-bool MonsterEgg::loadData(IDataSource *ids, uint32 version) {
-	if (!Item::loadData(ids, version)) return false;
+bool MonsterEgg::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Item::loadData(rs, version)) return false;
 
 	return true;
 }
 
 uint32 MonsterEgg::I_monsterEggHatch(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	MonsterEgg *megg = p_dynamic_cast<MonsterEgg *>(item);
+	MonsterEgg *megg = dynamic_cast<MonsterEgg *>(item);
 	if (!megg) return 0;
 
 	return megg->hatch();
@@ -110,7 +106,7 @@ uint32 MonsterEgg::I_monsterEggHatch(const uint8 *args, unsigned int /*argsize*/
 
 uint32 MonsterEgg::I_getMonId(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	MonsterEgg *megg = p_dynamic_cast<MonsterEgg *>(item);
+	MonsterEgg *megg = dynamic_cast<MonsterEgg *>(item);
 	if (!megg) return 0;
 
 	return megg->getMapNum() >> 3;

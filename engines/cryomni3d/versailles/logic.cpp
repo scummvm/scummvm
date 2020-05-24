@@ -106,7 +106,7 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	SET_OBJECT_CB(112, 126);
 	SET_OBJECT_GENERIC_CB(90, 127, 17);
 	SET_OBJECT(216, 128);
-	SET_OBJECT_GENERIC_CB(32, 129, 18);
+	SET_OBJECT_CB(32, 129);
 	SET_OBJECT(37, 130); // 35
 	SET_OBJECT_GENERIC_CB(134, 131, 19);
 	SET_OBJECT_GENERIC_CB(150, 132, 20);
@@ -192,6 +192,46 @@ void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
 	for (uint i = 0; i < 28; i++) {
 		bmpLetters[i].free();
 	}
+
+	if (_messages.size() <= 148) {
+		return;
+	}
+
+	Common::String &translation = _messages[148];
+
+	if (translation.size() == 0) {
+		return;
+	}
+
+	_fontManager.setCurrentFont(1);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(0);
+	_fontManager.setSurface(&surface);
+	_fontManager.displayStr(9, 424, translation);
+}
+
+void CryOmni3DEngine_Versailles::obj_129() {
+	displayObject(kImagesObjects[18], &CryOmni3DEngine_Versailles::obj_129hk);
+}
+
+void CryOmni3DEngine_Versailles::obj_129hk(Graphics::ManagedSurface &surface) {
+	if (_messages.size() <= 149) {
+		return;
+	}
+
+	Common::String &translation = _messages[149];
+
+	if (translation.size() == 0) {
+		return;
+	}
+
+	surface.fillRect(Common::Rect(0, 455, 640, 480), 247);
+
+	_fontManager.setCurrentFont(8);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(242);
+	_fontManager.setSurface(&surface);
+	_fontManager.displayStr(10, 460, translation);
 }
 
 void CryOmni3DEngine_Versailles::obj_142() {
@@ -2930,8 +2970,8 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 	bool success = false;
 	Common::RandomSource rnd("VersaillesBomb");
 	Graphics::Surface bmpLetters[28];
-	unsigned char bombPossibilites[60][5];
-	unsigned char bombCurrentLetters[60];
+	uint32 bombPossibilites[60][5];
+	byte bombCurrentLetters[60];
 	Graphics::ManagedSurface tempSurf;
 
 	const uint bombPasswordLength = _bombPassword.size();
@@ -2939,14 +2979,21 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 		error("Bomb password is too long");
 	}
 
-	loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
+	uint max = _bombAlphabet.size() - 1;
+	if (getLanguage() != Common::JA_JPN) {
+		// In bitmap mode we only have 28 images
+		assert(max < 28);
+		// BUG: in game the rand is modulo 27
+		max = 26;
+		loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
+	}
 	for (uint i = 0; i < bombPasswordLength; i++) {
-		bombPossibilites[i][0] = toupper(_bombPassword[i]);
+		bombPossibilites[i][0] = _bombPassword[i];
 		for (uint j = 1; j < 5; j++) {
 			bool foundSameLetter;
 			do {
 				foundSameLetter = false;
-				bombPossibilites[i][j] = rnd.getRandomNumberRng('A', 'Z');
+				bombPossibilites[i][j] = _bombAlphabet[rnd.getRandomNumber(max)];
 				for (uint k = 0; k < j; k++) {
 					if (bombPossibilites[i][k] == bombPossibilites[i][j]) {
 						foundSameLetter = true;
@@ -2989,13 +3036,14 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 				// Check if password is OK
 				success = true;
 				for (uint i = 0; i < bombPasswordLength; i++) {
-					unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
-					if (letterChar != _bombPassword[i]) {
+					uint16 letterId = bombPossibilites[i][bombCurrentLetters[i]];
+					if (letterId != _bombPassword[i]) {
 						success = false;
 						break;
 					}
 				}
 				if (success) {
+					handleBombTranslation(tempSurf);
 					break;
 				}
 			}
@@ -3011,6 +3059,43 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 		bmpLetters[i].free();
 	}
 	return success;
+}
+
+void CryOmni3DEngine_Versailles::handleBombTranslation(Graphics::ManagedSurface &surface) {
+	if (_messages.size() <= 150) {
+		return;
+	}
+
+	Common::String &translation = _messages[150];
+
+	if (translation.size() == 0) {
+		return;
+	}
+
+	surface.fillRect(Common::Rect(0, 430, 640, 480), 247);
+
+	_fontManager.setCurrentFont(1);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(242);
+	_fontManager.setSurface(&surface);
+	uint w = _fontManager.getStrWidth(translation);
+	_fontManager.displayStr((640 - w) / 2, 440, translation);
+
+	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0,
+	                           surface.w, surface.h);
+	g_system->updateScreen();
+
+	uint32 end = g_system->getMillis() + 5000;
+	bool exitImg = false;
+	while (!shouldAbort() && !exitImg && g_system->getMillis() < end) {
+		if (pollEvents()) {
+			if (checkKeysPressed() || getCurrentMouseButton() == 1) {
+				exitImg = true;
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
 }
 
 const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLength][2] = {
@@ -3122,22 +3207,33 @@ const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLeng
 
 void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surface,
         const Graphics::Surface(&bmpLetters)[28], const uint bombPasswordLength,
-        const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
-        const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]) {
+        const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
+        const byte(&bombCurrentLetters)[kBombPasswordMaxLength]) {
 	uint table = bombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
-	for (uint i = 0; i < bombPasswordLength; i++) {
-		unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
-		uint letterId = 0;
-		if (letterChar >= 'A' && letterChar <= 'Z') {
-			letterId = letterChar - 'A';
-		} else if (letterChar == ' ') {
-			letterId = 26;
-		} else if (letterChar == '\'') {
-			letterId = 27;
+	if (getLanguage() == Common::JA_JPN) {
+		_fontManager.setCurrentFont(1);
+		_fontManager.setTransparentBackground(true);
+		_fontManager.setForeColor(0);
+		_fontManager.setSurface(&surface);
+
+		for (uint i = 0; i < bombPasswordLength; i++) {
+			Common::Rect rct(34, 34);
+			rct.moveTo(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
+			surface.fillRect(rct, 239);
+
+			uint32 letter = bombPossibilites[i][bombCurrentLetters[i]];
+			Common::U32String str(&letter, 1);
+
+			_fontManager.displayStr(rct.left + (34 - _fontManager.getStrWidth(str)) / 2,
+			                        rct.top + 5, str);
 		}
-		const Graphics::Surface &letter = bmpLetters[letterId];
-		Common::Point dst(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
-		surface.transBlitFrom(letter, dst);
+	} else {
+		for (uint i = 0; i < bombPasswordLength; i++) {
+			uint letterId = _bombAlphabet.find(bombPossibilites[i][bombCurrentLetters[i]]);
+			const Graphics::Surface &letter = bmpLetters[letterId];
+			Common::Point dst(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
+			surface.transBlitFrom(letter, dst);
+		}
 	}
 }
 

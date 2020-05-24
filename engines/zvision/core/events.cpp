@@ -68,31 +68,6 @@ uint8 ZVision::getBufferedKey(uint8 pos) {
 		return _cheatBuffer[KEYBUF_SIZE - pos - 1];
 }
 
-void ZVision::shortKeys(Common::Event event) {
-	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-		switch (event.kbd.keycode) {
-		case Common::KEYCODE_s:
-			if (_menu->getEnable() & kMenubarSave)
-				_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
-			break;
-		case Common::KEYCODE_r:
-			if (_menu->getEnable() & kMenubarRestore)
-				_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
-			break;
-		case Common::KEYCODE_p:
-			if (_menu->getEnable() & kMenubarSettings)
-				_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
-			break;
-		case Common::KEYCODE_q:
-			if (_menu->getEnable() & kMenubarExit)
-				ifQuit();
-			break;
-		default:
-			break;
-		}
-	}
-}
-
 void ZVision::cheatCodes(uint8 key) {
 	Location loc = _scriptManager->getCurrentLocation();
 	// Do not process cheat codes while in the game menus
@@ -222,25 +197,45 @@ void ZVision::processEvents() {
 			onMouseMove(_event.mouse);
 			break;
 
-		case Common::EVENT_KEYDOWN: {
-			switch (_event.kbd.keycode) {
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_RIGHT:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch ((ZVisionAction)_event.customType) {
+			case kZVisionActionLeft:
+			case kZVisionActionRight:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
-					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_LEFT ?
+					_keyboardVelocity = (_event.customType == kZVisionActionLeft ?
 					                     -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
 					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_DOWN:
+			case kZVisionActionUp:
+			case kZVisionActionDown:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
-					_keyboardVelocity = (_event.kbd.keycode == Common::KEYCODE_UP ?
+					_keyboardVelocity = (_event.customType == kZVisionActionUp ?
 					                     -_scriptManager->getStateValue(StateKey_KbdRotateSpeed) :
 					                     _scriptManager->getStateValue(StateKey_KbdRotateSpeed)) * 2;
 				break;
 
-			case Common::KEYCODE_F10: {
+			case kZVisionActionSave:
+				if (_menu->getEnable() & kMenubarSave)
+					_scriptManager->changeLocation('g', 'j', 's', 'e', 0);
+				break;
+
+			case kZVisionActionRestore:
+				if (_menu->getEnable() & kMenubarRestore)
+					_scriptManager->changeLocation('g', 'j', 'r', 'e', 0);
+				break;
+
+			case kZVisionActionPreferences:
+				if (_menu->getEnable() & kMenubarSettings)
+					_scriptManager->changeLocation('g', 'j', 'p', 'e', 0);
+				break;
+
+			case kZVisionActionQuit:
+				if (_menu->getEnable() & kMenubarExit)
+					ifQuit();
+				break;
+
+			case kZVisionActionShowFPS: {
 				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
 				_renderManager->showDebugMsg(fpsStr);
 				}
@@ -248,32 +243,36 @@ void ZVision::processEvents() {
 			default:
 				break;
 			}
+			break;
 
-			uint8 vkKey = getZvisionKey(_event.kbd.keycode);
-
-			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
-
-			_scriptManager->addEvent(_event);
-			shortKeys(_event);
-			cheatCodes(vkKey);
-		}
-		break;
-		case Common::EVENT_KEYUP:
-			_scriptManager->addEvent(_event);
-			switch (_event.kbd.keycode) {
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_RIGHT:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			switch ((ZVisionAction)_event.customType) {
+			case kZVisionActionLeft:
+			case kZVisionActionRight:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::PANORAMA)
 					_keyboardVelocity = 0;
 				break;
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_DOWN:
+			case kZVisionActionUp:
+			case kZVisionActionDown:
 				if (_renderManager->getRenderTable()->getRenderState() == RenderTable::TILT)
 					_keyboardVelocity = 0;
 				break;
 			default:
 				break;
 			}
+			break;
+
+		case Common::EVENT_KEYDOWN: {
+			uint8 vkKey = getZvisionKey(_event.kbd.keycode);
+
+			_scriptManager->setStateValue(StateKey_KeyPress, vkKey);
+
+			_scriptManager->addEvent(_event);
+			cheatCodes(vkKey);
+		}
+		break;
+		case Common::EVENT_KEYUP:
+			_scriptManager->addEvent(_event);
 			break;
 		default:
 			break;

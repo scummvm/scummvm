@@ -635,7 +635,7 @@ static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
 /**
  * Defines the background image for a scene.
  */
-static void Background(CORO_PARAM, SCNHANDLE bfilm) {
+static void startBackground(CORO_PARAM, SCNHANDLE bfilm) {
 	_vm->_bg->StartupBackground(coroParam, bfilm);
 }
 
@@ -4279,7 +4279,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case BACKGROUND:
 		// Common to both DW1 & DW2
-		Background(coroParam, pp[0]);
+		startBackground(coroParam, pp[0]);
 		return -1;
 
 	case BLOCKING:

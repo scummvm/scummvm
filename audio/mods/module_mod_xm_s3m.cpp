@@ -134,6 +134,14 @@ bool ModuleModXmS3m::load(Common::SeekableReadStream &st) {
 	}
 	st.seek(setPos);
 
+	// amf file
+	char sigAmf[25] = {};
+	st.read(sigAmf, 24);
+	if (!memcmp(sigAmf, "ASYLUM Music Format V1.0", 24)) {
+		return loadAmf(st);
+	}
+	st.seek(setPos);
+
 	// mod file
 	return loadMod(st);
 }
@@ -350,14 +358,20 @@ bool ModuleModXmS3m::loadMod(Common::SeekableReadStream &st) {
 			// effect, param
 			byte effect = third & 0x0F;
 			byte param = fourth & 0xff;
-			if(param == 0 && (effect < 3 || effect == 0xA)) {
+			if (param == 0 && (effect < 3 || effect == 0xA)) {
 				effect = 0;
 			}
-			if(param == 0 && (effect == 5 || effect == 6)) {
+			if (param == 0 && (effect == 5 || effect == 6)) {
 				effect -= 2;
 			}
-			if(effect == 8 && numChannels == 4) {
-				effect = param = 0;
+			if (effect == 8) {
+				if (numChannels == 4) {
+					effect = param = 0;
+				} else if (param > 128) {
+					param = 128;
+				} else {
+					param = (param * 255) >> 7;
+				}
 			}
 			patterns[i].notes[idx].effect = effect;
 			patterns[i].notes[idx].param = param;
@@ -806,9 +820,122 @@ bool ModuleModXmS3m::loadS3m(Common::SeekableReadStream &st) {
 	return true;
 }
 
+bool ModuleModXmS3m::loadAmf(Common::SeekableReadStream &st) {
+	// already skipped the signature ("ASYLUM Music Format V1.0")
+	// total signature length is 32 bytes (the rest are null)
+	st.skip(8);
+	memcpy(name, "Asylum Module", 14);
+
+	numChannels = 8;
+	defaultSpeed = st.readByte();
+	defaultTempo = st.readByte();
+	numInstruments = st.readByte(); // actually number of samples, but we'll do 1:1 mapping
+	numPatterns = st.readByte();
+	sequenceLen = st.readByte();
+	restartPos = st.readByte();
+
+	sequence = new byte[256];
+	st.read(sequence, 256); // Always 256 bytes in the file.
+
+	// Read sample headers..
+	instruments = new Instrument[numInstruments + 1];
+	memset(instruments, 0, sizeof(Instrument) * (numInstruments + 1));
+	instruments[0].numSamples = 1;
+	instruments[0].samples = new Sample[1];
+	memset(&instruments[0].samples[0], 0, sizeof(Sample));
+
+	for (int i = 1; i <= numInstruments; ++i) {
+		instruments[i].numSamples = 1;
+		instruments[i].samples = new Sample[1];
+		memset(&instruments[i].samples[0], 0, sizeof(Sample));
+
+		// load sample
+		Sample &sample = instruments[i].samples[0];
+		st.read((byte *)sample.name, 22);
+		sample.name[22] = '\0';
+
+		sample.finetune = st.readSByte();
+		sample.volume = st.readByte();
+		sample.relNote = st.readSByte(); // aka "transpose"
+		sample.length = st.readUint32LE();
+		sample.loopStart = st.readUint32LE();
+		sample.loopLength = st.readUint32LE();
+
+		if (sample.loopStart + sample.loopLength > sample.length) {
+			sample.loopLength = sample.length - sample.loopStart;
+		}
+		if (sample.loopLength < 4) {
+			sample.loopStart = sample.length;
+			sample.loopLength = 0;
+		}
+
+		// Sample data comes later.
+	}
+
+	st.skip((64 - numInstruments) * 37); // 37 == sample header len
+
+	// load patterns
+	patterns = new Pattern[numPatterns];
+	memset(patterns, 0, numPatterns * sizeof(Pattern));
+	for (int i = 0; i < numPatterns; ++i) {
+		// Always 8 channels, 64 rows.
+		patterns[i].numChannels = 8;
+		patterns[i].numRows = 64;
+
+		// load notes
+		patterns[i].notes = new Note[8 * 64];
+		memset(patterns[i].notes, 0, 8 * 64 * sizeof(Note));
+		for (int row = 0; row < 64; row++) {
+			for (int channel = 0; channel < 8; channel++) {
+				Note &n = patterns[i].notes[row * 8 + channel];
+				uint8 note = st.readByte();
+				if (note != 0) {
+					note = note + 1;
+				}
+				n.key = note;
+				n.instrument = st.readByte();
+				n.effect = st.readByte();
+				n.param = st.readByte();
+				// TODO: copied from libmodplug .. is this needed?
+				if (n.effect < 1 || n.effect > 0x0f) {
+					n.effect = n.param = 0;
+				}
+				// TODO: copied from mod loader.. is this needed?
+				if (n.param == 0 && (n.effect < 3 || n.effect == 0xA))
+					n.effect = 0;
+				if (n.param == 0 && (n.effect == 5 || n.effect == 6))
+					n.effect -= 2;
+				if (n.effect == 8) {
+					if (n.param > 128) {
+						n.param = 128;
+					} else {
+						n.param = (n.param * 255) >> 7;
+					}
+				}
+			}
+		}
+	}
+
+	// Load sample data
+	for (int i = 1; i <= numInstruments; ++i) {
+		Sample &sample = instruments[i].samples[0];
+		sample.data = new int16[sample.length];
+		readSampleSint8(st, sample.length, sample.data);
+	}
+
+	// default to panning to middle?
+	defaultPanning = new byte[numChannels];
+	for (int i = 0; i < numChannels; ++i) {
+		defaultPanning[i] = 128;
+	}
+
+	return true;
+}
+
+
 void ModuleModXmS3m::readSampleSint8(Common::SeekableReadStream &stream, int length, int16 *dest) {
 	for (int i = 0; i < length; ++i) {
-		dest[i] = (stream.readSByte() << 8);
+		dest[i] = static_cast<int16>(stream.readSByte() * 256);
 		dest[i] = (dest[i] & 0x7FFF) - (dest[i] & 0x8000);
 	}
 }

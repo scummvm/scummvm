@@ -24,11 +24,10 @@
 
 #include "ultima/ultima8/filesys/archive_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
-
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(ArchiveFile)
 
 //static
 bool ArchiveFile::extractIndexFromName(const Std::string &name, uint32 &index) {
@@ -49,22 +48,24 @@ bool ArchiveFile::extractIndexFromName(const Std::string &name, uint32 &index) {
 	return true;
 }
 
-IDataSource *ArchiveFile::getDataSource(uint32 index, bool is_text) {
+Common::SeekableReadStream *ArchiveFile::getDataSource(uint32 index, bool is_text) {
 	uint32 size;
 	uint8 *buf = getObject(index, &size);
 
-	if (!buf) return 0;
+	if (!buf)
+		return nullptr;
 
-	return new IBufferDataSource(buf, size, is_text, true);
+	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
-IDataSource *ArchiveFile::getDataSource(const Std::string &name, bool is_text) {
+Common::SeekableReadStream *ArchiveFile::getDataSource(const Std::string &name, bool is_text) {
 	uint32 size;
 	uint8 *buf = getObject(name, &size);
 
-	if (!buf) return 0;
+	if (!buf)
+		return nullptr;
 
-	return new IBufferDataSource(buf, size, is_text, true);
+	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
 } // End of namespace Ultima8

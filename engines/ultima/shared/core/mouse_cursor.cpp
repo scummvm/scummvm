@@ -40,7 +40,7 @@ void MouseCursor::MouseCursorData::load(Common::SeekableReadStream &s) {
 
 /*-------------------------------------------------------------------*/
 
-MouseCursor::MouseCursor() {
+MouseCursor::MouseCursor() : _cursorId(-1) {
 /*
 	loadCursors();
 	_cursorId = -1;

@@ -37,33 +37,6 @@ enum DebugLevel {
 	MM_MINOR_WARN = 1
 };
 
-//
-// {s,u}int{8,16,32,ptr}
-//
-#ifndef BASIC_TYPES_DEFINED
-#define BASIC_TYPES_DEFINED
-
-#ifndef EX_TYPE_INT8
-#define EX_TYPE_INT8 char
-#endif
-
-#ifndef EX_TYPE_INT16
-#define EX_TYPE_INT16 int16
-#endif
-
-#ifndef EX_TYPE_INT32
-#define EX_TYPE_INT32 int32
-#endif
-
-#ifndef EX_TYPE_INTPTR
-#define EX_TYPE_INTPTR long long
-#endif
-
-typedef unsigned EX_TYPE_INTPTR uintptr;
-typedef signed EX_TYPE_INTPTR sintptr;
-
-#endif
-
 // ObjId and ProcId
 
 //! 16-Bit ID of an Object

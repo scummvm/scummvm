@@ -31,6 +31,8 @@
 #include "common/str.h"
 #include "common/str-array.h"
 
+#include "engines/engine.h"
+
 namespace GUI {
 
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
@@ -171,6 +173,9 @@ private:
 	 * time.
 	 */
 	bool _firstTime;
+
+protected:
+	PauseToken _debugPauseToken;
 
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	GUI::ConsoleDialog *_debuggerDialog;

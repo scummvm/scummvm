@@ -32,23 +32,21 @@
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump)
 
 // TODO: Remove all the hacks
 
 BookGump::BookGump()
-	: ModalGump() {
+	: ModalGump(), _textWidgetL(0), _textWidgetR(0) {
 
 }
 
 BookGump::BookGump(ObjId owner_, const Std::string &msg) :
-	ModalGump(0, 0, 100, 100, owner_), _text(msg) {
+	ModalGump(0, 0, 100, 100, owner_), _text(msg),
+	_textWidgetL(0), _textWidgetR(0) {
 }
 
 BookGump::~BookGump(void) {
@@ -73,17 +71,12 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(6);
 
 	SetShape(shapeP, 0);
-
-	ShapeFrame *sf = shapeP->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 }
 
 void BookGump::NextText() {
-	TextWidget *widgetL = p_dynamic_cast<TextWidget *>(getGump(_textWidgetL));
-	TextWidget *widgetR = p_dynamic_cast<TextWidget *>(getGump(_textWidgetR));
+	TextWidget *widgetL = dynamic_cast<TextWidget *>(getGump(_textWidgetL));
+	TextWidget *widgetR = dynamic_cast<TextWidget *>(getGump(_textWidgetR));
 	assert(widgetL);
 	assert(widgetR);
 	if (!widgetR->setupNextText()) {
@@ -94,12 +87,12 @@ void BookGump::NextText() {
 	widgetR->setupNextText();
 }
 
-void BookGump::OnMouseClick(int button, int32 mx, int32 my) {
+void BookGump::onMouseClick(int button, int32 mx, int32 my) {
 	// Scroll to next text, if possible
 	NextText();
 }
 
-void BookGump::OnMouseDouble(int button, int32 mx, int32 my) {
+void BookGump::onMouseDouble(int button, int32 mx, int32 my) {
 	Close();
 }
 
@@ -115,11 +108,11 @@ uint32 BookGump::I_readBook(const uint8 *args, unsigned int /*argsize*/) {
 	return gump->GetNotifyProcess()->getPid();
 }
 
-void BookGump::saveData(ODataSource *ods) {
+void BookGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
-bool BookGump::loadData(IDataSource *ids, uint32 version) {
+bool BookGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 
 	return false;

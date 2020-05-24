@@ -60,6 +60,7 @@ void Dialog::getInput(bool isNumeric, size_t maxCharacters) {
 void Dialog::draw() {
 	// Redraw the game's info area
 	U1Gfx::Info *infoArea = dynamic_cast<U1Gfx::Info *>(_game->findByName("Info"));
+	assert(infoArea);
 	infoArea->draw();
 }
 

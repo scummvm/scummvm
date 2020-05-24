@@ -110,6 +110,7 @@ void OSystem_IPHONE::initBackend() {
 bool OSystem_IPHONE::hasFeature(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
+	case kFeatureNoQuit:
 		return true;
 
 	default:

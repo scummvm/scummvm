@@ -30,6 +30,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * The gump for popping up text in the game you can read (plaques and gravestones)
+ */
 class ReadableGump : public ModalGump {
 	uint16 _shapeNum;
 	int _fontNum;
@@ -42,7 +45,7 @@ public:
 	~ReadableGump() override;
 
 	// Close on mouse click on key press
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
 	bool OnKeyDown(int key, int mod) override;
 
 	// Init the gump, call after construction
@@ -51,9 +54,9 @@ public:
 	INTRINSIC(I_readGrave);
 	INTRINSIC(I_readPlaque);
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

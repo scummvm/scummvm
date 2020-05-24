@@ -148,7 +148,7 @@ void EventsManager::pollEvents(bool skipTimers) {
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
 
 		case Common::EVENT_KEYDOWN:

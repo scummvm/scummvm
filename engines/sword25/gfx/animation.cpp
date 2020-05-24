@@ -92,7 +92,7 @@ Animation::Animation(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject
 }
 
 void Animation::initializeAnimationResource(const Common::String &fileName) {
-	// Die Resource wird für die gesamte Lebensdauer des Animations-Objektes gelockt.
+	// Die Resource wird fÃ¼r die gesamte Lebensdauer des Animations-Objektes gelockt.
 	Resource *resourcePtr = Kernel::getInstance()->getResourceManager()->requestResource(fileName);
 	if (resourcePtr && resourcePtr->getType() == Resource::TYPE_ANIMATION)
 		_animationResourcePtr = static_cast<AnimationResource *>(resourcePtr);
@@ -101,7 +101,7 @@ void Animation::initializeAnimationResource(const Common::String &fileName) {
 		return;
 	}
 
-	// Größe und Position der Animation anhand des aktuellen Frames bestimmen.
+	// GrÃ¶ÃŸe und Position der Animation anhand des aktuellen Frames bestimmen.
 	computeCurrentCharacteristics();
 }
 
@@ -216,12 +216,12 @@ void Animation::frameNotification(int timeElapsed) {
 	assert(animationDescriptionPtr);
 	assert(timeElapsed >= 0);
 
-	// Nur wenn die Animation läuft wird sie auch weiterbewegt
+	// Nur wenn die Animation lÃ¤uft wird sie auch weiterbewegt
 	if (_running) {
 		// Gesamte vergangene Zeit bestimmen (inkl. Restzeit des aktuellen Frames)
 		_currentFrameTime += timeElapsed;
 
-		// Anzahl an zu überpringenden Frames bestimmen
+		// Anzahl an zu Ã¼berpringenden Frames bestimmen
 		int skipFrames = animationDescriptionPtr->getMillisPerFrame() == 0 ? 0 : _currentFrameTime / animationDescriptionPtr->getMillisPerFrame();
 
 		// Neue Frame-Restzeit bestimmen
@@ -291,7 +291,7 @@ void Animation::frameNotification(int timeElapsed) {
 		_currentFrame = static_cast<uint>(tmpCurFrame);
 	}
 
-	// Größe und Position der Animation anhand des aktuellen Frames bestimmen
+	// GrÃ¶ÃŸe und Position der Animation anhand des aktuellen Frames bestimmen
 	computeCurrentCharacteristics();
 
 	assert(_currentFrame < animationDescriptionPtr->getFrameCount());
@@ -308,7 +308,7 @@ void Animation::computeCurrentCharacteristics() {
 	assert(pResource->getType() == Resource::TYPE_BITMAP);
 	BitmapResource *pBitmap = static_cast<BitmapResource *>(pResource);
 
-	// Größe des Bitmaps auf die Animation übertragen
+	// GrÃ¶ÃŸe des Bitmaps auf die Animation Ã¼bertragen
 	_width = static_cast<int>(pBitmap->getWidth() * _scaleFactorX);
 	_height = static_cast<int>(pBitmap->getHeight() * _scaleFactorY);
 

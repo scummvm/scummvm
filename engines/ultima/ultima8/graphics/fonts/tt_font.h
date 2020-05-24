@@ -60,7 +60,6 @@ public:
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
 		Std::string::size_type cursor = Std::string::npos) override;
 
-	ENABLE_RUNTIME_CLASSTYPE()
 protected:
 	Graphics::Font *_ttfFont;
 	uint32 _color;

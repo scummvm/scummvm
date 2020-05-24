@@ -185,10 +185,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		// Set default values for all of the custom engine options
 		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
-		const ExtraGuiOptions engineOptions = metaEngine.getExtraGuiOptions(Common::String());
-		for (uint i = 0; i < engineOptions.size(); i++) {
-			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
-		}
+		metaEngine.registerDefaultSettings(target);
 
 		err = metaEngine.createInstance(&system, &engine);
 	}
@@ -339,6 +336,8 @@ static void setupGraphics(OSystem &system) {
 			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 		if (ConfMan.hasKey("stretch_mode"))
 			system.setStretchMode(ConfMan.get("stretch_mode").c_str());
+		if (ConfMan.hasKey("shader"))
+			system.setShader(ConfMan.get("shader").c_str());
 	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified
@@ -364,8 +363,7 @@ static void setupKeymapper(OSystem &system) {
 	HardwareInputSet *inputSet = system.getHardwareInputSet();
 	KeymapperDefaultBindings *backendDefaultBindings = system.getKeymapperDefaultBindings();
 
-	mapper->registerHardwareInputSet(inputSet);
-	mapper->registerBackendDefaultBindings(backendDefaultBindings);
+	mapper->registerHardwareInputSet(inputSet, backendDefaultBindings);
 
 	Keymap *primaryGlobalKeymap = system.getEventManager()->getGlobalKeymap();
 	if (primaryGlobalKeymap) {
@@ -586,13 +584,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
-#ifndef FORCE_RTL
-			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldRTL())
+#ifndef FORCE_RETURN_TO_LAUNCHER
+			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldReturnToLauncher())
 				break;
 #endif
-			// Reset RTL flag in case we want to load another engine
-			g_system->getEventManager()->resetRTL();
-#ifdef FORCE_RTL
+			// Reset the return to launcher flag in case we want to load another engine
+			g_system->getEventManager()->resetReturnToLauncher();
+#ifdef FORCE_RETURN_TO_LAUNCHER
 			g_system->getEventManager()->resetQuit();
 #endif
 #ifdef ENABLE_EVENTRECORDER

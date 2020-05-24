@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Base class for any gump which blocks the game (menu, credits, movie, etc)
+ */
 class ModalGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -47,11 +50,11 @@ public:
 	Gump *FindGump(int mx, int my) override;
 	uint16 TraceObjId(int32 mx, int32 my) override;
 
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

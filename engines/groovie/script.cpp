@@ -576,14 +576,25 @@ void Script::o_videofromref() {			// 0x09
 	if (fileref != _videoRef) {
 		debugCN(1, kDebugScript, "\n");
 	}
+
+	// Determine if the GM initialization video is being played
+	bool gmInitVideo = (_version == kGroovieT7G && fileref == 0x2460);
 	// Play the video
-	if (!playvideofromref(fileref)) {
+	// If the GM init video is being played, loop it until the "audio"
+	// (init commands) has finished playing
+	if (!playvideofromref(fileref, gmInitVideo)) {
 		// Move _currentInstruction back
 		_currentInstruction -= 3;
+	} else if (gmInitVideo) {
+		// The script plays the GM init video twice to give the "audio"
+		// enough time to play. It has just looped until the audio finished,
+		// so the second play is no longer necessary.
+		// Skip the next instruction.
+		_currentInstruction += 3;
 	}
 }
 
-bool Script::playvideofromref(uint32 fileref) {
+bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 	// It isn't the current video, open it
 	if (fileref != _videoRef) {
 
@@ -618,8 +629,6 @@ bool Script::playvideofromref(uint32 fileref) {
 			return true;
 		}
 
-		_bitflags = 0;
-
 		// Reset the clicked mouse events
 		_eventMouseClicked = 0;
 	}
@@ -632,6 +641,8 @@ bool Script::playvideofromref(uint32 fileref) {
 		// Reset the skip address
 		_videoSkipAddress = 0;
 
+		_bitflags = 0;
+
 		// End the playback
 		return true;
 	}
@@ -641,7 +652,17 @@ bool Script::playvideofromref(uint32 fileref) {
 		bool endVideo = _vm->_videoPlayer->playFrame();
 		_vm->_musicPlayer->frameTick();
 
-		if (endVideo) {
+		if (endVideo && loopUntilAudioDone && _vm->_musicPlayer->isPlaying()) {
+			// The video has ended, but the audio hasn't. Loop the video.
+			_videoFile->seek(0);
+			// Clear bit flag 9 (fade-in)
+			_vm->_videoPlayer->load(_videoFile, _bitflags & ~(1 << 9));
+			return false;
+		}
+
+		if (endVideo || (loopUntilAudioDone && !_vm->_musicPlayer->isPlaying())) {
+			// The video has ended, or it was being looped and the audio has ended.
+
 			// Close the file
 			delete _videoFile;
 			_videoFile = NULL;
@@ -653,13 +674,19 @@ bool Script::playvideofromref(uint32 fileref) {
 
 			// Newline
 			debugCN(1, kDebugScript, "\n");
+
+			_bitflags = 0;
+
+			// Let the caller know if the video has ended
+			return true;
 		}
 
-		// Let the caller know if the video has ended
-		return endVideo;
+		// The video has not ended yet.
+		return false;
 	}
 
 	// If the file is closed, finish the playback
+	_bitflags = 0;
 	return true;
 }
 

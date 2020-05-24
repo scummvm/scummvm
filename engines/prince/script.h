@@ -229,6 +229,8 @@ private:
 	uint32 _currentString;
 	const char *_mode;
 
+	Flags _flagMap;
+
 	// Helper functions
 	uint32 step(uint32 opcodePC);
 	uint16 readScript16();

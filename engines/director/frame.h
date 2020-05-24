@@ -47,12 +47,16 @@ enum {
 };
 
 struct PaletteInfo {
-	uint8 firstColor;
-	uint8 lastColor;
-	uint8 flags;
-	uint8 speed;
+	byte firstColor;
+	byte lastColor;
+	byte flags;
+	byte speed;
 	uint16 frameCount;
 	uint16 cycleCount;
+	byte fade;
+	byte delay;
+	byte style;
+	byte colorCode;
 };
 
 struct FrameEntity {
@@ -68,37 +72,25 @@ public:
 	~Frame();
 	void readChannels(Common::ReadStreamEndian *stream);
 	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
-	void prepareFrame(Score *score);
-	uint16 getSpriteIDFromPos(Common::Point pos);
-	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
-	Common::Rect *getSpriteRect(uint16 spriteId);
 
 	void executeImmediateScripts();
 
-private:
 	void playTransition(Score *score);
-	void playSoundChannel();
-	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
-	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize);
-	void renderShape(Graphics::ManagedSurface &surface, uint16 spriteId);
-	void renderButton(Graphics::ManagedSurface &surface, uint16 spriteId);
+
+private:
+
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
 	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCast *textCast);
-	void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect);
-	void addDrawRect(uint16 entityId, Common::Rect &rect);
+
 
 public:
 	int _numChannels;
 	byte _channelData[kChannelDataSize];
 	uint8 _actionId;
-	uint8 _transDuration;
+	uint16 _transDuration;
 	uint8 _transArea; // 1 - Whole Stage, 0 - Changing Area
 	uint8 _transChunkSize;
 	TransitionType _transType;
@@ -110,10 +102,15 @@ public:
 	uint16 _sound2;
 	uint8 _soundType2;
 
+	byte _colorTempo;
+	byte _colorSound1;
+	byte _colorSound2;
+	byte _colorScript;
+	byte _colorTrans;
+
 	uint8 _skipFrameFlag;
 	uint8 _blend;
 	Common::Array<Sprite *> _sprites;
-	Common::Array<FrameEntity *> _drawRects;
 	DirectorEngine *_vm;
 };
 

@@ -46,6 +46,26 @@ size_t writeString16Array16(FILE *fp, char const *const *string, uint16 elems);
 size_t writePadding(FILE *fp);
 uint32 fileSize(FILE *fp);
 
+// Helper
+template<typename T, size_t (*Tf)(FILE *fp, const T &), typename U, size_t (*Uf)(FILE *fp, U)>
+size_t writeArray(FILE *fp, T const *array, U elems) {
+	size_t written = 0;
+	written += Uf(fp, elems);
+	for (U i = 0; i < elems; i++) {
+		written += Tf(fp, array[i]);
+	}
+	return written;
+}
+template<typename T, size_t (*Tf)(FILE *fp, T), typename U, size_t (*Uf)(FILE *fp, U)>
+size_t writeArray(FILE *fp, T const *array, U elems) {
+	size_t written = 0;
+	written += Uf(fp, elems);
+	for (U i = 0; i < elems; i++) {
+		written += Tf(fp, array[i]);
+	}
+	return written;
+}
+
 /* Misc stuff */
 void NORETURN_PRE error(const char *s, ...) NORETURN_POST;
 void warning(const char *s, ...);

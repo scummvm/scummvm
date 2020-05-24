@@ -40,9 +40,9 @@ public:
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	uint16 TraceObjId(int32 mx, int32 my) override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

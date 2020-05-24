@@ -29,6 +29,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * The tiny HP/mana bars shown on the desktop which can be activated from the paperdoll gump
+ */
 class MiniStatsGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -47,12 +50,12 @@ public:
 	// Trace a click, and return ObjId
 	uint16 TraceObjId(int32 mx, int32 my) override;
 
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
-	void OnMouseDouble(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
+	void onMouseDouble(int button, int32 mx, int32 my) override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 protected:
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

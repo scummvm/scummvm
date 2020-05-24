@@ -33,11 +33,13 @@
 namespace Dragons {
 
 
-static const Common::Point positionTable[4] = {
-	Common::Point(2, 0),
-	Common::Point(0xce, 0),
-	Common::Point(2, 0x9e),
-	Common::Point(0xce, 0x9e)
+static const struct {
+	int x, y;
+} positionTable[4] = {
+	{   2,   0 },
+	{ 206,   0 },
+	{   2, 158 },
+	{ 206, 158 }
 };
 
 static const int16 bagBounceTable[4] = {
@@ -67,10 +69,10 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_sequenceId = 0;
 	_screenPositionIndex = 0;
 	_previousState = Closed;
-	_bag = NULL;
-	_actor = NULL;
+	_bag = nullptr;
+	_actor = nullptr;
 
-	_inventionBookPrevSceneUpdateFunc = NULL;
+	_inventionBookPrevSceneUpdateFunc = nullptr;
 	_inventionBookPrevSceneId = 0;
 	_inventionBookPrevFlickerINISceneId = 0;
 	_inventionBookPrevFlickerINIPosition = Common::Point(0, 0);
@@ -118,7 +120,7 @@ void Inventory::updateVisibility() {
 }
 
 Common::Point Inventory::getPosition() {
-	return positionTable[_screenPositionIndex];
+	return Common::Point(positionTable[_screenPositionIndex].x, positionTable[_screenPositionIndex].y);
 }
 
 void Inventory::setActorFlag400() {
@@ -282,8 +284,8 @@ void Inventory::loadInventoryItemsFromSave() {
 
 void Inventory::openInventionBook() {
 	_inventionBookPrevSceneUpdateFunc = _vm->getSceneUpdateFunction();
-	_vm->setSceneUpdateFunction(NULL);
-//	fade_related_calls_with_1f();
+	_vm->clearSceneUpdateFunction();
+	_vm->fadeToBlack();
 	_sequenceId = 2;
 	_actor->updateSequence(2);
 	_inventionBookPrevSceneId = _vm->getCurrentSceneId();
@@ -300,7 +302,7 @@ void Inventory::openInventionBook() {
 void Inventory::closeInventionBook() {
 	uint sceneId;
 
-	// TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker) {
@@ -393,6 +395,7 @@ bool Inventory::clearItem(uint16 iniId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (_inventoryItemTbl[i] == iniId) {
 			_inventoryItemTbl[i] = 0;
+			return true;
 		}
 	}
 	return false;
@@ -404,7 +407,7 @@ void Inventory::inventoryMissing() {
 	static uint16 counter = 0;
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-	if (flicker->actor != NULL) {
+	if (flicker->actor != nullptr) {
 		flicker->actor->clearFlag(ACTOR_FLAG_10);
 		if ((_vm->getCurrentSceneId() != 0x2e) || (flicker->actor->_resourceID != 0x91)) {
 			flicker->actor->setFlag(ACTOR_FLAG_4);
@@ -428,6 +431,15 @@ void Inventory::setPreviousState() {
 	InventoryState tmpState = _state;
 	setState(_previousState);
 	_previousState = tmpState;
+}
+
+bool Inventory::hasItem(uint16 iniId) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+		if (_inventoryItemTbl[i] == iniId) {
+			return true;
+		}
+	}
+	return false;
 }
 
 } // End of namespace Dragons

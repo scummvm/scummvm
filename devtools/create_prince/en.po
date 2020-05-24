@@ -88,7 +88,7 @@ msgstr "HERO: A playground?! Oh, I get it!|That must be a joke. Ha, ha."
 #: dialog0001.txt:100005
 msgid "OTHER: Jesteśmy dowcipni. A teraz idź już stąd.|To nie miejsce dla szaleńców.#E4#B0"
 msgstr ""
-"OTHER: We're amuzed. Now go away from here.|This is not a place for crazy "
+"OTHER: We're amused. Now go away from here.|This is not a place for crazy "
 "people.#E4#B0"
 
 #: dialog0001.txt:100101
@@ -124,7 +124,7 @@ msgstr "OTHER: To me, all humans are lunatics."
 msgid "OTHER: Żyjecie jakieś marne dwieście czy ile tam|lat i to źle na was działa."
 msgstr ""
 "OTHER: You live a miserable two hundred or whatever|years and it still "
-"sucks...."
+"sucks."
 
 #: dialog0001.txt:100403
 msgid "OTHER: Ciągle gnacie tu i tam, spieszycie się i|nie potraficie usiedzieć nawet stu lat|w jednym miejscu."
@@ -4396,7 +4396,7 @@ msgstr "OTHER: Get going then!"
 
 #: dialog0108.txt:1
 msgid "OTHER: Na pewno oddałem ci wszystkie|rzeczy?"
-msgstr "OTHRE: Are you sure you've got everything?"
+msgstr "OTHER: Are you sure you've got everything?"
 
 #: dialog0108.txt:2
 msgid "HERO: Tak, sprawdziłem dokładnie."
@@ -5138,18 +5138,22 @@ msgid "#E3"
 msgstr "#E3"
 
 #: dialog0146.txt:100401
-msgid "#X1"
-msgstr "#X1"
+msgid "#E3"
+msgstr "#E3"
 
 #: dialog0146.txt:100501
-msgid "#B1"
-msgstr "#B1"
+msgid "#X1"
+msgstr "#X1"
 
 #: dialog0146.txt:100601
 msgid "#B1"
 msgstr "#B1"
 
 #: dialog0146.txt:100701
+msgid "#B1"
+msgstr "#B1"
+
+#: dialog0146.txt:100801
 msgid "#B1"
 msgstr "#B1"
 
@@ -6962,7 +6966,7 @@ msgstr ""
 
 #: dialog0186.txt:4
 msgid "OTHER: Sio!"
-msgstr "Other: Shoo!"
+msgstr "OTHER: Shoo!"
 
 #: dialog0187.txt:1
 msgid "OTHER: Przepraszam, czy ma pan może jakieś|zbędne obole?"
@@ -7451,7 +7455,7 @@ msgstr "OTHER: Oh... This can't be true..."
 
 #: dialog0226.txt:1
 msgid "HERO: Oto trucizna."
-msgstr "HERE: Here is the poison."
+msgstr "HERO: Here is the poison."
 
 #: dialog0226.txt:2
 msgid "HERO: Najlepsza z najlepszych."
@@ -7908,7 +7912,7 @@ msgstr "HERO: Well, as the devil, I think I have the|right to enter."
 
 #: dialog0244.txt:5
 msgid "OTHER2: Coś ty jakiś taki dziwny..."
-msgstr "OTHER: You look somewhat strange..."
+msgstr "OTHER2: You look somewhat strange..."
 
 #: dialog0244.txt:6
 msgid "OTHER2: Różek złamany, ogona nie ma..."
@@ -10005,6 +10009,10 @@ msgstr "P#OTHER: Ahhh... I understand."
 msgid "OTHER: No, ale może jeszcze będą z ciebie ludzie."
 msgstr "OTHER: Well, but maybe you will become a man some day."
 
+#: invtxt.txt:0
+msgid "homunkulus - Nie jest najmądrzejszy, ale przynajmniej|jest magiczny."
+msgstr "homunculus - He's not the smartest, but at least|he's magical."
+
 #: invtxt.txt:1
 msgid "eliksir nieśmiertelności - Aż trudno uwierzyć, że coś takiego|naprawdę istnieje."
 msgstr ""
@@ -10273,7 +10281,7 @@ msgstr "3 coins - A mean for opportunity."
 
 #: invtxt.txt:62
 msgid "4 monety - Prawie absolut."
-msgstr "4 coins - Almost absolut."
+msgstr "4 coins - Almost absolute."
 
 #: invtxt.txt:63
 msgid "5 monet - Ideał."
@@ -10772,7 +10780,7 @@ msgstr ""
 
 #: mob.lst:8001
 msgid "zamek - Klasyka. Tak mały, że znalezienie go|graniczyło z cudem."
-msgstr "castle - Classic. So small that finding it was almost a miracle."
+msgstr "lock - Classic. So small that finding it was almost a miracle."
 
 #: mob.lst:8002
 msgid "słowik - Biedny ptak..."
@@ -10912,7 +10920,7 @@ msgstr ""
 
 #: mob.lst:11007
 msgid "zamek - Kolejny zamek do zdobycia."
-msgstr "castle - Another castle to get."
+msgstr "lock - Another castle to get."
 
 #: mob.lst:11008
 msgid "drzwi do skarbca - Impregnowane drewno wzmocnione żelaznymi|ćwiekami.+Nie do wyważenia. Nawet dla niedźwiedzia."
@@ -11587,11 +11595,11 @@ msgstr ""
 
 #: mob.lst:29002
 msgid "wyjście - Z kolan na nogi."
-msgstr "exit - From my knees to my feet."
+msgstr "exit - From my knees to my legs."
 
 #: mob.lst:29003
 msgid "wyjście - Z kolan na nogi."
-msgstr "exit - From my knees to my feet."
+msgstr "exit - From my knees to my legs."
 
 #: mob.lst:29004
 msgid "butelki - Puste jak głowa Sheili."
@@ -12081,13 +12089,69 @@ msgstr "Dragon's Lair  - "
 msgid "Młyn - "
 msgstr "The Mill - "
 
+#: mob.lst:51001
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51002
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51003
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51004
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51005
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51006
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51007
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51008
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51009
+msgid " - "
+msgstr " - "
+
+#: mob.lst:51010
+msgid " - "
+msgstr " - "
+
 #: mob.lst:52001
+msgid "dźwignia - "
+msgstr "lever - "
+
+#: mob.lst:52002
+msgid "przycisk - "
+msgstr "button - "
+
+#: mob.lst:52003
 msgid "powrót - "
 msgstr "exit - "
 
-#: mob.lst:52002
+#: mob.lst:52004
 msgid "powrót - "
 msgstr "exit - "
+
+#: mob.lst:58001
+msgid " - "
+msgstr " - "
+
+#: variatxt.txt:9
+msgid "Nie mogę tego wząć."
+msgstr "I cannot pick it up."
 
 #: variatxt.txt:10
 msgid "Nie mogę tego użyć."
@@ -12528,3 +12592,171 @@ msgstr "Good little devil."
 #: variatxt.txt:3501
 msgid "Zawór już odkręcony."
 msgstr "Valve is already opened."
+
+#: variatxt.txt:3502
+msgid "Zawór już zakręcony."
+msgstr "Valve already closed."
+
+#: variatxt.txt:3503
+msgid "Lepiej nie będę przytykać ręki|do strumienia lawy."
+msgstr "I'd better not put my hand|to the lava stream."
+
+#: variatxt.txt:3504
+msgid "Bum."
+msgstr "Boom."
+
+#: variatxt.txt:3505
+msgid "Lepiej nie pokazywać się im na te|ich kaprawe oczka."
+msgstr "It is better not to show up in front of their|dull eyes."
+
+#: variatxt.txt:3601
+msgid "Wystarczy..."
+msgstr "Enough..."
+
+#: variatxt.txt:3602
+msgid "Jakoś tak sama mi się ręka|poślizgnęła."
+msgstr "Somehow my hand had slipped."
+
+#: variatxt.txt:3603
+msgid "Nie przy strażniku..."
+msgstr "Not in the presence of the guard..."
+
+#: variatxt.txt:3604
+msgid "Ta świeca nie będzie odpowiednia."
+msgstr "This candle will not be suitable."
+
+#: variatxt.txt:3605
+msgid "Życzymy przyjemnej podróży."
+msgstr "We wish you a pleasant journey."
+
+#: variatxt.txt:3606
+msgid "Nie chciałbym spotkać strażnika...|Pewnie nie darzy mnie już sympatią."
+msgstr ""
+"I don't want to bump into the guard...|He probably doesn't like me anymore."
+
+#: variatxt.txt:3607
+msgid "Tę na razie lepiej zostawię."
+msgstr "I better leave it for now."
+
+#: variatxt.txt:3608
+msgid "Najpierw lepiej odwiedzę wszystkie sale."
+msgstr "First, I'd better visit all the rooms."
+
+#: variatxt.txt:3609
+msgid "Nie przy strażniku..."
+msgstr "Not in the guard presence..."
+
+#: variatxt.txt:3610
+msgid "Od razu cieplej."
+msgstr "Warmer right away."
+
+#: variatxt.txt:3611
+msgid "Czasami nadgorliwość może popsuć|najlepsze plany."
+msgstr "Sometimes, zeal can ruin|the best plans."
+
+#: variatxt.txt:3612
+msgid "Nie teraz."
+msgstr "Not now."
+
+#: variatxt.txt:3613
+msgid "Jaka szkoda..."
+msgstr "What a pity..."
+
+#: variatxt.txt:3701
+msgid "Nie mam palców z żelaza!"
+msgstr "I don't have iron fingers!"
+
+#: variatxt.txt:3702
+msgid "Jeden węgielek wystarczy."
+msgstr "One coal is enough."
+
+#: variatxt.txt:3703
+msgid "Hmmm... Węgielek zamienił się w pył..."
+msgstr "Hmmm... The coal has turned into dust..."
+
+#: variatxt.txt:4001
+msgid "Mogę to pożyczyć na chwilę?..."
+msgstr "Can I borrow it for a moment?..."
+
+#: variatxt.txt:4002
+msgid "Nie ma to jak dobrze się|przeciągnąć."
+msgstr "There is nothing better than|stretching."
+
+#: variatxt.txt:4003
+msgid "Chyba był zbyt słabo rozgrzany."
+msgstr "I don't think it was hot enough."
+
+#: variatxt.txt:4004
+msgid "Płomień jest zbyt wątły."
+msgstr "The flame is too weak."
+
+#: variatxt.txt:4005
+msgid "Nareszcie!"
+msgstr "Finally!"
+
+#: variatxt.txt:4006
+msgid "Nie ma sensu zabarwiać tak małej|powłoczki."
+msgstr "It makes no sense to tint such a small|coating."
+
+#: variatxt.txt:4007
+msgid "Teraz powłoka jest czarna jak...|Jak... Eeee... Hmmm..."
+msgstr "Now the coating is black as...|As... Eeeer... Hmmm..."
+
+#: variatxt.txt:4008
+msgid "Już bardziej czarna być nie może."
+msgstr "It couldn't be more black."
+
+#: variatxt.txt:4009
+msgid "Jeden różek nikogo nie oszuka."
+msgstr "One rose will not fool anyone."
+
+#: variatxt.txt:4010
+msgid "Różki wieńczą dzieło."
+msgstr "Roses crown the work."
+
+#: variatxt.txt:4011
+msgid "Nie tutaj."
+msgstr "Not here."
+
+#: variatxt.txt:4012
+msgid "Na ich oczach?..."
+msgstr "In front of them?..."
+
+#: variatxt.txt:4013
+msgid "Na pewno się uda."
+msgstr "It will certainly work."
+
+#: variatxt.txt:4014
+msgid "E tam, na pewno się nie uda."
+msgstr "Umm, certainly it won't work."
+
+#: variatxt.txt:4101
+msgid "Proszę... Bardzo.... Gotowe..."
+msgstr "You are... Welcome.... Ready..."
+
+#: variatxt.txt:4201
+msgid "Twarde sztuki."
+msgstr "Tough stuff."
+
+#: variatxt.txt:5001
+msgid "Lepiej wrócę na znane mi tereny,|nie chcę pobłądzić."
+msgstr "I better get back to the areas I know,|I don't want to get lost."
+
+#: variatxt.txt:5002
+msgid "Tam w oddali widać jakąś samotną|chałupkę. To pewnie jakaś pustelnia."
+msgstr "There is a single hut over there in the|distance. It must belong to some hermit."
+
+#: variatxt.txt:5003
+msgid "O!... Widzę w oddali opuszczony, stary młyn."
+msgstr "Oh! I can see an old mill in the distance."
+
+#: variatxt.txt:5801
+msgid "Naciśnij w odpowiednim momencie lewy przycisk myszy, by|zaatakować lub cofnąć dłonie."
+msgstr ""
+"Click the left mouse button at the right moment to attack|or withdraw your "
+"palms."
+
+#: variatxt.txt:5802
+msgid "Naciskaj szybko na przemian lewy i prawy przycisk myszki|lub klawisze 'Z' i 'X'."
+msgstr ""
+"Click rapidly the left and right mouse buttons|or press the 'Z' and 'X' keys."

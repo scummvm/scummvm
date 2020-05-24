@@ -1016,13 +1016,28 @@ begin_credits("Credits");
 
 			begin_section("Ultima");
 				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Matthew Duggan", "stauff", "");
+
+				add_person("Daniel c. W&uuml;rl", "dwuerl", "(Nuvie)");
 				add_person("Eric Fry", "yuv422", "(Nuvie)");
-				add_person("", "malignantmanor", "(Nuvie)");
-				add_person("", "sb-x", "(Nuvie)");
+				add_person("Jeremy Newman", "laxdragon", "(Nuvie)");
+				add_person("Jonathan E. Wright", "nelno", "(Nuvie)");
+				add_person("Joseph Applegate", "sb-x", "(Nuvie)");
+				add_person("Malignant Manor", "malignantmanor", "(Nuvie)");
+				add_person("Markus Niemist&ouml;", "niemisto", "(Nuvie)");
+				add_person("Michael Fink", "vividos", "(Nuvie)");
+				add_person("Pieter Luteijn", "luteijn", "(Nuvie)");
+				add_person("Sam Matthews", "samuelmatthews", "(Nuvie)");
+				add_person("Travis Howell", "kirben", "(Nuvie)");
+				add_person("Willem Jan Palenstijn", "wjp", "(Nuvie)");
+
+				add_person("Brian Tietz", "btietz", "(Pentagram)");
 				add_person("Dominik Reichardt", "Dominus Dragon", "(Pentagram)");
+				add_person("Matthew Jimenez", "mjimenez", "(Pentagram)");
+				add_person("Max Horn", "Fingolfin", "(Pentagram)");
+				add_person("Patrick Burke", "takhisis", "(Pentagram)");
+				add_person("Ryan Nunn", "Colourless Dragon", "(Pentagram)");
 				add_person("Willem Jan Palenstijn", "wjp", "(Pentagram)");
-				add_person("", "Colourless Dragon", "(Pentagram)");
-				add_person("", "mjimenez", "(Pentagram)");
 			end_section();
 
 			begin_section("Voyeur");
@@ -1559,8 +1574,8 @@ begin_credits("Credits");
 			"of the Hugo trilogy.");
 
 		add_paragraph(
-			"Broken Sword 2.5 team for providing sources of their engine and their great ".
-			"support.");
+			"The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
+			"the source code with us.");
 
 		add_paragraph(
 			"Neil Dodwell and David Dew from Creative Reality for providing the source ".
@@ -1584,14 +1599,10 @@ begin_credits("Credits");
 			"James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.");
 
 		add_paragraph(
-			"The mindFactory team for writing Broken Sword 2.5, a splendid fan-made sequel, and for sharing ".
-			"the source code with us.");
+			"John Romero for sharing the source code of Hyperspace Delivery Boy! with us.");
 
 		add_paragraph(
-		"John Romero for sharing the source code of Hyperspace Delivery Boy! with us.");
-
-		add_paragraph(
-		"Steffen Dingel for sharing the source code of the Mission Supernova game with us.");
+			"Steffen Dingel for sharing the source code of the Mission Supernova game with us.");
 
 	end_section();
 

@@ -34,11 +34,9 @@ class IDataSource;
 
 class RawArchive : public Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	RawArchive() : Archive() { }
 	explicit RawArchive(ArchiveFile *af) : Archive(af) { }
-	explicit RawArchive(IDataSource *ids) : Archive(ids) { }
+	explicit RawArchive(Common::SeekableReadStream *rs) : Archive(rs) { }
 
 	~RawArchive() override;
 

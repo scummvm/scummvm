@@ -30,6 +30,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ShapeFrame;
+class RawShapeFrame;
 struct Palette;
 struct Rect;
 struct ConvertShapeFormat;
@@ -60,39 +61,31 @@ public:
 	//! (x,y) = coordinates of origin relative to top-left point of rectangle
 	void getTotalDimensions(int32 &w, int32 &h, int32 &x, int32 &y) const;
 
-	ShapeFrame *getFrame(unsigned int frame) {
-		if (frame < _frames.size()) return _frames[frame];
-		else return 0;
-	}
+	const ShapeFrame *getFrame(unsigned int frame) const;
 
-	void getShapeId(uint16 &flexId, uint32 &shapenum);
+	void getShapeId(uint16 &flexId, uint32 &shapenum) const;
 
 	// This will detect the format of a shape
 	static const ConvertShapeFormat *DetectShapeFormat(const uint8 *data, uint32 size);
 	static const ConvertShapeFormat *DetectShapeFormat(IDataSource *ds, uint32 size);
 
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
-	ENABLE_CUSTOM_MEMORY_ALLOCATION()
-
-protected:
+private:
+	void loadFrames(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
 	// This will load a u8 style shape 'optimized'.
-	void LoadU8Format(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
+	static Common::Array<RawShapeFrame *> loadU8Format(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
 	// This will load a pentagram style shape 'optimized'.
-	void LoadPentagramFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
+	static Common::Array<RawShapeFrame *> loadPentagramFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
 	// This will load any sort of shape via a ConvertShapeFormat struct
 	// Crusader shapes must be loaded this way
-	void LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
+	static Common::Array<RawShapeFrame *> loadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
-	Std::vector<ShapeFrame *> _frames;
+	Common::Array<ShapeFrame *> _frames;
 
 	const Palette *_palette;
 
-	const uint8 *_data;
-	uint32 _size;
 	const uint16 _flexId;
 	const uint32 _shapeNum;
 };

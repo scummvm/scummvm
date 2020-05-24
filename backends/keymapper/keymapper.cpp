@@ -40,7 +40,7 @@ Keymapper::Keymapper(EventManager *eventMan) :
 		_backendDefaultBindings(nullptr),
 		_delayedEventSource(new DelayedEventSource()),
 		_enabled(true),
-		_enabledKeymapType(Keymap::kKeymapTypeGlobal) {
+		_enabledKeymapType(Keymap::kKeymapTypeGame) {
 	_eventMan->getEventDispatcher()->registerSource(_delayedEventSource, true);
 	resetInputState();
 }
@@ -62,9 +62,16 @@ void Keymapper::clear() {
 	_hardwareInputs = nullptr;
 }
 
-void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
-	if (_hardwareInputs)
-		error("Hardware input set already registered");
+void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs, KeymapperDefaultBindings *backendDefaultBindings) {
+	bool reloadMappings = false;
+	if (_hardwareInputs) {
+		reloadMappings = true;
+		delete _hardwareInputs;
+	}
+	if (_backendDefaultBindings) {
+		reloadMappings = true;
+		delete _backendDefaultBindings;
+	}
 
 	if (!inputs) {
 		warning("No hardware input were defined, using defaults");
@@ -75,13 +82,11 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 	}
 
 	_hardwareInputs = inputs;
-}
-
-void Keymapper::registerBackendDefaultBindings(KeymapperDefaultBindings *backendDefaultBindings) {
-	if (!_keymaps.empty())
-		error("Backend default bindings must be defined before adding keymaps");
-
 	_backendDefaultBindings = backendDefaultBindings;
+
+	if (reloadMappings) {
+		reloadAllMappings();
+	}
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
@@ -90,9 +95,7 @@ void Keymapper::addGlobalKeymap(Keymap *keymap) {
 
 	ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 	initKeymap(keymap, keymapperDomain);
-
-	// Global keymaps have the lowest priority, they need to be first in the array
-	_keymaps.insert_at(0, keymap);
+	_keymaps.push_back(keymap);
 }
 
 void Keymapper::addGameKeymap(Keymap *keymap) {
@@ -115,6 +118,10 @@ void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
 	}
 
 	keymap->setConfigDomain(domain);
+	reloadKeymapMappings(keymap);
+}
+
+void Keymapper::reloadKeymapMappings(Keymap *keymap) {
 	keymap->setHardwareInputs(_hardwareInputs);
 	keymap->setBackendDefaultBindings(_backendDefaultBindings);
 	keymap->loadMappings();
@@ -145,14 +152,14 @@ Keymap *Keymapper::getKeymap(const String &id) const {
 
 void Keymapper::reloadAllMappings() {
 	for (uint i = 0; i < _keymaps.size(); i++) {
-		_keymaps[i]->loadMappings();
+		reloadKeymapMappings(_keymaps[i]);
 	}
 }
 
 void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
+	assert(type == Keymap::kKeymapTypeGui || type == Keymap::kKeymapTypeGame);
 	_enabledKeymapType = type;
 }
-
 
 List<Event> Keymapper::mapEvent(const Event &ev) {
 	if (!_enabled) {
@@ -164,19 +171,43 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	hardcodedEventMapping(ev);
 
 	List<Event> mappedEvents;
-	for (int i = _keymaps.size() - 1; i >= 0; --i) {
-		if (!_keymaps[i]->isEnabled()) {
+	bool matchedAction = mapEvent(ev, _enabledKeymapType, mappedEvents);
+	if (!matchedAction) {
+		// If we found actions matching this input in the game / gui keymaps,
+		// no need to look at the global keymaps. An input resulting in actions
+		// from system and game keymaps would lead to unexpected user experience.
+		matchedAction = mapEvent(ev, Keymap::kKeymapTypeGlobal, mappedEvents);
+	}
+
+	if (ev.type == EVENT_JOYAXIS_MOTION && ev.joystick.axis < ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
+		if (ABS<int32>(ev.joystick.position) >= kJoyAxisPressedTreshold) {
+			_joystickAxisPreviouslyPressed[ev.joystick.axis] = true;
+		} else if (ABS<int32>(ev.joystick.position) < kJoyAxisUnpressedTreshold) {
+			_joystickAxisPreviouslyPressed[ev.joystick.axis] = false;
+		}
+	}
+
+	if (!matchedAction) {
+		// if it didn't get mapped, just pass it through
+		mappedEvents.push_back(ev);
+	}
+
+	return mappedEvents;
+}
+
+bool Keymapper::mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Event> &mappedEvents) {
+	bool matchedAction = false;
+
+	for (uint i = 0; i < _keymaps.size(); i++) {
+		if (!_keymaps[i]->isEnabled() || _keymaps[i]->getType() != keymapType) {
 			continue;
 		}
 
-		Keymap::KeymapType keymapType = _keymaps[i]->getType();
-		if (keymapType != _enabledKeymapType && keymapType != Keymap::kKeymapTypeGlobal) {
-			continue; // Ignore GUI keymaps while in game and vice versa
+		Keymap::ActionArray actions = _keymaps[i]->getMappedActions(ev);
+		if (!actions.empty()) {
+			matchedAction = true;
 		}
 
-		debug(9, "Keymapper::mapKey keymap: %s", _keymaps[i]->getId().c_str());
-
-		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
 		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
 			Event mappedEvent = executeAction(*it, ev);
 			if (mappedEvent.type == EVENT_INVALID) {
@@ -197,34 +228,9 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 
 			mappedEvents.push_back(mappedEvent);
 		}
-		if (!actions.empty()) {
-			// If we found actions matching this input in a keymap, no need to look at the other keymaps.
-			// An input resulting in actions from system and game keymaps would lead to unexpected user experience.
-			break;
-		}
 	}
 
-	if (ev.type == EVENT_JOYAXIS_MOTION && ev.joystick.axis < ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
-		if (ABS<int32>(ev.joystick.position) >= kJoyAxisPressedTreshold) {
-			_joystickAxisPreviouslyPressed[ev.joystick.axis] = true;
-		} else if (ABS<int32>(ev.joystick.position) < kJoyAxisUnpressedTreshold) {
-			_joystickAxisPreviouslyPressed[ev.joystick.axis] = false;
-		}
-	}
-
-	// Ignore keyboard repeat events. Repeat event are meant for text input,
-	// the keymapper / keymaps are supposed to be disabled during text input.
-	// TODO: Add a way to keep repeat events if needed.
-	if (!mappedEvents.empty() && ev.type == EVENT_KEYDOWN && ev.kbdRepeat) {
-		return List<Event>();
-	}
-
-	if (mappedEvents.empty()) {
-		// if it didn't get mapped, just pass it through
-		mappedEvents.push_back(ev);
-	}
-
-	return mappedEvents;
+	return matchedAction;
 }
 
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
@@ -257,27 +263,33 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 	}
 }
 
-bool Keymapper::isMouseEvent(const Event &event) {
-	return event.type == EVENT_LBUTTONDOWN
-	        || event.type == EVENT_LBUTTONUP
-	        || event.type == EVENT_RBUTTONDOWN
-	        || event.type == EVENT_RBUTTONUP
-	        || event.type == EVENT_MBUTTONDOWN
-	        || event.type == EVENT_MBUTTONUP
-	        || event.type == EVENT_WHEELDOWN
-	        || event.type == EVENT_WHEELUP
-	        || event.type == EVENT_X1BUTTONDOWN
-	        || event.type == EVENT_X1BUTTONUP
-	        || event.type == EVENT_X2BUTTONDOWN
-	        || event.type == EVENT_X2BUTTONUP
-	        || event.type == EVENT_MOUSEMOVE;
-}
-
 Event Keymapper::executeAction(const Action *action, const Event &incomingEvent) {
 	Event outgoingEvent = Event(action->event);
 
 	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
+
+	if (outgoingEvent.type == EVENT_JOYAXIS_MOTION
+	        || outgoingEvent.type == EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
+		if (incomingEvent.type == EVENT_JOYAXIS_MOTION) {
+			// At the moment only half-axes can be bound to actions, hence taking
+			//  the absolute value. If full axes were to be mappable, the action
+			//  could carry the information allowing to distinguish cases here.
+			outgoingEvent.joystick.position = ABS(incomingEvent.joystick.position);
+		} else if (incomingType == kIncomingEventStart) {
+			outgoingEvent.joystick.position = JOYAXIS_MAX;
+		} else if (incomingType == kIncomingEventEnd) {
+			outgoingEvent.joystick.position = 0;
+		}
+
+		return outgoingEvent;
+	}
+
 	if (incomingType == kIncomingEventIgnored) {
+		outgoingEvent.type = EVENT_INVALID;
+		return outgoingEvent;
+	}
+
+	if (incomingEvent.type == EVENT_KEYDOWN && incomingEvent.kbdRepeat && !action->shouldTriggerOnKbdRepeats()) {
 		outgoingEvent.type = EVENT_INVALID;
 		return outgoingEvent;
 	}
@@ -287,6 +299,10 @@ Event Keymapper::executeAction(const Action *action, const Event &incomingEvent)
 	// hardware keys need to send up instead when they are up
 	if (incomingType == kIncomingEventEnd) {
 		outgoingEvent.type = convertedType;
+	}
+
+	if (outgoingEvent.type == EVENT_KEYDOWN && incomingEvent.type == EVENT_KEYDOWN) {
+		outgoingEvent.kbdRepeat = incomingEvent.kbdRepeat;
 	}
 
 	if (isMouseEvent(outgoingEvent)) {

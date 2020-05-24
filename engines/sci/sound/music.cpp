@@ -71,17 +71,11 @@ void SciMusic::init() {
 
 	Common::Platform platform = g_sci->getPlatform();
 	uint32 deviceFlags;
-#ifdef ENABLE_SCI32
 	if (g_sci->_features->generalMidiOnly()) {
 		deviceFlags = MDT_MIDI;
-	} else if (platform == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
-		deviceFlags = MDT_MIDI;
 	} else {
-#endif
 		deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
-#ifdef ENABLE_SCI32
 	}
-#endif
 
 	// Default to MIDI for Windows versions of SCI1.1 games, as their
 	// soundtrack is written for GM.
@@ -587,6 +581,12 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		if (pSnd->pMidiParser) {
 			Common::StackLock lock(_mutex);
 			pSnd->pMidiParser->mainThreadBegin();
+
+			// The track init always needs to be done. Otherwise some sounds will not be properly set up (bug #11476).
+			// It is also safe to do this for paused tracks, since the jumpToTick() command in line 602 will parse through
+			// the song from the beginning up to the resume position and ensure that the actual current voice mapping,
+			// instrument and volume settings etc. are correct.
+ 			pSnd->pMidiParser->initTrack();
 
 			if (pSnd->status != kSoundPaused)
 				pSnd->pMidiParser->sendInitCommands();

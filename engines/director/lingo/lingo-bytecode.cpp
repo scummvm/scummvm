@@ -61,6 +61,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1c, LC::c_tell,			"" },
 	{ 0x1d, LC::c_telldone,		"" },
 	{ 0x1e, LC::cb_list,		"" },
+	{ 0x1f, LC::cb_proplist,	"" },
 	{ 0x41, LC::c_intpush,		"b" },
 	{ 0x42, LC::c_argcnoretpush,"b" },
 	{ 0x43, LC::c_argcpush,		"b" },
@@ -68,9 +69,11 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x45, LC::c_namepush,		"b" },
 	{ 0x46, LC::cb_objectpush,  "b" },
 	{ 0x49, LC::cb_globalpush,	"b" },
+	{ 0x4a, LC::cb_thepush,		"b" },
 	{ 0x4b, LC::cb_varpush,		"bpa" },
 	{ 0x4c, LC::cb_varpush,		"bpv" },
 	{ 0x4f, LC::cb_globalassign,"b" },
+	{ 0x50, LC::cb_theassign,	"b" },
 	{ 0x51, LC::cb_varassign,	"bpa" },
 	{ 0x52, LC::cb_varassign,	"bpv" },
 	{ 0x53, LC::c_jump,			"jb" },
@@ -80,8 +83,16 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x57, LC::cb_call,		"b" },
 	{ 0x58, LC::cb_methodcall,  "b" },
 	{ 0x59, LC::cb_v4assign,	"b" },
+	{ 0x5a, LC::cb_v4assign2,	"b" },
+	{ 0x5b, LC::cb_delete, 		"b" },
 	{ 0x5c, LC::cb_v4theentitypush, "b" },
 	{ 0x5d, LC::cb_v4theentityassign, "b" },
+	{ 0x5f, LC::cb_thepush2,	"b" },
+	{ 0x60, LC::cb_theassign2,	"b" },
+	{ 0x61, LC::cb_objectfieldpush, "b" },
+	{ 0x62, LC::cb_objectfieldassign, "b" },
+	{ 0x64, LC::cb_stackpeek, 	"b" },
+	{ 0x65, LC::cb_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "b" },
 	{ 0x81, LC::c_intpush,		"w" },
 	{ 0x82, LC::c_argcnoretpush,"w" },
@@ -90,9 +101,11 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x85, LC::c_namepush,     "w" },
 	{ 0x86, LC::cb_objectpush,  "w" },
 	{ 0x89, LC::cb_globalpush,	"w" },
+	{ 0x8a, LC::cb_thepush,		"w" },
 	{ 0x8b, LC::cb_varpush,		"wpa" },
 	{ 0x8c, LC::cb_varpush,		"wpv" },
 	{ 0x8f, LC::cb_globalassign,"w" },
+	{ 0x90, LC::cb_theassign, 	"w" },
 	{ 0x91, LC::cb_varassign,	"wpa" },
 	{ 0x92, LC::cb_varassign,	"wpv" },
 	{ 0x93, LC::c_jump,			"jw" },
@@ -102,8 +115,13 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x97, LC::cb_call,		"w" },
 	{ 0x98, LC::cb_methodcall,  "w" },
 	{ 0x99, LC::cb_v4assign,	"w" },
+	{ 0x9a, LC::cb_v4assign2,	"w" },
 	{ 0x9c, LC::cb_v4theentitypush, "w" },
 	{ 0x9d, LC::cb_v4theentityassign, "w" },
+	{ 0x9f, LC::cb_thepush2, 	"w" },
+	{ 0xa0, LC::cb_theassign2, "w" },
+	{ 0xa1, LC::cb_objectfieldpush, "w" },
+	{ 0xa2, LC::cb_objectfieldassign, "w" },
 	{ 0xa6, LC::cb_v4theentitynamepush, "w" },
 	{ 0, 0, 0 }
 };
@@ -206,9 +224,28 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 
 
 void Lingo::initBytecode() {
+	// All new bytecodes must have respective entry in funcDescr[]
+	// array in lingo-code.cpp, which is used for decompilation
+	//
+	// Check that all opcodes have entries
+	Common::HashMap<inst, bool> list;
+	bool bailout = false;
+
+	// Build reverse hashmap
+	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
+		list[(inst)it->_key] = true;
+
 	for (LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
 		_lingoV4[op->opcode] = op;
+
+		if (!list.contains(op->func)) {
+			warning("Lingo::initBytecode(): Missing prototype for opcode 0x%02x", op->opcode);
+			bailout = true;
+		}
 	}
+
+	if (bailout)
+		error("Lingo::initBytecode(): Add entries to funcDescr[] in lingo-code.cpp");
 
 	for (LingoV4TheEntity *ent = lingoV4TheEntity; ent->bank != 0xff; ent++) {
 		_lingoV4TheEntity[(ent->bank << 8) + ent->firstArg] = ent;
@@ -231,6 +268,12 @@ void LC::cb_unk2() {
 	uint arg1 = g_lingo->readInt();
 	uint arg2 = g_lingo->readInt();
 	warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
+}
+
+void LC::cb_delete() {
+	g_lingo->readInt();
+	g_lingo->printSTUBWithArglist("cb_delete", 9);
+	g_lingo->dropStack(9);
 }
 
 void LC::cb_field() {
@@ -261,9 +304,8 @@ void LC::cb_localcall() {
 
 void LC::cb_methodcall() {
 	g_lingo->readInt();
-	Datum obj = g_lingo->pop();
-	obj.toString();
-	warning("STUB: cb_methodcall(%s)", obj.u.s->c_str());
+	Common::String name = g_lingo->pop().asString();
+	warning("STUB: cb_methodcall(%s)", name.c_str());
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
@@ -319,11 +361,40 @@ void LC::cb_v4assign() {
 
 void LC::cb_list() {
 	Datum nargs = g_lingo->pop();
-	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		LB::b_list(nargs.u.i);
-	} else {
-		warning("cb_list: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	if ((nargs.type != ARGC) && (nargs.type != ARGCNORET)) {
+		error("cb_list: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
+	LB::b_list(nargs.u.i);
+}
+
+
+void LC::cb_proplist() {
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type != ARGC) && (nargs.type != ARGCNORET)) {
+		error("cb_proplist: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	}
+	int arraySize = nargs.u.i;
+	if (arraySize % 2) {
+		warning("cb_proplist: list should have an even number of entries, ignoring the last one");
+	}
+
+	Datum result;
+	result.type = PARRAY;
+	result.u.parr = new PropertyArray;
+	arraySize /= 2;
+
+	for (int i = 0; i < arraySize; i++) {
+		Datum p = g_lingo->pop();
+		Datum v = g_lingo->pop();
+
+		PCell cell = PCell(p, v);
+		result.u.parr->insert_at(0, cell);
+	};
+
+	if (nargs.u.i % 2)
+		g_lingo->pop();
+
+	g_lingo->push(result);
 }
 
 
@@ -342,6 +413,20 @@ void LC::cb_call() {
 }
 
 
+void LC::cb_stackpeek() {
+	int peekOffset = g_lingo->readInt();
+	g_lingo->push(g_lingo->peek(peekOffset));
+}
+
+
+void LC::cb_stackdrop() {
+	int dropCount = g_lingo->readInt();
+	for (int i = 0; i < dropCount; i++) {
+		g_lingo->pop();
+	}
+}
+
+
 void LC::cb_globalpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
@@ -350,16 +435,17 @@ void LC::cb_globalpush() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Variable %s not found", name.c_str());
+		warning("cb_globalpush: variable %s not found", name.c_str());
 		g_lingo->push(result);
 		return;
 	} else if (s && !s->global) {
-		warning("Variable %s is local, not global", name.c_str());
+		warning("cb_globalpush: variable %s is local, not global", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_globalpush: pushing %s to stack", name.c_str());
 	result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
@@ -377,16 +463,34 @@ void LC::cb_globalassign() {
 		s = g_lingo->lookupVar(name.c_str(), true, true);
 	}
 	if (s && !s->global) {
-		warning("Variable %s is local, not global", name.c_str());
+		warning("cb_globalassign: variable %s is local, not global", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_globalassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
 	g_lingo->varAssign(target, source);
 }
 
+void LC::cb_objectfieldassign() {
+	int fieldNameId = g_lingo->readInt();
+	Common::String fieldName = g_lingo->getName(fieldNameId);
+	Datum object = g_lingo->pop();
+	Datum value = g_lingo->pop();
+	warning("STUB: cb_objectfieldassign(%s, %s, %s)", object.asString(true).c_str(), fieldName.c_str(), value.asString(true).c_str());
+}
+
+void LC::cb_objectfieldpush() {
+	int fieldNameId = g_lingo->readInt();
+	Common::String fieldName = g_lingo->getName(fieldNameId);
+	Datum object = g_lingo->pop();
+	warning("STUB: cb_objectfieldpush(%s, %s)", object.asString(true).c_str(), fieldName.c_str());
+	Datum result;
+	result.type = VOID;
+	g_lingo->push(result);
+}
 
 void LC::cb_objectpush() {
 	int nameId = g_lingo->readInt();
@@ -397,6 +501,37 @@ void LC::cb_objectpush() {
 	g_lingo->push(result);
 }
 
+void LC::cb_theassign() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	Datum value = g_lingo->pop();
+	warning("STUB: cb_theassign(%s, %s)", name.c_str(), value.asString().c_str());
+}
+
+void LC::cb_theassign2() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	Datum value = g_lingo->pop();
+	warning("STUB: cb_theassign2(%s, %s)", name.c_str(), value.asString().c_str());
+}
+
+void LC::cb_thepush() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	warning("STUB: cb_thepush(%s)", name.c_str());
+	Datum result;
+	result.type = VOID;
+	g_lingo->push(result);
+}
+
+void LC::cb_thepush2() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	warning("STUB: cb_thepush2(%s)", name.c_str());
+	Datum result;
+	result.type = VOID;
+	g_lingo->push(result);
+}
 
 void LC::cb_varpush() {
 	int nameId = g_lingo->readInt();
@@ -406,16 +541,17 @@ void LC::cb_varpush() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Variable %s not found", name.c_str());
+		warning("cb_varpush: variable %s not found", name.c_str());
 		g_lingo->push(result);
 		return;
 	} else if (s && s->global) {
-		warning("Variable %s is global, not local", name.c_str());
+		warning("cb_varpush: variable %s is global, not local", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_varpush: pushing %s to stack", name.c_str());
 	result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
@@ -427,49 +563,56 @@ void LC::cb_varassign() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Variable %s not found", name.c_str());
+		warning("cb_varassign: variable %s not found", name.c_str());
 		g_lingo->pop();
 		return;
 	} else if (s && s->global) {
-		warning("Variable %s is global, not local", name.c_str());
+		warning("cb_varassign: variable %s is global, not local", name.c_str());
 	}
 
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
+	debugC(3, kDebugLingoExec, "cb_varassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
 	g_lingo->varAssign(target, source);
+}
+
+
+void LC::cb_v4assign2() {
+	g_lingo->readInt();
+	g_lingo->printSTUBWithArglist("cb_v4assign2", 10);
+	g_lingo->dropStack(10);
 }
 
 
 void LC::cb_v4theentitypush() {
 	int bank = g_lingo->readInt();
 
-	Datum firstArg = g_lingo->pop();
-	firstArg.toInt();
+	int firstArg = g_lingo->pop().asInt();
 	Datum result;
 	result.u.s = NULL;
 	result.type = VOID;
 
-	int key = (bank << 8) + firstArg.u.i;
+	int key = (bank << 8) + firstArg;
 	if (g_lingo->_lingoV4TheEntity.contains(key)) {
-		debugC(3, kDebugLingoExec, "cb_v4theentitypush: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
+		debugC(3, kDebugLingoExec, "cb_v4theentitypush: mapping 0x%02x, 0x%02x", bank, firstArg);
 		int entity = g_lingo->_lingoV4TheEntity[key]->entity;
 		int field = g_lingo->_lingoV4TheEntity[key]->field;
 		switch (g_lingo->_lingoV4TheEntity[key]->type) {
 		case kTEANOArgs:
 			{
 				Datum id;
-				id.u.s = NULL;
+				id.u.i = 0;
 				id.type = VOID;
-				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(0x%02x, NULL, 0x%02x)", entity, field);
+				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, VOID, %s)", g_lingo->entity2str(entity), g_lingo->field2str(field));
 				result = g_lingo->getTheEntity(entity, id, field);
 			}
 			break;
 		case kTEAItemId:
 			{
 				Datum id = g_lingo->pop();
-				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(0x%02x, id, 0x%02x)", entity, field);
+				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
 				result = g_lingo->getTheEntity(entity, id, field);
 			}
 			break;
@@ -491,7 +634,7 @@ void LC::cb_v4theentitypush() {
 			break;
 		}
 	} else {
-		warning("cb_v4theentitypush: unhandled mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		warning("cb_v4theentitypush: unhandled mapping 0x%02x 0x%02x", bank, firstArg);
 	}
 
 	g_lingo->push(result);
@@ -521,7 +664,7 @@ void LC::cb_v4theentitynamepush() {
 	TheEntity *entity = g_lingo->_theEntities[name];
 
 	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: %s", name.c_str());
-	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(0x%02x, id, kTheNOField)", entity->entity);
+	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: calling getTheEntity(%s, VOID, kTheNOField)", g_lingo->entity2str(entity->entity));
 	Datum result = g_lingo->getTheEntity(entity->entity, id, kTheNOField);
 
 	g_lingo->push(result);
@@ -531,24 +674,23 @@ void LC::cb_v4theentitynamepush() {
 void LC::cb_v4theentityassign() {
 	int bank = g_lingo->readInt();
 
-	Datum firstArg = g_lingo->pop();
-	firstArg.toInt();
+	int firstArg = g_lingo->pop().asInt();
 	Datum value = g_lingo->pop();
 	Datum result;
 	result.u.s = NULL;
 	result.type = VOID;
 
-	int key = (bank << 8) + firstArg.u.i;
+	int key = (bank << 8) + firstArg;
 	if (!g_lingo->_lingoV4TheEntity.contains(key)) {
-		warning("cb_v4theentityassign: unhandled mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		warning("cb_v4theentityassign: unhandled mapping 0x%02x 0x%02x", bank, firstArg);
 
 		return;
 	}
 
-	debugC(3, kDebugLingoExec, "cb_v4theentityassign: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
+	debugC(3, kDebugLingoExec, "cb_v4theentityassign: mapping 0x%02x, 0x%02x", bank, firstArg);
 
 	if (!g_lingo->_lingoV4TheEntity[key]->writable) {
-		warning("cb_v4theentityassign: non-writable mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+		warning("cb_v4theentityassign: non-writable mapping 0x%02x 0x%02x", bank, firstArg);
 
 		return;
 	}
@@ -561,14 +703,14 @@ void LC::cb_v4theentityassign() {
 			Datum id;
 			id.u.s = NULL;
 			id.type = VOID;
-			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, NULL, 0x%02x, value)", entity, field);
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, VOID, %s, %s)", g_lingo->entity2str(entity), g_lingo->field2str(field), value.asString(true).c_str());
 			g_lingo->setTheEntity(entity, id, field, value);
 		}
 		break;
 	case kTEAItemId:
 		{
 			Datum id = g_lingo->pop();
-			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, id, 0x%02x, value)", entity, field);
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, %s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field), value.asString(true).c_str());
 			g_lingo->setTheEntity(entity, id, field, value);
 		}
 		break;
@@ -674,6 +816,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 	// copy the storage area first.
 	uint32 constsStoreOffset = constsOffset + 6 * constsCount;
+
+	if (constsStoreOffset > (uint32)stream.size()) {
+		warning("Lingo::addCodeV4(): Too big constsStoreOffset. %d > %d", constsStoreOffset, stream.size());
+		return;
+	}
+
 	uint32 constsStoreSize = stream.size() - constsStoreOffset;
 
 	if ((uint32)stream.size() < constsStoreOffset) {

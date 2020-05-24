@@ -28,27 +28,23 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess)
 
 GravityProcess::GravityProcess()
-	: Process() {
+	: Process(), _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(0) {
 
 }
 
 GravityProcess::GravityProcess(Item *item, int gravity)
-	: _xSpeed(0), _ySpeed(0), _zSpeed(0) {
+	: _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(gravity) {
 	assert(item);
 
-	_gravity = gravity;
 	_itemNum = item->getObjId();
-
 	_type = 0x203; // CONSTANT!
 }
 
@@ -58,7 +54,7 @@ void GravityProcess::init() {
 
 	item->setGravityPID(getPid());
 
-	Actor *actor = p_dynamic_cast<Actor *>(item);
+	Actor *actor = dynamic_cast<Actor *>(item);
 	if (actor) {
 		actor->setFallStart(actor->getZ());
 	}
@@ -85,7 +81,7 @@ void GravityProcess::run() {
 		return;
 	}
 
-	Actor *actor = p_dynamic_cast<Actor *>(item);
+	Actor *actor = dynamic_cast<Actor *>(item);
 	if (actor && actor->getFallStart() < actor->getZ()) {
 		actor->setFallStart(actor->getZ());
 	}
@@ -169,7 +165,9 @@ void GravityProcess::run() {
 
 		bool termFlag = true;
 		Item *hititem = getItem(hititemid);
-		if (_zSpeed < -2 && !p_dynamic_cast<Actor *>(item)) {
+		if (!hititem)
+			return; // shouldn't happen..
+		if (_zSpeed < -2 && !dynamic_cast<Actor *>(item)) {
 #ifdef BOUNCE_DIAG
 			pout << "item " << _itemNum << " bounce ["
 			     << Kernel::get_instance()->getFrameNum()
@@ -348,22 +346,22 @@ void GravityProcess::dumpInfo() const {
 }
 
 
-void GravityProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void GravityProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->write4(static_cast<uint32>(_gravity));
-	ods->write4(static_cast<uint32>(_xSpeed));
-	ods->write4(static_cast<uint32>(_ySpeed));
-	ods->write4(static_cast<uint32>(_zSpeed));
+	ws->writeUint32LE(static_cast<uint32>(_gravity));
+	ws->writeUint32LE(static_cast<uint32>(_xSpeed));
+	ws->writeUint32LE(static_cast<uint32>(_ySpeed));
+	ws->writeUint32LE(static_cast<uint32>(_zSpeed));
 }
 
-bool GravityProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool GravityProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_gravity = static_cast<int>(ids->read4());
-	_xSpeed = static_cast<int>(ids->read4());
-	_ySpeed = static_cast<int>(ids->read4());
-	_zSpeed = static_cast<int>(ids->read4());
+	_gravity = static_cast<int>(rs->readUint32LE());
+	_xSpeed = static_cast<int>(rs->readUint32LE());
+	_ySpeed = static_cast<int>(rs->readUint32LE());
+	_zSpeed = static_cast<int>(rs->readUint32LE());
 
 	return true;
 }

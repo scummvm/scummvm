@@ -44,7 +44,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) :
 
 	_viewport = Common::Rect(544, 332);
 
-	if (_vm->getFeatures() & GF_ME) {
+	if (_vm->isGameVariant(GF_ME)) {
 		// High color
 		initGraphics(_viewport.width(), _viewport.height(), nullptr);
 
@@ -66,25 +66,8 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) :
 	_mainMenuBackupScreenThumbnail.reset(new Graphics::Surface());
 	_mainMenuBackupBackBuffer.reset(new Graphics::Surface());
 
-	if (_vm->getFeatures() & GF_25TH) {
-		const char *menuFontName = "NotoSans-ExtraBold.ttf";
-#ifdef USE_FREETYPE2
-		int fontSize;
-		if (_vm->getLanguage() == Common::PL_POL) {
-			fontSize = 11; // The Polish diacritics need significantly more space, so we use a smaller font
-		} else {
-			fontSize = 16;
-		}
-
-		Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
-		if (fontStream) {
-			_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
-			delete fontStream;
-		} else
-#endif
-		{
-			warning("Unable to open the menu font file '%s'", menuFontName);
-		}
+	if (_vm->isGameVariant(GF_ME) && _vm->isGameVariant(GF_25TH)) {
+		loadMenuFont();
 	}
 }
 
@@ -96,6 +79,30 @@ MystGraphics::~MystGraphics() {
 	delete _menuFont;
 }
 
+void MystGraphics::loadMenuFont() {
+	delete _menuFont;
+	_menuFont = nullptr;
+
+	const char *menuFontName = "NotoSans-ExtraBold.ttf";
+#ifdef USE_FREETYPE2
+	int fontSize;
+	if (_vm->getLanguage() == Common::PL_POL) {
+		fontSize = 11; // The Polish diacritics need significantly more space, so we use a smaller font
+	} else {
+		fontSize = 16;
+	}
+
+	Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
+	if (fontStream) {
+		_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
+		delete fontStream;
+	} else
+#endif
+	{
+		warning("Unable to open the menu font file '%s'", menuFontName);
+	}
+}
+
 MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	// We need to grab the image from the current stack archive, however, we  don't know
 	// if it's a PICT or WDIB resource. If it's Myst ME it's most likely a PICT, and if it's
@@ -103,7 +110,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	// that PICT resources can contain WDIB's instead of PICT's.
 	Common::SeekableReadStream *dataStream = nullptr;
 
-	if (_vm->getFeatures() & GF_ME && _vm->hasResource(ID_PICT, id)) {
+	if (_vm->isGameVariant(GF_ME) && _vm->hasResource(ID_PICT, id)) {
 		// The PICT resource exists. However, it could still contain a MystBitmap
 		// instead of a PICT image...
 		dataStream = _vm->getResource(ID_PICT, id);
@@ -114,7 +121,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 
 	bool isPict = false;
 
-	if ((_vm->getFeatures() & GF_ME) && dataStream->size() > 512 + 10 + 4) {
+	if (_vm->isGameVariant(GF_ME) && dataStream->size() > 512 + 10 + 4) {
 		// Here we detect whether it's really a PICT or a WDIB. Since a MystBitmap
 		// would be compressed, there's no way to detect for the BM without a hack.
 		// So, we search for the PICT version opcode for detection.
@@ -137,7 +144,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	} else {
 		mhkSurface = _bmpDecoder->decodeImage(dataStream);
 
-		if (_vm->getFeatures() & GF_ME) {
+		if (_vm->isGameVariant(GF_ME)) {
 			mhkSurface->convertToTrueColor();
 		} else {
 			remapSurfaceToSystemPalette(mhkSurface);
@@ -159,7 +166,7 @@ void MystGraphics::applyImagePatches(uint16 id, const MohawkSurface *mhkSurface)
 	//
 	// Here we stomp over the "off" with an "on".
 	// The fixed image was provided by dafioram in bug Trac#10115.
-	if (id == 2019 && _vm->getFeatures() & GF_ME && _vm->getLanguage() == Common::EN_ANY) {
+	if (id == 2019 && _vm->isGameVariant(GF_ME) && _vm->getLanguage() == Common::EN_ANY) {
 		static const byte markerSwitchInstructionsFixPic[] = {
 				0x1d, 0x1c, 0x19, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x17, 0x19, 0x19, 0x19, 0x19, 0x19,
 				0x1e, 0x1e, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
@@ -263,7 +270,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	MohawkSurface *mhkSurface = findImage(image);
 	Graphics::Surface *surface = mhkSurface->getSurface();
 
-	if (image == 2258 && _vm->getFeatures() & GF_ME) {
+	if (image == 2258 && _vm->isGameVariant(GF_ME)) {
 		// In Myst ME, the image for the open red page brother door
 		// when the special lights are on does not have the correct width.
 		// We work around this issue by tweaking the destination rectangle
@@ -310,7 +317,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	for (uint16 i = 0; i < height; i++)
 		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->format.bytesPerPixel);
 
-	if (!(_vm->getFeatures() & GF_ME)) {
+	if (!_vm->isGameVariant(GF_ME)) {
 		// Make sure the palette is set
 		assert(mhkSurface->getPalette());
 		memcpy(_palette, mhkSurface->getPalette(), 256 * 3);
@@ -678,11 +685,11 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 
 	if (state == kRectEnabled)
-		screen->frameRect(rect, (_vm->getFeatures() & GF_ME) ? _pixelFormat.RGBToColor(0, 255, 0) : 250);
+		screen->frameRect(rect, _vm->isGameVariant(GF_ME) ? _pixelFormat.RGBToColor(0, 255, 0) : 250);
 	else if (state == kRectUnreachable)
-		screen->frameRect(rect, (_vm->getFeatures() & GF_ME) ? _pixelFormat.RGBToColor(0, 0, 255) : 252);
+		screen->frameRect(rect, _vm->isGameVariant(GF_ME) ? _pixelFormat.RGBToColor(0, 0, 255) : 252);
 	else
-		screen->frameRect(rect, (_vm->getFeatures() & GF_ME) ? _pixelFormat.RGBToColor(255, 0, 0) : 249);
+		screen->frameRect(rect, _vm->isGameVariant(GF_ME) ? _pixelFormat.RGBToColor(255, 0, 0) : 249);
 
 	_vm->_system->unlockScreen();
 }
@@ -693,7 +700,7 @@ void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, ui
 
 void MystGraphics::fadeToBlack() {
 	// This is only for the demo
-	assert(!(_vm->getFeatures() & GF_ME));
+	assert(!_vm->isGameVariant(GF_ME));
 
 	// Linear fade in 64 steps
 	for (int i = 63; i >= 0; i--) {
@@ -711,7 +718,7 @@ void MystGraphics::fadeToBlack() {
 
 void MystGraphics::fadeFromBlack() {
 	// This is only for the demo
-	assert(!(_vm->getFeatures() & GF_ME));
+	assert(!_vm->isGameVariant(GF_ME));
 
 	copyBackBufferToScreen(_viewport);
 

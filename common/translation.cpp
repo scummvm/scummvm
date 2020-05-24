@@ -33,6 +33,7 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/unicode-bidi.h"
 
 #ifdef USE_TRANSLATION
 
@@ -449,6 +450,19 @@ bool TranslationManager::checkHeader(File &in) {
 
 	return true;
 }
+
+String TranslationManager::convertBiDiString(const String &input) {
+	if (getCurrentLanguage() != "he")		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+		return input;
+
+	if (getCurrentCharset() != "iso-8859-8") {
+		warning("convertBiDiString: Unexpected charset is used with %s language: %s", getCurrentLanguage().c_str(), getCurrentCharset().c_str());
+		return input;
+	};
+
+	return Common::convertBiDiString(input, HE_ISR);
+}
+
 
 } // End of namespace Common
 

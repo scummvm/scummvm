@@ -31,6 +31,9 @@ namespace Ultima8 {
 
 class RenderedText;
 
+/**
+ * The game menu - with entries like Read Diary, Write Diary, Credits, etc.
+ */
 class MenuGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -55,7 +58,6 @@ public:
 
 protected:
 	bool _nameEntryMode;
-	int _oldMusicTrack;
 	int16 _oldPalTransform[12];
 
 	virtual void selectEntry(int entry);

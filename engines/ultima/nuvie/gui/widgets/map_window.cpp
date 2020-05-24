@@ -50,11 +50,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define USE_BUTTON 1 /* FIXME: put this in a common location */
-#define WALK_BUTTON 3
-#define ACTION_BUTTON 3
-#define DRAG_BUTTON 1
-
 #define TMP_MAP_BORDER 3
 
 #define WRAP_VIEWP(p,p1,s) ((p1-p) < 0 ? (p1-p) + s : p1-p)

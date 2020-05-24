@@ -174,6 +174,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	case kFeatureVirtualKeyboard:
 	case kFeatureClipboardSupport:
 	case kFeatureOpenUrl:
+	case kFeatureNoQuit:
 		return true;
 
 	default:
@@ -351,22 +352,6 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 	}
 }
 
-void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
-	FILE *output = 0;
-
-	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
-		output = stdout;
-	else
-		output = stderr;
-
-	if (type == LogMessageType::kError) {
-		_lastErrorMessage = message;
-	}
-
-	fputs(message, output);
-	fflush(output);
-}
-
 bool iOS7_touchpadModeEnabled() {
 	OSystem_iOS7 *sys = (OSystem_iOS7 *) g_system;
 	return sys && sys->touchpadModeEnabled();
@@ -414,7 +399,4 @@ void iOS7_main(int argc, char **argv) {
 		//*stderr = NULL;
 		fclose(newfp);
 	}
-
-	// prevents hanging on exit
-	exit(0);
 }

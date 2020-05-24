@@ -61,21 +61,34 @@ DragonsEngine *getEngine() {
 
 DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst) {
 	_language = desc->language;
-	_bigfileArchive = NULL;
-	_dragonRMS = NULL;
-	_backgroundResourceLoader = NULL;
-	_screen = NULL;
+	_bigfileArchive = nullptr;
+	_dragonRMS = nullptr;
+	_backgroundResourceLoader = nullptr;
+	_screen = nullptr;
 	_sequenceOpcodes = new SequenceOpcodes(this);
-	_scriptOpcodes = NULL;
+	_scriptOpcodes = nullptr;
 	_engine = this;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
-	_credits = NULL;
-	_talk = NULL;
-	_fontManager = NULL;
-	_strPlayer = NULL;
-	_sceneUpdateFunction = NULL;
-	_vsyncUpdateFunction = NULL;
+	_credits = nullptr;
+	_talk = nullptr;
+	_fontManager = nullptr;
+	_strPlayer = nullptr;
+	_sceneUpdateFunction = nullptr;
+	_vsyncUpdateFunction = nullptr;
+
+	_dragonOBD = nullptr;
+	_dragonImg = nullptr;
+	_actorManager = nullptr;
+	_dragonINIResource = nullptr;
+	_scene = nullptr;
+	_sound = nullptr;
+	_isLoadingDialogAudio = false;
+	_sceneId1 = 0;
+	_dragonFLG = nullptr;
+	_dragonVAR = nullptr;
+	_flickerIdleCounter = 0;
+	_loadingScreenState = nullptr;
 
 	_leftMouseButtonUp = false;
 	_leftMouseButtonDown = false;
@@ -97,6 +110,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 
 	_debugMode = false;
 	_isGamePaused = false;
+	_inMenu = false;
 
 	_bit_flags_8006fbd8 = 0;
 
@@ -106,6 +120,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 DragonsEngine::~DragonsEngine() {
 	delete _sequenceOpcodes;
 	delete _scriptOpcodes;
+	delete _cursor;
 }
 
 void DragonsEngine::updateEvents() {
@@ -219,10 +234,11 @@ Common::Error DragonsEngine::run() {
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
 		_strPlayer->playVideo("crystald.str");
-		//TODO why doesn't this file load correctly? _video->playVideo("illusion.str");
+		_strPlayer->playVideo("illusion.str");
 		_strPlayer->playVideo("labintro.str");
 
-		//TODO main menu here.
+		init();
+		mainMenu();
 		loadScene(0);
 	}
 
@@ -269,8 +285,6 @@ uint16 DragonsEngine::ipt_img_file_related() {
 
 void DragonsEngine::gameLoop() {
 	uint16 prevImgIniId = 0;
-	InventoryState uVar6;
-	InventoryState uVar7;
 	uint16 sequenceId;
 
 	_cursor->_cursorActivationSeqOffset = 0;
@@ -475,9 +489,9 @@ void DragonsEngine::gameLoop() {
 				}
 			}
 			if (_inventory->getState() == InventionBookOpen) {
-				uVar6 = _inventory->getState();
+				InventoryState uVar6 = _inventory->getState();
 				if (checkForInventoryButtonRelease() && isInputEnabled()) {
-					uVar7 = _inventory->_previousState;
+					InventoryState uVar7 = _inventory->_previousState;
 					if (_dragonVAR->getVar(7) == 1) {
 						_inventory->_previousState = uVar7;
 						_inventory->inventoryMissing();
@@ -517,7 +531,7 @@ void DragonsEngine::gameLoop() {
 			_inventory->setPreviousState();
 			continue;
 		}
-		uVar6 = _inventory->getState();
+		InventoryState uVar6 = _inventory->getState();
 		if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
 			_flickerIdleCounter = 0;
 			if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
@@ -640,7 +654,9 @@ void DragonsEngine::updateHandler() {
 
 	// 0x8001b200
 	if (isFlagSet(ENGINE_FLAG_8000) && !_sound->isSpeechPlaying()) {
+		//dialog finished playing.
 		clearFlags(ENGINE_FLAG_8000);
+		_sound->resumeMusic();
 	}
 
 	//TODO logic here
@@ -879,10 +895,10 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 	DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
 	DragonINI *ini1 = getINI(1);
 
-	if (flickerINI != NULL) {
+	if (flickerINI != nullptr) {
 		if (flickerINI->sceneId == currentSceneId) {
-			if (flickerINI->actor == NULL || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
-				if (ini1->actor != NULL) {
+			if (flickerINI->actor == nullptr || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
+				if (ini1->actor != nullptr) {
 					ini1->actor->updateSequence(8);
 					ini1->actor->_priorityLayer = 0;
 				}
@@ -896,7 +912,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 						&& flickerINI->actor->_direction != flickerINI->actor->_sequenceID) {
 					flickerINI->actor->updateSequence(flickerINI->actor->_direction);
 				}
-				if (ini1->actor != NULL) {
+				if (ini1->actor != nullptr) {
 					ini1->actor->_priorityLayer = 0;
 				}
 			}
@@ -955,18 +971,64 @@ void DragonsEngine::updatePathfindingActors() {
 	}
 }
 
-void DragonsEngine::fade_related(uint32 flags) {
+void DragonsEngine::fadeFromBlack(uint32 flags) {
 	if (!isFlagSet(ENGINE_FLAG_40)) {
 		return;
 	}
+	bool isUnkFlag2Set = isUnkFlagSet(ENGINE_UNK1_FLAG_2);
+
 	setUnkFlags(ENGINE_UNK1_FLAG_2);
 	clearFlags(ENGINE_FLAG_40);
 
-	//TODO 0x80015a1c
+	//TODO 0x80015a1c implement fading logic here.
+
+	if (!isUnkFlag2Set) {
+		clearUnkFlags(ENGINE_UNK1_FLAG_2);
+	}
 }
 
-void DragonsEngine::call_fade_related_1f() {
-	fade_related(0x1f);
+void DragonsEngine::fadeFromBlack() {
+	fadeFromBlack(0x1f);
+}
+
+void DragonsEngine::fadeFromBlackExcludingFont() {
+	fadeFromBlack(0x1e);
+}
+
+void DragonsEngine::fadeToBlack() {
+	fadeToBlack(0x1f);
+}
+
+void DragonsEngine::fadeToBlackExcludingFont() {
+	fadeToBlack(0x1e);
+}
+
+void DragonsEngine::fadeToBlack(uint32 flags) {
+	bool isFlag2Set = isUnkFlagSet(ENGINE_UNK1_FLAG_2);
+	//TODO
+//	do {
+//		SetShadeTex(poly_ft4_tbl + uVar2,0);
+//		uVar5 = uVar5 + 1;
+//		uVar2 = (uint)uVar5;
+//	} while (uVar5 < 0x40);
+//	uVar5 = 0;
+//	uVar2 = 0;
+//	do {
+//		SetShadeTex(poly_f4_tbl + uVar2,0);
+//		uVar1 = unkFlags1;
+//		uVar5 = uVar5 + 1;
+//		uVar2 = (uint)uVar5;
+//	} while (uVar5 < 0xf);
+	if (!isFlagSet(ENGINE_FLAG_40)) {
+		setUnkFlags(ENGINE_UNK1_FLAG_2);
+
+		//TODO fade out here.
+
+		setFlags(ENGINE_FLAG_40);
+		if (!isFlag2Set) {
+			clearUnkFlags(ENGINE_UNK1_FLAG_2);
+		}
+	}
 }
 
 void DragonsEngine::performAction() {
@@ -983,8 +1045,8 @@ void DragonsEngine::performAction() {
 
 	uVar2 = _scriptOpcodes->_scriptTargetINI;
 	uVar1 = _flags;
-	local_58_code = NULL;
-	local_58_codeEnd = NULL;
+	local_58_code = nullptr;
+	local_58_codeEnd = nullptr;
 
 	uVar6 = 0;
 	_scriptOpcodes->_numDialogStackFramesToPop = 0;
@@ -1019,7 +1081,7 @@ void DragonsEngine::performAction() {
 		local_58_codeEnd = local_58_code + READ_LE_UINT16(local_48._code + 6);
 	}
 	uVar4 = uVar4 & 0xfffd;
-	if (local_58_code != NULL && local_58_codeEnd != NULL) {
+	if (local_58_code != nullptr && local_58_codeEnd != nullptr) {
 		clearFlags(ENGINE_FLAG_8);
 		ScriptOpCall local_58(local_58_code, local_58_codeEnd - local_58_code);
 		_scriptOpcodes->runScript(local_58);
@@ -1113,7 +1175,7 @@ void DragonsEngine::walkFlickerToObject() {
 				return;
 			}
 			flickerINI = _dragonINIResource->getFlickerRecord();
-			if (flickerINI != NULL && flickerINI->actor != NULL) {
+			if (flickerINI != nullptr && flickerINI->actor != nullptr) {
 				flickerINI->actor->clearFlag(ACTOR_FLAG_10);
 				flickerINI->actor->setFlag(ACTOR_FLAG_4);
 				targetINI = getINI(_cursor->_performActionTargetINI - 1);
@@ -1156,12 +1218,12 @@ bool DragonsEngine::canSaveGameStateCurrently() {
 
 bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
 	return
-		// TODO (f == kSupportsRTL) ||
+		// TODO (f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }
 
-void DragonsEngine::loadScene(uint16 sceneId) {
+void DragonsEngine::init() {
 	_flags = 0x1046;
 	_flags &= 0x1c07040;
 	_flags |= 0x26;
@@ -1183,7 +1245,9 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 
 	_screen->loadPalette(4, _cursor->getPalette());
 	_screen->updatePaletteTransparency(4, 1, 0xff, true);
+}
 
+void DragonsEngine::loadScene(uint16 sceneId) {
 	// TODO fun_80017010_update_actor_texture_maybe();
 	if (sceneId > 2) {
 		_dragonVAR->setVar(1, 1);
@@ -1226,18 +1290,22 @@ void DragonsEngine::reset() {
 		_paletteCyclingTbl[i].updateCounter = 0;
 	}
 
-	setSceneUpdateFunction(NULL);
+	clearSceneUpdateFunction();
 }
 
 void DragonsEngine::runSceneUpdaterFunction() {
 	if ((isFlagSet(ENGINE_FLAG_20) && (_run_func_ptr_unk_countdown_timer == 0)) &&
-			(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
+			(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != nullptr)) {
 		_sceneUpdateFunction();
 	}
 }
 
 void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
 	_sceneUpdateFunction = newUpdateFunction;
+}
+
+void DragonsEngine::clearSceneUpdateFunction() {
+	setSceneUpdateFunction(nullptr);
 }
 
 void DragonsEngine::setVsyncUpdateFunction(void (*newUpdateFunction)()) {
@@ -1312,7 +1380,7 @@ bool DragonsEngine::isDebugMode() {
 }
 
 bool DragonsEngine::isVsyncUpdaterFunctionRunning() {
-	return _vsyncUpdateFunction != NULL;
+	return _vsyncUpdateFunction != nullptr;
 }
 
 void DragonsEngine::runVsyncUpdaterFunction() {
@@ -1331,8 +1399,8 @@ void DragonsEngine::updatePaletteCycling() {
 			if (_paletteCyclingTbl[loopIndex].updateInterval != 0) {
 				if (_paletteCyclingTbl[loopIndex].updateCounter == 0) {
 					uint16 *palette = (uint16 *)_screen->getPalette(_paletteCyclingTbl[loopIndex].paletteType);
-					int16 uVar14 = (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset;
-					int16 uVar8 = (uint)(uint16)_paletteCyclingTbl[loopIndex].endOffset;
+					int16 uVar14 = _paletteCyclingTbl[loopIndex].startOffset;
+					int16 uVar8 = _paletteCyclingTbl[loopIndex].endOffset;
 					if (uVar14 < uVar8) {
 						uint16 uVar11 = palette[uVar8];
 						int uVar15 = uVar8;
@@ -1341,7 +1409,7 @@ void DragonsEngine::updatePaletteCycling() {
 								uVar8--;
 								palette[uVar15] = palette[uVar15 - 1];
 								uVar15 = uVar8 & 0xffff;
-							} while ((uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
+							} while (_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
 						}
 						palette[(uint16)_paletteCyclingTbl[loopIndex].startOffset] = uVar11;
 						_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateInterval;
@@ -1354,7 +1422,7 @@ void DragonsEngine::updatePaletteCycling() {
 									uVar8--;
 									palette[uVar15] = palette[uVar15 + 1];
 									uVar15 = uVar8 & 0xffff;
-								} while ((uVar8 & 0xffff) < (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset);
+								} while ((uVar8 & 0xffff) < _paletteCyclingTbl[loopIndex].startOffset);
 							}
 							palette[(uint16)_paletteCyclingTbl[loopIndex].endOffset] = uVar11;
 							_paletteCyclingTbl[loopIndex].updateCounter =
@@ -1489,6 +1557,168 @@ void DragonsEngine::initSubtitleFlag() {
 		clearFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
 	} else {
 		setFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
+	}
+}
+
+int centerText(const char *text) {
+	return 0x14 - (strlen(text) / 2 + 1);
+}
+
+void DragonsEngine::mainMenu() {
+	_inMenu = true;
+	//TODO need to support other languages.
+	const char copyright[6][40] = {
+			"Crystal Dynamics is a trademark",
+			"of Crystal Dynamics.",
+			"Blazing Dragons is a trademark and",
+			"copyright of Terry Jones and is",
+			"used with permission.",
+			"Licensed by Nelvana Marketing Inc."
+	};
+	const char menuItems[3][40] = {
+			"Start",
+			"Options",
+			"Previews"
+	};
+
+	_screen->clearScreen();
+	Actor *actor = _actorManager->loadActor(0xd9,0,0,0,3);
+	actor->setFlag(ACTOR_FLAG_8000);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_80);
+
+	//TODO fix palette for copyright image.
+	_screen->loadPalette(0, _cursor->getPalette()); //actor->_actorResource->getPalette());
+
+	for (int i = 0; i < 6; i++) {
+		_fontManager->addAsciiText(centerText(&copyright[i][0]) * 8, (0x12 + i) * 8, &copyright[i][0], strlen(copyright[i]), 1);
+	}
+
+	waitForFramesAllowSkip(400);
+	_fontManager->clearText();
+	actor->updateSequence(1);
+
+	bool startGame = false;
+	do {
+		uint16 curMenuItem = 0;
+		do {
+			for (int i = 0; i < 3; i++) {
+				_fontManager->addAsciiText((i == 0 ? 17 : 16) * 8, (0x12 + i) * 8, &menuItems[i][0],
+										   strlen(menuItems[i]), i == curMenuItem ? 0 : 1);
+			}
+			if (checkForDownKeyRelease()) {
+				if (curMenuItem < 2) {
+					curMenuItem++;
+				} else {
+					curMenuItem = 0;
+				}
+				playOrStopSound(0x8009);
+			}
+
+			if (checkForUpKeyRelease()) {
+				if (curMenuItem > 0) {
+					curMenuItem--;
+				} else {
+					curMenuItem = 2;
+				}
+				playOrStopSound(0x8009);
+			}
+			waitForFrames(1);
+		} while (!checkForActionButtonRelease() && !shouldQuit());
+
+		if (curMenuItem == 0) {
+			_screen->clearScreen();
+			loadingScreen();
+			startGame = true;
+		} else if (curMenuItem == 1) {
+			//TODO options menu
+		} else if (curMenuItem == 2) {
+			_strPlayer->playVideo("previews.str");
+		}
+	} while (!shouldQuit() && !startGame);
+
+	_inMenu = false;
+}
+
+bool DragonsEngine::isInMenu() {
+	return _inMenu;
+}
+
+void loadingScreenUpdateFunction() {
+	getEngine()->loadingScreenUpdate();
+}
+
+void DragonsEngine::loadingScreen() {
+	const int flamesActorOffset[4] = {2, 0, 3, 1};
+	_loadingScreenState = new LoadingScreenState;
+	_fontManager->clearText();
+	_actorManager->clearActorFlags(2);
+	_screen->addFlatQuad(0,0,0x13f,0,0x13f,199,0,199,0x34a2,6,0);
+	Actor *actor = _actorManager->loadActor(0,0x82,0,0,6);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_200);
+	actor->setFlag(ACTOR_FLAG_80);
+	actor = _actorManager->loadActor(0,0x83,0,0,6);
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->setFlag(ACTOR_FLAG_200);
+	actor->setFlag(ACTOR_FLAG_80);
+
+	for (int i = 0; i < 10; i++) {
+		actor = _actorManager->loadActor(0,flamesActorOffset[(i % 4)] + 0x7e,i * 0x20 + 0x10,0xbe,6);
+		actor->setFlag(ACTOR_FLAG_100);
+		actor->setFlag(ACTOR_FLAG_200);
+		actor->setFlag(ACTOR_FLAG_80);
+		_loadingScreenState->flames[i] = actor;
+		_loadingScreenState->baseYOffset = 0xbe;
+		int x0 = i * 0x20;
+		_loadingScreenState->quads[i] = _screen->addFlatQuad(x0,0,x0 + 0x20,0,x0 + 0x20,199,x0,199,0,7,0);
+	}
+
+	setVsyncUpdateFunction(loadingScreenUpdateFunction);
+	waitForFramesAllowSkip(400);
+	_actorManager->clearActorFlags(2);
+	_screen->clearAllFlatQuads();
+	setVsyncUpdateFunction(nullptr);
+	delete _loadingScreenState;
+	_loadingScreenState = nullptr;
+}
+
+void DragonsEngine::loadingScreenUpdate() {
+	const int16 flameOffsetTbl[26] = {
+			3,      4,      5,      6,
+			7,      5,      4,      3,
+			3,      4,      6,      7,
+			6,      5,      5,      6,
+			7,      6,      4,      3,
+			2,      3,      4,      5,
+			6,      5
+	};
+	FlatQuad *quad;
+	int16 flameYOffset;
+
+	if (_loadingScreenState->loadingFlamesUpdateCounter == 0) {
+		_loadingScreenState->loadingFlamesUpdateCounter = 4;
+		for (int i = 0; i < 10 ; i++) {
+			flameYOffset = _loadingScreenState->baseYOffset - flameOffsetTbl[(i + _loadingScreenState->flameOffsetIdx) % 26];
+			if (_loadingScreenState->flames[i]->_y_pos >= -0xb) {
+				_loadingScreenState->flames[i]->_y_pos = flameYOffset;
+			}
+			quad = _screen->getFlatQuad(_loadingScreenState->quads[i]);
+			if (quad->points[0].y >= -1) {
+				quad->points[0].y = flameYOffset + 2;
+				quad->points[1].y = flameYOffset + 2;
+			}
+		}
+		_loadingScreenState->flameOffsetIdx = (_loadingScreenState->flameOffsetIdx + 1) % 26;
+	} else {
+		_loadingScreenState->loadingFlamesUpdateCounter--;
+	}
+
+	if (_loadingScreenState->loadingFlamesRiseCounter == 0) {
+		_loadingScreenState->loadingFlamesRiseCounter = 1;
+		_loadingScreenState->baseYOffset--;
+	} else {
+		_loadingScreenState->loadingFlamesRiseCounter--;
 	}
 }
 

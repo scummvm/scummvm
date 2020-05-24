@@ -151,7 +151,7 @@ bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

@@ -184,9 +184,9 @@ enum {
 
 typedef struct sc_var_set_s *sc_var_setref_t;
 extern void var_put(sc_var_setref_t vars,
-                    const sc_char *name, sc_int type, sc_vartype_t vt_value);
+                    const sc_char *name, sc_int _type, sc_vartype_t vt_value);
 extern sc_bool var_get(sc_var_setref_t vars,
-                       const sc_char *name, sc_int *type,
+                       const sc_char *name, sc_int *_type,
                        sc_vartype_t *vt_rvalue);
 extern void var_put_integer(sc_var_setref_t vars,
                             const sc_char *name, sc_int value);
@@ -332,7 +332,7 @@ extern void gs_object_player_wear(sc_gameref_t gs, sc_int object);
 extern void gs_object_npc_wear(sc_gameref_t gs, sc_int object, sc_int npc);
 extern void gs_object_to_room(sc_gameref_t gs, sc_int object, sc_int room);
 extern sc_int gs_npc_count(sc_gameref_t gs);
-extern void gs_set_npc_location(sc_gameref_t gs, sc_int npc, sc_int location);
+extern void gs_set_npc_location(sc_gameref_t gs, sc_int npc, sc_int _location);
 extern sc_int gs_npc_location(sc_gameref_t gs, sc_int npc);
 extern void gs_set_npc_position(sc_gameref_t gs, sc_int npc, sc_int position);
 extern sc_int gs_npc_position(sc_gameref_t gs, sc_int npc);
@@ -768,7 +768,7 @@ extern void if_print_debug_character(sc_char character);
 extern void if_print_tag(sc_int tag, const sc_char *arg);
 extern void if_read_line(sc_char *buffer, sc_int length);
 extern void if_read_debug(sc_char *buffer, sc_int length);
-extern sc_bool if_confirm(sc_int type);
+extern sc_bool if_confirm(sc_int _type);
 extern void *if_open_saved_game(sc_bool is_save);
 extern void if_close_saved_game(void *opaque);
 extern void if_display_hints(sc_gameref_t game);

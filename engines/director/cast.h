@@ -28,6 +28,7 @@
 
 namespace Graphics {
 struct Surface;
+class MacWidget;
 }
 
 namespace Common {
@@ -35,10 +36,15 @@ class SeekableReadStream;
 class ReadStreamEndian;
 }
 
+namespace Image {
+class ImageDecoder;
+}
+
 namespace Director {
 
 class Stxt;
 class CachedMacText;
+class SNDDecoder;
 
 class Cast {
 public:
@@ -51,8 +57,11 @@ public:
 	Common::Array<Resource> _children;
 
 	const Graphics::Surface *_surface;
+	Image::ImageDecoder *_img;
 
 	bool _modified;
+
+	Graphics::MacWidget *_widget;
 };
 
 class BitmapCast : public Cast {
@@ -69,6 +78,14 @@ public:
 	uint16 _bitsPerPixel;
 
 	uint32 _tag;
+};
+
+class SoundCast : public Cast {
+public:
+	SoundCast(Common::ReadStreamEndian &stream, uint16 version);
+
+	bool _looping;
+	SNDDecoder *_audio;
 };
 
 class ShapeCast : public Cast {
@@ -88,6 +105,7 @@ public:
 class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
+	virtual ~TextCast();
 
 	void setText(const char *text);
 
@@ -111,6 +129,8 @@ public:
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
 	CachedMacText *_cachedMacText;
+
+	Common::String getText();
 };
 
 class ButtonCast : public TextCast {

@@ -34,24 +34,21 @@
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SliderGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(SliderGump)
 
-SliderGump::SliderGump() : ModalGump() {
-	_renderedText = 0;
+SliderGump::SliderGump() : ModalGump(), _renderedText(nullptr), _min(0), _max(0),
+		_delta(0), _value(0), _usecodeNotifyPID(0), _renderedValue(-1) {
 }
 
 
 SliderGump::SliderGump(int x, int y, int16 min, int16 max,
                        int16 value_, int16 delta)
-	: ModalGump(x, y, 5, 5), _min(min), _max(max), _delta(delta), _value(value_) {
-	_usecodeNotifyPID = 0;
-	_renderedText = 0;
+	: ModalGump(x, y, 5, 5), _min(min), _max(max), _delta(delta), _value(value_),
+	  _usecodeNotifyPID(0), _renderedText(nullptr), _renderedValue(-1) {
 }
 
 SliderGump::~SliderGump() {
@@ -95,7 +92,7 @@ void SliderGump::setValueFromSlider(int sliderx) {
 }
 
 void SliderGump::setSliderPos() {
-	Gump *slider = Gump::FindGump(SlidingWidget::ClassType);
+	Gump *slider = Gump::FindGump<SlidingWidget>();
 	assert(slider);
 	slider->Move(getSliderPos(), slidery);
 }
@@ -127,11 +124,7 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
-	ShapeFrame *sf = _shape->getFrame(0);
-	assert(sf);
-
-	_dims.w = sf->_width;
-	_dims.h = sf->_height;
+	UpdateDimsFromShape();
 
 	Shape *childshape = GameData::get_instance()->
 	                    getGumps()->getShape(slidershape);
@@ -190,7 +183,7 @@ void SliderGump::Close(bool no_del) {
 	_processResult = _value;
 
 	if (_usecodeNotifyPID) {
-		UCProcess *ucp = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(_usecodeNotifyPID));
+		UCProcess *ucp = dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(_usecodeNotifyPID));
 		assert(ucp);
 		ucp->setReturnValue(_value);
 		ucp->wakeUp(_value);
@@ -248,11 +241,11 @@ void SliderGump::setUsecodeNotify(UCProcess *ucp) {
 	_usecodeNotifyPID = ucp->getPid();
 }
 
-void SliderGump::saveData(ODataSource *ods) {
+void SliderGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");
 }
 
-bool SliderGump::loadData(IDataSource *ids, uint32 version) {
+bool SliderGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 
 	return false;

@@ -23,7 +23,6 @@
 #ifndef ULTIMA8_GRAPHICS_RENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_RENDERSURFACE_H
 
-#include "ultima/ultima8/graphics/graphics_errors.h"
 #include "graphics/pixelformat.h"
 #include "graphics/managed_surface.h"
 
@@ -39,13 +38,13 @@ struct Palette;
 struct Rect;
 class Scaler;
 
-#define UNPACK_RGB8(pix,r,g,b) { r = (((pix)&RenderSurface::_format.r_mask)>>RenderSurface::_format.r_shift)<<RenderSurface::_format.r_loss; g = (((pix)&RenderSurface::_format.g_mask)>>RenderSurface::_format.g_shift)<<RenderSurface::_format.g_loss; b = (((pix)&RenderSurface::_format.b_mask)>>RenderSurface::_format.b_shift)<<RenderSurface::_format.b_loss; }
-#define PACK_RGB8(r,g,b) ((((r)>>RenderSurface::_format.r_loss)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss)<<RenderSurface::_format.b_shift))
-#define PACK_RGB16(r,g,b) ((((r)>>RenderSurface::_format.r_loss16)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss16)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss16)<<RenderSurface::_format.b_shift))
+#define UNPACK_RGB8(pix,r,g,b) { r = (((pix)&RenderSurface::_format.rMask)>>RenderSurface::_format.rShift)<<RenderSurface::_format.rLoss; g = (((pix)&RenderSurface::_format.gMask)>>RenderSurface::_format.gShift)<<RenderSurface::_format.gLoss; b = (((pix)&RenderSurface::_format.bMask)>>RenderSurface::_format.bShift)<<RenderSurface::_format.bLoss; }
+#define PACK_RGB8(r,g,b) ((((r)>>RenderSurface::_format.rLoss)<<RenderSurface::_format.rShift) | (((g)>>RenderSurface::_format.gLoss)<<RenderSurface::_format.gShift) | (((b)>>RenderSurface::_format.bLoss)<<RenderSurface::_format.bShift))
+#define PACK_RGB16(r,g,b) ((((r)>>RenderSurface::_format.rLoss16)<<RenderSurface::_format.rShift) | (((g)>>RenderSurface::_format.gLoss16)<<RenderSurface::_format.gShift) | (((b)>>RenderSurface::_format.bLoss16)<<RenderSurface::_format.bShift))
 
-#define UNPACK_RGBA8(pix,r,g,b,a) { r = (((pix)&RenderSurface::_format.r_mask)>>RenderSurface::_format.r_shift)<<RenderSurface::_format.r_loss; g = (((pix)&RenderSurface::_format.g_mask)>>RenderSurface::_format.g_shift)<<RenderSurface::_format.g_loss; b = (((pix)&RenderSurface::_format.b_mask)>>RenderSurface::_format.b_shift)<<RenderSurface::_format.b_loss; ; a = (((pix)&RenderSurface::_format.a_mask)>>RenderSurface::_format.a_shift)<<RenderSurface::_format.a_loss; }
-#define PACK_RGBA8(r,g,b,a) ((((r)>>RenderSurface::_format.r_loss)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss)<<RenderSurface::_format.b_shift) | (((a)>>RenderSurface::_format.a_loss)<<RenderSurface::_format.a_shift))
-#define PACK_RGBA16(r,g,b,a) ((((r)>>RenderSurface::_format.r_loss16)<<RenderSurface::_format.r_shift) | (((g)>>RenderSurface::_format.g_loss16)<<RenderSurface::_format.g_shift) | (((b)>>RenderSurface::_format.b_loss16)<<RenderSurface::_format.b_shift) | (((a)>>RenderSurface::_format.a_loss16)<<RenderSurface::_format.a_shift))
+#define UNPACK_RGBA8(pix,r,g,b,a) { r = (((pix)&RenderSurface::_format.rMask)>>RenderSurface::_format.rShift)<<RenderSurface::_format.rLoss; g = (((pix)&RenderSurface::_format.gMask)>>RenderSurface::_format.gShift)<<RenderSurface::_format.gLoss; b = (((pix)&RenderSurface::_format.bMask)>>RenderSurface::_format.bShift)<<RenderSurface::_format.bLoss; ; a = (((pix)&RenderSurface::_format.aMask)>>RenderSurface::_format.aShift)<<RenderSurface::_format.aLoss; }
+#define PACK_RGBA8(r,g,b,a) ((((r)>>RenderSurface::_format.rLoss)<<RenderSurface::_format.rShift) | (((g)>>RenderSurface::_format.gLoss)<<RenderSurface::_format.gShift) | (((b)>>RenderSurface::_format.bLoss)<<RenderSurface::_format.bShift) | (((a)>>RenderSurface::_format.aLoss)<<RenderSurface::_format.aShift))
+#define PACK_RGBA16(r,g,b,a) ((((r)>>RenderSurface::_format.rLoss16)<<RenderSurface::_format.rShift) | (((g)>>RenderSurface::_format.gLoss16)<<RenderSurface::_format.gShift) | (((b)>>RenderSurface::_format.bLoss16)<<RenderSurface::_format.bShift) | (((a)>>RenderSurface::_format.aLoss16)<<RenderSurface::_format.aShift))
 
 //
 // RenderSurface
@@ -54,17 +53,19 @@ class Scaler;
 //
 class RenderSurface {
 public:
+	struct U8PixelFormat : Graphics::PixelFormat {
+		// Extend with some extra attributes
+		byte  rLoss16, gLoss16, bLoss16, aLoss16;
+		uint32  rMask,   gMask,   bMask,   aMask;
 
-	// Colour shifting values (should these all be uint32???)
-	struct Format {
-		uint32  s_bpp,    s_bytes_per_pixel;
-		uint32  r_loss,   g_loss,   b_loss,   a_loss;
-		uint32  r_loss16, g_loss16, b_loss16, a_loss16;
-		uint32  r_shift,  g_shift,  b_shift,  a_shift;
-		uint32  r_mask,   g_mask,   b_mask,   a_mask;
+		inline U8PixelFormat() : Graphics::PixelFormat(),
+			rLoss16(0), gLoss16(0), bLoss16(0), aLoss16(0),
+			rMask(0), gMask(0), bMask(0), aMask(0)
+		{
+		}
 	};
 
-	static Format _format;
+	static U8PixelFormat _format;
 
 	static uint8 _gamma10toGamma22[256];
 	static uint8 _gamma22toGamma10[256];
@@ -86,13 +87,13 @@ public:
 
 	//! Begin painting to the buffer. MUST BE CALLED BEFORE DOING ANYTHING TO THE SURFACE!
 	// \note Can be called multiple times
-	// \return Error Code on error. Check return code.....
-	virtual ECode BeginPainting() = 0;
+	// \return true on success, false on failure
+	virtual bool BeginPainting() = 0;
 
 	//! Finish paining to the buffer.
 	// \note MUST BE CALLED FOR EACH CALL TO BeginPainting()
-	// \return Error Code on error. Check return code.....
-	virtual ECode EndPainting() = 0;
+	// \return true on success, false on failure
+	virtual bool EndPainting() = 0;
 
 	//! Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
 	// \note Do not delete the texture.
@@ -204,9 +205,6 @@ public:
 	//! Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
 	// TODO: virtual void PaintHighlightInvis(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
 	virtual void PaintHighlightInvis(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) = 0;
-
-	//! Paint a shape masked against destination alpha
-	virtual void PaintMasked(Shape *s, uint32 framenum, int32 x, int32 y, bool trans = false, bool mirrored = false, uint32 col32 = 0, bool untformed_pal = false) = 0;
 
 	//
 	// Basic Line Drawing

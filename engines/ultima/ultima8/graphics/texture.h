@@ -82,8 +82,6 @@ enum TextureFormat {
 };
 
 
-class IDataSource;
-
 //
 // Basic 32 Bit Texture
 //
@@ -103,8 +101,7 @@ public:
 		return Graphics::PixelFormat(4, 8, 8, 8, 8, TEX32_R_SHIFT, TEX32_G_SHIFT, TEX32_B_SHIFT, TEX32_A_SHIFT);
 	}
 
-	Texture() : _format(TEX_FMT_STANDARD), _glTex(0), _next(0) {
-	}
+	Texture();
 
 	virtual ~Texture();
 
@@ -113,6 +110,9 @@ public:
 	}
 	void create(uint16 width, uint16 height, const Graphics::PixelFormat &pixelFormat) override {
 		Graphics::ManagedSurface::create(width, height, pixelFormat);
+	}
+	void create(ManagedSurface &surf, const Common::Rect &bounds) override {
+		Graphics::ManagedSurface::create(surf, bounds);
 	}
 	void create(uint16 width, uint16 height, TextureFormat textureFormat);
 
@@ -130,14 +130,17 @@ public:
 	}
 
 	// Create a texture from a Data Source (filename is use to help detection of type)
-	static Texture *Create(IDataSource *ds, const char *filename = NULL);
+	static Texture *Create(Common::SeekableReadStream *rs, const char *filename = NULL);
 
 	// Loads the data from the passed surfcae
 	void loadSurface(const Graphics::Surface *surf);
+
+	// Load data from a passed 8bit surface
+	void loadSurface8Bit(const Graphics::Surface *surf, const byte *pal);
 protected:
 
 	// Read from a File. No filetype supported by this class
-	virtual bool Read(IDataSource * /*ds*/) {
+	virtual bool Read(Common::SeekableReadStream *rs) {
 		return false;
 	}
 };

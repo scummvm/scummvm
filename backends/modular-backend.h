@@ -68,6 +68,7 @@ public:
 	virtual bool setGraphicsMode(int mode) override;
 	virtual int getGraphicsMode() const override;
 	virtual const GraphicsMode *getSupportedShaders() const override;
+	virtual int getDefaultShader() const override;
 	virtual int getShader() const override;
 	virtual bool setShader(int id) override;
 	virtual const GraphicsMode *getSupportedStretchModes() const override;

@@ -67,7 +67,7 @@ NuvieEngine::~NuvieEngine() {
 bool NuvieEngine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima6";
 	majorVersion = 1;
-	minorVersion = 0;
+	minorVersion = 1;
 	return true;
 }
 

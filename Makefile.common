@@ -13,7 +13,7 @@ all: $(EXECUTABLE).dwp
 endif
 
 ifdef USE_PANDOC
-all: README$(PANDOCEXT) NEWS$(PANDOCEXT) doc/de/NEUES$(PANDOCEXT)
+all: PANDOC_CONVERT
 endif
 
 ######################################################################
@@ -244,6 +244,10 @@ VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
 ifdef USE_PANDOC
 # Convert README.md and NEWS.md to plain text for any platform that might require it
+PANDOC_CONVERT: README$(PANDOCEXT) CONTRIBUTING$(PANDOCEXT) NEWS$(PANDOCEXT) doc/de/NEUES$(PANDOCEXT)
+	@sed -i'' -e "s/NEWS.md/NEWS$(PANDOCEXT)/g" README$(PANDOCEXT)
+	@sed -i'' -e "s/CONTRIBUTING.md/CONTRIBUTING$(PANDOCEXT)/g" README$(PANDOCEXT)
+
 %$(PANDOCEXT): %.md
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) --metadata pagetitle=$(basename $(notdir $@)) -s -o $@ $<
@@ -278,9 +282,9 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYRIGHT NEWS.md README.md)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYRIGHT NEWS.md README.md CONTRIBUTING.md)
 ifdef USE_PANDOC
-DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT)
+DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT) CONTRIBUTING$(PANDOCEXT)
 endif
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se

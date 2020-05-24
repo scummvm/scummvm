@@ -78,14 +78,14 @@ public:
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char *filename)
+	DECLARE_VFUNCTION_1(playSound, const char *filename)
 
 	DECLARE_FUNCTION(monsieurServeUs)
 
 	/**
 	 * Setup Chapter 1
 	 */
-	DECLARE_FUNCTION(chapter1)
+	DECLARE_VFUNCTION(chapter1)
 
 	DECLARE_FUNCTION(milosOrder)
 	DECLARE_FUNCTION(monsieurOrder)
@@ -99,7 +99,7 @@ public:
 	/**
 	 * Setup Chapter 2
 	 */
-	DECLARE_FUNCTION(chapter2)
+	DECLARE_VFUNCTION(chapter2)
 	DECLARE_FUNCTION(inKitchen)
 	DECLARE_FUNCTION(tatianaClearTableB)
 	DECLARE_FUNCTION(ivoComeHere)
@@ -108,14 +108,14 @@ public:
 	/**
 	 * Setup Chapter 3
 	 */
-	DECLARE_FUNCTION(chapter3)
+	DECLARE_VFUNCTION(chapter3)
 	DECLARE_FUNCTION(serving3)
 	DECLARE_FUNCTION(annaBringTea3)
 
 	/**
 	 * Setup Chapter 4
 	 */
-	DECLARE_FUNCTION(chapter4)
+	DECLARE_VFUNCTION(chapter4)
 	DECLARE_FUNCTION(serving4)
 	DECLARE_FUNCTION(augustNeedsADrink)
 	DECLARE_FUNCTION(serveAugustADrink)
@@ -124,7 +124,7 @@ public:
 	/**
 	 * Setup Chapter 5
 	 */
-	DECLARE_FUNCTION(chapter5)
+	DECLARE_VFUNCTION(chapter5)
 
 	/**
 	 * Handle Chapter 5 events

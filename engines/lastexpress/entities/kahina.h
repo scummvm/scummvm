@@ -44,7 +44,7 @@ public:
 	 *
 	 * @param filename The sound filename
 	 */
-	DECLARE_FUNCTION_1(playSound, const char *filename)
+	DECLARE_VFUNCTION_1(playSound, const char *filename)
 
 	/**
 	 * Saves the game
@@ -52,7 +52,7 @@ public:
 	 * @param savegameType The type of the savegame
 	 * @param param        The param for the savegame (EventIndex or TimeValue)
 	 */
-	DECLARE_FUNCTION_2(savegame, SavegameType savegameType, uint32 param)
+	DECLARE_VFUNCTION_2(savegame, SavegameType savegameType, uint32 param)
 
 	/**
 	 * Updates parameter 2 using time value
@@ -85,7 +85,7 @@ public:
 	 * @param car            The car
 	 * @param entityPosition The entity position
 	 */
-	DECLARE_FUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
+	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
 	/**
 	 * Handles entering/exiting a compartment.
@@ -93,12 +93,12 @@ public:
 	 * @param sequence    The sequence to draw
 	 * @param compartment The compartment
 	 */
-	DECLARE_FUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
+	DECLARE_VFUNCTION_2(enterExitCompartment, const char *sequence, ObjectIndex compartment)
 
 	/**
 	 * Setup Chapter 1
 	 */
-	DECLARE_FUNCTION(chapter1)
+	DECLARE_VFUNCTION(chapter1)
 
 	/**
 	 * Handle Chapter 1 events
@@ -113,13 +113,13 @@ public:
 	/**
 	 * Setup Chapter 2
 	 */
-	DECLARE_FUNCTION(chapter2)
+	DECLARE_VFUNCTION(chapter2)
 	DECLARE_FUNCTION(inSeclusionPart2)
 
 	/**
 	 * Setup Chapter 3
 	 */
-	DECLARE_FUNCTION(chapter3)
+	DECLARE_VFUNCTION(chapter3)
 
 	/**
 	 * Update the entity, handling excuse me events and resetting the entity state after the argument with Anna in the baggage car
@@ -141,12 +141,12 @@ public:
 	/**
 	 * Setup Chapter 4
 	 */
-	DECLARE_FUNCTION(chapter4)
+	DECLARE_VFUNCTION(chapter4)
 
 	/**
 	 * Setup Chapter 5
 	 */
-	DECLARE_FUNCTION(chapter5)
+	DECLARE_VFUNCTION(chapter5)
 };
 
 } // End of namespace LastExpress

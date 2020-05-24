@@ -56,7 +56,7 @@ void Minigame1::run() {
 	uint16 auStack1008 [200];
 	DragonINI *originalFlickerIniID;
 	uint16 local_25c;
-	uint16 local_25a;
+	uint16 local_25a = 0;
 	uint16 catFieldE_scaleMaybe;
 	uint16 hitCounter;
 	uint16 local_254;
@@ -66,12 +66,12 @@ void Minigame1::run() {
 	uint16 local_242;
 	uint16 local_240;
 	uint16 local_23e;
-	short local_23c;
+	short local_23c = 0;
 	short local_23a;
 	short local_238;
 	short gameState;
-	uint16 local_234;
-	short local_232;
+	uint16 local_234 = 0;
+	short local_232 = 0;
 	uint16 local_22e;
 	uint16 local_22c;
 	Actor *targetActorIdTbl [5];

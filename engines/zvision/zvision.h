@@ -36,6 +36,10 @@
 
 #include "gui/debugger.h"
 
+namespace Common {
+class Keymap;
+}
+
 namespace Video {
 class VideoDecoder;
 }
@@ -96,6 +100,26 @@ enum ZVisionFeatures {
 	GF_DVD = (1 << 0) // ZGI DVD version
 };
 
+enum ZVisionAction {
+	kZVisionActionNone,
+	kZVisionActionUp,
+	kZVisionActionDown,
+	kZVisionActionLeft,
+	kZVisionActionRight,
+	kZVisionActionSave,
+	kZVisionActionRestore,
+	kZVisionActionQuit,
+	kZVisionActionPreferences,
+	kZVisionActionShowFPS,
+	kZVisionActionSkipCutscene,
+
+	kZVisionActionCount
+};
+
+extern const char *mainKeymapId;
+extern const char *gameKeymapId;
+extern const char *cutscenesKeymapId;
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -138,6 +162,8 @@ private:
 
 	// To prevent allocation every time we process events
 	Common::Event _event;
+
+	Common::Keymap *_gameKeymap, *_cutscenesKeymap;
 
 	int _frameRenderDelay;
 	int _renderedFrameCount;
@@ -185,6 +211,9 @@ public:
 		return _menu;
 	}
 
+	Common::Keymap *getGameKeymap() const {
+		return _gameKeymap;
+	}
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;
 	}
@@ -254,7 +283,6 @@ private:
 	void onMouseMove(const Common::Point &pos);
 
 	void registerDefaultSettings();
-	void shortKeys(Common::Event);
 
 	void cheatCodes(uint8 key);
 	void pushKeyToCheatBuf(uint8 key);

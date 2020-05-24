@@ -60,13 +60,14 @@ class DCCDManager : public DefaultAudioCDManager {
 public:
 	// Poll cdrom status
 	// Returns true if cd audio is playing
-	bool isPlaying() const;
+	bool isPlaying() const override;
 
 	// Play cdrom audio track
-	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType) override;
 
 	// Stop cdrom audio track
-	void stop();
+	void stop() override;
 };
 
 class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public PaletteManager, public FilesystemFactory

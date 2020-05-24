@@ -57,21 +57,21 @@ protected:
 	void setNum(const char *name, double num);
 	void setStr(const char *name, const char *str);
 
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) override;
 
 public:
 	MidiDriver_FluidSynth(Audio::Mixer *mixer);
 
-	int open();
-	void close();
+	int open() override;
+	void close() override;
 	void send(uint32 b) override;
 
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override;
 
 	// AudioStream API
-	bool isStereo() const { return true; }
-	int getRate() const { return _outputRate; }
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _outputRate; }
 };
 
 // MidiDriver method implementations
@@ -100,14 +100,14 @@ void MidiDriver_FluidSynth::setInt(const char *name, int val) {
 	char *name2 = scumm_strdup(name);
 
 	fluid_settings_setint(_settings, name2, val);
-	delete[] name2;
+	free(name2);
 }
 
 void MidiDriver_FluidSynth::setNum(const char *name, double val) {
 	char *name2 = scumm_strdup(name);
 
 	fluid_settings_setnum(_settings, name2, val);
-	delete[] name2;
+	free(name2);
 }
 
 void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
@@ -115,8 +115,8 @@ void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
 	char *val2 = scumm_strdup(val);
 
 	fluid_settings_setstr(_settings, name2, val2);
-	delete[] name2;
-	delete[] val2;
+	free(name2);
+	free(val2);
 }
 
 int MidiDriver_FluidSynth::open() {

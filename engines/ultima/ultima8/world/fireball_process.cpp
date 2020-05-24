@@ -31,18 +31,16 @@
 #include "ultima/ultima8/world/weapon_info.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(FireballProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(FireballProcess)
 
 FireballProcess::FireballProcess()
-	: Process() {
+	: Process(), _xSpeed(0), _ySpeed(0), _age(0), _target(0) {
 
 }
 
@@ -203,28 +201,28 @@ uint32 FireballProcess::I_TonysBalls(const uint8 *args,
 	return 0;
 }
 
-void FireballProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void FireballProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->write4(static_cast<uint32>(_xSpeed));
-	ods->write4(static_cast<uint32>(_ySpeed));
-	ods->write2(_target);
-	ods->write2(_tail[0]);
-	ods->write2(_tail[1]);
-	ods->write2(_tail[2]);
-	ods->write2(_age);
+	ws->writeUint32LE(static_cast<uint32>(_xSpeed));
+	ws->writeUint32LE(static_cast<uint32>(_ySpeed));
+	ws->writeUint16LE(_target);
+	ws->writeUint16LE(_tail[0]);
+	ws->writeUint16LE(_tail[1]);
+	ws->writeUint16LE(_tail[2]);
+	ws->writeUint16LE(_age);
 }
 
-bool FireballProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool FireballProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_xSpeed = static_cast<int>(ids->read4());
-	_ySpeed = static_cast<int>(ids->read4());
-	_target = ids->read2();
-	_tail[0] = ids->read2();
-	_tail[1] = ids->read2();
-	_tail[2] = ids->read2();
-	_age = ids->read2();
+	_xSpeed = static_cast<int>(rs->readUint32LE());
+	_ySpeed = static_cast<int>(rs->readUint32LE());
+	_target = rs->readUint16LE();
+	_tail[0] = rs->readUint16LE();
+	_tail[1] = rs->readUint16LE();
+	_tail[2] = rs->readUint16LE();
+	_age = rs->readUint16LE();
 
 	return true;
 }

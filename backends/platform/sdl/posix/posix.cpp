@@ -38,6 +38,7 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
 #include "backends/taskbar/unity/unity-taskbar.h"
+#include "backends/dialogs/gtk/gtk-dialogs.h"
 
 #ifdef USE_LINUXCD
 #include "backends/audiocd/linux/linux-audiocd.h"
@@ -69,6 +70,11 @@ void OSystem_POSIX::init() {
 	_taskbarManager = new UnityTaskbarManager();
 #endif
 
+#if defined(USE_SYSDIALOGS) && defined(USE_GTK)
+	// Initialize dialog manager
+	_dialogManager = new GtkDialogManager();
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
@@ -97,6 +103,10 @@ bool OSystem_POSIX::hasFeature(Feature f) {
 		return true;
 #ifdef HAS_POSIX_SPAWN
 	if (f == kFeatureOpenUrl)
+		return true;
+#endif
+#if defined(USE_SYSDIALOGS) && defined(USE_GTK)
+	if (f == kFeatureSystemBrowserDialog)
 		return true;
 #endif
 	return OSystem_SDL::hasFeature(f);

@@ -1,0 +1,41 @@
+<!-- $Id: creatures.dtd 2764 2011-01-03 09:13:22Z darren_janeczek $ -->
+
+<!ELEMENT creatures ( creature+ ) >
+
+<!ELEMENT creature EMPTY >
+<!ATTLIST creature id                   NMTOKEN  #REQUIRED
+                  encounterSize        NMTOKEN  #IMPLIED
+                  name                 CDATA    #REQUIRED
+                  tile                 NMTOKEN  #REQUIRED                  
+                  basehp               NMTOKEN  #IMPLIED
+                  exp                  NMTOKEN  #REQUIRED
+                  leader               NMTOKEN  #IMPLIED
+                  ambushes             %bool;   #IMPLIED
+                  camouflage           %bool;   #IMPLIED
+                  camouflageTile       NMTOKEN  #IMPLIED
+                  canMoveOntoAvatar    NMTOKEN  #IMPLIED
+                  canMoveOntoCreatures %bool;   #IMPLIED
+                  cantattack           %bool;   #IMPLIED
+                  casts                ( sleep | negate ) #IMPLIED
+                  divides              %bool;   #IMPLIED
+                  spawnsOnDeath        NMTOKEN  #IMPLIED
+                  flies                %bool;   #IMPLIED
+                  good                 %bool;   #IMPLIED
+                  incorporeal          %bool;   #IMPLIED
+                  leavestile           %bool;   #IMPLIED
+                  movement             ( none | wanders ) #IMPLIED
+                  nochest              %bool;   #IMPLIED
+                  poisons              %bool;   #IMPLIED
+                  ranged               %bool;   #IMPLIED
+                  rangedhittile        NMTOKEN  #IMPLIED
+                  rangedmisstile       NMTOKEN  #IMPLIED
+                  resists              %effect; #IMPLIED
+                  sails                %bool;   #IMPLIED
+                  spawntile            NMTOKEN  #IMPLIED
+                  steals               ( food | gold ) #IMPLIED
+                  swims                %bool;   #IMPLIED
+                  teleports            %bool;   #IMPLIED
+                  undead               %bool;   #IMPLIED
+                  wontattack           %bool;   #IMPLIED
+                  worldrangedtile      NMTOKEN  #IMPLIED 
+                  forceOfNature		   %bool;   #IMPLIED>

@@ -434,6 +434,9 @@ bool PrinceEngine::loadGame(int slotNumber) {
 	Common::String slotName = getSaveStateName(slotNumber);
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slotName);
 
+	if (!saveFile)
+		return false;
+
 	// Read the data into a data buffer
 	int size = saveFile->size();
 	byte *dataBuffer = (byte *)malloc(size);

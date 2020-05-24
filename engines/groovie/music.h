@@ -43,6 +43,7 @@ public:
 	void setBackgroundSong(uint32 fileref);
 	void playCD(uint8 track);
 	void startBackground();
+	bool isPlaying() { return _isPlaying; }
 
 	void frameTick();
 	void setBackgroundDelay(uint16 delay);
@@ -98,6 +99,7 @@ public:
 
 	// MidiDriver_BASE interface
 	void send(uint32 b) override;
+	void sysEx(const byte* msg, uint16 length) override;
 	void metaEvent(byte type, byte *data, uint16 length) override;
 
 private:

@@ -24,11 +24,11 @@
 #define ULTIMA8_GRAPHICS_ANIMDAT_H
 
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
 struct AnimAction;
 class ActorAnim;
 
@@ -37,11 +37,13 @@ public:
 	AnimDat();
 	~AnimDat();
 
-	void load(IDataSource *ds);
+	void load(Common::SeekableReadStream *rs);
 
 	ActorAnim *getAnim(uint32 shape) const;
 	AnimAction *getAnim(uint32 shape, uint32 action) const;
 
+	//! Return the action number for a given animation sequence
+	static uint32 getActionNumberForSequence(Animation::Sequence action);
 private:
 	Std::vector<ActorAnim *> _anims;
 };

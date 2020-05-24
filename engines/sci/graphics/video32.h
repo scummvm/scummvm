@@ -276,6 +276,23 @@ private:
 };
 
 #pragma mark -
+#pragma mark QuickTimePlayer
+
+/**
+ * QuickTimePlayer is used to play QuickTime animations.
+ * Used by Mac version of KQ7.
+ */
+class QuickTimePlayer : public VideoPlayer {
+public:
+	QuickTimePlayer(EventManager *eventMan);
+	
+	/**
+	 * Plays a QuickTime animation with the given file name
+	 */
+	void play(const Common::String& fileName);
+};
+
+#pragma mark -
 #pragma mark VMDPlayer
 
 /**
@@ -764,6 +781,7 @@ public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
 	_SEQPlayer(eventMan),
 	_AVIPlayer(eventMan),
+	_QuickTimePlayer(eventMan),
 	_VMDPlayer(eventMan, segMan),
 	_robotPlayer(segMan),
 	_duckPlayer(eventMan, segMan) {}
@@ -773,6 +791,7 @@ public:
 
 	SEQPlayer &getSEQPlayer() { return _SEQPlayer; }
 	AVIPlayer &getAVIPlayer() { return _AVIPlayer; }
+	QuickTimePlayer &getQuickTimePlayer() { return _QuickTimePlayer; }
 	VMDPlayer &getVMDPlayer() { return _VMDPlayer; }
 	RobotDecoder &getRobotPlayer() { return _robotPlayer; }
 	DuckPlayer &getDuckPlayer() { return _duckPlayer; }
@@ -780,6 +799,7 @@ public:
 private:
 	SEQPlayer _SEQPlayer;
 	AVIPlayer _AVIPlayer;
+	QuickTimePlayer _QuickTimePlayer;
 	VMDPlayer _VMDPlayer;
 	RobotDecoder _robotPlayer;
 	DuckPlayer _duckPlayer;

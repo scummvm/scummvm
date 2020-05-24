@@ -132,9 +132,12 @@ static void menuCommandsCallback(int action, Common::U32String &, void *data) {
 }
 
 void PinkEngine::initMenu() {
-	_director->getWndManager().setEnginePauseCallback(this, &pauseEngine);
+	_director->getWndManager().setEngine(this);
 
 	_menu = Graphics::MacMenu::createMenuFromPEexe(_exeResources, &_director->getWndManager());
+	if (getLanguage() == Common::HE_ISR) {
+		_menu->setAlignment(Graphics::kTextAlignRight);
+	}
 	_menu->calcDimensions();
 	_menu->setCommandsCallback(&menuCommandsCallback, this);
 }
@@ -155,8 +158,6 @@ void PinkEngine::executeMenuCommand(uint id) {
 
 	case kSaveAction:
 	case kSaveAsAction:
-		//FIXME: Somehow messes up the pause system causing issues such as
-		//frozen animations and BGM disappearing
 		saveGameDialog();
 		break;
 
@@ -234,10 +235,12 @@ bool PinkEngine::executePageChangeCommand(uint id) {
 }
 
 void PinkEngine::openLocalWebPage(const Common::String &pageName) const {
-	Common::FSNode gameFolder= Common::FSNode(ConfMan.get("path"));
+	Common::FSNode gameFolder = Common::FSNode(ConfMan.get("path"));
 	Common::FSNode filePath = gameFolder.getChild("INSTALL").getChild(pageName);
-	Common::String fullUrl = Common::String::format("file:///%s", filePath.getPath().c_str());
-	_system->openUrl(fullUrl);
+	if (filePath.exists()) {
+		Common::String fullUrl = Common::String::format("file:///%s", filePath.getPath().c_str());
+		_system->openUrl(fullUrl);
+	}
 }
 
 } // End of namespace Pink

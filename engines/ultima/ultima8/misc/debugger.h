@@ -33,9 +33,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class Ultima1Engine;
-
-
 class ConsoleStream : public Common::WriteStream {
 private:
 	Std::Precision _precision;
@@ -69,6 +66,11 @@ public:
 
 	ConsoleStream &operator<<(const Common::String &str) {
 		write(str.c_str(), str.size());
+		return *this;
+	}
+
+	ConsoleStream &operator<<(Std::Precision p) {
+		_precision = p;
 		return *this;
 	}
 
@@ -150,6 +152,17 @@ private:
 	bool cmdCloseItemGumps(int argc, const char **argv);
 	bool cmdMemberVar(int argc, const char **argv);
 
+	// Avatar mover
+	bool cmdBothButtonClick(int argc, const char **argv);
+	bool cmdStartTurnLeft(int argc, const char **argv);
+	bool cmdStartTurnRight(int argc, const char **argv);
+	bool cmdStartMoveForward(int argc, const char **argv);
+	bool cmdStartMoveBack(int argc, const char **argv);
+	bool cmdStopTurnLeft(int argc, const char **argv);
+	bool cmdStopTurnRight(int argc, const char **argv);
+	bool cmdStopMoveForward(int argc, const char **argv);
+	bool cmdStopMoveBack(int argc, const char **argv);
+
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);
 	bool cmdStopSFX(int argc, const char **argv);
@@ -168,12 +181,6 @@ private:
 	bool cmdDumpMap(int argc, const char **argvv);
 	bool cmdIncrementSortOrder(int argc, const char **argv);
 	bool cmdDecrementSortOrder(int argc, const char **argv);
-
-	// HID Manager
-	bool cmdBind(int argc, const char **argv);
-	bool cmdUnbind(int argc, const char **argv);
-	bool cmdListbinds(int argc, const char **argv);
-	bool cmdSave(int argc, const char **argv);
 
 	// Kernel
 	bool cmdProcessTypes(int argc, const char **argv);
@@ -194,12 +201,6 @@ private:
 	bool cmdUseBedroll(int argc, const char **argv);
 	bool cmdUseKeyring(int argc, const char **argv);
 	bool cmdToggleCombat(int argc, const char **argv);
-
-	// Memory Manager
-	bool cmdMemInfo(int argc, const char **argv);
-#ifdef DEBUG
-	bool cmdTestMemory(int argc, const char **argv);
-#endif
 
 	// Object Manager
 	bool cmdObjectTypes(int argc, const char **argv);

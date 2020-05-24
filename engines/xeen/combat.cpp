@@ -1487,10 +1487,9 @@ void Combat::attack2(int damage, RangeType rangeType) {
 
 				for (uint idx = 0; idx < party._activeParty.size(); ++idx)
 					party._activeParty[idx].setAward(42, true);
-
-				if (_monster2Attack == 27 && party._mazeId == 29)
-					party._gameFlags[0][104] = true;
 			}
+			if (_monster2Attack == 27 && party._mazeId == 29)
+				party._gameFlags[0][104] = true;
 		}
 
 		giveExperience(monsterData._experience);

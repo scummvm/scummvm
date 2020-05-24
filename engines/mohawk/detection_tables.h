@@ -23,9 +23,9 @@
 namespace Mohawk {
 
 #define GUI_OPTIONS_MYST                   GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI)
-#define GUI_OPTIONS_MYST_ME                GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_PLAY_MYST_FLYBY)
-#define GUI_OPTIONS_MYST_ME_25TH           GUIO6(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_PLAY_MYST_FLYBY, GAMEOPTION_25TH)
-#define GUI_OPTIONS_MYST_DEMO              GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
+#define GUI_OPTIONS_MYST_ME                GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_ME)
+#define GUI_OPTIONS_MYST_ME_25TH           GUIO6(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GAMEOPTION_ME, GAMEOPTION_25TH)
+#define GUI_OPTIONS_MYST_DEMO              GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GAMEOPTION_DEMO)
 #define GUI_OPTIONS_MYST_MAKING_OF         GUIO5(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD)
 
 #define GUI_OPTIONS_RIVEN                  GUIO4(GUIO_NOASPECT, GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOMIDI)
@@ -339,107 +339,27 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst Masterpiece Edition - 25th Anniversary
-	// English Windows - Created by the ScummVM team
+	// Repacked by the ScummVM team
 	{
 		{
 			"myst",
 			"Masterpiece Edition - 25th Anniversary",
 			{
 				{"myst.dat", 0, "c4cae9f143b5947262e6cb2397e1617e", -1},
+				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", -1},
+				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", -1},
+				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", -1},
+				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", -1},
 				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
 				AD_LISTEND
 			},
-			Common::EN_ANY,
+			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUI_OPTIONS_MYST_ME_25TH
 		},
 		GType_MYST,
 		GF_ME | GF_25TH,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// French Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// German Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// Polish Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Myst Masterpiece Edition - 25th Anniversary
-	// Spanish Windows - Repacked by the ScummVM team
-	{
-		{
-			"myst",
-			"Masterpiece Edition - 25th Anniversary",
-			{
-				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", -1},
-				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
-				AD_LISTEND
-			},
-			Common::ES_ESP,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUI_OPTIONS_MYST_ME_25TH
-		},
-		GType_MYST,
-		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -676,174 +596,29 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst - 25th anniversary
-	// English - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				// The french datafile is included in the list because
-				// in the 25th anniversary edition, all the files sit in the same
-				// package. All the detection entries need to have the same amount
-				// of files to show in the detection results.
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", 7088579 },
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// French - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", 7088579 },
-				AD_LISTEND
-			},
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// German - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_german.mhk", 0, "5ebd301bd4bf6fd7667c4a46eebf6532", 7098655 },
-				AD_LISTEND
-			},
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Italian - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_italian.mhk", 0, "9d53b178510ce90f10b32ad3ca967d38", 6677740 },
-				AD_LISTEND
-			},
-			Common::IT_ITA,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Japanese - Created by the ScummVM team
+	// Created by the ScummVM team
 	{
 		{
 			"riven",
 			"25th Anniversary",
 			{
 				{ "a_data.mhk",          0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_japanese.mhk", 0, "bf43cf8af21fefc5a02881f7cfb68f52", 7237370 },
+				{ "a_data_french.mhk",   0, "ad7547ed7159a97be98a005f62862f85", 7088579  },
+				{ "a_data_german.mhk",   0, "5ebd301bd4bf6fd7667c4a46eebf6532", 7098655  },
+				{ "a_data_italian.mhk",  0, "9d53b178510ce90f10b32ad3ca967d38", 6677740  },
+				{ "a_data_japanese.mhk", 0, "bf43cf8af21fefc5a02881f7cfb68f52", 7237370  },
+				{ "a_data_polish.mhk",   0, "5c7cd4b1a1a4c63cc670485816b0b5ec", 14588293 },
+				{ "a_data_russian.mhk",  0, "76e12906637f5274bb6af8ab42871c25", 14349136 },
+				{ "a_data_spanish.mhk",  0, "6226a3e1748e64962971b2f6536ef283", 8133297  },
 				AD_LISTEND
 			},
-			Common::JA_JPN,
+			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_DROPPLATFORM,
 			GUI_OPTIONS_RIVEN_25TH
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Polish - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_polish.mhk", 0, "5c7cd4b1a1a4c63cc670485816b0b5ec", 14588293 },
-				AD_LISTEND
-			},
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Russian - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_russian.mhk", 0, "76e12906637f5274bb6af8ab42871c25", 14349136 },
-				AD_LISTEND
-			},
-			Common::RU_RUS,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
-		0,
-	},
-
-	// Riven: The Sequel to Myst - 25th anniversary
-	// Spanish - Created by the ScummVM team
-	{
-		{
-			"riven",
-			"25th Anniversary",
-			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
-				{ "a_data_spanish.mhk", 0, "6226a3e1748e64962971b2f6536ef283", 8133297 },
-				AD_LISTEND
-			},
-			Common::ES_ESP,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUI_OPTIONS_RIVEN_25TH
-		},
-		GType_RIVEN,
-		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -1358,6 +1133,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("BookOutline", "82d0b24a6400bec8e94cde021a4c876b"),
+			Common::IT_ITA,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"La Tartaruga e la Lepre"
+	},
+
 	{
 		{
 			"tortoise",
@@ -1768,6 +1559,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		"GRANDMA.EXE"
+	},
+
+	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
+	{
+		{
+			"grandma",
+			"Demo v1.2",
+			AD_ENTRY1("BookOutline", "599fece5d71cdd19c9726c28dbf634d8"),
+			Common::IT_ITA,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		GF_DEMO,
+		"Al mare con la Nonna"
 	},
 
 	{

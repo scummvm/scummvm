@@ -30,6 +30,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
 	{"agustin",         "Boredom of Agustin Cordes"},
+	{"alavi",           "Informer Alavi - Murder of Miss Rojan"},
 	{"alimardan1",      "Alimardan's Mischief"},
 	{"alimardan2",      "Alimardan Meets Merlin"},
 	{"alphapolaris",    "Alpha Polaris"},
@@ -96,6 +97,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
 	{"msos",            "Monday Starts on Saturday"},
+	{"mythguff",        "Myth: A Guff's Tale"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
 	{"one",             "One"},
@@ -237,6 +239,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("actualdest", "",
 		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
+	// Informer Alavi - Murder of Miss Rojan (Persian) (Try version)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alavi", "Try version",
+		WME_ENTRY1s("data.dcp", "07b847ebafbf8e58daa341d60598c84b", 36628230), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO, WME_ANDISHE_VARAN),
+
 	// Alimardan's Mischief
 	WME_WINENTRY("alimardan1", "",
 		WME_ENTRY1s("data.dcp", "55c28b8d4f49120f980d237951a6c73f", 1834957694), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
@@ -350,6 +357,12 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "09e57d77b68dafa73a0924f11f61b059", 630742753,
 					"i18n.dcp", "583940f6d3fb4097e7cb1e2cc9a43a7b", 156078991), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_1),
 
+	// Art of Murder: FBI Confidential (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "7e4c1dc8b1fb08541f7784d6288acfc8", 633692059,
+					"it.dcp", "c3c10399644a1e9f7e977df73fb017e0", 166794517), Common::IT_ITA, ADGF_UNSTABLE, WME_1_8_1),
+
 	// Art of Murder: FBI Confidential (Spanish)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("artofmurder1", "",
@@ -361,6 +374,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("artofmurder1", "",
 		WME_ENTRY2s("data.dcp", "592862a5dd1ae90d53561815a535ab2e", 630734278,
 					"i18n.dcp", "b43bd7b64991ad9d5d285753767fe3f4", 176591837), Common::PL_POL, ADGF_UNSTABLE, WME_1_8_1),
+
+	// Art of Murder: FBI Confidential (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("artofmurder1", "",
+		WME_ENTRY2s("data.dcp", "4f383bd02fb0eea54e9b5825c3056b52", 23761530,
+					"ru.dcp", "57af214554547437c823a01f6cf51b24", 201702190), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
 	// Art of Murder: FBI Confidential (English Demo)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
@@ -1018,14 +1037,89 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("foxtail", "1.2.527.3391",
 		WME_ENTRY1s("data.dcp", "e5d06fa058cd9d6f20d6206356e5854d", 109503303), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_527),
 
+	// FoxTail 1.2.896.4370 (English)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::EN_ANY, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (German)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::DE_DEU, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (Polish)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::PL_POL, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (Russian)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4370 (Ukranian)
+	WME_WINENTRY("foxtail", "1.2.896.4370",
+		WME_ENTRY1s("data.dcp", "cee21687240aa160b8ebf1e0cccaef59", 154006218), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (English)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::EN_ANY, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (German)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::DE_DEU, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (Polish)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::PL_POL, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (Russian)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.896.4371 (Ukranian)
+	WME_WINENTRY("foxtail", "1.2.896.4371",
+		WME_ENTRY1s("data.dcp", "ca9842a6461cc7b00e63b5bc11813971", 154006242), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_896),
+
+	// FoxTail 1.2.902.4379 (English)
+	WME_WINENTRY("foxtail", "1.2.902.4379",
+		WME_ENTRY1s("data.dcp", "a4a5458afa42ac1d90f4050b033421a4", 153987445), Common::EN_ANY, ADGF_UNSTABLE, FOXTAIL_1_2_902),
+
+	// FoxTail 1.2.902.4379 (German)
+	WME_WINENTRY("foxtail", "1.2.902.4379",
+		WME_ENTRY1s("data.dcp", "a4a5458afa42ac1d90f4050b033421a4", 153987445), Common::DE_DEU, ADGF_UNSTABLE, FOXTAIL_1_2_902),
+
+	// FoxTail 1.2.902.4379 (Polish)
+	WME_WINENTRY("foxtail", "1.2.902.4379",
+		WME_ENTRY1s("data.dcp", "a4a5458afa42ac1d90f4050b033421a4", 153987445), Common::PL_POL, ADGF_UNSTABLE, FOXTAIL_1_2_902),
+
+	// FoxTail 1.2.902.4379 (Russian)
+	WME_WINENTRY("foxtail", "1.2.902.4379",
+		WME_ENTRY1s("data.dcp", "a4a5458afa42ac1d90f4050b033421a4", 153987445), Common::RU_RUS, ADGF_UNSTABLE, FOXTAIL_1_2_902),
+
+	// FoxTail 1.2.902.4379 (Ukranian)
+	WME_WINENTRY("foxtail", "1.2.902.4379",
+		WME_ENTRY1s("data.dcp", "a4a5458afa42ac1d90f4050b033421a4", 153987445), Common::UA_UKR, ADGF_UNSTABLE, FOXTAIL_1_2_902),
+
 	// Framed (Beta)
 	WME_WINENTRY("framed", "Beta",
 		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
 
-	// Ghost in the Sheet
+	// Ghost in the Sheet (Engligh, v1.00)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("english.dcp", "f53acdc5510aa184f6f968e38d8c9ad7", 12008908,
+					"data.dcp", "5e7f7d98680825bb81fca11e5493c1ad", 168658), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (Engligh, BigFish)
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("english.dcp", "e6d0aad2c89996bcabe416105a3d6d3a", 12221017,
 					"data.dcp", "b2f8b05328e4881e15e98e845b63f451", 168003), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (Italian)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("italiano.dcp", "b258151caddee5ecdaf0fdd3afe62151", 11220994,
+					"data.dcp", "99ae5d9977d9a542a35c09d27df0ab22", 167980), Common::IT_ITA, ADGF_UNSTABLE, WME_1_8_0),
+
+	// Ghost in the Sheet (Russian)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("russian.dcp", "e32a235e77886e4b95ca362252584373", 19283033,
+					"data.dcp", "45471184e40fb0e95b2c05c5e2ec8502", 167945), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_0),
 
 	// Ghost in the Sheet (Demo)
 	WME_WINENTRY("ghostsheet", "Demo",
@@ -1147,6 +1241,28 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("jamesperis", "Version 1.8",
 		WME_ENTRY1s("data.dcp", "d6049dfb5dbe812bae1e96924a012500", 225299340), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
 
+	// James Peris: No License Nor Control - Definitive Edition (English) (Steam 2020-03-12)
+	WME_WINENTRY("jamesperis", "Version 1.9",
+		WME_ENTRY2s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris: No License Nor Control - Definitive Edition (Spanish) (Steam 2020-03-12)
+	WME_WINENTRY("jamesperis", "Version 1.9",
+		WME_ENTRY2s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris: No License Nor Control - Definitive Edition (English) (Steam 2020-04-27)
+	WME_WINENTRY("jamesperis", "Version 1.9.1e",
+		WME_ENTRY3s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138,
+					"parche91e.dcp", "ee21819363fb32a38b9f5fcf8545e374", 72496832), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris: No License Nor Control - Definitive Edition (Spanish) (Steam 2020-04-27)
+	WME_WINENTRY("jamesperis", "Version 1.9.1e",
+		WME_ENTRY3s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138,
+					"parche91e.dcp", "ee21819363fb32a38b9f5fcf8545e374", 72496832), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
 	// James Peris: No License Nor Control (Demo) (English)
 	WME_WINENTRY("jamesperis", "Demo",
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
@@ -1187,31 +1303,83 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam, January 2017) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/Steam",
 		WME_ENTRY2s("data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680,
 					"data_sd.dcp", "9949302dfaea943113e2f0ee0dd468be", 4249680), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam, January 2017) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/Steam",
 		WME_ENTRY2s("data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463,
 					"data_hd.dcp", "fd579fa333f117882190993ea4f3bba5", 5164463), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam, November 2016) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "HD Ready Version",
+	WME_WINENTRY("juliastars", "HD Ready Version/Steam",
 		WME_ENTRY2s("data_sd.dcp", "dfaf7e730a66412f68d11cddb0c8737d", 4505667,
 					"german_sd.dcp", "23ceb8625cebfe32aaa5950e89ac68ba", 123326075), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
 
 	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam, November 2016) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("juliastars", "Full HD Version",
+	WME_WINENTRY("juliastars", "Full HD Version/Steam",
 		WME_ENTRY2s("data_hd.dcp", "f40b3d0778e37c61cf309d214446d233", 5264780,
 					"german_hd.dcp", "8d85f83a3fc8f1bec4e5ba2158b05b1e", 152499998), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
 
-	// J.U.L.I.A.: Untold
-	WME_WINENTRY("juliauntold", "",
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (Steam) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version/Steam",
+		WME_ENTRY2s("data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
+					"data_sd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (Steam) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version/Steam",
+		WME_ENTRY2s("data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554,
+					"data_hd.dcp", "da3508bd60025bac35211fb6fc959d88", 5655554), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
+		WME_ENTRY2s("data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792,
+					"data_sd.dcp", "da1f147a5f2ee6eb0750678a8b955c93", 4526792), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version/GOG",
+		WME_ENTRY2s("data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911,
+					"data_hd.dcp", "91dcb65523da943f22fca0c025a2ce8e", 5281911), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
+		WME_ENTRY2s("data_sd.dcp", "070d13b70e35cd95855ddc1687446631", 4526795,
+					"german_sd.dcp", "85eb39225083465225c30261a6bcd63e", 123326134), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version/GOG",
+		WME_ENTRY2s("data_hd.dcp", "7973ca635255d3791123fd750cb848f2", 5281925,
+					"german_hd.dcp", "19a771b1a933b71b889026d53734b0c0", 152500044), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (HD Ready Version) (GOG) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "HD Ready Version/GOG",
+		WME_ENTRY2s("data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
+					"data_sd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Among the Stars (Full HD Version) (GOG) (Spanish fanmade translation)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("juliastars", "Full HD Version/GOG",
+		WME_ENTRY2s("data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935,
+					"data_hd.dcp", "29f4856cc1514bdb86d3b19a39d86d76", 5877935), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_LITE),
+
+	// J.U.L.I.A.: Untold (Steam, January 2016)
+	WME_WINENTRY("juliauntold", "Steam",
 		WME_ENTRY1s("data.dcp", "fe995e26253f6e0a925dd7850fce17a9", 26459827), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
+
+	// J.U.L.I.A.: Untold (GOG)
+	WME_WINENTRY("juliauntold", "GOG",
+		WME_ENTRY1s("data.dcp", "b0aefd82647a26425fe3ee21aabb6283", 26462676), Common::EN_ANY, ADGF_UNSTABLE, WME_LITE),
 
 	// K'NOSSOS
 	WME_WINENTRY("knossos", "",
@@ -1286,6 +1454,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Monday Starts on Saturday
 	WME_WINENTRY("msos", "",
 		WME_ENTRY1s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Myth: A Guff's Tale
+	WME_WINENTRY("mythguff", "",
+		WME_ENTRY1s("data.dcp", "ef53dddd2264a7d5b13f3d71da5261e4", 675663078), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "Demo",
@@ -2599,6 +2771,71 @@ static const WMEGameDescription gameDescriptions[] = {
 					"xlanguage_ru.dcp", "756531c818db19d91f7747d0567e37c3", 15049077,
 					"Mac.dcp", "50911598561dc0ac7d050aeadbb58815", 4866263), Common::RU_RUS, Common::kPlatformMacintosh, ADGF_UNSTABLE, WME_LITE),
 
+	// Reversion: The Escape (Steam, April 2020) (Spanish)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (German)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_de.dcp", "d2471dceea100734afeb4ea77a0153ec", 14036212), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (English)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_en.dcp", "bf22fff27640014127929fe5347e1460", 11336876), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (French)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_fr.dcp", "5beabe999a110f31bddbc868f743c640", 11961697), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Italian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_it.dcp", "a98fa205490f7205d8cc301ab05ed115", 11564269), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Latvian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_lv.dcp", "6983daaf6bba6a496a73e272dbe274c4", 11436318), Common::LV_LAT, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_nz.dcp", "51b9d4cb6c4a571503e1d75fc4b4024c", 13739377), Common::ZH_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Polish)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_pl.dcp", "bf880fbe62c7743063b37447e228d3a8", 11551855), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Portuguese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_pt.dcp", "44a1ec3499e968373140dfef041099af", 10642716), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Russian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_ru.dcp", "ecbcf6b59c5df992d8a971cfd01dbbc3", 15026085), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Serbian)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_sr.dcp", "2455cc3770766787b6d7ca7301079230", 10702894), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_zh_s.dcp", "9df07bd28ee2378f684892f079e4166b", 12625743), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Reversion: The Escape (Steam, April 2020) (Traditional Chinese)
+	WME_WINENTRY("reversion1", "",
+		WME_ENTRY2s("data.dcp", "9074481da1b8a3f89f6951cba5031fbd", 283546933,
+					"xlanguage_zh_t.dcp", "3ddeeddbc625077fe8ea0e53108fcdba", 12551685), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Reversion: The Meeting (Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("xlanguage_nz.dcp", "8c3709474a87a7876109025dff41ff3f", 8746015,
@@ -3184,32 +3421,102 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Reversion: The Return (Steam, February 2020) (Spanish)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
-					"data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Reversion: The Return (Steam, February 2020) (German)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
-					"xlanguage_de.dcp", "c5d72f4b8ee111fddfe1caee8d97dcea", 10235058), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"xlanguage_de.dcp", "c5d72f4b8ee111fddfe1caee8d97dcea", 10235058), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
 	
 	// Reversion: The Return (Steam, February 2020) (English)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
-					"xlanguage_en.dcp", "f1af088d8eda8ea96e09eb2a3183a782", 10021001), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"xlanguage_en.dcp", "f1af088d8eda8ea96e09eb2a3183a782", 10021001), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
 	
 	// Reversion: The Return (Steam, February 2020) (Portuguese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
-					"xlanguage_pt.dcp", "2b55f9688039912fae450e3f6872c8ce", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
+					"xlanguage_pt.dcp", "2b55f9688039912fae450e3f6872c8ce", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
 	
 	// Reversion: The Return (Steam, February 2020) (Russian)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
-					"xlanguage_ru.dcp", "660627fa165d1d60135b3fc2e09e333b", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"xlanguage_ru.dcp", "660627fa165d1d60135b3fc2e09e333b", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
 	
 	// Reversion: The Return (Steam, February 2020) (Simplified Chinese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
-					"xlanguage_zh_s.dcp", "3c0beb597313226a78e15a38194772c6", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
+					"xlanguage_zh_s.dcp", "3c0beb597313226a78e15a38194772c6", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 16th 2020) (Spanish)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
+					"data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 16th 2020) (German)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
+					"xlanguage_de.dcp", "fd1465e8b305fd49854eb15d0caaa3bb", 10318916), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
+	
+	// Reversion: The Return (Steam, April 16th 2020) (English)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
+					"xlanguage_en.dcp", "690dbc088ccb0e198df17b9b9def3f67", 10104038), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+	
+	// Reversion: The Return (Steam, April 16th 2020) (Italian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
+					"xlanguage_it.dcp", "8b48db31e4a5d5ef54d17c4d672d5ad7", 10309029), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_2),
+	
+	// Reversion: The Return (Steam, April 16th 2020) (Portuguese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
+					"xlanguage_pt.dcp", "566e29be1c74e34263562f609f34e49b", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
+	
+	// Reversion: The Return (Steam, April 16th 2020) (Russian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
+					"xlanguage_ru.dcp", "921555991ce2feee9e83f1d483a001c1", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+	
+	// Reversion: The Return (Steam, April 16th 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
+					"xlanguage_zh_s.dcp", "f104564a8d8b19f6ad83ea32c0e7ac01", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Spanish)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (German)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_de.dcp", "f676548444517968d4239c9ccfcb3869", 10318916), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (English)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_en.dcp", "7221156703592abc9f98bbaafbb429fc", 10104038), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Italian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_it.dcp", "9aec04ab7fdcc4f3d8c616b31f6ab1bf", 10307721), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Portuguese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_pt.dcp", "45656ce4b79641d018cc178c3ca8468b", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Russian)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_ru.dcp", "f24c2021a9ad80aa7e03ef95dd930dd9", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
+
+	// Reversion: The Return (Steam, April 20th 2020) (Simplified Chinese)
+	WME_WINENTRY("reversion3", "",
+		WME_ENTRY2s("data.dcp", "d868bcc82a3c4d7b17f24b8f7cabcc78", 1806937960,
+					"xlanguage_zh_s.dcp", "d059c8c11e39e063a60c602a0127d244", 10146103), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_2),
 
 	// Rhiannon: Curse of the four Branches
 	WME_WINENTRY("rhiannon", "",
@@ -4645,6 +4952,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "01ab6ced306f11e0d0c7d1dfbc7a2658", 78352318), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_2),
+
+	// The Lost Crown - A Ghost Hunting Adventure (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelostcrowngha", "",
+		WME_ENTRY1s("theatre.dcp", "4ecf7175f1d7dd6524ff3c0e2cba0a28", 78444724), Common::IT_ITA, ADGF_UNSTABLE, WME_1_8_2),
 
 	// The Lost Crown - A Ghost Hunting Adventure (Steam, Jul 2014) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope

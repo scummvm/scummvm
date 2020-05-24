@@ -28,8 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-bool TextureTarga::Read(IDataSource *ds) {
-	Common::SeekableReadStream *rs = ds->GetRawStream();
+bool TextureTarga::Read(Common::SeekableReadStream *rs) {
 	Image::TGADecoder decoder;
 
 	if (!decoder.loadStream(*rs))

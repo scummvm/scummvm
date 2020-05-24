@@ -291,6 +291,11 @@ void MusicPlayerMidi::send(uint32 b) {
 		_driver->send(b);
 }
 
+void MusicPlayerMidi::sysEx(const byte *msg, uint16 length) {
+	if (_driver)
+		_driver->sysEx(msg, length);
+}
+
 void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:
@@ -487,6 +492,7 @@ void MusicPlayerXMI::send(uint32 b) {
 		return;
 	}
 
+	uint32 bytesToSend = b;
 	if ((b & 0xFFF0) == 0x72B0) { // XMIDI Patch Bank Select 114
 		// From AIL2's documentation: XMIDI Patch Bank Select controller (114)
 		// selects a bank to be used when searching the next patches
@@ -500,9 +506,9 @@ void MusicPlayerXMI::send(uint32 b) {
 		// We intercept the program change when using AdLib or MT32 drivers,
 		// since we have custom timbres for them.  The command is sent
 		// unchanged to GM drivers.
+		byte chan = b & 0xF;
+		byte patch = (b >> 8) & 0xFF;
 		if (_musicType != 0) {
-			byte chan = b & 0xF;
-			byte patch = (b >> 8) & 0xFF;
 
 			debugC(5, kDebugMIDI, "Groovie::Music: Setting custom patch %X from bank %X to channel %X", patch, _chanBanks[chan], chan);
 
@@ -523,9 +529,15 @@ void MusicPlayerXMI::send(uint32 b) {
 
 			// If we got here we couldn't find the patch, and the
 			// received message will be sent unchanged.
+		} else if (chan == 0x9) {
+			// GM program change on the rhythm channel (drumkit selection).
+			// Apply drumkit fallback to correct invalid drumkit numbers.
+			byte correctedPatch = _driver->_gsDrumkitFallbackMap[patch];
+			debugC(5, kDebugMIDI, "Groovie::Music: Selected drumkit %X (requested %X)", correctedPatch, patch);
+			bytesToSend = 0xC0 | chan | (correctedPatch << 8);
 		}
 	}
-	MusicPlayerMidi::send(b);
+	MusicPlayerMidi::send(bytesToSend);
 }
 
 bool MusicPlayerXMI::load(uint32 fileref, bool loop) {

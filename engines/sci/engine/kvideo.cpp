@@ -202,7 +202,11 @@ reg_t kShowMovie32(EngineState *s, int argc, reg_t *argv) {
 	const int16 x = argc > 3 ? argv[2].toSint16() : 0;
 	const int16 y = argc > 3 ? argv[3].toSint16() : 0;
 
-	g_sci->_video32->getSEQPlayer().play(fileName, numTicks, x, y);
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		g_sci->_video32->getQuickTimePlayer().play(fileName);
+	} else {
+		g_sci->_video32->getSEQPlayer().play(fileName, numTicks, x, y);
+	}
 
 	return s->r_acc;
 }

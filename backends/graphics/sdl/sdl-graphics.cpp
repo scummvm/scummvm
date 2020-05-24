@@ -46,9 +46,17 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 
 void SdlGraphicsManager::activateManager() {
 	_eventSource->setGraphicsManager(this);
+
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 void SdlGraphicsManager::deactivateManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher()) {
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	}
+
 	_eventSource->setGraphicsManager(0);
 }
 
@@ -235,7 +243,6 @@ void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
 }
 
 void SdlGraphicsManager::handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) {
-	_eventSource->resetKeyboardEmulation(width - 1, height - 1);
 	_forceRedraw = true;
 }
 
@@ -338,7 +345,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 }
 
 void SdlGraphicsManager::toggleFullScreen() {
-	if (!hasFeature(OSystem::kFeatureFullscreenMode))
+	if (!g_system->hasFeature(OSystem::kFeatureFullscreenMode))
 		return;
 
 	beginGFXTransaction();
@@ -358,7 +365,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics", _("Graphics"));
 	Action *act;
 
-	if (hasFeature(OSystem::kFeatureFullscreenMode)) {
+	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
 		act = new Action("FULS", _("Toggle fullscreen"));
 		act->addDefaultInputMapping("A+RETURN");
 		act->addDefaultInputMapping("A+KP_ENTER");

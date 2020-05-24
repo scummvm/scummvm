@@ -26,48 +26,24 @@
 namespace Ultima {
 namespace Ultima8 {
 
-struct ConvertShapeFormat;
-struct ConvertShapeFrame;
+class RawShapeFrame;
 
+/** A decompressed version of the RawShapeFrame for easier rendering */
 class ShapeFrame {
 public:
 
-	// parse data.
-	//
-	// You will find this is quite similar to the ConvertShapeFrame except
-	// all the unknown crap is removed. It's designed to allow for painting
-	// only, and for speed when loading.
-
-	ShapeFrame(const uint8 *data, uint32 size, const ConvertShapeFormat *format = 0,
-	           const uint8 special[256] = 0, ConvertShapeFrame *prev = 0);
+	ShapeFrame(const RawShapeFrame *rawframe);
 	~ShapeFrame();
 
-	uint32              _compressed;
-	int32               _width, _height;
-	int32               _xoff, _yoff;
+	int32 _width, _height;
+	int32 _xoff, _yoff;
 
-	uint32              *_line_offsets;      // Note these are offsets into rle_data
-	const uint8         *_rle_data;
+	uint8 *_pixels;
+	uint8 *_mask;
 
 	bool hasPoint(int32 x, int32 y) const;  // Check to see if a point is in the frame
 
 	uint8 getPixelAtPoint(int32 x, int32 y) const;  // Get the pixel at the point
-
-	void getConvertShapeFrame(ConvertShapeFrame &csf, bool need_bytes_rle = false);
-protected:
-
-	// This will load a u8 style shape 'optimized'.
-	void LoadU8Format(const uint8 *data, uint32 size);
-
-	// This will load a pentagram style shape 'optimized'.
-	void LoadPentagramFormat(const uint8 *data, uint32 size);
-
-	// This will load any sort of shape via a ConvertShapeFormat struct
-	// Crusader shapes must be loaded this way
-	void LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
-
-	// This will load a u8-compressed shape
-	void LoadU8CMPFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format, const uint8 special[256], ConvertShapeFrame *prev);
 };
 
 } // End of namespace Ultima8

@@ -141,6 +141,7 @@ void OSystem_OP::initBackend() {
 }
 
 void OSystem_OP::initSDL() {
+#ifdef SDL_INIT_EVENTTHREAD
 	// Check if SDL has not been initialized
 	if (!_initedSDL) {
 
@@ -154,6 +155,8 @@ void OSystem_OP::initSDL() {
 
 		_initedSDL = true;
 	}
+#endif
+	OSystem_SDL::initSDL();
 }
 
 void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {

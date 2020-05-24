@@ -11,3 +11,13 @@ set the selStart to Â
 
 set the selStart to Â
 0
+
+-- This comment is Â
+the continuationÂ
+of previous line
+
+   if the castNum of sprite 1 > the number of cast "StarLast" then set the castNum of sprite 1 to the number of Â
+        cast "StarFirst" end if
+
+put "HelloÂ
+World!"

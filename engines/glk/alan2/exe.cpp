@@ -471,7 +471,7 @@ Aptr attribute(Aword id, Aword atr) {
 }
 
 Aptr strattr(Aword id, Aword atr) {
-	return (Aptr) strdup((char *)attribute(id, atr));
+	return (Aptr)scumm_strdup((char *)attribute(id, atr));
 }
 
 
@@ -751,7 +751,7 @@ static void saylit(Aword lit) {
 	if (isNum(lit))
 		sayint(litValues[lit - LITMIN].value);
 	else {
-		str = (char *)strdup((char *)litValues[lit - LITMIN].value);
+		str = (char *)scumm_strdup((char *)litValues[lit - LITMIN].value);
 		saystr(str);
 	}
 }
@@ -1091,9 +1091,9 @@ Aword rnd(Aword from, Aword to) {
 	if (to == from)
 		return to;
 	else if (to > from)
-		return (rand() / 10) % (to - from + 1) + from;
+		return (g_vm->getRandomNumber(0x7fffffff) / 10) % (to - from + 1) + from;
 	else
-		return (rand() / 10) % (from - to + 1) + to;
+		return (g_vm->getRandomNumber(0x7fffffff) / 10) % (from - to + 1) + to;
 }
 
 /*----------------------------------------------------------------------

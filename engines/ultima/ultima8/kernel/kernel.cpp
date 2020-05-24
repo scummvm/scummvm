@@ -24,15 +24,13 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/id_man.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-Kernel *Kernel::_kernel = 0;
+Kernel *Kernel::_kernel = nullptr;
 
 Kernel::Kernel() : _loading(false) {
 	debugN(MM_INFO, "Creating Kernel...\n");
@@ -42,7 +40,7 @@ Kernel::Kernel() : _loading(false) {
 	current_process = _processes.end();
 	_frameNum = 0;
 	_paused = 0;
-	_runningProcess = 0;
+	_runningProcess = nullptr;
 	_frameByFrame = false;
 }
 
@@ -50,7 +48,7 @@ Kernel::~Kernel() {
 	reset();
 	debugN(MM_INFO, "Destroying Kernel...\n");
 
-	_kernel = 0;
+	_kernel = nullptr;
 
 	delete _pIDs;
 }
@@ -67,7 +65,7 @@ void Kernel::reset() {
 	_pIDs->clearAll();
 
 	_paused = 0;
-	_runningProcess = 0;
+	_runningProcess = nullptr;
 
 	// if we're in frame-by-frame mode, reset to a _paused state
 	if (_frameByFrame) _paused = 1;
@@ -185,7 +183,7 @@ void Kernel::runProcesses() {
 			if (!_runningProcess)
 				return; // If this happens then the list was reset so leave NOW!
 
-			_runningProcess = 0;
+			_runningProcess = nullptr;
 		}
 		if (!_paused && (p->_flags & Process::PROC_TERMINATED)) {
 			// process is killed, so remove it from the list
@@ -234,7 +232,7 @@ Process *Kernel::getProcess(ProcId pid) {
 		if (p->_pid == pid)
 			return p;
 	}
-	return 0;
+	return nullptr;
 }
 
 void Kernel::kernelStats() {
@@ -249,7 +247,7 @@ void Kernel::processTypes() {
 		Process *p = *it;
 		processtypes[p->GetClassType()._className]++;
 	}
-	Std::map<Common::String, unsigned int>::iterator iter;
+	Std::map<Common::String, unsigned int>::const_iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
 		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}
@@ -285,7 +283,7 @@ Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 
@@ -321,24 +319,24 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 	}
 }
 
-void Kernel::save(ODataSource *ods) {
-	ods->write4(_frameNum);
-	_pIDs->save(ods);
-	ods->write4(_processes.size());
+void Kernel::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_frameNum);
+	_pIDs->save(ws);
+	ws->writeUint32LE(_processes.size());
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		(*it)->save(ods);
+		(*it)->save(ws);
 	}
 }
 
-bool Kernel::load(IDataSource *ids, uint32 version) {
-	_frameNum = ids->read4();
+bool Kernel::load(Common::ReadStream *rs, uint32 version) {
+	_frameNum = rs->readUint32LE();
 
-	if (!_pIDs->load(ids, version)) return false;
+	if (!_pIDs->load(rs, version)) return false;
 
-	const uint32 pcount = ids->read4();
+	const uint32 pcount = rs->readUint32LE();
 
 	for (unsigned int i = 0; i < pcount; ++i) {
-		Process *p = loadProcess(ids, version);
+		Process *p = loadProcess(rs, version);
 		if (!p) return false;
 		_processes.push_back(p);
 	}
@@ -346,10 +344,10 @@ bool Kernel::load(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
-	const uint16 classlen = ids->read2();
+Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
+	const uint16 classlen = rs->readUint16LE();
 	char *buf = new char[classlen + 1];
-	ids->read(buf, classlen);
+	rs->read(buf, classlen);
 	buf[classlen] = 0;
 
 	Std::string classname = buf;
@@ -360,13 +358,13 @@ Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
 
 	if (iter == _processLoaders.end()) {
 		perr << "Unknown Process class: " << classname << Std::endl;
-		return 0;
+		return nullptr;
 	}
 
 
 	_loading = true;
 
-	Process *p = (*(iter->_value))(ids, version);
+	Process *p = (*(iter->_value))(rs, version);
 
 	_loading = false;
 

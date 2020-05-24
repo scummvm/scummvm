@@ -114,7 +114,7 @@ protected:
 	virtual ThemeLayout *makeClone(ThemeLayout *newParent) = 0;
 
 public:
-	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
+	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h);
 
 	virtual Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
 
@@ -139,11 +139,10 @@ protected:
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, bool enabled, int inset) :
+	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) :
 			ThemeLayout(nullptr),
 			_name(name),
 			_overlays(overlays),
-			_enabled(enabled),
 			_inset(inset) {
 		_w = _defaultW = width;
 		_h = _defaultH = height;
@@ -169,7 +168,6 @@ protected:
 
 	Common::String _name;
 	Common::String _overlays;
-	bool _enabled;
 	int _inset;
 };
 
@@ -228,7 +226,7 @@ public:
 		setTextHAlign(align);
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override;
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) override;
 	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name) override;
 
 	void reflowLayout(Widget *widgetChain) override;
@@ -265,7 +263,7 @@ public:
 		}
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override {
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) override {
 		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h)) {
 			h -= _tabHeight;
 			return true;
@@ -296,7 +294,7 @@ public:
 		}
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override { return false; }
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) override { return false; }
 	void reflowLayout(Widget *widgetChain) override {}
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const { return "SPACE"; }

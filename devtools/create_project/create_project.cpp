@@ -1047,6 +1047,7 @@ const Feature s_features[] = {
 	// Libraries
 	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
 	{       "mad",         "USE_MAD", "libmad",           true,  "libmad (MP3) support" },
+	{   "fribidi",     "USE_FRIBIDI", "fribidi",          true,  "BiDi support" },
 	{       "ogg",         "USE_OGG", "libogg_static",    true,  "Ogg support" },
 	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static", true, "Vorbis support" },
 	{    "tremor",      "USE_TREMOR", "libtremor", false, "Tremor support" },

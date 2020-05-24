@@ -131,7 +131,7 @@ void FontManager::draw() {
 
 void FontManager::clearText() {
 	_numTextEntries = 0;
-	_surface->fillRect(Common::Rect(0, 0, _surface->w - 1, _surface->h - 1), 0);
+	_surface->fillRect(Common::Rect(_surface->w, _surface->h), 0);
 }
 
 Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
@@ -166,7 +166,7 @@ void updatePalEntry(uint16 *pal, uint16 index, uint16 newValue) {
 void FontManager::updatePalette() {
 	uint16 *palette_f2_font_maybe = (uint16 *)_screen->getPalette(2);
 	const uint16 cursor3 = 0x14a5 | 0x8000;
-	if (_vm->isFlagSet(ENGINE_FLAG_200)) {
+	if (_vm->isInMenu() || _vm->isFlagSet(ENGINE_FLAG_200)) {
 		updatePalEntry(palette_f2_font_maybe, 3, cursor3); //TODO move this to palette initialisation
 		if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 16, cursor3);
@@ -231,12 +231,17 @@ void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) 
 	drawBoxChar(x2, y1, kTileIndexTopRight);
 	drawBoxChar(x1, y2, kTileIndexBottomLeft);
 	drawBoxChar(x2, y2, kTileIndexBottomRight);
+	_numTextEntries++;
 }
 
 void FontManager::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
-	//TODO clear just specified Area.
 	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
-	clearText();
+//	assert(x1 > 0);
+//	assert(y1 > 0);
+	_surface->fillRect(Common::Rect((x1-1) * 8, (y1-1) * 8, (x2 + 1) * 8 + 1, (y2 + 1) * 8 + 1), 0);
+	if (_numTextEntries > 0) {
+		_numTextEntries--; //TODO need a better way to check if we should still draw the font surface.
+	}
 }
 
 void FontManager::drawBoxChar(uint32 x, uint32 y, uint8 tileIndex) {
@@ -247,6 +252,20 @@ void FontManager::drawBoxChar(uint32 x, uint32 y, uint8 tileIndex) {
 		data += 8;
 		pixels += _surface->pitch;
 	}
+}
+
+void FontManager::addAsciiText(int16 x, int16 y, const char *text, uint16 length, uint8 fontType) {
+	uint16 wText[41];
+	memset(wText, 0, sizeof(wText));
+	if (length > 40) {
+		length = 40;
+	}
+
+	for (int i = 0; i < length; i++) {
+		wText[i] = text[i];
+	}
+
+	addText(x, y, wText, length, fontType);
 }
 
 } // End of namespace Dragons

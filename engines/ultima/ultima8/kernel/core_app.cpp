@@ -35,14 +35,11 @@ namespace Ultima8 {
 
 using Std::string;
 
-// p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp)
-
-CoreApp *CoreApp::_application = 0;
+CoreApp *CoreApp::_application = nullptr;
 
 CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
-		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(0), _fileSystem(0),
-		_configFileMan(0), _settingMan(0), _oHelp(false), _oQuiet(false), _oVQuiet(false) {
+		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(nullptr), _fileSystem(nullptr),
+		_configFileMan(nullptr), _settingMan(nullptr) {
 	_application = this;
 }
 
@@ -57,35 +54,16 @@ CoreApp::~CoreApp() {
 	FORGET_OBJECT(_configFileMan);
 	FORGET_OBJECT(_gameInfo);
 
-	_application = 0;
+	_application = nullptr;
 }
 
 void CoreApp::startup() {
-	DeclareArgs(); // Note: this is virtual
-
-	ParseArgs(0, 0);
-
-	if (_oHelp) {
-		helpMe(); // Note: this is virtual
-		error("Startup failed");
-	}
-
-
 	sysInit();
-
 	loadConfig(); // load config files
 }
 
-void CoreApp::DeclareArgs() {
-	_parameters.declare("--game",    &_oGameName, "");
-	_parameters.declare("-h",        &_oHelp,     true);
-	_parameters.declare("--help",    &_oHelp,     true);
-	_parameters.declare("-q",        &_oQuiet,    true);
-	_parameters.declare("-qq",       &_oVQuiet,   true);
-}
-
 void CoreApp::sysInit() {
-	_gameInfo = 0;
+	_gameInfo = nullptr;
 
 	_fileSystem = new FileSystem;
 
@@ -161,36 +139,12 @@ GameInfo *CoreApp::getDefaultGame() {
 	Std::string defaultgame;
 	bool defaultset = _settingMan->get("defaultgame", defaultgame,
 	                                  SettingManager::DOM_GLOBAL);
-
-	if (_oGameName != "") {
-		// game specified on commandline
-		gamename = _oGameName;
-
-	} else if (defaultset) {
+	if (defaultset) {
 		// default game specified in config file
 		gamename = defaultgame;
-
-	} else if (_games.size() == 2) {// TODO - Do this in a better method
-		// only one game in config file, so pick that
-		for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i) {
-			if (i->_value->_name != "pentagram")
-				gamename = i->_value->_name;
-		}
-
-	} else if (_games.size() == 1) {
-		gamename = _games.begin()->_value->_name;
-
 	} else {
-		perr << "Multiple games found in configuration, but no default "
-		     << "game is selected." << Std::endl
-		     << "Either start Pentagram with the \"--game <gamename>\","
-		     << Std::endl
-		     << "or set pentagram/defaultgame in pentagram.ini"
-		     << Std::endl;  // FIXME - report more useful error message
-		return 0;
+		gamename = _gameDesc->desc.gameId;
 	}
-
-	pout << "Default game: " << gamename << Std::endl;
 
 	GameInfo *info = getGameInfo(gamename);
 
@@ -233,11 +187,11 @@ void CoreApp::killGame() {
 	_configFileMan->clearRoot("game");
 	_settingMan->setCurrentDomain(SettingManager::DOM_GLOBAL);
 
-	_gameInfo = 0;
+	_gameInfo = nullptr;
 }
 
 
-bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
+bool CoreApp::getGameInfo(const istring &game, GameInfo *ginfo) {
 	// first try getting the information from the config file
 	// if that fails, try to autodetect it
 
@@ -254,10 +208,15 @@ bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
 		ginfo->_language = GameInfo::GAMELANG_ENGLISH;
 
 	} else {
-		assert(game == "ultima8");
+		assert(game == "ultima8" || game == "remorse" || game == "regret");
 
-		ginfo->_type = GameInfo::GAME_U8;
-		
+		if (game == "ultima8")
+			ginfo->_type = GameInfo::GAME_U8;
+		else if (game == "remorse")
+			ginfo->_type = GameInfo::GAME_REMORSE;
+		else if (game == "regret")
+			ginfo->_type = GameInfo::GAME_REGRET;
+
 		switch (_gameDesc->desc.language) {
 		case Common::EN_ANY:
 			ginfo->_language = GameInfo::GAMELANG_ENGLISH;
@@ -335,13 +294,6 @@ void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
 	_parameters.process(argc_, argv_);
 }
 
-void CoreApp::helpMe() {
-	debug(MM_INFO, "\t-h\t\t- quick help menu (this)\n");
-	debug(MM_INFO, "\t-q\t\t- silence general logging messages\n");
-	debug(MM_INFO, "\t-qq\t\t- silence general logging messages and\n\t\t\t  non-critical warnings/errors\n");
-	debug(MM_INFO, "\t--game {name}\t- select a game\n");
-}
-
 GameInfo *CoreApp::getGameInfo(istring game) const {
 	GameMap::const_iterator i;
 	i = _games.find(game);
@@ -349,7 +301,7 @@ GameInfo *CoreApp::getGameInfo(istring game) const {
 	if (i != _games.end())
 		return i->_value;
 	else
-		return 0;
+		return nullptr;
 }
 
 } // End of namespace Ultima8

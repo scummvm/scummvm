@@ -93,6 +93,7 @@ namespace LB {
 	void b_HMStoFrames(int nargs);
 	void b_param(int nargs);
 	void b_printFrom(int nargs);
+	void b_put(int nargs);
 	void b_showGlobals(int nargs);
 	void b_showLocals(int nargs);
 	void b_value(int nargs);
@@ -174,12 +175,8 @@ namespace LB {
 	void b_beep(int nargs);
 	void b_mci(int nargs);
 	void b_mciwait(int nargs);
+	void b_sound(int nargs);
 	void b_soundBusy(int nargs);
-	void b_soundClose(int nargs);
-	void b_soundFadeIn(int nargs);
-	void b_soundFadeOut(int nargs);
-	void b_soundPlayFile(int nargs);
-	void b_soundStop(int nargs);
 
 	void b_backspace(int nargs);
 	void b_empty(int nargs);

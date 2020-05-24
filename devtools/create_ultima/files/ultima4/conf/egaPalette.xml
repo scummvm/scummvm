@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE egaPalette SYSTEM "dtd/egaPalette.dtd" [
+  <!ENTITY % color SYSTEM "dtd/color.dtd">
+  %color;
+]>
+
+<!-- $Id: egaPalette.xml 2794 2011-01-25 01:58:45Z darren_janeczek $ -->
+<!-- See: http://upload.wikimedia.org/wikipedia/commons/d/df/EGA_Table.PNG -->
+<egaPalette>    
+    <color red="0" green="0" blue="0"/>          <!-- black --> 
+    <color red="0" green="0" blue="170"/>        <!-- blue -->
+    <color red="0" green="170" blue="0"/>        <!-- green -->
+    <color red="0" green="170" blue="170"/>      <!-- blue-green -->
+    <color red="170" green="0" blue="0"/>        <!-- red -->
+    <color red="170" green="0" blue="170"/>      <!-- purple -->
+    <color red="170" green="85" blue="0"/>       <!-- brown -->
+    <color red="170" green="170" blue="170"/>    <!-- lt. gray -->
+    <color red="85" green="85" blue="85"/>       <!-- gray -->
+    <color red="85" green="85" blue="255"/>      <!-- bright blue -->
+    <color red="85" green="255" blue="80"/>      <!-- bright green -->
+    <color red="85" green="255" blue="255"/>     <!-- bright blue-green -->
+    <color red="255" green="85" blue="85"/>      <!-- bright red -->
+    <color red="255" green="85" blue="255"/>     <!-- magenta -->
+    <color red="255" green="255" blue="85"/>     <!-- yellow --> 
+    <color red="255" green="255" blue="255"/>    <!-- white -->
+</egaPalette>

@@ -33,6 +33,7 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-widget.h"
 
+#include "common/achievements.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/gui_options.h"
@@ -269,7 +270,7 @@ void OptionsDialog::build() {
 
 	// Keymapper options
 	if (_keymapperWidget) {
-		_keymapperWidget->build();
+		_keymapperWidget->load();
 	}
 
 	// Graphic options
@@ -348,10 +349,24 @@ void OptionsDialog::build() {
 	}
 
 	// Shader options
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		if (_shaderPopUp) {
-			int value = ConfMan.getInt("shader", _domain);
-			_shaderPopUp->setSelected(value);
+	if (_shaderPopUp) {
+		_shaderPopUp->setSelected(0);
+
+		if (g_system->hasFeature(OSystem::kFeatureShader)) {
+			if (ConfMan.hasKey("shader", _domain)) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedShaders();
+				Common::String shader(ConfMan.get("shader", _domain));
+				int shaderCount = 1;
+				while (sm->name) {
+					shaderCount++;
+					if (scumm_stricmp(sm->name, shader.c_str()) == 0)
+						_shaderPopUp->setSelected(shaderCount);
+					sm++;
+				}
+			}
+		} else {
+			_shaderPopUpDesc->setVisible(false);
+			_shaderPopUp->setVisible(false);
 		}
 	}
 
@@ -534,6 +549,31 @@ void OptionsDialog::apply() {
 		}
 	}
 
+	// Shader options
+	if (_shaderPopUp) {
+		if (_enableShaderSettings) {
+			bool isSet = false;
+
+			if ((int32)_shaderPopUp->getSelectedTag() >= 0) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedShaders();
+				while (sm->name) {
+					if (sm->id == (int)_shaderPopUp->getSelectedTag()) {
+						if (ConfMan.get("shader", _domain) != sm->name)
+							graphicsModeChanged = true;
+						ConfMan.set("shader", sm->name, _domain);
+						isSet = true;
+						break;
+					}
+					sm++;
+				}
+			}
+			if (!isSet)
+				ConfMan.removeKey("shader", _domain);
+		} else {
+			ConfMan.removeKey("shader", _domain);
+		}
+	}
+
 	// Setup graphics again if needed
 	if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 		g_system->beginGFXTransaction();
@@ -547,6 +587,8 @@ void OptionsDialog::apply() {
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 		if (ConfMan.hasKey("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
+		if (ConfMan.hasKey("shader"))
+			g_system->setShader(ConfMan.get("shader", _domain).c_str());
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -613,18 +655,6 @@ void OptionsDialog::apply() {
 			// And display the error
 			GUI::MessageDialog dialog(message);
 			dialog.runModal();
-		}
-	}
-
-	// Shader options
-	if (_enableShaderSettings) {
-		if (g_system->hasFeature(OSystem::kFeatureShader)) {
-			if (_shaderPopUp) {
-				if (ConfMan.getInt("shader", _domain) != (int32)_shaderPopUp->getSelectedTag()) {
-					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
-					g_system->setShader(_shaderPopUp->getSelectedTag());
-				}
-			}
 		}
 	}
 
@@ -887,6 +917,14 @@ void OptionsDialog::handleTickle() {
 	}
 }
 
+void OptionsDialog::handleOtherEvent(const Common::Event &event) {
+	Dialog::handleOtherEvent(event);
+
+	if (event.type == Common::EVENT_INPUT_CHANGED && _keymapperWidget) {
+		_keymapperWidget->handleInputChanged();
+	}
+}
+
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
@@ -907,6 +945,13 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
+}
+
+void OptionsDialog::setShaderSettingsState(bool enabled) {
+	_enableShaderSettings = enabled;
+
+	_shaderPopUpDesc->setEnabled(enabled);
+	_shaderPopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -1066,20 +1111,98 @@ void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &
 	_keymapperWidget = new Common::RemapWidget(boss, prefix + "Container", keymaps);
 }
 
-void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
-	// Shader selector
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		if (g_system->getOverlayWidth() > 320)
-			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _("HW Shader:"), _("Different hardware shaders give different visual effects"));
-		else
-			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
-		_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
-		const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
-		while (p->name) {
-			_shaderPopUp->appendEntry(p->name, p->id);
-			p++;
+void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info) {
+	Common::String achDomainId = ConfMan.get("achievements", _domain);
+	AchMan.setActiveDomain(info.platform, info.appId);
+
+	GUI::ScrollContainerWidget *scrollContainer;
+	scrollContainer = new GUI::ScrollContainerWidget(boss, prefix + "Container", "");
+	scrollContainer->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
+
+	uint16 nAchieved = 0;
+	uint16 nHidden = 0;
+	uint16 nMax = info.descriptions.size();
+
+	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
+	uint16 yStep = lineHeight;
+	uint16 ySmallStep = yStep/3;
+	uint16 yPos = lineHeight + yStep*3;
+	uint16 progressBarWidth = 240;
+	uint16 width = g_system->getOverlayWidth() <= 320 ? 240 : 410;
+	uint16 descrDelta = g_system->getOverlayWidth() <= 320 ? 25 : 30;
+
+	for (int16 viewAchieved = 1; viewAchieved >= 0; viewAchieved--) {
+		// run this twice, first view all achieved, then view all non-hidden & non-achieved
+
+		for (uint16 idx = 0; idx < nMax ; idx++) {
+			int16 isAchieved = AchMan.isAchieved(info.descriptions[idx].id) ? 1 : 0;
+
+			if (isAchieved != viewAchieved) {
+				continue;
+			}
+
+			if (isAchieved) {
+				nAchieved++;
+			}
+
+			if (!isAchieved && info.descriptions[idx].isHidden) {
+				nHidden++;
+				continue;
+			}
+
+			CheckboxWidget *checkBox;
+			checkBox = new CheckboxWidget(scrollContainer, lineHeight, yPos, width, yStep, info.descriptions[idx].title);
+			checkBox->setEnabled(false);
+			checkBox->setState(isAchieved);
+			yPos += yStep;
+
+	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, Graphics::kTextAlignLeft, "", ThemeEngine::kFontStyleNormal);
+				yPos += yStep;
+			}
+
+			yPos += ySmallStep;
 		}
 	}
+
+	if (nHidden) {
+		Common::String hiddenStr = Common::String::format(_("%d hidden achievements remaining"), nHidden);
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), Graphics::kTextAlignLeft);
+	}
+
+	if (nMax) {
+		Common::String totalStr = Common::String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
+		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), Graphics::kTextAlignLeft);
+
+		SliderWidget *progressBar;
+		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
+		progressBar->setMinValue(0);
+		progressBar->setValue(nAchieved);
+		progressBar->setMaxValue(nMax);
+		progressBar->setEnabled(false);
+	}
+}
+
+void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
+	Common::String context;
+	if (g_system->getOverlayWidth() <= 320)
+		context = "lowres";
+
+	// Shader selector
+	if (g_system->getOverlayWidth() > 320)
+		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _("HW Shader:"), _("Different hardware shaders give different visual effects"));
+	else
+		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
+	_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
+	const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
+
+	_shaderPopUp->appendEntry(_("<default>"));
+	_shaderPopUp->appendEntry("");
+	while (p->name) {
+		_shaderPopUp->appendEntry(_c(p->description, context), p->id);
+		p++;
+	}
+
 	_enableShaderSettings = true;
 }
 
@@ -1352,22 +1475,6 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_speechVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableVolumeSettings = true;
-}
-
-void OptionsDialog::addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions) {
-	// Note: up to 7 engine options can currently fit on screen (the most that
-	// can fit in a 320x200 screen with the classic theme).
-	// TODO: Increase this number by including the checkboxes inside a scroll
-	// widget. The appropriate number of checkboxes will need to be added to
-	// the theme files.
-
-	uint i = 1;
-	ExtraGuiOptions::const_iterator iter;
-	for (iter = engineOptions.begin(); iter != engineOptions.end(); ++iter, ++i) {
-		Common::String id = Common::String::format("%d", i);
-		_engineCheckboxes.push_back(new CheckboxWidget(boss,
-			prefix + "customOption" + id + "Checkbox", _(iter->label), _(iter->tooltip)));
-	}
 }
 
 bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType) {
@@ -2666,7 +2773,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	// calculate shift
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 	int16 shiftUp = 0;
 	if (!showingCurrentStorage || enabled) {
 		// "storage is disabled" hint is not shown, shift everything up
@@ -2795,7 +2902,7 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 	if (!widget) return;
 
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 	if (!g_gui.xmlEval()->getWidgetData(widgetName, x, y, w, h))
 		warning("%s's position is undefined", widgetName);
 

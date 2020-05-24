@@ -48,13 +48,13 @@ Map::Map() {
 
 	_numForegrounds = _numGratings = 0;
 
-	_mapExplosions = NULL;
-	_mapExpBarrels = NULL;
-	_mapLaserBeams = NULL;
+	_mapExplosions = nullptr;
+	_mapExpBarrels = nullptr;
+	_mapLaserBeams = nullptr;
 
-	_background = NULL;
-	_foreground = NULL;
-	_iconList = NULL;
+	_background = nullptr;
+	_foreground = nullptr;
+	_iconList = nullptr;
 
 	_width = 0;
 	_height = 0;
@@ -69,6 +69,7 @@ Map::Map() {
 	_iconNum = 0;
 	_iconListOffset = 0;
 	_infoNum = 0;
+	_infoListOffset = 0;
 }
 
 Map::~Map() {
@@ -267,11 +268,11 @@ void Map::restartSystem() {
 	_listFGAnimSlow.clear();
 
 	delete[] _background;
-	_background = NULL;
+	_background = nullptr;
 	delete[] _foreground;
-	_foreground = NULL;
+	_foreground = nullptr;
 	delete[] _iconList;
-	_iconList = NULL;
+	_iconList = nullptr;
 
 	_width = _height = 0;
 	_animCycle = 0;
@@ -280,9 +281,9 @@ void Map::restartSystem() {
 	free(_mapExpBarrels);
 	free(_mapLaserBeams);
 
-	_mapExplosions = NULL;
-	_mapExpBarrels = NULL;
-	_mapLaserBeams = NULL;
+	_mapExplosions = nullptr;
+	_mapExpBarrels = nullptr;
+	_mapLaserBeams = nullptr;
 
 	// mark all in-memory tiles as being in memory, but able to be freed
 	g_hdb->_gfx->markTileCacheFreeable();
@@ -293,7 +294,7 @@ void Map::restartSystem() {
 
 bool Map::loadMap(char *name) {
 	Common::SeekableReadStream *mapStream = g_hdb->_fileMan->findFirstData(name, TYPE_BINARY);
-	if (mapStream == NULL) {
+	if (mapStream == nullptr) {
 		warning("The %s MPC entry can't be found", name);
 		delete mapStream;
 		return false;
@@ -1200,7 +1201,7 @@ void Map::centerMapXY(int x, int y) {
 			break;
 		}
 	}
-	
+
 	x = CLIP(x, minx, maxx);
 	y = CLIP(y, miny, maxy);
 

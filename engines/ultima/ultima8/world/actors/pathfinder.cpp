@@ -52,8 +52,8 @@ void PathfindingState::load(const Actor *_actor) {
 	_actor->getLocation(_x, _y, _z);
 	_lastAnim = _actor->getLastAnim();
 	_direction = _actor->getDir();
-	_firstStep = (_actor->getActorFlags() & Actor::ACT_FIRSTSTEP) != 0;
-	_flipped = (_actor->getFlags() & Item::FLG_FLIPPED) != 0;
+	_firstStep = _actor->hasActorFlags(Actor::ACT_FIRSTSTEP);
+	_flipped = _actor->hasFlags(Item::FLG_FLIPPED);
 	_combat = _actor->isInCombat();
 }
 
@@ -89,7 +89,8 @@ bool PathfindingState::checkItem(const Item *item, int xyRange, int zRange) cons
 	return (range <= xyRange);
 }
 
-bool PathfindingState::checkHit(Actor *_actor, const Actor *target) {
+bool PathfindingState::checkHit(const Actor *_actor, const Actor *target) const {
+	assert(target);
 #if 0
 	pout << "Trying hit in _direction " << _actor->getDirToItemCentre(*target) << Std::endl;
 #endif
@@ -113,21 +114,23 @@ bool PathNodeCmp::operator()(const PathNode *n1, const PathNode *n2) const {
 	return (n1->heuristicTotalCost < n2->heuristicTotalCost);
 }
 
-Pathfinder::Pathfinder() {
+Pathfinder::Pathfinder() : _actor(nullptr), _targetItem(nullptr),
+		_hitMode(false), _expandTime(0), _targetX(0), _targetY(0),
+		_targetZ(0), _actorXd(0), _actorYd(0), _actorZd(0) {
 	expandednodes = 0;
 }
 
 Pathfinder::~Pathfinder() {
 #if 1
-	pout << "~Pathfinder: " << _nodeList.size() << " _nodes, "
-	     << expandednodes << " expanded _nodes in " << _expandTime << "ms." << Std::endl;
+	pout << "~Pathfinder: " << _cleanupNodes.size() << " nodes to clean up, "
+	     << expandednodes << " expanded nodes in " << _expandTime << "ms." << Std::endl;
 #endif
 
 	// clean up _nodes
-	Std::list<PathNode *>::iterator iter;
-	for (iter = _nodeList.begin(); iter != _nodeList.end(); ++iter)
+	Std::vector<PathNode *>::iterator iter;
+	for (iter = _cleanupNodes.begin(); iter != _cleanupNodes.end(); ++iter)
 		delete *iter;
-	_nodeList.clear();
+	_cleanupNodes.clear();
 }
 
 void Pathfinder::init(Actor *actor_, PathfindingState *state) {
@@ -160,7 +163,7 @@ void Pathfinder::setTarget(Item *item, bool hit) {
 
 	if (hit) {
 		assert(_start._combat);
-		assert(p_dynamic_cast<Actor *>(_targetItem));
+		assert(dynamic_cast<Actor *>(_targetItem));
 		_hitMode = true;
 	} else {
 		_hitMode = false;
@@ -184,13 +187,13 @@ bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
 	return false;
 }
 
-bool Pathfinder::checkTarget(PathNode *node) {
+bool Pathfinder::checkTarget(const PathNode *node) const {
 	// TODO: these ranges are probably a bit too high,
 	// but otherwise it won't work properly yet -wjp
 	if (_targetItem) {
 		if (_hitMode) {
 			return node->state.checkHit(_actor,
-			                            p_dynamic_cast<Actor *>(_targetItem));
+			                            dynamic_cast<Actor *>(_targetItem));
 		} else {
 			return node->state.checkItem(_targetItem, 32, 8);
 		}
@@ -355,7 +358,6 @@ static void drawpath(PathNode *to, uint32 rgb, bool done) {
 void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
                          unsigned int steps) {
 	PathNode *newnode = new PathNode();
-	_nodeList.push_back(newnode); // for garbage collection
 	newnode->state = state;
 	newnode->parent = oldnode;
 	newnode->depth = oldnode->depth + 1;
@@ -530,10 +532,9 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	PathNode *startnode = new PathNode();
 	startnode->state = _start;
 	startnode->cost = 0;
-	startnode->parent = 0;
+	startnode->parent = nullptr;
 	startnode->depth = 0;
 	startnode->stepsfromparent = 0;
-	_nodeList.push_back(startnode);
 	_nodes.push(startnode);
 
 	unsigned int expandedNodes = 0;
@@ -543,7 +544,9 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	uint32 starttime = g_system->getMillis();
 
 	while (expandedNodes < NODELIMIT_MAX && !_nodes.empty() && !found) {
-		PathNode *node = _nodes.top();
+		// Take a copy here as the pop() below deletes the old node
+		PathNode *node = new PathNode(*_nodes.top());
+		_cleanupNodes.push_back(node);
 		_nodes.pop();
 
 #if 0
@@ -556,7 +559,7 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 			// done!
 
 			// find path length
-			PathNode *n = node;
+			const PathNode *n = node;
 			unsigned int length = 0;
 			while (n->parent) {
 				n = n->parent;

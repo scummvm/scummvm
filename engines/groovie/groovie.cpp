@@ -346,7 +346,7 @@ Common::Platform GroovieEngine::getPlatform() const {
 
 bool GroovieEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsLoadingDuringRuntime);
 }

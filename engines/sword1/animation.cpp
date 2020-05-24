@@ -182,7 +182,7 @@ bool MoviePlayer::load(uint32 id) {
 		filename = Common::String::format("%s.smk", sequenceList[id]);
 		break;
 	case kVideoDecoderPSX:
-		filename = Common::String::format("%s.str", (_vm->_systemVars.isDemo) ? sequenceList[id] : sequenceListPSX[id]);
+		filename = Common::String::format("%s.str", (_vm->_systemVars.isDemo && id == 4) ? "intro" : sequenceListPSX[id]);
 		break;
 	case kVideoDecoderMP2:
 		filename = Common::String::format("%s.mp2", sequenceList[id]);
@@ -520,8 +520,8 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 
 	// For the PSX version, we'll try the PlayStation stream files
 	if (vm->isPsx()) {
-		// The demo uses the normal file names
-		filename = ((vm->_systemVars.isDemo) ? Common::String(sequenceList[id]) : Common::String(sequenceListPSX[id])) + ".str";
+		// The demo uses the normal file names for the intro cutscene
+		filename = ((vm->_systemVars.isDemo && id == 4) ? "intro" : Common::String(sequenceListPSX[id])) + ".str";
 
 		if (Common::File::exists(filename)) {
 #ifdef USE_RGB_COLOR

@@ -85,15 +85,17 @@ void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 }
 
 Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
-	_layerSurface[0] = NULL;
-	_layerSurface[1] = NULL;
-	_layerSurface[2] = NULL;
+	_layerSurface[0] = nullptr;
+	_layerSurface[1] = nullptr;
+	_layerSurface[2] = nullptr;
 	_layerOffset[0] = Common::Point(0, 0);
 	_layerOffset[1] = Common::Point(0, 0);
 	_layerOffset[2] = Common::Point(0, 0);
 	_layerAlphaMode[0] = NORMAL;
 	_layerAlphaMode[1] = NORMAL;
 	_layerAlphaMode[2] = NORMAL;
+
+	_tileDataOffset = nullptr;
 }
 
 Background::~Background() {
@@ -255,8 +257,8 @@ void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int
 void Background::restoreTiles(uint16 layerNum, int16 x1, int16 y1, int16 w, int16 h) {
 	int16 tmw = x1 + w;
 	int16 tmh = y1 + h;
-	for (int y = 0; y < tmh; y++) {
-		for (int x = 0; x < tmw; x++) {
+	for (int y = y1; y < tmh; y++) {
+		for (int x = x1; x < tmw; x++) {
 			uint16 idx = READ_LE_UINT16(&_tileMap[layerNum].map[(y * _tileMap[layerNum].w + x) * 2]) + _tileMap[layerNum].tileIndexOffset;
 			//debug("tileIdx: %d", idx);
 			drawTileToSurface(_layerSurface[layerNum], _palette, _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
@@ -394,16 +396,16 @@ uint16 ScaleLayer::getScale(uint16 y) {
 			if (local_v0_368 != 0) {
 				iVar3 = ((uVar5 & 0xffffu) - (uVar7 & 0xffffu)) * (uint)(uint16)(y - pSVar6->_y);
 
-				assert(((uint)(uint16)local_v0_368 != 0xffffffff) || (iVar3 != -0x80000000));
+				assert(((uint16)local_v0_368 != 0xffffu) || (iVar3 != (int)-0x80000000));
 
-				return uVar7 + iVar3 / (int)(uint)(uint16)local_v0_368 & 0xffff;
+				return (uVar7 + iVar3 / (int)(uint)(uint16)local_v0_368) & 0xffff;
 			}
 		}
 	}
 	return uVar1 & 0xfff8u;
 }
 
-ScaleLayer::ScaleLayer(): _savedBands(NULL) {
+ScaleLayer::ScaleLayer(): _savedBands(nullptr) {
 	for (int i = 0; i < 32; i++) {
 		_bands[i]._y = -1;
 		_bands[i]._priority = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;

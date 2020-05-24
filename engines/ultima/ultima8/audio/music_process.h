@@ -37,32 +37,15 @@ class MidiPlayer;
 class MusicProcess : public Process {
 	friend class Debugger;
 
-	enum MusicStates {
-		MUSIC_NORMAL = 1,
-		MUSIC_TRANSITION = 2,
-		MUSIC_PLAY_WANTED = 3
-	};
-private:
-	void saveData(ODataSource *ods) override;
-
+protected:
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music
-	void playMusic_internal(int track);
+	virtual void playMusic_internal(int track) = 0;
 
 	static MusicProcess *_theMusicProcess;
 
-	MidiPlayer *_midiPlayer;
-	MusicStates _state;
-	int _currentTrack;      // Currently playing track (don't save)
-	int _wantedTrack;       // Track we want to play (save this)
-	int _songBranches[128];
-
-	int _lastRequest;       // Last requested track
-	int _queuedTrack;       // Track queued to start after current
 public:
 	MusicProcess();
-	MusicProcess(MidiPlayer *player); // Note that this does NOT delete the driver
-	~MusicProcess() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -72,24 +55,25 @@ public:
 		return _theMusicProcess;
 	}
 
-	void playMusic(int track);
-	void playCombatMusic(int track);
-	void queueMusic(int track);
-	void unqueueMusic();
-	void restoreMusic();
+	//! Play some background music. Does not change the current track if combat music is active.  If another track is currently queued, just queues this track for play.
+	virtual void playMusic(int track) = 0;
+	//! Play some combat music - the last played track will be remembered
+	virtual void playCombatMusic(int track) = 0;
+	//! Queue a track to start once the current one finishes
+	virtual void queueMusic(int track) = 0;
+	//! Clear any queued track (does not affect currently playing track)
+	virtual void unqueueMusic() = 0;
+	//! Restore the last requested non-combat track (eg, at the end of combat)
+	virtual void restoreMusic() = 0;
+
+	//! Save the current track state - used when the menu is opened
+	virtual void saveTrackState() = 0;
+	//! Bring back the track state from before it was put on hold
+	virtual void restoreTrackState() = 0;
 
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_musicStop);
 
-
-	//! Get the number of the current or wanted track
-	int getTrack() const {
-		return _wantedTrack;
-	}
-
-	void run() override;
-
-	bool loadData(IDataSource *ids, uint32 version);
 };
 
 } // End of namespace Ultima8

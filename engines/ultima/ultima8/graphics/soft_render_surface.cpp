@@ -181,7 +181,7 @@ template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy
 
 template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) {
 	_clipWindow.IntersectOther(sx, sy, w, h);
-	if (!w || !h || !RenderSurface::_format.a_mask) return;
+	if (!w || !h || !RenderSurface::_format.aMask) return;
 
 	// An optimization.
 	if ((int)(w * sizeof(uintX)) == _pitch) {
@@ -195,24 +195,24 @@ template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int3
 	uint8 *line_end = pixel + w * sizeof(uintX);
 	int diff = _pitch - w * sizeof(uintX);
 
-	uintX a = (((uintX)alpha) << RenderSurface::_format.a_shift)&RenderSurface::_format.a_mask;
+	uintX a = (((uintX)alpha) << RenderSurface::_format.aShift)&RenderSurface::_format.aMask;
 
 #ifdef CHECK_ALPHA_FILLS
 	uintX c;
 	uintX m;
 	if (a == 0) {
-		c = (RenderSurface::_format.b_mask >> 1)&RenderSurface::_format.b_mask;
-		m = RenderSurface::_format.b_mask;
+		c = (RenderSurface::_format.bMask >> 1)&RenderSurface::_format.bMask;
+		m = RenderSurface::_format.bMask;
 	} else {
-		c = (RenderSurface::_format.r_mask >> 1)&RenderSurface::_format.r_mask;
-		m = RenderSurface::_format.r_mask;
+		c = (RenderSurface::_format.rMask >> 1)&RenderSurface::_format.rMask;
+		m = RenderSurface::_format.rMask;
 	}
 #endif
 
 	while (pixel != end) {
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
-			*dest = (*dest & ~RenderSurface::_format.a_mask) | a;
+			*dest = (*dest & ~RenderSurface::_format.aMask) | a;
 #ifdef CHECK_ALPHA_FILLS
 			*dest = (*dest & ~m) | (c + (((*dest & m) >> 1)&m));
 #endif
@@ -254,7 +254,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, in
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
 			uintX d = *dest;
-			*dest = (d & RenderSurface::_format.a_mask) | BlendPreModFast(rgba, d);
+			*dest = (d & RenderSurface::_format.aMask) | BlendPreModFast(rgba, d);
 			pixel += sizeof(uintX);
 		}
 
@@ -408,76 +408,6 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(Texture *_tex, int32 s
 			texel += tex_diff;
 		}
 	}
-
-	/* Old complete code
-	    // Clamp or wrap or return?
-	#ifndef BLIT_WRAP
-	    if (w > static_cast<int32>(_tex->w))
-	#ifndef BLIT_CLIP
-	        return;
-	#else
-	        w = _tex->w;
-	#endif
-
-	    // Clamp or wrap or return?
-	    if (h > static_cast<int32>(_tex->_height))
-	#ifndef BLIT_CLIP
-	        return;
-	#else
-	        h = _tex->_height;
-	#endif
-	#endif
-
-	    // Clip to window
-	    int px = dx, py = dy;
-	    _clipWindow.IntersectOther(dx,dy,w,h);
-	    if (!w || !h) return;
-
-	    // Adjust source x and y
-	    if (px != dx) sx += dx - px;
-	    if (py != dy) sy += dy - py;
-
-	    uint8 *pixel = _pixels + dy * _pitch + dx * sizeof(uintX);
-	    uint8 *line_end = pixel + w*sizeof(uintX);
-	    uint8 *end = pixel + h * _pitch;
-	    int diff = _pitch - w*sizeof(uintX);
-
-	    uint32 *texel = _tex->_buffer + (sy * _tex->w + sx);
-	#ifdef BLIT_WRAP
-	    uint32 *texel_line_start = _tex->_buffer + sy * _tex->w;
-	    uint32 *texel_line_end = _tex->_buffer + (sy+1) * _tex->w;
-	    uint32 *texel_col_start = _tex->_buffer + sx;
-	    uint32 *texel_col_end = _tex->_buffer + (_tex->_height * _tex->w + sx);
-	#endif
-	    int tex_diff = _tex->w - w;
-
-	    //b = PACK_RGB8( (rgb>>16)&0xFF , (rgb>>8)&0xFF , rgb&0xFF );
-
-	    while (pixel != end)
-	    {
-	        while (pixel != line_end)
-	        {
-	            if (*texel & TEX32_A_MASK)
-	            {
-	                *(reinterpret_cast<uintX*>(pixel)) = static_cast<uintX>(PACK_RGB8( TEX32_R(*texel), TEX32_G(*texel), TEX32_B(*texel) ));
-	            }
-	            pixel+=sizeof(uintX);
-	            texel++;
-	#ifdef BLIT_WRAP
-	            if (texel == texel_line_end) texel = texel_line_start;
-	#endif
-	        }
-
-	        line_end += _pitch;
-	        pixel += diff;
-	        texel+= tex_diff;
-	#ifdef BLIT_WRAP
-	        if (texel == texel_col_end) texel = texel_col_start;
-	#endif
-	    }
-
-	*/
-
 
 }
 
@@ -637,7 +567,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 					if (*texel & TEX32_A_MASK) {
-						if (!RenderSurface::_format.a_mask || (*dest & RenderSurface::_format.a_mask)) {
+						if (!RenderSurface::_format.aMask || (*dest & RenderSurface::_format.aMask)) {
 							*dest = static_cast<uintX>(
 								PACK_RGB8(
 									(TEX32_R(*texel) * ia + r) >> 8,
@@ -654,7 +584,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 				while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if (!RenderSurface::_format.a_mask || (*dest & RenderSurface::_format.a_mask)) {
+					if (!RenderSurface::_format.aMask || (*dest & RenderSurface::_format.aMask)) {
 						uint32 alpha = *texel & TEX32_A_MASK;
 						if (alpha == 0xFF) {
 							*dest = static_cast<uintX>(
@@ -698,7 +628,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *_tex, i
 
 				// Uh, not completely supported right now
 				//if ((*texel & RenderSurface::_format.a_mask) && (*dest & RenderSurface::_format.a_mask))
-				if (*dest & RenderSurface::_format.a_mask) {
+				if (*dest & RenderSurface::_format.aMask) {
 					*dest = BlendHighlight(*texel, r, g, b, 1, ia);
 				}
 				pixel += sizeof(uintX);
@@ -940,35 +870,6 @@ template<class uintX> void SoftRenderSurface<uintX>::PaintHighlightInvis(Shape *
 #undef XFORM_SHAPES
 #undef XFORM_CONDITIONAL
 #undef BLEND_SHAPES
-}
-
-//
-// void SoftRenderSurface::PaintHighlight(Shape* s, uint32 frame, int32 x, int32 y, bool mirrored)
-//
-// Desc: Standard shape drawing functions. Masked against Dest Alpha. Highlights, Clips, and conditionally Flips and Xforms
-//
-
-template<class uintX> void SoftRenderSurface<uintX>::PaintMasked(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal) {
-#define FLIP_SHAPES
-#define FLIP_CONDITIONAL mirrored
-#define XFORM_SHAPES
-#define XFORM_CONDITIONAL trans
-#define BLEND_SHAPES(src,dst) BlendHighlight(src,cr,cg,cb,ca,255-ca)
-#define DESTALPHA_MASK
-
-	uint32 ca = TEX32_A(col32);
-	uint32 cr = TEX32_R(col32);
-	uint32 cg = TEX32_G(col32);
-	uint32 cb = TEX32_B(col32);
-
-#include "ultima/ultima8/graphics/soft_render_surface.inl"
-
-#undef FLIP_SHAPES
-#undef FLIP_CONDITIONAL
-#undef XFORM_SHAPES
-#undef XFORM_CONDITIONAL
-#undef BLEND_SHAPES
-#undef DESTALPHA_MASK
 }
 
 //

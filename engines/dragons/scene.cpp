@@ -40,10 +40,12 @@ Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, Ac
 		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
 	_mapTransitionEffectSceneID = 2;
 	_data_800633ee = 0;
+
+	_currentSceneId = -1;
 }
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	if (!_vm->isFlagSet(ENGINE_FLAG_40)) {
-		//TODO fade_related_calls_with_1f();
+		_vm->fadeToBlack();
 	}
 	bool unkFlag2Set = _vm->isUnkFlagSet(ENGINE_UNK1_FLAG_2);
 	bool flag8set = _vm->isFlagSet(ENGINE_FLAG_8);
@@ -67,7 +69,7 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		_vm->_cursor->updateSequenceID((int16)_vm->_cursor->_sequenceID);
 	}
 	_vm->waitForFrames(2);
-	// TODO call_fade_related_1f();
+	_vm->fadeFromBlack();
 	if (!unkFlag2Set) {
 		_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
 	}
@@ -126,7 +128,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->clearFlags(ENGINE_FLAG_20);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_10);
 
-	_vm->call_fade_related_1f();
+	_vm->fadeFromBlack();
 	// TODO 0x8002f7c4
 
 	_vm->_cursor->updatePosition(160, 100);
@@ -136,7 +138,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 
-	if (flicker == NULL || flicker->sceneId == 0) {
+	if (flicker == nullptr || flicker->sceneId == 0) {
 		_vm->getINI(1)->sceneId = 0;
 	} else {
 		_currentSceneId = (uint16)(sceneId & 0x7fff);
@@ -207,7 +209,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	debug("Camera: (%d, %d)", _camera.x, _camera.y);
 
 	// 0x8002ff80
-	// TODO fade_related_calls_with_1f();
+	_vm->fadeToBlack();
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_10);
 	_vm->setFlags(ENGINE_FLAG_20);
 	// TODO reset vsync_updater_function
@@ -338,7 +340,7 @@ void Scene::draw() {
 	_vm->_screen->clearScreen();
 
 	for (uint16 priority = 1; priority < 16; priority++) {
-		if (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200)) {
+		if (_vm->isInMenu() || (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200))) {
 			_vm->_fontManager->updatePalette();
 			_vm->_fontManager->draw();
 		}
@@ -360,6 +362,8 @@ void Scene::draw() {
 				drawBgLayer(0, rect, _stage->getBgLayer());
 			}
 		}
+
+		_screen->drawFlatQuads(priority);
 
 		for (int16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 			Actor *actor = _actorManager->getActorByDisplayOrder(i);
@@ -517,7 +521,7 @@ void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface 
 		rect.bottom += offset.y;
 	}
 //	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
-	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, rect, false, _stage->getLayerAlphaMode(layerNumber));
+	_screen->copyRectToSurface8bppWrappedX(*surface, _screen->getPalette(0), rect, _stage->getLayerAlphaMode(layerNumber));
 }
 
 ScaleLayer *Scene::getScaleLayer() {

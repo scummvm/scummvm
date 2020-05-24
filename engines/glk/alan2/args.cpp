@@ -49,9 +49,9 @@ void args(int argc, char *argv[]) {
 	switches(argc, argv);
 	if (advnam[0] == '\0')
 		/* No game given, try program name */
-		if (stricmp(prgnam, PROGNAME) != 0
+		if (scumm_stricmp(prgnam, PROGNAME) != 0
 		        && strstr(prgnam, PROGNAME) == 0)
-			advnam = strdup(argv[0]);
+			advnam = scumm_strdup(argv[0]);
 }
 
 } // End of namespace Alan2

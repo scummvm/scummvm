@@ -36,7 +36,6 @@ class Container;
 class ShapeInfo;
 class Shape;
 class Gump;
-class ODataSource;
 class GravityProcess;
 
 class Item : public Object {
@@ -132,9 +131,14 @@ public:
 	//! Get the Box this item occupies in the world. Undef if item is contained
 	Box getWorldBox() const;
 
-	//! Get flags
+	//! Get all flags
 	inline uint16 getFlags() const {
 		return _flags;
+	}
+
+	//! Does this item have any of the given flags mask set
+	inline bool hasFlags(uint16 flags) const {
+		return (_flags & flags) != 0;
 	}
 
 	//! Set the flags set in the given mask.
@@ -161,6 +165,11 @@ public:
 		return _extendedFlags;
 	}
 
+	//! Does item have any of the given extended flags
+	inline bool hasExtFlags(uint32 flags) const {
+		return (_extendedFlags & flags) != 0;
+	}
+
 	//! Set the _extendedFlags set in the given mask.
 	void setExtFlag(uint32 mask) {
 		_extendedFlags |= mask;
@@ -177,11 +186,7 @@ public:
 	}
 
 	//! Set this Item's shape number
-	void setShape(uint32 shape_) {
-		_shape = shape_;
-		_cachedShapeInfo = 0;
-		_cachedShape = 0;
-	}
+	void setShape(uint32 shape_);
 
 	//! Get this Item's frame number
 	uint32 getFrame() const {
@@ -372,7 +377,7 @@ public:
 	//! \param script The loopscript to run
 	//! \param scriptsize The size (in bytes) of the loopscript
 	//! \return true if the item matches, false otherwise
-	bool checkLoopScript(const uint8 *script, uint32 scriptsize);
+	bool checkLoopScript(const uint8 *script, uint32 scriptsize) const;
 
 	uint32 callUsecodeEvent_look();                             // event 0
 	uint32 callUsecodeEvent_use();                              // event 1
@@ -442,7 +447,7 @@ public:
 	//! dump some info about this item to pout
 	void dumpInfo() const override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
 
 	// Intrinsics
 	INTRINSIC(I_touch);
@@ -549,6 +554,7 @@ protected:
 
 	// This is stuff that is used for displaying and interpolation
 	struct Lerped {
+		Lerped() : _x(0), _y(0), _z(0), _shape(0), _frame(0) {};
 		int32 _x, _y, _z;
 		uint32 _shape, _frame;
 	};
@@ -561,7 +567,7 @@ protected:
 	ProcId _gravityPid;      // Item's GravityTracker (or 0)
 
 	//! save the actual Item data
-	void saveData(ODataSource *ods) override;
+	void saveData(Common::WriteStream *ws) override;
 
 private:
 
@@ -611,7 +617,7 @@ inline ShapeInfo *Item::getShapeInfo() const {
 }
 
 inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
-	ShapeInfo *si = getShapeInfo();
+	const ShapeInfo *si = getShapeInfo();
 	Z = si->_z;
 
 	if (_flags & Item::FLG_FLIPPED) {
@@ -625,16 +631,8 @@ inline void Item::getFootpadData(int32 &X, int32 &Y, int32 &Z) const {
 
 // like getFootpadData, but scaled to world coordinates
 inline void Item::getFootpadWorld(int32 &X, int32 &Y, int32 &Z) const {
-	ShapeInfo *si = getShapeInfo();
-	Z = si->_z * 8;
-
-	if (_flags & Item::FLG_FLIPPED) {
-		X = si->_y * 32;
-		Y = si->_x * 32;
-	} else {
-		X = si->_x * 32;
-		Y = si->_y * 32;
-	}
+	const ShapeInfo *si = getShapeInfo();
+	si->getFootpadWorld(X, Y, Z, _flags & Item::FLG_FLIPPED);
 }
 
 inline void Item::getLocation(int32 &X, int32 &Y, int32 &Z) const {

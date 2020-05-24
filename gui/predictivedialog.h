@@ -143,6 +143,8 @@ private:
 
 	bool _navigationWithKeys;
 	bool _needRefresh;
+	bool _isPressed;
+
 private:
 	EditTextWidget *_editText;
 	ButtonWidget   *_button[kButtonCount];

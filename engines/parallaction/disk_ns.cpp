@@ -590,7 +590,7 @@ private:
 		off_lens = src; src = &src[4];
 		buf = &src[src_len];
 
-		out = dest_end = &dest[dest_len];
+		out = dest_end = &dest[dest_len - 1];
 
 		/* skip the first few bits */
 		PP_READ_BITS(src[src_len + 3], x);
@@ -620,7 +620,7 @@ private:
 			else {
 				PP_READ_BITS(offbits, offset);
 			}
-			if (&out[offset] >= dest_end) return 0; /* match_overflow */
+			if (&out[offset] > dest_end) return 0; /* match_overflow */
 			while (todo--) { x = out[offset]; PP_BYTE_OUT(x); }
 		}
 

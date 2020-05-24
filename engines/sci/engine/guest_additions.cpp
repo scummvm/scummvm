@@ -25,6 +25,7 @@
 #include "common/gui_options.h"
 #include "common/savefile.h"
 #include "sci/engine/features.h"
+#include "sci/engine/file.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
@@ -402,7 +403,8 @@ void GuestAdditions::patchGameSaveRestoreSCI16() const {
 		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
 		Common::String methodName = _kernel->getSelectorName(selectorId);
 		if (methodName == "save") {
-			if (g_sci->getGameId() != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
+			if (g_sci->getGameId() != GID_FAIRYTALES &&  // Fairy Tales saves automatically without a dialog
+				g_sci->getGameId() != GID_QFG3) { // QFG3 does automatic saving in Glory:save
 					patchKSaveRestore(_segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
 			}
 			break;
@@ -446,7 +448,7 @@ void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
 
 	if (g_sci->isBE()) {
 		SWAP(patchPtr[1], patchPtr[2]);
-		SWAP(patchPtr[8], patchPtr[9]);
+		SWAP(patchPtr[7], patchPtr[8]);
 	}
 }
 
@@ -669,12 +671,28 @@ reg_t GuestAdditions::promptSaveRestoreRama(EngineState *s, int argc, reg_t *arg
 	return make_reg(0, saveIndex);
 }
 
-int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveNo) const {
-	int saveNo;
-	Common::String descriptionString;
+int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveId) const {
+	assert(!(isSave && outDescription.isNull()));
 
-	if (!isSave && forcedSaveNo != -1) {
-		saveNo = forcedSaveNo;
+	Common::String descriptionString;
+	int saveId = runSaveRestore(isSave, descriptionString, forcedSaveId);
+
+	if (!outDescription.isNull()) {
+		if (_segMan->isObject(outDescription)) {
+			outDescription = readSelector(_segMan, outDescription, SELECTOR(data));
+		}
+		SciArray &description = *_segMan->lookupArray(outDescription);
+		description.fromString(descriptionString);
+	}
+
+	return saveId;
+}
+
+int GuestAdditions::runSaveRestore(const bool isSave, Common::String &outDescription, const int forcedSaveId) const {
+	int saveId;
+
+	if (!isSave && forcedSaveId != -1) {
+		saveId = forcedSaveId;
 	} else {
 		const char *title;
 		const char *action;
@@ -687,22 +705,13 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 		}
 
 		GUI::SaveLoadChooser dialog(title, action, isSave);
-		saveNo = dialog.runModalWithCurrentTarget();
-		if (saveNo != -1) {
-			descriptionString = dialog.getResultString();
-			if (descriptionString.empty()) {
-				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
+		saveId = dialog.runModalWithCurrentTarget();
+		if (saveId != -1) {
+			outDescription = dialog.getResultString();
+			if (outDescription.empty()) {
+				outDescription = dialog.createDefaultSaveDescription(saveId - 1);
 			}
 		}
-	}
-
-	assert(!isSave || !outDescription.isNull());
-	if (!outDescription.isNull()) {
-		if (_segMan->isObject(outDescription)) {
-			outDescription = readSelector(_segMan, outDescription, SELECTOR(data));
-		}
-		SciArray &description = *_segMan->lookupArray(outDescription);
-		description.fromString(descriptionString);
 	}
 
 	// The autosave slot in ScummVM takes up slot 0, but in SCI the first
@@ -710,13 +719,9 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 	// number here to match what would come from the normal SCI save/restore
 	// dialog. Wrap slot 0 around to kMaxShiftedSaveId so that it remains
 	// a legal SCI value.
-	if (saveNo > 0) {
-		saveNo -= kSaveIdShift;
-	} else if (saveNo == 0) {
-		saveNo = kMaxShiftedSaveId;
-	}
+	saveId = shiftScummVMToSciSaveId(saveId);
 
-	return saveNo;
+	return saveId;
 }
 
 reg_t GuestAdditions::promptSaveRestoreHoyle5(EngineState *s, int argc, reg_t *argv) const {
@@ -756,11 +761,13 @@ bool GuestAdditions::restoreFromLauncher() const {
 			return false;
 		}
 
-		// Delayed restore should not happen in LSL6 hires until the room number is set.
-		//  LSL6:restore tests room numbers to determine if restoring is allowed, but the
-		//  Mac version adds a call to kGetEvent in LSL6:init before the initial call to
-		//  LSL6:newRoom. If the room number isn't set yet then restoring isn't allowed.
-		if (g_sci->getGameId() == GID_LSL6HIRES && _state->variables[VAR_GLOBAL][kGlobalVarCurrentRoomNo] == NULL_REG) {
+		// Delayed restore should not happen in LSL6 hires or PQ4 until the room number is set.
+		//  LSL6:restore and pq4:restore assume the room number has already been set, but the
+		//  Mac versions of these game add a call to kGetEvent in the games' init method before
+		//  the initial call to newRoom. If the room number isn't set yet then LSL6 doesn't
+		//  allow the restore and PQ4 sends a message to an invalid object.
+		if ((g_sci->getGameId() == GID_LSL6HIRES || g_sci->getGameId() == GID_PQ4) &&
+			_state->variables[VAR_GLOBAL][kGlobalVarCurrentRoomNo] == NULL_REG) {
 			return false;
 		}
 
@@ -784,10 +791,24 @@ bool GuestAdditions::restoreFromLauncher() const {
 			reg_t args[] = { make_reg(0, _state->_delayedRestoreGameId - kSaveIdShift) };
 			invokeSelector(g_sci->getGameObject(), SELECTOR(restore), 1, args);
 		} else {
+			int saveId = _state->_delayedRestoreGameId;
+
 			// When `Game::restore` is invoked, it will call to `Restore::doit`
 			// which will automatically return the `_delayedRestoreGameId` instead
 			// of prompting the user for a save game
 			invokeSelector(g_sci->getGameObject(), SELECTOR(restore));
+
+			// initialize KQ7 Mac's global save state by recording the save id
+			//  and description. this is necessary for subsequent saves to work
+			//  after restoring from launcher.
+			if (g_sci->getGameId() == GID_KQ7 && g_sci->getPlatform() == Common::kPlatformMacintosh) {
+				_state->_kq7MacSaveGameId = saveId;
+
+				SavegameDesc savegameDesc;
+				if (fillSavegameDesc(g_sci->getSavegameName(saveId), savegameDesc)) {
+					_state->_kq7MacSaveGameDescription = savegameDesc.name;
+				}
+			}
 
 			// The normal save game system resets _delayedRestoreGameId with a
 			// call to `EngineState::reset`, but RAMA uses a custom save game

@@ -35,6 +35,12 @@ namespace Dragons {
 
 Cursor::Cursor(DragonsEngine *vm): _vm(vm), _actor(0), _x(0), _y(0) {
 	_sequenceID = 0;
+	_data_800728b0_cursor_seqID = 0;
+	_iniUnderCursor = 0;
+	_performActionTargetINI = 0;
+	_objectInHandSequenceID = 0;
+	_cursorActivationSeqOffset = 0;
+	_iniItemInHand = 0;
 }
 
 void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResource) {

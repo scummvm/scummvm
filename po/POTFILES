@@ -51,6 +51,7 @@ audio/softsynth/sid.cpp
 
 backends/cloud/cloudmanager.cpp
 backends/cloud/storage.cpp
+backends/dialogs/gtk/gtk-dialogs.cpp
 backends/dialogs/macosx/macosx-dialogs.mm
 backends/dialogs/win32/win32-dialogs.cpp
 backends/events/default/default-events.cpp
@@ -65,6 +66,7 @@ backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/sdl/sdl-graphics.cpp
 backends/keymapper/hardware-input.cpp
 backends/keymapper/remap-widget.cpp
+backends/keymapper/virtual-mouse.cpp
 backends/midi/windows.cpp
 backends/networking/sdl_net/handlers/createdirectoryhandler.cpp
 backends/networking/sdl_net/handlers/downloadfilehandler.cpp

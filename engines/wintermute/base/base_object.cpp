@@ -479,6 +479,23 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetSoundFilename
+	// Used to save/restore ambient sounds
+	// Should contain '\\' character, because Split("\\") is called on result 
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetSoundFilename") == 0) {
+		stack->correctParams(0);
+
+		if (!_sFX) {
+			stack->pushNULL();
+		} else {
+			stack->pushString(_sFX->getFilename());
+		}
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// SoundFXNone

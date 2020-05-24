@@ -25,14 +25,12 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(HealProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(HealProcess)
 
 HealProcess::HealProcess() : Process() {
 	_hungerCounter = 0;
@@ -102,7 +100,7 @@ uint32 HealProcess::I_feedAvatar(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(food);
 
 	Process *p = Kernel::get_instance()->findProcess(0, 0x222); // CONSTANT!
-	HealProcess *hp = p_dynamic_cast<HealProcess *>(p);
+	HealProcess *hp = dynamic_cast<HealProcess *>(p);
 	if (!hp) {
 		perr << "I_feedAvatar: unable to find HealProcess!" << Std::endl;
 		return 0;
@@ -114,18 +112,18 @@ uint32 HealProcess::I_feedAvatar(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 
-void HealProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void HealProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->write2(_healCounter);
-	ods->write2(_hungerCounter);
+	ws->writeUint16LE(_healCounter);
+	ws->writeUint16LE(_hungerCounter);
 }
 
-bool HealProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool HealProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_healCounter = ids->read2();
-	_hungerCounter = ids->read2();
+	_healCounter = rs->readUint16LE();
+	_hungerCounter = rs->readUint16LE();
 
 	return true;
 }

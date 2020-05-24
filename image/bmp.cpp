@@ -115,7 +115,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// Create the codec (it will warn about unhandled compression)
-	_codec = createBitmapCodec(compression, width, height, bitsPerPixel);
+	_codec = createBitmapCodec(compression, 0, width, height, bitsPerPixel);
 	if (!_codec)
 		return false;
 

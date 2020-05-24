@@ -35,8 +35,9 @@ TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 }
 
 bool TADS::hasFeature(EngineFeature f) const {
-	// The TADS codebases rely on a lot of static globals, so RTL can't be supported
-	if (f == kSupportsRTL)
+	// The TADS codebases rely on a lot of static globals,
+	// so return to launcher can't be supported.
+	if (f == kSupportsReturnToLauncher)
 		return false;
 
 	return GlkAPI::hasFeature(f);

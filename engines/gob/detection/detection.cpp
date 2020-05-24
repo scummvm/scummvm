@@ -168,7 +168,7 @@ bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsReturnToLauncher);
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {

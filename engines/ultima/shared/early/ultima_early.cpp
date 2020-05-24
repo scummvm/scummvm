@@ -44,7 +44,7 @@ Shared::UltimaEarlyEngine *g_vm;
 namespace Shared {
 
 UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc) :
-		UltimaEngine(syst, gameDesc) {
+		UltimaEngine(syst, gameDesc), _game(nullptr) {
 	g_vm = this;
 	_mouseCursor = nullptr;
 	_screen = nullptr;

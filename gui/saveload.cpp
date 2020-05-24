@@ -77,6 +77,9 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 
 int SaveLoadChooser::runModalWithCurrentTarget() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	if (!plugin) {
+		error("SaveLoadChooser::runModalWithCurrentTarget(): Cannot find plugin");
+	}
 	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 }
 

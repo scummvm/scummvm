@@ -50,7 +50,7 @@ void ThemeEval::reset() {
 	_layouts.clear();
 }
 
-bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h) {
 	Common::StringTokenizer tokenizer(widget, ".");
 
 	if (widget.hasPrefix("Dialog."))
@@ -80,7 +80,7 @@ Graphics::TextAlign ThemeEval::getWidgetTextHAlign(const Common::String &widget)
 	return _layouts[dialogName]->getWidgetTextHAlign(widgetName);
 }
 
-void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled, Graphics::TextAlign align) {
+ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String &type, int w, int h, Graphics::TextAlign align) {
 	int typeW = -1;
 	int typeH = -1;
 	Graphics::TextAlign typeAlign = Graphics::kTextAlignInvalid;
@@ -105,13 +105,14 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
 
 	_curLayout.top()->addChild(widget);
-	setVar("Dialog." + _curDialog + "." + name + ".Enabled", enabled ? 1 : 0);
+
+	return *this;
 }
 
-void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, int16 width, int16 height, bool enabled, int inset) {
+ThemeEval &ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) {
 	Common::String var = "Dialog." + name;
 
-	ThemeLayout *layout = new ThemeLayoutMain(name, overlays, width, height, enabled, inset);
+	ThemeLayout *layout = new ThemeLayoutMain(name, overlays, width, height, inset);
 
 	if (_layouts.contains(var))
 		delete _layouts[var];
@@ -127,10 +128,11 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 
 	_curLayout.push(layout);
 	_curDialog = name;
-	setVar(var + ".Enabled", enabled ? 1 : 0);
+
+	return *this;
 }
 
-void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout::ItemAlign itemAlign) {
+ThemeEval &ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout::ItemAlign itemAlign) {
 	ThemeLayout *layout = nullptr;
 
 	if (spacing == -1)
@@ -149,11 +151,25 @@ void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout
 
 	_curLayout.top()->addChild(layout);
 	_curLayout.push(layout);
+
+	return *this;
 }
 
-void ThemeEval::addSpace(int size) {
+ThemeEval &ThemeEval::addSpace(int size) {
 	ThemeLayout *space = new ThemeLayoutSpacing(_curLayout.top(), size);
 	_curLayout.top()->addChild(space);
+
+	return *this;
+}
+
+bool ThemeEval::hasDialog(const Common::String &name) {
+	Common::StringTokenizer tokenizer(name, ".");
+
+	if (name.hasPrefix("Dialog."))
+		tokenizer.nextToken();
+
+	Common::String dialogName = "Dialog." + tokenizer.nextToken();
+	return _layouts.contains(dialogName);
 }
 
 void ThemeEval::reflowDialogLayout(const Common::String &name, Widget *widgetChain) {
@@ -165,12 +181,13 @@ void ThemeEval::reflowDialogLayout(const Common::String &name, Widget *widgetCha
 	_layouts["Dialog." + name]->reflowLayout(widgetChain);
 }
 
-bool ThemeEval::addImportedLayout(const Common::String &name) {
-	if (!_layouts.contains(name))
-		return false;
+ThemeEval &ThemeEval::addImportedLayout(const Common::String &name) {
+	ThemeLayout *importedLayout = _layouts[name];
+	assert(importedLayout);
 
-	_curLayout.top()->importLayout(_layouts[name]);
-	return true;
+	_curLayout.top()->importLayout(importedLayout);
+
+	return *this;
 }
 
 } // End of namespace GUI

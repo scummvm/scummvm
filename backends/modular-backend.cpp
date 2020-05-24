@@ -83,6 +83,10 @@ const OSystem::GraphicsMode *ModularBackend::getSupportedShaders() const {
 	return _graphicsManager->getSupportedShaders();
 }
 
+int ModularBackend::getDefaultShader() const {
+	return _graphicsManager->getDefaultShader();
+}
+
 bool ModularBackend::setShader(int id) {
 	return _graphicsManager->setShader(id);
 }

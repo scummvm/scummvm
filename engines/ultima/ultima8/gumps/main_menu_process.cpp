@@ -28,14 +28,11 @@
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(MainMenuProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MainMenuProcess)
 
 MainMenuProcess::MainMenuProcess() : Process() {
 	_init = false;
@@ -54,14 +51,14 @@ void MainMenuProcess::run() {
 	terminate();
 }
 
-void MainMenuProcess::saveData(ODataSource *ods) {
+void MainMenuProcess::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN();
 
-	Process::saveData(ods);
+	Process::saveData(ws);
 }
 
-bool MainMenuProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool MainMenuProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

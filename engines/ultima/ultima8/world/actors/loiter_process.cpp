@@ -27,22 +27,19 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(LoiterProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(LoiterProcess)
 
-LoiterProcess::LoiterProcess() : Process() {
+LoiterProcess::LoiterProcess() : Process(), _count(0) {
 }
 
-LoiterProcess::LoiterProcess(Actor *actor, int32 c) {
+LoiterProcess::LoiterProcess(Actor *actor, int32 c) : _count(c) {
 	assert(actor);
 	_itemNum = actor->getObjId();
-	_count = c;
 
 	_type = 0x205; // CONSTANT!
 }
@@ -104,17 +101,17 @@ void LoiterProcess::run() {
 	}
 }
 
-void LoiterProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void LoiterProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->write4(_count);
+	ws->writeUint32LE(_count);
 }
 
-bool LoiterProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool LoiterProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	if (version >= 3)
-		_count = ids->read4();
+		_count = rs->readUint32LE();
 	else
 		_count = 0; // default to loitering indefinitely
 

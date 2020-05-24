@@ -49,6 +49,7 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 	int titleX, titleY, subtitleX, subtitleY;
 	if (getLanguage() == Common::FR_FRA ||
 	        getLanguage() == Common::ES_ESP ||
+	        getLanguage() == Common::KO_KOR ||
 	        getLanguage() == Common::PT_BRA) {
 		titleX = 144;
 		titleY = 160;
@@ -59,6 +60,16 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 		titleY = 80;
 		subtitleX = 283;
 		subtitleY = 80;
+	} else if (getLanguage() == Common::JA_JPN) {
+		titleX = 144;
+		titleY = 125;
+		subtitleX = 144;
+		subtitleY = 145;
+	} else if (getLanguage() == Common::ZH_TWN) {
+		titleX = 130;
+		titleY = 160;
+		subtitleX = 340;
+		subtitleY = 160;
 	} else {
 		titleX = 100;
 		titleY = 80;
@@ -77,7 +88,9 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 
 	if (getLanguage() == Common::FR_FRA ||
 	        getLanguage() == Common::ES_ESP ||
-	        getLanguage() == Common::PT_BRA) {
+	        getLanguage() == Common::KO_KOR ||
+	        getLanguage() == Common::PT_BRA ||
+	        getLanguage() == Common::ZH_TWN) {
 		surface->vLine(100, 146, 172, color);
 		surface->hLine(100, 172, 168, color); // minus 1 because hLine draws inclusive
 	}
@@ -332,6 +345,8 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 					} else if (getLanguage() == Common::ES_ESP ||
 					           getLanguage() == Common::IT_ITA) {
 						rct = Common::Rect(250, 420, 530, 465);
+					} else if (getLanguage() == Common::JA_JPN) {
+						rct = Common::Rect(245, 420, 505, 465);
 					} else {
 						rct = Common::Rect(235, 420, 505, 465);
 					}
@@ -540,7 +555,7 @@ uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surfa
 	bool redraw = true;
 	uint result = uint(-1);
 
-	while (!end || redraw) {
+	while (!shouldAbort() && (!end || redraw)) {
 		if (redraw) {
 			for (uint boxId = 0; boxId < 2; boxId++) {
 				if (boxId == result) {
@@ -590,6 +605,8 @@ uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surfa
 
 uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFrame,
         bool saveMode, Common::String &saveName) {
+	bool autoName = (_messages.size() >= 148);
+
 	Graphics::ManagedSurface surface(bgFrame->w, bgFrame->h, bgFrame->format);
 	surface.blitFrom(*bgFrame);
 
@@ -609,7 +626,8 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 	g_system->updateScreen();
 
 	Common::Array<Common::String> savesList;
-	getSavesList(_isVisiting, savesList);
+	int nextSaveNum;
+	getSavesList(_isVisiting, savesList, nextSaveNum);
 	Common::String saveNameBackup;
 
 	showMouse(true);
@@ -750,15 +768,27 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 					boxSelected = boxHovered;
 					// Backup new one
 					saveNameBackup = savesList[boxSelected + fileListOffset];
-					// Not an existing save clear free name
-					if (!existingSave) {
-						savesList[boxSelected + fileListOffset] = "";
+					if (saveMode) {
+						if (!existingSave) {
+							// Not an existing save clear free name
+							savesList[boxSelected + fileListOffset] = "";
+						}
+						if (autoName) {
+							// Apply autoname to text
+							if (_currentLevel < 8) {
+								savesList[boxSelected + fileListOffset] = Common::String::format(_messages[146].c_str(),
+								        _currentLevel);
+							} else {
+								savesList[boxSelected + fileListOffset] = _messages[147];
+							}
+							savesList[boxSelected + fileListOffset] += Common::String::format(" - %d", nextSaveNum);
+						}
 					}
 					redraw = true;
 				}
 			}
 		}
-		if (boxSelected != uint(-1) && saveMode) {
+		if (boxSelected != uint(-1) && saveMode && !autoName) {
 			if (key.keycode != Common::KEYCODE_INVALID) {
 				// Reference means we edit in place
 				Common::String &selectedSaveName = savesList[boxSelected + fileListOffset];
@@ -826,6 +856,9 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 				autoRepeatEndInhibit = g_system->getMillis() + autoRepeatDelay;
 				filesListChanged = true;
 			}
+			if (shouldAbort()) {
+				return uint(-1);
+			}
 		}
 		if (autoRepeatInhibit && g_system->getMillis() > autoRepeatEndInhibit) {
 			autoRepeatInhibit = false;
@@ -837,7 +870,11 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 		}
 	}
 	if (boxSelected != uint(-1)) {
-		saveName = savesList[boxSelected + fileListOffset];
+		if (autoName) {
+			saveName = Common::String::format("AUTO%04d", nextSaveNum);
+		} else {
+			saveName = savesList[boxSelected + fileListOffset];
+		}
 		ConfMan.setInt(_isVisiting ? "visits_list_off" : "saves_list_off", fileListOffset);
 		return boxSelected + fileListOffset + 1;
 	} else {

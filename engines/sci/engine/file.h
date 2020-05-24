@@ -40,7 +40,6 @@ enum {
 	kMaxNumSaveGames = 20 ///< Maximum number of savegames
 };
 
-#ifdef ENABLE_SCI32
 enum {
 	kAutoSaveId = 0,  ///< The save game slot number for autosaves
 	kNewGameId = 999, ///< The save game slot number for a "new game" save
@@ -53,7 +52,6 @@ enum {
 	kSaveIdShift = 1,
 	kMaxShiftedSaveId = 99
 };
-#endif
 
 enum {
 	kVirtualFileHandleStart = 32000,
@@ -177,6 +175,9 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc);
  * compatible with game scripts' game catalogue readers.
  */
 Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameNameSize, const Common::String &fileNamePattern, const bool ramaFormat);
+
+int shiftSciToScummVMSaveId(int saveId);
+int shiftScummVMToSciSaveId(int saveId);
 #endif
 
 } // End of namespace Sci

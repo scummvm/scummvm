@@ -60,43 +60,51 @@ enum MainChannelsPosition {
 class Sprite {
 public:
 	Sprite();
-	Sprite(const Sprite &sprite);
 	~Sprite();
 
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
 
+	void setCast(uint16 castid);
+
+	Common::Rect getBbox();
+
 	uint16 _scriptId;
-	byte _flags2;  // x40 editable, 0x80 moveable
-	byte _unk2;
+	uint16 _scriptCastIndex;
+	byte _colorcode;  // x40 editable, 0x80 moveable
+	byte _blendAmount;
 	uint32 _unk3;
 
 	bool _enabled;
 	uint16 _castId;
-	byte _spriteType;
+	uint16 _castIndex;
+	SpriteType _spriteType;
+	CastType _castType;
+	byte _inkData;
 	InkType _ink;
 	uint16 _trails;
 
 	Cast *_cast;
 
-	uint16 _flags;
+	byte _thickness;
+	bool _dirty;
 	Common::Point _startPoint;
+	Common::Point _currentPoint;
+	Common::Rect _startBbox;
+	Common::Rect _currentBbox;
 	uint16 _width;
 	uint16 _height;
 	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
 	// As i know, constrainted != 0 only if sprite moveable
 	byte _constraint;
-	byte _moveable;
+	bool _moveable;
+	bool _editable;
+	bool _puppet;
 	byte _backColor;
 	byte _foreColor;
 
-	uint16 _left;
-	uint16 _right;
-	uint16 _top;
-	uint16 _bottom;
 	byte _blend;
 	bool _visible;
-	SpriteType _type;
 	// Using in digital movie sprites
 	byte _movieRate;
 	uint16 _movieTime;
@@ -104,8 +112,7 @@ public:
 	uint16 _stopTime;
 	byte _volume;
 	byte _stretch;
-	// Using in shape sprites
-	byte _lineSize;
+
 	// Using in text sprites
 	Common::String _editableText;
 };

@@ -29,29 +29,27 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GumpShapeArchive, ShapeArchive)
-
 GumpShapeArchive::~GumpShapeArchive() {
 	for (unsigned int i = 0; i < _gumpItemArea.size(); ++i)
 		delete _gumpItemArea[i];
-	_gumpItemArea.clear();
 }
 
-void GumpShapeArchive::loadGumpage(IDataSource *ds) {
-	unsigned int total = ds->getSize() / 8;
+void GumpShapeArchive::loadGumpage(Common::SeekableReadStream *rs) {
+	unsigned int total = rs->size() / 8;
 	_gumpItemArea.resize(total + 1);
 	for (unsigned int i = 1; i <= total; ++i) {
 		int x, y, w, h;
-		x = static_cast<int16>(ds->read2());
-		y = static_cast<int16>(ds->read2());
-		w = static_cast<int16>(ds->read2()) - x;
-		h = static_cast<int16>(ds->read2()) - y;
+		x = static_cast<int16>(rs->readUint16LE());
+		y = static_cast<int16>(rs->readUint16LE());
+		w = static_cast<int16>(rs->readUint16LE()) - x;
+		h = static_cast<int16>(rs->readUint16LE()) - y;
 		_gumpItemArea[i] = new Rect(x, y, w, h);
 	}
 }
 
 Rect *GumpShapeArchive::getGumpItemArea(uint32 shapenum) {
-	if (shapenum >= _gumpItemArea.size()) return 0;
+	if (shapenum >= _gumpItemArea.size())
+		return nullptr;
 	return _gumpItemArea[shapenum];
 }
 

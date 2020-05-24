@@ -552,6 +552,7 @@ static const char *directoryGlobs[] = {
 	"italian",
 	"msg",
 	"spanish",
+	"patches",
 	0
 };
 
@@ -800,7 +801,7 @@ bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool SciEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime); // ||
 		//(f == kSupportsSavingDuringRuntime);
 		// We can't allow saving through ScummVM menu, because
@@ -938,28 +939,11 @@ Common::Error SciEngine::loadGameState(int slot) {
 }
 
 Common::Error SciEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::String fileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::OutSaveFile *out = saveFileMan->openForSaving(fileName);
 	const char *version = "";
-	if (!out) {
-		warning("Opening savegame \"%s\" for writing failed", fileName.c_str());
-		return Common::kWritingFailed;
+	if (gamestate_save(_gamestate, slot, desc, version)) {
+		return Common::kNoError;
 	}
-
-	if (!gamestate_save(_gamestate, out, desc, version)) {
-		warning("Saving the game state to '%s' failed", fileName.c_str());
-		return Common::kWritingFailed;
-	} else {
-		out->finalize();
-		if (out->err()) {
-			warning("Writing the savegame failed");
-			return Common::kWritingFailed;
-		}
-		delete out;
-	}
-
-	return Common::kNoError;
+	return Common::kWritingFailed;
 }
 
 bool SciEngine::canLoadGameStateCurrently() {

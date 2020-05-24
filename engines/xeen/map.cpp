@@ -303,7 +303,12 @@ MobStruct::MobStruct() {
 bool MobStruct::synchronize(XeenSerializer &s) {
 	s.syncAsSint8(_pos.x);
 	s.syncAsSint8(_pos.y);
-	s.syncAsByte(_id);
+
+	byte v = (_id == -1) ? 0xff : _id;
+	s.syncAsByte(v);
+	if (s.isLoading())
+		_id = (v == 0xff) ? -1 : v;
+
 	s.syncAsByte(_direction);
 
 	return _id != 0xff || _pos.x != -1 || _pos.y != -1;
@@ -477,7 +482,10 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 			_objects.push_back(obj);
 			mobStruct.synchronize(s);
-		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+			if (s.finished())
+				// WORKAROUND: If end of data abnormally reached
+				return;
+		} while (mobStruct._id != -1 || mobStruct._pos.x != -1);
 
 		// Load monsters
 		mobStruct.synchronize(s);
@@ -485,7 +493,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			// Empty array has a blank entry
 			mobStruct.synchronize(s);
 
-		while (mobStruct._id != 255 || mobStruct._pos.x != -1) {
+		while (mobStruct._id != -1 || mobStruct._pos.x != -1) {
+			if (s.finished())
+				// WORKAROUND: If end of data abnormally reached
+				return;
+
 			MazeMonster mon;
 			mon._position = mobStruct._pos;
 			mon._id = mobStruct._id;
@@ -513,7 +525,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 		// Load wall items. Unlike the previous two arrays, this has no dummy entry for an empty array
 		mobStruct.synchronize(s);
-		while (mobStruct._id != 255 || mobStruct._pos.x != -1) {
+		while (mobStruct._id != -1 || mobStruct._pos.x != -1) {
+			if (s.finished())
+				// WORKAROUND: If end of data abnormally reached
+				return;
+
 			if (mobStruct._id < (int)_wallItemSprites.size()) {
 				MazeWallItem wi;
 				wi._position = mobStruct._pos;

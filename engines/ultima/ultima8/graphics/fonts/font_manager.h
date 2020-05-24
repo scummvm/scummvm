@@ -33,7 +33,6 @@ class Font;
 
 // This is TTF_Font struct
 typedef struct _TTF_Font TTF_Font;
-class IDataSource;
 
 class TTFont;
 

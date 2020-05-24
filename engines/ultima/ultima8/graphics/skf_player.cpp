@@ -65,12 +65,13 @@ struct SKFEvent {
 static const int FADESTEPS = 16; // HACK: half speed
 
 
-SKFPlayer::SKFPlayer(RawArchive *movie, int width, int height, bool introMusicHack)
-	: _width(width), _height(height), _skf(movie),
-	  _curFrame(0), _curObject(0), _curAction(0), _curEvent(0), _playing(false),
-	  _timer(0), _frameRate(15), _fadeColour(0), _fadeLevel(0), _buffer(0), _subs(0),
-	  _introMusicHack(introMusicHack), _lastUpdate(0), _subtitleY(0) {
-	IDataSource *eventlist = _skf->get_datasource(0);
+SKFPlayer::SKFPlayer(Common::SeekableReadStream *rs, int width, int height, bool introMusicHack)
+	: _width(width), _height(height), _curFrame(0), _curObject(0), _curAction(0),
+	  _curEvent(0), _playing(false), _timer(0), _frameRate(15), _fadeColour(0),
+	  _fadeLevel(0), _buffer(nullptr), _subs(nullptr), _introMusicHack(introMusicHack),
+      _lastUpdate(0), _subtitleY(0) {
+	_skf = new RawArchive(rs);
+	Common::ReadStream *eventlist = _skf->get_datasource(0);
 	if (!eventlist) {
 		perr << "No eventlist found in SKF" << Std::endl;
 		return;
@@ -91,16 +92,16 @@ SKFPlayer::~SKFPlayer() {
 	delete _subs;
 }
 
-void SKFPlayer::parseEventList(IDataSource *eventlist) {
-	uint16 frame = eventlist->read2();
+void SKFPlayer::parseEventList(Common::ReadStream *eventlist) {
+	uint16 frame = eventlist->readUint16LE();
 	while (frame != 0xFFFF) {
 		SKFEvent *ev = new SKFEvent;
 		ev->_frame = frame;
-		ev->_action = static_cast<SKFAction>(eventlist->read2());
-		ev->_data = eventlist->read2();
+		ev->_action = static_cast<SKFAction>(eventlist->readUint16LE());
+		ev->_data = eventlist->readUint16LE();
 		_events.push_back(ev);
 
-		frame = eventlist->read2();
+		frame = eventlist->readUint16LE();
 	}
 }
 
@@ -203,7 +204,7 @@ void SKFPlayer::run() {
 			if (musicproc) musicproc->playMusic(_events[_curEvent]->_data);
 			break;
 		case SKF_SlowStopMusic:
-			POUT("SlowStopMusic");
+//			pout << "SlowStopMusic" << Std::endl;
 			if (musicproc && !_introMusicHack) musicproc->playMusic(0);
 			break;
 		case SKF_PlaySFX:
@@ -215,7 +216,7 @@ void SKFPlayer::run() {
 			if (audioproc) audioproc->stopSFX(_events[_curEvent]->_data, 0);
 			break;
 		case SKF_SetSpeed:
-			POUT("SetSpeed " << _events[_curEvent]->_data);
+//			pout << "SetSpeed " << _events[_curEvent]->_data << Std::endl;
 //			_frameRate = _events[_curEvent]->_data;
 			break;
 		case SKF_PlaySound: {
@@ -253,7 +254,7 @@ void SKFPlayer::run() {
 		case SKF_ClearSubs:
 //			pout << "ClearSubs" << Std::endl;
 			delete _subs;
-			_subs = 0;
+			_subs = nullptr;
 			break;
 		default:
 			pout << "Unknown action" << Std::endl;
@@ -278,10 +279,10 @@ void SKFPlayer::run() {
 
 		// read object
 		object = _skf->get_datasource(_curObject);
-		if (!object || object->getSize() < 2)
+		if (!object || object->size() < 2)
 			continue;
 
-		objecttype = object->read2();
+		objecttype = object->readUint16LE();
 
 //		pout << "Object " << _curObject << "/" << _skf->getCount()
 //			 << ", type = " << objecttype << Std::endl;
