@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-05-24 16:41+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-05-24 23:41+0000\n"
+"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -2005,7 +2005,7 @@ msgstr "<Fehlerhafter Wert>"
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
-"Illegale Spielkopie erkannt.  In solchen Fällen bieten wir keine "
+"Illegale Spielkopie erkannt. In solchen Fällen bieten wir keine "
 "Unterstützung an"
 
 #: engines/dialogs.cpp:73
@@ -4581,9 +4581,8 @@ msgid "Show options menu"
 msgstr "Optionsmenü anzeigen"
 
 #: engines/mohawk/myst.cpp:613
-#, fuzzy
 msgid "Drop page"
-msgstr "Seite ~a~blegen"
+msgstr "Seite ablegen"
 
 #: engines/mohawk/myst.cpp:619
 msgid "Show map"
@@ -6140,8 +6139,7 @@ msgstr "Engine-Datendatei '%s' konnte nicht gefunden werden"
 #: engines/ultima/shared/engine/data_archive.cpp:99
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
-"Veraltete Engine-Daten. '%s' gefunden. %d.%d erwartet, aber %d.%d bekommen"
+msgstr "Veraltete Engine-Daten. %d.%d erwartet, aber %d.%d gefunden"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 msgid "Transfer Character"
@@ -6157,7 +6155,7 @@ msgstr "Ultima VIII-Cheats"
 
 #: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Ultima VIII Debug"
-msgstr "Ultima VIII Fehlersuche"
+msgstr "Ultima VIII-Fehlersuche"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:304
 msgid "[corrupt]"
