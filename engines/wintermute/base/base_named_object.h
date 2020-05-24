@@ -35,12 +35,17 @@
 namespace Wintermute {
 
 class BaseNamedObject : public BaseClass {
-	char *_name;
 public:
 	BaseNamedObject(BaseGame *inGame);
 	BaseNamedObject();
 	~BaseNamedObject(void) override;
 	BaseNamedObject(TDynamicConstructor, TDynamicConstructor);
+
+	// making this public is a quick hack for loading/saving the name variable
+	// via the persistence manager in the AdSceneGeometry class
+	// we could make this class here persistable as well,
+	// but the relevant subclasses don't persist their bases at the moment
+	char *_name;
 
 	const char *getName() const { return _name; }
 	void setName(const char *name);
