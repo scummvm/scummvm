@@ -187,6 +187,7 @@ bool Wintermute::BaseRenderOpenGL3D::forcedFlip() {
 }
 
 void Wintermute::BaseRenderOpenGL3D::initLoop() {
+	deleteRectList();
 	setup2D();
 }
 
