@@ -289,13 +289,12 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 }
 
 void ObjectManager::saveObject(Common::WriteStream *ws, Object *obj) const {
-	Std::string classname = obj->GetClassType()._className; // note: virtual
+	const Std::string & classname = obj->GetClassType()._className; // note: virtual
 
 	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
 	iter = _objectLoaders.find(classname);
 	if (iter == _objectLoaders.end()) {
-		perr << "Object class cannot save without registered loader: " << classname << Std::endl;
-		return;
+		error("Object class cannot save without registered loader: %s", classname.c_str());
 	}
 
 	ws->writeUint16LE(classname.size());
