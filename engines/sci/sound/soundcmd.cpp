@@ -192,9 +192,9 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 	if (!restoring)
 		resourceId = getSoundResourceId(obj);
 	else
-		// fix bug #10907 - the game was saved while track A was playing, but track B was initialized, waiting to be played later
-		// therefore, musicSlot->resourceId reflects the actual track that was playing (A), while getSoundResourceId(obj)
-		// is reflecting the track that's waiting to be played later (B)
+		// Handle cases where a game was saved while track A was playing, but track B was initialized, waiting to be played later.
+		// In such cases, musicSlot->resourceId contains the actual track that was playing (A), while getSoundResourceId(obj)
+		// contains the track that's waiting to be played later (B) - bug #10907.
 		resourceId = musicSlot->resourceId;
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
