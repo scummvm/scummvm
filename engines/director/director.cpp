@@ -87,6 +87,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_wm = nullptr;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	// Meet Mediaband could have up to 5 levels of directories
+	SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 5);
+
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband

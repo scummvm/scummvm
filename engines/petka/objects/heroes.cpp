@@ -142,7 +142,7 @@ void QObjectPetka::draw() {
 	Common::Rect dstRect(srcRect);
 	dstRect.translate(_x, _y);
 
-	g_vm->videoSystem()->screen().transBlitFrom(*surf, srcRect, dstRect, flc->getTransColor(surf->format));
+	g_vm->videoSystem()->transBlitFrom(*surf, srcRect, dstRect, flc->getTransColor(surf->format));
 	conv->free();
 	delete conv;
 }

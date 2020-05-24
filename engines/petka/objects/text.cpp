@@ -53,7 +53,7 @@ QText::QText(const Common::U32String &text, uint16 textColor, uint16 outlineColo
 
 void QText::draw() {
 	const Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
-	g_vm->videoSystem()->screen().transBlitFrom(*s, Common::Point((640 - s->w) / 2, 479 - s->h));
+	g_vm->videoSystem()->transBlitFrom(*s, Common::Point((640 - s->w) / 2, 479 - s->h));
 }
 
 const Common::Rect &QText::getRect() {
@@ -154,7 +154,7 @@ void QTextDescription::onClick(int x, int y) {
 void QTextDescription::draw() {
 	Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(6008);
-	g_vm->videoSystem()->screen().transBlitFrom(*s, flc->getTransColor(s->format));
+	g_vm->videoSystem()->transBlitFrom(*s, flc->getTransColor(s->format));
 	// todo dirty rects
 }
 

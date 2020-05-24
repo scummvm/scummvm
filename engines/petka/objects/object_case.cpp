@@ -88,7 +88,7 @@ void QObjectCase::update(int time) {
 		while (_time >= flc->getDelay()) {
 			flc->setFrame(-1);
 			_time -= flc->getDelay();
-			g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(0, 0), *flc);
+			g_vm->videoSystem()->addDirtyMskRects(*flc);
 		}
 	}
 }
@@ -108,7 +108,7 @@ void QObjectCase::draw() {
 			for (uint i = 0; i < mskRects.size(); ++i) {
 				Common::Rect rect = mskRects[i].findIntersectingRect(*it);
 				debug("%d %d", rect.width(), rect.height());
-				g_vm->videoSystem()->screen().transBlitFrom(*s, rect, rect, flc->getTransColor(s->format));
+				g_vm->videoSystem()->transBlitFrom(*s, rect, rect, flc->getTransColor(s->format));
 			}
 		}
 
@@ -144,7 +144,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		if (_clickedObjIndex != kCloseButton && _clickedObjIndex != kInvalidButton) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 			flc->setFrame(1);
-			g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(0, 0), *flc);
+			g_vm->videoSystem()->addDirtyMskRects(*flc);
 		}
 		_clickedObjIndex = kCloseButton;
 	} else {
@@ -159,7 +159,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		if (_clickedObjIndex != i && _clickedObjIndex != kInvalidButton) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 			flc->setFrame(1);
-			g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(0, 0), *flc);
+			g_vm->videoSystem()->addDirtyMskRects(*flc);
 		}
 
 		if (i == kButtonsCount && _clickedObjIndex != kInvalidButton) {
@@ -167,7 +167,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		} else if (i != _clickedObjIndex) {
 			if ((i != kChapayevButton || g_vm->getQSystem()->_chapayev->_isShown) && (i != kMapButton || g_vm->getQSystem()->_room->_showMap)) {
 				flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + i);
-				g_vm->videoSystem()->addDirtyRectFromMsk(Common::Point(0, 0), *flc);
+				g_vm->videoSystem()->addDirtyMskRects(*flc);
 				_clickedObjIndex = i;
 			} else {
 				_clickedObjIndex = kInvalidButton;

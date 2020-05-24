@@ -112,6 +112,8 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 			error("Unhandled Windows EXE version %d", getVersion());
 		}
 	}
+
+	_mainArchive->setFileName(movie);
 }
 
 void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
@@ -293,6 +295,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 		return;
 	}
+	sharedCast->setFileName(filename);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());

@@ -1241,6 +1241,28 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("jamesperis", "Version 1.8",
 		WME_ENTRY1s("data.dcp", "d6049dfb5dbe812bae1e96924a012500", 225299340), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_1),
 
+	// James Peris: No License Nor Control - Definitive Edition (English) (Steam 2020-03-12)
+	WME_WINENTRY("jamesperis", "Version 1.9",
+		WME_ENTRY2s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris: No License Nor Control - Definitive Edition (Spanish) (Steam 2020-03-12)
+	WME_WINENTRY("jamesperis", "Version 1.9",
+		WME_ENTRY2s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris: No License Nor Control - Definitive Edition (English) (Steam 2020-04-27)
+	WME_WINENTRY("jamesperis", "Version 1.9.1e",
+		WME_ENTRY3s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138,
+					"parche91e.dcp", "ee21819363fb32a38b9f5fcf8545e374", 72496832), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris: No License Nor Control - Definitive Edition (Spanish) (Steam 2020-04-27)
+	WME_WINENTRY("jamesperis", "Version 1.9.1e",
+		WME_ENTRY3s("data.dcp", "60568c88c9dc5653bfc94a8cbf228748", 225299678,
+					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138,
+					"parche91e.dcp", "ee21819363fb32a38b9f5fcf8545e374", 72496832), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+
 	// James Peris: No License Nor Control (Demo) (English)
 	WME_WINENTRY("jamesperis", "Demo",
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
