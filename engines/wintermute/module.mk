@@ -2,8 +2,12 @@ MODULE := engines/wintermute
 
 MODULE_OBJS := \
 	ad/ad_actor.o \
+	ad/ad_block.o \
 	ad/ad_entity.o \
 	ad/ad_game.o \
+	ad/ad_generic.o \
+	ad/ad_geom_ext.o \
+	ad/ad_geom_ext_node.o \
 	ad/ad_inventory.o \
 	ad/ad_inventory_box.o \
 	ad/ad_item.o \
@@ -11,7 +15,9 @@ MODULE_OBJS := \
 	ad/ad_node_state.o \
 	ad/ad_object.o \
 	ad/ad_path.o \
+	ad/ad_path3d.o \
 	ad/ad_path_point.o \
+	ad/ad_path_point3d.o \
 	ad/ad_region.o \
 	ad/ad_response.o \
 	ad/ad_response_box.o \
@@ -19,6 +25,7 @@ MODULE_OBJS := \
 	ad/ad_rot_level.o \
 	ad/ad_scale_level.o \
 	ad/ad_scene.o \
+	ad/ad_scene_geometry.o \
 	ad/ad_scene_node.o \
 	ad/ad_scene_state.o \
 	ad/ad_sentence.o \
@@ -26,7 +33,9 @@ MODULE_OBJS := \
 	ad/ad_talk_def.o \
 	ad/ad_talk_holder.o \
 	ad/ad_talk_node.o \
+	ad/ad_walkplane.o \
 	ad/ad_waypoint_group.o \
+	ad/ad_waypoint_group3d.o \
 	base/scriptables/debuggable/debuggable_script.o \
 	base/scriptables/debuggable/debuggable_script_engine.o \
 	base/scriptables/script.o \
@@ -64,6 +73,10 @@ MODULE_OBJS := \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/render_ticket.o \
+	base/gfx/opengl/light3d.o \
+	base/gfx/opengl/camera3d.o \
+	base/gfx/opengl/mesh.o \
+	base/gfx/opengl/loader3ds.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
