@@ -312,7 +312,7 @@ bool Actor::giveTreasure() {
 		}
 
 		// we need to produce a number of items
-		for (i = 0; (int)i < count; ++i) {
+		for (int j = 0; (int)j < count; ++j) {
 			// pick shape
 			int n = getRandom() % ti._shapes.size();
 			uint32 shapeNum = ti._shapes[n];
