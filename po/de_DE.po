@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
 "PO-Revision-Date: 2020-05-24 16:41+0000\n"
-"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -4534,6 +4534,7 @@ msgstr "Haupt~m~enü"
 #: engines/mohawk/dialogs.cpp:248
 msgid "The new language will be applied after restarting the game."
 msgstr ""
+"Die neue Sprache wird angewendet, nachdem das Spiel neu gestartet wurde."
 
 #: engines/mohawk/dialogs.cpp:320
 msgid "~W~ater Effect Enabled"
@@ -5158,13 +5159,13 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr "Objektnamen und Verben am unteren Bildrand anzeigen"
 
 #: engines/scumm/detection.cpp:1376
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Alternative Farbpalette verwenden"
+msgstr "Verwende die klassische NES Farbpalette"
 
 #: engines/scumm/detection.cpp:1377
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
+"Verwende eine neutralere Farbpalette, die den NES Classic besser emuliert"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
