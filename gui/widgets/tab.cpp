@@ -70,23 +70,19 @@ void TabWidget::init() {
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
 
-	String leftArrow = "<";
-	String rightArrow = ">";
+	String leftArrow = g_gui.useRTL() ? ">" : "<";
+	String rightArrow = g_gui.useRTL() ? "<" : ">";
 
-	if (g_gui.useRTL()) {							// GUI TODO: Incomplete and possibly incorrect too. Unusable atm.
-		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, rightArrow, nullptr, kCmdLeft);
-		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, leftArrow, nullptr, kCmdRight);
-		_navLeft->setEnabled(true);
-		_navRight->setEnabled(false);
-	} else {
-		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, leftArrow, nullptr, kCmdLeft);
-		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, rightArrow, nullptr, kCmdRight);
-		_navLeft->setEnabled(false);
-		_navRight->setEnabled(true);
-	}
+	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, leftArrow, nullptr, kCmdLeft);
+	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, rightArrow, nullptr, kCmdRight);
+
+	_navLeft->setEnabled(false);
+	_navRight->setEnabled(true);
 
 	_lastRead = -1;
 	_widthTillLastTab = 0;
+	_rtlTabOffset = 0;
+	_rtlSpaceOffset = 0;
 }
 
 TabWidget::~TabWidget() {
@@ -208,6 +204,9 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 		if (_firstVisibleTab > 0) {
 			setFirstVisible(_firstVisibleTab - 1);
+			if (g_gui.useRTL()){
+				_rtlTabOffset++;
+			}
 		}
 		if (_firstVisibleTab == 0) {
 			_navLeft->setEnabled(false);
@@ -221,6 +220,9 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 		if (_lastVisibleTab + 1 < (int)_tabs.size()) {
 			setFirstVisible(_firstVisibleTab + 1, false);
+			if (g_gui.useRTL()) {
+				_rtlTabOffset--;
+			}
 		}
 		if (_lastVisibleTab + 1 == (int)_tabs.size()) {
 			_navRight->setEnabled(false);
@@ -373,9 +375,6 @@ void TabWidget::reflowLayout() {
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
-	if (g_gui.useRTL()) {
-		x = x - g_gui.getOverlayOffset();
-	}
 	_navLeft->resize(x, y, _butW, _butH);
 	_navRight->resize(x + _butW + 2, y, _butW, _butH);
 }
@@ -408,12 +407,12 @@ void TabWidget::drawWidget() {
 			pad = 6;
 		}
 
-		r2.translate(g_system->getOverlayWidth() - _x - _w + pad, 0);
+		r2.translate(g_system->getOverlayWidth() - _x - _w + pad + _rtlSpaceOffset, 0);
 		if (_navButtonsVisible) {
 			r2.translate(_butW - 6, 0);
 		}
 
-		drawTab = _lastVisibleTab - drawTab;
+		drawTab = _lastVisibleTab - drawTab + _rtlTabOffset;
 	}
 
 	g_gui.theme()->drawTab(r2, _tabHeight, widths, tabs, drawTab);
@@ -423,8 +422,14 @@ void TabWidget::draw() {
 	Widget::draw();
 
 	if (_navButtonsVisible) {
+		int oldX = _x;
+		if (g_gui.useRTL()) {
+			_x = _x - g_gui.getOverlayOffset();
+		}
+
 		_navLeft->draw();
 		_navRight->draw();
+		_x = oldX;
 	}
 }
 
@@ -486,6 +491,10 @@ void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 			availableWidth -= _tabs[_firstVisibleTab-1]._tabWidth;
 			_firstVisibleTab--;
 		}
+	}
+
+	if (g_gui.useRTL() && _navButtonsVisible) {
+		_rtlSpaceOffset = availableWidth;
 	}
 }
 
