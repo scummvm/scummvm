@@ -37,6 +37,8 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/rect.h"
+#include "math/matrix4.h"
+#include "math/vector3d.h"
 
 namespace Wintermute {
 
@@ -87,6 +89,8 @@ public:
 	bool transferCharPtr(const char *name, char **val);
 	bool transferString(const char *name, Common::String *val);
 	bool transferVector2(const char *name, Vector2 *val);
+        bool transferVector3d(const char *name, Math::Vector3d *val);
+        bool transferMatrix4(const char *name, Math::Matrix4 *val);
 	BasePersistenceManager(const Common::String &savePrefix = "", bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);

@@ -821,6 +821,80 @@ bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 	}
 }
 
+bool BasePersistenceManager::transferVector3d(const char* name, Math::Vector3d* val) {
+	if (_saving) {
+		putFloat(val->x());
+		putFloat(val->y());
+		putFloat(val->z());
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		val->x() = getFloat();
+		val->y() = getFloat();
+		val->z() = getFloat();
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
+
+bool BasePersistenceManager::transferMatrix4(const char* name, Math::Matrix4* val) {
+	if (_saving) {
+		putFloat((*val)(0, 0));
+		putFloat((*val)(0, 1));
+		putFloat((*val)(0, 2));
+		putFloat((*val)(0, 3));
+		putFloat((*val)(1, 0));
+		putFloat((*val)(1, 1));
+		putFloat((*val)(1, 2));
+		putFloat((*val)(1, 3));
+		putFloat((*val)(2, 0));
+		putFloat((*val)(2, 1));
+		putFloat((*val)(2, 2));
+		putFloat((*val)(2, 3));
+		putFloat((*val)(3, 0));
+		putFloat((*val)(3, 1));
+		putFloat((*val)(3, 2));
+		putFloat((*val)(3, 3));
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	} else {
+		(*val)(0, 0) = getFloat();
+		(*val)(0, 1) = getFloat();
+		(*val)(0, 2) = getFloat();
+		(*val)(0, 3) = getFloat();
+		(*val)(1, 0) = getFloat();
+		(*val)(1, 1) = getFloat();
+		(*val)(1, 2) = getFloat();
+		(*val)(1, 3) = getFloat();
+		(*val)(2, 0) = getFloat();
+		(*val)(2, 1) = getFloat();
+		(*val)(2, 2) = getFloat();
+		(*val)(2, 3) = getFloat();
+		(*val)(3, 0) = getFloat();
+		(*val)(3, 1) = getFloat();
+		(*val)(3, 2) = getFloat();
+		(*val)(3, 3) = getFloat();
+
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
+
+		return STATUS_OK;
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
