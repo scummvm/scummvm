@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
 "PO-Revision-Date: 2020-05-24 23:41+0000\n"
-"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -6195,9 +6195,10 @@ msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "Dieses Spiel benötigt die FoxTail-Engine, welche nicht eingebaut ist."
 
 #: engines/wintermute/wintermute.cpp:178
-#, fuzzy
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr "Dieses Spiel benötigt die FoxTail-Engine, welche nicht eingebaut ist."
+msgstr ""
+"Dieses Spiel benötigt die HeroCraft-Engine, welche nicht zu dem Programmcode "
+"hinzugefügt wurde."
 
 #: engines/wintermute/wintermute.cpp:189
 msgid ""
