@@ -37,6 +37,7 @@ namespace Ultima4 {
 
 #define SCR_CYCLE_PER_SECOND 4
 #define SCR_CYCLE_MAX 16
+#define SCREEN_FRAME_TIME 50
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
@@ -119,6 +120,8 @@ private:
 	int _los[VIEWPORT_W][VIEWPORT_H];
 	int _frameDuration;
 	bool _continueScreenRefresh;
+	uint32 _priorFrameTime;
+
 public:
 	Std::vector<Common::String> _gemLayoutNames;
 	Std::vector<Common::String> _filterNames;
@@ -196,6 +199,7 @@ private:
 public:
 	Std::vector<Layout *> _layouts;
 	Scaler _filterScaler;
+
 public:
 	Screen();
 	~Screen();
@@ -224,6 +228,7 @@ public:
 	void screenDrawImage(const Common::String &name, int x = 0, int y = 0);
 	void screenDrawImageInMapArea(const Common::String &bkgd);
 
+	void screenFrame();
 	void screenCycle();
 	void screenEraseMapArea();
 	void screenEraseTextArea(int x, int y, int width, int height);

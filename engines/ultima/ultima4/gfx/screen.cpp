@@ -57,7 +57,7 @@ Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
                    _gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
                    _gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
                    _cursorStatus(0), _cursorEnabled(1), _frameDuration(0),
-                   _continueScreenRefresh(true) {
+                   _continueScreenRefresh(true), _priorFrameTime(0) {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
 	Common::fill(&_los[0][0], &_los[0][0] + (VIEWPORT_W * VIEWPORT_H), 0);
@@ -597,6 +597,15 @@ void Screen::screenScrollMessageArea() {
 	                 0, 0, 0);
 
 	update();
+}
+
+void Screen::screenFrame() {
+	uint32 time = g_system->getMillis();
+
+	if (time >= (_priorFrameTime + SCREEN_FRAME_TIME)) {
+		_priorFrameTime = time;
+		update();
+	}
 }
 
 void Screen::screenCycle() {
