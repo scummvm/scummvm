@@ -37,16 +37,16 @@
 
 namespace Petka {
 
-const int kResourceIdLook = 5002;
+const int kCursorLook = 5002;
 
 QObjectCursor::QObjectCursor() {
 	_id = 4097;
 	_z = 1000;
-	_resourceId = kResourceIdLook;
+	_resourceId = kCursorLook;
 	Common::Point pos = g_vm->getEventManager()->getMousePos();
 	_x = pos.x;
 	_y = pos.y;
-	g_vm->resMgr()->loadFlic(kResourceIdLook);
+	g_vm->resMgr()->loadFlic(kCursorLook);
 	_actionType = kActionLook;
 	_invObj = nullptr;
 	_name = "Cursor";
@@ -127,10 +127,19 @@ void QObjectCursor::setInvItem(QMessageObject *item, uint16 resourceId) {
 		item->_isShown = false;
 		item->_isActive = false;
 	} else {
-		_resourceId = kResourceIdLook;
+		_resourceId = kCursorLook;
 		_actionType = kActionLook;
 		_invObj = nullptr;
 	}
+}
+
+void QObjectCursor::setAction(int actionType) {
+	show(false);
+	returnInvItem();
+	_resourceId = kCursorLook + actionType;
+	_actionType = actionType;
+	_invObj = nullptr;
+	show(true);
 }
 
 }

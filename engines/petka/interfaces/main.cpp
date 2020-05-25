@@ -214,14 +214,8 @@ void InterfaceMain::onRightButtonDown(const Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
 	if (!star->_isActive)
 		return;
-	if (g_vm->getQSystem()->_case.get()->_isShown && cursor->_actionType == 6) {
-		cursor->show(0);
-		cursor->_resourceId = 5005;
-		cursor->returnInvItem();
-		cursor->_actionType = 3;
-		cursor->_invObj = nullptr;
-		cursor->setCursorPos(p.x, p.y, 1);
-		cursor->show(1);
+	if (g_vm->getQSystem()->_case.get()->_isShown && cursor->_actionType == kActionObjUse) {
+		cursor->setAction(kActionTake);
 	} else {
 		if (!star->_isShown) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(star->_resourceId);
