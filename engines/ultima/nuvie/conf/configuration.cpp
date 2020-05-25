@@ -37,6 +37,7 @@ Configuration::Configuration() : _configChanged(false) {
 	_localKeys["GameName"] = "";
 	_localKeys["GameID"] = "";
 	_localKeys["datadir"] = "data";		// This maps to ultima6/ in ultima.dat
+	_localKeys["quit"] = "false";
 }
 
 Configuration::~Configuration() {
@@ -150,7 +151,10 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 	Std::string k = key.substr(7);
 
 	// Check for local entry
-	assert(!_localKeys.contains(k));
+	if (_localKeys.contains(k)) {
+		ret = _localKeys[k].hasPrefixIgnoreCase("t");
+		return;
+	}
 
 	// Check for ScummVM key
 	if (ConfMan.hasKey(k)) {
@@ -246,10 +250,13 @@ bool Configuration::set(const Std::string &key, bool value) {
 
 	assert(key.hasPrefix("config/"));
 	Std::string k = key.substr(7);
-	assert(!_localKeys.contains(k));
 
-	ConfMan.setBool(k, value);
-	_configChanged = true;
+	if (_localKeys.contains(k)) {
+		_localKeys[k] = value ? "true" : "false";
+	} else {
+		ConfMan.setBool(k, value);
+		_configChanged = true;
+	}
 
 	return true;
 }
