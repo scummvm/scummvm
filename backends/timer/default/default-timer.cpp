@@ -84,6 +84,10 @@ void DefaultTimerManager::handler() {
 
 	uint32 curTime = g_system->getMillis(true);
 
+	// On slow systems this could still be run after destructor
+	if (!_head)
+		return;
+
 	// Repeat as long as there is a TimerSlot that is scheduled to fire.
 	TimerSlot *slot = _head->next;
 	while (slot && slot->nextFireTime < curTime) {
