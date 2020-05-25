@@ -147,7 +147,7 @@ static struct BuiltinProto {
 	{ "nothing",		LB::b_nothing,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "pass",			LB::b_pass,			0, 0, false, 4, BLTIN },	//			D4 c
 	{ "pause",			LB::b_pause,		0, 0, false, 2, BLTIN },	// D2 c
-		// play															// D2 c
+	{ "play",			LB::b_play,			1, 2, false, 2, BLTIN },	// D2 c
 	{ "playAccel",		LB::b_playAccel,	-1,0, false, 2, BLTIN },	// D2
 		// play done													// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, false, 3, BLTIN },	//		D3.1 c
@@ -1201,6 +1201,38 @@ void LB::b_pass(int nargs) {
 
 void LB::b_pause(int nargs) {
 	g_director->_playbackPaused = true;
+}
+
+void LB::b_play(int nargs) {
+	// Builtin function for play as used by the Director bytecode engine.
+	//
+	// Accepted arguments:
+	// 0  									# "play done"
+	// (STRING|INT) frame
+	// STRING movie, (STRING|INT) frame
+
+	if (nargs >= 1 && nargs <= 2) {
+		Datum movie;
+		Datum frame;
+
+		Datum firstArg = g_lingo->pop();
+		if (nargs == 2) {
+			movie = firstArg;
+			frame = g_lingo->pop();
+		} else {
+			if (firstArg.asInt() == 0) {
+				frame.type = SYMBOL;
+				frame.u.s = new Common::String("done");
+			} else {
+				frame = firstArg;
+			}
+		}
+
+		g_lingo->func_play(frame, movie);
+	} else {
+		warning("b_play: expected 1 or 2 args, not %d", nargs);
+		g_lingo->dropStack(nargs);
+	}
 }
 
 void LB::b_playAccel(int nargs) {

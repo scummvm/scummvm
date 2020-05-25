@@ -285,12 +285,6 @@ void Lingo::func_gotoprevious() {
 void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
 
-	if (movie.type != VOID) {
-		warning("STUB: func_play()");
-
-		return;
-	}
-
 	// play #done
 	if (frame.type == SYMBOL) {
 		if (!frame.u.s->equals("done")) {
