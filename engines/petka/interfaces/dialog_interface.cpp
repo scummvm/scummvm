@@ -143,7 +143,7 @@ void DialogInterface::onEndOpcode() {
 	if (_reaction) {
 		QReaction *reaction = _reaction;
 		_reaction = nullptr;
-		processSavedReaction(reaction, _sender);
+		_sender->processReaction(reaction);
 	}
 	_sender = nullptr;
 }

@@ -70,41 +70,6 @@ QMessageObject::QMessageObject() {
 	_reaction = nullptr;
 }
 
-void processSavedReaction(QReaction *reaction, QMessageObject *sender) {
-	for (uint i = 0; i < reaction->messages.size(); ++i) {
-		QMessage &msg = reaction->messages[i];
-		if (msg.opcode == kCheck && g_vm->getQSystem()->findObject(msg.objId)->_status != msg.arg1) {
-			break;
-		}
-		g_vm->getQSystem()->addMessage(msg.objId, msg.opcode, msg.arg1, msg.arg2, msg.arg3, 0, sender);
-		bool processed = true;
-		switch (msg.opcode) {
-		case kDialog: {
-			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(reaction->messages.data() + i + 1, reaction->messages.end()));
-			break;
-		}
-		case kPlay: {
-			QMessageObject *obj = g_vm->getQSystem()->findObject(msg.objId);
-			obj->setReaction(msg.arg1, createReaction(reaction->messages.data() + i + 1, reaction->messages.end()));
-			break;
-		}
-		case kWalk:
-		case kWalkTo:
-			g_vm->getQSystem()->_petka->setReactionAfterWalk(i, reaction, sender, true);
-			return;
-		case kWalkVich:
-			g_vm->getQSystem()->_chapayev->setReactionAfterWalk(i, reaction, sender, true);
-			return;
-		default:
-			processed = false;
-			break;
-		}
-		if (processed)
-			break;
-	}
-	delete reaction;
-}
-
 void QMessageObject::processMessage(const QMessage &msg) {
 	bool reacted = false;
 	for (uint i = 0; i < _reactions.size(); ++i) {
@@ -119,47 +84,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getBigDialogue()->setHandler(_id, msg.opcode);
 			g_vm->getQSystem()->_mainInterface->_dialog.setSender(this);
 		}
-		for (uint j = 0; j < r->messages.size(); ++j) {
-			QMessage &rMsg = r->messages[j];
-			if (rMsg.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
-				break;
-			}
-			if (rMsg.opcode == kIf &&
-				((rMsg.arg1 != 0xffff && rMsg.arg1 != msg.arg1) ||
-			    (rMsg.arg2 != -1 && rMsg.arg2 != msg.arg2) ||
-			    (rMsg.arg3 != -1 && rMsg.arg3 != msg.arg3))) {
-				break;
-			}
-			if (rMsg.opcode == kRandom && rMsg.arg2 != -1) {
-				rMsg.arg1 = (int16) g_vm->getRnd().getRandomNumber((uint) (rMsg.arg2 - 1));
-			}
-			g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk,
-										   rMsg.sender);
-			bool processed = true;
-			switch (rMsg.opcode) {
-			case kDialog: {
-				g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(r->messages.data() + j + 1, r->messages.end()));
-				break;
-			}
-			case kPlay: {
-				QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
-				obj->setReaction(rMsg.arg1, createReaction(r->messages.data() + j + 1, r->messages.end()));
-				break;
-			}
-			case kWalk:
-			case kWalkTo:
-				g_vm->getQSystem()->_petka->setReactionAfterWalk(j, r, this, false);
-				break;
-			case kWalkVich:
-				g_vm->getQSystem()->_chapayev->setReactionAfterWalk(j, r, this, false);
-				break;
-			default:
-				processed = false;
-				break;
-			}
-			if (processed)
-				break;
-		}
+		processReaction(r, &msg);
 		reacted = true;
 	}
 
@@ -247,7 +172,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			if (_reaction && _reactionId == msg.arg1) {
 				QReaction *reaction = _reaction;
 				_reaction = nullptr;
-				processSavedReaction(reaction, this);
+				processReaction(reaction);
 			}
 			break;
 		case kStatus:
@@ -385,6 +310,53 @@ void QMessageObject::setReaction(int16 id, QReaction *reaction) {
 	delete _reaction;
 	_reaction = reaction;
 	_reactionId = id;
+}
+
+void QMessageObject::processReaction(QReaction *r, const QMessage *msg) {
+	bool deleteReaction = (msg == nullptr);
+	for (uint j = 0; j < r->messages.size(); ++j) {
+		QMessage &rMsg = r->messages[j];
+		if (rMsg.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
+			break;
+		}
+		if (msg && rMsg.opcode == kIf &&
+			((rMsg.arg1 != 0xffff && rMsg.arg1 != msg->arg1) ||
+			 (rMsg.arg2 != -1 && rMsg.arg2 != msg->arg2) ||
+			 (rMsg.arg3 != -1 && rMsg.arg3 != msg->arg3))) {
+			break;
+		}
+		if (msg && rMsg.opcode == kRandom && rMsg.arg2 != -1) {
+			rMsg.arg1 = (int16) g_vm->getRnd().getRandomNumber((uint) (rMsg.arg2 - 1));
+		}
+		g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk,
+									   rMsg.sender);
+		bool processed = true;
+		switch (rMsg.opcode) {
+		case kDialog: {
+			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(r->messages.data() + j + 1, r->messages.end()));
+			break;
+		}
+		case kPlay: {
+			QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
+			obj->setReaction(rMsg.arg1, createReaction(r->messages.data() + j + 1, r->messages.end()));
+			break;
+		}
+		case kWalk:
+		case kWalkTo:
+			g_vm->getQSystem()->_petka->setReactionAfterWalk(j, r, this, deleteReaction);
+			return;
+		case kWalkVich:
+			g_vm->getQSystem()->_chapayev->setReactionAfterWalk(j, r, this, deleteReaction);
+			return;
+		default:
+			processed = false;
+			break;
+		}
+		if (processed)
+			break;
+	}
+	if (deleteReaction)
+		delete r;
 }
 
 QObject::QObject() {

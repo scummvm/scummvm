@@ -66,7 +66,7 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 		if (msg.opcode == kWalked && _heroReaction) {
 			QReaction *reaction = _heroReaction;
 			_heroReaction = nullptr;
-			processSavedReaction(reaction, _sender);
+			_sender->processReaction(reaction);
 		}
 		QMessageObject::processMessage(msg);
 		if (msg.opcode == kSet || msg.opcode == kPlay) {

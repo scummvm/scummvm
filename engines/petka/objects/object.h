@@ -27,8 +27,6 @@
 
 namespace Petka {
 
-extern void processSavedReaction(QReaction *reaction, QMessageObject *sender);
-
 class QVisibleObject {
 public:
 	QVisibleObject();
@@ -57,6 +55,7 @@ public:
 	void show(bool v) override;
 	void setReaction(int16 id, QReaction *reaction);
 	virtual void processMessage(const QMessage &msg);
+	void processReaction(QReaction *reaction, const QMessage *msg = nullptr);
 
 public:
 	int32 _x;
