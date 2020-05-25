@@ -42,8 +42,13 @@ DialogInterface::DialogInterface() {
 	_afterUserMsg = false;
 	_talker = nullptr;
 	_sender = nullptr;
+	_reaction = nullptr;
 	_hasSound = false;
 	_firstTime = true;
+}
+
+DialogInterface::~DialogInterface() {
+	delete _reaction;
 }
 
 void DialogInterface::start(uint id, QMessageObject *sender) {
@@ -183,8 +188,8 @@ void DialogInterface::end() {
 	_id = -1;
 	g_vm->getQSystem()->_currInterface->removeTexts();
 	restoreCursor();
-	if (g_dialogReaction)
-		processSavedReaction(&g_dialogReaction, _sender);
+	if (_reaction)
+		processSavedReaction(&_reaction, _sender);
 	_sender = nullptr;
 }
 
@@ -217,6 +222,12 @@ Sound *DialogInterface::findSound() {
 void DialogInterface::removeSound() {
 	g_vm->soundMgr()->removeSound(_soundName);
 	_soundName.clear();
+}
+
+void DialogInterface::setReaction(QReaction *reaction, bool deletePrev) {
+	if (deletePrev)
+		delete _reaction;
+	_reaction = reaction;
 }
 
 } // End of namespace Petka

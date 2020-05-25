@@ -27,19 +27,20 @@
 
 namespace Petka {
 
-class Sound;
-
 enum DialogState {
 	kPlaying = 1,
 	kMenu = 2,
 	kIdle = 3
 };
 
+class Sound;
 class QMessageObject;
+class QReaction;
 
 class DialogInterface {
 public:
 	DialogInterface();
+	~DialogInterface();
 
 	void start(uint id, QMessageObject *sender);
 	void next(int choice);
@@ -54,6 +55,7 @@ public:
 	bool isActive();
 
 	void setSender(QMessageObject *sender);
+	void setReaction(QReaction *reaction, bool deletePrev = false);
 
 private:
 	void sendMsg(uint16 opcode);
@@ -70,6 +72,7 @@ private:
 	Common::String _soundName;
 	QMessageObject *_talker;
 	QMessageObject *_sender;
+	QReaction *_reaction;
 	int16 _savedCursorActType;
 	int16 _savedCursorId;
 	bool _wasCursorShown;

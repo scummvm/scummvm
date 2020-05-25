@@ -98,8 +98,6 @@ public:
 	void onMouseMove(int x, int y) override;
 };
 
-extern QReaction *g_dialogReaction;
-
 } // End of namespace Petka
 
 #endif
