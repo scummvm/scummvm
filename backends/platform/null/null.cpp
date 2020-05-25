@@ -116,14 +116,16 @@ void OSystem_NULL::initBackend() {
 
 	((Audio::MixerImpl *)_mixer)->setReady(false);
 
-	// Note that both the mixer and the timer manager are useless
-	// this way; they need to be hooked into the system somehow to
-	// be functional. Of course, can't do that in a NULL backend :).
+	// Note that the mixer is useless this way; it needs to be hooked
+	// into the system somehow to be functional. Of course, can't do
+	// that in a NULL backend :).
 
 	ModularBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
+	((DefaultTimerManager *)getTimerManager())->checkTimers();
+
 	return false;
 }
 
