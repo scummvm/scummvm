@@ -57,6 +57,10 @@ public:
 	void tryTurnRight(bool b);
 	void tryMoveForward(bool b);
 	void tryMoveBack(bool b);
+	void tryMoveLeft(bool b);
+	void tryMoveRight(bool b);
+	void tryMoveUp(bool b);
+	void tryMoveDown(bool b);
 
 private:
 	void saveData(Common::WriteStream *ws) override;
@@ -89,6 +93,10 @@ private:
 	bool _tryTurnRight;
 	bool _tryMoveForward;
 	bool _tryMoveBack;
+	bool _tryMoveLeft;
+	bool _tryMoveRight;
+	bool _tryMoveUp;
+	bool _tryMoveDown;
 };
 
 } // End of namespace Ultima8
