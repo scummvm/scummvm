@@ -55,6 +55,7 @@ public:
 	QMessageObject();
 
 	void show(bool v) override;
+	void setReaction(int16 id, QReaction *reaction);
 	virtual void processMessage(const QMessage &msg);
 
 public:
@@ -80,7 +81,7 @@ public:
 	int32 _dialogColor;
 	Common::Array<QReaction> _reactions;
 	QReaction *_reaction;
-	int16 _reactionResId;
+	int16 _reactionId;
 };
 
 

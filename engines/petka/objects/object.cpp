@@ -85,9 +85,7 @@ void processSavedReaction(QReaction *reaction, QMessageObject *sender) {
 		}
 		case kPlay: {
 			QMessageObject *obj = g_vm->getQSystem()->findObject(msg.objId);
-			delete obj->_reaction;
-			obj->_reaction = createReaction(reaction->messages.data() + i + 1, reaction->messages.end());
-			obj->_reactionResId = msg.arg1;
+			obj->setReaction(msg.arg1, createReaction(reaction->messages.data() + i + 1, reaction->messages.end()));
 			break;
 		}
 		case kWalk:
@@ -145,9 +143,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			}
 			case kPlay: {
 				QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
-				delete obj->_reaction;
-				obj->_reaction = createReaction(r->messages.data() + j + 1, r->messages.end());
-				obj->_reactionResId = rMsg.arg1;
+				obj->setReaction(rMsg.arg1, createReaction(r->messages.data() + j + 1, r->messages.end()));
 				break;
 			}
 			case kWalk:
@@ -248,7 +244,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			_animate = msg.arg1;
 			break;
 		case kEnd:
-			if (_reaction && _reactionResId == msg.arg1) {
+			if (_reaction && _reactionId == msg.arg1) {
 				QReaction *reaction = _reaction;
 				_reaction = nullptr;
 				processSavedReaction(reaction, this);
@@ -383,6 +379,12 @@ void QMessageObject::processMessage(const QMessage &msg) {
 
 void QMessageObject::show(bool v) {
 	_isShown = v;
+}
+
+void QMessageObject::setReaction(int16 id, QReaction *reaction) {
+	delete _reaction;
+	_reaction = reaction;
+	_reactionId = id;
 }
 
 QObject::QObject() {
