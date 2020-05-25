@@ -116,4 +116,19 @@ void QObjectCursor::returnInvItem() {
 	}
 }
 
+void QObjectCursor::setInvItem(QMessageObject *item, uint16 resourceId) {
+	returnInvItem();
+	if (resourceId != 0xffff) {
+		_resourceId = resourceId;
+		_actionType = kActionObjUse;
+		_invObj = item;
+		item->_isShown = false;
+		item->_isActive = false;
+	} else {
+		_resourceId = 5002;
+		_actionType = 0;
+		_invObj = nullptr;
+	}
+}
+
 }
