@@ -90,7 +90,7 @@ Common::Error PetkaEngine::run() {
 	_soundMgr.reset(new SoundMgr());
 	_vsys.reset(new VideoSystem());
 
-	loadPart(strcmp(_desc->gameId, "petka_demo") == 0 ? 1 : 0);
+	loadPart(isDemo() ? 1 : 0);
 
 	while (!shouldQuit()) {
 		Common::Event event;
@@ -206,6 +206,10 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 		_system->delayMillis(15);
 	}
 	g_system->getMixer()->pauseAll(false);
+}
+
+bool PetkaEngine::isDemo() const {
+	return strcmp(_desc->gameId, "petka_demo") == 0;
 }
 
 SoundMgr *PetkaEngine::soundMgr() const {

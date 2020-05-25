@@ -331,7 +331,7 @@ void QMessageObject::play(int id, int type) {
 		flc = g_vm->resMgr()->loadFlic(id);
 		flc->setFrame(1);
 		_time = 0;
-		if (!_notLoopedSound) {
+		if (!_notLoopedSound || g_vm->isDemo()) {
 			g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
 		}
 		_resourceId = id;

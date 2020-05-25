@@ -71,6 +71,8 @@ public:
 	PetkaEngine(OSystem *syst, const ADGameDescription *desc);
 	~PetkaEngine();
 
+	bool isDemo() const;
+
 	void loadPart(byte part);
 	byte getPart();
 
