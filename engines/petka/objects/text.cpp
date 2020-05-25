@@ -112,8 +112,8 @@ void QTextPhrase::update(int time) {
 			dialog.next(-1);
 		}
 	} else if (_time > _phrase.size() * 30 + 1000 || !g_vm->getQSystem()->_panelInterface->_subtitles) {
-		dialog.next(-1);
 		_time = 0;
+		dialog.next(-1);
 	}
 }
 
