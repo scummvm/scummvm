@@ -119,8 +119,8 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 		if (_filenamePattern.genMethod == kGenHEPC) {
 			result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);
 		} else {
-			if (id == '3') { // special case for cursors
-				// For mac they're stored in game binary
+			if (id == '3') { // Special case for cursors.
+				// For mac they're stored in game binary.
 				result = _filenamePattern.pattern;
 			} else {
 				if (_filenamePattern.genMethod == kGenHEMac)
@@ -133,7 +133,7 @@ Common::String ScummEngine_v60he::generateFilename(const int room) const {
 		break;
 
 	default:
-		// Fallback to parent method
+		// Fallback to parent method.
 		return ScummEngine::generateFilename(room);
 	}
 
@@ -146,7 +146,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 
 	Common::String bPattern = _filenamePattern.pattern;
 
-	// Special cases for Blue's games, which share common (b) files
+	// Special cases for Blue's games, which share common (b) files.
 	if (_game.id == GID_BIRTHDAYYELLOW || _game.id == GID_BIRTHDAYRED)
 		bPattern = "Blue'sBirthday";
 	else if (_game.id == GID_TREASUREHUNT)
@@ -169,7 +169,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 				break;
 			case 1:
 				id = 'a';
-				// Some of the newer HE games for iOS use the ".hea" suffix instead
+				// Some of the newer HE games for iOS use the ".hea" suffix instead.
 				if (_filenamePattern.genMethod == kGenHEIOS)
 					result = Common::String::format("%s.hea", _filenamePattern.pattern);
 				else
@@ -195,8 +195,8 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 			if (_game.heversion < 98 || room < 0)
 				result = Common::String::format("%s.he%c", _filenamePattern.pattern, id);
 		} else {
-			if (id == '3') { // special case for cursors
-				// For mac they're stored in game binary
+			if (id == '3') { // Special case for cursors.
+				// For mac they're stored in game binary.
 				result = _filenamePattern.pattern;
 			} else {
 				Common::String pattern = id == 'b' ? bPattern : _filenamePattern.pattern;
@@ -210,7 +210,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 		break;
 
 	default:
-		// Fallback to parent method
+		// Fallback to parent method.
 		return ScummEngine_v60he::generateFilename(room);
 	}
 
@@ -332,7 +332,7 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 		if (strcmp(gfp->pattern, "maniacdemo.d64") == 0)
 			gs.features |= GF_DEMO;
 
-		// determine second disk file name
+		// Determine second disk file name.
 		Common::String disk2(disk1);
 		for (Common::String::iterator it = disk2.begin(); it != disk2.end(); ++it) {
 			// replace "xyz1.(d64|dsk)" by "xyz2.(d64|dsk)"
@@ -342,7 +342,7 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 			}
 		}
 
-		// open image
+		// Open image.
 		diskImg = new ScummDiskImage(disk1.c_str(), disk2.c_str(), gs);
 	}
 
@@ -366,7 +366,7 @@ static void closeDiskImage(ScummDiskImage *img) {
  */
 static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 	if (gs->id == GID_MONKEY || gs->id == GID_MONKEY2) {
-		// FMTOWNS monkey and monkey2 games don't have speech but may have .sou files
+		// FM-TOWNS monkey and monkey2 games don't have speech but may have .sou files.
 		if (gs->platform == Common::kPlatformFMTowns)
 			return false;
 
@@ -400,9 +400,9 @@ static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 	return false;
 }
 
-// The following function tries to detect the language for COMI and DIG
+// The following function tries to detect the language for COMI and DIG.
 static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
-	// First try to detect Chinese translation
+	// First try to detect Chinese translation.
 	Common::FSNode fontFile;
 
 	if (searchFSNode(fslist, "chinese_gb16x12.fnt", fontFile)) {
@@ -410,7 +410,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 		return Common::ZH_CNA;
 	}
 
-	// Now try to detect COMI and Dig by language files
+	// Now try to detect COMI and Dig by language files.
 	if (id != GID_CMI && id != GID_DIG)
 		return Common::UNK_LANG;
 
@@ -425,7 +425,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 	if (searchFSNode(fslist, filename, langFile))
 		tmp.open(langFile);
 	if (!tmp.isOpen()) {
-		// try loading in RESOURCE sub dir...
+		// Try loading in RESOURCE sub dir.
 		Common::FSNode resDir;
 		Common::FSList tmpList;
 		if (searchFSNode(fslist, "RESOURCE", resDir)
@@ -434,7 +434,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 			&& searchFSNode(tmpList, filename, langFile)) {
 			tmp.open(langFile);
 		}
-		// The Steam version of Dig has the LANGUAGE.BND in the DIG sub dir...
+		// The Steam version of Dig has the LANGUAGE.BND in the DIG sub dir.
 		if (!tmp.isOpen()
 			&& id == GID_DIG
 			&& searchFSNode(fslist, "DIG", resDir)
@@ -506,7 +506,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 			// The gameid either matches, or is empty. The latter indicates
 			// a generic entry, currently used for some generic HE settings.
 			if (g->variant == 0 || !scumm_stricmp(md5Entry->variant, g->variant)) {
-				// Perfect match found, use it and stop the loop
+				// Perfect match found, use it and stop the loop.
 				dr.game = *g;
 				dr.game.gameid = md5Entry->gameid;
 
@@ -520,18 +520,18 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 				}
 
 				// HACK: Special case to distinguish the V1 demo from the full version
-				// (since they have identical MD5):
+				// (since they have identical MD5).
 				if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
 					dr.extra = "V1 Demo";
 					dr.game.features = GF_DEMO;
 				}
 
-				// HACK: Try to detect languages for translated games
+				// HACK: Try to detect languages for translated games.
 				if (dr.language == UNK_LANG) {
 					dr.language = detectLanguage(fslist, dr.game.id);
 				}
 
-				// HACK: Detect between 68k and PPC versions
+				// HACK: Detect between 68k and PPC versions.
 				if (dr.game.platform == Common::kPlatformMacintosh && dr.game.version >= 5 && dr.game.heversion == 0 && strstr(gfp->pattern, "Data"))
 					dr.game.features |= GF_MAC_CONTAINER;
 
@@ -580,8 +580,8 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 	DescMap fileMD5Map;
 	DetectorResult dr;
 
-	// Dive one level down since mac indy3/loom has its files split into directories. See Bug #1438631
-	// Dive two levels down for Mac Steam games
+	// Dive one level down since mac indy3/loom have their files split into directories. See Bug #1438631.
+	// Dive two levels down for Mac Steam games.
 	composeFileHashMap(fileMD5Map, fslist, 3, directoryGlobs);
 
 	// Iterate over all filename patterns.
@@ -598,7 +598,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		if (!fileMD5Map.contains(file))
 			continue;
 
-		// Reset the DetectorResult variable
+		// Reset the DetectorResult variable.
 		dr.fp.pattern = gfp->pattern;
 		dr.fp.genMethod = gfp->genMethod;
 		dr.game.gameid = 0;
@@ -621,7 +621,6 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		//
 		// We only do that if the MD5 hadn't already been computed (since
 		// we may look at some detection files multiple times).
-		//
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
 			Common::SeekableReadStream *tmp = 0;
@@ -649,16 +648,16 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					// Exact match found. Compute the precise game settings.
 					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
 
-					// Print some debug info
+					// Print some debug info.
 					int filesize = tmp->size();
 					debug(1, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
 						file.c_str(), md5str.c_str(), filesize);
 
-					// Sanity check: We *should* have found a matching gameid / variant at this point.
-					// If not, we may have #ifdef'ed the entry out in our detection_tables.h because we
-					// don't have the required stuff compiled in, or there's a bug in our data tables...
+					// Sanity check: We *should* have found a matching gameid/variant at this point.
+					// If not, we may have #ifdef'ed the entry out in our detection_tables.h, because we
+					// don't have the required stuff compiled in, or there's a bug in our data tables.
 					if (dr.game.gameid != 0)
-						// Add it to the list of detected games
+						// Add it to the list of detected games.
 						results.push_back(dr);
 				}
 			}
@@ -675,8 +674,8 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 		// Prevent executables being detected as Steam variant. If we don't
 		// know the md5, then it's just the regular executable. Otherwise we
-		// will most likely fail on trying read the index from the executable.
-		// Fixes bug #10290
+		// will most likely fail on trying to read the index from the executable.
+		// Fixes bug #10290.
 		if (gfp->genMethod == kGenRoomNumSteam || gfp->genMethod == kGenDiskNumSteam)
 			continue;
 
@@ -688,8 +687,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		//
 		// PART 2: Fuzzy matching for files with unknown MD5.
 		//
-
-
+		//
 		// We loop over the game variants matching the gameid associated to
 		// the gfp record. We then try to decide for each whether it could be
 		// appropriate or not.
@@ -709,7 +707,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			// If a variant has been specified, use that!
 			if (gfp->variant) {
 				if (!scumm_stricmp(gfp->variant, g->variant)) {
-					// perfect match found
+					// Perfect match found.
 					results.push_back(dr);
 					break;
 				}
@@ -719,11 +717,12 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			// HACK: Perhaps it is some modified translation?
 			dr.language = detectLanguage(fslist, g->id);
 
-			// Detect if there are speech files in this unknown game
+			// Detect if there are speech files in this unknown game.
 			if (detectSpeech(fslist, g)) {
 				if (strchr(dr.game.guioptions, GUIO_NOSPEECH[0]) != NULL) {
 					if (g->id == GID_MONKEY || g->id == GID_MONKEY2)
-						// TODO: This may need to be updated if something important gets added in the top detection table for these game ids
+						// TODO: This may need to be updated if something important gets added
+						// in the top detection table for these game ids.
 						dr.game.guioptions = GUIO0();
 					else
 						warning("FIXME: fix NOSPEECH fallback");
@@ -765,20 +764,20 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		tmp.read(buf, 6);
 
 		if (buf[0] == 0xbc && buf[1] == 0xb9) {
-			// The NES version of MM
+			// The NES version of MM.
 			if (g->id == GID_MANIAC && g->platform == Common::kPlatformNES) {
-				// perfect match
+				// Perfect match.
 				return true;
 			}
 		} else if ((buf[0] == 0xCE && buf[1] == 0xF5) || // PC
 			(buf[0] == 0xCD && buf[1] == 0xFE)) {    // Commodore 64
 			// Could be V0 or V1.
-			// Candidates: maniac classic, zak classic
+			// Candidates: maniac classic, zak classic.
 
 			if (g->version >= 2)
 				return false;
 
-			// Zak has 58.LFL, Maniac doesn't have it.
+			// Zak has 58.LFL, Maniac doesn't.
 			const bool has58LFL = fileMD5Map.contains("58.LFL");
 			if (g->id == GID_MANIAC && !has58LFL) {
 			} else if (g->id == GID_ZAK && has58LFL) {
@@ -787,7 +786,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		} else if (buf[0] == 0xFF && buf[1] == 0xFE) {
 			// GF_OLD_BUNDLE: could be V2 or old V3.
 			// Note that GF_OLD_BUNDLE is true if and only if GF_OLD256 is false.
-			// Candidates: maniac enhanced, zak enhanced, indy3ega, loom
+			// Candidates: maniac enhanced, zak enhanced, indy3ega, loom.
 
 			if ((g->version != 2 && g->version != 3)  || (g->features & GF_OLD256))
 				return false;
@@ -819,8 +818,8 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			} else
 				return false;
 		} else if (buf[4] == '0' && buf[5] == 'R') {
-			// newer V3 game
-			// Candidates: indy3, indy3Towns, zakTowns, loomTowns
+			// Newer V3 game.
+			// Candidates: indy3, indy3Towns, zakTowns, loomTowns.
 
 			if (g->version != 3 || !(g->features & GF_OLD256))
 				return false;
@@ -866,23 +865,23 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 			// (which, after all, are usually missing many LFL files present in the
 			// full version of the game).
 
-			// No version of Indy3 has 05.LFL but MM, Loom and Zak all have it
+			// No version of Indy3 has 05.LFL but MM, Loom and Zak all have it.
 			if (g->id == GID_INDY3 && fileMD5Map.contains("05.LFL"))
 				return false;
 
-			// All versions of Indy3 have 93.LFL, but no other game
+			// All versions of Indy3 have 93.LFL, but no other game does.
 			if (g->id != GID_INDY3 && fileMD5Map.contains("93.LFL"))
 				return false;
 
-			// No version of Loom has 48.LFL
+			// No version of Loom has 48.LFL.
 			if (g->id == GID_LOOM && fileMD5Map.contains("48.LFL"))
 				return false;
 
-			// No version of Zak has 60.LFL, but most (non-demo) versions of Indy3 have it
+			// No version of Zak has 60.LFL, but most (non-demo) versions of Indy3 have it.
 			if (g->id == GID_ZAK && fileMD5Map.contains("60.LFL"))
 				return false;
 
-			// All versions of Indy3 and ZakTOWNS have 98.LFL, but no other game
+			// All versions of Indy3 and ZakTOWNS have 98.LFL, but no other game does.
 			if (g->id == GID_LOOM && g->platform != Common::kPlatformPCEngine && fileMD5Map.contains("98.LFL"))
 				return false;
 
@@ -890,12 +889,12 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		} else {
 			// TODO: Unknown file header, deal with it. Maybe an unencrypted
 			// variant...
-			// Anyway, we don't know to deal with the file, so we
+			// Anyway, we don't know how to deal with the file, so we
 			// just skip it.
 		}
 	} else if (file == "000.LFL") {
-		// Used in V4
-		// Candidates: monkeyEGA, pass, monkeyVGA, loomcd
+		// Used in V4.
+		// Candidates: monkeyEGA, pass, monkeyVGA, loomcd.
 
 		if (g->version != 4)
 			return false;
@@ -908,10 +907,10 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		_numScripts 199
 		_numSounds 199
 
-		Any good ideas to distinguish those? Maybe by the presence / absence
+		Any good ideas to distinguish those? Maybe by the presence/absence
 		of some files?
-		At least PASS and the monkeyEGA demo differ by 903.LFL missing...
-		And the count of DISK??.LEC files differs depending on what version
+		At least PASS and the monkeyEGA demo differ by 903.LFL missing.
+		And the count of DISK??.LEC files differ depending on what version
 		you have (4 or 8 floppy versions).
 		loomcd of course shipped on only one "disc".
 
@@ -925,9 +924,9 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		const bool has903LFL = fileMD5Map.contains("903.LFL");
 		const bool hasDisk02 = fileMD5Map.contains("DISK02.LEC");
 
-		// There is not much we can do based on the presence / absence
+		// There is not much we can do based on the presence/absence
 		// of files. Only that if 903.LFL is present, it can't be PASS;
-		// and if DISK02.LEC is present, it can't be LoomCD
+		// and if DISK02.LEC is present, it can't be LoomCD.
 		if (g->id == GID_PASS              && !has903LFL && !hasDisk02) {
 		} else if (g->id == GID_LOOM       &&  has903LFL && !hasDisk02) {
 		} else if (g->id == GID_MONKEY_VGA) {
@@ -935,15 +934,15 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 		} else
 			return false;
 	} else {
-		// Must be a V5+ game
+		// Must be a V5+ game.
 		if (g->version < 5)
 			return false;
 
-		// So at this point the gameid is determined, but not necessarily
+		// At this point the gameid is determined, but not necessarily
 		// the variant!
 
 		// TODO: Add code that handles this, at least for the non-HE games.
-		// Note sure how realistic it is to correctly detect HE-game
+		// Not sure how realistic it is to correctly detect HE game
 		// variants, would require me to look at a sufficiently large
 		// sample collection of HE games (assuming I had the time :).
 
@@ -1030,12 +1029,12 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 
 	// Append the platform, if a non-standard one has been specified.
 	if (x.game.platform != Common::kPlatformDOS && x.game.platform != Common::kPlatformUnknown) {
-		// HACK: For CoMI, it's pointless to encode the fact that it's for Windows
+		// HACK: For CoMI, it's pointless to encode the fact that it's for Windows.
 		if (x.game.id != GID_CMI)
 			res = res + "-" + Common::getPlatformAbbrev(x.game.platform);
 	}
 
-	// Append the language, if a non-standard one has been specified
+	// Append the language, if a non-standard one has been specified.
 	if (x.language != Common::EN_ANY && x.language != Common::UNK_LANG) {
 		res = res + "-" + Common::getLanguageCode(x.language);
 	}
@@ -1083,7 +1082,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// the correct new game ID (and platform, if specified).
 	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 
-	// Fetch the list of files in the current directory
+	// Fetch the list of files in the current directory.
 	Common::FSList fslist;
 	Common::FSNode dir(ConfMan.get("path"));
 	if (!dir.isDirectory())
@@ -1095,7 +1094,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	Common::List<DetectorResult> results;
 	::detectGames(fslist, results, gameid);
 
-	// Unable to locate game data
+	// Unable to locate game data.
 	if (results.empty())
 		return Common::kNoGameDataFoundError;
 
@@ -1105,7 +1104,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
 		Common::List<DetectorResult> tmp;
 
-		// Copy only those candidates which match the platform setting
+		// Copy only those candidates which match the platform setting.
 		for (Common::List<DetectorResult>::iterator
 		          x = results.begin(); x != results.end(); ++x) {
 			if (x->game.platform == platform) {
@@ -1122,11 +1121,11 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		}
 	}
 
-	// Still no unique match found -> print a warning
+	// Still no unique match found -> print a warning.
 	if (results.size() > 1)
 		warning("Engine_SCUMM_create: No unique game candidate found, using first one");
 
-	// Simply use the first match
+	// Simply use the first match.
 	DetectorResult res(*(results.begin()));
 	debug(1, "Using gameid %s, variant %s, extra %s", res.game.gameid, res.game.variant, res.extra);
 	debug(1, "  SCUMM version %d, HE version %d", res.game.version, res.game.heversion);
@@ -1167,11 +1166,11 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in
 	// our MD5 database but require a specific platform setting.
-	// TODO: Do we really still need / want the platform override ?
+	// TODO: Do we really still need/want the platform override?
 	if (ConfMan.hasKey("platform"))
 		res.game.platform = Common::parsePlatform(ConfMan.get("platform"));
 
-	// Language override
+	// Language override.
 	if (ConfMan.hasKey("language"))
 		res.language = Common::parseLanguage(ConfMan.get("language"));
 
@@ -1302,7 +1301,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot.
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= 99) {
