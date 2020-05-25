@@ -147,12 +147,12 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 	return nullptr;
 }
 
-const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res) const {
+const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *fallback) const {
 	if (opcode == kEnd || opcode == kHalf) {
 		return nullptr;
 	}
-	if (res) {
-		*res = false;
+	if (fallback) {
+		*fallback = false;
 	}
 	for (uint i = 0; i < _objDialogs.size(); ++i) {
 		if (_objDialogs[i].objId == objId) {
@@ -166,8 +166,8 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 			}
 			for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
 				if (_objDialogs[i].handlers[j].opcode == kFallback) {
-					if (res)
-						*res = true;
+					if (fallback)
+						*fallback = true;
 					return &_objDialogs[i].handlers[j];
 				}
 
@@ -179,8 +179,8 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 			continue;
 		for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
 			if (_objDialogs[i].handlers[j].opcode == opcode) {
-				if (res)
-					*res = true;
+				if (fallback)
+					*fallback = true;
 				return &_objDialogs[i].handlers[j];
 			}
 		}
@@ -188,7 +188,7 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 	return nullptr;
 }
 
-void BigDialogue::setHandler(uint objId, uint opcode, int index) {
+void BigDialogue::setHandler(uint objId, uint opcode) {
 	loadSpeechesInfo();
 	const DialogHandler *h = findHandler(objId, opcode, nullptr);
 	if (h) {
@@ -388,10 +388,7 @@ void BigDialogue::next(int choice) {
 			if (processed)
 				_currOp += 1;
 			else {
-				g_vm->getQSystem()->_mainInterface->_dialog.sendMsg(kSaid);
-				g_vm->getQSystem()->_mainInterface->_dialog._isUserMsg = 1;
-				g_vm->getQSystem()->_mainInterface->_dialog.restoreCursor();
-				g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, _currOp->userMsg.arg);
+				g_vm->getQSystem()->_mainInterface->_dialog.startUserMsg(_currOp->userMsg.arg);
 			}
 			return;
 		default:

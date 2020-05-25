@@ -105,9 +105,9 @@ void QTextPhrase::draw() {
 void QTextPhrase::update(int time) {
 	DialogInterface &dialog = g_vm->getQSystem()->_mainInterface->_dialog;
 	_time += time;
-	if (dialog._hasSound) {
-		Sound *sound = g_vm->soundMgr()->findSound(dialog._soundName);
-		if (sound && !sound->isPlaying()) {
+	Sound *sound = dialog.findSound();
+	if (sound) {
+		if (!sound->isPlaying()) {
 			_time = 0;
 			dialog.next(-1);
 		}
@@ -119,8 +119,7 @@ void QTextPhrase::update(int time) {
 
 void QTextPhrase::onClick(int x, int y) {
 	DialogInterface &dialog = g_vm->getQSystem()->_mainInterface->_dialog;
-	g_vm->soundMgr()->removeSound(dialog._soundName);
-	dialog._soundName.clear();
+	dialog.removeSound();
 	dialog.next(-1);
 }
 

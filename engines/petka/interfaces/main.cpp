@@ -252,7 +252,7 @@ void InterfaceMain::onMouseMove(const Common::Point p) {
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->setCursorPos(p.x, p.y, true);
 
-	if (prevObj != _objUnderCursor && _objUnderCursor && _dialog._state == kIdle) {
+	if (prevObj != _objUnderCursor && _objUnderCursor && !_dialog.isActive()) {
 		Graphics::PixelFormat fmt = g_system->getScreenFormat();
 		QMessageObject *obj = (QMessageObject *)_objUnderCursor;
 		if (!obj->_nameOnScreen.empty()) {
@@ -260,7 +260,7 @@ void InterfaceMain::onMouseMove(const Common::Point p) {
 		} else {
 			setText(Common::convertToU32String(obj->_name.c_str(), Common::kWindows1251), fmt.RGBToColor(0x80, 0, 0), fmt.RGBToColor(0xA, 0xA, 0xA));
 		}
-	} else if (prevObj && !_objUnderCursor && _dialog._state == kIdle) {
+	} else if (prevObj && !_objUnderCursor && !_dialog.isActive()) {
 		setText(Common::U32String(""), 0, 0);
 	}
 }

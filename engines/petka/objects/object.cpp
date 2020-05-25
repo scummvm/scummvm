@@ -120,10 +120,10 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			(r->senderId != -1 && r->senderId != msg.sender->_id)) {
 			continue;
 		}
-		bool res;
-		if (g_vm->getBigDialogue()->findHandler(_id, msg.opcode, &res) && res == 0) {
-			g_vm->getBigDialogue()->setHandler(_id, msg.opcode, -1);
-			g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
+		bool fallback;
+		if (g_vm->getBigDialogue()->findHandler(_id, msg.opcode, &fallback) && !fallback) {
+			g_vm->getBigDialogue()->setHandler(_id, msg.opcode);
+			g_vm->getQSystem()->_mainInterface->_dialog.setSender(this);
 		}
 		for (uint j = 0; j < r->messages.size(); ++j) {
 			QMessage &rMsg = r->messages[j];
@@ -195,8 +195,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		}
 		case kContinue:
-			g_vm->getQSystem()->_mainInterface->_dialog._isUserMsg = 0;
-			g_vm->getQSystem()->_mainInterface->_dialog.next(-1);
+			g_vm->getQSystem()->_mainInterface->_dialog.endUserMsg();
 			break;
 		case kCursor:
 			if (msg.arg1 == 0xffff) {
@@ -376,8 +375,6 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		}
 	} else {
-		g_vm->getBigDialogue()->setHandler(_id, msg.opcode, -1);
-		g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
 		for (uint i = 0; i < _reactions.size(); ++i) {
 			QReaction &r = _reactions[i];
 			if (r.opcode != msg.opcode ||
@@ -391,6 +388,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				g_dialogReaction->messages.push_back(r.messages[j]);
 			}
 		}
+		g_vm->getBigDialogue()->setHandler(_id, msg.opcode);
 		g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 	}
 

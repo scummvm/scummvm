@@ -112,8 +112,8 @@ public:
 
 	void next(int choice = -1);
 
-	const DialogHandler *findHandler(uint objId, uint opcode, bool *res) const;
-	void setHandler(uint objId, uint opcode, int index);
+	const DialogHandler *findHandler(uint objId, uint opcode, bool *fallback) const;
+	void setHandler(uint objId, uint opcode);
 
 	const Common::U32String *getSpeechInfo(int *talkerId, const char **soundName, int unk);
 

@@ -26,6 +26,7 @@
 #include "petka/interfaces/main.h"
 #include "petka/petka.h"
 #include "petka/objects/object_cursor.h"
+#include "petka/objects/heroes.h"
 #include "petka/q_system.h"
 #include "petka/big_dialogue.h"
 #include "petka/sound.h"
@@ -37,23 +38,21 @@ namespace Petka {
 DialogInterface::DialogInterface() {
 	_state = kIdle;
 	_id = -1;
-	_field24 = 0;
-	_isUserMsg = 0;
-	_afterUserMsg = 0;
+	_isUserMsg = false;
+	_afterUserMsg = false;
 	_talker = nullptr;
 	_sender = nullptr;
-	_hasSound = 0;
-	_firstTime = 1;
+	_hasSound = false;
+	_firstTime = true;
 }
 
 void DialogInterface::start(uint id, QMessageObject *sender) {
 	_id = id;
-	_hasSound = 0;
-	_field24 = 0;
-	_isUserMsg = 0;
-	_afterUserMsg = 0;
+	_hasSound = false;
+	_isUserMsg = false;
+	_afterUserMsg = false;
 	_talker = nullptr;
-	_firstTime = 1;
+	_firstTime = true;
 	_state = kIdle;
 	_sender = sender;
 	_soundName.clear();
@@ -105,7 +104,7 @@ void DialogInterface::next(int choice) {
 	if (_isUserMsg)
 		return;
 	if (_firstTime)
-		_firstTime = 0;
+		_firstTime = false;
 	else
 		g_vm->getBigDialogue()->next(choice);
 
@@ -187,6 +186,37 @@ void DialogInterface::end() {
 	if (g_dialogReaction)
 		processSavedReaction(&g_dialogReaction, _sender);
 	_sender = nullptr;
+}
+
+void DialogInterface::endUserMsg() {
+	_isUserMsg = false;
+	next(-1);
+}
+
+void DialogInterface::startUserMsg(uint16 arg) {
+	sendMsg(kSaid);
+	_isUserMsg = true;
+	restoreCursor();
+	g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, arg);
+}
+
+bool DialogInterface::isActive() {
+	return _state != kIdle;
+}
+
+void DialogInterface::setSender(QMessageObject *sender) {
+	_sender = sender;
+}
+
+Sound *DialogInterface::findSound() {
+	if (!_hasSound)
+		return nullptr;
+	return g_vm->soundMgr()->findSound(_soundName);
+}
+
+void DialogInterface::removeSound() {
+	g_vm->soundMgr()->removeSound(_soundName);
+	_soundName.clear();
 }
 
 } // End of namespace Petka
