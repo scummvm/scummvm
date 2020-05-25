@@ -58,7 +58,14 @@ void QObjectCursor::draw() {
 	const Graphics::Surface *frame = flc->getCurrentFrame();
 	if (frame) {
 		Graphics::Surface *s = frame->convertTo(g_system->getScreenFormat(), flc->getPalette());
-	    g_vm->videoSystem()->transBlitFrom(*s, flc->getBounds(), Common::Point(_x, _y), flc->getTransColor(s->format));
+		Common::Rect destRect(flc->getBounds());
+		destRect.translate(_x, _y);
+		destRect.clip(640, 480);
+
+		Common::Rect srcRect(destRect);
+		srcRect.translate(-_x, -_y);
+
+		g_vm->videoSystem()->transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
 		s->free();
 		delete s;
 	}
