@@ -119,39 +119,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		case kSet:
 		case kPlay:
-			if (dynamic_cast<QObjectBG *>(this)) {
-				break;
-			}
-			if (g_vm->getQSystem()->_isIniting) {
-				_resourceId = msg.arg1;
-				_notLoopedSound = msg.arg2 != 5;
-			} else {
-				_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(msg.arg1),
-													Audio::Mixer::kSFXSoundType);
-				_hasSound = _sound != nullptr;
-				_startSound = false;
-				FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-				if (flc) {
-					g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
-				}
-
-				flc = g_vm->resMgr()->loadFlic(msg.arg1);
-				flc->setFrame(1);
-				_time = 0;
-				if (!_notLoopedSound) {
-					g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
-				}
-				_resourceId = msg.arg1;
-			}
-			if (msg.arg2 == 1) {
-				FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-				flc->setFrame(1);
-				g_vm->videoSystem()->makeAllDirty();
-				_time = 0;
-			} else if (msg.arg2 == 2) {
-				g_vm->resMgr()->loadFlic(_resourceId);
-			}
-			_notLoopedSound = msg.arg2 != 5;
+			play(msg.arg1, msg.arg2);
 			break;
 		case kAnimate:
 			_animate = msg.arg1;
@@ -345,6 +313,43 @@ void QMessageObject::processReaction(QReaction *r, const QMessage *msg) {
 	}
 	if (deleteReaction)
 		delete r;
+}
+
+void QMessageObject::play(int id, int type) {
+	if (g_vm->getQSystem()->_isIniting) {
+		_resourceId = id;
+	} else {
+		_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(id),
+											Audio::Mixer::kSFXSoundType);
+		_hasSound = _sound != nullptr;
+		_startSound = false;
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		if (flc) {
+			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
+		}
+
+		flc = g_vm->resMgr()->loadFlic(id);
+		flc->setFrame(1);
+		_time = 0;
+		if (!_notLoopedSound) {
+			g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
+		}
+		_resourceId = id;
+	}
+	switch (type) {
+	case 1: {
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		flc->setFrame(1);
+		g_vm->videoSystem()->makeAllDirty();
+		break;
+	}
+	case 2:
+		g_vm->resMgr()->loadFlic(_resourceId);
+		break;
+	default:
+		break;
+	}
+	_notLoopedSound = type != 5;
 }
 
 QObject::QObject() {

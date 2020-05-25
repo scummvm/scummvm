@@ -57,6 +57,8 @@ public:
 	virtual void processMessage(const QMessage &msg);
 	void processReaction(QReaction *reaction, const QMessage *msg = nullptr);
 
+	virtual void play(int id, int type);
+
 public:
 	int32 _x;
 	int32 _y;

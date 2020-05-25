@@ -34,6 +34,7 @@ public:
 	void draw() override;
 	void goTo();
 	void setEntrance(const Common::String &name);
+	void play(int id, int type) override {}
 
 public:
 	int _showMap;
