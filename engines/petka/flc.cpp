@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/stream.h"
 
 #include "graphics/surface.h"
@@ -73,6 +74,14 @@ const Common::Rect &FlicDecoder::getBounds() const {
 	return *(new Common::Rect(0, 0));
 }
 
+Common::Point FlicDecoder::getPos() const {
+	const Track *track = getTrack(0);
+	if (track)
+		return ((const FlicVideoTrack *)track)->getPos();
+
+	return Common::Point(0, 0);
+}
+
 const Common::Array<Common::Rect> &FlicDecoder::getMskRects() const {
 	const Track *track = getTrack(0);
 	if (track)
@@ -95,7 +104,7 @@ uint32 FlicDecoder::getTransColor(const Graphics::PixelFormat &fmt) const {
 
 void FlicDecoder::setFrame(int frame) {
 	FlicVideoTrack *flc = ((FlicVideoTrack *)getTrack(0));
-	if (!flc || flc->getCurFrame() + 1 == frame)
+	if (!flc || flc->getFrameCount() == 1 || flc->getCurFrame() + 1 == frame)
 		return;
 
 	if (frame == -1) {
@@ -139,26 +148,42 @@ bool FlicDecoder::FlicVideoTrack::loadMsk(Common::SeekableReadStream &stream) {
 	_bounds.right = (int16)stream.readSint32LE();
 	_bounds.bottom = (int16)stream.readSint32LE();
 
+	if (_surface->w <= _bounds.right) {
+		_bounds.right = _surface->w - 1;
+	}
+	if (_surface->h <= _bounds.bottom) {
+		_bounds.bottom = _surface->h - 1;
+	}
+
 	if (_bounds.left > _bounds.right) {
-		int16 t = _bounds.left;
-		_bounds.left = _bounds.right;
-		_bounds.right = t;
+		SWAP(_bounds.left, _bounds.right);
 	}
 	if (_bounds.top > _bounds.bottom) {
-		int16 t = _bounds.top;
-		_bounds.top = _bounds.bottom;
-		_bounds.bottom = t;
+		SWAP(_bounds.top, _bounds.bottom);
 	}
-	assert(stream.size() == stream.pos());
-	if (getWidth() <= _bounds.right) {
-		_bounds.right = getWidth() - 1;
-	}
-	if (getHeight() <= _bounds.bottom) {
-		_bounds.bottom = getHeight() - 1;
-	}
+
 	_bounds = _bounds.findIntersectingRect(Common::Rect(0, 0, _bounds.right, 479));
 	_bounds.right++;
 	_bounds.bottom++;
+
+	_pos.x = 0;
+	_pos.y = 0;
+
+	if (_frameCount == 1 && _surface->w > 630 && _surface->h > 470 && (_bounds.width() < 620 || _bounds.height() < 460)) {
+		Graphics::Surface *s = new Graphics::Surface();
+		s->create(_bounds.width(), _bounds.height(), g_system->getScreenFormat());
+
+		_surface->convertToInPlace(s->format, _palette);
+		s->copyRectToSurface(*_surface, 0, 0, _bounds);
+
+		_surface->free();
+		delete _surface;
+
+		_pos.x = _bounds.left;
+		_pos.y = _bounds.top;
+
+		_surface = s;
+	}
 
 	return true;
 }
@@ -178,6 +203,10 @@ const Common::Array<Common::Rect> &FlicDecoder::FlicVideoTrack::getMskRects() co
 
 uint FlicDecoder::FlicVideoTrack::getDelay() const {
 	return _frameDelay;
+}
+
+Common::Point FlicDecoder::FlicVideoTrack::getPos() const {
+	return _pos;
 }
 
 } // End of namespace Petka

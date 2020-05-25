@@ -35,6 +35,7 @@ public:
 
 	uint getDelay() const;
 	const Common::Rect &getBounds() const;
+	Common::Point getPos() const;
 	const Common::Array<Common::Rect> &getMskRects() const;
 	const Graphics::Surface *getCurrentFrame() const;
 	uint32 getTransColor(const Graphics::PixelFormat &fmt) const;
@@ -48,11 +49,13 @@ protected:
 
 		uint getDelay() const;
 		const Common::Rect &getBounds() const;
+		Common::Point getPos() const;
 		const Common::Array<Common::Rect> &getMskRects() const;
 		const Graphics::Surface *getSurface() const;
 
 	private:
 		Common::Rect _bounds;
+		Common::Point _pos;
 		Common::Array<Common::Array<Common::Rect> > _msk;
 	};
 };

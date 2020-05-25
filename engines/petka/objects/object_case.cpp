@@ -106,9 +106,10 @@ void QObjectCase::draw() {
 
 		for (Common::List<Common::Rect>::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
 			for (uint i = 0; i < mskRects.size(); ++i) {
-				Common::Rect rect = mskRects[i].findIntersectingRect(*it);
-				debug("%d %d", rect.width(), rect.height());
-				g_vm->videoSystem()->transBlitFrom(*s, rect, rect, flc->getTransColor(s->format));
+				Common::Rect destRect = mskRects[i].findIntersectingRect(*it);
+				Common::Rect srcRect = destRect;
+				srcRect.translate(-flc->getPos().x - _x, -flc->getPos().y - _y);
+				g_vm->videoSystem()->transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
 			}
 		}
 

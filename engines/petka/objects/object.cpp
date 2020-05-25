@@ -416,10 +416,9 @@ bool QObject::isInPoint(int x, int y) {
 		return false;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc) {
-		Common::Rect rect(_x, _y, _x + flc->getWidth(), _y + flc->getHeight());
-		if (!rect.contains(x, y))
+		if (!flc->getBounds().contains(x - _x, y - _y))
 			return false;
-		return *(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0;
+		return *(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x - flc->getPos().x, y - _y - flc->getPos().y) != 0;
 	}
 	return false;
 }
@@ -441,7 +440,6 @@ void QObject::draw() {
 
 	Common::Rect screen(640, 480);
 	Common::Rect dest(flc->getBounds());
-	//flcRect.translate(_x, _y);
 	dest.translate(_x, _y);
 
 	Common::Rect intersect(screen.findIntersectingRect(dest));
@@ -456,7 +454,7 @@ void QObject::draw() {
 		if (destRect.isEmpty())
 			continue;
 		Common::Rect srcRect(destRect);
-		srcRect.translate(-_x, -_y);
+		srcRect.translate(-_x - flc->getPos().x, -_y - flc->getPos().y);
 		g_vm->videoSystem()->transBlitFrom(*s, srcRect, destRect, flc->getTransColor(s->format));
 	}
 	s->free();
