@@ -372,7 +372,7 @@ static bool checkSkipVideo(const Common::Event &event) {
 			return false;
 		}
 	case Common::EVENT_QUIT:
-	case Common::EVENT_RTL:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		return true;
 	default:
 		return false;

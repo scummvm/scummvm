@@ -27,6 +27,8 @@
 #include "common/singleton.h"
 #include "common/list.h"
 
+#include "engines/engine.h"  // for PauseToken
+
 /*
  *  Implement this class (interface) if you want to use PowerManager's suspend callback functionality
  *
@@ -80,6 +82,7 @@ private:
 	volatile bool _pauseFlag;						// For pausing, which is before suspending
 	volatile bool _pauseFlagOld;					// Save the last state of the flag while polling
 	volatile PauseState _pauseClientState;			// Pause state of the target
+	PauseToken _pauseToken;
 
 	volatile bool _suspendFlag;						// protected variable
 	PspMutex _flagMutex;							// mutex to access access flag

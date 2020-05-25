@@ -47,8 +47,6 @@ extern GUI_status actorViewButtonCallback(void *data);
 #define SE Game::get_game()->get_game_type()==NUVIE_GAME_SE
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
-static const uint8 ACTION_BUTTON = 3;
-
 PartyView::PartyView(Configuration *cfg) : View(cfg) {
 	player = NULL;
 	view_manager = NULL;
@@ -85,7 +83,6 @@ bool PartyView::init(void *vm, uint16 x, uint16 y, Font *f, Party *p, Player *pl
 }
 
 GUI_status PartyView::MouseWheel(sint32 x, sint32 y) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 
@@ -93,7 +90,7 @@ GUI_status PartyView::MouseWheel(sint32 x, sint32 y) {
 	ypos -= area.top;
 	if (xpos < 0 || ypos > area.top + area.height() - 6)
 		return GUI_PASS; // goes to MsgScrollw
-#endif
+
 	if (y > 0) {
 		if (up_arrow())
 			Redraw();

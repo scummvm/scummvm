@@ -1,0 +1,85 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "petka/objects/text.h"
+#include "petka/interfaces/interface.h"
+#include "petka/q_system.h"
+#include "petka/petka.h"
+#include "petka/objects/object_cursor.h"
+#include "petka/q_manager.h"
+#include "petka/video.h"
+
+namespace Petka {
+
+Interface::Interface()
+	: _objUnderCursor(nullptr), _startIndex(0) {}
+
+void Interface::stop() {
+	setText(Common::U32String(""), 0, 0);
+	g_vm->videoSystem()->makeAllDirty();
+}
+
+void Interface::setText(const Common::U32String &text, uint16 textColor, uint16 outlineColor) {
+	removeTexts();
+	if (!text.empty())
+		_objs.push_back(new QText(text, textColor, outlineColor));
+}
+
+void Interface::setTextPhrase(const Common::U32String &text, uint16 textColor, uint16 outlineColor) {
+	removeTexts();
+	_objUnderCursor = nullptr;
+	_objs.push_back(new QTextPhrase(text, textColor, outlineColor));
+}
+
+QVisibleObject *Interface::findObject(int resourceId) {
+	for (uint i = 0; i < _objs.size(); ++i) {
+		if (_objs[i]->_resourceId == resourceId) {
+			return _objs[i];
+		}
+	}
+	return nullptr;
+}
+
+void Interface::initCursor(int id, bool show, bool animate) {
+	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	_objs.push_back(cursor);
+	cursor->_resourceId = id;
+	cursor->_isShown = show;
+	cursor->_animate = animate;
+	cursor->_actionType = kActionLook;
+	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+}
+
+void Interface::removeTexts() {
+	for (uint i = 0; i < _objs.size();) {
+		if (_objs[i]->_resourceId == -2) {
+			g_vm->videoSystem()->addDirtyRect(((QText *)_objs[i])->getRect());
+			g_vm->resMgr()->removeResource(-2);
+			delete _objs[i];
+			_objs.remove_at(i);
+		} else {
+			++i;
+		}
+	}
+}
+
+} // End of namespace Petka

@@ -31,8 +31,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Debugger;
-class IDataSource;
-class ODataSource;
 
 class Process {
 	friend class Kernel;
@@ -45,9 +43,6 @@ public:
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
-	// memory pooling stuff
-	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 
 	uint32 getProcessFlags() const {
 		return _flags;
@@ -114,18 +109,13 @@ public:
 	//! dump some info about this process to pout
 	virtual void dumpInfo() const;
 
-	//! save this process
-	void save(ODataSource *ods);
-
 	//! load Process data
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
+
+	//! save Process data
+	virtual void saveData(Common::WriteStream *ws);
 
 protected:
-	//! save the Process data
-	virtual void saveData(ODataSource *ods);
-
-	void writeProcessHeader(ODataSource *ods);
-
 	//! process id
 	ProcId _pid;
 

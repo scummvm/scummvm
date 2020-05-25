@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
@@ -29,14 +30,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE_MULTI2(ShapeFont, Font, Shape)
-
-
 ShapeFont::ShapeFont(const uint8 *data_, uint32 size_,
                      const ConvertShapeFormat *format,
                      const uint16 flexId_, const uint32 shapeNum_)
 	: Font(), Shape(data_, size_, format, flexId_, shapeNum_),
 	  _height(0), _baseLine(0), _vLead(-1), _hLead(0) {
+	_crusaderCharMap = GAME_IS_CRUSADER && shapeNum_ == 1;
 }
 
 ShapeFont::~ShapeFont() {
@@ -44,13 +43,20 @@ ShapeFont::~ShapeFont() {
 
 
 int ShapeFont::getWidth(char c) {
-	return getFrame(static_cast<unsigned char>(c))->_width;
+	const ShapeFrame *frame = getFrame(charToFrameNum(c));
+	if (frame)
+		return frame->_width;
+	else
+		return 7; // small space..
 }
 
 int ShapeFont::getHeight() {
 	if (_height == 0) {
 		for (uint32 i = 0; i < frameCount(); i++) {
-			int h = getFrame(i)->_height;
+			const ShapeFrame *frame = getFrame(i);
+			if (!frame)
+				continue;
+			int h = frame->_height;
 
 			if (h > _height) _height = h;
 		}
@@ -85,6 +91,32 @@ void ShapeFont::getStringSize(const Std::string &text, int32 &width, int32 &heig
 		} else {
 			width += getWidth(text[i]) - _hLead;
 		}
+	}
+}
+
+int ShapeFont::charToFrameNum(char c) const {
+	if (_crusaderCharMap) {
+		if (c < 41)
+			// ( and ) are combined into a single shape
+			return c;
+		// weirdly X and Y are swapped in both upper and lowercase
+		else if (c == 'X')
+			return 'X';
+		else if (c == 'Y')
+			return 'W';
+		else if (c < 96)
+			return c - 1;
+		else if (c == 96)
+			// no backquote char
+			return charToFrameNum('\'');
+		else if (c == 'x')
+			return 'w';
+		else if (c == 'y')
+			return 'v';
+		else
+			return c - 2;
+	} else {
+		return c;
 	}
 }
 

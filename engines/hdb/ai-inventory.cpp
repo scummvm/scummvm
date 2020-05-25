@@ -106,7 +106,7 @@ void AI::clearInventory() {
 
 AIEntity *AI::getInvItem(int which) {
 	if (which >= _numInventory)
-		return NULL;
+		return nullptr;
 	return &_inventory[which].ent;
 }
 

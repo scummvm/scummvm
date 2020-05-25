@@ -33,13 +33,10 @@
 #include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MiniStatsGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MiniStatsGump)
 
 static const int gumpshape = 33;
 static const int hpx = 6;
@@ -109,14 +106,14 @@ uint16 MiniStatsGump::TraceObjId(int32 mx, int32 my) {
 	return 0;
 }
 
-Gump *MiniStatsGump::OnMouseDown(int button, int32 mx, int32 my) {
+Gump *MiniStatsGump::onMouseDown(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT)
 		return this;
 
 	return nullptr;
 }
 
-void MiniStatsGump::OnMouseDouble(int button, int32 mx, int32 my) {
+void MiniStatsGump::onMouseDouble(int button, int32 mx, int32 my) {
 	// check if there already is an open PaperdollGump
 	MainActor *av = getMainActor();
 	if (!av->getGump()) {
@@ -126,14 +123,12 @@ void MiniStatsGump::OnMouseDouble(int button, int32 mx, int32 my) {
 	Close();
 }
 
-void MiniStatsGump::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void MiniStatsGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
-bool MiniStatsGump::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
-
-	return true;
+bool MiniStatsGump::loadData(Common::ReadStream *rs, uint32 version) {
+	return Gump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8

@@ -45,13 +45,12 @@ public:
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	void Close(bool no_del = false) override;
 	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	void OnMouseUp(int button, int32 mx, int32 my) override;
+	void onMouseUp(int button, int32 mx, int32 my) override;
 
 	INTRINSIC(I_target);
 
-	bool loadData(IDataSource *ids, uint32 version);
-protected:
-	void saveData(ODataSource *ods) override;
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 private:
 	bool _targetTracing;

@@ -59,9 +59,14 @@ public:
 	/** Returns whether a joystick is currently connected */
 	bool isJoystickConnected() const;
 
+	/** Sets whether a game is currently running */
+	void setEngineRunning(bool value);
+
 protected:
 	/** Scroll lock state - since SDL doesn't track it */
 	bool _scrollLock;
+
+	bool _engineRunning;
 
 	int _mouseX;
 	int _mouseY;

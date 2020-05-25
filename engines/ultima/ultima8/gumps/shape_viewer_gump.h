@@ -33,13 +33,15 @@ namespace Ultima8 {
 
 class ShapeArchive;
 
-
+/**
+ * A tool for viewing the shapes in the game, for debugging purposes.
+ */
 class ShapeViewerGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ShapeViewerGump();
-	ShapeViewerGump(int width, int height,
+	ShapeViewerGump(int x, int y, int width, int height,
 	                Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
 	                uint32 flags = 0, int32 layer = LAYER_MODAL);
 	~ShapeViewerGump() override;
@@ -49,12 +51,15 @@ public:
 	bool OnKeyDown(int key, int mod) override;
 	bool OnTextInput(int unicode) override;
 
+	// Init the gump, call after construction
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+
 	static void U8ShapeViewer();
 
-	bool loadData(IDataSource *ids);
-protected:
-	void saveData(ODataSource *ods) override;
+	bool loadData(Common::ReadStream *rs);
+	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
 	unsigned int _curFlex;
 	ShapeArchive *_flex;
@@ -62,6 +67,9 @@ protected:
 	uint32 _curFrame;
 
 	uint32 _background;
+
+	//! The font used in the shape viewer
+	uint32 _fontNo;
 
 	int32 _shapeW, _shapeH, _shapeX, _shapeY;
 };

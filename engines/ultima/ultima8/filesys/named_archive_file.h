@@ -31,8 +31,6 @@ namespace Ultima8 {
 
 class NamedArchiveFile : public ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	NamedArchiveFile() : _indexCount(0) { }
 	~NamedArchiveFile() override { }
 

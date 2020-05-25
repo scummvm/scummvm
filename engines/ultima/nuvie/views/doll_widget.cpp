@@ -42,10 +42,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define USE_BUTTON 1 /* FIXME: put this in a common location */
-#define ACTION_BUTTON 3
-#define DRAG_BUTTON 1
-
 static const byte gump_blocked_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,

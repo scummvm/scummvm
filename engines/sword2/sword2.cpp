@@ -117,7 +117,7 @@ bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsSubtitleOptions) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsLoadingDuringRuntime);
@@ -546,9 +546,9 @@ Common::Error Sword2Engine::run() {
 				case Common::KEYCODE_p:
 					if (isPaused()) {
 						_screen->dimPalette(false);
-						pauseEngine(false);
+						_gamePauseToken.clear();
 					} else {
-						pauseEngine(true);
+						_gamePauseToken = pauseEngine();
 						_screen->dimPalette(true);
 					}
 					break;

@@ -45,14 +45,14 @@ public:
 	~BitmapResource() override { delete _pImage; }
 
 	/**
-	    @brief Gibt zurück, ob das Objekt einen gültigen Zustand hat.
+	    @brief Gibt zurÃ¼ck, ob das Objekt einen gÃ¼ltigen Zustand hat.
 	*/
 	bool isValid() const {
 		return (_pImage != 0);
 	}
 
 	/**
-	    @brief Gibt die Breite des Bitmaps zurück.
+	    @brief Gibt die Breite des Bitmaps zurÃ¼ck.
 	*/
 	int getWidth() const {
 		assert(_pImage);
@@ -60,7 +60,7 @@ public:
 	}
 
 	/**
-	    @brief Gibt die Höhe des Bitmaps zurück.
+	    @brief Gibt die HÃ¶he des Bitmaps zurÃ¼ck.
 	*/
 	int getHeight() const {
 		assert(_pImage);
@@ -79,23 +79,23 @@ public:
 	                        werden soll oder NULL, falls das gesamte Bild gerendert werden soll.<br>
 	                        Dieser Ausschnitt bezieht sich auf das ungespiegelte und unskalierte Bild.<br>
 	                        Der Standardwert ist NULL.
-	    @param Color ein ARGB Farbwert, der die Parameter für die Farbmodulation und fürs Alphablending festlegt.<br>
+	    @param Color ein ARGB Farbwert, der die Parameter fÃ¼r die Farbmodulation und fÃ¼rs Alphablending festlegt.<br>
 	                 Die Alpha-Komponente der Farbe bestimmt den Alphablending Parameter (0 = keine Deckung, 255 = volle Deckung).<br>
-	                 Die Farbkomponenten geben die Farbe für die Farbmodulation an.<br>
+	                 Die Farbkomponenten geben die Farbe fÃ¼r die Farbmodulation an.<br>
 	                 Der Standardwert is BS_ARGB(255, 255, 255, 255) (volle Deckung, keine Farbmodulation).
-	                 Zum Erzeugen des Farbwertes können die Makros BS_RGB und BS_ARGB benutzt werden.
+	                 Zum Erzeugen des Farbwertes kÃ¶nnen die Makros BS_RGB und BS_ARGB benutzt werden.
 	    @param Width gibt die Ausgabebreite des Bildausschnittes an.
 	                 Falls diese von der Breite des Bildausschnittes abweicht wird
 	                 das Bild entsprechend Skaliert.<br>
 	                 Der Wert -1 gibt an, dass das Bild nicht Skaliert werden soll.<br>
 	                 Der Standardwert ist -1.
-	    @param Width gibt die Ausgabehöhe des Bildausschnittes an.
-	                 Falls diese von der Höhe des Bildauschnittes abweicht, wird
+	    @param Width gibt die AusgabehÃ¶he des Bildausschnittes an.
+	                 Falls diese von der HÃ¶he des Bildauschnittes abweicht, wird
 	                 das Bild entsprechend Skaliert.<br>
 	                 Der Wert -1 gibt an, dass das Bild nicht Skaliert werden soll.<br>
 	                 Der Standardwert ist -1.
-	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
-	    @remark Er werden nicht alle Blitting-Operationen von allen BS_Image-Klassen unterstützt.<br>
+	    @return Gibt false zurÃ¼ck, falls das Rendern fehlgeschlagen ist.
+	    @remark Er werden nicht alle Blitting-Operationen von allen BS_Image-Klassen unterstÃ¼tzt.<br>
 	            Mehr Informationen gibt es in der Klassenbeschreibung von BS_Image und durch folgende Methoden:
 	            - IsBlitTarget()
 	            - IsScalingAllowed()
@@ -114,17 +114,17 @@ public:
 	}
 
 	/**
-	    @brief Füllt einen Rechteckigen Bereich des Bildes mit einer Farbe.
-	    @param pFillRect Pointer auf ein Common::Rect, welches den Ausschnitt des Bildes spezifiziert, der gefüllt
-	                      werden soll oder NULL, falls das gesamte Bild gefüllt werden soll.<br>
+	    @brief FÃ¼llt einen Rechteckigen Bereich des Bildes mit einer Farbe.
+	    @param pFillRect Pointer auf ein Common::Rect, welches den Ausschnitt des Bildes spezifiziert, der gefÃ¼llt
+	                      werden soll oder NULL, falls das gesamte Bild gefÃ¼llt werden soll.<br>
 	                      Der Standardwert ist NULL.
-	    @param Color der 32 Bit Farbwert mit dem der Bildbereich gefüllt werden soll.
-	    @remark Ein Aufruf dieser Methode ist nur gestattet, wenn IsFillingAllowed() true zurückgibt.
-	    @remark Es ist möglich über die Methode transparente Rechtecke darzustellen, indem man eine Farbe mit einem Alphawert ungleich
+	    @param Color der 32 Bit Farbwert mit dem der Bildbereich gefÃ¼llt werden soll.
+	    @remark Ein Aufruf dieser Methode ist nur gestattet, wenn IsFillingAllowed() true zurÃ¼ckgibt.
+	    @remark Es ist mÃ¶glich Ã¼ber die Methode transparente Rechtecke darzustellen, indem man eine Farbe mit einem Alphawert ungleich
 	            255 angibt.
-	    @remark Unabhängig vom Farbformat des Bildes muss ein 32 Bit Farbwert angegeben werden. Zur Erzeugung, können die Makros
+	    @remark UnabhÃ¤ngig vom Farbformat des Bildes muss ein 32 Bit Farbwert angegeben werden. Zur Erzeugung, kÃ¶nnen die Makros
 	            BS_RGB und BS_ARGB benutzt werden.
-	    @remark Falls das Rechteck nicht völlig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
+	    @remark Falls das Rechteck nicht vÃ¶llig innerhalb des Bildschirms ist, wird es automatisch zurechtgestutzt.
 	*/
 	bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) {
 		assert(_pImage);
@@ -135,9 +135,9 @@ public:
 	    @brief Liest einen Pixel des Bildes.
 	    @param X die X-Koordinate des Pixels.
 	    @param Y die Y-Koordinate des Pixels
-	    @return Gibt den 32-Bit Farbwert des Pixels an der übergebenen Koordinate zurück.
-	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
-	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
+	    @return Gibt den 32-Bit Farbwert des Pixels an der Ã¼bergebenen Koordinate zurÃ¼ck.
+	    @remark Diese Methode sollte auf keine Fall benutzt werden um grÃ¶ÃŸere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
+	            eher dafÃ¼r gedacht einzelne Pixel des Bildes auszulesen.
 	*/
 	uint getPixel(int x, int y) const {
 		return _pImage->getPixel(x, y);
@@ -147,8 +147,8 @@ public:
 	/** @name Auskunfts-Methoden */
 
 	/**
-	    @brief Überprüft, ob das BS_Image ein Zielbild für einen Blit-Aufruf sein kann.
-	    @return Gibt false zurück, falls ein Blit-Aufruf mit diesem Objekt als Ziel nicht gestattet ist.
+	    @brief ÃœberprÃ¼ft, ob das BS_Image ein Zielbild fÃ¼r einen Blit-Aufruf sein kann.
+	    @return Gibt false zurÃ¼ck, falls ein Blit-Aufruf mit diesem Objekt als Ziel nicht gestattet ist.
 	*/
 	bool isBlitTarget() {
 		assert(_pImage);
@@ -156,7 +156,7 @@ public:
 	}
 
 	/**
-	    @brief Gibt true zurück, falls das BS_Image bei einem Aufruf von Blit() skaliert dargestellt werden kann.
+	    @brief Gibt true zurÃ¼ck, falls das BS_Image bei einem Aufruf von Blit() skaliert dargestellt werden kann.
 	*/
 	bool isScalingAllowed() {
 		assert(_pImage);
@@ -164,7 +164,7 @@ public:
 	}
 
 	/**
-	    @brief Gibt true zurück, wenn das BS_Image mit einem Aufruf von Fill() gefüllt werden kann.
+	    @brief Gibt true zurÃ¼ck, wenn das BS_Image mit einem Aufruf von Fill() gefÃ¼llt werden kann.
 	*/
 	bool isFillingAllowed() {
 		assert(_pImage);
@@ -172,7 +172,7 @@ public:
 	}
 
 	/**
-	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit einem Alphawert dargestellt werden kann.
+	    @brief Gibt true zurÃ¼ck, wenn das BS_Image bei einem Aufruf von Blit() mit einem Alphawert dargestellt werden kann.
 	*/
 	bool isAlphaAllowed() {
 		assert(_pImage);
@@ -180,7 +180,7 @@ public:
 	}
 
 	/**
-	    @brief Gibt true zurück, wenn das BS_Image bei einem Aufruf von Blit() mit Farbmodulation dargestellt werden kann.
+	    @brief Gibt true zurÃ¼ck, wenn das BS_Image bei einem Aufruf von Blit() mit Farbmodulation dargestellt werden kann.
 	*/
 	bool isColorModulationAllowed() {
 		assert(_pImage);

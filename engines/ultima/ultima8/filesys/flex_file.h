@@ -29,15 +29,11 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 class FlexFile : public ArchiveFile {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	//! create FlexFile from datasource; FlexFile takes ownership of ds
 	//! and deletes it when destructed
-	explicit FlexFile(IDataSource *ds);
+	explicit FlexFile(Common::SeekableReadStream *rs);
 	~FlexFile() override;
 
 	bool exists(uint32 index) override {
@@ -85,12 +81,12 @@ public:
 		return false;
 	}
 
-	static bool isFlexFile(IDataSource *ds);
+	static bool isFlexFile(Common::SeekableReadStream *rs);
 
 protected:
 	bool nameToIndex(const Std::string &name, uint32 &index) const;
 
-	IDataSource *_ds;
+	Common::SeekableReadStream *_rs;
 	uint32 _count;
 
 private:

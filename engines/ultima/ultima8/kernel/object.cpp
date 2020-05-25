@@ -25,19 +25,14 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Object)
-
-DEFINE_CUSTOM_MEMORY_ALLOCATION(Object)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Object)
 
 Object::~Object() {
 	if (_objId != 0xFFFF)
@@ -70,29 +65,15 @@ ProcId Object::callUsecode(uint16 classid, uint16 offset,
 	return Kernel::get_instance()->addProcess(p);
 }
 
-
-void Object::save(ODataSource *ods) {
-	writeObjectHeader(ods);
-	saveData(ods); // virtual
-}
-
-void Object::writeObjectHeader(ODataSource *ods) const {
-	const char *cname = GetClassType()._className; // note: virtual
-	uint16 clen = strlen(cname);
-
-	ods->writeUint16LE(clen);
-	ods->write(cname, clen);
-}
-
-void Object::saveData(ODataSource *ods) {
+void Object::saveData(Common::WriteStream *ws) {
 	// note: Object is unversioned. If we ever want to version it,
 	// increase the global savegame version
 
-	ods->writeUint16LE(_objId);
+	ws->writeUint16LE(_objId);
 }
 
-bool Object::loadData(IDataSource *ids, uint32 version) {
-	_objId = ids->readUint16LE();
+bool Object::loadData(Common::ReadStream *rs, uint32 version) {
+	_objId = rs->readUint16LE();
 
 	return true;
 }

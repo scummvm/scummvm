@@ -26,8 +26,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 class AudioSample {
 protected:
 	uint32  _sampleRate;
@@ -40,8 +38,10 @@ protected:
 	uint32  _bufferSize;
 	uint8   const *_buffer;
 
+	bool 	_deleteBuffer;
+
 public:
-	AudioSample(const uint8 *buffer, uint32 size, uint32 bits, bool stereo);
+	AudioSample(const uint8 *buffer, uint32 size, uint32 bits, bool stereo, bool deleteBuffer);
 	virtual ~AudioSample(void);
 
 	inline uint32 getRate() const {

@@ -116,7 +116,8 @@ bool Vocabulary::loadParserWords() {
 		}
 		// If all of them were empty, we are definitely seeing SCI01 vocab in disguise (e.g. pq2 japanese)
 		if (alphabetNr == 26) {
-			warning("SCI0: Found SCI01 vocabulary in disguise");
+			if (g_sci->getLanguage() != Common::HE_ISR)
+				warning("SCI0: Found SCI01 vocabulary in disguise");
 			resourceType = kVocabularySCI1;
 		}
 	}
@@ -250,8 +251,32 @@ bool Vocabulary::loadSuffixes() {
 
 		_parserSuffixes.push_back(suffix);
 	}
+	appendSuffixes();
 
 	return true;
+}
+
+void Vocabulary::appendSuffixes() {
+	if (g_sci->getLanguage() == Common::HE_ISR) {
+		for (int i = 0; i < 2; i++) {
+			int cls;
+			if (i == 0)
+				cls = VOCAB_CLASS_PREPOSITION << 4;
+			else
+				cls = VOCAB_CLASS_NOUN << 4;
+
+			suffix_t suffixes[] = {
+				{cls, cls, 1, 0, "\xea", ""},					// get rid of Kaf Sofit
+				{cls, cls, 2, 0, "\xe9\xed", ""},				// get rid of Yud, Mem Sofit
+				{cls, cls, 2, 0, "\xe5\xfa", ""},				// get rid of Vav, Taf
+				{cls, cls, 3, 2, "\xe9\xe5\xfa", "\xe9\xfa"},	// Yud, Vav, Taf -> Yud, Taf
+				{cls, cls, 3, 2, "\xe0\xe5\xfa", "\xe0\xe4"}	// Alef, Vav, Taf -> Alef, He
+			};
+
+			for (int j = 0; j < ARRAYSIZE(suffixes); j++)
+				_parserSuffixes.push_back(suffixes[j]);
+		}
+	}
 }
 
 void Vocabulary::freeSuffixes() {
@@ -482,6 +507,44 @@ void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_l
 	}
 }
 
+void Vocabulary::lookupWordPrefix(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len) {
+	// currently, this is needed only for Hebrew translation
+	if (g_sci->getLanguage() != Common::HE_ISR)
+		return;
+
+	if (--word_len <= 0)
+		return;
+
+	PrefixMeaning prefixes[] = {
+		{0xe1, "1hebrew1prefix1bet"},           // "Bet"
+		{0xe4, "the"},                          // "He Hayedia"
+		{0xec, "1hebrew1prefix1lamed"},         // "Lamed"
+		{0xee, "1hebrew1prefix1mem"}            // "Mem"
+	};
+
+	for (int i = 0; i < ARRAYSIZE(prefixes); i++)
+		if (lookupSpecificPrefix(parent_retval, retval, word, word_len, prefixes[i].prefix, prefixes[i].meaning))
+			return;
+}
+
+bool Vocabulary::lookupSpecificPrefix(ResultWordListList &parent_retval, ResultWordList &retval, const char *word, int word_len, unsigned char prefix, const char *meaning) {
+	if (!_parserWords.contains(meaning)) {
+		warning("Vocabulary::lookupSpecificPrefix: _parserWords doesn't contains '%s'", meaning);
+		return false;
+	}
+	if ((unsigned char)word[0] == prefix) {
+		ResultWordList word_list;
+		lookupWord(word_list, word + 1, word_len);
+		if (!word_list.empty())
+			if (word_list.front()._class == VOCAB_CLASS_NOUN << 4 || word_list.front()._class == VOCAB_CLASS_PREPOSITION << 4) {
+				parent_retval.push_back(_parserWords[meaning]);
+				retval = word_list;
+				return true;
+			}
+	}
+	return false;
+}
+
 void Vocabulary::debugDecipherSaidBlock(const SciSpan<const byte> &data) {
 	bool first = true;
 	uint16 nextItem;
@@ -585,10 +648,14 @@ bool Vocabulary::tokenizeString(ResultWordListList &retval, const char *sentence
 				lookupWord(lookup_result, currentWord, wordLen);
 
 				if (lookup_result.empty()) { // Not found?
-					*error = (char *)calloc(wordLen + 1, 1);
-					strncpy(*error, currentWord, wordLen); // Set the offending word
-					retval.clear();
-					return false; // And return with error
+					lookupWordPrefix(retval, lookup_result, currentWord, wordLen);
+
+					if (lookup_result.empty()) { // Still not found?
+						*error = (char *)calloc(wordLen + 1, 1);
+						strncpy(*error, currentWord, wordLen); // Set the offending word
+						retval.clear();
+						return false; // And return with error
+					}
 				}
 
 				// Copy into list

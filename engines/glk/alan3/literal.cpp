@@ -56,7 +56,7 @@ void createStringLiteral(char *unquotedString) {
 	litCount++;
 	literals[litCount]._class = header->stringClassId;
 	literals[litCount].type = STRING_LITERAL;
-	literals[litCount].value = toAptr(strdup(unquotedString));
+	literals[litCount].value = toAptr(scumm_strdup(unquotedString));
 }
 
 /*----------------------------------------------------------------------*/

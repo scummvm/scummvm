@@ -90,13 +90,13 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), 0, kAboutCmd);
 
 	if (g_system->getOverlayWidth() > 320)
-		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _("~R~eturn to Launcher"), 0, kRTLCmd);
+		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _("~R~eturn to Launcher"), 0, kLauncherCmd);
 	else
-		_rtlButton = new GUI::ButtonWidget(this, "GlobalMenu.RTL", _c("~R~eturn to Launcher", "lowres"), 0, kRTLCmd);
-	_rtlButton->setEnabled(_engine->hasFeature(Engine::kSupportsRTL));
+		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _c("~R~eturn to Launcher", "lowres"), 0, kLauncherCmd);
+	_returnToLauncherButton->setEnabled(_engine->hasFeature(Engine::kSupportsReturnToLauncher));
 
-
-	new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
+		new GUI::ButtonWidget(this, "GlobalMenu.Quit", _("~Q~uit"), 0, kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
@@ -136,10 +136,10 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		dialog.runModal();
 		}
 		break;
-	case kRTLCmd: {
-		Common::Event eventRTL;
-		eventRTL.type = Common::EVENT_RTL;
-		g_system->getEventManager()->pushEvent(eventRTL);
+	case kLauncherCmd: {
+		Common::Event eventReturnToLauncher;
+		eventReturnToLauncher.type = Common::EVENT_RETURN_TO_LAUNCHER;
+		g_system->getEventManager()->pushEvent(eventReturnToLauncher);
 		close();
 		}
 		break;
@@ -166,9 +166,9 @@ void MainMenuDialog::reflowLayout() {
 	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual
 	// and to reimplement it in GUI::ButtonWidget to handle the hotkey.
 	if (g_system->getOverlayWidth() > 320)
-		_rtlButton->setLabel(_rtlButton->cleanupHotkey(_("~R~eturn to Launcher")));
+		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_("~R~eturn to Launcher")));
 	else
-		_rtlButton->setLabel(_rtlButton->cleanupHotkey(_c("~R~eturn to Launcher", "lowres")));
+		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_c("~R~eturn to Launcher", "lowres")));
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
@@ -328,6 +328,15 @@ ConfigDialog::ConfigDialog() :
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalConfig_KeyMapper");
 		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
+	}
+
+	//
+	// The Achievements tab
+	//
+	Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(gameDomain);
+	if (achievementsInfo.descriptions.size() > 0) {
+		tab->addTab(_("Achievements"), "GlobalConfig_Achievements");
+		addAchievementsControls(tab, "GlobalConfig_Achievements.", achievementsInfo);
 	}
 
 	// Activate the first tab

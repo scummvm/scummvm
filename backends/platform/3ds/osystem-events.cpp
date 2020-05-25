@@ -208,7 +208,7 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 		case APTHOOK_ONSUSPEND:
 		case APTHOOK_ONSLEEP:
 			if (g_engine) {
-				g_engine->pauseEngine(true);
+				osys->_sleepPauseToken = g_engine->pauseEngine();
 			}
 			osys->sleeping = true;
 			if (R_SUCCEEDED(gspLcdInit())) {
@@ -219,7 +219,7 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 		case APTHOOK_ONRESTORE:
 		case APTHOOK_ONWAKEUP:
 			if (g_engine) {
-				g_engine->pauseEngine(false);
+				osys->_sleepPauseToken.clear();
 			}
 			osys->sleeping = false;
 			loadConfig();
@@ -341,7 +341,7 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 	aptMainLoop(); // Call apt hook when necessary
 
 	// If magnify mode is on when returning to Launcher, turn it off
-	if (_eventManager->shouldRTL()) {
+	if (_eventManager->shouldReturnToLauncher()) {
 		if (_magnifyMode == MODE_MAGON) {
 			_magnifyMode = MODE_MAGOFF;
 			updateSize();
@@ -442,13 +442,14 @@ void OSystem_3DS::runOptionsDialog() {
 
 	optionsDialogRunning = true;
 
+	PauseToken pauseToken;
 	OptionsDialog dialog;
 	if (g_engine) {
-		g_engine->pauseEngine(true);
+		pauseToken = g_engine->pauseEngine();
 	}
 	int result = dialog.runModal();
 	if (g_engine) {
-		g_engine->pauseEngine(false);
+		pauseToken.clear();
 	}
 
 	if (result > 0) {

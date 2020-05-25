@@ -26,8 +26,6 @@
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
@@ -36,7 +34,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget)
 
 TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0),
 		_tx(0), _ty(0), _currentStart(0), _currentEnd(0), _targetWidth(0), _targetHeight(0),
@@ -46,7 +44,7 @@ TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0
 TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont_, int font,
                        int w, int h, Font::TextAlign align) :
 	Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
-	_blendColour(0), _currentStart(0), _currentEnd(0),
+	_blendColour(0), _currentStart(0), _currentEnd(0), _tx(0), _ty(0),
 	_targetWidth(w), _targetHeight(h), _cachedText(nullptr), _textAlign(align) {
 }
 
@@ -195,10 +193,10 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 	else
 		_cachedText->drawBlended(surf, x, y, _blendColour, true);
 
-	if (_parent->IsOfType<BarkGump>())
+	if (dynamic_cast<BarkGump *>(_parent))
 		return;
 
-	if (_parent->IsOfType<ButtonWidget>() && _parent->GetParent()->IsOfType<AskGump>())
+	if (dynamic_cast<ButtonWidget *>(_parent) && dynamic_cast<AskGump *>(_parent->GetParent()))
 		return;
 
 	x = _dims.x;
@@ -209,42 +207,42 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
-Gump *TextWidget::OnMouseMotion(int32 mx, int32 my) {
+Gump *TextWidget::onMouseMotion(int32 mx, int32 my) {
 	return nullptr;
 }
 
 
-void TextWidget::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void TextWidget::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 
-	ods->writeByte(_gameFont ? 1 : 0);
-	ods->writeUint32LE(static_cast<uint32>(_fontNum));
-	ods->writeUint32LE(_blendColour);
-	ods->writeUint32LE(static_cast<uint32>(_currentStart));
-	ods->writeUint32LE(static_cast<uint32>(_currentEnd));
-	ods->writeUint32LE(static_cast<uint32>(_targetWidth));
-	ods->writeUint32LE(static_cast<uint32>(_targetHeight));
-	ods->writeUint16LE(static_cast<uint16>(_textAlign));
-	ods->writeUint32LE(_text.size());
-	ods->write(_text.c_str(), _text.size());
+	ws->writeByte(_gameFont ? 1 : 0);
+	ws->writeUint32LE(static_cast<uint32>(_fontNum));
+	ws->writeUint32LE(_blendColour);
+	ws->writeUint32LE(static_cast<uint32>(_currentStart));
+	ws->writeUint32LE(static_cast<uint32>(_currentEnd));
+	ws->writeUint32LE(static_cast<uint32>(_targetWidth));
+	ws->writeUint32LE(static_cast<uint32>(_targetHeight));
+	ws->writeUint16LE(static_cast<uint16>(_textAlign));
+	ws->writeUint32LE(_text.size());
+	ws->write(_text.c_str(), _text.size());
 }
 
-bool TextWidget::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool TextWidget::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
-	_gameFont = (ids->readByte() != 0);
-	_fontNum = static_cast<int>(ids->readUint32LE());
-	_blendColour = ids->readUint32LE();
-	_currentStart = static_cast<int>(ids->readUint32LE());
-	_currentEnd = static_cast<int>(ids->readUint32LE());
-	_targetWidth = static_cast<int>(ids->readUint32LE());
-	_targetHeight = static_cast<int>(ids->readUint32LE());
-	_textAlign = static_cast<Font::TextAlign>(ids->readUint16LE());
+	_gameFont = (rs->readByte() != 0);
+	_fontNum = static_cast<int>(rs->readUint32LE());
+	_blendColour = rs->readUint32LE();
+	_currentStart = static_cast<int>(rs->readUint32LE());
+	_currentEnd = static_cast<int>(rs->readUint32LE());
+	_targetWidth = static_cast<int>(rs->readUint32LE());
+	_targetHeight = static_cast<int>(rs->readUint32LE());
+	_textAlign = static_cast<Font::TextAlign>(rs->readUint16LE());
 
-	uint32 slen = ids->readUint32LE();
+	uint32 slen = rs->readUint32LE();
 	if (slen > 0) {
 		char *buf = new char[slen + 1];
-		ids->read(buf, slen);
+		rs->read(buf, slen);
 		buf[slen] = 0;
 		_text = buf;
 		delete[] buf;

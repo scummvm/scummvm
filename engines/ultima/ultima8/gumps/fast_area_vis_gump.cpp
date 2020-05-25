@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(FastAreaVisGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(FastAreaVisGump)
 
 FastAreaVisGump::FastAreaVisGump(void) : Gump(0, 0, MAP_NUM_CHUNKS + 2, MAP_NUM_CHUNKS + 2, 0, FLAG_DRAGGABLE | FLAG_DONT_SAVE, LAYER_NORMAL) {
 }

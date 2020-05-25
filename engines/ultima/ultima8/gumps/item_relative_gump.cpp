@@ -27,13 +27,11 @@
 #include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ItemRelativeGump, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ItemRelativeGump)
 
 ItemRelativeGump::ItemRelativeGump() : Gump(), _ix(0), _iy(0) {
 }
@@ -123,7 +121,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	}
 
 	Item *next;
-	Item *prev;
+	Item *prev = nullptr;
 	while ((next = it->getParentAsContainer()) != nullptr) {
 		prev = it;
 		it = next;
@@ -134,7 +132,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	int32 gx, gy;
 
 	if (!gump) {
-		gump = GetRootGump()->FindGump(GameMapGump::ClassType);
+		gump = GetRootGump()->FindGump<GameMapGump>();
 
 		if (!gump) {
 			perr << "ItemRelativeGump::GetItemLocation(): "
@@ -144,6 +142,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 
 		gump->GetLocationOfItem(_owner, gx, gy, lerp_factor);
 	} else {
+		assert(prev);
 		gump->GetLocationOfItem(prev->getObjId(), gx, gy, lerp_factor);
 	}
 
@@ -171,12 +170,12 @@ void ItemRelativeGump::Move(int32 x, int32 y) {
 	_y += y;
 }
 
-void ItemRelativeGump::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void ItemRelativeGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
-bool ItemRelativeGump::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool ItemRelativeGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
 	return true;
 }

@@ -77,6 +77,19 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 	_sceneUpdateFunction = nullptr;
 	_vsyncUpdateFunction = nullptr;
 
+	_dragonOBD = nullptr;
+	_dragonImg = nullptr;
+	_actorManager = nullptr;
+	_dragonINIResource = nullptr;
+	_scene = nullptr;
+	_sound = nullptr;
+	_isLoadingDialogAudio = false;
+	_sceneId1 = 0;
+	_dragonFLG = nullptr;
+	_dragonVAR = nullptr;
+	_flickerIdleCounter = 0;
+	_loadingScreenState = nullptr;
+
 	_leftMouseButtonUp = false;
 	_leftMouseButtonDown = false;
 	_rightMouseButtonUp = false;
@@ -107,6 +120,7 @@ DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Eng
 DragonsEngine::~DragonsEngine() {
 	delete _sequenceOpcodes;
 	delete _scriptOpcodes;
+	delete _cursor;
 }
 
 void DragonsEngine::updateEvents() {
@@ -271,8 +285,6 @@ uint16 DragonsEngine::ipt_img_file_related() {
 
 void DragonsEngine::gameLoop() {
 	uint16 prevImgIniId = 0;
-	InventoryState uVar6;
-	InventoryState uVar7;
 	uint16 sequenceId;
 
 	_cursor->_cursorActivationSeqOffset = 0;
@@ -477,9 +489,9 @@ void DragonsEngine::gameLoop() {
 				}
 			}
 			if (_inventory->getState() == InventionBookOpen) {
-				uVar6 = _inventory->getState();
+				InventoryState uVar6 = _inventory->getState();
 				if (checkForInventoryButtonRelease() && isInputEnabled()) {
-					uVar7 = _inventory->_previousState;
+					InventoryState uVar7 = _inventory->_previousState;
 					if (_dragonVAR->getVar(7) == 1) {
 						_inventory->_previousState = uVar7;
 						_inventory->inventoryMissing();
@@ -519,7 +531,7 @@ void DragonsEngine::gameLoop() {
 			_inventory->setPreviousState();
 			continue;
 		}
-		uVar6 = _inventory->getState();
+		InventoryState uVar6 = _inventory->getState();
 		if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
 			_flickerIdleCounter = 0;
 			if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
@@ -642,7 +654,9 @@ void DragonsEngine::updateHandler() {
 
 	// 0x8001b200
 	if (isFlagSet(ENGINE_FLAG_8000) && !_sound->isSpeechPlaying()) {
+		//dialog finished playing.
 		clearFlags(ENGINE_FLAG_8000);
+		_sound->resumeMusic();
 	}
 
 	//TODO logic here
@@ -1204,7 +1218,7 @@ bool DragonsEngine::canSaveGameStateCurrently() {
 
 bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
 	return
-		// TODO (f == kSupportsRTL) ||
+		// TODO (f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }
@@ -1385,8 +1399,8 @@ void DragonsEngine::updatePaletteCycling() {
 			if (_paletteCyclingTbl[loopIndex].updateInterval != 0) {
 				if (_paletteCyclingTbl[loopIndex].updateCounter == 0) {
 					uint16 *palette = (uint16 *)_screen->getPalette(_paletteCyclingTbl[loopIndex].paletteType);
-					int16 uVar14 = (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset;
-					int16 uVar8 = (uint)(uint16)_paletteCyclingTbl[loopIndex].endOffset;
+					int16 uVar14 = _paletteCyclingTbl[loopIndex].startOffset;
+					int16 uVar8 = _paletteCyclingTbl[loopIndex].endOffset;
 					if (uVar14 < uVar8) {
 						uint16 uVar11 = palette[uVar8];
 						int uVar15 = uVar8;
@@ -1395,7 +1409,7 @@ void DragonsEngine::updatePaletteCycling() {
 								uVar8--;
 								palette[uVar15] = palette[uVar15 - 1];
 								uVar15 = uVar8 & 0xffff;
-							} while ((uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
+							} while (_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
 						}
 						palette[(uint16)_paletteCyclingTbl[loopIndex].startOffset] = uVar11;
 						_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateInterval;
@@ -1408,7 +1422,7 @@ void DragonsEngine::updatePaletteCycling() {
 									uVar8--;
 									palette[uVar15] = palette[uVar15 + 1];
 									uVar15 = uVar8 & 0xffff;
-								} while ((uVar8 & 0xffff) < (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset);
+								} while ((uVar8 & 0xffff) < _paletteCyclingTbl[loopIndex].startOffset);
 							}
 							palette[(uint16)_paletteCyclingTbl[loopIndex].endOffset] = uVar11;
 							_paletteCyclingTbl[loopIndex].updateCounter =

@@ -36,7 +36,7 @@ namespace Sludge {
 
 const char *typeName[] = { "undefined", "number", "user function", "string",
 		"built-in function", "file", "stack", "object type", "animation",
-		"costume" };
+		"costume", "fast array" };
 
 void Variable::unlinkVar() {
 	switch (varType) {
@@ -684,7 +684,7 @@ bool Variable::save(Common::WriteStream *stream) {
 			return false;
 
 		default:
-			fatal("Can't save variables of this type:", (varType < SVT_NUM_TYPES) ? typeName[varType] : "bad ID");
+			fatal("Can't save variables of this type:", (varType < SVT_NUM_TYPES - 1) ? typeName[varType] : "bad ID");
 	}
 	return true;
 }

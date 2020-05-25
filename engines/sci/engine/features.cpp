@@ -711,16 +711,21 @@ bool GameFeatures::generalMidiOnly() {
 #ifdef ENABLE_SCI32
 	switch (g_sci->getGameId()) {
 	case GID_MOTHERGOOSEHIRES:
-		return true;
+		return (g_sci->getPlatform() != Common::kPlatformMacintosh);
+
 	case GID_KQ7: {
 		if (g_sci->isDemo()) {
 			return false;
 		}
 
 		SoundResource sound(13, g_sci->getResMan(), detectDoSoundType());
-		return (sound.getTrackByType(/* AdLib */ 0) == nullptr);
+		return (sound.exists() && sound.getTrackByType(/* AdLib */ 0) == nullptr);
 	}
 	default:
+		 if (g_sci->getPlatform() == Common::kPlatformMacintosh && 
+			 getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+			 return true;
+		 }
 		break;
 	}
 #endif

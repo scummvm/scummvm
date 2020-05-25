@@ -1413,7 +1413,7 @@ int LoLEngine::olol_playEndSequence(EMCState *script) {
 	_screen->getPalette(1).clear();
 
 	showOutro(c, (_monsterDifficulty == 2));
-	// Don't call quitGame() on a RTL request (because this would
+	// Don't call quitGame() on a return to launcher request (because this would
 	// make the next game launched from the launcher quit instantly.
 	if (!shouldQuit())
 		quitGame();

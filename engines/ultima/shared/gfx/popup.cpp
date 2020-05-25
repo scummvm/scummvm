@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(Popup, VisualItem)
 	ON_MESSAGE(ShowMsg)
 END_MESSAGE_MAP()
 
-Popup::Popup(GameBase *game) : VisualItem(nullptr), _game(game), _respondTo(nullptr) {
+Popup::Popup(GameBase *game) : VisualItem(nullptr), _game(game), _respondTo(nullptr), _parentView(nullptr) {
 	game->addChild(this);
 }
 

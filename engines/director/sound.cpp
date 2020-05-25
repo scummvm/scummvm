@@ -61,6 +61,9 @@ DirectorSound::~DirectorSound() {
 }
 
 void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
+	if (debugChannelSet(-1, kDebugFast))
+		return;
+
 	Common::File *file = new Common::File();
 
 	if (!file->open(filename)) {

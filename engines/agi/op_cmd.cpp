@@ -750,20 +750,17 @@ void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		state->_vm->_sound->stopSound();
 	}
 
-	vm->inGameTimerPause();
+	PauseToken pt = vm->pauseEngine();
 
 	if (state->automaticSave) {
 		if (vm->saveGameAutomatic()) {
 			// automatic save succeded
-			vm->inGameTimerResume();
 			return;
 		}
 		// fall back to regular dialog otherwise
 	}
 
 	vm->saveGameDialog();
-
-	vm->inGameTimerResume();
 }
 
 void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
@@ -772,20 +769,17 @@ void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		state->_vm->_sound->stopSound();
 	}
 
-	vm->inGameTimerPause();
+	PauseToken pt = vm->pauseEngine();
 
 	if (state->automaticSave) {
 		if (vm->loadGameAutomatic()) {
 			// automatic restore succeded
-			vm->inGameTimerResume();
 			return;
 		}
 		// fall back to regular dialog otherwise
 	}
 
 	vm->loadGameDialog();
-
-	vm->inGameTimerResume();
 }
 
 void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             // do nothing
@@ -1746,11 +1740,9 @@ void cmdSetGameID(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 void cmdPause(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// Show pause message box
-	vm->inGameTimerPause();
+	PauseToken pt = vm->pauseEngine();
 
 	state->_vm->_systemUI->pauseDialog();
-
-	vm->inGameTimerResume();
 }
 
 void cmdSetMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {

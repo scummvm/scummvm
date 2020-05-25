@@ -39,16 +39,14 @@
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(MessageBoxGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(MessageBoxGump)
 
 MessageBoxGump::MessageBoxGump()
-	: ModalGump() {
+	: ModalGump(), _titleColour(0) {
 
 }
 
@@ -153,7 +151,8 @@ void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*sc
 }
 
 void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {
-	if (child->IsOfType<ButtonWidget>() && msg == ButtonWidget::BUTTON_CLICK) {
+	ButtonWidget *buttonWidget = dynamic_cast<ButtonWidget *>(child);
+	if (buttonWidget && msg == ButtonWidget::BUTTON_CLICK) {
 		_processResult = child->GetIndex();
 		Close();
 	}
@@ -167,11 +166,11 @@ ProcId MessageBoxGump::Show(Std::string _title, Std::string _message, uint32 tit
 	return gump->GetNotifyProcess()->getPid();
 }
 
-void MessageBoxGump::saveData(ODataSource *ods) {
+void MessageBoxGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 }
 
-bool MessageBoxGump::loadData(IDataSource *ids, uint32 version) {
+bool MessageBoxGump::loadData(Common::ReadStream *rs, uint32 version) {
 	CANT_HAPPEN_MSG("Trying to load ModalGump");
 
 	return false;

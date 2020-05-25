@@ -215,7 +215,7 @@ void Window::init() {
 	_gfxIndent = g_hdb->_gfx->loadPic(MENU_DELIVERY_INDENTATION);
 	_gfxArrowTo = g_hdb->_gfx->loadPic(MENU_ARROW_DELIVERTO);
 
-	_gfxTry = _gfxAgain = NULL; // They will be loaded when needed
+	_gfxTry = _gfxAgain = nullptr; // They will be loaded when needed
 
 	_gfxInvSelect = g_hdb->_gfx->loadPic(INVENTORY_NORMAL);
 	_gfxHandright = g_hdb->_gfx->loadPic(MENU_HAND_POINTRIGHT);
@@ -251,7 +251,7 @@ void Window::init() {
 		_dlvsInfo.y = 272;
 	}
 
-	_gemGfx = NULL;
+	_gemGfx = nullptr;
 
 	restartSystem();
 }
@@ -268,11 +268,11 @@ void Window::save(Common::OutSaveFile *out) {
 	memcpy(&_tempPzInfo, &_pzInfo, sizeof(_pzInfo));
 
 	for (i = 0; i < 10; i++) {
-		_tempPzInfo.gfxNumber[i] = NULL;
+		_tempPzInfo.gfxNumber[i] = nullptr;
 		if (i < 2)
-			_tempPzInfo.gfxFace[i] = NULL;
+			_tempPzInfo.gfxFace[i] = nullptr;
 	}
-	_tempPzInfo.gfxPanic = _tempPzInfo.gfxZone = NULL;
+	_tempPzInfo.gfxPanic = _tempPzInfo.gfxZone = nullptr;
 
 	out->writeByte(_tempPzInfo.active);
 	out->writeSint32LE(_tempPzInfo.sequence);
@@ -401,11 +401,11 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 
 	// Load Panic Zone Info
 	for (i = 0; i < 10; i++) {
-		_pzInfo.gfxNumber[i] = NULL;
+		_pzInfo.gfxNumber[i] = nullptr;
 		if (i < 2)
-			_pzInfo.gfxFace[i] = NULL;
+			_pzInfo.gfxFace[i] = nullptr;
 	}
-	_pzInfo.gfxPanic = _pzInfo.gfxZone = NULL;
+	_pzInfo.gfxPanic = _pzInfo.gfxZone = nullptr;
 
 	_pzInfo.active = in->readByte();
 	_pzInfo.sequence = in->readSint32LE();
@@ -582,6 +582,9 @@ void Window::chooseWeapon(AIType wType) {
 	static AIType lastWeaponSelected = AI_NONE;
 	int	slot = g_hdb->_ai->queryInventoryTypeSlot(wType);
 
+	if (slot == -1)
+		return;
+
 	g_hdb->_sound->playSound(SND_MENU_SLIDER);
 
 	if (!g_hdb->getActionMode())
@@ -621,18 +624,16 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 	if (_dialogInfo.active)
 		return;
 
-	_dialogInfo.gfx = NULL;
+	_dialogInfo.gfx = nullptr;
 	_dialogInfo.el = _dialogInfo.er = _dialogInfo.et = _dialogInfo.eb = 0;
 	_dialogInfo.luaMore[0] = 0;
 
 	_dialogInfo.tileIndex = tileIndex;
-	strcpy(_dialogInfo.title, title);
+	Common::strlcpy(_dialogInfo.title, title, 128);
 	_dialogInfo.active = true;
 
-	if (strlen(string) > sizeof(_dialogInfo.string))
-		strncpy(_dialogInfo.string, string, sizeof(_dialogInfo.string) - 1);
-	else
-		strcpy(_dialogInfo.string, string);
+	// This could need to be truncated
+	Common::strlcpy(_dialogInfo.string, string, 128);
 
 	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
@@ -662,7 +663,7 @@ void Window::openDialog(const char *title, int tileIndex, const char *string, in
 
 	_dialogInfo.more = more;
 	if (luaMore)
-		strcpy(_dialogInfo.luaMore, luaMore);
+		Common::strlcpy(_dialogInfo.luaMore, luaMore, 64);
 	g_hdb->_sound->playSound(SND_MOVE_SELECTION);
 }
 
@@ -849,13 +850,13 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 	for (int i = 0; i < 10; i++)
 		_dialogChoiceInfo.choices[i][0] = 0;
 
-	strcpy(_dialogChoiceInfo.title, title);
-	strcpy(_dialogChoiceInfo.text, text);
-	strcpy(_dialogChoiceInfo.func, func);
+	Common::strlcpy(_dialogChoiceInfo.title, title, 64);
+	Common::strlcpy(_dialogChoiceInfo.text, text, 160);
+	Common::strlcpy(_dialogChoiceInfo.func, func, 64);
 	_dialogChoiceInfo.numChoices = numChoices;
 
 	for (int i = 0; i < numChoices; i++)
-		strcpy(_dialogChoiceInfo.choices[i], choices[i]);
+		Common::strlcpy(_dialogChoiceInfo.choices[i], choices[i], 64);
 	_dialogChoiceInfo.active = true;
 
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
@@ -989,7 +990,7 @@ void Window::openMessageBar(const char *title, int time) {
 			for (i = 0; i < _numMsgQueue; i++)
 				if (!scumm_stricmp(_msgQueueStr[i], title))
 					return;
-			strcpy(_msgQueueStr[_numMsgQueue], title);
+			Common::strlcpy(_msgQueueStr[_numMsgQueue], title, 128);
 			_msgQueueWait[_numMsgQueue] = time;
 			_numMsgQueue++;
 		}
@@ -998,7 +999,7 @@ void Window::openMessageBar(const char *title, int time) {
 
 	_msgInfo.y = 0;
 	_msgInfo.timer = (time * kGameFPS);
-	strcpy(_msgInfo.title, title);
+	Common::strlcpy(_msgInfo.title, title, 128);
 
 	int	e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
@@ -1058,7 +1059,7 @@ void Window::nextMsgQueued() {
 		return;
 	}
 
-	strcpy(_msgInfo.title, _msgQueueStr[0]);
+	Common::strlcpy(_msgInfo.title, _msgQueueStr[0], 128);
 	_msgInfo.timer = (_msgQueueWait[0] * kGameFPS);
 
 	int e1, e2, e3, e4;
@@ -1075,7 +1076,7 @@ void Window::nextMsgQueued() {
 	_msgInfo.y = (g_hdb->_screenHeight >> 2) - (_msgInfo.height >> 1);
 
 	for (int xx = 0; xx < _numMsgQueue - 1; xx++) {
-		strcpy(_msgQueueStr[xx], _msgQueueStr[xx + 1]);
+		Common::strlcpy(_msgQueueStr[xx], _msgQueueStr[xx + 1], 128);
 		_msgQueueWait[xx] = _msgQueueWait[xx + 1];
 	}
 
@@ -1119,7 +1120,7 @@ void Window::drawInventory() {
 		int drawY = _invWinInfo.y + 16;
 
 		// Draw Inv Items
-		AIEntity *sel = NULL;
+		AIEntity *sel = nullptr;
 		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
 			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
 
@@ -1184,7 +1185,7 @@ void Window::drawInventory() {
 		int drawY = _invWinInfo.y;
 
 		// Draw Inv Items
-		AIEntity *sel = NULL;
+		AIEntity *sel = nullptr;
 		if (_invWinInfo.selection >= g_hdb->_ai->getInvAmount())
 			_invWinInfo.selection = g_hdb->_ai->getInvAmount() - 1;
 
@@ -1732,7 +1733,7 @@ void Window::drawTryAgain() {
 	if (!g_hdb->_ai->playerDead())
 		return;
 
-	if (NULL == _gfxTry) {
+	if (nullptr == _gfxTry) {
 		_gfxTry = g_hdb->_gfx->loadPic(GAME_TRY);
 		_gfxAgain = g_hdb->_gfx->loadPic(GAME_AGAIN);
 		_gfxLevelRestart = g_hdb->_gfx->loadPic(GAME_TA_LEVELRESTART);
@@ -1755,7 +1756,7 @@ void Window::clearTryAgain() {
 	delete _gfxAgain;
 	delete _gfxLevelRestart;
 
-	_gfxTry = _gfxAgain = _gfxLevelRestart = NULL;
+	_gfxTry = _gfxAgain = _gfxLevelRestart = nullptr;
 }
 
 void Window::loadPanicZoneGfx() {
@@ -1890,7 +1891,7 @@ void Window::textOut(const char *text, int x, int y, int timer) {
 
 	t->x = x;
 	t->y = y;
-	strcpy(t->text, text);
+	Common::strlcpy(t->text, text, 128);
 	t->timer = g_system->getMillis() + (uint32)(timer << 4);
 
 	if (x < 0) {

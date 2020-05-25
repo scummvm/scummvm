@@ -24,7 +24,7 @@
 #include <pspthreadman.h>
 
 #include "backends/platform/psp/powerman.h"
-#include "engine.h"
+#include "engines/engine.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* can put this locally too */
 //#define __PSP_DEBUG_PRINT__
@@ -121,12 +121,12 @@ void PowerManager::pollPauseEngine() {
 		if (g_engine) { // Check to see if we have an engine
 			if (pause && _pauseClientState == UNPAUSED) {
 				_pauseClientState = PAUSING;		// Tell PM we're in the middle of pausing
-				g_engine->pauseEngine(true);
 				PSP_DEBUG_PRINT_FUNC("Pausing engine\n");
+				_pauseToken = g_engine->pauseEngine();
 				_pauseClientState = PAUSED;			// Tell PM we're done pausing
 			} else if (!pause && _pauseClientState == PAUSED) {
-				g_engine->pauseEngine(false);
 				PSP_DEBUG_PRINT_FUNC("Unpausing for resume\n");
+				_pauseToken.clear();
 				_pauseClientState = UNPAUSED;		// Tell PM we're unpaused
 			}
 		}

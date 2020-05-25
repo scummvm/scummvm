@@ -34,7 +34,7 @@ DungeonWidget::DungeonWidget(Ultima1Game *game, Maps::MapBase *map, DungeonWidge
 		const Point &pt) : Shared::Maps::DungeonWidget(game, map, pt), _widgetId(widgetId) {
 }
 
-DungeonWidget::DungeonWidget(Ultima1Game *game, Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map) {
+DungeonWidget::DungeonWidget(Ultima1Game *game, Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map), _widgetId(MONSTER_NONE) {
 }
 
 Ultima1Game *DungeonWidget::getGame() const {

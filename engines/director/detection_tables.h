@@ -48,7 +48,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 		4
 	},
 
-	// Executa all movies in directory
+	// Execute all movies in directory
 	{
 		{
 			"directortest-all",
@@ -78,6 +78,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME("gundam0079", "", "Gundam0079.exe", "1a7acbba10a7246ba58c1d53fc7203f5", -1, 5),
 	MACGAME("gundam0079", "", "Gundam0079", "4c38a51a21a1ad231f218c4786ff771d", -1, 5),
+
+	MACGAME("ironhelix", "", "Iron Helix Minimum", "1ae45c23586b41997ba52e2e7c771c4c", 1652052, 3),
 
 	WINGAME("jewels", "", "JEWELS.EXE", "bb6d81471d166088260090472c6c3a87", -1, 4),
 	WINGAME("jewels", "", "Jewels.exe", "c1a2e8b7e41fa204009324a9c7db1030", -1, 7),
@@ -110,7 +112,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME("jman", "Turbo!", "JMP Turbo\xE2\x84\xA2", "cc3321069072b90f091f220bba16e4d4", -1, 4), // Trademark symbol (UTF-8)
 
-	WINGAME("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", -1, 4),
+	WINGAME("majestic", "", "MAJESTIC.EXE", "624267f70253e5327981003a6fc0aeba", 23437631, 4),
+
+	MACGAME("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483774, 4),
 
 	// Meet Mediaband
 	WINGAME("mediaband", "", "MEDIABND.EXE", "0cfb9b4762e33ab56d656a0eb146a048", 717921, 4),

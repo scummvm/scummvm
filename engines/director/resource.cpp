@@ -112,6 +112,8 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 			error("Unhandled Windows EXE version %d", getVersion());
 		}
 	}
+
+	_mainArchive->setFileName(movie);
 }
 
 void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
@@ -179,6 +181,9 @@ void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 	stream->readUint32LE(); // graphics DLL offset
 	stream->readUint32LE(); // sound DLL offset
 	/* uint32 rifxOffsetAlt = */ stream->readUint32LE(); // equivalent to rifxOffset
+	uint32 flags = stream->readUint32LE();
+
+	warning("PJ93 projector flags: %08x", flags);
 
 	loadEXERIFX(stream, rifxOffset);
 }
@@ -190,14 +195,17 @@ void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 		error("Invalid projector tag found in v5 EXE [%s]", tag2str(ver));
 
 	uint32 rifxOffset = stream->readUint32LE();
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	/* uint16 screenWidth = */ stream->readUint16LE();
-	/* uint16 screenHeight = */ stream->readUint16LE();
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	/* uint32 fontMapOffset = */ stream->readUint32LE();
+	uint32 pflags = stream->readUint32LE();
+	uint32 flags = stream->readUint32LE();
+	stream->readUint16LE();	// x
+	stream->readUint16LE(); // y
+	stream->readUint16LE(); // screenWidth
+	stream->readUint16LE(); // screenHeight
+	stream->readUint32LE(); // number of components
+	stream->readUint32LE(); // number of driver files
+	stream->readUint32LE(); // fontMapOffset
+
+	warning("PJ95 projector pflags: %08x  flags: %08x", pflags, flags);
 
 	loadEXERIFX(stream, rifxOffset);
 }
@@ -287,6 +295,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 		return;
 	}
+	sharedCast->setFileName(filename);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
@@ -349,7 +358,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		}
 	}
 
-	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C','A','S','t'));
+	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
 	if (!_sharedScore->_loadedCast)
 		_sharedScore->_loadedCast = new Common::HashMap<int, Cast *>();
 
@@ -357,8 +366,10 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		debug(0, "****** Loading %d CASt resources", cast.size());
 
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
+			Common::SeekableSubReadStreamEndian *stream = sharedCast->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = sharedCast->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
-			_sharedScore->loadCastData(*sharedCast->getResource(MKTAG('C', 'A', 'S', 't'), *iterator), *iterator, &res);
+			_sharedScore->loadCastData(*stream, *iterator, &res);
+			delete stream;
 		}
 	}
 
@@ -366,6 +377,17 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_sharedScore->loadSpriteImages(true);
 
 	_lingo->_archiveIndex = 0;
+}
+
+Cast *DirectorEngine::getCastMember(int castId) {
+	Cast *result = nullptr;
+	if (_currentScore) {
+		result = _currentScore->getCastMember(castId);
+	}
+	if (result == nullptr && _sharedScore) {
+		result = _sharedScore->getCastMember(castId);
+	}
+	return result;
 }
 
 } // End of namespace Director

@@ -44,10 +44,10 @@ public:
 	void addEgg(Egg *egg);
 	void addEgg(uint16 egg);
 
-	bool loadData(IDataSource *ids, uint32 version);
-private:
-	void saveData(ODataSource *ods) override;
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
+private:
 	Std::vector<uint16> _eggs;
 };
 

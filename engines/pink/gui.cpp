@@ -132,9 +132,12 @@ static void menuCommandsCallback(int action, Common::U32String &, void *data) {
 }
 
 void PinkEngine::initMenu() {
-	_director->getWndManager().setEnginePauseCallback(this, &pauseEngine);
+	_director->getWndManager().setEngine(this);
 
 	_menu = Graphics::MacMenu::createMenuFromPEexe(_exeResources, &_director->getWndManager());
+	if (getLanguage() == Common::HE_ISR) {
+		_menu->setAlignment(Graphics::kTextAlignRight);
+	}
 	_menu->calcDimensions();
 	_menu->setCommandsCallback(&menuCommandsCallback, this);
 }
@@ -155,8 +158,6 @@ void PinkEngine::executeMenuCommand(uint id) {
 
 	case kSaveAction:
 	case kSaveAsAction:
-		//FIXME: Somehow messes up the pause system causing issues such as
-		//frozen animations and BGM disappearing
 		saveGameDialog();
 		break;
 

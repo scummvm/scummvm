@@ -102,14 +102,7 @@ public:
 	 * Method to access the entire surface of the window (e.g. to draw an image).
 	 * @return A pointer to the entire surface of the window.
 	 */
-	ManagedSurface *getSurface() { return &_surface; }
-
-	/**
-	 * Abstract method for indicating whether the window is active or inactive.
-	 * Used by the WM to handle focus on windows, etc.
-	 * @param active Desired state of the window.
-	 */
-	virtual void setActive(bool active) = 0;
+	ManagedSurface *getWindowSurface() { return &_surface; }
 
 	/**
 	 * Method called to draw the window into the target surface.
@@ -128,8 +121,6 @@ public:
 	 * @return true If the event was successfully consumed and processed.
 	 */
 	virtual bool processEvent(Common::Event &event) = 0;
-
-	virtual bool hasAllFocus() = 0;
 
 	/**
 	 * Set the callback that will be used when an event needs to be processed.
@@ -194,7 +185,7 @@ public:
 	 * of the window, although move() and resize() might be more comfortable.
 	 * @param r The desired dimensions of the window.
 	 */
-	virtual void setDimensions(const Common::Rect &r);
+	virtual void setDimensions(const Common::Rect &r) override;
 
 	/**
 	 * Accessor to retrieve the dimensions of the inner surface of the window
@@ -216,14 +207,17 @@ public:
 	 * @param g See BaseMacWindow.
 	 * @param forceRedraw If true, the borders are guarranteed to redraw.
 	 */
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+
+	virtual bool draw(bool forceRedraw = false) override;
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
 	/**
 	 * Mutator to change the active state of the window.
 	 * Most often called from the WM.
 	 * @param active Target state.
 	 */
-	void setActive(bool active);
+	virtual void setActive(bool active) override;
 	/**
 	 * Accessor to determine whether a window is active.
 	 * @return True if the window is active.
@@ -250,8 +244,8 @@ public:
 	/**
 	 * See BaseMacWindow.
 	 */
-	virtual bool processEvent(Common::Event &event);
-	bool hasAllFocus() { return _beingDragged || _beingResized; }
+	virtual bool processEvent(Common::Event &event) override;
+	virtual bool hasAllFocus() override { return _beingDragged || _beingResized; }
 
 	/**
 	 * Set arbitrary border from a BMP data stream, with custom border offsets.
@@ -294,7 +288,6 @@ protected:
 
 protected:
 	ManagedSurface _borderSurface;
-	ManagedSurface _composeSurface;
 
 	bool _borderIsDirty;
 
@@ -306,7 +299,6 @@ private:
 
 	bool _scrollable;
 	bool _resizable;
-	bool _active;
 
 	bool _closeable;
 

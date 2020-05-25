@@ -1,0 +1,88 @@
+<!-- $Id: maps.dtd 2572 2005-10-03 06:17:52Z andrewtaylor $ -->
+
+<!ENTITY % bool '( true | false )'>
+<!ENTITY % role '( armorvendor | companion | foodvendor | guildvendor | hawkwind | healer | 
+                   horsevendor | innkeeper | lordbritish | reagentsvendor | tavernkeeper |
+                   weaponsvendor )'>
+
+<!ELEMENT maps ( map+ ) >
+
+<!ELEMENT map ( city | compressedchunk | dungeon | moongate | portal | shrine | xml | label )* >
+<!ATTLIST map id                  NMTOKEN  #REQUIRED
+              type                ( city | combat | dungeon | shrine | world | u3world ) #REQUIRED
+              fname               NMTOKEN  #REQUIRED
+              width               NMTOKEN  #REQUIRED
+              height              NMTOKEN  #REQUIRED
+              levels              NMTOKEN  #REQUIRED
+              chunkwidth          NMTOKEN  #IMPLIED
+              chunkheight         NMTOKEN  #IMPLIED
+              offset              NMTOKEN  #IMPLIED
+              borderbehavior      ( exit | fixed | wrap ) #REQUIRED
+              showavatar          %bool;   #IMPLIED
+              nolineofsight       %bool;   #IMPLIED
+              firstperson         %bool;   #IMPLIED
+              contextual          %bool;   #IMPLIED
+              music               NMTOKEN  #REQUIRED
+              tileset             NMTOKEN  #REQUIRED
+              tilemap             NMTOKEN  #REQUIRED>
+
+<!-- city-map specific information -->
+<!ELEMENT city ( personrole* ) >
+<!ATTLIST city name               CDATA    #REQUIRED
+               type               ( castle | towne | village | ruins ) #REQUIRED
+               tlk_fname          NMTOKEN  #REQUIRED>
+
+<!-- special roles for persons in a city: e.g. vendors -->
+<!ELEMENT personrole EMPTY >
+<!ATTLIST personrole role         %role;   #REQUIRED
+                     id           NMTOKEN  #REQUIRED>
+
+<!-- the U5 map implicitly leaves out certain chunks that are all of value 0x01 -->
+<!ELEMENT compressedchunk EMPTY >
+<!ATTLIST compressedchunk index    NMTOKEN  #REQUIRED>
+
+<!-- dungeon-map specific information -->
+<!ELEMENT dungeon EMPTY >
+<!ATTLIST dungeon name            CDATA    #REQUIRED
+                  rooms           NMTOKEN  #REQUIRED>
+
+<!-- shrine-map specific information -->
+<!ELEMENT shrine EMPTY >
+<!ATTLIST shrine mantra           NMTOKEN  #REQUIRED
+                 virtue           NMTOKEN  #REQUIRED>
+
+<!-- moongate definitions -->
+<!ELEMENT moongate EMPTY >
+<!ATTLIST moongate phase          NMTOKEN  #REQUIRED
+                   x              NMTOKEN  #REQUIRED
+                   y              NMTOKEN  #REQUIRED>
+
+<!-- portals to other maps -->
+<!ELEMENT portal ( retroActiveDest? ) >
+<!ATTLIST portal x                NMTOKEN  #REQUIRED
+                 y                NMTOKEN  #REQUIRED
+                 z                NMTOKEN  #IMPLIED
+                 destmapid        NMTOKEN  #REQUIRED
+                 startx           NMTOKEN  #REQUIRED
+                 starty           NMTOKEN  #REQUIRED
+                 startlevel       NMTOKEN  #IMPLIED
+                 action           ( descend | enter | klimb | exit_north | exit_east | exit_south | exit_west ) #REQUIRED
+                 condition        ( shrine | abyss ) #IMPLIED
+                 savelocation     %bool;   #REQUIRED
+                 message          CDATA    #IMPLIED
+                 transport        ( foot | footorhorse ) #REQUIRED
+                 exits            NMTOKEN  #IMPLIED>
+
+<!-- support for portals that don't exit where they are entered -->
+<!ELEMENT retroActiveDest EMPTY >
+<!ATTLIST retroActiveDest x       NMTOKEN  #REQUIRED
+                          y       NMTOKEN  #REQUIRED
+                          z       NMTOKEN  #IMPLIED
+                          mapid   NMTOKEN  #REQUIRED>
+
+<!-- labeled points of interest -->
+<!ELEMENT label EMPTY >
+<!ATTLIST label name    NMTOKEN  #REQUIRED
+                x       NMTOKEN  #REQUIRED
+                y       NMTOKEN  #REQUIRED
+                z       NMTOKEN  #IMPLIED>

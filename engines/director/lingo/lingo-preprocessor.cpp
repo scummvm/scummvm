@@ -37,7 +37,7 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 	Common::String res;
 
 	// Scan first non-whitespace
-	while (*s && (*s == ' ' || *s == '\t')) // If we see a whitespace
+	while (*s && (*s == ' ' || *s == '\t' || *s == '\xC2')) // If we see a whitespace
 		s++;
 
 	if (Common::isAlnum(*s)) {
@@ -59,7 +59,7 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 	Common::String res;
 
 	// Scan first non-whitespace
-	while (s >= lineStart && (*s == ' ' || *s == '\t')) // If we see a whitespace
+	while (s >= lineStart && (*s == ' ' || *s == '\t' || *s == '\xC2')) // If we see a whitespace
 		if (s > lineStart) {
 			s--;
 		} else {
@@ -82,8 +82,27 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 	return res;
 }
 
-Common::String Lingo::codePreprocessor(const char *s, bool simple) {
+Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple) {
 	Common::String res;
+
+	// We start from processing the continuation synbols
+	// \xC2\n  ->  \xC2
+	// This will greatly simplify newline processing, still leaving
+	// the line number tracking intact
+	while (*s) {
+		if (*s == '\xC2') {
+			res += *s++;
+			if (!*s)	// Who knows, maybe it is the last symbol in the script
+				break;
+			s++;
+			continue;
+		}
+		res += *s++;
+	}
+
+	Common::String tmp(res);
+	res.clear();
+	s = tmp.c_str();
 
 	// Strip comments
 	while (*s) {
@@ -101,16 +120,16 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 			s++;
 	}
 
-	Common::String tmp(res);
+	tmp = res;
 	res.clear();
 
 	// Strip trailing whitespaces
 	s = tmp.c_str();
 	while (*s) {
-		if (*s == ' ' || *s == '\t') { // If we see a whitespace
+		if (*s == ' ' || *s == '\t' || *s == '\xC2') { // If we see a whitespace
 			const char *ps = s; // Remember where we saw it
 
-			while (*ps == ' ' || *ps == '\t')	// Scan until end of whitespaces
+			while (*ps == ' ' || *ps == '\t' || *ps == '\xC2') // Scan until end of whitespaces
 				ps++;
 
 			if (*ps) {	// Not end of the string
@@ -144,6 +163,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 	Common::String line, tok, res1;
 	const char *lineStart, *prevEnd;
 	int iflevel = 0;
+	int linenumber = 1;
 
 	while (*s) {
 		line.clear();
@@ -151,24 +171,23 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 
 		// Get next line
 		while (*s && *s != '\n') { // If we see a whitespace
-			if (*s == '\xc2') {
-				res1 += *s++;
-				if (*s == '\n') {
-					line += ' ';
-					res1 += *s++;
-				}
-			} else {
-				res1 += *s;
-				line += tolower(*s++);
-			}
+			res1 += *s;
+			line += tolower(*s++);
+
+			if (*s == '\xc2')
+				linenumber++;
 		}
 		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
+
+		res1 = patchLingoCode(res1, type, id, linenumber);
 
 		res1 = preprocessReturn(res1);
 		res1 = preprocessPlay(res1);
 		res1 = preprocessSound(res1);
 
 		res += res1;
+
+		linenumber++;	// We do it here because of 'continue' statements
 
 		if (line.size() < 4) { // If line is too small, then skip it
 			if (*s)	// copy newline symbol
@@ -230,6 +249,10 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 				elseif = true;
 			} else if (tok.empty()) {
 				debugC(2, kDebugLingoParse, "lonely-else");
+
+				if (*s)	// copy newline symbol
+					res += *s++;
+
 				continue;
 			}
 
@@ -255,7 +278,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 				if (elseif == false) {
 					warning("Badly nested else");
 				}
-			} else { // check if we have tNLELSE
+			} else { // check if we have tNLELSE or \nEND
 				if (!*s) {
 					break;
 				}
@@ -263,11 +286,22 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 
 				while (*s1 && *s1 == '\n')
 					s1++;
-				tok = nexttok(s1);
+				tok = nexttok(s1, &s1);
 
 				if (tok.equalsIgnoreCase("else") && elseif) {
 					// Nothing to do here, same level
 					debugC(2, kDebugLingoParse, "tNLELSE");
+				} else if (tok.equalsIgnoreCase("end") && elseif) {
+					tok = nexttok(s1);
+
+					if (tok.equalsIgnoreCase("if")) {
+						// Nothing to do here
+						debugC(2, kDebugLingoParse, "see-end-if");
+					} else {
+						debugC(2, kDebugLingoParse, "++++ end if (no tNLELSE 2)");
+						res += " end if";
+						iflevel--;
+					}
 				} else {
 					debugC(2, kDebugLingoParse, "++++ end if (no tNLELSE)");
 					res += " end if";
@@ -306,6 +340,9 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		} else {
 			debugC(2, kDebugLingoParse, "nothing");
 		}
+
+		if (*s)	// copy newline symbol
+			res += *s++;
 	}
 
 	for (int i = 0; i < iflevel; i++) {
@@ -384,20 +421,37 @@ Common::String preprocessPlay(Common::String in) {
 	Common::String res, next;
 	const char *ptr = in.c_str();
 	const char *beg = ptr;
+	const char *nextPtr;
 
 	while ((ptr = strcasestr(beg, "play")) != NULL) {
-		ptr += 5; // end of 'play'
+		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+			res += *beg++;
+			continue;
+		}
+
+		ptr += 4; // end of 'play'
 		res += Common::String(beg, ptr);
 
-		next = nexttok(ptr);
+		if (!*ptr)	// If it is end of the line
+			break;
+
+		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
+			beg = ptr;
+			continue;
+		}
+
+		next = nexttok(ptr, &nextPtr);
 
 		debugC(2, kDebugLingoParse, "PLAY: nexttok: %s", next.c_str());
 
 		if (next.equalsIgnoreCase("done")) {
-			res += '#'; // Turn it into SYMBOL
+			res += " #"; // Turn it into SYMBOL
+		} else {
+			res += ' ';
 		}
 
-		res += *ptr++; // We advance one character, so 'one' is left
+		res += next;
+		ptr = nextPtr;
 		beg = ptr;
 	}
 
@@ -414,12 +468,26 @@ Common::String preprocessSound(Common::String in) {
 	Common::String res, next;
 	const char *ptr = in.c_str();
 	const char *beg = ptr;
+	const char *nextPtr;
 
 	while ((ptr = strcasestr(beg, "sound")) != NULL) {
-		ptr += 6; // end of 'sound'
+		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+			res += *beg++;
+			continue;
+		}
+
+		ptr += 5; // end of 'sound'
 		res += Common::String(beg, ptr);
 
-		next = nexttok(ptr);
+		if (!*ptr)	// If it is end of the line
+			break;
+
+		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
+			beg = ptr;
+			continue;
+		}
+
+		next = nexttok(ptr, &nextPtr);
 
 		debugC(2, kDebugLingoParse, "SOUND: nexttok: %s", next.c_str());
 
@@ -432,12 +500,14 @@ Common::String preprocessSound(Common::String in) {
 				next.equalsIgnoreCase("stop")) {
 			res += '#'; // Turn it into SYMBOL
 			modified = true;
+		} else {
+			res += ' ';
 		}
 
 		res += next;
 		if (modified)
 			res += ',';
-		ptr += next.size();
+		ptr = nextPtr;
 		beg = ptr;
 	}
 

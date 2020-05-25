@@ -68,7 +68,7 @@ function is_avatar_dead()
 end
 
 --used with triple crossbow and magic wind spells.
-g_projectile_offset_tbl = 
+g_projectile_offset_tbl =
 {
  {
   4,5,5,5,5,6,6,6,6,6,6,
@@ -109,7 +109,7 @@ g_moonstone_loc_tbl =
  {x=0x147, y=0x336, z=0},
  {x=0x17,  y=0x16,  z=1},
  {x=0x397, y=0x3A6, z=0}
-} 
+}
 
 g_show_stealing = config_get_boolean_value("config/ultima6/show_stealing")
 
@@ -125,7 +125,7 @@ end
 
 function alignment_is_evil(align)
    if align == ALIGNMENT_EVIL or align == ALIGNMENT_CHAOTIC then return true end
-   
+
    return false
 end
 
@@ -157,7 +157,7 @@ end
 
 function obj_new(obj_n, frame_n, status, qty, quality, x, y, z)
   local obj = {}
-  
+
   obj["obj_n"] = obj_n or 0
   obj["frame_n"] = frame_n or 0
   obj["status"] = status or 0
@@ -182,14 +182,14 @@ end
 
 function look_obj(obj)
    print("Thou dost see " .. obj.look_string);
-   local weight = obj.weight; --FIXME this could be a problem if we want to change Lua_number type to int. 
+   local weight = obj.weight; --FIXME this could be a problem if we want to change Lua_number type to int.
    if weight ~= 0 then
       if obj.qty > 1 and obj.stackable then
          print(". They weigh");
       else
          print(". It weighs");
       end
-      
+
       print(string.format(" %.1f", weight).." stones");
    end
 
@@ -198,7 +198,7 @@ function look_obj(obj)
       print("\n")
       return false
    end
-   
+
    local dmg = weapon_dmg_tbl[obj.obj_n];
    if dmg ~= nil then
       if weight ~= 0 then
@@ -206,13 +206,13 @@ function look_obj(obj)
       else
          print(". It")
       end
-      
+
       print(" can do "..dmg.." point")
       if dmg > 1 then print("s") end
       print(" of damage")
 
    end
-   
+
    local ac = armour_tbl[obj.obj_n]
    if ac ~= nil then
       if weight ~= 0 or dmg ~= 0 then
@@ -220,12 +220,12 @@ function look_obj(obj)
       else
          print(". It")
       end
-      
+
       print(" can absorb "..ac.." point")
       if ac > 1 then print("s") end
       print(" of damage")
    end
-   
+
    print(".\n");
    local player_loc = player_get_location();
    if g_show_stealing == true and obj.getable == true and player_loc.z == 0 and obj.ok_to_take == false then
@@ -235,14 +235,14 @@ function look_obj(obj)
         print("PRIVATE PROPERTY")
       end
    end
-   
+
    return true
 end
 
 function player_subtract_karma(k)
 	local karma = player_get_karma() - k
 	if karma < 0 then karma = 0 end
-	
+
 	player_set_karma(karma)
 end
 
@@ -257,7 +257,7 @@ function party_heal()
 	for actor in party_members() do
 		actor.asleep = false
 		actor.poisoned = false
-		actor.paralyzed = false	
+		actor.paralyzed = false
 		actor_remove_charm(actor)
 		actor.hp = actor.max_hp
 	end
@@ -271,20 +271,20 @@ end
 function projectile(tile_num, start_x, start_y, end_x, end_y, speed, spin)
 
 	if spin == nil then spin = 0 end
-	
+
 	local rotate_offset = 0
 	local src_tile_y_offset = 0
-	
+
 	if tile_num == 547 then --spear
 		rotate_offset = 45
 	elseif tile_num == 566 then --bow
 		rotate_offset = 90
 		src_tile_y_offset = 4
 	elseif tile_num == 567 then --crossbow
-		rotate_offset = 90 
+		rotate_offset = 90
 		src_tile_y_offset = 3
 	end
-	
+
 	play_sfx(SFX_MISSLE)
 	projectile_anim(tile_num, start_x, start_y, end_x, end_y, speed, false, rotate_offset, spin, src_tile_y_offset)
 end
@@ -344,7 +344,7 @@ function actor_is_readiable_obj(actor)
 	if g_readiable_objs_tbl[actor.tile_num] ~= nil then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -358,7 +358,7 @@ end
 
 function is_time_stopped()
 	if timer_get(TIMER_TIME_STOP) ~= 0 then return true end
-	
+
 	return false
 end
 
@@ -372,15 +372,15 @@ function load_game()
 		frame_n = tmp_obj_dat - 1023
 		obj_n = tmp_obj_dat - frame_n
 	end
-	
+
 	g_vanish_obj.obj_n = obj_n
 	g_vanish_obj.frame_n = frame_n
 
 	--Load moonstone locations.
 	objlist_seek(OBJLIST_OFFSET_MOONSTONES)
-	
+
 	for i=1,8 do
-	
+
 		local x = objlist_read2()
 		local y = objlist_read2()
 		local z = objlist_read2()
@@ -396,7 +396,7 @@ end
 
 function save_game()
 	objlist_seek(OBJLIST_OFFSET_VANISH_OBJ)
-	
+
 	local tmp_obj_dat = g_vanish_obj.obj_n
 	local frame_n = g_vanish_obj.frame_n
 
@@ -405,17 +405,17 @@ function save_game()
 	end
 
 	objlist_write2(tmp_obj_dat)
-	
+
 	--Save moonstone locations
 	objlist_seek(OBJLIST_OFFSET_MOONSTONES)
-	
+
 	for i=1,8 do
 		local loc = g_moonstone_loc_tbl[i]
 		objlist_write2(loc.x)
 		objlist_write2(loc.y)
 		objlist_write2(loc.z)
 	end
-	
+
 	objlist_seek(OBJLIST_OFFSET_KEG_TIMER)
 	objlist_write2(g_keg_timer)
 end
@@ -429,7 +429,7 @@ end
 
 function moonstone_get_loc(phase)
 	if phase < 1 or phase > 8 then return nil end
-	
+
 	return g_moonstone_loc_tbl[phase]
 end
 
@@ -455,7 +455,7 @@ function use_keg(obj)
 		print("\nNo effect\n")
 		return
 	end
-	
+
 	if g_keg_timer > 0 then
 		print("\nNot now\n")
 	else
@@ -473,7 +473,7 @@ function explode_keg()
 			explode_obj(obj)
 		end
 	end
-	
+
 	--try to explode lit kegs in the party's inventory
 	local party_actor
 	for party_actor in party_members() do
@@ -487,7 +487,7 @@ end
 function explode_obj(obj, actor)
 	dbg("Exploding "..obj.name.."\n")
 	local x, y, z
-	
+
 	if actor ~= nil then
 		x = actor.x
 		y = actor.y
@@ -497,9 +497,9 @@ function explode_obj(obj, actor)
 		y = obj.y
 		z = obj.z
 	end
-	
+
 	Obj.removeFromEngine(obj)
-	
+
 	local hit_items = explosion(0x189, x, y)
 	local random = math.random
 	local k, v
@@ -513,11 +513,11 @@ function explode_obj(obj, actor)
 			return -- don't keep exploding once Avatar is dead
 		end
 	end
-	
+
 	explode_surrounding_objects(x, y, z)
 end
 
-function explode_surrounding_objects(x, y, z)	
+function explode_surrounding_objects(x, y, z)
 	--blow up doors and other kegs
 	for x = x - 2,x + 2 do
 		for y = y - 2,y + 2 do
@@ -525,7 +525,7 @@ function explode_surrounding_objects(x, y, z)
 			if map_obj ~= nil then
 				explode_obj(map_obj)
 			end
-			
+
 			map_obj = map_get_obj(x, y, z, 0x12c) --steel door
 			if map_obj == nil or map_obj.frame_n == 0xc then
 				map_obj = map_get_obj(x, y, z, 0x129) --oaken door
@@ -536,7 +536,7 @@ function explode_surrounding_objects(x, y, z)
 					end
 				end
 			end
-			
+
 			if map_obj ~= nil and map_obj.frame_n <= 0xc then
 				Obj.removeFromEngine(map_obj)
 				print("\nThe door is blown up!\n")
@@ -572,4 +572,3 @@ magic_init = nuvie_load("u6/magic.lua"); magic_init();
 usecode_init = nuvie_load("u6/usecode.lua"); usecode_init();
 
 player_init = nuvie_load("u6/player.lua"); player_init();
-

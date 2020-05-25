@@ -10,4 +10,3 @@ if actor.visible == true and actor_can_turn_invisible(actor.obj_n) == true then
 else
 	magic_no_effect()
 end
-

@@ -49,6 +49,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 
+	_vSyncPrevTick = 0;
 	_sound = 0;
 	_speed = 1;
 	_turbo = false;
@@ -272,22 +273,25 @@ DreamWebEngine::~DreamWebEngine() {
 	delete _sound;
 }
 
-void DreamWebEngine::waitForVSync() {
-	const uint32 previousTicks = _system->getMillis();
-	// Originally, this was an interval for a thread that was
-	// called every 1000000 / 70 nanoseconds. It has been
-	// adjusted to be a delay instead.
-	const uint32 delay = 800 / 70 / _speed;
+void DreamWebEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (!pause)
+		_vSyncPrevTick = _system->getMillis();
+}
 
+void DreamWebEngine::waitForVSync() {
 	if (isPaused())
 		return;
 
 	processEvents();
 
-	while (!_turbo && _system->getMillis() - previousTicks < delay) {
-		processEvents(false);
-		_system->delayMillis(10);
+	if (!_turbo) {
+		const uint32 delay =  1000 / 70 / _speed;
+		uint32 elapsed = _system->getMillis() - _vSyncPrevTick;
+		if (elapsed < delay)
+			_system->delayMillis(delay - elapsed);
 	}
+	_vSyncPrevTick = _system->getMillis();
 
 	doShake();
 	doFade();
@@ -312,7 +316,7 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 	int softKey;
 	while (_eventMan->pollEvent(event)) {
 		switch(event.type) {
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			quit();
 			break;
 		case Common::EVENT_KEYDOWN:
@@ -320,7 +324,7 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 				switch (event.kbd.keycode) {
 
 				case Common::KEYCODE_f:
-					setSpeed(_speed != 20? 20: 1);
+					setSpeed(_speed != 4? 4: 1);
 					break;
 
 				case Common::KEYCODE_g:
@@ -399,6 +403,7 @@ Common::Error DreamWebEngine::run() {
 	_brightPalette = ConfMan.getBool("bright_palette");
 	_copyProtection = ConfMan.getBool("copy_protection");
 
+	_vSyncPrevTick = _system->getMillis();
 	dreamweb();
 	dreamwebFinalize();
 	_quitRequested = false;

@@ -167,6 +167,12 @@ private:
 
 	virtual void preInstHook(uint32 inst);
 	virtual void postInstHook(uint32 inst);
+
+#ifdef ENABLE_FOXTAIL
+	TOpcodesType _opcodesType;
+	void initOpcodesType();
+	uint32 decodeAltOpcodes(uint32 inst);
+#endif
 };
 
 } // End of namespace Wintermute

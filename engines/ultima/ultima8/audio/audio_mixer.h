@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 #define SAMPLE_RATE 22050
-#define CHANNEL_COUNT 8
+#define CHANNEL_COUNT 32
 
 class MidiPlayer;
 class AudioChannel;

@@ -53,8 +53,8 @@ public:
 	//! Open a file as writable. Streamed.
 	//! \param vfn the (virtual) filename
 	//! \param is_text open in text mode?
-	//! \return nullptr on failure
-	ODataSource *WriteFile(const Std::string &vfn, bool is_text = false);
+	//! \return a new writestream, or nullptr on failure
+	Common::WriteStream *WriteFile(const Std::string &vfn, bool is_text = false);
 
 	//! Mount a virtual path
 	//! \param vpath the name of the vpath (should start with '@')

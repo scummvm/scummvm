@@ -29,10 +29,11 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// U8-style load/save gump.
-
 class EditWidget;
 
+/**
+ * U8-style load/save gump (a single number + editable widget entry in the paged save/load gump)
+ */
 class U8SaveGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -43,8 +44,8 @@ public:
 	void InitGump(Gump *newparent, bool take_focus = true) override;
 	void Close(bool no_del = false) override;
 
-	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
-	void OnMouseClick(int button, int32 mx, int32 my) override;
+	Gump *onMouseDown(int button, int32 mx, int32 my) override;
+	void onMouseClick(int button, int32 mx, int32 my) override;
 	bool OnKeyDown(int key, int mod) override;
 	void ChildNotify(Gump *child, uint32 message) override;
 	void OnFocus(bool gain) override;

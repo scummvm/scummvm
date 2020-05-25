@@ -14,7 +14,7 @@ local function should_exit(input)
 	if input ~=nil and input == SDLK_ESCAPE then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -25,7 +25,7 @@ local function fade_out_sprite(sprite, speed)
 	else
 		speed = -3
 	end
-	
+
 	for i=0xff,0,speed do
 		sprite.opacity = i
 		canvas_update()
@@ -108,18 +108,18 @@ end
 
 local function origin_fx_sequence()
 	local g_img_tbl = image_load_all("title.lzc")
-	
+
 	canvas_set_palette("savage.pal", 2)
 
-	
+
 	local stars = sprite_new(g_img_tbl[0][0], 0, 24, true)
 	local logo_image = image_new(282,82)
 	image_blit(logo_image, g_img_tbl[0][1],0,16)
 	image_blit(logo_image, g_img_tbl[0][2],g_img_tbl[0][1].w,14)
 	image_blit(logo_image, g_img_tbl[0][3],g_img_tbl[0][1].w+g_img_tbl[0][2].w,0)
-	
+
 	local  logo = sprite_new(logo_image, 20, 70, false)
-	
+
 	local planet = sprite_new(g_img_tbl[12], 160, 48, true)
 	planet.clip_x = 0
 	planet.clip_y = 0
@@ -129,25 +129,25 @@ local function origin_fx_sequence()
 	players[1] = create_player_sprite(g_img_tbl[1][0], 58, 118)
 	players[2] = create_player_sprite(g_img_tbl[2][0], 186, 118)
 	players[3] = create_player_sprite(g_img_tbl[3][0], 278, 118)
-	
+
 	players[4] = create_player_sprite(g_img_tbl[4][0], 58, 126)
 	players[5] = create_player_sprite(g_img_tbl[5][0], 186, 126)
 	players[6] = create_player_sprite(g_img_tbl[6][0], 278, 126)
-	
+
 	players[7] = create_player_sprite(g_img_tbl[7][0], 58, 134)
 	players[8] = create_player_sprite(g_img_tbl[8][0], 186, 134)
 	players[9] = create_player_sprite(g_img_tbl[9][0], 278, 134)
-	
+
 	local conductor = sprite_new(g_img_tbl[10][0], 158, 98, true)
 	conductor.clip_x = 0
 	conductor.clip_y = 24
 	conductor.clip_w = 320
 	conductor.clip_h = 128
-	
+
 	fade_in()
 
 	music_play("music.lzc", 19)
-	
+
 	local i = 0
 	for i=0,6,1 do
 		conductor.image = g_img_tbl[10][i]
@@ -173,7 +173,7 @@ local function origin_fx_sequence()
 			conductor.image = g_img_tbl[10][j]
 			if poll_for_key_or_button(1) == true then return end
 		end
-	
+
 		conductor.image = g_img_tbl[10][14]
 		if poll_for_key_or_button(2) == true then return end
 		conductor.image = g_img_tbl[10][13]
@@ -183,21 +183,21 @@ local function origin_fx_sequence()
 		if poll_for_key_or_button(1) == true then return end
 			play_sfx(38, false)
 	end
-	
+
 	for i=16,20,1 do
 		conductor.image = g_img_tbl[10][i]
 		if poll_for_key_or_button(4) == true then return end
 	end
 	if poll_for_key_or_button(200) == true then return end
-	
+
 	play_sfx(12, false)
-	
+
 	conductor.image = g_img_tbl[10][6]
-	
+
 	for i=1,21,1 do
 		conductor.y = 98 + i * 12
 		conductor.image.scale = 100 + i * 15
-		
+
 		for j=1,9,1 do
 			players[j].y = players[j].y + 5
 			players[j].image.scale = 100 + i * 5
@@ -208,15 +208,15 @@ local function origin_fx_sequence()
 				players[j].x = players[j].x + 2
 			end
 		end
-	
+
 		if poll_for_esc(4) == true then return end
 	end
-	
-	
+
+
 	logo.visible = true
-	logo.image.scale = 10	
-	
-	
+	logo.image.scale = 10
+
+
 	for i=1,18,1 do
 		planet.y = planet.y + 6
 
@@ -227,18 +227,18 @@ local function origin_fx_sequence()
 		else
 			logo.y = logo.y + 1
 		end
-	
+
 		if poll_for_key_or_button(4) == true then return end
 	end
-	
+
 	fireworks(g_img_tbl, logo)
 end
 
 local function intro_sequence(g_img_tbl)
-	
+
 	canvas_set_palette("savage.pal", 0)
 	music_play("music.lzc", 18)
-		
+
 	local  logo = sprite_new(g_img_tbl[0][0], 0, 0, true)
 	fade_in()
 	if poll_for_key_or_button(175) == true then return end
@@ -511,7 +511,7 @@ local function ask_question(q_num, q_ord, sprites, text_image, a_b_border_img, i
 		end
 	end
 
-	local red = 0x04 
+	local red = 0x04
 	local black = 0x00
 	local answer = SDLK_a
 	local old_answer = 0
@@ -599,12 +599,12 @@ local function ask_question(q_num, q_ord, sprites, text_image, a_b_border_img, i
 			next_q = 3
 		end
 	end
-	
+
 	return next_q
 end
 
 
- 
+
 g_keycode_tbl =
 {
 [32]=" ",
@@ -698,22 +698,22 @@ local function create_new_character(img_tbl2)
 	create_char_sprites[28] = sprite_new(img_tbl2[3][18], 8, 28, false) -- Yellow
 	create_char_sprites[29] = sprite_new(img_tbl2[3][19], 8, 28, false) -- Blue
 	create_char_sprites[10] = sprite_new(img_tbl2[3][0], 8, 28, false) -- Drop Anim
-	create_char_sprites[11] = sprite_new(img_tbl2[3][1], 8, 28, false) -- 
-	create_char_sprites[12] = sprite_new(img_tbl2[3][2], 8, 28, false) -- 
-	create_char_sprites[13] = sprite_new(img_tbl2[3][3], 8, 28, false) -- 
-	create_char_sprites[14] = sprite_new(img_tbl2[3][4], 8, 28, false) -- 
-	create_char_sprites[15] = sprite_new(img_tbl2[3][5], 8, 28, false) -- 
-	create_char_sprites[16] = sprite_new(img_tbl2[3][6], 8, 28, false) -- 
-	create_char_sprites[17] = sprite_new(img_tbl2[3][7], 8, 28, false) -- 
-	create_char_sprites[18] = sprite_new(img_tbl2[3][8], 8, 28, false) -- 
-	create_char_sprites[19] = sprite_new(img_tbl2[3][9], 8, 28, false) -- 
-	create_char_sprites[20] = sprite_new(img_tbl2[3][10], 8, 28, false) -- 
-	create_char_sprites[21] = sprite_new(img_tbl2[3][11], 8, 28, false) -- 
-	create_char_sprites[22] = sprite_new(img_tbl2[3][12], 8, 28, false) -- 
-	create_char_sprites[23] = sprite_new(img_tbl2[3][13], 8, 28, false) -- 
-	create_char_sprites[24] = sprite_new(img_tbl2[3][14], 8, 28, false) -- 
-	create_char_sprites[25] = sprite_new(img_tbl2[3][15], 8, 28, false) -- 
-	create_char_sprites[26] = sprite_new(img_tbl2[3][16], 8, 28, false) -- 
+	create_char_sprites[11] = sprite_new(img_tbl2[3][1], 8, 28, false) --
+	create_char_sprites[12] = sprite_new(img_tbl2[3][2], 8, 28, false) --
+	create_char_sprites[13] = sprite_new(img_tbl2[3][3], 8, 28, false) --
+	create_char_sprites[14] = sprite_new(img_tbl2[3][4], 8, 28, false) --
+	create_char_sprites[15] = sprite_new(img_tbl2[3][5], 8, 28, false) --
+	create_char_sprites[16] = sprite_new(img_tbl2[3][6], 8, 28, false) --
+	create_char_sprites[17] = sprite_new(img_tbl2[3][7], 8, 28, false) --
+	create_char_sprites[18] = sprite_new(img_tbl2[3][8], 8, 28, false) --
+	create_char_sprites[19] = sprite_new(img_tbl2[3][9], 8, 28, false) --
+	create_char_sprites[20] = sprite_new(img_tbl2[3][10], 8, 28, false) --
+	create_char_sprites[21] = sprite_new(img_tbl2[3][11], 8, 28, false) --
+	create_char_sprites[22] = sprite_new(img_tbl2[3][12], 8, 28, false) --
+	create_char_sprites[23] = sprite_new(img_tbl2[3][13], 8, 28, false) --
+	create_char_sprites[24] = sprite_new(img_tbl2[3][14], 8, 28, false) --
+	create_char_sprites[25] = sprite_new(img_tbl2[3][15], 8, 28, false) --
+	create_char_sprites[26] = sprite_new(img_tbl2[3][16], 8, 28, false) --
 	create_char_sprites[3] = sprite_new(img_tbl2[1][1], 8, 28, true) -- Weird Border Around Shaman
 	-- TODO BORDER SHADOW (Solid Black)
 	-- TODO Memory Management on Image?
@@ -884,7 +884,7 @@ local function about_the_savage_empire(img_tbl2)
 	  table.insert(about_sprites, create_about_sprite(img_tbl2[6][i],   100, ypos))
 	  ypos = ypos + credit_heights[i+1]
 	end
-	
+
 	local done = 0
 
    local k,v
@@ -899,7 +899,7 @@ local function about_the_savage_empire(img_tbl2)
 			break
 		end
 	end
-   
+
 	destroy_sprites(about_sprites)
 end
 
@@ -1113,7 +1113,7 @@ canvas_set_bg_color(0)
 canvas_set_opacity(0)
 
 origin_fx_sequence()
-	
+
 --canvas_hide_all_sprites()
 
 -- Load Graphics for Intro & Main Menu

@@ -143,7 +143,7 @@ void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage co
 		fontFiles.push_back(fontFile);
 
 		// Use 96 dpi as it's the default under Windows
-		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -size,
+		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -(int)size,
 		                       96, Graphics::kTTFRenderModeMonochrome);
 		if (!font) {
 			error("Can't find required face (line %u) in %s", i, fontFile.c_str());

@@ -171,11 +171,12 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	hardcodedEventMapping(ev);
 
 	List<Event> mappedEvents;
-	if (!mapEvent(ev, _enabledKeymapType, mappedEvents)) {
+	bool matchedAction = mapEvent(ev, _enabledKeymapType, mappedEvents);
+	if (!matchedAction) {
 		// If we found actions matching this input in the game / gui keymaps,
 		// no need to look at the global keymaps. An input resulting in actions
 		// from system and game keymaps would lead to unexpected user experience.
-		mapEvent(ev, Keymap::kKeymapTypeGlobal, mappedEvents);
+		matchedAction = mapEvent(ev, Keymap::kKeymapTypeGlobal, mappedEvents);
 	}
 
 	if (ev.type == EVENT_JOYAXIS_MOTION && ev.joystick.axis < ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
@@ -186,14 +187,7 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 		}
 	}
 
-	// Ignore keyboard repeat events. Repeat event are meant for text input,
-	// the keymapper / keymaps are supposed to be disabled during text input.
-	// TODO: Add a way to keep repeat events if needed.
-	if (!mappedEvents.empty() && ev.type == EVENT_KEYDOWN && ev.kbdRepeat) {
-		return List<Event>();
-	}
-
-	if (mappedEvents.empty()) {
+	if (!matchedAction) {
 		// if it didn't get mapped, just pass it through
 		mappedEvents.push_back(ev);
 	}
@@ -295,11 +289,20 @@ Event Keymapper::executeAction(const Action *action, const Event &incomingEvent)
 		return outgoingEvent;
 	}
 
+	if (incomingEvent.type == EVENT_KEYDOWN && incomingEvent.kbdRepeat && !action->shouldTriggerOnKbdRepeats()) {
+		outgoingEvent.type = EVENT_INVALID;
+		return outgoingEvent;
+	}
+
 	EventType convertedType = convertStartToEnd(outgoingEvent.type);
 
 	// hardware keys need to send up instead when they are up
 	if (incomingType == kIncomingEventEnd) {
 		outgoingEvent.type = convertedType;
+	}
+
+	if (outgoingEvent.type == EVENT_KEYDOWN && incomingEvent.type == EVENT_KEYDOWN) {
+		outgoingEvent.kbdRepeat = incomingEvent.kbdRepeat;
 	}
 
 	if (isMouseEvent(outgoingEvent)) {

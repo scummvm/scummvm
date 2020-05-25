@@ -47,6 +47,7 @@ private:
 	DragonOBD *_dragonOBD;
 public:
 	DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD);
+	~DragonRMS();
 	char *getSceneName(uint32 sceneId);
 	byte *getAfterSceneDataLoadedScript(uint32 sceneId);
 	byte *getBeforeSceneDataLoadedScript(uint32 sceneId);

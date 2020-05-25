@@ -28,8 +28,6 @@
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -59,9 +57,9 @@ ObjectManager *ObjectManager::_objectManager = nullptr;
 // every object separately
 template<class T>
 struct ObjectLoader {
-	static Object *load(IDataSource *ids, uint32 version) {
+	static Object *load(Common::ReadStream *rs, uint32 version) {
 		T *p = new T();
-		bool ok = p->loadData(ids, version);
+		bool ok = p->loadData(rs, version);
 		if (!ok) {
 			delete p;
 			p = nullptr;
@@ -102,10 +100,10 @@ void ObjectManager::reset() {
 	for (i = 0; i < _objects.size(); ++i) {
 		if (_objects[i] == 0) continue;
 #if 0
-		Item *item = p_dynamic_cast<Item *>(_objects[i]);
+		Item *item = dynamic_cast<Item *>(_objects[i]);
 		if (item && item->getParent()) continue; // will be deleted by parent
 #endif
-		Gump *gump = p_dynamic_cast<Gump *>(_objects[i]);
+		Gump *gump = dynamic_cast<Gump *>(_objects[i]);
 		if (gump && gump->GetParent()) continue; // will be deleted by parent
 		delete _objects[i];
 	}
@@ -211,51 +209,51 @@ void ObjectManager::allow64kObjects() {
 }
 
 
-void ObjectManager::save(ODataSource *ods) {
-	_objIDs->save(ods);
-	_actorIDs->save(ods);
+void ObjectManager::save(Common::WriteStream *ws) {
+	_objIDs->save(ws);
+	_actorIDs->save(ws);
 
 	for (unsigned int i = 0; i < _objects.size(); ++i) {
 		Object *object = _objects[i];
 		if (!object) continue;
 
 		// child items/gumps are saved by their parent.
-		Item *item = p_dynamic_cast<Item *>(object);
+		Item *item = dynamic_cast<Item *>(object);
 		if (item && item->getParent()) continue;
-		Gump *gump = p_dynamic_cast<Gump *>(object);
+		Gump *gump = dynamic_cast<Gump *>(object);
 
 		// don't save Gumps with DONT_SAVE and Gumps with parents, unless
 		// the parent is a core gump
 		// FIXME: This leaks _objIDs. See comment in ObjectManager::load().
 		if (gump && !gump->mustSave(true)) continue;
 
-		object->save(ods);
+		saveObject(ws, object);
 	}
-
-	ods->writeUint16LE(0);
+ 
+	ws->writeUint16LE(0);
 }
 
 
-bool ObjectManager::load(IDataSource *ids, uint32 version) {
-	if (!_objIDs->load(ids, version)) return false;
-	if (!_actorIDs->load(ids, version)) return false;
+bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
+	if (!_objIDs->load(rs, version)) return false;
+	if (!_actorIDs->load(rs, version)) return false;
 
 	do {
 		// peek ahead for terminator
-		uint16 classlen = ids->readUint16LE();
+		uint16 classlen = rs->readUint16LE();
 		if (classlen == 0) break;
 		char *buf = new char[classlen + 1];
-		ids->read(buf, classlen);
+		rs->read(buf, classlen);
 		buf[classlen] = 0;
 
 		Std::string classname = buf;
 		delete[] buf;
 
-		Object *obj = loadObject(ids, classname, version);
+		Object *obj = loadObject(rs, classname, version);
 		if (!obj) return false;
 
 		// top level gumps have to be added to the correct core gump
-		Gump *gump = p_dynamic_cast<Gump *>(obj);
+		Gump *gump = dynamic_cast<Gump *>(obj);
 		if (gump) {
 			Ultima8Engine::get_instance()->addGump(gump);
 		}
@@ -290,19 +288,33 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 	return true;
 }
 
-Object *ObjectManager::loadObject(IDataSource *ids, uint32 version) {
-	uint16 classlen = ids->readUint16LE();
+void ObjectManager::saveObject(Common::WriteStream *ws, Object *obj) const {
+	const Std::string & classname = obj->GetClassType()._className; // note: virtual
+
+	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
+	iter = _objectLoaders.find(classname);
+	if (iter == _objectLoaders.end()) {
+		error("Object class cannot save without registered loader: %s", classname.c_str());
+	}
+
+	ws->writeUint16LE(classname.size());
+	ws->write(classname.c_str(), classname.size());
+	obj->saveData(ws);
+}
+
+Object *ObjectManager::loadObject(Common::ReadStream *rs, uint32 version) {
+	uint16 classlen = rs->readUint16LE();
 	char *buf = new char[classlen + 1];
-	ids->read(buf, classlen);
+	rs->read(buf, classlen);
 	buf[classlen] = 0;
 
 	Std::string classname = buf;
 	delete[] buf;
 
-	return loadObject(ids, classname, version);
+	return loadObject(rs, classname, version);
 }
 
-Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
+Object *ObjectManager::loadObject(Common::ReadStream *rs, Std::string classname,
                                   uint32 version) {
 	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
 	iter = _objectLoaders.find(classname);
@@ -312,7 +324,7 @@ Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
 		return nullptr;
 	}
 
-	Object *obj = (*(iter->_value))(ids, version);
+	Object *obj = (*(iter->_value))(rs, version);
 
 	if (!obj) {
 		perr << "Error loading object of type " << classname << Std::endl;

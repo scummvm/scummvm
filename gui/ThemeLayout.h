@@ -114,7 +114,7 @@ protected:
 	virtual ThemeLayout *makeClone(ThemeLayout *newParent) = 0;
 
 public:
-	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
+	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h);
 
 	virtual Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
 
@@ -226,7 +226,7 @@ public:
 		setTextHAlign(align);
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override;
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) override;
 	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name) override;
 
 	void reflowLayout(Widget *widgetChain) override;
@@ -263,7 +263,7 @@ public:
 		}
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override {
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) override {
 		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h)) {
 			h -= _tabHeight;
 			return true;
@@ -294,7 +294,7 @@ public:
 		}
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override { return false; }
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) override { return false; }
 	void reflowLayout(Widget *widgetChain) override {}
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const { return "SPACE"; }

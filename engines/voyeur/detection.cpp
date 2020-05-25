@@ -102,7 +102,7 @@ bool VoyeurMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Voyeur::VoyeurEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

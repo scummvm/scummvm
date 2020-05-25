@@ -172,6 +172,8 @@ public:
 
 extern const char *const endl;
 
+extern Common::String to_uppercase(const Common::String &s);
+
 } // End of namespace Std
 } // End of namespace Ultima
 

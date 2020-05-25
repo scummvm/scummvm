@@ -37,7 +37,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.36"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.37"
 
 class OSystem;
 
@@ -94,6 +94,7 @@ enum DrawData {
 	kDDCheckboxDefault,
 	kDDCheckboxDisabled,
 	kDDCheckboxSelected,
+	kDDCheckboxDisabledSelected,
 
 	kDDRadiobuttonDefault,
 	kDDRadiobuttonDisabled,

@@ -23,5 +23,3 @@ if obj ~= nil and g_armageddon == false then
 else
   magic_no_effect()
 end
-
-

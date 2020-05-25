@@ -42,10 +42,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define USE_BUTTON 1 /* FIXME: put this in a common location */
-#define ACTION_BUTTON 3
-#define DRAG_BUTTON 1
-
 InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
 	callback_object = callback;
@@ -361,7 +357,6 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 }
 
 GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 
@@ -369,7 +364,7 @@ GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
 	ypos -= area.top;
 	if (xpos < 0 || ypos > area.top + area.height() - 10)
 		return GUI_PASS; // goes to InventoryView
-#endif
+
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6) {
 		if (y > 0) {
 			up_arrow();

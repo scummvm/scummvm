@@ -58,6 +58,9 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 	if (!_allowDataOverride && data)
 		return data;
 
+	if (data)
+		delete data;
+
 	Common::SeekableReadStream *readStream;
 	if (!rawOpen(readStream, vfn))
 		return nullptr;
@@ -66,14 +69,14 @@ IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
 }
 
 // Open a streaming file as writeable. Streamed (0 on failure)
-ODataSource *FileSystem::WriteFile(const string &vfn, bool is_text) {
+Common::WriteStream *FileSystem::WriteFile(const string &vfn, bool is_text) {
 	string filename = vfn;
 	Common::WriteStream *writeStream;
 
 	if (!rawOpen(writeStream, filename))
 		return nullptr;
 
-	return new OFileDataSource(writeStream);
+	return writeStream;
 }
 
 bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {

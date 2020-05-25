@@ -29,6 +29,9 @@
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 #include "audio/mixer.h"
+#include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
+
+class TownsPC98_AudioDriver;
 
 namespace Saga {
 
@@ -86,6 +89,7 @@ private:
 	Audio::Mixer *_mixer;
 
 	MusicDriver *_player;
+	TownsPC98_AudioDriver *_playerPC98;
 	Audio::SoundHandle _musicHandle;
 	uint32 _trackNumber;
 

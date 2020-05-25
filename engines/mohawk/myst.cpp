@@ -656,7 +656,7 @@ void MohawkEngine_Myst::doFrame() {
 			}
 			break;
 		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			// Attempt to autosave before exiting
 			saveAutosaveIfEnabled();
 			break;
@@ -700,7 +700,7 @@ bool MohawkEngine_Myst::canDoAction(MystEventAction action) {
 		return actionsAllowed && stack->getStackId() != kDemoStack;
 	default:
 		// Not implemented yet
-		assert(false);
+		error("canDoAction(): Not implemented");
 	}
 }
 
@@ -741,7 +741,7 @@ void MohawkEngine_Myst::doAction(MystEventAction action) {
 			break;
 		}
 
-		if (isInteractive()) {
+		if (!isGameVariant(GF_25TH)) {
 			openMainMenuDialog();
 		}
 
@@ -754,12 +754,12 @@ void MohawkEngine_Myst::doAction(MystEventAction action) {
 		break;
 	case kMystActionLoadGameState:
 		if (canLoadGameStateCurrently()) {
-			runLoadDialog();
+			loadGameDialog();
 		}
 		break;
 	case kMystActionSaveGameState:
 		if (canSaveGameStateCurrently()) {
-			runSaveDialog();
+			saveGameDialog();
 		}
 		break;
 	case kMystActionDropPage:
@@ -773,6 +773,7 @@ void MohawkEngine_Myst::doAction(MystEventAction action) {
 		}
 		break;
 	case kMystActionNone:
+	default:
 		break;
 	}
 }
@@ -1067,7 +1068,7 @@ bool MohawkEngine_Myst::isInteractive() const {
 }
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
-	bool isInMenu = (_stack->getStackId() == kMenuStack) && _prevStack;
+	bool isInMenu = _stack->getStackId() == kMenuStack;
 
 	if (!isInMenu) {
 		if (!isInteractive()) {
@@ -1105,36 +1106,6 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 		return _prevStack;
 	default:
 		return false;
-	}
-}
-
-void MohawkEngine_Myst::runLoadDialog() {
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
-
-	pauseEngine(true);
-	int slot = slc.runModalWithCurrentTarget();
-	pauseEngine(false);
-
-	if (slot >= 0) {
-		loadGameState(slot);
-	}
-}
-
-void MohawkEngine_Myst::runSaveDialog() {
-	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
-
-	pauseEngine(true);
-	int slot = slc.runModalWithCurrentTarget();
-	pauseEngine(false);
-
-	if (slot >= 0) {
-		Common::String result(slc.getResultString());
-		if (result.empty()) {
-			// If the user was lazy and entered no save name, come up with a default name.
-			result = slc.createDefaultSaveDescription(slot);
-		}
-
-		saveGameState(slot, result);
 	}
 }
 

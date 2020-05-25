@@ -1311,7 +1311,10 @@ Common::Error ScummEngine::init() {
 			return Common::Error(Common::kUnsupportedColorMode, "This game requires dual graphics layer support which is disabled in this build");
 #endif
 			initGraphics(screenWidth, screenHeight);
-		}
+
+			if (_game.platform == Common::kPlatformNES)
+				_system->fillScreen(0x1d);
+			}
 	}
 
 	_outputPixelFormat = _system->getScreenFormat();
@@ -2752,7 +2755,7 @@ bool ScummEngine::startManiac() {
 		// chained game.
 		Common::EventManager *eventMan = g_system->getEventManager();
 		Common::Event event;
-		event.type = Common::EVENT_RTL;
+		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		eventMan->pushEvent(event);
 		return true;
 	} else {
@@ -2787,26 +2790,15 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
-int ScummEngine::runDialog(Dialog &dialog) {
-	// Pause engine
-	pauseEngine(true);
-
-	// Open & run the dialog
-	int result = dialog.runModal();
-
-	// Resume engine
-	pauseEngine(false);
-
-	// Return the result
-	return result;
-}
-
 #ifdef ENABLE_SCUMM_7_8
-int ScummEngine_v7::runDialog(Dialog &dialog) {
-	_splayer->pause();
-	int result = ScummEngine::runDialog(dialog);
-	_splayer->unpause();
-	return result;
+void ScummEngine_v7::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_splayer->pause();
+	} else {
+		_splayer->unpause();
+	}
+
+	ScummEngine::pauseEngineIntern(pause);
 }
 #endif
 

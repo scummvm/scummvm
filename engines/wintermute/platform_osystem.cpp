@@ -115,7 +115,7 @@ void BasePlatform::handleEvent(Common::Event *event) {
 		}
 		break;
 // Focus-events have been removed (_gameRef->onActivate originally)
-	case Common::EVENT_RTL:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		_gameRef->_quitting = true;
 		break;
 	case Common::EVENT_QUIT:

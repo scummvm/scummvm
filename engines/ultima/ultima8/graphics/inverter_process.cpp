@@ -26,8 +26,6 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -47,10 +45,10 @@ static unsigned int states[] = { 0, 8, 63, 211, 493, 945, 1594, 2459, 3552,
 InverterProcess *InverterProcess::_inverter = nullptr;
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(InverterProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(InverterProcess)
 
 InverterProcess::InverterProcess()
-	: Process() {
+	: Process(), _targetState(0) {
 
 }
 
@@ -76,16 +74,16 @@ void InverterProcess::run() {
 	}
 }
 
-void InverterProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void InverterProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(static_cast<uint16>(_targetState));
+	ws->writeUint16LE(static_cast<uint16>(_targetState));
 }
 
-bool InverterProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool InverterProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_targetState = ids->readUint16LE();
+	_targetState = rs->readUint16LE();
 
 	_inverter = this; //static
 	return true;

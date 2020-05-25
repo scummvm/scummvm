@@ -40,9 +40,31 @@ protected:
 	 * Converts a string to an integer
 	 */
 	int strToInt(const char *s);
+
+	/**
+	 * Converts a string to a boolean
+	 */
+	bool strToBool(const char *s) {
+		return s && tolower(*s) == 't';
+	}
+
+	/**
+	 * Split up a command string into arg values
+	 */
+	void splitString(const Common::String &str, Common::StringArray &argv);
 public:
 	Debugger();
     ~Debugger() override {}
+
+	/**
+	 * Executes the given command
+	 */
+	void executeCommand(const Common::String &cmd);
+
+	/**
+	 * Executes the given command
+	 */
+	void executeCommand(int argc, const char **argv);
 };
 
 } // End of namespace Shared

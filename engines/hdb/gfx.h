@@ -40,7 +40,7 @@ struct TileLookup {
 	uint16 skyIndex;
 	uint16 animIndex;
 
-	TileLookup() : filename(NULL), tData(NULL), skyIndex(0), animIndex(0) {}
+	TileLookup() : filename(nullptr), tData(nullptr), skyIndex(0), animIndex(0) {}
 };
 
 struct GfxCache {
@@ -53,7 +53,7 @@ struct GfxCache {
 	uint32 size;
 	int16 loaded;
 
-	GfxCache() : status(false), tileGfx(NULL), size(0), loaded(0) { name[0] = 0; }
+	GfxCache() : status(false), tileGfx(nullptr), size(0), loaded(0) { name[0] = 0; }
 };
 
 struct FontInfo {

@@ -108,6 +108,7 @@ public:
 	bool addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y);
 	void replaceItem(uint16 existingIniId, uint16 newIniId);
 	bool clearItem(uint16 iniId);
+	bool hasItem(uint16 iniId);
 
 	Actor *getInventoryItemActor(uint16 iniId);
 	void inventoryMissing();

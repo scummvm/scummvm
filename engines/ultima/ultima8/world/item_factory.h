@@ -29,7 +29,6 @@ namespace Ultima8 {
 class Item;
 class Actor;
 class Object;
-class IDataSource;
 
 class ItemFactory {
 public:

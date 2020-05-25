@@ -427,7 +427,7 @@ void output(const char original[]) {
 	char *str, *copy;
 	char *symptr;
 
-	copy = strdup(original);
+	copy = scumm_strdup(original);
 	str = copy;
 
 	if (str[0] != '$' || str[1] != '$')
@@ -1289,7 +1289,7 @@ static void movactor(CONTEXT) {
 						debugsay(cur.act);
 						printf(" (at ");
 						debugsay(cur.loc);
-						printf("), SCRIPT %ld, STEP %ld, Waiting %ld more>\n",
+						printf("), SCRIPT %u, STEP %u, Waiting %d more>\n",
 						       act->script, act->step + 1, step->after - act->count);
 					}
 					act->count++;
@@ -1304,7 +1304,7 @@ static void movactor(CONTEXT) {
 						debugsay(cur.act);
 						printf(" (at ");
 						debugsay(cur.loc);
-						printf("), SCRIPT %ld, STEP %ld, Evaluating:>\n",
+						printf("), SCRIPT %u, STEP %u, Evaluating:>\n",
 						       act->script, act->step + 1);
 					}
 					interpret(step->exp);
@@ -1320,7 +1320,7 @@ static void movactor(CONTEXT) {
 					debugsay(cur.act);
 					printf(" (at ");
 					debugsay(cur.loc);
-					printf("), SCRIPT %ld, STEP %ld, Executing:>\n",
+					printf("), SCRIPT %u, STEP %u, Executing:>\n",
 					       act->script, act->step);
 				}
 				interpret(step->stm);

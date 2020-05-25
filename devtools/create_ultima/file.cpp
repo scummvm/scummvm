@@ -22,6 +22,19 @@
 
 #include "file.h"
 
+#define MD5_COMPUTE_SIZE 1024
+
+uint32 File::computeMD5() {
+	uint32 total = 0;
+	seek(0);
+	for (int idx = 0; idx < MD5_COMPUTE_SIZE; ++idx)
+		total += readByte();
+
+	seek(0);
+	return total;
+}
+
+
 void Surface::setPaletteEntry(byte index, byte r, byte g, byte b) {
 	byte *pal = _palette + index * 3;
 	pal[0] = r;

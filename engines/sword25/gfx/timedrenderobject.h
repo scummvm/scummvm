@@ -46,8 +46,8 @@ public:
 	/**
 	    @brief Teilt dem Objekt mit, dass ein neuer Frame begonnen wird.
 
-	    Diese Methode wird jeden Frame an jedem BS_TimedRenderObject aufgerufen um diesen zu ermˆglichen
-	    ihren Zustand Zeitabh‰ngig zu ver‰ndern (z.B. Animationen).<br>
+	    Diese Methode wird jeden Frame an jedem BS_TimedRenderObject aufgerufen um diesen zu erm√∂glichen
+	    ihren Zustand Zeitabh√§ngig zu ver√§ndern (z.B. Animationen).<br>
 	    @param int TimeElapsed gibt an wie viel Zeit (in Microsekunden) seit dem letzten Frame vergangen ist.
 	*/
 	virtual void frameNotification(int timeElapsed) = 0;

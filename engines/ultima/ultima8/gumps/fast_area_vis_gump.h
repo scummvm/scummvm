@@ -29,6 +29,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * A gump for debugging which shows all the things in the "fast" area (the area around the avatar
+ * which is being calculated for pathfinding etc)
+ */
 class FastAreaVisGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

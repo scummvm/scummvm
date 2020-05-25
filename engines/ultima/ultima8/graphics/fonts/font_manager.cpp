@@ -102,7 +102,7 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 	if (iter != _ttfFonts.end())
 		return iter->_value;
 
-	IDataSource *fontids;
+	Common::SeekableReadStream *fontids;
 	fontids = FileSystem::get_instance()->ReadFile("@data/" + filename);
 	if (!fontids) {
 		perr << "Failed to open TTF: @data/" << filename << Std::endl;
@@ -110,9 +110,8 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 	}
 
 	// open font using ScummVM TTF API
-	// Note: The RWops and IDataSource will be deleted by the TTF_Font
-	Common::SeekableReadStream *rs = fontids->GetRawStream();
-	Graphics::Font *font = Graphics::loadTTFFont(*rs, pointsize);
+	// Note: The RWops and ReadStream will be deleted by the TTF_Font
+	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize);
 
 	if (!font) {
 		perr << "Failed to open TTF: @data/" << filename << Std::endl;
@@ -163,7 +162,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filena
 
 bool FontManager::addJPOverride(unsigned int fontnum,
                                 unsigned int jpfont, uint32 rgb) {
-	ShapeFont *jf = p_dynamic_cast<ShapeFont *>(GameData::get_instance()->getFonts()->getFont(jpfont));
+	ShapeFont *jf = dynamic_cast<ShapeFont *>(GameData::get_instance()->getFonts()->getFont(jpfont));
 	if (!jf)
 		return false;
 

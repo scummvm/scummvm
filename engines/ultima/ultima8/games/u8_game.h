@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-
 class U8Game: public Game {
 public:
 	U8Game();
@@ -45,7 +43,7 @@ public:
 	bool startInitialUsecode(int saveSlot) override;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
-	void writeSaveInfo(ODataSource *ods) override;
+	void writeSaveInfo(Common::WriteStream *ws) override;
 
 	ProcId playIntroMovie(bool fade) override;
 	ProcId playEndgameMovie(bool fade) override;
@@ -53,7 +51,7 @@ public:
 	void playQuotes() override;
 
 protected:
-	Std::string getCreditText(IDataSource *ids);
+	Std::string getCreditText(Common::SeekableReadStream *rs);
 };
 
 } // End of namespace Ultima8

@@ -168,6 +168,7 @@ _dialogs=auto
 _iconv=auto
 _tts=auto
 _gtk=auto
+_fribidi=auto
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -259,6 +260,7 @@ add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
+add_feature fribidi "FriBidi" "_fribidi"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1025,6 +1027,7 @@ Optional Features:
                            optimizations)
   --enable-release-mode    enable building in release mode (without optimizations)
   --enable-optimizations   enable optimizations
+  --enable-asan            enable Address Sanitizer for memory-related debugging
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -1075,6 +1078,9 @@ Optional Libraries:
 
   --with-mad-prefix=DIR    prefix where libmad is installed (optional)
   --disable-mad            disable libmad (MP3) support [autodetect]
+
+  --with-fribidi-prefix=DIR    prefix where libfribidi is installed
+  --disable-fribidi            disable libfribidi support [autodetect]
 
   --with-flac-prefix=DIR   prefix where libFLAC is installed (optional)
   --disable-flac           disable FLAC support [autodetect]
@@ -1233,6 +1239,8 @@ for ac_option in $@; do
 	--disable-flac)               _flac=no               ;;
 	--enable-mad)                 _mad=yes               ;;
 	--disable-mad)                _mad=no                ;;
+	--enable-fribidi)             _fribidi=yes           ;;
+	--disable-fribidi)            _fribidi=no            ;;
 	--enable-zlib)                _zlib=yes              ;;
 	--disable-zlib)               _zlib=no               ;;
 	--enable-sparkle)             _sparkle=yes           ;;
@@ -1354,6 +1362,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MAD_CFLAGS="-I$arg/include"
 		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-fribidi-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FRIBIDI_CFLAGS="-I$arg/include"
+		FRIBIDI_LIBS="-L$arg/lib"
 		;;
 	--with-jpeg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1978,22 +1991,30 @@ if test "$_host_os" = android; then
 		_android_toolchain="$ANDROID_TOOLCHAIN"
 	fi
 
+	case $_host_cpu in
+	arm | i686)
+		_android_version=16
+		;;
+	aarch64 | x86_64)
+		# Platform version 21 is needed as earlier versions of platform do not support this architecture.
+		_android_version=21
+		;;
+	esac
+
 	# If CXX environment variable is not set, try to set known to work defaults
 	if test -z "$CXX"; then
 		case $_host_cpu in
 		arm)
-			_android_target="armv7a-linux-androideabi16"
+			_android_target="armv7a-linux-androideabi$_android_version"
 			;;
 		aarch64)
-			# Platform version 21 is needed as earlier versions of platform do not support this architecture.
-			_android_target="aarch64-linux-android21"
+			_android_target="aarch64-linux-android$_android_version"
 			;;
 		i686)
-			_android_target="i686-linux-android16"
+			_android_target="i686-linux-android$_android_version"
 			;;
 		x86_64)
-			# Platform version 21 is needed as earlier versions of platform do not support this architecture.
-			_android_target="x86_64-linux-android21"
+			_android_target="x86_64-linux-android$_android_version"
 			;;
 		esac
 
@@ -2011,6 +2032,10 @@ if test "$_host_os" = android; then
 	if test -z "$STRINGS"; then
 		STRINGS="$_android_toolchain/bin/$_host_alias-strings"
 	fi
+	if test -z "$PKG_CONFIG_LIBDIR"; then
+		export PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
+	fi
+	_libcurlpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libcurlpath"
 fi
 
 #
@@ -2809,35 +2834,65 @@ case $_host_os in
 			fi
 		fi
 
-		# When building for MacOS X 10.5 we need to use the legacy icon
-		echocheck "macOS SDK target version at least 10.6"
-		_macos_atleast_10_6=no
-		cat > $TMPC << EOF
+		# Building with SDK 10.14+ causes blurry display on Retina screens.
+		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
+		# to n/a (i.e. 0.0). See bug #11430 for details.
+		echocheck "macOS deployement target"
+		_macos_min_version=undefined
+		for _macos_min_version_check in 1030 140 1050 1060 1070 1080 1090 101000 101100 101200 101300 101400 101500 101600; do
+			cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
-#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+#if MAC_OS_X_VERSION_MIN_REQUIRED > ${_macos_min_version_check}
 error
 #endif
 int main(int argc, char *argv[]) { return 0; }
 EOF
-		cc_check && _macos_atleast_10_6=yes
-		echo ${_macos_atleast_10_6}
-		if test "$_macos_atleast_10_6" = no ; then
+			cc_check
+			if test "$TMPR" -eq 0; then
+				_macos_min_version=$_macos_min_version_check
+				break
+			fi
+		done
+		# Also get a dot version of the min version
+		_macos_min_version_dot=undefined
+		if test "$_macos_min_version" != undefined ; then
+			if test "$_macos_min_version" -lt 101000; then
+				_macos_min_ver_major=$((${_macos_min_version}/100))
+				_macos_min_ver_minor=$((${_macos_min_version}/10 - 10*${_macos_min_ver_major}))
+				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
+			else
+				_macos_min_ver_major=$((${_macos_min_version}/10000))
+				_macos_min_ver_minor=$((${_macos_min_version}/100 - 100*${_macos_min_ver_major}))
+				_macos_min_version_dot=${_macos_min_ver_major}.${_macos_min_ver_minor}
+			fi
+		fi
+		echo $_macos_min_version_dot
+
+		# Building with SDK 10.14+ causes blurry display on Retina screens.
+		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
+		# to n/a (i.e. 0.0). See bug #11430 for details.
+		# We do it in any case when the linker supports the -platform_version flag,
+		# even when using an older SDK.
+		echo_n "Checking if linker supports -platform_version... "
+		_macos_has_ld_platform_version=no
+		cat > $TMPC << EOF
+int main(int argc, char *argv[]) { return 0; }
+EOF
+		_macos_ldflags_platform_version="-Xlinker -platform_version -Xlinker macos -Xlinker $_macos_min_version_dot -Xlinker 0.0.0"
+		cc_check $_macos_ldflags_platform_version && _macos_has_ld_platform_version=yes
+		echo $_macos_has_ld_platform_version
+		if test "$_macos_has_ld_platform_version" = yes ; then
+			append_var LDFLAGS "$_macos_ldflags_platform_version"
+		fi
+
+		# When building for MacOS X 10.5 or below we need to use the legacy icon
+		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -lt 1060 ; then
 			add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
 		fi
 
 		# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
-		echocheck "macOS SDK target version at least 10.14"
-		_macos_atleast_10_14=no
-		cat > $TMPC << EOF
-#include "AvailabilityMacros.h"
-#if !defined(MAC_OS_X_VERSION_10_14) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_14
-error
-#endif
-int main(int argc, char *argv[]) { return 0; }
-EOF
-		cc_check && _macos_atleast_10_14=yes
-		echo ${_macos_atleast_10_14}
-		if test "$_macos_atleast_10_14" = yes ; then
+		# Assume the SDK version is the same as the min version.
+		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -gt 101399 ; then
 			add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
 		fi
 
@@ -3694,7 +3749,7 @@ case $_backend in
 		;;
 	ps2)
 		append_var DEFINES "-D_EE"
-		append_var DEFINES "-DFORCE_RTL"
+		append_var DEFINES "-DFORCE_RETURN_TO_LAUNCHER"
 		append_var INCLUDES "-I$PS2SDK/ee/include"
 		append_var INCLUDES "-I$PS2SDK/common/include"
 		append_var INCLUDES "-I$PS2SDK/ports/include"
@@ -5524,6 +5579,26 @@ if test "$_pandoc" = yes ; then
 fi
 
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
+
+#
+# Check for FriBidi
+#
+echocheck "FriBidi"
+if test "$_fribidi" = auto ; then
+	_fribidi=no
+	cat > $TMPC << EOF
+#include <fribidi/fribidi.h>
+int main(void) { return 0; }
+EOF
+	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS -lfribidi && _fribidi=yes
+fi
+if test "$_fribidi" = yes ; then
+	append_var LIBS "$FRIBIDI_LIBS -lfribidi"
+	append_var INCLUDES "$FRIBIDI_CFLAGS"
+fi
+define_in_config_if_yes "$_fribidi" 'USE_FRIBIDI'
+echo "$_fribidi"
+
 
 # Default to plain text output for pandoc
 if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then

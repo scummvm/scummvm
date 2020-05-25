@@ -100,7 +100,7 @@ struct ScriptPatch {
 	// Jump straight to credits
 	//{"CINE_OUTRO", "-- delegate", "-- delegate\nCine_FadeOutBlack( 40 )\nCredits()"},
 
-	{NULL, NULL, NULL}
+	{nullptr, nullptr, nullptr}
 };
 
 LuaScript::LuaScript() {
@@ -113,7 +113,7 @@ LuaScript::LuaScript() {
 		_cameraYOff = (32 * 2 + 16);	// 2.50 Tiles Extra
 	}
 
-	_state = NULL;
+	_state = nullptr;
 	_systemInit = false;
 
 
@@ -134,7 +134,7 @@ void LuaScript::init() {
 	// Load Global Lua Code
 	_globalLuaStream = g_hdb->_fileMan->findFirstData("GLOBAL.LUA", TYPE_BINARY);
 	_globalLuaLength = g_hdb->_fileMan->getLength("GLOBAL.LUA", TYPE_BINARY);
-	if (_globalLuaStream == NULL || _globalLuaLength == 0) {
+	if (_globalLuaStream == nullptr || _globalLuaLength == 0) {
 		error("LuaScript::initScript: 'global code' failed to load");
 	}
 }
@@ -142,7 +142,7 @@ void LuaScript::init() {
 bool LuaScript::loadLua(const char *name) {
 	Common::SeekableReadStream *luaStream = g_hdb->_fileMan->findFirstData(name, TYPE_BINARY);
 	int32 luaLength = g_hdb->_fileMan->getLength(name, TYPE_BINARY);
-	if (luaStream == NULL) {
+	if (luaStream == nullptr) {
 		warning("The %s MPC entry can't be found", name);
 
 		_systemInit = false;
@@ -168,7 +168,7 @@ void LuaScript::saveGlobalNumber(const char *global, double value) {
 	}
 
 	Global *g = new Global;
-	strcpy(g->global, global);
+	Common::strlcpy(g->global, global, 32);
 	g->valueOrString = 0;
 	g->value = value;
 
@@ -183,15 +183,15 @@ void LuaScript::saveGlobalString(const char *global, const char *string) {
 	for (uint i = 0; i < _globals.size(); i++) {
 		if (!scumm_stricmp(global, _globals[i]->global)) {
 			_globals[i]->valueOrString = 1;
-			strcpy(_globals[i]->string, string);
+			Common::strlcpy(_globals[i]->string, string, 32);
 			return;
 		}
 	}
 
 	Global *g = new Global;
-	strcpy(g->global, global);
+	Common::strlcpy(g->global, global, 32);
 	g->valueOrString = 1;
-	strcpy(g->string, string);
+	Common::strlcpy(g->string, string, 32);
 
 	_globals.push_back(g);
 }
@@ -235,7 +235,7 @@ void LuaScript::save(Common::OutSaveFile *out) {
 	lua_pushstring(_state, "tempSave");
 	lua_call(_state, 1, 0);
 
-	g_hdb->_currentOutSaveFile = NULL;
+	g_hdb->_currentOutSaveFile = nullptr;
 }
 
 void LuaScript::loadSaveFile(Common::InSaveFile *in) {
@@ -263,7 +263,7 @@ void LuaScript::loadSaveFile(Common::InSaveFile *in) {
 
 	lua_call(_state, 1, 0);
 
-	g_hdb->_currentInSaveFile = NULL;
+	g_hdb->_currentInSaveFile = nullptr;
 }
 
 void LuaScript::setLuaGlobalValue(const char *name, int value) {
@@ -292,7 +292,7 @@ static int cineStart(lua_State *L) {
 }
 
 static int cineStop(lua_State *L) {
-	const char *funcNext = NULL;
+	const char *funcNext = nullptr;
 
 	int stackTop = lua_gettop(L);
 	if (stackTop) {
@@ -933,7 +933,7 @@ static int dialog(lua_State *L) {
 	const char *more = lua_tostring(L, 4);
 
 	if (!more || more[0] == '0')
-		more = NULL;
+		more = nullptr;
 
 	g_hdb->_lua->checkParameters("dialog", 4);
 
@@ -1566,7 +1566,7 @@ struct VarInit {
 	{ PIC_RANK3,						"PIC_RANK3" },
 	{ PIC_RANK4,						"PIC_RANK4" },
 	{ PIC_RANK5,						"PIC_RANK5" },
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 // For AI States, to be implemented
@@ -1649,7 +1649,7 @@ struct NumberInit {
 	{ STATE_DOLLYUSERIGHT,	"STATE_DOLLYUSERIGHT"	},
 	{ STATE_YELL,			"STATE_YELL"			},
 
-	{ STATE_NONE, NULL }
+	{ STATE_NONE, nullptr }
 };
 
 struct FuncInit {
@@ -1744,7 +1744,7 @@ struct FuncInit {
 	{	"closefile",			closeFile,			},
 	{	"dofile",				dofile,				},
 	{	"writeto",				writeto,			},
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 namespace {
@@ -1762,13 +1762,13 @@ void debugHook(lua_State *L, lua_Debug *ar) {
 }
 
 bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length) {
-	if (_state != NULL) {
+	if (_state != nullptr) {
 		lua_close(_state);
 	}
 
 	// Initialize Lua Environment
 	_state = lua_open();
-	if (_state == NULL) {
+	if (_state == nullptr) {
 		error("Couldn't initialize Lua script.");
 		return false;
 	}
@@ -2109,7 +2109,7 @@ void lua_printstack(lua_State *L) {
 
 const char *LuaScript::getStringOffStack() {
 	if (!_systemInit) {
-		return NULL;
+		return nullptr;
 	}
 
 	const char *string = lua_tostring(_state, 1);

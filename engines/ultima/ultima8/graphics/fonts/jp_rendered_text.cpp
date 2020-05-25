@@ -31,9 +31,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText)
-
-
 JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines, int width, int height,
 		int vLead, ShapeFont *font, unsigned int fontNum)
 		: _lines(lines), _font(font), _fontNum(fontNum) {

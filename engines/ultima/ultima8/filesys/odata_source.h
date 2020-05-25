@@ -32,187 +32,30 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class ODataSource {
+class ODataSource : public Common::SeekableWriteStream {
 public:
 	ODataSource() {}
 	virtual ~ODataSource() {}
 
-	virtual void writeByte(uint32) = 0;
-	virtual void writeUint16LE(uint16) = 0;
-	virtual void write2high(uint16) = 0;
-	virtual void write3(uint32) = 0;
-	virtual void writeUint32LE(uint32) = 0;
-	virtual void write4high(uint32) = 0;
-	virtual void write(const void *str, uint32 num_bytes) = 0;
+	virtual void writeUint24LE(uint32 val) {
+		writeByte(static_cast<byte>(val & 0xff));
+		writeByte(static_cast<byte>((val >> 8) & 0xff));
+		writeByte(static_cast<byte>((val >> 16) & 0xff));
+	}
 
 	void writeX(uint32 val, uint32 num_bytes) {
 		assert(num_bytes > 0 && num_bytes <= 4);
-		if (num_bytes == 1) writeByte(static_cast<uint8>(val));
+		if (num_bytes == 1) writeByte(static_cast<byte>(val));
 		else if (num_bytes == 2) writeUint16LE(static_cast<uint16>(val));
-		else if (num_bytes == 3) write3(val);
+		else if (num_bytes == 3) writeUint24LE(val);
 		else writeUint32LE(val);
 	}
 
-	virtual Common::WriteStream *GetRawStream() {
-		return nullptr;
-	}
-
-	virtual void seek(uint32 pos) = 0;
-	virtual void skip(int32 delta) = 0;
-	virtual uint32 size() const = 0;
-	virtual uint32 pos() const = 0;
-};
-
-
-class OFileDataSource : public ODataSource {
-private:
-	Common::WriteStream *_out;
-
-public:
-	OFileDataSource(Common::WriteStream *data_stream) : _out(data_stream) {
-	}
-
-	~OFileDataSource() override {
-		FORGET_OBJECT(_out);
-	}
-
-	bool good() const {
-		return !_out->err();
-	}
-
-	void writeByte(uint32 val) override {
-		_out->writeByte(val & 0xff);
-	}
-
-	void writeUint16LE(uint16 val) override {
-		_out->writeUint16LE(val);
-	}
-
-	void write2high(uint16 val) override {
-		_out->writeUint16BE(val);
-	}
-
-	void write3(uint32 val) override {
-		_out->writeByte(static_cast<byte>(val & 0xff));
-		_out->writeByte(static_cast<byte>((val >> 8) & 0xff));
-		_out->writeByte(static_cast<byte>((val >> 16) & 0xff));
-	}
-
-	void writeUint32LE(uint32 val) override {
-		_out->writeUint32LE(val);
-	}
-
-	void write4high(uint32 val) override {
-		_out->writeUint32BE(val);
-	}
-
-	void write(const void *b, uint32 len) override {
-		_out->write(static_cast<const char *>(b), len);
-	}
-
-	void seek(uint32 pos) override {
-		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
-		assert(ws);
-		ws->seek(pos);
-	}
-
-	void skip(int32 amount) override {
-		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
-		assert(ws);
-		ws->seek(amount, SEEK_CUR);
-	}
-
-	uint32 size() const override {
-		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
-		assert(ws);
-		return ws->size();
-	}
-
-	uint32 pos() const override {
-		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
-		assert(ws);
-		return _out->pos();
-	}
-
-	Common::WriteStream *GetRawStream() override {
-		return _out;
-	}
-};
-
-class OBufferDataSource: public ODataSource {
-protected:
-	uint8 *_buf;
-	uint8 *_bufPtr;
-	uint32 _size;
-public:
-	OBufferDataSource(void *data, uint32 len) : _size(len) {
-		assert(data == 0 || len == 0);
-		_buf = _bufPtr = reinterpret_cast<uint8 *>(data);
-	};
-
-	void load(char *data, uint32 len) {
-		assert(data == 0 || len == 0);
-		_buf = _bufPtr = reinterpret_cast<uint8 *>(data);
-		_size = len;
-	};
-
-	~OBufferDataSource() override {};
-
-	void writeByte(uint32 val) override {
-		*_bufPtr++ = val & 0xff;
-	};
-
-	void writeUint16LE(uint16 val) override {
-		*_bufPtr++ = val & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-	};
-
-	void write2high(uint16 val) override {
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = val & 0xff;
-	};
-
-	void write3(uint32 val) override {
-		*_bufPtr++ = val & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = (val >> 16) & 0xff;
-	};
-
-	void writeUint32LE(uint32 val) override {
-		*_bufPtr++ = val & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = (val >> 16) & 0xff;
-		*_bufPtr++ = (val >> 24) & 0xff;
-	};
-
-	void write4high(uint32 val) override {
-		*_bufPtr++ = (val >> 24) & 0xff;
-		*_bufPtr++ = (val >> 16) & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = val & 0xff;
-	};
-
-	void write(const void *b, uint32 len) override {
-		Common::copy((const byte *)b, (const byte *)b + len, _bufPtr);
-		_bufPtr += len;
-	};
-
-	void seek(uint32 pos) override {
-		_bufPtr = const_cast<unsigned char *>(_buf) + pos;
-	};
-
-	void skip(int32 pos) override {
-		_bufPtr += pos;
-	};
-
-	uint32 size() const override {
-		return _size;
-	};
-
-	uint32 pos() const override {
-		return static_cast<uint32>(_bufPtr - _buf);
+	virtual void skip(int32 delta) {
+		seek(delta, SEEK_CUR);
 	};
 };
+
 
 class OAutoBufferDataSource: public ODataSource {
 protected:
@@ -232,7 +75,7 @@ protected:
 		// Reallocate the buffer
 		if (_loc > _allocated) {
 			// The old pointer position
-			uint32 pos = static_cast<uint32>(_bufPtr - _buf);
+			uint32 position = static_cast<uint32>(_bufPtr - _buf);
 
 			// The new buffer and size (2 times what is needed)
 			_allocated = _loc * 2;
@@ -242,7 +85,7 @@ protected:
 			delete [] _buf;
 
 			_buf = new_buf;
-			_bufPtr = _buf + pos;
+			_bufPtr = _buf + position;
 		}
 
 		// Update size
@@ -266,81 +109,44 @@ public:
 		delete [] _buf;
 	}
 
-	void writeByte(uint32 val) override {
-		checkResize(1);
-		*_bufPtr++ = val & 0xff;
-	};
-
-	void writeUint16LE(uint16 val) override {
-		checkResize(2);
-		*_bufPtr++ = val & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-	};
-
-	void write2high(uint16 val) override {
-		checkResize(2);
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = val & 0xff;
-	};
-
-	void write3(uint32 val) override {
-		checkResize(3);
-		*_bufPtr++ = val & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = (val >> 16) & 0xff;
-	};
-
-	void writeUint32LE(uint32 val) override {
-		checkResize(4);
-		*_bufPtr++ = val & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = (val >> 16) & 0xff;
-		*_bufPtr++ = (val >> 24) & 0xff;
-	};
-
-	void write4high(uint32 val) override {
-		checkResize(4);
-		*_bufPtr++ = (val >> 24) & 0xff;
-		*_bufPtr++ = (val >> 16) & 0xff;
-		*_bufPtr++ = (val >> 8) & 0xff;
-		*_bufPtr++ = val & 0xff;
-	};
-
-	void write(const void *b, uint32 len) override {
+	uint32 write(const void *b, uint32 len) override {
 		checkResize(len);
 		Common::copy((const byte *)b, (const byte *)b + len, _bufPtr);
 		_bufPtr += len;
+		return len;
 	};
 
-	void seek(uint32 pos) override {
+	bool seek(int32 position, int whence = SEEK_SET) override {
+		assert(whence == SEEK_SET);
 		// No seeking past the end of the buffer
-		if (pos <= _size) _loc = pos;
+		if (position <= static_cast<int32>(_size)) _loc = position;
 		else _loc = _size;
 
 		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
+		return true;
 	};
 
-	void skip(int32 pos) override {
+	void skip(int32 position) override {
 		// No seeking past the end
-		if (pos >= 0) {
-			_loc += pos;
+		if (position >= 0) {
+			_loc += position;
 			if (_loc > _size) _loc = _size;
 		}
 		// No seeking past the start
 		else {
-			uint32 invpos = -pos;
+			uint32 invpos = -position;
 			if (invpos > _loc) invpos = _loc;
 			_loc -= invpos;
 		}
 		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
 	};
 
-	uint32 size() const override {
+	int32 size() const override {
 		return _size;
 	};
 
-	uint32 pos() const override {
-		return static_cast<uint32>(_bufPtr - _buf);
+	int32 pos() const override {
+		return static_cast<int32>(_bufPtr - _buf);
 	};
 
 	// Don't actually do anything substantial

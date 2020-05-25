@@ -33,11 +33,13 @@
 namespace Dragons {
 
 
-static const Common::Point positionTable[4] = {
-	Common::Point(2, 0),
-	Common::Point(0xce, 0),
-	Common::Point(2, 0x9e),
-	Common::Point(0xce, 0x9e)
+static const struct {
+	int x, y;
+} positionTable[4] = {
+	{   2,   0 },
+	{ 206,   0 },
+	{   2, 158 },
+	{ 206, 158 }
 };
 
 static const int16 bagBounceTable[4] = {
@@ -118,7 +120,7 @@ void Inventory::updateVisibility() {
 }
 
 Common::Point Inventory::getPosition() {
-	return positionTable[_screenPositionIndex];
+	return Common::Point(positionTable[_screenPositionIndex].x, positionTable[_screenPositionIndex].y);
 }
 
 void Inventory::setActorFlag400() {
@@ -393,6 +395,7 @@ bool Inventory::clearItem(uint16 iniId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (_inventoryItemTbl[i] == iniId) {
 			_inventoryItemTbl[i] = 0;
+			return true;
 		}
 	}
 	return false;
@@ -428,6 +431,15 @@ void Inventory::setPreviousState() {
 	InventoryState tmpState = _state;
 	setState(_previousState);
 	_previousState = tmpState;
+}
+
+bool Inventory::hasItem(uint16 iniId) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+		if (_inventoryItemTbl[i] == iniId) {
+			return true;
+		}
+	}
+	return false;
 }
 
 } // End of namespace Dragons

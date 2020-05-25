@@ -107,7 +107,7 @@ bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

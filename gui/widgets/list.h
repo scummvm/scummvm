@@ -79,6 +79,7 @@ protected:
 
 	String			_filter;
 	bool			_quickSelect;
+	bool			_dictionarySelect;
 
 	uint32			_cmd;
 
@@ -112,6 +113,8 @@ public:
 
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
 	String getQuickSelectString() const 		{ return _quickSelectStr; }
+
+	void enableDictionarySelect(bool enable)	{ _dictionarySelect = enable; }
 
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }

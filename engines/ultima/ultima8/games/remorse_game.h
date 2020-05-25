@@ -43,14 +43,13 @@ public:
 	bool startInitialUsecode(int saveSlot = -1) override;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
-	void writeSaveInfo(ODataSource *ods) override;
+	void writeSaveInfo(Common::WriteStream *ws) override;
 
 	ProcId playIntroMovie(bool fade) override;
+	ProcId playIntroMovie2(bool fade);
 	ProcId playEndgameMovie(bool fade) override;
 	void playCredits() override;
 	void playQuotes() override { };
-
-	static Game *createGame(GameInfo *info);
 
 protected:
 	static Game *_game;

@@ -200,7 +200,7 @@ bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool HDB::HDBGame::hasFeature(Engine::EngineFeature f) const {
-	return (f == kSupportsRTL) ||
+	return (f == kSupportsReturnToLauncher) ||
 		   (f == kSupportsLoadingDuringRuntime) ||
 		   (f == kSupportsSavingDuringRuntime);
 }

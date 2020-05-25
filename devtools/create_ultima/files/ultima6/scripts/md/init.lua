@@ -13,7 +13,7 @@ OBJLIST_OFFSET_BERRY_COUNTERS           = 0x1d2f
 OBJLIST_OFFSET_DREAM_STAGE              = 0x1d53
 
 function dbg(msg_string)
-   io.stderr:write(msg_string)
+   --io.stderr:write(msg_string)
 end
 
 g_hours_till_next_healing = 0
@@ -36,7 +36,7 @@ function load_game()
 
    objlist_seek(OBJLIST_OFFSET_HOURS_TILL_NEXT_HEALING)
    g_hours_till_next_healing = objlist_read1()
-   
+
    objlist_seek(OBJLIST_OFFSET_DREAM_MODE_FLAG)
    g_in_dream_mode = bit32.btest(objlist_read2(), 0x10)
    map_enable_temp_actor_cleaning(not g_in_dream_mode)
@@ -63,7 +63,7 @@ end
 function save_game()
    objlist_seek(OBJLIST_OFFSET_HOURS_TILL_NEXT_HEALING)
    objlist_write1(g_hours_till_next_healing)
-   
+
    objlist_seek(OBJLIST_OFFSET_DREAM_MODE_FLAG)
    local bytes = objlist_read2()
    if g_in_dream_mode then
@@ -195,7 +195,7 @@ function search(obj)
    if obj.on_map == false then
       return
    end
-   
+
    local found_obj = false
    local child
    local first_loop = true
@@ -217,18 +217,18 @@ function search(obj)
       script_wait(50)
       first_loop = false
    end
-   
+
    if prev_obj ~= nil then
       printfl("SEARCH_LAST_OBJ", prev_obj.look_string)
       Obj.moveToMap(prev_obj, obj.x, obj.y, obj.z)
    end
-   
+
    if found_obj == false then
       printl("SEARCHING_HERE_YOU_FIND_NOTHING")
    else
       print(".\n")
    end
-   
+
 end
 
 --tile_num, readied location
@@ -374,7 +374,7 @@ function update_lamp_posts()
    if Actor.get_talk_flag(0x73, 4) and (hour < 6 or hour > 17) then
       frame_n = 7
    end
-   
+
    local loc = player_get_location()
    for obj in find_obj(loc.z, 228) do --OBJ_LAMP_POST
       if obj ~= nil then
@@ -420,7 +420,7 @@ if type(actor_load) == "function" then
    actor_load()
 else
    if type(actor_load) == "string" then
-      io.stderr:write(actor_load);
+      --io.stderr:write(actor_load);
    end
 end
 

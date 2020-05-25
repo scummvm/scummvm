@@ -1003,7 +1003,7 @@ bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool ScummEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsSubtitleOptions);
@@ -1372,10 +1372,20 @@ static const ExtraGuiOption comiObjectLabelsOption = {
 	true
 };
 
+static const ExtraGuiOption mmnesObjectLabelsOption = {
+	_s("Use NES Classic Palette"),
+	_s("Use a more neutral color palette that closely emulates the NES Classic"),
+	"mm_nes_classic_palette",
+	false
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	if (target.empty() || ConfMan.get("gameid", target) == "comi") {
 		options.push_back(comiObjectLabelsOption);
+	}
+	if (target.empty() || Common::parsePlatform(ConfMan.get("platform", target)) == Common::kPlatformNES) {
+		options.push_back(mmnesObjectLabelsOption);
 	}
 	return options;
 }

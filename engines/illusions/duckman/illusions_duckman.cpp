@@ -241,7 +241,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 bool IllusionsEngine_Duckman::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

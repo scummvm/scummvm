@@ -29,14 +29,11 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarGravityProcess, GravityProcess)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarGravityProcess)
 
 AvatarGravityProcess::AvatarGravityProcess()
 	: GravityProcess() {
@@ -77,12 +74,12 @@ void AvatarGravityProcess::run() {
 }
 
 
-void AvatarGravityProcess::saveData(ODataSource *ods) {
-	GravityProcess::saveData(ods);
+void AvatarGravityProcess::saveData(Common::WriteStream *ws) {
+	GravityProcess::saveData(ws);
 }
 
-bool AvatarGravityProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!GravityProcess::loadData(ids, version)) return false;
+bool AvatarGravityProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!GravityProcess::loadData(rs, version)) return false;
 
 	return true;
 }

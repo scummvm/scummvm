@@ -33,6 +33,7 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-widget.h"
 
+#include "common/achievements.h"
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/gui_options.h"
@@ -1108,6 +1109,78 @@ void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &
 	}
 
 	_keymapperWidget = new Common::RemapWidget(boss, prefix + "Container", keymaps);
+}
+
+void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info) {
+	Common::String achDomainId = ConfMan.get("achievements", _domain);
+	AchMan.setActiveDomain(info.platform, info.appId);
+
+	GUI::ScrollContainerWidget *scrollContainer;
+	scrollContainer = new GUI::ScrollContainerWidget(boss, prefix + "Container", "");
+	scrollContainer->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
+
+	uint16 nAchieved = 0;
+	uint16 nHidden = 0;
+	uint16 nMax = info.descriptions.size();
+
+	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
+	uint16 yStep = lineHeight;
+	uint16 ySmallStep = yStep/3;
+	uint16 yPos = lineHeight + yStep*3;
+	uint16 progressBarWidth = 240;
+	uint16 width = g_system->getOverlayWidth() <= 320 ? 240 : 410;
+	uint16 descrDelta = g_system->getOverlayWidth() <= 320 ? 25 : 30;
+
+	for (int16 viewAchieved = 1; viewAchieved >= 0; viewAchieved--) {
+		// run this twice, first view all achieved, then view all non-hidden & non-achieved
+
+		for (uint16 idx = 0; idx < nMax ; idx++) {
+			int16 isAchieved = AchMan.isAchieved(info.descriptions[idx].id) ? 1 : 0;
+
+			if (isAchieved != viewAchieved) {
+				continue;
+			}
+
+			if (isAchieved) {
+				nAchieved++;
+			}
+
+			if (!isAchieved && info.descriptions[idx].isHidden) {
+				nHidden++;
+				continue;
+			}
+
+			CheckboxWidget *checkBox;
+			checkBox = new CheckboxWidget(scrollContainer, lineHeight, yPos, width, yStep, info.descriptions[idx].title);
+			checkBox->setEnabled(false);
+			checkBox->setState(isAchieved);
+			yPos += yStep;
+
+	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, Graphics::kTextAlignLeft, "", ThemeEngine::kFontStyleNormal);
+				yPos += yStep;
+			}
+
+			yPos += ySmallStep;
+		}
+	}
+
+	if (nHidden) {
+		Common::String hiddenStr = Common::String::format(_("%d hidden achievements remaining"), nHidden);
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), Graphics::kTextAlignLeft);
+	}
+
+	if (nMax) {
+		Common::String totalStr = Common::String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
+		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), Graphics::kTextAlignLeft);
+
+		SliderWidget *progressBar;
+		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
+		progressBar->setMinValue(0);
+		progressBar->setValue(nAchieved);
+		progressBar->setMaxValue(nMax);
+		progressBar->setEnabled(false);
+	}
 }
 
 void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
@@ -2700,7 +2773,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 
 	// calculate shift
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 	int16 shiftUp = 0;
 	if (!showingCurrentStorage || enabled) {
 		// "storage is disabled" hint is not shown, shift everything up
@@ -2829,7 +2902,7 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 	if (!widget) return;
 
 	int16 x, y;
-	uint16 w, h;
+	int16 w, h;
 	if (!g_gui.xmlEval()->getWidgetData(widgetName, x, y, w, h))
 		warning("%s's position is undefined", widgetName);
 

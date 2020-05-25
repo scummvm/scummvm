@@ -4,7 +4,7 @@ local lua_file = nil
 lua_file = nuvie_load("common/common.lua"); lua_file();
 
 function dbg(msg_string)
-	io.stderr:write(msg_string)
+	--io.stderr:write(msg_string)
 end
 
 function load_game()
@@ -58,7 +58,7 @@ function search(obj)
    if obj.on_map == false then
       return
    end
-   
+
    local found_obj = false
    local child
    local first_loop = true
@@ -80,18 +80,18 @@ function search(obj)
       script_wait(50)
       first_loop = false
    end
-   
+
    if prev_obj ~= nil then
       printfl("SEARCH_LAST_OBJ", prev_obj.look_string)
       Obj.moveToMap(prev_obj, obj.x, obj.y, obj.z)
    end
-   
+
    if found_obj == false then
       printl("SEARCHING_HERE_YOU_FIND_NOTHING")
    else
       print(".\n")
    end
-   
+
 end
 
 --tile_num, readied location
@@ -161,8 +161,8 @@ function obj_get_readiable_location(obj)
 	if g_readiable_objs_tbl[obj.tile_num] ~= nil then
 		return g_readiable_objs_tbl[obj.tile_num]
 	end
-	
-	return -1	
+
+	return -1
 end
 
 function create_object_needs_quan(obj_n)
@@ -181,7 +181,7 @@ if type(actor_load) == "function" then
 	actor_load()
 else
 	if type(actor_load) == "string" then
-		io.stderr:write(actor_load);
+		--io.stderr:write(actor_load);
 	end
 end
 

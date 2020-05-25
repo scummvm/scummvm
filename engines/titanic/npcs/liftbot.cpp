@@ -158,7 +158,7 @@ bool CLiftBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	static const char *const NAMES[] = {
 		"Groaning", "Groaning 2", "Talking 1", "Talking 2", "Talking 3",
 		"Happy Talking", "Complaining", "Aggressive", "Explaining",
-		"Happy Talking 2", "Happy Talking 3", "Happy Talking 4"
+		"Happy Talking 2", "Happy Talking 3", "Happy Talking 4",
 		"Confidential", nullptr
 	};
 

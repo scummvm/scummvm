@@ -49,13 +49,11 @@ public:
 
 	uint16 hatch();
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 	INTRINSIC(I_monsterEggHatch);
 	INTRINSIC(I_getMonId);
-
-protected:
-	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

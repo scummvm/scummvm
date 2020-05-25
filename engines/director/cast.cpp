@@ -22,6 +22,7 @@
 
 #include "common/substream.h"
 #include "graphics/surface.h"
+#include "graphics/macgui/maceditabletext.h"
 #include "image/image_decoder.h"
 
 #include "director/director.h"
@@ -36,6 +37,8 @@ namespace Director {
 Cast::Cast() {
 	_type = kCastTypeNull;
 	_surface = nullptr;
+	_widget = nullptr;
+
 	_img = nullptr;
 
 	_modified = true;
@@ -134,7 +137,7 @@ SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
 		for (int i = 0; i < 0xe; i++) {
 			stream.readByte();
 		}
-		_looping = stream.readByte() & 0x10;
+		_looping = stream.readByte() & 0x10 ? 0 : 1;
 	}
 }
 
@@ -290,6 +293,18 @@ void TextCast::setText(const char *text) {
 	_ptext = _ftext = text;
 
 	_cachedMacText->forceDirty();
+
+	if (_widget) {
+		((Graphics::MacEditableText *)_widget)->clearText();
+		((Graphics::MacEditableText *)_widget)->appendTextDefault(_ftext);
+	}
+}
+
+Common::String TextCast::getText() {
+	if (_widget)
+		_ptext = ((Graphics::MacEditableText *)_widget)->getEditedString().encode();
+
+	return _ptext;
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {

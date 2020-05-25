@@ -99,7 +99,7 @@ Common::Language MohawkEngine::getLanguage() const {
 
 bool MohawkEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsReturnToLauncher);
 }
 
 #ifdef ENABLE_MYST

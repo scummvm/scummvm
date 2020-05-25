@@ -28,21 +28,18 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-class ODataSource;
-
 struct FrameID {
 	uint16 _flexId;
 	uint32 _shapeNum;
 	uint32 _frameNum;
 
-	FrameID() { }
+	FrameID() : _flexId(0), _shapeNum(0), _frameNum(0) { }
 	FrameID(uint16 flex, uint32 shape, uint32 frame)
 		: _flexId(flex), _shapeNum(shape), _frameNum(frame) {
 	}
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids);
+	void save(Common::WriteStream *ws);
+	bool load(Common::ReadStream *rs);
 };
 
 } // End of namespace Ultima8

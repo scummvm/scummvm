@@ -27,8 +27,14 @@
 namespace Ultima {
 namespace Ultima8 {
 
+byte MidiPlayer::_callbackData[2];
+
 MidiPlayer::MidiPlayer() {
 	MidiPlayer::createDriver();
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_isFMSynth = MidiDriver::getMusicType(dev) == MT_ADLIB;
+	_callbackData[0] = 0;
+	_callbackData[1] = 0;
 
 	if (_driver) {
 		int retValue = _driver->open();
@@ -47,9 +53,11 @@ MidiPlayer::~MidiPlayer() {
 	_driver->close();
 }
 
-void MidiPlayer::play(byte *data, size_t size) {
+void MidiPlayer::play(byte *data, size_t size, int seqNo, int trackNo, bool speedHack) {
 	if (!_driver)
 		return;
+
+	assert(seqNo == 0 || seqNo == 1);
 
 	stop();
 
@@ -60,14 +68,16 @@ void MidiPlayer::play(byte *data, size_t size) {
 		warning("play() Unexpected signature");
 		_isPlaying = false;
 	} else {
-		_parser = MidiParser::createParser_XMIDI();
+		_parser = MidiParser::createParser_XMIDI(xmidiCallback, _callbackData + seqNo);
 
 		if (!_parser->loadMusic(data, size))
 			error("play() wrong music resource");
 
-		_parser->setTrack(0);
+		_parser->setTrack(trackNo);
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
+		if (speedHack)
+			_parser->setTempo(_driver->getBaseTempo() * 2);
 		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
@@ -80,6 +90,14 @@ void MidiPlayer::play(byte *data, size_t size) {
 void MidiPlayer::setLooping(bool loop) {
 	_parser->property(MidiParser::mpAutoLoop, loop);
 }
+
+void MidiPlayer::xmidiCallback(byte eventData, void *data) {
+	if (data == nullptr)
+		return;
+
+	*static_cast<byte*>(data) = eventData;
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

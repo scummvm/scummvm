@@ -71,7 +71,7 @@ void ThemeLayout::resetLayout() {
 		_children[i]->resetLayout();
 }
 
-bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) {
 	if (name.empty()) {
 		assert(getLayoutType() == kLayoutMain);
 		x = _x; y = _y;
@@ -158,7 +158,7 @@ void ThemeLayout::debugDraw(Graphics::Surface *screen, const Graphics::Font *fon
 #endif
 
 
-bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h) {
 	if (name == _name) {
 		x = _x; y = _y;
 		w = _w; h = _h;
@@ -229,7 +229,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		_w = _defaultW > 0 ? MIN(_defaultW, g_system->getOverlayWidth()) : -1;
 		_h = _defaultH > 0 ? MIN(_defaultH, g_system->getOverlayHeight()) : -1;
 	} else {
-		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, (uint16 &) _w, (uint16 &) _h)) {
+		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, _w, _h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
 		}
 

@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	frame.o \
 	graphics.o \
 	images.o \
+	ink.o \
 	movie.o \
 	resource.o \
 	score.o \
@@ -27,6 +28,7 @@ MODULE_OBJS = \
 	lingo/lingo-events.o \
 	lingo/lingo-funcs.o \
 	lingo/lingo-lex.o \
+	lingo/lingo-patcher.o \
 	lingo/lingo-preprocessor.o \
 	lingo/lingo-the.o
 

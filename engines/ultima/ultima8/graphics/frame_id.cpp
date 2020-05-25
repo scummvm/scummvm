@@ -23,22 +23,19 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/frame_id.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-void FrameID::save(ODataSource *ods) {
-	ods->writeUint16LE(_flexId);
-	ods->writeUint32LE(_shapeNum);
-	ods->writeUint32LE(_frameNum);
+void FrameID::save(Common::WriteStream *ws) {
+	ws->writeUint16LE(_flexId);
+	ws->writeUint32LE(_shapeNum);
+	ws->writeUint32LE(_frameNum);
 }
 
-bool FrameID::load(IDataSource *ids) {
-	_flexId = ids->readUint16LE();
-	_shapeNum = ids->readUint32LE();
-	_frameNum = ids->readUint32LE();
+bool FrameID::load(Common::ReadStream *rs) {
+	_flexId = rs->readUint16LE();
+	_shapeNum = rs->readUint32LE();
+	_frameNum = rs->readUint32LE();
 	return true;
 }
 

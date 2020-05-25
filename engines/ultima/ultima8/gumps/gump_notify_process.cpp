@@ -24,16 +24,14 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(GumpNotifyProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(GumpNotifyProcess)
 
 GumpNotifyProcess::GumpNotifyProcess()
-	: Process() {
+	: Process(), _gump(0) {
 
 }
 
@@ -74,16 +72,16 @@ void GumpNotifyProcess::dumpInfo() const {
 	pout << " gump: " << _gump << Std::endl;
 }
 
-void GumpNotifyProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void GumpNotifyProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(_gump);
+	ws->writeUint16LE(_gump);
 }
 
-bool GumpNotifyProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool GumpNotifyProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_gump = ids->readUint16LE();
+	_gump = rs->readUint16LE();
 
 	return true;
 }

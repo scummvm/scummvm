@@ -31,6 +31,9 @@ namespace Ultima8 {
 
 class RenderedText;
 
+/**
+ * Full-screen gump for the credits roll in U8
+ */
 class CreditsGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

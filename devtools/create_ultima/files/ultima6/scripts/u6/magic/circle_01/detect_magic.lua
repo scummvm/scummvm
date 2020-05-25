@@ -28,7 +28,7 @@ local potion_name = {
 }
 
 fade_obj_blue(obj)
- 
+
 if magical_tiles[obj.tile_num] ~= nil then
 	--magical object.
 	if obj.obj_n == 0x113 then
@@ -44,16 +44,15 @@ else
 	--not magical
 	local has_charge = false
 	local child
-	for child in container_objs(obj) do  -- look through container for effect object. 
+	for child in container_objs(obj) do  -- look through container for effect object.
 		if child.obj_n == 0x150 then --charge
 			has_charge = true
 			print("\nIt shows a charge of " .. magic_spell_name(child.quality) .. ".\n")
 			break
 	  	end
 	end
-	
+
 	if has_charge == false then
 		print("\nIt's not magical.\n")
 	end
 end
-

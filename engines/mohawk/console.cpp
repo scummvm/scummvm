@@ -328,7 +328,7 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
-	_vm->pauseEngine(false);
+	_debugPauseToken.clear();
 
 	// Go through all the ages, all the views and click random stuff
 	for (uint i = 0; i < ARRAYSIZE(mystStackNames); i++) {
@@ -366,7 +366,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 		}
 	}
 
-	_vm->pauseEngine(true);
+	_debugPauseToken = _vm->pauseEngine();
 	return true;
 }
 
@@ -690,7 +690,7 @@ bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_QuickTest(int argc, const char **argv) {
-	_vm->pauseEngine(false);
+	_debugPauseToken.clear();
 
 	// Go through all the stacks, all the cards and click random stuff
 	for (uint16 stackId = kStackFirst; stackId <= kStackLast; stackId++) {
@@ -744,7 +744,7 @@ bool RivenConsole::Cmd_QuickTest(int argc, const char **argv) {
 		}
 	}
 
-	_vm->pauseEngine(true);
+	_debugPauseToken = _vm->pauseEngine();
 	return true;
 }
 

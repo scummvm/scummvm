@@ -93,10 +93,10 @@ void FileMan::seek(int32 offset, int flag) {
 
 Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType type, int *length) {
 	Common::String fileString;
-	MPCEntry *file = NULL;
+	MPCEntry *file = nullptr;
 
 	char fname[128];
-	strcpy(fname, string);
+	Common::strlcpy(fname, string, 128);
 	char *pDest = strrchr(fname, '.');
 	if (pDest)
 		*pDest = '_';
@@ -119,9 +119,9 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 		}
 	}
 
-	if (file == NULL) {
+	if (file == nullptr) {
 		debug(4, "Couldn't find Data: '%s'", fnameS.c_str());
-		return NULL;
+		return nullptr;
 	}
 
 	// Load corresponding file into a buffer
@@ -140,10 +140,10 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 
 int32 FileMan::getLength(const char *string, DataType type) {
 	Common::String fileString;
-	MPCEntry *file = NULL;
+	MPCEntry *file = nullptr;
 
 	char fname[128];
-	strcpy(fname, string);
+	Common::strlcpy(fname, string, 128);
 	char *pDest = strrchr(fname, '.');
 	if (pDest)
 		*pDest = '_';
@@ -162,7 +162,7 @@ int32 FileMan::getLength(const char *string, DataType type) {
 		}
 	}
 
-	if (file == NULL) {
+	if (file == nullptr) {
 		return 0;
 	}
 

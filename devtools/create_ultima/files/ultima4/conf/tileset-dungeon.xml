@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE tileset SYSTEM "dtd/tileset.dtd">
+<!-- $Id: tileset-dungeon.xml 2295 2004-11-29 05:32:14Z andrewtaylor $ -->
+<tileset name="dungeon" extends="base">
+    <tile name="up_down_ladder" image="tile_bridge"/>
+    <tile name="ceiling_hole" image="tile_brick_floor"/>
+    <tile name="floor_hole" image="tile_brick_floor"/>
+    <tile name="magic_orb" image="tile_magic_flash"/>
+    <tile name="fountain" image="tile_shallows" animation="scroll"/>
+    <tile name="dungeon_room" image="tile_solid" rule="dng_room"/>    
+    <tile name="dungeon_door" image="tile_door" rule="dng_door"/>
+    <tile name="dungeon_altar" image="tile_altar" rule="dng_altar"/>
+</tileset>

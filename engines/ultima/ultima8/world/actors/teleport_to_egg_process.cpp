@@ -26,16 +26,13 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportToEggProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportToEggProcess)
 
-TeleportToEggProcess::TeleportToEggProcess() : Process() {
-
+TeleportToEggProcess::TeleportToEggProcess() : Process(),
+	_mapNum(0), _teleportId(0) {
 }
 
 
@@ -53,18 +50,18 @@ void TeleportToEggProcess::run() {
 	terminate();
 }
 
-void TeleportToEggProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void TeleportToEggProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_mapNum));
-	ods->writeUint32LE(static_cast<uint32>(_teleportId));
+	ws->writeUint32LE(static_cast<uint32>(_mapNum));
+	ws->writeUint32LE(static_cast<uint32>(_teleportId));
 }
 
-bool TeleportToEggProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool TeleportToEggProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_mapNum = static_cast<int>(ids->readUint32LE());
-	_teleportId = static_cast<int>(ids->readUint32LE());
+	_mapNum = static_cast<int>(rs->readUint32LE());
+	_teleportId = static_cast<int>(rs->readUint32LE());
 	return true;
 }
 

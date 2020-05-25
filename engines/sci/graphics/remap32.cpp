@@ -189,8 +189,8 @@ bool SingleRemap::apply() {
 	const uint8 remapStartColor = gfxRemap32->getStartColor();
 
 	// Blocked colors are not allowed to be used as target colors for the remap
-	bool blockedColors[236];
-	Common::fill(blockedColors, blockedColors + remapStartColor, false);
+	bool blockedColors[237];
+	Common::fill(blockedColors, &blockedColors[237], false);
 
 	const bool *const paletteCycleMap = g_sci->_gfxPalette32->getCycleMap();
 
@@ -291,12 +291,17 @@ GfxRemap32::GfxRemap32() :
 	_needsUpdate(false),
 	_blockedRangeStart(0),
 	_blockedRangeCount(0),
-	_remapStartColor(236),
 	_numActiveRemaps(0) {
-	// The `_remapStartColor` seems to always be 236 in SSCI, but if it is ever
-	// changed then the various C-style member arrays hard-coded to 236 need to
-	// be changed to match the highest possible value of `_remapStartColor`
-	assert(_remapStartColor == 236);
+
+	// Mac SSCI has one less remap entry than PC. Mac games expand the normal
+	//  range from 236 entries to 237 and uses the extra entry (236) for black
+	//  instead of 0. This was done to avoid conflicting with the operating
+	//  system's palette which always uses entry 0 for white.
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		_remapStartColor = 237;
+	} else {
+		_remapStartColor = 236;
+	}
 
 	if (g_sci->_features->hasMidPaletteCode()) {
 		_remaps.resize(9);
@@ -304,7 +309,7 @@ GfxRemap32::GfxRemap32() :
 		_remaps.resize(19);
 	}
 
-	_remapEndColor = _remapStartColor + _remaps.size() - 1;
+	_remapEndColor = 236 + _remaps.size() - 1;
 }
 
 void GfxRemap32::remapOff(const uint8 color) {

@@ -953,7 +953,7 @@ int playMovie(int fileNumber) {
 
 	setPixelCoords(false);
 #endif
-	return 1;
+	return 0;
 }
 
 int stopMovie() {

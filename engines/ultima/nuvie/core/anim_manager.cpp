@@ -291,13 +291,13 @@ void NuvieAnim::update_position() {
 
 /*** TileAnim ***/
 TileAnim::TileAnim() {
-	map_window = Game::get_game()->get_map_window();
-	tx = ty = px = py = 0;
+	_mapWindow = Game::get_game()->get_map_window();
+	_tx = _ty = _px = _py = 0;
 }
 
 
 TileAnim::~TileAnim() {
-	while (tiles.size())
+	while (_tiles.size())
 		remove_tile();
 }
 
@@ -306,9 +306,9 @@ TileAnim::~TileAnim() {
  * Returns -1 if it isn't found.
  */
 sint32 TileAnim::get_tile_id(PositionedTile *find_tile) {
-	uint32 tile_count = tiles.size();
+	uint32 tile_count = _tiles.size();
 	for (uint32 t = 0; t < tile_count; t++)
-		if (find_tile == tiles[t])
+		if (find_tile == _tiles[t])
 			return (t);
 	return (-1);
 }
@@ -317,11 +317,11 @@ sint32 TileAnim::get_tile_id(PositionedTile *find_tile) {
 /* Display ordered tile list.
  */
 void TileAnim::display() {
-	uint32 tcount = tiles.size();
+	uint32 tcount = _tiles.size();
 	for (sint32 t = (tcount - 1); t >= 0; t--)
-		anim_manager->drawTileAtWorldCoords(tiles[t]->tile,
-		                                    tx + tiles[t]->pos_x, ty + tiles[t]->pos_y,
-		                                    px + tiles[t]->px, py + tiles[t]->py);
+		anim_manager->drawTileAtWorldCoords(_tiles[t]->tile,
+		                                    _tx + _tiles[t]->pos_x, _ty + _tiles[t]->pos_y,
+		                                    _px + _tiles[t]->px, _py + _tiles[t]->py);
 }
 
 
@@ -335,7 +335,7 @@ PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
 	new_tile->pos_y = y;
 	new_tile->px = add_x;
 	new_tile->py = add_y;
-	tiles.insert(tiles.begin(), new_tile);
+	_tiles.insert(_tiles.begin(), new_tile);
 	return (new_tile);
 }
 
@@ -343,23 +343,23 @@ PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
 /* Remove tile from list position `i'. (default = last added)
  */
 void TileAnim::remove_tile(uint32 i) {
-	if (i < tiles.size()) {
+	if (i < _tiles.size()) {
 		//vector<PositionedTile*>::iterator ti = &tiles[i];
-		Std::vector<PositionedTile *>::iterator ti = tiles.begin();
+		Std::vector<PositionedTile *>::iterator ti = _tiles.begin();
 		for (uint32 j = 0; j < i; j++)
 			ti++;
 
 		delete *ti;
-		tiles.erase(ti);
+		_tiles.erase(ti);
 	}
 }
 
 void TileAnim::remove_tile(PositionedTile *p_tile) {
-	Std::vector<PositionedTile *>::iterator ti = tiles.begin();
-	for (; ti != tiles.end(); ti++) {
+	Std::vector<PositionedTile *>::iterator ti = _tiles.begin();
+	for (; ti != _tiles.end(); ti++) {
 		if (*ti == p_tile) {
 			delete *ti;
-			tiles.erase(ti);
+			_tiles.erase(ti);
 			break;
 		}
 	}
@@ -372,7 +372,7 @@ void TileAnim::remove_tile(PositionedTile *p_tile) {
  */
 void TileAnim::shift(sint32 sx, sint32 sy) {
 	uint8 tile_pitch = anim_manager->get_tile_pitch();
-	uint32 total_px = (tx * tile_pitch) + px, total_py = (ty * tile_pitch) + py;
+	uint32 total_px = (_tx * tile_pitch) + _px, total_py = (_ty * tile_pitch) + _py;
 	total_px += sx;
 	total_py += sy;
 	move(total_px / tile_pitch, total_py / tile_pitch,
@@ -383,20 +383,20 @@ void TileAnim::shift(sint32 sx, sint32 sy) {
 /* Move a tile by the pixel, relative to the animation, in direction sx,sy.
  */
 void TileAnim::shift_tile(uint32 ptile_num, sint32 sx, sint32 sy) {
-	if (tiles.size() <= ptile_num)
+	if (_tiles.size() <= ptile_num)
 		return;
 
 	uint8 tile_pitch = anim_manager->get_tile_pitch();
-	uint16 vtx = tiles[ptile_num]->pos_x, vty = tiles[ptile_num]->pos_y;
-	uint16 vpx = tiles[ptile_num]->px, vpy = tiles[ptile_num]->py;
+	uint16 vtx = _tiles[ptile_num]->pos_x, vty = _tiles[ptile_num]->pos_y;
+	uint16 vpx = _tiles[ptile_num]->px, vpy = _tiles[ptile_num]->py;
 	uint32 total_px = (vtx * tile_pitch) + vpx, total_py = (vty * tile_pitch) + vpy;
 	total_px += sx;
 	total_py += sy;
 	// move
-	tiles[ptile_num]->pos_x = total_px / tile_pitch;
-	tiles[ptile_num]->pos_y = total_py / tile_pitch;
-	tiles[ptile_num]->px = total_px % tile_pitch;
-	tiles[ptile_num]->py = total_py % tile_pitch;
+	_tiles[ptile_num]->pos_x = total_px / tile_pitch;
+	_tiles[ptile_num]->pos_y = total_py / tile_pitch;
+	_tiles[ptile_num]->px = total_px % tile_pitch;
+	_tiles[ptile_num]->py = total_py % tile_pitch;
 }
 
 void TileAnim::move_tile(PositionedTile *ptile, uint32 x, uint32 y) {
@@ -414,7 +414,7 @@ void TileAnim::move_tile(PositionedTile *ptile, uint32 x, uint32 y) {
  */
 HitAnim::HitAnim(MapCoord *loc) {
 	hit_actor = NULL;
-	add_tile(map_window->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
+	add_tile(_mapWindow->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
 	         0, 0);
 	move(loc->x, loc->y);
 }
@@ -422,7 +422,7 @@ HitAnim::HitAnim(MapCoord *loc) {
 
 HitAnim::HitAnim(Actor *actor) {
 	hit_actor = actor;
-	add_tile(map_window->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
+	add_tile(_mapWindow->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
 	         0, 0);
 	MapCoord loc = hit_actor->get_location();
 	move(loc.x, loc.y);
@@ -451,8 +451,8 @@ uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 /*** TextAnim ***/
 
 TextAnim::TextAnim(Std::string t, MapCoord loc, uint32 dur) {
-	px = loc.x;
-	py = loc.y;
+	_px = loc.x;
+	_py = loc.y;
 	duration = dur;
 	font = Game::get_game()->get_font_manager()->get_conv_font();
 	text = t;
@@ -467,7 +467,7 @@ void TextAnim::display() {
 	if (is_paused())
 		return;
 
-	anim_manager->drawText(font, text.c_str(), px, py);
+	anim_manager->drawText(font, text.c_str(), _px, _py);
 }
 
 uint16 TextAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
@@ -514,7 +514,7 @@ void TossAnim::init(Tile *tile, uint16 degrees, const MapCoord &start, const Map
 	target = new MapCoord(stop);
 	blocking = stop_flags;
 	speed = pixels_per_sec;
-	map_window->get_level(&mapwindow_level);
+	_mapWindow->get_level(&mapwindow_level);
 
 	TileManager *tile_mgr = Game::get_game()->get_tile_manager();
 	MapCoord direction; // relative direction from->to
@@ -586,12 +586,12 @@ void TossAnim::stop() {
  * center of the tile must be left or above the center of its location.
  */
 MapCoord TossAnim::get_location() {
-	MapCoord loc(tx, ty, 0);
+	MapCoord loc(_tx, _ty, 0);
 	if (src->x > target->x) { // moving left
-		if (px > 0) loc.x += 1;
+		if (_px > 0) loc.x += 1;
 	}
 	if (src->y > target->y) { // moving up
-		if (px > 0) loc.y += 1;
+		if (_px > 0) loc.y += 1;
 	}
 	return (loc);
 }
@@ -711,13 +711,13 @@ uint32 TossAnim::update_position(uint32 max_move) {
 
 	if (x_move != 0) {
 		if (x_dist >= y_dist) { // Y=X*tangent
-			uint32 xpos = tx * 16 + px; // pixel location
+			uint32 xpos = _tx * 16 + _px; // pixel location
 			sint32 relx = (xpos + x_move) - start_px; // new relative position
 			sint32 rely = (uint32)roundf(relx * tanS);
 			shift(x_move, rely - old_relpos); // **MOVE**
 			old_relpos = rely;
 		} else { // X=Y/tangent
-			uint32 ypos = ty * 16 + py; // pixel location
+			uint32 ypos = _ty * 16 + _py; // pixel location
 			sint32 rely = (ypos + y_move) - start_py; // new relative position
 			sint32 relx = (uint32)roundf(rely / tanS);
 			shift(relx - old_relpos, y_move); // **MOVE**
@@ -769,7 +769,7 @@ ExplosiveAnim::~ExplosiveAnim() {
  * the center.
  */
 void ExplosiveAnim::start() {
-	TileManager *tile_manager = map_window->get_tile_manager();
+	TileManager *tile_manager = _mapWindow->get_tile_manager();
 	sint32 s = 8; // how many pixels each new fireball is from the previous
 
 	move(center.x, center.y);
@@ -870,7 +870,7 @@ bool ExplosiveAnim::update() {
 	uint8 mapwindow_level;
 	LineTestResult lt;
 
-	map_window->get_level(&mapwindow_level);
+	_mapWindow->get_level(&mapwindow_level);
 	for (uint32 t = 0; t < flame.size(); t++) { // update each line of fire
 		if (flame[t].direction.sx == 0 && flame[t].direction.sy == 0)
 			continue; // not moving; check next flames
@@ -996,7 +996,7 @@ ProjectileAnim::~ProjectileAnim() {
  * the center.
  */
 void ProjectileAnim::start() {
-	TileManager *tile_manager = map_window->get_tile_manager();
+	TileManager *tile_manager = _mapWindow->get_tile_manager();
 	Tile *t = tile_manager->get_tile(tile_num);
 
 	move(0, 0);
@@ -1020,12 +1020,12 @@ void ProjectileAnim::start() {
  * a blocked tile. Hit actors & volatile objects (powder kegs).
  */
 bool ProjectileAnim::update() {
-	TileManager *tile_manager = map_window->get_tile_manager();
+	TileManager *tile_manager = _mapWindow->get_tile_manager();
 	Map *map = Game::get_game()->get_game_map();
 	uint8 level;
 	LineTestResult lt;
 
-	map_window->get_level(&level);
+	_mapWindow->get_level(&level);
 
 	for (uint16 i = 0; i < line.size(); i++) {
 		if (line[i].isRunning) {
@@ -1098,7 +1098,7 @@ bool ProjectileAnim::already_hit(MapEntity ent) {
 
 /*** WingAnim ***/
 WingAnim::WingAnim(MapCoord t) {
-	TileManager *tile_manager = map_window->get_tile_manager();
+	TileManager *tile_manager = _mapWindow->get_tile_manager();
 
 	p_tile_top = NULL;
 	p_tile_bottom = NULL;
@@ -1106,8 +1106,8 @@ WingAnim::WingAnim(MapCoord t) {
 	y = target.y * 16;
 
 	uint16 mx, my, win_w, win_h;
-	map_window->get_pos(&mx, &my);
-	map_window->get_windowSize(&win_w, &win_h);
+	_mapWindow->get_pos(&mx, &my);
+	_mapWindow->get_windowSize(&win_w, &win_h);
 
 	uint16 off_x;
 
@@ -1243,7 +1243,7 @@ bool HailstormAnim::update() {
 				hailstones[i].p_tile = NULL;
 
 				uint8 z = 0;
-				map_window->get_level(&z);
+				_mapWindow->get_level(&z);
 				Actor *actor = Game::get_game()->get_actor_manager()->get_actor(hailstones[i].x / 16, hailstones[i].y / 16, z);
 				if (actor) {
 					pause();

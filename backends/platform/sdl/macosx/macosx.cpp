@@ -147,7 +147,7 @@ bool OSystem_MacOSX::setTextInClipboard(const Common::String &text) {
 }
 
 bool OSystem_MacOSX::openUrl(const Common::String &url) {
-	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
+	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (const UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
 	OSStatus err = LSOpenCFURLRef(urlRef, NULL);
 	CFRelease(urlRef);
 	return err == noErr;

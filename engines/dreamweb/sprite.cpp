@@ -584,17 +584,17 @@ void DreamWebEngine::monks2text() {
 	} else {
 		switch (_introCount) {
 		case 1:
-			monks2ShowText(8);	// W≈chter! Das Netz der Tr≈ume f≈ngt an sich aufzul÷sen
+			monks2ShowText(8);	// W√Öchter! Das Netz der Tr√Öume f√Öngt an sich aufzul√ñsen
 			break;
 		case 4:	// Floppy
 		case 5:	// CD
 			if ((_introCount == 4 && !hasSpeech()) || (_introCount == 5 && hasSpeech()))
-				monks2ShowText(9);	// Die sieben b÷sen M≈chte der Erde fangen an sich zu sammeln
+				monks2ShowText(9);	// Die sieben b√ñsen M√Öchte der Erde fangen an sich zu sammeln
 			break;
 		case 7:	// Floppy
 		case 9:	// CD
 			if ((_introCount == 7 && !hasSpeech()) || (_introCount == 9 && hasSpeech()))
-				monks2ShowText(10);	// Wenn sie zu m≈chtig werden, wird das Dreamweb zerst÷rt
+				monks2ShowText(10);	// Wenn sie zu m√Öchtig werden, wird das Dreamweb zerst√ñrt
 			break;
 		case 10:	// Floppy
 		case 13:	// CD and floppy
@@ -612,12 +612,12 @@ void DreamWebEngine::monks2text() {
 				monks2ShowText(13, 0, 135);
 			break;
 		case 19:
-			monks2ShowText(14);	// SCHWEIGT! Die Auserw≈hlten sammeln sich
+			monks2ShowText(14);	// SCHWEIGT! Die Auserw√Öhlten sammeln sich
 			break;
 		case 22:	// Floppy
 		case 23:	// CD
 			if ((_introCount == 22 && !hasSpeech()) || (_introCount == 23 && hasSpeech()))
-				monks2ShowText(15);	// Wenn sie ihre Kr≈fte entdecken, werden sie zu m≈chtig sein
+				monks2ShowText(15);	// Wenn sie ihre Kr√Öfte entdecken, werden sie zu m√Öchtig sein
 			break;
 		case 25:	// Floppy
 		case 27:	// CD
@@ -627,7 +627,7 @@ void DreamWebEngine::monks2text() {
 		case 28:	// Floppy
 		case 30:	// CD
 			if ((_introCount == 28 && !hasSpeech()) || (_introCount == 30 && hasSpeech()))
-				monks2ShowText(17);	// Ja. Sie ist zu einem gro‹en und stattlichen Man herangewachsen
+				monks2ShowText(17);	// Ja. Sie ist zu einem gro√úen und stattlichen Man herangewachsen
 			break;
 		case 31:	// Floppy
 		case 35:	// CD

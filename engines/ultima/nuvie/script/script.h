@@ -23,11 +23,8 @@
 #ifndef NUVIE_SCRIPT_SCRIPT_H
 #define NUVIE_SCRIPT_SCRIPT_H
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lua.h"
-#else
-#include "ultima/nuvie/lua/lua.h"
-#endif
+
 #include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/gui/gui.h"

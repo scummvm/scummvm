@@ -46,6 +46,7 @@ public:
 			_data[String(c)] = true;
 			c = va_arg(ap, const char *);
 		}
+		va_end(ap);
 	}
 
 	/**

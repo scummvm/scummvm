@@ -99,6 +99,8 @@ void WindowsTextToSpeechManager::init() {
 		return;
 	}
 
+	_speechState = NO_VOICE;
+
 #ifdef USE_TRANSLATION
 	setLanguage(TransMan.getCurrentLanguage());
 #else
@@ -450,6 +452,8 @@ Common::String WindowsTextToSpeechManager::lcidToLocale(Common::String lcid) {
 }
 
 void WindowsTextToSpeechManager::updateVoices() {
+	if (_speechState == BROKEN)
+		return;
 	_ttsState->_availableVoices.clear();
 	ISpObjectToken *cpVoiceToken = nullptr;
 	IEnumSpObjectTokens *cpEnum = nullptr;

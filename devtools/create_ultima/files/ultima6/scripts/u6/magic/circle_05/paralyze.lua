@@ -14,4 +14,3 @@ print(actor.name.." is paralyzed.\n")
 if actor.in_party == true then
 	party_update_leader()
 end
-

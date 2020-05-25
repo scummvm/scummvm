@@ -473,7 +473,7 @@ void EE::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_shouldQuit = true;
 				break;
 
@@ -779,9 +779,9 @@ bool EE::moveball() {
 		hitfloor = true;
 	}
 
-	if (rbvely > 0)
-		rbvely += 1;
-	else
+	//if (rbvely > 0) // Checked with original, this is how it is
+	//	rbvely += 1;
+	//else
 		rbvely += 1;
 
 	_tbx = _bx >> 6;
@@ -1085,6 +1085,8 @@ void EE::init() {
 	_serve = _servevel = 1;
 
 	_rmode = false;
+
+	_shouldQuit = false;
 }
 
 void EE::drawStatus(Common::String str, int x, uint32 color, int y, int color2, int w) {

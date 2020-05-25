@@ -24,12 +24,12 @@
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/usecode/usecode_flex.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/world/map_glob.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -174,7 +174,7 @@ void GameData::loadTranslation() {
 	}
 }
 
-Std::string GameData::translate(Std::string text) {
+Std::string GameData::translate(const Std::string &text) {
 	// TODO: maybe cache these lookups? config calls may be expensive
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
@@ -226,7 +226,7 @@ FrameID GameData::translate(FrameID f) {
 void GameData::loadU8Data() {
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	IDataSource *fd = filesystem->ReadFile("@game/static/fixed.dat");
+	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/fixed.dat");
 	if (!fd)
 		error("Unable to load static/fixed.dat");;
 
@@ -241,7 +241,7 @@ void GameData::loadU8Data() {
 	filename += "usecode.flx";
 
 
-	IDataSource *uds = filesystem->ReadFile(filename);
+	Common::SeekableReadStream *uds = filesystem->ReadFile(filename);
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 
@@ -249,7 +249,7 @@ void GameData::loadU8Data() {
 
 	// Load main shapes
 	pout << "Load Shapes" << Std::endl;
-	IDataSource *sf = filesystem->ReadFile("@game/static/u8shapes.flx");
+	Common::SeekableReadStream *sf = filesystem->ReadFile("@game/static/u8shapes.flx");
 	if (!sf) sf = filesystem->ReadFile("@game/static/u8shapes.cmp");
 
 	if (!sf)
@@ -266,7 +266,7 @@ void GameData::loadU8Data() {
 	config->readConfigFile("@data/u8.ini", "game", true);
 
 	// Load typeflags
-	IDataSource *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
+	Common::SeekableReadStream *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
 	if (!tfs)
 		error("Unable to load static/typeflag.dat");
 
@@ -274,7 +274,7 @@ void GameData::loadU8Data() {
 	delete tfs;
 
 	// Load animdat
-	IDataSource *af = filesystem->ReadFile("@game/static/anim.dat");
+	Common::SeekableReadStream *af = filesystem->ReadFile("@game/static/anim.dat");
 	if (!af)
 		error("Unable to load static/anim.dat");
 
@@ -282,7 +282,7 @@ void GameData::loadU8Data() {
 	delete af;
 
 	// Load weapon overlay data
-	IDataSource *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
+	Common::SeekableReadStream *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
 	if (!wod)
 		error("Unable to load static/wpnovlay.dat");
 
@@ -292,7 +292,7 @@ void GameData::loadU8Data() {
 	delete overlayflex;
 
 	// Load _globs
-	IDataSource *gds = filesystem->ReadFile("@game/static/glob.flx");
+	Common::SeekableReadStream *gds = filesystem->ReadFile("@game/static/glob.flx");
 	if (!gds)
 		error("Unable to load static/glob.flx");
 
@@ -301,20 +301,20 @@ void GameData::loadU8Data() {
 	_globs.resize(globflex->getCount());
 	for (unsigned int i = 0; i < globflex->getCount(); ++i) {
 		MapGlob *glob = 0;
-		IDataSource *globds = globflex->get_datasource(i);
+		Common::SeekableReadStream *globrs = globflex->get_datasource(i);
 
-		if (globds && globds->size()) {
+		if (globrs && globrs->size()) {
 			glob = new MapGlob();
-			glob->read(globds);
+			glob->read(globrs);
 		}
-		delete globds;
+		delete globrs;
 
 		_globs[i] = glob;
 	}
 	delete globflex;
 
 	// Load fonts
-	IDataSource *fds = filesystem->ReadFile("@game/static/u8fonts.flx");
+	Common::SeekableReadStream *fds = filesystem->ReadFile("@game/static/u8fonts.flx");
 	if (!fds)
 		error("Unable to load static/u8fonts.flx");
 
@@ -331,14 +331,14 @@ void GameData::loadU8Data() {
 	_mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	delete msds;
 
-	IDataSource *gumpds = filesystem->ReadFile("@game/static/u8gumps.flx");
+	Common::SeekableReadStream *gumpds = filesystem->ReadFile("@game/static/u8gumps.flx");
 	if (!gumpds)
 		error("Unable to load static/u8gumps.flx");
 
 	_gumps = new GumpShapeArchive(gumpds, GUMPS,
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
-	IDataSource *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
+	Common::SeekableReadStream *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
 	if (!gumpageds)
 		error("Unable to load static/gumpage.dat");
 
@@ -346,13 +346,13 @@ void GameData::loadU8Data() {
 	delete gumpageds;
 
 
-	IDataSource *mf = filesystem->ReadFile("@game/sound/music.flx");
+	Common::SeekableReadStream *mf = filesystem->ReadFile("@game/sound/music.flx");
 	if (!mf)
 		error("Unable to load sound/music.flx");
 
 	_music = new MusicFlex(mf);
 
-	IDataSource *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
+	Common::SeekableReadStream *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)
 		error("Unable to load sound/sound.flx");
 
@@ -378,7 +378,7 @@ void GameData::setupJPOverrides() {
 	jpkeyvals = config->listKeyValues("language/jpfonts");
 	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
 		int fontnum = Std::atoi(iter->_key.c_str());
-		Std::string fontdesc = iter->_value;
+		const Std::string &fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
 		SplitString(fontdesc, ',', vals);
@@ -416,7 +416,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 	ttfkeyvals = config->listKeyValues(configkey);
 	for (iter = ttfkeyvals.begin(); iter != ttfkeyvals.end(); ++iter) {
 		int fontnum = Std::atoi(iter->_key.c_str());
-		Std::string fontdesc = iter->_value;
+		const Std::string &fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
 		SplitString(fontdesc, ',', vals);
@@ -425,7 +425,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 			continue;
 		}
 
-		Std::string filename = vals[0];
+		const Std::string &filename = vals[0];
 		int pointsize = Std::atoi(vals[1].c_str());
 		uint32 col32 = Std::strtol(vals[2].c_str(), 0, 0);
 		int border = Std::atoi(vals[3].c_str());
@@ -450,18 +450,18 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	Std::string u8_sound_ = "@game/sound/";
+	static const Std::string u8_sound_ = "@game/sound/";
 	char num_flx [32];
 	snprintf(num_flx , 32, "%i.flx", shapeNum);
 
 	char langletter = _gameInfo->getLanguageFileLetter();
 	if (!langletter) {
 		perr << "GameData::getSpeechFlex: Unknown language." << Std::endl;
-		// FIXME: This leaks s
+		delete s;
 		return nullptr;
 	}
 
-	IDataSource *sflx = filesystem->ReadFile(u8_sound_ + langletter + num_flx);
+	Common::SeekableReadStream *sflx = filesystem->ReadFile(u8_sound_ + langletter + num_flx);
 	if (sflx) {
 		*s = new SpeechFlex(sflx);
 	}
@@ -475,9 +475,9 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 void GameData::loadRemorseData() {
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	IDataSource *fd = filesystem->ReadFile("@game/static/_fixed.dat");
+	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/fixed.dat");
 	if (!fd)
-		error("Unable to load static/_fixed.dat");
+		error("Unable to load static/fixed.dat");
 
 	_fixed = new RawArchive(fd);
 
@@ -490,7 +490,7 @@ void GameData::loadRemorseData() {
 	filename += "usecode.flx";
 
 
-	IDataSource *uds = filesystem->ReadFile(filename);
+	Common::SeekableReadStream *uds = filesystem->ReadFile(filename);
 	if (!uds)
 		error("Unable to load %s", filename.c_str());
 
@@ -498,7 +498,7 @@ void GameData::loadRemorseData() {
 
 	// Load main shapes
 	pout << "Load Shapes" << Std::endl;
-	IDataSource *sf = filesystem->ReadFile("@game/static/shapes.flx");
+	Common::SeekableReadStream *sf = filesystem->ReadFile("@game/static/shapes.flx");
 
 	if (!sf)
 		error("Unable to load static/shapes.flx");
@@ -517,7 +517,7 @@ void GameData::loadRemorseData() {
 	config->readConfigFile("@data/remorse.ini", "game", true);
 
 	// Load typeflags
-	IDataSource *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
+	Common::SeekableReadStream *tfs = filesystem->ReadFile("@game/static/typeflag.dat");
 	if (!tfs)
 		error("Unable to load static/typeflag.dat");
 
@@ -525,7 +525,7 @@ void GameData::loadRemorseData() {
 	delete tfs;
 
 	// Load animdat
-	IDataSource *af = filesystem->ReadFile("@game/static/anim.dat");
+	Common::SeekableReadStream *af = filesystem->ReadFile("@game/static/anim.dat");
 	if (!af)
 		error("Unable to load static/anim.dat");
 
@@ -533,7 +533,7 @@ void GameData::loadRemorseData() {
 	delete af;
 
 	// Load weapon overlay data
-	IDataSource *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
+	Common::SeekableReadStream *wod = filesystem->ReadFile("@game/static/wpnovlay.dat");
 	if (!wod)
 		error("Unable to load static/wpnovlay.dat");
 
@@ -543,7 +543,7 @@ void GameData::loadRemorseData() {
 	delete overlayflex;
 
 	// Load globs
-	IDataSource *gds = filesystem->ReadFile("@game/static/glob.flx");
+	Common::SeekableReadStream *gds = filesystem->ReadFile("@game/static/glob.flx");
 	if (!gds)
 		error("Unable to load static/glob.flx");
 
@@ -552,73 +552,128 @@ void GameData::loadRemorseData() {
 	_globs.resize(globflex->getCount());
 	for (unsigned int i = 0; i < globflex->getCount(); ++i) {
 		MapGlob *glob = 0;
-		IDataSource *globds = globflex->get_datasource(i);
+		Common::SeekableReadStream *globrs = globflex->get_datasource(i);
 
-		if (globds && globds->size()) {
+		if (globrs && globrs->size()) {
 			glob = new MapGlob();
-			glob->read(globds);
+			glob->read(globrs);
 		}
-		delete globds;
+		delete globrs;
 
 		_globs[i] = glob;
 	}
 	delete globflex;
 
 	// Load fonts
-	IDataSource *fds = filesystem->ReadFile("@game/static/_fonts.flx");
+	Common::SeekableReadStream *fds = filesystem->ReadFile("@game/static/fonts.flx");
 	if (!fds)
-		error("Unable to load static/_fonts.flx");
+		error("Unable to load static/fonts.flx");
 
 	_fonts = new FontShapeArchive(fds, OTHER,
 	                             PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	_fonts->setHVLeads();
 
 	// Load mouse
-	IDataSource *msds = filesystem->ReadFile("@game/static/_mouse.shp");
+	IDataSource *msds = filesystem->ReadFile("@game/static/mouse.shp");
 	if (!msds)
-		error("Unable to load static/_mouse.shp");
+		error("Unable to load static/mouse.shp");
 
 	_mouse = new Shape(msds, 0);
 	_mouse->setPalette(PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 	delete msds;
 
-	IDataSource *gumpds = filesystem->ReadFile("@game/static/_gumps.flx");
+	Common::SeekableReadStream *gumpds = filesystem->ReadFile("@game/static/gumps.flx");
 	if (!gumpds)
-		error("Unable to load static/_gumps.flx");
+		error("Unable to load static/gumps.flx");
 
 	_gumps = new GumpShapeArchive(gumpds, GUMPS,
 		PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));
 
-#if 0
-	IDataSource *gumpageds = filesystem->ReadFile("@game/static/gumpage.dat");
-	if (!gumpageds)
-		error("Unable to load static/gumpage.dat");
+	Common::SeekableReadStream *dtableds = filesystem->ReadFile("@game/static/dtable.flx");
+	if (!dtableds)
+		error("Unable to load static/dtable.flx");
 
-	_gumps->loadGumpage(gumpageds);
-	delete gumpageds;
-#endif
+	RawArchive *dtableflex = new RawArchive(dtableds);
 
-	IDataSource *dummyds = filesystem->ReadFile("@data/empty.flx");
-	_music = nullptr; //new MusicFlex(dummyds);
-	delete dummyds;
-#if 0
-	IDataSource *mf = filesystem->ReadFile("@game/sound/_music.flx");
-	if (!mf)
-		error("Unable to load sound/_music.flx");
+	// TODO: What's in this flex file?
+	// Object 1: 35 * 142 byte blocks of .. something
+	// Object 2: 35 * 32-byte long names of NPCs?
+	//_dtable = new DtableDat();
+	//_dtable->load(dtableflex);
 
-	_music = new MusicFlex(mf);
-#endif
+	delete dtableflex;
 
-	dummyds = filesystem->ReadFile("@data/empty.flx");
-	_soundFlex = new SoundFlex(dummyds);
-	delete dummyds;
-#if 0
-	IDataSource *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
+	Common::SeekableReadStream *damageds = filesystem->ReadFile("@game/static/damage.flx");
+	if (!damageds)
+		error("Unable to load static/damage.flx");
+
+	RawArchive *damageflex = new RawArchive(damageds);
+
+	// TODO: What's in this flex file?
+	// 1 object of 12288 bytes, mostly 0s
+	//_damage = new DamageDat();
+	//_damage->load(damageflex);
+
+	delete damageflex;
+
+	Common::SeekableReadStream *combatds = filesystem->ReadFile("@game/static/combat.dat");
+	if (!combatds)
+		error("Unable to load static/combat.dat");
+
+	RawArchive *combatflex = new RawArchive(combatds);
+
+	// TODO: What's in this flex file?  Descriptions of combat tactics?
+	// 14 objects with contents:
+	// [ 16 Byte Name ]
+	// [ 4 * 16 bit numbers, alway 44, xx, 77, 78 ]
+	// [ 20 bytes of 0s ]
+	// [ variable number of bytes of data ]
+	//_combat = new CombatDat();
+	//_combat->load(combatflex);
+
+	delete combatflex;
+
+	Common::SeekableReadStream *stuffds = filesystem->ReadFile("@game/static/stuff.dat");
+	if (!stuffds)
+		error("Unable to load static/stuff.dat");
+
+	// TODO: What's in this dat file?
+	// 14 blocks of 323 bytes, references like W01 and I07
+	// (presumably weapon and inventory)
+	// shop data?
+
+	delete stuffds;
+
+	Common::SeekableReadStream *trigds = filesystem->ReadFile("@game/static/trig.dat");
+	if (!trigds)
+		error("Unable to load static/trig.dat");
+
+	// TODO: What's in this dat file?
+	// 12 x 256 bytes. Each block has consistently either 0000 or FFFF in the
+	//vsecond word of each DWORD
+
+	delete trigds;
+
+	Common::SeekableReadStream *xformpalds = filesystem->ReadFile("@game/static/xformpal.dat");
+	if (!xformpalds)
+		error("Unable to load static/xformpal.dat");
+	RawArchive *xformpalflex = new RawArchive(xformpalds);
+
+	// TODO: What's in this flex?
+	// Object 1: 32 bytes
+	// Object 2: 2304 bytes - presumably data for 3 palettes == 768 * 3
+	//           almost no low numbers (so not raw palette data, would be missing black..)
+
+	delete xformpalflex;
+
+	// Note: No MusicFlex for Remorse, as the music is all in different AMF files.
+	// The remorse_music_process will load them.
+
+	Common::SeekableReadStream *sndflx = filesystem->ReadFile("@game/sound/sound.flx");
 	if (!sndflx)
 		error("Unable to load sound/sound.flx");
 
 	_soundFlex = new SoundFlex(sndflx);
-#endif
 
 	loadTranslation();
 }

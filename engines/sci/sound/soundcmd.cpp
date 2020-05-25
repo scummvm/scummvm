@@ -91,10 +91,15 @@ int SoundCommandParser::getSoundResourceId(reg_t obj) {
 }
 
 void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
-	if (newSound->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, newSound->resourceId)))
+	if (newSound->resourceId) {
 		newSound->soundRes = new SoundResource(newSound->resourceId, _resMan, _soundVersion);
-	else
-		newSound->soundRes = 0;
+		if (!newSound->soundRes->exists()) {
+			delete newSound->soundRes;
+			newSound->soundRes = nullptr;
+		}
+	} else {
+		newSound->soundRes = nullptr;
+	}
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
@@ -170,7 +175,7 @@ reg_t SoundCommandParser::kDoSoundPlay(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
+void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restoring) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
@@ -183,7 +188,14 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 			error("Failed to initialize uninitialized sound slot");
 	}
 
-	int resourceId = getSoundResourceId(obj);
+	int resourceId;
+	if (!restoring)
+		resourceId = getSoundResourceId(obj);
+	else
+		// Handle cases where a game was saved while track A was playing, but track B was initialized, waiting to be played later.
+		// In such cases, musicSlot->resourceId contains the actual track that was playing (A), while getSoundResourceId(obj)
+		// contains the track that's waiting to be played later (B) - bug #10907.
+		resourceId = musicSlot->resourceId;
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
 		processDisposeSound(obj);

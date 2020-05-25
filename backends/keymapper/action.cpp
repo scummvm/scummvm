@@ -28,7 +28,8 @@ namespace Common {
 
 Action::Action(const char *i, const String &des) :
 		id(i),
-		description(des) {
+		description(des),
+		_shouldTriggerOnKbdRepeats(false) {
 	assert(i);
 }
 

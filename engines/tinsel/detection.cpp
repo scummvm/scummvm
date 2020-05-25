@@ -130,7 +130,7 @@ bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 		// global variables (static and non-static) which are never
 		// explicitly re-initialized when the engine is started
 		// for a second time.
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 #endif
 		(f == kSupportsLoadingDuringRuntime);
 }

@@ -46,7 +46,7 @@ typedef Common::Array<byte *> MacPatterns;
 
 namespace Director {
 
-enum DirectorGameID {
+enum DirectorGameGID {
 	GID_GENERIC,
 	GID_TEST,
 	GID_TESTALL
@@ -96,7 +96,8 @@ public:
 
 	// Detection related functions
 
-	DirectorGameID getGameID() const;
+	DirectorGameGID getGameGID() const;
+	const char *getGameId() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
@@ -116,6 +117,7 @@ public:
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
 	void clearSharedCast();
+	Cast *getCastMember(int castId);
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
@@ -126,8 +128,10 @@ public:
 	Archive *createArchive();
 
 	// events.cpp
-	void processEvents();
+	void processEvents(bool bufferLingoEvents = false);
 	void setDraggedSprite(uint16 id);
+	void releaseDraggedSprite();
+	uint32 getMacTicks();
 	void waitForClick();
 
 public:
@@ -148,6 +152,7 @@ public:
 	Common::List<MovieReference> _movieStack;
 
 	Graphics::ManagedSurface _backSurface;
+	bool _newMovieStarted;
 
 protected:
 	Common::Error run() override;

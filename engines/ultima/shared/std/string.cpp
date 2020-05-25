@@ -28,6 +28,15 @@ namespace Std {
 
 const char *const endl = "\n";
 
+Common::String to_uppercase(const Common::String &s) {
+	Common::String str = s;
+	Common::String::iterator X;
+	for (X = str.begin(); X != str.end(); ++X)
+		*X = toupper(*X);
+
+	return str;
+}
+
 string::string(size_t n, char c) : Common::String() {
 	ensureCapacity(n, false);
 	for (size_t idx = 0; idx < n; ++idx)

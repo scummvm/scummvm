@@ -28,6 +28,7 @@
 
 namespace Graphics {
 struct Surface;
+class MacWidget;
 }
 
 namespace Common {
@@ -59,6 +60,8 @@ public:
 	Image::ImageDecoder *_img;
 
 	bool _modified;
+
+	Graphics::MacWidget *_widget;
 };
 
 class BitmapCast : public Cast {
@@ -126,6 +129,8 @@ public:
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
 	CachedMacText *_cachedMacText;
+
+	Common::String getText();
 };
 
 class ButtonCast : public TextCast {

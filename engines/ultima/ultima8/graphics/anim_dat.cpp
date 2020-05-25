@@ -27,6 +27,7 @@
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/world/actors/actor_anim.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
 
@@ -57,8 +58,59 @@ AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
 	return _anims[shape]->getAction(action);
 }
 
+uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
+	if (GAME_IS_U8) {
+		return static_cast<uint32>(action);
+	} else {
+		// For crusader the actions have different IDs.  Rather than
+		// rewrite everything, we just translate them here for all the ones
+		// we want to use programmatically.  There are more, but they are
+		// called from usecode so don't need translation.
+		switch (action) {
+		case Animation::stand:
+			return 0;
+		case Animation::step:
+			return 1; // Same as walk in crusader.
+		case Animation::walk:
+			return 1;
+		case Animation::retreat:
+			return 2; // TODO: 28 is also a retreat move, which is right?
+		case Animation::run:
+			return 3;
+		case Animation::combatStand:
+			return 4; // TODO: 8, 37 is also a combat stand for other weapons?
+		// Note: 5, 6, 9, 10 == nothing (for avatar)?
+		case Animation::unreadyWeapon:
+			return 11; // TODO: 16 is also a unready-weapon move, which is right?
+		case Animation::readyWeapon:
+			return 12; // TODO: 7 is also a ready-weapon move, which is right?
+		case Animation::attack:
+			return 13;
+		// Note: 14, 17, 21, 22, 29 == nothing for avatar
+		case Animation::fallBackwards:
+			return 18;
+		case Animation::die:
+			return 20; // maybe? falls over forwards
+		case Animation::advance:
+			return 36; // TODO: 44 is also advance
+		case Animation::startKneeling:
+			return 40;
+		case Animation::stopKneeling:
+			return 41;
+		case Animation::kneel:
+			return 46; // 47 is knee with a larger weapon
+		// 48 is nothing for avatar
+		case Animation::lookLeft:
+			return 14;
+		case Animation::lookRight:
+			return 14;
+		default:
+			return static_cast<uint32>(action);;
+		}
+	}
+}
 
-void AnimDat::load(IDataSource *ds) {
+void AnimDat::load(Common::SeekableReadStream *rs) {
 	AnimFrame f;
 
 	// CONSTANT !
@@ -69,8 +121,8 @@ void AnimDat::load(IDataSource *ds) {
 		actioncount = 256;
 
 	for (unsigned int shape = 0; shape < _anims.size(); shape++) {
-		ds->seek(4 * shape);
-		uint32 offset = ds->readUint32LE();
+		rs->seek(4 * shape);
+		uint32 offset = rs->readUint32LE();
 
 		if (offset == 0) {
 			_anims[shape] = nullptr;
@@ -83,8 +135,8 @@ void AnimDat::load(IDataSource *ds) {
 		a->_actions.resize(actioncount);
 
 		for (unsigned int action = 0; action < actioncount; action++) {
-			ds->seek(offset + action * 4);
-			uint32 actionoffset = ds->readUint32LE();
+			rs->seek(offset + action * 4);
+			uint32 actionoffset = rs->readUint32LE();
 
 			if (actionoffset == 0) {
 				a->_actions[action] = 0;
@@ -96,12 +148,12 @@ void AnimDat::load(IDataSource *ds) {
 			a->_actions[action]->_shapeNum = shape;
 			a->_actions[action]->_action = action;
 
-			ds->seek(actionoffset);
-			uint32 actionsize = ds->readByte();
+			rs->seek(actionoffset);
+			uint32 actionsize = rs->readByte();
 			a->_actions[action]->_size = actionsize;
-			a->_actions[action]->_flags = ds->readByte();
-			a->_actions[action]->_frameRepeat = ds->readByte();
-			a->_actions[action]->_flags |= ds->readByte() << 8;
+			a->_actions[action]->_flags = rs->readByte();
+			a->_actions[action]->_frameRepeat = rs->readByte();
+			a->_actions[action]->_flags |= rs->readByte() << 8;
 
 			unsigned int dirCount = 8;
 			if (GAME_IS_CRUSADER &&
@@ -115,28 +167,28 @@ void AnimDat::load(IDataSource *ds) {
 
 				for (unsigned int j = 0; j < actionsize; j++) {
 					if (GAME_IS_U8) {
-						f._frame = ds->readByte(); // & 0x7FF;
-						uint8 x = ds->readByte();
+						f._frame = rs->readByte(); // & 0x7FF;
+						uint8 x = rs->readByte();
 						f._frame += (x & 0x7) << 8;
-						f._deltaZ = ds->readXS(1);
-						f._sfx = ds->readByte();
-						f._deltaDir = ds->readXS(1);
-						f._flags = ds->readByte();
+						f._deltaZ = rs->readSByte();
+						f._sfx = rs->readByte();
+						f._deltaDir = rs->readSByte();
+						f._flags = rs->readByte();
 						f._flags += (x & 0xF8) << 8;
 					} else if (GAME_IS_CRUSADER) {
 						// byte 0: low byte of frame
-						f._frame = ds->readByte();
+						f._frame = rs->readByte();
 						// byte 1: low nibble part of frame
-						uint8 x = ds->readByte();
+						uint8 x = rs->readByte();
 						f._frame += (x & 0xF) << 8;
 						// byte 2, 3: unknown; byte 3 might contain flags
-						ds->skip(2);
+						rs->skip(2);
 						// byte 4: deltadir (signed)
-						f._deltaDir = ds->readXS(1);
+						f._deltaDir = rs->readSByte();
 						// byte 5: flags?
-						f._flags = ds->readByte();
+						f._flags = rs->readByte();
 						// byte 6, 7: unknown
-						ds->skip(2);
+						rs->skip(2);
 
 						f._deltaZ = 0;
 						f._sfx = 0;

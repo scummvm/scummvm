@@ -28,10 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-// p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(SpeechFlex, SoundFlex)
-
-SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
+SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 	uint32 size = getRawSize(0);
 	const uint8 *buf = getRawObject(0);
 
@@ -41,8 +38,11 @@ SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
 	// hold multiple null-terminated strings.
 	unsigned int off = 0;
 	while (off < size) {
-		istring str(cbuf + off);
-		off += str.size() + 1;
+		unsigned int slen = 0;
+		while (off + slen < size && cbuf[off + slen])
+			slen++;
+		istring str(cbuf + off, slen);
+		off += slen + 1;
 
 		TabsToSpaces(str, 1);
 		TrimSpaces(str);

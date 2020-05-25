@@ -6,15 +6,43 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Autosaves are now supported for all the engines.
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
+   - Games are sorted in GUI ignoring the articles.
+   - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
 
  Dreamweb:
    - Added support for Russian fan-translation.
+   - Fixed animation speed.
 
  Kyra:
    - Added support for the PC-98 version of Eye of the Beholder I.
 
+ Prince:
+   - Fixed inventory item descriptions display.
+   - Added English translation.
+
+ Queen:
+   - Fixed loading a save game from the launcher.
+
+ SCUMM:
+   - Fixed palette issues leading to incorrect colors in MM NES intro and dark rooms.
+   - Fixed the rendering of the flashlight in MM NES to match the original version.
+   - Replaced the existing NES palette to a more accurate NTSC palette based on Mesen.
+   - Added a new GUI option to switch to an alternative NES palette based on the NES Classic.
+   - Improved colors in Apple //gs Maniac Mansion.
+   - Fixed crash when entering garage in Apple //gs Maniac Mansion.
+
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
+
+ Wintermute:
+   - Added subsystem for tracking achievements, implemented for 10+ games.
+
+ Xeen:
+   - Add missing sprite drawer for enemies hit by Energy Blast.
+   - Fixed freeze due to bad mob data at the top of Witches Tower
+   - Fix crash loading some savegames directly from the launcher
+   - Fix curing the well in Nightshadow
+   - Fix loading of wall items from savegames
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.

@@ -32,7 +32,6 @@ struct Rect {
 
 	Rect() : x(0), y(0), w(0), h(0) {}
 	Rect(int nx, int ny, int nw, int nh) : x(nx), y(ny), w(nw), h(nh) {}
-	Rect(const Rect &o) : x(o.x), y(o.y), w(o.w), h(o.h) {}
 
 	void    Set(int nx, int ny, int nw, int nh) {
 		x = nx;

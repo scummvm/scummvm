@@ -41,24 +41,32 @@ Common::String readStringFromStream(Common::SeekableReadStream *s) {
 
 #define ERROR error("Could not open file - %s", name.c_str())
 
-File::File(const Common::String &name) : Common::File() {
+File::File(const Common::String &name) : Common::File(), _filesize(-1) {
+	close();
+
 	if (!Common::File::open(name))
 		ERROR;
 }
 
 bool File::open(const Common::String &name) {
+	close();
+
 	if (!Common::File::open(name))
 		ERROR;
 	return true;
 }
 
 bool File::open(const Common::String &name, Common::Archive &archive) {
+	close();
+
 	if (!Common::File::open(name, archive))
 		ERROR;
 	return true;
 }
 
 bool File::open(const Common::FSNode &node) {
+	close();
+
 	Common::String name = node.getName();
 	if (!Common::File::open(node))
 		ERROR;
@@ -66,16 +74,30 @@ bool File::open(const Common::FSNode &node) {
 }
 
 bool File::open(SeekableReadStream *stream, const Common::String &name) {
+	close();
+
 	if (!Common::File::open(stream, name))
 		ERROR;
 	return true;
+}
+
+void File::close() {
+	_filesize = -1;
+	Common::File::close();
+}
+
+bool File::eof() {
+	if (_filesize == -1)
+		_filesize = size();
+
+	return pos() >= _filesize;
 }
 
 Common::String File::readString() {
 	Common::String result;
 	char c;
 
-	while (pos() < size() && (c = (char)readByte()) != '\0')
+	while (!eof() && (c = (char)readByte()) != '\0')
 		result += c;
 
 	return result;

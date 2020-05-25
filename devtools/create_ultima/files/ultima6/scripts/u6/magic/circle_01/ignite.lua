@@ -14,7 +14,7 @@ if obj.obj_n == 122 or --candle
 			else
 				obj.frame_n = obj.frame_n + 1;
 			end
-			
+
 			return magic_success()
 		end
 elseif obj.obj_n == 0xdf and obj.frame_n == 0 then --unlit keg

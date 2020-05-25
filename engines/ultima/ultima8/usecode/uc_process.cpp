@@ -25,27 +25,22 @@
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/usecode.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(UCProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(UCProcess)
 
-UCProcess::UCProcess() : Process() { // !! fixme
+UCProcess::UCProcess() : Process(), _classId(0xFFFF), _ip(0xFFFF),
+		_bp(0x0000), _temp32(0) { // !! fixme
 	_usecode = GameData::get_instance()->getMainUsecode();
 }
 
 UCProcess::UCProcess(uint16 classid_, uint16 offset_, uint32 this_ptr,
                      int thissize, const uint8 *args, int argsize)
-	: Process() {
-	_classId = 0xFFFF;
-	_ip = 0xFFFF;
-	_bp = 0x0000;
+	: Process(), _classId(0xFFFF), _ip(0xFFFF), _bp(0x0000), _temp32(0) {
 	_usecode = GameData::get_instance()->getMainUsecode();
-	_temp32 = 0;
 
 	load(classid_, offset_, this_ptr, thissize, args, argsize);
 }
@@ -160,37 +155,37 @@ void UCProcess::dumpInfo() const {
 	}
 }
 
-void UCProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void UCProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint16LE(_bp);
-	ods->writeUint16LE(_classId);
-	ods->writeUint16LE(_ip);
-	ods->writeUint32LE(_temp32);
-	ods->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
+	ws->writeUint16LE(_bp);
+	ws->writeUint16LE(_classId);
+	ws->writeUint16LE(_ip);
+	ws->writeUint32LE(_temp32);
+	ws->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
 	Std::list<Std::pair<uint16, int> >::iterator iter;
 	for (iter = _freeOnTerminate.begin(); iter != _freeOnTerminate.end(); ++iter) {
-		ods->writeUint16LE(iter->first);
-		ods->writeUint32LE(static_cast<uint32>(iter->second));
+		ws->writeUint16LE(iter->first);
+		ws->writeUint32LE(static_cast<uint32>(iter->second));
 	}
-	_stack.save(ods);
+	_stack.save(ws);
 }
 
-bool UCProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool UCProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_bp = ids->readUint16LE();
-	_classId = ids->readUint16LE();
-	_ip = ids->readUint16LE();
-	_temp32 = ids->readUint32LE();
-	uint32 freecount = ids->readUint32LE();
+	_bp = rs->readUint16LE();
+	_classId = rs->readUint16LE();
+	_ip = rs->readUint16LE();
+	_temp32 = rs->readUint32LE();
+	uint32 freecount = rs->readUint32LE();
 	for (unsigned int i = 0; i < freecount; ++i) {
 		Std::pair<uint16, int> p;
-		p.first = ids->readUint16LE();
-		p.second = static_cast<int>(ids->readUint32LE());
+		p.first = rs->readUint16LE();
+		p.second = static_cast<int>(rs->readUint32LE());
 		_freeOnTerminate.push_back(p);
 	}
-	_stack.load(ids, version);
+	_stack.load(rs, version);
 
 	return true;
 }

@@ -49,7 +49,13 @@ public:
 	const Common::Rect &getDimensions() { return _dims; }
 
 	bool isFocusable() { return _focusable; }
-	virtual void setActive(bool active) = 0;
+
+	/**
+	 * Method for indicating whether the widget is active or inactive.
+	 * Used by the WM to handle focus on windows, etc.
+	 * @param active Desired state of the widget.
+	 */
+	virtual void setActive(bool active);
 
 	/**
 	 * Method for marking the widget for redraw.
@@ -58,8 +64,11 @@ public:
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
+	virtual bool draw(bool forceRedraw = false) = 0;
+	virtual void blit(ManagedSurface *g, Common::Rect &dest) = 0;
 	virtual bool processEvent(Common::Event &event) = 0;
-	virtual bool hasAllFocus() = 0;
+	virtual bool hasAllFocus() { return _active; }
+	virtual bool isEditable() { return _editable; }
 
 	virtual void setDimensions(const Common::Rect &r) {
 		_dims = r;
@@ -70,11 +79,17 @@ public:
 
 	void removeWidget(MacWidget *child, bool del = true);
 
+	Graphics::ManagedSurface *getSurface() { return _composeSurface; }
+
 protected:
 	bool _focusable;
 	bool _contentIsDirty;
+	bool _active;
+	bool _editable;
 
 	Common::Rect _dims;
+
+	Graphics::ManagedSurface *_composeSurface;
 
 public:
 	MacWidget *_parent;

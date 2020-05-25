@@ -22,21 +22,19 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/uc_stack.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-void UCStack::save(ODataSource *ods) {
-	ods->writeUint32LE(_size);
-	ods->writeUint32LE(getSP());
+void UCStack::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_size);
+	ws->writeUint32LE(getSP());
 
-	ods->write(_bufPtr, stacksize());
+	ws->write(_bufPtr, stacksize());
 }
 
-bool UCStack::load(IDataSource *ids, uint32 version) {
-	_size = ids->readUint32LE();
+bool UCStack::load(Common::ReadStream *rs, uint32 version) {
+	_size = rs->readUint32LE();
 #ifdef USE_DYNAMIC_UCSTACK
 	if (_buf) delete[] _buf;
 	_buf = new uint8[_size];
@@ -47,10 +45,10 @@ bool UCStack::load(IDataSource *ids, uint32 version) {
 	}
 	_buf = _bufArray;
 #endif
-	uint32 sp = ids->readUint32LE();
+	uint32 sp = rs->readUint32LE();
 	_bufPtr = _buf + sp;
 
-	ids->read(_bufPtr, _size - sp);
+	rs->read(_bufPtr, _size - sp);
 
 	return true;
 }

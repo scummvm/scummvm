@@ -297,6 +297,7 @@ void MystMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 	}
 	case kQuitCmd:
 		close();
+		vm->saveAutosaveIfEnabled();
 		vm->runCredits();
 		break;
 	default:
@@ -333,7 +334,7 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 	if (is25th && g_engine) {
 		bool canChangeLanguage = true;
 		MohawkEngine_Riven *vm = static_cast<MohawkEngine_Riven *>(g_engine);
-		canChangeLanguage = vm->isInteractive();
+		canChangeLanguage = vm->isInteractive() || vm->isInMainMenu();
 
 		GUI::StaticTextWidget *languageCaption = new GUI::StaticTextWidget(widgetsBoss(), "RivenOptionsDialog.LanguageDesc", _("Language:"));
 		languageCaption->setAlign(Graphics::kTextAlignRight);

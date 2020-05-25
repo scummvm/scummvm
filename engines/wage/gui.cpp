@@ -173,7 +173,7 @@ void Gui::drawScene() {
 	if (!_sceneDirty)
 		return;
 
-	_scene->paint(_sceneWindow->getSurface(), 0, 0);
+	_scene->paint(_sceneWindow->getWindowSurface(), 0, 0);
 	_sceneWindow->setDirty(true);
 
 	_sceneDirty = true;

@@ -27,8 +27,6 @@
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -40,7 +38,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(Container, Item)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Container)
 
 Container::Container() {
 }
@@ -93,7 +91,7 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 
 	if (item->getObjId() < 256) return false; // actors don't fit in containers
 
-	Container *c = p_dynamic_cast<Container *>(item);
+	Container *c = dynamic_cast<Container *>(item);
 	if (c) {
 		// To quote Exult: "Watch for snake eating itself."
 		Container *p = this;
@@ -206,7 +204,7 @@ void Container::removeContents() {
 void Container::destroyContents() {
 	while (_contents.begin() != _contents.end()) {
 		Item *item = *(_contents.begin());
-		Container *cont = p_dynamic_cast<Container *>(item);
+		Container *cont = dynamic_cast<Container *>(item);
 		if (cont) cont->destroyContents();
 		item->destroy(true); // we destroy the item immediately
 	}
@@ -218,7 +216,7 @@ void Container::setFlagRecursively(uint32 mask) {
 	Std::list<Item *>::iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->setFlag(mask);
-		Container *cont = p_dynamic_cast<Container *>(*iter);
+		Container *cont = dynamic_cast<Container *>(*iter);
 		if (cont) cont->setFlagRecursively(mask);
 	}
 }
@@ -275,8 +273,8 @@ uint32 Container::getContentVolume() const {
 }
 
 void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
-                                uint32 scriptsize, bool recurse) {
-	Std::list<Item *>::iterator iter;
+                                uint32 scriptsize, bool recurse) const {
+	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		// check item against loopscript
 		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
@@ -290,7 +288,7 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 
 		if (recurse) {
 			// recurse into child-containers
-			Container *container = p_dynamic_cast<Container *>(*iter);
+			Container *container = dynamic_cast<Container *>(*iter);
 			if (container)
 				container->containerSearch(itemlist, loopscript,
 				                           scriptsize, recurse);
@@ -305,24 +303,24 @@ void Container::dumpInfo() const {
 	     << ", total weight: " << getTotalWeight() << Std::endl;
 }
 
-void Container::saveData(ODataSource *ods) {
-	Item::saveData(ods);
-	ods->writeUint32LE(static_cast<uint32>(_contents.size()));
+void Container::saveData(Common::WriteStream *ws) {
+	Item::saveData(ws);
+	ws->writeUint32LE(static_cast<uint32>(_contents.size()));
 	Std::list<Item *>::iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		(*iter)->save(ods);
+		ObjectManager::get_instance()->saveObject(ws, *iter);
 	}
 }
 
-bool Container::loadData(IDataSource *ids, uint32 version) {
-	if (!Item::loadData(ids, version)) return false;
+bool Container::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Item::loadData(rs, version)) return false;
 
-	uint32 contentcount = ids->readUint32LE();
+	uint32 contentcount = rs->readUint32LE();
 
 	// read _contents
 	for (unsigned int i = 0; i < contentcount; ++i) {
-		Object *obj = ObjectManager::get_instance()->loadObject(ids, version);
-		Item *item = p_dynamic_cast<Item *>(obj);
+		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
+		Item *item = dynamic_cast<Item *>(obj);
 		if (!item) return false;
 
 		addItem(item);

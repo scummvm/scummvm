@@ -25,13 +25,10 @@
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/shape.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget, Gump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget)
 
 SlidingWidget::SlidingWidget()
 	: Gump() {
@@ -59,12 +56,12 @@ uint16 SlidingWidget::TraceObjId(int32 mx, int32 my) {
 		return 0;
 }
 
-void SlidingWidget::saveData(ODataSource *ods) {
-	Gump::saveData(ods);
+void SlidingWidget::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
 }
 
-bool SlidingWidget::loadData(IDataSource *ids, uint32 version) {
-	if (!Gump::loadData(ids, version)) return false;
+bool SlidingWidget::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version)) return false;
 
 	return true;
 }

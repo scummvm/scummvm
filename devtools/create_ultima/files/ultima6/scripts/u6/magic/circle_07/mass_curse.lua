@@ -16,4 +16,3 @@ for k,v in pairs(hit_items) do
 end
 
 magic_success()
-

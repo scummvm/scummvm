@@ -73,12 +73,16 @@ struct Symbol {	/* symbol table entry */
 	union {
 		int		i;			/* VAR */
 		double	f;			/* FLOAT */
-		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
+		ScriptData	*defn;	/* HANDLER */
 		void (*func)();		/* OPCODE */
 		void (*bltin)(int);	/* BUILTIN */
 		Common::String	*s;	/* STRING */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
+		PropertyArray *parr;
 	} u;
+
+	int *refCount;
+
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
 	bool parens;	/* whether parens required or not, for builitins */
@@ -90,6 +94,10 @@ struct Symbol {	/* symbol table entry */
 	int archiveIndex; 		/* optional archive to execute with */
 
 	Symbol();
+	Symbol(const Symbol &s);
+	Symbol& operator=(const Symbol &s);
+	void reset();
+	~Symbol();
 };
 
 struct Datum {	/* interpreter stack type */
@@ -101,19 +109,103 @@ struct Datum {	/* interpreter stack type */
 		Common::String *s;	/* STRING */
 		Symbol	*sym;
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
+		PropertyArray *parr; /* PARRAY */
 	} u;
 
-	Datum() { u.sym = NULL; type = VOID; }
-	Datum(int val) { u.i = val; type = INT; }
-	Datum(double val) { u.f = val; type = FLOAT; }
-	Datum(Common::String *val) { u.s = val; type = STRING; }
+	int *refCount;
 
-	double makeFloat();
-	int makeInt();
-	Common::String *makeString(bool printonly = false);
-	Common::String getPrintable() { return *makeString(true); }
+	Datum() {
+		u.sym = NULL;
+		type = VOID;
+		refCount = new int;
+		*refCount = 1;
+	}
+	Datum(const Datum &d) {
+		type = d.type;
+		u = d.u;
+		refCount = d.refCount;
+		*refCount += 1;
+	}
+	Datum& operator=(const Datum &d) {
+		if (this != &d) {
+			reset();
+			type = d.type;
+			u = d.u;
+			refCount = d.refCount;
+			*refCount += 1;
+		}
+		return *this;
+	}
+	Datum(int val) {
+		u.i = val;
+		type = INT;
+		refCount = new int;
+		*refCount = 1;
+	}
+	Datum(double val) {
+		u.f = val;
+		type = FLOAT;
+		refCount = new int;
+		*refCount = 1;
+	}
+	Datum(const Common::String &val) {
+		u.s = new Common::String(val);
+		type = STRING;
+		refCount = new int;
+		*refCount = 1;
+	}
+	void reset() {
+		*refCount -= 1;
+		if (*refCount <= 0) {
+			switch (type) {
+			case STRING:
+				delete u.s;
+				break;
+			case ARRAY:
+				// fallthrough
+			case POINT:
+				// fallthrough
+			case RECT:
+				delete u.farr;
+				break;
+			case PARRAY:
+				delete u.parr;
+				break;
+			case VAR:
+				// fallthrough
+			case REFERENCE:
+				// fallthrough
+			case INT:
+				// fallthrough
+			case FLOAT:
+				// fallthrough
+			default:
+				break;
+			}
+			delete refCount;
+		}
+
+	}
+
+	~Datum() {
+		reset();
+	}
+
+	double asFloat();
+	int asInt();
+	Common::String asString(bool printonly = false);
 
 	const char *type2str(bool isk = false);
+
+	int compareTo(Datum &d, bool ignoreCase = false);
+};
+
+struct PCell {
+	Datum p;
+	Datum v;
+
+	PCell();
+	PCell(Datum &prop, Datum &val);
 };
 
 struct Builtin {
@@ -145,6 +237,20 @@ struct CFrame {	/* proc/func call stack frame */
 	SymbolHash *localvars;
 };
 
+struct LingoEvent {
+	LEvent event;
+	ScriptType st;
+	int entityId;
+	int channelId;
+
+	LingoEvent (LEvent e, ScriptType s, int ei, int ci = -1) {
+		event = e;
+		st = s;
+		entityId = ei;
+		channelId = ci;
+	}
+};
+
 
 struct LingoArchive {
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
@@ -161,11 +267,12 @@ public:
 	void restartLingo();
 
 	void addCode(const char *code, ScriptType type, uint16 id);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id, Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
 	void executeHandler(Common::String name);
 	void executeScript(ScriptType type, uint16 id, uint16 function);
 	void printStack(const char *s, uint pc);
+	void printCallStack(uint pc);
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void initBuiltIns();
@@ -175,9 +282,14 @@ public:
 
 	void runTests();
 
+	// lingo-preprocessor.cpp
 public:
-	Common::String codePreprocessor(const char *s, bool simple = false);
+	Common::String codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple = false);
 
+	// lingo-patcher.cpp
+	Common::String patchLingoCode(Common::String &line, ScriptType type, uint16 id, int linenumber);
+
+	// lingo.cpp
 private:
 	const char *findNextDefinition(const char *s);
 
@@ -185,12 +297,14 @@ private:
 private:
 	void initEventHandlerTypes();
 	void primaryEventHandler(LEvent event);
-	void processInputEvent(LEvent event);
-	void processFrameEvent(LEvent event);
-	void processGenericEvent(LEvent event);
+	void registerInputEvent(LEvent event);
+	void registerFrameEvent(LEvent event);
+	void registerGenericEvent(LEvent event);
 	void runMovieScript(LEvent event);
-	void processSpriteEvent(LEvent event);
-	void processEvent(LEvent event, ScriptType st, int entityId);
+	void registerSpriteEvent(LEvent event);
+	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
+
+	Common::Queue<LingoEvent> _eventQueue;
 
 public:
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
@@ -199,6 +313,8 @@ public:
 	Symbol *getHandler(Common::String &name);
 
 	void processEvent(LEvent event);
+	void processEvents();
+	void registerEvent(LEvent event);
 
 public:
 	void execute(uint pc);
@@ -213,7 +329,7 @@ public:
 	void varAssign(Datum &var, Datum &value);
 	Datum varFetch(Datum &var);
 
-	int alignTypes(Datum &d1, Datum &d2);
+	int getAlignedType(Datum &d1, Datum &d2);
 
 	void printAllVars();
 
@@ -259,8 +375,8 @@ public:
 
 	void factoryCall(Common::String &name, int nargs);
 
-	void func_mci(Common::String &s);
-	void func_mciwait(Common::String &s);
+	void func_mci(const Common::String &name);
+	void func_mciwait(const Common::String &name);
 	void func_beep(int repeats);
 	void func_goto(Datum &frame, Datum &movie);
 	void func_gotoloop();
@@ -268,7 +384,7 @@ public:
 	void func_gotoprevious();
 	void func_play(Datum &frame, Datum &movie);
 	void func_playdone();
-	void func_cursor(int c, int mask);
+	void func_cursor(int cursorId, int maskId);
 	int func_marker(int m);
 
 	// lingo-the.cpp
@@ -284,6 +400,7 @@ public:
 	Datum getObjectField(Common::String &obj, int field);
 	void setObjectField(Common::String &obj, int field, Datum &d);
 	Datum getObjectRef(Common::String &obj, Common::String &field);
+	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);
 	const char *entity2str(int id);
 	const char *field2str(int id);
 
@@ -298,6 +415,7 @@ public:
 public:
 	ScriptType _currentScriptType;
 	uint16 _currentEntityId;
+	int _currentChannelId;
 	ScriptContext *_currentScriptContext;
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
@@ -306,6 +424,7 @@ public:
 	LexerDefineState _indef;
 	bool _ignoreMe;
 	bool _immediateMode;
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methodVars;
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
@@ -321,6 +440,12 @@ public:
 
 	int _linenumber;
 	int _colnumber;
+	int _bytenumber;
+	Common::String _lasttoken;
+	int _lastbytenumber;
+	Common::String _errortoken;
+	int _errorbytenumber;
+	bool _ignoreError;
 
 	Common::String _floatPrecisionFormat;
 
@@ -344,6 +469,7 @@ public:
 public:
 	void push(Datum d);
 	Datum pop(void);
+	Datum peek(uint offset);
 
 public:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;

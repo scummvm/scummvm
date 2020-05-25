@@ -123,7 +123,7 @@ void aiOmniBotAction(AIEntity *e) {
 				// (2) Check we're not shooting into an Entity unless it's the player
 				AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + xv, e->tileY + yv, e->level, &result);
 				if (shoot && !hit && result) {
-					AIEntity *omni = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+					AIEntity *omni = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
 					omni->xVel = xv * kPlayerMoveSpeed * 2;
 					omni->yVel = yv * kPlayerMoveSpeed * 2;
 					if (g_hdb->_map->onScreen(e->tileX, e->tileY))
@@ -402,15 +402,15 @@ void aiRightBotFindGoal(AIEntity *e) {
 			bg = g_hdb->_map->getMapBGTileFlags(sx + xv, sy + yv) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
 			e1 = g_hdb->_ai->findEntity(sx + xv, sy + yv);
 			if (e1 && e1 == p)
-				e1 = NULL;
+				e1 = nullptr;
 			bg2 = g_hdb->_map->getMapBGTileFlags(sx + xv2, sy + yv2) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
 			e2 = g_hdb->_ai->findEntity(sx + xv2, sy + yv2);
 			if (e2 && e2 == p)
-				e2 = NULL;
+				e2 = nullptr;
 			bg3 = g_hdb->_map->getMapBGTileFlags(sx + xv3, sy + yv3) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
 			e3 = g_hdb->_ai->findEntity(sx + xv3, sy + yv3);
 			if (e3 && e3 == p)
-				e3 = NULL;
+				e3 = nullptr;
 
 			// Okay to move forward?
 			if ((!bg && !e1) && (bg2 || e2 || bg3 || e3)) {
@@ -437,9 +437,9 @@ void aiRightBotFindGoal(AIEntity *e) {
 			bg2 = g_hdb->_map->getMapBGTileFlags(sx + xv3, sy + yv3) & (kFlagSolid | kFlagWater | kFlagSlime | kFlagSpecial);
 			e2 = g_hdb->_ai->findEntity(sx + xv3, sy + yv3);
 			if (e1 && e1->type == AI_GUY)
-				e1 = NULL;
+				e1 = nullptr;
 			if (e2 && e2->type == AI_GUY)
-				e2 = NULL;
+				e2 = nullptr;
 
 			// Is tile to the right clear?
 			// Is tile to the left clear?
@@ -743,6 +743,10 @@ void aiRailRiderAction(AIEntity *e) {
 			e->aiAction = aiRailRiderOnAction;
 			e->aiUse = aiRailRiderOnUse;
 			arrowPath = g_hdb->_ai->findArrowPath(e->tileX, e->tileY);
+
+			if (arrowPath == nullptr)
+				return;
+
 			e->dir = arrowPath->dir;
 			e->value1 = 0;	// Not in a tunnel
 		}
@@ -913,7 +917,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 			if (onEvenTile(e->x, e->y) && e->tileX == e->value1 && e->tileY == e->value2)
 				e->value1 = 0;
 			else
-				e->draw = NULL;
+				e->draw = nullptr;
 		} else if (e->dir2 && e->dir2 != (AIDir)(e->tileX + e->tileY))
 			e->dir2 = DIR_NONE;
 		break;
@@ -1200,7 +1204,7 @@ void aiFourFirerAction(AIEntity *e) {
 		hit = nullptr;
 
 	if (shoot && !hit && result) {
-		AIEntity *fire = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+		AIEntity *fire = g_hdb->_ai->spawn(AI_OMNIBOT_MISSILE, e->dir, e->tileX + xv, e->tileY + yv, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
 		if (g_hdb->_map->onScreen(e->tileX, e->tileY))
 			g_hdb->_sound->playSound(SND_FOUR_FIRE);
 		fire->xVel = xv * kPlayerMoveSpeed * 2;
@@ -1596,18 +1600,18 @@ void aiLaserAction(AIEntity *e) {
 			// check for hitting the BACK of a Diverter.  It stops the laser.
 			if (hit && hit->type == AI_DIVERTER) {
 				if (e->int2 < 0 && hit->state != STATE_DIVERTER_BL && hit->state != STATE_DIVERTER_BR)
-					hit = NULL;
+					hit = nullptr;
 				else if (e->int2 > 0 && hit->state != STATE_DIVERTER_TL && hit->state != STATE_DIVERTER_TR)
-					hit = NULL;
+					hit = nullptr;
 			}
 		} else {
 			e->value2 = nx;
 			// check for hitting the BACK of a Diverter.  It stops the laser.
 			if (hit && hit->type == AI_DIVERTER) {
 				if (e->int1 < 0 && hit->state != STATE_DIVERTER_BR && hit->state != STATE_DIVERTER_TR)
-					hit = NULL;
+					hit = nullptr;
 				else if (e->int1 > 0 && hit->state != STATE_DIVERTER_TL && hit->state != STATE_DIVERTER_BL)
-					hit = NULL;
+					hit = nullptr;
 			}
 		}
 
@@ -1616,7 +1620,7 @@ void aiLaserAction(AIEntity *e) {
 		// It is possible to set a configuration which leads to a closed loop.
 		// Thus, we're breaking it here
 		if (moveCount > 1000)
-			hit = NULL;
+			hit = nullptr;
 	} while (hit && hit->type == AI_DIVERTER);
 }
 
@@ -1869,7 +1873,7 @@ void aiMeerkatInit(AIEntity *e) {
 
 void aiMeerkatInit2(AIEntity *e) {
 	//  hidden at the start!
-	e->draw = NULL;
+	e->draw = nullptr;
 
 	// make the looking around cycle better...
 	e->movedownGfx[3] = e->movedownGfx[1];
@@ -1963,7 +1967,7 @@ void aiMeerkatAction(AIEntity *e) {
 		if (!e->animFrame && e->animDelay == e->animCycle) {
 			e->sequence = 0;
 			e->state = STATE_NONE;
-			e->draw = NULL;
+			e->draw = nullptr;
 		}
 		break;
 
@@ -2028,7 +2032,7 @@ void aiMeerkatAction(AIEntity *e) {
 	if (e->value1) {
 		if (gem_xv[e->blinkFrames] == 100) {
 			e->value1 = 0;
-			e->aiDraw = NULL;
+			e->aiDraw = nullptr;
 			return;
 		}
 		e->value1 += gem_xv[e->blinkFrames];
@@ -2178,7 +2182,7 @@ void aiFatFrogAction(AIEntity *e) {
 			e->value1++;
 			if (e->value1 == 14) {
 				e->animFrame = e->value1 = 0;
-				e->aiDraw = NULL;
+				e->aiDraw = nullptr;
 				e->state = STATE_STANDDOWN;
 			}
 		} else {
@@ -2210,7 +2214,7 @@ void aiFatFrogAction(AIEntity *e) {
 			e->value1++;
 			if (e->value1 == 14) {
 				e->animFrame = e->value1 = 0;
-				e->aiDraw = NULL;
+				e->aiDraw = nullptr;
 				e->state = STATE_STANDLEFT;
 			}
 		} else {
@@ -2242,7 +2246,7 @@ void aiFatFrogAction(AIEntity *e) {
 			e->value1++;
 			if (e->value1 == 14) {
 				e->animFrame = e->value1 = 0;
-				e->aiDraw = NULL;
+				e->aiDraw = nullptr;
 				e->state = STATE_STANDRIGHT;
 			}
 		} else {
@@ -2431,8 +2435,8 @@ void aiGoodFairyAction(AIEntity *e) {
 					e->sequence = 30;
 					e->state = STATE_MOVEDOWN;
 					// is something there already?
-					if ((g_hdb->_ai->findEntityType(AI_CRATE, e->tileX + xv, e->tileY + yv) != NULL) ||
-						(g_hdb->_ai->findEntityType(AI_LIGHTBARREL, e->tileX + xv, e->tileY + yv) != NULL))
+					if ((g_hdb->_ai->findEntityType(AI_CRATE, e->tileX + xv, e->tileY + yv) != nullptr) ||
+						(g_hdb->_ai->findEntityType(AI_LIGHTBARREL, e->tileX + xv, e->tileY + yv) != nullptr))
 						return;
 					int spawnOK;
 					AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xv, e->tileY + yv, e->level, &spawnOK);
@@ -2440,7 +2444,7 @@ void aiGoodFairyAction(AIEntity *e) {
 					if (hit || !spawnOK || (bg_flags & kFlagSpecial))
 						return;
 
-					g_hdb->_ai->spawn(ITEM_GEM_WHITE, e->dir, e->tileX + xv, e->tileY + yv, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+					g_hdb->_ai->spawn(ITEM_GEM_WHITE, e->dir, e->tileX + xv, e->tileY + yv, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
 					g_hdb->_ai->addAnimateTarget(e->x + xv * kTileWidth, e->y + yv * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
 					if (e->onScreen) {
 						g_hdb->_sound->playSound(SND_GET_GEM);
@@ -2516,7 +2520,7 @@ void aiGoodFairyAction(AIEntity *e) {
 					// make sure we can move over water & white gems, but not fg_hdb->_ai->y blockers and solids
 					AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
 					if (hit && ((hit->type == ITEM_GEM_WHITE) || (hit->type == AI_GUY)))
-						hit = NULL;
+						hit = nullptr;
 					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
 					if (result && !hit && !(bg_flags & kFlagSpecial)) {
 						g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
@@ -2628,7 +2632,7 @@ void aiBadFairyAction(AIEntity *e) {
 
 					e->sequence = 30;
 					e->state = STATE_MOVEUP;
-					g_hdb->_ai->spawn(AI_GATEPUDDLE, opposite[e->dir], e->tileX, e->tileY, NULL, NULL, NULL, DIR_NONE, e->level, 0, 0, 1);
+					g_hdb->_ai->spawn(AI_GATEPUDDLE, opposite[e->dir], e->tileX, e->tileY, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
 					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
 					g_hdb->_ai->addGatePuddle(1);
 					if (e->onScreen)
@@ -2668,7 +2672,7 @@ void aiBadFairyAction(AIEntity *e) {
 					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
 					if (hit == p && !g_hdb->_ai->playerDead()) {
 						g_hdb->_ai->killPlayer(DEATH_FRIED);
-						hit = NULL;
+						hit = nullptr;
 					}
 
 					if (!hit && result && !(bg_flags & kFlagSpecial)) {
@@ -2830,7 +2834,7 @@ void aiGatePuddleAction(AIEntity *e) {
 		int move_ok;
 		AIEntity *hit = g_hdb->_ai->legalMoveOverWater(nx, ny, e->level, &move_ok);
 		if (hit == p)
-			hit = NULL;
+			hit = nullptr;
 
 		if (!hit && move_ok) {
 			uint32	bg_flags = g_hdb->_map->getMapBGTileFlags(nx, ny);
@@ -2905,7 +2909,7 @@ void aiIcePuffSnowballAction(AIEntity *e) {
 	// hit something solid - kill the snowball
 	if (!result) {
 		e->dir2 = DIR_NONE;
-		e->aiDraw = NULL;
+		e->aiDraw = nullptr;
 		return;
 	}
 
@@ -3231,7 +3235,7 @@ void aiDragonInit(AIEntity *e) {
 }
 
 void aiDragonInit2(AIEntity *e) {
-	e->draw = NULL;
+	e->draw = nullptr;
 	if (!g_hdb->_ai->_gfxDragonAsleep) {
 		g_hdb->_ai->_gfxDragonAsleep = g_hdb->_gfx->loadPic(DRAGON_ASLEEP);
 		g_hdb->_ai->_gfxDragonFlap[0] = g_hdb->_gfx->loadPic(DRAGON_FLAP1);

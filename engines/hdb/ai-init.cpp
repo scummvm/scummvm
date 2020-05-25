@@ -588,7 +588,7 @@ AIStateDef monkeystone[] = {
 AIEntTypeInfo aiEntList[] = {
 	// AI.H enum name		lua name				list of gfx for states	name of init function
 	//--------------------------------------------------------------------------------------------
-	{ AI_NONE,				"AI_NONE",				&none[0],				aiNoneInit,				NULL  },
+	{ AI_NONE,				"AI_NONE",				&none[0],				aiNoneInit,				nullptr  },
 	{ AI_GUY,				"AI_GUY",				&guy[0],				aiPlayerInit,			aiPlayerInit2  },
 	{ AI_DOLLY,				"AI_DOLLY",				&dolly[0],				aiDollyInit,			aiDollyInit2  },
 	{ AI_SERGEANT,			"AI_SERGEANT",			&sergeant[0],			aiSergeantInit,			aiSergeantInit2  },
@@ -602,7 +602,7 @@ AIEntTypeInfo aiEntList[] = {
 	{ AI_SHOCKBOT,			"AI_SHOCKBOT",			&shockBot[0],			aiShockBotInit,			aiShockBotInit2  },
 	{ AI_FOURFIRER,			"AI_FOURFIRER",			&fourFirer[0],			aiFourFirerInit,		aiFourFirerInit2  },
 	{ AI_OMNIBOT_MISSILE,	"AI_OMNIBOT_MISSILE",	&omniBotMissile[0],		aiOmniBotMissileInit,	aiOmniBotMissileInit2  },
-	{ AI_GEM_ATTACK,		"AI_GEM_ATTACK",		&gemAttack[0],			aiGemAttackInit,		NULL  },
+	{ AI_GEM_ATTACK,		"AI_GEM_ATTACK",		&gemAttack[0],			aiGemAttackInit,		nullptr  },
 	{ AI_WORKER,			"AI_WORKER",			&worker[0],				aiWorkerInit,			aiWorkerInit2  },
 	{ AI_ACCOUNTANT,		"AI_ACCOUNTANT",		&accountant[0],			aiAccountantInit,		aiAccountantInit2  },
 	{ AI_SLUG_ATTACK,		"AI_SLUG_ATTACK",		&slugAttack[0],			aiSlugAttackInit,		aiSlugAttackInit2  },
@@ -674,7 +674,7 @@ AIEntTypeInfo aiEntList[] = {
 	{ ITEM_SLICER,			"ITEM_SLICER",			&slicer[0],				aiSlicerInit,			aiSlicerInit2  },
 	{ ITEM_PACKAGE,			"ITEM_PACKAGE",			&package[0],			aiPackageInit,			aiPackageInit2  },
 
-	{ END_AI_TYPES,			NULL,					NULL,					NULL,					NULL }
+	{ END_AI_TYPES,			nullptr,					nullptr,					nullptr,					nullptr }
 };
 
 FuncLookUp aiFuncList[] = {
@@ -901,7 +901,7 @@ FuncLookUp aiFuncList[] = {
 	{aiIceBlockInit,			"aiIceBlockInit"},
 	{aiIceBlockInit2,			"aiIceBlockInit2"},
 	{aiIceBlockAction,			"aiIceBlockAction"},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 AI::AI() {
@@ -923,10 +923,10 @@ AI::AI() {
 
 	// Free Player Graphics
 	for (int i = 0; i < 8; i++)
-		_slugAttackGfx[i] = NULL;
+		_slugAttackGfx[i] = nullptr;
 
-	_weaponSelGfx = NULL;
-	_weaponGfx = NULL;
+	_weaponSelGfx = nullptr;
+	_weaponGfx = nullptr;
 
 	memset(_clubDownGfx, 0, sizeof(_clubDownGfx));
 	memset(_clubUpGfx, 0, sizeof(_clubUpGfx));
@@ -954,7 +954,7 @@ AI::AI() {
 	memset(_dyingGfx, 0, sizeof(_dyingGfx));
 
 	memset(_waypointGfx, 0, sizeof(_waypointGfx));
-	_debugQMark = NULL;
+	_debugQMark = nullptr;
 
 	if (g_hdb->isPPC())
 		_youGotY = 306;
@@ -973,6 +973,8 @@ AI::AI() {
 	}
 	_tileFroglickMiddleLR = nullptr;
 	_gfxDragonAsleep = nullptr;
+	_goodjobGfx = nullptr;
+
 	for (int i = 0; i < 2; ++i)
 		_gfxDragonFlap[i] = nullptr;
 	for (int i = 0; i < 4; ++i) {
@@ -983,6 +985,13 @@ AI::AI() {
 		_gfxLaserbeamLRLeft[i] = nullptr;
 		_gfxLaserbeamLRRight[i] = nullptr;
 	}
+	for (int i = 0; i < ARRAYSIZE(_getGfx); i++)
+		_getGfx[i] = nullptr;
+	for (int i = 0; i < ARRAYSIZE(_stunnedGfx); i++)
+		_stunnedGfx[i] = nullptr;
+	for (int i = 0; i < ARRAYSIZE(_stunLightningGfx); i++)
+		_stunLightningGfx[i] = nullptr;
+
 	_player = nullptr;
 	_cineAbortable = false;
 	_cineAborted = false;
@@ -1046,6 +1055,37 @@ AI::AI() {
 	_touchplateOff = 0;
 	_templeTouchpOn = 0;
 	_templeTouchpOff = 0;
+
+	_slugLeftFrames = _slugRightFrames = _slugAttackFrames = 0;
+	_weaponSelected = AI_NONE;
+
+	_numGems = 0;
+	_numGooCups = 0;
+	_numMonkeystones = 0;
+
+	_useSwitchOff = _useSwitchOn = 0;
+	_useHolderEmpty = _useHolderFull = 0;
+
+	_useSwitch2Off = _useSwitch2On = 0;
+	_useMailsorter = _useAskcomp = _useTeleporter = 0;
+	_useHandswitchOn = _useHandswitchOff = 0;
+
+	_targetDoorN = _targetDoorP = _targetDoorS = _targetDoorNv = _targetDoorPv = 0;
+	_targetDoorSv = _targetDoor2N = _targetDoor2P = 0;
+
+	_playerDead = false;
+	_playerInvisible = false;
+	_playerOnIce = false;
+	_playerEmerging = false;
+	_playerRunning = false;
+
+	_horrible1Frames = _horrible2Frames = _horrible3Frames = _horrible4Frames = 0;
+	_plummetFrames = _dyingFrames = 0;
+	_pushdownFrames = _pushupFrames = _pushleftFrames = _pushrightFrames = 0;
+	_stunDownFrames = _stunUpFrames = _stunLeftFrames = _stunRightFrames = 0;
+	_slugDownFrames = _slugUpFrames = _slugLeftFrames = _slugRightFrames = 0;
+
+	_gatePuddles = 0;
 }
 
 AI::~AI() {
@@ -1074,22 +1114,22 @@ AI::~AI() {
 	// Free Player Graphics
 	for (int i = 0; i < 8; i++) {
 		delete _slugAttackGfx[i];
-		_slugAttackGfx[i] = NULL;
+		_slugAttackGfx[i] = nullptr;
 	}
 	if (_weaponSelGfx) {
 		delete _weaponSelGfx;
-		_weaponSelGfx = NULL;
+		_weaponSelGfx = nullptr;
 	}
 	if (_weaponGfx) {
 		delete _weaponGfx;
-		_weaponGfx = NULL;
+		_weaponGfx = nullptr;
 	}
 
 	for (int i = 0; i < 4; i++)
 		delete _waypointGfx[i];
 	memset(_waypointGfx, 0, sizeof(_waypointGfx));
 	delete _debugQMark;
-	_debugQMark = NULL;
+	_debugQMark = nullptr;
 
 	// Free AnimTargets
 
@@ -1177,27 +1217,27 @@ void AI::init() {
 
 	// icepuff snowball
 	_icepSnowballGfxDown = _icepSnowballGfxLeft =
-		_icepSnowballGfxRight = NULL;
+		_icepSnowballGfxRight = nullptr;
 
 	// Frogglick
-	_tileFroglickMiddleUD = _tileFroglickMiddleLR = NULL;
-	_tileFroglickWiggleUD[0] = _tileFroglickWiggleLeft[0] = _tileFroglickWiggleRight[0] = NULL;
+	_tileFroglickMiddleUD = _tileFroglickMiddleLR = nullptr;
+	_tileFroglickWiggleUD[0] = _tileFroglickWiggleLeft[0] = _tileFroglickWiggleRight[0] = nullptr;
 
 	// Dragon
-	_gfxDragonAsleep = NULL;
+	_gfxDragonAsleep = nullptr;
 
 	// laser beam
-	_gfxLaserbeamUD[0] = _gfxLaserbeamUD[1] = _gfxLaserbeamLR[0] = _gfxLaserbeamLR[1] = NULL;
+	_gfxLaserbeamUD[0] = _gfxLaserbeamUD[1] = _gfxLaserbeamLR[0] = _gfxLaserbeamLR[1] = nullptr;
 
 	_laserRescan = false;
 	_laserOnScreen = false;
 
 	_dummyPlayer.type = AI_GUY;
 	_dummyLaser.type = AI_LASERBEAM;
-	strcpy(_dummyPlayer.entityName, "Virtual Player");
+	Common::strlcpy(_dummyPlayer.entityName, "Virtual Player", 32);
 	_numDeliveries = 0;
 	_playerRunning = false;
-	_weaponSelGfx = NULL;
+	_weaponSelGfx = nullptr;
 
 	restartSystem();
 }
@@ -1208,7 +1248,7 @@ void AI::clearPersistent() {
 
 const char *AI::funcLookUp(void(*function)(AIEntity *e)) {
 	if (!function)
-		return NULL;
+		return nullptr;
 
 	int i = 0;
 	while (aiFuncList[i].funcName) {
@@ -1216,12 +1256,12 @@ const char *AI::funcLookUp(void(*function)(AIEntity *e)) {
 			return aiFuncList[i].funcName;
 		i++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 FuncPtr AI::funcLookUp(const char *function) {
 	if (!function)
-		return NULL;
+		return nullptr;
 
 	int i = 0;
 	while (aiFuncList[i].funcName) {
@@ -1229,12 +1269,12 @@ FuncPtr AI::funcLookUp(const char *function) {
 			return aiFuncList[i].function;
 		i++;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AI::restartSystem() {
 	// init special player vars
-	_player = NULL;
+	_player = nullptr;
 
 	// Clear the Action list
 	memset(_actions, 0, sizeof(_actions));
@@ -1328,81 +1368,81 @@ void AI::restartSystem() {
 	_playerEmerging = false;
 
 	_weaponSelected = AI_NONE;
-	_weaponGfx = NULL;
-	_weaponSelGfx = NULL;
+	_weaponGfx = nullptr;
+	_weaponSelGfx = nullptr;
 
 	// Clear Cinematic System
 	_cineActive = _cameraLock = _playerLock = _cineAborted = false;
 
 	if (_icepSnowballGfxDown) {
 		delete _icepSnowballGfxDown;
-		_icepSnowballGfxDown = NULL;
+		_icepSnowballGfxDown = nullptr;
 	}
 	if (_icepSnowballGfxLeft) {
 		delete _icepSnowballGfxLeft;
-		_icepSnowballGfxLeft = NULL;
+		_icepSnowballGfxLeft = nullptr;
 	}
 	if (_icepSnowballGfxRight) {
 		delete _icepSnowballGfxRight;
-		_icepSnowballGfxRight = NULL;
+		_icepSnowballGfxRight = nullptr;
 	}
 
 	if (_tileFroglickMiddleUD) {
 		delete _tileFroglickMiddleUD;
-		_tileFroglickMiddleUD = NULL;
+		_tileFroglickMiddleUD = nullptr;
 	}
 	if (_tileFroglickWiggleUD[0]) {
 		for (int i = 0; i < 3; i++) {
 			delete _tileFroglickWiggleUD[i];
-			_tileFroglickWiggleUD[i] = NULL;
+			_tileFroglickWiggleUD[i] = nullptr;
 		}
 	}
 
 	if (_tileFroglickMiddleLR) {
 		delete _tileFroglickMiddleLR;
-		_tileFroglickMiddleLR = NULL;
+		_tileFroglickMiddleLR = nullptr;
 	}
 	if (_tileFroglickWiggleLeft[0]) {
 		for (int i = 0; i < 3; i++) {
 			delete _tileFroglickWiggleLeft[i];
-			_tileFroglickWiggleLeft[i] = NULL;
+			_tileFroglickWiggleLeft[i] = nullptr;
 		}
 	}
 	if (_tileFroglickWiggleRight[0]) {
 		for (int i = 0; i < 3; i++) {
 			delete _tileFroglickWiggleRight[i];
-			_tileFroglickWiggleRight[i] = NULL;
+			_tileFroglickWiggleRight[i] = nullptr;
 		}
 	}
 
 	// dragon!  see ya!
 	if (_gfxDragonAsleep) {
 		delete _gfxDragonAsleep;
-		_gfxDragonAsleep = NULL;
+		_gfxDragonAsleep = nullptr;
 		delete _gfxDragonFlap[0];
 		delete _gfxDragonFlap[1];
-		_gfxDragonFlap[0] = _gfxDragonFlap[1] = NULL;
+		_gfxDragonFlap[0] = _gfxDragonFlap[1] = nullptr;
 		delete _gfxDragonBreathe[0];
 		delete _gfxDragonBreathe[1];
 		delete _gfxDragonBreathe[2];
 		_gfxDragonBreathe[0] = _gfxDragonBreathe[1] =
-			_gfxDragonBreathe[2] = NULL;
+			_gfxDragonBreathe[2] = nullptr;
 	}
 
 	// PANIC ZONE gfx - see ya!
 	if (g_hdb->_window->_pzInfo.gfxPanic) {
 		delete g_hdb->_window->_pzInfo.gfxPanic;
-		g_hdb->_window->_pzInfo.gfxPanic = NULL;
+		g_hdb->_window->_pzInfo.gfxPanic = nullptr;
 		delete g_hdb->_window->_pzInfo.gfxZone;
-		g_hdb->_window->_pzInfo.gfxZone = NULL;
+		g_hdb->_window->_pzInfo.gfxZone = nullptr;
 		delete g_hdb->_window->_pzInfo.gfxFace[0];
-		g_hdb->_window->_pzInfo.gfxFace[0] = NULL;
+		g_hdb->_window->_pzInfo.gfxFace[0] = nullptr;
 		delete g_hdb->_window->_pzInfo.gfxFace[1];
-		g_hdb->_window->_pzInfo.gfxFace[1] = NULL;
+		g_hdb->_window->_pzInfo.gfxFace[1] = nullptr;
 
 		for (int i = 0; i < 10; i++) {
 			delete g_hdb->_window->_pzInfo.gfxNumber[i];
-			g_hdb->_window->_pzInfo.gfxNumber[i] = NULL;
+			g_hdb->_window->_pzInfo.gfxNumber[i] = nullptr;
 		}
 	}
 	g_hdb->_window->_pzInfo.active = false;
@@ -1417,12 +1457,12 @@ void AI::restartSystem() {
 			delete _gfxLaserbeamLRLeft[i];
 			delete _gfxLaserbeamLRRight[i];
 
-			_gfxLaserbeamUD[i] = NULL;
-			_gfxLaserbeamUDTop[i] = NULL;
-			_gfxLaserbeamUDBottom[i] = NULL;
-			_gfxLaserbeamLR[i] = NULL;
-			_gfxLaserbeamLRLeft[i] = NULL;
-			_gfxLaserbeamLRRight[i] = NULL;
+			_gfxLaserbeamUD[i] = nullptr;
+			_gfxLaserbeamUDTop[i] = nullptr;
+			_gfxLaserbeamUDBottom[i] = nullptr;
+			_gfxLaserbeamLR[i] = nullptr;
+			_gfxLaserbeamLRLeft[i] = nullptr;
+			_gfxLaserbeamLRRight[i] = nullptr;
 		}
 	}
 
@@ -1756,15 +1796,15 @@ void AI::loadSaveFile(Common::InSaveFile *in) {
 			temp->blinkGfx[j] = temp->movedownGfx[j] = temp->moveupGfx[j] =
 			temp->moveleftGfx[j] = temp->moverightGfx[j] = temp->standdownGfx[j] =
 			temp->standupGfx[j] = temp->standleftGfx[j] = temp->standrightGfx[j] =
-			temp->special1Gfx[j] = NULL;
+			temp->special1Gfx[j] = nullptr;
 
 		temp->blinkFrames = temp->movedownFrames = temp->moveupFrames = temp->moveleftFrames =
 			temp->moverightFrames = temp->standdownFrames = temp->standupFrames = temp->standleftFrames =
 			temp->standrightFrames = 0;
 
-		temp->draw = NULL;
-		temp->aiDraw = NULL;
-		temp->aiAction = temp->aiInit = temp->aiUse = NULL;
+		temp->draw = nullptr;
+		temp->aiDraw = nullptr;
+		temp->aiAction = temp->aiInit = temp->aiUse = nullptr;
 
 		cacheEntGfx(temp, false);
 	}

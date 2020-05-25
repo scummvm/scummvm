@@ -58,7 +58,7 @@ void forceNewPlayerInput() {
 
 /*----------------------------------------------------------------------*/
 static void unknown(CONTEXT, char tok[]) {
-	char *str = strdup(tok);
+	char *str = scumm_strdup(tok);
 	Parameter *messageParameters = newParameterArray();
 
 	addParameterForString(messageParameters, str);
@@ -94,7 +94,7 @@ static int lookup(CONTEXT, char wrd[]) {
 
 /*----------------------------------------------------------------------*/
 static bool isWordCharacter(int ch) {
-	return isISOLetter(ch) || isdigit(ch) || ch == '\'' || ch == '-' || ch == '_';
+	return isISOLetter(ch) || Common::isDigit(ch) || ch == '\'' || ch == '-' || ch == '_';
 }
 
 /*----------------------------------------------------------------------*/
@@ -112,8 +112,8 @@ static char *gettoken(char *txtBuf) {
 	if (isISOLetter(*marker))
 		while (*marker && isWordCharacter(*marker))
 			marker++;
-	else if (isdigit((int)*marker))
-		while (isdigit((int)*marker))
+	else if (Common::isDigit((int)*marker))
+		while (Common::isDigit((int)*marker))
 			marker++;
 	else if (*marker == '\"') {
 		marker++;
@@ -216,11 +216,11 @@ void scan(CONTEXT) {
 			FUNC1(lookup, w, token);
 			if (!isNoise(w))
 				playerWords[i++].code = w;
-		} else if (isdigit((int)token[0]) || token[0] == '\"') {
-			if (isdigit((int)token[0])) {
+		} else if (Common::isDigit((int)token[0]) || token[0] == '\"') {
+			if (Common::isDigit((int)token[0])) {
 				createIntegerLiteral(number(token));
 			} else {
-				char *unquotedString = strdup(token);
+				char *unquotedString = scumm_strdup(token);
 				unquotedString[strlen(token) - 1] = '\0';
 				createStringLiteral(&unquotedString[1]);
 				free(unquotedString);

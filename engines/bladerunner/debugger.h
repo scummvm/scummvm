@@ -133,6 +133,8 @@ public:
 	void drawWalkboxes();
 	void drawScreenEffects();
 
+	bool dbgAttemptToLoadChapterSetScene(int chapterId, int setId, int sceneId);
+
 private:
 	Common::Array<DebuggerDrawnObject> _specificDrawnObjectsList;
 	bool _specificActorsDrawn;

@@ -23,9 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/bit_set.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -115,15 +112,15 @@ void BitSet::setBits(unsigned int pos, unsigned int n, uint32 bits) {
 	_data[lastbyte] |= (bits >> shift) & lastmask;
 }
 
-void BitSet::save(ODataSource *ods) {
-	ods->writeUint32LE(_size);
-	ods->write(_data, _bytes);
+void BitSet::save(Common::WriteStream *ws) {
+	ws->writeUint32LE(_size);
+	ws->write(_data, _bytes);
 }
 
-bool BitSet::load(IDataSource *ids, uint32 version) {
-	uint32 s = ids->readUint32LE();
+bool BitSet::load(Common::ReadStream *rs, uint32 version) {
+	uint32 s = rs->readUint32LE();
 	setSize(s);
-	ids->read(_data, _bytes);
+	rs->read(_data, _bytes);
 
 	return true;
 }

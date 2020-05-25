@@ -22,6 +22,8 @@
 
 #include "common/events.h"
 
+#include "common/system.h"
+
 namespace Common {
 
 bool isMouseEvent(const Event &event) {
@@ -173,6 +175,80 @@ void EventDispatcher::dispatchPoll() {
 		if (i->poll)
 			i->observer->notifyPoll();
 	}
+}
+
+class KeyboardRepeatEventSourceWrapper : public Common::EventSource {
+public:
+	KeyboardRepeatEventSourceWrapper(Common::EventSource *delegate) :
+			_delegate(delegate),
+			_keyRepeatTime(0) {
+		assert(delegate);
+	}
+
+	// EventSource API
+	bool pollEvent(Common::Event &event) override {
+		uint32 time = g_system->getMillis(true);
+		bool gotEvent = _delegate->pollEvent(event);
+
+		if (gotEvent) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				// init continuous event stream
+				_currentKeyDown = event.kbd;
+				_keyRepeatTime = time + kKeyRepeatInitialDelay;
+				break;
+
+			case Common::EVENT_KEYUP:
+				if (event.kbd.keycode == _currentKeyDown.keycode) {
+					// Only stop firing events if it's the current key
+					_currentKeyDown.keycode = Common::KEYCODE_INVALID;
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			return true;
+		} else {
+			// Check if event should be sent again (keydown)
+			if (_currentKeyDown.keycode != Common::KEYCODE_INVALID && _keyRepeatTime <= time) {
+				// fire event
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbdRepeat = true;
+				event.kbd = _currentKeyDown;
+				_keyRepeatTime = time + kKeyRepeatSustainDelay;
+
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	bool allowMapping() const override {
+		return _delegate->allowMapping();
+	}
+
+private:
+	// for continuous events (keyDown)
+	enum {
+		kKeyRepeatInitialDelay = 400,
+		kKeyRepeatSustainDelay = 100
+	};
+
+	Common::EventSource *_delegate;
+
+	Common::KeyState _currentKeyDown;
+	uint32 _keyRepeatTime;
+};
+
+EventSource *makeKeyboardRepeatingEventSource(EventSource *eventSource) {
+	if (!eventSource) {
+		return nullptr;
+	}
+
+	return new KeyboardRepeatEventSourceWrapper(eventSource);
 }
 
 } // End of namespace Common

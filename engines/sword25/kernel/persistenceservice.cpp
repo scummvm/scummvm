@@ -214,7 +214,7 @@ Common::String PersistenceService::getSavegameDirectory() {
 
 namespace {
 bool checkslotID(uint slotID) {
-	// Überprüfen, ob die Slot-ID zulässig ist.
+	// ÃœberprÃ¼fen, ob die Slot-ID zulÃ¤ssig ist.
 	if (slotID >= SLOT_COUNT) {
 		error("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
@@ -261,7 +261,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	// FIXME: This code is a hack which bypasses the savefile API,
 	// and should eventually be removed.
 
-	// Überprüfen, ob die Slot-ID zulässig ist.
+	// ÃœberprÃ¼fen, ob die Slot-ID zulÃ¤ssig ist.
 	if (slotID >= SLOT_COUNT) {
 		error("Tried to save to an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
@@ -270,7 +270,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	// Dateinamen erzeugen.
 	Common::String filename = generateSavegameFilename(slotID);
 
-	// Spielstanddatei öffnen und die Headerdaten schreiben.
+	// Spielstanddatei Ã¶ffnen und die Headerdaten schreiben.
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
 	Common::OutSaveFile *file = sfm->openForSaving(filename);
 
@@ -335,7 +335,7 @@ bool PersistenceService::saveGame(uint slotID, const Common::String &screenshotF
 	file->finalize();
 	delete file;
 
-	// Savegameinformationen für diesen Slot aktualisieren.
+	// Savegameinformationen fÃ¼r diesen Slot aktualisieren.
 	_impl->readSlotSavegameInformation(slotID);
 
 	// Empty the cache, to remove old thumbnails
@@ -349,7 +349,7 @@ bool PersistenceService::loadGame(uint slotID) {
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
 	Common::InSaveFile *file;
 
-	// Überprüfen, ob die Slot-ID zulässig ist.
+	// ÃœberprÃ¼fen, ob die Slot-ID zulÃ¤ssig ist.
 	if (slotID >= SLOT_COUNT) {
 		error("Tried to load from an invalid slot (%d). Only slot ids form 0 to %d are allowed.", slotID, SLOT_COUNT - 1);
 		return false;
@@ -357,15 +357,15 @@ bool PersistenceService::loadGame(uint slotID) {
 
 	SavegameInformation &curSavegameInfo = _impl->_savegameInformations[slotID];
 
-	// Überprüfen, ob der Slot belegt ist.
+	// ÃœberprÃ¼fen, ob der Slot belegt ist.
 	if (!curSavegameInfo.isOccupied) {
 		error("Tried to load from an empty slot (%d).", slotID);
 		return false;
 	}
 
-	// Überprüfen, ob der Spielstand im angegebenen Slot mit der aktuellen Engine-Version kompatibel ist.
-	// Im Debug-Modus wird dieser Test übersprungen. Für das Testen ist es hinderlich auf die Einhaltung dieser strengen Bedingung zu bestehen,
-	// da sich die Versions-ID bei jeder Codeänderung mitändert.
+	// ÃœberprÃ¼fen, ob der Spielstand im angegebenen Slot mit der aktuellen Engine-Version kompatibel ist.
+	// Im Debug-Modus wird dieser Test Ã¼bersprungen. FÃ¼r das Testen ist es hinderlich auf die Einhaltung dieser strengen Bedingung zu bestehen,
+	// da sich die Versions-ID bei jeder CodeÃ¤nderung mitÃ¤ndert.
 #ifndef DEBUG
 	if (!curSavegameInfo.isCompatible) {
 		error("Tried to load a savegame (%d) that is not compatible with this engine version.", slotID);

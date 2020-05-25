@@ -23,6 +23,7 @@
 #ifndef ULTIMA8_KERNEL_MOUSE_H
 #define ULTIMA8_KERNEL_MOUSE_H
 
+#include "common/system.h"
 #include "common/rect.h"
 #include "common/stack.h"
 #include "ultima/shared/engine/events.h"
@@ -33,18 +34,49 @@ namespace Ultima8 {
 
 const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
 
+enum MouseButtonState {
+	MBS_DOWN = 0x1,
+	MBS_HANDLED = 0x2,		// Mousedown event handled
+	MBS_RELHANDLED = 0x4	// Mouse release event handled (only used in AvatarMover)
+};
+
 struct MButton {
 	uint16 _downGump;
 	uint32 _lastDown;
 	uint32 _curDown;
-	int _downX, _downY;
+	Common::Point _downPoint;
 	int _state;
-};
 
-enum MouseButtonState {
-	MBS_DOWN = 0x1,
-	MBS_HANDLED = 0x2,
-	MBS_RELHANDLED = 0x4
+	MButton() : _downGump(0), _curDown(0), _lastDown(0), _state(MBS_HANDLED | MBS_RELHANDLED)
+	{
+	}
+
+	bool isState(MouseButtonState state) const {
+		return _state & state;
+	}
+	void setState(MouseButtonState state) {
+		_state |= state;
+	}
+	void clearState(MouseButtonState state) {
+		_state &= ~state;
+	}
+
+	bool curWithinDblClkTimeout() {
+		uint32 now = g_system->getMillis();
+		return now - _curDown <= DOUBLE_CLICK_TIMEOUT;
+	}
+
+	bool lastWithinDblClkTimeout() {
+		uint32 now = g_system->getMillis();
+		return now - _lastDown <= DOUBLE_CLICK_TIMEOUT;
+	}
+
+	//! A convenience function - true if the current state is down, unhandled, and within the double click timeout.
+	bool isUnhandledDoubleClick() {
+		return isState(MBS_DOWN) && !isState(MBS_HANDLED) &&
+				(_curDown - _lastDown) <= DOUBLE_CLICK_TIMEOUT;
+	}
+
 };
 
 class Gump;
@@ -117,8 +149,11 @@ public:
 	//! get mouse cursor length. 0 = short, 1 = medium, 2 = long
 	int getMouseLength(int mx, int my);
 
-	//! get mouse cursor direction. 0 = up, 1 = up-right, 2 = right, etc...
-	int getMouseDirection(int mx, int my);
+	//! get mouse cursor direction on the screen. 0 = up, 1 = up-right, 2 = right, etc...
+	int getMouseDirectionScreen(int mx, int my);
+
+	//! get mouse cursor direction in the world. 0 = up, 1 = up-right, 2 = right, etc...
+	int getMouseDirectionWorld(int mx, int my);
 
 	//! get current mouse cursor location
 	void getMouseCoords(int32 &mx, int32 &my) const {

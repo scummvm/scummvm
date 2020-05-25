@@ -36,7 +36,8 @@ namespace Ultima8 {
   parse data and fill class
  */
 RawShapeFrame::RawShapeFrame(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
-                       const uint8 special[256], ConvertShapeFrame *prev) : _line_offsets(0) {
+                       const uint8 special[256], ConvertShapeFrame *prev) : _line_offsets(0),
+					   _rle_data(nullptr) {
 	// Load it as u8
 	if (!format || format == &U8ShapeFormat || format == &U82DShapeFormat)
 		loadU8Format(data, size);
@@ -112,12 +113,23 @@ void RawShapeFrame::loadGenericFormat(const uint8 *data, uint32 size, const Conv
 	if (_height == 0)
 		return;
 
+	// Fairly arbitrary sanity check
+	if (_height > 4096 || _width > 4096 || _xoff > 4096 || _yoff > 4096) {
+		warning("got some invalid data loading shape");
+		_width = _height = _xoff = _yoff = 0;
+		return;
+	}
+
 	_line_offsets = new uint32[_height];
 
 	for (int32 i = 0; i < _height; i++) {
 		if (format->_line_offset_absolute) {
 			_line_offsets[i] = ds.readX(format->_bytes_line_offset);
 		} else {
+			if (ds.size() - ds.pos() < (int32)format->_bytes_line_offset) {
+				warning("going off end of %d buffer at %d reading %d",
+						ds.size(), ds.pos(), format->_bytes_line_offset);
+			}
 			_line_offsets[i] = ds.readX(format->_bytes_line_offset) - ((_height - i) * format->_bytes_line_offset);
 		}
 	}

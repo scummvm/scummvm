@@ -232,7 +232,7 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 	/* Handle CLUT8 */
 	if (target.format.bytesPerPixel == 1) {
 		if (!palette)
-			warning("Trying to blit into a surface with 1bpp, you need the palette.");
+			error("NinePatchBitmap::blit(): Trying to blit into a surface with 8bpp, you need a palette.");
 
 		Surface *srf = new Surface();
 		srf->create(target.w, target.h, _bmp->format);

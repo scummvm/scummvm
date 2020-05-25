@@ -23,8 +23,8 @@
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/misc.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/conf/xml_tree.h"
 #include "ultima/nuvie/conf/config_node.h"
+#include "ultima/shared/conf/xml_tree.h"
 #include "common/config-manager.h"
 
 namespace Ultima {
@@ -40,7 +40,7 @@ Configuration::Configuration() : _configChanged(false) {
 }
 
 Configuration::~Configuration() {
-	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
+	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		delete(*i);
 	}
@@ -52,8 +52,8 @@ Configuration::~Configuration() {
 bool Configuration::readConfigFile(Std::string fname, Std::string root,
                                    bool readonly) {
 	_configFilename = fname;
-	XMLTree *tree = new XMLTree();
-	tree->clear(root);
+	Shared::XMLTree *tree = new Shared::XMLTree();
+
 	if (!tree->readConfigFile(fname)) {
 		delete tree;
 		return false;
@@ -64,7 +64,7 @@ bool Configuration::readConfigFile(Std::string fname, Std::string root,
 }
 
 void Configuration::write() {
-	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
+	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		if (!(*i)->isReadonly())
 			(*i)->write();
@@ -72,7 +72,7 @@ void Configuration::write() {
 }
 
 void Configuration::clear() {
-	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
+	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		delete(*i);
 	}
@@ -82,7 +82,7 @@ void Configuration::clear() {
 void Configuration::value(const Std::string &key, Std::string &ret,
                           const char *defaultvalue) {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -110,7 +110,7 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 
 void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -138,7 +138,7 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 
 void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -176,7 +176,7 @@ bool Configuration::set(const Std::string &key, const Std::string &value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
 		        (*i)->checkRoot(key)) {
@@ -208,7 +208,7 @@ bool Configuration::set(const Std::string &key, int value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
 		        (*i)->checkRoot(key)) {
@@ -235,7 +235,7 @@ bool Configuration::set(const Std::string &key, bool value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
 		        (*i)->checkRoot(key)) {
@@ -260,10 +260,10 @@ ConfigNode *Configuration::getNode(const Std::string &key) {
 
 Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) {
 	Std::set<Std::string> keys;
-	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
+	for (Common::Array<Shared::XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
-		Std::vector<Std::string> k = (*i)->listKeys(key, longformat);
-		for (Std::vector<Std::string>::iterator iter = k.begin();
+		Common::Array<Common::String> k = (*i)->listKeys(key, longformat);
+		for (Common::Array<Common::String>::iterator iter = k.begin();
 		        iter != k.end(); ++iter) {
 			keys.insert(*iter);
 		}
@@ -272,12 +272,12 @@ Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longf
 }
 
 void Configuration::getSubkeys(KeyTypeList &ktl, Std::string basekey) {
-	for (Std::vector<XMLTree *>::iterator tree = _trees.begin();
+	for (Std::vector<Shared::XMLTree *>::iterator tree = _trees.begin();
 	        tree != _trees.end(); ++tree) {
-		KeyTypeList l;
+		Shared::XMLTree::KeyTypeList l;
 		(*tree)->getSubkeys(l, basekey);
 
-		for (KeyTypeList::iterator i = l.begin();
+		for (Shared::XMLTree::KeyTypeList::iterator i = l.begin();
 		        i != l.end(); ++i) {
 			bool found = false;
 			for (KeyTypeList::iterator j = ktl.begin();

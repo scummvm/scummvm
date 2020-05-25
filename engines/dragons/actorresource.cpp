@@ -178,7 +178,7 @@ const char *ActorResource::getFilename() {
 }
 
 byte *ActorResource::getSequenceDataAtOffset(uint32 offset) {
-	assert(offset < _fileSize);
+	assert(offset < (uint32)_fileSize);
 	return &_data[offset];
 }
 

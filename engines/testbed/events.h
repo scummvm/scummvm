@@ -56,7 +56,7 @@ public:
 		return "Events";
 	}
 	const char *getDescription() const override {
-		return "Events : Keyboard/Mouse/RTL";
+		return "Events : Keyboard/Mouse/Return to Launcher";
 	}
 };
 

@@ -27,13 +27,10 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(Egg, Item)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Egg)
 
 Egg::Egg() : _hatched(false) {
 }
@@ -59,17 +56,17 @@ void Egg::leaveFastArea() {
 	Item::leaveFastArea();
 }
 
-void Egg::saveData(ODataSource *ods) {
-	Item::saveData(ods);
+void Egg::saveData(Common::WriteStream *ws) {
+	Item::saveData(ws);
 
 	uint8 h = _hatched ? 1 :  0;
-	ods->writeByte(h);
+	ws->writeByte(h);
 }
 
-bool Egg::loadData(IDataSource *ids, uint32 version) {
-	if (!Item::loadData(ids, version)) return false;
+bool Egg::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Item::loadData(rs, version)) return false;
 
-	_hatched = (ids->readByte() != 0);
+	_hatched = (rs->readByte() != 0);
 
 	return true;
 }

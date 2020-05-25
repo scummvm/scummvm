@@ -268,7 +268,7 @@ void Dialogs::scrollModeDialogue() {
 }
 
 void Dialogs::store(byte what, TuneType &played) {
-	memcpy(played, played + 1, sizeof(played) - 1);
+	memmove(played, played + 1, sizeof(played) - 1);
 	played[30] = what;
 }
 

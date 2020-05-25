@@ -40,6 +40,12 @@ namespace Dragons {
 Talk::Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive): _vm(vm), _bigfileArchive(bigfileArchive) {
 	_dat_800726ec_tfont_field0 = 1; //TODO source from font file
 	_dat_800726f0_tfont_field2 = 1; // TODO source from font file
+
+	_dat_8008e7e8_dialogBox_x1 = 0;
+	_dat_8008e844_dialogBox_y1 = 0;
+	_dat_8008e848_dialogBox_x2 = 0;
+	_dat_8008e874_dialogBox_y2 = 0;
+	_dat_800633f8_talkDialogFlag = 0;
 }
 
 void Talk::init() {
@@ -70,7 +76,7 @@ void Talk::printWideText(byte *text) {
 	int i = 0;
 	for (; READ_LE_INT16(text) != 0 && i < 1999; i++) {
 		char c = *text;
-		if (c < 0x20) {
+		if (c < 0x20 && i < 1999-4) {
 			buf[i++] = '0';
 			buf[i++] = 'x';
 			buf[i++] = (c & 0xF0 >> 4) + '0';
@@ -80,7 +86,7 @@ void Talk::printWideText(byte *text) {
 		}
 		text += 2;
 	}
-	buf[i] = 0;
+	buf[MAX(i, 1999)] = 0;
 	debug("TEXT: %s", buf);
 }
 
@@ -132,7 +138,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 	uint16 *dialogTextLinePtr;
 	uint16 *puVar18;
 	uint16 *curDialogTextPtr;
-	int unaff_s4;
+	int unaff_s4 = 0;
 	uint16 uVar19;
 	short sVar20;
 	uint32 maxLineLengthMaybe;
@@ -342,7 +348,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			if (0x16 < (short)uVar19) {
 				uVar19 = 0x16;
 			}
-			uVar11 = sVar20 * _dat_800726ec_tfont_field0 + 3 & 0xfffe;
+			uVar11 = (sVar20 * _dat_800726ec_tfont_field0 + 3) & 0xfffe;
 			sVar20 = (short)uVar11 >> 1;
 			if ((short)x < 0x14) {
 				_dat_8008e7e8_dialogBox_x1 = (x - sVar20) + 1;
@@ -421,7 +427,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 	}
 	if (param_5 != 0) {
 		if (_vm->isFlagSet(ENGINE_FLAG_8000)) {
-			_vm->_sound->PauseCDMusic();
+			_vm->_sound->resumeMusic();
 		}
 		if (isFlag8Set) {
 			_vm->setFlags(ENGINE_FLAG_8);
@@ -539,7 +545,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	uint16 sequenceId;
 	TalkDialogEntry *selectedDialogText;
 	uint iniId;
-	short local_990 [5];
+	//short local_990 [5];
 	uint16 auStack2438 [195];
 	uint16 local_800 [1000];
 	Common::Array<TalkDialogEntry *> dialogEntries;
@@ -585,7 +591,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 			return true;
 		}
 		_vm->clearFlags(ENGINE_FLAG_8);
-		strcpy((char *)local_990, selectedDialogText->dialogText);
+		//strcpy((char *)local_990, selectedDialogText->dialogText);
 		UTF16ToUTF16Z(auStack2438, (uint16 *)(selectedDialogText->dialogText + 10));
 //		load_string_from_dragon_txt(selectedDialogText->textIndex1, (char *)local_800);
 		if (selectedDialogText->hasText) {
@@ -638,7 +644,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 
 TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries) {
 	bool bVar1;
-	short sVar2;
+	int16 sVar2;
 	uint uVar3;
 	uint uVar4;
 	uint16 y;
@@ -647,24 +653,19 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	uint uVar7;
 	uint16 uVar8;
 	TalkDialogEntry *talkDialogEntry;
-	uint16 local_430 [80];
-	uint16 local_390[5];
+	//uint16 local_390[5];
 	uint16 local_386 [195];
 	uint16 asStack512 [200];
 	uint16 numEntries;
 	uint16 local_60;
 	uint16 local_58;
-	short local_50;
+	int16 local_50;
 	uint16 *local_40;
 	uint local_38;
 	bool hasDialogEntries;
 	uint16 *_dat_80083104;
 
 	talkDialogEntry = nullptr;
-	for (int i = 0; i < 0x24; i++) {
-		local_430[i] = 0x20;
-	}
-	local_430[0x24] = 0;
 
 	uVar8 = 0;
 	local_60 = 0;
@@ -677,7 +678,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			if ((talkDialogEntry->flags & 1) == 0) {
 				local_60 = local_60 + 1;
 				talkDialogEntry->yPosMaybe = '\0';
-				strcpy((char *)&local_390, (char *)talkDialogEntry->dialogText);
+				//strcpy((char *)&local_390, (char *)talkDialogEntry->dialogText);
 				UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
 				_dat_80083104 = local_386;
 				if (*local_386 == 0x20) {
@@ -693,7 +694,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			uVar3 = (uint)uVar8;
 		} while (uVar8 < numEntries);
 	}
-	drawDialogBox(1, 0x17 - (uint) local_58 & 0xffff, 0x26, 0x18, 1);
+	drawDialogBox(1, (0x17 - (uint) local_58) & 0xffff, 0x26, 0x18, 1);
 	uVar8 = 0;
 	_vm->_cursor->updateSequenceID(3);
 	local_50 = -2;
@@ -715,6 +716,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			uVar3 = (uint)x;
 		} while (x < numEntries);
 	}
+	assert(talkDialogEntry); // It could be zero if hasDialogEntries == 0. What to do then?
 	_vm->_cursor->updateActorPosition(0xf, (((uint16)talkDialogEntry->xPosMaybe + 0x18) - local_58) * 8 + 5);
 
 	if (!_vm->isFlagSet(ENGINE_FLAG_8)) {
@@ -775,7 +777,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 					uVar4 = FindLastPositionOf5cChar(_dat_80083104);
 					uVar4 = FUN_80031c28(_dat_80083104, local_40, uVar4 & 0xffff, 0x20);
 					_dat_80083104 = local_40;
-					if ((int)sVar2 == (uint)uVar8) {
+					if (sVar2 == uVar8) {
 						uVar7 = 0;
 						if (uVar6 < (uVar4 & 0xffff)) {
 							do {

@@ -34,6 +34,10 @@ class RenderSurface;
 class Texture;
 class Scaler;
 
+/**
+ * A virtual gump which scales the contents for display.  Mostly unused since import to scummvm.
+ * TODO: Look into removing this entirely.
+ */
 class ScalerGump : public DesktopGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

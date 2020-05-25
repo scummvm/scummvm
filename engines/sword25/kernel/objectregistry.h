@@ -46,19 +46,19 @@ public:
 	virtual ~ObjectRegistry() {}
 
 	uint registerObject(T *objectPtr) {
-		// Null-Pointer können nicht registriert werden.
+		// Null-Pointer kÃ¶nnen nicht registriert werden.
 		if (objectPtr == 0) {
 			error("Cannot register a null pointer.");
 			return 0;
 		}
 
-		// Falls das Objekt bereits registriert wurde, wird eine Warnung ausgeben und das Handle zurückgeben.
+		// Falls das Objekt bereits registriert wurde, wird eine Warnung ausgeben und das Handle zurÃ¼ckgeben.
 		uint handle = findHandleByPtr(objectPtr);
 		if (handle != 0) {
 			warning("Tried to register a object that was already registered.");
 			return handle;
 		}
-		// Ansonsten wird das Objekt in beide Maps eingetragen und das neue Handle zurückgeben.
+		// Ansonsten wird das Objekt in beide Maps eingetragen und das neue Handle zurÃ¼ckgeben.
 		else {
 			_handle2PtrMap[_nextHandle] = objectPtr;
 			_ptr2HandleMap[objectPtr] = _nextHandle;
@@ -68,30 +68,30 @@ public:
 	}
 
 	uint registerObject(T *objectPtr, uint handle) {
-		// Null-Pointer und Null-Handle können nicht registriert werden.
+		// Null-Pointer und Null-Handle kÃ¶nnen nicht registriert werden.
 		if (objectPtr == 0 || handle == 0) {
 			error("Cannot register a null pointer or a null handle.");
 			return 0;
 		}
 
-		// Falls das Objekt bereits registriert wurde, wird ein Fehler ausgegeben und 0 zurückgeben.
+		// Falls das Objekt bereits registriert wurde, wird ein Fehler ausgegeben und 0 zurÃ¼ckgeben.
 		uint handleTest = findHandleByPtr(objectPtr);
 		if (handleTest != 0) {
 			error("Tried to register a object that was already registered.");
 			return 0;
 		}
-		// Falls das Handle bereits vergeben ist, wird ein Fehler ausgegeben und 0 zurückgegeben.
+		// Falls das Handle bereits vergeben ist, wird ein Fehler ausgegeben und 0 zurÃ¼ckgegeben.
 		else if (findPtrByHandle(handle) != 0) {
 			error("Tried to register a handle that is already taken.");
 			return 0;
 		}
-		// Ansonsten wird das Objekt in beide Maps eingetragen und das gewünschte Handle zurückgeben.
+		// Ansonsten wird das Objekt in beide Maps eingetragen und das gewÃ¼nschte Handle zurÃ¼ckgeben.
 		else {
 			_handle2PtrMap[handle] = objectPtr;
 			_ptr2HandleMap[objectPtr] = handle;
 
-			// Falls das vergebene Handle größer oder gleich dem nächsten automatische vergebenen Handle ist, wird das nächste automatisch
-			// vergebene Handle erhöht.
+			// Falls das vergebene Handle grÃ¶ÃŸer oder gleich dem nÃ¤chsten automatische vergebenen Handle ist, wird das nÃ¤chste automatisch
+			// vergebene Handle erhÃ¶ht.
 			if (handle >= _nextHandle)
 				_nextHandle = handle + 1;
 
@@ -112,18 +112,18 @@ public:
 	}
 
 	T *resolveHandle(uint handle) {
-		// Zum Handle gehöriges Objekt in der Hash-Map finden.
+		// Zum Handle gehÃ¶riges Objekt in der Hash-Map finden.
 		T *objectPtr = findPtrByHandle(handle);
 
-		// Pointer zurückgeben. Im Fehlerfall ist dieser 0.
+		// Pointer zurÃ¼ckgeben. Im Fehlerfall ist dieser 0.
 		return objectPtr;
 	}
 
 	uint resolvePtr(T *objectPtr) {
-		// Zum Pointer gehöriges Handle in der Hash-Map finden.
+		// Zum Pointer gehÃ¶riges Handle in der Hash-Map finden.
 		uint handle = findHandleByPtr(objectPtr);
 
-		// Handle zurückgeben. Im Fehlerfall ist dieses 0.
+		// Handle zurÃ¼ckgeben. Im Fehlerfall ist dieses 0.
 		return handle;
 	}
 
@@ -147,18 +147,18 @@ protected:
 	uint32    _nextHandle;
 
 	T *findPtrByHandle(uint handle) {
-		// Zum Handle gehörigen Pointer finden.
+		// Zum Handle gehÃ¶rigen Pointer finden.
 		typename HANDLE2PTR_MAP::const_iterator it = _handle2PtrMap.find(handle);
 
-		// Pointer zurückgeben, oder, falls keiner gefunden wurde, 0 zurückgeben.
+		// Pointer zurÃ¼ckgeben, oder, falls keiner gefunden wurde, 0 zurÃ¼ckgeben.
 		return (it != _handle2PtrMap.end()) ? it->_value : 0;
 	}
 
 	uint findHandleByPtr(T *objectPtr) {
-		// Zum Pointer gehöriges Handle finden.
+		// Zum Pointer gehÃ¶riges Handle finden.
 		typename PTR2HANDLE_MAP::const_iterator it = _ptr2HandleMap.find(objectPtr);
 
-		// Handle zurückgeben, oder, falls keines gefunden wurde, 0 zurückgeben.
+		// Handle zurÃ¼ckgeben, oder, falls keines gefunden wurde, 0 zurÃ¼ckgeben.
 		return (it != _ptr2HandleMap.end()) ? it->_value : 0;
 	}
 };

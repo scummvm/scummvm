@@ -37,7 +37,6 @@ protected:
 	bool _skipStart;
 	int _saveSlot;
 
-	void saveData(ODataSource *ods) override;
 public:
 	StartU8Process(int saveSlot = -1);
 
@@ -46,7 +45,8 @@ public:
 
 	void run() override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

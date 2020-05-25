@@ -25,23 +25,18 @@
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(TargetedAnimProcess, ActorAnimProcess)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TargetedAnimProcess)
 
-TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess() {
-
+TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess(),
+		_x(0), _y(0), _z(0) {
 }
 
-TargetedAnimProcess::TargetedAnimProcess(Actor *actor_, Animation::Sequence action_, uint32 dir_, int32 coords[3]) : ActorAnimProcess(actor_, action_, dir_) {
-	_x = coords[0];
-	_y = coords[1];
-	_z = coords[2];
+TargetedAnimProcess::TargetedAnimProcess(Actor *actor_, Animation::Sequence action_, uint32 dir_, int32 coords[3]) : ActorAnimProcess(actor_, action_, dir_),
+		_x(coords[0]), _y(coords[1]), _z(coords[2]) {
 }
 
 bool TargetedAnimProcess::init() {
@@ -53,21 +48,21 @@ bool TargetedAnimProcess::init() {
 }
 
 
-void TargetedAnimProcess::saveData(ODataSource *ods) {
-	ActorAnimProcess::saveData(ods);
+void TargetedAnimProcess::saveData(Common::WriteStream *ws) {
+	ActorAnimProcess::saveData(ws);
 
-	ods->writeUint32LE(static_cast<uint32>(_x));
-	ods->writeUint32LE(static_cast<uint32>(_y));
-	ods->writeUint32LE(static_cast<uint32>(_z));
+	ws->writeUint32LE(static_cast<uint32>(_x));
+	ws->writeUint32LE(static_cast<uint32>(_y));
+	ws->writeUint32LE(static_cast<uint32>(_z));
 
 }
 
-bool TargetedAnimProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!ActorAnimProcess::loadData(ids, version)) return false;
+bool TargetedAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!ActorAnimProcess::loadData(rs, version)) return false;
 
-	_x = ids->readUint32LE();
-	_y = ids->readUint32LE();
-	_z = ids->readUint32LE();
+	_x = rs->readUint32LE();
+	_y = rs->readUint32LE();
+	_z = rs->readUint32LE();
 
 	return true;
 }

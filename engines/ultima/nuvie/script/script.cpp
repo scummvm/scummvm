@@ -20,17 +20,9 @@
  *
  */
 
-#ifdef USE_COMMON_LUA
 #include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
 #include "common/lua/lualib.h"
-#else
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "common/scummsys.h"
-#include "ultima/nuvie/lua/lua.h"
-#include "ultima/nuvie/lua/lauxlib.h"
-#include "ultima/nuvie/lua/lualib.h"
-#endif
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
@@ -472,11 +464,7 @@ uint8 ScriptThread::resume_with_nil() {
 
 uint8 ScriptThread::resume(int narg) {
 	const char *s;
-#ifdef USE_COMMON_LUA
 	int ret = lua_resume(L, /*NULL,*/ narg);
-#else
-	int ret = lua_resume(L, NULL, narg);
-#endif
 
 	state = NUVIE_SCRIPT_ERROR;
 
@@ -954,10 +942,6 @@ bool Script::play_cutscene(const char *script_file) {
 	script_file_path += script_file;
 
 	ConsoleHide();
-//if !SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
-	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL * 2);
-#endif
 
 	return run_lua_file(script_file_path.c_str());
 }
@@ -1284,7 +1268,7 @@ bool Script::call_magic_get_spell_list(Spell **spell_list) {
 		lua_gettable(L, -2);
 
 		if (!lua_istable(L, -1)) { //we've hit the end of our targets
-			::debug("end = %d", i);
+			::debug(1, "end = %d", i);
 			lua_pop(L, 1);
 			break;
 		}
@@ -1301,7 +1285,7 @@ bool Script::call_magic_get_spell_list(Spell **spell_list) {
 
 		if (num < 256 && spell_list[num] == NULL) {
 			spell_list[num] = new Spell((uint8)num, (const char *)name, (const char *)invocation, re);
-			::debug("num = %d, reagents = %d, name = %s invocation = %s\n", num, re, name, invocation);
+			::debug(1, "num = %d, reagents = %d, name = %s invocation = %s\n", num, re, name, invocation);
 		}
 
 		lua_pop(L, 1);
@@ -1550,11 +1534,7 @@ uint16 Script::call_get_tile_to_object_mapping(uint16 tile_n) {
 	lua_pushnumber(L, (lua_Number)tile_n);
 	call_function("get_tile_to_object_mapping", 1, 1);
 
-#ifdef USE_COMMON_LUA
 	return ((uint)lua_tonumber(L, -1));
-#else
-	return (lua_tounsigned(L, -1));
-#endif
 }
 
 bool Script::call_is_tile_object(uint16 obj_n) {
@@ -2286,7 +2266,7 @@ static int nscript_u6link_gc(lua_State *L) {
 
 	releaseU6Link(link);
 
-	::debug("U6Link garbage collector!!");
+	::debug(1, "U6Link garbage collector!!");
 	return 0;
 }
 
@@ -2334,7 +2314,7 @@ static int nscript_print(lua_State *L) {
 	if (scroll) {
 		scroll->display_string(string);
 	} else {
-		::debug("%s", string);
+		::debug(1, "%s", string);
 	}
 	return 0;
 }
@@ -3517,7 +3497,7 @@ static int nscript_projectile_anim_multi(lua_State *L) {
 		lua_gettable(L, -2);
 
 		if (!lua_istable(L, -1)) { //we've hit the end of our targets
-			::debug("end = %d", i);
+			::debug(1, "end = %d", i);
 			lua_pop(L, 1);
 			break;
 		}

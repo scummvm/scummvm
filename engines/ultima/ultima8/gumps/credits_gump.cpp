@@ -35,23 +35,27 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump, ModalGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CreditsGump)
 
 CreditsGump::CreditsGump()
-	: ModalGump() {
-
+	: ModalGump(), _parSkip(0), _timer(0), _title(nullptr),
+	  _nextTitle(nullptr), _state(CS_PLAYING),
+	  _nextTitleSurf(0), _currentSurface(0), _currentY(0) {
+	for (int i = 0; i < 4; i++) {
+	  _scroll[i] = nullptr;
+	  _scrollHeight[i] = 0;
+	}
 }
 
 CreditsGump::CreditsGump(const Std::string &text, int parskip,
                          uint32 flags, int32 layer)
-	: ModalGump(0, 0, 320, 200, 0, flags, layer) {
-	_text = text;
-	_parSkip = parskip;
-
-	_timer = 0;
-	_title = nullptr;
-	_nextTitle = nullptr;
-	_state = CS_PLAYING;
+		: ModalGump(0, 0, 320, 200, 0, flags, layer), _text(text), _parSkip(parskip),
+		_timer(0), _title(nullptr), _nextTitle(nullptr), _state(CS_PLAYING),
+		_nextTitleSurf(0), _currentSurface(0), _currentY(0) {
+	for (int i = 0; i < 4; i++) {
+		_scroll[i] = nullptr;
+		_scrollHeight[i] = 0;
+	}
 }
 
 CreditsGump::~CreditsGump() {
@@ -98,7 +102,7 @@ void CreditsGump::Close(bool no_del) {
 
 void CreditsGump::extractLine(Std::string &text_,
                               char &modifier, Std::string &line) {
-	if (!text_.empty() and (text_[0] == '+' || text_[0] == '&' || text_[0] == '}' ||
+	if (!text_.empty() && (text_[0] == '+' || text_[0] == '&' || text_[0] == '}' ||
 							text_[0] == '~' || text_[0] == '@')) {
 		modifier = text_[0];
 		text_.erase(0, 1);

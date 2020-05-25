@@ -45,11 +45,12 @@ Game::~Game() {
 
 
 // static
-Game *Game::createGame(GameInfo *info) {
+Game *Game::createGame(const GameInfo *info) {
 	switch (info->_type) {
 	case GameInfo::GAME_U8:
 		return new U8Game();
 	case GameInfo::GAME_REMORSE:
+	case GameInfo::GAME_REGRET:
 		return new RemorseGame();
 	default:
 		CANT_HAPPEN_MSG("createGame: invalid _game");

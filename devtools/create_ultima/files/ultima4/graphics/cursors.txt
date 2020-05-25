@@ -1,0 +1,105 @@
+XX         
+X.X        
+X..X       
+X...X      
+X....X     
+X.....X    
+X......X   
+X.......X  
+X........X 
+X.........X
+X.....X    
+X.X X..X   
+XX  X..X   
+     X..X  
+     X..X  
+      XXX 
+
+
+
+
+0,0
+           XX                   
+         XX.X                   
+       XX...X                   
+     XX....X                    
+   XX......X                    
+ XX........XXXXXXXX             
+X.................X             
+X.................X             
+ XX........XXXXXXXX             
+   XX......X                    
+     XX....X                    
+       XX...X                   
+         XX.X                   
+           XX                   
+                                
+                                
+                                
+                                
+                                
+                                
+0,6
+      XX                        
+     X..X                       
+     X..X                       
+    X....X                      
+    X....X                      
+   X......X                     
+   X......X                     
+  X........X                    
+  X........X                    
+ X..........X                   
+ X..........X                   
+X..XXX..XXX..X                  
+XXX  X..X  XXX                  
+     X..X                       
+     X..X                       
+     X..X                       
+     X..X                       
+     X..X                       
+     XXXX                       
+                                
+6,0
+      XX                        
+      X.XX                      
+      X...XX                    
+       X....XX                  
+       X......XX                
+XXXXXXXX........XX              
+X.................X             
+X.................X             
+XXXXXXXX........XX              
+       X......XX                
+       X....XX                  
+      X...XX                    
+      X.XX                      
+      XX                        
+                                
+                                
+                                
+                                
+                                
+                                
+18,6
+     XXXX                       
+     X..X                       
+     X..X                       
+     X..X                       
+     X..X                       
+     X..X                       
+XXX  X..X  XXX                  
+X..XXX..XXX..X                  
+ X..........X                   
+ X..........X                   
+  X........X                    
+  X........X                    
+   X......X                     
+   X......X                     
+    X....X                      
+    X....X                      
+     X..X                       
+     X..X                       
+      XX                        
+                                
+6,18

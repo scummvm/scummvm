@@ -48,35 +48,35 @@ public:
 	/**
 	    @brief Setzt den Alphawert des Bitmaps.
 	    @param Alpha der neue Alphawert der Bitmaps (0 = keine Deckung, 255 = volle Deckung).
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurÃ¼ckgibt.
 	*/
 	void setAlpha(int alpha);
 
 	/**
 	    @brief Setzt die Modulationfarbe der Bitmaps.
 	    @param Color eine 24-Bit Farbe, die die Modulationsfarbe des Bitmaps festlegt.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurÃ¼ckgibt.
 	*/
 	void setModulationColor(uint modulationColor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor des Bitmaps.
 	    @param ScaleFactor der Faktor um den das Bitmap in beide Richtungen gestreckt werden soll.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	void setScaleFactor(float scaleFactor);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Bitmap auf der X-Achse.
 	    @param ScaleFactor der Faktor um den die Bitmap in Richtungen der X-Achse gestreckt werden soll. Dieser Wert muss positiv sein.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	void setScaleFactorX(float scaleFactorX);
 
 	/**
 	    @brief Setzt den Skalierungsfaktor der Bitmap auf der Y-Achse.
 	    @param ScaleFactor der Faktor um den die Bitmap in Richtungen der Y-Achse gestreckt werden soll. Dieser Wert muss positiv sein.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	void setScaleFactorY(float scaleFactorY);
 
@@ -91,75 +91,75 @@ public:
 	void setFlipV(bool flipV);
 
 	/**
-	    @brief Gibt den aktuellen Alphawert des Bildes zurück.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurückgibt.
+	    @brief Gibt den aktuellen Alphawert des Bildes zurÃ¼ck.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurÃ¼ckgibt.
 	*/
 	int getAlpha() {
 		return _modulationColor >> 24;
 	}
 
 	/**
-	    @brief Gibt die aktuelle 24bit RGB Modulationsfarde des Bildes zurück.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
+	    @brief Gibt die aktuelle 24bit RGB Modulationsfarde des Bildes zurÃ¼ck.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurÃ¼ckgibt.
 	*/
 	int getModulationColor() {
 		return _modulationColor & 0x00ffffff;
 	}
 
 	/**
-	    @brief Gibt den Skalierungsfakter des Bitmaps auf der X-Achse zurück.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @brief Gibt den Skalierungsfakter des Bitmaps auf der X-Achse zurÃ¼ck.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	float getScaleFactorX() const {
 		return _scaleFactorX;
 	}
 
 	/**
-	    @brief Gibt den Skalierungsfakter des Bitmaps auf der Y-Achse zurück.
-	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurückgibt.
+	    @brief Gibt den Skalierungsfakter des Bitmaps auf der Y-Achse zurÃ¼ck.
+	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsScalingAllowed() true zurÃ¼ckgibt.
 	*/
 	float getScaleFactorY() const {
 		return _scaleFactorY;
 	}
 
 	/**
-	    @brief Gibt zurück, ob das Bild an der X-Achse gespiegelt angezeigt wird.
+	    @brief Gibt zurÃ¼ck, ob das Bild an der X-Achse gespiegelt angezeigt wird.
 	*/
 	bool isFlipH() {
 		return _flipH;
 	}
 
 	/**
-	    @brief Gibt zurück, ob das Bild an der Y-Achse gespiegelt angezeigt wird.
+	    @brief Gibt zurÃ¼ck, ob das Bild an der Y-Achse gespiegelt angezeigt wird.
 	*/
 	bool isFlipV() {
 		return _flipV;
 	}
 
 	// -----------------------------------------------------------------------------
-	// Die folgenden Methoden müssen alle BS_Bitmap-Klassen implementieren
+	// Die folgenden Methoden mÃ¼ssen alle BS_Bitmap-Klassen implementieren
 	// -----------------------------------------------------------------------------
 
 	/**
 	    @brief Liest einen Pixel des Bildes.
 	    @param X die X-Koordinate des Pixels.
 	    @param Y die Y-Koordinate des Pixels
-	    @return Gibt den 32-Bit Farbwert des Pixels an der übergebenen Koordinate zurück.
-	    @remark Diese Methode sollte auf keine Fall benutzt werden um größere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
-	            eher dafür gedacht einzelne Pixel des Bildes auszulesen.
+	    @return Gibt den 32-Bit Farbwert des Pixels an der Ã¼bergebenen Koordinate zurÃ¼ck.
+	    @remark Diese Methode sollte auf keine Fall benutzt werden um grÃ¶ÃŸere Teile des Bildes zu lesen, da sie sehr langsam ist. Sie ist
+	            eher dafÃ¼r gedacht einzelne Pixel des Bildes auszulesen.
 	*/
 	virtual uint getPixel(int x, int y) const = 0;
 
 	/**
-	    @brief Füllt den Inhalt des Bildes mit Pixeldaten.
-	    @param Pixeldata ein Vector der die Pixeldaten enthält. Sie müssen in dem Farbformat des Bildes vorliegen und es müssen genügend Daten
-	           vorhanden sein, um das ganze Bild zu füllen.
+	    @brief FÃ¼llt den Inhalt des Bildes mit Pixeldaten.
+	    @param Pixeldata ein Vector der die Pixeldaten enthÃ¤lt. Sie mÃ¼ssen in dem Farbformat des Bildes vorliegen und es mÃ¼ssen genÃ¼gend Daten
+	           vorhanden sein, um das ganze Bild zu fÃ¼llen.
 	    @param Offset der Offset in Byte im Pixeldata-Vector an dem sich der erste zu schreibende Pixel befindet.<br>
 	                  Der Standardwert ist 0.
 	    @param Stride der Abstand in Byte zwischen dem Zeilenende und dem Beginn einer neuen Zeile im Pixeldata-Vector.<br>
 	                  Der Standardwert ist 0.
-	    @return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
-	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
+	    @return Gibt false zurÃ¼ck, falls der Aufruf fehlgeschlagen ist.
+	    @remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurÃ¼ckgibt.
 	*/
 	virtual bool    setContent(const byte *pixeldata, uint size, uint offset = 0, uint stride = 0) = 0;
 

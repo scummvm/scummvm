@@ -31,12 +31,9 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ArchiveFile;
-class IDataSource;
 
 class Archive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
 	//! create Archive without any input sources
 	Archive();
 
@@ -45,7 +42,7 @@ public:
 
 	//! create Archive with a single input source, autodetecting the type
 	//! Will create FlexFile, U8SaveFile or ZipFile; ids will be deleted.
-	explicit Archive(IDataSource *ids);
+	explicit Archive(Common::SeekableReadStream *rs);
 
 	virtual ~Archive();
 
@@ -56,7 +53,7 @@ public:
 	bool addSource(ArchiveFile *af);
 
 	//! add input source, autodetecting the type (as the constructor)
-	bool addSource(IDataSource *ids);
+	bool addSource(Common::SeekableReadStream *rs);
 
 	//! Cache all objects
 	void cache();

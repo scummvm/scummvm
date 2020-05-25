@@ -29,18 +29,15 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-class ODataSource;
-
 // stringlists: _elementSize = 2, each element is actually a stringref
 // see for example the 0x0E opcode: there is no way to see if the
 // created list is a stringlist or not
 // the opcodes which do need a distinction have a operand for this.
 
-// Question: how are unionList/substractList supposed to know what to do?
+// Question: how are unionList/subtractList supposed to know what to do?
 // their behaviour differs if this is a stringlist
 
-// Question: does substractList remove _all_ occurences of elements or only 1?
+// Question: does subtractList remove _all_ occurences of elements or only 1?
 
 class UCList {
 	Std::vector<uint8> _elements;
@@ -121,7 +118,7 @@ public:
 			if (!inList(l[i]))
 				append(l[i]);
 	}
-	void substractList(const UCList &l) {
+	void subtractList(const UCList &l) {
 		for (unsigned int i = 0; i < l._size; i++)
 			remove(l[i]);
 	}
@@ -151,15 +148,15 @@ public:
 	void freeStrings();
 	void copyStringList(const UCList &l) ;
 	void unionStringList(UCList &l);
-	void substractStringList(const UCList &l);
+	void subtractStringList(const UCList &l);
 	bool stringInList(uint16 str) const;
 	void assignString(uint32 index, uint16 str);
 	void removeString(uint16 str, bool nodel = false);
 
 	uint16 getStringIndex(uint32 index) const;
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ws) const;
+	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
 	const Std::string &getString(uint32 index) const;

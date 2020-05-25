@@ -48,30 +48,30 @@ public:
 	    @brief Erzeugt eine neues Exemplar von BS_FontResource
 	    @param pKernel ein Pointer auf den Kernel
 	    @param FileName der Dateiname der zu ladenen Resource
-	    @remark Wenn der Konstruktor erfolgreich ausgeführt werden konnte gibt die Methode IsValid true zurück.
+	    @remark Wenn der Konstruktor erfolgreich ausgefÃ¼hrt werden konnte gibt die Methode IsValid true zurÃ¼ck.
 	*/
 	FontResource(Kernel *pKernel, const Common::String &fileName);
 
 	/**
-	    @brief Gibt true zurück, wenn das Objekt korrekt initialisiert wurde.
+	    @brief Gibt true zurÃ¼ck, wenn das Objekt korrekt initialisiert wurde.
 
-	    Diese Methode kann dazu benutzt werden um festzustellen, ob der Konstruktor erfolgreich ausgeführt wurde.
+	    Diese Methode kann dazu benutzt werden um festzustellen, ob der Konstruktor erfolgreich ausgefÃ¼hrt wurde.
 	*/
 	bool isValid() const {
 		return _valid;
 	}
 
 	/**
-	    @brief Gibt die Zeilenhöhe des Fonts in Pixeln zurück.
+	    @brief Gibt die ZeilenhÃ¶he des Fonts in Pixeln zurÃ¼ck.
 
-	    Die Zeilenhöhe ist der Wert, der zur Y-Koordinate addiert wird, wenn ein Zeilenumbruch auftritt.
+	    Die ZeilenhÃ¶he ist der Wert, der zur Y-Koordinate addiert wird, wenn ein Zeilenumbruch auftritt.
 	*/
 	int getLineHeight() const {
 		return _lineHeight;
 	}
 
 	/**
-	    @brief Gibt den Buchstabenabstand der Fonts in Pixeln zurück.
+	    @brief Gibt den Buchstabenabstand der Fonts in Pixeln zurÃ¼ck.
 
 	    Der Buchstabenabstand ist der Wert, der zwischen zwei Buchstaben freigelassen wird.
 	*/
@@ -80,9 +80,9 @@ public:
 	}
 
 	/**
-	    @brief Gibt das Bounding-Rect eines Zeichens auf der Charactermap zurück.
+	    @brief Gibt das Bounding-Rect eines Zeichens auf der Charactermap zurÃ¼ck.
 	    @param Character der ASCII-Code des Zeichens
-	    @return Das Bounding-Rect des übergebenen Zeichens auf der Charactermap.
+	    @return Das Bounding-Rect des Ã¼bergebenen Zeichens auf der Charactermap.
 	*/
 	const Common::Rect &getCharacterRect(int character) const {
 		assert(character >= 0 && character < 256);
@@ -90,7 +90,7 @@ public:
 	}
 
 	/**
-	    @brief Gibt den Dateinamen der Charactermap zurück.
+	    @brief Gibt den Dateinamen der Charactermap zurÃ¼ck.
 	*/
 	const Common::String &getCharactermapFileName() const {
 		return _bitmapFileName;

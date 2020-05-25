@@ -543,6 +543,9 @@ VectorRendererSpec(PixelFormat format) :
 
 	_bitmapAlphaColor = _format.RGBToColor(255, 0, 255);
 	_clippingArea = Common::Rect(0, 0, 32767, 32767);
+
+	_fgColor = _bgColor = _bevelColor = 0;
+	_gradientStart = _gradientEnd = 0;
 }
 
 /****************************

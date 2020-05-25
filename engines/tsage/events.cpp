@@ -58,7 +58,7 @@ bool EventsClass::pollEvent() {
 	// Handle keypress
 	switch (_event.type) {
 	case Common::EVENT_QUIT:
-	case Common::EVENT_RTL:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		break;
 
 	case Common::EVENT_MOUSEMOVE:

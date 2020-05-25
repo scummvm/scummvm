@@ -182,6 +182,8 @@ Std::vector<istring> SettingManager::listGames() {
 	Std::vector<istring> games;
 	games.push_back("pentagram");
 	games.push_back("ultima8");
+	games.push_back("remorse");
+	games.push_back("regret");
 
 	return games;
 }

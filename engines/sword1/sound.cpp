@@ -130,11 +130,11 @@ void Sound::checkSpeechFileEndianness() {
 		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size, &leOk);
 		uint32 maxSamples = size > 2000 ? 2000 : size;
 		double le_diff = endiannessHeuristicValue(data, size, maxSamples);
-		delete[] data;
+		free(data);
 		_bigEndianSpeech = true;
 		data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size, &beOk);
 		double be_diff = endiannessHeuristicValue(data, size, maxSamples);
-		delete [] data;
+		free(data);
 		// Set the big endian flag
 		if (leOk && !beOk)
 			_bigEndianSpeech = false;

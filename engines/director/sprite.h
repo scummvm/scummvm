@@ -60,11 +60,14 @@ enum MainChannelsPosition {
 class Sprite {
 public:
 	Sprite();
-	Sprite(const Sprite &sprite);
 	~Sprite();
 
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
+
+	void setCast(uint16 castid);
+
+	Common::Rect getBbox();
 
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;
@@ -75,7 +78,8 @@ public:
 	bool _enabled;
 	uint16 _castId;
 	uint16 _castIndex;
-	byte _spriteType;
+	SpriteType _spriteType;
+	CastType _castType;
 	byte _inkData;
 	InkType _ink;
 	uint16 _trails;
@@ -83,23 +87,24 @@ public:
 	Cast *_cast;
 
 	byte _thickness;
+	bool _dirty;
 	Common::Point _startPoint;
+	Common::Point _currentPoint;
+	Common::Rect _startBbox;
+	Common::Rect _currentBbox;
 	uint16 _width;
 	uint16 _height;
 	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
 	// As i know, constrainted != 0 only if sprite moveable
 	byte _constraint;
-	byte _moveable;
+	bool _moveable;
+	bool _editable;
+	bool _puppet;
 	byte _backColor;
 	byte _foreColor;
 
-	uint16 _left;
-	uint16 _right;
-	uint16 _top;
-	uint16 _bottom;
 	byte _blend;
 	bool _visible;
-	SpriteType _type;
 	// Using in digital movie sprites
 	byte _movieRate;
 	uint16 _movieTime;

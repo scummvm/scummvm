@@ -23,6 +23,8 @@
 #ifndef PSP_IMAGE_VIEWER_H
 #define PSP_IMAGE_VIEWER_H
 
+#include "engines/engine.h"  // for PauseToken
+
 class InputHandler;
 
 class ImageViewer : public DisplayClient {
@@ -54,6 +56,7 @@ private:
 	float _visibleHeight, _visibleWidth;
 	float _centerX, _centerY;
 	Event _movement;
+	PauseToken _pauseToken;
 
 	InputHandler *_inputHandler;
 	DisplayManager *_displayManager;

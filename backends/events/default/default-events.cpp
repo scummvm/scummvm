@@ -41,9 +41,8 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_buttonState(0),
 	_modifierState(0),
 	_shouldQuit(false),
-	_shouldRTL(false),
-	_confirmExitDialogActive(false),
-	_shouldGenerateKeyRepeatEvents(false) {
+	_shouldReturnToLauncher(false),
+	_confirmExitDialogActive(false) {
 
 	assert(boss);
 
@@ -51,9 +50,6 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_dispatcher.registerSource(&_artificialEventSource, false);
 
 	_dispatcher.registerObserver(this, kEventManPriority, false);
-
-	// Reset key repeat
-	_keyRepeatTime = 0;
 
 #ifdef ENABLE_VKEYBD
 	_vk = nullptr;
@@ -88,10 +84,6 @@ void DefaultEventManager::init() {
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	_dispatcher.dispatch();
 
-	if (_shouldGenerateKeyRepeatEvents) {
-		handleKeyRepeat();
-	}
-
 	if (g_engine)
 		// Handle autosaves if enabled
 		g_engine->handleAutoSave();
@@ -102,6 +94,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 	event = _eventQueue.pop();
 	bool forwardEvent = true;
+
+	// If the backend has the kFeatureNoQuit, replace Quit event with Return to Launcher
+	if (event.type == Common::EVENT_QUIT && g_system->hasFeature(OSystem::kFeatureNoQuit))
+		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -116,7 +112,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// key pressed. A better fix would be for engines to stop
 			// making invalid assumptions about ascii values.
 			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
-			_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
 		}
 		break;
 
@@ -154,8 +149,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		if (_shouldQuit)
 			event.type = Common::EVENT_QUIT;
-		else if (_shouldRTL)
-			event.type = Common::EVENT_RTL;
+		else if (_shouldReturnToLauncher)
+			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		break;
 #ifdef ENABLE_VKEYBD
 	case Common::EVENT_VIRTUAL_KEYBOARD:
@@ -165,25 +160,23 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (_vk->isDisplaying()) {
 			_vk->close(true);
 		} else {
+			PauseToken pt;
 			if (g_engine)
-				g_engine->pauseEngine(true);
+				pt = g_engine->pauseEngine();
 			_vk->show();
-			if (g_engine)
-				g_engine->pauseEngine(false);
 			forwardEvent = false;
 		}
 		break;
 #endif
-	case Common::EVENT_RTL:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		if (ConfMan.getBool("confirm_exit")) {
+			PauseToken pt;
 			if (g_engine)
-				g_engine->pauseEngine(true);
+				pt = g_engine->pauseEngine();
 			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
-			forwardEvent = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
-			if (g_engine)
-				g_engine->pauseEngine(false);
+			forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
 		} else
-			_shouldRTL = true;
+			_shouldReturnToLauncher = true;
 		break;
 
 	case Common::EVENT_MUTE:
@@ -198,12 +191,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				break;
 			}
 			_confirmExitDialogActive = true;
-			if (g_engine)
-				g_engine->pauseEngine(true);
-			GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
-			forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
-			if (g_engine)
-				g_engine->pauseEngine(false);
+
+			{
+				PauseToken pt;
+				if (g_engine)
+					pt = g_engine->pauseEngine();
+				GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
+				forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+			}
 			_confirmExitDialogActive = false;
 		} else {
 			_shouldQuit = true;
@@ -233,45 +228,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	}
 
 	return forwardEvent;
-}
-
-void DefaultEventManager::handleKeyRepeat() {
-	uint32 time = g_system->getMillis(true);
-
-	if (!_eventQueue.empty()) {
-		// Peek in the event queue
-		const Common::Event &nextEvent = _eventQueue.front();
-
-		switch (nextEvent.type) {
-		case Common::EVENT_KEYDOWN:
-			// init continuous event stream
-			_currentKeyDown = nextEvent.kbd;
-			_keyRepeatTime = time + kKeyRepeatInitialDelay;
-			break;
-
-		case Common::EVENT_KEYUP:
-			if (nextEvent.kbd.keycode == _currentKeyDown.keycode) {
-				// Only stop firing events if it's the current key
-				_currentKeyDown.keycode = Common::KEYCODE_INVALID;
-			}
-			break;
-
-		default:
-			break;
-		}
-	} else {
-		// Check if event should be sent again (keydown)
-		if (_currentKeyDown.keycode != Common::KEYCODE_INVALID && _keyRepeatTime <= time) {
-			// fire event
-			Common::Event repeatEvent;
-			repeatEvent.type = Common::EVENT_KEYDOWN;
-			repeatEvent.kbdRepeat = true;
-			repeatEvent.kbd = _currentKeyDown;
-			_keyRepeatTime = time + kKeyRepeatSustainDelay;
-
-			_eventQueue.push(repeatEvent);
-		}
-	}
 }
 
 void DefaultEventManager::pushEvent(const Common::Event &event) {

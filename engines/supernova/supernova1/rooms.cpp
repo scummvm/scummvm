@@ -4146,7 +4146,7 @@ void Outro::onEntrance() {
 	_vm->_screen->setViewportBrightness(1);
 
 	Common::Event event;
-	event.type = Common::EVENT_RTL;
+	event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 	_vm->getEventManager()->pushEvent(event);
 }
 

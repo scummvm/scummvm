@@ -106,7 +106,7 @@ void pushGameState(StateStackP stateStack, void *gameState) {
 
 /*======================================================================*/
 void attachPlayerCommandsToLastState(StateStackP stateStack, char *playerCommands) {
-	stateStack->commands[stateStack->stackPointer - 1] = strdup(playerCommands);
+	stateStack->commands[stateStack->stackPointer - 1] = scumm_strdup(playerCommands);
 }
 
 

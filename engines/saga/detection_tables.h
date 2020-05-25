@@ -599,6 +599,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 #endif
 
+	// Inherit the Earth - Japanese PC-98 CD version
+ 	{
+ 		{
+ 			"ite",
+ 			"CD",
+ 			{
+			 	{"ite.rsc",		GAME_RESOURCEFILE, "8f4315a9bb10ec839253108a032c8b54", 8921524},
+			 	{"scripts.rsc",	GAME_SCRIPTFILE, "875ffcf269efc49088423fc4572859ae", 477849},
+			 	AD_LISTEND
+ 			},
+ 			Common::JA_JPN,
+ 			Common::kPlatformPC98,
+ 			ADGF_CD,
+ 			GUIO0()
+ 		},
+ 		GID_ITE,
+ 		0,
+ 		ITE_DEFAULT_SCENE,
+ 		&ITE_Resources,
+ 		ARRAYSIZE(ITE_GameFonts),
+ 		ITE_GameFonts,
+ 		NULL,
+ 	},
+
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
 
 	// Inherit the earth - German Floppy version

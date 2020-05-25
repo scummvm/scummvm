@@ -496,7 +496,7 @@ bool ConverseGump::input_buf_add_char(char c) {
 	input_char = 0;
 	if (permit_input != NULL)
 		input_buf_remove_char();
-	input_buf.append(&c, 1);
+	input_buf.push_back(c);
 	return true;
 }
 

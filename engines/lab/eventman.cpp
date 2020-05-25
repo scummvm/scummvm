@@ -123,7 +123,7 @@ void EventManager::processInput() {
 			}
 			break;
 		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 		default:
 			break;
 		}

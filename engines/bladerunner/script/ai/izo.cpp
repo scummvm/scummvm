@@ -1132,7 +1132,7 @@ void AIScriptIzo::dialogueWithIzo() {
 		break;
 
 	case 20: // REFERENCE -> Should be VOIGT-KAMPFF
-		Actor_Says(kActorMcCoy, 5480, 18); // Look, just come along with me. You’re gonna have to take a little personality test.
+		Actor_Says(kActorMcCoy, 5480, 18); // Look, just come along with me. You're gonna have to take a little personality test.
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoEscape);
 		Player_Gains_Control();
 		break;

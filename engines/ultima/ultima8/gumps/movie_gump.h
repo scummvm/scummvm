@@ -30,14 +30,14 @@ namespace Ultima {
 namespace Ultima8 {
 
 class RawArchive;
-class SKFPlayer;
+class MoviePlayer;
 
 class MovieGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	MovieGump();
-	MovieGump(int width, int height, RawArchive *skf, bool introMusicHack = false,
+	MovieGump(int width, int height, Common::SeekableReadStream *rs, bool introMusicHack = false,
 	          uint32 flags = 0, int32 layer = LAYER_MODAL);
 	~MovieGump() override;
 
@@ -52,13 +52,13 @@ public:
 
 	bool OnKeyDown(int key, int mod) override;
 
-	static ProcId U8MovieViewer(RawArchive *skf, bool fade, bool introMusicHack = false);
+	static ProcId U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack = false);
 
-	bool loadData(IDataSource *ids);
+	bool loadData(Common::ReadStream *rs);
+	void saveData(Common::WriteStream *ws) override;
+
 protected:
-	void saveData(ODataSource *ods) override;
-
-	SKFPlayer *_player;
+	MoviePlayer *_player;
 };
 
 } // End of namespace Ultima8

@@ -38,6 +38,15 @@ SdlWindow::SdlWindow()
 	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED)
 #endif
 	{
+
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	// Query the desktop resolution. We simply hope nothing tried to change
+	// the resolution so far.
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
+		_desktopRes = Common::Rect(videoInfo->current_w, videoInfo->current_h);
+	}
+#endif
 }
 
 SdlWindow::~SdlWindow() {
@@ -186,7 +195,7 @@ void SdlWindow::iconifyWindow() {
 bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 	SDL_VERSION(&info->version);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	return _window ? SDL_GetWindowWMInfo(_window, info) : false;
+	return _window ? (SDL_GetWindowWMInfo(_window, info) == SDL_TRUE) : false;
 #else
 	#ifdef __MORPHOS__
 	return -1;
@@ -195,6 +204,19 @@ bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 	#endif
 #endif
 }
+
+Common::Rect SdlWindow::getDesktopResolution() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	int displayIndex = _window ? SDL_GetWindowDisplayIndex(_window) : 0;
+	SDL_DisplayMode displayMode;
+	if (!SDL_GetDesktopDisplayMode(displayIndex, &displayMode)) {
+		_desktopRes = Common::Rect(displayMode.w, displayMode.h);
+	}
+#endif
+
+	return _desktopRes;
+}
+
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Surface *copySDLSurface(SDL_Surface *src) {

@@ -33,16 +33,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ultima1_resources.h"
+#include "ultima4_resources.h"
 
 #define VERSION_NUMBER 1
 
-void error(const char *s, ...) {
+void error(const char *s) {
 	printf("%s\n", s);
 	exit(1);
 }
 
 int main(int argc, char *argv[]) {
 	extractUltima1Resources();
+	extractUltima4Resources();
 
 	return 0;
 }

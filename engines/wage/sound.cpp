@@ -98,15 +98,15 @@ void WageEngine::playSound(Common::String soundName) {
 	while (_mixer->isSoundHandleActive(_soundHandle) && !_shouldQuit) {
 		Common::Event event;
 
-		_eventMan->pollEvent(event);
-
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-			if (saveDialog())
-				_shouldQuit = true;
-			break;
-		default:
-			break;
+		if (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				if (saveDialog())
+					_shouldQuit = true;
+				break;
+			default:
+				break;
+			}
 		}
 
 		_system->updateScreen();

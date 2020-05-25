@@ -115,7 +115,7 @@ bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	return
-	    (f == kSupportsRTL) ||
+	    (f == kSupportsReturnToLauncher) ||
 	    (f == kSupportsSavingDuringRuntime) ||
 	    (f == kSupportsLoadingDuringRuntime);
 }

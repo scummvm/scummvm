@@ -97,7 +97,7 @@ bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *wor
 	if (isClosedDoor(targetX, targetY)) {
 		int tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
 
-		addAnimateTarget(targetX, targetY, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+		addAnimateTarget(targetX, targetY, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, nullptr);
 		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
 		if (g_hdb->_map->onScreen(x, y))
 			g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
@@ -109,7 +109,7 @@ bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *wor
 	if (isOpenDoor(targetX, targetY)) {
 		int tileIndex = g_hdb->_map->getMapBGTileIndex(targetX, targetY);
 
-		addAnimateTarget(targetX, targetY, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, NULL);
+		addAnimateTarget(targetX, targetY, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, nullptr);
 		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
 		if (g_hdb->_map->onScreen(x, y))
 			g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
@@ -188,7 +188,7 @@ bool AI::useLockedSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, 
 	int	worked;
 	bool rtn = useTarget(x, y, targetX, targetY, offTile, &worked);
 	if (worked) {
-		addItemToInventory(item, 1, NULL, NULL, NULL);
+		addItemToInventory(item, 1, nullptr, nullptr, nullptr);
 		if (g_hdb->_map->onScreen(x, y))
 			g_hdb->_sound->playSound(SND_SWITCH_USE);
 	}
@@ -217,7 +217,7 @@ bool AI::useCellHolder(AIEntity *e, int x, int y, int targetX, int targetY) {
 			g_hdb->_sound->playSound(SND_CELLHOLDER_USE_REJECT);
 	}
 
-	g_hdb->_window->openDialog("Locked!", -1, "I can't use that unless I have an Energy Cell.", 0, NULL);
+	g_hdb->_window->openDialog("Locked!", -1, "I can't use that unless I have an Energy Cell.", 0, nullptr);
 	g_hdb->_sound->playVoice(GUY_ENERGY_CELL, 0);
 	return false;
 }
@@ -243,7 +243,7 @@ void callbackDoorOpenClose(int x, int y) {
 		return;
 	}
 
-	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, NULL);
+	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, false, true, nullptr);
 	if (g_hdb->_map->onScreen(x, y))
 		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 	return;
@@ -253,7 +253,7 @@ void callbackDoorOpenClose(int x, int y) {
 bool AI::useDoorOpenClose(AIEntity *e, int x, int y) {
 	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
 
-	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, nullptr);
 	addCallback(CALLBACK_DOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
 	if (g_hdb->_map->onScreen(x, y))
 		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
@@ -269,7 +269,7 @@ void callbackAutoDoorOpenClose(int x, int y) {
 		return;
 	}
 
-	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, true, true, NULL);
+	g_hdb->_ai->addAnimateTarget(x, y, tileIndex, tileIndex + 3, ANIM_SLOW, true, true, nullptr);
 	if (g_hdb->_map->onScreen(x, y))
 		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 	return;
@@ -281,7 +281,7 @@ bool AI::useAutoDoorOpenClose(AIEntity *e, int x, int y) {
 	if (autoActive(x, y))
 		return false;
 
-	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, nullptr);
 	addCallback(CALLBACK_AUTODOOR_OPEN_CLOSE, x, y, kDelay5Seconds);
 	if (g_hdb->_map->onScreen(x, y))
 		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
@@ -298,7 +298,7 @@ bool AI::useDoorOpenCloseBot(AIEntity *e, int x, int y) {
 		return false;
 	}
 
-	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, NULL);
+	addAnimateTarget(x, y, tileIndex, tileIndex - 3, ANIM_SLOW, false, true, nullptr);
 	//	AddCallback( CALLBACK_DOOR_OPEN_CLOSE, x, y, DELAY_5SECONDS / fs );
 	if (g_hdb->_map->onScreen(x, y))
 		g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);

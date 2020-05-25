@@ -32,6 +32,9 @@ namespace Ultima8 {
 
 class RenderSurface;
 
+/**
+ * A gump to vertically invert the desktop contents - happens when certain switches in the game are switched.
+ */
 class InverterGump : public DesktopGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()

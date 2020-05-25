@@ -22,6 +22,7 @@
 
 #include "common/util.h"
 #include "common/stack.h"
+#include "common/unicode-bidi.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -561,19 +562,44 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 		maxTextWidth = MAX<int16>(maxTextWidth, textWidth);
 		switch (alignment) {
 		case SCI_TEXT16_ALIGNMENT_RIGHT:
-			offset = rect.width() - textWidth;
+			if (!g_sci->isLanguageRTL())
+				offset = rect.width() - textWidth;
+			else
+				offset = 0;
 			break;
 		case SCI_TEXT16_ALIGNMENT_CENTER:
 			offset = (rect.width() - textWidth) / 2;
 			break;
 		case SCI_TEXT16_ALIGNMENT_LEFT:
-			offset = 0;
+			if (!g_sci->isLanguageRTL())
+				offset = 0;
+			else
+				offset = rect.width() - textWidth;
 			break;
 
 		default:
 			warning("Invalid alignment %d used in TextBox()", alignment);
 		}
+
+
+		if (g_sci->isLanguageRTL())
+			// In the game fonts, characters have spacing on the left, and no spacing on the right,
+			// therefore, when we start drawing from the right, they "start from the border"
+			// e.g., in SQ3 Hebrew user's input prompt.
+			// We can't add spacing on the right of the Hebrew letters, because then characters in mixed
+			// English-Hebrew text might be stuck together.
+			// Therefore, we shift one pixel to the left, for proper spacing
+			offset--;
+
 		_ports->moveTo(rect.left + offset, rect.top + hline);
+
+		Common::String textString;
+		if (g_sci->isLanguageRTL()) {
+			const char *curTextLineOrig = curTextLine;
+			Common::String textLogical = Common::String(curTextLineOrig, (uint32)charCount);
+			textString = Common::convertBiDiString(textLogical, g_sci->getLanguage());		//TODO: maybe move to Draw()?
+			curTextLine = textString.c_str();
+		}
 
 		if (show) {
 			Show(curTextLine, 0, charCount, fontId, previousPenColor);
@@ -618,8 +644,15 @@ void GfxText16::DrawString(const Common::String &text) {
 
 // we need to have a separate status drawing code
 //  In KQ4 the IV char is actually 0xA, which would otherwise get considered as linebreak and not printed
-void GfxText16::DrawStatus(const Common::String &str) {
+void GfxText16::DrawStatus(const Common::String &strOrig) {
 	uint16 curChar, charWidth;
+
+	Common::String str;
+	if (!g_sci->isLanguageRTL())
+		str = strOrig;
+	else
+		str = Common::convertBiDiString(strOrig, g_sci->getLanguage());
+
 	const byte *text = (const byte *)str.c_str();
 	uint16 textLen = str.size();
 	Common::Rect rect;

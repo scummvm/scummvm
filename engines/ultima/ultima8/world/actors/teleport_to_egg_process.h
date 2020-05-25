@@ -39,11 +39,11 @@ public:
 
 	void run() override;
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
+
+	void saveData(Common::WriteStream *ws) override;
 
 protected:
-	void saveData(ODataSource *ods) override;
-
 	int _mapNum;
 	int _teleportId;
 };

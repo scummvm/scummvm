@@ -8,18 +8,18 @@ local FREUD_STATE_WRITING  = 1
 
 local function origin_fx_sequence()
    local g_img_tbl = image_load_all("title.lzc")
-   
+
    canvas_set_palette("strax.pal", 0)
 
-   
+
    local stars = sprite_new(g_img_tbl[0][0], 0, 24, true)
    local logo_image = image_new(282,82)
    image_blit(logo_image, g_img_tbl[0][1],0,16)
    image_blit(logo_image, g_img_tbl[0][2],g_img_tbl[0][1].w,14)
    image_blit(logo_image, g_img_tbl[0][3],g_img_tbl[0][1].w+g_img_tbl[0][2].w,0)
-   
+
    local  logo = sprite_new(logo_image, 20, 70, false)
-   
+
    local planet = sprite_new(g_img_tbl[12], 160, 48, true)
 
    planet.clip_x = 0
@@ -30,15 +30,15 @@ local function origin_fx_sequence()
    players[1] = create_player_sprite(g_img_tbl[1][0], 58, 118)
    players[2] = create_player_sprite(g_img_tbl[2][0], 186, 118)
    players[3] = create_player_sprite(g_img_tbl[3][0], 278, 118)
-   
+
    players[4] = create_player_sprite(g_img_tbl[4][0], 58, 126)
    players[5] = create_player_sprite(g_img_tbl[5][0], 186, 126)
    players[6] = create_player_sprite(g_img_tbl[6][0], 278, 126)
-   
+
    players[7] = create_player_sprite(g_img_tbl[7][0], 58, 134)
    players[8] = create_player_sprite(g_img_tbl[8][0], 186, 134)
    players[9] = create_player_sprite(g_img_tbl[9][0], 278, 134)
-   
+
    local conductor = sprite_new(g_img_tbl[10][0], 158, 98, true)
    conductor.clip_x = 0
    conductor.clip_y = 24
@@ -46,9 +46,9 @@ local function origin_fx_sequence()
    conductor.clip_h = 128
 
    music_play("strx_mus.lzc", 0)
-   
+
    fade_in()
-     
+
    local i = 0
    for i=0,6,1 do
       conductor.image = g_img_tbl[10][i]
@@ -74,7 +74,7 @@ local function origin_fx_sequence()
          conductor.image = g_img_tbl[10][j]
          if poll_for_key_or_button(1) == true then return end
       end
-   
+
       conductor.image = g_img_tbl[10][14]
       if poll_for_key_or_button(2) == true then return end
       conductor.image = g_img_tbl[10][13]
@@ -84,21 +84,21 @@ local function origin_fx_sequence()
       if poll_for_key_or_button(1) == true then return end
          play_sfx(38, false)
    end
-   
+
    for i=16,20,1 do
       conductor.image = g_img_tbl[10][i]
       if poll_for_key_or_button(4) == true then return end
    end
    if poll_for_key_or_button(135) == true then return end
-   
+
    --play_sfx(12, false)
-   
+
    conductor.image = g_img_tbl[10][6]
-   
+
    for i=1,21,1 do
       conductor.y = 98 + i * 12
       conductor.image.scale = 100 + i * 15
-      
+
       for j=1,9,1 do
          players[j].y = players[j].y + 5
          players[j].image.scale = 100 + i * 5
@@ -109,15 +109,15 @@ local function origin_fx_sequence()
             players[j].x = players[j].x + 2
          end
       end
-   
+
       if poll_for_esc(4) == true then return end
    end
-   
-   
+
+
    logo.visible = true
-   logo.image.scale = 10   
-   
-   
+   logo.image.scale = 10
+
+
    for i=1,18,1 do
       planet.y = planet.y + 6
 
@@ -128,12 +128,12 @@ local function origin_fx_sequence()
       else
          logo.y = logo.y + 1
       end
-   
+
       if poll_for_key_or_button(4) == true then return end
    end
-   
+
    if poll_for_esc(45) == true then return end
-   
+
    fireworks(g_img_tbl, logo)
    fade_out()
 end
@@ -151,7 +151,7 @@ function show_logos()
    fade_in()
    poll_for_key_or_button(195)
    if should_exit() then return end
-   
+
    sprite.image = g_img_tbl[2]
    sprite.x = 15
    music_play("mdd_mus.lzc", 1)
@@ -164,14 +164,14 @@ function flash_effect(image, text_delay)
    if text_delay == nil then
       text_delay = 300
    end
-   
+
    canvas_hide_all_sprites()
 
    local s = sprite_new(image, 0, 0, true)
    local bg = sprite_new(image_new(320,200,15), 0, 0, true)
-   
+
    if poll_for_key_or_button(6) == true then return end
-   
+
    local speed = 10
    local i
    for i=0x0,0xff,speed do
@@ -186,7 +186,7 @@ function show_fair_ground()
    local g_img_tbl = image_load_all("fair.lzc")
 
    canvas_hide_all_sprites()
-   
+
    local fair_bg = sprite_new(g_img_tbl[0], 0, 24, true)
    local buildings = sprite_new(g_img_tbl[1][0], 0, 24, true)
    local buildings1 = sprite_new(g_img_tbl[1][1], 320, 24, true)
@@ -195,13 +195,13 @@ function show_fair_ground()
    local podium = sprite_new(g_img_tbl[4], 240, 24, true)
    local people = sprite_new(g_img_tbl[5][0], 0, 24, true)
    local people1 = sprite_new(g_img_tbl[5][1], 320, 24, true)
-   
+
    local i
    for i=0,9 do
       wheel.image = g_img_tbl[2][i%5]
       if poll_for_key_or_button(7) == true then return end
    end
-   
+
    for i=0,79 do
       buildings.x = 0 - i
       buildings1.x = 320 - i
@@ -213,69 +213,69 @@ function show_fair_ground()
       people1.x = 320 - i * 3
       if poll_for_key_or_button(7) == true then return end
    end
-   
+
    if poll_for_key_or_button(15) == true then return end
 
 end
 
-function show_lowell()   
+function show_lowell()
 
    flash_effect(image_load("credits.lzc", 0))
 
    canvas_hide_all_sprites()
-   
+
    local g_img_tbl = image_load_all("lowell.lzc")
    local bg = sprite_new(g_img_tbl[0][0], 0, 24, true)
    local lowell = sprite_new(g_img_tbl[0][1], 0, 24, true)
 
    fade_in()
-   
+
    for i=1,20 do
       lowell.image = g_img_tbl[0][i]
       if poll_for_key_or_button(5) == true then return end
    end
-   
+
    flash_effect(image_load("credits.lzc", 1))
-   
+
    if poll_for_key_or_button(70) == true then return end
 end
 
 function show_fuse()
-   
+
    canvas_hide_all_sprites()
-   
+
    local g_img_tbl = image_load_all("fuse.lzc")
    local bg = sprite_new(g_img_tbl[0][0], 0, 24, true)
    local fuse = sprite_new(g_img_tbl[0][1], 0, 24, true)
-   
+
    music_play("mdd_mus.lzc", 2)
-      
+
    fade_in(4)
-         
+
    for i=1,28 do
       fuse.image = g_img_tbl[0][i]
       if poll_for_key_or_button(2) == true then return end
    end
-   
+
       flash_effect(image_load("credits.lzc", 2))
 end
 
 function show_flash()
 
    canvas_hide_all_sprites()
-   
+
       local g_img_tbl = image_load_all("fair.lzc")
 
       canvas_hide_all_sprites()
-      
+
       local fair_bg = sprite_new(g_img_tbl[0], 0, 24, true)
       local buildings = sprite_new(g_img_tbl[1][0], -80, 24, true)
       local buildings1 = sprite_new(g_img_tbl[1][1], 240, 24, true)
       local column = sprite_new(g_img_tbl[3], 30, 24, true)
       local podium = sprite_new(g_img_tbl[4], 80, 24, true)
-   
+
    music_play("mdd_mus.lzc", 3)
-   
+
    g_img_tbl = image_load_all("flash.lzc")
 
    fade_in(8)
@@ -290,7 +290,7 @@ function show_flash()
       s.image = g_img_tbl[1][i]
       if poll_for_key_or_button(6) == true then return end
    end
-   
+
    flash_effect(image_load("credits.lzc", 3), 215)
 end
 
@@ -310,7 +310,7 @@ function show_flight()
       capsule.y = 140 - i * 2 * i
       if poll_for_key_or_button(6) == true then return end
    end
-   
+
    if poll_for_key_or_button(98) == true then return end
    music_stop()
    if poll_for_key_or_button(8) == true then return end
@@ -330,11 +330,11 @@ function show_cabin()
    local hat1 = create_sprite(g_img_tbl[4], 62, -150)
    local hat2 = create_sprite(g_img_tbl[5], 62, 0)
    local hat3 = create_sprite(g_img_tbl[6], 62, 0)
-             
+
    music_play("mdd_mus.lzc", 5)
-   
+
    --FIXME rotate sprites.
-   
+
    local i
    for i=0,30 do
       cloud.image = g_img_tbl[1][(i + 2) % 15]
@@ -350,16 +350,16 @@ function show_cabin()
       else
          hat1.y = i * 8 + 15
       end
-      
+
       hat2.x = i * 32 - 150
       hat2.y = i * 8
 
       hat3.x = i * 32 - 500
       hat3.y = i * 4
-            
+
       if poll_for_key_or_button(8) == true then return end
    end
-   
+
    flash_effect(image_load("credits.lzc", 4),250)
 end
 
@@ -367,14 +367,14 @@ function show_mars_flash()
    canvas_hide_all_sprites()
 
    local g_img_tbl = image_load_all("mars.lzc")
-   
+
    music_play("mdd_mus.lzc", 6)
-   
+
    local bg = sprite_new(g_img_tbl[0][0], 0, 24, true)
    local flash = sprite_new(g_img_tbl[0][1], 0, 24, true)
-   
+
    fade_in(12)
-   
+
    if poll_for_key_or_button(60) == false then
 
    local i
@@ -400,17 +400,17 @@ function show_mars_flash()
             return
          end
       end
-      
+
       if poll_for_key_or_button(30) == true then
          flash_effect(image_load("credits.lzc", 5))
          return
       end
    end
-   
+
    end
-   
+
    poll_for_key_or_button(40)
-   
+
    flash_effect(image_load("credits.lzc", 5))
 end
 
@@ -421,7 +421,7 @@ function play_intro()
 
    show_fair_ground()
    if should_exit() then return end
-   
+
    show_lowell()
    if should_exit() then return end
 
@@ -433,22 +433,22 @@ function play_intro()
 
    show_flight()
    if should_exit() then return end
-    
+
    show_cabin()
    if should_exit() then return end
- 
+
    show_mars_flash()
    if should_exit() then return end
-   
+
 end
 
 function show_home()
    canvas_hide_all_sprites()
 
    local text_tbl = text_load("scenetxt.lzc", 0)
-   
+
    local g_img_tbl = image_load_all("scene1.lzc")
-   
+
    local bg = sprite_new(g_img_tbl[0][0], 0, 24, true)
    local door = sprite_new(g_img_tbl[0][1], 0, 24, true)
    local avatar = sprite_new(g_img_tbl[1][0], 240, 151, true)
@@ -458,36 +458,36 @@ function show_home()
    text.text_align = 2
    fade_in()
    music_play("mdd_mus.lzc", 8)
-   
+
    poll_for_key_or_button(75)
    if should_exit() then return end
 
    local woman = sprite_new(g_img_tbl[8][0], 0, 151, true)
    local spector = create_sprite(g_img_tbl[2][0], 60, 151)
-   
+
    door.visible = false
    avatar.image = g_img_tbl[1][1]
    text.text = text_tbl[2]
-   
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-   
+
    avatar.image = g_img_tbl[1][3]
    spector.image = g_img_tbl[2][1]
    spector.x = 80
    text.text = text_tbl[3]
    text.text_color = 2
-      
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-   
+
    woman.image = g_img_tbl[8][1]
    text.text = text_tbl[4]
    text.text_color = 14
-      
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-   
+
    woman.image = g_img_tbl[8][2]
    spector.image = g_img_tbl[2][2]
    spector.x = 100
@@ -496,7 +496,7 @@ function show_home()
 
    poll_for_key_or_button(75)
    if should_exit() then return end
-   
+
    woman.image = g_img_tbl[3][0]
    woman.x = -10
    woman.y = 155
@@ -504,10 +504,10 @@ function show_home()
    spector.x = 145
    text.text = text_tbl[6]
    text.text_color = 9
-   
+
    poll_for_key_or_button(75)
    if should_exit() then return end
-      
+
    --woman hands spector note
    text.text = text_tbl[7]
    local i
@@ -518,36 +518,36 @@ function show_home()
       spector.image = g_img_tbl[2][i + 5]
       poll_for_key_or_button(5)
    end
-   
+
    poll_for_key_or_button(50)
    if should_exit() then return end
-   
+
    text.text = text_tbl[8]
    text.text_color = 2
-   
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-   
-   
+
+
    --close up on woman
    canvas_hide_all_sprites()
-      
+
    bg.image = g_img_tbl[7]
    bg.visible = true
    text.text = text_tbl[9]
    text.text_color = 9
    text.visible = true
-      
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-    
+
    --spector, avatar review papers
-   
+
    bg.image = g_img_tbl[0][0]
    avatar.image = g_img_tbl[1][1]
    avatar.x = 270
    avatar.visible = true
-   
+
    spector.image = g_img_tbl[2][16]
    spector.x = 193
    spector.y = 161
@@ -558,47 +558,47 @@ function show_home()
 
    poll_for_key_or_button(75)
    if should_exit() then return end
-          
+
    --close up on papers
-   canvas_hide_all_sprites()   
+   canvas_hide_all_sprites()
    bg.image = g_img_tbl[5][0]
    bg.visible = true
-   
+
    local letter = sprite_new(g_img_tbl[5][1], 50, 24, true)
    local hand = sprite_new(g_img_tbl[4], 235, 78, true)
-   
+
    text.text = text_tbl[11]
    text.text_color = 14
    text.visible = true
-   
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-   
+
    hand.visible = false
    text.text = text_tbl[12]
    text.text_color = 2
-   
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-   
+
    --pickup letter
    letter.image = g_img_tbl[6]
    letter.x = 0
-   
+
    text.text = text_tbl[13]
    --FIXME need to rotate the letter sprite.
    for i=0,19 do
       letter.y = -20 - i
       poll_for_key_or_button(1)
    end
-      
+
    letter.visible = false
    text.text = text_tbl[14]
    text.text_color = 14
-      
+
    poll_for_key_or_button(100)
    if should_exit() then return end
-   
+
    fade_out(6)
 end
 
@@ -620,10 +620,10 @@ function show_map()
    }
 
    canvas_hide_all_sprites()
-   
+
    local bg = sprite_new(image_load("scene2.lzc", 0), 0, 24, true)
    fade_in(6)
-   
+
    poll_for_key_or_button(50)
    if should_exit() then return end
 
@@ -634,9 +634,9 @@ function show_map()
       poll_for_key_or_button(20)
       if should_exit() then return end
    end
-   
+
    poll_for_key_or_button(50)
-      
+
    fade_out(6)
 
 end
@@ -644,14 +644,14 @@ end
 function show_hike()
    canvas_hide_all_sprites()
    local g_img_tbl = image_load_all("scene2.lzc")
-   
+
    local bg = sprite_new(g_img_tbl[1], 0, 24, true)
    local avatar = sprite_new(g_img_tbl[3][0], -15, 148, true)
    local spector = sprite_new(g_img_tbl[4][0], -45, 149, true)
    local fg = sprite_new(g_img_tbl[2], 0, 24, true)
-   
+
    fade_in(6)
-   
+
    local i
    for i=0,94 do
       avatar.image = g_img_tbl[3][i % 12]
@@ -659,9 +659,9 @@ function show_hike()
       spector.image = g_img_tbl[4][(i+4) % 12]
       spector.x = i * 4 + -45
       poll_for_key_or_button(3)
-      if should_exit() then return end      
+      if should_exit() then return end
    end
-   
+
    fade_out(6)
 end
 
@@ -676,21 +676,21 @@ function show_lab_present_day()
    text.text_align = 2
 
    local moongate_tbl = image_load_all("moongate.lzc")
-         
+
    local bg = sprite_new(g_img_tbl[0], 0, 24, true)
 
    local moongate = create_sprite(moongate_tbl[0][0], 125, 130)
    moongate.visible = false
-   
+
    local spector = sprite_new(g_img_tbl[3][0], 165, 137,true)
    local table = create_sprite(g_img_tbl[1][0], 151, 82)
    local avatar = create_sprite(g_img_tbl[2][0], 65, 150)
 
    --local s = sprite_new(g_img_tbl[4][0], 0, 24,true)
    music_play("mdd_mus.lzc", 9)
-   
+
    fade_in(6)
-   
+
    local lab_tbl = {
       {1, 2,  0, 0, 50},
       {1, 2,  0, 1, 100},
@@ -704,7 +704,7 @@ function show_lab_present_day()
       {9, 14, 0, 2, 100}
 
    }
-   
+
    local i
    for i=1,7 do
       if lab_tbl[i][3] >= 0 then
@@ -717,20 +717,20 @@ function show_lab_present_day()
       end
 
       text.text = text_tbl[lab_tbl[i][1]]
-      text.text_color = lab_tbl[i][2]      
+      text.text_color = lab_tbl[i][2]
       poll_for_key_or_button(lab_tbl[i][5])
       if should_exit() then return end
    end
-   
+
    bg.image = g_img_tbl[0]
    spector.visible = true
    avatar.visible = true
    table.visible = true
    table.image = g_img_tbl[1][1]
-   
+
    spector.image = g_img_tbl[3][3]
    avatar.image = g_img_tbl[2][1]
-   
+
    moongate.visible = true
 
    --moongate rises up from floor
@@ -739,7 +739,7 @@ function show_lab_present_day()
       poll_for_key_or_button(4)
       if should_exit() then return end
    end
-   
+
    --avatar, spector discuss moongate
    moongate.image = moongate_tbl[1][0]
    for i=8,10 do
@@ -749,35 +749,35 @@ function show_lab_present_day()
          avatar.image = g_img_tbl[2][lab_tbl[i][3]]
          spector.image = g_img_tbl[3][lab_tbl[i][4]]
          text.text = text_tbl[lab_tbl[i][1]]
-         text.text_color = lab_tbl[i][2]  
-               
+         text.text_color = lab_tbl[i][2]
+
          poll_for_key_or_button(4)
          if should_exit() then return end
       end
    end
-   
-   
+
+
    spector.image = moongate_tbl[4][0]
    for i=0,64 do
       moongate.image = moongate_tbl[1][i % 8]
       avatar.image = moongate_tbl[2][math.floor(i/2)]
-      
+
       poll_for_key_or_button(4)
       if should_exit() then return end
    end
-   
+
    avatar.visible = false
-   
+
    for i=0,39 do
       moongate.image = moongate_tbl[1][i % 8]
       if i ~= 39 then
          spector.image = moongate_tbl[4][math.floor(i/2)]
       end
-      
+
       poll_for_key_or_button(4)
       if should_exit() then return end
    end
-   
+
    fade_out(6)
 end
 
@@ -786,19 +786,19 @@ function show_lab_1895()
    local scene4a_tbl = image_load_all("scene4a.lzc")
    local scene4b_tbl = image_load_all("scene4b.lzc")
    local moongate_tbl = image_load_all("moongate.lzc")
-      
+
    local text_tbl = text_load("scenetxt.lzc", 2)
 
    local text = sprite_new(nil, 0, 160, true)
    text.text = text_tbl[1]
    text.text_color = 6
    text.text_align = 2
-   
+
    local bg = sprite_new(scene4a_tbl[0], 0, 24, true)
-      
+
    local moongate = create_sprite(moongate_tbl[0][0], 140, 125)
    moongate.visible = false
-      
+
    local tesla = sprite_new(scene4a_tbl[6][0], 187, 125, true)
    local spark = sprite_new(scene4b_tbl[2][0], 32, 24, false)
 
@@ -806,16 +806,16 @@ function show_lab_1895()
    local freud_head = create_sprite(scene4a_tbl[4][2], 23, 100)
 
    local nellie = sprite_new(scene4b_tbl[1][0], 242, 24, false)
-   
+
    local bookcase = sprite_new(scene4a_tbl[1], 242, 24, false)
-      
+
    local blood = sprite_new(scene4a_tbl[5][0], 240, 40, true)
    local garrett = sprite_new(scene4b_tbl[0][0], 270, 45, false)
-   
+
    fade_in(6)
-   
+
    music_play("mdd_mus.lzc", 10)
-      
+
    local i
    for i=1,2 do
       text.text = text_tbl[i]
@@ -826,42 +826,42 @@ function show_lab_1895()
          else
             tesla.image = scene4a_tbl[6][10 - math.abs(j-10)]
          end
-         
+
          if j > 4 and j < 16 then
             --FIXME need spark sfx
             spark.visible = true
             spark.image = scene4b_tbl[2][j % 10]
          else
             spark.visible = false
-         end 
-                  
+         end
+
          poll_for_key_or_button(4)
          if should_exit() then return end
       end
       text.text_color = 7
    end
-   
+
    moongate.visible = true
 
    --moongate rises up from floor
    tesla.x = 188
    tesla.y = 128
    tesla.image = scene4a_tbl[6][6]
-   
+
    for i=0,8 do
       moongate.image = moongate_tbl[0][i]
       if i == 5 then
          tesla.image = scene4a_tbl[6][7]
       end
-      
+
       if i == 2 then
          blood.image = scene4a_tbl[5][1]
       end
-      
+
       poll_for_key_or_button(4)
       if should_exit() then return end
    end
-   
+
    --avatar walks out of the newly risen moongate
    local avatar = create_sprite(moongate_tbl[3][0], 80, 150)
 
@@ -875,131 +875,131 @@ function show_lab_1895()
       if i == 3 then
          blood.image = scene4a_tbl[5][2]
       end
-      
+
       if i == 4 then
          freud_head.image = scene4a_tbl[4][3]
       end
-      
+
       if i == 11 then
          text.text = text_tbl[3]
          text.text_color = 7
       end
-      
+
       poll_for_key_or_button(3)
       if should_exit() then return end
    end
-   
+
    --spector walks out of moongate
    local spector = create_sprite(moongate_tbl[5][0], 140, 130)
-   
+
    text.text = text_tbl[4]
    text.text_color = 14
 
    for i=0,24 do
       moongate.image = moongate_tbl[1][i % 8]
       spector.image = moongate_tbl[5][math.floor(i/2)]
-      
+
       poll_for_key_or_button(3)
       if should_exit() then return end
    end
-   
+
    --spector face closeup shot
    canvas_hide_all_sprites()
-   
+
    bg.image = scene4a_tbl[9][0]
    bg.visible = true
-   
+
    local face = sprite_new(scene4a_tbl[9][1], 0, 24, true)
-   
+
    text.text = text_tbl[5]
    text.text_color = 2
    text.visible = true
-   
+
    poll_for_key_or_button(200)
    if should_exit() then return end
-   
+
    --spector shows note to tesla
    text.text = text_tbl[6]
    face.visible = false
    bg.image = scene4a_tbl[0]
-   
+
    tesla.visible = true
    tesla.image = scene4a_tbl[6][9]
-   
+
    blood.visible = true
 
    freud_head.image = scene4a_tbl[4][2]
    freud_head.visible = true
 
    freud_body.visible = true
-   
+
    avatar.visible = true
    avatar.x = 80
    avatar.y = 150
    avatar.image = scene4a_tbl[2][1]
-   
+
    spector.visible = true
    spector.x = 145
    spector.y = 140
    spector.image = scene4a_tbl[3][1]
-   
-   poll_for_key_or_button(200)
-   if should_exit() then return end
-   
-   --tesla face closeup shot
-   canvas_hide_all_sprites()
-   
-   bg.image = scene4a_tbl[7][0]
-   bg.visible = true
-   
-   face.image = scene4a_tbl[7][1]
-   face.visible = true
-   
-   text.text = text_tbl[7]
-   text.text_color = 7
-   text.visible = true
-      
+
    poll_for_key_or_button(200)
    if should_exit() then return end
 
-   --blood closeup.    
+   --tesla face closeup shot
    canvas_hide_all_sprites()
-   
+
+   bg.image = scene4a_tbl[7][0]
+   bg.visible = true
+
+   face.image = scene4a_tbl[7][1]
+   face.visible = true
+
+   text.text = text_tbl[7]
+   text.text_color = 7
+   text.visible = true
+
+   poll_for_key_or_button(200)
+   if should_exit() then return end
+
+   --blood closeup.
+   canvas_hide_all_sprites()
+
    bg.image = scene4a_tbl[8][0]
    bg.visible = true
-   
+
    face.visible = true
    text.visible = true
    text.text_color = 4
-   
+
    for i=8,9 do
       face.image = scene4a_tbl[8][i - 7]
       text.text = text_tbl[i]
-      
+
       poll_for_key_or_button(200)
       if should_exit() then return end
    end
-   
+
    --Tesla calls Mr Garrett.
    text.text = text_tbl[10]
    text.text_color = 7
    face.visible = false
    bg.image = scene4a_tbl[0]
-   
+
    tesla.visible = true
    tesla.image = scene4a_tbl[6][10]
-   
+
    blood.visible = true
 
    freud_head.visible = true
    freud_body.visible = true
-   
+
    avatar.visible = true
    avatar.image = scene4a_tbl[2][0]
-   
+
    spector.visible = true
    spector.image = scene4a_tbl[3][0]
-   
+
    poll_for_key_or_button(200)
    if should_exit() then return end
 
@@ -1016,22 +1016,22 @@ function show_lab_1895()
       if i <= 10 then
          avatar.image = scene4a_tbl[2][i]
       end
-      
+
       garrett.image = scene4b_tbl[0][i]
-      
+
       poll_for_key_or_button(3)
       if should_exit() then return end
    end
-   
+
    --Tesla checks note, talks about mission.
-   
+
    spector.image = scene4a_tbl[3][1]
    spector.x = 155
    avatar.image = scene4a_tbl[2][10]
    freud_head.image = scene4a_tbl[4][1]
 
    local text_color_tbl = {4, 6, 7, 7, 14, 2, 2, 7, 4, 4, 7, 9, 7, 4, 7, 4, 7, 2, 7, 7, 7, 7, 7, 11, 2, 7, 7}
-   
+
    for i=12,20 do
       if i==13 or i==16 or i==20 then
          face.visible = true
@@ -1046,15 +1046,15 @@ function show_lab_1895()
          if i==13 then
             idx = 8
          else
-            idx = 7   
+            idx = 7
          end
          bg.image = scene4a_tbl[idx][0]
-         
+
          if i==16 then
             face.image = scene4a_tbl[idx][2]
          else
             face.image = scene4a_tbl[idx][1]
-         end 
+         end
       else
          local idx
          if i == 14 then
@@ -1069,13 +1069,13 @@ function show_lab_1895()
          end
          tesla.image = scene4a_tbl[6][idx]
       end
-      
+
       text.text = text_tbl[i]
       text.text_color = text_color_tbl[i+1]
-      
+
       poll_for_key_or_button(200)
-      if should_exit() then return end  
-               
+      if should_exit() then return end
+
       face.visible = false
       tesla.visible = true
       blood.visible = true
@@ -1086,19 +1086,19 @@ function show_lab_1895()
       garrett.visible = true
       bg.image = scene4a_tbl[0]
    end
-   
-   
+
+
    --Nellie walks in
-      
+
    tesla.image = scene4a_tbl[6][10]
-   
+
    text.text = text_tbl[21]
    text.text_color = text_color_tbl[22]
-   
+
    nellie.visible = true
-   nellie.y = 125         
+   nellie.y = 125
    bookcase.visible = true
-   
+
    for i=0,31 do
       if i == 7 then
          freud_head.image = scene4a_tbl[4][2]
@@ -1108,12 +1108,12 @@ function show_lab_1895()
       if i > 25 then
          nellie.y = 125 + (i - 26) * 2
       end
-      
+
       local avatar_idx = 20 - i
       if avatar_idx > 10 then
       avatar_idx = 10
       end
-      
+
       if avatar_idx < 4 then
       avatar_idx = 4
       end
@@ -1123,22 +1123,22 @@ function show_lab_1895()
       if garrett_idx > 31 then
          garrett_idx = 31
       end
-      
+
       if garrett_idx < 18 then
          garrett_idx = 18
       end
       garrett.image = scene4b_tbl[0][garrett_idx]
-      
+
       poll_for_key_or_button(3)
       if should_exit() then return end
    end
-   
+
    --Nellie shakes hands with Spector, Avatar
-   
+
    spector.x = 165
    nellie.x = 227
    nellie.y = 135
-   
+
    for i=22,26 do
       if i == 24 then
          nellie.image = scene4b_tbl[1][7]
@@ -1151,7 +1151,7 @@ function show_lab_1895()
          end
          spector.image = scene4a_tbl[3][0]
       end
-      
+
       if i == 25 then
          tesla.image = scene4a_tbl[6][9]
       elseif i == 26 then
@@ -1162,30 +1162,30 @@ function show_lab_1895()
 
       text.text = text_tbl[i]
       text.text_color = text_color_tbl[i+1]
-      
+
       poll_for_key_or_button(200)
       if should_exit() then return end
    end
-   
+
 end
 
 function run_introduction()
 
    show_home()
    if should_exit() then return end
-   
+
    show_map()
    if should_exit() then return end
 
    show_hike()
    if should_exit() then return end
-   
+
    show_lab_present_day()
    if should_exit() then return end
 
    show_lab_1895()
    if should_exit() then return end
-   
+
    fade_out(6)
 end
 
@@ -1287,8 +1287,8 @@ local char_creation_tbl = {
 
 local g_player_name = ""
 local gender_answer = ""
-local avatar_str  
-local avatar_dex 
+local avatar_str
+local avatar_dex
 local avatar_int
 
 function insert_player_name(text)
@@ -1300,7 +1300,7 @@ function insert_player_name(text)
       i = string.find(text, "$P")
    end
    output = output .. text
-   
+
    return output
 end
 
@@ -1388,9 +1388,9 @@ g_char_index = 0
 function collect_player_name()
    local name_text = g_name_sprite.text
    local len = string.len(name_text)
-   
+
    g_name_sprite.visible = true
-   
+
    local input = poll_for_input()
    if input ~= nil then
       if should_exit() then
@@ -1481,7 +1481,7 @@ function collect_player_name()
          g_cursor_timer = g_cursor_timer - 1
       end
    end
-   
+
    return false
 end
 
@@ -1497,7 +1497,7 @@ function update_freud(freud)
       else
          freud.timer = freud.timer - 1
       end
-      
+
       local state = freud.state
       if state == FREUD_STATE_STARING then
          if freud.can_move_pen == true then
@@ -1520,7 +1520,7 @@ function update_freud(freud)
          end
       end
    end
-   
+
    if freud.eyes.blink_timer == 200 then
       if freud.eyes.sprite_idx == 2 then
          freud.eyes.sprite.image = freud.images[0][5]
@@ -1535,16 +1535,16 @@ function update_freud(freud)
       end
       freud.eyes.blink_timer = -1
    end
-   freud.eyes.blink_timer = freud.eyes.blink_timer + 1   
+   freud.eyes.blink_timer = freud.eyes.blink_timer + 1
 end
 
 function ask_question(question_idx, text, freud)
    question_idx = question_idx + 1
-   
+
    local key_input = nil
-   
+
    local text_offset = char_creation_tbl[question_idx].text
-   
+
    while text_offset ~= 0 do
 
       if text_offset < 0 then
@@ -1552,9 +1552,9 @@ function ask_question(question_idx, text, freud)
       else
          text.text_color = 6
       end
-      
+
       text.text = insert_player_name(freud.text_tbl[math.abs(text_offset)])
-      
+
       freud.eyes.sprite_idx = char_creation_tbl[question_idx].eye_sprite
       freud.eyes.sprite.image = freud.images[0][freud.eyes.sprite_idx]
       freud.eyes.blink_timer = 0
@@ -1563,7 +1563,7 @@ function ask_question(question_idx, text, freud)
       local action = char_creation_tbl[question_idx].action_code
 
       local continue_loop = true
-      while continue_loop do 
+      while continue_loop do
          if action == -1 then
             local input = poll_for_input()
             if input ~= nil then
@@ -1587,19 +1587,19 @@ function ask_question(question_idx, text, freud)
                continue_loop = false
             end
          end
-         
+
          if should_exit() then
             return nil
          end
-         
+
          update_freud(freud)
          canvas_update()
       end
-      
+
       question_idx = question_idx + 1
       text_offset = char_creation_tbl[question_idx].text
    end
-   
+
    return key_input
 end
 
@@ -1627,7 +1627,7 @@ function question_1_answer_a(text, freud, rand_high, rand_low)
             if answer == SDLK_a then
                avatar_int = rand_high
                avatar_dex = rand_low
-               ask_question(40, text, freud)              
+               ask_question(40, text, freud)
             elseif answer == SDLK_b then
                avatar_dex = rand_high
                avatar_int = rand_low
@@ -1640,20 +1640,20 @@ function question_1_answer_a(text, freud, rand_high, rand_low)
             local answer = ask_question(46, text, freud)
             if answer == SDLK_a then
                avatar_str = rand_high
-               avatar_dex = rand_low               
+               avatar_dex = rand_low
                if gender_answer == SDLK_a then
                   ask_question(49, text, freud)
                else
                   ask_question(52, text, freud)
-               end               
+               end
             elseif answer == SDLK_b then
                avatar_dex = rand_high
-               avatar_str = rand_low               
+               avatar_str = rand_low
                if gender_answer == SDLK_a then
                   ask_question(58, text, freud)
                else
                   ask_question(55, text, freud)
-               end                
+               end
             end
          elseif var_16 == SDLK_b then
             local answer = ask_question(61, text, freud)
@@ -1664,7 +1664,7 @@ function question_1_answer_a(text, freud, rand_high, rand_low)
             elseif answer == SDLK_b then
                avatar_dex = rand_high
                avatar_int = rand_low
-               ask_question(66, text, freud)               
+               ask_question(66, text, freud)
             end
          end
       end
@@ -1683,10 +1683,10 @@ function question_1_answer_b(text, freud, rand_high, rand_low)
                ask_question(31, text, freud)
             else
                ask_question(34, text, freud)
-            end 
+            end
          elseif answer == SDLK_b then
             avatar_int = rand_high
-            avatar_str = rand_low            
+            avatar_str = rand_low
          end
       elseif var_16 == SDLK_b then
          local answer = ask_question(37, text, freud)
@@ -1697,7 +1697,7 @@ function question_1_answer_b(text, freud, rand_high, rand_low)
          elseif answer == SDLK_b then
             avatar_dex = rand_high
             avatar_int = rand_low
-            ask_question(43, text, freud)            
+            ask_question(43, text, freud)
          end
       end
    elseif var_14 == SDLK_b then
@@ -1711,7 +1711,7 @@ function question_1_answer_b(text, freud, rand_high, rand_low)
          elseif answer == SDLK_b then
             avatar_str = rand_high
             avatar_int = rand_low
-            ask_question(78, text, freud)         
+            ask_question(78, text, freud)
          end
       elseif var_16 == SDLK_b then
          local answer = ask_question(46, text, freud)
@@ -1722,7 +1722,7 @@ function question_1_answer_b(text, freud, rand_high, rand_low)
                ask_question(49, text, freud)
             else
                ask_question(52, text, freud)
-            end 
+            end
          elseif answer == SDLK_b then
             avatar_dex = rand_high
             avatar_str = rand_low
@@ -1730,8 +1730,8 @@ function question_1_answer_b(text, freud, rand_high, rand_low)
                ask_question(58, text, freud)
             else
                ask_question(55, text, freud)
-            end            
-         end         
+            end
+         end
       end
    end
 end
@@ -1750,7 +1750,7 @@ function question_1_answer_c(text, freud, rand_high, rand_low)
                ask_question(49, text, freud)
             else
                ask_question(52, text, freud)
-            end           
+            end
          elseif answer == SDLK_b then
             avatar_dex = rand_high
             avatar_str = rand_low
@@ -1758,7 +1758,7 @@ function question_1_answer_c(text, freud, rand_high, rand_low)
                ask_question(58, text, freud)
             else
                ask_question(55, text, freud)
-            end              
+            end
          end
       elseif var_16 == SDLK_b then
          local answer = ask_question(37, text, freud)
@@ -1769,8 +1769,8 @@ function question_1_answer_c(text, freud, rand_high, rand_low)
          elseif answer == SDLK_b then
             avatar_dex = rand_high
             avatar_int = rand_low
-            ask_question(43, text, freud)            
-         end         
+            ask_question(43, text, freud)
+         end
       end
    elseif var_14 == SDLK_b then
       local var_16 = ask_question(20, text, freud)
@@ -1783,7 +1783,7 @@ function question_1_answer_c(text, freud, rand_high, rand_low)
                ask_question(31, text, freud)
             else
                ask_question(34, text, freud)
-            end 
+            end
          elseif answer == SDLK_b then
             avatar_int = rand_high
             avatar_str = rand_low
@@ -1797,7 +1797,7 @@ function question_1_answer_c(text, freud, rand_high, rand_low)
          elseif answer == SDLK_b then
             avatar_str = rand_high
             avatar_dex = rand_low
-            ask_question(90, text, freud)               
+            ask_question(90, text, freud)
          end
       end
    end
@@ -1806,35 +1806,35 @@ end
 function create_character()
    canvas_hide_all_sprites()
    local create_tbl = image_load_all("create.lzc")
-   
+
    local text_tbl = text_load("scenetxt.lzc", 5)
 
    local text = sprite_new(nil, 0, 160, true)
    text.text = text_tbl[0]
    text.text_color = 2
    text.text_align = 2
-   
+
    local bg = sprite_new(create_tbl[0][0], 0, 24, true)
    local eyes_sprite = sprite_new(create_tbl[0][4], 0, 24, true)
    local pen_sprite = sprite_new(create_tbl[2][0], 128, 83, true)
    local clipboard = sprite_new(create_tbl[1], 89, 109, true)
-   
+
    local eyes ={["sprite"]=eyes_sprite, ["sprite_idx"]=4, ["blink_timer"]=0}
    local pen = {["sprite"]=pen_sprite,["x_off"]=0,["y_off"]=0,["sprite_idx"]=0,["timer"]=0,}
    local freud = {["eyes"]=eyes, ["pen"]=pen, ["state"]=FREUD_STATE_STARING, ["timer"] = 0, ["can_move_pen"] = false, ["images"]=create_tbl, ["text_tbl"]=text_tbl}
-   
+
    music_play("mdd_mus.lzc", 7)
 
    local rand_high = math.random(24,26)
    local rand_low = math.random(22,24)
    local stat_base = math.random(18,22)
-   
+
    avatar_str = stat_base
    avatar_dex = stat_base
    avatar_int = stat_base
-   
+
    local gender
-   
+
    gender_answer = ask_question(0, text, freud)
    if gender_answer == SDLK_a then
       gender = 0 --male
@@ -1843,9 +1843,9 @@ function create_character()
       gender = 1 --female
       ask_question(11, text, freud)
    end
-   
+
    local answer = ask_question(14, text, freud)
-   
+
    if answer == SDLK_a then
       question_1_answer_a(text, freud, rand_high, rand_low)
    elseif answer == SDLK_b then
@@ -1853,23 +1853,23 @@ function create_character()
    elseif answer == SDLK_c then
       question_1_answer_c(text, freud, rand_high, rand_low)
    end
-   
+
    if should_exit() then
       return false
    end
-   
+
    ask_question(69, text, freud)
-   
+
    config_set("config/newgame", true)
    config_set("config/newgamedata/name", g_player_name)
    config_set("config/newgamedata/gender", gender)
    config_set("config/newgamedata/str", avatar_str)
    config_set("config/newgamedata/dex", avatar_dex)
    config_set("config/newgamedata/int", avatar_int)
-   
+
    --wait_for_input()
    fade_out(6)
-   
+
    return true
 end
 
@@ -1884,9 +1884,9 @@ function execute_menu_item(cursor_pos)
    if cursor_pos ~= nil then
       set_menu_cursor_pos(cursor_pos)
    end
-   
+
    hide_mouse_cursor()
-   
+
    if g_menu_idx == 0 then -- story so far
       run_introduction()
    elseif g_menu_idx == 1 then -- create char
@@ -1899,7 +1899,7 @@ function execute_menu_item(cursor_pos)
    elseif g_menu_idx == 3 then -- about md
       about_martian_dreams()
    end
-   
+
    clear_should_exit_flag()
    canvas_hide_all_sprites()
    canvas_set_opacity(0xff)

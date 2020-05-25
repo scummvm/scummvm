@@ -81,8 +81,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 	_timePlayed = _timeSlice = _prevTimeSlice = _timeSeconds = _tiempo = 0;
 
-	_currentOutSaveFile = NULL;
-	_currentInSaveFile = NULL;
+	_currentOutSaveFile = nullptr;
+	_currentInSaveFile = nullptr;
 
 	_progressActive = false;
 
@@ -127,17 +127,17 @@ HDBGame::~HDBGame() {
 	delete _rnd;
 
 	delete _progressGfx;
-	_progressGfx = NULL;
+	_progressGfx = nullptr;
 	delete _progressMarkGfx;
-	_progressMarkGfx = NULL;
+	_progressMarkGfx = nullptr;
 	delete _loadingScreenGfx;
-	_loadingScreenGfx = NULL;
+	_loadingScreenGfx = nullptr;
 	if (_logoGfx) {
 		delete _logoGfx;
-		_logoGfx = NULL;
+		_logoGfx = nullptr;
 	}
 	delete _debugLogo;
-	_debugLogo = NULL;
+	_debugLogo = nullptr;
 }
 
 bool HDBGame::init() {
@@ -171,7 +171,7 @@ bool HDBGame::init() {
 	_debugLogo = _gfx->loadIcon("icon_debug_logo");
 	_progressGfx = _gfx->loadPic(PIC_LOADBAR);
 	_progressMarkGfx = _gfx->loadPic(PIC_LOADSTAR);
-	_logoGfx = NULL;
+	_logoGfx = nullptr;
 
 	_changeLevel = false;
 	_changeMapname[0] = 0;
@@ -185,7 +185,7 @@ bool HDBGame::init() {
 	if (!g_hdb->isPPC())
 		_loadingScreenGfx = _gfx->loadPic(PIC_LOADSCREEN);
 	else
-		_loadingScreenGfx = NULL;
+		_loadingScreenGfx = nullptr;
 
 	return true;
 }
@@ -256,7 +256,7 @@ bool HDBGame::restartMap() {
 
 		_lua->saveGlobalNumber("map12_complete", 1);
 
-		strcpy(_lastMapname, "MAP12");
+		Common::strlcpy(_lastMapname, "MAP12", 64);
 	}
 
 	if (!strcmp(_currentLuaName, "MAP06.LUA")) {
@@ -888,13 +888,13 @@ void HDBGame::setInMapName(const char *name) {
 	for (uint i = 0; i < ARRAYSIZE(mapNames); i++) {
 		if (!scumm_stricmp(name, mapNames[i].fName)) {
 			memset(&_inMapName, 0, 32);
-			strcpy(_inMapName, mapNames[i].printName);
+			Common::strlcpy(_inMapName, mapNames[i].printName, 32);
 			return;
 		}
 	}
 
 	memset(&_inMapName, 0, 32);
-	strcpy(_inMapName, name);
+	Common::strlcpy(_inMapName, name, 32);
 }
 
 Common::Error HDBGame::run() {
@@ -910,7 +910,7 @@ Common::Error HDBGame::run() {
 
 #if 0
 	Common::SeekableReadStream *titleStream = _fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
-	if (titleStream == NULL) {
+	if (titleStream == nullptr) {
 		debug("The TitleScreen MPC entry can't be found.");
 		delete titleStream;
 		return Common::kReadingFailed;
@@ -921,7 +921,7 @@ Common::Error HDBGame::run() {
 	delete titleStream;
 
 	Common::SeekableReadStream *tileStream = _fileMan->findFirstData("t32_ground1", TYPE_TILE32);
-	if (tileStream == NULL) {
+	if (tileStream == nullptr) {
 		debug("The t32_shipwindow_lr MPC entry can't be found.");
 		delete tileStream;
 		return Common::kReadingFailed;
@@ -960,7 +960,7 @@ Common::Error HDBGame::run() {
 			_gameState = GAME_PLAY;
 	}
 
-	//_window->openDialog("Sgt. Filibuster", 0, "You address me as 'sarge' or 'sergeant' or get your snappin' teeth kicked in! Got me?", 0, NULL);
+	//_window->openDialog("Sgt. Filibuster", 0, "You address me as 'sarge' or 'sergeant' or get your snappin' teeth kicked in! Got me?", 0, nullptr);
 
 #if 0
 	lua->executeFile("test.lua");

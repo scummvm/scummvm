@@ -188,7 +188,8 @@ enum GameSoundType {
 	kSoundFLAC = 6,
 	kSoundAIFF = 7,
 	kSoundShorten = 8,
-	kSoundMacSND = 9
+	kSoundMacSND = 9,
+	kSoundPC98 = 10
 };
 
 // Use a macro to read in the sound data based on if we actually want to buffer it or not
@@ -275,7 +276,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 				resourceType = kSoundFLAC;
 			}
 		}
-
 	}
 
 	// Default sound type is 16-bit signed PCM, used in ITE
@@ -285,6 +285,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		if (context->fileType() & GAME_MACBINARY) {
 			// ITE Mac has sound in the Mac snd format
 			resourceType = kSoundMacSND;
+		} else if (_vm->getPlatform() == Common::kPlatformPC98) {
+			resourceType = kSoundPC98;
 		} else if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
 			rawFlags |= Audio::FLAG_UNSIGNED;
 			rawFlags &= ~Audio::FLAG_16BITS;
@@ -326,6 +328,63 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.streamLength = audStream->getLength();
 		result = true;
 		} break;
+	case kSoundPC98: {
+		const uint32 clock[] = { 24576000, 16934400 };
+		const uint16 divide[] = { 3072, 1536, 896, 768, 448, 384, 512, 2560 };
+		const uint16 ctrlBits[] = { 0x0B, 0x0D, 0x07, 0x02, 0x03, 0x00, 0x01, 0x01 };
+
+		uint16 rateIndex = readS.readUint16LE() & 7;
+		uint16 sfxRate = clock[ctrlBits[rateIndex] & 1] / divide[ctrlBits[rateIndex] >> 1];
+		readS.seek(-2, SEEK_CUR);
+
+		Common::MemoryWriteStreamDynamic cstream(DisposeAfterUse::NO);
+
+		for (int srcBytesLeft = soundResourceLength; srcBytesLeft; ) {
+			uint32 srcPos = readS.pos();
+
+			uint16 r = readS.readUint16LE() & 7;
+			if (r != rateIndex) {
+				// I am quite optimistic that this won't come up. But let's see...
+				warning("SndRes::load(): PCM resource with changing playback rates encountered. Currently not implemented.");
+			}
+
+			uncompressedSound = !(readS.readUint16LE() & 1);
+			uint32 chunkSize = readS.readUint32LE();
+
+			if (!chunkSize)
+				break;
+
+			uint8 *chunk = new uint8[chunkSize];
+			uint8 *dst = chunk;
+
+			if (!uncompressedSound) {
+				for (uint32 i = chunkSize; i;) {
+					uint8 cnt = readS.readByte();
+					if (cnt & 0x80) {
+						cnt &= 0x7F;
+						uint8 val = readS.readByte();
+						memset(dst, val, cnt);
+					} else {
+						readS.read(dst, cnt);
+					}
+					dst += cnt;
+					i -= cnt;
+				}
+			} else {
+				readS.read(dst, chunkSize);
+			}
+
+			cstream.write(chunk, chunkSize);
+			srcBytesLeft -= (readS.pos() - srcPos);
+			delete[] chunk;
+		}
+
+		cstream.finalize();
+		Audio::SeekableAudioStream *audStream = Audio::makeRawStream(cstream.getData(), cstream.size(), sfxRate, 0, DisposeAfterUse::YES);
+		buffer.stream = audStream;
+		buffer.streamLength = audStream->getLength();
+		result = true;
+	} break;
 	case kSoundAIFF: {
 		Audio::RewindableAudioStream *audStream = Audio::makeAIFFStream(READ_STREAM(soundResourceLength), DisposeAfterUse::YES);
 		Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(audStream);

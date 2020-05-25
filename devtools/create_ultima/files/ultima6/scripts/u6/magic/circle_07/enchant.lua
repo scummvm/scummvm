@@ -18,13 +18,13 @@ if spell_num ~= nil then
 		for child in container_objs(obj) do
 			i = i + 1
 		end
-	
+
 		if i >= 10 then
 			print("\nIt's full\n")
 			play_sfx(SFX_FAILURE)
 			return
 		end
-	
+
 		magic_casting_fade_effect(caster)
 		local charge = Obj.new(336,0, spell_num)
 		charge.invisible = true

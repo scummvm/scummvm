@@ -40,10 +40,10 @@ public:
 
 	void run() override;
 
-	bool loadData(IDataSource *ids, uint32 version);
-protected:
-	void saveData(ODataSource *ods) override;
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	ObjId _target;
 };
 

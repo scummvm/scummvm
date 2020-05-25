@@ -30,8 +30,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Usecode;
-class ODataSource;
-class IDataSource;
 
 class Object {
 public:
@@ -40,9 +38,6 @@ public:
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
-
-	// memory pooling stuff
-	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 
 	//! get this Object's objID
 	inline ObjId getObjId() const {
@@ -59,9 +54,6 @@ public:
 	//! dump some info about this object to pout
 	virtual void dumpInfo() const;
 
-	//! save this object
-	void save(ODataSource *ods);
-
 	//! Spawn a usecode function on this object
 	//! \param classid The usecode class to run
 	//! \param offset The offset in that class to run
@@ -72,15 +64,10 @@ public:
 	ProcId callUsecode(uint16 classid, uint16 offset,
 	                   const uint8 *args = 0, int argsize = 0);
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	virtual void saveData(Common::WriteStream *ws);
 
 protected:
-	//! write the Object savegame header (mainly consisting of the classname)
-	void writeObjectHeader(ODataSource *ods) const;
-
-	//! save the actual Object data
-	virtual void saveData(ODataSource *ods);
-
 	ObjId _objId;
 };
 

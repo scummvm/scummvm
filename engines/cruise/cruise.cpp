@@ -76,7 +76,7 @@ CruiseEngine::~CruiseEngine() {
 
 bool CruiseEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }
@@ -178,9 +178,8 @@ bool CruiseEngine::loadLanguageStrings() {
 }
 
 void CruiseEngine::pauseEngine(bool pause) {
-	Engine::pauseEngine(pause);
-
 	if (pause) {
+		_gamePauseToken = Engine::pauseEngine();
 		// Draw the 'Paused' message
 		drawSolidBox(64, 100, 256, 117, 0);
 		drawString(10, 100, langString(ID_PAUSED), gfxModuleData.pPage00, itemColor, 300);
@@ -189,6 +188,7 @@ void CruiseEngine::pauseEngine(bool pause) {
 		_savedCursor = currentCursor;
 		changeCursor(CURSOR_NOMOUSE);
 	} else {
+		_gamePauseToken.clear();
 		processAnimation();
 		flipScreen();
 		changeCursor(_savedCursor);

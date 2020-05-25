@@ -1077,8 +1077,6 @@ public:
 
 	void inGameTimerReset(uint32 newPlayTime = 0);
 	void inGameTimerResetPassedCycles();
-	void inGameTimerPause();
-	void inGameTimerResume();
 	uint32 inGameTimerGet();
 	uint32 inGameTimerGetPassedCycles();
 

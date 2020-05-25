@@ -92,7 +92,7 @@ protected:
 	 */
 	void transBlitFromInner(const Surface &src, const Common::Rect &srcRect,
 		const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor,
-		uint srcAlpha, const uint32 *palette);
+		uint srcAlpha, const uint32 *palette, const Surface *mask, bool maskOnly);
 public:
 	/**
 	 * Clips the given source bounds so the passed destBounds will be entirely on-screen
@@ -279,7 +279,8 @@ public:
 	 *						the source surface
 	 * @param srcAlpha		Optional additional transparency applied to src
 	 */
-	void transBlitFrom(const Surface &src, uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+	void transBlitFrom(const Surface &src, uint transColor = 0, bool flipped = false,
+		uint overrideColor = 0, uint srcAlpha = 0xff);
 
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
@@ -297,6 +298,24 @@ public:
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
 	 * @param src			Source surface
+	 * @param destPos		Destination position to draw the surface
+	 * @param mask			Mask definition (0-skip, other-copy)
+	 */
+	void transBlitFrom(const Surface &src, const Common::Point &destPos,
+		const ManagedSurface &mask);
+
+	/**
+	 * Copies another surface into this one ignoring pixels of a designated transparent color
+	 * @param src			Source surface
+	 * @param destPos		Destination position to draw the surface
+	 * @param mask			Mask definition (0-skip, other-copy)
+	 */
+	void transBlitFrom(const Surface &src, const Common::Point &destPos,
+		const Surface &mask);
+
+	/**
+	 * Copies another surface into this one ignoring pixels of a designated transparent color
+	 * @param src			Source surface
 	 * @param srcRect		Sub-section of source surface to draw
 	 * @param destPos		Destination position to draw the surface
 	 * @param transColor	Transparency color to ignore copying
@@ -304,6 +323,8 @@ public:
 	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
 	 *						the source surface
 	 * @param srcAlpha		Optional additional transparency applied to src
+	 * @param mask			Optional parameter with mask definition (0-skip, other-copy)
+	 * @param maskOnly		Optional parameter for using mask over transColor
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Point &destPos,
 		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
@@ -319,9 +340,12 @@ public:
 	 * @param overrideColor	Optional color to use instead of non-transparent pixels from
 	 *						the source surface
 	 * @param srcAlpha		Optional additional transparency applied to src
+	 * @param mask			Optional parameter with mask definition (0-skip, other-copy)
+	 * @param maskOnly		Optional parameter for using mask over transColor
 	 */
 	void transBlitFrom(const Surface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff,
+		const Surface *mask = nullptr, bool maskOnly = false);
 
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
@@ -332,7 +356,8 @@ public:
 	 *						the source surface
 	 * @param srcAlpha		Optional additional transparency applied to src
 	 */
-	void transBlitFrom(const ManagedSurface &src, uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+	void transBlitFrom(const ManagedSurface &src, uint transColor = 0, bool flipped = false,
+		uint overrideColor = 0, uint srcAlpha = 0xff);
 
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
@@ -346,6 +371,15 @@ public:
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Point &destPos,
 		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+
+	/**
+	 * Copies another surface into this one ignoring pixels of a designated transparent color
+	 * @param src			Source surface
+	 * @param destPos		Destination position to draw the surface
+	 * @param mask			Mask definition (0-skip, other-copy)
+	 */
+	void transBlitFrom(const ManagedSurface &src, const Common::Point &destPos,
+		const ManagedSurface &mask);
 
 	/**
 	 * Copies another surface into this one ignoring pixels of a designated transparent color
@@ -374,7 +408,8 @@ public:
 	 * @param srcAlpha		Optional additional transparency applied to src
 	 */
 	void transBlitFrom(const ManagedSurface &src, const Common::Rect &srcRect, const Common::Rect &destRect,
-		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff);
+		uint transColor = 0, bool flipped = false, uint overrideColor = 0, uint srcAlpha = 0xff,
+		const Surface *mask = nullptr, bool maskOnly = false);
 
 	/**
 	 * Clear the entire surface
@@ -500,10 +535,24 @@ public:
 	}
 
 	/**
+	 * Returns true if a transparent color has been set
+	 */
+	bool hasTransparentColor() const {
+		return _transparentColorSet;
+	}
+
+	/**
 	 * Clear any existing palette
 	 */
 	void clearPalette() {
 		_paletteSet = false;
+	}
+
+	/**
+	 * Gets the palette array
+	 */
+	const uint32 *getPalette() const {
+		return _palette;
 	}
 
 	/**

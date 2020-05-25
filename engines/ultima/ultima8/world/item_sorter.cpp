@@ -43,7 +43,14 @@ namespace Ultima8 {
 // This does NOT need to be in the header
 struct SortItem {
 	SortItem(SortItem *n) : _next(n), _prev(nullptr), _itemNum(0),
-			_shape(nullptr), _order(-1), _depends() { }
+			_shape(nullptr), _order(-1), _depends(), _shapeNum(0),
+			_frame(0), _flags(0), _extFlags(0), _sx(0), _sy(0),
+			_sx2(0), _sy2(0), _x(0), _y(0), _z(0), _xLeft(0),
+			_yFar(0), _zTop(0), _sxLeft(0), _sxRight(0), _sxTop(0),
+			_syTop(0), _sxBot(0), _syBot(0),_f32x32(false), _flat(false),
+			_occl(false), _solid(false), _draw(false), _roof(false),
+			_noisy(false), _anim(false), _trans(false), _fixed(false),
+			_land(false), _occluded(false), _clipped(0) { }
 
 	SortItem                *_next;
 	SortItem                *_prev;
@@ -228,9 +235,7 @@ struct SortItem {
 
 	// Comparison for the sorted lists
 	inline bool ListLessThan(const SortItem *other) const {
-		return _z < other->_z ||
-		       (_z == other->_z && _x < other->_x) ||
-		       (_z == other->_z && _x == other->_x && _y < other->_y);
+		return _z < other->_z || (_z == other->_z && _flat);
 	}
 
 };
@@ -264,8 +269,8 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 	const bool bot_right_clear = dot_bot_right >= 0;
 
 	const bool clear = right_clear || left_clear ||
-	                   (bot_right_clear && bot_left_clear) ||
-	                   (top_right_clear && top_left_clear);
+	                   (bot_right_clear || bot_left_clear) ||
+	                   (top_right_clear || top_left_clear);
 
 	return !clear;
 }
@@ -333,33 +338,12 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	}
 	// Mixed, or non flat
 	else {
-
-		// Clearly X, Y and Z (useful?)
-		//if (si1._x <= si2._xLeft && si1._y <= si2._yFar && si1._zTop <= si2._z) return true;
-		//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y && si1._z >= si2._zTop) return false;
-
-		//int front1 = si1._x + si1._y;
-		//int rear1 = si1._xLeft + si1._yFar;
-		//int front2 = si2._x + si2._y;
-		//int rear2 = si2._xLeft + si2._yFar;
-
-		// Rear of object is infront of other's front
-		//if (front1 <= rear2) return true;
-		//else if (rear1 >= front2) return false;
-
 		// Clearly in z
 		if (si1._zTop <= si2._z)
 			return true;
 		else if (si1._z >= si2._zTop)
 			return false;
-
-		// Partial in z
-		//if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
 	}
-
-	// Clearly in x and y? (useful?)
-	//if (si1._x <= si2._xLeft && si1._y <= si2._yFar) return true;
-	//else if (si1._xLeft >= si2._x && si1._yFar >= si2._y) return false;
 
 	// Clearly in x?
 	if (si1._x <= si2._xLeft) return true;
@@ -402,7 +386,7 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	// Partial in y?
 	if (si1._y != si2._y) return si1._y < si2._y;
 
-	// Just sort by _shape number - not a number any more (is a pointer)
+	// Just sort by shape number
 	if (si1._shapeNum != si2._shapeNum) return si1._shapeNum < si2._shapeNum;
 
 	// And then by _frame
@@ -598,7 +582,7 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 
 ItemSorter::ItemSorter() :
 	_shapes(nullptr), _surf(nullptr), _items(nullptr), _itemsTail(nullptr),
-	_itemsUnused(nullptr), _sortLimit(0) {
+	_itemsUnused(nullptr), _sortLimit(0), _camSx(0), _camSy(0), _orderCounter(0) {
 	int i = 2048;
 	while (i--) _itemsUnused = new SortItem(_itemsUnused);
 }
@@ -657,7 +641,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_frame = frame_num;
 	const ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
 	if (!_frame) {
-		perr << "Invalid _shape: " << si->_shapeNum << "," << si->_frame
+		perr << "Invalid shape: " << si->_shapeNum << "," << si->_frame
 		     << Std::endl;
 		return;
 	}
@@ -702,6 +686,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	// Do Clipping here
 	si->_clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, _frame->_width, _frame->_height));
 	if (si->_clipped < 0)
+		// Clipped away entirely - don't add to the list.
 		return;
 
 	// These help out with sorting. We calc them now, so it will be faster
@@ -825,22 +810,31 @@ void ItemSorter::PaintDisplayList(bool item_highlight) {
 	}
 }
 
+/**
+ * Recursively paint this item and all its dependencies.
+ * Returns true if recursion should stop.
+ */
 bool ItemSorter::PaintSortItem(SortItem *si) {
-	// Don't paint this, or dependencies if occluded
-	if (si->_occluded) return false;
+	// Don't paint this, or dependencies (yet) if occluded
+	if (si->_occluded)
+		return false;
 
-	// Resursion, detection
+	// Resursion detection
 	si->_order = -2;
 
 	// Iterate through our dependancies, and paint them, if possible
 	SortItem::DependsList::iterator it = si->_depends.begin();
 	SortItem::DependsList::iterator end = si->_depends.end();
 	while (it != end) {
-		// Well, it can't. Implies infinite recursive sorting.
-		//if ((*it)->_order == -2) CANT_HAPPEN_MSG("Detected cycle in the dependency graph");
-
-		if ((*it)->_order == -1) if (PaintSortItem((*it))) return true;
-
+		if ((*it)->_order == -2) {
+			warning("cycle in paint dependency graph %d -> %d -> ... -> %d",
+					si->_shapeNum, (*it)->_shapeNum, si->_shapeNum);
+			break;
+		}
+		else if ((*it)->_order == -1) {
+			if (PaintSortItem((*it)))
+				return true;
+		}
 		++it;
 	}
 

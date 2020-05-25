@@ -1495,7 +1495,7 @@ void create_language_constants() {
 	if (cstring_resolve("SCRIPTING_ALREADY_OFF") == NULL)
 		create_cstring("SCRIPTING_ALREADY_OFF", SCRIPTING_ALREADY_OFF);
 	if (cstring_resolve("SCRIPTING_ALREADY_ON") == NULL)
-		create_cstring("SCRIPTING_ALREADY_OFF", SCRIPTING_ALREADY_OFF);
+		create_cstring("SCRIPTING_ALREADY_ON", SCRIPTING_ALREADY_ON);
 	if (cstring_resolve("CANT_WRITE_SCRIPT") == NULL)
 		create_cstring("CANT_WRITE_SCRIPT", CANT_WRITE_SCRIPT);
 	if (cstring_resolve("ERROR_READING_WALKTHRU") == NULL)

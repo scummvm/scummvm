@@ -23,16 +23,12 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Process)
-
-DEFINE_CUSTOM_MEMORY_ALLOCATION(Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(Process)
 
 Process::Process(ObjId it, uint16 ty)
 	: _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0) {
@@ -121,40 +117,27 @@ void Process::dumpInfo() const {
 	g_debugger->debugPrintf("%s\n", info.c_str());
 }
 
-void Process::save(ODataSource *ods) {
-	writeProcessHeader(ods);
-	saveData(ods); // virtual
-}
-
-void Process::writeProcessHeader(ODataSource *ods) {
-	const char *cname = GetClassType()._className; // virtual
-	uint16 clen = strlen(cname);
-
-	ods->writeUint16LE(clen);
-	ods->write(cname, clen);
-}
-
-void Process::saveData(ODataSource *ods) {
-	ods->writeUint16LE(_pid);
-	ods->writeUint32LE(_flags);
-	ods->writeUint16LE(_itemNum);
-	ods->writeUint16LE(_type);
-	ods->writeUint32LE(_result);
-	ods->writeUint32LE(static_cast<uint32>(_waiting.size()));
+void Process::saveData(Common::WriteStream *ws) {
+	ws->writeUint16LE(_pid);
+	ws->writeUint32LE(_flags);
+	ws->writeUint16LE(_itemNum);
+	ws->writeUint16LE(_type);
+	ws->writeUint32LE(_result);
+	ws->writeUint32LE(static_cast<uint32>(_waiting.size()));
 	for (unsigned int i = 0; i < _waiting.size(); ++i)
-		ods->writeUint16LE(_waiting[i]);
+		ws->writeUint16LE(_waiting[i]);
 }
 
-bool Process::loadData(IDataSource *ids, uint32 version) {
-	_pid = ids->readUint16LE();
-	_flags = ids->readUint32LE();
-	_itemNum = ids->readUint16LE();
-	_type = ids->readUint16LE();
-	_result = ids->readUint32LE();
-	uint32 waitcount = ids->readUint32LE();
+bool Process::loadData(Common::ReadStream *rs, uint32 version) {
+	_pid = rs->readUint16LE();
+	_flags = rs->readUint32LE();
+	_itemNum = rs->readUint16LE();
+	_type = rs->readUint16LE();
+	_result = rs->readUint32LE();
+	uint32 waitcount = rs->readUint32LE();
 	_waiting.resize(waitcount);
 	for (unsigned int i = 0; i < waitcount; ++i)
-		_waiting[i] = ids->readUint16LE();
+		_waiting[i] = rs->readUint16LE();
 
 	return true;
 }

@@ -27,25 +27,20 @@
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AmbushProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AmbushProcess)
 
-AmbushProcess::AmbushProcess() : Process() {
+AmbushProcess::AmbushProcess() : Process(), _delayCount(0) {
 
 }
 
-AmbushProcess::AmbushProcess(Actor *actor_) {
-	assert(actor_);
-	_itemNum = actor_->getObjId();
+AmbushProcess::AmbushProcess(Actor *actor) : _delayCount(0) {
+	assert(actor);
+	_itemNum = actor->getObjId();
 	_type = 0x21E; // CONSTANT !
-
-	_delayCount = 0;
 }
 
 void AmbushProcess::run() {
@@ -56,6 +51,12 @@ void AmbushProcess::run() {
 	_delayCount = 10;
 
 	Actor *a = getActor(_itemNum);
+	if (!a) {
+	   // this shouldn't happen
+	   terminate();
+	   return;
+	}
+
 	CombatProcess *cp = a->getCombatProcess();
 	if (!cp) {
 		// this shouldn't have happened
@@ -74,16 +75,16 @@ void AmbushProcess::run() {
 	terminate();
 }
 
-void AmbushProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void AmbushProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_delayCount);
+	ws->writeUint32LE(_delayCount);
 }
 
-bool AmbushProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool AmbushProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_delayCount = ids->readUint32LE();
+	_delayCount = rs->readUint32LE();
 
 	return true;
 }

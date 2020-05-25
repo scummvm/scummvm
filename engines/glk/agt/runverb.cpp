@@ -47,9 +47,8 @@ void v_look() {
 }
 
 
-static void v_go(int dir)
 /* 1=N, etc. */
-{
+static void v_go(int dir) {
 	int newloc, tmploc;
 	int i;
 	/*  rbool has_seen;*/
@@ -121,11 +120,8 @@ static void v_go(int dir)
 }
 
 
-
-
-static void v_noun(int vc, parse_rec *nounrec)
 /* PUSH, PULL, TURN, PLAY, CHANGE_LOCATIONS */
-{
+static void v_noun(int vc, parse_rec *nounrec) {
 	int dobj_;
 
 	dobj_ = p_obj(nounrec);
@@ -183,9 +179,8 @@ static void v_noun(int vc, parse_rec *nounrec)
 		       nounrec, NULL);
 }
 
-static void v_talk(int vc, parse_rec *nounrec, parse_rec *objrec)
 /* vc==1 if ASK, 0 if TALK TO */
-{
+static void v_talk(int vc, parse_rec *nounrec, parse_rec *objrec) {
 	int dobj_, iobj_;
 
 	dobj_ = p_obj(nounrec);
@@ -293,12 +288,11 @@ static void v_eat(int vc, parse_rec *nounrec) {
 }
 
 
-static int can_wear(parse_rec *objrec)
 /* assumes objrec is in the noun range */
-{
+static int can_wear(parse_rec *objrec) {
 	static const char *errs[] = {
 		"$The_n$$noun$ $n_is$ far too heavy to wear.",
-		"$You're$ already loaded down with too much weight as it is."
+		"$You're$ already loaded down with too much weight as it is.",
 		"$The_n$$noun$ $n_is$ too big and bulky to wear.",
 		"$You're$ wearing too much to also wear $the_n$$noun$."
 	};
@@ -314,9 +308,8 @@ static int can_wear(parse_rec *objrec)
 }
 
 
-static int can_carry(parse_rec *objrec)
 /* assumes objrec is in the noun range */
-{
+static int can_carry(parse_rec *objrec) {
 	static const char *errs[] = {
 		"$The_n$$noun$ $n_is$ far too heavy to carry.",
 		"$You're$ already carrying too much weight as it is.",
@@ -494,9 +487,8 @@ static void v_wear(parse_rec *objrec) {
 	it_move(obj, 1000);
 }
 
-static int do_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec)
 /* l_or_u: 0=lock, 1=unlock */
-{
+static int do_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec) {
 	int dnoun;
 	int dobj_, iobj_;
 	word dobj_word;
@@ -563,9 +555,8 @@ static int do_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec)
 	return 1;
 }
 
-static void v_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec)
 /* First argument indicates lock or unlock-- 0=lock, 1=unlock */
-{
+static void v_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec) {
 	if (!do_lock(l_or_u, nounrec, objrec)) return;
 	/* Need to fix these messages: */
 	alt_sysmsg((l_or_u ? 112 : 122),
@@ -573,9 +564,8 @@ static void v_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec)
 	           nounrec, objrec);
 }
 
-static void v_open(parse_rec *nounrec, parse_rec *objrec)
 /* OPEN ... WITH ... */
-{
+static void v_open(parse_rec *nounrec, parse_rec *objrec) {
 	int dnoun;
 	int dobj_, iobj_;
 
@@ -695,9 +685,8 @@ static void v_turn(word prep_, parse_rec *nounrec) {
 
 
 
-static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec)
 /* Missile=1 if actually firing a weapon. */
-{
+static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 	int targ, wep;
 	targ = targrec->obj;
 	wep = weprec->obj;
@@ -894,9 +883,8 @@ static rbool v_put(parse_rec *nounrec, word prep_,
 }
 
 
-static void v_throw(parse_rec *nounrec, word prep_, parse_rec *objrec)
 /* at, to, in, into, across, inside */
-{
+static void v_throw(parse_rec *nounrec, word prep_, parse_rec *objrec) {
 	int dobj_, iobj_;
 	dobj_ = p_obj(nounrec);
 	iobj_ = p_obj(objrec);
@@ -1079,10 +1067,9 @@ static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag
 }
 
 
-static rbool verify_scope(int vb_, parse_rec *nounrec,
-                          word prep_, parse_rec *objrec)
 /* This checks to make sure that all of the objects are present */
-{
+static rbool verify_scope(int vb_, parse_rec *nounrec,
+                          word prep_, parse_rec *objrec) {
 	int msgnum;
 	int dobj_, iobj_;
 	dobj_ = nounrec->obj;
@@ -1196,10 +1183,9 @@ rbool metacommand_cycle(int save_vb, int *p_redir_flag) {
 
 
 
-void exec_verb(void)
 /* Execute both meta-commands and more normal commands */
 /* May need tweaking for AGAIN and UNDO */
-{
+void exec_verb(void) {
 	int objswap;  /* 1=if iobj has been moved to dobj */
 	/* (Done for metacommands when there is an iobj but no dobj) */
 	rbool turndone;

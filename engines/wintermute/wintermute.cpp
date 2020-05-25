@@ -96,7 +96,7 @@ WintermuteEngine::~WintermuteEngine() {
 
 bool WintermuteEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
-	case kSupportsRTL:
+	case kSupportsReturnToLauncher:
 		return true;
 	case kSupportsLoadingDuringRuntime:
 		return true;
@@ -184,7 +184,7 @@ int WintermuteEngine::init() {
 	#endif
 
 	Common::ArchiveMemberList actors3d;
-	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
+	if (BaseEngine::instance().getFileManager()->listMatchingPackageMembers(actors3d, "*.act3d")) {
 		GUI::MessageDialog dialog(
 				_("This game requires 3D characters support, which is out of ScummVM's scope."),
 				_("Start anyway"),

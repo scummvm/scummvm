@@ -418,7 +418,12 @@ public:
 		* Supports for using the native system file browser dialog
 		* through the DialogManager.
 		*/
-		kFeatureSystemBrowserDialog
+		kFeatureSystemBrowserDialog,
+
+		/**
+		* For platforms that should not have a Quit button
+		*/
+		kFeatureNoQuit
 
 	};
 
@@ -933,7 +938,7 @@ public:
 	 * @param shakeYOffset	the shake y offset
 	 *
 	 * @note This is currently used in the SCUMM, QUEEN, KYRA, SCI, DREAMWEB,
-	 * SUPERNOVA, TEENAGENT, and TOLTECS engines.
+	 * SUPERNOVA, TEENAGENT, TOLTECS, ULTIMA, and PETKA engines.
 	 */
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset) = 0;
 

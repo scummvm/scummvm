@@ -24,7 +24,6 @@
 #include "ultima/nuvie/keybinding/key_actions.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/conf/xml_tree.h"
 #include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/files/utils.h"
@@ -34,6 +33,7 @@
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/gui/widgets/console.h"
 #include "ultima/nuvie/core/effect.h"
+#include "ultima/shared/conf/xml_tree.h"
 #include "common/hash-str.h"
 
 #define ENCODE_KEY(key, mod) ((uint32)(key) | ((uint32)(mod) << 24))
@@ -476,7 +476,7 @@ void KeyBinder::ParseLine(char *line) {
 		return;
 
 	u = s;
-	u = to_uppercase(u);
+	u = Std::to_uppercase(u);
 
 	// get key
 	while (!s.empty() && !Common::isSpace(s[0])) {
@@ -498,7 +498,7 @@ void KeyBinder::ParseLine(char *line) {
 
 			keycode = s.substr(0, i);
 			s.erase(0, i);
-			string t = to_uppercase(keycode);
+			string t = Std::to_uppercase(keycode);
 
 			if (t.empty()) {
 				::error("Keybinder: parse error in line: %s", s.c_str());
@@ -535,7 +535,7 @@ void KeyBinder::ParseLine(char *line) {
 	i = s.findFirstOf(chardata.whitespace);
 	string t = s.substr(0, i);
 	s.erase(0, i);
-	t = to_uppercase(t);
+	t = Std::to_uppercase(t);
 
 	ParseActionMap::iterator action_index;
 	action_index = _actions.find(t);
@@ -651,7 +651,7 @@ void KeyBinder::LoadGameSpecificKeys() {
 		ConsoleAddInfo("Loading %s", key_path);
 		LoadFromFileInternal(key_path);
 	} else // These aren't critical so failing to load doesn't matter much
-		ConsoleAddInfo("Couldn't find $s", key_path);
+		ConsoleAddInfo("Couldn't find %s", key_path);
 }
 
 void KeyBinder::LoadFromPatch() { // FIXME default should probably be system specific

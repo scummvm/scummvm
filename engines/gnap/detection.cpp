@@ -122,7 +122,7 @@ bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

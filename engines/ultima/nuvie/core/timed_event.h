@@ -122,9 +122,9 @@ public:
 class TimedMessage : public TimedEvent {
 	Std::string msg;
 public:
-	TimedMessage(uint32 reltime, const char *m, bool repeat = false)
+	TimedMessage(uint32 reltime, const char *m, bool repeating = false)
 		: TimedEvent(reltime), msg(m) {
-		repeat_count = repeat ? -1 : 0;
+		repeat_count = repeating ? -1 : 0;
 	}
 	void timed(uint32 evtime) override {
 		DEBUG(0, LEVEL_NOTIFICATION, "Activate! evtime=%d msg=\"%s\"\n", evtime, msg.c_str());

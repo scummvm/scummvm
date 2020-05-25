@@ -267,14 +267,14 @@ void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInit, char 
 		_actions[actionIndex].x1 = x;
 		_actions[actionIndex].y1 = y;
 		if (luaFuncInit[0] != '*')
-			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInit);
+			Common::strlcpy(_actions[actionIndex].luaFuncInit, luaFuncInit, 32);
 		if (luaFuncUse[0] != '*')
-			strcpy(_actions[actionIndex].luaFuncUse, luaFuncUse);
+			Common::strlcpy(_actions[actionIndex].luaFuncUse, luaFuncUse, 32);
 
 		if (_actions[actionIndex].luaFuncInit[0]) {
 			g_hdb->_lua->callFunction(_actions[actionIndex].luaFuncInit, 2);
-			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
-			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
+			Common::strlcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack(), 32);
+			Common::strlcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack(), 32);
 		}
 		return;
 	}
@@ -283,14 +283,14 @@ void AI::addToActionList(int actionIndex, int x, int y, char *luaFuncInit, char 
 		_actions[actionIndex].x2 = x;
 		_actions[actionIndex].y2 = y;
 		if (luaFuncInit[0] != '*')
-			strcpy(_actions[actionIndex].luaFuncInit, luaFuncInit);
+			Common::strlcpy(_actions[actionIndex].luaFuncInit, luaFuncInit, 32);
 		if (luaFuncUse[0] != '*')
-			strcpy(_actions[actionIndex].luaFuncUse, luaFuncUse);
+			Common::strlcpy(_actions[actionIndex].luaFuncUse, luaFuncUse, 32);
 
 		if (_actions[actionIndex].luaFuncInit[0]) {
 			g_hdb->_lua->callFunction(_actions[actionIndex].luaFuncInit, 2);
-			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
-			strcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack());
+			Common::strlcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack(), 32);
+			Common::strlcpy(_actions[actionIndex].entityName, g_hdb->_lua->getStringOffStack(), 32);
 		}
 		return;
 	}
@@ -351,7 +351,7 @@ bool AI::checkActionList(AIEntity *e, int x, int y, bool lookAndGrab) {
 
 void AI::addToHereList(const char *entName, int x, int y) {
 	HereT *h = new HereT;
-	strcpy(h->entName, entName);
+	Common::strlcpy(h->entName, entName, 32);
 	h->x = x;
 	h->y = y;
 	_hereList->push_back(h);
@@ -362,7 +362,7 @@ HereT *AI::findHere(int x, int y) {
 		if ((*it)->x == x && (*it)->y == y)
 			return *it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFuncUse) {
@@ -372,20 +372,20 @@ void AI::addToAutoList(int x, int y, const char *luaFuncInit, const char *luaFun
 			_autoActions[i].y = y;
 			_autoActions[i].activated = false;
 			if (luaFuncInit[0] != '*')
-				strcpy(&_autoActions[i].luaFuncInit[0], luaFuncInit);
+				Common::strlcpy(&_autoActions[i].luaFuncInit[0], luaFuncInit, 32);
 			if (luaFuncUse[0] != '*')
-				strcpy(&_autoActions[i].luaFuncUse[0], luaFuncUse);
+				Common::strlcpy(&_autoActions[i].luaFuncUse[0], luaFuncUse, 32);
 
 			if (_autoActions[i].luaFuncInit[0]) {
 				g_hdb->_lua->callFunction(_autoActions[i].luaFuncInit, 2);
 				const char *get = g_hdb->_lua->getStringOffStack();
 				if (!get)
 					return;
-				strcpy(&_autoActions[i].entityName[0], get);
+				Common::strlcpy(&_autoActions[i].entityName[0], get, 32);
 				get = g_hdb->_lua->getStringOffStack();
 				if (!get)
 					return;
-				strcpy(&_autoActions[i].entityName[0], get);
+				Common::strlcpy(&_autoActions[i].entityName[0], get, 32);
 			}
 			return;
 		}
@@ -525,11 +525,11 @@ bool AI::autoActive(int x, int y) {
 }
 
 CallbackDef allCallbacks[] = {
-	{NO_FUNCTION, NULL},
+	{NO_FUNCTION, nullptr},
 	{AI_BARREL_EXPLOSION_END, aiBarrelExplosionEnd},
 	{CALLBACK_DOOR_OPEN_CLOSE, callbackDoorOpenClose},
 	{CALLBACK_AUTODOOR_OPEN_CLOSE, callbackAutoDoorOpenClose},
-	{CALLBACK_END, NULL}
+	{CALLBACK_END, nullptr}
 };
 
 void AI::addCallback(CallbackType type, int x, int y, int delay) {
@@ -565,13 +565,13 @@ void AI::addToLuaList(int x, int y, int value1, int value2, char *luaFuncInit, c
 			_luaList[i].value1 = value1;
 			_luaList[i].value2 = value2;
 
-			strcpy(_luaList[i].luaFuncInit, luaFuncInit);
+			Common::strlcpy(_luaList[i].luaFuncInit, luaFuncInit, 32);
 			if (luaFuncInit[0] == '*')
 				_luaList[i].luaFuncInit[0] = 0;
-			strcpy(_luaList[i].luaFuncAction, luaFuncAction);
+			Common::strlcpy(_luaList[i].luaFuncAction, luaFuncAction, 32);
 			if (luaFuncAction[0] == '*')
 				_luaList[i].luaFuncAction[0] = 0;
-			strcpy(_luaList[i].luaFuncUse, luaFuncUse);
+			Common::strlcpy(_luaList[i].luaFuncUse, luaFuncUse, 32);
 			if (luaFuncUse[0] == '*')
 				_luaList[i].luaFuncUse[0] = 0;
 
@@ -624,7 +624,7 @@ void AI::addToTeleportList(int teleIndex, int x, int y, int dir, int level, int 
 		_teleporters[teleIndex].level1 = level;
 		_teleporters[teleIndex].anim1 = anim;
 		_teleporters[teleIndex].usable1 = usable;
-		strcpy(_teleporters[teleIndex].luaFuncUse1, luaFuncUse);
+		Common::strlcpy(_teleporters[teleIndex].luaFuncUse1, luaFuncUse, 32);
 		if (_teleporters[teleIndex].luaFuncUse1[0] == '*')
 			_teleporters[teleIndex].luaFuncUse1[0] = 0;
 		_numTeleporters++;
@@ -637,7 +637,7 @@ void AI::addToTeleportList(int teleIndex, int x, int y, int dir, int level, int 
 		_teleporters[teleIndex].level2 = level;
 		_teleporters[teleIndex].anim2 = anim;
 		_teleporters[teleIndex].usable2 = usable;
-		strcpy(_teleporters[teleIndex].luaFuncUse2, luaFuncUse);
+		Common::strlcpy(_teleporters[teleIndex].luaFuncUse2, luaFuncUse, 32);
 		if (_teleporters[teleIndex].luaFuncUse2[0] == '*')
 			_teleporters[teleIndex].luaFuncUse2[0] = 0;
 		_numTeleporters++;
@@ -801,7 +801,7 @@ ArrowPath *AI::findArrowPath(int x, int y) {
 		if ((*it)->tileX == x && (*it)->tileY == y)
 			return *it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void AI::addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int value1, int value2, char *id) {
@@ -809,15 +809,15 @@ void AI::addToTriggerList(char *luaFuncInit, char *luaFuncUse, int x, int y, int
 
 	_triggerList->push_back(t);
 
-	strcpy(t->id, id);
+	Common::strlcpy(t->id, id, 32);
 	t->x = x;
 	t->y = y;
 	t->value1 = value1;
 	t->value2 = value2;
 	if (luaFuncInit[0] != '*')
-		strcpy(t->luaFuncInit, luaFuncInit);
+		Common::strlcpy(t->luaFuncInit, luaFuncInit, 32);
 	if (luaFuncUse[0] != '*')
-		strcpy(t->luaFuncUse, luaFuncUse);
+		Common::strlcpy(t->luaFuncUse, luaFuncUse, 32);
 
 	if (!t->luaFuncUse[0])
 		g_hdb->_window->openMessageBar("Trigger without USE!", 10);

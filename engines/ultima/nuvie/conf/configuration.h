@@ -29,9 +29,12 @@
 #include "ultima/detection.h"
 
 namespace Ultima {
+namespace Shared {
+class XMLTree;
+} // End of namespace Shared
+
 namespace Nuvie {
 
-class XMLTree;
 class ConfigNode;
 
 #define NUVIE_CONF_READONLY true
@@ -59,7 +62,7 @@ class ConfigNode;
  */
 class Configuration {
 private:
-	Std::vector<XMLTree*> _trees;
+	Std::vector<Shared::XMLTree*> _trees;
     Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
         Common::IgnoreCase_EqualTo> _localKeys;
 	Std::string _configFilename;
@@ -111,8 +114,8 @@ public:
 	// list all subkeys of a key. (no guaranteed order in result)
 	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false);
 
-	typedef Std::pair<Std::string, Std::string> KeyType;
-	typedef Std::vector<KeyType> KeyTypeList;
+	typedef Std::pair<Common::String, Common::String> KeyType;
+	typedef Common::Array<KeyType> KeyTypeList;
 
 	void getSubkeys(KeyTypeList &ktl, Std::string basekey);
 };

@@ -898,6 +898,23 @@
 		/>
 	</drawdata>
 
+	<drawdata id = 'checkbox_disabled_selected' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal_disabled'
+				vertical_align = 'top'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bevelsq'
+					bevel = '2'
+					fill = 'none'
+		/>
+		<drawstep	func = 'cross'
+					fill = 'foreground'
+					stroke = '2'
+					fg_color = 'lightgrey'
+		/>
+	</drawdata>
+
 	<drawdata id = 'checkbox_disabled' cache = 'false'>
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'

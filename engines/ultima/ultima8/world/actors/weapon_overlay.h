@@ -38,8 +38,7 @@ struct WeaponOverlay {
 	unsigned int _dirCount;
 	Std::vector<WeaponOverlayFrame> *_frames; // 8 or 16 directions
 
-	WeaponOverlay() {
-		_frames = NULL;
+	WeaponOverlay() : _frames(nullptr), _dirCount(0) {
 	}
 	~WeaponOverlay() {
 		delete[] _frames;

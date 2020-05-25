@@ -103,7 +103,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 //	
 #ifdef NO_CLIPPING
 
-#define LINE_END_ASSIGN (0)
+#define LINE_END_ASSIGN //
 #define NOT_CLIPPED_X (1)
 #define NOT_CLIPPED_Y (1)
 #define OFFSET_PIXELS (_pixels)
@@ -121,7 +121,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 #define NOT_CLIPPED_Y (line >= 0 && line < scrn_height)
 #define OFFSET_PIXELS (off_pixels)
 
-	uint8				*off_pixels  = static_cast<uint8*>(_pixels) + static_cast<sintptr>(_clipWindow.x)*sizeof(uintX) + static_cast<sintptr>(_clipWindow.y)*_pitch;
+	uint8			*off_pixels  = _pixels + _clipWindow.x * sizeof(uintX) + _clipWindow.y * _pitch;
 	x -= _clipWindow.x;
 	y -= _clipWindow.y;
 
@@ -172,6 +172,8 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 		return;
 
 	const ShapeFrame *frame			= s->getFrame(framenum);
+	if (!frame)
+		return;
 	const uint8		*srcpixels		= frame->_pixels;
 	const uint8		*srcmask		= frame->_mask;
 	const uint32	*pal			= untformed_pal?
@@ -190,12 +192,12 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	y -= frame->_yoff;
 
 	for (int i = 0; i < height_; i++)  {
-		sintptr line = y + i;
+		int line = y + i;
 
 		if (NOT_CLIPPED_Y) {
 			const uint8	*srcline = srcpixels + i * width_;
 			const uint8	*srcmaskline = srcmask + i * width_;
-			uintX *dst_line_start = reinterpret_cast<uintX *>(static_cast<uint8*>(OFFSET_PIXELS) + _pitch * line);
+			uintX *dst_line_start = reinterpret_cast<uintX *>(OFFSET_PIXELS + _pitch * line);
 			LINE_END_ASSIGN;
 
 			for (int xpos = 0; xpos < width_; xpos++) {

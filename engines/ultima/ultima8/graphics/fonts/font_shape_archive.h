@@ -33,17 +33,15 @@ class ShapeFont;
 
 class FontShapeArchive : public ShapeArchive {
 public:
-	ENABLE_RUNTIME_CLASSTYPE()
-
 	FontShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(id_, pal_, format_) { }
 	FontShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(af, id_, pal_, format_) { }
-	FontShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
+	FontShapeArchive(Common::SeekableReadStream *rs, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(ds, id_, pal_, format_) { }
+		: ShapeArchive(rs, id_, pal_, format_) { }
  
 	~FontShapeArchive() override { }
 

@@ -272,7 +272,7 @@ bool LuaBindhelper::getMetatable(lua_State *L, const Common::String &tableName) 
 	// Push the Metatable table onto the stack
 	pushMetatableTable(L);
 
-	// Versuchen, die gewünschte Metatabelle auf den Stack zu legen. Wenn sie noch nicht existiert, muss sie erstellt werden.
+	// Versuchen, die gewÃ¼nschte Metatabelle auf den Stack zu legen. Wenn sie noch nicht existiert, muss sie erstellt werden.
 	lua_getfield(L, -1, tableName.c_str());
 	if (lua_isnil(L, -1)) {
 		// Pop nil from stack

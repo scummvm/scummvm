@@ -136,11 +136,11 @@ void printAndLog(const char *string) {
 	if (!g_io->onStatusLine && transcriptOption) {
 		// TODO Is this assuming only 70-char wide windows for GLK?
 		if ((int)strlen(string) > 70 - column) {
-			stringCopy = strdup(string);  /* Make sure we can write NULLs */
+			stringCopy = scumm_strdup(string);  /* Make sure we can write NULLs */
 			stringPart = stringCopy;
 			while ((int)strlen(stringPart) > 70 - column) {
 				int p;
-				for (p = 70 - column; p > 0 && !isspace((int)stringPart[p]); p--);
+				for (p = 70 - column; p > 0 && !Common::isSpace((int)stringPart[p]); p--);
 				stringPart[p] = '\0';
 				g_io->glk_put_string_stream(logFile, stringPart);
 				g_io->glk_put_char_stream(logFile, '\n');
@@ -242,7 +242,7 @@ static void sayParameter(CONTEXT, int p, int form) {
 
   str - The string starting with '$'
   */
-static char *printSymbol(CONTEXT, char str[]) { 
+static char *printSymbol(CONTEXT, char str[]) {
 	int advance = 2;
 
 	if (*str == '\0') printAndLog("$");
@@ -267,7 +267,7 @@ static char *printSymbol(CONTEXT, char str[]) {
 		case '-':
 		case '!':
 			space();
-			if (isdigit((int)str[2])) {
+			if (Common::isDigit((int)str[2])) {
 				int form;
 				switch (str[1]) {
 				case '+':
@@ -390,7 +390,7 @@ void output(const char *original) {
 	char *symptr;
 	Context ctx;
 
-	copy = strdup(original);
+	copy = scumm_strdup(original);
 	str = copy;
 
 	if (inhibitSpace(str) || punctuationNext(str))
@@ -429,7 +429,7 @@ void output(const char *original) {
 		capitalize = strchr("!?.", str[strlen(str) - 1]) != 0;
 
 	anyOutput = TRUE;
-	delete[] copy;
+	free(copy);
 }
 
 

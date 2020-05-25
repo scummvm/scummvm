@@ -158,6 +158,8 @@ MacWindowManager::MacWindowManager(uint32 mode) {
 	_activeWindow = -1;
 	_needsRemoval = false;
 
+	_activeWidget = nullptr;
+
 	_mode = mode;
 
 	_menu = 0;
@@ -166,7 +168,6 @@ MacWindowManager::MacWindowManager(uint32 mode) {
 
 	_engineP = nullptr;
 	_engineR = nullptr;
-	_pauseEngineCallback = nullptr;
 	_redrawEngineCallback = nullptr;
 
 	_colorBlack = 0;
@@ -210,13 +211,22 @@ void MacWindowManager::setMode(uint32 mode) {
 		_fontMan->forceBuiltinFonts();
 }
 
+void MacWindowManager::setActiveWidget(MacWidget *widget) {
+	if (_activeWidget)
+		_activeWidget->setActive(false);
+
+	_activeWidget = widget;
+
+	if (_activeWidget)
+		_activeWidget->setActive(true);
+}
 
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
 	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 
 	addWindowInitialized(w);
 
-	setActive(getNextId());
+	setActiveWindow(getNextId());
 
 	return w;
 }
@@ -226,7 +236,7 @@ MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor,
 
 	addWindowInitialized(w);
 
-	setActive(getNextId());
+	setActiveWindow(getNextId());
 
 	return w;
 }
@@ -255,14 +265,25 @@ void MacWindowManager::activateMenu() {
 		return;
 
 	if (_mode & kWMModalMenuMode) {
-		if (!_screenCopy)
-			_screenCopy = new ManagedSurface(*_screen);	// Create a copy
-		else
-			*_screenCopy = *_screen;
-		pauseEngine(true);
+		activateScreenCopy();
 	}
 
 	_menu->setVisible(true);
+}
+
+void MacWindowManager::activateScreenCopy() {
+	if (!_screenCopy)
+		_screenCopy = new ManagedSurface(*_screen);	// Create a copy
+	else
+		*_screenCopy = *_screen;
+
+	_screenCopyPauseToken = pauseEngine();
+}
+
+void MacWindowManager::disableScreenCopy() {
+	_screenCopyPauseToken.clear();
+	*_screen = *_screenCopy; // restore screen
+	g_system->copyRectToScreen(_screenCopy->getBasePtr(0, 0), _screenCopy->pitch, 0, 0, _screenCopy->w, _screenCopy->h);
 }
 
 bool MacWindowManager::isMenuActive() {
@@ -272,7 +293,7 @@ bool MacWindowManager::isMenuActive() {
 	return _menu->isVisible();
 }
 
-void MacWindowManager::setActive(int id) {
+void MacWindowManager::setActiveWindow(int id) {
 	if (_activeWindow == id)
 		return;
 
@@ -313,6 +334,9 @@ void macDrawPixel(int x, int y, int color, void *data) {
 			*((byte *)p->surface->getBasePtr(xu, yu)) =
 				(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
 					color : p->bgColor;
+
+			if (p->mask)
+				*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
 		}
 	} else {
 		int x1 = x;
@@ -328,6 +352,9 @@ void macDrawPixel(int x, int y, int color, void *data) {
 					*((byte *)p->surface->getBasePtr(xu, yu)) =
 						(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
 							color : p->bgColor;
+
+					if (p->mask)
+						*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
 				}
 	}
 }
@@ -335,7 +362,7 @@ void macDrawPixel(int x, int y, int color, void *data) {
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
-	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
+	MacPlotData pd(_screen, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
 
 	Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
 
@@ -407,8 +434,9 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		return true;
 
 	if (_activeWindow != -1) {
-		if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
-				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
+		if ((_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
+				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y))
+				|| (_activeWidget && _activeWidget->isEditable())) {
 			if (_cursorIsArrow) {
 				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 				_cursorIsArrow = false;
@@ -426,9 +454,10 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		BaseMacWindow *w = *it;
 
 		if (w->hasAllFocus() || (w->isEditable() && event.type == Common::EVENT_KEYDOWN) ||
-				w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+				w->getDimensions().contains(event.mouse.x, event.mouse.y)
+				|| (_activeWidget && _activeWidget->isEditable())) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
-				setActive(w->getId());
+				setActiveWindow(w->getId());
 
 			return w->processEvent(event);
 		}
@@ -510,6 +539,16 @@ void MacWindowManager::pushWatchCursor() {
 void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor) {
 	CursorMan.pushCursor(data, w, h, hx, hy, transcolor);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+}
+
+void MacWindowManager::pushCustomCursor(const Graphics::Cursor *cursor) {
+	CursorMan.pushCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
+	                     cursor->getHotspotY(), cursor->getKeyColor());
+
+	if (cursor->getPalette())
+		CursorMan.pushCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+	else
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 }
 
 void MacWindowManager::popCursor() {
@@ -594,17 +633,12 @@ uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	return bestColor;
 }
 
-void MacWindowManager::pauseEngine(bool pause) {
-	if (_engineP && _pauseEngineCallback) {
-		_pauseEngineCallback(_engineP, pause);
-	} else {
-		warning("MacWindowManager::pauseEngine(): no pauseEngineCallback is set");
-	}
+PauseToken MacWindowManager::pauseEngine() {
+	return _engineP->pauseEngine();
 }
 
-void MacWindowManager::setEnginePauseCallback(void *engine, void (*pauseCallback)(void *, bool)) {
+void MacWindowManager::setEngine(Engine *engine) {
 	_engineP = engine;
-	_pauseEngineCallback = pauseCallback;
 }
 
 void MacWindowManager::setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *)) {

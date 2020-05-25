@@ -229,7 +229,12 @@ void String::decRefCount(int *oldRefCount) {
 			g_refCountPool->freeChunk(oldRefCount);
 			unlockMemoryPoolMutex();
 		}
+		// Coverity thinks that we always free memory, as it assumes
+		// (correctly) that there are cases when oldRefCount == 0
+		// Thus, DO NOT COMPILE, trick it and shut tons of false positives
+#ifndef __COVERITY__
 		delete[] _str;
+#endif
 
 		// Even though _str points to a freed memory block now,
 		// we do not change its value, because any code that calls
@@ -895,6 +900,15 @@ int String::compareToIgnoreCase(const char *x) const {
 	return scumm_stricmp(c_str(), x);
 }
 
+int String::compareDictionary(const String &x) const {
+	return compareDictionary(x.c_str());
+}
+
+int String::compareDictionary(const char *x) const {
+	assert(x != nullptr);
+	return scumm_compareDictionary(c_str(), x);
+}
+
 #pragma mark -
 
 String operator+(const String &x, const String &y) {
@@ -1284,10 +1298,26 @@ int scumm_strnicmp(const char *s1, const char *s2, uint n) {
 	return l1 - l2;
 }
 
+const char *scumm_skipArticle(const char *s1) {
+	int o1 = 0;
+	if (!scumm_strnicmp(s1, "the ", 4))
+		o1 = 4;
+	else if (!scumm_strnicmp(s1, "a ", 2))
+		o1 = 2;
+	else if (!scumm_strnicmp(s1, "an ", 3))
+		o1 = 3;
+
+	return &s1[o1];
+}
+
+int scumm_compareDictionary(const char *s1, const char *s2) {
+	return scumm_stricmp(scumm_skipArticle(s1), scumm_skipArticle(s2));
+}
+
 //  Portable implementation of strdup.
 char *scumm_strdup(const char *in) {
 	const size_t len = strlen(in) + 1;
-	char *out = new char[len];
+	char *out = (char *)malloc(len);
 	if (out) {
 		strcpy(out, in);
 	}

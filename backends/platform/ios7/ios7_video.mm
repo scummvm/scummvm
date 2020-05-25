@@ -36,19 +36,21 @@ static long g_lastTick = 0;
 static int g_frames = 0;
 #endif
 
+void printError(const char *error_message) {
+	NSString *messageString = [NSString stringWithUTF8String:error_message];
+	NSLog(@"%@", messageString);
+	fprintf(stderr, "%s\n", error_message);
+}
+
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 
-int printOglError(const char *file, int line) {
-	int retCode = 0;
-
-	// returns 1 if an OpenGL error occurred, 0 otherwise.
+void printOglError(const char *file, int line) {
 	GLenum glErr = glGetError();
 	while (glErr != GL_NO_ERROR) {
-		fprintf(stderr, "glError: %u (%s: %d)\n", glErr, file, line);
-		retCode = 1;
+		Common::String error = Common::String::format("glError: %u (%s: %d)", glErr, file, line);
+		printError(error.c_str());
 		glErr = glGetError();
 	}
-	return retCode;
 }
 
 bool iOS7_isBigDevice() {
@@ -118,8 +120,8 @@ uint getSizeNextPOT(uint size) {
 
 	// In case creating the OpenGL ES context failed, we will error out here.
 	if (_context == nil) {
-		fprintf(stderr, "Could not create OpenGL ES context\n");
-		exit(-1);
+		printError("Could not create OpenGL ES context.");
+		abort();
 	}
 
 	if ([EAGLContext setCurrentContext:_context]) {
@@ -192,22 +194,9 @@ uint getSizeNextPOT(uint size) {
 - (void)createOverlaySurface {
 	uint overlayWidth = (uint) MAX(_renderBufferWidth, _renderBufferHeight);
 	uint overlayHeight = (uint) MIN(_renderBufferWidth, _renderBufferHeight);
-
-	if (iOS7_isBigDevice()) {
-		// On really big displays, like the iPad Pro, we scale the interface down
-		// so that the controls are not too small..
-		while (overlayHeight > 1024) {
-			overlayWidth /= 2;
-			overlayHeight /= 2;
-		}
-	}
-	else {
-		// On small devices, we force the user interface to use the small theme
-		while (overlayHeight > 480) {
-			overlayWidth /= 2;
-			overlayHeight /= 2;
-		}
-	}
+	float hdpi_scaler = [UIScreen mainScreen].scale;
+	overlayWidth = (uint)(overlayWidth / hdpi_scaler);
+	overlayHeight = (uint)(overlayHeight / hdpi_scaler);
 
 	_videoContext.overlayWidth = overlayWidth;
 	_videoContext.overlayHeight = overlayHeight;
@@ -255,9 +244,8 @@ uint getSizeNextPOT(uint size) {
 	if (compileSuccess == GL_FALSE) {
 		GLchar messages[256];
 		glGetShaderInfoLog(shaderHandle, sizeof(messages), 0, &messages[0]);
-		NSString *messageString = [NSString stringWithUTF8String:messages];
-		NSLog(@"%@", messageString);
-		exit(1);
+		printError(messages);
+		abort();
 	}
 
 	return shaderHandle;
@@ -303,7 +291,7 @@ uint getSizeNextPOT(uint size) {
 	glGetProgramiv(programHandle, GL_LINK_STATUS, &linkSuccess);
 	if (linkSuccess == GL_FALSE) {
 		printOpenGLError();
-		exit(1);
+		abort();
 	}
 
 	glUseProgram(programHandle);

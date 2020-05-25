@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE config SYSTEM "dtd/config.dtd" [
+  <!ENTITY % common SYSTEM "dtd/common.dtd">
+  %common;
+  <!ENTITY % constraint SYSTEM "dtd/constraint.dtd">
+  %constraint;
+  <!ENTITY % color SYSTEM "dtd/color.dtd">
+  %color;
+  <!ENTITY % armors SYSTEM "dtd/armors.dtd">
+  %armors;
+  <!ENTITY % creatures SYSTEM "dtd/creatures.dtd">
+  %creatures;
+  <!ENTITY % tileRules SYSTEM "dtd/tileRules.dtd">
+  %tileRules;
+  <!ENTITY % tilesets SYSTEM "dtd/tilesets.dtd">
+  %tilesets;
+  <!ENTITY % tileset SYSTEM "dtd/tileset.dtd">
+  %tileset;
+  <!ENTITY % tilemap SYSTEM "dtd/tilemap.dtd">
+  %tilemap;
+  <!ENTITY % egaPalette SYSTEM "dtd/egaPalette.dtd">
+  %egaPalette;
+  <!ENTITY % graphics SYSTEM "dtd/graphics.dtd">
+  %graphics;
+  <!ENTITY % maps SYSTEM "dtd/maps.dtd">
+  %maps;
+  <!ENTITY % weapons SYSTEM "dtd/weapons.dtd">
+  %weapons;
+]>
+
+<!-- $Id: config.xml 2545 2005-09-20 05:11:21Z andrewtaylor $ -->
+<!-- this is the top level config that includes all the sub-config files -->
+<config name="Ultima 4">
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="armors.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="creatures.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="maps.xml"/>  
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="tileRules.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="tilesets.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="egaPalette.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="graphics.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="music.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="sound.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="weapons.xml"/>
+</config>

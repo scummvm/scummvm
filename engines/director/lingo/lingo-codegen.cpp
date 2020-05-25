@@ -84,6 +84,9 @@ void Lingo::execute(uint pc) {
 			warning("Lingo::execute(): Bad PC (%d)", _pc);
 			break;
 		}
+
+		if (_vm->getCurrentScore() && _vm->getCurrentScore()->_stopPlay)
+			break;
 	}
 }
 
@@ -92,9 +95,30 @@ void Lingo::printStack(const char *s, uint pc) {
 
 	for (uint i = 0; i < _stack.size(); i++) {
 		Datum d = _stack[i];
-		stack += Common::String::format("<%s> ", d.getPrintable().c_str());
+		stack += Common::String::format("<%s> ", d.asString(true).c_str());
 	}
 	debugC(5, kDebugLingoExec, "[%3d]: %s", pc, stack.c_str());
+}
+
+void Lingo::printCallStack(uint pc) {
+	debugC(5, kDebugLingoExec, "Call stack:");
+	for (int i = 0; i < (int)g_lingo->_callstack.size(); i++) {
+		CFrame *frame = g_lingo->_callstack[i];
+		uint framePc = pc;
+		if (i < (int)g_lingo->_callstack.size() - 1)
+			framePc = g_lingo->_callstack[i + 1]->retpc;
+
+		if (frame->sp) {
+			debugC(5, kDebugLingoExec, "#%d %s:%d", i + 1,
+				g_lingo->_callstack[i]->sp->name.c_str(),
+				framePc
+			);
+		} else {
+			debugC(5, kDebugLingoExec, "#%d [unknown]:%d", i + 1,
+				framePc
+			);
+		}
+	}
 }
 
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
@@ -269,10 +293,10 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 		warning("Redefining handler '%s'", name.c_str());
 
 		// Do not attempt to remove code from built-ins
-		if (sym->type == HANDLER)
-			delete sym->u.defn;
-		else
-			sym->type = HANDLER;
+		sym->reset();
+		sym->refCount = new int;
+		*sym->refCount = 1;
+		sym->type = HANDLER;
 	}
 
 	sym->u.defn = code;
@@ -506,11 +530,11 @@ int Lingo::castIdFetch(Datum &var) {
 		else
 			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
 	} else if (var.type == INT || var.type == FLOAT) {
-		var.makeInt();
-		if (!score->_loadedCast->contains(var.u.i))
-			warning("castIdFetch: reference to non-existent cast ID: %d", var.u.i);
+		int castId = var.asInt();
+		if (!_vm->getCastMember(castId))
+			warning("castIdFetch: reference to non-existent cast ID: %d", castId);
 		else
-			id = var.u.i;
+			id = castId;
 	} else {
 		error("castIdFetch: was expecting STRING or INT, got %s", var.type2str());
 	}
@@ -532,30 +556,28 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		}
 
 		if (sym->type != INT && sym->type != VOID &&
-				sym->type != FLOAT && sym->type != STRING && sym->type != ARRAY) {
+				sym->type != FLOAT && sym->type != STRING &&
+				sym->type != ARRAY && sym->type != PARRAY) {
 			warning("varAssign: assignment to non-variable '%s'", sym->name.c_str());
 			return;
 		}
 
-		if ((sym->type == STRING || sym->type == VOID) && sym->u.s) // Free memory if needed
-			delete var.u.sym->u.s;
-
-		if (sym->type == POINT || sym->type == RECT || sym->type == ARRAY)
-			delete var.u.sym->u.farr;
-
+		sym->reset();
+		sym->refCount = value.refCount;
+		*sym->refCount += 1;
 		sym->type = value.type;
 		if (value.type == INT) {
 			sym->u.i = value.u.i;
 		} else if (value.type == FLOAT) {
 			sym->u.f = value.u.f;
 		} else if (value.type == STRING) {
-			sym->u.s = new Common::String(*value.u.s);
-			delete value.u.s;
+			sym->u.s = value.u.s;
 		} else if (value.type == POINT || value.type == ARRAY) {
-			sym->u.farr = new DatumArray(*value.u.farr);
-			delete value.u.farr;
+			sym->u.farr = value.u.farr;
+		} else if (value.type == PARRAY) {
+			sym->u.parr = value.u.parr;
 		} else if (value.type == SYMBOL) {
-			sym->u.i = value.u.i;
+			sym->u.s = value.u.s;
 		} else if (value.type == OBJECT) {
 			sym->u.s = value.u.s;
 		} else if (value.type == VOID) {
@@ -570,26 +592,19 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			warning("varAssign: Assigning to a reference to an empty score");
 			return;
 		}
-		if (!score->_loadedCast->contains(var.u.i)) {
-			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
-				warning("varAssign: Unknown REFERENCE %d", var.u.i);
-				return;
-			} else {
-				var.u.i -= score->_castIDoffset;
-			}
+		int referenceId = var.u.i;
+		Cast *member = g_director->getCastMember(referenceId);
+		if (!member) {
+			warning("varAssign: Unknown cast id %d", referenceId);
+			return;
 		}
-		Cast *cast = score->_loadedCast->getVal(var.u.i);
-		if (cast) {
-			switch (cast->_type) {
-			case kCastText:
-				value.makeString();
-				((TextCast *)cast)->setText(value.u.s->c_str());
-				delete value.u.s;
-				break;
-			default:
-				warning("varAssign: Unhandled cast type %s", tag2str(cast->_type));
-				break;
-			}
+		switch (member->_type) {
+		case kCastText:
+			((TextCast *)member)->setText(value.asString().c_str());
+			break;
+		default:
+			warning("varAssign: Unhandled cast type %s", tag2str(member->_type));
+			break;
 		}
 	}
 }
@@ -610,47 +625,45 @@ Datum Lingo::varFetch(Datum &var) {
 		}
 
 		result.type = sym->type;
+		delete result.refCount;
+		result.refCount = sym->refCount;
+		*result.refCount += 1;
 
 		if (sym->type == INT)
 			result.u.i = sym->u.i;
 		else if (sym->type == FLOAT)
 			result.u.f = sym->u.f;
 		else if (sym->type == STRING)
-			result.u.s = new Common::String(*sym->u.s);
+			result.u.s = sym->u.s;
 		else if (sym->type == POINT)
 			result.u.farr = sym->u.farr;
 		else if (sym->type == SYMBOL)
-			result.u.i = var.u.sym->u.i;
+			result.u.s = var.u.sym->u.s;
 		else if (sym->type == VOID)
 			result.u.i = 0;
-		else if (sym->type == ARRAY) {
+		else if (sym->type == ARRAY)
 			result.u.farr = sym->u.farr;
-		} else {
+		else if (sym->type == PARRAY)
+			result.u.parr = sym->u.parr;
+		else {
 			warning("varFetch: unhandled type: %s", var.type2str());
 			result.type = VOID;
 		}
 
 	} else if (var.type == REFERENCE) {
-		Score *score = g_director->getCurrentScore();
-		if (!score->_loadedCast->contains(var.u.i)) {
-			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
-				warning("varFetch: Unknown REFERENCE %d", var.u.i);
-				return result;
-			} else {
-				var.u.i -= score->_castIDoffset;
-			}
-		}
-		Cast *cast = score->_loadedCast->getVal(var.u.i);
+		Cast *cast = _vm->getCastMember(var.u.i);
 		if (cast) {
 			switch (cast->_type) {
 			case kCastText:
 				result.type = STRING;
-				result.u.s = new Common::String(((TextCast *)cast)->_ptext);
+				result.u.s = new Common::String(((TextCast *)cast)->getText());
 				break;
 			default:
 				warning("varFetch: Unhandled cast type %s", tag2str(cast->_type));
 				break;
 			}
+		} else {
+			warning("varFetch: Unknown cast id %d", var.u.i);
 		}
 
 	}

@@ -31,10 +31,8 @@ namespace Ultima8 {
 class idMan;
 class Object;
 class Actor;
-class IDataSource;
-class ODataSource;
 
-typedef Object *(*ObjectLoadFunc)(IDataSource *, uint32);
+typedef Object *(*ObjectLoadFunc)(Common::ReadStream *rs, uint32);
 
 class ObjectManager {
 public:
@@ -64,17 +62,19 @@ public:
 	void objectStats();
 	void objectTypes();
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ws);
+	bool load(Common::ReadStream *rs, uint32 version);
 
-	Object *loadObject(IDataSource *ids, uint32 version);
-	Object *loadObject(IDataSource *ids, Std::string classname, uint32 version);
+	void saveObject(Common::WriteStream *ws, Object *obj) const;
+	Object *loadObject(Common::ReadStream *rs, uint32 version);
 
 	Std::vector<Object *> _objects;
 	idMan *_objIDs;
 	idMan *_actorIDs;
 
 private:
+	Object *loadObject(Common::ReadStream *rs, Std::string classname, uint32 version);
+
 	void setupLoaders();
 
 	void addObjectLoader(Std::string classname, ObjectLoadFunc func) {

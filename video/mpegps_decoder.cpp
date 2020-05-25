@@ -302,7 +302,7 @@ Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getNextPacket(uint32 c
 		bool usePacket = false;
 
 		if (packet._pts == 0xFFFFFFFF) {
-			// No timestamp? Use it just in case. This could be a 
+			// No timestamp? Use it just in case. This could be a
 			// bad idea, but in my tests all audio packets have a
 			// time stamp.
 			usePacket = true;
@@ -368,7 +368,7 @@ bool MPEGPSDecoder::MPEGPSDemuxer::queueNextPacket() {
 			return true;
 		}
 
-		delete _stream;
+		delete stream;
 	}
 }
 

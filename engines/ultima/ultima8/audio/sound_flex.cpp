@@ -24,15 +24,44 @@
 
 #include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
+#include "ultima/ultima8/audio/raw_audio_sample.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Archive)
+SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nullptr) {
+	uint32 size;
+	uint8 *buf = getRawObject(0, &size);
 
+	Common::MemoryReadStream st(buf, size);
 
-SoundFlex::SoundFlex(IDataSource *ds) : Archive(ds), _samples(nullptr) {
+	if (buf[0] == 0xFF) {
+		// Crusader flex has an index in the first object with the format:
+		// [00 or FF] [ 3 bytes, often 'oB0' or 'pB0' ] [ null-terminated name ]
+		// read this data in and work out how to interpet it - probably tells
+		// some info about how to play back the raw sounds (eg, loop points?)
+		while (!st.eos() && _index.size() < _count) {
+			uint32 data = st.readUint32LE();
+			Std::string str;
+			char c = st.readByte();
+			while (c != 0 && !st.eos()) {
+				str.push_back(c);
+				c = st.readByte();
+			}
+			_index.push_back(SoundFlexEntry(str.c_str(), data));
+		}
+	} else {
+		// In U8 the first object just has 8-byte names.
+		char name[9] = {0};
+		int entries = MIN(size / 8, _count);
+		for (int i = 0; i < entries; i++) {
+			st.read(name, 8);
+			_index.push_back(SoundFlexEntry(name));
+		}
+	}
 }
 
 SoundFlex::~SoundFlex() {
@@ -63,7 +92,16 @@ void SoundFlex::cache(uint32 index) {
 
 	if (!buf || !size) return;
 
-	_samples[index] = new SonarcAudioSample(buf, size);
+	if (Std::strncmp(reinterpret_cast<const char *>(buf), "ASFX", 4) == 0) {
+		// After the 32 byte header, ASFX (crusader audio) is just raw data
+		// TODO: Check that 11025 is correct (seems like it?)
+		// TODO: Check if No Regret is Stereo and/or 16 bit?
+		const SoundFlexEntry &entry = _index[index];
+		debug(6, "SoundFlex: Playing sfx %d (%s) with data 0x%04X", index, entry._name.c_str(), entry._data);
+		_samples[index] = new RawAudioSample(buf + 32, size - 32, 11025, true, false);
+	} else {
+		_samples[index] = new SonarcAudioSample(buf, size);
+	}
 }
 
 void SoundFlex::uncache(uint32 index) {

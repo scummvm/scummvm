@@ -315,8 +315,8 @@ void AIEntity::load(Common::InSaveFile *in) {
 	FuncPtr init, init2, use, action;
 	EntFuncPtr drawf;
 
-	action = init = init2 = use = NULL;
-	drawf = NULL;
+	action = init = init2 = use = nullptr;
+	drawf = nullptr;
 
 	// Read 32-char names for the function ptrs we have in entity struct
 	in->read(funcString, 32);

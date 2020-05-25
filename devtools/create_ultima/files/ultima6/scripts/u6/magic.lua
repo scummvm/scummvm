@@ -1,4 +1,4 @@
-io.stderr:write("Magic init\n");
+--io.stderr:write("Magic init\n");
 magic_syllable_tbl = {a = "An", b = "Bet", c = "Corp", d = "Des", e = "Ex", f = "Flam", g = "Grav", h = "Hur",
                       i = "In", j = "Jux", k = "Kal", l = "Lor", m = "Mani", n = "Nox", o = "Ort", p = "Por",
                       q = "Quas", r = "Rel", s = "Sanct", t = "Tym", u = "Uus", v = "Vas", w = "Wis", x = "Xen",
@@ -9,7 +9,7 @@ magic_invocations = {}
 function magic_print_invocation_string(spell_num)
 	local i
 	local invocation = magic_spell_invocation(spell_num)
-	
+
 	for i = 1,#invocation do
 		if i ~= 1 then
 			print(" ")
@@ -21,12 +21,12 @@ end
 run_magic_script = function(invocation)
 	local spell_num = magic_invocations[invocation]
     if spell_num == nil then
-      io.stderr:write("No magic script found for invocation \"" .. invocation .. "\"\n");
+      --io.stderr:write("No magic script found for invocation \"" .. invocation .. "\"\n");
       return
     end
 
 --io.stderr:write("Running script \"" .. magic_invocations[invocation].script .."\"\n");
-	
+
     --run_script(magic_invocations[invocation].script)
     magic_cast_spell(spell_num, nil, nil)
     return
@@ -54,7 +54,7 @@ function magic_spell_name(spell_num)
 	if magic[spell_num+1] ~= nil then
 		return magic[spell_num+1].name
 	end
-	
+
 	return "Unknown"
 end
 
@@ -73,18 +73,18 @@ function magic_get_spell_list()
 	for k,v in pairs(magic) do
 			insert(list, v)
 	end
-	
+
 	return list
 end
 
 magic_init = function(name, invocation, reagents, circle, num, script)
-	local spell_num = (circle-1) * 16 + (num-1); 
+	local spell_num = (circle-1) * 16 + (num-1);
     local spell = {name=name,invocation=invocation,reagents=reagents,circle=circle,spell_num=spell_num,script=script}
 
     magic[spell_num+1] = spell
     magic_invocations[string.lower(invocation)] = spell_num
 
-    io.stderr:write("Init Magic: " .. name .. " I: " .. invocation .. "\n")
+    --io.stderr:write("Init Magic: " .. name .. " I: " .. invocation .. "\n")
 end
 
 function select_location_with_prompt(prompt)
@@ -100,16 +100,16 @@ end
 
 select_actor = function()
 	if g_magic_target ~= nil then return map_get_actor(g_magic_target) end
-	
+
 	print("On whom: ");
 
 	local loc = get_target()
 	local actor
-	
+
 	if loc ~= nil then
 		actor = map_get_actor(loc)
 	end
-	
+
 	if actor == nil then
 		print("nothing\n");
 	else
@@ -122,11 +122,11 @@ end
 
 select_obj = function()
 	if g_magic_target ~= nil then return map_get_obj(g_magic_target) end
-	
+
 	print("On what: ");
 
 	local obj = get_obj()
-	
+
 	if obj == nil then
 		print("nothing\n");
 	else
@@ -134,7 +134,7 @@ select_obj = function()
 		if obj.on_map and out_of_spell_range(obj.x, obj.y) then return end
 	end
 
-	return obj 
+	return obj
 end
 
 function select_actor_or_obj()
@@ -171,7 +171,7 @@ function select_actor_with_projectile(projectile_tile, caster)
 	if caster == nil then caster = magic_get_caster() end
 
 	local is_player = caster_is_player()
-	
+
 	local loc = select_location_with_prompt("On Whom: ")
 	local actor = map_get_actor(loc)
 	if actor == nil then
@@ -186,7 +186,7 @@ function select_actor_with_projectile(projectile_tile, caster)
 	elseif is_player == true then
 		print(actor.name.."\n")
 	end
-	
+
 	magic_casting_fade_effect(caster)
 	if loc == nil then magic_no_effect() return end
 	if out_of_spell_range(loc.x, loc.y) then return end
@@ -210,7 +210,7 @@ function select_actor_or_obj_with_projectile(projectile_tile, caster)
 	if item == nil then
 		item = map_get_obj(loc)
 	end
-	
+
 	if item ~= nil then
 		print(item.name)
 	else
@@ -291,11 +291,11 @@ function out_of_spell_range(target_x, target_y)
 	end
 end
 
-function caster_get_location()	  
+function caster_get_location()
 	 if g_magic_caster ~= nil then
 	  	return {x = g_magic_caster.x, y = g_magic_caster.y, z = g_magic_caster.z}
 	  end
-	  
+
 	  return player_get_location()
 end
 
@@ -307,7 +307,7 @@ end
 
 function caster_is_player()
 	if g_magic_caster == nil then return true end
-	
+
 	return false
 end
 
@@ -321,7 +321,7 @@ end
 
 function magic_casting_fade_effect(caster)
 	if caster == nil then caster = magic_get_caster() end
-	
+
 	Actor.black_fade_effect(caster, 12, 20) -- 12 = colour red. 20 = fade_speed
 end
 
@@ -364,7 +364,7 @@ function magic_wind(tile_num, caster, target_x, target_y)
 	local targets = {
 		{x=target_x,
 		y=target_y,
-		z=target_z}, 
+		z=target_z},
 		{x=target_x + offset_x_low,
 		y=target_y + offset_y_low,
 		z=target_z},
@@ -400,19 +400,19 @@ function magic_wind_spell(spell_num, tile_num)
 		if v.luatype == "actor" and v.actor_num ~= caster.actor_num then
 			if spell_num == 83 then --flame wind
 				spell_take_fire_dmg(caster, v)
-				
+
 			elseif spell_num == 87 then --poison wind
 				spell_poison_actor(caster, v)
-				
+
 			elseif spell_num == 98 then --energy wind
 				local exp = actor_hit(v, math.random(1, 0x1e))
-				if exp ~= 0 then         
+				if exp ~= 0 then
 					caster.exp = caster.exp + exp
 				end
-						
+
 				actor_yell_for_help(caster, v, 1)
 				actor_hit_msg(v)
-				
+
 			elseif spell_num == 113 then --death wind
 				spell_kill_actor(caster, v)
 			end

@@ -25,6 +25,7 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
+#include "common/rect.h"
 #include "common/str.h"
 
 class SdlWindow {
@@ -76,6 +77,11 @@ public:
 	 */
 	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
 
+	/*
+	 * Retrieve the current desktop resolution.
+	 */
+	Common::Rect getDesktopResolution();
+
 	bool mouseIsGrabbed() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {
@@ -87,6 +93,8 @@ public:
 
 private:
 	bool _inputGrabState;
+
+	Common::Rect _desktopRes;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:

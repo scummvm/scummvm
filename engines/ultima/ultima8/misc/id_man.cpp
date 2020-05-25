@@ -23,9 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/id_man.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -183,26 +180,26 @@ void idMan::clearID(uint16 id) {
 	assert(!_first || _last);
 }
 
-void idMan::save(ODataSource *ods) {
-	ods->writeUint16LE(_begin);
-	ods->writeUint16LE(_end);
-	ods->writeUint16LE(_maxEnd);
-	ods->writeUint16LE(_startCount);
-	ods->writeUint16LE(_usedCount);
+void idMan::save(Common::WriteStream *ws) const {
+	ws->writeUint16LE(_begin);
+	ws->writeUint16LE(_end);
+	ws->writeUint16LE(_maxEnd);
+	ws->writeUint16LE(_startCount);
+	ws->writeUint16LE(_usedCount);
 	uint16 cur = _first;
 	while (cur) {
-		ods->writeUint16LE(cur);
+		ws->writeUint16LE(cur);
 		cur = _ids[cur];
 	}
-	ods->writeUint16LE(0); // terminator
+	ws->writeUint16LE(0); // terminator
 }
 
-bool idMan::load(IDataSource *ds, uint32 version) {
-	_begin = ds->readUint16LE();
-	_end = ds->readUint16LE();
-	_maxEnd = ds->readUint16LE();
-	_startCount = ds->readUint16LE();
-	uint16 realusedcount = ds->readUint16LE();
+bool idMan::load(Common::ReadStream *rs, uint32 version) {
+	_begin = rs->readUint16LE();
+	_end = rs->readUint16LE();
+	_maxEnd = rs->readUint16LE();
+	_startCount = rs->readUint16LE();
+	uint16 realusedcount = rs->readUint16LE();
 
 	_ids.resize(_end + 1);
 
@@ -211,10 +208,10 @@ bool idMan::load(IDataSource *ds, uint32 version) {
 	}
 	_first = _last = 0;
 
-	uint16 cur = ds->readUint16LE();
+	uint16 cur = rs->readUint16LE();
 	while (cur) {
 		clearID(cur);
-		cur = ds->readUint16LE();
+		cur = rs->readUint16LE();
 	}
 
 	_usedCount = realusedcount;

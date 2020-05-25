@@ -202,11 +202,11 @@ typedef struct {
  */
 class TileAnim : public NuvieAnim {
 protected:
-	MapWindow *map_window;
-	uint32 tx, ty, // location on surface: in increments of "tile_pitch"
-	       px, py; // location on surface: pixel offset from tx,ty
+	MapWindow *_mapWindow;
+	uint32 _tx, _ty, // location on surface: in increments of "tile_pitch"
+	       _px, _py; // location on surface: pixel offset from tx,ty
 
-	vector<PositionedTile *> tiles;
+	vector<PositionedTile *> _tiles;
 
 	void display() override;
 
@@ -215,19 +215,19 @@ public:
 	~TileAnim() override;
 
 	MapCoord get_location() override {
-		return (MapCoord(tx, ty, 0));
+		return (MapCoord(_tx, _ty, 0));
 	}
 	void get_offset(uint32 &x_add, uint32 &y_add) {
-		x_add = px;
-		y_add = py;
+		x_add = _px;
+		y_add = _py;
 	}
 	sint32 get_tile_id(PositionedTile *find_tile);
 
 	void move(uint32 x, uint32 y, uint32 add_x = 0, uint32 add_y = 0) override {
-		tx = x;
-		ty = y;
-		px = add_x;
-		py = add_y;
+		_tx = x;
+		_ty = y;
+		_px = add_x;
+		_py = add_y;
 	}
 	void shift(sint32 sx, sint32 sy) override;
 	void shift_tile(uint32 ptile_num, sint32 sx, sint32 sy);

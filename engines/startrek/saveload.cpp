@@ -244,7 +244,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			Actor *a = &_actorList[i];
 			ser.syncAsUint16LE(a->spriteDrawn);
 			ser.syncString(a->animFilename);
-			if (a->bitmapFilename.size() < 15) {
+			if (a->animFilename.size() < 15) {
 				filler = 0;
 				for (uint j = 0; j < 16 - a->animFilename.size() - 1; ++j)
 					ser.syncAsByte(filler);	// make sure that exactly 16 bytes are synced

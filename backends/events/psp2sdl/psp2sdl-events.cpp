@@ -44,6 +44,11 @@ PSP2EventSource::PSP2EventSource() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
 		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 			_finger[port][i].id = -1;
+			_finger[port][i].timeLastDown = 0;
+			_finger[port][i].lastX = 0;
+			_finger[port][i].lastY = 0;
+			_finger[port][i].lastDownX = 0;
+			_finger[port][i].lastDownY = 0;
 		}
 		_multiFingerDragging[port] = DRAG_NONE;
 	}

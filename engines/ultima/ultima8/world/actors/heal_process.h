@@ -40,10 +40,10 @@ public:
 
 	INTRINSIC(I_feedAvatar);
 
-	bool loadData(IDataSource *ids, uint32 version);
-protected:
-	void saveData(ODataSource *ods) override;
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
+protected:
 	void feedAvatar(uint16 food);
 
 	uint16 _healCounter;

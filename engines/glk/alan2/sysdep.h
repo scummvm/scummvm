@@ -45,14 +45,6 @@ namespace Alan2 {
 #define GLK
 #define __win__
 
-#undef isdigit
-#define isdigit Common::isDigit
-#undef stricmp
-#define stricmp scumm_stricmp
-#undef strdup
-#define strdup scumm_strdup
-#undef rand
-#define rand() g_vm->getRandomNumber(0x7fffffff)
 #undef fprintf
 extern void fprintf(Common::WriteStream *ws, const char *fmt, ...);
 

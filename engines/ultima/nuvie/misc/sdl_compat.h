@@ -33,7 +33,6 @@ namespace Nuvie {
 #define SDL_FALSE 0
 
 #define SDL_SWSURFACE 0
-#define SDL_VERSION_ATLEAST(A, B, C) false
 
 typedef uint32 SDL_Color;
 #define MAKE_COLOR(r, g, b) (((uint32)r) | (((uint32)g) << 8) | (((uint32)b) << 16) | (((uint32)0xff) << 24))

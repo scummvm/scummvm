@@ -247,9 +247,9 @@ EventColumns *Scene::queueCredits(int delta_time, int duration, int n_credits, c
 	Event event;
 	EventColumns *eventColumns = NULL;
 
-	textEntry.knownColor = kKnownColorSubtitleTextColor;
-	textEntry.effectKnownColor = kKnownColorTransparent;
-	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
+	textEntry.knownColor = (_vm->getPlatform() == Common::kPlatformPC98) ? kKnownColorBrightWhite : kKnownColorSubtitleTextColor;
+	textEntry.effectKnownColor = (_vm->getPlatform() == Common::kPlatformPC98) ? kKnownColorVerbTextShadow : kKnownColorTransparent;
+	textEntry.flags = (FontEffectFlags)(((_vm->getPlatform() == Common::kPlatformPC98) ? kFontShadow : kFontOutline) | kFontCentered);
 	textEntry.point.x = 160;
 
 	for (i = 0; i < n_credits; i++) {
@@ -384,6 +384,8 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 		lang = 2;
 	else if (_vm->getLanguage() == Common::FR_FRA)
 		lang = 3;
+	else if (_vm->getLanguage() == Common::JA_JPN)
+		lang = 4;
 
 	int n_dialogues = 0;
 
@@ -726,12 +728,17 @@ int Scene::ITEIntroFaireTentProc(int param) {
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
 		eventColumns = _vm->_events->queue(event);
+		_vm->_events->chain(eventColumns, event);
+
+		// Queue PC98 extra credits
+		if (_vm->getPlatform() == Common::kPlatformPC98)
+			eventColumns = queueCredits(DISSOLVE_DURATION, CREDIT_DURATION1, ARRAYSIZE(creditsTent), creditsTent);
 
 		// End scene after momentary pause
 		event.type = kEvTOneshot;
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
-		event.time = 5000;
+		event.time = (_vm->getPlatform() == Common::kPlatformPC98) ? 5000 - CREDIT_DURATION1 : 5000;
 		_vm->_events->chain(eventColumns, event);
 
 		break;

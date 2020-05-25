@@ -348,16 +348,15 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
 		const Common::String &filename = *iter;
 
-#ifdef ENABLE_SCI32
-		// exclude new game and autosave slots, except for QFG4,
+		// exclude new game and autosave slots, except for QFG3/4,
 		//  whose autosave should appear as a normal saved game
-		if (g_sci->getGameId() != GID_QFG4) {
+		if (g_sci->getGameId() != GID_QFG3 && 
+			g_sci->getGameId() != GID_QFG4) {
 			const int id = strtol(filename.end() - 3, NULL, 10);
 			if (id == kNewGameId || id == kAutoSaveId) {
 				continue;
 			}
 		}
-#endif
 
 		SavegameDesc desc;
 		if (fillSavegameDesc(filename, desc)) {
@@ -444,6 +443,24 @@ Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameN
 	WRITE_LE_UINT16(out, kTerminator);
 
 	return new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
+}
+
+int shiftSciToScummVMSaveId(int saveId) {
+	if (saveId == kMaxShiftedSaveId) {
+		return 0;
+	} else if (saveId >= 0) {
+		return saveId + kSaveIdShift;
+	}
+	return saveId;
+}
+
+int shiftScummVMToSciSaveId(int saveId) {
+	if (saveId == 0) {
+		return kMaxShiftedSaveId;
+	} else if (saveId > 0) {
+		return saveId - kSaveIdShift;
+	}
+	return saveId;
 }
 #endif
 

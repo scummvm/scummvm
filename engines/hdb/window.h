@@ -56,7 +56,7 @@ struct DialogInfo {
 	char		luaMore[64];			// the name of the function to call after clicking the MORE button
 
 	DialogInfo() : tileIndex(0), active(false), x(0), y(0),
-		width(0), height(0), titleWidth(0), gfx(NULL), more(0), el(0), er(0), et(0),
+		width(0), height(0), titleWidth(0), gfx(nullptr), more(0), el(0), er(0), et(0),
 		eb(0) {
 			title[0] = 0;
 			string[0] = 0;
@@ -141,7 +141,7 @@ struct PanicZone {
 	Picture *gfxNumber[10];
 
 	PanicZone() : active(false), sequence(0), timer(0), x1(0), y1(0), x2(0), y2(0), xv(0), yv(0),
-		numberTime(0), numberTimeMaster(0), numberValue(0), gfxPanic(NULL), gfxZone(NULL) {
+		numberTime(0), numberTimeMaster(0), numberValue(0), gfxPanic(nullptr), gfxZone(nullptr) {
 		memset(&gfxFace, 0, sizeof(gfxFace));
 		memset(&gfxNumber, 0, sizeof(gfxNumber));
 	}

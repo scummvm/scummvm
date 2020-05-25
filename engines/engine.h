@@ -56,6 +56,37 @@ class Dialog;
 void GUIErrorMessage(const Common::String &msg);
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
 
+class Engine;
+
+
+/**
+* Manages pausing by Engine::pauseEngine handing out tokens that
+* each represent one requested level of pause.
+*/
+class PauseToken {
+public:
+	PauseToken();
+	PauseToken(const PauseToken &);
+#if __cplusplus >= 201103L
+	PauseToken(PauseToken &&);
+#endif
+	~PauseToken();
+
+	void operator=(const PauseToken &);
+#if __cplusplus >= 201103L
+	void operator=(PauseToken &&);
+#endif
+	/** Manually releases the PauseToken. Only allowed if the token
+	* currently represents a pause request.
+	*/
+	void clear();
+private:
+	PauseToken(Engine *);
+
+	Engine *_engine;
+
+	friend class Engine;
+};
 
 class Engine {
 public:
@@ -129,11 +160,11 @@ public:
 		kSupportsSubtitleOptions,
 
 		/**
-		 * 'Return to launcher' feature is supported, i.e., EVENT_RTL is handled
+		 * 'Return to launcher' feature is supported, i.e., EVENT_RETURN_TO_LAUNCHER is handled
 		 * either directly, or indirectly (that is, the engine calls and honors
 		 * the result of the Engine::shouldQuit() method appropriately).
 		 */
-		kSupportsRTL,
+		kSupportsReturnToLauncher,
 
 		/**
 		 * Loading savestates during runtime is supported, that is, this engine
@@ -339,17 +370,25 @@ public:
 	static MetaEngine &getMetaEngine();
 
 	/**
-	 * Pause or resume the engine. This should stop/resume any audio playback
+	 * Pause the engine. This should stop any audio playback
 	 * and other stuff. Called right before the system runs a global dialog
 	 * (like a global pause, main menu, options or 'confirm exit' dialog).
 	 *
-	 * This is a convenience tracker which automatically keeps track on how
-	 * often the engine has been paused, ensuring that after pausing an engine
-	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
-	 *
-	 * @param pause		true to pause the engine, false to resume it
+	 * Returns a PauseToken. Multiple pause tokens may exist. The engine will
+	 * be resumed when all associated pause tokens reach the end of their lives.
 	 */
-	void pauseEngine(bool pause);
+	PauseToken pauseEngine();
+private:
+	/** Resume the engine. This should resume any audio playback and other stuff.
+	*
+	* Only PauseToken is allowed to call this member function. Use the PauseToken
+	* that you got from pauseEngine to resume the engine.
+	*/
+	void resumeEngine();
+
+	friend class PauseToken;
+
+public:
 
 	/**
 	 * Return whether the engine is currently paused or not.

@@ -28,13 +28,10 @@
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(EggHatcherProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(EggHatcherProcess)
 
 EggHatcherProcess::EggHatcherProcess() {
 }
@@ -59,7 +56,7 @@ void EggHatcherProcess::run() {
 
 	for (unsigned int i = 0; i < _eggs.size(); i++) {
 		uint16 eggid = _eggs[i];
-		Egg *egg = p_dynamic_cast<Egg *>(getObject(eggid));
+		Egg *egg = dynamic_cast<Egg *>(getObject(eggid));
 		if (!egg) continue; // egg gone
 
 		int32 x, y, z;
@@ -81,7 +78,7 @@ void EggHatcherProcess::run() {
 		// if the avatar teleports, set the 'justTeleported' flag.
 		// if this is set, don't hatch any teleport _eggs
 		// unset it when you're out of range of any teleport _eggs
-		TeleportEgg *tegg = p_dynamic_cast<TeleportEgg *>(egg);
+		TeleportEgg *tegg = dynamic_cast<TeleportEgg *>(egg);
 
 		if (x1 <= ax && ax - axs < x2 && y1 <= ay && ay - ays < y2 &&
 		        z - 48 < az && az <= z + 48) { // CONSTANTS!
@@ -96,13 +93,13 @@ void EggHatcherProcess::run() {
 	if (!nearteleporter) av->setJustTeleported(false); // clear flag
 }
 
-void EggHatcherProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void EggHatcherProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 }
 
 
-bool EggHatcherProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool EggHatcherProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	// the _eggs will be re-added to the EggHatcherProcess when they're
 	// re-added to the CurrentMap

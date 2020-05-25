@@ -52,7 +52,8 @@ public:
 		SampleInfo() : _sfxNum(-1) { }
 		SampleInfo(int32 s, int32 p, ObjId o, int32 l, int32 c, uint32 ps, uint16 v, int16 lv, int16 rv) :
 			_sfxNum(s), _priority(p), _objId(o), _loops(l), _channel(c),
-			_pitchShift(ps), _volume(v), _lVol(lv), _rVol(rv) { }
+			_pitchShift(ps), _volume(v), _lVol(lv), _rVol(rv),
+			_curSpeechStart(0), _curSpeechEnd(0) { }
 		SampleInfo(const Std::string &b, int32 shpnum, ObjId o, int32 c,
 				   uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv) :
 			_sfxNum(-1), _priority(shpnum), _objId(o), _loops(0), _channel(c), _barked(b),
@@ -75,6 +76,8 @@ public:
 
 	INTRINSIC(I_playSFX);
 	INTRINSIC(I_playAmbientSFX);
+	INTRINSIC(I_playSFXCru);
+	INTRINSIC(I_playAmbientSFXCru);
 	INTRINSIC(I_isSFXPlaying);
 	INTRINSIC(I_setVolumeSFX);
 	INTRINSIC(I_stopSFX);
@@ -96,7 +99,7 @@ public:
 	void setVolumeSFX(int sfxNum, uint8 volume);
 
 	bool playSpeech(const Std::string &barked, int shapenum, ObjId objId,
-					uint32 pitchShift = 0x10000, uint16 volume = 256);
+					uint32 pitchShift = 0x10000, uint16 volume = 255);
 	void stopSpeech(const Std::string &barked, int shapenum, ObjId objId);
 	bool isSpeechPlaying(const Std::string &barked, int shapenum);
 
@@ -106,7 +109,7 @@ public:
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1
 	int playSample(AudioSample *sample, int priority, int loops,
-				   uint32 pitchShift = 0x10000, int16 lVol = 256, int16 rVol = 256);
+				   uint32 pitchShift = 0x10000, int16 lVol = 255, int16 rVol = 255);
 
 	//! pause all currently playing samples
 	void pauseAllSamples();
@@ -116,10 +119,10 @@ public:
 	//! stop all samples except speech
 	void stopAllExceptSpeech();
 
-	bool loadData(IDataSource *ids, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 
 private:
-	void saveData(ODataSource *ods) override;
 	uint32 _paused;
 
 	//! play the next speech sample for the text in this SampleInfo

@@ -68,6 +68,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "escapetofreedom", "Escape to Freedom" },
 	{ "etnyadrift", "Escape to New York" },
 	{ "farfromhome", "Far From Home" },
+	{ "finedayforreaping", "A Fine Day for Reaping" },
 	{ "frustratedinterviewee", "Frustrated Interviewee" },
 	{ "gammagals", "The Gamma Gals" },
 	{ "ghosttownadrift", "Ghost Town" },
@@ -102,6 +103,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "sceneofthecrime", "Scene of the Crime" },
 	{ "selmaswill", "Selma's Will" },
 	{ "seymoursstoopidquest", "Seymour's Stoopid Quest" },
+	{ "skybreak", "Skybreak!" },
 	{ "sommeril", "Sommeril" },
 	{ "stowaway", "Stowaway" },
 	{ "takeone", "Take One" },
@@ -109,6 +111,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "thepkgirl", "The PK Girl" },
 	{ "viewisbetter", "The View Is Better Here" },
 	{ "thelasthour", "The Last Hour" },
+	{ "thevirtualhuman", "The Virtual Human" },
 	{ "hellinahamper", "To Hell in a Hamper" },
 	{ "toomuchexercise", "Too Much Exercise" },
 	{ "topaz", "Topaz" },
@@ -138,6 +141,17 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "noblecrook3", "Noble Crook, episode 3" },
 	{ "noblecrook4", "Noble Crook, episode 4" },
 	{ "sonofcamelot", "Son of Camelot" },
+
+#ifndef RELEASE_BUILD
+	// Unsupported English ADRIFT 5 games
+	{ "axeofkolt", "The Axe of Kolt" },
+	{ "castlecoris", "The Spectre of Castle Coris" },
+	{ "fistoffire", "Die Feuerfaust - The Fist of Fire" },
+	{ "magneticmoon", "Magnetic Moon" },
+	{ "starshipquest", "Starship Quest" },
+	{ "sixsilverbullets", "Six Silver Bullets" },
+	{ "tingalan", "Tingalan" },
+#endif
 
 	// Italian Games
 	{ "ilgolem", "Il Golem" },
@@ -289,6 +303,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("escapetofreedom", "a7edcb289eb8177a143a96912ec55393", 18171),
 	DT_ENTRY0("etnyadrift", "990c0e2390d197ebcae1109e5534c433", 59583),
 	DT_ENTRY0("farfromhome", "b84df75a6ff647006f1f2783bde114f7", 42118),
+	DT_ENTRY0("finedayforreaping", "3eb40409db8034e4d2d4ff77e406caba", 96819),
 	DT_ENTRY0("frustratedinterviewee", "86dcc06a9edcd967183d5448165fd92e", 50578),
 	DT_ENTRY0("gammagals", "db813e61ded3e7f642d437ef1e77d0b3", 277834),
 	DT_ENTRY0("ghosttownadrift", "60c11a24853dec5e6a292914c6b4f7f2", 30205645),
@@ -324,13 +339,16 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("sceneofthecrime", "a8a094b145523c622e65ab6897727f2d", 68054),
 	DT_ENTRY0("selmaswill", "23b7fb4bf976135b8be2740e1fbfb83b", 19559),
 	DT_ENTRY0("seymoursstoopidquest", "61f4e155b958c1c652f12ed4216ee10d", 12623),
+	DT_ENTRY0("skybreak", "a5322754939d41aaf46c69c0a1100df8", 1191014),
 	DT_ENTRY1("sommeril", "Special Edition", "1870db33af741482bb5d93ab54200e7c", 22839),
 	DT_ENTRY0("stowaway", "6877c3079978ecf74e72b792005fca32", 14231),
 	DT_ENTRY0("takeone", "114caad9308b7adf9e15267a11f12632", 9547),
 	DT_ENTRY0("target", "c6bbbae5ea3f6407a55435cb4e0c20c3", 43024),
 	DT_ENTRY0("thepkgirl", "c9282cf8f91ebfe5a93b136f56d7a1aa", 1645515),
+	DT_ENTRY1("thepkgirl", "R3", "196773493b04cf42c92f6d1e85039469", 1645174),
 	DT_ENTRY0("viewisbetter", "9334adc4ccd03ceb1684ee56fdb07ab9", 7720),
 	DT_ENTRY0("thelasthour", "786d39eb223a64fe836f87b032b60ae1", 10658),
+	DT_ENTRY0("thevirtualhuman", "b894e19638a65e03d28b696a761d23a3", 6168),
 	DT_ENTRY0("tickettonowhere", "8c549a6bdc6a5a4895412516be8dce25", 65502),
 	DT_ENTRY0("hellinahamper", "810247344fddc9a812bf6283b4826093", 80183),
 	DT_ENTRY0("toomuchexercise", "aebb58d94f632c4232bee72b9a1b5e25", 6248),
@@ -368,6 +386,17 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("spacedetective5", "f1bf863cce436a5ef17e64237803571a", 32676),
 	DT_ENTRY0("spacedetective6", "6035c865f7a4831e4539b7a2ff2ab711", 31922),
 	DT_ENTRY0("spacedetective7", "2044086edd9b2288ff2279b3824dfcef", 30066),
+
+#ifndef RELEASE_BUILD
+	// Unsupported English ADRIFT 5 games
+	DT_ENTRY0("axeofkolt", "353a29250cc5e463876350e3d232fd22", 931390),
+	DT_ENTRY0("castlecoris", "15f21891cf889e24d21f644b07d249ce", 573856),
+	DT_ENTRY0("fistoffire", "3b76af72ce4876dfea4da23ab0b7f641", 567450),
+	DT_ENTRY0("magneticmoon", "26a11345dd49413dea2c1b4f7fd2b3fd", 488582),
+	DT_ENTRY0("starshipquest", "02fb2460c61c8d82c31fa1d763e63a7e", 449736),
+	DT_ENTRY0("sixsilverbullets", "e0f6170b5cbde7005609e68d8a25ddd3", 376934),
+	DT_ENTRY0("tingalan", "08c9ecd86664b62335d3852a2bb3d201", 259969026),
+#endif
 
 	// Italian Games
 	DT_ENTRYL0("ilgolem", Common::IT_ITA, "7ab97545be9c30457d0c9e748ab7885f", 6372213),

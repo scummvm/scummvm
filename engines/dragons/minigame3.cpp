@@ -70,24 +70,24 @@ void Minigame3::run() {
 	int iVar4;
 	DragonINI *flicker;
 	uint16 origSceneId;
-	//byte auStack1584_palette [512]; //[126];
-	uint16 local_5b2;
-	//byte auStack1072_palette [512];
-	Actor *bunnyActorTbl [4];
-	uint16 local_228;
+	//byte auStack1584_palette[512]; //[126];
+	//uint16 local_5b2;
+	//byte auStack1072_palette[512];
+	Actor *bunnyActorTbl[4];
+	uint16 local_228 = 0;
 	//uint16 local_226;
 	int16 local_224;
-	Actor *tearActorTbl [8];
+	Actor *tearActorTbl[8];
 	uint16 local_210;
-	int16 local_208 [16];
+	int16 local_208[16];
 	uint local_1e8;
 	uint oldEngineFlags;
 	uint16 local_1e0;
 	uint16 local_1de;
-	Actor *tearBlinkActorTbl2 [4];
-	Actor *tearBlinkActorTbl [4];
-	int16 local_1c8;
-	int16 local_1c6;
+	Actor *tearBlinkActorTbl2[4];
+	Actor *tearBlinkActorTbl[4];
+	int16 local_1c8 = 0;
+	int16 local_1c6 = 0;
 	uint16 local_1c2;
 	int16 local_1c0;
 	int16 local_1be;
@@ -95,11 +95,11 @@ void Minigame3::run() {
 	int16 local_1ba;
 	uint16 local_1b8;
 	int16 eyeBgYOffsetTbl[21];
-	TearInfo tearInfo [30];
-	Common::Point bunnyPositionsTbl [4];
-	Common::Point handPositionsTbl [4];
-	uint16 goodRabbitPositionTbl [4];
-	uint16 bunnyPositionTbl [4];
+	TearInfo tearInfo[30];
+	Common::Point bunnyPositionsTbl[4];
+	Common::Point handPositionsTbl[4];
+	uint16 goodRabbitPositionTbl[4];
+	uint16 bunnyPositionTbl[4];
 	int16 currentState;
 	uint16 flags;
 	int16 local_5c;
@@ -107,12 +107,12 @@ void Minigame3::run() {
 	int16 local_58;
 	int16 local_56;
 	int16 hopCounter;
-	uint16 local_50;
-	BunnyStruct bunnyInfo [2];
-	uint16 local_20;
-	uint16 local_1e;
-	uint16 local_1c;
-	uint16 local_1a;
+	uint16 local_50 = 0;
+	BunnyStruct bunnyInfo[2];
+	uint16 local_20 = 0;
+	uint16 local_1e = 0;
+	uint16 local_1c = 0;
+	uint16 local_1a = 0;
 	int16 local_16;
 	int16 local_14;
 	InventoryState origInventoryType;
@@ -196,7 +196,7 @@ void Minigame3::run() {
 // TODO
 //	memcpy2(auStack1584_palette, scrFileData_maybe, 0x200);
 //	memcpy2(auStack1072_palette, scrFileData_maybe, 0x200);
-	local_5b2 = 0x7fff;
+//	local_5b2 = 0x7fff;
 //	DisableVSyncEvent();
 	int i = 0;
 	while ((int16)i < 4) {
@@ -380,8 +380,8 @@ void Minigame3::run() {
 						bunnyActorTbl[local_1a]->_y_pos = (int16)((int)bunnyInfo[local_1e].y >> 9);
 						if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->_x_pos) {
 							local_228 = local_228 + 1;
-							bunnyActorTbl[local_1a]->updateSequence((uint)local_228 + 6 & 0xffff);
-							bunnyActorTbl[local_1c]->updateSequence((uint)local_228 + 0xd & 0xffff);
+							bunnyActorTbl[local_1a]->updateSequence(((uint)local_228 + 6) & 0xffff);
+							bunnyActorTbl[local_1c]->updateSequence(((uint)local_228 + 0xd) & 0xffff);
 						}
 					}
 				}
@@ -617,7 +617,7 @@ void Minigame3::run() {
 					if ((tmpValue & 0xffff) == 0) {
 						local_1be = 1;
 					} else {
-						local_1be = 0xffff;
+						local_1be = -1;
 					}
 					local_1bc = _vm->getRand(3);
 					local_1bc = local_1bc + 3;
@@ -731,7 +731,7 @@ void Minigame3::run() {
 		_vm->_dragonINIResource->getRecord(0x178)->objectState2 = 0;
 	}
 	_vm->waitForFrames(0x3c * 2);
-	_vm->_sound->PauseCDMusic();
+	_vm->_sound->resumeMusic();
 	_vm->fadeToBlack();
 //	fun_80017f28_noop();
 //	DAT_80093234 = DAT_80093234 + 1;

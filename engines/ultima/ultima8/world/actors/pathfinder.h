@@ -34,6 +34,9 @@ class Actor;
 class Item;
 
 struct PathfindingState {
+	PathfindingState() : _x(0), _y(0), _z(0),  _direction(0),
+		_lastAnim(Animation::walk), _flipped(false),
+		_firstStep(true), _combat(false) {};
 	int32 _x, _y, _z;
 	Animation::Sequence _lastAnim;
 	uint32 _direction;
@@ -44,7 +47,7 @@ struct PathfindingState {
 	void load(const Actor *actor);
 	bool checkPoint(int32 x_, int32 y_, int32 z_, int range) const;
 	bool checkItem(const Item *item, int xyRange, int zRange) const;
-	bool checkHit(Actor *actor, const Actor *target);
+	bool checkHit(const Actor *actor, const Actor *target) const;
 };
 
 struct PathfindingAction {
@@ -93,14 +96,15 @@ protected:
 	Std::list<PathfindingState> _visited;
 	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
 
-	Std::list<PathNode *> _nodeList;
+	/** List of nodes for garbage collection later and order is not important */
+	Std::vector<PathNode *> _cleanupNodes;
 
 	bool alreadyVisited(int32 x, int32 y, int32 z) const;
 	void newNode(PathNode *oldnode, PathfindingState &state,
 				 unsigned int steps);
 	void expandNode(PathNode *node);
 	unsigned int costHeuristic(PathNode *node);
-	bool checkTarget(PathNode *node);
+	bool checkTarget(const PathNode *node) const;
 };
 
 } // End of namespace Ultima8

@@ -36,7 +36,7 @@
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
 	OSystem_iOS7::sharedInstance()->quit();
-	exit(1);
+	abort();
 }
 
 @end
@@ -59,6 +59,24 @@ void OSystem_iOS7::fatalError() {
 	else {
 		OSystem::fatalError();
 	}
+}
+
+void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
+	FILE *output = 0;
+
+	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
+		output = stdout;
+	else
+		output = stderr;
+
+	if (type == LogMessageType::kError) {
+		_lastErrorMessage = message;
+		NSString *messageString = [NSString stringWithUTF8String:message];
+		NSLog(@"%@", messageString);
+	}
+
+	fputs(message, output);
+	fflush(output);
 }
 
 void OSystem_iOS7::engineInit() {

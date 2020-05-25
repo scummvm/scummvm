@@ -124,6 +124,21 @@ if the selection = the text of cast A31 then go to frame "sEnd" else put 7 end i
 when keyDown then if the key = RETURN then checkField
 when keyDown then if the key = QUOTE then checkField else put "bar"
 
+  if the mouseH > ((the right of sprite 15) - 20) then HidePopUp
+  else if ((the mouseH > ((the left of sprite 15) + 30)) and Â
+           (the mouseH < ((the left of sprite 15) + 73)) and Â
+           (the mouseV > ((the top  of sprite 15) + 20)) and Â
+           (the mouseV < ((the top  of sprite 15) + 40))) then StoreButtonHit
+  else if ((the mouseH > ((the left of sprite 15) + 81)) and Â
+           (the mouseH < ((the left of sprite 15) +124)) and Â
+           (the mouseV > ((the top  of sprite 15) + 20)) and Â
+           (the mouseV < ((the top  of sprite 15) + 40))) then LoadButtonHit
+  else if ((the mouseH > ((the left of sprite 15) + 30)) and Â
+           (the mouseH < ((the left of sprite 15) +124)) and Â
+           (the mouseV > ((the top  of sprite 15) + 55)) and Â
+           (the mouseV < ((the top  of sprite 15) + 83))) then AudioButtonHit
+  end if
+
 macro WindowHorzP X
     set X1 = constrainH( 14, X )
     if X1 = X then return( TRUE )

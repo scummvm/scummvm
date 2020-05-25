@@ -22,7 +22,7 @@
 
 /*
  * This code is based on original Sfinx source code
- * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
+ * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
 #include "engines/util.h"
@@ -183,7 +183,7 @@ void CGE2Engine::deinit() {
 
 bool CGE2Engine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime)
-		|| (f == kSupportsRTL);
+		|| (f == kSupportsReturnToLauncher);
 }
 
 Common::Error CGE2Engine::run() {

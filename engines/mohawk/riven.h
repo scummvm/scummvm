@@ -182,11 +182,7 @@ public:
 	void runOptionsDialog();
 
 	// Save / Load
-	void runLoadDialog();
-	void runSaveDialog();
 	virtual bool canSaveAutosaveCurrently() override;
-	void loadGameStateAndDisplayError(int slot);
-	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
 
 	/**
 	 * Has the game ended, or has the user requested to quit?

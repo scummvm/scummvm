@@ -16,26 +16,26 @@ function use_telescope(obj, actor)
 	local dir_string = direction_string(dir)
 	dir_string = dir_string:gsub("^%l", string.upper)
 	print(dir_string..".\n")
-	
+
 	local loc = mapwindow_get_location()
-	
+
 	--FIXME need to fade out blacking.
-	
+
 	mapwindow_set_enable_blacking(false)
-		
+
 	for i=0,40 do
 		loc.x,loc.y = direction_get_loc(dir,loc.x, loc.y)
 		mapwindow_set_location(loc.x, loc.y, loc.z)
 		script_wait(50)
 	end
-	
+
 	script_wait(600)
-	
+
 	mapwindow_set_enable_blacking(true)
-	
+
 	mapwindow_center_at_location(actor.x, actor.y, actor.z)
 	print("\nDone\n")
-	
+
 end
 
 function use_silver_horn(obj, actor)
@@ -47,15 +47,15 @@ function use_silver_horn(obj, actor)
 			return
 		end
 	end
-	
+
 	local random = math.random
-	
+
 	for i=1,3 do
 		local new_x = random(1, 7) + random(1, 7) + actor.x - 8
 		local new_y = random(1, 7) + random(1, 7) + actor.y - 8
 		local snake = Actor.new(413, new_x, new_y, actor.z, ALIGNMENT_CHAOTIC)
 	end
-	
+
 	print("Silver snakes are generated!\n")
 end
 

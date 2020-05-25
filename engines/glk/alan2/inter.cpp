@@ -175,13 +175,13 @@ void interpret(CONTEXT, Aaddr adr) {
 
 		switch (I_CLASS(i)) {
 		case C_CONST:
-			if (stpflg) printf("PUSH  \t%5ld", I_OP(i));
+			if (stpflg) printf("PUSH  \t%5u", I_OP(i));
 			push(I_OP(i));
 			break;
 		case C_CURVAR:
 			switch (I_OP(i)) {
 			case V_PARAM:
-				if (stpflg) printf("PARAM \t%5ld\t\t(%ld)", top(), params[top() - 1].code);
+				if (stpflg) printf("PARAM \t%5lu\t\t(%u)", top(), params[top() - 1].code);
 				push(params[pop() - 1].code);
 				break;
 			case V_CURLOC:
@@ -294,7 +294,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				Aptr sc;
 				sc = pop();
 				if (stpflg)
-					printf("SCORE \t%5ld\t\t(%ld)", sc, scores[sc - 1]);
+					printf("SCORE \t%5ld\t\t(%u)", sc, scores[sc - 1]);
 				score(sc);
 				break;
 			}
@@ -639,7 +639,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("LE \t%5ld, %5ld", lh, rh);
+					printf("LE \t%5d, %5d", lh, rh);
 				push(lh <= rh);
 				if (stpflg) {
 					if (top()) printf("\t(TRUE)");
@@ -654,7 +654,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("GE \t%5ld, %5ld", lh, rh);
+					printf("GE \t%5d, %5d", lh, rh);
 				push(lh >= rh);
 				if (stpflg) {
 					if (top()) printf("\t(TRUE)");
@@ -669,7 +669,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("LT \t%5ld, %5ld", lh, rh);
+					printf("LT \t%5d, %5d", lh, rh);
 				push((signed int)lh < (signed int)rh);
 				if (stpflg) {
 					if (top()) printf("\t(TRUE)");
@@ -684,7 +684,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("GT \t%5ld, %5ld", lh, rh);
+					printf("GT \t%5d, %5d", lh, rh);
 				push(lh > rh);
 				if (stpflg) {
 					if (top()) printf("\t(TRUE)");
@@ -699,7 +699,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("PLUS \t%5ld, %5ld", lh, rh);
+					printf("PLUS \t%5d, %5d", lh, rh);
 				push(lh + rh);
 				if (stpflg)
 					printf("\t(%ld)", top());
@@ -712,7 +712,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("MINUS \t%5ld, %5ld", lh, rh);
+					printf("MINUS \t%5d, %5d", lh, rh);
 				push(lh - rh);
 				if (stpflg)
 					printf("\t(%ld)", top());
@@ -725,7 +725,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("MULT \t%5ld, %5ld", lh, rh);
+					printf("MULT \t%5d, %5d", lh, rh);
 				push(lh * rh);
 				if (stpflg)
 					printf("\t(%ld)", top());
@@ -738,7 +738,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				rh = pop();
 				lh = pop();
 				if (stpflg)
-					printf("DIV \t%5ld, %5ld", lh, rh);
+					printf("DIV \t%5d, %5d", lh, rh);
 				push(lh / rh);
 				if (stpflg)
 					printf("\t(%ld)", top());
@@ -808,7 +808,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				low = pop();
 				val = pop();
 				if (stpflg)
-					printf("BETWEEN \t%5ld, %5ld, %5ld", val, low, high);
+					printf("BETWEEN \t%5d, %5d, %5d", val, low, high);
 				push(btw(val, low, high));
 				if (stpflg)
 					printf("\t(%ld)", top());

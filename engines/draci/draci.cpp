@@ -110,7 +110,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 bool DraciEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsSubtitleOptions) ||
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }
@@ -357,7 +357,7 @@ void DraciEngine::handleEvents() {
 		}
 	}
 
-	// Handle EVENT_QUIT and EVENT_RTL.
+	// Handle EVENT_QUIT and EVENT_RETURN_TO_LAUNCHER.
 	if (shouldQuit()) {
 		_game->setQuit(true);
 		_script->endCurrentProgram(true);

@@ -2276,7 +2276,7 @@ uint16 OldDOSFont::convert(uint16 c) const {
 		case 0x99:
 			c = 0x40;
 		case 0xE1:
-			// TODO: recheck this: no conversion for 'ß' ?
+			// TODO: recheck this: no conversion for 'ÃŸ' ?
 			break;
 		default:
 			break;

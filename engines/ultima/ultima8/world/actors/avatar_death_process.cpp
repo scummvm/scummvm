@@ -27,20 +27,18 @@
 #include "ultima/ultima8/gumps/readable_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarDeathProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarDeathProcess)
 
 AvatarDeathProcess::AvatarDeathProcess() : Process() {
 	_itemNum = 1;
@@ -57,7 +55,7 @@ void AvatarDeathProcess::run() {
 		return;
 	}
 
-	if (!(av->getActorFlags() & Actor::ACT_DEAD)) {
+	if (!av->hasActorFlags(Actor::ACT_DEAD)) {
 		perr << "AvatarDeathProcess: MainActor not dead" << Std::endl;
 		// avatar not dead?
 		terminate();
@@ -67,26 +65,29 @@ void AvatarDeathProcess::run() {
 	PaletteManager *palman = PaletteManager::get_instance();
 	palman->untransformPalette(PaletteManager::Pal_Game);
 
-	ReadableGump *gump = new ReadableGump(1, 27, 11,
-	                                      _TL_("HERE LIES*THE AVATAR*REST IN PEACE"));
-	gump->InitGump(0);
-	gump->setRelativePosition(Gump::CENTER);
-	Process *gumpproc = gump->GetNotifyProcess();
-
 	Process *menuproc = new MainMenuProcess();
 	Kernel::get_instance()->addProcess(menuproc);
-	menuproc->waitFor(gumpproc);
+
+	if (GAME_IS_U8) {
+		// TODO: What should this do in crusader?
+		ReadableGump *gump = new ReadableGump(1, 27, 11,
+											  _TL_("HERE LIES*THE AVATAR*REST IN PEACE"));
+		gump->InitGump(0);
+		gump->setRelativePosition(Gump::CENTER);
+		Process *gumpproc = gump->GetNotifyProcess();
+		menuproc->waitFor(gumpproc);
+	}
 
 	// done
 	terminate();
 }
 
-void AvatarDeathProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void AvatarDeathProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 }
 
-bool AvatarDeathProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool AvatarDeathProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

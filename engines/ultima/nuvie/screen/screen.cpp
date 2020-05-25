@@ -115,11 +115,6 @@ bool Screen::init() {
 
 	set_screen_mode();
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
-	SDL_RenderClear(sdlRenderer);
-	SDL_RenderPresent(sdlRenderer);
-#endif
 	return true;
 }
 
@@ -861,7 +856,7 @@ void Screen::clearalphamap8(uint16 x, uint16 y, uint16 w, uint16 h, uint8 opacit
 			shading_rect.setWidth((w + (SHADING_BORDER * 2)) * 16 + 8);
 			shading_rect.setHeight((h + (SHADING_BORDER * 2)) * 16 + 8);
 		}
-		shading_data = (byte *)malloc(sizeof(char) * shading_rect.width() * shading_rect.height());
+		shading_data = (byte *)malloc(sizeof(byte) * shading_rect.width() * shading_rect.height());
 		if (shading_data == NULL) {
 			/* We couldn't allocate memory for the opacity map, so just disable lighting */
 			shading_ambient = 0xFF;
@@ -1232,25 +1227,10 @@ bool Screen::initScaler() {
 	return true;
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-bool Screen::SDL_VideoModeOK(int scaled_width, int scaled_height, int bpp, int flags) {
-	return (bpp == get_screen_bpp());
-}
-#endif
-
 int Screen::get_screen_bpp() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_DisplayMode mode;
-	if (SDL_GetDisplayMode(0, 0, &mode) != 0) {
-		return 0;
-	}
-
-	return SDL_BITSPERPIXEL(mode.format);
-#else
 	// Get info. about video.
 	Graphics::PixelFormat pf = g_system->getScreenFormat();
 	return pf.bpp();
-#endif
 }
 
 void Screen::set_screen_mode() {
@@ -1266,42 +1246,13 @@ void Screen::set_screen_mode() {
 }
 
 bool Screen::toggle_fullscreen() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	return set_fullscreen(!fullscreen);
-#else
-	return sdl1_toggle_fullscreen();
-#endif
+	// No implementation
+	return true;
 }
-
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-bool Screen::sdl1_toggle_fullscreen() {
-	return false;
-}
-#endif
 
 bool Screen::set_fullscreen(bool value) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	fullscreen = value;
-	uint32 windowFlags = SDL_GetWindowFlags(sdlWindow);
-
-	if (fullscreen)
-		windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	else if ((windowFlags & SDL_WINDOW_FULLSCREEN_DESKTOP) == SDL_WINDOW_FULLSCREEN_DESKTOP)
-		windowFlags ^= SDL_WINDOW_FULLSCREEN_DESKTOP;
-
-	if (SDL_SetWindowFullscreen(sdlWindow, windowFlags) < 0) {
-		DEBUG(0, LEVEL_NOTIFICATION, "error toggling fullscreen mode %s\n", SDL_GetError());
-		return false;
-	}
-#ifdef WIN32
-	if (!fullscreen) {
-		SDL_SetWindowSize(sdlWindow, (int)(width * window_scale_w), (int)(height * window_scale_h));
-	}
-#endif
-	return true;
-#else
+	// No implementation
 	return false;
-#endif
 }
 
 //Note! assumes area divides evenly by down_scale factor
@@ -1603,53 +1554,8 @@ void Screen::get_mouse_location(int *x, int *y) {
 	*y = pt.y;
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-void Screen::scale_sdl_window_coords(sint32 *mx, sint32 *my) {
-	if (fullscreen) {
-		float sx, sy;
-		SDL_RenderGetScale(sdlRenderer, &sx, &sy);
-
-		Common::Rect viewport;
-		SDL_RenderGetViewport(sdlRenderer, &viewport);
-
-		*mx = *mx - (sint32)((float)viewport.left * sx);
-
-		sx = ((float)viewport.width() / width) * sx;
-		sy = ((float)viewport.height() / height) * sy;
-
-		*mx = (sint32)((float) * mx / sx) ;
-		*my = (sint32)((float) * my / sy) ;
-	} else {
-		sint32 w, h;
-		SDL_RenderGetLogicalSize(sdlRenderer, &w, &h);
-
-		w = w / width;
-		h = h / height;
-
-		*mx = (sint32)((float) * mx / window_scale_w);
-		*my = (sint32)((float) * my / window_scale_h);
-	}
-}
-#endif
-
 void Screen::set_non_square_pixels(bool value) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (value == non_square_pixels)
-		return;
-
-	non_square_pixels = value;
-
-	if (non_square_pixels)
-		window_scale_h *= 1.2;
-	else
-		window_scale_h /= 1.2;
-
-	int sw = (int)(width * window_scale_w);
-	int sh = (int)(height * window_scale_h);
-
-	SDL_RenderSetLogicalSize(sdlRenderer, sw, sh); //VGA non-square pixels.
-	SDL_SetWindowSize(sdlWindow, sw, sh);
-#endif
+	// No implementation
 }
 
 } // End of namespace Nuvie

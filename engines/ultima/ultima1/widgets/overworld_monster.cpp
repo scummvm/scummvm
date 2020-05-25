@@ -64,6 +64,7 @@ void OverworldMonster::movement() {
 
 void OverworldMonster::attackParty() {
 	Ultima1Game *game = dynamic_cast<Ultima1Game *>(_game);
+	assert(game);
 	Point playerPos = _map->_playerWidget->_position;
 	Point diff = playerPos - _position;
 	Point delta(SGN(diff.x), SGN(diff.y));

@@ -28,9 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class IDataSource;
-class ODataSource;
-
 //
 // idMan. Used to allocate and keep track of unused ids.
 // Supposed to be used by Kernel and World for pID and ObjId
@@ -96,8 +93,8 @@ public:
 		_maxEnd = maxEnd;
 	}
 
-	void save(ODataSource *ods);
-	bool load(IDataSource *ids, uint32 version);
+	void save(Common::WriteStream *ws) const;
+	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
 	//! double the amount of available IDs (up to the maximum passed

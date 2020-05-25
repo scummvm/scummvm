@@ -25,27 +25,26 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/item.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_class stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess)
 
 CreateItemProcess::CreateItemProcess()
-	: Process() {
+	: Process(), _shape(0), _frame(0), _quality(0), _flags(0),
+	_npcNum(0), _mapNum(0), _extendedFlags(0),
+	_x(0), _y(0), _z(0) {
 
 }
 
-CreateItemProcess::CreateItemProcess(uint32 shape_, uint32 frame_,
-                                     uint16 quality_, uint16 flags_,
-                                     uint16 npcnum_, uint16 mapnum_,
-                                     uint32 extendedflags_,
+CreateItemProcess::CreateItemProcess(uint32 shape, uint32 frame,
+                                     uint16 quality, uint16 flags,
+                                     uint16 npcnum, uint16 mapnum,
+                                     uint32 extendedflags,
                                      int32 x, int32 y, int32 z)
-	: _shape(shape_), _frame(frame_), _quality(quality_), _flags(flags_),
-	  _npcNum(npcnum_), _mapNum(mapnum_), _extendedFlags(extendedflags_),
+	: _shape(shape), _frame(frame), _quality(quality), _flags(flags),
+	  _npcNum(npcnum), _mapNum(mapnum), _extendedFlags(extendedflags),
 	  _x(x), _y(y), _z(z) {
 
 }
@@ -63,34 +62,34 @@ void CreateItemProcess::run() {
 	terminate();
 }
 
-void CreateItemProcess::saveData(ODataSource *ods) {
-	Process::saveData(ods);
+void CreateItemProcess::saveData(Common::WriteStream *ws) {
+	Process::saveData(ws);
 
-	ods->writeUint32LE(_shape);
-	ods->writeUint32LE(_frame);
-	ods->writeUint16LE(_quality);
-	ods->writeUint16LE(_flags);
-	ods->writeUint16LE(_npcNum);
-	ods->writeUint16LE(_mapNum);
-	ods->writeUint32LE(_extendedFlags);
-	ods->writeUint32LE(static_cast<uint32>(_x));
-	ods->writeUint32LE(static_cast<uint32>(_y));
-	ods->writeUint32LE(static_cast<uint32>(_z));
+	ws->writeUint32LE(_shape);
+	ws->writeUint32LE(_frame);
+	ws->writeUint16LE(_quality);
+	ws->writeUint16LE(_flags);
+	ws->writeUint16LE(_npcNum);
+	ws->writeUint16LE(_mapNum);
+	ws->writeUint32LE(_extendedFlags);
+	ws->writeUint32LE(static_cast<uint32>(_x));
+	ws->writeUint32LE(static_cast<uint32>(_y));
+	ws->writeUint32LE(static_cast<uint32>(_z));
 }
 
-bool CreateItemProcess::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool CreateItemProcess::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
-	_shape = ids->readUint32LE();
-	_frame = ids->readUint32LE();
-	_quality = ids->readUint16LE();
-	_flags = ids->readUint16LE();
-	_npcNum = ids->readUint16LE();
-	_mapNum = ids->readUint16LE();
-	_extendedFlags = ids->readUint32LE();
-	_x = static_cast<int32>(ids->readUint32LE());
-	_y = static_cast<int32>(ids->readUint32LE());
-	_z = static_cast<int32>(ids->readUint32LE());
+	_shape = rs->readUint32LE();
+	_frame = rs->readUint32LE();
+	_quality = rs->readUint16LE();
+	_flags = rs->readUint16LE();
+	_npcNum = rs->readUint16LE();
+	_mapNum = rs->readUint16LE();
+	_extendedFlags = rs->readUint32LE();
+	_x = static_cast<int32>(rs->readUint32LE());
+	_y = static_cast<int32>(rs->readUint32LE());
+	_z = static_cast<int32>(rs->readUint32LE());
 	return true;
 }
 

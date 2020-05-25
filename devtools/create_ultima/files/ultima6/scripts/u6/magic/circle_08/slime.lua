@@ -12,10 +12,10 @@ for x = loc.x - 5,loc.x + 5 do
 
 		if actor ~= nil then
 			local actor_type = actor_tbl[actor.obj_n]
-			
+
 			if actor.align == ALIGNMENT_EVIL and (actor_type == nil or actor_type[12] == 0) then
 				if actor_int_check(actor, caster) == false then
-					
+
 					local old_tile_num = actor.tile_num
 					actor.base_obj_n = 0x177 --convert actor into slime
 					local new_tile_num = actor.tile_num
@@ -28,7 +28,7 @@ for x = loc.x - 5,loc.x + 5 do
 						local obj
 						for obj in actor_inventory(actor) do
 							Actor.inv_remove_obj(actor, obj)
-						end  
+						end
 					end
 				end
 			end

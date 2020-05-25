@@ -140,7 +140,8 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected boolean isConnectionLimited() {
-			WifiManager wifiMgr = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+			// The WIFI Service must be looked up on the Application Context or memory will leak on devices < Android N (According to Android Studio warning)
+			WifiManager wifiMgr = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 			if (wifiMgr != null && wifiMgr.isWifiEnabled()) {
 				WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
 				return (wifiInfo == null || wifiInfo.getNetworkId() == -1); //WiFi is on, but it's not connected to any network
@@ -223,7 +224,7 @@ public class ScummVMActivity extends Activity {
 
 		// REMOVED: Since getFilesDir() is guaranteed to exist, getFilesDir().mkdirs() might be related to crashes in Android version 9+ (Pie or above, API 28+)!
 
-		// REMOVED: Setting savePath to Environment.getExternalStorageDirectory() + "/ScummVM/Saves/" 
+		// REMOVED: Setting savePath to Environment.getExternalStorageDirectory() + "/ScummVM/Saves/"
 		//                            so that it will be in persistent external storage and not deleted on uninstall
 		//                            This has the issue for external storage being unavailable on some devices
 		//                            Is this persistence really important considering that Android does not really support it anymore

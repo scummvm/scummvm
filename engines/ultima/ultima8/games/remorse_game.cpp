@@ -22,11 +22,16 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/remorse_game.h"
+#include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/kernel/object_manager.h"
+#include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -34,6 +39,7 @@
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -51,18 +57,38 @@ RemorseGame::~RemorseGame() {
 
 }
 
-bool RemorseGame::loadFiles() {
-	// Load palette
-	pout << "Load Palette" << Std::endl;
-	IDataSource *pf = FileSystem::get_instance()->ReadFile("@game/static/gamepal.pal");
+static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
+	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile(path);
 	if (!pf) {
-		perr << "Unable to load static/gamepal.pal." << Std::endl;
+		perr << "Unable to load static/*.pal." << Std::endl;
 		return false;
 	}
 
-	IBufferDataSource xfds(U8XFormPal, 1024);
-	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, *pf, xfds);
+	Common::MemoryReadStream xfds(CruXFormPal, 1024);
+	PaletteManager::get_instance()->load(index, *pf, xfds);
 	delete pf;
+
+	return true;
+}
+
+bool RemorseGame::loadFiles() {
+	// Load palette
+	pout << "Load Palettes" << Std::endl;
+
+	if (!loadPalette("@game/static/gamepal.pal", PaletteManager::Pal_Game))
+		return false;
+	if (GAME_IS_REGRET) {
+		if (!loadPalette("@game/static/cred.pal", PaletteManager::Pal_Cred))
+			return false;
+	}
+	if (!loadPalette("@game/static/diff.pal", PaletteManager::Pal_Diff))
+		return false;
+	if (!loadPalette("@game/static/misc.pal", PaletteManager::Pal_Misc))
+		return false;
+	if (!loadPalette("@game/static/misc2.pal", PaletteManager::Pal_Misc2))
+		return false;
+	if (!loadPalette("@game/static/star.pal", PaletteManager::Pal_Star))
+		return false;
 
 	pout << "Load GameData" << Std::endl;
 	GameData::get_instance()->loadRemorseData();
@@ -89,72 +115,89 @@ bool RemorseGame::startGame() {
 
 	ObjectManager::get_instance()->assignActorObjId(actor, 1);
 
-	actor->setLocation(60700, 59420, 16);
-
+	if (GAME_IS_REMORSE) {
+		actor->setLocation(60716, 59400, 16);
+	} else {
+		actor->setLocation(58174, 56606, 16);
+	}
 
 	World::get_instance()->switchMap(1);
-
-	Ultima8Engine::get_instance()->setAvatarInStasis(true);
 
 	return true;
 }
 
 bool RemorseGame::startInitialUsecode(int saveSlot) {
-//	Process* proc = new StartU8Process();
-//	Kernel::get_instance()->addProcess(proc);
-
+	Process* proc = new StartCrusaderProcess();
+	Kernel::get_instance()->addProcess(proc);
 	return true;
 }
 
 
-ProcId RemorseGame::playIntroMovie(bool fade) {
-	return 0;
+static ProcId playMovie(const char *movieID, bool fade) {
+	const Std::string filename = Std::string::format("@game/flics/%s.avi", movieID);
+	FileSystem *filesys = FileSystem::get_instance();
+	Common::SeekableReadStream *rs = filesys->ReadFile(filename);
+	if (!rs) {
+		pout << "RemorseGame::playIntro: movie not found." << Std::endl;
+		return 0;
+	}
+	// TODO: Add support for subtitles (.txt file).  The format is very simple.
+	return MovieGump::U8MovieViewer(rs, fade);
 }
 
+ProcId RemorseGame::playIntroMovie(bool fade) {
+	return playMovie("T01", fade);
+}
+
+ProcId RemorseGame::playIntroMovie2(bool fade) {
+	return playMovie("T02", fade);
+}
+
+
 ProcId RemorseGame::playEndgameMovie(bool fade) {
-	return 0;
+	return playMovie("O01", fade);
 }
 
 void RemorseGame::playCredits() {
 
 }
 
-void RemorseGame::writeSaveInfo(ODataSource *ods) {
+void RemorseGame::writeSaveInfo(Common::WriteStream *ws) {
 #if 0
 	MainActor *av = getMainActor();
 	int32 x, y, z;
 
 	const Std::string &avname = av->getName();
 	uint8 namelength = static_cast<uint8>(avname.size());
-	ods->writeByte(namelength);
+	ws->writeByte(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
-		ods->writeByte(static_cast<uint8>(avname[i]));
+		ws->writeByte(static_cast<uint8>(avname[i]));
 
 	av->getLocation(x, y, z);
-	ods->writeUint16LE(av->getMapNum());
-	ods->writeUint32LE(static_cast<uint32>(x));
-	ods->writeUint32LE(static_cast<uint32>(y));
-	ods->writeUint32LE(static_cast<uint32>(z));
+	ws->writeUint16LE(av->getMapNum());
+	ws->writeUint32LE(static_cast<uint32>(x));
+	ws->writeUint32LE(static_cast<uint32>(y));
+	ws->writeUint32LE(static_cast<uint32>(z));
 
-	ods->writeUint16LE(av->getStr());
-	ods->writeUint16LE(av->getInt());
-	ods->writeUint16LE(av->getDex());
-	ods->writeUint16LE(av->getHP());
-	ods->writeUint16LE(av->getMaxHP());
-	ods->writeUint16LE(av->getMana());
-	ods->writeUint16LE(av->getMaxMana());
-	ods->writeUint16LE(av->getArmourClass());
-	ods->writeUint16LE(av->getTotalWeight());
+	ws->writeUint16LE(av->getStr());
+	ws->writeUint16LE(av->getInt());
+	ws->writeUint16LE(av->getDex());
+	ws->writeUint16LE(av->getHP());
+	ws->writeUint16LE(av->getMaxHP());
+	ws->writeUint16LE(av->getMana());
+	ws->writeUint16LE(av->getMaxMana());
+	ws->writeUint16LE(av->getArmourClass());
+	ws->writeUint16LE(av->getTotalWeight());
 
 	for (unsigned int i = 1; i <= 6; i++) {
 		const uint16 objid = av->getEquip(i);
 		const Item *item = getItem(objid);
 		if (item) {
-			ods->writeUint32LE(item->getShape());
-			ods->writeUint32LE(item->getFrame());
+			ws->writeUint32LE(item->getShape());
+			ws->writeUint32LE(item->getFrame());
 		} else {
-			ods->writeUint32LE(0);
-			ods->writeUint32LE(0);
+			ws->writeUint32LE(0);
+			ws->writeUint32LE(0);
 		}
 	}
 #endif

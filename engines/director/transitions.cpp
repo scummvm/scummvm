@@ -171,8 +171,12 @@ void Frame::playTransition(Score *score) {
 	t.duration = MAX<uint16>(250, _transDuration); // When duration is < 1/4s, make it 1/4
 	t.chunkSize = MAX<uint>(1, _transChunkSize);
 
+	// If we requested fast transitions, speed everything up
+	if (debugChannelSet(-1, kDebugFast))
+		t.duration = 250;
+
 	if (_transArea)
-		warning("STUB: Changed area transition");
+		warning("STUB: Transition over changed area transition");
 
 	Common::Rect clipRect(score->_movieRect);
 	clipRect.moveTo(0, 0);
@@ -381,15 +385,15 @@ void Frame::playTransition(Score *score) {
 
 		case kTransCoverDown:								// 29
 			rto.setHeight(h);
-			rto.moveTo(0, -h + t.yStepSize * i);
+			rto.moveTo(0, t.yStepSize * i - h);
 			break;
 
 		case kTransCoverDownLeft:							// 30
-			rto.moveTo(w - t.xStepSize * i, -h + t.yStepSize * i);
+			rto.moveTo(w - t.xStepSize * i, t.yStepSize * i - h);
 			break;
 
 		case kTransCoverDownRight:							// 31
-			rto.moveTo(-w + t.xStepSize * i, -h + t.yStepSize * i);
+			rto.moveTo(t.xStepSize * i - w, t.yStepSize * i - h);
 			break;
 
 		case kTransCoverLeft:								// 32
@@ -397,7 +401,7 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransCoverRight:								// 33
-			rto.moveTo(-w + t.xStepSize * i, 0);
+			rto.moveTo(t.xStepSize * i - w, 0);
 			break;
 
 		case kTransCoverUp:									// 34
@@ -409,7 +413,7 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		case kTransCoverUpRight:							// 36
-			rto.moveTo(-w + t.xStepSize * i, h - t.yStepSize * i);
+			rto.moveTo(t.xStepSize * i - w, h - t.yStepSize * i);
 			break;
 
 		case kTransVenetianBlind:							// 37
@@ -784,7 +788,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 
 			for (int y = 0; y < t.yStepSize; y++) {
 				for (int x = 0; x < t.xStepSize; x++) {
-					if ((x & 2) ^ (y & 2) ^ flag) {
+					if ((x & 2) ^ (y & 2) ^ (int)flag) {
 						rto.moveTo(x * t.stripSize, y * t.stripSize);
 						rects.push_back(rto);
 					}
@@ -932,7 +936,7 @@ static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
 
 	t.steps += 2;
 
-	Graphics::MacPlotData pd(score->_backSurface, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
+	Graphics::MacPlotData pd(score->_backSurface, nullptr, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
 
 	for (uint16 i = 1; i < t.steps; i++) {
 		score->_backSurface->copyFrom(*score->_backSurface2);

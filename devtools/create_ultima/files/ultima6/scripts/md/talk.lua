@@ -6,14 +6,14 @@ function open_gates_at_olympus_mons()
    else
       printl("AARGH")
    end
-   
+
    gate = map_get_obj(0x2c4, 0x1f3, 0, 181) -- OBJ_GATE
    if gate ~= nil then
       gate.frame_n = 7
    else
       printl("AARGH")
    end
-   
+
 end
 
 function open_dream_machine_door()

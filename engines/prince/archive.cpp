@@ -98,6 +98,29 @@ bool PtcArchive::openTranslation(const Common::String &filename) {
 		_items[translationNames[i]] = item;
 	}
 
+	if ((int32)_items[translationNames[0]]._offset == _stream->pos()) {
+		warning("v0 translation file detected, update is needed");
+
+		return true;
+	}
+
+	// We have latter versions of the file
+	if (_stream->readByte() != '\n') {
+		error("Malformed prince_translation.dat file");
+	}
+
+	Common::String version = _stream->readLine();
+	Common::String stamp = _stream->readLine();
+
+	warning("%s translation file detected, built on %s", version.c_str(), stamp.c_str());
+
+	if (version.equals("v1.0")) {
+		// No more data, we all fine
+		return true;
+	}
+
+	// Here we have format extension data
+
 	return true;
 }
 

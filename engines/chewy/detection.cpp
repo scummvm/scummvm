@@ -150,7 +150,7 @@ bool ChewyMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Chewy::ChewyEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

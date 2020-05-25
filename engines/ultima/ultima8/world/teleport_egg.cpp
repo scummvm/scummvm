@@ -26,13 +26,10 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportEgg, Egg)
+DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportEgg)
 
 TeleportEgg::TeleportEgg() {
 }
@@ -53,12 +50,12 @@ uint16 TeleportEgg::hatch() {
 	return 0;
 }
 
-void TeleportEgg::saveData(ODataSource *ods) {
-	Egg::saveData(ods);
+void TeleportEgg::saveData(Common::WriteStream *ws) {
+	Egg::saveData(ws);
 }
 
-bool TeleportEgg::loadData(IDataSource *ids, uint32 version) {
-	if (!Egg::loadData(ids, version)) return false;
+bool TeleportEgg::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Egg::loadData(rs, version)) return false;
 
 	return true;
 }

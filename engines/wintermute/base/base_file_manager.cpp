@@ -295,6 +295,11 @@ bool BaseFileManager::registerPackages() {
 					if (_language != Common::RU_RUS) {
 						continue;
 					}
+				// Serbian
+				} else if (fileName == "xlanguage_sr.dcp") {
+					if (_language != Common::SR_SER) {
+						continue;
+					}
 				// Spanish
 				} else if (fileName == "spanish.dcp" || fileName == "xlanguage_es.dcp" || fileName == "spanish_language_pack.dcp") {
 					if (_language != Common::ES_ESP) {
@@ -390,8 +395,22 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 	return false;
 }
 
-int BaseFileManager::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
+//////////////////////////////////////////////////////////////////////////
+int BaseFileManager::listMatchingPackageMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
 	return _packages.listMatchingMembers(list, pattern);
+}
+
+//////////////////////////////////////////////////////////////////////////
+int BaseFileManager::listMatchingFiles(Common::StringArray &list, const Common::String &pattern) {
+	list = sfmFileList(pattern);
+	
+	Common::ArchiveMemberList files;
+	listMatchingDiskFileMembers(files, pattern);
+	for (Common::ArchiveMemberList::const_iterator it = files.begin(); it != files.end(); ++it) {
+		list.push_back((*it)->getName());
+	}
+		
+	return list.size();
 }
 
 //////////////////////////////////////////////////////////////////////////

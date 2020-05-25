@@ -37,51 +37,15 @@ class MidiPlayer;
 class MusicProcess : public Process {
 	friend class Debugger;
 
-	enum PlaybackStates {
-		PLAYBACK_NORMAL = 1,
-		PLAYBACK_TRANSITION = 2,
-		PLAYBACK_PLAY_WANTED = 3
-	};
-
-public:
-	//! The saveable part of track state
-	struct TrackState {
-		//! Track we want to play
-		int _wanted;
-		//! Last requested track that was not a temporary (ie, combat) track
-		int _lastRequest;
-		//! Track queued to start after current
-		int _queued;
-
-		TrackState() : _wanted(0), _lastRequest(0), _queued(0) { }
-		TrackState(int wanted, int lastRequest, int queued) :
-			_wanted(wanted), _lastRequest(lastRequest), _queued(queued) { }
-	};
-
-private:
-	void saveData(ODataSource *ods) override;
-
+protected:
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music
-	void playMusic_internal(int track);
+	virtual void playMusic_internal(int track) = 0;
 
 	static MusicProcess *_theMusicProcess;
 
-	MidiPlayer *_midiPlayer;
-	PlaybackStates _state;
-	int _songBranches[128];
-
-	int _currentTrack;      //! Currently playing track (don't save)
-
-	TrackState _trackState;
-
-	//! Is the current music "combat" music
-	bool _combatMusicActive;
-
 public:
 	MusicProcess();
-	MusicProcess(MidiPlayer *player); // Note that this does NOT delete the driver
-	~MusicProcess() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -92,28 +56,24 @@ public:
 	}
 
 	//! Play some background music. Does not change the current track if combat music is active.  If another track is currently queued, just queues this track for play.
-	void playMusic(int track);
+	virtual void playMusic(int track) = 0;
 	//! Play some combat music - the last played track will be remembered
-	void playCombatMusic(int track);
+	virtual void playCombatMusic(int track) = 0;
 	//! Queue a track to start once the current one finishes
-	void queueMusic(int track);
+	virtual void queueMusic(int track) = 0;
 	//! Clear any queued track (does not affect currently playing track)
-	void unqueueMusic();
+	virtual void unqueueMusic() = 0;
 	//! Restore the last requested non-combat track (eg, at the end of combat)
-	void restoreMusic();
+	virtual void restoreMusic() = 0;
+
+	//! Save the current track state - used when the menu is opened
+	virtual void saveTrackState() = 0;
+	//! Bring back the track state from before it was put on hold
+	virtual void restoreTrackState() = 0;
 
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_musicStop);
 
-
-	//! Get the state of tracks (wanted, requested, queued)
-	void getTrackState(TrackState &trackState) const;
-
-	void setTrackState(const TrackState &state);
-
-	void run() override;
-
-	bool loadData(IDataSource *ids, uint32 version);
 };
 
 } // End of namespace Ultima8

@@ -68,7 +68,7 @@ public:
 
 	void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley) override;
 
-	Gump *OnMouseMotion(int32 mx, int32 my) override;
+	Gump *onMouseMotion(int32 mx, int32 my) override;
 
 	//! display the next part of the text
 	//! \return false if there is no more text to display
@@ -99,10 +99,8 @@ protected:
 	Font *getFont() const;
 
 public:
-	bool loadData(IDataSource *ids, uint32 version);
-
-protected:
-	void saveData(ODataSource *ods) override;
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Ultima8

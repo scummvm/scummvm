@@ -632,10 +632,6 @@ void Game::play() {
 	screen->update();
 
 	//map_window->drawMap();
-//if !SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
-	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL);
-#endif
 
 	map_window->updateBlacking();
 

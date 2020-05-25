@@ -34,7 +34,6 @@ namespace Ultima8 {
 
 class ZipFile;
 class IDataSource;
-class ODataSource;
 class OAutoBufferDataSource;
 
 class SavegameReader {

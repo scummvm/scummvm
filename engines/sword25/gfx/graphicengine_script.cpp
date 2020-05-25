@@ -69,7 +69,7 @@ static LuaCallback *loopPointCallbackPtr = 0;	// FIXME: should be turned into Gr
 static ActionCallback *actionCallbackPtr = 0;	// FIXME: should be turned into GraphicEngine member var
 }
 
-// Die Strings werden als #defines definiert um Stringkomposition zur Compilezeit zu ermöglichen.
+// Die Strings werden als #defines definiert um Stringkomposition zur Compilezeit zu ermÃ¶glichen.
 #define RENDEROBJECT_CLASS_NAME "Gfx.RenderObject"
 #define BITMAP_CLASS_NAME "Gfx.Bitmap"
 #define PANEL_CLASS_NAME "Gfx.Panel"
@@ -210,7 +210,7 @@ static int init(lua_State *L) {
 	int __startStackDepth = lua_gettop(L);
 #endif
 
-	// Main-Panel zum Gfx-Modul hinzufügen
+	// Main-Panel zum Gfx-Modul hinzufÃ¼gen
 	RenderObjectPtr<Panel> mainPanelPtr(getGE()->getMainPanel());
 	assert(mainPanelPtr.isValid());
 

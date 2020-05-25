@@ -35,15 +35,13 @@
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/get_object.h"
-
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/odata_source.h"
+#include "ultima/ultima8/graphics/palette_fader_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // p_dynamic_cast stuff
-DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process)
+DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process)
 
 StartU8Process::StartU8Process(int saveSlot) : Process(),
 		_init(false), _saveSlot(saveSlot), _skipStart(saveSlot >= 0) {
@@ -63,6 +61,7 @@ void StartU8Process::run() {
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
 	if (_saveSlot >= 0 &&Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
+		PaletteFaderProcess::I_fadeFromBlack(0, 0);
 		return;
 	}
 
@@ -79,7 +78,7 @@ void StartU8Process::run() {
 		}
 
 		uint16 objid = uclist.getuint16(0);
-		Egg *egg = p_dynamic_cast<Egg *>(getObject(objid));
+		Egg *egg = dynamic_cast<Egg *>(getObject(objid));
 		int32 ix, iy, iz;
 		egg->getLocation(ix, iy, iz);
 		// Center on egg
@@ -111,14 +110,14 @@ void StartU8Process::run() {
 	terminate();
 }
 
-void StartU8Process::saveData(ODataSource *ods) {
+void StartU8Process::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN();
 
-	Process::saveData(ods);
+	Process::saveData(ws);
 }
 
-bool StartU8Process::loadData(IDataSource *ids, uint32 version) {
-	if (!Process::loadData(ids, version)) return false;
+bool StartU8Process::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Process::loadData(rs, version)) return false;
 
 	return true;
 }

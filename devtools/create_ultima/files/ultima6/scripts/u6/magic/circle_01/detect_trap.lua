@@ -13,7 +13,7 @@ local actor_int = actor_int_adj(caster)
 
 if actor_int >= dice_roll then
 	local child
-	for child in container_objs(obj) do  -- look through container for effect object. 
+	for child in container_objs(obj) do  -- look through container for effect object.
 		if child.obj_n == 337 then --effect
 			found = true
 			print("\nIt's trapped.\n");
