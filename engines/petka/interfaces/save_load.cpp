@@ -52,6 +52,7 @@ void InterfaceSaveLoad::start(int id) {
 
 	_loadMode = (id == kLoadMode);
 
+	_objs.clear();
 	QObjectBG *bg = (QObjectBG *)sys->findObject("SAVELOAD");
 	_objs.push_back(bg);
 	bg->_resourceId = kFirstSaveLoadPageId + _page + (_loadMode ? 0 : 5);
