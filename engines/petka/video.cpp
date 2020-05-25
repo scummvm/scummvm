@@ -47,7 +47,7 @@ void VideoSystem::update() {
 	Interface *interface = g_vm->getQSystem()->_currInterface;
 	uint32 time = g_system->getMillis();
 	if (interface) {
-		for (uint i = 0; i < interface->_objs.size(); ++i) {
+		for (uint i = interface->_startIndex; i < interface->_objs.size(); ++i) {
 			interface->_objs[i]->update(time - _time);
 		}
 
