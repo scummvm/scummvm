@@ -240,6 +240,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	// German CD version
+	{
+		{
+			"ultima8",
+			"",
+			AD_ENTRY1s("gusecode.flx", "dc981f82c6303548ad1c967cdef1a0ea", 1335445),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
 	{
 		{
 			"ultima8",
