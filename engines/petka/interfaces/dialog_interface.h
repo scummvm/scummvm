@@ -55,7 +55,7 @@ public:
 	Sound *findSound();
 
 	void setSender(QMessageObject *sender);
-	void setReaction(QReaction *reaction, bool deletePrev = false);
+	void setReaction(QReaction *reaction);
 
 private:
 	void onPlayOpcode(int prevTalkerId);

@@ -140,8 +140,11 @@ void DialogInterface::onEndOpcode() {
 	_id = -1;
 	_qsys->_currInterface->removeTexts();
 	restoreCursor();
-	if (_reaction)
-		processSavedReaction(&_reaction, _sender);
+	if (_reaction) {
+		QReaction *reaction = _reaction;
+		_reaction = nullptr;
+		processSavedReaction(reaction, _sender);
+	}
 	_sender = nullptr;
 }
 
@@ -174,9 +177,8 @@ void DialogInterface::removeSound() {
 	_soundName.clear();
 }
 
-void DialogInterface::setReaction(QReaction *reaction, bool deletePrev) {
-	if (deletePrev)
-		delete _reaction;
+void DialogInterface::setReaction(QReaction *reaction) {
+	delete _reaction;
 	_reaction = reaction;
 }
 

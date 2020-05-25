@@ -35,6 +35,7 @@ namespace Petka {
 QObjectPetka::QObjectPetka() {
 	_field7C = 1;
 	_reaction = nullptr;
+	_heroReaction = nullptr;
 	_sender = nullptr;
 	_isPetka = true;
 	_isWalking = false;
@@ -63,7 +64,9 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 	}
 	if (msg.opcode != kWalk) {
 		if (msg.opcode == kWalked && _heroReaction) {
-			processSavedReaction(&_heroReaction, _sender);
+			QReaction *reaction = _heroReaction;
+			_heroReaction = nullptr;
+			processSavedReaction(reaction, _sender);
 		}
 		QMessageObject::processMessage(msg);
 		if (msg.opcode == kSet || msg.opcode == kPlay) {
@@ -221,8 +224,7 @@ void QObjectPetka::updateWalk() {
 	}
 }
 
-void QObjectPetka::setReactionAfterWalk(uint index, QReaction **reaction, QMessageObject *sender, bool deleteReaction) {
-	QReaction *r = *reaction;
+void QObjectPetka::setReactionAfterWalk(uint index, QReaction *reaction, QMessageObject *sender, bool deleteReaction) {
 	_heroReaction = nullptr;
 
 	stopWalk();
@@ -231,19 +233,12 @@ void QObjectPetka::setReactionAfterWalk(uint index, QReaction **reaction, QMessa
 	_heroReaction = new QReaction();
 	_sender = sender;
 
-	for (uint i = index + 1; i < r->messages.size(); ++i) {
-		_heroReaction->messages.push_back(r->messages[i]);
+	for (uint i = index + 1; i < reaction->messages.size(); ++i) {
+		_heroReaction->messages.push_back(reaction->messages[i]);
 	}
 
 	if (deleteReaction) {
-		if (r == *reaction) {
-			if (*reaction) {
-				delete *reaction;
-			}
-			*reaction = nullptr;
-		} else {
-			delete r;
-		}
+		delete reaction;
 	}
 
 }
