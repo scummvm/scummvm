@@ -2064,13 +2064,15 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 			SHERLOCK_SCREEN_HEIGHT));
 	}
 
-        #ifdef USE_TTS
+#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
-            Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-            _ttsMan->stop();
-            _ttsMan->say(str.c_str());
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->stop();
+			ttsMan->say(str.c_str());
+		}
 	}
-        #endif 
+#endif
 }
 
 void ScalpelUserInterface::printObjectDesc() {

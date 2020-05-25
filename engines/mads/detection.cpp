@@ -138,7 +138,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},*/
 
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,
 		{
@@ -148,7 +148,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-	#endif
+#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

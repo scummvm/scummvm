@@ -200,7 +200,8 @@ void PopUpDialog::read(Common::String str) {
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-		ttsMan->say(str);
+		if (ttsMan != nullptr)
+			ttsMan->say(str);
 	}
 #endif
 }
