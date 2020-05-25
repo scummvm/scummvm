@@ -35,7 +35,7 @@ enum DialogState {
 
 class Sound;
 class QMessageObject;
-class QReaction;
+struct QReaction;
 
 class DialogInterface {
 public:
