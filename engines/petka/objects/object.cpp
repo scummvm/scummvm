@@ -418,7 +418,11 @@ bool QObject::isInPoint(int x, int y) {
 	if (flc) {
 		if (!flc->getBounds().contains(x - _x, y - _y))
 			return false;
-		return *(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x - flc->getPos().x, y - _y - flc->getPos().y) != 0;
+		const Graphics::Surface *s = flc->getCurrentFrame();
+		if (s->format.bytesPerPixel == 1)
+			return *(const byte*)flc->getCurrentFrame()->getBasePtr(x - _x - flc->getPos().x, y - _y - flc->getPos().y) != 0;
+		if (s->format.bytesPerPixel == 2)
+			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(x - _x - flc->getPos().x, y - _y - flc->getPos().y) != flc->getTransColor(s->format);
 	}
 	return false;
 }
