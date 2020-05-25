@@ -34,6 +34,7 @@
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,7 +46,9 @@ AvatarMoverProcess::AvatarMoverProcess() : Process(),
 		_lastFrame(0), _lastAttack(0), _idleTime(0),
 		_lastHeadShakeAnim(Animation::lookLeft), _fakeBothButtonClick(false),
 		_tryTurnLeft(false), _tryTurnRight(false),
-		_tryMoveForward(false), _tryMoveBack(false) {
+		_tryMoveForward(false), _tryMoveBack(false),
+		_tryMoveLeft(false), _tryMoveRight(false),
+		_tryMoveUp(false), _tryMoveDown(false) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -314,6 +317,44 @@ void AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
+	int y = 0;
+	int x = 0;
+	if (_tryMoveUp) {
+		y++;
+	}
+	if (_tryMoveDown) {
+		y--;
+	}
+	if (_tryMoveLeft) {
+		x--;
+	}
+	if (_tryMoveRight) {
+		x++;
+	}
+
+	if (x != 0 || y != 0) {
+		int32 nextdir =  Get_direction(y, x);
+
+		if (checkTurn(nextdir, true))
+			return;
+
+		Animation::Sequence nextanim;
+		if (lastanim == Animation::run) {
+			// want to run while in combat mode?
+			// first sheath weapon
+			nextanim = Animation::readyWeapon;
+		} else if (ABS(direction - nextdir) == 4) {
+			nextanim = Animation::retreat;
+			nextdir = direction;
+		} else {
+			nextanim = Animation::advance;
+		}
+
+		nextanim = Animation::checkWeapon(nextanim, lastanim);
+		waitFor(avatar->doAnim(nextanim, nextdir));
+		return;
+	}
+
 	if (checkTurn(direction, false))
 		return;
 
@@ -577,6 +618,28 @@ void AvatarMoverProcess::handleNormalMode() {
 		return;
 	}
 
+	int y = 0;
+	int x = 0;
+
+	if (_tryMoveUp) {
+		y++;
+	}
+	if (_tryMoveDown) {
+		y--;
+	}
+	if (_tryMoveLeft) {
+		x--;
+	}
+	if (_tryMoveRight) {
+		x++;
+	}
+
+	if (x != 0 || y != 0) {
+		direction = Get_direction(y, x);
+		step(Animation::walk, direction);
+		return;
+	}
+
 	if (checkTurn(direction, moving))
 		return;
 
@@ -765,6 +828,22 @@ void AvatarMoverProcess::tryMoveBack(bool b) {
 		_tryMoveBack = false;
 		_tryMoveForward = false;
 	}
+}
+
+void AvatarMoverProcess::tryMoveLeft(bool b) {
+	_tryMoveLeft = b;
+}
+
+void AvatarMoverProcess::tryMoveRight(bool b) {
+	_tryMoveRight = b;
+}
+
+void AvatarMoverProcess::tryMoveUp(bool b) {
+	_tryMoveUp = b;
+}
+
+void AvatarMoverProcess::tryMoveDown(bool b) {
+	_tryMoveDown = b;
 }
 
 void AvatarMoverProcess::turnToDirection(int direction) {
