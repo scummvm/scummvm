@@ -43,6 +43,14 @@
 
 namespace Petka {
 
+QReaction *createReaction(QMessage *messages, QMessage *end) {
+	QReaction *reaction = new QReaction();
+	while (messages != end) {
+		reaction->messages.push_back(*messages++);
+	}
+	return reaction;
+}
+
 QVisibleObject::QVisibleObject()
 	: _resourceId(-1), _z(240) {}
 
@@ -73,20 +81,13 @@ void processSavedReaction(QReaction **reaction, QMessageObject *sender) {
 		bool processed = true;
 		switch (msg.opcode) {
 		case kDialog: {
-			QReaction *dialogReaction = new QReaction();
-			for (uint j = i + 1; j < r->messages.size(); ++j) {
-				dialogReaction->messages.push_back(r->messages[j]);
-			}
-			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(dialogReaction);
+			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(r->messages.data() + i + 1, r->messages.end()));
 			break;
 		}
 		case kPlay: {
 			QMessageObject *obj = g_vm->getQSystem()->findObject(msg.objId);
-			obj->_reaction = new QReaction();
+			obj->_reaction = createReaction(r->messages.data() + i + 1, r->messages.end());
 			obj->_reactionResId = msg.arg1;
-			for (uint j = i + 1; j < r->messages.size(); ++j) {
-				obj->_reaction->messages.push_back(r->messages[j]);
-			}
 			break;
 		}
 		case kWalk:
@@ -144,24 +145,16 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			bool processed = true;
 			switch (rMsg.opcode) {
 			case kDialog: {
-				QReaction *reaction = new QReaction();
-				for (uint z = j + 1; z < r->messages.size(); ++z) {
-					reaction->messages.push_back(r->messages[z]);
-				}
-				g_vm->getQSystem()->_mainInterface->_dialog.setReaction(reaction, true);
+				g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(r->messages.data() + j + 1, r->messages.end()), true);
 				break;
 			}
 			case kPlay: {
 				QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
 				delete obj->_reaction;
-				obj->_reaction = new QReaction();
+				obj->_reaction = createReaction(r->messages.data() + j + 1, r->messages.end());
 				obj->_reactionResId = rMsg.arg1;
-				for (uint z = j + 1; z < r->messages.size(); ++z) {
-					obj->_reaction->messages.push_back(r->messages[z]);
-				}
 				break;
 			}
-
 			case kWalk:
 			case kWalkTo:
 				g_vm->getQSystem()->_petka->setReactionAfterWalk(j, &r, this, 0);
@@ -383,11 +376,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				(r.senderId != -1 && r.senderId != msg.sender->_id)) {
 				continue;
 			}
-			QReaction *reaction = new QReaction();
-			for (uint j = 0; j < r.messages.size(); ++j) {
-				reaction->messages.push_back(r.messages[j]);
-			}
-			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(reaction, true);
+			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(r.messages.data(), r.messages.end()), true);
 		}
 		g_vm->getBigDialogue()->setHandler(_id, msg.opcode);
 		g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
