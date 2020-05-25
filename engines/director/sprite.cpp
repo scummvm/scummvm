@@ -249,13 +249,13 @@ Common::Rect Sprite::getBbox() {
 		case kCheckboxSprite:
 			// Magic numbers: checkbox square need to move left about 5px from
 			// text and 12px side size (D4)
-			_startBbox = Common::Rect(x, y + 2, x + 12, y + 14);
+			result = Common::Rect(x, y + 2, x + 12, y + 14);
 			break;
 		case kButtonSprite:
-			_startBbox = Common::Rect(x, y, x + width, y + height + 3);
+			result = Common::Rect(x, y, x + width, y + height + 3);
 			break;
 		case kRadioButtonSprite:
-			_startBbox = Common::Rect(x, y + 2, x + 12, y + 14);
+			result = Common::Rect(x, y + 2, x + 12, y + 14);
 			break;
 		default:
 			warning("Score::getBbox(): Unknown buttonType");
