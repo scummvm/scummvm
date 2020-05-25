@@ -157,6 +157,11 @@ ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/openglsdl/openglsdl-graphics.o
 endif
+
+ifdef USE_DISCORD
+MODULE_OBJS += \
+	presence/discord/discord.o
+endif
 endif
 
 ifdef POSIX

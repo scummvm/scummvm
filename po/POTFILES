@@ -86,4 +86,5 @@ backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/ps3/ps3.cpp
 backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/wii/options.cpp
+backends/presence/discord/discord.cpp
 backends/updates/macosx/macosx-updates.mm
