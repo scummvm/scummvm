@@ -119,7 +119,6 @@ void QTextPhrase::update(int time) {
 
 void QTextPhrase::onClick(int x, int y) {
 	DialogInterface &dialog = g_vm->getQSystem()->_mainInterface->_dialog;
-	dialog.removeSound();
 	dialog.next(-1);
 }
 

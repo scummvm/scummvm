@@ -35,6 +35,8 @@ enum DialogState {
 
 class Sound;
 class QMessageObject;
+class BigDialogue;
+class QSystem;
 struct QReaction;
 
 class DialogInterface {
@@ -44,28 +46,37 @@ public:
 
 	void start(uint id, QMessageObject *sender);
 	void next(int choice);
-	void end();
 
 	void startUserMsg(uint16 arg);
 	void endUserMsg();
 
-	Sound *findSound();
-	void removeSound();
-
 	bool isActive();
+
+	Sound *findSound();
 
 	void setSender(QMessageObject *sender);
 	void setReaction(QReaction *reaction, bool deletePrev = false);
 
 private:
+	void onPlayOpcode(int prevTalkerId);
+	void onMenuOpcode();
+	void onEndOpcode();
+	void onUserMsgOpcode();
+
+	void removeSound();
+
 	void sendMsg(uint16 opcode);
+	void setPhrase(const Common::U32String *text);
+	void playSound(const Common::String &name);
+
 	void initCursor();
 	void restoreCursor();
 
 private:
+	BigDialogue *_dialog;
+	QSystem *_qsys;
 	bool _isUserMsg;
 	bool _afterUserMsg;
-	bool _hasSound;
 	bool _firstTime;
 	int _id;
 	DialogState _state;

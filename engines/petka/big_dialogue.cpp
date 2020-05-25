@@ -122,7 +122,8 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 
 		uint index = _currOp->play.messageIndex;
 		_currOp = menuOp;
-		*soundName = _speeches[index].soundName;
+		if (soundName)
+			*soundName = _speeches[index].soundName;
 		*talkerId = _speeches[index].speakerId;
 		return &_speeches[index].text;
 	}
@@ -138,7 +139,8 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 	}
 		// fall through
 	case kOperationPlay:
-		*soundName = _speeches[_currOp->play.messageIndex].soundName;
+		if (soundName)
+			*soundName = _speeches[_currOp->play.messageIndex].soundName;
 		*talkerId = _speeches[_currOp->play.messageIndex].speakerId;
 		return &_speeches[_currOp->play.messageIndex].text;
 	default:
@@ -465,6 +467,14 @@ bool BigDialogue::checkMenu(uint menuIndex) {
 		bit <<= 1;
 	}
 	return true;
+}
+
+void BigDialogue::getMenuChoices(Common::Array<Common::U32String> &choices) {
+	uint count = choicesCount();
+	for (uint i = 0; i < count; ++i) {
+		int id;
+		choices.push_back(*getSpeechInfo(&id, nullptr, i));
+	}
 }
 
 } // End of namespace Petka

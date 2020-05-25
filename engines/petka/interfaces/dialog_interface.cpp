@@ -36,6 +36,8 @@
 namespace Petka {
 
 DialogInterface::DialogInterface() {
+	_dialog = g_vm->getBigDialogue();
+	_qsys = g_vm->getQSystem();
 	_state = kIdle;
 	_id = -1;
 	_isUserMsg = false;
@@ -43,7 +45,6 @@ DialogInterface::DialogInterface() {
 	_talker = nullptr;
 	_sender = nullptr;
 	_reaction = nullptr;
-	_hasSound = false;
 	_firstTime = true;
 }
 
@@ -53,7 +54,6 @@ DialogInterface::~DialogInterface() {
 
 void DialogInterface::start(uint id, QMessageObject *sender) {
 	_id = id;
-	_hasSound = false;
 	_isUserMsg = false;
 	_afterUserMsg = false;
 	_talker = nullptr;
@@ -66,7 +66,7 @@ void DialogInterface::start(uint id, QMessageObject *sender) {
 }
 
 void DialogInterface::initCursor() {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = _qsys->_cursor.get();
 
 	_savedCursorId = cursor->_resourceId;
 	_savedCursorActType = cursor->_actionType;
@@ -80,7 +80,7 @@ void DialogInterface::initCursor() {
 }
 
 void DialogInterface::restoreCursor() {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = _qsys->_cursor.get();
 	cursor->_isShown = _wasCursorShown;
 	cursor->_animate = _wasCursorAnim;
 	cursor->_resourceId = _savedCursorId;
@@ -94,80 +94,32 @@ void DialogInterface::next(int choice) {
 	if ((choice == -1 && _state == kMenu) || (choice != -1 && _state == kPlaying))
 		return;
 
-	QSystem *qsys = g_vm->getQSystem();
-	BigDialogue *bigDialog = g_vm->getBigDialogue();
-
-	const char *soundName = nullptr;
 	int prevTalkerId = -1;
-
 	if (choice == -1 && !_afterUserMsg) {
-		bigDialog->getSpeechInfo(&prevTalkerId, &soundName, -1);
+		_dialog->getSpeechInfo(&prevTalkerId, nullptr, -1);
 	}
 	_afterUserMsg = _isUserMsg;
 
-	qsys->_cursor->_isShown = 0;
+	_qsys->_cursor->_isShown = false;
 	if (_isUserMsg)
 		return;
 	if (_firstTime)
 		_firstTime = false;
 	else
-		g_vm->getBigDialogue()->next(choice);
+		_dialog->next(choice);
 
-	switch (g_vm->getBigDialogue()->opcode()) {
-	case kOpcodePlay: {
-		int currTalkerId;
-		const Common::U32String *text = bigDialog->getSpeechInfo(&currTalkerId, &soundName, -1);
-		g_vm->soundMgr()->removeSound(_soundName);
-		if (prevTalkerId != currTalkerId) {
-			sendMsg(kSaid);
-		}
-		_talker = qsys->findObject(currTalkerId);
-		_soundName = g_vm->getSpeechPath() + soundName;
-		Sound *s = g_vm->soundMgr()->addSound(_soundName, Audio::Mixer::kSpeechSoundType);
-		if (s) {
-			Common::Rect bounds = g_vm->resMgr()->loadFlic(_talker->_resourceId)->getBounds();
-			s->setBalance(bounds.left + _talker->_x + bounds.width(), 640);
-			s->play(0);
-		}
-		_hasSound = s != nullptr;
-		if (prevTalkerId != currTalkerId) {
-			sendMsg(kSay);
-		}
-		qsys->_mainInterface->setTextPhrase(*text, _talker->_dialogColor, g_system->getScreenFormat().RGBToColor(0x7F, 0, 0));
-		_state = kPlaying;
+	switch (_dialog->opcode()) {
+	case kOpcodePlay:
+		onPlayOpcode(prevTalkerId);
 		break;
-	}
-	case kOpcodeMenu: {
-		g_vm->soundMgr()->removeSound(_soundName);
-		_soundName.clear();
-		if (_talker) {
-			sendMsg(kSaid);
-			_talker = nullptr;
-		}
-		uint count = bigDialog->choicesCount();
-		if (count == 0)
-			break;
-
-		Common::Array<Common::U32String> choices;
-		for (uint i = 0; i < count; ++i) {
-			int id;
-			choices.push_back(*bigDialog->getSpeechInfo(&id, &soundName, i));
-		}
-		qsys->_mainInterface->setTextChoice(choices, 0xFFFF, g_system->getScreenFormat().RGBToColor(0xFF, 0, 0));
-
-		qsys->_cursor->_isShown = 1;
-		_state = kMenu;
+	case kOpcodeMenu:
+		onMenuOpcode();
 		break;
-	}
 	case kOpcodeEnd:
-		end();
+		onEndOpcode();
 		break;
 	case kOpcodeUserMessage:
-		qsys->_mainInterface->setTextPhrase(Common::U32String(""), 0, 0);
-		g_vm->soundMgr()->removeSound(_soundName);
-		_soundName.clear();
-		_talker = nullptr;
-		_state = kPlaying;
+		onUserMsgOpcode();
 		break;
 	default:
 		break;
@@ -180,13 +132,13 @@ void DialogInterface::sendMsg(uint16 opcode) {
 	}
 }
 
-void DialogInterface::end() {
+void DialogInterface::onEndOpcode() {
 	g_vm->soundMgr()->removeSound(_soundName);
 	sendMsg(kSaid);
 	_talker = nullptr;
 	_state = kIdle;
 	_id = -1;
-	g_vm->getQSystem()->_currInterface->removeTexts();
+	_qsys->_currInterface->removeTexts();
 	restoreCursor();
 	if (_reaction)
 		processSavedReaction(&_reaction, _sender);
@@ -202,7 +154,7 @@ void DialogInterface::startUserMsg(uint16 arg) {
 	sendMsg(kSaid);
 	_isUserMsg = true;
 	restoreCursor();
-	g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, arg);
+	_qsys->addMessage(_qsys->_chapayev->_id, kUserMsg, arg);
 }
 
 bool DialogInterface::isActive() {
@@ -214,8 +166,6 @@ void DialogInterface::setSender(QMessageObject *sender) {
 }
 
 Sound *DialogInterface::findSound() {
-	if (!_hasSound)
-		return nullptr;
 	return g_vm->soundMgr()->findSound(_soundName);
 }
 
@@ -228,6 +178,70 @@ void DialogInterface::setReaction(QReaction *reaction, bool deletePrev) {
 	if (deletePrev)
 		delete _reaction;
 	_reaction = reaction;
+}
+
+void DialogInterface::playSound(const Common::String &name) {
+	removeSound();
+	_soundName = name;
+	Sound *s = g_vm->soundMgr()->addSound(name, Audio::Mixer::kSpeechSoundType);
+	if (s) {
+		Common::Rect bounds = g_vm->resMgr()->loadFlic(_talker->_resourceId)->getBounds();
+		s->setBalance(bounds.left + _talker->_x + bounds.width(), 640);
+		s->play(0);
+	}
+}
+
+void DialogInterface::setPhrase(const Common::U32String *text) {
+	uint16 textColor;
+	uint16 outlineColor;
+	if (_talker->_dialogColor == -1) {
+		textColor = g_system->getScreenFormat().RGBToColor(0xA, 0xA, 0xA);
+		outlineColor = 0xFFFF;
+	} else {
+		textColor = _talker->_dialogColor;
+		outlineColor = g_system->getScreenFormat().RGBToColor(0x7F, 0, 0);
+	}
+	_qsys->_mainInterface->setTextPhrase(*text, textColor, outlineColor);
+}
+
+void DialogInterface::onPlayOpcode(int prevTalkerId) {
+	int currTalkerId;
+	const char *soundName = nullptr;
+	const Common::U32String *text = _dialog->getSpeechInfo(&currTalkerId, &soundName, -1);
+
+	if (prevTalkerId != currTalkerId) {
+		sendMsg(kSaid);
+	}
+
+	_talker = _qsys->findObject(currTalkerId);
+	playSound(g_vm->getSpeechPath() + soundName);
+	setPhrase(text);
+
+	if (prevTalkerId != currTalkerId) {
+		sendMsg(kSay);
+	}
+	_state = kPlaying;
+}
+
+void DialogInterface::onMenuOpcode() {
+	removeSound();
+
+	sendMsg(kSaid);
+	_talker = nullptr;
+
+	Common::Array<Common::U32String> choices;
+	_dialog->getMenuChoices(choices);
+	_qsys->_mainInterface->setTextChoice(choices, 0xFFFF, g_system->getScreenFormat().RGBToColor(0xFF, 0, 0));
+
+	_qsys->_cursor->_isShown = true;
+	_state = kMenu;
+}
+
+void DialogInterface::onUserMsgOpcode() {
+	_qsys->_mainInterface->setTextPhrase(Common::U32String(""), 0, 0);
+	removeSound();
+	_talker = nullptr;
+	_state = kPlaying;
 }
 
 } // End of namespace Petka

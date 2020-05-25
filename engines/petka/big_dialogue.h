@@ -116,6 +116,7 @@ public:
 	void setHandler(uint objId, uint opcode);
 
 	const Common::U32String *getSpeechInfo(int *talkerId, const char **soundName, int unk);
+	void getMenuChoices(Common::Array<Common::U32String> &choices);
 
 	void load(Common::ReadStream *s);
 	void save(Common::WriteStream *s);
