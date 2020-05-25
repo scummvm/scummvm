@@ -33,6 +33,10 @@
 
 #include "common/array.h"
 
+#ifdef USE_DISCORD
+class DiscordPresence;
+#endif
+
 /**
  * Base OSystem class for all SDL ports.
  */
@@ -88,6 +92,10 @@ protected:
 	bool _initedSDL;
 #ifdef USE_SDL_NET
 	bool _initedSDLnet;
+#endif
+
+#ifdef USE_DISCORD
+	DiscordPresence *_presence;
 #endif
 
 	/**

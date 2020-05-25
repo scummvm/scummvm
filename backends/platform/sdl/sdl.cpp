@@ -30,6 +30,10 @@
 #include "common/translation.h"
 #include "common/encoding.h"
 
+#ifdef USE_DISCORD
+#include "backends/presence/discord/discord.h"
+#endif
+
 #include "backends/saves/default/default-saves.h"
 
 // Audio CD support was removed with SDL 2.0
@@ -127,6 +131,11 @@ OSystem_SDL::~OSystem_SDL() {
 
 	delete _logger;
 	_logger = 0;
+
+#ifdef USE_DISCORD
+	delete _presence;
+	_presence = 0;
+#endif
 
 #ifdef USE_SDL_NET
 	if (_initedSDLnet) SDLNet_Quit();
@@ -263,6 +272,10 @@ void OSystem_SDL::initBackend() {
 	// Setup a custom program icon.
 	_window->setupIcon();
 
+#ifdef USE_DISCORD
+	_presence = new DiscordPresence();
+#endif
+
 	_inited = true;
 
 	BaseBackend::initBackend();
@@ -284,9 +297,14 @@ void OSystem_SDL::engineInit() {
 	// Add the started engine to the list of recent tasks
 	_taskbarManager->addRecent(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 
-	// Set the overlay icon the current running engine
+	// Set the overlay icon to the current running engine
 	_taskbarManager->setOverlayIcon(ConfMan.getActiveDomainName(), ConfMan.get("description"));
 #endif
+#ifdef USE_DISCORD
+	// Set the presence status to the current running engine
+	_presence->updateStatus(ConfMan.getActiveDomainName(), ConfMan.get("description"));
+#endif
+
 	_eventSource->setEngineRunning(true);
 }
 
@@ -298,6 +316,10 @@ void OSystem_SDL::engineDone() {
 #ifdef USE_TASKBAR
 	// Remove overlay icon
 	_taskbarManager->setOverlayIcon("", "");
+#endif
+#ifdef USE_DISCORD
+	// Reset presence status
+	_presence->updateStatus("", "");
 #endif
 	_eventSource->setEngineRunning(false);
 }
