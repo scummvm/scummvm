@@ -204,7 +204,7 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 		if (_firstVisibleTab > 0) {
 			setFirstVisible(_firstVisibleTab - 1);
-			if (g_gui.useRTL()){
+			if (g_gui.useRTL()) {
 				_rtlTabOffset++;
 			}
 		}
@@ -424,12 +424,14 @@ void TabWidget::draw() {
 	if (_navButtonsVisible) {
 		int oldX = _x;
 		if (g_gui.useRTL()) {
+			/** By default, in RTL - everything is flipped and offset by the top stacked dialog's left and right paddings.
+				The navbars are relative to the main dialog, so temporarily subtract the additional offset used */
 			_x = _x - g_gui.getOverlayOffset();
 		}
 
 		_navLeft->draw();
 		_navRight->draw();
-		_x = oldX;
+		_x = oldX;		// Restore the orignal value, so other widgets behave normally
 	}
 }
 
