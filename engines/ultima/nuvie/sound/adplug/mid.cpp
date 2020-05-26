@@ -223,7 +223,7 @@ bool CmidPlayer::update() {
 				//  This is to do implied MIDI events. aka 'Running Status'
 				if (v < 0x80) {
 					v = track[curtrack].pv;
-					debug("Running status [%2X]\n", (unsigned int)v);
+					debug("Running status [%2X]", (unsigned int)v);
 					pos--;
 				} else {
 					if (v >= 0xf0 && v < 0xf9) {
@@ -373,12 +373,12 @@ bool CmidPlayer::update() {
 							for (i = 0; i < l; i++)
 								midiprintf("%c", (unsigned char)getnext(1));
 						} else if (v == 0x6) {
-							debug("Marker: ");
+							debugN("Marker: ");
 							for (i = 0; i < l; i++) {
 								//midiprintf ("%c",(unsigned char)getnext(1));
-								debug("%c", (unsigned char)getnext(1));
+								debugN("%c", (unsigned char)getnext(1));
 							}
-							debug("\n");
+							debug("");
 						} else {
 							for (i = 0; i < l; i++)
 								midiprintf("%2X ", (unsigned int)getnext(1));
