@@ -200,6 +200,7 @@ bool Wintermute::BaseRenderOpenGL3D::setup2D(bool force) {
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
+		glDepthMask(false);
 		glDisable(GL_STENCIL);
 		glDisable(GL_CLIP_PLANE0);
 		glDisable(GL_FOG);
