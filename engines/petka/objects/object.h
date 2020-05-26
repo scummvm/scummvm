@@ -59,6 +59,9 @@ public:
 
 	virtual void play(int id, int type);
 
+	void loadSound();
+	void removeSound();
+
 public:
 	int32 _x;
 	int32 _y;

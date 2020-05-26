@@ -95,10 +95,7 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	_objs.push_back(room);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
-		debug("Added sound id %d", obj->_resourceId);
-		obj->_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(obj->_resourceId), Audio::Mixer::kSFXSoundType);
-		obj->_hasSound = obj->_sound != nullptr;
-		obj->_startSound = false;
+		obj->loadSound();
 		if (obj->_isShown || obj->_isActive)
 			g_vm->resMgr()->loadFlic(obj->_resourceId);
 		_objs.push_back(obj);
@@ -154,8 +151,7 @@ void InterfaceMain::unloadRoom(bool fromSave) {
 				for (uint j = 0; j < info->attachedObjIds.size(); ++j) {
 					if (info->attachedObjIds[j] == ((QMessageObject *) _objs[i])->_id) {
 						QMessageObject *o = (QMessageObject *) _objs.remove_at(i);
-						g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(o->_resourceId));
-						o->_sound = nullptr;
+						o->removeSound();
 						removed = true;
 						break;
 					}

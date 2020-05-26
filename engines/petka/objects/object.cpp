@@ -319,22 +319,22 @@ void QMessageObject::play(int id, int type) {
 	if (g_vm->getQSystem()->_isIniting) {
 		_resourceId = id;
 	} else {
-		_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(id),
-											Audio::Mixer::kSFXSoundType);
-		_hasSound = _sound != nullptr;
-		_startSound = false;
+		if (!_notLoopedSound || g_vm->isDemo()) {
+			removeSound();
+		}
+
 		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 		if (flc) {
 			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 		}
 
+		_resourceId = id;
+
+		loadSound();
+
 		flc = g_vm->resMgr()->loadFlic(id);
 		flc->setFrame(1);
 		_time = 0;
-		if (!_notLoopedSound || g_vm->isDemo()) {
-			g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
-		}
-		_resourceId = id;
 	}
 	switch (type) {
 	case 1: {
@@ -350,6 +350,19 @@ void QMessageObject::play(int id, int type) {
 		break;
 	}
 	_notLoopedSound = type != 5;
+}
+
+void QMessageObject::loadSound() {
+	Common::String name = g_vm->resMgr()->findSoundName(_resourceId);
+	_sound = g_vm->soundMgr()->addSound(name, Audio::Mixer::kSFXSoundType);
+	_hasSound = _sound != nullptr;
+	_startSound = false;
+}
+
+void QMessageObject::removeSound() {
+	Common::String name = g_vm->resMgr()->findSoundName(_resourceId);
+	g_vm->soundMgr()->removeSound(name);
+	_sound = nullptr;
 }
 
 QObject::QObject() {

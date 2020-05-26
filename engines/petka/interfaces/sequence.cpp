@@ -44,9 +44,8 @@ void InterfaceSequence::start(int id) {
 		if (_objs[i]->_resourceId != -666) {
 			g_vm->resMgr()->removeResource(_objs[i]->_resourceId);
 		}
-		QMessageObject *obj = (QObject *)_objs[i];
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_objs[i]->_resourceId));
-		obj->_sound = nullptr;
+		QMessageObject *obj = (QMessageObject *)_objs[i];
+		obj->removeSound();
 	}
 
 	g_system->getMixer()->pauseAll(true);
@@ -87,10 +86,7 @@ void InterfaceSequence::start(int id) {
 		for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 			QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
 			g_vm->resMgr()->loadFlic(obj->_resourceId);
-			obj->_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(obj->_resourceId),
-													 Audio::Mixer::kSFXSoundType);
-			obj->_hasSound = obj->_sound != nullptr;
-			obj->_startSound = false;
+			obj->loadSound();
 			_objs.push_back(obj);
 		}
 	}
@@ -105,9 +101,8 @@ void InterfaceSequence::stop() {
 		if (_objs[i]->_resourceId != -666) {
 			g_vm->resMgr()->removeResource(_objs[i]->_resourceId);
 		}
-		QMessageObject *obj = (QObject *)_objs[i];
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_objs[i]->_resourceId));
-		obj->_sound = nullptr;
+		QMessageObject *obj = (QMessageObject *)_objs[i];
+		obj->removeSound();
 	}
 
 	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_fxId));
