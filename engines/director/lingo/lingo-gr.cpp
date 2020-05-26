@@ -2483,8 +2483,8 @@ yyreduce:
 #line 338 "engines/director/lingo/lingo-gr.y"
                                                                                            {
 		inst else1 = 0, end3 = 0;
-		WRITE_UINT32(&else1, (yyvsp[-3].narg) + 1);
-		WRITE_UINT32(&end3, (yyvsp[-1].code));
+		WRITE_UINT32(&else1, (yyvsp[-3].narg) + 1 - (yyvsp[-6].narg) + 1);
+		WRITE_UINT32(&end3, (yyvsp[-1].code) - (yyvsp[-3].narg) + 1);
 		(*g_lingo->_currentScript)[(yyvsp[-6].narg)] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[-3].narg)] = end3;		/* end, if cond fails */
 		g_lingo->processIf((yyvsp[-3].narg), (yyvsp[-1].code)); }
@@ -2495,8 +2495,8 @@ yyreduce:
 #line 345 "engines/director/lingo/lingo-gr.y"
                                                                                                                   {
 		inst else1 = 0, end = 0;
-		WRITE_UINT32(&else1, (yyvsp[-6].narg) +1);
-		WRITE_UINT32(&end, (yyvsp[-1].code));
+		WRITE_UINT32(&else1, (yyvsp[-6].narg) + 1 - (yyvsp[-9].narg) + 1);
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-6].narg) + 1);
 		(*g_lingo->_currentScript)[(yyvsp[-9].narg)] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[-6].narg)] = end;		/* end, if cond fails */
 		g_lingo->processIf((yyvsp[-6].narg), (yyvsp[-1].code)); }
@@ -2507,7 +2507,7 @@ yyreduce:
 #line 356 "engines/director/lingo/lingo-gr.y"
                                                                 {
 		inst else1 = 0;
-		WRITE_UINT32(&else1, (yyvsp[0].narg) + 1);
+		WRITE_UINT32(&else1, (yyvsp[0].narg) + 1 - (yyvsp[-3].narg) + 1);
 		(*g_lingo->_currentScript)[(yyvsp[-3].narg)] = else1;	/* end, if cond fails */
 		g_lingo->codeLabel((yyvsp[0].narg)); }
 #line 2514 "engines/director/lingo/lingo-gr.cpp"
@@ -2517,8 +2517,8 @@ yyreduce:
 #line 362 "engines/director/lingo/lingo-gr.y"
                                                                                                              {
 		inst else1 = 0, end = 0;
-		WRITE_UINT32(&else1, (yyvsp[-5].narg) + 1);
-		WRITE_UINT32(&end, (yyvsp[-1].code));
+		WRITE_UINT32(&else1, (yyvsp[-5].narg) + 1 - (yyvsp[-8].narg) + 1);
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-5].narg) + 1);
 		(*g_lingo->_currentScript)[(yyvsp[-8].narg)] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[-5].narg)] = end;	}
 #line 2525 "engines/director/lingo/lingo-gr.cpp"
@@ -2528,7 +2528,7 @@ yyreduce:
 #line 368 "engines/director/lingo/lingo-gr.y"
                                                                       {
 		inst end = 0;
-		WRITE_UINT32(&end, (yyvsp[-1].code));
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-4].narg) + 1);
 
 		(*g_lingo->_currentScript)[(yyvsp[-4].narg)] = end; }
 #line 2535 "engines/director/lingo/lingo-gr.cpp"

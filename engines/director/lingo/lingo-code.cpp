@@ -93,8 +93,8 @@ static struct FuncDescr {
 	{ LC::c_intpush,		"c_intpush",		"i" },
 	{ LC::c_itemOf,			"c_itemOf",			"" },	// D3
 	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
-	{ LC::c_jump,			"c_jump",			"i" },
-	{ LC::c_jumpifz,		"c_jumpifz",		"i" },
+	{ LC::c_jump,			"c_jump",			"o" },
+	{ LC::c_jumpifz,		"c_jumpifz",		"o" },
 	{ LC::c_le,				"c_le",				"" },
 	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
 	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
@@ -144,6 +144,8 @@ static struct FuncDescr {
 	{ LC::cb_field,			"cb_field",			"" },
 	{ LC::cb_globalassign,	"cb_globalassign",	"N" },
 	{ LC::cb_globalpush,	"cb_globalpush",	"N" },
+	{ LC::cb_jump,			"cb_jump",			"i" },
+	{ LC::cb_jumpifz,		"cb_jumpifz",		"i" },
 	{ LC::cb_list,			"cb_list",			"" },
 	{ LC::cb_proplist,		"cb_proplist",		"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
@@ -1151,15 +1153,15 @@ void LC::c_le() {
 }
 
 void LC::c_jump() {
-	uint jump = g_lingo->readInt();
-	g_lingo->_pc = jump;
+	int jump = g_lingo->readInt();
+	g_lingo->_pc = g_lingo->_pc + jump - 2;
 }
 
 void LC::c_jumpifz() {
-	uint jump = g_lingo->readInt();
+	int jump = g_lingo->readInt();
 	int test = g_lingo->pop().asInt();
 	if (test == 0) {
-		g_lingo->_pc = jump;
+		g_lingo->_pc = g_lingo->_pc + jump - 2;
 	}
 }
 

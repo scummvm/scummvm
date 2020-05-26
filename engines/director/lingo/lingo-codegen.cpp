@@ -472,8 +472,6 @@ void Lingo::processIf(int toplabel, int endlabel) {
 
 	debugC(4, kDebugLingoCompile, "processIf(%d, %d)", toplabel, endlabel);
 
-	WRITE_UINT32(&iend, endlabel);
-
 	while (true) {
 		if (_labelstack.empty()) {
 			warning("Lingo::processIf(): Label stack underflow");
@@ -488,6 +486,8 @@ void Lingo::processIf(int toplabel, int endlabel) {
 			break;
 
 		debugC(4, kDebugLingoCompile, "processIf: label at %d", label);
+
+		WRITE_UINT32(&iend, endlabel - label + 1);
 
 		(*_currentScript)[label] = iend;      /* end, if cond fails */
 	}

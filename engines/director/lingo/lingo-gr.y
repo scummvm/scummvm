@@ -337,15 +337,15 @@ tellstart:	  /* empty */				{
 
 ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist begin[end3] tENDIF {
 		inst else1 = 0, end3 = 0;
-		WRITE_UINT32(&else1, $else1 + 1);
-		WRITE_UINT32(&end3, $end3);
+		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
+		WRITE_UINT32(&end3, $end3 - $else1 + 1);
 		(*g_lingo->_currentScript)[$then] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[$else1] = end3;		/* end, if cond fails */
 		g_lingo->processIf($else1, $end3); }
 	| if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist tELSE begin stmtlist begin[end3] tENDIF {
 		inst else1 = 0, end = 0;
-		WRITE_UINT32(&else1, $else1 +1);
-		WRITE_UINT32(&end, $end3);
+		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
+		WRITE_UINT32(&end, $end3 - $else1 + 1);
 		(*g_lingo->_currentScript)[$then] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[$else1] = end;		/* end, if cond fails */
 		g_lingo->processIf($else1, $end3); }
@@ -355,19 +355,19 @@ elseifstmtlist:	/* nothing */
 
 elseifstmt: tELSIF expr jumpifz[then] tTHEN stmtlist jump[end3] {
 		inst else1 = 0;
-		WRITE_UINT32(&else1, $end3 + 1);
+		WRITE_UINT32(&else1, $end3 + 1 - $then + 1);
 		(*g_lingo->_currentScript)[$then] = else1;	/* end, if cond fails */
 		g_lingo->codeLabel($end3); }
 
 ifoneliner: if expr jumpifz[then] tTHEN stmtoneliner jump[else1] tELSE begin stmtoneliner begin[end3] tENDIF {
 		inst else1 = 0, end = 0;
-		WRITE_UINT32(&else1, $else1 + 1);
-		WRITE_UINT32(&end, $end3);
+		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
+		WRITE_UINT32(&end, $end3 - $else1 + 1);
 		(*g_lingo->_currentScript)[$then] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[$else1] = end;	}	/* end, if cond fails */
 	| if expr jumpifz[then] tTHEN stmtoneliner begin[end3] tENDIF {
 		inst end = 0;
-		WRITE_UINT32(&end, $end3);
+		WRITE_UINT32(&end, $end3 - $then + 1);
 
 		(*g_lingo->_currentScript)[$then] = end; }		/* end, if cond fails */
 
