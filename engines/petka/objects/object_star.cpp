@@ -89,4 +89,15 @@ uint QObjectStar::findButtonIndex(int16 x, int16 y) const {
 	return i;
 }
 
+void QObjectStar::setPos(Common::Point p) {
+	if (!_isShown) {
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+		p.x = MAX<int16>(p.x - flc->getWidth() / 2, 0);
+		p.y = MAX<int16>(p.y - flc->getHeight() / 2, 0);
+
+		_x = MIN<int16>(p.x, 639 - flc->getWidth());
+		_y = MIN<int16>(p.y, 479 - flc->getHeight());
+	}
+}
+
 }

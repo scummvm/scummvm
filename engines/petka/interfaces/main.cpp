@@ -213,14 +213,7 @@ void InterfaceMain::onRightButtonDown(const Common::Point p) {
 	if (g_vm->getQSystem()->_case.get()->_isShown && cursor->_actionType == kActionObjUse) {
 		cursor->setAction(kActionTake);
 	} else {
-		if (!star->_isShown) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(star->_resourceId);
-			int x = MAX(p.x - flc->getWidth() / 2, 0);
-			int y = MAX(p.y - flc->getHeight() / 2, 0);
-
-			star->_x = MIN(x, 639 - flc->getWidth());
-			star->_y = MIN(y, 479 - flc->getHeight());
-		}
+		star->setPos(p);
 		star->show(star->_isShown == 0);
 	}
 }

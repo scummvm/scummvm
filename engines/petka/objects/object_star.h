@@ -34,6 +34,7 @@ public:
 	bool isInPoint(int x, int y) override;
 	void onMouseMove(int x, int y) override;
 	void onClick(int x, int y) override;
+	void setPos(Common::Point p);
 
 private:
 	uint findButtonIndex(int16 x, int16 y) const;
