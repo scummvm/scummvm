@@ -41,6 +41,7 @@ class BaseActiveRect;
 class BaseObject;
 class BaseSurface;
 class BasePersistenceManager;
+class Camera3D;
 
 /**
  * @class BaseRenderer a common interface for the rendering portion of WME
@@ -120,6 +121,7 @@ public:
 	virtual bool forcedFlip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
+	virtual bool setup3D(Camera3D* camera = nullptr, bool force = false);
 	virtual bool setupLines();
 
 	/**

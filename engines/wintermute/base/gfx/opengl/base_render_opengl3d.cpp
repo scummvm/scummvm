@@ -256,8 +256,20 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 	return true;
 }
 
-bool BaseRenderOpenGL3D::setup3D(bool force) {
-	warning("BaseRenderOpenGL3D::setup3D not yet implemented");
+bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
+	if (!_state3D || force) {
+		_state3D = true;
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glAlphaFunc(GL_GEQUAL, 0x08);
+
+		// no culling for the moment
+		glDisable(GL_CULL_FACE);
+
+		setProjection();
+	}
+
 	return true;
 }
 

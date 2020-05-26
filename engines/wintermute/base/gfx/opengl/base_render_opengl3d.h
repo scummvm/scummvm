@@ -101,7 +101,7 @@ public:
 	bool forcedFlip() override;
 	void initLoop() override;
 	bool setup2D(bool force = false) override;
-	bool setup3D(bool force = false);
+	bool setup3D(Camera3D *camera, bool force = false) override;
 	bool setupLines() override;
 
 	/**
