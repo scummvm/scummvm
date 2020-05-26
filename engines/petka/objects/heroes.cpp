@@ -129,6 +129,9 @@ void QObjectPetka::draw() {
 	if (_animate && _startSound) {
 		if (_sound) {
 			_sound->play(!_notLoopedSound);
+			if (!_notLoopedSound) {
+				_sound = nullptr;
+			}
 		}
 		_startSound = false;
 	}
@@ -271,15 +274,11 @@ void QObjectPetka::update(int time) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
 		while (_time >= flc->getDelay()) {
-			if (_sound && _hasSound && flc->getCurFrame() == 0) {
+			if (_sound && flc->getCurFrame() == 0) {
 				_startSound = true;
-				_hasSound = false;
 			}
 			flc->setFrame(-1);
 			if (flc->getCurFrame() == flc->getFrameCount() - 1) {
-				if (_notLoopedSound) {
-					_hasSound = _sound != nullptr;
-				}
 				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, 0);
 			}
 			if (flc->getCurFrame() + 1 == flc->getFrameCount() / 2) {

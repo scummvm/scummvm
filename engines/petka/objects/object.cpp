@@ -66,7 +66,6 @@ QMessageObject::QMessageObject() {
 	_holdMessages = false;
 	_notLoopedSound = true;
 	_startSound = false;
-	_hasSound = false;
 	_reaction = nullptr;
 }
 
@@ -355,7 +354,6 @@ void QMessageObject::play(int id, int type) {
 void QMessageObject::loadSound() {
 	Common::String name = g_vm->resMgr()->findSoundName(_resourceId);
 	_sound = g_vm->soundMgr()->addSound(name, Audio::Mixer::kSFXSoundType);
-	_hasSound = _sound != nullptr;
 	_startSound = false;
 }
 
@@ -403,6 +401,9 @@ void QObject::draw() {
 	if (_animate && _startSound) {
 		if (_sound) {
 			_sound->play(!_notLoopedSound);
+			if (!_notLoopedSound) {
+				_sound = nullptr;
+			}
 		}
 		_startSound = false;
 	}
@@ -462,16 +463,12 @@ void QObject::update(int time) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
 		while (_time >= flc->getDelay()) {
-			if (_sound && _hasSound && flc->getCurFrame() == 0) {
+			if (_sound && flc->getCurFrame() == 0) {
 				_startSound = true;
-				_hasSound = false;
 			}
 			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 			flc->setFrame(-1);
 			if (flc->getCurFrame() == flc->getFrameCount() - 1) {
-				if (_notLoopedSound) {
-					_hasSound = _sound != nullptr;
-				}
 				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, 0);
 			}
 			if (flc->getCurFrame() + 1 == flc->getFrameCount() / 2) {

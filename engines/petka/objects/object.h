@@ -75,7 +75,6 @@ public:
 	bool _holdMessages;
 	int _isActive;
 	int _startSound;
-	int _hasSound;
 	int _notLoopedSound;
 	Sound *_sound;
 	int8 _status;
