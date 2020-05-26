@@ -83,6 +83,7 @@ void TabWidget::init() {
 	_widthTillLastTab = 0;
 	_rtlTabOffset = 0;
 	_rtlSpaceOffset = 0;
+	_rtlBackgroundOffset = 0;
 }
 
 TabWidget::~TabWidget() {
@@ -411,11 +412,12 @@ void TabWidget::drawWidget() {
 		if (_navButtonsVisible) {
 			r2.translate(_butW - 6, 0);
 		}
+		_rtlBackgroundOffset = ABS(this->getWidth() - _widthTillLastTab);
 
 		drawTab = _lastVisibleTab - drawTab + _rtlTabOffset;
 	}
 
-	g_gui.theme()->drawTab(r2, _tabHeight, widths, tabs, drawTab);
+	g_gui.theme()->drawTab(r2, _tabHeight, widths, tabs, drawTab, (g_gui.useRTL() && _useRTL), _rtlBackgroundOffset);
 }
 
 void TabWidget::draw() {

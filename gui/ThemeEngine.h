@@ -442,7 +442,7 @@ public:
 	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-	             const Common::Array<Common::String> &tabs, int active);
+	             const Common::Array<Common::String> &tabs, int active, bool rtl = false, int rtlBackgroundOffset = 0);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState);
 

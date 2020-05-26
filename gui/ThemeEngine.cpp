@@ -1245,13 +1245,19 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 }
 
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-                          const Common::Array<Common::String> &tabs, int active) {
+                          const Common::Array<Common::String> &tabs, int active, bool rtl, int rtlBackgroundOffset) {
 	if (!ready())
 		return;
 
 	assert(tabs.size() == tabWidths.size());
 
-	drawDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
+	if (rtl) {
+		Common::Rect r2 = r;
+		r2.translate(-rtlBackgroundOffset, 0);
+		drawDD(kDDTabBackground, Common::Rect(r2.left, r2.top, r2.right, r2.top + tabHeight));
+	} else {
+		drawDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
+	}
 
 	int width = 0;
 	int activePos = -1;
