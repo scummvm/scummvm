@@ -140,7 +140,11 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 	_cursorNoninteractive = nullptr;
 
+#ifdef USE_OPENGL
+	_useD3D = true;
+#elif
 	_useD3D = false;
+#endif
 
 	_musicSystem = new BaseGameMusic(this);
 
@@ -482,7 +486,11 @@ bool BaseGame::initialize1() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
-	_renderer = makeOpenGLTextureRenderer(this);
+#ifdef USE_OPENGL
+	_renderer = makeOpenGL3DRenderer(this);
+#elif
+	_renderer = makeOSystemRenderer(this);
+#endif
 	if (_renderer == nullptr) {
 		return STATUS_FAILED;
 	}
