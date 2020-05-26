@@ -149,15 +149,21 @@ void Screen::clear() {
 void Screen::loadMouseCursors() {
 	// enable or disable the mouse cursor
 	if (settings._mouseOptions._enabled) {
-		g_system->showMouse(true);
-
 		Shared::File cursorsFile("data/graphics/cursors.txt");
 
 		for (int idx = 0; idx < 5; ++idx)
 			_mouseCursors[idx] = loadMouseCursor(cursorsFile);
 
+		// Set the default initial cursor
+		const uint TRANSPARENT = format.RGBToColor(0x80, 0x80, 0x80);
+		MouseCursorSurface *c = _mouseCursors[MC_DEFAULT];
+		CursorMan.pushCursor(c->getPixels(),
+			MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE,
+			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &format);
+		CursorMan.showMouse(true);
+
 	} else {
-		g_system->showMouse(false);
+		CursorMan.showMouse(false);
 	}
 
 	_filterScaler = scalerGet(settings._filter);
@@ -1217,8 +1223,8 @@ void Screen::screenGemUpdate() {
 	// TODO: Move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
 	if (g_context->_location->_map->_type == Map::DUNGEON) {
 		//DO THE SPECIAL DUNGEON MAP TRAVERSAL
-		Std::vector<Std::vector<int>> drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));
-		Common::List<Std::pair<int, int>> coordStack;
+		Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));
+		Common::List<Std::pair<int, int> > coordStack;
 
 		//Put the avatar's position on the stack
 		int center_x = layout->_viewport.width() / 2 - 1;
