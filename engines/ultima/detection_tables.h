@@ -259,6 +259,20 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima8",
 			"",
+			AD_ENTRY1s("gusecode.flx", "1abad7a58e052ff3d9664df1ab2ddb86", 1136206),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
+	{
+		{
+			"ultima8",
+			"",
 			AD_ENTRY1s("jusecode.flx", "1793bb252b805bf8d59300690987c605", 1208003),
 			Common::JA_JPN,
 			Common::kPlatformDOS,
