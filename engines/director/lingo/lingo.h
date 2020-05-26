@@ -324,7 +324,7 @@ public:
 	void cleanLocalVars();
 	Symbol *define(Common::String &s, int nargs, ScriptData *code);
 	Symbol *define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1, bool removeCode = true);
-	void processIf(int elselabel, int endlabel, int finalElse);
+	void processIf(int toplabel, int endlabel);
 	int castIdFetch(Datum &var);
 	void varAssign(Datum &var, Datum &value);
 	Datum varFetch(Datum &var);

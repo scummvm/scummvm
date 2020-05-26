@@ -467,20 +467,16 @@ void Lingo::codeLabel(int label) {
 	debugC(4, kDebugLingoCompile, "codeLabel: Added label %d", label);
 }
 
-void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
-	inst ielse1, iend;
-	int  else1 = 0;
+void Lingo::processIf(int toplabel, int endlabel) {
+	inst iend;
 
-	debugC(4, kDebugLingoCompile, "processIf(%d, %d, %d)", startlabel, endlabel, finalElse);
+	debugC(4, kDebugLingoCompile, "processIf(%d, %d)", toplabel, endlabel);
 
 	WRITE_UINT32(&iend, endlabel);
 
-	int finalElsePos = -1;
-	bool multiIf = _labelstack.size() > 1;
-
 	while (true) {
 		if (_labelstack.empty()) {
-			warning("Label stack underflow");
+			warning("Lingo::processIf(): Label stack underflow");
 			break;
 		}
 
@@ -491,28 +487,9 @@ void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 		if (!label)
 			break;
 
-		if (else1)
-			else1 = else1 - label;
+		debugC(4, kDebugLingoCompile, "processIf: label at %d", label);
 
-		// Store position of the last 'if', so we could set reference to the
-		// 'finalElse' part
-		if (finalElse && finalElsePos == -1) {
-			finalElsePos = label;
-		}
-
-		debugC(4, kDebugLingoCompile, "processIf: %d: %d %d", label, else1 + label, endlabel + label);
-
-		WRITE_UINT32(&ielse1, else1);
-		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
-		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
-
-		else1 = label;
-	}
-
-	if (multiIf && finalElsePos != -1) {
-		debugC(4, kDebugLingoCompile, "processIf: storing %d to %d", finalElse - finalElsePos + startlabel, finalElsePos);
-		WRITE_UINT32(&ielse1, finalElse - finalElsePos + startlabel);
-		(*_currentScript)[finalElsePos + 2] = ielse1;
+		(*_currentScript)[label] = iend;      /* end, if cond fails */
 	}
 }
 
