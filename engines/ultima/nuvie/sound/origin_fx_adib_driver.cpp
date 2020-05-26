@@ -342,7 +342,7 @@ void OriginFXAdLibDriver::play_note(uint8 channel, sint8 note, uint8 velocity) {
 }
 
 uint16 OriginFXAdLibDriver::sub_60D(sint16 val) {
-	const uint16 word_20f[] = {0x1E5, 0x202, 0x220, 0x241, 0x263, 0x287, 0x2AE, 0x2D7, 0x302, 0x330, 0x360, 0x393, 0x3CA};
+	static const uint16 word_20f[] = {0x1E5, 0x202, 0x220, 0x241, 0x263, 0x287, 0x2AE, 0x2D7, 0x302, 0x330, 0x360, 0x393, 0x3CA};
 
 	sint16 var_2 = val / 256;
 
@@ -356,7 +356,11 @@ uint16 OriginFXAdLibDriver::sub_60D(sint16 val) {
 
 	uint16 di = word_20f[(var_2 + 6) % 0xc];
 	if ((val & 0xff) != 0) {
-		di += ((word_20f[((var_2 - 18) % 0xc) + 1] - di) * (val & 0xff)) / 256;
+		int offset = ((var_2 - 18) % 0xc) + 1;
+		// FIXME: This offset is negative near the end of the Savage Empire Origin FX
+		// intro.. what should it do?
+		if (offset >= 0)
+			di += ((word_20f[offset] - di) * (val & 0xff)) / 256;
 	}
 
 	return (si << 10) + di;
