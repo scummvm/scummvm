@@ -34,8 +34,12 @@ class UIComponent;
 class UIContainer : public UIComponent {
 	Common::Array<UIComponent*> _components;
 
+	int _handleSpecificNumOfTopLayers;
+
 public:
-	UIContainer(BladeRunnerEngine *vm) : UIComponent(vm) {}
+	UIContainer(BladeRunnerEngine *vm) : UIComponent(vm) {
+		_handleSpecificNumOfTopLayers = 0;
+	}
 
 	void draw(Graphics::Surface &surface) override;
 
@@ -48,6 +52,8 @@ public:
 
 	void add(UIComponent *component);
 	void clear();
+
+	void setHandleSpecificNumOfTopLayers(int count);
 };
 
 

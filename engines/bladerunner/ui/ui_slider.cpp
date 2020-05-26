@@ -30,19 +30,19 @@
 namespace BladeRunner {
 
 const Color256 UISlider::kColors[] = {
-	{ 0, 0, 0 },
-	{ 16, 8, 8 },
-	{ 32, 24, 8 },
-	{ 56, 32, 16 },
-	{ 72, 48, 16 },
-	{ 88, 56, 24 },
-	{ 104, 72, 32 },
-	{ 128, 80, 40 },
-	{ 136, 96, 48 },
-	{ 152, 112, 56 },
-	{ 168, 128, 72 },
-	{ 184, 144, 88 },
-	{ 200, 160, 96 },
+	{   0,   0,   0 }, // Black - unpressed (framing rectange)
+	{  16,   8,   8 },
+	{  32,  24,   8 },
+	{  56,  32,  16 },
+	{  72,  48,  16 },
+	{  88,  56,  24 }, // Mouse-over (framing rectange)
+	{ 104,  72,  32 },
+	{ 128,  80,  40 },
+	{ 136,  96,  48 },
+	{ 152, 112,  56 },
+	{ 168, 128,  72 }, // Pressed (framing rectange)
+	{ 184, 144,  88 },
+	{ 200, 160,  96 },
 	{ 216, 184, 112 },
 	{ 232, 200, 128 },
 	{ 240, 224, 144 }
@@ -79,10 +79,12 @@ void UISlider::draw(Graphics::Surface &surface) {
 		frameColor = 0;
 	}
 
+	// Ensures animated transition of the frame's (outlining rectangle's) color to the new one
 	if (_currentFrameColor < frameColor) {
 		++_currentFrameColor;
 	}
 
+	// Ensures animated transition of the frame's (outlining rectangle's) color to the new one
 	if (_currentFrameColor > frameColor) {
 		--_currentFrameColor;
 	}

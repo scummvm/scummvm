@@ -40,13 +40,30 @@
 #include "bladerunner/ui/ui_container.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/ui/ui_slider.h"
+#include "bladerunner/ui/ui_scroll_box.h"
+#include "bladerunner/ui/ui_dropdown.h"
 
 #include "audio/mixer.h"
 #include "common/keyboard.h"
+#include "common/debug.h"
 
 namespace BladeRunner {
 
 const char *KIASectionSettings::kLeary = "LEARY";
+
+const Color256 KIASectionSettings::kColors[] = {
+	{   0,   0,   0 }, // Black - unpressed (framing rectange)
+	{  16,   8,   8 },
+	{  32,  24,   8 },
+	{  56,  32,  16 },
+	{  72,  48,  16 },
+	{  88,  56,  24 }, // Mouse-over (framing rectange)
+	{ 104,  72,  32 },
+	{ 128,  80,  40 },
+	{ 136,  96,  48 },
+	{ 152, 112,  56 },
+	{ 168, 128,  72 }  // Pressed (framing rectange)
+};
 
 KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	: KIASectionBase(vm) {
@@ -64,17 +81,44 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_soundEffectVolume    = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), _vm->_mixer->kMaxMixerVolume, 0);
 	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), _vm->_mixer->kMaxMixerVolume, 0);
 #endif
+	_subtitlesEnable                   = nullptr;
 
 	if (_vm->_language == Common::RU_RUS) {
 		// expanded click-bounding box x-axis
 		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 436, 374), 0, false);
-		// moved to new line
-		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(276, 376, 345, 386), 0, false);
+		if (_vm->_subtitles->isSystemActive()) {
+			// moved to new line
+			_subtitlesEnable  = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(276, 376, 345, 386), 0, false);
+		}
 	} else {
 		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
-		// moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
-		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false);
+		if (_vm->_subtitles->isSystemActive()) {
+			// moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+			_subtitlesEnable  = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false);
+		}
 	}
+
+	_selectedTextLanguageStr = "";
+	_selectedTextLanguageId = -1;
+	_textLanguageDropdown = nullptr;
+	if (_vm->_subtitles->isSystemActive()) {
+		// TODO initialize with default values or ConfMan() in open()?
+		_selectedTextLanguageStr = "";
+		_selectedTextLanguageId = -1;
+		// Put at height on top of Music setting
+		// This avoids interference and handling the case of when BLADERUNNER_ORIGINAL_SETTINGS is set
+		//      (in which case the middle part of the KIA screen is filled with controls)
+		_textLanguageDropdown = new UIDropDown(_vm,
+		                                       dropdownSelectedCallback,
+		                                       dropdownCancelledCallback,
+		                                       dropdownClickedTopFrameCallback,
+		                                       this,
+		                                       "",
+		                                       0,
+		                                       136,
+		                                       Subtitles::kMaxLanguageSelectionNum);
+	}
+
 	_playerAgendaSelector = new UIImagePicker(_vm, 5);
 
 	_uiContainer->add(_musicVolume);
@@ -87,7 +131,16 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_uiContainer->add(_directorsCut);
 	if (_vm->_subtitles->isSystemActive()) {
 		_uiContainer->add(_subtitlesEnable);
+		// Note: Keep _languageSelectorScrollBox last added to _uiContainer
+		// in order to be able to set it as the only active object
+		// when the language selection dropdown is shown.
+		_uiContainer->add(_textLanguageDropdown);
 	}
+
+	_state = kStateNormal;
+
+	_mouseX = 0;
+	_mouseY = 0;
 
 	_learyPos = 0;
 }
@@ -102,27 +155,39 @@ KIASectionSettings::~KIASectionSettings() {
 	delete _gammaCorrection;
 #endif
 	delete _directorsCut;
-	delete _subtitlesEnable;
+	if (_vm->_subtitles->isSystemActive()) {
+		delete _textLanguageDropdown;
+		delete _subtitlesEnable;
+	}
 	delete _playerAgendaSelector;
 }
 
 void KIASectionSettings::open() {
+	_state = kStateNormal;
+
 	_playerAgendaSelector->resetImages();
 
-	_playerAgendaSelector->defineImage(0, Common::Rect(180, 290, 227, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(30));
-	_playerAgendaSelector->defineImage(1, Common::Rect(238, 290, 285, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(31));
-	_playerAgendaSelector->defineImage(2, Common::Rect(296, 290, 343, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(32));
-	_playerAgendaSelector->defineImage(3, Common::Rect(354, 290, 401, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(33));
-	_playerAgendaSelector->defineImage(4, Common::Rect(412, 290, 459, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(34));
+	_playerAgendaSelector->defineImage(kPlayerAgendaPolite,     Common::Rect(180, 290, 227, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(30));
+	_playerAgendaSelector->defineImage(kPlayerAgendaNormal,     Common::Rect(238, 290, 285, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(31));
+	_playerAgendaSelector->defineImage(kPlayerAgendaSurly,      Common::Rect(296, 290, 343, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(32));
+	_playerAgendaSelector->defineImage(kPlayerAgendaErratic,    Common::Rect(354, 290, 401, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(33));
+	_playerAgendaSelector->defineImage(kPlayerAgendaUserChoice, Common::Rect(412, 290, 459, 353), nullptr, nullptr, nullptr, _vm->_textOptions->getText(34));
 	initConversationChoices();
 	_playerAgendaSelector->activate(mouseInCallback, nullptr, nullptr, mouseUpCallback, this);
 
 	_directorsCut->enable();
-	_subtitlesEnable->enable();
+	if (_vm->_subtitles->isSystemActive()) {
+		_subtitlesEnable->enable();
+		_textLanguageDropdown->activate();
+		populateLanguageSelection();
+	}
 }
 
 void KIASectionSettings::close() {
 	_playerAgendaSelector->deactivate();
+	if (_vm->_subtitles->isSystemActive()) {
+		_textLanguageDropdown->deactivate();
+	}
 }
 
 void KIASectionSettings::draw(Graphics::Surface &surface) {
@@ -140,7 +205,9 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 
 	_directorsCut->setChecked(_vm->_gameFlags->query(kFlagDirectorsCut));
 
-	_subtitlesEnable->setChecked(_vm->isSubtitlesEnabled());
+	if (_vm->_subtitles->isSystemActive()) {
+		_subtitlesEnable->setChecked(_vm->isSubtitlesEnabled());
+	}
 
 	const char *textConversationChoices = _vm->_textOptions->getText(0);
 	const char *textMusic = _vm->_textOptions->getText(2);
@@ -167,7 +234,6 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	int posDark = 178 - _vm->_mainFont->getStringWidth(textDark);
 #endif
 
-	_uiContainer->draw(surface);
 	_playerAgendaSelector->draw(surface);
 
 	_vm->_mainFont->drawString(&surface, textConversationChoices, posConversationChoices, 280, surface.w, surface.format.RGBToColor(232, 208, 136));
@@ -202,38 +268,47 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 
 	if (_vm->_subtitles->isSystemActive()) {
 		// Allow this to be loading as an extra text item in the resource for text options
-		const char *subtitlesTranslation = nullptr;
+		const char *subtitlesTranslation      = nullptr;
+		const char *languageSelectTranslation = nullptr;
 		switch (_vm->_language) {
-			case Common::EN_ANY:
-			default:
-				subtitlesTranslation = "Subtitles";
-				break;
-			case Common::DE_DEU:
-				subtitlesTranslation = "Untertitel";
-				break;
-			case Common::FR_FRA:
-				subtitlesTranslation = "Sous-titres";
-				break;
-			case Common::IT_ITA:
-				subtitlesTranslation = "Sottotitoli";
-				break;
-			case Common::ES_ESP:
-				// the spanish text must have accented í
-				subtitlesTranslation = "Subt\xa1tulos";
-				break;
-			case Common::RU_RUS:
-				// субтитры
-				if (_vm->_russianCP1251) {
-					// Patched translation by Siberian Studio is using Windows-1251 encoding
-					subtitlesTranslation = "\xf1\xf3\xe1\xf2\xe8\xf2\xf0\xfb";
-				} else {
-					// Original release uses custom encoding
-					subtitlesTranslation = "CE,NBNHS";
-				}
-				break;
+		case Common::EN_ANY:
+		default:
+			subtitlesTranslation      = "Subtitles";
+			languageSelectTranslation = "Text Language:";
+			break;
+		case Common::DE_DEU:
+			subtitlesTranslation = "Untertitel";
+			languageSelectTranslation = "Text Language:"; // TODO DEUTCH translation
+			break;
+		case Common::FR_FRA:
+			subtitlesTranslation = "Sous-titres";
+			languageSelectTranslation = "Text Language:"; // TODO FRENCH translation
+			break;
+		case Common::IT_ITA:
+			subtitlesTranslation = "Sottotitoli";
+			languageSelectTranslation = "Text Language:"; // TODO ITALIAN translation
+			break;
+		case Common::ES_ESP:
+			// the spanish text must have accented í
+			subtitlesTranslation = "Subt\xa1tulos";
+			languageSelectTranslation = "Text Language:"; // TODO SPANISH translation
+			break;
+		case Common::RU_RUS:
+			// субтитры
+			if (_vm->_russianCP1251) {
+				// Patched translation by Siberian Studio is using Windows-1251 encoding
+				subtitlesTranslation = "\xf1\xf3\xe1\xf2\xe8\xf2\xf0\xfb";
+				languageSelectTranslation = "Text Language:"; // TODO RUSSIAN translation + proper characters for encoding
+			} else {
+				// Original release uses custom encoding
+				subtitlesTranslation = "CE,NBNHS";
+				languageSelectTranslation = "Text Language:"; // TODO RUSSIAN translation + proper characters for this encoding
+			}
+			break;
 		}
-		// +1 to the max of original index of textOptions which is 41
+		// +2 to the max of original index of textOptions which is 41
 		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0 ? subtitlesTranslation : _vm->_textOptions->getText(42);
+		const char *textLanguageSelect = strcmp(_vm->_textOptions->getText(43), "") == 0 ? languageSelectTranslation : _vm->_textOptions->getText(43);
 
 		if (_vm->_language == Common::RU_RUS) {
 			// special case for Russian version, put the option in a new line to avoid overlap
@@ -242,36 +317,48 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 			// moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
 			_vm->_mainFont->drawString(&surface, textSubtitles, 323, 365, surface.w, surface.format.RGBToColor(232, 208, 136));
 		}
+
+		// Vertical Align with "Soft" label
+		_textLanguageDropdown->setControlLeft(posSoft);
+		_textLanguageDropdown->setLabelStr(textLanguageSelect);
 	}
+
+	// Draw uiContainer contained objects after drawing the text on the section for music, sound, speech etc.
+	_uiContainer->draw(surface);
 
 	_playerAgendaSelector->drawTooltip(surface, _mouseX, _mouseY);
 }
 
 void KIASectionSettings::handleKeyDown(const Common::KeyState &kbd) {
-	if (toupper(kbd.ascii) != kLeary[_learyPos]) {
-		_learyPos = 0;
-	}
-
-	if (toupper(kbd.ascii) == kLeary[_learyPos]) {
-		++_learyPos;
-		if (!kLeary[_learyPos]) {
-			_vm->_settings->setLearyMode(!_vm->_settings->getLearyMode());
+	if (_state == kStateNormal) {
+		if (toupper(kbd.ascii) != kLeary[_learyPos]) {
 			_learyPos = 0;
-			initConversationChoices();
+		}
+
+		if (toupper(kbd.ascii) == kLeary[_learyPos]) {
+			++_learyPos;
+			if (!kLeary[_learyPos]) {
+				_vm->_settings->setLearyMode(!_vm->_settings->getLearyMode());
+				_learyPos = 0;
+				initConversationChoices();
+			}
 		}
 	}
 }
 
 void KIASectionSettings::handleMouseMove(int mouseX, int mouseY) {
 	_uiContainer->handleMouseMove(mouseX, mouseY);
+
 	_mouseX = mouseX;
 	_mouseY = mouseY;
+
 	_playerAgendaSelector->handleMouseAction(mouseX, mouseY, false, false, false);
 }
 
 void KIASectionSettings::handleMouseDown(bool mainButton) {
 	if (mainButton) {
 		_uiContainer->handleMouseDown(false);
+
 		_playerAgendaSelector->handleMouseAction(_mouseX, _mouseY, true, false, false);
 	}
 }
@@ -279,7 +366,14 @@ void KIASectionSettings::handleMouseDown(bool mainButton) {
 void KIASectionSettings::handleMouseUp(bool mainButton) {
 	if (mainButton) {
 		_uiContainer->handleMouseUp(false);
+
 		_playerAgendaSelector->handleMouseAction(_mouseX, _mouseY, false, true, false);
+	}
+}
+
+void KIASectionSettings::handleMouseScroll(int direction) {
+	if (_vm->_subtitles->isSystemActive() && _state == kStateLanguageSelect) {
+		_uiContainer->handleMouseScroll(direction);
 	}
 }
 
@@ -333,8 +427,7 @@ void KIASectionSettings::checkBoxCallback(void *callbackData, void *source) {
 		} else {
 			self->_vm->_gameFlags->reset(kFlagDirectorsCut);
 		}
-	}
-	else if (source == self->_subtitlesEnable) {
+	} else if (self->_vm->_subtitles->isSystemActive() && source == self->_subtitlesEnable) {
 		self->_vm->setSubtitlesEnabled(self->_subtitlesEnable->_isChecked);
 	}
 }
@@ -351,29 +444,29 @@ void KIASectionSettings::mouseUpCallback(int buttonId, void *callbackData) {
 
 void KIASectionSettings::onButtonPressed(int buttonId) {
 	switch (buttonId) {
-	case 0:
+	case kPlayerAgendaPolite:
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, -30, -30, 50, 0);
-		_vm->_settings->setPlayerAgenda(0);
+		_vm->_settings->setPlayerAgenda(kPlayerAgendaPolite);
 		initConversationChoices();
 		break;
-	case 1:
+	case kPlayerAgendaNormal:
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, -15, -15, 50, 0);
-		_vm->_settings->setPlayerAgenda(1);
+		_vm->_settings->setPlayerAgenda(kPlayerAgendaNormal);
 		initConversationChoices();
 		break;
-	case 2:
+	case kPlayerAgendaSurly:
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 0, 0, 50, 0);
-		_vm->_settings->setPlayerAgenda(2);
+		_vm->_settings->setPlayerAgenda(kPlayerAgendaSurly);
 		initConversationChoices();
 		break;
-	case 3:
+	case kPlayerAgendaErratic:
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 15, 15, 50, 0);
-		_vm->_settings->setPlayerAgenda(3);
+		_vm->_settings->setPlayerAgenda(kPlayerAgendaErratic);
 		initConversationChoices();
 		break;
-	case 4:
+	case kPlayerAgendaUserChoice:
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 30, 30, 50, 0);
-		_vm->_settings->setPlayerAgenda(4);
+		_vm->_settings->setPlayerAgenda(kPlayerAgendaUserChoice);
 		initConversationChoices();
 		break;
 	default:
@@ -385,7 +478,7 @@ void KIASectionSettings::initConversationChoices() {
 	for (int i = 0; i < 5; ++i) {
 		const Shape *shape = nullptr;
 		if (_vm->_settings->getPlayerAgenda() == i) {
-			if (i == 4) {
+			if (i == kPlayerAgendaUserChoice) {
 				shape = _vm->_kia->_shapes->get(122);
 			} else if (_vm->_settings->getLearyMode()) {
 				shape = _vm->_kia->_shapes->get(106 + i);
@@ -393,7 +486,7 @@ void KIASectionSettings::initConversationChoices() {
 				shape = _vm->_kia->_shapes->get(114 + i);
 			}
 		} else {
-			if (i == 4) {
+			if (i == kPlayerAgendaUserChoice) {
 				shape = _vm->_kia->_shapes->get(123);
 			} else if (_vm->_settings->getLearyMode()) {
 				shape = _vm->_kia->_shapes->get(110 + i);
@@ -405,6 +498,64 @@ void KIASectionSettings::initConversationChoices() {
 		_playerAgendaSelector->setImageShapeUp(i, shape);
 		_playerAgendaSelector->setImageShapeHovered(i, shape);
 		_playerAgendaSelector->setImageShapeDown(i, shape);
+	}
+}
+
+void KIASectionSettings::populateLanguageSelection() {
+	_textLanguageDropdown->clearLines();
+	_textLanguageDropdown->addLine("English v7 [ENG] (SCUMMVM)", 1);
+	_textLanguageDropdown->addLine("French v7 [FRA] (Kwama57)", 2);
+	_textLanguageDropdown->addLine("Spanish v7 [ESP] (Victor G. Fraile & GeekOb)", 3);
+	_textLanguageDropdown->addLine("Greek v1 [ENG] (Praetorian)", 4);
+	_textLanguageDropdown->addLine("Hebrew v1 [ENG] (Rzil)", 5);
+	_textLanguageDropdown->addLine("Chinese v0 [ENG] (*)", 6);
+	_textLanguageDropdown->addLine("Russian v1 [ENG] (*)", 7);
+	_textLanguageDropdown->addLine("Italian v0 [ITA] (*)", 8);
+	_textLanguageDropdown->addLine("Deutsch v0 [DEU] (*)", 9);
+}
+
+void KIASectionSettings::changeState(State state) {
+	_state = state;
+	if (state != kStateNormal) {
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP7), 90, 0, 0, 50, 0);
+	}
+}
+
+void KIASectionSettings::dropdownSelectedCallback(void *callbackData, void *source, int lineData, int mouseButton) {
+	KIASectionSettings *self = (KIASectionSettings *)callbackData;
+
+	if (source == self->_textLanguageDropdown && lineData >= 0) {
+		self->_selectedTextLanguageStr = self->_textLanguageDropdown->getLineSelectedStr();
+		self->_selectedTextLanguageId = lineData;
+		self->showTextSelectionDropdown(false);
+	}
+}
+
+void KIASectionSettings::dropdownCancelledCallback(void *callbackData, void *source) {
+	KIASectionSettings *self = (KIASectionSettings *)callbackData;
+	if (source == self->_textLanguageDropdown) {
+		self->showTextSelectionDropdown(false);
+	}
+}
+
+void KIASectionSettings::dropdownClickedTopFrameCallback(void *callbackData, void *source) {
+	KIASectionSettings *self = (KIASectionSettings *)callbackData;
+
+	if (source == self->_textLanguageDropdown) {
+		self->showTextSelectionDropdown(!self->_textLanguageDropdown->isDropDownMenuExpanded());
+	}
+}
+
+void KIASectionSettings::showTextSelectionDropdown(bool showToggle) {
+	if (showToggle) {
+		// scrollable area will be expanded
+		populateLanguageSelection();
+		_uiContainer->setHandleSpecificNumOfTopLayers(1);
+		changeState(kStateLanguageSelect);
+	} else {
+		// scrollable area will be collapsed
+		_uiContainer->setHandleSpecificNumOfTopLayers(0);
+		changeState(kStateNormal);
 	}
 }
 

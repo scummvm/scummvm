@@ -80,7 +80,15 @@ const Color256 UIScrollBox::kTextColors4[] = {
 	{ 248, 224, 144 }
 };
 
-UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect, Common::Rect scrollBarRect) : UIComponent(vm) {
+UIScrollBox::UIScrollBox(BladeRunnerEngine *vm,
+	                     UIScrollBoxClickedCallback *lineSelectedCallback,
+	                     void *callbackData,
+	                     int maxLineCount,
+	                     int style,
+	                     bool center,
+	                     Common::Rect rect,
+	                     Common::Rect scrollBarRect) : UIComponent(vm) {
+
 	_selectedLineState     = 0;
 	_scrollUpButtonState   = 0;
 	_scrollDownButtonState = 0;
@@ -101,7 +109,7 @@ UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelecte
 	_callbackData         = callbackData;
 
 	_isVisible  = false;
-	_style      = style;
+	_style      = style; // 0, 1 or (new) 2. "2" is similar to "1" but with solid background for main area and scroll bar
 	_center     = center;
 	_timeLastScroll    = _vm->_time->currentSystem();
 	_timeLastCheckbox  = _vm->_time->currentSystem();
@@ -171,10 +179,52 @@ void UIScrollBox::hide() {
 	_isVisible = false;
 }
 
+bool UIScrollBox::isVisible() {
+	return _isVisible;
+}
+
+bool UIScrollBox::hasFocus() {
+	return _mouseOver;
+}
+
+void UIScrollBox::setBoxTop(int top) {
+	_rect.moveTo(_rect.left, top);
+
+	_rect.bottom = _rect.top + kLineHeight * _maxLinesVisible - 1;
+}
+
+void UIScrollBox::setBoxLeft(int left) {
+	_rect.moveTo(left, _rect.top);
+}
+
+void UIScrollBox::setBoxWidth(uint16 width) {
+	_rect.setWidth(width);
+}
+
+int UIScrollBox::getBoxLeft() {
+	return _rect.left;
+}
+
+uint16 UIScrollBox::getBoxWidth() {
+	return _rect.width();
+}
+
+void UIScrollBox::setScrollbarTop(int top) {
+	_scrollBarRect.moveTo(_scrollBarRect.left, top);
+}
+
+void UIScrollBox::setScrollbarLeft(int left) {
+	_scrollBarRect.moveTo(left, _scrollBarRect.top);
+}
+
+void UIScrollBox::setScrollbarWidth(uint16 width) {
+	_scrollBarRect.setWidth(width);
+	_scrollBarRect.right += 15; // right side was not used, but it's useful for determining if the control is selected
+}
+
 void UIScrollBox::clearLines() {
 	_lineCount = 0;
 	_firstLineVisible = 0;
-
 }
 
 void UIScrollBox::addLine(const Common::String &text, int lineData, int flags) {
@@ -378,7 +428,26 @@ int UIScrollBox::getSelectedLineData() {
 	return -1;
 }
 
+Common::String UIScrollBox::getLineText(int lineData) {
+	if (hasLine(lineData)) {
+		return _lines[_hoveredLine]->text;
+	}
+	return "";
+}
+
+int UIScrollBox::getMaxLinesVisible() {
+	return _maxLinesVisible;
+}
+
+int UIScrollBox::getLineCount() {
+	return _lineCount;
+}
+
 void UIScrollBox::draw(Graphics::Surface &surface) {
+	if (!_isVisible) {
+		return;
+	}
+
 	uint32 timeNow = _vm->_time->currentSystem();
 
 	// update scrolling
@@ -536,12 +605,22 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 
 			if (_lines[i]->flags & 0x08) { // has background rectangle
 				int colorBackground = 0;
-				if (_style) {
+				if (_style == 2) {
+					colorBackground = surface.format.RGBToColor(kTextBackgroundColors[colorIndex].r / 8, kTextBackgroundColors[colorIndex].g / 8, kTextBackgroundColors[colorIndex].b / 8);
+				} else if (_style > 0) {
 					colorBackground = surface.format.RGBToColor(kTextBackgroundColors[colorIndex].r, kTextBackgroundColors[colorIndex].g, kTextBackgroundColors[colorIndex].b);
 				} else {
 					colorBackground = surface.format.RGBToColor(80, 56, 32);
 				}
-				surface.fillRect(Common::Rect(x, y, _rect.right + 1, y1 + 1), colorBackground);
+
+				if (_style == 2) {
+					// New: style = 2 (original unused)
+					// original behavior -- No padding between the colored background of lines, simulate solid background (gradient)
+					surface.fillRect(Common::Rect(CLIP(x - 1, 0, 639), y, _rect.right + 1, y + kLineHeight), colorBackground);
+				} else {
+					// original behavior -- there is padding between the colored background of lines
+					surface.fillRect(Common::Rect(x, y, _rect.right + 1, y1 + 1), colorBackground);
+				}
 			}
 
 			if (_center) {
@@ -557,68 +636,79 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 		} while (i < lastLineVisible);
 	}
 
-	// draw scroll up button
-	int scrollUpButtonShapeId = 0;
-	if (_scrollUpButtonState) {
-		if (_scrollUpButtonState == 2) {
-			if (_scrollUpButtonHover) {
-				scrollUpButtonShapeId = 72;
+	if (_style == 2 && getLineCount() >= getMaxLinesVisible()) {
+		// New: style = 2 (original unused)
+		// Solid background color for scrollbar
+		int scrollBarFillColor = surface.format.RGBToColor(k3DFrameColors[0].r / 2, k3DFrameColors[0].g / 2, k3DFrameColors[0].b / 2);
+		surface.fillRect(Common::Rect(_scrollBarRect.left, _scrollBarRect.top, CLIP(_scrollBarRect.left + 15, 0, 639), _scrollBarRect.bottom), scrollBarFillColor);
+	}
+
+	if (_style != 2
+	    || (_style == 2 && getLineCount() >= getMaxLinesVisible())
+	) {
+		// draw scroll up button
+		int scrollUpButtonShapeId = 0;
+		if (_scrollUpButtonState) {
+			if (_scrollUpButtonState == 2) {
+				if (_scrollUpButtonHover) {
+					scrollUpButtonShapeId = 72;
+				} else {
+					scrollUpButtonShapeId = 71;
+				}
 			} else {
-				scrollUpButtonShapeId = 71;
+				scrollUpButtonShapeId = 70;
 			}
+		} else if (_scrollUpButtonHover) {
+			scrollUpButtonShapeId = 71;
 		} else {
 			scrollUpButtonShapeId = 70;
 		}
-	} else if (_scrollUpButtonHover) {
-		scrollUpButtonShapeId = 71;
-	} else {
-		scrollUpButtonShapeId = 70;
-	}
-	_vm->_kia->_shapes->get(scrollUpButtonShapeId)->draw(surface, _scrollBarRect.left, _scrollBarRect.top);
+		_vm->_kia->_shapes->get(scrollUpButtonShapeId)->draw(surface, _scrollBarRect.left, _scrollBarRect.top);
 
-	// draw scroll down button
-	int scrollDownButtonShapeId = 0;
-	if (_scrollDownButtonState) {
-		if (_scrollDownButtonState == 2) {
-			if (_scrollDownButtonHover) {
-				scrollDownButtonShapeId = 75;
+		// draw scroll down button
+		int scrollDownButtonShapeId = 0;
+		if (_scrollDownButtonState) {
+			if (_scrollDownButtonState == 2) {
+				if (_scrollDownButtonHover) {
+					scrollDownButtonShapeId = 75;
+				} else {
+					scrollDownButtonShapeId = 74;
+				}
 			} else {
-				scrollDownButtonShapeId = 74;
+				scrollDownButtonShapeId = 73;
 			}
+		} else if (_scrollDownButtonHover) {
+			scrollDownButtonShapeId = 74;
 		} else {
 			scrollDownButtonShapeId = 73;
 		}
-	} else if (_scrollDownButtonHover) {
-		scrollDownButtonShapeId = 74;
-	} else {
-		scrollDownButtonShapeId = 73;
-	}
-	_vm->_kia->_shapes->get(scrollDownButtonShapeId)->draw(surface, _scrollBarRect.left, _scrollBarRect.bottom - 7);
+		_vm->_kia->_shapes->get(scrollDownButtonShapeId)->draw(surface, _scrollBarRect.left, _scrollBarRect.bottom - 7);
 
-	int scrollAreaSize = _scrollBarRect.bottom - (_scrollBarRect.top + 15);
-	int scrollBarHeight = 0;
-	if (_lineCount <= _maxLinesVisible) {
-		scrollBarHeight = _scrollBarRect.bottom - (_scrollBarRect.top + 15);
-	} else {
-		scrollBarHeight = _maxLinesVisible * scrollAreaSize / _lineCount;
-	}
-	scrollBarHeight = MAX(scrollBarHeight, 16);
+		int scrollAreaSize = _scrollBarRect.bottom - (_scrollBarRect.top + 15);
+		int scrollBarHeight = 0;
+		if (_lineCount <= _maxLinesVisible) {
+			scrollBarHeight = _scrollBarRect.bottom - (_scrollBarRect.top + 15);
+		} else {
+			scrollBarHeight = _maxLinesVisible * scrollAreaSize / _lineCount;
+		}
+		scrollBarHeight = MAX(scrollBarHeight, 16);
 
-	int v56 = 0;
-	if (_lineCount <= _maxLinesVisible) {
-		v56 = 0;
-	} else {
-		v56 = _firstLineVisible * (scrollAreaSize - scrollBarHeight) / (_lineCount - _maxLinesVisible);
-	}
+		int v56 = 0;
+		if (_lineCount <= _maxLinesVisible) {
+			v56 = 0;
+		} else {
+			v56 = _firstLineVisible * (scrollAreaSize - scrollBarHeight) / (_lineCount - _maxLinesVisible);
+		}
 
-	int v58 = v56 + _scrollBarRect.top + 8;
+		int v58 = v56 + _scrollBarRect.top + 8;
 
-	if (_scrollBarState == 2) {
-		draw3DFrame(surface, Common::Rect(_scrollBarRect.left, v58, _scrollBarRect.left + 15, v58 + scrollBarHeight), 1, 1);
-	} else if (!_scrollBarState && _scrollBarHover) {
-		draw3DFrame(surface, Common::Rect(_scrollBarRect.left, v56 + _scrollBarRect.top + 8, _scrollBarRect.left + 15, v58 + scrollBarHeight), 0, 1);
-	} else {
-		draw3DFrame(surface, Common::Rect(_scrollBarRect.left, v58, _scrollBarRect.left + 15, v58 + scrollBarHeight), 0, 0);
+		if (_scrollBarState == 2) {
+			draw3DFrame(surface, Common::Rect(_scrollBarRect.left, v58, _scrollBarRect.left + 15, v58 + scrollBarHeight), 1, 1);
+		} else if (!_scrollBarState && _scrollBarHover) {
+			draw3DFrame(surface, Common::Rect(_scrollBarRect.left, v56 + _scrollBarRect.top + 8, _scrollBarRect.left + 15, v58 + scrollBarHeight), 0, 1);
+		} else {
+			draw3DFrame(surface, Common::Rect(_scrollBarRect.left, v58, _scrollBarRect.left + 15, v58 + scrollBarHeight), 0, 0);
+		}
 	}
 }
 

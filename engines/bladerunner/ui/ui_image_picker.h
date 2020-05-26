@@ -73,10 +73,15 @@ public:
 
 	bool setImageTop(int i, int top);
 	bool setImageLeft(int i, int left);
+	bool setImageWidth(int i, int16 width);
 	bool setImageShapeUp(int i, const Shape *shapeUp);
 	bool setImageShapeHovered(int i, const Shape *shapeHovered);
 	bool setImageShapeDown(int i, const Shape *shapeDown);
 	bool setImageTooltip(int i, const char *tooltip);
+
+	int getImageTop(int i);
+	int getImageLeft(int i);
+	int getImageWidth(int i);
 
 	bool resetActiveImage(int i);
 
