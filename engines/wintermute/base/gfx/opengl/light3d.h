@@ -21,7 +21,7 @@ public:
 	Light3D(BaseGame* inGame);
 	virtual ~Light3D();
 	uint32 m_DiffuseColor;
-	Math::Vector3d m_Pos;
+	Math::Vector3d m_Position;
 	Math::Vector3d m_Target;
 	bool m_IsSpotlight;
 	bool m_Active;
@@ -31,6 +31,7 @@ public:
 	bool m_IsAvailable;
 
 	bool SetLight(int Index=0);
+	bool loadFrom3DS(byte** buffer);
 };
 
 }

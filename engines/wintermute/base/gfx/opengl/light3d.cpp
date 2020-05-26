@@ -7,6 +7,7 @@
 #include "../../../math/math_util.h"
 #include "../../../wintypes.h"
 #include "math/glmath.h"
+#include "loader3ds.h"
 
 namespace Wintermute {
 
@@ -14,7 +15,7 @@ namespace Wintermute {
 Light3D::Light3D(BaseGame* inGame): BaseScriptable(inGame, false, false)
 {
 	m_DiffuseColor = BYTETORGBA(255, 255, 255, 255);
-	m_Pos = Math::Vector3d(0, 0, 0);
+	m_Position = Math::Vector3d(0, 0, 0);
 	m_Target = Math::Vector3d(0, 0, 0);
 	m_IsSpotlight = false;
 	m_Falloff = 0;
@@ -77,12 +78,104 @@ bool Light3D::SetLight(int Index)
 	return true;
 }
 
+bool Light3D::loadFrom3DS(byte** buffer)
+{
+	uint32 whole_chunk_size = *reinterpret_cast<uint32*>(*buffer);
+	byte* end = *buffer + whole_chunk_size - 2;
+	*buffer += 4;
+
+	m_Position.x() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+	m_Position.z() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+	m_Position.y() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+
+	while (*buffer < end) {
+		uint16 chunk_id = *reinterpret_cast<uint16*>(*buffer);
+
+		switch (chunk_id) {
+		case SPOTLIGHT:
+			*buffer += 6;
+
+			m_Target.x() = *reinterpret_cast<float*>(*buffer);
+			*buffer += 4;
+			m_Target.z() = *reinterpret_cast<float*>(*buffer);
+			*buffer += 4;
+			m_Target.y() = *reinterpret_cast<float*>(*buffer);
+			*buffer += 4;
+
+			// this is appearently not used
+			*buffer += 4;
+
+			m_Falloff = *reinterpret_cast<float*>(*buffer);
+			*buffer += 4;
+
+			m_IsSpotlight = true;
+			break;
+
+		case LIGHT_IS_OFF:
+			*buffer += 6;
+
+			m_Active = false;
+			break;
+
+		case RGB_BYTE: {
+			*buffer += 6;
+
+			byte r = **buffer;
+			*buffer += 1;
+			byte g = **buffer;
+			*buffer += 1;
+			byte b = **buffer;
+			*buffer += 1;
+
+			m_DiffuseColor = r;
+			m_DiffuseColor |= g << 8;
+			m_DiffuseColor |= b << 16;
+			m_DiffuseColor |= 255 << 24;
+			break;
+		}
+
+		case RGB_FLOAT: {
+			*buffer += 6;
+
+			float r = *reinterpret_cast<float*>(*buffer);
+			*buffer += 4;
+			float g = *reinterpret_cast<float*>(*buffer);
+			*buffer += 4;
+			float b = *reinterpret_cast<float*>(*buffer);
+			*buffer += 4;
+
+			m_DiffuseColor = static_cast<int32>(r*255);
+			m_DiffuseColor |= static_cast<int32>(g*255) << 8;
+			m_DiffuseColor |= static_cast<int32>(b*255) << 16;
+			m_DiffuseColor |= 255 << 24;
+			break;
+		}
+
+		case RANGE_END:
+		case 0x4659:
+		case MULTIPLIER:
+		case ROLL:
+		case SPOT_SHADOW_MAP:
+		case SPOT_RAY_TRACE_BIAS:
+		case SPOT_RAY_TRACE:
+			*buffer += *reinterpret_cast<uint32*>(*buffer + 2);
+		default:
+			break;
+		}
+	}
+
+	return true;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::GetViewMatrix(Math::Matrix4 *ViewMatrix)
 {
 	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
-	*ViewMatrix = Math::makeLookAtMatrix(m_Pos, m_Target, up);
+	*ViewMatrix = Math::makeLookAtMatrix(m_Position, m_Target, up);
 	return true;
 }
 

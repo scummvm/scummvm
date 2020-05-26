@@ -8,6 +8,7 @@
 #include "math/quat.h"
 #include "../../../math/math_util.h"
 #include "math/glmath.h"
+#include "loader3ds.h"
 
 namespace Wintermute {
 
@@ -31,6 +32,53 @@ Camera3D::Camera3D(BaseGame* inGame): BaseNamedObject(inGame)
 Camera3D::~Camera3D()
 {
 
+}
+
+bool Camera3D::loadFrom3DS(byte** buffer)
+{
+	uint32 whole_chunk_size = *reinterpret_cast<uint32*>(*buffer);
+	byte* end = *buffer + whole_chunk_size - 2;
+	*buffer += 4; // chunk size
+
+	m_Position.x() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+	m_Position.z() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+	m_Position.y() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+
+	m_Target.x() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+	m_Target.z() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+	m_Target.y() = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+
+	m_Bank = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+
+	float lens = *reinterpret_cast<float*>(*buffer);
+	*buffer += 4;
+
+	if (lens > 0.0f) {
+		m_FOV = 1900.0f / lens;
+	} else {
+		m_FOV = 45.0f;
+	}
+
+	// this is overkill here, simplify it later
+	while (*buffer < end) {
+		uint16 chunk_id = *reinterpret_cast<uint16*>(*buffer);
+
+		switch (chunk_id) {
+		case 0x4720:
+			*buffer += *reinterpret_cast<uint16*>(*buffer + 2);
+		default:
+			break;
+		}
+	}
+
+	return true;
 }
 
 

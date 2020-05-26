@@ -30,6 +30,7 @@ public:
 	float m_NearClipPlane;
 	float m_FarClipPlane;
 
+	bool loadFrom3DS(byte** buffer);
 };
 
 }

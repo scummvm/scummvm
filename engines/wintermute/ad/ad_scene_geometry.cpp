@@ -164,7 +164,7 @@ bool AdSceneGeometry::LoadFile(const char* Filename)
 	BaseArray<Mesh*> meshes;
 	BaseArray<Common::String> meshNames;
 
-	if(!load_3ds_file(Filename, meshes, meshNames, _lights, _cameras))
+	if(!load3DSFile(Filename, meshes, meshNames, _lights, _cameras))
 	{
 		delete GeomExt;
 		return false;
@@ -1361,7 +1361,7 @@ Math::Vector3d AdSceneGeometry::GetLightPos(char* LightName)
 	{
 		if(scumm_stricmp(LightName, _lights[i]->getName())==0)
 		{
-			return _lights[i]->m_Pos;
+			return _lights[i]->m_Position;
 		}
 	}
 	return Math::Vector3d(0, 0, 0);
