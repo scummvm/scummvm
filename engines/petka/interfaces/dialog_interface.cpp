@@ -150,6 +150,7 @@ void DialogInterface::onEndOpcode() {
 
 void DialogInterface::endUserMsg() {
 	_isUserMsg = false;
+	initCursor();
 	next(-1);
 }
 
