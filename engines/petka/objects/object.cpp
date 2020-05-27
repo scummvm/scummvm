@@ -283,8 +283,7 @@ void QMessageObject::processReaction(QReaction *r, const QMessage *msg) {
 		if (msg && rMsg.opcode == kRandom && rMsg.arg2 != -1) {
 			rMsg.arg1 = (int16) g_vm->getRnd().getRandomNumber((uint) (rMsg.arg2 - 1));
 		}
-		g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk,
-									   rMsg.sender);
+		g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk, this);
 		bool processed = true;
 		switch (rMsg.opcode) {
 		case kDialog: {
@@ -511,10 +510,10 @@ void QObject::onClick(int x, int y) {
 	case kActionTalk:
 		g_vm->getQSystem()->addMessage(_id, kTalk, 0, 0, 0, 0, this);
 		break;
-	case kActionObjUse:
+	case kActionObjUseChapayev:
 		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->_chapayev.get());
 		break;
-	case kActionObjUseChapayev:
+	case kActionObjUse:
 		g_vm->getQSystem()->addMessage(_id, kObjectUse, 0, 0, 0, 0, cursor->_invObj);
 		break;
 	default:
