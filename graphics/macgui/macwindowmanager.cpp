@@ -359,6 +359,17 @@ void macDrawPixel(int x, int y, int color, void *data) {
 	}
 }
 
+void macInvertPixel(int x, int y, int color, void *data) {
+	// Argument color is unused; we just invert the colors as they are in the surface.
+	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
+
+	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
+		byte *p = (byte *)surface->getBasePtr(x, y);
+
+		*p = abs(255 - *p);
+	}
+}
+
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
