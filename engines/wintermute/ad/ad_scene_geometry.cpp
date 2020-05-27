@@ -26,6 +26,7 @@
 #include "../base/gfx/opengl/mesh.h"
 #include "math/glmath.h"
 #include "../base/gfx/opengl/loader3ds.h"
+#include "../base/gfx/opengl/base_render_opengl3d.h"
 
 namespace Wintermute {
 
@@ -188,7 +189,7 @@ bool AdSceneGeometry::LoadFile(const char* Filename)
 				plane->setName((char*)meshNames[i].c_str());
 				plane->m_Mesh = meshes[i];
 				plane->m_Mesh->computeNormals();
-				plane->m_Mesh->fillVertexBuffer(0x700000FF);
+				plane->m_Mesh->fillVertexBuffer(0xFFFF00FF);
 				plane->m_ReceiveShadows = ExtNode->m_ReceiveShadows;
 				_planes.add(plane);
 			}
@@ -200,7 +201,7 @@ bool AdSceneGeometry::LoadFile(const char* Filename)
 				block->setName((char*)meshNames[i].c_str());
 				block->m_Mesh = meshes[i];
 				block->m_Mesh->computeNormals();
-				block->m_Mesh->fillVertexBuffer(0x70FF0000);
+				block->m_Mesh->fillVertexBuffer(0xFFFF00FF);
 				block->m_ReceiveShadows = ExtNode->m_ReceiveShadows;
 				_blocks.add(block);
 			}
@@ -222,7 +223,7 @@ bool AdSceneGeometry::LoadFile(const char* Filename)
 				generic->setName((char*)meshNames[i].c_str());
 				generic->m_Mesh = meshes[i];
 				generic->m_Mesh->computeNormals();
-				generic->m_Mesh->fillVertexBuffer(0x7000FF00);
+				generic->m_Mesh->fillVertexBuffer(0xFFFF00FF);
 				generic->m_ReceiveShadows = ExtNode->m_ReceiveShadows;
 				_generics.add(generic);
 			}
@@ -385,25 +386,24 @@ bool AdSceneGeometry::StoreDrawingParams()
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::Render(bool Render)
 {
-	// implement this later
-
-//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
+	// we know that we have opengl available if this class is instantiated
+	BaseRenderOpenGL3D* renderer = static_cast<BaseRenderOpenGL3D*>(_gameRef->_renderer);
 
 //	// store values
 //	StoreDrawingParams();
-//	if(!Render) return true;
+	if(!Render) return true;
 
+	renderer->resetModelViewTransform();
+	renderer->setup3D(GetActiveCamera());
 
-//	// render the geometry
-//	Math::Matrix4 matIdentity;
-//	matIdentity.setToIdentity();
+	// factor this out later
 
-//	if(m_ActiveCamera>=0 && m_ActiveCamera<_cameras.size())
-//		m_Renderer->Setup3D(_cameras[m_ActiveCamera]);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-//	m_Renderer->m_Device->SetTransform(D3DTS_WORLD, &matIdentity);
-
-//	C3DUtils::SetFixedVertexShader(m_Renderer->m_Device, D3DFVF_MODELVERTEXCOLOR);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 //	m_Renderer->m_Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 //	m_Renderer->m_Device->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -413,40 +413,45 @@ bool AdSceneGeometry::Render(bool Render)
 //	m_Renderer->m_Device->SetRenderState(D3DRS_ALPHATESTENABLE,  FALSE);
 //	m_Renderer->m_Device->SetTexture(0, NULL);
 
-//	int i;
+	unsigned i;
 
-//	// render walk planes
-//	for(i=0; i<_planes.size(); i++)
-//	{
-//		if(!_planes[i]->m_Active) continue;
-//		if(!_planes[i]->m_Mesh->m_VB) continue;
-//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _planes[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _planes[i]->m_Mesh->m_NumFaces);
+	// render walk planes
+	for(i=0; i<_planes.size(); i++)
+	{
+		if(!_planes[i]->m_Active) {
+//			continue;
+		}
 
-//		m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
-//	}
+		_planes[i]->m_Mesh->render();
 
-//	// render blocks
-//	for(i=0; i<_blocks.size(); i++)
-//	{
-//		if(!_blocks[i]->m_Active) continue;
-//		if(!_blocks[i]->m_Mesh->m_VB) continue;
-//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _blocks[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _blocks[i]->m_Mesh->m_NumFaces);
+		//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
+	}
+
+	// render blocks
+	for(i=0; i<_blocks.size(); i++)
+	{
+		if(!_blocks[i]->m_Active) {
+//			continue;
+		}
+
+		_blocks[i]->m_Mesh->render();
 
 //		m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
-//	}
+	}
 
-//	// render generic objects
-//	for(i=0; i<_generics.size(); i++)
-//	{
-//		if(!_generics[i]->m_Active) continue;
-//		if(!_generics[i]->m_Mesh->m_VB) continue;
-//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _generics[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _generics[i]->m_Mesh->m_NumFaces);
+	// render generic objects
+	for(i=0; i<_generics.size(); i++)
+	{
+		if(!_generics[i]->m_Active) {
+//			continue;
+		}
+
+		_generics[i]->m_Mesh->render();
 
 //		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
-//	}
+	}
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
 //	m_Renderer->m_Device->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );
