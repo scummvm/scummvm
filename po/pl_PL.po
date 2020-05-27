@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-03-21 05:14+0000\n"
-"Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
+"PO-Revision-Date: 2020-05-28 02:41+0000\n"
+"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.11\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-Language: Polish\n"
@@ -6118,9 +6118,9 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Chcesz wczytaæ zapis stanu gry?"
 
 #: engines/toon/toon.cpp:1527
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr "Nie uda³o siê usun±æ pliku."
+msgstr "Nie uda³o siê odnale¼æ  '%s' pliku."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, fuzzy, c-format
@@ -6128,11 +6128,11 @@ msgid "Could not locate engine data %s"
 msgstr "Szybki zapis w slocie #%d nie powiód³ siê"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Znaleziono niew³a¶ciw± wersjê silnika \"%s1\". Oczekiwano %d2 ale otrzymano "
-"%d3."
+"Znaleziono nieaktualn± wersjê silnika.Oczekiwano%dI.%d ale otrzymano "
+"wersjê%d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6141,11 +6141,11 @@ msgstr "Zmieñ postaæ"
 
 #: engines/ultima/ultima8/meta_engine.cpp:96
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:126
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Ultima VIII Cheats"
 
 #: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Ultima VIII Debug"
@@ -6153,16 +6153,15 @@ msgstr ""
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:304
 msgid "[corrupt]"
-msgstr ""
+msgstr "[uszkodzony]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:307
 msgid "[outdated]"
-msgstr ""
+msgstr "[przestarza³y]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:310
-#, fuzzy
 msgid "[too modern]"
-msgstr "Tryb dla daltonistów"
+msgstr "[zbyt nowoczesne]"
 
 #: engines/wintermute/detection.cpp:62
 msgid "Show FPS-counter"
@@ -6182,15 +6181,15 @@ msgstr "Stosuj filtrowanie dwuliniowe do poszczególnych sprite'ów"
 
 #: engines/wintermute/wintermute.cpp:156
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr ""
+msgstr "Ta gra wymaga wsparcia plików PNG, JPG i Vorbis."
 
 #: engines/wintermute/wintermute.cpp:167
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
+msgstr "Ta gra wymaga silnika FoxTail który nie jest zgodny z programem."
 
 #: engines/wintermute/wintermute.cpp:178
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
+msgstr "Ta gra wymaga silnika HeroCraft który nie jest zgodny z programem."
 
 #: engines/wintermute/wintermute.cpp:189
 msgid ""
