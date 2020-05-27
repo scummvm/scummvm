@@ -24,6 +24,7 @@
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
+#include "camera3d.h"
 
 namespace Wintermute {
 BaseRenderer *makeOpenGL3DRenderer(BaseGame *inGame) {
@@ -273,6 +274,10 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		glDisable(GL_CULL_FACE);
 
 		setProjection();
+
+		Math::Matrix4 viewMatrix;
+		camera->GetViewMatrix(&viewMatrix);
+		glLoadMatrixf(viewMatrix.getData());
 	}
 
 	return true;
