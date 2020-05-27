@@ -224,7 +224,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			}
 			break;
 		case kDescription: {
-			Common::ScopedPtr<Common::SeekableReadStream> invStream(g_vm->openFile("invntr.txt", false));
+			Common::ScopedPtr<Common::SeekableReadStream> invStream(g_vm->openFile("invntr.txt", true));
 			if (invStream) {
 				Common::String desc;
 				Common::INIFile invIni;

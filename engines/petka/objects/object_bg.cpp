@@ -105,7 +105,7 @@ void QObjectBG::goTo() {
 
 	QMessageObject *oldRoom = sys->findObject(oldRoomId);
 
-	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", true));
 	Common::INIFile bgsIni;
 	bgsIni.allowNonEnglishCharacters();
 	bgsIni.loadFromStream(*bgsStream);

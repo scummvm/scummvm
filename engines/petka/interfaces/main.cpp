@@ -72,7 +72,7 @@ void InterfaceMain::start(int id) {
 	_objs.push_back(g_vm->getQSystem()->_petka.get());
 	_objs.push_back(g_vm->getQSystem()->_chapayev.get());
 
-	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", true));
 	Common::INIFile bgsIni;
 	bgsIni.allowNonEnglishCharacters();
 	bgsIni.loadFromStream(*bgsStream);
