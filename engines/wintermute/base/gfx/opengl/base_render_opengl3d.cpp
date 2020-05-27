@@ -147,7 +147,7 @@ bool Wintermute::BaseRenderOpenGL3D::setProjection() {
 	float horizontal_view_angle = M_PI * 0.5f;
 	float aspect_ratio = float(viewportHeight) / float(viewportWidth);
 	float near_plane = 1.0f;
-	float far_plane = 1000.0f;
+	float far_plane = 1900.0f;
 	float right = near_plane * tanf(horizontal_view_angle * 0.5f);
 
 	glMatrixMode(GL_PROJECTION);
