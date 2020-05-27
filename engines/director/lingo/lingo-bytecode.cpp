@@ -80,9 +80,9 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x50, LC::cb_theassign,	"b" },
 	{ 0x51, LC::cb_varassign,	"bpa" },
 	{ 0x52, LC::cb_varassign,	"bpv" },
-	{ 0x53, LC::cb_jump,		"jb" },
-	{ 0x54, LC::cb_jump,		"jbn" },
-	{ 0x55, LC::cb_jumpifz,		"jb" },
+	{ 0x53, LC::c_jump,			"jb" },
+	{ 0x54, LC::c_jump,			"jbn" },
+	{ 0x55, LC::c_jumpifz,		"jb" },
 	{ 0x56, LC::cb_localcall,	"b" },
 	{ 0x57, LC::cb_call,		"b" },
 	{ 0x58, LC::cb_methodcall,  "b" },
@@ -112,9 +112,9 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x90, LC::cb_theassign, 	"w" },
 	{ 0x91, LC::cb_varassign,	"wpa" },
 	{ 0x92, LC::cb_varassign,	"wpv" },
-	{ 0x93, LC::cb_jump,		"jw" },
-	{ 0x94, LC::cb_jump,		"jwn" },
-	{ 0x95, LC::cb_jumpifz,		"jw" },
+	{ 0x93, LC::c_jump,			"jw" },
+	{ 0x94, LC::c_jump,			"jwn" },
+	{ 0x95, LC::c_jumpifz,		"jw" },
 	{ 0x96, LC::cb_localcall,	"w" },
 	{ 0x97, LC::cb_call,		"w" },
 	{ 0x98, LC::cb_methodcall,  "w" },
@@ -322,19 +322,6 @@ void LC::cb_methodcall() {
 
 }
 
-
-void LC::cb_jump() {
-	uint jump = g_lingo->readInt();
-	g_lingo->_pc = jump;
-}
-
-void LC::cb_jumpifz() {
-	uint jump = g_lingo->readInt();
-	int test = g_lingo->pop().asInt();
-	if (test == 0) {
-		g_lingo->_pc = jump;
-	}
-}
 
 void LC::cb_v4assign() {
 	int op = g_lingo->readInt();
@@ -1236,7 +1223,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		g_lingo->code1(STOP);
 
 		// Rewrite every offset flagged as a jump based on the new code alignment.
-		// This converts the relative offset from the bytecode to an absolute one.
 		for (uint j = 0; j < jumpList.size(); j++) {
 			int originalJumpAddressLoc = jumpList[j];
 			int originalJumpInstructionLoc = originalJumpAddressLoc-1;
@@ -1245,7 +1231,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			int oldTarget = originalJumpInstructionLoc + jump;
 			if ((oldTarget >= 0) && (oldTarget < (int)offsetList.size())) {
 				int newJump = offsetList[oldTarget];
-				WRITE_UINT32(&((*_currentScript)[jumpAddressPc]), newJump);
+				WRITE_UINT32(&((*_currentScript)[jumpAddressPc]), newJump - jumpAddressPc + 1);
 			} else {
 				warning("Jump of %d from position %d is outside the function!", jump, originalJumpAddressLoc);
 			}

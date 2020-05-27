@@ -171,8 +171,6 @@ namespace LC {
 	void cb_v4theentitynamepush();
 	void cb_v4theentityassign();
 	void cb_zeropush();
-	void cb_jump();
-	void cb_jumpifz();
 
 } // End of namespace LC
 

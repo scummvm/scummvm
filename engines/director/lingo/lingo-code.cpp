@@ -144,8 +144,6 @@ static struct FuncDescr {
 	{ LC::cb_field,			"cb_field",			"" },
 	{ LC::cb_globalassign,	"cb_globalassign",	"N" },
 	{ LC::cb_globalpush,	"cb_globalpush",	"N" },
-	{ LC::cb_jump,			"cb_jump",			"i" },
-	{ LC::cb_jumpifz,		"cb_jumpifz",		"i" },
 	{ LC::cb_list,			"cb_list",			"" },
 	{ LC::cb_proplist,		"cb_proplist",		"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
