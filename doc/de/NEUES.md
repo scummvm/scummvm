@@ -7,15 +7,43 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Alle Engines unterstützen nun automatisch gespeicherte Spielstände.
    - Fehler starten nun den Debugger, anstatt ScummVM einfach abstürzen zu lassen.
+   - Artikel werden bei der Sortierung der Spiele im Launcher nicht mehr berücksichtigt.
+   - Hebräisch wird nun korrekt in der Benutzeroberfläche dargestellt (benötigt die FriBiDi-Bibliothek).
 
  Dreamweb:
    - Unterstützung für russische Fan-Übersetzung hinzugefügt.
+   - Animationsgeschwindigkeit korrigiert.
 
  Kyra:
    - Unterstützung für die PC-98-Version von Eye of the Beholder I hinzugefügt.
 
+ Prince:
+   - Fehlerhafte Anzeige der Item-Beschreibungen im Inventar korrigiert.
+   - Englischsprachige Übersetzung hinzugefügt.
+
+ Queen:
+   - Fehler beim Laden von Spielständen aus dem Launcher heraus korrigiert.
+
+ SCUMM:
+   - Fehlerhafte Farbpalette korrigiert, die zu falscher Darstellung in der NES-Version von Maniac Mansion führt.
+   - Darstellung der Taschenlampe in der NES-Version von Maniac Mansion entspricht nun dem Original.
+   - Bisherige NES-Farbpalette durch genauere NTSC-Palette von Mesen ersetzt.
+   - Neue Option zur Benutzeroberfläche hinzugefügt, welche die Auswahl einer Farbpalette basierend auf dem NES Classic erlaubt.
+   - Farbpalette in der Apple //gs-Version von Maniac Mansion verbessert.
+   - Absturzt beim Betreten der Gara in der Apple //gs-Version von Maniac Mansion behoben.
+
  Sword1:
    - Unterstützung für lokalisierte Menüs in der russischen Version der Novy Disk Trilogy hinzugefügt.
+
+ Wintermute:
+   - System zur Verfolgung von Errungenschaften hinzugefügt, für mehr als 10 Spiele verfügbar.
+
+ Xeen:
+   - Fehlendes Sprite korrigiert, welches dargestellt wird, wenn ein Gegner von einem Energie-Strahl getroffen wird.
+   - Das Spiel friert nun nicht mehr wegen fehlerhafter Mob-Daten an der Spitze des Hexenturms ein.
+   - Absturz beim Laden einige Spielstände aus dem Launcher heraus korrigiert.
+   - Die Quelle in Nightshadow kann nun geheilt werden.
+   - Fehler beim Laden einiger Items behoben.
 
  Linux-Portierung:
    - Anstelle des Datei-Browsers von ScummVM kann nun der Datei-Browser des Betriebssystems verwendet werden.
