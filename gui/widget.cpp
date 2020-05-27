@@ -732,6 +732,9 @@ SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, const ch
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) {
+	if (g_gui.useRTL() && _useRTL == false) {
+		x = _w - x;		// If internal flipping is off, adjust the mouse to behave as if it were LTR.
+	}
 	if (isEnabled() && _isDragging) {
 		int newValue = posToValue(x);
 		if (newValue < _valueMin)
