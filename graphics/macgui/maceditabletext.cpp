@@ -108,10 +108,9 @@ void MacEditableText::setActive(bool active) {
 
 	MacWidget::setActive(active);
 
+	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	if (_active) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
-	} else {
-		g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	}
 
 	if (!_cursorOff && _cursorState == true) {
@@ -161,6 +160,11 @@ bool MacEditableText::draw(bool forceRedraw) {
 	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
 		return false;
 
+	if (!_surface) {
+		warning("MacEditableText::draw: Null surface");
+		return false;
+	}
+
 	_composeSurface->clear(_bgcolor);
 
 	_contentIsDirty = false;
@@ -179,7 +183,7 @@ bool MacEditableText::draw(bool forceRedraw) {
 }
 
 bool MacEditableText::draw(ManagedSurface *g, bool forceRedraw) {
-	if (!draw(forceRedraw))
+	if (!MacEditableText::draw(forceRedraw))
 		return false;
 
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
