@@ -117,6 +117,13 @@ Common::Error PetkaEngine::run() {
 			}
 		}
 		_qsystem->update();
+
+		if (_shouldChangePart) {
+			loadPart(_nextPart);
+			_shouldChangePart = false;
+			_vsys->makeAllDirty();
+		}
+
 		_vsys->update();
 		_system->delayMillis(20);
 	}
@@ -240,6 +247,55 @@ void PetkaEngine::loadPart(byte part) {
 	_dialogMan.reset(new BigDialogue());
 	_qsystem.reset(new QSystem());
 	_qsystem->init();
+}
+
+void PetkaEngine::loadPartAtNextFrame(byte part) {
+	_shouldChangePart = true;
+	_nextPart = part;
+}
+
+void PetkaEngine::loadChapter(byte chapter) {
+	Common::INIFile parts;
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_fileMgr->getFileStream("PARTS.INI"));
+
+	if (!stream || !parts.loadFromStream(*stream)) {
+		debugC(kPetkaDebugResources, "PARTS.INI opening failed");
+		return;
+	}
+
+	_fileMgr->closeStore(_chapterStoreName);
+
+	const Common::String section = Common::String::format("Part %d Chapter %d", _part, chapter);
+	parts.getKey("Chapter", section, _chapterStoreName);
+	if (_chapterStoreName.empty())
+		return;
+
+	Common::ScopedPtr<Common::SeekableReadStream> namesStream(g_vm->openFile("Names.ini", true));
+	Common::ScopedPtr<Common::SeekableReadStream> castStream(g_vm->openFile("Cast.ini", true));
+
+	Common::INIFile namesIni;
+	Common::INIFile castIni;
+
+	namesIni.allowNonEnglishCharacters();
+	castIni.allowNonEnglishCharacters();
+
+	if (namesStream)
+		namesIni.loadFromStream(*namesStream);
+	if (castStream)
+		castIni.loadFromStream(*castStream);
+
+	for (uint i = 0; i < _qsystem->_allObjects.size(); ++i) {
+		QMessageObject *obj = _qsystem->_allObjects[i];
+		namesIni.getKey(obj->_name, "all", obj->_nameOnScreen);
+
+		Common::String rgbString;
+		if (castIni.getKey(obj->_name, "all", rgbString)) {
+			int r, g, b;
+			sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
+			obj->_dialogColor = g_vm->_system->getScreenFormat().RGBToColor((byte)r, (byte)g, (byte)b);
+		}
+	}
+	_chapter = chapter;
 }
 
 BigDialogue *PetkaEngine::getBigDialogue() const {

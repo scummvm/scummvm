@@ -237,8 +237,13 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			}
 			break;
 		}
+		case kPart:
+			g_vm->loadPartAtNextFrame(msg.arg1);
+			break;
+		case kChapter:
+			g_vm->loadChapter(msg.arg1);
+			break;
 		default:
-			debug("Opcode %d is not implemented", msg.opcode);
 			break;
 		}
 	} else {

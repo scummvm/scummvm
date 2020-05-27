@@ -77,7 +77,11 @@ public:
 	bool isDemo() const;
 
 	void loadPart(byte part);
+	void loadPartAtNextFrame(byte part);
+
 	byte getPart();
+
+	void loadChapter(byte chapter);
 
 	virtual Common::Error run() override;
 
