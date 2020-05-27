@@ -636,7 +636,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1173,7 +1173,7 @@
 					height = '6'
 					xpos = 'left'
 					ypos = 'center'
-					padding = '2,0,2,0'
+					padding = '0,0,0,0'
 					orientation = 'bottom'
 		/>
 	</drawdata>
@@ -1266,7 +1266,7 @@
 					height = '6'
 					xpos = 'left'
 					ypos = 'center'
-					padding = '2,0,2,0'
+					padding = '0,0,0,0'
 					orientation = 'bottom'
 		/>
 	</drawdata>
@@ -1448,7 +1448,7 @@
 					height = '6'
 					xpos = 'left'
 					ypos = 'center'
-					padding = '2,0,0,0'
+					padding = '0,0,0,0'
 					orientation = 'bottom'
 		/>
 	</drawdata>
@@ -1486,7 +1486,7 @@
 					radius = '5'
 					fill = 'foreground'
 					fg_color = 'button_pressed'
-					clip = '0,0,-13,0'
+					clip = '13,0,0,0'
 		/>
 		<drawstep	func = 'triangle'
 					fg_color = 'white'
@@ -1532,7 +1532,7 @@
 					radius = '5'
 					fill = 'foreground'
 					fg_color = 'button_pressed'
-					clip = '0,0,-7,0'
+					clip = '7,0,0,0'
 		/>
 		<drawstep	func = 'triangle'
 					fg_color = 'white'
@@ -1541,7 +1541,7 @@
 					height = '6'
 					xpos = 'left'
 					ypos = 'center'
-					padding = '2,0,0,0'
+					padding = '0,0,0,0'
 					orientation = 'bottom'
 		/>
 	</drawdata>
@@ -1634,7 +1634,7 @@
 					height = '6'
 					xpos = 'left'
 					ypos = 'center'
-					padding = '2,0,0,0'
+					padding = '0,0,0,0'
 					orientation = 'bottom'
 		/>
 	</drawdata>
