@@ -1749,7 +1749,7 @@ sc_char *uip_replace_pronouns(sc_gameref_t game, const sc_char *string) {
 		 */
 		if (prefix && name && extent > 0) {
 			sc_char *position;
-			sc_int prefix_length, name_length, length, final;
+			sc_int prefix_length, name_length, length, final_length;
 
 			/*
 			 * If not yet allocated, allocate a buffer now, and copy the input
@@ -1778,15 +1778,15 @@ sc_char *uip_replace_pronouns(sc_gameref_t game, const sc_char *string) {
 				buffer_allocation += length - extent;
 				buffer = (sc_char *)sc_realloc(buffer, buffer_allocation);
 				current = buffer + offset;
-				final = length;
+				final_length = length;
 			} else
-				final = extent;
+				final_length = extent;
 
 			/* Insert the replacement strings into the buffer. */
 			position = buffer + (current - buffer);
 			memmove(position + length,
 			        position + extent,
-			        buffer_allocation - (current - buffer) - final);
+			        buffer_allocation - (current - buffer) - final_length);
 			memcpy(position, prefix, prefix_length);
 			position[prefix_length] = ' ';
 			memcpy(position + prefix_length + 1, name, name_length);
