@@ -119,6 +119,7 @@ void InterfacePanel::start(int id) {
 	}
 
 	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	_savedCursorRes = cursor->_resourceId;
 	_savedCursorType = cursor->_actionType;
 
 	initCursor(4901, 1, 1);
