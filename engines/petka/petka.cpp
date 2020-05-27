@@ -146,7 +146,7 @@ void PetkaEngine::loadStores() {
 		return;
 	}
 
-	const char *const names[] = {"Background", "Flics", "Wavs", "SFX", "Music", "Speech"};
+	const char *const names[] = {"Background", "Flics", "Wav", "SFX", "Music", "Speech"};
 	const Common::String section = Common::String::format("Part %d", _part);
 
 	parts.getKey("CurrentPath", section, _currentPath);
