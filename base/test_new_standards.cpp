@@ -43,15 +43,14 @@
 //
 // We're not testing `nullptr` and `override`, since they're defined in common/c++11-compat.h
 
-// INITIALIZIER_LIST1 test disabled:
-// it fails in my VS 2019 and in GCC 4.8.5 (from 2015)
-// TODO: maybe it's my syntax problem, maybe Common::Array need to be changed to support this syntax?
-#define DONT_TEST_INITIALIZIER_LIST1
-
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/rect.h"
+
+#ifndef DONT_TEST_INITIALIZIER_LIST1
+#include <initializer_list>
+#endif
 
 #ifndef DONT_TEST_CLASS_ENUM
 // ----------------------------------
@@ -121,6 +120,19 @@ private:
 	Dictionary_11<int> d11;
 #endif
 
+#ifndef DONT_TEST_INITIALIZIER_LIST1
+	// Array with C++11 initialization list
+	template<class T> class ArrayCpp11 : public Common::Array<T> {
+	public:
+		ArrayCpp11(std::initializer_list<T> list) {
+			if (list.size()) {
+				this->allocCapacity(list.size());
+				Common::uninitialized_copy(list.begin(), list.end(), this->_storage);
+			}
+		}
+	};
+#endif
+
 	void test_cpp11() {
 #ifdef DONT_TEST_INITIALIZIER_LIST1
 		// ------------------------
@@ -133,7 +145,7 @@ private:
 		arr.push_back(3);
 #else
 		// C++11
-		Common::Array<int> arr = {1, 2, 3};
+		ArrayCpp11<int> arr = {1, 2, 3};
 #endif
 
 #ifndef DONT_TEST_INITIALIZIER_LIST2
