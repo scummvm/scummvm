@@ -193,9 +193,6 @@ void ScrollBarWidget::drawWidget() {
 	if (_draggingPart != kNoPart)
 		_part = _draggingPart;
 
-	if (g_gui.useRTL() && _useRTL)
-		_x = _x + g_gui.getOverlayOffset();
-
 	ThemeEngine::ScrollbarState state = ThemeEngine::kScrollbarStateNo;
 	if (_numEntries <= _entriesPerPage) {
 		state = ThemeEngine::kScrollbarStateSinglePage;
