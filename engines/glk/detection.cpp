@@ -35,6 +35,8 @@
 #include "glk/alan3/alan3.h"
 #include "glk/archetype/archetype.h"
 #include "glk/archetype/detection.h"
+#include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/detection.h"
 #include "glk/frotz/detection.h"
 #include "glk/frotz/frotz.h"
 #include "glk/glulxe/detection.h"
@@ -172,6 +174,7 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	else if ((*engine = create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc)) != nullptr) {}
+	else if ((*engine = create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc)) != nullptr) {}
@@ -222,6 +225,7 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
 	Glk::Alan3::Alan3MetaEngine::getSupportedGames(list);
 	Glk::Archetype::ArchetypeMetaEngine::getSupportedGames(list);
+	Glk::Comprehend::ComprehendMetaEngine::getSupportedGames(list);
 	Glk::Frotz::FrotzMetaEngine::getSupportedGames(list);
 	Glk::Glulxe::GlulxeMetaEngine::getSupportedGames(list);
 	Glk::Hugo::HugoMetaEngine::getSupportedGames(list);
@@ -246,6 +250,7 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	FIND_GAME(AGT);
 	FIND_GAME(Alan3);
 	FIND_GAME(Archetype);
+	FIND_GAME(Comprehend);
 	FIND_GAME(Frotz);
 	FIND_GAME(Glulxe);
 	FIND_GAME(Hugo);
@@ -272,6 +277,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Glk::Alan2::Alan2MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Alan3::Alan3MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Archetype::ArchetypeMetaEngine::detectGames(fslist, detectedGames);
+	Glk::Comprehend::ComprehendMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Hugo::HugoMetaEngine::detectGames(fslist, detectedGames);
@@ -293,6 +299,7 @@ void GlkMetaEngine::detectClashes() const {
 	Glk::Alan2::Alan2MetaEngine::detectClashes(map);
 	Glk::Alan3::Alan3MetaEngine::detectClashes(map);
 	Glk::Archetype::ArchetypeMetaEngine::detectClashes(map);
+	Glk::Comprehend::ComprehendMetaEngine::detectClashes(map);
 	Glk::Frotz::FrotzMetaEngine::detectClashes(map);
 	Glk::Glulxe::GlulxeMetaEngine::detectClashes(map);
 	Glk::Hugo::HugoMetaEngine::detectClashes(map);

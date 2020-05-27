@@ -166,6 +166,8 @@ MODULE_OBJS := \
 	archetype/sys_object.o \
 	archetype/timestamp.o \
 	archetype/token.o \
+	comprehend/comprehend.o \
+	comprehend/detection.o \
 	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \
