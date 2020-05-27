@@ -41,6 +41,7 @@
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
+#include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -88,6 +89,8 @@ void AdScene::setDefaults() {
 	_pfTargetPath = nullptr;
 	_pfRequester = nullptr;
 	_mainLayer = nullptr;
+	_sceneGeometry = nullptr;
+	_showGeometry = false;
 
 	_pfPointsNum = 0;
 	_persistentState = false;
@@ -180,6 +183,10 @@ void AdScene::cleanup() {
 		_gameRef->unregisterObject(_objects[i]);
 	}
 	_objects.clear();
+
+	if (_sceneGeometry)	{
+		delete _sceneGeometry;
+	}
 
 	delete _viewport;
 	_viewport = nullptr;
@@ -467,7 +474,6 @@ int AdScene::getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject 
 	return MAX(xLength, yLength);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdScene::pathFinderStep() {
 	int i;
@@ -532,6 +538,10 @@ bool AdScene::initLoop() {
 	}
 #endif
 
+	if (_sceneGeometry) {
+		return _sceneGeometry->InitLoop();
+	}
+
 	return STATUS_OK;
 }
 
@@ -568,6 +578,7 @@ TOKEN_DEF(LAYER)
 TOKEN_DEF(WAYPOINTS)
 TOKEN_DEF(EVENTS)
 TOKEN_DEF(CURSOR)
+TOKEN_DEF(GEOMETRY)
 TOKEN_DEF(CAMERA)
 TOKEN_DEF(ENTITY)
 TOKEN_DEF(SCALE_LEVEL)
@@ -598,6 +609,16 @@ TOKEN_DEF(VIEWPORT)
 TOKEN_DEF(PERSISTENT_STATE_SPRITES)
 TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
+TOKEN_DEF(EDITOR_SHOW_GEOMETRY)
+TOKEN_DEF(EDITOR_RESOLUTION_WIDTH)
+TOKEN_DEF(EDITOR_RESOLUTION_HEIGHT)
+TOKEN_DEF(FOV_OVERRIDE)
+TOKEN_DEF(NEARCLIPPING_PLANE)
+TOKEN_DEF(FAR_CLIPPING_PLANE)
+TOKEN_DEF(2D_PATHFINDING)
+TOKEN_DEF(MAX_SHADOW_TYPE)
+TOKEN_DEF(SCROLL_3D_COMPABILITY)
+TOKEN_DEF(AMBIENT_LIGHT_COLOR)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::loadBuffer(char *buffer, bool complete) {
@@ -609,6 +630,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(EVENTS)
 	TOKEN_TABLE(CURSOR)
+	TOKEN_TABLE(GEOMETRY)
 	TOKEN_TABLE(CAMERA)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SCALE_LEVEL)
@@ -639,6 +661,16 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(PERSISTENT_STATE_SPRITES)
 	TOKEN_TABLE(PERSISTENT_STATE)
 	TOKEN_TABLE(EDITOR_PROPERTY)
+	TOKEN_TABLE(EDITOR_SHOW_GEOMETRY)
+	TOKEN_TABLE(EDITOR_RESOLUTION_WIDTH)
+	TOKEN_TABLE(EDITOR_RESOLUTION_HEIGHT)
+	TOKEN_TABLE(FOV_OVERRIDE)
+	TOKEN_TABLE(NEARCLIPPING_PLANE)
+	TOKEN_TABLE(FAR_CLIPPING_PLANE)
+	TOKEN_TABLE(2D_PATHFINDING)
+	TOKEN_TABLE(MAX_SHADOW_TYPE)
+	TOKEN_TABLE(SCROLL_3D_COMPABILITY)
+	TOKEN_TABLE(AMBIENT_LIGHT_COLOR)
 	TOKEN_TABLE_END
 
 	cleanup();
@@ -753,7 +785,21 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
+		case TOKEN_GEOMETRY:
+			delete _sceneGeometry;
 
+			if (!_gameRef->_useD3D) {
+				break;
+			}
+
+			_sceneGeometry = new AdSceneGeometry(_gameRef);
+
+			if(_sceneGeometry == nullptr || !_sceneGeometry->LoadFile(params)) {
+				delete _sceneGeometry;
+				cmd = PARSERR_GENERIC;
+			}
+
+			break;
 		case TOKEN_CAMERA:
 			Common::strlcpy(camera, params, MAX_PATH_LENGTH);
 			break;
@@ -891,12 +937,24 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		_gameRef->LOG(0, "Warning: scene '%s' has no main layer.", getFilename());
 	}
 
+	if (_sceneGeometry && camera[0] != '\0') {
+		// TODO: set camera here
+	}
 
 	sortScaleLevels();
 	sortRotLevels();
 
 	_initialized = true;
 
+	if (_sceneGeometry) {
+		// TODO: original wme code does a check on waypoint height here
+
+		Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+
+		if (activeCamera != nullptr) {
+			// TODO: set camera
+		}
+	}
 
 	return STATUS_OK;
 }
@@ -1040,6 +1098,10 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			_gameRef->_offsetPercentY = (float)(_offsetTop - viewportY) / ((float)_layers[j]->_height - viewportHeight) * 100.0f;
 		}
 
+		if (!doUpdate && _sceneGeometry && _layers[j]->_main) {
+			// TODO: render shadow geometry in case of
+			// shadow type being stencil
+		}
 
 		// for each node
 		for (uint32 k = 0; k < _layers[j]->_nodes.size(); k++) {
@@ -1047,12 +1109,18 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			switch (node->_type) {
 			case OBJECT_ENTITY:
 				if (node->_entity->_active && (_gameRef->_editorMode || !node->_entity->_editorOnly)) {
-					_gameRef->_renderer->setup2D();
-
-					if (doUpdate) {
-						node->_entity->update();
+					if (node->_entity->_is3D) {
+						// prepare 3d rendering
 					} else {
-						node->_entity->display();
+						_gameRef->_renderer->setup2D();
+					}
+
+					if (!node->_entity->_is3D || _sceneGeometry) {
+						if (doUpdate) {
+							node->_entity->update();
+						} else {
+							node->_entity->display();
+						}
 					}
 				}
 				break;
@@ -1086,6 +1154,10 @@ bool AdScene::traverseNodes(bool doUpdate) {
 		}
 	} // each layer
 
+	if (!doUpdate && _sceneGeometry) {
+		// always display geometry for the moment
+		_sceneGeometry->Render(true);
+	}
 
 	// restore state
 	_gameRef->setOffset(origX, origY);
@@ -1116,24 +1188,40 @@ bool AdScene::display() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::updateFreeObjects() {
 	AdGame *adGame = (AdGame *)_gameRef;
-	// 3D-code removed
-	// bool is3DSet;
+	bool is3DSet;
 
 	// *** update all active objects
-	// is3DSet = false;
+	is3DSet = false;
 	for (uint32 i = 0; i < adGame->_objects.size(); i++) {
 		if (!adGame->_objects[i]->_active) {
 			continue;
 		}
-		// 3D-code removed
+
+		if (adGame->_objects[i]->_is3D && _sceneGeometry) {
+			Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+
+			if (activeCamera != nullptr) {
+				// TODO: set the camera and setup 3d
+				is3DSet = true;
+			}
+		}
+
 		adGame->_objects[i]->update();
 		adGame->_objects[i]->_drawn = false;
 	}
 
-
 	for (uint32 i = 0; i < _objects.size(); i++) {
 		if (!_objects[i]->_active) {
 			continue;
+		}
+
+		if (_objects[i]->_is3D && _sceneGeometry) {
+			Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+
+			if (activeCamera != nullptr) {
+				// TODO: set the camera and setup 3d
+				is3DSet = true;
+			}
 		}
 
 		_objects[i]->update();
@@ -1144,7 +1232,6 @@ bool AdScene::updateFreeObjects() {
 	if (_autoScroll && _gameRef->getMainObject() != nullptr) {
 		scrollToObject(_gameRef->getMainObject());
 	}
-
 
 	return STATUS_OK;
 }
@@ -1183,14 +1270,21 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 			continue;
 		}
 
-		_gameRef->_renderer->setup2D();
+		if (objects[i]->_is3D && _sceneGeometry) {
+			Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+
+			if (activeCamera != nullptr) {
+				// TODO: set the camera and setup 3d
+			}
+		} else {
+			_gameRef->_renderer->setup2D();
+		}
 
 		if (_gameRef->_editorMode || !obj->_editorOnly) {
 			obj->display();
 		}
 		obj->_drawn = true;
 	}
-
 
 	// display design only objects
 	if (!display3DOnly) {
@@ -1218,6 +1312,8 @@ bool AdScene::compareObjs(const AdObject *obj1, const AdObject *obj2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::displayRegionContentOld(AdRegion *region) {
+	// is this function actually used?
+
 	AdGame *adGame = (AdGame *)_gameRef;
 	AdObject *obj;
 
@@ -1352,6 +1448,15 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			act = nullptr;
 			stack->pushNULL();
 		}
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// LoadActor3D
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(name, "LoadActor3D") == 0) {
+		stack->correctParams(1);
+		stack->pushNULL();
 		return STATUS_OK;
 	}
 
@@ -1699,6 +1804,105 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// EnableNode3D
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "EnableNode3D") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// DisableNode3D
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DisableNode3D") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IsNode3DEnabled
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "IsNode3DEnabled") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// EnableLight
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "EnableLight") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// DisableLight
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DisableLight") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IsLightEnabled
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "IsLightEnabled") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetLightName
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetLightName") == 0) {
+		stack->correctParams(1);
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SetLightColor
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetLightColor") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetLightColor
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetLightColor") == 0) {
+		stack->correctParams(1);
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetLightPosition
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetLightPosition") == 0) {
+		stack->correctParams(1);
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SetActiveCamera
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetActiveCamera") == 0) {
+		stack->correctParams(1);
+		stack->pushBool(false);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// SetViewport
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetViewport") == 0) {
@@ -1822,6 +2026,24 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 		stack->pushBool(true);
 		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// EnableFog
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "EnableFog") == 0) {
+		stack->correctParams(3);
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// EnableFog
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DisableFog") == 0) {
+		stack->correctParams(0);
+		stack->pushNULL();
+		return STATUS_OK;
 	} else {
 		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
@@ -1908,6 +2130,14 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// ShowGeometry
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "ShowGeometry") {
+		_scValue->setBool(_showGeometry);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "PersistentState") {
@@ -1973,6 +2203,32 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// GeometryFile
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "GeometryFile") {
+		if (_sceneGeometry && _sceneGeometry->getFilename()) {
+			_scValue->setString(_sceneGeometry->getFilename());
+		} else {
+			_scValue->setNULL();
+		}
+
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// WaypointsHeight
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "WaypointsHeight") {
+		if (_sceneGeometry) {
+			_scValue->setFloat(_sceneGeometry->m_WaypointHeight);
+		} else {
+			_scValue->setFloat(0.0f);
+		}
+
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Width (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Width") {
@@ -1981,6 +2237,22 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		} else {
 			_scValue->setInt(0);
 		}
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// MaxShadowType
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "MaxShadowType") {
+		_scValue->setInt(0);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// AmbientLightColor
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "AmbientLightColor") {
+		_scValue->setInt(0);
 		return _scValue;
 	}
 
@@ -2016,6 +2288,14 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "AutoScroll") == 0) {
 		_autoScroll = value->getBool();
 		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ShowGeometry
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ShowGeometry") == 0) {
+		_showGeometry = value->getBool();
+		return _scValue;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2104,6 +2384,31 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 		_targetOffsetTop = _offsetTop;
 
 		return STATUS_OK;
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// WaypointsHeight
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "WaypointsHeight") == 0) {
+
+		return _scValue;
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// MaxShadowType
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "MaxShadowType") == 0) {
+		return _scValue;
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// AmbientLightColor
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "AmbientLightColor") == 0) {
+		return _scValue;
 	} else {
 		return BaseObject::scSetProperty(name, value);
 	}
@@ -2150,6 +2455,9 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "PERSISTENT_STATE_SPRITES=%s\n", _persistentStateSprites ? "TRUE" : "FALSE");
 	}
 
+	if (_sceneGeometry) {
+		// TODO: save scene geometry
+	}
 
 	// scripts
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -2380,6 +2688,13 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::afterLoad() {
+	if (_sceneGeometry) {
+		Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+
+		if (activeCamera) {
+			// TODO: set active camera
+		}
+	}
 	return STATUS_OK;
 }
 

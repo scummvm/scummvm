@@ -44,6 +44,8 @@ class AdPath;
 class AdScaleLevel;
 class AdRotLevel;
 class AdPathPoint;
+class AdSceneGeometry;
+
 class AdScene : public BaseObject {
 public:
 
@@ -123,6 +125,8 @@ public:
 	BaseArray<AdLayer *> _layers;
 	BaseArray<AdObject *> _objects;
 	BaseArray<AdWaypointGroup *> _waypointGroups;
+	AdSceneGeometry* _sceneGeometry;
+	bool _showGeometry;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	int32 _width;
