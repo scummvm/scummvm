@@ -5577,7 +5577,7 @@ echo "$_fribidi"
 # Test C++11 Compatibility
 #
 define_in_config_if_yes "$_test_cpp11" 'ENABLE_TEST_CPP_11'
-echo_n "Test C+11 Compatibility in compilation? "
+echo_n "Test C++11 compatibility during compilation... "
 echo "$_test_cpp11"
 
 # Default to plain text output for pandoc
