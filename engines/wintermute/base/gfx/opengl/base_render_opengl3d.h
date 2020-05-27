@@ -74,6 +74,7 @@ public:
 
 	bool setProjection() override;
 	bool setProjection2D();
+	void resetModelViewTransform();
 
 	bool windowedBlt() override;
 	/**

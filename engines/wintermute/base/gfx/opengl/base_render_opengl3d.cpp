@@ -167,6 +167,11 @@ bool BaseRenderOpenGL3D::setProjection2D() {
 	return true;
 }
 
+void BaseRenderOpenGL3D::resetModelViewTransform() {
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+
 bool BaseRenderOpenGL3D::windowedBlt() {
 	warning("BaseRenderOpenGL3D::windowedBlt not yet implemented");
 	return true;
