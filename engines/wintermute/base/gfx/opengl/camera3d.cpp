@@ -61,9 +61,9 @@ bool Camera3D::loadFrom3DS(byte** buffer)
 	*buffer += 4;
 
 	if (lens > 0.0f) {
-		m_FOV = 1900.0f / lens;
+		m_FOV = Math::Angle(1900.0f / lens).getRadians();
 	} else {
-		m_FOV = 45.0f;
+		m_FOV = Math::Angle(45.0f).getRadians();
 	}
 
 	// this is overkill here, simplify it later
