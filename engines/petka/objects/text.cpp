@@ -53,7 +53,9 @@ QText::QText(const Common::U32String &text, uint16 textColor, uint16 outlineColo
 
 void QText::draw() {
 	const Graphics::Surface *s = g_vm->resMgr()->loadBitmap(-2);
-	g_vm->videoSystem()->transBlitFrom(*s, Common::Point((640 - s->w) / 2, 479 - s->h));
+	if (s) {
+		g_vm->videoSystem()->transBlitFrom(*s, Common::Point((640 - s->w) / 2, 479 - s->h));
+	}
 }
 
 const Common::Rect &QText::getRect() {
