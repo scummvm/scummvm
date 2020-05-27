@@ -116,9 +116,6 @@ void PopUpDialog::open() {
 	else if (_y + _h >= screenH)
 		_y = screenH - 1 - _h;
 
-	if (g_gui.useRTL())
-		_x = g_system->getOverlayWidth() - _x - _w;
-
 	// TODO - implement scrolling if we had to move the menu, or if there are too many entries
 
 	_lastRead = -1;
@@ -132,8 +129,9 @@ void PopUpDialog::reflowLayout() {
 void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
-	if (g_gui.useRTL())
-		_x = _x + g_gui.getOverlayOffset();
+	if (g_gui.useRTL()) {
+		_x = g_system->getOverlayWidth() - _x - _w + g_gui.getOverlayOffset();
+	}
 
 	// Draw the menu border
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
@@ -299,8 +297,8 @@ void PopUpDialog::clearEntries() {
 
 int PopUpDialog::findItem(int x, int y) const {
 	if (x >= 0 && x < _w && y >= 0 && y < _h) {
-		if (_twoColumns) {							// GUI TODO: Problems with collisions in 2 coloumns.
-			uint entry = (y - 2) / _lineHeight;		//			 GUI Language in Options uses this. Basically, left coloumn highlights right and vice versa.
+		if (_twoColumns) {
+			uint entry = (y - 2) / _lineHeight;
 			if (x > _w / 2) {
 				entry += _entriesPerColumn;
 
@@ -398,8 +396,15 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	Graphics::TextAlign alignment = Graphics::kTextAlignLeft;
 
 	if (g_gui.useRTL()) {
-		r2.translate(-g_gui.getOverlayOffset(), 0);
-		alignment = Graphics::kTextAlignRight;
+		if (_twoColumns) {
+			r1.translate(this->getWidth() - w, 0);
+		}
+
+		r2.left = g_system->getOverlayWidth() - r2.left - w + g_gui.getOverlayOffset();
+		r2.right = r2.left + w;
+
+		alignment = Graphics::kTextAlignRight;		// GUI TODO: Since the text for dropdowns is also drawn here, they must be center aligned in some way.
+
 		_leftPadding = 0;
 	}
 
