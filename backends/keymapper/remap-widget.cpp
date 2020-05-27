@@ -108,7 +108,6 @@ void RemapWidget::reflowActionWidgets() {
 	int labelWidth = getWidth() - (spacing + keyButtonWidth + spacing);
 	labelWidth = MAX(0, labelWidth);
 
-	int xOffset = g_gui.getOverlayOffset();
 	uint textYOff = (buttonHeight - kLineHeight) / 2;
 
 	uint y = spacing;
@@ -131,9 +130,6 @@ void RemapWidget::reflowActionWidgets() {
 				int descriptionWidth = getWidth() - x - spacing - resetButtonWidth - spacing;
 				descriptionWidth = MAX(0, descriptionWidth);
 
-				if (g_gui.useRTL()) {
-					x = x - xOffset;
-				}
 				keymapTitle.descriptionText->resize(x, y + textYOff, descriptionWidth, kLineHeight);
 				keymapTitle.resetButton->resize(x + descriptionWidth, y, resetButtonWidth, buttonHeight);
 			}
@@ -143,15 +139,9 @@ void RemapWidget::reflowActionWidgets() {
 
 		x = spacing;
 
-		if (g_gui.useRTL()) {
-			x = x - xOffset;
-		}
 		row.keyButton->resize(x, y, keyButtonWidth, buttonHeight);
 
 		x += keyButtonWidth + spacing;
-		if (g_gui.useRTL()) {
-			x = x + spacing;		// GUI TODO: Some last characters keep getting cut off, but this may be a local testing language issue (i.e for English)
-		}
 		row.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
 
 		y += buttonHeight + spacing;
