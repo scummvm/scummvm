@@ -105,33 +105,33 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY) const {
 		while (x <= y) {
 
 			// The place where, eventually, the result coordinates will be stored
-			Common::Point final;
+			Common::Point finalPos;
 
 			// Auxilliary array of multiplicative coefficients for reflecting points.
 			static const int kSigns[] = { 1, -1 };
 
 			// Check all 8 reflections of the basic point.
 			for (uint i = 0; i < 2; ++i) {
-				final.y = startY + y * kSigns[i];
+				finalPos.y = startY + y * kSigns[i];
 
 				for (uint j = 0; j < 2; ++j) {
-					final.x = startX + x * kSigns[j];
+					finalPos.x = startX + x * kSigns[j];
 
 					// If the current point is walkable, return it
-					if (searchRect.contains(final.x, final.y) && isWalkable(final)) {
-						return final;
+					if (searchRect.contains(finalPos.x, finalPos.y) && isWalkable(finalPos)) {
+						return finalPos;
 					}
 				}
 			}
 			for (uint i = 0; i < 2; ++i) {
-				final.y = startY + x * kSigns[i];
+				finalPos.y = startY + x * kSigns[i];
 
 				for (uint j = 0; j < 2; ++j) {
-					final.x = startX + y * kSigns[j];
+					finalPos.x = startX + y * kSigns[j];
 
 					// If the current point is walkable, return it
-					if (searchRect.contains(final.x, final.y) && isWalkable(final)) {
-						return final;
+					if (searchRect.contains(finalPos.x, finalPos.y) && isWalkable(finalPos)) {
+						return finalPos;
 					}
 				}
 			}
