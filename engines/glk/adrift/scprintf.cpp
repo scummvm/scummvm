@@ -1345,7 +1345,7 @@ sc_char *pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
 		if (index_ < synonym_count && extent > 0) {
 			const sc_char *replacement;
 			sc_char *position;
-			sc_int length, final;
+			sc_int length, final_length;
 
 			/*
 			 * If not yet allocated, allocate a buffer now, and copy the input
@@ -1378,15 +1378,15 @@ sc_char *pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
 				buffer_allocation += length - extent;
 				buffer = (sc_char *)sc_realloc(buffer, buffer_allocation);
 				current = buffer + offset;
-				final = length;
+				final_length = length;
 			} else
-				final = extent;
+				final_length = extent;
 
 			/* Insert the replacement string into the buffer. */
 			position = buffer + (current - buffer);
 			memmove(position + length,
 			        position + extent,
-			        buffer_allocation - (current - buffer) - final);
+			        buffer_allocation - (current - buffer) - final_length);
 			memcpy(position, replacement, length);
 
 			/* Adjust current to skip over the replacement. */

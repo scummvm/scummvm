@@ -136,7 +136,7 @@ struct re_machine {
     re_state_id init;
 
     /* the machine's final state */
-    re_state_id final;
+    re_state_id final_state;
 };
 
 /* ------------------------------------------------------------------------ */
@@ -325,7 +325,7 @@ static void re_set_trans(re_context *ctx,
 static void re_init_machine(re_context *ctx, re_machine *machine)
 {
     machine->init = re_alloc_state(ctx);
-    machine->final = re_alloc_state(ctx);
+    machine->final_state = re_alloc_state(ctx);
 }
 
 /*
@@ -337,7 +337,7 @@ static void re_build_char(re_context *ctx, re_machine *machine, char ch)
     re_init_machine(ctx, machine);
 
     /* allocate a transition tuple for the new state */
-    re_set_trans(ctx, machine->init, machine->final, ch);
+    re_set_trans(ctx, machine->init, machine->final_state, ch);
 }
 
 /*
@@ -353,7 +353,7 @@ static void re_build_char_range(re_context *ctx, re_machine *machine,
     re_init_machine(ctx, machine);
 
     /* allocate a transition table for the new state */
-    re_set_trans(ctx, machine->init, machine->final,
+    re_set_trans(ctx, machine->init, machine->final_state,
                  (char)(exclusion ? RE_RANGE_EXCL : RE_RANGE));
 
     /* allocate a copy of the range bit vector */
@@ -383,7 +383,7 @@ static void re_build_group_matcher(re_context *ctx,
      *   as the character code.  Store the special code for a group
      *   recognizer rather than the normal literal character code.  
      */
-    re_set_trans(ctx, machine->init, machine->final,
+    re_set_trans(ctx, machine->init, machine->final_state,
                  (char)(group_num + RE_GROUP_MATCH_0));
 }
 
@@ -407,13 +407,13 @@ static void re_build_concat(re_context *ctx, re_machine *new_machine,
      *   Set up an epsilon transition from the first submachine's final
      *   state to the second submachine's initial state 
      */
-    re_set_trans(ctx, lhs->final, rhs->init, RE_EPSILON);
+    re_set_trans(ctx, lhs->final_state, rhs->init, RE_EPSILON);
 
     /*
      *   Set up an epsilon transition from the second submachine's final
      *   state to our new machine's final state 
      */
-    re_set_trans(ctx, rhs->final, new_machine->final, RE_EPSILON);
+    re_set_trans(ctx, rhs->final_state, new_machine->final_state, RE_EPSILON);
 }
 
 /*
@@ -433,18 +433,18 @@ static void re_build_group(re_context *ctx, re_machine *new_machine,
      *   the group's final state into the container's final state 
      */
     re_set_trans(ctx, new_machine->init, sub_machine->init, RE_EPSILON);
-    re_set_trans(ctx, sub_machine->final, new_machine->final, RE_EPSILON);
+    re_set_trans(ctx, sub_machine->final_state, new_machine->final_state, RE_EPSILON);
 
     /*
      *   Mark the initial and final states of the group machine as being
      *   group markers.  
      */
     ctx->tuple_arr[new_machine->init].flags |= RE_STATE_GROUP_BEGIN;
-    ctx->tuple_arr[new_machine->final].flags |= RE_STATE_GROUP_END;
+    ctx->tuple_arr[new_machine->final_state].flags |= RE_STATE_GROUP_END;
 
     /* store the group ID in the 'ch' member of the start and end states */
     ctx->tuple_arr[new_machine->init].ch = group_id;
-    ctx->tuple_arr[new_machine->final].ch = group_id;
+    ctx->tuple_arr[new_machine->final_state].ch = group_id;
 }
 
 /*
@@ -467,8 +467,8 @@ static void re_build_alter(re_context *ctx, re_machine *new_machine,
      *   Set up an epsilon transition from the final state of each
      *   submachine to our final state 
      */
-    re_set_trans(ctx, lhs->final, new_machine->final, RE_EPSILON);
-    re_set_trans(ctx, rhs->final, new_machine->final, RE_EPSILON);
+    re_set_trans(ctx, lhs->final_state, new_machine->final_state, RE_EPSILON);
+    re_set_trans(ctx, rhs->final_state, new_machine->final_state, RE_EPSILON);
 }
 
 /*
@@ -487,7 +487,7 @@ static void re_build_closure(re_context *ctx,
      *   to our final state 
      */
     re_set_trans(ctx, new_machine->init, sub->init, RE_EPSILON);
-    re_set_trans(ctx, sub->final, new_machine->final, RE_EPSILON);
+    re_set_trans(ctx, sub->final_state, new_machine->final_state, RE_EPSILON);
 
     /*
      *   If this is an unbounded closure ('*' or '+', but not '?'), set up
@@ -497,7 +497,7 @@ static void re_build_closure(re_context *ctx,
      *   once.  
      */
     if (specifier != '?')
-        re_set_trans(ctx, sub->final, sub->init, RE_EPSILON);
+        re_set_trans(ctx, sub->final_state, sub->init, RE_EPSILON);
 
     /*
      *   If this is a zero-or-one closure or a zero-or-more closure, set
@@ -507,7 +507,7 @@ static void re_build_closure(re_context *ctx,
      *   subexpression in this case.  
      */
     if (specifier != '+')
-        re_set_trans(ctx, new_machine->init, new_machine->final, RE_EPSILON);
+        re_set_trans(ctx, new_machine->init, new_machine->final_state, RE_EPSILON);
 }
 
 /*
@@ -515,7 +515,7 @@ static void re_build_closure(re_context *ctx,
  */
 static void re_build_null_machine(re_context *ctx, re_machine *machine)
 {
-    machine->init = machine->final = RE_STATE_INVALID;
+    machine->init = machine->final_state = RE_STATE_INVALID;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1130,7 +1130,7 @@ static int re_match(re_context *ctx, const char *entire_str,
      *   if we're starting in the final state, immediately return success
      *   with a zero-length match 
      */
-    if (cur_state == machine->final)
+    if (cur_state == machine->final_state)
     {
         /* return success with a zero-length match */
         return 0;
@@ -1390,7 +1390,7 @@ static int re_match(re_context *ctx, const char *entire_str,
              */
             memcpy(regs1, regs, sizeof(regs1));
             sub_machine.init = tuple->next_state_1;
-            sub_machine.final = machine->final;
+            sub_machine.final_state = machine->final_state;
             ret1 = re_match(ctx, entire_str, p, curlen, &sub_machine, regs1);
 
             /*
@@ -1398,7 +1398,7 @@ static int re_match(re_context *ctx, const char *entire_str,
              */
             memcpy(regs2, regs, sizeof(regs2));
             sub_machine.init = tuple->next_state_2;
-            sub_machine.final = machine->final;
+            sub_machine.final_state = machine->final_state;
             ret2 = re_match(ctx, entire_str, p, curlen, &sub_machine, regs2);
 
             /*
@@ -1429,7 +1429,7 @@ static int re_match(re_context *ctx, const char *entire_str,
         /*
          *   If we're in the final state, return success 
          */
-        if (cur_state == machine->final)
+        if (cur_state == machine->final_state)
         {
             /* finish off any group involved in the final state */
             re_note_group(ctx, regs, cur_state, p);
