@@ -41,9 +41,6 @@ InterfaceSequence::InterfaceSequence() {
 void InterfaceSequence::start(int id) {
 	removeTexts();
 	for (uint i = 0; i < _objs.size(); ++i) {
-		if (_objs[i]->_resourceId != -666) {
-			g_vm->resMgr()->removeResource(_objs[i]->_resourceId);
-		}
 		QMessageObject *obj = (QMessageObject *)_objs[i];
 		obj->removeSound();
 	}
@@ -98,12 +95,11 @@ void InterfaceSequence::start(int id) {
 void InterfaceSequence::stop() {
 	removeTexts();
 	for (uint i = 0; i < _objs.size(); ++i) {
-		if (_objs[i]->_resourceId != -666) {
-			g_vm->resMgr()->removeResource(_objs[i]->_resourceId);
-		}
 		QMessageObject *obj = (QMessageObject *)_objs[i];
 		obj->removeSound();
 	}
+
+	_objs.clear();
 
 	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_fxId));
 	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_musicId));
@@ -119,7 +115,9 @@ void InterfaceSequence::stop() {
 
 void InterfaceSequence::onLeftButtonDown(const Common::Point p) {
 	QVisibleObject *obj = findObject(-2);
-	obj->onClick(p.x, p.y);
+	if (obj) {
+		obj->onClick(p.x, p.y);
+	}
 }
 
 } // End of namespace Petka
