@@ -283,9 +283,9 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 		sym->type = HANDLER;
 
 		if (!_eventHandlerTypeIds.contains(name)) {
-			_builtins[name] = sym;
+			_archives[_archiveIndex].functionHandlers[name] = sym;
 		} else {
-			_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+			_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 		}
 	} else {
 		// we don't want to be here. The getHandler call should have used the EntityId and the result
@@ -660,7 +660,7 @@ void Lingo::codeFactory(Common::String &name) {
 	sym->parens = true;
 	sym->u.bltin = LB::b_factory;
 
-	_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+	_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 }
 
 }

@@ -190,9 +190,6 @@ Lingo::~Lingo() {
 
 	for (SymbolHash::iterator it = _globalvars.begin(); it != _globalvars.end(); ++it)
 		delete it->_value;
-
-	for (Common::HashMap<uint32, Symbol *>::iterator it = _handlers.begin(); it != _handlers.end(); ++it)
-		delete it->_value;
 }
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
@@ -212,6 +209,30 @@ Common::String Lingo::getName(uint16 id) {
 	}
 	result = _archives[_archiveIndex].names[id];
 	return result;
+}
+
+Symbol *Lingo::getHandler(Common::String &name) {
+	if (!_eventHandlerTypeIds.contains(name)) {
+		// local scripts
+		if (_archives[0].functionHandlers.contains(name))
+			return _archives[0].functionHandlers[name];
+
+		// shared scripts
+		if (_archives[1].functionHandlers.contains(name))
+			return _archives[1].functionHandlers[name];
+
+		if (_builtins.contains(name))
+			return _builtins[name];
+
+		return NULL;
+	}
+
+	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
+	// event handlers should only be defined locally, the score in a shared file is ignored
+	if (_archives[0].eventHandlers.contains(entityIndex))
+		return _archives[0].eventHandlers[entityIndex];
+
+	return NULL;
 }
 
 const char *Lingo::findNextDefinition(const char *s) {
@@ -413,7 +434,7 @@ void Lingo::restartLingo() {
 	// custom menus
 	//
 	// NOTE:
-	// tuneousScript is not reset
+	// timeoutScript is not reset
 }
 
 int Lingo::getAlignedType(Datum &d1, Datum &d2) {

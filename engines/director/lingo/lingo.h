@@ -255,8 +255,9 @@ struct LingoEvent {
 struct LingoArchive {
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
+	Common::HashMap<uint32, Symbol *> eventHandlers;
+	SymbolHash functionHandlers;
 };
-
 
 class Lingo {
 
@@ -419,6 +420,7 @@ public:
 	ScriptContext *_currentScriptContext;
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
+
 	bool _returning;
 	bool _nextRepeat;
 	LexerDefineState _indef;
@@ -436,7 +438,6 @@ public:
 	Common::Array<int> _labelstack;
 
 	SymbolHash _builtins;
-	Common::HashMap<uint32, Symbol *> _handlers;
 
 	int _linenumber;
 	int _colnumber;

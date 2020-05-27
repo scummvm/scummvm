@@ -94,21 +94,6 @@ ScriptType Lingo::event2script(LEvent ev) {
 	return kNoneScript;
 }
 
-Symbol *Lingo::getHandler(Common::String &name) {
-	if (!_eventHandlerTypeIds.contains(name)) {
-		if (_builtins.contains(name))
-			return _builtins[name];
-
-		return NULL;
-	}
-
-	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
-	if (!_handlers.contains(entityIndex))
-		return NULL;
-
-	return _handlers[entityIndex];
-}
-
 void Lingo::primaryEventHandler(LEvent event) {
 	/* When an event occurs the message [...] is first sent to a
 	 * primary event handler: [... if exists it is executed] and the
@@ -330,7 +315,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId, int channelI
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
+	if (_archives[_archiveIndex].eventHandlers.contains(ENTITY_INDEX(event, entityId))) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 		executeHandler(_eventHandlerTypes[event]); // D4+ Events
 	} else if (_vm->getVersion() < 4 && event == kEventNone && getScriptContext(st, entityId)) {
