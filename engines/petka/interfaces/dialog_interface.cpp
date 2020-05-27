@@ -187,8 +187,11 @@ void DialogInterface::playSound(const Common::String &name) {
 	_soundName = name;
 	Sound *s = g_vm->soundMgr()->addSound(name, Audio::Mixer::kSpeechSoundType);
 	if (s) {
-		Common::Rect bounds = g_vm->resMgr()->loadFlic(_talker->_resourceId)->getBounds();
-		s->setBalance(bounds.left + _talker->_x + bounds.width(), 640);
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_talker->_resourceId);
+		if (flc) {
+			Common::Rect bounds = flc->getBounds();
+			s->setBalance(bounds.left + _talker->_x + bounds.width(), 640);
+		}
 		s->play(0);
 	}
 }
