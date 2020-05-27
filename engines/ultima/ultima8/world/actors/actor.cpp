@@ -273,7 +273,7 @@ bool Actor::giveTreasure() {
 				}
 
 			} else {
-				pout << "Unhandled _special treasure: " << ti._special
+				pout << "Unhandled special treasure: " << ti._special
 				     << Std::endl;
 			}
 			continue;
