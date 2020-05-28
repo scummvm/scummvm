@@ -120,54 +120,64 @@ void Sprite::setPattern(uint16 pattern) {
 
 void Sprite::setCast(uint16 castId) {
 	Cast *member = g_director->getCastMember(castId);
-	if (member) {
-		_cast = member;
-		_castId = castId;
-		_castType = kCastTypeNull;
+	_castType = kCastTypeNull;
+	_castId = castId;
 
-		if (g_director->getVersion() < 4) {
-			switch (_spriteType) {
-			case kBitmapSprite:
-				_castType = kCastBitmap;
-				break;
-			case kRectangleSprite:
-			case kRoundedRectangleSprite:
-			case kOvalSprite:
-			case kLineTopBottomSprite:
-			case kLineBottomTopSprite:
-			case kOutlinedRectangleSprite:
-			case kOutlinedRoundedRectangleSprite:
-			case kOutlinedOvalSprite:
-			case kCastMemberSprite:
-				if (_cast != nullptr) {
-					switch (_cast->_type) {
-					case kCastButton:
-						_castType = kCastButton;
-						break;
-					default:
-						_castType = kCastShape;
-						break;
-					}
-				} else {
+	if (castId == 0)
+		return;
+
+	if (member)
+		_cast = member;
+	else
+		warning("Sprite::setCast: Cast id %d has null member", castId);
+
+	if (g_director->getVersion() < 4) {
+		switch (_spriteType) {
+		case kBitmapSprite:
+			_castType = kCastBitmap;
+			break;
+		case kRectangleSprite:
+		case kRoundedRectangleSprite:
+		case kOvalSprite:
+		case kLineTopBottomSprite:
+		case kLineBottomTopSprite:
+		case kOutlinedRectangleSprite:
+		case kOutlinedRoundedRectangleSprite:
+		case kOutlinedOvalSprite:
+		case kCastMemberSprite:
+			if (_cast != nullptr) {
+				switch (_cast->_type) {
+				case kCastButton:
+					_castType = kCastButton;
+					break;
+				default:
 					_castType = kCastShape;
+					break;
 				}
-				break;
-			case kTextSprite:
-				_castType = kCastText;
-				break;
-			case kButtonSprite:
-			case kCheckboxSprite:
-			case kRadioButtonSprite:
-				_castType = kCastButton;
-				break;
-			default:
-				warning("Sprite::setCast(): Unhandled sprite type %d", _spriteType);
-				break;
+			} else {
+				_castType = kCastShape;
 			}
+			break;
+		case kTextSprite:
+			_castType = kCastText;
+			break;
+		case kButtonSprite:
+		case kCheckboxSprite:
+		case kRadioButtonSprite:
+			_castType = kCastButton;
+			break;
+		default:
+			warning("Sprite::setCast(): Unhandled sprite type %d", _spriteType);
+			break;
+		}
+	} else {
+		if (!member) {
+			debugC(1, kDebugImages, "Sprite::setCast(): Cast id %d not found", _castId);
 		} else {
 			_castType = member->_type;
 		}
 	}
+
 	_dirty = true;
 }
 
@@ -186,6 +196,9 @@ Common::Rect Sprite::getBbox() {
 		break;
 	case kCastRTE:
 	case kCastText: {
+		if (!_cast)
+			return result;
+
 		TextCast *textCast = (TextCast*)_cast;
 		int x = _currentPoint.x; // +rectLeft;
 		int y = _currentPoint.y; // +rectTop;
@@ -210,6 +223,9 @@ Common::Rect Sprite::getBbox() {
 	case kCastButton: {
 		// This may not be a button cast. It could be a textcast with the
 		// channel forcing it to be a checkbox or radio button!
+		if (!_cast)
+			return result;
+
 		ButtonCast *button = (ButtonCast *)_cast;
 
 		// Sometimes, at least in the D3 Workshop Examples, these buttons are
@@ -263,6 +279,9 @@ Common::Rect Sprite::getBbox() {
 		break;
 	}
 	case kCastBitmap: {
+		if (!_cast)
+			return result;
+
 		BitmapCast *bc = (BitmapCast *)_cast;
 
 		int32 regX = bc->_regX;
@@ -283,7 +302,7 @@ Common::Rect Sprite::getBbox() {
 		break;
 	}
 	default:
-		warning("Sprite::getBbox(): Unhandled cast type: %d", _castType);
+		warning("Sprite::getBbox(): Unhandled cast type: %d : castId: %d", _castType, _castId);
 	}
 	return result;
 }
