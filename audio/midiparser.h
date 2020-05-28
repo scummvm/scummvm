@@ -279,6 +279,7 @@ protected:
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
 	bool   _disableAllNotesOffMidiEvents;   ///< Don't send All Notes Off MIDI messages
+	bool   _doNotAutoStartPlayback;  ///< Do not automatically start playback after parsing MIDI data or setting the track
 	byte  *_tracks[120];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _numTracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _activeTrack;   ///< Keeps track of the currently active track, in multi-track formats.
@@ -289,6 +290,7 @@ protected:
 	                        ///< simulated events in certain formats.
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 	bool   _jumpingToTick; ///< True if currently inside jumpToTick
+	bool   _doParse;       ///< True if the parser should be parsing; false if it should be active
 
 protected:
 	static uint32 readVLQ(byte * &data);
@@ -377,7 +379,14 @@ public:
 		  * Any active notes registered by this parser will still be turned
 		  * off.
 		  */
-		 mpDisableAllNotesOffMidiEvents = 6
+		 mpDisableAllNotesOffMidiEvents = 6,
+
+		 /**
+		  * Does not automatically start playback after parsing MIDI data
+		  * or setting the track. Use startPlaying to start playback.
+		  * Note that not every parser implementation might support this.
+		  */
+		  mpDoNotAutoStartPlayback = 7
 	};
 
 public:
@@ -396,11 +405,35 @@ public:
 	void setTempo(uint32 tempo);
 	void onTimer();
 
-	bool isPlaying() const { return (_position._playPos != 0); }
+	bool isPlaying() const { return (_position._playPos != 0 && _doParse); }
+	/**
+	 * Start playback from the current position in the current track, or at
+	 * the beginning if there is no current position.
+	 * If the parser is already playing or there is no valid current track,
+	 * this function does nothing.
+	 */
+	bool startPlaying();
+	/**
+	 * Stops playback. This resets the current playback position.
+	 */
 	void stopPlaying();
 
 	bool setTrack(int track);
 	bool jumpToTick(uint32 tick, bool fireEvents = false, bool stopNotes = true, bool dontSendNoteOn = false);
+	/**
+	 * Returns true if the active track has a jump point defined for the
+	 * specified index number.
+	 * Can be implemented for MIDI formats with support for some form of index
+	 * points.
+	 */
+	virtual bool hasJumpIndex(uint8 index) { return false; }
+	/**
+	 * Stops playback and resumes it at the position defined for the specified
+	 * index number.
+	 * Can be implemented for MIDI formats with support for some form of index
+	 * points.
+	 */
+	virtual bool jumpToIndex(uint8 index, bool stopNotes = true) { return false; }
 
 	uint32 getPPQN() { return _ppqn; }
 	virtual uint32 getTick() { return _position._playTick; }
