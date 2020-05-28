@@ -358,7 +358,7 @@ void BigDialogue::next(int choice) {
 		}
 		case kOperationDisableMenuItem:
 			_ops[_currOp->disableMenuItem.opIndex].menu.bitField &= ~(1 << _currOp->disableMenuItem.bit); // disable menu item
-			checkMenu(_currOp->disableMenuItem.opIndex);
+			checkMenu(_startOpIndex);
 			_currOp += 1;
 			processed = false;
 			break;
