@@ -480,14 +480,11 @@ void BaseRenderOpenGLTexture::drawFromSurface(RenderTicketOpenGL *ticket, Common
 	ticket->drawToSurface(_renderSurface, dstRect, clipRect);
 }
 
-void BaseRenderOpenGLTexture::drawRenderSurface()
-{
+void BaseRenderOpenGLTexture::drawRenderSurface() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	for (int i = 0; i < _renderSurface->h; ++i)
-	{
-		for (int j = 0; j < _renderSurface->w; ++j)
-		{
+	for (int i = 0; i < _renderSurface->h; ++i) {
+		for (int j = 0; j < _renderSurface->w; ++j) {
 			byte* pixel = reinterpret_cast<byte*>(_renderSurface->getPixels());
 			pixel += i * _renderSurface->w * 4 + j * 4;
 

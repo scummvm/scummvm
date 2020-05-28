@@ -46,8 +46,7 @@ void Wintermute::BaseRenderOpenGL3D::setWindowed(bool windowed) {
 
 }
 
-Graphics::PixelFormat Wintermute::BaseRenderOpenGL3D::getPixelFormat() const
-{
+Graphics::PixelFormat Wintermute::BaseRenderOpenGL3D::getPixelFormat() const {
 	return OpenGL::Texture::getRGBAPixelFormat();
 }
 
@@ -136,8 +135,7 @@ bool Wintermute::BaseRenderOpenGL3D::setProjection() {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setProjection2D()
-{
+bool Wintermute::BaseRenderOpenGL3D::setProjection2D() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _viewportRect.width(), 0, _viewportRect.height(), -1.0, 100.0);
@@ -192,8 +190,7 @@ void Wintermute::BaseRenderOpenGL3D::initLoop() {
 }
 
 bool Wintermute::BaseRenderOpenGL3D::setup2D(bool force) {
-	if (_state3D || force)
-	{
+	if (_state3D || force) {
 		_state3D = false;
 
 		// some states are still missing here
@@ -251,14 +248,16 @@ void Wintermute::BaseRenderOpenGL3D::endSaveLoad() {
 
 bool Wintermute::BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture& tex, const Wintermute::Rect32& rect,
 												float zoomX, float zoomY, const Wintermute::Vector2& pos,
-												uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+												uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+												bool mirrorX, bool mirrorY) {
 	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
 	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
 bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, const Wintermute::Rect32& rect,
 												  const Wintermute::Vector2& pos, const Wintermute::Vector2& rot, const Wintermute::Vector2& scale,
-												  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+												  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+												  bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
 
 	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
@@ -275,13 +274,12 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 	float offset = _viewportRect.height() / 2.0f;
 	float corrected_y =  (pos.y - offset) * -1.0f + offset;
 
-	if (mirrorX)
-	{
+	// to be implemented
+	if (mirrorX) {
 
 	}
 
-	if (mirrorY)
-	{
+	if (mirrorY) {
 
 	}
 
@@ -342,8 +340,7 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 
 	// transform vertices here if necessary, add offset
 
-	if (alphaDisable)
-	{
+	if (alphaDisable) {
 		glDisable(GL_ALPHA_TEST);
 	}
 
@@ -360,12 +357,11 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture& tex, co
 
 	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
 
-	// we could do this in a vertex buffer anyways
+	// we probably should do this in a vertex buffer anyways
 	//glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	if (alphaDisable)
-	{
+	if (alphaDisable) {
 		glEnable(GL_ALPHA_TEST);
 	}
 

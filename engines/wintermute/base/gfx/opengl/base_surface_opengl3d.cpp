@@ -64,8 +64,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, boo
 		return false;
 	}
 
-	if (img.getSurface()->format.bytesPerPixel == 1 && img.getPalette() == nullptr)
-	{
+	if (img.getSurface()->format.bytesPerPixel == 1 && img.getPalette() == nullptr) {
 		return false;
 	}
 
