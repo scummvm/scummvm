@@ -482,7 +482,7 @@ static const char *const kEoB1MenuStringsStarveDOSSpanish[1] = {
 static const StringListProvider kEoB1MenuStringsStarveDOSSpanishProvider = { ARRAYSIZE(kEoB1MenuStringsStarveDOSSpanish), kEoB1MenuStringsStarveDOSSpanish };
 
 static const char *const kEoB1MenuStringsScribeDOSSpanish[5] = {
-	"Escoge los pergamino(s)\rque deseas escribir .",
+	"Escoge el pergamino\rque deseas escribir.\r",
 	"\r\r\r Selecciona un\r Mago de tu grupo\r para transcribir\r los conjuros.",
 	" No tienes ningun\r pergamino para\r transcribir.",
 	" No tienes\r ningun pergamino\r para este Mago.",
@@ -572,10 +572,10 @@ static const char *const kEoB1CharGuiStringsWp1DOSSpanish[2] = {
 static const StringListProvider kEoB1CharGuiStringsWp1DOSSpanishProvider = { ARRAYSIZE(kEoB1CharGuiStringsWp1DOSSpanish), kEoB1CharGuiStringsWp1DOSSpanish };
 
 static const char *const kEoB1CharGuiStringsWrDOSSpanish[4] = {
-	"NO",
+	"  NO ",
 	"LLEGA",
-	"SIN",
-	"MUN"
+	"SIN ",
+	"MUNI"
 };
 
 static const StringListProvider kEoB1CharGuiStringsWrDOSSpanishProvider = { ARRAYSIZE(kEoB1CharGuiStringsWrDOSSpanish), kEoB1CharGuiStringsWrDOSSpanish };
