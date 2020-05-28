@@ -53,7 +53,7 @@ MidiPlayer::~MidiPlayer() {
 	_driver->close();
 }
 
-void MidiPlayer::play(byte *data, size_t size, int seqNo, int trackNo, bool speedHack) {
+void MidiPlayer::load(byte *data, size_t size, int seqNo, bool speedHack) {
 	if (!_driver)
 		return;
 
@@ -62,29 +62,54 @@ void MidiPlayer::play(byte *data, size_t size, int seqNo, int trackNo, bool spee
 	stop();
 
 	if (size < 4)
-		error("play() wrong music resource size");
+		error("load() wrong music resource size");
 
 	if (READ_BE_UINT32(data) != MKTAG('F', 'O', 'R', 'M')) {
-		warning("play() Unexpected signature");
+		warning("load() Unexpected signature");
 		_isPlaying = false;
 	} else {
 		_parser = MidiParser::createParser_XMIDI(xmidiCallback, _callbackData + seqNo);
 
-		if (!_parser->loadMusic(data, size))
-			error("play() wrong music resource");
-
-		_parser->setTrack(trackNo);
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
 		if (speedHack)
 			_parser->setTempo(_driver->getBaseTempo() * 2);
 		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		_parser->property(MidiParser::mpDoNotAutoStartPlayback, 1);
 
 		int volume = g_engine->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		setVolume(volume);
+
+		if (!_parser->loadMusic(data, size))
+			error("load() wrong music resource");
+	}
+}
+void MidiPlayer::play(int trackNo, int branchIndex) {
+	if (!_parser)
+		return;
+
+	if (!_parser->setTrack(trackNo)) {
+		warning("play() invalid track number %i", trackNo);
+		return;
+	}
+		
+	if (branchIndex >= 0) {
+		if (!_parser->jumpToIndex(branchIndex, false)) {
+			warning("play() invalid branch index %i", branchIndex);
+			// Track will play from the beginning instead
+		}
+	}
+
+	if (!_parser->startPlaying()) {
+		warning("play() failed to start playing");
+	} else {
 		_isPlaying = true;
 	}
+}
+
+bool MidiPlayer::hasBranchIndex(uint8 index) {
+	return _parser && _parser->hasJumpIndex(index);
 }
 
 void MidiPlayer::setLooping(bool loop) {
