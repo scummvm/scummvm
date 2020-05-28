@@ -22,14 +22,13 @@
 
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/dump_game_data.h"
-#include "glk/quetzal.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
+#include "glk/comprehend/game_data.h"
+#include "glk/comprehend/graphics.h"
+#include "glk/comprehend/game.h"
+#include "glk/comprehend/util.h"
 
 namespace Glk {
 namespace Comprehend {
-
-Comprehend *g_comprehend;
 
 extern struct comprehend_game game_transylvania;
 extern struct comprehend_game game_crimson_crown_1;
@@ -38,44 +37,68 @@ extern struct comprehend_game game_oo_topos;
 extern struct comprehend_game game_talisman;
 
 static struct comprehend_game *comprehend_games[] = {
-    &game_transylvania,
-    &game_crimson_crown_1,
-    &game_crimson_crown_2,
-    &game_oo_topos,
-    &game_talisman,
+	&game_transylvania,
+	&game_crimson_crown_1,
+	&game_crimson_crown_2,
+	&game_oo_topos,
+	&game_talisman,
 };
 
 struct dump_option {
-	const char *const option;
-	unsigned flag;
+	const char	*option;
+	unsigned	flag;
 };
 
-static const dump_option dump_options[] = {
-    {"strings", DUMP_STRINGS},
-    {"extra-strings", DUMP_EXTRA_STRINGS},
-    {"rooms", DUMP_ROOMS},
-    {"items", DUMP_ITEMS},
-    {"dictionary", DUMP_DICTIONARY},
-    {"word-pairs", DUMP_WORD_PAIRS},
-    {"actions", DUMP_ACTIONS},
-    {"functions", DUMP_FUNCTIONS},
-    {"replace-words", DUMP_REPLACE_WORDS},
-    {"header", DUMP_HEADER},
-    {"all", DUMP_ALL},
+static struct dump_option dump_options[] = {
+	{"strings",		DUMP_STRINGS},
+	{"extra-strings",	DUMP_EXTRA_STRINGS},
+	{"rooms",		DUMP_ROOMS},
+	{"items",		DUMP_ITEMS},
+	{"dictionary",		DUMP_DICTIONARY},
+	{"word-pairs",		DUMP_WORD_PAIRS},
+	{"actions",		DUMP_ACTIONS},
+	{"functions",		DUMP_FUNCTIONS},
+	{"replace-words",	DUMP_REPLACE_WORDS},
+	{"header",		DUMP_HEADER},
+	{"all",			DUMP_ALL},
 };
 
-#ifdef TODO
-int main(int argc, char **argv) {
+static void usage(const char *progname)
+{
+	int i;
+
+	printf("Usage %s [OPTION]... GAME_NAME GAME_DIR\n", progname);
+	printf("\nOptions:\n");
+	printf("  -d, --debug                   Enable debugging\n");
+	printf("  -D, --dump=OPTION             Dump game data\n");
+	for (i = 0; i < ARRAY_SIZE(dump_options); i++)
+		printf("        %s\n", dump_options[i].option);
+	printf("  -p, --no-play                 Don't run the interpreter\n");
+	printf("  -g, --no-graphics             Disable graphics\n");
+	printf("  -f, --no-floodfill            Disable floodfill\n");
+	printf("  -w, --graphics-width=WIDTH    Graphics width\n");
+	printf("  -h, --graphics-height=HEIGHT  Graphics height\n");
+
+	printf("\nSupported games:\n");
+	for (i = 0; i < ARRAY_SIZE(comprehend_games); i++)
+		printf("    %-10s %s\n", comprehend_games[i]->short_name,
+		       comprehend_games[i]->game_name);
+
+	exit(EXIT_FAILURE);
+}
+
+int main(int argc, char **argv)
+{
 	struct option long_opts[] = {
-	    {"debug", no_argument, 0, 'd'},
-	    {"dump", required_argument, 0, 'D'},
-	    {"no-play", no_argument, 0, 'p'},
-	    {"no-graphics", no_argument, 0, 'g'},
-	    {"no-floodfill", no_argument, 0, 'f'},
-	    {"graphics-width", required_argument, 0, 'w'},
-	    {"graphics-height", required_argument, 0, 'h'},
-	    {"help", no_argument, 0, '?'},
-	    {NULL, 0, 0, 0},
+		{"debug",		no_argument,		0, 'd'},
+		{"dump",		required_argument,	0, 'D'},
+		{"no-play",		no_argument,		0, 'p'},
+		{"no-graphics",		no_argument,		0, 'g'},
+		{"no-floodfill",	no_argument,		0, 'f'},
+		{"graphics-width",	required_argument,	0, 'w'},
+		{"graphics-height",	required_argument,	0, 'h'},
+		{"help",		no_argument,		0, '?'},
+		{NULL,			0,			0, 0},
 	};
 	const char *short_opts = "dD:pgfw:h:?";
 	struct comprehend_game *game;
@@ -83,7 +106,7 @@ int main(int argc, char **argv) {
 	unsigned dump_flags = 0;
 	int i, c, opt_index;
 	unsigned graphics_width = G_RENDER_WIDTH,
-	         graphics_height = G_RENDER_HEIGHT;
+		graphics_height = G_RENDER_HEIGHT;
 	bool play_game = true, graphics_enabled = true;
 
 	while (1) {
@@ -170,32 +193,9 @@ int main(int argc, char **argv) {
 
 	if (play_game)
 		comprehend_play_game(game);
-}
-#endif
 
-Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_saveSlot(-1) {
-	g_comprehend = this;
+	exit(EXIT_SUCCESS);
 }
 
-Comprehend::~Comprehend() {
-	g_comprehend = nullptr;
-}
-
-void Comprehend::runGame() {
-	initialize();
-	#ifdef TODO
-	_bottomWindow = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	if (_bottomWindow == nullptr) {
-		glk_exit();
-		return;
-	}
-	glk_set_window(_bottomWindow);
-#endif
-}
-
-void Comprehend::initialize() {
-}
-
-} // End of namespace Comprehend
-} // End of namespace Glk
+} // namespace Comprehend
+} // namespace Glk

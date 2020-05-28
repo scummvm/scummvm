@@ -168,6 +168,21 @@ MODULE_OBJS := \
 	archetype/token.o \
 	comprehend/comprehend.o \
 	comprehend/detection.o \
+	comprehend/dictionary.o \
+	comprehend/dump_game_data.o \
+	comprehend/file_buf.o \
+	comprehend/game.o \
+	comprehend/game_cc.o \
+	comprehend/game_data.o \
+	comprehend/game_oo.o \
+	comprehend/game_tm.o \
+	comprehend/game_tr.o \
+	comprehend/graphics.o \
+	comprehend/image_data.o \
+	comprehend/image_view.o \
+	comprehend/opcode_map.o \
+	comprehend/strings.o \
+	comprehend/util.o \
 	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \

@@ -29,8 +29,41 @@
 namespace Glk {
 namespace Comprehend {
 
+#undef printf
+#define printf debugN
+#undef getchar
+#define getchar() (0)
+
+#define PATH_MAX 256
+
+struct comprehend_game;
+struct game_info;
+struct game_state;
+
+#define EXTRA_STRING_TABLE(x) (0x8200 | (x))
+
+struct game_strings {
+	uint16 game_restart;
+};
+
+#define ROOM_IS_NORMAL 0
+#define ROOM_IS_DARK 1
+#define ROOM_IS_TOO_BRIGHT 2
+
+struct game_ops {
+	void (*before_game)(struct comprehend_game *game);
+	void (*before_prompt)(struct comprehend_game *game);
+	bool (*before_turn)(struct comprehend_game *game);
+	bool (*after_turn)(struct comprehend_game *game);
+	int (*room_is_special)(struct comprehend_game *game,
+	                       unsigned room_index,
+	                       unsigned *room_desc_string);
+	void (*handle_special_opcode)(struct comprehend_game *game,
+	                              uint8 operand);
+};
+
 /**
- * Scott Adams game interpreter
+ * Comprehend engine
  */
 class Comprehend : public GlkAPI {
 private:
@@ -45,6 +78,8 @@ public:
 	 * Constructor
 	 */
 	Comprehend(OSystem *syst, const GlkGameDescription &gameDesc);
+
+	~Comprehend() override;
 
 	/**
 	 * Returns the running interpreter type
@@ -71,6 +106,8 @@ public:
 		return Common::kWritingFailed;
 	}
 };
+
+extern Comprehend *g_comprehend;
 
 } // End of namespace Comprehend
 } // End of namespace Glk
