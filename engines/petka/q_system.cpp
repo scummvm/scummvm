@@ -52,48 +52,6 @@ QSystem::~QSystem() {
 
 }
 
-static Common::String readString(Common::ReadStream &readStream) {
-	uint32 stringSize = readStream.readUint32LE();
-	byte *data = (byte *)malloc(stringSize + 1);
-	readStream.read(data, stringSize);
-	data[stringSize] = '\0';
-	Common::String str((char *)data);
-	return str;
-}
-
-static void readObject(QMessageObject &obj, Common::SeekableReadStream &stream,
-	const Common::INIFile &namesIni, const Common::INIFile &castIni) {
-	obj._id = stream.readUint16LE();
-	obj._name = readString(stream);
-	obj._reactions.resize(stream.readUint32LE());
-
-	for (uint i = 0; i < obj._reactions.size(); ++i) {
-		QReaction *reaction = &obj._reactions[i];
-		reaction->opcode = stream.readUint16LE();
-		reaction->status = stream.readByte();
-		reaction->senderId = stream.readUint16LE();
-		reaction->messages.resize(stream.readUint32LE());
-		for (uint j = 0; j < reaction->messages.size(); ++j) {
-			QMessage *msg = &reaction->messages[j];
-			msg->objId = stream.readUint16LE();
-			msg->opcode = stream.readUint16LE();
-			msg->arg1 = stream.readUint16LE();
-			msg->arg2 = stream.readUint16LE();
-			msg->arg3 = stream.readUint16LE();
-		}
-	}
-
-	namesIni.getKey(obj._name, "all", obj._nameOnScreen);
-
-	Common::String rgbString;
-	if (castIni.getKey(obj._name, "all", rgbString)) {
-		int r, g, b;
-		sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
-		obj._dialogColor = g_vm->_system->getScreenFormat().RGBToColor((byte)r, (byte)g, (byte)b);
-	}
-}
-
-
 bool QSystem::init() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("script.dat", true));
 	if (!stream)
