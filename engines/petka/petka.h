@@ -41,7 +41,7 @@
  *  - Red Comrades Demo
  *  - Red Comrades Save the Galaxy
  *  	- Part 1: can be completed
- *  	- Part 2: not tested
+ *  	- Part 2: unplayable (requires support of scrolling backgrounds)
  *  	- Part 3: not tested
  *  - Red Comrades 2: For the Great Justice
  */
