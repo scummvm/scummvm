@@ -324,10 +324,9 @@ static void load_image_file(struct image_data *info, const char *filename,
 	}
 }
 
-static void load_image_files(struct image_data *info, const char *game_dir,
+static void load_image_files(struct image_data *info,
 			     const char **filenames, size_t nr_files)
 {
-	char path[256];
 	uint i;
 
 	memset(info, 0, sizeof(*info));
@@ -337,8 +336,7 @@ static void load_image_files(struct image_data *info, const char *game_dir,
 	info->image_offsets = (uint16 *)xmalloc(info->nr_images * sizeof(uint16));
 
 	for (i = 0; i < nr_files; i++) {
-		snprintf(path, sizeof(path), "%s/%s", game_dir, filenames[i]);
-		load_image_file(info, path, i);
+		load_image_file(info, filenames[i], i);
 	}
 }
 
@@ -351,31 +349,12 @@ static size_t graphic_array_count(const char **filenames, size_t max)
 	return count;
 }
 
-static void split_path(const char *filename, char **dir, char **base)
-{
-	const char *p;
-
-	p = strrchr(filename, '/');
-	if (!p) {
-		*base = xstrndup(filename, strlen(filename));
-		*dir = xstrndup(".", 1);
-	} else {
-		*base = xstrndup(p, strlen(p));
-		*dir = xstrndup(filename, p - filename);
-	}
-}
-
 void comprehend_load_image_file(const char *filename, struct image_data *info)
 {
-	char *dir, *base;
-
-	split_path(filename, &dir, &base);
-	load_image_files(info, dir, (const char **)&base, 1);
-	free(dir);
-	free(base);
+	load_image_files(info, (const char **)&filename, 1);
 }
 
-void comprehend_load_images(comprehend_game *game, const char *game_dir)
+void comprehend_load_images(comprehend_game *game)
 {
 	size_t nr_item_files, nr_room_files;
 
@@ -386,10 +365,10 @@ void comprehend_load_images(comprehend_game *game, const char *game_dir)
 		graphic_array_count(game->item_graphic_files,
 				    ARRAY_SIZE(game->item_graphic_files));
 
-	load_image_files(&game->info->room_images, game_dir,
+	load_image_files(&game->info->room_images,
 			 game->location_graphic_files, nr_room_files);
 
-	load_image_files(&game->info->item_images, game_dir,
+	load_image_files(&game->info->item_images,
 			 game->item_graphic_files, nr_item_files);
 }
 

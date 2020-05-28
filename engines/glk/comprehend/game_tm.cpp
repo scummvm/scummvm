@@ -33,7 +33,6 @@ static struct game_ops tm_ops = {};
 struct comprehend_game game_talisman = {
     "Talisman, Challenging the Sands of Time (broken)",
     "tm",
-    nullptr,
     "G0",
     {},
 	{"RA", "RB", "RC", "RD", "RE", "RF", "RG"},

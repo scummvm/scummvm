@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
+#include "glk/window_graphics.h"
+#include "glk/window_text_buffer.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -68,11 +70,19 @@ struct game_ops {
 class Comprehend : public GlkAPI {
 private:
 	int _saveSlot;		 ///< Save slot when loading savegame from launcher
+public:
+	GraphicsWindow *_graphicsWindow;
+	TextBufferWindow *_textBufferWindow;
 private:
 	/**
 	 * Initialization code
 	 */
 	void initialize();
+
+	/**
+	 * Deinitialization
+	 */
+	void deinitialize();
 public:
 	/**
 	 * Constructor

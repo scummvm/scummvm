@@ -138,7 +138,6 @@ static struct game_ops cc2_ops = {
 struct comprehend_game game_crimson_crown_1 = {
 	"Crimson Crown (Part 1/2)",
 	"cc1",
-	nullptr,
 	"CC1.GDA",
 	{ {"MA.MS1", 0x89} },
 	{"RA.MS1", "RB.MS1", "RC.MS1"},
@@ -153,7 +152,6 @@ struct comprehend_game game_crimson_crown_1 = {
 struct comprehend_game game_crimson_crown_2 = {
 	"Crimson Crown (Part 2/2)",
 	"cc2",
-	nullptr,
 	"CC2.GDA",
 	{ {"MA.MS2", 0x89} },
 	{"RA.MS2", "RB.MS2"},

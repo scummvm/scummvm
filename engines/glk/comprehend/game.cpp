@@ -165,7 +165,7 @@ struct item *get_item(comprehend_game *game, uint16 index) {
 }
 
 void game_save(comprehend_game *game) {
-	char path[PATH_MAX], filename[32];
+	char filename[32];
 	int c;
 
 	console_println(game, game->info->strings.strings[STRING_SAVE_GAME]);
@@ -181,12 +181,11 @@ void game_save(comprehend_game *game) {
 	}
 
 	snprintf(filename, sizeof(filename), game->save_game_file_fmt, c - '0');
-	snprintf(path, sizeof(path), "%s%s", game->game_dir, filename);
-	comprehend_save_game(game, path);
+	comprehend_save_game(game, filename);
 }
 
 void game_restore(comprehend_game *game) {
-	char path[PATH_MAX], filename[32];
+	char filename[32];
 	int c;
 
 	console_println(game, game->info->strings.strings[STRING_RESTORE_GAME]);
@@ -202,8 +201,7 @@ void game_restore(comprehend_game *game) {
 	}
 
 	snprintf(filename, sizeof(filename), game->save_game_file_fmt, c - '0');
-	snprintf(path, sizeof(path), "%s%s", game->game_dir, filename);
-	comprehend_restore_game(game, path);
+	comprehend_restore_game(game, filename);
 
 	game->info->update_flags = UPDATE_ALL;
 }
@@ -212,7 +210,7 @@ void game_restart(comprehend_game *game) {
 	console_println(game, string_lookup(game, game->strings->game_restart));
 	console_get_key();
 
-	comprehend_load_game(game, game->game_dir);
+	comprehend_load_game(game);
 	game->info->update_flags = UPDATE_ALL;
 }
 
@@ -1013,6 +1011,7 @@ static void skip_non_whitespace(char **p) {
 		(*p)++;
 }
 
+#ifdef TODO
 static void handle_debug_command(comprehend_game *game,
                                  const char *line) {
 	int i;
@@ -1052,6 +1051,7 @@ static void handle_debug_command(comprehend_game *game,
 		printf("\n");
 	}
 }
+#endif
 
 static bool handle_sentence(comprehend_game *game,
                             struct sentence *sentence) {

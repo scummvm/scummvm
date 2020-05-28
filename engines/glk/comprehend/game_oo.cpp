@@ -126,7 +126,6 @@ static struct game_ops oo_ops = {
 struct comprehend_game game_oo_topos = {
 	"Oo-Topos",
 	"oo",
-	nullptr,
 	"G0",
 	{
 		// Extra strings are (annoyingly) stored in the game binary

@@ -21,12 +21,12 @@
  */
 
 #include "glk/comprehend/comprehend.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
 #include "glk/comprehend/dump_game_data.h"
 #include "glk/comprehend/game.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/quetzal.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -44,8 +44,7 @@ static comprehend_game *comprehend_games[] = {
     &game_crimson_crown_1,
     &game_crimson_crown_2,
     &game_oo_topos,
-    &game_talisman
-};
+    &game_talisman};
 
 struct dump_option {
 	const char *const option;
@@ -151,7 +150,7 @@ int main(int argc, char **argv) {
 #endif
 
 Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_saveSlot(-1) {
+                                                                            _saveSlot(-1) {
 	g_comprehend = this;
 }
 
@@ -174,22 +173,23 @@ void Comprehend::runGame() {
 	assert(game);
 
 	game->info = (game_info *)malloc(sizeof(*game->info));
-	comprehend_load_game(game, nullptr);
+	comprehend_load_game(game);
 
 	comprehend_play_game(game);
+
+	deinitialize();
 }
 
 void Comprehend::initialize() {
+	_textBufferWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	_graphicsWindow = (GraphicsWindow *)glk_window_open(
+	    _textBufferWindow, winmethod_Above | winmethod_Proportional,
+	    160, wintype_Graphics, 0);
+}
 
-
-#ifdef TODO
-	_bottomWindow = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	if (_bottomWindow == nullptr) {
-		glk_exit();
-		return;
-	}
-	glk_set_window(_bottomWindow);
-#endif
+void Comprehend::deinitialize() {
+	glk_window_close(_graphicsWindow);
+	glk_window_close(_textBufferWindow);
 }
 
 } // End of namespace Comprehend

@@ -201,7 +201,6 @@ static struct game_ops tr_ops = {
 struct comprehend_game game_transylvania = {
 	"Transylvania",
 	"tr",
-	nullptr,
 	"TR.GDA",
 	{
 		{"MA.MS1", 0x88},

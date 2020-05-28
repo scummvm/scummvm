@@ -821,16 +821,12 @@ static void parse_header(struct comprehend_game *game, struct file_buf *fb) {
 	                       8;
 }
 
-static void load_extra_string_file(struct comprehend_game *game,
-                                   const char *dirname,
-                                   struct string_file *string_file) {
-	char filename[PATH_MAX];
+static void load_extra_string_file(comprehend_game *game,
+                                   string_file *string_file) {
 	struct file_buf fb;
 	unsigned end;
 
-	snprintf(filename, sizeof(filename), "%s/%s", dirname,
-	         string_file->filename);
-	file_buf_map(filename, &fb);
+	file_buf_map(string_file->filename, &fb);
 
 	if (string_file->end_offset)
 		end = string_file->end_offset;
@@ -843,8 +839,7 @@ static void load_extra_string_file(struct comprehend_game *game,
 	file_buf_unmap(&fb);
 }
 
-static void load_extra_string_files(struct comprehend_game *game,
-                                    const char *dirname) {
+static void load_extra_string_files(comprehend_game *game) {
 	int i;
 
 	memset(&game->info->strings2, 0, sizeof(game->info->strings2));
@@ -858,20 +853,15 @@ static void load_extra_string_files(struct comprehend_game *game,
 		if (game->info->strings2.nr_strings == 0)
 			game->info->strings2.nr_strings++;
 
-		load_extra_string_file(game, dirname, &game->string_files[i]);
+		load_extra_string_file(game, &game->string_files[i]);
 	}
 }
 
-static void load_game_data(struct comprehend_game *game, const char *dirname) {
-	char data_file[PATH_MAX];
+static void load_game_data(struct comprehend_game *game) {
 	struct file_buf fb;
 
-	snprintf(data_file, sizeof(data_file), "%s/%s",
-	         dirname, game->game_data_file);
-
 	memset(game->info, 0, sizeof(*game->info));
-
-	file_buf_map(data_file, &fb);
+	file_buf_map(game->game_data_file, &fb);
 
 	parse_header(game, &fb);
 	parse_rooms(game, &fb);
@@ -882,7 +872,7 @@ static void load_game_data(struct comprehend_game *game, const char *dirname) {
 	parse_string_table(&fb, game->info->header.addr_strings,
 	                   game->info->header.addr_strings_end,
 	                   &game->info->strings);
-	load_extra_string_files(game, dirname);
+	load_extra_string_files(game);
 	parse_vm(game, &fb);
 	parse_action_table(game, &fb);
 	parse_replace_words(game, &fb);
@@ -890,14 +880,12 @@ static void load_game_data(struct comprehend_game *game, const char *dirname) {
 	file_buf_unmap(&fb);
 }
 
-void comprehend_load_game(struct comprehend_game *game, const char *dirname) {
-	game->game_dir = dirname;
-
+void comprehend_load_game(struct comprehend_game *game) {
 	/* Load the main game data file */
-	load_game_data(game, dirname);
+	load_game_data(game);
 
 	if (g_enabled()) {
-		comprehend_load_images(game, dirname);
+		comprehend_load_images(game);
 		if (game->color_table)
 			g_set_color_table(game->color_table);
 	}

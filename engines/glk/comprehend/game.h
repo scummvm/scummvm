@@ -44,8 +44,6 @@ struct comprehend_game {
 	const char *game_name;
 	const char *short_name;
 
-	const char *game_dir;
-
 	const char *game_data_file;
 	struct string_file string_files[MAX_FILES];
 	const char *location_graphic_files[MAX_FILES];

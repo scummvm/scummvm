@@ -91,7 +91,7 @@ void draw_image(image_data *info, unsigned index);
 void draw_location_image(image_data *info, unsigned index);
 
 void comprehend_load_image_file(const char *filename, image_data *info);
-void comprehend_load_images(comprehend_game *game, const char *game_dir);
+void comprehend_load_images(comprehend_game *game);
 
 } // namespace Comprehend
 } // namespace Glk

@@ -307,7 +307,7 @@ enum {
 #define WORD_TYPE_NOUN_MASK	(WORD_TYPE_FEMALE | WORD_TYPE_MALE |	\
 				 WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
 
-void comprehend_load_game(struct comprehend_game *game, const char *dirname);
+void comprehend_load_game(struct comprehend_game *game);
 void comprehend_restore_game(struct comprehend_game *game,
 			     const char *filename);
 void comprehend_save_game(struct comprehend_game *game, const char *filename);
