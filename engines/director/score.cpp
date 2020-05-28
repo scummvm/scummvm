@@ -1833,16 +1833,17 @@ void Score::renderShape(uint16 spriteId) {
 					lineSize = sc->_lineThickness;
 					ink = sc->_ink;
 				}
-				// shapes should be rendered with transparency by default
-				if (ink == kInkTypeCopy) {
-					ink = kInkTypeTransparent;
-				}
 			}
 			break;
 		default:
 			warning("Score::renderShape(): Unhandled cast type: %d", sp->_cast->_type);
 			break;
 		}
+	}
+
+	// shapes should be rendered with transparency by default
+	if (ink == kInkTypeCopy) {
+		ink = kInkTypeTransparent;
 	}
 
 	// for outlined shapes, line thickness of 1 means invisible.
