@@ -179,6 +179,18 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 		matchedAction = mapEvent(ev, Keymap::kKeymapTypeGlobal, mappedEvents);
 	}
 
+	if (!matchedAction && (ev.type == EVENT_KEYDOWN || ev.type == EVENT_KEYUP) && ev.kbd.flags & KBD_NON_STICKY) {
+		// If no matching actions and non-sticky keyboard modifiers are down,
+		// check again for matches no non-sticky keyboard modifiers
+		Event kbdEvent = Event(ev);
+		kbdEvent.kbd.flags &= ~KBD_NON_STICKY;
+
+		matchedAction = mapEvent(kbdEvent, _enabledKeymapType, mappedEvents);
+		if (!matchedAction) {
+			matchedAction = mapEvent(kbdEvent, Keymap::kKeymapTypeGlobal, mappedEvents);
+		}
+	}
+
 	if (ev.type == EVENT_JOYAXIS_MOTION && ev.joystick.axis < ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
 		if (ABS<int32>(ev.joystick.position) >= kJoyAxisPressedTreshold) {
 			_joystickAxisPreviouslyPressed[ev.joystick.axis] = true;
