@@ -112,7 +112,7 @@ bool QSystem::init() {
 	bgsIni.allowNonEnglishCharacters();
 
 	if (namesStream)
-		namesIni.loadFromStream(*namesStream); //fails because ini is broken for Russian letters
+		namesIni.loadFromStream(*namesStream);
 	if (castStream)
 		castIni.loadFromStream(*castStream);
 	if (bgsStream)
