@@ -207,7 +207,7 @@ void DialogInterface::setPhrase(const Common::U32String *text) {
 		textColor = _talker->_dialogColor;
 		outlineColor = g_system->getScreenFormat().RGBToColor(0x7F, 0, 0);
 	}
-	_qsys->_mainInterface->setTextPhrase(*text, textColor, outlineColor);
+	_qsys->_currInterface->setTextPhrase(*text, textColor, outlineColor);
 }
 
 void DialogInterface::onPlayOpcode(int prevTalkerId) {
@@ -244,7 +244,7 @@ void DialogInterface::onMenuOpcode() {
 }
 
 void DialogInterface::onUserMsgOpcode() {
-	_qsys->_mainInterface->setTextPhrase(Common::U32String(""), 0, 0);
+	_qsys->_currInterface->setTextPhrase(Common::U32String(""), 0, 0);
 	removeSound();
 	_talker = nullptr;
 	_state = kPlaying;
