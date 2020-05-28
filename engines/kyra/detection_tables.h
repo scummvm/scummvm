@@ -1706,6 +1706,22 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		EOB_FLAGS
 	},
+	
+	{	// spanish translation
+		{
+			"eob",
+			0,
+			{
+				{ "EOBDATA3.PAK", 0, "a7800a8ea8251f678530eb952de7b815", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_MIDIPCJR, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB_FLAGS
+	},
 
 	{
 		{
