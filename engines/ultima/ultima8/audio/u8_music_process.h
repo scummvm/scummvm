@@ -66,6 +66,7 @@ private:
 
 	MidiPlayer *_midiPlayer;
 	PlaybackStates _state;
+	//! The branch (starting point) to use for each music track
 	int _songBranches[128];
 
 	int _currentTrack;      //! Currently playing track (don't save)

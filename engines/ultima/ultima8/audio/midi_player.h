@@ -35,14 +35,27 @@ public:
 	~MidiPlayer() override;
 
 	/**
-	 * Play the specified music
+	 * Load the specified music data
 	 */
-	void play(byte *data, size_t size, int seqNo, int trackNo, bool speedHack);
+	void load(byte *data, size_t size, int seqNo, bool speedHack);
+
+	/**
+	 * Play the specified music track, starting at the
+	 * specified branch. Use branchNo -1 to start from the
+	 * beginning.
+	 */
+	void play(int trackNo, int branchNo);
 
 	/**
 	 * Sets whether the music should loop
 	 */
 	void setLooping(bool loop);
+
+	/**
+	 * Returns true if the current music track has a branch
+	 * defined for the specified index.
+	 */
+	bool hasBranchIndex(uint8 index);
 
 	bool isFMSynth() const {
 		return _isFMSynth;

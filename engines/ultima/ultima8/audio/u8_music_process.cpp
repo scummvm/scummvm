@@ -173,7 +173,8 @@ void U8MusicProcess::playMusic_internal(int track) {
 		warning("Doing a MIDI transition! trans: %d xmidi: %d speedhack: %d", trans, xmidi_index, speed_hack);
 
 		if (xmidi && xmidi->_data) {
-			_midiPlayer->play(xmidi->_data, xmidi->_size, 1, trans, speed_hack);
+			_midiPlayer->load(xmidi->_data, xmidi->_size, 1, speed_hack);
+			_midiPlayer->play(trans, -1);
 		} else {
 			_midiPlayer->stop();
 		}
@@ -218,24 +219,20 @@ void U8MusicProcess::run() {
 		}
 
 		if (xmidi && xmidi->_data) {
-#ifdef TODO
-			// TODO: support branches in tracks.
-			// Not clear how to do this with the scummvm xmidi parser..
-			if (song_branches[wanted_track] != -1)
-			 {
-				 XMidiEvent *event = list->findBranchEvent(song_branches[wanted_track]);
-				 if (!event) song_branches[wanted_track] = 0;
-			 }
-#endif
 
 			if (_midiPlayer) {
 				// if there's a track queued, only play this one once
 				bool repeat = (_trackState._queued == 0);
-				_midiPlayer->play(xmidi->_data, xmidi->_size, 0, 0, false);
+				_midiPlayer->load(xmidi->_data, xmidi->_size, 0, false);
 				_midiPlayer->setLooping(repeat);
+				if (_songBranches[_trackState._wanted] >= 0 && !_midiPlayer->hasBranchIndex(_songBranches[_trackState._wanted]))
+					// Current branch is past the end of the list of branches. Reset to 0.
+					_songBranches[_trackState._wanted] = 0;
+				_midiPlayer->play(0, _songBranches[_trackState._wanted]);
 			}
 
 			_currentTrack = _trackState._wanted;
+			// Start this track at a different point (branch) next time
 			_songBranches[_trackState._wanted]++;
 		} else {
 			_currentTrack = _trackState._wanted = 0;
