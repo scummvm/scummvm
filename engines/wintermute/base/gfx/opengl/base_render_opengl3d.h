@@ -128,9 +128,6 @@ public:
 	bool drawSpriteEx(const OpenGL::Texture& tex, const Rect32& rect, const Vector2& pos, const Vector2& rot, const Vector2& scale,
 					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 
-	void pointFromScreen(Point32 *point);
-	void pointToScreen(Point32 *point);
-
 private:
 	bool _spriteBatchMode;
 	bool _state3D;
