@@ -716,7 +716,7 @@ void KingdomGame::restoreGame() {
 	loadGameState(savegameId);
 }
 
-Common::Error KingdomGame::saveGameState(int slot, const Common::String &desc) {
+Common::Error KingdomGame::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String savegameFile = getSavegameFilename(slot);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *out = saveMan->openForSaving(savegameFile);
@@ -1411,7 +1411,7 @@ int KingdomGame::getAKey() {
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_quit = true;
 			break;
 

@@ -236,7 +236,7 @@ namespace Kingdom {
 		void saveGame();
 		void restoreGame();
 		virtual Common::Error loadGameState(int slot);
-		virtual Common::Error saveGameState(int slot, const Common::String &desc);
+		virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 		Common::String getSavegameFilename(int slot);
 		void writeSavegameHeader(Common::OutSaveFile *out, KingdomSavegameHeader &header);
 		void synchronize(Common::Serializer &s);
