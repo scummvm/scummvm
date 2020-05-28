@@ -33,6 +33,7 @@ public:
 	void stop() override;
 
 	void onLeftButtonDown(const Common::Point p) override;
+	void onRightButtonDown(const Common::Point p) override;
 	void onMouseMove(const Common::Point p) override;
 
 private:

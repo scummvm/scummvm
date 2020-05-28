@@ -321,4 +321,8 @@ void InterfacePanel::applySettings() {
 	g_vm->syncSoundSettings();
 }
 
+void InterfacePanel::onRightButtonDown(const Common::Point p) {
+	stop();
+}
+
 } // End of namespace Petka

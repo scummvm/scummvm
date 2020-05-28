@@ -156,4 +156,8 @@ void InterfaceMap::onMouseMove(const Common::Point p) {
 	}
 }
 
+void InterfaceMap::onRightButtonDown(const Common::Point p) {
+	stop();
+}
+
 } // End of namespace Petka
