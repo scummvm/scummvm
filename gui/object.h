@@ -71,7 +71,7 @@ protected:
 	Widget		*_firstWidget;
 
 public:
-	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _firstWidget(nullptr) { }
+	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _useRTL(true), _firstWidget(nullptr) { }
 	GuiObject(const Common::String &name);
 	~GuiObject() override;
 
