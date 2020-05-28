@@ -347,10 +347,11 @@ Common::Error SkyEngine::init() {
 				}
 	}
 
-	// Setup mixer: Default volume is set to 127 (the game engine's max volume)
-	ConfMan.registerDefault("sfx_volume", 127);
-	ConfMan.registerDefault("music_volume", 127);
-	ConfMan.registerDefault("speech_volume", 127);
+	// Setup mixer: Default volume is set to 192 (ScummVM)
+	//              which is 96 (in-game) volume
+	ConfMan.registerDefault("sfx_volume",    192);
+	ConfMan.registerDefault("music_volume",  192);
+	ConfMan.registerDefault("speech_volume", 192);
 	ConfMan.registerDefault("mute", "false");
 	syncSoundSettings();
 
