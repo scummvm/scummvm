@@ -264,12 +264,12 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwhile expr end[body] stmtlist end[end2] tENDREPEAT	{
-		inst body = 0, end = 0;
-		WRITE_UINT32(&body, $body - $repeatwhile);
-		WRITE_UINT32(&end, $end2 - $repeatwhile);
-		(*g_lingo->_currentScript)[$repeatwhile + 1] = body;	/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwhile + 2] = end; }	/* end, if cond fails */
+	| repeatwhile expr jumpifz[body] stmtlist jump[end2] tENDREPEAT	{
+		inst start = 0, end = 0;
+		WRITE_UINT32(&start, $repeatwhile - $end2 + 2);
+		WRITE_UINT32(&end, $end2 - $body + 2);
+		(*g_lingo->_currentScript)[$body] = end;		/* end, if cond fails */
+		(*g_lingo->_currentScript)[$end2] = start; }	/* looping back */
 
 	// repeat with index = start to end
 	//   statements
@@ -371,7 +371,7 @@ ifoneliner: if expr jumpifz[then] tTHEN stmtoneliner jump[else1] tELSE begin stm
 
 		(*g_lingo->_currentScript)[$then] = end; }		/* end, if cond fails */
 
-repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(LC::c_repeatwhilecode, STOP, STOP); }
+repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->_currentScript->size() - 1; }
 
 repeatwith:		tREPEAT tWITH ID	{
 		$$ = g_lingo->code3(LC::c_repeatwithcode, STOP, STOP);
