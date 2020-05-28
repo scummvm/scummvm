@@ -73,7 +73,10 @@ static const ADGameDescription gameDescriptions[] = {
 class KingdomMetaEngine : public AdvancedMetaEngine {
 public:
 	KingdomMetaEngine() : AdvancedMetaEngine(Kingdom::gameDescriptions, sizeof(ADGameDescription), kingdomGames) {
-		_singleId = "kingdom";
+	}
+
+	const char *getEngineId() const override {
+		return "kingdom";
 	}
 
 	virtual const char *getName() const {
