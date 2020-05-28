@@ -52,7 +52,6 @@ void InterfaceSaveLoad::start(int id) {
 
 	_loadMode = (id == kLoadMode);
 
-	_objs.clear();
 	QObjectBG *bg = (QObjectBG *)sys->findObject("SAVELOAD");
 	_objs.push_back(bg);
 	bg->_resourceId = kFirstSaveLoadPageId + _page + (_loadMode ? 0 : 5);
@@ -84,6 +83,8 @@ void InterfaceSaveLoad::stop() {
 
 	sys->_currInterface = sys->_prevInterface;
 	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
+
+	_objs.clear();
 
 	Interface::stop();
 }

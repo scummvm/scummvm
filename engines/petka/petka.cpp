@@ -59,6 +59,9 @@ PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 
 	_part = 0;
 	_chapter = 0;
+	_shouldChangePart = false;
+	_nextPart = 0;
+	_saveSlot = -1;
 	g_vm = this;
 
 	debug("PetkaEngine::ctor");
@@ -120,6 +123,9 @@ Common::Error PetkaEngine::run() {
 
 		if (_shouldChangePart) {
 			loadPart(_nextPart);
+			if (_saveSlot != -1)
+				loadGameState(_saveSlot);
+			_saveSlot = -1;
 			_shouldChangePart = false;
 			_vsys->makeAllDirty();
 		}
@@ -132,7 +138,6 @@ Common::Error PetkaEngine::run() {
 
 Common::SeekableReadStream *PetkaEngine::openFile(const Common::String &name, bool addCurrentPath) {
 	if (name.empty()) {
-		debug("PetkaEngine::openFile: attempt to open file with empty name");
 		return nullptr;
 	}
 	return _fileMgr->getFileStream(addCurrentPath ? _currentPath + name : name);
@@ -252,6 +257,7 @@ void PetkaEngine::loadPart(byte part) {
 void PetkaEngine::loadPartAtNextFrame(byte part) {
 	_shouldChangePart = true;
 	_nextPart = part;
+	_saveSlot = -1;
 }
 
 void PetkaEngine::loadChapter(byte chapter) {
@@ -304,6 +310,20 @@ BigDialogue *PetkaEngine::getBigDialogue() const {
 
 const Common::String &PetkaEngine::getSpeechPath() {
 	return _speechPath;
+}
+
+bool PetkaEngine::hasFeature(EngineFeature f) const {
+	return
+		f == kSupportsReturnToLauncher ||
+		f == kSupportsLoadingDuringRuntime ||
+		f == kSupportsSavingDuringRuntime ||
+		f == kSupportsChangingOptionsDuringRuntime;
+}
+
+void PetkaEngine::pauseEngineIntern(bool pause) {
+	if (!pause)
+		_vsys->updateTime();
+	Engine::pauseEngineIntern(pause);
 }
 
 } // End of namespace Petka

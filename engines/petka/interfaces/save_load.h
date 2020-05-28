@@ -39,6 +39,8 @@ public:
 	void start(int id) override;
 	void stop() override;
 
+	bool loadMode() { return _loadMode; }
+
 	void onLeftButtonDown(const Common::Point p) override;
 	void onRightButtonDown(const Common::Point p) override;
 	void onMouseMove(const Common::Point p) override;

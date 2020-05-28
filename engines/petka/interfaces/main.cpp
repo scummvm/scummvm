@@ -78,7 +78,8 @@ void InterfaceMain::start(int id) {
 	bgsIni.loadFromStream(*bgsStream);
 	Common::String startRoom;
 	bgsIni.getKey("StartRoom", "Settings", startRoom);
-	loadRoom(g_vm->getQSystem()->findObject(startRoom)->_id, false);
+	if (g_vm->getSaveSlot() == -1)
+		loadRoom(g_vm->getQSystem()->findObject(startRoom)->_id, false);
 }
 
 void InterfaceMain::loadRoom(int id, bool fromSave) {

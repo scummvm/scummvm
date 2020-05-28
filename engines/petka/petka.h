@@ -80,10 +80,13 @@ public:
 	void loadPartAtNextFrame(byte part);
 
 	byte getPart();
+	int getSaveSlot();
 
 	void loadChapter(byte chapter);
 
 	virtual Common::Error run() override;
+
+	bool hasFeature(EngineFeature f) const override;
 
 	Common::SeekableReadStream *openFile(const Common::String &name, bool addCurrentPath);
 
@@ -103,6 +106,9 @@ public:
 
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
+
+protected:
+	void pauseEngineIntern(bool pause) override;
 
 private:
 	void loadStores();
@@ -128,7 +134,7 @@ private:
 	uint8 _nextPart;
 	uint8 _chapter;
 	bool _shouldChangePart;
-	Common::String _saveName;
+	int _saveSlot;
 };
 
 class Console : public GUI::Debugger {

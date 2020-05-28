@@ -312,8 +312,8 @@ void QSystem::load(Common::ReadStream *s) {
 }
 
 void QSystem::save(Common::WriteStream *s) {
-	s->writeUint32LE(_allObjects.size());
-	for (uint i = 0; i < _allObjects.size(); ++i) {
+	s->writeUint32LE(_allObjects.size() - 3);
+	for (uint i = 0; i < _allObjects.size() - 3; ++i) {
 		writeString(s, _allObjects[i]->_name);
 		s->writeUint32LE(_allObjects[i]->_holdMessages);
 		s->writeUint32LE(_allObjects[i]->_status);

@@ -29,6 +29,7 @@
 
 #include "petka/petka.h"
 #include "petka/q_system.h"
+#include "petka/interfaces/save_load.h"
 
 namespace Petka {
 
@@ -49,7 +50,7 @@ Common::Error PetkaEngine::loadGameState(int slot) {
 		_qsystem->load(in);
 	} else {
 		_shouldChangePart = true;
-		_saveName = generateSaveName(slot, _targetName.c_str());
+		_saveSlot = slot;
 	}
 
 	delete in;
@@ -62,6 +63,8 @@ Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, 
 		return Common::kUnknownError;
 
 	out->writeUint32BE(MKTAG('p', 'e', 't', 'k'));
+	out->writeByte(desci.size());
+	out->writeString(desci);
 
 	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
@@ -84,10 +87,18 @@ Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, 
 
 bool PetkaEngine::canSaveGameStateCurrently() {
 	return true;
+	InterfaceSaveLoad *interface =_qsystem->_saveLoadInterface.get();
+	return (interface == _qsystem->_currInterface && !interface->loadMode());
 }
 
 bool PetkaEngine::canLoadGameStateCurrently() {
 	return true;
+	InterfaceSaveLoad *interface =_qsystem->_saveLoadInterface.get();
+	return (interface == _qsystem->_currInterface && interface->loadMode());
+}
+
+int PetkaEngine::getSaveSlot() {
+	return _saveSlot;
 }
 
 bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc, bool skipThumbnail) {
