@@ -276,6 +276,8 @@ void PetkaEngine::loadChapter(byte chapter) {
 	if (_chapterStoreName.empty())
 		return;
 
+	_fileMgr->openStore(_chapterStoreName);
+
 	Common::ScopedPtr<Common::SeekableReadStream> namesStream(g_vm->openFile("Names.ini", true));
 	Common::ScopedPtr<Common::SeekableReadStream> castStream(g_vm->openFile("Cast.ini", true));
 
