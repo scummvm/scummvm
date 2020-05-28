@@ -40,7 +40,7 @@ struct instruction;
 #define DUMP_FUNCTIONS (1 << 7)
 #define DUMP_REPLACE_WORDS (1 << 8)
 #define DUMP_HEADER (1 << 9)
-#define DUMP_ALL (~0)
+#define DUMP_ALL (~0U)
 
 void dump_instruction(struct comprehend_game *game,
                       struct function_state *func_state,

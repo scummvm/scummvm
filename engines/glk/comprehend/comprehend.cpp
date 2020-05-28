@@ -22,6 +22,8 @@
 
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/dump_game_data.h"
+#include "glk/comprehend/game.h"
+#include "glk/comprehend/game_data.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -31,18 +33,18 @@ namespace Comprehend {
 
 Comprehend *g_comprehend;
 
-extern struct comprehend_game game_transylvania;
-extern struct comprehend_game game_crimson_crown_1;
-extern struct comprehend_game game_crimson_crown_2;
-extern struct comprehend_game game_oo_topos;
-extern struct comprehend_game game_talisman;
+extern comprehend_game game_transylvania;
+extern comprehend_game game_crimson_crown_1;
+extern comprehend_game game_crimson_crown_2;
+extern comprehend_game game_oo_topos;
+extern comprehend_game game_talisman;
 
-static struct comprehend_game *comprehend_games[] = {
+static comprehend_game *comprehend_games[] = {
     &game_transylvania,
     &game_crimson_crown_1,
     &game_crimson_crown_2,
     &game_oo_topos,
-    &game_talisman,
+    &game_talisman
 };
 
 struct dump_option {
@@ -145,31 +147,6 @@ int main(int argc, char **argv) {
 
 	game_name = argv[optind++];
 	game_dir = argv[optind++];
-
-	/* Lookup game */
-	game = NULL;
-	for (i = 0; i < ARRAY_SIZE(comprehend_games); i++) {
-		if (strcmp(game_name, comprehend_games[i]->short_name) == 0) {
-			game = comprehend_games[i];
-			break;
-		}
-	}
-	if (!game) {
-		printf("Unknown game '%s'\n", game_name);
-		usage(argv[0]);
-	}
-
-	if (graphics_enabled)
-		g_init(graphics_width, graphics_height);
-
-	game->info = xmalloc(sizeof(*game->info));
-	comprehend_load_game(game, game_dir);
-
-	if (dump_flags)
-		dump_game_data(game, dump_flags);
-
-	if (play_game)
-		comprehend_play_game(game);
 }
 #endif
 
@@ -184,7 +161,28 @@ Comprehend::~Comprehend() {
 
 void Comprehend::runGame() {
 	initialize();
-	#ifdef TODO
+
+	// Lookup game
+	Common::String filename = getFilename();
+	comprehend_game *game = NULL;
+	for (uint i = 0; i < 5; ++i) {
+		if (filename.equalsIgnoreCase(comprehend_games[i]->short_name) == 0) {
+			game = comprehend_games[i];
+			break;
+		}
+	}
+	assert(game);
+
+	game->info = (game_info *)malloc(sizeof(*game->info));
+	comprehend_load_game(game, nullptr);
+
+	comprehend_play_game(game);
+}
+
+void Comprehend::initialize() {
+
+
+#ifdef TODO
 	_bottomWindow = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
 	if (_bottomWindow == nullptr) {
 		glk_exit();
@@ -192,9 +190,6 @@ void Comprehend::runGame() {
 	}
 	glk_set_window(_bottomWindow);
 #endif
-}
-
-void Comprehend::initialize() {
 }
 
 } // End of namespace Comprehend
