@@ -196,7 +196,8 @@ void ControlStatus::drawToScreen() {
 	_statusText->drawToScreen(WITH_MASK);
 }
 
-Control::Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system, Common::Keymap *shortcutsKeymap) {
+Control::Control(SkyEngine *vm, Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system, Common::Keymap *shortcutsKeymap) {
+	_vm = vm;
 	_saveFileMan = saveFileMan;
 
 	_skyScreen = screen;
@@ -226,25 +227,48 @@ ConResource *Control::createResource(void *pSpData, uint32 pNSprites, uint32 pCu
 }
 
 void Control::removePanel() {
+	//
+	// We sync sound settings when exiting the Panel
+	// TODO: There's still an edge case not addressed here
+	//       for when the player opens the native menu (F5)
+	//       and the ScummVM in-game menu on top of it.
+	//       In that case, the eventual music volume
+	//       will be the one set in the ScummVM UI
+	//
+	// Setting the music volume from native menu affects only music volume
+	// even though the native menu has no setting for SFX and Speech volume
+	// TODO: Was this the behavior in the original (DOS version)?
+	//
+	// SkyEngine native sound volume range is [0, 127]
+	// However, via ScummVM UI, the volume range can be set within [0, 256]
+	// so we "translate" between them
+	uint8 volume = _skyMusic->giveVolume();
+	if (volume == 127) { // ensure mapping of max values
+		ConfMan.setInt("music_volume", 256);
+	} else {
+		ConfMan.setInt("music_volume", CLIP(volume << 1, 0, 256));
+	}
+	_vm->syncSoundSettings();
+
 	free(_screenBuf);
-	free(_sprites.controlPanel);	free(_sprites.button);
-	free(_sprites.buttonDown);		free(_sprites.savePanel);
-	free(_sprites.yesNo);			free(_sprites.slide);
-	free(_sprites.slide2);			free(_sprites.slode);
-	free(_sprites.slode2);			free(_sprites.musicBodge);
-	delete _controlPanel;			delete _exitButton;
+	free(_sprites.controlPanel); free(_sprites.button);
+	free(_sprites.buttonDown);   free(_sprites.savePanel);
+	free(_sprites.yesNo);        free(_sprites.slide);
+	free(_sprites.slide2);       free(_sprites.slode);
+	free(_sprites.slode2);       free(_sprites.musicBodge);
+	delete _controlPanel;        delete _exitButton;
 	_controlPanel = NULL;
-	delete _slide;				delete _slide2;
-	delete _slode;				delete _restorePanButton;
-	delete _savePanel;			delete _saveButton;
-	delete _downFastButton;			delete _downSlowButton;
-	delete _upFastButton;			delete _upSlowButton;
-	delete _quitButton;			delete _autoSaveButton;
-	delete _savePanButton;			delete _dosPanButton;
-	delete _restartPanButton;		delete _fxPanButton;
-	delete _musicPanButton;			delete _bodge;
-	delete _yesNo;				delete _text;
-	delete _statusBar;			delete _restoreButton;
+	delete _slide;               delete _slide2;
+	delete _slode;               delete _restorePanButton;
+	delete _savePanel;           delete _saveButton;
+	delete _downFastButton;      delete _downSlowButton;
+	delete _upFastButton;        delete _upSlowButton;
+	delete _quitButton;          delete _autoSaveButton;
+	delete _savePanButton;       delete _dosPanButton;
+	delete _restartPanButton;    delete _fxPanButton;
+	delete _musicPanButton;      delete _bodge;
+	delete _yesNo;               delete _text;
+	delete _statusBar;           delete _restoreButton;
 
 	if (_textSprite) {
 		free(_textSprite);
@@ -695,6 +719,8 @@ uint16 Control::doMusicSlide() {
 			if (volume >= 128) volume = 0;
 			else volume = 127 - volume;
 			_skyMusic->setVolume(volume);
+			// we don't sync here with ConfMan to avoid numerous redundant I/O.
+			// we sync in removePanel()
 		}
 		buttonControl(_slide2);
 		_text->drawToScreen(WITH_MASK);

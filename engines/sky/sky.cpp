@@ -102,13 +102,19 @@ void SkyEngine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	if (ConfMan.getBool("sfx_mute"))
+	if (ConfMan.getBool("sfx_mute")) // set mute sfx status for native options menu (F5)
 		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;
 
-	if (ConfMan.getBool("music_mute"))
+	if (ConfMan.getBool("music_mute")) { // CD version allows to mute music from native options menu (F5)
 		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
+	}
+	// SkyEngine native sound volume range is [0, 127]
+	// However, via ScummVM UI, the volume range can be set within [0, 256]
+	// so we "translate" between them
+	_skyMusic->setVolume(mute ? 0: CLIP(ConfMan.getInt("music_volume") >> 1, 0, 127));
 
-	_skyMusic->setVolume(mute ? 0: ConfMan.getInt("music_volume") >> 1);
+	// write-back to ini file for persistence
+	ConfMan.flushToDisk();
 }
 
 void SkyEngine::initVirgin() {
@@ -294,7 +300,7 @@ Common::Error SkyEngine::init() {
 	Common::Keymap *shortcutsKeymap = keymapper->getKeymap(shortcutsKeymapId);
 	assert(shortcutsKeymap);
 
-	_skyControl = new Control(_saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system, shortcutsKeymap);
+	_skyControl = new Control(this, _saveFileMan, _skyScreen, _skyDisk, _skyMouse, _skyText, _skyMusic, _skyLogic, _skySound, _skyCompact, _system, shortcutsKeymap);
 	_skyLogic->useControlInstance(_skyControl);
 
 	switch (Common::parseLanguage(ConfMan.get("language"))) {
@@ -341,7 +347,11 @@ Common::Error SkyEngine::init() {
 				}
 	}
 
-	// Setup mixer
+	// Setup mixer: Default volume is set to 127 (the game engine's max volume)
+	ConfMan.registerDefault("sfx_volume", 127);
+	ConfMan.registerDefault("music_volume", 127);
+	ConfMan.registerDefault("speech_volume", 127);
+	ConfMan.registerDefault("mute", "false");
 	syncSoundSettings();
 
 	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen, _skyCompact);
