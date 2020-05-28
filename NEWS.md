@@ -31,6 +31,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved colors in Apple //gs Maniac Mansion.
    - Fixed crash when entering garage in Apple //gs Maniac Mansion.
 
+ Sky:
+   - Fixed syncing of music volume between native settings panel and ScummVM configuration.
+
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
