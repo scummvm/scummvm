@@ -100,6 +100,7 @@ const Game eob1Games[] = {
 	{ kEoB1, kPlatformDOS, kNoSpecial, EN_ANY },
 	{ kEoB1, kPlatformDOS, kNoSpecial, DE_DEU },
 	{ kEoB1, kPlatformDOS, kNoSpecial, IT_ITA },
+	{ kEoB1, kPlatformDOS, kNoSpecial, ES_ESP },
 
 	{ kEoB1, kPlatformAmiga, kNoSpecial, EN_ANY },
 	{ kEoB1, kPlatformAmiga, kNoSpecial, DE_DEU },
