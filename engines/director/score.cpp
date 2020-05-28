@@ -1759,7 +1759,7 @@ void Score::unrenderSprite(uint16 spriteId) {
 void Score::renderSprite(uint16 id) {
 	Sprite *sprite = _sprites[id];
 
-	if (!sprite)
+	if (!sprite || !sprite->_enabled)
 		return;
 
 	CastType castType = sprite->_castType;
