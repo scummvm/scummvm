@@ -264,6 +264,8 @@ struct NoteTimer {
  */
 class MidiParser {
 protected:
+	static const uint8 MAXIMUM_TRACKS = 120;
+
 	uint16    _activeNotes[128];   ///< Each uint16 is a bit mask for channels that have that note on.
 	NoteTimer _hangingNotes[32];   ///< Maintains expiration info for up to 32 notes.
 	                                ///< Used for "Smart Jump" and MIDI formats that do not include explicit Note Off events.
@@ -280,7 +282,7 @@ protected:
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
 	bool   _disableAllNotesOffMidiEvents;   ///< Don't send All Notes Off MIDI messages
 	bool   _doNotAutoStartPlayback;  ///< Do not automatically start playback after parsing MIDI data or setting the track
-	byte  *_tracks[120];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
+	byte  *_tracks[MAXIMUM_TRACKS];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _numTracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _activeTrack;   ///< Keeps track of the currently active track, in multi-track formats.
 

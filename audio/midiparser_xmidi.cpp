@@ -55,7 +55,7 @@ protected:
 	 * The sequence branches defined for each track. These point to
 	 * positions in the MIDI data.
 	 */
-	byte *_trackBranches[ARRAYSIZE(_tracks)][MAXIMUM_TRACK_BRANCHES];
+	byte *_trackBranches[MAXIMUM_TRACKS][MAXIMUM_TRACK_BRANCHES];
 
 	XMidiCallbackProc _callbackProc;
 	void *_callbackData;
