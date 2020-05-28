@@ -36,6 +36,8 @@ public:
 	void setEntrance(const Common::String &name);
 	void play(int id, int type) override {}
 
+	void readInisData(Common::INIFile &names, Common::INIFile &cast, Common::INIFile *bgs) override;
+
 public:
 	int _showMap;
 	int _fxId;

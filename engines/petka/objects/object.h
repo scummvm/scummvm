@@ -25,6 +25,11 @@
 
 #include "petka/base.h"
 
+namespace Common {
+class INIFile;
+class SeekableReadStream;
+}
+
 namespace Petka {
 
 class QVisibleObject {
@@ -61,6 +66,9 @@ public:
 
 	void loadSound();
 	void removeSound();
+
+	void readScriptData(Common::SeekableReadStream &stream);
+	virtual void readInisData(Common::INIFile &names, Common::INIFile &cast, Common::INIFile *bgs);
 
 public:
 	int32 _x;

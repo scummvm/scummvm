@@ -125,34 +125,23 @@ bool QSystem::init() {
 	_bgs.resize(bgsCount);
 
 	_petka.reset(new QObjectPetka());
-	readObject(*_petka, *stream, namesIni, castIni);
+	_petka->readScriptData(*stream);
+	_petka->readInisData(namesIni, castIni, nullptr);
 	_allObjects.push_back(_petka.get());
 
 	_chapayev.reset(new QObjectChapayev());
-	readObject(*_chapayev, *stream, namesIni, castIni);
+	_chapayev->readScriptData(*stream);
+	_chapayev->readInisData(namesIni, castIni, nullptr);
 	_allObjects.push_back(_chapayev.get());
 
 	for (uint i = 0; i < objsCount; ++i) {
-		readObject(_objs[i], *stream, namesIni, castIni);
+		_objs[i].readScriptData(*stream);
+		_objs[i].readInisData(namesIni, castIni, nullptr);
 		_allObjects.push_back(&_objs[i]);
 	}
 	for (uint i = 0; i < bgsCount; ++i) {
-		readObject(_bgs[i], *stream, namesIni, castIni);
-
-
-		Common::String val;
-		bgsIni.getKey(_bgs[i]._name, "Settings", val);
-
-		if (!val.empty()) {
-			UnkStruct unk;
-
-			sscanf(val.c_str(), "%lf %lf %d %d %lf", &unk.f1, &unk.f2, &unk.f3, &unk.f4, &unk.f5);
-
-			_unkMap.setVal(_bgs[i]._name, unk);
-		}
-
-
-
+		_bgs[i].readScriptData(*stream);
+		_bgs[i].readInisData(namesIni, castIni, &bgsIni);
 		_allObjects.push_back(&_bgs[i]);
 	}
 

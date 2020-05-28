@@ -367,6 +367,47 @@ void QMessageObject::removeSound() {
 	_sound = nullptr;
 }
 
+static Common::String readString(Common::ReadStream &readStream) {
+	uint32 stringSize = readStream.readUint32LE();
+	byte *data = (byte *)malloc(stringSize + 1);
+	readStream.read(data, stringSize);
+	data[stringSize] = '\0';
+	Common::String str((char *)data);
+	return str;
+}
+
+void QMessageObject::readScriptData(Common::SeekableReadStream &stream) {
+	_id = stream.readUint16LE();
+	_name = readString(stream);
+	_reactions.resize(stream.readUint32LE());
+
+	for (uint i = 0; i < _reactions.size(); ++i) {
+		QReaction *reaction = &_reactions[i];
+		reaction->opcode = stream.readUint16LE();
+		reaction->status = stream.readByte();
+		reaction->senderId = stream.readUint16LE();
+		reaction->messages.resize(stream.readUint32LE());
+		for (uint j = 0; j < reaction->messages.size(); ++j) {
+			QMessage *msg = &reaction->messages[j];
+			msg->objId = stream.readUint16LE();
+			msg->opcode = stream.readUint16LE();
+			msg->arg1 = stream.readUint16LE();
+			msg->arg2 = stream.readUint16LE();
+			msg->arg3 = stream.readUint16LE();
+		}
+	}
+}
+
+void QMessageObject::readInisData(Common::INIFile &names, Common::INIFile &cast, Common::INIFile *bgs) {
+	names.getKey(_name, "all", _nameOnScreen);
+	Common::String rgbString;
+	if (cast.getKey(_name, "all", rgbString)) {
+		int r, g, b;
+		sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
+		_dialogColor = g_vm->_system->getScreenFormat().RGBToColor((byte)r, (byte)g, (byte)b);
+	}
+}
+
 QObject::QObject() {
 	_animate = true;
 	_updateZ = true;

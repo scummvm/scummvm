@@ -294,14 +294,7 @@ void PetkaEngine::loadChapter(byte chapter) {
 
 	for (uint i = 0; i < _qsystem->_allObjects.size(); ++i) {
 		QMessageObject *obj = _qsystem->_allObjects[i];
-		namesIni.getKey(obj->_name, "all", obj->_nameOnScreen);
-
-		Common::String rgbString;
-		if (castIni.getKey(obj->_name, "all", rgbString)) {
-			int r, g, b;
-			sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
-			obj->_dialogColor = g_vm->_system->getScreenFormat().RGBToColor((byte)r, (byte)g, (byte)b);
-		}
+		obj->readInisData(namesIni, castIni, nullptr);
 	}
 	_chapter = chapter;
 }
