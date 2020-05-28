@@ -102,8 +102,10 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 		return true;
 	case kSupportsSavingDuringRuntime:
 		return true;
+#ifdef ENABLE_WME3D
 	case kSupportsArbitraryResolutions:
 		return true;
+#endif
 	default:
 		return false;
 	}
@@ -111,7 +113,24 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error WintermuteEngine::run() {
+	// Initialize graphics using following:
+#ifndef ENABLE_WME3D
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	if (_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS) {
+		initGraphics(320, 240, &format);
+#ifdef ENABLE_FOXTAIL
+	} else if (BaseEngine::isFoxTailCheck(_gameDescription->targetExecutable)) {
+		initGraphics(640, 360, &format);
+#endif
+	} else {
+		initGraphics(800, 600, &format);
+	}
+	if (g_system->getScreenFormat() != format) {
+		return Common::kUnsupportedColorMode;
+	}
+#else
 	g_system->setupScreen(800, 600, false, true);
+#endif
 
 	// Create debugger console. It requires GFX to be initialized
 	_dbgController = new DebuggerController(this);
@@ -170,6 +189,22 @@ int WintermuteEngine::init() {
 			_game = nullptr;
 			return false;
 		}
+	#endif
+
+	#ifndef ENABLE_WME3D
+	Common::ArchiveMemberList actors3d;
+	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
+		GUI::MessageDialog dialog(
+				_("This game requires 3D characters support, which is out of ScummVM's scope."),
+				_("Start anyway"),
+				_("Cancel")
+			);
+		if (dialog.runModal() != GUI::kMessageOK) {
+			delete _game;
+			_game = nullptr;
+			return false;
+		}
+	}
 	#endif
 
 	_game = new AdGame(_targetName);
