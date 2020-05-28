@@ -269,7 +269,7 @@ void BigDialogue::save(Common::WriteStream *s) {
 	for (uint i = 0; i < _ops.size(); ++i) {
 		switch (_ops[i].type) {
 		case kOperationBreak:
-			s->writeUint32LE(MKTAG(0, 0, 0, kOperationBreak));
+			s->writeUint32LE(MKTAG(kOperationBreak, 0, 0, 0));
 			break;
 		case kOperationMenu:
 			s->writeByte(_ops[i].menu.bits);
@@ -278,30 +278,30 @@ void BigDialogue::save(Common::WriteStream *s) {
 			break;
 		case kOperationGoTo:
 			s->writeUint16LE(_ops[i].goTo.opIndex);
-			s->writeUint16LE(MKTAG16(0, kOperationGoTo));
+			s->writeUint16LE(MKTAG16(kOperationGoTo, 0));
 			break;
 		case kOperationDisableMenuItem:
 			s->writeUint16LE(_ops[i].disableMenuItem.opIndex);
-			s->writeUint16LE(MKTAG16(_ops[i].disableMenuItem.bit, kOperationDisableMenuItem));
+			s->writeUint16LE(MKTAG16(kOperationDisableMenuItem, _ops[i].disableMenuItem.bit));
 			break;
 		case kOperationEnableMenuItem:
 			s->writeUint16LE(_ops[i].enableMenuItem.opIndex);
-			s->writeUint16LE(MKTAG16(_ops[i].enableMenuItem.bit, kOperationEnableMenuItem));
+			s->writeUint16LE(MKTAG16(kOperationEnableMenuItem, _ops[i].enableMenuItem.bit));
 			break;
 		case kOperationReturn:
-			s->writeUint32LE(MKTAG(0, 0, 0, kOperationReturn));
+			s->writeUint32LE(MKTAG(kOperationReturn, 0, 0, 0));
 			break;
 		case kOperationPlay:
 			s->writeUint16LE(_ops[i].play.messageIndex);
-			s->writeUint16LE(MKTAG16(0, kOperationPlay));
+			s->writeUint16LE(MKTAG16(kOperationPlay, 0));
 			break;
 		case kOperationCircle:
 			s->writeUint16LE(_ops[i].circle.count);
-			s->writeUint16LE(MKTAG16(_ops[i].circle.curr, kOperationPlay));
+			s->writeUint16LE(MKTAG16(kOperationCircle, _ops[i].circle.curr));
 			break;
 		case kOperationUserMessage:
 			s->writeUint16LE(_ops[i].userMsg.arg);
-			s->writeUint16LE(MKTAG16(0, kOperationUserMessage));
+			s->writeUint16LE(MKTAG16(kOperationUserMessage, 0));
 			break;
 		default:
 			break;
