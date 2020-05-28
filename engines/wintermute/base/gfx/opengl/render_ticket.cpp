@@ -108,7 +108,7 @@ bool RenderTicketOpenGL::operator==(const RenderTicketOpenGL &t) const {
 
 // Replacement for SDL2's SDL_RenderCopy
 void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface) const {
-	Graphics::Surface* converted_surface = getSurface()->convertTo(Graphics::PixelFormat { 4, 8, 8, 8, 8, 24, 16, 8, 0});
+	Graphics::Surface* converted_surface = getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	Graphics::TransparentSurface src(*converted_surface, false);
 
 	Common::Rect clipRect;
@@ -142,7 +142,7 @@ void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface) const 
 }
 
 void RenderTicketOpenGL::drawToSurface(Graphics::Surface *_targetSurface, Common::Rect *dstRect, Common::Rect *clipRect) const {
-	Graphics::Surface* converted_surface = getSurface()->convertTo(Graphics::PixelFormat { 4, 8, 8, 8, 8, 24, 16, 8, 0});
+	Graphics::Surface* converted_surface = getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	Graphics::TransparentSurface src(*converted_surface, false);
 	bool doDelete = false;
 	if (!clipRect) {
