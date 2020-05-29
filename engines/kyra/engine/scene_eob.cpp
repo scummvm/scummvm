@@ -115,13 +115,18 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 void EoBCoreEngine::readLevelFileData(int level) {
 	Common::String file;
 	Common::SeekableReadStream *s = 0;
-	static const char *const suffix[] = { "DRO", "INF", "ELO", "JOT", 0 };
+	static const char *suffix[] = { "INF", "DRO", "ELO", "JOT", 0 };
+
+	if ( _flags.lang == Common::ES_ESP && _flags.gameID == GI_EOB1 ) {
+		suffix[0] = "DRO";
+		suffix[1] = "INF";
+	}
 
 	for (const char *const *sf = suffix; *sf && !s; sf++) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);
 		s = _res->createReadStream(file);
 	}
-	
+
 	if (!s)
 		error("Failed to load level file LEVEL%d.INF/DRO/ELO/JOT", level);
 
@@ -208,7 +213,7 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		} else if (_flags.platform == Common::kPlatformAmiga) {
 			// Amiga versions don't have shape shading
 		} else if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98) {
-		
+
 		} else if (_configRenderMode != Common::kRenderCGA) {
 			Palette backupPal(256);
 			backupPal.copy(_screen->getPalette(0), 224, 32, 224);
@@ -318,7 +323,7 @@ void EoBCoreEngine::addLevelItems() {
 	}
 }
 
-void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {	
+void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	if (file)
 		strcpy(_lastBlockDataFile, file);
 
@@ -333,7 +338,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	} else if (_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformAmiga || _flags.platform == Common::kPlatformPC98)) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
 		vcnSize = _flags.platform == Common::kPlatformPC98 ? in->size() : in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
-		_vcnBlocks = new uint8[vcnSize];			
+		_vcnBlocks = new uint8[vcnSize];
 		if (_flags.platform == Common::kPlatformAmiga) {
 			_screen->getPalette(1).loadAmigaPalette(*in, 1, 5);
 			in->seek(22, SEEK_CUR);
@@ -377,7 +382,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	} else {
 		if (_flags.platform != Common::kPlatformAmiga && !(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
 			memcpy(_vcnColTable, colMap, 32);
-		
+
 		memcpy(_vcnBlocks, pos, vcnSize);
 	}
 }
