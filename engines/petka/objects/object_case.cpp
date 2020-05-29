@@ -24,6 +24,7 @@
 
 #include "petka/interfaces/main.h"
 #include "petka/objects/object_case.h"
+#include "petka/objects/object_cursor.h"
 #include "petka/flc.h"
 #include "petka/petka.h"
 #include "petka/q_manager.h"
@@ -180,7 +181,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 void QObjectCase::onClick(int x, int y) {
 	switch (_clickedObjIndex) {
 		case kChapayevButton:
-			g_vm->getQSystem()->setChapayev();
+			g_vm->getQSystem()->setCursorAction(kActionObjUseChapayev);
 			break;
 		case kPanelButton:
 			g_vm->getQSystem()->togglePanelInterface();

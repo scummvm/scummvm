@@ -74,8 +74,11 @@ public:
 
 	void togglePanelInterface();
 	void toggleMapInterface();
+	void toggleCase();
 
-	void setChapayev();
+	void goPrevInterface();
+
+	void setCursorAction(int action);
 
 	void onEvent(const Common::Event &event);
 

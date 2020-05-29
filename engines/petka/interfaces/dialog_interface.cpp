@@ -26,6 +26,7 @@
 #include "petka/interfaces/main.h"
 #include "petka/petka.h"
 #include "petka/objects/object_cursor.h"
+#include "petka/objects/object_star.h"
 #include "petka/objects/heroes.h"
 #include "petka/q_system.h"
 #include "petka/big_dialogue.h"
@@ -248,6 +249,12 @@ void DialogInterface::onUserMsgOpcode() {
 	removeSound();
 	_talker = nullptr;
 	_state = kPlaying;
+}
+
+void DialogInterface::fixCursor() {
+	_isUserMsg = false;
+	_qsys->getCursor()->show(true);
+	_qsys->getStar()->_isActive = true;
 }
 
 } // End of namespace Petka

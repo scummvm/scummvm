@@ -182,9 +182,10 @@ void QSystem::toggleMapInterface() {
 	}
 }
 
-void QSystem::setChapayev() {
-	if (getStar()->_isActive && _currInterface == _mainInterface.get() && getChapay()->_isShown) {
-		getCursor()->setAction(kActionObjUseChapayev);
+void QSystem::setCursorAction(int action) {
+	if (getStar()->_isActive && _currInterface == _mainInterface.get()) {
+		if (action != kActionObjUseChapayev || getChapay()->_isShown)
+			getCursor()->setAction(action);
 	}
 }
 
@@ -313,8 +314,74 @@ void QSystem::onEvent(const Common::Event &event) {
 	case Common::EVENT_RBUTTONDOWN:
 		_currInterface->onRightButtonDown(event.mouse);
 		break;
+	case Common::EVENT_KEYDOWN:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_1:
+		case Common::KEYCODE_l:
+			setCursorAction(kActionLook);
+			break;
+		case Common::KEYCODE_2:
+		case Common::KEYCODE_w:
+			setCursorAction(kActionWalk);
+			break;
+		case Common::KEYCODE_3:
+		case Common::KEYCODE_g:
+			setCursorAction(kActionUse);
+			break;
+		case Common::KEYCODE_4:
+		case Common::KEYCODE_u:
+			setCursorAction(kActionTake);
+			break;
+		case Common::KEYCODE_5:
+		case Common::KEYCODE_t:
+			setCursorAction(kActionTalk);
+			break;
+		case Common::KEYCODE_6:
+		case Common::KEYCODE_c:
+			setCursorAction(kActionObjUseChapayev);
+			break;
+		case Common::KEYCODE_i:
+			toggleCase();
+			break;
+		case Common::KEYCODE_TAB:
+		case Common::KEYCODE_m:
+			toggleMapInterface();
+			break;
+		case Common::KEYCODE_o:
+			togglePanelInterface();
+			break;
+		case Common::KEYCODE_ESCAPE:
+			goPrevInterface();
+			break;
+		case Common::KEYCODE_F2:
+			_saveLoadInterface->start(kSaveMode);
+			break;
+		case Common::KEYCODE_F3:
+			_saveLoadInterface->start(kLoadMode);
+			break;
+		case Common::KEYCODE_r:
+			if (event.kbd.flags & Common::KBD_ALT) {
+				_mainInterface->_dialog.fixCursor(); // Buggy in original
+			}
+			break;
+		default:
+			break;
+		}
 	default:
 		break;
+	}
+}
+
+void QSystem::goPrevInterface() {
+	getCase()->show(0);
+	if (_currInterface != _startupInterface.get() && _currInterface != _sequenceInterface.get())
+		_currInterface->stop();
+}
+
+void QSystem::toggleCase() {
+	if (_currInterface == _mainInterface.get() && getStar()->_isActive) {
+		QObjectCase *obj = getCase();
+		obj->show(obj->_isShown == 0);
 	}
 }
 

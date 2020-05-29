@@ -57,6 +57,8 @@ public:
 	void setSender(QMessageObject *sender);
 	void setReaction(QReaction *reaction);
 
+	void fixCursor();
+
 private:
 	void onPlayOpcode(int prevTalkerId);
 	void onMenuOpcode();
