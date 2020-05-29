@@ -808,6 +808,11 @@ begin_credits("Credits");
 				add_person("Eric Fry", "yuv422", "");
 			end_section();
 
+			begin_section("Kingdom");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Thomas Fach-Pedersen", "madmoose", "");
+			end_section();
+
 			begin_section("Kyra");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 				add_person("Oystein Eftevaag", "vinterstum", "");
