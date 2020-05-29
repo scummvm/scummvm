@@ -72,9 +72,9 @@ void QObjectStar::onClick(int x, int y) {
 		return;
 	}
 	if (button == kCaseButtonIndex) {
-		g_vm->getQSystem()->_case->show(1);
+		g_vm->getQSystem()->getCase()->show(1);
 	} else {
-		QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+		QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 		cursor->setAction(button - 1);
 	}
 	show(0);

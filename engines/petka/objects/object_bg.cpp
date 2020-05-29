@@ -97,8 +97,8 @@ void QObjectBG::draw() {
 void QObjectBG::goTo() {
 	QSystem *sys = g_vm->getQSystem();
 
-	sys->_petka->stopWalk();
-	sys->_chapayev->stopWalk();
+	sys->getPetka()->stopWalk();
+	sys->getChapay()->stopWalk();
 
 	int oldRoomId = sys->_mainInterface->_roomId;
 	sys->_mainInterface->loadRoom(_id, false);
@@ -129,11 +129,11 @@ void QObjectBG::setEntrance(const Common::String &name) {
 	QSystem *sys = g_vm->getQSystem();
 	QMessageObject *entrance = sys->findObject(name);
 	if (entrance) {
-		sys->_petka->_z = 0;
-		sys->_chapayev->_z = 0;
+		sys->getPetka()->_z = 0;
+		sys->getChapay()->_z = 0;
 
-		sys->_petka->setPos(entrance->_walkX, entrance->_walkY);
-		sys->_chapayev->setPos(entrance->_walkX, entrance->_walkY - 2);
+		sys->getPetka()->setPos(entrance->_walkX, entrance->_walkY);
+		sys->getChapay()->setPos(entrance->_walkX, entrance->_walkY - 2);
 
 		sys->_xOffset = CLIP<int32>(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
 		sys->_field6C = sys->_xOffset;

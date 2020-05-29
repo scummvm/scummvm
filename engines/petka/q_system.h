@@ -65,6 +65,12 @@ public:
 	QMessageObject *findObject(int16 id);
 	QMessageObject *findObject(const Common::String &name);
 
+	QObjectPetka *getPetka() const;
+	QObjectChapayev *getChapay() const;
+	QObjectCursor *getCursor() const;
+	QObjectCase *getCase() const;
+	QObjectStar *getStar() const;
+
 	void togglePanelInterface();
 	void toggleMapInterface();
 
@@ -73,11 +79,6 @@ public:
 public:
 	Common::Array<QMessageObject *> _allObjects;
 	Common::List<QMessage> _messages;
-	QObjectPetka *_petka;
-	QObjectChapayev *_chapayev;
-	QObjectCursor *_cursor;
-	QObjectCase *_case;
-	QObjectStar *_star;
 	Common::ScopedPtr<InterfaceMain> _mainInterface;
 	Common::ScopedPtr<InterfaceSaveLoad> _saveLoadInterface;
 	Common::ScopedPtr<InterfaceSequence> _sequenceInterface;

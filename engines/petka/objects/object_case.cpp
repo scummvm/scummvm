@@ -166,7 +166,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		if (i == kButtonsCount && _clickedObjIndex != kInvalidButton) {
 			_clickedObjIndex = kInvalidButton;
 		} else if (i != _clickedObjIndex) {
-			if ((i != kChapayevButton || g_vm->getQSystem()->_chapayev->_isShown) && (i != kMapButton || g_vm->getQSystem()->_room->_showMap)) {
+			if ((i != kChapayevButton || g_vm->getQSystem()->getChapay()->_isShown) && (i != kMapButton || g_vm->getQSystem()->_room->_showMap)) {
 				flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + i);
 				g_vm->videoSystem()->addDirtyMskRects(*flc);
 				_clickedObjIndex = i;

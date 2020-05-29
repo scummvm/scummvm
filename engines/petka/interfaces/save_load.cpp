@@ -48,7 +48,7 @@ InterfaceSaveLoad::InterfaceSaveLoad() {
 
 void InterfaceSaveLoad::start(int id) {
 	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->_cursor.get();
+	QObjectCursor *cursor = sys->getCursor();
 
 	_loadMode = (id == kLoadMode);
 
@@ -73,7 +73,7 @@ void InterfaceSaveLoad::start(int id) {
 
 void InterfaceSaveLoad::stop() {
 	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 
 	sys->_xOffset = _savedXOffset;
 	sys->_sceneWidth = _savedSceneWidth;
@@ -109,7 +109,7 @@ void InterfaceSaveLoad::onRightButtonDown(const Common::Point p) {
 }
 
 void InterfaceSaveLoad::onMouseMove(const Common::Point p) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = findSaveLoadRectIndex(p) != -1 || _nextPageRect.contains(p) || _prevPageRect.contains(p);
 	cursor->setCursorPos(p.x, p.y, 0);
 }

@@ -90,13 +90,13 @@ void QMessageObject::processMessage(const QMessage &msg) {
 	if (reacted || !g_vm->getBigDialogue()->findHandler(_id, msg.opcode, nullptr)) {
 		switch (msg.opcode) {
 		case kAddInv:
-			g_vm->getQSystem()->_case->addItem(msg.objId);
+			g_vm->getQSystem()->getCase()->addItem(msg.objId);
 			break;
 		case kDelInv:
-			g_vm->getQSystem()->_case->removeItem(msg.objId);
+			g_vm->getQSystem()->getCase()->removeItem(msg.objId);
 			break;
 		case kSetInv:
-			g_vm->getQSystem()->_case->transformItem(msg.sender->_id, msg.objId);
+			g_vm->getQSystem()->getCase()->transformItem(msg.sender->_id, msg.objId);
 			break;
 		case kAvi: {
 			Common::String videoName = g_vm->resMgr()->findResourceName((uint16) msg.arg1);
@@ -107,7 +107,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getQSystem()->_mainInterface->_dialog.endUserMsg();
 			break;
 		case kCursor:
-			g_vm->getQSystem()->_cursor->setInvItem(this, msg.arg1);
+			g_vm->getQSystem()->getCursor()->setInvItem(this, msg.arg1);
 			g_vm->videoSystem()->makeAllDirty();
 			break;
 		case kDialog:
@@ -142,8 +142,8 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			show(false);
 			break;
 		case kStop:
-			g_vm->getQSystem()->_cursor.get()->show(msg.arg1);
-			g_vm->getQSystem()->_star.get()->_isActive = msg.arg1;
+			g_vm->getQSystem()->getCursor()->show(msg.arg1);
+			g_vm->getQSystem()->getStar()->_isActive = msg.arg1;
 			break;
 		case kShow:
 			show(true);
@@ -154,10 +154,10 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kSystem:
 			switch (msg.arg1){
 			case 0:
-				g_vm->getQSystem()->_star->_isActive = 0;
+				g_vm->getQSystem()->getStar()->_isActive = 0;
 				break;
 			case 1:
-				g_vm->getQSystem()->_star->_isActive = 1;
+				g_vm->getQSystem()->getStar()->_isActive = 1;
 				break;
 			case 242:
 				g_system->quit();
@@ -180,18 +180,18 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			_isActive = false;
 			break;
 		case kJump:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+			g_vm->getQSystem()->getPetka()->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
 			break;
 		case kJumpVich:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+			g_vm->getQSystem()->getPetka()->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
 			break;
 		case kWalk:
 			if (!reacted) {
 				if (_walkX == -1) {
-					g_vm->getQSystem()->_petka->walk(msg.arg1, msg.arg2);
+					g_vm->getQSystem()->getPetka()->walk(msg.arg1, msg.arg2);
 
 				} else {
-					g_vm->getQSystem()->_petka->walk(_walkX, _walkY);
+					g_vm->getQSystem()->getPetka()->walk(_walkX, _walkY);
 				}
 			}
 			break;
@@ -203,12 +203,12 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				destY = _walkY;
 			}
 			if (destX != -1) {
-				g_vm->getQSystem()->_petka->walk(destX, destY);
-				QReaction *r = g_vm->getQSystem()->_petka->_heroReaction;
+				g_vm->getQSystem()->getPetka()->walk(destX, destY);
+				QReaction *r = g_vm->getQSystem()->getPetka()->_heroReaction;
 				if (r) {
 					for (uint i = 0; i < r->messages.size(); ++i) {
 						if (r->messages[i].opcode == kGoTo) {
-							g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
+							g_vm->getQSystem()->getChapay()->walk(_walkX, _walkY);
 							break;
 						}
 					}
@@ -218,9 +218,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		}
 		case kWalkVich:
 			if (msg.arg1 == 0xffff || msg.arg2 == -1) {
-				g_vm->getQSystem()->_chapayev->walk(msg.arg1, msg.arg2);
+				g_vm->getQSystem()->getChapay()->walk(msg.arg1, msg.arg2);
 			} else if (_walkX != -1) {
-				g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
+				g_vm->getQSystem()->getChapay()->walk(_walkX, _walkY);
 			}
 			break;
 		case kDescription: {
@@ -302,10 +302,10 @@ void QMessageObject::processReaction(QReaction *r, const QMessage *msg) {
 		}
 		case kWalk:
 		case kWalkTo:
-			g_vm->getQSystem()->_petka->setReactionAfterWalk(j, r, this, deleteReaction);
+			g_vm->getQSystem()->getPetka()->setReactionAfterWalk(j, r, this, deleteReaction);
 			return;
 		case kWalkVich:
-			g_vm->getQSystem()->_chapayev->setReactionAfterWalk(j, r, this, deleteReaction);
+			g_vm->getQSystem()->getChapay()->setReactionAfterWalk(j, r, this, deleteReaction);
 			return;
 		default:
 			processed = false;
@@ -539,7 +539,7 @@ void QObject::setPos(int x, int y) {
 }
 
 void QObject::onClick(int x, int y) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	switch (cursor->_actionType) {
 	case kActionLook:
 		g_vm->getQSystem()->addMessage(_id, kLook, 0, 0, 0, 0, this);
@@ -557,7 +557,7 @@ void QObject::onClick(int x, int y) {
 		g_vm->getQSystem()->addMessage(_id, kTalk, 0, 0, 0, 0, this);
 		break;
 	case kActionObjUseChapayev:
-		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->_chapayev);
+		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->getChapay());
 		break;
 	case kActionObjUse:
 		g_vm->getQSystem()->addMessage(_id, kObjectUse, 0, 0, 0, 0, cursor->_invObj);

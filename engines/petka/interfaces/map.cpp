@@ -67,7 +67,7 @@ void InterfaceMap::start(int id) {
 		break;
 	}
 
-	QObjectCursor *cursor = sys->_cursor.get();
+	QObjectCursor *cursor = sys->getCursor();
 	_savedCursorId = cursor->_resourceId;
 	_savedCursorActionType = cursor->_actionType;
 
@@ -85,7 +85,7 @@ void InterfaceMap::start(int id) {
 
 void InterfaceMap::stop() {
 	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->_cursor.get();
+	QObjectCursor *cursor = sys->getCursor();
 
 	if (_objUnderCursor)
 		((QMessageObject *)_objUnderCursor)->_isShown = false;
@@ -138,7 +138,7 @@ void InterfaceMap::onMouseMove(const Common::Point p) {
 		}
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->_isShown = true;
 	cursor->setCursorPos(p.x, p.y, 0);

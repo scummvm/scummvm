@@ -118,7 +118,7 @@ void InterfacePanel::start(int id) {
 		break;
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	_savedCursorRes = cursor->_resourceId;
 	_savedCursorType = cursor->_actionType;
 
@@ -139,7 +139,7 @@ void InterfacePanel::start(int id) {
 
 void InterfacePanel::stop() {
 	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->_cursor.get();
+	QObjectCursor *cursor = sys->getCursor();
 
 	sys->_xOffset = _savedXOffset;
 	sys->_sceneWidth = _savedSceneWidth;
@@ -262,7 +262,7 @@ void InterfacePanel::onMouseMove(const Common::Point p) {
 		flc->setFrame(frame);
 		g_vm->videoSystem()->addDirtyRect(_objectPoints[pointIndex], *flc);
 	}
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_isShown = 1;
 	cursor->setCursorPos(p.x, p.y, 0);
 }

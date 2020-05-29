@@ -123,7 +123,7 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 		}
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->_isShown = true;
 	cursor->setCursorPos(p.x, p.y, 0);

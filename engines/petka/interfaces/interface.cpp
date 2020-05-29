@@ -60,7 +60,7 @@ QVisibleObject *Interface::findObject(int resourceId) {
 }
 
 void Interface::initCursor(int id, bool show, bool animate) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	_objs.push_back(cursor);
 	cursor->_resourceId = id;
 	cursor->_isShown = show;

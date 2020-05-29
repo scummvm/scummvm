@@ -44,9 +44,8 @@
 namespace Petka {
 
 QSystem::QSystem()
-	: _cursor(nullptr), _case(nullptr), _star(nullptr), _petka(nullptr), _chapayev(nullptr),
-	_mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr), _isIniting(0),
-	_sceneWidth(640) {}
+	: _mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr),
+	_isIniting(0), _sceneWidth(640) {}
 
 QSystem::~QSystem() {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
@@ -84,9 +83,9 @@ bool QSystem::init() {
 	for (uint i = 0; i < objsCount + bgsCount; ++i) {
 		QMessageObject *obj = nullptr;
 		if (i == 0) {
-			obj = _petka = new QObjectPetka;
+			obj = new QObjectPetka;
 		} else if (i == 1) {
-			obj = _chapayev = new QObjectChapayev;
+			obj = new QObjectChapayev;
 		} else if (i < objsCount) {
 			obj = new QObject;
 		} else {
@@ -99,13 +98,9 @@ bool QSystem::init() {
 
 	addMessageForAllObjects(kTotalInit);
 
-	_cursor = new QObjectCursor;
-	_case = new QObjectCase;
-	_star = new QObjectStar;
-
-	_allObjects.push_back(_cursor);
-	_allObjects.push_back(_case);
-	_allObjects.push_back(_star);
+	_allObjects.push_back(new QObjectCursor);
+	_allObjects.push_back(new QObjectCase);
+	_allObjects.push_back(new QObjectStar);
 
 	_mainInterface.reset(new InterfaceMain());
 	_startupInterface.reset(new InterfaceStartup());
@@ -165,8 +160,8 @@ void QSystem::update() {
 }
 
 void QSystem::togglePanelInterface() {
-	if (_currInterface != _startupInterface.get() && _star->_isActive) {
-		_case->show(0);
+	if (_currInterface != _startupInterface.get() && getStar()->_isActive) {
+		getCase()->show(0);
 		if (_currInterface == _panelInterface.get()) {
 			_currInterface->stop();
 		} else if (_currInterface == _mainInterface.get()) {
@@ -176,8 +171,8 @@ void QSystem::togglePanelInterface() {
 }
 
 void QSystem::toggleMapInterface() {
-	if (_currInterface != _startupInterface.get() && _star->_isActive && _room->_showMap) {
-		_case->show(0);
+	if (_currInterface != _startupInterface.get() && getStar()->_isActive && _room->_showMap) {
+		getCase()->show(0);
 		if (_currInterface == _mapInterface.get()) {
 			_currInterface->stop();
 		} else if (_currInterface == _mainInterface.get()) {
@@ -188,8 +183,8 @@ void QSystem::toggleMapInterface() {
 }
 
 void QSystem::setChapayev() {
-	if (_star->_isActive && _currInterface == _mainInterface.get() && _chapayev->_isShown) {
-		_cursor->setAction(kActionObjUseChapayev);
+	if (getStar()->_isActive && _currInterface == _mainInterface.get() && getChapay()->_isShown) {
+		getCursor()->setAction(kActionObjUseChapayev);
 	}
 }
 
@@ -224,9 +219,10 @@ void QSystem::load(Common::ReadStream *s) {
 	}
 
 	uint itemSize = s->readUint32LE();
-	_case->_items.clear();
+	QObjectCase *objCase = getCase();
+	objCase->_items.clear();
 	for (uint i = 0; i < itemSize; ++i) {
-		_case->_items.push_back(s->readSint32LE());
+		objCase->_items.push_back(s->readSint32LE());
 	}
 
 	_room = (QObjectBG *)findObject(readString(s));
@@ -236,13 +232,14 @@ void QSystem::load(Common::ReadStream *s) {
 
 	g_vm->getBigDialogue()->load(s);
 
-	_cursor->_resourceId = s->readUint32LE();
-	_cursor->_actionType = s->readUint32LE();
+	QObjectCursor *cursor = getCursor();
+	cursor->_resourceId = s->readUint32LE();
+	cursor->_actionType = s->readUint32LE();
 	int invObjId = s->readSint32LE();
 	if (invObjId != -1) {
-		_cursor->_invObj = findObject(invObjId);
+		cursor->_invObj = findObject(invObjId);
 	} else {
-		_cursor->_invObj = nullptr;
+		cursor->_invObj = nullptr;
 	}
 
 	g_vm->videoSystem()->makeAllDirty();
@@ -263,9 +260,10 @@ void QSystem::save(Common::WriteStream *s) {
 		s->writeUint32LE(_allObjects[i]->_animate);
 	}
 
-	s->writeUint32LE(_case->_items.size());
-	for (uint i = 0; i < _case->_items.size(); ++i) {
-		s->writeSint32LE(_case->_items[i]);
+	QObjectCase *objCase = getCase();
+	s->writeUint32LE(objCase->_items.size());
+	for (uint i = 0; i < objCase->_items.size(); ++i) {
+		s->writeSint32LE(objCase->_items[i]);
 	}
 
 	writeString(s, _room->_name);
@@ -274,13 +272,34 @@ void QSystem::save(Common::WriteStream *s) {
 
 	g_vm->getBigDialogue()->save(s);
 
-	s->writeUint32LE(_cursor->_resourceId);
-	s->writeUint32LE(_cursor->_actionType);
-	if (_cursor->_invObj) {
-		s->writeSint32LE(_cursor->_invObj->_resourceId);
+	QObjectCursor *cursor = getCursor();
+	s->writeUint32LE(cursor->_resourceId);
+	s->writeUint32LE(cursor->_actionType);
+	if (cursor->_invObj) {
+		s->writeSint32LE(cursor->_invObj->_resourceId);
 	} else {
 		s->writeSint32LE(-1);
 	}
+}
+
+QObjectPetka *QSystem::getPetka() const {
+	return (QObjectPetka *)_allObjects[0];
+}
+
+QObjectChapayev *QSystem::getChapay() const {
+	return (QObjectChapayev *)_allObjects[1];
+}
+
+QObjectCursor *QSystem::getCursor() const {
+	return (QObjectCursor *)_allObjects[_allObjects.size() - 3];
+}
+
+QObjectCase *QSystem::getCase() const {
+	return (QObjectCase *)_allObjects[_allObjects.size() - 2];
+}
+
+QObjectStar *QSystem::getStar() const {
+	return (QObjectStar *)_allObjects.back();
 }
 
 }
