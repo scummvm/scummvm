@@ -89,7 +89,9 @@ void QObjectBG::draw() {
 	if (s) {
 		const Common::List<Common::Rect> &dirty = g_vm->videoSystem()->rects();
 		for (Common::List<Common::Rect>::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
-			g_vm->videoSystem()->blitFrom(*s, *it, Common::Point(it->left, it->top));
+			Common::Rect srcRect = *it;
+			srcRect.translate(g_vm->getQSystem()->_xOffset, 0);
+			g_vm->videoSystem()->blitFrom(*s, srcRect, Common::Point(it->left, it->top));
 		}
 	}
 }
