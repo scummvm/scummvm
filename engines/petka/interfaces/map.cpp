@@ -73,8 +73,8 @@ void InterfaceMap::start(int id) {
 
 	initCursor(4901, 1, 0);
 
-	_savedXOffset = 0; // g_vm->getQSystem()->xOffset;
-	_savedSceneWidth = 640; // g_vm->getQSystem()->savedSceneWidth
+	_savedXOffset = sys->_xOffset;
+	_savedSceneWidth =  sys->_sceneWidth;
 
 	g_vm->getQSystem()->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, bg);
 
