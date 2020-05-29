@@ -2910,10 +2910,6 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 	if (!g_gui.xmlEval()->getWidgetData(widgetName, x, y, w, h, _useRTL))
 		warning("%s's position is undefined", widgetName);
 
-	// GUI TODO: I'm not sure what's this being used for. Will this be useful when using navbars?
-	if (g_gui.useRTL())
-		x = g_system->getOverlayWidth() - x - w;
-
 	widget->setPos(x + xOffset, y + yOffset);
 }
 #endif // USE_LIBCURL

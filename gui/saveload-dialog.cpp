@@ -1006,7 +1006,6 @@ void SaveLoadChooserGrid::reflowLayout() {
 
 			if (g_gui.useRTL()) {
 				alignment = Graphics::kTextAlignRight;
-				// GUI TODO: 1st and 3rd row pictures not being displayed.
 			}
 
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, nullptr, buttonCmd);
