@@ -181,14 +181,7 @@ double QObjectPetka::calcSmth(int y) {
 
 	y = MIN(y, 480);
 
-
-	if (!qsys->_perspectives.contains(qsys->_room->_name)) {
-		return 1.0;
-	}
-
-	const Perspective &pers = qsys->_perspectives.getVal(qsys->_room->_name);
-
-
+	const Perspective &pers = qsys->_room->_persp;
 	double res = (y - pers.y0) * pers.k / (pers.y1 - pers.y0);
 	if (res < 0.0)
 		res = 0.0;

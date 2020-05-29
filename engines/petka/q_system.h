@@ -47,15 +47,6 @@ class InterfacePanel;
 class InterfaceMap;
 class Interface;
 
-// Linear Interpolation
-struct Perspective {
-	double f0;
-	double k;
-	int y0;
-	int y1;
-	double f1;
-};
-
 class QSystem {
 public:
 	explicit QSystem();
@@ -97,8 +88,6 @@ public:
 	Common::ScopedPtr<InterfaceMap> _mapInterface;
 	Interface *_currInterface;
 	Interface *_prevInterface;
-
-	Common::HashMap<Common::String, Perspective> _perspectives;
 
 	int _isIniting;
 	int _fxId;

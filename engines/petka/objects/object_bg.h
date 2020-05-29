@@ -27,6 +27,15 @@
 
 namespace Petka {
 
+// Linear Interpolation
+struct Perspective {
+	double f0;
+	double k;
+	int y0;
+	int y1;
+	double f1;
+};
+
 class QObjectBG : public QMessageObject {
 public:
 	QObjectBG();
@@ -42,6 +51,7 @@ public:
 	int _showMap;
 	int _fxId;
 	int _musicId;
+	Perspective _persp;
 };
 
 } // End of namespace Petka
