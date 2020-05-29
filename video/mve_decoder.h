@@ -23,9 +23,12 @@
 #ifndef VIDEO_MVEDECODER_H
 #define VIDEO_MVEDECODER_H
 
+#include "audio/audiostream.h"
 #include "video/video_decoder.h"
+#include "graphics/surface.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/memstream.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -33,7 +36,6 @@ class SeekableReadStream;
 
 namespace Graphics {
 struct PixelFormat;
-struct Surface;
 }
 
 namespace Video {
@@ -45,15 +47,115 @@ namespace Video {
  *  - kingdom
  */
 class MveDecoder : public VideoDecoder {
+	bool _done;
+	Common::SeekableReadStream *_s;
+
+	uint16_t _packetLen;
+	uint16_t _packetKind;
+
+	Graphics::Surface _decodeSurface0;
+	Graphics::Surface _decodeSurface1;
+	Graphics::Surface _frameSurface;
+
+	uint16_t _widthInBlocks;
+	uint16_t _heightInBlocks;
+
+	uint16_t _width;
+	uint16_t _height;
+
+	Common::Rational _frameRate;
+
+	bool      _dirtyPalette;
+	byte      _palette[0x300];
+
+	uint16_t  _skipMapSize;
+	byte     *_skipMap;
+
+	uint16_t  _decodingMapSize;
+	byte     *_decodingMap;
+
+	int       _frameNumber;
+	byte      _frameFormat;
+	uint16_t  _frameSize;
+	byte     *_frameData;
+
+	Audio::QueuingAudioStream *_audioStream;
+
+	void readPacketHeader();
+	void copyBlock(Graphics::Surface &dst, Common::MemoryReadStream &s, int block);
+	void copyBlock(Graphics::Surface &dst, Graphics::Surface &src, int block, int offset = 0);
+	void copyBlock(Graphics::Surface &dst, Graphics::Surface &src, int dx, int dy, int off_x, int off_y);
+
+	void decodeFormat6();
+	void decodeFormat10();
+
+	class MveVideoTrack : public FixedRateVideoTrack {
+		MveDecoder *_decoder;
+	public:
+		MveVideoTrack(MveDecoder *decoder);
+
+		bool endOfTrack() const;
+
+		uint16 getWidth() const;
+		uint16 getHeight() const;
+
+		Graphics::PixelFormat getPixelFormat() const;
+
+		int getCurFrame() const;
+		// int getFrameCount() const;
+
+		const Graphics::Surface *decodeNextFrame();
+		const byte *getPalette() const;
+		bool hasDirtyPalette() const;
+
+	protected:
+		Common::Rational getFrameRate() const;
+	};
+
+	class MveAudioTrack : public AudioTrack {
+		MveDecoder *_decoder;
+	public:
+		MveAudioTrack(MveDecoder *decoder);
+
+		Audio::AudioStream *getAudioStream() const;
+	};
+
+	class MveSkipStream {
+		Common::MemoryReadStream s;
+		uint16_t queue;
+	public:
+		MveSkipStream(byte *p, size_t sz)
+			: s(p, sz), queue(0x8000)
+		{}
+
+		void reset() {
+			s.seek(0);
+			queue = 0x8000;
+		}
+
+		bool skip() {
+			if (queue == 0x8000) {
+				queue = s.readUint16LE();
+				assert(queue != 0);
+			}
+			bool r = (queue & 0x8000) == 0;
+			queue <<= 1;
+			return r;
+		}
+	};
+
 public:
 	MveDecoder();
 	virtual ~MveDecoder();
 
-	virtual bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream);
 
-	const Common::List<Common::Rect> *getDirtyRects() const;
-	void clearDirtyRects();
-	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+	// const Common::List<Common::Rect> *getDirtyRects() const;
+	// void clearDirtyRects();
+	// void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
+
+	Common::Rational getFrameRate() { return _frameRate; }
+	void readNextPacket();
 };
 
 } // End of namespace Video

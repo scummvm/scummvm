@@ -43,6 +43,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "gui/saveload.h"
+#include "video/mve_decoder.h"
 
 #include "kingdom/kingdom.h"
 
@@ -280,10 +281,22 @@ void KingdomGame::titlePage() {
 	_sound = false;
 	fadeToBlack2();
 	playMovie(200);
+	if (shouldQuit()) {
+		return;
+	}
+
 	fadeToBlack2();
 	playMovie(206);
+	if (shouldQuit()) {
+		return;
+	}
+
 	fadeToBlack2();
 	playMovie(198);
+	if (shouldQuit()) {
+		return;
+	}
+
 	fadeToBlack2();
 }
 
@@ -475,6 +488,9 @@ void KingdomGame::playMovie(int movieNum) {
 	_mouseButton = 0;
 	_keyActive = false;
 	const Common::String path = Common::String::format("King%.3d.mve", movieNum);
+
+	warning("%s", path.c_str());
+
 	// Check if the file is available. If not the original does the following: _ATimer = 55, display of error with a check of timer, exit
 	// That can be replaced by an error()
 
@@ -489,6 +505,51 @@ void KingdomGame::playMovie(int movieNum) {
 	
 	MVE_ReleaseMem();
 	*/
+
+	bool skipMovie = false;
+	Video::MveDecoder *decoder = new Video::MveDecoder();
+	if (decoder->loadFile(path)) {
+		decoder->start();
+		while (!decoder->endOfVideo() && !skipMovie && !shouldQuit()) {
+			unsigned int delay = MIN(decoder->getTimeToNextFrame(), 10u);
+			g_system->delayMillis(delay);
+
+			const Graphics::Surface *frame = nullptr;
+
+			if (decoder->needsUpdate()) {
+				frame = decoder->decodeNextFrame();
+			}
+
+			if (frame) {
+				::Graphics::Surface *screen = g_system->lockScreen();
+				screen->copyRectToSurface(*frame, 0, 0, Common::Rect(frame->w, frame->h));
+				g_system->unlockScreen();
+
+				if (decoder->hasDirtyPalette()) {
+					g_system->getPaletteManager()->setPalette(decoder->getPalette(), 0, 256);
+				}
+
+				g_system->updateScreen();
+			}
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RETURN_TO_LAUNCHER:
+					_quit = true;
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						skipMovie = true;
+					}
+				default:
+					break;
+				}
+			}
+		}
+	}
+	delete decoder;
 
 	// This is hidden somewhere in RunMovieCtl callback...
 	// To be removed when MVE_RunMovie is implemented
