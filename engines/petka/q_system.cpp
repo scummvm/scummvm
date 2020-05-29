@@ -49,7 +49,9 @@ QSystem::QSystem()
 	_sceneWidth(640) {}
 
 QSystem::~QSystem() {
-
+	for (uint i = 0; i < _allObjects.size(); ++i) {
+		delete _allObjects[i];
+	}
 }
 
 bool QSystem::init() {
@@ -76,42 +78,34 @@ bool QSystem::init() {
 	if (bgsStream)
 		bgsIni.loadFromStream(*bgsStream);
 
-	uint32 objsCount = stream->readUint32LE() - 2;
+	uint32 objsCount = stream->readUint32LE();
 	uint32 bgsCount = stream->readUint32LE();
-
-	_objs.resize(objsCount);
-	_bgs.resize(bgsCount);
-
-	_petka.reset(new QObjectPetka());
-	_petka->readScriptData(*stream);
-	_petka->readInisData(namesIni, castIni, nullptr);
-	_allObjects.push_back(_petka.get());
-
-	_chapayev.reset(new QObjectChapayev());
-	_chapayev->readScriptData(*stream);
-	_chapayev->readInisData(namesIni, castIni, nullptr);
-	_allObjects.push_back(_chapayev.get());
-
-	for (uint i = 0; i < objsCount; ++i) {
-		_objs[i].readScriptData(*stream);
-		_objs[i].readInisData(namesIni, castIni, nullptr);
-		_allObjects.push_back(&_objs[i]);
-	}
-	for (uint i = 0; i < bgsCount; ++i) {
-		_bgs[i].readScriptData(*stream);
-		_bgs[i].readInisData(namesIni, castIni, &bgsIni);
-		_allObjects.push_back(&_bgs[i]);
+	_allObjects.reserve(objsCount + bgsCount + 3);
+	for (uint i = 0; i < objsCount + bgsCount; ++i) {
+		QMessageObject *obj = nullptr;
+		if (i == 0) {
+			obj = _petka = new QObjectPetka;
+		} else if (i == 1) {
+			obj = _chapayev = new QObjectChapayev;
+		} else if (i < objsCount) {
+			obj = new QObject;
+		} else {
+			obj = new QObjectBG;
+		}
+		obj->readScriptData(*stream);
+		obj->readInisData(namesIni, castIni, &bgsIni);
+		_allObjects.push_back(obj);
 	}
 
 	addMessageForAllObjects(kTotalInit);
 
-	_cursor.reset(new QObjectCursor());
-	_case.reset(new QObjectCase());
-	_star.reset(new QObjectStar());
+	_cursor = new QObjectCursor;
+	_case = new QObjectCase;
+	_star = new QObjectStar;
 
-	_allObjects.push_back(_cursor.get());
-	_allObjects.push_back(_case.get());
-	_allObjects.push_back(_star.get());
+	_allObjects.push_back(_cursor);
+	_allObjects.push_back(_case);
+	_allObjects.push_back(_star);
 
 	_mainInterface.reset(new InterfaceMain());
 	_startupInterface.reset(new InterfaceStartup());

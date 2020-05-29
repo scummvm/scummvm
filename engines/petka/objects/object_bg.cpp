@@ -116,13 +116,13 @@ void QObjectBG::goTo() {
 		return;
 	}
 
-	Common::Array<QObjectBG> &bgs = sys->_bgs;
+	/*Common::Array<QObjectBG> &bgs = sys->_bgs;
 	for (uint i = 0; i < bgs.size(); ++i) {
 		if (bgsIni.getKey(bgs[i]._name, _name, entranceName)) {
 			setEntrance(entranceName);
 			break;
 		}
-	}
+	}*/
 }
 
 void QObjectBG::setEntrance(const Common::String &name) {

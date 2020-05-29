@@ -557,7 +557,7 @@ void QObject::onClick(int x, int y) {
 		g_vm->getQSystem()->addMessage(_id, kTalk, 0, 0, 0, 0, this);
 		break;
 	case kActionObjUseChapayev:
-		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->_chapayev.get());
+		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->_chapayev);
 		break;
 	case kActionObjUse:
 		g_vm->getQSystem()->addMessage(_id, kObjectUse, 0, 0, 0, 0, cursor->_invObj);

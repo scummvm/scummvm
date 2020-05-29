@@ -71,15 +71,13 @@ public:
 	void setChapayev();
 
 public:
-	Common::Array<QObject> _objs;
-	Common::Array<QObjectBG> _bgs;
 	Common::Array<QMessageObject *> _allObjects;
 	Common::List<QMessage> _messages;
-	Common::ScopedPtr<QObjectPetka> _petka;
-	Common::ScopedPtr<QObjectChapayev> _chapayev;
-	Common::ScopedPtr<QObjectCursor> _cursor;
-	Common::ScopedPtr<QObjectCase> _case;
-	Common::ScopedPtr<QObjectStar> _star;
+	QObjectPetka *_petka;
+	QObjectChapayev *_chapayev;
+	QObjectCursor *_cursor;
+	QObjectCase *_case;
+	QObjectStar *_star;
 	Common::ScopedPtr<InterfaceMain> _mainInterface;
 	Common::ScopedPtr<InterfaceSaveLoad> _saveLoadInterface;
 	Common::ScopedPtr<InterfaceSequence> _sequenceInterface;

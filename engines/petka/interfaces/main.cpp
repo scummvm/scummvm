@@ -69,8 +69,8 @@ void InterfaceMain::start(int id) {
 	g_vm->getQSystem()->update();
 	g_vm->getQSystem()->_isIniting = 0;
 
-	_objs.push_back(g_vm->getQSystem()->_petka.get());
-	_objs.push_back(g_vm->getQSystem()->_chapayev.get());
+	_objs.push_back(g_vm->getQSystem()->_petka);
+	_objs.push_back(g_vm->getQSystem()->_chapayev);
 
 	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", true));
 	Common::INIFile bgsIni;
@@ -180,11 +180,11 @@ void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 
 	switch (cursor->_actionType) {
 	case kActionWalk: {
-		QObjectPetka *petka = g_vm->getQSystem()->_petka.get();
+		QObjectPetka *petka = g_vm->getQSystem()->_petka;
 		if (petka->_heroReaction) {
 			for (uint i = 0; i < petka->_heroReaction->messages.size(); ++i) {
 				if (petka->_heroReaction->messages[i].opcode == kGoTo) {
-					QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev.get();
+					QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev;
 					chapay->stopWalk();
 					break;
 				}
@@ -196,7 +196,7 @@ void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 		break;
 	}
 	case kActionObjUseChapayev: {
-		QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev.get();
+		QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev;
 		chapay->walk(p.x, p.y);
 		break;
 	}
