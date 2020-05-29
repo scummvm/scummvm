@@ -403,7 +403,11 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		r2.left = g_system->getOverlayWidth() - r2.left - w + g_gui.getOverlayOffset();
 		r2.right = r2.left + w;
 
-		alignment = Graphics::kTextAlignRight;		// GUI TODO: Since the text for dropdowns is also drawn here, they must be center aligned in some way.
+		if (_boss->getFlags() == 305) {
+			alignment = Graphics::kTextAlignCenter;		// GUI FIXME: This is not a good way to say that I am a DropDownButtonWidget
+		} else {
+			alignment = Graphics::kTextAlignRight;
+		}
 
 		_leftPadding = 0;
 	}
