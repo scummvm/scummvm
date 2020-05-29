@@ -20,23 +20,72 @@
  *
  */
 
+#include "glk/comprehend/game_cc.h"
 #include "glk/comprehend/comprehend.h"
-#include "glk/comprehend/game_data.h"
-#include "glk/comprehend/game.h"
 
 namespace Glk {
 namespace Comprehend {
 
-static void cc_clear_companion_flags(struct comprehend_game *game)
-{
+static struct game_strings cc1_strings = {0x9};
+
+static struct game_ops cc1_ops = {
+    nullptr,
+    CrimsonCrownGame::cc1_before_prompt,
+    nullptr,
+    nullptr,
+    nullptr,
+    CrimsonCrownGame::cc1_handle_special_opcode};
+
+#ifdef TODO
+static struct game_ops cc2_ops = {
+    nullptr,
+    cc2_before_prompt,
+    nullptr,
+    nullptr,
+    nullptr,
+    cc2_handle_special_opcode};
+#endif
+
+CrimsonCrownGame::CrimsonCrownGame() : comprehend_game() {
+	game_name = "Crimson Crown";
+	short_name = "cc1";
+	game_data_file = "cc1.gda";
+
+	string_files.push_back(string_file("ma.ms1", 0x89));
+	location_graphic_files.push_back("RA.MS1");
+	location_graphic_files.push_back("RB.MS1");
+	location_graphic_files.push_back("RC.MS1");
+	item_graphic_files.push_back("OA.MS1");
+	item_graphic_files.push_back("OB.MS1");
+
+	save_game_file_fmt = "G%d.MS0";
+	strings = &cc1_strings;
+	ops = &cc1_ops;
+}
+
+#ifdef TODO
+struct comprehend_game game_crimson_crown_2 = {
+    "Crimson Crown (Part 2/2)",
+    "cc2",
+    "CC2.GDA",
+    {{"MA.MS2", 0x89}},
+    {"RA.MS2", "RB.MS2"},
+    {"OA.MS2", "OB.MS2"},
+    "G%d.MS0",
+    0,
+    nullptr,
+    &cc2_ops,
+    nullptr};
+#endif
+
+static void cc_clear_companion_flags(struct comprehend_game *game) {
 	/* Clear the Sabrina/Erik action flags */
 	game->info->flags[0xa] = 0;
 	game->info->flags[0xb] = 0;
 }
 
 static bool cc_common_handle_special_opcode(struct comprehend_game *game,
-					    uint8 operand)
-{
+                                            uint8 operand) {
 	switch (operand) {
 	case 0x03:
 		/*
@@ -64,9 +113,8 @@ static bool cc_common_handle_special_opcode(struct comprehend_game *game,
 	return false;
 }
 
-static void cc1_handle_special_opcode(struct comprehend_game *game,
-				      uint8 operand)
-{
+void CrimsonCrownGame::cc1_handle_special_opcode(comprehend_game *game,
+		uint8 operand) {
 	if (cc_common_handle_special_opcode(game, operand))
 		return;
 
@@ -83,8 +131,7 @@ static void cc1_handle_special_opcode(struct comprehend_game *game,
 }
 
 static void cc2_handle_special_opcode(struct comprehend_game *game,
-				      uint8 operand)
-{
+                                      uint8 operand) {
 	if (cc_common_handle_special_opcode(game, operand))
 		return;
 
@@ -105,63 +152,13 @@ static void cc2_handle_special_opcode(struct comprehend_game *game,
 	}
 }
 
-static void cc2_before_prompt(struct comprehend_game *game)
-{
+static void cc2_before_prompt(struct comprehend_game *game) {
 	cc_clear_companion_flags(game);
 }
 
-static void cc1_before_prompt(struct comprehend_game *game)
-{
+void CrimsonCrownGame::cc1_before_prompt(comprehend_game *game) {
 	cc_clear_companion_flags(game);
 }
-
-static struct game_strings cc1_strings = { 0x9 };
-
-static struct game_ops cc1_ops = {
-	nullptr,
-	cc1_before_prompt,
-	nullptr,
-	nullptr,
-	nullptr,
-	cc1_handle_special_opcode
-};
-
-static struct game_ops cc2_ops = {
-	nullptr,
-	cc2_before_prompt,
-	nullptr,
-	nullptr,
-	nullptr,
-	cc2_handle_special_opcode
-};
-
-struct comprehend_game game_crimson_crown_1 = {
-	"Crimson Crown (Part 1/2)",
-	"cc1",
-	"CC1.GDA",
-	{ {"MA.MS1", 0x89} },
-	{"RA.MS1", "RB.MS1", "RC.MS1"},
-	{"OA.MS1", "OB.MS1"},
-	"G%d.MS0",
-	0,
-	&cc1_strings,
-	&cc1_ops,
-	nullptr
-};
-
-struct comprehend_game game_crimson_crown_2 = {
-	"Crimson Crown (Part 2/2)",
-	"cc2",
-	"CC2.GDA",
-	{ {"MA.MS2", 0x89} },
-	{"RA.MS2", "RB.MS2"},
-	{"OA.MS2", "OB.MS2"},
-	"G%d.MS0",
-	0,
-	nullptr,
-	&cc2_ops,
-	nullptr
-};
 
 } // namespace Comprehend
 } // namespace Glk

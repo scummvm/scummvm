@@ -20,37 +20,70 @@
  *
  */
 
+#include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/comprehend.h"
-#include "glk/comprehend/game_data.h"
-#include "glk/comprehend/game.h"
 #include "glk/comprehend/graphics.h"
 
 namespace Glk {
 namespace Comprehend {
 
-#define OO_ROOM_FLAG_DARK	0x02
+#define OO_ROOM_FLAG_DARK 0x02
 
-#define OO_BRIGHT_ROOM		0x19
+#define OO_BRIGHT_ROOM 0x19
 
-#define OO_FLAG_WEARING_GOGGLES	0x1b
-#define OO_FLAG_FLASHLIGHT_ON	0x27
+#define OO_FLAG_WEARING_GOGGLES 0x1b
+#define OO_FLAG_FLASHLIGHT_ON 0x27
 
-static int oo_room_is_special(struct comprehend_game *game, 
-			      unsigned room_index,
-			      unsigned *room_desc_string)
-{
+static struct game_ops oo_ops = {
+    nullptr,
+    nullptr,
+    OOToposGame::oo_before_turn,
+    nullptr,
+    OOToposGame::oo_room_is_special,
+    OOToposGame::oo_handle_special_opcode
+};
+
+OOToposGame::OOToposGame() : comprehend_game() {
+	game_name = "Oo-Topos";
+	short_name = "oo";
+	game_data_file = "g0";
+
+	// Extra strings are (annoyingly) stored in the game binary
+	string_files.push_back(string_file("NOVEL.EXE", 0x16564, 0x17640));
+	string_files.push_back(string_file("NOVEL.EXE", 0x17702, 0x18600));
+	string_files.push_back(string_file("NOVEL.EXE", 0x186b2, 0x19b80));
+	string_files.push_back(string_file("NOVEL.EXE", 0x19c62, 0x1a590));
+	string_files.push_back(string_file("NOVEL.EXE", 0x1a634, 0x1b080));
+	location_graphic_files.push_back("RA");
+	location_graphic_files.push_back("RB");
+	location_graphic_files.push_back("RC");
+	location_graphic_files.push_back("RD");
+	location_graphic_files.push_back("RE");
+	item_graphic_files.push_back("OA");
+	item_graphic_files.push_back("OB");
+	item_graphic_files.push_back("OC");
+	item_graphic_files.push_back("OD");
+
+	save_game_file_fmt = "G%d";
+	color_table = 1;
+	ops = &oo_ops;
+}
+
+int OOToposGame::oo_room_is_special(comprehend_game *game,
+                              unsigned room_index,
+                              unsigned *room_desc_string) {
 	struct room *room = &game->info->rooms[room_index];
 
 	/* Is the room dark */
 	if ((room->flags & OO_ROOM_FLAG_DARK) &&
 	    !(game->info->flags[OO_FLAG_FLASHLIGHT_ON])) {
 		if (room_desc_string)
-			*room_desc_string = 0xb3; 
+			*room_desc_string = 0xb3;
 		return ROOM_IS_DARK;
 	}
 
 	/* Is the room too bright */
-	if (room_index == OO_BRIGHT_ROOM && 
+	if (room_index == OO_BRIGHT_ROOM &&
 	    !game->info->flags[OO_FLAG_WEARING_GOGGLES]) {
 		if (room_desc_string)
 			*room_desc_string = 0x1c;
@@ -60,8 +93,7 @@ static int oo_room_is_special(struct comprehend_game *game,
 	return ROOM_IS_NORMAL;
 }
 
-static bool oo_before_turn(struct comprehend_game *game)
-{
+bool OOToposGame::oo_before_turn(comprehend_game *game) {
 	/* FIXME - probably doesn't work correctly with restored games */
 	static bool flashlight_was_on = false, googles_were_worn = false;
 	struct room *room = &game->info->rooms[game->info->current_room];
@@ -89,9 +121,8 @@ static bool oo_before_turn(struct comprehend_game *game)
 	return false;
 }
 
-static void oo_handle_special_opcode(struct comprehend_game *game,
-				     uint8 operand)
-{
+void OOToposGame::oo_handle_special_opcode(comprehend_game *game,
+		uint8 operand) {
 	switch (operand) {
 	case 0x03:
 		/* Game over - failure */
@@ -113,36 +144,6 @@ static void oo_handle_special_opcode(struct comprehend_game *game,
 		break;
 	}
 }
-
-static struct game_ops oo_ops = {
-	nullptr,
-	nullptr,
-	oo_before_turn,
-	nullptr,
-	oo_room_is_special,
-	oo_handle_special_opcode
-}; 
-
-struct comprehend_game game_oo_topos = {
-	"Oo-Topos",
-	"oo",
-	"G0",
-	{
-		// Extra strings are (annoyingly) stored in the game binary
-		{"NOVEL.EXE", 0x16564, 0x17640},
-		{"NOVEL.EXE", 0x17702, 0x18600},
-		{"NOVEL.EXE", 0x186b2, 0x19b80},
-		{"NOVEL.EXE", 0x19c62, 0x1a590},
-		{"NOVEL.EXE", 0x1a634, 0x1b080},
-	},
-	{"RA", "RB", "RC", "RD", "RE"},
-	{"OA", "OB", "OC", "OD"},
-	"G%d",
-	1,
-	nullptr,
-	&oo_ops,
-	nullptr
-};
 
 } // namespace Comprehend
 } // namespace Glk

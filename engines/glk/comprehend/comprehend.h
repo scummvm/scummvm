@@ -83,6 +83,9 @@ private:
 	 * Deinitialization
 	 */
 	void deinitialize();
+
+	comprehend_game *createGame();
+
 public:
 	/**
 	 * Constructor

@@ -25,26 +25,17 @@
 #include "common/translation.h"
 #include "glk/comprehend/dump_game_data.h"
 #include "glk/comprehend/game.h"
+#include "glk/comprehend/game_cc.h"
 #include "glk/comprehend/game_data.h"
+#include "glk/comprehend/game_oo.h"
+#include "glk/comprehend/game_tm.h"
+#include "glk/comprehend/game_tr.h"
 #include "glk/quetzal.h"
 
 namespace Glk {
 namespace Comprehend {
 
 Comprehend *g_comprehend;
-
-extern comprehend_game game_transylvania;
-extern comprehend_game game_crimson_crown_1;
-extern comprehend_game game_crimson_crown_2;
-extern comprehend_game game_oo_topos;
-extern comprehend_game game_talisman;
-
-static comprehend_game *comprehend_games[] = {
-    &game_transylvania,
-    &game_crimson_crown_1,
-    &game_crimson_crown_2,
-    &game_oo_topos,
-    &game_talisman};
 
 struct dump_option {
 	const char *const option;
@@ -162,19 +153,9 @@ void Comprehend::runGame() {
 	initialize();
 
 	// Lookup game
-	Common::String filename = getFilename();
-	comprehend_game *game = NULL;
-	for (uint i = 0; i < 5; ++i) {
-		if (filename.equalsIgnoreCase(comprehend_games[i]->short_name) == 0) {
-			game = comprehend_games[i];
-			break;
-		}
-	}
-	assert(game);
+	comprehend_game *game = createGame();
 
-	game->info = (game_info *)malloc(sizeof(*game->info));
 	comprehend_load_game(game);
-
 	comprehend_play_game(game);
 
 	deinitialize();
@@ -192,5 +173,18 @@ void Comprehend::deinitialize() {
 	glk_window_close(_textBufferWindow);
 }
 
-} // End of namespace Comprehend
-} // End of namespace Glk
+comprehend_game *Comprehend::createGame() {
+	if (_gameDescription._gameId == "crimsoncrown")
+		return new CrimsonCrownGame();
+	if (_gameDescription._gameId == "ootopis")
+		return new OOToposGame();
+	if (_gameDescription._gameId == "talisman")
+		return new OOToposGame();
+	if (_gameDescription._gameId == "transylvania")
+		return new TransylvaniaGame();
+
+	error("Unknown game");
+}
+
+} // namespace Comprehend
+} // namespace Glk

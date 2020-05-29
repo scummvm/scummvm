@@ -326,51 +326,34 @@ static void load_image_file(struct image_data *info, const char *filename,
 }
 
 static void load_image_files(struct image_data *info,
-			     const char **filenames, size_t nr_files)
-{
+	const Common::Array<const char *> filenames) {
 	uint i;
 
 	memset(info, 0, sizeof(*info));
 
-	info->nr_images = nr_files * IMAGES_PER_FILE;
+	info->nr_images = filenames.size() * IMAGES_PER_FILE;
 	info->fb = (file_buf *)xmalloc(info->nr_images * sizeof(*info->fb));
 	info->image_offsets = (uint16 *)xmalloc(info->nr_images * sizeof(uint16));
 
-	for (i = 0; i < nr_files; i++) {
+	for (i = 0; i < filenames.size(); i++) {
 		load_image_file(info, filenames[i], i);
 	}
 }
 
-static size_t graphic_array_count(const char **filenames, size_t max)
-{
-	size_t count;
-
-	for (count = 0; count < max && filenames[count]; count++)
-		;
-	return count;
-}
-
 void comprehend_load_image_file(const char *filename, struct image_data *info)
 {
-	load_image_files(info, (const char **)&filename, 1);
+	Common::Array<const char *> filenames;
+	filenames.push_back(filename);
+
+	load_image_files(info, filenames);
 }
 
-void comprehend_load_images(comprehend_game *game)
-{
-	size_t nr_item_files, nr_room_files;
-
-	nr_room_files =
-		graphic_array_count(game->location_graphic_files,
-				    ARRAY_SIZE(game->location_graphic_files));
-	nr_item_files =
-		graphic_array_count(game->item_graphic_files,
-				    ARRAY_SIZE(game->item_graphic_files));
-
+void comprehend_load_images(comprehend_game *game) {
 	load_image_files(&game->info->room_images,
-			 game->location_graphic_files, nr_room_files);
+			 game->location_graphic_files);
 
 	load_image_files(&game->info->item_images,
-			 game->item_graphic_files, nr_item_files);
+			 game->item_graphic_files);
 }
 
 } // namespace Comprehend

@@ -24,21 +24,20 @@
 #define GLK_COMPREHEND_GAME_H
 
 #include "glk/comprehend/game_data.h"
-#include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Glk {
 namespace Comprehend {
 
-#define MAX_FILES 10
-
 struct comprehend_game {
+public:
 	const char *game_name;
 	const char *short_name;
 
 	const char *game_data_file;
-	struct string_file string_files[MAX_FILES];
-	const char *location_graphic_files[MAX_FILES];
-	const char *item_graphic_files[MAX_FILES];
+	Common::Array<string_file> string_files;
+	Common::Array <const char *> location_graphic_files;
+	Common::Array <const char *> item_graphic_files;
 	const char *save_game_file_fmt;
 	unsigned color_table;
 
@@ -46,6 +45,10 @@ struct comprehend_game {
 	struct game_ops *ops;
 
 	struct game_info *info;
+
+public:
+	comprehend_game();
+	~comprehend_game();
 };
 
 void console_println(struct comprehend_game *game, const char *text);

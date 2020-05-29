@@ -29,9 +29,11 @@ namespace Comprehend {
 
 const PlainGameDescriptor COMPREHEND_GAME_LIST[] = {
     {"crimsoncrown", "Crimson Crown"},
+    {"ootopis", "OO-Topos"},
     {"transylvania", "Transylvania"},
-
-    {nullptr, nullptr}};
+    {"talisman", "Talisman"},
+	{nullptr, nullptr}
+};
 
 struct ComprehendDetectionEntry {
 	const char *const _gameId;
@@ -44,8 +46,7 @@ const ComprehendDetectionEntry COMPREHEND_GAMES[] = {
     {"crimsoncrown", "cc1.gda", "f2abf019675ac5c9bcfd81032bc7787b"},
     {"transylvania", "tr.gda", "22e08633eea02ceee49b909dfd982d22"},
 
-    {nullptr, nullptr, nullptr}
-};
+    {nullptr, nullptr, nullptr}};
 
 } // End of namespace Comprehend
 } // End of namespace Glk

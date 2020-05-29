@@ -43,6 +43,20 @@ struct winsize {
 };
 static struct winsize console_winsize;
 
+comprehend_game::comprehend_game() : game_name(nullptr),
+                                     short_name(nullptr),
+                                     game_data_file(nullptr),
+                                     save_game_file_fmt(nullptr),
+                                     color_table(0),
+                                     strings(nullptr),
+                                     ops(nullptr) {
+	info = (game_info *)malloc(sizeof(*info));
+}
+
+comprehend_game::~comprehend_game() {
+	free(info);
+}
+
 static void console_init(void) {
 	//	ioctl(STDOUT_FILENO, TIOCGWINSZ, &console_winsize);
 }

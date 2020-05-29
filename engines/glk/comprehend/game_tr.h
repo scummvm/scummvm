@@ -20,31 +20,28 @@
  *
  */
 
-#include "glk/comprehend/comprehend.h"
-#include "glk/comprehend/game_tm.h"
+#ifndef GLK_COMPREHEND_GAME_TR_H
+#define GLK_COMPREHEND_GAME_TR_H
+
+#include "glk/comprehend/game.h"
 
 namespace Glk {
 namespace Comprehend {
 
-/* FIXME - This is broken */
+class TransylvaniaGame : public comprehend_game {
+public:
+	TransylvaniaGame();
 
-TalismanGame::TalismanGame() : comprehend_game() {
-	game_name = "Talisman, Challenging the Sands of Time (broken)";
-	short_name = "tm";
-	game_data_file = "G0";
-
-	location_graphic_files.push_back("RA");
-	location_graphic_files.push_back("RB");
-	location_graphic_files.push_back("RC");
-	location_graphic_files.push_back("RD");
-	location_graphic_files.push_back("RE");
-	location_graphic_files.push_back("RF");
-	location_graphic_files.push_back("RG");
-	item_graphic_files.push_back("OA");
-	item_graphic_files.push_back("OB");
-	item_graphic_files.push_back("OE");
-	item_graphic_files.push_back("OF");
-}
+public:
+	static void tr_before_game(comprehend_game *game);
+	static bool tr_before_turn(comprehend_game *game);
+	static int tr_room_is_special(comprehend_game *game,
+		unsigned room_index, unsigned *room_desc_string);
+	static void tr_handle_special_opcode(comprehend_game *game,
+		uint8 operand);
+};
 
 } // namespace Comprehend
 } // namespace Glk
+
+#endif

@@ -22,7 +22,7 @@
 
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/game_data.h"
-#include "glk/comprehend/game.h"
+#include "glk/comprehend/game_tr.h"
 #include "glk/comprehend/util.h"
 
 namespace Glk {
@@ -43,6 +43,45 @@ static struct tr_monster tr_werewolf = {
 static struct tr_monster tr_vampire = {
 	0x26, 5, (1 << 7), 0, 5
 };
+
+static struct game_strings tr_strings = {
+    EXTRA_STRING_TABLE(0x8a)
+};
+
+static struct game_ops tr_ops = {
+    TransylvaniaGame::tr_before_game,
+    nullptr,
+    TransylvaniaGame::tr_before_turn,
+    nullptr,
+    TransylvaniaGame::tr_room_is_special,
+    TransylvaniaGame::tr_handle_special_opcode,
+};
+
+
+TransylvaniaGame::TransylvaniaGame() : comprehend_game() {
+	game_name = "Transylvania";
+	short_name = "tr";
+	game_data_file = "tr.gda";
+
+	string_files.push_back(string_file("MA.MS1", 0x88));
+	string_files.push_back(string_file("MB.MS1", 0x88));
+	string_files.push_back(string_file("MC.MS1", 0x88));
+	string_files.push_back(string_file("MD.MS1", 0x88));
+	string_files.push_back(string_file("ME.MS1", 0x88));
+
+    location_graphic_files.push_back("RA.MS1");
+	location_graphic_files.push_back("RB.MS1");
+	location_graphic_files.push_back("RC.MS1");
+
+	item_graphic_files.push_back("OA.MS1");
+	item_graphic_files.push_back("OB.MS1");
+	item_graphic_files.push_back("OC.MS1");
+
+	save_game_file_fmt = "G%d.MS0";
+	strings = &tr_strings;
+	ops = &tr_ops;
+};
+
 
 static void tr_update_monster(struct comprehend_game *game,
 			      struct tr_monster *monster_info)
@@ -77,7 +116,7 @@ static void tr_update_monster(struct comprehend_game *game,
 	}
 }
 
-static int tr_room_is_special(struct comprehend_game *game, unsigned room_index,
+int TransylvaniaGame::tr_room_is_special(comprehend_game *game, unsigned room_index,
 			      unsigned *room_desc_string)
 {
 	struct room *room = &game->info->rooms[room_index];
@@ -91,14 +130,14 @@ static int tr_room_is_special(struct comprehend_game *game, unsigned room_index,
 	return ROOM_IS_NORMAL;
 }
 
-static bool tr_before_turn(struct comprehend_game *game)
+bool TransylvaniaGame::tr_before_turn(comprehend_game *game)
 {
 	tr_update_monster(game, &tr_werewolf);
 	tr_update_monster(game, &tr_vampire);
 	return false;
 }
 
-static void tr_handle_special_opcode(struct comprehend_game *game,
+void TransylvaniaGame::tr_handle_special_opcode(comprehend_game *game,
 				     uint8 operand)
 {
 	switch (operand) {
@@ -159,8 +198,7 @@ static void read_string(char *buffer, size_t size)
 #endif
 }
 
-static void tr_before_game(struct comprehend_game *game)
-{
+void TransylvaniaGame::tr_before_game(struct comprehend_game *game) {
 	char buffer[128];
 
 	/* Welcome to Transylvania - sign your name */
@@ -184,39 +222,6 @@ static void tr_before_game(struct comprehend_game *game)
 	console_println(game, game->info->strings.strings[0x21]);
 	read_string(buffer, sizeof(buffer));
 }
-
-static struct game_strings tr_strings = {
-	EXTRA_STRING_TABLE(0x8a)
-};
-
-static struct game_ops tr_ops = {
-	tr_before_game,
-	nullptr,
-	tr_before_turn,
-	nullptr,
-	tr_room_is_special,
-	tr_handle_special_opcode,
-};
-
-struct comprehend_game game_transylvania = {
-	"Transylvania",
-	"tr",
-	"TR.GDA",
-	{
-		{"MA.MS1", 0x88},
-		{"MB.MS1", 0x88},
-		{"MC.MS1", 0x88},
-		{"MD.MS1", 0x88},
-		{"ME.MS1", 0x88},
-	},
-	{"RA.MS1", "RB.MS1", "RC.MS1"},
-	{"OA.MS1", "OB.MS1", "OC.MS1"},
-	"G%d.MS0",
-	0,
-	&tr_strings,
-	&tr_ops,
-	nullptr
-};
 
 } // namespace Comprehend
 } // namespace Glk
