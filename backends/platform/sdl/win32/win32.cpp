@@ -33,6 +33,7 @@
 #define _WIN32_IE 0x500
 #endif
 #include <shlobj.h>
+#include <wchar.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
