@@ -39,7 +39,7 @@ InterfaceSequence::InterfaceSequence() {
 }
 
 void InterfaceSequence::start(int id) {
-	stop();
+	removeObjects();
 
 	g_system->getMixer()->pauseAll(true);
 
@@ -89,13 +89,7 @@ void InterfaceSequence::start(int id) {
 }
 
 void InterfaceSequence::stop() {
-	removeTexts();
-	for (uint i = 0; i < _objs.size(); ++i) {
-		QMessageObject *obj = (QMessageObject *)_objs[i];
-		obj->removeSound();
-	}
-
-	_objs.clear();
+	removeObjects();
 
 	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_fxId));
 	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_musicId));
@@ -114,6 +108,15 @@ void InterfaceSequence::onLeftButtonDown(const Common::Point p) {
 	if (obj) {
 		obj->onClick(p.x, p.y);
 	}
+}
+
+void InterfaceSequence::removeObjects() {
+	removeTexts();
+	for (uint i = 0; i < _objs.size(); ++i) {
+		QMessageObject *obj = (QMessageObject *)_objs[i];
+		obj->removeSound();
+	}
+	_objs.clear();
 }
 
 } // End of namespace Petka

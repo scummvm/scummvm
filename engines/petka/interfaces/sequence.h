@@ -37,6 +37,9 @@ public:
 	void onLeftButtonDown(const Common::Point p) override;
 
 private:
+	void removeObjects();
+
+private:
 	int _fxId;
 	int _musicId;
 };
