@@ -23,6 +23,8 @@
 #ifndef PETKA_SEQUENCE_H
 #define PETKA_SEQUENCE_H
 
+#include "audio/mixer.h"
+
 #include "petka/interfaces/interface.h"
 
 namespace Petka {
@@ -38,6 +40,7 @@ public:
 
 private:
 	void removeObjects();
+	void playSound(int id, Audio::Mixer::SoundType type);
 
 private:
 	int _fxId;
