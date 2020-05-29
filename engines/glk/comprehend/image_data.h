@@ -29,10 +29,10 @@ namespace Glk {
 namespace Comprehend {
 
 class ComprehendGame;
-struct file_buf;
+struct FileBuffer;
 
 struct image_data {
-	file_buf	*fb;
+	FileBuffer	*fb;
 	uint16	*image_offsets;
 	size_t		nr_images;
 

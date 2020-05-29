@@ -23,47 +23,47 @@
 #ifndef GLK_COMPREHEND_FILE_BUF_H
 #define GLK_COMPREHEND_FILE_BUF_H
 
-#include "common/scummsys.h"
+#include "common/array.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 
 namespace Glk {
 namespace Comprehend {
 
-struct file_buf {
-	uint8		*data;
-	size_t		size;
-	uint8		*p;
+struct FileBuffer : public Common::SeekableReadStream {
+private:
+	Common::Array<byte> _data;
+	Common::Array<bool> _readBytes;
+	int32 _pos;
 
-	uint8		*marked;
+public:
+	FileBuffer() : _pos(0) {}
+	FileBuffer(const Common::String &filename);
+	static bool exists(const Common::String &filename);
+
+	int32 pos() const override { return _pos; }
+	int32 size() const override { return _data.size(); }
+	bool seek(int32 offset, int whence = SEEK_SET) override;
+
+	bool eos() const override {
+		return _pos >= (int)_data.size();
+	}
+	uint32 read(void *dataPtr, uint32 dataSize) override;
+
+	const byte *dataPtr() const { return &_data[_pos]; }
+	size_t strlen(bool *eof = nullptr);
+
 };
 
-void file_buf_map(const char *filename, struct file_buf *fb);
-int file_buf_map_may_fail(const char *filename, struct file_buf *fb);
-void file_buf_unmap(struct file_buf *fb);
-void file_buf_show_unmarked(struct file_buf *fb);
+#ifdef TODO
+void file_buf_unmap(struct FileBuffer *fb);
+void file_buf_show_unmarked(struct FileBuffer *fb);
 
-void *file_buf_data_pointer(struct file_buf *fb);
-void file_buf_set_pos(struct file_buf *fb, unsigned pos);
-unsigned file_buf_get_pos(struct file_buf *fb);
+unsigned file_buf_get_pos(struct FileBuffer *fb);
 
-size_t file_buf_strlen(struct file_buf *fb, bool *eof);
+size_t file_buf_strlen(struct FileBuffer *fb, bool *eof);
 
-void file_buf_get_data(struct file_buf *fb, void *data, size_t data_size);
-void file_buf_get_u8(struct file_buf *fb, uint8 *val);
-void file_buf_get_le16(struct file_buf *fb, uint16 *val);
-
-#define file_buf_get_array(fb, type, base, array, member, size)		\
-	do {								\
-		uint __i;						\
-		for (__i = (base); __i < (base) + (size); __i++)	\
-			file_buf_get_##type(fb, &((array)[__i]).member); \
-	} while (0)
-
-#define file_buf_get_array_u8(fb, base, array, member, size) \
-	file_buf_get_array(fb, u8, base, array, member, size)
-
-#define file_buf_get_array_le16(fb, base, array, member, size) \
-	file_buf_get_array(fb, le16, base, array, member, size)
+void file_buf_get_data(struct FileBuffer *fb, void *data, size_t data_size);
 
 void file_buf_put_skip(Common::WriteStream *fd, size_t skip);
 void file_buf_put_u8(Common::WriteStream *fd, uint8 val);
@@ -81,6 +81,21 @@ void file_buf_put_le16(Common::WriteStream *fd, uint16 val);
 
 #define file_buf_put_array_u8(fd, base, array, member, size) \
 	file_buf_put_array(fd, u8, base, array, member, size)
+#endif
+
+#define file_buf_get_array(fb, type, base, array, member, size) \
+	do {                                                        \
+		uint __i;                                               \
+		for (__i = (base); __i < (base) + (size); __i++)        \
+			(array)[__i].member = fb->read##type();    \
+	} while (0)
+
+#define file_buf_get_array_u8(fb, base, array, member, size) \
+	file_buf_get_array(fb, Byte, base, array, member, size)
+
+#define file_buf_get_array_le16(fb, base, array, member, size) \
+	file_buf_get_array(fb, Uint16LE, base, array, member, size)
+
 
 } // namespace Comprehend
 } // namespace Glk

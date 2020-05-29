@@ -57,22 +57,22 @@ void image_set_draw_flags(unsigned flags)
 	draw_flags |= flags;
 }
 
-static uint16 image_get_operand(struct file_buf *fb)
+static uint16 image_get_operand(FileBuffer *fb)
 {
 	uint8 val;
 
-	file_buf_get_u8(fb, &val);
+	val = fb->readByte();
 	return val;
 }
 
-static bool do_image_op(struct file_buf *fb, struct image_context *ctx)
+static bool do_image_op(struct FileBuffer *fb, struct image_context *ctx)
 {
 	uint8 opcode;
 	uint16 a, b;
 
-	file_buf_get_u8(fb, &opcode);
+	opcode = fb->readByte();
 	debug_printf(DEBUG_IMAGE_DRAW,
-		     "  %.4x [%.2x]: ", file_buf_get_pos(fb) - 1, opcode);
+		     "  %.4x [%.2x]: ", fb->pos() - 1, opcode);
 
 	switch (opcode) {
 	case IMAGE_OP_SCENE_END:
@@ -257,7 +257,7 @@ static bool do_image_op(struct file_buf *fb, struct image_context *ctx)
 void draw_image(struct image_data *info, unsigned index)
 {
 	unsigned file_num;
-	struct file_buf *fb;
+	struct FileBuffer *fb;
 	bool done = false;
 	image_context ctx = {
 		0, 0, G_COLOR_BLACK, G_COLOR_BLACK, IMAGE_OP_SHAPE_CIRCLE_LARGE
@@ -272,7 +272,7 @@ void draw_image(struct image_data *info, unsigned index)
 		return;
 	}
 
-	file_buf_set_pos(fb, info->image_offsets[index]);
+	fb->seek(info->image_offsets[index]);
 	while (!done) {
 		done = do_image_op(fb, &ctx);
 		if (!done && (draw_flags & IMAGEF_OP_WAIT_KEYPRESS)) {
@@ -304,30 +304,28 @@ static void load_image_file(struct image_data *info, const char *filename,
 			    unsigned file_num)
 {
 	unsigned base = file_num * IMAGES_PER_FILE;
-	struct file_buf *fb;
+	struct FileBuffer *fb;
 	uint16 version;
 	int i;
 
-	fb = &info->fb[file_num];
-	file_buf_map(filename, fb);
+	info->fb[file_num] = FileBuffer(filename);
 
 	/*
 	 * In earlier versions of Comprehend the first word is 0x1000 and
 	 * the image offsets start four bytes in. In newer versions the
 	 * image offsets start at the beginning of the image file.
 	 */
-	file_buf_get_le16(fb, &version);
+	version = fb->readUint16LE();
 	if (version == 0x1000)
-		file_buf_set_pos(fb, 4);
+		fb->seek(4);
 	else
-		file_buf_set_pos(fb, 0);
+		fb->seek(0);
 
 	/* Get the image offsets in the file */
 	for (i = 0; i < IMAGES_PER_FILE; i++) {
-		file_buf_get_le16(fb, &info->image_offsets[base + i]); {
-			if (version == 0x1000)
-				info->image_offsets[base + i] += 4;
-		}
+		info->image_offsets[base + i] = fb->readUint16LE();
+		if (version == 0x1000)
+			info->image_offsets[base + i] += 4;
 	}
 }
 
@@ -338,7 +336,7 @@ static void load_image_files(struct image_data *info,
 	memset(info, 0, sizeof(*info));
 
 	info->nr_images = filenames.size() * IMAGES_PER_FILE;
-	info->fb = (file_buf *)xmalloc(info->nr_images * sizeof(*info->fb));
+	info->fb = (FileBuffer *)xmalloc(info->nr_images * sizeof(*info->fb));
 	info->image_offsets = (uint16 *)xmalloc(info->nr_images * sizeof(uint16));
 
 	for (i = 0; i < filenames.size(); i++) {
