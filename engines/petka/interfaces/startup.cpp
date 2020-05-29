@@ -59,23 +59,16 @@ void InterfaceStartup::start(int id) {
 	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::kMusicSoundType);
 	s->play(true);
 
-	const Common::Array<BGInfo> &infos = g_vm->getQSystem()->_mainInterface->_bgs;
-
-	for (uint i = 0; i < infos.size(); ++i) {
-		if (infos[i].objId != bg->_id) {
-			continue;
-		}
-		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
-			QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].attachedObjIds[j]);
-			obj->_z = 1;
-			obj->_x = 0;
-			obj->_y = 0;
-			obj->_frame = 1;
-			obj->_animate = 0;
-			obj->_isShown = 0;
-			_objs.push_back(obj);
-		}
-		break;
+	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(id);
+	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
+		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
+		obj->_z = 1;
+		obj->_x = 0;
+		obj->_y = 0;
+		obj->_frame = 1;
+		obj->_animate = 0;
+		obj->_isShown = 0;
+		_objs.push_back(obj);
 	}
 
 	initCursor(kStartupCursorId, 1, 0);

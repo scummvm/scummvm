@@ -47,24 +47,17 @@ void InterfaceMap::start(int id) {
 	_roomResID = bg->_resourceId;
 	_objs.push_back(bg);
 
-	const Common::Array<BGInfo> &infos = sys->_mainInterface->_bgs;
-
-	for (uint i = 0; i < infos.size(); ++i) {
-		if (infos[i].objId != bg->_id) {
-			continue;
-		}
-		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
-			QMessageObject *obj = sys->findObject(infos[i].attachedObjIds[j]);
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
-			flc->setFrame(1);
-			obj->_z = 1;
-			obj->_x = 0;
-			obj->_y = 0;
-			obj->_frame = 1;
-			obj->_animate = obj->_isShown;
-			_objs.push_back(obj);
-		}
-		break;
+	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(id);
+	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
+		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+		flc->setFrame(1);
+		obj->_z = 1;
+		obj->_x = 0;
+		obj->_y = 0;
+		obj->_frame = 1;
+		obj->_animate = obj->_isShown;
+		_objs.push_back(obj);
 	}
 
 	QObjectCursor *cursor = sys->getCursor();

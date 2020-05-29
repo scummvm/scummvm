@@ -97,25 +97,19 @@ void InterfacePanel::start(int id) {
 	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kPanelObjName);
 	_objs.push_back(bg);
 	sys->update();
-	const Common::Array<BGInfo> &infos = sys->_mainInterface->_bgs;
 
-	for (uint i = 0; i < infos.size(); ++i) {
-		if (infos[i].objId != bg->_id) {
-			continue;
-		}
-		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
-			QMessageObject *obj = sys->findObject(infos[i].attachedObjIds[j]);
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
-			flc->setFrame(1);
-			obj->_z = 1;
-			obj->_x = _objectPoints[j].x;
-			obj->_y = _objectPoints[j].y;
-			obj->_frame = 1;
-			obj->_animate = 0;
-			obj->_isShown = 1;
-			_objs.push_back(obj);
-		}
-		break;
+	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(id);
+	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
+		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+		flc->setFrame(1);
+		obj->_z = 1;
+		obj->_x = _objectPoints[i].x;
+		obj->_y = _objectPoints[i].y;
+		obj->_frame = 1;
+		obj->_animate = 0;
+		obj->_isShown = 1;
+		_objs.push_back(obj);
 	}
 
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
