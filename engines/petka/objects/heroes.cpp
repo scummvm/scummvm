@@ -182,20 +182,20 @@ double QObjectPetka::calcSmth(int y) {
 	y = MIN(y, 480);
 
 
-	if (!qsys->_unkMap.contains(qsys->_room->_name)) {
+	if (!qsys->_perspectives.contains(qsys->_room->_name)) {
 		return 1.0;
 	}
 
-	const UnkStruct &unk = qsys->_unkMap.getVal(qsys->_room->_name);
+	const Perspective &pers = qsys->_perspectives.getVal(qsys->_room->_name);
 
 
-	double res = (y - unk.f3) * unk.f2 / (unk.f4 - unk.f3);
+	double res = (y - pers.y0) * pers.k / (pers.y1 - pers.y0);
 	if (res < 0.0)
 		res = 0.0;
 
-	if (res + unk.f1 > unk.f5)
-		return unk.f5;
-	return res + unk.f1;
+	if (res + pers.f0 > pers.f1)
+		return pers.f1;
+	return res + pers.f0;
 }
 
 void QObjectPetka::updateWalk() {

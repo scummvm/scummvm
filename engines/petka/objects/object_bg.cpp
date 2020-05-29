@@ -147,9 +147,9 @@ void QObjectBG::readInisData(Common::INIFile &names, Common::INIFile &cast, Comm
 		bgs->getKey(_name, "Settings", perspective);
 		if (!perspective.empty()) {
 			// todo store this structure in bg object
-			UnkStruct unk;
-			sscanf(perspective.c_str(), "%lf %lf %d %d %lf", &unk.f1, &unk.f2, &unk.f3, &unk.f4, &unk.f5);
-			g_vm->getQSystem()->_unkMap.setVal(_name, unk);
+			Perspective unk;
+			sscanf(perspective.c_str(), "%lf %lf %d %d %lf", &unk.f0, &unk.k, &unk.y0, &unk.y1, &unk.f1);
+			g_vm->getQSystem()->_perspectives.setVal(_name, unk);
 		}
 	}
 	QMessageObject::readInisData(names, cast, bgs);

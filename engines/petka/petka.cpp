@@ -93,7 +93,7 @@ Common::Error PetkaEngine::run() {
 	_soundMgr.reset(new SoundMgr());
 	_vsys.reset(new VideoSystem());
 
-	loadPart(isDemo() ? 1 : 0);
+	loadPart(2);
 
 	while (!shouldQuit()) {
 		Common::Event event;

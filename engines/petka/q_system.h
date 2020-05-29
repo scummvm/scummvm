@@ -47,12 +47,13 @@ class InterfacePanel;
 class InterfaceMap;
 class Interface;
 
-struct UnkStruct {
+// Linear Interpolation
+struct Perspective {
+	double f0;
+	double k;
+	int y0;
+	int y1;
 	double f1;
-	double f2;
-	int f3;
-	int f4;
-	double f5;
 };
 
 class QSystem {
@@ -97,7 +98,7 @@ public:
 	Interface *_currInterface;
 	Interface *_prevInterface;
 
-	Common::HashMap<Common::String, UnkStruct> _unkMap;
+	Common::HashMap<Common::String, Perspective> _perspectives;
 
 	int _isIniting;
 	int _fxId;
