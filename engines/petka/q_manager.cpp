@@ -30,6 +30,7 @@
 
 #include "petka/flc.h"
 #include "petka/q_manager.h"
+#include "petka/q_system.h"
 #include "petka/petka.h"
 
 namespace Petka {
@@ -144,6 +145,9 @@ Graphics::Surface *QManager::loadBitmap(uint32 id) {
 	Graphics::Surface *s = loadBitmapSurface(*stream);
 	if (s) {
 		s->convertToInPlace(g_system->getScreenFormat());
+		g_vm->getQSystem()->_sceneWidth = s->w;
+		g_vm->getQSystem()->_xOffset = 0;
+
 		QResource &res = _resourceMap.getVal(id);
 		res.type = QResource::kSurface;
 		res.surface = s;
