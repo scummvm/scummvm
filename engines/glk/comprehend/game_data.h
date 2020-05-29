@@ -185,6 +185,12 @@ struct game_info {
 	unsigned		update_flags;
 };
 
+struct string_file {
+	const char *filename;
+	uint32 base_offset;
+	uint32 end_offset;
+};
+
 enum {
 	OPCODE_UNKNOWN,
 	OPCODE_TEST_FALSE,

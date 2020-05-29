@@ -23,12 +23,12 @@
 #ifndef GLK_COMPREHEND_IMAGE_DATA_H
 #define GLK_COMPREHEND_IMAGE_DATA_H
 
-#include "glk/comprehend/game.h"
 #include "common/scummsys.h"
 
 namespace Glk {
 namespace Comprehend {
 
+struct comprehend_game;
 struct file_buf;
 
 struct image_data {

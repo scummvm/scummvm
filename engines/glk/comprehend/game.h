@@ -23,22 +23,13 @@
 #ifndef GLK_COMPREHEND_GAME_H
 #define GLK_COMPREHEND_GAME_H
 
+#include "glk/comprehend/game_data.h"
 #include "common/scummsys.h"
 
 namespace Glk {
 namespace Comprehend {
 
 #define MAX_FILES 10
-
-struct function;
-struct item;
-struct word;
-
-struct string_file {
-	const char *filename;
-	uint32 base_offset;
-	uint32 end_offset;
-};
 
 struct comprehend_game {
 	const char *game_name;

@@ -22,6 +22,7 @@
 
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/file_buf.h"
+#include "glk/comprehend/game.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/image_data.h"
 #include "glk/comprehend/graphics.h"

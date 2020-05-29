@@ -21,6 +21,7 @@
  */
 
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/game.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/util.h"
 
