@@ -23,6 +23,8 @@
 #ifndef PETKA_MAIN_H
 #define PETKA_MAIN_H
 
+#include "audio/mixer.h"
+
 #include "petka/interfaces/interface.h"
 #include "petka/interfaces/dialog_interface.h"
 
