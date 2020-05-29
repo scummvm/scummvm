@@ -28,17 +28,29 @@
 namespace Glk {
 namespace Comprehend {
 
+struct tr_monster {
+	uint8 object;
+	uint8 dead_flag;
+	unsigned min_turns_before;
+	unsigned room_allow_flag;
+	unsigned randomness;
+};
+
 class TransylvaniaGame : public comprehend_game {
-public:
-	TransylvaniaGame();
+private:
+	static const tr_monster WEREWOLF;
+	static const tr_monster VAMPIRE;
+
+	void update_monster(const tr_monster *monster_info);
 
 public:
-	static void tr_before_game(comprehend_game *game);
-	static bool tr_before_turn(comprehend_game *game);
-	static int tr_room_is_special(comprehend_game *game,
-		unsigned room_index, unsigned *room_desc_string);
-	static void tr_handle_special_opcode(comprehend_game *game,
-		uint8 operand);
+	TransylvaniaGame();
+	~TransylvaniaGame() override {}
+
+	void before_game() override;
+	bool before_turn() override;
+	int room_is_special(unsigned room_index, unsigned *room_desc_string) override;
+	void handle_special_opcode(uint8 operand) override;
 };
 
 } // namespace Comprehend

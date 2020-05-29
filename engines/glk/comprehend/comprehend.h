@@ -48,22 +48,6 @@ struct game_strings {
 	uint16 game_restart;
 };
 
-#define ROOM_IS_NORMAL 0
-#define ROOM_IS_DARK 1
-#define ROOM_IS_TOO_BRIGHT 2
-
-struct game_ops {
-	void (*before_game)(struct comprehend_game *game);
-	void (*before_prompt)(struct comprehend_game *game);
-	bool (*before_turn)(struct comprehend_game *game);
-	bool (*after_turn)(struct comprehend_game *game);
-	int (*room_is_special)(struct comprehend_game *game,
-	                       unsigned room_index,
-	                       unsigned *room_desc_string);
-	void (*handle_special_opcode)(struct comprehend_game *game,
-	                              uint8 operand);
-};
-
 /**
  * Comprehend engine
  */

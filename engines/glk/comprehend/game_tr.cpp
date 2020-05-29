@@ -28,33 +28,16 @@
 namespace Glk {
 namespace Comprehend {
 
-struct tr_monster {
-	uint8		object;
-	uint8		dead_flag;
-	unsigned	min_turns_before;
-	unsigned	room_allow_flag;
-	unsigned	randomness;
-};
-
-static struct tr_monster tr_werewolf = {
+const tr_monster TransylvaniaGame::WEREWOLF = {
 	0x21, 7, (1 << 6), 5, 5
 };
 
-static struct tr_monster tr_vampire = {
+const tr_monster TransylvaniaGame::VAMPIRE = {
 	0x26, 5, (1 << 7), 0, 5
 };
 
 static struct game_strings tr_strings = {
     EXTRA_STRING_TABLE(0x8a)
-};
-
-static struct game_ops tr_ops = {
-    TransylvaniaGame::tr_before_game,
-    nullptr,
-    TransylvaniaGame::tr_before_turn,
-    nullptr,
-    TransylvaniaGame::tr_room_is_special,
-    TransylvaniaGame::tr_handle_special_opcode,
 };
 
 
@@ -79,28 +62,24 @@ TransylvaniaGame::TransylvaniaGame() : comprehend_game() {
 
 	save_game_file_fmt = "G%d.MS0";
 	strings = &tr_strings;
-	ops = &tr_ops;
 };
 
-
-static void tr_update_monster(struct comprehend_game *game,
-			      struct tr_monster *monster_info)
-{
+void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 	struct item *monster;
 	struct room *room;
 	uint16 turn_count;
 
-	room = &game->info->rooms[game->info->current_room];
-	turn_count = game->info->variable[VAR_TURN_COUNT];
+	room = &info->rooms[info->current_room];
+	turn_count = info->variable[VAR_TURN_COUNT];
 
-	monster = get_item(game, monster_info->object);
-	if (monster->room == game->info->current_room) {
+	monster = get_item(this, monster_info->object);
+	if (monster->room == info->current_room) {
 		/* The monster is in the current room - leave it there */
 		return;
 	}
 
 	if ((room->flags & monster_info->room_allow_flag) &&
-	    !game->info->flags[monster_info->dead_flag] &&
+	    !info->flags[monster_info->dead_flag] &&
 	    turn_count > monster_info->min_turns_before) {
 		/*
 		 * The monster is alive and allowed to move to the current
@@ -108,18 +87,18 @@ static void tr_update_monster(struct comprehend_game *game,
 		 * it back to limbo.
 		 */
 		if ((g_comprehend->getRandomNumber(0x7fffffff) % monster_info->randomness) == 0) {
-			move_object(game, monster, game->info->current_room);
-			game->info->variable[0xf] = turn_count + 1;
+			move_object(this, monster, info->current_room);
+			info->variable[0xf] = turn_count + 1;
 		} else {
-			move_object(game, monster, ROOM_NOWHERE);
+			move_object(this, monster, ROOM_NOWHERE);
 		}
 	}
 }
 
-int TransylvaniaGame::tr_room_is_special(comprehend_game *game, unsigned room_index,
+int TransylvaniaGame::room_is_special(unsigned room_index,
 			      unsigned *room_desc_string)
 {
-	struct room *room = &game->info->rooms[room_index];
+	struct room *room = &info->rooms[room_index];
 
 	if (room_index == 0x28) {
 		if (room_desc_string)
@@ -130,15 +109,13 @@ int TransylvaniaGame::tr_room_is_special(comprehend_game *game, unsigned room_in
 	return ROOM_IS_NORMAL;
 }
 
-bool TransylvaniaGame::tr_before_turn(comprehend_game *game)
-{
-	tr_update_monster(game, &tr_werewolf);
-	tr_update_monster(game, &tr_vampire);
+bool TransylvaniaGame::before_turn() {
+	update_monster(&WEREWOLF);
+	update_monster(&VAMPIRE);
 	return false;
 }
 
-void TransylvaniaGame::tr_handle_special_opcode(comprehend_game *game,
-				     uint8 operand)
+void TransylvaniaGame::handle_special_opcode(uint8 operand)
 {
 	switch (operand) {
 	case 0x01:
@@ -153,11 +130,11 @@ void TransylvaniaGame::tr_handle_special_opcode(comprehend_game *game,
 		break;
 
 	case 0x06:
-		game_save(game);
+		game_save(this);
 		break;
 
 	case 0x07:
-		game_restore(game);
+		game_restore(this);
 		break;
 
 	case 0x03:
@@ -166,7 +143,7 @@ void TransylvaniaGame::tr_handle_special_opcode(comprehend_game *game,
 		/* Won the game */
 	case 0x08:
 		/* Restart game */
-		game_restart(game);
+		game_restart(this);
 		break;
 
 	case 0x09:
@@ -174,9 +151,9 @@ void TransylvaniaGame::tr_handle_special_opcode(comprehend_game *game,
 		 * Show the Zin screen in reponse to doing 'sing some enchanted
 		 * evening' in his cabin.
 		 */
-		draw_location_image(&game->info->room_images, 41);
+		draw_location_image(&info->room_images, 41);
 		console_get_key();
-		game->info->update_flags |= UPDATE_GRAPHICS;
+		info->update_flags |= UPDATE_GRAPHICS;
 		break;
 	}
 }
@@ -198,11 +175,11 @@ static void read_string(char *buffer, size_t size)
 #endif
 }
 
-void TransylvaniaGame::tr_before_game(struct comprehend_game *game) {
+void TransylvaniaGame::before_game() {
 	char buffer[128];
 
 	/* Welcome to Transylvania - sign your name */
-	console_println(game, game->info->strings.strings[0x20]);
+	console_println(this, info->strings.strings[0x20]);
 	read_string(buffer, sizeof(buffer));
 
 	/*
@@ -211,15 +188,15 @@ void TransylvaniaGame::tr_before_game(struct comprehend_game *game) {
 	 * limited (the original game will break if you put a name in that
 	 * is too long).
 	 */
-	if (!game->info->replace_words[0])
-		game->info->replace_words[0] = xstrndup(buffer, strlen(buffer));
+	if (!info->replace_words[0])
+		info->replace_words[0] = xstrndup(buffer, strlen(buffer));
 	else
-		snprintf(game->info->replace_words[0],
-			 strlen(game->info->replace_words[0]),
+		snprintf(info->replace_words[0],
+			 strlen(info->replace_words[0]),
 			 "%s", buffer);
 
 	/* And your next of kin - This isn't store by the game */
-	console_println(game, game->info->strings.strings[0x21]);
+	console_println(this, info->strings.strings[0x21]);
 	read_string(buffer, sizeof(buffer));
 }
 

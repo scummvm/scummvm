@@ -31,6 +31,7 @@ namespace Comprehend {
 class TalismanGame : public comprehend_game {
 public:
 	TalismanGame();
+	~TalismanGame() override {}
 };
 
 } // namespace Comprehend

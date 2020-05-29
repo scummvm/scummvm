@@ -48,8 +48,7 @@ comprehend_game::comprehend_game() : game_name(nullptr),
                                      game_data_file(nullptr),
                                      save_game_file_fmt(nullptr),
                                      color_table(0),
-                                     strings(nullptr),
-                                     ops(nullptr) {
+                                     strings(nullptr) {
 	info = (game_info *)malloc(sizeof(*info));
 }
 
@@ -275,9 +274,7 @@ static void update_graphics(comprehend_game *game) {
 	if (!g_enabled())
 		return;
 
-	type = ROOM_IS_NORMAL;
-	if (game->ops->room_is_special)
-		type = game->ops->room_is_special(game, game->info->current_room, NULL);
+	type = game->room_is_special(game->info->current_room, NULL);
 
 	switch (type) {
 	case ROOM_IS_DARK:
@@ -345,12 +342,9 @@ static void update(comprehend_game *game) {
 	update_graphics(game);
 
 	/* Check if the room is special (dark, too bright, etc) */
-	room_type = ROOM_IS_NORMAL;
 	room_desc_string = room->string_desc;
-	if (game->ops->room_is_special)
-		room_type = game->ops->room_is_special(game,
-		                                       game->info->current_room,
-		                                       &room_desc_string);
+	room_type = game->room_is_special(game->info->current_room,
+		&room_desc_string);
 
 	if (game->info->update_flags & UPDATE_ROOM_DESC)
 		console_println(game, string_lookup(game, room_desc_string));
@@ -962,9 +956,7 @@ static void eval_instruction(comprehend_game *game,
 
 	case OPCODE_SPECIAL:
 		/* Game specific opcode */
-		if (game->ops->handle_special_opcode)
-			game->ops->handle_special_opcode(game,
-			                                 instr->operand[0]);
+		game->handle_special_opcode(instr->operand[0]);
 		break;
 
 	default:
@@ -1174,20 +1166,18 @@ static void read_sentence(comprehend_game *game, char **line,
 }
 
 static void before_turn(comprehend_game *game) {
-	/* Run the game specific before turn bits */
-	if (game->ops->before_turn)
-		game->ops->before_turn(game);
+	// Run the game specific before turn bits
+	game->before_turn();
 
-	/* Run the each turn functions */
+	// Run the each turn functions
 	eval_function(game, &game->info->functions[0], NULL, NULL);
 
 	update(game);
 }
 
 static void after_turn(comprehend_game *game) {
-	/* Do post turn game specific bits */
-	if (game->ops->after_turn)
-		game->ops->after_turn(game);
+	// Do post turn game specific bits
+	game->after_turn();
 }
 
 static void read_input(comprehend_game *game) {
@@ -1205,7 +1195,7 @@ static void read_input(comprehend_game *game) {
 		line = fgets(buffer, sizeof(buffer), stdin);
 	}
 
-	/* Re-comprehend special commands start with '!' */
+	// Re-comprehend special commands start with '!'
 	if (*line == '!') {
 		handle_debug_command(game, &line[1]);
 		return;
@@ -1233,11 +1223,10 @@ static void read_input(comprehend_game *game) {
 void comprehend_play_game(comprehend_game *game) {
 	console_init();
 
-	if (game->ops->before_game)
-		game->ops->before_game(game);
+	game->before_game();
 
 	game->info->update_flags = (uint)UPDATE_ALL;
-	while (1)
+	while (!g_comprehend->shouldQuit())
 		read_input(game);
 }
 

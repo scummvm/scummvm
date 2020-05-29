@@ -31,13 +31,11 @@ namespace Comprehend {
 class OOToposGame : public comprehend_game {
 public:
 	OOToposGame();
+	~OOToposGame() override {}
 
-public:
-	static bool oo_before_turn(comprehend_game *game);
-	static int oo_room_is_special(comprehend_game *game,
-		unsigned room_index, unsigned *room_desc_string);
-	static void oo_handle_special_opcode(comprehend_game *game,
-		uint8 operand);
+	bool before_turn() override;
+	int room_is_special(unsigned room_index, unsigned *room_desc_string) override;
+	void handle_special_opcode(uint8 operand) override;
 };
 
 } // namespace Comprehend

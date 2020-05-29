@@ -34,15 +34,6 @@ namespace Comprehend {
 #define OO_FLAG_WEARING_GOGGLES 0x1b
 #define OO_FLAG_FLASHLIGHT_ON 0x27
 
-static struct game_ops oo_ops = {
-    nullptr,
-    nullptr,
-    OOToposGame::oo_before_turn,
-    nullptr,
-    OOToposGame::oo_room_is_special,
-    OOToposGame::oo_handle_special_opcode
-};
-
 OOToposGame::OOToposGame() : comprehend_game() {
 	game_name = "Oo-Topos";
 	short_name = "oo";
@@ -66,17 +57,15 @@ OOToposGame::OOToposGame() : comprehend_game() {
 
 	save_game_file_fmt = "G%d";
 	color_table = 1;
-	ops = &oo_ops;
 }
 
-int OOToposGame::oo_room_is_special(comprehend_game *game,
-                              unsigned room_index,
+int OOToposGame::room_is_special(unsigned room_index,
                               unsigned *room_desc_string) {
-	struct room *room = &game->info->rooms[room_index];
+	room *room = &info->rooms[room_index];
 
 	/* Is the room dark */
 	if ((room->flags & OO_ROOM_FLAG_DARK) &&
-	    !(game->info->flags[OO_FLAG_FLASHLIGHT_ON])) {
+	    !(info->flags[OO_FLAG_FLASHLIGHT_ON])) {
 		if (room_desc_string)
 			*room_desc_string = 0xb3;
 		return ROOM_IS_DARK;
@@ -84,7 +73,7 @@ int OOToposGame::oo_room_is_special(comprehend_game *game,
 
 	/* Is the room too bright */
 	if (room_index == OO_BRIGHT_ROOM &&
-	    !game->info->flags[OO_FLAG_WEARING_GOGGLES]) {
+	    !info->flags[OO_FLAG_WEARING_GOGGLES]) {
 		if (room_desc_string)
 			*room_desc_string = 0x1c;
 		return ROOM_IS_TOO_BRIGHT;
@@ -93,36 +82,35 @@ int OOToposGame::oo_room_is_special(comprehend_game *game,
 	return ROOM_IS_NORMAL;
 }
 
-bool OOToposGame::oo_before_turn(comprehend_game *game) {
+bool OOToposGame::before_turn() {
 	/* FIXME - probably doesn't work correctly with restored games */
 	static bool flashlight_was_on = false, googles_were_worn = false;
-	struct room *room = &game->info->rooms[game->info->current_room];
+	struct room *room = &info->rooms[info->current_room];
 
 	/* 
 	 * Check if the room needs to be redrawn because the flashlight
 	 * was switch off or on.
 	 */
-	if (game->info->flags[OO_FLAG_FLASHLIGHT_ON] != flashlight_was_on &&
+	if (info->flags[OO_FLAG_FLASHLIGHT_ON] != flashlight_was_on &&
 	    (room->flags & OO_ROOM_FLAG_DARK)) {
-		flashlight_was_on = game->info->flags[OO_FLAG_FLASHLIGHT_ON];
-		game->info->update_flags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
+		flashlight_was_on = info->flags[OO_FLAG_FLASHLIGHT_ON];
+		info->update_flags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
 
 	/*
 	 * Check if the room needs to be redrawn because the goggles were
 	 * put on or removed.
 	 */
-	if (game->info->flags[OO_FLAG_WEARING_GOGGLES] != googles_were_worn &&
-	    game->info->current_room == OO_BRIGHT_ROOM) {
-		googles_were_worn = game->info->flags[OO_FLAG_WEARING_GOGGLES];
-		game->info->update_flags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
+	if (info->flags[OO_FLAG_WEARING_GOGGLES] != googles_were_worn &&
+	    info->current_room == OO_BRIGHT_ROOM) {
+		googles_were_worn = info->flags[OO_FLAG_WEARING_GOGGLES];
+		info->update_flags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
 
 	return false;
 }
 
-void OOToposGame::oo_handle_special_opcode(comprehend_game *game,
-		uint8 operand) {
+void OOToposGame::handle_special_opcode(uint8 operand) {
 	switch (operand) {
 	case 0x03:
 		/* Game over - failure */
@@ -130,17 +118,17 @@ void OOToposGame::oo_handle_special_opcode(comprehend_game *game,
 		/* Won the game */
 	case 0x04:
 		/* Restart game */
-		game_restart(game);
+		game_restart(this);
 		break;
 
 	case 0x06:
 		/* Save game */
-		game_save(game);
+		game_save(this);
 		break;
 
 	case 0x07:
 		/* Restore game */
-		game_restore(game);
+		game_restore(this);
 		break;
 	}
 }

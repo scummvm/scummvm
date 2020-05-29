@@ -31,11 +31,10 @@ namespace Comprehend {
 class CrimsonCrownGame : public comprehend_game {
 public:
 	CrimsonCrownGame();
+	~CrimsonCrownGame() override {}
 
-public:
-	static void cc1_before_prompt(comprehend_game *game);
-	static void cc1_handle_special_opcode(comprehend_game *game,
-		uint8 operand);
+	void before_prompt() override;
+	void handle_special_opcode(uint8 operand) override;
 };
 
 } // namespace Comprehend

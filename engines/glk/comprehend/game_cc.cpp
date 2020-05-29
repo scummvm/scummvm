@@ -28,14 +28,6 @@ namespace Comprehend {
 
 static struct game_strings cc1_strings = {0x9};
 
-static struct game_ops cc1_ops = {
-    nullptr,
-    CrimsonCrownGame::cc1_before_prompt,
-    nullptr,
-    nullptr,
-    nullptr,
-    CrimsonCrownGame::cc1_handle_special_opcode};
-
 #ifdef TODO
 static struct game_ops cc2_ops = {
     nullptr,
@@ -60,7 +52,6 @@ CrimsonCrownGame::CrimsonCrownGame() : comprehend_game() {
 
 	save_game_file_fmt = "G%d.MS0";
 	strings = &cc1_strings;
-	ops = &cc1_ops;
 }
 
 #ifdef TODO
@@ -113,9 +104,8 @@ static bool cc_common_handle_special_opcode(struct comprehend_game *game,
 	return false;
 }
 
-void CrimsonCrownGame::cc1_handle_special_opcode(comprehend_game *game,
-		uint8 operand) {
-	if (cc_common_handle_special_opcode(game, operand))
+void CrimsonCrownGame::handle_special_opcode(uint8 operand) {
+	if (cc_common_handle_special_opcode(this, operand))
 		return;
 
 	switch (operand) {
@@ -156,8 +146,8 @@ static void cc2_before_prompt(struct comprehend_game *game) {
 	cc_clear_companion_flags(game);
 }
 
-void CrimsonCrownGame::cc1_before_prompt(comprehend_game *game) {
-	cc_clear_companion_flags(game);
+void CrimsonCrownGame::before_prompt() {
+	cc_clear_companion_flags(this);
 }
 
 } // namespace Comprehend
