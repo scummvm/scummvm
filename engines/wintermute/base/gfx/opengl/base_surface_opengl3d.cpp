@@ -1,13 +1,33 @@
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 #include "base_surface_opengl3d.h"
 
 #include "../base_image.h"
 #include "base_render_opengl3d.h"
 #include "graphics/transparent_surface.h"
 
-Wintermute::BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(Wintermute::BaseGame* game, BaseRenderOpenGL3D* renderer)
-	: BaseSurface(game), tex(nullptr), renderer(renderer), pixelOpReady(false)
-{
-
+Wintermute::BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(Wintermute::BaseGame *game, BaseRenderOpenGL3D *renderer)
+    : BaseSurface(game), tex(nullptr), renderer(renderer), pixelOpReady(false) {
 }
 
 bool Wintermute::BaseSurfaceOpenGL3D::invalidate() {
@@ -40,7 +60,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::display(int x, int y, Wintermute::Rect32 r
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayTransform(int x, int y, Wintermute::Rect32 rect, Wintermute::Rect32 newRect, const Graphics::TransformStruct& transform) {
+bool Wintermute::BaseSurfaceOpenGL3D::displayTransform(int x, int y, Wintermute::Rect32 rect, Wintermute::Rect32 newRect, const Graphics::TransformStruct &transform) {
 	return true;
 }
 
@@ -58,8 +78,8 @@ bool Wintermute::BaseSurfaceOpenGL3D::restore() {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	BaseImage img	= BaseImage();
+bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+	BaseImage img = BaseImage();
 	if (!img.loadFile(filename)) {
 		return false;
 	}
@@ -71,9 +91,9 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, boo
 	_filename = filename;
 
 	if (defaultCK) {
-		ckRed   = 255;
+		ckRed = 255;
 		ckGreen = 0;
-		ckBlue  = 255;
+		ckBlue = 255;
 	}
 
 	_ckDefault = defaultCK;
@@ -84,7 +104,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String& filename, boo
 	bool needsColorKey = false;
 	bool replaceAlpha = true;
 
-	Graphics::Surface* surf = img.getSurface()->convertTo(OpenGL::Texture::getRGBAPixelFormat(), img.getPalette());
+	Graphics::Surface *surf = img.getSurface()->convertTo(OpenGL::Texture::getRGBAPixelFormat(), img.getPalette());
 
 	if (_filename.hasSuffix(".bmp") && img.getSurface()->format.bytesPerPixel == 4) {
 		// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
@@ -126,7 +146,7 @@ bool Wintermute::BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byt
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::getPixel(int x, int y, byte* r, byte* g, byte* b, byte* a) {
+bool Wintermute::BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
 	return true;
 }
 
@@ -153,12 +173,12 @@ bool Wintermute::BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 		return false;
 	}
 
-	uint8* image_data = nullptr;
+	uint8 *image_data = nullptr;
 
 	// assume 32 bit rgba for now
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 
-	uint32 pixel = *reinterpret_cast<uint32*>(image_data + y * tex->getWidth() * 4 + x * 4);
+	uint32 pixel = *reinterpret_cast<uint32 *>(image_data + y * tex->getWidth() * 4 + x * 4);
 	pixel &= 0x000000FF;
 	return pixel == 0;
 }
