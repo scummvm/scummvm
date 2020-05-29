@@ -23,14 +23,14 @@
 #include "common/scummsys.h"
 #include "common/translation.h"
 
+#include "common/savefile.h"
+#include "graphics/thumbnail.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
 #include "graphics/palette.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
 #include "common/system.h"
 #include "image/iff.h"
 #include "engines/util.h"
@@ -42,6 +42,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "gui/saveload.h"
 
 #include "kingdom/kingdom.h"
 
@@ -114,24 +115,22 @@ void KingdomGame::initVariables() {
 //	_quitFlag = 0;
 	_soundNumber = 0;
 	_pMovie = 0;
-//	_options = 0;
 	_oldTRS = 0;
 	_oldTLS = 0;
 	_oldIconsClosed = false;
 	_fstFwd = false;
 	_noMusic = false;
 	_mouseValue = 0;
-	_mapEx = 0;
+	_mapEx = false;
 	_loopFlag = false;
 	_lastSound = 0;
 	_keyActive = false;
 	_itemInhibit = false;
-//	_iconW = 0;
 	_gameMode = 0;
 	_fullScreen = false;
 	_frameStop = 0;
 	_daelonCntr = 0;
-	_sound = 0;
+	_sound = false;
 	_asMode = false;
 	for (int i = 0; i < 510; i++) {
 		_rezPointers[i] = nullptr;
@@ -139,10 +138,8 @@ void KingdomGame::initVariables() {
 	}
 	_mouseDebound = false;
 	_mouseButton = 0;
-//	_cursorActive = false;
 	_cursorDrawn = false;
 	_oldCursorPos = Common::Point(0, 0);
-//	_cursorShape = nullptr;
 	_oldCursorDef = 0;
 	_cursorDef = 0;
 	_cursorPos = Common::Point(0, 0);
