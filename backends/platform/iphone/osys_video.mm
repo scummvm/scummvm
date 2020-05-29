@@ -324,7 +324,7 @@ void OSystem_IPHONE::hideOverlay() {
 
 void OSystem_IPHONE::clearOverlay() {
 	//printf("clearOverlay()\n");
-	bzero(_videoContext->overlayTexture.getPixels(), _videoContext->overlayTexture.h * _videoContext->overlayTexture.pitch);
+	memset(_videoContext->overlayTexture.getPixels(), 0, _videoContext->overlayTexture.h * _videoContext->overlayTexture.pitch);
 	dirtyFullOverlayScreen();
 }
 

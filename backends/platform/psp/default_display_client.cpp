@@ -176,7 +176,7 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 	PSP_DEBUG_PRINT("format[%p], _buffer[%p], _palette[%p]\n", format, &_buffer, &_palette);
 
 	if (!format) {
-		bzero(&_pixelFormat, sizeof(_pixelFormat));
+		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
 		_pixelFormat.bytesPerPixel = 1;	// default
 	} else {
 		_pixelFormat = *format;
