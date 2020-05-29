@@ -42,26 +42,26 @@ static struct game_strings tr_strings = {
 
 
 TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
-	game_name = "Transylvania";
-	short_name = "tr";
-	game_data_file = "tr.gda";
+	_gameName = "Transylvania";
+	_shortName = "tr";
+	_gameDataFile = "tr.gda";
 
-	string_files.push_back(string_file("MA.MS1", 0x88));
-	string_files.push_back(string_file("MB.MS1", 0x88));
-	string_files.push_back(string_file("MC.MS1", 0x88));
-	string_files.push_back(string_file("MD.MS1", 0x88));
-	string_files.push_back(string_file("ME.MS1", 0x88));
+	_stringFiles.push_back(string_file("MA.MS1", 0x88));
+	_stringFiles.push_back(string_file("MB.MS1", 0x88));
+	_stringFiles.push_back(string_file("MC.MS1", 0x88));
+	_stringFiles.push_back(string_file("MD.MS1", 0x88));
+	_stringFiles.push_back(string_file("ME.MS1", 0x88));
 
-    location_graphic_files.push_back("RA.MS1");
-	location_graphic_files.push_back("RB.MS1");
-	location_graphic_files.push_back("RC.MS1");
+    _locationGraphicFiles.push_back("RA.MS1");
+	_locationGraphicFiles.push_back("RB.MS1");
+	_locationGraphicFiles.push_back("RC.MS1");
 
-	item_graphic_files.push_back("OA.MS1");
-	item_graphic_files.push_back("OB.MS1");
-	item_graphic_files.push_back("OC.MS1");
+	_itemGraphicFiles.push_back("OA.MS1");
+	_itemGraphicFiles.push_back("OB.MS1");
+	_itemGraphicFiles.push_back("OC.MS1");
 
-	save_game_file_fmt = "G%d.MS0";
-	strings = &tr_strings;
+	_savegameFileFormat = "G%d.MS0";
+	_gameStrings = &tr_strings;
 };
 
 void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
@@ -69,17 +69,17 @@ void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 	struct room *room;
 	uint16 turn_count;
 
-	room = &info->rooms[info->current_room];
-	turn_count = info->variable[VAR_TURN_COUNT];
+	room = &info->_rooms[info->_currentRoom];
+	turn_count = info->_variables[VAR_TURN_COUNT];
 
 	monster = get_item(this, monster_info->object);
-	if (monster->room == info->current_room) {
+	if (monster->room == info->_currentRoom) {
 		/* The monster is in the current room - leave it there */
 		return;
 	}
 
 	if ((room->flags & monster_info->room_allow_flag) &&
-	    !info->flags[monster_info->dead_flag] &&
+	    !info->_flags[monster_info->dead_flag] &&
 	    turn_count > monster_info->min_turns_before) {
 		/*
 		 * The monster is alive and allowed to move to the current
@@ -87,8 +87,8 @@ void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 		 * it back to limbo.
 		 */
 		if ((g_comprehend->getRandomNumber(0x7fffffff) % monster_info->randomness) == 0) {
-			move_object(this, monster, info->current_room);
-			info->variable[0xf] = turn_count + 1;
+			move_object(this, monster, info->_currentRoom);
+			info->_variables[0xf] = turn_count + 1;
 		} else {
 			move_object(this, monster, ROOM_NOWHERE);
 		}
@@ -98,7 +98,7 @@ void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 int TransylvaniaGame::room_is_special(unsigned room_index,
 			      unsigned *room_desc_string)
 {
-	struct room *room = &info->rooms[room_index];
+	struct room *room = &info->_rooms[room_index];
 
 	if (room_index == 0x28) {
 		if (room_desc_string)
@@ -151,9 +151,9 @@ void TransylvaniaGame::handle_special_opcode(uint8 operand)
 		 * Show the Zin screen in reponse to doing 'sing some enchanted
 		 * evening' in his cabin.
 		 */
-		draw_location_image(&info->room_images, 41);
+		draw_location_image(&info->_roomImages, 41);
 		console_get_key();
-		info->update_flags |= UPDATE_GRAPHICS;
+		info->_updateFlags |= UPDATE_GRAPHICS;
 		break;
 	}
 }
@@ -179,7 +179,7 @@ void TransylvaniaGame::before_game() {
 	char buffer[128];
 
 	/* Welcome to Transylvania - sign your name */
-	console_println(this, info->strings.strings[0x20]);
+	console_println(this, info->_strings.strings[0x20]);
 	read_string(buffer, sizeof(buffer));
 
 	/*
@@ -188,15 +188,15 @@ void TransylvaniaGame::before_game() {
 	 * limited (the original game will break if you put a name in that
 	 * is too long).
 	 */
-	if (!info->replace_words[0])
-		info->replace_words[0] = xstrndup(buffer, strlen(buffer));
+	if (!info->_replaceWords[0])
+		info->_replaceWords[0] = xstrndup(buffer, strlen(buffer));
 	else
-		snprintf(info->replace_words[0],
-			 strlen(info->replace_words[0]),
+		snprintf(info->_replaceWords[0],
+			 strlen(info->_replaceWords[0]),
 			 "%s", buffer);
 
 	/* And your next of kin - This isn't store by the game */
-	console_println(this, info->strings.strings[0x21]);
+	console_println(this, info->_strings.strings[0x21]);
 	read_string(buffer, sizeof(buffer));
 }
 

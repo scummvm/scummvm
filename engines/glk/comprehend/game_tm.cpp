@@ -29,21 +29,21 @@ namespace Comprehend {
 /* FIXME - This is broken */
 
 TalismanGame::TalismanGame() : ComprehendGame() {
-	game_name = "Talisman, Challenging the Sands of Time (broken)";
-	short_name = "tm";
-	game_data_file = "G0";
+	_gameName = "Talisman, Challenging the Sands of Time (broken)";
+	_shortName = "tm";
+	_gameDataFile = "G0";
 
-	location_graphic_files.push_back("RA");
-	location_graphic_files.push_back("RB");
-	location_graphic_files.push_back("RC");
-	location_graphic_files.push_back("RD");
-	location_graphic_files.push_back("RE");
-	location_graphic_files.push_back("RF");
-	location_graphic_files.push_back("RG");
-	item_graphic_files.push_back("OA");
-	item_graphic_files.push_back("OB");
-	item_graphic_files.push_back("OE");
-	item_graphic_files.push_back("OF");
+	_locationGraphicFiles.push_back("RA");
+	_locationGraphicFiles.push_back("RB");
+	_locationGraphicFiles.push_back("RC");
+	_locationGraphicFiles.push_back("RD");
+	_locationGraphicFiles.push_back("RE");
+	_locationGraphicFiles.push_back("RF");
+	_locationGraphicFiles.push_back("RG");
+	_itemGraphicFiles.push_back("OA");
+	_itemGraphicFiles.push_back("OB");
+	_itemGraphicFiles.push_back("OE");
+	_itemGraphicFiles.push_back("OF");
 }
 
 } // namespace Comprehend

@@ -55,8 +55,8 @@ const char *string_lookup(ComprehendGame *game, uint16 index)
 		/* Fall-through */
 	case 0x00:
 	case 0x80:
-		if (string < game->info->strings.nr_strings)
-			return game->info->strings.strings[string];
+		if (string < game->info->_strings.nr_strings)
+			return game->info->_strings.strings[string];
 		break;
 
 	case 0x83:
@@ -64,8 +64,8 @@ const char *string_lookup(ComprehendGame *game, uint16 index)
 		/* Fall-through */
 	case 0x02:
 	case 0x82:
-		if (string < game->info->strings2.nr_strings)
-			return game->info->strings2.strings[string];
+		if (string < game->info->_strings2.nr_strings)
+			return game->info->_strings2.strings[string];
 		break;
 	}
 

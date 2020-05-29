@@ -167,44 +167,44 @@ struct game_header {
 };
 
 struct game_info {
-	game_header header;
+	game_header _header;
 
-	unsigned comprehend_version;
+	unsigned _comprehendVersion;
 
-	uint8 start_room;
+	uint8 _startRoom;
 
-	room rooms[0x100];
-	size_t nr_rooms;
-	uint8 current_room;
+	room _rooms[0x100];
+	size_t _nr_rooms;
+	uint8 _currentRoom;
 
-	struct item item[0xff];
+	struct item _item[0xff];
 
-	struct word *words;
-	size_t nr_words;
+	struct word *_words;
+	size_t _nr_words;
 
-	struct word_map word_map[0xff];
-	size_t nr_word_maps;
+	struct word_map _wordMaps[0xff];
+	size_t _nr_word_maps;
 
-	struct string_table strings;
-	struct string_table strings2;
+	struct string_table _strings;
+	struct string_table _strings2;
 
-	struct action action[0xffff];
-	size_t nr_actions;
+	struct action _actions[0xffff];
+	size_t _nr_actions;
 
-	struct function functions[0xffff];
-	size_t nr_functions;
+	struct function _functions[0xffff];
+	size_t _nr_functions;
 
-	struct image_data room_images;
-	struct image_data item_images;
+	struct image_data _roomImages;
+	struct image_data _itemImages;
 
-	bool flags[MAX_FLAGS];
-	uint16 variable[MAX_VARIABLES];
+	bool _flags[MAX_FLAGS];
+	uint16 _variables[MAX_VARIABLES];
 
-	char *replace_words[256];
-	size_t nr_replace_words;
+	char *_replaceWords[256];
+	size_t _nr_replace_words;
 
-	uint8 current_replace_word;
-	unsigned update_flags;
+	uint8 _currentReplaceWord;
+	unsigned _updateFlags;
 
 	game_info();
 };

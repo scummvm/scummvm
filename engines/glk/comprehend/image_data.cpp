@@ -349,11 +349,11 @@ void comprehend_load_image_file(const char *filename, struct image_data *info)
 }
 
 void comprehend_load_images(ComprehendGame *game) {
-	load_image_files(&game->info->room_images,
-			 game->location_graphic_files);
+	load_image_files(&game->info->_roomImages,
+			 game->_locationGraphicFiles);
 
-	load_image_files(&game->info->item_images,
-			 game->item_graphic_files);
+	load_image_files(&game->info->_itemImages,
+			 game->_itemGraphicFiles);
 }
 
 } // namespace Comprehend

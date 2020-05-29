@@ -160,7 +160,7 @@ void dump_instruction(ComprehendGame *game,
 		break;
 
 	case OPCODE_SET_STRING_REPLACEMENT:
-		debugN(" %s", game->info->replace_words[instr->operand[0] - 1]);
+		debugN(" %s", game->info->_replaceWords[instr->operand[0] - 1]);
 		break;
 	}
 
@@ -172,9 +172,9 @@ static void dump_functions(ComprehendGame *game)
 	struct function *func;
 	uint i, j;
 
-	debugN("Functions (%zd entries)\n", game->info->nr_functions);
-	for (i = 0; i < game->info->nr_functions; i++) {
-		func = &game->info->functions[i];
+	debugN("Functions (%zd entries)\n", game->info->_nr_functions);
+	for (i = 0; i < game->info->_nr_functions; i++) {
+		func = &game->info->_functions[i];
 
 		debugN("[%.4x] (%zd instructions)\n", i, func->nr_instructions);
 		for (j = 0; j < func->nr_instructions; j++)
@@ -189,9 +189,9 @@ static void dump_action_table(ComprehendGame *game)
 	struct word *word;
 	uint i, j;
 
-	debugN("Action table (%zd entries)\n", game->info->nr_actions);
-	for (i = 0; i < game->info->nr_actions; i++) {
-		action = &game->info->action[i];
+	debugN("Action table (%zd entries)\n", game->info->_nr_actions);
+	for (i = 0; i < game->info->_nr_actions; i++) {
+		action = &game->info->_actions[i];
 
 		debugN("(");
 		for (j = 0; j < 4; j++) {
@@ -247,14 +247,14 @@ static void dump_dictionary(ComprehendGame *game)
 	uint i;
 
 	/* Sort the dictionary by index */
-	dictionary = (word *)xmalloc(sizeof(*words) * game->info->nr_words);
-	memcpy(dictionary, game->info->words,
-	       sizeof(*words) * game->info->nr_words);
-	qsort(dictionary, game->info->nr_words, sizeof(*words),
+	dictionary = (word *)xmalloc(sizeof(*words) * game->info->_nr_words);
+	memcpy(dictionary, game->info->_words,
+	       sizeof(*words) * game->info->_nr_words);
+	qsort(dictionary, game->info->_nr_words, sizeof(*words),
 	      word_index_compare);
 
-	debugN("Dictionary (%zd words)\n", game->info->nr_words);
-	for (i = 0; i < game->info->nr_words; i++) {
+	debugN("Dictionary (%zd words)\n", game->info->_nr_words);
+	for (i = 0; i < game->info->_nr_words; i++) {
 		words = &dictionary[i];
 		debugN("  [%.2x] %.2x %s\n", words->_index, words->_type,
 		       words->_word);
@@ -270,9 +270,9 @@ static void dump_word_map(ComprehendGame *game)
 	struct word_map *map;
 	uint i, j;
 
-	debugN("Word pairs (%zd entries)\n", game->info->nr_word_maps);
-	for (i = 0; i < game->info->nr_word_maps; i++) {
-		map = &game->info->word_map[i];
+	debugN("Word pairs (%zd entries)\n", game->info->_nr_word_maps);
+	for (i = 0; i < game->info->_nr_word_maps; i++) {
+		map = &game->info->_wordMaps[i];
 
 		for (j = 0; j < 3; j++) {
 			word[j] = dict_find_word_by_index_type(
@@ -296,9 +296,9 @@ static void dump_rooms(ComprehendGame *game)
 	uint i;
 
 	/* Room zero acts as the players inventory */
-	debugN("Rooms (%zd entries)\n", game->info->nr_rooms);
-	for (i = 1; i <= game->info->nr_rooms; i++) {
-		room = &game->info->rooms[i];
+	debugN("Rooms (%zd entries)\n", game->info->_nr_rooms);
+	for (i = 1; i <= game->info->_nr_rooms; i++) {
+		room = &game->info->_rooms[i];
 
 		debugN("  [%.2x] flags=%.2x, graphic=%.2x\n",
 		       i, room->flags, room->graphic);
@@ -322,22 +322,22 @@ static void dump_items(ComprehendGame *game)
 	struct item *item;
 	uint i, j;
 
-	debugN("Items (%zd entries)\n", game->info->header.nr_items);
-	for (i = 0; i < game->info->header.nr_items; i++) {
-		item = &game->info->item[i];
+	debugN("Items (%zd entries)\n", game->info->_header.nr_items);
+	for (i = 0; i < game->info->_header.nr_items; i++) {
+		item = &game->info->_item[i];
 
 		debugN("  [%.2x] %s\n", i + 1,
 		       item->string_desc ?
 		       string_lookup(game, item->string_desc) : "");
-		if (game->info->comprehend_version == 2)
+		if (game->info->_comprehendVersion == 2)
 			debugN("    long desc: %s\n",
 			       string_lookup(game, item->long_string));
 
 		debugN("    words: ");
-		for (j = 0; j < game->info->nr_words; j++)
-			if (game->info->words[j]._index == item->word &&
-			    (game->info->words[j]._type & WORD_TYPE_NOUN_MASK))
-				debugN("%s ", game->info->words[j]._word);
+		for (j = 0; j < game->info->_nr_words; j++)
+			if (game->info->_words[j]._index == item->word &&
+			    (game->info->_words[j]._type & WORD_TYPE_NOUN_MASK))
+				debugN("%s ", game->info->_words[j]._word);
 		debugN("\n");
 		debugN("    flags=%.2x (takeable=%d, weight=%d)\n",
 		       item->flags, !!(item->flags & ITEMF_CAN_TAKE),
@@ -359,15 +359,15 @@ static void dump_string_table(struct string_table *table)
 static void dump_game_data_strings(ComprehendGame *game)
 {
 	debugN("Main string table (%zd entries)\n",
-	       game->info->strings.nr_strings);
-	dump_string_table(&game->info->strings);
+	       game->info->_strings.nr_strings);
+	dump_string_table(&game->info->_strings);
 }
 
 static void dump_extra_strings(ComprehendGame *game)
 {
 	debugN("Extra strings (%zd entries)\n",
-	       game->info->strings2.nr_strings);
-	dump_string_table(&game->info->strings2);
+	       game->info->_strings2.nr_strings);
+	dump_string_table(&game->info->_strings2);
 }
 
 static void dump_replace_words(ComprehendGame *game)
@@ -375,14 +375,14 @@ static void dump_replace_words(ComprehendGame *game)
 	uint i;
 
 	debugN("Replacement words (%zd entries)\n",
-	       game->info->nr_replace_words);
-	for (i = 0; i < game->info->nr_replace_words; i++)
-		debugN("  [%.2x] %s\n", i + 1, game->info->replace_words[i]);
+	       game->info->_nr_replace_words);
+	for (i = 0; i < game->info->_nr_replace_words; i++)
+		debugN("  [%.2x] %s\n", i + 1, game->info->_replaceWords[i]);
 }
 
 static void dump_header(ComprehendGame *game)
 {
-	struct game_header *header = &game->info->header;
+	struct game_header *header = &game->info->_header;
 	uint16 *dir_table = header->room_direction_table;
 
 	debugN("Game header:\n");

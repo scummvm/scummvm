@@ -35,17 +35,17 @@ namespace Comprehend {
 
 class ComprehendGame {
 public:
-	const char *game_name;
-	const char *short_name;
+	const char *_gameName;
+	const char *_shortName;
 
-	const char *game_data_file;
-	Common::Array<string_file> string_files;
-	Common::Array<const char *> location_graphic_files;
-	Common::Array<const char *> item_graphic_files;
-	const char *save_game_file_fmt;
-	unsigned color_table;
+	const char *_gameDataFile;
+	Common::Array<string_file> _stringFiles;
+	Common::Array<const char *> _locationGraphicFiles;
+	Common::Array<const char *> _itemGraphicFiles;
+	const char *_savegameFileFormat;
+	unsigned _colorTable;
 
-	struct game_strings *strings;
+	struct game_strings *_gameStrings;
 	struct game_info *info;
 
 public:
