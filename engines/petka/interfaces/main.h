@@ -56,6 +56,9 @@ public:
 
 	void removeTextDescription();
 
+private:
+	void playSound(int id, Audio::Mixer::SoundType type);
+
 public:
 	DialogInterface _dialog;
 	Common::Array<BGInfo> _bgs;

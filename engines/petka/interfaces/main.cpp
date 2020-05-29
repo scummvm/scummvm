@@ -91,35 +91,33 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	_roomId = id;
 	const BGInfo *info = findBGInfo(id);
 	QObjectBG *room = (QObjectBG *)sys->findObject(id);
-	g_vm->getQSystem()->_room = room;
+	sys->_room = room;
 	g_vm->resMgr()->loadBitmap(room->_resourceId);
 	_objs.push_back(room);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
-		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
+		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		obj->loadSound();
 		if (obj->_isShown || obj->_isActive)
 			g_vm->resMgr()->loadFlic(obj->_resourceId);
 		_objs.push_back(obj);
 	}
-	if (sys->_musicId != room->_musicId) {
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_musicId));
-		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_musicId), Audio::Mixer::kMusicSoundType);
-		if (sound) {
-			sound->play(true);
-		}
-		sys->_musicId = room->_musicId;
-	}
-	if (sys->_fxId != room->_fxId) {
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_fxId));
-		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_fxId), Audio::Mixer::kMusicSoundType);
-		if (sound) {
-			sound->play(true);
-		}
-		sys->_fxId = room->_fxId;
-	}
+	playSound(room->_musicId, Audio::Mixer::kMusicSoundType);
+	playSound(room->_fxId, Audio::Mixer::kSFXSoundType);
 	if (!fromSave)
-		g_vm->getQSystem()->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
+		sys->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
 	g_vm->videoSystem()->updateTime();
+}
+
+void InterfaceMain::playSound(int id, Audio::Mixer::SoundType type) {
+	int *sysId = (type == Audio::Mixer::kMusicSoundType) ? &g_vm->getQSystem()->_musicId : &g_vm->getQSystem()->_fxId;
+	if (*sysId != id) {
+		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(*sysId));
+		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(id), Audio::Mixer::kMusicSoundType); // kMusicSoundType intended
+		if (sound) {
+			sound->play(true);
+		}
+		*sysId = id;
+	}
 }
 
 const BGInfo *InterfaceMain::findBGInfo(int id) const {
