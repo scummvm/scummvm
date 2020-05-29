@@ -276,7 +276,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		setProjection();
 
 		Math::Matrix4 viewMatrix;
-		camera->GetViewMatrix(&viewMatrix);
+		camera->getViewMatrix(&viewMatrix);
 		glLoadMatrixf(viewMatrix.getData());
 	}
 

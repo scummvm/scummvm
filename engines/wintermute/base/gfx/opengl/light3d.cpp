@@ -1,6 +1,30 @@
-// This file is part of Wintermute Engine
-// For conditions of distribution and use, see copyright notice in license.txt
-// http://dead-code.org/redir.php?target=wme
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
 
 
 #include "light3d.h"
@@ -12,30 +36,27 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-Light3D::Light3D(BaseGame* inGame): BaseScriptable(inGame, false, false)
-{
-	m_DiffuseColor = BYTETORGBA(255, 255, 255, 255);
-	m_Position = Math::Vector3d(0, 0, 0);
-	m_Target = Math::Vector3d(0, 0, 0);
-	m_IsSpotlight = false;
-	m_Falloff = 0;
-	m_Active = true;
+Light3D::Light3D(BaseGame* inGame): BaseScriptable(inGame, false, false) {
+	_diffuseColor = BYTETORGBA(255, 255, 255, 255);
+	_position = Math::Vector3d(0, 0, 0);
+	_target = Math::Vector3d(0, 0, 0);
+	_isSpotlight = false;
+	_falloff = 0;
+	_active = true;
 
-	m_Distance = 0.0f;
-	m_IsAvailable = false;
+	_distance = 0.0f;
+	_isAvailable = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-Light3D::~Light3D()
-{
+Light3D::~Light3D() {
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool Light3D::SetLight(int Index)
-{
+bool Light3D::setLight(int Index) {
 	//Implement this later
 
 //	LPDIRECT3DDEVICE Device = ((CBRenderD3D*)Game->m_Renderer)->m_Device;
@@ -78,46 +99,45 @@ bool Light3D::SetLight(int Index)
 	return true;
 }
 
-bool Light3D::loadFrom3DS(byte** buffer)
-{
-	uint32 whole_chunk_size = *reinterpret_cast<uint32*>(*buffer);
-	byte* end = *buffer + whole_chunk_size - 2;
+bool Light3D::loadFrom3DS(byte **buffer) {
+	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
+	byte *end = *buffer + whole_chunk_size - 2;
 	*buffer += 4;
 
-	m_Position.x() = *reinterpret_cast<float*>(*buffer);
+	_position.x() = *reinterpret_cast<float*>(*buffer);
 	*buffer += 4;
-	m_Position.z() = *reinterpret_cast<float*>(*buffer);
+	_position.z() = *reinterpret_cast<float*>(*buffer);
 	*buffer += 4;
-	m_Position.y() = *reinterpret_cast<float*>(*buffer);
+	_position.y() = *reinterpret_cast<float*>(*buffer);
 	*buffer += 4;
 
 	while (*buffer < end) {
-		uint16 chunk_id = *reinterpret_cast<uint16*>(*buffer);
+		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
 
 		switch (chunk_id) {
 		case SPOTLIGHT:
 			*buffer += 6;
 
-			m_Target.x() = *reinterpret_cast<float*>(*buffer);
+			_target.x() = *reinterpret_cast<float *>(*buffer);
 			*buffer += 4;
-			m_Target.z() = *reinterpret_cast<float*>(*buffer);
+			_target.z() = *reinterpret_cast<float *>(*buffer);
 			*buffer += 4;
-			m_Target.y() = *reinterpret_cast<float*>(*buffer);
+			_target.y() = *reinterpret_cast<float *>(*buffer);
 			*buffer += 4;
 
 			// this is appearently not used
 			*buffer += 4;
 
-			m_Falloff = *reinterpret_cast<float*>(*buffer);
+			_falloff = *reinterpret_cast<float *>(*buffer);
 			*buffer += 4;
 
-			m_IsSpotlight = true;
+			_isSpotlight = true;
 			break;
 
 		case LIGHT_IS_OFF:
 			*buffer += 6;
 
-			m_Active = false;
+			_active = false;
 			break;
 
 		case RGB_BYTE: {
@@ -130,27 +150,27 @@ bool Light3D::loadFrom3DS(byte** buffer)
 			byte b = **buffer;
 			*buffer += 1;
 
-			m_DiffuseColor = r;
-			m_DiffuseColor |= g << 8;
-			m_DiffuseColor |= b << 16;
-			m_DiffuseColor |= 255 << 24;
+			_diffuseColor = r;
+			_diffuseColor |= g << 8;
+			_diffuseColor |= b << 16;
+			_diffuseColor |= 255 << 24;
 			break;
 		}
 
 		case RGB_FLOAT: {
 			*buffer += 6;
 
-			float r = *reinterpret_cast<float*>(*buffer);
+			float r = *reinterpret_cast<float *>(*buffer);
 			*buffer += 4;
-			float g = *reinterpret_cast<float*>(*buffer);
+			float g = *reinterpret_cast<float *>(*buffer);
 			*buffer += 4;
-			float b = *reinterpret_cast<float*>(*buffer);
+			float b = *reinterpret_cast<float *>(*buffer);
 			*buffer += 4;
 
-			m_DiffuseColor = static_cast<int32>(r*255);
-			m_DiffuseColor |= static_cast<int32>(g*255) << 8;
-			m_DiffuseColor |= static_cast<int32>(b*255) << 16;
-			m_DiffuseColor |= 255 << 24;
+			_diffuseColor = static_cast<int32>(r * 255);
+			_diffuseColor |= static_cast<int32>(g * 255) << 8;
+			_diffuseColor |= static_cast<int32>(b * 255) << 16;
+			_diffuseColor |= 255 << 24;
 			break;
 		}
 
@@ -172,19 +192,17 @@ bool Light3D::loadFrom3DS(byte** buffer)
 
 
 //////////////////////////////////////////////////////////////////////////
-bool Light3D::GetViewMatrix(Math::Matrix4 *ViewMatrix)
-{
+bool Light3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
-	*ViewMatrix = Math::makeLookAtMatrix(m_Position, m_Target, up);
+	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool Light3D::Persist(BasePersistenceManager* PersistMgr)
-{
-	PersistMgr->transferBool("m_Active", &m_Active);
-	PersistMgr->transferUint32("m_DiffuseColor", &m_DiffuseColor);
+bool Light3D::persist(BasePersistenceManager* persistMgr) {
+	persistMgr->transferBool("_active", &_active);
+	persistMgr->transferUint32("_diffuseColor", &_diffuseColor);
 	return true;
 }
 

@@ -539,7 +539,7 @@ bool AdScene::initLoop() {
 #endif
 
 	if (_sceneGeometry) {
-		return _sceneGeometry->InitLoop();
+		return _sceneGeometry->initLoop();
 	}
 
 	return STATUS_OK;
@@ -794,7 +794,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 			_sceneGeometry = new AdSceneGeometry(_gameRef);
 
-			if(_sceneGeometry == nullptr || !_sceneGeometry->LoadFile(params)) {
+			if(_sceneGeometry == nullptr || !_sceneGeometry->loadFile(params)) {
 				delete _sceneGeometry;
 				cmd = PARSERR_GENERIC;
 			}
@@ -949,7 +949,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	if (_sceneGeometry) {
 		// TODO: original wme code does a check on waypoint height here
 
-		Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 		if (activeCamera != nullptr) {
 			// TODO: set camera
@@ -1156,7 +1156,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 	if (!doUpdate && _sceneGeometry) {
 		// always display geometry for the moment
-		_sceneGeometry->Render(true);
+		_sceneGeometry->render(true);
 	}
 
 	// restore state
@@ -1198,7 +1198,7 @@ bool AdScene::updateFreeObjects() {
 		}
 
 		if (adGame->_objects[i]->_is3D && _sceneGeometry) {
-			Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
 				// TODO: set the camera and setup 3d
@@ -1216,7 +1216,7 @@ bool AdScene::updateFreeObjects() {
 		}
 
 		if (_objects[i]->_is3D && _sceneGeometry) {
-			Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
 				// TODO: set the camera and setup 3d
@@ -1271,7 +1271,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 		}
 
 		if (objects[i]->_is3D && _sceneGeometry) {
-			Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
 				// TODO: set the camera and setup 3d
@@ -2220,7 +2220,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "WaypointsHeight") {
 		if (_sceneGeometry) {
-			_scValue->setFloat(_sceneGeometry->m_WaypointHeight);
+			_scValue->setFloat(_sceneGeometry->_waypointHeight);
 		} else {
 			_scValue->setFloat(0.0f);
 		}
@@ -2689,7 +2689,7 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::afterLoad() {
 	if (_sceneGeometry) {
-		Camera3D* activeCamera = _sceneGeometry->GetActiveCamera();
+		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 		if (activeCamera) {
 			// TODO: set active camera

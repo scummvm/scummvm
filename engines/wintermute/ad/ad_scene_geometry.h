@@ -1,6 +1,30 @@
-// This file is part of Wintermute Engine
-// For conditions of distribution and use, see copyright notice in license.txt
-// http://dead-code.org/redir.php?target=wme
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
 
 
 #ifndef WINTERMUTE_AD_SCENE_GEOMETRY_H
@@ -25,88 +49,87 @@ class AdWaypointGroup3D;
 class AdGeomExt;
 class AdPathPoint3D;
 
-class AdSceneGeometry : public BaseObject
-{
+class AdSceneGeometry : public BaseObject {
 public:
-	bool m_MaxLightsWarning;
-	bool DropWaypoints();
-	bool SetLightColor(char* LightName, uint32 Color);
-	uint32 GetLightColor(char* LightName);
-	Math::Vector3d GetLightPos(char* LightName);
-	bool EnableNode(char* NodeName, bool Enable=true);
-	bool IsNodeEnabled(char* NodeName);
-	bool EnableLight(char* LightName, bool Enable=true);
-	bool IsLightEnabled(char* LightName);
+	bool _maxLightsWarning;
+	bool dropWaypoints();
+	bool setLightColor(char *lightName, uint32 color);
+	uint32 getLightColor(char *lightName);
+	Math::Vector3d getLightPos(char *lightName);
+	bool enableNode(char *nodeName, bool enable=true);
+	bool isNodeEnabled(char *nodeName);
+	bool enableLight(char *lightName, bool enable=true);
+	bool isLightEnabled(char *lightName);
 	DECLARE_PERSISTENT(AdSceneGeometry, BaseObject);
-	bool CorrectTargetPoint(Math::Vector3d Source, Math::Vector3d* Target);
+	bool correctTargetPoint(Math::Vector3d source, Math::Vector3d *target);
 
-	bool m_LastValuesInitialized;
-	Math::Matrix4 m_LastWorldMat;
-	Math::Matrix4 m_LastViewMat;
-	Math::Matrix4 m_LastProjMat;
-	int m_LastOffsetX;
-	int m_LastOffsetY;
-	Rect32 m_DrawingViewport;
-	int m_LastScrollX;
-	int m_LastScrollY;
+	bool _lastValuesInitialized;
+	Math::Matrix4 _lastWorldMat;
+	Math::Matrix4 _lastViewMat;
+	Math::Matrix4 _lastProjMat;
+	int _lastOffsetX;
+	int _lastOffsetY;
+	Rect32 _drawingViewport;
+	int _lastScrollX;
+	int _lastScrollY;
 
 
-	bool CreateLights();
-	bool EnableLights(Math::Vector3d Point, BaseArray<char*>& IgnoreLights);
-	static int CompareLights(const void* Obj1, const void* Obj2);
+	bool createLights();
+	bool enableLights(Math::Vector3d Point, BaseArray<char*>& IgnoreLights);
+	static int compareLights(const void *obj1, const void *obj2);
 	
-	bool InitLoop();
-	float GetPointsDist(Math::Vector3d p1, Math::Vector3d p2);
-	void PathFinderStep();
-	bool GetPath(Math::Vector3d source, Math::Vector3d target, AdPath3D* path, bool Rerun=false);
-	bool Convert2Dto3D(int X, int Y, Math::Vector3d* Pos);
-	bool Convert2Dto3DTolerant(int X, int Y, Math::Vector3d *Pos);
-	bool Convert3Dto2D(Math::Vector3d* Pos, int* X, int* Y);
-	BaseSprite* m_WptMarker;
-	float m_WaypointHeight;
-	bool DirectPathExists(Math::Vector3d* p1, Math::Vector3d* p2);
-	float GetHeightAt(Math::Vector3d Pos, float Tolerance=0.0f, bool* IntFound=NULL);
+	bool initLoop();
+	float getPointsDist(Math::Vector3d p1, Math::Vector3d p2);
+	void pathFinderStep();
+	bool getPath(Math::Vector3d source, Math::Vector3d target, AdPath3D *path, bool rerun=false);
+	bool convert2Dto3D(int x, int y, Math::Vector3d *pos);
+	bool convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos);
+	bool convert3Dto2D(Math::Vector3d *pos, int *x, int *y);
+	BaseSprite* _wptMarker;
+	float _waypointHeight;
+	bool directPathExists(Math::Vector3d *p1, Math::Vector3d *p2);
+	float getHeightAt(Math::Vector3d pos, float Ttlerance=0.0f, bool *intFound=NULL);
 
-	bool StoreDrawingParams();
-	bool Render(bool Render);
-	bool RenderShadowGeometry();
+	bool storeDrawingParams();
+	bool render(bool render);
+	bool renderShadowGeometry();
 
-	Math::Matrix4* GetViewMatrix();
-	Math::Matrix4 m_ViewMatrix;
-	bool SetActiveCamera(char* Camera, float FOV, float NearClipPlane, float FarClipPlane);
-	bool SetActiveCamera(int Camera, float FOV, float NearClipPlane, float FarClipPlane);
+	Math::Matrix4* getViewMatrix();
+	Math::Matrix4 _viewMatrix;
+	bool setActiveCamera(char *camera, float fov, float nearClipPlane, float farClipPlane);
+	bool setActiveCamera(int camera, float fow, float nearClipPlane, float farClipPlane);
 	//bool SetActiveCameraTwin(char* Camera);
 	//bool SetActiveCameraTwin(int Camera);
-	Camera3D* GetActiveCamera();
-	int m_ActiveCamera;
+	Camera3D* getActiveCamera();
+	int _activeCamera;
 
-	bool SetActiveLight(char* Light);
-	bool SetActiveLight(int Light);
-	int m_ActiveLight;
+	bool setActiveLight(char *light);
+	bool setActiveLight(int light);
+	int _activeLight;
 
-	void Cleanup();
-	AdSceneGeometry(BaseGame* inGame);
+	void cleanup();
+	AdSceneGeometry(BaseGame *inGame);
 	virtual ~AdSceneGeometry();
-	bool LoadFile(const char* Filename);
-	BaseArray<AdWalkplane*> _planes;
-	BaseArray<AdBlock*> _blocks;
-	BaseArray<AdGeneric*> _generics;
-	BaseArray<Camera3D*> _cameras;
-	BaseArray<Light3D*> _lights;
-	BaseArray<AdWaypointGroup3D*> _waypointGroups;
+	bool loadFile(const char *filename);
+	BaseArray<AdWalkplane *> _planes;
+	BaseArray<AdBlock *> _blocks;
+	BaseArray<AdGeneric *> _generics;
+	BaseArray<Camera3D *> _cameras;
+	BaseArray<Light3D *> _lights;
+	BaseArray<AdWaypointGroup3D *> _waypointGroups;
 	uint32 _PFMaxTime;
 
 private:
-	AdGeomExt* GetGeometryExtension(char* Filename);
-	Math::Vector3d GetBlockIntersection(Math::Vector3d* p1, Math::Vector3d* p2);
+	AdGeomExt *getGeometryExtension(char *filename);
+	Math::Vector3d getBlockIntersection(Math::Vector3d *p1, Math::Vector3d *p2);
 	bool _PFReady;
 	Math::Vector3d _PFSource;
 	Math::Vector3d _PFTarget;
-	AdPath3D* _PFTargetPath;
+	AdPath3D *_PFTargetPath;
 	Math::Vector3d _PFAlternateTarget;
 	float _PFAlternateDist;
 	bool _PFRerun;
-	BaseArray<AdPathPoint3D*> _PFPath;
+	BaseArray<AdPathPoint3D *> _PFPath;
 
 };
 

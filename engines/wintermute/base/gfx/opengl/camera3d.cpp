@@ -1,6 +1,30 @@
-// This file is part of Wintermute Engine
-// For conditions of distribution and use, see copyright notice in license.txt
-// http://dead-code.org/redir.php?target=wme
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
 
 
 #include "camera3d.h"
@@ -18,61 +42,58 @@ namespace Wintermute {
 
 
 //////////////////////////////////////////////////////////////////////////
-Camera3D::Camera3D(BaseGame* inGame): BaseNamedObject(inGame)
-{
-	m_Position = Math::Vector3d(0,0,0);
-	m_Target = Math::Vector3d(0,0,0);
-	m_Bank = 0.0f;
-	m_FOV = m_OrigFOV = Math::Angle(45.0f).getRadians();
-	m_NearClipPlane = m_FarClipPlane = -1.0f;
+Camera3D::Camera3D(BaseGame* inGame): BaseNamedObject(inGame) {
+	_position = Math::Vector3d(0,0,0);
+	_target = Math::Vector3d(0,0,0);
+	_bank = 0.0f;
+	_fov = _originalFOV = Math::Angle(45.0f).getRadians();
+	_nearClipPlane = _farClipPlane = -1.0f;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-Camera3D::~Camera3D()
-{
+Camera3D::~Camera3D() {
 
 }
 
-bool Camera3D::loadFrom3DS(byte** buffer)
-{
-	uint32 whole_chunk_size = *reinterpret_cast<uint32*>(*buffer);
-	byte* end = *buffer + whole_chunk_size - 2;
+bool Camera3D::loadFrom3DS(byte **buffer) {
+	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
+	byte *end = *buffer + whole_chunk_size - 2;
 	*buffer += 4; // chunk size
 
-	m_Position.x() = *reinterpret_cast<float*>(*buffer);
+	_position.x() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
-	m_Position.z() = *reinterpret_cast<float*>(*buffer);
+	_position.z() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
-	m_Position.y() = *reinterpret_cast<float*>(*buffer);
-	*buffer += 4;
-
-	m_Target.x() = *reinterpret_cast<float*>(*buffer);
-	*buffer += 4;
-	m_Target.z() = *reinterpret_cast<float*>(*buffer);
-	*buffer += 4;
-	m_Target.y() = *reinterpret_cast<float*>(*buffer);
+	_position.y() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
 
-	m_Bank = *reinterpret_cast<float*>(*buffer);
+	_target.x() = *reinterpret_cast<float *>(*buffer);
+	*buffer += 4;
+	_target.z() = *reinterpret_cast<float *>(*buffer);
+	*buffer += 4;
+	_target.y() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
 
-	float lens = *reinterpret_cast<float*>(*buffer);
+	_bank = *reinterpret_cast<float *>(*buffer);
+	*buffer += 4;
+
+	float lens = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
 
 	if (lens > 0.0f) {
-		m_FOV = Math::Angle(1900.0f / lens).getRadians();
+		_fov = Math::Angle(1900.0f / lens).getRadians();
 	} else {
-		m_FOV = Math::Angle(45.0f).getRadians();
+		_fov = Math::Angle(45.0f).getRadians();
 	}
 
 	// this is overkill here, simplify it later
 	while (*buffer < end) {
-		uint16 chunk_id = *reinterpret_cast<uint16*>(*buffer);
+		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
 
 		switch (chunk_id) {
 		case 0x4720:
-			*buffer += *reinterpret_cast<uint16*>(*buffer + 2);
+			*buffer += *reinterpret_cast<uint16 *>(*buffer + 2);
 		default:
 			break;
 		}
@@ -83,71 +104,67 @@ bool Camera3D::loadFrom3DS(byte** buffer)
 
 
 //////////////////////////////////////////////////////////////////////////
-bool Camera3D::GetViewMatrix(Math::Matrix4 *ViewMatrix)
-{
+bool Camera3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
 
-	if(m_Bank!=0)
-	{
+	if (_bank != 0) {
 		Math::Matrix4 rotZ;
-		rotZ.buildAroundZ(Math::Angle(m_Bank).getRadians());
+		rotZ.buildAroundZ(Math::Angle(_bank).getRadians());
 		rotZ.transform(&up, false);
 	}
 
-	*ViewMatrix = Math::makeLookAtMatrix(m_Position, m_Target, up);
+
+	*viewMatrix = Math::makeLookAtMatrix(_position, _target, up);
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void Camera3D::SetupPos(Math::Vector3d Pos, Math::Vector3d Target, float Bank)
-{
-	m_Position = Pos;
-	m_Target = Target;
-	m_Bank = Bank;
+void Camera3D::setupPos(Math::Vector3d pos, Math::Vector3d target, float bank) {
+	_position = pos;
+	_target = target;
+	_bank = bank;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void Camera3D::RotateView(float X, float Y, float Z)
-{
+void Camera3D::rotateView(float X, float Y, float Z) {
 	Math::Vector3d vVector;						// Vector for the position/view.
 
 	// Get our view vector (The direciton we are facing)
-	vVector = m_Target - m_Position;		// This gets the direction of the view
+	vVector = _target - _position;		// This gets the direction of the view
 	
 	// Rotate the view along the desired axis
-	if(X) {
+	if (X) {
 		// Rotate the view vector up or down, then add it to our position
-		m_Target.z() = (float)(m_Position.z() + sin(X)*vVector.y() + cos(X)*vVector.z());
-		m_Target.y() = (float)(m_Position.y() + cos(X)*vVector.y() - sin(X)*vVector.z());
+		_target.z() = (float)(_position.z() + sin(X)*vVector.y() + cos(X)*vVector.z());
+		_target.y() = (float)(_position.y() + cos(X)*vVector.y() - sin(X)*vVector.z());
 	}
-	if(Y) {
+	if (Y) {
 		// Rotate the view vector right or left, then add it to our position
-		m_Target.z() = (float)(m_Position.z() + sin(Y)*vVector.x() + cos(Y)*vVector.z());
-		m_Target.x() = (float)(m_Position.x() + cos(Y)*vVector.x() - sin(Y)*vVector.z());
+		_target.z() = (float)(_position.z() + sin(Y)*vVector.x() + cos(Y)*vVector.z());
+		_target.x() = (float)(_position.x() + cos(Y)*vVector.x() - sin(Y)*vVector.z());
 	}
-	if(Z) {
+	if (Z) {
 		// Rotate the view vector diagnally right or diagnally down, then add it to our position
-		m_Target.x() = (float)(m_Position.x() + sin(Z)*vVector.y() + cos(Z)*vVector.x());
-		m_Target.y() = (float)(m_Position.y() + cos(Z)*vVector.y() - sin(Z)*vVector.x());
+		_target.x() = (float)(_position.x() + sin(Z)*vVector.y() + cos(Z)*vVector.x());
+		_target.y() = (float)(_position.y() + cos(Z)*vVector.y() - sin(Z)*vVector.x());
 	}
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void Camera3D::Move(float Speed)
-{
-	Math::Vector3d vVector;						// Init a vector for our view
+void Camera3D::move(float speed) {
+	Math::Vector3d vector;						// Init a vector for our view
 
 	// Get our view vector (The direciton we are facing)
-	vVector = m_Target - m_Position;		// This gets the direction of the view
+	vector = _target - _position;		// This gets the direction of the view
 	
-	m_Position.x() += vVector.x() * Speed;		// Add our acceleration to our position's X
-	m_Position.z() += vVector.z() * Speed;		// Add our acceleration to our position's Z
-	m_Target.x() += vVector.x() * Speed;			// Add our acceleration to our view's X
-	m_Target.z() += vVector.z() * Speed;			// Add our acceleration to our view's Z
+	_position.x() += vector.x() * speed;		// Add our acceleration to our position's X
+	_position.z() += vector.z() * speed;		// Add our acceleration to our position's Z
+	_target.x() += vector.x() * speed;			// Add our acceleration to our view's X
+	_target.z() += vector.z() * speed;			// Add our acceleration to our view's Z
 }
 
 }

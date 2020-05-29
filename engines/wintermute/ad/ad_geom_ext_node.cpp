@@ -1,6 +1,30 @@
-// This file is part of Wintermute Engine
-// For conditions of distribution and use, see copyright notice in license.txt
-// http://dead-code.org/redir.php?target=wme
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
 
 
 #include "ad_geom_ext_node.h"
@@ -12,19 +36,16 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExtNode::AdGeomExtNode(BaseGame* inGame) : BaseClass(inGame)
-{
-	m_NamePattern = NULL;
-	m_ReceiveShadows = false;
-	m_Type = GEOM_GENERIC;
+AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame) {
+	_namePattern = NULL;
+	_receiveShadows = false;
+	_type = GEOM_GENERIC;
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExtNode::~AdGeomExtNode(void)
-{
-	if (m_NamePattern)
-	{
-		delete[] m_NamePattern;
+AdGeomExtNode::~AdGeomExtNode(void) {
+	if (_namePattern) {
+		delete[] _namePattern;
 	}
 }
 
@@ -38,8 +59,7 @@ TOKEN_DEF_START
 	TOKEN_DEF (RECEIVE_SHADOWS)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExtNode::LoadBuffer(byte* Buffer, bool Complete)
-{
+bool AdGeomExtNode::loadBuffer(byte* buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
 		TOKEN_TABLE (NODE)
 		TOKEN_TABLE (NAME)
@@ -53,61 +73,52 @@ bool AdGeomExtNode::LoadBuffer(byte* Buffer, bool Complete)
 	int cmd=2;
 	BaseParser parser;
 
-	if(Complete)
-	{
-		if(parser.getCommand ((char**)&Buffer, commands, (char**)&params)!=TOKEN_NODE)
-		{
+	if(complete) {
+		if(parser.getCommand ((char**)&buffer, commands, (char**)&params)!=TOKEN_NODE) {
 			_gameRef->LOG(0, "'NODE' keyword expected.");
 			return false;
 		}
-		Buffer = params;
+		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand ((char**)&Buffer, commands, (char**)&params)) > 0)
-	{
-		switch (cmd)
-		{
-			case TOKEN_NAME:
-				BaseUtils::setString(&m_NamePattern, (char*)params);
+	while ((cmd = parser.getCommand ((char**)&buffer, commands, (char**)&params)) > 0) {
+		switch (cmd) {
+		case TOKEN_NAME:
+			BaseUtils::setString(&_namePattern, (char*)params);
+		break;
+
+		case TOKEN_RECEIVE_SHADOWS:
+			parser.scanStr((char*)params, "%b", &_receiveShadows);
+		break;
+
+		case TOKEN_WALKPLANE: {
+			bool isWalkplane = false;
+			parser.scanStr((char*)params, "%b", &isWalkplane);
+			if(isWalkplane) _type = GEOM_WALKPLANE;
 			break;
+		}
 
-			case TOKEN_RECEIVE_SHADOWS:
-				parser.scanStr((char*)params, "%b", &m_ReceiveShadows);
+		case TOKEN_BLOCKED: {
+			bool isBlocked = false;
+			parser.scanStr((char*)params, "%b", &isBlocked);
+			if(isBlocked) _type = GEOM_BLOCKED;
 			break;
+		}
 
-			case TOKEN_WALKPLANE:
-			{
-				bool IsWalkplane = false;
-				parser.scanStr((char*)params, "%b", &IsWalkplane);
-				if(IsWalkplane) m_Type = GEOM_WALKPLANE;
-				break;
-			}
-
-			case TOKEN_BLOCKED:
-			{
-				bool IsBlocked = false;
-				parser.scanStr((char*)params, "%b", &IsBlocked);
-				if(IsBlocked) m_Type = GEOM_BLOCKED;
-				break;
-			}
-
-			case TOKEN_WAYPOINT:
-			{
-				bool IsWaypoint = false;
-				parser.scanStr((char*)params, "%b", &IsWaypoint);
-				if(IsWaypoint) m_Type = GEOM_WAYPOINT;
-				break;
-			}			
+		case TOKEN_WAYPOINT: {
+			bool isWaypoint = false;
+			parser.scanStr((char*)params, "%b", &isWaypoint);
+			if(isWaypoint) _type = GEOM_WAYPOINT;
+			break;
+		}
 		}
 	}
 
-	if (cmd == PARSERR_TOKENNOTFOUND)
-	{
+	if (cmd == PARSERR_TOKENNOTFOUND) {
 		_gameRef->LOG(0, "Syntax error in geometry description file");
 		return false;
 	}
-	if (cmd == PARSERR_GENERIC)
-	{
+	if (cmd == PARSERR_GENERIC) {
 		_gameRef->LOG(0, "Error loading geometry description");
 		return false;
 	}
@@ -116,20 +127,18 @@ bool AdGeomExtNode::LoadBuffer(byte* Buffer, bool Complete)
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExtNode::SetupNode(char* NamePattern, TGeomNodeType Type, bool ReceiveShadows)
-{
-	BaseUtils::setString(&m_NamePattern, NamePattern);
-	m_Type = Type;
-	m_ReceiveShadows = ReceiveShadows;
+bool AdGeomExtNode::setupNode(char *namePattern, TGeomNodeType type, bool receiveShadows) {
+	BaseUtils::setString(&_namePattern, namePattern);
+	_type = type;
+	_receiveShadows = receiveShadows;
 
 	return true;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExtNode::MatchesName(char* Name)
-{
-	return Common::matchString(Name, m_NamePattern);
+bool AdGeomExtNode::matchesName(char *name) {
+	return Common::matchString(name, _namePattern);
 }
 
 }

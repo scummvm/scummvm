@@ -1,6 +1,30 @@
-// This file is part of Wintermute Engine
-// For conditions of distribution and use, see copyright notice in license.txt
-// http://dead-code.org/redir.php?target=wme
+/* ResidualVM - A 3D game interpreter
+ *
+ * ResidualVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+/*
+ * This file is based on WME.
+ * http://dead-code.org/redir.php?target=wme
+ * Copyright (c) 2003-2013 Jan Nedoma and contributors
+ */
 
 
 #ifndef WINTERMUTE_LIGHT3D_H
@@ -13,24 +37,23 @@
 
 namespace Wintermute {
 
-class Light3D : public BaseScriptable
-{
+class Light3D : public BaseScriptable {
 public:
-	bool Persist(BasePersistenceManager* PersistMgr);
-	bool GetViewMatrix(Math::Matrix4 *ViewMatrix);
+	bool persist(BasePersistenceManager *persistMgr);
+	bool getViewMatrix(Math::Matrix4 *viewMatrix);
 	Light3D(BaseGame* inGame);
 	virtual ~Light3D();
-	uint32 m_DiffuseColor;
-	Math::Vector3d m_Position;
-	Math::Vector3d m_Target;
-	bool m_IsSpotlight;
-	bool m_Active;
-	float m_Falloff;
+	uint32 _diffuseColor;
+	Math::Vector3d _position;
+	Math::Vector3d _target;
+	bool _isSpotlight;
+	bool _active;
+	float _falloff;
 	
-	float m_Distance;
-	bool m_IsAvailable;
+	float _distance;
+	bool _isAvailable;
 
-	bool SetLight(int Index=0);
+	bool setLight(int Index=0);
 	bool loadFrom3DS(byte** buffer);
 };
 
