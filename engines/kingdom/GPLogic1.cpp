@@ -238,6 +238,8 @@ void Logic::GPL1_50() {
 				inventoryAdd(3);
 				_spell3 = true;
 				break;
+			default:
+			    break;
 		}
 		if (_spell1 && _spell2 && _spell3) {
 			_vm->playMovie(6);

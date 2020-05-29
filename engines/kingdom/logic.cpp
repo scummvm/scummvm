@@ -31,11 +31,11 @@ Logic::Logic(KingdomGame* vm) : _vm(vm) {
 void Logic::initVariables() {
 	_healthOld = 0;
 	_health = 0;
-	_tideCntl = 0;
+	_tideCntl = false;
 	_statPlay = 0;
-	_spell3 = 0;
-	_spell2 = 0;
-	_spell1 = 0;
+	_spell3 = false;
+	_spell2 = false;
+	_spell1 = false;
 	_robberyNode = 0;
 	_rtnNode = 0;
 	_replay = false;
@@ -49,7 +49,7 @@ void Logic::initVariables() {
 	_nodeNum = 0;
 	_nextNode = 0;
 	_mapStat = 0;
-	_lastObs = 0;
+	_lastObs = false;
 	_lastObstacle = 0;
 	_help = false;
 	_eye = false;

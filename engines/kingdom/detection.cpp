@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 
+#include "common/savefile.h"
 #include "engines/advancedDetector.h"
 #include "common/file.h"
 

@@ -390,23 +390,25 @@ void Logic::GPL3_551() {
 	case 0x452:
 		_vm->_aTimer = 0;
 		switch(_nodes[55]) {
-	case 0:
-		dsAll();
-		_vm->playMovie(69);
-		_vm->_tsIconOnly = false;
-		_nodes[55] = 1;
-		_vm->setATimer();
-		break;
-	case 1:
-		dsAll();
-		_vm->playMovie(134);
-		_statPlay = 993;
-		_vm->_loopFlag = true;
-		break;
-	case 9:
-		_statPlay = 560;
-		_vm->_loopFlag = true;
-		break;
+		case 0:
+			dsAll();
+			_vm->playMovie(69);
+			_vm->_tsIconOnly = false;
+			_nodes[55] = 1;
+			_vm->setATimer();
+			break;
+		case 1:
+			dsAll();
+			_vm->playMovie(134);
+			_statPlay = 993;
+			_vm->_loopFlag = true;
+			break;
+		case 9:
+			_statPlay = 560;
+			_vm->_loopFlag = true;
+			break;
+		default:
+			break;
 		}
 		break;
 	default:
@@ -614,6 +616,8 @@ void Logic::GPL3_580() {
 		_vm->_sound = true;
 		_vm->playMovie(143);
 		_currMap = 10;
+		break;
+	default:
 		break;
 	}
 	_vm->playSound(27);
@@ -851,6 +855,8 @@ void Logic::GPL3_621() {
 			_vm->_frameStop = 24;
 			_vm->playMovie(202);
 			_currMap = 121;
+			break;
+		default:
 			break;
 		}
 		break;
