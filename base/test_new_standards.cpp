@@ -32,6 +32,10 @@
 //
 // Note: there are 3 warnings in my GCC run, they have no signficance
 
+#if defined(NONSTANDARD_PORT)
+#include "portdefs.h"
+#endif
+
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
