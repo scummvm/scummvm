@@ -895,3 +895,48 @@ static const char *const kEoB1MonsterDistAttStringsDOSSpanish[5] = {
 };
 
 static const StringListProvider kEoB1MonsterDistAttStringsDOSSpanishProvider = { ARRAYSIZE(kEoB1MonsterDistAttStringsDOSSpanish), kEoB1MonsterDistAttStringsDOSSpanish };
+
+static const char *const kEoB1IntroStringsTowerDOSSpanish[3] = {
+	"NOSOTROS, LOS LORDS DE WATERDEEP,\rHEMOS DECIDIDO SALVAR NUESTRA CIUDAD\rDE LOS ANTIGUOS DEMONIOS",
+	"",
+	"LLAMEMOS A LOS HEROES DE LA REGION\rY ELIJAMOS A NUESTROS GUERREROS."
+};
+
+static const StringListProvider kEoB1IntroStringsTowerDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsTowerDOSSpanish), kEoB1IntroStringsTowerDOSSpanish };
+
+static const char *const kEoB1IntroStringsOrbDOSSpanish[1] = {
+	"GRAN MAESTRO...."
+};
+
+static const StringListProvider kEoB1IntroStringsOrbDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsOrbDOSSpanish), kEoB1IntroStringsOrbDOSSpanish };
+
+static const char *const kEoB1IntroStringsWdEntryDOSSpanish[1] = {
+	"PARECE QUE TENEMOS UNA POSIBLE SOLUCION."
+};
+
+static const StringListProvider kEoB1IntroStringsWdEntryDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsWdEntryDOSSpanish), kEoB1IntroStringsWdEntryDOSSpanish };
+
+static const char *const kEoB1IntroStringsKingDOSSpanish[1] = {
+	"TE ENCOMENDAMOS LA MISION DE DESTRUIR\rA LOS DEMONIOS....SI ERES CAPAZ."
+};
+
+static const StringListProvider kEoB1IntroStringsKingDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsKingDOSSpanish), kEoB1IntroStringsKingDOSSpanish };
+
+static const char *const kEoB1IntroStringsHandsDOSSpanish[1] = {
+	"PREPARAOS PARA UNA LARGA JORNADA."
+};
+
+static const StringListProvider kEoB1IntroStringsHandsDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsHandsDOSSpanish), kEoB1IntroStringsHandsDOSSpanish };
+
+static const char *const kEoB1IntroStringsWdExitDOSSpanish[1] = {
+	"COMENZAD LA BUSQUEDA BAJO LA CIUDAD."
+};
+
+static const StringListProvider kEoB1IntroStringsWdExitDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsWdExitDOSSpanish), kEoB1IntroStringsWdExitDOSSpanish };
+
+static const char *const kEoB1IntroStringsTunnelDOSSpanish[2] = {
+	"COMIENZA LA AVENTURA.",
+	"LA SALIDA ESTA OBTURADA!!."
+};
+
+static const StringListProvider kEoB1IntroStringsTunnelDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsTunnelDOSSpanish), kEoB1IntroStringsTunnelDOSSpanish };
