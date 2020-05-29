@@ -120,6 +120,14 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = *(_position._playPos++);
 		info.length = readVLQ(_position._playPos);
+		if (info.length == 0) {
+			// Notes with length 0 are played with a very short duration by the AIL driver.
+			// However, the MidiParser will treat notes with length 0 as "active notes"; i.e.
+			// they will only get turned off when a corresponding Note Off event is encountered.
+			// Because XMIDI does not contain Note Off events, this will cause the note to hang.
+			// Set length to 1 to prevent this from happening.
+			info.length = 1;
+		}
 		if (info.basic.param2 == 0) {
 			info.event = info.channel() | 0x80;
 			info.length = 0;
