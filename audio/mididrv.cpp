@@ -57,6 +57,22 @@ const byte MidiDriver::_gmToMt32[128] = {
 	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
 };
 
+// These are the power-on default instruments of the Roland MT-32 family.
+const byte MidiDriver::_mt32DefaultInstruments[8] = {
+	0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A
+};
+
+// These are the power-on default panning settings for channels 2-9 of the Roland MT-32 family.
+// Internally, the MT-32 has 15 panning positions (0-E with 7 being center).
+// This has been translated to the equivalent MIDI panning values (0-127).
+// These are used for setting default panning on GM devices when using them with MT-32 data.
+// Note that MT-32 panning is reversed compared to the MIDI specification. This is not reflected
+// here; the driver is expected to flip these values based on the _reversePanning variable.
+const byte MidiDriver::_mt32DefaultPanning[8] = {
+	// 7,    8,    7,    8,    4,    A,    0,    E 
+	0x40, 0x49,	0x40, 0x49, 0x25, 0x5B, 0x00, 0x7F
+};
+
 // This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism 
 // to correct invalid drumkit selections. Some games rely on this mechanism to select the 
 // correct Roland GS drumkit. Use this map to emulate this mechanism.
@@ -431,18 +447,186 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	return 0;
 }
 
+void MidiDriver::initMT32(bool initForGM) {
+	sendMT32Reset();
+
+	if (initForGM) {
+		// Set up MT-32 for GM data.
+		// This is based on Roland's GM settings for MT-32.
+		debug("Initializing MT-32 for General MIDI data");
+
+		byte buffer[17];
+
+		// Roland MT-32 SysEx for system area
+		memcpy(&buffer[0], "\x41\x10\x16\x12\x10\x00", 6);
+
+		// Set reverb parameters:
+		// - Mode 2 (Plate)
+		// - Time 3
+		// - Level 4
+		memcpy(&buffer[6], "\x01\x02\x03\x04\x66", 5);
+		sysEx(buffer, 11);
+
+		// Set partial reserve to match SC-55
+		memcpy(&buffer[6], "\x04\x08\x04\x04\x03\x03\x03\x03\x02\x02\x4C", 11);
+		sysEx(buffer, 17);
+
+		// Use MIDI instrument channels 1-8 instead of 2-9
+		memcpy(&buffer[6], "\x0D\x00\x01\x02\x03\x04\x05\x06\x07\x09\x3E", 11);
+		sysEx(buffer, 17);
+
+		// The MT-32 has reversed stereo panning compared to the MIDI spec.
+		// GM does use panning as specified by the MIDI spec.
+		_reversePanning = true;
+
+		int i;
+
+		// Set default GM panning (center on all channels)
+		for (i = 0; i < 8; ++i) {
+			send((0x40 << 16) | (10 << 8) | (0xB0 | i));
+		}
+
+		// Set default GM instruments (0 on all channels).
+		// This is expected to be mapped to the MT-32 equivalent by the driver.
+		for (i = 0; i < 8; ++i) {
+			send((0 << 8) | (0xC0 | i));
+		}
+
+		// Set Pitch Bend Sensitivity to 2 semitones.
+		for (i = 0; i < 8; ++i) {
+			setPitchBendRange(i, 2);
+		}
+		setPitchBendRange(9, 2);
+	}
+}
+
 void MidiDriver::sendMT32Reset() {
 	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
 	sysEx(resetSysEx, sizeof(resetSysEx));
 	g_system->delayMillis(100);
 }
 
-void MidiDriver::sendGMReset() {
-	static const byte resetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
-	sysEx(resetSysEx, sizeof(resetSysEx));
-	g_system->delayMillis(100);
+void MidiDriver::initGM(bool initForMT32, bool enableGS) {
+	sendGMReset();
+
+	if (initForMT32) {
+		// Set up the GM device for MT-32 MIDI data.
+		// Based on iMuse implementation (which is based on Roland's MT-32 settings for GS)
+		debug("Initializing GM device for MT-32 MIDI data");
+
+		// The MT-32 has reversed stereo panning compared to the MIDI spec.
+		// GM does use panning as specified by the MIDI spec.
+		_reversePanning = true;
+
+		int i;
+
+		// Set the default panning for the MT-32 instrument channels.
+		for (i = 1; i < 9; ++i) {
+			send((_mt32DefaultPanning[i - 1] << 16) | (10 << 8) | (0xB0 | i));
+		}
+
+		// Set Channels 1-16 Reverb to 64, which is the
+		// equivalent of MT-32 default Reverb Level 5
+		for (i = 0; i < 16; ++i)
+			send((64 << 16) | (91 << 8) | (0xB0 | i));
+
+		// Set Channels 1-16 Chorus to 0. The MT-32 has no chorus capability.
+		// (This is probably the default for many GM devices with chorus anyway.)
+		for (i = 0; i < 16; ++i)
+			send((0 << 16) | (93 << 8) | (0xB0 | i));
+
+		// Set Channels 1-16 Pitch Bend Sensitivity to 12 semitones.
+		for (i = 0; i < 16; ++i) {
+			setPitchBendRange(i, 12);
+		}
+
+		if (enableGS) {
+			// GS specific settings for MT-32 instrument mapping.
+			debug("Additional initialization of GS device for MT-32 MIDI data");
+
+			// Note: All Roland GS devices support CM-64/32L maps
+
+			// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
+			// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
+			// Bank select MSB: bank 0
+			getPercussionChannel()->controlChange(0, 0);
+			// Bank select LSB: map 1 (SC-55)
+			getPercussionChannel()->controlChange(32, 1);
+			// Patch change: 127 (CM-64/32L)
+			send(127 << 8 | 0xC0 | 9);
+
+			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
+			for (i = 0; i < 16; ++i) {
+				if (i == getPercussionChannel()->getNumber())
+					continue;
+				// Bank select MSB: bank 127 (CM-64/32L)
+				send((127 << 16) | (0 << 8) | (0xB0 | i));
+				// Bank select LSB: map 1 (SC-55)
+				send((1 << 16) | (32 << 8) | (0xB0 | i));
+				// Patch change: 0 (causes bank select to take effect)
+				send((0 << 16) | (0 << 8) | (0xC0 | i));
+			}
+
+			byte buffer[12];
+
+			// Roland GS SysEx ID
+			memcpy(&buffer[0], "\x41\x10\x42\x12", 4);
+
+			// Set channels 1-16 Mod. LFO1 Pitch Depth to 4
+			memcpy(&buffer[4], "\x40\x20\x04\x04\x18", 5);
+			for (i = 0; i < 16; ++i) {
+				buffer[5] = 0x20 + i;
+				buffer[8] = 0x18 - i;
+				sysEx(buffer, 9);
+			}
+
+			// In Roland's GS MT-32 emulation settings, percussion channel expression
+			// is locked at 80. This corrects a difference in volume of the SC-55 MT-32
+			// drum kit vs the drums of the MT-32. However, this approach has a problem:
+			// the MT-32 supports expression on the percussion channel, so MIDI data
+			// which uses this will play incorrectly. So instead, percussion channel
+			// volume will be scaled by the driver by a factor 80/127.
+			// Strangely, the regular GM drum kit does have a volume that matches the
+			// MT-32 drums, so scaling is only necessary when using GS MT-32 emulation.
+			_scaleGSPercussionVolumeToMT32 = true;
+
+			// Change Reverb settings (as used by Roland):
+			// - Character: 0
+			// - Pre-LPF: 4
+			// - Level: 35h
+			// - Time: 6Ah
+			memcpy(&buffer[4], "\x40\x01\x31\x00\x04\x35\x6A\x6B", 8);
+			sysEx(buffer, 12);
+		}
+
+		// Set the default MT-32 patches. For non-GS devices these are expected to be
+		// mapped to the GM equivalents by the driver.
+		for (i = 1; i < 9; ++i) {
+			send((_mt32DefaultInstruments[i - 1] << 8) | (0xC0 | i));
+		}
+
+		// Regarding Master Tune: 442 kHz was intended for the MT-32 family, but
+		// apparently due to a firmware bug the master tune was actually 440 kHz for
+		// all models (see MUNT source code for more details). So master tune is left
+		// at 440 kHz for GM devices playing MT-32 MIDI data.
+	}
 }
 
+void MidiDriver::sendGMReset() {
+	static const byte gmResetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
+	sysEx(gmResetSysEx, sizeof(gmResetSysEx));
+	g_system->delayMillis(100);
+
+	// Send a Roland GS reset. This will be ignored by pure GM units,
+	// but will enable certain GS features on units that support them.
+	// This is especially useful for some Yamaha units, which are put
+	// in XG mode after a GM reset, which has some compatibility
+	// problems with GS features like instrument banks and
+	// GS-exclusive drum sounds.
+	static const byte gsResetSysEx[] = { 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41 };
+	sysEx(gsResetSysEx, sizeof(gsResetSysEx));
+	g_system->delayMillis(100);
+}
 
 void MidiDriver_BASE::midiDumpInit() {
 	g_system->displayMessageOnOSD(_("Starting MIDI dump"));
@@ -552,6 +736,10 @@ MidiDriver_BASE::~MidiDriver_BASE() {
 
 void MidiDriver_BASE::send(byte status, byte firstOp, byte secondOp) {
 	send(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+}
+
+void MidiDriver_BASE::send(int8 source, byte status, byte firstOp, byte secondOp) {
+	send(source, status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 }
 
 void MidiDriver::midiDriverCommonSend(uint32 b) {

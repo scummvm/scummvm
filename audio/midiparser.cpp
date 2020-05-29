@@ -42,6 +42,7 @@ _autoLoop(false),
 _smartJump(false),
 _centerPitchWheelOnUnload(false),
 _sendSustainOffOnNotesOff(false),
+_disableAllNotesOffMidiEvents(false),
 _numTracks(0),
 _activeTrack(255),
 _abortParse(false),
@@ -68,6 +69,9 @@ void MidiParser::property(int prop, int value) {
 	case mpSendSustainOffOnNotesOff:
 		_sendSustainOffOnNotesOff = (value != 0);
 		break;
+	case mpDisableAllNotesOffMidiEvents:
+		_disableAllNotesOffMidiEvents = (value != 0);
+		break;
 	default:
 		break;
 	}
@@ -75,6 +79,10 @@ void MidiParser::property(int prop, int value) {
 
 void MidiParser::sendToDriver(uint32 b) {
 	_driver->send(b);
+}
+
+void MidiParser::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
+	_driver->metaEvent(type, data, length);
 }
 
 void MidiParser::setTempo(uint32 tempo) {
@@ -255,7 +263,7 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 			} else {
 				stopPlaying();
 				if (fireEvents)
-					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+					sendMetaEventToDriver(info.ext.type, info.ext.data, (uint16)info.length);
 			}
 			return false;
 		} else if (info.ext.type == 0x51) {
@@ -264,7 +272,7 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 			}
 		}
 		if (fireEvents)
-			_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+			sendMetaEventToDriver(info.ext.type, info.ext.data, (uint16)info.length);
 	} else {
 		if (fireEvents)
 			sendToDriver(info.event, info.basic.param1, info.basic.param2);
@@ -298,13 +306,15 @@ void MidiParser::allNotesOff() {
 	}
 	_hangingNotesCount = 0;
 
-	// To be sure, send an "All Note Off" event (but not all MIDI devices
-	// support this...).
+	if (!_disableAllNotesOffMidiEvents) {
+		// To be sure, send an "All Note Off" event (but not all MIDI devices
+		// support this...).
 
-	for (i = 0; i < 16; ++i) {
-		sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
-		if (_sendSustainOffOnNotesOff)
-			sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+		for (i = 0; i < 16; ++i) {
+			sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
+			if (_sendSustainOffOnNotesOff)
+				sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+		}
 	}
 
 	memset(_activeNotes, 0, sizeof(_activeNotes));
