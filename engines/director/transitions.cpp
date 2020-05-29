@@ -130,60 +130,27 @@ struct {
 	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
 };
 
-struct TransParams {
-	TransitionType type;
-	uint duration;
-	uint chunkSize;
-
-	int steps;
-	int stepDuration;
-
-	int xStepSize;
-	int yStepSize;
-
-	int xpos, ypos;
-
-	int stripSize;
-
-	TransParams() {
-		type = kTransNone;
-		duration = 250;
-		chunkSize = 1;
-		steps = 0;
-		stepDuration = 0;
-		stripSize = 0;
-
-		xStepSize = yStepSize = 0;
-		xpos = ypos = 0;
-	}
-};
-
-static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect);
-static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect);
-static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &clipRect);
-static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect);
-static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect);
-
-void Frame::playTransition(Score *score) {
+void Score::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType) {
 	TransParams t;
 
-	t.type = _transType;
-	t.duration = MAX<uint16>(250, _transDuration); // When duration is < 1/4s, make it 1/4
-	t.chunkSize = MAX<uint>(1, _transChunkSize);
+	t.type = transType;
+	t.duration = MAX<uint16>(250, transDuration); // When duration is < 1/4s, make it 1/4
+	t.chunkSize = MAX<uint>(1, transChunkSize);
+	t.area = MAX<uint>(0, transArea);
 
 	// If we requested fast transitions, speed everything up
 	if (debugChannelSet(-1, kDebugFast))
 		t.duration = 250;
 
-	if (_transArea)
+	if (t.area)
 		warning("STUB: Transition over changed area transition");
 
-	Common::Rect clipRect(score->_movieRect);
+	Common::Rect clipRect(_movieRect);
 	clipRect.moveTo(0, 0);
 
 	Common::Rect rfrom, rto;
 
-	initTransParams(t, score, clipRect);
+	initTransParams(t, clipRect);
 
 	Graphics::ManagedSurface *blitFrom;
 	bool fullredraw = false;
@@ -191,36 +158,36 @@ void Frame::playTransition(Score *score) {
 	switch (transProps[t.type].algo) {
 	case kTransAlgoDissolve:
 		if (t.type == kTransDissolvePatterns)
-			dissolvePatternsTrans(t, score, clipRect);
+			dissolvePatternsTrans(t, clipRect);
 		else
-			dissolveTrans(t, score, clipRect);
+			dissolveTrans(t, clipRect);
 		return;
 
 	case kTransAlgoChecker:
 	case kTransAlgoStrips:
 	case kTransAlgoBlinds:
-		transMultiPass(t, score, clipRect);
+		transMultiPass(t, clipRect);
 		return;
 
 	case kTransAlgoZoom:
-		transZoom(t, score, clipRect);
+		transZoom(t, clipRect);
 		return;
 
 	case kTransAlgoCenterOut:
 	case kTransAlgoCover:
 	case kTransAlgoWipe:
-		blitFrom = score->_surface;
+		blitFrom = _surface;
 		break;
 
 	case kTransAlgoEdgesIn:
 	case kTransAlgoReveal:
 	case kTransAlgoPush:
-		blitFrom = score->_backSurface2;
+		blitFrom = _backSurface2;
 		fullredraw = true;
 		break;
 
 	default:
-		blitFrom = score->_surface;
+		blitFrom = _surface;
 		break;
 	}
 
@@ -234,7 +201,7 @@ void Frame::playTransition(Score *score) {
 
 		if (transProps[t.type].algo == kTransAlgoReveal ||
 				transProps[t.type].algo == kTransAlgoEdgesIn) {
-			score->_backSurface->copyFrom(*score->_surface);
+			_backSurface->copyFrom(*_surface);
 		}
 
 		switch (t.type) {
@@ -304,7 +271,7 @@ void Frame::playTransition(Score *score) {
 
 		case kTransPushLeft:								// 11
 			rto.moveTo(w - t.xStepSize * i, 0);
-			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+			_backSurface->blitFrom(*_surface, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.moveTo(t.xStepSize * i, 0);
 			rfrom.setWidth(w - t.xStepSize * i);
@@ -314,7 +281,7 @@ void Frame::playTransition(Score *score) {
 		case kTransPushRight:								// 12
 			rfrom.moveTo(w - t.xStepSize * i, 0);
 			rfrom.setWidth(t.xStepSize * i);
-			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+			_backSurface->blitFrom(*_surface, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setWidth(w - t.xStepSize * i);
 			rto.moveTo(t.xStepSize * i, 0);
@@ -325,7 +292,7 @@ void Frame::playTransition(Score *score) {
 		case kTransPushDown:								// 13
 			rfrom.moveTo(0, h - t.yStepSize * i);
 			rfrom.setHeight(t.yStepSize * i);
-			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+			_backSurface->blitFrom(*_surface, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setHeight(h - t.yStepSize * i);
 			rto.moveTo(0, t.yStepSize * i);
@@ -335,7 +302,7 @@ void Frame::playTransition(Score *score) {
 
 		case kTransPushUp:									// 14
 			rto.moveTo(0, h - t.yStepSize * i);
-			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
+			_backSurface->blitFrom(*_surface, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.moveTo(0, t.yStepSize * i);
 			rfrom.setHeight(h - t.yStepSize * i);
@@ -445,7 +412,7 @@ void Frame::playTransition(Score *score) {
 			break;
 
 		default:
-			warning("Frame::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
+			warning("Score::playTransition(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
 			stop = true;
 			break;
 		}
@@ -453,19 +420,19 @@ void Frame::playTransition(Score *score) {
 		if (stop)
 			break;
 
-		score->_backSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
+		_backSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
 			break;
 
 		if (fullredraw) {
-			g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
+			g_system->copyRectToScreen(_backSurface->getPixels(), _backSurface->pitch, 0, 0, w, h);
 		} else {
 			rto.clip(clipRect);
 
 			if (rto.height() > 0 && rto.width() > 0) {
-				g_system->copyRectToScreen(score->_backSurface->getBasePtr(rto.left, rto.top), score->_backSurface->pitch, rto.left, rto.top, rto.width(), rto.height());
+				g_system->copyRectToScreen(_backSurface->getBasePtr(rto.left, rto.top), _backSurface->pitch, rto.left, rto.top, rto.width(), rto.height());
 			}
 		}
 
@@ -494,7 +461,7 @@ static uint32 randomSeed[33] = {
 	0x14000000UL, 0x32800000UL, 0x48000000UL, 0xa3000000UL
 };
 
-static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
+void Score::dissolveTrans(TransParams &t, Common::Rect &clipRect) {
 	uint w = clipRect.width();
 	uint h = clipRect.height();
 	uint realw = w, realh = h;
@@ -577,7 +544,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 		return;
 
 	// Get previous frame
-	score->_backSurface->copyFrom(*score->_backSurface2);
+	_backSurface->copyFrom(*_backSurface2);
 
 	rnd = seed = randomSeed[hBits + vBits];
 	int hMask = (1L << hBits) - 1;
@@ -619,14 +586,14 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 					if (x < realw && y < realh) {
 						r.moveTo(x, y);
 						r.clip(clipRect);
-						score->_backSurface->copyRectToSurface(*score->_surface, x, y, r);
+						_backSurface->copyRectToSurface(*_surface, x, y, r);
 					}
 				} else {
 					mask = pixmask[x % -t.xStepSize];
 					x = x / -t.xStepSize;
 
-					byte *color1 = (byte *)score->_backSurface->getBasePtr(x, y);
-					byte *color2 = (byte *)score->_surface->getBasePtr(x, y);
+					byte *color1 = (byte *)_backSurface->getBasePtr(x, y);
+					byte *color2 = (byte *)_surface->getBasePtr(x, y);
 
 					*color1 = ((*color1 & ~mask) | (*color2 & mask)) & 0xff;
 				}
@@ -641,7 +608,7 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 			}
 		} while (rnd != seed);
 
-		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, realw, realh);
+		g_system->copyRectToScreen(_backSurface->getPixels(), _backSurface->pitch, 0, 0, realw, realh);
 		g_system->updateScreen();
 
 		if (processQuitEvent(true))
@@ -720,12 +687,12 @@ static byte dissolvePatterns[][8] = {
 	{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
 };
 
-static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
+void Score::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect) {
 	uint w = clipRect.width();
 	uint h = clipRect.height();
 
 	// Get previous frame
-	score->_backSurface->copyFrom(*score->_backSurface2);
+	_backSurface->copyFrom(*_backSurface2);
 
 	t.steps = 64;
 	t.stepDuration = t.duration / t.steps;
@@ -733,8 +700,8 @@ static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &cl
 	for (int i = 0; i < t.steps; i++) {
 		for (uint y = 0; y < h; y++) {
 			byte pat = dissolvePatterns[i][y % 8];
-			byte *dst = (byte *)score->_backSurface->getBasePtr(0, y);
-			byte *src = (byte *)score->_surface->getBasePtr(0, y);
+			byte *dst = (byte *)_backSurface->getBasePtr(0, y);
+			byte *src = (byte *)_surface->getBasePtr(0, y);
 
 			for (uint x = 0; x < w;) {
 				byte mask = 0x80;
@@ -749,7 +716,7 @@ static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &cl
 			}
 		}
 
-		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
+		g_system->copyRectToScreen(_backSurface->getPixels(), _backSurface->pitch, 0, 0, w, h);
 		g_system->updateScreen();
 
 		if (processQuitEvent(true))
@@ -759,7 +726,7 @@ static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &cl
 	}
 }
 
-static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect) {
+void Score::transMultiPass(TransParams &t, Common::Rect &clipRect) {
 	Common::Rect rto;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
@@ -901,7 +868,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			break;
 
 		default:
-			warning("Frame::transMultiPass(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
+			warning("Score::transMultiPass(): Unhandled transition type %s %d %d", transProps[t.type].name, t.duration, t.chunkSize);
 			stop = true;
 			break;
 		}
@@ -914,8 +881,8 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			rto.clip(clipRect);
 
 			if (rto.height() > 0 && rto.width() > 0) {
-				score->_backSurface->blitFrom(*score->_surface, rto, Common::Point(rto.left, rto.top));
-				g_system->copyRectToScreen(score->_backSurface->getBasePtr(rto.left, rto.top), score->_backSurface->pitch, rto.left, rto.top, rto.width(), rto.height());
+				_backSurface->blitFrom(*_surface, rto, Common::Point(rto.left, rto.top));
+				g_system->copyRectToScreen(_backSurface->getBasePtr(rto.left, rto.top), _backSurface->pitch, rto.left, rto.top, rto.width(), rto.height());
 			}
 		}
 		rects.clear();
@@ -929,17 +896,17 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 	}
 }
 
-static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
+void Score::transZoom(TransParams &t, Common::Rect &clipRect) {
 	Common::Rect r = clipRect;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
 
 	t.steps += 2;
 
-	Graphics::MacPlotData pd(score->_backSurface, nullptr, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
+	Graphics::MacPlotData pd(_backSurface, nullptr, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
 
 	for (uint16 i = 1; i < t.steps; i++) {
-		score->_backSurface->copyFrom(*score->_backSurface2);
+		_backSurface->copyFrom(*_backSurface2);
 
 		for (int s = 2; s >= 0; s--) {
 			if (i - s < 0 || i - s > t.steps - 2)
@@ -965,7 +932,7 @@ static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
 		r.setWidth(t.xStepSize * i * 2);
 		r.moveTo(w / 2 - t.xStepSize * i, h / 2 - t.yStepSize * i);
 
-		g_system->copyRectToScreen(score->_backSurface->getPixels(), score->_backSurface->pitch, 0, 0, w, h);
+		g_system->copyRectToScreen(_backSurface->getPixels(), _backSurface->pitch, 0, 0, w, h);
 		g_system->updateScreen();
 
 		g_system->delayMillis(t.stepDuration);
@@ -974,7 +941,7 @@ static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
 	}
 }
 
-static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect) {
+void Score::initTransParams(TransParams &t, Common::Rect &clipRect) {
 	int w = clipRect.width();
 	int h = clipRect.height();
 	int m = MIN(w, h);

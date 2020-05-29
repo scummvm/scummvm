@@ -63,6 +63,36 @@ struct ZoomBox {
 	uint32 nextTime;
 };
 
+
+struct TransParams {
+	TransitionType type;
+	uint duration;
+	uint chunkSize;
+	uint area;
+
+	int steps;
+	int stepDuration;
+
+	int xStepSize;
+	int yStepSize;
+
+	int xpos, ypos;
+
+	int stripSize;
+
+	TransParams() {
+		type = kTransNone;
+		duration = 250;
+		chunkSize = 1;
+		steps = 0;
+		stepDuration = 0;
+		stripSize = 0;
+
+		xStepSize = yStepSize = 0;
+		xpos = ypos = 0;
+	}
+};
+
 class Score {
 public:
 	Score(DirectorEngine *vm);
@@ -130,6 +160,14 @@ private:
 	void drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawGhostSprite(const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId);
+
+	// transitions.cpp
+	void playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType);
+	void initTransParams(TransParams &t, Common::Rect &clipRect);
+	void dissolveTrans(TransParams &t, Common::Rect &clipRect);
+	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect);
+	void transMultiPass(TransParams &t, Common::Rect &clipRect);
+	void transZoom(TransParams &t, Common::Rect &clipRect);
 
 	// score.cpp
 	void playSoundChannel(uint16 frameId);

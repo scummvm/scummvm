@@ -1731,7 +1731,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 
 		if (currentFrame->_transType != 0)
 			// TODO Handle changing area case
-			currentFrame->playTransition(this);
+			playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType);
 
 		if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0) {
 			playSoundChannel(frameId);
