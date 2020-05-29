@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_COMPREHEND_GAME_TR_H
-#define GLK_COMPREHEND_GAME_TR_H
+#ifndef GLK_ComprehendGame_TR_H
+#define GLK_ComprehendGame_TR_H
 
 #include "glk/comprehend/game.h"
 
@@ -36,7 +36,7 @@ struct tr_monster {
 	unsigned randomness;
 };
 
-class TransylvaniaGame : public comprehend_game {
+class TransylvaniaGame : public ComprehendGame {
 private:
 	static const tr_monster WEREWOLF;
 	static const tr_monster VAMPIRE;

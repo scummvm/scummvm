@@ -26,7 +26,7 @@
 namespace Glk {
 namespace Comprehend {
 
-struct comprehend_game;
+class ComprehendGame;
 struct function_state;
 struct instruction;
 
@@ -42,10 +42,10 @@ struct instruction;
 #define DUMP_HEADER (1 << 9)
 #define DUMP_ALL (~0U)
 
-void dump_instruction(struct comprehend_game *game,
+void dump_instruction(ComprehendGame *game,
                       struct function_state *func_state,
                       struct instruction *instr);
-void dump_game_data(struct comprehend_game *game, unsigned flags);
+void dump_game_data(ComprehendGame *game, unsigned flags);
 
 } // namespace Comprehend
 } // namespace Glk

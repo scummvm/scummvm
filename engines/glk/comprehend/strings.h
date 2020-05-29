@@ -26,10 +26,10 @@
 namespace Glk {
 namespace Comprehend {
 
-struct comprehend_game;
+class ComprehendGame;
 
-const char *string_lookup(struct comprehend_game *game, uint16 index);
-const char *instr_lookup_string(struct comprehend_game *game, uint8 index,
+const char *string_lookup(ComprehendGame *game, uint16 index);
+const char *instr_lookup_string(ComprehendGame *game, uint8 index,
 				uint8 table);
 
 } // namespace Comprehend

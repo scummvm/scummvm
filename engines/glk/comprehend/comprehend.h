@@ -27,6 +27,7 @@
 #include "glk/glk_api.h"
 #include "glk/window_graphics.h"
 #include "glk/window_text_buffer.h"
+#include "glk/comprehend/game.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -38,7 +39,6 @@ namespace Comprehend {
 
 #define PATH_MAX 256
 
-struct comprehend_game;
 struct game_info;
 struct game_state;
 
@@ -68,7 +68,7 @@ private:
 	 */
 	void deinitialize();
 
-	comprehend_game *createGame();
+	ComprehendGame *createGame();
 
 public:
 	/**

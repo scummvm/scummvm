@@ -38,7 +38,7 @@ static struct game_ops cc2_ops = {
     cc2_handle_special_opcode};
 #endif
 
-CrimsonCrownGame::CrimsonCrownGame() : comprehend_game() {
+CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame() {
 	game_name = "Crimson Crown";
 	short_name = "cc1";
 	game_data_file = "cc1.gda";
@@ -55,7 +55,7 @@ CrimsonCrownGame::CrimsonCrownGame() : comprehend_game() {
 }
 
 #ifdef TODO
-struct comprehend_game game_crimson_crown_2 = {
+ComprehendGame game_crimson_crown_2 = {
     "Crimson Crown (Part 2/2)",
     "cc2",
     "CC2.GDA",
@@ -69,13 +69,13 @@ struct comprehend_game game_crimson_crown_2 = {
     nullptr};
 #endif
 
-static void cc_clear_companion_flags(struct comprehend_game *game) {
+static void cc_clear_companion_flags(ComprehendGame *game) {
 	/* Clear the Sabrina/Erik action flags */
 	game->info->flags[0xa] = 0;
 	game->info->flags[0xb] = 0;
 }
 
-static bool cc_common_handle_special_opcode(struct comprehend_game *game,
+static bool cc_common_handle_special_opcode(ComprehendGame *game,
                                             uint8 operand) {
 	switch (operand) {
 	case 0x03:
@@ -120,7 +120,7 @@ void CrimsonCrownGame::handle_special_opcode(uint8 operand) {
 	}
 }
 
-static void cc2_handle_special_opcode(struct comprehend_game *game,
+static void cc2_handle_special_opcode(ComprehendGame *game,
                                       uint8 operand) {
 	if (cc_common_handle_special_opcode(game, operand))
 		return;
@@ -142,7 +142,7 @@ static void cc2_handle_special_opcode(struct comprehend_game *game,
 	}
 }
 
-static void cc2_before_prompt(struct comprehend_game *game) {
+static void cc2_before_prompt(ComprehendGame *game) {
 	cc_clear_companion_flags(game);
 }
 

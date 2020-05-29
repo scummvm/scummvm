@@ -187,7 +187,7 @@ static void parse_function(struct file_buf * fb, struct function * func) {
 	}
 }
 
-static void parse_vm(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_vm(ComprehendGame * game, struct file_buf * fb) {
 	struct function *func;
 
 	file_buf_set_pos(fb, game->info->header.addr_vm);
@@ -202,7 +202,7 @@ static void parse_vm(struct comprehend_game * game, struct file_buf * fb) {
 	}
 }
 
-static void parse_action_table_vvnn(struct comprehend_game * game,
+static void parse_action_table_vvnn(ComprehendGame * game,
 	                                struct file_buf * fb, size_t * index) {
 	struct action *action;
 	uint8 verb, count;
@@ -246,7 +246,7 @@ static void parse_action_table_vvnn(struct comprehend_game * game,
 	}
 }
 
-static void parse_action_table_vnjn(struct comprehend_game * game,
+static void parse_action_table_vnjn(ComprehendGame * game,
 	                                struct file_buf * fb, size_t * index) {
 	struct action *action;
 	uint8 join, count;
@@ -291,7 +291,7 @@ static void parse_action_table_vnjn(struct comprehend_game * game,
 	}
 }
 
-static void parse_action_table_vjn(struct comprehend_game * game,
+static void parse_action_table_vjn(ComprehendGame * game,
 	                                struct file_buf * fb, size_t * index) {
 	struct action *action;
 	uint8 join, count;
@@ -332,7 +332,7 @@ static void parse_action_table_vjn(struct comprehend_game * game,
 	}
 }
 
-static void parse_action_table_vdn(struct comprehend_game * game,
+static void parse_action_table_vdn(ComprehendGame * game,
 	                                struct file_buf * fb, size_t * index) {
 	struct action *action;
 	uint8 verb, count;
@@ -373,7 +373,7 @@ static void parse_action_table_vdn(struct comprehend_game * game,
 	}
 }
 
-static void parse_action_table_vnn(struct comprehend_game * game,
+static void parse_action_table_vnn(ComprehendGame * game,
 	                                struct file_buf * fb, size_t * index) {
 	struct action *action;
 	uint8 verb, count;
@@ -415,7 +415,7 @@ static void parse_action_table_vnn(struct comprehend_game * game,
 	}
 }
 
-static void parse_action_table_vn(struct comprehend_game * game,
+static void parse_action_table_vn(ComprehendGame * game,
 	                                struct file_buf * fb, size_t * index) {
 	struct action *action;
 	uint8 verb, count;
@@ -454,7 +454,7 @@ static void parse_action_table_vn(struct comprehend_game * game,
 	}
 }
 
-static void parse_action_table_v(struct comprehend_game * game,
+static void parse_action_table_v(ComprehendGame * game,
 	                                struct file_buf * fb, size_t * index) {
 	struct action *action;
 	uint8 verb, nr_funcs;
@@ -497,7 +497,7 @@ static void parse_action_table_v(struct comprehend_game * game,
 	}
 }
 
-static void parse_action_table(struct comprehend_game * game,
+static void parse_action_table(ComprehendGame * game,
 	                            struct file_buf * fb) {
 	game->info->nr_actions = 0;
 
@@ -515,7 +515,7 @@ static void parse_action_table(struct comprehend_game * game,
 	parse_action_table_v(game, fb, &game->info->nr_actions);
 }
 
-static void parse_dictionary(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_dictionary(ComprehendGame * game, struct file_buf * fb) {
 	word *words;
 	uint i, j;
 
@@ -538,7 +538,7 @@ static void parse_dictionary(struct comprehend_game * game, struct file_buf * fb
 	}
 }
 
-static void parse_word_map(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_word_map(ComprehendGame * game, struct file_buf * fb) {
 	struct word_map *map;
 	uint8 index, type, dummy;
 	uint i;
@@ -586,7 +586,7 @@ static void parse_word_map(struct comprehend_game * game, struct file_buf * fb) 
 	}
 }
 
-static void parse_items(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_items(ComprehendGame * game, struct file_buf * fb) {
 	size_t nr_items = game->info->header.nr_items;
 
 	/* Item descriptions */
@@ -617,7 +617,7 @@ static void parse_items(struct comprehend_game * game, struct file_buf * fb) {
 	file_buf_get_array_u8(fb, 0, game->info->item, graphic, nr_items);
 }
 
-static void parse_rooms(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_rooms(ComprehendGame * game, struct file_buf * fb) {
 	size_t nr_rooms = game->info->nr_rooms;
 	int i;
 
@@ -748,14 +748,14 @@ static void parse_string_table(struct file_buf * fb, unsigned start_addr,
 	}
 }
 
-static void parse_variables(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_variables(ComprehendGame * game, struct file_buf * fb) {
 	int i;
 
 	for (i = 0; i < ARRAY_SIZE(game->info->variable); i++)
 		file_buf_get_le16(fb, &game->info->variable[i]);
 }
 
-static void parse_flags(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_flags(ComprehendGame * game, struct file_buf * fb) {
 	int i, bit, flag_index = 0;
 	uint8 bitmask;
 
@@ -768,7 +768,7 @@ static void parse_flags(struct comprehend_game * game, struct file_buf * fb) {
 	}
 }
 
-static void parse_replace_words(struct comprehend_game * game,
+static void parse_replace_words(ComprehendGame * game,
 	                            struct file_buf * fb) {
 	uint16 dummy;
 	size_t len;
@@ -798,7 +798,7 @@ static void parse_replace_words(struct comprehend_game * game,
 * The main game data file header has the offsets for where each bit of
 * game data is. The offsets have a magic constant value added to them.
 */
-static void parse_header(struct comprehend_game * game, struct file_buf * fb) {
+static void parse_header(ComprehendGame * game, struct file_buf * fb) {
 	struct game_header *header = &game->info->header;
 	uint16 dummy, addr_dictionary_end;
 	uint8 dummy8;
@@ -916,7 +916,7 @@ static void parse_header(struct comprehend_game * game, struct file_buf * fb) {
 		                    8;
 }
 
-static void load_extra_string_file(comprehend_game * game,
+static void load_extra_string_file(ComprehendGame * game,
 	                                string_file * string_file) {
 	struct file_buf fb;
 	unsigned end;
@@ -934,7 +934,7 @@ static void load_extra_string_file(comprehend_game * game,
 	file_buf_unmap(&fb);
 }
 
-static void load_extra_string_files(comprehend_game * game) {
+static void load_extra_string_files(ComprehendGame * game) {
 	int i;
 
 	memset(&game->info->strings2, 0, sizeof(game->info->strings2));
@@ -952,7 +952,7 @@ static void load_extra_string_files(comprehend_game * game) {
 	}
 }
 
-static void load_game_data(struct comprehend_game * game) {
+static void load_game_data(ComprehendGame * game) {
 	struct file_buf fb;
 
 	memset(game->info, 0, sizeof(*game->info));
@@ -975,7 +975,7 @@ static void load_game_data(struct comprehend_game * game) {
 	file_buf_unmap(&fb);
 }
 
-void comprehend_load_game(struct comprehend_game * game) {
+void comprehend_load_game(ComprehendGame * game) {
 	/* Load the main game data file */
 	load_game_data(game);
 
@@ -1004,7 +1004,7 @@ static void patch_string_desc(uint16 * desc) {
 }
 #endif
 
-void comprehend_save_game(struct comprehend_game * game, const char *filename) {
+void comprehend_save_game(ComprehendGame * game, const char *filename) {
 #ifdef TODO
 	FILE *fd;
 	uint8 bitmask;
@@ -1088,7 +1088,7 @@ void comprehend_save_game(struct comprehend_game * game, const char *filename) {
 #endif
 }
 
-void comprehend_restore_game(struct comprehend_game * game, const char *filename) {
+void comprehend_restore_game(ComprehendGame * game, const char *filename) {
 #ifdef TODO
 	struct file_buf fb;
 	size_t nr_rooms, nr_items;

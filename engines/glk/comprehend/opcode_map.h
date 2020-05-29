@@ -28,7 +28,7 @@
 namespace Glk {
 namespace Comprehend {
 
-uint8 *get_opcode_map(comprehend_game *game);
+uint8 *get_opcode_map(ComprehendGame *game);
 
 } // namespace Comprehend
 } // namespace Glk

@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef GLK_COMPREHEND_GAME_TM_H
-#define GLK_COMPREHEND_GAME_TM_H
+#ifndef GLK_ComprehendGame_TM_H
+#define GLK_ComprehendGame_TM_H
 
 #include "glk/comprehend/game.h"
 
 namespace Glk {
 namespace Comprehend {
 
-class TalismanGame : public comprehend_game {
+class TalismanGame : public ComprehendGame {
 public:
 	TalismanGame();
 	~TalismanGame() override {}

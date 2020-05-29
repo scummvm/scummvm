@@ -37,7 +37,7 @@ static bool word_match(struct word *word, const char *string)
 	return strncmp(word->_word, string, strlen(word->_word)) == 0;
 }
 
-word *dict_find_word_by_string(struct comprehend_game *game,
+word *dict_find_word_by_string(ComprehendGame *game,
 				      const char *string)
 {
 	uint i;
@@ -52,7 +52,7 @@ word *dict_find_word_by_string(struct comprehend_game *game,
 	return NULL;
 }
 
-struct word *dict_find_word_by_index_type(struct comprehend_game *game,
+struct word *dict_find_word_by_index_type(ComprehendGame *game,
 					  uint8 index, uint8 type)
 {
 	uint i;
@@ -66,7 +66,7 @@ struct word *dict_find_word_by_index_type(struct comprehend_game *game,
 	return NULL;
 }
 
-struct word *find_dict_word_by_index(struct comprehend_game *game,
+struct word *find_dict_word_by_index(ComprehendGame *game,
 				     uint8 index, uint8 type_mask)
 {
 	uint i;
@@ -80,7 +80,7 @@ struct word *find_dict_word_by_index(struct comprehend_game *game,
 	return NULL;
 }
 
-bool dict_match_index_type(struct comprehend_game *game, const char *word,
+bool dict_match_index_type(ComprehendGame *game, const char *word,
 			   uint8 index, uint8 type_mask)
 {
 	uint i;

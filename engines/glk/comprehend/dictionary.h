@@ -26,16 +26,16 @@
 namespace Glk {
 namespace Comprehend {
 
-struct comprehend_game;
+class ComprehendGame;
 struct word;
 
-struct word *find_dict_word_by_index(struct comprehend_game *game,
+struct word *find_dict_word_by_index(ComprehendGame *game,
 				     uint8 index, uint8 type_mask);
-struct word *dict_find_word_by_index_type(struct comprehend_game *game,
+struct word *dict_find_word_by_index_type(ComprehendGame *game,
 					  uint8 index, uint8 type);
-struct word *dict_find_word_by_string(struct comprehend_game *game,
+struct word *dict_find_word_by_string(ComprehendGame *game,
 				      const char *string);
-bool dict_match_index_type(struct comprehend_game *game, const char *word,
+bool dict_match_index_type(ComprehendGame *game, const char *word,
 			   uint8 index, uint8 type_mask);
 
 } // namespace Comprehend

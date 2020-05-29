@@ -34,7 +34,7 @@ namespace Comprehend {
 #define OO_FLAG_WEARING_GOGGLES 0x1b
 #define OO_FLAG_FLASHLIGHT_ON 0x27
 
-OOToposGame::OOToposGame() : comprehend_game() {
+OOToposGame::OOToposGame() : ComprehendGame() {
 	game_name = "Oo-Topos";
 	short_name = "oo";
 	game_data_file = "g0";

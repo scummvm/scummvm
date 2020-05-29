@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 	    {NULL, 0, 0, 0},
 	};
 	const char *short_opts = "dD:pgfw:h:?";
-	struct comprehend_game *game;
+	ComprehendGame *game;
 	const char *game_name, *game_dir;
 	unsigned dump_flags = 0;
 	int i, c, opt_index;
@@ -153,7 +153,7 @@ void Comprehend::runGame() {
 	initialize();
 
 	// Lookup game
-	comprehend_game *game = createGame();
+	ComprehendGame *game = createGame();
 
 	comprehend_load_game(game);
 	comprehend_play_game(game);
@@ -173,7 +173,7 @@ void Comprehend::deinitialize() {
 	glk_window_close(_textBufferWindow);
 }
 
-comprehend_game *Comprehend::createGame() {
+ComprehendGame *Comprehend::createGame() {
 	if (_gameDescription._gameId == "crimsoncrown")
 		return new CrimsonCrownGame();
 	if (_gameDescription._gameId == "ootopis")

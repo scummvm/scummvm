@@ -113,7 +113,7 @@ static const char *opcode_names[] = {
 #endif
 };
 
-void dump_instruction(struct comprehend_game *game,
+void dump_instruction(ComprehendGame *game,
 		      struct function_state *func_state,
 		      struct instruction *instr)
 {
@@ -167,7 +167,7 @@ void dump_instruction(struct comprehend_game *game,
 	debugN("\n");
 }
 
-static void dump_functions(struct comprehend_game *game)
+static void dump_functions(ComprehendGame *game)
 {
 	struct function *func;
 	uint i, j;
@@ -183,7 +183,7 @@ static void dump_functions(struct comprehend_game *game)
 	}
 }
 
-static void dump_action_table(struct comprehend_game *game)
+static void dump_action_table(ComprehendGame *game)
 {
 	struct action *action;
 	struct word *word;
@@ -240,7 +240,7 @@ static int word_index_compare(const void *a, const void *b)
 	return 0;
 }
 
-static void dump_dictionary(struct comprehend_game *game)
+static void dump_dictionary(ComprehendGame *game)
 {
 	word *dictionary;
 	word *words;
@@ -263,7 +263,7 @@ static void dump_dictionary(struct comprehend_game *game)
 	free(dictionary);
 }
 
-static void dump_word_map(struct comprehend_game *game)
+static void dump_word_map(ComprehendGame *game)
 {
 	struct word *word[3];
 	char str[3][6];
@@ -290,7 +290,7 @@ static void dump_word_map(struct comprehend_game *game)
 	}
 }
 
-static void dump_rooms(struct comprehend_game *game)
+static void dump_rooms(ComprehendGame *game)
 {
 	struct room *room;
 	uint i;
@@ -317,7 +317,7 @@ static void dump_rooms(struct comprehend_game *game)
 	}
 }
 
-static void dump_items(struct comprehend_game *game)
+static void dump_items(ComprehendGame *game)
 {
 	struct item *item;
 	uint i, j;
@@ -356,21 +356,21 @@ static void dump_string_table(struct string_table *table)
 		debugN("[%.4x] %s\n", i, table->strings[i]);
 }
 
-static void dump_game_data_strings(struct comprehend_game *game)
+static void dump_game_data_strings(ComprehendGame *game)
 {
 	debugN("Main string table (%zd entries)\n",
 	       game->info->strings.nr_strings);
 	dump_string_table(&game->info->strings);
 }
 
-static void dump_extra_strings(struct comprehend_game *game)
+static void dump_extra_strings(ComprehendGame *game)
 {
 	debugN("Extra strings (%zd entries)\n",
 	       game->info->strings2.nr_strings);
 	dump_string_table(&game->info->strings2);
 }
 
-static void dump_replace_words(struct comprehend_game *game)
+static void dump_replace_words(ComprehendGame *game)
 {
 	uint i;
 
@@ -380,7 +380,7 @@ static void dump_replace_words(struct comprehend_game *game)
 		debugN("  [%.2x] %s\n", i + 1, game->info->replace_words[i]);
 }
 
-static void dump_header(struct comprehend_game *game)
+static void dump_header(ComprehendGame *game)
 {
 	struct game_header *header = &game->info->header;
 	uint16 *dir_table = header->room_direction_table;
@@ -418,7 +418,7 @@ static void dump_header(struct comprehend_game *game)
 	debugN("  string table end:     %.4x\n", header->addr_strings_end);
 }
 
-typedef void (*dump_func_t)(struct comprehend_game *game);
+typedef void (*dump_func_t)(ComprehendGame *game);
 
 struct dumper {
 	dump_func_t	dump_func;
@@ -438,7 +438,7 @@ static struct dumper dumpers[] = {
 	{dump_replace_words,		DUMP_REPLACE_WORDS},
 };
 
-void dump_game_data(struct comprehend_game *game, unsigned flags)
+void dump_game_data(ComprehendGame *game, unsigned flags)
 {
 	int i;
 

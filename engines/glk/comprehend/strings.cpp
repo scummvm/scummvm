@@ -30,7 +30,7 @@ namespace Comprehend {
 
 static char bad_string[128];
 
-const char *string_lookup(comprehend_game *game, uint16 index)
+const char *string_lookup(ComprehendGame *game, uint16 index)
 {
 	uint16 string;
 	uint8 table;
@@ -73,7 +73,7 @@ const char *string_lookup(comprehend_game *game, uint16 index)
 	return bad_string;
 }
 
-const char *instr_lookup_string(struct comprehend_game *game, uint8 index,
+const char *instr_lookup_string(ComprehendGame *game, uint8 index,
 				uint8 table)
 {
 	return string_lookup(game, table << 8 | index);

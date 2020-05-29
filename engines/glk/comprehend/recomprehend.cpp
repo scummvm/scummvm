@@ -30,13 +30,13 @@
 namespace Glk {
 namespace Comprehend {
 
-extern struct comprehend_game game_transylvania;
-extern struct comprehend_game game_crimson_crown_1;
-extern struct comprehend_game game_crimson_crown_2;
-extern struct comprehend_game game_oo_topos;
-extern struct comprehend_game game_talisman;
+extern ComprehendGame game_transylvania;
+extern ComprehendGame game_crimson_crown_1;
+extern ComprehendGame game_crimson_crown_2;
+extern ComprehendGame game_oo_topos;
+extern ComprehendGame game_talisman;
 
-static struct comprehend_game *comprehend_games[] = {
+static ComprehendGame *ComprehendGames[] = {
 	&game_transylvania,
 	&game_crimson_crown_1,
 	&game_crimson_crown_2,
@@ -80,9 +80,9 @@ static void usage(const char *progname)
 	printf("  -h, --graphics-height=HEIGHT  Graphics height\n");
 
 	printf("\nSupported games:\n");
-	for (i = 0; i < ARRAY_SIZE(comprehend_games); i++)
-		printf("    %-10s %s\n", comprehend_games[i]->short_name,
-		       comprehend_games[i]->game_name);
+	for (i = 0; i < ARRAY_SIZE(ComprehendGames); i++)
+		printf("    %-10s %s\n", ComprehendGames[i]->short_name,
+		       ComprehendGames[i]->game_name);
 
 	exit(EXIT_FAILURE);
 }
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 		{NULL,			0,			0, 0},
 	};
 	const char *short_opts = "dD:pgfw:h:?";
-	struct comprehend_game *game;
+	ComprehendGame *game;
 	const char *game_name, *game_dir;
 	unsigned dump_flags = 0;
 	int i, c, opt_index;
@@ -171,9 +171,9 @@ int main(int argc, char **argv)
 
 	/* Lookup game */
 	game = NULL;
-	for (i = 0; i < ARRAY_SIZE(comprehend_games); i++) {
-		if (strcmp(game_name, comprehend_games[i]->short_name) == 0) {
-			game = comprehend_games[i];
+	for (i = 0; i < ARRAY_SIZE(ComprehendGames); i++) {
+		if (strcmp(game_name, ComprehendGames[i]->short_name) == 0) {
+			game = ComprehendGames[i];
 			break;
 		}
 	}

@@ -31,12 +31,12 @@ namespace Glk {
 namespace Comprehend {
 
 void ComprehendMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = COMPREHEND_GAME_LIST; pd->gameId; ++pd)
+	for (const PlainGameDescriptor *pd = ComprehendGame_LIST; pd->gameId; ++pd)
 		games.push_back(*pd);
 }
 
 GameDescriptor ComprehendMetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = COMPREHEND_GAME_LIST; pd->gameId; ++pd) {
+	for (const PlainGameDescriptor *pd = ComprehendGame_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
@@ -64,7 +64,7 @@ bool ComprehendMetaEngine::detectGames(const Common::FSList &fslist, DetectedGam
 		gameFile.close();
 
 		// Iterate through the known games
-		const ComprehendDetectionEntry *p = COMPREHEND_GAMES;
+		const ComprehendDetectionEntry *p = ComprehendGameS;
 		for (; p->_gameId; ++p) {
 			if (filename.equalsIgnoreCase(p->_filename)) {
 				// Check for an md5 match
@@ -81,7 +81,7 @@ bool ComprehendMetaEngine::detectGames(const Common::FSList &fslist, DetectedGam
 }
 
 void ComprehendMetaEngine::detectClashes(Common::StringMap &map) {
-	for (const PlainGameDescriptor *pd = COMPREHEND_GAME_LIST; pd->gameId; ++pd) {
+	for (const PlainGameDescriptor *pd = ComprehendGame_LIST; pd->gameId; ++pd) {
 		if (map.contains(pd->gameId))
 			error("Duplicate game Id found - %s", pd->gameId);
 		map[pd->gameId] = "";

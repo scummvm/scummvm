@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef GLK_COMPREHEND_GAME_CC_H
-#define GLK_COMPREHEND_GAME_CC_H
+#ifndef GLK_ComprehendGame_CC_H
+#define GLK_ComprehendGame_CC_H
 
 #include "glk/comprehend/game.h"
 
 namespace Glk {
 namespace Comprehend {
 
-class CrimsonCrownGame : public comprehend_game {
+class CrimsonCrownGame : public ComprehendGame {
 public:
 	CrimsonCrownGame();
 	~CrimsonCrownGame() override {}

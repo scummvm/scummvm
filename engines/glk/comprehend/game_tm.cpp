@@ -28,7 +28,7 @@ namespace Comprehend {
 
 /* FIXME - This is broken */
 
-TalismanGame::TalismanGame() : comprehend_game() {
+TalismanGame::TalismanGame() : ComprehendGame() {
 	game_name = "Talisman, Challenging the Sands of Time (broken)";
 	short_name = "tm";
 	game_data_file = "G0";

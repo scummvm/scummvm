@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_COMPREHEND_GAME_H
-#define GLK_COMPREHEND_GAME_H
+#ifndef GLK_ComprehendGame_H
+#define GLK_ComprehendGame_H
 
 #include "common/array.h"
 #include "glk/comprehend/game_data.h"
@@ -33,7 +33,7 @@ namespace Comprehend {
 #define ROOM_IS_DARK 1
 #define ROOM_IS_TOO_BRIGHT 2
 
-struct comprehend_game {
+class ComprehendGame {
 public:
 	const char *game_name;
 	const char *short_name;
@@ -49,8 +49,8 @@ public:
 	struct game_info *info;
 
 public:
-	comprehend_game();
-	virtual ~comprehend_game();
+	ComprehendGame();
+	virtual ~ComprehendGame();
 
 	virtual void before_game() {}
 	virtual void before_prompt() {}
@@ -67,18 +67,18 @@ public:
 	virtual void handle_special_opcode(uint8 operand) {}
 };
 
-void console_println(comprehend_game *game, const char *text);
+void console_println(ComprehendGame *game, const char *text);
 int console_get_key(void);
 
-struct item *get_item(comprehend_game *game, uint16 index);
-void move_object(comprehend_game *game, struct item *item, int new_room);
-void eval_function(comprehend_game *game, struct function *func,
+struct item *get_item(ComprehendGame *game, uint16 index);
+void move_object(ComprehendGame *game, struct item *item, int new_room);
+void eval_function(ComprehendGame *game, struct function *func,
                    struct word *verb, struct word *noun);
 
-void comprehend_play_game(comprehend_game *game);
-void game_save(comprehend_game *game);
-void game_restore(comprehend_game *game);
-void game_restart(comprehend_game *game);
+void comprehend_play_game(ComprehendGame *game);
+void game_save(ComprehendGame *game);
+void game_restore(ComprehendGame *game);
+void game_restart(ComprehendGame *game);
 
 } // namespace Comprehend
 } // namespace Glk

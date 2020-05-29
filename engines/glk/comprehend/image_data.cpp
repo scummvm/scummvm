@@ -348,7 +348,7 @@ void comprehend_load_image_file(const char *filename, struct image_data *info)
 	load_image_files(info, filenames);
 }
 
-void comprehend_load_images(comprehend_game *game) {
+void comprehend_load_images(ComprehendGame *game) {
 	load_image_files(&game->info->room_images,
 			 game->location_graphic_files);
 

@@ -41,7 +41,7 @@ static struct game_strings tr_strings = {
 };
 
 
-TransylvaniaGame::TransylvaniaGame() : comprehend_game() {
+TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 	game_name = "Transylvania";
 	short_name = "tr";
 	game_data_file = "tr.gda";

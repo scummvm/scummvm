@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_COMPREHEND_GAME_DATA_H
-#define GLK_COMPREHEND_GAME_DATA_H
+#ifndef GLK_ComprehendGame_DATA_H
+#define GLK_ComprehendGame_DATA_H
 
 #include "glk/comprehend/image_data.h"
 
@@ -341,10 +341,10 @@ enum {
 #define WORD_TYPE_NOUN_MASK (WORD_TYPE_FEMALE | WORD_TYPE_MALE | \
 	                         WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
 
-void comprehend_load_game(struct comprehend_game *game);
-void comprehend_restore_game(struct comprehend_game *game,
+void comprehend_load_game(ComprehendGame *game);
+void comprehend_restore_game(ComprehendGame *game,
                              const char *filename);
-void comprehend_save_game(struct comprehend_game *game, const char *filename);
+void comprehend_save_game(ComprehendGame *game, const char *filename);
 
 } // namespace Comprehend
 } // namespace Glk

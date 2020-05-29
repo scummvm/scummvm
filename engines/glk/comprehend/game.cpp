@@ -43,7 +43,7 @@ struct winsize {
 };
 static struct winsize console_winsize;
 
-comprehend_game::comprehend_game() : game_name(nullptr),
+ComprehendGame::ComprehendGame() : game_name(nullptr),
                                      short_name(nullptr),
                                      game_data_file(nullptr),
                                      save_game_file_fmt(nullptr),
@@ -52,7 +52,7 @@ comprehend_game::comprehend_game() : game_name(nullptr),
 	info = (game_info *)malloc(sizeof(*info));
 }
 
-comprehend_game::~comprehend_game() {
+ComprehendGame::~ComprehendGame() {
 	free(info);
 }
 
@@ -72,7 +72,7 @@ int console_get_key(void) {
 	return c;
 }
 
-void console_println(comprehend_game *game, const char *text) {
+void console_println(ComprehendGame *game, const char *text) {
 	const char *replace, *word = nullptr, *p = text;
 	char bad_word[64];
 	size_t line_length = 0;
@@ -159,7 +159,7 @@ void console_println(comprehend_game *game, const char *text) {
 	printf("\n");
 }
 
-static struct room *get_room(comprehend_game *game, uint16 index) {
+static struct room *get_room(ComprehendGame *game, uint16 index) {
 	/* Room zero is reserved for the players inventory */
 	if (index == 0)
 		fatal_error("Room index 0 (player inventory) is invalid");
@@ -170,14 +170,14 @@ static struct room *get_room(comprehend_game *game, uint16 index) {
 	return &game->info->rooms[index];
 }
 
-struct item *get_item(comprehend_game *game, uint16 index) {
+struct item *get_item(ComprehendGame *game, uint16 index) {
 	if (index >= game->info->header.nr_items)
 		fatal_error("Bad item %d\n", index);
 
 	return &game->info->item[index];
 }
 
-void game_save(comprehend_game *game) {
+void game_save(ComprehendGame *game) {
 	char filename[32];
 	int c;
 
@@ -197,7 +197,7 @@ void game_save(comprehend_game *game) {
 	comprehend_save_game(game, filename);
 }
 
-void game_restore(comprehend_game *game) {
+void game_restore(ComprehendGame *game) {
 	char filename[32];
 	int c;
 
@@ -219,7 +219,7 @@ void game_restore(comprehend_game *game) {
 	game->info->update_flags = UPDATE_ALL;
 }
 
-void game_restart(comprehend_game *game) {
+void game_restart(ComprehendGame *game) {
 	console_println(game, string_lookup(game, game->strings->game_restart));
 	console_get_key();
 
@@ -227,7 +227,7 @@ void game_restart(comprehend_game *game) {
 	game->info->update_flags = UPDATE_ALL;
 }
 
-static struct word_index *is_word_pair(comprehend_game *game,
+static struct word_index *is_word_pair(ComprehendGame *game,
                                        struct word *word1, struct word *word2) {
 	struct word_map *map;
 	uint i;
@@ -246,7 +246,7 @@ static struct word_index *is_word_pair(comprehend_game *game,
 	return NULL;
 }
 
-static struct item *get_item_by_noun(comprehend_game *game,
+static struct item *get_item_by_noun(ComprehendGame *game,
                                      struct word *noun) {
 	uint i;
 
@@ -265,7 +265,7 @@ static struct item *get_item_by_noun(comprehend_game *game,
 	return NULL;
 }
 
-static void update_graphics(comprehend_game *game) {
+static void update_graphics(ComprehendGame *game) {
 	struct item *item;
 	struct room *room;
 	int type;
@@ -309,7 +309,7 @@ static void update_graphics(comprehend_game *game) {
 	}
 }
 
-static void describe_objects_in_current_room(comprehend_game *game) {
+static void describe_objects_in_current_room(ComprehendGame *game) {
 	struct item *item;
 	size_t count = 0;
 	uint i;
@@ -335,7 +335,7 @@ static void describe_objects_in_current_room(comprehend_game *game) {
 	}
 }
 
-static void update(comprehend_game *game) {
+static void update(ComprehendGame *game) {
 	struct room *room = get_room(game, game->info->current_room);
 	unsigned room_type, room_desc_string;
 
@@ -356,7 +356,7 @@ static void update(comprehend_game *game) {
 	game->info->update_flags = 0;
 }
 
-static void move_to(comprehend_game *game, uint8 room) {
+static void move_to(ComprehendGame *game, uint8 room) {
 	if (room - 1 >= (int)game->info->nr_rooms)
 		fatal_error("Attempted to move to invalid room %.2x\n", room);
 
@@ -383,7 +383,7 @@ static void func_set_test_result(struct function_state *func_state, bool value) 
 	}
 }
 
-static size_t num_objects_in_room(comprehend_game *game, int room) {
+static size_t num_objects_in_room(ComprehendGame *game, int room) {
 	size_t count = 0, i;
 
 	for (i = 0; i < game->info->header.nr_items; i++)
@@ -393,7 +393,7 @@ static size_t num_objects_in_room(comprehend_game *game, int room) {
 	return count;
 }
 
-void move_object(comprehend_game *game, struct item *item, int new_room) {
+void move_object(ComprehendGame *game, struct item *item, int new_room) {
 	unsigned obj_weight = item->flags & ITEMF_WEIGHT_MASK;
 
 	if (item->room == new_room)
@@ -424,7 +424,7 @@ void move_object(comprehend_game *game, struct item *item, int new_room) {
 	item->room = new_room;
 }
 
-static void eval_instruction(comprehend_game *game,
+static void eval_instruction(ComprehendGame *game,
                              struct function_state *func_state,
                              struct instruction *instr,
                              struct word *verb, struct word *noun) {
@@ -983,7 +983,7 @@ static void eval_instruction(comprehend_game *game,
  * is reached. Otherwise the commands instructions are skipped over and the
  * next test sequence (if there is one) is tried.
  */
-void eval_function(comprehend_game *game, struct function *func,
+void eval_function(ComprehendGame *game, struct function *func,
                    struct word *verb, struct word *noun) {
 	struct function_state func_state;
 	uint i;
@@ -1016,7 +1016,7 @@ static void skip_non_whitespace(char **p) {
 }
 
 #ifdef TODO
-static void handle_debug_command(comprehend_game *game,
+static void handle_debug_command(ComprehendGame *game,
                                  const char *line) {
 	int i;
 
@@ -1057,7 +1057,7 @@ static void handle_debug_command(comprehend_game *game,
 }
 #endif
 
-static bool handle_sentence(comprehend_game *game,
+static bool handle_sentence(ComprehendGame *game,
                             struct sentence *sentence) {
 	struct function *func;
 	struct action *action;
@@ -1103,7 +1103,7 @@ static bool handle_sentence(comprehend_game *game,
 	return false;
 }
 
-static void read_sentence(comprehend_game *game, char **line,
+static void read_sentence(ComprehendGame *game, char **line,
                           struct sentence *sentence) {
 	bool sentence_end = false;
 	char *word_string, *p = *line;
@@ -1163,7 +1163,7 @@ static void read_sentence(comprehend_game *game, char **line,
 	*line = p;
 }
 
-static void before_turn(comprehend_game *game) {
+static void before_turn(ComprehendGame *game) {
 	// Run the game specific before turn bits
 	game->before_turn();
 
@@ -1173,12 +1173,12 @@ static void before_turn(comprehend_game *game) {
 	update(game);
 }
 
-static void after_turn(comprehend_game *game) {
+static void after_turn(ComprehendGame *game) {
 	// Do post turn game specific bits
 	game->after_turn();
 }
 
-static void read_input(comprehend_game *game) {
+static void read_input(ComprehendGame *game) {
 #ifdef TODO
 	struct sentence sentence;
 	char *line = NULL, buffer[1024];
@@ -1218,7 +1218,7 @@ static void read_input(comprehend_game *game) {
 #endif
 }
 
-void comprehend_play_game(comprehend_game *game) {
+void comprehend_play_game(ComprehendGame *game) {
 	console_init();
 
 	game->before_game();

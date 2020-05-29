@@ -173,7 +173,7 @@ static uint8 opcode_map_v2[0x100] = {
 	#endif
 };
 
-uint8 *get_opcode_map(comprehend_game *game)
+uint8 *get_opcode_map(ComprehendGame *game)
 {
 	switch (game->info->comprehend_version) {
 	case 1:
