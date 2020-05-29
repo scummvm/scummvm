@@ -102,20 +102,8 @@ Common::Error PetkaEngine::run() {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return Common::kNoError;
-			case Common::EVENT_MOUSEMOVE:
-				_qsystem->_currInterface->onMouseMove(event.mouse);
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				_qsystem->_currInterface->onLeftButtonDown(event.mouse);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				_qsystem->_currInterface->onRightButtonDown(event.mouse);
-				break;
-			case Common::EVENT_KEYDOWN:
-				break;
 			default:
+				_qsystem->onEvent(event);
 				break;
 			}
 		}

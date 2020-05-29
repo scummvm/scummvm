@@ -302,4 +302,20 @@ QObjectStar *QSystem::getStar() const {
 	return (QObjectStar *)_allObjects.back();
 }
 
+void QSystem::onEvent(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+		_currInterface->onMouseMove(event.mouse);
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+		_currInterface->onLeftButtonDown(event.mouse);
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		_currInterface->onRightButtonDown(event.mouse);
+		break;
+	default:
+		break;
+	}
+}
+
 }

@@ -24,6 +24,7 @@
 #define PETKA_Q_SYSTEM_H
 
 #include "common/ptr.h"
+#include "common/events.h"
 #include "common/stream.h"
 #include "common/list.h"
 #include "common/hashmap.h"
@@ -75,6 +76,8 @@ public:
 	void toggleMapInterface();
 
 	void setChapayev();
+
+	void onEvent(const Common::Event &event);
 
 public:
 	Common::Array<QMessageObject *> _allObjects;
