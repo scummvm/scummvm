@@ -169,7 +169,7 @@ _iconv=auto
 _tts=auto
 _gtk=auto
 _fribidi=auto
-_test_cpp11=no
+_test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -261,7 +261,7 @@ add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
-add_feature test_cpp11 "Test C++11" "_test_cpp11"
+add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1242,8 +1242,8 @@ for ac_option in $@; do
 	--disable-mad)                _mad=no                ;;
 	--enable-fribidi)             _fribidi=yes           ;;
 	--disable-fribidi)            _fribidi=no            ;;
-	--enable-test-cpp11)          _test_cpp11=yes        ;;
-	--disable-test-cpp11)         _test_cpp11=no         ;;
+	--enable-test-c++11)          _test_cxx11=yes        ;;
+	--disable-test-c++11)         _test_cxx11=no         ;;
 	--enable-zlib)                _zlib=yes              ;;
 	--disable-zlib)               _zlib=no               ;;
 	--enable-sparkle)             _sparkle=yes           ;;
@@ -5576,9 +5576,9 @@ echo "$_fribidi"
 #
 # Test C++11 Compatibility
 #
-define_in_config_if_yes "$_test_cpp11" 'ENABLE_TEST_CPP_11'
+define_in_config_if_yes "$_test_cxx11" 'ENABLE_TEST_CPP_11'
 echo_n "Test C++11 compatibility during compilation... "
-echo "$_test_cpp11"
+echo "$_test_cxx11"
 
 # Default to plain text output for pandoc
 if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then
