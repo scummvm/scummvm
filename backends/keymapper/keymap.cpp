@@ -138,7 +138,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 		if (normalizedKeystate.flags & KBD_NON_STICKY) {
 			// If no matching actions and non-sticky keyboard modifiers are down,
 			// check again for matches without the exact keyboard modifiers
-			for (HardwareActionMap::const_iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); itInput++) {
+			for (HardwareActionMap::const_iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); ++itInput) {
 				if (itInput->_key.type == kHardwareInputTypeKeyboard && itInput->_key.key.keycode == normalizedKeystate.keycode) {
 					int flags = itInput->_key.key.flags;
 					if (flags & KBD_NON_STICKY && (flags & normalizedKeystate.keycode) == flags) {

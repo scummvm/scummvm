@@ -118,7 +118,7 @@ public:
 	 * @param actions an array containing pointers to the actions
 	 * @return	the matching status for the retieved actions
 	 */
-	 KeymapMatch getMappedActions(const Event &event, ActionArray &actions) const;
+	KeymapMatch getMappedActions(const Event &event, ActionArray &actions) const;
 
 	/**
 	 * Adds a new Action to this Map
