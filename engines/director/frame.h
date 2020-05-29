@@ -75,8 +75,6 @@ public:
 
 	void executeImmediateScripts();
 
-	void playTransition(Score *score);
-
 private:
 
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
