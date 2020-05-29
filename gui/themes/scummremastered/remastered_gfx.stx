@@ -773,7 +773,7 @@
 					height = '4'
 					xpos = 'left'
 					ypos = '9'
-					padding = '0, 0, 3, 0'
+					padding = '2, 0, 3, 0'
 					orientation = 'bottom'
 		/>
 
