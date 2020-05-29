@@ -415,10 +415,10 @@ void TabWidget::drawWidget() {
 
 		if (g_gui.getOverlayOffset() == 0 && g_system->getOverlayHeight() < 400) {
 			/** When the overlay offset is 0 and overlay height < 400, we have a top stacked dialog with no
-				relative padding and are in lowres mode. Referring to the lowres.stx, the global TabWidget.Tab has
-				a size of 40, we add half of that towards our pad.
+				relative padding and are in lowres mode. The minimum size of TabWidget.Tab is in _minTabWidth,
+				we add half of that towards our pad.
 			*/
-			pad += 20;
+			pad += (_minTabWidth / 2);
 		}
 
 		r2.translate(g_system->getOverlayWidth() - _x - _w + pad + _rtlSpaceOffset, 0);
