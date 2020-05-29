@@ -99,9 +99,11 @@ void EditTextWidget::drawWidget() {
 	const Common::Rect &r = Common::Rect(_x + 2 + _leftPadding, _y + 2, _x + _leftPadding + getEditRect().width() + 8, _y + _h);
 	setTextDrawableArea(r);
 
+	Graphics::TextAlign alignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
+
 	g_gui.theme()->drawText(
 			Common::Rect(_x + 2 + _leftPadding, _y + 1, _x + _leftPadding + getEditRect().width() + 2, _y + _h),
-			_editString, _state, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone,
+			_editString, _state, alignment, ThemeEngine::kTextInversionNone,
 			-_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 }
 
