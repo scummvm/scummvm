@@ -33,7 +33,7 @@ namespace Comprehend {
 #define ROOM_IS_DARK 1
 #define ROOM_IS_TOO_BRIGHT 2
 
-class ComprehendGame {
+class ComprehendGame : public GameInfo {
 public:
 	const char *_gameName;
 	const char *_shortName;
@@ -46,7 +46,6 @@ public:
 	unsigned _colorTable;
 
 	struct game_strings *_gameStrings;
-	struct game_info *info;
 
 public:
 	ComprehendGame();

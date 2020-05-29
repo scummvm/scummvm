@@ -51,7 +51,11 @@ struct function_state {
 	bool in_command;
 	bool executed;
 
-	function_state();
+	function_state() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct room {
@@ -60,7 +64,11 @@ struct room {
 	uint8 graphic;
 	uint16 string_desc;
 
-	room();
+	room() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct item {
@@ -71,7 +79,11 @@ struct item {
 	uint8 word;
 	uint8 graphic;
 
-	item();
+	item() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct word {
@@ -79,14 +91,24 @@ struct word {
 	uint8 _index;
 	uint8 _type;
 
-	word();
+	word() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct word_index {
 	uint8 index;
 	uint8 type;
 
-	word_index() : index(0), type(0) {}
+	word_index() {
+		clear();
+	}
+
+	void clear() {
+		index = type = 0;
+	}
 };
 
 struct word_map {
@@ -94,7 +116,11 @@ struct word_map {
 	word_index word[3];
 	uint8 flags;
 
-	word_map() : flags(0) {}
+	word_map() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct action {
@@ -105,7 +131,11 @@ struct action {
 	uint8 word_type[4];
 	uint16 function;
 
-	action();
+	action() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct instruction {
@@ -114,21 +144,33 @@ struct instruction {
 	uint8 operand[3];
 	bool is_command;
 
-	instruction();
+	instruction() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct function {
 	instruction instructions[0x100];
 	size_t nr_instructions;
 
-	function() : nr_instructions(0) {}
+	function() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct string_table {
 	char *strings[0xffff];
 	size_t nr_strings;
 
-	string_table();
+	string_table() {
+		clear();
+	}
+
+	void clear();
 };
 
 struct game_header {
@@ -163,10 +205,14 @@ struct game_header {
 
 	uint16 addr_vm; // FIXME - functions
 
-	game_header();
+	game_header() {
+		clear();
+	}
+
+	void clear();
 };
 
-struct game_info {
+struct GameInfo {
 	game_header _header;
 
 	unsigned _comprehendVersion;
@@ -177,7 +223,7 @@ struct game_info {
 	size_t _nr_rooms;
 	uint8 _currentRoom;
 
-	struct item _item[0xff];
+	struct item _items[0xff];
 
 	struct word *_words;
 	size_t _nr_words;
@@ -206,7 +252,11 @@ struct game_info {
 	uint8 _currentReplaceWord;
 	unsigned _updateFlags;
 
-	game_info();
+	GameInfo() {
+		clearInfo();
+	}
+
+	void clearInfo();
 };
 
 struct string_file {

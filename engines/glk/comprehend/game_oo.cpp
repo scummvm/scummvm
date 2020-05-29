@@ -61,11 +61,11 @@ OOToposGame::OOToposGame() : ComprehendGame() {
 
 int OOToposGame::room_is_special(unsigned room_index,
                               unsigned *room_desc_string) {
-	room *room = &info->_rooms[room_index];
+	room *room = &_rooms[room_index];
 
 	/* Is the room dark */
 	if ((room->flags & OO_ROOM_FLAG_DARK) &&
-	    !(info->_flags[OO_FLAG_FLASHLIGHT_ON])) {
+	    !(_flags[OO_FLAG_FLASHLIGHT_ON])) {
 		if (room_desc_string)
 			*room_desc_string = 0xb3;
 		return ROOM_IS_DARK;
@@ -73,7 +73,7 @@ int OOToposGame::room_is_special(unsigned room_index,
 
 	/* Is the room too bright */
 	if (room_index == OO_BRIGHT_ROOM &&
-	    !info->_flags[OO_FLAG_WEARING_GOGGLES]) {
+	    !_flags[OO_FLAG_WEARING_GOGGLES]) {
 		if (room_desc_string)
 			*room_desc_string = 0x1c;
 		return ROOM_IS_TOO_BRIGHT;
@@ -85,26 +85,26 @@ int OOToposGame::room_is_special(unsigned room_index,
 bool OOToposGame::before_turn() {
 	/* FIXME - probably doesn't work correctly with restored games */
 	static bool flashlight_was_on = false, googles_were_worn = false;
-	struct room *room = &info->_rooms[info->_currentRoom];
+	struct room *room = &_rooms[_currentRoom];
 
 	/* 
 	 * Check if the room needs to be redrawn because the flashlight
 	 * was switch off or on.
 	 */
-	if (info->_flags[OO_FLAG_FLASHLIGHT_ON] != flashlight_was_on &&
+	if (_flags[OO_FLAG_FLASHLIGHT_ON] != flashlight_was_on &&
 	    (room->flags & OO_ROOM_FLAG_DARK)) {
-		flashlight_was_on = info->_flags[OO_FLAG_FLASHLIGHT_ON];
-		info->_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
+		flashlight_was_on = _flags[OO_FLAG_FLASHLIGHT_ON];
+		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
 
 	/*
 	 * Check if the room needs to be redrawn because the goggles were
 	 * put on or removed.
 	 */
-	if (info->_flags[OO_FLAG_WEARING_GOGGLES] != googles_were_worn &&
-	    info->_currentRoom == OO_BRIGHT_ROOM) {
-		googles_were_worn = info->_flags[OO_FLAG_WEARING_GOGGLES];
-		info->_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
+	if (_flags[OO_FLAG_WEARING_GOGGLES] != googles_were_worn &&
+	    _currentRoom == OO_BRIGHT_ROOM) {
+		googles_were_worn = _flags[OO_FLAG_WEARING_GOGGLES];
+		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
 
 	return false;

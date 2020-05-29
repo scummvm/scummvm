@@ -158,6 +158,7 @@ void Comprehend::runGame() {
 	comprehend_load_game(game);
 	comprehend_play_game(game);
 
+	delete game;
 	deinitialize();
 }
 

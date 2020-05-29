@@ -69,17 +69,17 @@ void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 	struct room *room;
 	uint16 turn_count;
 
-	room = &info->_rooms[info->_currentRoom];
-	turn_count = info->_variables[VAR_TURN_COUNT];
+	room = &_rooms[_currentRoom];
+	turn_count = _variables[VAR_TURN_COUNT];
 
 	monster = get_item(this, monster_info->object);
-	if (monster->room == info->_currentRoom) {
+	if (monster->room == _currentRoom) {
 		/* The monster is in the current room - leave it there */
 		return;
 	}
 
 	if ((room->flags & monster_info->room_allow_flag) &&
-	    !info->_flags[monster_info->dead_flag] &&
+	    !_flags[monster_info->dead_flag] &&
 	    turn_count > monster_info->min_turns_before) {
 		/*
 		 * The monster is alive and allowed to move to the current
@@ -87,8 +87,8 @@ void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 		 * it back to limbo.
 		 */
 		if ((g_comprehend->getRandomNumber(0x7fffffff) % monster_info->randomness) == 0) {
-			move_object(this, monster, info->_currentRoom);
-			info->_variables[0xf] = turn_count + 1;
+			move_object(this, monster, _currentRoom);
+			_variables[0xf] = turn_count + 1;
 		} else {
 			move_object(this, monster, ROOM_NOWHERE);
 		}
@@ -98,7 +98,7 @@ void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 int TransylvaniaGame::room_is_special(unsigned room_index,
 			      unsigned *room_desc_string)
 {
-	struct room *room = &info->_rooms[room_index];
+	struct room *room = &_rooms[room_index];
 
 	if (room_index == 0x28) {
 		if (room_desc_string)
@@ -151,9 +151,9 @@ void TransylvaniaGame::handle_special_opcode(uint8 operand)
 		 * Show the Zin screen in reponse to doing 'sing some enchanted
 		 * evening' in his cabin.
 		 */
-		draw_location_image(&info->_roomImages, 41);
+		draw_location_image(&_roomImages, 41);
 		console_get_key();
-		info->_updateFlags |= UPDATE_GRAPHICS;
+		_updateFlags |= UPDATE_GRAPHICS;
 		break;
 	}
 }
@@ -179,7 +179,7 @@ void TransylvaniaGame::before_game() {
 	char buffer[128];
 
 	/* Welcome to Transylvania - sign your name */
-	console_println(this, info->_strings.strings[0x20]);
+	console_println(this, _strings.strings[0x20]);
 	read_string(buffer, sizeof(buffer));
 
 	/*
@@ -188,15 +188,15 @@ void TransylvaniaGame::before_game() {
 	 * limited (the original game will break if you put a name in that
 	 * is too long).
 	 */
-	if (!info->_replaceWords[0])
-		info->_replaceWords[0] = xstrndup(buffer, strlen(buffer));
+	if (!_replaceWords[0])
+		_replaceWords[0] = xstrndup(buffer, strlen(buffer));
 	else
-		snprintf(info->_replaceWords[0],
-			 strlen(info->_replaceWords[0]),
+		snprintf(_replaceWords[0],
+			 strlen(_replaceWords[0]),
 			 "%s", buffer);
 
 	/* And your next of kin - This isn't store by the game */
-	console_println(this, info->_strings.strings[0x21]);
+	console_println(this, _strings.strings[0x21]);
 	read_string(buffer, sizeof(buffer));
 }
 

@@ -49,11 +49,9 @@ ComprehendGame::ComprehendGame() : _gameName(nullptr),
                                      _savegameFileFormat(nullptr),
                                      _colorTable(0),
                                      _gameStrings(nullptr) {
-	info = (game_info *)malloc(sizeof(*info));
 }
 
 ComprehendGame::~ComprehendGame() {
-	free(info);
 }
 
 static void console_init(void) {
@@ -95,13 +93,13 @@ void console_println(ComprehendGame *game, const char *text) {
 
 		case '@':
 			/* Replace word */
-			if (game->info->_currentReplaceWord >= game->info->_nr_replace_words) {
+			if (game->_currentReplaceWord >= game->_nr_replace_words) {
 				snprintf(bad_word, sizeof(bad_word),
 				         "[BAD_REPLACE_WORD(%.2x)]",
-				         game->info->_currentReplaceWord);
+				         game->_currentReplaceWord);
 				word = bad_word;
 			} else {
-				word = game->info->_replaceWords[game->info->_currentReplaceWord];
+				word = game->_replaceWords[game->_currentReplaceWord];
 			}
 			word_len = strlen(word);
 			p++;
@@ -164,24 +162,24 @@ static struct room *get_room(ComprehendGame *game, uint16 index) {
 	if (index == 0)
 		fatal_error("Room index 0 (player inventory) is invalid");
 
-	if (index - 1 >= (int)game->info->_nr_rooms)
+	if (index - 1 >= (int)game->_nr_rooms)
 		fatal_error("Room index %d is invalid", index);
 
-	return &game->info->_rooms[index];
+	return &game->_rooms[index];
 }
 
 struct item *get_item(ComprehendGame *game, uint16 index) {
-	if (index >= game->info->_header.nr_items)
+	if (index >= game->_header.nr_items)
 		fatal_error("Bad item %d\n", index);
 
-	return &game->info->_item[index];
+	return &game->_items[index];
 }
 
 void game_save(ComprehendGame *game) {
 	char filename[32];
 	int c;
 
-	console_println(game, game->info->_strings.strings[STRING_SAVE_GAME]);
+	console_println(game, game->_strings.strings[STRING_SAVE_GAME]);
 
 	c = console_get_key();
 	if (c < '1' || c > '3') {
@@ -201,7 +199,7 @@ void game_restore(ComprehendGame *game) {
 	char filename[32];
 	int c;
 
-	console_println(game, game->info->_strings.strings[STRING_RESTORE_GAME]);
+	console_println(game, game->_strings.strings[STRING_RESTORE_GAME]);
 
 	c = console_get_key();
 	if (c < '1' || c > '3') {
@@ -216,7 +214,7 @@ void game_restore(ComprehendGame *game) {
 	snprintf(filename, sizeof(filename), game->_savegameFileFormat, c - '0');
 	comprehend_restore_game(game, filename);
 
-	game->info->_updateFlags = UPDATE_ALL;
+	game->_updateFlags = UPDATE_ALL;
 }
 
 void game_restart(ComprehendGame *game) {
@@ -224,7 +222,7 @@ void game_restart(ComprehendGame *game) {
 	console_get_key();
 
 	comprehend_load_game(game);
-	game->info->_updateFlags = UPDATE_ALL;
+	game->_updateFlags = UPDATE_ALL;
 }
 
 static struct word_index *is_word_pair(ComprehendGame *game,
@@ -233,8 +231,8 @@ static struct word_index *is_word_pair(ComprehendGame *game,
 	uint i;
 
 	/* Check if this is a word pair */
-	for (i = 0; i < game->info->_nr_word_maps; i++) {
-		map = &game->info->_wordMaps[i];
+	for (i = 0; i < game->_nr_word_maps; i++) {
+		map = &game->_wordMaps[i];
 
 		if (map->word[0].index == word1->_index &&
 		    map->word[0].type == word1->_type &&
@@ -258,9 +256,9 @@ static struct item *get_item_by_noun(ComprehendGame *game,
 	 *         (the box and the snarl-in-a-box). The player is unable
 	 *         to drop the latter because this will match the former.
 	 */
-	for (i = 0; i < game->info->_header.nr_items; i++)
-		if (game->info->_item[i].word == noun->_index)
-			return &game->info->_item[i];
+	for (i = 0; i < game->_header.nr_items; i++)
+		if (game->_items[i].word == noun->_index)
+			return &game->_items[i];
 
 	return NULL;
 }
@@ -274,34 +272,34 @@ static void update_graphics(ComprehendGame *game) {
 	if (!g_enabled())
 		return;
 
-	type = game->room_is_special(game->info->_currentRoom, NULL);
+	type = game->room_is_special(game->_currentRoom, NULL);
 
 	switch (type) {
 	case ROOM_IS_DARK:
-		if (game->info->_updateFlags & UPDATE_GRAPHICS)
+		if (game->_updateFlags & UPDATE_GRAPHICS)
 			draw_dark_room();
 		break;
 
 	case ROOM_IS_TOO_BRIGHT:
-		if (game->info->_updateFlags & UPDATE_GRAPHICS)
+		if (game->_updateFlags & UPDATE_GRAPHICS)
 			draw_bright_room();
 		break;
 
 	default:
-		if (game->info->_updateFlags & UPDATE_GRAPHICS) {
-			room = get_room(game, game->info->_currentRoom);
-			draw_location_image(&game->info->_roomImages,
+		if (game->_updateFlags & UPDATE_GRAPHICS) {
+			room = get_room(game, game->_currentRoom);
+			draw_location_image(&game->_roomImages,
 			                    room->graphic - 1);
 		}
 
-		if ((game->info->_updateFlags & UPDATE_GRAPHICS) ||
-		    (game->info->_updateFlags & UPDATE_GRAPHICS_ITEMS)) {
-			for (i = 0; i < game->info->_header.nr_items; i++) {
-				item = &game->info->_item[i];
+		if ((game->_updateFlags & UPDATE_GRAPHICS) ||
+		    (game->_updateFlags & UPDATE_GRAPHICS_ITEMS)) {
+			for (i = 0; i < game->_header.nr_items; i++) {
+				item = &game->_items[i];
 
-				if (item->room == game->info->_currentRoom &&
+				if (item->room == game->_currentRoom &&
 				    item->graphic != 0)
-					draw_image(&game->info->_itemImages,
+					draw_image(&game->_itemImages,
 					           item->graphic - 1);
 			}
 		}
@@ -314,10 +312,10 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 	size_t count = 0;
 	uint i;
 
-	for (i = 0; i < game->info->_header.nr_items; i++) {
-		item = &game->info->_item[i];
+	for (i = 0; i < game->_header.nr_items; i++) {
+		item = &game->_items[i];
 
-		if (item->room == game->info->_currentRoom &&
+		if (item->room == game->_currentRoom &&
 		    item->string_desc != 0)
 			count++;
 	}
@@ -325,10 +323,10 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 	if (count > 0) {
 		console_println(game, string_lookup(game, STRING_YOU_SEE));
 
-		for (i = 0; i < game->info->_header.nr_items; i++) {
-			item = &game->info->_item[i];
+		for (i = 0; i < game->_header.nr_items; i++) {
+			item = &game->_items[i];
 
-			if (item->room == game->info->_currentRoom &&
+			if (item->room == game->_currentRoom &&
 			    item->string_desc != 0)
 				console_println(game, string_lookup(game, item->string_desc));
 		}
@@ -336,32 +334,32 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 }
 
 static void update(ComprehendGame *game) {
-	struct room *room = get_room(game, game->info->_currentRoom);
+	struct room *room = get_room(game, game->_currentRoom);
 	unsigned room_type, room_desc_string;
 
 	update_graphics(game);
 
 	/* Check if the room is special (dark, too bright, etc) */
 	room_desc_string = room->string_desc;
-	room_type = game->room_is_special(game->info->_currentRoom,
+	room_type = game->room_is_special(game->_currentRoom,
 		&room_desc_string);
 
-	if (game->info->_updateFlags & UPDATE_ROOM_DESC)
+	if (game->_updateFlags & UPDATE_ROOM_DESC)
 		console_println(game, string_lookup(game, room_desc_string));
 
-	if ((game->info->_updateFlags & UPDATE_ITEM_LIST) &&
+	if ((game->_updateFlags & UPDATE_ITEM_LIST) &&
 	    room_type == ROOM_IS_NORMAL)
 		describe_objects_in_current_room(game);
 
-	game->info->_updateFlags = 0;
+	game->_updateFlags = 0;
 }
 
 static void move_to(ComprehendGame *game, uint8 room) {
-	if (room - 1 >= (int)game->info->_nr_rooms)
+	if (room - 1 >= (int)game->_nr_rooms)
 		fatal_error("Attempted to move to invalid room %.2x\n", room);
 
-	game->info->_currentRoom = room;
-	game->info->_updateFlags = (UPDATE_GRAPHICS | UPDATE_ROOM_DESC |
+	game->_currentRoom = room;
+	game->_updateFlags = (UPDATE_GRAPHICS | UPDATE_ROOM_DESC |
 	                            UPDATE_ITEM_LIST);
 }
 
@@ -386,8 +384,8 @@ static void func_set_test_result(struct function_state *func_state, bool value) 
 static size_t num_objects_in_room(ComprehendGame *game, int room) {
 	size_t count = 0, i;
 
-	for (i = 0; i < game->info->_header.nr_items; i++)
-		if (game->info->_item[i].room == room)
+	for (i = 0; i < game->_header.nr_items; i++)
+		if (game->_items[i].room == room)
 			count++;
 
 	return count;
@@ -401,23 +399,23 @@ void move_object(ComprehendGame *game, struct item *item, int new_room) {
 
 	if (item->room == ROOM_INVENTORY) {
 		/* Removed from player's inventory */
-		game->info->_variables[VAR_INVENTORY_WEIGHT] -= obj_weight;
+		game->_variables[VAR_INVENTORY_WEIGHT] -= obj_weight;
 	}
 	if (new_room == ROOM_INVENTORY) {
 		/* Moving to the player's inventory */
-		game->info->_variables[VAR_INVENTORY_WEIGHT] += obj_weight;
+		game->_variables[VAR_INVENTORY_WEIGHT] += obj_weight;
 	}
 
-	if (item->room == game->info->_currentRoom) {
+	if (item->room == game->_currentRoom) {
 		/* Item moved away from the current room */
-		game->info->_updateFlags |= UPDATE_GRAPHICS;
+		game->_updateFlags |= UPDATE_GRAPHICS;
 
-	} else if (new_room == game->info->_currentRoom) {
+	} else if (new_room == game->_currentRoom) {
 		/*
 		 * Item moved into the current room. Only the item needs a
 		 * redraw, not the whole room.
 		 */
-		game->info->_updateFlags |= (UPDATE_GRAPHICS_ITEMS |
+		game->_updateFlags |= (UPDATE_GRAPHICS_ITEMS |
 		                             UPDATE_ITEM_LIST);
 	}
 
@@ -435,7 +433,7 @@ static void eval_instruction(ComprehendGame *game,
 	bool test;
 	uint i, count;
 
-	room = get_room(game, game->info->_currentRoom);
+	room = get_room(game, game->_currentRoom);
 
 	if (debugging_enabled()) {
 		if (!instr->is_command) {
@@ -482,31 +480,31 @@ static void eval_instruction(ComprehendGame *game,
 	opcode_map = get_opcode_map(game);
 	switch (opcode_map[instr->opcode]) {
 	case OPCODE_VAR_ADD:
-		game->info->_variables[instr->operand[0]] +=
-		    game->info->_variables[instr->operand[1]];
+		game->_variables[instr->operand[0]] +=
+		    game->_variables[instr->operand[1]];
 		break;
 
 	case OPCODE_VAR_SUB:
-		game->info->_variables[instr->operand[0]] -=
-		    game->info->_variables[instr->operand[1]];
+		game->_variables[instr->operand[0]] -=
+		    game->_variables[instr->operand[1]];
 		break;
 
 	case OPCODE_VAR_INC:
-		game->info->_variables[instr->operand[0]]++;
+		game->_variables[instr->operand[0]]++;
 		break;
 
 	case OPCODE_VAR_DEC:
-		game->info->_variables[instr->operand[0]]--;
+		game->_variables[instr->operand[0]]--;
 		break;
 
 	case OPCODE_VAR_EQ:
 		func_set_test_result(func_state,
-		                     game->info->_variables[instr->operand[0]] ==
-		                         game->info->_variables[instr->operand[1]]);
+		                     game->_variables[instr->operand[0]] ==
+		                         game->_variables[instr->operand[1]]);
 		break;
 
 	case OPCODE_TURN_TICK:
-		game->info->_variables[VAR_TURN_COUNT]++;
+		game->_variables[VAR_TURN_COUNT]++;
 		break;
 
 	case OPCODE_PRINT:
@@ -527,12 +525,12 @@ static void eval_instruction(ComprehendGame *game,
 
 	case OPCODE_NOT_IN_ROOM:
 		func_set_test_result(func_state,
-		                     game->info->_currentRoom != instr->operand[0]);
+		                     game->_currentRoom != instr->operand[0]);
 		break;
 
 	case OPCODE_IN_ROOM:
 		func_set_test_result(func_state,
-		                     game->info->_currentRoom == instr->operand[0]);
+		                     game->_currentRoom == instr->operand[0]);
 		break;
 
 	case OPCODE_MOVE_TO_ROOM:
@@ -574,7 +572,7 @@ static void eval_instruction(ComprehendGame *game,
 
 	case OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM:
 		item = get_item(game, instr->operand[0] - 1);
-		move_object(game, item, game->info->_currentRoom);
+		move_object(game, item, game->_currentRoom);
 		break;
 
 	case OPCODE_OBJECT_IN_ROOM:
@@ -597,9 +595,9 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_INVENTORY_FULL:
 		item = get_item_by_noun(game, noun);
 		func_set_test_result(func_state,
-		                     game->info->_variables[VAR_INVENTORY_WEIGHT] +
+		                     game->_variables[VAR_INVENTORY_WEIGHT] +
 		                             (item->flags & ITEMF_WEIGHT_MASK) >
-		                         game->info->_variables[VAR_INVENTORY_LIMIT]);
+		                         game->_variables[VAR_INVENTORY_LIMIT]);
 		break;
 
 	case OPCODE_DESCRIBE_CURRENT_OBJECT:
@@ -616,8 +614,8 @@ static void eval_instruction(ComprehendGame *game,
 		test = false;
 
 		if (noun) {
-			for (i = 0; i < game->info->_header.nr_items; i++) {
-				struct item *itemP = &game->info->_item[i];
+			for (i = 0; i < game->_header.nr_items; i++) {
+				struct item *itemP = &game->_items[i];
 
 				if (itemP->word == noun->_index &&
 				    itemP->room == instr->operand[0]) {
@@ -635,7 +633,7 @@ static void eval_instruction(ComprehendGame *game,
 		item = get_item_by_noun(game, noun);
 		if (item)
 			func_set_test_result(func_state,
-			                     item->room != game->info->_currentRoom);
+			                     item->room != game->_currentRoom);
 		else
 			func_set_test_result(func_state, true);
 		break;
@@ -644,7 +642,7 @@ static void eval_instruction(ComprehendGame *game,
 		item = get_item_by_noun(game, noun);
 		if (item)
 			func_set_test_result(func_state,
-			                     item->room == game->info->_currentRoom);
+			                     item->room == game->_currentRoom);
 		else
 			func_set_test_result(func_state, false);
 		break;
@@ -715,13 +713,13 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_OBJECT_NOT_PRESENT:
 		item = get_item(game, instr->operand[0] - 1);
 		func_set_test_result(func_state,
-		                     item->room != game->info->_currentRoom);
+		                     item->room != game->_currentRoom);
 		break;
 
 	case OPCODE_OBJECT_PRESENT:
 		item = get_item(game, instr->operand[0] - 1);
 		func_set_test_result(func_state,
-		                     item->room == game->info->_currentRoom);
+		                     item->room == game->_currentRoom);
 		break;
 
 	case OPCODE_OBJECT_NOT_VALID:
@@ -758,8 +756,8 @@ static void eval_instruction(ComprehendGame *game,
 		}
 
 		console_println(game, string_lookup(game, STRING_INVENTORY));
-		for (i = 0; i < game->info->_header.nr_items; i++) {
-			item = &game->info->_item[i];
+		for (i = 0; i < game->_header.nr_items; i++) {
+			item = &game->_items[i];
 			if (item->room == ROOM_INVENTORY)
 				printf("%s\n",
 				       string_lookup(game, item->string_desc));
@@ -774,8 +772,8 @@ static void eval_instruction(ComprehendGame *game,
 		}
 
 		console_println(game, string_lookup(game, instr->operand[1]));
-		for (i = 0; i < game->info->_header.nr_items; i++) {
-			item = &game->info->_item[i];
+		for (i = 0; i < game->_header.nr_items; i++) {
+			item = &game->_items[i];
 			if (item->room == instr->operand[0])
 				printf("%s\n",
 				       string_lookup(game, item->string_desc));
@@ -792,7 +790,7 @@ static void eval_instruction(ComprehendGame *game,
 
 	case OPCODE_DROP_OBJECT:
 		item = get_item(game, instr->operand[0] - 1);
-		move_object(game, item, game->info->_currentRoom);
+		move_object(game, item, game->_currentRoom);
 		break;
 
 	case OPCODE_DROP_CURRENT_OBJECT:
@@ -800,7 +798,7 @@ static void eval_instruction(ComprehendGame *game,
 		if (!item)
 			fatal_error("Attempt to take object failed\n");
 
-		move_object(game, item, game->info->_currentRoom);
+		move_object(game, item, game->_currentRoom);
 		break;
 
 	case OPCODE_TAKE_CURRENT_OBJECT:
@@ -818,20 +816,20 @@ static void eval_instruction(ComprehendGame *game,
 
 	case OPCODE_TEST_FLAG:
 		func_set_test_result(func_state,
-		                     game->info->_flags[instr->operand[0]]);
+		                     game->_flags[instr->operand[0]]);
 		break;
 
 	case OPCODE_TEST_NOT_FLAG:
 		func_set_test_result(func_state,
-		                     !game->info->_flags[instr->operand[0]]);
+		                     !game->_flags[instr->operand[0]]);
 		break;
 
 	case OPCODE_CLEAR_FLAG:
-		game->info->_flags[instr->operand[0]] = false;
+		game->_flags[instr->operand[0]] = false;
 		break;
 
 	case OPCODE_SET_FLAG:
-		game->info->_flags[instr->operand[0]] = true;
+		game->_flags[instr->operand[0]] = true;
 		break;
 
 	case OPCODE_OR:
@@ -875,28 +873,28 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_SET_OBJECT_GRAPHIC:
 		item = get_item(game, instr->operand[0] - 1);
 		item->graphic = instr->operand[1];
-		if (item->room == game->info->_currentRoom)
-			game->info->_updateFlags |= UPDATE_GRAPHICS;
+		if (item->room == game->_currentRoom)
+			game->_updateFlags |= UPDATE_GRAPHICS;
 		break;
 
 	case OPCODE_SET_ROOM_GRAPHIC:
 		room = get_room(game, instr->operand[0]);
 		room->graphic = instr->operand[1];
-		if (instr->operand[0] == game->info->_currentRoom)
-			game->info->_updateFlags |= UPDATE_GRAPHICS;
+		if (instr->operand[0] == game->_currentRoom)
+			game->_updateFlags |= UPDATE_GRAPHICS;
 		break;
 
 	case OPCODE_CALL_FUNC:
 		index = instr->operand[0];
 		if (instr->operand[1] == 0x81)
 			index += 256;
-		if (index >= game->info->_nr_functions)
+		if (index >= game->_nr_functions)
 			fatal_error("Bad function %.4x >= %.4x\n",
-			            index, game->info->_nr_functions);
+			            index, game->_nr_functions);
 
 		debug_printf(DEBUG_FUNCTIONS,
 		             "Calling subfunction %.4x\n", index);
-		eval_function(game, &game->info->_functions[index], verb, noun);
+		eval_function(game, &game->_functions[index], verb, noun);
 		break;
 
 	case OPCODE_TEST_FALSE:
@@ -923,7 +921,7 @@ static void eval_instruction(ComprehendGame *game,
 		break;
 
 	case OPCODE_SET_STRING_REPLACEMENT:
-		game->info->_currentReplaceWord = instr->operand[0] - 1;
+		game->_currentReplaceWord = instr->operand[0] - 1;
 		break;
 
 	case OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT:
@@ -932,22 +930,22 @@ static void eval_instruction(ComprehendGame *game,
 		 * maybe capitalisation?
 		 */
 		if (noun && (noun->_type & WORD_TYPE_NOUN_PLURAL))
-			game->info->_currentReplaceWord = 3;
+			game->_currentReplaceWord = 3;
 		else if (noun && (noun->_type & WORD_TYPE_FEMALE))
-			game->info->_currentReplaceWord = 0;
+			game->_currentReplaceWord = 0;
 		else if (noun && (noun->_type & WORD_TYPE_MALE))
-			game->info->_currentReplaceWord = 1;
+			game->_currentReplaceWord = 1;
 		else
-			game->info->_currentReplaceWord = 2;
+			game->_currentReplaceWord = 2;
 		break;
 
 	case OPCODE_DRAW_ROOM:
-		draw_location_image(&game->info->_roomImages,
+		draw_location_image(&game->_roomImages,
 		                    instr->operand[0] - 1);
 		break;
 
 	case OPCODE_DRAW_OBJECT:
-		draw_image(&game->info->_itemImages, instr->operand[0] - 1);
+		draw_image(&game->_itemImages, instr->operand[0] - 1);
 		break;
 
 	case OPCODE_WAIT_KEY:
@@ -1037,21 +1035,21 @@ static void handle_debug_command(ComprehendGame *game,
 		dump_game_data(game, DUMP_ROOMS);
 
 	} else if (strncmp(line, "dump state", 10) == 0) {
-		printf("Current room: %.2x\n", game->info->current_room);
+		printf("Current room: %.2x\n", game->current_room);
 		printf("Carry weight %d/%d\n\n",
-		       game->info->variable[VAR_INVENTORY_WEIGHT],
-		       game->info->variable[VAR_INVENTORY_LIMIT]);
+		       game->variable[VAR_INVENTORY_WEIGHT],
+		       game->variable[VAR_INVENTORY_LIMIT]);
 
 		printf("Flags:\n");
-		for (i = 0; i < ARRAY_SIZE(game->info->flags); i++)
-			printf("  [%.2x]: %d\n", i, game->info->flags[i]);
+		for (i = 0; i < ARRAY_SIZE(game->flags); i++)
+			printf("  [%.2x]: %d\n", i, game->flags[i]);
 		printf("\n");
 
 		printf("Variables:\n");
-		for (i = 0; i < ARRAY_SIZE(game->info->variable); i++)
+		for (i = 0; i < ARRAY_SIZE(game->variable); i++)
 			printf("  [%.2x]: %5d (0x%.4x)\n",
-			       i, game->info->variable[i],
-			       game->info->variable[i]);
+			       i, game->variable[i],
+			       game->variable[i]);
 		printf("\n");
 	}
 }
@@ -1067,8 +1065,8 @@ static bool handle_sentence(ComprehendGame *game,
 		return false;
 
 	/* Find a matching action */
-	for (i = 0; i < game->info->_nr_actions; i++) {
-		action = &game->info->_actions[i];
+	for (i = 0; i < game->_nr_actions; i++) {
+		action = &game->_actions[i];
 
 		if (action->type == ACTION_VERB_OPT_NOUN &&
 		    sentence->nr_words > action->nr_words + 1)
@@ -1091,7 +1089,7 @@ static bool handle_sentence(ComprehendGame *game,
 		}
 		if (j == action->nr_words) {
 			/* Match */
-			func = &game->info->_functions[action->function];
+			func = &game->_functions[action->function];
 			eval_function(game, func,
 			              &sentence->words[0], &sentence->words[1]);
 			return true;
@@ -1168,7 +1166,7 @@ static void before_turn(ComprehendGame *game) {
 	game->before_turn();
 
 	// Run the each turn functions
-	eval_function(game, &game->info->_functions[0], NULL, NULL);
+	eval_function(game, &game->_functions[0], NULL, NULL);
 
 	update(game);
 }
@@ -1223,7 +1221,7 @@ void comprehend_play_game(ComprehendGame *game) {
 
 	game->before_game();
 
-	game->info->_updateFlags = (uint)UPDATE_ALL;
+	game->_updateFlags = (uint)UPDATE_ALL;
 	while (!g_comprehend->shouldQuit())
 		read_input(game);
 }

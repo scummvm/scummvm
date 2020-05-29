@@ -175,7 +175,7 @@ static uint8 opcode_map_v2[0x100] = {
 
 uint8 *get_opcode_map(ComprehendGame *game)
 {
-	switch (game->info->_comprehendVersion) {
+	switch (game->_comprehendVersion) {
 	case 1:
 		return opcode_map_v1;
 		break;
@@ -183,7 +183,7 @@ uint8 *get_opcode_map(ComprehendGame *game)
 		return opcode_map_v2;
 	default:
 		fatal_error("Unsupported Comprehend version %d\n",
-			    game->info->_comprehendVersion);
+			    game->_comprehendVersion);
 
 		/* Not reached */
 		return NULL;

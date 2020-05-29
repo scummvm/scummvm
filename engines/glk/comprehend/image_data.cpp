@@ -46,6 +46,12 @@ struct image_context {
 
 static unsigned draw_flags;
 
+void image_data::clear() {
+	fb = nullptr;
+	image_offsets = nullptr;
+	nr_images = 0;
+}
+
 void image_set_draw_flags(unsigned flags)
 {
 	draw_flags |= flags;
@@ -349,10 +355,10 @@ void comprehend_load_image_file(const char *filename, struct image_data *info)
 }
 
 void comprehend_load_images(ComprehendGame *game) {
-	load_image_files(&game->info->_roomImages,
+	load_image_files(&game->_roomImages,
 			 game->_locationGraphicFiles);
 
-	load_image_files(&game->info->_itemImages,
+	load_image_files(&game->_itemImages,
 			 game->_itemGraphicFiles);
 }
 

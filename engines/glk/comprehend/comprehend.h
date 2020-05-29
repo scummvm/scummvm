@@ -39,7 +39,7 @@ namespace Comprehend {
 
 #define PATH_MAX 256
 
-struct game_info;
+struct GameInfo;
 struct game_state;
 
 #define EXTRA_STRING_TABLE(x) (0x8200 | (x))

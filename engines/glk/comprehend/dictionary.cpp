@@ -45,9 +45,9 @@ word *dict_find_word_by_string(ComprehendGame *game,
 	if (!string)
 		return NULL;
 
-	for (i = 0; i < game->info->_nr_words; i++)
-		if (word_match(&game->info->_words[i], string))
-			return &game->info->_words[i];
+	for (i = 0; i < game->_nr_words; i++)
+		if (word_match(&game->_words[i], string))
+			return &game->_words[i];
 
 	return NULL;
 }
@@ -57,10 +57,10 @@ struct word *dict_find_word_by_index_type(ComprehendGame *game,
 {
 	uint i;
 
-	for (i = 0; i < game->info->_nr_words; i++) {
-		if (game->info->_words[i]._index == index &&
-		    game->info->_words[i]._type == type)
-			return &game->info->_words[i];
+	for (i = 0; i < game->_nr_words; i++) {
+		if (game->_words[i]._index == index &&
+		    game->_words[i]._type == type)
+			return &game->_words[i];
 	}
 
 	return NULL;
@@ -71,10 +71,10 @@ struct word *find_dict_word_by_index(ComprehendGame *game,
 {
 	uint i;
 
-	for (i = 0; i < game->info->_nr_words; i++) {
-		if (game->info->_words[i]._index == index &&
-		    (game->info->_words[i]._type & type_mask) != 0)
-			return &game->info->_words[i];
+	for (i = 0; i < game->_nr_words; i++) {
+		if (game->_words[i]._index == index &&
+		    (game->_words[i]._type & type_mask) != 0)
+			return &game->_words[i];
 	}
 
 	return NULL;
@@ -85,10 +85,10 @@ bool dict_match_index_type(ComprehendGame *game, const char *word,
 {
 	uint i;
 
-	for (i = 0; i < game->info->_nr_words; i++)
-		if (game->info->_words[i]._index == index &&
-		    ((game->info->_words[i]._type & type_mask) != 0) &&
-		    word_match(&game->info->_words[i], word))
+	for (i = 0; i < game->_nr_words; i++)
+		if (game->_words[i]._index == index &&
+		    ((game->_words[i]._type & type_mask) != 0) &&
+		    word_match(&game->_words[i], word))
 			return true;
 
 	return false;

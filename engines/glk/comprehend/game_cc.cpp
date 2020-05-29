@@ -71,8 +71,8 @@ ComprehendGame game_crimson_crown_2 = {
 
 static void cc_clear_companion_flags(ComprehendGame *game) {
 	/* Clear the Sabrina/Erik action flags */
-	game->info->_flags[0xa] = 0;
-	game->info->_flags[0xb] = 0;
+	game->_flags[0xa] = 0;
+	game->_flags[0xb] = 0;
 }
 
 static bool cc_common_handle_special_opcode(ComprehendGame *game,
@@ -128,7 +128,7 @@ static void cc2_handle_special_opcode(ComprehendGame *game,
 	switch (operand) {
 	case 0x01:
 		/* Enter the Vampire's throne room */
-		eval_function(game, &game->info->_functions[0xe], NULL, NULL);
+		eval_function(game, &game->_functions[0xe], NULL, NULL);
 		break;
 
 	case 0x05:

@@ -35,6 +35,12 @@ struct image_data {
 	file_buf	*fb;
 	uint16	*image_offsets;
 	size_t		nr_images;
+
+	image_data() {
+		clear();
+	}
+
+	void clear();
 };
 
 #define IMAGEF_OP_WAIT_KEYPRESS		(1 << 0)
