@@ -50,6 +50,8 @@ struct function_state {
 	bool _and;
 	bool in_command;
 	bool executed;
+
+	function_state();
 };
 
 struct room {
@@ -57,6 +59,8 @@ struct room {
 	uint8 flags;
 	uint8 graphic;
 	uint16 string_desc;
+
+	room();
 };
 
 struct item {
@@ -66,23 +70,31 @@ struct item {
 	uint8 flags;
 	uint8 word;
 	uint8 graphic;
+
+	item();
 };
 
 struct word {
-	char word[7];
-	uint8 index;
-	uint8 type;
+	char _word[7];
+	uint8 _index;
+	uint8 _type;
+
+	word();
 };
 
 struct word_index {
 	uint8 index;
 	uint8 type;
+
+	word_index() : index(0), type(0) {}
 };
 
 struct word_map {
 	/* <word[0]>, <word[1]> == <word[2]> */
-	struct word_index word[3];
+	word_index word[3];
 	uint8 flags;
+
+	word_map() : flags(0) {}
 };
 
 struct action {
@@ -92,6 +104,8 @@ struct action {
 	uint8 word[4];
 	uint8 word_type[4];
 	uint16 function;
+
+	action();
 };
 
 struct instruction {
@@ -99,16 +113,22 @@ struct instruction {
 	size_t nr_operands;
 	uint8 operand[3];
 	bool is_command;
+
+	instruction();
 };
 
 struct function {
-	struct instruction instructions[0x100];
+	instruction instructions[0x100];
 	size_t nr_instructions;
+
+	function() : nr_instructions(0) {}
 };
 
 struct string_table {
 	char *strings[0xffff];
 	size_t nr_strings;
+
+	string_table();
 };
 
 struct game_header {
@@ -142,16 +162,18 @@ struct game_header {
 	uint16 addr_actions_v;
 
 	uint16 addr_vm; // FIXME - functions
+
+	game_header();
 };
 
 struct game_info {
-	struct game_header header;
+	game_header header;
 
 	unsigned comprehend_version;
 
 	uint8 start_room;
 
-	struct room rooms[0x100];
+	room rooms[0x100];
 	size_t nr_rooms;
 	uint8 current_room;
 
@@ -183,6 +205,8 @@ struct game_info {
 
 	uint8 current_replace_word;
 	unsigned update_flags;
+
+	game_info();
 };
 
 struct string_file {
@@ -191,8 +215,7 @@ struct string_file {
 	uint32 end_offset;
 
 	string_file() : filename(nullptr), base_offset(0), end_offset(0) {}
-	string_file(const char *fname, uint32 baseOfs, uint32 endO = 0) :
-		filename(fname), base_offset(baseOfs), end_offset(endO) {
+	string_file(const char *fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
 	}
 };
 

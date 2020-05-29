@@ -236,10 +236,10 @@ static struct word_index *is_word_pair(comprehend_game *game,
 	for (i = 0; i < game->info->nr_word_maps; i++) {
 		map = &game->info->word_map[i];
 
-		if (map->word[0].index == word1->index &&
-		    map->word[0].type == word1->type &&
-		    map->word[1].index == word2->index &&
-		    map->word[1].type == word2->type)
+		if (map->word[0].index == word1->_index &&
+		    map->word[0].type == word1->_type &&
+		    map->word[1].index == word2->_index &&
+		    map->word[1].type == word2->_type)
 			return &map->word[2];
 	}
 
@@ -250,7 +250,7 @@ static struct item *get_item_by_noun(comprehend_game *game,
                                      struct word *noun) {
 	uint i;
 
-	if (!noun || !(noun->type & WORD_TYPE_NOUN_MASK))
+	if (!noun || !(noun->_type & WORD_TYPE_NOUN_MASK))
 		return NULL;
 
 	/*
@@ -259,7 +259,7 @@ static struct item *get_item_by_noun(comprehend_game *game,
 	 *         to drop the latter because this will match the former.
 	 */
 	for (i = 0; i < game->info->header.nr_items; i++)
-		if (game->info->item[i].word == noun->index)
+		if (game->info->item[i].word == noun->_index)
 			return &game->info->item[i];
 
 	return NULL;
@@ -551,12 +551,12 @@ static void eval_instruction(comprehend_game *game,
 
 	case OPCODE_MOVE:
 		/* Move in the direction dictated by the current verb */
-		if (verb->index - 1 >= NR_DIRECTIONS)
+		if (verb->_index - 1 >= NR_DIRECTIONS)
 			fatal_error("Bad verb %d:%d in move",
-			            verb->index, verb->type);
+			            verb->_index, verb->_type);
 
-		if (room->direction[verb->index - 1])
-			move_to(game, room->direction[verb->index - 1]);
+		if (room->direction[verb->_index - 1])
+			move_to(game, room->direction[verb->_index - 1]);
 		else
 			console_println(game, string_lookup(game, STRING_CANT_GO));
 		break;
@@ -619,7 +619,7 @@ static void eval_instruction(comprehend_game *game,
 			for (i = 0; i < game->info->header.nr_items; i++) {
 				struct item *itemP = &game->info->item[i];
 
-				if (itemP->word == noun->index &&
+				if (itemP->word == noun->_index &&
 				    itemP->room == instr->operand[0]) {
 					test = true;
 					break;
@@ -727,7 +727,7 @@ static void eval_instruction(comprehend_game *game,
 	case OPCODE_OBJECT_NOT_VALID:
 		/* FIXME - should be called OPCODE_CURRENT_OBJECT_NOT_VALID */
 		func_set_test_result(func_state, !noun ||
-		                                     (noun->type & WORD_TYPE_NOUN_MASK) == 0);
+		                                     (noun->_type & WORD_TYPE_NOUN_MASK) == 0);
 		break;
 
 	case OPCODE_CURRENT_IS_OBJECT:
@@ -931,11 +931,11 @@ static void eval_instruction(comprehend_game *game,
 		 * FIXME - Not sure what the operand is for,
 		 * maybe capitalisation?
 		 */
-		if (noun && (noun->type & WORD_TYPE_NOUN_PLURAL))
+		if (noun && (noun->_type & WORD_TYPE_NOUN_PLURAL))
 			game->info->current_replace_word = 3;
-		else if (noun && (noun->type & WORD_TYPE_FEMALE))
+		else if (noun && (noun->_type & WORD_TYPE_FEMALE))
 			game->info->current_replace_word = 0;
-		else if (noun && (noun->type & WORD_TYPE_MALE))
+		else if (noun && (noun->_type & WORD_TYPE_MALE))
 			game->info->current_replace_word = 1;
 		else
 			game->info->current_replace_word = 2;
@@ -985,9 +985,7 @@ static void eval_instruction(comprehend_game *game,
  */
 void eval_function(comprehend_game *game, struct function *func,
                    struct word *verb, struct word *noun) {
-	struct function_state func_state = {
-	    true, false, 0, false, false, false
-	};
+	struct function_state func_state;
 	uint i;
 
 	func_state.else_result = true;
@@ -1084,8 +1082,8 @@ static bool handle_sentence(comprehend_game *game,
 		 * run that action's function.
 		 */
 		for (j = 0; j < action->nr_words; j++) {
-			if (sentence->words[j].index == action->word[j] &&
-			    (sentence->words[j].type & action->word_type[j]))
+			if (sentence->words[j]._index == action->word[j] &&
+			    (sentence->words[j]._type & action->word_type[j]))
 				continue;
 
 			/* Word didn't match */
@@ -1149,9 +1147,9 @@ static void read_sentence(comprehend_game *game, char **line,
 			                    &sentence->words[index - 2],
 			                    &sentence->words[index - 1]);
 			if (pair) {
-				sentence->words[index - 2].index = pair->index;
-				sentence->words[index - 2].type = pair->type;
-				strcpy(sentence->words[index - 2].word,
+				sentence->words[index - 2]._index = pair->index;
+				sentence->words[index - 2]._type = pair->type;
+				strcpy(sentence->words[index - 2]._word,
 				       "[PAIR]");
 				sentence->nr_words--;
 			}

@@ -219,7 +219,7 @@ static void dump_action_table(struct comprehend_game *game)
 			word = find_dict_word_by_index(game, action->word[j],
 						       action->word_type[j]);
 			if (word)
-				debugN("%-6s ", word->word);
+				debugN("%-6s ", word->_word);
 			else
 				debugN("%.2x:%.2x  ", action->word[j],
 				       action->word_type[j]);
@@ -233,9 +233,9 @@ static int word_index_compare(const void *a, const void *b)
 {
 	const word *word_a = (const word *)a, *word_b = (const word *)b;
 
-	if (word_a->index > word_b->index)
+	if (word_a->_index > word_b->_index)
 		return 1;
-	if (word_a->index < word_b->index)
+	if (word_a->_index < word_b->_index)
 		return -1;
 	return 0;
 }
@@ -256,8 +256,8 @@ static void dump_dictionary(struct comprehend_game *game)
 	debugN("Dictionary (%zd words)\n", game->info->nr_words);
 	for (i = 0; i < game->info->nr_words; i++) {
 		words = &dictionary[i];
-		debugN("  [%.2x] %.2x %s\n", words->index, words->type,
-		       words->word);
+		debugN("  [%.2x] %.2x %s\n", words->_index, words->_type,
+		       words->_word);
 	}
 
 	free(dictionary);
@@ -279,7 +279,7 @@ static void dump_word_map(struct comprehend_game *game)
 				game, map->word[j].index, map->word[j].type);
 			if (word[j])
 				snprintf(str[j], sizeof(str[j]),
-					 "%s", word[j]->word);
+				         "%s", word[j]->_word);
 			else
 				snprintf(str[j], sizeof(str[j]), "%.2x:%.2x ",
 					 map->word[j].index, map->word[j].type);
@@ -335,9 +335,9 @@ static void dump_items(struct comprehend_game *game)
 
 		debugN("    words: ");
 		for (j = 0; j < game->info->nr_words; j++)
-			if (game->info->words[j].index == item->word &&
-			    (game->info->words[j].type & WORD_TYPE_NOUN_MASK))
-				debugN("%s ", game->info->words[j].word);
+			if (game->info->words[j]._index == item->word &&
+			    (game->info->words[j]._type & WORD_TYPE_NOUN_MASK))
+				debugN("%s ", game->info->words[j]._word);
 		debugN("\n");
 		debugN("    flags=%.2x (takeable=%d, weight=%d)\n",
 		       item->flags, !!(item->flags & ITEMF_CAN_TAKE),
