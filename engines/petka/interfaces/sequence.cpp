@@ -39,11 +39,7 @@ InterfaceSequence::InterfaceSequence() {
 }
 
 void InterfaceSequence::start(int id) {
-	removeTexts();
-	for (uint i = 0; i < _objs.size(); ++i) {
-		QMessageObject *obj = (QMessageObject *)_objs[i];
-		obj->removeSound();
-	}
+	stop();
 
 	g_system->getMixer()->pauseAll(true);
 
