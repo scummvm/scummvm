@@ -150,6 +150,11 @@ void TabWidget::removeTab(int tabID) {
 		_firstWidget = nullptr;
 	}
 
+	// Remove this tab's width from class variable, which is used to adjust position in RTL based GUI
+	if (g_gui.useRTL()) {
+		_widthTillLastTab -= _tabs[tabID]._tabWidth;
+	}
+
 	// Dispose the widgets in that tab and then the tab itself
 	delete _tabs[tabID].firstWidget;
 	_tabs.remove_at(tabID);
@@ -406,6 +411,14 @@ void TabWidget::drawWidget() {
 		int pad = this->getWidth() - (_x + _widthTillLastTab) + g_gui.getOverlayOffset();
 		if (pad < 0) {
 			pad = 6;
+		}
+
+		if (g_gui.getOverlayOffset() == 0 && g_system->getOverlayHeight() < 400) {
+			/** When the overlay offset is 0 and overlay height < 400, we have a top stacked dialog with no
+				relative padding and are in lowres mode. Referring to the lowres.stx, the global TabWidget.Tab has
+				a size of 40, we add half of that towards our pad.
+			*/
+			pad += 20;
 		}
 
 		r2.translate(g_system->getOverlayWidth() - _x - _w + pad + _rtlSpaceOffset, 0);
