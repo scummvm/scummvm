@@ -281,13 +281,20 @@ void CharacterGenerator::init() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_screen->fadeToBlack(32);
 
-	_screen->loadEoBBitmap("CHARGEN", _vm->_cgaMappingDefault, 5, 3, 0);
+	static const char *characterGenerationBitmaps[] = { "CHARGEN", "CHARGENB" };
+
+	if (_vm->_flags.lang == Common::ES_ESP && _vm->game() == GI_EOB1) {
+		characterGenerationBitmaps[0] = "CCARGEN";
+		characterGenerationBitmaps[1] = "CCARGENB";
+	}
+
+	_screen->loadEoBBitmap(characterGenerationBitmaps[0], _vm->_cgaMappingDefault, 5, 3, 0);
 	_screen->selectPC98Palette(4, _screen->getPalette(0));
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga || (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
 		_screen->fadeFromBlack(32);
 
-	_screen->loadShapeSetBitmap("CHARGENB", 5, 3);
+	_screen->loadShapeSetBitmap(characterGenerationBitmaps[1], 5, 3);
 	if (_chargenMagicShapes) {
 		for (int i = 0; i < 10; i++)
 			delete[] _chargenMagicShapes[i];
