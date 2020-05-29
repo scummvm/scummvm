@@ -71,7 +71,7 @@ void InterfaceSequence::start(int id) {
 		}
 	} else {
 		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(bg->_fxId));
-		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_fxId), Audio::Mixer::kMusicSoundType);
+		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_fxId), Audio::Mixer::kSFXSoundType);
 		if (sound) {
 			sound->play(true);
 		}
