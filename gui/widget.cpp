@@ -111,6 +111,8 @@ void Widget::draw() {
 		_x = getAbsX();
 		_y = getAbsY();
 
+		Common::Rect oldClip = g_gui.theme()->swapClipRect(_boss->getClipRect());
+
 		if (g_gui.useRTL()) {
 			_x = g_system->getOverlayWidth() - _x - _w;
 
@@ -120,9 +122,12 @@ void Widget::draw() {
 				*/
 				_x = _x + g_gui.getOverlayOffset();
 			}
-		}
 
-		Common::Rect oldClip = g_gui.theme()->swapClipRect(_boss->getClipRect());
+			Common::Rect r = _boss->getClipRect();
+			r.moveTo(_x, r.top);
+
+			g_gui.theme()->swapClipRect(r);
+		}
 
 		// Draw border
 		if (_flags & WIDGET_BORDER) {
