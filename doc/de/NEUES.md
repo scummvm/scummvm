@@ -30,7 +30,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Bisherige NES-Farbpalette durch genauere NTSC-Palette von Mesen ersetzt.
    - Neue Option zur Benutzeroberfläche hinzugefügt, welche die Auswahl einer Farbpalette basierend auf dem NES Classic erlaubt.
    - Farbpalette in der Apple //gs-Version von Maniac Mansion verbessert.
-   - Absturzt beim Betreten der Garage in der Apple //gs-Version von Maniac Mansion behoben.
+   - Absturz beim Betreten der Garage in der Apple //gs-Version von Maniac Mansion behoben.
 
  Sky:
    - Synchronisation der Musik-Lautstärke zwischen dem nativen Einstellungs-Dialog des Spiels und der ScummVM-Konfiguration korrigiert.
