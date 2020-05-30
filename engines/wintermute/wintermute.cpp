@@ -184,12 +184,10 @@ int WintermuteEngine::init() {
 	#endif
 
 	// check if game require 3D capabilities
-	if (_gameDescription->adDesc.flags & GF_3D)
-	{
+	if (_gameDescription->adDesc.flags & GF_3D) {
 		GUI::MessageDialog dialog(_("This game requires 3D capabilities that are out ScummVM scope. As such, it"
 			" is likely to be unplayable totally or partially."), _("Start anyway"), _("Cancel"));
-		if (dialog.runModal() != GUI::kMessageOK)
-		{
+		if (dialog.runModal() != GUI::kMessageOK) {
 			delete _game;
 			_game = nullptr;
 			return false;
