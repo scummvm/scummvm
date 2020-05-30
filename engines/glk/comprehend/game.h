@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "glk/comprehend/game_data.h"
+#include "glk/comprehend/opcode_map.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -33,7 +34,7 @@ namespace Comprehend {
 #define ROOM_IS_DARK 1
 #define ROOM_IS_TOO_BRIGHT 2
 
-class ComprehendGame : public GameInfo {
+class ComprehendGame : public GameInfo, public OpcodeMap {
 public:
 	const char *_gameName;
 	const char *_shortName;

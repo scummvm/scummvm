@@ -875,6 +875,8 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 		break;
 	}
 
+	game->loadOpcodes(game->_comprehendVersion);
+
 	/* FIXME - Second word in header has unknown usage */
 	parse_header_le16(fb, &dummy);
 

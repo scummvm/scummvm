@@ -126,7 +126,7 @@ void dump_instruction(ComprehendGame *game,
 		       func_state->or_count, func_state->_and,
 		       func_state->test_result, func_state->else_result);
 
-	opcode_map = get_opcode_map(game);
+	opcode_map = game->_opcodeMap;
 	opcode = opcode_map[instr->opcode];
 
 	debugN("  [%.2x] ", instr->opcode);

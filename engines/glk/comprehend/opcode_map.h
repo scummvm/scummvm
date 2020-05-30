@@ -23,12 +23,32 @@
 #ifndef GLK_COMPREHEND_OPCODE_MAP_H
 #define GLK_COMPREHEND_OPCODE_MAP_H
 
-#include "glk/comprehend/game.h"
+#include "common/scummsys.h"
 
 namespace Glk {
 namespace Comprehend {
 
-uint8 *get_opcode_map(ComprehendGame *game);
+/*
+ * Version 2 of the Comprehend engine (OO-Topos) changes some of the opcode
+ * numbers and adds new opcodes. This class encapsulates a table to translate
+ * the opcodes used in the original games into a generic version used by the engine
+ *
+ * FIXME - unimplemented/unknown ocpodes:
+ *
+ * d5(obj): Make object visible. This will print a "you see: object" when the
+ *          object is in the room.
+ */
+class OpcodeMap {
+public:
+	byte _opcodeMap[0x100];
+
+private:
+	void loadVersion1();
+	void loadVersion2();
+
+public:
+	void loadOpcodes(int version);
+};
 
 } // namespace Comprehend
 } // namespace Glk

@@ -44,11 +44,11 @@ struct WinSize {
 static WinSize console_winsize;
 
 ComprehendGame::ComprehendGame() : _gameName(nullptr),
-                                     _shortName(nullptr),
-                                     _gameDataFile(nullptr),
-                                     _savegameFileFormat(nullptr),
-                                     _colorTable(0),
-                                     _gameStrings(nullptr) {
+                                   _shortName(nullptr),
+                                   _gameDataFile(nullptr),
+                                   _savegameFileFormat(nullptr),
+                                   _colorTable(0),
+                                   _gameStrings(nullptr) {
 }
 
 ComprehendGame::~ComprehendGame() {
@@ -426,7 +426,7 @@ static void eval_instruction(ComprehendGame *game,
                              FunctionState *func_state,
                              Instruction *instr,
                              Word *verb, Word *noun) {
-	uint8 *opcode_map;
+	const byte *opcode_map = game->_opcodeMap;
 	Room *room;
 	Item *item;
 	uint16 index;
@@ -477,7 +477,6 @@ static void eval_instruction(ComprehendGame *game,
 		}
 	}
 
-	opcode_map = get_opcode_map(game);
 	switch (opcode_map[instr->opcode]) {
 	case OPCODE_VAR_ADD:
 		game->_variables[instr->operand[0]] +=
