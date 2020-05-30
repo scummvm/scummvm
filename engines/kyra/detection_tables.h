@@ -1804,6 +1804,22 @@ const KYRAGameDescription adGameDescs[] = {
 		EOB2_FLAGS
 	},
 
+	{ // Spanish version
+		{
+			"eob2",
+			0,
+			{
+				{ "LEVEL15.INF", 0, "099c683dc4e66171b19b64ea3e90aa12", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB2_FLAGS
+	},
+
 	{
 		{
 			"eob2",
