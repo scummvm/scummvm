@@ -1,5 +1,5 @@
 static const char *const kEoB2ChargenStrings1DOSSpanish[9] = {
-	"Tu grupo esta\rpreparado. Pulsa\rJUGAR o la\r'tecla 'P' para\rpara comenzar.",
+	"Tu grupo esta\rpreparado. Pulsa\rJUGAR o la tecla\r'P' para comenzar.",
 	"          ",
 	"AC\rPV\rNIV",
 	"%s\r%d\r%d\r%d\r%d\r%d",
@@ -191,7 +191,7 @@ static const char *const kEoB2MagicObjectStringsDOSSpanish[5] = {
 static const StringListProvider kEoB2MagicObjectStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MagicObjectStringsDOSSpanish), kEoB2MagicObjectStringsDOSSpanish };
 
 static const char *const kEoB2MagicObjectString5DOSSpanish[1] = {
-	"Palo"
+	"Vara"
 };
 
 static const StringListProvider kEoB2MagicObjectString5DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicObjectString5DOSSpanish), kEoB2MagicObjectString5DOSSpanish };
@@ -227,7 +227,7 @@ static const char *const kEoB2ValidateCursedStringDOSSpanish[1] = {
 static const StringListProvider kEoB2ValidateCursedStringDOSSpanishProvider = { ARRAYSIZE(kEoB2ValidateCursedStringDOSSpanish), kEoB2ValidateCursedStringDOSSpanish };
 
 static const char *const kEoB2ValidateNoDropStringDOSSpanish[1] = {
-	"You can't put that item there.\r"
+	"No puedes poner ese objeto alli.\r"
 };
 
 static const StringListProvider kEoB2ValidateNoDropStringDOSSpanishProvider = { ARRAYSIZE(kEoB2ValidateNoDropStringDOSSpanish), kEoB2ValidateNoDropStringDOSSpanish };
@@ -448,7 +448,7 @@ static const StringListProvider kEoB2MenuStringsPrefsDOSSpanishProvider = { ARRA
 
 static const char *const kEoB2MenuStringsRest2DOSSpanish[5] = {
 	"%s obtiene %s.\r",
-	"%s memmemoriza %s.\r",
+	"%s memoriza %s.\r",
 	"%s cura a %s.\r",
 	"Horas pasadas: %-4d",
 	"\r%s\r"
@@ -506,7 +506,7 @@ static const char *const kEoB2CharGuiStringsHpDOSSpanish[2] = {
 static const StringListProvider kEoB2CharGuiStringsHpDOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsHpDOSSpanish), kEoB2CharGuiStringsHpDOSSpanish };
 
 static const char *const kEoB2CharGuiStringsWp2DOSSpanish[3] = {
-	"MISS",
+	"NADA",
 	"HACK",
 	"BASH"
 };
@@ -514,8 +514,8 @@ static const char *const kEoB2CharGuiStringsWp2DOSSpanish[3] = {
 static const StringListProvider kEoB2CharGuiStringsWp2DOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsWp2DOSSpanish), kEoB2CharGuiStringsWp2DOSSpanish };
 
 static const char *const kEoB2CharGuiStringsWrDOSSpanish[4] = {
-	"CAN'T",
-	"REACH",
+	" NO ",
+	"PUEDE",
 	"NO",
 	"AMMO"
 };
@@ -523,7 +523,7 @@ static const char *const kEoB2CharGuiStringsWrDOSSpanish[4] = {
 static const StringListProvider kEoB2CharGuiStringsWrDOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsWrDOSSpanish), kEoB2CharGuiStringsWrDOSSpanish };
 
 static const char *const kEoB2CharGuiStringsSt2DOSSpanish[7] = {
-	"Swapping",
+	"Cambiando",
 	"MUERTO",
 	"INCONSCIENTE",
 	"RALENTIZADO",
@@ -535,8 +535,8 @@ static const char *const kEoB2CharGuiStringsSt2DOSSpanish[7] = {
 static const StringListProvider kEoB2CharGuiStringsSt2DOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsSt2DOSSpanish), kEoB2CharGuiStringsSt2DOSSpanish };
 
 static const char *const kEoB2CharGuiStringsInDOSSpanish[4] = {
-	"CHARACTER INFO",
-	"ARMOR CLASS",
+	"INFORMACION",
+	"ARMADURA",
 	"EXP",
 	"NIV"
 };
@@ -562,7 +562,7 @@ static const char *const kEoB2CharStatusStrings9DOSSpanish[1] = {
 static const StringListProvider kEoB2CharStatusStrings9DOSSpanishProvider = { ARRAYSIZE(kEoB2CharStatusStrings9DOSSpanish), kEoB2CharStatusStrings9DOSSpanish };
 
 static const char *const kEoB2CharStatusStrings12DOSSpanish[1] = {
-	"%s slows down.\r"
+	"%s se ralentiza.\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings12DOSSpanishProvider = { ARRAYSIZE(kEoB2CharStatusStrings12DOSSpanish), kEoB2CharStatusStrings12DOSSpanish };
@@ -632,7 +632,7 @@ static const char *const kEoB2ClericSpellsListDOSSpanish[30] = {
 	"Bendecir",
 	"Herida Leve",
 	"Cura Leve",
-	"Detect Magic",
+	"Detectar Magia",
 	"Proteccion al Mal",
 	"Auxiliar",
 	"Hoja Llameante",
@@ -653,8 +653,8 @@ static const char *const kEoB2ClericSpellsListDOSSpanish[30] = {
 	"Levantar Muertos",
 	"Quitar Vida",
 	"Vision Verdadera",
-	"Herir",
-	"Curar",
+	"Danar",
+	"Sanar",
 	"Resurreccion",
 	"Imponer Manos",
 	"Alejar Muertos"
@@ -719,8 +719,8 @@ static const char *const kEoB2SpellNamesDOSSpanish[68] = {
 	"levantar muertos",
 	"quitar vida",
 	"vision verdadera",
-	"herir",
-	"curar",
+	"danar",
+	"sanar",
 	"resureccion",
 	"imponer manos",
 	"alejar muertos",
@@ -736,11 +736,11 @@ static const char *const kEoB2SpellNamesDOSSpanish[68] = {
 static const StringListProvider kEoB2SpellNamesDOSSpanishProvider = { ARRAYSIZE(kEoB2SpellNamesDOSSpanish), kEoB2SpellNamesDOSSpanish };
 
 static const char *const kEoB2MagicStrings1DOSSpanish[6] = {
-	"ABORT SPELL",
-	"ABORT SPELL",
+	"ABORTAR",
+	"ABORTAR",
 	"Debes tener una mano libre para el conjuro.\r",
 	"No puedes tener dos conjuros del mismo tipo activos.\r",
-	"%s casts %s.\r",
+	"%s conjura %s.\r",
 	"\rok\r"
 };
 
@@ -750,7 +750,7 @@ static const char *const kEoB2MagicStrings2DOSSpanish[5] = {
 	"El conjuro falla!\r",
 	"%s ha sido desintegrado!\r",
 	"\x06\x06""Golpean al grupo con un conjuro mortal!\r",
-	"\x06\x06""%s has been hit by cause serious wounds.\r",
+	"\x06\x06""%s Ha sido alcanzado por 'Heridas Graves'.\r",
 	"PETRIFICADO"
 };
 
@@ -917,7 +917,7 @@ static const char *const kEoB2TransferStrings2DOSSpanish[2] = {
 static const StringListProvider kEoB2TransferStrings2DOSSpanishProvider = { ARRAYSIZE(kEoB2TransferStrings2DOSSpanish), kEoB2TransferStrings2DOSSpanish };
 
 static const char *const kEoB2TransferLabelsDOSSpanish[2] = {
-	"CANCELAR",
+	"VOLVER",
 	"OK"
 };
 
