@@ -74,7 +74,7 @@ void InterfaceStartup::start(int id) {
 	initCursor(kStartupCursorId, 1, 0);
 }
 
-void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
+void InterfaceStartup::onLeftButtonDown(Common::Point p) {
 	if (!_objUnderCursor)
 		return;
 	switch (_objUnderCursor->_resourceId) {
@@ -95,7 +95,7 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfaceStartup::onMouseMove(const Common::Point p) {
+void InterfaceStartup::onMouseMove(Common::Point p) {
 	_objUnderCursor = nullptr;
 	bool found = false;
 	for (int i = _objs.size() - 1; i > 0; --i) {

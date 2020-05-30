@@ -147,7 +147,7 @@ void InterfacePanel::stop() {
 	Interface::stop();
 }
 
-void InterfacePanel::onLeftButtonDown(const Common::Point p) {
+void InterfacePanel::onLeftButtonDown(Common::Point p) {
 	int i = 0;
 	for (i = _objs.size() - 1; i > 0; --i) {
 		if (_objs[i]->isInPoint(p.x, p.y)) {
@@ -211,7 +211,7 @@ void InterfacePanel::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfacePanel::onMouseMove(const Common::Point p) {
+void InterfacePanel::onMouseMove(Common::Point p) {
 	bool found = false;
 	for (uint i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
@@ -315,7 +315,7 @@ void InterfacePanel::applySettings() {
 	g_vm->syncSoundSettings();
 }
 
-void InterfacePanel::onRightButtonDown(const Common::Point p) {
+void InterfacePanel::onRightButtonDown(Common::Point p) {
 	stop();
 }
 

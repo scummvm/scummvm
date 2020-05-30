@@ -89,7 +89,7 @@ void InterfaceSaveLoad::stop() {
 	Interface::stop();
 }
 
-void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {
+void InterfaceSaveLoad::onLeftButtonDown(Common::Point p) {
 	int index = findSaveLoadRectIndex(p);
 	if (index == -1) {
 		if (_prevPageRect.contains(p) && _page > 0) {
@@ -104,17 +104,17 @@ void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfaceSaveLoad::onRightButtonDown(const Common::Point p) {
+void InterfaceSaveLoad::onRightButtonDown(Common::Point p) {
 	stop();
 }
 
-void InterfaceSaveLoad::onMouseMove(const Common::Point p) {
+void InterfaceSaveLoad::onMouseMove(Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = findSaveLoadRectIndex(p) != -1 || _nextPageRect.contains(p) || _prevPageRect.contains(p);
 	cursor->setCursorPos(p.x, p.y, 0);
 }
 
-int InterfaceSaveLoad::findSaveLoadRectIndex(const Common::Point p) {
+int InterfaceSaveLoad::findSaveLoadRectIndex(Common::Point p) {
 	for (uint i = 0; i < ARRAYSIZE(_saveRects); ++i) {
 		if (_saveRects[i].contains(p)) {
 			return i;

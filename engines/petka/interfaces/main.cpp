@@ -151,7 +151,7 @@ void InterfaceMain::unloadRoom(bool fromSave) {
 	_objs.push_back(sys->getChapay());
 }
 
-void InterfaceMain::onLeftButtonDown(const Common::Point p) {
+void InterfaceMain::onLeftButtonDown(Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	if (!cursor->_isShown) {
 		_dialog.next(-1);
@@ -192,7 +192,7 @@ void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfaceMain::onRightButtonDown(const Common::Point p) {
+void InterfaceMain::onRightButtonDown(Common::Point p) {
 	QObjectStar *star = g_vm->getQSystem()->getStar();
 	QObjectCase *objCase = g_vm->getQSystem()->getCase();
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
@@ -206,7 +206,7 @@ void InterfaceMain::onRightButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfaceMain::onMouseMove(const Common::Point p) {
+void InterfaceMain::onMouseMove(Common::Point p) {
 	QMessageObject *prevObj = (QMessageObject *)_objUnderCursor;
 	_objUnderCursor = nullptr;
 

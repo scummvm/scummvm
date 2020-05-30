@@ -97,7 +97,7 @@ void InterfaceMap::stop() {
 	Interface::stop();
 }
 
-void InterfaceMap::onLeftButtonDown(const Common::Point p) {
+void InterfaceMap::onLeftButtonDown(Common::Point p) {
 	for (int i = _objs.size() - 1; i >= 0; --i) {
 		if (_objs[i]->isInPoint(p.x, p.y)) {
 			_objs[i]->onClick(p.x, p.y);
@@ -106,7 +106,7 @@ void InterfaceMap::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfaceMap::onMouseMove(const Common::Point p) {
+void InterfaceMap::onMouseMove(Common::Point p) {
 	QVisibleObject *oldObj = _objUnderCursor;
 	_objUnderCursor = nullptr;
 
@@ -146,7 +146,7 @@ void InterfaceMap::onMouseMove(const Common::Point p) {
 	}
 }
 
-void InterfaceMap::onRightButtonDown(const Common::Point p) {
+void InterfaceMap::onRightButtonDown(Common::Point p) {
 	stop();
 }
 

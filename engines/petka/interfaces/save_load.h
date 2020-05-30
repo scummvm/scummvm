@@ -41,12 +41,12 @@ public:
 
 	bool loadMode() { return _loadMode; }
 
-	void onLeftButtonDown(const Common::Point p) override;
-	void onRightButtonDown(const Common::Point p) override;
-	void onMouseMove(const Common::Point p) override;
+	void onLeftButtonDown(Common::Point p) override;
+	void onRightButtonDown(Common::Point p) override;
+	void onMouseMove(Common::Point p) override;
 
 private:
-	int findSaveLoadRectIndex(const Common::Point p);
+	int findSaveLoadRectIndex(Common::Point p);
 
 private:
 	bool _loadMode;

@@ -49,9 +49,9 @@ public:
 
 	void unloadRoom(bool fromSave);
 
-	void onLeftButtonDown(const Common::Point p) override;
-	void onRightButtonDown(const Common::Point p) override;
-	void onMouseMove(const Common::Point p) override;
+	void onLeftButtonDown(Common::Point p) override;
+	void onRightButtonDown(Common::Point p) override;
+	void onMouseMove(Common::Point p) override;
 
 	void setTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor);
 	void setTextDescription(const Common::U32String &text, int frame);

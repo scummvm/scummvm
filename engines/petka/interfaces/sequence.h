@@ -36,7 +36,7 @@ public:
 	void start(int id) override;
 	void stop() override;
 
-	void onLeftButtonDown(const Common::Point p) override;
+	void onLeftButtonDown(Common::Point p) override;
 
 private:
 	void removeObjects();
