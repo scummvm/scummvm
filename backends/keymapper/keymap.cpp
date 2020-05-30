@@ -141,7 +141,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 			for (HardwareActionMap::const_iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); ++itInput) {
 				if (itInput->_key.type == kHardwareInputTypeKeyboard && itInput->_key.key.keycode == normalizedKeystate.keycode) {
 					int flags = itInput->_key.key.flags;
-					if (flags & KBD_NON_STICKY && (flags & normalizedKeystate.keycode) == flags) {
+					if (flags & KBD_NON_STICKY && (flags & normalizedKeystate.flags) == flags) {
 						actions.push_back(itInput->_value);
 						return kKeymapMatchPartial;
 					}
