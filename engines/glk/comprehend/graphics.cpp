@@ -424,36 +424,14 @@ static void set_color(unsigned color) {
 
 void g_draw_box(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
                 unsigned color) {
-#ifdef TODO
-	SDL_Rect rect;
-	int i;
-
-	rect.x = x1;
-	rect.y = y1;
-	rect.w = x2 - x1;
-	rect.h = y2 - y1;
-
-	set_color(color);
-	for (i = 0; i < ARRAY_SIZE(ctx.renderer); i++)
-		SDL_RenderDrawRect(ctx.renderer[i], &rect);
-#endif
+	Rect r(x1, y1, x2, y2);
+	g_comprehend->_topWindow->frameRect(color, r);
 }
 
 static void g_draw_filled_box(unsigned x1, unsigned y1,
                               unsigned x2, unsigned y2, unsigned color) {
-#ifdef TODO
-	SDL_Rect rect;
-	int i;
-
-	rect.x = x1;
-	rect.y = y1;
-	rect.w = x2 - x1;
-	rect.h = y2 - y1;
-
-	set_color(color);
-	for (i = 0; i < ARRAY_SIZE(ctx.renderer); i++)
-		SDL_RenderFillRect(ctx.renderer[i], &rect);
-#endif
+	Rect r(x1, y1, x2, y2);
+	g_comprehend->_topWindow->fillRect(color, r);
 }
 
 unsigned g_get_pixel_color(int x, int y) {
@@ -481,15 +459,8 @@ void g_draw_pixel(unsigned x, unsigned y, unsigned color) {
 }
 
 void g_draw_line(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
-		 unsigned color)
-{
-#ifdef TODO
-	int i;
-
-	set_color(color);
-	for (i = 0; i < ARRAY_SIZE(ctx.renderer); i++)
-		SDL_RenderDrawLine(ctx.renderer[i], x1, y1, x2, y2);
-#endif
+		 unsigned color) {
+	g_comprehend->_topWindow->drawLine(color, Point(x1, y1), Point(x2, y2));
 }
 
 void g_draw_shape(int x, int y, int shape_type, unsigned fill_color)
@@ -630,27 +601,18 @@ void g_floodfill(int x, int y, unsigned fill_color,
 
 }
 
-void g_flip_buffers(void)
-{
+void g_flip_buffers(void) {
 #ifdef TODO
 	SDL_RenderPresent(ctx.renderer[RENDERER_SCREEN]);
 #endif
 }
 
 void g_clear_screen(unsigned color) {
-	#ifdef TODO
-	int i;
-
-	set_color(color);
-	for (i = 0; i < ARRAY_SIZE(ctx.renderer); i++)
-		SDL_RenderClear(ctx.renderer[i]);
-
-	SDL_RenderPresent(ctx.renderer[RENDERER_SCREEN]);
-#endif
+	GraphicsWindow *win = g_comprehend->_topWindow;
+	win->fillRect(color, Rect(0, 0, win->_w, win->_h));
 }
 
-void g_init(unsigned width, unsigned height)
-{
+void g_init(unsigned width, unsigned height) {
 	#ifdef TODO
 	int err;
 

@@ -177,6 +177,16 @@ void GraphicsWindow::fillRect(uint color, const Rect &box) {
 	touch();
 }
 
+void GraphicsWindow::frameRect(uint color, const Rect &box) {
+	_surface->frameRect(box, color);
+	touch();
+}
+
+void GraphicsWindow::drawLine(uint color, const Point &from, const Point &to) {
+	_surface->drawLine(from.x, from.y, to.x, to.y, color);
+	touch();
+}
+
 void GraphicsWindow::drawPicture(Picture *src, int x0, int y0, int width, int height, uint linkval) {
 	if (width != src->w || height != src->h) {
 		src = g_vm->_pictures->scale(src, width, height);
