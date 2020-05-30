@@ -64,8 +64,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 
 	if (gameId == "actualdest" ||
 		gameId == "artofmurder1" ||
-		gameId == "alavi1" ||
-		gameId == "alavi2" ||
+		gameId == "alavi" ||
 		gameId == "agustin" ||
 		gameId == "bickadoodle" ||
 		gameId == "bthreshold" ||
