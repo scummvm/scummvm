@@ -121,8 +121,7 @@ int main(int argc, char **argv) {
 }
 #endif
 
-Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkAPI(syst, gameDesc), _saveSlot(-1), _game(nullptr) {
+Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _saveSlot(-1), _game(nullptr) {
 	g_comprehend = this;
 }
 
@@ -143,13 +142,17 @@ void Comprehend::runGame() {
 
 	deinitialize();
 }
-
 void Comprehend::initialize() {
-	_topWindow = (GraphicsWindow *)glk_window_open(0, 0, 0, wintype_Graphics, 1);
-	_bottomWindow = (TextBufferWindow *)glk_window_open(
-	    _topWindow, winmethod_Below | winmethod_Fixed,
-	    80, wintype_TextBuffer, 0);
+	g_conf->_wMarginX = 0;
+	g_conf->_wMarginY = 0;
+
+	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	_topWindow = (GraphicsWindow *)glk_window_open(_bottomWindow,
+	                                               winmethod_Above | winmethod_Fixed,
+	                                               400, wintype_Graphics, 2);
+
 	glk_set_window(_bottomWindow);
+	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
 }
 
 void Comprehend::deinitialize() {
@@ -181,7 +184,7 @@ void Comprehend::print(const char *fmt, ...) {
 	va_end(argp);
 
 	glk_put_string_stream(glk_window_get_stream(_bottomWindow),
-		msg.c_str());
+	                      msg.c_str());
 }
 
 void Comprehend::readLine(char *buffer, size_t maxLen) {
@@ -200,7 +203,6 @@ void Comprehend::readLine(char *buffer, size_t maxLen) {
 
 	buffer[ev.val1] = 0;
 }
-
 
 } // namespace Comprehend
 } // namespace Glk
