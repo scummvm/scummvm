@@ -125,6 +125,7 @@ private:
 	void loadSpeechesInfo();
 	bool checkMenu(uint opIndex);
 	bool findOperation(uint startOpIndex, uint opType, uint *resIndex);
+	void circleMoveTo(byte index);
 
 private:
 	Operation *_currOp;
