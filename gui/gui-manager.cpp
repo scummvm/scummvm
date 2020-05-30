@@ -81,9 +81,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 #ifdef USE_TRANSLATION
 	// Enable translation
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
-	if (TransMan.getCurrentLanguage() == "C" && false) {		// GUI TODO: Change this to enable RTL
-		_useRTL = true;
-	}
+	setLanguageRTL();
 #endif // USE_TRANSLATION
 
 #ifdef USE_TTS
@@ -662,6 +660,22 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 	_lastMousePosition.x = x;
 	_lastMousePosition.y = y;
 	_lastMousePosition.time = _system->getMillis(true);
+}
+
+void GuiManager::setLanguageRTL() {
+	if (ConfMan.hasKey("guiRTL")) {
+		_useRTL = ConfMan.getBool("guiRTL");
+		return;
+	}
+#ifdef USE_TRANSLATION
+	Common::String language = TransMan.getCurrentLanguage();
+	if (language.equals("he") || language.equals("C")) {
+		_useRTL = true;
+		return;
+	}
+#endif // USE_TRANSLATION
+
+	_useRTL = false;
 }
 
 void GuiManager::setDialogPaddings(int l, int r) {

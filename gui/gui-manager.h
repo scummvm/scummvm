@@ -90,6 +90,8 @@ public:
 	int getHeight() const { return _height; }
 
 	bool useRTL() const { return _useRTL; }
+	void setLanguageRTL();
+
 	void setDialogPaddings(int l, int r);
 	int getOverlayOffset() { return _topDialogRightPadding - _topDialogLeftPadding; }
 
