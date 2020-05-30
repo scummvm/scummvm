@@ -369,10 +369,10 @@ void QSystem::onEvent(const Common::Event &event) {
 			goPrevInterface();
 			break;
 		case Common::KEYCODE_F2:
-			_saveLoadInterface->start(kSaveMode);
+			startSaveLoad(kSaveMode);
 			break;
 		case Common::KEYCODE_F3:
-			_saveLoadInterface->start(kLoadMode);
+			startSaveLoad(kLoadMode);
 			break;
 		case Common::KEYCODE_r:
 			if (event.kbd.flags & Common::KBD_ALT) {
@@ -407,6 +407,12 @@ void QSystem::toggleCase() {
 	if (_currInterface == _mainInterface.get() && getStar()->_isActive) {
 		QObjectCase *obj = getCase();
 		obj->show(obj->_isShown == 0);
+	}
+}
+
+void QSystem::startSaveLoad(int id) {
+	if (_currInterface == _mainInterface.get() && getStar()->_isActive) {
+		_saveLoadInterface->start(id);
 	}
 }
 

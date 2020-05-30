@@ -72,6 +72,8 @@ public:
 	QObjectCase *getCase() const;
 	QObjectStar *getStar() const;
 
+	void startSaveLoad(int id);
+
 	void togglePanelInterface();
 	void toggleMapInterface();
 	void toggleCase();
