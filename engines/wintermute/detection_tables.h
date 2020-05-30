@@ -30,7 +30,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
 	{"agustin",         "Boredom of Agustin Cordes"},
-	{"alavi",           "Informer Alavi - Murder of Miss Rojan"},
+	{"alavi1",          "Informer Alavi - Murder of Miss Rojan"},
+	{"alavi2",          "Alavi Animator"},
 	{"alimardan1",      "Alimardan's Mischief"},
 	{"alimardan2",      "Alimardan Meets Merlin"},
 	{"alphapolaris",    "Alpha Polaris"},
@@ -241,8 +242,13 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Informer Alavi - Murder of Miss Rojan (Persian) (Try version)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("alavi", "Try version",
+	WME_WINENTRY("alavi1", "Try version",
 		WME_ENTRY1s("data.dcp", "07b847ebafbf8e58daa341d60598c84b", 36628230), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO, WME_ANDISHE_VARAN),
+
+	// Alavi Animator (Persian) (Try version)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alavi2", "Try version",
+		WME_ENTRY1s("data.dcp", "587b46baa3f82dfe09bdb51f01231fa2", 37191939), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO, WME_ANDISHE_VARAN),
 
 	// Alimardan's Mischief
 	WME_WINENTRY("alimardan1", "",
