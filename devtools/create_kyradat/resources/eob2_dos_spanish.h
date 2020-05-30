@@ -1305,10 +1305,10 @@ static const char *const kEoB2FinaleCPSFilesDOSSpanish[13] = {
 static const StringListProvider kEoB2FinaleCPSFilesDOSSpanishProvider = { ARRAYSIZE(kEoB2FinaleCPSFilesDOSSpanish), kEoB2FinaleCPSFilesDOSSpanish };
 
 static const char *const kEoB2MonsterDistAttStringsDOSSpanish[5] = {
-	"The party is hit with a psychic mind blast!\r",
-	"paralyzed",
-	"poisoned",
-	"paralyzed",
+	"EL grupo es alcanzado por 'Azote Mental'!\r",
+	"paralizado",
+	"envenenado",
+	"paralizado",
 	"PETRIFICADO"
 };
 
