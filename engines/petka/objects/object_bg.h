@@ -30,7 +30,7 @@ namespace Petka {
 // Linear Interpolation
 struct Perspective {
 	double f0;
-	double k;
+	double k; // seems to be (f1 - f0) always in files
 	int y0;
 	int y1;
 	double f1;
