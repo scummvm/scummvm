@@ -56,6 +56,7 @@ protected:
 private:
 	virtual void wait(uint32 ticks) { _vm->delay(ticks * _tickLength); }
 	Common::Array<Common::Rect> _textFields;
+	const Screen::FontId _textFont;
 	uint8 _textColor;
 };
 
@@ -190,7 +191,8 @@ private:
 
 EoBSeqPlayerCommon::EoBSeqPlayerCommon(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen), _textColor(0xE1),
 	_fillColor1(vm->gameFlags().platform == Common::kPlatformAmiga ? 19 : (vm->gameFlags().platform == Common::kPlatformPC98 ? 0 : 12)),
-	_fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157), _tickLength(16) {
+	_fillColor2(vm->gameFlags().platform == Common::kPlatformAmiga ? 10 : 157), _tickLength(16),
+	_textFont(vm->gameFlags().platform == Common::kPlatformPC98 ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_8_FNT) {
 	_shapes = new uint8*[64];
 	memset(_shapes, 0, 64 * sizeof(uint8*));
 }
@@ -273,17 +275,30 @@ void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textm
 	if (!str)
 		return;
 
-	Screen::FontId of = _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT);
+	Screen::FontId of = _screen->setFont(_textFont);
 	int cp = _screen->setCurPage(0);
+	Common::String tmpStr(str);
+
+	if (_vm->_flags.lang == Common::ES_ESP) {
+		textmodeX = (20 - ((tmpStr.contains('\r') ? tmpStr.findFirstOf('\r') : tmpStr.size()) >> 1)) << 1;
+		textmodeY--;
+		// No "typewriter" effect for Spanish
+		mode = 2;
+	}
 
 	int x1 = textmodeX << 2;
 	int y1 = textmodeY << 3;
 
 	for (int i = 0; str[i] &&!_vm->shouldQuit() && !_vm->skipFlag(); ) {
 		uint8 c = str[i++];
+		bool loop = true;
 		if (c == 13) {
 			curX = 0;
 			textmodeY++;
+			if (_vm->_flags.lang == Common::ES_ESP) {
+				tmpStr = &str[i];
+				textmodeX = (20 - ((tmpStr.contains('\r') ? tmpStr.findFirstOf('\r'): tmpStr.size()) >> 1)) << 1;
+			}
 		} else if (c == 10) {
 			_textColor = str[i++];
 		} else if (c == 7) {
@@ -293,7 +308,12 @@ void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textm
 			_textFields.push_back(Common::Rect(x1, y1, x22, y22));
 			clearTextField();
 			curX = 0;
+		} else {
+			loop = false;
 		}
+
+		if (loop)
+			continue;
 
 		charStr[0] = c;
 		charStr[1] = (c >= 0x81 && (c <= 0x9F || (c >= 0xE0 && c <= 0xFC))) ? str[i++] : 0;
@@ -1078,8 +1098,7 @@ void EoBIntroPlayer::tunnel() {
 		_vm->delayUntil(end);
 	}
 
-	// subtitle "We have them" - the PC-98 version does not have this string.
-	_screen->copyRegion(0, 160, 0, 184, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
+	displaySubtitle(160, 184, 16, _stringsTunnel, 0, 27, 23, 0xE1, 0);
 	_screen->updateScreen();
 
 	_vm->delay(18 * _vm->_tickLength);
@@ -1149,7 +1168,7 @@ void EoBIntroPlayer::tunnel() {
 	_screen->copyRegion(0, 120, 80, 30, 160, 64, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(160, 120, 80, 94, 160, 64, 4, 0, Screen::CR_NO_P_CHECK);
 
-	displaySubtitle(176, 184, 16, _stringsTunnel, 0, 27, 23, 0xE1, 0);
+	displaySubtitle(176, 184, 16, _stringsTunnel, 1, 27, 23, 0xE1, 0);
 
 	_screen->setCurPage(0);
 	_screen->updateScreen();
