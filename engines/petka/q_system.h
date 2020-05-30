@@ -94,7 +94,7 @@ public:
 	Interface *_currInterface;
 	Interface *_prevInterface;
 
-	int _isIniting;
+	bool _totalInit;
 	int _fxId;
 	int _musicId;
 

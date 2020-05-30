@@ -66,9 +66,6 @@ InterfaceMain::InterfaceMain() {
 }
 
 void InterfaceMain::start(int id) {
-	g_vm->getQSystem()->update();
-	g_vm->getQSystem()->_isIniting = 0;
-
 	_objs.push_back(g_vm->getQSystem()->getPetka());
 	_objs.push_back(g_vm->getQSystem()->getChapay());
 

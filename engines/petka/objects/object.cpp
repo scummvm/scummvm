@@ -319,7 +319,7 @@ void QMessageObject::processReaction(QReaction *r, const QMessage *msg) {
 }
 
 void QMessageObject::play(int id, int type) {
-	if (g_vm->getQSystem()->_isIniting) {
+	if (g_vm->getQSystem()->_totalInit) {
 		_resourceId = id;
 	} else {
 		if (!_notLoopedSound || g_vm->isDemo()) {

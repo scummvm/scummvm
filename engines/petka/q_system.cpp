@@ -45,7 +45,7 @@ namespace Petka {
 
 QSystem::QSystem()
 	: _mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr),
-	_isIniting(0), _sceneWidth(640) {}
+	_totalInit(false), _sceneWidth(640) {}
 
 QSystem::~QSystem() {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
@@ -57,7 +57,6 @@ bool QSystem::init() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("script.dat", true));
 	if (!stream)
 		return false;
-	_isIniting = 1;
 	Common::ScopedPtr<Common::SeekableReadStream> namesStream(g_vm->openFile("Names.ini", true));
 	Common::ScopedPtr<Common::SeekableReadStream> castStream(g_vm->openFile("Cast.ini", true));
 	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", true));
@@ -96,8 +95,6 @@ bool QSystem::init() {
 		_allObjects.push_back(obj);
 	}
 
-	addMessageForAllObjects(kTotalInit);
-
 	_allObjects.push_back(new QObjectCursor);
 	_allObjects.push_back(new QObjectCase);
 	_allObjects.push_back(new QObjectStar);
@@ -108,11 +105,20 @@ bool QSystem::init() {
 	_sequenceInterface.reset(new InterfaceSequence());
 	_panelInterface.reset(new InterfacePanel());
 	_mapInterface.reset(new InterfaceMap());
+
 	if (g_vm->getPart() == 0) {
 		_prevInterface = _currInterface = _startupInterface.get();
 	} else {
 		_prevInterface = _currInterface = _mainInterface.get();
 	}
+
+	_totalInit = true;
+
+	addMessageForAllObjects(kTotalInit);
+	update();
+
+	_totalInit = false;
+
 	_currInterface->start(0);
 	return true;
 }

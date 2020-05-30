@@ -76,7 +76,7 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 		QMessageObject::processMessage(msg);
 		if (msg.opcode == kSet || msg.opcode == kPlay) {
 			initSurface();
-			if (!g_vm->getQSystem()->_isIniting) {
+			if (!g_vm->getQSystem()->_totalInit) {
 				setPos(_x_, _y_);
 			}
 		}
