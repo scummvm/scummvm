@@ -391,11 +391,6 @@ void QMessageObject::readScriptData(Common::SeekableReadStream &stream) {
 			msg->arg1 = stream.readUint16LE();
 			msg->arg2 = stream.readUint16LE();
 			msg->arg3 = stream.readUint16LE();
-			if (msg->opcode == kPlay || msg->opcode == kSet) {
-				if (msg->arg2 != 1 && msg->arg2 != -1 && msg->arg2 != 5) {
-					debug("MSG PLAY 2 5");
-				}
-			}
 		}
 	}
 }
