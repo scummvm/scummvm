@@ -998,13 +998,12 @@ static void skip_non_whitespace(char **p) {
 		(*p)++;
 }
 
-#ifdef TODO
 static void handle_debug_command(ComprehendGame *game,
                                  const char *line) {
 	int i;
 
 	if (strncmp(line, "quit", 4) == 0) {
-		error("Quit");
+		g_comprehend->quitGame();
 
 	} else if (strncmp(line, "debug", 5) == 0) {
 		if (debugging_enabled())
@@ -1020,25 +1019,24 @@ static void handle_debug_command(ComprehendGame *game,
 		dump_game_data(game, DUMP_ROOMS);
 
 	} else if (strncmp(line, "dump state", 10) == 0) {
-		printf("Current room: %.2x\n", game->current_room);
+		printf("Current room: %.2x\n", game->_currentRoom);
 		printf("Carry weight %d/%d\n\n",
-		       game->variable[VAR_INVENTORY_WEIGHT],
-		       game->variable[VAR_INVENTORY_LIMIT]);
+		       game->_variables[VAR_INVENTORY_WEIGHT],
+		       game->_variables[VAR_INVENTORY_LIMIT]);
 
 		printf("Flags:\n");
-		for (i = 0; i < ARRAY_SIZE(game->flags); i++)
-			printf("  [%.2x]: %d\n", i, game->flags[i]);
+		for (i = 0; i < ARRAY_SIZE(game->_flags); i++)
+			printf("  [%.2x]: %d\n", i, game->_flags[i]);
 		printf("\n");
 
 		printf("Variables:\n");
-		for (i = 0; i < ARRAY_SIZE(game->variable); i++)
+		for (i = 0; i < ARRAY_SIZE(game->_variables); i++)
 			printf("  [%.2x]: %5d (0x%.4x)\n",
-			       i, game->variable[i],
-			       game->variable[i]);
+			       i, game->_variables[i],
+			       game->_variables[i]);
 		printf("\n");
 	}
 }
-#endif
 
 static bool handle_sentence(ComprehendGame *game,
                             Sentence *sentence) {
@@ -1162,21 +1160,20 @@ static void after_turn(ComprehendGame *game) {
 }
 
 static void read_input(ComprehendGame *game) {
-#ifdef TODO
-	sentence sentence;
+	Sentence sentence;
 	char *line = NULL, buffer[1024];
 	bool handled;
 
-	if (game->ops->before_prompt)
-		game->ops->before_prompt(game);
+	game->before_prompt();
 	before_turn(game);
 
-	while (!line) {
-		printf("> ");
-		line = fgets(buffer, sizeof(buffer), stdin);
-	}
+	g_comprehend->print("> ");
+	g_comprehend->readLine(buffer, sizeof(buffer));
+	if (g_comprehend->shouldQuit())
+		return;
 
 	// Re-comprehend special commands start with '!'
+	line = &buffer[0];
 	if (*line == '!') {
 		handle_debug_command(game, &line[1]);
 		return;
@@ -1196,9 +1193,6 @@ static void read_input(ComprehendGame *game) {
 		if (handled)
 			before_turn(game);
 	}
-#else
-	error("TODO: read_input");
-#endif
 }
 
 void comprehend_play_game(ComprehendGame *game) {
