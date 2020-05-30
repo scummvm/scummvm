@@ -126,8 +126,8 @@ void EoBCoreEngine::readLevelFileData(int level) {
 		error("Failed to load level file LEVEL%d.INF/DRO/ELO/JOT", level);
 
 	if (s->readUint16LE() + 2 == s->size()) {
-		uint16 headerID = s->readUint16LE();
-		if (headerID == 4 /* INF file */ || headerID == 0 /* DRO file */) {
+		// check for valid compression type
+		if (s->readUint16LE() <= 4) {
 			delete s;
 			s = 0;
 			_screen->loadBitmap(file.c_str(), 5, 5, 0, true);
