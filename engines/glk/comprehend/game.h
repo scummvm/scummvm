@@ -69,10 +69,10 @@ public:
 void console_println(ComprehendGame *game, const char *text);
 int console_get_key(void);
 
-struct item *get_item(ComprehendGame *game, uint16 index);
-void move_object(ComprehendGame *game, struct item *item, int new_room);
-void eval_function(ComprehendGame *game, struct function *func,
-                   struct word *verb, struct word *noun);
+item *get_item(ComprehendGame *game, uint16 index);
+void move_object(ComprehendGame *game, item *item, int new_room);
+void eval_function(ComprehendGame *game, function *func,
+                   word *verb, word *noun);
 
 void comprehend_play_game(ComprehendGame *game);
 void game_save(ComprehendGame *game);

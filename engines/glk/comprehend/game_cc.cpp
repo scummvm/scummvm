@@ -26,10 +26,10 @@
 namespace Glk {
 namespace Comprehend {
 
-static struct game_strings cc1_strings = {0x9};
+static game_strings cc1_strings = {0x9};
 
 #ifdef TODO
-static struct game_ops cc2_ops = {
+static game_ops cc2_ops = {
     nullptr,
     cc2_before_prompt,
     nullptr,

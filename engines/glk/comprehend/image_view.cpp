@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 		{NULL,			0,			0, 0},
 	};
 	const char *short_opts = "w:h:c:t:spfd?";
-	struct image_data info;
+	image_data info;
 	const char *filename;
 	unsigned index, clear_color = G_COLOR_WHITE,
 		graphics_width = G_RENDER_WIDTH,

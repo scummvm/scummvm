@@ -89,62 +89,20 @@ size_t FileBuffer::strlen(bool *eof) {
 	return end - &_data[_pos];
 }
 
-
-#ifdef TODO
-void file_buf_unmap(struct FileBuffer *fb) {
-	free(fb->marked);
-	free(fb->data);
-}
-
-unsigned file_buf_get_pos(struct FileBuffer *fb) {
-	return fb->p - fb->data;
-}
-
-void file_buf_get_data(struct FileBuffer *fb, void *data, size_t data_size) {
-	if (fb->pos() + data_size > fb->size)
-		error("Not enough data in file (%x + %x > %x)",
-		      fb->pos(), data_size, fb->size);
-
-	if (data)
-		memcpy(data, fb->p, data_size);
-
-	/* Mark this region of the file as read */
-	memset(fb->marked + fb->pos(), '?', data_size);
-
-	fb->p += data_size;
-}
-
-/*
- * Debugging function to show regions of a file that have not been read.
- */
-void file_buf_show_unmarked(struct FileBuffer *fb) {
+void FileBuffer::showUnmarked() {
 	int i, start = -1;
 
-	for (i = 0; i < (int)fb->size; i++) {
-		if (!fb->marked[i] && start == -1)
+	for (i = 0; i < (int)_data.size(); i++) {
+		if (!_readBytes[i] && start == -1)
 			start = i;
 
-		if ((fb->marked[i] || i == (int)fb->size - 1) && start != -1) {
+		if ((_readBytes[i] || i == (int)_data.size() - 1) && start != -1) {
 			warning("%.4x - %.4x unmarked (%d bytes)\n",
 			        start, i - 1, i - start);
 			start = -1;
 		}
 	}
 }
-
-void file_buf_put_u8(Common::WriteStream *fd, uint8 val) {
-	fd->writeByte(val);
-}
-
-void file_buf_put_le16(Common::WriteStream *fd, uint16 val) {
-	fd->writeUint16LE(val);
-}
-
-void file_buf_put_skip(Common::WriteStream *fd, size_t skip) {
-	for (uint i = 0; i < skip; i++)
-		file_buf_put_u8(fd, 0);
-}
-#endif
 
 } // namespace Comprehend
 } // namespace Glk

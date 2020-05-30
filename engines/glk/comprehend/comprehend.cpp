@@ -58,7 +58,7 @@ static const dump_option dump_options[] = {
 
 #ifdef TODO
 int main(int argc, char **argv) {
-	struct option long_opts[] = {
+	option long_opts[] = {
 	    {"debug", no_argument, 0, 'd'},
 	    {"dump", required_argument, 0, 'D'},
 	    {"no-play", no_argument, 0, 'p'},

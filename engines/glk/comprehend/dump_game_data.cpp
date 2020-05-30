@@ -114,8 +114,8 @@ static const char *opcode_names[] = {
 };
 
 void dump_instruction(ComprehendGame *game,
-		      struct function_state *func_state,
-		      struct instruction *instr)
+		      function_state *func_state,
+		      instruction *instr)
 {
 	uint i;
 	int str_index, str_table;
@@ -169,7 +169,7 @@ void dump_instruction(ComprehendGame *game,
 
 static void dump_functions(ComprehendGame *game)
 {
-	struct function *func;
+	function *func;
 	uint i, j;
 
 	debugN("Functions (%zd entries)\n", game->_nr_functions);
@@ -185,8 +185,8 @@ static void dump_functions(ComprehendGame *game)
 
 static void dump_action_table(ComprehendGame *game)
 {
-	struct action *action;
-	struct word *word;
+	action *action;
+	word *word;
 	uint i, j;
 
 	debugN("Action table (%zd entries)\n", game->_nr_actions);
@@ -265,9 +265,9 @@ static void dump_dictionary(ComprehendGame *game)
 
 static void dump_word_map(ComprehendGame *game)
 {
-	struct word *word[3];
+	word *word[3];
 	char str[3][6];
-	struct word_map *map;
+	word_map *map;
 	uint i, j;
 
 	debugN("Word pairs (%zd entries)\n", game->_nr_word_maps);
@@ -292,7 +292,7 @@ static void dump_word_map(ComprehendGame *game)
 
 static void dump_rooms(ComprehendGame *game)
 {
-	struct room *room;
+	room *room;
 	uint i;
 
 	/* Room zero acts as the players inventory */
@@ -319,7 +319,7 @@ static void dump_rooms(ComprehendGame *game)
 
 static void dump_items(ComprehendGame *game)
 {
-	struct item *item;
+	item *item;
 	uint i, j;
 
 	debugN("Items (%zd entries)\n", game->_header.nr_items);
@@ -348,7 +348,7 @@ static void dump_items(ComprehendGame *game)
 	}
 }
 
-static void dump_string_table(struct string_table *table)
+static void dump_string_table(string_table *table)
 {
 	uint i;
 
@@ -382,7 +382,7 @@ static void dump_replace_words(ComprehendGame *game)
 
 static void dump_header(ComprehendGame *game)
 {
-	struct game_header *header = &game->_header;
+	game_header *header = &game->_header;
 	uint16 *dir_table = header->room_direction_table;
 
 	debugN("Game header:\n");
@@ -425,7 +425,7 @@ struct dumper {
 	unsigned	flag;
 };
 
-static struct dumper dumpers[] = {
+static dumper dumpers[] = {
 	{dump_header,			DUMP_HEADER},
 	{dump_game_data_strings,	DUMP_STRINGS},
 	{dump_extra_strings,		DUMP_EXTRA_STRINGS},

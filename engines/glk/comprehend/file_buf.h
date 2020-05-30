@@ -53,35 +53,11 @@ public:
 	const byte *dataPtr() const { return &_data[_pos]; }
 	size_t strlen(bool *eof = nullptr);
 
+	/*
+	 * Debugging function to show regions of a file that have not been read.
+	 */
+	void showUnmarked();
 };
-
-#ifdef TODO
-void file_buf_unmap(struct FileBuffer *fb);
-void file_buf_show_unmarked(struct FileBuffer *fb);
-
-unsigned file_buf_get_pos(struct FileBuffer *fb);
-
-size_t file_buf_strlen(struct FileBuffer *fb, bool *eof);
-
-void file_buf_get_data(struct FileBuffer *fb, void *data, size_t data_size);
-
-void file_buf_put_skip(Common::WriteStream *fd, size_t skip);
-void file_buf_put_u8(Common::WriteStream *fd, uint8 val);
-void file_buf_put_le16(Common::WriteStream *fd, uint16 val);
-
-#define file_buf_put_array(fd, type, base, array, member, size)		\
-	do {								\
-		int __i;						\
-		for (__i = (base); __i < (base) + (size); __i++)	\
-			file_buf_put_##type(fd, (array)[__i].member);	\
-	} while (0)
-
-#define file_buf_put_array_le16(fd, base, array, member, size) \
-	file_buf_put_array(fd, le16, base, array, member, size)
-
-#define file_buf_put_array_u8(fd, base, array, member, size) \
-	file_buf_put_array(fd, u8, base, array, member, size)
-#endif
 
 #define file_buf_get_array(fb, type, base, array, member, size) \
 	do {                                                        \

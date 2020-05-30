@@ -29,11 +29,11 @@ namespace Comprehend {
 class ComprehendGame;
 struct word;
 
-struct word *find_dict_word_by_index(ComprehendGame *game,
+word *find_dict_word_by_index(ComprehendGame *game,
 				     uint8 index, uint8 type_mask);
-struct word *dict_find_word_by_index_type(ComprehendGame *game,
+word *dict_find_word_by_index_type(ComprehendGame *game,
 					  uint8 index, uint8 type);
-struct word *dict_find_word_by_string(ComprehendGame *game,
+word *dict_find_word_by_string(ComprehendGame *game,
 				      const char *string);
 bool dict_match_index_type(ComprehendGame *game, const char *word,
 			   uint8 index, uint8 type_mask);

@@ -85,7 +85,7 @@ int OOToposGame::room_is_special(unsigned room_index,
 bool OOToposGame::before_turn() {
 	/* FIXME - probably doesn't work correctly with restored games */
 	static bool flashlight_was_on = false, googles_were_worn = false;
-	struct room *room = &_rooms[_currentRoom];
+	room *room = &_rooms[_currentRoom];
 
 	/* 
 	 * Check if the room needs to be redrawn because the flashlight

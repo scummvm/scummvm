@@ -65,7 +65,7 @@ static uint16 image_get_operand(FileBuffer *fb)
 	return val;
 }
 
-static bool do_image_op(struct FileBuffer *fb, struct image_context *ctx)
+static bool do_image_op(FileBuffer *fb, image_context *ctx)
 {
 	uint8 opcode;
 	uint16 a, b;
@@ -254,10 +254,10 @@ static bool do_image_op(struct FileBuffer *fb, struct image_context *ctx)
 	return false;
 }
 
-void draw_image(struct image_data *info, unsigned index)
+void draw_image(image_data *info, unsigned index)
 {
 	unsigned file_num;
-	struct FileBuffer *fb;
+	FileBuffer *fb;
 	bool done = false;
 	image_context ctx = {
 		0, 0, G_COLOR_BLACK, G_COLOR_BLACK, IMAGE_OP_SHAPE_CIRCLE_LARGE
@@ -294,17 +294,17 @@ void draw_bright_room(void)
 	g_clear_screen(G_COLOR_WHITE);
 }
 
-void draw_location_image(struct image_data *info, unsigned index)
+void draw_location_image(image_data *info, unsigned index)
 {
 	g_clear_screen(G_COLOR_WHITE);
 	draw_image(info, index);
 }
 
-static void load_image_file(struct image_data *info, const char *filename,
+static void load_image_file(image_data *info, const char *filename,
 			    unsigned file_num)
 {
 	unsigned base = file_num * IMAGES_PER_FILE;
-	struct FileBuffer *fb;
+	FileBuffer *fb;
 	uint16 version;
 	int i;
 
@@ -329,7 +329,7 @@ static void load_image_file(struct image_data *info, const char *filename,
 	}
 }
 
-static void load_image_files(struct image_data *info,
+static void load_image_files(image_data *info,
 	const Common::Array<const char *> filenames) {
 	uint i;
 
@@ -344,7 +344,7 @@ static void load_image_files(struct image_data *info,
 	}
 }
 
-void comprehend_load_image_file(const char *filename, struct image_data *info)
+void comprehend_load_image_file(const char *filename, image_data *info)
 {
 	Common::Array<const char *> filenames;
 	filenames.push_back(filename);

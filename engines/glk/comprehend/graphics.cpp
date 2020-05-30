@@ -63,7 +63,7 @@ struct graphics_context {
 	//	SDL_Surface	*surface;
 };
 
-static struct graphics_context ctx;
+static graphics_context ctx;
 
 unsigned g_set_pen_color(uint8 opcode) {
 	return pen_colors[opcode - IMAGE_OP_PEN_COLOR_A];

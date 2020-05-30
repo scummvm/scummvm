@@ -36,7 +36,7 @@ const tr_monster TransylvaniaGame::VAMPIRE = {
 	0x26, 5, (1 << 7), 0, 5
 };
 
-static struct game_strings tr_strings = {
+static game_strings tr_strings = {
     EXTRA_STRING_TABLE(0x8a)
 };
 
@@ -65,8 +65,8 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 };
 
 void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
-	struct item *monster;
-	struct room *room;
+	item *monster;
+	room *room;
 	uint16 turn_count;
 
 	room = &_rooms[_currentRoom];
@@ -98,7 +98,7 @@ void TransylvaniaGame::update_monster(const tr_monster *monster_info) {
 int TransylvaniaGame::room_is_special(unsigned room_index,
 			      unsigned *room_desc_string)
 {
-	struct room *room = &_rooms[room_index];
+	room *room = &_rooms[room_index];
 
 	if (room_index == 0x28) {
 		if (room_desc_string)

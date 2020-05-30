@@ -43,8 +43,8 @@ struct instruction;
 #define DUMP_ALL (~0U)
 
 void dump_instruction(ComprehendGame *game,
-                      struct function_state *func_state,
-                      struct instruction *instr);
+                      function_state *func_state,
+                      instruction *instr);
 void dump_game_data(ComprehendGame *game, unsigned flags);
 
 } // namespace Comprehend
