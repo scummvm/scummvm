@@ -43,6 +43,12 @@ bool FileBuffer::exists(const Common::String &filename) {
 	return Common::File::exists(filename);
 }
 
+void FileBuffer::close() {
+	_data.clear();
+	_readBytes.clear();
+	_pos = 0;
+}
+
 bool FileBuffer::seek(int32 offset, int whence) {
 	switch (whence) {
 	case SEEK_SET:

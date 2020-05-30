@@ -79,7 +79,7 @@ void g_floodfill(int x, int y, unsigned fill_color, unsigned old_color);
 
 void g_clear_screen(unsigned color);
 void g_flip_buffers(void);
-void g_init(unsigned width, unsigned height);
+void g_init();
 bool g_enabled(void);
 
 } // namespace Comprehend

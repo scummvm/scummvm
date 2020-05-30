@@ -1019,7 +1019,10 @@ void comprehend_load_game(ComprehendGame *game) {
 	load_game_data(game);
 
 	if (g_enabled()) {
-		comprehend_load_images(game);
+		// Set up image files
+		game->_roomImages.load(game->_locationGraphicFiles);
+		game->_itemImages.load(game->_itemGraphicFiles);
+
 		if (game->_colorTable)
 			g_set_color_table(game->_colorTable);
 	}

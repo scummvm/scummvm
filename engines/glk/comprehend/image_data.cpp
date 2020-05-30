@@ -46,33 +46,53 @@ struct ImageContext {
 
 static unsigned draw_flags;
 
-void ImageData::clear() {
-	fb = nullptr;
-	image_offsets = nullptr;
-	nr_images = 0;
+/*-------------------------------------------------------*/
+
+void ImageFileData::load(const char *filename) {
+	uint16 version;
+	int i;
+
+	_fb = FileBuffer(filename);
+
+	/*
+	 * In earlier versions of Comprehend the first word is 0x1000 and
+	 * the image offsets start four bytes in. In newer versions the
+	 * image offsets start at the beginning of the image file.
+	 */
+	version = _fb.readUint16LE();
+	if (version == 0x1000)
+		_fb.seek(4);
+	else
+		_fb.seek(0);
+
+	// Get the image offsets in the file
+	_imageOffsets.resize(IMAGES_PER_FILE);
+	for (i = 0; i < IMAGES_PER_FILE; i++) {
+		_imageOffsets[i] = _fb.readUint16LE();
+		if (version == 0x1000)
+			_imageOffsets[i] += 4;
+	}
 }
 
-void image_set_draw_flags(unsigned flags)
-{
-	draw_flags |= flags;
+void ImageFileData::draw(uint index, ImageContext *ctx) {
+	_fb.seek(_imageOffsets[index]);
+
+	for (bool done = false; !done;) {
+		done = doImageOp(ctx);
+		if (!done && (draw_flags & IMAGEF_OP_WAIT_KEYPRESS)) {
+			getchar();
+			g_flip_buffers();
+		}
+	}
 }
 
-static uint16 image_get_operand(FileBuffer *fb)
-{
-	uint8 val;
-
-	val = fb->readByte();
-	return val;
-}
-
-static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
-{
+bool ImageFileData::doImageOp(ImageContext *ctx) {
 	uint8 opcode;
 	uint16 a, b;
 
-	opcode = fb->readByte();
+	opcode = _fb.readByte();
 	debug_printf(DEBUG_IMAGE_DRAW,
-		     "  %.4x [%.2x]: ", fb->pos() - 1, opcode);
+	             "  %.4x [%.2x]: ", _fb.pos() - 1, opcode);
 
 	switch (opcode) {
 	case IMAGE_OP_SCENE_END:
@@ -94,15 +114,15 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 
 	case IMAGE_OP_DRAW_LINE:
 	case IMAGE_OP_DRAW_LINE_FAR:
-		a = image_get_operand(fb);
-		b = image_get_operand(fb);
+		a = imageGetOperand();
+		b = imageGetOperand();
 
 		if (opcode & 0x1)
 			a += 255;
 
 		debug_printf(DEBUG_IMAGE_DRAW,
-			     "draw_line (%d, %d) - (%d, %d)\n", opcode,
-			     ctx->x, ctx->y, a, b);
+		             "draw_line (%d, %d) - (%d, %d)\n", opcode,
+		             ctx->x, ctx->y, a, b);
 		g_draw_line(ctx->x, ctx->y, a, b, ctx->pen_color);
 
 		ctx->x = a;
@@ -111,15 +131,15 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 
 	case IMAGE_OP_DRAW_BOX:
 	case IMAGE_OP_DRAW_BOX_FAR:
-		a = image_get_operand(fb);
-		b = image_get_operand(fb);
+		a = imageGetOperand();
+		b = imageGetOperand();
 
 		if (opcode & 0x1)
 			a += 255;
 
 		debug_printf(DEBUG_IMAGE_DRAW,
-			     "draw_box (%d, %d) - (%d, %d)\n", opcode,
-			     ctx->x, ctx->y, a, b);
+		             "draw_box (%d, %d) - (%d, %d)\n", opcode,
+		             ctx->x, ctx->y, a, b);
 
 		g_draw_box(ctx->x, ctx->y, a, b, ctx->pen_color);
 		break;
@@ -127,8 +147,8 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 	case IMAGE_OP_MOVE_TO:
 	case IMAGE_OP_MOVE_TO_FAR:
 		/* Move to */
-		a = image_get_operand(fb);
-		b = image_get_operand(fb);
+		a = imageGetOperand();
+		b = imageGetOperand();
 
 		if (opcode & 0x1)
 			a += 255;
@@ -147,7 +167,7 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 	case IMAGE_OP_SHAPE_A:
 	case IMAGE_OP_SHAPE_SPRAY:
 		debug_printf(DEBUG_IMAGE_DRAW,
-			     "set_shape_type(%.2x)\n", opcode - 0x40);
+		             "set_shape_type(%.2x)\n", opcode - 0x40);
 		ctx->shape = opcode;
 		break;
 
@@ -162,15 +182,15 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 
 	case IMAGE_OP_DRAW_SHAPE:
 	case IMAGE_OP_DRAW_SHAPE_FAR:
-		a = image_get_operand(fb);
-		b = image_get_operand(fb);
+		a = imageGetOperand();
+		b = imageGetOperand();
 
 		if (opcode & 0x1)
 			a += 255;
 
 		debug_printf(DEBUG_IMAGE_DRAW,
-			     "draw_shape(%d, %d), style=%.2x, fill=%.2x\n",
-			     a, b, ctx->shape, ctx->fill_color);
+		             "draw_shape(%d, %d), style=%.2x, fill=%.2x\n",
+		             a, b, ctx->shape, ctx->fill_color);
 
 		g_draw_shape(a, b, ctx->shape, ctx->fill_color);
 		break;
@@ -178,8 +198,8 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 	case IMAGE_OP_PAINT:
 	case IMAGE_OP_PAINT_FAR:
 		/* Paint */
-		a = image_get_operand(fb);
-		b = image_get_operand(fb);
+		a = imageGetOperand();
+		b = imageGetOperand();
 
 		if (opcode & 0x1)
 			a += 255;
@@ -187,18 +207,18 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 		debug_printf(DEBUG_IMAGE_DRAW, "paint(%d, %d)\n", a, b);
 		if (!(draw_flags & IMAGEF_NO_FLOODFILL))
 			g_floodfill(a, b, ctx->fill_color,
-				    g_get_pixel_color(a, b));
+			            g_get_pixel_color(a, b));
 		break;
 
 	case IMAGE_OP_FILL_COLOR:
-		a = image_get_operand(fb);
+		a = imageGetOperand();
 		debug_printf(DEBUG_IMAGE_DRAW, "set_fill_color(%.2x)\n", a);
 		ctx->fill_color = g_set_fill_color(a);
 		break;
 
 	case IMAGE_OP_SET_TEXT_POS:
-		a = image_get_operand(fb);
-		b = image_get_operand(fb);
+		a = imageGetOperand();
+		b = imageGetOperand();
 		debug_printf(DEBUG_IMAGE_DRAW, "set_text_pos(%d, %d)\n", a, b);
 
 		ctx->text_x = a;
@@ -206,12 +226,12 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 		break;
 
 	case IMAGE_OP_DRAW_CHAR:
-		a = image_get_operand(fb);
+		a = imageGetOperand();
 		debug_printf(DEBUG_IMAGE_DRAW, "draw_char(%c)\n",
-			     a >= 0x20 && a < 0x7f ? a : '?');
+		             a >= 0x20 && a < 0x7f ? a : '?');
 
 		g_draw_box(ctx->text_x, ctx->text_y,
-			   ctx->text_x + 6, ctx->text_y + 7, ctx->fill_color);
+		           ctx->text_x + 6, ctx->text_y + 7, ctx->fill_color);
 		ctx->text_x += 8;
 		break;
 
@@ -234,19 +254,19 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 	case 0xb0:
 	case 0xd0:
 		/* FIXME - unknown, one argument */
-		a = image_get_operand(fb);
+		a = imageGetOperand();
 		debug_printf(DEBUG_IMAGE_DRAW, "unknown %.2x: (%.2x) '%c'\n",
-			     opcode, a,
-			     a >= 0x20 && a < 0x7f ? a : '?');
+		             opcode, a,
+		             a >= 0x20 && a < 0x7f ? a : '?');
 		break;
 
 	default:
 		/* FIXME - Unknown, two arguments */
-		a = image_get_operand(fb);
-		b = image_get_operand(fb);
+		a = imageGetOperand();
+		b = imageGetOperand();
 
 		debug_printf(DEBUG_IMAGE_DRAW,
-			     "unknown(%.2x, %.2x)\n", a, b);
+		             "unknown(%.2x, %.2x)\n", a, b);
 		g_draw_pixel(a, b, 0x00ff00ff);
 		break;
 	}
@@ -254,34 +274,48 @@ static bool do_image_op(FileBuffer *fb, ImageContext *ctx)
 	return false;
 }
 
-void draw_image(ImageData *info, unsigned index)
-{
-	unsigned file_num;
-	FileBuffer *fb;
-	bool done = false;
+uint16 ImageFileData::imageGetOperand() {
+	return _fb.readByte();
+}
+
+/*-------------------------------------------------------*/
+
+ImageData::ImageData() {
+}
+
+
+void ImageData::clear() {
+	_files.clear();
+}
+
+void ImageData::load(const Common::Array<const char *> &filenames) {
+	// Set up files array
+	clear();
+	_files.resize(filenames.size());
+
+	// Iterate through loading each file
+	for (uint idx = 0; idx < filenames.size(); ++idx)
+		_files[idx].load(filenames[idx]);
+}
+
+/*-------------------------------------------------------*/
+
+void image_set_draw_flags(unsigned flags) {
+	draw_flags |= flags;
+}
+
+void draw_image(ImageData *info, unsigned index) {
 	ImageContext ctx = {
 		0, 0, G_COLOR_BLACK, G_COLOR_BLACK, IMAGE_OP_SHAPE_CIRCLE_LARGE, 0, 0
 	};
 
-	file_num = index / IMAGES_PER_FILE;
-	fb = &info->fb[file_num];
-
-	if (index >= info->nr_images) {
+	if (index >= (info->size() * IMAGES_PER_FILE)) {
 		warning("Bad image index %.8x (max=%.8x)\n", index,
-		       (uint)info->nr_images);
+		       (uint)info->size());
 		return;
 	}
 
-	fb->seek(info->image_offsets[index]);
-	while (!done) {
-		done = do_image_op(fb, &ctx);
-		if (!done && (draw_flags & IMAGEF_OP_WAIT_KEYPRESS)) {
-			getchar();
-			g_flip_buffers();
-		}
-	}
-
-	g_flip_buffers();
+	(*info)[index / IMAGES_PER_FILE].draw(index % IMAGES_PER_FILE, &ctx);
 }
 
 void draw_dark_room(void)
@@ -298,67 +332,6 @@ void draw_location_image(ImageData *info, unsigned index)
 {
 	g_clear_screen(G_COLOR_WHITE);
 	draw_image(info, index);
-}
-
-static void load_image_file(ImageData *info, const char *filename,
-			    unsigned file_num)
-{
-	unsigned base = file_num * IMAGES_PER_FILE;
-	FileBuffer *fb;
-	uint16 version;
-	int i;
-
-	info->fb[file_num] = FileBuffer(filename);
-	fb = &info->fb[file_num];
-
-	/*
-	 * In earlier versions of Comprehend the first word is 0x1000 and
-	 * the image offsets start four bytes in. In newer versions the
-	 * image offsets start at the beginning of the image file.
-	 */
-	version = fb->readUint16LE();
-	if (version == 0x1000)
-		fb->seek(4);
-	else
-		fb->seek(0);
-
-	/* Get the image offsets in the file */
-	for (i = 0; i < IMAGES_PER_FILE; i++) {
-		info->image_offsets[base + i] = fb->readUint16LE();
-		if (version == 0x1000)
-			info->image_offsets[base + i] += 4;
-	}
-}
-
-static void load_image_files(ImageData *info,
-	const Common::Array<const char *> filenames) {
-	uint i;
-
-	memset(info, 0, sizeof(*info));
-
-	info->nr_images = filenames.size() * IMAGES_PER_FILE;
-	info->fb = (FileBuffer *)xmalloc(info->nr_images * sizeof(*info->fb));
-	info->image_offsets = (uint16 *)xmalloc(info->nr_images * sizeof(uint16));
-
-	for (i = 0; i < filenames.size(); i++) {
-		load_image_file(info, filenames[i], i);
-	}
-}
-
-void comprehend_load_image_file(const char *filename, ImageData *info)
-{
-	Common::Array<const char *> filenames;
-	filenames.push_back(filename);
-
-	load_image_files(info, filenames);
-}
-
-void comprehend_load_images(ComprehendGame *game) {
-	load_image_files(&game->_roomImages,
-			 game->_locationGraphicFiles);
-
-	load_image_files(&game->_itemImages,
-			 game->_itemGraphicFiles);
 }
 
 } // namespace Comprehend

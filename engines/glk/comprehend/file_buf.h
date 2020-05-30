@@ -40,6 +40,7 @@ public:
 	FileBuffer() : _pos(0) {}
 	FileBuffer(const Common::String &filename);
 	static bool exists(const Common::String &filename);
+	void close();
 
 	int32 pos() const override { return _pos; }
 	int32 size() const override { return _data.size(); }

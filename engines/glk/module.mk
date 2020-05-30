@@ -180,7 +180,6 @@ MODULE_OBJS := \
 	comprehend/game_tr.o \
 	comprehend/graphics.o \
 	comprehend/image_data.o \
-	comprehend/image_view.o \
 	comprehend/opcode_map.o \
 	comprehend/strings.o \
 	comprehend/util.o \

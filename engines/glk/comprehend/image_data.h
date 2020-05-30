@@ -23,6 +23,7 @@
 #ifndef GLK_COMPREHEND_IMAGE_DATA_H
 #define GLK_COMPREHEND_IMAGE_DATA_H
 
+#include "glk/comprehend/file_buf.h"
 #include "common/scummsys.h"
 
 namespace Glk {
@@ -30,17 +31,35 @@ namespace Comprehend {
 
 class ComprehendGame;
 struct FileBuffer;
+struct ImageContext;
+
+struct ImageFileData {
+private:
+	Common::Array<uint16> _imageOffsets;
+	FileBuffer _fb;
+
+private:
+	bool doImageOp(ImageContext *ctx);
+	uint16 imageGetOperand();
+
+	public:
+	void load(const char *filename);
+
+	void draw(uint index, ImageContext *ctx);
+};
 
 struct ImageData {
-	FileBuffer	*fb;
-	uint16	*image_offsets;
-	size_t		nr_images;
+private:
+	Common::Array<ImageFileData> _files;
 
-	ImageData() {
-		clear();
-	}
-
+public:
+	ImageData();
 	void clear();
+
+	uint size() const { return _files.size(); }
+	ImageFileData &operator[](uint index) { return _files[index]; }
+
+	void load(const Common::Array<const char *> &filenames);
 };
 
 #define IMAGEF_OP_WAIT_KEYPRESS		(1 << 0)
@@ -95,9 +114,6 @@ void draw_dark_room(void);
 void draw_bright_room(void);
 void draw_image(ImageData *info, unsigned index);
 void draw_location_image(ImageData *info, unsigned index);
-
-void comprehend_load_image_file(const char *filename, ImageData *info);
-void comprehend_load_images(ComprehendGame *game);
 
 } // namespace Comprehend
 } // namespace Glk

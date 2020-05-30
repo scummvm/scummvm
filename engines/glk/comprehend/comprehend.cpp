@@ -30,6 +30,7 @@
 #include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/game_tm.h"
 #include "glk/comprehend/game_tr.h"
+#include "glk/comprehend/graphics.h"
 #include "glk/quetzal.h"
 
 namespace Glk {
@@ -153,6 +154,8 @@ void Comprehend::initialize() {
 
 	glk_set_window(_bottomWindow);
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
+
+	g_init();
 }
 
 void Comprehend::deinitialize() {

@@ -612,32 +612,7 @@ void g_clear_screen(unsigned color) {
 	win->fillRect(color, Rect(0, 0, win->_w, win->_h));
 }
 
-void g_init(unsigned width, unsigned height) {
-	#ifdef TODO
-	int err;
-
-	err = SDL_Init(SDL_INIT_VIDEO);
-	if (err == -1)
-		fatal_error("Failed to initialize graphics\n");
-
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-
-	ctx.screen = SDL_CreateWindow("Re-Comprehend",
-				      SDL_WINDOWPOS_CENTERED,
-				      SDL_WINDOWPOS_CENTERED,
-				      width, height, 0);
-
-	ctx.renderer[RENDERER_SCREEN] =
-		SDL_CreateRenderer(ctx.screen, -1, SDL_RENDERER_ACCELERATED);
-	SDL_RenderSetLogicalSize(ctx.renderer[RENDERER_SCREEN],
-				 G_RENDER_WIDTH, G_RENDER_HEIGHT);
-
-	ctx.surface = SDL_CreateRGBSurface(0, G_RENDER_WIDTH, G_RENDER_HEIGHT,
-					   32, 0x000000ff, 0x0000ff00,
-					   0x00ff0000, 0xff000000);
-	ctx.renderer[RENDERER_PIXEL_DATA] =
-		SDL_CreateSoftwareRenderer(ctx.surface);
-#endif
+void g_init() {
 	graphics_enabled = true;
 }
 
