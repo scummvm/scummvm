@@ -94,11 +94,10 @@ void InterfacePanel::start(int id) {
 	readSettings();
 
 	QSystem *sys = g_vm->getQSystem();
-	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kPanelObjName);
+	QObjectBG *bg = (QObjectBG *)sys->findObject(kPanelObjName);
 	_objs.push_back(bg);
-	sys->update();
 
-	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(id);
+	const BGInfo *info = sys->_mainInterface->findBGInfo(bg->_id);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
@@ -112,39 +111,12 @@ void InterfacePanel::start(int id) {
 		_objs.push_back(obj);
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
-	_savedCursorRes = cursor->_resourceId;
-	_savedCursorType = cursor->_actionType;
-
-	initCursor(4901, 1, 1);
-
-	_savedSceneWidth = sys->_sceneWidth;
-	_savedXOffset = sys->_xOffset;
-
-	sys->_sceneWidth = 640;
-	sys->_xOffset = 0;
+	SubInterface::start(id);
 
 	updateSliders();
 	updateSubtitles();
 
-	sys->_currInterface = this;
-	g_vm->videoSystem()->makeAllDirty();
-}
-
-void InterfacePanel::stop() {
-	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->getCursor();
-
-	sys->_xOffset = _savedXOffset;
-	sys->_sceneWidth = _savedSceneWidth;
-
-	cursor->_resourceId = _savedCursorRes;
-	cursor->_actionType = _savedCursorType;
-
-	sys->_currInterface = sys->_prevInterface;
-	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
-
-	Interface::stop();
+	sys->getCursor()->_animate = true;
 }
 
 void InterfacePanel::onLeftButtonDown(Common::Point p) {

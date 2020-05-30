@@ -41,13 +41,11 @@ void InterfaceMap::start(int id) {
 	if (!sys->_room->_showMap)
 		return;
 
-	_objs.clear();
-
 	QObjectBG *bg = (QObjectBG *)sys->findObject(mapName);
 	_roomResID = bg->_resourceId;
 	_objs.push_back(bg);
 
-	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(id);
+	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(bg->_id);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
@@ -60,41 +58,15 @@ void InterfaceMap::start(int id) {
 		_objs.push_back(obj);
 	}
 
-	QObjectCursor *cursor = sys->getCursor();
-	_savedCursorId = cursor->_resourceId;
-	_savedCursorActionType = cursor->_actionType;
+	sys->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, bg);
 
-	initCursor(4901, 1, 0);
-
-	_savedXOffset = sys->_xOffset;
-	_savedSceneWidth =  sys->_sceneWidth;
-
-	g_vm->getQSystem()->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, bg);
-
-	g_vm->getQSystem()->_currInterface = this;
-	g_vm->videoSystem()->updateTime();
-	g_vm->videoSystem()->makeAllDirty();
+	SubInterface::start(id);
 }
 
 void InterfaceMap::stop() {
-	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->getCursor();
-
 	if (_objUnderCursor)
 		((QMessageObject *)_objUnderCursor)->_isShown = false;
-
-	setText(Common::U32String(""), 0, 0);
-
-	sys->_xOffset = _savedXOffset;
-	sys->_sceneWidth = _savedSceneWidth;
-
-	cursor->_resourceId = _savedCursorId;
-	cursor->_actionType = _savedCursorActionType;
-
-	sys->_currInterface = g_vm->getQSystem()->_prevInterface;
-	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
-
-	Interface::stop();
+	SubInterface::stop();
 }
 
 void InterfaceMap::onLeftButtonDown(Common::Point p) {

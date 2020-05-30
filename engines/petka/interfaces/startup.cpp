@@ -50,15 +50,16 @@ enum {
 };
 
 void InterfaceStartup::start(int id) {
-	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kStartupObjName);
+	QSystem *sys = g_vm->getQSystem();
+	QObjectBG *bg = (QObjectBG *)sys->findObject(kStartupObjName);
 	_objs.push_back(bg);
 
 	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::kMusicSoundType);
 	s->play(true);
 
-	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(bg->_id);
+	const BGInfo *info = sys->_mainInterface->findBGInfo(bg->_id);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
-		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
+		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
 		obj->_z = 1;
 		obj->_x = 0;
 		obj->_y = 0;
@@ -68,7 +69,8 @@ void InterfaceStartup::start(int id) {
 		_objs.push_back(obj);
 	}
 
-	initCursor(kStartupCursorId, 1, 0);
+	initCursor(kStartupCursorId, true, false);
+	g_vm->videoSystem()->updateTime();
 }
 
 void InterfaceStartup::onLeftButtonDown(Common::Point p) {

@@ -27,7 +27,7 @@
 
 namespace Petka {
 
-class InterfaceMap: public Interface {
+class InterfaceMap: public SubInterface {
 public:
 	void start(int id) override;
 	void stop() override;
@@ -37,10 +37,6 @@ public:
 	void onMouseMove(Common::Point p) override;
 
 private:
-	int _savedXOffset;
-	int _savedSceneWidth;
-	int _savedCursorId;
-	int _savedCursorActionType;
 	int _roomResID;
 };
 

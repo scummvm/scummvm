@@ -59,6 +59,18 @@ public:
 	uint _startIndex;
 };
 
+class SubInterface : public Interface {
+public:
+	void start(int id) override;
+	void stop() override;
+
+private:
+	int _savedXOffset;
+	int _savedSceneWidth;
+	int _savedCursorId;
+	int _savedCursorType;
+};
+
 } // End of namespace Petka
 
 #endif

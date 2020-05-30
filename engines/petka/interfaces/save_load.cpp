@@ -34,7 +34,6 @@ const uint kFirstSaveLoadPageId = 4990;
 InterfaceSaveLoad::InterfaceSaveLoad() {
 	_page = 0;
 	_loadMode = false;
-	_savedCursorId = 0;
 
 	_saveRects[0] = Common::Rect(43, 84, 151, 166);
 	_saveRects[1] = Common::Rect(43, 209, 151, 291);
@@ -48,7 +47,6 @@ InterfaceSaveLoad::InterfaceSaveLoad() {
 
 void InterfaceSaveLoad::start(int id) {
 	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->getCursor();
 
 	_loadMode = (id == kLoadMode);
 
@@ -56,37 +54,7 @@ void InterfaceSaveLoad::start(int id) {
 	_objs.push_back(bg);
 	bg->_resourceId = kFirstSaveLoadPageId + _page + (_loadMode ? 0 : 5);
 
-	_savedSceneWidth = sys->_sceneWidth;
-	_savedXOffset = sys->_xOffset;
-
-	sys->_sceneWidth = 640;
-	sys->_xOffset = 0;
-
-	_savedCursorId = cursor->_resourceId;
-	_savedCursorType = cursor->_actionType;
-
-	initCursor(4901, 1, 0);
-
-	sys->_currInterface = this;
-	g_vm->videoSystem()->makeAllDirty();
-}
-
-void InterfaceSaveLoad::stop() {
-	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
-
-	sys->_xOffset = _savedXOffset;
-	sys->_sceneWidth = _savedSceneWidth;
-
-	cursor->_resourceId = _savedCursorId;
-	cursor->_actionType = _savedCursorType;
-
-	sys->_currInterface = sys->_prevInterface;
-	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
-
-	_objs.clear();
-
-	Interface::stop();
+	SubInterface::start(id);
 }
 
 void InterfaceSaveLoad::onLeftButtonDown(Common::Point p) {
