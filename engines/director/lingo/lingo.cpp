@@ -144,7 +144,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentEntityId = 0;
 	_currentChannelId = -1;
 	_pc = 0;
-	_returning = false;
+	_abort = false;
 	_nextRepeat = false;
 	_indef = kStateNone;
 	_ignoreMe = false;
@@ -386,7 +386,6 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	_currentScriptContext = sc;
 	_currentScript = _currentScriptContext->functions[function]->u.defn;
 	_pc = 0;
-	_returning = false;
 
 	_localvars = new SymbolHash;
 
@@ -396,7 +395,6 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 }
 
 void Lingo::executeHandler(Common::String name) {
-	_returning = false;
 	_localvars = new SymbolHash;
 
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());

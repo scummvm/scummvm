@@ -1413,15 +1413,13 @@ void LC::call(Symbol *sym, int nargs) {
 		g_lingo->_archiveIndex = sym->archiveIndex;
 	}
 
-	g_lingo->execute(0);
-
-	g_lingo->_returning = false;
+	g_lingo->_pc = 0;
 }
 
 void LC::c_procret() {
 	if (!g_lingo->_callstack.size()) {
 		warning("c_procret: Call stack underflow");
-		g_lingo->_returning = true;
+		g_lingo->_abort = true;
 		return;
 	}
 
@@ -1445,8 +1443,6 @@ void LC::c_procret() {
 	g_lingo->_localvars = fp->localvars;
 
 	delete fp;
-
-	g_lingo->_returning = true;
 }
 
 void LC::c_global() {

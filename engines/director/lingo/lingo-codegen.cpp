@@ -55,7 +55,7 @@
 namespace Director {
 
 void Lingo::execute(uint pc) {
-	for (_pc = pc; !_returning && (*_currentScript)[_pc] != STOP && !_nextRepeat;) {
+	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP && !_nextRepeat;) {
 		Common::String instr = decodeInstruction(_currentScript, _pc);
 		uint current = _pc;
 
@@ -88,6 +88,8 @@ void Lingo::execute(uint pc) {
 		if (_vm->getCurrentScore() && _vm->getCurrentScore()->_stopPlay)
 			break;
 	}
+
+	_abort = false;
 }
 
 void Lingo::printStack(const char *s, uint pc) {

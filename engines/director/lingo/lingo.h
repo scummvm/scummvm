@@ -421,7 +421,7 @@ public:
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
 
-	bool _returning;
+	bool _abort;
 	bool _nextRepeat;
 	LexerDefineState _indef;
 	bool _ignoreMe;
