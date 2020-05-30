@@ -276,6 +276,7 @@ protected:
 	uint32 _ppqn;           ///< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
 	uint32 _tempo;          ///< Microseconds per quarter note.
 	uint32 _psecPerTick;  ///< Microseconds per tick (_tempo / _ppqn).
+	uint32 _sysExDelay;     ///< Number of microseconds until the next SysEx event can be sent.
 	bool   _autoLoop;       ///< For lightweight clients that don't provide their own flow control.
 	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song

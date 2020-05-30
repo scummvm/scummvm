@@ -208,21 +208,28 @@ void MidiDriver_Miles_Midi::initMidiDevice() {
 }
 
 void MidiDriver_Miles_Midi::sysEx(const byte *msg, uint16 length) {
+	uint16 delay = sysExNoDelay(msg, length);
+
+	if (delay > 0)
+		g_system->delayMillis(delay);
+}
+
+uint16 MidiDriver_Miles_Midi::sysExNoDelay(const byte *msg, uint16 length) {
 	if (!_nativeMT32 && length >= 3 && msg[0] == 0x41 && msg[2] == 0x16)
 		// MT-32 SysExes have no effect on GM devices.
-		return;
+		return 0;
 
 	// Send SysEx
 	_driver->sysEx(msg, length);
 
 	// Wait the time it takes to send the SysEx data
-	uint32 delay = (length + 2) * 1000 / 3125;
+	uint16 delay = (length + 2) * 1000 / 3125;
 
 	// Plus an additional delay for the MT-32 rev00
 	if (_nativeMT32)
 		delay += 40;
 
-	g_system->delayMillis(delay);
+	return delay;
 }
 
 void MidiDriver_Miles_Midi::MT32SysEx(const uint32 targetAddress, const byte *dataPtr) {

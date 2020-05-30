@@ -38,6 +38,7 @@ _timerRate(0x4A0000),
 _ppqn(96),
 _tempo(500000),
 _psecPerTick(5208), // 500000 / 96
+_sysExDelay(0),
 _autoLoop(false),
 _smartJump(false),
 _centerPitchWheelOnUnload(false),
@@ -181,6 +182,10 @@ void MidiParser::onTimer() {
 	uint32 endTime;
 	uint32 eventTime;
 
+	// The SysEx delay can be decreased whenever time passes,
+	// even if the parser does not parse events.
+	_sysExDelay -= (_sysExDelay > _timerRate) ? _timerRate : _sysExDelay;
+
 	if (!_position._playPos || !_driver || !_doParse)
 		return;
 
@@ -252,10 +257,20 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 		// SysEx event
 		// Check for trailing 0xF7 -- if present, remove it.
 		if (fireEvents) {
+			if (_sysExDelay > 0)
+				// Don't process this event if the delay from
+				// the previous SysEx hasn't passed yet.
+				return false;
+
+			uint16 delay;
 			if (info.ext.data[info.length-1] == 0xF7)
-				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+				delay = _driver->sysExNoDelay(info.ext.data, (uint16)info.length-1);
 			else
-				_driver->sysEx(info.ext.data, (uint16)info.length);
+				delay = _driver->sysExNoDelay(info.ext.data, (uint16)info.length);
+
+			// Set the delay in microseconds so the next
+			// SysEx event will be delayed if necessary.
+			_sysExDelay = delay * 1000;
 		}
 	} else if (info.event == 0xFF) {
 		// META event

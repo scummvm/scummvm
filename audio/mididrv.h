@@ -125,7 +125,7 @@ public:
 	void send(int8 source, byte status, byte firstOp, byte secondOp);
 
 	/**
-	 * Transmit a sysEx to the midi device.
+	 * Transmit a SysEx to the MIDI device.
 	 *
 	 * The given msg MUST NOT contain the usual SysEx frame, i.e.
 	 * do NOT include the leading 0xF0 and the trailing 0xF7.
@@ -135,6 +135,20 @@ public:
 	 * undefined behavior (most likely, a crash).
 	 */
 	virtual void sysEx(const byte *msg, uint16 length) { }
+
+	/**
+	 * Transmit a SysEx to the MIDI device and return the necessary
+	 * delay until the next SysEx event in milliseconds.
+	 *
+	 * This can be used to implement an alternate delay method than the
+	 * OSystem::delayMillis function used by most sysEx implementations.
+	 * Note that not every driver needs a delay, or supports this method.
+	 * In this case, 0 is returned and the driver itself will do a delay 
+	 * if necessary.
+	 *
+	 * For information on the SysEx data requirements, see the sysEx method.
+	 */
+	virtual uint16 sysExNoDelay(const byte *msg, uint16 length) { sysEx(msg, length); return 0; }
 
 	// TODO: Document this.
 	virtual void metaEvent(byte type, byte *data, uint16 length) { }
