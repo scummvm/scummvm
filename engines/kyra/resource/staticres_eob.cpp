@@ -511,7 +511,7 @@ void EoBCoreEngine::initStaticResource() {
 		SoundResourceInfo_PC finale(files, temp);
 		sndInfo_finale = &finale;
 	}
-	
+
 	_sound->initAudioResourceInfo(kMusicIngame, sndInfo_ingame);
 	_sound->initAudioResourceInfo(kMusicIntro, sndInfo_intro);
 	_sound->initAudioResourceInfo(kMusicFinale, sndInfo_finale);
@@ -678,7 +678,7 @@ void EoBCoreEngine::initButtonData() {
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
 	memcpy(_buttonDefs, buttonDefs, sizeof(buttonDefs));
-	
+
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		static const uint16 keyCodesFMTowns[] = {
 			93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
@@ -1510,13 +1510,13 @@ void DarkMoonEngine::initStaticResource() {
 			"Game ID",
 			"\r Parece que ya se ha vencido\r Xanathar aqui. Deseas transferir\r el grupo que ha\r finalizado el juego? En caso contrario\r puedes seleccionar otra partida\r de las anteriores guardadas.",
 			"Escoge Fichero",
-			"\r\r   Un momento por favor..."
+			"\r\r   Un momento\r   por favor..."
 		},
 		{
 			0, 0, 0, 0
 		}
 	};
-	
+
 	switch(_flags.lang) {
 		case Common::EN_ANY:
 			_errorSlotNoNameString = errorSlotNoNameString[0];
