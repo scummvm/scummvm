@@ -56,13 +56,13 @@ void TextDisplayer_SegaCD::printDialogueText(const char *str, bool wait) {
 	clearDim(_curDim);
 
 	if (wait) {
-		printShadowedText(str, 32, 12);
+		printShadedText(str, 32, 12);
 		_engine->resetSkipFlag();
 		_renderer->render(0);
 		_screen->updateScreen();
 		_engine->delay(500);
 	} else {
-		printShadowedText(str, 0, 0);
+		printShadedText(str, 0, 0);
 		_renderer->render(0);
 		_screen->updateScreen();
 	}
@@ -70,7 +70,7 @@ void TextDisplayer_SegaCD::printDialogueText(const char *str, bool wait) {
 	_screen->setFontStyles(Screen::FID_8_FNT, cs);
 }
 
-void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int textColor, int shadowColor, int pitchW, int pitchH, int marginRight, bool screenUpdate) {
+void TextDisplayer_SegaCD::printShadedText(const char *str, int x, int y, int textColor, int shadowColor, int pitchW, int pitchH, int marginRight, bool screenUpdate) {
 	const ScreenDim *s = &_dimTable[_curDim];
 	if (x == -1)
 		x = s->sx;
@@ -92,8 +92,8 @@ void TextDisplayer_SegaCD::printShadowedText(const char *str, int x, int y, int 
 		return;
 
 	if (s->unkE) {
-		for (int i = 0; i < pitchH >> 3; ++i)
-			_screen->sega_loadTextBufferToVRAM(i * (pitchW >> 3), (s->unkC & 0x7FF) << 5, (pitchW * pitchH) >> 1);
+		for (int i = 0; i < (pitchH >> 3); ++i)
+			_screen->sega_loadTextBufferToVRAM(i * (pitchW << 2), ((s->unkC & 0x7FF) + i * s->unkE) << 5, pitchW << 2);
 	} else {
 		_screen->sega_loadTextBufferToVRAM(0, (s->unkC & 0x7FF) << 5, (pitchW * pitchH) >> 1);
 	}
@@ -157,14 +157,14 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 				}
 			}			
 
-			printShadowedText(tmp, _curPosX, _curPosY, _textColor);
+			printShadedText(tmp, _curPosX, _curPosY, _textColor);
 			_curPosX += _screen->getTextWidth(tmp);
 			updated = true;
 		}		
 	}
 
 	if (!updated)
-		printShadowedText("", _curPosX, _curPosY, _textColor);
+		printShadedText("", _curPosX, _curPosY, _textColor);
 
 	if (tc != -1)
 		SWAP(_textColor, tc);
@@ -239,7 +239,7 @@ void TextDisplayer_SegaCD::copyTextBufferLine(uint16 srcY, uint16 dstY, uint16 l
 
 const ScreenDim TextDisplayer_SegaCD::_dimTable[6] = {
 	{ 0x0001, 0x0017, 0x0118, 0x0018, 0xff, 0x44, 0x2597, 0x0000 },
-	{ 0x0012, 0x0009, 0x00a0, 0x0080, 0xff, 0x00, 0x0153, 0x0028 },
+	{ 0x0012, 0x0009, 0x00a0, 0x0080, 0xff, 0x99, 0x0153, 0x0028 },
 	{ 0x0001, 0x0014, 0x0130, 0x0030, 0xff, 0xee, 0xe51c, 0x0000 },
 	{ 0x0001, 0x0017, 0x00D0, 0x0030, 0xff, 0x00, 0x0461, 0x0000 },
 	{ 0x0000, 0x0000, 0x00F0, 0x0100, 0xff, 0x00, 0x600A, 0x0000 },

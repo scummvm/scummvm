@@ -131,6 +131,7 @@ Common::Error EoBEngine::init() {
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->modifyScreenDim(27, 0x00, 0x02, 0x11, 0x03);
 		_screen->modifyScreenDim(28, 0x07, 0xA0, 0x17, 0x24);
+		_screen->modifyScreenDim(2, 0x12, 0x44, 0x14, 0x80);
 	} else {
 		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0xA0);
 	}
@@ -331,7 +332,7 @@ void EoBEngine::startupLoad() {
 	_screen->sega_fadeToNeutral(1);
 }
 
-void EoBEngine::startupLoad2() {
+void EoBEngine::startupReset() {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return;
 	_screen->sega_fadeToBlack(1);
@@ -1050,7 +1051,7 @@ void EoBEngine::displayParchment(int id) {
 	int curPage = (id == 46) ? 4 : id - 47;
 	for (int i = 0; i < numPages && !shouldQuit(); ++i) {
 		_screen->sega_loadTextBackground(data, 22464);
-		_txt->printShadowedText(strings[curPage++], 16, 16, 0x22, 0, 208, 216, 16, false);
+		_txt->printShadedText(strings[curPage++], 16, 16, 0x22, 0, 208, 216, 16, false);
 		_screen->sega_loadTextBufferToVRAM(0, 0x20, 22464);
 		r->fillRectWithTiles(0, 7, 0, 26, 27, 0x4001, true);
 		r->render(0);
@@ -1143,9 +1144,9 @@ bool EoBEngine::checkPartyStatusExtra() {
 
 		int cs = _screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
 		_screen->sega_clearTextBuffer(0);
-		_txt->printShadowedText(_menuStringsDefeat[0], 12, 0, 0xff, 0xcc, 304, 48, 0, false);
-		_txt->printShadowedText(_menuStringsDefeat[1], 20, 16, 0xff, 0xcc, 304, 48, 0, false);
-		_txt->printShadowedText(_menuStringsDefeat[2], 20, 32, 0xff, 0xcc, 304, 48, 0, false);
+		_txt->printShadedText(_menuStringsDefeat[0], 12, 0, 0xff, 0xcc, 304, 48, 0, false);
+		_txt->printShadedText(_menuStringsDefeat[1], 20, 16, 0xff, 0xcc, 304, 48, 0, false);
+		_txt->printShadedText(_menuStringsDefeat[2], 20, 32, 0xff, 0xcc, 304, 48, 0, false);
 		_screen->setFontStyles(_screen->_currentFont, cs);
 		_screen->sega_loadTextBufferToVRAM(0, 0xA3A0, 7296);
 		r->fillRectWithTiles(0, 1, 20, 38, 6, 0x651D, true);

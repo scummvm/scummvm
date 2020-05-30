@@ -418,7 +418,7 @@ void SegaSequencePlayer::s_displayTextJp(const uint8 *pos) {
 		y = 16;
 	}
 
-	_vm->_txt->printShadowedText(str, x, y, -1, 0xEE);
+	_vm->_txt->printShadedText(str, x, y, -1, 0xEE);
 }
 
 void SegaSequencePlayer::s_fadeToNeutral(const uint8 *pos) {
@@ -608,7 +608,7 @@ void SegaSequencePlayer::s_displayTextEn(const uint8 *pos) {
 
 	if (_playingID >= 55) {
 		int cs = _screen->setFontStyles(_screen->_currentFont, Font::kStyleForceTwoByte | Font::kStyleFat);
-		_vm->_txt->printShadowedText(str, 0, 0, -1, 0xEE);
+		_vm->_txt->printShadedText(str, 0, 0, -1, 0xEE);
 		_screen->setFontStyles(_screen->_currentFont, cs);
 	} else {
 		int x = 0;
@@ -619,7 +619,7 @@ void SegaSequencePlayer::s_displayTextEn(const uint8 *pos) {
 			y = 16;
 		}
 
-		_vm->_txt->printShadowedText(str, x, y, -1, 0xEE);
+		_vm->_txt->printShadedText(str, x, y, -1, 0xEE);
 	}
 }
 

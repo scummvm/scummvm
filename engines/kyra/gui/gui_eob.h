@@ -55,8 +55,8 @@ public:
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) override;
 
 	// Non button based menu handling (main menu, character generation)
-	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
-	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);
+	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing);
+	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset);
 
 	// Button based menus (camp menu, load menu)
 	virtual void runCampMenu();
@@ -87,6 +87,10 @@ protected:
 	char** _saveSlotStringsTemp;
 	int16 _saveSlotX;
 	int16 _saveSlotY;
+	int _menuCur;
+
+	int _clickableCharactersPage;;
+	char _csjis[3];
 
 	Screen_EoB *_screen;
 
@@ -150,7 +154,6 @@ private:
 	uint32 _paladinSpellAvltyFlags;
 	bool _needRest;
 
-	int _menuCur;
 	int _menuNumItems;
 	bool _charSelectRedraw;
 
@@ -167,12 +170,9 @@ private:
 	static const uint8 _highlightColorTablePC98[];
 	static const uint8 _highlightColorTableSegaCD[];
 
-	// FM-Towns specific
-	int checkKatakanaSelection();
-	void printKatakanaOptions(int page);
-
-	int _currentKanaPage;
-	char _csjis[3];
+	// FM-Towns / SegaCD specific
+	virtual int checkClickableCharactersSelection();
+	virtual void printClickableCharacters(int page);
 };
 
 } // End of namespace Kyra

@@ -1395,7 +1395,7 @@ int Screen::getTextWidth(const char *str, bool nextWordOnly) {
 
 		uint c = fetchChar(str);
 
-		if (c == 0 || (nextWordOnly && (c == 2 || c == 6 || c == 32 || c == 0x4081))) {
+		if (c == 0 || (nextWordOnly && (c == 2 || c == 6 || c == 13 || c == 32 || c == 0x4081))) {
 			break;
 		} else if (c == '\r') {
 			if (curLineLen > maxLineLen)

@@ -243,6 +243,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_lastVIntTick = _lastSecTick = _totalPlaySecs = _totalEnemiesKilled = _totalSteps = 0;
 	_levelMaps = 0;
 	_closeSpellbookAfterUse = false;
+	_wndBackgrnd = 0;
 
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
@@ -640,12 +641,14 @@ Common::Error EoBCoreEngine::go() {
 			startupLoad();
 			repeatLoop = _gui->runLoadMenu(_flags.platform == Common::kPlatformSegaCD ? 80 : 72, _flags.platform == Common::kPlatformSegaCD ? 16 : 14, true);
 			if (!repeatLoop)
-				startupLoad2();
+				startupReset();
 		} else if (action == -2 || action == -4) {
 			// new game
 			repeatLoop = startCharacterGeneration(action == -4);
 			if (repeatLoop && !shouldQuit())
 				startupNew();
+			else
+				startupReset();
 		} else if (action == -3) {
 			// transfer party
 			repeatLoop = startPartyTransfer();
@@ -1077,13 +1080,13 @@ int EoBCoreEngine::getModifiedHpLimits(int hpModifier, int constModifier, int le
 	return res;
 }
 
-Common::String EoBCoreEngine::getCharStrength(int str, int strExt) {
+Common::String EoBCoreEngine::getCharStrength(int str, int strExt, bool twoDigitsPadding) {
 	if (strExt) {
 		if (strExt == 100)
 			strExt = 0;
-		_strenghtStr = Common::String::format("%d/%02d", str, strExt);
+		_strenghtStr = Common::String::format(twoDigitsPadding ? "%02d/%02d" : "%d/%02d", str, strExt);
 	} else {
-		_strenghtStr = Common::String::format("%d", str);
+		_strenghtStr = Common::String::format(twoDigitsPadding ? "%02d" : "%d", str);
 	}
 
 	return _strenghtStr;

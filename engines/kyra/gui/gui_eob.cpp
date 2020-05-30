@@ -1533,6 +1533,7 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _n
 	memset(_numAssignedSpellsOfType, 0, 72);
 
 	_charSelectRedraw = false;
+	_clickableCharactersPage = 0;
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		_highLightColorTable = _highlightColorTableAmiga;
@@ -2080,9 +2081,9 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 
 	for (int i = 0; i < _menuNumItems; i++) {
 		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
-		int ty = i * (lineSpacing + _screen->getFontHeight());
+		int ty = i * (lineSpacing + _screen->getCharHeight(' '));
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printShadowedText(strings[item], 4, 2 + ty, item == v ? 0x55 : 0xff, 0x11);
+			_vm->_txt->printShadedText(strings[item], 4, (sd == 8 ? 2 : 20) + ty, item == v ? 0x55 : 0xff, sd == 8 ? 0x11 : 0x99);
 		} else {
 			_screen->printShadedText(strings[item], x, y + ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 			if (item == v)
@@ -2101,7 +2102,7 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	int currentItem = _menuCur % _menuNumItems;
 	int newItem = currentItem;
 	int result = -1;
-	int lineH = (_menuLineSpacing + _screen->getFontHeight());
+	int lineH = (_menuLineSpacing + _screen->getCharHeight(' '));
 	int lineS1 = _menuLineSpacing >> 1;
 	int x = (_screen->_curDim->sx + dm->sx) << 3;
 	int y = _screen->_curDim->sy + dm->sy;
@@ -2110,9 +2111,9 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	_vm->removeInputTop();
 	Common::Point mousePos = _vm->getMousePos();
 
-	int x1 = (_screen->_curDim->sx << 3) + (dm->sx * _screen->getFontWidth());
+	int x1 = (_screen->_curDim->sx << 3) + (dm->sx * _screen->getCharWidth('W'));
 	int y1 = _screen->_curDim->sy + dm->sy - lineS1;
-	int x2 = x1 + (dm->w * _screen->getFontWidth()) - 1;
+	int x2 = x1 + (dm->w * _screen->getCharWidth('W')) - 1;
 	int y2 = y1 + _menuNumItems * lineH - 1;
 	if (_vm->posWithinRect(mousePos.x, mousePos.y, x1, y1, x2, y2))
 		newItem = (mousePos.y - y1) / lineH;
@@ -2681,7 +2682,7 @@ void GUI_EoB::updateBoxFrameHighLight(int box) {
 	} else {
 		if (_updateBoxIndex != -1) {
 			const EoBRect16 *r = &_highlightFrames[_updateBoxIndex];
-			_screen->drawBox(r->x1, r->y1, r->x2, r->y2, 12);
+			_screen->drawBox(r->x1, r->y1, r->x2, r->y2, _vm->guiSettings()->colors.guiColorBlack);
 			_screen->updateScreen();
 		}
 
@@ -2699,6 +2700,9 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 	uint8 cursorState = 1;
 	char sufx[3] = " \0";
+
+	uint8 *segaCharBuf = new uint8[destMaxLen << 5];
+	memset(segaCharBuf, 0, destMaxLen << 5);
 
 	int len = strlen(dest);
 	if (len > destMaxLen) {
@@ -2720,7 +2724,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
 
 	_menuCur = -1;
-	printKatakanaOptions(0);
+	printClickableCharacters(0);
 
 	int bytesPerChar = (_vm->_flags.platform == Common::kPlatformFMTowns) ? 2 : 1;
 	int in = 0;
@@ -2731,7 +2735,14 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 		while (!in && !_vm->shouldQuit()) {
 			if (next <= _vm->_system->getMillis()) {
-				if (cursorState) {
+				if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+					memset(segaCharBuf, cursorState ? 0 : cursorColor, 32);
+					_screen->sega_setTextBuffer(segaCharBuf, 32);
+					_vm->_txt->printShadedText(sufx, 0, 0, textColor1, 0, -1, -1, 0, false);
+					_screen->sega_loadTextBufferToVRAM(0, ((y >> 3) * 40 + x + pos + 1) << 5, 32);
+					_screen->sega_getRenderer()->render(0, x + pos, y >> 3, 1, 1);
+					_screen->sega_setTextBuffer(0, 0);
+				} else if (cursorState) {
 					_screen->copyRegion((pos + 1) << 3, 191, (x + pos) << 3, y, 8, 9, 2, 0, Screen::CR_NO_P_CHECK);
 					_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
 				} else {
@@ -2745,7 +2756,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			}
 
 			_vm->updateInput();
-			in = checkKatakanaSelection();
+			in = checkClickableCharactersSelection();
 
 			for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
 				if (evt->event.type == Common::EVENT_KEYDOWN) {
@@ -2800,8 +2811,8 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 		} else if ((in > 31 && in < 126) || (in == 0x89)) {
 			if (!(in == 32 && pos == 0)) {
-				// EOBI/PC-98 is the only version that allows small characters
-				if (in >= 97 && in <= 122 && !_vm->_flags.use16ColorMode)
+				// The SegaCD and PC-98 versions of EOB I are the only versions that allow small characters
+				if (in >= 97 && in <= 122 && !(_vm->_flags.gameID == GI_EOB1 && (_vm->_flags.platform == Common::kPlatformPC98 || _vm->_flags.platform == Common::kPlatformSegaCD)))
 					in -= 32;
 
 				if (pos < len) {
@@ -2848,9 +2859,18 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			}
 		}
 
-		_screen->copyRegion(0, 191, (x - 1) << 3, y, (destMaxLen + 2) << 3, 9, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
-		
+		if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+			memset(segaCharBuf, 0, destMaxLen << 5);
+			_screen->sega_setTextBuffer(segaCharBuf, destMaxLen << 5);
+			_vm->_txt->printShadedText(dest, 0, 0, textColor1, 0, -1, -1, 0, false);
+			_screen->sega_loadTextBufferToVRAM(0, ((y >> 3) * 40 + x + 1) << 5, destMaxLen << 5);
+			_screen->sega_getRenderer()->render(0, x, y >> 3, destMaxLen, 1);
+			_screen->sega_setTextBuffer(0, 0);
+		} else {
+			_screen->copyRegion(0, 191, (x - 1) << 3, y, (destMaxLen + 2) << 3, 9, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
+		}
+
 		if (_vm->_flags.platform == Common::kPlatformFMTowns) {
 			if (pos < len) {
 				sufx[0] = dest[pos * bytesPerChar];
@@ -2863,20 +2883,30 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			sufx[0] = (pos < len) ? dest[pos] : 32;
 		}
 
-		if (cursorState)
+		if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+			memset(segaCharBuf, 0, 32);
+			_screen->sega_setTextBuffer(segaCharBuf, 32);
+			_vm->_txt->printShadedText(sufx, 0, 0, textColor1, 0, -1, -1, 0, false);
+			_screen->sega_loadTextBufferToVRAM(0, ((y >> 3) * 40 + x + pos + 1) << 5, 32);
+			_screen->sega_getRenderer()->render(0, x + pos, y >> 3, 1, 1);
+			_screen->sega_setTextBuffer(0, 0);
+		} else if (cursorState) {
 			_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
-		else
+		} else {
 			_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
+		}
 		_screen->updateScreen();
 
 	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE && !_vm->shouldQuit());
+
+	delete[] segaCharBuf;
 
 	lolKeymap->setEnabled(true);
 
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
 
-int GUI_EoB::checkKatakanaSelection() {
+int GUI_EoB::checkClickableCharactersSelection() {
 	if (_vm->_flags.platform != Common::kPlatformFMTowns)
 		return 0;
 
@@ -2893,8 +2923,8 @@ int GUI_EoB::checkKatakanaSelection() {
 			int lineOffs = (y - 112) >> 4;
 			int column = (x - 152) >> 2;
 
-			_csjis[0] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + lineOffs][column];
-			_csjis[1] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + lineOffs][column + 1];
+			_csjis[0] = _vm->_textInputCharacterLines[_clickableCharactersPage * 4 + lineOffs][column];
+			_csjis[1] = _vm->_textInputCharacterLines[_clickableCharactersPage * 4 + lineOffs][column + 1];
 
 			if (_csjis[0] != '\x81' || _csjis[1] != '\x40') {
 				highlight = lineOffs << 8 | column;
@@ -2930,8 +2960,8 @@ int GUI_EoB::checkKatakanaSelection() {
 			_screen->printShadedText(_vm->_textInputSelectStrings[_menuCur & 3], kanaSelXCrds[_menuCur & 3], 176, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		} else {
 			char osjis[3];
-			osjis[0] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + (_menuCur >> 8)][_menuCur & 0xFF];
-			osjis[1] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + (_menuCur >> 8)][(_menuCur & 0xFF) + 1];
+			osjis[0] = _vm->_textInputCharacterLines[_clickableCharactersPage * 4 + (_menuCur >> 8)][_menuCur & 0xFF];
+			osjis[1] = _vm->_textInputCharacterLines[_clickableCharactersPage * 4 + (_menuCur >> 8)][(_menuCur & 0xFF) + 1];
 			osjis[2] = 0;
 			_screen->printShadedText(osjis, 152 + ((_menuCur & 0xFF) << 2), 112 + ((_menuCur >> 4) & ~0x0F), _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		}
@@ -2943,7 +2973,7 @@ int GUI_EoB::checkKatakanaSelection() {
 		if (highlight & 0x400) {
 			switch (highlight & 3) {
 			case 0:
-				printKatakanaOptions((_currentKanaPage + 1) % 3);
+				printClickableCharacters((_clickableCharactersPage + 1) % 3);
 				break;
 			case 1:
 				_keyPressed.keycode = Common::KEYCODE_RETURN;
@@ -2964,11 +2994,11 @@ int GUI_EoB::checkKatakanaSelection() {
 	return in;
 }
 
-void GUI_EoB::printKatakanaOptions(int page) {
+void GUI_EoB::printClickableCharacters(int page) {
 	if (_vm->_flags.platform != Common::kPlatformFMTowns)
 		return;
 
-	_currentKanaPage = page;
+	_clickableCharactersPage = page;
 	_screen->copyRegion(160, 44, 144, 108, 160, 84, 2, 0, Screen::CR_NO_P_CHECK);
 	for (int i = 0; i < 4; i++)
 		_screen->printShadedText(_vm->_textInputCharacterLines[page * 4 + i], 152, (i << 4) + 112, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
@@ -3253,7 +3283,7 @@ int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 			int sli = (newHighlight == _numSlotsVisible) ? _savegameOffset : (_savegameOffset + newHighlight);
 			if (_vm->_flags.platform == Common::kPlatformSegaCD) {
 				_screen->sega_clearTextBuffer(0);
-				_vm->_txt->printShadowedText(Common::String::format("%03d/989", sli).c_str(), 0, 0, 0xFF, 0xCC, -1, -1, 0, false);
+				_vm->_txt->printShadedText(Common::String::format("%03d/989", sli).c_str(), 0, 0, 0xFF, 0xCC, -1, -1, 0, false);
 				_screen->sega_loadTextBufferToVRAM(0, 64, 224);
 				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
 				_screen->copyRegion(_saveSlotX + 8, _saveSlotY + 152, _saveSlotX + 8, _saveSlotY + 152, 56, 8, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
@@ -3444,7 +3474,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 			updateDesc = false;
 			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 				_screen->sega_clearTextBuffer(0);
-				_vm->_txt->printShadowedText(Common::String::format(_vm->_menuStringsMgc[1], (char)(np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton] + 79), (char)(np[lastHighLightButton] + 79)).c_str(), 0, 2, 0x55, 0xCC, 160, 16, 0, false);
+				_vm->_txt->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], (char)(np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton] + 79), (char)(np[lastHighLightButton] + 79)).c_str(), 0, 2, 0x55, 0xCC, 160, 16, 0, false);
 				_screen->sega_loadTextBufferToVRAM(0, 0x5560, 1280);
 				_screen->sega_getRenderer()->render(0, 1, 8, 20, 2);
 			} else {

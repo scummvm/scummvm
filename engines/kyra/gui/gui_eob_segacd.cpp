@@ -273,7 +273,7 @@ void EoBEngine::gui_displayMap() {
 	_screen->sega_clearTextBuffer(0);
 
 	_screen->sega_clearTextBuffer(0);
-	_txt->printShadowedText(_mapStrings2[_currentLevel - 1], 0, 0, 0xFF, 0, 64, 16, 0, false);
+	_txt->printShadedText(_mapStrings2[_currentLevel - 1], 0, 0, 0xFF, 0, 64, 16, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x7C20, 512);
 	r->fillRectWithTiles(0, 31, 16, 8, 2, 0x63E1, true);
 
@@ -506,7 +506,7 @@ void EoBEngine::makeNameShapes(int charId) {
 			_screen->sega_getRenderer()->loadToVRAM(in + 27424 - _characters[i].portrait * 224, 224, 0x3F00 + i * 0xE0);
 			_screen->sega_getRenderer()->fillRectWithTiles(0, 0, i << 1, 7, 1, 0x61F8 + i * 7, true);
 		} else {
-			_txt->printShadowedText(_characters[i].name, 0, i << 4, 0xFF, 0xCC);
+			_txt->printShadedText(_characters[i].name, 0, i << 4, 0xFF, 0xCC);
 		}
 	}
 	delete[] in;
@@ -567,13 +567,13 @@ void EoBEngine::drawMapButton(const char *str, int x, int y) {
 	_screen->sega_drawClippedLine(8, 9, x, y, 64, 14, 0x99);
 	_screen->sega_drawClippedLine(8, 9, x, y + 1, 63, 13, 0xBB);
 	_screen->sega_drawClippedLine(8, 9, x + 1, y + 1, 62, 12, 0xAA);
-	_txt->printShadowedText(str, x + 14, y + 1, 0xFF, 0xCC, 64, 72, 0, false);
+	_txt->printShadedText(str, x + 14, y + 1, 0xFF, 0xCC, 64, 72, 0, false);
 }
 
 void EoBEngine::drawMapPage(int level) {
 	_screen->sega_clearTextBuffer(0);
 	int cs = _screen->setFontStyles(_screen->_currentFont, (_flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat) | Font::kStyleNarrow1);
-	_txt->printShadowedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, 0, false);
+	_txt->printShadedText(_mapStrings3[level - 1], 0, 0, 0xCC, 0, 48, 16, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_loadTextBufferToVRAM(0, 0x7920, 384);
 	SegaRenderer *r = _screen->sega_getRenderer();
@@ -624,7 +624,7 @@ void EoBEngine::drawDialogueButtons() {
 		_screen->sega_drawClippedLine(38, 6, _dialogueButtonPosX[i], _dialogueButtonPosY[i], 90, 14, 0x99);
 		_screen->sega_drawClippedLine(38, 6, _dialogueButtonPosX[i], _dialogueButtonPosY[i] + 1, 89, 13, 0xBB);
 		_screen->sega_drawClippedLine(38, 6, _dialogueButtonPosX[i] + 1, _dialogueButtonPosY[i] + 1, 88, 12, 0xAA);
-		_txt->printShadowedText(_dialogueButtonString[i], _dialogueButtonPosX[i] + (_dialogueButtonWidth >> 1) - MIN<int>(_dialogueButtonWidth, _screen->getTextWidth(_dialogueButtonString[i])) / 2,
+		_txt->printShadedText(_dialogueButtonString[i], _dialogueButtonPosX[i] + (_dialogueButtonWidth >> 1) - MIN<int>(_dialogueButtonWidth, _screen->getTextWidth(_dialogueButtonString[i])) / 2,
 			_dialogueButtonPosY[i] + 1, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0xEE, 304, 48, 0, false);
 		_screen->setFontStyles(_screen->_currentFont, cs);
 	}
@@ -671,7 +671,7 @@ void GUI_EoB_SegaCD::initMemorizePrayMenu() {
 	_screen->sega_getRenderer()->memsetVRAM(0x5560, 0, 1280);
 	_screen->sega_getRenderer()->loadToVRAM(&_campMenu[0x87C0], 4992, 0x3CE0);
 	_screen->sega_clearTextBuffer(0);
-	_vm->_txt->printShadowedText(getMenuString(37), 0, 2, 0xFF, 0xCC, 160, 16, 0, false);
+	_vm->_txt->printShadedText(getMenuString(37), 0, 2, 0xFF, 0xCC, 160, 16, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 2560);
 	_screen->sega_getRenderer()->render(0, 1, 4, 20, 2);
 }
@@ -687,7 +687,7 @@ void GUI_EoB_SegaCD::drawSaveSlotDialog(int x, int y, int id) {
 	_saveLoadCancelButton->x = ((const EoBMenuButtonDef*)_saveLoadCancelButton->extButtonDef)->x + x - (x ? 8 : 0);
 	_saveLoadCancelButton->y = ((const EoBMenuButtonDef*)_saveLoadCancelButton->extButtonDef)->y + y;
 	int cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
-	_vm->_txt->printShadowedText(_vm->_saveLoadStrings[2 + id], 0, 3, 0xFF, 0xCC, 160, 16, 0, false);
+	_vm->_txt->printShadedText(_vm->_saveLoadStrings[2 + id], 0, 3, 0xFF, 0xCC, 160, 16, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 1280);
 	_screen->sega_getRenderer()->render(0, x >> 3, (y >> 3) + 1, 22, 21);
@@ -702,7 +702,7 @@ bool GUI_EoB_SegaCD::confirmDialogue(int id) {
 		_screen->_charSpacing = 1;
 	}
 	cs = _screen->setFontStyles(_screen->_currentFont, cs);
-	_vm->_txt->printShadowedText(getMenuString(id), 0, 3, 0xFF, 0xCC, 160, 40, 0, false);
+	_vm->_txt->printShadedText(getMenuString(id), 0, 3, 0xFF, 0xCC, 160, 40, 0, false);
 	_screen->_charSpacing = 0;
 	_screen->setFontStyles(_screen->_currentFont, cs);
 
@@ -772,7 +772,7 @@ void GUI_EoB_SegaCD::displayTextBox(int id, int textColor, bool wait) {
 	if (id == 23 || id == 26 || id == 49)
 		cs |= Font::kStyleNarrow2;
 	cs = _screen->setFontStyles(_screen->_currentFont, cs);
-	_vm->_txt->printShadowedText(getMenuString(id), 0, 0, textColor, 0xCC, 160, 40, 0, false);
+	_vm->_txt->printShadedText(getMenuString(id), 0, 0, textColor, 0xCC, 160, 40, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 3200);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 6, 20, 5, 0x6283, true);
@@ -811,7 +811,7 @@ void GUI_EoB_SegaCD::drawSaveSlotButton(int slot, int redrawBox, bool highlight)
 
 	_screen->sega_getRenderer()->fillRectWithTiles(0, (_saveSlotX >> 3) + (_saveSlotX ? 1 : 2), (_saveSlotY >> 3) + (_saveSlotY ? 6 : 7) + (slot << 1), 3, 2, 0x41E7 + slot * 12 + (redrawBox == 2 ? 6 : 0), true);
 	_screen->sega_clearTextBuffer(0);
-	_vm->_txt->printShadowedText(slot < 5 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], 0, (slot << 4) + (slot < 5 ? 0 : 2), highlight ? 0x55 : 0xFF, 0xCC, 121, 80, 0, false);
+	_vm->_txt->printShadedText(slot < 5 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], 0, (slot << 4) + (slot < 5 ? 0 : 2), highlight ? 0x55 : 0xFF, 0xCC, 121, 80, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5560, 4800);
 	_screen->sega_getRenderer()->render(0, (_saveSlotX >> 3) + (_saveSlotX ? 1 : 2), (_saveSlotY >> 3) + (_saveSlotY ? 6 : 7) + (slot << 1), 21, 2);
 }
@@ -874,9 +874,9 @@ void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
 	_screen->sega_clearTextBuffer(0);
 
 	int cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
-	_vm->_txt->printShadowedText(getMenuString(42), 0, 0, 0xFF, 0xCC, 160, 48, 0, false);
-	_vm->_txt->printShadowedText(_vm->_menuStringsRest2[3], 0, 16, 0xFF, 0xCC, 160, 48, 0, false);
-	_vm->_txt->printShadowedText(Common::String::format("%3d", hours).c_str(), 117, 16, 0xFF, 0xCC, 160, 48, 0, false);
+	_vm->_txt->printShadedText(getMenuString(42), 0, 0, 0xFF, 0xCC, 160, 48, 0, false);
+	_vm->_txt->printShadedText(_vm->_menuStringsRest2[3], 0, 16, 0xFF, 0xCC, 160, 48, 0, false);
+	_vm->_txt->printShadedText(Common::String::format("%3d", hours).c_str(), 117, 16, 0xFF, 0xCC, 160, 48, 0, false);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 5120);
@@ -885,6 +885,106 @@ void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
 	r->render(0, 0, 0, 22, 16);
 	_screen->updateScreen();
 	_vm->delay(160);
+}
+
+int GUI_EoB_SegaCD::checkClickableCharactersSelection() {
+	Common::Point mousePos = _vm->getMousePos();
+	int highlight = -1;
+
+	for (int i = 0; i < 60; ++i) {
+		int x = (i % 12) * 12 + 152;
+		int y = (i / 12) * 12 + 96;
+		if (!_vm->posWithinRect(mousePos.x, mousePos.y, x, y, x + 11, y + 7))
+			continue;
+		highlight = i;
+		break;
+	}
+
+	if (highlight == -1) {
+		for (int i = 0; i < 3; ++i) {
+			int x = 200 + i * 36;
+			if (!_vm->posWithinRect(mousePos.x, mousePos.y, x, 164, x + _screen->getTextWidth(_vm->_textInputSelectStrings[i]) - 1, 171))
+				continue;
+			highlight = 200 + i;
+			break;
+		}
+	}
+
+	if (highlight != _menuCur) {
+		printClickableCharacters(_clickableCharactersPage);
+		if (highlight != -1)
+			printClickableCharacter(highlight, 0x55);
+		_screen->sega_getRenderer()->render(0, 18, 10, 20, 14);
+		_menuCur = highlight;
+	}
+
+	_csjis[0] = _csjis[1] = _csjis[2] = 0;
+	int in = 0;
+	for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
+		if (evt->event.type == Common::EVENT_LBUTTONDOWN)
+			in = 1;
+	}
+
+	if (in && highlight != -1) {
+		_menuCur = -1;
+		switch (highlight) {
+		case 200:
+			printClickableCharacters(_clickableCharactersPage ^ 1);
+			break;
+		case 201:
+			_keyPressed.keycode = Common::KEYCODE_BACKSPACE;
+			break;
+		case 202:
+			_keyPressed.keycode = Common::KEYCODE_RETURN;
+			break;
+		default:
+			_csjis[0] = fetchClickableCharacter(highlight);
+			return _csjis[0];
+		}
+	}
+
+	return in;
+}
+
+void GUI_EoB_SegaCD::printClickableCharacters(int page) {
+	if (_clickableCharactersPage != page) {
+		_clickableCharactersPage = page;
+		assert(_vm->_wndBackgrnd);
+		_screen->sega_loadTextBackground(_vm->_wndBackgrnd, 10240);
+	}
+	for (int i = 0; i < 60; ++i)
+		printClickableCharacter(i, 0xFF);
+	for (int i = 200; i < 203; ++i)
+		printClickableCharacter(i, 0xFF);
+	_screen->sega_getRenderer()->render(0, 18, 10, 20, 14);
+}
+
+void GUI_EoB_SegaCD::printClickableCharacter(int id, int col) {
+	char ch[3] = "\0\0";
+
+	if (id < 60) {
+		ch[0] = fetchClickableCharacter(id);
+		_vm->_txt->printShadedText(ch, (id % 12) * 12 + 12, (id / 12) * 12 + 32, col);
+	} else if (id >= 200) {
+		id -= 200;
+		_vm->_txt->printShadedText(_vm->_textInputSelectStrings[id], 60 + id * 36, 100, col);
+	}
+}
+
+char GUI_EoB_SegaCD::fetchClickableCharacter(int id) const {
+	if (id >= 200)
+		return (char)id;
+	if (id >= 60)
+		return 0;
+
+	char c = _vm->_textInputCharacterLines[_clickableCharactersPage][id];
+	if (_clickableCharactersPage) {
+		if (c > 159 && c < 192)
+			c -= 32;
+		else if (c > 191 && c < 224)
+			c += 32;
+	}
+	return c;
 }
 
 const GUI_EoB_SegaCD::MenuButtonTiles GUI_EoB_SegaCD::_menuButtonTiles[35] = {

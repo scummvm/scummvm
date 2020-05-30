@@ -39,7 +39,7 @@ public:
 
 	void printDialogueText(int id, const char *string1, const char *string2) override;
 	void printDialogueText(const char *str, bool wait = false) override;
-	void printShadowedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, int pitchW = -1, int pitchH = -1, int marginRight = 0, bool screenUpdate = true) override;
+	void printShadedText(const char *str, int x = -1, int y = -1, int textColor = -1, int shadowColor = -1, int pitchW = -1, int pitchH = -1, int marginRight = 0, bool screenUpdate = true) override;
 	int clearDim(int dim) override;
 
 private:

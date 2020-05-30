@@ -340,7 +340,7 @@ protected:
 	// Main loop
 	virtual void startupNew();
 	virtual void startupLoad() = 0;
-	virtual void startupLoad2() {}
+	virtual void startupReset() {}
 	void runLoop();
 	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);
@@ -353,6 +353,7 @@ protected:
 	bool startPartyTransfer();
 
 	const uint8 **_faceShapes;
+	const uint8 *_wndBackgrnd;
 
 	static const int8 _characterClassType[];
 	static const uint8 _hpIncrPerLevel[];
@@ -403,7 +404,7 @@ protected:
 	int getClassAndConstHitpointsModifier(int cclass, int constitution);
 	int getCharacterClassType(int cclass, int levelIndex);
 	int getModifiedHpLimits(int hpModifier, int constModifier, int level, bool mode);
-	Common::String getCharStrength(int str, int strExt);
+	Common::String getCharStrength(int str, int strExt, bool twoDigitsPadding = false);
 	int testCharacter(int16 index, int flags);
 	int getNextValidCharIndex(int curCharIndex, int searchStep);
 

@@ -82,7 +82,7 @@ private:
 	// Main loop
 	void startupNew() override;
 	void startupLoad() override;
-	void startupLoad2() override;
+	void startupReset() override;
 
 	// Intro/Outro/Sequence Playback
 	enum IntroPart {
