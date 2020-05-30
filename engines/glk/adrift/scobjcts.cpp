@@ -757,15 +757,15 @@ static sc_bool obj_indirectly_in_room_internal(sc_gameref_t game, sc_int object,
 	}
 }
 
-sc_bool obj_indirectly_in_room(sc_gameref_t game, sc_int object, sc_int room) {
+sc_bool obj_indirectly_in_room(sc_gameref_t game, sc_int object, sc_int Room) {
 	sc_bool result;
 
 	/* Check, trace result, and return. */
-	result = obj_indirectly_in_room_internal(game, object, room);
+	result = obj_indirectly_in_room_internal(game, object, Room);
 
 	if (obj_trace) {
 		sc_trace("Object: checking for object %ld indirectly in room %ld, %s\n",
-		         object, room, result ? "true" : "false");
+		         object, Room, result ? "true" : "false");
 	}
 
 	return result;

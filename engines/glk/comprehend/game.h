@@ -39,13 +39,13 @@ public:
 	const char *_shortName;
 
 	const char *_gameDataFile;
-	Common::Array<string_file> _stringFiles;
+	Common::Array<StringFile> _stringFiles;
 	Common::Array<const char *> _locationGraphicFiles;
 	Common::Array<const char *> _itemGraphicFiles;
 	const char *_savegameFileFormat;
 	unsigned _colorTable;
 
-	struct game_strings *_gameStrings;
+	struct GameStrings *_gameStrings;
 
 public:
 	ComprehendGame();
@@ -69,10 +69,10 @@ public:
 void console_println(ComprehendGame *game, const char *text);
 int console_get_key(void);
 
-item *get_item(ComprehendGame *game, uint16 index);
-void move_object(ComprehendGame *game, item *item, int new_room);
-void eval_function(ComprehendGame *game, function *func,
-                   word *verb, word *noun);
+Item *get_item(ComprehendGame *game, uint16 index);
+void move_object(ComprehendGame *game, Item *item, int new_room);
+void eval_function(ComprehendGame *game, Function *func,
+                   Word *verb, Word *noun);
 
 void comprehend_play_game(ComprehendGame *game);
 void game_save(ComprehendGame *game);

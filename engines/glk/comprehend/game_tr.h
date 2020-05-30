@@ -28,7 +28,7 @@
 namespace Glk {
 namespace Comprehend {
 
-struct tr_monster {
+struct TransylvaniaMonster {
 	uint8 object;
 	uint8 dead_flag;
 	unsigned min_turns_before;
@@ -38,10 +38,10 @@ struct tr_monster {
 
 class TransylvaniaGame : public ComprehendGame {
 private:
-	static const tr_monster WEREWOLF;
-	static const tr_monster VAMPIRE;
+	static const TransylvaniaMonster WEREWOLF;
+	static const TransylvaniaMonster VAMPIRE;
 
-	void update_monster(const tr_monster *monster_info);
+	void update_monster(const TransylvaniaMonster *monster_info);
 
 public:
 	TransylvaniaGame();

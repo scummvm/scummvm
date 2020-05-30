@@ -26,7 +26,7 @@
 namespace Glk {
 namespace Comprehend {
 
-static game_strings cc1_strings = {0x9};
+static GameStrings cc1_strings = {0x9};
 
 #ifdef TODO
 static game_ops cc2_ops = {
@@ -43,7 +43,7 @@ CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame() {
 	_shortName = "cc1";
 	_gameDataFile = "cc1.gda";
 
-	_stringFiles.push_back(string_file("ma.ms1", 0x89));
+	_stringFiles.push_back(StringFile("ma.ms1", 0x89));
 	_locationGraphicFiles.push_back("RA.MS1");
 	_locationGraphicFiles.push_back("RB.MS1");
 	_locationGraphicFiles.push_back("RC.MS1");

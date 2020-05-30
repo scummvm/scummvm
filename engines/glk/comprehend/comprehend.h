@@ -40,11 +40,11 @@ namespace Comprehend {
 #define PATH_MAX 256
 
 struct GameInfo;
-struct game_state;
+struct gameState;
 
 #define EXTRA_STRING_TABLE(x) (0x8200 | (x))
 
-struct game_strings {
+struct GameStrings {
 	uint16 game_restart;
 };
 

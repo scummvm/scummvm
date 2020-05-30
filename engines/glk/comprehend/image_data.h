@@ -31,12 +31,12 @@ namespace Comprehend {
 class ComprehendGame;
 struct FileBuffer;
 
-struct image_data {
+struct ImageData {
 	FileBuffer	*fb;
 	uint16	*image_offsets;
 	size_t		nr_images;
 
-	image_data() {
+	ImageData() {
 		clear();
 	}
 
@@ -93,10 +93,10 @@ void image_set_draw_flags(unsigned flags);
 
 void draw_dark_room(void);
 void draw_bright_room(void);
-void draw_image(image_data *info, unsigned index);
-void draw_location_image(image_data *info, unsigned index);
+void draw_image(ImageData *info, unsigned index);
+void draw_location_image(ImageData *info, unsigned index);
 
-void comprehend_load_image_file(const char *filename, image_data *info);
+void comprehend_load_image_file(const char *filename, ImageData *info);
 void comprehend_load_images(ComprehendGame *game);
 
 } // namespace Comprehend

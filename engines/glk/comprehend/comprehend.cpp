@@ -37,12 +37,12 @@ namespace Comprehend {
 
 Comprehend *g_comprehend;
 
-struct dump_option {
+struct DumpOption {
 	const char *const option;
 	unsigned flag;
 };
 
-static const dump_option dump_options[] = {
+static const DumpOption dump_options[] = {
     {"strings", DUMP_STRINGS},
     {"extra-strings", DUMP_EXTRA_STRINGS},
     {"rooms", DUMP_ROOMS},

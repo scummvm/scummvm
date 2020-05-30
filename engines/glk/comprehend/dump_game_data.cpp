@@ -114,8 +114,8 @@ static const char *opcode_names[] = {
 };
 
 void dump_instruction(ComprehendGame *game,
-		      function_state *func_state,
-		      instruction *instr)
+		      FunctionState *func_state,
+		      Instruction *instr)
 {
 	uint i;
 	int str_index, str_table;
@@ -169,7 +169,7 @@ void dump_instruction(ComprehendGame *game,
 
 static void dump_functions(ComprehendGame *game)
 {
-	function *func;
+	Function *func;
 	uint i, j;
 
 	debugN("Functions (%zd entries)\n", game->_nr_functions);
@@ -185,8 +185,8 @@ static void dump_functions(ComprehendGame *game)
 
 static void dump_action_table(ComprehendGame *game)
 {
-	action *action;
-	word *word;
+	Action *action;
+	Word *word;
 	uint i, j;
 
 	debugN("Action table (%zd entries)\n", game->_nr_actions);
@@ -231,7 +231,7 @@ static void dump_action_table(ComprehendGame *game)
 
 static int word_index_compare(const void *a, const void *b)
 {
-	const word *word_a = (const word *)a, *word_b = (const word *)b;
+	const Word *word_a = (const Word *)a, *word_b = (const Word *)b;
 
 	if (word_a->_index > word_b->_index)
 		return 1;
@@ -242,12 +242,12 @@ static int word_index_compare(const void *a, const void *b)
 
 static void dump_dictionary(ComprehendGame *game)
 {
-	word *dictionary;
-	word *words;
+	Word *dictionary;
+	Word *words;
 	uint i;
 
 	/* Sort the dictionary by index */
-	dictionary = (word *)xmalloc(sizeof(*words) * game->_nr_words);
+	dictionary = (Word *)xmalloc(sizeof(*words) * game->_nr_words);
 	memcpy(dictionary, game->_words,
 	       sizeof(*words) * game->_nr_words);
 	qsort(dictionary, game->_nr_words, sizeof(*words),
@@ -265,9 +265,9 @@ static void dump_dictionary(ComprehendGame *game)
 
 static void dump_word_map(ComprehendGame *game)
 {
-	word *word[3];
+	Word *word[3];
 	char str[3][6];
-	word_map *map;
+	WordMap *map;
 	uint i, j;
 
 	debugN("Word pairs (%zd entries)\n", game->_nr_word_maps);
@@ -292,7 +292,7 @@ static void dump_word_map(ComprehendGame *game)
 
 static void dump_rooms(ComprehendGame *game)
 {
-	room *room;
+	Room *room;
 	uint i;
 
 	/* Room zero acts as the players inventory */
@@ -319,7 +319,7 @@ static void dump_rooms(ComprehendGame *game)
 
 static void dump_items(ComprehendGame *game)
 {
-	item *item;
+	Item *item;
 	uint i, j;
 
 	debugN("Items (%zd entries)\n", game->_header.nr_items);
@@ -348,7 +348,7 @@ static void dump_items(ComprehendGame *game)
 	}
 }
 
-static void dump_string_table(string_table *table)
+static void dump_string_table(StringTable *table)
 {
 	uint i;
 
@@ -382,7 +382,7 @@ static void dump_replace_words(ComprehendGame *game)
 
 static void dump_header(ComprehendGame *game)
 {
-	game_header *header = &game->_header;
+	GameHeader *header = &game->_header;
 	uint16 *dir_table = header->room_direction_table;
 
 	debugN("Game header:\n");
@@ -420,12 +420,12 @@ static void dump_header(ComprehendGame *game)
 
 typedef void (*dump_func_t)(ComprehendGame *game);
 
-struct dumper {
+struct Dumper {
 	dump_func_t	dump_func;
 	unsigned	flag;
 };
 
-static dumper dumpers[] = {
+static Dumper dumpers[] = {
 	{dump_header,			DUMP_HEADER},
 	{dump_game_data_strings,	DUMP_STRINGS},
 	{dump_extra_strings,		DUMP_EXTRA_STRINGS},

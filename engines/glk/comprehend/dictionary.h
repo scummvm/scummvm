@@ -27,13 +27,13 @@ namespace Glk {
 namespace Comprehend {
 
 class ComprehendGame;
-struct word;
+struct Word;
 
-word *find_dict_word_by_index(ComprehendGame *game,
+Word *find_dict_word_by_index(ComprehendGame *game,
 				     uint8 index, uint8 type_mask);
-word *dict_find_word_by_index_type(ComprehendGame *game,
+Word *dict_find_word_by_index_type(ComprehendGame *game,
 					  uint8 index, uint8 type);
-word *dict_find_word_by_string(ComprehendGame *game,
+Word *dict_find_word_by_string(ComprehendGame *game,
 				      const char *string);
 bool dict_match_index_type(ComprehendGame *game, const char *word,
 			   uint8 index, uint8 type_mask);

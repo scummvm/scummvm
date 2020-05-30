@@ -91,7 +91,7 @@ extern sc_bool sc_strempty(const sc_char *string);
 extern sc_char *sc_trim_string(sc_char *string);
 extern sc_char *sc_normalize_string(sc_char *string);
 extern sc_bool sc_compare_word(const sc_char *string,
-                               const sc_char *word, sc_int length);
+                               const sc_char *Word, sc_int length);
 extern sc_uint sc_hash(const sc_char *string);
 
 /* TAF file reader/decompressor enumerations, opaque typedef and functions. */
@@ -281,7 +281,7 @@ extern void gs_copy(sc_gameref_t to, sc_gameref_t from);
 extern void gs_destroy(sc_gameref_t game);
 
 /* Game state accessors and mutators. */
-extern void gs_move_player_to_room(sc_gameref_t game, sc_int room);
+extern void gs_move_player_to_room(sc_gameref_t game, sc_int Room);
 extern sc_bool gs_player_in_room(sc_gameref_t game, sc_int room);
 extern sc_var_setref_t gs_get_vars(sc_gameref_t gs);
 extern sc_prop_setref_t gs_get_bundle(sc_gameref_t gs);
@@ -300,8 +300,8 @@ extern sc_int gs_event_state(sc_gameref_t gs, sc_int event);
 extern sc_int gs_event_time(sc_gameref_t gs, sc_int event);
 extern void gs_decrement_event_time(sc_gameref_t gs, sc_int event);
 extern sc_int gs_room_count(sc_gameref_t gs);
-extern void gs_set_room_seen(sc_gameref_t gs, sc_int room, sc_bool seen);
-extern sc_bool gs_room_seen(sc_gameref_t gs, sc_int room);
+extern void gs_set_room_seen(sc_gameref_t gs, sc_int Room, sc_bool seen);
+extern sc_bool gs_room_seen(sc_gameref_t gs, sc_int Room);
 extern sc_int gs_task_count(sc_gameref_t gs);
 extern void gs_set_task_done(sc_gameref_t gs, sc_int task, sc_bool done);
 extern void gs_set_task_scored(sc_gameref_t gs, sc_int task, sc_bool scored);
@@ -367,9 +367,9 @@ enum {
 
 extern void lib_warn_battle_system(void);
 extern sc_int lib_random_roomgroup_member(sc_gameref_t game, sc_int roomgroup);
-extern const sc_char *lib_get_room_name(sc_gameref_t game, sc_int room);
-extern void lib_print_room_name(sc_gameref_t game, sc_int room);
-extern void lib_print_room_description(sc_gameref_t game, sc_int room);
+extern const sc_char *lib_get_room_name(sc_gameref_t game, sc_int Room);
+extern void lib_print_room_name(sc_gameref_t game, sc_int Room);
+extern void lib_print_room_description(sc_gameref_t game, sc_int Room);
 extern sc_bool lib_cmd_go_north(sc_gameref_t game);
 extern sc_bool lib_cmd_go_east(sc_gameref_t game);
 extern sc_bool lib_cmd_go_south(sc_gameref_t game);
@@ -690,8 +690,8 @@ enum {
 	NPC_NEUTER = 2
 };
 
-extern sc_bool npc_in_room(sc_gameref_t game, sc_int npc, sc_int room);
-extern sc_int npc_count_in_room(sc_gameref_t game, sc_int room);
+extern sc_bool npc_in_room(sc_gameref_t game, sc_int npc, sc_int Room);
+extern sc_int npc_count_in_room(sc_gameref_t game, sc_int Room);
 extern void npc_setup_initial(sc_gameref_t game);
 extern void npc_start_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk);
 extern void npc_tick_npcs(sc_gameref_t game);
@@ -712,10 +712,10 @@ extern sc_bool obj_is_surface(sc_gameref_t game, sc_int object);
 extern sc_int obj_container_object(sc_gameref_t game, sc_int n);
 extern sc_int obj_surface_object(sc_gameref_t game, sc_int n);
 extern sc_bool obj_indirectly_in_room(sc_gameref_t game,
-                                      sc_int object, sc_int room);
+                                      sc_int object, sc_int Room);
 extern sc_bool obj_indirectly_held_by_player(sc_gameref_t game, sc_int object);
 extern sc_bool obj_directly_in_room(sc_gameref_t game,
-                                    sc_int object, sc_int room);
+                                    sc_int object, sc_int Room);
 extern sc_int obj_stateful_object(sc_gameref_t game, sc_int n);
 extern sc_int obj_dynamic_object(sc_gameref_t game, sc_int n);
 extern sc_int obj_wearable_object(sc_gameref_t game, sc_int n);

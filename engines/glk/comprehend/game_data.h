@@ -43,7 +43,7 @@ enum {
 	NR_DIRECTIONS,
 };
 
-struct function_state {
+struct FunctionState {
 	bool test_result;
 	bool else_result;
 	unsigned or_count;
@@ -51,27 +51,27 @@ struct function_state {
 	bool in_command;
 	bool executed;
 
-	function_state() {
+	FunctionState() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct room {
+struct Room {
 	uint8 direction[NR_DIRECTIONS];
 	uint8 flags;
 	uint8 graphic;
 	uint16 string_desc;
 
-	room() {
+	Room() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct item {
+struct Item {
 	uint16 string_desc;
 	uint16 long_string; /* Only used by version 2 */
 	uint8 room;
@@ -79,30 +79,30 @@ struct item {
 	uint8 word;
 	uint8 graphic;
 
-	item() {
+	Item() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct word {
+struct Word {
 	char _word[7];
 	uint8 _index;
 	uint8 _type;
 
-	word() {
+	Word() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct word_index {
+struct WordIndex {
 	uint8 index;
 	uint8 type;
 
-	word_index() {
+	WordIndex() {
 		clear();
 	}
 
@@ -111,19 +111,19 @@ struct word_index {
 	}
 };
 
-struct word_map {
+struct WordMap {
 	/* <word[0]>, <word[1]> == <word[2]> */
-	word_index word[3];
+	WordIndex word[3];
 	uint8 flags;
 
-	word_map() {
+	WordMap() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct action {
+struct Action {
 	int type;
 	size_t nr_words;
 	// FIXME - use struct word_index here.
@@ -131,49 +131,49 @@ struct action {
 	uint8 word_type[4];
 	uint16 function;
 
-	action() {
+	Action() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct instruction {
+struct Instruction {
 	uint8 opcode;
 	size_t nr_operands;
 	uint8 operand[3];
 	bool is_command;
 
-	instruction() {
+	Instruction() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct function {
-	instruction instructions[0x100];
+struct Function {
+	Instruction instructions[0x100];
 	size_t nr_instructions;
 
-	function() {
+	Function() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct string_table {
+struct StringTable {
 	char *strings[0xffff];
 	size_t nr_strings;
 
-	string_table() {
+	StringTable() {
 		clear();
 	}
 
 	void clear();
 };
 
-struct game_header {
+struct GameHeader {
 	uint16 magic;
 
 	uint16 room_desc_table;
@@ -205,7 +205,7 @@ struct game_header {
 
 	uint16 addr_vm; // FIXME - functions
 
-	game_header() {
+	GameHeader() {
 		clear();
 	}
 
@@ -213,35 +213,35 @@ struct game_header {
 };
 
 struct GameInfo {
-	game_header _header;
+	GameHeader _header;
 
 	unsigned _comprehendVersion;
 
 	uint8 _startRoom;
 
-	room _rooms[0x100];
+	Room _rooms[0x100];
 	size_t _nr_rooms;
 	uint8 _currentRoom;
 
-	struct item _items[0xff];
+	struct Item _items[0xff];
 
-	struct word *_words;
+	struct Word *_words;
 	size_t _nr_words;
 
-	struct word_map _wordMaps[0xff];
+	struct WordMap _wordMaps[0xff];
 	size_t _nr_word_maps;
 
-	struct string_table _strings;
-	struct string_table _strings2;
+	struct StringTable _strings;
+	struct StringTable _strings2;
 
-	struct action _actions[0xffff];
+	struct Action _actions[0xffff];
 	size_t _nr_actions;
 
-	struct function _functions[0xffff];
+	struct Function _functions[0xffff];
 	size_t _nr_functions;
 
-	struct image_data _roomImages;
-	struct image_data _itemImages;
+	struct ImageData _roomImages;
+	struct ImageData _itemImages;
 
 	bool _flags[MAX_FLAGS];
 	uint16 _variables[MAX_VARIABLES];
@@ -259,13 +259,13 @@ struct GameInfo {
 	void clearInfo();
 };
 
-struct string_file {
+struct StringFile {
 	const char *filename;
 	uint32 base_offset;
 	uint32 end_offset;
 
-	string_file() : filename(nullptr), base_offset(0), end_offset(0) {}
-	string_file(const char *fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
+	StringFile() : filename(nullptr), base_offset(0), end_offset(0) {}
+	StringFile(const char *fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
 	}
 };
 

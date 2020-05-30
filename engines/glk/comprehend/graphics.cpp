@@ -48,7 +48,7 @@ static unsigned pen_colors[] = {
     RGB(0xff, 0x00, 0x00),
 };
 
-struct graphics_context {
+struct GraphicsContext {
 	Window *screen;
 
 	/*
@@ -63,7 +63,7 @@ struct graphics_context {
 	//	SDL_Surface	*surface;
 };
 
-static graphics_context ctx;
+static GraphicsContext ctx;
 
 unsigned g_set_pen_color(uint8 opcode) {
 	return pen_colors[opcode - IMAGE_OP_PEN_COLOR_A];

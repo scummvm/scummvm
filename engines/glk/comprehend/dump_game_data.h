@@ -27,8 +27,8 @@ namespace Glk {
 namespace Comprehend {
 
 class ComprehendGame;
-struct function_state;
-struct instruction;
+struct FunctionState;
+struct Instruction;
 
 #define DUMP_STRINGS (1 << 0)
 #define DUMP_EXTRA_STRINGS (1 << 1)
@@ -43,8 +43,8 @@ struct instruction;
 #define DUMP_ALL (~0U)
 
 void dump_instruction(ComprehendGame *game,
-                      function_state *func_state,
-                      instruction *instr);
+                      FunctionState *func_state,
+                      Instruction *instr);
 void dump_game_data(ComprehendGame *game, unsigned flags);
 
 } // namespace Comprehend

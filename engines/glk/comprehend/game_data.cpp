@@ -38,7 +38,7 @@ static char special_charset[] = "[]\n!\"#$%&'(),-/0123456789:;?<>";
 
 static uint16 magic_offset;
 
-void function_state::clear() {
+void FunctionState::clear() {
 	test_result = true;
 	else_result = false;
 	or_count = 0;
@@ -49,7 +49,7 @@ void function_state::clear() {
 
 /*-------------------------------------------------------*/
 
-void room::clear() {
+void Room::clear() {
 	flags = 0;
     graphic = 0;
 	string_desc = 0;
@@ -58,7 +58,7 @@ void room::clear() {
 
 /*-------------------------------------------------------*/
 
-void item::clear() {
+void Item::clear() {
 	string_desc = 0;
     long_string = 0;
     room = 0;
@@ -69,7 +69,7 @@ void item::clear() {
 
 /*-------------------------------------------------------*/
 
-void word::clear() {
+void Word::clear() {
 	_index = 0;
 	_type = 0;
 	Common::fill(&_word[0], &_word[7], '\0');
@@ -77,7 +77,7 @@ void word::clear() {
 
 /*-------------------------------------------------------*/
 
-void word_map::clear() {
+void WordMap::clear() {
 	flags = 0;
 	for (int idx = 0; idx < 3; ++idx)
 		word[idx].clear();
@@ -85,7 +85,7 @@ void word_map::clear() {
 
 /*-------------------------------------------------------*/
 
-void action::clear() {
+void Action::clear() {
 	type = 0;
 	nr_words = 0;
 	function = 0;
@@ -95,7 +95,7 @@ void action::clear() {
 
 /*-------------------------------------------------------*/
 
-void instruction::clear() {
+void Instruction::clear() {
 	opcode = 0;
 	nr_operands = 0;
 	is_command= false;
@@ -104,7 +104,7 @@ void instruction::clear() {
 
 /*-------------------------------------------------------*/
 
-void function::clear() {
+void Function::clear() {
 	nr_instructions = 0;
 	for (int idx = 0; idx < 0x100; ++idx)
 		instructions[idx].clear();
@@ -112,14 +112,14 @@ void function::clear() {
 
 /*-------------------------------------------------------*/
 
-void string_table::clear() {
+void StringTable::clear() {
 	nr_strings = 0;	
 	Common::fill(&strings[0], &strings[0xffff], nullptr);
 }
 
 /*-------------------------------------------------------*/
 
-void game_header::clear() {
+void GameHeader::clear() {
 	magic = 0;
 	room_desc_table = 0;
 	room_flags_table = 0;
@@ -199,7 +199,7 @@ static bool opcode_is_command(uint8 opcode) {
 }
 
 static uint8 parse_vm_instruction(FileBuffer *fb,
-		instruction *instr) {
+		Instruction *instr) {
 	uint i;
 
 	/* Get the opcode */
@@ -215,8 +215,8 @@ static uint8 parse_vm_instruction(FileBuffer *fb,
 	return instr->opcode;
 }
 
-static void parse_function(FileBuffer *fb, function * func) {
-	instruction *instruction;
+static void parse_function(FileBuffer *fb, Function * func) {
+	Instruction *instruction;
 	uint8 *p, opcode;
 
 	p = (uint8 *)memchr(fb->dataPtr(), 0x00, fb->size() - fb->pos());
@@ -237,7 +237,7 @@ static void parse_function(FileBuffer *fb, function * func) {
 }
 
 static void parse_vm(ComprehendGame *game, FileBuffer *fb) {
-	function *func;
+	Function *func;
 
 	fb->seek(game->_header.addr_vm);
 	while (1) {
@@ -253,7 +253,7 @@ static void parse_vm(ComprehendGame *game, FileBuffer *fb) {
 
 static void parse_action_table_vvnn(ComprehendGame *game,
 	                                FileBuffer *fb, size_t * index) {
-	action *action;
+	Action *action;
 	uint8 verb, count;
 	int i, j;
 
@@ -297,7 +297,7 @@ static void parse_action_table_vvnn(ComprehendGame *game,
 
 static void parse_action_table_vnjn(ComprehendGame *game,
 	                                FileBuffer *fb, size_t * index) {
-	action *action;
+	Action *action;
 	uint8 join, count;
 	int i;
 
@@ -342,7 +342,7 @@ static void parse_action_table_vnjn(ComprehendGame *game,
 
 static void parse_action_table_vjn(ComprehendGame *game,
 	                                FileBuffer *fb, size_t * index) {
-	action *action;
+	Action *action;
 	uint8 join, count;
 	int i;
 
@@ -383,7 +383,7 @@ static void parse_action_table_vjn(ComprehendGame *game,
 
 static void parse_action_table_vdn(ComprehendGame *game,
 	                                FileBuffer *fb, size_t * index) {
-	action *action;
+	Action *action;
 	uint8 verb, count;
 	int i;
 
@@ -424,7 +424,7 @@ static void parse_action_table_vdn(ComprehendGame *game,
 
 static void parse_action_table_vnn(ComprehendGame *game,
 	                                FileBuffer *fb, size_t * index) {
-	action *action;
+	Action *action;
 	uint8 verb, count;
 	int i;
 
@@ -466,7 +466,7 @@ static void parse_action_table_vnn(ComprehendGame *game,
 
 static void parse_action_table_vn(ComprehendGame *game,
 	                                FileBuffer *fb, size_t * index) {
-	action *action;
+	Action *action;
 	uint8 verb, count;
 	int i;
 
@@ -505,7 +505,7 @@ static void parse_action_table_vn(ComprehendGame *game,
 
 static void parse_action_table_v(ComprehendGame *game,
 	                                FileBuffer *fb, size_t * index) {
-	action *action;
+	Action *action;
 	uint8 verb, nr_funcs;
 	uint16 func;
 	int i;
@@ -565,11 +565,11 @@ static void parse_action_table(ComprehendGame *game,
 }
 
 static void parse_dictionary(ComprehendGame *game, FileBuffer *fb) {
-	word *words;
+	Word *words;
 	uint i, j;
 
 	// FIXME - fixed size 0xff array?
-	game->_words = (word *)xmalloc(game->_nr_words * sizeof(words));
+	game->_words = (Word *)xmalloc(game->_nr_words * sizeof(words));
 
 	fb->seek(game->_header.addr_dictionary);
 	for (i = 0; i < game->_nr_words; i++) {
@@ -588,7 +588,7 @@ static void parse_dictionary(ComprehendGame *game, FileBuffer *fb) {
 }
 
 static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
-	word_map *map;
+	WordMap *map;
 	uint8 index, type, dummy;
 	uint i;
 
@@ -788,7 +788,7 @@ done:
 }
 
 static void parse_string_table(FileBuffer *fb, unsigned start_addr,
-	                            uint32 end_addr, string_table *table) {
+	                            uint32 end_addr, StringTable *table) {
 	fb->seek(start_addr);
 	while (1) {
 		table->strings[table->nr_strings++] = parse_string(fb);
@@ -848,7 +848,7 @@ static void parse_replace_words(ComprehendGame *game,
 * game data is. The offsets have a magic constant value added to them.
 */
 static void parse_header(ComprehendGame *game, FileBuffer *fb) {
-	game_header *header = &game->_header;
+	GameHeader *header = &game->_header;
 	uint16 dummy, addr_dictionary_end;
 	uint8 dummy8;
 
@@ -966,7 +966,7 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 }
 
 static void load_extra_string_file(ComprehendGame *game,
-	                                string_file * string_file) {
+	                                StringFile * string_file) {
 	FileBuffer fb(string_file->filename);
 	unsigned end;
 

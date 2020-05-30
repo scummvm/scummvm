@@ -28,7 +28,7 @@
 namespace Glk {
 namespace Comprehend {
 
-static bool word_match(word *word, const char *string)
+static bool word_match(Word *word, const char *string)
 {
 	/* Words less than 6 characters must match exactly */
 	if (strlen(word->_word) < 6 && strlen(string) != strlen(word->_word))
@@ -37,7 +37,7 @@ static bool word_match(word *word, const char *string)
 	return strncmp(word->_word, string, strlen(word->_word)) == 0;
 }
 
-word *dict_find_word_by_string(ComprehendGame *game,
+Word *dict_find_word_by_string(ComprehendGame *game,
 				      const char *string)
 {
 	uint i;
@@ -52,7 +52,7 @@ word *dict_find_word_by_string(ComprehendGame *game,
 	return NULL;
 }
 
-word *dict_find_word_by_index_type(ComprehendGame *game,
+Word *dict_find_word_by_index_type(ComprehendGame *game,
 					  uint8 index, uint8 type)
 {
 	uint i;
@@ -66,7 +66,7 @@ word *dict_find_word_by_index_type(ComprehendGame *game,
 	return NULL;
 }
 
-word *find_dict_word_by_index(ComprehendGame *game,
+Word *find_dict_word_by_index(ComprehendGame *game,
 				     uint8 index, uint8 type_mask)
 {
 	uint i;

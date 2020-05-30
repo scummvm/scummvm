@@ -40,11 +40,11 @@ OOToposGame::OOToposGame() : ComprehendGame() {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
-	_stringFiles.push_back(string_file("NOVEL.EXE", 0x16564, 0x17640));
-	_stringFiles.push_back(string_file("NOVEL.EXE", 0x17702, 0x18600));
-	_stringFiles.push_back(string_file("NOVEL.EXE", 0x186b2, 0x19b80));
-	_stringFiles.push_back(string_file("NOVEL.EXE", 0x19c62, 0x1a590));
-	_stringFiles.push_back(string_file("NOVEL.EXE", 0x1a634, 0x1b080));
+	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x16564, 0x17640));
+	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x17702, 0x18600));
+	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x186b2, 0x19b80));
+	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x19c62, 0x1a590));
+	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x1a634, 0x1b080));
 	_locationGraphicFiles.push_back("RA");
 	_locationGraphicFiles.push_back("RB");
 	_locationGraphicFiles.push_back("RC");
@@ -61,7 +61,7 @@ OOToposGame::OOToposGame() : ComprehendGame() {
 
 int OOToposGame::room_is_special(unsigned room_index,
                               unsigned *room_desc_string) {
-	room *room = &_rooms[room_index];
+	Room *room = &_rooms[room_index];
 
 	/* Is the room dark */
 	if ((room->flags & OO_ROOM_FLAG_DARK) &&
@@ -85,7 +85,7 @@ int OOToposGame::room_is_special(unsigned room_index,
 bool OOToposGame::before_turn() {
 	/* FIXME - probably doesn't work correctly with restored games */
 	static bool flashlight_was_on = false, googles_were_worn = false;
-	room *room = &_rooms[_currentRoom];
+	Room *room = &_rooms[_currentRoom];
 
 	/* 
 	 * Check if the room needs to be redrawn because the flashlight
