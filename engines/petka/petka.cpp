@@ -171,13 +171,13 @@ Common::RandomSource &PetkaEngine::getRnd() {
 }
 
 void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
-	g_system->getMixer()->pauseAll(true);
-	Graphics::PixelFormat fmt = _system->getScreenFormat();
-
 	Video::AVIDecoder decoder;
-	if (!decoder.loadStream(stream)) {
+	if (stream && !decoder.loadStream(stream)) {
 		return;
 	}
+
+	g_system->getMixer()->pauseAll(true);
+	Graphics::PixelFormat fmt = _system->getScreenFormat();
 
 	decoder.start();
 	while (!decoder.endOfVideo()) {
