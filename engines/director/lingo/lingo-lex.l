@@ -364,8 +364,8 @@ the{spc}+[[:alpha:]]+		{
 		}
 
 		if (g_lingo->_builtins.contains(ptr)) {
-			if (g_lingo->_builtins[ptr]->type == FBLTIN &&
-					g_lingo->_builtins[ptr]->nargs == 1 && g_lingo->_builtins[ptr]->maxArgs == 1) {
+			if (g_lingo->_builtins[ptr].type == FBLTIN &&
+					g_lingo->_builtins[ptr].nargs == 1 && g_lingo->_builtins[ptr].maxArgs == 1) {
 				yylval.s = new Common::String(ptr);
 				return THEFBLTIN;
 			}
@@ -410,10 +410,10 @@ word			{ count(); return varCheck(tWORD, "word"); }
 				return ID;
 
 		if (g_lingo->_builtins.contains(yytext)) {
-			int type = g_lingo->_builtins[yytext]->type;
-			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
+			int type = g_lingo->_builtins[yytext].type;
+			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext].parens == false) {
 				if (type == RBLTIN) {
-					if (g_lingo->_builtins[yytext]->nargs != 1 || g_lingo->_builtins[yytext]->maxArgs != 1) {
+					if (g_lingo->_builtins[yytext].nargs != 1 || g_lingo->_builtins[yytext].maxArgs != 1) {
 						warning("Incorrectly set RBLTIN %s", yytext);
 						return LEXERROR;
 					}

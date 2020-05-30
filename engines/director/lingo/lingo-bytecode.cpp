@@ -293,9 +293,9 @@ void LC::cb_localcall() {
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		Symbol *sym = g_lingo->_currentScriptContext->functions[functionId];
+		Symbol sym = g_lingo->_currentScriptContext->functions[functionId];
 		if (debugChannelSet(3, kDebugLingoExec))
-			g_lingo->printSTUBWithArglist(sym->name.c_str(), nargs.u.i, "localcall:");
+			g_lingo->printSTUBWithArglist(sym.name->c_str(), nargs.u.i, "localcall:");
 
 		LC::call(sym, nargs.u.i);
 
@@ -434,23 +434,10 @@ void LC::cb_stackdrop() {
 void LC::cb_globalpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
-	Datum result;
-	result.type = VOID;
-
-	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
-	if (!s) {
-		warning("cb_globalpush: variable %s not found", name.c_str());
-		g_lingo->push(result);
-		return;
-	} else if (s && !s->global) {
-		warning("cb_globalpush: variable %s is local, not global", name.c_str());
-	}
-
-	Datum target;
+	Datum target(name);
 	target.type = VAR;
-	target.u.sym = s;
 	debugC(3, kDebugLingoExec, "cb_globalpush: pushing %s to stack", name.c_str());
-	result = g_lingo->varFetch(target);
+	Datum result = g_lingo->varFetch(target, true);
 	g_lingo->push(result);
 }
 
@@ -458,24 +445,14 @@ void LC::cb_globalpush() {
 void LC::cb_globalassign() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
-
-	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
-	if (!s) {
-		// Lingo lets you declare globals inside a method.
-		// This doesn't define them in the script list, but you can still
-		// read and write to them???
-		s = g_lingo->lookupVar(name.c_str(), true, true);
-	}
-	if (s && !s->global) {
-		warning("cb_globalassign: variable %s is local, not global", name.c_str());
-	}
-
-	Datum target;
+	Datum target(name);
 	target.type = VAR;
-	target.u.sym = s;
 	debugC(3, kDebugLingoExec, "cb_globalassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
-	g_lingo->varAssign(target, source);
+	// Lingo lets you declare globals inside a method.
+	// This doesn't define them in the script list, but you can still
+	// read and write to them???
+	g_lingo->varAssign(target, source, true, true);
 }
 
 void LC::cb_objectfieldassign() {
@@ -540,23 +517,10 @@ void LC::cb_thepush2() {
 void LC::cb_varpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
-	Datum result;
-	result.type = VOID;
-
-	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
-	if (!s) {
-		warning("cb_varpush: variable %s not found", name.c_str());
-		g_lingo->push(result);
-		return;
-	} else if (s && s->global) {
-		warning("cb_varpush: variable %s is global, not local", name.c_str());
-	}
-
-	Datum target;
+	Datum target(name);
 	target.type = VAR;
-	target.u.sym = s;
 	debugC(3, kDebugLingoExec, "cb_varpush: pushing %s to stack", name.c_str());
-	result = g_lingo->varFetch(target);
+	Datum result = g_lingo->varFetch(target, false);
 	g_lingo->push(result);
 }
 
@@ -564,22 +528,12 @@ void LC::cb_varpush() {
 void LC::cb_varassign() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
-
-	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
-	if (!s) {
-		warning("cb_varassign: variable %s not found", name.c_str());
-		g_lingo->pop();
-		return;
-	} else if (s && s->global) {
-		warning("cb_varassign: variable %s is global, not local", name.c_str());
-	}
-
-	Datum target;
+	Datum target(name);
 	target.type = VAR;
-	target.u.sym = s;
 	debugC(3, kDebugLingoExec, "cb_varassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
-	g_lingo->varAssign(target, source);
+	// Local variables should be initialised by the script
+	g_lingo->varAssign(target, source, false, false);
 }
 
 
@@ -809,7 +763,13 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		if (index < _archives[_archiveIndex].names.size()) {
 			const char *name = _archives[_archiveIndex].names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
-			g_lingo->lookupVar(name, true, true);
+			if (!_globalvars.contains(name)) {
+				_globalvars[name] = Symbol();
+				_globalvars[name].name = new Common::String(name);
+				_globalvars[name].global = true;
+			} else {
+				warning("Global %d (%s) already defined", i, name);
+			}
 		} else {
 			warning("Global %d has unknown name id %d, skipping define", i, index);
 		}
@@ -1238,17 +1198,19 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		}
 
 		// Attach to handlers
-		Symbol *sym = NULL;
+		Symbol sym;
 		if (nameIndex < _archives[_archiveIndex].names.size()) {
 			debugC(5, kDebugLoading, "Function %d binding: %s()", i, _archives[_archiveIndex].names[nameIndex].c_str());
-			sym = g_lingo->define(_archives[_archiveIndex].names[nameIndex], argCount, _currentScript);
+			sym = g_lingo->define(_archives[_archiveIndex].names[nameIndex], argCount, _currentScript, argNames, varNames);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
-			sym = new Symbol;
-			sym->type = HANDLER;
-			sym->u.defn = _currentScript;
-			sym->nargs = argCount;
-			sym->maxArgs = argCount;
+			sym.name = new Common::String();
+			sym.type = HANDLER;
+			sym.u.defn = _currentScript;
+			sym.nargs = argCount;
+			sym.maxArgs = argCount;
+			sym.argNames = argNames;
+			sym.varNames = varNames;
 		}
 
 		if (!skipdump && ConfMan.getBool("dump_scripts")) {
@@ -1266,10 +1228,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			out.writeString(Common::String::format("<end code>\n\n"));
 		}
 
-		sym->argNames = argNames;
-		sym->varNames = varNames;
-		sym->ctx = _currentScriptContext;
-		sym->archiveIndex = _archiveIndex;
 		_currentScriptContext->functions.push_back(sym);
 
 	}

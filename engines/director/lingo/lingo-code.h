@@ -78,7 +78,7 @@ namespace LC {
 	void c_arraypush();
 	void c_proparraypush();
 	void c_assign();
-	bool verify(Symbol *s);
+	bool verify(const Symbol &s);
 	void c_eval();
 	void c_setImmediate();
 
@@ -115,8 +115,8 @@ namespace LC {
 	void c_jumpifz();
 	void c_call();
 
-	void call(Symbol *, int nargs);
-	void call(Common::String name, int nargs);
+	void call(const Symbol &sym, int nargs);
+	void call(const Common::String &name, int nargs);
 
 	void c_procret();
 

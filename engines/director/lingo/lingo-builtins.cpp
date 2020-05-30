@@ -280,25 +280,28 @@ void Lingo::initBuiltIns() {
 		if (blt->version > _vm->getVersion())
 			continue;
 
-		Symbol *sym = new Symbol;
+		Symbol sym;
 
-		sym->name = blt->name;
-		sym->type = blt->type;
-		sym->nargs = blt->minArgs;
-		sym->maxArgs = blt->maxArgs;
-		sym->parens = blt->parens;
-		sym->u.bltin = blt->func;
+		sym.name = new Common::String(blt->name);
+		sym.type = blt->type;
+		sym.nargs = blt->minArgs;
+		sym.maxArgs = blt->maxArgs;
+		sym.parens = blt->parens;
+		sym.u.bltin = blt->func;
 
 		_builtins[blt->name] = sym;
 
-		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
+		_functions[(void *)sym.u.s] = new FuncDesc(blt->name, "");
 	}
 
 	// Set predefined methods
 	for (const char **b = predefinedMethods; *b; b++) {
-		Symbol *s = g_lingo->lookupVar(*b, true, true);
-		s->type = SYMBOL;
-		s->u.s = new Common::String(*b);
+		Common::String name(*b);
+		Datum target(name);
+		target.type = VAR;
+		Datum source(name);
+		source.type = SYMBOL;
+		g_lingo->varAssign(target, source, true, true);
 	}
 }
 
@@ -1624,7 +1627,7 @@ Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
 		(*commandId)++;
 
 		name = Common::String::format("scummvmMenu%d", *commandId);
-	} while (getHandler(name) != NULL);
+	} while (getHandler(name).type != VOID);
 
 	return Common::String::format("on %s\n  %s\nend %s\n\n", name.c_str(), command.c_str(), name.c_str());
 }
@@ -2114,7 +2117,7 @@ void LB::b_factory(int nargs) {
 	// This is intentionally empty
 }
 
-void Lingo::factoryCall(Common::String &name, int nargs) {
+void Lingo::factoryCall(const Common::String &name, int nargs) {
 	Common::String s("factoryCall: ");
 
 	s += name;

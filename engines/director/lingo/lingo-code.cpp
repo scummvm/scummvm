@@ -221,13 +221,13 @@ void LC::c_printtop(void) {
 		warning(g_lingo->_floatPrecisionFormat.c_str(), d.u.f);
 		break;
 	case VAR:
-		if (!d.u.sym) {
+		if (!d.u.s) {
 			warning("Inconsistent stack: var, val: %d", d.u.i);
 		} else {
-			if (!d.u.sym->name.empty())
-				warning("var: %s", d.u.sym->name.c_str());
+			if (!d.u.s->empty())
+				warning("var: %s", d.u.s->c_str());
 			else
-				warning("Nameless var. val: %d", d.u.sym->u.i);
+				warning("Nameless var");
 		}
 		break;
 	case STRING:
@@ -362,25 +362,27 @@ void LC::c_varpush() {
 		warning("c_varpush: ANCESTOR");
 	}
 
-	if (g_lingo->getHandler(name) != NULL) {
+	// Looking for the cast member constants
+	if (g_director->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
+		int val = castNumToNum(name.c_str());
+
+		if (val != -1) {
+			d.type = INT;
+			d.u.i = val;
+			g_lingo->push(d);
+			return;
+		}
+	}
+
+	if (g_lingo->getHandler(name).type != VOID) {
 		d.type = HANDLER;
 		d.u.s = new Common::String(name);
 		g_lingo->push(d);
 		return;
 	}
 
-	d.u.sym = g_lingo->lookupVar(name.c_str());
-	if (d.u.sym->type == CASTREF) {
-		d.type = INT;
-		int val = d.u.sym->u.i;
-
-		delete d.u.sym;
-
-		d.u.i = val;
-	} else {
-		d.type = VAR;
-	}
-
+	d.type = VAR;
+	d.u.s = new Common::String(name);
 	g_lingo->push(d);
 }
 
@@ -394,19 +396,6 @@ void LC::c_assign() {
 	d2 = g_lingo->pop();
 
 	g_lingo->varAssign(d1, d2);
-}
-
-bool LC::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL && s->type != ARRAY && s->type != PARRAY) {
-		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
-
-		return false;
-	}
-
-	if (s->type == VOID)
-		warning("Variable used before assigning a value '%s'", s->name.c_str());
-
-	return true;
 }
 
 void LC::c_eval() {
@@ -425,9 +414,6 @@ void LC::c_eval() {
 		g_lingo->push(d);
 		return;
 	}
-
-	if (!LC::verify(d.u.sym))
-		return;
 
 	d = g_lingo->varFetch(d);
 
@@ -1183,15 +1169,15 @@ void LC::c_whencode() {
 	int entity = g_lingo->_currentEntityId;
 	g_lingo->_currentEntityId = 0;
 
-	Symbol *sym = g_lingo->define(eventname, start, 0, NULL, end, false); // Redefine, but not remove code
+	Symbol sym = g_lingo->define(eventname, start, 0, NULL, end, false); // Redefine, but not remove code
 
 	g_lingo->_currentEntityId = entity;
 
 	if (debugChannelSet(1, kDebugLingoExec)) {
 		uint pc = 0;
-		while (pc < sym->u.defn->size()) {
+		while (pc < sym.u.defn->size()) {
 			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
+			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
 			debugC(1, kDebugLingoExec, "[%5d] %s", spc, instr.c_str());
 		}
 	}
@@ -1268,37 +1254,40 @@ void LC::c_call() {
 	LC::call(name, nargs);
 }
 
-void LC::call(Common::String name, int nargs) {
+void LC::call(const Common::String &name, int nargs) {
 	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
-	Symbol *sym = g_lingo->getHandler(name);
+	Symbol sym = g_lingo->getHandler(name);
 
 	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
-		Symbol *s = g_lingo->lookupVar(name.c_str(), false);
-		if (s && s->type == OBJECT) {
-			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
-			name = *s->u.s;
-			sym = g_lingo->getHandler(name);
+		if ((*g_lingo->_localvars).contains(name)) {
+			Datum eventName(name);
+			eventName.type = VAR;
+			Datum d = g_lingo->varFetch(eventName);
+			if (d.type == OBJECT) {
+				debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), d.u.s->c_str());
+				sym = g_lingo->getHandler(*d.u.s);
+			}
 		}
 	}
 
 	call(sym, nargs);
 }
 
-void LC::call(Symbol *sym, int nargs) {
+void LC::call(const Symbol &sym, int nargs) {
 	bool dropArgs = false;
 
-	if (sym == NULL) {
+	if (sym.type == VOID) {
 		warning("Call to undefined handler. Dropping %d stack items", nargs);
 		dropArgs = true;
 	} else {
-		if ((sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN)
-				&& sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
-			if (sym->nargs == sym->maxArgs)
-				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", sym->name.c_str(), sym->nargs, nargs);
+		if ((sym.type == BLTIN || sym.type == FBLTIN || sym.type == RBLTIN)
+				&& sym.nargs != -1 && sym.nargs != nargs && sym.maxArgs != nargs) {
+			if (sym.nargs == sym.maxArgs)
+				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", sym.name->c_str(), sym.nargs, nargs);
 			else
-				warning("Incorrect number of arguments to handler '%s', expecting %d or %d. Dropping %d stack items", sym->name.c_str(), sym->nargs, sym->maxArgs, nargs);
+				warning("Incorrect number of arguments to handler '%s', expecting %d or %d. Dropping %d stack items", sym.name->c_str(), sym.nargs, sym.maxArgs, nargs);
 
 			dropArgs = true;
 		}
@@ -1314,36 +1303,36 @@ void LC::call(Symbol *sym, int nargs) {
 		return;
 	}
 
-	if (sym->nargs != -1 && sym->maxArgs < nargs) {
+	if (sym.nargs != -1 && sym.maxArgs < nargs) {
 		warning("Incorrect number of arguments for function %s (%d, expected %d to %d). Dropping extra %d",
-					sym->name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
-		for (int i = 0; i < nargs - sym->maxArgs; i++)
+					sym.name->c_str(), nargs, sym.nargs, sym.maxArgs, nargs - sym.nargs);
+		for (int i = 0; i < nargs - sym.maxArgs; i++)
 			g_lingo->pop();
 	}
 
-	if (sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN) {
-		if (sym->u.bltin == LB::b_factory) {
-			g_lingo->factoryCall(sym->name, nargs);
+	if (sym.type == BLTIN || sym.type == FBLTIN || sym.type == RBLTIN) {
+		if (sym.u.bltin == LB::b_factory) {
+			g_lingo->factoryCall(*sym.name, nargs);
 		} else {
 			int stackSize = g_lingo->_stack.size() - nargs;
 
-			(*sym->u.bltin)(nargs);
+			(*sym.u.bltin)(nargs);
 
 			int stackNewSize = g_lingo->_stack.size();
 
-			if (sym->type == FBLTIN || sym->type == RBLTIN) {
+			if (sym.type == FBLTIN || sym.type == RBLTIN) {
 				if (stackNewSize - stackSize != 1)
-					warning("built-in function %s did not return value", sym->name.c_str());
+					warning("built-in function %s did not return value", sym.name->c_str());
 			} else {
 				if (stackNewSize - stackSize != 0)
-					warning("built-in procedure %s returned extra %d values", sym->name.c_str(), stackNewSize - stackSize);
+					warning("built-in procedure %s returned extra %d values", sym.name->c_str(), stackNewSize - stackSize);
 			}
 		}
 
 		return;
 	}
 
-	for (int i = nargs; i < sym->nargs; i++) {
+	for (int i = nargs; i < sym.nargs; i++) {
 		Datum d;
 
 		d.u.s = NULL;
@@ -1354,7 +1343,6 @@ void LC::call(Symbol *sym, int nargs) {
 	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
-	fp->sp = sym;
 	fp->retpc = g_lingo->_pc;
 	fp->retscript = g_lingo->_currentScript;
 	fp->retctx = g_lingo->_currentScriptContext;
@@ -1363,41 +1351,43 @@ void LC::call(Symbol *sym, int nargs) {
 
 	// Create new set of local variables
 	g_lingo->_localvars = new SymbolHash;
-	if (sym->argNames) {
-
-		if ((int)sym->argNames->size() < sym->nargs) {
-			int dropSize = sym->nargs - sym->argNames->size();
-			warning("%d arg names defined for %d args! Dropping the last %d values", sym->argNames->size(), sym->nargs, dropSize);
+	if (sym.argNames) {
+		int symNArgs = sym.nargs;
+		if ((int)sym.argNames->size() < symNArgs) {
+			int dropSize = symNArgs - sym.argNames->size();
+			warning("%d arg names defined for %d args! Dropping the last %d values", sym.argNames->size(), symNArgs, dropSize);
 			for (int i = 0; i < dropSize; i++) {
 				g_lingo->pop();
-				sym->nargs -= 1;
+				symNArgs -= 1;
 			}
-		} else if ((int)sym->argNames->size() > sym->nargs) {
-			warning("%d arg names defined for %d args! Ignoring the last %d names", sym->argNames->size(), sym->nargs, sym->argNames->size() - sym->nargs);
+		} else if ((int)sym.argNames->size() > symNArgs) {
+			warning("%d arg names defined for %d args! Ignoring the last %d names", sym.argNames->size(), symNArgs, sym.argNames->size() - symNArgs);
 		}
-		for (int i = sym->nargs - 1; i >= 0; i--) {
-			Common::String name = (*sym->argNames)[i];
+		for (int i = symNArgs - 1; i >= 0; i--) {
+			Common::String name = (*sym.argNames)[i];
 			if (!g_lingo->_localvars->contains(name)) {
-				Datum arg;
+				Datum arg(name);
 				arg.type = VAR;
-				arg.u.sym = g_lingo->lookupVar(name.c_str(), true, false);
 				Datum value = g_lingo->pop();
-				g_lingo->varAssign(arg, value);
+				g_lingo->varAssign(arg, value, true);
 			} else {
 				warning("Argument %s already defined", name.c_str());
 			}
 		}
 	}
-	if (sym->varNames) {
-		for (Common::Array<Common::String>::iterator it = sym->varNames->begin(); it != sym->varNames->end(); ++it) {
+	if (sym.varNames) {
+		for (Common::Array<Common::String>::iterator it = sym.varNames->begin(); it != sym.varNames->end(); ++it) {
 			Common::String name = *it;
 			if (!g_lingo->_localvars->contains(name)) {
-				g_lingo->lookupVar(name.c_str(), true, false);
+				(*g_lingo->_localvars)[name] = Symbol();
+				(*g_lingo->_localvars)[name].name = new Common::String(name);
 			} else {
 				warning("Variable %s already defined", name.c_str());
 			}
 		}
 	}
+
+	fp->sp = sym;
 
 	g_lingo->_callstack.push_back(fp);
 
@@ -1405,13 +1395,11 @@ void LC::call(Symbol *sym, int nargs) {
 		g_lingo->printCallStack(0);
 	}
 
-	g_lingo->_currentScript = sym->u.defn;
-	if (sym->ctx) {
-		g_lingo->_currentScriptContext = sym->ctx;
+	g_lingo->_currentScript = sym.u.defn;
+	if (sym.ctx) {
+		g_lingo->_currentScriptContext = sym.ctx;
 	}
-	if (sym->archiveIndex) {
-		g_lingo->_archiveIndex = sym->archiveIndex;
-	}
+	g_lingo->_archiveIndex = sym.archiveIndex;
 
 	g_lingo->_pc = 0;
 }
@@ -1454,13 +1442,11 @@ void LC::c_procret() {
 void LC::c_global() {
 	Common::String name(g_lingo->readString());
 
-	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
-	if (s && !s->global) {
-		warning("Local variable %s declared as global", name.c_str());
+	if (!g_lingo->_globalvars.contains(name)) {
+		g_lingo->_globalvars[name] = Symbol();
+		g_lingo->_globalvars[name].name = new Common::String(name);
+		g_lingo->_globalvars[name].global = true;
 	}
-
-	s = g_lingo->lookupVar(name.c_str(), true, true);
-	s->global = true;
 }
 
 void LC::c_property() {

@@ -38,6 +38,7 @@ namespace Director {
 Lingo *g_lingo;
 
 Symbol::Symbol() {
+	name = nullptr;
 	type = VOID;
 	u.s = nullptr;
 	refCount = new int;
@@ -53,6 +54,7 @@ Symbol::Symbol() {
 }
 
 Symbol::Symbol(const Symbol &s) {
+	name = s.name;
 	type = s.type;
 	u.s = s.u.s;
 	refCount = s.refCount;
@@ -70,6 +72,7 @@ Symbol::Symbol(const Symbol &s) {
 Symbol& Symbol::operator=(const Symbol &s) {
 	if (this != &s) {
 		reset();
+		name = s.name;
 		type = s.type;
 		u.s = s.u.s;
 		refCount = s.refCount;
@@ -89,6 +92,8 @@ Symbol& Symbol::operator=(const Symbol &s) {
 void Symbol::reset() {
 	*refCount -= 1;
 	if (*refCount <= 0) {
+		if (name)
+			delete name;
 		switch (type) {
 		case HANDLER:
 			delete u.defn;
@@ -117,6 +122,10 @@ void Symbol::reset() {
 		default:
 			break;
 		}
+		if (argNames)
+			delete argNames;
+		if (varNames)
+			delete varNames;
 		delete refCount;
 	}
 }
@@ -183,13 +192,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 Lingo::~Lingo() {
 	cleanupBuiltins();
-
-	if (_localvars)
-		for (SymbolHash::iterator it = _localvars->begin(); it != _localvars->end(); ++it)
-			delete it->_value;
-
-	for (SymbolHash::iterator it = _globalvars.begin(); it != _globalvars.end(); ++it)
-		delete it->_value;
 }
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
@@ -211,7 +213,8 @@ Common::String Lingo::getName(uint16 id) {
 	return result;
 }
 
-Symbol *Lingo::getHandler(Common::String &name) {
+Symbol Lingo::getHandler(const Common::String &name) {
+	Symbol result;
 	if (!_eventHandlerTypeIds.contains(name)) {
 		// local scripts
 		if (_archives[0].functionHandlers.contains(name))
@@ -224,7 +227,7 @@ Symbol *Lingo::getHandler(Common::String &name) {
 		if (_builtins.contains(name))
 			return _builtins[name];
 
-		return NULL;
+		return result;
 	}
 
 	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
@@ -232,7 +235,7 @@ Symbol *Lingo::getHandler(Common::String &name) {
 	if (_archives[0].eventHandlers.contains(entityIndex))
 		return _archives[0].eventHandlers[entityIndex];
 
-	return NULL;
+	return result;
 }
 
 const char *Lingo::findNextDefinition(const char *s) {
@@ -284,17 +287,18 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 
 	_currentScriptContext = new ScriptContext;
+	_currentScript = new ScriptData;
 	_currentScriptType = type;
 	_currentEntityId = id;
 	_archives[_archiveIndex].scriptContexts[type][id] = _currentScriptContext;
 
 	// FIXME: unpack into seperate functions
 	_currentScriptFunction = 0;
-	_currentScriptContext->functions.push_back(new Symbol);
-	_currentScript = new ScriptData;
-	_currentScriptContext->functions[_currentScriptFunction]->type = HANDLER;
-	_currentScriptContext->functions[_currentScriptFunction]->u.defn = _currentScript;
-	_currentScriptContext->functions[_currentScriptFunction]->ctx = _currentScriptContext;
+	Symbol currentFunc;
+	currentFunc.type = HANDLER;
+	currentFunc.u.defn = _currentScript;
+	currentFunc.ctx = _currentScriptContext;
+	_currentScriptContext->functions.push_back(currentFunc);
 
 	_linenumber = _colnumber = 1;
 	_hadError = false;
@@ -384,7 +388,7 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
 
 	_currentScriptContext = sc;
-	_currentScript = _currentScriptContext->functions[function]->u.defn;
+	_currentScript = _currentScriptContext->functions[function].u.defn;
 	_pc = 0;
 
 	_localvars = new SymbolHash;
@@ -405,17 +409,23 @@ void Lingo::executeHandler(Common::String name) {
 }
 
 void Lingo::restartLingo() {
-	warning("STUB: restartLingo()");
+	debugC(3, kDebugLingoExec, "Resetting Lingo!");
 
-	for (int i = 0; i <= kMaxScriptType; i++) {
-		for (ScriptContextHash::iterator it = _archives[_archiveIndex].scriptContexts[i].begin(); it != _archives[_archiveIndex].scriptContexts[i].end(); ++it) {
-			for (size_t j = 0; j < it->_value->functions.size(); j++) {
-				delete it->_value->functions[j];
+	for (int a = 0; a < 2; a++) {
+		LingoArchive *arch = &_archives[a];
+		for (int i = 0; i <= kMaxScriptType; i++) {
+			for (ScriptContextHash::iterator it = arch->scriptContexts[i].begin(); it != arch->scriptContexts[i].end(); ++it) {
+				it->_value->functions.clear();
+				delete it->_value;
 			}
-			delete it->_value;
+
+			arch->scriptContexts[i].clear();
 		}
 
-		_archives[_archiveIndex].scriptContexts[i].clear();
+		arch->names.clear();
+		arch->eventHandlers.clear();
+		arch->functionHandlers.clear();
+
 	}
 
 	// TODO
@@ -584,7 +594,7 @@ Common::String Datum::asString(bool printonly) {
 		s = "#void";
 		break;
 	case VAR:
-		s = Common::String::format("var: #%s", u.sym->name.c_str());
+		s = Common::String::format("var: #%s", u.s->c_str());
 		break;
 	case REFERENCE:
 		{
@@ -669,7 +679,7 @@ const char *Datum::type2str(bool isk) {
 int Datum::compareTo(Datum &d, bool ignoreCase) {
 	if (type == SYMBOL && d.type == SYMBOL) {
 		// TODO: Implement union comparisons
-		return ignoreCase ? u.sym->name.compareToIgnoreCase(d.u.sym->name) : u.sym->name.compareTo(d.u.sym->name);
+		return ignoreCase ? u.s->compareToIgnoreCase(*d.u.s) : u.s->compareTo(*d.u.s);
 	}
 
 	int alignType = g_lingo->getAlignedType(*this, d);
