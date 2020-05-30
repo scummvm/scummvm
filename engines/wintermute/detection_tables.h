@@ -239,7 +239,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("actualdest", "",
 		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
-	// Informer Alavi - Murder of Miss Rojan (Persian) (Try version)
+	// Informer Alavi - Murder of Miss Rojan (Persian) (Beta version -old version-, between 1387/12 to 1392/6)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("alavi", "Beta version",
+		WME_ENTRY1s("data.dcp", "587b46baa3f82dfe09bdb51f01231fa2", 37191939), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO, WME_ANDISHE_VARAN),
+
+	// Informer Alavi - Murder of Miss Rojan (Persian) (Try version, between 1388/8)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("alavi", "Try version",
 		WME_ENTRY1s("data.dcp", "07b847ebafbf8e58daa341d60598c84b", 36628230), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO, WME_ANDISHE_VARAN),
