@@ -107,11 +107,8 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 					show = true;
 					_objUnderCursor = obj;
 				}
-				if (obj->_isShown != show) {
-					obj->_isShown = show;
-					flc->setFrame(1);
-					g_vm->videoSystem()->addDirtyRect(flc->getBounds());
-				}
+				if (obj->_isShown != show)
+					obj->show(obj->_isShown == 0);
 			}
 		}
 	}

@@ -496,11 +496,9 @@ void QObject::updateZ() {
 }
 
 void QObject::show(bool v) {
-	if (g_vm->getQSystem()->_mainInterface->findObject(_resourceId)) {
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-		if (flc) {
-			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
-		}
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	if (flc) {
+		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 	}
 	QMessageObject::show(v);
 }
