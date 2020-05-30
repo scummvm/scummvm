@@ -50,43 +50,35 @@ enum {
 };
 
 void InterfaceStartup::start(int id) {
-	g_vm->getQSystem()->update();
-	g_vm->getQSystem()->_isIniting = 0;
-
-	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kStartupObjName);
+	QSystem *sys = g_vm->getQSystem();
+	QObjectBG *bg = (QObjectBG *)sys->findObject(kStartupObjName);
 	_objs.push_back(bg);
 
 	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::kMusicSoundType);
 	s->play(true);
 
-	const Common::Array<BGInfo> &infos = g_vm->getQSystem()->_mainInterface->_bgs;
-
-	for (uint i = 0; i < infos.size(); ++i) {
-		if (infos[i].objId != bg->_id) {
-			continue;
-		}
-		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
-			QMessageObject *obj = g_vm->getQSystem()->findObject(infos[i].attachedObjIds[j]);
-			obj->_z = 1;
-			obj->_x = 0;
-			obj->_y = 0;
-			obj->_frame = 1;
-			obj->_animate = 0;
-			obj->_isShown = 0;
-			_objs.push_back(obj);
-		}
-		break;
+	const BGInfo *info = sys->_mainInterface->findBGInfo(bg->_id);
+	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
+		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
+		obj->_z = 1;
+		obj->_x = 0;
+		obj->_y = 0;
+		obj->_frame = 1;
+		obj->_animate = false;
+		obj->_isShown = false;
+		_objs.push_back(obj);
 	}
 
-	initCursor(kStartupCursorId, 1, 0);
+	initCursor(kStartupCursorId, true, false);
+	g_vm->videoSystem()->updateTime();
 }
 
-void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
+void InterfaceStartup::onLeftButtonDown(Common::Point p) {
 	if (!_objUnderCursor)
 		return;
 	switch (_objUnderCursor->_resourceId) {
 	case kExit:
-		g_system->quit();
+		Engine::quitGame();
 		break;
 	case kCredits:
 		g_vm->playVideo(g_vm->openFile(kCreditsVideoName, false));
@@ -97,10 +89,12 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 	case kNewGame:
 		g_vm->loadPart(1);
 		break;
+	default:
+		break;
 	}
 }
 
-void InterfaceStartup::onMouseMove(const Common::Point p) {
+void InterfaceStartup::onMouseMove(Common::Point p) {
 	_objUnderCursor = nullptr;
 	bool found = false;
 	for (int i = _objs.size() - 1; i > 0; --i) {
@@ -109,24 +103,21 @@ void InterfaceStartup::onMouseMove(const Common::Point p) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			if (flc) {
 				bool show = false;
-				if (!found && obj->isInPoint(p.x, p.y)) {
+				if (!found && obj->isInPoint(p)) {
 					found = true;
 					show = true;
 					_objUnderCursor = obj;
 				}
-				if (obj->_isShown != show) {
-					obj->_isShown = show;
-					flc->setFrame(1);
-					g_vm->videoSystem()->addDirtyRect(flc->getBounds());
-				}
+				if (obj->_isShown != show)
+					obj->show(obj->_isShown == 0);
 			}
 		}
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->_isShown = true;
-	cursor->setCursorPos(p.x, p.y, 0);
+	cursor->setPos(p, false);
 }
 
 void InterfaceStartup::stop() {

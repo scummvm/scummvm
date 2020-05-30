@@ -39,44 +39,15 @@ InterfaceSequence::InterfaceSequence() {
 }
 
 void InterfaceSequence::start(int id) {
-	removeTexts();
-	for (uint i = 0; i < _objs.size(); ++i) {
-		QMessageObject *obj = (QMessageObject *)_objs[i];
-		obj->removeSound();
-	}
+	removeObjects();
 
 	g_system->getMixer()->pauseAll(true);
 
 	QObjectBG* bg = (QObjectBG *)g_vm->getQSystem()->findObject(id);
 	_objs.push_back(bg);
 
-	if (bg->_musicId == _musicId) {
-		Sound *s = g_vm->soundMgr()->findSound(g_vm->resMgr()->findSoundName(bg->_musicId));
-		if (s) {
-			s->pause(false);
-		}
-	} else {
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(bg->_musicId));
-		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::kMusicSoundType);
-		if (sound) {
-			sound->play(true);
-		}
-		_musicId = bg->_musicId;
-	}
-
-	if (bg->_fxId == _fxId) {
-		Sound *s = g_vm->soundMgr()->findSound(g_vm->resMgr()->findSoundName(bg->_fxId));
-		if (s) {
-			s->pause(false);
-		}
-	} else {
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(bg->_fxId));
-		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_fxId), Audio::Mixer::kMusicSoundType);
-		if (sound) {
-			sound->play(true);
-		}
-		_fxId = bg->_fxId;
-	}
+	playSound(bg->_musicId, Audio::Mixer::kMusicSoundType);
+	playSound(bg->_fxId, Audio::Mixer::kSFXSoundType);
 
 	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(id);
 	if (info) {
@@ -93,13 +64,7 @@ void InterfaceSequence::start(int id) {
 }
 
 void InterfaceSequence::stop() {
-	removeTexts();
-	for (uint i = 0; i < _objs.size(); ++i) {
-		QMessageObject *obj = (QMessageObject *)_objs[i];
-		obj->removeSound();
-	}
-
-	_objs.clear();
+	removeObjects();
 
 	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_fxId));
 	g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_musicId));
@@ -113,10 +78,36 @@ void InterfaceSequence::stop() {
 	Interface::stop();
 }
 
-void InterfaceSequence::onLeftButtonDown(const Common::Point p) {
+void InterfaceSequence::onLeftButtonDown(Common::Point p) {
 	QVisibleObject *obj = findObject(-2);
 	if (obj) {
-		obj->onClick(p.x, p.y);
+		obj->onClick(p);
+	}
+}
+
+void InterfaceSequence::removeObjects() {
+	removeTexts();
+	for (uint i = 0; i < _objs.size(); ++i) {
+		QMessageObject *obj = (QMessageObject *)_objs[i];
+		obj->removeSound();
+	}
+	_objs.clear();
+}
+
+void InterfaceSequence::playSound(int id, Audio::Mixer::SoundType type) {
+	int *soundId = (type == Audio::Mixer::kSFXSoundType) ? &_fxId : &_musicId;
+	if (*soundId == id) {
+		Sound *s = g_vm->soundMgr()->findSound(g_vm->resMgr()->findSoundName(id));
+		if (s) {
+			s->pause(false);
+		}
+	} else {
+		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(*soundId));
+		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(id), type);
+		if (sound) {
+			sound->play(true);
+		}
+		*soundId = id;
 	}
 }
 

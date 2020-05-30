@@ -92,7 +92,7 @@ static void doJoyEvent(Common::Queue<Common::Event> *queue, u32 keysPressed, u32
 
 static void eventThreadFunc(void *arg) {
 	OSystem_3DS *osys = (OSystem_3DS *)g_system;
-	auto eventQueue = (Common::Queue<Common::Event> *)arg;
+	Common::Queue<Common::Event> *eventQueue = (Common::Queue<Common::Event> *)arg;
 
 	uint32 touchStartTime = osys->getMillis();
 	touchPosition  lastTouch  = {0, 0};

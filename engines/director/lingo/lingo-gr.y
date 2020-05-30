@@ -145,9 +145,10 @@ static void mArg(Common::String *s) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn begin end expr if when repeatwhile chunkexpr
-%type<code> repeatwith stmtlist tellstart reference simpleexpr list valuelist
-%type<narg> argdef arglist nonemptyarglist linearlist proplist jump jumpifz
+%type<code> asgn begin end expr if when chunkexpr
+%type<code> stmtlist tellstart reference simpleexpr list valuelist
+%type<code> jump jumpifz varassign
+%type<narg> argdef arglist nonemptyarglist linearlist proplist
 %type<s> on
 
 %left tAND tOR
@@ -264,56 +265,117 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwhile expr end[body] stmtlist end[end2] tENDREPEAT	{
-		inst body = 0, end = 0;
-		WRITE_UINT32(&body, $body - $repeatwhile);
-		WRITE_UINT32(&end, $end2 - $repeatwhile);
-		(*g_lingo->_currentScript)[$repeatwhile + 1] = body;	/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwhile + 2] = end; }	/* end, if cond fails */
+	| tREPEAT tWHILE begin expr jumpifz[body] stmtlist jump[end2] tENDREPEAT	{
+		inst start = 0, end = 0;
+		WRITE_UINT32(&start, $begin - $end2 + 1);
+		WRITE_UINT32(&end, $end2 - $body + 2);
+		(*g_lingo->_currentScript)[$body] = end;		/* end, if cond fails */
+		(*g_lingo->_currentScript)[$end2] = start; }	/* looping back */
 
 	// repeat with index = start to end
 	//   statements
 	// end repeat
 	//
-	| repeatwith tEQ begin[init] expr end tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
-		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, $init - $repeatwith);
-		WRITE_UINT32(&finish, $finish - $repeatwith);
-		WRITE_UINT32(&body, $stmtlist - $repeatwith);
-		WRITE_UINT32(&end, $end3 - $repeatwith);
-		WRITE_UINT32(&inc, 1);
-		(*g_lingo->_currentScript)[$repeatwith + 1] = init;		/* initial count value */
-		(*g_lingo->_currentScript)[$repeatwith + 2] = finish;	/* final count value */
-		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwith + 4] = inc;		/* increment */
-		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
+	| tREPEAT tWITH ID tEQ expr[init]
+				{ g_lingo->code1(LC::c_varpush);
+				  g_lingo->codeString($ID->c_str()); }
+			varassign
+				{ g_lingo->code1(LC::c_eval);
+				  g_lingo->codeString($ID->c_str()); }
+			tTO expr[finish]
+				{ g_lingo->code1(LC::c_le); } jumpifz stmtlist tENDREPEAT {
+
+		g_lingo->code1(LC::c_eval);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_intpush);
+		g_lingo->codeInt(1);
+		g_lingo->code1(LC::c_add);
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_assign);
+		g_lingo->code2(LC::c_jump, STOP);
+		int pos = g_lingo->_currentScript->size() - 1;
+
+		inst loop = 0, end = 0;
+		WRITE_UINT32(&loop, $varassign - pos + 2);
+		WRITE_UINT32(&end, pos - $jumpifz + 2);
+		(*g_lingo->_currentScript)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentScript)[$jumpifz] = end;	}	/* end, if cond fails */
 
 	// repeat with index = high down to low
 	//   statements
 	// end repeat
 	//
-	| repeatwith tEQ begin[init] expr end tDOWN tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
-		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, $init - $repeatwith);
-		WRITE_UINT32(&finish, $finish - $repeatwith);
-		WRITE_UINT32(&body, $stmtlist - $repeatwith);
-		WRITE_UINT32(&end, $end3 - $repeatwith);
-		WRITE_UINT32(&inc, (uint32)-1);
-		(*g_lingo->_currentScript)[$repeatwith + 1] = init;		/* initial count value */
-		(*g_lingo->_currentScript)[$repeatwith + 2] = finish;	/* final count value */
-		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwith + 4] = inc;		/* increment */
-		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
-	| repeatwith tIN begin[list] expr end stmtlist end[end3] tENDREPEAT {
-		inst list = 0, body = 0, end = 0;
-		WRITE_UINT32(&list, $list - $repeatwith);
-		WRITE_UINT32(&body, $stmtlist - $repeatwith);
-		WRITE_UINT32(&end, $end3 - $repeatwith);
-		(*g_lingo->_currentScript)[$repeatwith + 1] = list;		/* initial count value */
-		(*g_lingo->_currentScript)[$repeatwith + 2] = 0;		/* final count value */
-		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwith + 4] = 0;		/* increment */
-		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
+	| tREPEAT tWITH ID tEQ expr[init]
+				{ g_lingo->code1(LC::c_varpush);
+				  g_lingo->codeString($ID->c_str()); }
+			varassign
+				{ g_lingo->code1(LC::c_eval);
+				  g_lingo->codeString($ID->c_str()); }
+			tDOWN tTO expr[finish]
+				{ g_lingo->code1(LC::c_ge); }
+			jumpifz stmtlist tENDREPEAT {
+
+		g_lingo->code1(LC::c_eval);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_intpush);
+		g_lingo->codeInt(1);
+		g_lingo->code1(LC::c_sub);
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_assign);
+		g_lingo->code2(LC::c_jump, STOP);
+		int pos = g_lingo->_currentScript->size() - 1;
+
+		inst loop = 0, end = 0;
+		WRITE_UINT32(&loop, $varassign - pos + 2);
+		WRITE_UINT32(&end, pos - $jumpifz + 2);
+		(*g_lingo->_currentScript)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentScript)[$jumpifz] = end;	}	/* end, if cond fails */
+
+
+	// repeat with index in list
+	//   statements
+	// end repeat
+	//
+	| tREPEAT tWITH ID tIN expr
+				{ g_lingo->code1(LC::cb_stackpeek);
+				  g_lingo->codeInt(0);
+				  g_lingo->codeFunc(new Common::String("count"), 1);
+				  g_lingo->code1(LC::c_intpush);	// start counter
+				  g_lingo->codeInt(1); }
+			begin
+				{ g_lingo->code1(LC::cb_stackpeek);	// get counter
+				  g_lingo->codeInt(0);
+				  g_lingo->code1(LC::cb_stackpeek);	// get array size
+				  g_lingo->codeInt(2);
+				  g_lingo->code1(LC::c_le); }
+			jumpifz
+				{ g_lingo->code1(LC::cb_stackpeek);	// get list
+				  g_lingo->codeInt(2);
+				  g_lingo->code1(LC::cb_stackpeek);	// get counter
+				  g_lingo->codeInt(1);
+				  g_lingo->codeFunc(new Common::String("getAt"), 2);
+				  g_lingo->code1(LC::c_varpush);
+				  g_lingo->codeString($ID->c_str());
+				  g_lingo->code1(LC::c_assign); }
+			stmtlist tENDREPEAT {
+
+		g_lingo->code1(LC::c_intpush);
+		g_lingo->codeInt(1);
+		g_lingo->code1(LC::c_add);			// Increment counter
+
+		int jump = g_lingo->code2(LC::c_jump, STOP);
+
+		int end2 = g_lingo->code1(LC::cb_stackdrop);	// remove list, size, counter
+		g_lingo->codeInt(3);
+
+		inst loop = 0, end = 0;
+		WRITE_UINT32(&loop, $begin - jump);
+		WRITE_UINT32(&end, end2 - $jumpifz + 1);
+
+		(*g_lingo->_currentScript)[jump + 1] = loop;		/* final count value */
+		(*g_lingo->_currentScript)[$jumpifz] = end;	}	/* end, if cond fails */
 
 	| tNEXT tREPEAT {
 		g_lingo->code1(LC::c_nextRepeat); }
@@ -371,20 +433,16 @@ ifoneliner: if expr jumpifz[then] tTHEN stmtoneliner jump[else1] tELSE begin stm
 
 		(*g_lingo->_currentScript)[$then] = end; }		/* end, if cond fails */
 
-repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(LC::c_repeatwhilecode, STOP, STOP); }
-
-repeatwith:		tREPEAT tWITH ID	{
-		$$ = g_lingo->code3(LC::c_repeatwithcode, STOP, STOP);
-		g_lingo->code3(STOP, STOP, STOP);
-		g_lingo->codeString($ID->c_str());
-		delete $ID; }
-
 jumpifz:	/* nothing */	{
 		g_lingo->code2(LC::c_jumpifz, STOP);
 		$$ = g_lingo->_currentScript->size() - 1; }
 
 jump:		/* nothing */	{
 		g_lingo->code2(LC::c_jump, STOP);
+		$$ = g_lingo->_currentScript->size() - 1; }
+
+varassign:		/* nothing */	{
+		g_lingo->code1(LC::c_assign);
 		$$ = g_lingo->_currentScript->size() - 1; }
 
 if:	  tIF					{

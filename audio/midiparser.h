@@ -278,6 +278,7 @@ protected:
 	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
+	bool   _disableAllNotesOffMidiEvents;   ///< Don't send All Notes Off MIDI messages
 	byte  *_tracks[120];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _numTracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _activeTrack;   ///< Keeps track of the currently active track, in multi-track formats.
@@ -304,6 +305,7 @@ protected:
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
+	virtual void sendMetaEventToDriver(byte type, byte *data, uint16 length);
 
 	/**
 	 * Platform independent BE uint32 read-and-advance.
@@ -365,7 +367,17 @@ public:
 		 * Sends a sustain off event when a notes off event is triggered.
 		 * Stops hanging notes.
 		 */
-		 mpSendSustainOffOnNotesOff = 5
+		 mpSendSustainOffOnNotesOff = 5,
+
+		 /**
+		  * Prevent sending out all notes off events on all channels when
+		  * playback of a track is stopped. This option is useful when
+		  * multiple sources are used; otherwise stopping playback of one
+		  * source will interrupt playback of the other sources.
+		  * Any active notes registered by this parser will still be turned
+		  * off.
+		  */
+		 mpDisableAllNotesOffMidiEvents = 6
 	};
 
 public:
@@ -396,7 +408,7 @@ public:
 	static void defaultXMidiCallback(byte eventData, void *refCon);
 
 	static MidiParser *createParser_SMF();
-	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, XMidiNewTimbreListProc newTimbreListProc = NULL, MidiDriver_BASE *newTimbreListDriver = NULL);
+	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, XMidiNewTimbreListProc newTimbreListProc = NULL, MidiDriver_BASE *newTimbreListDriver = NULL, int source = -1);
 	static MidiParser *createParser_QT();
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };

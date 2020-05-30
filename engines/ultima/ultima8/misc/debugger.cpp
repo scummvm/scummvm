@@ -92,6 +92,15 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AvatarMoverProcess::stopMoveForward", WRAP_METHOD(Debugger, cmdStopMoveForward));
 	registerCmd("AvatarMoverProcess::stopMoveBack", WRAP_METHOD(Debugger, cmdStopMoveBack));
 
+	registerCmd("AvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartMoveLeft));
+	registerCmd("AvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartMoveRight));
+	registerCmd("AvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartMoveUp));
+	registerCmd("AvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartMoveDown));
+	registerCmd("AvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopMoveLeft));
+	registerCmd("AvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopMoveRight));
+	registerCmd("AvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopMoveUp));
+	registerCmd("AvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopMoveDown));
+
 	registerCmd("AudioProcess::listSFX", WRAP_METHOD(Debugger, cmdListSFX));
 	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
 	registerCmd("AudioProcess::stopSFX", WRAP_METHOD(Debugger, cmdStopSFX));
@@ -129,18 +138,18 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
 
-	registerCmd("QuickAvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartMoveUp));
-	registerCmd("QuickAvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartMoveDown));
-	registerCmd("QuickAvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartMoveLeft));
-	registerCmd("QuickAvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartMoveRight));
-	registerCmd("QuickAvatarMoverProcess::startAscend", WRAP_METHOD(Debugger, cmdStartAscend));
-	registerCmd("QuickAvatarMoverProcess::startDescend", WRAP_METHOD(Debugger, cmdStartDescend));
-	registerCmd("QuickAvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopMoveUp));
-	registerCmd("QuickAvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopMoveDown));
-	registerCmd("QuickAvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopMoveLeft));
-	registerCmd("QuickAvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopMoveRight));
-	registerCmd("QuickAvatarMoverProcess::stopAscend", WRAP_METHOD(Debugger, cmdStopAscend));
-	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopDescend));
+	registerCmd("QuickAvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartQuickMoveUp));
+	registerCmd("QuickAvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartQuickMoveDown));
+	registerCmd("QuickAvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartQuickMoveLeft));
+	registerCmd("QuickAvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartQuickMoveRight));
+	registerCmd("QuickAvatarMoverProcess::startAscend", WRAP_METHOD(Debugger, cmdStartQuickMoveAscend));
+	registerCmd("QuickAvatarMoverProcess::startDescend", WRAP_METHOD(Debugger, cmdStartQuickMoveDescend));
+	registerCmd("QuickAvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopQuickMoveUp));
+	registerCmd("QuickAvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopQuickMoveDown));
+	registerCmd("QuickAvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopQuickMoveLeft));
+	registerCmd("QuickAvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopQuickMoveRight));
+	registerCmd("QuickAvatarMoverProcess::stopAscend", WRAP_METHOD(Debugger, cmdStopQuickMoveAscend));
+	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopQuickMoveDescend));
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
 
@@ -1167,6 +1176,58 @@ bool Debugger::cmdStartMoveBack(int argc, const char **argv) {
 	return false;
 }
 
+bool Debugger::cmdStartMoveLeft(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveLeft(true);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveRight(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveRight(true);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveUp(true);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveDown(true);
+	}
+	return false;
+}
+
 bool Debugger::cmdStopTurnLeft(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't turn left: avatarInStasis\n");
@@ -1219,6 +1280,58 @@ bool Debugger::cmdStopMoveBack(int argc, const char **argv) {
 	return false;
 }
 
+bool Debugger::cmdStopMoveLeft(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveLeft(false);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveRight(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveRight(false);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveUp(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveUp(false);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveDown(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move back: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->tryMoveDown(false);
+	}
+	return false;
+}
+
 bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't toggle combat: avatarInStasis\n");
@@ -1262,8 +1375,7 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	return true;
 }
 
-
-bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveUp(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(-64, -64, 0, 0);
 		return false;
@@ -1273,7 +1385,7 @@ bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveDown(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(+64, +64, 0, 1);
 		return false;
@@ -1283,7 +1395,7 @@ bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartMoveLeft(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveLeft(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(-64, +64, 0, 2);
 		return false;
@@ -1293,7 +1405,7 @@ bool Debugger::cmdStartMoveLeft(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartMoveRight(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveRight(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(+64, -64, 0, 3);
 		return false;
@@ -1303,7 +1415,7 @@ bool Debugger::cmdStartMoveRight(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartAscend(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveAscend(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(0, 0, 8, 4);
 		return false;
@@ -1313,7 +1425,7 @@ bool Debugger::cmdStartAscend(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartDescend(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveDescend(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(0, 0, -8, 5);
 		return false;
@@ -1323,32 +1435,32 @@ bool Debugger::cmdStartDescend(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStopMoveUp(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveUp(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(0);
 	return false;
 }
 
-bool Debugger::cmdStopMoveDown(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveDown(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(1);
 	return false;
 }
 
-bool Debugger::cmdStopMoveLeft(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveLeft(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(2);
 	return false;
 }
 
-bool Debugger::cmdStopMoveRight(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveRight(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(3);
 	return false;
 }
 
-bool Debugger::cmdStopAscend(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveAscend(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(4);
 	return false;
 }
 
-bool Debugger::cmdStopDescend(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveDescend(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(5);
 	return false;
 }

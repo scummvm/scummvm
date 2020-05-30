@@ -39,9 +39,9 @@ public:
 	void setReactionAfterWalk(uint index, QReaction *reaction, QMessageObject *sender, bool deleteReaction);
 
 	void draw() override;
-	bool isInPoint(int x, int y) override;
+	bool isInPoint(Common::Point p) override;
 	void update(int time) override;
-	void setPos(int x, int y) override;
+	void setPos(Common::Point p, bool ) override;
 
 	double calcSmth(int y);
 

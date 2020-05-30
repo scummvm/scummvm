@@ -32,6 +32,10 @@
 //
 // Note: there are 3 warnings in my GCC run, they have no signficance
 
+#if defined(NONSTANDARD_PORT)
+#include "portdefs.h"
+#endif
+
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
@@ -43,15 +47,49 @@
 //
 // We're not testing `nullptr` and `override`, since they're defined in common/c++11-compat.h
 
-// INITIALIZIER_LIST1 test disabled:
-// it fails in my VS 2019 and in GCC 4.8.5 (from 2015)
-// TODO: maybe it's my syntax problem, maybe Common::Array need to be changed to support this syntax?
-#define DONT_TEST_INITIALIZIER_LIST1
-
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/rect.h"
+
+#ifndef DONT_TEST_INITIALIZIER_LIST1
+#ifndef USE_INITIALIZIER_LIST_REPLACEMENT
+#include <initializer_list>
+#else
+namespace std {
+template<class T> class initializer_list {
+public:
+	typedef T value_type;
+	typedef const T& reference;
+	typedef const T& const_reference;
+	typedef size_t size_type;
+	typedef const T* iterator;
+	typedef const T* const_iterator;
+
+	constexpr initializer_list() noexcept = default;
+	constexpr size_t size() const noexcept { return m_size; };
+	constexpr const T* begin() const noexcept { return m_begin; };
+	constexpr const T* end() const noexcept { return m_begin + m_size; }
+
+private:
+	// Note: begin has to be first or the compiler gets very upset
+	const T* m_begin = { nullptr };
+	size_t m_size = { 0 };
+
+	// The compiler is allowed to call this constructor
+	constexpr initializer_list(const T* t, size_t s) noexcept : m_begin(t) , m_size(s) {}
+};
+
+template<class T> constexpr const T* begin(initializer_list<T> il) noexcept {
+	return il.begin();
+}
+
+template<class T> constexpr const T* end(initializer_list<T> il) noexcept {
+	return il.end();
+}
+} // end namespace std
+#endif
+#endif
 
 #ifndef DONT_TEST_CLASS_ENUM
 // ----------------------------------
@@ -121,6 +159,19 @@ private:
 	Dictionary_11<int> d11;
 #endif
 
+#ifndef DONT_TEST_INITIALIZIER_LIST1
+	// Array with C++11 initialization list
+	template<class T> class ArrayCpp11 : public Common::Array<T> {
+	public:
+		ArrayCpp11(std::initializer_list<T> list) {
+			if (list.size()) {
+				this->allocCapacity(list.size());
+				Common::uninitialized_copy(list.begin(), list.end(), this->_storage);
+			}
+		}
+	};
+#endif
+
 	void test_cpp11() {
 #ifdef DONT_TEST_INITIALIZIER_LIST1
 		// ------------------------
@@ -133,7 +184,7 @@ private:
 		arr.push_back(3);
 #else
 		// C++11
-		Common::Array<int> arr = {1, 2, 3};
+		ArrayCpp11<int> arr = {1, 2, 3};
 #endif
 
 #ifndef DONT_TEST_INITIALIZIER_LIST2

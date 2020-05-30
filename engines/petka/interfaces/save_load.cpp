@@ -34,7 +34,6 @@ const uint kFirstSaveLoadPageId = 4990;
 InterfaceSaveLoad::InterfaceSaveLoad() {
 	_page = 0;
 	_loadMode = false;
-	_savedCursorId = 0;
 
 	_saveRects[0] = Common::Rect(43, 84, 151, 166);
 	_saveRects[1] = Common::Rect(43, 209, 151, 291);
@@ -48,47 +47,17 @@ InterfaceSaveLoad::InterfaceSaveLoad() {
 
 void InterfaceSaveLoad::start(int id) {
 	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->_cursor.get();
 
 	_loadMode = (id == kLoadMode);
 
-	_objs.clear();
 	QObjectBG *bg = (QObjectBG *)sys->findObject("SAVELOAD");
 	_objs.push_back(bg);
 	bg->_resourceId = kFirstSaveLoadPageId + _page + (_loadMode ? 0 : 5);
 
-	_savedSceneWidth = sys->_sceneWidth;
-	_savedXOffset = sys->_xOffset;
-
-	sys->_sceneWidth = 640;
-	sys->_xOffset = 0;
-
-	_savedCursorId = cursor->_resourceId;
-	_savedCursorType = cursor->_actionType;
-
-	initCursor(4901, 1, 0);
-
-	sys->_currInterface = this;
-	g_vm->videoSystem()->makeAllDirty();
+	SubInterface::start(id);
 }
 
-void InterfaceSaveLoad::stop() {
-	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-
-	sys->_xOffset = _savedXOffset;
-	sys->_sceneWidth = _savedSceneWidth;
-
-	cursor->_resourceId = _savedCursorId;
-	cursor->_actionType = _savedCursorType;
-
-	sys->_currInterface = sys->_prevInterface;
-	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
-
-	Interface::stop();
-}
-
-void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {
+void InterfaceSaveLoad::onLeftButtonDown(Common::Point p) {
 	int index = findSaveLoadRectIndex(p);
 	if (index == -1) {
 		if (_prevPageRect.contains(p) && _page > 0) {
@@ -103,18 +72,18 @@ void InterfaceSaveLoad::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfaceSaveLoad::onRightButtonDown(const Common::Point p) {
+void InterfaceSaveLoad::onRightButtonDown(Common::Point p) {
 	stop();
 }
 
-void InterfaceSaveLoad::onMouseMove(const Common::Point p) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+void InterfaceSaveLoad::onMouseMove(Common::Point p) {
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = findSaveLoadRectIndex(p) != -1 || _nextPageRect.contains(p) || _prevPageRect.contains(p);
-	cursor->setCursorPos(p.x, p.y, 0);
+	cursor->setPos(p, false);
 }
 
-int InterfaceSaveLoad::findSaveLoadRectIndex(const Common::Point p) {
-	for (uint i = 0; i < sizeof(_saveRects) / sizeof(Common::Rect); ++i) {
+int InterfaceSaveLoad::findSaveLoadRectIndex(Common::Point p) {
+	for (uint i = 0; i < ARRAYSIZE(_saveRects); ++i) {
 		if (_saveRects[i].contains(p)) {
 			return i;
 		}

@@ -33,9 +33,9 @@ public:
 	void draw() override;
 	void update(int time) override;
 	void show(bool v) override;
-	bool isInPoint(int x, int y) override;
-	void onMouseMove(int x, int y) override;
-	void onClick(int x, int y) override;
+	bool isInPoint(Common::Point p) override;
+	void onMouseMove(Common::Point p) override;
+	void onClick(Common::Point p) override;
 
 	void addItem(uint16 id);
 	void removeItem(uint16 id);

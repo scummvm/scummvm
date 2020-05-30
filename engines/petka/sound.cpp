@@ -102,14 +102,14 @@ void SoundMgr::removeSound(const Common::String &name) {
 
 void SoundMgr::removeAll() {
 	debug("SoundMgr::removeAll");
-	_sounds.clear(0);
+	_sounds.clear(false);
 }
 
 void SoundMgr::removeSoundsWithType(Audio::Mixer::SoundType type) {
 	SoundsMap::iterator it;
 	for (it = _sounds.begin(); it != _sounds.end(); ++it) {
 		Sound *s = it->_value.get();
-		if (s->type() == type && !s->isPlaying()) {
+		if (s->type() == type) {
 			_sounds.erase(it);
 		}
 	}

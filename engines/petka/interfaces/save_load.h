@@ -32,29 +32,24 @@ enum {
 	kLoadMode
 };
 
-class InterfaceSaveLoad : public Interface {
+class InterfaceSaveLoad : public SubInterface {
 public:
 	InterfaceSaveLoad();
 
 	void start(int id) override;
-	void stop() override;
 
-	void onLeftButtonDown(const Common::Point p) override;
-	void onRightButtonDown(const Common::Point p) override;
-	void onMouseMove(const Common::Point p) override;
+	bool loadMode() { return _loadMode; }
+
+	void onLeftButtonDown(Common::Point p) override;
+	void onRightButtonDown(Common::Point p) override;
+	void onMouseMove(Common::Point p) override;
 
 private:
-	int findSaveLoadRectIndex(const Common::Point p);
+	int findSaveLoadRectIndex(Common::Point p);
 
 private:
 	bool _loadMode;
 	uint _page;
-
-	int _savedXOffset;
-	int _savedSceneWidth;
-	int _savedCursorId;
-	int _savedCursorType;
-
 	Common::Rect _saveRects[6];
 	Common::Rect _nextPageRect;
 	Common::Rect _prevPageRect;

@@ -23,6 +23,8 @@
 #ifndef PETKA_SEQUENCE_H
 #define PETKA_SEQUENCE_H
 
+#include "audio/mixer.h"
+
 #include "petka/interfaces/interface.h"
 
 namespace Petka {
@@ -34,7 +36,11 @@ public:
 	void start(int id) override;
 	void stop() override;
 
-	void onLeftButtonDown(const Common::Point p) override;
+	void onLeftButtonDown(Common::Point p) override;
+
+private:
+	void removeObjects();
+	void playSound(int id, Audio::Mixer::SoundType type);
 
 private:
 	int _fxId;

@@ -87,7 +87,6 @@ static struct FuncDescr {
 	{ LC::c_gotoprevious,	"c_gotoprevious",	"" },
 	{ LC::c_gt,				"c_gt",				"" },
 	{ LC::c_hilite,			"c_hilite",			"" },
-	{ LC::c_ifcode,			"c_ifcode",			"oooi" },
 	{ LC::c_instance,		"c_instance",		"s" },	// D2
 	{ LC::c_intersects,		"c_intersects",		"" },
 	{ LC::c_intpush,		"c_intpush",		"i" },
@@ -117,8 +116,6 @@ static struct FuncDescr {
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
 	{ LC::c_property,		"c_property",		"s" },
-	{ LC::c_repeatwhilecode,"c_repeatwhilecode","oo" },
-	{ LC::c_repeatwithcode,	"c_repeatwithcode",	"ooooos" },
 	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
 	{ LC::c_starts,			"c_starts",			"" },
 	{ LC::c_stringpush,		"c_stringpush",		"s" },
@@ -1163,103 +1160,6 @@ void LC::c_jumpifz() {
 	}
 }
 
-void LC::c_repeatwhilecode(void) {
-	Datum d;
-	int savepc = g_lingo->_pc;
-
-	uint body = g_lingo->getInt(savepc);
-	uint end =  g_lingo->getInt(savepc + 1);
-
-	g_lingo->execute(savepc + 2);	/* condition */
-	int test = g_lingo->pop().asInt();
-
-	while (test) {
-		g_lingo->execute(body + savepc - 1);	/* body */
-		g_lingo->_nextRepeat = false;
-
-		if (g_lingo->_returning)
-			break;
-
-		if (g_lingo->_exitRepeat) {
-			g_lingo->_exitRepeat = false;
-			break;
-		}
-
-		g_lingo->execute(savepc + 2);	/* condition */
-		test = g_lingo->pop().asInt();
-	}
-
-	if (!g_lingo->_returning)
-		g_lingo->_pc = end + savepc - 1; /* next stmt */
-}
-
-void LC::c_repeatwithcode(void) {
-	int savepc = g_lingo->_pc;
-
-	uint init = g_lingo->getInt(savepc);
-	uint finish =  g_lingo->getInt(savepc + 1);
-	uint body = g_lingo->getInt(savepc + 2);
-	int inc = (int32)g_lingo->getInt(savepc + 3);
-	uint end = g_lingo->getInt(savepc + 4);
-	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
-	Symbol *counter = g_lingo->lookupVar(countername.c_str());
-
-	if (finish == 0 && inc == 0) {
-		// Handle repeat with  X in ARRAY
-		g_lingo->execute(init + savepc -1); // eval the list
-		Datum array = g_lingo->pop(); // get the list from the stack
-
-		Datum loop_var;
-		loop_var.type = VAR;
-		loop_var.u.sym = g_lingo->lookupVar(countername.c_str());
-
-		uint arraySize = array.u.farr->size();
-		for (uint i = 0; i < arraySize; i++) {
-			g_lingo->varAssign(loop_var, array.u.farr->operator[](i));
-			g_lingo->execute(body + savepc -1);
-			if (g_lingo->_returning) // handle return within the repeat with loop
-				return;
-			if (g_lingo->_exitRepeat) { // handle `exit repeat`
-				g_lingo->_exitRepeat = false;
-				break;
-			}
-		}
-		g_lingo->_pc = end + savepc - 1; /* next stmt */
-		return;
-	}
-
-	if (counter->type == CASTREF) {
-		error("Cast ref used as index: %s", countername.c_str());
-	}
-
-	g_lingo->execute(init + savepc - 1);	/* condition */
-	counter->u.i = g_lingo->pop().asInt();
-	counter->type = INT;
-
-	while (true) {
-		g_lingo->execute(body + savepc - 1);	/* body */
-		g_lingo->_nextRepeat = false;
-
-		if (g_lingo->_returning)
-			break;
-
-		if (g_lingo->_exitRepeat) {
-			g_lingo->_exitRepeat = false;
-			break;
-		}
-
-		counter->u.i += inc;
-		g_lingo->execute(finish + savepc - 1);	/* condition */
-		int base = g_lingo->pop().asInt();
-
-		if (counter->u.i == base + inc)
-			break;
-	}
-
-	if (!g_lingo->_returning)
-		g_lingo->_pc = end + savepc - 1; /* next stmt */
-}
-
 void LC::c_nextRepeat(void) {
 	// loop body is a single instruction chunk which ends with
 	// STOP. Now we simulate end of execution of this chunk
@@ -1268,38 +1168,6 @@ void LC::c_nextRepeat(void) {
 
 void LC::c_exitRepeat(void) {
 	g_lingo->_exitRepeat = true;
-}
-
-void LC::c_ifcode(void) {
-	Datum d;
-	int savepc = g_lingo->_pc;	/* then part */
-
-	uint then =    g_lingo->getInt(savepc);
-	uint elsep =   g_lingo->getInt(savepc+1);
-	uint end =     g_lingo->getInt(savepc+2);
-	uint skipEnd = g_lingo->getInt(savepc+3);
-
-	debugC(8, kDebugLingoExec, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
-	g_lingo->execute(savepc + 4);	/* condition */
-
-	d = g_lingo->pop();
-
-	if (d.asInt()) {
-		debugC(8, kDebugLingoExec, "executing then");
-		g_lingo->execute(then + savepc - 1);
-	} else if (elsep) { /* else part? */
-		debugC(8, kDebugLingoExec, "executing else");
-		g_lingo->execute(elsep + savepc - 1);
-	}
-
-	// Since we do recursive calls, we want to skip behind end of the 'if'
-	// statement only once, and not after every 'end if' call
-	if (!g_lingo->_returning && !skipEnd) {
-		g_lingo->_pc = end + savepc - 1; /* next stmt */
-		debugC(8, kDebugLingoExec, "executing end");
-	} else {
-		debugC(8, kDebugLingoExec, "skipped end");
-	}
 }
 
 void LC::c_whencode() {

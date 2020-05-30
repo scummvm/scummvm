@@ -94,69 +94,35 @@ void InterfacePanel::start(int id) {
 	readSettings();
 
 	QSystem *sys = g_vm->getQSystem();
-	QObjectBG *bg = (QObjectBG *)g_vm->getQSystem()->findObject(kPanelObjName);
+	QObjectBG *bg = (QObjectBG *)sys->findObject(kPanelObjName);
 	_objs.push_back(bg);
-	sys->update();
-	const Common::Array<BGInfo> &infos = sys->_mainInterface->_bgs;
 
-	for (uint i = 0; i < infos.size(); ++i) {
-		if (infos[i].objId != bg->_id) {
-			continue;
-		}
-		for (uint j = 0; j < infos[i].attachedObjIds.size(); ++j) {
-			QMessageObject *obj = sys->findObject(infos[i].attachedObjIds[j]);
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
-			flc->setFrame(1);
-			obj->_z = 1;
-			obj->_x = _objectPoints[j].x;
-			obj->_y = _objectPoints[j].y;
-			obj->_frame = 1;
-			obj->_animate = 0;
-			obj->_isShown = 1;
-			_objs.push_back(obj);
-		}
-		break;
+	const BGInfo *info = sys->_mainInterface->findBGInfo(bg->_id);
+	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
+		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
+		FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
+		flc->setFrame(1);
+		obj->_z = 1;
+		obj->_x = _objectPoints[i].x;
+		obj->_y = _objectPoints[i].y;
+		obj->_frame = 1;
+		obj->_animate = false;
+		obj->_isShown = true;
+		_objs.push_back(obj);
 	}
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	_savedCursorRes = cursor->_resourceId;
-	_savedCursorType = cursor->_actionType;
-
-	initCursor(4901, 1, 1);
-
-	_savedSceneWidth = sys->_sceneWidth;
-	_savedXOffset = sys->_xOffset;
-
-	sys->_sceneWidth = 640;
-	sys->_xOffset = 0;
+	SubInterface::start(id);
 
 	updateSliders();
 	updateSubtitles();
 
-	sys->_currInterface = this;
-	g_vm->videoSystem()->makeAllDirty();
+	sys->getCursor()->_animate = true;
 }
 
-void InterfacePanel::stop() {
-	QSystem *sys = g_vm->getQSystem();
-	QObjectCursor *cursor = sys->_cursor.get();
-
-	sys->_xOffset = _savedXOffset;
-	sys->_sceneWidth = _savedSceneWidth;
-
-	cursor->_resourceId = _savedCursorRes;
-	cursor->_actionType = _savedCursorType;
-
-	sys->_currInterface = sys->_prevInterface;
-	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
-
-	Interface::stop();
-}
-
-void InterfacePanel::onLeftButtonDown(const Common::Point p) {
+void InterfacePanel::onLeftButtonDown(Common::Point p) {
 	int i = 0;
 	for (i = _objs.size() - 1; i > 0; --i) {
-		if (_objs[i]->isInPoint(p.x, p.y)) {
+		if (_objs[i]->isInPoint(p)) {
 			break;
 		}
 	}
@@ -217,12 +183,12 @@ void InterfacePanel::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfacePanel::onMouseMove(const Common::Point p) {
+void InterfacePanel::onMouseMove(Common::Point p) {
 	bool found = false;
 	for (uint i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
 		byte frame = 1;
-		if (!found && obj->isInPoint(p.x, p.y)) {
+		if (!found && obj->isInPoint(p)) {
 			found = true;
 			if ((i >= kNewGameButtonIndex && i <= kSaveButtonIndex) || (i >= kDecSpeechButtonIndex && i <= kIncSpeedButtonIndex)) {
 				frame = 2;
@@ -262,9 +228,9 @@ void InterfacePanel::onMouseMove(const Common::Point p) {
 		flc->setFrame(frame);
 		g_vm->videoSystem()->addDirtyRect(_objectPoints[pointIndex], *flc);
 	}
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
-	cursor->_isShown = 1;
-	cursor->setCursorPos(p.x, p.y, 0);
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
+	cursor->_isShown = true;
+	cursor->setPos(p, false);
 }
 
 void InterfacePanel::updateSliders() {
@@ -319,6 +285,10 @@ void InterfacePanel::applySettings() {
 	ConfMan.setInt("petka_speed", 4 * (_speedFrame - 1));
 	ConfMan.flushToDisk();
 	g_vm->syncSoundSettings();
+}
+
+void InterfacePanel::onRightButtonDown(Common::Point p) {
+	stop();
 }
 
 } // End of namespace Petka

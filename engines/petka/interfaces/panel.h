@@ -27,15 +27,15 @@
 
 namespace Petka {
 
-class InterfacePanel : public Interface {
+class InterfacePanel : public SubInterface {
 public:
 	InterfacePanel();
 
 	void start(int id) override;
-	void stop() override;
 
-	void onLeftButtonDown(const Common::Point p) override;
-	void onMouseMove(const Common::Point p) override;
+	void onLeftButtonDown(Common::Point p) override;
+	void onRightButtonDown(Common::Point p) override;
+	void onMouseMove(Common::Point p) override;
 
 private:
 	void readSettings();
@@ -45,11 +45,6 @@ private:
 	void updateSubtitles();
 
 public:
-	int _savedXOffset;
-	int _savedSceneWidth;
-	int _savedCursorType;
-	int _savedCursorRes;
-
 	int _subtitles;
 	int _speechFrame;
 	int _musicFrame;

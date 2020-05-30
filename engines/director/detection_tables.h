@@ -63,14 +63,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 		4
 	},
 
+	// Generic D2 Mac entry
+	MACGAME("director", "D2-mac", "D2-mac", 0, -1, 2),
 	// Generic D3 Mac entry
-	MACGAME("director", "", "D3-mac", 0, -1, 3),
+	MACGAME("director", "D3-mac", "D3-mac", 0, -1, 3),
 	// Generic D4 Mac entry
-	MACGAME("director", "", "D4-mac", 0, -1, 4),
+	MACGAME("director", "D4-mac", "D4-mac", 0, -1, 4),
 	// Generic D3 Win entry
-	WINGAME("director", "", "D3-win", 0, -1, 3),
+	WINGAME("director", "D3-win", "D3-win", 0, -1, 3),
 	// Generic D4 Win entry
-	WINGAME("director", "", "D4-win", 0, -1, 4),
+	WINGAME("director", "D4-win", "D4-win", 0, -1, 4),
 
 	MACGAME("theapartment", "D2", "Main Menu", "fc56c179cb8c6d4938e61ee61fd0032c", 48325, 2), // Original name is "•Main Menu"
 	MACGAME("theapartment", "D3", "Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911, 3), // Original name is "•Main Menu"
@@ -93,6 +95,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("jewels", "", "Jewels of the Oracle", "fa52f0136cde568a46249ce74f01a324", -1, 7),
 	WINDEMO("jewels", "Demo", "JEWELS.EXE", "abcc448c035e88d4edb4a29034fd1e34", -1, 4),
 
+	MACGAME("jman", "", "Journeyman.16 MB", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 3),
 	WINGAME("jman", "", "JMAN.EXE", "7c8230a804abf9353b05627a675b5ffb", 375282, 3),
 	WINDEMO("jman", "", "JMDEMO.EXE", "7c8230a804abf9353b05627a675b5ffb", 375305, 3),
 

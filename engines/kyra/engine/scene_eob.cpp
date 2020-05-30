@@ -115,18 +115,19 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 void EoBCoreEngine::readLevelFileData(int level) {
 	Common::String file;
 	Common::SeekableReadStream *s = 0;
-	static const char *const suffix[] = { "INF", "DRO", "ELO", "JOT", 0 };
+	static const char *const suffix[] = { "DRO", "INF", "ELO", "JOT", 0 };
 
 	for (const char *const *sf = suffix; *sf && !s; sf++) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);
 		s = _res->createReadStream(file);
 	}
-
+	
 	if (!s)
 		error("Failed to load level file LEVEL%d.INF/DRO/ELO/JOT", level);
 
 	if (s->readUint16LE() + 2 == s->size()) {
-		if (s->readUint16LE() == 4) {
+		// check for valid compression type
+		if (s->readUint16LE() <= 4) {
 			delete s;
 			s = 0;
 			_screen->loadBitmap(file.c_str(), 5, 5, 0, true);

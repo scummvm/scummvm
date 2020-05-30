@@ -11,7 +11,7 @@ MODULE_OBJS := \
 	midiparser.o \
 	midiplayer.o \
 	miles_adlib.o \
-	miles_mt32.o \
+	miles_midi.o \
 	mixer.o \
 	mpu401.o \
 	musicplugin.o \

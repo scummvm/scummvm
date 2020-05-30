@@ -115,7 +115,7 @@ public:
 	const DialogHandler *findHandler(uint objId, uint opcode, bool *fallback) const;
 	void setHandler(uint objId, uint opcode);
 
-	const Common::U32String *getSpeechInfo(int *talkerId, const char **soundName, int unk);
+	const Common::U32String *getSpeechInfo(int *talkerId, const char **soundName, int choice);
 	void getMenuChoices(Common::Array<Common::U32String> &choices);
 
 	void load(Common::ReadStream *s);

@@ -76,8 +76,8 @@ void QObjectPetka::processMessage(const QMessage &arg) {
 		QMessageObject::processMessage(msg);
 		if (msg.opcode == kSet || msg.opcode == kPlay) {
 			initSurface();
-			if (!g_vm->getQSystem()->_isIniting) {
-				setPos(_x_, _y_);
+			if (!g_vm->getQSystem()->_totalInit) {
+				setPos(Common::Point(_x_, _y_), false);
 			}
 		}
 	}
@@ -122,7 +122,7 @@ void QObjectPetka::walk(int x, int y) {
 			_holdMessages = true;
 		//}
 	} else {
-		setPos(x, y);
+		setPos(Common::Point(x, y), false);
 	}
 }
 
@@ -158,20 +158,20 @@ void QObjectPetka::draw() {
 	delete conv;
 }
 
-void QObjectPetka::setPos(int x, int y) {
-	y = MIN(y, 480);
+void QObjectPetka::setPos(Common::Point p, bool) {
+	p.y = MIN<int16>(p.y, 480);
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 
-	_field98 = calcSmth(y);
+	_field98 = calcSmth(p.y);
 
 	_surfH = flc->getHeight() * _field98;
 	_surfW = flc->getWidth() * _field98;
 
-	_x_ = x;
-	_y_ = y;
+	_x_ = p.x;
+	_y_ = p.y;
 
-	_x = x - _surfW / 2;
-	_y = y - _surfH;
+	_x = p.x - _surfW / 2;
+	_y = p.y - _surfH;
 
 	g_vm->videoSystem()->makeAllDirty();
 }
@@ -181,27 +181,20 @@ double QObjectPetka::calcSmth(int y) {
 
 	y = MIN(y, 480);
 
-
-	if (!qsys->_unkMap.contains(qsys->_room->_name)) {
-		return 1.0;
-	}
-
-	const UnkStruct &unk = qsys->_unkMap.getVal(qsys->_room->_name);
-
-
-	double res = (y - unk.f3) * unk.f2 / (unk.f4 - unk.f3);
+	const Perspective &pers = qsys->_room->_persp;
+	double res = (y - pers.y0) * pers.k / (pers.y1 - pers.y0);
 	if (res < 0.0)
 		res = 0.0;
 
-	if (res + unk.f1 > unk.f5)
-		return unk.f5;
-	return res + unk.f1;
+	if (res + pers.f0 > pers.f1)
+		return pers.f1;
+	return res + pers.f0;
 }
 
 void QObjectPetka::updateWalk() {
 	if (_isWalking) {
 		_isWalking = false;
-		setPos(_destX, _destY);
+		setPos(Common::Point(_destX, _destY), false);
 
 		QMessage msg(_id, kSet, (uint16)_imageId, 1, 0, nullptr, 0);
 		if (_heroReaction) {
@@ -307,7 +300,7 @@ void QObjectPetka::update(int time) {
 	}
 }
 
-bool QObjectPetka::isInPoint(int x, int y) {
+bool QObjectPetka::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
@@ -315,11 +308,11 @@ bool QObjectPetka::isInPoint(int x, int y) {
 	if (!s)
 		return false;
 	Common::Rect bounds(_surfW, _surfH);
-	x -= _x;
-	y -= _y;
-	if (!bounds.contains(x, y))
+	p.x -= _x;
+	p.y -= _y;
+	if (!bounds.contains(p.x, p.y))
 		return false;
-	return *(uint16 *)s->getBasePtr(x, y) != flc->getTransColor(s->format);
+	return *(uint16 *)s->getBasePtr(p.x, p.y) != flc->getTransColor(s->format);
 }
 
 QObjectChapayev::QObjectChapayev() {

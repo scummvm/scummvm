@@ -51,7 +51,6 @@ my @subs_files = qw(
 	dists/riscos/!Boot,feb
 	dists/amiga/RM2AG.rexx
 	backends/platform/psp/README.PSP
-	snapcraft.yaml
 	);
 
 my %subs = (

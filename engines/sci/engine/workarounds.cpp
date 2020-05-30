@@ -1324,6 +1324,11 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  10, 149,   1,  1, { MSG_WORKAROUND_EXTRACT,  322,  10, 149,   1,  1, 13,   0,   0, NULL } },
 	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  10, 149,   1,  2, { MSG_WORKAROUND_EXTRACT,  322,  10, 149,   1,  2, 13,   0,   0, NULL } },
 	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  322,  10, 149,   1,  3, { MSG_WORKAROUND_EXTRACT,  322,  10, 149,   1,  3, 13,   0,   0, NULL } },
+	// Wrong verb when clicking lock pick or toolkit on gnome's door in room 320
+	//  while not having enough lock picking skill.
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  320,   9,   9,   7,  1, { MSG_WORKAROUND_REMAP,    320,   9,  42,   7,  1, 99,   0,   0, NULL } },
+	// Wrong modNum (missing parameter) when clicking your only dagger in room 625
+	{ GID_QFG4,          SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  625,   4,   6,  34,  1, { MSG_WORKAROUND_REMAP,    620,   4,   6,  34,  1, 99,   0,   0, NULL } },
 	// This fixes the error message shown when speech and subtitles are
 	// enabled simultaneously in SQ4 - the (very) long dialog when Roger
 	// is talking with the aliens is missing - bug #6067.

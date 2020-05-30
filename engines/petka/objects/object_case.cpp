@@ -24,6 +24,7 @@
 
 #include "petka/interfaces/main.h"
 #include "petka/objects/object_case.h"
+#include "petka/objects/object_cursor.h"
 #include "petka/flc.h"
 #include "petka/petka.h"
 #include "petka/q_manager.h"
@@ -135,13 +136,13 @@ void QObjectCase::show(bool v) {
 	}
 }
 
-bool QObjectCase::isInPoint(int x, int y) {
+bool QObjectCase::isInPoint(Common::Point p) {
 	return _isShown;
 }
 
-void QObjectCase::onMouseMove(int x, int y) {
+void QObjectCase::onMouseMove(Common::Point p) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(kExitCaseResourceId);
-	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0) {
+	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(p.x - _x, p.y - _y) != 0) {
 		if (_clickedObjIndex != kCloseButton && _clickedObjIndex != kInvalidButton) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 			flc->setFrame(1);
@@ -152,7 +153,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		uint i;
 		for (i = 0; i < kButtonsCount; ++i) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + i);
-			if (flc->getMskRects()[0].contains(Common::Point(x - _x, y))) {
+			if (flc->getMskRects()[0].contains(Common::Point(p.x - _x, p.y))) {
 				break;
 			}
 		}
@@ -166,7 +167,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		if (i == kButtonsCount && _clickedObjIndex != kInvalidButton) {
 			_clickedObjIndex = kInvalidButton;
 		} else if (i != _clickedObjIndex) {
-			if ((i != kChapayevButton || g_vm->getQSystem()->_chapayev->_isShown) && (i != kMapButton || g_vm->getQSystem()->_room->_showMap)) {
+			if ((i != kChapayevButton || g_vm->getQSystem()->getChapay()->_isShown) && (i != kMapButton || g_vm->getQSystem()->_room->_showMap)) {
 				flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + i);
 				g_vm->videoSystem()->addDirtyMskRects(*flc);
 				_clickedObjIndex = i;
@@ -177,10 +178,10 @@ void QObjectCase::onMouseMove(int x, int y) {
 	}
 }
 
-void QObjectCase::onClick(int x, int y) {
+void QObjectCase::onClick(Common::Point p) {
 	switch (_clickedObjIndex) {
 		case kChapayevButton:
-			g_vm->getQSystem()->setChapayev();
+			g_vm->getQSystem()->setCursorAction(kActionObjUseChapayev);
 			break;
 		case kPanelButton:
 			g_vm->getQSystem()->togglePanelInterface();

@@ -60,6 +60,7 @@ namespace {
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
 #define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB1)
+#define EOB_SPANISH_FLAGS FLAGS(false, false, false, true, false, false, false, false, false, Kyra::GI_EOB1)
 #define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_EOB1)
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
@@ -1705,6 +1706,22 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_MIDIPCJR, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
 		EOB_FLAGS
+	},
+	
+	{	// Spanish version
+		{
+			"eob",
+			0,
+			{
+				{ "EOBDATA3.PAK", 0, "a7800a8ea8251f678530eb952de7b815", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_MIDIPCJR, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB_SPANISH_FLAGS
 	},
 
 	{

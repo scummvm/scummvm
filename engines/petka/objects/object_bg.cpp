@@ -45,7 +45,7 @@ QObjectBG::QObjectBG() {
 	_y = 0;
 	_z = 0;
 
-	_showMap = 1;
+	_showMap = true;
 
 	_fxId = 0;
 	_musicId = 0;
@@ -64,10 +64,10 @@ void QObjectBG::processMessage(const QMessage &msg) {
 		_fxId = msg.arg1;
 		break;
 	case kMap:
-		_showMap = msg.arg1 != 0;
+		_showMap = (msg.arg1 != 0);
 		break;
 	case kNoMap:
-		_showMap = 0;
+		_showMap = false;
 		break;
 	case kGoTo:
 		goTo();
@@ -89,7 +89,9 @@ void QObjectBG::draw() {
 	if (s) {
 		const Common::List<Common::Rect> &dirty = g_vm->videoSystem()->rects();
 		for (Common::List<Common::Rect>::const_iterator it = dirty.begin(); it != dirty.end(); ++it) {
-			g_vm->videoSystem()->blitFrom(*s, *it, Common::Point(it->left, it->top));
+			Common::Rect srcRect = *it;
+			srcRect.translate(g_vm->getQSystem()->_xOffset, 0);
+			g_vm->videoSystem()->blitFrom(*s, srcRect, Common::Point(it->left, it->top));
 		}
 	}
 }
@@ -97,8 +99,8 @@ void QObjectBG::draw() {
 void QObjectBG::goTo() {
 	QSystem *sys = g_vm->getQSystem();
 
-	sys->_petka->stopWalk();
-	sys->_chapayev->stopWalk();
+	sys->getPetka()->stopWalk();
+	sys->getChapay()->stopWalk();
 
 	int oldRoomId = sys->_mainInterface->_roomId;
 	sys->_mainInterface->loadRoom(_id, false);
@@ -116,29 +118,46 @@ void QObjectBG::goTo() {
 		return;
 	}
 
-	Common::Array<QObjectBG> &bgs = sys->_bgs;
+	/*Common::Array<QObjectBG> &bgs = sys->_bgs;
 	for (uint i = 0; i < bgs.size(); ++i) {
 		if (bgsIni.getKey(bgs[i]._name, _name, entranceName)) {
 			setEntrance(entranceName);
 			break;
 		}
-	}
+	}*/
 }
 
 void QObjectBG::setEntrance(const Common::String &name) {
 	QSystem *sys = g_vm->getQSystem();
 	QMessageObject *entrance = sys->findObject(name);
 	if (entrance) {
-		sys->_petka->_z = 0;
-		sys->_chapayev->_z = 0;
+		sys->getPetka()->_z = 0;
+		sys->getChapay()->_z = 0;
 
-		sys->_petka->setPos(entrance->_walkX, entrance->_walkY);
-		sys->_chapayev->setPos(entrance->_walkX, entrance->_walkY - 2);
+		sys->getPetka()->setPos(Common::Point(entrance->_walkX, entrance->_walkY), false);
+		sys->getChapay()->setPos(Common::Point(entrance->_walkX, entrance->_walkY - 2), false);
 
 		sys->_xOffset = CLIP<int32>(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
 		sys->_field6C = sys->_xOffset;
 	}
 	g_vm->videoSystem()->makeAllDirty();
+}
+
+void QObjectBG::readInisData(Common::INIFile &names, Common::INIFile &cast, Common::INIFile *bgs) {
+	if (bgs) {
+		Common::String perspective;
+		bgs->getKey(_name, "Settings", perspective);
+		if (!perspective.empty()) {
+			sscanf(perspective.c_str(), "%lf %lf %d %d %lf", &_persp.f0, &_persp.k, &_persp.y0, &_persp.y1, &_persp.f1);
+		} else {
+			_persp.f0 = 1.0;
+			_persp.f1 = 1.0;
+			_persp.k = 0.0;
+			_persp.y0 = 0;
+			_persp.y1 = 480;
+		}
+	}
+	QMessageObject::readInisData(names, cast, bgs);
 }
 
 }

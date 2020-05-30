@@ -57,6 +57,7 @@ private:
 
 	struct TitleScreenConfig {
 		const Common::Platform platform;
+		const Common::Language lang;
 		const char bmpFile[12];
 		const RenderModePalFile *palFiles;
 		const int pc98PaletteID;
@@ -68,7 +69,7 @@ private:
 	};
 
 	static const RenderModePalFile _renderModePalFiles[3];
-	static const TitleScreenConfig _titleConfig[3];
+	static const TitleScreenConfig _titleConfig[4];
 	const TitleScreenConfig *_ttlCfg;
 
 	// Main loop
