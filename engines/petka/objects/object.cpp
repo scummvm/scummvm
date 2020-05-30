@@ -64,7 +64,7 @@ QMessageObject::QMessageObject() {
 	_isActive = true;
 	_updateZ = false;
 	_holdMessages = false;
-	_notLoopedSound = true;
+	_loopedSound = false;
 	_startSound = false;
 	_reaction = nullptr;
 }
@@ -329,38 +329,27 @@ void QMessageObject::processReaction(QReaction *r, const QMessage *msg) {
 void QMessageObject::play(int id, int type) {
 	if (g_vm->getQSystem()->_totalInit) {
 		_resourceId = id;
-	} else {
-		if (!_notLoopedSound || g_vm->isDemo()) {
-			removeSound();
-		}
-
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-		if (flc) {
-			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
-		}
-
-		_resourceId = id;
-
-		loadSound();
-
-		flc = g_vm->resMgr()->loadFlic(id);
-		flc->setFrame(1);
-		_time = 0;
+		_loopedSound = (type == 5);
+		return;
 	}
-	switch (type) {
-	case 1: {
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-		flc->setFrame(1);
-		g_vm->videoSystem()->makeAllDirty();
-		break;
+
+	if (_loopedSound || g_vm->isDemo()) {
+		removeSound();
 	}
-	case 2:
-		g_vm->resMgr()->loadFlic(_resourceId);
-		break;
-	default:
-		break;
+
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	if (flc) {
+		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 	}
-	_notLoopedSound = type != 5;
+
+	_resourceId = id;
+
+	loadSound();
+
+	flc = g_vm->resMgr()->loadFlic(id);
+	flc->setFrame(1);
+	_time = 0;
+	_loopedSound = (type == 5);
 }
 
 void QMessageObject::loadSound() {
@@ -402,6 +391,11 @@ void QMessageObject::readScriptData(Common::SeekableReadStream &stream) {
 			msg->arg1 = stream.readUint16LE();
 			msg->arg2 = stream.readUint16LE();
 			msg->arg3 = stream.readUint16LE();
+			if (msg->opcode == kPlay || msg->opcode == kSet) {
+				if (msg->arg2 != 1 && msg->arg2 != -1 && msg->arg2 != 5) {
+					debug("MSG PLAY 2 5");
+				}
+			}
 		}
 	}
 }
@@ -457,8 +451,8 @@ void QObject::draw() {
 	}
 	if (_animate && _startSound) {
 		if (_sound) {
-			_sound->play(!_notLoopedSound);
-			if (!_notLoopedSound) {
+			_sound->play(_loopedSound);
+			if (_loopedSound) {
 				_sound = nullptr;
 			}
 		}

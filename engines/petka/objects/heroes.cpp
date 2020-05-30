@@ -133,8 +133,8 @@ void QObjectPetka::draw() {
 
 	if (_animate && _startSound) {
 		if (_sound) {
-			_sound->play(!_notLoopedSound);
-			if (!_notLoopedSound) {
+			_sound->play(_loopedSound);
+			if (_loopedSound) {
 				_sound = nullptr;
 			}
 		}

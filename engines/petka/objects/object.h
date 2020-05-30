@@ -85,7 +85,7 @@ public:
 	bool _holdMessages;
 	bool _isActive;
 	bool _startSound;
-	bool _notLoopedSound;
+	bool _loopedSound;
 	Sound *_sound;
 	int8 _status;
 	uint16 _id;
