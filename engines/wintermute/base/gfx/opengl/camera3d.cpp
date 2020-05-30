@@ -63,14 +63,14 @@ bool Camera3D::loadFrom3DS(byte **buffer) {
 
 	_position.x() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
-	_position.z() = *reinterpret_cast<float *>(*buffer);
+	_position.z() = -*reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
 	_position.y() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
 
 	_target.x() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
-	_target.z() = *reinterpret_cast<float *>(*buffer);
+	_target.z() = -*reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
 	_target.y() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;

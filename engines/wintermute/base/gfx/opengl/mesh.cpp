@@ -89,7 +89,7 @@ bool Wintermute::Mesh::loadFrom3DS(byte** buffer) {
 			for (int i = 0; i < _vertexCount; ++i) {
 				*reinterpret_cast<float *>(_vertexData + 4 * 3 * i) = *reinterpret_cast<float *>(*buffer);
 				*buffer += 4;
-				*reinterpret_cast<float *>(_vertexData + 4 * 3 * i + 8) = *reinterpret_cast<float *>(*buffer);
+				*reinterpret_cast<float *>(_vertexData + 4 * 3 * i + 8) = -*reinterpret_cast<float *>(*buffer);
 				*buffer += 4;
 				*reinterpret_cast<float *>(_vertexData + 4 * 3 * i + 4) = *reinterpret_cast<float *>(*buffer);
 				*buffer += 4;
