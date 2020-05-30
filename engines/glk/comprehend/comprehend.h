@@ -55,8 +55,8 @@ class Comprehend : public GlkAPI {
 private:
 	int _saveSlot;		 ///< Save slot when loading savegame from launcher
 public:
-	GraphicsWindow *_graphicsWindow;
-	TextBufferWindow *_textBufferWindow;
+	GraphicsWindow *_topWindow;
+	TextBufferWindow *_bottomWindow;
 private:
 	/**
 	 * Initialization code
@@ -103,7 +103,15 @@ public:
 		return Common::kWritingFailed;
 	}
 
+	/**
+	 * Print string to the buffer window
+	 */
 	void print(const char *fmt, ...);
+
+	/**
+	 * Read an input line
+	 */
+	void readLine(char *buffer, size_t maxLen);
 };
 
 extern Comprehend *g_comprehend;

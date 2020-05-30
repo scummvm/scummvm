@@ -158,29 +158,12 @@ void TransylvaniaGame::handle_special_opcode(uint8 operand)
 	}
 }
 
-static void read_string(char *buffer, size_t size)
-{
-#ifdef TODO
-	char *p;
-
-	printf("> ");
-	fgets(buffer, size, stdin);
-
-	/* Remove trailing newline */
-	p = strchr(buffer, '\n');
-	if (p)
-		*p = '\0';
-#else
-	error("TODO");
-#endif
-}
-
 void TransylvaniaGame::before_game() {
 	char buffer[128];
 
-	/* Welcome to Transylvania - sign your name */
+	// Welcome to Transylvania - sign your name
 	console_println(this, _strings.strings[0x20]);
-	read_string(buffer, sizeof(buffer));
+	g_comprehend->readLine(buffer, sizeof(buffer));
 
 	/*
 	 * Transylvania uses replace word 0 as the player's name, the game
@@ -195,9 +178,9 @@ void TransylvaniaGame::before_game() {
 			 strlen(_replaceWords[0]),
 			 "%s", buffer);
 
-	/* And your next of kin - This isn't store by the game */
+	// And your next of kin - This isn't stored by the game
 	console_println(this, _strings.strings[0x21]);
-	read_string(buffer, sizeof(buffer));
+	g_comprehend->readLine(buffer, sizeof(buffer));
 }
 
 } // namespace Comprehend

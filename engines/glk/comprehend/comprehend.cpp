@@ -163,16 +163,16 @@ void Comprehend::runGame() {
 }
 
 void Comprehend::initialize() {
-	_textBufferWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	_graphicsWindow = (GraphicsWindow *)glk_window_open(
-	    _textBufferWindow, winmethod_Above | winmethod_Proportional,
-	    160, wintype_Graphics, 0);
-	glk_set_window(_textBufferWindow);
+	_topWindow = (GraphicsWindow *)glk_window_open(0, 0, 0, wintype_Graphics, 1);
+	_bottomWindow = (TextBufferWindow *)glk_window_open(
+	    _topWindow, winmethod_Below | winmethod_Fixed,
+	    80, wintype_TextBuffer, 0);
+	glk_set_window(_bottomWindow);
 }
 
 void Comprehend::deinitialize() {
-	glk_window_close(_graphicsWindow);
-	glk_window_close(_textBufferWindow);
+	glk_window_close(_topWindow);
+	glk_window_close(_bottomWindow);
 }
 
 ComprehendGame *Comprehend::createGame() {
@@ -194,9 +194,27 @@ void Comprehend::print(const char *fmt, ...) {
 	Common::String msg = Common::String::vformat(fmt, argp);
 	va_end(argp);
 
-	glk_put_string_stream(glk_window_get_stream(_textBufferWindow),
+	glk_put_string_stream(glk_window_get_stream(_bottomWindow),
 		msg.c_str());
 }
+
+void Comprehend::readLine(char *buffer, size_t maxLen) {
+	event_t ev;
+
+	glk_request_line_event(_bottomWindow, buffer, maxLen - 1, 0);
+
+	for (;;) {
+		glk_select(&ev);
+		if (ev.type == evtype_Quit) {
+			glk_cancel_line_event(_bottomWindow, &ev);
+			return;
+		} else if (ev.type == evtype_LineInput)
+			break;
+	}
+
+	buffer[ev.val1] = 0;
+}
+
 
 } // namespace Comprehend
 } // namespace Glk
