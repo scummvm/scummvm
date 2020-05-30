@@ -341,11 +341,11 @@ void QSystem::onEvent(const Common::Event &event) {
 			break;
 		case Common::KEYCODE_3:
 		case Common::KEYCODE_g:
-			setCursorAction(kActionUse);
+			setCursorAction(kActionTake);
 			break;
 		case Common::KEYCODE_4:
 		case Common::KEYCODE_u:
-			setCursorAction(kActionTake);
+			setCursorAction(kActionUse);
 			break;
 		case Common::KEYCODE_5:
 		case Common::KEYCODE_t:
