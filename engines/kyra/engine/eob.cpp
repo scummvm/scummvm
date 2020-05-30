@@ -61,8 +61,14 @@ Common::Error EoBEngine::init() {
 	initStaticResource();
 
 	for (int i = 0; i < ARRAYSIZE(_titleConfig); ++i) {
-		if (_flags.platform == _titleConfig[i].platform)
+		if (_flags.platform == _titleConfig[i].platform && _flags.lang == _titleConfig[i].lang)
 			_ttlCfg = &_titleConfig[i];
+	}
+	if (!_ttlCfg) {
+		for (int i = 0; i < ARRAYSIZE(_titleConfig); ++i) {
+			if (_flags.platform == _titleConfig[i].platform && _titleConfig[i].lang == Common::UNK_LANG)
+				_ttlCfg = &_titleConfig[i];
+		}
 	}
 	assert(_ttlCfg);
 
