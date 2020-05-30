@@ -669,7 +669,7 @@ void GuiManager::setLanguageRTL() {
 	}
 #ifdef USE_TRANSLATION
 	Common::String language = TransMan.getCurrentLanguage();
-	if (language.equals("he") || language.equals("C")) {
+	if (language.equals("C") && false) {		// GUI TODO: Remove false condition to enable RTL
 		_useRTL = true;
 		return;
 	}
