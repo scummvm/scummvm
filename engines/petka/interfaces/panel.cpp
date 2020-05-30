@@ -122,7 +122,7 @@ void InterfacePanel::start(int id) {
 void InterfacePanel::onLeftButtonDown(Common::Point p) {
 	int i = 0;
 	for (i = _objs.size() - 1; i > 0; --i) {
-		if (_objs[i]->isInPoint(p.x, p.y)) {
+		if (_objs[i]->isInPoint(p)) {
 			break;
 		}
 	}
@@ -188,7 +188,7 @@ void InterfacePanel::onMouseMove(Common::Point p) {
 	for (uint i = _objs.size() - 1; i > 0; --i) {
 		QMessageObject *obj = (QMessageObject *)_objs[i];
 		byte frame = 1;
-		if (!found && obj->isInPoint(p.x, p.y)) {
+		if (!found && obj->isInPoint(p)) {
 			found = true;
 			if ((i >= kNewGameButtonIndex && i <= kSaveButtonIndex) || (i >= kDecSpeechButtonIndex && i <= kIncSpeedButtonIndex)) {
 				frame = 2;
@@ -230,7 +230,7 @@ void InterfacePanel::onMouseMove(Common::Point p) {
 	}
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_isShown = 1;
-	cursor->setCursorPos(p.x, p.y, 0);
+	cursor->setPos(p, false);
 }
 
 void InterfacePanel::updateSliders() {

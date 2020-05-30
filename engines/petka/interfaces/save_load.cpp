@@ -79,7 +79,7 @@ void InterfaceSaveLoad::onRightButtonDown(Common::Point p) {
 void InterfaceSaveLoad::onMouseMove(Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = findSaveLoadRectIndex(p) != -1 || _nextPageRect.contains(p) || _prevPageRect.contains(p);
-	cursor->setCursorPos(p.x, p.y, 0);
+	cursor->setPos(p, false);
 }
 
 int InterfaceSaveLoad::findSaveLoadRectIndex(Common::Point p) {

@@ -71,8 +71,8 @@ void InterfaceMap::stop() {
 
 void InterfaceMap::onLeftButtonDown(Common::Point p) {
 	for (int i = _objs.size() - 1; i >= 0; --i) {
-		if (_objs[i]->isInPoint(p.x, p.y)) {
-			_objs[i]->onClick(p.x, p.y);
+		if (_objs[i]->isInPoint(p)) {
+			_objs[i]->onClick(p);
 			break;
 		}
 	}
@@ -89,7 +89,7 @@ void InterfaceMap::onMouseMove(Common::Point p) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			if (flc) {
 				bool show = false;
-				if (!found && obj->isInPoint(p.x, p.y)) {
+				if (!found && obj->isInPoint(p)) {
 					found = true;
 					show = true;
 					_objUnderCursor = obj;
@@ -103,7 +103,7 @@ void InterfaceMap::onMouseMove(Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->_isShown = true;
-	cursor->setCursorPos(p.x, p.y, 0);
+	cursor->setPos(p, false);
 
 	if (_objUnderCursor != oldObj && _objUnderCursor) {
 		Graphics::PixelFormat fmt = g_system->getScreenFormat();

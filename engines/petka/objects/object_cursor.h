@@ -41,11 +41,11 @@ class QObjectCursor : public QMessageObject {
 public:
 	QObjectCursor();
 
-	void setCursorPos(int x, int y, bool center);
+	void setPos(Common::Point p, bool center) override;
 	void update(int time) override;
 	void draw() override;
 	void show(bool v) override;
-	bool isInPoint(int x, int y) override { return 0; }
+	bool isInPoint(Common::Point p) override { return false; }
 	void setAction(int actionType);
 	void setInvItem(QMessageObject *item, uint16 resourceId);
 	void returnInvItem();

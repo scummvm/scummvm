@@ -85,7 +85,7 @@ void QObjectCursor::update(int time) {
 	}
 }
 
-void QObjectCursor::setCursorPos(int x, int y, bool center) {
+void QObjectCursor::setPos(Common::Point p, bool center) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (!_animate) {
 		flc->setFrame(1);
@@ -95,12 +95,12 @@ void QObjectCursor::setCursorPos(int x, int y, bool center) {
 
 	if (center) {
 		Common::Rect bounds = flc->getBounds();
-		x = x - bounds.left - bounds.width() / 2;
-		y = y - bounds.top - bounds.height() / 2;
+		p.x = p.x - bounds.left - bounds.width() / 2;
+		p.y = p.y - bounds.top - bounds.height() / 2;
 	}
 
-	_x = x;
-	_y = y;
+	_x = p.x;
+	_y = p.y;
 
 	g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), flc->getBounds());
 }

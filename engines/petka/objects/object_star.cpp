@@ -52,12 +52,12 @@ QObjectStar::QObjectStar() {
 	_buttonRects[5] = Common::Rect(11, 79, 40, 118);
 }
 
-bool QObjectStar::isInPoint(int x, int y) {
+bool QObjectStar::isInPoint(Common::Point p) {
 	return _isShown;
 }
 
-void QObjectStar::onMouseMove(int x, int y) {
-	uint frame = (findButtonIndex(x - _x, y - _y) + 1) % 7 + 1;
+void QObjectStar::onMouseMove(Common::Point p) {
+	uint frame = (findButtonIndex(p.x - _x, p.y - _y) + 1) % 7 + 1;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getCurFrame() + 1 != frame) {
 		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
@@ -65,8 +65,8 @@ void QObjectStar::onMouseMove(int x, int y) {
 	}
 }
 
-void QObjectStar::onClick(int x, int y) {
-	uint button = findButtonIndex(x - _x, y - _y);
+void QObjectStar::onClick(Common::Point p) {
+	uint button = findButtonIndex(p.x - _x, p.y - _y);
 	if (button == kCaseButtonIndex) {
 		g_vm->getQSystem()->getCase()->show(1);
 	} else if (button < ARRAYSIZE(_buttonRects)) {
@@ -85,7 +85,7 @@ uint QObjectStar::findButtonIndex(int16 x, int16 y) const {
 	return i;
 }
 
-void QObjectStar::setPos(Common::Point p) {
+void QObjectStar::setPos(Common::Point p, bool) {
 	if (!_isShown) {
 		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 		p.x = MAX<int16>(p.x - flc->getWidth() / 2, 0);

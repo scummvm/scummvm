@@ -156,8 +156,8 @@ void InterfaceMain::onLeftButtonDown(Common::Point p) {
 	}
 
 	for (int i = _objs.size() - 1; i >= 0; --i) {
-		if (_objs[i]->isInPoint(p.x, p.y)) {
-			_objs[i]->onClick(p.x, p.y);
+		if (_objs[i]->isInPoint(p)) {
+			_objs[i]->onClick(p);
 			return;
 		}
 	}
@@ -198,7 +198,7 @@ void InterfaceMain::onRightButtonDown(Common::Point p) {
 	if (objCase->_isShown && cursor->_actionType == kActionObjUse) {
 		cursor->setAction(kActionTake);
 	} else {
-		star->setPos(p);
+		star->setPos(p, false);
 		star->show(star->_isShown == 0);
 	}
 }
@@ -210,15 +210,15 @@ void InterfaceMain::onMouseMove(Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	if (cursor->_isShown) {
 		for (int i = _objs.size() - 1; i >= 0; --i) {
-			if (_objs[i]->isInPoint(p.x, p.y)) {
-				_objs[i]->onMouseMove(p.x, p.y);
+			if (_objs[i]->isInPoint(p)) {
+				_objs[i]->onMouseMove(p);
 				break;
 			}
 		}
 	}
 
 	cursor->_animate = _objUnderCursor != nullptr;
-	cursor->setCursorPos(p.x, p.y, true);
+	cursor->setPos(p, true);
 
 	if (prevObj != _objUnderCursor && _objUnderCursor && !_dialog.isActive()) {
 		Graphics::PixelFormat fmt = g_system->getScreenFormat();

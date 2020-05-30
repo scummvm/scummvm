@@ -134,8 +134,8 @@ void QObjectBG::setEntrance(const Common::String &name) {
 		sys->getPetka()->_z = 0;
 		sys->getChapay()->_z = 0;
 
-		sys->getPetka()->setPos(entrance->_walkX, entrance->_walkY);
-		sys->getChapay()->setPos(entrance->_walkX, entrance->_walkY - 2);
+		sys->getPetka()->setPos(Common::Point(entrance->_walkX, entrance->_walkY), false);
+		sys->getChapay()->setPos(Common::Point(entrance->_walkX, entrance->_walkY - 2), false);
 
 		sys->_xOffset = CLIP<int32>(entrance->_walkX - 320, 0, sys->_sceneWidth - 640);
 		sys->_field6C = sys->_xOffset;

@@ -136,13 +136,13 @@ void QObjectCase::show(bool v) {
 	}
 }
 
-bool QObjectCase::isInPoint(int x, int y) {
+bool QObjectCase::isInPoint(Common::Point p) {
 	return _isShown;
 }
 
-void QObjectCase::onMouseMove(int x, int y) {
+void QObjectCase::onMouseMove(Common::Point p) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(kExitCaseResourceId);
-	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x, y - _y) != 0) {
+	if (*(const byte *)flc->getCurrentFrame()->getBasePtr(p.x - _x, p.y - _y) != 0) {
 		if (_clickedObjIndex != kCloseButton && _clickedObjIndex != kInvalidButton) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 			flc->setFrame(1);
@@ -153,7 +153,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 		uint i;
 		for (i = 0; i < kButtonsCount; ++i) {
 			flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + i);
-			if (flc->getMskRects()[0].contains(Common::Point(x - _x, y))) {
+			if (flc->getMskRects()[0].contains(Common::Point(p.x - _x, p.y))) {
 				break;
 			}
 		}
@@ -178,7 +178,7 @@ void QObjectCase::onMouseMove(int x, int y) {
 	}
 }
 
-void QObjectCase::onClick(int x, int y) {
+void QObjectCase::onClick(Common::Point p) {
 	switch (_clickedObjIndex) {
 		case kChapayevButton:
 			g_vm->getQSystem()->setCursorAction(kActionObjUseChapayev);

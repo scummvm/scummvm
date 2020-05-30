@@ -114,7 +114,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 			break;
 		case kSetPos:
-			setPos(msg.arg1, msg.arg2);
+			setPos(Common::Point(msg.arg1, msg.arg2), false);
 			break;
 		case kSet:
 		case kPlay:
@@ -179,12 +179,20 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kPassive:
 			_isActive = false;
 			break;
-		case kJump:
-			g_vm->getQSystem()->getPetka()->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+		case kJump: {
+			Common::Point p;
+			p.x = (msg.arg1 == 0xffff ? _walkX : msg.arg1);
+			p.y = (msg.arg2 == -1 ? _walkY : msg.arg2);
+			g_vm->getQSystem()->getPetka()->setPos(p, false);
 			break;
-		case kJumpVich:
-			g_vm->getQSystem()->getPetka()->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+		}
+		case kJumpVich: {
+			Common::Point p;
+			p.x = (msg.arg1 == 0xffff ? _walkX : msg.arg1);
+			p.y = (msg.arg2 == -1 ? _walkY : msg.arg2);
+			g_vm->getQSystem()->getPetka()->setPos(p, false);
 			break;
+		}
 		case kWalk:
 			if (!reacted) {
 				if (_walkX == -1) {
@@ -419,22 +427,22 @@ QObject::QObject() {
 	_walkY = -1;
 }
 
-bool QObject::isInPoint(int x, int y) {
+bool QObject::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc) {
-		if (!flc->getBounds().contains(x - _x, y - _y))
+		if (!flc->getBounds().contains(p.x - _x, p.y - _y))
 			return false;
 		const Graphics::Surface *s = flc->getCurrentFrame();
 		if (s->format.bytesPerPixel == 1) {
-			byte index = *(const byte *) flc->getCurrentFrame()->getBasePtr(x - _x - flc->getPos().x,
-																			y - _y - flc->getPos().y);
+			byte index = *(const byte *) flc->getCurrentFrame()->getBasePtr(p.x - _x - flc->getPos().x,
+																			p.y - _y - flc->getPos().y);
 			const byte *pal = flc->getPalette();
 			return (pal[0] != pal[index * 3] || pal[1] != pal[index * 3 + 1] || pal[2] != pal[index * 3 + 2]);
 		}
 		if (s->format.bytesPerPixel == 2)
-			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(x - _x - flc->getPos().x, y - _y - flc->getPos().y) != flc->getTransColor(s->format);
+			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(p.x - _x - flc->getPos().x, p.y - _y - flc->getPos().y) != flc->getTransColor(s->format);
 	}
 	return false;
 }
@@ -526,24 +534,24 @@ void QObject::update(int time) {
 	}
 }
 
-void QObject::setPos(int x, int y) {
+void QObject::setPos(Common::Point p, bool) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyMskRects(Common::Point(_x, _y), *flc);
-		g_vm->videoSystem()->addDirtyMskRects(Common::Point(x, y), *flc);
-		_x = x;
-		_y = y;
+		g_vm->videoSystem()->addDirtyMskRects(p, *flc);
+		_x = p.x;
+		_y = p.y;
 	}
 }
 
-void QObject::onClick(int x, int y) {
+void QObject::onClick(Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	switch (cursor->_actionType) {
 	case kActionLook:
 		g_vm->getQSystem()->addMessage(_id, kLook, 0, 0, 0, 0, this);
 		break;
 	case kActionWalk:
-		g_vm->getQSystem()->addMessage(_id, kWalk, x, y, 0, 0, this);
+		g_vm->getQSystem()->addMessage(_id, kWalk, p.x, p.y, 0, 0, this);
 		break;
 	case kActionUse:
 		g_vm->getQSystem()->addMessage(_id, kUse, 0, 0, 0, 0, this);
@@ -555,7 +563,7 @@ void QObject::onClick(int x, int y) {
 		g_vm->getQSystem()->addMessage(_id, kTalk, 0, 0, 0, 0, this);
 		break;
 	case kActionObjUseChapayev:
-		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->getChapay());
+		g_vm->getQSystem()->addMessage(_id, kObjectUse, p.x, p.y, 0, 0, g_vm->getQSystem()->getChapay());
 		break;
 	case kActionObjUse:
 		g_vm->getQSystem()->addMessage(_id, kObjectUse, 0, 0, 0, 0, cursor->_invObj);
@@ -565,7 +573,7 @@ void QObject::onClick(int x, int y) {
 	}
 }
 
-void QObject::onMouseMove(int x, int y) {
+void QObject::onMouseMove(Common::Point p) {
 	g_vm->getQSystem()->_mainInterface->_objUnderCursor = this;
 }
 

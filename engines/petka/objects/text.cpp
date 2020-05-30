@@ -119,7 +119,7 @@ void QTextPhrase::update(int time) {
 	}
 }
 
-void QTextPhrase::onClick(int x, int y) {
+void QTextPhrase::onClick(Common::Point p) {
 	DialogInterface &dialog = g_vm->getQSystem()->_mainInterface->_dialog;
 	dialog.next(-1);
 }
@@ -147,7 +147,7 @@ QTextDescription::QTextDescription(const Common::U32String &desc, uint32 frame) 
 	font->drawString(s, desc, textArea.left, textArea.top, textArea.width(), 0);
 }
 
-void QTextDescription::onClick(int x, int y) {
+void QTextDescription::onClick(Common::Point p) {
 	g_vm->getQSystem()->_mainInterface->removeTextDescription();
 }
 
@@ -187,8 +187,9 @@ QTextChoice::QTextChoice(const Common::Array<Common::U32String> &choices, uint16
 	}
 }
 
-void QTextChoice::onMouseMove(int x, int y) {
-	Common::Point p(x -_rect.left, y - _rect.top);
+void QTextChoice::onMouseMove(Common::Point p) {
+	p.x = p.x - _rect.left;
+	p.y = p.y - _rect.top;
 	uint newChoice;
 	for (newChoice = 0; newChoice < _rects.size(); ++newChoice) {
 		if (_rects[newChoice].contains(p)) {
@@ -212,7 +213,7 @@ void QTextChoice::onMouseMove(int x, int y) {
 	}
 }
 
-void QTextChoice::onClick(int x, int y) {
+void QTextChoice::onClick(Common::Point p) {
 	if (_activeChoice < _choices.size()) {
 		g_vm->getQSystem()->_mainInterface->_dialog.next(_activeChoice);
 	}

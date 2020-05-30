@@ -103,7 +103,7 @@ void InterfaceStartup::onMouseMove(Common::Point p) {
 			FlicDecoder *flc = g_vm->resMgr()->loadFlic(obj->_resourceId);
 			if (flc) {
 				bool show = false;
-				if (!found && obj->isInPoint(p.x, p.y)) {
+				if (!found && obj->isInPoint(p)) {
 					found = true;
 					show = true;
 					_objUnderCursor = obj;
@@ -117,7 +117,7 @@ void InterfaceStartup::onMouseMove(Common::Point p) {
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	cursor->_animate = _objUnderCursor != nullptr;
 	cursor->_isShown = true;
-	cursor->setCursorPos(p.x, p.y, 0);
+	cursor->setPos(p, false);
 }
 
 void InterfaceStartup::stop() {

@@ -81,7 +81,7 @@ void InterfaceSequence::stop() {
 void InterfaceSequence::onLeftButtonDown(Common::Point p) {
 	QVisibleObject *obj = findObject(-2);
 	if (obj) {
-		obj->onClick(p.x, p.y);
+		obj->onClick(p);
 	}
 }
 

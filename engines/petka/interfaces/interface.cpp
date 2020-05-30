@@ -66,7 +66,7 @@ void Interface::initCursor(int id, bool show, bool animate) {
 	cursor->_isShown = show;
 	cursor->_animate = animate;
 	cursor->_actionType = kActionLook;
-	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+	cursor->setPos(Common::Point(cursor->_x, cursor->_y), false);
 }
 
 void Interface::removeTexts() {
