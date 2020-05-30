@@ -275,7 +275,7 @@ static const char *const kEoB1RipItemStringsDOSSpanish[3] = {
 static const StringListProvider kEoB1RipItemStringsDOSSpanishProvider = { ARRAYSIZE(kEoB1RipItemStringsDOSSpanish), kEoB1RipItemStringsDOSSpanish };
 
 static const char *const kEoB1CursedStringDOSSpanish[1] = {
-	"Maldito %s %d"
+	"%d Maldice a %s"
 };
 
 static const StringListProvider kEoB1CursedStringDOSSpanishProvider = { ARRAYSIZE(kEoB1CursedStringDOSSpanish), kEoB1CursedStringDOSSpanish };
@@ -285,13 +285,13 @@ static const char *const kEoB1MagicObjectStringsDOSSpanish[5] = {
 	"Pergamino de Clerigo",
 	"Anillo",
 	"Pocion",
-	"Vara"
+	"Varita"
 };
 
 static const StringListProvider kEoB1MagicObjectStringsDOSSpanishProvider = { ARRAYSIZE(kEoB1MagicObjectStringsDOSSpanish), kEoB1MagicObjectStringsDOSSpanish };
 
 static const char *const kEoB1MagicObjectString5DOSSpanish[1] = {
-	"Varita"
+	"Vara"
 };
 
 static const StringListProvider kEoB1MagicObjectString5DOSSpanishProvider = { ARRAYSIZE(kEoB1MagicObjectString5DOSSpanish), kEoB1MagicObjectString5DOSSpanish };
@@ -584,7 +584,7 @@ static const char *const kEoB1CharGuiStringsSt1DOSSpanish[6] = {
 	"Cambiando",
 	"MUERTO",
 	"INCONSCIENTE",
-	"RELANTIZADO",
+	"RALENTIZADO",
 	"ENVENENADO",
 	"PARALIZADO"
 };
