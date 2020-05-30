@@ -305,15 +305,24 @@ QObjectStar *QSystem::getStar() const {
 
 void QSystem::onEvent(const Common::Event &event) {
 	switch (event.type) {
-	case Common::EVENT_MOUSEMOVE:
-		_currInterface->onMouseMove(event.mouse);
+	case Common::EVENT_MOUSEMOVE: {
+		Common::Point p = event.mouse;
+		p.x += _xOffset;
+		_currInterface->onMouseMove(p);
 		break;
-	case Common::EVENT_LBUTTONDOWN:
-		_currInterface->onLeftButtonDown(event.mouse);
+	}
+	case Common::EVENT_LBUTTONDOWN: {
+		Common::Point p = event.mouse;
+		p.x += _xOffset;
+		_currInterface->onLeftButtonDown(p);
 		break;
-	case Common::EVENT_RBUTTONDOWN:
-		_currInterface->onRightButtonDown(event.mouse);
+	}
+	case Common::EVENT_RBUTTONDOWN: {
+		Common::Point p = event.mouse;
+		p.x += _xOffset;
+		_currInterface->onRightButtonDown(p);
 		break;
+	}
 	case Common::EVENT_KEYDOWN:
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_1:
