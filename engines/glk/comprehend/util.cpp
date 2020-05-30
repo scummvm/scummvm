@@ -64,7 +64,7 @@ void debug_printf(unsigned flags, const char *fmt, ...) {
 
 	if (debug_flags & flags) {
 		va_start(args, fmt);
-		Common::String msg = Common::String(fmt, args);
+		Common::String msg = Common::String::vformat(fmt, args);
 		va_end(args);
 
 		debug(1, "%s", msg.c_str());

@@ -890,7 +890,7 @@ static void eval_instruction(ComprehendGame *game,
 			index += 256;
 		if (index >= game->_nr_functions)
 			fatal_error("Bad function %.4x >= %.4x\n",
-			            index, game->_nr_functions);
+			            index, (uint)game->_nr_functions);
 
 		debug_printf(DEBUG_FUNCTIONS,
 		             "Calling subfunction %.4x\n", index);

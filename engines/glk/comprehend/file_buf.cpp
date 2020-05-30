@@ -64,8 +64,8 @@ bool FileBuffer::seek(int32 offset, int whence) {
 uint32 FileBuffer::read(void *dataPtr, uint32 dataSize) {
 	int32 bytesRead = CLIP((int32)dataSize, 0, (int32)_data.size() - _pos);
 	if (bytesRead) {
-		Common::fill(&_readBytes[_pos], &_readBytes[_pos + bytesRead], true);
-		Common::copy(&_data[_pos], &_data[_pos + bytesRead], (byte *)dataPtr);
+		Common::fill(&_readBytes[_pos], &_readBytes[_pos] + bytesRead, true);
+		Common::copy(&_data[_pos], &_data[_pos] + bytesRead, (byte *)dataPtr);
 		_pos += bytesRead;
 	}
 

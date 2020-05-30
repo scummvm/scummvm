@@ -23,6 +23,8 @@
 #ifndef GLK_COMPREHEND_UTIL_H
 #define GLK_COMPREHEND_UTIL_H
 
+#include "common/scummsys.h"
+
 namespace Glk {
 namespace Comprehend {
 

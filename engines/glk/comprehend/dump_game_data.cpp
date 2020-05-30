@@ -172,11 +172,11 @@ static void dump_functions(ComprehendGame *game)
 	Function *func;
 	uint i, j;
 
-	debugN("Functions (%zd entries)\n", game->_nr_functions);
+	debugN("Functions (%u entries)\n", (uint)game->_nr_functions);
 	for (i = 0; i < game->_nr_functions; i++) {
 		func = &game->_functions[i];
 
-		debugN("[%.4x] (%zd instructions)\n", i, func->nr_instructions);
+		debugN("[%.4x] (%u instructions)\n", i, (uint)func->nr_instructions);
 		for (j = 0; j < func->nr_instructions; j++)
 			dump_instruction(game, NULL, &func->instructions[j]);
 		debugN("\n");
@@ -189,7 +189,7 @@ static void dump_action_table(ComprehendGame *game)
 	Word *word;
 	uint i, j;
 
-	debugN("Action table (%zd entries)\n", game->_nr_actions);
+	debugN("Action table (%u entries)\n", (uint)game->_nr_actions);
 	for (i = 0; i < game->_nr_actions; i++) {
 		action = &game->_actions[i];
 
@@ -253,7 +253,7 @@ static void dump_dictionary(ComprehendGame *game)
 	qsort(dictionary, game->_nr_words, sizeof(*words),
 	      word_index_compare);
 
-	debugN("Dictionary (%zd words)\n", game->_nr_words);
+	debugN("Dictionary (%u words)\n", (uint)game->_nr_words);
 	for (i = 0; i < game->_nr_words; i++) {
 		words = &dictionary[i];
 		debugN("  [%.2x] %.2x %s\n", words->_index, words->_type,
@@ -270,7 +270,7 @@ static void dump_word_map(ComprehendGame *game)
 	WordMap *map;
 	uint i, j;
 
-	debugN("Word pairs (%zd entries)\n", game->_nr_word_maps);
+	debugN("Word pairs (%u entries)\n", (uint)game->_nr_word_maps);
 	for (i = 0; i < game->_nr_word_maps; i++) {
 		map = &game->_wordMaps[i];
 
@@ -296,7 +296,7 @@ static void dump_rooms(ComprehendGame *game)
 	uint i;
 
 	/* Room zero acts as the players inventory */
-	debugN("Rooms (%zd entries)\n", game->_nr_rooms);
+	debugN("Rooms (%u entries)\n", (uint)game->_nr_rooms);
 	for (i = 1; i <= game->_nr_rooms; i++) {
 		room = &game->_rooms[i];
 
@@ -322,7 +322,7 @@ static void dump_items(ComprehendGame *game)
 	Item *item;
 	uint i, j;
 
-	debugN("Items (%zd entries)\n", game->_header.nr_items);
+	debugN("Items (%u entries)\n", (uint)game->_header.nr_items);
 	for (i = 0; i < game->_header.nr_items; i++) {
 		item = &game->_items[i];
 
@@ -358,15 +358,15 @@ static void dump_string_table(StringTable *table)
 
 static void dump_game_data_strings(ComprehendGame *game)
 {
-	debugN("Main string table (%zd entries)\n",
-	       game->_strings.nr_strings);
+	debugN("Main string table (%u entries)\n",
+	       (uint)game->_strings.nr_strings);
 	dump_string_table(&game->_strings);
 }
 
 static void dump_extra_strings(ComprehendGame *game)
 {
-	debugN("Extra strings (%zd entries)\n",
-	       game->_strings2.nr_strings);
+	debugN("Extra strings (%u entries)\n",
+	       (uint)game->_strings2.nr_strings);
 	dump_string_table(&game->_strings2);
 }
 
@@ -374,8 +374,8 @@ static void dump_replace_words(ComprehendGame *game)
 {
 	uint i;
 
-	debugN("Replacement words (%zd entries)\n",
-	       game->_nr_replace_words);
+	debugN("Replacement words (%u entries)\n",
+	       (uint)game->_nr_replace_words);
 	for (i = 0; i < game->_nr_replace_words; i++)
 		debugN("  [%.2x] %s\n", i + 1, game->_replaceWords[i]);
 }
@@ -440,7 +440,7 @@ static Dumper dumpers[] = {
 
 void dump_game_data(ComprehendGame *game, unsigned flags)
 {
-	int i;
+	uint i;
 
 	for (i = 0; i < ARRAY_SIZE(dumpers); i++)
 		if (flags & dumpers[i].flag) {

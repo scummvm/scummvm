@@ -260,15 +260,15 @@ void draw_image(ImageData *info, unsigned index)
 	FileBuffer *fb;
 	bool done = false;
 	ImageContext ctx = {
-		0, 0, G_COLOR_BLACK, G_COLOR_BLACK, IMAGE_OP_SHAPE_CIRCLE_LARGE
+		0, 0, G_COLOR_BLACK, G_COLOR_BLACK, IMAGE_OP_SHAPE_CIRCLE_LARGE, 0, 0
 	};
 
 	file_num = index / IMAGES_PER_FILE;
 	fb = &info->fb[file_num];
 
 	if (index >= info->nr_images) {
-		printf("WARNING: Bad image index %.8x (max=%.8zx)\n", index,
-		       info->nr_images);
+		warning("Bad image index %.8x (max=%.8x)\n", index,
+		       (uint)info->nr_images);
 		return;
 	}
 
@@ -309,6 +309,7 @@ static void load_image_file(ImageData *info, const char *filename,
 	int i;
 
 	info->fb[file_num] = FileBuffer(filename);
+	fb = &info->fb[file_num];
 
 	/*
 	 * In earlier versions of Comprehend the first word is 0x1000 and

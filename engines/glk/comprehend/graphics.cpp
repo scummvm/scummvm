@@ -63,7 +63,9 @@ struct GraphicsContext {
 	//	SDL_Surface	*surface;
 };
 
+#ifdef TODO
 static GraphicsContext ctx;
+#endif
 
 unsigned g_set_pen_color(uint8 opcode) {
 	return pen_colors[opcode - IMAGE_OP_PEN_COLOR_A];

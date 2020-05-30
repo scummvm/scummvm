@@ -40,7 +40,7 @@ enum {
 	DIRECTION_DOWN,
 	DIRECTION_IN,
 	DIRECTION_OUT,
-	NR_DIRECTIONS,
+	NR_DIRECTIONS
 };
 
 struct FunctionState {
@@ -96,6 +96,8 @@ struct Word {
 	}
 
 	void clear();
+
+	void load(FileBuffer *fb);
 };
 
 struct WordIndex {
@@ -225,7 +227,7 @@ struct GameInfo {
 
 	struct Item _items[0xff];
 
-	struct Word *_words;
+	Word *_words;
 	size_t _nr_words;
 
 	struct WordMap _wordMaps[0xff];
@@ -337,7 +339,7 @@ enum {
 	OPCODE_CURRENT_IS_OBJECT,
 	OPCODE_DRAW_ROOM,
 	OPCODE_DRAW_OBJECT,
-	OPCODE_WAIT_KEY,
+	OPCODE_WAIT_KEY
 };
 
 /* Game state update flags */
@@ -355,7 +357,7 @@ enum {
 	ACTION_VERB_DIR_NOUN,
 	ACTION_VERB_NOUN_NOUN,
 	ACTION_VERB_NOUN,
-	ACTION_VERB_OPT_NOUN,
+	ACTION_VERB_OPT_NOUN
 };
 
 /* Standard strings (main string table) */

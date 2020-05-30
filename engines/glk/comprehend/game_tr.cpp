@@ -62,7 +62,7 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 
 	_savegameFileFormat = "G%d.MS0";
 	_gameStrings = &tr_strings;
-};
+}
 
 void TransylvaniaGame::update_monster(const TransylvaniaMonster *monster_info) {
 	Item *monster;
