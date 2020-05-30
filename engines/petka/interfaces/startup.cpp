@@ -59,7 +59,7 @@ void InterfaceStartup::start(int id) {
 	Sound *s = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(bg->_musicId), Audio::Mixer::kMusicSoundType);
 	s->play(true);
 
-	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(id);
+	const BGInfo *info = g_vm->getQSystem()->_mainInterface->findBGInfo(bg->_id);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
 		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
 		obj->_z = 1;
