@@ -22,8 +22,8 @@
 
 #include "glk/comprehend/game.h"
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/debugger.h"
 #include "glk/comprehend/dictionary.h"
-#include "glk/comprehend/dump_game_data.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/graphics.h"
 #include "glk/comprehend/opcode_map.h"
@@ -421,17 +421,19 @@ static void eval_instruction(ComprehendGame *game,
 
 	room = get_room(game, game->_currentRoom);
 
-	if (debugging_enabled()) {
+	if (gDebugLevel > 0) {
+		Common::String line;
 		if (!instr->is_command) {
-			printf("? ");
+			line += "? ";
 		} else {
 			if (func_state->test_result)
-				printf("+ ");
+				line += "+ ";
 			else
-				printf("- ");
+				line += "- ";
 		}
 
-		dump_instruction(game, func_state, instr);
+		line += g_debugger->dumpInstruction(game, func_state, instr);
+		debug("%s", line.c_str());
 	}
 
 	if (func_state->or_count)
@@ -998,46 +1000,6 @@ static void skip_non_whitespace(char **p) {
 		(*p)++;
 }
 
-static void handle_debug_command(ComprehendGame *game,
-                                 const char *line) {
-	int i;
-
-	if (strncmp(line, "quit", 4) == 0) {
-		g_comprehend->quitGame();
-
-	} else if (strncmp(line, "debug", 5) == 0) {
-		if (debugging_enabled())
-			debug_disable(DEBUG_ALL);
-		else
-			debug_enable(DEBUG_FUNCTIONS);
-		printf("Debugging %s\n", debugging_enabled() ? "on" : "off");
-
-	} else if (strncmp(line, "dump objects", 12) == 0) {
-		dump_game_data(game, DUMP_ITEMS);
-
-	} else if (strncmp(line, "dump rooms", 10) == 0) {
-		dump_game_data(game, DUMP_ROOMS);
-
-	} else if (strncmp(line, "dump state", 10) == 0) {
-		printf("Current room: %.2x\n", game->_currentRoom);
-		printf("Carry weight %d/%d\n\n",
-		       game->_variables[VAR_INVENTORY_WEIGHT],
-		       game->_variables[VAR_INVENTORY_LIMIT]);
-
-		printf("Flags:\n");
-		for (i = 0; i < ARRAY_SIZE(game->_flags); i++)
-			printf("  [%.2x]: %d\n", i, game->_flags[i]);
-		printf("\n");
-
-		printf("Variables:\n");
-		for (i = 0; i < ARRAY_SIZE(game->_variables); i++)
-			printf("  [%.2x]: %5d (0x%.4x)\n",
-			       i, game->_variables[i],
-			       game->_variables[i]);
-		printf("\n");
-	}
-}
-
 static bool handle_sentence(ComprehendGame *game,
                             Sentence *sentence) {
 	Function *func;
@@ -1167,17 +1129,15 @@ static void read_input(ComprehendGame *game) {
 	game->before_prompt();
 	before_turn(game);
 
-	g_comprehend->print("> ");
-	g_comprehend->readLine(buffer, sizeof(buffer));
-	if (g_comprehend->shouldQuit())
-		return;
+	do {
+		g_comprehend->print("> ");
+		g_comprehend->readLine(buffer, sizeof(buffer));
+		if (g_comprehend->shouldQuit())
+			return;
+	} while (strlen(buffer) == 0);
 
 	// Re-comprehend special commands start with '!'
 	line = &buffer[0];
-	if (*line == '!') {
-		handle_debug_command(game, &line[1]);
-		return;
-	}
 
 	while (1) {
 		read_sentence(game, &line, &sentence);

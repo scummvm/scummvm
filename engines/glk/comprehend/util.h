@@ -43,9 +43,6 @@ void *xmalloc(size_t size);
 char *xstrndup(const char *str, size_t size);
 
 void debug_printf(unsigned flags, const char *fmt, ...);
-void debug_enable(unsigned flags);
-void debug_disable(unsigned flags);
-bool debugging_enabled(void);
 
 } // namespace Comprehend
 } // namespace Glk

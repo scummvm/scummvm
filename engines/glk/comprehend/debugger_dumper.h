@@ -20,56 +20,55 @@
  *
  */
 
-#include "glk/comprehend/util.h"
-#include "common/debug.h"
-#include "common/str.h"
-#include "common/textconsole.h"
+#ifndef GLK_COMPREHEND_DEBUGGER_DUMPER_H
+#define GLK_COMPREHEND_DEBUGGER_DUMPER_H
+
+#include "common/hashmap.h"
 
 namespace Glk {
 namespace Comprehend {
 
-void __fatal_error(const char *func, unsigned line, const char *fmt, ...) {
-	error("TODO");
-}
+class ComprehendGame;
+struct FunctionState;
+struct Instruction;
+struct StringTable;
 
-void fatal_strerror(int err, const char *fmt, ...) {
-	error("TODO");
-}
+class DebuggerDumper {
+private:
+	Common::HashMap<byte, Common::String> _opcodes;
+	ComprehendGame *_game;
 
-void *xmalloc(size_t size) {
-	void *p;
+private:
+	void dumpFunctions();
+	void dumpActionTable();
+	static int wordIndexCompare(const void *a, const void *b);
+	void dumpDictionary();
+	void dumpWordMap();
+	void dumpRooms();
+	void dumpItems();
+	void dumpStringTable(StringTable *table);
+	void dumpGameDataStrings();
+	void dumpExtraStrings();
+	void dumpReplaceWords();
+	void dumpHeader();
+	void dumpState();
 
-	p = malloc(size);
-	if (!p)
-		fatal_error("Out of memory");
+protected:
+	/**
+	 * Prints out dumped text
+	 */
+	virtual void print(const char *fmt, ...) = 0;
 
-	memset(p, 0, size);
-	return p;
-}
+public:
+	DebuggerDumper();
 
-char *xstrndup(const char *str, size_t len) {
-	char *p;
+	Common::String dumpInstruction(ComprehendGame *game,
+		FunctionState *func_state, Instruction *instr);
 
-	Common::String s(str, len);
-	p = scumm_strdup(s.c_str());
-	if (!p)
-		fatal_error("Out of memory");
-	return p;
-}
-
-void debug_printf(unsigned flags, const char *fmt, ...) {
-#ifdef TODO
-	va_list args;
-
-	if (debug_flags & flags) {
-		va_start(args, fmt);
-		Common::String msg = Common::String::vformat(fmt, args);
-		va_end(args);
-
-		debug(1, "%s", msg.c_str());
-	}
-	#endif
-}
+	bool dumpGameData(ComprehendGame *game, const Common::String &type);
+};
 
 } // namespace Comprehend
 } // namespace Glk
+
+#endif

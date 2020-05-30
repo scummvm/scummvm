@@ -78,7 +78,7 @@ GlkEngine::~GlkEngine() {
 
 void GlkEngine::initialize() {
 	initGraphicsMode();
-	setDebugger(new Debugger());
+	createDebugger();
 
 	_conf = new Conf(getInterpreterType());
 	_screen = createScreen();
@@ -114,6 +114,10 @@ void GlkEngine::initGraphicsMode() {
 	}
 
 	initGraphics(width, height, &format);
+}
+
+void GlkEngine::createDebugger() {
+	setDebugger(new Debugger());
 }
 
 Common::Error GlkEngine::run() {

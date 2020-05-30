@@ -20,56 +20,33 @@
  *
  */
 
-#include "glk/comprehend/util.h"
-#include "common/debug.h"
-#include "common/str.h"
-#include "common/textconsole.h"
+#ifndef GLK_COMPREHEND_DEBUGGER_H
+#define GLK_COMPREHEND_DEBUGGER_H
+
+#include "glk/debugger.h"
+#include "glk/comprehend/debugger_dumper.h"
 
 namespace Glk {
 namespace Comprehend {
 
-void __fatal_error(const char *func, unsigned line, const char *fmt, ...) {
-	error("TODO");
-}
+class Debugger : public Glk::Debugger, public DebuggerDumper {
+private:
+	/**
+	 * Dump data
+	 */
+	bool cmdDump(int argc, const char **argv);
 
-void fatal_strerror(int err, const char *fmt, ...) {
-	error("TODO");
-}
+protected:
+	void print(const char *fmt, ...) override;
 
-void *xmalloc(size_t size) {
-	void *p;
+public:
+	Debugger();
+	~Debugger();
+};
 
-	p = malloc(size);
-	if (!p)
-		fatal_error("Out of memory");
+extern Debugger *g_debugger;
 
-	memset(p, 0, size);
-	return p;
-}
+} // End of namespace Comprehend
+} // End of namespace Glk
 
-char *xstrndup(const char *str, size_t len) {
-	char *p;
-
-	Common::String s(str, len);
-	p = scumm_strdup(s.c_str());
-	if (!p)
-		fatal_error("Out of memory");
-	return p;
-}
-
-void debug_printf(unsigned flags, const char *fmt, ...) {
-#ifdef TODO
-	va_list args;
-
-	if (debug_flags & flags) {
-		va_start(args, fmt);
-		Common::String msg = Common::String::vformat(fmt, args);
-		va_end(args);
-
-		debug(1, "%s", msg.c_str());
-	}
-	#endif
-}
-
-} // namespace Comprehend
-} // namespace Glk
+#endif

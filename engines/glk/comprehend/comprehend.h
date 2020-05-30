@@ -57,6 +57,8 @@ private:
 public:
 	GraphicsWindow *_topWindow;
 	TextBufferWindow *_bottomWindow;
+	ComprehendGame *_game;
+
 private:
 	/**
 	 * Initialization code
@@ -68,7 +70,15 @@ private:
 	 */
 	void deinitialize();
 
-	ComprehendGame *createGame();
+	/**
+	 * Create the debugger
+	 */
+	void createDebugger() override;
+
+	/**
+	 * Creates the appropriate game class
+	 */
+	void createGame();
 
 public:
 	/**

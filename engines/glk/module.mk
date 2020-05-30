@@ -167,9 +167,10 @@ MODULE_OBJS := \
 	archetype/timestamp.o \
 	archetype/token.o \
 	comprehend/comprehend.o \
+	comprehend/debugger.o \
+	comprehend/debugger_dumper.o \
 	comprehend/detection.o \
 	comprehend/dictionary.o \
-	comprehend/dump_game_data.o \
 	comprehend/file_buf.o \
 	comprehend/game.o \
 	comprehend/game_cc.o \

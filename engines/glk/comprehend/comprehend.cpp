@@ -23,7 +23,7 @@
 #include "glk/comprehend/comprehend.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
-#include "glk/comprehend/dump_game_data.h"
+#include "glk/comprehend/debugger.h"
 #include "glk/comprehend/game.h"
 #include "glk/comprehend/game_cc.h"
 #include "glk/comprehend/game_data.h"
@@ -36,25 +36,6 @@ namespace Glk {
 namespace Comprehend {
 
 Comprehend *g_comprehend;
-
-struct DumpOption {
-	const char *const option;
-	unsigned flag;
-};
-
-static const DumpOption dump_options[] = {
-    {"strings", DUMP_STRINGS},
-    {"extra-strings", DUMP_EXTRA_STRINGS},
-    {"rooms", DUMP_ROOMS},
-    {"items", DUMP_ITEMS},
-    {"dictionary", DUMP_DICTIONARY},
-    {"word-pairs", DUMP_WORD_PAIRS},
-    {"actions", DUMP_ACTIONS},
-    {"functions", DUMP_FUNCTIONS},
-    {"replace-words", DUMP_REPLACE_WORDS},
-    {"header", DUMP_HEADER},
-    {"all", DUMP_ALL},
-};
 
 #ifdef TODO
 int main(int argc, char **argv) {
@@ -140,12 +121,14 @@ int main(int argc, char **argv) {
 }
 #endif
 
-Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-                                                                            _saveSlot(-1) {
+Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) :
+		GlkAPI(syst, gameDesc), _saveSlot(-1), _game(nullptr) {
 	g_comprehend = this;
 }
 
 Comprehend::~Comprehend() {
+	delete _game;
+
 	g_comprehend = nullptr;
 }
 
@@ -153,12 +136,11 @@ void Comprehend::runGame() {
 	initialize();
 
 	// Lookup game
-	ComprehendGame *game = createGame();
+	createGame();
 
-	comprehend_load_game(game);
-	comprehend_play_game(game);
+	comprehend_load_game(_game);
+	comprehend_play_game(_game);
 
-	delete game;
 	deinitialize();
 }
 
@@ -175,17 +157,21 @@ void Comprehend::deinitialize() {
 	glk_window_close(_bottomWindow);
 }
 
-ComprehendGame *Comprehend::createGame() {
-	if (_gameDescription._gameId == "crimsoncrown")
-		return new CrimsonCrownGame();
-	if (_gameDescription._gameId == "ootopis")
-		return new OOToposGame();
-	if (_gameDescription._gameId == "talisman")
-		return new OOToposGame();
-	if (_gameDescription._gameId == "transylvania")
-		return new TransylvaniaGame();
+void Comprehend::createDebugger() {
+	setDebugger(new Debugger());
+}
 
-	error("Unknown game");
+void Comprehend::createGame() {
+	if (_gameDescription._gameId == "crimsoncrown")
+		_game = new CrimsonCrownGame();
+	if (_gameDescription._gameId == "ootopis")
+		_game = new OOToposGame();
+	if (_gameDescription._gameId == "talisman")
+		_game = new OOToposGame();
+	if (_gameDescription._gameId == "transylvania")
+		_game = new TransylvaniaGame();
+	else
+		error("Unknown game");
 }
 
 void Comprehend::print(const char *fmt, ...) {

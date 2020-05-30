@@ -20,34 +20,41 @@
  *
  */
 
-#ifndef GLK_COMPREHEND_DUMP_GAME_DATA_H
-#define GLK_COMPREHEND_DUMP_GAME_DATA_H
+#include "glk/comprehend/debugger.h"
+#include "glk/comprehend/comprehend.h"
 
 namespace Glk {
 namespace Comprehend {
 
-class ComprehendGame;
-struct FunctionState;
-struct Instruction;
+Debugger *g_debugger;
 
-#define DUMP_STRINGS (1 << 0)
-#define DUMP_EXTRA_STRINGS (1 << 1)
-#define DUMP_ROOMS (1 << 2)
-#define DUMP_ITEMS (1 << 3)
-#define DUMP_DICTIONARY (1 << 4)
-#define DUMP_WORD_PAIRS (1 << 5)
-#define DUMP_ACTIONS (1 << 6)
-#define DUMP_FUNCTIONS (1 << 7)
-#define DUMP_REPLACE_WORDS (1 << 8)
-#define DUMP_HEADER (1 << 9)
-#define DUMP_ALL (~0U)
+Debugger::Debugger() : Glk::Debugger() {
+	g_debugger = this;
+	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
+}
 
-void dump_instruction(ComprehendGame *game,
-                      FunctionState *func_state,
-                      Instruction *instr);
-void dump_game_data(ComprehendGame *game, unsigned flags);
+Debugger::~Debugger() {
+	g_debugger = nullptr;
+}
+
+void Debugger::print(const char *fmt, ...) {
+	va_list argp;
+	va_start(argp, fmt);
+	Common::String msg = Common::String::vformat(fmt, argp);
+	va_end(argp);
+
+	debugPrintf("%s", msg.c_str());
+}
+
+bool Debugger::cmdDump(int argc, const char **argv) {
+	Common::String param = (argc == 2) ? argv[1] : "";
+	ComprehendGame *game = g_comprehend->_game;
+
+	if (!dumpGameData(game, param))
+		debugPrintf("Unknown dump option\n");
+
+	return true;
+}
 
 } // namespace Comprehend
 } // namespace Glk
-
-#endif

@@ -95,6 +95,11 @@ protected:
 	virtual void initGraphicsMode();
 
 	/**
+	 * Create the debugger
+	 */
+	virtual void createDebugger();
+
+	/**
 	 * Create the screen
 	 */
 	virtual Screen *createScreen();
