@@ -203,7 +203,10 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	// load meshes
 	for(i = 0; i < meshes.size(); i++) {
 		AdGeomExtNode *ExtNode = geomExt->matchName((char *)meshNames[i].c_str());
-		if(!ExtNode) continue;
+
+		if (!ExtNode) {
+			continue;
+		}
 
 		switch(ExtNode->_type) {
 			case GEOM_WALKPLANE: {
@@ -211,7 +214,8 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 				plane->setName((char*)meshNames[i].c_str());
 				plane->_mesh = meshes[i];
 				plane->_mesh->computeNormals();
-				plane->_mesh->fillVertexBuffer(0xFFFF00FF);
+				// TODO: These constants are endianness dependent
+				plane->_mesh->fillVertexBuffer(0xFFFF0000);
 				plane->_receiveShadows = ExtNode->_receiveShadows;
 				_planes.add(plane);
 			}
@@ -222,7 +226,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 				block->setName((char *)meshNames[i].c_str());
 				block->_mesh = meshes[i];
 				block->_mesh->computeNormals();
-				block->_mesh->fillVertexBuffer(0xFFFF00FF);
+				block->_mesh->fillVertexBuffer(0xFF0000FF);
 				block->_receiveShadows = ExtNode->_receiveShadows;
 				_blocks.add(block);
 			}
@@ -244,7 +248,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 				generic->setName((char *)meshNames[i].c_str());
 				generic->_mesh = meshes[i];
 				generic->_mesh->computeNormals();
-				generic->_mesh->fillVertexBuffer(0xFFFF00FF);
+				generic->_mesh->fillVertexBuffer(0xFF00FF00);
 				generic->_receiveShadows = ExtNode->_receiveShadows;
 				_generics.add(generic);
 			}
