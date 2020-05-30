@@ -78,7 +78,7 @@ void QObjectStar::onClick(int x, int y) {
 
 uint QObjectStar::findButtonIndex(int16 x, int16 y) const {
 	uint i = 0;
-	for (i = 0; i < sizeof(_buttonRects) / sizeof(Common::Rect); ++i) {
+	for (i = 0; i < ARRAYSIZE(_buttonRects); ++i) {
 		if (_buttonRects[i].contains(x, y))
 			return i;
 	}
