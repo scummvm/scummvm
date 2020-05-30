@@ -102,7 +102,7 @@ void SoundMgr::removeSound(const Common::String &name) {
 
 void SoundMgr::removeAll() {
 	debug("SoundMgr::removeAll");
-	_sounds.clear(0);
+	_sounds.clear(false);
 }
 
 void SoundMgr::removeSoundsWithType(Audio::Mixer::SoundType type) {

@@ -242,7 +242,7 @@ void InterfaceMain::setTextChoice(const Common::Array<Common::U32String> &choice
 void InterfaceMain::setTextDescription(const Common::U32String &text, int frame) {
 	removeTexts();
 	QObjectStar *star = g_vm->getQSystem()->getStar();
-	star->_isActive = 0;
+	star->_isActive = false;
 	_objUnderCursor = nullptr;
 	_hasTextDesc = true;
 	_objs.push_back(new QTextDescription(text, frame));

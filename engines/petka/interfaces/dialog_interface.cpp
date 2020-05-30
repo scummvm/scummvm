@@ -194,7 +194,7 @@ void DialogInterface::playSound(const Common::String &name) {
 			Common::Rect bounds = flc->getBounds();
 			s->setBalance(bounds.left + _talker->_x + bounds.width(), 640);
 		}
-		s->play(0);
+		s->play(false);
 	}
 }
 

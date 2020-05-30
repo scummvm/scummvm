@@ -62,7 +62,7 @@ QMessageObject::QMessageObject() {
 	_animate = true;
 	_isShown = true;
 	_isActive = true;
-	_updateZ = 0;
+	_updateZ = false;
 	_holdMessages = false;
 	_notLoopedSound = true;
 	_startSound = false;
@@ -154,10 +154,10 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kSystem:
 			switch (msg.arg1){
 			case 0:
-				g_vm->getQSystem()->getStar()->_isActive = 0;
+				g_vm->getQSystem()->getStar()->_isActive = false;
 				break;
 			case 1:
-				g_vm->getQSystem()->getStar()->_isActive = 1;
+				g_vm->getQSystem()->getStar()->_isActive = true;
 				break;
 			case 242:
 				g_system->quit();

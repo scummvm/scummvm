@@ -48,7 +48,7 @@ public:
 	void readInisData(Common::INIFile &names, Common::INIFile &cast, Common::INIFile *bgs) override;
 
 public:
-	int _showMap;
+	bool _showMap;
 	int _fxId;
 	int _musicId;
 	Perspective _persp;

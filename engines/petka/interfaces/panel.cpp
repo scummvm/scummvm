@@ -106,8 +106,8 @@ void InterfacePanel::start(int id) {
 		obj->_x = _objectPoints[i].x;
 		obj->_y = _objectPoints[i].y;
 		obj->_frame = 1;
-		obj->_animate = 0;
-		obj->_isShown = 1;
+		obj->_animate = false;
+		obj->_isShown = true;
 		_objs.push_back(obj);
 	}
 
@@ -229,7 +229,7 @@ void InterfacePanel::onMouseMove(Common::Point p) {
 		g_vm->videoSystem()->addDirtyRect(_objectPoints[pointIndex], *flc);
 	}
 	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
-	cursor->_isShown = 1;
+	cursor->_isShown = true;
 	cursor->setPos(p, false);
 }
 

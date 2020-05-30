@@ -113,7 +113,7 @@ void QObjectCursor::show(bool v) {
 
 void QObjectCursor::returnInvItem() {
 	if (_actionType == kActionObjUse) {
-		_invObj->show(1);
+		_invObj->show(true);
 		_invObj->_isActive = true;
 	}
 }

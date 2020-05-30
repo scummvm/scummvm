@@ -68,12 +68,12 @@ void QObjectStar::onMouseMove(Common::Point p) {
 void QObjectStar::onClick(Common::Point p) {
 	uint button = findButtonIndex(p.x - _x, p.y - _y);
 	if (button == kCaseButtonIndex) {
-		g_vm->getQSystem()->getCase()->show(1);
+		g_vm->getQSystem()->getCase()->show(true);
 	} else if (button < ARRAYSIZE(_buttonRects)) {
 		QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 		cursor->setAction(button - 1);
 	}
-	show(0);
+	show(false);
 }
 
 uint QObjectStar::findButtonIndex(int16 x, int16 y) const {

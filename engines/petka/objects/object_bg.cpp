@@ -45,7 +45,7 @@ QObjectBG::QObjectBG() {
 	_y = 0;
 	_z = 0;
 
-	_showMap = 1;
+	_showMap = true;
 
 	_fxId = 0;
 	_musicId = 0;
@@ -64,10 +64,10 @@ void QObjectBG::processMessage(const QMessage &msg) {
 		_fxId = msg.arg1;
 		break;
 	case kMap:
-		_showMap = msg.arg1 != 0;
+		_showMap = (msg.arg1 != 0);
 		break;
 	case kNoMap:
-		_showMap = 0;
+		_showMap = false;
 		break;
 	case kGoTo:
 		goTo();

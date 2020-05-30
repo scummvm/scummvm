@@ -64,8 +64,8 @@ void InterfaceStartup::start(int id) {
 		obj->_x = 0;
 		obj->_y = 0;
 		obj->_frame = 1;
-		obj->_animate = 0;
-		obj->_isShown = 0;
+		obj->_animate = false;
+		obj->_isShown = false;
 		_objs.push_back(obj);
 	}
 

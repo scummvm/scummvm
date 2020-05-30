@@ -178,7 +178,7 @@ void QSystem::togglePanelInterface() {
 
 void QSystem::toggleMapInterface() {
 	if (_currInterface != _startupInterface.get() && getStar()->_isActive && _room->_showMap) {
-		getCase()->show(0);
+		getCase()->show(false);
 		if (_currInterface == _mapInterface.get()) {
 			_currInterface->stop();
 		} else if (_currInterface == _mainInterface.get()) {
@@ -398,7 +398,7 @@ void QSystem::onEvent(const Common::Event &event) {
 }
 
 void QSystem::goPrevInterface() {
-	getCase()->show(0);
+	getCase()->show(false);
 	if (_currInterface != _startupInterface.get() && _currInterface != _sequenceInterface.get())
 		_currInterface->stop();
 }
