@@ -87,6 +87,8 @@ bool Camera3D::loadFrom3DS(byte **buffer) {
 		_fov = Math::Angle(45.0f).getRadians();
 	}
 
+	_originalFOV = _fov;
+
 	// this is overkill here, simplify it later
 	while (*buffer < end) {
 		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
