@@ -140,22 +140,21 @@ bool BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, uint32 color, 
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setProjection() {
+bool BaseRenderOpenGL3D::setProjection(float fov) {
 	// is the viewport already set here?
 	float viewportWidth = _viewportRect.right - _viewportRect.left;
 	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
 
-	float horizontal_view_angle = M_PI * 0.5f;
-	float aspect_ratio = float(viewportHeight) / float(viewportWidth);
-	float near_plane = 1.0f;
-	float far_plane = 1900.0f;
-	float right = near_plane * tanf(horizontal_view_angle * 0.5f);
+	float verticalViewAngle = fov;
+	float aspectRatio = float(viewportWidth) / float(viewportHeight);
+	float nearPlane = 1.0f;
+	float farPlane = 10000.0f;
+	float top = nearPlane * tanf(verticalViewAngle * 0.5f);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-right, right, -right * aspect_ratio, right * aspect_ratio, near_plane, far_plane);
+	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
 	glMatrixMode(GL_MODELVIEW);
-
 	return true;
 }
 
@@ -273,11 +272,12 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		// no culling for the moment
 		glDisable(GL_CULL_FACE);
 
-		setProjection();
+		setProjection(camera->_fov);
 
 		Math::Matrix4 viewMatrix;
 		camera->getViewMatrix(&viewMatrix);
-		glLoadMatrixf(viewMatrix.getData());
+		glMultMatrixf(viewMatrix.getData());
+		glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
 	}
 
 	return true;
