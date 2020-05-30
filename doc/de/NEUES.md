@@ -30,7 +30,10 @@ Programmcodes finden Sie auf Englisch unter:
    - Bisherige NES-Farbpalette durch genauere NTSC-Palette von Mesen ersetzt.
    - Neue Option zur Benutzeroberfläche hinzugefügt, welche die Auswahl einer Farbpalette basierend auf dem NES Classic erlaubt.
    - Farbpalette in der Apple //gs-Version von Maniac Mansion verbessert.
-   - Absturzt beim Betreten der Gara in der Apple //gs-Version von Maniac Mansion behoben.
+   - Absturzt beim Betreten der Garage in der Apple //gs-Version von Maniac Mansion behoben.
+
+ Sky:
+   - Synchronisation der Musik-Lautstärke zwischen dem nativen Einstellungs-Dialog des Spiels und der ScummVM-Konfiguration korrigiert.
 
  Sword1:
    - Unterstützung für lokalisierte Menüs in der russischen Version der Novy Disk Trilogy hinzugefügt.
@@ -39,7 +42,7 @@ Programmcodes finden Sie auf Englisch unter:
    - System zur Verfolgung von Errungenschaften hinzugefügt, für mehr als 10 Spiele verfügbar.
 
  Xeen:
-   - Fehlendes Sprite korrigiert, welches dargestellt wird, wenn ein Gegner von einem Energie-Strahl getroffen wird.
+   - Fehlendes Sprite hinzugefügt, welches dargestellt werden soll, wenn ein Gegner von einem Energie-Strahl getroffen wird.
    - Das Spiel friert nun nicht mehr wegen fehlerhafter Mob-Daten an der Spitze des Hexenturms ein.
    - Absturz beim Laden einige Spielstände aus dem Launcher heraus korrigiert.
    - Die Quelle in Nightshadow kann nun geheilt werden.
