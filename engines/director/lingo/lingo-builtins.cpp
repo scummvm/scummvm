@@ -2130,7 +2130,7 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 	s = name + "-" + *method.u.s;
 
 	debugC(3, kDebugLingoExec, "Stack size before call: %d, nargs: %d", _stack.size(), nargs);
-	LC::call(s, nargs);
+	LC::call(s, 1);
 	debugC(3, kDebugLingoExec, "Stack size after call: %d", _stack.size());
 
 	if (!method.u.s->compareToIgnoreCase("mNew")) {
