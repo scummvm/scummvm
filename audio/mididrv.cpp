@@ -173,6 +173,9 @@ Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType
 MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
 	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	if ((flags & MDT_PREFER_FLUID) && selDevStr == "auto") {
+		selDevStr = "fluidsynth";
+	}
 	DeviceHandle hdl = getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
 	DeviceHandle reslt = 0;
 

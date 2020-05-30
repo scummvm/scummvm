@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/timer.h"
 #include "common/array.h"
 
@@ -79,7 +80,8 @@ enum MidiDriverFlags {
 	MDT_PC98        = 1 << 8,		// FM-TOWNS: Maps to MT_PC98
 	MDT_MIDI        = 1 << 9,		// Real MIDI
 	MDT_PREFER_MT32 = 1 << 10,		// MT-32 output is preferred
-	MDT_PREFER_GM   = 1 << 11		// GM output is preferred
+	MDT_PREFER_GM   = 1 << 11,		// GM output is preferred
+	MDT_PREFER_FLUID= 1 << 12		// FluidSynth driver is preferred
 };
 
 /**
@@ -339,6 +341,12 @@ public:
 	// Channel allocation functions
 	virtual MidiChannel *allocateChannel() = 0;
 	virtual MidiChannel *getPercussionChannel() = 0;
+
+	// Allow an engine to supply its own soundFont data. This stream will be destroyed after use.
+	virtual void setEngineSoundFont(Common::SeekableReadStream *soundFontData) { }
+
+	// Does this driver accept soundFont data?
+	virtual bool acceptsSoundFontData() { return false; }
 };
 
 class MidiChannel {

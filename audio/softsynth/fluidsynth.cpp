@@ -34,6 +34,7 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "audio/musicplugin.h"
@@ -50,6 +51,7 @@ private:
 	fluid_synth_t *_synth;
 	int _soundFont;
 	int _outputRate;
+	Common::SeekableReadStream *_engineSoundFontData;
 
 protected:
 	// Because GCC complains about casting from const to non-const...
@@ -69,6 +71,9 @@ public:
 	MidiChannel *allocateChannel() override;
 	MidiChannel *getPercussionChannel() override;
 
+	void setEngineSoundFont(Common::SeekableReadStream *soundFontData) override;
+	bool acceptsSoundFontData() override { return true; }
+
 	// AudioStream API
 	bool isStereo() const override { return true; }
 	int getRate() const override { return _outputRate; }
@@ -77,7 +82,7 @@ public:
 // MidiDriver method implementations
 
 MidiDriver_FluidSynth::MidiDriver_FluidSynth(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer) {
+	: MidiDriver_Emulated(mixer), _engineSoundFontData(NULL) {
 
 	for (int i = 0; i < ARRAYSIZE(_midiChannels); i++) {
 		_midiChannels[i].init(this, i);
@@ -119,12 +124,48 @@ void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
 	free(val2);
 }
 
+// Soundfont memory loader callback functions.
+
+static void *SoundFontMemLoader_open(const char *filename)
+{
+	void *p;
+	if(filename[0] != '&')
+	{
+		return NULL;
+	}
+	sscanf(filename, "&%p", &p);
+	return p;
+}
+
+static int SoundFontMemLoader_read(void *buf, int count, void *handle)
+{
+	return ((Common::SeekableReadStream *)handle)->read(buf, count) == count ? FLUID_OK : FLUID_FAILED;
+}
+
+static int SoundFontMemLoader_seek(void *handle, long offset, int origin)
+{
+	return ((Common::SeekableReadStream *)handle)->seek(offset, origin) ? FLUID_OK : FLUID_FAILED;
+}
+
+static int SoundFontMemLoader_close(void *handle)
+{
+	delete (Common::SeekableReadStream *)handle;
+	return FLUID_OK;
+}
+
+static long SoundFontMemLoader_tell(void *handle)
+{
+	return ((Common::SeekableReadStream *)handle)->pos();
+}
+
 int MidiDriver_FluidSynth::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	if (!ConfMan.hasKey("soundfont"))
+	if (_engineSoundFontData == NULL && !ConfMan.hasKey("soundfont"))
 		error("FluidSynth requires a 'soundfont' setting");
+
+	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.hasKey("soundfont");
 
 	_settings = new_fluid_settings();
 
@@ -189,16 +230,32 @@ int MidiDriver_FluidSynth::open() {
 
 	fluid_synth_set_interp_method(_synth, -1, interpMethod);
 
-	const char *soundfont = ConfMan.get("soundfont").c_str();
+	const char *soundfont = ConfMan.hasKey("soundfont") ?
+			ConfMan.get("soundfont").c_str() : Common::String::format("&%p", _engineSoundFontData).c_str();
+
+	if (isUsingInMemorySoundFontData) {
+		fluid_sfloader_t *soundFontMemoryLoader = new_fluid_defsfloader(_settings);
+		fluid_sfloader_set_callbacks(soundFontMemoryLoader,
+									 SoundFontMemLoader_open,
+									 SoundFontMemLoader_read,
+									 SoundFontMemLoader_seek,
+									 SoundFontMemLoader_tell,
+									 SoundFontMemLoader_close);
+		fluid_synth_add_sfloader(_synth, soundFontMemoryLoader);
+	}
 
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
-	// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal
-	// with the chroot filesystem. All the path selected by the user are
-	// relative to the Document directory. So, we need to adjust the path to
-	// reflect that.
-	Common::String soundfont_fullpath = iOS7_getDocumentsDir();
-	soundfont_fullpath += soundfont;
-	_soundFont = fluid_synth_sfload(_synth, soundfont_fullpath.c_str(), 1);
+	if (!isUsingInMemorySoundFontData) {
+		// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal
+		// with the chroot filesystem. All the path selected by the user are
+		// relative to the Document directory. So, we need to adjust the path to
+		// reflect that.
+		Common::String soundfont_fullpath = iOS7_getDocumentsDir();
+		soundfont_fullpath += soundfont;
+		_soundFont = fluid_synth_sfload(_synth, soundfont_fullpath.c_str(), 1);
+	} else {
+		_soundFont = fluid_synth_sfload(_synth, soundfont, 1);
+	}
 #else
 	_soundFont = fluid_synth_sfload(_synth, soundfont, 1);
 #endif
@@ -280,6 +337,10 @@ MidiChannel *MidiDriver_FluidSynth::getPercussionChannel() {
 
 void MidiDriver_FluidSynth::generateSamples(int16 *data, int len) {
 	fluid_synth_write_s16(_synth, len, data, 0, 2, data, 1, 2);
+}
+
+void MidiDriver_FluidSynth::setEngineSoundFont(Common::SeekableReadStream *soundFontData) {
+	_engineSoundFontData = soundFontData;
 }
 
 
