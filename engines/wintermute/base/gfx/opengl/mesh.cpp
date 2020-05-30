@@ -22,6 +22,7 @@
 
 #include "mesh.h"
 #include "loader3ds.h"
+#include "common/file.h"
 
 Wintermute::Mesh::Mesh()
 	: _vertexData(nullptr), _vertexCount(0),
@@ -136,10 +137,62 @@ void Wintermute::Mesh::render() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	glInterleavedArrays(GL_C4UB_V3F, 0, 0);
+	uint32 *vertices = reinterpret_cast<uint32 *>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
+	uint16 *indices = reinterpret_cast<uint16 *>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY));
 
-	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, 0);
+	uint32 *tempVertices = new uint32[4 * _indexCount];
 
+	int pos = 0;
+
+	for (uint16 *index = indices; index < indices + _indexCount; ++index) {
+		*reinterpret_cast<uint32 *>(tempVertices  + 4 * pos) = *reinterpret_cast<uint32 *>(vertices + 4 * *index);
+		*reinterpret_cast<float *>(tempVertices  + 4 * pos + 1) = *reinterpret_cast<float *>(vertices + 4 * *index + 1);
+		*reinterpret_cast<float *>(tempVertices  + 4 * pos + 2) = *reinterpret_cast<float *>(vertices + 4 * *index + 2);
+		*reinterpret_cast<float *>(tempVertices  + 4 * pos + 3) = *reinterpret_cast<float *>(vertices + 4 * *index + 3);
+		++pos;
+	}
+
+	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+//	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+	glInterleavedArrays(GL_C4UB_V3F, 0, tempVertices);
+//	glInterleavedArrays(GL_C4UB_V3F, 0, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, _indexCount);
+//	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, 0);
+
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	delete[] tempVertices;
+}
+
+void Wintermute::Mesh::dumpVertexCoordinates(const char *filename) {
+	Common::DumpFile dump;
+	dump.open(filename);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+	uint32 *vertices = reinterpret_cast<uint32 *>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
+	uint16 *indices = reinterpret_cast<uint16 *>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY));
+
+	for (uint16 *index = indices; index < indices + _indexCount; ++index) {
+		float x = *reinterpret_cast<float *>(vertices + 4 * *index + 1);
+		float y = *reinterpret_cast<float *>(vertices + 4 * *index + 2);
+		float z = *reinterpret_cast<float *>(vertices + 4 * *index + 3);
+
+		dump.writeString(Common::String::format("%u ", *index));
+		dump.writeString(Common::String::format("%g ", x));
+		dump.writeString(Common::String::format("%g ", y));
+		dump.writeString(Common::String::format("%g\n", z));
+	}
+
+	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	glUnmapBuffer(GL_ARRAY_BUFFER);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

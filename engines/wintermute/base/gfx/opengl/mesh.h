@@ -36,6 +36,7 @@ public:
 	void fillVertexBuffer(uint32 color);
 	bool loadFrom3DS(byte **buffer);
 	void render();
+	void dumpVertexCoordinates(const char *filename);
 
 private:
 	byte *_vertexData;
