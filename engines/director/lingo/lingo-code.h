@@ -92,7 +92,6 @@ namespace LC {
 	void c_objectfieldassign();
 	void c_objectrefpush();
 
-	void c_repeatwithcode();
 	void c_nextRepeat();
 	void c_whencode();
 	void c_tellcode();

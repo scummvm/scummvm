@@ -146,7 +146,7 @@ static void mArg(Common::String *s) {
 %token tON tENDIF tENDREPEAT tENDTELL
 
 %type<code> asgn begin end expr if when chunkexpr
-%type<code> repeatwith stmtlist tellstart reference simpleexpr list valuelist
+%type<code> stmtlist tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
 %type<s> on
@@ -432,12 +432,6 @@ ifoneliner: if expr jumpifz[then] tTHEN stmtoneliner jump[else1] tELSE begin stm
 		WRITE_UINT32(&end, $end3 - $then + 1);
 
 		(*g_lingo->_currentScript)[$then] = end; }		/* end, if cond fails */
-
-repeatwith:		tREPEAT tWITH ID	{
-		$$ = g_lingo->code3(LC::c_repeatwithcode, STOP, STOP);
-		g_lingo->code3(STOP, STOP, STOP);
-		g_lingo->codeString($ID->c_str());
-		delete $ID; }
 
 jumpifz:	/* nothing */	{
 		g_lingo->code2(LC::c_jumpifz, STOP);
