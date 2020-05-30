@@ -982,8 +982,6 @@ static void load_extra_string_file(ComprehendGame *game,
 static void load_extra_string_files(ComprehendGame *game) {
 	int i;
 
-	memset(&game->_strings2, 0, sizeof(game->_strings2));
-
 	for (i = 0; i < ARRAY_SIZE(game->_stringFiles); i++) {
 		if (!game->_stringFiles[i].filename)
 			break;
@@ -1007,7 +1005,6 @@ static void load_game_data(ComprehendGame *game) {
 	parse_items(game, &fb);
 	parse_dictionary(game, &fb);
 	parse_word_map(game, &fb);
-	memset(&game->_strings, 0, sizeof(game->_strings));
 	parse_string_table(&fb, game->_header.addr_strings,
 		                game->_header.addr_strings_end,
 		                &game->_strings);
