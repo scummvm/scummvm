@@ -160,7 +160,7 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				g_vm->getQSystem()->getStar()->_isActive = true;
 				break;
 			case 242:
-				g_system->quit();
+				Engine::quitGame();
 				break;
 			default:
 				break;
