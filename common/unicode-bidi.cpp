@@ -85,7 +85,7 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 		_log_to_vis_index = NULL;
 		_vis_to_log_index = NULL;
 	} else {
-		visual = U32String(visual_str, input.size());
+		visual = U32String((uint32 *)visual_str, input.size());
 		delete[] visual_str;
 	}
 #else
