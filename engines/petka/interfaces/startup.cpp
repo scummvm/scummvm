@@ -79,7 +79,7 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 		return;
 	switch (_objUnderCursor->_resourceId) {
 	case kExit:
-		g_system->quit();
+		Engine::quitGame();
 		break;
 	case kCredits:
 		g_vm->playVideo(g_vm->openFile(kCreditsVideoName, false));
@@ -89,6 +89,8 @@ void InterfaceStartup::onLeftButtonDown(const Common::Point p) {
 		break;
 	case kNewGame:
 		g_vm->loadPart(1);
+		break;
+	default:
 		break;
 	}
 }
