@@ -38,11 +38,6 @@ struct Sentence {
 	size_t nr_words;
 };
 
-struct WinSize {
-	uint ws_col;
-};
-static WinSize console_winsize;
-
 ComprehendGame::ComprehendGame() : _gameName(nullptr),
                                    _shortName(nullptr),
                                    _gameDataFile(nullptr),
@@ -73,7 +68,6 @@ int console_get_key(void) {
 void console_println(ComprehendGame *game, const char *text) {
 	const char *replace, *word = nullptr, *p = text;
 	char bad_word[64];
-	size_t line_length = 0;
 	int word_len = 0;
 
 	if (!text) {
@@ -86,7 +80,6 @@ void console_println(ComprehendGame *game, const char *text) {
 		case '\n':
 			word = NULL;
 			word_len = 0;
-			line_length = 0;
 			printf("\n");
 			p++;
 			break;
@@ -126,26 +119,19 @@ void console_println(ComprehendGame *game, const char *text) {
 
 		if (!word || !word_len)
 			continue;
-
+#ifdef DEPRECATED
 		/* Print this word */
 		if (line_length + word_len > console_winsize.ws_col) {
 			/* Too long - insert a line break */
 			printf("\n");
 			line_length = 0;
 		}
-
-		printf("%.*s", word_len, word);
-		line_length += word_len;
+#endif
+		Common::String wordStr(word, word_len);
+		g_comprehend->print("%s", wordStr.c_str());
 
 		if (*p == ' ') {
-			if (line_length >= console_winsize.ws_col) {
-				/* Newline, don't print the space */
-				printf("\n");
-				line_length = 0;
-			} else {
-				printf(" ");
-				line_length++;
-			}
+			g_comprehend->print(" ");
 			p++;
 
 			/* Skip any double spaces */
@@ -154,7 +140,7 @@ void console_println(ComprehendGame *game, const char *text) {
 		}
 	}
 
-	printf("\n");
+	g_comprehend->print("\n");
 }
 
 static Room *get_room(ComprehendGame *game, uint16 index) {

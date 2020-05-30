@@ -102,6 +102,8 @@ public:
 	Common::Error writeGameData(Common::WriteStream *ws) override {
 		return Common::kWritingFailed;
 	}
+
+	void print(const char *fmt, ...);
 };
 
 extern Comprehend *g_comprehend;

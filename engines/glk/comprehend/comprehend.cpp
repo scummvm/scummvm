@@ -167,6 +167,7 @@ void Comprehend::initialize() {
 	_graphicsWindow = (GraphicsWindow *)glk_window_open(
 	    _textBufferWindow, winmethod_Above | winmethod_Proportional,
 	    160, wintype_Graphics, 0);
+	glk_set_window(_textBufferWindow);
 }
 
 void Comprehend::deinitialize() {
@@ -185,6 +186,16 @@ ComprehendGame *Comprehend::createGame() {
 		return new TransylvaniaGame();
 
 	error("Unknown game");
+}
+
+void Comprehend::print(const char *fmt, ...) {
+	va_list argp;
+	va_start(argp, fmt);
+	Common::String msg = Common::String::vformat(fmt, argp);
+	va_end(argp);
+
+	glk_put_string_stream(glk_window_get_stream(_textBufferWindow),
+		msg.c_str());
 }
 
 } // namespace Comprehend
