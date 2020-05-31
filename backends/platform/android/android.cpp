@@ -115,8 +115,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),
 	_audio_buffer_size(audio_buffer_size),
 	_screen_changeid(0),
-	_egl_surface_width(0),
-	_egl_surface_height(0),
 	_force_redraw(false),
 	_game_texture(0),
 	_game_pbuf(),
@@ -226,9 +224,7 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 
 	bool paused = true;
 
-	byte *buf;
-	int offset, left, written;
-	int samples, i;
+	int offset, left, written, i;
 
 	struct timespec tv_delay;
 	tv_delay.tv_sec = 0;
@@ -240,7 +236,6 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 	tv_full.tv_sec = 0;
 	tv_full.tv_nsec = msecs_full * 1000 * 1000;
 
-	bool silence;
 	uint silence_count = 33;
 
 	while (!system->_audio_thread_exit) {
@@ -255,12 +250,12 @@ void *OSystem_Android::audioThreadFunc(void *arg) {
 			LOGD("audio thread woke up");
 		}
 
-		buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
+		byte *buf = (byte *)env->GetPrimitiveArrayCritical(bufa, 0);
 		assert(buf);
 
-		samples = mixer->mixCallback(buf, buf_size);
+		int samples = mixer->mixCallback(buf, buf_size);
 
-		silence = samples < 1;
+		bool silence = samples < 1;
 
 		// looks stupid, and it is, but currently there's no way to detect
 		// silence-only buffers from the mixer

@@ -106,8 +106,6 @@ private:
 	int _audio_buffer_size;
 
 	int _screen_changeid;
-	int _egl_surface_width;
-	int _egl_surface_height;
 
 	bool _force_redraw;
 

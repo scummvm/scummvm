@@ -191,10 +191,6 @@ void OSystem_Android::initSurface() {
 	assert(!JNI::haveSurface());
 
 	_screen_changeid = JNI::surface_changeid;
-	_egl_surface_width = JNI::egl_surface_width;
-	_egl_surface_height = JNI::egl_surface_height;
-
-	assert(_egl_surface_width > 0 && _egl_surface_height > 0);
 
 	JNI::initSurface();
 
@@ -222,8 +218,6 @@ void OSystem_Android::deinitSurface() {
 	LOGD("deinitializing surface");
 
 	_screen_changeid = JNI::surface_changeid;
-	_egl_surface_width = 0;
-	_egl_surface_height = 0;
 
 	// release texture resources
 	if (_game_texture)
@@ -251,8 +245,8 @@ void OSystem_Android::initViewport() {
 	GLCALL(glEnable(GL_BLEND));
 	GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-	GLCALL(glViewport(0, 0, _egl_surface_width, _egl_surface_height));
-	LOGD("viewport size: %dx%d", _egl_surface_width, _egl_surface_height);
+	GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
+	LOGD("viewport size: %dx%d", JNI::egl_surface_width, JNI::egl_surface_height);
 
 	clearFocusRectangle();
 }
@@ -260,8 +254,8 @@ void OSystem_Android::initViewport() {
 void OSystem_Android::initOverlay() {
 	// minimum of 320x200
 	// (surface can get smaller when opening the virtual keyboard on *QVGA*)
-	int overlay_width = MAX(_egl_surface_width, 320);
-	int overlay_height = MAX(_egl_surface_height, 200);
+	int overlay_width = MAX(JNI::egl_surface_width, 320);
+	int overlay_height = MAX(JNI::egl_surface_height, 200);
 
 	// the 'normal' theme layout uses a max height of 400 pixels. if the
 	// surface is too big we use only a quarter of the size so that the widgets
@@ -278,7 +272,7 @@ void OSystem_Android::initOverlay() {
 
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
 	_overlay_texture->setDrawRect(0, 0,
-									_egl_surface_width, _egl_surface_height);
+									JNI::egl_surface_width, JNI::egl_surface_height);
 }
 
 void OSystem_Android::initSize(uint width, uint height,
@@ -349,7 +343,7 @@ void OSystem_Android::clearScreen(FixupType type, byte count) {
 }
 
 void OSystem_Android::updateScreenRect() {
-	Common::Rect rect(0, 0, _egl_surface_width, _egl_surface_height);
+	Common::Rect rect(0, 0, JNI::egl_surface_width, JNI::egl_surface_height);
 
 	_overlay_texture->setDrawRect(rect);
 
@@ -364,20 +358,20 @@ void OSystem_Android::updateScreenRect() {
 		float screen_ar;
 		if (dpi[0] != 0.0 && dpi[1] != 0.0) {
 			// horizontal orientation
-			screen_ar = (dpi[1] * _egl_surface_width) /
-						(dpi[0] * _egl_surface_height);
+			screen_ar = (dpi[1] * JNI::egl_surface_width) /
+						(dpi[0] * JNI::egl_surface_height);
 		} else {
-			screen_ar = float(_egl_surface_width) / float(_egl_surface_height);
+			screen_ar = float(JNI::egl_surface_width) / float(JNI::egl_surface_height);
 		}
 
 		float game_ar = float(w) / float(h);
 
 		if (screen_ar > game_ar) {
-			rect.setWidth(round(_egl_surface_height * game_ar));
-			rect.moveTo((_egl_surface_width - rect.width()) / 2, 0);
+			rect.setWidth(round(JNI::egl_surface_height * game_ar));
+			rect.moveTo((JNI::egl_surface_width - rect.width()) / 2, 0);
 		} else {
-			rect.setHeight(round(_egl_surface_width / game_ar));
-			rect.moveTo((_egl_surface_height - rect.height()) / 2, 0);
+			rect.setHeight(round(JNI::egl_surface_width / game_ar));
+			rect.moveTo((JNI::egl_surface_height - rect.height()) / 2, 0);
 		}
 	}
 
@@ -446,7 +440,7 @@ void OSystem_Android::setupScreen(uint screenW, uint screenH, bool fullscreen, b
 	_opengl = accel3d;
 	initViewport();
 
-	_touchControls.init(_egl_surface_width, _egl_surface_height);
+	_touchControls.init(JNI::egl_surface_width, JNI::egl_surface_height);
 
 	if (_opengl) {
 		// resize game texture
@@ -495,7 +489,7 @@ void OSystem_Android::updateScreen() {
 
 		if (_frame_buffer) {
 			_frame_buffer->detach();
-			glViewport(0,0, _egl_surface_width, _egl_surface_height);
+			glViewport(0,0, JNI::egl_surface_width, JNI::egl_surface_height);
 		}
 
 		// clear pointer leftovers in dead areas
@@ -505,28 +499,8 @@ void OSystem_Android::updateScreen() {
 	//	if (_show_overlay)
 	//		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
 
-		if (true || _focus_rect.isEmpty()) {
-			_game_texture->drawTextureRect();
-			drawVirtControls();
-		} else {
-// TODO what is this and do we have engines using it?
-#if 0
-			GLCALL(glPushMatrix());
-
-			GLCALL(glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
-							xdiv(_egl_surface_height, _focus_rect.height()),
-							1 << 16));
-			GLCALL(glTranslatex(-_focus_rect.left << 16,
-								-_focus_rect.top << 16, 0));
-			GLCALL(glScalex(xdiv(_game_texture->width(), _egl_surface_width),
-							xdiv(_game_texture->height(), _egl_surface_height),
-							1 << 16));
-
-			_game_texture->drawTextureRect();
-
-			GLCALL(glPopMatrix());
-#endif
-		}
+		_game_texture->drawTextureRect();
+		drawVirtControls();
 
 		int cs = _mouse_targetscale;
 
