@@ -226,6 +226,7 @@ struct GameInfo {
 	Common::Array<WordMap> _wordMaps;
 	Common::Array<Action> _actions;
 	Common::Array<Function> _functions;
+	Common::StringArray _replaceWords;
 
 	StringTable _strings;
 	StringTable _strings2;
@@ -236,7 +237,6 @@ struct GameInfo {
 	bool _flags[MAX_FLAGS];
 	uint16 _variables[MAX_VARIABLES];
 
-	Common::Array<char *> _replaceWords;
 	uint8 _currentReplaceWord;
 	uint _updateFlags;
 

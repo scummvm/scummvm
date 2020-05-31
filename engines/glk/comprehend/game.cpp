@@ -176,7 +176,7 @@ void console_println(ComprehendGame *game, const char *text) {
 				         game->_currentReplaceWord);
 				word = bad_word;
 			} else {
-				word = game->_replaceWords[game->_currentReplaceWord];
+				word = game->_replaceWords[game->_currentReplaceWord].c_str();
 			}
 			word_len = strlen(word);
 			p++;

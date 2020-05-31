@@ -150,7 +150,7 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		break;
 
 	case OPCODE_SET_STRING_REPLACEMENT:
-		line += Common::String::format(" %s", game->_replaceWords[instr->operand[0] - 1]);
+		line += Common::String::format(" %s", game->_replaceWords[instr->operand[0] - 1].c_str());
 		break;
 	}
 
@@ -366,7 +366,7 @@ void DebuggerDumper::dumpReplaceWords() {
 	print("Replacement words (%u entries)\n",
 	      _game->_replaceWords.size());
 	for (i = 0; i < _game->_replaceWords.size(); i++)
-		print("  [%.2x] %s\n", i + 1, _game->_replaceWords[i]);
+		print("  [%.2x] %s\n", i + 1, _game->_replaceWords[i].c_str());
 }
 
 void DebuggerDumper::dumpHeader() {

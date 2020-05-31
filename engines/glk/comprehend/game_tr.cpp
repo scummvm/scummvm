@@ -164,18 +164,8 @@ void TransylvaniaGame::before_game() {
 	console_println(this, _strings[0x20].c_str());
 	g_comprehend->readLine(buffer, sizeof(buffer));
 
-	/*
-	 * Transylvania uses replace word 0 as the player's name, the game
-	 * data file stores a bunch of dummy characters, so the length is
-	 * limited (the original game will break if you put a name in that
-	 * is too long).
-	 */
-	if (!_replaceWords[0])
-		_replaceWords[0] = xstrndup(buffer, strlen(buffer));
-	else
-		snprintf(_replaceWords[0],
-			 strlen(_replaceWords[0]),
-			 "%s", buffer);
+	// The player's name is stored in word 0
+	_replaceWords[0] = Common::String(buffer);
 
 	// And your next of kin - This isn't stored by the game
 	console_println(this, _strings[0x21].c_str());
