@@ -225,12 +225,10 @@ struct GameInfo {
 
 	Common::Array<WordMap> _wordMaps;
 	Common::Array<Action> _actions;
+	Common::Array<Function> _functions;
 
 	StringTable _strings;
 	StringTable _strings2;
-
-	struct Function _functions[0xffff];
-	size_t _nr_functions;
 
 	struct ImageData _roomImages;
 	struct ImageData _itemImages;

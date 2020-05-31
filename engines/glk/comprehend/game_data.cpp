@@ -167,7 +167,6 @@ void GameInfo::clearInfo() {
 	_currentRoom = 0;
 	_words = nullptr;
 	_nr_words = 0;
-	_nr_functions = 0;
 	_currentReplaceWord = 0;
 	_updateFlags = 0;
 	_strings.clear();
@@ -179,8 +178,7 @@ void GameInfo::clearInfo() {
 	_items.clear();
 	_wordMaps.clear();
 	_actions.clear();
-	for (uint idx = 0; idx < 0xffff; ++idx)
-		_functions[idx].clear();
+	_functions.clear();
 
 	Common::fill(&_flags[0], &_flags[MAX_FLAGS], false);
 	Common::fill(&_variables[0], &_variables[MAX_VARIABLES], 0);
@@ -245,17 +243,16 @@ static void parse_function(FileBuffer *fb, Function *func) {
 }
 
 static void parse_vm(ComprehendGame *game, FileBuffer *fb) {
-	Function *func;
-
 	fb->seek(game->_header.addr_vm);
-	while (1) {
-		func = &game->_functions[game->_nr_functions];
 
-		parse_function(fb, func);
-		if (func->nr_instructions == 0)
+	while (1) {
+		Function func;
+
+		parse_function(fb, &func);
+		if (func.nr_instructions == 0)
 			break;
 
-		game->_nr_functions++;
+		game->_functions.push_back(func);
 	}
 }
 

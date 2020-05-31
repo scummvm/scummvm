@@ -952,9 +952,9 @@ static void eval_instruction(ComprehendGame *game,
 		index = instr->operand[0];
 		if (instr->operand[1] == 0x81)
 			index += 256;
-		if (index >= game->_nr_functions)
+		if (index >= game->_functions.size())
 			error("Bad function %.4x >= %.4x\n",
-			            index, (uint)game->_nr_functions);
+			      index, game->_functions.size());
 
 		debugC(kDebugScripts, "Calling subfunction %.4x", index);
 		eval_function(game, &game->_functions[index], verb, noun);

@@ -162,8 +162,8 @@ void DebuggerDumper::dumpFunctions() {
 	Function *func;
 	uint i, j;
 
-	print("Functions (%u entries)\n", (uint)_game->_nr_functions);
-	for (i = 0; i < _game->_nr_functions; i++) {
+	print("Functions (%u entries)\n", _game->_functions.size());
+	for (i = 0; i < _game->_functions.size(); i++) {
 		func = &_game->_functions[i];
 
 		print("[%.4x] (%u instructions)\n", i, (uint)func->nr_instructions);
