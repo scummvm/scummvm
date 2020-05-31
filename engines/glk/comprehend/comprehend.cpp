@@ -38,10 +38,9 @@ namespace Comprehend {
 
 Comprehend *g_comprehend;
 
-Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
-		_drawSurface(nullptr), _game(nullptr),_saveSlot(-1), 
-		_graphicsEnabled(true), _drawFlags(0) {
+Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
+                                                                            _drawSurface(nullptr), _game(nullptr), _saveSlot(-1),
+                                                                            _graphicsEnabled(true), _drawFlags(0) {
 	g_comprehend = this;
 }
 
@@ -132,6 +131,24 @@ void Comprehend::readLine(char *buffer, size_t maxLen) {
 	buffer[ev.val1] = 0;
 }
 
+int Comprehend::readChar() {
+	_drawSurface->renderIfDirty();
+
+	glk_request_char_event(_bottomWindow);
+
+	event_t ev;
+	while (ev.type != evtype_CharInput) {
+		glk_select(&ev);
+
+		if (ev.type == evtype_Quit) {
+			glk_cancel_char_event(_bottomWindow);
+			return -1;
+		}
+	}
+
+	return ev.val1;
+}
+
 Common::Error Comprehend::readSaveData(Common::SeekableReadStream *rs) {
 	Common::Serializer s(rs, nullptr);
 	_game->synchronizeSave(s);
@@ -146,7 +163,6 @@ Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
 
 	return Common::kNoError;
 }
-
 
 } // namespace Comprehend
 } // namespace Glk

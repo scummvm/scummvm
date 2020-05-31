@@ -139,11 +139,11 @@ static void console_init(void) {
 int console_get_key(void) {
 	int c, dummy;
 
-	dummy = c = getchar();
+	dummy = c = g_comprehend->readChar();
 
 	/* Clear input buffer */
 	while (dummy != '\n' && dummy != EOF)
-		dummy = getchar();
+		dummy = g_comprehend->readChar();
 
 	return c;
 }

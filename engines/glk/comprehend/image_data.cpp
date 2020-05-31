@@ -79,7 +79,8 @@ void ImageFileData::draw(uint index, ImageContext *ctx) {
 	for (bool done = false; !done;) {
 		done = doImageOp(g_comprehend->_drawSurface, ctx);
 		if (!done && (draw_flags & IMAGEF_OP_WAIT_KEYPRESS)) {
-			getchar();
+			if (g_comprehend->readChar() == -1)
+				return;
 		}
 	}
 }

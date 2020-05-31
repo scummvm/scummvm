@@ -34,8 +34,6 @@ namespace Comprehend {
 
 #undef printf
 #define printf debugN
-#undef getchar
-#define getchar() (0)
 
 #define PATH_MAX 256
 
@@ -122,6 +120,11 @@ public:
 	 * Read an input line
 	 */
 	void readLine(char *buffer, size_t maxLen);
+
+	/**
+	 * Read in a character
+	 */
+	int readChar();
 };
 
 extern Comprehend *g_comprehend;
