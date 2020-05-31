@@ -527,7 +527,8 @@ void KingdomGame::playMovie(int movieNum) {
 				g_system->unlockScreen();
 
 				if (decoder->hasDirtyPalette()) {
-					g_system->getPaletteManager()->setPalette(decoder->getPalette(), 0, 256);
+					PaletteManager *paletteManager = g_system->getPaletteManager();
+					decoder->applyPalette(paletteManager);
 				}
 
 				g_system->updateScreen();

@@ -38,6 +38,8 @@ namespace Graphics {
 struct PixelFormat;
 }
 
+class PaletteManager;
+
 namespace Video {
 
 /**
@@ -66,6 +68,8 @@ class MveDecoder : public VideoDecoder {
 	Common::Rational _frameRate;
 
 	bool      _dirtyPalette;
+	uint16    _palStart;
+	uint16    _palCount;
 	byte      _palette[0x300];
 
 	uint16    _skipMapSize;
@@ -150,6 +154,7 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	void setAudioTrack(int track);
+	void applyPalette(PaletteManager *paletteManager);
 
 	// const Common::List<Common::Rect> *getDirtyRects() const;
 	// void clearDirtyRects();
