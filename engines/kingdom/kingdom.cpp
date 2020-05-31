@@ -506,6 +506,9 @@ void KingdomGame::playMovie(int movieNum) {
 	MVE_ReleaseMem();
 	*/
 
+	int x = _fullScreen ? 0 : 4;
+	int y = _fullScreen ? 0 : 17;
+
 	bool skipMovie = false;
 	Video::MveDecoder *decoder = new Video::MveDecoder();
 	if (decoder->loadFile(path)) {
@@ -523,7 +526,7 @@ void KingdomGame::playMovie(int movieNum) {
 
 			if (frame) {
 				::Graphics::Surface *screen = g_system->lockScreen();
-				screen->copyRectToSurface(*frame, 0, 0, Common::Rect(frame->w, frame->h));
+				screen->copyRectToSurface(*frame, x, y, Common::Rect(frame->w, frame->h));
 				g_system->unlockScreen();
 
 				if (decoder->hasDirtyPalette()) {
