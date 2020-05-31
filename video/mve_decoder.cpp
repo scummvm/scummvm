@@ -353,6 +353,12 @@ void MveDecoder::readNextPacket() {
 				uint16 palStart = _s->readUint16LE();
 				uint16 palCount = _s->readUint16LE();
 				uint16 unk = _s->readUint16LE();
+				(void)unk;
+
+				if (palStart || palCount) {
+					_palStart = palStart;
+					_palCount = palCount;
+				}
 
 				_frameNumber += 1;
 				frameDone = true;
