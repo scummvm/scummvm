@@ -161,7 +161,7 @@ void TransylvaniaGame::before_game() {
 	char buffer[128];
 
 	// Welcome to Transylvania - sign your name
-	console_println(this, _strings.strings[0x20]);
+	console_println(this, _strings[0x20].c_str());
 	g_comprehend->readLine(buffer, sizeof(buffer));
 
 	/*
@@ -178,7 +178,7 @@ void TransylvaniaGame::before_game() {
 			 "%s", buffer);
 
 	// And your next of kin - This isn't stored by the game
-	console_println(this, _strings.strings[0x21]);
+	console_println(this, _strings[0x21].c_str());
 	g_comprehend->readLine(buffer, sizeof(buffer));
 }
 

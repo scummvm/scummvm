@@ -25,6 +25,7 @@
 
 #include "glk/comprehend/image_data.h"
 #include "common/serializer.h"
+#include "common/str-array.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -167,16 +168,7 @@ struct Function {
 	void clear();
 };
 
-struct StringTable {
-	char *strings[0xffff];
-	size_t nr_strings;
-
-	StringTable() {
-		clear();
-	}
-
-	void clear();
-};
+typedef Common::StringArray StringTable;
 
 struct GameHeader {
 	uint16 magic;
@@ -236,8 +228,8 @@ struct GameInfo {
 	struct WordMap _wordMaps[0xff];
 	size_t _nr_word_maps;
 
-	struct StringTable _strings;
-	struct StringTable _strings2;
+	StringTable _strings;
+	StringTable _strings2;
 
 	struct Action _actions[0xffff];
 	size_t _nr_actions;

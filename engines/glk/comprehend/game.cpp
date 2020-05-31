@@ -109,8 +109,8 @@ Common::String ComprehendGame::stringLookup(uint16 index) {
 		/* Fall-through */
 	case 0x00:
 	case 0x80:
-		if (string < _strings.nr_strings)
-			return _strings.strings[string];
+		if (string < _strings.size())
+			return _strings[string];
 		break;
 
 	case 0x83:
@@ -118,8 +118,8 @@ Common::String ComprehendGame::stringLookup(uint16 index) {
 		/* Fall-through */
 	case 0x02:
 	case 0x82:
-		if (string < _strings2.nr_strings)
-			return _strings2.strings[string];
+		if (string < _strings2.size())
+			return _strings2[string];
 		break;
 	}
 
@@ -247,7 +247,7 @@ Item *get_item(ComprehendGame *game, uint16 index) {
 void game_save(ComprehendGame *game) {
 	int c;
 
-	console_println(game, game->_strings.strings[STRING_SAVE_GAME]);
+	console_println(game, game->_strings[STRING_SAVE_GAME].c_str());
 
 	c = console_get_key();
 	if (c < '1' || c > '3') {
@@ -265,7 +265,7 @@ void game_save(ComprehendGame *game) {
 void game_restore(ComprehendGame *game) {
 	int c;
 
-	console_println(game, game->_strings.strings[STRING_RESTORE_GAME]);
+	console_println(game, game->_strings[STRING_RESTORE_GAME].c_str());
 
 	c = console_get_key();
 	if (c < '1' || c > '3') {

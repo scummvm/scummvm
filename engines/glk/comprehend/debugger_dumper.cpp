@@ -341,23 +341,23 @@ void DebuggerDumper::dumpItems() {
 	}
 }
 
-void DebuggerDumper::dumpStringTable(StringTable *table) {
+void DebuggerDumper::dumpStringTable(Common::StringArray &table) {
 	uint i;
 
-	for (i = 0; i < table->nr_strings; i++)
-		print("[%.4x] %s\n", i, table->strings[i]);
+	for (i = 0; i < table.size(); i++)
+		print("[%.4x] %s\n", i, table[i].c_str());
 }
 
 void DebuggerDumper::dumpGameDataStrings() {
 	print("Main string table (%u entries)\n",
-	      (uint)_game->_strings.nr_strings);
-	dumpStringTable(&_game->_strings);
+	      _game->_strings.size());
+	dumpStringTable(_game->_strings);
 }
 
 void DebuggerDumper::dumpExtraStrings() {
 	print("Extra strings (%u entries)\n",
-	      (uint)_game->_strings2.nr_strings);
-	dumpStringTable(&_game->_strings2);
+	      _game->_strings2.size());
+	dumpStringTable(_game->_strings2);
 }
 
 void DebuggerDumper::dumpReplaceWords() {

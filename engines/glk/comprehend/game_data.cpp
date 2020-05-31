@@ -131,13 +131,6 @@ void Function::clear() {
 
 /*-------------------------------------------------------*/
 
-void StringTable::clear() {
-	nr_strings = 0;
-	Common::fill(&strings[0], &strings[0xffff], (char *)nullptr);
-}
-
-/*-------------------------------------------------------*/
-
 void GameHeader::clear() {
 	magic = 0;
 	room_desc_table = 0;
@@ -747,16 +740,16 @@ static char decode_string_elem(uint8 c, bool capital, bool special) {
 * specifier). If a character has the value 0x1f then the next character is
 * taken from the symbols table.
 */
-static char *parse_string(FileBuffer *fb) {
+static Common::String parseString(FileBuffer *fb) {
 	bool capital_next = false, special_next = false;
 	unsigned i, j, k = 0;
 	uint64 chunk;
 	uint8 elem, *encoded;
-	char *string, c;
+	char c;
 	size_t encoded_len;
+	Common::String string;
 
 	encoded_len = fb->strlen();
-	string = (char *)xmalloc(encoded_len * 2);
 
 	/* Get the encoded string */
 	encoded = (uint8 *)xmalloc(encoded_len + 5);
@@ -784,13 +777,13 @@ static char *parse_string(FileBuffer *fb) {
 				                       special_next);
 				special_next = false;
 				capital_next = false;
-				string[k++] = c;
+				string += c;
+				k++;
 			}
 		}
 	}
 
 done:
-	string[k] = '\0';
 	free(encoded);
 
 	return string;
@@ -800,7 +793,7 @@ static void parse_string_table(FileBuffer *fb, unsigned start_addr,
                                uint32 end_addr, StringTable *table) {
 	fb->seek(start_addr);
 	while (1) {
-		table->strings[table->nr_strings++] = parse_string(fb);
+		table->push_back(parseString(fb));
 		if (fb->pos() >= (int32)end_addr)
 			break;
 	}
@@ -996,9 +989,9 @@ static void load_extra_string_files(ComprehendGame *game) {
 			break;
 
 		// HACK - get string offsets correct
-		game->_strings2.nr_strings = 0x40 * i;
-		if (game->_strings2.nr_strings == 0)
-			game->_strings2.nr_strings++;
+		game->_strings2.resize(0x40 * i);
+		if (game->_strings2.empty())
+			game->_strings2.push_back("");
 
 		load_extra_string_file(game, &game->_stringFiles[i]);
 	}

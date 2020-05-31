@@ -24,6 +24,7 @@
 #define GLK_COMPREHEND_DEBUGGER_DUMPER_H
 
 #include "common/hashmap.h"
+#include "common/str-array.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -31,7 +32,6 @@ namespace Comprehend {
 class ComprehendGame;
 struct FunctionState;
 struct Instruction;
-struct StringTable;
 
 class DebuggerDumper {
 private:
@@ -46,7 +46,7 @@ private:
 	void dumpWordMap();
 	void dumpRooms();
 	void dumpItems();
-	void dumpStringTable(StringTable *table);
+	void dumpStringTable(Common::StringArray &table);
 	void dumpGameDataStrings();
 	void dumpExtraStrings();
 	void dumpReplaceWords();
