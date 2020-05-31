@@ -30,6 +30,9 @@ namespace Wintermute {
 
 class Mesh {
 public:
+	// vertex size in bytes, for the moment we only have
+	// position and color components
+	static const int kVertexSize = 16;
 	Mesh();
 	~Mesh();
 	void computeNormals();
