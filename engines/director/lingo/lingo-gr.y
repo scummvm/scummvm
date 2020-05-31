@@ -102,7 +102,8 @@ static void endDef() {
 }
 
 static void mArg(Common::String *s, VarType type) {
-	g_lingo->_methodVars[*s] = type;
+	if (!g_lingo->_methodVars.contains(*s))
+		g_lingo->_methodVars[*s] = type;
 }
 
 %}
@@ -173,6 +174,7 @@ programline: /* empty */
 asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
+		mArg($ID, kVarLocal);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -196,6 +198,7 @@ asgn: tPUT expr tINTO ID 		{
 	| tSET ID tEQ expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
+		mArg($ID, kVarLocal);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -209,6 +212,7 @@ asgn: tPUT expr tINTO ID 		{
 	| tSET ID tTO expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
+		mArg($ID, kVarLocal);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -278,7 +282,8 @@ stmt: stmtoneliner
 	//
 	| tREPEAT tWITH ID tEQ expr[init]
 				{ g_lingo->code1(LC::c_varpush);
-				  g_lingo->codeString($ID->c_str()); }
+				  g_lingo->codeString($ID->c_str());
+				  mArg($ID, kVarLocal); }
 			varassign
 				{ g_lingo->code1(LC::c_eval);
 				  g_lingo->codeString($ID->c_str()); }
@@ -308,7 +313,8 @@ stmt: stmtoneliner
 	//
 	| tREPEAT tWITH ID tEQ expr[init]
 				{ g_lingo->code1(LC::c_varpush);
-				  g_lingo->codeString($ID->c_str()); }
+				  g_lingo->codeString($ID->c_str());
+				  mArg($ID, kVarLocal); }
 			varassign
 				{ g_lingo->code1(LC::c_eval);
 				  g_lingo->codeString($ID->c_str()); }
@@ -358,6 +364,7 @@ stmt: stmtoneliner
 				  g_lingo->codeFunc(new Common::String("getAt"), 2);
 				  g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
+				  mArg($ID, kVarLocal);
 				  g_lingo->code1(LC::c_assign); }
 			stmtlist tENDREPEAT {
 

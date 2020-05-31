@@ -56,7 +56,8 @@ enum VarType {
 	kVarArgument,
 	kVarProperty,
 	kVarInstance,
-	kVarGlobal
+	kVarGlobal,
+	kVarLocal
 };
 
 typedef void (*inst)(void);
