@@ -95,8 +95,8 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x60, LC::cb_theassign2,	"b" },
 	{ 0x61, LC::cb_objectfieldpush, "b" },
 	{ 0x62, LC::cb_objectfieldassign, "b" },
-	{ 0x64, LC::cb_stackpeek, 	"b" },
-	{ 0x65, LC::cb_stackdrop, 	"b" },
+	{ 0x64, LC::c_stackpeek, 	"b" },
+	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "b" },
 	{ 0x81, LC::c_intpush,		"w" },
 	{ 0x82, LC::c_argcnoretpush,"w" },
@@ -414,20 +414,6 @@ void LC::cb_call() {
 		warning("cb_call: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
 
-}
-
-
-void LC::cb_stackpeek() {
-	int peekOffset = g_lingo->readInt();
-	g_lingo->push(g_lingo->peek(peekOffset));
-}
-
-
-void LC::cb_stackdrop() {
-	int dropCount = g_lingo->readInt();
-	for (int i = 0; i < dropCount; i++) {
-		g_lingo->pop();
-	}
 }
 
 

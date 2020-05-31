@@ -163,8 +163,8 @@ static struct FuncDescr {
 	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","N" },
 	{ LC::cb_v4theentityassign,"cb_v4theentityassign","i" },
 	{ LC::cb_zeropush,		"cb_zeropush",		"" },
-	{ LC::cb_stackpeek,		"cb_stackpeek",		"i" },
-	{ LC::cb_stackdrop,		"cb_stackdrop",		"i" },
+	{ LC::c_stackpeek,		"c_stackpeek",		"i" },
+	{ LC::c_stackdrop,		"c_stackdrop",		"i" },
 	{ 0, 0, 0 }
 };
 
@@ -384,6 +384,18 @@ void LC::c_varpush() {
 	d.type = VAR;
 	d.u.s = new Common::String(name);
 	g_lingo->push(d);
+}
+
+void LC::c_stackpeek() {
+	int peekOffset = g_lingo->readInt();
+	g_lingo->push(g_lingo->peek(peekOffset));
+}
+
+void LC::c_stackdrop() {
+	int dropCount = g_lingo->readInt();
+	for (int i = 0; i < dropCount; i++) {
+		g_lingo->pop();
+	}
 }
 
 void LC::c_setImmediate() {

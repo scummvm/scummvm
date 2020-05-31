@@ -2552,7 +2552,7 @@ yyreduce:
 
   case 38:
 #line 348 "engines/director/lingo/lingo-gr.y"
-                                { g_lingo->code1(LC::cb_stackpeek);
+                                { g_lingo->code1(LC::c_stackpeek);
 				  g_lingo->codeInt(0);
 				  g_lingo->codeFunc(new Common::String("count"), 1);
 				  g_lingo->code1(LC::c_intpush);	// start counter
@@ -2562,9 +2562,9 @@ yyreduce:
 
   case 39:
 #line 354 "engines/director/lingo/lingo-gr.y"
-                                { g_lingo->code1(LC::cb_stackpeek);	// get counter
+                                { g_lingo->code1(LC::c_stackpeek);	// get counter
 				  g_lingo->codeInt(0);
-				  g_lingo->code1(LC::cb_stackpeek);	// get array size
+				  g_lingo->code1(LC::c_stackpeek);	// get array size
 				  g_lingo->codeInt(2);
 				  g_lingo->code1(LC::c_le); }
 #line 2571 "engines/director/lingo/lingo-gr.cpp"
@@ -2572,9 +2572,9 @@ yyreduce:
 
   case 40:
 #line 360 "engines/director/lingo/lingo-gr.y"
-                                { g_lingo->code1(LC::cb_stackpeek);	// get list
+                                { g_lingo->code1(LC::c_stackpeek);	// get list
 				  g_lingo->codeInt(2);
-				  g_lingo->code1(LC::cb_stackpeek);	// get counter
+				  g_lingo->code1(LC::c_stackpeek);	// get counter
 				  g_lingo->codeInt(1);
 				  g_lingo->codeFunc(new Common::String("getAt"), 2);
 				  g_lingo->code1(LC::c_varpush);
@@ -2594,7 +2594,7 @@ yyreduce:
 
 		int jump = g_lingo->code2(LC::c_jump, STOP);
 
-		int end2 = g_lingo->code1(LC::cb_stackdrop);	// remove list, size, counter
+		int end2 = g_lingo->code1(LC::c_stackdrop);	// remove list, size, counter
 		g_lingo->codeInt(3);
 
 		inst loop = 0, end = 0;

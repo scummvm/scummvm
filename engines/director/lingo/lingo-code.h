@@ -77,6 +77,8 @@ namespace LC {
 	void c_argcnoretpush();
 	void c_arraypush();
 	void c_proparraypush();
+	void c_stackpeek();
+	void c_stackdrop();
 	void c_assign();
 	bool verify(const Symbol &s);
 	void c_eval();
@@ -158,8 +160,6 @@ namespace LC {
 	void cb_thepush();
 	void cb_thepush2();
 	void cb_proplist();
-	void cb_stackpeek();
-	void cb_stackdrop();
 	void cb_varassign();
 	void cb_varpush();
 	void cb_v4assign();
