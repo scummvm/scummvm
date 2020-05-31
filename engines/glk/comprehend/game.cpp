@@ -29,6 +29,7 @@
 #include "glk/comprehend/opcode_map.h"
 #include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
+#include "common/debug-channels.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -421,7 +422,7 @@ static void eval_instruction(ComprehendGame *game,
 
 	room = get_room(game, game->_currentRoom);
 
-	if (gDebugLevel > 0) {
+	if (DebugMan.isDebugChannelEnabled(kDebugScripts)) {
 		Common::String line;
 		if (!instr->is_command) {
 			line += "? ";
@@ -433,7 +434,7 @@ static void eval_instruction(ComprehendGame *game,
 		}
 
 		line += g_debugger->dumpInstruction(game, func_state, instr);
-		debug("%s", line.c_str());
+		debugC(kDebugScripts, "%s", line.c_str());
 	}
 
 	if (func_state->or_count)
@@ -879,8 +880,7 @@ static void eval_instruction(ComprehendGame *game,
 			fatal_error("Bad function %.4x >= %.4x\n",
 			            index, (uint)game->_nr_functions);
 
-		debug_printf(DEBUG_FUNCTIONS,
-		             "Calling subfunction %.4x\n", index);
+		debugC(kDebugScripts, "Calling subfunction %.4x", index);
 		eval_function(game, &game->_functions[index], verb, noun);
 		break;
 
@@ -946,12 +946,12 @@ static void eval_instruction(ComprehendGame *game,
 
 	default:
 		if (instr->opcode & 0x80) {
-			debug_printf(DEBUG_FUNCTIONS,
-			             "Unhandled command opcode %.2x\n",
+			debugC(kDebugScripts,
+			             "Unhandled command opcode %.2x",
 			             instr->opcode);
 		} else {
-			debug_printf(DEBUG_FUNCTIONS,
-			             "Unhandled test opcode %.2x - returning false\n",
+			debugC(kDebugScripts,
+			             "Unhandled test opcode %.2x - returning false",
 			             instr->opcode);
 			func_set_test_result(func_state, false);
 		}

@@ -42,8 +42,6 @@ void fatal_strerror(int err, const char *fmt, ...);
 void *xmalloc(size_t size);
 char *xstrndup(const char *str, size_t size);
 
-void debug_printf(unsigned flags, const char *fmt, ...);
-
 } // namespace Comprehend
 } // namespace Glk
 

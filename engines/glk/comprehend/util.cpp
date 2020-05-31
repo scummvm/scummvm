@@ -57,19 +57,5 @@ char *xstrndup(const char *str, size_t len) {
 	return p;
 }
 
-void debug_printf(unsigned flags, const char *fmt, ...) {
-#ifdef TODO
-	va_list args;
-
-	if (debug_flags & flags) {
-		va_start(args, fmt);
-		Common::String msg = Common::String::vformat(fmt, args);
-		va_end(args);
-
-		debug(1, "%s", msg.c_str());
-	}
-	#endif
-}
-
 } // namespace Comprehend
 } // namespace Glk

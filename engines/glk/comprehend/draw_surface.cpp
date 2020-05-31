@@ -206,7 +206,7 @@ uint32 DrawSurface::getFillColor(uint8 index) {
 	color = _colorTable[index];
 	if (!color) {
 		/* Unknown color - use ugly purple */
-		debug_printf(DEBUG_IMAGE_DRAW, "Unknown color %.2x\n", index);
+		debugC(kDebugGraphics, "Unknown color %.2x", index);
 		return RGB(0xff, 0x00, 0xff);
 	}
 

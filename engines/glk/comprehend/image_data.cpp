@@ -92,13 +92,12 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 	uint16 a, b;
 
 	opcode = _fb.readByte();
-	debug_printf(DEBUG_IMAGE_DRAW,
-	             "  %.4x [%.2x]: ", _fb.pos() - 1, opcode);
+	debugCN(kDebugGraphics, "  %.4x [%.2x]: ", _fb.pos() - 1, opcode);
 
 	switch (opcode) {
 	case IMAGE_OP_SCENE_END:
 	case IMAGE_OP_EOF:
-		debug_printf(DEBUG_IMAGE_DRAW, "end\n");
+		debugC(kDebugGraphics, "end");
 		return true;
 
 	case IMAGE_OP_PEN_COLOR_A:
@@ -109,7 +108,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 	case IMAGE_OP_PEN_COLOR_F:
 	case IMAGE_OP_PEN_COLOR_G:
 	case IMAGE_OP_PEN_COLOR_H:
-		debug_printf(DEBUG_IMAGE_DRAW, "set_pen_color(%.2x)\n", opcode);
+		debugC(kDebugGraphics, "set_pen_color(%.2x)", opcode);
 		ctx->_penColor = ds->getPenColor(opcode);
 		break;
 
@@ -121,8 +120,8 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		if (opcode & 0x1)
 			a += 255;
 
-		debug_printf(DEBUG_IMAGE_DRAW,
-		             "draw_line (%d, %d) - (%d, %d)\n", opcode,
+		debugC(kDebugGraphics,
+		             "draw_line (%d, %d) - (%d, %d)", opcode,
 		             ctx->_x, ctx->_y, a, b);
 		ds->drawLine(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 
@@ -138,8 +137,8 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		if (opcode & 0x1)
 			a += 255;
 
-		debug_printf(DEBUG_IMAGE_DRAW,
-		             "draw_box (%d, %d) - (%d, %d)\n", opcode,
+		debugC(kDebugGraphics,
+		             "draw_box (%d, %d) - (%d, %d)", opcode,
 		             ctx->_x, ctx->_y, a, b);
 
 		ds->drawBox(ctx->_x, ctx->_y, a, b, ctx->_penColor);
@@ -154,7 +153,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		if (opcode & 0x1)
 			a += 255;
 
-		debug_printf(DEBUG_IMAGE_DRAW, "move_to(%d, %d)\n", a, b);
+		debugC(kDebugGraphics, "move_to(%d, %d)", a, b);
 		ctx->_x = a;
 		ctx->_y = b;
 		break;
@@ -167,8 +166,8 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 	case IMAGE_OP_SHAPE_CIRCLE_LARGE:
 	case IMAGE_OP_SHAPE_A:
 	case IMAGE_OP_SHAPE_SPRAY:
-		debug_printf(DEBUG_IMAGE_DRAW,
-		             "set_shape_type(%.2x)\n", opcode - 0x40);
+		debugC(kDebugGraphics,
+		             "set_shape_type(%.2x)", opcode - 0x40);
 		ctx->shape = opcode;
 		break;
 
@@ -177,7 +176,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		 * FIXME - This appears to be a shape type. Only used by
 		 *         OO-Topos.
 		 */
-		debug_printf(DEBUG_IMAGE_DRAW, "shape_unknown()\n");
+		debugC(kDebugGraphics, "shape_unknown()");
 		ctx->shape = IMAGE_OP_SHAPE_PIXEL;
 		break;
 
@@ -189,8 +188,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		if (opcode & 0x1)
 			a += 255;
 
-		debug_printf(DEBUG_IMAGE_DRAW,
-		             "draw_shape(%d, %d), style=%.2x, fill=%.2x\n",
+		debugC(kDebugGraphics, "draw_shape(%d, %d), style=%.2x, fill=%.2x",
 		             a, b, ctx->shape, ctx->fill_color);
 
 		ds->drawShape(a, b, ctx->shape, ctx->fill_color);
@@ -205,7 +203,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		if (opcode & 0x1)
 			a += 255;
 
-		debug_printf(DEBUG_IMAGE_DRAW, "paint(%d, %d)\n", a, b);
+		debugC(kDebugGraphics, "paint(%d, %d)", a, b);
 		if (!(draw_flags & IMAGEF_NO_FLOODFILL))
 			ds->floodFill(a, b, ctx->fill_color,
 			            ds->getPixelColor(a, b));
@@ -213,14 +211,14 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 
 	case IMAGE_OP_FILL_COLOR:
 		a = imageGetOperand();
-		debug_printf(DEBUG_IMAGE_DRAW, "set_fill_color(%.2x)\n", a);
+		debugC(kDebugGraphics, "set_fill_color(%.2x)", a);
 		ctx->fill_color = ds->getFillColor(a);
 		break;
 
 	case IMAGE_OP_SET_TEXT_POS:
 		a = imageGetOperand();
 		b = imageGetOperand();
-		debug_printf(DEBUG_IMAGE_DRAW, "set_text_pos(%d, %d)\n", a, b);
+		debugC(kDebugGraphics, "set_text_pos(%d, %d)", a, b);
 
 		ctx->text_x = a;
 		ctx->text_y = b;
@@ -228,7 +226,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 
 	case IMAGE_OP_DRAW_CHAR:
 		a = imageGetOperand();
-		debug_printf(DEBUG_IMAGE_DRAW, "draw_char(%c)\n",
+		debugC(kDebugGraphics, "draw_char(%c)",
 		             a >= 0x20 && a < 0x7f ? a : '?');
 
 		ds->drawBox(ctx->text_x, ctx->text_y,
@@ -241,14 +239,14 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		 * FIXME - Oo-Topos uses this at the beginning of some room
 		 *         images.
 		 */
-		debug_printf(DEBUG_IMAGE_DRAW, "unknown()\n");
+		debugC(kDebugGraphics, "unknown()");
 		break;
 
 	case 0xb5:
 	case 0x82:
 	case 0x50:
 		/* FIXME - unknown, no arguments */
-		debug_printf(DEBUG_IMAGE_DRAW, "unknown\n");
+		debugC(kDebugGraphics, "unknown");
 		break;
 
 	case 0x73:
@@ -256,7 +254,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 	case 0xd0:
 		/* FIXME - unknown, one argument */
 		a = imageGetOperand();
-		debug_printf(DEBUG_IMAGE_DRAW, "unknown %.2x: (%.2x) '%c'\n",
+		debugC(kDebugGraphics, "unknown %.2x: (%.2x) '%c'",
 		             opcode, a,
 		             a >= 0x20 && a < 0x7f ? a : '?');
 		break;
@@ -266,8 +264,7 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		a = imageGetOperand();
 		b = imageGetOperand();
 
-		debug_printf(DEBUG_IMAGE_DRAW,
-		             "unknown(%.2x, %.2x)\n", a, b);
+		debugC(kDebugGraphics, "unknown(%.2x, %.2x)", a, b);
 		ds->drawPixel(a, b, 0x00ff00ff);
 		break;
 	}
