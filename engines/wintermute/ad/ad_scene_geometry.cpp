@@ -421,7 +421,7 @@ bool AdSceneGeometry::render(bool render) {
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glBindTexture(GL_TEXTURE_2D, 0);

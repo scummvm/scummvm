@@ -269,9 +269,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		glEnable(GL_BLEND);
 		glAlphaFunc(GL_GEQUAL, 0x08);
 
-		// no culling for the moment
-		glDisable(GL_CULL_FACE);
-
 		setProjection(camera->_fov);
 
 		Math::Matrix4 viewMatrix;
