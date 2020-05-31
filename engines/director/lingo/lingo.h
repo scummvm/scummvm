@@ -325,7 +325,8 @@ public:
 	Symbol define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1, bool removeCode = true);
 	void processIf(int toplabel, int endlabel);
 	int castIdFetch(Datum &var);
-	void varAssign(Datum &var, Datum &value, bool create = false, bool global = false);
+	void varCreate(const Common::String &name, bool global);
+	void varAssign(Datum &var, Datum &value, bool global = false);
 	Datum varFetch(Datum &var, bool global = false);
 
 	int getAlignedType(Datum &d1, Datum &d2);

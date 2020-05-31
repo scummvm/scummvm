@@ -301,7 +301,8 @@ void Lingo::initBuiltIns() {
 		target.type = VAR;
 		Datum source(name);
 		source.type = SYMBOL;
-		g_lingo->varAssign(target, source, true, true);
+		g_lingo->varCreate(name, true);
+		g_lingo->varAssign(target, source, true);
 	}
 }
 

@@ -227,7 +227,6 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 	sym.u.defn = code;
 	sym.nargs = nargs;
 	sym.maxArgs = nargs;
-	// TODO: Assign these properties from here
 	sym.argNames = argNames;
 	sym.varNames = varNames;
 	sym.ctx = _currentScriptContext;
@@ -454,7 +453,27 @@ int Lingo::castIdFetch(Datum &var) {
 	return id;
 }
 
-void Lingo::varAssign(Datum &var, Datum &value, bool create, bool global) {
+void Lingo::varCreate(const Common::String &name, bool global) {
+	if (_localvars && _localvars->contains(name)) {
+		if (global)
+			warning("varCreate: variable %s is local, not global", name.c_str());
+		return;
+	} else if (_globalvars.contains(name)) {
+		if (!global)
+			warning("varCreate: variable %s is global, not local", name.c_str());
+		return;
+	}
+
+	if (global) {
+		_globalvars[name] = Symbol();
+		_globalvars[name].name = new Common::String(name);
+	} else {
+		(*_localvars)[name] = Symbol();
+		(*_localvars)[name].name = new Common::String(name);
+	}
+}
+
+void Lingo::varAssign(Datum &var, Datum &value, bool global) {
 	if (var.type != VAR && var.type != REFERENCE) {
 		warning("varAssign: assignment to non-variable");
 		return;
@@ -475,18 +494,8 @@ void Lingo::varAssign(Datum &var, Datum &value, bool create, bool global) {
 		}
 
 		if (!sym) {
-			if (create) {;
-				if (global) {
-					_globalvars[name] = Symbol();
-					sym = &_globalvars[name];
-				} else {
-					(*_localvars)[name] = Symbol();
-					sym = &(*_localvars)[name];
-				}
-			} else {
-				warning("varAssign: variable %s not defined", name.c_str());
-				return;
-			}
+			warning("varAssign: variable %s not defined", name.c_str());
+			return;
 		}
 
 		if (sym->type != INT && sym->type != VOID &&

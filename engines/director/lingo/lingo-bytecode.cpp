@@ -452,7 +452,8 @@ void LC::cb_globalassign() {
 	// Lingo lets you declare globals inside a method.
 	// This doesn't define them in the script list, but you can still
 	// read and write to them???
-	g_lingo->varAssign(target, source, true, true);
+	g_lingo->varCreate(name, true);
+	g_lingo->varAssign(target, source, true);
 }
 
 void LC::cb_objectfieldassign() {
@@ -532,8 +533,8 @@ void LC::cb_varassign() {
 	target.type = VAR;
 	debugC(3, kDebugLingoExec, "cb_varassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
-	// Local variables should be initialised by the script
-	g_lingo->varAssign(target, source, false, false);
+	// Local variables should be initialised by the script, no varCreate here
+	g_lingo->varAssign(target, source, false);
 }
 
 

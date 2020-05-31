@@ -1366,10 +1366,11 @@ void LC::call(const Symbol &sym, int nargs) {
 		for (int i = symNArgs - 1; i >= 0; i--) {
 			Common::String name = (*sym.argNames)[i];
 			if (!g_lingo->_localvars->contains(name)) {
+				g_lingo->varCreate(name, false);
 				Datum arg(name);
 				arg.type = VAR;
 				Datum value = g_lingo->pop();
-				g_lingo->varAssign(arg, value, true);
+				g_lingo->varAssign(arg, value);
 			} else {
 				warning("Argument %s already defined", name.c_str());
 			}
