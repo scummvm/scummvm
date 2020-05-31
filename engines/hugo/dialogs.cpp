@@ -124,7 +124,7 @@ void TopMenu::reflowLayout() {
 void TopMenu::loadBmpArr(Common::SeekableReadStream &in) {
 	_arraySize = in.readUint16BE();
 
-	delete _arrayBmp;
+	delete[] _arrayBmp;
 	_arrayBmp = new Graphics::Surface *[_arraySize * 2];
 	for (int i = 0; i < _arraySize; i++) {
 		uint16 bmpSize = in.readUint16BE();
