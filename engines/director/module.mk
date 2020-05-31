@@ -33,7 +33,7 @@ MODULE_OBJS = \
 	lingo/lingo-the.o
 
 director-grammar:
-	flex engines/director/lingo/lingo-lex.l
+	`brew --prefix flex`/bin/flex engines/director/lingo/lingo-lex.l
 	`brew --prefix bison`/bin/bison -dv engines/director/lingo/lingo-gr.y
 
 # This module can be built as a plugin
