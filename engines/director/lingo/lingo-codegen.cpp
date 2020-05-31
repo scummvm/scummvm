@@ -272,7 +272,7 @@ Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Common::Str
 		argNames->push_back(Common::String(_argstack[i]->c_str()));
 	}
 	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars.begin(); it != _methodVars.end(); ++it) {
+	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
 		if (it->_value == kVarLocal)
 			varNames->push_back(Common::String(it->_key));
 	}

@@ -427,7 +427,7 @@ static const YY_CHAR yy_ec[256] =
 
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    2,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1
@@ -766,7 +766,7 @@ static void count() {
 
 static int checkImmediate(int token) {
 	if (g_lingo->_immediateMode || g_lingo->_indef == kStateInArgs ||
-			g_lingo->_methodVars.contains(yytext)) {
+			g_lingo->_methodVars->contains(yytext)) {
 		yylval.s = new Common::String(yytext);
 
 		return ID;
@@ -792,7 +792,7 @@ static Common::String *cleanupString(const char *s) {
 }
 
 static int varCheck(int token, const char *name) {
-	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars.contains(name)) {
+	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars->contains(name)) {
 		yylval.s = new Common::String(name);
 
 		return ID;
@@ -1613,7 +1613,7 @@ YY_RULE_SETUP
 
 		// Check that this is one of locally used names:
 		// argument, property, instance or global
-		if (g_lingo->_methodVars.contains(yytext))
+		if (g_lingo->_methodVars->contains(yytext))
 			return ID;
 
 		// First of all, match against argument list

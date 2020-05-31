@@ -90,7 +90,8 @@ static void inNone() { g_lingo->_indef = kStateNone; }
 
 static void startDef() {
 	inArgs();
-	g_lingo->_methodVars.clear();
+	g_lingo->_methodVarsStash = g_lingo->_methodVars;
+	g_lingo->_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 }
 
 static void endDef() {
@@ -98,12 +99,14 @@ static void endDef() {
 	inNone();
 	g_lingo->_ignoreMe = false;
 
-	g_lingo->_methodVars.clear();
+	delete g_lingo->_methodVars;
+	g_lingo->_methodVars = g_lingo->_methodVarsStash;
+	g_lingo->_methodVarsStash = nullptr;
 }
 
-static void mArg(Common::String *s, VarType type) {
-	if (!g_lingo->_methodVars.contains(*s))
-		g_lingo->_methodVars[*s] = type;
+static void mVar(Common::String *s, VarType type) {
+	if (!g_lingo->_methodVars->contains(*s))
+		(*g_lingo->_methodVars)[*s] = type;
 }
 
 %}
@@ -174,7 +177,7 @@ programline: /* empty */
 asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarLocal);
+		mVar($ID, kVarLocal);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -198,7 +201,7 @@ asgn: tPUT expr tINTO ID 		{
 	| tSET ID tEQ expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarLocal);
+		mVar($ID, kVarLocal);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -212,7 +215,7 @@ asgn: tPUT expr tINTO ID 		{
 	| tSET ID tTO expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarLocal);
+		mVar($ID, kVarLocal);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -283,7 +286,7 @@ stmt: stmtoneliner
 	| tREPEAT tWITH ID tEQ expr[init]
 				{ g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
-				  mArg($ID, kVarLocal); }
+				  mVar($ID, kVarLocal); }
 			varassign
 				{ g_lingo->code1(LC::c_eval);
 				  g_lingo->codeString($ID->c_str()); }
@@ -314,7 +317,7 @@ stmt: stmtoneliner
 	| tREPEAT tWITH ID tEQ expr[init]
 				{ g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
-				  mArg($ID, kVarLocal); }
+				  mVar($ID, kVarLocal); }
 			varassign
 				{ g_lingo->code1(LC::c_eval);
 				  g_lingo->codeString($ID->c_str()); }
@@ -364,7 +367,7 @@ stmt: stmtoneliner
 				  g_lingo->codeFunc(new Common::String("getAt"), 2);
 				  g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
-				  mArg($ID, kVarLocal);
+				  mVar($ID, kVarLocal);
 				  g_lingo->code1(LC::c_assign); }
 			stmtlist tENDREPEAT {
 
@@ -597,34 +600,34 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 globallist: ID					{
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarGlobal);
+		mVar($ID, kVarGlobal);
 		delete $ID; }
 	| globallist ',' ID			{
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarGlobal);
+		mVar($ID, kVarGlobal);
 		delete $ID; }
 
 propertylist: ID				{
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarProperty);
+		mVar($ID, kVarProperty);
 		delete $ID; }
 	| propertylist ',' ID		{
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarProperty);
+		mVar($ID, kVarProperty);
 		delete $ID; }
 
 instancelist: ID				{
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarInstance);
+		mVar($ID, kVarInstance);
 		delete $ID; }
 	| instancelist ',' ID		{
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID, kVarInstance);
+		mVar($ID, kVarInstance);
 		delete $ID; }
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -726,8 +729,8 @@ on:  tON { startDef(); } ID 	{
 		$$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
-	| ID						{ g_lingo->codeArg($ID); mArg($ID, kVarArgument); $$ = 1; delete $ID; }
-	| argdef ',' ID				{ g_lingo->codeArg($ID); mArg($ID, kVarArgument); $$ = $1 + 1; delete $ID; }
+	| ID						{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = 1; delete $ID; }
+	| argdef ',' ID				{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = $1 + 1; delete $ID; }
 
 endargdef:	/* nothing */
 	| ID						{ delete $ID; }

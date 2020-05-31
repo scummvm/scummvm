@@ -294,12 +294,8 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	// FIXME: unpack into seperate functions
 	_currentScriptFunction = 0;
-	Symbol currentFunc;
-	currentFunc.type = HANDLER;
-	currentFunc.u.defn = _currentScript;
-	currentFunc.ctx = _currentScriptContext;
-	_currentScriptContext->functions.push_back(currentFunc);
 
+	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 	_linenumber = _colnumber = 1;
 	_hadError = false;
 
@@ -350,10 +346,13 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		debugC(1, kDebugLingoCompile, "Last code chunk:\n#####\n%s\n#####", begin);
 		parse(begin);
 
+		// end of script, add a c_procret so stack frames work as expected
+		code1(LC::c_procret);
 		code1(STOP);
 	} else {
 		parse(code);
 
+		code1(LC::c_procret);
 		code1(STOP);
 	}
 
@@ -372,6 +371,42 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		}
 		debugC(2, kDebugLingoCompile, "<end code>");
 	}
+
+	// for D4 and above, there won't be any code left. all scoped methods
+	// will be defined and stored by the code parser, and this function we save 
+	// will be blank.
+	// however D3 and below allow scopeless functions!
+	Symbol currentFunc;
+
+	currentFunc.type = HANDLER;
+	currentFunc.u.defn = _currentScript;
+	// guess the name. don't actually bind it to the event, there's a seperate
+	// triggering mechanism for that.
+	if (type == kFrameScript) {
+		currentFunc.name = new Common::String("enterFrame");
+	} else if (type == kSpriteScript) {
+		currentFunc.name = new Common::String("mouseUp");
+	} else {
+		currentFunc.name = new Common::String("[unknown]");
+	}
+	currentFunc.ctx = _currentScriptContext;
+	currentFunc.archiveIndex = _archiveIndex;
+	// arg names should be empty, but just in case
+	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+	for (uint i = 0; i < _argstack.size(); i++) {
+		argNames->push_back(Common::String(_argstack[i]->c_str()));
+	}
+	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
+	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
+		if (it->_value == kVarLocal)
+			varNames->push_back(Common::String(it->_key));
+	}
+	delete _methodVars;
+	_methodVars = nullptr;
+
+	currentFunc.argNames = argNames;
+	currentFunc.varNames = varNames;
+	_currentScriptContext->functions.push_back(currentFunc);
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
@@ -385,14 +420,13 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 		return;
 	}
 
+	_localvars = new SymbolHash;
+
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
 
 	_currentScriptContext = sc;
-	_currentScript = _currentScriptContext->functions[function].u.defn;
-	_pc = 0;
-
-	_localvars = new SymbolHash;
-
+	Symbol sym = _currentScriptContext->functions[function];
+	LC::call(sym, 0);
 	execute(_pc);
 
 	cleanLocalVars();
