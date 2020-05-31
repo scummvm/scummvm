@@ -125,7 +125,7 @@ void console_println(ComprehendGame *game, const char *text) {
 
 		case '@':
 			/* Replace word */
-			if (game->_currentReplaceWord >= game->_nr_replace_words) {
+			if (game->_currentReplaceWord >= game->_replaceWords.size()) {
 				snprintf(bad_word, sizeof(bad_word),
 				         "[BAD_REPLACE_WORD(%.2x)]",
 				         game->_currentReplaceWord);

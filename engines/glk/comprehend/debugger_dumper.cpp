@@ -365,8 +365,8 @@ void DebuggerDumper::dumpReplaceWords() {
 	uint i;
 
 	print("Replacement words (%u entries)\n",
-	      (uint)_game->_nr_replace_words);
-	for (i = 0; i < _game->_nr_replace_words; i++)
+	      _game->_replaceWords.size());
+	for (i = 0; i < _game->_replaceWords.size(); i++)
 		print("  [%.2x] %s\n", i + 1, _game->_replaceWords[i]);
 }
 

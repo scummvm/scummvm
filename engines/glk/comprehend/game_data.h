@@ -251,13 +251,14 @@ struct GameInfo {
 	bool _flags[MAX_FLAGS];
 	uint16 _variables[MAX_VARIABLES];
 
-	char *_replaceWords[256];
-	size_t _nr_replace_words;
-
+	Common::Array<char *> _replaceWords;
 	uint8 _currentReplaceWord;
-	unsigned _updateFlags;
+	uint _updateFlags;
 
 	GameInfo() {
+		clearInfo();
+	}
+	~GameInfo() {
 		clearInfo();
 	}
 

@@ -179,7 +179,6 @@ void GameInfo::clearInfo() {
 	_nr_word_maps = 0;
 	_nr_actions = 0;
 	_nr_functions = 0;
-	_nr_replace_words = 0;
 	_currentReplaceWord = 0;
 	_updateFlags = 0;
 	_strings.clear();
@@ -200,7 +199,10 @@ void GameInfo::clearInfo() {
 
 	Common::fill(&_flags[0], &_flags[MAX_FLAGS], false);
 	Common::fill(&_variables[0], &_variables[MAX_VARIABLES], 0);
-	Common::fill(&_replaceWords[0], &_replaceWords[256], (char *)nullptr);
+
+	for (uint idx = 0; idx < _replaceWords.size(); ++idx)
+		free(_replaceWords[idx]);
+	_replaceWords.clear();
 }
 
 static void parse_header_le16(FileBuffer *fb, uint16 *val) {
@@ -843,12 +845,11 @@ static void parse_replace_words(ComprehendGame *game,
 		if (len == 0)
 			break;
 
-		game->_replaceWords[i] = xstrndup((const char *)fb->dataPtr(), len);
+		game->_replaceWords.push_back(xstrndup((const char *)fb->dataPtr(), len));
 		fb->skip(len + (eof ? 0 : 1));
 		if (eof)
 			break;
 	}
-	game->_nr_replace_words = i;
 }
 
 /*
