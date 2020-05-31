@@ -49,7 +49,7 @@ template<typename T> inline T ABS(T x)		{ return (x >= 0) ? x : -x; }
 template<typename T> inline T MIN(T a, T b)	{ return (a < b) ? a : b; }
 template<typename T> inline T MAX(T a, T b)	{ return (a > b) ? a : b; }
 template<typename T> inline T CLIP(T v, T amin, T amax)
-		{ if (v < amin) return amin; else if (v > amax) return amax; else return v; }
+		{ if (amin > amax) {T tmp = amin; amin = amax; amax = tmp;} if (v < amin) return amin; else if (v > amax) return amax; else return v; }
 
 /**
  * Template method which swaps the values of its two parameters.
