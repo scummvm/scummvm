@@ -437,9 +437,9 @@ static const char *const kEoB1MenuStringsSpellsDOSSpanish[17] = {
 	"\r\r El Mago no tiene\r su libro de Magia!",
 	"\r\r\r Escoge el personaje \r de tu grupo\r que quieras para\r invocar conjuros.",
 	"\r No tienes\r ningun Clerigo\r capaz de invocar\r conjuros.",
-	"\r No tienes un Mago\r capaz de aprender\r conjuros.",
-	" Un Mago inconsciente\r o muerto\r no puede aprender\r conjuros.",
-	" Un Monje inconsciente\r o muerto\r no puede invocar\r conjuros.",
+	"\r No tienes un Mago\r capaz de memorizar\r conjuros.",
+	" Un Mago\r inconsciente o\r muerto no puede\r memorizar conjuros.",
+	" Un Clerigo\r inconsciente o\r muerto no puede\r invocar conjuros.",
 	"1",
 	"2",
 	"3",
@@ -454,11 +454,11 @@ static const char *const kEoB1MenuStringsSpellsDOSSpanish[17] = {
 static const StringListProvider kEoB1MenuStringsSpellsDOSSpanishProvider = { ARRAYSIZE(kEoB1MenuStringsSpellsDOSSpanish), kEoB1MenuStringsSpellsDOSSpanish };
 
 static const char *const kEoB1MenuStringsRestDOSSpanish[5] = {
-	"\rDesea tu sanador\rcurar al grupo?",
+	"\rQuieres sanar a\rtodo tu grupo?",
 	" Algunos aun estan\r heridos.Reposo\r hasta curar?",
 	"Descansar grupo.",
 	"\r Los personajes\r estan\r descansados.",
-	" Tu grupo necesita\r descansar para\r obtener los conjuros."
+	" Tu grupo necesita\r descansar para\r obtener conjuros."
 };
 
 static const StringListProvider kEoB1MenuStringsRestDOSSpanishProvider = { ARRAYSIZE(kEoB1MenuStringsRestDOSSpanish), kEoB1MenuStringsRestDOSSpanish };
@@ -476,16 +476,16 @@ static const char *const kEoB1MenuStringsExitDOSSpanish[1] = {
 static const StringListProvider kEoB1MenuStringsExitDOSSpanishProvider = { ARRAYSIZE(kEoB1MenuStringsExitDOSSpanish), kEoB1MenuStringsExitDOSSpanish };
 
 static const char *const kEoB1MenuStringsStarveDOSSpanish[1] = {
-	" Tu grupo esta\r hambriento. Deseas\r que continuen\r reposando?"
+	" Tu grupo esta\r hambriento.\r quieres seguir\r descansando?"
 };
 
 static const StringListProvider kEoB1MenuStringsStarveDOSSpanishProvider = { ARRAYSIZE(kEoB1MenuStringsStarveDOSSpanish), kEoB1MenuStringsStarveDOSSpanish };
 
 static const char *const kEoB1MenuStringsScribeDOSSpanish[5] = {
-	"Escoge el pergamino\rque deseas escribir.\r",
+	"Selecciona el\rpergamino a\rtranscribir.",
 	"\r\r\r Selecciona un\r Mago de tu grupo\r para transcribir\r los conjuros.",
 	" No tienes ningun\r pergamino para\r transcribir.",
-	" No tienes\r ningun pergamino\r para este Mago.",
+	" No tienes \r ningun pergamino\r que este Mago\r necesite.",
 	"\r No tienes un\r Mago capaz de\r transcribir\r pergaminos."
 };
 
@@ -650,7 +650,7 @@ static const char *const kEoB1MageSpellsListDOSSpanish[26] = {
 	"Escudo",
 	"Golpe Electrico",
 	"Invisibilidad",
-	"Golpe",
+	"Desbloquear",
 	"Flecha Acida M.",
 	"Nube Ponzonosa",
 	"Disolver Magia",
@@ -666,7 +666,7 @@ static const char *const kEoB1MageSpellsListDOSSpanish[26] = {
 	"Piel de Roca",
 	"Nube Acida",
 	"Cono Helado",
-	"Bloquear Monstruo"
+	"Paraliz. Monstruo"
 };
 
 static const StringListProvider kEoB1MageSpellsListDOSSpanishProvider = { ARRAYSIZE(kEoB1MageSpellsListDOSSpanish), kEoB1MageSpellsListDOSSpanish };
@@ -680,7 +680,7 @@ static const char *const kEoB1ClericSpellsListDOSSpanish[25] = {
 	"Proteccion al Mal",
 	"Ayuda",
 	"Hoja Llameante",
-	"Bloquear Persona",
+	"Paralizar",
 	"Retrasar Veneno",
 	"Crear Comida",
 	"Disipar Magia",
@@ -936,7 +936,7 @@ static const StringListProvider kEoB1IntroStringsWdExitDOSSpanishProvider = { AR
 
 static const char *const kEoB1IntroStringsTunnelDOSSpanish[2] = {
 	"COMIENZA LA AVENTURA.",
-	"LA SALIDA ESTA OBTURADA!!."
+	"LA SALIDA ESTA OBSTRUIDA!!."
 };
 
 static const StringListProvider kEoB1IntroStringsTunnelDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsTunnelDOSSpanish), kEoB1IntroStringsTunnelDOSSpanish };
