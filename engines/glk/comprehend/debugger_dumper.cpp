@@ -290,9 +290,9 @@ void DebuggerDumper::dumpRooms() {
 	Room *room;
 	uint i;
 
-	/* Room zero acts as the players inventory */
-	print("Rooms (%u entries)\n", (uint)_game->_nr_rooms);
-	for (i = 1; i <= _game->_nr_rooms; i++) {
+	// Room zero acts as the players inventory
+	print("Rooms (%u entries)\n", (uint)_game->_rooms.size() - 1);
+	for (i = 1; i < _game->_rooms.size(); i++) {
 		room = &_game->_rooms[i];
 
 		print("  [%.2x] flags=%.2x, graphic=%.2x\n",

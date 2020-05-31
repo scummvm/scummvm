@@ -164,7 +164,6 @@ void GameInfo::clearInfo() {
 	_header.clear();
 	_comprehendVersion = 0;
 	_startRoom = 0;
-	_nr_rooms = 0;
 	_currentRoom = 0;
 	_words = nullptr;
 	_nr_words = 0;
@@ -178,8 +177,7 @@ void GameInfo::clearInfo() {
 	_roomImages.clear();
 	_itemImages.clear();
 
-	for (uint idx = 0; idx < 0x100; ++idx)
-		_rooms[idx].clear();
+	_rooms.clear();
 	for (uint idx = 0; idx < 0xff; ++idx)
 		_items[idx].clear();
 	for (uint idx = 0; idx < 0xff; ++idx)
@@ -669,7 +667,7 @@ static void parse_items(ComprehendGame *game, FileBuffer *fb) {
 }
 
 static void parse_rooms(ComprehendGame *game, FileBuffer *fb) {
-	size_t nr_rooms = game->_nr_rooms;
+	size_t nr_rooms = game->_rooms.size() - 1;
 	int i;
 
 	/* Room exit directions */
@@ -959,8 +957,8 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 	parse_variables(game, fb);
 	parse_flags(game, fb);
 
-	game->_nr_rooms = header->room_direction_table[DIRECTION_SOUTH] -
-	                  header->room_direction_table[DIRECTION_NORTH];
+	game->_rooms.resize(header->room_direction_table[DIRECTION_SOUTH] -
+	                    header->room_direction_table[DIRECTION_NORTH] + 1);
 
 	game->_nr_words = (addr_dictionary_end -
 	                   header->addr_dictionary) /

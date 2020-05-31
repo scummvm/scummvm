@@ -216,8 +216,7 @@ struct GameInfo {
 
 	uint8 _startRoom;
 
-	Room _rooms[0x100];
-	size_t _nr_rooms;
+	Common::Array<Room> _rooms;
 	uint8 _currentRoom;
 
 	struct Item _items[0xff];

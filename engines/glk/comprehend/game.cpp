@@ -63,12 +63,12 @@ void ComprehendGame::synchronizeSave(Common::Serializer &s) {
 	for (i = 0; i < ARRAY_SIZE(_flags); i++)
 		s.syncAsByte(_flags[i]);
 
-	// Rooms
-	nr_rooms = _nr_rooms;
-	s.syncAsByte(_nr_rooms);
-	assert(nr_rooms == _nr_rooms);
+	// Rooms. Note that index 0 is the player's inventory
+	nr_rooms = _rooms.size();
+	s.syncAsByte(nr_rooms);
+	assert(nr_rooms == _rooms.size());
 
-	for (i = 0; i < _nr_rooms; ++i) {
+	for (i = 1; i < _rooms.size(); ++i) {
 		s.syncAsUint16LE(_rooms[i].string_desc);
 		for (dir = 0; dir < NR_DIRECTIONS; dir++)
 			s.syncAsByte(_rooms[i].direction[dir]);
@@ -231,7 +231,7 @@ static Room *get_room(ComprehendGame *game, uint16 index) {
 	if (index == 0)
 		error("Room index 0 (player inventory) is invalid");
 
-	if (index - 1 >= (int)game->_nr_rooms)
+	if (index >= (int)game->_rooms.size())
 		error("Room index %d is invalid", index);
 
 	return &game->_rooms[index];
@@ -418,7 +418,7 @@ static void update(ComprehendGame *game) {
 }
 
 static void move_to(ComprehendGame *game, uint8 room) {
-	if (room - 1 >= (int)game->_nr_rooms)
+	if (room >= (int)game->_rooms.size())
 		error("Attempted to move to invalid room %.2x\n", room);
 
 	game->_currentRoom = room;
