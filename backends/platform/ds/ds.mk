@@ -195,9 +195,11 @@ ARM7_LDFLAGS	:= -g $(ARM7_ARCH) -mfloat-abi=soft
 # We do this because it is a .c file, not a .cpp file and so is outside our
 # regular build system anyway. But this is *bad*. It should be changed into a
 # .cpp file and this rule be removed.
+# Redefining -std there as we are using CXXFLAGS which specifies -ansi or -std=c++11
+# Using gnu90 as library code doesn't conform to standards
 %.o: %.c
 	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CC) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(CC) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -std=gnu90 -c $(<) -o $*.o
 
 # Set custom build flags for cartreset.o
 $(ndsdir)/arm7/source/libcartreset/cartreset.o: CXXFLAGS=$(ARM7_CFLAGS)
