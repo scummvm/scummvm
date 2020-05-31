@@ -1417,7 +1417,7 @@ void LC::call(Symbol *sym, int nargs) {
 }
 
 void LC::c_procret() {
-	if (!g_lingo->_callstack.size()) {
+	if (g_lingo->_callstack.size() == 0) {
 		warning("c_procret: Call stack underflow");
 		g_lingo->_abort = true;
 		return;
@@ -1443,6 +1443,12 @@ void LC::c_procret() {
 	g_lingo->_localvars = fp->localvars;
 
 	delete fp;
+
+	if (g_lingo->_callstack.size() == 0) {
+		debugC(5, kDebugLingoExec, "Call stack empty, returning");
+		g_lingo->_abort = true;
+		return;
+	}
 }
 
 void LC::c_global() {
