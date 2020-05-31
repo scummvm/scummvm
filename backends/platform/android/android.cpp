@@ -132,7 +132,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_show_mouse(false),
 	_show_overlay(false),
 	_enable_zoning(false),
-	_mutexManager(0),
 	_mixer(0),
 	_queuedEventTime(0),
 	_event_queue_lock(0),
@@ -394,7 +393,7 @@ void OSystem_Android::initBackend() {
 
 	JNI::setReadyForEvents(true);
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_Android::hasFeature(Feature f) {
@@ -478,26 +477,6 @@ uint32 OSystem_Android::getMillis(bool skipRecord) {
 
 void OSystem_Android::delayMillis(uint msecs) {
 	usleep(msecs * 1000);
-}
-
-OSystem::MutexRef OSystem_Android::createMutex() {
-	assert(_mutexManager);
-	return _mutexManager->createMutex();
-}
-
-void OSystem_Android::lockMutex(MutexRef mutex) {
-	assert(_mutexManager);
-	_mutexManager->lockMutex(mutex);
-}
-
-void OSystem_Android::unlockMutex(MutexRef mutex) {
-	assert(_mutexManager);
-	_mutexManager->unlockMutex(mutex);
-}
-
-void OSystem_Android::deleteMutex(MutexRef mutex) {
-	assert(_mutexManager);
-	_mutexManager->deleteMutex(mutex);
 }
 
 void OSystem_Android::quit() {

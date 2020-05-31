@@ -33,7 +33,7 @@
 #include "graphics/pixelbuffer.h"
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/framebuffer.h"
-#include "backends/base-backend.h"
+#include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
@@ -98,8 +98,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
-class MutexManager;
-class OSystem_Android : public EventsBaseBackend, public PaletteManager {
+class OSystem_Android : public ModularBackend, public PaletteManager, Common::EventSource {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -149,7 +148,6 @@ private:
 	bool _enable_zoning;
 	bool _virtkeybd_on;
 
-	MutexManager *_mutexManager;
 	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
@@ -169,6 +167,9 @@ private:
 	void setupKeymapper();
 	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 
+protected:
+	virtual Common::EventSource *getDefaultEventSource() { return this; }
+
 public:
 	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
 	virtual ~OSystem_Android();
@@ -176,9 +177,9 @@ public:
 	virtual void initBackend();
 	void enableZoning(bool enable) { _enable_zoning = enable; }
 
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
+	virtual bool hasFeature(OSystem::Feature f);
+	virtual void setFeatureState(OSystem::Feature f, bool enable);
+	virtual bool getFeatureState(OSystem::Feature f);
 
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
@@ -279,11 +280,6 @@ public:
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
-
-	virtual MutexRef createMutex(void);
-	virtual void lockMutex(MutexRef mutex);
-	virtual void unlockMutex(MutexRef mutex);
-	virtual void deleteMutex(MutexRef mutex);
 
 	virtual void quit();
 
