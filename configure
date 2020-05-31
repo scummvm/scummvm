@@ -1786,6 +1786,8 @@ switch)
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
+	# Switch SDK has C++11 constructs so we must enable it
+	_use_cxx11=yes
 	;;
 tizen)
  	_host_os=tizen
@@ -2251,16 +2253,17 @@ if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
 		# Try to use ANSI mode when C++11 is disabled.
 		if test "$_use_cxx11" = "no" ; then
-			case $_host_os in
-			# newlib-based system include files suppress non-C89 function
-			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
-				;;
-			*)
-				append_var CXXFLAGS "-ansi"
-				;;
-			esac
+			append_var CXXFLAGS "-ansi"
 		fi
+		case $_host_os in
+		# newlib-based system include files suppress non-C89 function
+		# declarations under __STRICT_ANSI__, undefine it
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
+			append_var CXXFLAGS "-U__STRICT_ANSI__"
+			;;
+		*)
+			;;
+		esac
 		append_var CXXFLAGS "-W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
 		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
