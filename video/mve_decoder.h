@@ -75,7 +75,6 @@ class MveDecoder : public VideoDecoder {
 	byte     *_decodingMap;
 
 	int       _frameNumber;
-	byte      _frameFormat;
 	uint16    _frameSize;
 	byte     *_frameData;
 
