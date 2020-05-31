@@ -524,7 +524,7 @@ void EoBCoreEngine::initStaticResource() {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
 		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
-		{	"Volver",	"<Vacio>",	"Guardar",		"Cargar"	    },
+		{	"Anular",	"Sin Uso",			"Grabar",		"Cargar"	    },
 		{   0,          0,					0,					0			},
 		{	0,          0,					0,					0			}
 	};
@@ -533,7 +533,7 @@ void EoBCoreEngine::initStaticResource() {
 		"There is no game\rsaved in that slot!",
 		"Hier ist noch kein\rSpiel gespeichert!",
 		"Non c'\x0E alcun gioco\rsalvato in quella\rposizione!",
-		"No hay ningun juego\ren esta posicion!",
+		"No hay partidas\rgrabadas!",
 		"\r ""\x82\xBB\x82\xCC\x83""X""\x83\x8D\x83""b""\x83""g""\x82\xC9\x82\xCD\x83""Q""\x81""[""\x83\x80\x82\xAA\x83""Z""\x81""[""\x83""u\r ""\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81""B",
 		0
 	};
@@ -1485,7 +1485,7 @@ void DarkMoonEngine::initStaticResource() {
 	static const char *const errorSlotNoNameString[4] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielst[nde m]ssen\r einen Namen haben!",
-		" Debes especificar\r un nombre para\r tu partida!",
+		" Debes poner\run nombre al\rfichero!",
 		0
 	};
 
