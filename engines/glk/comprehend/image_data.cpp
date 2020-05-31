@@ -117,9 +117,8 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		if (opcode & 0x1)
 			a += 255;
 
-		debugC(kDebugGraphics,
-		             "draw_line (%d, %d) - (%d, %d)", opcode,
-		             ctx->_x, ctx->_y, a, b);
+		debugC(kDebugGraphics, "draw_line (%d, %d) - (%d, %d)",
+			ctx->_x, ctx->_y, a, b);
 		ds->drawLine(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 
 		ctx->_x = a;
@@ -134,9 +133,8 @@ bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 		if (opcode & 0x1)
 			a += 255;
 
-		debugC(kDebugGraphics,
-		             "draw_box (%d, %d) - (%d, %d)", opcode,
-		             ctx->_x, ctx->_y, a, b);
+		debugC(kDebugGraphics, "draw_box (%d, %d) - (%d, %d)",
+			ctx->_x, ctx->_y, a, b);
 
 		ds->drawBox(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 		break;

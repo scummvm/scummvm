@@ -127,8 +127,9 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 	if (instr->nr_operands) {
 		line += "(";
 		for (i = 0; i < instr->nr_operands; i++)
-			line += Common::String::format("%.2x%s", instr->operand[i]),
-			      i == instr->nr_operands - 1 ? ")" : ", ";
+			line += Common::String::format("%.2x%s",
+				instr->operand[i],
+			    i == (instr->nr_operands - 1) ? ")" : ", ");
 	}
 
 	switch (opcode) {

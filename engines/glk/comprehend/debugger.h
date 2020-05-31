@@ -46,7 +46,7 @@ protected:
 
 public:
 	Debugger();
-	~Debugger();
+	virtual ~Debugger();
 };
 
 extern Debugger *g_debugger;

@@ -61,9 +61,10 @@ protected:
 
 public:
 	DebuggerDumper();
+	virtual ~DebuggerDumper() {}
 
 	Common::String dumpInstruction(ComprehendGame *game,
-		FunctionState *func_state, Instruction *instr);
+	                               FunctionState *func_state, Instruction *instr);
 
 	bool dumpGameData(ComprehendGame *game, const Common::String &type);
 };

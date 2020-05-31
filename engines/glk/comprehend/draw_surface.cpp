@@ -34,8 +34,6 @@ namespace Comprehend {
 #define RENDERER_SCREEN 0
 #define RENDERER_PIXEL_DATA 1
 
-static bool graphics_enabled;
-
 const uint32 DrawSurface::PEN_COLORS[8] = {
     G_COLOR_BLACK,
     RGB(0x00, 0x66, 0x00),
