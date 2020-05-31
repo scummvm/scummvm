@@ -1026,7 +1026,7 @@ void comprehend_load_game(ComprehendGame *game) {
 		game->_itemImages.load(game->_itemGraphicFiles);
 
 		if (game->_colorTable)
-			DrawSurface::setColorTable(game->_colorTable);
+			g_comprehend->_drawSurface->setColorTable(game->_colorTable);
 	}
 
 	// FIXME: This can be merged, don't need to keep start room around

@@ -76,13 +76,11 @@ void ImageFileData::load(const char *filename) {
 
 void ImageFileData::draw(uint index, ImageContext *ctx) {
 	_fb.seek(_imageOffsets[index]);
-	DrawSurface ds;
 
 	for (bool done = false; !done;) {
-		done = doImageOp(&ds, ctx);
+		done = doImageOp(g_comprehend->_drawSurface, ctx);
 		if (!done && (draw_flags & IMAGEF_OP_WAIT_KEYPRESS)) {
 			getchar();
-			ds.render();
 		}
 	}
 }
@@ -317,18 +315,15 @@ void draw_image(ImageData *info, unsigned index) {
 }
 
 void draw_dark_room() {
-	DrawSurface ds;
-	ds.clearScreen(G_COLOR_BLACK);
+	g_comprehend->_drawSurface->clearScreen(G_COLOR_BLACK);
 }
 
 void draw_bright_room() {
-	DrawSurface ds;
-	ds.clearScreen(G_COLOR_WHITE);
+	g_comprehend->_drawSurface->clearScreen(G_COLOR_WHITE);
 }
 
 void draw_location_image(ImageData *info, unsigned index) {
-	DrawSurface ds;
-	ds.clearScreen(G_COLOR_WHITE);
+	g_comprehend->_drawSurface->clearScreen(G_COLOR_WHITE);
 	draw_image(info, index);
 }
 

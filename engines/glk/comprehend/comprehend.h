@@ -41,6 +41,7 @@ namespace Comprehend {
 
 struct GameInfo;
 struct gameState;
+class DrawSurface;
 
 #define EXTRA_STRING_TABLE(x) (0x8200 | (x))
 
@@ -57,6 +58,7 @@ private:
 public:
 	GraphicsWindow *_topWindow;
 	TextBufferWindow *_bottomWindow;
+	DrawSurface *_drawSurface;
 	ComprehendGame *_game;
 	bool _graphicsEnabled;
 	uint _drawFlags;

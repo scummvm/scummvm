@@ -39,12 +39,14 @@ namespace Comprehend {
 Comprehend *g_comprehend;
 
 Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkAPI(syst, gameDesc), _saveSlot(-1), _game(nullptr),
+		GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
+		_drawSurface(nullptr), _game(nullptr),_saveSlot(-1), 
 		_graphicsEnabled(true), _drawFlags(0) {
 	g_comprehend = this;
 }
 
 Comprehend::~Comprehend() {
+	delete _drawSurface;
 	delete _game;
 
 	g_comprehend = nullptr;
@@ -75,8 +77,9 @@ void Comprehend::initialize() {
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
 
 	// Initialize drawing
-	DrawSurface::setColorTable(0);
-	DrawSurface::_renderColor = 0;
+	_drawSurface = new DrawSurface();
+	_drawSurface->setColorTable(0);
+	_drawSurface->_renderColor = 0;
 }
 
 void Comprehend::deinitialize() {
@@ -114,6 +117,7 @@ void Comprehend::print(const char *fmt, ...) {
 void Comprehend::readLine(char *buffer, size_t maxLen) {
 	event_t ev;
 
+	_drawSurface->renderIfDirty();
 	glk_request_line_event(_bottomWindow, buffer, maxLen - 1, 0);
 
 	for (;;) {

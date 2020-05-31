@@ -69,12 +69,14 @@ private:
 	static const uint32 DEFAULT_COLOR_TABLE[256];
 	static const uint32 COLOR_TABLE_1[256];
 	static const uint32 *COLOR_TABLES[2];
-	static const uint32 *_colorTable;
+	bool _dirty;
 
 public:
-	static uint32 _renderColor;
+	uint32 _renderColor;
+	const uint32 *_colorTable;
 public:
-	DrawSurface() {
+	DrawSurface() : _renderColor(0), _colorTable(DEFAULT_COLOR_TABLE),
+	                _dirty(false) {
 		reset();
 	}
 
@@ -83,9 +85,10 @@ public:
 	 */
 	void reset();
 
-	static void setColorTable(uint index);
+	void setColorTable(uint index);
 	uint getPenColor(uint8 opcode) const;
 	uint32 getFillColor(uint8 index);
+	void setColor(uint32 color);
 
 	void drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
 	void drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
@@ -97,9 +100,9 @@ public:
 	void clearScreen(uint32 color);
 
 	/**
-	 * Render the surface to the screen's picture window
+	 * Render the surface to the screen if it's changed
 	 */
-	void render();
+	void renderIfDirty();
 };
 
 } // namespace Comprehend

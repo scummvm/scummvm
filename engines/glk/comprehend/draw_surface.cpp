@@ -176,10 +176,6 @@ const uint32 *DrawSurface::COLOR_TABLES[2] = {
     COLOR_TABLE_1,
 };
 
-const uint32 *DrawSurface::_colorTable = DEFAULT_COLOR_TABLE;
-
-uint32 DrawSurface::_renderColor;
-
 /*-------------------------------------------------------*/
 
 void DrawSurface::reset() {
@@ -194,6 +190,7 @@ void DrawSurface::setColorTable(uint index) {
 	}
 
 	_colorTable = COLOR_TABLES[index];
+	_dirty = true;
 }
 
 uint DrawSurface::getPenColor(uint8 opcode) const {
@@ -213,20 +210,30 @@ uint32 DrawSurface::getFillColor(uint8 index) {
 	return color;
 }
 
+void DrawSurface::setColor(uint32 color) {
+	_renderColor = color;
+}
+
 void DrawSurface::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color) {
-	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, color);
+	setColor(color);
+	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, _renderColor);
+	_dirty = true;
 }
 
 void DrawSurface::drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2,
                           uint32 color) {
+	setColor(color);
 	Common::Rect r(x1, y1, x2, y2);
-	frameRect(r, color);
+	frameRect(r, _renderColor);
+	_dirty = true;
 }
 
 void DrawSurface::drawFilledBox(uint16 x1, uint16 y1,
                                 uint16 x2, uint16 y2, uint32 color) {
+	setColor(color);
 	Common::Rect r(x1, y1, x2, y2);
-	fillRect(r, color);
+	fillRect(r, _renderColor);
+	_dirty = true;
 }
 
 void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
@@ -333,6 +340,8 @@ void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
 		/* Unknown shape */
 		break;
 	}
+
+	_dirty = true;
 }
 
 void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
@@ -352,9 +361,7 @@ void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
 			break;
 
 	drawLine(x1, y, x2, y, fill_color);
-#ifdef TODO
-	SDL_RenderPresent(ctx.renderer[RENDERER_SCREEN]);
-#endif
+
 	/* Scanline above */
 	for (i = x1; i < x2; i++)
 		if (y > 0 && getPixelColor(i, y - 1) == old_color)
@@ -364,11 +371,15 @@ void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
 	for (i = x1; i < x2; i++)
 		if (y < RENDER_Y_MAX && getPixelColor(i, y + 1) == old_color)
 			floodFill(i, y + 1, fill_color, old_color);
+
+	_dirty = true;
 }
 
 void DrawSurface::drawPixel(uint16 x, uint16 y, uint32 color) {
+	setColor(color);
 	uint32 *ptr = (uint32 *)getBasePtr(x, y);
-	*ptr = color;
+	*ptr = _renderColor;
+	_dirty = true;
 }
 
 uint32 DrawSurface::getPixelColor(uint16 x, uint16 y) {
@@ -377,29 +388,21 @@ uint32 DrawSurface::getPixelColor(uint16 x, uint16 y) {
 }
 
 void DrawSurface::clearScreen(uint32 color) {
-	fillRect(Common::Rect(0, 0, this->w, this->h), color);
-	render();
+	setColor(color);
+	fillRect(Common::Rect(0, 0, this->w, this->h), _renderColor);
+	_dirty = true;
 }
 
-void DrawSurface::render() {
-	GraphicsWindow *win = g_comprehend->_topWindow;
-	win->drawPicture(*this, (uint)-2, 0, 0, win->_w, win->_h);
+void DrawSurface::renderIfDirty() {
+	if (_dirty) {
+		GraphicsWindow *win = g_comprehend->_topWindow;
+		win->drawPicture(*this, (uint)-2, 0, 0, win->_w, win->_h);
+		_dirty = false;
+		// FIXME: Get rid of this hack and properly use the graphics window
+		g_system->copyRectToScreen(getPixels(), pitch, 0, 0, w, h);
+		g_system->updateScreen();
+	}
 }
-
-/*-------------------------------------------------------*/
-
-#ifdef TODO
-static void set_color(unsigned color) {
-	int i;
-
-	for (i = 0; i < ARRAY_SIZE(ctx.renderer); i++)
-		SDL_SetRenderDrawColor(ctx.renderer[i],
-		                       (color >> 24) & 0xff,
-		                       (color >> 16) & 0xff,
-		                       (color >> 8) & 0xff,
-		                       (color >> 0) & 0xff);
-}
-#endif
 
 } // namespace Comprehend
 } // namespace Glk
