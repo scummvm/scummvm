@@ -1086,7 +1086,7 @@ static bool handle_sentence(ComprehendGame *game,
 		return false;
 
 	/* Find a matching action */
-	for (i = 0; i < game->_nr_actions; i++) {
+	for (i = 0; i < game->_actions.size(); i++) {
 		action = &game->_actions[i];
 
 		if (action->type == ACTION_VERB_OPT_NOUN &&

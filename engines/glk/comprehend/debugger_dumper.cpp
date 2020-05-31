@@ -180,8 +180,8 @@ void DebuggerDumper::dumpActionTable() {
 	Word *word;
 	uint i, j;
 
-	print("Action table (%u entries)\n", (uint)_game->_nr_actions);
-	for (i = 0; i < _game->_nr_actions; i++) {
+	print("Action table (%u entries)\n", _game->_actions.size());
+	for (i = 0; i < _game->_actions.size(); i++) {
 		action = &_game->_actions[i];
 
 		print("(");
