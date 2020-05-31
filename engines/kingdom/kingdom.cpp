@@ -974,18 +974,10 @@ void KingdomGame::eraseCursor() {
 }
 
 void KingdomGame::readMouse() {
-	_mouseButton = 0;
+	Common::EventManager *eventManager = g_system->getEventManager();
 
-	Common::Event event;
-	g_system->getEventManager()->pollEvent(event);
-	if (event.type == Common::EVENT_MOUSEMOVE)
-		_cursorPos = event.mouse;
-	if (event.type == Common::EVENT_LBUTTONUP)
-		_mouseButton |= 1;
-	if (event.type == Common::EVENT_RBUTTONUP)
-		_mouseButton |= 2;
-
-	g_system->getEventManager()->pushEvent(event);
+	_mouseButton = eventManager->getButtonState();
+	_cursorPos   = eventManager->getMousePos();
 }
 
 void KingdomGame::getUserInput() {
