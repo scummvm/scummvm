@@ -26,7 +26,6 @@
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
-#include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
 
 namespace Glk {

@@ -29,7 +29,6 @@
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/opcode_map.h"
-#include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
 
 namespace Glk {
@@ -84,6 +83,51 @@ void ComprehendGame::synchronizeSave(Common::Serializer &s) {
 
 	for (i = 0; i < nr_items; ++i)
 		_items[i].synchronize(s);
+}
+
+Common::String ComprehendGame::stringLookup(uint16 index) {
+	uint16 string;
+	uint8 table;
+
+	/*
+	 * There are two tables of strings. The first is stored in the main
+	 * game data file, and the second is stored in multiple string files.
+	 *
+	 * In instructions string indexes are split into a table and index
+	 * value. In other places such as the save files strings from the
+	 * main table are occasionally just a straight 16-bit index. We
+	 * convert all string indexes to the former case so that we can handle
+	 * them the same everywhere.
+	 */
+	table = (index >> 8) & 0xff;
+	string = index & 0xff;
+
+	switch (table) {
+	case 0x81:
+	case 0x01:
+		string += 0x100;
+		/* Fall-through */
+	case 0x00:
+	case 0x80:
+		if (string < _strings.nr_strings)
+			return _strings.strings[string];
+		break;
+
+	case 0x83:
+		string += 0x100;
+		/* Fall-through */
+	case 0x02:
+	case 0x82:
+		if (string < _strings2.nr_strings)
+			return _strings2.strings[string];
+		break;
+	}
+
+	return Common::String::format("BAD_STRING(%.4x)", index);
+}
+
+Common::String ComprehendGame::instrStringLookup(uint8 index, uint8 table) {
+	return stringLookup(table << 8 | index);
 }
 
 /*-------------------------------------------------------*/
@@ -237,7 +281,7 @@ void game_restore(ComprehendGame *game) {
 }
 
 void game_restart(ComprehendGame *game) {
-	console_println(game, string_lookup(game, game->_gameStrings->game_restart));
+	console_println(game, game->stringLookup(game->_gameStrings->game_restart).c_str());
 	console_get_key();
 
 	comprehend_load_game(game);
@@ -340,14 +384,14 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 	}
 
 	if (count > 0) {
-		console_println(game, string_lookup(game, STRING_YOU_SEE));
+		console_println(game, game->stringLookup(STRING_YOU_SEE).c_str());
 
 		for (i = 0; i < game->_header.nr_items; i++) {
 			item = &game->_items[i];
 
 			if (item->room == game->_currentRoom &&
 			    item->string_desc != 0)
-				console_println(game, string_lookup(game, item->string_desc));
+				console_println(game, game->stringLookup(item->string_desc).c_str());
 		}
 	}
 }
@@ -364,7 +408,7 @@ static void update(ComprehendGame *game) {
 	                                  &room_desc_string);
 
 	if (game->_updateFlags & UPDATE_ROOM_DESC)
-		console_println(game, string_lookup(game, room_desc_string));
+		console_println(game, game->stringLookup(room_desc_string).c_str());
 
 	if ((game->_updateFlags & UPDATE_ITEM_LIST) &&
 	    room_type == ROOM_IS_NORMAL)
@@ -528,9 +572,8 @@ static void eval_instruction(ComprehendGame *game,
 		break;
 
 	case OPCODE_PRINT:
-		console_println(game, instr_lookup_string(game,
-		                                          instr->operand[0],
-		                                          instr->operand[1]));
+		console_println(game, game->instrStringLookup(
+			instr->operand[0], instr->operand[1]).c_str());
 		break;
 
 	case OPCODE_TEST_NOT_ROOM_FLAG:
@@ -576,14 +619,14 @@ static void eval_instruction(ComprehendGame *game,
 		if (room->direction[verb->_index - 1])
 			move_to(game, room->direction[verb->_index - 1]);
 		else
-			console_println(game, string_lookup(game, STRING_CANT_GO));
+			console_println(game, game->stringLookup(STRING_CANT_GO).c_str());
 		break;
 
 	case OPCODE_MOVE_DIRECTION:
 		if (room->direction[instr->operand[0] - 1])
 			move_to(game, room->direction[instr->operand[0] - 1]);
 		else
-			console_println(game, string_lookup(game, STRING_CANT_GO));
+			console_println(game, game->stringLookup(STRING_CANT_GO).c_str());
 		break;
 
 	case OPCODE_ELSE:
@@ -626,7 +669,7 @@ static void eval_instruction(ComprehendGame *game,
 		 * FIXME - unsure what the single operand is for.
 		 */
 		item = get_item_by_noun(game, noun);
-		printf("%s\n", string_lookup(game, item->long_string));
+		printf("%s\n", game->stringLookup(item->long_string).c_str());
 		break;
 
 	case OPCODE_CURRENT_OBJECT_IN_ROOM:
@@ -771,32 +814,32 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_INVENTORY:
 		count = num_objects_in_room(game, ROOM_INVENTORY);
 		if (count == 0) {
-			console_println(game, string_lookup(game, STRING_INVENTORY_EMPTY));
+			console_println(game, game->stringLookup(STRING_INVENTORY_EMPTY).c_str());
 			break;
 		}
 
-		console_println(game, string_lookup(game, STRING_INVENTORY));
+		console_println(game, game->stringLookup(STRING_INVENTORY).c_str());
 		for (i = 0; i < game->_header.nr_items; i++) {
 			item = &game->_items[i];
 			if (item->room == ROOM_INVENTORY)
 				printf("%s\n",
-				       string_lookup(game, item->string_desc));
+				       game->stringLookup(item->string_desc).c_str());
 		}
 		break;
 
 	case OPCODE_INVENTORY_ROOM:
 		count = num_objects_in_room(game, instr->operand[0]);
 		if (count == 0) {
-			console_println(game, string_lookup(game, instr->operand[1] + 1));
+			console_println(game, game->stringLookup(instr->operand[1] + 1).c_str());
 			break;
 		}
 
-		console_println(game, string_lookup(game, instr->operand[1]));
+		console_println(game, game->stringLookup(instr->operand[1]).c_str());
 		for (i = 0; i < game->_header.nr_items; i++) {
 			item = &game->_items[i];
 			if (item->room == instr->operand[0])
 				printf("%s\n",
-				       string_lookup(game, item->string_desc));
+				       game->stringLookup(item->string_desc).c_str());
 		}
 		break;
 
@@ -1074,7 +1117,7 @@ static bool handle_sentence(ComprehendGame *game,
 	}
 
 	/* No matching action */
-	console_println(game, string_lookup(game, STRING_DONT_UNDERSTAND));
+	console_println(game, game->stringLookup(STRING_DONT_UNDERSTAND).c_str());
 	return false;
 }
 

@@ -67,6 +67,9 @@ public:
 	virtual void handle_special_opcode(uint8 operand) {}
 
 	void synchronizeSave(Common::Serializer &s);
+
+	Common::String stringLookup(uint16 index);
+	Common::String instrStringLookup(uint8 index, uint8 table);
 };
 
 void console_println(ComprehendGame *game, const char *text);

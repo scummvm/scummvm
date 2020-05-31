@@ -23,7 +23,6 @@
 #include "glk/comprehend/debugger_dumper.h"
 #include "glk/comprehend/dictionary.h"
 #include "glk/comprehend/game.h"
-#include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
 
 namespace Glk {
@@ -120,7 +119,7 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 	opcode_map = game->_opcodeMap;
 	opcode = opcode_map[instr->opcode];
 
-	line += "  [%.2x] ", instr->opcode;
+	line += Common::String::format("  [%.2x] ", instr->opcode);
 	if (_opcodes.contains(opcode))
 		line += _opcodes[opcode];
 	else
@@ -129,7 +128,7 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 	if (instr->nr_operands) {
 		line += "(";
 		for (i = 0; i < instr->nr_operands; i++)
-			line += "%.2x%s", instr->operand[i],
+			line += Common::String::format("%.2x%s", instr->operand[i]),
 			      i == instr->nr_operands - 1 ? ")" : ", ";
 	}
 
@@ -147,11 +146,11 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 			str_table = instr->operand[2];
 		}
 
-		line += " %s", instr_lookup_string(game, str_index, str_table);
+		line += Common::String::format(" %s", game->instrStringLookup(str_index, str_table).c_str());
 		break;
 
 	case OPCODE_SET_STRING_REPLACEMENT:
-		line += " %s", game->_replaceWords[instr->operand[0] - 1];
+		line += Common::String::format(" %s", game->_replaceWords[instr->operand[0] - 1]);
 		break;
 	}
 
@@ -298,7 +297,7 @@ void DebuggerDumper::dumpRooms() {
 
 		print("  [%.2x] flags=%.2x, graphic=%.2x\n",
 		      i, room->flags, room->graphic);
-		print("    %s\n", string_lookup(_game, room->string_desc));
+		print("    %s\n", _game->stringLookup(room->string_desc).c_str());
 		print("    n: %.2x  s: %.2x  e: %.2x  w: %.2x\n",
 		      room->direction[DIRECTION_NORTH],
 		      room->direction[DIRECTION_SOUTH],
@@ -322,10 +321,10 @@ void DebuggerDumper::dumpItems() {
 		item = &_game->_items[i];
 
 		print("  [%.2x] %s\n", i + 1,
-		      item->string_desc ? string_lookup(_game, item->string_desc) : "");
+		      item->string_desc ? _game->stringLookup(item->string_desc).c_str() : "");
 		if (_game->_comprehendVersion == 2)
 			print("    long desc: %s\n",
-			      string_lookup(_game, item->long_string));
+			      _game->stringLookup(item->long_string).c_str());
 
 		print("    words: ");
 		for (j = 0; j < _game->_nr_words; j++)
