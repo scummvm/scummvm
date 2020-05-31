@@ -34,7 +34,7 @@
 
 namespace Wintermute {
 
-class Mesh;
+class Mesh3DS;
 
 class AdGeneric : public BaseScriptable {
 public:
@@ -43,7 +43,7 @@ public:
 	bool _active;
 	AdGeneric(BaseGame *inGame);
 	virtual ~AdGeneric();
-	Mesh *_mesh;
+	Mesh3DS *_mesh;
 };
 
 }

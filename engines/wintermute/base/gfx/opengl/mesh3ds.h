@@ -28,13 +28,13 @@
 
 namespace Wintermute {
 
-class Mesh {
+class Mesh3DS {
 public:
 	// vertex size in bytes, for the moment we only have
 	// position and color components
 	static const int kVertexSize = 16;
-	Mesh();
-	~Mesh();
+	Mesh3DS();
+	~Mesh3DS();
 	void computeNormals();
 	void fillVertexBuffer(uint32 color);
 	bool loadFrom3DS(byte **buffer);

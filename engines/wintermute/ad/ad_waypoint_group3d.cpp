@@ -48,7 +48,7 @@ AdWaypointGroup3D::~AdWaypointGroup3D() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdWaypointGroup3D::addFromMesh(Mesh *mesh) {
+bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 	Math::Vector3d min = Math::Vector3d(0,0,0);
 	Math::Vector3d max = Math::Vector3d(0,0,0);
 

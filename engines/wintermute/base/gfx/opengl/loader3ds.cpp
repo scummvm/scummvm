@@ -24,11 +24,11 @@
 #include "../../base_file_manager.h"
 #include "camera3d.h"
 #include "light3d.h"
-#include "mesh.h"
+#include "mesh3ds.h"
 
 namespace Wintermute {
 
-bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh *>& meshes, BaseArray<Common::String>& meshNames,
+bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh3DS *>& meshes, BaseArray<Common::String>& meshNames,
 				   BaseArray<Wintermute::Light3D *>& lights, BaseArray<Wintermute::Camera3D *>& cameras) {
 	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
 	byte *end = *buffer + whole_chunk_size - 2;
@@ -41,14 +41,14 @@ bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh *>& meshes, BaseArr
 	while (*buffer < end) {
 		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
 
-		Mesh *mesh;
+		Mesh3DS *mesh;
 		Light3D *light;
 		Camera3D *camera;
 
 		switch (chunk_id) {
 		case MESH:
 			*buffer += 2;
-			mesh = new Mesh;
+			mesh = new Mesh3DS;
 			if (mesh->loadFrom3DS(buffer)) {
 				meshNames.add(Common::String(name_begin));
 				meshes.add(mesh);
@@ -89,7 +89,7 @@ bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh *>& meshes, BaseArr
 
 
 
-bool load3DSFile(const char *filename, BaseArray<Wintermute::Mesh *> &meshes, BaseArray<Common::String> &meshNames,
+bool load3DSFile(const char *filename, BaseArray<Wintermute::Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
 				   BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras) {
 	uint32 file_size = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &file_size);

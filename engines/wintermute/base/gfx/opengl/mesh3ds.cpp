@@ -20,18 +20,18 @@
  *
  */
 
-#include "mesh.h"
+#include "mesh3ds.h"
 #include "loader3ds.h"
 #include "common/file.h"
 
-Wintermute::Mesh::Mesh()
+Wintermute::Mesh3DS::Mesh3DS()
 	: _vertexData(nullptr), _vertexCount(0),
 	  _indexData(nullptr), _indexCount(0),
 	  _vertexBuffer(0), _indexBuffer(0) {
 
 }
 
-Wintermute::Mesh::~Mesh() {
+Wintermute::Mesh3DS::~Mesh3DS() {
 
 	GLuint bufferNames[2] = {_vertexBuffer, _indexBuffer};
 	glDeleteBuffers(2, bufferNames);
@@ -40,11 +40,11 @@ Wintermute::Mesh::~Mesh() {
 	delete[] _indexData;
 }
 
-void Wintermute::Mesh::computeNormals() {
+void Wintermute::Mesh3DS::computeNormals() {
 
 }
 
-void Wintermute::Mesh::fillVertexBuffer(uint32 color) {
+void Wintermute::Mesh3DS::fillVertexBuffer(uint32 color) {
 	if (_vertexBuffer == 0) {
 		GLuint bufferNames[2];
 		glGenBuffers(2, bufferNames);
@@ -71,7 +71,7 @@ void Wintermute::Mesh::fillVertexBuffer(uint32 color) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-bool Wintermute::Mesh::loadFrom3DS(byte** buffer) {
+bool Wintermute::Mesh3DS::loadFrom3DS(byte** buffer) {
 	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
 	byte *end = *buffer + whole_chunk_size - 2;
 	*buffer += 4;
@@ -130,7 +130,7 @@ bool Wintermute::Mesh::loadFrom3DS(byte** buffer) {
 	return true;
 }
 
-void Wintermute::Mesh::render() {
+void Wintermute::Mesh3DS::render() {
 	if (_vertexBuffer == 0) {
 		return;
 	}
@@ -145,7 +145,7 @@ void Wintermute::Mesh::render() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Wintermute::Mesh::dumpVertexCoordinates(const char *filename) {
+void Wintermute::Mesh3DS::dumpVertexCoordinates(const char *filename) {
 	Common::DumpFile dump;
 	dump.open(filename);
 

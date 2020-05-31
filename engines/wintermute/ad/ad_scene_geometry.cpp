@@ -47,7 +47,7 @@
 #include "../base/base_file_manager.h"
 #include "common/math.h"
 #include "../wintermute.h"
-#include "../base/gfx/opengl/mesh.h"
+#include "../base/gfx/opengl/mesh3ds.h"
 #include "math/glmath.h"
 #include "../base/gfx/opengl/loader3ds.h"
 #include "../base/gfx/opengl/base_render_opengl3d.h"
@@ -188,7 +188,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	filenameTmp.replace(filenameTmp.size() - 3, 3, "geometry", 0, 8);
 	AdGeomExt *geomExt = getGeometryExtension(filenameTmp.begin());
 
-	BaseArray<Mesh *> meshes;
+	BaseArray<Mesh3DS *> meshes;
 	BaseArray<Common::String> meshNames;
 
 	if (!load3DSFile(filename, meshes, meshNames, _lights, _cameras)) {
@@ -233,7 +233,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			break;
 
 			case GEOM_WAYPOINT: {
-				Mesh *mesh = meshes[i];
+				Mesh3DS *mesh = meshes[i];
 				// TODO: groups
 				if (_waypointGroups.size()==0) {
 					_waypointGroups.add(new AdWaypointGroup3D(_gameRef));

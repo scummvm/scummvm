@@ -28,9 +28,9 @@
 namespace Wintermute {
 	class Light3D;
 	class Camera3D;
-	class Mesh;
+	class Mesh3DS;
 
-	bool load3DSFile(const char *filename, BaseArray<Mesh *> &meshes, BaseArray<Common::String> &meshNames,
+	bool load3DSFile(const char *filename, BaseArray<Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
 					   BaseArray<Light3D *> &lights, BaseArray<Camera3D *> &cameras);
 
 	enum Chunks3DS {

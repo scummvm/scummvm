@@ -75,7 +75,7 @@ MODULE_OBJS := \
 	base/gfx/opengl/render_ticket.o \
 	base/gfx/opengl/light3d.o \
 	base/gfx/opengl/camera3d.o \
-	base/gfx/opengl/mesh.o \
+	base/gfx/opengl/mesh3ds.o \
 	base/gfx/opengl/loader3ds.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \

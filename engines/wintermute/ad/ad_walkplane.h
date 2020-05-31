@@ -34,14 +34,14 @@
 
 namespace Wintermute {
 
-class Mesh;
+class Mesh3DS;
 
 class AdWalkplane : public BaseScriptable {
 public:
 	bool _receiveShadows;
 	bool persist(BasePersistenceManager *persistMgr);
 	bool _active;
-	Mesh *_mesh;
+	Mesh3DS *_mesh;
 	AdWalkplane(BaseGame *inGame);
 	virtual ~AdWalkplane();
 };

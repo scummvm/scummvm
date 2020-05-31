@@ -37,13 +37,13 @@
 namespace Wintermute {
 
 class CAdSceneGeometry;
-class Mesh;
+class Mesh3DS;
 
 class AdWaypointGroup3D : public BaseClass {
 public:
 	//DECLARE_PERSISTENT(AdWaypointGroup3D, BaseClass);
 	bool _active;
-	bool addFromMesh(Mesh *mesh);
+	bool addFromMesh(Mesh3DS *mesh);
 	AdWaypointGroup3D(BaseGame *inGame);
 	virtual ~AdWaypointGroup3D();
 	BaseArray<Math::Vector3d *> _points;
