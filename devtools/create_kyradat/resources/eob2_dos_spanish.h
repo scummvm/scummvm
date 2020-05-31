@@ -104,7 +104,7 @@ static const char *const kEoB2ChargenAlignmentStringsDOSSpanish[9] = {
 static const StringListProvider kEoB2ChargenAlignmentStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenAlignmentStringsDOSSpanish), kEoB2ChargenAlignmentStringsDOSSpanish };
 
 static const char *const kEoB2ChargenEnterGameStringsDOSSpanish[1] = {
-	"  Entering game.\r  Please wait."
+	"ENTRANDO AL JUEGO\rPOR FAVOR ESPERA."
 };
 
 static const StringListProvider kEoB2ChargenEnterGameStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenEnterGameStringsDOSSpanish), kEoB2ChargenEnterGameStringsDOSSpanish };
@@ -116,7 +116,7 @@ static const char *const kEoB2PryDoorStringsDOSSpanish[8] = {
 	"\x06\x06""Intentas forzar la puerta, pero fallas.\r",
 	"No puedes poner ese objeto alli.\r",
 	"El objeto es demasiado grande.\r",
-	"Nadie sabe lo que hay detras de la puerta.\r",
+	"Nadie puede abrir esta puerta.\r",
 	"\r"
 };
 
@@ -167,7 +167,7 @@ static const char *const kEoB2ItemSuffixStringsWandsDOSSpanish[8] = {
 static const StringListProvider kEoB2ItemSuffixStringsWandsDOSSpanishProvider = { ARRAYSIZE(kEoB2ItemSuffixStringsWandsDOSSpanish), kEoB2ItemSuffixStringsWandsDOSSpanish };
 
 static const char *const kEoB2RipItemStringsDOSSpanish[3] = {
-	"%s ha perdido la ",
+	"%s ha perdido su ",
 	"%s ha perdido su ",
 	".\r"
 };
@@ -181,8 +181,8 @@ static const char *const kEoB2CursedStringDOSSpanish[1] = {
 static const StringListProvider kEoB2CursedStringDOSSpanishProvider = { ARRAYSIZE(kEoB2CursedStringDOSSpanish), kEoB2CursedStringDOSSpanish };
 
 static const char *const kEoB2MagicObjectStringsDOSSpanish[5] = {
-	"Mage Scroll",
-	"Cleric Scroll",
+	"Pergamino de Mago",
+	"Pergamino de Clerigo",
 	"Anillo",
 	"Pocion",
 	"Varita"
@@ -254,7 +254,7 @@ static const char *const kEoB2ItemMisuseStringsDOSSpanish[3] = {
 static const StringListProvider kEoB2ItemMisuseStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ItemMisuseStringsDOSSpanish), kEoB2ItemMisuseStringsDOSSpanish };
 
 static const char *const kEoB2TakenStringsDOSSpanish[1] = {
-	" taken.\r"
+	".\r"
 };
 
 static const StringListProvider kEoB2TakenStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2TakenStringsDOSSpanish), kEoB2TakenStringsDOSSpanish };
@@ -319,7 +319,7 @@ static const char *const kEoB2MenuStringsMainDOSSpanish[8] = {
 	"Selecciona:",
 	"Descansar Grupo",
 	"Memorizar Conjuros",
-	"Aprender Conjuros",
+	"Orar Conjuros",
 	"Utilizar Pergaminos",
 	"Preferencias",
 	"Opciones",
@@ -330,11 +330,11 @@ static const StringListProvider kEoB2MenuStringsMainDOSSpanishProvider = { ARRAY
 
 static const char *const kEoB2MenuStringsSaveLoadDOSSpanish[8] = {
 	"Cargar Partida",
-	"Salvar Partida",
+	"Guardar Partida",
 	"Dejar Personaje",
 	"Abandonar Partida",
 	"Opciones:",
-	"\rJuego Salvado.",
+	"\rJuego Guardado.",
 	"La grabacion\rha fallado!",
 	"No puedo cargar\rla partida.\rFichero corrupto!"
 };
@@ -469,7 +469,7 @@ static const char *const kEoB2MenuStringsRest4DOSSpanish[1] = {
 static const StringListProvider kEoB2MenuStringsRest4DOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsRest4DOSSpanish), kEoB2MenuStringsRest4DOSSpanish };
 
 static const char *const kEoB2MenuStringsDefeatDOSSpanish[1] = {
-	"\rYour entire party\rhas been defeated!\rWould you like to\rload a previously\rsaved game?"
+	"\rTodo tu grupo\rha sido eliminado!\rQuieres cargar\runa partida\rgrabada?"
 };
 
 static const StringListProvider kEoB2MenuStringsDefeatDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsDefeatDOSSpanish), kEoB2MenuStringsDefeatDOSSpanish };
@@ -506,18 +506,18 @@ static const char *const kEoB2CharGuiStringsHpDOSSpanish[2] = {
 static const StringListProvider kEoB2CharGuiStringsHpDOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsHpDOSSpanish), kEoB2CharGuiStringsHpDOSSpanish };
 
 static const char *const kEoB2CharGuiStringsWp2DOSSpanish[3] = {
-	"NADA",
+	"FALLA",
 	"HACK",
-	"BASH"
+	"GOLPE"
 };
 
 static const StringListProvider kEoB2CharGuiStringsWp2DOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsWp2DOSSpanish), kEoB2CharGuiStringsWp2DOSSpanish };
 
 static const char *const kEoB2CharGuiStringsWrDOSSpanish[4] = {
-	" NO ",
-	"PUEDE",
-	"NO",
-	"AMMO"
+	" NO  ",
+	"LLEGA",
+	" SIN",
+	"MUNI"
 };
 
 static const StringListProvider kEoB2CharGuiStringsWrDOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsWrDOSSpanish), kEoB2CharGuiStringsWrDOSSpanish };
@@ -596,13 +596,13 @@ static const char *const kEoB2MageSpellsListDOSSpanish[33] = {
 	"Detectar Magia",
 	"Dardo Magico",
 	"Escudo",
-	"Choque Electrico",
+	"Golpe Electrico",
 	"Difuminar",
 	"Detectar Invisible",
 	"Identificar Magia",
 	"Invisibilidad",
 	"Flecha Acida M.",
-	"Disipar Magia",
+	"Disolver Magia",
 	"Bola de Fuego",
 	"Velocidad",
 	"Paralizar",
@@ -631,7 +631,7 @@ static const char *const kEoB2ClericSpellsListDOSSpanish[30] = {
 	"",
 	"Bendecir",
 	"Herida Leve",
-	"Cura Leve",
+	"Curacion Leve",
 	"Detectar Magia",
 	"Proteccion al Mal",
 	"Auxiliar",
@@ -639,22 +639,22 @@ static const char *const kEoB2ClericSpellsListDOSSpanish[30] = {
 	"Paralizar",
 	"Retrasar Veneno",
 	"Crear Comida",
-	"Disolver Magia",
+	"Disipar Magia",
 	"Atuendo Magico",
 	"Oracion",
 	"Quitar Paralisis",
 	"Herida Grave",
-	"Cura Grave",
+	"Curacion Grave",
 	"Neutralizar Veneno",
 	"Proteccion Mal 3m",
 	"Herida Critica",
-	"Cura Critica",
+	"Curacion Critica",
 	"Columna de Fuego",
-	"Levantar Muertos",
+	"Alzar Muertos",
 	"Quitar Vida",
 	"Vision Verdadera",
 	"Danar",
-	"Sanar",
+	"Sanacion",
 	"Resurreccion",
 	"Imponer Manos",
 	"Alejar Muertos"
@@ -668,13 +668,13 @@ static const char *const kEoB2SpellNamesDOSSpanish[68] = {
 	"detectar magia",
 	"dardo magico",
 	"escudo",
-	"choque electrico",
+	"golpe electrico",
 	"difuminar",
 	"detectar invisibilidad",
 	"identificar magia",
 	"invisibilidad",
-	"flecha acida de melf",
-	"disipar magia",
+	"flecha acida de Melf",
+	"disolver magia",
 	"bola de fuego",
 	"velocidad",
 	"paralizar",
@@ -705,7 +705,7 @@ static const char *const kEoB2SpellNamesDOSSpanish[68] = {
 	"paralizar",
 	"retrasar veneno",
 	"crear comida",
-	"disolver magia",
+	"disipar magia",
 	"atuendo magico",
 	"oracion",
 	"quitar paralisis",
@@ -716,11 +716,11 @@ static const char *const kEoB2SpellNamesDOSSpanish[68] = {
 	"herida critica",
 	"cura critica",
 	"columna de fuego",
-	"levantar muertos",
+	"alzar muertos",
 	"quitar vida",
 	"vision verdadera",
 	"danar",
-	"sanar",
+	"sanacion",
 	"resureccion",
 	"imponer manos",
 	"alejar muertos",
@@ -736,8 +736,8 @@ static const char *const kEoB2SpellNamesDOSSpanish[68] = {
 static const StringListProvider kEoB2SpellNamesDOSSpanishProvider = { ARRAYSIZE(kEoB2SpellNamesDOSSpanish), kEoB2SpellNamesDOSSpanish };
 
 static const char *const kEoB2MagicStrings1DOSSpanish[6] = {
-	"ABORTAR",
-	"ABORTAR",
+	"SIN CONJURO",
+	"SIN CONJURO",
 	"Debes tener una mano libre para el conjuro.\r",
 	"No puedes tener dos conjuros del mismo tipo activos.\r",
 	"%s conjura %s.\r",
@@ -757,8 +757,8 @@ static const char *const kEoB2MagicStrings2DOSSpanish[5] = {
 static const StringListProvider kEoB2MagicStrings2DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings2DOSSpanish), kEoB2MagicStrings2DOSSpanish };
 
 static const char *const kEoB2MagicStrings3DOSSpanish[5] = {
-	"Cast spell on which character? ",
-	"\rSpell aborted.\r",
+	"Utilizar conjuro en quien? ",
+	"\rConjuro abortado.\r",
 	"El conjuro de %s, %s expira.\r",
 	"%s pierde al monstruo.\r",
 	"%s debe estar delante para golpear!\r"
@@ -779,7 +779,7 @@ static const char *const kEoB2MagicStrings6DOSSpanish[1] = {
 static const StringListProvider kEoB2MagicStrings6DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings6DOSSpanish), kEoB2MagicStrings6DOSSpanish };
 
 static const char *const kEoB2MagicStrings7DOSSpanish[2] = {
-	"%s is already under the effect of a %s spell.\r",
+	"%s esta ya bajo los efectos del conjuro %s.\r",
 	"El grupo esta ya bajo los efectos del conjuro %s.\r"
 };
 
@@ -787,7 +787,7 @@ static const StringListProvider kEoB2MagicStrings7DOSSpanishProvider = { ARRAYSI
 
 static const char *const kEoB2MagicStrings8DOSSpanish[6] = {
 	"El conjuro falla!\r",
-	"held",
+	"retenido",
 	"El conjuro falla!\r",
 	"El conjuro falla\r",
 	"Ningun monstruo al alcance!\r",
@@ -797,90 +797,90 @@ static const char *const kEoB2MagicStrings8DOSSpanish[6] = {
 static const StringListProvider kEoB2MagicStrings8DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings8DOSSpanish), kEoB2MagicStrings8DOSSpanish };
 
 static const byte kEoB2ManDefDOSSpanish[200] = {
-	0x09, 0x03, 0x04, 0x00, 0x09, 0x0D, 0x02, 0x00,
-	0x09, 0x07, 0x07, 0x00, 0x14, 0x06, 0x05, 0x00,
-	0x14, 0x10, 0x06, 0x00, 0x14, 0x1C, 0x03, 0x00,
-	0x1A, 0x04, 0x06, 0x00, 0x1A, 0x0A, 0x05, 0x00,
-	0x1A, 0x0C, 0x05, 0x00, 0x15, 0x03, 0x04, 0x00,
-	0x15, 0x05, 0x05, 0x00, 0x15, 0x0F, 0x02, 0x00,
-	0x15, 0x14, 0x03, 0x00, 0x15, 0x1B, 0x02, 0x00,
-	0x15, 0x1D, 0x03, 0x00, 0x23, 0x01, 0x03, 0x00,
-	0x23, 0x03, 0x03, 0x00, 0x23, 0x08, 0x03, 0x00,
-	0x23, 0x19, 0x02, 0x00, 0x23, 0x1F, 0x04, 0x00,
-	0x23, 0x26, 0x04, 0x00, 0x26, 0x03, 0x02, 0x00,
-	0x26, 0x05, 0x06, 0x00, 0x26, 0x12, 0x03, 0x00,
-	0x26, 0x18, 0x01, 0x00, 0x26, 0x1E, 0x01, 0x00,
-	0x26, 0x21, 0x04, 0x00, 0x17, 0x01, 0x03, 0x00,
-	0x17, 0x03, 0x06, 0x00, 0x17, 0x06, 0x02, 0x00,
-	0x17, 0x0F, 0x05, 0x00, 0x17, 0x1B, 0x01, 0x00,
-	0x17, 0x21, 0x06, 0x00, 0x12, 0x03, 0x02, 0x00,
-	0x12, 0x05, 0x04, 0x00, 0x12, 0x09, 0x02, 0x00,
-	0x12, 0x0B, 0x04, 0x00, 0x12, 0x0D, 0x06, 0x00,
-	0x12, 0x0F, 0x03, 0x00, 0x12, 0x11, 0x05, 0x00,
-	0x12, 0x12, 0x02, 0x00, 0x1F, 0x02, 0x04, 0x00,
-	0x1F, 0x02, 0x07, 0x00, 0x1F, 0x04, 0x03, 0x00,
-	0x1F, 0x06, 0x03, 0x00, 0x1F, 0x09, 0x03, 0x00,
-	0x1F, 0x0A, 0x01, 0x00, 0x1C, 0x03, 0x03, 0x00,
-	0x1C, 0x04, 0x02, 0x00, 0x1C, 0x05, 0x06, 0x00
+	0x09, 0x03, 0x07, 0x00, 0x09, 0x03, 0x04, 0x00,
+	0x09, 0x07, 0x0A, 0x00, 0x14, 0x05, 0x05, 0x00,
+	0x14, 0x09, 0x02, 0x00, 0x14, 0x10, 0x05, 0x00,
+	0x1A, 0x03, 0x04, 0x00, 0x1A, 0x06, 0x06, 0x00,
+	0x1A, 0x07, 0x06, 0x00, 0x15, 0x12, 0x07, 0x00,
+	0x15, 0x12, 0x07, 0x00, 0x15, 0x02, 0x05, 0x00,
+	0x15, 0x02, 0x01, 0x00, 0x15, 0x0B, 0x05, 0x00,
+	0x15, 0x07, 0x01, 0x00, 0x23, 0x02, 0x07, 0x00,
+	0x23, 0x0C, 0x03, 0x00, 0x23, 0x01, 0x03, 0x00,
+	0x23, 0x01, 0x02, 0x00, 0x23, 0x01, 0x08, 0x00,
+	0x23, 0x06, 0x08, 0x00, 0x26, 0x01, 0x01, 0x00,
+	0x26, 0x0E, 0x08, 0x00, 0x26, 0x03, 0x04, 0x00,
+	0x26, 0x01, 0x03, 0x00, 0x26, 0x03, 0x08, 0x00,
+	0x26, 0x01, 0x03, 0x00, 0x17, 0x02, 0x01, 0x00,
+	0x17, 0x02, 0x03, 0x00, 0x17, 0x01, 0x02, 0x00,
+	0x17, 0x04, 0x01, 0x00, 0x17, 0x06, 0x07, 0x00,
+	0x17, 0x01, 0x03, 0x00, 0x09, 0x07, 0x0A, 0x00,
+	0x14, 0x10, 0x05, 0x00, 0x15, 0x02, 0x05, 0x00,
+	0x15, 0x02, 0x01, 0x00, 0x23, 0x01, 0x03, 0x00,
+	0x23, 0x01, 0x02, 0x00, 0x23, 0x01, 0x08, 0x00,
+	0x26, 0x01, 0x07, 0x00, 0x26, 0x03, 0x08, 0x00,
+	0x26, 0x01, 0x03, 0x00, 0x17, 0x02, 0x01, 0x00,
+	0x17, 0x02, 0x03, 0x00, 0x17, 0x04, 0x01, 0x00,
+	0x17, 0x01, 0x03, 0x00, 0x15, 0x07, 0x01, 0x00,
+	0x26, 0x01, 0x01, 0x00, 0x26, 0x03, 0x01, 0x00
 };
 
 static const ByteProvider kEoB2ManDefDOSSpanishProvider = { ARRAYSIZE(kEoB2ManDefDOSSpanish), kEoB2ManDefDOSSpanish };
 
 static const char *const kEoB2ManWordDOSSpanish[51] = {
-	"cursor",
-	"majority",
-	"right",
-	"unusable",
-	"greyed",
-	"thrown",
-	"spellcasters",
-	"button",
-	"characters",
-	"carefree",
+	"legend",
+	"beholder",
+	"desde",
+	"aventura",
+	"lanzar",
+	"pagina",
+	"movimientos",
+	"pantalla",
+	"personajes",
+	"grabados",
 
-	"practical",
-	"inherit",
-	"while",
-	"combinations",
-	"charm",
-	"individuals",
-	"gestures",
-	"pummel",
-	"paladins",
-	"skill",
+	"grabados",
+	"activar",
+	"marca",
+	"anterioridad",
+	"marca",
+	"inteligencia",
+	"disponer",
+	"tienen",
+	"gnomos",
+	"magia",
 
-	"advancement",
-	"also",
-	"counters",
-	"knowledge",
-	"greater",
-	"assume",
-	"several",
-	"laying",
-	"reach",
-	"swiftly",
+	"parentesco",
+	"razas",
+	"resucitar",
+	"guerreros",
+	"humanos",
+	"luchan",
+	"humanos",
+	"asumir",
+	"mando",
+	"carisma",
 
-	"allows",
-	"limited",
-	"jack",
-	"thrown",
-	"weapons",
-	"note",
-	"certain",
-	"damage",
-	"done",
-	"bonus",
+	"ademas",
+	"golpear",
+	"mide",
+	"desde",
+	"pagina",
+	"activar",
+	"marca",
+	"tienen",
+	"gnomes",
+	"magia",
 
-	"may",
-	"over",
-	"box",
-	"put",
-	"portrait",
-	"backpack",
-	"inside",
-	"causes",
-	"until",
-	"outright",
+	"razas",
+	"luchar",
+	"humanos",
+	"asumir",
+	"mando",
+	"ademas",
+	"mide",
+	"marca",
+	"razas",
+	"los",
 	""
 };
 
@@ -930,7 +930,7 @@ static const char *const kEoB2IntroStringsDOSSpanish[20] = {
 	"El mensaje era muy urgente.",
 	"  Que querria Khelben?",
 	"Bienvenido, sigueme.",
-	" Khelben te lleva a su estudio.",
+	"Khelben te espera en su estudio.",
 	"Gracias por acudir tan aprisa.",
 	"Tenemos problemas.......",
 	"Antiguos demonios permanecen aun en \rel Templo Darkmoon",
@@ -972,10 +972,10 @@ static const char *const kEoB2FinaleStringsDOSSpanish[20] = {
 	"Gracias, mis victoriosos amigos.",
 	"Habeis derrotado a Dran!",
 	"No sabia que Dran fuese un dragon.",
-	"El debe tener mas de 300 anos!",
+	"Debe tener mas de 300 anos!",
 	"Su poder ha desaparecido.",
 	"Pero Darkmoon es aun un lugar\rde demonios.",
-	"Y muchos de los suyos perduran.",
+	"Y muchos de los suyos aun permanecen.",
 	"Ahora debemos dejar este lugar.",
 	"Y que mis hombres acaben\rcon todos ellos.",
 	"Seguidme.",
@@ -1266,19 +1266,19 @@ static const byte kEoB2CreditsDataDOSSpanish[2316] = {
 	0x28, 0x44, 0x72, 0x6F, 0x77, 0x20, 0x4D, 0x61,
 	0x67, 0x65, 0x29, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
 	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
-	0x0D, 0x0D, 0x01, 0x41, 0x6E, 0x79, 0x20, 0x63,
-	0x68, 0x61, 0x72, 0x61, 0x63, 0x74, 0x65, 0x72,
-	0x73, 0x20, 0x69, 0x6E, 0x20, 0x74, 0x68, 0x69,
-	0x73, 0x20, 0x67, 0x61, 0x6D, 0x65, 0x20, 0x77,
-	0x68, 0x6F, 0x20, 0x62, 0x65, 0x61, 0x72, 0x0D,
-	0x01, 0x72, 0x65, 0x73, 0x65, 0x6D, 0x62, 0x6C,
-	0x61, 0x6E, 0x63, 0x65, 0x20, 0x74, 0x6F, 0x20,
-	0x70, 0x65, 0x72, 0x73, 0x6F, 0x6E, 0x73, 0x20,
-	0x6C, 0x69, 0x76, 0x69, 0x6E, 0x67, 0x20, 0x6F,
-	0x72, 0x0D, 0x01, 0x64, 0x65, 0x61, 0x64, 0x20,
-	0x61, 0x72, 0x65, 0x20, 0x70, 0x75, 0x72, 0x65,
-	0x6C, 0x79, 0x20, 0x63, 0x6F, 0x69, 0x6E, 0x63,
-	0x69, 0x64, 0x65, 0x6E, 0x74, 0x61, 0x6C, 0x2E,
+	0x0D, 0x0D, 0x01, 0x45, 0x6C, 0x20, 0x70, 0x61,
+	0x72, 0x65, 0x63, 0x69, 0x64, 0x6F, 0x20, 0x64,
+	0x65, 0x20, 0x6C, 0x6F, 0x73, 0x20, 0x70, 0x65,
+	0x72, 0x73, 0x6F, 0x6E, 0x61, 0x6A, 0x65, 0x73,
+	0x20, 0x64, 0x65, 0x20, 0x20, 0x20, 0x20, 0x0D,
+	0x01, 0x65, 0x73, 0x74, 0x65, 0x20, 0x6A, 0x75,
+	0x65, 0x67, 0x6F, 0x20, 0x63, 0x6F, 0x6E, 0x20,
+	0x61, 0x6C, 0x67, 0x75, 0x6E, 0x61, 0x20, 0x70,
+	0x65, 0x72, 0x73, 0x6F, 0x6E, 0x61, 0x20, 0x20,
+	0x20, 0x0D, 0x01, 0x72, 0x65, 0x61, 0x6C, 0x20,
+	0x65, 0x73, 0x20, 0x70, 0x75, 0x72, 0x61, 0x20,
+	0x63, 0x6F, 0x69, 0x6E, 0x63, 0x69, 0x64, 0x65,
+	0x6E, 0x63, 0x69, 0x61, 0x2E, 0x20, 0x20, 0x20,
 	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
 	0x0D, 0x0D, 0x0D, 0x02, 0x11, 0x0D, 0x0D, 0x0D,
 	0x0D, 0x0D, 0x0D, 0x00
@@ -1315,27 +1315,27 @@ static const char *const kEoB2MonsterDistAttStringsDOSSpanish[5] = {
 static const StringListProvider kEoB2MonsterDistAttStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MonsterDistAttStringsDOSSpanish), kEoB2MonsterDistAttStringsDOSSpanish };
 
 static const char *const kEoB2Npc1StringsDOSSpanish[2] = {
-	"talk",
-	"leave"
+	"hablar",
+	"dejar"
 };
 
 static const StringListProvider kEoB2Npc1StringsDOSSpanishProvider = { ARRAYSIZE(kEoB2Npc1StringsDOSSpanish), kEoB2Npc1StringsDOSSpanish };
 
 static const char *const kEoB2Npc2StringsDOSSpanish[2] = {
-	"release him",
-	"leave"
+	"liberar",
+	"dejar"
 };
 
 static const StringListProvider kEoB2Npc2StringsDOSSpanishProvider = { ARRAYSIZE(kEoB2Npc2StringsDOSSpanish), kEoB2Npc2StringsDOSSpanish };
 
 static const char *const kEoB2MonsterDustStringsDOSSpanish[1] = {
-	"The monster crumbles to dust!\r"
+	"El monstruo se convierte en polvo!\r"
 };
 
 static const StringListProvider kEoB2MonsterDustStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MonsterDustStringsDOSSpanish), kEoB2MonsterDustStringsDOSSpanish };
 
 static const char *const kEoB2KheldranStringsDOSSpanish[1] = {
-	"    Such trusting whelps!"
+	"   Tan confiado cachorro!"
 };
 
 static const StringListProvider kEoB2KheldranStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2KheldranStringsDOSSpanish), kEoB2KheldranStringsDOSSpanish };
