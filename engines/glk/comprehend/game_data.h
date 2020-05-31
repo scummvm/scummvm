@@ -214,12 +214,11 @@ struct GameInfo {
 
 	unsigned _comprehendVersion;
 
-	uint8 _startRoom;
-
 	Common::Array<Room> _rooms;
 	uint8 _currentRoom;
+	uint8 _startRoom;
 
-	struct Item _items[0xff];
+	Common::Array<Item> _items;
 
 	Word *_words;
 	size_t _nr_words;

@@ -178,8 +178,7 @@ void GameInfo::clearInfo() {
 	_itemImages.clear();
 
 	_rooms.clear();
-	for (uint idx = 0; idx < 0xff; ++idx)
-		_items[idx].clear();
+	_items.clear();
 	for (uint idx = 0; idx < 0xff; ++idx)
 		_wordMaps[idx].clear();
 	for (uint idx = 0; idx < 0xffff; ++idx)
@@ -637,6 +636,7 @@ static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
 
 static void parse_items(ComprehendGame *game, FileBuffer *fb) {
 	size_t nr_items = game->_header.nr_items;
+	game->_items.resize(nr_items);
 
 	/* Item descriptions */
 	fb->seek(game->_header.addr_item_strings);
@@ -645,7 +645,7 @@ static void parse_items(ComprehendGame *game, FileBuffer *fb) {
 	if (game->_comprehendVersion == 2) {
 		/* Comprehend version 2 adds long string descriptions */
 		fb->seek(game->_header.addr_item_strings +
-		         (game->_header.nr_items * sizeof(uint16)));
+		         (game->_items.size() * sizeof(uint16)));
 		file_buf_get_array_le16(fb, 0, game->_items, long_string, nr_items);
 	}
 

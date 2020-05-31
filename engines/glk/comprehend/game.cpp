@@ -78,10 +78,11 @@ void ComprehendGame::synchronizeSave(Common::Serializer &s) {
 	}
 
 	// Objects
-	nr_items = _header.nr_items;
-	s.syncAsByte(_header.nr_items);
+	nr_items = _items.size();
+	s.syncAsByte(nr_items);
+	assert(nr_items == _items.size());
 
-	for (i = 0; i < nr_items; ++i)
+	for (i = 0; i < _items.size(); ++i)
 		_items[i].synchronize(s);
 }
 
@@ -238,7 +239,7 @@ static Room *get_room(ComprehendGame *game, uint16 index) {
 }
 
 Item *get_item(ComprehendGame *game, uint16 index) {
-	if (index >= game->_header.nr_items)
+	if (index >= game->_items.size())
 		error("Bad item %d\n", index);
 
 	return &game->_items[index];
@@ -319,7 +320,7 @@ static Item *get_item_by_noun(ComprehendGame *game,
 	 *         (the box and the snarl-in-a-box). The player is unable
 	 *         to drop the latter because this will match the former.
 	 */
-	for (i = 0; i < game->_header.nr_items; i++)
+	for (i = 0; i < game->_items.size(); i++)
 		if (game->_items[i].word == noun->_index)
 			return &game->_items[i];
 
@@ -357,7 +358,7 @@ static void update_graphics(ComprehendGame *game) {
 
 		if ((game->_updateFlags & UPDATE_GRAPHICS) ||
 		    (game->_updateFlags & UPDATE_GRAPHICS_ITEMS)) {
-			for (i = 0; i < game->_header.nr_items; i++) {
+			for (i = 0; i < game->_items.size(); i++) {
 				item = &game->_items[i];
 
 				if (item->room == game->_currentRoom &&
@@ -375,7 +376,7 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 	size_t count = 0;
 	uint i;
 
-	for (i = 0; i < game->_header.nr_items; i++) {
+	for (i = 0; i < game->_items.size(); i++) {
 		item = &game->_items[i];
 
 		if (item->room == game->_currentRoom &&
@@ -386,7 +387,7 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 	if (count > 0) {
 		console_println(game, game->stringLookup(STRING_YOU_SEE).c_str());
 
-		for (i = 0; i < game->_header.nr_items; i++) {
+		for (i = 0; i < game->_items.size(); i++) {
 			item = &game->_items[i];
 
 			if (item->room == game->_currentRoom &&
@@ -447,7 +448,7 @@ static void func_set_test_result(FunctionState *func_state, bool value) {
 static size_t num_objects_in_room(ComprehendGame *game, int room) {
 	size_t count = 0, i;
 
-	for (i = 0; i < game->_header.nr_items; i++)
+	for (i = 0; i < game->_items.size(); i++)
 		if (game->_items[i].room == room)
 			count++;
 
@@ -677,7 +678,7 @@ static void eval_instruction(ComprehendGame *game,
 		test = false;
 
 		if (noun) {
-			for (i = 0; i < game->_header.nr_items; i++) {
+			for (i = 0; i < game->_items.size(); i++) {
 				Item *itemP = &game->_items[i];
 
 				if (itemP->word == noun->_index &&
@@ -819,7 +820,7 @@ static void eval_instruction(ComprehendGame *game,
 		}
 
 		console_println(game, game->stringLookup(STRING_INVENTORY).c_str());
-		for (i = 0; i < game->_header.nr_items; i++) {
+		for (i = 0; i < game->_items.size(); i++) {
 			item = &game->_items[i];
 			if (item->room == ROOM_INVENTORY)
 				printf("%s\n",
@@ -835,7 +836,7 @@ static void eval_instruction(ComprehendGame *game,
 		}
 
 		console_println(game, game->stringLookup(instr->operand[1]).c_str());
-		for (i = 0; i < game->_header.nr_items; i++) {
+		for (i = 0; i < game->_items.size(); i++) {
 			item = &game->_items[i];
 			if (item->room == instr->operand[0])
 				printf("%s\n",

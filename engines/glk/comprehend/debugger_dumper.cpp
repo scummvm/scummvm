@@ -316,8 +316,8 @@ void DebuggerDumper::dumpItems() {
 	Item *item;
 	uint i, j;
 
-	print("Items (%u entries)\n", (uint)_game->_header.nr_items);
-	for (i = 0; i < _game->_header.nr_items; i++) {
+	print("Items (%u entries)\n", _game->_items.size());
+	for (i = 0; i < _game->_items.size(); i++) {
 		item = &_game->_items[i];
 
 		print("  [%.2x] %s\n", i + 1,
