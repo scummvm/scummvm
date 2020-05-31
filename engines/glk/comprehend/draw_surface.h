@@ -102,9 +102,6 @@ public:
 	void render();
 };
 
-void g_init();
-bool g_enabled(void);
-
 } // namespace Comprehend
 } // namespace Glk
 

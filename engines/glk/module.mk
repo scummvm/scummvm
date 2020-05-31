@@ -171,6 +171,7 @@ MODULE_OBJS := \
 	comprehend/debugger_dumper.o \
 	comprehend/detection.o \
 	comprehend/dictionary.o \
+	comprehend/draw_surface.o \
 	comprehend/file_buf.o \
 	comprehend/game.o \
 	comprehend/game_cc.o \
@@ -178,7 +179,6 @@ MODULE_OBJS := \
 	comprehend/game_oo.o \
 	comprehend/game_tm.o \
 	comprehend/game_tr.o \
-	comprehend/graphics.o \
 	comprehend/image_data.o \
 	comprehend/opcode_map.o \
 	comprehend/strings.o \

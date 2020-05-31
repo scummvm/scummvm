@@ -58,6 +58,7 @@ public:
 	GraphicsWindow *_topWindow;
 	TextBufferWindow *_bottomWindow;
 	ComprehendGame *_game;
+	bool _graphicsEnabled;
 
 private:
 	/**

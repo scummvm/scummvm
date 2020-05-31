@@ -22,7 +22,7 @@
 
 #include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/comprehend.h"
-#include "glk/comprehend/graphics.h"
+#include "glk/comprehend/draw_surface.h"
 
 namespace Glk {
 namespace Comprehend {

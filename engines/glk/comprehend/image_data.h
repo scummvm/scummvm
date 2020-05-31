@@ -24,7 +24,7 @@
 #define GLK_COMPREHEND_IMAGE_DATA_H
 
 #include "glk/comprehend/file_buf.h"
-#include "glk/comprehend/graphics.h"
+#include "glk/comprehend/draw_surface.h"
 #include "common/scummsys.h"
 
 namespace Glk {

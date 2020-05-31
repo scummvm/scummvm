@@ -25,7 +25,7 @@
 #include "glk/comprehend/dictionary.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
-#include "glk/comprehend/graphics.h"
+#include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
 
@@ -1018,7 +1018,7 @@ void comprehend_load_game(ComprehendGame *game) {
 	/* Load the main game data file */
 	load_game_data(game);
 
-	if (g_enabled()) {
+	if (g_comprehend->_graphicsEnabled) {
 		// Set up image files
 		game->_roomImages.load(game->_locationGraphicFiles);
 		game->_itemImages.load(game->_itemGraphicFiles);

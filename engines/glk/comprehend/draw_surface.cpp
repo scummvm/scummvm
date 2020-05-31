@@ -20,7 +20,7 @@
  *
  */
 
-#include "glk/comprehend/graphics.h"
+#include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/image_data.h"
 #include "glk/comprehend/util.h"
@@ -400,16 +400,6 @@ static void set_color(unsigned color) {
 		                       (color >> 0) & 0xff);
 }
 #endif
-
-void g_init() {
-	graphics_enabled = true;
-	DrawSurface::setColorTable(0);
-	DrawSurface::_renderColor = 0;
-}
-
-bool g_enabled(void) {
-	return graphics_enabled;
-}
 
 } // namespace Comprehend
 } // namespace Glk

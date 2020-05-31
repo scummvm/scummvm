@@ -24,13 +24,13 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "glk/comprehend/debugger.h"
+#include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/game.h"
 #include "glk/comprehend/game_cc.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/game_tm.h"
 #include "glk/comprehend/game_tr.h"
-#include "glk/comprehend/graphics.h"
 #include "glk/quetzal.h"
 
 namespace Glk {
@@ -122,7 +122,9 @@ int main(int argc, char **argv) {
 }
 #endif
 
-Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _saveSlot(-1), _game(nullptr) {
+Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) :
+		GlkAPI(syst, gameDesc), _saveSlot(-1), _game(nullptr),
+		_graphicsEnabled(true) {
 	g_comprehend = this;
 }
 
@@ -144,6 +146,7 @@ void Comprehend::runGame() {
 	deinitialize();
 }
 void Comprehend::initialize() {
+	// Set up the GLK windows
 	g_conf->_wMarginX = 0;
 	g_conf->_wMarginY = 0;
 
@@ -155,7 +158,9 @@ void Comprehend::initialize() {
 	glk_set_window(_bottomWindow);
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
 
-	g_init();
+	// Initialize drawing
+	DrawSurface::setColorTable(0);
+	DrawSurface::_renderColor = 0;
 }
 
 void Comprehend::deinitialize() {

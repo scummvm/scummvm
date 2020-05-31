@@ -25,7 +25,7 @@
 #include "glk/comprehend/debugger.h"
 #include "glk/comprehend/dictionary.h"
 #include "glk/comprehend/game_data.h"
-#include "glk/comprehend/graphics.h"
+#include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/opcode_map.h"
 #include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
@@ -255,7 +255,7 @@ static void update_graphics(ComprehendGame *game) {
 	int type;
 	uint i;
 
-	if (!g_enabled())
+	if (!g_comprehend->_graphicsEnabled)
 		return;
 
 	type = game->room_is_special(game->_currentRoom, NULL);
