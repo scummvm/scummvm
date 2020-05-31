@@ -255,11 +255,11 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 	return sym;
 }
 
-Symbol Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
+Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
 	if (prefix)
 		name = *prefix + "-" + name;
 
-	debugC(1, kDebugLingoCompile, "define(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
+	debugC(1, kDebugLingoCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
 			name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""),
 			end, _currentEntityId);
 
@@ -267,14 +267,19 @@ Symbol Lingo::define(Common::String &name, int start, int nargs, Common::String 
 		end = _currentScript->size();
 
 	ScriptData *code = new ScriptData(&(*_currentScript)[start], end - start);
-	Symbol sym = define(name, nargs, code);
+	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+	for (uint i = 0; i < _argstack.size(); i++) {
+		argNames->push_back(Common::String(_argstack[i]->c_str()));
+	}
+	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
+	// FIXME: introspect variable names
+	Symbol sym = define(name, nargs, code, argNames, varNames);
 
 	// Now remove all defined code from the _currentScript
 	if (removeCode)
 		for (int i = end - 1; i >= start; i--) {
 			_currentScript->remove_at(i);
 		}
-
 
 	return sym;
 }

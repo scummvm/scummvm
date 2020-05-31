@@ -1169,7 +1169,7 @@ void LC::c_whencode() {
 	int entity = g_lingo->_currentEntityId;
 	g_lingo->_currentEntityId = 0;
 
-	Symbol sym = g_lingo->define(eventname, start, 0, NULL, end, false); // Redefine, but not remove code
+	Symbol sym = g_lingo->codeDefine(eventname, start, 0, NULL, end, false); // Redefine, but not remove code
 
 	g_lingo->_currentEntityId = entity;
 

@@ -1612,7 +1612,7 @@ YY_RULE_SETUP
 			return ID;
 
 		// Check that this is one of locally used names:
-		// argument, propery, instance or global
+		// argument, property, instance or global
 		if (g_lingo->_methodVars.contains(yytext))
 			return ID;
 

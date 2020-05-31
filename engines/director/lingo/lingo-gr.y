@@ -101,8 +101,8 @@ static void endDef() {
 	g_lingo->_methodVars.clear();
 }
 
-static void mArg(Common::String *s) {
-	g_lingo->_methodVars[*s] = true;
+static void mArg(Common::String *s, VarType type) {
+	g_lingo->_methodVars[*s] = type;
 }
 
 %}
@@ -590,34 +590,34 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 globallist: ID					{
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mArg($ID, kVarGlobal);
 		delete $ID; }
 	| globallist ',' ID			{
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mArg($ID, kVarGlobal);
 		delete $ID; }
 
 propertylist: ID				{
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mArg($ID, kVarProperty);
 		delete $ID; }
 	| propertylist ',' ID		{
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mArg($ID, kVarProperty);
 		delete $ID; }
 
 instancelist: ID				{
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mArg($ID, kVarInstance);
 		delete $ID; }
 	| instancelist ',' ID		{
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mArg($ID, kVarInstance);
 		delete $ID; }
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -691,19 +691,19 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$ID, $begin, $argdef);
+		g_lingo->codeDefine(*$ID, $begin, $argdef);
 		endDef();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$ID); delete $ID; }
 	| tMETHOD { startDef(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
+		g_lingo->codeDefine(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
 		endDef();
 		delete $tMETHOD; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$on, $begin, $argdef);
+		g_lingo->codeDefine(*$on, $begin, $argdef);
 		endDef();
 
 		checkEnd($ENDCLAUSE, $on->c_str(), false);
@@ -711,7 +711,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
 		delete $ENDCLAUSE; }
 	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$on, $begin, $argdef);
+		g_lingo->codeDefine(*$on, $begin, $argdef);
 		endDef();
 		delete $on; }
 
@@ -719,8 +719,8 @@ on:  tON { startDef(); } ID 	{
 		$$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
-	| ID						{ g_lingo->codeArg($ID); mArg($ID); $$ = 1; delete $ID; }
-	| argdef ',' ID				{ g_lingo->codeArg($ID); mArg($ID); $$ = $1 + 1; delete $ID; }
+	| ID						{ g_lingo->codeArg($ID); mArg($ID, kVarArgument); $$ = 1; delete $ID; }
+	| argdef ',' ID				{ g_lingo->codeArg($ID); mArg($ID, kVarArgument); $$ = $1 + 1; delete $ID; }
 
 endargdef:	/* nothing */
 	| ID						{ delete $ID; }

@@ -118,8 +118,8 @@ static void endDef() {
 	g_lingo->_methodVars.clear();
 }
 
-static void mArg(Common::String *s) {
-	g_lingo->_methodVars[*s] = true;
+static void mArg(Common::String *s, VarType type) {
+	g_lingo->_methodVars[*s] = type;
 }
 
 
@@ -3178,7 +3178,7 @@ yyreduce:
                                                 {
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
-		mArg((yyvsp[0].s));
+		mArg((yyvsp[0].s), kVarGlobal);
 		delete (yyvsp[0].s); }
 #line 3184 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -3188,7 +3188,7 @@ yyreduce:
                                                 {
 		g_lingo->code1(LC::c_global);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
-		mArg((yyvsp[0].s));
+		mArg((yyvsp[0].s), kVarGlobal);
 		delete (yyvsp[0].s); }
 #line 3194 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -3198,7 +3198,7 @@ yyreduce:
                                                 {
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
-		mArg((yyvsp[0].s));
+		mArg((yyvsp[0].s), kVarProperty);
 		delete (yyvsp[0].s); }
 #line 3204 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -3208,7 +3208,7 @@ yyreduce:
                                         {
 		g_lingo->code1(LC::c_property);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
-		mArg((yyvsp[0].s));
+		mArg((yyvsp[0].s), kVarProperty);
 		delete (yyvsp[0].s); }
 #line 3214 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -3218,7 +3218,7 @@ yyreduce:
                                                 {
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
-		mArg((yyvsp[0].s));
+		mArg((yyvsp[0].s), kVarInstance);
 		delete (yyvsp[0].s); }
 #line 3224 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -3228,7 +3228,7 @@ yyreduce:
                                         {
 		g_lingo->code1(LC::c_instance);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
-		mArg((yyvsp[0].s));
+		mArg((yyvsp[0].s), kVarInstance);
 		delete (yyvsp[0].s); }
 #line 3234 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -3336,7 +3336,7 @@ yyreduce:
 #line 692 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg));
+		g_lingo->codeDefine(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg));
 		endDef();
 		delete (yyvsp[-6].s); }
 #line 3343 "engines/director/lingo/lingo-gr.cpp"
@@ -3358,7 +3358,7 @@ yyreduce:
 #line 699 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg) + 1, &g_lingo->_currentFactory);
+		g_lingo->codeDefine(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg) + 1, &g_lingo->_currentFactory);
 		endDef();
 		delete (yyvsp[-6].s); }
 #line 3365 "engines/director/lingo/lingo-gr.cpp"
@@ -3368,7 +3368,7 @@ yyreduce:
 #line 704 "engines/director/lingo/lingo-gr.y"
                                                                      {	// D3
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*(yyvsp[-7].s), (yyvsp[-6].code), (yyvsp[-5].narg));
+		g_lingo->codeDefine(*(yyvsp[-7].s), (yyvsp[-6].code), (yyvsp[-5].narg));
 		endDef();
 
 		checkEnd((yyvsp[-1].s), (yyvsp[-7].s)->c_str(), false);
@@ -3381,7 +3381,7 @@ yyreduce:
 #line 712 "engines/director/lingo/lingo-gr.y"
                                                  {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*(yyvsp[-5].s), (yyvsp[-4].code), (yyvsp[-3].narg));
+		g_lingo->codeDefine(*(yyvsp[-5].s), (yyvsp[-4].code), (yyvsp[-3].narg));
 		endDef();
 		delete (yyvsp[-5].s); }
 #line 3388 "engines/director/lingo/lingo-gr.cpp"
@@ -3408,13 +3408,13 @@ yyreduce:
 
   case 160:
 #line 722 "engines/director/lingo/lingo-gr.y"
-                                                        { g_lingo->codeArg((yyvsp[0].s)); mArg((yyvsp[0].s)); (yyval.narg) = 1; delete (yyvsp[0].s); }
+                                                        { g_lingo->codeArg((yyvsp[0].s)); mArg((yyvsp[0].s), kVarArgument); (yyval.narg) = 1; delete (yyvsp[0].s); }
 #line 3413 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 161:
 #line 723 "engines/director/lingo/lingo-gr.y"
-                                                { g_lingo->codeArg((yyvsp[0].s)); mArg((yyvsp[0].s)); (yyval.narg) = (yyvsp[-2].narg) + 1; delete (yyvsp[0].s); }
+                                                { g_lingo->codeArg((yyvsp[0].s)); mArg((yyvsp[0].s), kVarArgument); (yyval.narg) = (yyvsp[-2].narg) + 1; delete (yyvsp[0].s); }
 #line 3419 "engines/director/lingo/lingo-gr.cpp"
     break;
 

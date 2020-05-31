@@ -52,6 +52,13 @@ enum LexerDefineState {
 	kStateInArgs
 };
 
+enum VarType {
+	kVarArgument,
+	kVarProperty,
+	kVarInstance,
+	kVarGlobal
+};
+
 typedef void (*inst)(void);
 #define	STOP (inst)0
 #define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
@@ -322,7 +329,7 @@ public:
 	void popContext();
 	void cleanLocalVars();
 	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr);
-	Symbol define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1, bool removeCode = true);
+	Symbol codeDefine(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1, bool removeCode = true);
 	void processIf(int toplabel, int endlabel);
 	int castIdFetch(Datum &var);
 	void varCreate(const Common::String &name, bool global);
@@ -425,7 +432,7 @@ public:
 	LexerDefineState _indef;
 	bool _ignoreMe;
 	bool _immediateMode;
-	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methodVars;
+	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methodVars;
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
