@@ -142,8 +142,8 @@ static const StringListProvider kEoB2ItemSuffixStringsRingsDOSSpanishProvider = 
 
 static const char *const kEoB2ItemSuffixStringsPotionsDOSSpanish[8] = {
 	"Fuerza Gigante",
-	"Curar",
-	"Sanar",
+	"Curacion",
+	"Sanacion",
 	"Veneno",
 	"Vitalidad",
 	"Velocidad",
