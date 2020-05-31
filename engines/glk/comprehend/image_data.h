@@ -24,6 +24,7 @@
 #define GLK_COMPREHEND_IMAGE_DATA_H
 
 #include "glk/comprehend/file_buf.h"
+#include "glk/comprehend/graphics.h"
 #include "common/scummsys.h"
 
 namespace Glk {
@@ -39,7 +40,7 @@ private:
 	FileBuffer _fb;
 
 private:
-	bool doImageOp(ImageContext *ctx);
+	bool doImageOp(DrawSurface *ds, ImageContext *ctx);
 	uint16 imageGetOperand();
 
 	public:

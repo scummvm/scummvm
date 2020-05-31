@@ -24,6 +24,7 @@
 #define GLK_COMPREHEND_GRAPHICS_H
 
 #include "common/scummsys.h"
+#include "graphics/managed_surface.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -62,23 +63,45 @@ namespace Comprehend {
 #define G_COLOR_BROWN1		0x7a5200ff
 #define G_COLOR_BROWN2		0x663300ff
 
-void g_set_color_table(unsigned index);
+class DrawSurface : public Graphics::ManagedSurface {
+private:
+	static const uint32 PEN_COLORS[8];
+	static const uint32 DEFAULT_COLOR_TABLE[256];
+	static const uint32 COLOR_TABLE_1[256];
+	static const uint32 *COLOR_TABLES[2];
+	static const uint32 *_colorTable;
 
-unsigned g_set_fill_color(uint8 index);
-unsigned g_set_pen_color(uint8 opcode);
+public:
+	static uint32 _renderColor;
+public:
+	DrawSurface() {
+		reset();
+	}
 
-unsigned g_get_pixel_color(int x, int y);
+	/**
+	 * Sets up the surface to the correct size and pixel format
+	 */
+	void reset();
 
-void g_draw_pixel(unsigned x, unsigned y, unsigned color);
-void g_draw_line(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
-		 unsigned color);
-void g_draw_box(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
-		unsigned color);
-void g_draw_shape(int x, int y, int shape_type, unsigned fill_color);
-void g_floodfill(int x, int y, unsigned fill_color, unsigned old_color);
+	static void setColorTable(uint index);
+	uint getPenColor(uint8 opcode) const;
+	uint32 getFillColor(uint8 index);
 
-void g_clear_screen(unsigned color);
-void g_flip_buffers(void);
+	void drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
+	void drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
+	void drawFilledBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
+	void drawShape(int x, int y, int shape_type, uint32 fill_color);
+	void floodFill(int x, int y, uint32 fill_color, uint32 old_color);
+	void drawPixel(uint16 x, uint16 y, uint32 color);
+	uint32 getPixelColor(uint16 x, uint16 y);
+	void clearScreen(uint32 color);
+
+	/**
+	 * Render the surface to the screen's picture window
+	 */
+	void render();
+};
+
 void g_init();
 bool g_enabled(void);
 

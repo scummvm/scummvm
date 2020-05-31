@@ -34,9 +34,9 @@ namespace Comprehend {
 #define IMAGES_PER_FILE	16
 
 struct ImageContext {
-	unsigned	x;
-	unsigned	y;
-	unsigned	pen_color;
+	unsigned	_x;
+	unsigned	_y;
+	unsigned	_penColor;
 	unsigned	fill_color;
 	unsigned	shape;
 
@@ -76,17 +76,18 @@ void ImageFileData::load(const char *filename) {
 
 void ImageFileData::draw(uint index, ImageContext *ctx) {
 	_fb.seek(_imageOffsets[index]);
+	DrawSurface ds;
 
 	for (bool done = false; !done;) {
-		done = doImageOp(ctx);
+		done = doImageOp(&ds, ctx);
 		if (!done && (draw_flags & IMAGEF_OP_WAIT_KEYPRESS)) {
 			getchar();
-			g_flip_buffers();
+			ds.render();
 		}
 	}
 }
 
-bool ImageFileData::doImageOp(ImageContext *ctx) {
+bool ImageFileData::doImageOp(DrawSurface *ds, ImageContext *ctx) {
 	uint8 opcode;
 	uint16 a, b;
 
@@ -109,7 +110,7 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 	case IMAGE_OP_PEN_COLOR_G:
 	case IMAGE_OP_PEN_COLOR_H:
 		debug_printf(DEBUG_IMAGE_DRAW, "set_pen_color(%.2x)\n", opcode);
-		ctx->pen_color = g_set_pen_color(opcode);
+		ctx->_penColor = ds->getPenColor(opcode);
 		break;
 
 	case IMAGE_OP_DRAW_LINE:
@@ -122,11 +123,11 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 
 		debug_printf(DEBUG_IMAGE_DRAW,
 		             "draw_line (%d, %d) - (%d, %d)\n", opcode,
-		             ctx->x, ctx->y, a, b);
-		g_draw_line(ctx->x, ctx->y, a, b, ctx->pen_color);
+		             ctx->_x, ctx->_y, a, b);
+		ds->drawLine(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 
-		ctx->x = a;
-		ctx->y = b;
+		ctx->_x = a;
+		ctx->_y = b;
 		break;
 
 	case IMAGE_OP_DRAW_BOX:
@@ -139,9 +140,9 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 
 		debug_printf(DEBUG_IMAGE_DRAW,
 		             "draw_box (%d, %d) - (%d, %d)\n", opcode,
-		             ctx->x, ctx->y, a, b);
+		             ctx->_x, ctx->_y, a, b);
 
-		g_draw_box(ctx->x, ctx->y, a, b, ctx->pen_color);
+		ds->drawBox(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 		break;
 
 	case IMAGE_OP_MOVE_TO:
@@ -154,8 +155,8 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 			a += 255;
 
 		debug_printf(DEBUG_IMAGE_DRAW, "move_to(%d, %d)\n", a, b);
-		ctx->x = a;
-		ctx->y = b;
+		ctx->_x = a;
+		ctx->_y = b;
 		break;
 
 	case IMAGE_OP_SHAPE_PIXEL:
@@ -192,7 +193,7 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 		             "draw_shape(%d, %d), style=%.2x, fill=%.2x\n",
 		             a, b, ctx->shape, ctx->fill_color);
 
-		g_draw_shape(a, b, ctx->shape, ctx->fill_color);
+		ds->drawShape(a, b, ctx->shape, ctx->fill_color);
 		break;
 
 	case IMAGE_OP_PAINT:
@@ -206,14 +207,14 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 
 		debug_printf(DEBUG_IMAGE_DRAW, "paint(%d, %d)\n", a, b);
 		if (!(draw_flags & IMAGEF_NO_FLOODFILL))
-			g_floodfill(a, b, ctx->fill_color,
-			            g_get_pixel_color(a, b));
+			ds->floodFill(a, b, ctx->fill_color,
+			            ds->getPixelColor(a, b));
 		break;
 
 	case IMAGE_OP_FILL_COLOR:
 		a = imageGetOperand();
 		debug_printf(DEBUG_IMAGE_DRAW, "set_fill_color(%.2x)\n", a);
-		ctx->fill_color = g_set_fill_color(a);
+		ctx->fill_color = ds->getFillColor(a);
 		break;
 
 	case IMAGE_OP_SET_TEXT_POS:
@@ -230,7 +231,7 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 		debug_printf(DEBUG_IMAGE_DRAW, "draw_char(%c)\n",
 		             a >= 0x20 && a < 0x7f ? a : '?');
 
-		g_draw_box(ctx->text_x, ctx->text_y,
+		ds->drawBox(ctx->text_x, ctx->text_y,
 		           ctx->text_x + 6, ctx->text_y + 7, ctx->fill_color);
 		ctx->text_x += 8;
 		break;
@@ -267,7 +268,7 @@ bool ImageFileData::doImageOp(ImageContext *ctx) {
 
 		debug_printf(DEBUG_IMAGE_DRAW,
 		             "unknown(%.2x, %.2x)\n", a, b);
-		g_draw_pixel(a, b, 0x00ff00ff);
+		ds->drawPixel(a, b, 0x00ff00ff);
 		break;
 	}
 
@@ -318,19 +319,19 @@ void draw_image(ImageData *info, unsigned index) {
 	(*info)[index / IMAGES_PER_FILE].draw(index % IMAGES_PER_FILE, &ctx);
 }
 
-void draw_dark_room(void)
-{
-	g_clear_screen(G_COLOR_BLACK);
+void draw_dark_room() {
+	DrawSurface ds;
+	ds.clearScreen(G_COLOR_BLACK);
 }
 
-void draw_bright_room(void)
-{
-	g_clear_screen(G_COLOR_WHITE);
+void draw_bright_room() {
+	DrawSurface ds;
+	ds.clearScreen(G_COLOR_WHITE);
 }
 
-void draw_location_image(ImageData *info, unsigned index)
-{
-	g_clear_screen(G_COLOR_WHITE);
+void draw_location_image(ImageData *info, unsigned index) {
+	DrawSurface ds;
+	ds.clearScreen(G_COLOR_WHITE);
 	draw_image(info, index);
 }
 

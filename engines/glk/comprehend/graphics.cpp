@@ -37,7 +37,7 @@ namespace Comprehend {
 
 static bool graphics_enabled;
 
-static unsigned pen_colors[] = {
+const uint32 DrawSurface::PEN_COLORS[8] = {
     G_COLOR_BLACK,
     RGB(0x00, 0x66, 0x00),
     RGB(0x00, 0xff, 0x00),
@@ -48,31 +48,8 @@ static unsigned pen_colors[] = {
     RGB(0xff, 0x00, 0x00),
 };
 
-struct GraphicsContext {
-	Window *screen;
-
-	/*
-	 * FIXME - Currently using two renderers. One for drawing the (possibly
-	 *         scaled) image to the screen and the other for getting pixel
-	 *         data for floodfill boundaries. This is almost certainly not
-	 *         the best way to do this.
-	 */
-	//	SDL_Renderer	*renderer[2];
-
-	/* Used for pixel access for flood fills */
-	//	SDL_Surface	*surface;
-};
-
-#ifdef TODO
-static GraphicsContext ctx;
-#endif
-
-unsigned g_set_pen_color(uint8 opcode) {
-	return pen_colors[opcode - IMAGE_OP_PEN_COLOR_A];
-}
-
 /* Used by Transylvania and Crimson Crown */
-static unsigned default_color_table[] = {
+const uint32 DrawSurface::DEFAULT_COLOR_TABLE[256] = {
     G_COLOR_WHITE,     // 00
     G_COLOR_DARK_BLUE, // 01
     G_COLOR_GRAY1,     // 02
@@ -117,55 +94,10 @@ static unsigned default_color_table[] = {
 
 /* Used by OO-topos */
 /* FIXME - incomplete */
-static unsigned color_table_1[] = {
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+const uint32 DrawSurface::COLOR_TABLE_1[256] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,
     0,
     0,
@@ -234,172 +166,44 @@ static unsigned color_table_1[] = {
     0,
     0,
 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+const uint32 *DrawSurface::COLOR_TABLES[2] = {
+    DEFAULT_COLOR_TABLE,
+    COLOR_TABLE_1,
 };
 
-static unsigned *color_tables[] = {
-    default_color_table,
-    color_table_1,
-};
+const uint32 *DrawSurface::_colorTable = DEFAULT_COLOR_TABLE;
 
-static unsigned *color_table = default_color_table;
+uint32 DrawSurface::_renderColor;
 
-void g_set_color_table(unsigned index) {
-	if (index >= ARRAY_SIZE(color_tables)) {
-		printf("Bad color table %d - using default\n", index);
-		color_table = default_color_table;
-	}
+/*-------------------------------------------------------*/
 
-	color_table = color_tables[index];
+void DrawSurface::reset() {
+	create(G_RENDER_WIDTH, G_RENDER_HEIGHT,
+	       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 }
 
-unsigned g_set_fill_color(uint8 index) {
+void DrawSurface::setColorTable(uint index) {
+	if (index >= ARRAY_SIZE(COLOR_TABLES)) {
+		warning("Bad color table %d - using default", index);
+		_colorTable = DEFAULT_COLOR_TABLE;
+	}
+
+	_colorTable = COLOR_TABLES[index];
+}
+
+uint DrawSurface::getPenColor(uint8 opcode) const {
+	return PEN_COLORS[opcode - IMAGE_OP_PEN_COLOR_A];
+}
+
+uint32 DrawSurface::getFillColor(uint8 index) {
 	unsigned color;
 
-	color = color_table[index];
+	color = _colorTable[index];
 	if (!color) {
 		/* Unknown color - use ugly purple */
 		debug_printf(DEBUG_IMAGE_DRAW, "Unknown color %.2x\n", index);
@@ -408,6 +212,181 @@ unsigned g_set_fill_color(uint8 index) {
 
 	return color;
 }
+
+void DrawSurface::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color) {
+	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, color);
+}
+
+void DrawSurface::drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2,
+                          uint32 color) {
+	Common::Rect r(x1, y1, x2, y2);
+	frameRect(r, color);
+}
+
+void DrawSurface::drawFilledBox(uint16 x1, uint16 y1,
+                                uint16 x2, uint16 y2, uint32 color) {
+	Common::Rect r(x1, y1, x2, y2);
+	fillRect(r, color);
+}
+
+void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
+	int i, j;
+
+	switch (shape_type) {
+	case IMAGE_OP_SHAPE_PIXEL:
+		x += 7;
+		y += 7;
+		drawPixel(x, y, fill_color);
+		break;
+
+	case IMAGE_OP_SHAPE_BOX:
+		x += 6;
+		y += 7;
+		drawFilledBox(x, y, x + 2, y + 2, fill_color);
+		break;
+
+	case IMAGE_OP_SHAPE_CIRCLE_TINY:
+		x += 5;
+		y += 5;
+		drawFilledBox(x + 1, y, x + 3, y + 4, fill_color);
+		drawFilledBox(x, y + 1, x + 4, y + 3, fill_color);
+		break;
+
+	case IMAGE_OP_SHAPE_CIRCLE_SMALL:
+		x += 4;
+		y += 4;
+		drawFilledBox(x + 1, y, x + 5, y + 6, fill_color);
+		drawFilledBox(x, y + 1, x + 6, y + 5, fill_color);
+		break;
+
+	case IMAGE_OP_SHAPE_CIRCLE_MED:
+		x += 1;
+		y += 1;
+		drawFilledBox(x + 1,
+		              y + 1,
+		              x + 1 + (2 + 4 + 2),
+		              y + 1 + (2 + 4 + 2),
+		              fill_color);
+		drawFilledBox(x + 3,
+		              y,
+		              x + 3 + 4,
+		              y + (1 + 2 + 4 + 2 + 1),
+		              fill_color);
+		drawFilledBox(x,
+		              y + 3,
+		              x + (1 + 2 + 4 + 2 + 1),
+		              y + 3 + 4,
+		              fill_color);
+		break;
+
+	case IMAGE_OP_SHAPE_CIRCLE_LARGE:
+		drawFilledBox(x + 2,
+		              y + 1,
+		              x + 2 + (3 + 4 + 3),
+		              y + 1 + (1 + 3 + 4 + 3 + 1),
+		              fill_color);
+		drawFilledBox(x + 1,
+		              y + 2,
+		              x + 1 + (1 + 3 + 4 + 3 + 1),
+		              y + 2 + (3 + 4 + 3),
+		              fill_color);
+		drawFilledBox(x + 5,
+		              y,
+		              x + 5 + 4,
+		              y + 1 + 1 + 3 + 4 + 3 + 1 + 1,
+		              fill_color);
+		drawFilledBox(x,
+		              y + 5,
+		              x + 1 + 1 + 3 + 4 + 3 + 1 + 1,
+		              y + 5 + 4,
+		              fill_color);
+		break;
+
+	case IMAGE_OP_SHAPE_A:
+		/* FIXME - very large circle? */
+		break;
+
+	case IMAGE_OP_SHAPE_SPRAY: {
+		char spray[13][13] = {
+		    {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
+		    {0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+		    {0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1},
+		    {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+		    {1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0},
+		    {0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+		    {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0},
+		    {1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0},
+		    {0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0},
+		    {1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0},
+		    {0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0},
+		    {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		    {0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
+		};
+		for (i = 0; i < 13; i++)
+			for (j = 0; j < 13; j++)
+				if (spray[i][j])
+					drawPixel(x + i, y + j, fill_color);
+		break;
+	}
+
+	default:
+		/* Unknown shape */
+		break;
+	}
+}
+
+void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
+	int x1, x2, i;
+
+	if (getPixelColor(x, y) != old_color || fill_color == old_color)
+		return;
+
+	/* Left end of scanline */
+	for (x1 = x; x1 > 0; x1--)
+		if (getPixelColor(x1 - 1, y) != old_color)
+			break;
+
+	/* Right end of scanline */
+	for (x2 = x; x2 < RENDER_X_MAX; x2++)
+		if (getPixelColor(x2 + 1, y) != old_color)
+			break;
+
+	drawLine(x1, y, x2, y, fill_color);
+#ifdef TODO
+	SDL_RenderPresent(ctx.renderer[RENDERER_SCREEN]);
+#endif
+	/* Scanline above */
+	for (i = x1; i < x2; i++)
+		if (y > 0 && getPixelColor(i, y - 1) == old_color)
+			floodFill(i, y - 1, fill_color, old_color);
+
+	/* Scanline below */
+	for (i = x1; i < x2; i++)
+		if (y < RENDER_Y_MAX && getPixelColor(i, y + 1) == old_color)
+			floodFill(i, y + 1, fill_color, old_color);
+}
+
+void DrawSurface::drawPixel(uint16 x, uint16 y, uint32 color) {
+	uint32 *ptr = (uint32 *)getBasePtr(x, y);
+	*ptr = color;
+}
+
+uint32 DrawSurface::getPixelColor(uint16 x, uint16 y) {
+	uint32 *ptr = (uint32 *)getBasePtr(x, y);
+	return *ptr;
+}
+
+void DrawSurface::clearScreen(uint32 color) {
+	fillRect(Common::Rect(0, 0, this->w, this->h), color);
+	render();
+}
+
+void DrawSurface::render() {
+	GraphicsWindow *win = g_comprehend->_topWindow;
+	win->drawPicture(*this, (uint)-2, 0, 0, win->_w, win->_h);
+}
+
+/*-------------------------------------------------------*/
 
 #ifdef TODO
 static void set_color(unsigned color) {
@@ -422,202 +401,13 @@ static void set_color(unsigned color) {
 }
 #endif
 
-void g_draw_box(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
-                unsigned color) {
-	Rect r(x1, y1, x2, y2);
-	g_comprehend->_topWindow->frameRect(color, r);
-}
-
-static void g_draw_filled_box(unsigned x1, unsigned y1,
-                              unsigned x2, unsigned y2, unsigned color) {
-	Rect r(x1, y1, x2, y2);
-	g_comprehend->_topWindow->fillRect(color, r);
-}
-
-unsigned g_get_pixel_color(int x, int y) {
-#ifdef TODO
-	uint32 *pixels, val;
-
-	pixels = ctx.surface->pixels;
-	val = pixels[(y * G_RENDER_WIDTH) + x];
-
-	/* FIXME - correct endianess on all platforms? */
-	return be32toh(val);
-#else
-	return 0;
-#endif
-}
-
-void g_draw_pixel(unsigned x, unsigned y, unsigned color) {
-#ifdef TODO
-	int i;
-
-	set_color(color);
-	for (i = 0; i < ARRAY_SIZE(ctx.renderer); i++)
-		SDL_RenderDrawPoint(ctx.renderer[i], x, y);
-#endif
-}
-
-void g_draw_line(unsigned x1, unsigned y1, unsigned x2, unsigned y2,
-		 unsigned color) {
-	g_comprehend->_topWindow->drawLine(color, Point(x1, y1), Point(x2, y2));
-}
-
-void g_draw_shape(int x, int y, int shape_type, unsigned fill_color)
-{
-	int i, j;
-
-	switch (shape_type) {
-	case IMAGE_OP_SHAPE_PIXEL:
-		x += 7; y += 7;
-		g_draw_pixel(x, y, fill_color);
-		break;
-
-	case IMAGE_OP_SHAPE_BOX:
-		x += 6; y += 7;
-		g_draw_filled_box(x, y, x + 2, y + 2, fill_color);
-		break;
-
-	case IMAGE_OP_SHAPE_CIRCLE_TINY:
-		x += 5;
-		y += 5;
-		g_draw_filled_box(x + 1, y, x + 3, y + 4, fill_color);
-		g_draw_filled_box(x, y + 1, x + 4, y + 3, fill_color);
-		break;
-
-	case IMAGE_OP_SHAPE_CIRCLE_SMALL:
-		x += 4; y += 4;
-		g_draw_filled_box(x + 1, y, x + 5, y + 6, fill_color);
-		g_draw_filled_box(x, y + 1, x + 6, y + 5, fill_color);
-		break;
-
-	case IMAGE_OP_SHAPE_CIRCLE_MED:
-		x += 1; y += 1;
-		g_draw_filled_box(x + 1,
-				  y + 1,
-				  x + 1 + (2 + 4 + 2),
-				  y + 1 + (2 + 4 + 2),
-				  fill_color);
-		g_draw_filled_box(x + 3,
-				  y,
-				  x + 3 + 4,
-				  y + (1 + 2 + 4 + 2 + 1),
-				  fill_color);
-		g_draw_filled_box(x,
-				  y + 3,
-				  x + (1 + 2 + 4 + 2 + 1),
-				  y + 3 + 4,
-				  fill_color);
-		break;
-
-	case IMAGE_OP_SHAPE_CIRCLE_LARGE:
-		g_draw_filled_box(x + 2,
-				  y + 1,
-				  x + 2 + (3 + 4 + 3),
-				  y + 1 + (1 + 3 + 4 + 3 + 1),
-				  fill_color);
-		g_draw_filled_box(x + 1,
-				  y + 2,
-				  x + 1 + (1 + 3 + 4 + 3 + 1),
-				  y + 2 + (3 + 4 + 3),
-				  fill_color);
-		g_draw_filled_box(x + 5,
-				  y,
-				  x + 5 + 4,
-				  y + 1 + 1 + 3 + 4 + 3 + 1 + 1,
-				  fill_color);
-		g_draw_filled_box(x,
-				  y + 5,
-				  x + 1 + 1 + 3 + 4 + 3 + 1 + 1,
-				  y + 5 + 4,
-				  fill_color);
-		break;
-
-	case IMAGE_OP_SHAPE_A:
-		/* FIXME - very large circle? */
-		break;
-
-	case IMAGE_OP_SHAPE_SPRAY:
-	{
-		char spray[13][13] = {
-			{0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
-			{0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-			{0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1},
-			{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-			{1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0},
-			{0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0},
-			{1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0},
-			{0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0},
-			{1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0},
-			{0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0},
-			{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
-		};
-		for (i = 0; i < 13; i++)
-			for (j = 0; j < 13; j++)
-				if (spray[i][j])
-					g_draw_pixel(x + i, y + j, fill_color);
-		break;
-	}
-
-	default:
-		/* Unknown shape */
-		break;
-	}
-}
-
-void g_floodfill(int x, int y, unsigned fill_color,
-			unsigned old_color)
-{
-	int x1, x2, i;
-
-	if (g_get_pixel_color(x, y) != old_color || fill_color == old_color)
-		return;
-
-	/* Left end of scanline */
-	for (x1 = x; x1 > 0; x1--)
-		if (g_get_pixel_color(x1 - 1, y) != old_color)
-			break;
-
-	/* Right end of scanline */
-	for (x2 = x; x2 < RENDER_X_MAX; x2++)
-		if (g_get_pixel_color(x2 + 1, y) != old_color)
-			break;
-
-	g_draw_line(x1, y, x2, y, fill_color);
-#ifdef TODO
-	SDL_RenderPresent(ctx.renderer[RENDERER_SCREEN]);
-#endif
-	/* Scanline above */
-	for (i = x1; i < x2; i++)
-		if (y > 0 && g_get_pixel_color(i, y - 1) == old_color)
-			g_floodfill(i, y - 1, fill_color, old_color);
-
-	/* Scanline below */
-	for (i = x1; i < x2; i++)
-		if (y < RENDER_Y_MAX && g_get_pixel_color(i, y + 1) == old_color)
-			g_floodfill(i, y + 1, fill_color, old_color);
-
-}
-
-void g_flip_buffers(void) {
-#ifdef TODO
-	SDL_RenderPresent(ctx.renderer[RENDERER_SCREEN]);
-#endif
-}
-
-void g_clear_screen(unsigned color) {
-	GraphicsWindow *win = g_comprehend->_topWindow;
-	win->fillRect(color, Rect(0, 0, win->_w, win->_h));
-}
-
 void g_init() {
 	graphics_enabled = true;
+	DrawSurface::setColorTable(0);
+	DrawSurface::_renderColor = 0;
 }
 
-bool g_enabled(void)
-{
+bool g_enabled(void) {
 	return graphics_enabled;
 }
 
