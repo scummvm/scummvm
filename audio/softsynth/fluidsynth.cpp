@@ -82,7 +82,7 @@ public:
 // MidiDriver method implementations
 
 MidiDriver_FluidSynth::MidiDriver_FluidSynth(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer), _engineSoundFontData(NULL) {
+	: MidiDriver_Emulated(mixer), _engineSoundFontData(nullptr) {
 
 	for (int i = 0; i < ARRAYSIZE(_midiChannels); i++) {
 		_midiChannels[i].init(this, i);
@@ -126,46 +126,45 @@ void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
 
 // Soundfont memory loader callback functions.
 
-static void *SoundFontMemLoader_open(const char *filename)
-{
+static void *SoundFontMemLoader_open(const char *filename) {
 	void *p;
-	if(filename[0] != '&')
-	{
-		return NULL;
+	if (filename[0] != '&') {
+		return nullptr;
 	}
 	sscanf(filename, "&%p", &p);
 	return p;
 }
 
-static int SoundFontMemLoader_read(void *buf, int count, void *handle)
-{
-	return ((Common::SeekableReadStream *)handle)->read(buf, count) == count ? FLUID_OK : FLUID_FAILED;
+static int SoundFontMemLoader_read(void *buf, int count, void *handle) {
+	return ((Common::SeekableReadStream *) handle)->read(buf, count) == count ? FLUID_OK : FLUID_FAILED;
 }
 
-static int SoundFontMemLoader_seek(void *handle, long offset, int origin)
-{
-	return ((Common::SeekableReadStream *)handle)->seek(offset, origin) ? FLUID_OK : FLUID_FAILED;
+static int SoundFontMemLoader_seek(void *handle, long offset, int origin) {
+	return ((Common::SeekableReadStream *) handle)->seek(offset, origin) ? FLUID_OK : FLUID_FAILED;
 }
 
-static int SoundFontMemLoader_close(void *handle)
-{
-	delete (Common::SeekableReadStream *)handle;
+static int SoundFontMemLoader_close(void *handle) {
+	delete (Common::SeekableReadStream *) handle;
 	return FLUID_OK;
 }
 
-static long SoundFontMemLoader_tell(void *handle)
-{
-	return ((Common::SeekableReadStream *)handle)->pos();
+static long SoundFontMemLoader_tell(void *handle) {
+	return ((Common::SeekableReadStream *) handle)->pos();
 }
 
 int MidiDriver_FluidSynth::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	if (_engineSoundFontData == NULL && !ConfMan.hasKey("soundfont"))
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.hasKey("soundfont");
+#else
+	bool isUsingInMemorySoundFontData = false;
+#endif
+
+	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont"))
 		error("FluidSynth requires a 'soundfont' setting");
 
-	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.hasKey("soundfont");
 
 	_settings = new_fluid_settings();
 
@@ -231,8 +230,9 @@ int MidiDriver_FluidSynth::open() {
 	fluid_synth_set_interp_method(_synth, -1, interpMethod);
 
 	const char *soundfont = ConfMan.hasKey("soundfont") ?
-			ConfMan.get("soundfont").c_str() : Common::String::format("&%p", _engineSoundFontData).c_str();
+			ConfMan.get("soundfont").c_str() : Common::String::format("&%p", (void *)_engineSoundFontData).c_str();
 
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
 	if (isUsingInMemorySoundFontData) {
 		fluid_sfloader_t *soundFontMemoryLoader = new_fluid_defsfloader(_settings);
 		fluid_sfloader_set_callbacks(soundFontMemoryLoader,
@@ -243,6 +243,7 @@ int MidiDriver_FluidSynth::open() {
 									 SoundFontMemLoader_close);
 		fluid_synth_add_sfloader(_synth, soundFontMemoryLoader);
 	}
+#endif
 
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
 	if (!isUsingInMemorySoundFontData) {
