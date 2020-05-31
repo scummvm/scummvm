@@ -47,8 +47,6 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 
 	// pause the engine and all native threads
 	final public native void setPause(boolean pause);
-	// ResidualVM specific method
-	final public native void enableZoning(boolean enable);
 	// Feed an event to ResidualVM.  Safe to call from other threads.
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
 										int arg4, int arg5, int arg6);

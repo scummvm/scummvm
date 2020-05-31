@@ -247,8 +247,6 @@ void OSystem_Android::initViewport() {
 
 	GLCALL(glViewport(0, 0, JNI::egl_surface_width, JNI::egl_surface_height));
 	LOGD("viewport size: %dx%d", JNI::egl_surface_width, JNI::egl_surface_height);
-
-	clearFocusRectangle();
 }
 
 void OSystem_Android::initOverlay() {
@@ -584,24 +582,6 @@ void OSystem_Android::fillScreen(uint32 col) {
 	GLTHREADCHECK;
 
 	_game_texture->fillBuffer(col);
-}
-
-void OSystem_Android::setFocusRectangle(const Common::Rect& rect) {
-	ENTER("%d, %d, %d, %d", rect.left, rect.top, rect.right, rect.bottom);
-
-	if (_enable_zoning) {
-		_focus_rect = rect;
-		_force_redraw = true;
-	}
-}
-
-void OSystem_Android::clearFocusRectangle() {
-	ENTER();
-
-	if (_enable_zoning) {
-		_focus_rect = Common::Rect();
-		_force_redraw = true;
-	}
 }
 
 void OSystem_Android::showOverlay() {

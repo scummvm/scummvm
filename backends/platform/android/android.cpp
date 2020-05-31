@@ -131,7 +131,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_ar_correction(true),
 	_show_mouse(false),
 	_show_overlay(false),
-	_enable_zoning(false),
 	_mixer(0),
 	_queuedEventTime(0),
 	_event_queue_lock(0),

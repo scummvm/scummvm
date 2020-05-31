@@ -115,8 +115,6 @@ private:
 	Graphics::PixelBuffer _game_pbuf;
 	OpenGL::FrameBuffer *_frame_buffer;
 
-	Common::Rect _focus_rect;
-
 	// Overlay layer
 	GLES4444Texture *_overlay_texture;
 	bool _show_overlay;
@@ -145,7 +143,6 @@ private:
 	pthread_t _audio_thread;
 	static void *audioThreadFunc(void *arg);
 
-	bool _enable_zoning;
 	bool _virtkeybd_on;
 
 	Audio::MixerImpl *_mixer;
@@ -175,7 +172,6 @@ public:
 	virtual ~OSystem_Android();
 
 	virtual void initBackend();
-	void enableZoning(bool enable) { _enable_zoning = enable; }
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
@@ -253,8 +249,6 @@ public:
 	virtual void unlockScreen();
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 	virtual void fillScreen(uint32 col);
-	virtual void setFocusRectangle(const Common::Rect& rect);
-	virtual void clearFocusRectangle();
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
