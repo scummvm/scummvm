@@ -138,22 +138,15 @@ void MveDecoder::decodeFormat6() {
 	_decodingMapSize = _widthInBlocks * _heightInBlocks * 2;
 	_decodingMap     = _frameData + 14;
 
-	if (_frameNumber > 1) {
-		_decodeSurface1.copyFrom(_decodeSurface0);
-	}
-	if (_frameNumber > 0) {
-		_decodeSurface0.copyFrom(_frameSurface);
-	}
-
 	Common::MemoryReadStream opStream = Common::MemoryReadStream(_decodingMap, _decodingMapSize);
 	Common::MemoryReadStream frameStream = Common::MemoryReadStream(_frameData + _decodingMapSize + 14, _frameSize);
 
 	// Pass 1
+	opStream.seek(0);
 	for (int b = 0; b != _widthInBlocks * _heightInBlocks; ++b) {
-		if (opStream.readUint16LE() == 0) {
-			copyBlock(_frameSurface, frameStream, b);
-		} else if (_frameNumber > 1) {
-			copyBlock(_frameSurface, _decodeSurface1, b);
+		uint16 op = opStream.readUint16LE();
+		if (op == 0) {
+			copyBlock(_decodeSurface0, frameStream, b);
 		}
 	}
 
@@ -161,15 +154,21 @@ void MveDecoder::decodeFormat6() {
 	opStream.seek(0);
 	for (int b = 0; b != _widthInBlocks * _heightInBlocks; ++b) {
 		uint16 op = opStream.readUint16LE();
-		int offset = int(op & 0x7fff) - 0x4000;
-		if (op & 0x8000) {
-			if (_frameNumber > 0) {
-				copyBlock(_frameSurface, _decodeSurface0, b, offset);
-			}
-		} else if (op != 0) {
-			copyBlock(_frameSurface, _frameSurface, b, offset);
+		if (op != 0) {
+			Graphics::Surface &src = (op & 0x8000) ? _decodeSurface1 : _decodeSurface0;
+			int offset = int(op & 0x7fff) - 0x4000;
+			copyBlock(_decodeSurface0, src, b, offset);
 		}
 	}
+
+	// Pass 3
+	for (int b = 0; b != _widthInBlocks * _heightInBlocks; ++b) {
+		copyBlock(_frameSurface, _decodeSurface0, b);
+	}
+
+	Graphics::Surface t = _decodeSurface0;
+	_decodeSurface0 = _decodeSurface1;
+	_decodeSurface1 = t;
 
 	_decodingMap = nullptr;
 }
