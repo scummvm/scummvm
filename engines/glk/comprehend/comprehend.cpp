@@ -133,14 +133,16 @@ void Comprehend::readLine(char *buffer, size_t maxLen) {
 }
 
 Common::Error Comprehend::readSaveData(Common::SeekableReadStream *rs) {
-	// TODO
+	Common::Serializer s(rs, nullptr);
+	_game->synchronizeSave(s);
 
 	_game->_updateFlags = UPDATE_ALL;
 	return Common::kNoError;
 }
 
 Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
-	// TODO
+	Common::Serializer s(nullptr, ws);
+	_game->synchronizeSave(s);
 
 	return Common::kNoError;
 }
