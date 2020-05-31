@@ -29,7 +29,6 @@
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/opcode_map.h"
-#include "glk/comprehend/util.h"
 
 namespace Glk {
 namespace Comprehend {

@@ -23,7 +23,6 @@
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/game_tr.h"
-#include "glk/comprehend/util.h"
 
 namespace Glk {
 namespace Comprehend {

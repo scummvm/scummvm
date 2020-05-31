@@ -26,7 +26,6 @@
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
-#include "glk/comprehend/util.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -556,7 +555,7 @@ static void parse_dictionary(ComprehendGame *game, FileBuffer *fb) {
 	uint i;
 
 	// FIXME - fixed size 0xff array?
-	game->_words = (Word *)xmalloc(game->_nr_words * sizeof(Word));
+	game->_words = (Word *)malloc(game->_nr_words * sizeof(Word));
 
 	fb->seek(game->_header.addr_dictionary);
 	for (i = 0; i < game->_nr_words; i++)
@@ -725,7 +724,7 @@ static Common::String parseString(FileBuffer *fb) {
 	encoded_len = fb->strlen();
 
 	/* Get the encoded string */
-	encoded = (uint8 *)xmalloc(encoded_len + 5);
+	encoded = (uint8 *)malloc(encoded_len + 5);
 	memset(encoded, 0, encoded_len);
 	fb->read(encoded, encoded_len);
 

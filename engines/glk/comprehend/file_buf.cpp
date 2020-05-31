@@ -23,7 +23,6 @@
 #include "glk/comprehend/file_buf.h"
 #include "common/algorithm.h"
 #include "common/file.h"
-#include "glk/comprehend/util.h"
 
 namespace Glk {
 namespace Comprehend {

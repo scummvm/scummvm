@@ -23,7 +23,6 @@
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/image_data.h"
-#include "glk/comprehend/util.h"
 #include "glk/window_graphics.h"
 
 namespace Glk {

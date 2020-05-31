@@ -32,6 +32,7 @@ namespace Comprehend {
 
 #define MAX_FLAGS 64
 #define MAX_VARIABLES 128
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 enum {
 	DIRECTION_NORTH,

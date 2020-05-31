@@ -23,7 +23,6 @@
 #include "glk/comprehend/debugger_dumper.h"
 #include "glk/comprehend/dictionary.h"
 #include "glk/comprehend/game.h"
-#include "glk/comprehend/util.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -244,7 +243,7 @@ void DebuggerDumper::dumpDictionary() {
 	uint i;
 
 	/* Sort the dictionary by index */
-	dictionary = (Word *)xmalloc(sizeof(*words) * _game->_nr_words);
+	dictionary = (Word *)malloc(sizeof(*words) * _game->_nr_words);
 	memcpy(dictionary, _game->_words,
 	       sizeof(*words) * _game->_nr_words);
 	qsort(dictionary, _game->_nr_words, sizeof(*words),
