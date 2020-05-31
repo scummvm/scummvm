@@ -48,6 +48,7 @@ MveDecoder::MveDecoder()
 	  _frameNumber(-1),
 	  _frameSize(0),
 	  _frameData(nullptr),
+	  _audioTrack(0),
 	  _audioStream(nullptr)
 {
 	for (int i = 0; i < 0x300; ++i)
@@ -89,6 +90,11 @@ bool MveDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	return true;
+}
+
+void MveDecoder::setAudioTrack(int track) {
+	assert(track >= 0 && track < 16);
+	_audioTrack= track;
 }
 
 void MveDecoder::copyBlock(Graphics::Surface &dst, Common::MemoryReadStream &s, int block) {
@@ -358,9 +364,13 @@ void MveDecoder::readNextPacket() {
 				assert(opLen == len + 6);
 				assert(_audioStream);
 
-				byte *audioFrame = new byte[len];
-				_s->read(audioFrame, len);
-				_audioStream->queueBuffer(audioFrame, len, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+				if (mask & (1 << _audioTrack)) {
+					byte *audioFrame = new byte[len];
+					_s->read(audioFrame, len);
+					_audioStream->queueBuffer(audioFrame, len, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+				} else {
+					_s->skip(len);
+				}
 
 				break;
 			}

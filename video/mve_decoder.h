@@ -78,6 +78,7 @@ class MveDecoder : public VideoDecoder {
 	uint16    _frameSize;
 	byte     *_frameData;
 
+	int _audioTrack;
 	Audio::QueuingAudioStream *_audioStream;
 
 	void readPacketHeader();
@@ -148,6 +149,7 @@ public:
 	virtual ~MveDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
+	void setAudioTrack(int track);
 
 	// const Common::List<Common::Rect> *getDirtyRects() const;
 	// void clearDirtyRects();
