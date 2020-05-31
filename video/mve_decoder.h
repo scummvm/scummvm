@@ -50,33 +50,33 @@ class MveDecoder : public VideoDecoder {
 	bool _done;
 	Common::SeekableReadStream *_s;
 
-	uint16_t _packetLen;
-	uint16_t _packetKind;
+	uint16 _packetLen;
+	uint16 _packetKind;
 
 	Graphics::Surface _decodeSurface0;
 	Graphics::Surface _decodeSurface1;
 	Graphics::Surface _frameSurface;
 
-	uint16_t _widthInBlocks;
-	uint16_t _heightInBlocks;
+	uint16 _widthInBlocks;
+	uint16 _heightInBlocks;
 
-	uint16_t _width;
-	uint16_t _height;
+	uint16 _width;
+	uint16 _height;
 
 	Common::Rational _frameRate;
 
 	bool      _dirtyPalette;
 	byte      _palette[0x300];
 
-	uint16_t  _skipMapSize;
+	uint16    _skipMapSize;
 	byte     *_skipMap;
 
-	uint16_t  _decodingMapSize;
+	uint16    _decodingMapSize;
 	byte     *_decodingMap;
 
 	int       _frameNumber;
 	byte      _frameFormat;
-	uint16_t  _frameSize;
+	uint16    _frameSize;
 	byte     *_frameData;
 
 	Audio::QueuingAudioStream *_audioStream;
@@ -122,7 +122,7 @@ class MveDecoder : public VideoDecoder {
 
 	class MveSkipStream {
 		Common::MemoryReadStream s;
-		uint16_t queue;
+		uint16 queue;
 	public:
 		MveSkipStream(byte *p, size_t sz)
 			: s(p, sz), queue(0x8000)

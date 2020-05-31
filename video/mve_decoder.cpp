@@ -76,9 +76,9 @@ bool MveDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 	_s = stream;
 
-	uint16_t h1 = _s->readUint16LE();
-	uint16_t h2 = _s->readUint16LE();
-	uint16_t h3 = _s->readUint16LE();
+	uint16 h1 = _s->readUint16LE();
+	uint16 h2 = _s->readUint16LE();
+	uint16 h3 = _s->readUint16LE();
 
 	assert(h1 == 0x001a);
 	assert(h2 == 0x0100);
@@ -161,7 +161,7 @@ void MveDecoder::decodeFormat6() {
 	// Pass 2
 	opStream.seek(0);
 	for (int b = 0; b != _widthInBlocks * _heightInBlocks; ++b) {
-		uint16_t op = opStream.readUint16LE();
+		uint16 op = opStream.readUint16LE();
 		int offset = int(op & 0x7fff) - 0x4000;
 		if (op & 0x8000) {
 			if (_frameNumber > 0) {
@@ -185,7 +185,7 @@ void MveDecoder::decodeFormat10() {
 	skipStream.reset();
 	for (int b = 0; b != _widthInBlocks * _heightInBlocks; ++b) {
 		if (skipStream.skip()) continue;
-		uint16_t op = opStream.readUint16LE();
+		uint16 op = opStream.readUint16LE();
 		if (op == 0) {
 			copyBlock(_decodeSurface0, frameStream, b);
 		}
@@ -196,7 +196,7 @@ void MveDecoder::decodeFormat10() {
 	skipStream.reset();
 	for (int b = 0; b != _widthInBlocks * _heightInBlocks; ++b) {
 		if (skipStream.skip()) continue;
-		uint16_t op = opStream.readUint16LE();
+		uint16 op = opStream.readUint16LE();
 		if (op != 0) {
 			Graphics::Surface &src = (op & 0x8000) ? _decodeSurface1 : _decodeSurface0;
 			int offset = int(op & 0x7fff) - 0x4000;
@@ -247,8 +247,8 @@ void MveDecoder::readPacketHeader() {
 void MveDecoder::readNextPacket() {
 	bool packetDone = false;
 	while (!_done && !packetDone) {
-		uint16_t opLen = _s->readUint16LE();
-		uint16_t opKind = _s->readUint16BE();
+		uint16 opLen = _s->readUint16LE();
+		uint16 opKind = _s->readUint16BE();
 
 		switch (opKind) {
 			case 0x0000:
@@ -267,18 +267,18 @@ void MveDecoder::readNextPacket() {
 			case 0x0200: // create timer
 			{
 				assert(opLen == 6);
-				uint32_t rate = _s->readUint32LE();
-				uint16_t subdiv = _s->readUint16LE();
+				uint32 rate = _s->readUint32LE();
+				uint16 subdiv = _s->readUint16LE();
 				_frameRate = Common::Rational(1000000, rate * subdiv);
 				break;
 			}
 			case 0x0300: // init audio
 			{
 				assert(opLen == 8);
-				uint16_t unk = _s->readUint16LE();
-				uint16_t flags = _s->readUint16LE();
-				uint16_t sampleRate = _s->readUint16LE();
-				uint16_t bufLen = _s->readUint16LE();
+				uint16 unk = _s->readUint16LE();
+				uint16 flags = _s->readUint16LE();
+				uint16 sampleRate = _s->readUint16LE();
+				uint16 bufLen = _s->readUint16LE();
 
 				/*
 				warning("\t\tAudio: %dHz %s %s",
@@ -305,10 +305,10 @@ void MveDecoder::readNextPacket() {
 			{
 				assert(opLen == 8);
 
-				uint16_t width = _s->readUint16LE();
-				uint16_t height = _s->readUint16LE();
-				uint16_t count = _s->readUint16LE();
-				uint16_t trueColor = _s->readUint16LE();
+				uint16 width = _s->readUint16LE();
+				uint16 height = _s->readUint16LE();
+				uint16 count = _s->readUint16LE();
+				uint16 trueColor = _s->readUint16LE();
 
 				_widthInBlocks = width;
 				_heightInBlocks = height;
@@ -342,9 +342,9 @@ void MveDecoder::readNextPacket() {
 			case 0x0701: // send video
 			{
 				assert(opLen == 6);
-				uint16_t palStart = _s->readUint16LE();
-				uint16_t palCount = _s->readUint16LE();
-				uint16_t unk = _s->readUint16LE();
+				uint16 palStart = _s->readUint16LE();
+				uint16 palCount = _s->readUint16LE();
+				uint16 unk = _s->readUint16LE();
 
 				_frameNumber += 1;
 
@@ -363,9 +363,9 @@ void MveDecoder::readNextPacket() {
 			}
 			case 0x0800: // audio frame
 			{
-				uint16_t seq = _s->readUint16LE();
-				uint16_t mask = _s->readUint16LE();
-				uint16_t len = _s->readUint16LE();
+				uint16 seq = _s->readUint16LE();
+				uint16 mask = _s->readUint16LE();
+				uint16 len = _s->readUint16LE();
 
 				assert(opLen == len + 6);
 				assert(_audioStream);
@@ -379,25 +379,25 @@ void MveDecoder::readNextPacket() {
 			case 0x0900: // audio frame (silent)
 			{
 				assert(opLen == 6);
-				uint16_t seq = _s->readUint16LE();
-				uint16_t mask = _s->readUint16LE();
-				uint16_t len = _s->readUint16LE();
+				uint16 seq = _s->readUint16LE();
+				uint16 mask = _s->readUint16LE();
+				uint16 len = _s->readUint16LE();
 
 				break;
 			}
 			case 0x0a00: // set video mode
 			{
 				assert(opLen == 6);
-				uint16_t width = _s->readUint16LE();
-				uint16_t height = _s->readUint16LE();
-				uint16_t flags = _s->readUint16LE();
+				uint16 width = _s->readUint16LE();
+				uint16 height = _s->readUint16LE();
+				uint16 flags = _s->readUint16LE();
 
 				break;
 			}
 			case 0x0c00:
 			{
-				uint16_t palStart = _s->readUint16LE();
-				uint16_t palCount = _s->readUint16LE();
+				uint16 palStart = _s->readUint16LE();
+				uint16 palCount = _s->readUint16LE();
 
 				assert(opLen >= 3 * palCount + 2);
 
