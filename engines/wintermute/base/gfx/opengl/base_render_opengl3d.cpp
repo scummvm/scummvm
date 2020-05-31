@@ -229,13 +229,13 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
-		glDisable(GL_STENCIL);
+		glDisable(GL_STENCIL_TEST);
 		glDisable(GL_CLIP_PLANE0);
 		glDisable(GL_FOG);
 		glLightModeli(GL_LIGHT_MODEL_AMBIENT, 0);
 
 		glEnable(GL_CULL_FACE);
-		glCullFace(GL_CCW);
+		glFrontFace(GL_CCW);
 		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
 		glAlphaFunc(GL_GEQUAL, 0.0f);
