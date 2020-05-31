@@ -229,17 +229,17 @@ void console_println(ComprehendGame *game, const char *text) {
 static Room *get_room(ComprehendGame *game, uint16 index) {
 	/* Room zero is reserved for the players inventory */
 	if (index == 0)
-		fatal_error("Room index 0 (player inventory) is invalid");
+		error("Room index 0 (player inventory) is invalid");
 
 	if (index - 1 >= (int)game->_nr_rooms)
-		fatal_error("Room index %d is invalid", index);
+		error("Room index %d is invalid", index);
 
 	return &game->_rooms[index];
 }
 
 Item *get_item(ComprehendGame *game, uint16 index) {
 	if (index >= game->_header.nr_items)
-		fatal_error("Bad item %d\n", index);
+		error("Bad item %d\n", index);
 
 	return &game->_items[index];
 }
@@ -419,7 +419,7 @@ static void update(ComprehendGame *game) {
 
 static void move_to(ComprehendGame *game, uint8 room) {
 	if (room - 1 >= (int)game->_nr_rooms)
-		fatal_error("Attempted to move to invalid room %.2x\n", room);
+		error("Attempted to move to invalid room %.2x\n", room);
 
 	game->_currentRoom = room;
 	game->_updateFlags = (UPDATE_GRAPHICS | UPDATE_ROOM_DESC |
@@ -613,7 +613,7 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_MOVE:
 		/* Move in the direction dictated by the current verb */
 		if (verb->_index - 1 >= NR_DIRECTIONS)
-			fatal_error("Bad verb %d:%d in move",
+			error("Bad verb %d:%d in move",
 			            verb->_index, verb->_type);
 
 		if (room->direction[verb->_index - 1])
@@ -846,7 +846,7 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM:
 		item = get_item_by_noun(game, noun);
 		if (!item)
-			fatal_error("Bad current object\n");
+			error("Bad current object\n");
 
 		move_object(game, item, instr->operand[0]);
 		break;
@@ -859,7 +859,7 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_DROP_CURRENT_OBJECT:
 		item = get_item_by_noun(game, noun);
 		if (!item)
-			fatal_error("Attempt to take object failed\n");
+			error("Attempt to take object failed\n");
 
 		move_object(game, item, game->_currentRoom);
 		break;
@@ -867,7 +867,7 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_TAKE_CURRENT_OBJECT:
 		item = get_item_by_noun(game, noun);
 		if (!item)
-			fatal_error("Attempt to take object failed\n");
+			error("Attempt to take object failed\n");
 
 		move_object(game, item, ROOM_INVENTORY);
 		break;
@@ -927,7 +927,7 @@ static void eval_instruction(ComprehendGame *game,
 			room->string_desc = instr->operand[1] + 0x200;
 			break;
 		default:
-			fatal_error("Bad string desc %.2x:%.2x\n",
+			error("Bad string desc %.2x:%.2x\n",
 			            instr->operand[1], instr->operand[2]);
 			break;
 		}
@@ -952,7 +952,7 @@ static void eval_instruction(ComprehendGame *game,
 		if (instr->operand[1] == 0x81)
 			index += 256;
 		if (index >= game->_nr_functions)
-			fatal_error("Bad function %.4x >= %.4x\n",
+			error("Bad function %.4x >= %.4x\n",
 			            index, (uint)game->_nr_functions);
 
 		debugC(kDebugScripts, "Calling subfunction %.4x", index);

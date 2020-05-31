@@ -35,10 +35,6 @@ namespace Comprehend {
 
 #define ARRAY_SIZE(a)	(sizeof(a) / sizeof(a[0]))
 
-#define fatal_error error
-
-void __fatal_error(const char *func, unsigned line, const char *fmt, ...);
-void fatal_strerror(int err, const char *fmt, ...);
 void *xmalloc(size_t size);
 char *xstrndup(const char *str, size_t size);
 

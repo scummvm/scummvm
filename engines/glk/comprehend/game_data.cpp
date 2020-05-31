@@ -243,7 +243,7 @@ static void parse_function(FileBuffer *fb, Function *func) {
 
 	p = (const uint8 *)memchr(fb->dataPtr(), 0x00, fb->size() - fb->pos());
 	if (!p)
-		fatal_error("bad function @ %.4x", fb->pos());
+		error("bad function @ %.4x", fb->pos());
 
 	while (1) {
 		instruction = &func->instructions[func->nr_instructions];
@@ -254,7 +254,7 @@ static void parse_function(FileBuffer *fb, Function *func) {
 
 		func->nr_instructions++;
 		if (func->nr_instructions >= ARRAY_SIZE(func->instructions))
-			fatal_error("Function has too many instructions");
+			error("Function has too many instructions");
 	}
 }
 
@@ -879,7 +879,7 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 		break;
 
 	default:
-		fatal_error("Unknown game_data magic %.4x\n", header->magic);
+		error("Unknown game_data magic %.4x\n", header->magic);
 		break;
 	}
 

@@ -28,20 +28,12 @@
 namespace Glk {
 namespace Comprehend {
 
-void __fatal_error(const char *func, unsigned line, const char *fmt, ...) {
-	error("TODO");
-}
-
-void fatal_strerror(int err, const char *fmt, ...) {
-	error("TODO");
-}
-
 void *xmalloc(size_t size) {
 	void *p;
 
 	p = malloc(size);
 	if (!p)
-		fatal_error("Out of memory");
+		error("Out of memory");
 
 	memset(p, 0, size);
 	return p;
@@ -53,7 +45,7 @@ char *xstrndup(const char *str, size_t len) {
 	Common::String s(str, len);
 	p = scumm_strdup(s.c_str());
 	if (!p)
-		fatal_error("Out of memory");
+		error("Out of memory");
 	return p;
 }
 
