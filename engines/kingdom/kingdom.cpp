@@ -509,11 +509,11 @@ void KingdomGame::playMovie(int movieNum) {
 	int x = _fullScreen ? 0 : 4;
 	int y = _fullScreen ? 0 : 17;
 
-	bool skipMovie = false;
 	Video::MveDecoder *decoder = new Video::MveDecoder();
 	if (decoder->loadFile(path)) {
 		decoder->setAudioTrack(_sound);
 		decoder->start();
+		bool skipMovie = false;
 		while (!decoder->endOfVideo() && !skipMovie && !shouldQuit()) {
 			unsigned int delay = MIN(decoder->getTimeToNextFrame(), 10u);
 			g_system->delayMillis(delay);
