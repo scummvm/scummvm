@@ -399,6 +399,7 @@ void Lingo::executeHandler(Common::String name) {
 
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
 	LC::call(name, 0);
+	execute(_pc);
 
 	cleanLocalVars();
 }
