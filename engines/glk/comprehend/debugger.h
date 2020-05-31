@@ -36,6 +36,11 @@ private:
 	 */
 	bool cmdDump(int argc, const char **argv);
 
+	/**
+	 * Sets whether floodfills are done when rendering images
+	 */
+	bool cmdFloodfills(int argc, const char **argv);
+
 protected:
 	void print(const char *fmt, ...) override;
 

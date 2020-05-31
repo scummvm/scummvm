@@ -31,6 +31,7 @@ Debugger *g_debugger;
 Debugger::Debugger() : Glk::Debugger() {
 	g_debugger = this;
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
+	registerCmd("floodfills", WRAP_METHOD(Debugger, cmdFloodfills));
 }
 
 Debugger::~Debugger() {
@@ -52,6 +53,18 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 
 	if (!dumpGameData(game, param))
 		debugPrintf("Unknown dump option\n");
+
+	return true;
+}
+
+bool Debugger::cmdFloodfills(int argc, const char **argv) {
+	if (argc == 2 && !strcmp(argv[1], "off")) {
+		g_comprehend->_drawFlags |= IMAGEF_NO_FLOODFILL;
+		debugPrintf("Floodfills are off\n");
+	} else {
+		g_comprehend->_drawFlags &= ~IMAGEF_NO_FLOODFILL;
+		debugPrintf("Floodfills are on\n");
+	}
 
 	return true;
 }

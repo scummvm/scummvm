@@ -59,6 +59,7 @@ public:
 	TextBufferWindow *_bottomWindow;
 	ComprehendGame *_game;
 	bool _graphicsEnabled;
+	uint _drawFlags;
 
 private:
 	/**
