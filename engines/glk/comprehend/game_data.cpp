@@ -167,7 +167,6 @@ void GameInfo::clearInfo() {
 	_currentRoom = 0;
 	_words = nullptr;
 	_nr_words = 0;
-	_nr_word_maps = 0;
 	_nr_actions = 0;
 	_nr_functions = 0;
 	_currentReplaceWord = 0;
@@ -179,8 +178,7 @@ void GameInfo::clearInfo() {
 
 	_rooms.clear();
 	_items.clear();
-	for (uint idx = 0; idx < 0xff; ++idx)
-		_wordMaps[idx].clear();
+	_wordMaps.clear();
 	for (uint idx = 0; idx < 0xffff; ++idx)
 		_actions[idx].clear();
 	for (uint idx = 0; idx < 0xffff; ++idx)
@@ -588,11 +586,10 @@ static void parse_dictionary(ComprehendGame *game, FileBuffer *fb) {
 }
 
 static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
-	WordMap *map;
 	uint8 index, type;
 	uint i;
 
-	game->_nr_word_maps = 0;
+	game->_wordMaps.clear();
 	fb->seek(game->_header.addr_word_map);
 
 	/*
@@ -600,7 +597,7 @@ static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
 	* index/type values for a first and second word.
 	*/
 	while (1) {
-		map = &game->_wordMaps[game->_nr_word_maps];
+		WordMap map;
 
 		index = fb->readByte();
 		type = fb->readByte();
@@ -609,13 +606,13 @@ static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
 			break;
 		}
 
-		map->word[0].index = index;
-		map->word[0].type = type;
-		map->flags = fb->readByte();
-		map->word[1].index = fb->readByte();
-		map->word[1].type = fb->readByte();
+		map.word[0].index = index;
+		map.word[0].type = type;
+		map.flags = fb->readByte();
+		map.word[1].index = fb->readByte();
+		map.word[1].type = fb->readByte();
 
-		game->_nr_word_maps++;
+		game->_wordMaps.push_back(map);
 	}
 
 	/* Consume two more null bytes (type and index were also null) */
@@ -626,11 +623,11 @@ static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
 	* index/type. The first and second words from above map to the
 	* target word here. E.g. 'go north' -> 'north'.
 	*/
-	for (i = 0; i < game->_nr_word_maps; i++) {
-		map = &game->_wordMaps[i];
+	for (i = 0; i < game->_wordMaps.size(); i++) {
+		WordMap &map = game->_wordMaps[i];
 
-		map->word[2].index = fb->readByte();
-		map->word[2].type = fb->readByte();
+		map.word[2].index = fb->readByte();
+		map.word[2].type = fb->readByte();
 	}
 }
 

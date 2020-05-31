@@ -266,8 +266,8 @@ void DebuggerDumper::dumpWordMap() {
 	WordMap *map;
 	uint i, j;
 
-	print("Word pairs (%u entries)\n", (uint)_game->_nr_word_maps);
-	for (i = 0; i < _game->_nr_word_maps; i++) {
+	print("Word pairs (%u entries)\n", _game->_wordMaps.size());
+	for (i = 0; i < _game->_wordMaps.size(); i++) {
 		map = &_game->_wordMaps[i];
 
 		for (j = 0; j < 3; j++) {

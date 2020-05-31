@@ -295,7 +295,7 @@ static WordIndex *is_word_pair(ComprehendGame *game,
 	uint i;
 
 	/* Check if this is a word pair */
-	for (i = 0; i < game->_nr_word_maps; i++) {
+	for (i = 0; i < game->_wordMaps.size(); i++) {
 		map = &game->_wordMaps[i];
 
 		if (map->word[0].index == word1->_index &&
@@ -305,7 +305,7 @@ static WordIndex *is_word_pair(ComprehendGame *game,
 			return &map->word[2];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 static Item *get_item_by_noun(ComprehendGame *game,

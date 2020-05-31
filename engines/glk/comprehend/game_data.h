@@ -223,8 +223,7 @@ struct GameInfo {
 	Word *_words;
 	size_t _nr_words;
 
-	struct WordMap _wordMaps[0xff];
-	size_t _nr_word_maps;
+	Common::Array<WordMap> _wordMaps;
 
 	StringTable _strings;
 	StringTable _strings2;
