@@ -1455,60 +1455,57 @@ void KingdomGame::drawIcon(int x, int y, int index) {
 
 int KingdomGame::getAKey() {
 	drawCursor();
-	if (_mouseButton != 0 && _mouseDebound == false) {
+
+	if (_mouseButton == 0) {
+		_mouseDebound = false;
+	} else if (_mouseDebound == false) {
 		_mouseDebound = true;
 		return (_mouseButton & 2) ? 2 : 1;
 	}
 
 	int retval = 0;
-	_mouseDebound = false;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_quit = true;
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
+			return 0;
 			break;
 		case Common::EVENT_KEYDOWN:
-			// if keyboard used, retVal = getch() + 0x100
-			if (!event.kbd.hasFlags(Common::KBD_CTRL) && !event.kbd.hasFlags(Common::KBD_ALT))
-				retval = 0x100 + event.kbd.keycode;
-			else if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
-				_console->attach();
-			else if (event.kbd.keycode == Common::KEYCODE_c && event.kbd.hasFlags(Common::KBD_CTRL)) {
-				_userInput = 0x12D;
-				// _QuitFlag = 2;
-				_quit = true; 
+			if (!event.kbd.hasFlags(Common::KBD_ALT)) {
+				retval = event.kbd.keycode;
+				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+					retval += 0x100;
+				}
 			}
-			break;
-		case Common::EVENT_LBUTTONUP: // retval == 2?
-			if (_logic->_eye)
-				retval = !_asMode ? 0x43A : 0x43B;
-			break;
-		case Common::EVENT_RBUTTONUP: // retval == 1?
-			retval = _mouseValue;
-			break;
-		case Common::EVENT_MOUSEMOVE:
-			_cursorPos = event.mouse;
 
-		default:
-			refreshSound();
-			checkMainScreen();
-			if (_aTimerFlag) {
-				_aTimerFlag = false;
-				retval = 0x2F1;
-			} else if (_bTimerFlag) {
-				_bTimerFlag = false;
-				retval = 0x2F2;
-			} else if (_skylarTimerFlag) {
-				_skylarTimerFlag = false;
-				retval = 0x2F5;
-			} else
-				retval= 0;
+			// TODO: Reenable ScummVM custom key commands
+
+			// else if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
+			// 	_console->attach();
+			// else if (event.kbd.keycode == Common::KEYCODE_c && event.kbd.hasFlags(Common::KBD_CTRL)) {
+			// 	_userInput = 0x12D;
+				// _QuitFlag = 2;
+				// _quit = true;
+			// }
 			break;
+		}
+	}
+
+	// If no keyboard, check timers
+	if (retval == 0) {
+		refreshSound();
+		checkMainScreen();
+		if (_aTimerFlag) {
+			_aTimerFlag = false;
+			retval = 0x2F1;
+		} else if (_bTimerFlag) {
+			_bTimerFlag = false;
+			retval = 0x2F2;
+		} else if (_skylarTimerFlag) {
+			_skylarTimerFlag = false;
+			retval = 0x2F5;
 		}
 	}
 	return retval;
