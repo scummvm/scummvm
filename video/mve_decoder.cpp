@@ -97,6 +97,10 @@ void MveDecoder::setAudioTrack(int track) {
 	_audioTrack= track;
 }
 
+void MveDecoder::applyPalette(PaletteManager *paletteManager) {
+	paletteManager->setPalette(_palette + 3 * _palStart, _palStart, _palCount);
+}
+
 void MveDecoder::copyBlock(Graphics::Surface &dst, Common::MemoryReadStream &s, int block) {
 	int x = (block % _widthInBlocks) * 8;
 	int y = (block / _widthInBlocks) * 8;
@@ -404,15 +408,17 @@ void MveDecoder::readNextPacket() {
 					byte g = _s->readByte();
 					byte b = _s->readByte();
 
-					_palette[3*i+0] = (r << 2) | r;
-					_palette[3*i+1] = (g << 2) | g;
-					_palette[3*i+2] = (b << 2) | b;
+					_palette[3*i+0] = (r << 2) | (r >> 4);
+					_palette[3*i+1] = (g << 2) | (g >> 4);
+					_palette[3*i+2] = (b << 2) | (b >> 4);
 				}
 				if (palCount & 1) {
 					_s->skip(1);
 				}
 
 				_dirtyPalette = true;
+				_palStart = palStart;
+				_palCount = palCount;
 
 				break;
 			}
