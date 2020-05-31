@@ -60,7 +60,6 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 	_itemGraphicFiles.push_back("OB.MS1");
 	_itemGraphicFiles.push_back("OC.MS1");
 
-	_savegameFileFormat = "G%d.MS0";
 	_gameStrings = &tr_strings;
 }
 

@@ -50,7 +50,6 @@ CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame() {
 	_itemGraphicFiles.push_back("OA.MS1");
 	_itemGraphicFiles.push_back("OB.MS1");
 
-	_savegameFileFormat = "G%d.MS0";
 	_gameStrings = &cc1_strings;
 }
 

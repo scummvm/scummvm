@@ -128,5 +128,19 @@ void Comprehend::readLine(char *buffer, size_t maxLen) {
 	buffer[ev.val1] = 0;
 }
 
+Common::Error Comprehend::readSaveData(Common::SeekableReadStream *rs) {
+	// TODO
+
+	_game->_updateFlags = UPDATE_ALL;
+	return Common::kNoError;
+}
+
+Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
+	// TODO
+
+	return Common::kNoError;
+}
+
+
 } // namespace Comprehend
 } // namespace Glk

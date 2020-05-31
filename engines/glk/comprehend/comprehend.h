@@ -103,17 +103,13 @@ public:
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	Common::Error readSaveData(Common::SeekableReadStream *rs) override {
-		return Common::kReadingFailed;
-	}
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	Common::Error writeGameData(Common::WriteStream *ws) override {
-		return Common::kWritingFailed;
-	}
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 
 	/**
 	 * Print string to the buffer window

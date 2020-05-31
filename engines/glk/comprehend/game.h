@@ -43,7 +43,6 @@ public:
 	Common::Array<StringFile> _stringFiles;
 	Common::Array<const char *> _locationGraphicFiles;
 	Common::Array<const char *> _itemGraphicFiles;
-	const char *_savegameFileFormat;
 	unsigned _colorTable;
 
 	struct GameStrings *_gameStrings;

@@ -55,7 +55,6 @@ OOToposGame::OOToposGame() : ComprehendGame() {
 	_itemGraphicFiles.push_back("OC");
 	_itemGraphicFiles.push_back("OD");
 
-	_savegameFileFormat = "G%d";
 	_colorTable = 1;
 }
 

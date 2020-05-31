@@ -30,6 +30,7 @@
 #include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -42,7 +43,6 @@ struct Sentence {
 ComprehendGame::ComprehendGame() : _gameName(nullptr),
                                    _shortName(nullptr),
                                    _gameDataFile(nullptr),
-                                   _savegameFileFormat(nullptr),
                                    _colorTable(0),
                                    _gameStrings(nullptr) {
 }
@@ -163,7 +163,6 @@ Item *get_item(ComprehendGame *game, uint16 index) {
 }
 
 void game_save(ComprehendGame *game) {
-	char filename[32];
 	int c;
 
 	console_println(game, game->_strings.strings[STRING_SAVE_GAME]);
@@ -178,12 +177,10 @@ void game_save(ComprehendGame *game) {
 		return;
 	}
 
-	snprintf(filename, sizeof(filename), game->_savegameFileFormat, c - '0');
-	comprehend_save_game(game, filename);
+	g_comprehend->saveGameState(c - '0', _("Savegame"));
 }
 
 void game_restore(ComprehendGame *game) {
-	char filename[32];
 	int c;
 
 	console_println(game, game->_strings.strings[STRING_RESTORE_GAME]);
@@ -198,10 +195,7 @@ void game_restore(ComprehendGame *game) {
 		return;
 	}
 
-	snprintf(filename, sizeof(filename), game->_savegameFileFormat, c - '0');
-	comprehend_restore_game(game, filename);
-
-	game->_updateFlags = UPDATE_ALL;
+	(void)g_comprehend->loadGameState(c - '0');
 }
 
 void game_restart(ComprehendGame *game) {
