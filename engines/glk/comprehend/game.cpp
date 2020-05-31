@@ -21,16 +21,16 @@
  */
 
 #include "glk/comprehend/game.h"
+#include "common/debug-channels.h"
+#include "common/translation.h"
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/debugger.h"
 #include "glk/comprehend/dictionary.h"
-#include "glk/comprehend/game_data.h"
 #include "glk/comprehend/draw_surface.h"
+#include "glk/comprehend/game_data.h"
 #include "glk/comprehend/opcode_map.h"
 #include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
-#include "common/debug-channels.h"
-#include "common/translation.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -49,6 +49,44 @@ ComprehendGame::ComprehendGame() : _gameName(nullptr),
 
 ComprehendGame::~ComprehendGame() {
 }
+
+void ComprehendGame::synchronizeSave(Common::Serializer &s) {
+	uint dir, i;
+	size_t nr_rooms, nr_items;
+
+	s.syncAsUint16LE(_currentRoom);
+
+	// Variables
+	for (i = 0; i < ARRAY_SIZE(_variables); i++)
+		s.syncAsUint16LE(_variables[i]);
+
+	// Flags
+	for (i = 0; i < ARRAY_SIZE(_flags); i++)
+		s.syncAsByte(_flags[i]);
+
+	// Rooms
+	nr_rooms = _nr_rooms;
+	s.syncAsByte(_nr_rooms);
+	assert(nr_rooms == _nr_rooms);
+
+	for (i = 0; i < _nr_rooms; ++i) {
+		s.syncAsUint16LE(_rooms[i].string_desc);
+		for (dir = 0; dir < NR_DIRECTIONS; dir++)
+			s.syncAsByte(_rooms[i].direction[dir]);
+
+		s.syncAsByte(_rooms[i].flags);
+		s.syncAsByte(_rooms[i].graphic);
+	}
+
+	// Objects
+	nr_items = _header.nr_items;
+	s.syncAsByte(_header.nr_items);
+
+	for (i = 0; i < nr_items; ++i)
+		_items[i].synchronize(s);
+}
+
+/*-------------------------------------------------------*/
 
 static void console_init(void) {
 	//	ioctl(STDOUT_FILENO, TIOCGWINSZ, &console_winsize);
@@ -207,7 +245,7 @@ void game_restart(ComprehendGame *game) {
 }
 
 static WordIndex *is_word_pair(ComprehendGame *game,
-                                       Word *word1, Word *word2) {
+                               Word *word1, Word *word2) {
 	WordMap *map;
 	uint i;
 
@@ -226,7 +264,7 @@ static WordIndex *is_word_pair(ComprehendGame *game,
 }
 
 static Item *get_item_by_noun(ComprehendGame *game,
-                                     Word *noun) {
+                              Word *noun) {
 	uint i;
 
 	if (!noun || !(noun->_type & WORD_TYPE_NOUN_MASK))
@@ -323,7 +361,7 @@ static void update(ComprehendGame *game) {
 	/* Check if the room is special (dark, too bright, etc) */
 	room_desc_string = room->string_desc;
 	room_type = game->room_is_special(game->_currentRoom,
-		&room_desc_string);
+	                                  &room_desc_string);
 
 	if (game->_updateFlags & UPDATE_ROOM_DESC)
 		console_println(game, string_lookup(game, room_desc_string));
@@ -341,7 +379,7 @@ static void move_to(ComprehendGame *game, uint8 room) {
 
 	game->_currentRoom = room;
 	game->_updateFlags = (UPDATE_GRAPHICS | UPDATE_ROOM_DESC |
-	                            UPDATE_ITEM_LIST);
+	                      UPDATE_ITEM_LIST);
 }
 
 static void func_set_test_result(FunctionState *func_state, bool value) {
@@ -397,7 +435,7 @@ void move_object(ComprehendGame *game, Item *item, int new_room) {
 		 * redraw, not the whole room.
 		 */
 		game->_updateFlags |= (UPDATE_GRAPHICS_ITEMS |
-		                             UPDATE_ITEM_LIST);
+		                       UPDATE_ITEM_LIST);
 	}
 
 	item->room = new_room;
@@ -941,12 +979,12 @@ static void eval_instruction(ComprehendGame *game,
 	default:
 		if (instr->opcode & 0x80) {
 			debugC(kDebugScripts,
-			             "Unhandled command opcode %.2x",
-			             instr->opcode);
+			       "Unhandled command opcode %.2x",
+			       instr->opcode);
 		} else {
 			debugC(kDebugScripts,
-			             "Unhandled test opcode %.2x - returning false",
-			             instr->opcode);
+			       "Unhandled test opcode %.2x - returning false",
+			       instr->opcode);
 			func_set_test_result(func_state, false);
 		}
 		break;

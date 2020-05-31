@@ -23,9 +23,10 @@
 #ifndef GLK_ComprehendGame_H
 #define GLK_ComprehendGame_H
 
-#include "common/array.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/opcode_map.h"
+#include "common/array.h"
+#include "common/serializer.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -64,6 +65,8 @@ public:
 		return ROOM_IS_NORMAL;
 	}
 	virtual void handle_special_opcode(uint8 operand) {}
+
+	void synchronizeSave(Common::Serializer &s);
 };
 
 void console_println(ComprehendGame *game, const char *text);

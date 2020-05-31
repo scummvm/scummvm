@@ -24,6 +24,7 @@
 #define GLK_ComprehendGame_DATA_H
 
 #include "glk/comprehend/image_data.h"
+#include "common/serializer.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -84,6 +85,8 @@ struct Item {
 	}
 
 	void clear();
+
+	void synchronize(Common::Serializer &s);
 };
 
 struct Word {

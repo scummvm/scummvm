@@ -23,9 +23,9 @@
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/dictionary.h"
+#include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
-#include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/strings.h"
 #include "glk/comprehend/util.h"
 
@@ -64,6 +64,15 @@ void Item::clear() {
 	flags = 0;
 	word = 0;
 	graphic = 0;
+}
+
+void Item::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(string_desc);
+	s.syncAsUint16LE(long_string);
+	s.syncAsByte(room);
+	s.syncAsByte(flags);
+	s.syncAsByte(word);
+	s.syncAsByte(graphic);
 }
 
 /*-------------------------------------------------------*/
@@ -1027,182 +1036,8 @@ void comprehend_load_game(ComprehendGame *game) {
 			DrawSurface::setColorTable(game->_colorTable);
 	}
 
-	/* FIXME - This can be merged, don't need to keep start room around */
+	// FIXME: This can be merged, don't need to keep start room around
 	game->_currentRoom = game->_startRoom;
-}
-
-#ifdef TODO
-static void patch_string_desc(uint16 *desc) {
-	/*
-	* String descriptors in the save file sometimes are encoded as a
-	* table/index value like the instruction opcodes used, and other
-	* times the are encoded as an absolute index. We fix them up to
-	* all be the former type.
-	*/
-	if (!(*desc & 0x8000) && *desc >= 0x100) {
-		*desc -= 0x100;
-		*desc |= 0x8100;
-	}
-}
-#endif
-
-void comprehend_save_game(ComprehendGame *game, const char *filename) {
-#ifdef TODO
-	FILE *fd;
-	uint8 bitmask;
-	int dir, bit, flag_index, i;
-	size_t nr_rooms, nr_items;
-
-	fd = fopen(filename, "w");
-	if (!fd) {
-		printf("Error: Failed to open save file '%s': %s\n",
-		       filename, strerror(errno));
-		return;
-	}
-
-	nr_rooms = game->nr_rooms;
-	nr_items = game->header.nr_items;
-
-	file_buf_put_u8(fd, 0);
-	file_buf_put_u8(fd, game->current_room);
-	file_buf_put_u8(fd, 0);
-
-	/* Variables */
-	for (i = 0; i < ARRAY_SIZE(game->variable); i++)
-		file_buf_put_le16(fd, game->variable[i]);
-
-	/* Flags */
-	for (flag_index = 0, i = 0; i < ARRAY_SIZE(game->flags) / 8; i++) {
-		bitmask = 0;
-		for (bit = 7; bit >= 0; bit--) {
-			bitmask |= (!!game->flags[flag_index]) << bit;
-			flag_index++;
-		}
-
-		file_buf_put_u8(fd, bitmask);
-	}
-
-	/*
-	* Re-Comprehend doesn't need this since the number of items is
-	* determined by the currently loaded game, but the original games
-	* won't load the file properly without it.
-	*/
-	file_buf_put_skip(fd, 0x12c - ftell(fd));
-	file_buf_put_u8(fd, nr_items);
-
-	if (game->comprehend_version == 1)
-		file_buf_put_skip(fd, 0x230 - ftell(fd));
-	else
-		file_buf_put_skip(fd, 0x130 - ftell(fd));
-
-	/* Rooms */
-	file_buf_put_array_le16(fd, 1, game->rooms,
-	                        string_desc, nr_rooms);
-	for (dir = 0; dir < NR_DIRECTIONS; dir++)
-		file_buf_put_array_u8(fd, 1, game->rooms,
-		                      direction[dir], nr_rooms);
-	file_buf_put_array_u8(fd, 1, game->rooms, flags, nr_rooms);
-	file_buf_put_array_u8(fd, 1, game->rooms, graphic, nr_rooms);
-
-	/*
-	* Objects
-	*
-	* Layout differs depending on Comprehend version. Version 2 also
-	* has long string descriptions for each object.
-	*/
-	file_buf_put_array_le16(fd, 0, game->item, string_desc, nr_items);
-	if (game->comprehend_version == 1) {
-		file_buf_put_array_u8(fd, 0, game->item, room, nr_items);
-		file_buf_put_array_u8(fd, 0, game->item, flags, nr_items);
-		file_buf_put_array_u8(fd, 0, game->item, word, nr_items);
-		file_buf_put_array_u8(fd, 0, game->item, graphic, nr_items);
-	} else {
-		file_buf_put_array_le16(fd, 0, game->item, long_string, nr_items);
-		file_buf_put_array_u8(fd, 0, game->item, word, nr_items);
-		file_buf_put_array_u8(fd, 0, game->item, room, nr_items);
-		file_buf_put_array_u8(fd, 0, game->item, flags, nr_items);
-		file_buf_put_array_u8(fd, 0, game->item, graphic, nr_items);
-	}
-
-	fclose(fd);
-#else
-	error("Save");
-#endif
-}
-
-void comprehend_restore_game(ComprehendGame *game, const char *filename) {
-#ifdef TODO
-	FileBuffer fb;
-	size_t nr_rooms, nr_items;
-	uint err, dir, i;
-
-	err = file_buf_map_may_fail(filename, &fb);
-	if (err) {
-		printf("Error: Failed to open save file '%s': %s\n",
-		       filename, strerror(-err));
-		return;
-	}
-
-	nr_rooms = game->nr_rooms;
-	nr_items = game->header.nr_items;
-
-	/* Restore starting room */
-	file_buf_set_pos(&fb, 1);
-	game->current_room = fb->readByte();
-
-	/* Restore flags and variables */
-	file_buf_set_pos(&fb, 3);
-	parse_variables(game, &fb);
-	parse_flags(game, &fb);
-
-	/* FIXME - unknown restore data, skip over it */
-	if (game->comprehend_version == 1)
-		file_buf_set_pos(&fb, 0x230);
-	else
-		file_buf_set_pos(&fb, 0x130);
-
-	/* Restore rooms */
-	file_buf_get_array_le16(&fb, 1, game->rooms,
-	                        string_desc, nr_rooms);
-	for (dir = 0; dir < NR_DIRECTIONS; dir++)
-		file_buf_get_array_u8(&fb, 1, game->rooms,
-		                      direction[dir], nr_rooms);
-	file_buf_get_array_u8(&fb, 1, game->rooms, flags, nr_rooms);
-	file_buf_get_array_u8(&fb, 1, game->rooms, graphic, nr_rooms);
-
-	/*
-	* Restore objects
-	*
-	* Layout differs depending on Comprehend version. Version 2 also
-	* has long string descriptions for each object.
-	*/
-	file_buf_get_array_le16(&fb, 0, game->item, string_desc, nr_items);
-	if (game->comprehend_version == 1) {
-		file_buf_get_array_u8(&fb, 0, game->item, room, nr_items);
-		file_buf_get_array_u8(&fb, 0, game->item, flags, nr_items);
-		file_buf_get_array_u8(&fb, 0, game->item, word, nr_items);
-		file_buf_get_array_u8(&fb, 0, game->item, graphic, nr_items);
-	} else {
-		file_buf_get_array_le16(&fb, 0, game->item, long_string, nr_items);
-		file_buf_get_array_u8(&fb, 0, game->item, word, nr_items);
-		file_buf_get_array_u8(&fb, 0, game->item, room, nr_items);
-		file_buf_get_array_u8(&fb, 0, game->item, flags, nr_items);
-		file_buf_get_array_u8(&fb, 0, game->item, graphic, nr_items);
-	}
-
-	/*
-	* FIXME - The save file has some string descriptors masked with 0x8000.
-	*         Not sure what this means, so just mask it out for now.
-	*/
-	for (i = 1; i <= nr_rooms; i++)
-		patch_string_desc(&game->rooms[i].string_desc);
-	for (i = 0; i < nr_items; i++)
-		patch_string_desc(&game->item[i].string_desc);
-
-	file_buf_unmap(&fb);
-#else
-	error("load");
-#endif
 }
 
 } // namespace Comprehend
