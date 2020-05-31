@@ -46,7 +46,6 @@ MveDecoder::MveDecoder()
 	  _decodingMapSize(0),
 	  _decodingMap(nullptr),
 	  _frameNumber(-1),
-	  _frameFormat(0),
 	  _frameSize(0),
 	  _frameData(nullptr),
 	  _audioStream(nullptr)
@@ -245,8 +244,8 @@ void MveDecoder::readPacketHeader() {
 }
 
 void MveDecoder::readNextPacket() {
-	bool packetDone = false;
-	while (!_done && !packetDone) {
+	bool frameDone = false;
+	while (!_done && !frameDone) {
 		uint16 opLen = _s->readUint16LE();
 		uint16 opKind = _s->readUint16BE();
 
@@ -259,7 +258,6 @@ void MveDecoder::readNextPacket() {
 			}
 			case 0x0100:
 			{
-				packetDone = true;
 				assert(opLen == 0);
 				readPacketHeader();
 				break;
@@ -331,11 +329,12 @@ void MveDecoder::readNextPacket() {
 			}
 			case 0x0600:
 			{
-				_frameFormat = 0x06;
 				delete[] _frameData;
 				_frameData = new byte[opLen];
 				_frameSize = opLen;
 				_s->read(_frameData, _frameSize);
+
+				decodeFormat6();
 
 				break;
 			}
@@ -347,17 +346,7 @@ void MveDecoder::readNextPacket() {
 				uint16 unk = _s->readUint16LE();
 
 				_frameNumber += 1;
-
-				switch (_frameFormat) {
-					case 0x06:
-						decodeFormat6();
-						break;
-					case 0x10:
-						decodeFormat10();
-						break;
-					default:
-						break;
-				}
+				frameDone = true;
 
 				break;
 			}
@@ -439,11 +428,12 @@ void MveDecoder::readNextPacket() {
 			case 0x1000:
 			{
 				// TODO: Preallocate or keep existing buffer
-				_frameFormat = 0x10;
 				delete[] _frameData;
 				_frameData = new byte[opLen];
 				_frameSize = opLen;
 				_s->read(_frameData, _frameSize);
+
+				decodeFormat10();
 
 				break;
 			}
