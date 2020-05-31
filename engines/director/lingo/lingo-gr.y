@@ -733,7 +733,7 @@ endargdef:	/* nothing */
 	| ID						{ delete $ID; }
 	| endargdef ',' ID			{ delete $ID; }
 
-argstore:	  /* nothing */		{ g_lingo->codeArgStore(); inDef(); }
+argstore:	  /* nothing */		{ inDef(); }
 
 macro: ID nonemptyarglist		{
 		g_lingo->code1(LC::c_call);

@@ -348,14 +348,6 @@ void Lingo::clearArgStack() {
 	_argstack.clear();
 }
 
-void Lingo::codeArgStore() {
-	for (int i = _argstack.size() - 1; i >= 0; i--) {
-		code1(LC::c_varpush);
-		codeString(_argstack[i]->c_str());
-		code1(LC::c_assign);
-	}
-}
-
 int Lingo::codeSetImmediate(bool state) {
 	g_lingo->_immediateMode = state;
 

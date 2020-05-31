@@ -3439,7 +3439,7 @@ yyreduce:
 
   case 165:
 #line 736 "engines/director/lingo/lingo-gr.y"
-                                        { g_lingo->codeArgStore(); inDef(); }
+                                        { inDef(); }
 #line 3444 "engines/director/lingo/lingo-gr.cpp"
     break;
 

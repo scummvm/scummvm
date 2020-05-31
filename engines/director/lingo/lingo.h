@@ -358,7 +358,6 @@ public:
 	}
 
 	void codeArg(Common::String *s);
-	void codeArgStore();
 	int codeSetImmediate(bool state);
 	int codeFunc(Common::String *s, int numpar);
 	int codeMe(Common::String *method, int numpar);
