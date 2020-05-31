@@ -821,6 +821,9 @@ bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 	}
 }
 
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+// Vector3
 bool BasePersistenceManager::transferVector3d(const char* name, Math::Vector3d* val) {
 	if (_saving) {
 		putFloat(val->x());
@@ -845,6 +848,8 @@ bool BasePersistenceManager::transferVector3d(const char* name, Math::Vector3d* 
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Matrix4
 bool BasePersistenceManager::transferMatrix4(const char* name, Math::Matrix4* val) {
 	if (_saving) {
 		putFloat((*val)(0, 0));
@@ -894,6 +899,7 @@ bool BasePersistenceManager::transferMatrix4(const char* name, Math::Matrix4* va
 		return STATUS_OK;
 	}
 }
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////

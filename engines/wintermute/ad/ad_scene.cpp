@@ -41,7 +41,6 @@
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
-#include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -61,6 +60,10 @@
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
+
+#ifdef ENABLE_WME3D
+#include "engines/wintermute/ad/ad_scene_geometry.h"
+#endif
 
 namespace Wintermute {
 
@@ -89,8 +92,11 @@ void AdScene::setDefaults() {
 	_pfTargetPath = nullptr;
 	_pfRequester = nullptr;
 	_mainLayer = nullptr;
+
+#ifdef ENABLE_WME3D
 	_sceneGeometry = nullptr;
 	_showGeometry = false;
+#endif
 
 	_pfPointsNum = 0;
 	_persistentState = false;
@@ -184,9 +190,11 @@ void AdScene::cleanup() {
 	}
 	_objects.clear();
 
+#ifdef ENABLE_WME3D
 	if (_sceneGeometry)	{
 		delete _sceneGeometry;
 	}
+#endif
 
 	delete _viewport;
 	_viewport = nullptr;
@@ -538,9 +546,11 @@ bool AdScene::initLoop() {
 	}
 #endif
 
+#ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
 		return _sceneGeometry->initLoop();
 	}
+#endif
 
 	return STATUS_OK;
 }
@@ -578,7 +588,9 @@ TOKEN_DEF(LAYER)
 TOKEN_DEF(WAYPOINTS)
 TOKEN_DEF(EVENTS)
 TOKEN_DEF(CURSOR)
+#ifdef ENABLE_WME3D
 TOKEN_DEF(GEOMETRY)
+#endif
 TOKEN_DEF(CAMERA)
 TOKEN_DEF(ENTITY)
 TOKEN_DEF(SCALE_LEVEL)
@@ -609,6 +621,7 @@ TOKEN_DEF(VIEWPORT)
 TOKEN_DEF(PERSISTENT_STATE_SPRITES)
 TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
+#ifdef ENABLE_WME3D
 TOKEN_DEF(EDITOR_SHOW_GEOMETRY)
 TOKEN_DEF(EDITOR_RESOLUTION_WIDTH)
 TOKEN_DEF(EDITOR_RESOLUTION_HEIGHT)
@@ -619,6 +632,7 @@ TOKEN_DEF(2D_PATHFINDING)
 TOKEN_DEF(MAX_SHADOW_TYPE)
 TOKEN_DEF(SCROLL_3D_COMPABILITY)
 TOKEN_DEF(AMBIENT_LIGHT_COLOR)
+#endif
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::loadBuffer(char *buffer, bool complete) {
@@ -630,7 +644,9 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(EVENTS)
 	TOKEN_TABLE(CURSOR)
+#ifdef ENABLE_WME3D
 	TOKEN_TABLE(GEOMETRY)
+#endif
 	TOKEN_TABLE(CAMERA)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SCALE_LEVEL)
@@ -661,6 +677,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(PERSISTENT_STATE_SPRITES)
 	TOKEN_TABLE(PERSISTENT_STATE)
 	TOKEN_TABLE(EDITOR_PROPERTY)
+#ifdef ENABLE_WME3D
 	TOKEN_TABLE(EDITOR_SHOW_GEOMETRY)
 	TOKEN_TABLE(EDITOR_RESOLUTION_WIDTH)
 	TOKEN_TABLE(EDITOR_RESOLUTION_HEIGHT)
@@ -671,6 +688,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(MAX_SHADOW_TYPE)
 	TOKEN_TABLE(SCROLL_3D_COMPABILITY)
 	TOKEN_TABLE(AMBIENT_LIGHT_COLOR)
+#endif
 	TOKEN_TABLE_END
 
 	cleanup();
@@ -785,6 +803,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 			}
 			break;
+#ifdef ENABLE_WME3D
 		case TOKEN_GEOMETRY:
 			delete _sceneGeometry;
 
@@ -800,6 +819,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			}
 
 			break;
+#endif
 		case TOKEN_CAMERA:
 			Common::strlcpy(camera, params, MAX_PATH_LENGTH);
 			break;
@@ -937,15 +957,18 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		_gameRef->LOG(0, "Warning: scene '%s' has no main layer.", getFilename());
 	}
 
+#ifdef ENABLE_WME3D
 	if (_sceneGeometry && camera[0] != '\0') {
 		// TODO: set camera here
 	}
+#endif
 
 	sortScaleLevels();
 	sortRotLevels();
 
 	_initialized = true;
 
+#ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
 		// TODO: original wme code does a check on waypoint height here
 
@@ -955,6 +978,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			// TODO: set camera
 		}
 	}
+#endif
 
 	return STATUS_OK;
 }
@@ -1098,10 +1122,12 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			_gameRef->_offsetPercentY = (float)(_offsetTop - viewportY) / ((float)_layers[j]->_height - viewportHeight) * 100.0f;
 		}
 
+#ifdef ENABLE_WME3D
 		if (!doUpdate && _sceneGeometry && _layers[j]->_main) {
 			// TODO: render shadow geometry in case of
 			// shadow type being stencil
 		}
+#endif
 
 		// for each node
 		for (uint32 k = 0; k < _layers[j]->_nodes.size(); k++) {
@@ -1109,6 +1135,15 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			switch (node->_type) {
 			case OBJECT_ENTITY:
 				if (node->_entity->_active && (_gameRef->_editorMode || !node->_entity->_editorOnly)) {
+#ifndef ENABLE_WME3D
+					_gameRef->_renderer->setup2D();
+
+					if (doUpdate) {
+						node->_entity->update();
+					} else {
+						node->_entity->display();
+					}
+#else
 					if (node->_entity->_is3D) {
 						// prepare 3d rendering
 					} else {
@@ -1122,6 +1157,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 							node->_entity->display();
 						}
 					}
+#endif
 				}
 				break;
 
@@ -1154,10 +1190,12 @@ bool AdScene::traverseNodes(bool doUpdate) {
 		}
 	} // each layer
 
+#ifdef ENABLE_WME3D
 	if (!doUpdate && _sceneGeometry) {
 		// always display geometry for the moment
 		_sceneGeometry->render(true);
 	}
+#endif
 
 	// restore state
 	_gameRef->setOffset(origX, origY);
@@ -1188,15 +1226,17 @@ bool AdScene::display() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::updateFreeObjects() {
 	AdGame *adGame = (AdGame *)_gameRef;
-	bool is3DSet;
+#ifdef ENABLE_WME3D
+	bool is3DSet = false;
+#endif
 
 	// *** update all active objects
-	is3DSet = false;
 	for (uint32 i = 0; i < adGame->_objects.size(); i++) {
 		if (!adGame->_objects[i]->_active) {
 			continue;
 		}
 
+#ifdef ENABLE_WME3D
 		if (adGame->_objects[i]->_is3D && _sceneGeometry) {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
@@ -1205,6 +1245,7 @@ bool AdScene::updateFreeObjects() {
 				is3DSet = true;
 			}
 		}
+#endif
 
 		adGame->_objects[i]->update();
 		adGame->_objects[i]->_drawn = false;
@@ -1215,6 +1256,7 @@ bool AdScene::updateFreeObjects() {
 			continue;
 		}
 
+#ifdef ENABLE_WME3D
 		if (_objects[i]->_is3D && _sceneGeometry) {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
@@ -1223,6 +1265,7 @@ bool AdScene::updateFreeObjects() {
 				is3DSet = true;
 			}
 		}
+#endif
 
 		_objects[i]->update();
 		_objects[i]->_drawn = false;
@@ -1270,6 +1313,9 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 			continue;
 		}
 
+#ifndef ENABLE_WME3D
+		_gameRef->_renderer->setup2D();
+#else
 		if (objects[i]->_is3D && _sceneGeometry) {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
@@ -1279,6 +1325,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 		} else {
 			_gameRef->_renderer->setup2D();
 		}
+#endif
 
 		if (_gameRef->_editorMode || !obj->_editorOnly) {
 			obj->display();
@@ -1451,6 +1498,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// LoadActor3D
 	//////////////////////////////////////////////////////////////////////////
@@ -1459,6 +1507,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->pushNULL();
 		return STATUS_OK;
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadEntity
@@ -1803,6 +1852,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// EnableNode3D
 	//////////////////////////////////////////////////////////////////////////
@@ -1901,6 +1951,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->pushBool(false);
 		return STATUS_OK;
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetViewport
@@ -2028,6 +2079,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// EnableFog
 	//////////////////////////////////////////////////////////////////////////
@@ -2038,7 +2090,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// EnableFog
+	// DisableFog
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableFog") == 0) {
 		stack->correctParams(0);
@@ -2047,6 +2099,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	} else {
 		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
+#endif
 }
 
 
@@ -2129,6 +2182,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// ShowGeometry
 	//////////////////////////////////////////////////////////////////////////
@@ -2136,6 +2190,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		_scValue->setBool(_showGeometry);
 		return _scValue;
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
@@ -2202,6 +2257,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// GeometryFile
 	//////////////////////////////////////////////////////////////////////////
@@ -2227,6 +2283,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 
 		return _scValue;
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Width (RO)
@@ -2240,6 +2297,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// MaxShadowType
 	//////////////////////////////////////////////////////////////////////////
@@ -2255,6 +2313,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		_scValue->setInt(0);
 		return _scValue;
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
@@ -2290,6 +2349,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// ShowGeometry
 	//////////////////////////////////////////////////////////////////////////
@@ -2297,6 +2357,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 		_showGeometry = value->getBool();
 		return _scValue;
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
@@ -2387,6 +2448,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	}
 
 
+#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// WaypointsHeight
 	//////////////////////////////////////////////////////////////////////////
@@ -2412,6 +2474,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	} else {
 		return BaseObject::scSetProperty(name, value);
 	}
+#endif
 }
 
 
@@ -2455,9 +2518,11 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "PERSISTENT_STATE_SPRITES=%s\n", _persistentStateSprites ? "TRUE" : "FALSE");
 	}
 
+#ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
 		// TODO: save scene geometry
 	}
+#endif
 
 	// scripts
 	for (uint32 i = 0; i < _scripts.size(); i++) {
@@ -2688,6 +2753,7 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::afterLoad() {
+#ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
 		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
@@ -2695,6 +2761,7 @@ bool AdScene::afterLoad() {
 			// TODO: set active camera
 		}
 	}
+#endif
 	return STATUS_OK;
 }
 

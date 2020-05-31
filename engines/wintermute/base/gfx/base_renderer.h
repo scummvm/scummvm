@@ -41,7 +41,9 @@ class BaseActiveRect;
 class BaseObject;
 class BaseSurface;
 class BasePersistenceManager;
+#ifdef ENABLE_WME3D
 class Camera3D;
+#endif
 
 /**
  * @class BaseRenderer a common interface for the rendering portion of WME
@@ -121,7 +123,9 @@ public:
 	virtual bool forcedFlip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
+#ifdef ENABLE_WME3D
 	virtual bool setup3D(Camera3D* camera = nullptr, bool force = false);
+#endif
 	virtual bool setupLines();
 
 	/**
