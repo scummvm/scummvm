@@ -149,7 +149,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn begin end expr if when chunkexpr
+%type<code> asgn begin end expr if chunkexpr
 %type<code> stmtlist tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
@@ -389,11 +389,9 @@ stmt: stmtoneliner
 
 	| tNEXT tREPEAT {
 		g_lingo->code1(LC::c_nextRepeat); }
-	| when stmtonelinerwithif end {
-		inst end = 0;
-		WRITE_UINT32(&end, $end - $when);
-		g_lingo->code1(STOP);
-		(*g_lingo->_currentScript)[$when + 1] = end; }
+	| tWHEN ID tTHEN expr {
+		g_lingo->code1(LC::c_whencode);
+		g_lingo->codeString($ID->c_str()); }
 	| tTELL expr '\n' tellstart stmtlist end tENDTELL {
 		inst end;
 		WRITE_UINT32(&end, $end - $tellstart);
@@ -465,12 +463,6 @@ end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size
 stmtlist: 					{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist '\n'
 	| stmtlist stmt
-
-when:	  tWHEN	ID tTHEN	{
-		$$ = g_lingo->code1(LC::c_whencode);
-		g_lingo->code1(STOP);
-		g_lingo->codeString($ID->c_str());
-		delete $ID; }
 
 simpleexpr: INT		{
 		$$ = g_lingo->code1(LC::c_intpush);

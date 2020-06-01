@@ -131,7 +131,7 @@ static struct FuncDescr {
 	{ LC::c_themenuitementityassign,"c_themenuitementityassign","EF" },
 	{ LC::c_varpush,		"c_varpush",		"s" },
 	{ LC::c_voidpush,		"c_voidpush",		""  },
-	{ LC::c_whencode,		"c_whencode",		"os" },
+	{ LC::c_whencode,		"c_whencode",		"s" },
 	{ LC::c_within,			"c_within",			"" },
 	{ LC::c_wordOf,			"c_wordOf",			"" },	// D3
 	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
@@ -1169,32 +1169,10 @@ void LC::c_exitRepeat(void) {
 }
 
 void LC::c_whencode() {
-	Datum d;
-	uint start = g_lingo->_pc;
-	uint end = g_lingo->readInt() + start - 1;
 	Common::String eventname(g_lingo->readString());
+	Common::String code = g_lingo->pop().asString();
 
-	start = g_lingo->_pc;
-
-	debugC(1, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
-
-	int entity = g_lingo->_currentEntityId;
-	g_lingo->_currentEntityId = 0;
-
-	Symbol sym = g_lingo->codeDefine(eventname, start, 0, NULL, end, false); // Redefine, but not remove code
-
-	g_lingo->_currentEntityId = entity;
-
-	if (debugChannelSet(1, kDebugLingoExec)) {
-		uint pc = 0;
-		while (pc < sym.u.defn->size()) {
-			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
-			debugC(1, kDebugLingoExec, "[%5d] %s", spc, instr.c_str());
-		}
-	}
-
-	g_lingo->_pc = end + 1;
+	warning("STUB: c_whencode('%s', '%s'", eventname.c_str(), code.c_str());
 }
 
 void LC::c_tellcode() {
