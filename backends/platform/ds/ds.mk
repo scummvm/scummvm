@@ -135,17 +135,36 @@ clean: dsclean
 
 dsclean:
 	$(RM) $(addprefix $(ndsdir)/, $(ARM7_MODULE_OBJS)) scummvm.nds scummvm.ds.gba
+	$(RM_REC) romfs
 
 .PHONY: dsclean
 
 # TODO: Add a 'dsdist' target ?
 
-%.nds: %.elf $(ndsdir)/arm7/arm7.elf
-	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.elf -b $(srcdir)/$(ndsdir)/logo.bmp "$(@F);ScummVM $(VERSION);DS Port"
+%.nds: %.elf $(ndsdir)/arm7/arm7.elf romfs
+	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.elf -b $(srcdir)/$(ndsdir)/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
 
 %.ds.gba: %.nds
 	dsbuild $< -o $@ -l $(srcdir)/$(ndsdir)/arm9/ndsloader.bin
 	padbin 16 $@
+
+romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(PLUGINS)
+	@rm -rf romfs
+	@mkdir -p romfs
+	@cp $(DIST_FILES_THEMES) romfs/
+ifdef DIST_FILES_ENGINEDATA
+	@cp $(DIST_FILES_ENGINEDATA) romfs/
+endif
+ifdef DIST_FILES_NETWORKING
+	@cp $(DIST_FILES_NETWORKING) romfs/
+endif
+ifdef DIST_FILES_VKEYBD
+	@cp $(DIST_FILES_VKEYBD) romfs/
+endif
+ifeq ($(DYNAMIC_MODULES),1)
+	@mkdir -p romfs/plugins
+	@for i in $(PLUGINS); do $(STRIP) --strip-debug $$i -o romfs/plugins/`basename $$i`; done
+endif
 
 #############################################################################
 #############################################################################

@@ -1724,6 +1724,12 @@ ds)
 	_host_os=ds
 	_host_cpu=arm
 	_host_alias=arm-none-eabi
+
+	test "x$prefix" = xNONE && prefix=nitro:
+
+	datarootdir='${prefix}'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
 	;;
 gamecube)
 	_host_os=gamecube
@@ -5881,7 +5887,7 @@ case $_host_os in
 esac
 
 case $_backend in
-	3ds)
+	3ds | ds)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
 		;;
 	openpandora)
