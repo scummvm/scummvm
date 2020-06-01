@@ -12,7 +12,7 @@ static const char *const k2SeqplayStringsDOSSpanish[103] = {
 	"...deba ser extraida del centro del mundo.",
 	"Zanthia, la mas joven de los M""\xA1""sticos de Kyrandia, ha sido elegida para recoger la Piedra.",
 	"Gracias por jugar The Hand of Fate.",
-	"Estos ar""\xA0""ndanos deber""\xA1""an bastar parar abrir un portal al centro del mundo",
+	"Estos ar""\xA0""ndanos deber""\xA1""an bastar parar abrir un portal al centro del mundo.",
 	" DUMMY STRING... ",
 	" DUMMY STRING... ",
 	"Hey! Me han robado todo mi equipo!",
