@@ -32,9 +32,6 @@
 namespace Glk {
 namespace Comprehend {
 
-#undef printf
-#define printf debugN
-
 #define PATH_MAX 256
 
 struct GameInfo;

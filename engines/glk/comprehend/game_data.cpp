@@ -699,8 +699,8 @@ static char decode_string_elem(uint8 c, bool capital, bool special) {
 		}
 	}
 
-	/* Unknown character */
-	printf("Unknown char %d, caps=%d, special=%d\n", c, capital, special);
+	// Unknown character
+	g_comprehend->print("Unknown char %d, caps=%d, special=%d\n", c, capital, special);
 	return '*';
 }
 

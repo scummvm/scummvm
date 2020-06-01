@@ -154,7 +154,7 @@ void console_println(ComprehendGame *game, const char *text) {
 	int word_len = 0;
 
 	if (!text) {
-		printf("\n");
+		g_comprehend->print("\n");
 		return;
 	}
 
@@ -163,7 +163,7 @@ void console_println(ComprehendGame *game, const char *text) {
 		case '\n':
 			word = NULL;
 			word_len = 0;
-			printf("\n");
+			g_comprehend->print("\n");
 			p++;
 			break;
 
@@ -206,7 +206,7 @@ void console_println(ComprehendGame *game, const char *text) {
 		/* Print this word */
 		if (line_length + word_len > console_winsize.ws_col) {
 			/* Too long - insert a line break */
-			printf("\n");
+			g_comprehend->print("\n");
 			line_length = 0;
 		}
 #endif
@@ -523,7 +523,7 @@ static void eval_instruction(ComprehendGame *game,
 		do_command = func_state->test_result;
 
 		if (func_state->or_count != 0)
-			printf("Warning: or_count == %d\n",
+			g_comprehend->print("Warning: or_count == %d\n",
 			       func_state->or_count);
 		func_state->or_count = 0;
 
@@ -669,7 +669,7 @@ static void eval_instruction(ComprehendGame *game,
 		 * FIXME - unsure what the single operand is for.
 		 */
 		item = get_item_by_noun(game, noun);
-		printf("%s\n", game->stringLookup(item->long_string).c_str());
+		g_comprehend->print("%s\n", game->stringLookup(item->long_string).c_str());
 		break;
 
 	case OPCODE_CURRENT_OBJECT_IN_ROOM:
@@ -822,7 +822,7 @@ static void eval_instruction(ComprehendGame *game,
 		for (i = 0; i < game->_items.size(); i++) {
 			item = &game->_items[i];
 			if (item->room == ROOM_INVENTORY)
-				printf("%s\n",
+				g_comprehend->print("%s\n",
 				       game->stringLookup(item->string_desc).c_str());
 		}
 		break;
@@ -838,7 +838,7 @@ static void eval_instruction(ComprehendGame *game,
 		for (i = 0; i < game->_items.size(); i++) {
 			item = &game->_items[i];
 			if (item->room == instr->operand[0])
-				printf("%s\n",
+				g_comprehend->print("%s\n",
 				       game->stringLookup(item->string_desc).c_str());
 		}
 		break;
