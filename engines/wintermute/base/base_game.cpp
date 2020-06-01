@@ -142,7 +142,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 #ifdef ENABLE_WME3D
 	_useD3D = true;
-#elif
+#else
 	_useD3D = false;
 #endif
 
@@ -488,7 +488,7 @@ bool BaseGame::initialize1() {
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	_renderer = makeOpenGL3DRenderer(this);
-#elif
+#else
 	_renderer = makeOSystemRenderer(this);
 #endif
 	if (_renderer == nullptr) {
