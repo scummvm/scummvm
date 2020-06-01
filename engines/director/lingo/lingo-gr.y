@@ -409,7 +409,7 @@ ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist lbl[end3
 		(*g_lingo->_currentScript)[$then] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[$else1] = end3;		/* end, if cond fails */
 		g_lingo->processIf($else1, $end3); }
-	| if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist tELSE lbl stmtlist lbl[end3] tENDIF {
+	| if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist tELSE stmtlist lbl[end3] tENDIF {
 		inst else1 = 0, end = 0;
 		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
 		WRITE_UINT32(&end, $end3 - $else1 + 1);
