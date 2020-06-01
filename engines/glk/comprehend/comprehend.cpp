@@ -165,15 +165,16 @@ Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
 }
 
 void Comprehend::drawLocationPicture(int pictureNum, bool clearBg) {
-	glk_image_draw(_topWindow, pictureNum + (clearBg ? LOCATIONS_OFFSET : LOCATIONS_NO_BG_OFFSET), 0, 0);
+	glk_image_draw_scaled(_topWindow, pictureNum + (clearBg ? LOCATIONS_OFFSET : LOCATIONS_NO_BG_OFFSET),
+		0, 0, 640, 480);
 }
 
 void Comprehend::drawItemPicture(int pictureNum) {
-	glk_image_draw(_topWindow, pictureNum + ITEMS_OFFSET, 0, 0);
+	glk_image_draw_scaled(_topWindow, pictureNum + ITEMS_OFFSET, 0, 0, 640, 480);
 }
 
 void Comprehend::clearScreen(bool isBright) {	
-	glk_image_draw(_topWindow, isBright ? BRIGHT_ROOM : DARK_ROOM, 0, 0);
+	glk_image_draw_scaled(_topWindow, isBright ? BRIGHT_ROOM : DARK_ROOM, 0, 0, 640, 480);
 }
 
 } // namespace Comprehend
