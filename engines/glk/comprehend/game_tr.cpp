@@ -149,7 +149,7 @@ void TransylvaniaGame::handle_special_opcode(uint8 operand)
 		 * Show the Zin screen in reponse to doing 'sing some enchanted
 		 * evening' in his cabin.
 		 */
-		draw_location_image(&_roomImages, 41);
+		g_comprehend->drawLocationPicture(41);
 		console_get_key();
 		_updateFlags |= UPDATE_GRAPHICS;
 		break;

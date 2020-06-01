@@ -26,6 +26,7 @@
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
+#include "glk/comprehend/pics.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -170,8 +171,6 @@ void GameInfo::clearInfo() {
 	_updateFlags = 0;
 	_strings.clear();
 	_strings2.clear();
-	_roomImages.clear();
-	_itemImages.clear();
 
 	_rooms.clear();
 	_items.clear();
@@ -993,9 +992,9 @@ void comprehend_load_game(ComprehendGame *game) {
 	load_game_data(game);
 
 	if (g_comprehend->_graphicsEnabled) {
-		// Set up image files
-		game->_roomImages.load(game->_locationGraphicFiles);
-		game->_itemImages.load(game->_itemGraphicFiles);
+		// Set up the picture archive
+		g_comprehend->_pics->load(game->_locationGraphicFiles,
+			game->_itemGraphicFiles);
 
 		if (game->_colorTable)
 			g_comprehend->_drawSurface->setColorTable(game->_colorTable);

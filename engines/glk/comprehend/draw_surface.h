@@ -69,14 +69,12 @@ private:
 	static const uint32 DEFAULT_COLOR_TABLE[256];
 	static const uint32 COLOR_TABLE_1[256];
 	static const uint32 *COLOR_TABLES[2];
-	bool _dirty;
 
 public:
 	uint32 _renderColor;
 	const uint32 *_colorTable;
 public:
-	DrawSurface() : _renderColor(0), _colorTable(DEFAULT_COLOR_TABLE),
-	                _dirty(false) {
+	DrawSurface() : _renderColor(0), _colorTable(DEFAULT_COLOR_TABLE) {
 		reset();
 	}
 
@@ -98,11 +96,6 @@ public:
 	void drawPixel(uint16 x, uint16 y, uint32 color);
 	uint32 getPixelColor(uint16 x, uint16 y);
 	void clearScreen(uint32 color);
-
-	/**
-	 * Render the surface to the screen if it's changed
-	 */
-	void renderIfDirty();
 };
 
 } // namespace Comprehend

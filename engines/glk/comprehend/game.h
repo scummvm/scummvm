@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_ComprehendGame_H
-#define GLK_ComprehendGame_H
+#ifndef GLK_COMPREHEND_GAME_H
+#define GLK_COMPREHEND_GAME_H
 
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/opcode_map.h"
@@ -42,8 +42,8 @@ public:
 
 	const char *_gameDataFile;
 	Common::Array<StringFile> _stringFiles;
-	Common::Array<const char *> _locationGraphicFiles;
-	Common::Array<const char *> _itemGraphicFiles;
+	Common::StringArray _locationGraphicFiles;
+	Common::StringArray _itemGraphicFiles;
 	unsigned _colorTable;
 
 	struct GameStrings *_gameStrings;

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_ComprehendGame_OO_H
-#define GLK_ComprehendGame_OO_H
+#ifndef GLK_COMPREHEND_GAME_OO_H
+#define GLK_COMPREHEND_GAME_OO_H
 
 #include "glk/comprehend/game.h"
 

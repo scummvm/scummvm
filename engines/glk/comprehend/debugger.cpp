@@ -22,6 +22,7 @@
 
 #include "glk/comprehend/debugger.h"
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/pics.h"
 
 namespace Glk {
 namespace Comprehend {

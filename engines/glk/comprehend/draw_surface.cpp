@@ -22,7 +22,7 @@
 
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/comprehend.h"
-#include "glk/comprehend/image_data.h"
+#include "glk/comprehend/pics.h"
 #include "glk/window_graphics.h"
 
 namespace Glk {
@@ -187,7 +187,6 @@ void DrawSurface::setColorTable(uint index) {
 	}
 
 	_colorTable = COLOR_TABLES[index];
-	_dirty = true;
 }
 
 uint DrawSurface::getPenColor(uint8 opcode) const {
@@ -214,7 +213,6 @@ void DrawSurface::setColor(uint32 color) {
 void DrawSurface::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color) {
 	setColor(color);
 	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, _renderColor);
-	_dirty = true;
 }
 
 void DrawSurface::drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2,
@@ -222,7 +220,6 @@ void DrawSurface::drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2,
 	setColor(color);
 	Common::Rect r(x1, y1, x2, y2);
 	frameRect(r, _renderColor);
-	_dirty = true;
 }
 
 void DrawSurface::drawFilledBox(uint16 x1, uint16 y1,
@@ -230,7 +227,6 @@ void DrawSurface::drawFilledBox(uint16 x1, uint16 y1,
 	setColor(color);
 	Common::Rect r(x1, y1, x2, y2);
 	fillRect(r, _renderColor);
-	_dirty = true;
 }
 
 void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
@@ -337,8 +333,6 @@ void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
 		/* Unknown shape */
 		break;
 	}
-
-	_dirty = true;
 }
 
 void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
@@ -368,15 +362,12 @@ void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
 	for (i = x1; i < x2; i++)
 		if (y < RENDER_Y_MAX && getPixelColor(i, y + 1) == old_color)
 			floodFill(i, y + 1, fill_color, old_color);
-
-	_dirty = true;
 }
 
 void DrawSurface::drawPixel(uint16 x, uint16 y, uint32 color) {
 	setColor(color);
 	uint32 *ptr = (uint32 *)getBasePtr(x, y);
 	*ptr = _renderColor;
-	_dirty = true;
 }
 
 uint32 DrawSurface::getPixelColor(uint16 x, uint16 y) {
@@ -387,18 +378,6 @@ uint32 DrawSurface::getPixelColor(uint16 x, uint16 y) {
 void DrawSurface::clearScreen(uint32 color) {
 	setColor(color);
 	fillRect(Common::Rect(0, 0, this->w, this->h), _renderColor);
-	_dirty = true;
-}
-
-void DrawSurface::renderIfDirty() {
-	if (_dirty) {
-		GraphicsWindow *win = g_comprehend->_topWindow;
-		win->drawPicture(*this, (uint)-2, 0, 0, win->_w, win->_h);
-		_dirty = false;
-		// FIXME: Get rid of this hack and properly use the graphics window
-		g_system->copyRectToScreen(getPixels(), pitch, 0, 0, w, h);
-		g_system->updateScreen();
-	}
 }
 
 } // namespace Comprehend

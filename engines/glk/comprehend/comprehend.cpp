@@ -31,6 +31,7 @@
 #include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/game_tm.h"
 #include "glk/comprehend/game_tr.h"
+#include "glk/comprehend/pics.h"
 #include "glk/quetzal.h"
 
 namespace Glk {
@@ -39,8 +40,8 @@ namespace Comprehend {
 Comprehend *g_comprehend;
 
 Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
-                                                                            _drawSurface(nullptr), _game(nullptr), _saveSlot(-1),
-                                                                            _graphicsEnabled(true), _drawFlags(0) {
+		_drawSurface(nullptr), _game(nullptr), _pics(nullptr), _saveSlot(-1),
+		_graphicsEnabled(true), _drawFlags(0) {
 	g_comprehend = this;
 }
 
@@ -75,10 +76,11 @@ void Comprehend::initialize() {
 	glk_set_window(_bottomWindow);
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
 
-	// Initialize drawing
+	// Initialize drawing surface, and the archive that abstracts
+	// the room and item graphics as as individual files
 	_drawSurface = new DrawSurface();
-	_drawSurface->setColorTable(0);
-	_drawSurface->_renderColor = 0;
+	_pics = new Pics();
+	SearchMan.add("Pics", _pics, 99, false);
 }
 
 void Comprehend::deinitialize() {
@@ -116,7 +118,6 @@ void Comprehend::print(const char *fmt, ...) {
 void Comprehend::readLine(char *buffer, size_t maxLen) {
 	event_t ev;
 
-	_drawSurface->renderIfDirty();
 	glk_request_line_event(_bottomWindow, buffer, maxLen - 1, 0);
 
 	for (;;) {
@@ -132,8 +133,6 @@ void Comprehend::readLine(char *buffer, size_t maxLen) {
 }
 
 int Comprehend::readChar() {
-	_drawSurface->renderIfDirty();
-
 	glk_request_char_event(_bottomWindow);
 
 	event_t ev;
@@ -162,6 +161,18 @@ Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
 	_game->synchronizeSave(s);
 
 	return Common::kNoError;
+}
+
+void Comprehend::drawLocationPicture(int pictureNum, bool clearBg) {
+	glk_image_draw(_topWindow, pictureNum + (clearBg ? LOCATIONS_OFFSET : LOCATIONS_NO_BG_OFFSET), 0, 0);
+}
+
+void Comprehend::drawItemPicture(int pictureNum) {
+	glk_image_draw(_topWindow, pictureNum + ITEMS_OFFSET, 0, 0);
+}
+
+void Comprehend::clearScreen(bool isBright) {	
+	glk_image_draw(_topWindow, isBright ? BRIGHT_ROOM : DARK_ROOM, 0, 0);
 }
 
 } // namespace Comprehend

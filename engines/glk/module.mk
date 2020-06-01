@@ -179,8 +179,8 @@ MODULE_OBJS := \
 	comprehend/game_oo.o \
 	comprehend/game_tm.o \
 	comprehend/game_tr.o \
-	comprehend/image_data.o \
 	comprehend/opcode_map.o \
+	comprehend/pics.o \
 	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \

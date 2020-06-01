@@ -340,19 +340,18 @@ static void update_graphics(ComprehendGame *game) {
 	switch (type) {
 	case ROOM_IS_DARK:
 		if (game->_updateFlags & UPDATE_GRAPHICS)
-			draw_dark_room();
+			g_comprehend->clearScreen(false);
 		break;
 
 	case ROOM_IS_TOO_BRIGHT:
 		if (game->_updateFlags & UPDATE_GRAPHICS)
-			draw_bright_room();
+			g_comprehend->clearScreen(false);
 		break;
 
 	default:
 		if (game->_updateFlags & UPDATE_GRAPHICS) {
 			room = get_room(game, game->_currentRoom);
-			draw_location_image(&game->_roomImages,
-			                    room->graphic - 1);
+			g_comprehend->drawLocationPicture(room->graphic - 1);
 		}
 
 		if ((game->_updateFlags & UPDATE_GRAPHICS) ||
@@ -362,8 +361,7 @@ static void update_graphics(ComprehendGame *game) {
 
 				if (item->room == game->_currentRoom &&
 				    item->graphic != 0)
-					draw_image(&game->_itemImages,
-					           item->graphic - 1);
+					g_comprehend->drawItemPicture(item->graphic - 1);
 			}
 		}
 		break;
@@ -1002,12 +1000,11 @@ static void eval_instruction(ComprehendGame *game,
 		break;
 
 	case OPCODE_DRAW_ROOM:
-		draw_location_image(&game->_roomImages,
-		                    instr->operand[0] - 1);
+		g_comprehend->drawLocationPicture(instr->operand[0] - 1);
 		break;
 
 	case OPCODE_DRAW_OBJECT:
-		draw_image(&game->_itemImages, instr->operand[0] - 1);
+		g_comprehend->drawItemPicture(instr->operand[0] - 1);
 		break;
 
 	case OPCODE_WAIT_KEY:

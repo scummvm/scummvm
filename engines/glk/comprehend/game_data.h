@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef GLK_ComprehendGame_DATA_H
-#define GLK_ComprehendGame_DATA_H
+#ifndef GLK_COMPREHEND_GAME_DATA_H
+#define GLK_COMPREHEND_GAME_DATA_H
 
-#include "glk/comprehend/image_data.h"
+#include "glk/comprehend/file_buf.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
 
@@ -33,6 +33,8 @@ namespace Comprehend {
 #define MAX_FLAGS 64
 #define MAX_VARIABLES 128
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+
+class ComprehendGame;
 
 enum {
 	DIRECTION_NORTH,
@@ -231,9 +233,6 @@ struct GameInfo {
 
 	StringTable _strings;
 	StringTable _strings2;
-
-	struct ImageData _roomImages;
-	struct ImageData _itemImages;
 
 	bool _flags[MAX_FLAGS];
 	uint16 _variables[MAX_VARIABLES];

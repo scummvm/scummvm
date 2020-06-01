@@ -37,6 +37,7 @@ namespace Comprehend {
 struct GameInfo;
 struct gameState;
 class DrawSurface;
+class Pics;
 
 #define EXTRA_STRING_TABLE(x) (0x8200 | (x))
 
@@ -55,6 +56,7 @@ public:
 	TextBufferWindow *_bottomWindow;
 	DrawSurface *_drawSurface;
 	ComprehendGame *_game;
+	Pics *_pics;
 	bool _graphicsEnabled;
 	uint _drawFlags;
 
@@ -122,6 +124,21 @@ public:
 	 * Read in a character
 	 */
 	int readChar();
+
+	/**
+	 * Draw a location image
+	 */
+	void drawLocationPicture(int pictureNum, bool clearBg = true);
+
+	/**
+	 * Draw an item image
+	 */
+	void drawItemPicture(int pictureNum);
+
+	/**
+	 * Clear the picture area
+	 */
+	void clearScreen(bool isBright);
 };
 
 extern Comprehend *g_comprehend;
