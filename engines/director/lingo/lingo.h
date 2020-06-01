@@ -255,6 +255,8 @@ struct Object {
 
     // used only for factories
     DatumArray *objArray;
+
+	Symbol getMethod(Common::String &methodName, bool ignorePredefined = false);
 };
 
 struct CFrame {	/* proc/func call stack frame */
@@ -264,6 +266,7 @@ struct CFrame {	/* proc/func call stack frame */
 	ScriptContext	*retctx;   /* which script context to use after return */
 	int 	retarchive;	/* which archive to use after return */
 	SymbolHash *localvars;
+	Object *retMeObj; /* which me obj to use after return */
 };
 
 struct LingoEvent {
@@ -309,6 +312,7 @@ public:
 	void cleanupBuiltins();
 	void initFuncs();
 	void initBytecode();
+	void initMethods();
 
 	void runTests();
 
@@ -449,6 +453,7 @@ public:
 	ScriptContext *_currentScriptContext;
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
+	Object *_currentMeObj;
 
 	bool _abort;
 	bool _nextRepeat;
@@ -468,6 +473,7 @@ public:
 	Common::Array<int> _labelstack;
 
 	SymbolHash _builtins;
+	SymbolHash _methods;
 
 	int _linenumber;
 	int _colnumber;

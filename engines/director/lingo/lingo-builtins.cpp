@@ -260,21 +260,6 @@ static struct BuiltinProto {
 	{ 0, 0, 0, 0, false, 0, 0 }
 };
 
-static const char *predefinedMethods[] = {
-	"mAtFrame",				// D3
-	"mDescribe",			// D3
-	"mDispose",				// D3
-	"mGet",					// D3
-	"mInstanceRespondsTo",	// D3
-	"mMessageList",			// D3
-	"mName",				// D3
-	"mNew",					// D3
-	"mPerform",				// D3
-	"mPut",					// D3
-	"mRespondsTo",			// D3
-	0
-};
-
 void Lingo::initBuiltIns() {
 	for (BuiltinProto *blt = builtins; blt->name; blt++) {
 		if (blt->version > _vm->getVersion())
@@ -292,17 +277,6 @@ void Lingo::initBuiltIns() {
 		_builtins[blt->name] = sym;
 
 		_functions[(void *)sym.u.s] = new FuncDesc(blt->name, "");
-	}
-
-	// Set predefined methods
-	for (const char **b = predefinedMethods; *b; b++) {
-		Common::String name(*b);
-		Datum target(name);
-		target.type = VAR;
-		Datum source(name);
-		source.type = SYMBOL;
-		g_lingo->varCreate(name, true);
-		g_lingo->varAssign(target, source, true);
 	}
 }
 
@@ -2096,41 +2070,6 @@ void LB::b_version(int nargs) {
 	default:
 		error("Unsupported Director for 'version'");
 		break;
-	}
-}
-
-///////////////////
-// Factory
-///////////////////
-void LB::b_factory(int nargs) {
-	// This is intentionally empty
-}
-
-void Lingo::factoryCall(const Common::String &name, int nargs) {
-	Common::String s("factoryCall: ");
-
-	s += name;
-
-	convertVOIDtoString(0, nargs);
-
-	printSTUBWithArglist(s.c_str(), nargs);
-
-	Datum method = _stack[_stack.size() - nargs + 0];
-
-	drop(nargs - 1);
-
-	s = name + "-" + *method.u.s;
-
-	debugC(3, kDebugLingoExec, "Stack size before call: %d, nargs: %d", _stack.size(), nargs);
-	LC::call(s, 1);
-	debugC(3, kDebugLingoExec, "Stack size after call: %d", _stack.size());
-
-	if (!method.u.s->compareToIgnoreCase("mNew")) {
-		Datum d(name);
-
-		d.type = OBJECT;
-
-		g_lingo->push(d);
 	}
 }
 
