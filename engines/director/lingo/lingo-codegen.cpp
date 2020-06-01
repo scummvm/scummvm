@@ -224,7 +224,7 @@ void Lingo::cleanLocalVars() {
 	g_lingo->_localvars = nullptr;
 }
 
-Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
+Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames, Object *factory) {
 	Symbol sym;
 	sym.name = new Common::String(name);
 	sym.type = HANDLER;
@@ -246,25 +246,29 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 		debugC(1, kDebugLingoCompile, "<end define code>");
 	}
 
-	Symbol existing = getHandler(name);
-	if (existing.type != VOID)
-		warning("Redefining handler '%s'", name.c_str());
-
-	if (!_eventHandlerTypeIds.contains(name)) {
-		_archives[_archiveIndex].functionHandlers[name] = sym;
+	if (factory != nullptr) {
+		if (factory->methods.contains(name)) {
+			warning("Redefining method '%s' on factory '%s'", name.c_str(), factory->name->c_str());
+		}
+		factory->methods[name] = sym;
 	} else {
-		_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		Symbol existing = getHandler(name);
+		if (existing.type != VOID)
+			warning("Redefining handler '%s'", name.c_str());
+
+		if (!_eventHandlerTypeIds.contains(name)) {
+			_archives[_archiveIndex].functionHandlers[name] = sym;
+		} else {
+			_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		}
 	}
 
 	return sym;
 }
 
-Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
-	if (prefix)
-		name = *prefix + "-" + name;
-
+Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *factory, int end, bool removeCode) {
 	debugC(1, kDebugLingoCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
-			name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""),
+			name.c_str(), _currentScript->size() - 1, start, nargs, (factory ? factory->name->c_str() : ""),
 			end, _currentEntityId);
 
 	if (end == -1)
@@ -280,7 +284,7 @@ Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Common::Str
 		if (it->_value == kVarLocal)
 			varNames->push_back(Common::String(it->_key));
 	}
-	Symbol sym = define(name, nargs, code, argNames, varNames);
+	Symbol sym = define(name, nargs, code, argNames, varNames, factory);
 
 	// Now remove all defined code from the _currentScript
 	if (removeCode)
@@ -375,30 +379,30 @@ int Lingo::codeFunc(Common::String *s, int numpar) {
 	return ret;
 }
 
-int Lingo::codeMe(Common::String *method, int numpar) {
-	// Check if need to encode reference to the factory
-	if (method == nullptr) {
-		int ret = g_lingo->code1(LC::c_factory);
-		g_lingo->codeString(g_lingo->_currentFactory.c_str());
+// int Lingo::codeMe(Common::String *method, int numpar) {
+// 	// Check if need to encode reference to the factory
+// 	if (method == nullptr) {
+// 		int ret = g_lingo->code1(LC::c_factory);
+// 		g_lingo->codeString(g_lingo->_currentFactory->name->c_str());
 
-		return ret;
-	}
+// 		return ret;
+// 	}
 
-	int ret = g_lingo->code1(LC::c_call);
+// 	int ret = g_lingo->code1(LC::c_call);
 
-	Common::String m(g_lingo->_currentFactory);
+// 	Common::String m(g_lingo->_currentFactory->name);
 
-	m += '-';
-	m += *method;
+// 	m += '-';
+// 	m += *method;
 
-	g_lingo->codeString(m.c_str());
+// 	g_lingo->codeString(m.c_str());
 
-	inst num = 0;
-	WRITE_UINT32(&num, numpar);
-	g_lingo->code1(num);
+// 	inst num = 0;
+// 	WRITE_UINT32(&num, numpar);
+// 	g_lingo->code1(num);
 
-	return ret;
-}
+// 	return ret;
+// }
 
 void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
@@ -627,18 +631,23 @@ Datum Lingo::varFetch(Datum &var, bool global) {
 }
 
 void Lingo::codeFactory(Common::String &name) {
-	_currentFactory = name;
+	Object *obj = new Object;
+	obj->name = new Common::String(name);
+	obj->type = kFactoryObj;
+	obj->inheritanceLevel = 1;
+	obj->scriptContext = _currentScriptContext;
+	obj->objArray = new DatumArray; 
 
-	Symbol sym;
-
-	sym.name = new Common::String(name);
-	sym.type = BLTIN;
-	sym.nargs = -1;
-	sym.maxArgs = 0;
-	sym.parens = true;
-	sym.u.bltin = LB::b_factory;
-
-	_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+	_currentFactory = obj;
+	if (!_globalvars.contains(name)) {
+		_globalvars[name] = Symbol();
+		_globalvars[name].name = new Common::String(name);
+		_globalvars[name].global = true;
+		_globalvars[name].type = OBJECT;
+		_globalvars[name].u.obj = obj;
+	} else {
+		warning("Factory '%s' already defined", name.c_str());
+	}
 }
 
 }
