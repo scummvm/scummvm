@@ -138,6 +138,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
+	// Note: Not all user interface elements are translated in ScummVM
 	{
 		{
 			"ultima6",
@@ -153,6 +154,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
+    // Note: Not all user interface elements are translated in ScummVM
     {
 		{
 			"ultima6_enh",
