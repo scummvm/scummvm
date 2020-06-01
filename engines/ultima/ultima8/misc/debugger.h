@@ -153,7 +153,8 @@ private:
 	bool cmdMemberVar(int argc, const char **argv);
 
 	// Avatar mover
-	bool cmdBothButtonClick(int argc, const char **argv);
+	bool cmdStartJump(int argc, const char **argv);
+	bool cmdStopJump(int argc, const char **argv);
 	bool cmdStartTurnLeft(int argc, const char **argv);
 	bool cmdStartTurnRight(int argc, const char **argv);
 	bool cmdStartMoveForward(int argc, const char **argv);
@@ -170,6 +171,11 @@ private:
 	bool cmdStopMoveDown(int argc, const char **argv);
 	bool cmdStopMoveLeft(int argc, const char **argv);
 	bool cmdStopMoveRight(int argc, const char **argv);
+
+	bool cmdStartMoveRun(int argc, const char **argv);
+	bool cmdStopMoveRun(int argc, const char **argv);
+	bool cmdStartMoveStep(int argc, const char **argv);
+	bool cmdStopMoveStep(int argc, const char **argv);
 
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);
