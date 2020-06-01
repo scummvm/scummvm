@@ -2,6 +2,8 @@ MODULE := engines/wintermute
 
 MODULE_OBJS := \
 	ad/ad_actor.o \
+	ad/ad_actor_3dx.o \
+	ad/ad_attach_3dx.o \
 	ad/ad_block.o \
 	ad/ad_entity.o \
 	ad/ad_game.o \
@@ -14,6 +16,7 @@ MODULE_OBJS := \
 	ad/ad_layer.o \
 	ad/ad_node_state.o \
 	ad/ad_object.o \
+	ad/ad_object_3d.o \
 	ad/ad_path.o \
 	ad/ad_path3d.o \
 	ad/ad_path_point.o \
@@ -75,8 +78,17 @@ MODULE_OBJS := \
 	base/gfx/opengl/render_ticket.o \
 	base/gfx/opengl/light3d.o \
 	base/gfx/opengl/camera3d.o \
+	base/gfx/opengl/material.o \
+	base/gfx/opengl/meshx.o \
 	base/gfx/opengl/mesh3ds.o \
 	base/gfx/opengl/loader3ds.o \
+	base/gfx/opengl/shadow_volume.o \
+	base/gfx/x/active_animation.o \
+	base/gfx/x/animation.o \
+	base/gfx/x/animation_channel.o \
+	base/gfx/x/animation_set.o \
+	base/gfx/x/frame_node.o \
+	base/gfx/x/modelx.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
@@ -85,6 +97,7 @@ MODULE_OBJS := \
 	base/sound/base_sound_manager.o \
 	base/base_active_rect.o \
 	base/base.o \
+	base/base_animation_transition_time.o \
 	base/base_dynamic_buffer.o \
 	base/base_engine.o \
 	base/base_fader.o \
