@@ -25,6 +25,7 @@
 
 namespace Director {
 
+Common::String preprocessWhen(Common::String in, bool *changed);
 Common::String preprocessReturn(Common::String in);
 Common::String preprocessPlay(Common::String in);
 Common::String preprocessSound(Common::String in);
@@ -181,15 +182,20 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 
 		res1 = patchLingoCode(res1, type, id, linenumber);
 
-		res1 = preprocessReturn(res1);
-		res1 = preprocessPlay(res1);
-		res1 = preprocessSound(res1);
+		bool changed = false;
+		res1 = preprocessWhen(res1, &changed);
+
+		if (!changed) {
+			res1 = preprocessReturn(res1);
+			res1 = preprocessPlay(res1);
+			res1 = preprocessSound(res1);
+		}
 
 		res += res1;
 
 		linenumber++;	// We do it here because of 'continue' statements
 
-		if (line.size() < 4) { // If line is too small, then skip it
+		if (line.size() < 4 || changed) { // If line is too small, then skip it
 			if (*s)	// copy newline symbol
 				res += *s++;
 
@@ -377,6 +383,76 @@ const char *strcasestr(const char *s, const char *find) {
 	return s;
 }
 #endif
+
+// when ID then statement -> when ID then "statement"
+Common::String preprocessWhen(Common::String in, bool *changed) {
+	Common::String res, next;
+	const char *ptr = in.c_str();
+	const char *beg = ptr;
+	const char *nextPtr;
+
+	while ((ptr = strcasestr(beg, "when")) != NULL) {
+		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+			res += *beg++;
+			continue;
+		}
+
+		ptr += 4; // end of 'play'
+		res += Common::String(beg, ptr);
+
+		if (!*ptr)	// If it is end of the line
+			break;
+
+		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
+			beg = ptr;
+			continue;
+		}
+
+		*changed = true;
+
+		res += ' ';
+		next = nexttok(ptr, &nextPtr);	// ID
+		res += next;
+
+		res += ' ';
+		next = nexttok(nextPtr, &nextPtr);	// then
+		res += next;
+
+		res += ' ';
+		res += '"';
+
+		// now we need to preprocess quotes
+		bool skipQuote = false;
+		while (*nextPtr) {
+			if (*nextPtr == '"') {
+				res += "\" & QUOTE ";
+
+				if (*(nextPtr + 1))
+					res += "& \"";
+				else
+					skipQuote = true;	// we do not want the last quote
+			} else {
+				res += *nextPtr;
+			}
+
+			nextPtr++;
+		}
+
+		if (!skipQuote)
+			res += '"';
+
+		beg = nextPtr;
+
+		break;
+	}
+
+	res += Common::String(beg);
+
+	if (in.size() != res.size())
+		debugC(2, kDebugLingoParse, "WHEN: in: %s\nout: %s", in.c_str(), res.c_str());
+
+	return res;
+}
 
 // "hello" & return && "world" -> "hello" & scummvm_return && "world"
 //
