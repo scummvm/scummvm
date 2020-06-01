@@ -44,11 +44,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarMoverProcess)
 
 AvatarMoverProcess::AvatarMoverProcess() : Process(),
 		_lastFrame(0), _lastAttack(0), _idleTime(0),
-		_lastHeadShakeAnim(Animation::lookLeft), _fakeBothButtonClick(false),
-		_tryTurnLeft(false), _tryTurnRight(false),
-		_tryMoveForward(false), _tryMoveBack(false),
-		_tryMoveLeft(false), _tryMoveRight(false),
-		_tryMoveUp(false), _tryMoveDown(false) {
+		_lastHeadShakeAnim(Animation::lookLeft),
+		_movementFlags(0) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -294,41 +291,40 @@ void AvatarMoverProcess::handleCombatMode() {
 			return;
 
 	bool moving = (lastanim == Animation::advance || lastanim == Animation::retreat);
-	bool tryMove = _tryMoveForward || _tryMoveBack;
 
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
-	if (moving || !tryMove) {
-		if (_tryTurnLeft) {
+	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
+		if (hasMovementFlags(MOVE_TURN_LEFT)) {
 			direction = (direction + 7) % 8;
 		}
 
-		if (_tryTurnRight) {
+		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
 			direction = (direction + 1) % 8;
 		}
 	}
 
-	if (_tryMoveForward) {
+	if (hasMovementFlags(MOVE_FORWARD)) {
 		waitFor(avatar->doAnim(Animation::advance, direction));
 		return;
 	}
 
-	if (_tryMoveBack) {
+	if (hasMovementFlags(MOVE_BACK)) {
 		waitFor(avatar->doAnim(Animation::retreat, direction));
 		return;
 	}
 
 	int y = 0;
 	int x = 0;
-	if (_tryMoveUp) {
+	if (hasMovementFlags(MOVE_UP)) {
 		y++;
 	}
-	if (_tryMoveDown) {
+	if (hasMovementFlags(MOVE_DOWN)) {
 		y--;
 	}
-	if (_tryMoveLeft) {
+	if (hasMovementFlags(MOVE_LEFT)) {
 		x--;
 	}
-	if (_tryMoveRight) {
+	if (hasMovementFlags(MOVE_RIGHT)) {
 		x++;
 	}
 
@@ -472,7 +468,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	// both mouse buttons down and not yet handled, or neither down and we are faking it.
 	if ((!_mouseButton[0].isState(MBS_HANDLED) && !_mouseButton[1].isState(MBS_HANDLED)) ||
 			(_mouseButton[0].isState(MBS_HANDLED) && _mouseButton[1].isState(MBS_HANDLED) &&
-			 _fakeBothButtonClick)) {
+			 hasMovementFlags(MOVE_JUMP))) {
 		// Take action if both were clicked within
 		// double-click timeout of each other.
 		// notice these are all unsigned.
@@ -483,14 +479,14 @@ void AvatarMoverProcess::handleNormalMode() {
 			down = _mouseButton[0]._curDown - down;
 		}
 
-		if (_fakeBothButtonClick || down < DOUBLE_CLICK_TIMEOUT) {
+		if (hasMovementFlags(MOVE_JUMP) || down < DOUBLE_CLICK_TIMEOUT) {
 			_mouseButton[0].setState(MBS_HANDLED);
 			_mouseButton[1].setState(MBS_HANDLED);
-			if (_fakeBothButtonClick) {
+			if (hasMovementFlags(MOVE_JUMP)) {
 				// Also have to fake a release.
 				_mouseButton[1].clearState(MBS_RELHANDLED);
 			}
-			_fakeBothButtonClick = false;
+			clearMovementFlag(MOVE_JUMP);
 			// Both buttons pressed within the timeout
 			// (or we're faking it)
 
@@ -527,10 +523,10 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 	}
 
-	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked || _fakeBothButtonClick) &&
+	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked || hasMovementFlags(MOVE_JUMP)) &&
 	        _mouseButton[1].isState(MBS_DOWN)) {
 		_mouseButton[0].setState(MBS_HANDLED);
-		_fakeBothButtonClick = false;
+		clearMovementFlag(MOVE_JUMP);
 		// We got a left mouse down (or a fake one) while the already
 		// handled right was down.
 
@@ -591,52 +587,63 @@ void AvatarMoverProcess::handleNormalMode() {
 		if (checkTurn(mousedir, false))
 			return;
 
-	bool moving = (lastanim == Animation::run || lastanim == Animation::walk);
-	bool tryMove = _tryMoveForward || _tryMoveBack;
+	bool moving = (lastanim == Animation::step || lastanim == Animation::run || lastanim == Animation::walk);
 
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
-	if (moving || !tryMove) {
-		if (_tryTurnLeft) {
+	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
+		if (hasMovementFlags(MOVE_TURN_LEFT)) {
 			direction = (direction + 7) % 8;
 		}
 
-		if (_tryTurnRight) {
+		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
 			direction = (direction + 1) % 8;
 		}
 	}
 
-	if (_tryMoveForward) {
-		step(Animation::walk, direction);
+	Animation::Sequence nextanim = Animation::walk;
+
+	if (hasMovementFlags(MOVE_STEP)) {
+		nextanim = Animation::step;
+	} else if (hasMovementFlags(MOVE_RUN)) {
+		if (lastanim == Animation::run
+			    || lastanim == Animation::runningJump
+			    || lastanim == Animation::walk)
+			nextanim = Animation::run;
+		else
+			nextanim = Animation::walk;
+	}
+
+	if (hasMovementFlags(MOVE_FORWARD)) {
+		step(nextanim, direction);
 		return;
 	}
 
-	if (_tryMoveBack) {
-		step(Animation::walk, (direction + 4) % 8);
+	if (hasMovementFlags(MOVE_BACK)) {
+		step(nextanim, (direction + 4) % 8);
+
 		// flip to move forward once turned
-		_tryMoveBack = false;
-		_tryMoveForward = true;
+		setMovementFlag(MOVE_FORWARD);
 		return;
 	}
 
 	int y = 0;
 	int x = 0;
-
-	if (_tryMoveUp) {
+	if (hasMovementFlags(MOVE_UP)) {
 		y++;
 	}
-	if (_tryMoveDown) {
+	if (hasMovementFlags(MOVE_DOWN)) {
 		y--;
 	}
-	if (_tryMoveLeft) {
+	if (hasMovementFlags(MOVE_LEFT)) {
 		x--;
 	}
-	if (_tryMoveRight) {
+	if (hasMovementFlags(MOVE_RIGHT)) {
 		x++;
 	}
 
 	if (x != 0 || y != 0) {
 		direction = Get_direction(y, x);
-		step(Animation::walk, direction);
+		step(nextanim, direction);
 		return;
 	}
 
@@ -660,7 +667,6 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 	} else {
 		if ((getRandom() % 3000) + 150 < _idleTime) {
-			Animation::Sequence nextanim;
 			if (getRandom() % 5 == 0)
 				nextanim = _lastHeadShakeAnim;
 			else if (_lastHeadShakeAnim == Animation::lookLeft)
@@ -806,44 +812,6 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 	} else {
 		waitFor(avatar->doAnim(Animation::jump, direction));
 	}
-}
-
-void AvatarMoverProcess::tryTurnLeft(bool b) {
-	_tryTurnLeft = b;
-}
-
-void AvatarMoverProcess::tryTurnRight(bool b) {
-	_tryTurnRight = b;
-}
-
-void AvatarMoverProcess::tryMoveForward(bool b) {
-	_tryMoveForward = b;
-}
-
-void AvatarMoverProcess::tryMoveBack(bool b) {
-	if (b) {
-		_tryMoveBack = true;
-	}
-	else {
-		_tryMoveBack = false;
-		_tryMoveForward = false;
-	}
-}
-
-void AvatarMoverProcess::tryMoveLeft(bool b) {
-	_tryMoveLeft = b;
-}
-
-void AvatarMoverProcess::tryMoveRight(bool b) {
-	_tryMoveRight = b;
-}
-
-void AvatarMoverProcess::tryMoveUp(bool b) {
-	_tryMoveUp = b;
-}
-
-void AvatarMoverProcess::tryMoveDown(bool b) {
-	_tryMoveDown = b;
 }
 
 void AvatarMoverProcess::turnToDirection(int direction) {
