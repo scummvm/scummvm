@@ -1170,9 +1170,21 @@ void LC::c_exitRepeat(void) {
 
 void LC::c_whencode() {
 	Common::String eventname(g_lingo->readString());
-	Common::String code = g_lingo->pop().asString();
+	Datum code = g_lingo->pop();
+	Datum nullId;
 
-	warning("STUB: c_whencode('%s', '%s'", eventname.c_str(), code.c_str());
+	// the following when events are supported by D3
+	if (eventname.equalsIgnoreCase("keyDown")) {
+		g_lingo->setTheEntity(kTheKeyDownScript, nullId, kTheNOField, code);
+	} else if (eventname.equalsIgnoreCase("mouseDown")) {
+		g_lingo->setTheEntity(kTheMouseDownScript, nullId, kTheNOField, code);
+	} else if (eventname.equalsIgnoreCase("mouseUp")) {
+		g_lingo->setTheEntity(kTheMouseUpScript, nullId, kTheNOField, code);
+	} else if (eventname.equalsIgnoreCase("timeOut")) {
+		g_lingo->setTheEntity(kTheTimeoutScript, nullId, kTheNOField, code);
+	} else {
+		warning("c_whencode(): unsupported event handler %s", eventname.c_str());
+	}
 }
 
 void LC::c_tellcode() {
