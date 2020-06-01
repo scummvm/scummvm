@@ -690,6 +690,20 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
 
+	// Spanish fan translation
+	{ // CD version
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "943f6d7fc9a8f0ed15d0a0b5c1f221b0"),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
+	},
+
 	{ // Interactive Demo
 		{
 			"kyra2",
@@ -1707,7 +1721,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		EOB_FLAGS
 	},
-	
+
 	{	// Spanish version
 		{
 			"eob",
