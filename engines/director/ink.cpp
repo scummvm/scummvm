@@ -41,9 +41,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 		maskSurface->clear(0);
 	}
 
-	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
-
-
 	if (drawRect.isEmpty()) {
 		warning("Score::inkBasedBlit(): empty drawRect");
 		return;
