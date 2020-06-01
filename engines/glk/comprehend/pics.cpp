@@ -26,6 +26,7 @@
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/pics.h"
 #include "glk/comprehend/draw_surface.h"
+#include "common/memstream.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -39,6 +40,7 @@ Pics::ImageFile::ImageFile(const Common::String &filename) {
 	uint16 version;
 	int i;
 
+	_filename = filename;
 	if (!f.open(filename))
 		error("Could not open file - %s", filename.c_str());
 
@@ -62,7 +64,7 @@ Pics::ImageFile::ImageFile(const Common::String &filename) {
 	}
 }
 
-void Pics::ImageFile::draw(uint index, ImageContext *ctx) {
+void Pics::ImageFile::draw(uint index, ImageContext *ctx) const {
 	if (!ctx->_file.open(_filename))
 		error("Opening image file");
 
@@ -73,7 +75,7 @@ void Pics::ImageFile::draw(uint index, ImageContext *ctx) {
 	}
 }
 
-bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) {
+bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 	uint8 opcode;
 	uint16 a, b;
 
@@ -256,7 +258,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) {
 	return false;
 }
 
-uint16 Pics::ImageFile::imageGetOperand(ImageContext *ctx) {
+uint16 Pics::ImageFile::imageGetOperand(ImageContext *ctx) const {
 	return ctx->_file.readByte();
 }
 
@@ -280,7 +282,7 @@ void Pics::load(const Common::StringArray &roomFiles,
 int Pics::getPictureNumber(const Common::String &filename) const {
 	// Ensure prefix and suffix
 	if (!filename.hasPrefixIgnoreCase("pic") ||
-	    !filename.hasSuffixIgnoreCase(".png"))
+	    !filename.hasSuffixIgnoreCase(".raw"))
 		return -1;
 
 	// Get the number part
@@ -323,11 +325,22 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 	if (num == -1 || !hasFile(name))
 		return nullptr;
 
-	// TODO
-	error("TODO: createReadStream");
+	// Draw the image
+	drawPicture(num);
+
+	// Create a stream with the data for the surface
+	Common::MemoryReadWriteStream *stream =
+	    new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+	const DrawSurface &ds = *g_comprehend->_drawSurface;
+	stream->writeUint16LE(ds.w);
+	stream->writeUint16LE(ds.h);
+	stream->writeUint16LE(0);		// Palette size
+	stream->write(ds.getPixels(), ds.w * ds.h * 4);
+
+	return stream;
 }
 
-void Pics::drawPicture(int pictureNum) {
+void Pics::drawPicture(int pictureNum) const {
 	ImageContext ctx(g_comprehend->_drawSurface, g_comprehend->_drawFlags);
 
 	if (pictureNum == DARK_ROOM) {

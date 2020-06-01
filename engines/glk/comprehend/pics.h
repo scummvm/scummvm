@@ -111,14 +111,14 @@ class Pics : public Common::Archive {
 		Common::String _filename;
 
 	private:
-		bool doImageOp(ImageContext *ctx);
-		uint16 imageGetOperand(ImageContext *ctx);
+		bool doImageOp(ImageContext *ctx) const;
+		uint16 imageGetOperand(ImageContext *ctx) const;
 
 	public:
 		ImageFile() {}
 		ImageFile(const Common::String &filename);
 
-		void draw(uint index, ImageContext *ctx);
+		void draw(uint index, ImageContext *ctx) const;
 	};
 
 private:
@@ -134,7 +134,7 @@ private:
 	/**
 	 * Draw the specified picture
 	 */
-	void drawPicture(int pictureNum);
+	void drawPicture(int pictureNum) const;
 
 public:
 	void clear();
