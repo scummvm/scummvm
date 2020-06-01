@@ -430,7 +430,7 @@ enum yysymbol_kind_t
   YYSYMBOL_jump = 124,                     /* jump  */
   YYSYMBOL_varassign = 125,                /* varassign  */
   YYSYMBOL_if = 126,                       /* if  */
-  YYSYMBOL_begin = 127,                    /* begin  */
+  YYSYMBOL_lbl = 127,                      /* lbl  */
   YYSYMBOL_stmtlist = 128,                 /* stmtlist  */
   YYSYMBOL_simpleexpr = 129,               /* simpleexpr  */
   YYSYMBOL_expr = 130,                     /* expr  */
@@ -891,8 +891,8 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   "$accept", "program", "programline", "asgn", "stmtoneliner", "stmt",
   "$@1", "$@2", "$@3", "$@4", "$@5", "$@6", "$@7", "$@8", "$@9",
   "tellstart", "ifstmt", "elseifstmtlist", "elseifstmt", "jumpifz", "jump",
-  "varassign", "if", "begin", "stmtlist", "simpleexpr", "expr",
-  "chunkexpr", "reference", "proc", "$@10", "$@11", "$@12", "globallist",
+  "varassign", "if", "lbl", "stmtlist", "simpleexpr", "expr", "chunkexpr",
+  "reference", "proc", "$@10", "$@11", "$@12", "globallist",
   "propertylist", "instancelist", "gotofunc", "gotomovie", "playfunc",
   "$@13", "defn", "$@14", "$@15", "$@16", "on", "$@17", "argdef",
   "endargdef", "argstore", "macro", "arglist", "nonemptyarglist", "list",
@@ -2418,7 +2418,7 @@ yyreduce:
 
   case 25:
 #line 270 "engines/director/lingo/lingo-gr.y"
-                                                                                        {
+                                                                                {
 		inst start = 0, end = 0;
 		WRITE_UINT32(&start, (yyvsp[-5].code) - (yyvsp[-1].code) + 1);
 		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-3].code) + 2);
@@ -2588,7 +2588,7 @@ yyreduce:
 
   case 40:
 #line 390 "engines/director/lingo/lingo-gr.y"
-                                                            {
+                                                          {
 		inst end;
 		g_lingo->code1(STOP);
 		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-3].code) + 1);
@@ -2598,7 +2598,7 @@ yyreduce:
 
   case 41:
 #line 395 "engines/director/lingo/lingo-gr.y"
-                                                      {
+                                                    {
 		inst end;
 		g_lingo->code1(STOP);
 		WRITE_UINT32(&end, (yyvsp[0].code) - (yyvsp[-2].code) + 1);
@@ -2616,7 +2616,7 @@ yyreduce:
 
   case 43:
 #line 405 "engines/director/lingo/lingo-gr.y"
-                                                                                           {
+                                                                                         {
 		inst else1 = 0, end3 = 0;
 		WRITE_UINT32(&else1, (yyvsp[-3].code) + 1 - (yyvsp[-6].code) + 1);
 		WRITE_UINT32(&end3, (yyvsp[-1].code) - (yyvsp[-3].code) + 1);
@@ -2628,7 +2628,7 @@ yyreduce:
 
   case 44:
 #line 412 "engines/director/lingo/lingo-gr.y"
-                                                                                                                  {
+                                                                                                              {
 		inst else1 = 0, end = 0;
 		WRITE_UINT32(&else1, (yyvsp[-6].code) + 1 - (yyvsp[-9].code) + 1);
 		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-6].code) + 1);
@@ -3301,7 +3301,7 @@ yyreduce:
 
   case 147:
 #line 689 "engines/director/lingo/lingo-gr.y"
-                                                                     {	// D3
+                                                                   {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->codeDefine(*(yyvsp[-7].s), (yyvsp[-6].code), (yyvsp[-5].narg));
 		endDef();
@@ -3314,7 +3314,7 @@ yyreduce:
 
   case 148:
 #line 697 "engines/director/lingo/lingo-gr.y"
-                                                 {	// D4. No 'end' clause
+                                               {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
 		g_lingo->codeDefine(*(yyvsp[-5].s), (yyvsp[-4].code), (yyvsp[-3].narg));
 		endDef();

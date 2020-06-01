@@ -149,7 +149,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn begin expr if chunkexpr
+%type<code> asgn lbl expr if chunkexpr
 %type<code> stmtlist tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
@@ -267,9 +267,9 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| tREPEAT tWHILE begin expr jumpifz[body] stmtlist jump[end2] tENDREPEAT	{
+	| tREPEAT tWHILE lbl expr jumpifz[body] stmtlist jump[end2] tENDREPEAT	{
 		inst start = 0, end = 0;
-		WRITE_UINT32(&start, $begin - $end2 + 1);
+		WRITE_UINT32(&start, $lbl - $end2 + 1);
 		WRITE_UINT32(&end, $end2 - $body + 2);
 		(*g_lingo->_currentScript)[$body] = end;		/* end, if cond fails */
 		(*g_lingo->_currentScript)[$end2] = start; }	/* looping back */
@@ -348,7 +348,7 @@ stmt: stmtoneliner
 				  g_lingo->codeFunc(new Common::String("count"), 1);
 				  g_lingo->code1(LC::c_intpush);	// start counter
 				  g_lingo->codeInt(1); }
-			begin
+			lbl
 				{ g_lingo->code1(LC::c_stackpeek);	// get counter
 				  g_lingo->codeInt(0);
 				  g_lingo->code1(LC::c_stackpeek);	// get array size
@@ -376,7 +376,7 @@ stmt: stmtoneliner
 		g_lingo->codeInt(3);
 
 		inst loop = 0, end = 0;
-		WRITE_UINT32(&loop, $begin - jump);
+		WRITE_UINT32(&loop, $lbl - jump);
 		WRITE_UINT32(&end, end2 - $jumpifz + 1);
 
 		(*g_lingo->_currentScript)[jump + 1] = loop;		/* final count value */
@@ -387,29 +387,29 @@ stmt: stmtoneliner
 	| tWHEN ID tTHEN expr {
 		g_lingo->code1(LC::c_whencode);
 		g_lingo->codeString($ID->c_str()); }
-	| tTELL expr '\n' tellstart stmtlist begin tENDTELL {
+	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL {
 		inst end;
 		g_lingo->code1(STOP);
-		WRITE_UINT32(&end, $begin - $tellstart + 1);
+		WRITE_UINT32(&end, $lbl - $tellstart + 1);
 		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
-	| tTELL expr tTO tellstart stmtoneliner begin {
+	| tTELL expr tTO tellstart stmtoneliner lbl {
 		inst end;
 		g_lingo->code1(STOP);
-		WRITE_UINT32(&end, $begin - $tellstart + 1);
+		WRITE_UINT32(&end, $lbl - $tellstart + 1);
 		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
 
 tellstart:	  /* empty */				{
 		$$ = g_lingo->code1(LC::c_tellcode);
 		g_lingo->code1(STOP); }
 
-ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist begin[end3] tENDIF {
+ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist lbl[end3] tENDIF {
 		inst else1 = 0, end3 = 0;
 		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
 		WRITE_UINT32(&end3, $end3 - $else1 + 1);
 		(*g_lingo->_currentScript)[$then] = else1;		/* elsepart */
 		(*g_lingo->_currentScript)[$else1] = end3;		/* end, if cond fails */
 		g_lingo->processIf($else1, $end3); }
-	| if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist tELSE begin stmtlist begin[end3] tENDIF {
+	| if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist tELSE lbl stmtlist lbl[end3] tENDIF {
 		inst else1 = 0, end = 0;
 		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
 		WRITE_UINT32(&end, $end3 - $else1 + 1);
@@ -441,7 +441,7 @@ varassign:		/* nothing */	{
 if:	  tIF					{
 		g_lingo->codeLabel(0); } // Mark beginning of the if() statement
 
-begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
+lbl:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 
 stmtlist: 					{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist '\n'
@@ -674,29 +674,29 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 // See also:
 //   on keyword
 defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
-			begin argdef '\n' argstore stmtlist 		{
+			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$ID, $begin, $argdef);
+		g_lingo->codeDefine(*$ID, $lbl, $argdef);
 		endDef();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$ID); delete $ID; }
 	| tMETHOD { startDef(); }
-			begin argdef '\n' argstore stmtlist 		{
+			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
+		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1, &g_lingo->_currentFactory);
 		endDef();
 		delete $tMETHOD; }
-	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
+	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$on, $begin, $argdef);
+		g_lingo->codeDefine(*$on, $lbl, $argdef);
 		endDef();
 
 		checkEnd($ENDCLAUSE, $on->c_str(), false);
 		delete $on;
 		delete $ENDCLAUSE; }
-	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
+	| on lbl argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$on, $begin, $argdef);
+		g_lingo->codeDefine(*$on, $lbl, $argdef);
 		endDef();
 		delete $on; }
 
