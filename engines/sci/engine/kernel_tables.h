@@ -39,6 +39,7 @@ namespace Sci {
 // i - regular integer
 // o - object
 // r - reference
+// l - list
 // n - node
 // 0 - NULL
 // . - any
