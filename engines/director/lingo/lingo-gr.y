@@ -345,7 +345,8 @@ stmt: stmtoneliner
 	| tREPEAT tWITH ID tIN expr
 				{ g_lingo->code1(LC::c_stackpeek);
 				  g_lingo->codeInt(0);
-				  g_lingo->codeFunc(new Common::String("count"), 1);
+				  Common::String count("count");
+				  g_lingo->codeFunc(&count, 1);
 				  g_lingo->code1(LC::c_intpush);	// start counter
 				  g_lingo->codeInt(1); }
 			lbl
@@ -359,7 +360,8 @@ stmt: stmtoneliner
 				  g_lingo->codeInt(2);
 				  g_lingo->code1(LC::c_stackpeek);	// get counter
 				  g_lingo->codeInt(1);
-				  g_lingo->codeFunc(new Common::String("getAt"), 2);
+				  Common::String getAt("getAt");
+				  g_lingo->codeFunc(&getAt, 2);
 				  g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
 				  mVar($ID, kVarLocal);
