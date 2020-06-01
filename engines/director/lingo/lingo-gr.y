@@ -149,7 +149,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn begin end expr if chunkexpr
+%type<code> asgn begin expr if chunkexpr
 %type<code> stmtlist tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
@@ -296,7 +296,7 @@ stmt: stmtoneliner
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		g_lingo->code1(LC::c_assign);
-		g_lingo->code2(LC::c_jump, STOP);
+		g_lingo->code2(LC::c_jump, 0);
 		int pos = g_lingo->_currentScript->size() - 1;
 
 		inst loop = 0, end = 0;
@@ -328,7 +328,7 @@ stmt: stmtoneliner
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		g_lingo->code1(LC::c_assign);
-		g_lingo->code2(LC::c_jump, STOP);
+		g_lingo->code2(LC::c_jump, 0);
 		int pos = g_lingo->_currentScript->size() - 1;
 
 		inst loop = 0, end = 0;
@@ -370,7 +370,7 @@ stmt: stmtoneliner
 		g_lingo->codeInt(1);
 		g_lingo->code1(LC::c_add);			// Increment counter
 
-		int jump = g_lingo->code2(LC::c_jump, STOP);
+		int jump = g_lingo->code2(LC::c_jump, 0);
 
 		int end2 = g_lingo->code1(LC::c_stackdrop);	// remove list, size, counter
 		g_lingo->codeInt(3);
@@ -387,13 +387,15 @@ stmt: stmtoneliner
 	| tWHEN ID tTHEN expr {
 		g_lingo->code1(LC::c_whencode);
 		g_lingo->codeString($ID->c_str()); }
-	| tTELL expr '\n' tellstart stmtlist end tENDTELL {
+	| tTELL expr '\n' tellstart stmtlist begin tENDTELL {
 		inst end;
-		WRITE_UINT32(&end, $end - $tellstart);
+		g_lingo->code1(STOP);
+		WRITE_UINT32(&end, $begin - $tellstart + 1);
 		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
-	| tTELL expr tTO tellstart stmtoneliner end {
+	| tTELL expr tTO tellstart stmtoneliner begin {
 		inst end;
-		WRITE_UINT32(&end, $end - $tellstart);
+		g_lingo->code1(STOP);
+		WRITE_UINT32(&end, $begin - $tellstart + 1);
 		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
 
 tellstart:	  /* empty */				{
@@ -425,11 +427,11 @@ elseifstmt: tELSIF expr jumpifz[then] tTHEN stmtlist jump[end3] {
 		g_lingo->codeLabel($end3); }
 
 jumpifz:	/* nothing */	{
-		g_lingo->code2(LC::c_jumpifz, STOP);
+		g_lingo->code2(LC::c_jumpifz, 0);
 		$$ = g_lingo->_currentScript->size() - 1; }
 
 jump:		/* nothing */	{
-		g_lingo->code2(LC::c_jump, STOP);
+		g_lingo->code2(LC::c_jump, 0);
 		$$ = g_lingo->_currentScript->size() - 1; }
 
 varassign:		/* nothing */	{
@@ -440,8 +442,6 @@ if:	  tIF					{
 		g_lingo->codeLabel(0); } // Mark beginning of the if() statement
 
 begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
-
-end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
 
 stmtlist: 					{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist '\n'
