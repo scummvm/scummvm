@@ -282,6 +282,8 @@ void EoBSeqPlayerCommon::printSubtitle(const char *str, int textmodeX, int textm
 	if (_vm->_flags.lang == Common::ES_ESP) {
 		textmodeX = (20 - ((tmpStr.contains('\r') ? tmpStr.findFirstOf('\r') : tmpStr.size()) >> 1)) << 1;
 		textmodeY--;
+		if (_vm->_configRenderMode == Common::kRenderCGA)
+			col  = 3;
 		// No "typewriter" effect for Spanish
 		mode = 2;
 	}
@@ -479,9 +481,9 @@ void EoBIntroPlayer::openingCredits() {
 		_vm->delay(50 * _vm->_tickLength);
 }
 
-#define printSub(stringArray, index, x, y, col, mode) if (stringArray) printSubtitle(stringArray[index], x, y, col, mode)
-#define displaySubtitle(gfxTitleSrcY, gfxTitleDstY, gfxTitleH, stringArray, index, x, y, col, mode) \
-	printSub(stringArray, index, x, y, col, mode); \
+#define printSub(stringArray, index, x, y, colJP, colES, mode) if (stringArray) printSubtitle(stringArray[index], x, y, _vm->_flags.lang == Common::ES_ESP ? colES : colJP, mode)
+#define displaySubtitle(gfxTitleSrcY, gfxTitleDstY, gfxTitleH, stringArray, index, x, y, colJP, colES, mode) \
+	printSub(stringArray, index, x, y, colJP, colES, mode); \
 	else _screen->copyRegion(0, gfxTitleSrcY, 0, gfxTitleDstY, 320, gfxTitleH, 6, 0, Screen::CR_NO_P_CHECK)
 
 void EoBIntroPlayer::tower() {
@@ -513,8 +515,8 @@ void EoBIntroPlayer::tower() {
 
 	_screen->setCurPage(0);
 
-	displaySubtitle(0, 168, 32, _stringsTower, 0, 17, 22, 0xE1, 2);
-	printSub(_stringsTower, 1, 13, 24, 0xE1, 2);
+	displaySubtitle(0, 168, 32, _stringsTower, 0, 17, 22, 0xE1, 0x0F, 2);
+	printSub(_stringsTower, 1, 13, 24, 0xE1, 0x0F, 2);
 
 	for (int i = 0; i < 64 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 2) {
 		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
@@ -561,7 +563,7 @@ void EoBIntroPlayer::tower() {
 	}
 
 	_screen->fillRect(0, 168, 319, 199, _fillColor1);
-	displaySubtitle(32, 168, 32, _stringsTower, 2, 20, 23, 0xE1, 0);
+	displaySubtitle(32, 168, 32, _stringsTower, 2, 20, 23, 0xE1, 0x0F, 0);
 	_screen->updateScreen();
 	_vm->delay(65 * _vm->_tickLength);
 }
@@ -607,7 +609,7 @@ void EoBIntroPlayer::orb() {
 			_vm->delayUntil(end);
 	}
 
-	displaySubtitle(64, 168, 16, _stringsOrb, 0, 32, 23, 0xE1, 0);
+	displaySubtitle(64, 168, 16, _stringsOrb, 0, 32, 23, 0xE1, 0x08, 0);
 	_screen->updateScreen();
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
@@ -669,7 +671,7 @@ void EoBIntroPlayer::waterdeepEntry() {
 		_vm->delayUntil(end);
 	}
 
-	displaySubtitle(80, 168, 16, _stringsWdEntry, 0, 21, 23, 0xE1, 0);
+	displaySubtitle(80, 168, 16, _stringsWdEntry, 0, 21, 23, 0xE1, 0x08, 0);
 
 	_screen->updateScreen();
 	_vm->delay(50 * _vm->_tickLength);
@@ -816,7 +818,7 @@ void EoBIntroPlayer::king() {
 		_vm->delayUntil(end);
 	}
 
-	displaySubtitle(96, 160, 32, _stringsKing, 0, 10, 24, 0xE1, 0);
+	displaySubtitle(96, 160, 32, _stringsKing, 0, 10, 24, 0xE1, 0x03, 0);
 	_screen->updateScreen();
 	_vm->delay(70 * _vm->_tickLength);
 
@@ -847,7 +849,7 @@ void EoBIntroPlayer::hands() {
 	_screen->drawShape(2, _shapes[1], 151, 4, 0);
 	boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
 
-	displaySubtitle(128, 176, 16, _stringsHands, 0, 24, 23, 0xE1, 0);
+	displaySubtitle(128, 176, 16, _stringsHands, 0, 24, 23, 0xE1, 0x0F, 0);
 
 	_screen->updateScreen();
 	_vm->delay(15 * _vm->_tickLength);
@@ -1025,7 +1027,7 @@ void EoBIntroPlayer::waterdeepExit() {
 	loadAndSetPalette(_filesWdExit[1], 0);
 	_vm->delay(6 * _vm->_tickLength);
 
-	displaySubtitle(144, 184, 16, _stringsWdExit, 0, 24, 23, 0xE1, 0);
+	displaySubtitle(144, 184, 16, _stringsWdExit, 0, 24, 23, 0xE1, 0x0F, 0);
 
 	cx = 0;
 	cy = 136;
@@ -1098,7 +1100,7 @@ void EoBIntroPlayer::tunnel() {
 		_vm->delayUntil(end);
 	}
 
-	displaySubtitle(160, 184, 16, _stringsTunnel, 0, 27, 23, 0xE1, 0);
+	displaySubtitle(160, 184, 16, _stringsTunnel, 0, 27, 23, 0xE1, 0x0F, 0);
 	_screen->updateScreen();
 
 	_vm->delay(18 * _vm->_tickLength);
@@ -1168,7 +1170,7 @@ void EoBIntroPlayer::tunnel() {
 	_screen->copyRegion(0, 120, 80, 30, 160, 64, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(160, 120, 80, 94, 160, 64, 4, 0, Screen::CR_NO_P_CHECK);
 
-	displaySubtitle(176, 184, 16, _stringsTunnel, 1, 27, 23, 0xE1, 0);
+	displaySubtitle(176, 184, 16, _stringsTunnel, 1, 27, 23, 0xE1, 0x08, 0);
 
 	_screen->setCurPage(0);
 	_screen->updateScreen();
