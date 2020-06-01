@@ -135,7 +135,7 @@ Common::Error DirectorEngine::run() {
 	_soundManager = nullptr;
 
 	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
-							| Graphics::kWMModeManualDrawWidgets);
+																			 | Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen);
 	_wm->setEngine(this);
 
 	_lingo = new Lingo(this);
