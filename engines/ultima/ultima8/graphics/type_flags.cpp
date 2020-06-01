@@ -136,7 +136,7 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			si._unknown = ((data[4] & 0xF0) << 24) & (data[5] << 16) & (data[7] << 8) & data[8];
+			si._unknown = ((data[4] & 0xF0) << 24) | (data[5] << 16) | (data[7] << 8) | data[8];
 
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
 			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
