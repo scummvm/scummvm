@@ -58,11 +58,6 @@ static bool npot_supported = false;
 OpenGL::Shader * g_box_shader;
 GLuint g_verticesVBO;
 
-static inline GLfixed xdiv(int numerator, int denominator) {
-	assert(numerator < (1 << 16));
-	return (numerator << 16) / denominator;
-}
-
 template<class T>
 static T nextHigher2(T k) {
 	if (k == 0)

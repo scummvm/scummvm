@@ -25,6 +25,7 @@
 
 #if defined(__ANDROID__)
 
+#include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "audio/mixer_intern.h"
@@ -39,6 +40,7 @@
 
 #include "backends/platform/android/events.h"
 #include "backends/platform/android/texture.h"
+#include "backends/platform/android/graphics.h"
 #include "backends/platform/android/touchcontrols.h"
 
 #include <pthread.h>
@@ -98,40 +100,13 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
-class OSystem_Android : public ModularBackend, public PaletteManager, Common::EventSource {
+class OSystem_Android : public ModularBackend, Common::EventSource {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
 	int _audio_buffer_size;
 
 	int _screen_changeid;
-
-	bool _force_redraw;
-
-	bool _opengl;
-
-	// Game layer
-	GLESBaseTexture *_game_texture;
-	Graphics::PixelBuffer _game_pbuf;
-	OpenGL::FrameBuffer *_frame_buffer;
-
-	// Overlay layer
-	GLES4444Texture *_overlay_texture;
-	bool _show_overlay;
-
-	// Mouse layer
-	GLESBaseTexture *_mouse_texture;
-	GLESBaseTexture *_mouse_texture_palette;
-	GLES5551Texture *_mouse_texture_rgb;
-	Common::Point _mouse_hotspot;
-	uint32 _mouse_keycolor;
-	int _mouse_targetscale;
-	bool _show_mouse;
-	bool _use_mouse_palette;
-
-	int _graphicsMode;
-	bool _fullscreen;
-	bool _ar_correction;
 
 	pthread_t _main_thread;
 
@@ -150,19 +125,7 @@ private:
 
 	Common::String getSystemProperty(const char *name) const;
 
-	void initSurface();
-	void deinitSurface();
-	void initViewport();
-
-	void initOverlay();
-
-#ifdef USE_RGB_COLOR
-	void initTexture(GLESBaseTexture **texture, uint width, uint height,
-						const Graphics::PixelFormat *format);
-#endif
-
 	void setupKeymapper();
-	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 
 protected:
 	virtual Common::EventSource *getDefaultEventSource() { return this; }
@@ -177,35 +140,8 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
-
-#ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
-#endif
-
-	virtual void initSize(uint width, uint height,
-							const Graphics::PixelFormat *format);
-
-	enum FixupType {
-		kClear = 0,		// glClear
-		kClearSwap,		// glClear + swapBuffers
-		kClearUpdate	// glClear + updateScreen
-	};
-
-	void clearScreen(FixupType type, byte count = 1);
-
-	void updateScreenRect();
-	virtual int getScreenChangeID() const;
-
-	virtual int16 getHeight();
-	virtual int16 getWidth();
-
-	virtual PaletteManager *getPaletteManager() {
-		return this;
+	virtual PaletteManager *getPaletteManager() override {
+		return dynamic_cast<AndroidGraphicsManager *>(_graphicsManager);
 	}
 
 public:
@@ -228,46 +164,12 @@ private:
 	int _fingersDown;
 
 	void clipMouse(Common::Point &p);
-	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true, bool touchpadMode = false);
-	void updateEventScale();
+	void scaleMouse(Common::Point &p, int x, int y, bool touchpadMode = false);
 	void disableCursorPalette();
 
 	TouchControls _touchControls;
 
-	void drawVirtControls();
-
-protected:
-	// PaletteManager API
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num) const;
-
 public:
-	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
-									int w, int h);
-	virtual void updateScreen();
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
-	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
-	virtual void fillScreen(uint32 col);
-
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void clearOverlay();
-	virtual void grabOverlay(void *buf, int pitch);
-	virtual void copyRectToOverlay(const void *buf, int pitch,
-									int x, int y, int w, int h);
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
-	virtual Graphics::PixelFormat getOverlayFormat() const;
-
-	virtual bool showMouse(bool visible);
-
-	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
-								int hotspotY, uint32 keycolor,
-								bool dontScale,
-								const Graphics::PixelFormat *format);
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual void pushEvent(const Common::Event &event);
 	virtual void pushKeyPressEvent(Common::Event &event);
@@ -278,7 +180,6 @@ public:
 	virtual void quit();
 
 	virtual void setWindowCaption(const char *caption);
-	virtual void displayMessageOnOSD(const char *msg);
 	virtual void showVirtualKeyboard(bool enable);
 
 	virtual Audio::Mixer *getMixer();
@@ -295,12 +196,8 @@ public:
 
 	// ResidualVM specific method
 	virtual void launcherInitSize(uint w, uint h);
-	bool lockMouse(bool lock);
-	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
-		setupScreen(screenW, screenH, fullscreen, accel3d, true);
-	}
-	void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d, bool isGame);
-	Graphics::PixelBuffer getScreenPixelBuffer();
+	void updateEventScale(const GLESBaseTexture *tex);
+	TouchControls* getTouchControls() { return &_touchControls; }
 };
 
 #endif

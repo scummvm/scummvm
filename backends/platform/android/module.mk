@@ -5,7 +5,7 @@ MODULE_OBJS := \
 	texture.o \
 	asset-archive.o \
 	android.o \
-	gfx.o \
+	graphics.o \
 	events.o \
 	snprintf.o \
 	touchcontrols.o
