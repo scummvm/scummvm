@@ -65,6 +65,7 @@
 #include "resources/hof_dos_german.h"
 #include "resources/hof_dos_italian.h"
 #include "resources/hof_dos_russian.h"
+#include "resources/hof_dos_spanish.h"
 
 #include "resources/hof_dos_cddemo.h"
 #include "resources/hof_dos_cddemo_english.h"
@@ -875,6 +876,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kNoSpecial, DE_DEU, &k2SeqplayStringsDOSGermanProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kNoSpecial, IT_ITA, &k2SeqplayStringsDOSItalianProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kNoSpecial, RU_RUS, &k2SeqplayStringsDOSRussianProvider },
+	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kNoSpecial, ES_ESP, &k2SeqplayStringsDOSSpanishProvider },
 	{ k2SeqplayPakFiles, kKyra2, kPlatformDOS, kTalkieVersion, UNK_LANG, &k2SeqplayPakFilesDOSCDProvider },
 	{ k2SeqplayCredits, kKyra2, kPlatformDOS, kTalkieVersion, UNK_LANG, &k2SeqplayCreditsDOSCDProvider },
 	{ k2SeqplayCreditsSpecial, kKyra2, kPlatformDOS, kTalkieVersion, UNK_LANG, &k2SeqplayCreditsSpecialDOSCDProvider },
