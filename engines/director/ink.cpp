@@ -138,7 +138,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 		byte srcColor = *src;
 
 		for (int j = 0; j < drawRect.width(); j++) {
-			if (_sprites[spriteId]->_cast->_type == kCastShape)
+			if (!_sprites[spriteId]->_cast || _sprites[spriteId]->_cast->_type == kCastShape)
 				srcColor = 0x0;
 			else
 				srcColor = *src;
@@ -147,7 +147,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 				// TODO: This entire reverse colour attempt needs a lot more testing on
 				// a lot more colour depths.
 				if (srcColor != skipColor) {
-					if (_sprites[targetSprite]->_cast->_type != kCastBitmap) {
+					if (!_sprites[targetSprite]->_cast || _sprites[targetSprite]->_cast->_type != kCastBitmap) {
 						if (*dst == 0 || *dst == 255) {
 							*dst = _vm->transformColor(*dst);
 						} else if (srcColor == 255 || srcColor == 0) {
