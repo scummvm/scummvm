@@ -74,20 +74,20 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      _("Ok")       , nullptr, kOkCmd);
 
 	if (g_gui.useRTL()) {
-		/** If using RTL, swap out the odd rows, as they will be flipped when drawing. (Swapping the commands and display data)
-			We flip them back to orignal, because the keyboard layout stays the same in LTR & RTL,
-			but the rest, like okButton, cancel, etc are all flipped.
+		/** If using RTL, swap the internal name of odd rows, to be flipped again when drawing.
+			We flip them back to orignal, because the keyboard layout stays the same in LTR & RTL.
+			The rest, like okButton, cancel, etc are all flipped.
 		*/
 
 		// Row 1
-		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", "3  def", nullptr, kBut3Cmd);
-		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", "6  mno", nullptr, kBut6Cmd);
-		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", "9  wxyz", nullptr, kBut9Cmd);
+		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button3", "1  `-.&", nullptr, kBut1Cmd);
+		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button6", "4  ghi", nullptr, kBut4Cmd);
+		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button9", "7  pqrs", nullptr, kBut7Cmd);
 
 		// Row 3
-		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", "1  `-.&", nullptr, kBut1Cmd);
-		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", "4  ghi", nullptr, kBut4Cmd);
-		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", "7  pqrs", nullptr, kBut7Cmd);
+		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button1", "3  def", nullptr, kBut3Cmd);
+		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button4", "6  mno", nullptr, kBut6Cmd);
+		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button7", "9  wxyz", nullptr, kBut9Cmd);
 
 		// Middle Row - Stays the same
 		_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", "2  abc", nullptr, kBut2Cmd);
