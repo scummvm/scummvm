@@ -155,6 +155,7 @@ namespace LC {
 	void cb_objectfieldassign();
 	void cb_objectfieldpush();
 	void cb_objectpush();
+	void cb_tellcall();
 	void cb_theassign();
 	void cb_theassign2();
 	void cb_thepush();

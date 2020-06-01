@@ -95,6 +95,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x60, LC::cb_theassign2,	"b" },
 	{ 0x61, LC::cb_objectfieldpush, "b" },
 	{ 0x62, LC::cb_objectfieldassign, "b" },
+	{ 0x63, LC::cb_tellcall,	"b" },
 	{ 0x64, LC::c_stackpeek, 	"b" },
 	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "b" },
@@ -467,6 +468,23 @@ void LC::cb_objectpush() {
 	Datum result;
 	result.type = VOID;
 	g_lingo->push(result);
+}
+
+void LC::cb_tellcall() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->getName(nameId);
+	warning("STUB: cb_tellcall(%s)", name.c_str());
+
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
+		//LC::call(name, nargs.u.i);
+		for (int i = 0; i < nargs.u.i; i++) {
+			g_lingo->pop();
+		}
+	} else {
+		warning("cb_tellcall: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	}
+
 }
 
 void LC::cb_theassign() {
