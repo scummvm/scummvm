@@ -397,7 +397,7 @@ void MacWindowManager::draw() {
 	}
 
 	// Menu is drawn on top of everything and always
-	if (_menu)
+	if (_menu && !(_mode & kWMModeFullscreen))
 		_menu->draw(_screen, _fullRefresh);
 
 	_fullRefresh = false;
