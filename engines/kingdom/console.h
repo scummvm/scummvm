@@ -34,8 +34,6 @@ private:
 	KingdomGame *_vm;
 
 public:
-	bool _allowSkip;
-
 	explicit Console(Kingdom::KingdomGame *vm);
 	virtual ~Console(void) {}
 
