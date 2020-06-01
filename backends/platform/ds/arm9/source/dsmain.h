@@ -117,9 +117,6 @@ void 	setShakePos(int shakeXOffset, int shakeYOffset);
 // Reports
 void 	memoryReport();
 
-// GBAMP
-bool 	isGBAMPAvailable();
-
 // Sleep (I'd like some of that right now)
 void 	checkSleepMode();
 

@@ -31,8 +31,6 @@
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "nds.h"
-#include "gbampsave.h"
-#include "backends/saves/default/default-saves.h"
 #include "audio/mixer_intern.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"
@@ -46,7 +44,6 @@ protected:
 	Common::Event eventQueue[96];
 	int queuePos;
 
-	GBAMPSaveFileManager mpSaveManager;
 	Audio::MixerImpl *_mixer;
 	Graphics::Surface _framebuffer;
 	bool _frameBufferExists;
@@ -125,17 +122,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-
-	// FIXME/TODO: The CD API as follows is *obsolete*
-	// and should be replaced by an AudioCDManager subclass,
-	// see backends/audiocd/ and common/system.h
-	virtual bool openCD();
-	virtual void closeCD() {}
-	virtual bool pollCD();
-	virtual void playCD(int track, int num_loops, int start_frame, int duration);
-	virtual void stopCD();
-	virtual void updateCD();
-
 	virtual void quit();
 
 	void addEvent(const Common::Event& e);
@@ -164,8 +150,6 @@ public:
 	u16 getDSCursorPaletteEntry(u32 entry) const { return !_disableCursorPalette? _cursorPalette[entry]: _palette[entry]; }
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-
-	virtual FilesystemFactory *getFilesystemFactory();
 
 	void refreshCursor();
 

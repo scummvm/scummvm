@@ -40,12 +40,12 @@
 #include "nds/registers_alt.h"
 #include "common/config-manager.h"
 #include "common/str.h"
-#include "cdaudio.h"
 #include "graphics/surface.h"
 #include "touchkeyboard.h"
-#include "backends/fs/ds/ds-fs-factory.h"
+#include "backends/fs/posix/posix-fs-factory.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
 #ifdef ENABLE_AGI
@@ -95,16 +95,12 @@ OSystem_DS::OSystem_DS()
 	_instance = this;
 //	_mixer = NULL;
 	//_frameBufferExists = false;
+	_fsFactory = new POSIXFilesystemFactory();
 }
 
 OSystem_DS::~OSystem_DS() {
 	delete _mixer;
 	_mixer = 0;
-
-	// If _savefileManager is not 0, then it points to the OSystem_DS
-	// member variable mpSaveManager. Hence we set _savefileManager to
-	// 0, to prevent the OSystem destructor from trying to delete it.
-	_savefileManager = 0;
 }
 
 int OSystem_DS::timerHandler(int t) {
@@ -117,10 +113,7 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	if (DS::isGBAMPAvailable()) {
-		_savefileManager = &mpSaveManager;
-	}
-
+	_savefileManager = new DefaultSaveFileManager();
 	_timerManager = new DefaultTimerManager();
     DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
@@ -132,11 +125,6 @@ void OSystem_DS::initBackend() {
 
 	_mixer = new Audio::MixerImpl(DS::getSoundFrequency());
 	_mixer->setReady(true);
-
-	/* TODO/FIXME: The NDS should use a custom AudioCD manager instance!
-	if (!_audiocdManager)
-		_audiocdManager = new DSAudioCDManager();
-	*/
 
 	EventsBaseBackend::initBackend();
 }
@@ -649,7 +637,6 @@ uint32 OSystem_DS::getMillis(bool skipRecord) {
 void OSystem_DS::delayMillis(uint msecs) {
 	int st = getMillis();
 	DS::addEventsToQueue();
-	DS::CD::update();
 
 	DS::doSoundCallback();
 	while (st + msecs >= getMillis()) {
@@ -679,10 +666,6 @@ void OSystem_DS::getTimeAndDate(TimeDate &td) const {
 	td.tm_wday = t.tm_wday;
 }
 
-FilesystemFactory *OSystem_DS::getFilesystemFactory() {
-	return &DSFilesystemFactory::instance();
-}
-
 OSystem::MutexRef OSystem_DS::createMutex(void) {
 	return NULL;
 }
@@ -694,29 +677,6 @@ void OSystem_DS::unlockMutex(MutexRef mutex) {
 }
 
 void OSystem_DS::deleteMutex(MutexRef mutex) {
-}
-
-// FIXME/TODO: The CD API as follows is *obsolete*
-// and should be replaced by an AudioCDManager subclass,
-// see backends/audiocd/ and common/system.h
-
-bool OSystem_DS::openCD() {
-	return DS::CD::checkCD();
-}
-
-bool OSystem_DS::pollCD() {
-	return DS::CD::isPlaying();
-}
-
-void OSystem_DS::playCD(int track, int num_loops, int start_frame, int duration) {
-	DS::CD::playTrack(track, num_loops, start_frame, duration);
-}
-
-void OSystem_DS::stopCD() {
-	DS::CD::stopTrack();
-}
-
-void OSystem_DS::updateCD() {
 }
 
 void OSystem_DS::quit() {
@@ -857,8 +817,6 @@ u16 OSystem_DS::applyGamma(u16 color) {
 }
 
 void OSystem_DS::engineDone() {
-	// Scumm games appear not to stop their CD audio, so I stop the CD here.
-	stopCD();
 	DS::exitGame();
 
 #ifdef ENABLE_AGI

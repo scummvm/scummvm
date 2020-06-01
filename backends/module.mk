@@ -284,8 +284,9 @@ endif
 
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
-	fs/ds/ds-fs.o \
-	fs/ds/ds-fs-factory.o \
+	fs/posix/posix-fs.o \
+	fs/posix/posix-fs-factory.o \
+	fs/posix/posix-iostream.o \
 	plugins/ds/ds-provider.o
 endif
 

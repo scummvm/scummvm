@@ -106,12 +106,8 @@ void OSystem::initBackend() {
 	if (!getTimerManager())
 		error("Backend failed to instantiate timer manager");
 
-	// TODO: We currently don't check _savefileManager, because at least
-	// on the Nintendo DS, it is possible that none is set. That should
-	// probably be treated as "saving is not possible". Or else the NDS
-	// port needs to be changed to always set a _savefileManager
-// 	if (!_savefileManager)
-// 		error("Backend failed to instantiate savefile manager");
+	if (!_savefileManager)
+		error("Backend failed to instantiate savefile manager");
 
 	// TODO: We currently don't check _fsFactory because not all ports
 	// set it.
