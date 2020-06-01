@@ -3015,6 +3015,8 @@ EOF
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/nds/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/armv5te/lib"
 		append_var LIBS "-specs=ds_arm9.specs"
+		append_var LIBS "-lfilesystem"
+		append_var LIBS "-lfat"
 		append_var LIBS "-lnds9"
 		;;
 	freebsd* | openbsd*)
@@ -3401,7 +3403,6 @@ if test -n "$_host"; then
 			;;
 		ds)
 			append_var DEFINES "-DDISABLE_COMMAND_LINE"
-			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_SID"
