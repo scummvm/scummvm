@@ -389,20 +389,10 @@ stmt: stmtoneliner
 	| tWHEN ID tTHEN expr {
 		g_lingo->code1(LC::c_whencode);
 		g_lingo->codeString($ID->c_str()); }
-	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL {
-		inst end;
-		g_lingo->code1(STOP);
-		WRITE_UINT32(&end, $lbl - $tellstart + 1);
-		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
-	| tTELL expr tTO tellstart stmtoneliner lbl {
-		inst end;
-		g_lingo->code1(STOP);
-		WRITE_UINT32(&end, $lbl - $tellstart + 1);
-		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
+	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL { g_lingo->code1(LC::c_telldone); }
+	| tTELL expr tTO tellstart stmtoneliner lbl { g_lingo->code1(LC::c_telldone); }
 
-tellstart:	  /* empty */				{
-		$$ = g_lingo->code1(LC::c_tellcode);
-		g_lingo->code1(STOP); }
+tellstart:	  /* empty */	{ g_lingo->code1(LC::c_tell); }
 
 ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist lbl[end3] tENDIF {
 		inst else1 = 0, end3 = 0;
