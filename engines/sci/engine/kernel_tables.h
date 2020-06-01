@@ -980,7 +980,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
 	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY, SIGFOR_ALL, "ii",                  NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kFont_subops,    NULL },
-	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  kBitmap_subops,  NULL },
+	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "i([.!]*)",              kBitmap_subops,  NULL },
 	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiii(iiiii)",          NULL,            NULL },
 	// The first argument is a ScreenItem instance ID that is created by the
 	// engine, not the VM; as a result, in ScummVM, this argument looks like
