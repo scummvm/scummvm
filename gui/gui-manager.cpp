@@ -70,7 +70,6 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	_launched = false;
 
 	_useRTL = false;
-	_isAnotherDialogOverlayed = false;
 
 	_topDialogLeftPadding = 0;
 	_topDialogRightPadding = 0;

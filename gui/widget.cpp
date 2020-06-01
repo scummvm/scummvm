@@ -226,7 +226,7 @@ bool Widget::isVisible() const {
 	return !(_flags & WIDGET_INVISIBLE);
 }
 
-bool Widget::useRTL() const{
+bool Widget::useRTL() const {
 	return _useRTL;
 }
 
