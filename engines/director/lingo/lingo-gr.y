@@ -99,6 +99,17 @@ static void endDef() {
 	inNone();
 	g_lingo->_ignoreMe = false;
 
+	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = g_lingo->_methodVars->begin(); i != g_lingo->_methodVars->end(); ++i) {
+		if (i->_value == kVarInstance) {
+			if (g_lingo->_currentFactory != nullptr) {
+				g_lingo->_currentFactory->properties[i->_key] = Symbol();
+				g_lingo->_currentFactory->properties[i->_key].name = new Common::String(i->_key);
+			} else {
+				warning("Instance var '%s' defined outside factory", i->_key.c_str());
+			}
+		}
+	}
+
 	delete g_lingo->_methodVars;
 	g_lingo->_methodVars = g_lingo->_methodVarsStash;
 	g_lingo->_methodVarsStash = nullptr;
@@ -590,13 +601,9 @@ propertylist: ID				{
 		delete $ID; }
 
 instancelist: ID				{
-		g_lingo->code1(LC::c_instance);
-		g_lingo->codeString($ID->c_str());
 		mVar($ID, kVarInstance);
 		delete $ID; }
 	| instancelist ',' ID		{
-		g_lingo->code1(LC::c_instance);
-		g_lingo->codeString($ID->c_str());
 		mVar($ID, kVarInstance);
 		delete $ID; }
 
@@ -668,7 +675,7 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 //
 // See also:
 //   on keyword
-defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
+defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
 			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
 		g_lingo->codeDefine(*$ID, $lbl, $argdef);
@@ -678,7 +685,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
 	| tMETHOD { startDef(); }
 			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1, &g_lingo->_currentFactory);
+		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1, g_lingo->_currentFactory);
 		endDef();
 		delete $tMETHOD; }
 	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
@@ -696,7 +703,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
 		delete $on; }
 
 on:  tON { startDef(); } ID 	{
-		$$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
+		$$ = $ID; g_lingo->_currentFactory = NULL; g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
 	| ID						{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = 1; delete $ID; }

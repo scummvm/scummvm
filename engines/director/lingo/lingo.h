@@ -42,6 +42,7 @@ struct TheEntity;
 struct TheEntityField;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
+struct Object;
 struct ScriptContext;
 class DirectorEngine;
 class Frame;
@@ -87,6 +88,7 @@ struct Symbol {	/* symbol table entry */
 		Common::String	*s;	/* STRING */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr;
+		Object *obj;
 	} u;
 
 	int *refCount;
@@ -117,6 +119,7 @@ struct Datum {	/* interpreter stack type */
 		Common::String *s;	/* STRING, VAR, OBJECT */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr; /* PARRAY */
+		Object *obj;
 	} u;
 
 	int *refCount;
@@ -235,6 +238,25 @@ typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Comm
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
+enum ObjectType {
+    kFactoryObj = 0,
+    kScriptObj = 1
+};
+
+struct Object {
+	Common::String *name;
+    ObjectType type;
+
+    Object *prototype;
+    SymbolHash properties;
+    SymbolHash methods;
+    int inheritanceLevel; // 1 for original object
+    ScriptContext *scriptContext;
+
+    // used only for factories
+    DatumArray *objArray;
+};
+
 struct CFrame {	/* proc/func call stack frame */
 	Symbol	sp;	/* symbol table entry */
 	int		retpc;	/* where to resume after return */
@@ -330,8 +352,8 @@ public:
 	void pushContext();
 	void popContext();
 	void cleanLocalVars();
-	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr);
-	Symbol codeDefine(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1, bool removeCode = true);
+	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr, Object *obj = nullptr);
+	Symbol codeDefine(Common::String &s, int start, int nargs, Object *obj = nullptr, int end = -1, bool removeCode = true);
 	void processIf(int toplabel, int endlabel);
 	int castIdFetch(Datum &var);
 	void varCreate(const Common::String &name, bool global);
@@ -361,7 +383,7 @@ public:
 	void codeArg(Common::String *s);
 	int codeSetImmediate(bool state);
 	int codeFunc(Common::String *s, int numpar);
-	int codeMe(Common::String *method, int numpar);
+	// int codeMe(Common::String *method, int numpar);
 	int codeFloat(double f);
 	void codeFactory(Common::String &s);
 
@@ -461,7 +483,7 @@ public:
 	bool _hadError;
 
 	bool _inFactory;
-	Common::String _currentFactory;
+	Object *_currentFactory;
 	bool _inCond;
 
 	bool _exitRepeat;

@@ -619,9 +619,21 @@ Common::String Datum::asString(bool printonly) {
 		break;
 	case OBJECT:
 		if (!printonly) {
-			s = Common::String::format("#%s", u.s->c_str());
+			s = Common::String::format("#%s", u.obj->name->c_str());
 		} else {
-			s = Common::String::format("object: #%s", u.s->c_str());
+			s = Common::String::format("object: #%s properties: [", u.obj->name->c_str());
+			for (SymbolHash::iterator i = u.obj->properties.begin(); i != u.obj->properties.end(); ++i) {
+				if (i != u.obj->properties.begin())
+					s += ", ";
+				s += (*i)._key.c_str();
+			}
+			s += "] methods: [";
+			for (SymbolHash::iterator i = u.obj->methods.begin(); i != u.obj->methods.end(); ++i) {
+				if (i != u.obj->methods.begin())
+					s += ", ";
+				s += (*i)._key.c_str();
+			}
+			s += "]";
 		}
 		break;
 	case VOID:
