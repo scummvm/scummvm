@@ -48,6 +48,7 @@ Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkA
 Comprehend::~Comprehend() {
 	delete _drawSurface;
 	delete _game;
+	SearchMan.remove("Pics");	// This also deletes it
 
 	g_comprehend = nullptr;
 }
@@ -80,7 +81,7 @@ void Comprehend::initialize() {
 	// the room and item graphics as as individual files
 	_drawSurface = new DrawSurface();
 	_pics = new Pics();
-	SearchMan.add("Pics", _pics, 99, false);
+	SearchMan.add("Pics", _pics, 99, true);
 }
 
 void Comprehend::deinitialize() {
