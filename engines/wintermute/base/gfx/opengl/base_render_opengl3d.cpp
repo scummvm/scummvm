@@ -39,10 +39,12 @@ BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
 }
 
 BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
+	warning("BaseRenderOpenGL3D::takeScreenshot not yet implemented");
 	return nullptr;
 }
 
 bool BaseRenderOpenGL3D::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
+	warning("BaseRenderOpenGL3D::saveScreenshot not yet implemented");
 	return true;
 }
 
@@ -57,10 +59,12 @@ bool BaseRenderOpenGL3D::setViewport(Rect32 *rect) {
 }
 
 Rect32 BaseRenderOpenGL3D::getViewPort() {
+	warning("BaseRenderOpenGL3D::getViewPort not yet implemented");
 	return Rect32(0, 0, 0, 0);
 }
 
 void BaseRenderOpenGL3D::setWindowed(bool windowed) {
+	warning("BaseRenderOpenGL3D::setWindowed not yet implemented");
 }
 
 Graphics::PixelFormat BaseRenderOpenGL3D::getPixelFormat() const {
@@ -126,10 +130,12 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 }
 
 bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+	warning("BaseRenderOpenGL3D::drawLine not yet implemented");
 	return true;
 }
 
 bool BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
+	warning("BaseRenderOpenGL3D::drawRect not yet implemented");
 	return true;
 }
 
@@ -162,6 +168,7 @@ bool BaseRenderOpenGL3D::setProjection2D() {
 }
 
 bool BaseRenderOpenGL3D::windowedBlt() {
+	warning("BaseRenderOpenGL3D::windowedBlt not yet implemented");
 	return true;
 }
 
@@ -172,6 +179,7 @@ bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
 }
 
 void Wintermute::BaseRenderOpenGL3D::onWindowChange() {
+	warning("BaseRenderOpenGL3D::onWindowChange not yet implemented");
 }
 
 bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
@@ -193,10 +201,12 @@ bool Wintermute::BaseRenderOpenGL3D::flip() {
 }
 
 bool BaseRenderOpenGL3D::indicatorFlip() {
+	warning("BaseRenderOpenGL3D::indicatorFlip not yet implemented");
 	return true;
 }
 
 bool BaseRenderOpenGL3D::forcedFlip() {
+	warning("BaseRenderOpenGL3D::forcedFlip not yet implemented");
 	return true;
 }
 
@@ -247,10 +257,12 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 }
 
 bool BaseRenderOpenGL3D::setup3D(bool force) {
+	warning("BaseRenderOpenGL3D::setup3D not yet implemented");
 	return true;
 }
 
 bool BaseRenderOpenGL3D::setupLines() {
+	warning("BaseRenderOpenGL3D::setupLines not yet implemented");
 	return true;
 }
 
@@ -259,6 +271,7 @@ BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {
 }
 
 void BaseRenderOpenGL3D::endSaveLoad() {
+	warning("BaseRenderOpenGL3D::endLoad not yet implemented");
 }
 
 bool BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture &tex, const Wintermute::Rect32 &rect,
@@ -291,9 +304,11 @@ bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermu
 
 	// to be implemented
 	if (mirrorX) {
+		warning("BaseRenderOpenGL3D::SpriteEx x mirroring is not yet implemented");
 	}
 
 	if (mirrorY) {
+		warning("BaseRenderOpenGL3D::SpriteEx y mirroring is not yet implemented");
 	}
 
 	// provide space for 3d position coords, 2d texture coords and a 32 bit color value

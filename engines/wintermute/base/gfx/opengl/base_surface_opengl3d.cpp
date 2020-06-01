@@ -33,18 +33,22 @@ BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *ren
 }
 
 bool BaseSurfaceOpenGL3D::invalidate() {
+	warning("BaseSurfaceOpenGL3D::invalidate not yet implemented");
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayHalfTrans(int x, int y, Rect32 rect) {
+	warning("BaseSurfaceOpenGL3D::displayHalfTrans not yet implemented");
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
+	warning("BaseSurfaceOpenGL3D::isTransparentAt not yet implemented");
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	warning("BaseSurfaceOpenGL3D::displayTransZoom not yet implemented");
 	return true;
 }
 
@@ -54,6 +58,7 @@ bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, 
 }
 
 bool BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+	warning("BaseSurfaceOpenGL3D::displayTransOffset not yet implemented");
 	return true;
 }
 
@@ -63,10 +68,12 @@ bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBl
 }
 
 bool BaseSurfaceOpenGL3D::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
+	warning("BaseSurfaceOpenGL3D::displayTransform not yet implemented");
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	warning("BaseSurfaceOpenGL3D::displayZoom not yet implemented");
 	return true;
 }
 
@@ -77,6 +84,7 @@ bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX,
 }
 
 bool BaseSurfaceOpenGL3D::restore() {
+	warning("BaseSurfaceOpenGL3D::restore not yet implemented");
 	return true;
 }
 
@@ -145,14 +153,17 @@ bool BaseSurfaceOpenGL3D::create(int width, int height) {
 }
 
 bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, int a) {
+	warning("BaseSurfaceOpenGL3D::putPixel not yet implemented");
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
+	warning("BaseSurfaceOpenGL3D::getPixel not yet implemented");
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
+	warning("BaseSurfaceOpenGL3D::comparePixel not yet implemented");
 	return true;
 }
 
