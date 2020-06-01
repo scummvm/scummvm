@@ -186,6 +186,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	initFuncs();
 	initBytecode();
 	initTheEntities();
+	initMethods();
 
 	warning("Lingo Inited");
 }
