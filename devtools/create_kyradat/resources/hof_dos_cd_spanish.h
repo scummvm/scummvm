@@ -15,7 +15,7 @@ static const char *const k2SeqplayStringsDOSCDSpanish[104] = {
 	"Estos arandanos deberian bastar parar abrir un portal al centro del mundo",
 	" DUMMY STRING... ",
 	" DUMMY STRING... ",
-	"Hey! Me han robdado todo mi equipo!",
+	"Hey! Me han robado todo mi equipo!",
 	" DUMMY STRING... ",
 	"Si piensan que voy a ir caminando hasta ahí estan locos!",
 	" DUMMY STRING... ",
