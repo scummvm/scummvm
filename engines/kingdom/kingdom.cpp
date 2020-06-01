@@ -455,12 +455,10 @@ void KingdomGame::setMouse() {
 }
 
 void KingdomGame::initMPlayer() {
-	debug("STUB: InitMPlayer");
+	// No implementation for ScummVM, everything is in the player class' constructor
 }
 
 void KingdomGame::playMovie(int movieNum) {
-	debug("STUB: PlayMovie");
-
 	if (movieNum == 1 || movieNum == 3 || movieNum == 54 || movieNum == 198 || movieNum == 200 || movieNum == 206)
 		_fullScreen = true;
 	else
@@ -489,22 +487,8 @@ void KingdomGame::playMovie(int movieNum) {
 	_keyActive = false;
 	const Common::String path = Common::String::format("King%.3d.mve", movieNum);
 
-	warning("%s", path.c_str());
-
 	// Check if the file is available. If not the original does the following: _ATimer = 55, display of error with a check of timer, exit
 	// That can be replaced by an error()
-
-	/* Original behavior. To be uncommented when the codec is available
-	_track = _sound;
-	_vidState = 0;
-
-	if (_fullScreen)
-		MVE_RunMovie(fileHandle, 0, 0, _track);
-	else
-		MVE_RunMovie(fileHandle, 6, 17, _track);
-	
-	MVE_ReleaseMem();
-	*/
 
 	int x = _fullScreen ? 0 : 4;
 	int y = _fullScreen ? 0 : 17;
@@ -557,9 +541,7 @@ void KingdomGame::playMovie(int movieNum) {
 	delete decoder;
 
 	// This is hidden somewhere in RunMovieCtl callback...
-	// To be removed when MVE_RunMovie is implemented
 	showPic(300 + _pMovie);
-	//
 
 	if (!_fullScreen) {
 		_treeRightSta = 1;

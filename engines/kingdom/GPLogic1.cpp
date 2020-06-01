@@ -81,7 +81,7 @@ void Logic::GPL1_11() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -137,7 +137,7 @@ void Logic::GPL1_31() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -184,7 +184,7 @@ void Logic::GPL1_41() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -293,7 +293,7 @@ void Logic::GPL1_51() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -350,7 +350,7 @@ void Logic::GPL1_53() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -415,7 +415,7 @@ void Logic::GPL1_71() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -521,7 +521,7 @@ void Logic::GPL1_81() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -581,7 +581,7 @@ void Logic::GPL1_91() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -629,7 +629,7 @@ void Logic::GPL1_101() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -665,7 +665,7 @@ void Logic::GPL1_111() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -722,7 +722,7 @@ void Logic::GPL1_121() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -769,7 +769,7 @@ void Logic::GPL1_141() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -803,7 +803,7 @@ void Logic::GPL1_151() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -921,7 +921,7 @@ void Logic::GPL1_161() {
 		break;	
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -975,7 +975,7 @@ void Logic::GPL1_171() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -1084,7 +1084,7 @@ void Logic::GPL1_181() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -1135,7 +1135,7 @@ void Logic::GPL1_201() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -1254,7 +1254,7 @@ void Logic::GPL1_211() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -1338,7 +1338,7 @@ void Logic::GPL1_221() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
@@ -1429,7 +1429,7 @@ void Logic::GPL1_241() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 	_vm->_userInput = 0;

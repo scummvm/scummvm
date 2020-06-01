@@ -348,7 +348,7 @@ void Logic::GPL4_994() {
 		break;
 	default:
 		if (_vm->_userInput)
-			debug("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
+			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
 	}
 }
