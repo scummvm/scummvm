@@ -350,6 +350,7 @@ void Pics::drawPicture(int pictureNum) const {
 		ctx._drawSurface->clearScreen(G_COLOR_WHITE);
 
 	} else if (pictureNum >= ITEMS_OFFSET) {
+		pictureNum -= ITEMS_OFFSET;
 		_items[pictureNum / IMAGES_PER_FILE].draw(
 		    pictureNum % IMAGES_PER_FILE, &ctx);
 
