@@ -145,7 +145,6 @@ protected:
 	bool		_useStdCursor;
 
 	bool		_useRTL;
-	bool		_isAnotherDialogOverlayed;
 
 	int			_topDialogLeftPadding;
 	int			_topDialogRightPadding;
