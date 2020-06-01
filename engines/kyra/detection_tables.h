@@ -540,6 +540,19 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra2",
 			"Extracted",
+			AD_ENTRY1("FATE.PAK", "7c6c82f9beac616d2f4accf65c448162"),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
 			AD_ENTRY1("CH01-S00.DLG", "54b7a5a94f6e1ec91f0fb1311eec09ab"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
