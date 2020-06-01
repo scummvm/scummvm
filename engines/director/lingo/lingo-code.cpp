@@ -123,7 +123,6 @@ static struct FuncDescr {
 	{ LC::c_swap,			"c_swap",			"" },
 	{ LC::c_symbolpush,		"c_symbolpush",		"s" },	// D3
 	{ LC::c_tell,			"c_tell",			"" },
-	{ LC::c_tellcode,		"c_tellcode",		"o" },
 	{ LC::c_telldone,		"c_telldone",		"" },
 	{ LC::c_theentityassign,"c_theentityassign","EF" },
 	{ LC::c_theentitypush,	"c_theentitypush",	"EF" }, // entity, field
@@ -1186,16 +1185,6 @@ void LC::c_whencode() {
 	} else {
 		warning("c_whencode(): unsupported event handler %s", eventname.c_str());
 	}
-}
-
-void LC::c_tellcode() {
-	Datum d1 = g_lingo->pop(); // reference
-	uint start = g_lingo->_pc;
-	uint end = g_lingo->readInt() + start - 1;
-
-	warning("STUB: c_tellcode(%s)", d1.asString(true).c_str());
-
-	g_lingo->_pc = end;
 }
 
 void LC::c_tell() {

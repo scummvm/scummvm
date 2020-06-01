@@ -96,7 +96,6 @@ namespace LC {
 
 	void c_nextRepeat();
 	void c_whencode();
-	void c_tellcode();
 	void c_tell();
 	void c_telldone();
 	void c_exitRepeat();
