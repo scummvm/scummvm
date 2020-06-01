@@ -55,6 +55,8 @@
 namespace Director {
 
 void Lingo::execute(uint pc) {
+	int counter = 0;
+
 	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP && !_nextRepeat;) {
 		Common::String instr = decodeInstruction(_currentScript, _pc);
 		uint current = _pc;
@@ -87,6 +89,11 @@ void Lingo::execute(uint pc) {
 
 		if (_vm->getCurrentScore() && _vm->getCurrentScore()->_stopPlay)
 			break;
+
+		if (++counter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
+			warning("Lingo::execute(): Stopping due to debug few frames only");
+			break;
+		}
 	}
 
 	_abort = false;
