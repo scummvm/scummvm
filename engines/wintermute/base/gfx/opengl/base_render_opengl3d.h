@@ -38,26 +38,26 @@ public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3D() override;
 
-	virtual void dumpData(const char *filename) {}
+	void dumpData(const char *filename) override {}
 	/**
 	 * Take a screenshot of the current screenstate
 	 *
 	 * @return a BaseImage containing the current screen-buffer.
 	 */
-	virtual BaseImage *takeScreenshot();
-	virtual bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0);
-	virtual bool setViewport(int left, int top, int right, int bottom);
-	virtual bool setViewport(Rect32 *rect);
-	virtual Rect32 getViewPort();
-	virtual void setWindowed(bool windowed);
+	BaseImage *takeScreenshot() override;
+	bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0) override;
+	bool setViewport(int left, int top, int right, int bottom) override;
+	bool setViewport(Rect32 *rect) override;
+	Rect32 getViewPort() override;
+	void setWindowed(bool windowed) override;
 
-	virtual Graphics::PixelFormat getPixelFormat() const;
+	Graphics::PixelFormat getPixelFormat() const override;
 	/**
 	 * Fade the screen to black
 	 *
 	 * @param alpha amount to fade by (alpha value of black)
 	 */
-	virtual void fade(uint16 alpha);
+	void fade(uint16 alpha) override;
 	/**
 	 * Fade a portion of the screen to a specific color
 	 *
@@ -67,15 +67,15 @@ public:
 	 * @param a the alpha component to fade too.
 	 * @param rect the portion of the screen to fade (if nullptr, the entire screen will be faded).
 	 */
-	virtual void fadeToColor(byte r, byte g, byte b, byte a);
+	void fadeToColor(byte r, byte g, byte b, byte a) override;
 
-	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
-	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override; 	// Unused outside indicator-display
+	bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1) override; 	// Unused outside indicator-display
 
-	virtual bool setProjection();
+	bool setProjection() override;
 	bool setProjection2D();
 
-	virtual bool windowedBlt();
+	bool windowedBlt() override;
 	/**
 	 * Fill a portion of the screen with a specified color
 	 *
@@ -83,46 +83,46 @@ public:
 	 * @param g the green component to fill with.
 	 * @param b the blue component to fill with.
 	 */
-	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr);
-	virtual void onWindowChange();
-	virtual bool initRenderer(int width, int height, bool windowed);
+	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
+	void onWindowChange() override;
+	bool initRenderer(int width, int height, bool windowed) override;
 	/**
 	 * Flip the backbuffer onto the screen-buffer
 	 * The screen will NOT be updated before calling this function.
 	 *
 	 * @return true if successfull, false on error.
 	 */
-	virtual bool flip();
+	bool flip() override;
 	/**
 	 * Special flip for the indicator drawn during save/load
 	 * essentially, just copies the region defined by the _indicator-variables.
 	 */
-	virtual bool indicatorFlip();
-	virtual bool forcedFlip();
-	virtual void initLoop();
-	virtual bool setup2D(bool force = false);
-	virtual bool setup3D(bool force = false);
-	virtual bool setupLines();
+	bool indicatorFlip() override;
+	bool forcedFlip() override;
+	void initLoop() override;
+	bool setup2D(bool force = false) override;
+	bool setup3D(bool force = false);
+	bool setupLines() override;
 
 	/**
 	 * Get the name of the current renderer
 	 *
 	 * @return the name of the renderer.
 	 */
-	virtual Common::String getName() const {
+	Common::String getName() const override {
 		return "OpenGL 3D renderer";
 	};
-	virtual bool displayDebugInfo() {
+	bool displayDebugInfo() override {
 		return STATUS_FAILED;
 	};
-	virtual bool drawShaderQuad() {
+	bool drawShaderQuad() override {
 		return STATUS_FAILED;
 	}
 
-	virtual float getScaleRatioX() const {
+	float getScaleRatioX() const override {
 		return 1.0f;
 	}
-	virtual float getScaleRatioY() const {
+	float getScaleRatioY() const override {
 		return 1.0f;
 	}
 
@@ -134,16 +134,16 @@ public:
 	 *
 	 * @return a surface that can be used with this renderer
 	 */
-	virtual BaseSurface *createSurface();
+	BaseSurface *createSurface() override;
 
-	virtual bool startSpriteBatch() {
+	bool startSpriteBatch() override {
 		return STATUS_OK;
 	};
-	virtual bool endSpriteBatch() {
+	bool endSpriteBatch() override {
 		return STATUS_OK;
 	};
 
-	virtual void endSaveLoad();
+	void endSaveLoad() override;
 
 	bool drawSprite(const OpenGL::Texture& tex, const Rect32& rect, float zoomX, float zoomY, const Vector2& pos,
 					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);

@@ -26,59 +26,61 @@
 #include "base_render_opengl3d.h"
 #include "graphics/transparent_surface.h"
 
-Wintermute::BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(Wintermute::BaseGame *game, BaseRenderOpenGL3D *renderer)
+namespace Wintermute {
+
+BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *renderer)
     : BaseSurface(game), tex(nullptr), renderer(renderer), pixelOpReady(false) {
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::invalidate() {
+bool BaseSurfaceOpenGL3D::invalidate() {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayHalfTrans(int x, int y, Wintermute::Rect32 rect) {
+bool BaseSurfaceOpenGL3D::displayHalfTrans(int x, int y, Rect32 rect) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
+bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Wintermute::Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayTrans(int x, int y, Wintermute::Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	renderer->drawSprite(*tex, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Wintermute::Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::display(int x, int y, Wintermute::Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	renderer->drawSprite(*tex, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayTransform(int x, int y, Wintermute::Rect32 rect, Wintermute::Rect32 newRect, const Graphics::TransformStruct &transform) {
+bool BaseSurfaceOpenGL3D::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayZoom(int x, int y, Wintermute::Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::displayTiled(int x, int y, Wintermute::Rect32 rect, int numTimesX, int numTimesY) {
+bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
 	Vector2 scale(numTimesX, numTimesY);
 	renderer->drawSpriteEx(*tex, rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::restore() {
+bool BaseSurfaceOpenGL3D::restore() {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
+bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	BaseImage img = BaseImage();
 	if (!img.loadFile(filename)) {
 		return false;
@@ -136,35 +138,35 @@ bool Wintermute::BaseSurfaceOpenGL3D::create(const Common::String &filename, boo
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::create(int width, int height) {
+bool BaseSurfaceOpenGL3D::create(int width, int height) {
 	tex = new OpenGL::Texture(width, height);
 	_valid = true;
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, int a) {
+bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, int a) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
+bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
+bool BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g, byte b, int a) {
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::startPixelOp() {
+bool BaseSurfaceOpenGL3D::startPixelOp() {
 	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::endPixelOp() {
+bool BaseSurfaceOpenGL3D::endPixelOp() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return true;
 }
 
-bool Wintermute::BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
+bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 	if (x < 0 || y < 0 || x >= tex->getWidth() || y >= tex->getHeight()) {
 		return false;
 	}
@@ -181,4 +183,6 @@ bool Wintermute::BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 	uint32 pixel = *reinterpret_cast<uint32 *>(image_data + y * tex->getWidth() * 4 + x * 4);
 	pixel &= 0x000000FF;
 	return pixel == 0;
+}
+
 }

@@ -22,7 +22,7 @@
 
 #include "base_render_opengl3d.h"
 
-#include "../../../../../graphics/opengl/system_headers.h"
+#include "graphics/opengl/system_headers.h"
 #include "base_surface_opengl3d.h"
 #include "math/glmath.h"
 
@@ -31,49 +31,47 @@ BaseRenderer *makeOpenGL3DRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3D(inGame);
 }
 
-} // namespace Wintermute
-
-Wintermute::BaseRenderOpenGL3D::BaseRenderOpenGL3D(Wintermute::BaseGame *inGame)
+BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
     : _spriteBatchMode(false) {
 }
 
-Wintermute::BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
+BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
 }
 
-Wintermute::BaseImage *Wintermute::BaseRenderOpenGL3D::takeScreenshot() {
+BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
 	return nullptr;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
+bool BaseRenderOpenGL3D::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
+bool BaseRenderOpenGL3D::setViewport(int left, int top, int right, int bottom) {
 	_viewportRect.setRect(left, top, right, bottom);
 	glViewport(left, top, right - left, bottom - top);
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setViewport(Wintermute::Rect32 *rect) {
+bool BaseRenderOpenGL3D::setViewport(Rect32 *rect) {
 	return setViewport(rect->left, rect->top, rect->right, rect->bottom);
 }
 
-Wintermute::Rect32 Wintermute::BaseRenderOpenGL3D::getViewPort() {
+Rect32 BaseRenderOpenGL3D::getViewPort() {
 	return Rect32(0, 0, 0, 0);
 }
 
-void Wintermute::BaseRenderOpenGL3D::setWindowed(bool windowed) {
+void BaseRenderOpenGL3D::setWindowed(bool windowed) {
 }
 
-Graphics::PixelFormat Wintermute::BaseRenderOpenGL3D::getPixelFormat() const {
+Graphics::PixelFormat BaseRenderOpenGL3D::getPixelFormat() const {
 	return OpenGL::Texture::getRGBAPixelFormat();
 }
 
-void Wintermute::BaseRenderOpenGL3D::fade(uint16 alpha) {
+void BaseRenderOpenGL3D::fade(uint16 alpha) {
 	fadeToColor(0, 0, 0, (byte)(255 - alpha));
 }
 
-void Wintermute::BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
+void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	setProjection2D();
@@ -127,11 +125,11 @@ void Wintermute::BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a)
 	setup2D(true);
 }
 
-bool Wintermute::BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+bool BaseRenderOpenGL3D::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
+bool BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, uint32 color, int width) {
 	return true;
 }
 
@@ -154,7 +152,7 @@ bool Wintermute::BaseRenderOpenGL3D::setProjection() {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setProjection2D() {
+bool BaseRenderOpenGL3D::setProjection2D() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _viewportRect.width(), 0, _viewportRect.height(), -1.0, 100.0);
@@ -163,11 +161,11 @@ bool Wintermute::BaseRenderOpenGL3D::setProjection2D() {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::windowedBlt() {
+bool BaseRenderOpenGL3D::windowedBlt() {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
+bool BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	glClearColor(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	return true;
@@ -176,7 +174,7 @@ bool Wintermute::BaseRenderOpenGL3D::fill(byte r, byte g, byte b, Common::Rect *
 void Wintermute::BaseRenderOpenGL3D::onWindowChange() {
 }
 
-bool Wintermute::BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
+bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_windowed = windowed;
 	_width = width;
 	_height = height;
@@ -194,20 +192,20 @@ bool Wintermute::BaseRenderOpenGL3D::flip() {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::indicatorFlip() {
+bool BaseRenderOpenGL3D::indicatorFlip() {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::forcedFlip() {
+bool BaseRenderOpenGL3D::forcedFlip() {
 	return true;
 }
 
-void Wintermute::BaseRenderOpenGL3D::initLoop() {
+void BaseRenderOpenGL3D::initLoop() {
 	deleteRectList();
 	setup2D();
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setup2D(bool force) {
+bool BaseRenderOpenGL3D::setup2D(bool force) {
 	if (_state3D || force) {
 		_state3D = false;
 
@@ -248,22 +246,22 @@ bool Wintermute::BaseRenderOpenGL3D::setup2D(bool force) {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setup3D(bool force) {
+bool BaseRenderOpenGL3D::setup3D(bool force) {
 	return true;
 }
 
-bool Wintermute::BaseRenderOpenGL3D::setupLines() {
+bool BaseRenderOpenGL3D::setupLines() {
 	return true;
 }
 
-Wintermute::BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {
+BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {
 	return new BaseSurfaceOpenGL3D(nullptr, this);
 }
 
-void Wintermute::BaseRenderOpenGL3D::endSaveLoad() {
+void BaseRenderOpenGL3D::endSaveLoad() {
 }
 
-bool Wintermute::BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture &tex, const Wintermute::Rect32 &rect,
+bool BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture &tex, const Wintermute::Rect32 &rect,
                                                 float zoomX, float zoomY, const Wintermute::Vector2 &pos,
                                                 uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
                                                 bool mirrorX, bool mirrorY) {
@@ -271,7 +269,7 @@ bool Wintermute::BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture &tex, cons
 	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
-bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermute::Rect32 &rect,
+bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermute::Rect32 &rect,
                                                   const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
                                                   float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
                                                   bool mirrorX, bool mirrorY) {
@@ -298,13 +296,9 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, co
 	if (mirrorY) {
 	}
 
-	// provide space for 3d position coords, 2d texture coords and a 32 bit colot value
-	int vertex_size = 24;
-	byte vertices[vertex_size * 4];
-
-	for (int i = 0; i < vertex_size * 4; ++i) {
-		vertices[i] = 0;
-	}
+	// provide space for 3d position coords, 2d texture coords and a 32 bit color value
+	const int vertex_size = 24;
+	byte vertices[vertex_size * 4] = {};
 
 	// texture coords
 	*reinterpret_cast<float *>(vertices) = tex_left;
@@ -382,3 +376,5 @@ bool Wintermute::BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, co
 
 	return true;
 }
+
+} // namespace Wintermute
