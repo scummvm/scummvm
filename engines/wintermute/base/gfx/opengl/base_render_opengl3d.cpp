@@ -80,38 +80,39 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 
 	setProjection2D();
 
-	int vertex_size = 16;
-	byte vertices[4 * vertex_size];
+	const int vertexSize = 16;
+	byte vertices[4 * vertexSize];
+	float *vertexCoords = reinterpret_cast<float *>(vertices);
 
-	*reinterpret_cast<float *>(vertices + 4) = _viewportRect.left;
-	*reinterpret_cast<float *>(vertices + 8) = _viewportRect.bottom;
-	*reinterpret_cast<float *>(vertices + 12) = 0.0f;
-	*reinterpret_cast<float *>(vertices + vertex_size + 4) = _viewportRect.left;
-	*reinterpret_cast<float *>(vertices + vertex_size + 8) = _viewportRect.top;
-	*reinterpret_cast<float *>(vertices + vertex_size + 12) = 0.0f;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size + 4) = _viewportRect.right;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size + 8) = _viewportRect.bottom;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size + 12) = 0.0f;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size + 4) = _viewportRect.right;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size + 8) = _viewportRect.top;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size + 12) = 0.0f;
+	vertexCoords[0 * 4 + 1] = _viewportRect.left;
+	vertexCoords[0 * 4 + 2] = _viewportRect.bottom;
+	vertexCoords[0 * 4 + 3] = 0.0f;
+	vertexCoords[1 * 4 + 1] = _viewportRect.left;
+	vertexCoords[1 * 4 + 2] = _viewportRect.top;
+	vertexCoords[1 * 4 + 3] = 0.0f;
+	vertexCoords[2 * 4 + 1] = _viewportRect.right;
+	vertexCoords[2 * 4 + 2] = _viewportRect.bottom;
+	vertexCoords[2 * 4 + 3] = 0.0f;
+	vertexCoords[3 * 4 + 1] = _viewportRect.right;
+	vertexCoords[3 * 4 + 2] = _viewportRect.top;
+	vertexCoords[3 * 4 + 3] = 0.0f;
 
-	*(vertices) = r;
-	*(vertices + 1) = g;
-	*(vertices + 2) = b;
-	*(vertices + 3) = a;
-	*(vertices + vertex_size) = r;
-	*(vertices + vertex_size + 1) = g;
-	*(vertices + vertex_size + 2) = b;
-	*(vertices + vertex_size + 3) = a;
-	*(vertices + 2 * vertex_size) = r;
-	*(vertices + 2 * vertex_size + 1) = g;
-	*(vertices + 2 * vertex_size + 2) = b;
-	*(vertices + 2 * vertex_size + 3) = a;
-	*(vertices + 3 * vertex_size) = r;
-	*(vertices + 3 * vertex_size + 1) = g;
-	*(vertices + 3 * vertex_size + 2) = b;
-	*(vertices + 3 * vertex_size + 3) = a;
+	vertices[0 * vertexSize + 0] = r;
+	vertices[0 * vertexSize + 1] = g;
+	vertices[0 * vertexSize + 2] = b;
+	vertices[0 * vertexSize + 3] = a;
+	vertices[1 * vertexSize + 0] = r;
+	vertices[1 * vertexSize + 1] = g;
+	vertices[1 * vertexSize + 2] = b;
+	vertices[1 * vertexSize + 3] = a;
+	vertices[2 * vertexSize + 0] = r;
+	vertices[2 * vertexSize + 1] = g;
+	vertices[2 * vertexSize + 2] = b;
+	vertices[2 * vertexSize + 3] = a;
+	vertices[3 * vertexSize + 0] = r;
+	vertices[3 * vertexSize + 1] = g;
+	vertices[3 * vertexSize + 2] = b;
+	vertices[3 * vertexSize + 3] = a;
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -121,8 +122,8 @@ void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	glVertexPointer(3, GL_FLOAT, vertex_size, vertices + 4);
-	glColorPointer(4, GL_UNSIGNED_BYTE, vertex_size, vertices);
+	glVertexPointer(3, GL_FLOAT, vertexSize, vertices + 4);
+	glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, vertices);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -294,10 +295,10 @@ bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermu
 	float width = (rect.right - rect.left) * scale.x;
 	float height = (rect.bottom - rect.top) * scale.y;
 
-	float tex_left = (float)rect.left / (float)tex.getWidth();
-	float tex_top = (float)rect.top / (float)tex.getHeight();
-	float tex_right = (float)rect.right / (float)tex.getWidth();
-	float tex_bottom = (float)rect.bottom / (float)tex.getHeight();
+	float texLeft = (float)rect.left / (float)tex.getWidth();
+	float texTop = (float)rect.top / (float)tex.getHeight();
+	float texRight = (float)rect.right / (float)tex.getWidth();
+	float texBottom = (float)rect.bottom / (float)tex.getHeight();
 
 	float offset = _viewportRect.height() / 2.0f;
 	float corrected_y = (pos.y - offset) * -1.0f + offset;
@@ -312,32 +313,34 @@ bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermu
 	}
 
 	// provide space for 3d position coords, 2d texture coords and a 32 bit color value
-	const int vertex_size = 24;
-	byte vertices[vertex_size * 4] = {};
+	const int vertexSize = 24;
+	byte vertices[vertexSize * 4] = {};
+
+	float *vertexCoords = reinterpret_cast<float *>(vertices);
 
 	// texture coords
-	*reinterpret_cast<float *>(vertices) = tex_left;
-	*reinterpret_cast<float *>(vertices + 4) = tex_top;
-	*reinterpret_cast<float *>(vertices + vertex_size) = tex_left;
-	*reinterpret_cast<float *>(vertices + vertex_size + 4) = tex_bottom;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size) = tex_right;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size + 4) = tex_top;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size) = tex_right;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size + 4) = tex_bottom;
+	vertexCoords[0 * 6 + 0] = texLeft;
+	vertexCoords[0 * 6 + 1] = texTop;
+	vertexCoords[1 * 6 + 0] = texLeft;
+	vertexCoords[1 * 6 + 1] = texBottom;
+	vertexCoords[2 * 6 + 0] = texRight;
+	vertexCoords[2 * 6 + 1] = texTop;
+	vertexCoords[3 * 6 + 0] = texRight;
+	vertexCoords[3 * 6 + 1] = texBottom;
 
 	// position coords
-	*reinterpret_cast<float *>(vertices + 12) = pos.x - 0.5f;
-	*reinterpret_cast<float *>(vertices + 12 + 4) = corrected_y - 0.5f;
-	*reinterpret_cast<float *>(vertices + 12 + 8) = -1.1f;
-	*reinterpret_cast<float *>(vertices + vertex_size + 12) = pos.x - 0.5f;
-	*reinterpret_cast<float *>(vertices + vertex_size + 12 + 4) = corrected_y - height - 0.5f;
-	*reinterpret_cast<float *>(vertices + vertex_size + 12 + 8) = -1.1f;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size + 12) = pos.x + width - 0.5f;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size + 12 + 4) = corrected_y - 0.5f;
-	*reinterpret_cast<float *>(vertices + 2 * vertex_size + 12 + 8) = -1.1f;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size + 12) = pos.x + width - 0.5f;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size + 12 + 4) = corrected_y - height - 0.5;
-	*reinterpret_cast<float *>(vertices + 3 * vertex_size + 12 + 8) = -1.1f;
+	vertexCoords[0 * 6 + 3] = pos.x - 0.5f;
+	vertexCoords[0 * 6 + 4] = corrected_y - 0.5f;
+	vertexCoords[0 * 6 + 5] = -1.1f;
+	vertexCoords[1 * 6 + 3] = pos.x - 0.5f;
+	vertexCoords[1 * 6 + 4] = corrected_y - height - 0.5f;
+	vertexCoords[1 * 6 + 5] = -1.1f;
+	vertexCoords[2 * 6 + 3] = pos.x + width - 0.5f;
+	vertexCoords[2 * 6 + 4] = corrected_y - 0.5f;
+	vertexCoords[2 * 6 + 5] = -1.1f;
+	vertexCoords[3 * 6 + 3] = pos.x + width - 0.5f;
+	vertexCoords[3 * 6 + 4] = corrected_y - height - 0.5;
+	vertexCoords[3 * 6 + 5] = -1.1f;
 
 	// not exactly sure about the color format, but this seems to work
 	byte a = RGBCOLGetA(color);
@@ -345,22 +348,22 @@ bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermu
 	byte g = RGBCOLGetG(color);
 	byte b = RGBCOLGetB(color);
 
-	vertices[8] = r;
-	vertices[8 + 1] = g;
-	vertices[8 + 2] = b;
-	vertices[8 + 3] = a;
-	vertices[vertex_size + 8] = r;
-	vertices[vertex_size + 8 + 1] = g;
-	vertices[vertex_size + 8 + 2] = b;
-	vertices[vertex_size + 8 + 3] = a;
-	vertices[2 * vertex_size + 8] = r;
-	vertices[2 * vertex_size + 8 + 1] = g;
-	vertices[2 * vertex_size + 8 + 2] = b;
-	vertices[2 * vertex_size + 8 + 3] = a;
-	vertices[3 * vertex_size + 8] = r;
-	vertices[3 * vertex_size + 8 + 2] = g;
-	vertices[3 * vertex_size + 8 + 2] = b;
-	vertices[3 * vertex_size + 8 + 3] = a;
+	vertices[0 * vertexSize + 8 + 0] = r;
+	vertices[0 * vertexSize + 8 + 1] = g;
+	vertices[0 * vertexSize + 8 + 2] = b;
+	vertices[0 * vertexSize + 8 + 3] = a;
+	vertices[1 * vertexSize + 8 + 0] = r;
+	vertices[1 * vertexSize + 8 + 1] = g;
+	vertices[1 * vertexSize + 8 + 2] = b;
+	vertices[1 * vertexSize + 8 + 3] = a;
+	vertices[2 * vertexSize + 8 + 0] = r;
+	vertices[2 * vertexSize + 8 + 1] = g;
+	vertices[2 * vertexSize + 8 + 2] = b;
+	vertices[2 * vertexSize + 8 + 3] = a;
+	vertices[3 * vertexSize + 8 + 0] = r;
+	vertices[3 * vertexSize + 8 + 2] = g;
+	vertices[3 * vertexSize + 8 + 2] = b;
+	vertices[3 * vertexSize + 8 + 3] = a;
 
 	// transform vertices here if necessary, add offset
 
