@@ -88,7 +88,7 @@ Object *Object::clone() {
 	return res;
 }
 
-Symbol Object::getMethod(const Common::String &methodName, bool ignorePredefined) {
+Symbol Object::getMethod(const Common::String methodName, bool ignorePredefined) {
 	if (!ignorePredefined && g_lingo->_methods.contains(methodName)) {
 		return g_lingo->_methods[methodName];
 	}
@@ -99,7 +99,7 @@ Symbol Object::getMethod(const Common::String &methodName, bool ignorePredefined
 	return Symbol();
 }
 
-bool Object::hasVar(const Common::String &varName) {
+bool Object::hasVar(const Common::String varName) {
 	// Factory object instance vars are accessed like normal vars
 	// Script object properties cannot be accessed like normal vars until D5
 	if (type == kScriptObj && g_lingo->_vm->getVersion() < 5) {
@@ -108,14 +108,13 @@ bool Object::hasVar(const Common::String &varName) {
 	return properties.contains(varName);
 }
 
-Symbol &Object::getVar(const Common::String &varName) {
+Symbol &Object::getVar(const Common::String varName) {
 	return properties[varName];
 }
 
 void LM::m_dispose(int nargs) {
 	g_lingo->printSTUBWithArglist("m_dispose", nargs);
 	g_lingo->dropStack(nargs);
-	g_lingo->pushVoid();
 }
 
 void LM::m_get(int nargs) {
@@ -139,13 +138,9 @@ void LM::m_new(int nargs) {
 	Object *clone = g_lingo->_currentMeObj->clone();
 
 	// Call user-defined mNew
-	Common::String methodName("mNew");
-	Symbol userMNew = clone->getMethod(methodName, true);
-	Symbol cloneSym;
-	cloneSym.type = OBJECT;
-	cloneSym.u.obj = clone;
+	Symbol userMNew = clone->getMethod("mNew", true);
 	if (userMNew.type != VOID) {
-		LC::call(userMNew, nargs, cloneSym);
+		LC::call(userMNew, nargs, clone);
 	}
 
 	Datum res;

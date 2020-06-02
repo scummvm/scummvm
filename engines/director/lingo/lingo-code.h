@@ -116,7 +116,7 @@ namespace LC {
 	void c_jumpifz();
 	void c_call();
 
-	void call(const Symbol &targetSym, int nargs, const Symbol &funcSym = Symbol());
+	void call(const Symbol &targetSym, int nargs, Object *target = nullptr);
 	void call(const Common::String &name, int nargs);
 
 	void c_procret();

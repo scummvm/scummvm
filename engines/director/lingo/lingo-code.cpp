@@ -1242,7 +1242,6 @@ void LC::call(const Common::String &name, int nargs) {
 	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
-	Symbol targetSym = Symbol();
 	Symbol funcSym = g_lingo->getHandler(name);
 
 	if (funcSym.type == VOID) {
@@ -1251,20 +1250,18 @@ void LC::call(const Common::String &name, int nargs) {
 		Datum d = g_lingo->varFetch(eventName);
 		if (d.type == OBJECT) {
 			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), d.u.obj->name->c_str());
-			targetSym = Symbol();
-			targetSym.type = OBJECT;
-			targetSym.u.obj = d.u.obj;
+			Object *target = d.u.obj;
+			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
+			nargs -= 1;
+			funcSym = target->getMethod(*methodName.u.s);
+			call(funcSym, nargs, target);
+			return;
 		}
-		Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
-		nargs -= 1;
-		funcSym = targetSym.u.obj->getMethod(*methodName.u.s);
-		call(funcSym, nargs, targetSym);
-	} else {
-		call(funcSym, nargs);
 	}
+	call(funcSym, nargs);
 }
 
-void LC::call(const Symbol &funcSym, int nargs, const Symbol &targetSym) {
+void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 	bool dropArgs = false;
 
 	if (funcSym.type == VOID) {
@@ -1302,11 +1299,11 @@ void LC::call(const Symbol &funcSym, int nargs, const Symbol &targetSym) {
 	if (funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
 		int stackSize = g_lingo->_stack.size() - nargs;
 
-		if (targetSym.type == OBJECT) {
+		if (target) {
 			// Only need to update the me obj
 			// Pushing an entire stack frame is not necessary
 			Object *retMeObj = g_lingo->_currentMeObj;
-			g_lingo->_currentMeObj = targetSym.u.obj;
+			g_lingo->_currentMeObj = target;
 			(*funcSym.u.bltin)(nargs);
 			g_lingo->_currentMeObj = retMeObj;
 		} else {
@@ -1382,6 +1379,12 @@ void LC::call(const Symbol &funcSym, int nargs, const Symbol &targetSym) {
 		}
 	}
 
+	if (target) {
+		g_lingo->_currentMeObj = target;
+	} else {
+		g_lingo->_currentMeObj = nullptr;
+	}
+
 	fp->sp = funcSym;
 
 	g_lingo->_callstack.push_back(fp);
@@ -1397,12 +1400,6 @@ void LC::call(const Symbol &funcSym, int nargs, const Symbol &targetSym) {
 	g_lingo->_archiveIndex = funcSym.archiveIndex;
 
 	g_lingo->_pc = 0;
-
-	if (targetSym.type == OBJECT) {
-		g_lingo->_currentMeObj = targetSym.u.obj;
-	} else {
-		g_lingo->_currentMeObj = nullptr;
-	}
 }
 
 void LC::c_procret() {

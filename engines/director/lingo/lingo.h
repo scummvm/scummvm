@@ -257,9 +257,9 @@ struct Object {
     Common::HashMap<uint, Datum> *objArray;
 
 	Object *clone();
-	Symbol getMethod(const Common::String &methodName, bool ignorePredefined = false);
-	bool hasVar(const Common::String &varName);
-	Symbol &getVar(const Common::String &varName);
+	Symbol getMethod(const Common::String methodName, bool ignorePredefined = false);
+	bool hasVar(const Common::String varName);
+	Symbol &getVar(const Common::String varName);
 };
 
 struct CFrame {	/* proc/func call stack frame */
