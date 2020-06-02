@@ -76,6 +76,16 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *
 	_offsetY = offsetY;
 }
 
+#ifdef ENABLE_WME3D
+BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, ModelX *model, int x, int y, int width, int height, bool precise)
+	: BaseClass(inGame) {
+	_owner = owner;
+	_modelX = model;
+	_rect.setRect(x, y, x + width, y + height);
+	_precise = precise;
+}
+#endif
+
 
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::~BaseActiveRect() {

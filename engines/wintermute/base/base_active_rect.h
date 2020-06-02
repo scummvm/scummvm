@@ -36,6 +36,9 @@ namespace Wintermute {
 class BaseRegion;
 class BaseSubFrame;
 class BaseObject;
+#ifdef ENABLE_WME3D
+class ModelX;
+#endif
 class BaseActiveRect: BaseClass {
 public:
 	void clipRect();
@@ -43,6 +46,9 @@ public:
 	float _zoomX;
 	float _zoomY;
 	BaseSubFrame *_frame;
+#ifdef ENABLE_WME3D
+	ModelX *_modelX;
+#endif
 	BaseObject *_owner;
 	BaseRegion *_region;
 	int32 _offsetX;
@@ -51,6 +57,9 @@ public:
 	BaseActiveRect(BaseGame *inGameOwner = nullptr);
 	BaseActiveRect(BaseGame *inGameOwner, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
 	BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY);
+#ifdef ENABLE_WME3D
+	BaseActiveRect(BaseGame *inGame, BaseObject *owner, ModelX *model, int x, int y, int width, int height, bool precise = true);
+#endif
 	~BaseActiveRect() override;
 
 };
