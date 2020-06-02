@@ -23,6 +23,7 @@
 #include "glk/comprehend/pics.h"
 #include "common/memstream.h"
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/charset.h"
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
@@ -218,12 +219,14 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 
 	case IMAGE_OP_DRAW_CHAR:
 		a = imageGetOperand(ctx);
-		debugC(kDebugGraphics, "draw_char(%c)",
-		       a >= 0x20 && a < 0x7f ? a : '?');
+		if (a < 0x20 || a >= 0x7f) {
+			warning("Invalid character - %c", a);
+			a = '?';
+		}
 
-		ctx->_drawSurface->drawBox(ctx->_textX, ctx->_textY,
-		                           ctx->_textX + 6, ctx->_textY + 7, ctx->_fillColor);
-		ctx->_textX += 8;
+		debugC(kDebugGraphics, "draw_char(%c)", a);
+		ctx->_font->drawChar(ctx->_drawSurface, a, ctx->_textX, ctx->_textY, ctx->_penColor);
+		ctx->_textX += ctx->_font->getCharWidth(a);
 		break;
 
 	case 0xf3:
@@ -269,6 +272,15 @@ uint16 Pics::ImageFile::imageGetOperand(ImageContext *ctx) const {
 }
 
 /*-------------------------------------------------------*/
+
+Pics::Pics() : _font(nullptr) {
+	if (Common::File::exists("charset.gda"))
+		_font = new CharSet();
+}
+
+Pics::~Pics() {
+	delete _font;
+}
 
 void Pics::clear() {
 	_rooms.clear();
@@ -351,7 +363,7 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 }
 
 void Pics::drawPicture(int pictureNum) const {
-	ImageContext ctx(g_comprehend->_drawSurface, g_comprehend->_drawFlags);
+	ImageContext ctx(g_comprehend->_drawSurface, _font, g_comprehend->_drawFlags);
 
 	if (pictureNum == DARK_ROOM) {
 		ctx._drawSurface->clearScreen(G_COLOR_BLACK);

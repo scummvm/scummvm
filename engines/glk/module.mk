@@ -166,6 +166,7 @@ MODULE_OBJS := \
 	archetype/sys_object.o \
 	archetype/timestamp.o \
 	archetype/token.o \
+	comprehend/charset.o \
 	comprehend/comprehend.o \
 	comprehend/debugger.o \
 	comprehend/debugger_dumper.o \

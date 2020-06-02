@@ -89,6 +89,7 @@ class Pics : public Common::Archive {
 	struct ImageContext {
 		Common::File _file;
 		DrawSurface *_drawSurface;
+		Graphics::Font *_font;
 		uint _drawFlags;
 
 		uint16 _x;
@@ -100,9 +101,9 @@ class Pics : public Common::Archive {
 		uint16 _textX;
 		uint16 _textY;
 
-		ImageContext(DrawSurface *drawSurface, uint flags) :
-			_drawSurface(drawSurface), _drawFlags(0), _x(0), _y(0),
-			_penColor(G_COLOR_BLACK), _fillColor(G_COLOR_BLACK),
+		ImageContext(DrawSurface *drawSurface, Graphics::Font *font, uint flags) :
+			_drawSurface(drawSurface), _font(font), _drawFlags(0),
+			_x(0), _y(0), _penColor(G_COLOR_BLACK), _fillColor(G_COLOR_BLACK),
 			_shape(IMAGE_OP_SHAPE_CIRCLE_LARGE), _textX(0), _textY(0) {
 		}
 
@@ -128,6 +129,7 @@ private:
 	Common::Array<ImageFile> _rooms;
 	Common::Array<ImageFile> _items;
 	ImageFile _title;
+	Graphics::Font *_font;
 
 private:
 	/**
@@ -141,6 +143,9 @@ private:
 	void drawPicture(int pictureNum) const;
 
 public:
+	Pics();
+	~Pics();
+
 	void clear();
 
 	void load(const Common::StringArray &roomFiles,
