@@ -96,6 +96,23 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 
 	_blendMode = Graphics::BLEND_NORMAL;
+
+#ifdef ENABLE_WME3D
+	_modelX = nullptr;
+	_shadowModel = nullptr;
+	_posVector = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_angle = 0.0f;
+	_scale = 1.0f;
+	_worldMatrix.setToIdentity();
+
+	_shadowImage = nullptr;
+	_shadowSize = 10.0f;
+	_shadowType = SHADOW_NONE;
+	// rgba value
+	_shadowColor = 0x00000080;
+	_shadowLightPos = Math::Vector3d(-40.0f, 200.0f, -40.0f);
+	_drawBackfaces = true;
+#endif
 }
 
 
@@ -1241,5 +1258,35 @@ void BaseObject::setSoundEvent(const char *eventName) {
 bool BaseObject::afterMove() {
 	return STATUS_OK;
 }
+
+#ifdef ENABLE_WME3D
+bool BaseObject::getMatrix(Math::Matrix4 *modelMatrix, Math::Vector3d *posVect) {
+	if (posVect == nullptr) {
+		posVect = &_posVector;
+	}
+
+	Math::Matrix4 scale;
+	scale.setToIdentity();
+	scale(0, 0) = _scale3D;
+	scale(1, 1) = _scale3D;
+	scale(2, 2) = _scale3D;
+
+	float sinOfAngle = _angle.getSine();
+	float cosOfAngle = _angle.getCosine();
+	Math::Matrix4 rotation;
+	rotation.setToIdentity();
+	rotation(0, 0) = cosOfAngle;
+	rotation(0, 2) = sinOfAngle;
+	rotation(2, 0) = -sinOfAngle;
+	rotation(2, 2) = cosOfAngle;
+	Math::Matrix4 translation;
+	translation.setToIdentity();
+	translation.setPosition(*posVect);
+
+	*modelMatrix = translation * rotation * scale;
+	modelMatrix->transpose();
+	return true;
+}
+#endif
 
 } // End of namespace Wintermute
