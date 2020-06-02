@@ -1250,37 +1250,30 @@ void LC::call(const Common::String &name, int nargs) {
 	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
-	Symbol sym = g_lingo->getHandler(name);
+	Symbol targetSym = Symbol();
+	Symbol funcSym = g_lingo->getHandler(name);
 
-	if (sym.type == VOID) {
+	if (funcSym.type == VOID) {
 		Datum eventName(name);
 		eventName.type = VAR;
 		Datum d = g_lingo->varFetch(eventName);
 		if (d.type == OBJECT) {
 			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), d.u.obj->name->c_str());
-			sym = Symbol();
-			sym.type = OBJECT;
-			sym.u.obj = d.u.obj;
+			targetSym = Symbol();
+			targetSym.type = OBJECT;
+			targetSym.u.obj = d.u.obj;
 		}
-	}
-
-	call(sym, nargs);
-}
-
-void LC::call(const Symbol &sym, int nargs) {
-	bool dropArgs = false;
-
-	Symbol targetSym;
-	Symbol funcSym;
-	if (sym.type == OBJECT) {
-		targetSym = sym;
 		Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 		nargs -= 1;
 		funcSym = targetSym.u.obj->getMethod(*methodName.u.s);
+		call(funcSym, nargs, targetSym);
 	} else {
-		targetSym.type = VOID;
-		funcSym = sym;
+		call(funcSym, nargs);
 	}
+}
+
+void LC::call(const Symbol &funcSym, int nargs, const Symbol &targetSym) {
+	bool dropArgs = false;
 
 	if (funcSym.type == VOID) {
 		warning("Call to undefined handler. Dropping %d stack items", nargs);
