@@ -88,12 +88,12 @@ Object *Object::clone() {
 	return res;
 }
 
-Symbol Object::getMethod(const Common::String methodName, bool ignorePredefined) {
-	if (!ignorePredefined && g_lingo->_methods.contains(methodName)) {
-		return g_lingo->_methods[methodName];
-	}
+Symbol Object::getMethod(const Common::String methodName) {
 	if (methods.contains(methodName)) {
 		return methods[methodName];
+	}
+	if (g_lingo->_methods.contains(methodName)) {
+		return g_lingo->_methods[methodName];
 	}
 	// TODO: error handling
 	return Symbol();
@@ -135,17 +135,10 @@ void LM::m_put(int nargs) {
 }
 
 void LM::m_new(int nargs) {
-	Object *clone = g_lingo->_currentMeObj->clone();
-
-	// Call user-defined mNew
-	Symbol userMNew = clone->getMethod("mNew", true);
-	if (userMNew.type != VOID) {
-		LC::call(userMNew, nargs, clone);
-	}
-
+	// This is usually be overridden by a user-defined mNew
 	Datum res;
 	res.type = OBJECT;
-	res.u.obj = clone;
+	res.u.obj = g_lingo->_currentMeObj;
 	g_lingo->push(res);
 }
 

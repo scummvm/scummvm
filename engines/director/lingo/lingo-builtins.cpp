@@ -1267,7 +1267,12 @@ void LB::b_quit(int nargs) {
 }
 
 void LB::b_return(int nargs) {
-	// We do not touch the top of the stack, it will be returned
+	CFrame *fp = g_lingo->_callstack.back();
+	// Do not allow a factory's mNew method to return a value
+	// Otherwise do not touch the top of the stack, it will be returned
+	if (g_lingo->_currentMeObj && g_lingo->_currentMeObj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
+		g_lingo->pop();
+	}
 	LC::c_procret();
 }
 

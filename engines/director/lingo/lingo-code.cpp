@@ -1253,6 +1253,9 @@ void LC::call(const Common::String &name, int nargs) {
 			Object *target = d.u.obj;
 			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 			nargs -= 1;
+			if (methodName.u.s->equalsIgnoreCase("mNew")) {
+				target = target->clone();
+			}
 			funcSym = target->getMethod(*methodName.u.s);
 			call(funcSym, nargs, target);
 			return;
@@ -1413,6 +1416,14 @@ void LC::c_procret() {
 
 	CFrame *fp = g_lingo->_callstack.back();
 	g_lingo->_callstack.pop_back();
+
+	if (g_lingo->_currentMeObj && g_lingo->_currentMeObj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
+		// Return the newly created object after executing mNew
+		Datum d;
+		d.type = OBJECT;
+		d.u.obj = g_lingo->_currentMeObj;
+		g_lingo->push(d);
+	}
 
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_currentScriptContext = fp->retctx;
