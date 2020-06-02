@@ -54,6 +54,26 @@ bool BaseRenderOpenGL3D::setDefaultAmbientLightColor() {
 	return true;
 }
 
+void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
+	switch (blendMode) {
+	case Graphics::BLEND_NORMAL:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
+
+	case Graphics::BLEND_ADDITIVE:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		break;
+
+	case Graphics::BLEND_SUBTRACTIVE:
+		// wme3d takes the color value here
+		glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+		break;
+
+	default:
+		error("BaseRenderOpenGL3D::setSpriteBlendMode unsupported blend mode %i", blendMode);
+	}
+}
+
 BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
 	warning("BaseRenderOpenGL3D::takeScreenshot not yet implemented");
 	return nullptr;

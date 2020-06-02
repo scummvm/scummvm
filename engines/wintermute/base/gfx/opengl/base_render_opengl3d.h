@@ -42,6 +42,8 @@ public:
 	bool setAmbientLightColor(uint32 color);
 	bool setDefaultAmbientLightColor();
 
+	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode);
+
 	void dumpData(const char *filename) override {}
 	/**
 	 * Take a screenshot of the current screenstate
