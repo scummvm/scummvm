@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BASE_RENDERER_SDL_H
-#define WINTERMUTE_BASE_RENDERER_SDL_H
+#ifndef WINTERMUTE_BASE_RENDER_OPENGL_TEXTURE_H
+#define WINTERMUTE_BASE_RENDER_OPENGL_TEXTURE_H
 
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "common/rect.h"

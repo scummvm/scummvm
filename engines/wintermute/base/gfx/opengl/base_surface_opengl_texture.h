@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#ifndef WINTERMUTE_BASE_SURFACESDL_H
-#define WINTERMUTE_BASE_SURFACESDL_H
+#ifndef WINTERMUTE_BASE_SURFACE_OPENGL_TEXTURE_H
+#define WINTERMUTE_BASE_SURFACE_OPENGL_TEXTURE_H
 
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
