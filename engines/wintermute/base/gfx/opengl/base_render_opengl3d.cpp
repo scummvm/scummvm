@@ -38,6 +38,22 @@ BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
 }
 
+bool BaseRenderOpenGL3D::setAmbientLightColor(uint32 color) {
+	byte a = RGBCOLGetA(color);
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+
+	float value[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
+	return true;
+}
+
+bool BaseRenderOpenGL3D::setDefaultAmbientLightColor() {
+	setAmbientLightColor(0x00000000);
+	return true;
+}
+
 BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
 	warning("BaseRenderOpenGL3D::takeScreenshot not yet implemented");
 	return nullptr;

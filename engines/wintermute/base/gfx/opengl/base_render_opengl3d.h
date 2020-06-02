@@ -39,6 +39,9 @@ public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3D() override;
 
+	bool setAmbientLightColor(uint32 color);
+	bool setDefaultAmbientLightColor();
+
 	void dumpData(const char *filename) override {}
 	/**
 	 * Take a screenshot of the current screenstate
