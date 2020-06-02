@@ -427,6 +427,7 @@ void AvatarMoverProcess::handleNormalMode() {
 
 	if (!_mouseButton[1].isState(MBS_RELHANDLED)) {
 		_mouseButton[1].setState(MBS_RELHANDLED);
+		clearMovementFlag(MOVE_MOUSE_DIRECTION);
 
 		// if we were running in combat mode, slow to a walk, draw weapon
 		// (even in stasis)
@@ -465,10 +466,14 @@ void AvatarMoverProcess::handleNormalMode() {
 	if (stasis)
 		return;
 
-	// both mouse buttons down and not yet handled, or neither down and we are faking it.
-	if ((!_mouseButton[0].isState(MBS_HANDLED) && !_mouseButton[1].isState(MBS_HANDLED)) ||
-			(_mouseButton[0].isState(MBS_HANDLED) && _mouseButton[1].isState(MBS_HANDLED) &&
-			 hasMovementFlags(MOVE_JUMP))) {
+	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
+		// right mouse button is down long enough to act on it
+		// if facing right direction, walk
+		setMovementFlag(MOVE_MOUSE_DIRECTION);
+	}
+
+	// both mouse buttons down and not yet handled, check for jump.
+	if (!_mouseButton[0].isState(MBS_HANDLED) && !_mouseButton[1].isState(MBS_HANDLED)) {
 		// Take action if both were clicked within
 		// double-click timeout of each other.
 		// notice these are all unsigned.
@@ -479,73 +484,19 @@ void AvatarMoverProcess::handleNormalMode() {
 			down = _mouseButton[0]._curDown - down;
 		}
 
-		if (hasMovementFlags(MOVE_JUMP) || down < DOUBLE_CLICK_TIMEOUT) {
+		if (down < DOUBLE_CLICK_TIMEOUT) {
+			// Both buttons pressed within the timeout
 			_mouseButton[0].setState(MBS_HANDLED);
 			_mouseButton[1].setState(MBS_HANDLED);
-			if (hasMovementFlags(MOVE_JUMP)) {
-				// Also have to fake a release.
-				_mouseButton[1].clearState(MBS_RELHANDLED);
-			}
-			clearMovementFlag(MOVE_JUMP);
-			// Both buttons pressed within the timeout
-			// (or we're faking it)
-
-			if (checkTurn(mousedir, false))
-				return;
-
-			Animation::Sequence nextanim = Animation::jumpUp;
-			if (mouselength > 0) {
-				nextanim = Animation::jump;
-			}
-			// check if there's something we can climb up onto here
-
-			Animation::Sequence climbanim = Animation::climb72;
-			while (climbanim >= Animation::climb16) {
-				if (avatar->tryAnim(climbanim, direction) ==
-				        Animation::SUCCESS) {
-					nextanim = climbanim;
-				}
-				climbanim = static_cast<Animation::Sequence>(climbanim - 1);
-			}
-
-			if (nextanim == Animation::jump) {
-				jump(Animation::jump, direction);
-			} else {
-				if (nextanim != Animation::jumpUp) {
-					// climbing gives str/dex
-					avatar->accumulateStr(2 + nextanim - Animation::climb16);
-					avatar->accumulateDex(2 * (2 + nextanim - Animation::climb16));
-				}
-				nextanim = Animation::checkWeapon(nextanim, lastanim);
-				waitFor(avatar->doAnim(nextanim, direction));
-			}
-			return;
+			setMovementFlag(MOVE_JUMP);
 		}
 	}
 
-	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked || hasMovementFlags(MOVE_JUMP)) &&
-	        _mouseButton[1].isState(MBS_DOWN)) {
+	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked) && hasMovementFlags(MOVE_ANY_DIRECTION | MOVE_STEP)) {
 		_mouseButton[0].setState(MBS_HANDLED);
-		clearMovementFlag(MOVE_JUMP);
-		// We got a left mouse down (or a fake one) while the already
-		// handled right was down.
-
-		if (checkTurn(mousedir, false))
-			return;
-
-		// check if we need to do a running jump
-		if (lastanim == Animation::run ||
-		        lastanim == Animation::runningJump) {
-			jump(Animation::runningJump, direction);
-		} else if (mouselength > 0) {
-			jump(Animation::jump, direction);
-		} else {
-			Animation::Sequence nextanim = Animation::checkWeapon(Animation::jumpUp, lastanim);
-			waitFor(avatar->doAnim(nextanim, direction));
-		}
-		return;
-
+		// We got a left mouse down while already moving in any direction or holding the step button.
 		// CHECKME: check what needs to happen when keeping left pressed
+		setMovementFlag(MOVE_JUMP);
 	}
 
 	if (_mouseButton[1].isUnhandledDoubleClick()) {
@@ -561,11 +512,71 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 	}
 
-	if (_mouseButton[1].isState(MBS_DOWN) &&
-	        _mouseButton[1].isState(MBS_HANDLED)) {
-		// right mouse button is down long enough to act on it
-		// if facing right direction, walk
+	if (hasMovementFlags(MOVE_JUMP) && hasMovementFlags(MOVE_ANY_DIRECTION)) {
+		clearMovementFlag(MOVE_JUMP);
 
+		if (hasMovementFlags(MOVE_MOUSE_DIRECTION)) {
+			if (checkTurn(mousedir, false))
+				return;
+		}
+
+		Animation::Sequence nextanim = Animation::jump;
+		// check if we need to do a running jump
+		if (lastanim == Animation::run || lastanim == Animation::runningJump) {
+			nextanim = Animation::runningJump;
+		}
+		else if (avatar->hasActorFlags(Actor::ACT_AIRWALK)) {
+			nextanim = Animation::airwalkJump;
+		}
+		else if ((hasMovementFlags(MOVE_MOUSE_DIRECTION) && mouselength == 0) || hasMovementFlags(MOVE_STEP)) {
+			nextanim = Animation::jumpUp;
+		}
+
+		nextanim = Animation::checkWeapon(nextanim, lastanim);
+		waitFor(avatar->doAnim(nextanim, direction));
+		return;
+	}
+
+	if (hasMovementFlags(MOVE_JUMP)) {
+		clearMovementFlag(MOVE_JUMP);
+
+		// Also have to fake a release.
+		_mouseButton[1].clearState(MBS_RELHANDLED);
+
+		if (checkTurn(mousedir, false))
+			return;
+
+		Animation::Sequence nextanim = Animation::jumpUp;
+		if (mouselength > 0) {
+			nextanim = Animation::jump;
+		}
+
+		// check if there's something we can climb up onto here
+		Animation::Sequence climbanim = Animation::climb72;
+		while (climbanim >= Animation::climb16) {
+			if (avatar->tryAnim(climbanim, direction) ==
+				Animation::SUCCESS) {
+				nextanim = climbanim;
+			}
+			climbanim = static_cast<Animation::Sequence>(climbanim - 1);
+		}
+
+		if (nextanim == Animation::jump) {
+			jump(Animation::jump, direction);
+		}
+		else {
+			if (nextanim != Animation::jumpUp) {
+				// climbing gives str/dex
+				avatar->accumulateStr(2 + nextanim - Animation::climb16);
+				avatar->accumulateDex(2 * (2 + nextanim - Animation::climb16));
+			}
+			nextanim = Animation::checkWeapon(nextanim, lastanim);
+			waitFor(avatar->doAnim(nextanim, direction));
+		}
+		return;
+	}
+	
+	if (hasMovementFlags(MOVE_MOUSE_DIRECTION)) {
 		Animation::Sequence nextanim = Animation::step;
 
 		if (mouselength == 1) {
