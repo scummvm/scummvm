@@ -23,8 +23,8 @@
 #ifndef WINTERMUTE_BASE_SURFACE_OPENGL3D_H
 #define WINTERMUTE_BASE_SURFACE_OPENGL3D_H
 
-#include "../base_surface.h"
-#include "../../../../../graphics/opengl/texture.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
+#include "graphics/opengl/texture.h"
 
 namespace Wintermute {
 

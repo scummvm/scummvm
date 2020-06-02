@@ -23,10 +23,10 @@
 #ifndef WINTERMUTE_BASE_RENDER_OPENGL3D_H
 #define WINTERMUTE_BASE_RENDER_OPENGL3D_H
 
-#include "../base_renderer.h"
-#include "../../../math/rect32.h"
-#include "../../../math/vector2.h"
-#include "../../../dctypes.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/math/vector2.h"
+#include "engines/wintermute/dctypes.h"
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/transform_struct.h"

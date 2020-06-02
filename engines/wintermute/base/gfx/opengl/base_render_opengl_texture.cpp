@@ -35,9 +35,9 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "common/system.h"
-#include "graphics/transparent_surface.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
+#include "graphics/transparent_surface.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/opengl/surfacerenderer.h"
 
