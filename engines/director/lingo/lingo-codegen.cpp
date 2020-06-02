@@ -661,7 +661,7 @@ void Lingo::codeFactory(Common::String &name) {
 	obj->type = kFactoryObj;
 	obj->inheritanceLevel = 1;
 	obj->scriptContext = _currentScriptContext;
-	obj->objArray = new DatumArray; 
+	obj->objArray = new Common::HashMap<uint32, Datum>; 
 
 	_currentFactory = obj;
 	if (!_globalvars.contains(name)) {

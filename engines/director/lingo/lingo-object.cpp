@@ -83,7 +83,7 @@ Object *Object::clone() {
 	res->inheritanceLevel = inheritanceLevel + 1;
 	res->scriptContext = scriptContext;
 	if (objArray) {
-		res->objArray = new DatumArray(*objArray);
+		res->objArray = new Common::HashMap<uint, Datum>(*objArray);
 	}
 	return res;
 }
@@ -119,15 +119,20 @@ void LM::m_dispose(int nargs) {
 }
 
 void LM::m_get(int nargs) {
-	g_lingo->printSTUBWithArglist("m_get", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->pushVoid();
+	Datum indexD = g_lingo->pop();
+	uint index = MAX(0, indexD.asInt());
+	if (g_lingo->_currentMeObj->objArray->contains(index)) {
+		g_lingo->push((*g_lingo->_currentMeObj->objArray)[index]);
+	} else {
+		g_lingo->push(Datum(0));
+	}
 }
 
 void LM::m_put(int nargs) {
-	g_lingo->printSTUBWithArglist("m_put", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->pushVoid();
+	Datum value = g_lingo->pop();
+	Datum indexD = g_lingo->pop();
+	uint index = MAX(0, indexD.asInt());
+	(*g_lingo->_currentMeObj->objArray)[index] = value;
 }
 
 void LM::m_new(int nargs) {
