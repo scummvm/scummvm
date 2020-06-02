@@ -361,7 +361,7 @@ void GUI_LoK::setGUILabels() {
 			offset = 52;
 		else if (_vm->gameFlags().lang == Common::DE_DEU)
 			offset = 30;
-		else if (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::IT_ITA)
+		else if (_vm->gameFlags().lang == Common::FR_FRA || _vm->gameFlags().lang == Common::IT_ITA || _vm->gameFlags().lang == Common::ES_ESP)
 			offset = 6;
 		offsetOn = offsetMainMenu = offsetOptions = offset;
 		walkspeedGarbageOffset = 48;
