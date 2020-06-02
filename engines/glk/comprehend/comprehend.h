@@ -24,10 +24,10 @@
 #define GLK_COMPREHEND_COMPREHEND_H
 
 #include "common/scummsys.h"
+#include "glk/comprehend/game.h"
 #include "glk/glk_api.h"
 #include "glk/window_graphics.h"
 #include "glk/window_text_buffer.h"
-#include "glk/comprehend/game.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -50,7 +50,7 @@ struct GameStrings {
  */
 class Comprehend : public GlkAPI {
 private:
-	int _saveSlot;		 ///< Save slot when loading savegame from launcher
+	int _saveSlot; ///< Save slot when loading savegame from launcher
 public:
 	GraphicsWindow *_topWindow;
 	TextBufferWindow *_bottomWindow;
@@ -129,6 +129,11 @@ public:
 	 * Read in a character
 	 */
 	int readChar();
+
+	/**
+	 * Draw a picture
+	 */
+	void drawPicture(uint pictureNum);
 
 	/**
 	 * Draw a location image

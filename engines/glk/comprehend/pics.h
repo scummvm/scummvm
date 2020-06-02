@@ -25,6 +25,8 @@
 
 #include "glk/comprehend/draw_surface.h"
 #include "common/archive.h"
+#include "common/file.h"
+#include "common/str-array.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -79,7 +81,8 @@ enum {
 	LOCATIONS_NO_BG_OFFSET = 100,
 	ITEMS_OFFSET = 200,
 	DARK_ROOM = 1000,
-	BRIGHT_ROOM = 1001
+	BRIGHT_ROOM = 1001,
+	TITLE_IMAGE = 9999
 };
 
 class Pics : public Common::Archive {
@@ -124,6 +127,7 @@ class Pics : public Common::Archive {
 private:
 	Common::Array<ImageFile> _rooms;
 	Common::Array<ImageFile> _items;
+	ImageFile _title;
 
 private:
 	/**
@@ -140,7 +144,8 @@ public:
 	void clear();
 
 	void load(const Common::StringArray &roomFiles,
-		const Common::StringArray &itemFiles);
+		const Common::StringArray &itemFiles,
+		const Common::String &titleFile);
 
 	/**
 	 * Check if a member with the given name is present in the Archive.

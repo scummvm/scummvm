@@ -44,6 +44,7 @@ public:
 	Common::Array<StringFile> _stringFiles;
 	Common::StringArray _locationGraphicFiles;
 	Common::StringArray _itemGraphicFiles;
+	Common::String _titleGraphicFile;
 	unsigned _colorTable;
 
 	struct GameStrings *_gameStrings;

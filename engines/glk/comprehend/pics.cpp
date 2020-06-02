@@ -20,18 +20,18 @@
  *
  */
 
+#include "glk/comprehend/pics.h"
+#include "common/memstream.h"
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
 #include "glk/comprehend/game_data.h"
-#include "glk/comprehend/pics.h"
-#include "glk/comprehend/draw_surface.h"
-#include "common/memstream.h"
 
 namespace Glk {
 namespace Comprehend {
 
-#define IMAGES_PER_FILE	16
+#define IMAGES_PER_FILE 16
 
 /*-------------------------------------------------------*/
 
@@ -50,6 +50,12 @@ Pics::ImageFile::ImageFile(const Common::String &filename) {
 	 * image offsets start at the beginning of the image file.
 	 */
 	version = f.readUint16LE();
+	if (version == 0x6300 /* Single image file */) {
+		_imageOffsets.resize(1);
+		_imageOffsets[0] = 4;
+		return;
+	}
+
 	if (version == 0x1000)
 		f.seek(4);
 	else
@@ -109,7 +115,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 			a += 255;
 
 		debugC(kDebugGraphics, "draw_line (%d, %d) - (%d, %d)",
-			ctx->_x, ctx->_y, a, b);
+		       ctx->_x, ctx->_y, a, b);
 		ctx->_drawSurface->drawLine(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 
 		ctx->_x = a;
@@ -125,7 +131,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 			a += 255;
 
 		debugC(kDebugGraphics, "draw_box (%d, %d) - (%d, %d)",
-			ctx->_x, ctx->_y, a, b);
+		       ctx->_x, ctx->_y, a, b);
 
 		ctx->_drawSurface->drawBox(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 		break;
@@ -153,7 +159,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 	case IMAGE_OP_SHAPE_A:
 	case IMAGE_OP_SHAPE_SPRAY:
 		debugC(kDebugGraphics,
-		             "set_shape_type(%.2x)", opcode - 0x40);
+		       "set_shape_type(%.2x)", opcode - 0x40);
 		ctx->_shape = opcode;
 		break;
 
@@ -175,7 +181,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 			a += 255;
 
 		debugC(kDebugGraphics, "draw_shape(%d, %d), style=%.2x, fill=%.2x",
-		             a, b, ctx->_shape, ctx->_fillColor);
+		       a, b, ctx->_shape, ctx->_fillColor);
 
 		ctx->_drawSurface->drawShape(a, b, ctx->_shape, ctx->_fillColor);
 		break;
@@ -192,7 +198,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		debugC(kDebugGraphics, "paint(%d, %d)", a, b);
 		if (!(ctx->_drawFlags & IMAGEF_NO_FLOODFILL))
 			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor,
-			            ctx->_drawSurface->getPixelColor(a, b));
+			                             ctx->_drawSurface->getPixelColor(a, b));
 		break;
 
 	case IMAGE_OP_FILL_COLOR:
@@ -213,10 +219,10 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 	case IMAGE_OP_DRAW_CHAR:
 		a = imageGetOperand(ctx);
 		debugC(kDebugGraphics, "draw_char(%c)",
-		             a >= 0x20 && a < 0x7f ? a : '?');
+		       a >= 0x20 && a < 0x7f ? a : '?');
 
 		ctx->_drawSurface->drawBox(ctx->_textX, ctx->_textY,
-		           ctx->_textX + 6, ctx->_textY + 7, ctx->_fillColor);
+		                           ctx->_textX + 6, ctx->_textY + 7, ctx->_fillColor);
 		ctx->_textX += 8;
 		break;
 
@@ -241,8 +247,8 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		/* FIXME - unknown, one argument */
 		a = imageGetOperand(ctx);
 		debugC(kDebugGraphics, "unknown %.2x: (%.2x) '%c'",
-		             opcode, a,
-		             a >= 0x20 && a < 0x7f ? a : '?');
+		       opcode, a,
+		       a >= 0x20 && a < 0x7f ? a : '?');
 		break;
 
 	default:
@@ -270,13 +276,17 @@ void Pics::clear() {
 }
 
 void Pics::load(const Common::StringArray &roomFiles,
-                const Common::StringArray &itemFiles) {
+                const Common::StringArray &itemFiles,
+                const Common::String &titleFile) {
 	clear();
 
 	for (uint idx = 0; idx < roomFiles.size(); ++idx)
 		_rooms.push_back(ImageFile(roomFiles[idx]));
 	for (uint idx = 0; idx < itemFiles.size(); ++idx)
 		_items.push_back(ImageFile(itemFiles[idx]));
+
+	if (!titleFile.empty())
+		_title = ImageFile(titleFile);
 }
 
 int Pics::getPictureNumber(const Common::String &filename) const {
@@ -298,7 +308,7 @@ bool Pics::hasFile(const Common::String &name) const {
 	if (num == -1)
 		return false;
 
-	if (num == DARK_ROOM || num == BRIGHT_ROOM)
+	if (num == DARK_ROOM || num == BRIGHT_ROOM || num == TITLE_IMAGE)
 		return true;
 	if (num >= ITEMS_OFFSET && num < (int)(ITEMS_OFFSET + _items.size() * IMAGES_PER_FILE))
 		return true;
@@ -334,7 +344,7 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 	const DrawSurface &ds = *g_comprehend->_drawSurface;
 	stream->writeUint16LE(ds.w);
 	stream->writeUint16LE(ds.h);
-	stream->writeUint16LE(0);		// Palette size
+	stream->writeUint16LE(0); // Palette size
 	stream->write(ds.getPixels(), ds.w * ds.h * 4);
 
 	return stream;
@@ -349,6 +359,9 @@ void Pics::drawPicture(int pictureNum) const {
 	} else if (pictureNum == BRIGHT_ROOM) {
 		ctx._drawSurface->clearScreen(G_COLOR_WHITE);
 
+	} else if (pictureNum == TITLE_IMAGE) {
+		_title.draw(0, &ctx);
+
 	} else if (pictureNum >= ITEMS_OFFSET) {
 		pictureNum -= ITEMS_OFFSET;
 		_items[pictureNum / IMAGES_PER_FILE].draw(
@@ -360,7 +373,7 @@ void Pics::drawPicture(int pictureNum) const {
 
 		pictureNum %= 100;
 		_rooms[pictureNum / IMAGES_PER_FILE].draw(
-			pictureNum % IMAGES_PER_FILE, &ctx);
+		    pictureNum % IMAGES_PER_FILE, &ctx);
 	}
 }
 

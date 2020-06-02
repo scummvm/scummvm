@@ -993,7 +993,7 @@ void comprehend_load_game(ComprehendGame *game) {
 	if (g_comprehend->_graphicsEnabled) {
 		// Set up the picture archive
 		g_comprehend->_pics->load(game->_locationGraphicFiles,
-			game->_itemGraphicFiles);
+			game->_itemGraphicFiles, game->_titleGraphicFile);
 
 		if (game->_colorTable)
 			g_comprehend->_drawSurface->setColorTable(game->_colorTable);

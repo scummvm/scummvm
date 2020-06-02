@@ -175,19 +175,21 @@ Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
 	return Common::kNoError;
 }
 
+void Comprehend::drawPicture(uint pictureNum) {
+	glk_image_draw_scaled(_topWindow, pictureNum,
+	                      20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
+}
+
 void Comprehend::drawLocationPicture(int pictureNum, bool clearBg) {
-	glk_image_draw_scaled(_topWindow, pictureNum + (clearBg ? LOCATIONS_OFFSET : LOCATIONS_NO_BG_OFFSET),
-		20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
+	drawPicture(pictureNum + (clearBg ? LOCATIONS_OFFSET : LOCATIONS_NO_BG_OFFSET));
 }
 
 void Comprehend::drawItemPicture(int pictureNum) {
-	glk_image_draw_scaled(_topWindow, pictureNum + ITEMS_OFFSET,
-		20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
+	drawPicture(pictureNum + ITEMS_OFFSET);
 }
 
 void Comprehend::clearScreen(bool isBright) {	
-	glk_image_draw_scaled(_topWindow, isBright ? BRIGHT_ROOM : DARK_ROOM,
-		20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
+	drawPicture(isBright ? BRIGHT_ROOM : DARK_ROOM);
 }
 
 } // namespace Comprehend

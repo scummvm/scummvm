@@ -23,6 +23,7 @@
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/game_tr.h"
+#include "glk/comprehend/pics.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -59,6 +60,7 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 	_itemGraphicFiles.push_back("OB.MS1");
 	_itemGraphicFiles.push_back("OC.MS1");
 
+	_titleGraphicFile = "trtitle.ms1";
 	_gameStrings = &tr_strings;
 }
 
@@ -158,6 +160,9 @@ void TransylvaniaGame::handle_special_opcode(uint8 operand)
 
 void TransylvaniaGame::before_game() {
 	char buffer[128];
+
+	// Draw the title
+	g_comprehend->drawPicture(TITLE_IMAGE);
 
 	// Welcome to Transylvania - sign your name
 	console_println(this, _strings[0x20].c_str());
