@@ -254,7 +254,7 @@ struct Object {
     ScriptContext *scriptContext;
 
     // used only for factories
-    DatumArray *objArray;
+    Common::HashMap<uint, Datum> *objArray;
 
 	Object *clone();
 	Symbol getMethod(const Common::String &methodName, bool ignorePredefined = false);
