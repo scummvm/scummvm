@@ -41,6 +41,7 @@
 #ifdef ENABLE_WME3D
 namespace Math {
 
+class Angle;
 template<int rows, int cols> class Matrix;
 typedef Matrix<4, 4> Matrix4;
 typedef Matrix<3, 1> Vector3d;
@@ -100,6 +101,7 @@ public:
 #ifdef ENABLE_WME3D
 	bool transferVector3d(const char *name, Math::Vector3d *val);
 	bool transferMatrix4(const char *name, Math::Matrix4 *val);
+	bool transferAngle(const char *name, Math::Angle *val);
 #endif
 	BasePersistenceManager(const Common::String &savePrefix = "", bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
