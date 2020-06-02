@@ -1723,9 +1723,13 @@ void LB::b_puppetSound(int nargs) {
 }
 
 void LB::b_puppetSprite(int nargs) {
-	g_lingo->printSTUBWithArglist("b_puppetSprite", nargs);
+	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	g_lingo->dropStack(nargs);
+	if (g_lingo->_currentChannelId == -1) {
+		warning("b_puppetSprite: channel Id is missing");
+		return;
+	}
+	frame->_sprites[g_lingo->_currentChannelId]->_puppet = true;
 }
 
 void LB::b_puppetTempo(int nargs) {
