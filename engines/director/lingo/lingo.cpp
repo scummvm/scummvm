@@ -149,6 +149,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentScriptType = kMovieScript;
 	_currentScriptContext = nullptr;
 	_currentScriptFunction = 0;
+	_currentMeObj = nullptr;
 
 	_currentEntityId = 0;
 	_currentChannelId = -1;
