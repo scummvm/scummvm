@@ -31,8 +31,8 @@
 namespace Glk {
 namespace Comprehend {
 
-static char charset[] = "..abcdefghijklmnopqrstuvwxyz .";
-static char special_charset[] = "[]\n!\"#$%&'(),-/0123456789:;?<>";
+static const char CHARSET[] = "..abcdefghijklmnopqrstuvwxyz .";
+static const char SPECIAL_CHARSET[] = "[]\n!\"#$%&'(),-/0123456789:;?<>";
 
 static uint16 magic_offset;
 
@@ -677,11 +677,11 @@ static uint64 string_get_chunk(uint8 *string) {
 
 static char decode_string_elem(uint8 c, bool capital, bool special) {
 	if (special) {
-		if (c < sizeof(special_charset) - 1)
-			return special_charset[c];
+		if (c < sizeof(SPECIAL_CHARSET) - 1)
+			return SPECIAL_CHARSET[c];
 	} else {
-		if (c < sizeof(charset) - 1) {
-			c = charset[c];
+		if (c < sizeof(CHARSET) - 1) {
+			c = CHARSET[c];
 			if (capital) {
 				/*
 				* A capital space means that the character

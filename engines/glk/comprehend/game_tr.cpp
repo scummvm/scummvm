@@ -36,7 +36,7 @@ const TransylvaniaMonster TransylvaniaGame::VAMPIRE = {
 	0x26, 5, (1 << 7), 0, 5
 };
 
-static GameStrings tr_strings = {
+static GameStrings TR_STRINGS = {
     EXTRA_STRING_TABLE(0x8a)
 };
 
@@ -61,7 +61,7 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 	_itemGraphicFiles.push_back("OC.MS1");
 
 	_titleGraphicFile = "trtitle.ms1";
-	_gameStrings = &tr_strings;
+	_gameStrings = &TR_STRINGS;
 }
 
 void TransylvaniaGame::update_monster(const TransylvaniaMonster *monster_info) {
