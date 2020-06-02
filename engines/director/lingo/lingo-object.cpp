@@ -22,6 +22,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
@@ -72,6 +73,21 @@ void Lingo::initMethods() {
 	}
 }
 
+Object *Object::clone() {
+	Object *res = new Object;
+	res->name = name;
+	res->type = type;
+	res->prototype = this;
+	res->properties = properties;
+	res->methods = methods;
+	res->inheritanceLevel = inheritanceLevel + 1;
+	res->scriptContext = scriptContext;
+	if (objArray) {
+		res->objArray = new DatumArray(*objArray);
+	}
+	return res;
+}
+
 Symbol Object::getMethod(Common::String &methodName, bool ignorePredefined) {
 	if (!ignorePredefined && g_lingo->_methods.contains(methodName)) {
 		return g_lingo->_methods[methodName];
@@ -102,9 +118,22 @@ void LM::m_put(int nargs) {
 }
 
 void LM::m_new(int nargs) {
-	g_lingo->printSTUBWithArglist("m_new", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->pushVoid();
+	Object *clone = g_lingo->_currentMeObj->clone();
+
+	// Call user-defined mNew
+	Common::String methodName("mNew");
+	Symbol userMNew = clone->getMethod(methodName, true);
+	Symbol cloneSym;
+	cloneSym.type = OBJECT;
+	cloneSym.u.obj = clone;
+	if (userMNew.type != VOID) {
+		LC::call(userMNew, nargs, cloneSym);
+	}
+
+	Datum res;
+	res.type = OBJECT;
+	res.u.obj = clone;
+	g_lingo->push(res);
 }
 
 }

@@ -256,6 +256,7 @@ struct Object {
     // used only for factories
     DatumArray *objArray;
 
+	Object *clone();
 	Symbol getMethod(Common::String &methodName, bool ignorePredefined = false);
 };
 
