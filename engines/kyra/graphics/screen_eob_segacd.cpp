@@ -344,7 +344,7 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 		}
 		
 		_segaAnimator->update();
-		_segaRenderer->render(Screen_EoB::kSegaInitShapesPage, true);
+		_segaRenderer->render(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true);
 
 		for (int i = l; i < s; ++i)
 			dst[i] = encodeShape((((i % 80) * w) % SCREEN_W) >> 3, ((i % 80) / (SCREEN_W / w)) * h, w >> 3, h);
@@ -429,7 +429,7 @@ SegaRenderer::SegaRenderer(Screen_EoB *screen) : _screen(screen), _drChain(0), _
 }
 
 SegaRenderer::~SegaRenderer() {
-	clearDirtyRects();
+	//clearDirtyRects();
 	delete[] _vram;
 	delete[] _vsram;
 	delete[] _spriteMask;
@@ -504,7 +504,7 @@ void SegaRenderer::loadToVRAM(const void *data, uint16 dataSize, uint16 addr) {
 	assert(data);
 	assert(addr + dataSize <= 0x10000);
 	memcpy(_vram + addr, data, dataSize);
-	checkUpdateDirtyRects(addr, dataSize);
+	//checkUpdateDirtyRects(addr, dataSize);
 }
 
 void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData) {
@@ -526,7 +526,7 @@ void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr,
 		assert(in->size() < 0x10000 - addr);
 		in->read(dst, in->size());
 	}
-	addDirtyRect(0, 0, _screenW, _screenH);
+	//addDirtyRect(0, 0, _screenW, _screenH);
 }
 
 void SegaRenderer::memsetVRAM(int addr, uint8 val, int len) {
@@ -537,7 +537,7 @@ void SegaRenderer::memsetVRAM(int addr, uint8 val, int len) {
 
 void SegaRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr, bool topToBottom, const uint16 *patternTable) {
 	uint16 addr = vramArea ? (vramArea == 1 ? 0xE000 : 0xF000) : 0xC000;
-	addDirtyRect(x << 3, y << 3, w << 3, h << 3);
+	//addDirtyRect(x << 3, y << 3, w << 3, h << 3);
 	if (y & 0x8000) {
 		y &= ~0x8000;
 		addr = 0xE000;
@@ -598,19 +598,19 @@ void SegaRenderer::writeUint16VSRAM(int addr, uint16 value) {
 	assert(addr < 80);
 	assert(!(addr & 1));
 	_vsram[addr >> 1] = value;
-	checkUpdateDirtyRects(addr, 2);
+	//checkUpdateDirtyRects(addr, 2);
 }
 
 void SegaRenderer::writeUint8VRAM(int addr, uint8 value) {
 	assert(addr < 0x10000);
 	_vram[addr] = value;
-	checkUpdateDirtyRects(addr, 1);
+	//checkUpdateDirtyRects(addr, 1);
 }
 
 void SegaRenderer::writeUint16VRAM(int addr, uint16 value) {
 	assert(addr < 0x10000);
 	*((uint16*)(_vram + addr)) = value;
-	checkUpdateDirtyRects(addr, 2);
+	//checkUpdateDirtyRects(addr, 2);
 }
 
 void SegaRenderer::clearPlanes() {
@@ -620,21 +620,23 @@ void SegaRenderer::clearPlanes() {
 	}
 }
 
-void SegaRenderer::render(int destPageNum, bool spritesOnly) {
+void SegaRenderer::render(int destPageNum, int renderBlockX, int renderBlockY, int renderBlockWidth, int renderBlockHeight, bool spritesOnly) {
+	if (renderBlockX == -1)
+		renderBlockX = 0;
+	if (renderBlockY == -1)
+		renderBlockY = 0;
+	if (renderBlockWidth == -1)
+		renderBlockWidth = _blocksW;
+	if (renderBlockHeight == -1)
+		renderBlockHeight = _blocksH;
+
 	uint8 *renderBuffer = _screen->getPagePtr(destPageNum);
-	memset(renderBuffer, 0, _screenW * _screenH);
-
-	if (destPageNum == 0)
-		sendDirtyRectsToScreen();
-
-	// It is assumed that no dirty rects are needed if the rendering takes place to any other page than page 0.
-	// So if you'd render to e. g. page 2 and afterwards to page 0 your dirty rects would be lost. This is
-	// intentional for now, since I assume that this will be in harmony with the actual usage of the renderer.
-	clearDirtyRects();
+	// This also ensures that a dirty rect is created if necessary
+	_screen->fillRect(renderBlockX << 3, renderBlockY << 3, ((renderBlockX + renderBlockWidth) << 3) - 1, ((renderBlockY + renderBlockHeight) << 3) - 1, 0, destPageNum);
 
 	// Plane B
 	if (!spritesOnly)
-		renderPlanePart(kPlaneB, renderBuffer, 0, 0, _blocksW, _blocksH);
+		renderPlanePart(kPlaneB, renderBuffer, renderBlockX, renderBlockY, renderBlockX + renderBlockWidth, renderBlockY + renderBlockHeight);
 
 	// Plane A (only draw if the nametable is not identical to that of plane B)
 	if (_planes[kPlaneA].nameTable != _planes[kPlaneB].nameTable && !spritesOnly) {
@@ -642,19 +644,19 @@ void SegaRenderer::render(int destPageNum, bool spritesOnly) {
 		// kind of replaces plane A in the space that is covered by it.
 		if (_planes[kWindowPlane].nameTableSize) {
 			SegaPlane *p = &_planes[kWindowPlane];
-			renderPlanePart(kPlaneA, renderBuffer, 0, 0, p->blockX, _blocksH);
-			renderPlanePart(kPlaneA, renderBuffer, 0, 0, _blocksW, p->blockY);
-			renderPlanePart(kPlaneA, renderBuffer, p->blockX + p->w, 0, _blocksW, _blocksH);
-			renderPlanePart(kPlaneA, renderBuffer, 0, p->blockY + p->h, _blocksW, _blocksH);
+			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(0, renderBlockX), MAX<int>(0, renderBlockY), MIN<int>(p->blockX, renderBlockX + renderBlockWidth), MIN<int>(_blocksH, renderBlockY + renderBlockHeight));
+			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(0, renderBlockX), MAX<int>(0, renderBlockY), MIN<int>(_blocksW, renderBlockX + renderBlockWidth), MIN<int>(p->blockY, renderBlockY + renderBlockHeight));
+			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(p->blockX + p->w, renderBlockX), MAX<int>(0, renderBlockY), MIN<int>(_blocksW, renderBlockX + renderBlockWidth), MIN<int>(_blocksH, renderBlockY + renderBlockHeight));
+			renderPlanePart(kPlaneA, renderBuffer, MAX<int>(0, renderBlockX), MAX<int>(p->blockY + p->h, renderBlockY), MIN<int>(_blocksW, renderBlockX + renderBlockWidth), MIN<int>(_blocksH, renderBlockY + renderBlockHeight));
 		} else {
-			renderPlanePart(kPlaneA, renderBuffer, 0, 0, _blocksW, _blocksH);
+			renderPlanePart(kPlaneA, renderBuffer, renderBlockX, renderBlockY, renderBlockX + renderBlockWidth, renderBlockY + renderBlockHeight);
 		}
 	}
 
 	// Window Plane
 	if (_planes[kWindowPlane].nameTableSize && !spritesOnly) {
 		SegaPlane *p = &_planes[kWindowPlane];
-		renderPlanePart(kWindowPlane, renderBuffer, p->blockX, p->blockY, p->blockX + p->w, p->blockY + p->h);
+		renderPlanePart(kWindowPlane, renderBuffer, MIN<int>(p->blockX, renderBlockX + renderBlockWidth), MIN<int>(p->blockY, renderBlockY + renderBlockHeight), MAX<int>(p->blockX + p->w, renderBlockX), MAX<int>(p->blockY + p->h, renderBlockY));
 	}
 
 	// Sprites
@@ -680,6 +682,20 @@ void SegaRenderer::render(int destPageNum, bool spritesOnly) {
 
 		x -= 128;
 		y -= 128;
+
+		/*if ((x >> 3) < renderBlockX) {
+			bW = MIN<int>(0, (int)bW - (renderBlockX - (x >> 3)));
+			x = (renderBlockX << 3);
+			
+		}
+
+		if ((y >> 3) < renderBlockY) {
+			bH = MIN<int>(0, (int)bH - (renderBlockY - (y >> 3)));
+			y = (renderBlockY << 3);
+		}
+
+		bW = MIN<int>(bW, renderBlockWidth);
+		bH = MIN<int>(bH, renderBlockHeight);*/
 
 		uint8 *dst = renderBuffer + y * _screenW + x;
 		uint8 *msk = _spriteMask + y * _screenW + x;
@@ -730,14 +746,14 @@ void SegaRenderer::renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, 
 
 			int ty = (vscrNt + y) % p->mod;
 
-			renderPlaneTile(dst, x, &p->nameTable[ty * _pitch + x1], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
+			renderPlaneTile(dst, x, &p->nameTable[ty * _pitch], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
 
 			if (vscrPxStart) {
 				ty = (ty + 1) % p->mod;
 				uint16 dstOffs = (vscrPxEnd - vscrPxStart) * _screenW;
 				vscrPxEnd = vscrPxStart;
 				vscrPxStart = 0;
-				renderPlaneTile(dst + dstOffs, x, &p->nameTable[ty * _pitch + x1], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
+				renderPlaneTile(dst + dstOffs, x, &p->nameTable[ty * _pitch], vscrPxStart, vscrPxEnd, hScrollTableIndex, _pitch);
 			}
 			dst += 8;
 		}
@@ -745,7 +761,7 @@ void SegaRenderer::renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, 
 	}
 }
 
-void SegaRenderer::renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollLSBStart, int vScrollLSBEnd, int hScrollTableIndex, uint16 pitch) {
+void SegaRenderer::renderPlaneTile(uint8 *dst, int ntblX, const uint16 *ntblLine, int vScrollLSBStart, int vScrollLSBEnd, int hScrollTableIndex, uint16 pitch) {
 	for (int bY = vScrollLSBStart; bY < vScrollLSBEnd; ++bY) {
 		uint8 *dst2 = dst;
 		uint16 hscrNt = 0;
@@ -757,7 +773,7 @@ void SegaRenderer::renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTabl
 			hscrNt >>= 3;
 		}
 
-		const uint16 *pNt = &nameTable[(destX + hscrNt) % pitch];
+		const uint16 *pNt = &ntblLine[(ntblX + hscrNt) % pitch];
 		if (pNt < (const uint16*)(&_vram[0x10000])) {
 			uint16 nt = *pNt;
 			uint16 pal = ((nt >> 13) & 3) << 4;
@@ -775,7 +791,7 @@ void SegaRenderer::renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTabl
 
 		if (hscrPx) {
 			dst += (8 - hscrPx);
-			pNt = &nameTable[(destX + hscrNt + 1) % pitch];
+			pNt = &ntblLine[(ntblX + hscrNt + 1) % pitch];
 			if (pNt < (const uint16*)(&_vram[0x10000])) {
 				uint16 nt = *pNt;
 				uint16 pal = ((nt >> 13) & 3) << 4;
@@ -925,7 +941,7 @@ template<bool hflip> void SegaRenderer::renderLineFragment(uint8 *dst, uint8 *ma
 
 #undef mRenderLineFragment
 
-void SegaRenderer::checkUpdateDirtyRects(int addr, int len) {
+/*void SegaRenderer::checkUpdateDirtyRects(int addr, int len) {
 	//void *tbl[] = { _vram, _hScrollTable, , _planes[kPlaneA].nameTable, _planes[kPlaneB].nameTable, _planes[kWindowPlane].nameTable };
 	addDirtyRect(0, 0, _screenW, _screenH);
 	/*uint8 *addE = &_vram[addr];
@@ -941,6 +957,7 @@ void SegaRenderer::checkUpdateDirtyRects(int addr, int len) {
 	}*/
 
 	//if (addr >= _hScrollTable && addr < _hScrollTable + 0x400);
+/*
 }
 
 void SegaRenderer::addDirtyRect(int x, int y, int w, int h) {
@@ -965,7 +982,7 @@ void SegaRenderer::clearDirtyRects() {
 		delete _drChain;
 		_drChain = e;
 	}
-}
+}*/
 
 void SegaRenderer::initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip) {
 	_prioChainEnd = new PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);

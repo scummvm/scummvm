@@ -184,7 +184,7 @@ Common::Error EoBEngine::init() {
 	const uint8 **shapeBuffer = new const uint8 *[numSprites]; \
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numSprites, spriteWidth, spriteHeight, 3, false); \
 	releaseShpArr(shapeBuffer, numSprites); \
-	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage, true); \
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true); \
 	_screen->sega_getAnimator()->clearSprites(); \
 	int cp = _screen->setCurPage(Screen_EoB::kSegaInitShapesPage); \
 	singleShape = _screen->encodeShape(0, 0, numSprites  * (spriteWidth >> 3), spriteHeight); \

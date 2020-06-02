@@ -85,8 +85,10 @@ public:
 	void writeUint8VRAM(int addr, uint8 value);
 	void writeUint16VRAM(int addr, uint16 value);
 	void clearPlanes();
-	
-	void render(int destPageNum, bool spritesOnly = false);
+
+	//void renderScreen();
+	//void renderArea(int destPageNum, int renderLeft, int renderTop, int renderWidth, int renderHeight, bool spritesOnly = false);
+	void render(int destPageNum, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
 
 private:
 	void renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, int x2, int y2);
@@ -101,11 +103,11 @@ private:
 	const renderFuncD *_renderLineFragmentD;
 #else
 	template<bool hflip> void renderLineFragment(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal);
-#endif
+#endif/*
 	void checkUpdateDirtyRects(int addr, int len);
 	void addDirtyRect(int x, int y, int w, int h);
 	void sendDirtyRectsToScreen();
-	void clearDirtyRects();
+	void clearDirtyRects();*/
 
 	void initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip);
 	void clearPrioChain();
