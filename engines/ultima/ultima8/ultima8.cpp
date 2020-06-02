@@ -707,7 +707,7 @@ void Ultima8Engine::leaveTextMode(Gump *gump) {
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
-	bool handled = false;
+	//bool handled = false;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -803,8 +803,8 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 			button = Shared::BUTTON_MIDDLE;
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
-		if (_mouse->buttonDown(button))
-			handled = true;
+		_mouse->buttonDown(button);
+		//if (_mouse->buttonDown(button)) handled = true;
 		break;
 	}
 
@@ -818,8 +818,8 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 			button = Shared::BUTTON_MIDDLE;
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
-		if (_mouse->buttonUp(button))
-			handled = true;
+		_mouse->buttonUp(button);
+		//if (_mouse->buttonUp(button)) handled = true;
 		break;
 	}
 
@@ -839,7 +839,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 }
 
 void Ultima8Engine::handleDelayedEvents() {
-	uint32 now = g_system->getMillis();
+	//uint32 now = g_system->getMillis();
 
 	_mouse->handleDelayedEvents();
 }
