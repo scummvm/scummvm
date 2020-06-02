@@ -477,7 +477,11 @@ void Lingo::varCreate(const Common::String &name, bool global) {
 		if (global)
 			warning("varCreate: variable %s is local, not global", name.c_str());
 		return;
-	} else if (_globalvars.contains(name)) {
+	} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
+		if (global)
+			warning("varCreate: variable %s is instance or property, not global", name.c_str());
+		return;
+	} else  if (_globalvars.contains(name)) {
 		if (!global)
 			warning("varCreate: variable %s is global, not local", name.c_str());
 		return;
@@ -506,6 +510,10 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global) {
 			sym = &(*_localvars)[name];
 			if (global)
 				warning("varAssign: variable %s is local, not global", name.c_str());
+		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
+			sym = &_currentMeObj->getVar(name);
+			if (global)
+				warning("varAssign: variable %s is instance or property, not global", sym->name->c_str());
 		} else if (_globalvars.contains(name)) {
 			sym = &_globalvars[name];
 			if (!global)
@@ -584,6 +592,10 @@ Datum Lingo::varFetch(Datum &var, bool global) {
 			sym = &(*_localvars)[name];
 			if (global)
 				warning("varFetch: variable %s is local, not global", sym->name->c_str());
+		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
+			sym = &_currentMeObj->getVar(name);
+			if (global)
+				warning("varFetch: variable %s is instance or property, not global", sym->name->c_str());
 		} else if (_globalvars.contains(name)) {
 			sym = &_globalvars[name];
 			if (!global)

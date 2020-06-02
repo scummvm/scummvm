@@ -92,6 +92,12 @@ static void startDef() {
 	inArgs();
 	g_lingo->_methodVarsStash = g_lingo->_methodVars;
 	g_lingo->_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
+
+	if (g_lingo->_currentFactory) {
+		for (SymbolHash::iterator i = g_lingo->_currentFactory->properties.begin(); i != g_lingo->_currentFactory->properties.end(); ++i) {
+			(*g_lingo->_methodVars)[i->_key] = kVarInstance;
+		}
+	}
 }
 
 static void endDef() {
@@ -99,25 +105,23 @@ static void endDef() {
 	inNone();
 	g_lingo->_ignoreMe = false;
 
-	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = g_lingo->_methodVars->begin(); i != g_lingo->_methodVars->end(); ++i) {
-		if (i->_value == kVarInstance) {
-			if (g_lingo->_currentFactory != nullptr) {
-				g_lingo->_currentFactory->properties[i->_key] = Symbol();
-				g_lingo->_currentFactory->properties[i->_key].name = new Common::String(i->_key);
-			} else {
-				warning("Instance var '%s' defined outside factory", i->_key.c_str());
-			}
-		}
-	}
-
 	delete g_lingo->_methodVars;
 	g_lingo->_methodVars = g_lingo->_methodVarsStash;
 	g_lingo->_methodVarsStash = nullptr;
 }
 
 static void mVar(Common::String *s, VarType type) {
-	if (!g_lingo->_methodVars->contains(*s))
+	if (!g_lingo->_methodVars->contains(*s)) {
 		(*g_lingo->_methodVars)[*s] = type;
+		if (type == kVarInstance) {
+			if (g_lingo->_currentFactory) {
+				g_lingo->_currentFactory->properties[*s] = Symbol();
+				g_lingo->_currentFactory->properties[*s].name = new Common::String(*s);
+			} else {
+				warning("Instance var '%s' defined outside factory", s->c_str());
+			}
+		}
+	}
 }
 
 %}

@@ -257,7 +257,9 @@ struct Object {
     DatumArray *objArray;
 
 	Object *clone();
-	Symbol getMethod(Common::String &methodName, bool ignorePredefined = false);
+	Symbol getMethod(const Common::String &methodName, bool ignorePredefined = false);
+	bool hasVar(const Common::String &varName);
+	Symbol &getVar(const Common::String &varName);
 };
 
 struct CFrame {	/* proc/func call stack frame */

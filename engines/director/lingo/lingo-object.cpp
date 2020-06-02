@@ -88,7 +88,7 @@ Object *Object::clone() {
 	return res;
 }
 
-Symbol Object::getMethod(Common::String &methodName, bool ignorePredefined) {
+Symbol Object::getMethod(const Common::String &methodName, bool ignorePredefined) {
 	if (!ignorePredefined && g_lingo->_methods.contains(methodName)) {
 		return g_lingo->_methods[methodName];
 	}
@@ -97,6 +97,19 @@ Symbol Object::getMethod(Common::String &methodName, bool ignorePredefined) {
 	}
 	// TODO: error handling
 	return Symbol();
+}
+
+bool Object::hasVar(const Common::String &varName) {
+	// Factory object instance vars are accessed like normal vars
+	// Script object properties cannot be accessed like normal vars until D5
+	if (type == kScriptObj && g_lingo->_vm->getVersion() < 5) {
+		return false;
+	}
+	return properties.contains(varName);
+}
+
+Symbol &Object::getVar(const Common::String &varName) {
+	return properties[varName];
 }
 
 void LM::m_dispose(int nargs) {
