@@ -67,6 +67,8 @@ void Lingo::execute(uint pc) {
 		if (debugChannelSet(9, kDebugLingoExec)) {
 			debug("Vars before");
 			printAllVars();
+			if (_currentMeObj)
+				debug("me: %s", _currentMeObj->name->c_str());
 		}
 
 		debugC(1, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
