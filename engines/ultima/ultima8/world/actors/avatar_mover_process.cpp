@@ -180,7 +180,11 @@ void AvatarMoverProcess::handleCombatMode() {
 	}
 
 	_mouseButton[0].setState(MBS_RELHANDLED);
-	_mouseButton[1].setState(MBS_RELHANDLED);
+
+	if (!_mouseButton[1].isState(MBS_RELHANDLED)) {
+		_mouseButton[1].setState(MBS_RELHANDLED);
+		clearMovementFlag(MOVE_MOUSE_DIRECTION);
+	}
 
 	if (_mouseButton[0].isState(MBS_DOWN) &&
 	        _mouseButton[0].isState(MBS_HANDLED) && _mouseButton[0]._lastDown > 0) {
@@ -249,11 +253,16 @@ void AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
+	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
+		// right mouse button is down long enough to act on it
+		// if facing right direction, walk
+	}
 	if (_mouseButton[1].isState(MBS_DOWN) &&
 	        _mouseButton[1].isState(MBS_HANDLED) && _mouseButton[1]._lastDown > 0) {
 		// right mouse button is down long enough to act on it
 		// if facing right direction, walk
 		//!! TODO: check if you can actually take this step
+		setMovementFlag(MOVE_MOUSE_DIRECTION);
 
 		if (checkTurn(mousedir, true))
 			return;
@@ -304,7 +313,24 @@ void AvatarMoverProcess::handleCombatMode() {
 	}
 
 	if (hasMovementFlags(MOVE_FORWARD)) {
-		waitFor(avatar->doAnim(Animation::advance, direction));
+		Animation::Sequence nextanim = Animation::advance;
+
+		if (lastanim == Animation::run) {
+			// want to run while in combat mode?
+			// first sheath weapon
+			nextanim = Animation::readyWeapon;
+		} 
+
+		if (hasMovementFlags(MOVE_RUN)) {
+			// Take a step before running
+			nextanim = Animation::walk;
+			avatar->setActorFlag(Actor::ACT_COMBATRUN);
+			avatar->toggleInCombat();
+			MusicProcess::get_instance()->playCombatMusic(110); // CONSTANT!!
+		}
+
+		nextanim = Animation::checkWeapon(nextanim, lastanim);
+		waitFor(avatar->doAnim(nextanim, direction));
 		return;
 	}
 
@@ -344,6 +370,14 @@ void AvatarMoverProcess::handleCombatMode() {
 			nextdir = direction;
 		} else {
 			nextanim = Animation::advance;
+		}
+
+		if (hasMovementFlags(MOVE_RUN)) {
+			// Take a step before running
+			nextanim = Animation::walk;
+			avatar->setActorFlag(Actor::ACT_COMBATRUN);
+			avatar->toggleInCombat();
+			MusicProcess::get_instance()->playCombatMusic(110); // CONSTANT!!
 		}
 
 		nextanim = Animation::checkWeapon(nextanim, lastanim);
@@ -428,7 +462,15 @@ void AvatarMoverProcess::handleNormalMode() {
 	if (!_mouseButton[1].isState(MBS_RELHANDLED)) {
 		_mouseButton[1].setState(MBS_RELHANDLED);
 		clearMovementFlag(MOVE_MOUSE_DIRECTION);
+	}
 
+	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
+		// right mouse button is down long enough to act on it
+		// if facing right direction, walk
+		setMovementFlag(MOVE_MOUSE_DIRECTION);
+	}
+
+	if (!hasMovementFlags(MOVE_ANY_DIRECTION)) {
 		// if we were running in combat mode, slow to a walk, draw weapon
 		// (even in stasis)
 		if (combatRun) {
@@ -465,12 +507,6 @@ void AvatarMoverProcess::handleNormalMode() {
 	// can't do any new actions if in stasis
 	if (stasis)
 		return;
-
-	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
-		// right mouse button is down long enough to act on it
-		// if facing right direction, walk
-		setMovementFlag(MOVE_MOUSE_DIRECTION);
-	}
 
 	// both mouse buttons down and not yet handled, check for jump.
 	if (!_mouseButton[0].isState(MBS_HANDLED) && !_mouseButton[1].isState(MBS_HANDLED)) {
