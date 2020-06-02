@@ -1723,6 +1723,12 @@ void LB::b_puppetSound(int nargs) {
 }
 
 void LB::b_puppetSprite(int nargs) {
+	if (!g_director->getCurrentScore()) {
+		warning("b_puppetSprite: no score");
+
+		return;
+	}
+
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
 	if (g_lingo->_currentChannelId == -1) {
