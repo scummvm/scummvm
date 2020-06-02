@@ -30,6 +30,7 @@
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/transform_struct.h"
+#include "math/matrix4.h"
 
 namespace Wintermute {
 
@@ -75,6 +76,8 @@ public:
 	bool setProjection(float fov);
 	bool setProjection2D();
 	void resetModelViewTransform();
+	void pushWorldTransform(const Math::Matrix4 &transform);
+	void popWorldTransform();
 
 	bool windowedBlt() override;
 	/**

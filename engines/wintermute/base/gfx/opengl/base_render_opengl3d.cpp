@@ -172,6 +172,15 @@ void BaseRenderOpenGL3D::resetModelViewTransform() {
 	glLoadIdentity();
 }
 
+void BaseRenderOpenGL3D::pushWorldTransform(const Math::Matrix4 &transform) {
+	glPushMatrix();
+	glMultMatrixf(transform.getData());
+}
+
+void BaseRenderOpenGL3D::popWorldTransform() {
+	glPopMatrix();
+}
+
 bool BaseRenderOpenGL3D::windowedBlt() {
 	warning("BaseRenderOpenGL3D::windowedBlt not yet implemented");
 	return true;
