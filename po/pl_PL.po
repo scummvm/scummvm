@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-05-28 02:41+0000\n"
+"PO-Revision-Date: 2020-06-02 16:41+0000\n"
 "Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -292,15 +292,13 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "U¿yj w³asnych ustawieñ d¼wiêku"
+msgstr "U¿yj w³asnych ustawieñ grafiki"
 
 #: gui/editgamedialog.cpp:219
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "U¿yj w³asnych ustawieñ d¼wiêku"
+msgstr "U¿yj w³asnych ustawieñ grafiki"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1739 engines/dialogs.cpp:329
 msgid "Keymaps"
@@ -412,7 +410,7 @@ msgstr "¦cie¿ka zapisów:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Osi±gniêcia"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -1248,9 +1246,8 @@ msgid "Theme:"
 msgstr "Styl:"
 
 #: gui/options.cpp:1976
-#, fuzzy
 msgid "GUI renderer:"
-msgstr "Renderer interf.:"
+msgstr "Renderer interfejsu graficznego"
 
 #: gui/options.cpp:1988
 msgid "Autosave:"
@@ -1328,9 +1325,8 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2084
-#, fuzzy
 msgid "Enable storage"
-msgstr "W³±cz publiczno¶æ studyjn±"
+msgstr "W³±cz przechowywanie w chmurze"
 
 #: gui/options.cpp:2084
 msgid "Confirm you want to use this account for this storage"
@@ -1378,15 +1374,16 @@ msgstr ""
 #: gui/options.cpp:2097
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
+"Zapisane gry synchronizuj± siê podczas startu, po zapisie i w czasie "
+"za³adowania."
 
 #: gui/options.cpp:2098
 msgid "Sync now"
 msgstr ""
 
 #: gui/options.cpp:2098
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "Rozpocznij wybran± grê"
+msgstr "Zsynchronizuj zapisane gry"
 
 #: gui/options.cpp:2101
 msgctxt "lowres"
@@ -1398,9 +1395,8 @@ msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 
 #: gui/options.cpp:2104
-#, fuzzy
 msgid "Download game files"
-msgstr "Wczytaj plik"
+msgstr "Pobierz pliki gry"
 
 #: gui/options.cpp:2104
 msgid "Open downloads manager dialog"
@@ -1416,9 +1412,8 @@ msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 
 #: gui/options.cpp:2110
-#, fuzzy
 msgid "Disconnect"
-msgstr "Po³±cz"
+msgstr "Roz³±cz"
 
 #: gui/options.cpp:2110
 msgid "Stop using this storage on this device"
@@ -1459,14 +1454,12 @@ msgid "Paste code from clipboard"
 msgstr ""
 
 #: gui/options.cpp:2124
-#, fuzzy
 msgid "3. Connect"
-msgstr "Po³±cz"
+msgstr "3. Po³±cz"
 
 #: gui/options.cpp:2124
-#, fuzzy
 msgid "Connect your cloud storage account"
-msgstr "Otwórz asystenta po³±czenia z us³ug± przechowywania danych w chmurze"
+msgstr "Po³±cz z kontem przechowywania danych w chmurze"
 
 #: gui/options.cpp:2133
 msgid "Run server"
@@ -1486,9 +1479,8 @@ msgid "/root/ Path:"
 msgstr "G³ówna /:"
 
 #: gui/options.cpp:2138 gui/options.cpp:2140 gui/options.cpp:2141
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Okre¶la ¶cie¿kê g³ówn± dla mened¿era plików"
+msgstr "Okre¶la ¶cie¿kê g³ówn± w Menad¿erze Plików"
 
 #: gui/options.cpp:2140
 msgid "/root/ Path:"
@@ -1521,9 +1513,8 @@ msgid "Closing options dialog will stop the server."
 msgstr ""
 
 #: gui/options.cpp:2167
-#, fuzzy
 msgid "Use Text to speech"
-msgstr "Tekst i mowa:"
+msgstr "Przetwórz tekst na mowê"
 
 #: gui/options.cpp:2167
 msgid "Will read text in gui on mouse over."
@@ -1596,14 +1587,12 @@ msgid "Wait until current Storage finishes up and try again."
 msgstr "Proszê czekaæ, a¿ aktywna us³uga zakoñczy pracê i spróbowaæ ponownie."
 
 #: gui/options.cpp:2596
-#, fuzzy
 msgid "Connecting..."
-msgstr "Po³±cz"
+msgstr "£±czenie..."
 
 #: gui/options.cpp:2612
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Inna us³uga jest aktywna. Czy chcesz j± przerwaæ?"
+msgstr "Us³uga jest aktywna. Czy chcesz j± przerwaæ?"
 
 #: gui/options.cpp:2810 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -1618,19 +1607,16 @@ msgid "Stop local webserver"
 msgstr "Zatrzymuje lokalny serwer WWW"
 
 #: gui/options.cpp:2972
-#, fuzzy
 msgid "Storage connected."
-msgstr "%s - asystent po³±czenia"
+msgstr "Po³±czono z chmur±."
 
 #: gui/options.cpp:2974
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Nie uda³o siê zmieniæ dostawcy przechowywania!"
+msgstr "Nie uda³o siê po³±czyæ z us³ug± chmury."
 
 #: gui/options.cpp:2976
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Nie uda³o siê zmieniæ dostawcy przechowywania!"
+msgstr "Nie uda³o siê siê po³±czyæ z us³ug± chmury: "
 
 #: gui/options.cpp:2996
 msgid ""
@@ -1812,9 +1798,8 @@ msgid "Antialiased"
 msgstr "Wyg³adzany"
 
 #: gui/unknown-game-dialog.cpp:49
-#, fuzzy
 msgid "Add anyway"
-msgstr "W³±cz mimo tego"
+msgstr "Dodaj mimo tego"
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
@@ -1941,9 +1926,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Nie uda³o siê znale¼æ odpowiedniej wtyczki silnika"
 
 #: common/error.cpp:70
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "Silnik nie wspiera zapisu stanu gry"
+msgstr "Silnik nie wspiera zapisywania stanu gry"
 
 #: common/error.cpp:73
 msgid "User canceled"
@@ -1998,7 +1982,7 @@ msgstr "<Nieprawid³owa warto¶æ>"
 
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
+msgstr "Wykryto nielegaln± kopiê gry. Nie bêdzie ona wspierana"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2078,13 +2062,13 @@ msgstr ""
 "sprawd¼ plik README."
 
 #: engines/dialogs.cpp:222 engines/pegasus/pegasus.cpp:385
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
 "Zapis stanu gry nie powiód³ siê (%s)! Aby uzyskaæ podstawowe informacje oraz "
-"dowiedzieæ jak szukaæ dalszej pomocy, sprawd¼ plik README."
+"dowiedzieæ siê, jak szukaæ dalszej pomocy, sprawd¼ plik README."
 
 #: engines/dialogs.cpp:349
 msgid "~O~K"
@@ -2099,18 +2083,18 @@ msgid "~K~eys"
 msgstr "~K~lawisze"
 
 #: engines/engine.cpp:318
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Nie uda³o siê prze³±czyæ w tryb wideo: '"
+msgstr "Nie uda³o siê prze³±czyæ do rozdzielczo¶ci '%dx%d'."
 
 #: engines/engine.cpp:327
 msgid "Could not initialize color format."
 msgstr "Nie uda³o siê zainicjalizowaæ formatu kolorów."
 
 #: engines/engine.cpp:336
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Nie uda³o siê prze³±czyæ w tryb wideo: '"
+msgstr "Nie uda³o siê prze³±czyæ w tryb video '%s'."
 
 #: engines/engine.cpp:344
 #, fuzzy, c-format
@@ -2154,14 +2138,12 @@ msgstr ""
 "Dalsze informacje s± dostêpne w pliku README."
 
 #: engines/engine.cpp:510 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Autozapis:"
+msgstr "Autozapis"
 
 #: engines/engine.cpp:512
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "B³±d podczas uruchamiania gry:"
+msgstr "Wyst±pi³ b³±d podczas zapisu"
 
 #: engines/engine.cpp:575
 #, fuzzy, c-format
@@ -2188,14 +2170,14 @@ msgstr "W³±cz mimo tego"
 
 #: engines/engine.cpp:735
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Za³adowanie gry nie jest mo¿liwe w tym momencie"
 
 #: engines/engine.cpp:760
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Zapis gry jest w tym momencie niemo¿liwy"
 
 #: engines/game.cpp:171
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
 "\n"
@@ -2203,7 +2185,8 @@ msgid ""
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
 "Nie uda³o siê rozpoznaæ gry w \"%s\".\n"
-"Proszê wys³aæ poni¿sze informacje do zespo³u ScummVM, razem z\n"
+"\n"
+"Proszê wys³aæ poni¿sze informacje do zespo³u ScummVM, %s razem z\n"
 "nazw± gry, któr± próbowano dodaæ i jej numerem wersji i wersj± jêzykow±:"
 
 #: engines/game.cpp:175
@@ -2212,9 +2195,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Pasuj±ce identyfikatory gry dla silnika %s:"
 
 #: audio/adlib.cpp:2293
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "Emulator AdLib:"
+msgstr "Emulator AdLib"
 
 #: audio/fmopl.cpp:72
 msgid "MAME OPL emulator"
@@ -2283,12 +2265,11 @@ msgstr ""
 
 #: audio/mididrv.cpp:448
 msgid "Starting MIDI dump"
-msgstr ""
+msgstr "Uruchamianie MIDI dump"
 
 #: audio/mods/paula.cpp:303
-#, fuzzy
 msgid "Amiga Audio emulator"
-msgstr "Emulator d¼wiêku Amigi"
+msgstr "Emulator Audio Amigi"
 
 #: audio/null.h:44
 msgid "No music"
