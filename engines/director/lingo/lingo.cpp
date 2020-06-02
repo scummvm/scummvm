@@ -835,6 +835,14 @@ void Lingo::printAllVars() {
 	}
 	debugN("\n");
 
+	if (_currentMeObj) {
+		debugN("  Instance/property vars: ");
+		for (SymbolHash::iterator i = _currentMeObj->properties.begin(); i != _currentMeObj->properties.end(); ++i) {
+			debugN("%s, ", (*i)._key.c_str());
+		}
+		debugN("\n");
+	}
+
 	debugN("  Global vars: ");
 	for (SymbolHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
 		debugN("%s, ", (*i)._key.c_str());
