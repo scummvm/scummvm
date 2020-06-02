@@ -588,6 +588,11 @@ Datum Lingo::varFetch(Datum &var, bool global) {
 		Symbol *sym = nullptr;
 		Common::String name = *var.u.s;
 
+		if (_currentMeObj != nullptr && name.equalsIgnoreCase("me")) {
+			result.type = OBJECT;
+			result.u.obj = _currentMeObj;
+			return result;
+		}
 		if (_localvars && _localvars->contains(name)) {
 			sym = &(*_localvars)[name];
 			if (global)

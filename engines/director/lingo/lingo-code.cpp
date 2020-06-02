@@ -354,14 +354,6 @@ void LC::c_varpush() {
 		return;
 	}
 
-	if (name.equalsIgnoreCase("me")) {
-		warning("c_varpush: ME");
-	}
-
-	if (name.equalsIgnoreCase("ancestor")) {
-		warning("c_varpush: ANCESTOR");
-	}
-
 	// Looking for the cast member constants
 	if (g_director->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
 		int val = castNumToNum(name.c_str());
