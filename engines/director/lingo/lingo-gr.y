@@ -93,7 +93,7 @@ static void startDef() {
 	g_lingo->_methodVarsStash = g_lingo->_methodVars;
 	g_lingo->_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 
-	if (g_lingo->_currentFactory) {
+	if (g_lingo->_inFactory) {
 		for (SymbolHash::iterator i = g_lingo->_currentFactory->properties.begin(); i != g_lingo->_currentFactory->properties.end(); ++i) {
 			(*g_lingo->_methodVars)[i->_key] = kVarInstance;
 		}
@@ -114,7 +114,7 @@ static void mVar(Common::String *s, VarType type) {
 	if (!g_lingo->_methodVars->contains(*s)) {
 		(*g_lingo->_methodVars)[*s] = type;
 		if (type == kVarInstance) {
-			if (g_lingo->_currentFactory) {
+			if (g_lingo->_inFactory) {
 				g_lingo->_currentFactory->properties[*s] = Symbol();
 				g_lingo->_currentFactory->properties[*s].name = new Common::String(*s);
 			} else {
