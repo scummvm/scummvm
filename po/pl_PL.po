@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
 "PO-Revision-Date: 2020-06-02 16:41+0000\n"
-"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1578,7 +1578,6 @@ msgstr ""
 "Proszê otworzyæ stronê rêcznie."
 
 #: gui/options.cpp:2574
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Inna us³uga jest aktywna. Czy chcesz j± przerwaæ?"
 
@@ -1780,7 +1779,6 @@ msgid "Disabled GFX"
 msgstr "Wy³±czona grafika"
 
 #: gui/ThemeEngine.cpp:261
-#, fuzzy
 msgid "Standard renderer"
 msgstr "Standardowy renderer"
 
@@ -1829,7 +1827,6 @@ msgid "Copying the game information to the clipboard has failed!"
 msgstr "Kopiowanie informacji gry nie powiod³o siê!"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
