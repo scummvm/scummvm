@@ -345,7 +345,8 @@ void SoundMidiPC::pause(bool paused) {
 		_music->setMidiDriver(0);
 		for (int i = 0; i < 3; i++)
 			_sfx[i]->setMidiDriver(0);
-		_output->allNotesOff();
+		if (_output)
+			_output->allNotesOff();
 	} else {
 		_music->setMidiDriver(_output);
 		for (int i = 0; i < 3; ++i)
