@@ -713,7 +713,7 @@ static char decode_string_elem(uint8 c, bool capital, bool special) {
 */
 static Common::String parseString(FileBuffer *fb) {
 	bool capital_next = false, special_next = false;
-	unsigned i, j, k = 0;
+	unsigned i, j;
 	uint64 chunk;
 	uint8 elem, *encoded;
 	char c;
@@ -724,7 +724,7 @@ static Common::String parseString(FileBuffer *fb) {
 
 	/* Get the encoded string */
 	encoded = (uint8 *)malloc(encoded_len + 5);
-	memset(encoded, 0, encoded_len);
+	Common::fill(encoded, encoded + encoded_len + 5, 0);
 	fb->read(encoded, encoded_len);
 
 	/* Skip over the zero byte */
@@ -749,7 +749,6 @@ static Common::String parseString(FileBuffer *fb) {
 				special_next = false;
 				capital_next = false;
 				string += c;
-				k++;
 			}
 		}
 	}
