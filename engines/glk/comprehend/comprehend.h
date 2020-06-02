@@ -95,6 +95,11 @@ public:
 	InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
 
 	/**
+	 * Initialize the graphics
+	 */
+	void initGraphicsMode() override;
+
+	/**
 	 * Execute the game
 	 */
 	void runGame() override;

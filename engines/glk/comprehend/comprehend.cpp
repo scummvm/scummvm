@@ -21,8 +21,6 @@
  */
 
 #include "glk/comprehend/comprehend.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
 #include "glk/comprehend/debugger.h"
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/game.h"
@@ -33,9 +31,16 @@
 #include "glk/comprehend/game_tr.h"
 #include "glk/comprehend/pics.h"
 #include "glk/quetzal.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "engines/util.h"
 
 namespace Glk {
 namespace Comprehend {
+
+// Even with no ScummVM scaling, internally we do a 2x scaling to
+// render on a 640x480 window, to allow for better looking text
+#define SCALE_FACTOR 2
 
 Comprehend *g_comprehend;
 
@@ -53,6 +58,11 @@ Comprehend::~Comprehend() {
 	g_comprehend = nullptr;
 }
 
+void Comprehend::initGraphicsMode() {
+	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	initGraphics(640, 400, &pixelFormat);
+}
+
 void Comprehend::runGame() {
 	initialize();
 
@@ -64,6 +74,7 @@ void Comprehend::runGame() {
 
 	deinitialize();
 }
+
 void Comprehend::initialize() {
 	// Set up the GLK windows
 	g_conf->_wMarginX = 0;
@@ -72,7 +83,7 @@ void Comprehend::initialize() {
 	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
 	_topWindow = (GraphicsWindow *)glk_window_open(_bottomWindow,
 	                                               winmethod_Above | winmethod_Fixed,
-	                                               400, wintype_Graphics, 2);
+	                                               160 * SCALE_FACTOR, wintype_Graphics, 2);
 
 	glk_set_window(_bottomWindow);
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
@@ -166,15 +177,17 @@ Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
 
 void Comprehend::drawLocationPicture(int pictureNum, bool clearBg) {
 	glk_image_draw_scaled(_topWindow, pictureNum + (clearBg ? LOCATIONS_OFFSET : LOCATIONS_NO_BG_OFFSET),
-		0, 0, 640, 480);
+		20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
 }
 
 void Comprehend::drawItemPicture(int pictureNum) {
-	glk_image_draw_scaled(_topWindow, pictureNum + ITEMS_OFFSET, 0, 0, 640, 480);
+	glk_image_draw_scaled(_topWindow, pictureNum + ITEMS_OFFSET,
+		20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
 }
 
 void Comprehend::clearScreen(bool isBright) {	
-	glk_image_draw_scaled(_topWindow, isBright ? BRIGHT_ROOM : DARK_ROOM, 0, 0, 640, 480);
+	glk_image_draw_scaled(_topWindow, isBright ? BRIGHT_ROOM : DARK_ROOM,
+		20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
 }
 
 } // namespace Comprehend

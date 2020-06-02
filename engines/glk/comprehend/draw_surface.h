@@ -29,39 +29,39 @@
 namespace Glk {
 namespace Comprehend {
 
-#define G_RENDER_WIDTH	320
-#define G_RENDER_HEIGHT	240
+#define G_RENDER_WIDTH	280
+#define G_RENDER_HEIGHT	200
 
 #define RGB(r, g, b)		(uint32)(((r) << 24) | ((g) << 16) | ((b) << 8) | 0xff)
 
-#define G_COLOR_BLACK		0x000000ff
-#define G_COLOR_WHITE		0xffffffff
-#define G_COLOR_CYAN		0x3366ffff
-#define G_COLOR_YELLOW		0xffff00ff
-#define G_COLOR_RED		0xff0000ff
+#define G_COLOR_BLACK  0x000000ff
+#define G_COLOR_WHITE  0xffffffff
+#define G_COLOR_CYAN   0x3366ffff
+#define G_COLOR_YELLOW 0xffff00ff
+#define G_COLOR_RED    0xff0000ff
 
-#define G_COLOR_GRAY0		0x202020ff
-#define G_COLOR_GRAY1		0x404040ff
-#define G_COLOR_GRAY2		0x808080ff
-#define G_COLOR_GRAY3		0xc0c0c0ff
+#define G_COLOR_GRAY0  0x202020ff
+#define G_COLOR_GRAY1  0x404040ff
+#define G_COLOR_GRAY2  0x808080ff
+#define G_COLOR_GRAY3  0xc0c0c0ff
 
-#define G_COLOR_LIGHT_ORANGE	0xff9966ff
-#define G_COLOR_ORANGE		0xff9900ff
-#define G_COLOR_DARK_PURPLE	0x666699ff
-#define G_COLOR_DARK_BLUE	0x000099ff
+#define G_COLOR_LIGHT_ORANGE  0xff9966ff
+#define G_COLOR_ORANGE        0xff9900ff
+#define G_COLOR_DARK_PURPLE   0x666699ff
+#define G_COLOR_DARK_BLUE     0x000099ff
 
-#define G_COLOR_DARK_RED	0xcc0033ff
-#define G_COLOR_DITHERED_PINK	0xff6699ff
+#define G_COLOR_DARK_RED      0xcc0033ff
+#define G_COLOR_DITHERED_PINK 0xff6699ff
 
-#define G_COLOR_DARK_GREEN1	0x009966ff
-#define G_COLOR_DARK_GREEN2	0x003300ff
+#define G_COLOR_DARK_GREEN1   0x009966ff
+#define G_COLOR_DARK_GREEN2   0x003300ff
 
-#define G_COLOR_AQUA		0x33ccccff
+#define G_COLOR_AQUA          0x33ccccff
 
-#define G_COLOR_GREEN		0x33cc00ff
+#define G_COLOR_GREEN         0x33cc00ff
 
-#define G_COLOR_BROWN1		0x7a5200ff
-#define G_COLOR_BROWN2		0x663300ff
+#define G_COLOR_BROWN1        0x7a5200ff
+#define G_COLOR_BROWN2        0x663300ff
 
 class DrawSurface : public Graphics::ManagedSurface {
 private:
