@@ -2748,6 +2748,12 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_viewport));
 	persistMgr->transferSint32(TMEMBER(_width));
 
+#ifdef ENABLE_WME3D
+	if (_gameRef->_playing3DGame) {
+		persistMgr->transferBool(TMEMBER(_2DPathfinding));
+	}
+#endif
+
 	return STATUS_OK;
 }
 

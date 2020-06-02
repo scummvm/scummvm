@@ -56,6 +56,9 @@ public:
 	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
 	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
 
+#ifdef ENABLE_WME3D
+	bool _2DPathfinding;
+#endif
 	bool afterLoad();
 
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
