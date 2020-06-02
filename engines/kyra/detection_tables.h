@@ -367,6 +367,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
+	{ // Spanish fan translation
+		{
+			"kyra1",
+			"CD",
+			AD_ENTRY1("GEMCUT.PAK", "d9fb36376939f3d31ec2c3746ff6da1b"),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_CD_FLAGS
+	},
+
 	{ // Kyra 1 Mac CD as mentioned in fr #2766454 "KYRA1: Add support for Macintosh CD" by nnooiissee
 		{
 			"kyra1",
