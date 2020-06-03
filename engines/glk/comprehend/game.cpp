@@ -36,11 +36,19 @@ namespace Comprehend {
 struct Sentence {
 	Word words[4];
 	size_t nr_words;
+
+	Sentence() {
+		clear();
+	}
+
+	void clear() {
+		for (uint idx = 0; idx < 4; ++idx)
+			words[idx].clear();
+		nr_words = 0;
+	}
 };
 
-ComprehendGame::ComprehendGame() : _gameDataFile(nullptr),
-                                   _colorTable(0),
-                                   _gameStrings(nullptr) {
+ComprehendGame::ComprehendGame() : _colorTable(0), _gameStrings(nullptr) {
 }
 
 ComprehendGame::~ComprehendGame() {
@@ -401,7 +409,7 @@ static void update(ComprehendGame *game) {
 	/* Check if the room is special (dark, too bright, etc) */
 	room_desc_string = room->string_desc;
 	room_type = game->roomIsSpecial(game->_currentRoom,
-	                                  &room_desc_string);
+	                                &room_desc_string);
 
 	if (game->_updateFlags & UPDATE_ROOM_DESC)
 		console_println(game, game->stringLookup(room_desc_string).c_str());
@@ -520,7 +528,7 @@ static void eval_instruction(ComprehendGame *game,
 
 		if (func_state->or_count != 0)
 			g_comprehend->print("Warning: or_count == %d\n",
-			       func_state->or_count);
+			                    func_state->or_count);
 		func_state->or_count = 0;
 
 		if (!do_command)
@@ -569,7 +577,8 @@ static void eval_instruction(ComprehendGame *game,
 
 	case OPCODE_PRINT:
 		console_println(game, game->instrStringLookup(
-			instr->operand[0], instr->operand[1]).c_str());
+		                              instr->operand[0], instr->operand[1])
+		                          .c_str());
 		break;
 
 	case OPCODE_TEST_NOT_ROOM_FLAG:
@@ -610,7 +619,7 @@ static void eval_instruction(ComprehendGame *game,
 		/* Move in the direction dictated by the current verb */
 		if (verb->_index - 1 >= NR_DIRECTIONS)
 			error("Bad verb %d:%d in move",
-			            verb->_index, verb->_type);
+			      verb->_index, verb->_type);
 
 		if (room->direction[verb->_index - 1])
 			move_to(game, room->direction[verb->_index - 1]);
@@ -819,7 +828,7 @@ static void eval_instruction(ComprehendGame *game,
 			item = &game->_items[i];
 			if (item->room == ROOM_INVENTORY)
 				g_comprehend->print("%s\n",
-				       game->stringLookup(item->string_desc).c_str());
+				                    game->stringLookup(item->string_desc).c_str());
 		}
 		break;
 
@@ -835,7 +844,7 @@ static void eval_instruction(ComprehendGame *game,
 			item = &game->_items[i];
 			if (item->room == instr->operand[0])
 				g_comprehend->print("%s\n",
-				       game->stringLookup(item->string_desc).c_str());
+				                    game->stringLookup(item->string_desc).c_str());
 		}
 		break;
 
@@ -924,7 +933,7 @@ static void eval_instruction(ComprehendGame *game,
 			break;
 		default:
 			error("Bad string desc %.2x:%.2x\n",
-			            instr->operand[1], instr->operand[2]);
+			      instr->operand[1], instr->operand[2]);
 			break;
 		}
 		break;
@@ -1124,7 +1133,7 @@ static void read_sentence(ComprehendGame *game, char **line,
 	Word *word;
 	int index;
 
-	memset(sentence, 0, sizeof(*sentence));
+	sentence->clear();
 	while (1) {
 		skip_whitespace(&p);
 		word_string = p;
@@ -1144,11 +1153,9 @@ static void read_sentence(ComprehendGame *game, char **line,
 		/* Find the dictionary word for this */
 		word = dict_find_word_by_string(game, word_string);
 		if (!word)
-			memset(&sentence->words[sentence->nr_words], 0,
-			       sizeof(sentence->words[sentence->nr_words]));
+			sentence->words[sentence->nr_words].clear();
 		else
-			memcpy(&sentence->words[sentence->nr_words],
-			       word, sizeof(*word));
+			sentence->words[sentence->nr_words] = *word;
 
 		sentence->nr_words++;
 
