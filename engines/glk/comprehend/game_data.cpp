@@ -833,12 +833,12 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 
 	case 0x93f0: /* OO-Topos */
 		game->_comprehendVersion = 2;
-		magic_offset = (uint16)-0x5a00;
+		magic_offset = (uint16) - 0x5a00;
 		break;
 
 	case 0xa429: /* Talisman */
 		game->_comprehendVersion = 2;
-		magic_offset = (uint16)-0x5a00;
+		magic_offset = (uint16) - 0x5a00;
 		break;
 
 	default:
@@ -990,7 +990,7 @@ void comprehend_load_game(ComprehendGame *game) {
 	if (g_comprehend->_graphicsEnabled) {
 		// Set up the picture archive
 		g_comprehend->_pics->load(game->_locationGraphicFiles,
-			game->_itemGraphicFiles, game->_titleGraphicFile);
+		                          game->_itemGraphicFiles, game->_titleGraphicFile);
 
 		if (game->_colorTable)
 			g_comprehend->_drawSurface->setColorTable(game->_colorTable);

@@ -112,7 +112,7 @@ Common::String ComprehendGame::stringLookup(uint16 index) {
 	case 0x81:
 	case 0x01:
 		string += 0x100;
-		/* Fall-through */
+	/* Fall-through */
 	case 0x00:
 	case 0x80:
 		if (string < _strings.size())
@@ -121,7 +121,7 @@ Common::String ComprehendGame::stringLookup(uint16 index) {
 
 	case 0x83:
 		string += 0x100;
-		/* Fall-through */
+	/* Fall-through */
 	case 0x02:
 	case 0x82:
 		if (string < _strings2.size())
@@ -139,7 +139,7 @@ Common::String ComprehendGame::instrStringLookup(uint8 index, uint8 table) {
 /*-------------------------------------------------------*/
 
 static void console_init(void) {
-	//	ioctl(STDOUT_FILENO, TIOCGWINSZ, &console_winsize);
+	//  ioctl(STDOUT_FILENO, TIOCGWINSZ, &console_winsize);
 }
 
 int console_get_key(void) {
@@ -304,9 +304,9 @@ static WordIndex *is_word_pair(ComprehendGame *game,
 		map = &game->_wordMaps[i];
 
 		if (map->word[0].index == word1->_index &&
-		    map->word[0].type == word1->_type &&
-		    map->word[1].index == word2->_index &&
-		    map->word[1].type == word2->_type)
+		        map->word[0].type == word1->_type &&
+		        map->word[1].index == word2->_index &&
+		        map->word[1].type == word2->_type)
 			return &map->word[2];
 	}
 
@@ -361,12 +361,12 @@ static void update_graphics(ComprehendGame *game) {
 		}
 
 		if ((game->_updateFlags & UPDATE_GRAPHICS) ||
-		    (game->_updateFlags & UPDATE_GRAPHICS_ITEMS)) {
+		        (game->_updateFlags & UPDATE_GRAPHICS_ITEMS)) {
 			for (i = 0; i < game->_items.size(); i++) {
 				item = &game->_items[i];
 
 				if (item->room == game->_currentRoom &&
-				    item->graphic != 0)
+				        item->graphic != 0)
 					g_comprehend->drawItemPicture(item->graphic - 1);
 			}
 		}
@@ -383,7 +383,7 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 		item = &game->_items[i];
 
 		if (item->room == game->_currentRoom &&
-		    item->string_desc != 0)
+		        item->string_desc != 0)
 			count++;
 	}
 
@@ -394,7 +394,7 @@ static void describe_objects_in_current_room(ComprehendGame *game) {
 			item = &game->_items[i];
 
 			if (item->room == game->_currentRoom &&
-			    item->string_desc != 0)
+			        item->string_desc != 0)
 				console_println(game, game->stringLookup(item->string_desc).c_str());
 		}
 	}
@@ -415,7 +415,7 @@ static void update(ComprehendGame *game) {
 		console_println(game, game->stringLookup(room_desc_string).c_str());
 
 	if ((game->_updateFlags & UPDATE_ITEM_LIST) &&
-	    room_type == ROOM_IS_NORMAL)
+	        room_type == ROOM_IS_NORMAL)
 		describe_objects_in_current_room(game);
 
 	game->_updateFlags = 0;
@@ -568,7 +568,7 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_VAR_EQ:
 		func_set_test_result(func_state,
 		                     game->_variables[instr->operand[0]] ==
-		                         game->_variables[instr->operand[1]]);
+		                     game->_variables[instr->operand[1]]);
 		break;
 
 	case OPCODE_TURN_TICK:
@@ -577,8 +577,8 @@ static void eval_instruction(ComprehendGame *game,
 
 	case OPCODE_PRINT:
 		console_println(game, game->instrStringLookup(
-		                              instr->operand[0], instr->operand[1])
-		                          .c_str());
+		                    instr->operand[0], instr->operand[1])
+		                .c_str());
 		break;
 
 	case OPCODE_TEST_NOT_ROOM_FLAG:
@@ -664,8 +664,8 @@ static void eval_instruction(ComprehendGame *game,
 		item = get_item_by_noun(game, noun);
 		func_set_test_result(func_state,
 		                     game->_variables[VAR_INVENTORY_WEIGHT] +
-		                             (item->flags & ITEMF_WEIGHT_MASK) >
-		                         game->_variables[VAR_INVENTORY_LIMIT]);
+		                     (item->flags & ITEMF_WEIGHT_MASK) >
+		                     game->_variables[VAR_INVENTORY_LIMIT]);
 		break;
 
 	case OPCODE_DESCRIBE_CURRENT_OBJECT:
@@ -686,7 +686,7 @@ static void eval_instruction(ComprehendGame *game,
 				Item *itemP = &game->_items[i];
 
 				if (itemP->word == noun->_index &&
-				    itemP->room == instr->operand[0]) {
+				        itemP->room == instr->operand[0]) {
 					test = true;
 					break;
 				}
@@ -793,7 +793,7 @@ static void eval_instruction(ComprehendGame *game,
 	case OPCODE_OBJECT_NOT_VALID:
 		/* FIXME - should be called OPCODE_CURRENT_OBJECT_NOT_VALID */
 		func_set_test_result(func_state, !noun ||
-		                                     (noun->_type & WORD_TYPE_NOUN_MASK) == 0);
+		                     (noun->_type & WORD_TYPE_NOUN_MASK) == 0);
 		break;
 
 	case OPCODE_CURRENT_IS_OBJECT:
@@ -1093,10 +1093,10 @@ static bool handle_sentence(ComprehendGame *game,
 		action = &game->_actions[i];
 
 		if (action->type == ACTION_VERB_OPT_NOUN &&
-		    sentence->nr_words > action->nr_words + 1)
+		        sentence->nr_words > action->nr_words + 1)
 			continue;
 		if (action->type != ACTION_VERB_OPT_NOUN &&
-		    sentence->nr_words != action->nr_words)
+		        sentence->nr_words != action->nr_words)
 			continue;
 
 		/*
@@ -1105,7 +1105,7 @@ static bool handle_sentence(ComprehendGame *game,
 		 */
 		for (j = 0; j < action->nr_words; j++) {
 			if (sentence->words[j]._index == action->word[j] &&
-			    (sentence->words[j]._type & action->word_type[j]))
+			        (sentence->words[j]._type & action->word_type[j]))
 				continue;
 
 			/* Word didn't match */
@@ -1176,7 +1176,7 @@ static void read_sentence(ComprehendGame *game, char **line,
 		}
 
 		if (sentence->nr_words >= ARRAY_SIZE(sentence->words) ||
-		    sentence_end)
+		        sentence_end)
 			break;
 	}
 

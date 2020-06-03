@@ -380,7 +380,7 @@ enum {
 #define WORD_TYPE_NOUN 0x40
 #define WORD_TYPE_NOUN_PLURAL 0x80
 #define WORD_TYPE_NOUN_MASK (WORD_TYPE_FEMALE | WORD_TYPE_MALE | \
-	                         WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
+                             WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
 
 void comprehend_load_game(ComprehendGame *game);
 void comprehend_restore_game(ComprehendGame *game,

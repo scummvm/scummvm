@@ -104,7 +104,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
-		FunctionState *func_state, Instruction *instr) {
+        FunctionState *func_state, Instruction *instr) {
 	uint i;
 	int str_index, str_table;
 	uint8 *opcode_map, opcode;
@@ -112,8 +112,8 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 
 	if (func_state)
 		line = Common::String::format("[or=%d,and=%d,test=%d,else=%d]",
-		      func_state->or_count, func_state->_and,
-		      func_state->test_result, func_state->else_result);
+		                              func_state->or_count, func_state->_and,
+		                              func_state->test_result, func_state->else_result);
 
 	opcode_map = game->_opcodeMap;
 	opcode = opcode_map[instr->opcode];
@@ -128,8 +128,8 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		line += "(";
 		for (i = 0; i < instr->nr_operands; i++)
 			line += Common::String::format("%.2x%s",
-				instr->operand[i],
-			    i == (instr->nr_operands - 1) ? ")" : ", ");
+			                               instr->operand[i],
+			                               i == (instr->nr_operands - 1) ? ")" : ", ");
 	}
 
 	switch (opcode) {
@@ -272,7 +272,7 @@ void DebuggerDumper::dumpWordMap() {
 
 		for (j = 0; j < 3; j++) {
 			word[j] = dict_find_word_by_index_type(
-			    _game, map->word[j].index, map->word[j].type);
+			              _game, map->word[j].index, map->word[j].type);
 			if (word[j])
 				snprintf(str[j], sizeof(str[j]),
 				         "%s", word[j]->_word);
@@ -329,7 +329,7 @@ void DebuggerDumper::dumpItems() {
 		print("    words: ");
 		for (j = 0; j < _game->_nr_words; j++)
 			if (_game->_words[j]._index == item->word &&
-			    (_game->_words[j]._type & WORD_TYPE_NOUN_MASK))
+			        (_game->_words[j]._type & WORD_TYPE_NOUN_MASK))
 				print("%s ", _game->_words[j]._word);
 		print("\n");
 		print("    flags=%.2x (takeable=%d, weight=%d)\n",

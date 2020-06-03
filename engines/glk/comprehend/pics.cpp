@@ -304,7 +304,7 @@ void Pics::load(const Common::StringArray &roomFiles,
 int Pics::getPictureNumber(const Common::String &filename) const {
 	// Ensure prefix and suffix
 	if (!filename.hasPrefixIgnoreCase("pic") ||
-	    !filename.hasSuffixIgnoreCase(".raw"))
+	        !filename.hasSuffixIgnoreCase(".raw"))
 		return -1;
 
 	// Get the number part

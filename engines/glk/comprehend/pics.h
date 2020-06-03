@@ -149,8 +149,8 @@ public:
 	void clear();
 
 	void load(const Common::StringArray &roomFiles,
-		const Common::StringArray &itemFiles,
-		const Common::String &titleFile);
+	          const Common::StringArray &itemFiles,
+	          const Common::String &titleFile);
 
 	/**
 	 * Check if a member with the given name is present in the Archive.

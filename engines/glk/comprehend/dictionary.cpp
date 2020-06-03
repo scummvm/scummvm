@@ -28,8 +28,7 @@
 namespace Glk {
 namespace Comprehend {
 
-static bool word_match(Word *word, const char *string)
-{
+static bool word_match(Word *word, const char *string) {
 	/* Words less than 6 characters must match exactly */
 	if (strlen(word->_word) < 6 && strlen(string) != strlen(word->_word))
 		return false;
@@ -38,8 +37,7 @@ static bool word_match(Word *word, const char *string)
 }
 
 Word *dict_find_word_by_string(ComprehendGame *game,
-				      const char *string)
-{
+                               const char *string) {
 	uint i;
 
 	if (!string)
@@ -53,13 +51,12 @@ Word *dict_find_word_by_string(ComprehendGame *game,
 }
 
 Word *dict_find_word_by_index_type(ComprehendGame *game,
-					  uint8 index, uint8 type)
-{
+                                   uint8 index, uint8 type) {
 	uint i;
 
 	for (i = 0; i < game->_nr_words; i++) {
 		if (game->_words[i]._index == index &&
-		    game->_words[i]._type == type)
+		        game->_words[i]._type == type)
 			return &game->_words[i];
 	}
 
@@ -67,13 +64,12 @@ Word *dict_find_word_by_index_type(ComprehendGame *game,
 }
 
 Word *find_dict_word_by_index(ComprehendGame *game,
-				     uint8 index, uint8 type_mask)
-{
+                              uint8 index, uint8 type_mask) {
 	uint i;
 
 	for (i = 0; i < game->_nr_words; i++) {
 		if (game->_words[i]._index == index &&
-		    (game->_words[i]._type & type_mask) != 0)
+		        (game->_words[i]._type & type_mask) != 0)
 			return &game->_words[i];
 	}
 
@@ -81,14 +77,13 @@ Word *find_dict_word_by_index(ComprehendGame *game,
 }
 
 bool dict_match_index_type(ComprehendGame *game, const char *word,
-			   uint8 index, uint8 type_mask)
-{
+                           uint8 index, uint8 type_mask) {
 	uint i;
 
 	for (i = 0; i < game->_nr_words; i++)
 		if (game->_words[i]._index == index &&
-		    ((game->_words[i]._type & type_mask) != 0) &&
-		    word_match(&game->_words[i], word))
+		        ((game->_words[i]._type & type_mask) != 0) &&
+		        word_match(&game->_words[i], word))
 			return true;
 
 	return false;

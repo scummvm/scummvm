@@ -42,8 +42,12 @@ public:
 	static bool exists(const Common::String &filename);
 	void close();
 
-	int32 pos() const override { return _pos; }
-	int32 size() const override { return _data.size(); }
+	int32 pos() const override {
+		return _pos;
+	}
+	int32 size() const override {
+		return _data.size();
+	}
 	bool seek(int32 offset, int whence = SEEK_SET) override;
 
 	bool eos() const override {
@@ -51,7 +55,9 @@ public:
 	}
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 
-	const byte *dataPtr() const { return &_data[_pos]; }
+	const byte *dataPtr() const {
+		return &_data[_pos];
+	}
 	size_t strlen(bool *eof = nullptr);
 
 	/*

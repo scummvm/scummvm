@@ -45,15 +45,15 @@ namespace Comprehend {
 Comprehend *g_comprehend;
 
 Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
-		_drawSurface(nullptr), _game(nullptr), _pics(nullptr), _saveSlot(-1),
-		_graphicsEnabled(true), _drawFlags(0) {
+	_drawSurface(nullptr), _game(nullptr), _pics(nullptr), _saveSlot(-1),
+	_graphicsEnabled(true), _drawFlags(0) {
 	g_comprehend = this;
 }
 
 Comprehend::~Comprehend() {
 	delete _drawSurface;
 	delete _game;
-	SearchMan.remove("Pics");	// This also deletes it
+	SearchMan.remove("Pics");   // This also deletes it
 
 	g_comprehend = nullptr;
 }
@@ -82,8 +82,8 @@ void Comprehend::initialize() {
 
 	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
 	_topWindow = (GraphicsWindow *)glk_window_open(_bottomWindow,
-	                                               winmethod_Above | winmethod_Fixed,
-	                                               160 * SCALE_FACTOR, wintype_Graphics, 2);
+	             winmethod_Above | winmethod_Fixed,
+	             160 * SCALE_FACTOR, wintype_Graphics, 2);
 
 	glk_set_window(_bottomWindow);
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
@@ -188,7 +188,7 @@ void Comprehend::drawItemPicture(int pictureNum) {
 	drawPicture(pictureNum + ITEMS_OFFSET);
 }
 
-void Comprehend::clearScreen(bool isBright) {	
+void Comprehend::clearScreen(bool isBright) {
 	drawPicture(isBright ? BRIGHT_ROOM : DARK_ROOM);
 }
 

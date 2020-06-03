@@ -92,7 +92,9 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
+	InterpreterType getInterpreterType() const override {
+		return INTERPRETER_SCOTT;
+	}
 
 	/**
 	 * Initialize the graphics

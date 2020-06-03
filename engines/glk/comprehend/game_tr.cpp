@@ -37,7 +37,7 @@ const TransylvaniaMonster TransylvaniaGame::VAMPIRE = {
 };
 
 static const GameStrings TR_STRINGS = {
-    EXTRA_STRING_TABLE(0x8a)
+	EXTRA_STRING_TABLE(0x8a)
 };
 
 
@@ -50,7 +50,7 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 	_stringFiles.push_back(StringFile("MD.MS1", 0x88));
 	_stringFiles.push_back(StringFile("ME.MS1", 0x88));
 
-    _locationGraphicFiles.push_back("RA.MS1");
+	_locationGraphicFiles.push_back("RA.MS1");
 	_locationGraphicFiles.push_back("RB.MS1");
 	_locationGraphicFiles.push_back("RC.MS1");
 
@@ -77,8 +77,8 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	}
 
 	if ((room->flags & monsterInfo->room_allow_flag) &&
-	    !_flags[monsterInfo->dead_flag] &&
-	    turn_count > monsterInfo->min_turns_before) {
+	        !_flags[monsterInfo->dead_flag] &&
+	        turn_count > monsterInfo->min_turns_before) {
 		/*
 		 * The monster is alive and allowed to move to the current
 		 * room. Randomly decide whether on not to. If not, move
@@ -94,8 +94,7 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 }
 
 int TransylvaniaGame::roomIsSpecial(unsigned room_index,
-			      unsigned *roomDescString)
-{
+                                    unsigned *roomDescString) {
 	Room *room = &_rooms[room_index];
 
 	if (room_index == 0x28) {
@@ -113,8 +112,7 @@ bool TransylvaniaGame::beforeTurn() {
 	return false;
 }
 
-void TransylvaniaGame::handleSpecialOpcode(uint8 operand)
-{
+void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 0x01:
 		// FIXME: Called when the mice are dropped and the cat chases them.
@@ -133,11 +131,11 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand)
 		break;
 
 	case 0x03:
-		// Game over - failure
-		// fall through
+	// Game over - failure
+	// fall through
 	case 0x05:
-		// Won the game
-		// fall through
+	// Won the game
+	// fall through
 	case 0x08:
 		// Restart game
 		game_restart(this);

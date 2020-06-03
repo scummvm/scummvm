@@ -57,12 +57,12 @@ OOToposGame::OOToposGame() : ComprehendGame() {
 }
 
 int OOToposGame::roomIsSpecial(unsigned room_index,
-                              unsigned *roomDescString) {
+                               unsigned *roomDescString) {
 	Room *room = &_rooms[room_index];
 
 	// Is the room dark
 	if ((room->flags & OO_ROOM_FLAG_DARK) &&
-	    !(_flags[OO_FLAG_FLASHLIGHT_ON])) {
+	        !(_flags[OO_FLAG_FLASHLIGHT_ON])) {
 		if (roomDescString)
 			*roomDescString = 0xb3;
 		return ROOM_IS_DARK;
@@ -70,7 +70,7 @@ int OOToposGame::roomIsSpecial(unsigned room_index,
 
 	// Is the room too bright
 	if (room_index == OO_BRIGHT_ROOM &&
-	    !_flags[OO_FLAG_WEARING_GOGGLES]) {
+	        !_flags[OO_FLAG_WEARING_GOGGLES]) {
 		if (roomDescString)
 			*roomDescString = 0x1c;
 		return ROOM_IS_TOO_BRIGHT;
@@ -84,12 +84,12 @@ bool OOToposGame::beforeTurn() {
 	static bool flashlight_was_on = false, googles_were_worn = false;
 	Room *room = &_rooms[_currentRoom];
 
-	/* 
+	/*
 	 * Check if the room needs to be redrawn because the flashlight
 	 * was switch off or on.
 	 */
 	if (_flags[OO_FLAG_FLASHLIGHT_ON] != flashlight_was_on &&
-	    (room->flags & OO_ROOM_FLAG_DARK)) {
+	        (room->flags & OO_ROOM_FLAG_DARK)) {
 		flashlight_was_on = _flags[OO_FLAG_FLASHLIGHT_ON];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
@@ -99,7 +99,7 @@ bool OOToposGame::beforeTurn() {
 	 * put on or removed.
 	 */
 	if (_flags[OO_FLAG_WEARING_GOGGLES] != googles_were_worn &&
-	    _currentRoom == OO_BRIGHT_ROOM) {
+	        _currentRoom == OO_BRIGHT_ROOM) {
 		googles_were_worn = _flags[OO_FLAG_WEARING_GOGGLES];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
@@ -110,11 +110,11 @@ bool OOToposGame::beforeTurn() {
 void OOToposGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 0x03:
-		// Game over - failure
-		// fall through
+	// Game over - failure
+	// fall through
 	case 0x05:
-		// Won the game
-		// fall through
+	// Won the game
+	// fall through
 	case 0x04:
 		// Restart game
 		game_restart(this);
