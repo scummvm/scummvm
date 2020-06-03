@@ -640,6 +640,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheHeight:
 		d.u.i = sprite->_height;
 		break;
+	case kTheImmediate:
+		d.u.i = sprite->_immediate;
+		break;
 	case kTheInk:
 		d.u.i = sprite->_ink;
 		break;
@@ -751,6 +754,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheHeight:
 		sprite->_height = d.asInt();
+		break;
+	case kTheImmediate:
+		sprite->_immediate = d.asInt();
 		break;
 	case kTheInk:
 		sprite->_ink = static_cast<InkType>(d.asInt());

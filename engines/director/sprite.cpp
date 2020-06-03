@@ -52,6 +52,7 @@ Sprite::Sprite() {
 	_moveable = false;
 	_editable = false;
 	_puppet = false;
+	_immediate = false;
 	_backColor = 255;
 	_foreColor = 0;
 
