@@ -202,6 +202,8 @@ private:
 
 	void enqueueAllMovies();
 	MovieReference getNextMovieFromQueue();
+
+	void runTests();
 };
 
 extern DirectorEngine *g_director;

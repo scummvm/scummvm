@@ -142,16 +142,7 @@ Common::Error DirectorEngine::run() {
 	_soundManager = new DirectorSound(this);
 
 	if (getGameGID() == GID_TEST) {
-		_mainArchive = nullptr;
-		_currentScore = nullptr;
-
-		if (debugChannelSet(-1, kDebugText)) {
-			testFontScaling();
-			testFonts();
-		}
-
-		_lingo->runTests();
-
+		runTests();
 		return Common::kNoError;
 	} else if (getGameGID() == GID_TESTALL) {
 		enqueueAllMovies();

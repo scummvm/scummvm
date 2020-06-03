@@ -222,6 +222,34 @@ bool MacArchive::openFile(const Common::String &fileName) {
 			_fileName.deleteLastChar();
 	}
 
+	readTags();
+
+	return true;
+}
+
+bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
+	close();
+
+	if (startOffset)
+		error("MacArchive::openStream(): startOffset > 0 is not yet implemented");
+
+	_resFork = new Common::MacResManager();
+	stream->seek(startOffset);
+
+	if (!_resFork->loadFromMacBinary(*stream)) {
+		close();
+		return false;
+	}
+
+	_fileName = "<stream>";
+	_resFork->setBaseFileName(_fileName);
+
+	readTags();
+
+	return true;
+}
+
+void MacArchive::readTags() {
 	Common::MacResTagArray tagArray = _resFork->getResTagArray();
 
 	for (uint32 i = 0; i < tagArray.size(); i++) {
@@ -236,13 +264,6 @@ bool MacArchive::openFile(const Common::String &fileName) {
 			debug(3, "Found MacArchive resource '%s' %d: %s", tag2str(tagArray[i]), idArray[j], res.name.c_str());
 		}
 	}
-
-	return true;
-}
-
-bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
-	// TODO: Add support for this (v4 Windows games)
-	return false;
 }
 
 Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id) {
