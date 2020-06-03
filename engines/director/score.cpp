@@ -1213,13 +1213,6 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 	if (script.empty() || !script.hasPrefix("--"))
 		return;
 
-	int pos = 2;
-	while (script[pos] == ' ' || script[pos] == '\t')
-		pos++;
-
-	if (script[pos] != '\n')
-		return;
-
 	if (ConfMan.getBool("dump_scripts"))
 		dumpScript(script.c_str(), kMovieScript, _movieScriptCount);
 
