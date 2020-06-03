@@ -168,7 +168,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 
-		if (sc->getCurrentFrame() > 0)
+		if (sc->getCurrentFrame() > 0 && !sc->_stopPlay && _lingo->getEventCount() == 0)
 			_lingo->registerEvent(kEventIdle);
 
 		if (!bufferLingoEvents)

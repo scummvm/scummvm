@@ -94,6 +94,10 @@ ScriptType Lingo::event2script(LEvent ev) {
 	return kNoneScript;
 }
 
+int Lingo::getEventCount() {
+	return _eventQueue.size();
+}
+
 void Lingo::primaryEventHandler(LEvent event) {
 	/* When an event occurs the message [...] is first sent to a
 	 * primary event handler: [... if exists it is executed] and the

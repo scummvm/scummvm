@@ -320,6 +320,7 @@ public:
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
+	int getEventCount();
 	void processEvent(LEvent event);
 	void processEvents();
 	void registerEvent(LEvent event);
