@@ -129,7 +129,6 @@ struct GlkDetectionEntry {
 	const char *const _md5;
 	size_t _filesize;
 	Common::Language _language;
-	const char *const _filename;
 };
 
 #define DT_ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
