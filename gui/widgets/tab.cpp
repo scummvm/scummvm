@@ -423,11 +423,13 @@ void TabWidget::drawWidget() {
 			pad += (_minTabWidth / 2);
 		}
 
+		_rtlBackgroundOffset = ABS(this->getWidth() - _widthTillLastTab);
+
 		r2.translate(g_system->getOverlayWidth() - _x - _w + pad + _rtlSpaceOffset, 0);
 		if (_navButtonsVisible) {
 			r2.translate(_butW - 6, 0);
+			_rtlBackgroundOffset += (_butW * 2);
 		}
-		_rtlBackgroundOffset = ABS(this->getWidth() - _widthTillLastTab);
 
 		drawTab = _lastVisibleTab - drawTab + _rtlTabOffset;
 	}
