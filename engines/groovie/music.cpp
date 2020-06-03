@@ -385,11 +385,14 @@ bool MusicPlayerMidi::loadParser(Common::SeekableReadStream *stream, bool loop) 
 // MusicPlayerXMI
 
 MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName) :
-	MusicPlayerMidi(vm) {
+	MusicPlayerMidi(vm),
+	_milesMidiDriver(NULL) {
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	MusicType musicType = MidiDriver::getMusicType(dev);
+	if (musicType == MT_GM && ConfMan.getBool("native_mt32"))
+		musicType = MT_MT32;
 	_driver = NULL;
 
 	// new Miles Audio support, to disable set milesAudioEnabled to false
@@ -404,24 +407,22 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 		// 11th Hour uses SAMPLE.AD/SAMPLE.OPL/SAMPLE.MT
 		switch (musicType) {
 		case MT_ADLIB:
+			// TODO Would be nice if the Miles AdLib and MIDI drivers shared
+			// a common interface, then we can use only _milesMidiDriver in
+			// this class.
 			_driver = Audio::MidiDriver_Miles_AdLib_create(gtlName + ".AD", gtlName + ".OPL");
 			break;
 		case MT_MT32:
-			_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + ".MT");
+			_driver = _milesMidiDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, gtlName + ".MT");
+			newTimbreListProc = Audio::MidiDriver_Miles_MT32_processXMIDITimbreChunk;
 			break;
 		case MT_GM:
-			if (ConfMan.getBool("native_mt32")) {
-				_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + ".MT");
-				musicType = MT_MT32;
-			}
+			_driver = _milesMidiDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, "");
 			break;
 		default:
 			break;
 		}
-
-		if (musicType == MT_MT32) {
-			newTimbreListProc = Audio::MidiDriver_Miles_MT32_processXMIDITimbreChunk;
-		}
+		_musicType = musicType;
 	}
 
 	if (_driver) {
@@ -436,9 +437,11 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	assert(_driver);
 
 	// Create the parser
-	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, newTimbreListProc, _driver);
+	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, newTimbreListProc, _milesMidiDriver, 0);
 
-	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
+	int result = _driver->open();
+	if (result > 0 && result != MidiDriver::MERR_ALREADY_OPEN)
+		error("Opening MidiDriver failed with error code %i", result);
 
 	// Set the parser's driver
 	_midiParser->setMidiDriver(this);
@@ -540,6 +543,33 @@ void MusicPlayerXMI::send(uint32 b) {
 	MusicPlayerMidi::send(bytesToSend);
 }
 
+void MusicPlayerXMI::send(int8 source, uint32 b) {
+	if (_milesMidiDriver) {
+		_milesMidiDriver->send(source, b);
+	} else {
+		MusicPlayerMidi::send(b);
+	}
+}
+
+void MusicPlayerXMI::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+	if (_milesMidiDriver) {
+		if (type == 0x2F) // End Of Track
+			MusicPlayerMidi::endTrack();
+		_milesMidiDriver->metaEvent(source, type, data, length);
+	} else {
+		MusicPlayerMidi::metaEvent(type, data, length);
+	}
+}
+
+void MusicPlayerXMI::updateVolume() {
+	if (_milesMidiDriver) {
+		uint16 val = (_userVolume * _gameVolume) / 100;
+		_milesMidiDriver->setSourceVolume(0, val);
+	} else {
+		MusicPlayerMidi::updateVolume();
+	}
+}
+
 bool MusicPlayerXMI::load(uint32 fileref, bool loop) {
 	debugC(1, kDebugMIDI, "Groovie::Music: Starting the playback of song: %04X", fileref);
 
@@ -551,6 +581,13 @@ bool MusicPlayerXMI::load(uint32 fileref, bool loop) {
 	}
 
 	return loadParser(file, loop);
+}
+
+void MusicPlayerXMI::unload() {
+	MusicPlayerMidi::unload();
+	if (_milesMidiDriver) {
+		_milesMidiDriver->deinitSource(0);
+	}
 }
 
 void MusicPlayerXMI::loadTimbres(const Common::String &filename) {

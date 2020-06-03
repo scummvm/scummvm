@@ -27,6 +27,7 @@
 #include "common/mutex.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
+#include "audio/miles.h"
 
 class MidiParser;
 
@@ -107,8 +108,6 @@ private:
 	byte _chanVolumes[0x10];
 	void updateChanVolume(byte channel);
 
-	void endTrack();
-
 protected:
 	byte *_data;
 	MidiParser *_midiParser;
@@ -117,6 +116,7 @@ protected:
 	void onTimerInternal() override;
 	void updateVolume() override;
 	void unload() override;
+	void endTrack();
 
 	bool loadParser(Common::SeekableReadStream *stream, bool loop);
 };
@@ -127,9 +127,13 @@ public:
 	~MusicPlayerXMI() override;
 
 	void send(uint32 b) override;
+	void send(int8 source, uint32 b) override;
+	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 
 protected:
+	void updateVolume() override;
 	bool load(uint32 fileref, bool loop) override;
+	void unload() override;
 
 private:
 	// Channel banks
@@ -139,6 +143,7 @@ private:
 	uint8 _musicType;
 
 	bool _milesAudioMode;
+	Audio::MidiDriver_Miles_Midi *_milesMidiDriver;
 
 	// Timbres
 	class Timbre {
