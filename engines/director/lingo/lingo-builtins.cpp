@@ -1323,7 +1323,16 @@ void LB::b_integerp(int nargs) {
 
 void LB::b_objectp(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res ((d.type == OBJECT) ? 1 : 0);
+	Datum res;
+	if (d.type == OBJECT) {
+		if (d.u.obj->type == kFactoryObj && (d.u.obj->inheritanceLevel == 1 || d.u.obj->disposed)) {
+			res = 0;
+		} else {
+			res = 1;
+		}
+	} else {
+		res = 0;
+	}
 	g_lingo->push(res);
 }
 
