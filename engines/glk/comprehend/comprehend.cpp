@@ -107,11 +107,11 @@ void Comprehend::createDebugger() {
 void Comprehend::createGame() {
 	if (_gameDescription._gameId == "crimsoncrown")
 		_game = new CrimsonCrownGame();
-	if (_gameDescription._gameId == "ootopis")
+	else if (_gameDescription._gameId == "ootopis")
 		_game = new OOToposGame();
-	if (_gameDescription._gameId == "talisman")
+	else if (_gameDescription._gameId == "talisman")
 		_game = new OOToposGame();
-	if (_gameDescription._gameId == "transylvania")
+	else if (_gameDescription._gameId == "transylvania")
 		_game = new TransylvaniaGame();
 	else
 		error("Unknown game");
