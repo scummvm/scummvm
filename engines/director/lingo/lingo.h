@@ -538,8 +538,11 @@ public:
 
 	bool _dontPassEvent;
 
+	Datum _perFrameHook;
+
 public:
 	void executeImmediateScripts(Frame *frame);
+	void executePerFrameHook();
 };
 
 extern Lingo *g_lingo;

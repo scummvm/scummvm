@@ -468,7 +468,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
 		break;
 	case kThePerFrameHook:
-		warning("STUB: Lingo::getTheEntity(): getting the perframehook");
+		d = _perFrameHook;
 		break;
 	case kThePi:
 		d.type = FLOAT;
@@ -553,7 +553,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		break;
 	case kThePerFrameHook:
-		warning("STUB: Lingo::setTheEntity(): setting the perframehook");
+		_perFrameHook = d;
 		break;
 	case kTheSoundEntity:
 		{

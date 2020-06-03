@@ -181,6 +181,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_archiveIndex = 0;
 
+	_perFrameHook = Datum();
+
 	initEventHandlerTypes();
 
 	initBuiltIns();
@@ -824,6 +826,22 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 				g_lingo->processEvent(kEventNone, kFrameScript, frame->_sprites[i]->_scriptId, i);
 			else
 				g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId, i);
+		}
+	}
+}
+
+void Lingo::executePerFrameHook() {
+	// TODO: Call with arguments
+	if (_perFrameHook.type == OBJECT) {
+		Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
+		if (method.type != VOID) {
+			_localvars = new SymbolHash;
+
+			debugC(1, kDebugLingoExec, "Executing mAtFrame on perFrameHook : %s", _perFrameHook.u.obj->name->c_str());
+			LC::call(method, 0, _perFrameHook.u.obj);
+			execute(_pc);
+
+			cleanLocalVars();
 		}
 	}
 }
