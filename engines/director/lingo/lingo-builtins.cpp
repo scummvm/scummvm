@@ -1827,6 +1827,12 @@ void LB::b_zoomBox(int nargs) {
 void LB::b_updateStage(int nargs) {
 	ARGNUMCHECK(0);
 
+	if (g_director->getGameGID() == GID_TEST) {
+		warning("b_updateStage: Skipping due to tests");
+
+		return;
+	}
+
 	Score *score = g_director->getCurrentScore();
 
 	if (!score) {
