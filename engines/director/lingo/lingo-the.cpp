@@ -26,6 +26,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/frame.h"
+#include "director/sound.h"
 #include "director/sprite.h"
 #include "director/score.h"
 #include "director/lingo/lingo.h"
@@ -477,6 +478,24 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = 1;
 		break;
+	case kTheSoundEntity:
+		{
+			switch (field) {
+			case kTheVolume:
+				{
+					SoundChannel *chan = _vm->getSoundManager()->getChannel(id.asInt());
+					if (chan) {
+						d.type = INT;
+						d.u.i = (int)chan->volume;
+					}
+				}
+				break;
+			default:
+				warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+				break;
+			}
+		}
+		break;
 	case kTheSprite:
 		d = getTheSprite(id, field);
 		break;
@@ -506,7 +525,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		d.type = VOID;
+		break;
 	}
 
 	return d;
@@ -534,6 +553,23 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kThePerFrameHook:
 		warning("STUB: Lingo::setTheEntity(): setting the perframehook");
+		break;
+	case kTheSoundEntity:
+		{
+			switch (field) {
+			case kTheVolume:
+				{
+					SoundChannel *chan = _vm->getSoundManager()->getChannel(id.asInt());
+					if (chan) {
+						chan->volume = (byte)d.asInt();
+					}
+				}
+				break;
+			default:
+				warning("Lingo::setTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+				break;
+			}
+		}
 		break;
 	case kTheSprite:
 		setTheSprite(id, field, d);
