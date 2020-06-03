@@ -2212,7 +2212,11 @@ Sprite *Score::getSpriteById(uint16 id) {
 
 void Score::playSoundChannel(uint16 frameId) {
 	Frame *frame = _frames[frameId];
-	debug(0, "STUB: playSoundChannel(), Sound1 %d Sound2 %d", frame->_sound1, frame->_sound2);
+
+	debugC(5, kDebugLoading, "playSoundChannel(), Sound1 %d Sound2 %d", frame->_sound1, frame->_sound2);
+	DirectorSound *sound = _vm->getSoundManager();
+	sound->playCastMember(frame->_sound1, 1, false);
+	sound->playCastMember(frame->_sound2, 2, false);
 }
 
 void Score::addZoomBox(ZoomBox *box) {

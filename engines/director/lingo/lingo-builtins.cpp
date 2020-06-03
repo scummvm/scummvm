@@ -1679,47 +1679,19 @@ void LB::b_puppetPalette(int nargs) {
 }
 
 void LB::b_puppetSound(int nargs) {
-	if (nargs != 1) {
-		warning("STUB: b_puppetSound: more than 1 argument, got %d", nargs);
-		g_lingo->dropStack(nargs);
-		return;
-	}
-	Score *score = g_director->getCurrentScore();
+	ARGNUMCHECK(1);
 
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum castMember = g_lingo->pop();
+	Score *score = g_director->getCurrentScore();
 
 	if (!score) {
 		warning("b_puppetSound(): no score");
-
 		return;
 	}
 
 	int castId = g_lingo->castIdFetch(castMember);
-
-	if (castId == 0) {
-		sound->stopSound(1);
-	} else {
-		Cast *cast = g_director->getCastMember(castId);
-		if (!cast) {
-			warning("b_puppetSound: attempted to play a NULL cast member");
-			return;
-		} else if (cast->_type != kCastSound) {
-			error("b_puppetSound: attempted to play a non-SoundCast cast member");
-			return;
-		}
-		bool looping = ((SoundCast *)cast)->_looping;
-		SNDDecoder *sd = ((SoundCast *)cast)->_audio;
-		if (!sd) {
-			warning("b_puppetSound: no audio data attached to cast");
-			return;
-		}
-		if (looping)
-			sound->playStream(*sd->getLoopingAudioStream(), 1);
-		else
-			sound->playStream(*sd->getAudioStream(), 1);
-	}
-
+	sound->playCastMember(castId, 1);
 }
 
 void LB::b_puppetSprite(int nargs) {

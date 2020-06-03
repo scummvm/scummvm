@@ -139,7 +139,7 @@ Common::Error DirectorEngine::run() {
 	_wm->setEngine(this);
 
 	_lingo = new Lingo(this);
-	_soundManager = new DirectorSound();
+	_soundManager = new DirectorSound(this);
 
 	if (getGameGID() == GID_TEST) {
 		_mainArchive = nullptr;
