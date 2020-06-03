@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	ink.o \
 	movie.o \
 	resource.o \
+	score-loading.o \
 	score.o \
 	sound.o \
 	sprite.o \
