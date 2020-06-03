@@ -93,7 +93,7 @@ void TransylvaniaGame::update_monster(const TransylvaniaMonster *monster_info) {
 	}
 }
 
-int TransylvaniaGame::room_is_special(unsigned room_index,
+int TransylvaniaGame::roomIsSpecial(unsigned room_index,
 			      unsigned *room_desc_string)
 {
 	Room *room = &_rooms[room_index];
@@ -107,13 +107,13 @@ int TransylvaniaGame::room_is_special(unsigned room_index,
 	return ROOM_IS_NORMAL;
 }
 
-bool TransylvaniaGame::before_turn() {
+bool TransylvaniaGame::beforeTurn() {
 	update_monster(&WEREWOLF);
 	update_monster(&VAMPIRE);
 	return false;
 }
 
-void TransylvaniaGame::handle_special_opcode(uint8 operand)
+void TransylvaniaGame::handleSpecialOpcode(uint8 operand)
 {
 	switch (operand) {
 	case 0x01:
@@ -156,7 +156,7 @@ void TransylvaniaGame::handle_special_opcode(uint8 operand)
 	}
 }
 
-void TransylvaniaGame::before_game() {
+void TransylvaniaGame::beforeGame() {
 	char buffer[128];
 
 	// Draw the title

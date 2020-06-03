@@ -36,8 +36,8 @@ public:
 	CrimsonCrownGame();
 	~CrimsonCrownGame() override {}
 
-	void before_prompt() override;
-	void handle_special_opcode(uint8 operand) override;
+	void beforePrompt() override;
+	void handleSpecialOpcode(uint8 operand) override;
 
 	void setupDisk(uint diskNum);
 };

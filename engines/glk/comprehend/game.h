@@ -50,19 +50,18 @@ public:
 	ComprehendGame();
 	virtual ~ComprehendGame();
 
-	virtual void before_game() {}
-	virtual void before_prompt() {}
-	virtual bool before_turn() {
+	virtual void beforeGame() {}
+	virtual void beforePrompt() {}
+	virtual bool beforeTurn() {
 		return false;
 	}
-	virtual bool after_turn() {
+	virtual bool afterTurn() {
 		return false;
 	}
-	virtual int room_is_special(unsigned room_index,
-		unsigned *room_desc_string) {
+	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
 		return ROOM_IS_NORMAL;
 	}
-	virtual void handle_special_opcode(uint8 operand) {}
+	virtual void handleSpecialOpcode(uint8 operand) {}
 
 	void synchronizeSave(Common::Serializer &s);
 

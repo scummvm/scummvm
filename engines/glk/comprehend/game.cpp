@@ -333,7 +333,7 @@ static void update_graphics(ComprehendGame *game) {
 	if (!g_comprehend->_graphicsEnabled)
 		return;
 
-	type = game->room_is_special(game->_currentRoom, NULL);
+	type = game->roomIsSpecial(game->_currentRoom, NULL);
 
 	switch (type) {
 	case ROOM_IS_DARK:
@@ -400,7 +400,7 @@ static void update(ComprehendGame *game) {
 
 	/* Check if the room is special (dark, too bright, etc) */
 	room_desc_string = room->string_desc;
-	room_type = game->room_is_special(game->_currentRoom,
+	room_type = game->roomIsSpecial(game->_currentRoom,
 	                                  &room_desc_string);
 
 	if (game->_updateFlags & UPDATE_ROOM_DESC)
@@ -1011,7 +1011,7 @@ static void eval_instruction(ComprehendGame *game,
 
 	case OPCODE_SPECIAL:
 		/* Game specific opcode */
-		game->handle_special_opcode(instr->operand[0]);
+		game->handleSpecialOpcode(instr->operand[0]);
 		break;
 
 	default:
@@ -1176,9 +1176,9 @@ static void read_sentence(ComprehendGame *game, char **line,
 	*line = p;
 }
 
-static void before_turn(ComprehendGame *game) {
+static void beforeTurn(ComprehendGame *game) {
 	// Run the game specific before turn bits
-	game->before_turn();
+	game->beforeTurn();
 
 	// Run the each turn functions
 	eval_function(game, &game->_functions[0], NULL, NULL);
@@ -1188,7 +1188,7 @@ static void before_turn(ComprehendGame *game) {
 
 static void after_turn(ComprehendGame *game) {
 	// Do post turn game specific bits
-	game->after_turn();
+	game->afterTurn();
 }
 
 static void read_input(ComprehendGame *game) {
@@ -1196,8 +1196,8 @@ static void read_input(ComprehendGame *game) {
 	char *line = NULL, buffer[1024];
 	bool handled;
 
-	game->before_prompt();
-	before_turn(game);
+	game->beforePrompt();
+	beforeTurn(game);
 
 	do {
 		g_comprehend->print("> ");
@@ -1221,14 +1221,14 @@ static void read_input(ComprehendGame *game) {
 		line++;
 
 		if (handled)
-			before_turn(game);
+			beforeTurn(game);
 	}
 }
 
 void comprehend_play_game(ComprehendGame *game) {
 	console_init();
 
-	game->before_game();
+	game->beforeGame();
 
 	game->_updateFlags = (uint)UPDATE_ALL;
 	while (!g_comprehend->shouldQuit())

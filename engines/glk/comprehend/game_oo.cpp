@@ -56,7 +56,7 @@ OOToposGame::OOToposGame() : ComprehendGame() {
 	_colorTable = 1;
 }
 
-int OOToposGame::room_is_special(unsigned room_index,
+int OOToposGame::roomIsSpecial(unsigned room_index,
                               unsigned *room_desc_string) {
 	Room *room = &_rooms[room_index];
 
@@ -79,7 +79,7 @@ int OOToposGame::room_is_special(unsigned room_index,
 	return ROOM_IS_NORMAL;
 }
 
-bool OOToposGame::before_turn() {
+bool OOToposGame::beforeTurn() {
 	/* FIXME - probably doesn't work correctly with restored games */
 	static bool flashlight_was_on = false, googles_were_worn = false;
 	Room *room = &_rooms[_currentRoom];
@@ -107,7 +107,7 @@ bool OOToposGame::before_turn() {
 	return false;
 }
 
-void OOToposGame::handle_special_opcode(uint8 operand) {
+void OOToposGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 0x03:
 		/* Game over - failure */

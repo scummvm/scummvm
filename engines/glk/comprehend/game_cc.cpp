@@ -50,7 +50,7 @@ void CrimsonCrownGame::setupDisk(uint diskNum) {
 		_gameStrings = nullptr;
 }
 
-void CrimsonCrownGame::handle_special_opcode(uint8 operand) {
+void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 0x01:
 		// Enter the Vampire's throne room
@@ -92,7 +92,7 @@ void CrimsonCrownGame::handle_special_opcode(uint8 operand) {
 	}
 }
 
-void CrimsonCrownGame::before_prompt() {
+void CrimsonCrownGame::beforePrompt() {
 	// Clear the Sabrina/Erik action flags
 	_flags[0xa] = 0;
 	_flags[0xb] = 0;

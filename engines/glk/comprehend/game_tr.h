@@ -47,10 +47,10 @@ public:
 	TransylvaniaGame();
 	~TransylvaniaGame() override {}
 
-	void before_game() override;
-	bool before_turn() override;
-	int room_is_special(unsigned room_index, unsigned *room_desc_string) override;
-	void handle_special_opcode(uint8 operand) override;
+	void beforeGame() override;
+	bool beforeTurn() override;
+	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
+	void handleSpecialOpcode(uint8 operand) override;
 };
 
 } // namespace Comprehend
