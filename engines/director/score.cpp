@@ -430,6 +430,7 @@ void Score::update() {
 	// _surface->copyFrom(*_trailSurface);
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
+	_lingo->executePerFrameHook();
 
 	if (_vm->getVersion() >= 6) {
 		_lingo->processEvent(kEventBeginSprite);
