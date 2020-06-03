@@ -77,6 +77,7 @@ Object *Object::clone() {
 	Object *res = new Object;
 	res->name = name;
 	res->type = type;
+	res->disposed = disposed;
 	res->prototype = this;
 	res->properties = properties;
 	res->methods = methods;
@@ -89,17 +90,22 @@ Object *Object::clone() {
 }
 
 Symbol Object::getMethod(const Common::String methodName) {
+	if (disposed) {
+		error("Method '%s' called on disposed object '%s'", methodName.c_str(), name->c_str());
+	}
 	if (methods.contains(methodName)) {
 		return methods[methodName];
 	}
 	if (g_lingo->_methods.contains(methodName)) {
 		return g_lingo->_methods[methodName];
 	}
-	// TODO: error handling
 	return Symbol();
 }
 
 bool Object::hasVar(const Common::String varName) {
+	if (disposed) {
+		error("Variable '%s' accessed on disposed object '%s'", varName.c_str(), name->c_str());
+	}
 	// Factory object instance vars are accessed like normal vars
 	// Script object properties cannot be accessed like normal vars until D5
 	if (type == kScriptObj && g_lingo->_vm->getVersion() < 5) {
@@ -113,8 +119,7 @@ Symbol &Object::getVar(const Common::String varName) {
 }
 
 void LM::m_dispose(int nargs) {
-	g_lingo->printSTUBWithArglist("m_dispose", nargs);
-	g_lingo->dropStack(nargs);
+	g_lingo->_currentMeObj->disposed = true;
 }
 
 void LM::m_get(int nargs) {

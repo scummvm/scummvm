@@ -246,6 +246,7 @@ enum ObjectType {
 struct Object {
 	Common::String *name;
     ObjectType type;
+	bool disposed;
 
     Object *prototype;
     SymbolHash properties;
