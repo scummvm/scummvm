@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-06-02 16:41+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-06-03 15:41+0000\n"
+"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -2624,37 +2624,32 @@ msgid "Switch to DotMatrix scaling"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
 msgid "Left Mouse Button"
-msgstr "Symuluje lewy przycisk myszy"
+msgstr "Lewy przycisk myszy"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "Symuluje prawy przycisk myszy"
+msgstr "Prawy przycisk myszy"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
 msgid "Middle Mouse Button"
-msgstr "Symuluje lewy przycisk myszy"
+msgstr "Symuluje ¶rodkowy przycisk myszy"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Ko³ko myszy w górê"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Kó³ko myszy w dó³"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "Symuluje lewy przycisk myszy"
+msgstr "Symuluje czwarty przycisk myszy"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "Symuluje lewy przycisk myszy"
+msgstr "Symuluje pi±ty przycisk myszy"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
@@ -2662,110 +2657,100 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr ""
+msgstr "Joystick B"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr ""
+msgstr "Joystick X"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr ""
+msgstr "Joystick Y"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
 msgid "Joy Back"
-msgstr "Ruch wstecz"
+msgstr "Ruch wstecz Joysticka"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
 msgid "Joy Start"
-msgstr "~S~tart"
+msgstr "Start Joysticka"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
 msgid "Left Stick"
-msgstr "Klikniêcie LPM"
+msgstr "Lewa ga³ka analogowa"
 
 #: backends/keymapper/hardware-input.cpp:264
-#, fuzzy
 msgid "Right Stick"
-msgstr "Klikniêcie PPM"
+msgstr "Prawa ga³ka analogowa"
 
 #: backends/keymapper/hardware-input.cpp:265
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Lewy Bumper LB"
 
 #: backends/keymapper/hardware-input.cpp:266
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Prawy Bumper RB"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52
 msgid "D-pad Up"
-msgstr ""
+msgstr "Krzy¿ak w górê"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53
 msgid "D-pad Down"
-msgstr ""
+msgstr "Krzy¿ak w dó³"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54
-#, fuzzy
 msgid "D-pad Left"
-msgstr "¦lizg w lewo"
+msgstr "Krzy¿ak w lewo"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55
-#, fuzzy
 msgid "D-pad Right"
-msgstr "¦lizg w prawo"
+msgstr "Krzy¿ak w prawo"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr ""
+msgstr "Lewy Trigger"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr ""
+msgstr "Prawy Trigger"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62
-#, fuzzy
 msgid "Left Stick X"
-msgstr "Klikniêcie LPM"
+msgstr "Lewy Analog X"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63
-#, fuzzy
 msgid "Left Stick Y"
-msgstr "Klikniêcie LPM"
+msgstr "Lewy Analog Y"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64
-#, fuzzy
 msgid "Right Stick X"
-msgstr "Klikniêcie PPM"
+msgstr "Prawy Analog X"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65
-#, fuzzy
 msgid "Right Stick Y"
-msgstr "Klikniêcie PPM"
+msgstr "Prawy Analog Y"
 
 #: backends/keymapper/remap-widget.cpp:281
 #: backends/keymapper/remap-widget.cpp:311
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Przywróæ ustawienia domy¶lne"
 
 #: backends/keymapper/remap-widget.cpp:282
 msgid "Clear mapping"
@@ -2773,34 +2758,31 @@ msgstr ""
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "Wirtualna mysz ruch w górê"
 
 #: backends/keymapper/virtual-mouse.cpp:159
-#, fuzzy
 msgid "Virtual mouse down"
-msgstr "Przerwij pobieranie"
+msgstr "Wirtualna mysz ruch w dó³"
 
 #: backends/keymapper/virtual-mouse.cpp:164
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "Wirtualna mysz ruch w lewo"
 
 #: backends/keymapper/virtual-mouse.cpp:169
-#, fuzzy
 msgid "Virtual mouse right"
-msgstr "¦lizg w prawo"
+msgstr "Wirtualna mysz ruch w prawo"
 
 #: backends/keymapper/virtual-mouse.cpp:174
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "Zwolnij ruch wirtualnej myszy"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "¦cie¿ka nie jest katalogiem"
+msgstr "Nie mo¿na utworzyæ katalogu w tym miejscu!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -2814,94 +2796,84 @@ msgstr "¦cie¿ka nie jest katalogiem"
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:56
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:63
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:137
-#, fuzzy
 msgid "Invalid path!"
-msgstr "Nieprawid³owy kod"
+msgstr "Nieprawid³owa ¶cie¿ka dostêpu!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "¦cie¿ka nie istnieje"
+msgstr "Katalog nadrzêdny nie istnieje!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "Nie mo¿na utworzyæ katalogu wewn±trz pliku!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:98
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:141
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "Plik o tej nazwie znajdujê siê w katalogu nadrzêdnym!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:104
-#, fuzzy
 msgid "Failed to create the directory!"
-msgstr "Nie uda³o siê usun±æ pliku."
+msgstr "Nie uda³o siê utworzyæ katalogu!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:111
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:120
-#, fuzzy
 msgid "Directory created successfully!"
-msgstr "DVD zamontowane pomy¶lnie"
+msgstr "Katalog zosta³ utworzony!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:122
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:204
-#, fuzzy
 msgid "Back to parent directory"
-msgstr "¦cie¿ka nie jest katalogiem"
+msgstr "Powrót do katalogu nadrzêdnego"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "¦cie¿ka nie istnieje"
+msgstr "Plik nie istnieje!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "¦cie¿ka nie jest katalogiem"
+msgstr "Nie mo¿na pobraæ katalogu!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "Nie uda³o siê usun±æ pliku."
+msgstr "Nie uda³o siê odczytaæ pliku!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
 "The page is not available without the resources. Make sure file wwwroot.zip "
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
+"Ta strona jest niedostêpna. Upewnij siê ¿e plik wwwroot.zip z dystrybucji "
+"ScummVM jest dostêpny w 'g³ównej ¶cie¿ce'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
-#, fuzzy
 msgid "Create directory"
-msgstr "¦cie¿ka nie jest katalogiem"
+msgstr "Utwórz katalog"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
-#, fuzzy
 msgid "Upload files"
-msgstr "Wczytaj plik"
+msgstr "Prze¶lij pliki"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
-msgstr ""
+msgstr "Wpisz nazwê nowego katalogu:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
-#, fuzzy
 msgid "Select a file to upload:"
-msgstr "Wybierz zapis do wczytania"
+msgstr "Wybierz plik do przes³ania:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
-#, fuzzy
 msgid "Or select a directory (works in Chrome only):"
-msgstr "Wybierz katalog dla stylów GUI"
+msgstr "Lub wybierz katalog (dzia³a tylko w przegl±darce Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
@@ -2909,26 +2881,23 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
-msgstr ""
+msgstr "Wyst±pi³ b³±d"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 msgid "File system root"
-msgstr ""
+msgstr "G³ówny system plików"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
-#, fuzzy
 msgid "Saved games"
-msgstr "Zapis:"
+msgstr "Zapisane gry"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
-#, fuzzy
 msgid "Parent directory"
-msgstr "¦cie¿ka nie jest katalogiem"
+msgstr "Katalog nadrzêdny"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM nie mo¿e otworzyæ katalogu!"
+msgstr "ScummVM nie móg³ przyporz±dkowaæ wskazanego katalogu."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
