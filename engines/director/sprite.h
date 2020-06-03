@@ -100,6 +100,7 @@ public:
 	bool _moveable;
 	bool _editable;
 	bool _puppet;
+	bool _immediate;
 	byte _backColor;
 	byte _foreColor;
 
