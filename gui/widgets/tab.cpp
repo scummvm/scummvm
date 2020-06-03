@@ -128,7 +128,9 @@ int TabWidget::addTab(const String &title, const String &dialogName) {
 	if (newWidth < _minTabWidth)
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
-	_widthTillLastTab += newWidth;
+
+	if (g_gui.useRTL())
+		_widthTillLastTab += newWidth;
 
 	_tabs.push_back(newTab);
 
