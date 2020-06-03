@@ -27,12 +27,14 @@
 namespace Glk {
 namespace Comprehend {
 
-const PlainGameDescriptor ComprehendGame_LIST[] = {
+const PlainGameDescriptor COMPREHEND_GAME_LIST[] = {
     {"crimsoncrown", "Crimson Crown"},
     {"ootopis", "OO-Topos"},
+#ifndef RELEASE_BUILD
+    {"talisman", "Talisman: Challenging the Sands of Time"},
+#endif
     {"transylvania", "Transylvania"},
-    {"talisman", "Talisman"},
-	{nullptr, nullptr}
+    {nullptr, nullptr}
 };
 
 struct ComprehendDetectionEntry {
@@ -41,12 +43,16 @@ struct ComprehendDetectionEntry {
 	const char *const _md5;
 };
 
-const ComprehendDetectionEntry ComprehendGameS[] = {
-    // DOS games
+const ComprehendDetectionEntry COMPREHEND_GAMES[] = {
     {"crimsoncrown", "cc1.gda", "f2abf019675ac5c9bcfd81032bc7787b"},
+    {"ootopis", "g0", "56460c1ee669c253607534155d7e9db4"},
+#ifndef RELEASE_BUILD
+	{"talisman", "g0", "35770d4815e610b5252e3fcd9f11def3"},
+#endif
     {"transylvania", "tr.gda", "22e08633eea02ceee49b909dfd982d22"},
 
-    {nullptr, nullptr, nullptr}};
+	{nullptr, nullptr, nullptr}
+};
 
 } // End of namespace Comprehend
 } // End of namespace Glk
