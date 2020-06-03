@@ -1308,6 +1308,9 @@ void Score::gotoLoop() {
 int Score::getCurrentLabelNumber() {
 	Common::SortedArray<Label *>::iterator i;
 
+	if (!_labels)
+		return 0;
+
 	int frame = 0;
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
