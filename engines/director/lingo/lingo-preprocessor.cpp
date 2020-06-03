@@ -165,6 +165,7 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 	const char *lineStart, *prevEnd;
 	int iflevel = 0;
 	int linenumber = 1;
+	bool defFound = false;
 
 	while (*s) {
 		line.clear();
@@ -189,6 +190,19 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 			res1 = preprocessReturn(res1);
 			res1 = preprocessPlay(res1);
 			res1 = preprocessSound(res1);
+		}
+
+		if (type == kMovieScript && _vm->getVersion() <= 3 && !defFound) {
+			tok = nexttok(line.c_str());
+			if (tok.equals("macro") || tok.equals("factory") || tok.equals("on")) {
+				defFound = true;
+			} else {
+				debugC(2, kDebugLingoParse, "skipping line before first definition");
+				linenumber++;
+				if (*s)	// skip newline symbol
+					s++;
+				continue;
+			}
 		}
 
 		res += res1;
