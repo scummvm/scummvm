@@ -35,6 +35,8 @@ namespace Comprehend {
 #define ROOM_IS_DARK 1
 #define ROOM_IS_TOO_BRIGHT 2
 
+struct GameStrings;
+
 class ComprehendGame : public GameInfo, public OpcodeMap {
 public:
 	Common::String _gameDataFile;
@@ -44,7 +46,7 @@ public:
 	Common::String _titleGraphicFile;
 	unsigned _colorTable;
 
-	struct GameStrings *_gameStrings;
+	const GameStrings *_gameStrings;
 
 public:
 	ComprehendGame();

@@ -36,7 +36,7 @@ const TransylvaniaMonster TransylvaniaGame::VAMPIRE = {
 	0x26, 5, (1 << 7), 0, 5
 };
 
-static GameStrings TR_STRINGS = {
+static const GameStrings TR_STRINGS = {
     EXTRA_STRING_TABLE(0x8a)
 };
 
@@ -62,7 +62,7 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 	_gameStrings = &TR_STRINGS;
 }
 
-void TransylvaniaGame::update_monster(const TransylvaniaMonster *monster_info) {
+void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	Item *monster;
 	Room *room;
 	uint16 turn_count;
@@ -70,21 +70,21 @@ void TransylvaniaGame::update_monster(const TransylvaniaMonster *monster_info) {
 	room = &_rooms[_currentRoom];
 	turn_count = _variables[VAR_TURN_COUNT];
 
-	monster = get_item(this, monster_info->object);
+	monster = get_item(this, monsterInfo->object);
 	if (monster->room == _currentRoom) {
-		/* The monster is in the current room - leave it there */
+		// The monster is in the current room - leave it there
 		return;
 	}
 
-	if ((room->flags & monster_info->room_allow_flag) &&
-	    !_flags[monster_info->dead_flag] &&
-	    turn_count > monster_info->min_turns_before) {
+	if ((room->flags & monsterInfo->room_allow_flag) &&
+	    !_flags[monsterInfo->dead_flag] &&
+	    turn_count > monsterInfo->min_turns_before) {
 		/*
 		 * The monster is alive and allowed to move to the current
 		 * room. Randomly decide whether on not to. If not, move
 		 * it back to limbo.
 		 */
-		if ((g_comprehend->getRandomNumber(0x7fffffff) % monster_info->randomness) == 0) {
+		if ((g_comprehend->getRandomNumber(0x7fffffff) % monsterInfo->randomness) == 0) {
 			move_object(this, monster, _currentRoom);
 			_variables[0xf] = turn_count + 1;
 		} else {
@@ -94,13 +94,13 @@ void TransylvaniaGame::update_monster(const TransylvaniaMonster *monster_info) {
 }
 
 int TransylvaniaGame::roomIsSpecial(unsigned room_index,
-			      unsigned *room_desc_string)
+			      unsigned *roomDescString)
 {
 	Room *room = &_rooms[room_index];
 
 	if (room_index == 0x28) {
-		if (room_desc_string)
-			*room_desc_string = room->string_desc;
+		if (roomDescString)
+			*roomDescString = room->string_desc;
 		return ROOM_IS_DARK;
 	}
 
@@ -108,8 +108,8 @@ int TransylvaniaGame::roomIsSpecial(unsigned room_index,
 }
 
 bool TransylvaniaGame::beforeTurn() {
-	update_monster(&WEREWOLF);
-	update_monster(&VAMPIRE);
+	updateMonster(&WEREWOLF);
+	updateMonster(&VAMPIRE);
 	return false;
 }
 
@@ -117,14 +117,11 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand)
 {
 	switch (operand) {
 	case 0x01:
-		/*
-		 * FIXME - Called when the mice are dropped and the cat chases
-		 *         them.
-		 */
+		// FIXME: Called when the mice are dropped and the cat chases them.
 		break;
 
 	case 0x02:
-		/* FIXME - Called when the gun is fired */
+		// FIXME: Called when the gun is fired
 		break;
 
 	case 0x06:
@@ -136,11 +133,13 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand)
 		break;
 
 	case 0x03:
-		/* Game over - failure */
+		// Game over - failure
+		// fall through
 	case 0x05:
-		/* Won the game */
+		// Won the game
+		// fall through
 	case 0x08:
-		/* Restart game */
+		// Restart game
 		game_restart(this);
 		break;
 

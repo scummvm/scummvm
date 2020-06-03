@@ -26,7 +26,7 @@
 namespace Glk {
 namespace Comprehend {
 
-static GameStrings CC1_STRINGS = {0x9};
+static const GameStrings CC1_STRINGS = {0x9};
 
 CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame() {
 	setupDisk(1);
@@ -59,12 +59,8 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 		break;
 
 	case 0x03:
-		/*
-		 * Game over - failure.
-		 *
-		 * FIXME - If playing the second disk this should restart
-		 *         from the beginning of the first disk.
-		 */
+		// Game over - failure
+		setupDisk(1);
 		game_restart(this);
 		break;
 

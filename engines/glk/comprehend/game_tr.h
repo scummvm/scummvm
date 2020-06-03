@@ -41,7 +41,7 @@ private:
 	static const TransylvaniaMonster WEREWOLF;
 	static const TransylvaniaMonster VAMPIRE;
 
-	void update_monster(const TransylvaniaMonster *monster_info);
+	void updateMonster(const TransylvaniaMonster *monsterInfo);
 
 public:
 	TransylvaniaGame();
@@ -49,7 +49,7 @@ public:
 
 	void beforeGame() override;
 	bool beforeTurn() override;
-	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
+	int roomIsSpecial(unsigned room_index, unsigned *roomDescString) override;
 	void handleSpecialOpcode(uint8 operand) override;
 };
 

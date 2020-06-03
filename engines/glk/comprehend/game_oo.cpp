@@ -57,22 +57,22 @@ OOToposGame::OOToposGame() : ComprehendGame() {
 }
 
 int OOToposGame::roomIsSpecial(unsigned room_index,
-                              unsigned *room_desc_string) {
+                              unsigned *roomDescString) {
 	Room *room = &_rooms[room_index];
 
-	/* Is the room dark */
+	// Is the room dark
 	if ((room->flags & OO_ROOM_FLAG_DARK) &&
 	    !(_flags[OO_FLAG_FLASHLIGHT_ON])) {
-		if (room_desc_string)
-			*room_desc_string = 0xb3;
+		if (roomDescString)
+			*roomDescString = 0xb3;
 		return ROOM_IS_DARK;
 	}
 
-	/* Is the room too bright */
+	// Is the room too bright
 	if (room_index == OO_BRIGHT_ROOM &&
 	    !_flags[OO_FLAG_WEARING_GOGGLES]) {
-		if (room_desc_string)
-			*room_desc_string = 0x1c;
+		if (roomDescString)
+			*roomDescString = 0x1c;
 		return ROOM_IS_TOO_BRIGHT;
 	}
 
@@ -80,7 +80,7 @@ int OOToposGame::roomIsSpecial(unsigned room_index,
 }
 
 bool OOToposGame::beforeTurn() {
-	/* FIXME - probably doesn't work correctly with restored games */
+	// FIXME: Probably doesn't work correctly with restored games
 	static bool flashlight_was_on = false, googles_were_worn = false;
 	Room *room = &_rooms[_currentRoom];
 
@@ -110,21 +110,23 @@ bool OOToposGame::beforeTurn() {
 void OOToposGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 0x03:
-		/* Game over - failure */
+		// Game over - failure
+		// fall through
 	case 0x05:
-		/* Won the game */
+		// Won the game
+		// fall through
 	case 0x04:
-		/* Restart game */
+		// Restart game
 		game_restart(this);
 		break;
 
 	case 0x06:
-		/* Save game */
+		// Save game
 		game_save(this);
 		break;
 
 	case 0x07:
-		/* Restore game */
+		// Restore game
 		game_restore(this);
 		break;
 	}
