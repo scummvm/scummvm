@@ -27,6 +27,9 @@
  */
 
 #include "engines/wintermute/ad/ad_actor.h"
+#ifdef ENABLE_WME3D
+#include "engines/wintermute/ad/ad_actor_3dx.h"
+#endif
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_entity.h"
 #include "engines/wintermute/ad/ad_inventory.h"
@@ -390,6 +393,28 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// LoadActor3D
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "LoadActor3D") == 0) {
+		stack->correctParams(1);
+		// assume that we have an .X model here
+		// wme3d has also support for .ms3d files
+		// but they are deprecated
+		AdActor3DX *act = new AdActor3DX(_gameRef);
+		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
+			addObject(act);
+			stack->pushNative(act, true);
+		} else {
+			delete act;
+			act = nullptr;
+			stack->pushNULL();
+		}
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadEntity

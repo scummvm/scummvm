@@ -62,6 +62,7 @@
 #include "engines/wintermute/wintermute.h"
 
 #ifdef ENABLE_WME3D
+#include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #endif
 
@@ -1498,7 +1499,14 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "LoadActor3D") == 0) {
 		stack->correctParams(1);
-		stack->pushNULL();
+		AdActor3DX *act = new AdActor3DX(_gameRef);
+		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
+			addObject(act);
+			stack->pushNative(act, true);
+		} else {
+			delete act;
+			stack->pushNULL();
+		}
 		return STATUS_OK;
 	}
 #endif
