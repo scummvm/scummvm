@@ -434,6 +434,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_machineType;
 		break;
+	case kTheMovie:
+		d.type = STRING;
+		d.u.s = new Common::String(_vm->getCurrentScore()->getArchive()->getFileName());
+		break;
 	case kTheMouseCast:
 		{
 			Common::Point pos = g_system->getEventManager()->getMousePos();
