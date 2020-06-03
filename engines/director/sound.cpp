@@ -176,10 +176,16 @@ void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRep
 					warning("DirectorSound::playCastMember: no audio data attached to cast member %d", castId);
 					return;
 				}
+				Audio::AudioStream *as;
 				if (looping)
-					playStream(*sd->getLoopingAudioStream(), soundChannel);
+					as = sd->getLoopingAudioStream();
 				else
-					playStream(*sd->getAudioStream(), soundChannel);
+					as = sd->getAudioStream();
+				if (!as) {
+					warning("DirectorSound::playCastMember: audio data failed to load from cast");
+					return;
+				}
+				playStream(*as, soundChannel);
 				_channels[soundChannel - 1].lastPlayingCast = castId;
 			}
 		} else {
@@ -300,10 +306,14 @@ bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 Audio::SeekableAudioStream *SNDDecoder::getAudioStream() {
+	if (!_data)
+		return nullptr;
 	return Audio::makeRawStream(_data, _size, _rate, _flags, DisposeAfterUse::NO);
 }
 
 Audio::AudioStream *SNDDecoder::getLoopingAudioStream() {
+	if (!_data)
+		return nullptr;
 	return new Audio::LoopingAudioStream(Audio::makeRawStream(_data, _size, _rate, _flags, DisposeAfterUse::NO), 0);
 }
 
