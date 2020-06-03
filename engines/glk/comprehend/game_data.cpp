@@ -954,10 +954,7 @@ static void load_extra_string_file(ComprehendGame *game,
 static void load_extra_string_files(ComprehendGame *game) {
 	uint i;
 
-	for (i = 0; i < ARRAY_SIZE(game->_stringFiles); i++) {
-		if (!game->_stringFiles[i].filename)
-			break;
-
+	for (i = 0; i < game->_stringFiles.size(); i++) {
 		// HACK - get string offsets correct
 		game->_strings2.resize(0x40 * i);
 		if (game->_strings2.empty())

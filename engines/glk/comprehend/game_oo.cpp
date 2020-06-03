@@ -35,8 +35,6 @@ namespace Comprehend {
 #define OO_FLAG_FLASHLIGHT_ON 0x27
 
 OOToposGame::OOToposGame() : ComprehendGame() {
-	_gameName = "Oo-Topos";
-	_shortName = "oo";
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary

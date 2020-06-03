@@ -38,9 +38,7 @@ struct Sentence {
 	size_t nr_words;
 };
 
-ComprehendGame::ComprehendGame() : _gameName(nullptr),
-                                   _shortName(nullptr),
-                                   _gameDataFile(nullptr),
+ComprehendGame::ComprehendGame() : _gameDataFile(nullptr),
                                    _colorTable(0),
                                    _gameStrings(nullptr) {
 }

@@ -37,10 +37,7 @@ namespace Comprehend {
 
 class ComprehendGame : public GameInfo, public OpcodeMap {
 public:
-	const char *_gameName;
-	const char *_shortName;
-
-	const char *_gameDataFile;
+	Common::String _gameDataFile;
 	Common::Array<StringFile> _stringFiles;
 	Common::StringArray _locationGraphicFiles;
 	Common::StringArray _itemGraphicFiles;

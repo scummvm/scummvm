@@ -29,8 +29,6 @@ namespace Comprehend {
 /* FIXME - This is broken */
 
 TalismanGame::TalismanGame() : ComprehendGame() {
-	_gameName = "Talisman, Challenging the Sands of Time (broken)";
-	_shortName = "tm";
 	_gameDataFile = "G0";
 
 	_locationGraphicFiles.push_back("RA");

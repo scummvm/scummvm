@@ -28,55 +28,36 @@ namespace Comprehend {
 
 static GameStrings CC1_STRINGS = {0x9};
 
-#ifdef TODO
-static game_ops cc2_ops = {
-    nullptr,
-    cc2_before_prompt,
-    nullptr,
-    nullptr,
-    nullptr,
-    cc2_handle_special_opcode};
-#endif
-
 CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame() {
-	_gameName = "Crimson Crown";
-	_shortName = "cc1";
-	_gameDataFile = "cc1.gda";
-
-	_stringFiles.push_back(StringFile("ma.ms1", 0x89));
-	_locationGraphicFiles.push_back("RA.MS1");
-	_locationGraphicFiles.push_back("RB.MS1");
-	_locationGraphicFiles.push_back("RC.MS1");
-	_itemGraphicFiles.push_back("OA.MS1");
-	_itemGraphicFiles.push_back("OB.MS1");
-
-	_gameStrings = &CC1_STRINGS;
+	setupDisk(1);
 }
 
-#ifdef TODO
-ComprehendGame game_crimson_crown_2 = {
-    "Crimson Crown (Part 2/2)",
-    "cc2",
-    "CC2.GDA",
-    {{"MA.MS2", 0x89}},
-    {"RA.MS2", "RB.MS2"},
-    {"OA.MS2", "OB.MS2"},
-    "G%d.MS0",
-    0,
-    nullptr,
-    &cc2_ops,
-    nullptr};
-#endif
+void CrimsonCrownGame::setupDisk(uint diskNum) {
+	assert(diskNum == 1 || diskNum == 2);
 
-static void cc_clear_companion_flags(ComprehendGame *game) {
-	/* Clear the Sabrina/Erik action flags */
-	game->_flags[0xa] = 0;
-	game->_flags[0xb] = 0;
+	_gameDataFile = Common::String::format("cc%u.gda", diskNum);
+	_stringFiles.push_back(StringFile(Common::String::format("ma.ms%u", diskNum), 0x89));
+	_locationGraphicFiles.push_back(Common::String::format("ra.ms%u", diskNum));
+	_locationGraphicFiles.push_back(Common::String::format("rb.ms%u", diskNum));
+	if (diskNum == 1)
+		_locationGraphicFiles.push_back("RC.ms1");
+	_itemGraphicFiles.push_back(Common::String::format("oa.ms%u", diskNum));
+	_itemGraphicFiles.push_back(Common::String::format("ob.ms%u", diskNum));
+
+	if (diskNum == 1)
+		_gameStrings = &CC1_STRINGS;
+	else
+		_gameStrings = nullptr;
 }
 
-static bool cc_common_handle_special_opcode(ComprehendGame *game,
-                                            uint8 operand) {
+void CrimsonCrownGame::handle_special_opcode(uint8 operand) {
 	switch (operand) {
+	case 0x01:
+		// Enter the Vampire's throne room
+		assert(_diskNum == 1);
+		eval_function(this, &_functions[0xe], nullptr, nullptr);
+		break;
+
 	case 0x03:
 		/*
 		 * Game over - failure.
@@ -84,69 +65,37 @@ static bool cc_common_handle_special_opcode(ComprehendGame *game,
 		 * FIXME - If playing the second disk this should restart
 		 *         from the beginning of the first disk.
 		 */
-		game_restart(game);
+		game_restart(this);
+		break;
+
+	case 0x05:
+		if (_diskNum == 1) {
+			// Finished disk 1
+			error("[Completed disk 1 - handle switch to disk 2]");
+		} else {
+			// Won the game.
+			// FIXME: The merchant ship should arrives, etc.
+			game_restart(this);
+		}
 		break;
 
 	case 0x06:
-		game_save(game);
+		game_save(this);
 		break;
 
 	case 0x07:
-		/*
-		 * FIXME - This will only correctly restore games that were
-		 *         saved for the disk currently being played.
-		 */
-		game_restore(game);
-		return true;
-	}
-
-	return false;
-}
-
-void CrimsonCrownGame::handle_special_opcode(uint8 operand) {
-	if (cc_common_handle_special_opcode(this, operand))
-		return;
-
-	switch (operand) {
-	case 0x05:
-		/*
-		 * Completed first part (disk 1) of the game.
-		 *
-		 * FIXME - This should automatically load disk 2.
-		 */
-		error("[Completed disk 1 - to continue run Re-Comprehend with the 'cc2' game]");
-		break;
-	}
-}
-
-static void cc2_handle_special_opcode(ComprehendGame *game,
-                                      uint8 operand) {
-	if (cc_common_handle_special_opcode(game, operand))
-		return;
-
-	switch (operand) {
-	case 0x01:
-		/* Enter the Vampire's throne room */
-		eval_function(game, &game->_functions[0xe], NULL, NULL);
+		game_restore(this);
 		break;
 
-	case 0x05:
-		/*
-		 * Won the game.
-		 *
-		 * FIXME - The merchant ship should arrives, etc.
-		 */
-		game_restart(game);
+	default:
 		break;
 	}
-}
-
-static void cc2_before_prompt(ComprehendGame *game) {
-	cc_clear_companion_flags(game);
 }
 
 void CrimsonCrownGame::before_prompt() {
-	cc_clear_companion_flags(this);
+	// Clear the Sabrina/Erik action flags
+	_flags[0xa] = 0;
+	_flags[0xb] = 0;
 }
 
 } // namespace Comprehend

@@ -42,8 +42,6 @@ static GameStrings TR_STRINGS = {
 
 
 TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
-	_gameName = "Transylvania";
-	_shortName = "tr";
 	_gameDataFile = "tr.gda";
 
 	_stringFiles.push_back(StringFile("MA.MS1", 0x88));

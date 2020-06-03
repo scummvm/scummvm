@@ -29,12 +29,17 @@ namespace Glk {
 namespace Comprehend {
 
 class CrimsonCrownGame : public ComprehendGame {
+private:
+	uint _diskNum;
+
 public:
 	CrimsonCrownGame();
 	~CrimsonCrownGame() override {}
 
 	void before_prompt() override;
 	void handle_special_opcode(uint8 operand) override;
+
+	void setupDisk(uint diskNum);
 };
 
 } // namespace Comprehend

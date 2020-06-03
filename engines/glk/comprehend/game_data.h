@@ -251,12 +251,12 @@ struct GameInfo {
 };
 
 struct StringFile {
-	const char *filename;
+	Common::String filename;
 	uint32 base_offset;
 	uint32 end_offset;
 
 	StringFile() : filename(nullptr), base_offset(0), end_offset(0) {}
-	StringFile(const char *fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
+	StringFile(const Common::String &fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
 	}
 };
 
