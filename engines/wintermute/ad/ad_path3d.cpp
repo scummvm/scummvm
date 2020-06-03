@@ -26,29 +26,25 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "ad_path3d.h"
-#include "../base/base_persistence_manager.h"
+#include "engines/wintermute/ad/ad_path3d.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdPath3D, false);
 
 //////////////////////////////////////////////////////////////////////////
-AdPath3D::AdPath3D(BaseGame* inGame) : BaseClass (inGame) {
-	_currIndex = -1;
-	_ready = false;
+AdPath3D::AdPath3D(BaseGame *inGame) : BaseClass(inGame), _ready(false), _currIndex(-1) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdPath3D::~AdPath3D() {
 	reset();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdPath3D::reset() {
-	for(unsigned i=0; i<_points.size(); i++) {
+	for (uint i = 0; i < _points.size(); i++) {
 		delete _points[i];
 	}
 
@@ -57,18 +53,15 @@ void AdPath3D::reset() {
 	_ready = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdPath3D::addPoint(Math::Vector3d point) {
 	_points.add(new Math::Vector3d(point));
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdPath3D::addPoint(float x, float y, float z) {
 	_points.add(new Math::Vector3d(x, y, z));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPath3D::setReady(bool ready) {
@@ -78,38 +71,34 @@ bool AdPath3D::setReady(bool ready) {
 	return orig;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d* AdPath3D::getFirst() {
-	if(_points.size() > 0) {
+Math::Vector3d *AdPath3D::getFirst() {
+	if (_points.size() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d* AdPath3D::getNext() {
+Math::Vector3d *AdPath3D::getNext() {
 	_currIndex++;
-	if(_currIndex < _points.size()) {
+	if (_currIndex < _points.size()) {
 		return _points[_currIndex];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d* AdPath3D::getCurrent() {
-	if(_currIndex >= 0 && _currIndex < _points.size()) {
+Math::Vector3d *AdPath3D::getCurrent() {
+	if (_currIndex >= 0 && _currIndex < _points.size()) {
 		return _points[_currIndex];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
@@ -118,29 +107,27 @@ bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_currIndex));
 	persistMgr->transferBool(TMEMBER(_ready));
 
-	if(persistMgr->getIsSaving()) {
+	if (persistMgr->getIsSaving()) {
 		int j = _points.size();
 		persistMgr->transferSint32("ArraySize", &j);
-		for(int i=0; i<j; i++) {
+		for (int i = 0; i < j; i++) {
 			persistMgr->transferFloat("x", &_points[i]->x());
 			persistMgr->transferFloat("y", &_points[i]->y());
 			persistMgr->transferFloat("z", &_points[i]->z());
 		}
-	}
-	else {
+	} else {
 		int j = 0;
 		persistMgr->transferSint32("ArraySize", &j);
-		for(int i=0; i<j; i++) {
+		for (int i = 0; i < j; i++) {
 			float x, y, z;
 			persistMgr->transferFloat("x", &x);
 			persistMgr->transferFloat("y", &y);
 			persistMgr->transferFloat("z", &z);
 			addPoint(x, y, z);
 		}
-
 	}
 
 	return true;
 }
 
-}
+} // namespace Wintermute

@@ -26,27 +26,21 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
-#include "ad_walkplane.h"
-#include "../base/base_persistence_manager.h"
+#include "engines/wintermute/ad/ad_walkplane.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdWalkplane::AdWalkplane(BaseGame *inGame): BaseScriptable(inGame, false, false) {
-	_mesh = NULL;
-	_active = true;
-	_receiveShadows = false;
+AdWalkplane::AdWalkplane(BaseGame *inGame) : BaseScriptable(inGame, false, false),
+                                             _receiveShadows(false), _active(true), _mesh(nullptr) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdWalkplane::~AdWalkplane() {
-	if (_mesh) {
-		delete _mesh;
-	}
+	delete _mesh;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdWalkplane::persist(BasePersistenceManager *persistMgr) {
@@ -54,4 +48,4 @@ bool AdWalkplane::persist(BasePersistenceManager *persistMgr) {
 	return true;
 }
 
-}
+} // namespace Wintermute

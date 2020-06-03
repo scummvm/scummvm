@@ -26,13 +26,12 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
-#include "camera3d.h"
+#include "engines/wintermute/base/gfx/opengl/camera3d.h"
+#include "engines/wintermute/base/gfx/opengl/loader3ds.h"
+#include "engines/wintermute/math/math_util.h"
 #include "math/angle.h"
-#include "math/quat.h"
-#include "../../../math/math_util.h"
 #include "math/glmath.h"
-#include "loader3ds.h"
+#include "math/quat.h"
 
 namespace Wintermute {
 
@@ -40,20 +39,15 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////////////////////////////////////
-Camera3D::Camera3D(BaseGame* inGame): BaseNamedObject(inGame) {
-	_position = Math::Vector3d(0,0,0);
-	_target = Math::Vector3d(0,0,0);
-	_bank = 0.0f;
-	_fov = _originalFOV = Math::Angle(45.0f).getRadians();
-	_nearClipPlane = _farClipPlane = -1.0f;
+Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame),
+                                       _position(0.0f, 0.0f, 0.0f), _target(0.0f, 0.0f, 0.0f), _bank(0.0f),
+                                       _fov(Math::Angle(45.0f).getRadians()), _originalFOV(Math::Angle(45.0f).getRadians()),
+                                       _nearClipPlane(-1.0f), _farClipPlane(-1.0f) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 Camera3D::~Camera3D() {
-
 }
 
 bool Camera3D::loadFrom3DS(byte **buffer) {
@@ -104,7 +98,6 @@ bool Camera3D::loadFrom3DS(byte **buffer) {
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool Camera3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
@@ -120,7 +113,6 @@ bool Camera3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void Camera3D::setupPos(Math::Vector3d pos, Math::Vector3d target, float bank) {
 	_position = pos;
@@ -128,45 +120,42 @@ void Camera3D::setupPos(Math::Vector3d pos, Math::Vector3d target, float bank) {
 	_bank = bank;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-void Camera3D::rotateView(float X, float Y, float Z) {
-	Math::Vector3d vVector;						// Vector for the position/view.
+void Camera3D::rotateView(float x, float y, float z) {
+	Math::Vector3d vVector; // Vector for the position/view.
 
 	// Get our view vector (The direciton we are facing)
-	vVector = _target - _position;		// This gets the direction of the view
-	
+	vVector = _target - _position; // This gets the direction of the view
+
 	// Rotate the view along the desired axis
-	if (X) {
+	if (x) {
 		// Rotate the view vector up or down, then add it to our position
-		_target.z() = (float)(_position.z() + sin(X)*vVector.y() + cos(X)*vVector.z());
-		_target.y() = (float)(_position.y() + cos(X)*vVector.y() - sin(X)*vVector.z());
+		_target.z() = (float)(_position.z() + sin(x) * vVector.y() + cos(x) * vVector.z());
+		_target.y() = (float)(_position.y() + cos(x) * vVector.y() - sin(x) * vVector.z());
 	}
-	if (Y) {
+	if (y) {
 		// Rotate the view vector right or left, then add it to our position
-		_target.z() = (float)(_position.z() + sin(Y)*vVector.x() + cos(Y)*vVector.z());
-		_target.x() = (float)(_position.x() + cos(Y)*vVector.x() - sin(Y)*vVector.z());
+		_target.z() = (float)(_position.z() + sin(y) * vVector.x() + cos(y) * vVector.z());
+		_target.x() = (float)(_position.x() + cos(y) * vVector.x() - sin(y) * vVector.z());
 	}
-	if (Z) {
+	if (z) {
 		// Rotate the view vector diagnally right or diagnally down, then add it to our position
-		_target.x() = (float)(_position.x() + sin(Z)*vVector.y() + cos(Z)*vVector.x());
-		_target.y() = (float)(_position.y() + cos(Z)*vVector.y() - sin(Z)*vVector.x());
+		_target.x() = (float)(_position.x() + sin(z) * vVector.y() + cos(z) * vVector.x());
+		_target.y() = (float)(_position.y() + cos(z) * vVector.y() - sin(z) * vVector.x());
 	}
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void Camera3D::move(float speed) {
-	Math::Vector3d vector;						// Init a vector for our view
+	Math::Vector3d vector; // Init a vector for our view
 
 	// Get our view vector (The direciton we are facing)
-	vector = _target - _position;		// This gets the direction of the view
-	
-	_position.x() += vector.x() * speed;		// Add our acceleration to our position's X
-	_position.z() += vector.z() * speed;		// Add our acceleration to our position's Z
-	_target.x() += vector.x() * speed;			// Add our acceleration to our view's X
-	_target.z() += vector.z() * speed;			// Add our acceleration to our view's Z
+	vector = _target - _position; // This gets the direction of the view
+
+	_position.x() += vector.x() * speed; // Add our acceleration to our position's X
+	_position.z() += vector.z() * speed; // Add our acceleration to our position's Z
+	_target.x() += vector.x() * speed;   // Add our acceleration to our view's X
+	_target.z() += vector.z() * speed;   // Add our acceleration to our view's Z
 }
 
-}
+} // namespace Wintermute

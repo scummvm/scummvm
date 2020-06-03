@@ -22,9 +22,9 @@
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/camera3d.h"
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
-#include "camera3d.h"
 
 namespace Wintermute {
 BaseRenderer *makeOpenGL3DRenderer(BaseGame *inGame) {

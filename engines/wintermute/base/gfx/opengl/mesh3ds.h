@@ -50,6 +50,6 @@ private:
 	GLuint _indexBuffer;
 };
 
-}
+} // namespace Wintermute
 
 #endif

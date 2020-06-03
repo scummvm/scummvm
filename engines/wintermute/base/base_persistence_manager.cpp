@@ -45,6 +45,11 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
+#ifdef ENABLE_WME3D
+#include "math/matrix4.h"
+#include "math/vector3d.h"
+#endif
+
 namespace Wintermute {
 
 // The original WME-Lite savegames had the following:
@@ -824,7 +829,7 @@ bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
 #ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
 // Vector3
-bool BasePersistenceManager::transferVector3d(const char* name, Math::Vector3d* val) {
+bool BasePersistenceManager::transferVector3d(const char *name, Math::Vector3d *val) {
 	if (_saving) {
 		putFloat(val->x());
 		putFloat(val->y());
@@ -850,24 +855,13 @@ bool BasePersistenceManager::transferVector3d(const char* name, Math::Vector3d* 
 
 //////////////////////////////////////////////////////////////////////////
 // Matrix4
-bool BasePersistenceManager::transferMatrix4(const char* name, Math::Matrix4* val) {
+bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *val) {
 	if (_saving) {
-		putFloat((*val)(0, 0));
-		putFloat((*val)(0, 1));
-		putFloat((*val)(0, 2));
-		putFloat((*val)(0, 3));
-		putFloat((*val)(1, 0));
-		putFloat((*val)(1, 1));
-		putFloat((*val)(1, 2));
-		putFloat((*val)(1, 3));
-		putFloat((*val)(2, 0));
-		putFloat((*val)(2, 1));
-		putFloat((*val)(2, 2));
-		putFloat((*val)(2, 3));
-		putFloat((*val)(3, 0));
-		putFloat((*val)(3, 1));
-		putFloat((*val)(3, 2));
-		putFloat((*val)(3, 3));
+		for (int r = 0; r < 4; ++r) {
+			for (int c = 0; c < 4; ++c) {
+				putFloat((*val)(r, c));
+			}
+		}
 
 		if (_saveStream->err()) {
 			return STATUS_FAILED;
@@ -875,22 +869,11 @@ bool BasePersistenceManager::transferMatrix4(const char* name, Math::Matrix4* va
 
 		return STATUS_OK;
 	} else {
-		(*val)(0, 0) = getFloat();
-		(*val)(0, 1) = getFloat();
-		(*val)(0, 2) = getFloat();
-		(*val)(0, 3) = getFloat();
-		(*val)(1, 0) = getFloat();
-		(*val)(1, 1) = getFloat();
-		(*val)(1, 2) = getFloat();
-		(*val)(1, 3) = getFloat();
-		(*val)(2, 0) = getFloat();
-		(*val)(2, 1) = getFloat();
-		(*val)(2, 2) = getFloat();
-		(*val)(2, 3) = getFloat();
-		(*val)(3, 0) = getFloat();
-		(*val)(3, 1) = getFloat();
-		(*val)(3, 2) = getFloat();
-		(*val)(3, 3) = getFloat();
+		for (int r = 0; r < 4; ++r) {
+			for (int c = 0; c < 4; ++c) {
+				(*val)(r, c) = getFloat();
+			}
+		}
 
 		if (_loadStream->err()) {
 			return STATUS_FAILED;

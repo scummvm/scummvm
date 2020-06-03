@@ -191,9 +191,7 @@ void AdScene::cleanup() {
 	_objects.clear();
 
 #ifdef ENABLE_WME3D
-	if (_sceneGeometry)	{
-		delete _sceneGeometry;
-	}
+	delete _sceneGeometry;
 #endif
 
 	delete _viewport;
@@ -482,6 +480,7 @@ int AdScene::getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject 
 	return MAX(xLength, yLength);
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 void AdScene::pathFinderStep() {
 	int i;
@@ -588,9 +587,7 @@ TOKEN_DEF(LAYER)
 TOKEN_DEF(WAYPOINTS)
 TOKEN_DEF(EVENTS)
 TOKEN_DEF(CURSOR)
-#ifdef ENABLE_WME3D
-TOKEN_DEF(GEOMETRY)
-#endif
+TOKEN_DEF(GEOMETRY) // WME3D
 TOKEN_DEF(CAMERA)
 TOKEN_DEF(ENTITY)
 TOKEN_DEF(SCALE_LEVEL)
@@ -621,18 +618,16 @@ TOKEN_DEF(VIEWPORT)
 TOKEN_DEF(PERSISTENT_STATE_SPRITES)
 TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
-#ifdef ENABLE_WME3D
-TOKEN_DEF(EDITOR_SHOW_GEOMETRY)
-TOKEN_DEF(EDITOR_RESOLUTION_WIDTH)
-TOKEN_DEF(EDITOR_RESOLUTION_HEIGHT)
-TOKEN_DEF(FOV_OVERRIDE)
-TOKEN_DEF(NEARCLIPPING_PLANE)
-TOKEN_DEF(FAR_CLIPPING_PLANE)
-TOKEN_DEF(2D_PATHFINDING)
-TOKEN_DEF(MAX_SHADOW_TYPE)
-TOKEN_DEF(SCROLL_3D_COMPABILITY)
-TOKEN_DEF(AMBIENT_LIGHT_COLOR)
-#endif
+TOKEN_DEF(EDITOR_SHOW_GEOMETRY) // WME3D
+TOKEN_DEF(EDITOR_RESOLUTION_WIDTH) // WME3D
+TOKEN_DEF(EDITOR_RESOLUTION_HEIGHT) // WME3D
+TOKEN_DEF(FOV_OVERRIDE) // WME3D
+TOKEN_DEF(NEARCLIPPING_PLANE) // WME3D
+TOKEN_DEF(FAR_CLIPPING_PLANE) // WME3D
+TOKEN_DEF(2D_PATHFINDING) // WME3D
+TOKEN_DEF(MAX_SHADOW_TYPE) // WME3D
+TOKEN_DEF(SCROLL_3D_COMPABILITY) // WME3D
+TOKEN_DEF(AMBIENT_LIGHT_COLOR) // WME3D
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::loadBuffer(char *buffer, bool complete) {
@@ -644,9 +639,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(WAYPOINTS)
 	TOKEN_TABLE(EVENTS)
 	TOKEN_TABLE(CURSOR)
-#ifdef ENABLE_WME3D
-	TOKEN_TABLE(GEOMETRY)
-#endif
+	TOKEN_TABLE(GEOMETRY) // WME3D
 	TOKEN_TABLE(CAMERA)
 	TOKEN_TABLE(ENTITY)
 	TOKEN_TABLE(SCALE_LEVEL)
@@ -677,18 +670,16 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(PERSISTENT_STATE_SPRITES)
 	TOKEN_TABLE(PERSISTENT_STATE)
 	TOKEN_TABLE(EDITOR_PROPERTY)
-#ifdef ENABLE_WME3D
-	TOKEN_TABLE(EDITOR_SHOW_GEOMETRY)
-	TOKEN_TABLE(EDITOR_RESOLUTION_WIDTH)
-	TOKEN_TABLE(EDITOR_RESOLUTION_HEIGHT)
-	TOKEN_TABLE(FOV_OVERRIDE)
-	TOKEN_TABLE(NEARCLIPPING_PLANE)
-	TOKEN_TABLE(FAR_CLIPPING_PLANE)
-	TOKEN_TABLE(2D_PATHFINDING)
-	TOKEN_TABLE(MAX_SHADOW_TYPE)
-	TOKEN_TABLE(SCROLL_3D_COMPABILITY)
-	TOKEN_TABLE(AMBIENT_LIGHT_COLOR)
-#endif
+	TOKEN_TABLE(EDITOR_SHOW_GEOMETRY) // WME3D
+	TOKEN_TABLE(EDITOR_RESOLUTION_WIDTH) // WME3D
+	TOKEN_TABLE(EDITOR_RESOLUTION_HEIGHT) // WME3D
+	TOKEN_TABLE(FOV_OVERRIDE) // WME3D
+	TOKEN_TABLE(NEARCLIPPING_PLANE) // WME3D
+	TOKEN_TABLE(FAR_CLIPPING_PLANE) // WME3D
+	TOKEN_TABLE(2D_PATHFINDING) // WME3D
+	TOKEN_TABLE(MAX_SHADOW_TYPE) // WME3D
+	TOKEN_TABLE(SCROLL_3D_COMPABILITY) // WME3D
+	TOKEN_TABLE(AMBIENT_LIGHT_COLOR) // WME3D
 	TOKEN_TABLE_END
 
 	cleanup();
@@ -1251,6 +1242,7 @@ bool AdScene::updateFreeObjects() {
 		adGame->_objects[i]->_drawn = false;
 	}
 
+
 	for (uint32 i = 0; i < _objects.size(); i++) {
 		if (!_objects[i]->_active) {
 			continue;
@@ -1275,6 +1267,7 @@ bool AdScene::updateFreeObjects() {
 	if (_autoScroll && _gameRef->getMainObject() != nullptr) {
 		scrollToObject(_gameRef->getMainObject());
 	}
+
 
 	return STATUS_OK;
 }
@@ -1332,6 +1325,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 		}
 		obj->_drawn = true;
 	}
+
 
 	// display design only objects
 	if (!display3DOnly) {
@@ -2693,6 +2687,12 @@ float AdScene::getScaleAt(int Y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::persist(BasePersistenceManager *persistMgr) {
+	// TODO: Persist scene geometry as well.
+	// Keep in mind that this might create incompabilities
+	// between savegames from ScummVM and ResidualVM
+	// Suggestions of potential fixes by somaen:
+	// 1) Give ResidualVM savegames a special tag
+	// 2) Don't serialize 3d stuff (which might mean more work than just ignoring them here)
 	BaseObject::persist(persistMgr);
 
 	persistMgr->transferBool(TMEMBER(_autoScroll));

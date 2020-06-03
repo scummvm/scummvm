@@ -26,22 +26,20 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_AD_GEOM_EXT_H
 #define WINTERMUTE_AD_GEOM_EXT_H
 
-#include "../base/base.h"
-#include "../coll_templ.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
 
 namespace Wintermute {
 
 class AdGeomExtNode;
 
-class AdGeomExt : public BaseClass
-{
+class AdGeomExt : public BaseClass {
 public:
 	AdGeomExt(BaseGame *inGame);
-	virtual ~AdGeomExt(void);
+	virtual ~AdGeomExt();
 	bool loadFile(char *filename);
 	bool loadBuffer(byte *buffer);
 	bool addStandardNodes();
@@ -51,6 +49,6 @@ private:
 	BaseArray<AdGeomExtNode *> _nodes;
 };
 
-}
+} // namespace Wintermute
 
 #endif

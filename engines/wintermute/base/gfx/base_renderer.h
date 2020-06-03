@@ -124,7 +124,7 @@ public:
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
 #ifdef ENABLE_WME3D
-	virtual bool setup3D(Camera3D* camera = nullptr, bool force = false);
+	virtual bool setup3D(Camera3D *camera = nullptr, bool force = false);
 #endif
 	virtual bool setupLines();
 

@@ -26,14 +26,13 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_AD_PATH3D_H
 #define WINTERMUTE_AD_PATH3D_H
 
-#include "../base/base.h"
-#include "../coll_templ.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/persistent.h"
 #include "math/vector3d.h"
-#include "../persistent.h"
 
 namespace Wintermute {
 
@@ -55,6 +54,6 @@ public:
 	DECLARE_PERSISTENT(AdPath3D, BaseClass);
 };
 
-}
+} // namespace Wintermute
 
 #endif

@@ -26,11 +26,10 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_AD_BLOCK_H
 #define WINTERMUTE_AD_BLOCK_H
 
-#include "../base/base_scriptable.h"
+#include "engines/wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
 
@@ -43,9 +42,9 @@ public:
 	bool _active;
 	AdBlock(BaseGame *inGame);
 	virtual ~AdBlock();
-	Mesh3DS* _mesh;
+	Mesh3DS *_mesh;
 };
 
-}
+} // namespace Wintermute
 
 #endif

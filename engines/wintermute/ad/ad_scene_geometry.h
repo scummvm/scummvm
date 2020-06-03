@@ -26,14 +26,13 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_AD_SCENE_GEOMETRY_H
 #define WINTERMUTE_AD_SCENE_GEOMETRY_H
 
-#include "../base/base_object.h"
+#include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/math/rect32.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
-#include "../math/rect32.h"
 
 namespace Wintermute {
 
@@ -56,12 +55,12 @@ public:
 	bool setLightColor(char *lightName, uint32 color);
 	uint32 getLightColor(char *lightName);
 	Math::Vector3d getLightPos(char *lightName);
-	bool enableNode(char *nodeName, bool enable=true);
+	bool enableNode(char *nodeName, bool enable = true);
 	bool isNodeEnabled(char *nodeName);
-	bool enableLight(char *lightName, bool enable=true);
+	bool enableLight(char *lightName, bool enable = true);
 	bool isLightEnabled(char *lightName);
 	DECLARE_PERSISTENT(AdSceneGeometry, BaseObject);
-	bool correctTargetPoint(Math::Vector3d source, Math::Vector3d *target);
+	bool correctTargetPoint(const Math::Vector3d &source, Math::Vector3d *target);
 
 	bool _lastValuesInitialized;
 	Math::Matrix4 _lastWorldMat;
@@ -73,34 +72,33 @@ public:
 	int _lastScrollX;
 	int _lastScrollY;
 
-
 	bool createLights();
-	bool enableLights(Math::Vector3d Point, BaseArray<char*>& IgnoreLights);
+	bool enableLights(Math::Vector3d Point, BaseArray<char *> &IgnoreLights);
 	static int compareLights(const void *obj1, const void *obj2);
-	
+
 	bool initLoop();
 	float getPointsDist(Math::Vector3d p1, Math::Vector3d p2);
 	void pathFinderStep();
-	bool getPath(Math::Vector3d source, Math::Vector3d target, AdPath3D *path, bool rerun=false);
+	bool getPath(Math::Vector3d source, Math::Vector3d target, AdPath3D *path, bool rerun = false);
 	bool convert2Dto3D(int x, int y, Math::Vector3d *pos);
 	bool convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos);
 	bool convert3Dto2D(Math::Vector3d *pos, int *x, int *y);
-	BaseSprite* _wptMarker;
+	BaseSprite *_wptMarker;
 	float _waypointHeight;
 	bool directPathExists(Math::Vector3d *p1, Math::Vector3d *p2);
-	float getHeightAt(Math::Vector3d pos, float Ttlerance=0.0f, bool *intFound=NULL);
+	float getHeightAt(Math::Vector3d pos, float Ttlerance = 0.0f, bool *intFound = NULL);
 
 	bool storeDrawingParams();
 	bool render(bool render);
 	bool renderShadowGeometry();
 
-	Math::Matrix4* getViewMatrix();
+	Math::Matrix4 *getViewMatrix();
 	Math::Matrix4 _viewMatrix;
 	bool setActiveCamera(char *camera, float fov, float nearClipPlane, float farClipPlane);
 	bool setActiveCamera(int camera, float fow, float nearClipPlane, float farClipPlane);
 	//bool SetActiveCameraTwin(char* Camera);
 	//bool SetActiveCameraTwin(int Camera);
-	Camera3D* getActiveCamera();
+	Camera3D *getActiveCamera();
 	int _activeCamera;
 
 	bool setActiveLight(char *light);
@@ -130,9 +128,8 @@ private:
 	float _PFAlternateDist;
 	bool _PFRerun;
 	BaseArray<AdPathPoint3D *> _PFPath;
-
 };
 
-}
+} // namespace Wintermute
 
 #endif

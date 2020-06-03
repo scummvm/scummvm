@@ -23,7 +23,7 @@
 #ifndef WINTERMUTE_LOADER3DS_H
 #define WINTERMUTE_LOADER3DS_H
 
-#include "../../../coll_templ.h"
+#include "engines/wintermute/coll_templ.h"
 
 namespace Wintermute {
 	class Light3D;

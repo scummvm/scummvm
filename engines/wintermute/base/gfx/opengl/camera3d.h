@@ -26,23 +26,22 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_CAMERA3D_H
 #define WINTERMUTE_CAMERA3D_H
 
-#include "../../base_named_object.h"
-#include "math/vector3d.h"
+#include "engines/wintermute/base/base_named_object.h"
 #include "math/matrix4.h"
+#include "math/vector3d.h"
 
 namespace Wintermute {
 
 class Camera3D : public BaseNamedObject {
 public:
 	void move(float speed);
-	void rotateView(float X, float Y, float Z);
+	void rotateView(float x, float y, float z);
 	void setupPos(Math::Vector3d pos, Math::Vector3d target, float Bank = 0);
-	bool getViewMatrix(Math::Matrix4* viewMatrix);
-	Camera3D(BaseGame* inGame);
+	bool getViewMatrix(Math::Matrix4 *viewMatrix);
+	Camera3D(BaseGame *inGame);
 	virtual ~Camera3D();
 
 	Math::Vector3d _position;
@@ -53,9 +52,9 @@ public:
 	float _nearClipPlane;
 	float _farClipPlane;
 
-	bool loadFrom3DS(byte** buffer);
+	bool loadFrom3DS(byte **buffer);
 };
 
-}
+} // namespace Wintermute
 
 #endif

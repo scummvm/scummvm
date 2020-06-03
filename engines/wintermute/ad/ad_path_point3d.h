@@ -30,9 +30,9 @@
 #ifndef WINTERMUTE_AD_PATH_POINT3D_H
 #define WINTERMUTE_AD_PATH_POINT3D_H
 
+#include "engines/wintermute/persistent.h"
+#include "engines/wintermute/base/base.h"
 #include "math/vector3d.h"
-#include "../persistent.h"
-#include "../base/base.h"
 
 namespace Wintermute {
 

@@ -26,22 +26,21 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_AD_GEOM_EXT_NODE_H
 #define WINTERMUTE_AD_GEOM_EXT_NODE_H
 
-#include "../base/base.h"
-#include "ad_types.h"
+#include "engines/wintermute/ad/ad_types.h"
+#include "engines/wintermute/base/base.h"
 
 namespace Wintermute {
 
 class AdGeomExtNode : public BaseClass {
 public:
 	AdGeomExtNode(BaseGame *inGame);
-	virtual ~AdGeomExtNode(void);
+	virtual ~AdGeomExtNode();
 	bool loadBuffer(byte *buffer, bool complete);
 
-	bool setupNode(char *namePattern, TGeomNodeType type=GEOM_GENERIC, bool receiveShadows=false);
+	bool setupNode(char *namePattern, TGeomNodeType type = GEOM_GENERIC, bool receiveShadows = false);
 	bool matchesName(char *name);
 
 	bool _receiveShadows;
@@ -51,6 +50,6 @@ private:
 	char *_namePattern;
 };
 
-}
+} // namespace Wintermute
 
 #endif

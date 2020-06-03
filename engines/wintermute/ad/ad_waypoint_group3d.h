@@ -30,9 +30,9 @@
 #ifndef WINTERMUTE_AD_WAYPOINT_GROUP_3D_H
 #define WINTERMUTE_AD_WAYPOINT_GROUP_3D_H
 
-#include "../base/base.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
 #include "math/vector3d.h"
-#include "../coll_templ.h"
 
 namespace Wintermute {
 
@@ -41,6 +41,7 @@ class Mesh3DS;
 
 class AdWaypointGroup3D : public BaseClass {
 public:
+	// this is already commented out in wme3d
 	//DECLARE_PERSISTENT(AdWaypointGroup3D, BaseClass);
 	bool _active;
 	bool addFromMesh(Mesh3DS *mesh);

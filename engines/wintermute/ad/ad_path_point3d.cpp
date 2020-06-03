@@ -26,23 +26,18 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
-#include "ad_path_point3d.h"
-#include "../base/base_persistence_manager.h"
+#include "engines/wintermute/ad/ad_path_point3d.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdPathPoint3D, false);
 
 //////////////////////////////////////////////////////////////////////////
-AdPathPoint3D::AdPathPoint3D(): BaseClass() {
-	_pos = Math::Vector3d(0, 0, 0);
-	_distance = 0;
-
-	_marked = false;
-	_origin = NULL;
+AdPathPoint3D::AdPathPoint3D() : BaseClass(),
+                                 _origin(nullptr), _marked(false),
+                                 _distance(0.0f), _pos(0.0f, 0.0f, 0.0f) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint3D::AdPathPoint3D(Math::Vector3d pos, float dist) {
@@ -50,15 +45,13 @@ AdPathPoint3D::AdPathPoint3D(Math::Vector3d pos, float dist) {
 	_distance = dist;
 
 	_marked = false;
-	_origin = NULL;
+	_origin = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint3D::~AdPathPoint3D() {
-	_origin = NULL;
+	_origin = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPathPoint3D::persist(BasePersistenceManager *persistMgr) {
@@ -73,4 +66,4 @@ bool AdPathPoint3D::persist(BasePersistenceManager *persistMgr) {
 	return true;
 }
 
-}
+} // namespace Wintermute

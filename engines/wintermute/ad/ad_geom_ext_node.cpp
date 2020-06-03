@@ -26,89 +26,90 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
-#include "ad_geom_ext_node.h"
-#include "../base/base_parser.h"
-#include "../base/base_game.h"
-#include "../utils/utils.h"
 #include "common/str.h"
+#include "engines/wintermute/ad/ad_geom_ext_node.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame) {
-	_namePattern = NULL;
-	_receiveShadows = false;
-	_type = GEOM_GENERIC;
+AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame),
+                                                 _receiveShadows(false), _type(GEOM_GENERIC), _namePattern(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExtNode::~AdGeomExtNode(void) {
-	if (_namePattern) {
-		delete[] _namePattern;
-	}
+AdGeomExtNode::~AdGeomExtNode() {
+	delete[] _namePattern;
 }
-
 
 TOKEN_DEF_START
-	TOKEN_DEF (NODE)
-	TOKEN_DEF (NAME)
-	TOKEN_DEF (WALKPLANE)
-	TOKEN_DEF (BLOCKED)
-	TOKEN_DEF (WAYPOINT)
-	TOKEN_DEF (RECEIVE_SHADOWS)
+	TOKEN_DEF(NODE)
+	TOKEN_DEF(NAME)
+	TOKEN_DEF(WALKPLANE)
+	TOKEN_DEF(BLOCKED)
+	TOKEN_DEF(WAYPOINT)
+	TOKEN_DEF(RECEIVE_SHADOWS)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExtNode::loadBuffer(byte* buffer, bool complete) {
+bool AdGeomExtNode::loadBuffer(byte *buffer, bool complete) {
 	TOKEN_TABLE_START(commands)
-		TOKEN_TABLE (NODE)
-		TOKEN_TABLE (NAME)
-		TOKEN_TABLE (WALKPLANE)
-		TOKEN_TABLE (BLOCKED)
-		TOKEN_TABLE (WAYPOINT)
-		TOKEN_TABLE (RECEIVE_SHADOWS)
+		TOKEN_TABLE(NODE)
+		TOKEN_TABLE(NAME)
+		TOKEN_TABLE(WALKPLANE)
+		TOKEN_TABLE(BLOCKED)
+		TOKEN_TABLE(WAYPOINT)
+		TOKEN_TABLE(RECEIVE_SHADOWS)
 	TOKEN_TABLE_END
 
-	byte* params;
-	int cmd=2;
+	byte *params;
+	int cmd = 2;
 	BaseParser parser;
 
-	if(complete) {
-		if(parser.getCommand ((char**)&buffer, commands, (char**)&params)!=TOKEN_NODE) {
+	if (complete) {
+		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_NODE) {
 			_gameRef->LOG(0, "'NODE' keyword expected.");
 			return false;
 		}
+
 		buffer = params;
 	}
 
-	while ((cmd = parser.getCommand ((char**)&buffer, commands, (char**)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME:
-			BaseUtils::setString(&_namePattern, (char*)params);
-		break;
+			BaseUtils::setString(&_namePattern, (char *)params);
+			break;
 
 		case TOKEN_RECEIVE_SHADOWS:
-			parser.scanStr((char*)params, "%b", &_receiveShadows);
-		break;
+			parser.scanStr((char *)params, "%b", &_receiveShadows);
+			break;
 
 		case TOKEN_WALKPLANE: {
 			bool isWalkplane = false;
-			parser.scanStr((char*)params, "%b", &isWalkplane);
-			if(isWalkplane) _type = GEOM_WALKPLANE;
+			parser.scanStr((char *)params, "%b", &isWalkplane);
+			if (isWalkplane) {
+				_type = GEOM_WALKPLANE;
+			}
 			break;
 		}
 
 		case TOKEN_BLOCKED: {
 			bool isBlocked = false;
-			parser.scanStr((char*)params, "%b", &isBlocked);
-			if(isBlocked) _type = GEOM_BLOCKED;
+			parser.scanStr((char *)params, "%b", &isBlocked);
+			if (isBlocked) {
+				_type = GEOM_BLOCKED;
+			}
 			break;
 		}
 
 		case TOKEN_WAYPOINT: {
 			bool isWaypoint = false;
-			parser.scanStr((char*)params, "%b", &isWaypoint);
-			if(isWaypoint) _type = GEOM_WAYPOINT;
+			parser.scanStr((char *)params, "%b", &isWaypoint);
+			if (isWaypoint) {
+				_type = GEOM_WAYPOINT;
+			}
 			break;
 		}
 		}
@@ -125,7 +126,6 @@ bool AdGeomExtNode::loadBuffer(byte* buffer, bool complete) {
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdGeomExtNode::setupNode(char *namePattern, TGeomNodeType type, bool receiveShadows) {
 	BaseUtils::setString(&_namePattern, namePattern);
@@ -135,10 +135,9 @@ bool AdGeomExtNode::setupNode(char *namePattern, TGeomNodeType type, bool receiv
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdGeomExtNode::matchesName(char *name) {
 	return Common::matchString(name, _namePattern);
 }
 
-}
+} // namespace Wintermute

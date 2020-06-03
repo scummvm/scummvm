@@ -26,76 +26,66 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
-#include "light3d.h"
-#include "../../../math/math_util.h"
-#include "../../../wintypes.h"
+#include "engines/wintermute/base/gfx/opengl/light3d.h"
+#include "engines/wintermute/base/gfx/opengl/loader3ds.h"
+#include "engines/wintermute/math/math_util.h"
+#include "engines/wintermute/wintypes.h"
 #include "math/glmath.h"
-#include "loader3ds.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-Light3D::Light3D(BaseGame* inGame): BaseScriptable(inGame, false, false) {
-	_diffuseColor = BYTETORGBA(255, 255, 255, 255);
-	_position = Math::Vector3d(0, 0, 0);
-	_target = Math::Vector3d(0, 0, 0);
-	_isSpotlight = false;
-	_falloff = 0;
-	_active = true;
-
-	_distance = 0.0f;
-	_isAvailable = false;
+Light3D::Light3D(BaseGame *inGame) : BaseScriptable(inGame, false, false),
+                                     _diffuseColor(BYTETORGBA(255, 255, 255, 255)),
+                                     _position(0, 0, 0), _target(0, 0, 0), _isSpotlight(false),
+                                     _active(true), _falloff(0), _distance(0.0f), _isAvailable(false) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 Light3D::~Light3D() {
-
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-bool Light3D::setLight(int Index) {
-	//Implement this later
+bool Light3D::setLight(int index) {
+	warning("Light3D::setLight not implemented yet");
 
-//	LPDIRECT3DDEVICE Device = ((CBRenderD3D*)Game->m_Renderer)->m_Device;
+	//	LPDIRECT3DDEVICE Device = ((CBRenderD3D*)Game->m_Renderer)->m_Device;
 
-//	D3DLIGHT d3dLight;
-//	ZeroMemory(&d3dLight, sizeof(D3DLIGHT));
+	//	D3DLIGHT d3dLight;
+	//	ZeroMemory(&d3dLight, sizeof(D3DLIGHT));
 
-//	d3dLight.Type = m_IsSpotlight ? D3DLIGHT_SPOT : D3DLIGHT_POINT;
-//	d3dLight.Diffuse.r = (float)D3DCOLGetR(m_DiffuseColor) / 256.0f;
-//	d3dLight.Diffuse.g = (float)D3DCOLGetG(m_DiffuseColor) / 256.0f;
-//	d3dLight.Diffuse.b = (float)D3DCOLGetB(m_DiffuseColor) / 256.0f;
+	//	d3dLight.Type = m_IsSpotlight ? D3DLIGHT_SPOT : D3DLIGHT_POINT;
+	//	d3dLight.Diffuse.r = (float)D3DCOLGetR(m_DiffuseColor) / 256.0f;
+	//	d3dLight.Diffuse.g = (float)D3DCOLGetG(m_DiffuseColor) / 256.0f;
+	//	d3dLight.Diffuse.b = (float)D3DCOLGetB(m_DiffuseColor) / 256.0f;
 
-//	d3dLight.Position.x = m_Pos.x;
-//	d3dLight.Position.y = m_Pos.y;
-//	d3dLight.Position.z = m_Pos.z;
-	
-//	if(m_IsSpotlight)
-//	{
-//		Math::Vector3d Dir = m_Target - m_Pos;
-//		d3dLight.Direction = Dir;
-//		d3dLight.Range = D3DXVec3Length(&Dir);
+	//	d3dLight.Position.x = m_Pos.x;
+	//	d3dLight.Position.y = m_Pos.y;
+	//	d3dLight.Position.z = m_Pos.z;
 
-//		d3dLight.Theta        = 0.5f;
-//		d3dLight.Phi          = 1.0f;
-//		d3dLight.Falloff      = 1.0f;
-//		d3dLight.Attenuation0 = 1.0f;
-//	}
-//	else
-//	{
-//		d3dLight.Range = 100000.0f;
-//		d3dLight.Attenuation0 = 1.0f;
-//	}
-	
-//	bool ret = Device->SetLight(Index, &d3dLight);
+	//	if(m_IsSpotlight)
+	//	{
+	//		Math::Vector3d Dir = m_Target - m_Pos;
+	//		d3dLight.Direction = Dir;
+	//		d3dLight.Range = D3DXVec3Length(&Dir);
 
-//	if(m_Active)
-//		Device->LightEnable(Index, TRUE);
+	//		d3dLight.Theta        = 0.5f;
+	//		d3dLight.Phi          = 1.0f;
+	//		d3dLight.Falloff      = 1.0f;
+	//		d3dLight.Attenuation0 = 1.0f;
+	//	}
+	//	else
+	//	{
+	//		d3dLight.Range = 100000.0f;
+	//		d3dLight.Attenuation0 = 1.0f;
+	//	}
 
-//	return ret;
+	//	bool ret = Device->SetLight(Index, &d3dLight);
+
+	//	if(m_Active)
+	//		Device->LightEnable(Index, TRUE);
+
+	//	return ret;
 	return true;
 }
 
@@ -104,11 +94,11 @@ bool Light3D::loadFrom3DS(byte **buffer) {
 	byte *end = *buffer + whole_chunk_size - 2;
 	*buffer += 4;
 
-	_position.x() = *reinterpret_cast<float*>(*buffer);
+	_position.x() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
-	_position.z() = -*reinterpret_cast<float*>(*buffer);
+	_position.z() = -*reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
-	_position.y() = *reinterpret_cast<float*>(*buffer);
+	_position.y() = *reinterpret_cast<float *>(*buffer);
 	*buffer += 4;
 
 	while (*buffer < end) {
@@ -181,7 +171,7 @@ bool Light3D::loadFrom3DS(byte **buffer) {
 		case SPOT_SHADOW_MAP:
 		case SPOT_RAY_TRACE_BIAS:
 		case SPOT_RAY_TRACE:
-			*buffer += *reinterpret_cast<uint32*>(*buffer + 2);
+			*buffer += *reinterpret_cast<uint32 *>(*buffer + 2);
 		default:
 			break;
 		}
@@ -190,7 +180,6 @@ bool Light3D::loadFrom3DS(byte **buffer) {
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	Math::Vector3d up = Math::Vector3d(0.0f, 1.0f, 0.0f);
@@ -198,12 +187,11 @@ bool Light3D::getViewMatrix(Math::Matrix4 *viewMatrix) {
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-bool Light3D::persist(BasePersistenceManager* persistMgr) {
+bool Light3D::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool("_active", &_active);
 	persistMgr->transferUint32("_diffuseColor", &_diffuseColor);
 	return true;
 }
 
-}
+} // namespace Wintermute

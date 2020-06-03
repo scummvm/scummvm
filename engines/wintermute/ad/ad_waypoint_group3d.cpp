@@ -26,45 +26,42 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#include "ad_waypoint_group3d.h"
+#include "engines/wintermute/ad/ad_waypoint_group3d.h"
 
 namespace Wintermute {
 
 //IMPLEMENT_PERSISTENT(AdWaypointGroup3D, false);
 
 //////////////////////////////////////////////////////////////////////////
-AdWaypointGroup3D::AdWaypointGroup3D(BaseGame* inGame):BaseClass(inGame) {
-	_active = true;
+AdWaypointGroup3D::AdWaypointGroup3D(BaseGame *inGame) : BaseClass(inGame), _active(true) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdWaypointGroup3D::~AdWaypointGroup3D() {
-	for(unsigned i = 0;  i <_points.size(); i++) {
+	for (uint i = 0; i < _points.size(); i++) {
 		delete _points[i];
 	}
 	_points.clear();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
-	Math::Vector3d min = Math::Vector3d(0,0,0);
-	Math::Vector3d max = Math::Vector3d(0,0,0);
+	Math::Vector3d min = Math::Vector3d(0, 0, 0);
+	Math::Vector3d max = Math::Vector3d(0, 0, 0);
 
 	// implement this later
 
-//	if(Mesh->m_NumVertices > 0)	Min = Max = Mesh->m_Vertices[0].m_Pos;
+	//	if(Mesh->m_NumVertices > 0)	Min = Max = Mesh->m_Vertices[0].m_Pos;
 
-//	for(int i=0; i<Mesh->m_NumVertices; i++){
-//		Min.x = min(Min.x, Mesh->m_Vertices[i].m_Pos.x);
-//		Min.y = min(Min.y, Mesh->m_Vertices[i].m_Pos.y);
-//		Min.z = min(Min.z, Mesh->m_Vertices[i].m_Pos.z);
+	//	for(int i=0; i<Mesh->m_NumVertices; i++){
+	//		Min.x = min(Min.x, Mesh->m_Vertices[i].m_Pos.x);
+	//		Min.y = min(Min.y, Mesh->m_Vertices[i].m_Pos.y);
+	//		Min.z = min(Min.z, Mesh->m_Vertices[i].m_Pos.z);
 
-//		Max.x = max(Max.x, Mesh->m_Vertices[i].m_Pos.x);
-//		Max.y = max(Max.y, Mesh->m_Vertices[i].m_Pos.y);
-//		Max.z = max(Max.z, Mesh->m_Vertices[i].m_Pos.z);
-//	}
+	//		Max.x = max(Max.x, Mesh->m_Vertices[i].m_Pos.x);
+	//		Max.y = max(Max.y, Mesh->m_Vertices[i].m_Pos.y);
+	//		Max.z = max(Max.z, Mesh->m_Vertices[i].m_Pos.z);
+	//	}
 
 	Math::Vector3d *vect = new Math::Vector3d;
 	vect->x() = min.x() + (max.x() - min.x()) / 2;
@@ -72,7 +69,7 @@ bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 	vect->z() = min.z() + (max.z() - min.z()) / 2;
 
 	_points.add(vect);
-		
+
 	return true;
 }
 
@@ -88,4 +85,4 @@ HRESULT AdWaypointGroup3D::Persist(CBPersistMgr* PersistMgr){
 }
 */
 
-}
+} // namespace Wintermute

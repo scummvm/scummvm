@@ -20,11 +20,11 @@
  *
  */
 
-#include "loader3ds.h"
-#include "../../base_file_manager.h"
-#include "camera3d.h"
-#include "light3d.h"
-#include "mesh3ds.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/gfx/opengl/camera3d.h"
+#include "engines/wintermute/base/gfx/opengl/light3d.h"
+#include "engines/wintermute/base/gfx/opengl/loader3ds.h"
+#include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
 
 namespace Wintermute {
 

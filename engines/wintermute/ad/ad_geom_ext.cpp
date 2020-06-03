@@ -26,88 +26,83 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
-#include "ad_geom_ext.h"
-#include "../base/base_game.h"
-#include "../base/base_file_manager.h"
-#include "../utils/utils.h"
-#include "../base/base_parser.h"
-#include "ad_geom_ext_node.h"
-#include "ad_types.h"
+#include "engines/wintermute/ad/ad_geom_ext.h"
+#include "engines/wintermute/ad/ad_geom_ext_node.h"
+#include "engines/wintermute/ad/ad_types.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExt::AdGeomExt(BaseGame* in_gameRef) : BaseClass(in_gameRef) {
+AdGeomExt::AdGeomExt(BaseGame *in_gameRef) : BaseClass(in_gameRef) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExt::~AdGeomExt(void) {
-	for(unsigned i=0; i<_nodes.size(); i++) {
-		if (_nodes[i]) {
-			delete _nodes[i];
-		}
+AdGeomExt::~AdGeomExt() {
+	for (uint i = 0; i < _nodes.size(); i++) {
+		delete _nodes[i];
 	}
 	_nodes.clear();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExt::loadFile(char* filename) {
-	byte* Buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if(Buffer==NULL) {
+bool AdGeomExt::loadFile(char *filename) {
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdGeomExt::LoadFile failed for file '%s'", filename);
 		return false;
 	}
 
-	bool ret = loadBuffer(Buffer);
-	if(!ret) {
+	bool ret = loadBuffer(buffer);
+	if (!ret) {
 		_gameRef->LOG(0, "Error parsing geometry description file '%s'", filename);
 	}
 
-	delete [] Buffer;
+	delete[] buffer;
 
 	return ret;
 }
 
-
 TOKEN_DEF_START
-TOKEN_DEF (GEOMETRY)
-TOKEN_DEF (NODE)
+	TOKEN_DEF(GEOMETRY)
+	TOKEN_DEF(NODE)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
 bool AdGeomExt::loadBuffer(byte *buffer) {
 	TOKEN_TABLE_START(commands)
-		TOKEN_TABLE (GEOMETRY)
-		TOKEN_TABLE (NODE)
+		TOKEN_TABLE(GEOMETRY)
+		TOKEN_TABLE(NODE)
 	TOKEN_TABLE_END
 
-	byte* params;
+	byte *params;
 	int cmd;
 	BaseParser parser;
 
-	if(parser.getCommand ((char **)&buffer, commands, (char **)&params)!=TOKEN_GEOMETRY) {
+	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_GEOMETRY) {
 		_gameRef->LOG(0, "'GEOMETRY' keyword expected.");
 		return false;
 	}
+
 	buffer = params;
 
-	while ((cmd = parser.getCommand ((char **) &buffer, commands, (char **)&params)) > 0) {
+	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NODE: {
-			AdGeomExtNode* node = new AdGeomExtNode(_gameRef);
-			if(node && node->loadBuffer(params, false)) {
+			AdGeomExtNode *node = new AdGeomExtNode(_gameRef);
+
+			if (node && node->loadBuffer(params, false)) {
 				_nodes.add(node);
-			}
-			else {
+			} else {
 				if (node) {
 					delete node;
 				}
 
 				cmd = PARSERR_GENERIC;
 			}
-		}
-			break;
+			} break;
 		}
 	}
 
@@ -123,7 +118,6 @@ bool AdGeomExt::loadBuffer(byte *buffer) {
 	addStandardNodes();
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGeomExt::addStandardNodes() {
@@ -144,17 +138,19 @@ bool AdGeomExt::addStandardNodes() {
 	return true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdGeomExtNode *AdGeomExt::matchName(char *name) {
-	if(!name) return NULL;
+	if (!name) {
+		return nullptr;
+	}
 
-	for(unsigned i=0; i<_nodes.size(); i++) {
-		if(_nodes[i]->matchesName(name)) {
+	for (uint i = 0; i < _nodes.size(); i++) {
+		if (_nodes[i]->matchesName(name)) {
 			return _nodes[i];
 		}
 	}
-	return NULL;
+
+	return nullptr;
 }
 
-}
+} // namespace Wintermute

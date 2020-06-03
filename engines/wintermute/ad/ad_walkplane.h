@@ -26,11 +26,10 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_AD_WALKPLANE_H
 #define WINTERMUTE_AD_WALKPLANE_H
 
-#include "../base/base_scriptable.h"
+#include "engines/wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
 
@@ -46,6 +45,6 @@ public:
 	virtual ~AdWalkplane();
 };
 
-}
+} // namespace Wintermute
 
 #endif

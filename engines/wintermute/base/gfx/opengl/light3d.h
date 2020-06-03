@@ -26,12 +26,11 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-
 #ifndef WINTERMUTE_LIGHT3D_H
 #define WINTERMUTE_LIGHT3D_H
 
-#include "../../base_persistence_manager.h"
-#include "../../base_scriptable.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/base/base_scriptable.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
 
@@ -41,7 +40,7 @@ class Light3D : public BaseScriptable {
 public:
 	bool persist(BasePersistenceManager *persistMgr);
 	bool getViewMatrix(Math::Matrix4 *viewMatrix);
-	Light3D(BaseGame* inGame);
+	Light3D(BaseGame *inGame);
 	virtual ~Light3D();
 	uint32 _diffuseColor;
 	Math::Vector3d _position;
@@ -49,14 +48,14 @@ public:
 	bool _isSpotlight;
 	bool _active;
 	float _falloff;
-	
+
 	float _distance;
 	bool _isAvailable;
 
-	bool setLight(int Index=0);
-	bool loadFrom3DS(byte** buffer);
+	bool setLight(int index = 0);
+	bool loadFrom3DS(byte **buffer);
 };
 
-}
+} // namespace Wintermute
 
 #endif
