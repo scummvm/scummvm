@@ -194,6 +194,8 @@ private:
 
 	Common::StringArray _movieQueue;
 
+
+	// tests.cpp
 private:
 	void testFontScaling();
 	void testFonts();

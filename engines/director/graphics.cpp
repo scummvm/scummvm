@@ -19,12 +19,7 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-#include "common/macresman.h"
 #include "common/system.h"
-#include "engines/util.h"
-
-#include "graphics/fonts/macfont.h"
-#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
@@ -780,97 +775,6 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPaletteLength = count;
 
 	_wm->passPalette(palette, count);
-}
-
-void DirectorEngine::testFontScaling() {
-	int x = 10;
-	int y = 10;
-	int w = 640;
-	int h = 480;
-
-	initGraphics(w, h);
-	_system->getPaletteManager()->setPalette(macPalette, 0, 256);
-
-	Graphics::ManagedSurface surface;
-
-	surface.create(w, h);
-	surface.clear(255);
-
-	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
-
-	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
-
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 200, 500);
-
-	Graphics::MacFont bigFont(Graphics::kMacFontNewYork, 15);
-
-	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
-
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50 + 200, 500);
-
-	const char *text = "d";
-
-	for (int i = 9; i <= 20; i++) {
-		Graphics::MacFont macFont(Graphics::kMacFontNewYork, i);
-
-		const Graphics::Font *font = _wm->_fontMan->getFont(macFont);
-
-		int width = font->getStringWidth(text);
-
-		Common::Rect bbox = font->getBoundingBox(text, x, y, w);
-		surface.frameRect(bbox, 15);
-
-		font->drawString(&surface, text, x, y, width, 0);
-
-		x += width + 1;
-	}
-
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			int y1 = 80 + i * 7;
-			int x1 = 80 + j * 7;
-
-			for (x = x1; x < x1 + 6; x++)
-				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = transformColor(i * 16 + j);
-		}
-	}
-
-	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
-
-	Common::Event event;
-
-	while (true) {
-		if (g_system->getEventManager()->pollEvent(event))
-			if (event.type == Common::EVENT_QUIT)
-				break;
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
-}
-
-void DirectorEngine::testFonts() {
-	Common::String fontName("Helvetica");
-
-	Common::MacResManager *fontFile = new Common::MacResManager();
-	if (!fontFile->open(fontName))
-		error("testFonts(): Could not open %s as a resource fork", fontName.c_str());
-
-	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
-	if (fonds.size() > 0) {
-		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
-			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
-			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
-
-			debug("Font: %s", name.c_str());
-
-			Graphics::MacFontFamily font;
-			font.load(*stream);
-		}
-	}
-
-	delete fontFile;
 }
 
 void DirectorEngine::setCursor(int type) {
