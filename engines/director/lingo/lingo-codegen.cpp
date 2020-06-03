@@ -450,6 +450,9 @@ int Lingo::castIdFetch(Datum &var) {
 			warning("castIdFetch: reference to non-existent cast ID: %d", castId);
 		else
 			id = castId;
+	} else if (var.type == VOID) {
+		warning("castIdFetch: reference to VOID cast ID");
+		return 0;
 	} else {
 		error("castIdFetch: was expecting STRING or INT, got %s", var.type2str());
 	}
