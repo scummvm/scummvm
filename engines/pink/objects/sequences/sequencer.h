@@ -69,7 +69,7 @@ public:
 private:
 	SequenceContext *_context;
 	GamePage *_page;
-	Common::Array<SequenceContext *> _parrallelContexts;
+	Common::Array<SequenceContext *> _parallelContexts;
 	Array<Sequence *> _sequences;
 	Array<SeqTimer *> _timers;
 	uint _time;
