@@ -49,8 +49,8 @@ public:
 	void onLeftClickMessage() override;
 	void onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) override;
 
-	const Common::String &getPDALink() const override;
-	const Common::String &getLocation() const override;
+	Common::String getPDALink() const override;
+	Common::String getLocation() const override;
 
 private:
 	HandlerMgr _handlerMgr;

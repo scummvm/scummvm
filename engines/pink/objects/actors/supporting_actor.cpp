@@ -84,11 +84,11 @@ void SupportingActor::onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) 
 	_handlerMgr.onUseClickMessage(this, item, mgr);
 }
 
-const Common::String &SupportingActor::getLocation() const {
+Common::String SupportingActor::getLocation() const {
 	return _location;
 }
 
-const Common::String &SupportingActor::getPDALink() const {
+Common::String SupportingActor::getPDALink() const {
 	return _pdaLink;
 }
 

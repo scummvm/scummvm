@@ -108,9 +108,8 @@ Action *Actor::findAction(const Common::String &name) {
 	return nullptr;
 }
 
-const Common::String &Actor::getLocation() const {
-	static const Common::String empty;
-	return empty;
+Common::String Actor::getLocation() const {
+	return Common::String();
 }
 
 void Actor::setAction(Action *newAction) {
@@ -138,9 +137,8 @@ InventoryMgr *Actor::getInventoryMgr() const {
 	return _page->getModule()->getInventoryMgr();
 }
 
-const Common::String &Actor::getPDALink() const {
-	static const Common::String empty;
-	return empty;
+Common::String Actor::getPDALink() const {
+	return Common::String();
 }
 
 } // End of namespace Pink
