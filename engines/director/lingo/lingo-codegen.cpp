@@ -543,12 +543,14 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global) {
 			sym->u.i = value.u.i;
 		} else if (value.type == FLOAT) {
 			sym->u.f = value.u.f;
-		} else if (value.type == STRING || value.type == SYMBOL || value.type == OBJECT) {
+		} else if (value.type == STRING || value.type == SYMBOL) {
 			sym->u.s = value.u.s;
 		} else if (value.type == POINT || value.type == ARRAY) {
 			sym->u.farr = value.u.farr;
 		} else if (value.type == PARRAY) {
 			sym->u.parr = value.u.parr;
+		} else if (value.type == OBJECT) {
+			sym->u.obj = value.u.obj;
 		} else if (value.type == VOID) {
 			sym->u.i = 0;
 		} else {
@@ -623,12 +625,14 @@ Datum Lingo::varFetch(Datum &var, bool global) {
 			result.u.i = sym->u.i;
 		else if (sym->type == FLOAT)
 			result.u.f = sym->u.f;
-		else if (sym->type == STRING || sym->type == SYMBOL || sym->type == OBJECT)
+		else if (sym->type == STRING || sym->type == SYMBOL)
 			result.u.s = sym->u.s;
 		else if (sym->type == POINT || sym->type == ARRAY)
 			result.u.farr = sym->u.farr;
 		else if (sym->type == PARRAY)
 			result.u.parr = sym->u.parr;
+		else if (sym->type == OBJECT)
+			result.u.obj = sym->u.obj;
 		else if (sym->type == VOID)
 			result.u.i = 0;
 		else {
