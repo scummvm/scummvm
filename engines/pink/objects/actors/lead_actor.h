@@ -71,7 +71,7 @@ public:
 	void onKeyboardButtonClick(Common::KeyCode code);
 	void onLeftButtonClick(const Common::Point point);
 	void onLeftButtonUp();
-	void onRightButtonClick(const Common::Point point);
+	virtual void onRightButtonClick(const Common::Point point);
 
 	void onMouseMove(const Common::Point point);
 
@@ -139,6 +139,8 @@ protected:
 class PubPink : public LeadActor {
 public:
 	void toConsole() const override;
+
+	void onRightButtonClick(const Common::Point point) override;
 
 	void onLeftClickMessage() override;
 	void onVariableSet() override;

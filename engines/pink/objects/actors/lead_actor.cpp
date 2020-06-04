@@ -499,4 +499,9 @@ bool PubPink::playingMiniGame() {
 			_page->checkValueOfVariable(kFoodPuzzle, kUndefinedValue));
 }
 
+void PubPink::onRightButtonClick(const Common::Point point) {
+	if (!playingMiniGame())
+		LeadActor::onRightButtonClick(point);
+}
+
 } // End of namespace Pink
