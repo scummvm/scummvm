@@ -689,7 +689,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
 	| tMETHOD { startDef(); }
 			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1, g_lingo->_currentFactory);
+		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef, g_lingo->_currentFactory);
 		endDef();
 		delete $tMETHOD; }
 	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
