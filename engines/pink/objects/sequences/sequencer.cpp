@@ -69,9 +69,9 @@ void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
 	if (sequence) {
 		SequenceContext *context = new SequenceContext(sequence);
 		SequenceContext *conflict;
-		while((conflict = findConfilictingContextWith(context)) != nullptr)
+		while ((conflict = findConfilictingContextWith(context)) != nullptr) {
 			conflict->getSequence()->forceEnd();
-
+		}
 		_context = context;
 		sequence->init(loadingSave);
 		debugC(5, kPinkDebugScripts, "Main Sequence %s started", sequence->getName().c_str());
