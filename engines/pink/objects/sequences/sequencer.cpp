@@ -69,7 +69,7 @@ void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
 	if (sequence) {
 		SequenceContext *context = new SequenceContext(sequence);
 		SequenceContext *conflict;
-		while ((conflict = findConfilictingContextWith(context)) != nullptr) {
+		while ((conflict = findConflictingContextWith(context)) != nullptr) {
 			conflict->getSequence()->forceEnd();
 		}
 		_context = context;
@@ -90,7 +90,7 @@ void Sequencer::authorParallelSequence(Sequence *sequence, bool loadingSave) {
 	const Common::String leadName = _page->getLeadActor()->getName();
 	SequenceContext *context = new SequenceContext(sequence);
 
-	if (!context->findState(leadName) && !findConfilictingContextWith(context)) {
+	if (!context->findState(leadName) && !findConflictingContextWith(context)) {
 		_parrallelContexts.push_back(context);
 		sequence->init(loadingSave);
 		debugC(6, kPinkDebugScripts, "Parallel Sequence %s started", sequence->getName().c_str());
@@ -189,7 +189,7 @@ void Sequencer::saveState(Archive &archive) {
 	}
 }
 
-SequenceContext *Sequencer::findConfilictingContextWith(SequenceContext *context) {
+SequenceContext *Sequencer::findConflictingContextWith(SequenceContext *context) {
 	if (_context && _context->isConflictingWith(context)) {
 		return _context;
 	}

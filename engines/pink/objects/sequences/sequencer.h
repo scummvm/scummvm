@@ -59,7 +59,7 @@ public:
 
 	void removeContext(SequenceContext *context);
 
-	SequenceContext *findConfilictingContextWith(SequenceContext *context);
+	SequenceContext *findConflictingContextWith(SequenceContext *context);
 
 	Sequence *findSequence(const Common::String &name);
 	SequenceActorState *findState(const Common::String &name);
