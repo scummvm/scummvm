@@ -237,7 +237,7 @@ void VoyeurEngine::doTailTitle() {
 	_screen->_vPort->setupViewPort(NULL);
 	_screen->screenReset();
 
-	if (_bVoy->getBoltGroup(0x600)) {
+	if (!getIsDemo() && _bVoy->getBoltGroup(0x600)) {
 		RL2Decoder decoder;
 		decoder.loadRL2File("a1100200.rl2", false);
 		decoder.start();
