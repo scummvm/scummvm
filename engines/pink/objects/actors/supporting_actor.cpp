@@ -48,11 +48,11 @@ void SupportingActor::toConsole() const {
 }
 
 bool SupportingActor::isLeftClickHandlers() const {
-	return _handlerMgr.isLeftClickHandler(this);
+	return _handlerMgr.findSuitableHandlerLeftClick(this);
 }
 
 bool SupportingActor::isUseClickHandlers(InventoryItem *item) const {
-	return _handlerMgr.isUseClickHandler(this, item->getName());
+	return _handlerMgr.findSuitableHandlerUseClick(this, item->getName());
 }
 
 void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
@@ -67,7 +67,7 @@ void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 
 void SupportingActor::onMouseOverWithItem(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	Common::String item = itemName;
-	if (_handlerMgr.isUseClickHandler(this, itemName))
+	if (_handlerMgr.findSuitableHandlerUseClick(this, itemName))
 		item += kClickable;
 	cursorMgr->setCursor(kHoldingItemCursor, point, item);
 }

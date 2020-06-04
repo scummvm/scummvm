@@ -47,26 +47,6 @@ void HandlerMgr::toConsole() const {
 	}
 }
 
-bool HandlerMgr::isLeftClickHandler(const Actor *actor) const {
-	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
-		if (_leftClickHandlers[i]->isSuitable(actor))
-			return true;
-	}
-
-	return false;
-}
-
-bool HandlerMgr::isUseClickHandler(const Actor *actor, const Common::String &itemName) const {
-	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
-		if (itemName == _useClickHandlers[i]->getInventoryItem() &&
-			_useClickHandlers[i]->isSuitable(actor))
-			return true;
-	}
-
-	return false;
-}
-
-
 void HandlerMgr::onTimerMessage(Actor *actor) {
 	Handler *handler = findSuitableHandlerTimer(actor);
 	if (handler)
@@ -80,14 +60,14 @@ void HandlerMgr::onLeftClickMessage(Actor *actor) {
 }
 
 void HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr) {
-	HandlerUseClick *handler = findSuitableHandlerUseClick(actor, item);
+	HandlerUseClick *handler = findSuitableHandlerUseClick(actor, item->getName());
 	assert(handler);
 	if (!handler->getRecepient().empty())
 		mgr->setItemOwner(handler->getRecepient(), item);
 	handler->handle(actor);
 }
 
-Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {
+Handler *HandlerMgr::findSuitableHandlerTimer(const Actor *actor) {
 	for (uint i = 0; i < _timerHandlers.size(); ++i) {
 		if (_timerHandlers[i]->isSuitable(actor))
 			return _timerHandlers[i];
@@ -96,7 +76,7 @@ Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {
 	return nullptr;
 }
 
-HandlerLeftClick *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
+HandlerLeftClick *HandlerMgr::findSuitableHandlerLeftClick(const Actor *actor) const {
 	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
 		if (_leftClickHandlers[i]->isSuitable(actor))
 			return _leftClickHandlers[i];
@@ -105,9 +85,9 @@ HandlerLeftClick *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
 	return nullptr;
 }
 
-HandlerUseClick *HandlerMgr::findSuitableHandlerUseClick(Actor *actor, InventoryItem *item) {
+HandlerUseClick *HandlerMgr::findSuitableHandlerUseClick(const Actor *actor, const Common::String &itemName) const {
 	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
-		if (item->getName() == _useClickHandlers[i]->getInventoryItem() && _useClickHandlers[i]->isSuitable(actor))
+		if (itemName == _useClickHandlers[i]->getInventoryItem() && _useClickHandlers[i]->isSuitable(actor))
 			return _useClickHandlers[i];
 	}
 
