@@ -522,6 +522,15 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 	return opType;
 }
 
+Datum Datum::eval() {
+	if (type != VAR) { // It could be cast ref
+		lazy = false;
+		return *this;
+	}
+
+	return g_lingo->varFetch(*this);
+}
+
 int Datum::asInt() {
 	int res = 0;
 
@@ -691,6 +700,10 @@ Common::String Datum::asString(bool printonly) {
 		break;
 	default:
 		warning("Incorrect operation asString() for type: %s", type2str());
+	}
+
+	if (lazy) {
+		s += " (lazy)";
 	}
 
 	return s;

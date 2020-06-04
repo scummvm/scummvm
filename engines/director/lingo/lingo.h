@@ -112,6 +112,7 @@ struct Symbol {	/* symbol table entry */
 
 struct Datum {	/* interpreter stack type */
 	int type;
+	bool lazy; // evaluate when popped off stack
 
 	union {
 		int	i;				/* INT, ARGC, ARGCNORET */
@@ -127,11 +128,13 @@ struct Datum {	/* interpreter stack type */
 	Datum() {
 		u.s = nullptr;
 		type = VOID;
+		lazy = false;
 		refCount = new int;
 		*refCount = 1;
 	}
 	Datum(const Datum &d) {
 		type = d.type;
+		lazy = d.lazy;
 		u = d.u;
 		refCount = d.refCount;
 		*refCount += 1;
@@ -149,18 +152,21 @@ struct Datum {	/* interpreter stack type */
 	Datum(int val) {
 		u.i = val;
 		type = INT;
+		lazy = false;
 		refCount = new int;
 		*refCount = 1;
 	}
 	Datum(double val) {
 		u.f = val;
 		type = FLOAT;
+		lazy = false;
 		refCount = new int;
 		*refCount = 1;
 	}
 	Datum(const Common::String &val) {
 		u.s = new Common::String(val);
 		type = STRING;
+		lazy = false;
 		refCount = new int;
 		*refCount = 1;
 	}
@@ -201,6 +207,7 @@ struct Datum {	/* interpreter stack type */
 		reset();
 	}
 
+	Datum eval();
 	double asFloat();
 	int asInt();
 	Common::String asString(bool printonly = false);
@@ -364,9 +371,9 @@ public:
 	Symbol codeDefine(Common::String &s, int start, int nargs, Object *obj = nullptr, int end = -1, bool removeCode = true);
 	void processIf(int toplabel, int endlabel);
 	int castIdFetch(Datum &var);
-	void varCreate(const Common::String &name, bool global);
-	void varAssign(Datum &var, Datum &value, bool global = false);
-	Datum varFetch(Datum &var, bool global = false);
+	void varCreate(const Common::String &name, bool global, SymbolHash *localvars = nullptr);
+	void varAssign(Datum &var, Datum &value, bool global = false, SymbolHash *localvars = nullptr);
+	Datum varFetch(Datum &var, bool global = false, SymbolHash *localvars = nullptr);
 
 	int getAlignedType(Datum &d1, Datum &d2);
 

@@ -253,14 +253,6 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 			warning("Redefining method '%s' on factory '%s'", name.c_str(), factory->name->c_str());
 		}
 		factory->methods[name] = sym;
-
-		// FIXME: Method names can conflict with vars. This won't work all the time.
-		Datum target(name);
-		target.type = VAR;
-		Datum source(name);
-		source.type = SYMBOL;
-		g_lingo->varCreate(name, true);
-		g_lingo->varAssign(target, source, true);
 	} else {
 		Symbol existing = getHandler(name);
 		if (existing.type != VOID)
@@ -474,8 +466,12 @@ int Lingo::castIdFetch(Datum &var) {
 	return id;
 }
 
-void Lingo::varCreate(const Common::String &name, bool global) {
-	if (_localvars && _localvars->contains(name)) {
+void Lingo::varCreate(const Common::String &name, bool global, SymbolHash *localvars) {
+	if (localvars == nullptr) {
+		localvars = _localvars;
+	}
+
+	if (localvars && localvars->contains(name)) {
 		if (global)
 			warning("varCreate: variable %s is local, not global", name.c_str());
 		return;
@@ -493,12 +489,16 @@ void Lingo::varCreate(const Common::String &name, bool global) {
 		_globalvars[name] = Symbol();
 		_globalvars[name].name = new Common::String(name);
 	} else {
-		(*_localvars)[name] = Symbol();
-		(*_localvars)[name].name = new Common::String(name);
+		(*localvars)[name] = Symbol();
+		(*localvars)[name].name = new Common::String(name);
 	}
 }
 
-void Lingo::varAssign(Datum &var, Datum &value, bool global) {
+void Lingo::varAssign(Datum &var, Datum &value, bool global, SymbolHash *localvars) {
+	if (localvars == nullptr) {
+		localvars = _localvars;
+	}
+
 	if (var.type != VAR && var.type != REFERENCE) {
 		warning("varAssign: assignment to non-variable");
 		return;
@@ -508,8 +508,8 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global) {
 		Symbol *sym = nullptr;
 		Common::String name = *var.u.s;
 
-		if (_localvars && _localvars->contains(name)) {
-			sym = &(*_localvars)[name];
+		if (localvars && localvars->contains(name)) {
+			sym = &(*localvars)[name];
 			if (global)
 				warning("varAssign: variable %s is local, not global", name.c_str());
 		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
@@ -580,7 +580,11 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global) {
 	}
 }
 
-Datum Lingo::varFetch(Datum &var, bool global) {
+Datum Lingo::varFetch(Datum &var, bool global, SymbolHash *localvars) {
+	if (localvars == nullptr) {
+		localvars = _localvars;
+	}
+
 	Datum result;
 	result.type = VOID;
 	if (var.type != VAR && var.type != REFERENCE) {
@@ -597,8 +601,8 @@ Datum Lingo::varFetch(Datum &var, bool global) {
 			result.u.obj = _currentMeObj;
 			return result;
 		}
-		if (_localvars && _localvars->contains(name)) {
-			sym = &(*_localvars)[name];
+		if (localvars && localvars->contains(name)) {
+			sym = &(*localvars)[name];
 			if (global)
 				warning("varFetch: variable %s is local, not global", sym->name->c_str());
 		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
