@@ -307,6 +307,13 @@ protected:
 	void hangingNote(byte channel, byte note, uint32 ticksLeft, bool recycle = true);
 	void hangAllActiveNotes();
 
+	/**
+	 * Called before starting playback of a track.
+	 * Can be implemented by subclasses if they need to
+	 * perform actions at this point.
+	 */
+	virtual void onTrackStart(uint8 track) { };
+
 	virtual void sendToDriver(uint32 b);
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
