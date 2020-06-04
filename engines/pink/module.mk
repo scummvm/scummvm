@@ -38,7 +38,6 @@ MODULE_OBJS = \
 	objects/actors/supporting_actor.o \
 	objects/handlers/handler.o \
 	objects/handlers/handler_mgr.o \
-	objects/handlers/handler_timer.o \
 	objects/pages/game_page.o \
 	objects/pages/page.o \
 	objects/pages/pda_page.o \

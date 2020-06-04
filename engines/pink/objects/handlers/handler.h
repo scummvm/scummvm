@@ -81,6 +81,16 @@ private:
 	Common::String _recepient;
 };
 
+class HandlerTimerActions : public Handler {
+public:
+	void toConsole() const override;
+	void deserialize(Archive &archive) override;
+	void handle(Actor *actor) override;
+
+private:
+	StringArray _actions;
+};
+
 } // End of namespace Pink
 
 #endif
