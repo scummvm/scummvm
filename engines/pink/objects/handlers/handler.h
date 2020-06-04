@@ -52,32 +52,20 @@ class Sequence;
 
 class HandlerSequences : public Handler {
 public:
-	HandlerSequences(bool parallel = false);
+	HandlerSequences(bool startPage = false, bool parallel = false);
 
 	void deserialize(Archive &archive) override;
 	void handle(Actor *actor) override;
 
 protected:
-	virtual void execute(Sequence *sequence) {};
-
 	StringArray _sequences;
+	bool _startPage;
 	bool _parallel;
-};
-
-class HandlerStartPage : public HandlerSequences {
-public:
-	void toConsole() const override;
-
-private:
-	void execute(Sequence *sequence) override;
 };
 
 class HandlerLeftClick : public HandlerSequences {
 public:
 	void toConsole() const override;
-
-private:
-	void execute(Sequence *sequence) override {}
 };
 
 class HandlerUseClick : public HandlerSequences {
@@ -89,8 +77,6 @@ public:
 	const Common::String &getRecepient() const { return _recepient; }
 
 private:
-	void execute(Sequence *sequence) override {};
-
 	Common::String _inventoryItem;
 	Common::String _recepient;
 };

@@ -86,34 +86,13 @@ void HandlerSequences::handle(Actor *actor) {
 	else
 		sequencer->authorSequence(sequence, false);
 
-	execute(sequence);
+	if (_startPage)
+		sequence->allowSkipping();
 }
 
-HandlerSequences::HandlerSequences(bool parallel) {
+HandlerSequences::HandlerSequences(bool startPage, bool parallel) {
+	_startPage = startPage;
 	_parallel = parallel;
-}
-
-void HandlerStartPage::execute(Sequence *sequence) {
-	sequence->allowSkipping();
-}
-
-void HandlerStartPage::toConsole() const {
-	debugC(6, kPinkDebugLoadingObjects, "HandlerStartPage:");
-
-	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
-	for (uint i = 0; i < _sideEffects.size(); ++i) {
-		_sideEffects[i]->toConsole();
-	}
-
-	debugC(6, kPinkDebugLoadingObjects, "\tConditions:");
-	for (uint i = 0; i < _conditions.size(); ++i) {
-		_conditions[i]->toConsole();
-	}
-
-	debugC(6, kPinkDebugLoadingObjects, "\tSequences:");
-	for (uint i = 0; i < _sequences.size(); ++i) {
-		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _sequences[i].c_str());
-	}
 }
 
 void HandlerLeftClick::toConsole() const {
