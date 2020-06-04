@@ -510,6 +510,17 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| FBLTIN arglist	{
 		g_lingo->codeFunc($FBLTIN, $arglist);
 		delete $FBLTIN; }
+	| ID[func] '(' ID[method] ')' {
+			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->codeString($method->c_str());
+			g_lingo->codeFunc($func, 1);
+			delete $func;
+			delete $method; }
+	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString($method->c_str()); }
+				nonemptyarglist ')' {
+			g_lingo->codeFunc($func, $nonemptyarglist + 1);
+			delete $func;
+			delete $method; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }

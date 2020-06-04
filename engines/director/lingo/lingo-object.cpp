@@ -61,15 +61,6 @@ void Lingo::initMethods() {
 		sym.parens = false;
 		sym.u.bltin = mtd->func;
 		_methods[mtd->name] = sym;
-
-		// FIXME: Method names can conflict with vars. This won't work all the time.
-		Common::String name(mtd->name);
-		Datum target(name);
-		target.type = VAR;
-		Datum source(name);
-		source.type = SYMBOL;
-		g_lingo->varCreate(name, true);
-		g_lingo->varAssign(target, source, true);
 	}
 }
 

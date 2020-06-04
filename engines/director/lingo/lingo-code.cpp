@@ -94,6 +94,7 @@ static struct FuncDescr {
 	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
 	{ LC::c_jump,			"c_jump",			"o" },
 	{ LC::c_jumpifz,		"c_jumpifz",		"o" },
+	{ LC::c_lazyeval,		"c_lazyeval",			"s" },
 	{ LC::c_le,				"c_le",				"" },
 	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
 	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
@@ -192,6 +193,9 @@ Datum Lingo::pop(void) {
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
+	if (ret.lazy) {
+		ret = ret.eval();
+	}
 
 	return ret;
 }
@@ -421,6 +425,15 @@ void LC::c_eval() {
 
 	d = g_lingo->varFetch(d);
 
+	g_lingo->push(d);
+}
+
+void LC::c_lazyeval() {
+	LC::c_varpush();
+
+	Datum d;
+	d = g_lingo->pop();
+	d.lazy = true;
 	g_lingo->push(d);
 }
 
@@ -1344,7 +1357,7 @@ void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 	fp->retMeObj = g_lingo->_currentMeObj;
 
 	// Create new set of local variables
-	g_lingo->_localvars = new SymbolHash;
+	SymbolHash *localvars = new SymbolHash;
 	if (funcSym.argNames) {
 		int symNArgs = funcSym.nargs;
 		if ((int)funcSym.argNames->size() < symNArgs) {
@@ -1359,28 +1372,30 @@ void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 		}
 		for (int i = symNArgs - 1; i >= 0; i--) {
 			Common::String name = (*funcSym.argNames)[i];
-			if (!g_lingo->_localvars->contains(name)) {
-				g_lingo->varCreate(name, false);
+			if (!localvars->contains(name)) {
+				g_lingo->varCreate(name, false, localvars);
 				Datum arg(name);
 				arg.type = VAR;
 				Datum value = g_lingo->pop();
-				g_lingo->varAssign(arg, value);
+				g_lingo->varAssign(arg, value, false, localvars);
 			} else {
 				warning("Argument %s already defined", name.c_str());
+				g_lingo->pop();
 			}
 		}
 	}
 	if (funcSym.varNames) {
 		for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
 			Common::String name = *it;
-			if (!g_lingo->_localvars->contains(name)) {
-				(*g_lingo->_localvars)[name] = Symbol();
-				(*g_lingo->_localvars)[name].name = new Common::String(name);
+			if (!localvars->contains(name)) {
+				(*localvars)[name] = Symbol();
+				(*localvars)[name].name = new Common::String(name);
 			} else {
 				warning("Variable %s already defined", name.c_str());
 			}
 		}
 	}
+	g_lingo->_localvars = localvars;
 
 	if (target) {
 		g_lingo->_currentMeObj = target;
