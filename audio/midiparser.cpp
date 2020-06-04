@@ -372,6 +372,9 @@ bool MidiParser::setTrack(int track) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	if (_disableAutoStartPlayback)
 		_doParse = false;
+
+	onTrackStart(track);
+
 	_activeTrack = track;
 	_position._playPos = _tracks[track];
 	parseNextEvent(_nextEvent);

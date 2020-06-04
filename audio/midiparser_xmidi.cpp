@@ -73,8 +73,6 @@ protected:
 
 	byte  *_tracksTimbreList[120]; ///< Timbre-List for each track.
 	uint32 _tracksTimbreListSize[120]; ///< Size of the Timbre-List for each track.
-	byte  *_activeTrackTimbreList;
-	uint32 _activeTrackTimbreListSize;
 
 protected:
 	uint32 readVLQ2(byte * &data);
@@ -92,6 +90,7 @@ protected:
 		MidiParser::resetTracking();
 		_loopCount = -1;
 	}
+	void onTrackStart(uint8 track) override;
 
 	void sendToDriver(uint32 b) override;
 	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
@@ -102,9 +101,7 @@ public:
 			_newTimbreListProc(newTimbreListProc),
 			_newTimbreListDriver(newTimbreListDriver),
 			_source(source),
-			_loopCount(-1),
-			_activeTrackTimbreList(NULL),
-			_activeTrackTimbreListSize(0) {
+			_loopCount(-1) {
 		memset(_loop, 0, sizeof(_loop));
 		memset(_trackBranches, 0, sizeof(_trackBranches));
 		memset(_tracksTimbreList, 0, sizeof(_tracksTimbreList));
@@ -438,6 +435,9 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 		int tracksRead = 0;
 		uint32 branchOffsets[128];
 		memset(branchOffsets, 0, sizeof(branchOffsets));
+		memset(_trackBranches, 0, sizeof(_trackBranches));
+		memset(_tracksTimbreList, 0, sizeof(_tracksTimbreList));
+		memset(_tracksTimbreListSize, 0, sizeof(_tracksTimbreListSize));
 		while (tracksRead < _numTracks) {
 			if (!memcmp(pos, "FORM", 4)) {
 				// Skip this plus the 4 bytes after it.
@@ -511,17 +511,20 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 		_ppqn = 60;
 		resetTracking();
 		setTempo(500000);
-		setTrack(0);
-		_activeTrackTimbreList = _tracksTimbreList[0];
-		_activeTrackTimbreListSize = _tracksTimbreListSize[0];
 
-		if (_newTimbreListProc)
-			_newTimbreListProc(_newTimbreListDriver, _activeTrackTimbreList, _activeTrackTimbreListSize);
+		// Start playback of the first track.
+		setTrack(0);
 
 		return true;
 	}
 
 	return false;
+}
+
+void MidiParser_XMIDI::onTrackStart(uint8 track) {
+	// Load custom timbres
+	if (_newTimbreListProc && _tracksTimbreListSize[track] > 0)
+		_newTimbreListProc(_newTimbreListDriver, _tracksTimbreList[track], _tracksTimbreListSize[track]);
 }
 
 void MidiParser_XMIDI::sendToDriver(uint32 b) {
