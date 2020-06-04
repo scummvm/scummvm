@@ -386,7 +386,7 @@ void Screen_EoB::sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *sr
 }
 #endif
 
-SegaRenderer::SegaRenderer(Screen_EoB *screen) : _screen(screen), _drChain(0), _prioChainStart(0), _prioChainEnd(0), _pitch(64), _hScrollMode(0), _hScrollTable(0), _vScrollMode(0), _spriteTable(0), _numSpritesMax(0), _spriteMask(0)
+SegaRenderer::SegaRenderer(Screen_EoB *screen) : _screen(screen), _prioChainStart(0), _prioChainEnd(0), _pitch(64), _hScrollMode(0), _hScrollTable(0), _vScrollMode(0), _spriteTable(0), _numSpritesMax(0), _spriteMask(0)
 #if SEGA_PERFORMANCE
 , _renderLineFragmentD(0), _renderLineFragmentM(0)
 #endif
@@ -429,7 +429,6 @@ SegaRenderer::SegaRenderer(Screen_EoB *screen) : _screen(screen), _drChain(0), _
 }
 
 SegaRenderer::~SegaRenderer() {
-	//clearDirtyRects();
 	delete[] _vram;
 	delete[] _vsram;
 	delete[] _spriteMask;
@@ -504,7 +503,6 @@ void SegaRenderer::loadToVRAM(const void *data, uint16 dataSize, uint16 addr) {
 	assert(data);
 	assert(addr + dataSize <= 0x10000);
 	memcpy(_vram + addr, data, dataSize);
-	//checkUpdateDirtyRects(addr, dataSize);
 }
 
 void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData) {
@@ -526,7 +524,6 @@ void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr,
 		assert(in->size() < 0x10000 - addr);
 		in->read(dst, in->size());
 	}
-	//addDirtyRect(0, 0, _screenW, _screenH);
 }
 
 void SegaRenderer::memsetVRAM(int addr, uint8 val, int len) {
@@ -537,7 +534,6 @@ void SegaRenderer::memsetVRAM(int addr, uint8 val, int len) {
 
 void SegaRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr, bool topToBottom, const uint16 *patternTable) {
 	uint16 addr = vramArea ? (vramArea == 1 ? 0xE000 : 0xF000) : 0xC000;
-	//addDirtyRect(x << 3, y << 3, w << 3, h << 3);
 	if (y & 0x8000) {
 		y &= ~0x8000;
 		addr = 0xE000;
@@ -598,19 +594,16 @@ void SegaRenderer::writeUint16VSRAM(int addr, uint16 value) {
 	assert(addr < 80);
 	assert(!(addr & 1));
 	_vsram[addr >> 1] = value;
-	//checkUpdateDirtyRects(addr, 2);
 }
 
 void SegaRenderer::writeUint8VRAM(int addr, uint8 value) {
 	assert(addr < 0x10000);
 	_vram[addr] = value;
-	//checkUpdateDirtyRects(addr, 1);
 }
 
 void SegaRenderer::writeUint16VRAM(int addr, uint16 value) {
 	assert(addr < 0x10000);
 	*((uint16*)(_vram + addr)) = value;
-	//checkUpdateDirtyRects(addr, 2);
 }
 
 void SegaRenderer::clearPlanes() {

@@ -86,10 +86,7 @@ public:
 	void writeUint16VRAM(int addr, uint16 value);
 	void clearPlanes();
 
-	//void renderScreen();
-	//void renderArea(int destPageNum, int renderLeft, int renderTop, int renderWidth, int renderHeight, bool spritesOnly = false);
-	void render(int destPageNum, int renderBlockX = -1, int renderBlockY = -1, int renderBlockWidth = -1, int renderBlockHeight = -1, bool spritesOnly = false);
-
+	void render(int destPageNum, int renderLeft = -1, int renderTop = -1, int renderWidth = -1, int renderHeight = -1, bool spritesOnly = false);
 private:
 	void renderPlanePart(int plane, uint8 *dstBuffer, int x1, int y1, int x2, int y2);
 	void renderPlaneTile(uint8 *dst, int destX, const uint16 *nameTable, int vScrollLSBStart, int vScrollLSBEnd, int hScrollTableIndex, uint16 pitch);
@@ -103,11 +100,7 @@ private:
 	const renderFuncD *_renderLineFragmentD;
 #else
 	template<bool hflip> void renderLineFragment(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal);
-#endif/*
-	void checkUpdateDirtyRects(int addr, int len);
-	void addDirtyRect(int x, int y, int w, int h);
-	void sendDirtyRectsToScreen();
-	void clearDirtyRects();*/
+#endif
 
 	void initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip);
 	void clearPrioChain();
@@ -130,12 +123,6 @@ private:
 	uint8 _vScrollMode;
 	uint16 _pitch;
 	uint16 _numSpritesMax;
-
-	struct DRChainEntry {
-		DRChainEntry(DRChainEntry *chain, int x, int y, int w, int h) : _next(chain), _rect(x, y, x + w, y + h) {}
-		Common::Rect _rect;
-		DRChainEntry *_next;
-	} *_drChain;
 
 	struct PrioTileRenderObj {
 		PrioTileRenderObj(PrioTileRenderObj *chainEnd, uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip) :

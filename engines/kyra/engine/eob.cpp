@@ -261,7 +261,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	for (int i = 0; i < 4; ++i)
 		_screen->sega_getRenderer()->loadToVRAM(_redGridTile, 8, 0x52A0 + i * 8);
 	_screen->sega_getRenderer()->fillRectWithTiles(1, 0, 4, 4, 4, 0x6295);
-	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage);
+	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage, 0, 4, 4, 4);
 	_screen->drawShape(Screen_EoB::kSegaInitShapesPage, _weaponSlotShapes[1], 0, 0, 0);
 	_screen->drawShape(Screen_EoB::kSegaInitShapesPage, _weaponSlotShapes[1], 0, 16, 0);
 	_weaponSlotGrid = _screen->encodeShape(0, 0, 4, 16);

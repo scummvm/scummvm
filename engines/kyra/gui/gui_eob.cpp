@@ -2090,9 +2090,6 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 		}
 	}
 
-	if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
-		_screen->sega_getRenderer()->render(0);
-	_screen->updateScreen();
 	_menuLineSpacing = lineSpacing;
 	_menuLastInFlags = 0;
 	_vm->removeInputTop();
@@ -2141,14 +2138,12 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 
 	if (newItem != currentItem) {
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printShadowedText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, 2 + currentItem * lineH, 0xFF, 0x11);
-			_vm->_txt->printShadowedText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, 2 + newItem * lineH, 0x55, 0x11);
-			_screen->sega_getRenderer()->render(0);
+			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + currentItem * lineH, 0xFF, sd == 8 ? 0x11 : 0x99);
+			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + newItem * lineH, 0x55, sd == 8 ? 0x11 : 0x99);
 		} else {
 			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);
 			_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorLightRed, 0);
 		}
-		_screen->updateScreen();
 	}
 
 	if (result != -1) {
@@ -2233,8 +2228,7 @@ void GUI_EoB::runCampMenu() {
 					prevHighlightButton = 0;
 				}
 			} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD && newMenu == 2) {
-				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
-				_screen->copyRegion(0, 0, 0, 0, 176, 168, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+				_screen->sega_getRenderer()->render(0, 0, 0, 22, 21);
 			}
 
 			lastMenu = newMenu;
@@ -3439,12 +3433,10 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				memorizePrayMenuPrintString(menuSpellMap[lastHighLightButton * 11 + ii], ii - 1, spellType, false, false);
 
 			_screen->setCurPage(0);
-			if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
-				_screen->copyRegion(0, 80, 0, 80, 176, 72, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
-			} else {
+			if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+				_screen->sega_getRenderer()->render(0, 0, 10, 22, 9);
+			else
 				_screen->copyRegion(0, 50, 0, 50, 176, 72, 2, 0, Screen::CR_NO_P_CHECK);
-			}
 			lastHighLightText = -1;
 		}
 		
@@ -3454,8 +3446,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 				_screen->sega_clearTextBuffer(0);
 				_vm->_txt->printShadowedText(Common::String::format(_vm->_menuStringsMgc[1], (char)(np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton] + 79), (char)(np[lastHighLightButton] + 79)).c_str(), 0, 2, 0x55, 0xCC, 160, 16, 0, false);
 				_screen->sega_loadTextBufferToVRAM(0, 0x5560, 1280);
-				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
-				_screen->copyRegion(8, 64, 8, 64, 160, 16, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+				_screen->sega_getRenderer()->render(0, 1, 8, 20, 2);
 			} else {
 				_screen->set16bitShadingLevel(4);
 				_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
@@ -4305,12 +4296,10 @@ Button *GUI_EoB::initMenu(int id) {
 		buttons = linkButton(buttons, b);
 	}
 
-	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-		_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
-		_screen->copyRegion(0, 0, 0, 0, 176, 168, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
-	} else {
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+		_screen->sega_getRenderer()->render(0, 0, 0, 22, 21);
+	else
 		_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
-	}
 
 	_vm->gui_notifyButtonListChanged();
 	_screen->setCurPage(0);
