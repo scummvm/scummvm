@@ -280,7 +280,8 @@ bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 	return
 		f == kSupportsReturnToLauncher ||
 		f == kSupportsLoadingDuringRuntime ||
-		f == kSupportsSavingDuringRuntime;
+		f == kSupportsSavingDuringRuntime ||
+		f == kSupportsChangingOptionsDuringRuntime;
 }
 
 void PinkEngine::pauseEngineIntern(bool pause) {
