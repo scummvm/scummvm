@@ -1073,16 +1073,9 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 		script += ch;
 	}
 
-	// Check if the script has macro. They must start with a comment.
+	// Check if this is a script. It must start with a comment.
 	// See D2 Interactivity Manual pp.46-47 (Ch.2.11. Using a macro)
 	if (script.empty() || !script.hasPrefix("--"))
-		return;
-
-	int pos = 2;
-	while (script[pos] == ' ' || script[pos] == '\t')
-		pos++;
-
-	if (script[pos] != '\n')
 		return;
 
 	if (ConfMan.getBool("dump_scripts"))
