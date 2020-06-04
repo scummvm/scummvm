@@ -3294,7 +3294,7 @@ yyreduce:
 #line 690 "engines/director/lingo/lingo-gr.y"
                                                                         {
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg) + 1, g_lingo->_currentFactory);
+		g_lingo->codeDefine(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg), g_lingo->_currentFactory);
 		endDef();
 		delete (yyvsp[-6].s); }
 #line 3301 "engines/director/lingo/lingo-gr.cpp"
