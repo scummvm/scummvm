@@ -56,7 +56,7 @@ public:
 
 	void init(bool paused) override;
 
-	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
+	void onMouseOver(Common::Point point, CursorMgr *mgr) override;
 
 	void onLeftClickMessage() override;
 

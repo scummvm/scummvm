@@ -70,7 +70,7 @@ public:
 	void saveStage();
 	void loadStage();
 
-	Actor *getActorByPoint(const Common::Point point);
+	Actor *getActorByPoint(Common::Point point);
 
 	Graphics::MacWindowManager &getWndManager() { return *_wm; };
 

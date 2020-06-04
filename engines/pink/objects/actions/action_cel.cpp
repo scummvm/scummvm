@@ -103,7 +103,7 @@ void ActionCEL::decodeNext() {
 	_actor->getPage()->getGame()->getDirector()->addDirtyRects(this);
 }
 
-void ActionCEL::setCenter(const Common::Point &center) {
+void ActionCEL::setCenter(Common::Point center) {
 	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
 	_bounds = Common::Rect::center(center.x, center.y, _decoder.getWidth(), _decoder.getHeight());
 	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);

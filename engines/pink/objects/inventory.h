@@ -57,7 +57,7 @@ public:
 	void saveState(Archive &archive);
 
 	void update();
-	void onClick(const Common::Point point);
+	void onClick(Common::Point point);
 
 	bool start(bool paused);
 

@@ -38,15 +38,15 @@ public:
 	CursorMgr(PinkEngine *game, Page *page);
 
 	void update();
-	void setCursor(uint index, const Common::Point point, const Common::String &itemName);
-	void setCursor(const Common::String &cursorName, const Common::Point point);
+	void setCursor(uint index, Common::Point point, const Common::String &itemName);
+	void setCursor(const Common::String &cursorName, Common::Point point);
 
 	void setPage(Page *page) { _page = page; }
 
 private:
 	void startAnimation(uint index);
 
-	void showItem(const Common::String &itemName, const Common::Point point);
+	void showItem(const Common::String &itemName, Common::Point point);
 	void hideItem();
 
 private:

@@ -67,7 +67,7 @@ void PDAButtonActor::onLeftClickMessage() {
 	}
 }
 
-void PDAButtonActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
+void PDAButtonActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 	if (_command.type == Command::kNull || !isActive())
 		mgr->setCursor(kPDADefaultCursor, point, Common::String());
 	else

@@ -52,7 +52,7 @@ public:
 	uint32 getZ() { return _z; }
 	CelDecoder *getDecoder() { return &_decoder; }
 
-	void setCenter(const Common::Point &center);
+	void setCenter(Common::Point center);
 
 
 	void loadDecoder();

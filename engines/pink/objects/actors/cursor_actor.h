@@ -44,7 +44,7 @@ public:
 		return true;
 	}
 
-	void setCursorItem(const Common::String &name, const Common::Point point) {
+	void setCursorItem(const Common::String &name, Common::Point point) {
 		if (!_action || _action->getName() != name)
 			setAction(name);
 		static_cast<ActionCEL*>(_action)->setCenter(point);

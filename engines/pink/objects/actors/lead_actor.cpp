@@ -203,7 +203,7 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 	}
 }
 
-void LeadActor::onLeftButtonClick(const Common::Point point) {
+void LeadActor::onLeftButtonClick(Common::Point point) {
 	switch (_state) {
 	case kReady:
 	case kMoving: {
@@ -246,7 +246,7 @@ void LeadActor::onLeftButtonUp() {
 		_page->getGame()->getPdaMgr().onLeftButtonUp();
 }
 
-void LeadActor::onRightButtonClick(const Common::Point point) {
+void LeadActor::onRightButtonClick(Common::Point point) {
 	if (_state == kReady || _state == kMoving) {
 		Actor *clickedActor = getActorByPoint(point);
 		if (clickedActor && isInteractingWith(clickedActor)) {
@@ -258,18 +258,18 @@ void LeadActor::onRightButtonClick(const Common::Point point) {
 	}
 }
 
-void LeadActor::onMouseMove(const Common::Point point) {
+void LeadActor::onMouseMove(Common::Point point) {
 	if (_state != kPDA)
 		updateCursor(point);
 	else
 		_page->getGame()->getPdaMgr().onMouseMove(point);
 }
 
-void LeadActor::onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+void LeadActor::onMouseOverWithItem(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	_cursorMgr->setCursor(kHoldingItemCursor, point, itemName + kClickable);
 }
 
-void LeadActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
+void LeadActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 	if (getInventoryMgr()->isPinkOwnsAnyItems())
 		_cursorMgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
 	else
@@ -338,11 +338,11 @@ void LeadActor::setNextExecutors(const Common::String &nextModule, const Common:
 void LeadActor::forceUpdateCursor() {
 	PinkEngine *vm =_page->getGame();
 	vm->getDirector()->update(); // we have actions, that should be drawn to properly update cursor
-	const Common::Point point = vm->getEventManager()->getMousePos();
+	Common::Point point = vm->getEventManager()->getMousePos();
 	updateCursor(point);
 }
 
-void LeadActor::updateCursor(const Common::Point point) {
+void LeadActor::updateCursor(Common::Point point) {
 	switch (_state) {
 	case kReady:
 	case kMoving: {
@@ -396,7 +396,7 @@ WalkLocation *LeadActor::getWalkDestination() {
 	return _walkMgr->findLocation(_recipient->getLocation());
 }
 
-Actor *LeadActor::getActorByPoint(const Common::Point point) {
+Actor *LeadActor::getActorByPoint(Common::Point point) {
 	return _page->getGame()->getDirector()->getActorByPoint(point);
 }
 
@@ -465,7 +465,7 @@ void PubPink::onVariableSet() {
 		_isHaveItem = true;
 }
 
-void PubPink::updateCursor(const Common::Point point) {
+void PubPink::updateCursor(Common::Point point) {
 	if (playingMiniGame()) {
 		Actor *actor = getActorByPoint(point);
 		assert(actor);
@@ -499,7 +499,7 @@ bool PubPink::playingMiniGame() {
 			_page->checkValueOfVariable(kFoodPuzzle, kUndefinedValue));
 }
 
-void PubPink::onRightButtonClick(const Common::Point point) {
+void PubPink::onRightButtonClick(Common::Point point) {
 	if (!playingMiniGame())
 		LeadActor::onRightButtonClick(point);
 }

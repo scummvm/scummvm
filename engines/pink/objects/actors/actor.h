@@ -63,8 +63,8 @@ public:
 	virtual bool isLeftClickHandlers() const { return false; }
 	virtual bool isUseClickHandlers(InventoryItem *item) const { return false; }
 
-	virtual void onMouseOver(const Common::Point point, CursorMgr *mgr);
-	virtual void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+	virtual void onMouseOverWithItem(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
 	virtual void onTimerMessage() {}
 	virtual void onLeftClickMessage() {}
