@@ -155,7 +155,6 @@ void AvatarMoverProcess::handleCombatMode() {
 	// if we were blocking, and no longer holding the mouse, stop
 	if (lastanim == Animation::startBlock &&
 	        !_mouseButton[0].isState(MBS_DOWN)) {
-//		pout << "AvatarMover: combat stop blocking" << Std::endl;
 		waitFor(avatar->doAnim(Animation::stopBlock, direction));
 		return;
 	}
@@ -477,6 +476,7 @@ void AvatarMoverProcess::handleNormalMode() {
 			avatar = getMainActor();
 			avatar->clearActorFlag(Actor::ACT_COMBATRUN);
 			avatar->toggleInCombat();
+
 			ProcId walkpid = avatar->doAnim(Animation::walk, direction);
 			ProcId drawpid = avatar->doAnim(Animation::readyWeapon, direction);
 			Process *drawproc = Kernel::get_instance()->getProcess(drawpid);
@@ -497,11 +497,6 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 
 		// TODO: if we were hanging, fall
-
-		// otherwise, stand
-		if (!stasis)
-			waitFor(avatar->doAnim(Animation::stand, direction));
-		return;
 	}
 
 	// can't do any new actions if in stasis
