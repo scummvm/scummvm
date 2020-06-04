@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-05-10 07:57+0200\n"
-"PO-Revision-Date: 2020-06-03 15:41+0000\n"
+"PO-Revision-Date: 2020-06-04 22:41+0000\n"
 "Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -3302,27 +3302,27 @@ msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
@@ -3572,39 +3572,36 @@ msgid ""
 msgstr ""
 
 #: engines/adl/detection.cpp:51
-#, fuzzy
 msgid "TV emulation"
-msgstr "Emulator MT-32"
+msgstr "Emulacja TV"
 
 #: engines/adl/detection.cpp:52
 msgid "Emulate composite output to an NTSC TV"
 msgstr "Emulacja formatu z³o¿onego na system telewizji NTSC"
 
 #: engines/adl/detection.cpp:61 engines/adl/detection.cpp:71
-#, fuzzy
 msgid "Color graphics"
-msgstr "Filtrowanie obrazu"
+msgstr "Kolorowa grafika"
 
 #: engines/adl/detection.cpp:62 engines/adl/detection.cpp:72
 msgid "Use color graphics instead of monochrome"
-msgstr ""
+msgstr "U¿yj kolorowej grafiki zamiast monochromatycznej"
 
 #: engines/adl/detection.cpp:81
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Poka¿ etykiety obiektów"
+msgstr "Poka¿ w trybie scanline"
 
 #: engines/adl/detection.cpp:82
 msgid "Darken every other scanline to mimic the look of a CRT"
-msgstr ""
+msgstr "Przyciemnienie w celu uzyskania wygl±du imituj±cego CRT"
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Zawsze u¿ywaj monochromatycznego tekstu"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "Nie emuluj artefaktów graficznych NTSC dla tekstu"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:62
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -3619,7 +3616,6 @@ msgstr "U¿yj oryginalnych ekranów odczytu/zapisu"
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:458
 #: engines/sherlock/detection.cpp:76 engines/toltecs/detection.cpp:229
 #: engines/zvision/detection_tables.h:51
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "U¿yj oryginalnych ekranów odczytu/zapisu zamiast tych ze ScummVM"
 
@@ -3720,13 +3716,13 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2477
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
-"Pomy¶lnie zapisano stan w pliku:\n"
+"Pomy¶lnie zapisano stan gry w pliku:\n"
 "\n"
 "%s"
 
@@ -3741,7 +3737,7 @@ msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:1028
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "Wymagane ¼ród³o gry nie zosta³o odnalezione"
 
 #: engines/bladerunner/bladerunner.cpp:2188
 msgid ""
