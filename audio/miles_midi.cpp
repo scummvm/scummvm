@@ -479,9 +479,9 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 
 		// figure out which queue is accessed
 		controllerNumber -= MILES_CONTROLLER_SYSEX_RANGE_BEGIN;
-		while (controllerNumber > MILES_CONTROLLER_SYSEX_COMMAND_SEND) {
+		while (controllerNumber > MILES_CONTROLLER_SYSEX_COMMAND_FINAL_DATA) {
 			sysExQueueNr++;
-			controllerNumber -= (MILES_CONTROLLER_SYSEX_COMMAND_SEND + 1);
+			controllerNumber -= (MILES_CONTROLLER_SYSEX_COMMAND_FINAL_DATA + 1);
 		}
 		assert(sysExQueueNr < MILES_CONTROLLER_SYSEX_QUEUE_COUNT);
 
@@ -513,8 +513,15 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 				}
 			}
 			break;
-		case MILES_CONTROLLER_SYSEX_COMMAND_SEND:
-			sysExSend = true;
+		case MILES_CONTROLLER_SYSEX_COMMAND_FINAL_DATA:
+			if (sysExPos < MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
+				// Space left? put current byte into queue
+				_sysExQueues[sysExQueueNr].data[sysExPos] = controllerValue;
+				sysExPos++;
+				// Do not increment dataPos. Subsequent Final Data commands will
+				// re-send the last address byte with the new controller value.
+				sysExSend = true;
+			}
 			break;
 		default:
 			assert(0);
@@ -528,8 +535,23 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 				// Execute SysEx
 				MT32SysEx(_sysExQueues[sysExQueueNr].targetAddress, _sysExQueues[sysExQueueNr].data);
 
-				// adjust target address to point at the end of the current data
-				_sysExQueues[sysExQueueNr].targetAddress += sysExPos;
+				// Adjust target address to point at the final data byte, or at the
+				// end of the current data in case of an overflow
+				// Note that the address bytes are actually 7 bits
+				byte addressByte1 = (_sysExQueues[sysExQueueNr].targetAddress & 0xFF0000) >> 16;
+				byte addressByte2 = (_sysExQueues[sysExQueueNr].targetAddress & 0x00FF00) >> 8;
+				byte addressByte3 = _sysExQueues[sysExQueueNr].targetAddress & 0x0000FF;
+				addressByte3 += _sysExQueues[sysExQueueNr].dataPos;
+				if (addressByte3 > 0x7F) {
+					addressByte3 -= 0x80;
+					addressByte2++;
+				}
+				if (addressByte2 > 0x7F) {
+					addressByte2 -= 0x80;
+					addressByte1++;
+				}
+				_sysExQueues[sysExQueueNr].targetAddress = addressByte1 << 16 | addressByte2 << 8 | addressByte3;
+
 				// reset queue data buffer
 				_sysExQueues[sysExQueueNr].dataPos = 0;
 			}
@@ -1112,7 +1134,7 @@ MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Co
 		uint16                    instrumentDataSize;
 
 		if (!fileStream->open(instrumentDataFilename))
-			error("MILES-MDI: could not open instrument file '%s'", instrumentDataFilename.c_str());
+			error("MILES-MIDI: could not open instrument file '%s'", instrumentDataFilename.c_str());
 
 		fileSize = fileStream->size();
 
