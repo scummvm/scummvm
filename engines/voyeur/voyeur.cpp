@@ -164,7 +164,7 @@ bool VoyeurEngine::doHeadTitle() {
 
 	if (_loadGameSlot == -1) {
 		// Show starting screen
-		if (_bVoy->getBoltGroup(0x500)) {
+		if (!getIsDemo() && _bVoy->getBoltGroup(0x500)) {
 			showConversionScreen();
 			_bVoy->freeBoltGroup(0x500);
 
@@ -179,11 +179,13 @@ bool VoyeurEngine::doHeadTitle() {
 				return false;
 		}
 
-		// Show the title screen
-		_eventsManager->getMouseInfo();
-		showTitleScreen();
-		if (shouldQuit())
-			return false;
+		if (!getIsDemo()) {
+			// Show the title screen
+			_eventsManager->getMouseInfo();
+			showTitleScreen();
+			if (shouldQuit())
+				return false;
+		}
 
 		// Opening
 		_eventsManager->getMouseInfo();
