@@ -81,9 +81,16 @@ void HandlerSequences::handle(Actor *actor) {
 	Sequence *sequence = sequencer->findSequence(_sequences[index]);
 
 	assert(sequence);
-	sequencer->authorSequence(sequence, 0);
+	if (_parallel)
+		sequencer->authorParallelSequence(sequence, false);
+	else
+		sequencer->authorSequence(sequence, false);
 
 	execute(sequence);
+}
+
+HandlerSequences::HandlerSequences(bool parallel) {
+	_parallel = parallel;
 }
 
 void HandlerStartPage::execute(Sequence *sequence) {

@@ -47,17 +47,6 @@ private:
 	StringArray _actions;
 };
 
-//appear in HokusPokus
-class HandlerTimerSequences : public HandlerSequences { //originally it was inherited from HandlerTimer
-public:
-	void toConsole() const override;
-
-	void handle(Actor *actor) override;
-
-protected:
-	void execute(Sequence *sequence) override {};
-};
-
 } // End of namespace Pink
 
 #endif

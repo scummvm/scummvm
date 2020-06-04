@@ -69,39 +69,4 @@ void HandlerTimerActions::handle(Actor *actor) {
 	}
 }
 
-void HandlerTimerSequences::toConsole() const {
-	debugC(6, kPinkDebugLoadingObjects, "HandlerTimerSequences:");
-
-	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
-	for (uint i = 0; i < _sideEffects.size(); ++i) {
-		_sideEffects[i]->toConsole();
-	}
-
-	debugC(6, kPinkDebugLoadingObjects, "\tConditions:");
-	for (uint i = 0; i < _conditions.size(); ++i) {
-		_conditions[i]->toConsole();
-	}
-
-	debugC(6, kPinkDebugLoadingObjects, "\tSequences:");
-	for (uint i = 0; i < _sequences.size(); ++i) {
-		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _sequences[i].c_str());
-	}
-}
-
-void HandlerTimerSequences::handle(Actor *actor) {
-	Handler::handle(actor);
-	Sequencer *sequencer = actor->getPage()->getSequencer();
-
-	assert(!_sequences.empty());
-
-	Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
-	uint index = rnd.getRandomNumber(_sequences.size() - 1);
-
-	Sequence *sequence = sequencer->findSequence(_sequences[index]);
-
-	assert(sequence);
-
-	sequencer->authorParallelSequence(sequence, 0);
-}
-
 } // End of namespace Pink

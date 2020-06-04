@@ -52,13 +52,16 @@ class Sequence;
 
 class HandlerSequences : public Handler {
 public:
+	HandlerSequences(bool parallel = false);
+
 	void deserialize(Archive &archive) override;
 	void handle(Actor *actor) override;
 
 protected:
-	virtual void execute(Sequence *sequence) = 0;
+	virtual void execute(Sequence *sequence) {};
 
 	StringArray _sequences;
+	bool _parallel;
 };
 
 class HandlerStartPage : public HandlerSequences {

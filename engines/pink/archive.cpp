@@ -153,7 +153,7 @@ static Object *createObject(int objectId) {
 	case kHandlerTimerActions:
 		return new HandlerTimerActions; // hack for Peril, but behavior is correct
 	case kHandlerTimerSequences:
-		return new HandlerTimerSequences;
+		return new HandlerSequences(true);
 	case kHandlerUseClick:
 		return new HandlerUseClick;
 	case kInventoryActor:
