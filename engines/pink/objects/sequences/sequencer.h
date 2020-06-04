@@ -51,7 +51,7 @@ public:
 	void update();
 
 	void authorSequence(Sequence *sequence, bool loadingSave);
-	void authorParallelSequence(Sequence *seqeunce, bool loadingSave);
+	void authorParallelSequence(Sequence *sequence, bool loadingSave);
 
 	void skipSubSequence();
 	void restartSequence();
