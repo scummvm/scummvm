@@ -1086,7 +1086,7 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 	}
 
 	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[dd]->_textAlignH,
-				_widgets[dd]->_textAlignV);
+		_widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state, bool rtl) {
