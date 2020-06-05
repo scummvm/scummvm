@@ -690,7 +690,7 @@ Common::String Datum::asString(bool printonly) {
 		warning("Incorrect operation asString() for type: %s", type2str());
 	}
 
-	if (lazy) {
+	if (printonly && lazy) {
 		s += " (lazy)";
 	}
 
