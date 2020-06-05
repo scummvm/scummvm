@@ -97,8 +97,8 @@ public:
 	void drawPixel(int16 x, int16 y, uint32 color);
 	uint32 getPixelColor(int16 x, int16 y);
 	void clearScreen(uint32 color);
-	void opcodeB(int16 x, int16 y, int8 param);
-	void opcodeBPoint(int16 x, int16 y);
+	void drawCircle(int16 x, int16 y, int16 diameter);
+	void drawCirclePoint(int16 x, int16 y);
 };
 
 } // namespace Comprehend

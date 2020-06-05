@@ -46,7 +46,7 @@ enum Opcode {
 	OPCODE_MOVE_TO = 8,
 	OPCODE_DRAW_BOX = 9,
 	OPCODE_DRAW_LINE = 10,
-	OPCODE_B = 11,
+	OPCODE_DRAW_CIRCLE = 11,
 	OPCODE_DRAW_SHAPE = 12,
 	OPCODE_DELAY = 13,
 	OPCODE_PAINT = 14,
@@ -203,10 +203,12 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		ctx->_y = b;
 		break;
 
-	case OPCODE_B:
-		// TODO: Figure out what shape this draws
+	case OPCODE_DRAW_CIRCLE:
 		a = imageGetOperand(ctx);
-		ctx->_drawSurface->opcodeB(ctx->_x, ctx->_y, a);
+		debugC(kDebugGraphics, "draw_circle (%d, %d) diameter=%d",
+		       ctx->_x, ctx->_y, a);
+
+		ctx->_drawSurface->drawCircle(ctx->_x, ctx->_y, a);
 		break;
 
 	case OPCODE_DRAW_SHAPE:

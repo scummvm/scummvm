@@ -386,34 +386,34 @@ void DrawSurface::clearScreen(uint32 color) {
 	fillRect(Common::Rect(0, 0, this->w, this->h), _renderColor);
 }
 
-void DrawSurface::opcodeB(int16 x, int16 y, int8 param) {
-	int invert = -param;
+void DrawSurface::drawCircle(int16 x, int16 y, int16 diameter) {
+	int invert = -diameter;
 	int delta = 0;
 
 	do {
-		opcodeBPoint(x - delta, y - param);
-		opcodeBPoint(x + delta, y - param);
-		opcodeBPoint(x + delta, y + param);
-		opcodeBPoint(x - delta, y + param);
+		drawCirclePoint(x - delta, y - diameter);
+		drawCirclePoint(x + delta, y - diameter);
+		drawCirclePoint(x + delta, y + diameter);
+		drawCirclePoint(x - delta, y + diameter);
 
-		opcodeBPoint(x + param, y - delta);
-		opcodeBPoint(x - param, y - delta);
-		opcodeBPoint(x - param, y + delta);
-		opcodeBPoint(x + param, y + delta);
+		drawCirclePoint(x + diameter, y - delta);
+		drawCirclePoint(x - diameter, y - delta);
+		drawCirclePoint(x - diameter, y + delta);
+		drawCirclePoint(x + diameter, y + delta);
 
 		invert += (delta * 2) + 1;
 		++delta;
 		if (!((uint)invert & 0x80)) {
 			invert += 2;
-			param <<= 1;
-			invert -= param;
-			param >>= 1;
-			--param;
+			diameter <<= 1;
+			invert -= diameter;
+			diameter >>= 1;
+			--diameter;
 		}
-	} while (param >= delta);
+	} while (diameter >= delta);
 }
 
-void DrawSurface::opcodeBPoint(int16 x, int16 y) {
+void DrawSurface::drawCirclePoint(int16 x, int16 y) {
 	if (x < 280 && y < 160)
 		drawPixel(x, y);
 }
