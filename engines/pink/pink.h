@@ -54,8 +54,7 @@
  *      Fully Playable*
  *
  *  Known bugs:
- *      PDA is not usable(ActionText is not implemented)
- *      missing menu
+ *      PDA is partially usable(ActionText is not implemented)
  */
 
 struct ADGameDescription;
