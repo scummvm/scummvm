@@ -299,6 +299,7 @@ struct LingoArchive {
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
 	Common::HashMap<uint32, Symbol> eventHandlers;
+	Common::HashMap<uint32, Common::String> primaryEventHandlers;
 	SymbolHash functionHandlers;
 };
 
@@ -341,6 +342,7 @@ private:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
+	void setPrimaryEventHandler(LEvent event, Common::String &code);
 	void primaryEventHandler(LEvent event);
 	void registerInputEvent(LEvent event);
 	void registerFrameEvent(LEvent event);

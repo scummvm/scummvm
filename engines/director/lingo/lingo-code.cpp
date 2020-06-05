@@ -1224,6 +1224,8 @@ void LC::c_whencode() {
 	// the following when events are supported by D3
 	if (eventname.equalsIgnoreCase("keyDown")) {
 		g_lingo->setTheEntity(kTheKeyDownScript, nullId, kTheNOField, code);
+	} else if (eventname.equalsIgnoreCase("keyUp")) {
+		g_lingo->setTheEntity(kTheKeyUpScript, nullId, kTheNOField, code);
 	} else if (eventname.equalsIgnoreCase("mouseDown")) {
 		g_lingo->setTheEntity(kTheMouseDownScript, nullId, kTheNOField, code);
 	} else if (eventname.equalsIgnoreCase("mouseUp")) {
