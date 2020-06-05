@@ -373,6 +373,20 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_keyCode;
 		break;
+	case kTheKeyDownScript:
+		d.type = STRING;
+		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventKeyDown))
+			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventKeyDown]);
+		else
+			d.u.s = new Common::String();
+		break;
+	case kTheKeyUpScript:
+		d.type = STRING;
+		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventKeyUp))
+			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventKeyUp]);
+		else
+			d.u.s = new Common::String();
+		break;
 	case kTheLastClick:
 		d.type = INT;
 		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastClickTime;
@@ -455,6 +469,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
 		break;
+	case kTheMouseDownScript:
+		d.type = STRING;
+		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventMouseDown))
+			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventMouseDown]);
+		else
+			d.u.s = new Common::String();
+		break;
 	case kTheMouseH:
 		d.type = INT;
 		d.u.i = g_system->getEventManager()->getMousePos().x;
@@ -466,6 +487,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMouseUp:
 		d.type = INT;
 		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
+		break;
+	case kTheMouseUpScript:
+		d.type = STRING;
+		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventMouseUp))
+			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventMouseUp]);
+		else
+			d.u.s = new Common::String();
 		break;
 	case kThePerFrameHook:
 		d = _perFrameHook;
@@ -524,6 +552,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastTimerReset;
 		break;
+	case kTheTimeoutScript:
+		d.type = STRING;
+		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventTimeout))
+			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventTimeout]);
+		else
+			d.u.s = new Common::String();
+		break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		break;
@@ -552,6 +587,18 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_floatPrecision = MAX(0, MIN(_floatPrecision, 19)); // 0 to 19
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		break;
+	case kTheKeyDownScript:
+		setPrimaryEventHandler(kEventKeyDown, d.asString());
+		break;
+	case kTheKeyUpScript:
+		setPrimaryEventHandler(kEventKeyUp, d.asString());
+		break;
+	case kTheMouseDownScript:
+		setPrimaryEventHandler(kEventMouseDown, d.asString());
+		break;
+	case kTheMouseUpScript:
+		setPrimaryEventHandler(kEventMouseUp, d.asString());
+		break;
 	case kThePerFrameHook:
 		_perFrameHook = d;
 		break;
@@ -574,6 +621,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheSprite:
 		setTheSprite(id, field, d);
+		break;
+	case kTheTimeoutScript:
+		setPrimaryEventHandler(kEventTimeout, d.asString());
 		break;
 	default:
 		warning("Lingo::setTheEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));

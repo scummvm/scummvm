@@ -98,6 +98,15 @@ int Lingo::getEventCount() {
 	return _eventQueue.size();
 }
 
+void Lingo::setPrimaryEventHandler(LEvent event, const Common::String &code) {
+	debugC(3, kDebugLingoExec, "setting primary event handler (%s)", _eventHandlerTypes[event]);
+	_archives[_archiveIndex].primaryEventHandlers[event] = code;
+	pushContext();
+	g_lingo->_localvars = new SymbolHash;
+	addCode(code.c_str(), kGlobalScript, event);
+	popContext();
+}
+
 void Lingo::primaryEventHandler(LEvent event) {
 	/* When an event occurs the message [...] is first sent to a
 	 * primary event handler: [... if exists it is executed] and the
@@ -105,14 +114,14 @@ void Lingo::primaryEventHandler(LEvent event) {
 	 * the message by including the dontPassEventCommand in the script
 	 * [D4 docs page 77]
 	 */
-	debugC(3, kDebugLingoExec, "STUB: primary event handler (%s) not implemented", _eventHandlerTypes[event]);
+	debugC(3, kDebugLingoExec, "calling primary event handler (%s)", _eventHandlerTypes[event]);
 	switch (event) {
 	case kEventMouseDown:
 	case kEventMouseUp:
 	case kEventKeyUp:
 	case kEventKeyDown:
 	case kEventTimeout:
-		// TODO
+		executeScript(kGlobalScript, event, 0);
 		break;
 	default:
 		/* N.B.: No primary event handlers for events other than
@@ -122,13 +131,6 @@ void Lingo::primaryEventHandler(LEvent event) {
 		 */
 		warning("primaryEventHandler() on event other than mouseDown, mouseUp, keyUp, keyDown, timeout");
 	}
-#ifdef DEBUG_DONTPASSEVENT
-	// #define DEBUG_DONTPASSEVENT to simulate raising of the dontPassEvent flag
-	_dontPassEvent = true;
-	debugC(3, kDebugLingoExec, "STUB: primaryEventHandler raising dontPassEvent");
-#else
-	debugC(3, kDebugLingoExec, "STUB: primaryEventHandler not raising dontPassEvent");
-#endif
 }
 
 void Lingo::registerInputEvent(LEvent event) {
@@ -182,10 +184,6 @@ void Lingo::registerInputEvent(LEvent event) {
 				_eventQueue.push(LingoEvent(kEventNone, kSpriteScript, sprite->_castId + score->_castIDoffset));
 			_eventQueue.push(LingoEvent(event, kSpriteScript, sprite->_castId + score->_castIDoffset));
 		}
-	}
-	if (event == kEventKeyDown) {
-		// TODO: is the above condition necessary or useful?
-		_eventQueue.push(LingoEvent(event, kGlobalScript, 0));
 	}
 
 	runMovieScript(event);
