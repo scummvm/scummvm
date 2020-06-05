@@ -885,6 +885,11 @@ begin_credits("Credits");
 				add_person("Matthew Hoops", "clone2727", "(retired)");
 			end_section();
 
+            begin_section("Petka");
+				add_person("Andrei Prykhodko", "whiterandrek", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
 			begin_section("Pink");
 				add_person("Andrei Prykhodko", "whiterandrek", "");
 				add_person("Eugene Sandulenko", "sev", "");
