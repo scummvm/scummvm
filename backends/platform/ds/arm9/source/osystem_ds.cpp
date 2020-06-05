@@ -42,7 +42,7 @@
 #include "common/str.h"
 #include "graphics/surface.h"
 #include "touchkeyboard.h"
-#include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/fs/devoptab/devoptab-fs-factory.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/saves/default/default-saves.h"
@@ -95,7 +95,7 @@ OSystem_DS::OSystem_DS()
 	_instance = this;
 //	_mixer = NULL;
 	//_frameBufferExists = false;
-	_fsFactory = new POSIXFilesystemFactory();
+	_fsFactory = new DevoptabFilesystemFactory();
 }
 
 OSystem_DS::~OSystem_DS() {
