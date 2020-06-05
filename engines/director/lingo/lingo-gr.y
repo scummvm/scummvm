@@ -110,6 +110,15 @@ static void endDef() {
 	g_lingo->_methodVarsStash = nullptr;
 }
 
+static VarType globalCheck() {
+	// If in a definition, assume variables are local unless
+	// they were declared global with `global varname`
+	if (g_lingo->_indef == kStateInDef) {
+		return kVarLocal;
+	}
+	return kVarGlobal;
+}
+
 static void mVar(Common::String *s, VarType type) {
 	if (!g_lingo->_methodVars->contains(*s)) {
 		(*g_lingo->_methodVars)[*s] = type;
@@ -195,7 +204,7 @@ programline: /* empty */
 asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
-		mVar($ID, kVarLocal);
+		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -219,7 +228,7 @@ asgn: tPUT expr tINTO ID 		{
 	| tSET ID tEQ expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
-		mVar($ID, kVarLocal);
+		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -233,7 +242,7 @@ asgn: tPUT expr tINTO ID 		{
 	| tSET ID tTO expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
-		mVar($ID, kVarLocal);
+		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -299,7 +308,7 @@ stmt: stmtoneliner
 	| tREPEAT tWITH ID tEQ expr[init]
 				{ g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
-				  mVar($ID, kVarLocal); }
+				  mVar($ID, globalCheck()); }
 			varassign
 				{ g_lingo->code1(LC::c_eval);
 				  g_lingo->codeString($ID->c_str()); }
@@ -330,7 +339,7 @@ stmt: stmtoneliner
 	| tREPEAT tWITH ID tEQ expr[init]
 				{ g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
-				  mVar($ID, kVarLocal); }
+				  mVar($ID, globalCheck()); }
 			varassign
 				{ g_lingo->code1(LC::c_eval);
 				  g_lingo->codeString($ID->c_str()); }
@@ -382,7 +391,7 @@ stmt: stmtoneliner
 				  g_lingo->codeFunc(&getAt, 2);
 				  g_lingo->code1(LC::c_varpush);
 				  g_lingo->codeString($ID->c_str());
-				  mVar($ID, kVarLocal);
+				  mVar($ID, globalCheck());
 				  g_lingo->code1(LC::c_assign); }
 			stmtlist tENDREPEAT {
 
