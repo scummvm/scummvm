@@ -72,7 +72,6 @@ Score::Score(DirectorEngine *vm) {
 	_nextFrameTime = 0;
 	_flags = 0;
 	_stopPlay = false;
-	_stageColor = 0;
 
 	_castIDoffset = 0;
 
