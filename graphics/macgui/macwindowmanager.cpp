@@ -446,8 +446,9 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 
 	if (_activeWindow != -1) {
 		if ((_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
-				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y))
-				|| (_activeWidget && _activeWidget->isEditable())) {
+				 ((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) ||
+				(_activeWidget && _activeWidget->isEditable() &&
+				 _activeWidget->getDimensions().contains(event.mouse.x, event.mouse.y))) {
 			if (_cursorIsArrow) {
 				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 				_cursorIsArrow = false;
