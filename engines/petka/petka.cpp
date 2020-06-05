@@ -237,7 +237,7 @@ void PetkaEngine::loadPart(byte part) {
 
 	_resMgr.reset(new QManager(*this));
 	_resMgr->init();
-	_dialogMan.reset(new BigDialogue());
+	_dialogMan.reset(new BigDialogue(*this));
 	_qsystem.reset(new QSystem());
 	_qsystem->init();
 }
