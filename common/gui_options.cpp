@@ -128,12 +128,7 @@ const String getGameGUIOptionsDescription(const String &options) {
 
 void updateGameGUIOptions(const String &options, const String &langOption) {
 	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption;
-
-	if ((!options.empty() && !ConfMan.hasKey("guioptions")) ||
-	    (ConfMan.hasKey("guioptions") && ConfMan.get("guioptions") != newOptionString)) {
-		ConfMan.set("guioptions", newOptionString);
-		ConfMan.flushToDisk();
-	}
+	ConfMan.setAndFlush("guioptions", newOptionString);
 }
 
 
