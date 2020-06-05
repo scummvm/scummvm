@@ -1019,8 +1019,12 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	if (checked)
 		dd = rtl ? kDDCheckboxSelectedRTL : kDDCheckboxSelected;
 
-	if (state == kStateDisabled)
-		dd = checked ? rtl ? kDDCheckboxDisabledSelectedRTL : kDDCheckboxDisabledSelected : rtl ? kDDCheckboxDisabledRTL : kDDCheckboxDisabled;
+	if (state == kStateDisabled) {
+		if (checked)
+			dd = rtl ? kDDCheckboxDisabledSelectedRTL : kDDCheckboxDisabledSelected;
+		else
+			dd = rtl ? kDDCheckboxDisabledRTL : kDDCheckboxDisabled;
+	}
 
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 	r2.bottom = r2.top + checkBoxSize;
