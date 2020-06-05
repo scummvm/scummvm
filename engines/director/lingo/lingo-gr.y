@@ -103,7 +103,6 @@ static void startDef() {
 static void endDef() {
 	g_lingo->clearArgStack();
 	inNone();
-	g_lingo->_ignoreMe = false;
 
 	delete g_lingo->_methodVars;
 	g_lingo->_methodVars = g_lingo->_methodVarsStash;
@@ -727,7 +726,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
 		delete $on; }
 
 on:  tON { startDef(); } ID 	{
-		$$ = $ID; g_lingo->_currentFactory = NULL; g_lingo->_ignoreMe = true; }
+		$$ = $ID; g_lingo->_currentFactory = NULL; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
 	| ID						{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = 1; delete $ID; }
