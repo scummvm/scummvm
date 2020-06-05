@@ -81,10 +81,10 @@ Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType ty
 	Sound *sound = findSound(name);
 	if (sound)
 		return sound;
-	Common::SeekableReadStream *s = g_vm->openFile(name, false);
+	Common::SeekableReadStream *s = _vm.openFile(name, false);
 	if (s) {
 		debug("SoundMgr: added sound %s", name.c_str());
-		sound = new Sound(g_vm->openFile(name, false), type);
+		sound = new Sound(_vm.openFile(name, false), type);
 		_sounds.getVal(name).reset(sound);
 	}
 	return sound;
