@@ -244,7 +244,6 @@ static struct BuiltinProto {
 	// References
 	{ "cast",			LB::b_cast,			1, 1, false, 4, RBLTIN },	//			D4 f
 	{ "field",			LB::b_field,		1, 1, false, 3, RBLTIN },	//		D3 f
-//	{ "me",				LB::b_me,			-1,0, false, 3, FBLTIN },	//		D3				// works as normal ID, see c_varpush
 	{ "script",			LB::b_script,		1, 1, false, 4, RBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, false, 4, RBLTIN },	//			D4 f
 	// Chunk operations

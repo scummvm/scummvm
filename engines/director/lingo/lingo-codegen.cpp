@@ -381,31 +381,6 @@ int Lingo::codeFunc(Common::String *s, int numpar) {
 	return ret;
 }
 
-// int Lingo::codeMe(Common::String *method, int numpar) {
-// 	// Check if need to encode reference to the factory
-// 	if (method == nullptr) {
-// 		int ret = g_lingo->code1(LC::c_factory);
-// 		g_lingo->codeString(g_lingo->_currentFactory->name->c_str());
-
-// 		return ret;
-// 	}
-
-// 	int ret = g_lingo->code1(LC::c_call);
-
-// 	Common::String m(g_lingo->_currentFactory->name);
-
-// 	m += '-';
-// 	m += *method;
-
-// 	g_lingo->codeString(m.c_str());
-
-// 	inst num = 0;
-// 	WRITE_UINT32(&num, numpar);
-// 	g_lingo->code1(num);
-
-// 	return ret;
-// }
-
 void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
 	debugC(4, kDebugLingoCompile, "codeLabel: Added label %d", label);
