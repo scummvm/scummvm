@@ -286,6 +286,9 @@ MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
 	fs/posix/posix-iostream.o \
+	fs/posix-drives/posix-drives-fs.o \
+	fs/posix-drives/posix-drives-fs-factory.o \
+	fs/devoptab/devoptab-fs-factory.o \
 	plugins/ds/ds-provider.o
 endif
 
