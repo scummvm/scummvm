@@ -211,6 +211,49 @@ void LC::c_xpop() {
 	g_lingo->pop();
 }
 
+void Lingo::pushContext(const Symbol *funcSym) {
+	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
+	CFrame *fp = new CFrame;
+
+	fp->retpc = g_lingo->_pc;
+	fp->retscript = g_lingo->_currentScript;
+	fp->retctx = g_lingo->_currentScriptContext;
+	fp->retarchive = g_lingo->_archiveIndex;
+	fp->localvars = g_lingo->_localvars;
+	fp->retMeObj = g_lingo->_currentMeObj;
+	if (funcSym) {
+		fp->sp = *funcSym;
+	}
+
+	g_lingo->_callstack.push_back(fp);
+
+	if (debugChannelSet(5, kDebugLingoExec)) {
+		g_lingo->printCallStack(0);
+	}
+}
+
+void Lingo::popContext() {
+	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size());
+	CFrame *fp = g_lingo->_callstack.back();
+	g_lingo->_callstack.pop_back();
+
+	g_lingo->_currentScript = fp->retscript;
+	g_lingo->_currentScriptContext = fp->retctx;
+	g_lingo->_archiveIndex = fp->retarchive;
+	g_lingo->_pc = fp->retpc;
+	g_lingo->_currentMeObj = fp->retMeObj;
+
+	// Restore local variables
+	g_lingo->cleanLocalVars();
+	g_lingo->_localvars = fp->localvars;
+
+	if (debugChannelSet(5, kDebugLingoExec)) {
+		g_lingo->printCallStack(g_lingo->_pc);
+	}
+
+	delete fp;
+}
+
 void LC::c_printtop(void) {
 	Datum d = g_lingo->pop();
 
@@ -1346,15 +1389,7 @@ void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 		g_lingo->push(d);
 	}
 
-	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
-	CFrame *fp = new CFrame;
-
-	fp->retpc = g_lingo->_pc;
-	fp->retscript = g_lingo->_currentScript;
-	fp->retctx = g_lingo->_currentScriptContext;
-	fp->retarchive = g_lingo->_archiveIndex;
-	fp->localvars = g_lingo->_localvars;
-	fp->retMeObj = g_lingo->_currentMeObj;
+	g_lingo->pushContext(&funcSym);
 
 	// Create new set of local variables
 	SymbolHash *localvars = new SymbolHash;
@@ -1403,14 +1438,6 @@ void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 		g_lingo->_currentMeObj = nullptr;
 	}
 
-	fp->sp = funcSym;
-
-	g_lingo->_callstack.push_back(fp);
-
-	if (debugChannelSet(5, kDebugLingoExec)) {
-		g_lingo->printCallStack(0);
-	}
-
 	g_lingo->_currentScript = funcSym.u.defn;
 	if (funcSym.ctx) {
 		g_lingo->_currentScriptContext = funcSym.ctx;
@@ -1427,11 +1454,7 @@ void LC::c_procret() {
 		return;
 	}
 
-	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size());
-
 	CFrame *fp = g_lingo->_callstack.back();
-	g_lingo->_callstack.pop_back();
-
 	if (g_lingo->_currentMeObj && g_lingo->_currentMeObj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
 		// Return the newly created object after executing mNew
 		Datum d;
@@ -1440,22 +1463,7 @@ void LC::c_procret() {
 		g_lingo->push(d);
 	}
 
-	g_lingo->_currentScript = fp->retscript;
-	g_lingo->_currentScriptContext = fp->retctx;
-	g_lingo->_archiveIndex = fp->retarchive;
-	g_lingo->_pc = fp->retpc;
-	g_lingo->_currentMeObj = fp->retMeObj;
-
-	if (debugChannelSet(5, kDebugLingoExec)) {
-		g_lingo->printCallStack(g_lingo->_pc);
-	}
-
-	g_lingo->cleanLocalVars();
-
-	// Restore local variables
-	g_lingo->_localvars = fp->localvars;
-
-	delete fp;
+	g_lingo->popContext();
 
 	if (g_lingo->_callstack.size() == 0) {
 		debugC(5, kDebugLingoExec, "Call stack empty, returning");
