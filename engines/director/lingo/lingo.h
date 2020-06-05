@@ -551,7 +551,7 @@ public:
 
 public:
 	void executeImmediateScripts(Frame *frame);
-	void executePerFrameHook();
+	void executePerFrameHook(int frame, int subframe);
 };
 
 extern Lingo *g_lingo;
