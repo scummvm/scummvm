@@ -47,6 +47,7 @@
 #include "engines/wintermute/base/gfx/opengl/light3d.h"
 #include "engines/wintermute/base/gfx/opengl/loader3ds.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
+#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/wintermute.h"
 #include "math/glmath.h"
@@ -567,28 +568,38 @@ float AdSceneGeometry::getHeightAt(Math::Vector3d pos, float tolerance, bool *in
 	Math::Vector3d intersection;
 	Math::Vector3d dir = Math::Vector3d(0, -1, 0);
 
-	warning("AdSceneGeometry::getHeightAt not yet implemented");
+	pos.y() += tolerance;
 
-	//	Pos.y += Tolerance;
+	bool intFoundTmp = false;
 
-	//	bool int_found = false;
-	//	for(int i=0; i<_planes.size(); i++){
-	//		for(int j=0; j<_planes[i]->m_Mesh->m_NumFaces; j++){
-	//			if(C3DUtils::IntersectTriangle(
-	//						Pos, dir,
-	//						_planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[0]].m_Pos,
-	//						_planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[1]].m_Pos,
-	//						_planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[2]].m_Pos,
-	//						&intersection.x, &intersection.y, &intersection.z)){
-	//				if(intersection.y > Pos.y+Tolerance) continue; // only fall down
-	//				if(!int_found || fabs(ret - Pos.y) > fabs(intersection.y - Pos.y)) ret = intersection.y;
-	//				int_found = true;
-	//			}
+	for (uint32 i = 0; i < _planes.size(); i++) {
+		for (int j = 0; j < _planes[i]->_mesh->faceCount(); j++) {
+			uint16 *triangle = _planes[i]->_mesh->getFace(j);
+			float *v0 = _planes[i]->_mesh->getVertexPosition(triangle[0]);
+			float *v1 = _planes[i]->_mesh->getVertexPosition(triangle[1]);
+			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
 
-	//		}
-	//	}
+			if (lineIntersectsTriangle(pos, dir,
+			                           Math::Vector3d(v0[0], v0[1], v0[2]),
+			                           Math::Vector3d(v1[0], v1[1], v1[2]),
+			                           Math::Vector3d(v2[0], v2[1], v2[2]),
+			                           intersection.x(), intersection.y(), intersection.z())) {
+				if (intersection.y() > pos.y() + tolerance) {
+					continue; // only fall down
+				}
 
-	//	if(IntFound) *IntFound = int_found;
+				if (!intFoundTmp || ABS(ret - pos.y()) > ABS(intersection.y() - pos.y())) {
+					ret = intersection.y();
+				}
+
+				intFoundTmp = true;
+			}
+		}
+	}
+
+	if (intFound) {
+		*intFound = intFoundTmp;
+	}
 
 	return ret;
 }
