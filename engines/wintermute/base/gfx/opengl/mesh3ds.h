@@ -23,6 +23,7 @@
 #ifndef WINTERMUTE_MESH_H
 #define WINTERMUTE_MESH_H
 
+#include "common/memstream.h"
 #include "common/scummsys.h"
 #include "graphics/opengl/system_headers.h"
 
@@ -37,7 +38,7 @@ public:
 	~Mesh3DS();
 	void computeNormals();
 	void fillVertexBuffer(uint32 color);
-	bool loadFrom3DS(byte **buffer);
+	bool loadFrom3DS(Common::MemoryReadStream &fileStream);
 	void render();
 	void dumpVertexCoordinates(const char *filename);
 

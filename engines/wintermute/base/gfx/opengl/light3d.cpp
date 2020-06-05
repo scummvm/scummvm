@@ -89,56 +89,39 @@ bool Light3D::setLight(int index) {
 	return true;
 }
 
-bool Light3D::loadFrom3DS(byte **buffer) {
-	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
-	byte *end = *buffer + whole_chunk_size - 2;
-	*buffer += 4;
+bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
+	uint32 wholeChunkSize = fileStream.readUint32LE();
+	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
-	_position.x() = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
-	_position.z() = -*reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
-	_position.y() = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
+	_position.x() = fileStream.readFloatLE();
+	_position.z() = -fileStream.readFloatLE();
+	_position.y() = fileStream.readFloatLE();
 
-	while (*buffer < end) {
-		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
+	while (fileStream.pos() < end) {
+		uint16 chunkId = fileStream.readUint16LE();
+		uint32 chunkSize = fileStream.readUint32LE();
 
-		switch (chunk_id) {
+		switch (chunkId) {
 		case SPOTLIGHT:
-			*buffer += 6;
-
-			_target.x() = *reinterpret_cast<float *>(*buffer);
-			*buffer += 4;
-			_target.z() = -*reinterpret_cast<float *>(*buffer);
-			*buffer += 4;
-			_target.y() = *reinterpret_cast<float *>(*buffer);
-			*buffer += 4;
+			_target.x() = fileStream.readFloatLE();
+			_target.z() = -fileStream.readFloatLE();
+			_target.y() = fileStream.readFloatLE();
 
 			// this is appearently not used
-			*buffer += 4;
+			fileStream.readFloatLE();
 
-			_falloff = *reinterpret_cast<float *>(*buffer);
-			*buffer += 4;
-
+			_falloff = fileStream.readFloatLE();
 			_isSpotlight = true;
 			break;
 
 		case LIGHT_IS_OFF:
-			*buffer += 6;
-
 			_active = false;
 			break;
 
 		case RGB_BYTE: {
-			*buffer += 6;
-
-			byte r = **buffer;
-			*buffer += 1;
-			byte g = **buffer;
-			*buffer += 1;
-			byte b = **buffer;
-			*buffer += 1;
+			byte r = fileStream.readByte();
+			byte g = fileStream.readByte();
+			byte b = fileStream.readByte();
 
 			_diffuseColor = r;
 			_diffuseColor |= g << 8;
@@ -148,14 +131,9 @@ bool Light3D::loadFrom3DS(byte **buffer) {
 		}
 
 		case RGB_FLOAT: {
-			*buffer += 6;
-
-			float r = *reinterpret_cast<float *>(*buffer);
-			*buffer += 4;
-			float g = *reinterpret_cast<float *>(*buffer);
-			*buffer += 4;
-			float b = *reinterpret_cast<float *>(*buffer);
-			*buffer += 4;
+			float r = fileStream.readFloatLE();
+			float g = fileStream.readFloatLE();
+			float b = fileStream.readFloatLE();
 
 			_diffuseColor = static_cast<int32>(r * 255);
 			_diffuseColor |= static_cast<int32>(g * 255) << 8;
@@ -171,8 +149,8 @@ bool Light3D::loadFrom3DS(byte **buffer) {
 		case SPOT_SHADOW_MAP:
 		case SPOT_RAY_TRACE_BIAS:
 		case SPOT_RAY_TRACE:
-			*buffer += *reinterpret_cast<uint32 *>(*buffer + 2);
 		default:
+			fileStream.seek(chunkSize - 6, SEEK_CUR);
 			break;
 		}
 	}

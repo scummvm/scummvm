@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_LIGHT3D_H
 #define WINTERMUTE_LIGHT3D_H
 
+#include "common/memstream.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/base_scriptable.h"
 #include "math/matrix4.h"
@@ -53,7 +54,7 @@ public:
 	bool _isAvailable;
 
 	bool setLight(int index = 0);
-	bool loadFrom3DS(byte **buffer);
+	bool loadFrom3DS(Common::MemoryReadStream &fileStream);
 };
 
 } // namespace Wintermute

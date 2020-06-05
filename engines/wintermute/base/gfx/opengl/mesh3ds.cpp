@@ -56,11 +56,14 @@ void Mesh3DS::fillVertexBuffer(uint32 color) {
 	glBufferData(GL_ARRAY_BUFFER, _vertexCount * kVertexSize, 0, GL_STATIC_DRAW);
 	uint32 *bufferData = reinterpret_cast<uint32 *>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 
+	float *bufferFloatData = reinterpret_cast<float *>(bufferData);
+	float *vertexFloatData = reinterpret_cast<float *>(_vertexData);
+
 	for (int i = 0; i < _vertexCount; ++i) {
-		*reinterpret_cast<uint32 *>(bufferData + 4 * i) = color;
-		*reinterpret_cast<float *>(bufferData + 4 * i + 1) = *reinterpret_cast<float *>(_vertexData + 4 * 3 * i);
-		*reinterpret_cast<float *>(bufferData + 4 * i + 2) = *reinterpret_cast<float *>(_vertexData + 4 * 3 * i + 4);
-		*reinterpret_cast<float *>(bufferData + 4 * i + 3) = *reinterpret_cast<float *>(_vertexData + 4 * 3 * i + 8);
+		bufferData[4 * i] = color;
+		bufferFloatData[4 * i + 1] = vertexFloatData[3 * i + 0];
+		bufferFloatData[4 * i + 2] = vertexFloatData[3 * i + 1];
+		bufferFloatData[4 * i + 3] = vertexFloatData[3 * i + 2];
 	}
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -71,49 +74,40 @@ void Mesh3DS::fillVertexBuffer(uint32 color) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-bool Wintermute::Mesh3DS::loadFrom3DS(byte **buffer) {
-	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
-	byte *end = *buffer + whole_chunk_size - 2;
-	*buffer += 4;
+bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
+	uint32 wholeChunkSize = fileStream.readUint32LE();
+	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
-	while (*buffer < end) {
-		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
+	while (fileStream.pos() < end) {
+		uint16 chunkId = fileStream.readUint16LE();
+		uint32 chunkSize = fileStream.readUint32LE();
 
-		switch (chunk_id) {
+		switch (chunkId) {
 		case VERTICES:
-			*buffer += 6;
-			_vertexCount = *reinterpret_cast<uint16 *>(*buffer);
-			*buffer += 2;
-
+			_vertexCount = fileStream.readUint16LE();
 			_vertexData = new byte[4 * 3 * _vertexCount];
 
 			for (int i = 0; i < _vertexCount; ++i) {
-				*reinterpret_cast<float *>(_vertexData + 4 * 3 * i) = *reinterpret_cast<float *>(*buffer);
-				*buffer += 4;
-				*reinterpret_cast<float *>(_vertexData + 4 * 3 * i + 8) = -*reinterpret_cast<float *>(*buffer);
-				*buffer += 4;
-				*reinterpret_cast<float *>(_vertexData + 4 * 3 * i + 4) = *reinterpret_cast<float *>(*buffer);
-				*buffer += 4;
+				float *floatVertexData = reinterpret_cast<float *>(_vertexData);
+				// note that .3ds has a right handed coordinate system
+				// with the z axis pointing upwards
+				floatVertexData[3 * i + 0] = fileStream.readFloatLE();
+				floatVertexData[3 * i + 2] = -fileStream.readFloatLE();
+				floatVertexData[3 * i + 1] = fileStream.readFloatLE();
 			}
 			break;
 
 		case FACES: {
-			*buffer += 6;
-			uint16 faceCount = *reinterpret_cast<uint16 *>(*buffer);
+			uint16 faceCount = fileStream.readUint16LE();
 			_indexCount = 3 * faceCount;
-			*buffer += 2;
-
 			_indexData = new uint16[_indexCount];
 
 			for (int i = 0; i < faceCount; ++i) {
-				_indexData[i * 3] = *reinterpret_cast<uint16 *>(*buffer);
-				*buffer += 2;
-				_indexData[i * 3 + 2] = *reinterpret_cast<uint16 *>(*buffer);
-				*buffer += 2;
-				_indexData[i * 3 + 1] = *reinterpret_cast<uint16 *>(*buffer);
-				*buffer += 2;
+				_indexData[i * 3] = fileStream.readUint16LE();
+				_indexData[i * 3 + 2] = fileStream.readUint16LE();
+				_indexData[i * 3 + 1] = fileStream.readUint16LE();
 				// not used appearently
-				*buffer += 2;
+				fileStream.readUint16LE();
 			}
 			break;
 		}
@@ -121,8 +115,8 @@ bool Wintermute::Mesh3DS::loadFrom3DS(byte **buffer) {
 		case MAPPING_COORDS:
 		case LOCAL_COORDS:
 		case SMOOTHING_GROUPS:
-			*buffer += *reinterpret_cast<uint32 *>(*buffer + 2);
 		default:
+			fileStream.seek(chunkSize - 6, SEEK_CUR);
 			break;
 		}
 	}

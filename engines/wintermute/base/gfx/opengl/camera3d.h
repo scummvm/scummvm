@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_CAMERA3D_H
 #define WINTERMUTE_CAMERA3D_H
 
+#include "common/memstream.h"
 #include "engines/wintermute/base/base_named_object.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
@@ -52,7 +53,7 @@ public:
 	float _nearClipPlane;
 	float _farClipPlane;
 
-	bool loadFrom3DS(byte **buffer);
+	bool loadFrom3DS(Common::MemoryReadStream &fileStream);
 };
 
 } // namespace Wintermute

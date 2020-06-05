@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
 #include "engines/wintermute/base/gfx/opengl/light3d.h"
@@ -28,29 +29,28 @@
 
 namespace Wintermute {
 
-bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh3DS *>& meshes, BaseArray<Common::String>& meshNames,
-				   BaseArray<Wintermute::Light3D *>& lights, BaseArray<Wintermute::Camera3D *>& cameras) {
-	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
-	byte *end = *buffer + whole_chunk_size - 2;
-	*buffer += 4;
+bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
+                   BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras) {
+	uint32 wholeChunkSize = fileStream.readUint32LE();
+	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
-	char* name_begin = reinterpret_cast<char *>(*buffer);
-	int name_size = strlen(reinterpret_cast<char *>(*buffer)) + 1;
-	*buffer += name_size;
+	Common::String name;
+	for (int8 current = fileStream.readByte(); current != 0; current = fileStream.readByte()) {
+		name.insertChar(current, name.size());
+	}
 
-	while (*buffer < end) {
-		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
+	while (fileStream.pos() < end) {
+		uint16 chunkId = fileStream.readUint16LE();
 
 		Mesh3DS *mesh;
 		Light3D *light;
 		Camera3D *camera;
 
-		switch (chunk_id) {
+		switch (chunkId) {
 		case MESH:
-			*buffer += 2;
 			mesh = new Mesh3DS;
-			if (mesh->loadFrom3DS(buffer)) {
-				meshNames.add(Common::String(name_begin));
+			if (mesh->loadFrom3DS(fileStream)) {
+				meshNames.add(name);
 				meshes.add(mesh);
 			} else {
 				delete mesh;
@@ -58,10 +58,9 @@ bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh3DS *>& meshes, Base
 			break;
 
 		case LIGHT:
-			*buffer += 2;
 			light = new Light3D(nullptr);
-			if (light->loadFrom3DS(buffer)) {
-				light->setName(reinterpret_cast<char *>(name_begin));
+			if (light->loadFrom3DS(fileStream)) {
+				light->setName(name.c_str());
 				lights.add(light);
 			} else {
 				delete light;
@@ -69,10 +68,9 @@ bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh3DS *>& meshes, Base
 			break;
 
 		case CAMERA:
-			*buffer += 2;
 			camera = new Camera3D(nullptr);
-			if (camera->loadFrom3DS(buffer)) {
-				camera->setName(reinterpret_cast<char *>(name_begin));
+			if (camera->loadFrom3DS(fileStream)) {
+				camera->setName(name.c_str());
 				cameras.add(camera);
 			} else {
 				delete camera;
@@ -87,33 +85,34 @@ bool load3DSObject(byte **buffer, BaseArray<Wintermute::Mesh3DS *>& meshes, Base
 	return true;
 }
 
-
-
 bool load3DSFile(const char *filename, BaseArray<Wintermute::Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
-				   BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras) {
-	uint32 file_size = 0;
-	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &file_size);
+                 BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras) {
+	uint32 fileSize = 0;
+	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &fileSize);
 
 	if (buffer == nullptr) {
 		return false;
 	}
 
-	for (byte *iter = buffer; iter < buffer + file_size; ) {
-		uint16 chunk_id = *reinterpret_cast<uint16 *>(iter);
-		iter += 2;
+	Common::MemoryReadStream fileStream(buffer, fileSize);
 
-		switch (chunk_id) {
+	while (fileStream.pos() < fileStream.size()) {
+		uint16 chunkId = fileStream.readUint16LE();
+		uint32 chunkSize = 0;
+
+		switch (chunkId) {
 		case MAIN:
 		case EDITOR:
-			iter += 4;
+			chunkSize = fileStream.readUint32LE();
 			break;
 
 		case OBJECT:
-			load3DSObject(&iter, meshes, meshNames, lights, cameras);
+			load3DSObject(fileStream, meshes, meshNames, lights, cameras);
 			break;
 
 		default:
-			iter += (*reinterpret_cast<uint32 *>(iter) - 2);
+			chunkSize = fileStream.readUint32LE();
+			fileStream.seek(chunkSize - 6, SEEK_CUR);
 			break;
 		}
 	}
@@ -123,4 +122,4 @@ bool load3DSFile(const char *filename, BaseArray<Wintermute::Mesh3DS *> &meshes,
 	return true;
 }
 
-}
+} // namespace Wintermute

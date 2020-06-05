@@ -50,30 +50,21 @@ Camera3D::Camera3D(BaseGame *inGame) : BaseNamedObject(inGame),
 Camera3D::~Camera3D() {
 }
 
-bool Camera3D::loadFrom3DS(byte **buffer) {
-	uint32 whole_chunk_size = *reinterpret_cast<uint32 *>(*buffer);
-	byte *end = *buffer + whole_chunk_size - 2;
-	*buffer += 4; // chunk size
+bool Camera3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
+	uint32 wholeChunkSize = fileStream.readUint32LE();
+	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
-	_position.x() = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
-	_position.z() = -*reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
-	_position.y() = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
+	_position.x() = fileStream.readFloatLE();
+	_position.z() = -fileStream.readFloatLE();
+	_position.y() = fileStream.readFloatLE();
 
-	_target.x() = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
-	_target.z() = -*reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
-	_target.y() = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
+	_target.x() = fileStream.readFloatLE();
+	_target.z() = -fileStream.readFloatLE();
+	_target.y() = fileStream.readFloatLE();
 
-	_bank = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
+	_bank = fileStream.readFloatLE();
 
-	float lens = *reinterpret_cast<float *>(*buffer);
-	*buffer += 4;
+	float lens = fileStream.readFloatLE();
 
 	if (lens > 0.0f) {
 		_fov = Math::Angle(1900.0f / lens).getRadians();
@@ -83,16 +74,12 @@ bool Camera3D::loadFrom3DS(byte **buffer) {
 
 	_originalFOV = _fov;
 
-	// this is overkill here, simplify it later
-	while (*buffer < end) {
-		uint16 chunk_id = *reinterpret_cast<uint16 *>(*buffer);
+	// discard all subchunks
+	while (fileStream.pos() < end) {
+		uint16 chunkId = fileStream.readUint16LE();
+		uint32 chunkSize = fileStream.readUint32LE();
 
-		switch (chunk_id) {
-		case 0x4720:
-			*buffer += *reinterpret_cast<uint16 *>(*buffer + 2);
-		default:
-			break;
-		}
+		fileStream.seek(chunkSize - 6, SEEK_CUR);
 	}
 
 	return true;
