@@ -40,6 +40,9 @@
 
 namespace Director {
 
+const uint32 wmMode = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
+	| Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen;
+
 DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
@@ -135,8 +138,7 @@ Common::Error DirectorEngine::run() {
 	_macBinary = nullptr;
 	_soundManager = nullptr;
 
-	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
-																			 | Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen);
+	_wm = new Graphics::MacWindowManager(wmMode);
 	_wm->setEngine(this);
 
 	_lingo = new Lingo(this);

@@ -549,7 +549,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheStillDown:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
+		d.u.i = _vm->_wm->_mouseDown;
 		break;
 	case kTheTimer:
 		d.type = INT;
@@ -576,6 +576,12 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	}
 
 	switch (entity) {
+	case kTheButtonStyle:
+		if (d.asInt())
+			g_director->_wm->_mode = Director::wmMode | Graphics::kWMModeButtonDialogStyle;
+		else
+			g_director->_wm->_mode = Director::wmMode;
+		break;
 	case kTheCast:
 		setTheCast(id, field, d);
 		break;
