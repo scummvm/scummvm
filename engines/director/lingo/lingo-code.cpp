@@ -1262,7 +1262,7 @@ void LC::call(const Common::String &name, int nargs) {
 		eventName.type = VAR;
 		Datum d = g_lingo->varFetch(eventName);
 		if (d.type == OBJECT) {
-			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), d.u.obj->name->c_str());
+			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to <%s>", name.c_str(), d.asString(true).c_str());
 			Object *target = d.u.obj;
 			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 			nargs -= 1;
