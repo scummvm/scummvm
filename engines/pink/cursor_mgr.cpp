@@ -32,7 +32,7 @@ CursorMgr::CursorMgr(PinkEngine *game, Page *page)
 	_time(0), _isPlayingAnimation(false),
 	_isSecondFrame(false), _firstFrameIndex(0)  {}
 
-void CursorMgr::setCursor(uint index, Common::Point point, const Common::String &itemName) {
+void CursorMgr::setCursor(byte index, Common::Point point, const Common::String &itemName) {
 	switch (index) {
 	case kClickableFirstFrameCursor:
 	case kPDAClickableFirstFrameCursor:
@@ -65,7 +65,7 @@ void CursorMgr::update() {
 }
 
 void CursorMgr::setCursor(const Common::String &cursorName, Common::Point point) {
-	uint index;
+	byte index;
 	if (cursorName == kCursorNameExitLeft)
 		index = kExitLeftCursor;
 	else if (cursorName == kCursorNameExitRight)
@@ -87,7 +87,7 @@ void CursorMgr::hideItem() {
 		_actor->setAction(kHideAction);
 }
 
-void CursorMgr::startAnimation(uint index) {
+void CursorMgr::startAnimation(byte index) {
 	if (_isPlayingAnimation)
 		return;
 

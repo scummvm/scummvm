@@ -45,7 +45,7 @@ public:
 private:
 	Common::String _fileName;
 	Sound _sound;
-	uint32 _volume;
+	byte _volume;
 	bool _isLoop;
 	bool _isBackground;
 };

@@ -65,8 +65,8 @@ private:
 
 	Command _command;
 
-	int _x;
-	int _y;
+	int16 _x;
+	int16 _y;
 
 	bool _hideOnStop;
 	bool _opaque;
