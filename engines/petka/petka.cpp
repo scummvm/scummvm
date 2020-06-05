@@ -91,7 +91,7 @@ Common::Error PetkaEngine::run() {
 	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
 	_soundMgr.reset(new SoundMgr(*this));
-	_vsys.reset(new VideoSystem());
+	_vsys.reset(new VideoSystem(*this));
 
 	loadPart(2);
 

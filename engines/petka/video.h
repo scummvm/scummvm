@@ -29,9 +29,11 @@ namespace Petka {
 
 class FlicDecoder;
 
+class PetkaEngine;
+
 class VideoSystem : public Graphics::Screen {
 public:
-	VideoSystem();
+	VideoSystem(PetkaEngine &vm);
 
 	void updateTime();
 	void update() override;
@@ -51,6 +53,7 @@ private:
 	void sort();
 
 private:
+	PetkaEngine &_vm;
 	uint32 _shakeTime;
 	uint32 _time;
 	bool _shake;

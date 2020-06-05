@@ -36,15 +36,15 @@ namespace Petka {
 const uint kShakeTime = 30;
 const int kShakeOffset = 3;
 
-VideoSystem::VideoSystem() :
-	_shake(false), _shift(false), _shakeTime(0), _time(0) {
+VideoSystem::VideoSystem(PetkaEngine &vm) :
+	_vm(vm), _shake(false), _shift(false), _shakeTime(0), _time(0) {
 	makeAllDirty();
 	_time = g_system->getMillis();
 	_allowAddingRects = true;
 }
 
 void VideoSystem::update() {
-	Interface *interface = g_vm->getQSystem()->_currInterface;
+	Interface *interface = _vm.getQSystem()->_currInterface;
 	uint32 time = g_system->getMillis();
 	if (interface) {
 		for (uint i = interface->_startIndex; i < interface->_objs.size(); ++i) {
@@ -128,7 +128,7 @@ void VideoSystem::setShake(bool shake) {
 }
 
 void VideoSystem::sort() {
-	Common::Array<QVisibleObject *> &objs = g_vm->getQSystem()->_currInterface->_objs;
+	Common::Array<QVisibleObject *> &objs = _vm.getQSystem()->_currInterface->_objs;
 	for (uint i = 0; i < objs.size() - 1; ++i) {
 		uint minIndex = i;
 		for (uint j = i + 1; j < objs.size(); ++j) {
