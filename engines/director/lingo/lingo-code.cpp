@@ -80,14 +80,12 @@ static struct FuncDescr {
 	{ LC::c_exitRepeat,		"c_exitRepeat",		"" },
 	{ LC::c_floatpush,		"c_floatpush",		"f" },
 	{ LC::c_ge,				"c_ge",				"" },
-	{ LC::c_global,			"c_global",			"s" },
 	{ LC::c_goto,			"c_goto",			"" },
 	{ LC::c_gotoloop,		"c_gotoloop",		"" },
 	{ LC::c_gotonext,		"c_gotonext",		"" },
 	{ LC::c_gotoprevious,	"c_gotoprevious",	"" },
 	{ LC::c_gt,				"c_gt",				"" },
 	{ LC::c_hilite,			"c_hilite",			"" },
-	{ LC::c_instance,		"c_instance",		"s" },	// D2
 	{ LC::c_intersects,		"c_intersects",		"" },
 	{ LC::c_intpush,		"c_intpush",		"i" },
 	{ LC::c_itemOf,			"c_itemOf",			"" },	// D3
@@ -1474,38 +1472,10 @@ void LC::c_procret() {
 	}
 }
 
-void LC::c_global() {
-	Common::String name(g_lingo->readString());
-
-	if (!g_lingo->_globalvars.contains(name)) {
-		g_lingo->_globalvars[name] = Symbol();
-		g_lingo->_globalvars[name].name = new Common::String(name);
-		g_lingo->_globalvars[name].global = true;
-	}
-}
-
 void LC::c_property() {
 	Common::String name(g_lingo->readString());
 
 	warning("STUB: c_property()");
-}
-
-void LC::c_instance() {
-	Common::String name(g_lingo->readString());
-
-	warning("STUB: c_instance(%s)", name.c_str());
-}
-
-void LC::c_factory() {
-	Common::String name(g_lingo->readString());
-	Datum d;
-
-	warning("STUB: c_factory(%s)", name.c_str());
-
-	d.type = OBJECT;
-	d.u.s = new Common::String(name);
-
-	g_lingo->push(d);
 }
 
 void LC::c_open() {
