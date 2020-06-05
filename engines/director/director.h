@@ -207,6 +207,7 @@ private:
 };
 
 extern DirectorEngine *g_director;
+extern const uint32 wmMode;
 
 } // End of namespace Director
 

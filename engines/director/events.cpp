@@ -104,7 +104,6 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				if (sc->_sprites[spriteId]->_scriptId)
 					sc->_currentClickOnSpriteId = spriteId;
 
-				sc->_mouseIsDown = true;
 				sc->_lastEventTime = g_director->getMacTicks();
 				sc->_lastClickTime = sc->_lastEventTime;
 
@@ -121,9 +120,14 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				spriteId = sc->getSpriteIDFromPos(pos);
 
+				if (!sc->_sprites[sc->_currentMouseDownSpriteId]->_currentBbox.contains(pos))
+					sc->_currentMouseDownSpriteId = 0;
+
+				if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle))
+					sc->_currentMouseDownSpriteId = spriteId;
+
 				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 
-				sc->_mouseIsDown = false;
 				releaseDraggedSprite();
 
 				{
