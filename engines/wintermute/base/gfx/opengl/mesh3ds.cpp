@@ -165,4 +165,17 @@ void Mesh3DS::dumpVertexCoordinates(const char *filename) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+int Mesh3DS::faceCount() {
+	// .3ds files have only triangles anyways
+	return _indexCount / 3;
+}
+
+uint16 *Mesh3DS::getFace(int index) {
+	return _indexData + 3 * index;
+}
+
+float *Mesh3DS::getVertexPosition(int index) {
+	return reinterpret_cast<float *>(_vertexData + 12 * index);
+}
+
 } // namespace Wintermute
