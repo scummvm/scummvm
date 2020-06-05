@@ -214,7 +214,55 @@ void DrawSurface::setColor(uint32 color) {
 
 void DrawSurface::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	setColor(color);
+#if 1
 	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, _renderColor);
+#else
+	bool swapped = false;
+	int deltaX = -1, deltaY = -1;
+	int xDiff = x1 - x2, yDiff = y1 - y2;
+
+	// Draw pixel at starting point
+	drawPixel(x1, y1);
+
+	// Figure out the deltas movement for creating the line
+	if (xDiff < 0) {
+		deltaX = 1;
+		xDiff = -xDiff;
+	}
+	if (yDiff < 0) {
+		deltaY = 1;
+		yDiff = -yDiff;
+	}
+
+	if (xDiff < yDiff) {
+		swapped = true;
+		SWAP(xDiff, yDiff);
+		SWAP(deltaX, deltaY);
+		SWAP(x1, y1);
+	}
+
+	int temp1 = yDiff;
+	int temp2 = yDiff - xDiff;
+	int temp3 = temp2;
+
+	// Iterate to draw the remaining pixels of the line
+	for (int ctr = xDiff; ctr > 0; --ctr) {
+		x1 += deltaX;
+
+		if (temp3 >= 0) {
+			y1 += deltaY;
+			temp3 += temp2;
+		} else {
+			temp3 += temp1;
+		}
+
+		int xp = x1, yp = y1;
+		if (swapped)
+			SWAP(xp, yp);
+
+		drawPixel(xp, yp, color);
+	}
+#endif
 }
 
 void DrawSurface::drawBox(int16 x1, int16 y1, int16 x2, int16 y2,
@@ -372,8 +420,10 @@ void DrawSurface::drawPixel(int16 x, int16 y, uint32 color) {
 }
 
 void DrawSurface::drawPixel(int16 x, int16 y) {
-	uint32 *ptr = (uint32 *)getBasePtr(x, y);
-	*ptr = _renderColor;
+	if (x >= 0 && y >= 0 && x < this->w && y < this->h) {
+		uint32 *ptr = (uint32 *)getBasePtr(x, y);
+		*ptr = _renderColor;
+	}
 }
 
 uint32 DrawSurface::getPixelColor(int16 x, int16 y) {
