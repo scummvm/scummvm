@@ -40,8 +40,8 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
+MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
+	MacWidget(parent, x, y, w, h, true, border, gutter, boxShadow), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear, textShadow) {
 
 	_maxWidth = maxWidth;
 
@@ -50,10 +50,12 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 
 	MacText::render();
+	setAlignOffset(_textAlignment);
+	updateCursorPos();
 }
 
-MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
+MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
+	MacWidget(parent, x, y, w, h, true, border, gutter, boxShadow), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear, textShadow) {
 
 	_maxWidth = maxWidth;
 
@@ -62,6 +64,8 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 
 	MacText::render();
+	setAlignOffset(_textAlignment);
+	updateCursorPos();
 }
 
 void MacEditableText::init() {
@@ -83,8 +87,6 @@ void MacEditableText::init() {
 	_cursorRow = getLineCount() - 1;
 	_cursorCol = getLineCharWidth(_cursorRow);
 
-	updateCursorPos();
-
 	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
 
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
@@ -100,6 +102,25 @@ MacEditableText::~MacEditableText() {
 	delete _cursorRect;
 	delete _cursorSurface;
 	delete _composeSurface;
+}
+
+void MacEditableText::setAlignOffset(TextAlign align) {
+	switch(align) {
+	case kTextAlignLeft:
+	default:
+		_alignOffset = Common::Point(0, 0);
+		break;
+	case kTextAlignCenter:
+		_alignOffset = Common::Point((_maxWidth / 2) - (_surface->w / 2), 0);
+		break;
+	case kTextAlignRight:
+		_alignOffset = Common::Point(_maxWidth - (_surface->w + 1), 0);
+		break;
+	}
+}
+
+Common::Point MacEditableText::calculateOffset() {
+	return Common::Point(_alignOffset.x + _border + _gutter + 1, _alignOffset.y + _border + _gutter/2);
 }
 
 void MacEditableText::setActive(bool active) {
@@ -171,10 +192,21 @@ bool MacEditableText::draw(bool forceRedraw) {
 	_cursorDirty = false;
 
 	// Compose
-	MacText::draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, 0, 0);
+	for (int bb = 0; bb < _shadow; bb ++) {
+		_composeSurface->hLine(_shadow, _composeSurface->h - _shadow + bb, _composeSurface->w, 0);
+		_composeSurface->vLine(_composeSurface->w - _shadow + bb, _shadow, _composeSurface->h - _shadow, 0);
+	}
+
+	for (int bb = 0; bb < _border; bb++) {
+		Common::Rect borderRect(bb, bb, _composeSurface->w - _shadow - bb, _composeSurface->h - _shadow - bb);
+		_composeSurface->frameRect(borderRect, 0);
+	}
+
+	Common::Point offset(calculateOffset());
+	MacText::draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
 	if (_cursorState)
-		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY));
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
 
 	if (_selectedText.endY != -1)
 		drawSelection();
@@ -524,8 +556,16 @@ void MacEditableText::updateCursorPos() {
 	} else {
 		_cursorRow = MIN<int>(_cursorRow, _textLines.size() - 1);
 
-		_cursorY = _textLines[_cursorRow].y;
-		_cursorX = getLineWidth(_cursorRow, false, _cursorCol);
+		Common::Point offset(calculateOffset());
+
+		int alignOffset = 0;
+		if (_textAlignment == kTextAlignRight)
+			alignOffset = _textMaxWidth - getLineWidth(_cursorRow);
+		else if (_textAlignment == kTextAlignCenter)
+			alignOffset = (_textMaxWidth / 2) - (getLineWidth(_cursorRow) / 2);
+
+		_cursorY = _textLines[_cursorRow].y + offset.y - 2;
+		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + offset.x - 1;
 	}
 
 	_cursorDirty = true;
