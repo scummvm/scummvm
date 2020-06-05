@@ -304,8 +304,6 @@ void Score::startLoop() {
 	_backSurface->create(_movieRect.width(), _movieRect.height());
 	_backSurface2->create(_movieRect.width(), _movieRect.height());
 
-	_sprites.resize(_frames[0]->_sprites.size());
-
 	if (_vm->_backSurface.w > 0) {
 		// Persist screen between the movies
 		// TODO: this is a workaround until the rendering pipeline is reworked
@@ -330,7 +328,6 @@ void Score::startLoop() {
 	_sprites = _frames[_currentFrame]->_sprites;
 	_lingo->processEvent(kEventStartMovie);
 
-	_sprites = _frames[_currentFrame]->_sprites;
 	renderFrame(_currentFrame, true);
 
 	if (_frames.size() <= 1) {	// We added one empty sprite
@@ -507,6 +504,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		if (needsUpdate || forceUpdate)
 			unrenderSprite(i);
 
+		_maskSurface->fillRect(nextSprite->_currentBbox, 1);
 		_sprites[i] = nextSprite;
 	}
 
@@ -557,8 +555,6 @@ void Score::renderSprite(uint16 id) {
 		return;
 
 	CastType castType = sprite->_castType;
-
-	_maskSurface->fillRect(sprite->_currentBbox, 1);
 
 	if (castType == kCastTypeNull)
 		return;
