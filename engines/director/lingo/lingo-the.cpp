@@ -23,6 +23,9 @@
 #include "common/system.h"
 #include "common/events.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macbutton.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/frame.h"
@@ -896,6 +899,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
+	if (field == kTheHilite) {
+		d.u.i = member->_hilite;
+		return d;
+	}
+
 	CastType castType = member->_type;
 	CastInfo *castInfo = nullptr;
 	if (score->_castsInfo.contains(id)) {
@@ -1046,6 +1054,18 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheHeight:
 		score->getCastMemberInitialRect(id).setHeight(d.asInt());
 		score->setCastMemberModified(id);
+		break;
+	case kTheHilite:
+		// TODO: Understand how texts can be selected programmatically as well.
+		if (member->_type == kCastButton) {
+			TextCast *button = (TextCast *)member;
+			if ((bool)d.asInt() !=  member->_hilite) {
+				((Graphics::MacButton *) button->_widget)->invertInner();
+				button->_hilite = !!d.asInt();
+			}
+		} else {
+			warning("Lingo::setTheCast: Attempted to set hilite of unsupported cast type");
+		}
 		break;
 	case kTheName:
 		if (!castInfo) {

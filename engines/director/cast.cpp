@@ -39,6 +39,7 @@ Cast::Cast() {
 	_type = kCastTypeNull;
 	_surface = nullptr;
 	_widget = nullptr;
+	_hilite = false;
 
 	_img = nullptr;
 
