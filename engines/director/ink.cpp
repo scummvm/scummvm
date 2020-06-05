@@ -55,10 +55,7 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 
 	switch (ink) {
 	case kInkTypeCopy:
-		if (maskSurface)
 			_surface->transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), *maskSurface);
-		else
-			_surface->blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
 		break;
 	case kInkTypeTransparent:
 		// FIXME: is it always white (last entry in pallette)?
