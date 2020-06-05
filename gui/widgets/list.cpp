@@ -589,13 +589,11 @@ void ListWidget::drawWidget() {
 			buffer = _editString;
 			color = _editColor;
 			adjustOffset();
-			g_gui.theme()->drawText(r1, buffer, _state,
-									alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		} else {
 			buffer = _list[pos];
-			g_gui.theme()->drawText(r1, buffer, _state,
-									alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		}
+		g_gui.theme()->drawText(r1, buffer, _state,
+								alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {

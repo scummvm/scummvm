@@ -93,7 +93,7 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 			ThemeEngine::kFontColorNormal,
 			false
 		);
-		}
 	}
+}
 
 }

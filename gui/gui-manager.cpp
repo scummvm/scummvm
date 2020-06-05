@@ -580,7 +580,6 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		return;
 	int button;
 	uint32 time;
-
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
 	if (g_gui.useRTL()) {
 		mouse.x = g_system->getOverlayWidth() - event.mouse.x - activeDialog->_x + g_gui.getOverlayOffset();
@@ -662,7 +661,7 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 }
 
 void GuiManager::setLanguageRTL() {
-	if (ConfMan.hasKey("guiRTL")) {
+	if (ConfMan.hasKey("guiRTL")) {		// Put guiRTL = yes to your scummvm.ini to force RTL GUI
 		_useRTL = ConfMan.getBool("guiRTL");
 		return;
 	}
