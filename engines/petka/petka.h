@@ -72,7 +72,7 @@ enum {
 class PetkaEngine : public Engine {
 public:
 	PetkaEngine(OSystem *syst, const ADGameDescription *desc);
-	~PetkaEngine();
+	~PetkaEngine() override;
 
 	bool isDemo() const;
 
