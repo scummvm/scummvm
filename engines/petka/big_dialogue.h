@@ -28,6 +28,8 @@
 
 namespace Petka {
 
+class PetkaEngine;
+
 enum {
 	kOpcodePlay = 1,
 	kOpcodeMenu,
@@ -104,7 +106,7 @@ struct SpeechInfo {
 
 class BigDialogue {
 public:
-	BigDialogue();
+	BigDialogue(PetkaEngine &vm);
 
 	uint opcode();
 
@@ -128,6 +130,8 @@ private:
 	void circleMoveTo(byte index);
 
 private:
+	PetkaEngine &_vm;
+
 	Operation *_currOp;
 	Common::Array<Operation> _ops;
 	uint _startOpIndex;

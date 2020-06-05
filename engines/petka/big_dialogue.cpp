@@ -35,11 +35,12 @@ namespace Petka {
 
 const uint16 kFallback = 0xFFFE;
 
-BigDialogue::BigDialogue() {
+BigDialogue::BigDialogue(PetkaEngine &vm)
+	: _vm(vm) {
 	_currOp = nullptr;
 	_startOpIndex = 0;
 
-	Common::ScopedPtr<Common::SeekableReadStream> file(g_vm->openFile("dialogue.fix", true));
+	Common::ScopedPtr<Common::SeekableReadStream> file(vm.openFile("dialogue.fix", true));
 	if (!file)
 		return;
 
@@ -72,7 +73,7 @@ void BigDialogue::loadSpeechesInfo() {
 	if (!_speeches.empty())
 		return;
 
-	Common::ScopedPtr<Common::SeekableReadStream> file(g_vm->openFile("dialogue.lod", true));
+	Common::ScopedPtr<Common::SeekableReadStream> file(_vm.openFile("dialogue.lod", true));
 	if (!file)
 		return;
 
@@ -379,7 +380,7 @@ void BigDialogue::next(int choice) {
 			if (processed)
 				_currOp += 1;
 			else {
-				g_vm->getQSystem()->_mainInterface->_dialog.startUserMsg(_currOp->userMsg.arg);
+				_vm.getQSystem()->_mainInterface->_dialog.startUserMsg(_currOp->userMsg.arg);
 			}
 			return;
 		default:
