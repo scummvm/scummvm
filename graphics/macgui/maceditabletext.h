@@ -69,6 +69,7 @@ public:
 	void setAlignOffset(TextAlign align);
 	Common::Point calculateOffset();
 	virtual void setActive(bool active) override;
+	void setEditable(bool editable);
 
 	void appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd = false);
 	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);

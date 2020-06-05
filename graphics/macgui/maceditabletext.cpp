@@ -134,9 +134,24 @@ void MacEditableText::setActive(bool active) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
 	}
 
-	if (!_cursorOff && _cursorState == true) {
-		_cursorState = false;
-		_cursorDirty = true;
+	if (!_cursorOff && _cursorState == true)
+		undrawCursor();
+}
+
+void MacEditableText::setEditable(bool editable) {
+	if (editable == _editable)
+		return;
+
+	_editable = editable;
+	_cursorOff = !editable;
+
+	if (editable) {
+		// TODO: Select whole region. This is done every time the text is set from
+		// uneditable to editable.
+		setActive(editable);
+		_wm->setActiveWidget(this);
+	} else {
+		undrawCursor();
 	}
 }
 
