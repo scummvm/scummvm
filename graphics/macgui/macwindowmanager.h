@@ -66,7 +66,8 @@ enum {
 	kWMModeForceBuiltinFonts= (1 << 3),
 	kWMModeUnicode			= (1 << 4),
 	kWMModeManualDrawWidgets= (1 << 5),
-	kWMModeFullscreen       = (1 << 6)
+	kWMModeFullscreen       = (1 << 6),
+	kWMModeButtonDialogStyle= (1 << 7)
 };
 
 }
@@ -256,8 +257,12 @@ public:
 	Common::Rect _menuHotzone;
 
 	bool _menuTimerActive;
+	bool _mouseDown;
 
 	int _colorBlack, _colorWhite;
+
+	MacWidget *_hoveredWidget;
+	MacWidget *_mouseDownWidget;
 
 private:
 	void drawDesktop();

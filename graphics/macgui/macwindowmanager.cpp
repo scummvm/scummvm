@@ -159,6 +159,9 @@ MacWindowManager::MacWindowManager(uint32 mode) {
 	_needsRemoval = false;
 
 	_activeWidget = nullptr;
+	_mouseDown = false;
+	_hoveredWidget = nullptr;
+	_mouseDownWidget = nullptr;
 
 	_mode = mode;
 
@@ -313,6 +316,8 @@ void MacWindowManager::setActiveWindow(int id) {
 void MacWindowManager::removeWindow(MacWindow *target) {
 	_windowsToRemove.push_back(target);
 	_needsRemoval = true;
+	_hoveredWidget = nullptr;
+	_mouseDownWidget = nullptr;
 
 	if (target->getId() == _activeWindow)
 		_activeWindow = -1;
@@ -427,8 +432,19 @@ static void menuTimerHandler(void *refCon) {
 }
 
 bool MacWindowManager::processEvent(Common::Event &event) {
-	if (event.type == Common::EVENT_MOUSEMOVE)
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
 		_lastMousePos = event.mouse;
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+		_mouseDown = true;
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_mouseDown = false;
+		break;
+	default:
+		break;
+	}
 
 	if (_menu && !_menu->isVisible()) {
 		if ((_mode & kWMModeAutohideMenu) && event.type == Common::EVENT_MOUSEMOVE) {

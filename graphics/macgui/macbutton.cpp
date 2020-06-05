@@ -145,6 +145,12 @@ bool MacButton::draw(ManagedSurface *g, bool forceRedraw) {
 bool MacButton::processEvent(Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
+		if (_wm->_mouseDown) {
+			if (_wm->_mode & kWMModeButtonDialogStyle)
+				return true;
+
+			setActive(true);
+		}
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		setActive(true);

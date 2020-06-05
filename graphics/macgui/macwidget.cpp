@@ -80,11 +80,13 @@ void MacWidget::blit(ManagedSurface *g, Common::Rect &dest) {
 }
 
 bool MacWidget::processEvent(Common::Event &event) {
-	warning("MacWidget::processEvent");
 	return false;
 }
 
 void MacWidget::removeWidget(MacWidget *child, bool del) {
+	if (_children.size() == 0)
+		return;
+
 	for (uint i = 0; i < _children.size(); i++) {
 		if (_children[i] == child) {
 			if (del)

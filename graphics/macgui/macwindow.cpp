@@ -479,6 +479,11 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
+		if (_wm->_mouseDown && _wm->_hoveredWidget && !_wm->_hoveredWidget->_dims.contains(event.mouse.x, event.mouse.y)) {
+			_wm->_hoveredWidget->setActive(false);
+			_wm->_hoveredWidget = nullptr;
+		}
+
 		if (_beingDragged) {
 			_dims.translate(event.mouse.x - _draggedX, event.mouse.y - _draggedY);
 			updateInnerDims();
@@ -527,6 +532,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 		_beingDragged = false;
 		_beingResized = false;
+		_wm->_mouseDownWidget = nullptr;
 
 		setHighlight(kBorderNone);
 		break;
@@ -544,9 +550,16 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return false;
 	}
 
-	MacWidget *w = findEventHandler(event, _dims.left, _dims.top);
-	if (w && w != this && w->processEvent(event))
-		return true;
+	MacWidget *w = _wm->_mouseDownWidget ? _wm->_mouseDownWidget : findEventHandler(event, _dims.left, _dims.top);
+	if (w && w != this) {
+		_wm->_hoveredWidget = w;
+
+		if (event.type == Common::EVENT_LBUTTONDOWN)
+			_wm->_mouseDownWidget = w;
+
+		if (w->processEvent(event))
+			return true;
+	}
 
 	if (_callback)
 		return (*_callback)(click, event, _dataPtr);
