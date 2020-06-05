@@ -118,6 +118,12 @@ public:
 	const String &		get(const String &key) const;
 	void				set(const String &key, const String &value);
 
+	/**
+	 * Update a configuration entry for the active domain and flush
+	 * the configuration file to disk if the value changed
+	 */
+	void				setAndFlush(const String &key, const Common::String &value);
+
 #if 1
 	//
 	// Domain specific access methods: Acces *one specific* domain and modify it.
