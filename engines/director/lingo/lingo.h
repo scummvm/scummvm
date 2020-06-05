@@ -364,7 +364,7 @@ public:
 
 public:
 	void execute(uint pc);
-	void pushContext();
+	void pushContext(const Symbol *funcSym = nullptr);
 	void popContext();
 	void cleanLocalVars();
 	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr, Object *obj = nullptr);
