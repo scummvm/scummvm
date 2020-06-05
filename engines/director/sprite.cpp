@@ -24,6 +24,8 @@
 #include "director/cast.h"
 #include "director/sprite.h"
 
+#include "graphics/macgui/macwidget.h"
+
 namespace Director {
 
 Sprite::Sprite() {
@@ -67,6 +69,37 @@ Sprite::Sprite() {
 }
 
 Sprite::~Sprite() {
+}
+
+void Sprite::updateCast() {
+	if (_cast && _cast->_widget) {
+		if (_cast->isEditable() != _editable && !_puppet)
+			_cast->setEditable(_editable);
+		_cast->_widget->_dims.moveTo(_currentPoint.x, _currentPoint.y);
+	}
+}
+
+void Sprite::translate(Common::Point delta, bool moveTo) {
+	_currentPoint += delta;
+
+	if (_cast && _cast->_widget) {
+		if (moveTo)
+			_cast->_widget->_dims.translate(delta.x, delta.y);
+		else
+			_cast->_widget->_dims.moveTo(delta.x, delta.y);
+	}
+
+	_dirty = true;
+}
+
+bool Sprite::isDirty() {
+	return _dirty || (_cast && _cast->isModified());
+}
+
+void Sprite::setClean() {
+	_dirty = false;
+	if (_cast)
+		_cast->_modified = false;
 }
 
 uint16 Sprite::getPattern() {
@@ -196,89 +229,15 @@ Common::Rect Sprite::getBbox() {
 								_currentPoint.y + _height);
 		break;
 	case kCastRTE:
-	case kCastText: {
-		if (!_cast)
-			return result;
+	case kCastText:
+	case kCastButton:
+		{
+			if (!_cast)
+				return result;
 
-		TextCast *textCast = (TextCast*)_cast;
-		int x = _currentPoint.x; // +rectLeft;
-		int y = _currentPoint.y; // +rectTop;
-		int height = textCast->_initialRect.height(); //_sprites[spriteId]->_height;
-		int width;
-		Common::Rect *textRect = NULL;
-
-		if (g_director->getVersion() >= 4) {
-			// where does textRect come from?
-			if (textRect == NULL) {
-				width = textCast->_initialRect.right;
-			} else {
-				width = textRect->width();
-			}
-		} else {
-			width = textCast->_initialRect.width(); //_sprites[spriteId]->_width;
-		}
-
-		result = Common::Rect(x, y, x + width, y + height);
-		break;
-	}
-	case kCastButton: {
-		// This may not be a button cast. It could be a textcast with the
-		// channel forcing it to be a checkbox or radio button!
-		if (!_cast)
-			return result;
-
-		ButtonCast *button = (ButtonCast *)_cast;
-
-		// Sometimes, at least in the D3 Workshop Examples, these buttons are
-		// just TextCast. If they are, then we just want to use the spriteType
-		// as the button type. If they are full-bown Cast members, then use the
-		// actual cast member type.
-		int buttonType = _spriteType;
-		if (buttonType == kCastMemberSprite) {
-			switch (button->_buttonType) {
-			case kTypeCheckBox:
-				buttonType = kCheckboxSprite;
-				break;
-			case kTypeButton:
-				buttonType = kButtonSprite;
-				break;
-			case kTypeRadio:
-				buttonType = kRadioButtonSprite;
-				break;
-			}
-		}
-
-		uint32 rectLeft = button->_initialRect.left;
-		uint32 rectTop = button->_initialRect.top;
-
-		int x = _currentPoint.x;
-		int y = _currentPoint.y;
-
-		if (g_director->getVersion() > 3) {
-			x += rectLeft;
-			y += rectTop;
-		}
-
-		int height = button->_initialRect.height();
-		int width = button->_initialRect.width() + 3;
-
-		switch (buttonType) {
-		case kCheckboxSprite:
-			// Magic numbers: checkbox square need to move left about 5px from
-			// text and 12px side size (D4)
-			result = Common::Rect(x, y + 2, x + 12, y + 14);
+			result = _cast->_widget->getDimensions();
 			break;
-		case kButtonSprite:
-			result = Common::Rect(x, y, x + width, y + height + 3);
-			break;
-		case kRadioButtonSprite:
-			result = Common::Rect(x, y + 2, x + 12, y + 14);
-			break;
-		default:
-			warning("Score::getBbox(): Unknown buttonType");
 		}
-		break;
-	}
 	case kCastBitmap: {
 		if (!_cast)
 			return result;

@@ -62,6 +62,10 @@ public:
 	Sprite();
 	~Sprite();
 
+	void updateCast();
+	void translate(Common::Point delta, bool moveTo = false);
+	bool isDirty();
+	void setClean();
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
 
@@ -113,9 +117,6 @@ public:
 	uint16 _stopTime;
 	byte _volume;
 	byte _stretch;
-
-	// Using in text sprites
-	Common::String _editableText;
 };
 
 } // End of namespace Director

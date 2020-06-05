@@ -26,7 +26,6 @@
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/maceditabletext.h"
-#include "director/cachedmactext.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -296,10 +295,6 @@ void Score::startLoop() {
 
 	initGraphics(_movieRect.width(), _movieRect.height());
 
-	_window = _vm->_wm->addWindow(false, false, false);
-	_window->disableBorder();
-	_window->resize(_movieRect.width(), _movieRect.height());
-
 	_surface = _window->getWindowSurface();
 	_maskSurface = new Graphics::ManagedSurface;
 	_backSurface = new Graphics::ManagedSurface;
@@ -324,6 +319,7 @@ void Score::startLoop() {
 	_vm->_backSurface.create(_movieRect.width(), _movieRect.height());
 
 	_vm->_wm->setScreen(_surface);
+	_vm->_wm->_lastWidget = nullptr;
 
 	_surface->clear(_stageColor);
 
@@ -434,9 +430,6 @@ void Score::update() {
 
 	_vm->_newMovieStarted = false;
 
-	// _surface->clear(_stageColor);
-	// _surface->copyFrom(*_trailSurface);
-
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
 	if (_vm->getVersion() >= 6) {
@@ -509,7 +502,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		// - The cast member ID of the sprite has changed (_dirty flag set)
 		// - The sprite slot from the current frame is different (cast member ID or bounding box) from the cached sprite slot
 		// (maybe we have to compare all the sprite attributes, not just these two?)
-		bool needsUpdate = currentSprite->_dirty || currentSprite->_castId != nextSprite->_castId || currentSprite->_currentBbox != nextSprite->_currentBbox;
+		bool needsUpdate = currentSprite->isDirty() || currentSprite->_castId != nextSprite->_castId || currentSprite->_currentBbox != nextSprite->_currentBbox;
 
 		if (needsUpdate || forceUpdate)
 			unrenderSprite(i);
@@ -551,11 +544,15 @@ void Score::unrenderSprite(uint16 spriteId) {
 
 	currentSprite->_currentBbox = currentSprite->getBbox();
 	currentSprite->_dirty = false;
+
+	if (currentSprite->_cast)
+		currentSprite->_cast->_modified = false;
 }
 
 void Score::renderSprite(uint16 id) {
 	Sprite *sprite = _sprites[id];
 
+	sprite->updateCast();
 	if (!sprite || !sprite->_enabled)
 		return;
 
@@ -573,7 +570,7 @@ void Score::renderSprite(uint16 id) {
 	if (castType == kCastShape) {
 		renderShape(id);
 	} else if (castType == kCastText || castType == kCastRTE) {
-		renderText(id, NULL);
+		renderText(id);
 	} else if (castType == kCastButton) {
 		renderButton(id);
 	} else {
@@ -588,6 +585,8 @@ void Score::renderSprite(uint16 id) {
 
 		renderBitmap(id);
 	}
+
+	sprite->setClean();
 }
 
 void Score::renderShape(uint16 spriteId) {
@@ -708,7 +707,6 @@ void Score::renderShape(uint16 spriteId) {
 	inkBasedBlit(&maskSurface, tmpSurface, ink, shapeRect, spriteId);
 }
 
-
 void Score::renderButton(uint16 spriteId) {
 	uint16 castId = _sprites[spriteId]->_castId;
 
@@ -723,241 +721,31 @@ void Score::renderButton(uint16 spriteId) {
 	}
 	ButtonCast *button = (ButtonCast *)member;
 
-	// Sometimes, at least in the D3 Workshop Examples, these buttons are just TextCast.
-	// If they are, then we just want to use the spriteType as the button type.
-	// If they are full-bown Cast members, then use the actual cast member type.
-	int buttonType = _sprites[spriteId]->_spriteType;
-	if (buttonType == kCastMemberSprite) {
-		switch (button->_buttonType) {
-		case kTypeCheckBox:
-			buttonType = kCheckboxSprite;
-			break;
-		case kTypeButton:
-			buttonType = kButtonSprite;
-			break;
-		case kTypeRadio:
-			buttonType = kRadioButtonSprite;
-			break;
-		}
-	}
-
-	bool invert = spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId;
-
 	// TODO: review all cases to confirm if we should use text height.
 	// height = textRect.height();
 
-	Common::Rect _rect = _sprites[spriteId]->_currentBbox;
-	int16 x = _rect.left;
-	int16 y = _rect.top;
+	Common::Rect bbox = _sprites[spriteId]->_currentBbox;
 
-	Common::Rect textRect(0, 0, _rect.width(), _rect.height());
-
-	// WORKAROUND, HACK
-	// Because we're not drawing text with transparency
-	// We swap drawing depending on whether the button is
-	// inverted or not, to prevent destroying the border
-	if (!invert)
-		renderText(spriteId, &textRect);
-
-	Graphics::MacPlotData plotStroke(_surface, nullptr, &_vm->getPatterns(), 1, 0, 0, 1, 0);
-
-	switch (buttonType) {
-	case kCheckboxSprite:
-		_surface->frameRect(_rect, 0);
-		break;
-	case kButtonSprite: {
-			Graphics::MacPlotData pd(_surface, nullptr, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 0, 0, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
-
-			Graphics::drawRoundRect(_rect, 4, 0, invert, Graphics::macDrawPixel, &pd);
-		}
-		break;
-	case kRadioButtonSprite:
-		Graphics::drawEllipse(x, y + 2, x + 11, y + 13, 0, false, Graphics::macDrawPixel, &plotStroke);
-		break;
-	default:
-		warning("renderButton: Unknown buttonType");
-		break;
-	}
-
-	if (invert)
-		renderText(spriteId, &textRect);
+	inkBasedBlit(nullptr, button->_widget->getSurface()->rawSurface(),  _sprites[spriteId]->_ink, bbox, spriteId);
 }
 
-void Score::renderText(uint16 spriteId, Common::Rect *textRect) {
-	TextCast *textCast = (TextCast*)_sprites[spriteId]->_cast;
-	if (textCast == nullptr) {
+void Score::renderText(uint16 spriteId) {
+	TextCast *text = (TextCast*)_sprites[spriteId]->_cast;
+	if (text == nullptr) {
 		warning("Score::renderText(): TextCast #%d is a nullptr", spriteId);
 		return;
 	}
 
-	Score *score = _vm->getCurrentScore();
-	Sprite *sprite = _sprites[spriteId];
+	Common::Rect bbox = _sprites[spriteId]->_currentBbox;
+	text->_widget->draw();
 
-	Common::Rect bbox = sprite->_currentBbox;
-	int width = bbox.width();
-	int height = bbox.height();
-	int x = bbox.left;
-	int y = bbox.top;
-
-	if (_vm->getCurrentScore()->_fontMap.contains(textCast->_fontId)) {
+	if (_fontMap.contains(text->_fontId)) {
 		// We need to make sure that the Shared Cast fonts have been loaded in?
 		// might need a mapping table here of our own.
 		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
 	}
 
-	if (width == 0 || height == 0) {
-		warning("Score::renderText(): Requested to draw on an empty surface: %d x %d", width, height);
-		return;
-	}
-
-	if (sprite->_editable) {
-		if (!textCast->_widget) {
-			warning("Creating MacEditableText with '%s'", toPrintable(textCast->_ftext).c_str());
-			textCast->_widget = new Graphics::MacEditableText(score->_window, x, y, width, height, g_director->_wm, textCast->_ftext, new Graphics::MacFont(), 0, 255, width);
-			warning("Finished creating MacEditableText");
-		}
-
-		textCast->_widget->draw();
-
-		InkType ink = sprite->_ink;
-
-		// if (spriteId == score->_currentMouseDownSpriteId)
-		// 	ink = kInkTypeReverse;
-
-		inkBasedBlit(nullptr, textCast->_widget->getSurface()->rawSurface(), ink, Common::Rect(x, y, x + width, y + height), spriteId);
-
-		return;
-	}
-
-	debugC(3, kDebugText, "renderText: sprite: %d x: %d y: %d w: %d h: %d fontId: '%d' text: '%s'", spriteId, x, y, width, height, textCast->_fontId, Common::toPrintable(textCast->_ftext).c_str());
-
-	uint16 boxShadow = (uint16)textCast->_boxShadow;
-	uint16 borderSize = (uint16)textCast->_borderSize;
-	if (textRect != NULL)
-		borderSize = 0;
-	uint16 padding = (uint16)textCast->_gutterSize;
-	uint16 textShadow = (uint16)textCast->_textShadow;
-
-	//uint32 rectLeft = textCast->initialRect.left;
-	//uint32 rectTop = textCast->initialRect.top;
-
-	textCast->_cachedMacText->clip(width);
-	const Graphics::ManagedSurface *textSurface = textCast->_cachedMacText->getSurface();
-
-	if (!textSurface)
-		return;
-
-	height = textSurface->h;
-	if (textRect != NULL) {
-		// TODO: this offset could be due to incorrect fonts loaded!
-		textRect->bottom = height + textCast->_cachedMacText->getLineCount();
-	}
-
-	uint16 textX = 0, textY = 0;
-
-	if (textRect == NULL) {
-		if (borderSize > 0) {
-			if (_vm->getVersion() <= 3) {
-				height += (borderSize * 2);
-				textX += (borderSize + 2);
-			} else {
-				height += borderSize;
-				textX += (borderSize + 1);
-			}
-			textY += borderSize;
-		} else {
-			x += 1;
-		}
-
-		if (padding > 0) {
-			width += padding * 2;
-			height += padding;
-			textY += padding / 2;
-		}
-
-		if (textCast->_textAlign == kTextAlignRight)
-			textX -= 1;
-
-		if (textShadow > 0)
-			textX--;
-	} else {
-		x++;
-		if (width % 2 != 0)
-			x++;
-
-		if (sprite->_spriteType != kCastMemberSprite) {
-			y += 2;
-			switch (sprite->_spriteType) {
-			case kCheckboxSprite:
-				textX += 16;
-				break;
-			case kRadioButtonSprite:
-				textX += 17;
-				break;
-			default:
-				break;
-			}
-		} else {
-			ButtonType buttonType = ((ButtonCast*)textCast)->_buttonType;
-			switch (buttonType) {
-			case kTypeCheckBox:
-				width += 4;
-				textX += 16;
-				break;
-			case kTypeRadio:
-				width += 4;
-				textX += 17;
-				break;
-			case kTypeButton:
-				width += 4;
-				y += 2;
-				break;
-			default:
-				warning("Score::renderText(): Expected button but got unexpected button type: %d", buttonType);
-				y += 2;
-				break;
-			}
-		}
-	}
-
-	switch (textCast->_textAlign) {
-	case kTextAlignLeft:
-	default:
-		break;
-	case kTextAlignCenter:
-		textX = (width / 2) - (textSurface->w / 2) + (padding / 2) + borderSize;
-		break;
-	case kTextAlignRight:
-		textX = width - (textSurface->w + 1) + (borderSize * 2) - (textShadow * 2) - (padding);
-		break;
-	}
-
-	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
-	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), score->getStageColor());
-
-	if (textRect == NULL && boxShadow > 0) {
-		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
-	}
-
-	if (textRect == NULL && borderSize != kSizeNone) {
-		for (int bb = 0; bb < borderSize; bb++) {
-			Common::Rect borderRect(bb, bb, textWithFeatures.w - bb - boxShadow - textShadow, textWithFeatures.h - bb - boxShadow - textShadow);
-			textWithFeatures.fillRect(borderRect, 0xff);
-			textWithFeatures.frameRect(borderRect, 0);
-		}
-	}
-
-	if (textShadow > 0)
-		textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX + textShadow, textY + textShadow), 0xff);
-
-	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
-
-	InkType ink = sprite->_ink;
-
-	// if (spriteId == score->_currentMouseDownSpriteId)
-	// 	ink = kInkTypeReverse;
-
-	inkBasedBlit(nullptr, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height), spriteId);
+	inkBasedBlit(nullptr, text->_widget->getSurface()->rawSurface(), _sprites[spriteId]->_ink, bbox, spriteId);
 }
 
 void Score::renderBitmap(uint16 spriteId) {

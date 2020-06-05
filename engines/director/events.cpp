@@ -85,9 +85,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 					if (draggedSprite->_moveable) {
 						pos = g_system->getEventManager()->getMousePos();
 						Common::Point delta = pos - _draggingSpritePos;
-						draggedSprite->_currentPoint.x += delta.x;
-						draggedSprite->_currentPoint.y += delta.y;
-						draggedSprite->_dirty = true;
+						draggedSprite->translate(delta);
 						_draggingSpritePos = pos;
 					} else {
 						releaseDraggedSprite();

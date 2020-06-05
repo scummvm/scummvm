@@ -26,8 +26,13 @@
 #include "director/archive.h"
 #include "director/types.h"
 
+#include "graphics/font.h"
+
 namespace Graphics {
 struct Surface;
+class MacEditableText;
+class MacWindowManager;
+class MacButton;
 class MacWidget;
 }
 
@@ -43,13 +48,15 @@ class ImageDecoder;
 namespace Director {
 
 class Stxt;
-class CachedMacText;
 class SNDDecoder;
 
 class Cast {
 public:
 	Cast();
 	virtual ~Cast();
+	virtual bool isEditable();
+	virtual bool setEditable(bool editable);
+	virtual bool isModified() { return _modified; }
 
 	CastType _type;
 	Common::Rect _initialRect;
@@ -105,9 +112,14 @@ public:
 class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
-	virtual ~TextCast();
 
 	void setText(const char *text);
+	virtual void createWidget();
+
+	virtual bool isModified() override;
+	virtual bool isEditable() override;
+	virtual bool setEditable(bool editable) override;
+	Graphics::TextAlign getAlignment();
 
 	SizeType _borderSize;
 	SizeType _gutterSize;
@@ -128,7 +140,6 @@ public:
 	Common::String _ptext;
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
-	CachedMacText *_cachedMacText;
 
 	Common::String getText();
 };
@@ -136,6 +147,7 @@ public:
 class ButtonCast : public TextCast {
 public:
 	ButtonCast(Common::ReadStreamEndian &stream, uint16 version);
+	virtual void createWidget() override;
 
 	ButtonType _buttonType;
 };
