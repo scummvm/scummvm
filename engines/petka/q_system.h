@@ -50,7 +50,7 @@ class Interface;
 
 class QSystem {
 public:
-	explicit QSystem();
+	QSystem(PetkaEngine &vm);
 	~QSystem();
 
 	bool init();
@@ -85,6 +85,8 @@ public:
 	void onEvent(const Common::Event &event);
 
 public:
+	PetkaEngine &_vm;
+
 	Common::Array<QMessageObject *> _allObjects;
 	Common::List<QMessage> _messages;
 	Common::ScopedPtr<InterfaceMain> _mainInterface;

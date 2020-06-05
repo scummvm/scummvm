@@ -43,8 +43,8 @@
 
 namespace Petka {
 
-QSystem::QSystem()
-	: _mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr),
+QSystem::QSystem(PetkaEngine &vm)
+	: _vm(vm), _mainInterface(nullptr), _currInterface(nullptr), _prevInterface(nullptr),
 	_totalInit(false), _sceneWidth(640) {}
 
 QSystem::~QSystem() {
@@ -54,12 +54,12 @@ QSystem::~QSystem() {
 }
 
 bool QSystem::init() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("script.dat", true));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm.openFile("script.dat", true));
 	if (!stream)
 		return false;
-	Common::ScopedPtr<Common::SeekableReadStream> namesStream(g_vm->openFile("Names.ini", true));
-	Common::ScopedPtr<Common::SeekableReadStream> castStream(g_vm->openFile("Cast.ini", true));
-	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", true));
+	Common::ScopedPtr<Common::SeekableReadStream> namesStream(_vm.openFile("Names.ini", true));
+	Common::ScopedPtr<Common::SeekableReadStream> castStream(_vm.openFile("Cast.ini", true));
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(_vm.openFile("BGs.ini", true));
 
 	Common::INIFile namesIni;
 	Common::INIFile castIni;
@@ -106,7 +106,7 @@ bool QSystem::init() {
 	_panelInterface.reset(new InterfacePanel());
 	_mapInterface.reset(new InterfaceMap());
 
-	if (g_vm->getPart() == 0) {
+	if (_vm.getPart() == 0) {
 		_prevInterface = _currInterface = _startupInterface.get();
 	} else {
 		_prevInterface = _currInterface = _mainInterface.get();
@@ -237,7 +237,7 @@ void QSystem::load(Common::ReadStream *s) {
 		_mainInterface->loadRoom(_room->_id, true);
 	}
 
-	g_vm->getBigDialogue()->load(s);
+	_vm.getBigDialogue()->load(s);
 
 	QObjectCursor *cursor = getCursor();
 	cursor->_resourceId = s->readUint32LE();
@@ -249,7 +249,7 @@ void QSystem::load(Common::ReadStream *s) {
 		cursor->_invObj = nullptr;
 	}
 
-	g_vm->videoSystem()->makeAllDirty();
+	_vm.videoSystem()->makeAllDirty();
 }
 
 void QSystem::save(Common::WriteStream *s) {
@@ -277,7 +277,7 @@ void QSystem::save(Common::WriteStream *s) {
 
 	// heroes (no impl)
 
-	g_vm->getBigDialogue()->save(s);
+	_vm.getBigDialogue()->save(s);
 
 	QObjectCursor *cursor = getCursor();
 	s->writeUint32LE(cursor->_resourceId);
@@ -382,11 +382,11 @@ void QSystem::onEvent(const Common::Event &event) {
 #if 1
 		case Common::KEYCODE_RIGHT:
 			_xOffset += 6;
-			g_vm->videoSystem()->makeAllDirty();
+			_vm.videoSystem()->makeAllDirty();
 			break;
 		case Common::KEYCODE_LEFT:
 			_xOffset -= 6;
-			g_vm->videoSystem()->makeAllDirty();
+			_vm.videoSystem()->makeAllDirty();
 			break;
 #endif
 		default:
