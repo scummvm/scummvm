@@ -454,7 +454,7 @@ void Lingo::varCreate(const Common::String &name, bool global, SymbolHash *local
 		if (global)
 			warning("varCreate: variable %s is instance or property, not global", name.c_str());
 		return;
-	} else  if (_globalvars.contains(name)) {
+	} else if (_globalvars.contains(name)) {
 		if (!global)
 			warning("varCreate: variable %s is global, not local", name.c_str());
 		return;

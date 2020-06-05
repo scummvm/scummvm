@@ -128,6 +128,8 @@ static void mVar(Common::String *s, VarType type) {
 			} else {
 				warning("Instance var '%s' defined outside factory", s->c_str());
 			}
+		} else if (type == kVarGlobal) {
+			g_lingo->varCreate(*s, true);
 		}
 	}
 }
@@ -602,13 +604,9 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| tOPEN expr 				{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
 
 globallist: ID					{
-		g_lingo->code1(LC::c_global);
-		g_lingo->codeString($ID->c_str());
 		mVar($ID, kVarGlobal);
 		delete $ID; }
 	| globallist ',' ID			{
-		g_lingo->code1(LC::c_global);
-		g_lingo->codeString($ID->c_str());
 		mVar($ID, kVarGlobal);
 		delete $ID; }
 
