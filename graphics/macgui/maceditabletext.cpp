@@ -72,8 +72,8 @@ void MacEditableText::init() {
 	_inTextSelection = false;
 
 	_scrollPos = 0;
-	_editable = true;
-	_selectable = true;
+	_editable = false;
+	_selectable = false;
 
 	_editableRow = 0;
 
