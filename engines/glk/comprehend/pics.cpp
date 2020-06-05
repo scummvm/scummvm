@@ -22,8 +22,8 @@
 
 #include "glk/comprehend/pics.h"
 #include "common/memstream.h"
-#include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/charset.h"
+#include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/file_buf.h"
 #include "glk/comprehend/game.h"
@@ -38,9 +38,9 @@ enum Opcode {
 	OPCODE_END = 0,
 	OPCODE_SET_TEXT_POS = 1,
 	OPCODE_SET_PEN_COLOR = 2,
-	OPCODE_TEXT_CHAR1 = 3,
+	OPCODE_TEXT_CHAR = 3,
 	OPCODE_SET_SHAPE = 4,
-	OPCODE_TEXT_CHAR2 = 5,
+	OPCODE_TEXT_OUTLINE = 5,
 	OPCODE_SET_FILL_COLOR = 6,
 	OPCODE_END2 = 7,
 	OPCODE_MOVE_TO = 8,
@@ -138,11 +138,13 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		ctx->_penColor = ctx->_drawSurface->getPenColor(param);
 		break;
 
-	case OPCODE_TEXT_CHAR1:
-	case OPCODE_TEXT_CHAR2:
-		// In Transylvania at least, the CHAR1 opcode sets a flag that gets
-		// cleared when the character drawing is done, but is never used.
-		// So the two opcodes are functionally identical
+	case OPCODE_TEXT_CHAR:
+	case OPCODE_TEXT_OUTLINE:
+		// Text outline mode draws a bunch of pixels that sort of looks like the char
+		// TODO: See if the outline mode is ever used
+		if (opcode == OPCODE_TEXT_OUTLINE)
+			warning("TODO: Implement drawing text outlines");
+
 		a = imageGetOperand(ctx);
 		if (a < 0x20 || a >= 0x7f) {
 			warning("Invalid character - %c", a);
@@ -186,7 +188,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		b = imageGetOperand(ctx);
 
 		debugC(kDebugGraphics, "draw_box (%d, %d) - (%d, %d)",
-			ctx->_x, ctx->_y, a, b);
+		       ctx->_x, ctx->_y, a, b);
 
 		ctx->_drawSurface->drawBox(ctx->_x, ctx->_y, a, b, ctx->_penColor);
 		break;
@@ -261,8 +263,8 @@ void Pics::ImageFile::doResetOp(ImageContext *ctx, byte param) const {
 		break;
 
 	case RESETOP_OO_TOPOS_UNKNOWN:
-	    // TODO: This is called for some scenes in OO-Topis. Figure out what it does
-	    break;
+		// TODO: This is called for some scenes in OO-Topis. Figure out what it does
+		break;
 
 	default:
 		break;
@@ -306,7 +308,7 @@ void Pics::load(const Common::StringArray &roomFiles,
 int Pics::getPictureNumber(const Common::String &filename) const {
 	// Ensure prefix and suffix
 	if (!filename.hasPrefixIgnoreCase("pic") ||
-	        !filename.hasSuffixIgnoreCase(".raw"))
+	    !filename.hasSuffixIgnoreCase(".raw"))
 		return -1;
 
 	// Get the number part
