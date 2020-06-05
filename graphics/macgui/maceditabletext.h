@@ -74,9 +74,6 @@ public:
 	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);
 	void clearText();
 
-	void setEditable(bool editable) { _editable = editable; }
-	void setSelectable(bool selectable) { _selectable = selectable; }
-
 	void undrawCursor();
 
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);
