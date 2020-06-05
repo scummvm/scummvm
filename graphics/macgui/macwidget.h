@@ -48,8 +48,6 @@ public:
 	 */
 	const Common::Rect &getDimensions() { return _dims; }
 
-	bool isFocusable() { return _focusable; }
-
 	/**
 	 * Method for indicating whether the widget is active or inactive.
 	 * Used by the WM to handle focus on windows, etc.
@@ -82,20 +80,20 @@ public:
 	Graphics::ManagedSurface *getSurface() { return _composeSurface; }
 
 protected:
+	uint16 _border;
+	uint16 _gutter;
+	uint16 _shadow;
+
+	Graphics::ManagedSurface *_composeSurface;
+
+public:
 	bool _focusable;
 	bool _contentIsDirty;
 	bool _active;
 	bool _editable;
 
-	uint16 _border;
-	uint16 _gutter;
-	uint16 _shadow;
-
 	Common::Rect _dims;
 
-	Graphics::ManagedSurface *_composeSurface;
-
-public:
 	MacWidget *_parent;
 	Common::Array<MacWidget *> _children;
 };
