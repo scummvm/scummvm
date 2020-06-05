@@ -64,6 +64,7 @@
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #endif
 
 namespace Wintermute {
@@ -1233,7 +1234,7 @@ bool AdScene::updateFreeObjects() {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
-				// TODO: set the camera and setup 3d
+				_gameRef->_renderer->setup3D(activeCamera);
 				is3DSet = true;
 			}
 		}
@@ -1254,7 +1255,7 @@ bool AdScene::updateFreeObjects() {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
-				// TODO: set the camera and setup 3d
+				_gameRef->_renderer->setup3D(activeCamera);
 				is3DSet = true;
 			}
 		}
@@ -1314,7 +1315,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 			if (activeCamera != nullptr) {
-				// TODO: set the camera and setup 3d
+				_gameRef->_renderer->setup3D(activeCamera);
 			}
 		} else {
 			_gameRef->_renderer->setup2D();
