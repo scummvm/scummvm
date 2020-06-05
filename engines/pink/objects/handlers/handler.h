@@ -49,18 +49,22 @@ protected:
 };
 
 class Sequence;
+class Sequencer;
 
 class HandlerSequences : public Handler {
 public:
-	HandlerSequences(bool startPage = false, bool parallel = false);
-
 	void deserialize(Archive &archive) override;
 	void handle(Actor *actor) override;
 
 protected:
+	virtual void authorSequence(Sequencer *sequencer, Sequence *sequence);
+
+protected:
 	StringArray _sequences;
-	bool _startPage;
-	bool _parallel;
+};
+
+class HandlerStartPage : public HandlerSequences {
+	void authorSequence(Sequencer *sequencer, Sequence *sequence) override;
 };
 
 class HandlerLeftClick : public HandlerSequences {
@@ -89,6 +93,10 @@ public:
 
 private:
 	StringArray _actions;
+};
+
+class HandlerTimerSequences : public HandlerSequences {
+	void authorSequence(Sequencer *sequencer, Sequence *sequence) override;
 };
 
 } // End of namespace Pink

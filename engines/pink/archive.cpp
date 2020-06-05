@@ -147,12 +147,12 @@ static Object *createObject(int objectId) {
 	case kHandlerLeftClick:
 		return new HandlerLeftClick;
 	case kHandlerStartPage:
-		return new HandlerSequences(true, false);
+		return new HandlerStartPage;
 	case kHandlerTimer:
 	case kHandlerTimerActions:
 		return new HandlerTimerActions; // hack for Peril, but behavior is correct
 	case kHandlerTimerSequences:
-		return new HandlerSequences(false, true);
+		return new HandlerTimerSequences;
 	case kHandlerUseClick:
 		return new HandlerUseClick;
 	case kInventoryActor:

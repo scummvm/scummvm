@@ -81,18 +81,12 @@ void HandlerSequences::handle(Actor *actor) {
 	Sequence *sequence = sequencer->findSequence(_sequences[index]);
 
 	assert(sequence);
-	if (_parallel)
-		sequencer->authorParallelSequence(sequence, false);
-	else
-		sequencer->authorSequence(sequence, false);
 
-	if (_startPage)
-		sequence->allowSkipping();
+	authorSequence(sequencer, sequence);
 }
 
-HandlerSequences::HandlerSequences(bool startPage, bool parallel) {
-	_startPage = startPage;
-	_parallel = parallel;
+void HandlerSequences::authorSequence(Sequencer *sequencer, Sequence *sequence) {
+	sequencer->authorSequence(sequence, false);
 }
 
 void HandlerLeftClick::toConsole() const {
@@ -171,6 +165,15 @@ void HandlerTimerActions::handle(Actor *actor) {
 		assert(action);
 		actor->setAction(action);
 	}
+}
+
+void HandlerStartPage::authorSequence(Sequencer *sequencer, Sequence *sequence) {
+	HandlerSequences::authorSequence(sequencer, sequence);
+	sequence->allowSkipping();
+}
+
+void HandlerTimerSequences::authorSequence(Sequencer *sequencer, Sequence *sequence) {
+	sequencer->authorParallelSequence(sequence, false);
 }
 
 } // End of namespace Pink
