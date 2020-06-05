@@ -191,8 +191,8 @@ void DrawSurface::setColorTable(uint index) {
 	_colorTable = COLOR_TABLES[index];
 }
 
-uint DrawSurface::getPenColor(uint8 opcode) const {
-	return PEN_COLORS[opcode - IMAGE_OP_PEN_COLOR_A];
+uint DrawSurface::getPenColor(uint8 param) const {
+	return PEN_COLORS[param];
 }
 
 uint32 DrawSurface::getFillColor(uint8 index) {
@@ -212,56 +212,56 @@ void DrawSurface::setColor(uint32 color) {
 	_renderColor = color;
 }
 
-void DrawSurface::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color) {
+void DrawSurface::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	setColor(color);
 	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, _renderColor);
 }
 
-void DrawSurface::drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2,
+void DrawSurface::drawBox(int16 x1, int16 y1, int16 x2, int16 y2,
                           uint32 color) {
 	setColor(color);
-	Common::Rect r(x1, y1, x2, y2);
+	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
 	frameRect(r, _renderColor);
 }
 
-void DrawSurface::drawFilledBox(uint16 x1, uint16 y1,
-                                uint16 x2, uint16 y2, uint32 color) {
+void DrawSurface::drawFilledBox(int16 x1, int16 y1,
+                                int16 x2, int16 y2, uint32 color) {
 	setColor(color);
-	Common::Rect r(x1, y1, x2, y2);
+	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
 	fillRect(r, _renderColor);
 }
 
-void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
+void DrawSurface::drawShape(int16 x, int16 y, int shape_type, uint32 fill_color) {
 	int i, j;
 
 	switch (shape_type) {
-	case IMAGE_OP_SHAPE_PIXEL:
+	case SHAPE_PIXEL:
 		x += 7;
 		y += 7;
 		drawPixel(x, y, fill_color);
 		break;
 
-	case IMAGE_OP_SHAPE_BOX:
+	case SHAPE_BOX:
 		x += 6;
 		y += 7;
 		drawFilledBox(x, y, x + 2, y + 2, fill_color);
 		break;
 
-	case IMAGE_OP_SHAPE_CIRCLE_TINY:
+	case SHAPE_CIRCLE_TINY:
 		x += 5;
 		y += 5;
 		drawFilledBox(x + 1, y, x + 3, y + 4, fill_color);
 		drawFilledBox(x, y + 1, x + 4, y + 3, fill_color);
 		break;
 
-	case IMAGE_OP_SHAPE_CIRCLE_SMALL:
+	case SHAPE_CIRCLE_SMALL:
 		x += 4;
 		y += 4;
 		drawFilledBox(x + 1, y, x + 5, y + 6, fill_color);
 		drawFilledBox(x, y + 1, x + 6, y + 5, fill_color);
 		break;
 
-	case IMAGE_OP_SHAPE_CIRCLE_MED:
+	case SHAPE_CIRCLE_MED:
 		x += 1;
 		y += 1;
 		drawFilledBox(x + 1,
@@ -281,7 +281,7 @@ void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
 		              fill_color);
 		break;
 
-	case IMAGE_OP_SHAPE_CIRCLE_LARGE:
+	case SHAPE_CIRCLE_LARGE:
 		drawFilledBox(x + 2,
 		              y + 1,
 		              x + 2 + (3 + 4 + 3),
@@ -304,11 +304,11 @@ void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
 		              fill_color);
 		break;
 
-	case IMAGE_OP_SHAPE_A:
+	case SHAPE_A:
 		/* FIXME - very large circle? */
 		break;
 
-	case IMAGE_OP_SHAPE_SPRAY: {
+	case SHAPE_SPRAY: {
 		char spray[13][13] = {
 			{0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
 			{0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
@@ -337,7 +337,7 @@ void DrawSurface::drawShape(int x, int y, int shape_type, uint32 fill_color) {
 	}
 }
 
-void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
+void DrawSurface::floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_color) {
 	int x1, x2, i;
 
 	if (getPixelColor(x, y) != old_color || fill_color == old_color)
@@ -366,13 +366,17 @@ void DrawSurface::floodFill(int x, int y, uint32 fill_color, uint32 old_color) {
 			floodFill(i, y + 1, fill_color, old_color);
 }
 
-void DrawSurface::drawPixel(uint16 x, uint16 y, uint32 color) {
+void DrawSurface::drawPixel(int16 x, int16 y, uint32 color) {
 	setColor(color);
+	drawPixel(x, y);
+}
+
+void DrawSurface::drawPixel(int16 x, int16 y) {
 	uint32 *ptr = (uint32 *)getBasePtr(x, y);
 	*ptr = _renderColor;
 }
 
-uint32 DrawSurface::getPixelColor(uint16 x, uint16 y) {
+uint32 DrawSurface::getPixelColor(int16 x, int16 y) {
 	uint32 *ptr = (uint32 *)getBasePtr(x, y);
 	return *ptr;
 }
@@ -380,6 +384,38 @@ uint32 DrawSurface::getPixelColor(uint16 x, uint16 y) {
 void DrawSurface::clearScreen(uint32 color) {
 	setColor(color);
 	fillRect(Common::Rect(0, 0, this->w, this->h), _renderColor);
+}
+
+void DrawSurface::opcodeB(int16 x, int16 y, int8 param) {
+	int invert = -param;
+	int delta = 0;
+
+	do {
+		opcodeBPoint(x - delta, y - param);
+		opcodeBPoint(x + delta, y - param);
+		opcodeBPoint(x + delta, y + param);
+		opcodeBPoint(x - delta, y + param);
+
+		opcodeBPoint(x + param, y - delta);
+		opcodeBPoint(x - param, y - delta);
+		opcodeBPoint(x - param, y + delta);
+		opcodeBPoint(x + param, y + delta);
+
+		invert += (delta * 2) + 1;
+		++delta;
+		if (!((uint)invert & 0x80)) {
+			invert += 2;
+			param <<= 1;
+			invert -= param;
+			param >>= 1;
+			--param;
+		}
+	} while (param >= delta);
+}
+
+void DrawSurface::opcodeBPoint(int16 x, int16 y) {
+	if (x < 280 && y < 160)
+		drawPixel(x, y);
 }
 
 } // namespace Comprehend

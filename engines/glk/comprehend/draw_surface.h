@@ -84,18 +84,21 @@ public:
 	void reset();
 
 	void setColorTable(uint index);
-	uint getPenColor(uint8 opcode) const;
+	uint getPenColor(uint8 param) const;
 	uint32 getFillColor(uint8 index);
 	void setColor(uint32 color);
 
-	void drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
-	void drawBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
-	void drawFilledBox(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint32 color);
-	void drawShape(int x, int y, int shape_type, uint32 fill_color);
-	void floodFill(int x, int y, uint32 fill_color, uint32 old_color);
-	void drawPixel(uint16 x, uint16 y, uint32 color);
-	uint32 getPixelColor(uint16 x, uint16 y);
+	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
+	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
+	void drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
+	void drawShape(int16 x, int16 y, int shape_type, uint32 fill_color);
+	void floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_color);
+	void drawPixel(int16 x, int16 y);
+	void drawPixel(int16 x, int16 y, uint32 color);
+	uint32 getPixelColor(int16 x, int16 y);
 	void clearScreen(uint32 color);
+	void opcodeB(int16 x, int16 y, int8 param);
+	void opcodeBPoint(int16 x, int16 y);
 };
 
 } // namespace Comprehend

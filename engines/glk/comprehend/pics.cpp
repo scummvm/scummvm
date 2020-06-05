@@ -34,6 +34,31 @@ namespace Comprehend {
 
 #define IMAGES_PER_FILE 16
 
+enum Opcode {
+	OPCODE_END = 0,
+	OPCODE_SET_TEXT_POS = 1,
+	OPCODE_SET_PEN_COLOR = 2,
+	OPCODE_TEXT_CHAR1 = 3,
+	OPCODE_SET_SHAPE = 4,
+	OPCODE_TEXT_CHAR2 = 5,
+	OPCODE_SET_FILL_COLOR = 6,
+	OPCODE_END2 = 7,
+	OPCODE_MOVE_TO = 8,
+	OPCODE_DRAW_BOX = 9,
+	OPCODE_DRAW_LINE = 10,
+	OPCODE_B = 11,
+	OPCODE_DRAW_SHAPE = 12,
+	OPCODE_DELAY = 13,
+	OPCODE_PAINT = 14,
+	OPCODE_RESET = 15
+};
+
+enum SpecialOpcode {
+	RESETOP_0 = 0,
+	RESETOP_RESET = 1,
+	RESETOP_OO_TOPOS_UNKNOWN = 3
+};
+
 /*-------------------------------------------------------*/
 
 Pics::ImageFile::ImageFile(const Common::String &filename) {
@@ -89,127 +114,18 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 	opcode = ctx->_file.readByte();
 	debugCN(kDebugGraphics, "  %.4x [%.2x]: ", ctx->_file.pos() - 1, opcode);
 
+	byte param = opcode & 0xf;
+	opcode >>= 4;
+
 	switch (opcode) {
-	case IMAGE_OP_SCENE_END:
-	case IMAGE_OP_EOF:
-		debugC(kDebugGraphics, "end");
+	case OPCODE_END:
+	case OPCODE_END2:
+		// End of the rendering
+		debugC(kDebugGraphics, "End of image");
 		return true;
 
-	case IMAGE_OP_PEN_COLOR_A:
-	case IMAGE_OP_PEN_COLOR_B:
-	case IMAGE_OP_PEN_COLOR_C:
-	case IMAGE_OP_PEN_COLOR_D:
-	case IMAGE_OP_PEN_COLOR_E:
-	case IMAGE_OP_PEN_COLOR_F:
-	case IMAGE_OP_PEN_COLOR_G:
-	case IMAGE_OP_PEN_COLOR_H:
-		debugC(kDebugGraphics, "set_pen_color(%.2x)", opcode);
-		ctx->_penColor = ctx->_drawSurface->getPenColor(opcode);
-		break;
-
-	case IMAGE_OP_DRAW_LINE:
-	case IMAGE_OP_DRAW_LINE_FAR:
-		a = imageGetOperand(ctx);
-		b = imageGetOperand(ctx);
-
-		if (opcode & 0x1)
-			a += 255;
-
-		debugC(kDebugGraphics, "draw_line (%d, %d) - (%d, %d)",
-		       ctx->_x, ctx->_y, a, b);
-		ctx->_drawSurface->drawLine(ctx->_x, ctx->_y, a, b, ctx->_penColor);
-
-		ctx->_x = a;
-		ctx->_y = b;
-		break;
-
-	case IMAGE_OP_DRAW_BOX:
-	case IMAGE_OP_DRAW_BOX_FAR:
-		a = imageGetOperand(ctx);
-		b = imageGetOperand(ctx);
-
-		if (opcode & 0x1)
-			a += 255;
-
-		debugC(kDebugGraphics, "draw_box (%d, %d) - (%d, %d)",
-		       ctx->_x, ctx->_y, a, b);
-
-		ctx->_drawSurface->drawBox(ctx->_x, ctx->_y, a, b, ctx->_penColor);
-		break;
-
-	case IMAGE_OP_MOVE_TO:
-	case IMAGE_OP_MOVE_TO_FAR:
-		/* Move to */
-		a = imageGetOperand(ctx);
-		b = imageGetOperand(ctx);
-
-		if (opcode & 0x1)
-			a += 255;
-
-		debugC(kDebugGraphics, "move_to(%d, %d)", a, b);
-		ctx->_x = a;
-		ctx->_y = b;
-		break;
-
-	case IMAGE_OP_SHAPE_PIXEL:
-	case IMAGE_OP_SHAPE_BOX:
-	case IMAGE_OP_SHAPE_CIRCLE_TINY:
-	case IMAGE_OP_SHAPE_CIRCLE_SMALL:
-	case IMAGE_OP_SHAPE_CIRCLE_MED:
-	case IMAGE_OP_SHAPE_CIRCLE_LARGE:
-	case IMAGE_OP_SHAPE_A:
-	case IMAGE_OP_SHAPE_SPRAY:
-		debugC(kDebugGraphics,
-		       "set_shape_type(%.2x)", opcode - 0x40);
-		ctx->_shape = opcode;
-		break;
-
-	case 0x48:
-		/*
-		 * FIXME - This appears to be a _shape type. Only used by
-		 *         OO-Topos.
-		 */
-		debugC(kDebugGraphics, "shape_unknown()");
-		ctx->_shape = IMAGE_OP_SHAPE_PIXEL;
-		break;
-
-	case IMAGE_OP_DRAW_SHAPE:
-	case IMAGE_OP_DRAW_SHAPE_FAR:
-		a = imageGetOperand(ctx);
-		b = imageGetOperand(ctx);
-
-		if (opcode & 0x1)
-			a += 255;
-
-		debugC(kDebugGraphics, "draw_shape(%d, %d), style=%.2x, fill=%.2x",
-		       a, b, ctx->_shape, ctx->_fillColor);
-
-		ctx->_drawSurface->drawShape(a, b, ctx->_shape, ctx->_fillColor);
-		break;
-
-	case IMAGE_OP_PAINT:
-	case IMAGE_OP_PAINT_FAR:
-		/* Paint */
-		a = imageGetOperand(ctx);
-		b = imageGetOperand(ctx);
-
-		if (opcode & 0x1)
-			a += 255;
-
-		debugC(kDebugGraphics, "paint(%d, %d)", a, b);
-		if (!(ctx->_drawFlags & IMAGEF_NO_FLOODFILL))
-			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor,
-			                             ctx->_drawSurface->getPixelColor(a, b));
-		break;
-
-	case IMAGE_OP_FILL_COLOR:
-		a = imageGetOperand(ctx);
-		debugC(kDebugGraphics, "set_fill_color(%.2x)", a);
-		ctx->_fillColor = ctx->_drawSurface->getFillColor(a);
-		break;
-
-	case IMAGE_OP_SET_TEXT_POS:
-		a = imageGetOperand(ctx);
+	case OPCODE_SET_TEXT_POS:
+		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
 		b = imageGetOperand(ctx);
 		debugC(kDebugGraphics, "set_text_pos(%d, %d)", a, b);
 
@@ -217,7 +133,16 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		ctx->_textY = b;
 		break;
 
-	case IMAGE_OP_DRAW_CHAR:
+	case OPCODE_SET_PEN_COLOR:
+		debugC(kDebugGraphics, "set_pen_color(%.2x)", opcode);
+		ctx->_penColor = ctx->_drawSurface->getPenColor(param);
+		break;
+
+	case OPCODE_TEXT_CHAR1:
+	case OPCODE_TEXT_CHAR2:
+		// In Transylvania at least, the CHAR1 opcode sets a flag that gets
+		// cleared when the character drawing is done, but is never used.
+		// So the two opcodes are functionally identical
 		a = imageGetOperand(ctx);
 		if (a < 0x20 || a >= 0x7f) {
 			warning("Invalid character - %c", a);
@@ -229,42 +154,117 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		ctx->_textX += ctx->_font->getCharWidth(a);
 		break;
 
-	case 0xf3:
-		/*
-		 * FIXME - Oo-Topos uses this at the beginning of some room
-		 *         images.
-		 */
-		debugC(kDebugGraphics, "unknown()");
+	case OPCODE_SET_SHAPE:
+		debugC(kDebugGraphics, "set_shape_type(%.2x)", param);
+
+		if (param == 8) {
+			// FIXME: This appears to be a _shape type. Only used by OO-Topos
+			warning("TODO: Shape type 8");
+			ctx->_shape = SHAPE_PIXEL;
+		} else {
+			ctx->_shape = (Shape)param;
+		}
 		break;
 
-	case 0xb5:
-	case 0x82:
-	case 0x50:
-		/* FIXME - unknown, no arguments */
-		debugC(kDebugGraphics, "unknown");
-		break;
-
-	case 0x73:
-	case 0xb0:
-	case 0xd0:
-		/* FIXME - unknown, one argument */
+	case OPCODE_SET_FILL_COLOR:
 		a = imageGetOperand(ctx);
-		debugC(kDebugGraphics, "unknown %.2x: (%.2x) '%c'",
-		       opcode, a,
-		       a >= 0x20 && a < 0x7f ? a : '?');
+		debugC(kDebugGraphics, "set_fill_color(%.2x)", a);
+		ctx->_fillColor = ctx->_drawSurface->getFillColor(a);
 		break;
 
-	default:
-		/* FIXME - Unknown, two arguments */
-		a = imageGetOperand(ctx);
+	case OPCODE_MOVE_TO:
+		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
 		b = imageGetOperand(ctx);
 
-		debugC(kDebugGraphics, "unknown(%.2x, %.2x)", a, b);
-		ctx->_drawSurface->drawPixel(a, b, 0x00ff00ff);
+		debugC(kDebugGraphics, "move_to(%d, %d)", a, b);
+		ctx->_x = a;
+		ctx->_y = b;
+		break;
+
+	case OPCODE_DRAW_BOX:
+		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
+		b = imageGetOperand(ctx);
+
+		debugC(kDebugGraphics, "draw_box (%d, %d) - (%d, %d)",
+			ctx->_x, ctx->_y, a, b);
+
+		ctx->_drawSurface->drawBox(ctx->_x, ctx->_y, a, b, ctx->_penColor);
+		break;
+
+	case OPCODE_DRAW_LINE:
+		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
+		b = imageGetOperand(ctx);
+
+		debugC(kDebugGraphics, "draw_line (%d, %d) - (%d, %d)",
+		       ctx->_x, ctx->_y, a, b);
+		ctx->_drawSurface->drawLine(ctx->_x, ctx->_y, a, b, ctx->_penColor);
+
+		ctx->_x = a;
+		ctx->_y = b;
+		break;
+
+	case OPCODE_B:
+		// TODO: Figure out what shape this draws
+		a = imageGetOperand(ctx);
+		ctx->_drawSurface->opcodeB(ctx->_x, ctx->_y, a);
+		break;
+
+	case OPCODE_DRAW_SHAPE:
+		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
+		b = imageGetOperand(ctx);
+
+		debugC(kDebugGraphics, "draw_shape(%d, %d), style=%.2x, fill=%.2x",
+		       a, b, ctx->_shape, ctx->_fillColor);
+
+		ctx->_drawSurface->drawShape(a, b, ctx->_shape, ctx->_fillColor);
+		break;
+
+	case OPCODE_DELAY:
+		// The original allowed for rendering to be paused briefly. We don't do
+		// that in ScummVM, and just show the finished rendered image
+		(void)imageGetOperand(ctx);
+		break;
+
+	case OPCODE_PAINT:
+		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
+		b = imageGetOperand(ctx);
+
+		if (opcode & 0x1)
+			a += 255;
+
+		debugC(kDebugGraphics, "paint(%d, %d)", a, b);
+		if (!(ctx->_drawFlags & IMAGEF_NO_FLOODFILL))
+			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor,
+			                             ctx->_drawSurface->getPixelColor(a, b));
+		break;
+
+	case OPCODE_SPECIAL:
+		a = imageGetOperand(ctx);
+		doResetOp(ctx, a);
 		break;
 	}
 
 	return false;
+}
+
+void Pics::ImageFile::doResetOp(ImageContext *ctx, byte param) const {
+	switch (param) {
+	case RESETOP_0:
+		// In Transylvania this sub-opcode is a do nothing
+		break;
+
+	case RESETOP_RESET:
+		// TODO: Calls same reset that first gets called when rendering starts.
+		// Figure out what the implication of resetting the variables does
+		break;
+
+	case RESETOP_OO_TOPOS_UNKNOWN:
+	    // TODO: This is called for some scenes in OO-Topis. Figure out what it does
+	    break;
+
+	default:
+		break;
+	}
 }
 
 uint16 Pics::ImageFile::imageGetOperand(ImageContext *ctx) const {

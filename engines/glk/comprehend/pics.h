@@ -31,49 +31,6 @@
 namespace Glk {
 namespace Comprehend {
 
-#define IMAGE_OP_SCENE_END 0x00
-
-#define IMAGE_OP_SET_TEXT_POS 0x10
-
-#define IMAGE_OP_PEN_COLOR_A 0x20
-#define IMAGE_OP_PEN_COLOR_B 0x21
-#define IMAGE_OP_PEN_COLOR_C 0x22
-#define IMAGE_OP_PEN_COLOR_D 0x23
-#define IMAGE_OP_PEN_COLOR_E 0x24
-#define IMAGE_OP_PEN_COLOR_F 0x25
-#define IMAGE_OP_PEN_COLOR_G 0x26
-#define IMAGE_OP_PEN_COLOR_H 0x27
-
-#define IMAGE_OP_DRAW_CHAR 0x30
-
-#define IMAGE_OP_SHAPE_PIXEL 0x40
-#define IMAGE_OP_SHAPE_BOX 0x41
-#define IMAGE_OP_SHAPE_CIRCLE_TINY 0x42
-#define IMAGE_OP_SHAPE_CIRCLE_SMALL 0x43
-#define IMAGE_OP_SHAPE_CIRCLE_MED 0x44
-#define IMAGE_OP_SHAPE_CIRCLE_LARGE 0x45
-#define IMAGE_OP_SHAPE_A 0x46
-#define IMAGE_OP_SHAPE_SPRAY 0x47
-
-#define IMAGE_OP_EOF 0x55
-
-#define IMAGE_OP_FILL_COLOR 0x60
-
-#define IMAGE_OP_MOVE_TO 0x80
-#define IMAGE_OP_MOVE_TO_FAR 0x81
-
-#define IMAGE_OP_DRAW_BOX 0x90
-#define IMAGE_OP_DRAW_BOX_FAR 0x91
-
-#define IMAGE_OP_DRAW_LINE 0xa0
-#define IMAGE_OP_DRAW_LINE_FAR 0xa1
-
-#define IMAGE_OP_DRAW_SHAPE 0xc0
-#define IMAGE_OP_DRAW_SHAPE_FAR 0xc1
-
-#define IMAGE_OP_PAINT 0xe0
-#define IMAGE_OP_PAINT_FAR 0xe1
-
 #define IMAGEF_NO_FLOODFILL (1 << 1)
 
 enum {
@@ -83,6 +40,17 @@ enum {
 	DARK_ROOM = 1000,
 	BRIGHT_ROOM = 1001,
 	TITLE_IMAGE = 9999
+};
+
+enum Shape {
+	SHAPE_PIXEL = 0,
+	SHAPE_BOX = 1,
+	SHAPE_CIRCLE_TINY = 2,
+	SHAPE_CIRCLE_SMALL = 3,
+	SHAPE_CIRCLE_MED = 4,
+	SHAPE_CIRCLE_LARGE = 5,
+	SHAPE_A = 6,
+	SHAPE_SPRAY = 7
 };
 
 class Pics : public Common::Archive {
@@ -96,7 +64,7 @@ class Pics : public Common::Archive {
 		uint16 _y;
 		uint32 _penColor;
 		uint32 _fillColor;
-		uint32 _shape;
+		Shape _shape;
 
 		uint16 _textX;
 		uint16 _textY;
@@ -104,9 +72,8 @@ class Pics : public Common::Archive {
 		ImageContext(DrawSurface *drawSurface, Graphics::Font *font, uint flags) :
 			_drawSurface(drawSurface), _font(font), _drawFlags(0),
 			_x(0), _y(0), _penColor(G_COLOR_BLACK), _fillColor(G_COLOR_BLACK),
-			_shape(IMAGE_OP_SHAPE_CIRCLE_LARGE), _textX(0), _textY(0) {
+			_shape(SHAPE_CIRCLE_LARGE), _textX(0), _textY(0) {
 		}
-
 	};
 
 	struct ImageFile {
@@ -117,7 +84,7 @@ class Pics : public Common::Archive {
 	private:
 		bool doImageOp(ImageContext *ctx) const;
 		uint16 imageGetOperand(ImageContext *ctx) const;
-
+		void doResetOp(ImageContext *ctx, byte param) const;
 	public:
 		ImageFile() {}
 		ImageFile(const Common::String &filename);
