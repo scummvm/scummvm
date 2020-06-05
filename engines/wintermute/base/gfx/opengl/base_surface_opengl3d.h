@@ -66,6 +66,8 @@ public:
 		return tex->getHeight();
 	}
 
+	void setTexture();
+
 private:
 	OpenGL::Texture* tex;
 	BaseRenderOpenGL3D* renderer;

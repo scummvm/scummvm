@@ -195,4 +195,8 @@ bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 	return pixel == 0;
 }
 
+void BaseSurfaceOpenGL3D::setTexture() {
+	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
+}
+
 }
