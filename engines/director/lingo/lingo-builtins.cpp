@@ -248,10 +248,10 @@ static struct BuiltinProto {
 	{ "script",			LB::b_script,		1, 1, false, 4, RBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, false, 4, RBLTIN },	//			D4 f
 	// Chunk operations
-	{ "numberOfChars",	LB::b_numberofchars,1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "numberOfItems",	LB::b_numberofitems,1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "numberOfLines",	LB::b_numberoflines,1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "numberOfWords",	LB::b_numberofwords,1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "numberOfChars",	LB::b_numberofchars,1, 1, false, 3, FBLTIN },	//			D3 f
+	{ "numberOfItems",	LB::b_numberofitems,1, 1, false, 3, FBLTIN },	//			D3 f
+	{ "numberOfLines",	LB::b_numberoflines,1, 1, false, 3, FBLTIN },	//			D3 f
+	{ "numberOfWords",	LB::b_numberofwords,1, 1, false, 3, FBLTIN },	//			D3 f
 	{ "lastCharOf",		LB::b_lastcharof,	1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "lastItemOf",		LB::b_lastitemof,	1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "lastLineOf",		LB::b_lastlineof,	1, 1, false, 4, FBLTIN },	//			D4 f
