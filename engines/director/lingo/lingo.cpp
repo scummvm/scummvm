@@ -831,18 +831,15 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 	}
 }
 
-void Lingo::executePerFrameHook() {
-	// TODO: Call with arguments
+void Lingo::executePerFrameHook(int frame, int subframe) {
 	if (_perFrameHook.type == OBJECT) {
 		Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
 		if (method.type != VOID) {
-			_localvars = new SymbolHash;
-
-			debugC(1, kDebugLingoExec, "Executing mAtFrame on perFrameHook : %s", _perFrameHook.u.obj->name->c_str());
-			LC::call(method, 0, _perFrameHook.u.obj);
+			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
+			push(Datum(frame));
+			push(Datum(subframe));
+			LC::call(method, 2, _perFrameHook.u.obj);
 			execute(_pc);
-
-			cleanLocalVars();
 		}
 	}
 }

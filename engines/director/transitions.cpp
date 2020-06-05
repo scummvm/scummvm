@@ -30,6 +30,7 @@
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/util.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -131,6 +132,8 @@ struct {
 };
 
 void Score::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType) {
+	// Play a transition and return the number of subframes rendered
+
 	TransParams t;
 
 	t.type = transType;
@@ -437,6 +440,8 @@ void Score::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		}
 
 		g_system->updateScreen();
+
+		g_lingo->executePerFrameHook(_currentFrame, i);
 	}
 }
 
@@ -568,7 +573,7 @@ void Score::dissolveTrans(TransParams &t, Common::Rect &clipRect) {
 
 	Common::Rect r(MAX(1, t.xStepSize), t.yStepSize);
 
-	while (t.steps) {
+	for (int i = 0; i < t.steps; i++) {
 		uint32 pixPerStep = pixPerStepInit;
 		do {
 			uint32 x = rnd >> vShift;
@@ -611,12 +616,12 @@ void Score::dissolveTrans(TransParams &t, Common::Rect &clipRect) {
 		g_system->copyRectToScreen(_backSurface->getPixels(), _backSurface->pitch, 0, 0, realw, realh);
 		g_system->updateScreen();
 
+		g_lingo->executePerFrameHook(_currentFrame, i + 1);
+
 		if (processQuitEvent(true))
 			break;
 
 		g_system->delayMillis(t.stepDuration);
-
-		t.steps--;
 	}
 }
 
@@ -718,6 +723,8 @@ void Score::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect) {
 
 		g_system->copyRectToScreen(_backSurface->getPixels(), _backSurface->pitch, 0, 0, w, h);
 		g_system->updateScreen();
+
+		g_lingo->executePerFrameHook(_currentFrame, i + 1);
 
 		if (processQuitEvent(true))
 			break;
@@ -889,6 +896,8 @@ void Score::transMultiPass(TransParams &t, Common::Rect &clipRect) {
 
 		g_system->updateScreen();
 
+		g_lingo->executePerFrameHook(_currentFrame, i);
+
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
 			break;
@@ -934,6 +943,8 @@ void Score::transZoom(TransParams &t, Common::Rect &clipRect) {
 
 		g_system->copyRectToScreen(_backSurface->getPixels(), _backSurface->pitch, 0, 0, w, h);
 		g_system->updateScreen();
+
+		g_lingo->executePerFrameHook(_currentFrame, i);
 
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))

@@ -380,6 +380,14 @@ void Score::update() {
 
 	// For previous frame
 	if (_currentFrame > 0) {
+		// TODO: Confirm when the perFrameHook is called if
+		// there's no transition.
+		// If there is a transition, the perFrameHook is called
+		// after each transition subframe instead.
+		if (_frames[_currentFrame]->_transType == 0) {
+			_lingo->executePerFrameHook(_currentFrame, 0);
+		}
+
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
 		// However, the exitFrame event can overwrite the value
@@ -430,7 +438,6 @@ void Score::update() {
 	// _surface->copyFrom(*_trailSurface);
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
-	_lingo->executePerFrameHook();
 
 	if (_vm->getVersion() >= 6) {
 		_lingo->processEvent(kEventBeginSprite);
@@ -518,9 +525,10 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 
 		_vm->_wm->draw();
 
-		if (currentFrame->_transType != 0)
+		if (currentFrame->_transType != 0) {
 			// TODO Handle changing area case
 			playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType);
+		}
 
 		if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0) {
 			playSoundChannel(frameId);
