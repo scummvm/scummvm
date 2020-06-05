@@ -83,7 +83,7 @@ MacText::~MacText() {
 	delete _surface;
 }
 
-MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 textShadow) {
 	_str = s;
 	_wm = wm;
 	_macFont = macFont;
@@ -95,6 +95,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_surface = nullptr;
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
+	_textShadow = textShadow;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -114,7 +115,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_fullRefresh = true;
 }
 
-MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
+MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 textShadow) {
 	_str = Common::U32String(s);
 	_wm = wm;
 	_macFont = macFont;
@@ -126,6 +127,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	_surface = nullptr;
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
+	_textShadow = textShadow;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -592,6 +594,12 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
 										MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
 										Common::Point(xoff, yoff));
+
+	if (_textShadow)
+		g->transBlitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
+																				MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
+										 Common::Point(xoff + _textShadow, yoff + _textShadow), 0xff);
+
 }
 
 void MacText::drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint) {
