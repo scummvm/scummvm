@@ -140,8 +140,6 @@ public:
 	void renderZoomBox(bool redraw = false);
 	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
-	int32 getStageColor() { return _stageColor; }
-
 	Cast *getCastMember(int castId);
 	void renderFrame(uint16 frameId, bool forceUpdate = false, bool updateStageOnly = false);
 	void renderSprite(uint16 id);
@@ -211,6 +209,7 @@ public:
 	uint32 _lastClickTime;
 	uint32 _lastKeyTime;
 	uint32 _lastTimerReset;
+	uint16 _stageColor;
 
 	bool _stopPlay;
 	uint32 _nextFrameTime;
@@ -243,7 +242,6 @@ private:
 	uint32 _flags;
 	uint16 _castArrayEnd;
 	uint16 _movieScriptCount;
-	uint16 _stageColor;
 	Lingo *_lingo;
 	DirectorSound *_soundManager;
 	DirectorEngine *_vm;
