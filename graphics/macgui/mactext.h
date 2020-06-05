@@ -109,9 +109,9 @@ class MacText {
 
 public:
 	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
+			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 textShadow = 0);
 	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
+			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 textShadow = 0);
 			// 0 pixels between the lines by default
 	~MacText();
 
@@ -182,6 +182,7 @@ protected:
 
 	int _maxWidth;
 	int _interLinear;
+	int _textShadow;
 
 	int _textMaxWidth;
 	int _textMaxHeight;
