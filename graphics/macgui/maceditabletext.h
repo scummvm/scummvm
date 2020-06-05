@@ -53,10 +53,8 @@ struct SelectedText {
 
 class MacEditableText : public MacText, public MacWidget {
 public:
-	MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
-	MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
+	MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0);
+	MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0);
 			// 0 pixels between the lines by default
 	virtual ~MacEditableText();
 
@@ -68,6 +66,8 @@ public:
 	virtual bool draw(bool forceRedraw = false) override;
 	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
+	void setAlignOffset(TextAlign align);
+	Common::Point calculateOffset();
 	virtual void setActive(bool active) override;
 
 	void appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd = false);
@@ -109,6 +109,9 @@ public:
 	bool _selectable;
 
 	int _scrollPos;
+
+protected:
+	Common::Point _alignOffset;
 
 private:
 	ManagedSurface *_cursorSurface;

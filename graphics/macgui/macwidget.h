@@ -39,7 +39,7 @@ class MacWidget {
 	friend class MacEditableText;
 
 public:
-	MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable);
+	MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border = 0, uint16 gutter = 0, uint16 shadow = 0);
 	virtual ~MacWidget();
 
 	/**
@@ -86,6 +86,10 @@ protected:
 	bool _contentIsDirty;
 	bool _active;
 	bool _editable;
+
+	uint16 _border;
+	uint16 _gutter;
+	uint16 _shadow;
 
 	Common::Rect _dims;
 
