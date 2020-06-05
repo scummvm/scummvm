@@ -162,7 +162,7 @@ static struct BuiltinProto {
 		// when mouseUp													// D2
 		// when timeOut													// D2
 	// Types
-	{ "factory",		LB::b_factoryP,		1, 1, true,  3, FBLTIN },	//		D3
+	{ "factory",		LB::b_factory,		1, 1, true,  3, FBLTIN },	//		D3
 	{ "floatP",			LB::b_floatP,		1, 1, true,  3, FBLTIN },	//		D3
 	{ "ilk",	 		LB::b_ilk,			1, 2, false, 4, FBLTIN },	//			D4 f
 	{ "integerp",		LB::b_integerp,		1, 1, true,  2, FBLTIN },	// D2 f
@@ -1294,12 +1294,16 @@ void LB::b_startTimer(int nargs) {
 ///////////////////
 // Types
 ///////////////////
-void LB::b_factoryP(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum res(d.asInt());
-	g_lingo->push(res);
-
-	warning("STUB: b_factoryP");
+void LB::b_factory(int nargs) {
+	Datum factoryName = g_lingo->pop();
+	factoryName.type = VAR;
+	Datum o = g_lingo->varFetch(factoryName, true);
+	if (o.type == OBJECT && o.u.obj->type == kFactoryObj
+			&& o.u.obj->name->equalsIgnoreCase(*factoryName.u.s) && o.u.obj->inheritanceLevel == 1) {
+		g_lingo->push(o);
+	} else {
+		g_lingo->push(Datum(0));
+	}
 }
 
 void LB::b_floatP(int nargs) {
@@ -1324,11 +1328,7 @@ void LB::b_objectp(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res;
 	if (d.type == OBJECT) {
-		if (d.u.obj->type == kFactoryObj && (d.u.obj->inheritanceLevel == 1 || d.u.obj->disposed)) {
-			res = 0;
-		} else {
-			res = 1;
-		}
+		res = !d.u.obj->disposed;
 	} else {
 		res = 0;
 	}

@@ -75,7 +75,7 @@ namespace LB {
 	void b_setProp(int nargs);
 	void b_sort(int nargs);
 
-	void b_factoryP(int nargs);
+	void b_factory(int nargs);
 	void b_floatP(int nargs);
 	void b_ilk(int nargs);
 	void b_integerp(int nargs);
@@ -188,8 +188,6 @@ namespace LB {
 	void b_tab(int nargs);
 	void b_true(int nargs);
 	void b_version(int nargs);
-
-	void b_factory(int nargs);
 
 	void b_cast(int nargs);
 	void b_field(int nargs);
