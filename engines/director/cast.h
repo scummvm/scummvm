@@ -67,6 +67,7 @@ public:
 	Image::ImageDecoder *_img;
 
 	bool _modified;
+	bool _hilite;
 
 	Graphics::MacWidget *_widget;
 };

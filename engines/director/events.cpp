@@ -28,6 +28,7 @@
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/cast.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -124,6 +125,12 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				sc->_mouseIsDown = false;
 				releaseDraggedSprite();
+
+				{
+					Cast *cast = g_director->getCastMember(sc->_sprites[spriteId]->_castId);
+					if (cast && cast->_type == kCastButton)
+						cast->_hilite = !cast->_hilite;
+				}
 
 				_lingo->registerEvent(kEventMouseUp);
 				sc->_currentMouseDownSpriteId = 0;
