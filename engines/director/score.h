@@ -149,7 +149,7 @@ public:
 
 private:
 	void update();
-	void renderText(uint16 spriteId, Common::Rect *textSize);
+	void renderText(uint16 spriteId);
 	void renderShape(uint16 spriteId);
 	void renderButton(uint16 spriteId);
 	void renderBitmap(uint16 spriteId);

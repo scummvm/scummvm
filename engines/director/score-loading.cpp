@@ -119,6 +119,10 @@ bool Score::loadArchive() {
 		_stageColor = 1;
 	}
 
+	_window = _vm->_wm->addWindow(false, false, false);
+	_window->disableBorder();
+	_window->resize(_movieRect.width(), _movieRect.height());
+
 	// Cast Information Array
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
 		_castIDoffset = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
@@ -224,11 +228,6 @@ bool Score::loadArchive() {
 		debug("STUB: Unhandled 'SCVW' resource");
 	}
 
-	setSpriteCasts();
-	setSpriteBboxes();
-	loadSpriteImages(false);
-	loadSpriteSounds(false);
-
 	// Now process STXTs
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 	debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
@@ -250,6 +249,11 @@ bool Score::loadArchive() {
 	}
 	copyCastStxts();
 
+	setSpriteCasts();
+	setSpriteBboxes();
+	loadSpriteImages(false);
+	loadSpriteSounds(false);
+
 	return true;
 }
 
@@ -267,7 +271,9 @@ void Score::copyCastStxts() {
 		if (_loadedStxts->getVal(stxtid)) {
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
 			TextCast *tc = (TextCast *)c->_value;
+
 			tc->importStxt(stxt);
+			tc->createWidget();
 		}
 	}
 }
@@ -673,6 +679,12 @@ void Score::setSpriteBboxes() {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			Sprite *sp = _frames[i]->_sprites[j];
+			if (i == 1)
+			// Only call updateCast on the first frame sprites, because renderSprite
+			// calls updateCast for us after that. We need to get widget bounding info here.
+			// if (i == 1)
+				sp->updateCast();
+
 			sp->_startBbox = sp->getBbox();
 			sp->_currentBbox = sp->_startBbox;
 		}

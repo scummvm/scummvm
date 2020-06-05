@@ -22,11 +22,12 @@
 
 #include "common/substream.h"
 #include "graphics/surface.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/maceditabletext.h"
+#include "graphics/macgui/macbutton.h"
 #include "image/image_decoder.h"
 
 #include "director/director.h"
-#include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/score.h"
 #include "director/sound.h"
@@ -47,6 +48,18 @@ Cast::Cast() {
 Cast::~Cast() {
 	if (_img)
 		delete _img;
+
+	if (_widget)
+		delete _widget;
+}
+
+bool Cast::isEditable() {
+	return false;
+}
+
+bool Cast::setEditable(bool editable) {
+	warning("Cast::setEditable: Attempted to set editable of non-editable cast");
+	return false;
 }
 
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
@@ -255,13 +268,22 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 		stream.readUint16();
 	}
 
-	_cachedMacText = new CachedMacText(this, _bgcolor, version, -1, g_director->_wm);
-
 	_modified = false;
 }
 
-TextCast::~TextCast() {
-	delete _cachedMacText;
+Graphics::TextAlign TextCast::getAlignment() {
+	switch (_textAlign) {
+	case kTextAlignRight:
+		return Graphics::kTextAlignRight;
+		break;
+	case kTextAlignCenter:
+		return Graphics::kTextAlignCenter;
+		break;
+	case kTextAlignLeft:
+	default:
+		return Graphics::kTextAlignLeft;
+		break;
+	}
 }
 
 void TextCast::importStxt(const Stxt *stxt) {
@@ -273,11 +295,21 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_palinfo3 = stxt->_palinfo3;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
-
-	_cachedMacText->setStxt(this);
 }
 
-void TextCast::importRTE(byte *text) 	{
+void TextCast::createWidget() {
+	uint fgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
+	warning("TextCast::createWidget: bgcolor: %d, fgcolor: %d", _bgcolor, fgcolor);
+
+	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
+
+	_widget = new Graphics::MacEditableText(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor, _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
+
+	((Graphics::MacEditableText *)_widget)->draw();
+	delete macFont;
+}
+
+void TextCast::importRTE(byte *text) {
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
 	//child1 is the raw text.
@@ -292,12 +324,14 @@ void TextCast::setText(const char *text) {
 
 	_ptext = _ftext = text;
 
-	_cachedMacText->forceDirty();
-
 	if (_widget) {
-		((Graphics::MacEditableText *)_widget)->clearText();
-		((Graphics::MacEditableText *)_widget)->appendTextDefault(_ftext);
+		Graphics::MacEditableText *wtext = (Graphics::MacEditableText *)_widget;
+		wtext->clearText();
+		wtext->appendTextDefault(_ftext);
+		wtext->draw();
 	}
+
+	_modified = true;
 }
 
 Common::String TextCast::getText() {
@@ -305,6 +339,34 @@ Common::String TextCast::getText() {
 		_ptext = ((Graphics::MacEditableText *)_widget)->getEditedString().encode();
 
 	return _ptext;
+}
+
+bool TextCast::isModified() {
+	return _modified || (_widget ? ((Graphics::MacEditableText *)_widget)->_contentIsDirty : false);
+}
+
+bool TextCast::isEditable() {
+	if (!_widget) {
+		warning("TextCast::setEditable: Attempt to set editable of null widget");
+		return false;
+	}
+
+	return (Graphics::MacEditableText *)_widget->_editable;
+}
+
+bool TextCast::setEditable(bool editable) {
+	if (!_widget) {
+		warning("TextCast::setEditable: Attempt to set editable of null widget");
+		return false;
+	}
+
+	Graphics::MacEditableText *text = (Graphics::MacEditableText *)_widget;
+	text->_focusable = editable;
+	text->setEditable(editable);
+	text->_selectable = editable;
+	// text->setActive(editable);
+
+	return true;
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
@@ -377,6 +439,19 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 
 		_buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	}
+}
+
+void ButtonCast::createWidget() {
+	uint fgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
+
+	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
+
+	_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor);
+
+	_widget->_focusable = true;
+
+	((Graphics::MacButton *)(_widget))->draw();
+	delete macFont;
 }
 
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
