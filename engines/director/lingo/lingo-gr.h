@@ -147,7 +147,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 129 "engines/director/lingo/lingo-gr.y"
+#line 138 "engines/director/lingo/lingo-gr.y"
 
 	Common::String *s;
 	int i;
