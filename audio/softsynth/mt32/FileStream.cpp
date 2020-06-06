@@ -21,6 +21,11 @@
 
 #include "internals.h"
 
+// Disable MSVC STL exceptions
+#ifdef _MSC_VER
+#define _HAS_EXCEPTIONS 0
+#endif
+
 #include "FileStream.h"
 
 namespace MT32Emu {
