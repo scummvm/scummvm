@@ -36,8 +36,7 @@ const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
 
 enum MouseButtonState {
 	MBS_DOWN = 0x1,
-	MBS_HANDLED = 0x2,		// Mousedown event handled
-	MBS_RELHANDLED = 0x4	// Mouse release event handled (only used in AvatarMover)
+	MBS_HANDLED = 0x2		// Mousedown event handled
 };
 
 struct MButton {
@@ -47,7 +46,7 @@ struct MButton {
 	Common::Point _downPoint;
 	int _state;
 
-	MButton() : _downGump(0), _curDown(0), _lastDown(0), _state(MBS_HANDLED | MBS_RELHANDLED)
+	MButton() : _downGump(0), _curDown(0), _lastDown(0), _state(MBS_HANDLED)
 	{
 	}
 
