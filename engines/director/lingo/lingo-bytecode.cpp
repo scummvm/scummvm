@@ -103,7 +103,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x82, LC::c_argcnoretpush,"w" },
 	{ 0x83, LC::c_argcpush,		"w" },
 	// 0x84, push a constant
-	{ 0x85, LC::c_namepush,     "w" },
+	{ 0x85, LC::c_namepush,		"w" },
 	{ 0x86, LC::cb_objectpush,  "w" },
 	{ 0x89, LC::cb_globalpush,	"w" },
 	{ 0x8a, LC::cb_thepush,		"w" },

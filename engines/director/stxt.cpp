@@ -75,7 +75,7 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 		_palinfo3 = textStream.readUint16();
 
 		debugC(3, kDebugText, "Stxt init: formattingCount: %u, formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d padding: 0x%02x",
-			   formattingCount, formatStartOffset, height, ascent, _fontId, _textSlant, padding);
+				formattingCount, formatStartOffset, height, ascent, _fontId, _textSlant, padding);
 
 		debugC(3, kDebugText, "        fontSize: %d, p0: %x p1: %x p2: %x", _fontSize, _palinfo1, _palinfo2, _palinfo3);
 
@@ -86,7 +86,7 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 			_ftext += text.firstChar();
 			text.deleteChar(0);
 
-			if (f == '\001')    // Insert two \001s as a replacement
+			if (f == '\001')	// Insert two \001s as a replacement
 				_ftext += '\001';
 
 			prevPos++;

@@ -246,23 +246,23 @@ typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Co
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
 enum ObjectType {
-    kFactoryObj = 0,
-    kScriptObj = 1
+	kFactoryObj = 0,
+	kScriptObj = 1
 };
 
 struct Object {
 	Common::String *name;
-    ObjectType type;
+	ObjectType type;
 	bool disposed;
 
-    Object *prototype;
-    SymbolHash properties;
-    SymbolHash methods;
-    int inheritanceLevel; // 1 for original object
-    ScriptContext *scriptContext;
+	Object *prototype;
+	SymbolHash properties;
+	SymbolHash methods;
+	int inheritanceLevel; // 1 for original object
+	ScriptContext *scriptContext;
 
-    // used only for factories
-    Common::HashMap<uint, Datum> *objArray;
+	// used only for factories
+	Common::HashMap<uint, Datum> *objArray;
 
 	Object *clone();
 	Symbol getMethod(const Common::String &methodName);

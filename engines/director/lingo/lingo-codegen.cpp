@@ -408,7 +408,7 @@ void Lingo::processIf(int toplabel, int endlabel) {
 
 		WRITE_UINT32(&iend, endlabel - label + 1);
 
-		(*_currentScript)[label] = iend;      /* end, if cond fails */
+		(*_currentScript)[label] = iend;	/* end, if cond fails */
 	}
 }
 
@@ -647,7 +647,7 @@ void Lingo::codeFactory(Common::String &name) {
 	obj->disposed = false;
 	obj->inheritanceLevel = 1;
 	obj->scriptContext = _currentScriptContext;
-	obj->objArray = new Common::HashMap<uint32, Datum>; 
+	obj->objArray = new Common::HashMap<uint32, Datum>;
 
 	_currentFactory = obj;
 	if (!_globalvars.contains(name)) {

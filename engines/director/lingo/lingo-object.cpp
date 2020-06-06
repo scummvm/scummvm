@@ -34,17 +34,17 @@ static struct MethodProto {
 	int maxArgs;
 	int version;
 } predefinedMethods[] = {
-    // "mAtFrame"                                                   // D2 - XObject or user-defined
-    // "mDescribe",			                                        // D2 - XObject
-	{ "mDispose",               LM::m_dispose,       0, 0, 2 },	    // D2
-	{ "mGet",			        LM::m_get,           1, 1, 2 },	    // D2
-	// "mInstanceRespondsTo",                                       // D2 - XObject
-	// "mMessageList",			                                    // D2 - XObject
-	// "mName",				                                        // D2 - XObject
-	{ "mNew",				    LM::m_new,           -1, 0, 2 },    // D2
-	// "mPerform",				                                    // D2 - XObject
-	{ "mPut",				    LM::m_put,           2, 2, 2 },	    // D2
-	// "mRespondsTo",		                                        // D2 - XObject
+	// "mAtFrame"													// D2 - XObject or user-defined
+	// "mDescribe",													// D2 - XObject
+	{ "mDispose",				LM::m_dispose,		 0, 0, 2 },		// D2
+	{ "mGet",					LM::m_get,			 1, 1, 2 },		// D2
+	// "mInstanceRespondsTo",										// D2 - XObject
+	// "mMessageList",			 									// D2 - XObject
+	// "mName",														// D2 - XObject
+	{ "mNew",					LM::m_new,			-1, 0, 2 },		// D2
+	// "mPerform",				 									// D2 - XObject
+	{ "mPut",					LM::m_put,			 2, 2, 2 },		// D2
+	// "mRespondsTo",		 										// D2 - XObject
 	{ 0, 0, 0, 0, 0 }
 };
 
