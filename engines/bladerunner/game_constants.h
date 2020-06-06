@@ -1039,8 +1039,8 @@ enum Flags {
 	kFlagUG16FolderFound                      = 597,
 	kFlagUG07ClovisCaughtMcCoy                = 598,
 	kFlagKIAPrivacyAddonIntro                 = 599,
-	kFlagUG16LutherLanceTalkReplicants1       = 600,
-	kFlagUG16LutherLanceTalkReplicants2       = 601,
+	kFlagUG16LutherLanceTalkReplicants        = 600,
+	kFlagUG16LutherLanceTalkHumans            = 601,
 	// 602 is never used
 	kFlagSteeleAimingAtGordo                  = 603,
 	kFlagNR03McCoyThrownOut                   = 604,

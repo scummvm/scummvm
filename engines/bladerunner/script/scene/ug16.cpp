@@ -237,8 +237,8 @@ void SceneScriptUG16::dialogueWithLuther() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1400, 5, 6, 2); // REPLICANTS
 	DM_Add_To_List_Never_Repeat_Once_Selected(1410, 5, 4, 8); // WORK
-	if (Game_Flag_Query(kFlagUG16LutherLanceTalkReplicants1)
-	 || Game_Flag_Query(kFlagUG16LutherLanceTalkReplicants2)
+	if (Game_Flag_Query(kFlagUG16LutherLanceTalkReplicants)
+	 || Game_Flag_Query(kFlagUG16LutherLanceTalkHumans)
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1420, 6, 4, 5); // LIFESPAN
 		DM_Add_To_List_Never_Repeat_Once_Selected(1430, 6, 4, 5); // CLOVIS
@@ -287,7 +287,7 @@ void SceneScriptUG16::dialogueWithLuther() {
 			Actor_Says(kActorLance, 140, 16);
 			Actor_Says(kActorMcCoy, 5790, 13);
 			Actor_Says(kActorLuther, 170, 14);
-			Game_Flag_Set(kFlagUG16LutherLanceTalkReplicants1);
+			Game_Flag_Set(kFlagUG16LutherLanceTalkReplicants);
 			Actor_Modify_Friendliness_To_Other(kActorLuther, kActorMcCoy, 5);
 		} else {
 			Actor_Says(kActorLuther, 180, 14);
@@ -295,7 +295,7 @@ void SceneScriptUG16::dialogueWithLuther() {
 			Actor_Says(kActorLance, 150, 17);
 			Actor_Says(kActorMcCoy, 5800, 13);
 			Actor_Says(kActorLuther, 190, 15);
-			Game_Flag_Set(kFlagUG16LutherLanceTalkReplicants2);
+			Game_Flag_Set(kFlagUG16LutherLanceTalkHumans);
 			Actor_Modify_Friendliness_To_Other(kActorLuther, kActorMcCoy, -10);
 		}
 		break;
