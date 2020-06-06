@@ -1619,7 +1619,7 @@ void KingdomGame::cursorType() {
 
 	_iconSelect = 9;
 	for (int var6 = 0; var6 < 8; var6++) {
-		if (_mouseValue == 181 + var6) {
+		if (_mouseValue == 0x181 + var6) {
 			int var2 = _logic->_nodeNum;
 			if (_tsIconOnly)
 				var2 = 79;
