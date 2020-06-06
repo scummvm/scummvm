@@ -1682,19 +1682,33 @@ void LB::b_puppetSound(int nargs) {
 }
 
 void LB::b_puppetSprite(int nargs) {
-	if (!g_director->getCurrentScore()) {
+	Score *sc = g_director->getCurrentScore();
+	if (!sc) {
 		warning("b_puppetSprite: no score");
-
+		g_lingo->dropStack(nargs);
 		return;
 	}
 
-	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
+	if (nargs == 2 && g_director->getVersion() >= 4) {
+		Datum state = g_lingo->pop();
+		Datum sprite = g_lingo->pop();
+		if ((uint)sprite.asInt() < sc->_sprites.size()) {
+			sc->_sprites[sprite.asInt()]->_puppet = state.asInt();
+		} else {
+			warning("b_puppetSprite: sprite index out of bounds");
+		}
+	} else if (nargs == 0 && g_director->getVersion() < 4) {
+		g_lingo->dropStack(nargs);
 
-	if (g_lingo->_currentChannelId == -1) {
-		warning("b_puppetSprite: channel Id is missing");
-		return;
+		if (g_lingo->_currentChannelId == -1) {
+			warning("b_puppetSprite: channel Id is missing");
+			return;
+		}
+		sc->_sprites[g_lingo->_currentChannelId]->_puppet = true;
+	} else {
+		warning("b_puppetSprite: unexpectedly received %d arguments", nargs);
+		g_lingo->dropStack(nargs);
 	}
-	frame->_sprites[g_lingo->_currentChannelId]->_puppet = true;
 }
 
 void LB::b_puppetTempo(int nargs) {
