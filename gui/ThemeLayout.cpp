@@ -233,7 +233,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		_w = _defaultW > 0 ? MIN(_defaultW, g_system->getOverlayWidth()) : -1;
 		_h = _defaultH > 0 ? MIN(_defaultH, g_system->getOverlayHeight()) : -1;
 	} else {
-		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, _w, _h, _useRTL)) {
+		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, _w, _h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
 		}
 

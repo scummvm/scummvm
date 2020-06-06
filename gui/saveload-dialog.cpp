@@ -493,7 +493,7 @@ void SaveLoadChooserSimple::reflowLayout() {
 		int16 x, y;
 		int16 w, h;
 
-		if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.Thumbnail", x, y, w, h, _useRTL))
+		if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails");
 
 		// Even if there is no thumbnail support, getWidgetData() will provide default thumbnail values
@@ -934,7 +934,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 
 	int16 x, y;
 	int16 w;
-	if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight, _useRTL))
+	if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight))
 		error("Could not load widget position for 'SaveLoadChooser.List'");
 
 	const int16 buttonWidth = kThumbnailWidth + 6;
