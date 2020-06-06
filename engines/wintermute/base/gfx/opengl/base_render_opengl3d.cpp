@@ -189,6 +189,7 @@ bool BaseRenderOpenGL3D::setProjection(float fov) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
+	glGetFloatv(GL_PROJECTION_MATRIX, _lastProjectionMatrix.getData());
 	glMatrixMode(GL_MODELVIEW);
 	return true;
 }

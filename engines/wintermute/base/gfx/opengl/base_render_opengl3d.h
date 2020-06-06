@@ -113,6 +113,10 @@ public:
 	bool setup3D(Camera3D *camera, bool force = false) override;
 	bool setupLines() override;
 
+	Math::Matrix4 lastProjectionMatrix() {
+		return _lastProjectionMatrix;
+	}
+
 	/**
 	 * Get the name of the current renderer
 	 *
@@ -160,6 +164,7 @@ public:
 					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 
 private:
+	Math::Matrix4 _lastProjectionMatrix;
 	bool _spriteBatchMode;
 	bool _state3D;
 };
