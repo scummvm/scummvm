@@ -1181,7 +1181,7 @@ void KingdomGame::refreshSound() {
 }
 
 void KingdomGame::checkMainScreen() {
-	if (_cTimerFlag || _logic->_statPlay == 900 || _logic->_statPlay == 901)
+	if (!_cTimerFlag || _logic->_statPlay == 900 || _logic->_statPlay == 901)
 		return;
 
 	_cTimerFlag = false;
