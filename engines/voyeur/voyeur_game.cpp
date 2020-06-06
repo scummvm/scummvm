@@ -238,11 +238,13 @@ void VoyeurEngine::doTailTitle() {
 	_screen->_vPort->setupViewPort(NULL);
 	_screen->screenReset();
 
-	if (!getIsDemo() && _bVoy->getBoltGroup(0x600)) {
-		RL2Decoder decoder;
-		decoder.loadRL2File("a1100200.rl2", false);
-		decoder.start();
-		decoder.play(this);
+	if (_bVoy->getBoltGroup(0x600)) {
+		if (!getIsDemo()) {
+			RL2Decoder decoder;
+			decoder.loadRL2File("a1100200.rl2", false);
+			decoder.start();
+			decoder.play(this);
+		}
 
 		if (!shouldQuit() && !_eventsManager->_mouseClicked) {
 			doClosingCredits();
