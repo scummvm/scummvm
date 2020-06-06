@@ -64,7 +64,6 @@ public:
 
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 	virtual bool draw(bool forceRedraw = false) override;
-	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 
 	void setAlignOffset(TextAlign align);
 	Common::Point calculateOffset();

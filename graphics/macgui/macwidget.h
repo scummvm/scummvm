@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/events.h"
 #include "common/rect.h"
+#include "graphics/managed_surface.h"
 
 namespace Common {
 	struct Event;
@@ -34,6 +35,7 @@ namespace Common {
 namespace Graphics {
 
 class ManagedSurface;
+class MacWindowManager;
 
 class MacWidget {
 	friend class MacEditableText;
@@ -61,10 +63,10 @@ public:
 	 */
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
 
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
-	virtual bool draw(bool forceRedraw = false) = 0;
-	virtual void blit(ManagedSurface *g, Common::Rect &dest) = 0;
-	virtual bool processEvent(Common::Event &event) = 0;
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
+	virtual bool draw(bool forceRedraw = false);
+	virtual void blit(ManagedSurface *g, Common::Rect &dest);
+	virtual bool processEvent(Common::Event &event);
 	virtual bool hasAllFocus() { return _active; }
 	virtual bool isEditable() { return _editable; }
 
@@ -78,6 +80,7 @@ public:
 	void removeWidget(MacWidget *child, bool del = true);
 
 	Graphics::ManagedSurface *getSurface() { return _composeSurface; }
+	Graphics::ManagedSurface *getMask() { return _maskSurface; }
 
 protected:
 	uint16 _border;
@@ -85,6 +88,7 @@ protected:
 	uint16 _shadow;
 
 	Graphics::ManagedSurface *_composeSurface;
+	Graphics::ManagedSurface *_maskSurface;
 
 public:
 	bool _focusable;

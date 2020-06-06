@@ -22,11 +22,12 @@
 
 #include "common/system.h"
 
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwidget.h"
 
 namespace Graphics {
 
-MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border, uint16 gutter, uint16 shadow) :
+	MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border, uint16 gutter, uint16 shadow) :
 	_focusable(focusable), _parent(parent), _border(border), _gutter(gutter), _shadow(shadow) {
 	_contentIsDirty = true;
 
@@ -39,6 +40,13 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusab
 		parent->_children.push_back(this);
 
 	_composeSurface = nullptr;
+	_maskSurface = nullptr;
+
+	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
+	_composeSurface->clear(255);
+
+	_maskSurface = new ManagedSurface(_dims.width(), _dims.height());
+	_maskSurface->clear(0);
 
 	_active = false;
 	_editable = false;
@@ -57,6 +65,23 @@ void MacWidget::setActive(bool active) {
 		return;
 
 	_active = active;
+}
+
+bool MacWidget::draw(bool forceRedraw) {
+	return false;
+}
+
+bool MacWidget::draw(ManagedSurface *g, bool forceRedraw) {
+	return false;
+}
+
+void MacWidget::blit(ManagedSurface *g, Common::Rect &dest) {
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
+}
+
+bool MacWidget::processEvent(Common::Event &event) {
+	warning("MacWidget::processEvent");
+	return false;
 }
 
 void MacWidget::removeWidget(MacWidget *child, bool del) {
