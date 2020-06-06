@@ -95,8 +95,7 @@ bool BaseRenderOpenGL3D::setViewport(Rect32 *rect) {
 }
 
 Rect32 BaseRenderOpenGL3D::getViewPort() {
-	warning("BaseRenderOpenGL3D::getViewPort not yet implemented");
-	return Rect32(0, 0, 0, 0);
+	return _viewportRect;
 }
 
 void BaseRenderOpenGL3D::setWindowed(bool windowed) {
