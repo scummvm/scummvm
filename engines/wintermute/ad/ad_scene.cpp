@@ -952,7 +952,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry && camera[0] != '\0') {
-		// TODO: set camera here
+		_sceneGeometry->setActiveCamera(camera, -1.0f, -1.0f, -1.0f);
 	}
 #endif
 
@@ -968,7 +968,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
 		if (activeCamera != nullptr) {
-			// TODO: set camera
+			_gameRef->_renderer->setup3D(activeCamera);
 		}
 	}
 #endif
