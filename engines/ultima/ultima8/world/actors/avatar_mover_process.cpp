@@ -110,9 +110,6 @@ void AvatarMoverProcess::handleHangingMode() {
 		//m1clicked = true;
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
-	_mouseButton[0].setState(MBS_RELHANDLED);
-	_mouseButton[1].setState(MBS_RELHANDLED);
-
 
 	// if left mouse is down, try to climb up
 
@@ -178,10 +175,7 @@ void AvatarMoverProcess::handleCombatMode() {
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
 
-	_mouseButton[0].setState(MBS_RELHANDLED);
-
-	if (!_mouseButton[1].isState(MBS_RELHANDLED)) {
-		_mouseButton[1].setState(MBS_RELHANDLED);
+	if (!_mouseButton[0].isState(MBS_DOWN)) {
 		clearMovementFlag(MOVE_MOUSE_DIRECTION);
 	}
 
@@ -253,19 +247,14 @@ void AvatarMoverProcess::handleCombatMode() {
 	}
 
 	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
-		// right mouse button is down long enough to act on it
-		// if facing right direction, walk
-	}
-	if (_mouseButton[1].isState(MBS_DOWN) &&
-	        _mouseButton[1].isState(MBS_HANDLED) && _mouseButton[1]._lastDown > 0) {
-		// right mouse button is down long enough to act on it
-		// if facing right direction, walk
-		//!! TODO: check if you can actually take this step
+		// Note: Orginal game allowed a move animation on a single right click.
+		// This implementation needs right mouse to be held. 
 		setMovementFlag(MOVE_MOUSE_DIRECTION);
 
 		if (checkTurn(mousedir, true))
 			return;
 
+		//!! TODO: check if you can actually take this step
 		int32 nextdir = mousedir;
 		Animation::Sequence nextanim;
 
@@ -455,17 +444,13 @@ void AvatarMoverProcess::handleNormalMode() {
 		_mouseButton[1].setState(MBS_HANDLED);
 	}
 
-	// see if mouse was just released
-	_mouseButton[0].setState(MBS_RELHANDLED); // don't care about left
-
-	if (!_mouseButton[1].isState(MBS_RELHANDLED)) {
-		_mouseButton[1].setState(MBS_RELHANDLED);
+	if (!_mouseButton[1].isState(MBS_DOWN)) {
 		clearMovementFlag(MOVE_MOUSE_DIRECTION);
 	}
 
 	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
-		// right mouse button is down long enough to act on it
-		// if facing right direction, walk
+		// Note: Orginal game allowed a move animation on a single right click.
+		// This implementation needs right mouse to be held. 
 		setMovementFlag(MOVE_MOUSE_DIRECTION);
 	}
 
@@ -577,9 +562,6 @@ void AvatarMoverProcess::handleNormalMode() {
 
 	if (hasMovementFlags(MOVE_JUMP)) {
 		clearMovementFlag(MOVE_JUMP);
-
-		// Also have to fake a release.
-		_mouseButton[1].clearState(MBS_RELHANDLED);
 
 		if (checkTurn(mousedir, false))
 			return;
@@ -987,7 +969,6 @@ void AvatarMoverProcess::onMouseUp(int button) {
 	}
 
 	_mouseButton[bid].clearState(MBS_DOWN);
-	_mouseButton[bid].clearState(MBS_RELHANDLED);
 }
 
 
