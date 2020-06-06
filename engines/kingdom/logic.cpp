@@ -59,7 +59,8 @@ void Logic::initVariables() {
 }
 
 void Logic::initPlay() {
-	memset(_inventory, 0xFF, 19);
+	for (int i = 0; i != 19; ++i)
+		_inventory[i] = -1;
 
 	for (int i = 0; i < 99; i++)
 		_nodes[i] = 0;
@@ -565,7 +566,9 @@ void Logic::characterDeath() {
 	_currMap = 3;
 	dsAll();
 	_pouch = false;
-	memset(_inventory, -1, 19);
+	for (int i = 0; i != 19; ++i) {
+		_inventory[i] = -1;
+	}
 	_statPlay = 994;
 	_vm->_loopFlag = true;
 }
