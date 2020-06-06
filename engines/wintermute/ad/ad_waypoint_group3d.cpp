@@ -26,7 +26,9 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
+#include "common/util.h"
 #include "engines/wintermute/ad/ad_waypoint_group3d.h"
+#include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
 
 namespace Wintermute {
 
@@ -49,19 +51,19 @@ bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 	Math::Vector3d min = Math::Vector3d(0, 0, 0);
 	Math::Vector3d max = Math::Vector3d(0, 0, 0);
 
-	// implement this later
+	if (mesh->vertexCount() > 0) {
+		min = max = mesh->getVertexPosition(0);
+	}
 
-	//	if(Mesh->m_NumVertices > 0)	Min = Max = Mesh->m_Vertices[0].m_Pos;
+	for (int i = 0; i < mesh->vertexCount(); i++){
+		min.x() = MIN(min.x(), mesh->getVertexPosition(i)[0]);
+		min.y() = MIN(min.y(), mesh->getVertexPosition(i)[1]);
+		min.z() = MIN(min.z(), mesh->getVertexPosition(i)[2]);
 
-	//	for(int i=0; i<Mesh->m_NumVertices; i++){
-	//		Min.x = min(Min.x, Mesh->m_Vertices[i].m_Pos.x);
-	//		Min.y = min(Min.y, Mesh->m_Vertices[i].m_Pos.y);
-	//		Min.z = min(Min.z, Mesh->m_Vertices[i].m_Pos.z);
-
-	//		Max.x = max(Max.x, Mesh->m_Vertices[i].m_Pos.x);
-	//		Max.y = max(Max.y, Mesh->m_Vertices[i].m_Pos.y);
-	//		Max.z = max(Max.z, Mesh->m_Vertices[i].m_Pos.z);
-	//	}
+		max.x() = MAX(max.x(), mesh->getVertexPosition(i)[0]);
+		max.y() = MAX(max.y(), mesh->getVertexPosition(i)[1]);
+		max.z() = MAX(max.z(), mesh->getVertexPosition(i)[2]);
+	}
 
 	Math::Vector3d *vect = new Math::Vector3d;
 	vect->x() = min.x() + (max.x() - min.x()) / 2;
