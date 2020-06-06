@@ -43,6 +43,8 @@ public:
 	void dumpVertexCoordinates(const char *filename);
 	int faceCount();
 	uint16 *getFace(int index);
+
+	int vertexCount();
 	float *getVertexPosition(int index);
 
 private:

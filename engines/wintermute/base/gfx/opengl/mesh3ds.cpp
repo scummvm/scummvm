@@ -178,4 +178,8 @@ float *Mesh3DS::getVertexPosition(int index) {
 	return reinterpret_cast<float *>(_vertexData + 12 * index);
 }
 
+int Wintermute::Mesh3DS::vertexCount() {
+	return _vertexCount;
+}
+
 } // namespace Wintermute
