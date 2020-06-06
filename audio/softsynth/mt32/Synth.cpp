@@ -1674,6 +1674,8 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 	case MR_Reset:
 		reset();
 		break;
+	default:
+		break;
 	}
 }
 

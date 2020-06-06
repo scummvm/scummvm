@@ -273,6 +273,8 @@ Analog *Analog::createAnalog(const AnalogOutputMode mode, const bool oldMT32Anal
 		return new AnalogImpl<IntSampleEx>(mode, oldMT32AnalogLPF);
 	case RendererType_FLOAT:
 		return new AnalogImpl<FloatSample>(mode, oldMT32AnalogLPF);
+	default:
+		break;
 	}
 	return NULL;
 }
