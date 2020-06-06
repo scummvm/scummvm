@@ -80,7 +80,7 @@ Object *Object::clone() {
 	return res;
 }
 
-Symbol Object::getMethod(const Common::String methodName) {
+Symbol Object::getMethod(const Common::String &methodName) {
 	if (disposed) {
 		error("Method '%s' called on disposed object '%s'", methodName.c_str(), name->c_str());
 	}
@@ -93,7 +93,7 @@ Symbol Object::getMethod(const Common::String methodName) {
 	return Symbol();
 }
 
-bool Object::hasVar(const Common::String varName) {
+bool Object::hasVar(const Common::String &varName) {
 	if (disposed) {
 		error("Variable '%s' accessed on disposed object '%s'", varName.c_str(), name->c_str());
 	}
@@ -105,13 +105,25 @@ bool Object::hasVar(const Common::String varName) {
 	return properties.contains(varName);
 }
 
-Symbol &Object::getVar(const Common::String varName) {
+Symbol &Object::getVar(const Common::String &varName) {
 	return properties[varName];
+}
+
+// Initialization/disposal
+
+void LM::m_new(int nargs) {
+	// This is usually overridden by a user-defined mNew
+	Datum res;
+	res.type = OBJECT;
+	res.u.obj = g_lingo->_currentMeObj;
+	g_lingo->push(res);
 }
 
 void LM::m_dispose(int nargs) {
 	g_lingo->_currentMeObj->disposed = true;
 }
+
+// Object array
 
 void LM::m_get(int nargs) {
 	Datum indexD = g_lingo->pop();
@@ -128,14 +140,6 @@ void LM::m_put(int nargs) {
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
 	(*g_lingo->_currentMeObj->objArray)[index] = value;
-}
-
-void LM::m_new(int nargs) {
-	// This is usually be overridden by a user-defined mNew
-	Datum res;
-	res.type = OBJECT;
-	res.u.obj = g_lingo->_currentMeObj;
-	g_lingo->push(res);
 }
 
 }
