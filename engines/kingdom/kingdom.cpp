@@ -497,6 +497,11 @@ void KingdomGame::playMovie(int movieNum) {
 	if (decoder->loadFile(path)) {
 		decoder->setAudioTrack(_sound);
 		decoder->start();
+
+		if (_frameStop) {
+			decoder->setEndFrame(_frameStop);
+		}
+
 		bool skipMovie = false;
 		while (!decoder->endOfVideo() && !skipMovie && !shouldQuit()) {
 			unsigned int delay = MIN(decoder->getTimeToNextFrame(), 10u);
