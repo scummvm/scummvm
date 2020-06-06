@@ -776,77 +776,47 @@ bool AdSceneGeometry::convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
-	warning("AdSceneGeometry::convert3Dto3D not yet implemented");
+	Rect32 viewport = _gameRef->_renderer3D->getViewPort();
+	Math::Matrix4 projectionMatrix = _gameRef->_renderer3D->lastProjectionMatrix();
 
-	//	CBRenderD3D* rend = (CBRenderD3D*)_gameRef->m_Renderer;
+	Math::Vector3d direction((((2.0f * x) / viewport.width()) - 1) / projectionMatrix(0, 0),
+	                         -(((2.0f * y) / viewport.height()) - 1) / projectionMatrix(1, 1),
+	                         1.0f);
+	Math::Matrix4 m = _viewMatrix;
+	m.inverse();
+	m.transform(&direction, false);
+	direction.z() *= -1.0f;
 
-	//	if(!m_LastValuesInitialized)
-	//	{
-	//		rend->m_Device->GetViewport(&m_DrawingViewport);
-	//		rend->m_Device->GetTransform(D3DTS_PROJECTION, &m_LastProjMat);
-	//	}
+	bool intFound = false;
+	float minDist = FLT_MAX;
 
-	//	float ResWidth, ResHeight;
-	//	float LayerWidth, LayerHeight;
-	//	float ModWidth, ModHeight;
-	//	bool CustomViewport;
-	//	rend->GetProjectionParams(&ResWidth, &ResHeight, &LayerWidth, &LayerHeight, &ModWidth, &ModHeight, &CustomViewport);
+	for (uint32 i = 0; i < _planes.size(); i++) {
+		for (int j = 0; j < _planes[i]->_mesh->faceCount(); j++) {
+			uint16 *triangle = _planes[i]->_mesh->getFace(j);
+			float *v0 = _planes[i]->_mesh->getVertexPosition(triangle[0]);
+			float *v1 = _planes[i]->_mesh->getVertexPosition(triangle[1]);
+			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
+			Math::Vector3d intersection;
 
-	//	// modify coordinates according to viewport settings
-	//	int mleft = m_DrawingViewport.X;
-	//	int mright = ResWidth - m_DrawingViewport.width() - m_DrawingViewport.X;
-	//	int mtop = m_DrawingViewport.Y;
-	//	int mbottom = ResHeight - m_DrawingViewport.height() - m_DrawingViewport.Y;
+			if (lineIntersectsTriangle(getActiveCamera()->_position, direction,
+			                           Math::Vector3d(v0[0], v0[1], v0[2]),
+			                           Math::Vector3d(v1[0], v1[1], v1[2]),
+			                           Math::Vector3d(v2[0], v2[1], v2[2]),
+			                           intersection.x(), intersection.y(), intersection.z())) {
+				Math::Vector3d lineSegement = intersection - getActiveCamera()->_position;
+				float dist = lineSegement.getMagnitude();
 
-	//	X-=(mleft + mright)/2 + ModWidth;
-	//	Y-=(mtop + mbottom)/2 + ModHeight;
+				if (dist < minDist) {
+					*pos = intersection;
+					minDist = dist;
+				}
 
-	//	Math::Vector3d vPickRayDir;
-	//	Math::Vector3d vPickRayOrig;
+				intFound = true;
+			}
+		}
+	}
 
-	//	// Compute the vector of the pick ray in screen space
-	//	Math::Vector3d vec;
-	//	vec.x =  ((( 2.0f * X) / m_DrawingViewport.width() ) - 1) / m_LastProjMat._11;
-	//	vec.y = -((( 2.0f * Y) / m_DrawingViewport.height()) - 1) / m_LastProjMat._22;
-	//	vec.z() =  1.0f;
-
-	//	// Get the inverse view matrix
-	//	Math::Matrix4 m = m_ViewMatrix;
-	//	m.inverse();
-
-	//	// Transform the screen space pick ray into 3D space
-	//	vPickRayDir.x  = vec.x*m._11 + vec.y*m._21 + vec.z*m._31;
-	//	vPickRayDir.y  = vec.x*m._12 + vec.y*m._22 + vec.z*m._32;
-	//	vPickRayDir.z  = vec.x*m._13 + vec.y*m._23 + vec.z*m._33;
-	//	vPickRayOrig.x = m._41;
-	//	vPickRayOrig.y = m._42;
-	//	vPickRayOrig.z = m._43;
-
-	bool int_found = false;
-	//	float min_dist = FLT_MAX;
-	//	Math::Vector3d intersection, ray;
-	//	for(int i=0; i<_planes.size(); i++){
-	//		for(int j=0; j<_planes[i]->m_Mesh->m_NumFaces; j++){
-	//			if(C3DUtils::IntersectTriangle(
-	//								vPickRayOrig, vPickRayDir,
-	//								_planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[0]].m_Pos,
-	//								_planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[1]].m_Pos,
-	//								_planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[2]].m_Pos,
-	//								&intersection.x, &intersection.y, &intersection.z))
-	//			{
-	//				ray = intersection - vPickRayOrig;
-	//				float dist = D3DXVec3Length(&ray);
-	//				if(dist < min_dist){
-	//					*Pos = intersection;
-	//					min_dist = dist;
-	//				}
-	//				int_found = true;
-	//			}
-
-	//		}
-	//	}
-
-	return int_found;
+	return intFound;
 }
 
 //////////////////////////////////////////////////////////////////////////
