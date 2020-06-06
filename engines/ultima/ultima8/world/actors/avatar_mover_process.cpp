@@ -477,11 +477,18 @@ void AvatarMoverProcess::handleNormalMode() {
 			avatar->clearActorFlag(Actor::ACT_COMBATRUN);
 			avatar->toggleInCombat();
 
-			ProcId walkpid = avatar->doAnim(Animation::walk, direction);
-			ProcId drawpid = avatar->doAnim(Animation::readyWeapon, direction);
-			Process *drawproc = Kernel::get_instance()->getProcess(drawpid);
-			drawproc->waitFor(walkpid);
-			waitFor(drawpid);
+			// If we were running, slow to a walk before drawing weapon.
+			// Note: Original game did not check last animation and always took an extra walk.
+			if (lastanim == Animation::run || lastanim == Animation::runningJump) {
+				ProcId walkpid = avatar->doAnim(Animation::walk, direction);
+				ProcId drawpid = avatar->doAnim(Animation::readyWeapon, direction);
+				Process *drawproc = Kernel::get_instance()->getProcess(drawpid);
+				drawproc->waitFor(walkpid);
+				waitFor(drawpid);
+				return;
+			}
+
+			waitFor(avatar->doAnim(Animation::readyWeapon, direction));
 			return;
 		}
 
