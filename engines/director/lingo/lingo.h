@@ -265,9 +265,9 @@ struct Object {
     Common::HashMap<uint, Datum> *objArray;
 
 	Object *clone();
-	Symbol getMethod(const Common::String methodName);
-	bool hasVar(const Common::String varName);
-	Symbol &getVar(const Common::String varName);
+	Symbol getMethod(const Common::String &methodName);
+	bool hasVar(const Common::String &varName);
+	Symbol &getVar(const Common::String &varName);
 };
 
 struct CFrame {	/* proc/func call stack frame */
@@ -342,7 +342,7 @@ private:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
-	void setPrimaryEventHandler(LEvent event, Common::String &code);
+	void setPrimaryEventHandler(LEvent event, const Common::String &code);
 	void primaryEventHandler(LEvent event);
 	void registerInputEvent(LEvent event);
 	void registerFrameEvent(LEvent event);
