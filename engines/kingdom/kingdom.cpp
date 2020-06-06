@@ -1472,6 +1472,8 @@ int KingdomGame::getAKey() {
 				// _quit = true;
 			// }
 			break;
+		default:
+			break;
 		}
 	}
 
