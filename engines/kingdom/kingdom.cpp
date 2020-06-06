@@ -109,7 +109,7 @@ void KingdomGame::initVariables() {
 	_aTimerFlag = false;
 	_aTimer = 0;
 	_zoom = 0;
-	_wizard = false; 
+	_wizard = false;
 	_userInput = 0;
 //	_track = 0;
 //	_statMap = 0;
@@ -810,7 +810,7 @@ Common::Error KingdomGame::loadGameState(int slot) {
 	playSound(_soundNumber);
 	for (int i = 0; i < 7; i++)
 		_iconPic[i] = 89 + i;
-	
+
 	_frameStop = 0;
 	_gameMode = 0;
 	_asMode = false;
@@ -1131,7 +1131,7 @@ void KingdomGame::displayIcon(int reznum) {
 	fShowPic(reznum);
 	_bTimer = 76;
 	readMouse();
-	
+
 	while(_bTimer != 0 && _mouseButton == 0) {
 		checkTimers();
 		refreshSound();
@@ -1155,7 +1155,7 @@ void KingdomGame::setATimer() {
 
 	if (_logic->_nodeNum == 56 && _logic->_inventory[8] < 1 && _wizard)
 		wrkNodeNum = 80;
-	
+
 	for (int i = 0; i < 7; i++) {
 		int idx = _iconActTable[wrkNodeNum][i];
 		if (_logic->_inventory[idx] > 0) {
@@ -1246,7 +1246,7 @@ void KingdomGame::checkMainScreen() {
 					_iconPic[i] = 12 + idx;
 				else
 					_iconPic[i] = 89 + i;
-			} 
+			}
 		} else if (_iconSel != i && _iconPic[i] != 89 + i) {
 			if (_iconPic[i] != 12 + idx)
 				_iconPic[i] = 32;
@@ -1351,7 +1351,7 @@ void KingdomGame::checkMainScreen() {
 	}
 
 	int timer = 0;
-	int delta = 7; // CHECKME: the variable is the same than the one used for the first for(), and the value should therefore be 7  
+	int delta = 7; // CHECKME: the variable is the same than the one used for the first for(), and the value should therefore be 7
 	if (_skylarTimer != 0) {
 		delta = 772;
 		timer = _skylarTimer;
@@ -1642,7 +1642,7 @@ void KingdomGame::cursorType() {
 void KingdomGame::cursorTypeExit() {
 	if (_mouseValue >= 0x400)
 		_cursorDef = _cursorTable[_mouseValue - 0x400];
-	else 
+	else
 		_cursorDef = (_mouseValue != 0) ? 0x68 : 0x67;
 }
 
