@@ -91,9 +91,6 @@ void MacEditableText::init() {
 
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
 	_cursorSurface->clear(_wm->_colorBlack);
-
-	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
-	_composeSurface->clear(_bgcolor);
 }
 
 MacEditableText::~MacEditableText() {
@@ -236,10 +233,6 @@ bool MacEditableText::draw(ManagedSurface *g, bool forceRedraw) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
 	return true;
-}
-
-void MacEditableText::blit(ManagedSurface *g, Common::Rect &dest) {
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
 }
 
 void MacEditableText::drawSelection() {

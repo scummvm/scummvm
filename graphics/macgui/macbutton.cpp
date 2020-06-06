@@ -38,7 +38,6 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	MacEditableText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment) {
 
 	_buttonType = buttonType;
-	delete _composeSurface;
 
 	int offset;
 	switch (buttonType) {
@@ -58,7 +57,8 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 
 	_alignOffset.x += offset;
 	_dims.right += offset;
-	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
+	_composeSurface->create(_dims.width(), _dims.height());
+	_maskSurface->create(_dims.width(), _dims.height());
 }
 
 void MacButton::setActive(bool active) {
@@ -109,10 +109,11 @@ bool MacButton::draw(bool forceRedraw) {
 	if (!_contentIsDirty && !forceRedraw)
 		return false;
 
+	_maskSurface->clear(0);
 	MacEditableText::draw();
 
 	Common::Rect r(_dims.width() - 1, _dims.height() - 1);
-	Graphics::MacPlotData pd(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0);
+	Graphics::MacPlotData pd(_composeSurface, _maskSurface, &_wm->getPatterns(), 1, 0, 0, 1, 0);
 
 	switch (_buttonType) {
 	case kCheckBox: {
@@ -139,10 +140,6 @@ bool MacButton::draw(ManagedSurface *g, bool forceRedraw) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
 
 	return true;
-}
-
-void MacButton::blit(ManagedSurface *g, Common::Rect &dest) {
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
 }
 
 bool MacButton::processEvent(Common::Event &event) {

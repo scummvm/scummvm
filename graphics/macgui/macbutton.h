@@ -48,7 +48,6 @@ public:
 	void invertInner();
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 	virtual bool draw(bool forceRedraw = false) override;
-	virtual void blit(ManagedSurface *g, Common::Rect &dest) override;
 	virtual bool processEvent(Common::Event &event) override;
 
 private:
