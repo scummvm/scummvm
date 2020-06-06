@@ -80,20 +80,20 @@ public:
 		return "kingdom";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Kingdom: The Far Reaches' Engine";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Kingdom: The far Reaches (C) 1995 Virtual Image Productions";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool KingdomMetaEngine::hasFeature(MetaEngineFeature f) const {
