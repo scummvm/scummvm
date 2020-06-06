@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/math.h"
 #include "graphics/cursorman.h"
 
 #include "tsage/scenes.h"
@@ -3885,10 +3886,6 @@ void Scene1575::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field41A);
 }
 
-double hypotenuse(double v1, double v2) {
-	return sqrt(v1 * v1 + v2 * v2);
-}
-
 void Scene1575::postInit(SceneObjectList *OwnerList) {
 	loadScene(1575);
 	R2_GLOBALS._uiElements._active = false;
@@ -3914,8 +3911,8 @@ void Scene1575::postInit(SceneObjectList *OwnerList) {
 		_arrActor[i].postInit();
 		_arrActor[i].setup(1575, 2, k5A7F6[3 * i + 2]);
 
-		double v1 = hypotenuse(2.0, 3 - k5A7F6[3 * i]);
-		v1 += hypotenuse(2.0, 3 - k5A7F6[3 * i + 1]);
+		double v1 = Common::hypotenuse<double>(2.0, 3 - k5A7F6[3 * i]);
+		v1 += Common::hypotenuse<double>(2.0, 3 - k5A7F6[3 * i + 1]);
 		int yp = (int)(sqrt(v1) * 75.0 / 17.0 - 161.0);
 
 		int angle = R2_GLOBALS._gfxManagerInstance.getAngle(

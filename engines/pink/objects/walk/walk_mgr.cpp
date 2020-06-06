@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/math.h"
+
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
 #include "pink/pink.h"
@@ -110,7 +112,7 @@ WalkAction *WalkMgr::getWalkAction() {
 double WalkMgr::getLengthBetweenLocations(WalkLocation *first, WalkLocation *second) {
 	Coordinates firstCoord = getLocationCoordinates(first->getName());
 	Coordinates secondCoord = getLocationCoordinates(second->getName());
-	return hypot(secondCoord.point.x - firstCoord.point.x, secondCoord.point.y - firstCoord.point.y);
+	return Common::hypotenuse(secondCoord.point.x - firstCoord.point.x, secondCoord.point.y - firstCoord.point.y);
 }
 
 Coordinates WalkMgr::getLocationCoordinates(const Common::String &locationName) {
