@@ -109,37 +109,36 @@ extern int yydebug;
     tWHEN = 310,                   /* tWHEN  */
     tWITH = 311,                   /* tWITH  */
     tWHILE = 312,                  /* tWHILE  */
-    tNLELSE = 313,                 /* tNLELSE  */
-    tFACTORY = 314,                /* tFACTORY  */
-    tOPEN = 315,                   /* tOPEN  */
-    tPLAY = 316,                   /* tPLAY  */
-    tINSTANCE = 317,               /* tINSTANCE  */
-    tGE = 318,                     /* tGE  */
-    tLE = 319,                     /* tLE  */
-    tEQ = 320,                     /* tEQ  */
-    tNEQ = 321,                    /* tNEQ  */
-    tAND = 322,                    /* tAND  */
-    tOR = 323,                     /* tOR  */
-    tNOT = 324,                    /* tNOT  */
-    tMOD = 325,                    /* tMOD  */
-    tAFTER = 326,                  /* tAFTER  */
-    tBEFORE = 327,                 /* tBEFORE  */
-    tCONCAT = 328,                 /* tCONCAT  */
-    tCONTAINS = 329,               /* tCONTAINS  */
-    tSTARTS = 330,                 /* tSTARTS  */
-    tCHAR = 331,                   /* tCHAR  */
-    tITEM = 332,                   /* tITEM  */
-    tLINE = 333,                   /* tLINE  */
-    tWORD = 334,                   /* tWORD  */
-    tSPRITE = 335,                 /* tSPRITE  */
-    tINTERSECTS = 336,             /* tINTERSECTS  */
-    tWITHIN = 337,                 /* tWITHIN  */
-    tTELL = 338,                   /* tTELL  */
-    tPROPERTY = 339,               /* tPROPERTY  */
-    tON = 340,                     /* tON  */
-    tENDIF = 341,                  /* tENDIF  */
-    tENDREPEAT = 342,              /* tENDREPEAT  */
-    tENDTELL = 343                 /* tENDTELL  */
+    tFACTORY = 313,                /* tFACTORY  */
+    tOPEN = 314,                   /* tOPEN  */
+    tPLAY = 315,                   /* tPLAY  */
+    tINSTANCE = 316,               /* tINSTANCE  */
+    tGE = 317,                     /* tGE  */
+    tLE = 318,                     /* tLE  */
+    tEQ = 319,                     /* tEQ  */
+    tNEQ = 320,                    /* tNEQ  */
+    tAND = 321,                    /* tAND  */
+    tOR = 322,                     /* tOR  */
+    tNOT = 323,                    /* tNOT  */
+    tMOD = 324,                    /* tMOD  */
+    tAFTER = 325,                  /* tAFTER  */
+    tBEFORE = 326,                 /* tBEFORE  */
+    tCONCAT = 327,                 /* tCONCAT  */
+    tCONTAINS = 328,               /* tCONTAINS  */
+    tSTARTS = 329,                 /* tSTARTS  */
+    tCHAR = 330,                   /* tCHAR  */
+    tITEM = 331,                   /* tITEM  */
+    tLINE = 332,                   /* tLINE  */
+    tWORD = 333,                   /* tWORD  */
+    tSPRITE = 334,                 /* tSPRITE  */
+    tINTERSECTS = 335,             /* tINTERSECTS  */
+    tWITHIN = 336,                 /* tWITHIN  */
+    tTELL = 337,                   /* tTELL  */
+    tPROPERTY = 338,               /* tPROPERTY  */
+    tON = 339,                     /* tON  */
+    tENDIF = 340,                  /* tENDIF  */
+    tENDREPEAT = 341,              /* tENDREPEAT  */
+    tENDTELL = 342                 /* tENDTELL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -168,7 +167,7 @@ union YYSTYPE
 		Common::String *field;
 	} objectref;
 
-#line 172 "engines/director/lingo/lingo-gr.h"
+#line 171 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
