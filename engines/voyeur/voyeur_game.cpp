@@ -87,6 +87,7 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 4:
 					breakFlag = true;
+					_eventsManager->_mouseClicked = false;
 					break;
 				case 5:
 					doGossip();
