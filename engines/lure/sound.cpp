@@ -143,6 +143,122 @@ void SoundManager::loadSection(uint16 sectionId) {
 	_driver->setTimerCallback(this, &onTimer);
 }
 
+void SoundManager::initCustomTimbres() {
+	if (!_isRoland || !_nativeMT32 || _driver == NULL)
+		return;
+
+	if (!_soundData)
+		error("SoundManager::initCustomTimbres - sound section has not been specified");
+
+	// Locate timbre data
+	uint32 headerSize = READ_LE_UINT32(_soundData->data() + 2); // Skip past the number of sounds
+	uint16 timbreDataHeaderOffset = _soundsTotal * 4 + 2;
+	if (timbreDataHeaderOffset + 6 > headerSize) {
+		warning("SoundManager::initCustomTimbres - could not find timbre data header");
+		return;
+	}
+
+	uint32 timbreDataOffset = READ_LE_UINT32(_soundData->data() + timbreDataHeaderOffset + 2); // Skip past end of header mark
+	if (timbreDataOffset + 17259 > _soundData->size()) {
+		warning("SoundManager::initCustomTimbres - timbre data smaller than expected");
+		return;
+	}
+	byte *timbreData = _soundData->data() + timbreDataOffset;
+
+	// Send SysExes
+
+	// System Area
+	uint32 address = 0x10 << 14; // 10 00 00
+	static const uint8 systemAreaSysExLengths[5] = { 1, 3, 9, 9, 1 };
+	for (int i = 0; i < 5; ++i) {
+		mt32SysEx(address, timbreData, systemAreaSysExLengths[i]);
+		address += systemAreaSysExLengths[i];
+		timbreData += systemAreaSysExLengths[i];
+	}
+	// Patch Temporary Area
+	address = 0x03 << 14; // 03 00 00
+	int sysexLength = 16;
+	for (int i = 0; i < 8; ++i) {
+		mt32SysEx(address, timbreData, sysexLength);
+		address += sysexLength;
+		timbreData += sysexLength;
+	}
+	// Timbre Memory
+	address = 0x08 << 14; // 08 00 00
+	sysexLength = 246;
+	for (int i = 0; i < 64; ++i) {
+		mt32SysEx(address, timbreData, sysexLength);
+		address += 256;
+		timbreData += sysexLength;
+	}
+	// Patch Memory
+	address = 0x05 << 14; // 05 00 00
+	sysexLength = 8;
+	for (int i = 0; i < 128; ++i) {
+		mt32SysEx(address, timbreData, sysexLength);
+		address += sysexLength;
+		timbreData += sysexLength;
+	}
+	// Rhythm Part Setup Temporary Area
+	address = 0x03 << 14 | 0x01 << 7 | 0x10; // 03 01 10
+	sysexLength = 4;
+	for (int i = 0; i < 85; ++i) {
+		mt32SysEx(address, timbreData, sysexLength);
+		address += sysexLength;
+		timbreData += sysexLength;
+	}
+}
+
+void SoundManager::mt32SysEx(const uint32 targetAddress, const byte *dataPtr, uint8 length) {
+	byte   sysExMessage[270];
+	uint16 sysExPos = 0;
+	byte   sysExByte;
+	uint16 sysExChecksum = 0;
+
+	memset(&sysExMessage, 0, sizeof(sysExMessage));
+
+	sysExMessage[0] = 0x41; // Roland
+	sysExMessage[1] = 0x10;
+	sysExMessage[2] = 0x16; // Model MT32
+	sysExMessage[3] = 0x12; // Command DT1
+
+	sysExChecksum = 0;
+
+	sysExMessage[4] = (targetAddress >> 14) & 0x7F;
+	sysExMessage[5] = (targetAddress >> 7) & 0x7F;
+	sysExMessage[6] = targetAddress & 0x7F;
+
+	for (byte targetAddressByte = 4; targetAddressByte < 7; targetAddressByte++) {
+		assert(sysExMessage[targetAddressByte] < 0x80); // security check
+		sysExChecksum -= sysExMessage[targetAddressByte];
+	}
+
+	sysExPos = 7;
+	for (int i = 0; i < length; ++i) {
+		sysExByte = *dataPtr++;
+
+		assert(sysExPos < sizeof(sysExMessage));
+		assert(sysExByte < 0x80); // security check
+		sysExMessage[sysExPos++] = sysExByte;
+		sysExChecksum -= sysExByte;
+	}
+
+	// Calculate checksum
+	assert(sysExPos < sizeof(sysExMessage));
+	sysExMessage[sysExPos++] = sysExChecksum & 0x7F;
+
+	_driver->sysEx(sysExMessage, sysExPos);
+
+	// Wait the time it takes to send the SysEx data
+	uint32 delay = (length + 2) * 1000 / 3125;
+
+	// Plus an additional delay for the MT-32 rev00
+	if (_nativeMT32)
+		delay += 40;
+
+	g_system->delayMillis(delay);
+}
+
 void SoundManager::bellsBodge() {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::bellsBodge");
 	Resources &res = Resources::getReference();

@@ -123,6 +123,7 @@ private:
 	void musicInterface_TidySounds();
 	static void onTimer(void *data);
 	void doTimer();
+	void mt32SysEx(const uint32 targetAddress, const byte *dataPtr, uint8 length);
 
 public:
 	SoundManager();
@@ -132,6 +133,7 @@ public:
 	void loadFromStream(Common::ReadStream *stream);
 
 	void loadSection(uint16 sectionId);
+	void initCustomTimbres();
 	void killSounds();
 	void addSound(uint8 soundIndex, bool tidyFlag = true);
 	void addSound2(uint8 soundIndex);

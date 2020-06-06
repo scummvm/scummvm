@@ -50,7 +50,7 @@ static const AnimRecord anim_screens[] = {
 // with a palette in the following resource. Returns true if the introduction
 // should be aborted
 
-bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize) {
+bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize, bool fadeOut) {
 	Screen &screen = Screen::getReference();
 	bool isEGA = LureEngine::getReference().isEGA();
 	screen.screen().loadScreen(screenId);
@@ -65,7 +65,7 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	bool result = interruptableDelay(delaySize);
 	if (LureEngine::getReference().shouldQuit()) return true;
 
-	if (!isEGA)
+	if (fadeOut && !isEGA)
 		screen.paletteFadeOut();
 
 	return result;
@@ -100,9 +100,20 @@ bool Introduction::show() {
 
 	// Initial game company and then game screen
 
-	for (int ctr = 0; start_screens[ctr]; ++ctr)
+	for (int ctr = 0; ctr < 3; ++ctr)
 		if (showScreen(start_screens[ctr], start_screens[ctr] + 1, 5000))
 			return true;
+
+	// Title screen
+	if (showScreen(start_screens[3], start_screens[3] + 1, 5000, false))
+		return true;
+
+	// TODO Original interpreter flashes a note icon in the lower left corner while doing this
+	Sound.initCustomTimbres();
+
+	// Fade out title screen
+	if (!isEGA)
+		screen.paletteFadeOut();
 
 	PaletteCollection coll(0x32);
 	Palette EgaPalette(0x1D);

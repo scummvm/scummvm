@@ -29,7 +29,7 @@ namespace Lure {
 
 class Introduction {
 private:
-	bool showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize);
+	bool showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize, bool fadeOut = true);
 	bool interruptableDelay(uint32 milliseconds);
 public:
 	bool show();
