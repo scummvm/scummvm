@@ -993,7 +993,7 @@ void KingdomGame::getUserInput() {
 		_loopFlag = true;
 	}
 
-	if (_userInput == 0x42B && _logic->_statPlay == 53 && _gameMode == 0) {
+	if (_userInput == 0x42B && _logic->_statPlay != 53 && _gameMode == 0) {
 		_logic->_oldStatPlay = _logic->_statPlay;
 		_logic->_statPlay = 900;
 		_loopFlag = true;
