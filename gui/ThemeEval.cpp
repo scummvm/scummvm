@@ -50,6 +50,12 @@ void ThemeEval::reset() {
 	_layouts.clear();
 }
 
+bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h) {
+	bool useRTL;
+
+	return getWidgetData(widget, x, y, w, h, useRTL);
+}
+
 bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL) {
 	Common::StringTokenizer tokenizer(widget, ".");
 
