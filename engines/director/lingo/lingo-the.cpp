@@ -229,6 +229,7 @@ TheEntityField fields[] = {
 	{ kTheCast,		"text",			kTheText,		2 },// D2 p
 
 	// Field fields
+	{ kTheField,	"text",			kTheText,		4 },// 		D3 p undocumented
 	{ kTheField,	"textAlign",	kTheTextAlign,	3 },//		D3 p
 	{ kTheField,	"textFont",		kTheTextFont,	3 },//		D3 p
 	{ kTheField,	"textHeight",	kTheTextHeight,	3 },//		D3 p
