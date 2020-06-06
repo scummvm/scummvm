@@ -163,6 +163,11 @@ inline T deg2rad(T deg) {
 	return deg2rad<T,T>(deg);
 }
 
+template<class T>
+inline T hypotenuse(T xv, T yv) {
+	return (T)sqrt((double)(xv * xv + yv * yv));
+}
+
 } // End of namespace Common
 
 #endif // COMMON_MATH_H
