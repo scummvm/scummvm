@@ -951,7 +951,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 
 	Cast *member = _vm->getCastMember(id);
 	if (!member) {
-		error("Lingo::setTheCast(): Cast id %d doesn't exist", id);
+		warning("Lingo::setTheCast(): Cast id %d doesn't exist", id);
 		return;
 	}
 	CastType castType = member->_type;
