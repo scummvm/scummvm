@@ -370,7 +370,7 @@ void DrawSurface::drawShape(int16 x, int16 y, int shape_type, uint32 fill_color)
 	}
 }
 
-void DrawSurface::floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_color) {
+void DrawSurface::floodFill(int16 x, int16 y, uint32 fillColor) {
 	int x1, x2, i;
 
 	if (y == this->h)
@@ -378,33 +378,33 @@ void DrawSurface::floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_colo
 	else if (y > this->h)
 		return;
 
-	if (getPixelColor(x, y) != old_color || fill_color == old_color)
+	if (!isPixelWhite(x, y))
 		return;
 
-	/* Left end of scanline */
+	// Left end of scanline
 	for (x1 = x; x1 > 0; x1--)
-		if (getPixelColor(x1 - 1, y) != old_color)
+		if (!isPixelWhite(x1 - 1, y))
 			break;
 
-	/* Right end of scanline */
+	// Right end of scanline
 	for (x2 = x; x2 < this->w; x2++)
-		if (getPixelColor(x2 + 1, y) != old_color)
+		if (!isPixelWhite(x2 + 1, y))
 			break;
 
-	drawLine(x1, y, x2, y, fill_color);
+	drawLine(x1, y, x2, y, fillColor);
 
-	/* Scanline above */
+	// Scanline above
 	if (y > 0) {
 		for (i = x1; i < x2; i++)
-			if (getPixelColor(i, y - 1) == old_color)
-				floodFill(i, y - 1, fill_color, old_color);
+			if (isPixelWhite(i, y - 1))
+				floodFill(i, y - 1, fillColor);
 	}
 
-	/* Scanline below */
+	// Scanline below
 	if (y < (this->h - 1)) {
 		for (i = x1; i < x2; i++)
-			if (getPixelColor(i, y + 1) == old_color)
-				floodFill(i, y + 1, fill_color, old_color);
+			if (isPixelWhite(i, y + 1))
+				floodFill(i, y + 1, fillColor);
 	}
 }
 
@@ -415,9 +415,20 @@ void DrawSurface::drawPixel(int16 x, int16 y, uint32 color) {
 	}
 }
 
-uint32 DrawSurface::getPixelColor(int16 x, int16 y) {
-	uint32 *ptr = (uint32 *)getBasePtr(x, y);
+uint32 DrawSurface::getPixelColor(int16 x, int16 y) const {
+	assert(x >= 0 && y >= 0 && x < this->w && y < this->h);
+	const uint32 *ptr = (uint32 *)getBasePtr(x, y);
 	return *ptr;
+}
+
+bool DrawSurface::isPixelWhite(int16 x, int16 y) const {
+	if (x < 0 || y < 0 || x >= this->w || y >= this->h) {
+		return false;
+	} else {
+		byte r, g, b;
+		format.colorToRGB(getPixelColor(x, y), r, g, b);
+		return r == 255 && g == 255 && b == 255;
+	}
 }
 
 void DrawSurface::clearScreen(uint32 color) {

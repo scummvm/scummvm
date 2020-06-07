@@ -238,8 +238,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 
 		debugC(kDebugGraphics, "paint(%d, %d)", a, b);
 		if (!(ctx->_drawFlags & IMAGEF_NO_FLOODFILL))
-			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor,
-			                             ctx->_drawSurface->getPixelColor(a, b));
+			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor);
 		break;
 
 	case OPCODE_SPECIAL:
@@ -376,6 +375,7 @@ void Pics::drawPicture(int pictureNum) const {
 		ctx._drawSurface->clearScreen(G_COLOR_WHITE);
 
 	} else if (pictureNum == TITLE_IMAGE) {
+		ctx._drawSurface->clearScreen(G_COLOR_WHITE);
 		_title.draw(0, &ctx);
 
 	} else if (pictureNum >= ITEMS_OFFSET) {

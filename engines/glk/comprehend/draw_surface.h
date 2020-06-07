@@ -90,9 +90,10 @@ public:
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawShape(int16 x, int16 y, int shape_type, uint32 fill_color);
-	void floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_color);
+	void floodFill(int16 x, int16 y, uint32 fillColor);
 	void drawPixel(int16 x, int16 y, uint32 color);
-	uint32 getPixelColor(int16 x, int16 y);
+	uint32 getPixelColor(int16 x, int16 y) const;
+	bool isPixelWhite(int16 x, int16 y) const;
 	void clearScreen(uint32 color);
 	void drawCircle(int16 x, int16 y, int16 diameter, uint32 color);
 	void drawCirclePoint(int16 x, int16 y);
