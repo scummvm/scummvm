@@ -126,6 +126,7 @@ public:
 	Common::String   _languageCode;
 	Common::Language _language;
 	bool             _russianCP1251;
+	bool             _noMusicDriver; // If "Music Device" is set to "No Music" from Audio tab
 
 	ActorDialogueQueue *_actorDialogueQueue;
 	ScreenEffects      *_screenEffects;
