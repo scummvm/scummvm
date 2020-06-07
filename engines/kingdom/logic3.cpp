@@ -654,6 +654,7 @@ void Logic::GPL3_581() {
 			_statPlay = 993;
 			_vm->_loopFlag = true;
 		}
+		break;
 	case 0x43A:
 		_statPlay = 582;
 		_vm->_zoom = 2;
