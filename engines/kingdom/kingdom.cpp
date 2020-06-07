@@ -1626,7 +1626,7 @@ void KingdomGame::cursorType() {
 			if (_logic->_nodeNum == 56 && _logic->_inventory[8] < 1 && _wizard)
 				var2 = 80;
 			int indx = _iconActTable[var2][var6];
-			if (_logic->_inventory[indx] != 0 && _logic->_nodes[28] != 1 && _logic->_nodes[67] != 1 && !_iconsClosed && !_itemInhibit) {
+			if (_logic->_inventory[indx] > 0 && _logic->_nodes[28] != 1 && _logic->_nodes[67] != 1 && !_iconsClosed && !_itemInhibit) {
 				_mouseValue = indx + 0x428;
 				_iconSelect = var6;
 				break;
