@@ -210,7 +210,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		debugC(kDebugGraphics, "draw_circle (%d, %d) diameter=%d",
 		       ctx->_x, ctx->_y, a);
 
-		ctx->_drawSurface->drawCircle(ctx->_x, ctx->_y, a);
+		ctx->_drawSurface->drawCircle(ctx->_x, ctx->_y, a, ctx->_penColor);
 		break;
 
 	case OPCODE_DRAW_SHAPE:

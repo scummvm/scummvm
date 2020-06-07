@@ -208,14 +208,9 @@ uint32 DrawSurface::getFillColor(uint8 index) {
 	return color;
 }
 
-void DrawSurface::setColor(uint32 color) {
-	_renderColor = color;
-}
-
 void DrawSurface::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
-	setColor(color);
 #if 1
-	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, _renderColor);
+	Graphics::ManagedSurface::drawLine(x1, y1, x2, y2, color);
 #else
 	bool swapped = false;
 	int deltaX = -1, deltaY = -1;
@@ -265,18 +260,14 @@ void DrawSurface::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color)
 #endif
 }
 
-void DrawSurface::drawBox(int16 x1, int16 y1, int16 x2, int16 y2,
-                          uint32 color) {
-	setColor(color);
+void DrawSurface::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
-	frameRect(r, _renderColor);
+	frameRect(r, color);
 }
 
-void DrawSurface::drawFilledBox(int16 x1, int16 y1,
-                                int16 x2, int16 y2, uint32 color) {
-	setColor(color);
+void DrawSurface::drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
-	fillRect(r, _renderColor);
+	fillRect(r, color);
 }
 
 void DrawSurface::drawShape(int16 x, int16 y, int shape_type, uint32 fill_color) {
@@ -415,14 +406,9 @@ void DrawSurface::floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_colo
 }
 
 void DrawSurface::drawPixel(int16 x, int16 y, uint32 color) {
-	setColor(color);
-	drawPixel(x, y);
-}
-
-void DrawSurface::drawPixel(int16 x, int16 y) {
 	if (x >= 0 && y >= 0 && x < this->w && y < this->h) {
 		uint32 *ptr = (uint32 *)getBasePtr(x, y);
-		*ptr = _renderColor;
+		*ptr = color;
 	}
 }
 
@@ -432,24 +418,23 @@ uint32 DrawSurface::getPixelColor(int16 x, int16 y) {
 }
 
 void DrawSurface::clearScreen(uint32 color) {
-	setColor(color);
-	fillRect(Common::Rect(0, 0, this->w, this->h), _renderColor);
+	fillRect(Common::Rect(0, 0, this->w, this->h), color);
 }
 
-void DrawSurface::drawCircle(int16 x, int16 y, int16 diameter) {
+void DrawSurface::drawCircle(int16 x, int16 y, int16 diameter, uint32 color) {
 	int invert = -diameter;
 	int delta = 0;
 
 	do {
-		drawCirclePoint(x - delta, y - diameter);
-		drawCirclePoint(x + delta, y - diameter);
-		drawCirclePoint(x + delta, y + diameter);
-		drawCirclePoint(x - delta, y + diameter);
+		drawPixel(x - delta, y - diameter, color);
+		drawPixel(x + delta, y - diameter, color);
+		drawPixel(x + delta, y + diameter, color);
+		drawPixel(x - delta, y + diameter, color);
 
-		drawCirclePoint(x + diameter, y - delta);
-		drawCirclePoint(x - diameter, y - delta);
-		drawCirclePoint(x - diameter, y + delta);
-		drawCirclePoint(x + diameter, y + delta);
+		drawPixel(x + diameter, y - delta, color);
+		drawPixel(x - diameter, y - delta, color);
+		drawPixel(x - diameter, y + delta, color);
+		drawPixel(x + diameter, y + delta, color);
 
 		invert += (delta * 2) + 1;
 		++delta;
@@ -461,11 +446,6 @@ void DrawSurface::drawCircle(int16 x, int16 y, int16 diameter) {
 			--diameter;
 		}
 	} while (diameter >= delta);
-}
-
-void DrawSurface::drawCirclePoint(int16 x, int16 y) {
-	if (x < 280 && y < 160)
-		drawPixel(x, y);
 }
 
 } // namespace Comprehend

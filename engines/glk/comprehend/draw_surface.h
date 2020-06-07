@@ -71,10 +71,9 @@ private:
 	static const uint32 *COLOR_TABLES[2];
 
 public:
-	uint32 _renderColor;
 	const uint32 *_colorTable;
 public:
-	DrawSurface() : _renderColor(0), _colorTable(DEFAULT_COLOR_TABLE) {
+	DrawSurface() : _colorTable(DEFAULT_COLOR_TABLE) {
 		reset();
 	}
 
@@ -86,18 +85,16 @@ public:
 	void setColorTable(uint index);
 	uint getPenColor(uint8 param) const;
 	uint32 getFillColor(uint8 index);
-	void setColor(uint32 color);
 
 	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawShape(int16 x, int16 y, int shape_type, uint32 fill_color);
 	void floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_color);
-	void drawPixel(int16 x, int16 y);
 	void drawPixel(int16 x, int16 y, uint32 color);
 	uint32 getPixelColor(int16 x, int16 y);
 	void clearScreen(uint32 color);
-	void drawCircle(int16 x, int16 y, int16 diameter);
+	void drawCircle(int16 x, int16 y, int16 diameter, uint32 color);
 	void drawCirclePoint(int16 x, int16 y);
 };
 
