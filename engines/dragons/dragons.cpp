@@ -19,9 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "gui/message.h"
 #include "common/config-manager.h"
 #include "common/keyboard.h"
 #include "common/language.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/thumbnail.h"
 #include "common/error.h"
@@ -210,6 +212,10 @@ void DragonsEngine::updateEvents() {
 }
 
 Common::Error DragonsEngine::run() {
+	if(!checkAudioVideoFiles()) {
+		return Common::kNoGameDataFoundError;
+	}
+
 	_screen = new Screen();
 	_bigfileArchive = new BigfileArchive(this, "bigfile.dat");
 	_talk = new Talk(this, _bigfileArchive);
@@ -1720,6 +1726,39 @@ void DragonsEngine::loadingScreenUpdate() {
 	} else {
 		_loadingScreenState->loadingFlamesRiseCounter--;
 	}
+}
+
+bool DragonsEngine::checkAudioVideoFiles() {
+	return validateAVFile("crystald.str") &&
+		   validateAVFile("illusion.str") &&
+		   validateAVFile("labintro.str") &&
+		   validateAVFile("previews.str") &&
+		   validateAVFile("dtspeech.xa");
+}
+
+bool DragonsEngine::validateAVFile(const char *filename) {
+	const byte fileSignature[12] = {0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00};
+	byte buf[12];
+	Common::File file;
+	bool fileValid = false;
+
+	if (!file.open(filename)) {
+		error("Failed to open %s", filename);
+	}
+
+	if ((file.size() % 2352) == 0) {
+		file.read(buf, 12);
+		if (!memcmp(fileSignature, buf, 12)) {
+			fileValid = true;
+		}
+	}
+
+	file.close();
+
+	if(!fileValid) {
+		GUIErrorMessage(Common::String::format(_("Error: The file '%s' hasn't been extracted properly.\nPlease refer to the wiki page\nhttps://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for details on how to properly extract the DTSPEECH.XA and *.STR files from your game disc."), filename));
+	}
+	return fileValid;
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {
