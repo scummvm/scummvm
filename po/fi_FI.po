@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-05-10 10:56+0000\n"
+"PO-Revision-Date: 2020-06-07 23:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.11\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Suomi\n"
 
 #: gui/about.cpp:102
@@ -3847,6 +3847,10 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+"Virhe: Tiedostoa '%s' ei ole purettu oikein.\n"
+"Lue wiki-sivulta\n"
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos miten "
+"purat DTSPEECH.XA ja *.STR -tiedostot oikein pelilevyltäsi."
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -6193,6 +6197,8 @@ msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
 msgstr ""
+"Tämä peli tarvitsee 3D-ominaisuuksia jotka eivät kuulu ScummVM:n "
+"repertuaariin. Tämän takia se ei ole osittain tai laisinkaan pelattavissa."
 
 #: engines/wintermute/wintermute.cpp:200
 msgid ""
@@ -6487,52 +6493,44 @@ msgid "Walking speed: Ultra Super Mega Fast"
 msgstr "Kävelynopeus: Ultrasupermeganopea"
 
 #: engines/wintermute/keymapper_tables.h:675
-#, fuzzy
 msgid "Show game credits"
-msgstr "Näytä hiiren kursori"
+msgstr "Näytä pelin lopputekstit"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
-msgstr ""
+msgstr "Soita valittu musiikki"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
-msgstr ""
+msgstr "Valitse seuraava musiikki"
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Peliaika: "
+msgstr "Soita sävel 1:A"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Peliaika: "
+msgstr "Soita sävel 2: F#"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Peliaika: "
+msgstr "Soita sävel 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Peliaika: "
+msgstr "Soita sävel 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Peliaika: "
+msgstr "Soita sävel 5: E"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Peliaika: "
+msgstr "Soita sävel 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Peliaika: "
+msgstr "Soita sävel 7: B"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
