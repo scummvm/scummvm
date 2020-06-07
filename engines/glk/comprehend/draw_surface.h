@@ -63,7 +63,7 @@ namespace Comprehend {
 #define G_COLOR_BROWN1        0x7a5200ff
 #define G_COLOR_BROWN2        0x663300ff
 
-class DrawSurface : public Graphics::ManagedSurface {
+class Surface : public Graphics::ManagedSurface {
 private:
 	static const uint32 PEN_COLORS[8];
 	static const uint32 DEFAULT_COLOR_TABLE[256];
@@ -73,7 +73,7 @@ private:
 public:
 	const uint32 *_colorTable;
 public:
-	DrawSurface() : _colorTable(DEFAULT_COLOR_TABLE) {
+	Surface() : _colorTable(DEFAULT_COLOR_TABLE) {
 		reset();
 	}
 
@@ -90,13 +90,21 @@ public:
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawShape(int16 x, int16 y, int shape_type, uint32 fill_color);
-	void floodFill(int16 x, int16 y, uint32 fillColor);
 	void drawPixel(int16 x, int16 y, uint32 color);
 	uint32 getPixelColor(int16 x, int16 y) const;
-	bool isPixelWhite(int16 x, int16 y) const;
 	void clearScreen(uint32 color);
 	void drawCircle(int16 x, int16 y, int16 diameter, uint32 color);
 	void drawCirclePoint(int16 x, int16 y);
+};
+
+class FloodFillSurface : public Surface {
+private:
+	bool isPixelWhite(int16 x, int16 y) const;
+public:
+	void floodFill(int16 x, int16 y, uint32 fillColor);
+};
+
+class DrawSurface : public FloodFillSurface {
 };
 
 } // namespace Comprehend
