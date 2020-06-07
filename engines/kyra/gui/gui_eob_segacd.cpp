@@ -776,7 +776,7 @@ void GUI_EoB_SegaCD::displayTextBox(int id, int textColor, bool wait) {
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 3200);
 	_screen->setFontStyles(_screen->_currentFont, cs);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 6, 20, 5, 0x6283, true);
-	_screen->sega_getRenderer()->render(0, 0, 0, 22, 20);
+	_screen->sega_getRenderer()->render(0, 0, 1, 22, 19);
 	_screen->updateScreen();
 	if (!wait)
 		return;

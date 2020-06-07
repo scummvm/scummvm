@@ -3285,8 +3285,7 @@ int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 				_screen->sega_clearTextBuffer(0);
 				_vm->_txt->printShadedText(Common::String::format("%03d/989", sli).c_str(), 0, 0, 0xFF, 0xCC, -1, -1, 0, false);
 				_screen->sega_loadTextBufferToVRAM(0, 64, 224);
-				_screen->sega_getRenderer()->render(Screen_EoB::kSegaRenderPage);
-				_screen->copyRegion(_saveSlotX + 8, _saveSlotY + 152, _saveSlotX + 8, _saveSlotY + 152, 56, 8, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
+				_screen->sega_getRenderer()->render(0, (_saveSlotX + 8) >> 3, (_saveSlotY + 152) >> 3, 7, 1);
 			} else {
 				Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
 				_screen->set16bitShadingLevel(4);
