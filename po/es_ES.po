@@ -3931,7 +3931,7 @@ msgstr "No conozco la palabra \"%s\".\n"
 
 #: engines/glk/advsys/vm.cpp:682
 msgid "I don't understand.\n"
-msgstr "No te entiendo."
+msgstr "No te entiendo.\n"
 
 #: engines/glk/alan2/alan2.cpp:76
 msgid "This is too short to be a valid Alan2 file."
