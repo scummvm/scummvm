@@ -3737,6 +3737,7 @@ case $_backend in
 		;;
 	null)
 		append_var DEFINES "-DUSE_NULL_DRIVER"
+		_text_console=yes
 		;;
 	openpandora)
 		append_var DEFINES "-DOPENPANDORA"
