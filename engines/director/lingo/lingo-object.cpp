@@ -75,7 +75,7 @@ Object *Object::clone() {
 	res->inheritanceLevel = inheritanceLevel + 1;
 	res->scriptContext = scriptContext;
 	if (objArray) {
-		res->objArray = new Common::HashMap<uint, Datum>(*objArray);
+		res->objArray = new Common::HashMap<uint32, Datum>(*objArray);
 	}
 	return res;
 }
