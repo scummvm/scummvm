@@ -24,6 +24,7 @@
 #ifdef POSIX
 #include <sys/time.h>
 #include <unistd.h>
+#include <signal.h>
 #endif
 
 // We use some stdio.h functionality here thus we need to allow some
@@ -47,6 +48,7 @@
 #include "backends/graphics/null/null-graphics.h"
 #include "audio/mixer_intern.h"
 #include "common/scummsys.h"
+#include "gui/debugger.h"
 
 /*
  * Include header files needed for the getFilesystemFactory() method.
@@ -102,9 +104,22 @@ OSystem_NULL::OSystem_NULL() {
 OSystem_NULL::~OSystem_NULL() {
 }
 
+#ifdef POSIX
+static volatile bool intReceived = false;
+
+static sighandler_t last_handler;
+
+void intHandler(int dummy) {
+	signal(SIGINT, last_handler);
+	intReceived = true;
+}
+#endif
+
 void OSystem_NULL::initBackend() {
 #ifdef POSIX
 	gettimeofday(&_startTime, 0);
+
+	last_handler = signal(SIGINT, intHandler);
 #endif
 
 	_mutexManager = new NullMutexManager();
@@ -125,6 +140,24 @@ void OSystem_NULL::initBackend() {
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
 	((DefaultTimerManager *)getTimerManager())->checkTimers();
+
+#ifdef POSIX
+	if (intReceived) {
+		intReceived = false;
+
+#ifdef USE_TEXT_CONSOLE_FOR_DEBUGGER
+		GUI::Debugger *debugger = g_engine ? g_engine->getOrCreateDebugger() : nullptr;
+		if (debugger && !debugger->isActive()) {
+			last_handler = signal(SIGINT, intHandler);
+			event.type = Common::EVENT_DEBUGGER;
+			return true;
+		}
+#endif
+
+		event.type = Common::EVENT_QUIT;
+		return true;
+	}
+#endif
 
 	return false;
 }
