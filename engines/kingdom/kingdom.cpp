@@ -504,7 +504,7 @@ void KingdomGame::playMovie(int movieNum) {
 
 		bool skipMovie = false;
 		while (!decoder->endOfVideo() && !skipMovie && !shouldQuit()) {
-			unsigned int delay = MIN(decoder->getTimeToNextFrame(), 10u);
+			uint delay = MIN<uint>(decoder->getTimeToNextFrame(), 10u);
 			g_system->delayMillis(delay);
 
 			const Graphics::Surface *frame = nullptr;
