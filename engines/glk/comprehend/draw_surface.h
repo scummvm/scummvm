@@ -30,7 +30,7 @@ namespace Glk {
 namespace Comprehend {
 
 #define G_RENDER_WIDTH  280
-#define G_RENDER_HEIGHT 200
+#define G_RENDER_HEIGHT 160
 
 #define RGB(r, g, b)        (uint32)(((r) << 24) | ((g) << 16) | ((b) << 8) | 0xff)
 

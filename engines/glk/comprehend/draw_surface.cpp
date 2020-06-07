@@ -28,12 +28,6 @@
 namespace Glk {
 namespace Comprehend {
 
-#define RENDER_X_MAX 278
-#define RENDER_Y_MAX 162
-
-#define RENDERER_SCREEN 0
-#define RENDERER_PIXEL_DATA 1
-
 const uint32 DrawSurface::PEN_COLORS[8] = {
 	G_COLOR_BLACK,
 	RGB(0x00, 0x66, 0x00),
@@ -379,6 +373,11 @@ void DrawSurface::drawShape(int16 x, int16 y, int shape_type, uint32 fill_color)
 void DrawSurface::floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_color) {
 	int x1, x2, i;
 
+	if (y == this->h)
+		y = this->h - 1;
+	else if (y > this->h)
+		return;
+
 	if (getPixelColor(x, y) != old_color || fill_color == old_color)
 		return;
 
@@ -388,21 +387,25 @@ void DrawSurface::floodFill(int16 x, int16 y, uint32 fill_color, uint32 old_colo
 			break;
 
 	/* Right end of scanline */
-	for (x2 = x; x2 < RENDER_X_MAX; x2++)
+	for (x2 = x; x2 < this->w; x2++)
 		if (getPixelColor(x2 + 1, y) != old_color)
 			break;
 
 	drawLine(x1, y, x2, y, fill_color);
 
 	/* Scanline above */
-	for (i = x1; i < x2; i++)
-		if (y > 0 && getPixelColor(i, y - 1) == old_color)
-			floodFill(i, y - 1, fill_color, old_color);
+	if (y > 0) {
+		for (i = x1; i < x2; i++)
+			if (getPixelColor(i, y - 1) == old_color)
+				floodFill(i, y - 1, fill_color, old_color);
+	}
 
 	/* Scanline below */
-	for (i = x1; i < x2; i++)
-		if (y < RENDER_Y_MAX && getPixelColor(i, y + 1) == old_color)
-			floodFill(i, y + 1, fill_color, old_color);
+	if (y < (this->h - 1)) {
+		for (i = x1; i < x2; i++)
+			if (getPixelColor(i, y + 1) == old_color)
+				floodFill(i, y + 1, fill_color, old_color);
+	}
 }
 
 void DrawSurface::drawPixel(int16 x, int16 y, uint32 color) {
