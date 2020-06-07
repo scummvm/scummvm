@@ -335,7 +335,7 @@ void Logic::GPL2_301() {
 		if (_vm->_userInput)
 			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
 		break;
-	} 
+	}
 }
 
 void Logic::GPL2_302() {
@@ -375,7 +375,7 @@ void Logic::GPL2_311() {
 		_vm->playMovie(68);
 		_statPlay = 992;
 		_vm->_loopFlag = true;
-		break;			
+		break;
 	default:
 		if (_vm->_userInput)
 			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
@@ -570,7 +570,7 @@ void Logic::GPL2_351() {
 		_vm->playMovie(178);
 		_vm->_userInput = 0x2F1;
 		_vm->_loopFlag = true;
-		// No break on purpose
+		// fallthrough
 	case 0x2F1:
 		_vm->_aTimer = 0;
 		dsAll();

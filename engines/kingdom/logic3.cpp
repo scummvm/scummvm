@@ -633,7 +633,7 @@ void Logic::GPL3_581() {
 		_vm->_tsIconOnly = true;
 		_currMap = 10;
 		_vm->playSound(30);
-		// No break on purpose
+		// fallthrough
 	case 0x428:
 	case 0x429:
 	case 0x42A:
