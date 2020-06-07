@@ -135,12 +135,14 @@ const Game lolGames[] = {
 	{ kLoL, kPlatformDOS, kNoSpecial, RU_RUS },
 	{ kLoL, kPlatformDOS, kNoSpecial, DE_DEU },
 	{ kLoL, kPlatformDOS, kNoSpecial, FR_FRA },
+	{ kLoL, kPlatformDOS, kNoSpecial, ES_ESP },
 
 	{ kLoL, kPlatformDOS, kTalkieVersion, EN_ANY },
 	{ kLoL, kPlatformDOS, kTalkieVersion, FR_FRA },
 	{ kLoL, kPlatformDOS, kTalkieVersion, DE_DEU },
 	{ kLoL, kPlatformDOS, kTalkieVersion, IT_ITA },
 	{ kLoL, kPlatformDOS, kTalkieVersion, RU_RUS },
+	{ kLoL, kPlatformDOS, kTalkieVersion, ES_ESP },
 
 	{ kLoL, kPlatformPC98, kNoSpecial, JA_JPN },
 

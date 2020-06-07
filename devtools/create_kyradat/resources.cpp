@@ -126,6 +126,7 @@
 #include "resources/lol_dos_french.h"
 #include "resources/lol_dos_german.h"
 #include "resources/lol_dos_russian.h"
+#include "resources/lol_dos_spanish.h"
 
 #include "resources/lol_dos_cd.h"
 #include "resources/lol_dos_cd_english.h"
@@ -133,6 +134,7 @@
 #include "resources/lol_dos_cd_german.h"
 #include "resources/lol_dos_cd_italian.h"
 #include "resources/lol_dos_cd_russian.h"
+#include "resources/lol_dos_cd_spanish.h"
 
 #include "resources/lol_pc98.h"
 #include "resources/lol_pc98_japanese.h"
@@ -3713,6 +3715,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, RU_RUS, &kLoLCharacterDefsDOSRussianProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, DE_DEU, &kLoLCharacterDefsDOSGermanProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, FR_FRA, &kLoLCharacterDefsDOSFrenchProvider },
+	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kNoSpecial, ES_ESP, &kLoLCharacterDefsDOSSpanishProvider },
 	{ kLoLIngamePakFiles, kLoL, kPlatformPC98, kNoSpecial, UNK_LANG, &kLoLIngamePakFilesPC98Provider },
 	{ kLoLCharacterDefs, kLoL, kPlatformPC98, kNoSpecial, JA_JPN, &kLoLCharacterDefsPC98JapaneseProvider },
 	{ kLoLIngameSfxFiles, kLoL, kPlatformPC98, kNoSpecial, UNK_LANG, &kLoLIngameSfxFilesPC98Provider },
@@ -3939,6 +3942,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kTalkieVersion, DE_DEU, &kLoLCharacterDefsDOSCDGermanProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kTalkieVersion, IT_ITA, &kLoLCharacterDefsDOSCDItalianProvider },
 	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kTalkieVersion, RU_RUS, &kLoLCharacterDefsDOSCDRussianProvider },
+	{ kLoLCharacterDefs, kLoL, kPlatformDOS, kTalkieVersion, ES_ESP, &kLoLCharacterDefsDOSCDSpanishProvider },
 	{ kMaxResIDs, kKyra1, kPlatformDOS, kNoSpecial, UNK_LANG, NULL }
 };
 

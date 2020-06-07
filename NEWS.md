@@ -17,6 +17,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the PC-98 version of Eye of the Beholder I.
    - Added support for the Spanish versions of Eye of the Beholder I and II, Legend of
      Kyrandia 1 (CD-ROM fan translation) and Legend of Kyrandia 2 (floppy version and
+	 CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and
 	 CD-ROM fan translation).
 
  Prince:
