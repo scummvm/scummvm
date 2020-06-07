@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-05-11 02:16+0000\n"
+"PO-Revision-Date: 2020-06-07 23:41+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.11\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Espanol\n"
 
 #: gui/about.cpp:102
@@ -3873,6 +3873,11 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+"Error: el archivo %s no ha sido extraído correctamente.\n"
+"Visita la página de la wiki\n"
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos para ver "
+"más información sobre cómo extraer los archivos DTSPEECH.XA y *.STR de tu "
+"disco de juego."
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -6242,6 +6247,8 @@ msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
 msgstr ""
+"Este juego requiere unas funciones 3D que no entran en el ámbito de ScummVM, "
+"así que probablemente no será jugable en su totalidad o parcialmente."
 
 #: engines/wintermute/wintermute.cpp:200
 msgid ""
@@ -6537,52 +6544,44 @@ msgid "Walking speed: Ultra Super Mega Fast"
 msgstr "Andar ultra mega rápido"
 
 #: engines/wintermute/keymapper_tables.h:675
-#, fuzzy
 msgid "Show game credits"
-msgstr "Mostrar cursor"
+msgstr "Mostrar créditos"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
-msgstr ""
+msgstr "Reproducir disco de música seleccionado"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
-msgstr ""
+msgstr "Elegir el siguiente disco de música"
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Tiempo: "
+msgstr "Tocar nota 1: La"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Tiempo: "
+msgstr "Tocar nota 2: Fa sostenido"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Tiempo: "
+msgstr "Tocar nota 3: Re sostenido"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Tiempo: "
+msgstr "Tocar nota 4: Do sostenido"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Tiempo: "
+msgstr "Tocar nota 5: Mi"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Tiempo: "
+msgstr "Tocar nota 6: Sol sostenido"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Tiempo: "
+msgstr "Tocar nota 7: Si"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
