@@ -273,7 +273,6 @@ void Score::copyCastStxts() {
 			TextCast *tc = (TextCast *)c->_value;
 
 			tc->importStxt(stxt);
-			tc->createWidget();
 		}
 	}
 }
@@ -654,7 +653,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			break;
 		case kCastButton:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
-			_loadedCast->setVal(id, new ButtonCast(stream, _vm->getVersion()));
+			_loadedCast->setVal(id, new TextCast(stream, _vm->getVersion(), 0xff, true));
 			break;
 		default:
 			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
@@ -679,7 +678,6 @@ void Score::setSpriteBboxes() {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			Sprite *sp = _frames[i]->_sprites[j];
-			if (i == 1)
 			// Only call updateCast on the first frame sprites, because renderSprite
 			// calls updateCast for us after that. We need to get widget bounding info here.
 			// if (i == 1)
@@ -774,7 +772,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastButton:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastButton (%d children)", res->children.size());
-		_loadedCast->setVal(id, new ButtonCast(castStream, _vm->getVersion()));
+		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion(), 0xff, true));
 		break;
 	case kCastLingoScript:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastLingoScript");

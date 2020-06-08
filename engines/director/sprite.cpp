@@ -72,11 +72,23 @@ Sprite::~Sprite() {
 }
 
 void Sprite::updateCast() {
-	if (_cast && _cast->_widget) {
-		if (_cast->isEditable() != _editable && !_puppet)
-			_cast->setEditable(_editable);
-		_cast->_widget->_dims.moveTo(_currentPoint.x, _currentPoint.y);
+	if (!_cast)
+		return;
+
+	if (!_cast->_widget) {
+		if (_cast->_type == kCastText && _spriteType != kTextSprite) {
+			_cast->_type = kCastButton;
+			((TextCast *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
+		}
+
+		if (_cast->_type == kCastText || _cast->_type == kCastButton) {
+			((TextCast *)_cast)->createWidget();
+			_cast->_widget->_dims.moveTo(_currentPoint.x, _currentPoint.y);
+		}
 	}
+
+	if (_cast->isEditable() != _editable && !_puppet)
+		_cast->setEditable(_editable);
 }
 
 void Sprite::translate(Common::Point delta, bool moveTo) {
@@ -199,6 +211,7 @@ void Sprite::setCast(uint16 castId) {
 		case kCheckboxSprite:
 		case kRadioButtonSprite:
 			_castType = kCastButton;
+
 			break;
 		default:
 			warning("Sprite::setCast(): Unhandled sprite type %d", _spriteType);
