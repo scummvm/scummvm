@@ -279,13 +279,7 @@ void Lingo::varCreate(const Common::String &name, bool global, SymbolHash *local
 }
 
 void Lingo::codeFactory(Common::String &name) {
-	Object *obj = new Object;
-	obj->name = new Common::String(name);
-	obj->type = kFactoryObj;
-	obj->disposed = false;
-	obj->inheritanceLevel = 1;
-	obj->scriptContext = _currentScriptContext;
-	obj->objArray = new Common::HashMap<uint32, Datum>;
+	Object *obj = new Object(name, kFactoryObj);
 
 	_currentFactory = obj;
 	if (!_globalvars.contains(name)) {

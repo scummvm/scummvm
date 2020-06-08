@@ -46,6 +46,7 @@ Symbol::Symbol() {
 	nargs = 0;
 	maxArgs = 0;
 	parens = true;
+	methodType = kNoneObj;
 	global = false;
 	argNames = nullptr;
 	varNames = nullptr;
@@ -62,6 +63,7 @@ Symbol::Symbol(const Symbol &s) {
 	nargs = s.nargs;
 	maxArgs = s.maxArgs;
 	parens = s.parens;
+	methodType = s.methodType;
 	global = s.global;
 	argNames = s.argNames;
 	varNames = s.varNames;
@@ -80,6 +82,7 @@ Symbol& Symbol::operator=(const Symbol &s) {
 		nargs = s.nargs;
 		maxArgs = s.maxArgs;
 		parens = s.parens;
+		methodType = s.methodType;
 		global = s.global;
 		argNames = s.argNames;
 		varNames = s.varNames;

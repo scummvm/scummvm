@@ -1041,8 +1041,13 @@ void LB::b_openResFile(int nargs) {
 
 void LB::b_openXlib(int nargs) {
 	Datum d = g_lingo->pop();
-
-	warning("STUB: b_openXlib(%s)", d.asString().c_str());
+	Common::String xlibName = d.asString();
+	if (g_lingo->_xlibs.contains(xlibName)) {
+		Symbol sym = g_lingo->_xlibs[xlibName];
+		(*sym.u.bltin)(0);
+	} else {
+		warning("STUB: b_openXLib(%s)", xlibName.c_str());
+	}
 }
 
 void LB::b_saveMovie(int nargs) {
@@ -1298,7 +1303,7 @@ void LB::b_factory(int nargs) {
 	Datum factoryName = g_lingo->pop();
 	factoryName.type = VAR;
 	Datum o = g_lingo->varFetch(factoryName, true);
-	if (o.type == OBJECT && o.u.obj->type == kFactoryObj
+	if (o.type == OBJECT && (o.u.obj->type & (kFactoryObj | kXObj))
 			&& o.u.obj->name->equalsIgnoreCase(*factoryName.u.s) && o.u.obj->inheritanceLevel == 1) {
 		g_lingo->push(o);
 	} else {

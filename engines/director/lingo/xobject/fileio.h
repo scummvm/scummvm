@@ -20,25 +20,18 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_OBJECT_H
-#define DIRECTOR_LINGO_OBJECT_H
+#ifndef DIRECTOR_LINGO_XOBJECT_FILEIO_H
+#define DIRECTOR_LINGO_XOBJECT_FILEIO_H
+
+#include "director/lingo/lingo-object.h"
 
 namespace Director {
 
-namespace LM {
-	// predefined methods
-	void m_describe(int nargs);
-	void m_dispose(int nargs);
-	void m_get(int nargs);
-	void m_instanceRespondsTo(int nargs);
-	void m_messageList(int nargs);
-	void m_name(int nargs);
+namespace FileIO {
+	void b_openXLib(int nargs);
 	void m_new(int nargs);
-	void m_perform(int nargs);
-	void m_put(int nargs);
-	void m_respondsTo(int nargs);
 
-} // End of namespace LM
+} // End of namespace FileIO
 
 } // End of namespace Director
 

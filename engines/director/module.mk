@@ -32,7 +32,8 @@ MODULE_OBJS = \
 	lingo/lingo-object.o \
 	lingo/lingo-patcher.o \
 	lingo/lingo-preprocessor.o \
-	lingo/lingo-the.o
+	lingo/lingo-the.o \
+	lingo/xobject/fileio.o
 
 director-grammar:
 	`brew --prefix flex`/bin/flex engines/director/lingo/lingo-lex.l

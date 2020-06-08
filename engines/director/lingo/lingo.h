@@ -96,6 +96,7 @@ struct Symbol {	/* symbol table entry */
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
 	bool parens;	/* whether parens required or not, for builitins */
+	int methodType;	/* valid target objects, for method builtins */
 
 	bool global;
 	Common::Array<Common::String> *argNames;
@@ -246,8 +247,10 @@ typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Co
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
 enum ObjectType {
-	kFactoryObj = 0,
-	kScriptObj = 1
+	kNoneObj = 0,
+	kFactoryObj = 1 << 0,
+	kXObj = 1 << 1,
+	kScriptObj = 1 << 2
 };
 
 struct Object {
@@ -264,7 +267,21 @@ struct Object {
 	// used only for factories
 	Common::HashMap<uint32, Datum> *objArray;
 
+	Object(const Common::String &objName, ObjectType objType, ScriptContext *objContext = nullptr) {
+		name = new Common::String(objName);
+		type = objType;
+		disposed = false;
+		inheritanceLevel = 1;
+		scriptContext = objContext;
+		if (objType == kFactoryObj) {
+			objArray = new Common::HashMap<uint32, Datum>;
+		} else {
+			objArray = nullptr;
+		}
+	}
+
 	Object *clone();
+	void addProperty(const Common::String &propName);
 	Symbol getMethod(const Common::String &methodName);
 	bool hasVar(const Common::String &varName);
 	Symbol &getVar(const Common::String &varName);
@@ -498,6 +515,7 @@ public:
 
 	SymbolHash _builtins;
 	SymbolHash _methods;
+	SymbolHash _xlibs;
 
 	Common::String _floatPrecisionFormat;
 
