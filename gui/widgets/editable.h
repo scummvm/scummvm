@@ -55,6 +55,9 @@ protected:
 
 	int			_editScrollOffset;
 
+	Graphics::TextAlign _align;
+	Graphics::TextAlign _drawAlign;
+
 	ThemeEngine::FontStyle  _font;
 
 	ThemeEngine::TextInversionState  _inversion;

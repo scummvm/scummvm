@@ -394,10 +394,11 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 	Common::Rect r1(x, y, x + w, y + _lineHeight);
 	Common::Rect r2(x + 1, y + 2, x + w, y + 2 + _lineHeight);
 	Graphics::TextAlign alignment = Graphics::kTextAlignLeft;
+	int pad = _leftPadding;
 
 	if (g_gui.useRTL()) {
 		if (_twoColumns) {
-			r1.translate(this->getWidth() - w, 0);
+			r1.translate(this->getWidth() - w, 0);		// Shift the line-separator to the "first" col of RTL popup
 		}
 
 		r2.left = g_system->getOverlayWidth() - r2.left - w + g_gui.getOverlayOffset();
@@ -409,7 +410,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 			alignment = Graphics::kTextAlignRight;
 		}
 
-		_leftPadding = 0;
+		pad = _rightPadding;
 	}
 
 	if (name.size() == 0) {
@@ -419,7 +420,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		g_gui.theme()->drawText(
 			r2,
 			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-			alignment, ThemeEngine::kTextInversionNone, _leftPadding
+			alignment, ThemeEngine::kTextInversionNone, pad
 		);
 	}
 }
@@ -536,10 +537,12 @@ void PopUpWidget::drawWidget() {
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
 
-	if (g_gui.useRTL() && _useRTL)
-		_leftPadding = 0;
+	int pad = _leftPadding;
 
-	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state, (g_gui.useRTL() && _useRTL));
+	if (g_gui.useRTL() && _useRTL)
+		pad = _rightPadding;
+
+	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, pad, _state, (g_gui.useRTL() && _useRTL));
 }
 
 } // End of namespace GUI
