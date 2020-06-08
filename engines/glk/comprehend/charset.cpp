@@ -54,8 +54,8 @@ void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 
 		uint32 *lineP = (uint32 *)dst->getBasePtr(x, y + yp);
 		byte bits = _data[chr - 32][yp];
 
-		for (uint xp = 0; xp < 8; ++xp, ++lineP, ++x, bits >>= 1) {
-			if ((x >= 0) && (x < dst->w) && (bits & 1))
+		for (int xp = x; xp < (x + 8); ++xp, ++lineP, bits >>= 1) {
+			if ((xp >= 0) && (xp < dst->w) && (bits & 1))
 				*lineP = color;
 		}
 	}
