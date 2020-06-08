@@ -320,6 +320,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		camera->getViewMatrix(&viewMatrix);
 		glMultMatrixf(viewMatrix.getData());
 		glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
+		glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
 	}
 
 	return true;
@@ -328,6 +329,17 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 bool BaseRenderOpenGL3D::setupLines() {
 	warning("BaseRenderOpenGL3D::setupLines not yet implemented");
 	return true;
+}
+
+void BaseRenderOpenGL3D::project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y) {
+	Math::Vector3d windowCoords;
+	Math::Matrix4 modelMatrix = worldMatrix * _lastViewMatrix;
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	Math::gluMathProject(point, modelMatrix.getData(), _lastProjectionMatrix.getData(), viewport, windowCoords);
+	x = windowCoords.x();
+	// The Wintermute script code will expect a Direct3D viewport
+	y = viewport[3] - windowCoords.y();
 }
 
 BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {

@@ -113,6 +113,8 @@ public:
 	bool setup3D(Camera3D *camera, bool force = false) override;
 	bool setupLines() override;
 
+	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y);
+
 	Math::Matrix4 lastProjectionMatrix() {
 		return _lastProjectionMatrix;
 	}
@@ -165,6 +167,7 @@ public:
 
 private:
 	Math::Matrix4 _lastProjectionMatrix;
+	Math::Matrix4 _lastViewMatrix;
 	bool _spriteBatchMode;
 	bool _state3D;
 };
