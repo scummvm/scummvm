@@ -49,7 +49,6 @@ struct Resource;
 class Sprite;
 class Stxt;
 class BitmapCast;
-class ButtonCast;
 class ScriptCast;
 class ShapeCast;
 class TextCast;

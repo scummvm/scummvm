@@ -112,7 +112,7 @@ public:
 
 class TextCast : public Cast {
 public:
-	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
+	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor, bool asButton = false);
 
 	void setText(const char *text);
 	virtual void createWidget();
@@ -136,6 +136,7 @@ public:
 	byte _textFlags;
 	uint16 _palinfo1, _palinfo2, _palinfo3;
 	int32 _bgcolor;
+	ButtonType _buttonType;
 
 	Common::String _ftext;
 	Common::String _ptext;
@@ -143,14 +144,6 @@ public:
 	void importRTE(byte* text);
 
 	Common::String getText();
-};
-
-class ButtonCast : public TextCast {
-public:
-	ButtonCast(Common::ReadStreamEndian &stream, uint16 version);
-	virtual void createWidget() override;
-
-	ButtonType _buttonType;
 };
 
 class ScriptCast : public Cast {

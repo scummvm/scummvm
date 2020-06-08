@@ -713,7 +713,7 @@ void Score::renderButton(uint16 spriteId) {
 		warning("renderButton: cast id %d not of type kCastButton", castId);
 		return;
 	}
-	ButtonCast *button = (ButtonCast *)member;
+	TextCast *button = (TextCast *)member;
 
 	// TODO: review all cases to confirm if we should use text height.
 	// height = textRect.height();

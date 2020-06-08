@@ -155,13 +155,14 @@ SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
 	}
 }
 
-TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor) {
+TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor, bool asButton) {
 	_type = kCastText;
 
 	_bgcolor = bgcolor;
 	_borderSize = kSizeNone;
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
+	_buttonType = kTypeButton;
 
 	_flags = 0;
 	_textFlags = 0;
@@ -269,7 +270,24 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 		stream.readUint16();
 	}
 
-	_modified = false;
+	if (asButton) {
+		_type = kCastButton;
+
+		if (version < 4) {
+			_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
+		} else {
+			stream.readByte();
+			stream.readByte();
+
+			// This has already been populated in the super TextCast constructor
+			//initialRect = Score::readRect(stream);
+			//boundingRect = Score::readRect(stream);
+
+			_buttonType = static_cast<ButtonType>(stream.readUint16BE());
+		}
+	}
+
+	_modified = true;
 }
 
 Graphics::TextAlign TextCast::getAlignment() {
@@ -299,14 +317,34 @@ void TextCast::importStxt(const Stxt *stxt) {
 }
 
 void TextCast::createWidget() {
+	if (g_director->getCurrentScore()->_window)
+		g_director->getCurrentScore()->_window->removeWidget(_widget);
+	else if (_widget)
+		delete _widget;
+
 	uint fgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
-	warning("TextCast::createWidget: bgcolor: %d, fgcolor: %d", _bgcolor, fgcolor);
 
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 
-	_widget = new Graphics::MacEditableText(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor, _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
+	switch (_type) {
+	case kCastText:
+		_widget = new Graphics::MacEditableText(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor, _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
 
-	((Graphics::MacEditableText *)_widget)->draw();
+		((Graphics::MacEditableText *)_widget)->draw();
+		break;
+
+	case kCastButton:
+		_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor);
+		((Graphics::MacButton *)_widget)->draw();
+		_widget->_focusable = true;
+
+		((Graphics::MacButton *)(_widget))->draw();
+		break;
+
+	default:
+		break;
+	}
+
 	delete macFont;
 }
 
@@ -423,36 +461,6 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 	if (debugChannelSet(3, kDebugLoading))
 		_initialRect.debugPrint(0, "ShapeCast: rect:");
-}
-
-ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version, 0xff) {
-	_type = kCastButton;
-
-	if (version < 4) {
-		_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
-	} else {
-		stream.readByte();
-		stream.readByte();
-
-		// This has already been populated in the super TextCast constructor
-		//initialRect = Score::readRect(stream);
-		//boundingRect = Score::readRect(stream);
-
-		_buttonType = static_cast<ButtonType>(stream.readUint16BE());
-	}
-}
-
-void ButtonCast::createWidget() {
-	uint fgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
-
-	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
-
-	_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor);
-
-	_widget->_focusable = true;
-
-	((Graphics::MacButton *)(_widget))->draw();
-	delete macFont;
 }
 
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {

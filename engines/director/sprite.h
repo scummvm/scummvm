@@ -26,7 +26,6 @@
 namespace Director {
 
 class BitmapCast;
-class ButtonCast;
 class ShapeCast;
 class TextCast;
 
