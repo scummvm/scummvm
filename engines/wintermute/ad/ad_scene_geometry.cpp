@@ -606,54 +606,66 @@ float AdSceneGeometry::getHeightAt(Math::Vector3d pos, float tolerance, bool *in
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::directPathExists(Math::Vector3d *p1, Math::Vector3d *p2) {
-	Math::Vector3d v0;
-	Math::Vector3d v1;
-	Math::Vector3d v2;
+	// pretty sure this stuff can be somewhat simplified by factoring it out
+	// into some functions but let's leave this to a later point
 
-	uint i;
-	uint j;
+	// test walkplanes
+	for (uint i = 0; i < _planes.size(); i++) {
+		for (int j = 0; j < _planes[i]->_mesh->faceCount(); j++) {
+			uint16 *triangle = _planes[i]->_mesh->getFace(j);
+			float *v0 = _planes[i]->_mesh->getVertexPosition(triangle[0]);
+			float *v1 = _planes[i]->_mesh->getVertexPosition(triangle[1]);
+			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
+			Math::Vector3d intersection;
+			float dist;
 
-	warning("AdSceneGeometry::directPathExists not yet implemented");
+			if (lineSegmentIntersectsTriangle(*p1, *p2, Math::Vector3d(v0[0], v0[1], v0[2]),
+			                                  Math::Vector3d(v1[0], v1[1], v1[2]),
+			                                  Math::Vector3d(v2[0], v2[1], v2[2]),
+			                                  intersection, dist)) {
+				if (lineIntersectsTriangle(*p1, *p1 - *p2, v0, v1, v2,
+				                           intersection.x(), intersection.y(), intersection.z())) {
+					return false;
+				}
 
-	//	// test walkplanes
-	//	for(i=0; i<_planes.size(); i++){
-	//		for(j=0; j<_planes[i]->m_Mesh->m_NumFaces; j++){
-	//			v0 = _planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[0]].m_Pos;
-	//			v1 = _planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[1]].m_Pos;
-	//			v2 = _planes[i]->m_Mesh->m_Vertices[_planes[i]->m_Mesh->m_Faces[j].m_Vertices[2]].m_Pos;
+				if (lineIntersectsTriangle(*p2, *p2 - *p1, v0, v1, v2,
+				                           intersection.x(), intersection.y(), intersection.z())) {
+					return false;
+				}
+			}
+		}
+	}
 
-	//			D3DXPLANE plane;
-	//			Math::Vector3d intersection;
-	//			float dist;
+	// test blocks
+	for (uint i = 0; i < _blocks.size(); i++) {
+		if (!_blocks[i]->_active) {
+			continue;
+		}
 
-	//			if(C3DUtils::PickGetIntersect(*p1, *p2, v0, v1, v2, &intersection, &dist)){
-	//				if(C3DUtils::IntersectTriangle(*p1, *p1-*p2, v0, v1, v2, &intersection.x, &intersection.y, &intersection.z)) return false;
-	//				if(C3DUtils::IntersectTriangle(*p2, *p2-*p1, v0, v1, v2, &intersection.x, &intersection.y, &intersection.z)) return false;
-	//			}
-	//		}
-	//	}
+		for (int j = 0; j < _blocks[i]->_mesh->faceCount(); j++) {
+			uint16 *triangle = _blocks[i]->_mesh->getFace(j);
+			float *v0 = _blocks[i]->_mesh->getVertexPosition(triangle[0]);
+			float *v1 = _blocks[i]->_mesh->getVertexPosition(triangle[1]);
+			float *v2 = _blocks[i]->_mesh->getVertexPosition(triangle[2]);
+			Math::Vector3d intersection;
+			float dist;
 
-	//	// test blocks
-	//	for(i=0; i<_blocks.size(); i++)
-	//	{
-	//		if(!_blocks[i]->m_Active) continue;
-	//		for(j=0; j<_blocks[i]->m_Mesh->m_NumFaces; j++)
-	//		{
-	//			v0 = _blocks[i]->m_Mesh->m_Vertices[_blocks[i]->m_Mesh->m_Faces[j].m_Vertices[0]].m_Pos;
-	//			v1 = _blocks[i]->m_Mesh->m_Vertices[_blocks[i]->m_Mesh->m_Faces[j].m_Vertices[1]].m_Pos;
-	//			v2 = _blocks[i]->m_Mesh->m_Vertices[_blocks[i]->m_Mesh->m_Faces[j].m_Vertices[2]].m_Pos;
+			if (lineSegmentIntersectsTriangle(*p1, *p2, Math::Vector3d(v0[0], v0[1], v0[2]),
+			                                  Math::Vector3d(v1[0], v1[1], v1[2]),
+			                                  Math::Vector3d(v2[0], v2[1], v2[2]),
+			                                  intersection, dist)) {
+				if (lineIntersectsTriangle(*p1, *p1 - *p2, v0, v1, v2,
+				                           intersection.x(), intersection.y(), intersection.z())) {
+					return false;
+				}
 
-	//			D3DXPLANE plane;
-	//			Math::Vector3d intersection;
-	//			float dist;
-
-	//			if(C3DUtils::PickGetIntersect(*p1, *p2, v0, v1, v2, &intersection, &dist))
-	//			{
-	//				if(C3DUtils::IntersectTriangle(*p1, *p1-*p2, v0, v1, v2, &intersection.x, &intersection.y, &intersection.z)) return false;
-	//				if(C3DUtils::IntersectTriangle(*p2, *p2-*p1, v0, v1, v2, &intersection.x, &intersection.y, &intersection.z)) return false;
-	//			}
-	//		}
-	//	}
+				if (lineIntersectsTriangle(*p2, *p2 - *p1, v0, v1, v2,
+				                           intersection.x(), intersection.y(), intersection.z())) {
+					return false;
+				}
+			}
+		}
+	}
 
 	return true;
 }
