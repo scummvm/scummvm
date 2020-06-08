@@ -536,7 +536,6 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void ListWidget::drawWidget() {
 	int i, pos, len = _list.size();
 	Common::String buffer;
-	Graphics::TextAlign alignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
 
 	// Draw a thin frame around the list.
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
@@ -553,14 +552,14 @@ void ListWidget::drawWidget() {
 			inverted = _inversion;
 
 		Common::Rect r(getEditRect());
-		int pad = g_gui.useRTL() ? _rightPadding : _leftPadding;
+		int pad = _leftPadding;
 		int rtlPad = (_x + r.left + _leftPadding) - (_x + _hlLeftPadding);
 
 		// If in numbering mode & not in RTL based GUI, we first print a number prefix
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
 			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
-									buffer, _state, alignment, inverted, _leftPadding, true);
+									buffer, _state, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
 		}
 
@@ -593,18 +592,18 @@ void ListWidget::drawWidget() {
 			buffer = _list[pos];
 		}
 		g_gui.theme()->drawText(r1, buffer, _state,
-								alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
+								_drawAlign, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
-			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
+			buffer = Common::String::format(" .%2d", (pos + _numberingMode));
 
 			Common::Rect r2 = r1;
 
 			r2.left = r1.right;
 			r2.right = r1.right + rtlPad;
 
-			g_gui.theme()->drawText(r2, buffer, _state, alignment, inverted, _leftPadding, true);
+			g_gui.theme()->drawText(r2, buffer, _state, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
 }

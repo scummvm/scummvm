@@ -43,7 +43,7 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 	// We follow the logic of drawStringImpl here. The only exception is
 	// that we do allow an empty width to be specified here. This allows us
 	// to obtain the complete bounding box of a string.
-	const int leftX = x, rightX = w ? (x + w) : 0x7FFFFFFF;
+	const int leftX = x, rightX = w ? (x + w + 1) : 0x7FFFFFFF;
 	int width = font.getStringWidth(str);
 
 	if (align == kTextAlignCenter)
@@ -100,7 +100,7 @@ void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x
 	// ever change something here we will need to change it there too.
 	assert(dst != 0);
 
-	const int leftX = x, rightX = x + w;
+	const int leftX = x, rightX = x + w + 1;
 	int width = font.getStringWidth(str);
 
 	if (align == kTextAlignCenter)
