@@ -31,6 +31,7 @@
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -120,20 +121,8 @@ bool AdObject3D::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::convert3DTo2D(Math::Matrix4 *worldMat, int *posX, int *posY) {
-	warning("AdObject3D::Convert3DTo2D not yet implemented");
-	//	LPDIRECT3DDEVICE dev = ((CBRenderD3D*)Game->_renderer)->_device;
-	//	Math::Matrix4 viewMat, projMat;
-	//	Math::Vector3d vec2d(0,0,0);
-	//	dev->GetTransform(D3DTS_VIEW, &viewMat);
-	//	dev->GetTransform(D3DTS_PROJECTION, &projMat);
-
-	//	D3DVIEWPORT vport;
-	//	dev->GetViewport(&vport);
-
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(0,0,0), &vport, &projMat, &viewMat, WorldMat);
-
-	//	*PosX = vec2d.x() + _gameRef->_offsetX - _gameRef->_renderer->_drawOffsetX;
-	//	*PosY = vec2d.y() + _gameRef->_offsetY - _gameRef->_renderer->_drawOffsetY;
+	Math::Vector3d origin(0.0f, 0.0f, 0.0f);
+	_gameRef->_renderer3D->project(*worldMat, origin, *posX, *posY);
 
 	return true;
 }
