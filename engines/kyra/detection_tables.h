@@ -1384,8 +1384,8 @@ const KYRAGameDescription adGameDescs[] = {
 			"lol",
 			"CD",
 			{
-				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
 				{ "LEVEL01.FRE", 0, "3f5a8856e86b8bc6207becd73426017c", -1 },
+				{ "LEVEL02.FRE", 0, "03cf8239fd4b4ead22e6b771af84b036", -1 },
 				{ 0, 0, 0, 0 }
 			},
 			Common::ES_ESP,
