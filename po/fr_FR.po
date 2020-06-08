@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-05-23 16:32+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2020-06-08 16:40+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -6568,52 +6568,44 @@ msgid "Walking speed: Ultra Super Mega Fast"
 msgstr "Vitesse de marche: Ultra Super Méga Rapide"
 
 #: engines/wintermute/keymapper_tables.h:675
-#, fuzzy
 msgid "Show game credits"
-msgstr "Afficher le curseur de la souris"
+msgstr "Afficher les crédits du jeu"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
-msgstr ""
+msgstr "Jouer l'enregistrement musical sélectionné"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
-msgstr ""
+msgstr "Sélectionner l'enregistrement musical suivant"
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Durée de jeu : "
+msgstr "Jouer la note 1 : La"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Durée de jeu : "
+msgstr "Jouer la note 2 : Fa#"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Durée de jeu : "
+msgstr "Jouer la note 3 : Ré#"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Durée de jeu : "
+msgstr "Jouer la note 4 : Do#"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Durée de jeu : "
+msgstr "Jouer la note 5 : Mi"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Durée de jeu : "
+msgstr "Jouer la note 6 : Sol#"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Durée de jeu : "
+msgstr "Jouer la note 7 : Si"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
