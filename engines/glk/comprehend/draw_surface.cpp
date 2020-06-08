@@ -211,7 +211,7 @@ void Surface::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 	int xDiff = x1 - x2, yDiff = y1 - y2;
 
 	// Draw pixel at starting point
-	drawPixel(x1, y1);
+	drawPixel(x1, y1, color);
 
 	// Figure out the deltas movement for creating the line
 	if (xDiff < 0) {
@@ -265,6 +265,7 @@ void Surface::drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color
 }
 
 void Surface::drawShape(int16 x, int16 y, int shape_type, uint32 fill_color) {
+	return;//***DEBUG****
 	int i, j;
 
 	switch (shape_type) {
@@ -426,9 +427,17 @@ bool FloodFillSurface::isPixelWhite(int16 x, int16 y) const {
 	}
 }
 
-void FloodFillSurface::floodFill(int16 x, int16 y, uint32 fillColor) {
-	int x1, x2, i;
+#define SCALE 4
 
+void FloodFillSurface::dumpToScreen() {
+	Graphics::ManagedSurface s(w * SCALE, h * SCALE, format);
+	s.transBlitFrom(*this, Common::Rect(0, 0, w, h), Common::Rect(0, 0, w * SCALE,h * SCALE), 0x888888);
+	g_system->copyRectToScreen(s.getPixels(), s.pitch, 0, 0,
+		MIN(s.w, (uint16)g_system->getWidth()), MIN(s.h, (uint16)g_system->getHeight()));
+	g_system->updateScreen();
+}
+
+void FloodFillSurface::floodFill(int16 x, int16 y, uint32 fillColor) {
 	if (y == this->h)
 		y = this->h - 1;
 	else if (y > this->h)
@@ -436,6 +445,12 @@ void FloodFillSurface::floodFill(int16 x, int16 y, uint32 fillColor) {
 
 	if (!isPixelWhite(x, y))
 		return;
+
+	floodFillRow(x, y, fillColor);
+}
+
+void FloodFillSurface::floodFillRow(int16 x, int16 y, uint32 fillColor) {
+	int x1, x2, i;
 
 	// Left end of scanline
 	for (x1 = x; x1 > 0; x1--)
@@ -449,18 +464,20 @@ void FloodFillSurface::floodFill(int16 x, int16 y, uint32 fillColor) {
 
 	drawLine(x1, y, x2, y, fillColor);
 
+	//dumpToScreen();
+
 	// Scanline above
 	if (y > 0) {
-		for (i = x1; i < x2; i++)
+		for (i = x1; i <= x2; i++)
 			if (isPixelWhite(i, y - 1))
-				floodFill(i, y - 1, fillColor);
+				floodFillRow(i, y - 1, fillColor);
 	}
 
 	// Scanline below
 	if (y < (this->h - 1)) {
-		for (i = x1; i < x2; i++)
+		for (i = x1; i <= x2; i++)
 			if (isPixelWhite(i, y + 1))
-				floodFill(i, y + 1, fillColor);
+				floodFillRow(i, y + 1, fillColor);
 	}
 }
 
