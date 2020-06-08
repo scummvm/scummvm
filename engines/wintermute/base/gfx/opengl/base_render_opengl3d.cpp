@@ -273,7 +273,6 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
 		glDisable(GL_STENCIL_TEST);
 		glDisable(GL_CLIP_PLANE0);
 		glDisable(GL_FOG);
