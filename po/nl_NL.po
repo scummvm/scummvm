@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-05-23 16:25+0000\n"
+"PO-Revision-Date: 2020-06-08 19:22+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -6234,21 +6234,18 @@ msgstr ""
 "ScummVM."
 
 #: engines/wintermute/keymapper_tables.h:57
-#, fuzzy
 msgid "Escape"
-msgstr "Escape Toets"
+msgstr "Escape"
 
 #: engines/wintermute/keymapper_tables.h:113
-#, fuzzy
 msgid "Look At"
-msgstr "Kijk naar"
+msgstr "Kijk Naar"
 
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:449
 #: engines/wintermute/keymapper_tables.h:1436
-#, fuzzy
 msgid "Walk forward"
-msgstr "Loop naar"
+msgstr "Loop vooruit"
 
 #: engines/wintermute/keymapper_tables.h:146
 #: engines/wintermute/keymapper_tables.h:454
@@ -6258,27 +6255,24 @@ msgstr "Loop achteruit"
 #: engines/wintermute/keymapper_tables.h:164
 #: engines/wintermute/keymapper_tables.h:407
 #: engines/wintermute/keymapper_tables.h:1251
-#, fuzzy
 msgid "Show scene geometry"
-msgstr "Toon scherm-besturing"
+msgstr "Toon scene geometrie"
 
 #: engines/wintermute/keymapper_tables.h:173
 #: engines/wintermute/keymapper_tables.h:189
 #: engines/wintermute/keymapper_tables.h:588
 #: engines/wintermute/keymapper_tables.h:784
 #: engines/wintermute/keymapper_tables.h:912
-#, fuzzy
 msgid "Previous page"
-msgstr "~V~orige"
+msgstr "Vorige pagina"
 
 #: engines/wintermute/keymapper_tables.h:180
 #: engines/wintermute/keymapper_tables.h:197
 #: engines/wintermute/keymapper_tables.h:595
 #: engines/wintermute/keymapper_tables.h:791
 #: engines/wintermute/keymapper_tables.h:917
-#, fuzzy
 msgid "Next page"
-msgstr "Volgende"
+msgstr "Volgende pagina"
 
 #: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:243
@@ -6295,9 +6289,8 @@ msgstr "Volgende"
 #: engines/wintermute/keymapper_tables.h:1172
 #: engines/wintermute/keymapper_tables.h:1221
 #: engines/wintermute/keymapper_tables.h:1423
-#, fuzzy
 msgid "Show hints"
-msgstr "Toon verborgen bestanden"
+msgstr "Toon hints"
 
 #: engines/wintermute/keymapper_tables.h:230
 #: engines/wintermute/keymapper_tables.h:381
@@ -6307,23 +6300,20 @@ msgstr "Toon verborgen bestanden"
 #: engines/wintermute/keymapper_tables.h:1191
 #: engines/wintermute/keymapper_tables.h:1200
 #: engines/wintermute/keymapper_tables.h:1343
-#, fuzzy
 msgid "Show inventory"
-msgstr "Inventaris"
+msgstr "Toon Inventaris"
 
 #: engines/wintermute/keymapper_tables.h:250
 #: engines/wintermute/keymapper_tables.h:277
 #: engines/wintermute/keymapper_tables.h:1325
-#, fuzzy
 msgid "GUI variant A"
-msgstr "Onbekende variant"
+msgstr "GUI variant A"
 
 #: engines/wintermute/keymapper_tables.h:257
 #: engines/wintermute/keymapper_tables.h:284
 #: engines/wintermute/keymapper_tables.h:1331
-#, fuzzy
 msgid "GUI variant B"
-msgstr "Onbekende variant"
+msgstr "GUI variant B"
 
 #: engines/wintermute/keymapper_tables.h:291
 #: engines/wintermute/keymapper_tables.h:798
@@ -6402,9 +6392,8 @@ msgstr "Telefoon # knop"
 
 #: engines/wintermute/keymapper_tables.h:387
 #: engines/wintermute/keymapper_tables.h:1005
-#, fuzzy
 msgid "Show help"
-msgstr "Toon Alles"
+msgstr "Toon help"
 
 #: engines/wintermute/keymapper_tables.h:393
 #: engines/wintermute/keymapper_tables.h:553
@@ -6416,9 +6405,8 @@ msgstr "Toon Alles"
 #: engines/wintermute/keymapper_tables.h:1207
 #: engines/wintermute/keymapper_tables.h:1362
 #: engines/wintermute/keymapper_tables.h:1491
-#, fuzzy
 msgid "Scroll up"
-msgstr "Scroll lijst omhoog"
+msgstr "Scroll omhoog"
 
 #: engines/wintermute/keymapper_tables.h:400
 #: engines/wintermute/keymapper_tables.h:560
@@ -6430,19 +6418,17 @@ msgstr "Scroll lijst omhoog"
 #: engines/wintermute/keymapper_tables.h:1214
 #: engines/wintermute/keymapper_tables.h:1369
 #: engines/wintermute/keymapper_tables.h:1496
-#, fuzzy
 msgid "Scroll down"
-msgstr "Scroll lijst naar beneden"
+msgstr "Scroll omlaag"
 
 #: engines/wintermute/keymapper_tables.h:412
 msgid "Change shadow type"
-msgstr ""
+msgstr "Verander schaduwtype"
 
 #: engines/wintermute/keymapper_tables.h:422
 #: engines/wintermute/keymapper_tables.h:509
-#, fuzzy
 msgid "Volume max"
-msgstr "Volume"
+msgstr "Volume max"
 
 #: engines/wintermute/keymapper_tables.h:427
 #, fuzzy
@@ -6459,7 +6445,7 @@ msgstr "Debugger"
 #: engines/wintermute/keymapper_tables.h:439
 #: engines/wintermute/keymapper_tables.h:1246
 msgid "Exit"
-msgstr ""
+msgstr "Uitgang"
 
 #: engines/wintermute/keymapper_tables.h:444
 #, fuzzy
@@ -6467,24 +6453,20 @@ msgid "Light helper window"
 msgstr "Maak passend aan window"
 
 #: engines/wintermute/keymapper_tables.h:469
-#, fuzzy
 msgid "Run forward"
-msgstr "Beweeg Vooruit"
+msgstr "Ren vooruit"
 
 #: engines/wintermute/keymapper_tables.h:474
-#, fuzzy
 msgid "Run backward"
-msgstr "Loop achteruit"
+msgstr "Ren achteruit"
 
 #: engines/wintermute/keymapper_tables.h:479
-#, fuzzy
 msgid "Turn left fast"
-msgstr "Draai Linksom"
+msgstr "Snelle draai linksom"
 
 #: engines/wintermute/keymapper_tables.h:484
-#, fuzzy
 msgid "Turn right fast"
-msgstr "Draai Rechtsom"
+msgstr "Snelle draai rechtsom"
 
 #: engines/wintermute/keymapper_tables.h:489
 #, fuzzy
@@ -6492,65 +6474,58 @@ msgid "Show blueprint"
 msgstr "Toon Object Regel"
 
 #: engines/wintermute/keymapper_tables.h:516
-#, fuzzy
 msgid "Volume off"
-msgstr "Volume"
+msgstr "Volume uit"
 
 #: engines/wintermute/keymapper_tables.h:523
 msgid "Change font size"
-msgstr ""
+msgstr "Verander fontgrootte"
 
 #: engines/wintermute/keymapper_tables.h:602
 msgid "Save game"
 msgstr "Spel opslaan"
 
 #: engines/wintermute/keymapper_tables.h:612
-#, fuzzy
 msgid "Quick save"
-msgstr "Klik Modus"
+msgstr "Snel bewaren"
 
 #: engines/wintermute/keymapper_tables.h:617
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "Loopsnelheid: Laag"
 
 #: engines/wintermute/keymapper_tables.h:622
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Loopsnelheid: Gemiddeld"
 
 #: engines/wintermute/keymapper_tables.h:627
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Loopsnelheid: Hoog"
 
 #: engines/wintermute/keymapper_tables.h:632
-#, fuzzy
 msgid "Quick load"
-msgstr "Klik Modus"
+msgstr "Snel laden"
 
 #: engines/wintermute/keymapper_tables.h:637
 #: engines/wintermute/keymapper_tables.h:967
 #: engines/wintermute/keymapper_tables.h:1268
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "Download annuleren"
+msgstr "Annuleren wachten"
 
 #: engines/wintermute/keymapper_tables.h:647
-#, fuzzy
 msgid "First page"
-msgstr "Spreek spreuk uit"
+msgstr "Eerste pagina"
 
 #: engines/wintermute/keymapper_tables.h:652
-#, fuzzy
 msgid "Last page"
-msgstr "Spreek spreuk uit"
+msgstr "Laatste pagina"
 
 #: engines/wintermute/keymapper_tables.h:659
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Loopsnelheid: Ultra Super Mega Snel"
 
 #: engines/wintermute/keymapper_tables.h:675
-#, fuzzy
 msgid "Show game credits"
-msgstr "Toon muiswijzer"
+msgstr "Tool spel credits"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
@@ -6558,66 +6533,59 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
-msgstr ""
+msgstr "Selecteer volgend lied"
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Speeltijd: "
+msgstr "Speel noot 1: A"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Speeltijd: "
+msgstr "Speel noot 2: F#"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Speeltijd: "
+msgstr "Speel noot 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Speeltijd: "
+msgstr "Speel noot 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Speeltijd: "
+msgstr "Speel noot 5: E"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Speeltijd: "
+msgstr "Speel noot 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Speeltijd: "
+msgstr "Speel noot 7: B"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Gave: Telekinese"
 
 #: engines/wintermute/keymapper_tables.h:738
 msgid "Ability: Push"
-msgstr ""
+msgstr "Gave: Duw"
 
 #: engines/wintermute/keymapper_tables.h:743
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Gave: Bliksem"
 
 #: engines/wintermute/keymapper_tables.h:748
 msgid "Ability: Light"
-msgstr ""
+msgstr "Gave: Licht"
 
 #: engines/wintermute/keymapper_tables.h:753
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Gave: Wind"
 
 #: engines/wintermute/keymapper_tables.h:758
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Gave: Geluid"
 
 #: engines/wintermute/keymapper_tables.h:763
 msgid "Ability: Esence"
@@ -6625,88 +6593,78 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:768
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Gave: Uitdrijver"
 
 #: engines/wintermute/keymapper_tables.h:773
-#, fuzzy
 msgid "Skip minigame"
-msgstr "Regel overslaan"
+msgstr "Minispel overslaan"
 
 #: engines/wintermute/keymapper_tables.h:881
-#, fuzzy
 msgid "Show hints / Dance move"
-msgstr "Toon verborgen bestanden"
+msgstr "Toon hints / Dansbeweging"
 
 #: engines/wintermute/keymapper_tables.h:888
-#, fuzzy
 msgid "Dance move up"
-msgstr "Download annuleren"
+msgstr "Dansbeweging omhoog"
 
 #: engines/wintermute/keymapper_tables.h:894
-#, fuzzy
 msgid "Dance move down"
-msgstr "Download annuleren"
+msgstr "Dansbeweging omlaag"
 
 #: engines/wintermute/keymapper_tables.h:900
-#, fuzzy
 msgid "Dance move left"
-msgstr "Verplaats naar rechts"
+msgstr "Dansbeweging links"
 
 #: engines/wintermute/keymapper_tables.h:906
-#, fuzzy
 msgid "Dance move right"
-msgstr "Verplaats naar rechts"
+msgstr "Dansbeweging rechts"
 
 #: engines/wintermute/keymapper_tables.h:936
-#, fuzzy
 msgid "Cancel input"
-msgstr "Annuleren"
+msgstr "Annuleer invoer"
 
 #: engines/wintermute/keymapper_tables.h:1046
 msgid "Shift"
-msgstr ""
+msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1101
 #: engines/wintermute/keymapper_tables.h:1409
-#, fuzzy
 msgid "Next action"
-msgstr "~V~orige"
+msgstr "Volgende actie"
 
 #: engines/wintermute/keymapper_tables.h:1109
 #: engines/wintermute/keymapper_tables.h:1417
-#, fuzzy
 msgid "Previous action"
-msgstr "~V~orige"
+msgstr "Vorige actie"
 
 #: engines/wintermute/keymapper_tables.h:1128
 #: engines/wintermute/keymapper_tables.h:1263
-#, fuzzy
 msgid "Settings"
-msgstr "3DS Instellingen Openen"
+msgstr "Instellingen"
 
 #: engines/wintermute/keymapper_tables.h:1133
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "Dialoog antwoord 1"
 
 #: engines/wintermute/keymapper_tables.h:1138
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "Dialoog antwoord 2"
 
 #: engines/wintermute/keymapper_tables.h:1143
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "Dialoog antwoord 3"
 
 #: engines/wintermute/keymapper_tables.h:1148
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "Dialoog antwoord 4"
 
 #: engines/wintermute/keymapper_tables.h:1158
 msgid "Spin slower"
-msgstr ""
+msgstr "Langzamer draaien"
 
 #: engines/wintermute/keymapper_tables.h:1165
 msgid "Spin faster"
-msgstr ""
+msgstr "Sneller draaien"
 
 #: engines/wintermute/keymapper_tables.h:1278
 #, fuzzy
@@ -6714,14 +6672,12 @@ msgid "Bezier window"
 msgstr "Maak passend aan window"
 
 #: engines/wintermute/keymapper_tables.h:1294
-#, fuzzy
 msgid "Droid action"
-msgstr "~V~orige"
+msgstr "Droid actie"
 
 #: engines/wintermute/keymapper_tables.h:1350
-#, fuzzy
 msgid "Show journal"
-msgstr "Toon Alles"
+msgstr "Toon logboek"
 
 #: engines/wintermute/keymapper_tables.h:1356
 msgid "Music menu"
@@ -6732,17 +6688,16 @@ msgid "Rotate"
 msgstr "Roteer"
 
 #: engines/wintermute/keymapper_tables.h:1401
-#, fuzzy
 msgid "Drop"
-msgstr "Laat pagina vallen"
+msgstr "Laat vallen"
 
 #: engines/wintermute/keymapper_tables.h:1501
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:1506
 msgid "Key i"
-msgstr ""
+msgstr "Toets i"
 
 #: engines/xeen/detection.cpp:96
 msgid "Show item costs in standard inventory mode"
