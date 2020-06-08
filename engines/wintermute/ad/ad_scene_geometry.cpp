@@ -395,17 +395,14 @@ bool AdSceneGeometry::storeDrawingParams() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::render(bool render) {
-	// we know that we have opengl available if this class is instantiated
-	BaseRenderOpenGL3D *renderer = static_cast<BaseRenderOpenGL3D *>(_gameRef->_renderer);
-
-	//	// store values
+	//	store values
 	//	StoreDrawingParams();
 	if (!render) {
 		return true;
 	}
 
-	renderer->resetModelViewTransform();
-	renderer->setup3D(getActiveCamera());
+	_gameRef->_renderer3D->resetModelViewTransform();
+	_gameRef->_renderer3D->setup3D(getActiveCamera(), true);
 
 	// factor this out later
 
