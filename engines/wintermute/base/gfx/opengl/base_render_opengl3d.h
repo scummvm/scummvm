@@ -78,7 +78,7 @@ public:
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override; 	// Unused outside indicator-display
 	bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1) override; 	// Unused outside indicator-display
 
-	bool setProjection(float fov);
+	bool setProjection();
 	bool setProjection2D();
 	void resetModelViewTransform();
 	void pushWorldTransform(const Math::Matrix4 &transform);
@@ -168,6 +168,7 @@ public:
 private:
 	Math::Matrix4 _lastProjectionMatrix;
 	Math::Matrix4 _lastViewMatrix;
+	float _fov;
 	bool _spriteBatchMode;
 	bool _state3D;
 };

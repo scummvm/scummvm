@@ -175,12 +175,12 @@ bool BaseRenderOpenGL3D::drawRect(int x1, int y1, int x2, int y2, uint32 color, 
 	return true;
 }
 
-bool BaseRenderOpenGL3D::setProjection(float fov) {
+bool BaseRenderOpenGL3D::setProjection() {
 	// is the viewport already set here?
 	float viewportWidth = _viewportRect.right - _viewportRect.left;
 	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
 
-	float verticalViewAngle = fov;
+	float verticalViewAngle = _fov;
 	float aspectRatio = float(viewportWidth) / float(viewportHeight);
 	float nearPlane = 1.0f;
 	float farPlane = 10000.0f;
@@ -313,7 +313,8 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		glEnable(GL_BLEND);
 		glAlphaFunc(GL_GEQUAL, 0x08);
 
-		setProjection(camera->_fov);
+		_fov = camera->_fov;
+		setProjection();
 
 		Math::Matrix4 viewMatrix;
 		camera->getViewMatrix(&viewMatrix);
