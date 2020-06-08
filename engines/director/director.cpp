@@ -45,8 +45,8 @@ DirectorEngine *g_director;
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
 		_rnd("director") {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
-	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
-	DebugMan.addDebugChannel(kDebugLingoParse, "lingoparse", "Lingo code parsing");
+	DebugMan.addDebugChannel(kDebugLingoCompile, "compile", "Lingo Compilation");
+	DebugMan.addDebugChannel(kDebugLingoParse, "parse", "Lingo code parsing");
 	DebugMan.addDebugChannel(kDebugLingoCompileOnly, "compileonly", "Skip Lingo code execution");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
 	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
@@ -57,7 +57,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
 	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
 	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
-	DebugMan.addDebugChannel(kDebugLingoPreprocess, "lingopreprocess", "Lingo preprocessing");
+	DebugMan.addDebugChannel(kDebugLingoPreprocess, "preprocess", "Lingo preprocessing");
 
 	g_director = this;
 
