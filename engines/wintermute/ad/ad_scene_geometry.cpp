@@ -54,7 +54,7 @@
 
 namespace Wintermute {
 
-IMPLEMENT_PERSISTENT(AdSceneGeometry, false);
+IMPLEMENT_PERSISTENT(AdSceneGeometry, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneGeometry::AdSceneGeometry(BaseGame *gameRef) : BaseObject(gameRef) {
@@ -196,7 +196,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 	// load meshes
 	for (i = 0; i < meshes.size(); i++) {
-		AdGeomExtNode *ExtNode = geomExt->matchName((char *)meshNames[i].c_str());
+		AdGeomExtNode *ExtNode = geomExt->matchName(meshNames[i].c_str());
 
 		if (!ExtNode) {
 			continue;
@@ -205,7 +205,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 		switch (ExtNode->_type) {
 		case GEOM_WALKPLANE: {
 			AdWalkplane *plane = new AdWalkplane(_gameRef);
-			plane->setName((char *)meshNames[i].c_str());
+			plane->setName(meshNames[i].c_str());
 			plane->_mesh = meshes[i];
 			plane->_mesh->computeNormals();
 			// TODO: These constants are endianness dependent
@@ -216,7 +216,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 		case GEOM_BLOCKED: {
 			AdBlock *block = new AdBlock(_gameRef);
-			block->setName((char *)meshNames[i].c_str());
+			block->setName(meshNames[i].c_str());
 			block->_mesh = meshes[i];
 			block->_mesh->computeNormals();
 			block->_mesh->fillVertexBuffer(0xFF0000FF);
@@ -236,7 +236,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 		case GEOM_GENERIC: {
 			AdGeneric *generic = new AdGeneric(_gameRef);
-			generic->setName((char *)meshNames[i].c_str());
+			generic->setName(meshNames[i].c_str());
 			generic->_mesh = meshes[i];
 			generic->_mesh->computeNormals();
 			generic->_mesh->fillVertexBuffer(0xFF00FF00);
@@ -254,7 +254,8 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	createLights();
 
 	if (_lights.size() > 0) {
-		setActiveLight(0);
+		uint activeLight = 0;
+		setActiveLight(activeLight);
 	}
 
 	delete geomExt;
@@ -282,7 +283,7 @@ bool AdSceneGeometry::dropWaypoints() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveCamera(int camera, float fov, float nearClipPlane, float farClipPlane) {
-	if (camera < 0 || camera >= _cameras.size()) {
+	if (camera < 0 || static_cast<uint>(camera) >= _cameras.size()) {
 		_gameRef->LOG(0, "Warning: Camera %d is out of bounds.", camera);
 		return false;
 	} else {
@@ -315,16 +316,16 @@ bool AdSceneGeometry::setActiveCamera(char *camera, float fov, float nearClipPla
 
 //////////////////////////////////////////////////////////////////////////
 Camera3D *AdSceneGeometry::getActiveCamera() {
-	if (_activeCamera >= 0 && _activeCamera < _cameras.size()) {
+	if (_activeCamera >= 0 && static_cast<uint>(_activeCamera) < _cameras.size()) {
 		return _cameras[_activeCamera];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveLight(int light) {
-	if (light < 0 || light >= _lights.size()) {
+	if (light < 0 || static_cast<uint>(light) >= _lights.size()) {
 		_gameRef->LOG(0, "Warning: Light %d is out of bounds.", light);
 		return false;
 	} else {
@@ -362,6 +363,8 @@ bool AdSceneGeometry::storeDrawingParams() {
 	//	m_Renderer->m_Device->GetTransform(D3DTS_VIEW, &m_LastViewMat);
 	//	m_Renderer->m_Device->GetTransform(D3DTS_PROJECTION, &m_LastProjMat);
 
+	warning("AdSceneGeometry::storeDrawingParams not yet implemented");
+
 	AdScene *scene = ((AdGame *)_gameRef)->_scene;
 	if (scene) {
 		_lastScrollX = scene->getOffsetLeft();
@@ -373,8 +376,8 @@ bool AdSceneGeometry::storeDrawingParams() {
 
 	Rect32 rc;
 	_gameRef->getCurrentViewportRect(&rc);
-	float width = (float)rc.right - (float)rc.left;
-	float height = (float)rc.bottom - (float)rc.top;
+//	float width = (float)rc.right - (float)rc.left;
+//	float height = (float)rc.bottom - (float)rc.top;
 
 	// margins
 	//	int mleft = rc.left;
@@ -1097,18 +1100,20 @@ bool AdSceneGeometry::enableLights(Math::Vector3d point, BaseArray<char *> &igno
 }
 
 //////////////////////////////////////////////////////////////////////////
-int AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
-	Light3D *Light1 = *(Light3D **)obj1;
-	Light3D *Light2 = *(Light3D **)obj2;
+// keep this commented out for later, although we are going to
+// use a different siganture anyways since we want to use ScummVM's sort
+//int AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
+//	Light3D *Light1 = *(Light3D **)obj1;
+//	Light3D *Light2 = *(Light3D **)obj2;
 
-	if (Light1->_distance < Light2->_distance) {
-		return -1;
-	} else if (Light1->_distance > Light2->_distance) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
+//	if (Light1->_distance < Light2->_distance) {
+//		return -1;
+//	} else if (Light1->_distance > Light2->_distance) {
+//		return 1;
+//	} else {
+//		return 0;
+//	}
+//}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::correctTargetPoint(const Math::Vector3d &source, Math::Vector3d *target) {

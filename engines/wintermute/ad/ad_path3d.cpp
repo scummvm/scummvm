@@ -31,7 +31,7 @@
 
 namespace Wintermute {
 
-IMPLEMENT_PERSISTENT(AdPath3D, false);
+IMPLEMENT_PERSISTENT(AdPath3D, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdPath3D::AdPath3D(BaseGame *inGame) : BaseClass(inGame), _ready(false), _currIndex(-1) {
@@ -84,7 +84,7 @@ Math::Vector3d *AdPath3D::getFirst() {
 //////////////////////////////////////////////////////////////////////////
 Math::Vector3d *AdPath3D::getNext() {
 	_currIndex++;
-	if (_currIndex < _points.size()) {
+	if (static_cast<uint>(_currIndex) < _points.size()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -93,7 +93,7 @@ Math::Vector3d *AdPath3D::getNext() {
 
 //////////////////////////////////////////////////////////////////////////
 Math::Vector3d *AdPath3D::getCurrent() {
-	if (_currIndex >= 0 && _currIndex < _points.size()) {
+	if (_currIndex >= 0 && static_cast<uint>(_currIndex) < _points.size()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;

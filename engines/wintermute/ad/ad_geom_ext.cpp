@@ -139,7 +139,7 @@ bool AdGeomExt::addStandardNodes() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExtNode *AdGeomExt::matchName(char *name) {
+AdGeomExtNode *AdGeomExt::matchName(const char *name) {
 	if (!name) {
 		return nullptr;
 	}

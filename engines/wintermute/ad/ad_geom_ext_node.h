@@ -40,8 +40,8 @@ public:
 	virtual ~AdGeomExtNode();
 	bool loadBuffer(byte *buffer, bool complete);
 
-	bool setupNode(char *namePattern, TGeomNodeType type = GEOM_GENERIC, bool receiveShadows = false);
-	bool matchesName(char *name);
+	bool setupNode(const char *namePattern, TGeomNodeType type = GEOM_GENERIC, bool receiveShadows = false);
+	bool matchesName(const char *name);
 
 	bool _receiveShadows;
 	TGeomNodeType _type;

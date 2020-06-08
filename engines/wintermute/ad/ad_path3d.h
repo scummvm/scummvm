@@ -51,7 +51,7 @@ public:
 	BaseArray<Math::Vector3d *> _points;
 	int _currIndex;
 
-	DECLARE_PERSISTENT(AdPath3D, BaseClass);
+	DECLARE_PERSISTENT(AdPath3D, BaseClass)
 };
 
 } // namespace Wintermute

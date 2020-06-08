@@ -177,7 +177,7 @@ bool BaseSurfaceOpenGL3D::endPixelOp() {
 }
 
 bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
-	if (x < 0 || y < 0 || x >= tex->getWidth() || y >= tex->getHeight()) {
+	if (x < 0 || y < 0 || static_cast<uint>(x) >= tex->getWidth() || static_cast<uint>(y) >= tex->getHeight()) {
 		return false;
 	}
 

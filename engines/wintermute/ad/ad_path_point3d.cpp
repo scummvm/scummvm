@@ -31,7 +31,7 @@
 
 namespace Wintermute {
 
-IMPLEMENT_PERSISTENT(AdPathPoint3D, false);
+IMPLEMENT_PERSISTENT(AdPathPoint3D, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint3D::AdPathPoint3D() : BaseClass(),

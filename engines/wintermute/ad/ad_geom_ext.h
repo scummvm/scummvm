@@ -43,7 +43,7 @@ public:
 	bool loadFile(char *filename);
 	bool loadBuffer(byte *buffer);
 	bool addStandardNodes();
-	AdGeomExtNode *matchName(char *name);
+	AdGeomExtNode *matchName(const char *name);
 
 private:
 	BaseArray<AdGeomExtNode *> _nodes;

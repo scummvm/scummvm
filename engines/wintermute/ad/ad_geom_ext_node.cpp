@@ -127,7 +127,7 @@ bool AdGeomExtNode::loadBuffer(byte *buffer, bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExtNode::setupNode(char *namePattern, TGeomNodeType type, bool receiveShadows) {
+bool AdGeomExtNode::setupNode(const char *namePattern, TGeomNodeType type, bool receiveShadows) {
 	BaseUtils::setString(&_namePattern, namePattern);
 	_type = type;
 	_receiveShadows = receiveShadows;
@@ -136,7 +136,7 @@ bool AdGeomExtNode::setupNode(char *namePattern, TGeomNodeType type, bool receiv
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGeomExtNode::matchesName(char *name) {
+bool AdGeomExtNode::matchesName(const char *name) {
 	return Common::matchString(name, _namePattern);
 }
 

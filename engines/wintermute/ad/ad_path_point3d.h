@@ -38,7 +38,7 @@ namespace Wintermute {
 
 class AdPathPoint3D: public BaseClass {
 public:
-	DECLARE_PERSISTENT(AdPathPoint3D, BaseClass);
+	DECLARE_PERSISTENT(AdPathPoint3D, BaseClass)
 	AdPathPoint3D(Math::Vector3d pos, float dist);
 	AdPathPoint3D();
 	virtual ~AdPathPoint3D();

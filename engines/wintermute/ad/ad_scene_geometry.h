@@ -59,7 +59,7 @@ public:
 	bool isNodeEnabled(char *nodeName);
 	bool enableLight(char *lightName, bool enable = true);
 	bool isLightEnabled(char *lightName);
-	DECLARE_PERSISTENT(AdSceneGeometry, BaseObject);
+	DECLARE_PERSISTENT(AdSceneGeometry, BaseObject)
 	bool correctTargetPoint(const Math::Vector3d &source, Math::Vector3d *target);
 
 	bool _lastValuesInitialized;
@@ -74,7 +74,6 @@ public:
 
 	bool createLights();
 	bool enableLights(Math::Vector3d Point, BaseArray<char *> &IgnoreLights);
-	static int compareLights(const void *obj1, const void *obj2);
 
 	bool initLoop();
 	float getPointsDist(Math::Vector3d p1, Math::Vector3d p2);
