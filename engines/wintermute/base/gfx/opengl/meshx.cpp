@@ -29,6 +29,7 @@
 #include "common/math.h"
 #include "common/util.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/material.h"
 #include "engines/wintermute/base/gfx/opengl/meshx.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume.h"
@@ -210,16 +211,25 @@ bool MeshX::render(ModelX *model) {
 
 	// is this correct?
 	for (uint32 i = 0; i < _numAttrs; i++) {
-		// get the correct material
-
-		// set material
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[i]->_diffuse.data);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[i]->_specular.data);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[i]->_emissive.data);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[i]->_shininess);
 
 		// set texture (if any)
 
-		// render
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		static_cast<BaseSurfaceOpenGL3D *>(_materials[i]->getSurface())->setTexture();
+		glInterleavedArrays(GL_T2F_N3F_V3F, 0, _vertexData);
+		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData + _indexRanges[i]);
 
 		// maintain polycount
 	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 
 	return res;
 }
