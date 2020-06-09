@@ -54,17 +54,15 @@ class Cast {
 public:
 	Cast();
 	virtual ~Cast();
-	virtual bool isEditable();
-	virtual bool setEditable(bool editable);
+	virtual bool isEditable() { return false; }
+	virtual bool setEditable(bool editable) { return false; }
 	virtual bool isModified() { return _modified; }
+	virtual void createWidget();
 
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
 	Common::Array<Resource> _children;
-
-	const Graphics::Surface *_surface;
-	Image::ImageDecoder *_img;
 
 	bool _modified;
 	bool _hilite;
@@ -75,6 +73,10 @@ public:
 class BitmapCast : public Cast {
 public:
 	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
+	~BitmapCast();
+	virtual void createWidget() override;
+
+	Image::ImageDecoder *_img;
 
 	uint16 _pitch;
 	uint16 _regX;
@@ -99,6 +101,7 @@ public:
 class ShapeCast : public Cast {
 public:
 	ShapeCast(Common::ReadStreamEndian &stream, uint16 version);
+	ShapeCast();
 
 	ShapeType _shapeType;
 	uint16 _pattern;

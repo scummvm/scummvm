@@ -146,10 +146,7 @@ public:
 
 private:
 	void update();
-	void renderText(uint16 spriteId);
 	void renderShape(uint16 spriteId);
-	void renderButton(uint16 spriteId);
-	void renderBitmap(uint16 spriteId);
 
 	// ink.cpp
 	void inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId);

@@ -33,23 +33,12 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	t.moveTo(drawRect.left, drawRect.top);
 	bool nullMask = false;
 
-	// combine the given mask with the maskSurface
-	if (!maskSurface) {
-		nullMask = true;
-		maskSurface = new Graphics::ManagedSurface;
-		maskSurface->create(spriteSurface.w, spriteSurface.h, Graphics::PixelFormat::createFormatCLUT8());
-		maskSurface->clear(0);
-	}
-
 	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
-
-
-	if (drawRect.isEmpty()) {
-		warning("Score::inkBasedBlit(): empty drawRect");
-		return;
+	if (maskSurface->w != drawRect.width() || maskSurface->h != drawRect.height()) {
+		warning("Score::inkBasedBlit: Mismatched dimensions of mask surface and drawRect: %d", spriteId);
 	}
 
-	maskSurface->blitFrom(*_maskSurface, drawRect, Common::Point(0, 0));
+	maskSurface->transBlitFrom(*_maskSurface, drawRect, Common::Point(0, 0), _stageColor);
 
 	drawRect.clip(t);
 

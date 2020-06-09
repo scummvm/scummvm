@@ -37,34 +37,25 @@ namespace Director {
 
 Cast::Cast() {
 	_type = kCastTypeNull;
-	_surface = nullptr;
 	_widget = nullptr;
 	_hilite = false;
-
-	_img = nullptr;
 
 	_modified = true;
 }
 
 Cast::~Cast() {
-	if (_img)
-		delete _img;
-
 	if (_widget)
 		delete _widget;
 }
 
-bool Cast::isEditable() {
-	return false;
-}
-
-bool Cast::setEditable(bool editable) {
-	warning("Cast::setEditable: Attempted to set editable of non-editable cast");
-	return false;
+void Cast::createWidget() {
+	if (_widget)
+		error("TextCast::createWidget: Attempted to create widget twice");
 }
 
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	_type = kCastBitmap;
+	_img = nullptr;
 
 	if (version < 4) {
 		_pitch = 0;
@@ -140,6 +131,23 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		stream.readUint32();
 	}
 	_tag = castTag;
+}
+
+BitmapCast::~BitmapCast() {
+	if (_img)
+		delete _img;
+}
+
+void BitmapCast::createWidget() {
+	Cast::createWidget();
+
+	if (!_img) {
+		warning("BitmapCast::createWidget: No image decoder");
+		return;
+	}
+
+	_widget = new Graphics::MacWidget(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width() - 1, _initialRect.height() - 1, false);
+	_widget->getSurface()->blitFrom(*_img->getSurface());
 }
 
 SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
@@ -294,14 +302,11 @@ Graphics::TextAlign TextCast::getAlignment() {
 	switch (_textAlign) {
 	case kTextAlignRight:
 		return Graphics::kTextAlignRight;
-		break;
 	case kTextAlignCenter:
 		return Graphics::kTextAlignCenter;
-		break;
 	case kTextAlignLeft:
 	default:
 		return Graphics::kTextAlignLeft;
-		break;
 	}
 }
 
@@ -317,10 +322,7 @@ void TextCast::importStxt(const Stxt *stxt) {
 }
 
 void TextCast::createWidget() {
-	if (g_director->getCurrentScore()->_window)
-		g_director->getCurrentScore()->_window->removeWidget(_widget);
-	else if (_widget)
-		delete _widget;
+	Cast::createWidget();
 
 	uint fgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
 
@@ -461,6 +463,17 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 	if (debugChannelSet(3, kDebugLoading))
 		_initialRect.debugPrint(0, "ShapeCast: rect:");
+}
+
+ShapeCast::ShapeCast() {
+	_shapeType = kShapeRectangle;
+	_pattern = 0;
+	_fgCol = 0;
+	_bgCol = 0;
+	_fillType = 0;
+	_lineThickness = 0;
+	_lineDirection = 0;
+	_ink = kInkTypeCopy;
 }
 
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {

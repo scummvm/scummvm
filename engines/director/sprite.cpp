@@ -24,6 +24,8 @@
 #include "director/cast.h"
 #include "director/sprite.h"
 
+#include "director/score.h"
+
 #include "graphics/macgui/macwidget.h"
 
 namespace Director {
@@ -76,16 +78,26 @@ void Sprite::updateCast() {
 		return;
 
 	if (!_cast->_widget) {
-		if (_cast->_type == kCastText && _spriteType != kTextSprite) {
+		if (_cast->_type == kCastText && (_spriteType == kButtonSprite || _spriteType == kCheckboxSprite || _spriteType == kRadioButtonSprite)) {
+			// WORKAROUND: In D2/D3 there can be text casts that have button
+			// information set in the sprite.
+			warning("Sprite::updateCast: Working around D2/3 button glitch");
 			_cast->_type = kCastButton;
 			((TextCast *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 		}
 
-		if (_cast->_type == kCastText || _cast->_type == kCastButton) {
-			((TextCast *)_cast)->createWidget();
-			_cast->_widget->_dims.moveTo(_currentPoint.x, _currentPoint.y);
-		}
+		_cast->createWidget();
 	}
+
+	int offsetx, offsety = 0;
+	if (_cast->_type == kCastBitmap) {
+		BitmapCast *bc = (BitmapCast *)_cast;
+		offsety = bc->_initialRect.top - bc->_regY;
+		offsetx = bc->_initialRect.left - bc->_regX;
+	}
+
+	if (_cast && _cast->_widget)
+		_cast->_widget->_dims.moveTo(_currentPoint.x + offsetx, _currentPoint.y + offsety);
 
 	if (_cast->isEditable() != _editable && !_puppet)
 		_cast->setEditable(_editable);
@@ -174,8 +186,9 @@ void Sprite::setCast(uint16 castId) {
 
 	if (member)
 		_cast = member;
-	else
+	else {
 		warning("Sprite::setCast: Cast id %d has null member", castId);
+	}
 
 	if (g_director->getVersion() < 4) {
 		switch (_spriteType) {
@@ -191,7 +204,7 @@ void Sprite::setCast(uint16 castId) {
 		case kOutlinedRoundedRectangleSprite:
 		case kOutlinedOvalSprite:
 		case kCastMemberSprite:
-			if (_cast != nullptr) {
+			if (_cast) {
 				switch (_cast->_type) {
 				case kCastButton:
 					_castType = kCastButton;
@@ -202,6 +215,8 @@ void Sprite::setCast(uint16 castId) {
 				}
 			} else {
 				_castType = kCastShape;
+
+				g_director->getCurrentScore()->_loadedCast->setVal(_castId, new ShapeCast());
 			}
 			break;
 		case kTextSprite:
@@ -225,6 +240,7 @@ void Sprite::setCast(uint16 castId) {
 		}
 	}
 
+
 	_dirty = true;
 }
 
@@ -234,49 +250,22 @@ Common::Rect Sprite::getBbox() {
 		return result;
 	}
 
-	switch (_castType) {
-	case kCastShape:
-		result = Common::Rect(_currentPoint.x,
-								_currentPoint.y,
-								_currentPoint.x + _width,
-								_currentPoint.y + _height);
-		break;
-	case kCastRTE:
-	case kCastText:
-	case kCastButton:
-		{
-			if (!_cast)
-				return result;
+	if (_castType == kCastShape) {
+		// WORKAROUND: Shape widgets not fully implemented.
+		result = Common::Rect(_currentPoint.x, _currentPoint.y, _currentPoint.x + _width, _currentPoint.y + _height);
+	} else {
+		result = _cast ? _cast->_widget->getDimensions() : Common::Rect(0, 0, _width, _height);
+	}
 
-			result = _cast->_widget->getDimensions();
-			break;
-		}
-	case kCastBitmap: {
-		if (!_cast)
-			return result;
+	result.moveTo(_currentPoint.x, _currentPoint.y);
 
+	if (_cast && _castType == kCastBitmap) {
 		BitmapCast *bc = (BitmapCast *)_cast;
-
-		int32 regX = bc->_regX;
-		int32 regY = bc->_regY;
-		int32 rectLeft = bc->_initialRect.left;
-		int32 rectTop = bc->_initialRect.top;
-
-		int x = _currentPoint.x - regX + rectLeft;
-		int y = _currentPoint.y - regY + rectTop;
-		int height = _height;
-		int width = g_director->getVersion() > 4 ? bc->_initialRect.width() : _width;
-
-		// If one of the dimensions is invalid, invalidate whole thing
-		if (width == 0 || height == 0)
-			width = height = 0;
-
-		result = Common::Rect(x, y, x + width, y + height);
-		break;
+		int offsety = bc->_initialRect.top - bc->_regY;
+		int offsetx = bc->_initialRect.left - bc->_regX;
+		result.translate(offsetx, offsety);
 	}
-	default:
-		warning("Sprite::getBbox(): Unhandled cast type: %d : castId: %d", _castType, _castId);
-	}
+
 	return result;
 }
 
