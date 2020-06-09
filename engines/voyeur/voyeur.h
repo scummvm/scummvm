@@ -231,10 +231,6 @@ public:
 	 */
 	void playAudio(int audioId);
 
-	/**
-	 * Saves the last time the game was played
-	 */
-	void saveLastInplay();
 	void makeViewFinder();
 	void makeViewFinderP();
 	void initIFace();
@@ -295,7 +291,7 @@ public:
 	void showEndingNews();
 };
 
-#define VOYEUR_SAVEGAME_VERSION 2
+#define VOYEUR_SAVEGAME_VERSION 3
 
 /**
  * Header for Voyeur savegame files

@@ -24,6 +24,7 @@
 #include "voyeur/screen.h"
 #include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
+#include "common/config-manager.h"
 
 namespace Voyeur {
 
@@ -588,22 +589,21 @@ void ThreadResource::parsePlayCommands() {
 			// Pick the person who is to die, during startup
 			if (_vm->_iForceDeath == -1) {
 				// No specific person has been preset to be killed, so pick one randomly.
-				// The loop below was used because the victim was persisted from the previous
-				// play-through, so it ensured that a different victim is picked.
-				int randomVal;
+				// The loop below ensures that a different victim is picked.
+				int lastVictim = ConfMan.hasKey("lastVictim") ? ConfMan.getInt("lastVictim") : -1;
+				int randomVictim;
 				do {
-					randomVal = _vm->getRandomNumber(3) + 1;
-				} while (randomVal == _vm->_voy->_victimNumber);
+					randomVictim = _vm->getRandomNumber(3) + 1;
+				} while (randomVictim == lastVictim);
 
-				_vm->_voy->_victimNumber = randomVal;
-				_vm->_controlPtr->_state->_victimIndex = randomVal;
+				_vm->_controlPtr->_state->_victimIndex = randomVictim;
 			} else {
-				// Player has seen something that locks in the character to die
-				_vm->_voy->_victimNumber = _vm->_iForceDeath;
+				// Victim selected from command line
 				_vm->_controlPtr->_state->_victimIndex = _vm->_iForceDeath;
 			}
-
-			_vm->saveLastInplay();
+			
+			ConfMan.setInt("lastVictim", _vm->_controlPtr->_state->_victimIndex);
+			ConfMan.flushToDisk();
 			break;
 
 		case 11:

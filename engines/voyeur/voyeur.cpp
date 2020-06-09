@@ -674,10 +674,6 @@ void VoyeurEngine::doTransitionCard(const Common::String &time, const Common::St
 	flipPageAndWait();
 }
 
-void VoyeurEngine::saveLastInplay() {
-	// No implementation in ScummVM version
-}
-
 void VoyeurEngine::flipPageAndWait() {
 	_screen->_vPort->_flags |= DISPFLAG_8;
 	_screen->flipPage();
