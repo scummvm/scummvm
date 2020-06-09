@@ -687,7 +687,6 @@ void Logic::GPL3_590() {
 		_nodes[59] = 0;
 	}
 	_vm->playMovie(144);
-	_vm->showPic(144);
 	_currMap = 114;
 	_vm->playSound(21);
 	_statPlay = 591;
