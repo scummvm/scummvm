@@ -47,7 +47,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Kingdom PC DOS Demo version, provided by Strangerke
 	{
 		"kingdom",
-		0,
+		"Demo",
 		AD_ENTRY1s("KINGDEMO.EXE", "2ce478fc13086d0ddb02a2867ba307dc", 167154),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
