@@ -412,6 +412,168 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	_currentScriptContext->functions.push_back(currentFunc);
 }
 
+void Lingo::printStack(const char *s, uint pc) {
+	Common::String stack(s);
+
+	for (uint i = 0; i < _stack.size(); i++) {
+		Datum d = _stack[i];
+		stack += Common::String::format("<%s> ", d.asString(true).c_str());
+	}
+	debugC(5, kDebugLingoExec, "[%3d]: %s", pc, stack.c_str());
+}
+
+void Lingo::printCallStack(uint pc) {
+	debugC(5, kDebugLingoExec, "Call stack:");
+	for (int i = 0; i < (int)g_lingo->_callstack.size(); i++) {
+		CFrame *frame = g_lingo->_callstack[i];
+		uint framePc = pc;
+		if (i < (int)g_lingo->_callstack.size() - 1)
+			framePc = g_lingo->_callstack[i + 1]->retpc;
+
+		if (frame->sp.type != VOID) {
+			debugC(5, kDebugLingoExec, "#%d %s:%d", i + 1,
+				g_lingo->_callstack[i]->sp.name->c_str(),
+				framePc
+			);
+		} else {
+			debugC(5, kDebugLingoExec, "#%d [unknown]:%d", i + 1,
+				framePc
+			);
+		}
+	}
+}
+
+Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
+	Symbol sym;
+	Common::String res;
+
+	sym.u.func = (*sd)[pc++];
+	if (_functions.contains((void *)sym.u.s)) {
+		res = _functions[(void *)sym.u.s]->name;
+		const char *pars = _functions[(void *)sym.u.s]->proto;
+		inst i;
+		uint start = pc;
+
+		while (*pars) {
+			switch (*pars++) {
+			case 'i':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" %d", v);
+					break;
+				}
+			case 'f':
+				{
+					Datum d;
+					i = (*sd)[pc++];
+					d.u.f = *(double *)(&i);
+
+					res += Common::String::format(" %f", d.u.f);
+					break;
+				}
+			case 'o':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" [%5d]", v + start - 1);
+					break;
+				}
+			case 's':
+				{
+					char *s = (char *)&(*sd)[pc];
+					pc += calcStringAlignment(s);
+
+					res += Common::String::format(" \"%s\"", s);
+					break;
+				}
+			case 'E':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" %s", entity2str(v));
+					break;
+				}
+			case 'F':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" %s", field2str(v));
+					break;
+				}
+			case 'N':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" \"%s\"", getName(v).c_str());
+					break;
+				}
+			default:
+				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
+			}
+
+			if (*pars)
+				res += ',';
+		}
+	} else {
+		res = "<unknown>";
+	}
+
+	if (newPc)
+		*newPc = pc;
+
+	return res;
+}
+
+void Lingo::execute(uint pc) {
+	int counter = 0;
+
+	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP && !_nextRepeat;) {
+		Common::String instr = decodeInstruction(_currentScript, _pc);
+		uint current = _pc;
+
+		if (debugChannelSet(5, kDebugLingoExec))
+			printStack("Stack before: ", current);
+
+		if (debugChannelSet(9, kDebugLingoExec)) {
+			debug("Vars before");
+			printAllVars();
+			if (_currentMeObj)
+				debug("me: %s", _currentMeObj->name->c_str());
+		}
+
+		debugC(1, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
+
+		_pc++;
+		(*((*_currentScript)[_pc - 1]))();
+
+		if (debugChannelSet(5, kDebugLingoExec))
+			printStack("Stack after: ", current);
+
+		if (debugChannelSet(9, kDebugLingoExec)) {
+			debug("Vars after");
+			printAllVars();
+		}
+
+		if (_pc >= (*_currentScript).size()) {
+			warning("Lingo::execute(): Bad PC (%d)", _pc);
+			break;
+		}
+
+		if (++counter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
+			warning("Lingo::execute(): Stopping due to debug few frames only");
+			break;
+		}
+	}
+
+	_abort = false;
+}
+
 void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	ScriptContext *sc = getScriptContext(type, id);
 	if (!sc) {
@@ -863,6 +1025,206 @@ void Lingo::printAllVars() {
 		debugN("%s, ", (*i)._key.c_str());
 	}
 	debugN("\n");
+}
+
+int Lingo::castIdFetch(Datum &var) {
+	Score *score = _vm->getCurrentScore();
+	if (!score) {
+		warning("castIdFetch: Score is empty");
+		return 0;
+	}
+
+	int id = 0;
+	if (var.type == STRING) {
+		if (score->_castsNames.contains(*var.u.s))
+			id = score->_castsNames[*var.u.s];
+		else
+			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
+	} else if (var.type == INT || var.type == FLOAT) {
+		int castId = var.asInt();
+		if (!_vm->getCastMember(castId))
+			warning("castIdFetch: reference to non-existent cast ID: %d", castId);
+		else
+			id = castId;
+	} else if (var.type == VOID) {
+		warning("castIdFetch: reference to VOID cast ID");
+		return 0;
+	} else {
+		error("castIdFetch: was expecting STRING or INT, got %s", var.type2str());
+	}
+
+	return id;
+}
+
+void Lingo::varAssign(Datum &var, Datum &value, bool global, SymbolHash *localvars) {
+	if (localvars == nullptr) {
+		localvars = _localvars;
+	}
+
+	if (var.type != VAR && var.type != REFERENCE) {
+		warning("varAssign: assignment to non-variable");
+		return;
+	}
+
+	if (var.type == VAR) {
+		Symbol *sym = nullptr;
+		Common::String name = *var.u.s;
+
+		if (localvars && localvars->contains(name)) {
+			sym = &(*localvars)[name];
+			if (global)
+				warning("varAssign: variable %s is local, not global", name.c_str());
+		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
+			sym = &_currentMeObj->getVar(name);
+			if (global)
+				warning("varAssign: variable %s is instance or property, not global", sym->name->c_str());
+		} else if (_globalvars.contains(name)) {
+			sym = &_globalvars[name];
+			if (!global)
+				warning("varAssign: variable %s is global, not local", name.c_str());
+		}
+
+		if (!sym) {
+			warning("varAssign: variable %s not defined", name.c_str());
+			return;
+		}
+
+		if (sym->type != INT && sym->type != VOID &&
+				sym->type != FLOAT && sym->type != STRING &&
+				sym->type != ARRAY && sym->type != PARRAY) {
+			warning("varAssign: assignment to non-variable '%s'", sym->name->c_str());
+			return;
+		}
+
+		sym->reset();
+		sym->refCount = value.refCount;
+		*sym->refCount += 1;
+		sym->name = new Common::String(name);
+		sym->type = value.type;
+		if (value.type == INT) {
+			sym->u.i = value.u.i;
+		} else if (value.type == FLOAT) {
+			sym->u.f = value.u.f;
+		} else if (value.type == STRING || value.type == SYMBOL) {
+			sym->u.s = value.u.s;
+		} else if (value.type == POINT || value.type == ARRAY) {
+			sym->u.farr = value.u.farr;
+		} else if (value.type == PARRAY) {
+			sym->u.parr = value.u.parr;
+		} else if (value.type == OBJECT) {
+			sym->u.obj = value.u.obj;
+		} else if (value.type == VOID) {
+			sym->u.i = 0;
+		} else {
+			warning("varAssign: unhandled type: %s", value.type2str());
+			sym->u.s = value.u.s;
+		}
+	} else if (var.type == REFERENCE) {
+		Score *score = g_director->getCurrentScore();
+		if (!score) {
+			warning("varAssign: Assigning to a reference to an empty score");
+			return;
+		}
+		int referenceId = var.u.i;
+		Cast *member = g_director->getCastMember(referenceId);
+		if (!member) {
+			warning("varAssign: Unknown cast id %d", referenceId);
+			return;
+		}
+		switch (member->_type) {
+		case kCastText:
+			((TextCast *)member)->setText(value.asString().c_str());
+			break;
+		default:
+			warning("varAssign: Unhandled cast type %s", tag2str(member->_type));
+			break;
+		}
+	}
+}
+
+Datum Lingo::varFetch(Datum &var, bool global, SymbolHash *localvars) {
+	if (localvars == nullptr) {
+		localvars = _localvars;
+	}
+
+	Datum result;
+	result.type = VOID;
+	if (var.type != VAR && var.type != REFERENCE) {
+		warning("varFetch: fetch from non-variable");
+		return result;
+	}
+
+	if (var.type == VAR) {
+		Symbol *sym = nullptr;
+		Common::String name = *var.u.s;
+
+		if (_currentMeObj != nullptr && name.equalsIgnoreCase("me")) {
+			result.type = OBJECT;
+			result.u.obj = _currentMeObj;
+			return result;
+		}
+		if (localvars && localvars->contains(name)) {
+			sym = &(*localvars)[name];
+			if (global)
+				warning("varFetch: variable %s is local, not global", sym->name->c_str());
+		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
+			sym = &_currentMeObj->getVar(name);
+			if (global)
+				warning("varFetch: variable %s is instance or property, not global", sym->name->c_str());
+		} else if (_globalvars.contains(name)) {
+			sym = &_globalvars[name];
+			if (!global)
+				warning("varFetch: variable %s is global, not local", sym->name->c_str());
+		}
+
+		if (!sym) {
+			warning("varFetch: variable %s not found", name.c_str());
+			return result;
+		}
+
+		result.type = sym->type;
+		delete result.refCount;
+		result.refCount = sym->refCount;
+		*result.refCount += 1;
+
+		if (sym->type == INT)
+			result.u.i = sym->u.i;
+		else if (sym->type == FLOAT)
+			result.u.f = sym->u.f;
+		else if (sym->type == STRING || sym->type == SYMBOL)
+			result.u.s = sym->u.s;
+		else if (sym->type == POINT || sym->type == ARRAY)
+			result.u.farr = sym->u.farr;
+		else if (sym->type == PARRAY)
+			result.u.parr = sym->u.parr;
+		else if (sym->type == OBJECT)
+			result.u.obj = sym->u.obj;
+		else if (sym->type == VOID)
+			result.u.i = 0;
+		else {
+			warning("varFetch: unhandled type: %s", var.type2str());
+			result.type = VOID;
+		}
+
+	} else if (var.type == REFERENCE) {
+		Cast *cast = _vm->getCastMember(var.u.i);
+		if (cast) {
+			switch (cast->_type) {
+			case kCastText:
+				result.type = STRING;
+				result.u.s = new Common::String(((TextCast *)cast)->getText());
+				break;
+			default:
+				warning("varFetch: Unhandled cast type %s", tag2str(cast->_type));
+				break;
+			}
+		} else {
+			warning("varFetch: Unknown cast id %d", var.u.i);
+		}
+
+	}
+
+	return result;
 }
 
 } // End of namespace Director

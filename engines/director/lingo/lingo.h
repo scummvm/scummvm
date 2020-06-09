@@ -369,25 +369,13 @@ public:
 	void pushContext(const Symbol *funcSym = nullptr);
 	void popContext();
 	void cleanLocalVars();
-	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr, Object *obj = nullptr);
-	Symbol codeDefine(Common::String &s, int start, int nargs, Object *obj = nullptr, int end = -1, bool removeCode = true);
-	void processIf(int toplabel, int endlabel);
 	int castIdFetch(Datum &var);
-	void varCreate(const Common::String &name, bool global, SymbolHash *localvars = nullptr);
 	void varAssign(Datum &var, Datum &value, bool global = false, SymbolHash *localvars = nullptr);
 	Datum varFetch(Datum &var, bool global = false, SymbolHash *localvars = nullptr);
 
 	int getAlignedType(Datum &d1, Datum &d2);
 
 	void printAllVars();
-
-	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
-	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
-	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
-	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
-	int codeString(const char *s);
-	void codeLabel(int label);
-	int codeInt(int val);
 
 	int calcStringAlignment(const char *s) {
 		return calcCodeAlignment(strlen(s) + 1);
@@ -397,12 +385,8 @@ public:
 		return (l + instLen - 1) / instLen;
 	}
 
-	void codeArg(Common::String *s);
 	int codeSetImmediate(bool state);
-	int codeFunc(Common::String *s, int numpar);
 	// int codeMe(Common::String *method, int numpar);
-	int codeFloat(double f);
-	void codeFactory(Common::String &s);
 
 	inst readInst() { return getInst(_pc++); }
 	inst getInst(uint pc) { return (*_currentScript)[pc]; }
@@ -455,9 +439,42 @@ private:
 	Common::StringArray _entityNames;
 	Common::StringArray _fieldNames;
 
+// compiler resources
 public:
 	bool isInArgStack(Common::String *s);
 	void clearArgStack();
+
+	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
+	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
+	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
+	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
+	void codeArg(Common::String *s);
+	Symbol codeDefine(Common::String &s, int start, int nargs, Object *obj = nullptr, int end = -1, bool removeCode = true);
+	void codeFactory(Common::String &s);
+	int codeFloat(double f);
+	int codeFunc(Common::String *s, int numpar);
+	int codeInt(int val);
+	void codeLabel(int label);
+	int codeString(const char *s);
+	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr, Object *obj = nullptr);
+	void processIf(int toplabel, int endlabel);
+	void varCreate(const Common::String &name, bool global, SymbolHash *localvars = nullptr);
+
+	LexerDefineState _indef;
+	int _linenumber;
+	int _colnumber;
+	int _bytenumber;
+	Common::String _lasttoken;
+	int _lastbytenumber;
+	Common::String _errortoken;
+	int _errorbytenumber;
+	bool _ignoreError;
+	bool _inFactory;
+	Object *_currentFactory;
+
+	Common::Array<Common::String *> _argstack;
+	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
+	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
 
 public:
 	ScriptType _currentScriptType;
@@ -470,13 +487,9 @@ public:
 
 	bool _abort;
 	bool _nextRepeat;
-	LexerDefineState _indef;
 	bool _immediateMode;
-	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
-	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
 
 	Common::Array<CFrame *> _callstack;
-	Common::Array<Common::String *> _argstack;
 	TheEntityHash _theEntities;
 	TheEntityFieldHash _theEntityFields;
 
@@ -487,21 +500,10 @@ public:
 	SymbolHash _builtins;
 	SymbolHash _methods;
 
-	int _linenumber;
-	int _colnumber;
-	int _bytenumber;
-	Common::String _lasttoken;
-	int _lastbytenumber;
-	Common::String _errortoken;
-	int _errorbytenumber;
-	bool _ignoreError;
-
 	Common::String _floatPrecisionFormat;
 
 	bool _hadError;
 
-	bool _inFactory;
-	Object *_currentFactory;
 	bool _inCond;
 
 	bool _exitRepeat;
