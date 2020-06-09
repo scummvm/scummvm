@@ -832,7 +832,7 @@ Common::String Datum::asString(bool printonly) {
 		if (!printonly) {
 			s = Common::String::format("#%s", u.obj->name->c_str());
 		} else {
-			s = Common::String::format("object: #%s %d", u.obj->name->c_str(), u.obj->inheritanceLevel);
+			s = Common::String::format("object: #%s %d %p", u.obj->name->c_str(), u.obj->inheritanceLevel, (void *)u.obj);
 		}
 		break;
 	case VOID:

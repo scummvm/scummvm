@@ -171,6 +171,13 @@ struct Datum {	/* interpreter stack type */
 		refCount = new int;
 		*refCount = 1;
 	}
+	Datum(Object *val) {
+		u.obj = val;
+		type = OBJECT;
+		lazy = false;
+		refCount = new int;
+		*refCount = 1;
+	}
 
 	void reset();
 

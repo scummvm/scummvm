@@ -107,7 +107,7 @@ void Object::addProperty(const Common::String &propName) {
 
 Symbol Object::getMethod(const Common::String &methodName) {
 	if (disposed) {
-		error("Method '%s' called on disposed object '%s'", methodName.c_str(), name->c_str());
+		error("Method '%s' called on disposed object <%s>", methodName.c_str(), Datum(this).asString(true).c_str());
 	}
 	if (methods.contains(methodName) && (inheritanceLevel > 1 || type == kFactoryObj)) {
 		// Instance methods can be called on an original factory object,
@@ -122,7 +122,7 @@ Symbol Object::getMethod(const Common::String &methodName) {
 
 bool Object::hasVar(const Common::String &varName) {
 	if (disposed) {
-		error("Variable '%s' accessed on disposed object '%s'", varName.c_str(), name->c_str());
+		error("Variable '%s' accessed on disposed object <%s>", varName.c_str(), Datum(this).asString(true).c_str());
 	}
 	// Factory object instance vars are accessed like normal vars
 	// Script object properties cannot be accessed like normal vars until D5
