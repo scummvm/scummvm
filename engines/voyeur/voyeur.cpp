@@ -250,7 +250,7 @@ bool VoyeurEngine::doLock() {
 	byte *wrongVoc = _filesManager->fload("wrong.voc", &wrongVocSize);
 
 	if (_bVoy->getBoltGroup(0x700)) {
-		Common::String password = "3333";
+		Common::String password = ConfMan.hasKey("lockCode") ? ConfMan.get("lockCode") : "3333";
 
 		_screen->_backgroundPage = _bVoy->getPictureResource(0x700);
 		_screen->_backColors = _bVoy->getCMapResource(0x701);
@@ -361,6 +361,7 @@ bool VoyeurEngine::doLock() {
 				if ((password.empty() && displayString.empty()) || (password != displayString)) {
 					_screen->_vPort->setupViewPort();
 					password = displayString;
+					ConfMan.setAndFlush("lockCode", password);
 					displayString = "";
 					continue;
 				}
