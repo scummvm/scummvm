@@ -186,8 +186,34 @@ bool MeshX::update(FrameNode *parentFrame) {
 
 	// update skinned mesh
 	if (_skinnedMesh) {
+		BaseArray<Math::Matrix4> finalBoneMatrices;
+		finalBoneMatrices.resize(_boneMatrices.size());
 
-	} else { // update static mesh
+		for (uint i = 0; i < skinWeightsList.size(); ++i) {
+			finalBoneMatrices[i] = *_boneMatrices[i] * skinWeightsList[i]._offsetMatrix;
+		}
+
+		for (uint32 i = 0; i < _vertexCount; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				_vertexData[i * kVertexComponentCount + kPositionOffset + j] = 0.0f;
+			}
+		}
+
+		for (uint boneIndex = 0; boneIndex < skinWeightsList.size(); ++boneIndex) {
+			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
+				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
+				Math::Vector3d pos;
+				pos.setData(_vertexPositionData + vertexIndex * 3);
+				finalBoneMatrices[boneIndex].transform(&pos, true);
+				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
+
+				for (uint j = 0; j < 3; ++j) {
+					_vertexData[vertexIndex * kVertexComponentCount + kPositionOffset + j] += pos.getData()[j];
+				}
+			}
+		}
+	} else { // update static
+		warning("MeshX::update update of static mesh is not implemented yet");
 	}
 	return res;
 }
