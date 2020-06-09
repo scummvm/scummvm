@@ -194,6 +194,7 @@ static const char *const selectorNameTable[] = {
 	"setLooper",    // QFG4
 	"useStamina",   // QFG4
 	"value",        // QFG4
+	"vol",          // SQ6
 #endif
 	NULL
 };
@@ -311,7 +312,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setCursor,
 	SELECTOR_setLooper,
 	SELECTOR_useStamina,
-	SELECTOR_value
+	SELECTOR_value,
+	SELECTOR_vol
 #endif
 };
 
@@ -18305,6 +18307,48 @@ static const uint16 sq6RestoreErrorDialogPatch[] = {
 	PATCH_END
 };
 
+// The scripts that manage the music volume on Polysorbate LX have conflicts
+//  which can set the volume too low outside and in the arcade and club.
+//
+// Outside the arcade and club, room 330 adjusts the current music and volume
+//  based on which entrance ego is nearest and the distance. All Polysorbate LX
+//  music plays through gSound1. rm330:init records gSound1:vol when ego enters,
+/// rm330:doit uses this value in volume calculations, and then sExitToArcade or
+//  sExitToClub restores gSound1:vol to its original value. The other two street
+//  rooms (320 and 340) slowly fade gSound1:vol in from 0 to the normal value of
+//  127 whenever entering from another room.
+//
+// Entering room 330 from another street while gSound1 is still fading stops the
+//  fade and causes the current low volume to be recorded and used. This may be
+//  so low that the music can't be heard at all. Entering the arcade or club
+//  restores this artificially low volume. Both of these areas expect the volume
+//  to already be set to 127 and so it remains low until doing something that
+//  adjusts and resets it, like going to and from the basement.
+//
+// We fix this by ignoring the value of gSound1:vol when entering room 330 so
+//  that the scripts always use the normal initial volume of 127 and restore
+//  this when entering the arcade or club. This bug is the only circumstance in
+//  which gSound1:vol isn't already 127 when entering room 330.
+//
+// Applies to: All versions
+// Responsible method: rm330:init
+// Fixes bug: #9578
+static const uint16 sq6PolysorbateVolumeSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(vol),           // pushi vol
+	0x76,                               // push0
+	0x81, 0x68,                         // lag 68
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ gSound1 vol? ]
+	0xa3, 0x07,                         // sal 07
+	SIG_END
+};
+
+static const uint16 sq6PolysorbateVolumePatch[] = {
+	0x35, 0x7f,                         // ldi 7f [ normal volume ]
+	0x32, PATCH_UINT16(0x0003),         // jmp 0003
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
@@ -18314,6 +18358,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,    15, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    33, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
+	{  true,   330, "fix polysorbate lx music volume",             1, sq6PolysorbateVolumeSignature,   sq6PolysorbateVolumePatch },
 	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
 	{  true,   460, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   500, "fix slow transitions",                        1, sq6SlowTransitionSignature1,     sq6SlowTransitionPatch1 },
