@@ -152,7 +152,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		}
 
 		debugC(kDebugGraphics, "draw_char(%c)", a);
-		ctx->_font->drawChar(ctx->_drawSurface, a, ctx->_textX, ctx->_textY, ctx->_penColor);
+		ctx->_font->drawChar(ctx->_drawSurface, a, ctx->_textX, ctx->_textY, ctx->_fillColor);
 		ctx->_textX += ctx->_font->getCharWidth(a);
 		break;
 
