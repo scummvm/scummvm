@@ -1128,7 +1128,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, SymbolHash *localva
 
 		if (sym->type != INT && sym->type != VOID &&
 				sym->type != FLOAT && sym->type != STRING &&
-				sym->type != ARRAY && sym->type != PARRAY) {
+				sym->type != ARRAY && sym->type != PARRAY && sym->type != OBJECT) {
 			warning("varAssign: assignment to non-variable '%s'", sym->name->c_str());
 			return;
 		}
