@@ -45,9 +45,9 @@ DirectorEngine *g_director;
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
 		_rnd("director") {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
-	DebugMan.addDebugChannel(kDebugLingoCompile, "compile", "Lingo Compilation");
-	DebugMan.addDebugChannel(kDebugLingoParse, "parse", "Lingo code parsing");
-	DebugMan.addDebugChannel(kDebugLingoCompileOnly, "compileonly", "Skip Lingo code execution");
+	DebugMan.addDebugChannel(kDebugCompile, "compile", "Lingo Compilation");
+	DebugMan.addDebugChannel(kDebugParse, "parse", "Lingo code parsing");
+	DebugMan.addDebugChannel(kDebugCompileOnly, "compileonly", "Skip Lingo code execution");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
 	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
 	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
@@ -57,7 +57,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
 	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
 	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
-	DebugMan.addDebugChannel(kDebugLingoPreprocess, "preprocess", "Lingo preprocessing");
+	DebugMan.addDebugChannel(kDebugPreprocess, "preprocess", "Lingo preprocessing");
 
 	g_director = this;
 
@@ -241,7 +241,7 @@ Common::Error DirectorEngine::run() {
 				_nextMovie.frameI = -1;
 			}
 
-			if (!debugChannelSet(-1, kDebugLingoCompileOnly) && goodMovie) {
+			if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
 				debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
 
 				_currentScore->startLoop();

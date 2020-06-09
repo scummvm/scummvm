@@ -44,7 +44,7 @@ using namespace Director;
 int yyparse();
 
 static void count() {
-	if (debugChannelSet(-1, kDebugLingoParse))
+	if (debugChannelSet(-1, kDebugParse))
 		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
 
 	char *p = yytext;
@@ -470,7 +470,7 @@ int Lingo::parse(const char *code) {
 
 	YY_BUFFER_STATE bp;
 
-	if (debugChannelSet(-1, kDebugLingoParse))
+	if (debugChannelSet(-1, kDebugParse))
 		yydebug = 1;
 	else
 		yydebug = 0;

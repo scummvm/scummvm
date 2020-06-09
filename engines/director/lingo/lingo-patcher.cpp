@@ -101,7 +101,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, ScriptType type, uint
 		}
 
 		// Now everything matched
-		debugC(1, kDebugLingoParse, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
+		debugC(1, kDebugParse, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
 				patch->gameId, patch->movie, scriptType2str(type), id, linenum,
 				patch->orig, line.c_str());
 		return patch->replace;

@@ -179,14 +179,14 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 			if (*s == '\xc2')
 				linenumber++;
 		}
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "line: %d                         '%s'", iflevel, line.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "line: %d                         '%s'", iflevel, line.c_str());
 
 		if (type == kMovieScript && _vm->getVersion() <= 3 && !defFound) {
 			tok = nexttok(line.c_str());
 			if (tok.equals("macro") || tok.equals("factory") || tok.equals("on")) {
 				defFound = true;
 			} else {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "skipping line before first definition");
+				debugC(2, kDebugParse | kDebugPreprocess, "skipping line before first definition");
 				linenumber++;
 				if (*s)	// copy newline symbol
 					res += *s++;
@@ -213,7 +213,7 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 			if (*s)	// copy newline symbol
 				res += *s++;
 
-			debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "too small");
+			debugC(2, kDebugParse | kDebugPreprocess, "too small");
 
 			continue;
 		}
@@ -221,23 +221,23 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 		tok = nexttok(line.c_str(), &lineStart);
 		if (tok.equals("if")) {
 			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
-			debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "start-if <%s>", tok.c_str());
+			debugC(2, kDebugParse | kDebugPreprocess, "start-if <%s>", tok.c_str());
 
 			if (tok.equals("if")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "end-if");
+				debugC(2, kDebugParse | kDebugPreprocess, "end-if");
 				tok = prevtok(prevEnd, lineStart);
 
 				if (tok.equals("end")) {
 					// do nothing, we open and close same line
-					debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "end-end");
+					debugC(2, kDebugParse | kDebugPreprocess, "end-end");
 				} else {
 					iflevel++;
 				}
 			} else if (tok.equals("then")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "last-then");
+				debugC(2, kDebugParse | kDebugPreprocess, "last-then");
 				iflevel++;
 			} else if (tok.equals("else")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "last-else");
+				debugC(2, kDebugParse | kDebugPreprocess, "last-else");
 				iflevel++;
 			} else { // other token
 				// Now check if we have tNLELSE
@@ -252,23 +252,23 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 				tok = nexttok(s1);
 
 				if (tok.equalsIgnoreCase("else")) { // ignore case because it is look-ahead
-					debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "tNLELSE");
+					debugC(2, kDebugParse | kDebugPreprocess, "tNLELSE");
 					iflevel++;
 				} else {
-					debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "++++ end if (no nlelse after single liner)");
+					debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (no nlelse after single liner)");
 					res += " end if";
 				}
 			}
 		} else if (tok.equals("else")) {
-			debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "start-else");
+			debugC(2, kDebugParse | kDebugPreprocess, "start-else");
 			bool elseif = false;
 
 			tok = nexttok(lineStart);
 			if (tok.equals("if")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "second-if");
+				debugC(2, kDebugParse | kDebugPreprocess, "second-if");
 				elseif = true;
 			} else if (tok.empty()) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "lonely-else");
+				debugC(2, kDebugParse | kDebugPreprocess, "lonely-else");
 
 				if (*s)	// copy newline symbol
 					res += *s++;
@@ -277,24 +277,24 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 			}
 
 			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
-			debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "last: '%s'", tok.c_str());
+			debugC(2, kDebugParse | kDebugPreprocess, "last: '%s'", tok.c_str());
 
 			if (tok.equals("if")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "end-if");
+				debugC(2, kDebugParse | kDebugPreprocess, "end-if");
 				tok = prevtok(prevEnd, lineStart);
 
 				if (tok.equals("end")) {
-					debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "end-end");
+					debugC(2, kDebugParse | kDebugPreprocess, "end-end");
 					iflevel--;
 				}
 			} else if (tok.equals("then")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "last-then");
+				debugC(2, kDebugParse | kDebugPreprocess, "last-then");
 
 				if (elseif == false) {
 					warning("Badly nested then");
 				}
 			} else if (tok.equals("else")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "last-else");
+				debugC(2, kDebugParse | kDebugPreprocess, "last-else");
 				if (elseif == false) {
 					warning("Badly nested else");
 				}
@@ -310,46 +310,46 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 
 				if (tok.equalsIgnoreCase("else") && elseif) {
 					// Nothing to do here, same level
-					debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "tNLELSE");
+					debugC(2, kDebugParse | kDebugPreprocess, "tNLELSE");
 				} else if (tok.equalsIgnoreCase("end") && elseif) {
 					tok = nexttok(s1);
 
 					if (tok.equalsIgnoreCase("if")) {
 						// Nothing to do here
-						debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "see-end-if");
+						debugC(2, kDebugParse | kDebugPreprocess, "see-end-if");
 					} else {
-						debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "++++ end if (no tNLELSE 2)");
+						debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (no tNLELSE 2)");
 						res += " end if";
 						iflevel--;
 					}
 				} else {
-					debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "++++ end if (no tNLELSE)");
+					debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (no tNLELSE)");
 					res += " end if";
 					iflevel--;
 				}
 			}
 		} else if (tok.equals("end")) {
-			debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "start-end");
+			debugC(2, kDebugParse | kDebugPreprocess, "start-end");
 
 			tok = nexttok(lineStart);
 			if (tok.equals("if")) {
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "second-if");
+				debugC(2, kDebugParse | kDebugPreprocess, "second-if");
 				iflevel--;
 			}
 		} else if (tok.equals("when")) {
-			debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "start-when");
+			debugC(2, kDebugParse | kDebugPreprocess, "start-when");
 
 			if (strstr(lineStart, "if") && strstr(lineStart, "then")) {
 				tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
-				debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "when-start-if <%s>", tok.c_str());
+				debugC(2, kDebugParse | kDebugPreprocess, "when-start-if <%s>", tok.c_str());
 
 				if (tok.equals("if")) {
-					debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "when-end-if");
+					debugC(2, kDebugParse | kDebugPreprocess, "when-end-if");
 					tok = prevtok(prevEnd, lineStart);
 
 					if (tok.equals("end")) {
 						// do nothing, we open and close same line
-						debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "when-end-end");
+						debugC(2, kDebugParse | kDebugPreprocess, "when-end-end");
 					} else {
 						res += " end if";
 					}
@@ -358,7 +358,7 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 				}
 			}
 		} else {
-			debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "nothing");
+			debugC(2, kDebugParse | kDebugPreprocess, "nothing");
 		}
 
 		if (*s)	// copy newline symbol
@@ -366,14 +366,14 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 	}
 
 	for (int i = 0; i < iflevel; i++) {
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "++++ end if (unclosed)");
+		debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (unclosed)");
 		res += "\nend if";
 	}
 
 	// Make the parser happier when there is no newline at the end
 	res += '\n';
 
-	debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "#############\n%s\n#############", res.c_str());
+	debugC(2, kDebugParse | kDebugPreprocess, "#############\n%s\n#############", res.c_str());
 
 	return res;
 }
@@ -463,7 +463,7 @@ Common::String preprocessWhen(Common::String in, bool *changed) {
 	res += Common::String(beg);
 
 	if (in.size() != res.size())
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "WHEN: in: %s\nout: %s", in.c_str(), res.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "WHEN: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
@@ -487,7 +487,7 @@ Common::String preprocessReturn(Common::String in) {
 
 		next = nexttok(ptr + 6); // end of 'return'
 
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "RETURN: prevtok: %s nexttok: %s", prev.c_str(), next.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "RETURN: prevtok: %s nexttok: %s", prev.c_str(), next.c_str());
 
 		if (prev.hasSuffix("&") || prev.hasSuffix("&&") || prev.hasSuffix("=") ||
 				next.hasPrefix("&") || next.hasPrefix("&&")) {
@@ -501,7 +501,7 @@ Common::String preprocessReturn(Common::String in) {
 	res += Common::String(beg);
 
 	if (in.size() != res.size())
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "RETURN: in: %s\nout: %s", in.c_str(), res.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "RETURN: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
@@ -532,7 +532,7 @@ Common::String preprocessPlay(Common::String in) {
 
 		next = nexttok(ptr, &nextPtr);
 
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "PLAY: nexttok: %s", next.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "PLAY: nexttok: %s", next.c_str());
 
 		if (next.equalsIgnoreCase("done")) {
 			res += " #"; // Turn it into SYMBOL
@@ -548,7 +548,7 @@ Common::String preprocessPlay(Common::String in) {
 	res += Common::String(beg);
 
 	if (in.size() != res.size())
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "PLAY: in: %s\nout: %s", in.c_str(), res.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "PLAY: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
@@ -579,7 +579,7 @@ Common::String preprocessSound(Common::String in) {
 
 		next = nexttok(ptr, &nextPtr);
 
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "SOUND: nexttok: %s", next.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "SOUND: nexttok: %s", next.c_str());
 
 		bool modified = false;
 
@@ -604,7 +604,7 @@ Common::String preprocessSound(Common::String in) {
 	res += Common::String(beg);
 
 	if (in.size() != res.size())
-		debugC(2, kDebugLingoParse | kDebugLingoPreprocess, "SOUND: in: %s\nout: %s", in.c_str(), res.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "SOUND: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }

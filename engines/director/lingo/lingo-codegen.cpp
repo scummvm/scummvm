@@ -76,14 +76,14 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 	sym.ctx = _currentScriptContext;
 	sym.archiveIndex = _archiveIndex;
 
-	if (debugChannelSet(1, kDebugLingoCompile)) {
+	if (debugChannelSet(1, kDebugCompile)) {
 		uint pc = 0;
 		while (pc < sym.u.defn->size()) {
 			uint spc = pc;
 			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
-			debugC(1, kDebugLingoCompile, "[%5d] %s", spc, instr.c_str());
+			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 		}
-		debugC(1, kDebugLingoCompile, "<end define code>");
+		debugC(1, kDebugCompile, "<end define code>");
 	}
 
 	if (factory) {
@@ -107,7 +107,7 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 }
 
 Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *factory, int end, bool removeCode) {
-	debugC(1, kDebugLingoCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
+	debugC(1, kDebugCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
 			name.c_str(), _currentScript->size() - 1, start, nargs, (factory ? factory->name->c_str() : ""),
 			end, _currentEntityId);
 
@@ -221,13 +221,13 @@ int Lingo::codeFunc(Common::String *s, int numpar) {
 
 void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
-	debugC(4, kDebugLingoCompile, "codeLabel: Added label %d", label);
+	debugC(4, kDebugCompile, "codeLabel: Added label %d", label);
 }
 
 void Lingo::processIf(int toplabel, int endlabel) {
 	inst iend;
 
-	debugC(4, kDebugLingoCompile, "processIf(%d, %d)", toplabel, endlabel);
+	debugC(4, kDebugCompile, "processIf(%d, %d)", toplabel, endlabel);
 
 	while (true) {
 		if (_labelstack.empty()) {
@@ -242,7 +242,7 @@ void Lingo::processIf(int toplabel, int endlabel) {
 		if (!label)
 			break;
 
-		debugC(4, kDebugLingoCompile, "processIf: label at %d", label);
+		debugC(4, kDebugCompile, "processIf: label at %d", label);
 
 		WRITE_UINT32(&iend, endlabel - label + 1);
 

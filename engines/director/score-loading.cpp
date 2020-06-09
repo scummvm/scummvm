@@ -1017,7 +1017,7 @@ void Score::loadLingoNames(Common::SeekableSubReadStreamEndian &stream) {
 
 void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 	if (_vm->getVersion() >= 4) {
-		debugC(1, kDebugLingoCompile, "Add V4 script context");
+		debugC(1, kDebugCompile, "Add V4 script context");
 
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "Lctx header:");

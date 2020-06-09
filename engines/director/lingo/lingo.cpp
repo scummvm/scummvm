@@ -252,22 +252,22 @@ const char *Lingo::findNextDefinition(const char *s) {
 			return NULL;
 
 		if (!scumm_strnicmp(res, "macro ", 6)) {
-			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'macros ' construct");
+			debugC(1, kDebugCompile, "findNextDefinition(): See 'macros ' construct");
 			return res;
 		}
 
 		if (!scumm_strnicmp(res, "on ", 3)) {
-			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'on ' construct");
+			debugC(1, kDebugCompile, "findNextDefinition(): See 'on ' construct");
 			return res;
 		}
 
 		if (!scumm_strnicmp(res, "factory ", 8)) {
-			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'factory ' construct");
+			debugC(1, kDebugCompile, "findNextDefinition(): See 'factory ' construct");
 			return res;
 		}
 
 		if (!scumm_strnicmp(res, "method ", 7)) {
-			debugC(1, kDebugLingoCompile, "findNextDefinition(): See 'method ' construct");
+			debugC(1, kDebugCompile, "findNextDefinition(): See 'method ' construct");
 			return res;
 		}
 
@@ -279,7 +279,7 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	debugC(1, kDebugLingoCompile, "Add code for type %s(%d) with id %d\n"
+	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
 	if (getScriptContext(type, id)) {
@@ -305,7 +305,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	const char *begin, *end;
 
 	if (!strncmp(code, "menu:", 5)) {
-		debugC(1, kDebugLingoCompile, "Parsing menu");
+		debugC(1, kDebugCompile, "Parsing menu");
 		parseMenu(code);
 
 		return;
@@ -328,25 +328,25 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			else
 				_inFactory = false;
 
-			debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
+			debugC(1, kDebugCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
 
 			parse(chunk.c_str());
 
-			if (debugChannelSet(3, kDebugLingoCompile)) {
-				debugC(2, kDebugLingoCompile, "<current code>");
+			if (debugChannelSet(3, kDebugCompile)) {
+				debugC(2, kDebugCompile, "<current code>");
 				uint pc = 0;
 				while (pc < _currentScript->size()) {
 					uint spc = pc;
 					Common::String instr = decodeInstruction(_currentScript, pc, &pc);
-					debugC(2, kDebugLingoCompile, "[%5d] %s", spc, instr.c_str());
+					debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 				}
-				debugC(2, kDebugLingoCompile, "<end code>");
+				debugC(2, kDebugCompile, "<end code>");
 			}
 
 			begin = end;
 		} while ((end = findNextDefinition(begin + 1)));
 
-		debugC(1, kDebugLingoCompile, "Last code chunk:\n#####\n%s\n#####", begin);
+		debugC(1, kDebugCompile, "Last code chunk:\n#####\n%s\n#####", begin);
 		parse(begin);
 
 		// end of script, add a c_procret so stack frames work as expected
@@ -361,22 +361,22 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	_inFactory = false;
 
-	if (debugChannelSet(3, kDebugLingoCompile)) {
+	if (debugChannelSet(3, kDebugCompile)) {
 		if (_currentScript->size() && !_hadError)
 			Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 
-		debugC(2, kDebugLingoCompile, "<resulting code>");
+		debugC(2, kDebugCompile, "<resulting code>");
 		uint pc = 0;
 		while (pc < _currentScript->size()) {
 			uint spc = pc;
 			Common::String instr = decodeInstruction(_currentScript, pc, &pc);
-			debugC(2, kDebugLingoCompile, "[%5d] %s", spc, instr.c_str());
+			debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 		}
-		debugC(2, kDebugLingoCompile, "<end code>");
+		debugC(2, kDebugCompile, "<end code>");
 	}
 
 	// for D4 and above, there won't be any code left. all scoped methods
-	// will be defined and stored by the code parser, and this function we save 
+	// will be defined and stored by the code parser, and this function we save
 	// will be blank.
 	// however D3 and below allow scopeless functions!
 	Symbol currentFunc;
@@ -963,7 +963,7 @@ void Lingo::runTests() {
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
 
-			if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_hadError)
 					executeScript(kMovieScript, counter, 0);
 				else

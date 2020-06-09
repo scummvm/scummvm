@@ -704,7 +704,7 @@ void LC::cb_zeropush() {
 }
 
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id, Common::String &archName) {
-	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
+	debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
@@ -1158,12 +1158,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			} else {
 				// unimplemented instruction
 				if (opcode < 0x40) { // 1 byte instruction
-					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x", opcode);
+					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x", opcode);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->code1(LC::cb_unk);
 					g_lingo->codeInt(opcode);
 				} else if (opcode < 0x80) { // 2 byte instruction
-					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d)", opcode, (uint)codeStore[pointer]);
+					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x (%d)", opcode, (uint)codeStore[pointer]);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->code1(LC::cb_unk1);
 					g_lingo->codeInt(opcode);
@@ -1171,7 +1171,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					g_lingo->codeInt((uint)codeStore[pointer]);
 					pointer += 1;
 				} else { // 3 byte instruction
-					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d, %d)", opcode, (uint)codeStore[pointer], (uint)codeStore[pointer+1]);
+					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x (%d, %d)", opcode, (uint)codeStore[pointer], (uint)codeStore[pointer+1]);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->code1(LC::cb_unk2);
 					g_lingo->codeInt(opcode);
@@ -1247,7 +1247,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 
 void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(1, kDebugLingoCompile, "Add V4 script name index");
+	debugC(1, kDebugCompile, "Add V4 script name index");
 
 	if (stream.size() < 0x14) {
 		warning("Lnam header too small");
