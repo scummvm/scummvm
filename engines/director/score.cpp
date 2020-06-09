@@ -315,7 +315,6 @@ void Score::startLoop() {
 	_vm->_backSurface.create(_movieRect.width(), _movieRect.height());
 
 	_vm->_wm->setScreen(_surface);
-	_vm->_wm->_lastWidget = nullptr;
 
 	_surface->clear(_stageColor);
 
@@ -539,45 +538,27 @@ void Score::unrenderSprite(uint16 spriteId) {
 	}
 
 	currentSprite->_currentBbox = currentSprite->getBbox();
-	currentSprite->_dirty = false;
-
-	if (currentSprite->_cast)
-		currentSprite->_cast->_modified = false;
 }
 
 void Score::renderSprite(uint16 id) {
 	Sprite *sprite = _sprites[id];
 
+	if (!sprite || !sprite->_enabled || !sprite->_castType)
+		return;
+
 	sprite->updateCast();
-	if (!sprite || !sprite->_enabled)
-		return;
 
-	CastType castType = sprite->_castType;
-
-	if (castType == kCastTypeNull)
-		return;
-
-	debugC(1, kDebugImages, "Score::renderFrame(): channel: %d,  castType: %d", id, castType);
-	// this needs precedence to be hit first... D3 does something really tricky
-	// with cast IDs for shapes. I don't like this implementation 100% as the
-	// 'cast' above might not actually hit a member and be null?
-	if (castType == kCastShape) {
+	debugC(1, kDebugImages, "Score::renderFrame(): channel: %d,  castType: %d", id, sprite->_castType);
+	if (sprite->_castType == kCastShape) {
 		renderShape(id);
-	} else if (castType == kCastText || castType == kCastRTE) {
-		renderText(id);
-	} else if (castType == kCastButton) {
-		renderButton(id);
 	} else {
-		if (!sprite->_cast || sprite->_cast->_type != kCastBitmap) {
-			warning("Score::renderFrame(): No cast ID for sprite %d", id);
-			return;
+		Cast *cast = _sprites[id]->_cast;
+		if (cast && cast->_widget) {
+			cast->_widget->draw();
+			inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), _sprites[id]->_ink, _sprites[id]->_currentBbox, id);
+		} else {
+			warning("Score::renderSprite: No widget for channel ID %d", id);
 		}
-		if (sprite->_cast->_surface == nullptr) {
-			warning("Score::renderFrame(): No cast surface for sprite %d", id);
-			return;
-		}
-
-		renderBitmap(id);
 	}
 
 	sprite->setClean();
@@ -699,62 +680,6 @@ void Score::renderShape(uint16 spriteId) {
 	}
 
 	inkBasedBlit(&maskSurface, tmpSurface, ink, shapeRect, spriteId);
-}
-
-void Score::renderButton(uint16 spriteId) {
-	uint16 castId = _sprites[spriteId]->_castId;
-
-	// This may not be a button cast. It could be a textcast with the channel forcing it
-	// to be a checkbox or radio button!
-	Cast *member = _vm->getCastMember(castId);
-	if (!member) {
-		warning("renderButton: unknown cast id %d", castId);
-	} else if (member->_type != kCastButton) {
-		warning("renderButton: cast id %d not of type kCastButton", castId);
-		return;
-	}
-	TextCast *button = (TextCast *)member;
-
-	// TODO: review all cases to confirm if we should use text height.
-	// height = textRect.height();
-
-	Common::Rect bbox = _sprites[spriteId]->_currentBbox;
-
-	inkBasedBlit(nullptr, button->_widget->getSurface()->rawSurface(),  _sprites[spriteId]->_ink, bbox, spriteId);
-}
-
-void Score::renderText(uint16 spriteId) {
-	TextCast *text = (TextCast*)_sprites[spriteId]->_cast;
-	if (text == nullptr) {
-		warning("Score::renderText(): TextCast #%d is a nullptr", spriteId);
-		return;
-	}
-
-	Common::Rect bbox = _sprites[spriteId]->_currentBbox;
-	text->_widget->draw();
-
-	if (_fontMap.contains(text->_fontId)) {
-		// We need to make sure that the Shared Cast fonts have been loaded in?
-		// might need a mapping table here of our own.
-		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
-	}
-
-	inkBasedBlit(nullptr, text->_widget->getSurface()->rawSurface(), _sprites[spriteId]->_ink, bbox, spriteId);
-}
-
-void Score::renderBitmap(uint16 spriteId) {
-	InkType ink;
-	Sprite *sprite = _sprites[spriteId];
-
-	// if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
-	// 	ink = kInkTypeReverse;
-	// else
-		ink = sprite->_ink;
-
-	BitmapCast *bc = (BitmapCast *)sprite->_cast;
-	Common::Rect drawRect = sprite->_currentBbox;
-
-	inkBasedBlit(nullptr, *(bc->_surface), ink, drawRect, spriteId);
 }
 
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {

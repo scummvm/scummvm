@@ -250,9 +250,9 @@ bool Score::loadArchive() {
 	copyCastStxts();
 
 	setSpriteCasts();
-	setSpriteBboxes();
 	loadSpriteImages(false);
 	loadSpriteSounds(false);
+	setSpriteBboxes();
 
 	return true;
 }
@@ -358,8 +358,8 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 		delete pic;
 
-		bitmapCast->_surface = img->getSurface();
 		bitmapCast->_img = img;
+		bitmapCast->createWidget();
 
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
 			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
@@ -678,10 +678,7 @@ void Score::setSpriteBboxes() {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			Sprite *sp = _frames[i]->_sprites[j];
-			// Only call updateCast on the first frame sprites, because renderSprite
-			// calls updateCast for us after that. We need to get widget bounding info here.
-			// if (i == 1)
-				sp->updateCast();
+			sp->updateCast();
 
 			sp->_startBbox = sp->getBbox();
 			sp->_currentBbox = sp->_startBbox;

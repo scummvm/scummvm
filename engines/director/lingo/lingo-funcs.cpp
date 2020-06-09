@@ -346,30 +346,21 @@ void Lingo::func_cursor(int cursorId, int maskId) {
 			return;
 		}
 
-		if (cursorCast->_surface == nullptr) {
-			warning("func_cursor(): empty surface for bitmap cast %d", cursorId);
-			return;
-		}
-		if (maskCast->_surface == nullptr) {
-			warning("func_cursor(): empty surface for bitmap cast %d", maskId);
-			return;
-		}
-
 		byte *assembly = (byte *)malloc(16 * 16);
 		byte *dst = assembly;
 
 		for (int y = 0; y < 16; y++) {
 			const byte *cursor = nullptr, *mask = nullptr;
 
-			if (y < cursorCast->_surface->h &&
-					y < maskCast->_surface->h) {
-				cursor = (const byte *)cursorCast->_surface->getBasePtr(0, y);
-				mask = (const byte *)maskCast->_surface->getBasePtr(0, y);
+			if (y < cursorCast->_widget->getSurface()->h &&
+					y < maskCast->_widget->getSurface()->h) {
+				cursor = (const byte *)cursorCast->_widget->getSurface()->getBasePtr(0, y);
+				mask = (const byte *)maskCast->_widget->getSurface()->getBasePtr(0, y);
 			}
 
 			for (int x = 0; x < 16; x++) {
-				if (x >= cursorCast->_surface->w ||
-						x >= maskCast->_surface->w) {
+				if (x >= cursorCast->_widget->getSurface()->w ||
+						x >= maskCast->_widget->getSurface()->w) {
 					cursor = mask = nullptr;
 				}
 
