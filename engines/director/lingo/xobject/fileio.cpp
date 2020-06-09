@@ -157,7 +157,23 @@ void FileIO::m_new(int nargs) {
 			return;
 		}
 	} else if (option.equalsIgnoreCase("append")) {
-		warning("FileIO: append is unimplemented");
+		Common::InSaveFile *inFile = g_system->getSavefileManager()->openForLoading(filename);
+		if (!inFile) {
+			delete me;
+			g_lingo->push(Datum(kErrorIO));
+			return;
+		}
+		me->outFile = g_system->getSavefileManager()->openForSaving(filename);
+		me->outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		if (!me->outFile) {
+			delete me;
+			g_lingo->push(Datum(kErrorIO));
+			return;
+		}
+		while (!inFile->eos() && !inFile->err()) {
+			me->outStream->writeByte(inFile->readByte());
+		}
+		delete inFile;
 	} else {
 		error("Unsupported FileIO option: '%s'", option.c_str());
 	}
