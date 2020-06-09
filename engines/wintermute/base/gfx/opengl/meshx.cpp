@@ -80,6 +80,18 @@ bool MeshX::findBones(FrameNode *rootFrame) {
 		return true;
 	}
 
+	_boneMatrices.resize(skinWeightsList.size());
+
+	for (uint i = 0; i < skinWeightsList.size(); ++i) {
+		FrameNode *frame = rootFrame->findFrame(skinWeightsList[i]._boneName.c_str());
+
+		if (frame) {
+			_boneMatrices[i] = frame->getCombinedMatrix();
+		} else {
+			warning("MeshX::findBones could not find bone %s", skinWeightsList[i]._boneName.c_str());
+		}
+	}
+
 	return true;
 }
 
