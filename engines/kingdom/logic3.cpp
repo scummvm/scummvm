@@ -431,7 +431,7 @@ void Logic::GPL3_560() {
 	_nodeNum = 56;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	if (_vm->_wizard) {
+	if (!_vm->_wizard) {
 		_vm->_frameStop = 50;
 		enAll();
 		_vm->playMovie(135);
@@ -1655,15 +1655,15 @@ void Logic::GPL3_781() {
 		if (_vm->_wizard) {
 			_vm->_frameStop = 64;
 			_vm->playMovie(173);
-			inventoryDel(1);
 		} else {
 			_vm->_frameStop = 66;
 			_vm->_fstFwd = false;
 			_vm->playMovie(172);
 			_vm->_fstFwd = true;
-			_vm->playMovie(201);
+			_vm->playMovie(215);
 		}
 
+		inventoryDel(1);
 		_vm->fShowPic(471);
 		_currMap = 124;
 		break;
