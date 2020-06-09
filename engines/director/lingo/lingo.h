@@ -171,38 +171,8 @@ struct Datum {	/* interpreter stack type */
 		refCount = new int;
 		*refCount = 1;
 	}
-	void reset() {
-		*refCount -= 1;
-		if (*refCount <= 0) {
-			switch (type) {
-			case VAR:
-				// fallthrough
-			case STRING:
-				delete u.s;
-				break;
-			case ARRAY:
-				// fallthrough
-			case POINT:
-				// fallthrough
-			case RECT:
-				delete u.farr;
-				break;
-			case PARRAY:
-				delete u.parr;
-				break;
-			case REFERENCE:
-				// fallthrough
-			case INT:
-				// fallthrough
-			case FLOAT:
-				// fallthrough
-			default:
-				break;
-			}
-			delete refCount;
-		}
 
-	}
+	void reset();
 
 	~Datum() {
 		reset();
@@ -280,7 +250,12 @@ struct Object {
 		}
 	}
 
-	Object *clone();
+	virtual ~Object() {
+		delete name;
+		delete objArray;
+	}
+
+	virtual Object *clone();
 	void addProperty(const Common::String &propName);
 	Symbol getMethod(const Common::String &methodName);
 	bool hasVar(const Common::String &varName);
