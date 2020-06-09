@@ -23,13 +23,59 @@
 #ifndef DIRECTOR_LINGO_XOBJECT_FILEIO_H
 #define DIRECTOR_LINGO_XOBJECT_FILEIO_H
 
+#include "common/savefile.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
 
+enum FileIOError {
+	kErrorNone = 0,
+	kErrorDirectoryFull = -33,
+	kErrorVolumeFull = -34,
+	kErrorVolumeNotFound = -35,
+	kErrorIO = -36,
+	kErrorBadFileName = -37,
+	kErrorFileNotOpen = -38,
+	kErrorTooManyFilesOpen = -42,
+	kErrorFileNotFound = -43,
+	kErrorNoSuchDrive = -56,
+	kErrorReadOnly = -61, // undocumented
+	kErrorNoDiskInDrive = -65,
+	kErrorDirectoryNotFound = -120
+};
+
+struct FileXObject : Object {
+	Common::InSaveFile *infile;
+	Common::OutSaveFile *outfile;
+
+	FileXObject() : Object("FileIO", kXObj) {
+		infile = nullptr;
+		outfile = nullptr;
+	}
+
+	virtual ~FileXObject() {
+		delete infile;
+		delete outfile;
+	}
+
+	virtual Object *clone();
+};
+
 namespace FileIO {
 	void b_openXLib(int nargs);
+	void m_delete(int nargs);
+	void m_dispose(int nargs);
+	void m_fileName(int nargs);
+	void m_getLength(int nargs);
+	void m_getPosition(int nargs);
 	void m_new(int nargs);
+	void m_readChar(int nargs);
+	void m_readLine(int nargs);
+	void m_readToken(int nargs);
+	void m_readWord(int nargs);
+	void m_setPosition(int nargs);
+	void m_writeChar(int nargs);
+	void m_writeString(int nards);
 
 } // End of namespace FileIO
 
