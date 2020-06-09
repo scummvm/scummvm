@@ -283,6 +283,8 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
+	pushContext();
+
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
@@ -411,6 +413,8 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	currentFunc.varNames = varNames;
 	_currentScriptContext->functions.push_back(currentFunc);
 	_currentAssembly = nullptr;
+
+	popContext();
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -577,6 +581,7 @@ void Lingo::execute(uint pc) {
 
 void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	ScriptContext *sc = getScriptContext(type, id);
+
 	if (!sc) {
 		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
 		return;
@@ -586,26 +591,17 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 		return;
 	}
 
-	_localvars = new SymbolHash;
-
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
 
-	_currentScriptContext = sc;
-	Symbol sym = _currentScriptContext->functions[function];
+	Symbol sym = sc->functions[function];
 	LC::call(sym, 0);
 	execute(_pc);
-
-	cleanLocalVars();
 }
 
 void Lingo::executeHandler(Common::String name) {
-	_localvars = new SymbolHash;
-
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
 	LC::call(name, 0);
 	execute(_pc);
-
-	cleanLocalVars();
 }
 
 void Lingo::restartLingo() {

@@ -365,7 +365,7 @@ public:
 
 public:
 	void execute(uint pc);
-	void pushContext(const Symbol *funcSym = nullptr);
+	void pushContext(const Symbol *funcSym = nullptr, bool newVarFrame = true);
 	void popContext();
 	void cleanLocalVars();
 	int castIdFetch(Datum &var);

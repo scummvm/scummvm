@@ -101,10 +101,7 @@ int Lingo::getEventCount() {
 void Lingo::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	debugC(3, kDebugLingoExec, "setting primary event handler (%s)", _eventHandlerTypes[event]);
 	_archives[_archiveIndex].primaryEventHandlers[event] = code;
-	pushContext();
-	g_lingo->_localvars = new SymbolHash;
 	addCode(code.c_str(), kGlobalScript, event);
-	popContext();
 }
 
 void Lingo::primaryEventHandler(LEvent event) {

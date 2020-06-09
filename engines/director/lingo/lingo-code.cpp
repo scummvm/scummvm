@@ -209,7 +209,7 @@ void LC::c_xpop() {
 	g_lingo->pop();
 }
 
-void Lingo::pushContext(const Symbol *funcSym) {
+void Lingo::pushContext(const Symbol *funcSym, bool newVarFrame) {
 	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
@@ -219,9 +219,11 @@ void Lingo::pushContext(const Symbol *funcSym) {
 	fp->retarchive = g_lingo->_archiveIndex;
 	fp->localvars = g_lingo->_localvars;
 	fp->retMeObj = g_lingo->_currentMeObj;
-	if (funcSym) {
+	if (funcSym)
 		fp->sp = *funcSym;
-	}
+
+	if (newVarFrame)
+		g_lingo->_localvars = new SymbolHash;
 
 	g_lingo->_callstack.push_back(fp);
 
@@ -1389,7 +1391,7 @@ void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 		g_lingo->push(d);
 	}
 
-	g_lingo->pushContext(&funcSym);
+	g_lingo->pushContext(&funcSym, false);
 
 	// Create new set of local variables
 	SymbolHash *localvars = new SymbolHash;
