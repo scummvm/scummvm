@@ -31,10 +31,10 @@ namespace Director {
 #define WINGAME(t,e,f,m,s,v) 	GENGAME_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define MACDEMO(t,e,f,m,s,v) 	GENGAME_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO(t,e,f,m,s,v) 	GENGAME_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
-#define MACGAME_1(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
-#define WINGAME_1(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
-#define MACDEMO_1(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
-#define WINDEMO_1(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_DEMO,v)
+#define MACGAME_l(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
+#define WINGAME_l(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
+#define MACDEMO_l(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
+#define WINDEMO_l(t,e,f,m,s,l,v) GENGAME_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_DEMO,v)
 
 static const DirectorGameDescription gameDescriptions[] = {
 	// Execute all *.lingo files in game directory
@@ -88,7 +88,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 ////////////////////////////////////////
 
-	MACGAME_1("madmac", "", "VW Player", "16034c0db4619552e4fe7e108cb98dae", 17070, Common::FR_FRA, 0),
+	MACGAME_l("madmac", "", "VW Player", "16034c0db4619552e4fe7e108cb98dae", 17070, Common::FR_FRA, 0),
 
 ////////////////////////////////////////
 //
@@ -96,8 +96,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 ////////////////////////////////////////
 
-	MACGAME_1("alice", "", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 274274, Common::JA_JPN, 2),
-	MACGAME_1("tri3dtrial", "", "Tri-3D-Trial", "cfa68a1bc49251497ebde18e5fc9c217", 271223, Common::JA_JPN, 2),
+	MACGAME_l("alice", "", "Alice", "e54ec74aeb4355b0acd46320327c1bed", 274274, Common::JA_JPN, 2),
+	MACGAME_l("tri3dtrial", "", "Tri-3D-Trial", "cfa68a1bc49251497ebde18e5fc9c217", 271223, Common::JA_JPN, 2),
 
 	MACGAME("warlock", "V1.0", "Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271093, 2),
 	MACGAME("warlock", "V1.1.1", "Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271107, 2),
@@ -111,8 +111,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 ////////////////////////////////////////
 
-	MACGAME_1("alexworld", "", "AlexWorld", "f5277c53bacd27936158dd3867e587e2", 391576, Common::JA_JPN, 3),
-	WINGAME_1("alexworld", "", "ALEX.EXE", "65d06b5fef155a2473434571aff5bc29", 369996, Common::JA_JPN, 3),
+	MACGAME_l("alexworld", "", "AlexWorld", "f5277c53bacd27936158dd3867e587e2", 391576, Common::JA_JPN, 3),
+	WINGAME_l("alexworld", "", "ALEX.EXE", "65d06b5fef155a2473434571aff5bc29", 369996, Common::JA_JPN, 3),
 
 	MACGAME("amandastories", "3.0", "AmandaStories", "1687f456d7f2bcf98e84fec6d3a03c17", 353985, 3),
 
@@ -145,16 +145,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO("jman", "CD Demo", "Journeyman Demo", "424093b2bc04a1bfa4376c878f67a364", 3083188, 3),
 	MACDEMO("jman", "Looping Demo", "Journeyman Looping Demo", "1ae45c23586b41997ba52e2e7c771c4c", 3077658, 3),
 	WINGAME("jman", "", "JMAN.EXE", "7c8230a804abf9353b05627a675b5ffb", 375282, 3),
-	WINGAME_1("jman", "", "JOURNEY.EXE", "65d06b5fef155a2473434571aff5bc29", -1, Common::JA_JPN, 3),
+	WINGAME_l("jman", "", "JOURNEY.EXE", "65d06b5fef155a2473434571aff5bc29", -1, Common::JA_JPN, 3),
 	WINDEMO("jman", "Demo", "JMDEMO.EXE", "7c8230a804abf9353b05627a675b5ffb", 375305, 3),
 
-	MACGAME_1("lzone", "V2.0", "L-ZONE", "276bee761e48a6fd709df77d5c2f60dd", 395344, Common::JA_JPN, 3),
-	WINGAME_1("lzone", "", "L_ZONE.EXE", "65d06b5fef155a2473434571aff5bc29", 370009, Common::JA_JPN, 3),
+	MACGAME_l("lzone", "V2.0", "L-ZONE", "276bee761e48a6fd709df77d5c2f60dd", 395344, Common::JA_JPN, 3),
+	WINGAME_l("lzone", "", "L_ZONE.EXE", "65d06b5fef155a2473434571aff5bc29", 370009, Common::JA_JPN, 3),
 
 	MACGAME("maze", "", "Maze", "c4917547b9d9fda87567a9b3544489c4", 384534, 3),
 
 	MACGAME("murderbrett", "", "The Environmental Surfer", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384469, 3),
-	WINGAME("murderbrett", "", "BRETTP.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 3),	
+	WINGAME("murderbrett", "", "BRETTP.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 3),
 	MACGAME("murdermagic", "", "The Magic Death", "a8788e8b79dccc582b9818ec63734bed", 736754, 3),
 	WINGAME("murdermagic", "", "MAGIC.EXE", "7c8230a804abf9353b05627a675b5ffb", 375298, 3),
 	MACGAME("murdersam", "", "Who Killed Sam Rupert", "243ed9ef948de907401784d0938a4ed5", 518996, 3), // original name is Who Killed Sam Rupert?
@@ -162,9 +162,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("murdertaylor", "", "Taylor French", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384469, 3),
 	WINGAME("murdertaylor", "", "TAYLORF.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 3),
 
-	MACGAME_1("refixion1", "", "REFIXION", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356245, Common::JA_JPN, 3),
-	MACGAME_1("refixion2", "", "Museum or Hospital", "1ae45c23586b41997ba52e2e7c771c4c", 375841, Common::JA_JPN, 3),
-	MACGAME_1("refixion3", "", "The Reindeer Story", "f5277c53bacd27936158dd3867e587e2", 392473, Common::JA_JPN, 3),
+	MACGAME_l("refixion1", "", "REFIXION", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356245, Common::JA_JPN, 3),
+	MACGAME_l("refixion2", "", "Museum or Hospital", "1ae45c23586b41997ba52e2e7c771c4c", 375841, Common::JA_JPN, 3),
+	MACGAME_l("refixion3", "", "The Reindeer Story", "f5277c53bacd27936158dd3867e587e2", 392473, Common::JA_JPN, 3),
 
 	MACDEMO("rodney", "Demo", "Rodney's Funscreen demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356866, 3), // full game is supported in MADE engine
 	MACDEMO("screamingmetal", "Demo", "Screaming Metal Demo", "0a280df213c5bf3eca241f37151e1d56", 373190, 3), // full game was never released
@@ -174,7 +174,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME("spyclub", "", "SPYCLUB.EXE", "65d06b5fef155a2473434571aff5bc29", -1, 3),
 
-	MACGAME_1("the7colors", "", "LEGEND OF PSYS CITY", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384001, Common::JA_JPN, 3), //original name is ~LEGEND OF PSY•S CITY~
+	MACGAME_l("the7colors", "", "LEGEND OF PSYS CITY", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384001, Common::JA_JPN, 3), //original name is ~LEGEND OF PSY•S CITY~
 	MACGAME("the7colors", "", "T7C-R!", "d84feae6ba35340857f46c9cbd6bd1a6", 398981, 3), // English translation by Skye Sonomura (HomeStarRunnerTron)
 
 	MACGAME("vvcyber", "", "Start Game", "7f443f2e63fd497a9ad85b10dc880a91", 384846, 3),
@@ -294,8 +294,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 4),
 
 	MACGAME("daedalus", "", "DAEDALUS.DAT", "4eb2fab14f1b932ae9f01d8b05a411de", 69794, 4),
-	MACGAME_1("daedalus", "", "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69794, Common::DE_DEU, 4),
-	MACGAME_1("daedalus", "", "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69794, Common::FR_FRA, 4),
+	MACGAME_l("daedalus", "", "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69794, Common::DE_DEU, 4),
+	MACGAME_l("daedalus", "", "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69794, Common::FR_FRA, 4),
 
 	WINDEMO("earthwormjim", "Demo", "EWJDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 
@@ -329,7 +329,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO("jman", "Director's Cut Demo", "Journeyman - Director's Cut", "01be45e7241194dad07938e7059b88e3", 484284, 4),
 
 	MACGAME("jman2", "", "Buried in Time PowerPC", "71287376e445ab9c98f0d150bb0ed175", 80334, 4), // original name is Buried in Time™ PowerPC; also contains 68k binary
-	MACGAME_1("jman2", "", "Buried in Time PowerPC", "71287376e445ab9c98f0d150bb0ed175", 86324, Common::DE_DEU, 4), // see English notes
+	MACGAME_l("jman2", "", "Buried in Time PowerPC", "71287376e445ab9c98f0d150bb0ed175", 86324, Common::DE_DEU, 4), // see English notes
 	MACDEMO("jman2", "Demo", "Buried in Time Demo", "1ae45c23586b41997ba52e2e7c771c4c", 437743, 4),
 	MACDEMO("jman2", "06/22/94 Demo", "Buried in Time Demo", "cdb27c916044ae4dceb4b7326063fa03", 328895, 4),
 	MACDEMO("jman2", "Final Demo", "Buried in Time Demo", "cc3321069072b90f091f220bba16e4d4", 292731, 4),
@@ -361,17 +361,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO("mechwarrior2", "Demo", "MW2DEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 	WINDEMO("muppets", "Demo", "MUPPETS.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 
-	MACGAME_1("murdertaylor", "", "Taylor French", "dc839fb9e2f8e6bfc4f4f995c57df495", 291683, Common::DE_DEU, 4),
-	WINGAME_1("murdertaylor", "", "TF.EXE", "d7a97fbe1daf2bc5fdecee2725c297cd", 952741, Common::DE_DEU, 4),
+	MACGAME_l("murdertaylor", "", "Taylor French", "dc839fb9e2f8e6bfc4f4f995c57df495", 291683, Common::DE_DEU, 4),
+	WINGAME_l("murdertaylor", "", "TF.EXE", "d7a97fbe1daf2bc5fdecee2725c297cd", 952741, Common::DE_DEU, 4),
 
 	WINDEMO("pitfall", "Demo", "PITDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 	WINDEMO("santafe1", "Demo", "ELKMOON.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 	WINDEMO("shanghai", "Demo", "SHGMDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 	WINDEMO("spycraft", "Demo", "SPYCRAFT.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 
-	MACGAME_1("ybr2", "", "YBR2", "b797956eb3a4dabcc15bfadf6fc66591", 504153, Common::JA_JPN, 4),
-	WINGAME_1("ybr2", "", "YBR2.EXE", "dbe273c1df60305be98a1a582ddd2c3b", 860579, Common::JA_JPN, 4),
-	WINDEMO_1("ybr2", "Demo", "YBR2DEMO.EXE", "25ecc053e02a0ef537d34d615119c814", 900973, Common::JA_JPN, 4),
+	MACGAME_l("ybr2", "", "YBR2", "b797956eb3a4dabcc15bfadf6fc66591", 504153, Common::JA_JPN, 4),
+	WINGAME_l("ybr2", "", "YBR2.EXE", "dbe273c1df60305be98a1a582ddd2c3b", 860579, Common::JA_JPN, 4),
+	WINDEMO_l("ybr2", "Demo", "YBR2DEMO.EXE", "25ecc053e02a0ef537d34d615119c814", 900973, Common::JA_JPN, 4),
 
 	WINDEMO("znemesis", "Demo", "ZORKDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is supported in ZVision engine
 
@@ -383,8 +383,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME("amber", "", "amber_jb.exe", "1a7acbba10a7246ba58c1d53fc7203f5", -1, 5),
 
-	WINGAME_1("ernie", "", "Ernie.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1417481, Common::SE_SWE, 5),
-	WINDEMO_1("ernie", "Demo", "ERNIE.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1417371, Common::SE_SWE, 5),
+	WINGAME_l("ernie", "", "Ernie.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1417481, Common::SE_SWE, 5),
+	WINDEMO_l("ernie", "Demo", "ERNIE.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1417371, Common::SE_SWE, 5),
 
 	WINGAME("gadget", "", "GADGET.EXE", "d62438566e44826960fc16c5c23dbe43", 2212541, 5),  //ADGF_HICOLOR,
 
@@ -475,15 +475,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 		5
 	},
 
-	MACGAME_1("murderbrett", "", "Brad, le surfeur", "227fcce08de8028e2201f5f4eb3b3cc3", 720160, Common::FR_FRA, 5),
-	WINGAME_1("murderbrett", "", "BRAD.EXE", "e1c3cb4df694b887f3708f9ebb72302f", 934342, Common::FR_FRA, 5),
+	MACGAME_l("murderbrett", "", "Brad, le surfeur", "227fcce08de8028e2201f5f4eb3b3cc3", 720160, Common::FR_FRA, 5),
+	WINGAME_l("murderbrett", "", "BRAD.EXE", "e1c3cb4df694b887f3708f9ebb72302f", 934342, Common::FR_FRA, 5),
 
-	MACGAME_1("ybr3", "", "YBRH", "4c38a51a21a1ad231f218c4786ff771d", 105855, Common::JA_JPN, 5),
-	MACGAME_1("ybr3", "Single Version", "YBR_Single", "6e7e31d05709e1d38d63f4df6a59eec0", 722547, Common::JA_JPN, 5),
-	MACDEMO_1("ybr3", "Demo", "harapeco", "4ab012350c6e1c39eda772e33df30cea", 723903, Common::JA_JPN, 5), // Original name is non-ASCII Japanese characters
-	WINGAME_1("ybr3", "", "YBRH.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1410805, Common::JA_JPN, 5), // Original name is non-ASCII Japanese characters
-	WINGAME_1("ybr3", "Single Version", "YBRSingl.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1410799, Common::JA_JPN, 5),
-	WINDEMO_1("ybr3", "Demo", "harapeco.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1693107, Common::JA_JPN, 5),
+	MACGAME_l("ybr3", "", "YBRH", "4c38a51a21a1ad231f218c4786ff771d", 105855, Common::JA_JPN, 5),
+	MACGAME_l("ybr3", "Single Version", "YBR_Single", "6e7e31d05709e1d38d63f4df6a59eec0", 722547, Common::JA_JPN, 5),
+	MACDEMO_l("ybr3", "Demo", "harapeco", "4ab012350c6e1c39eda772e33df30cea", 723903, Common::JA_JPN, 5), // Original name is non-ASCII Japanese characters
+	WINGAME_l("ybr3", "", "YBRH.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1410805, Common::JA_JPN, 5), // Original name is non-ASCII Japanese characters
+	WINGAME_l("ybr3", "Single Version", "YBRSingl.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1410799, Common::JA_JPN, 5),
+	WINDEMO_l("ybr3", "Demo", "harapeco.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1693107, Common::JA_JPN, 5),
 
 ////////////////////////////////////////
 //
