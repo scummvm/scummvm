@@ -23,6 +23,7 @@
 #ifndef DIRECTOR_LINGO_XOBJECT_FILEIO_H
 #define DIRECTOR_LINGO_XOBJECT_FILEIO_H
 
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "director/lingo/lingo-object.h"
 
@@ -30,12 +31,14 @@ namespace Director {
 
 enum FileIOError {
 	kErrorNone = 0,
+	kErrorEOF = -1,
 	kErrorDirectoryFull = -33,
 	kErrorVolumeFull = -34,
 	kErrorVolumeNotFound = -35,
 	kErrorIO = -36,
 	kErrorBadFileName = -37,
 	kErrorFileNotOpen = -38,
+	kErrorInvalidPos = -39, // undocumented
 	kErrorTooManyFilesOpen = -42,
 	kErrorFileNotFound = -43,
 	kErrorNoSuchDrive = -56,
@@ -45,20 +48,26 @@ enum FileIOError {
 };
 
 struct FileXObject : Object {
-	Common::InSaveFile *infile;
-	Common::OutSaveFile *outfile;
+	Common::String *filename;
+	Common::InSaveFile *inFile;
+	Common::SeekableReadStream *inStream;
+	Common::OutSaveFile *outFile;
+	Common::MemoryWriteStreamDynamic *outStream;
 
 	FileXObject() : Object("FileIO", kXObj) {
-		infile = nullptr;
-		outfile = nullptr;
+		filename = nullptr;
+		inFile = nullptr;
+		inStream = nullptr;
+		outFile = nullptr;
+		outStream = nullptr;
 	}
 
 	virtual ~FileXObject() {
-		delete infile;
-		delete outfile;
+		dispose();
 	}
 
 	virtual Object *clone();
+	void dispose();
 };
 
 namespace FileIO {

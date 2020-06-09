@@ -34,23 +34,22 @@ static struct MethodProto {
 	void (*func)(int);
 	int minArgs;	// -1 -- arglist
 	int maxArgs;
-	int type;
 	int version;
 } predefinedMethods[] = {
-	{ "mDelete",				FileIO::m_delete,			 0, 0, kXObj,				2 },	// D2
-	{ "mDispose",				FileIO::m_dispose,			 0, 0, kXObj,				2 },	// D2
-	{ "mFileName",				FileIO::m_fileName,			 0, 0, kXObj,				2 },	// D2
-	{ "mGetLength",				FileIO::m_getLength,		 0, 0, kXObj,				2 },	// D2
-	{ "mGetPosition",			FileIO::m_getPosition,		 0, 0, kXObj,				2 },	// D2
-	{ "mNew",					FileIO::m_new,				 2, 2, kXObj,				2 },	// D2
-	{ "mReadChar",				FileIO::m_readChar,			 0, 0, kXObj,				2 },	// D2
-	{ "mReadLine",				FileIO::m_readLine,			 0, 0, kXObj,				2 },	// D2
-	{ "mReadToken",				FileIO::m_readToken,		 2, 2, kXObj,				2 },	// D2
-	{ "mReadWord",				FileIO::m_readWord,			 0, 0, kXObj,				2 },	// D2
-	{ "mSetPosition",			FileIO::m_setPosition,		 1, 1, kXObj,				2 },	// D2
-	{ "mWriteChar",				FileIO::m_writeChar,		 1, 1, kXObj,				2 },	// D2
-	{ "mWriteString",			FileIO::m_writeString,		 1, 1, kXObj,				2 },	// D2
-	{ 0, 0, 0, 0, 0, 0 }
+	{ "mDelete",				FileIO::m_delete,			 0, 0,						2 },	// D2
+	{ "mDispose",				FileIO::m_dispose,			 0, 0,						2 },	// D2
+	{ "mFileName",				FileIO::m_fileName,			 0, 0,						2 },	// D2
+	{ "mGetLength",				FileIO::m_getLength,		 0, 0,						2 },	// D2
+	{ "mGetPosition",			FileIO::m_getPosition,		 0, 0,						2 },	// D2
+	{ "mNew",					FileIO::m_new,				 2, 2,						2 },	// D2
+	{ "mReadChar",				FileIO::m_readChar,			 0, 0,						2 },	// D2
+	{ "mReadLine",				FileIO::m_readLine,			 0, 0,						2 },	// D2
+	{ "mReadToken",				FileIO::m_readToken,		 2, 2,						2 },	// D2
+	{ "mReadWord",				FileIO::m_readWord,			 0, 0,						2 },	// D2
+	{ "mSetPosition",			FileIO::m_setPosition,		 1, 1,						2 },	// D2
+	{ "mWriteChar",				FileIO::m_writeChar,		 1, 1,						2 },	// D2
+	{ "mWriteString",			FileIO::m_writeString,		 1, 1,						2 },	// D2
+	{ 0, 0, 0, 0, 0 }
 };
 
 void FileIO::b_openXLib(int nargs) {
@@ -72,7 +71,7 @@ void FileIO::b_openXLib(int nargs) {
 		sym.type = FBLTIN;
 		sym.nargs = mtd->minArgs;
 		sym.maxArgs = mtd->maxArgs;
-		sym.methodType = mtd->type;
+		sym.methodType = kXObj;
 		sym.u.bltin = mtd->func;
 		obj->methods[mtd->name] = sym;
 	}
@@ -96,6 +95,30 @@ Object *FileXObject::clone() {
 	return res;
 }
 
+void FileXObject::dispose() {
+	disposed = true;
+
+	if (filename) {
+		delete filename;
+		filename = nullptr;
+	}
+	if (inFile) {
+		delete inFile;
+		if (inStream != inFile)
+			delete inStream;
+		inFile = nullptr;
+		inStream = nullptr;
+	}
+	if (outFile) {
+		outFile->write(outStream->getData(), outStream->size());
+		outFile->finalize();
+		delete outFile;
+		delete outStream;
+		outFile = nullptr;
+		outStream = nullptr;
+	}
+}
+
 void FileIO::m_new(int nargs) {
 	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
 
@@ -116,14 +139,20 @@ void FileIO::m_new(int nargs) {
 	}
 
 	if (option.equalsIgnoreCase("read")) {
-		me->infile = g_system->getSavefileManager()->openForLoading(filename);
-		if (!me->infile) {
+		me->inFile = g_system->getSavefileManager()->openForLoading(filename);
+		me->inStream = me->inFile;
+		if (!me->inFile) {
+			delete me;
 			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
 	} else if (option.equalsIgnoreCase("write")) {
-		me->outfile = g_system->getSavefileManager()->openForSaving(filename);
-		if (!me->outfile) {
+		// OutSaveFile is not seekable so create a separate seekable stream
+		// which will be written to the outfile upon disposal
+		me->outFile = g_system->getSavefileManager()->openForSaving(filename);
+		me->outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		if (!me->outFile) {
+			delete me;
 			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
@@ -133,6 +162,8 @@ void FileIO::m_new(int nargs) {
 		error("Unsupported FileIO option: '%s'", option.c_str());
 	}
 
+	me->filename = new Common::String(filename);
+
 	Datum res;
 	res.type = OBJECT;
 	res.u.obj = me;
@@ -141,90 +172,197 @@ void FileIO::m_new(int nargs) {
 
 void FileIO::m_dispose(int nargs) {
 	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
-
-	me->disposed = true;
-
-	if (me->infile) {
-		delete me->infile;
-		me->infile = nullptr;
-	}
-	if (me->outfile) {
-		me->outfile->finalize();
-		delete me->outfile;
-		me->outfile = nullptr;
-	}
+	me->dispose();
 }
 
 // Read
 
 void FileIO::m_readChar(int nargs) {
-	g_lingo->printSTUBWithArglist("m_readChar", 0);
-	g_lingo->push(Datum(0));
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+
+	if (!me->inStream || me->inStream->eos() || me->inStream->err()) {
+		g_lingo->push(Datum(kErrorEOF));
+		return;
+	}
+
+	int ch = me->inStream->readByte();
+	if (me->inStream->eos() || me->inStream->err()) {
+		ch = kErrorEOF;
+	}
+	g_lingo->push(Datum(ch));
 }
 
 void FileIO::m_readLine(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	// file(mReadLine) is equivalent to file(mReadToken, "", RETURN)
+	// See D4 Using Lingo p. 323
 
-	if (me->infile) {
-		Common::String line = me->infile->readLine();
-		g_lingo->push(Datum(line));
-	} else {
-		g_lingo->push(Datum(""));
-	}
+	g_lingo->push(Datum(""));
+	g_lingo->push(Datum("\n"));
+	FileIO::m_readToken(2);
 }
 
 void FileIO::m_readWord(int nargs) {
-	g_lingo->printSTUBWithArglist("m_readWord", 0);
-	g_lingo->push(Datum(""));
+	// file(mReadWord) is equivalent to file(mReadToken, " ", " " & RETURN)
+	// See D4 Using Lingo p. 323
+
+	g_lingo->push(Datum(" "));
+	g_lingo->push(Datum(" \n"));
+	FileIO::m_readToken(2);
 }
 
 void FileIO::m_readToken(int nargs) {
-	g_lingo->printSTUBWithArglist("m_readToken", 2);
-	g_lingo->push(Datum(""));
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	Common::String skipString = *d1.u.s;
+	Common::String breakString = *d2.u.s;
+
+	if (!me->inStream || me->inStream->eos() || me->inStream->err()) {
+		g_lingo->push(Datum(""));
+		return;
+	}
+
+	Common::String tok = "";
+	char ch;
+	do {
+		ch = me->inStream->readByte();
+		if (me->inStream->eos() || me->inStream->err()) {
+			g_lingo->push(Datum(tok));
+			return;
+		}
+	} while (skipString.contains(ch));
+
+	while (!breakString.contains(ch)) {
+		tok += ch;
+		ch = me->inStream->readByte();
+
+		if (me->inStream->eos() || me->inStream->err()) {
+			g_lingo->push(Datum(tok));
+			return;
+		}
+	}
+
+	// Include the break character when the skipString is empty
+	if (skipString.size() == 0) {
+		tok += ch;
+	} else {
+		me->inStream->seek(-1, SEEK_CUR);
+	}
+
+	g_lingo->push(Datum(tok));
 }
 
 // Write
 
 void FileIO::m_writeChar(int nargs) {
-	g_lingo->printSTUBWithArglist("m_writeChar", 1);
-	g_lingo->push(Datum(0));
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	Datum d = g_lingo->pop();
+
+	if (!me->outStream) {
+		g_lingo->push(Datum(kErrorReadOnly));
+		return;
+	}
+
+	me->outStream->writeByte(d.asInt());
+	g_lingo->push(Datum(kErrorNone));
 }
 
 void FileIO::m_writeString(int nargs) {
 	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
 	Datum d = g_lingo->pop();
 
-	if (me->outfile) {
-		me->outfile->writeString(d.asString());
-		g_lingo->push(Datum(kErrorNone));
-	} else {
+	if (!me->outStream) {
 		g_lingo->push(Datum(kErrorReadOnly));
+		return;
 	}
+
+	me->outStream->writeString(d.asString());
+	g_lingo->push(Datum(kErrorNone));
 }
 
 // Other
 
 void FileIO::m_getPosition(int nargs) {
-	g_lingo->printSTUBWithArglist("m_getPosition", 0);
-	g_lingo->push(Datum(0));
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+
+	if (me->inStream) {
+		g_lingo->push(Datum(me->inStream->pos()));
+	} else if (me->outStream) {
+		g_lingo->push(Datum(me->outStream->pos()));
+	} else {
+		warning("FileIO: No file open");
+		g_lingo->push(Datum(kErrorFileNotOpen));
+	}
 }
 
 void FileIO::m_setPosition(int nargs) {
-	g_lingo->printSTUBWithArglist("m_setPosition", 1);
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	Datum d = g_lingo->pop();
+	int pos = d.asInt();
+
+	if (me->inStream) {
+		if (pos <= me->inStream->size()) {
+			me->inStream->seek(pos, SEEK_SET);
+			g_lingo->push(Datum(kErrorNone));
+		} else {
+			me->inStream->seek(me->inStream->size(), SEEK_SET);
+			g_lingo->push(Datum(kErrorInvalidPos));
+		}
+	} else if (me->outStream) {
+		if (pos <= me->outStream->size()) {
+			me->outStream->seek(pos, SEEK_SET);
+			g_lingo->push(Datum(kErrorNone));
+		} else {
+			me->outStream->seek(me->outStream->size(), SEEK_SET);
+			g_lingo->push(Datum(kErrorInvalidPos));
+		}
+	} else {
+		warning("FileIO: No file open");
+		g_lingo->push(Datum(kErrorFileNotOpen));
+	}
 }
 
 void FileIO::m_getLength(int nargs) {
-	g_lingo->printSTUBWithArglist("m_getLength", 0);
-	g_lingo->push(Datum(0));
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+
+	if (me->inStream) {
+		g_lingo->push(Datum(me->inStream->size()));
+	} else if (me->outStream) {
+		g_lingo->push(Datum(me->outStream->size()));
+	} else {
+		warning("FileIO: No file open");
+		g_lingo->push(Datum(kErrorFileNotOpen));
+	}
 }
 
 void FileIO::m_fileName(int nargs) {
-	g_lingo->printSTUBWithArglist("m_fileName", 0);
-	g_lingo->push(Datum(""));
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+
+	if (me->filename) {
+		g_lingo->push(Datum(*me->filename));
+	} else {
+		warning("FileIO: No file open");
+		g_lingo->push(Datum(kErrorFileNotOpen));
+	}
 }
 
 void FileIO::m_delete(int nargs) {
-	g_lingo->printSTUBWithArglist("m_delete", 0);
+	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+
+	if (me->filename) {
+		Common::String filename = *me->filename;
+		me->dispose();
+		if (g_system->getSavefileManager()->removeSavefile(filename)) {
+			g_lingo->push(Datum(kErrorNone));
+		} else {
+			g_lingo->push(Datum(kErrorIO));
+		}
+	} else {
+		warning("FileIO: No file open");
+		g_lingo->push(Datum(kErrorFileNotOpen));
+	}
 }
 
 } // End of namespace Director
