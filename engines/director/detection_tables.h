@@ -166,8 +166,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME_1("refixion2", "", "Museum or Hospital", "1ae45c23586b41997ba52e2e7c771c4c", 375841, Common::JA_JPN, 3),
 	MACGAME_1("refixion3", "", "The Reindeer Story", "f5277c53bacd27936158dd3867e587e2", 392473, Common::JA_JPN, 3),
 
-	MACDEMO("rodneyfun", "Demo", "Rodney's Funscreen demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356866, 3), // Full game is MADE engine for DOS/Win only
-	MACDEMO("screamingmetal", "Demo", "Screaming Metal Demo", "0a280df213c5bf3eca241f37151e1d56", 373190, 3), // Full game was never released
+	MACDEMO("rodney", "Demo", "Rodney's Funscreen demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 356866, 3), // full game is supported in MADE engine
+	MACDEMO("screamingmetal", "Demo", "Screaming Metal Demo", "0a280df213c5bf3eca241f37151e1d56", 373190, 3), // full game was never released
 
 	MACGAME("snh", "", "A Silly Noisy House", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 357142, 3),
 	WINGAME("snh", "", "SNH.EXE", "5a6e241994f671a1ebe664fbae394217", 378901, 3),
@@ -288,9 +288,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304714, 4),
 	WINGAME("alice", "", "ALICE.EXE", "c67ece9b657ee80355520ac37a25fe55", 684733, 4),
 
-	WINGAME("chopsuey", "Chop Suey", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 4),
+	WINDEMO("ataripack", "Demo", "ACTDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
+	WINDEMO("c64pack", "Demo", "C64DEMO.EXE", "0458e44d9ad4ae0d3a583ac4141d21ae", 1007517, 4), // full game is not Director
 
-	MACDEMO("gundam0079", "Demo", "Gundam Demo", "01be45e7241194dad07938e7059b88e3", 483376, 4), // Full game is D5
+	WINGAME("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 4),
+
+	MACGAME("daedalus", "", "DAEDALUS.DAT", "4eb2fab14f1b932ae9f01d8b05a411de", 69794, 4),
+	MACGAME_1("daedalus", "", "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69794, Common::DE_DEU, 4),
+	MACGAME_1("daedalus", "", "DAEDALUS.DAT", "2b9e22ee93e5d58f383ef389fa09e12b", 69794, Common::FR_FRA, 4),
+
+	WINDEMO("earthwormjim", "Demo", "EWJDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
+
+	MACDEMO("gundam0079", "Demo", "Gundam Demo", "01be45e7241194dad07938e7059b88e3", 483376, 4), // full game is D5
+
+	WINDEMO("hyperblade", "Demo", "HYPER.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 
 	WINGAME("id4p1", "iD4 Mission Disk 1 - Alien Supreme Commander", "SUPREME.EXE", "629eb9a5d991a2dbe380804e8c37043a", 1664965, 4),
 	WINGAME("id4p2", "iD4 Mission Disk 2 - Alien Science Officer", "SCIENCE.EXE", "812a4b81b70e61e547c14dbbd507b402", 1766499, 4),
@@ -347,12 +358,22 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME("mediaband", "", "MEDIABND.EXE", "0cfb9b4762e33ab56d656a0eb146a048", 717921, 4),
 
+	WINDEMO("mechwarrior2", "Demo", "MW2DEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
+	WINDEMO("muppets", "Demo", "MUPPETS.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
+
 	MACGAME_1("murdertaylor", "", "Taylor French", "dc839fb9e2f8e6bfc4f4f995c57df495", 291683, Common::DE_DEU, 4),
 	WINGAME_1("murdertaylor", "", "TF.EXE", "d7a97fbe1daf2bc5fdecee2725c297cd", 952741, Common::DE_DEU, 4),
+
+	WINDEMO("pitfall", "Demo", "PITDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
+	WINDEMO("santafe1", "Demo", "ELKMOON.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
+	WINDEMO("shanghai", "Demo", "SHGMDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
+	WINDEMO("spycraft", "Demo", "SPYCRAFT.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 
 	MACGAME_1("ybr2", "", "YBR2", "b797956eb3a4dabcc15bfadf6fc66591", 504153, Common::JA_JPN, 4),
 	WINGAME_1("ybr2", "", "YBR2.EXE", "dbe273c1df60305be98a1a582ddd2c3b", 860579, Common::JA_JPN, 4),
 	WINDEMO_1("ybr2", "Demo", "YBR2DEMO.EXE", "25ecc053e02a0ef537d34d615119c814", 900973, Common::JA_JPN, 4),
+
+	WINDEMO("znemesis", "Demo", "ZORKDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is supported in ZVision engine
 
 ////////////////////////////////////////
 //
