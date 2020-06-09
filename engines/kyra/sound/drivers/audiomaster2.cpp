@@ -497,11 +497,8 @@ void SoundResource::interrupt(AudioMaster2IOManager *io) {
 	setupSoundEffect(unit, io->_sync, io->_tempo);
 }
 
-SoundResource8SVX::SoundResource8SVX(AudioMaster2ResourceManager *res) : SoundResource(res, 4) {
-	_numSamplesOnce = _numSamplesRepeat = _numSamplesPerCycle = _trackVolume = _dataSize = 0;
-	_rate = 0;
-	_numBlocks = _format = 0;
-	_data = 0;
+SoundResource8SVX::SoundResource8SVX(AudioMaster2ResourceManager *res) : SoundResource(res, 4),
+	_numSamplesOnce(0), _numSamplesRepeat(0), _numSamplesPerCycle(0), _trackVolume(0), _dataSize(0), _rate(0), _numBlocks(0), _format(0), _data(0) {
 }
 
 SoundResource8SVX::~SoundResource8SVX() {

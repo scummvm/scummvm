@@ -2337,6 +2337,8 @@ void GUI_EoB::runCampMenu() {
 					newMenu = 2;
 					break;
 				}
+				// fall through
+
 			case 0x800C:			
 				if (lastMenu == 1 || lastMenu == 2)
 					newMenu = 0;

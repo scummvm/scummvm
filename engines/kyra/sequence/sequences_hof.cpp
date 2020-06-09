@@ -376,6 +376,10 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_countDownRemainder = 0;
 	_countDownLastUpdate = 0;
 
+	_talkieFinaleExtraFlag = false;
+	_target = kHoF;
+	_firstScene = _loopStartScene = 0;
+
 	int tempSize = 0;
 	_vm->resource()->unloadAllPakFiles();
 	_vm->resource()->loadPakFile(StaticResource::staticDataFilename());

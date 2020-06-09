@@ -111,7 +111,7 @@ private:
 	static const uint16 _chargenButtonKeyCodesFMTOWNS[];
 	static const CreatePartyModButton _chargenModButtons[];
 	static const EoBRect8 _chargenButtonBodyCoords[];
-	static const uint8 _chargenSegaButtonCoords[];
+	static const uint8 _chargenSegaButtonCoords[60];
 	static const int16 _chargenBoxX[];
 	static const int16 _chargenBoxY[];
 	static const int16 _chargenNameFieldX[];
@@ -1698,7 +1698,7 @@ const EoBRect8 CharacterGenerator::_chargenButtonBodyCoords[] = {
 	{ 0x14, 0x90, 0x0B, 0x10 }
 };
 
-const uint8 CharacterGenerator::_chargenSegaButtonCoords[] {
+const uint8 CharacterGenerator::_chargenSegaButtonCoords[60] = {
 	0x03, 0x17, 0x0b, 0x02, 0x00,
 	0x1c, 0x16, 0x05, 0x02, 0x2c,
 	0x12, 0x08, 0x04, 0x02, 0x40,

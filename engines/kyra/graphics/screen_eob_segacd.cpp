@@ -507,8 +507,6 @@ void SegaRenderer::loadToVRAM(const void *data, uint16 dataSize, uint16 addr) {
 
 void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr, bool compressedData) {
 	assert(in);
-	assert(addr <= 0xFFFF);
-
 	uint8 *dst = _vram + addr;
 
 	if (compressedData) {
@@ -933,49 +931,6 @@ template<bool hflip> void SegaRenderer::renderLineFragment(uint8 *dst, uint8 *ma
 #endif
 
 #undef mRenderLineFragment
-
-/*void SegaRenderer::checkUpdateDirtyRects(int addr, int len) {
-	//void *tbl[] = { _vram, _hScrollTable, , _planes[kPlaneA].nameTable, _planes[kPlaneB].nameTable, _planes[kWindowPlane].nameTable };
-	addDirtyRect(0, 0, _screenW, _screenH);
-	/*uint8 *addE = &_vram[addr];
-	int x = 0;
-	int y = 0;
-	int w = 0;
-	int h = 0;
-
-	if (addE >= (uint8*)_planes[kPlaneA].nameTable && addE < (uint8*)_planes[kPlaneA].nameTable + _planes[kPlaneA].nameTableSize) {
-		x = ((addE - (uint8*)_planes[kPlaneA].nameTable) >> 1) % _pitch;
-		y = ((addE - (uint8*)_planes[kPlaneA].nameTable) >> 1) / _pitch;
-		w = len > _pitch;
-	}*/
-
-	//if (addr >= _hScrollTable && addr < _hScrollTable + 0x400);
-/*
-}
-
-void SegaRenderer::addDirtyRect(int x, int y, int w, int h) {
-	_drChain = new DRChainEntry(_drChain, x, y, w, h);
-}
-
-void SegaRenderer::sendDirtyRectsToScreen() {
-	for (DRChainEntry *e = _drChain; e; e = e->_next) {
-		int w = e->_rect.width();
-		int h = e->_rect.height();
-		if (w == _screenW && h == _screenH) {
-			_screen->_forceFullUpdate = true;
-			return;
-		}
-		_screen->addDirtyRect(e->_rect.left, e->_rect.top, w, h);
-	}
-}
-
-void SegaRenderer::clearDirtyRects() {
-	while (_drChain) {
-		DRChainEntry *e = _drChain->_next;
-		delete _drChain;
-		_drChain = e;
-	}
-}*/
 
 void SegaRenderer::initPrioRenderTask(uint8 *dst, uint8 *mask, const uint8 *src, int start, int end, uint8 pal, bool hflip) {
 	_prioChainEnd = new PrioTileRenderObj(_prioChainEnd, dst, mask, src, start, end, pal, hflip);

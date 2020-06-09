@@ -121,7 +121,7 @@ void LoLEngine::giveCredits(int credits, int redraw) {
 
 		if (redraw) {
 			gui_drawMoneyBox(6);
-			if (credits)
+			// if (credits)
 				delay(_tickLength, 1);
 		}
 		credits -= t;

@@ -556,7 +556,7 @@ void EoBEngine::printStatsString(const char *str, int x, int y) {
 
 void EoBEngine::printSpellbookString(uint16 *dst, const char *str, uint16 ntbl) {
 	assert(str);
-	for (char c = *str++; c; c = *str++) {
+	for (uint8 c = (uint8)*str++; c; c = (uint8)*str++) {
 		if (c > 31 && c < 128)
 			*dst = ntbl + c - 32;
 		dst++;
@@ -977,14 +977,14 @@ char GUI_EoB_SegaCD::fetchClickableCharacter(int id) const {
 	if (id >= 60)
 		return 0;
 
-	char c = _vm->_textInputCharacterLines[_clickableCharactersPage][id];
+	uint8 c = (uint8)_vm->_textInputCharacterLines[_clickableCharactersPage][id];
 	if (_clickableCharactersPage) {
 		if (c > 159 && c < 192)
 			c -= 32;
 		else if (c > 191 && c < 224)
 			c += 32;
 	}
-	return c;
+	return (char)c;
 }
 
 const GUI_EoB_SegaCD::MenuButtonTiles GUI_EoB_SegaCD::_menuButtonTiles[35] = {

@@ -468,12 +468,10 @@ Common::Error EoBCoreEngine::init() {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		_gui = new GUI_EoB(this);
 		assert(_gui);
-	}
-
-	if (_flags.platform != Common::kPlatformSegaCD) {
 		_txt = new TextDisplayer_rpg(this, _screen);
 		assert(_txt);
 	}
+
 	_inf = new EoBInfProcessor(this, _screen);
 	assert(_inf);
 	setDebugger(new Debugger_EoB(this));

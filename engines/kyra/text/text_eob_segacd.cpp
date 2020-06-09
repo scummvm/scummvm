@@ -176,14 +176,14 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 }
 
 uint8 TextDisplayer_SegaCD::fetchCharacter(char *dest, const char *&src) {
-	char c = *src++;
+	uint8 c = (uint8)*src++;
 
-	if (c <= '\r') {
+	if (c <= (uint8)'\r') {
 		dest[0] = '\0';
-		return (uint8)c;
+		return c;
 	}
 		
-	dest[0] = c;
+	dest[0] = (char)c;
 	dest[1] = (c <= 0x7F || (c >= 0xA1 && c <= 0xDF)) ? '\0' : *src++;
 
 	return 0;

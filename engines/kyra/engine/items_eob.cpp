@@ -78,7 +78,7 @@ void EoBCoreEngine::loadItemDefs() {
 			_items[i].value = (int8)*pos++;
 		}
 		_numItems += (temp / 14);
-		_items[22].nameUnid = _items[27].nameUnid = _items[28].nameUnid = _items[29].nameUnid = _items[29].nameUnid = 96;
+		_items[22].nameUnid = _items[27].nameUnid = _items[28].nameUnid = _items[29].nameUnid = _items[59].nameUnid = 96;
 	}
 
 	if (_itemNamesStatic) {

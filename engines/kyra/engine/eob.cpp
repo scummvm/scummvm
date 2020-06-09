@@ -162,10 +162,15 @@ Common::Error EoBEngine::init() {
 		_gui = new GUI_EoB_SegaCD(this);
 		assert(_gui);
 		_playFldPattern2 = new uint16[1040];
+		memset(_playFldPattern2, 0, 1040 * sizeof(uint16));
 		_tempPattern = new uint16[924];
+		memset(_tempPattern, 0, 924 * sizeof(uint16));
 		_shakeBackBuffer1 = new uint8[120 * 6];
+		memset(_shakeBackBuffer1, 0, 120 * 6);
 		_shakeBackBuffer2 = new uint8[179 * 6];
+		memset(_shakeBackBuffer2, 0, 179 * 6);
 		_compassData = new uint8[0x5000];
+		memset(_compassData, 0, 0x5000);
 		_closeSpellbookAfterUse = false;
 	}
 

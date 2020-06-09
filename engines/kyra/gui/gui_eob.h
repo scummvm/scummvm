@@ -89,7 +89,7 @@ protected:
 	int16 _saveSlotY;
 	int _menuCur;
 
-	int _clickableCharactersPage;;
+	int _clickableCharactersPage;
 	char _csjis[3];
 
 	Screen_EoB *_screen;
