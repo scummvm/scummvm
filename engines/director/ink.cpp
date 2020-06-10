@@ -33,8 +33,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	t.moveTo(drawRect.left, drawRect.top);
 	bool nullMask = false;
 
-	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
-
 	maskSurface->transBlitFrom(*_maskSurface, drawRect, Common::Point(0, 0), _stageColor);
 
 	drawRect.clip(t);
