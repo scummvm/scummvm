@@ -53,7 +53,7 @@ class SNDDecoder;
 class Cast {
 public:
 	Cast();
-	virtual ~Cast();
+	virtual ~Cast() {};
 	virtual bool isEditable() { return false; }
 	virtual bool setEditable(bool editable) { return false; }
 	virtual bool isModified() { return _modified; }

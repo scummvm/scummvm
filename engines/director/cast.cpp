@@ -43,11 +43,6 @@ Cast::Cast() {
 	_modified = true;
 }
 
-Cast::~Cast() {
-	if (_widget)
-		delete _widget;
-}
-
 void Cast::createWidget() {
 	if (_widget)
 		error("TextCast::createWidget: Attempted to create widget twice");
