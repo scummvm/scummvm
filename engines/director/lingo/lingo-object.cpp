@@ -89,6 +89,21 @@ void Lingo::initXLibs() {
 		sym.u.bltin = lib->initializer;
 		_xlibInitializers[lib->name] = sym;
 	}
+
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		// TODO: Mac executables can contain XObjects in XCOD resources.
+		// If a Mac executable exists, check which XObjects should be loaded.
+		openXLib("FileIO", kXObj);
+	}
+}
+
+void Lingo::openXLib(const Common::String &name, ObjectType type) {
+	if (_xlibInitializers.contains(name)) {
+		Symbol sym = _xlibInitializers[name];
+		(*sym.u.bltin)(type);
+	} else {
+		warning("Unimplemented xlib: '%s'", name.c_str());
+	}
 }
 
 Object *Object::clone() {

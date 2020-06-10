@@ -1045,12 +1045,7 @@ void LB::b_openXlib(int nargs) {
 
 	Datum d = g_lingo->pop();
 	Common::String xlibName = d.asString();
-	if (g_lingo->_xlibInitializers.contains(xlibName)) {
-		Symbol sym = g_lingo->_xlibInitializers[xlibName];
-		(*sym.u.bltin)(kXObj);
-	} else {
-		warning("STUB: b_openXLib(%s)", xlibName.c_str());
-	}
+	g_lingo->openXLib(xlibName, kXObj);
 }
 
 void LB::b_saveMovie(int nargs) {
