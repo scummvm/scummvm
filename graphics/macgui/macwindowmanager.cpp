@@ -261,7 +261,7 @@ MacMenu *MacWindowManager::addMenu() {
 }
 
 void MacWindowManager::activateMenu() {
-	if (!_menu || _menu->isVisible())
+	if (!_menu || ((_mode & kWMModeAutohideMenu) && _menu->isVisible()))
 		return;
 
 	if (_mode & kWMModalMenuMode) {
