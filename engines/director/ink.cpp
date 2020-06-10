@@ -32,6 +32,8 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	Common::Rect t(spriteSurface.w, spriteSurface.h);
 	t.moveTo(drawRect.left, drawRect.top);
 
+	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
+
 	maskSurface->transBlitFrom(*_maskSurface, drawRect, Common::Point(0, 0), _stageColor);
 
 	drawRect.clip(t);
