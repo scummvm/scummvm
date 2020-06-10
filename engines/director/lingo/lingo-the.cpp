@@ -631,8 +631,12 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheStageColor: {
 		Score *score = _vm->getCurrentScore();
 		score->_stageColor = d.asInt();
-		score->_surface->clear(score->_stageColor);
-		score->renderFrame(score->getCurrentFrame(), true);
+		if (score->_surface) {
+			score->_surface->clear(score->_stageColor);
+			score->renderFrame(score->getCurrentFrame(), true);
+		} else {
+			warning("setStageColor: score has no surface, skipping");
+		}
 	}
 		break;
 	case kTheSprite:
