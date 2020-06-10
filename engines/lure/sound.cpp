@@ -787,15 +787,22 @@ void MidiMusic::playMusic() {
 }
 
 void MidiMusic::send(uint32 b) {
+	byte channel;
+	if (Sound.isRoland() && _isMusic) {
+		// Use the channel as defined in the MIDI data
+		channel = b & 0x0F;
+	} else {
+		// Remap data channel to (one of) the channel(s) assigned to this player
 #ifdef SOUND_CROP_CHANNELS
-	if ((b & 0xF) >= _numChannels) return;
-	byte channel = _channelNumber + (byte)(b & 0x0F);
+		if ((b & 0xF) >= _numChannels) return;
+		channel = _channelNumber + (byte)(b & 0x0F);
 #else
-	byte channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
+		channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
 #endif
 
-	if ((channel >= NUM_CHANNELS) || (_channels[channel].midiChannel == NULL))
-		return;
+		if ((channel >= NUM_CHANNELS) || (_channels[channel].midiChannel == NULL))
+			return;
+	}
 
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by song and master volume
@@ -805,15 +812,18 @@ void MidiMusic::send(uint32 b) {
 		volume = volume * _volume * master_volume / 65025;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0) {
-		if (Sound.isRoland() && !Sound.hasNativeMT32()) {
+		if (Sound.isRoland() && !Sound.hasNativeMT32() && channel != 9) {
 			b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 		}
-	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
+	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// No implementation
 	}
 
-	_channels[channel].midiChannel->send(b);
+	if (Sound.isRoland() && _isMusic) {
+		_driver->send(b);
+	} else {
+		_channels[channel].midiChannel->send(b);
+	}
 }
 
 void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
