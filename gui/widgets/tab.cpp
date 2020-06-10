@@ -73,8 +73,8 @@ void TabWidget::init() {
 	String leftArrow = g_gui.useRTL() ? ">" : "<";
 	String rightArrow = g_gui.useRTL() ? "<" : ">";
 
-	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, leftArrow, nullptr, kCmdLeft);
-	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, rightArrow, nullptr, kCmdRight);
+	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, Common::convertToU32String(leftArrow), nullptr, kCmdLeft);
+	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, Common::convertToU32String(rightArrow), nullptr, kCmdRight);
 
 	_navLeft->setEnabled(false);
 	_navRight->setEnabled(true);
@@ -112,7 +112,7 @@ uint16 TabWidget::getHeight() const {
 	return _h + _tabHeight;
 }
 
-int TabWidget::addTab(const String &title, const String &dialogName) {
+int TabWidget::addTab(const U32String &title, const String &dialogName) {
 	// Add a new tab page
 	Tab newTab;
 	newTab.title = title;
@@ -120,7 +120,7 @@ int TabWidget::addTab(const String &title, const String &dialogName) {
 	newTab.firstWidget = nullptr;
 
 	// Determine the new tab width
-	int newWidth = g_gui.getStringWidth(title) + kTabTitleSpacing;
+	int newWidth = g_gui.getStringWidth(Common::convertFromU32String(title)) + kTabTitleSpacing;
 	if (newWidth < _minTabWidth)
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
@@ -260,7 +260,7 @@ void TabWidget::handleMouseMoved(int x, int y, int button) {
 
 	if (tabID <= _lastVisibleTab) {
 		if (tabID != _lastRead) {
-			read(_tabs[tabID].title);
+			read(Common::convertFromU32String(_tabs[tabID].title));
 			_lastRead = tabID;
 		}
 	}
@@ -350,7 +350,7 @@ void TabWidget::reflowLayout() {
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		// Determine the new tab width
-		int newWidth = g_gui.getStringWidth(_tabs[i].title) + kTabTitleSpacing;
+		int newWidth = g_gui.getStringWidth(Common::convertFromU32String(_tabs[i].title)) + kTabTitleSpacing;
 		if (newWidth < _minTabWidth)
 			newWidth = _minTabWidth;
 		_tabs[i]._tabWidth = newWidth;
@@ -384,7 +384,7 @@ void TabWidget::reflowLayout() {
 }
 
 void TabWidget::drawWidget() {
-	Common::Array<Common::String> tabs;
+	Common::Array<Common::U32String> tabs;
 	Common::Array<int> widths;
 	for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
 		tabs.push_back(_tabs[i].title);

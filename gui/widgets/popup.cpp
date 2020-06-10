@@ -84,7 +84,7 @@ void PopUpDialog::open() {
 		_w = 0;
 
 		for (uint i = 0; i < _entries.size(); i++) {
-			int width = g_gui.getStringWidth(_entries[i]);
+			int width = g_gui.getStringWidth(Common::convertFromU32String(_entries[i]));
 
 			if (width > _w)
 				_w = width;
@@ -190,7 +190,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	// ...and update the selection accordingly
 	setSelection(item);
 	if (_lastRead != item && _entries.size() > 0 && item != -1) {
-		read(_entries[item]);
+		read(Common::convertFromU32String(_entries[item]));
 		_lastRead = item;
 	}
 }
@@ -288,7 +288,7 @@ void PopUpDialog::setWidth(uint16 width) {
 	_w = width;
 }
 
-void PopUpDialog::appendEntry(const Common::String &entry) {
+void PopUpDialog::appendEntry(const Common::U32String &entry) {
 	_entries.push_back(entry);
 }
 
@@ -390,7 +390,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		w = _w - 2;
 	}
 
-	Common::String &name(_entries[entry]);
+	Common::U32String &name(_entries[entry]);
 
 	Common::Rect r1(x, y, x + w, y + _lineHeight);
 	Common::Rect r2(x + 1, y + 2, x + w, y + 2 + _lineHeight);
@@ -496,7 +496,7 @@ void PopUpWidget::reflowLayout() {
 	Widget::reflowLayout();
 }
 
-void PopUpWidget::appendEntry(const String &entry, uint32 tag) {
+void PopUpWidget::appendEntry(const U32String &entry, uint32 tag) {
 	Entry e;
 	e.name = entry;
 	e.tag = tag;
@@ -529,7 +529,7 @@ void PopUpWidget::setSelectedTag(uint32 tag) {
 }
 
 void PopUpWidget::drawWidget() {
-	Common::String sel;
+	Common::U32String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
 

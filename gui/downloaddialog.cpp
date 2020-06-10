@@ -49,8 +49,8 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
 	_remoteBrowser = new RemoteBrowserDialog(_("Select directory with game data"));
 
-	_remoteDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.RemoteDirectory", _("From: "));
-	_localDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.LocalDirectory", _("To: "));
+	_remoteDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.RemoteDirectory", Common::convertToU32String(_("From: ")));
+	_localDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.LocalDirectory", Common::convertToU32String(_("To: ")));
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
 	_progressBar = new SliderWidget(this, "GlobalOptions_Cloud_DownloadDialog.ProgressBar");
 	_progressBar->setMinValue(0);
@@ -58,14 +58,14 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.PercentText", Common::String::format("%u %%", progress));
-	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", "");
-	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", "");
+	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", Common::convertToU32String(""));
+	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", Common::convertToU32String(""));
 	if (g_system->getOverlayWidth() > 320)
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Cancel download"), nullptr, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", Common::convertToU32String(_("Cancel download")), nullptr, kDownloadDialogButtonCmd);
 	else
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), nullptr, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", Common::convertToU32String(_c("Cancel download", "lowres")), nullptr, kDownloadDialogButtonCmd);
 
-	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), nullptr, kCloseCmd);
+	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", Common::convertToU32String(_("Hide")), nullptr, kCloseCmd);
 	refreshWidgets();
 
 	CloudMan.setDownloadTarget(this);

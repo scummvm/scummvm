@@ -59,7 +59,7 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_showHidden = false;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, "Browser.Headline", title);
+	new StaticTextWidget(this, "Browser.Headline", Common::convertToU32String(title));
 
 	// Current path - TODO: handle long paths ?
 	_currentPath = new EditTextWidget(this, "Browser.Path", "", nullptr, 0, kPathEditedCmd);
@@ -72,15 +72,15 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Checkbox for the "show hidden files" state.
-	_showHiddenWidget = new CheckboxWidget(this, "Browser.Hidden", _("Show hidden files"), _("Show files marked with the hidden attribute"), kHiddenCmd);
+	_showHiddenWidget = new CheckboxWidget(this, "Browser.Hidden", Common::convertToU32String(_("Show hidden files")), _("Show files marked with the hidden attribute"), kHiddenCmd);
 
 	// Buttons
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
+		new ButtonWidget(this, "Browser.Up", Common::convertToU32String(_("Go up")), _("Go to previous directory level"), kGoUpCmd);
 	else
-		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), nullptr, kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), nullptr, kChooseCmd);
+		new ButtonWidget(this, "Browser.Up", Common::convertToU32String(_c("Go up", "lowres")), _("Go to previous directory level"), kGoUpCmd);
+	new ButtonWidget(this, "Browser.Cancel", Common::convertToU32String(_("Cancel")), nullptr, kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", Common::convertToU32String(_("Choose")), nullptr, kChooseCmd);
 }
 
 int BrowserDialog::runModal() {
