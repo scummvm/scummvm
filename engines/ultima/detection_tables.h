@@ -304,6 +304,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	// Crusader - No Remorse provided by andy155
+	{
+		{
+			"remorse",
+			"",
+			AD_ENTRY1s("eusecode.flx", 3fb211f4adfd80595078afc85bdfe7b4", 433143),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
 	// GOG Crusader - No Regret
 	{
 		{
