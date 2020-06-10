@@ -31,7 +31,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	// drawRect could be bigger than the spriteSurface. Clip it
 	Common::Rect t(spriteSurface.w, spriteSurface.h);
 	t.moveTo(drawRect.left, drawRect.top);
-	bool nullMask = false;
 
 	maskSurface->transBlitFrom(*_maskSurface, drawRect, Common::Point(0, 0), _stageColor);
 
@@ -63,8 +62,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 		break;
 	}
 
-	if (nullMask)
-		delete maskSurface;
 }
 
 void Score::drawBackgndTransSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, int spriteId) {
