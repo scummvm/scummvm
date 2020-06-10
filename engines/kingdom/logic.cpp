@@ -26,6 +26,7 @@
 namespace Kingdom {
 
 Logic::Logic(KingdomGame* vm) : _vm(vm) {
+	initVariables();
 }
 
 void Logic::initVariables() {

@@ -23,8 +23,6 @@
 #ifndef KINGDOM_LOGIC_H
 #define KINGDOM_LOGIC_H
 
-#include "gui/debugger.h"
-
 namespace Kingdom {
 
 class KingdomGame;
@@ -282,6 +280,7 @@ public:
 	void increaseHealth();
 	void endCredits();
 	void gameHelp_Sub43C();
+	void initVariables();
 
 public:
 	explicit Logic(Kingdom::KingdomGame *vm);
@@ -290,7 +289,6 @@ public:
 	void gameHelp();
 	void inventoryDel(int item);
 	void inventoryAdd(int item);
-	void initVariables();
 	void executeOpcode();
 	void initPlay();
 	void switchAS();

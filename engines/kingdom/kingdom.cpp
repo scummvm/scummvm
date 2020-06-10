@@ -162,7 +162,6 @@ Common::Error KingdomGame::run() {
 	_console = new Console(this);
 
 	_logic = new Logic(this);
-	_logic->initVariables();
 
 	setupPics();
 	initTools();
