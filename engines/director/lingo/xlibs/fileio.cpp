@@ -28,7 +28,7 @@
 
 namespace Director {
 
-static Common::String xlibName = "FileIO";
+static const char *xlibName = "FileIO";
 
 static struct MethodProto {
 	const char *name;
