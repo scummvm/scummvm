@@ -254,7 +254,7 @@ Common::Rect Sprite::getBbox() {
 		// WORKAROUND: Shape widgets not fully implemented.
 		result = Common::Rect(_currentPoint.x, _currentPoint.y, _currentPoint.x + _width, _currentPoint.y + _height);
 	} else {
-		result = _cast ? _cast->_widget->getDimensions() : Common::Rect(0, 0, _width, _height);
+		result = _cast && _cast->_widget ? _cast->_widget->getDimensions() : Common::Rect(0, 0, _width, _height);
 	}
 
 	result.moveTo(_currentPoint.x, _currentPoint.y);
