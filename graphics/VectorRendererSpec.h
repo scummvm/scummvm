@@ -68,6 +68,9 @@ public:
 	void drawString(const Graphics::Font *font, const Common::String &text,
 		const Common::Rect &area, Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
 		int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0)) override;
+	void drawString(const Graphics::Font *font, const Common::U32String &text,
+		const Common::Rect &area, Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
+		int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0)) override;
 
 	void setFgColor(uint8 r, uint8 g, uint8 b) override { _fgColor = _format.RGBToColor(r, g, b); }
 	void setBgColor(uint8 r, uint8 g, uint8 b) override { _bgColor = _format.RGBToColor(r, g, b); }
