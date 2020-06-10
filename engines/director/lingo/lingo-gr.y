@@ -299,8 +299,8 @@ stmt: stmtoneliner
 		inst start = 0, end = 0;
 		WRITE_UINT32(&start, $lbl - $end2 + 1);
 		WRITE_UINT32(&end, $end2 - $body + 2);
-		(*g_lingo->_currentScript)[$body] = end;		/* end, if cond fails */
-		(*g_lingo->_currentScript)[$end2] = start; }	/* looping back */
+		(*g_lingo->_currentAssembly)[$body] = end;		/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[$end2] = start; }	/* looping back */
 
 	// repeat with index = start to end
 	//   statements
@@ -325,13 +325,13 @@ stmt: stmtoneliner
 		g_lingo->codeString($ID->c_str());
 		g_lingo->code1(LC::c_assign);
 		g_lingo->code2(LC::c_jump, 0);
-		int pos = g_lingo->_currentScript->size() - 1;
+		int pos = g_lingo->_currentAssembly->size() - 1;
 
 		inst loop = 0, end = 0;
 		WRITE_UINT32(&loop, $varassign - pos + 2);
 		WRITE_UINT32(&end, pos - $jumpifz + 2);
-		(*g_lingo->_currentScript)[pos] = loop;		/* final count value */
-		(*g_lingo->_currentScript)[$jumpifz] = end;	}	/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;	}	/* end, if cond fails */
 
 	// repeat with index = high down to low
 	//   statements
@@ -357,13 +357,13 @@ stmt: stmtoneliner
 		g_lingo->codeString($ID->c_str());
 		g_lingo->code1(LC::c_assign);
 		g_lingo->code2(LC::c_jump, 0);
-		int pos = g_lingo->_currentScript->size() - 1;
+		int pos = g_lingo->_currentAssembly->size() - 1;
 
 		inst loop = 0, end = 0;
 		WRITE_UINT32(&loop, $varassign - pos + 2);
 		WRITE_UINT32(&end, pos - $jumpifz + 2);
-		(*g_lingo->_currentScript)[pos] = loop;		/* final count value */
-		(*g_lingo->_currentScript)[$jumpifz] = end;	}	/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;	}	/* end, if cond fails */
 
 
 	// repeat with index in list
@@ -409,8 +409,8 @@ stmt: stmtoneliner
 		WRITE_UINT32(&loop, $lbl - jump);
 		WRITE_UINT32(&end, end2 - $jumpifz + 1);
 
-		(*g_lingo->_currentScript)[jump + 1] = loop;		/* final count value */
-		(*g_lingo->_currentScript)[$jumpifz] = end;	}	/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[jump + 1] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;	}	/* end, if cond fails */
 
 	| tNEXT tREPEAT {
 		g_lingo->code1(LC::c_nextRepeat); }
@@ -426,15 +426,15 @@ ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist lbl[end3
 		inst else1 = 0, end3 = 0;
 		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
 		WRITE_UINT32(&end3, $end3 - $else1 + 1);
-		(*g_lingo->_currentScript)[$then] = else1;		/* elsepart */
-		(*g_lingo->_currentScript)[$else1] = end3;		/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[$then] = else1;		/* elsepart */
+		(*g_lingo->_currentAssembly)[$else1] = end3;		/* end, if cond fails */
 		g_lingo->processIf($else1, $end3); }
 	| if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist tELSE stmtlist lbl[end3] tENDIF {
 		inst else1 = 0, end = 0;
 		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
 		WRITE_UINT32(&end, $end3 - $else1 + 1);
-		(*g_lingo->_currentScript)[$then] = else1;		/* elsepart */
-		(*g_lingo->_currentScript)[$else1] = end;		/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[$then] = else1;		/* elsepart */
+		(*g_lingo->_currentAssembly)[$else1] = end;		/* end, if cond fails */
 		g_lingo->processIf($else1, $end3); }
 
 elseifstmtlist:	/* nothing */
@@ -443,27 +443,27 @@ elseifstmtlist:	/* nothing */
 elseifstmt: tELSIF expr jumpifz[then] tTHEN stmtlist jump[end3] {
 		inst else1 = 0;
 		WRITE_UINT32(&else1, $end3 + 1 - $then + 1);
-		(*g_lingo->_currentScript)[$then] = else1;	/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[$then] = else1;	/* end, if cond fails */
 		g_lingo->codeLabel($end3); }
 
 jumpifz:	/* nothing */	{
 		g_lingo->code2(LC::c_jumpifz, 0);
-		$$ = g_lingo->_currentScript->size() - 1; }
+		$$ = g_lingo->_currentAssembly->size() - 1; }
 
 jump:		/* nothing */	{
 		g_lingo->code2(LC::c_jump, 0);
-		$$ = g_lingo->_currentScript->size() - 1; }
+		$$ = g_lingo->_currentAssembly->size() - 1; }
 
 varassign:		/* nothing */	{
 		g_lingo->code1(LC::c_assign);
-		$$ = g_lingo->_currentScript->size() - 1; }
+		$$ = g_lingo->_currentAssembly->size() - 1; }
 
 if:	  tIF					{
 		g_lingo->codeLabel(0); } // Mark beginning of the if() statement
 
-lbl:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
+lbl:	  /* nothing */		{ $$ = g_lingo->_currentAssembly->size(); }
 
-stmtlist: 					{ $$ = g_lingo->_currentScript->size(); }
+stmtlist: 					{ $$ = g_lingo->_currentAssembly->size(); }
 	| stmtlist '\n'
 	| stmtlist stmt
 

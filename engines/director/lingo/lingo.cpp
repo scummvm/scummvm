@@ -146,9 +146,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
 	_currentScript = 0;
-	_currentScriptType = kMovieScript;
 	_currentScriptContext = nullptr;
-	_currentScriptFunction = 0;
 	_currentMeObj = nullptr;
 
 	_currentEntityId = 0;
@@ -290,13 +288,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 
 	_currentScriptContext = new ScriptContext;
-	_currentScript = new ScriptData;
-	_currentScriptType = type;
+	_currentAssembly = new ScriptData;
 	_currentEntityId = id;
 	_archives[_archiveIndex].scriptContexts[type][id] = _currentScriptContext;
-
-	// FIXME: unpack into seperate functions
-	_currentScriptFunction = 0;
 
 	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 	_linenumber = _colnumber = 1;
@@ -335,9 +329,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			if (debugChannelSet(3, kDebugCompile)) {
 				debugC(2, kDebugCompile, "<current code>");
 				uint pc = 0;
-				while (pc < _currentScript->size()) {
+				while (pc < _currentAssembly->size()) {
 					uint spc = pc;
-					Common::String instr = decodeInstruction(_currentScript, pc, &pc);
+					Common::String instr = decodeInstruction(_currentAssembly, pc, &pc);
 					debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 				}
 				debugC(2, kDebugCompile, "<end code>");
@@ -362,14 +356,14 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	_inFactory = false;
 
 	if (debugChannelSet(3, kDebugCompile)) {
-		if (_currentScript->size() && !_hadError)
-			Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
+		if (_currentAssembly->size() && !_hadError)
+			Common::hexdump((byte *)&_currentAssembly->front(), _currentAssembly->size() * sizeof(inst));
 
 		debugC(2, kDebugCompile, "<resulting code>");
 		uint pc = 0;
-		while (pc < _currentScript->size()) {
+		while (pc < _currentAssembly->size()) {
 			uint spc = pc;
-			Common::String instr = decodeInstruction(_currentScript, pc, &pc);
+			Common::String instr = decodeInstruction(_currentAssembly, pc, &pc);
 			debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 		}
 		debugC(2, kDebugCompile, "<end code>");
@@ -382,7 +376,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	Symbol currentFunc;
 
 	currentFunc.type = HANDLER;
-	currentFunc.u.defn = _currentScript;
+	currentFunc.u.defn = _currentAssembly;
 	// guess the name. don't actually bind it to the event, there's a seperate
 	// triggering mechanism for that.
 	if (type == kFrameScript) {
@@ -410,6 +404,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	currentFunc.argNames = argNames;
 	currentFunc.varNames = varNames;
 	_currentScriptContext->functions.push_back(currentFunc);
+	_currentAssembly = nullptr;
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -560,7 +555,7 @@ void Lingo::execute(uint pc) {
 			printAllVars();
 		}
 
-		if (_pc >= (*_currentScript).size()) {
+		if (!_abort && _pc >= (*_currentScript).size()) {
 			warning("Lingo::execute(): Bad PC (%d)", _pc);
 			break;
 		}

@@ -714,7 +714,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	}
 
 	_currentScriptContext = new ScriptContext;
-	_currentScriptType = type;
 	_currentEntityId = id;
 	_archives[_archiveIndex].scriptContexts[type][id] = _currentScriptContext;
 
@@ -1028,8 +1027,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			}
 		}
 
-		_currentScriptFunction = i;
-		_currentScript = new ScriptData;
+		_currentAssembly = new ScriptData;
 
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "Function %d code:", i);
@@ -1045,7 +1043,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 			if (opcode == 0x44 || opcode == 0x84) {
 				// push a constant
-				offsetList.push_back(_currentScript->size());
+				offsetList.push_back(_currentAssembly->size());
 				int arg = 0;
 				if (opcode == 0x84) {
 					arg = (uint16)READ_BE_UINT16(&codeStore[pointer]);
@@ -1075,10 +1073,10 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					break;
 				}
 				if (opcode == 0x84) {
-					offsetList.push_back(_currentScript->size());
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
+					offsetList.push_back(_currentAssembly->size());
 				} else {
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
 				}
 				switch (constant.type) {
 				case INT:
@@ -1095,7 +1093,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					break;
 				}
 			} else if (_lingoV4.contains(opcode)) {
-				offsetList.push_back(_currentScript->size());
+				offsetList.push_back(_currentAssembly->size());
 				g_lingo->code1(_lingoV4[opcode]->func);
 
 				size_t argc = strlen(_lingoV4[opcode]->proto);
@@ -1105,14 +1103,14 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 						switch (_lingoV4[opcode]->proto[c]) {
 						case 'b':
 							// read one uint8 as an argument
-							offsetList.push_back(_currentScript->size());
+							offsetList.push_back(_currentAssembly->size());
 							arg = (uint8)codeStore[pointer];
 							pointer += 1;
 							break;
 						case 'w':
 							// read one uint16 as an argument
-							offsetList.push_back(_currentScript->size());
-							offsetList.push_back(_currentScript->size());
+							offsetList.push_back(_currentAssembly->size());
+							offsetList.push_back(_currentAssembly->size());
 							arg = (uint16)READ_BE_UINT16(&codeStore[pointer]);
 							pointer += 2;
 							break;
@@ -1159,25 +1157,25 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				// unimplemented instruction
 				if (opcode < 0x40) { // 1 byte instruction
 					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x", opcode);
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
 					g_lingo->code1(LC::cb_unk);
 					g_lingo->codeInt(opcode);
 				} else if (opcode < 0x80) { // 2 byte instruction
 					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x (%d)", opcode, (uint)codeStore[pointer]);
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
 					g_lingo->code1(LC::cb_unk1);
 					g_lingo->codeInt(opcode);
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
 					g_lingo->codeInt((uint)codeStore[pointer]);
 					pointer += 1;
 				} else { // 3 byte instruction
 					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x (%d, %d)", opcode, (uint)codeStore[pointer], (uint)codeStore[pointer+1]);
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
 					g_lingo->code1(LC::cb_unk2);
 					g_lingo->codeInt(opcode);
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
 					g_lingo->codeInt((uint)codeStore[pointer]);
-					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentAssembly->size());
 					g_lingo->codeInt((uint)codeStore[pointer+1]);
 					pointer += 2;
 				}
@@ -1192,11 +1190,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			int originalJumpAddressLoc = jumpList[j];
 			int originalJumpInstructionLoc = originalJumpAddressLoc-1;
 			int jumpAddressPc = offsetList[originalJumpAddressLoc];
-			int jump = getInt(jumpAddressPc);
+			int jump = (int)READ_UINT32(&((*_currentAssembly)[jumpAddressPc]));
 			int oldTarget = originalJumpInstructionLoc + jump;
 			if ((oldTarget >= 0) && (oldTarget < (int)offsetList.size())) {
 				int newJump = offsetList[oldTarget];
-				WRITE_UINT32(&((*_currentScript)[jumpAddressPc]), newJump - jumpAddressPc + 1);
+				WRITE_UINT32(&((*_currentAssembly)[jumpAddressPc]), newJump - jumpAddressPc + 1);
 			} else {
 				warning("Jump of %d from position %d is outside the function!", jump, originalJumpAddressLoc);
 			}
@@ -1206,12 +1204,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		Symbol sym;
 		if (nameIndex < _archives[_archiveIndex].names.size()) {
 			debugC(5, kDebugLoading, "Function %d binding: %s()", i, _archives[_archiveIndex].names[nameIndex].c_str());
-			sym = g_lingo->define(_archives[_archiveIndex].names[nameIndex], argCount, _currentScript, argNames, varNames);
+			sym = g_lingo->define(_archives[_archiveIndex].names[nameIndex], argCount, _currentAssembly, argNames, varNames);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
 			sym.name = new Common::String();
 			sym.type = HANDLER;
-			sym.u.defn = _currentScript;
+			sym.u.defn = _currentAssembly;
 			sym.nargs = argCount;
 			sym.maxArgs = argCount;
 			sym.argNames = argNames;
@@ -1225,16 +1223,16 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				out.writeString(Common::String::format("<noname>, %d args\n", argCount));
 
 			uint pc = 0;
-			while (pc < _currentScript->size()) {
+			while (pc < _currentAssembly->size()) {
 				uint spc = pc;
-				Common::String instr = decodeInstruction(_currentScript, pc, &pc);
+				Common::String instr = decodeInstruction(_currentAssembly, pc, &pc);
 				out.writeString(Common::String::format("[%5d] %s\n", spc, instr.c_str()));
 			}
 			out.writeString(Common::String::format("<end code>\n\n"));
 		}
 
 		_currentScriptContext->functions.push_back(sym);
-
+		_currentAssembly = nullptr;
 	}
 
 	if (!skipdump && ConfMan.getBool("dump_scripts")) {

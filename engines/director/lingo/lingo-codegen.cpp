@@ -108,13 +108,13 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 
 Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *factory, int end, bool removeCode) {
 	debugC(1, kDebugCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
-			name.c_str(), _currentScript->size() - 1, start, nargs, (factory ? factory->name->c_str() : ""),
+			name.c_str(), _currentAssembly->size() - 1, start, nargs, (factory ? factory->name->c_str() : ""),
 			end, _currentEntityId);
 
 	if (end == -1)
-		end = _currentScript->size();
+		end = _currentAssembly->size();
 
-	ScriptData *code = new ScriptData(&(*_currentScript)[start], end - start);
+	ScriptData *code = new ScriptData(&(*_currentAssembly)[start], end - start);
 	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
 	for (uint i = 0; i < _argstack.size(); i++) {
 		argNames->push_back(Common::String(_argstack[i]->c_str()));
@@ -126,10 +126,10 @@ Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *fac
 	}
 	Symbol sym = define(name, nargs, code, argNames, varNames, factory);
 
-	// Now remove all defined code from the _currentScript
+	// Now remove all defined code from the _currentAssembly
 	if (removeCode)
 		for (int i = end - 1; i >= start; i--) {
-			_currentScript->remove_at(i);
+			_currentAssembly->remove_at(i);
 		}
 
 	return sym;
@@ -139,34 +139,34 @@ int Lingo::codeString(const char *str) {
 	int numInsts = calcStringAlignment(str);
 
 	// Where we copy the string over
-	int pos = _currentScript->size();
+	int pos = _currentAssembly->size();
 
 	// Allocate needed space in script
 	for (int i = 0; i < numInsts; i++)
-		_currentScript->push_back(0);
+		_currentAssembly->push_back(0);
 
-	byte *dst = (byte *)&_currentScript->front() + pos * sizeof(inst);
+	byte *dst = (byte *)&_currentAssembly->front() + pos * sizeof(inst);
 
 	memcpy(dst, str, strlen(str) + 1);
 
-	return _currentScript->size();
+	return _currentAssembly->size();
 }
 
 int Lingo::codeFloat(double f) {
 	int numInsts = calcCodeAlignment(sizeof(double));
 
 	// Where we copy the string over
-	int pos = _currentScript->size();
+	int pos = _currentAssembly->size();
 
 	// Allocate needed space in script
 	for (int i = 0; i < numInsts; i++)
-		_currentScript->push_back(0);
+		_currentAssembly->push_back(0);
 
-	double *dst = (double *)((byte *)&_currentScript->front() + pos * sizeof(inst));
+	double *dst = (double *)((byte *)&_currentAssembly->front() + pos * sizeof(inst));
 
 	*dst = f;
 
-	return _currentScript->size();
+	return _currentAssembly->size();
 }
 
 int Lingo::codeInt(int val) {
@@ -174,7 +174,7 @@ int Lingo::codeInt(int val) {
 	WRITE_UINT32(&i, val);
 	g_lingo->code1(i);
 
-	return _currentScript->size();
+	return _currentAssembly->size();
 }
 
 bool Lingo::isInArgStack(Common::String *s) {
@@ -246,7 +246,7 @@ void Lingo::processIf(int toplabel, int endlabel) {
 
 		WRITE_UINT32(&iend, endlabel - label + 1);
 
-		(*_currentScript)[label] = iend;	/* end, if cond fails */
+		(*_currentAssembly)[label] = iend;	/* end, if cond fails */
 	}
 }
 

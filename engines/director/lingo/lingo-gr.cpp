@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.6.3.  */
+/* A Bison parser, made by GNU Bison 3.6.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -49,7 +49,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.6.3"
+#define YYBISON_VERSION "3.6.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -860,7 +860,7 @@ static const yytype_int8 yytranslate[] =
 };
 
 #if YYDEBUG
-  /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
+  /* YYRLINEYYN -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
        0,   198,   198,   199,   201,   202,   203,   205,   212,   216,
@@ -955,7 +955,7 @@ static const yytype_int16 yytoknum[] =
 #define yytable_value_is_error(Yyn) \
   0
 
-  /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+  /* YYPACTSTATE-NUM -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
@@ -998,7 +998,7 @@ static const yytype_int16 yypact[] =
     -300,  -300,  1110,  1532,  -300,  -300,  -300,  1616,  -300
 };
 
-  /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
+  /* YYDEFACTSTATE-NUM -- Default reduction number in state STATE-NUM.
      Performed when YYTABLE does not specify something else to do.  Zero
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
@@ -1042,7 +1042,7 @@ static const yytype_uint8 yydefact[] =
       53,    48,     0,     0,    53,    47,    29,     0,    33
 };
 
-  /* YYPGOTO[NTERM-NUM].  */
+  /* YYPGOTONTERM-NUM.  */
 static const yytype_int16 yypgoto[] =
 {
     -300,    98,  -300,  -300,   -41,    15,  -300,  -300,  -300,  -300,
@@ -1053,7 +1053,7 @@ static const yytype_int16 yypgoto[] =
     -300,    13,   -32,  -300,  -300,  -300,  -300,    43
 };
 
-  /* YYDEFGOTO[NTERM-NUM].  */
+  /* YYDEFGOTONTERM-NUM.  */
 static const yytype_int16 yydefgoto[] =
 {
       -1,    45,    46,    47,    48,   313,   303,   330,   355,   304,
@@ -1064,7 +1064,7 @@ static const yytype_int16 yydefgoto[] =
       61,   154,    77,    62,   121,   122,   123,   124
 };
 
-  /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
+  /* YYTABLEYYPACT[STATE-NUM] -- What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule whose
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
@@ -1593,7 +1593,7 @@ static const yytype_int16 yycheck[] =
       89,    90,    91,    92,    93,    94
 };
 
-  /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
+  /* YYSTOSSTATE-NUM -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
@@ -1636,7 +1636,7 @@ static const yytype_uint8 yystos[] =
      122,   114,   127,   127,   122,   123,    86,   127,    86
 };
 
-  /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
+  /* YYR1YYN -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
        0,   103,   104,   104,   105,   105,   105,   106,   106,   106,
@@ -1659,7 +1659,7 @@ static const yytype_uint8 yyr1[] =
      157,   157,   158,   158,   159,   159,   160,   160
 };
 
-  /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
+  /* YYR2YYN -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     3,     0,     1,     1,     4,     4,     6,
@@ -2454,8 +2454,8 @@ yyreduce:
 		inst start = 0, end = 0;
 		WRITE_UINT32(&start, (yyvsp[-5].code) - (yyvsp[-1].code) + 1);
 		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-3].code) + 2);
-		(*g_lingo->_currentScript)[(yyvsp[-3].code)] = end;		/* end, if cond fails */
-		(*g_lingo->_currentScript)[(yyvsp[-1].code)] = start; }
+		(*g_lingo->_currentAssembly)[(yyvsp[-3].code)] = end;		/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[(yyvsp[-1].code)] = start; }
 #line 2460 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2493,13 +2493,13 @@ yyreduce:
 		g_lingo->codeString((yyvsp[-11].s)->c_str());
 		g_lingo->code1(LC::c_assign);
 		g_lingo->code2(LC::c_jump, 0);
-		int pos = g_lingo->_currentScript->size() - 1;
+		int pos = g_lingo->_currentAssembly->size() - 1;
 
 		inst loop = 0, end = 0;
 		WRITE_UINT32(&loop, (yyvsp[-7].code) - pos + 2);
 		WRITE_UINT32(&end, pos - (yyvsp[-2].code) + 2);
-		(*g_lingo->_currentScript)[pos] = loop;		/* final count value */
-		(*g_lingo->_currentScript)[(yyvsp[-2].code)] = end;	}
+		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[(yyvsp[-2].code)] = end;	}
 #line 2504 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2537,13 +2537,13 @@ yyreduce:
 		g_lingo->codeString((yyvsp[-12].s)->c_str());
 		g_lingo->code1(LC::c_assign);
 		g_lingo->code2(LC::c_jump, 0);
-		int pos = g_lingo->_currentScript->size() - 1;
+		int pos = g_lingo->_currentAssembly->size() - 1;
 
 		inst loop = 0, end = 0;
 		WRITE_UINT32(&loop, (yyvsp[-8].code) - pos + 2);
 		WRITE_UINT32(&end, pos - (yyvsp[-2].code) + 2);
-		(*g_lingo->_currentScript)[pos] = loop;		/* final count value */
-		(*g_lingo->_currentScript)[(yyvsp[-2].code)] = end;	}
+		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[(yyvsp[-2].code)] = end;	}
 #line 2548 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2600,8 +2600,8 @@ yyreduce:
 		WRITE_UINT32(&loop, (yyvsp[-5].code) - jump);
 		WRITE_UINT32(&end, end2 - (yyvsp[-3].code) + 1);
 
-		(*g_lingo->_currentScript)[jump + 1] = loop;		/* final count value */
-		(*g_lingo->_currentScript)[(yyvsp[-3].code)] = end;	}
+		(*g_lingo->_currentAssembly)[jump + 1] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[(yyvsp[-3].code)] = end;	}
 #line 2606 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2644,8 +2644,8 @@ yyreduce:
 		inst else1 = 0, end3 = 0;
 		WRITE_UINT32(&else1, (yyvsp[-3].code) + 1 - (yyvsp[-6].code) + 1);
 		WRITE_UINT32(&end3, (yyvsp[-1].code) - (yyvsp[-3].code) + 1);
-		(*g_lingo->_currentScript)[(yyvsp[-6].code)] = else1;		/* elsepart */
-		(*g_lingo->_currentScript)[(yyvsp[-3].code)] = end3;		/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[(yyvsp[-6].code)] = else1;		/* elsepart */
+		(*g_lingo->_currentAssembly)[(yyvsp[-3].code)] = end3;		/* end, if cond fails */
 		g_lingo->processIf((yyvsp[-3].code), (yyvsp[-1].code)); }
 #line 2651 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -2656,8 +2656,8 @@ yyreduce:
 		inst else1 = 0, end = 0;
 		WRITE_UINT32(&else1, (yyvsp[-5].code) + 1 - (yyvsp[-8].code) + 1);
 		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-5].code) + 1);
-		(*g_lingo->_currentScript)[(yyvsp[-8].code)] = else1;		/* elsepart */
-		(*g_lingo->_currentScript)[(yyvsp[-5].code)] = end;		/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[(yyvsp[-8].code)] = else1;		/* elsepart */
+		(*g_lingo->_currentAssembly)[(yyvsp[-5].code)] = end;		/* end, if cond fails */
 		g_lingo->processIf((yyvsp[-5].code), (yyvsp[-1].code)); }
 #line 2663 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -2667,7 +2667,7 @@ yyreduce:
                                                                 {
 		inst else1 = 0;
 		WRITE_UINT32(&else1, (yyvsp[0].code) + 1 - (yyvsp[-3].code) + 1);
-		(*g_lingo->_currentScript)[(yyvsp[-3].code)] = else1;	/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[(yyvsp[-3].code)] = else1;	/* end, if cond fails */
 		g_lingo->codeLabel((yyvsp[0].code)); }
 #line 2673 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -2676,7 +2676,7 @@ yyreduce:
 #line 449 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->code2(LC::c_jumpifz, 0);
-		(yyval.code) = g_lingo->_currentScript->size() - 1; }
+		(yyval.code) = g_lingo->_currentAssembly->size() - 1; }
 #line 2681 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2684,7 +2684,7 @@ yyreduce:
 #line 453 "engines/director/lingo/lingo-gr.y"
                                 {
 		g_lingo->code2(LC::c_jump, 0);
-		(yyval.code) = g_lingo->_currentScript->size() - 1; }
+		(yyval.code) = g_lingo->_currentAssembly->size() - 1; }
 #line 2689 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2692,7 +2692,7 @@ yyreduce:
 #line 457 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_assign);
-		(yyval.code) = g_lingo->_currentScript->size() - 1; }
+		(yyval.code) = g_lingo->_currentAssembly->size() - 1; }
 #line 2697 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -2705,13 +2705,13 @@ yyreduce:
 
   case 52:
 #line 464 "engines/director/lingo/lingo-gr.y"
-                                { (yyval.code) = g_lingo->_currentScript->size(); }
+                                { (yyval.code) = g_lingo->_currentAssembly->size(); }
 #line 2710 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 53:
 #line 466 "engines/director/lingo/lingo-gr.y"
-                                                { (yyval.code) = g_lingo->_currentScript->size(); }
+                                                { (yyval.code) = g_lingo->_currentAssembly->size(); }
 #line 2716 "engines/director/lingo/lingo-gr.cpp"
     break;
 

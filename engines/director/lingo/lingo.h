@@ -444,7 +444,7 @@ public:
 	bool isInArgStack(Common::String *s);
 	void clearArgStack();
 
-	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
+	int code1(inst code) { _currentAssembly->push_back(code); return _currentAssembly->size() - 1; }
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
@@ -460,6 +460,7 @@ public:
 	void processIf(int toplabel, int endlabel);
 	void varCreate(const Common::String &name, bool global, SymbolHash *localvars = nullptr);
 
+	ScriptData *_currentAssembly;
 	LexerDefineState _indef;
 	int _linenumber;
 	int _colnumber;
@@ -477,11 +478,9 @@ public:
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
 
 public:
-	ScriptType _currentScriptType;
 	uint16 _currentEntityId;
 	int _currentChannelId;
 	ScriptContext *_currentScriptContext;
-	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
 	Object *_currentMeObj;
 
