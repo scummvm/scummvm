@@ -166,8 +166,8 @@ public:
 
 	bool useRTL() const;
 
-	uint8 parseHotkey(const Common::String &label);
-	Common::String cleanupHotkey(const Common::String &label);
+	uint8 parseHotkey(const Common::U32String &label);
+	Common::U32String cleanupHotkey(const Common::U32String &label);
 
 	bool hasTooltip() const { return !_tooltip.empty(); }
 	const Common::String &getTooltip() const { return _tooltip; }
@@ -196,19 +196,19 @@ protected:
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
-	Common::String			_label;
+	Common::U32String		_label;
 	Graphics::TextAlign		_align;
 	ThemeEngine::FontStyle	_font;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
-	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
+	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	void setValue(int value);
-	void setLabel(const Common::String &label);
+	void setLabel(const Common::U32String &label);
 	void handleMouseEntered(int button) override	{ readLabel(); }
-	const Common::String &getLabel() const		{ return _label; }
+	const Common::U32String &getLabel() const		{ return _label; }
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
-	void readLabel() { read(_label); }
+	void readLabel() { read(Common::convertFromU32String(_label)); }
 
 protected:
 	void drawWidget() override;
@@ -221,15 +221,15 @@ protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
-	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void getMinSize(int &minWidth, int &minHeight) override;
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
 
-	void setLabel(const Common::String &label);
+	void setLabel(const Common::U32String &label);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
@@ -247,8 +247,8 @@ protected:
 /* DropdownButtonWidget */
 class DropdownButtonWidget : public ButtonWidget {
 public:
-	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
-	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
@@ -256,12 +256,12 @@ public:
 	void getMinSize(int &minWidth, int &minHeight) override;
 
 
-	void appendEntry(const Common::String &label, uint32 cmd);
+	void appendEntry(const Common::U32String &label, uint32 cmd);
 	void clearEntries();
 
 protected:
 	struct Entry {
-		Common::String label;
+		Common::U32String label;
 		uint32 cmd;
 	};
 	typedef Common::Array<Entry> EntryList;
@@ -307,8 +307,8 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
-	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const char *tooltip = nullptr, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
@@ -353,8 +353,8 @@ protected:
 	int _value;
 
 public:
-	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = nullptr, uint8 hotkey = 0);
-	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = nullptr, uint8 hotkey = 0);
+	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::U32String &label, const char *tooltip = nullptr, uint8 hotkey = 0);
+	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::U32String &label, const char *tooltip = nullptr, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }

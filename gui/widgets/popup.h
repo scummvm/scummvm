@@ -43,10 +43,11 @@ enum {
  */
 class PopUpWidget : public Widget, public CommandSender {
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 
 	struct Entry {
-		String	name;
-		uint32	tag;
+		U32String	name;
+		uint32		tag;
 	};
 	typedef Common::Array<Entry> EntryList;
 protected:
@@ -63,7 +64,7 @@ public:
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
 
-	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
+	void appendEntry(const U32String &entry, uint32 tag = (uint32)-1);
 	void clearEntries();
 	int numEntries() { return _entries.size(); }
 
@@ -77,7 +78,7 @@ public:
 	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
 //	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
-	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(Common::convertFromU32String(_entries[_selectedItem].name)); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void reflowLayout() override;
@@ -106,7 +107,7 @@ protected:
 
 	int			_lastRead;
 
-	typedef Common::Array<Common::String> EntryList;
+	typedef Common::Array<Common::U32String> EntryList;
 	EntryList		_entries;
 
 public:
@@ -127,7 +128,7 @@ public:
 	void setLineHeight(int lineHeight);
 	void setWidth(uint16 width);
 
-	void appendEntry(const Common::String &entry);
+	void appendEntry(const Common::U32String &entry);
 	void clearEntries();
 	void setSelection(int item);
 
