@@ -118,7 +118,7 @@ public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor, bool asButton = false);
 
 	void setText(const char *text);
-	virtual void createWidget();
+	virtual void createWidget() override;
 
 	virtual bool isModified() override;
 	virtual bool isEditable() override;
