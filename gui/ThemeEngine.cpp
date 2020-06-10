@@ -1580,6 +1580,10 @@ int ThemeEngine::getStringWidth(const Common::String &str, FontStyle font) const
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getStringWidth(str) : 0;
 }
 
+int ThemeEngine::getStringWidth(const Common::U32String &str, FontStyle font) const {
+	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getStringWidth(str) : 0;
+}
+
 int ThemeEngine::getCharWidth(byte c, FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getCharWidth(c) : 0;
 }
