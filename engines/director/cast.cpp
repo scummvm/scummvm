@@ -141,7 +141,7 @@ void BitmapCast::createWidget() {
 		return;
 	}
 
-	_widget = new Graphics::MacWidget(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width() - 1, _initialRect.height() - 1, false);
+	_widget = new Graphics::MacWidget(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width() - 1, _initialRect.height(), false);
 	_widget->getSurface()->blitFrom(*_img->getSurface());
 }
 
