@@ -161,6 +161,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_abort = false;
 	_nextRepeat = false;
 	_indef = kStateNone;
+	_indef = kStateNone;
 	_immediateMode = false;
 
 	_linenumber = _colnumber = _bytenumber = _lastbytenumber = _errorbytenumber = 0;

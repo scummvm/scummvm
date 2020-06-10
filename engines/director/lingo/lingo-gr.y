@@ -84,9 +84,10 @@ static void checkEnd(Common::String *token, const char *expect, bool required) {
 	}
 }
 
-static void inArgs() { g_lingo->_indef = kStateInArgs; }
-static void inDef()  { g_lingo->_indef = kStateInDef; }
-static void inNone() { g_lingo->_indef = kStateNone; }
+static void inArgs() { g_lingo->_indefStore = g_lingo->_indef; g_lingo->_indef = kStateInArgs; }
+static void inDef()  { g_lingo->_indefStore = g_lingo->_indef; g_lingo->_indef = kStateInDef; }
+static void inNone() { g_lingo->_indefStore = g_lingo->_indef; g_lingo->_indef = kStateNone; }
+static void inLast() { g_lingo->_indef = g_lingo->_indefStore; }
 
 static void startDef() {
 	inArgs();
@@ -585,9 +586,9 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| playfunc
 	| tEXIT tREPEAT				{ g_lingo->code1(LC::c_exitRepeat); }
 	| tEXIT						{ g_lingo->code1(LC::c_procret); }
-	| tGLOBAL					{ inArgs(); } globallist { inNone(); }
-	| tPROPERTY					{ inArgs(); } propertylist { inNone(); }
-	| tINSTANCE					{ inArgs(); } instancelist { inNone(); }
+	| tGLOBAL					{ inArgs(); } globallist { inLast(); }
+	| tPROPERTY					{ inArgs(); } propertylist { inLast(); }
+	| tINSTANCE					{ inArgs(); } instancelist { inLast(); }
 	| BLTIN '(' arglist ')'		{
 		g_lingo->codeFunc($BLTIN, $arglist);
 		delete $BLTIN; }

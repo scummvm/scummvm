@@ -464,6 +464,7 @@ public:
 
 	ScriptData *_currentAssembly;
 	LexerDefineState _indef;
+	LexerDefineState _indefStore;
 	int _linenumber;
 	int _colnumber;
 	int _bytenumber;
