@@ -79,6 +79,7 @@ void Comprehend::initialize() {
 	// Set up the GLK windows
 	g_conf->_wMarginX = 0;
 	g_conf->_wMarginY = 0;
+	g_conf->_tMarginY = 4;
 
 	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
 	_topWindow = (GraphicsWindow *)glk_window_open(_bottomWindow,
@@ -87,6 +88,12 @@ void Comprehend::initialize() {
 
 	glk_set_window(_bottomWindow);
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
+
+	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_bottomWindow->_stream->setZColors(
+		pixelFormat.RGBToColor(0xff, 0xff, 0xff),
+		pixelFormat.RGBToColor(0, 0, 0)
+	);
 
 	// Initialize drawing surface, and the archive that abstracts
 	// the room and item graphics as as individual files
