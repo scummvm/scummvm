@@ -280,21 +280,18 @@ void KingdomGame::titlePage() {
 	_sound = false;
 	fadeToBlack2();
 	playMovie(200);
-	if (shouldQuit()) {
+	if (shouldQuit())
 		return;
-	}
 
 	fadeToBlack2();
 	playMovie(206);
-	if (shouldQuit()) {
+	if (shouldQuit())
 		return;
-	}
 
 	fadeToBlack2();
 	playMovie(198);
-	if (shouldQuit()) {
+	if (shouldQuit())
 		return;
-	}
 
 	fadeToBlack2();
 }
@@ -917,8 +914,7 @@ bool KingdomGame::readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHead
 		header._saveName += ch;
 
 	// Get the thumbnail
-	Graphics::loadThumbnail(*in, header._thumbnail);
-	if (!header._thumbnail)
+	if (!Graphics::loadThumbnail(*in, header._thumbnail))
 		return false;
 
 	// Read in save date/time
