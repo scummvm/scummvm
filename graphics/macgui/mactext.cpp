@@ -784,6 +784,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	if (endCol == -1)
 		endCol = getLineCharWidth(endRow);
 
+	if (_textLines.empty()) {
+		return res;
+	}
+
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
 	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
 
