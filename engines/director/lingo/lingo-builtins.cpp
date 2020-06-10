@@ -1548,11 +1548,6 @@ void LB::b_installMenu(int nargs) {
 				p++;
 
 			if (!submenuText.empty()) { // Adding submenu for previous menu
-				if (!command.empty()) {
-					handlers += g_lingo->genMenuHandler(&commandId, command);
-					submenuText += Common::String::format("[%d]", commandId);
-				}
-
 				menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 			}
 
@@ -1585,6 +1580,8 @@ void LB::b_installMenu(int nargs) {
 		text.trim();
 		command.trim();
 
+		submenuText += text;
+
 		if (!submenuText.empty()) {
 			if (!command.empty()) {
 				handlers += g_lingo->genMenuHandler(&commandId, command);
@@ -1594,17 +1591,11 @@ void LB::b_installMenu(int nargs) {
 			}
 		}
 
-		submenuText += text;
-
 		if (!*s) // if we reached end of string, do not increment it but break
 			break;
 	}
 
 	if (!submenuText.empty()) {
-		if (!command.empty()) {
-			handlers += g_lingo->genMenuHandler(&commandId, command);
-			submenuText += Common::String::format("[%d]", commandId);
-		}
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 	}
 
