@@ -147,13 +147,12 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 
 			if (!out.open(fname.c_str())) {
 				warning("Can not open dump file %s", fname.c_str());
-				return;
+			} else {
+				out.write(buf, mmmSize);
+
+				out.flush();
+				out.close();
 			}
-
-			out.write(buf, mmmSize);
-
-			out.flush();
-			out.close();
 
 			free(buf);
 		}
