@@ -33,34 +33,31 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	t.moveTo(drawRect.left, drawRect.top);
 
 	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
-
 	maskSurface->transBlitFrom(*_maskSurface, drawRect, Common::Point(0, 0), _stageColor);
-
-	drawRect.clip(t);
 
 	switch (ink) {
 	case kInkTypeCopy:
-			_surface->transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), *maskSurface);
+			_surface->transBlitFrom(spriteSurface, Common::Point(t.left, t.top), *maskSurface);
 		break;
 	case kInkTypeTransparent:
 		// FIXME: is it always white (last entry in pallette)?
-		_surface->transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), _vm->getPaletteColorCount() - 1);
+		_surface->transBlitFrom(spriteSurface, Common::Point(t.left, t.top), _vm->getPaletteColorCount() - 1);
 		break;
 	case kInkTypeBackgndTrans:
-		drawBackgndTransSprite(spriteSurface, drawRect, spriteId);
+		drawBackgndTransSprite(spriteSurface, t, spriteId);
 		break;
 	case kInkTypeMatte:
-		drawMatteSprite(spriteSurface, drawRect);
+		drawMatteSprite(spriteSurface, t);
 		break;
 	case kInkTypeGhost:
-		drawGhostSprite(spriteSurface, drawRect);
+		drawGhostSprite(spriteSurface, t);
 		break;
 	case kInkTypeReverse:
-		drawReverseSprite(spriteSurface, drawRect, spriteId);
+		drawReverseSprite(spriteSurface, t, spriteId);
 		break;
 	default:
 		warning("Score::inkBasedBlit(): Unhandled ink type %d", ink);
-		_surface->blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+		_surface->blitFrom(spriteSurface, Common::Point(t.left, t.top));
 		break;
 	}
 
