@@ -39,6 +39,8 @@ public:
 private:
 	void drawCampMenu() override;
 	void initMemorizePrayMenu() override;
+	void initScribeScrollMenu() override;
+	void printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight) override;
 	void drawSaveSlotDialog(int x, int y, int id) override;
 	bool confirmDialogue(int id) override;
 	void displayTextBox(int id, int textColor, bool wait) override;
@@ -63,7 +65,7 @@ private:
 		uint16 srcOffs;
 	};
 
-	static const MenuButtonTiles _menuButtonTiles[35];
+	static const MenuButtonTiles _menuButtonTiles[40];
 };
 
 } // End of namespace Kyra

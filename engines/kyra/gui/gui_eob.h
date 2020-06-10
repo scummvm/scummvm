@@ -108,6 +108,8 @@ private:
 
 	virtual void drawCampMenu() {}
 	virtual void initMemorizePrayMenu() {}
+	virtual void initScribeScrollMenu() {}
+	virtual void printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight);
 	virtual bool confirmDialogue(int id);
 	int selectCharacterDialogue(int id);
 	virtual void displayTextBox(int id, int textColor = 0xFF, bool wait = true);

@@ -3627,6 +3627,16 @@ void GUI_EoB::scribeScrollDialogue() {
 	int16 *menuItems = new int16[6];
 	int numScrolls = 0;
 
+	uint8 yOffs= 50;
+	uint8 lw = 9;
+	uint8 inputCodeOffs = 0;
+
+	if (_vm->_flags.platform == Common::kPlatformSegaCD) {
+		yOffs = 80;
+		lw = 8;
+		inputCodeOffs = 4;
+	}
+
 	for (int i = 0; i < 32; i++) {
 		for (int ii = 0; ii < 6; ii++) {
 			scrollInvSlot[i] = _vm->checkInventoryForItem(ii, 34, i + 1) + 1;
@@ -3641,7 +3651,6 @@ void GUI_EoB::scribeScrollDialogue() {
 	if (numScrolls) {
 		int csel = selectCharacterDialogue(49);
 		if (csel != -1) {
-
 			EoBCharacter *c = &_vm->_characters[csel];
 			int s = 0;
 
@@ -3674,10 +3683,11 @@ void GUI_EoB::scribeScrollDialogue() {
 							break;
 
 						releaseButtons(buttonList);
+						initScribeScrollMenu();
 						buttonList = initMenu(6);
 
 						for (int i = 0; i < s; i++)
-							_screen->printShadedText(_vm->_mageSpellList[menuItems[i]], 8, 9 * i + 50, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+							printScribeScrollSpellString(menuItems, i, false);
 
 						redraw = false;
 						lastHighLight = -1;
@@ -3686,9 +3696,9 @@ void GUI_EoB::scribeScrollDialogue() {
 
 					if (lastHighLight != newHighLight) {
 						if (lastHighLight >= 0)
-							_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, _vm->guiSettings()->colors.guiColorWhite, 0);
+							printScribeScrollSpellString(menuItems, lastHighLight, false);
+						printScribeScrollSpellString(menuItems, newHighLight, true);
 						lastHighLight = newHighLight;
-						_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, _vm->guiSettings()->colors.guiColorLightRed, 0);
 						_screen->updateScreen();
 					}
 
@@ -3697,16 +3707,16 @@ void GUI_EoB::scribeScrollDialogue() {
 
 					if (inputFlag == 0) {
 						Common::Point p = _vm->getMousePos();
-						if (_vm->posWithinRect(p.x, p.y, 8, 50, 176, s * 9 + 49))
-							newHighLight = (p.y - 50) / 9;
+						if (_vm->posWithinRect(p.x, p.y, 8, yOffs, 176, s * lw + yOffs - 1))
+							newHighLight = (p.y - yOffs) / lw;
 					} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP2] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN]) {
 						newHighLight = (newHighLight + 1) % s;
 					} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP8] || inputFlag == _vm->_keyMap[Common::KEYCODE_UP]) {
 						newHighLight = (newHighLight + s - 1) % s;
-					} else if (inputFlag == 0x8023 || inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
+					} else if (inputFlag == (0x8023 + inputCodeOffs) || inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
 						s = 0;
-					} else if (inputFlag == 0x8024) {
-						newHighLight = (_vm->_mouseY - 50) / 9;
+					} else if (inputFlag == 0x8024 + inputCodeOffs) {
+						newHighLight = (_vm->_mouseY - yOffs) / lw;
 						if (newHighLight >= 0 && newHighLight < s) {
 							inputFlag = _vm->_keyMap[Common::KEYCODE_SPACE];
 						} else {
@@ -4026,6 +4036,14 @@ bool GUI_EoB::restParty() {
 	}
 
 	return res;
+}
+
+void GUI_EoB::printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight) {
+	assert(menuItems);
+	if (highlight)
+		_screen->printText(_vm->_mageSpellList[menuItems[id]], 8, 9 * id + 50, _vm->guiSettings()->colors.guiColorLightRed, 0);
+	else
+		_screen->printShadedText(_vm->_mageSpellList[menuItems[id]], 8, 9 * id + 50, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 }
 
 bool GUI_EoB::confirmDialogue(int id) {

@@ -676,6 +676,25 @@ void GUI_EoB_SegaCD::initMemorizePrayMenu() {
 	_screen->sega_getRenderer()->render(0, 1, 4, 20, 2);
 }
 
+void GUI_EoB_SegaCD::initScribeScrollMenu() {
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 21, 0);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 4, 20, 4, 0x6283, true);
+	_screen->sega_getRenderer()->loadToVRAM(&_campMenu[0x87C0], 4992, 0x3CE0);
+	_screen->sega_clearTextBuffer(0);
+	_vm->_txt->printShadedText(getMenuString(48), 0, 3, 0xFF, 0xCC, 160, 16, 0, false);
+	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 2560);
+	_screen->sega_getRenderer()->render(0, 1, 4, 20, 2);
+}
+
+void GUI_EoB_SegaCD::printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight) {
+	assert(menuItems);
+	uint16 buf[22];
+	memset(buf, 0, sizeof(buf));
+	_vm->printSpellbookString(&buf[1], _vm->_mageSpellList[menuItems[id]], highlight ? 0x6223 : 0x63C9);
+	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 10 + id, 20, 1, 0,  true, false, buf);
+	_screen->sega_getRenderer()->render(0, 1, 10 + id, 20, 1);
+}
+
 void GUI_EoB_SegaCD::drawSaveSlotDialog(int x, int y, int id) {
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 21, 0);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, (x >> 3) + 1, (y >> 3) + (y ? 3 : 4), 20, 2, 0x6283, true);
@@ -987,7 +1006,7 @@ char GUI_EoB_SegaCD::fetchClickableCharacter(int id) const {
 	return (char)c;
 }
 
-const GUI_EoB_SegaCD::MenuButtonTiles GUI_EoB_SegaCD::_menuButtonTiles[35] = {
+const GUI_EoB_SegaCD::MenuButtonTiles GUI_EoB_SegaCD::_menuButtonTiles[40] = {
 	{ 0x01e7, 0x0000 },	{ 0x01fb, 0x0028 },	{ 0x020f, 0x0050 }, { 0x0223, 0x0078 },
 	{ 0x0237, 0x00a0 }, { 0x0000, 0x0000 },	{ 0x01cf, 0x01c8 },	{ 0x025f, 0x0118 },
 	{ 0x024b, 0x00c8 }, { 0x0273, 0x0140 },	{ 0x020b, 0x0198 },	{ 0x01cf, 0x01c8 },
@@ -996,9 +1015,8 @@ const GUI_EoB_SegaCD::MenuButtonTiles GUI_EoB_SegaCD::_menuButtonTiles[35] = {
 	{ 0x0000, 0x0000 }, { 0x0000, 0x0000 }, { 0x0000, 0x0000 }, { 0x0000, 0x0000 },
 	{ 0x0000, 0x0000 },	{ 0x0000, 0x0000 },	{ 0x01db, 0x01b0 }, { 0x01cf, 0x01c8 },
 	{ 0x0000, 0x0000 }, { 0x01e7, 0x0270 },	{ 0x01f3, 0x027C }, { 0x01ff, 0x0288 },
-	{ 0x020b, 0x0294 },	{ 0x0217, 0x02A0 },
-	
-	{ 0x024d, 0x030c }
+	{ 0x020b, 0x0294 },	{ 0x0217, 0x02A0 },	{ 0x024d, 0x030c },	{ 0x0000, 0x0000 },
+	{ 0x0000, 0x0000 }, { 0x0000, 0x0000 }, { 0x01CF, 0x01C8 }, { 0x0000, 0x0000 }
 };
 
 } // End of namespace Kyra
