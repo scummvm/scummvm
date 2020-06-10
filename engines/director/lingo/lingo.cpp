@@ -320,9 +320,6 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	// macros and factories have conflicting grammar. Thus we ease life for the parser.
 	if ((end = findNextDefinition(code))) {
 		do {
-			g_lingo->_methodVarsStash = g_lingo->_methodVars;
-			g_lingo->_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
-
 			Common::String chunk(begin, end);
 
 			if (chunk.hasPrefixIgnoreCase("factory") || chunk.hasPrefixIgnoreCase("method"))
@@ -346,10 +343,6 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 				}
 				debugC(2, kDebugCompile, "<end code>");
 			}
-
-			delete g_lingo->_methodVars;
-			g_lingo->_methodVars = g_lingo->_methodVarsStash;
-			g_lingo->_methodVarsStash = nullptr;
 
 			begin = end;
 		} while ((end = findNextDefinition(begin + 1)));
