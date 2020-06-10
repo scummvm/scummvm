@@ -25,7 +25,6 @@
 
 #include "common/memstream.h"
 #include "common/savefile.h"
-#include "director/lingo/lingo-object.h"
 
 namespace Director {
 
@@ -47,14 +46,14 @@ enum FileIOError {
 	kErrorDirectoryNotFound = -120
 };
 
-struct FileXObject : Object {
+struct FileObject : Object {
 	Common::String *filename;
 	Common::InSaveFile *inFile;
 	Common::SeekableReadStream *inStream;
 	Common::OutSaveFile *outFile;
 	Common::MemoryWriteStreamDynamic *outStream;
 
-	FileXObject() : Object("FileIO", kXObj) {
+	FileObject(ObjectType objType) : Object("FileIO", objType) {
 		filename = nullptr;
 		inFile = nullptr;
 		inStream = nullptr;
@@ -62,16 +61,17 @@ struct FileXObject : Object {
 		outStream = nullptr;
 	}
 
-	virtual ~FileXObject() {
+	virtual ~FileObject() {
 		dispose();
 	}
 
+	void initMethods();
 	virtual Object *clone();
 	void dispose();
 };
 
 namespace FileIO {
-	void b_openXLib(int nargs);
+	void initialize(int type);
 	void m_delete(int nargs);
 	void m_dispose(int nargs);
 	void m_fileName(int nargs);

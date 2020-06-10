@@ -96,7 +96,7 @@ struct Symbol {	/* symbol table entry */
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
 	bool parens;	/* whether parens required or not, for builitins */
-	int methodType;	/* valid target objects, for method builtins */
+	int targetType;	/* valid target objects, for method builtins */
 
 	bool global;
 	Common::Array<Common::String> *argNames;
@@ -227,7 +227,8 @@ enum ObjectType {
 	kNoneObj = 0,
 	kFactoryObj = 1 << 0,
 	kXObj = 1 << 1,
-	kScriptObj = 1 << 2
+	kScriptObj = 1 << 2,
+	kXtraObj = 1 << 3
 };
 
 struct Object {
@@ -324,6 +325,7 @@ public:
 	void initFuncs();
 	void initBytecode();
 	void initMethods();
+	void initXLibs();
 
 	void runTests();
 
@@ -497,7 +499,7 @@ public:
 
 	SymbolHash _builtins;
 	SymbolHash _methods;
-	SymbolHash _xlibs;
+	SymbolHash _xlibInitializers;
 
 	Common::String _floatPrecisionFormat;
 

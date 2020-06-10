@@ -1040,11 +1040,14 @@ void LB::b_openResFile(int nargs) {
 }
 
 void LB::b_openXlib(int nargs) {
+	// TODO: When Xtras are implemented, determine whether to initialize
+	// the XObject or Xtra version of FileIO
+
 	Datum d = g_lingo->pop();
 	Common::String xlibName = d.asString();
-	if (g_lingo->_xlibs.contains(xlibName)) {
-		Symbol sym = g_lingo->_xlibs[xlibName];
-		(*sym.u.bltin)(0);
+	if (g_lingo->_xlibInitializers.contains(xlibName)) {
+		Symbol sym = g_lingo->_xlibInitializers[xlibName];
+		(*sym.u.bltin)(kXObj);
 	} else {
 		warning("STUB: b_openXLib(%s)", xlibName.c_str());
 	}

@@ -24,7 +24,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
-#include "director/lingo/xobject/fileio.h"
+#include "director/lingo/xlibs/fileio.h"
 
 namespace Director {
 
@@ -36,26 +36,17 @@ static struct MethodProto {
 	int type;
 	int version;
 } predefinedMethods[] = {
-	{ "mDescribe",				LM::m_describe,				 0, 0, kXObj,				2 },	// D2
-	{ "mDispose",				LM::m_dispose,				 0, 0, kFactoryObj | kXObj,	2 },	// D2
-	{ "mGet",					LM::m_get,					 1, 1, kFactoryObj,			2 },	// D2
-	{ "mInstanceRespondsTo",	LM::m_instanceRespondsTo,	 1, 1, kXObj,				3 },		// D3
-	{ "mMessageList",			LM::m_messageList,			 0, 0, kXObj,				3 },		// D3
-	{ "mName",					LM::m_name,					 0, 0, kXObj,				3 },		// D3
-	{ "mNew",					LM::m_new,					-1, 0, kFactoryObj | kXObj, 2 },	// D2
-	{ "mPerform",				LM::m_perform,				-1, 0, kFactoryObj | kXObj, 3 },		// D3
-	{ "mPut",					LM::m_put,					 2, 2, kFactoryObj,			2 },	// D2
-	{ "mRespondsTo",			LM::m_respondsTo,			 1, 1, kXObj,				2 },	// D2
+	{ "describe",				LM::m_describe,				 0, 0,	kXObj,					2 },	// D2
+	{ "dispose",				LM::m_dispose,				 0, 0,	kFactoryObj | kXObj,	2 },	// D2
+	{ "get",					LM::m_get,					 1, 1,	kFactoryObj,			2 },	// D2
+	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					3 },		// D3
+	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					3 },		// D3
+	{ "name",					LM::m_name,					 0, 0,	kXObj,					3 },		// D3
+	{ "new",					LM::m_new,					-1, 0,	kFactoryObj | kXObj, 	2 },	// D2
+	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj, 	3 },		// D3
+	{ "put",					LM::m_put,					 2, 2,	kFactoryObj,			2 },	// D2
+	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					2 },	// D2
 	{ 0, 0, 0, 0, 0, 0 }
-};
-
-static struct XLibProto {
-	const char *name;
-	void (*initializer)(int);
-	int version;
-} xlibs[] = {
-	{ "FileIO",					FileIO::b_openXLib,										2 },	// D2
-	{ 0, 0, 0 }
 };
 
 void Lingo::initMethods() {
@@ -68,21 +59,35 @@ void Lingo::initMethods() {
 		sym.type = FBLTIN;
 		sym.nargs = mtd->minArgs;
 		sym.maxArgs = mtd->maxArgs;
-		sym.methodType = mtd->type;
+		sym.targetType = mtd->type;
 		sym.u.bltin = mtd->func;
 		_methods[mtd->name] = sym;
 	}
+}
 
+static struct XLibProto {
+	const char *name;
+	void (*initializer)(int);
+	int type;
+	int version;
+} xlibs[] = {
+	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	2 },	// D2
+	{ 0, 0, 0, 0 }
+};
+
+void Lingo::initXLibs() {
 	for (XLibProto *lib = xlibs; lib->name; lib++) {
 		if (lib->version > _vm->getVersion())
 			continue;
 
 		Symbol sym;
+		sym.name = new Common::String(lib->name);
 		sym.type = FBLTIN;
 		sym.nargs = 0;
 		sym.maxArgs = 0;
+		sym.targetType = lib->type;
 		sym.u.bltin = lib->initializer;
-		_xlibs[lib->name] = sym;
+		_xlibInitializers[lib->name] = sym;
 	}
 }
 
@@ -109,14 +114,29 @@ Symbol Object::getMethod(const Common::String &methodName) {
 	if (disposed) {
 		error("Method '%s' called on disposed object <%s>", methodName.c_str(), Datum(this).asString(true).c_str());
 	}
-	if (methods.contains(methodName) && (inheritanceLevel > 1 || type == kFactoryObj)) {
-		// Instance methods can be called on an original factory object,
-		// but not on an original XObject
+
+	// instance method (factory, script object, and Xtra)
+	if ((type | (kFactoryObj & kScriptObj & kXtraObj)) && methods.contains(methodName)) {
 		return methods[methodName];
 	}
-	if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].type)) {
-		return g_lingo->_methods[methodName];
+
+	if ((type & (kFactoryObj | kXObj)) && methodName.hasPrefixIgnoreCase("m")) {
+		Common::String shortName = methodName.substr(1);
+		// instance method (XObject)
+		if (type == kXObj && methods.contains(shortName) && inheritanceLevel > 1) {
+			return methods[shortName];
+		}
+		// predefined method (factory and XObject)
+		if (g_lingo->_methods.contains(shortName) && (type & g_lingo->_methods[shortName].type)) {
+			return g_lingo->_methods[shortName];
+		}
+	} else if (type & (kScriptObj | kXtraObj)) {
+		// predefined method (script object and Xtra)
+		if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].type)) {
+			return g_lingo->_methods[methodName];
+		}
 	}
+
 	return Symbol();
 }
 

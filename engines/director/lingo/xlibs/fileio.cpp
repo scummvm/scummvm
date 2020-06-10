@@ -24,46 +24,60 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-object.h"
-#include "director/lingo/xobject/fileio.h"
+#include "director/lingo/xlibs/fileio.h"
 
 namespace Director {
+
+static Common::String xlibName = "FileIO";
 
 static struct MethodProto {
 	const char *name;
 	void (*func)(int);
 	int minArgs;	// -1 -- arglist
 	int maxArgs;
+	int type;
 	int version;
-} predefinedMethods[] = {
-	{ "mDelete",				FileIO::m_delete,			 0, 0,						2 },	// D2
-	{ "mDispose",				FileIO::m_dispose,			 0, 0,						2 },	// D2
-	{ "mFileName",				FileIO::m_fileName,			 0, 0,						2 },	// D2
-	{ "mGetLength",				FileIO::m_getLength,		 0, 0,						2 },	// D2
-	{ "mGetPosition",			FileIO::m_getPosition,		 0, 0,						2 },	// D2
-	{ "mNew",					FileIO::m_new,				 2, 2,						2 },	// D2
-	{ "mReadChar",				FileIO::m_readChar,			 0, 0,						2 },	// D2
-	{ "mReadLine",				FileIO::m_readLine,			 0, 0,						2 },	// D2
-	{ "mReadToken",				FileIO::m_readToken,		 2, 2,						2 },	// D2
-	{ "mReadWord",				FileIO::m_readWord,			 0, 0,						2 },	// D2
-	{ "mSetPosition",			FileIO::m_setPosition,		 1, 1,						2 },	// D2
-	{ "mWriteChar",				FileIO::m_writeChar,		 1, 1,						2 },	// D2
-	{ "mWriteString",			FileIO::m_writeString,		 1, 1,						2 },	// D2
-	{ 0, 0, 0, 0, 0 }
+} xlibMethods[] = {
+	{ "delete",					FileIO::m_delete,			 0, 0,	kXObj | kXtraObj,		2 },	// D2
+	{ "dispose",				FileIO::m_dispose,			 0, 0,	kXObj,					2 },	// D2
+	{ "fileName",				FileIO::m_fileName,			 0, 0,	kXObj | kXtraObj,		2 },	// D2
+	{ "getLength",				FileIO::m_getLength,		 0, 0,	kXObj | kXtraObj,		2 },	// D2
+	{ "getPosition",			FileIO::m_getPosition,		 0, 0,	kXObj | kXtraObj,		2 },	// D2
+	{ "new",					FileIO::m_new,				 2, 2,	kXObj | kXtraObj,		2 },	// D2
+	{ "readChar",				FileIO::m_readChar,			 0, 0,	kXObj | kXtraObj,		2 },	// D2
+	{ "readLine",				FileIO::m_readLine,			 0, 0,	kXObj | kXtraObj,		2 },	// D2
+	{ "readToken",				FileIO::m_readToken,		 2, 2,	kXObj | kXtraObj,		2 },	// D2
+	{ "readWord",				FileIO::m_readWord,			 0, 0,	kXObj | kXtraObj,		2 },	// D2
+	{ "setPosition",			FileIO::m_setPosition,		 1, 1,	kXObj | kXtraObj,		2 },	// D2
+	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	kXObj | kXtraObj,		2 },	// D2
+	{ "writeString",			FileIO::m_writeString,		 1, 1,	kXObj | kXtraObj,		2 },	// D2
+	{ 0, 0, 0, 0, 0, 0 }
 };
 
-void FileIO::b_openXLib(int nargs) {
-	const Common::String name = "FileIO";
-
-	if (g_lingo->_globalvars.contains(name)) {
-		warning("FileIO already initialized");
-		return;
+void FileIO::initialize(int type) {
+	if (type & kXObj) {
+		if (!g_lingo->_globalvars.contains(xlibName)) {
+			FileObject *xobj = new FileObject(kXObj);
+			xobj->initMethods();
+			g_lingo->_globalvars[xlibName] = Symbol();
+			g_lingo->_globalvars[xlibName].name = new Common::String(xlibName);
+			g_lingo->_globalvars[xlibName].global = true;
+			g_lingo->_globalvars[xlibName].type = OBJECT;
+			g_lingo->_globalvars[xlibName].u.obj = xobj;
+		} else {
+			warning("FileIO XObject already initialized");
+		}
 	}
+	if (type & kXtraObj) {
+		// TODO - Implement Xtra
+	}
+}
 
-	FileXObject *obj = new FileXObject();
+// Initialization/disposal
 
-	for (MethodProto *mtd = predefinedMethods; mtd->name; mtd++) {
-		if (mtd->version > g_lingo->_vm->getVersion())
+void FileObject::initMethods() {
+	for (MethodProto *mtd = xlibMethods; mtd->name; mtd++) {
+		if (mtd->version > g_lingo->_vm->getVersion() || !(type & mtd->type))
 			continue;
 
 		Symbol sym;
@@ -71,22 +85,14 @@ void FileIO::b_openXLib(int nargs) {
 		sym.type = FBLTIN;
 		sym.nargs = mtd->minArgs;
 		sym.maxArgs = mtd->maxArgs;
-		sym.methodType = kXObj;
+		sym.targetType = mtd->type;
 		sym.u.bltin = mtd->func;
-		obj->methods[mtd->name] = sym;
+		methods[mtd->name] = sym;
 	}
-
-	g_lingo->_globalvars[name] = Symbol();
-	g_lingo->_globalvars[name].name = new Common::String(name);
-	g_lingo->_globalvars[name].global = true;
-	g_lingo->_globalvars[name].type = OBJECT;
-	g_lingo->_globalvars[name].u.obj = obj;
 }
 
-// Initialization/disposal
-
-Object *FileXObject::clone() {
-	FileXObject *res = new FileXObject();
+Object *FileObject::clone() {
+	FileObject *res = new FileObject(type);
 	res->disposed = disposed;
 	res->prototype = this;
 	res->properties = properties;
@@ -95,7 +101,7 @@ Object *FileXObject::clone() {
 	return res;
 }
 
-void FileXObject::dispose() {
+void FileObject::dispose() {
 	disposed = true;
 
 	if (filename) {
@@ -120,7 +126,7 @@ void FileXObject::dispose() {
 }
 
 void FileIO::m_new(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
@@ -187,14 +193,14 @@ void FileIO::m_new(int nargs) {
 }
 
 void FileIO::m_dispose(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 	me->dispose();
 }
 
 // Read
 
 void FileIO::m_readChar(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	if (!me->inStream || me->inStream->eos() || me->inStream->err()) {
 		g_lingo->push(Datum(kErrorEOF));
@@ -227,7 +233,7 @@ void FileIO::m_readWord(int nargs) {
 }
 
 void FileIO::m_readToken(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
@@ -273,7 +279,7 @@ void FileIO::m_readToken(int nargs) {
 // Write
 
 void FileIO::m_writeChar(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 	Datum d = g_lingo->pop();
 
 	if (!me->outStream) {
@@ -286,7 +292,7 @@ void FileIO::m_writeChar(int nargs) {
 }
 
 void FileIO::m_writeString(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 	Datum d = g_lingo->pop();
 
 	if (!me->outStream) {
@@ -301,7 +307,7 @@ void FileIO::m_writeString(int nargs) {
 // Other
 
 void FileIO::m_getPosition(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	if (me->inStream) {
 		g_lingo->push(Datum(me->inStream->pos()));
@@ -314,7 +320,7 @@ void FileIO::m_getPosition(int nargs) {
 }
 
 void FileIO::m_setPosition(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 	Datum d = g_lingo->pop();
 	int pos = d.asInt();
 
@@ -341,7 +347,7 @@ void FileIO::m_setPosition(int nargs) {
 }
 
 void FileIO::m_getLength(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	if (me->inStream) {
 		g_lingo->push(Datum(me->inStream->size()));
@@ -354,7 +360,7 @@ void FileIO::m_getLength(int nargs) {
 }
 
 void FileIO::m_fileName(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	if (me->filename) {
 		g_lingo->push(Datum(*me->filename));
@@ -365,7 +371,7 @@ void FileIO::m_fileName(int nargs) {
 }
 
 void FileIO::m_delete(int nargs) {
-	FileXObject *me = static_cast<FileXObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	if (me->filename) {
 		Common::String filename = *me->filename;
