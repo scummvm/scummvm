@@ -270,8 +270,8 @@ public:
 
 	int _mapStat; // CHECKME: Useless? If so, to be removed
 
-	void enAll(); // TODO: Rename later as enableAll
-	void dsAll(); // TODO: Rename later as disableAll
+	void enableUIButtons();
+	void disableUIButtons();
 	bool wound();
 	void GPLogic1_SubSP10();
 	void GPLogic1_SubSP121();

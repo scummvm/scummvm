@@ -24,6 +24,30 @@
 
 namespace Kingdom {
 
+bool _finalFrameTable[] = {
+    false, false, true, false, true, false, true, true, true, false,
+    false, true, true, true, false, true, true, true, true, false,
+    true, true, true, true, true, true, true, false, true, true,
+    false, false, false, true, true, true, true, true, true, true,
+    true, true, true, false, true, false, false, true, true, true,
+    false, true, true, true, false, true, true, true, true, false,
+    false, true, true, true, true, true, true, true, false, false,
+    false, true, false, false, false, false, true, true, false, true,
+    true, true, true, true, true, true, true, true, true, false,
+    true, true, false, false, false, false, true, true, true, false,
+    true, true, true, true, false, false, false, true, false, false,
+    true, true, true, true, true, true, true, false, true, true,
+    false, true, true, true, true, false, true, true, true, true,
+    true, true, true, true, false, true, false, false, false, true,
+    true, true, false, true, true, false, true, true, false, true,
+    true, true, true, false, true, false, false, true, true, true,
+    true, true, false, true, true, true, false, false, false, true,
+    false, true, true, true, true, true, true, false, false, true,
+    true, true, false, false, false, false, true, true, false, true,
+    true, true, true, true, false, false, false, false, false, false,
+    false, false, true, false, false, false, false, false, false, true
+};
+
 const char *_rezNames[] = {
 	"",
 	"KMAP001.lbm",

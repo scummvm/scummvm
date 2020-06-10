@@ -542,7 +542,8 @@ void KingdomGame::playMovie(int movieNum) {
 	delete decoder;
 
 	// This is hidden somewhere in RunMovieCtl callback...
-	showPic(300 + _pMovie);
+	if (_finalFrameTable[_pMovie])
+		showPic(300 + _pMovie);
 
 	if (!_fullScreen) {
 		_treeRightSta = 1;
@@ -1015,7 +1016,7 @@ void KingdomGame::drawLocation() {
 
 	int emlValue = _emlTable[_logic->_nodeNum];
 	if (emlValue > 0)
-		_logic->enAll();
+		_logic->enableUIButtons();
 
 	if (!_mapEx || !emlValue || _logic->_resurrect) {
 		if (_logic->_statPlay != 50)

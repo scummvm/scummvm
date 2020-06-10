@@ -360,7 +360,7 @@ void Logic::GPL1_60() {
 	_vm->drawLocation();
 	_vm->_userInput = 0;
 	if (_nodes[4] == 0) {
-		dsAll();
+		disableUIButtons();
 		_vm->playMovie(9);
 		_statPlay = 991;
 	} else {
@@ -435,7 +435,7 @@ void Logic::GPL1_80() {
 		_vm->_tsIconOnly = true;
 	} else {
 		_nodes[8] = 0;
-		dsAll();
+		disableUIButtons();
 		_vm->playMovie(14);
 		_currMap = 10;
 		_vm->setATimer();
@@ -446,7 +446,7 @@ void Logic::GPL1_80() {
 void Logic::GPL1_81() {
 	switch(_vm->_userInput) {
 	case 0x2F1:
-		dsAll();
+		disableUIButtons();
 		_vm->playMovie(15);
 		_statPlay = 991;
 		_vm->_loopFlag = true;
@@ -454,7 +454,7 @@ void Logic::GPL1_81() {
 	case 0x429:
 		if (!_nodes[8]) {
 			_vm->_aTimer = 0;
-			enAll();
+			enableUIButtons();
 			_vm->playMovie(18);
 			_vm->playSound(3);
 			inventoryDel(1);
@@ -466,7 +466,7 @@ void Logic::GPL1_81() {
 	case 0x42A:
 		if (!_nodes[8]) {
 			_vm->_aTimer = 0;
-			enAll();
+			enableUIButtons();
 			_vm->playMovie(18);
 			_vm->playSound(3);
 			inventoryDel(2);
@@ -478,7 +478,7 @@ void Logic::GPL1_81() {
 	case 0x42C:
 		if (!_nodes[8]) {
 			_vm->_aTimer = 0;
-			enAll();
+			enableUIButtons();
 			_vm->playMovie(16);
 			_vm->playSound(3);
 			_nodes[8] = 9;
@@ -488,7 +488,7 @@ void Logic::GPL1_81() {
 		break;
 	case 0x42D:
 		if (!_nodes[8]) {
-			enAll();
+			enableUIButtons();
 			_vm->playMovie(17);
 			inventoryDel(5);
 			_vm->playSound(3);
@@ -731,7 +731,7 @@ void Logic::GPL1_130() {
 	_nodeNum = 13;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	dsAll();
+	disableUIButtons();
 	_vm->playMovie(4);
 	_statPlay = 991;
 	_vm->_loopFlag = true;
@@ -747,7 +747,7 @@ void Logic::GPL1_140() {
 		_currMap = 10;
 		_statPlay = 141;
 	} else {
-		dsAll();
+		disableUIButtons();
 		_vm->playMovie(27);
 		_statPlay = 991;
 		_vm->_loopFlag = true;
@@ -797,7 +797,7 @@ void Logic::GPL1_151() {
 		break;
 	case 0x445:
 		_statPlay = 80;
-		enAll();
+		enableUIButtons();
 		_vm->_loopFlag = true;
 		_vm->_userInput = 0;
 		break;
@@ -937,7 +937,7 @@ void Logic::GPL1_170() {
 	} else {
 		_nodeNum = 17;
 		_vm->drawLocation();
-		dsAll();
+		disableUIButtons();
 		_vm->playMovie(30);
 		_currMap = 10;
 		_statPlay = 171;
@@ -949,7 +949,7 @@ void Logic::GPL1_170() {
 void Logic::GPL1_171() {
 	switch(_vm->_userInput) {
 	case 0x2F1:
-		enAll();
+		enableUIButtons();
 		if (wound()) {
 			_vm->_aTimer = 0;
 			_replay = false;
@@ -957,7 +957,7 @@ void Logic::GPL1_171() {
 			_statPlay = _nextNode;
 			_vm->_loopFlag = true;
 		} else {
-			dsAll();
+			disableUIButtons();
 			_vm->playMovie(32);
 			_statPlay = 991;
 			_vm->_loopFlag = true;
@@ -966,7 +966,7 @@ void Logic::GPL1_171() {
 	case 0x42C:
 		_vm->_aTimer = 0;
 		_replay = false;
-		enAll();
+		enableUIButtons();
 		_vm->playMovie(34);
 		_vm->_userInput = 0;
 		_nodes[17] = 9;
@@ -1097,7 +1097,7 @@ void Logic::GPL1_190() {
 	_nodeNum = 19;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	dsAll();
+	disableUIButtons();
 	_vm->playMovie(38);
 	_statPlay = 991;
 	_vm->_loopFlag = true;
@@ -1158,7 +1158,7 @@ void Logic::GPL1_210() {
 		_vm->playSound(38);
 		_currMap = 81;
 	} else {
-		dsAll();
+		disableUIButtons();
 		_vm->playMovie(45);
 		_nodes[21] = 0;
 		_currMap = 10;
@@ -1170,7 +1170,7 @@ void Logic::GPL1_210() {
 void Logic::GPL1_211() {
 	switch(_vm->_userInput) {
 	case 0x2F1:
-		dsAll();
+		disableUIButtons();
 		_vm->playMovie(46);
 		_statPlay = 991;
 		_vm->_loopFlag = true;
@@ -1184,7 +1184,7 @@ void Logic::GPL1_211() {
 			_vm->_userInput = 0;
 		} else {
 			_vm->playMovie(178);
-			dsAll();
+			disableUIButtons();
 			_vm->playMovie(46);
 			_statPlay = 991;
 			_vm->_loopFlag = true;
@@ -1193,7 +1193,7 @@ void Logic::GPL1_211() {
 	case 0x42A:
 		if (!_nodes[21]) {
 			_vm->_aTimer = 0;
-			enAll();
+			enableUIButtons();
 			_vm->playMovie(48);
 			inventoryDel(2);
 			_nodes[21] = 1;
@@ -1205,7 +1205,7 @@ void Logic::GPL1_211() {
 	case 0x42D:
 		if (!_nodes[21]) {
 			_vm->_aTimer = 0;
-			enAll();
+			enableUIButtons();
 			_vm->playMovie(47);
 			_vm->playSound(38);
 			inventoryDel(5);
@@ -1240,7 +1240,7 @@ void Logic::GPL1_211() {
 	case 0x442:
 		if (_vm->_tsIconOnly) {
 			_vm->_aTimer = 0;
-			enAll();
+			enableUIButtons();
 			_vm->playMovie(49);
 			_vm->_tsIconOnly = false;
 			_vm->playSound(38);
@@ -1316,7 +1316,7 @@ void Logic::GPL1_221() {
 		break;
 	case 0x42C:
 		if (!_nodes[22]) {
-			dsAll();
+			disableUIButtons();
 			_vm->playMovie(43);
 			_vm->playSound(34);
 			_statPlay = 991;
@@ -1351,7 +1351,7 @@ void Logic::GPL1_230() {
 	_nodeNum = 23;
 	_vm->drawLocation();
 	_vm->_userInput = 0;
-	dsAll();
+	disableUIButtons();
 	_vm->playMovie(50);
 	_statPlay = 991;
 	_vm->_loopFlag = true;

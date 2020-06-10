@@ -93,7 +93,7 @@ void Logic::GPL4_901() {
 			_vm->playMovie(10);
 			inventoryDel(3);
 			_vm->_tsIconOnly = false;
-			enAll();
+			enableUIButtons();
 			switchAS();
 			_mapStat = 0;
 		}
@@ -136,7 +136,7 @@ void Logic::GPL4_991() {
 		_vm->drawPic(179);
 		_vm->_skylarTimer = 0;
 		_vm->_skylarTimerFlag = false;
-		enAll();
+		enableUIButtons();
 		_vm->_mapEx = true;
 		_nodeNum = 5;
 		_vm->drawLocation();
@@ -183,7 +183,7 @@ void Logic::GPL4_992() {
 		_vm->drawPic(179);
 		_vm->_skylarTimer = 0;
 		_vm->_skylarTimerFlag = false;
-		enAll();
+		enableUIButtons();
 		_vm->_mapEx = true;
 		_nodeNum = 27;
 		_vm->drawLocation();
@@ -228,7 +228,7 @@ void Logic::GPL4_992_demo() {
 		_vm->drawPic(179);
 		_vm->_skylarTimer = 0;
 		_vm->_skylarTimerFlag = false;
-		enAll();
+		enableUIButtons();
 		_nodeNum = 27;
 		_vm->drawLocation();
 		_resurrect = true;
@@ -276,7 +276,7 @@ void Logic::GPL4_993() {
 		_vm->drawPic(179);
 		_vm->_skylarTimer = 0;
 		_vm->_skylarTimerFlag = false;
-		enAll();
+		enableUIButtons();
 		_vm->_mapEx = true;
 		_nodeNum = 52;
 		_vm->drawLocation();
@@ -324,7 +324,7 @@ void Logic::GPL4_993_demo() {
 		_vm->drawPic(179);
 		_vm->_skylarTimer = 0;
 		_vm->_skylarTimerFlag = false;
-		enAll();
+		enableUIButtons();
 		_nodeNum = 52;
 		_vm->drawLocation();
 		_resurrect = true;

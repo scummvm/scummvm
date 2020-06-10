@@ -74,7 +74,7 @@ void Logic::initPlay() {
 	_health = 12;
 	_healthOld = 1;
 	_lastObs = false;
-	enAll();
+	enableUIButtons();
 	_pouch = true;
 
 	initOpcodes();
@@ -294,7 +294,7 @@ void Logic::initOpcodesFull() {
 	_opCodes[993] = &Logic::GPL4_993;
 }
 
-void Logic::enAll() {
+void Logic::enableUIButtons() {
 	_help = true;
 	_eye = true;
 	_replay = true;
@@ -302,7 +302,7 @@ void Logic::enAll() {
 	_fstFwd = true;
 }
 
-void Logic::dsAll() {
+void Logic::disableUIButtons() {
 	_help = false;
 	_eye = false;
 	_replay = false;
@@ -395,12 +395,12 @@ void Logic::endCredits() {
 	_vm->fadeToBlack1();
 	_vm->drawRect(4, 17, 228, 161, 0);
 	_vm->playSound(0);
-	dsAll();
+	disableUIButtons();
 	_vm->_iconsClosed = true;
 	_vm->playMovie(199);
-	dsAll();
+	disableUIButtons();
 	_vm->playMovie(205);
-	dsAll();
+	disableUIButtons();
 	_vm->fadeToBlack1();
 	_vm->drawRect(4, 17, 228, 161, 0);
 	_vm->playMovie(201);
@@ -472,14 +472,17 @@ void Logic::gameHelp() {
 
 	switch(_vm->_userInput) {
 	case 0x240:
+		// New game
 		_vm->fadeToBlack2();
 		//TODO: Set _quitFlag to 1
 		break;
 	case 0x241:
+		// Resume game
 		gameHelp_Sub43C();
 		return;
 		break;
 	case 0x242:
+		// Music On/Off
 		if (_vm->_noMusic) {
 			_vm->_noMusic = false;
 			_vm->playSound(1);
@@ -490,6 +493,7 @@ void Logic::gameHelp() {
 		_vm->drawHelpScreen();
 		break;
 	case 0x243: {
+		// Show Demo
 		_vm->fadeToBlack2();
 		_vm->_keyActive = false;
 		_vm->_noIFScreen = true;
@@ -510,10 +514,13 @@ void Logic::gameHelp() {
 		}
 		break;
 	case 0x244:
+		// Quit
 		//TODO: Set _quitFlag to 2
 		_vm->_quit = true;
 		break;
 	case 0x245: {
+		// Show Credits
+		
 		_vm->fadeToBlack1();
 		// The demo isn't saving pMovie.
 		// It's obviously a bug and this behavior wasn't kept in ScummVM
@@ -565,7 +572,7 @@ void Logic::switchAS() {
 
 void Logic::characterDeath() {
 	_currMap = 3;
-	dsAll();
+	disableUIButtons();
 	_pouch = false;
 	for (int i = 0; i != 19; ++i) {
 		_inventory[i] = -1;
