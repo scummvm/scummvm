@@ -77,7 +77,6 @@ static struct FuncDescr {
 	{ LC::c_div,			"c_div",			"" },
 	{ LC::c_eq,				"c_eq",				"" },
 	{ LC::c_eval,			"c_eval",			"s" },
-	{ LC::c_exitRepeat,		"c_exitRepeat",		"" },
 	{ LC::c_floatpush,		"c_floatpush",		"f" },
 	{ LC::c_ge,				"c_ge",				"" },
 	{ LC::c_goto,			"c_goto",			"" },
@@ -102,7 +101,6 @@ static struct FuncDescr {
 	{ LC::c_namepush,		"c_namepush",		"N" },
 	{ LC::c_negate,			"c_negate",			"" },
 	{ LC::c_neq,			"c_neq",			"" },
-	{ LC::c_nextRepeat,		"c_nextRepeat",		"" },
 	{ LC::c_not,			"c_not",			"" },
 	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
 	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
@@ -1204,16 +1202,6 @@ void LC::c_jumpifz() {
 	if (test == 0) {
 		g_lingo->_pc = g_lingo->_pc + jump - 2;
 	}
-}
-
-void LC::c_nextRepeat(void) {
-	// loop body is a single instruction chunk which ends with
-	// STOP. Now we simulate end of execution of this chunk
-	g_lingo->_nextRepeat = true;
-}
-
-void LC::c_exitRepeat(void) {
-	g_lingo->_exitRepeat = true;
 }
 
 void LC::c_whencode() {

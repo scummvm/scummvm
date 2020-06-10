@@ -303,6 +303,11 @@ struct LingoArchive {
 	SymbolHash functionHandlers;
 };
 
+struct RepeatBlock {
+	Common::Array<uint32> exits;
+	Common::Array<uint32> nexts;
+};
+
 class Lingo {
 
 public:
@@ -475,6 +480,7 @@ public:
 	bool _ignoreError;
 	bool _inFactory;
 	Object *_currentFactory;
+	Common::Array<RepeatBlock *> _repeatStack;
 
 	Common::Array<Common::String *> _argstack;
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
@@ -488,7 +494,6 @@ public:
 	Object *_currentMeObj;
 
 	bool _abort;
-	bool _nextRepeat;
 	bool _immediateMode;
 
 	Common::Array<CFrame *> _callstack;
@@ -508,8 +513,6 @@ public:
 	bool _hadError;
 
 	bool _inCond;
-
-	bool _exitRepeat;
 
 	bool _cursorOnStack;
 

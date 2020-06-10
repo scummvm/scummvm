@@ -159,7 +159,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentChannelId = -1;
 	_pc = 0;
 	_abort = false;
-	_nextRepeat = false;
 	_indef = kStateNone;
 	_indef = kStateNone;
 	_immediateMode = false;
@@ -176,8 +175,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_floatPrecisionFormat = "%.4f";
 
 	_cursorOnStack = false;
-
-	_exitRepeat = false;
 
 	_localvars = NULL;
 
@@ -561,7 +558,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 void Lingo::execute(uint pc) {
 	int counter = 0;
 
-	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP && !_nextRepeat;) {
+	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP;) {
 		Common::String instr = decodeInstruction(_currentScript, _pc);
 		uint current = _pc;
 

@@ -95,11 +95,9 @@ namespace LC {
 	void c_objectfieldassign();
 	void c_objectrefpush();
 
-	void c_nextRepeat();
 	void c_whencode();
 	void c_tell();
 	void c_telldone();
-	void c_exitRepeat();
 	Datum compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location = false, bool value = false);
 	Datum eqData(Datum d1, Datum d2);
 	void c_eq();

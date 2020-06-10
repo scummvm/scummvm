@@ -104,6 +104,28 @@ static void endDef() {
 	inNone();
 }
 
+static void startRepeat() {
+	g_lingo->_repeatStack.push_back(new RepeatBlock);
+}
+
+static void endRepeat(uint exitPos, uint nextPos) {
+	RepeatBlock *block = g_lingo->_repeatStack.back();
+	g_lingo->_repeatStack.pop_back();
+	for (uint i = 0; i < block->exits.size(); i++) {
+		uint32 pos = block->exits[i];
+		inst exit = 0;
+		WRITE_UINT32(&exit, exitPos - (pos - 1));
+		(*g_lingo->_currentAssembly)[pos] = exit;
+	}
+	for (uint i = 0; i < block->nexts.size(); i++) {
+		uint32 pos = block->nexts[i];
+		inst next = 0;
+		WRITE_UINT32(&next, nextPos - (pos - 1));
+		(*g_lingo->_currentAssembly)[pos] = next;
+	}
+	delete block;
+}
+
 static VarType globalCheck() {
 	// If in a definition, assume variables are local unless
 	// they were declared global with `global varname`
@@ -290,12 +312,13 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| tREPEAT tWHILE lbl expr jumpifz[body] stmtlist jump[end2] tENDREPEAT	{
+	| tREPEAT tWHILE lbl expr jumpifz[body] startrepeat stmtlist jump[end2] tENDREPEAT	{
 		inst start = 0, end = 0;
 		WRITE_UINT32(&start, $lbl - $end2 + 1);
 		WRITE_UINT32(&end, $end2 - $body + 2);
 		(*g_lingo->_currentAssembly)[$body] = end;		/* end, if cond fails */
-		(*g_lingo->_currentAssembly)[$end2] = start; }	/* looping back */
+		(*g_lingo->_currentAssembly)[$end2] = start;	/* looping back */
+		endRepeat($end2 + 1, $lbl);	}	/* code any exit/next repeats */
 
 	// repeat with index = start to end
 	//   statements
@@ -309,8 +332,9 @@ stmt: stmtoneliner
 				{ g_lingo->code1(LC::c_eval);
 				  g_lingo->codeString($ID->c_str()); }
 			tTO expr[finish]
-				{ g_lingo->code1(LC::c_le); } jumpifz stmtlist tENDREPEAT {
+				{ g_lingo->code1(LC::c_le); } jumpifz startrepeat stmtlist tENDREPEAT {
 
+		int nextPos = g_lingo->_currentAssembly->size();
 		g_lingo->code1(LC::c_eval);
 		g_lingo->codeString($ID->c_str());
 		g_lingo->code1(LC::c_intpush);
@@ -326,7 +350,9 @@ stmt: stmtoneliner
 		WRITE_UINT32(&loop, $varassign - pos + 2);
 		WRITE_UINT32(&end, pos - $jumpifz + 2);
 		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
-		(*g_lingo->_currentAssembly)[$jumpifz] = end;	}	/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;	/* end, if cond fails */
+		endRepeat(pos + 1, nextPos); }	/* code any exit/next repeats */
+
 
 	// repeat with index = high down to low
 	//   statements
@@ -341,8 +367,9 @@ stmt: stmtoneliner
 				  g_lingo->codeString($ID->c_str()); }
 			tDOWN tTO expr[finish]
 				{ g_lingo->code1(LC::c_ge); }
-			jumpifz stmtlist tENDREPEAT {
+			jumpifz startrepeat stmtlist tENDREPEAT {
 
+		int nextPos = g_lingo->_currentAssembly->size();
 		g_lingo->code1(LC::c_eval);
 		g_lingo->codeString($ID->c_str());
 		g_lingo->code1(LC::c_intpush);
@@ -358,8 +385,8 @@ stmt: stmtoneliner
 		WRITE_UINT32(&loop, $varassign - pos + 2);
 		WRITE_UINT32(&end, pos - $jumpifz + 2);
 		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
-		(*g_lingo->_currentAssembly)[$jumpifz] = end;	}	/* end, if cond fails */
-
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;	/* end, if cond fails */
+		endRepeat(pos + 1, nextPos); }	/* code any exit/next repeats */
 
 	// repeat with index in list
 	//   statements
@@ -389,8 +416,9 @@ stmt: stmtoneliner
 				  g_lingo->codeString($ID->c_str());
 				  mVar($ID, globalCheck());
 				  g_lingo->code1(LC::c_assign); }
-			stmtlist tENDREPEAT {
+			startrepeat stmtlist tENDREPEAT {
 
+		int nextPos = g_lingo->_currentAssembly->size();
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(LC::c_add);			// Increment counter
@@ -405,15 +433,24 @@ stmt: stmtoneliner
 		WRITE_UINT32(&end, end2 - $jumpifz + 1);
 
 		(*g_lingo->_currentAssembly)[jump + 1] = loop;		/* final count value */
-		(*g_lingo->_currentAssembly)[$jumpifz] = end;	}	/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;		/* end, if cond fails */
+		endRepeat(end2, nextPos); }	/* code any exit/next repeats */
 
 	| tNEXT tREPEAT {
-		g_lingo->code1(LC::c_nextRepeat); }
+		if (g_lingo->_repeatStack.size()) {
+			g_lingo->code2(LC::c_jump, 0);
+			int pos = g_lingo->_currentAssembly->size() - 1;
+			g_lingo->_repeatStack.back()->nexts.push_back(pos);
+		} else {
+			warning("# LINGO: next repeat not inside repeat block");
+		} }
 	| tWHEN ID tTHEN expr {
 		g_lingo->code1(LC::c_whencode);
 		g_lingo->codeString($ID->c_str()); }
 	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL { g_lingo->code1(LC::c_telldone); }
 	| tTELL expr tTO tellstart stmtoneliner lbl { g_lingo->code1(LC::c_telldone); }
+
+startrepeat:	/* nothing */	{ startRepeat(); }
 
 tellstart:	  /* empty */	{ g_lingo->code1(LC::c_tell); }
 
@@ -584,7 +621,14 @@ reference: 	RBLTIN simpleexpr	{
 proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| gotofunc
 	| playfunc
-	| tEXIT tREPEAT				{ g_lingo->code1(LC::c_exitRepeat); }
+	| tEXIT tREPEAT				{
+		if (g_lingo->_repeatStack.size()) {
+			g_lingo->code2(LC::c_jump, 0);
+			int pos = g_lingo->_currentAssembly->size() - 1;
+			g_lingo->_repeatStack.back()->exits.push_back(pos);
+		} else {
+			warning("# LINGO: exit repeat not inside repeat block");
+		} }
 	| tEXIT						{ g_lingo->code1(LC::c_procret); }
 	| tGLOBAL					{ inArgs(); } globallist { inLast(); }
 	| tPROPERTY					{ inArgs(); } propertylist { inLast(); }
