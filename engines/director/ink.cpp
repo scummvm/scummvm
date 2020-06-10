@@ -34,9 +34,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	bool nullMask = false;
 
 	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
-	if (maskSurface->w != drawRect.width() || maskSurface->h != drawRect.height()) {
-		warning("Score::inkBasedBlit: Mismatched dimensions of mask surface and drawRect: %d", spriteId);
-	}
 
 	maskSurface->transBlitFrom(*_maskSurface, drawRect, Common::Point(0, 0), _stageColor);
 
