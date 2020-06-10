@@ -121,6 +121,7 @@ static const char *const selectorNameTable[] = {
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"givePoints",   // King's Quest 6
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
 	"cycler",       // Space Quest 4 / system selector
@@ -239,6 +240,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
+	SELECTOR_givePoints,
 	SELECTOR_has,
 	SELECTOR_modeless,
 	SELECTOR_cycler,
@@ -4626,6 +4628,57 @@ static const uint16 kq6PatchCliffStepFloatFix[] = {
 	PATCH_END
 };
 
+// After casting the Make Rain spell, collecting the baby's tears a second time
+//  awards a duplicate point. The script getBabyTears is missing a flag check to
+//  prevent this. The falling water from Beast's fountain doesn't have this bug
+//  because it tests flag 14 before awarding its point. Flag 14 is set when the
+//  Druids catch Alexander. We add the missing flag check.
+//
+// Applies to: All versions
+// Responsible method: getBabyTears:changeState(4)
+static const uint16 kq6SignatureDuplicateBabyTearsPoint[] = {
+	0x31, 0x0f,                         // bnt 0f [ state 4 ]
+	SIG_ADDTOOFFSET(+12),
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0040),           // bnt 0040
+	0x89, 0xa1,                         // lsg a1
+	0x35, SIG_MAGICDWORD, 0x04,         // ldi 04
+	0x14,                               // or
+	0xa1, 0xa1,                         // sag a1
+	0x38, SIG_SELECTOR16(givePoints),   // pushi givePoints
+	0x78,                               // push1
+	0x78,                               // push1
+	0x81, 0x01,                         // lag 01
+	0x4a, 0x06,                         // send 06 [ Kq6 givePoints: 1 ]
+	SIG_ADDTOOFFSET(+45),
+	0x32,                               // jmp [ end of method ]
+	SIG_END
+};
+
+static const uint16 kq6PatchDuplicateBabyTearsPoint[] = {
+	0x31, 0x0c,                         // bnt 0c [ state 4 ]
+	PATCH_ADDTOOFFSET(+12),
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	0x31, 0x44,                         // bnt 44
+	0x81, 0xa1,                         // lag a1
+	0x14,                               // or
+	0xa1, 0xa1,                         // sag a1
+	0x81, 0x89,                         // lag 89 [ flags ]
+	0x7a,                               // push2  [ flag 14 ]
+	0x12,                               // and    [ has storm occurred? ]
+	0x2f, 0x09,                         // bt 09  [ skip point ]
+	PATCH_ADDTOOFFSET(+54),
+	0x48,                               // ret    [ prevent toss, stack is empty ]
+	0x00,                               // bnot
+	0x00,                               // bnot
+	PATCH_END
+};
+
 // KQ6 truncates messages longer than 400 characters in the CD and Mac versions.
 //  This is most prominent when reading Cassima's letter to Alexander. When the
 //  Messager class was upgraded to support audio, a 400 character buffer was
@@ -5104,6 +5157,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
+	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
