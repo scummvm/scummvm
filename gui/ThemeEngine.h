@@ -389,6 +389,8 @@ public:
 
 	int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const;
 
+	int getStringWidth(const Common::U32String &str, FontStyle font = kFontStyleBold) const;
+
 	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const;
 
 	int getKerningOffset(byte left, byte right, FontStyle font = kFontStyleBold) const;
