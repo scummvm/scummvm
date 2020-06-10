@@ -70,7 +70,7 @@ void Comprehend::runGame() {
 	createGame();
 
 	comprehend_load_game(_game);
-	comprehend_play_game(_game);
+	_game->playGame();
 
 	deinitialize();
 }

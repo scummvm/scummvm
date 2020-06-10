@@ -70,7 +70,7 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	room = &_rooms[_currentRoom];
 	turn_count = _variables[VAR_TURN_COUNT];
 
-	monster = get_item(this, monsterInfo->object);
+	monster = get_item(monsterInfo->object);
 	if (monster->room == _currentRoom) {
 		// The monster is in the current room - leave it there
 		return;
@@ -85,10 +85,10 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 		 * it back to limbo.
 		 */
 		if ((g_comprehend->getRandomNumber(0x7fffffff) % monsterInfo->randomness) == 0) {
-			move_object(this, monster, _currentRoom);
+			move_object(monster, _currentRoom);
 			_variables[0xf] = turn_count + 1;
 		} else {
-			move_object(this, monster, ROOM_NOWHERE);
+			move_object(monster, ROOM_NOWHERE);
 		}
 	}
 }
@@ -123,11 +123,11 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 		break;
 
 	case 0x06:
-		game_save(this);
+		game_save();
 		break;
 
 	case 0x07:
-		game_restore(this);
+		game_restore();
 		break;
 
 	case 0x03:
@@ -138,7 +138,7 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	// fall through
 	case 0x08:
 		// Restart game
-		game_restart(this);
+		game_restart();
 		break;
 
 	case 0x09:
@@ -160,14 +160,14 @@ void TransylvaniaGame::beforeGame() {
 	g_comprehend->drawPicture(TITLE_IMAGE);
 
 	// Welcome to Transylvania - sign your name
-	console_println(this, _strings[0x20].c_str());
+	console_println(_strings[0x20].c_str());
 	g_comprehend->readLine(buffer, sizeof(buffer));
 
 	// The player's name is stored in word 0
 	_replaceWords[0] = Common::String(buffer);
 
 	// And your next of kin - This isn't stored by the game
-	console_println(this, _strings[0x21].c_str());
+	console_println(_strings[0x21].c_str());
 	g_comprehend->readLine(buffer, sizeof(buffer));
 }
 

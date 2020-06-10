@@ -55,13 +55,13 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 	case 0x01:
 		// Enter the Vampire's throne room
 		assert(_diskNum == 1);
-		eval_function(this, &_functions[0xe], nullptr, nullptr);
+		eval_function(&_functions[0xe], nullptr, nullptr);
 		break;
 
 	case 0x03:
 		// Game over - failure
 		setupDisk(1);
-		game_restart(this);
+		game_restart();
 		break;
 
 	case 0x05:
@@ -71,16 +71,16 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 		} else {
 			// Won the game.
 			// FIXME: The merchant ship should arrives, etc.
-			game_restart(this);
+			game_restart();
 		}
 		break;
 
 	case 0x06:
-		game_save(this);
+		game_save();
 		break;
 
 	case 0x07:
-		game_restore(this);
+		game_restore();
 		break;
 
 	default:

@@ -117,17 +117,17 @@ void OOToposGame::handleSpecialOpcode(uint8 operand) {
 	// fall through
 	case 0x04:
 		// Restart game
-		game_restart(this);
+		game_restart();
 		break;
 
 	case 0x06:
 		// Save game
-		game_save(this);
+		game_save();
 		break;
 
 	case 0x07:
 		// Restore game
-		game_restore(this);
+		game_restore();
 		break;
 	}
 }
