@@ -1041,8 +1041,12 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 
 void Lingo::printAllVars() {
 	debugN("  Local vars: ");
-	for (SymbolHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
-		debugN("%s, ", (*i)._key.c_str());
+	if (_localvars) {
+		for (SymbolHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
+			debugN("%s, ", (*i)._key.c_str());
+		}
+	} else {
+		debugN("(no local vars)");
 	}
 	debugN("\n");
 
