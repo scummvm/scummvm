@@ -42,17 +42,6 @@ enum {
 	TITLE_IMAGE = 9999
 };
 
-enum Shape {
-	SHAPE_PIXEL = 0,
-	SHAPE_BOX = 1,
-	SHAPE_CIRCLE_TINY = 2,
-	SHAPE_CIRCLE_SMALL = 3,
-	SHAPE_CIRCLE_MED = 4,
-	SHAPE_CIRCLE_LARGE = 5,
-	SHAPE_A = 6,
-	SHAPE_SPRAY = 7
-};
-
 class Pics : public Common::Archive {
 	struct ImageContext {
 		Common::File _file;

@@ -169,6 +169,41 @@ const uint32 *Surface::COLOR_TABLES[2] = {
 	COLOR_TABLE_1,
 };
 
+static const byte SHAPE_DATA[32][8] = {
+	{    0,    0,    0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0,    0,    0, 0x80 },
+	{    0,    0,    0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0,    0,    0,    1 },
+	{    1,    0,    0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0,    0,    0, 0x80 },
+	{ 0x80,    0,    0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0,    0,    1,    3 },
+	{    3,    1,    0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0,    0, 0x80, 0xC0 },
+	{ 0xC0, 0x80,    0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0,    3,    7,    7 },
+	{    7,    7,    3,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0, 0xC0, 0xE0, 0xE0 },
+	{ 0xE0, 0xE0, 0xC0,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    3, 0x0F, 0x0F, 0x1F, 0x1F },
+	{ 0x1F, 0x1F, 0x0F, 0x0F,    3,    0,    0,    0 },
+	{    0,    0,    0, 0xC0, 0xF0, 0xF0, 0xF8, 0xF8 },
+	{ 0xF8, 0xF8, 0xF0, 0xF0, 0xC0,    0,    0,    0 },
+	{    0,    3, 0x1F, 0x3F, 0x3F, 0x3F, 0x7F, 0x7F },
+	{ 0x7F, 0x7F, 0x3F, 0x3F, 0x3F, 0x1F,    3,    0 },
+	{    0, 0xC0, 0xF8, 0xFC, 0xFC, 0xFC, 0xFE, 0xFE },
+	{ 0xFE, 0xFE, 0xFC, 0xFC, 0xFC, 0xF8, 0xC0,    0 },
+	{    0,    0,    0,    0,    1,    8,    2,    0 },
+	{ 0x0A,    0,    4,    0,    0,    0,    0,    0 },
+	{    0,    0,    0,    0,    0, 0x20,    0, 0x90 },
+	{    0, 0xA0,    0, 0x80,    0,    0,    0,    0 },
+	{    0,    2,    8, 0x12,    1, 0x24, 0x0B,    3 },
+	{ 0x23,    9, 0x22, 0x0A,    4,    1,    0,    0 },
+	{    0, 0x20, 0x80, 0x28,    0, 0xD4, 0xC0, 0xE4 },
+	{ 0xE8, 0x90, 0x44, 0xA8,    0, 0x50,    0,    0 }
+};
+
 /*-------------------------------------------------------*/
 
 void Surface::reset() {
@@ -264,110 +299,29 @@ void Surface::drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color
 	fillRect(r, color);
 }
 
-void Surface::drawShape(int16 x, int16 y, int shape_type, uint32 fill_color) {
-	return;//***DEBUG****
-	int i, j;
+void Surface::drawShape(int16 x, int16 y, Shape shapeType, uint32 fillColor) {
+	uint shapeNum = (uint)shapeType * 4;
 
-	switch (shape_type) {
-	case SHAPE_PIXEL:
-		x += 7;
-		y += 7;
-		drawPixel(x, y, fill_color);
-		break;
+	// Outer loop to draw the shape across a 2x2 grid of 8x8 sub-shapes
+	for (int shapeX = 0; shapeX <= 8; shapeX += 8) {
+		for (int shapeY = 0; shapeY <= 8; shapeY += 8, ++shapeNum) {
+			// Inner loop for character
+			for (int charY = 0; charY < 8; ++charY) {
+				int yp = y + shapeY + charY;
+				if (yp < 0 || yp >= this->h)
+					continue;
 
-	case SHAPE_BOX:
-		x += 6;
-		y += 7;
-		drawFilledBox(x, y, x + 2, y + 2, fill_color);
-		break;
+				int xp = x + shapeX;
+				uint32 *lineP = (uint32 *)getBasePtr(xp, yp);
+				byte bits = SHAPE_DATA[shapeNum][charY];
 
-	case SHAPE_CIRCLE_TINY:
-		x += 5;
-		y += 5;
-		drawFilledBox(x + 1, y, x + 3, y + 4, fill_color);
-		drawFilledBox(x, y + 1, x + 4, y + 3, fill_color);
-		break;
+				for (int charX = 0; charX < 8; ++lineP, ++charX, ++xp, bits <<= 1) {
+					if (xp >= 0 && xp < this->w && (bits & 0x80) != 0)
+						*lineP = fillColor;
+				}
+			}
 
-	case SHAPE_CIRCLE_SMALL:
-		x += 4;
-		y += 4;
-		drawFilledBox(x + 1, y, x + 5, y + 6, fill_color);
-		drawFilledBox(x, y + 1, x + 6, y + 5, fill_color);
-		break;
-
-	case SHAPE_CIRCLE_MED:
-		x += 1;
-		y += 1;
-		drawFilledBox(x + 1,
-		              y + 1,
-		              x + 1 + (2 + 4 + 2),
-		              y + 1 + (2 + 4 + 2),
-		              fill_color);
-		drawFilledBox(x + 3,
-		              y,
-		              x + 3 + 4,
-		              y + (1 + 2 + 4 + 2 + 1),
-		              fill_color);
-		drawFilledBox(x,
-		              y + 3,
-		              x + (1 + 2 + 4 + 2 + 1),
-		              y + 3 + 4,
-		              fill_color);
-		break;
-
-	case SHAPE_CIRCLE_LARGE:
-		drawFilledBox(x + 2,
-		              y + 1,
-		              x + 2 + (3 + 4 + 3),
-		              y + 1 + (1 + 3 + 4 + 3 + 1),
-		              fill_color);
-		drawFilledBox(x + 1,
-		              y + 2,
-		              x + 1 + (1 + 3 + 4 + 3 + 1),
-		              y + 2 + (3 + 4 + 3),
-		              fill_color);
-		drawFilledBox(x + 5,
-		              y,
-		              x + 5 + 4,
-		              y + 1 + 1 + 3 + 4 + 3 + 1 + 1,
-		              fill_color);
-		drawFilledBox(x,
-		              y + 5,
-		              x + 1 + 1 + 3 + 4 + 3 + 1 + 1,
-		              y + 5 + 4,
-		              fill_color);
-		break;
-
-	case SHAPE_A:
-		/* FIXME - very large circle? */
-		break;
-
-	case SHAPE_SPRAY: {
-		char spray[13][13] = {
-			{0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0},
-			{0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-			{0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1},
-			{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-			{1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0},
-			{0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0},
-			{1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0},
-			{0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0},
-			{1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0},
-			{0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0},
-			{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
-		};
-		for (i = 0; i < 13; i++)
-			for (j = 0; j < 13; j++)
-				if (spray[i][j])
-					drawPixel(x + i, y + j, fill_color);
-		break;
-	}
-
-	default:
-		/* Unknown shape */
-		break;
+		}
 	}
 }
 

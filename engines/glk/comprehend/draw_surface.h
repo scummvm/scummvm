@@ -63,6 +63,18 @@ namespace Comprehend {
 #define G_COLOR_BROWN1        0x7a5200ff
 #define G_COLOR_BROWN2        0x663300ff
 
+enum Shape {
+	SHAPE_PIXEL = 0,
+	SHAPE_BOX = 1,
+	SHAPE_CIRCLE_TINY = 2,
+	SHAPE_CIRCLE_SMALL = 3,
+	SHAPE_CIRCLE_MED = 4,
+	SHAPE_CIRCLE_LARGE = 5,
+	SHAPE_A = 6,
+	SHAPE_SPRAY = 7
+};
+
+
 class Surface : public Graphics::ManagedSurface {
 private:
 	static const uint32 PEN_COLORS[8];
@@ -89,7 +101,7 @@ public:
 	void drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
 	void drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color);
-	void drawShape(int16 x, int16 y, int shape_type, uint32 fill_color);
+	void drawShape(int16 x, int16 y, Shape shapeType, uint32 fill_color);
 	void drawPixel(int16 x, int16 y, uint32 color);
 	uint32 getPixelColor(int16 x, int16 y) const;
 	void clearScreen(uint32 color);

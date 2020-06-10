@@ -216,7 +216,6 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 	case OPCODE_DRAW_SHAPE:
 		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
 		b = imageGetOperand(ctx);
-
 		debugC(kDebugGraphics, "draw_shape(%d, %d), style=%.2x, fill=%.2x",
 		       a, b, ctx->_shape, ctx->_fillColor);
 
