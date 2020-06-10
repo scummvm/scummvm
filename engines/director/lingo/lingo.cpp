@@ -410,6 +410,20 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	delete _methodVars;
 	_methodVars = nullptr;
 
+	if (debugChannelSet(1, kDebugCompile)) {
+		debug("Function vars");
+		debugN("  Args: ");
+		for (uint i = 0; i < argNames->size(); i++) {
+			debugN("%s, ", (*argNames)[i].c_str());
+		}
+		debugN("\n");
+		debugN("  Local vars: ");
+		for (uint i = 0; i < varNames->size(); i++) {
+			debugN("%s, ", (*varNames)[i].c_str());
+		}
+		debugN("\n");
+	}
+
 	currentFunc.argNames = argNames;
 	currentFunc.varNames = varNames;
 	_currentScriptContext->functions.push_back(currentFunc);

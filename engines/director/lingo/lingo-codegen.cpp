@@ -126,6 +126,20 @@ Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *fac
 	}
 	Symbol sym = define(name, nargs, code, argNames, varNames, factory);
 
+	if (debugChannelSet(1, kDebugCompile)) {
+		debug("Function vars");
+		debugN("  Args: ");
+		for (uint i = 0; i < argNames->size(); i++) {
+			debugN("%s, ", (*argNames)[i].c_str());
+		}
+		debugN("\n");
+		debugN("  Local vars: ");
+		for (uint i = 0; i < varNames->size(); i++) {
+			debugN("%s, ", (*varNames)[i].c_str());
+		}
+		debugN("\n");
+	}
+
 	// Now remove all defined code from the _currentAssembly
 	if (removeCode)
 		for (int i = end - 1; i >= start; i--) {
