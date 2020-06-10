@@ -90,8 +90,6 @@ static void inNone() { g_lingo->_indef = kStateNone; }
 
 static void startDef() {
 	inArgs();
-	g_lingo->_methodVarsStash = g_lingo->_methodVars;
-	g_lingo->_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 
 	if (g_lingo->_inFactory) {
 		for (SymbolHash::iterator i = g_lingo->_currentFactory->properties.begin(); i != g_lingo->_currentFactory->properties.end(); ++i) {
@@ -103,10 +101,6 @@ static void startDef() {
 static void endDef() {
 	g_lingo->clearArgStack();
 	inNone();
-
-	delete g_lingo->_methodVars;
-	g_lingo->_methodVars = g_lingo->_methodVarsStash;
-	g_lingo->_methodVarsStash = nullptr;
 }
 
 static VarType globalCheck() {
