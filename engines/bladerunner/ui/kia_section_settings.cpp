@@ -131,7 +131,7 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_uiContainer->add(_directorsCut);
 	if (_vm->_subtitles->isSystemActive()) {
 		_uiContainer->add(_subtitlesEnable);
-		// Note: Keep _languageSelectorScrollBox last added to _uiContainer
+		// Note: Keep _textLanguageDropdown last added to _uiContainer
 		// in order to be able to set it as the only active object
 		// when the language selection dropdown is shown.
 		_uiContainer->add(_textLanguageDropdown);

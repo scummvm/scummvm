@@ -62,15 +62,7 @@ class KIASectionSettings : public KIASectionBase {
 	Common::String _selectedTextLanguageStr;
 	int            _selectedTextLanguageId;
 
-	UIDropDown     *_textLanguageDropdown;
-
-//	UIScrollBox   *_languageSelectorScrollBox;
-//	UIImagePicker *_languageDropdownBtn;
-//	Common::Rect   _languageSelectorFrameRect;
-//	int            _languageSelectorFrameRectColor;
-//	bool           _languageSelectorFrameRectHasFocus;
-//	int            _languageSelectorScrollBoxMaxLineWidth;
-
+	UIDropDown    *_textLanguageDropdown;
 	UIImagePicker *_playerAgendaSelector;
 
 	int            _mouseX;
