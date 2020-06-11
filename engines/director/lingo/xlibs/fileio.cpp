@@ -136,12 +136,14 @@ void FileIO::m_new(int nargs) {
 
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
-		GUI::FileBrowserDialog browser(0, filename.c_str(), option.equalsIgnoreCase("read") ? GUI::kFBModeLoad : GUI::kFBModeSave);
+		GUI::FileBrowserDialog browser(0, "txt", option.equalsIgnoreCase("read") ? GUI::kFBModeLoad : GUI::kFBModeSave);
 		if (browser.runModal() <= 0) {
 			g_lingo->push(Datum(kErrorFileNotFound));
 			return;
 		}
 		filename = browser.getResult();
+	} else {
+		filename += ".txt";
 	}
 
 	if (option.equalsIgnoreCase("read")) {
@@ -155,7 +157,7 @@ void FileIO::m_new(int nargs) {
 	} else if (option.equalsIgnoreCase("write")) {
 		// OutSaveFile is not seekable so create a separate seekable stream
 		// which will be written to the outfile upon disposal
-		me->outFile = g_system->getSavefileManager()->openForSaving(filename);
+		me->outFile = g_system->getSavefileManager()->openForSaving(filename, false);
 		me->outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 		if (!me->outFile) {
 			delete me;
@@ -169,7 +171,7 @@ void FileIO::m_new(int nargs) {
 			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
-		me->outFile = g_system->getSavefileManager()->openForSaving(filename);
+		me->outFile = g_system->getSavefileManager()->openForSaving(filename, false);
 		me->outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 		if (!me->outFile) {
 			delete me;
