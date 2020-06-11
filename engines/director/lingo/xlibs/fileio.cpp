@@ -142,7 +142,7 @@ void FileIO::m_new(int nargs) {
 			return;
 		}
 		filename = browser.getResult();
-	} else {
+	} else if (!filename.hasSuffixIgnoreCase(".txt")) {
 		filename += ".txt";
 	}
 
