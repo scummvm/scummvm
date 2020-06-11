@@ -46,7 +46,7 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	Dialog("GlobalOptions_Cloud_DownloadDialog"), _launcher(launcher), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
-	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
+	_browser = new BrowserDialog(Common::convertToU32String(_("Select directory where to download game data")), true);
 	_remoteBrowser = new RemoteBrowserDialog(_("Select directory with game data"));
 
 	_remoteDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.RemoteDirectory", Common::convertToU32String(_("From: ")));

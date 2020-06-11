@@ -2123,7 +2123,7 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", Common::convertToU32String(_c("2. Get the code and enter it here:", "lowres")));
 	else
 		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", Common::convertToU32String(_("2. Get the code and enter it here:")));
-	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", "", nullptr, 0, 0, ThemeEngine::kFontStyleConsole);
+	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", Common::convertToU32String(""), nullptr, 0, 0, ThemeEngine::kFontStyleConsole);
 	_storageWizardPasteButton = new ButtonWidget(boss, prefix + "StorageWizardPasteButton", Common::convertToU32String(_("Paste")), _("Paste code from clipboard"), kPasteCodeStorageCmd);
 	_storageWizardConnectButton = new ButtonWidget(boss, prefix + "StorageWizardConnectButton", Common::convertToU32String(_("3. Connect")), _("Connect your cloud storage account"), kConnectStorageCmd);
 	_storageWizardConnectionStatusHint = new StaticTextWidget(boss, prefix + "StorageWizardConnectionStatusHint", Common::convertToU32String("..."));
@@ -2394,7 +2394,7 @@ void GlobalOptionsDialog::close() {
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kChooseSaveDirCmd: {
-		BrowserDialog browser(_("Select directory for saved games"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select directory for saved games")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2410,7 +2410,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kChooseThemeDirCmd: {
-		BrowserDialog browser(_("Select directory for GUI themes"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select directory for GUI themes")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2420,7 +2420,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kChooseExtraDirCmd: {
-		BrowserDialog browser(_("Select directory for extra files"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select directory for extra files")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2431,7 +2431,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #ifdef DYNAMIC_MODULES
 	case kChoosePluginsDirCmd: {
-		BrowserDialog browser(_("Select directory for plugins"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select directory for plugins")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2444,7 +2444,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kChooseRootDirCmd: {
-		BrowserDialog browser(_("Select directory for Files Manager /root/"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select directory for Files Manager /root/")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2480,7 +2480,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #endif
 #endif
 	case kChooseSoundFontCmd: {
-		BrowserDialog browser(_("Select SoundFont"), false);
+		BrowserDialog browser(Common::convertToU32String(_("Select SoundFont")), false);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode file(browser.getResult());
@@ -2513,7 +2513,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kPopUpItemSelectedCmd: {
 		if (_storageWizardCodeBox)
-			_storageWizardCodeBox->setEditString("");
+			_storageWizardCodeBox->setEditString(Common::convertToU32String(""));
 		// update container's scrollbar
 		reflowLayout();
 		break;
@@ -2572,7 +2572,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kConnectStorageCmd: {
-		Common::String code = "";
+		Common::U32String code = "";
 		if (_storageWizardCodeBox)
 			code = _storageWizardCodeBox->getEditString();
 		if (code.size() == 0)
@@ -2605,7 +2605,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (_storageWizardConnectionStatusHint)
 			_storageWizardConnectionStatusHint->setLabel(Common::convertToU32String(_("Connecting...")));
 		CloudMan.connectStorage(
-			_selectedStorageIndex, code,
+			_selectedStorageIndex, Common::convertFromU32String(code),
 			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageConnectionCallback)
 		);
 		_connectingStorage = true;
@@ -2614,7 +2614,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kDisconnectStorageCmd: {
 		if (_storageWizardCodeBox)
-			_storageWizardCodeBox->setEditString("");
+			_storageWizardCodeBox->setEditString(Common::convertToU32String(""));
 
 		if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isWorking()) {
 			bool cancel = true;

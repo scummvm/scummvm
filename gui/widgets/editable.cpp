@@ -69,7 +69,7 @@ void EditableWidget::reflowLayout() {
 	}
 }
 
-void EditableWidget::setEditString(const String &str) {
+void EditableWidget::setEditString(const U32String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
@@ -212,7 +212,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_c:
 		if (state.flags & Common::KBD_CTRL) {
 			if (!getEditString().empty())
-				g_system->setTextInClipboard(getEditString());
+				g_system->setTextInClipboard(Common::convertFromU32String(getEditString()));
 		} else {
 			defaultKeyDownHandler(state, dirty, forcecaret, handled);
 		}

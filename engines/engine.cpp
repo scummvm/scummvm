@@ -755,7 +755,7 @@ bool Engine::loadGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Load game:")), Common::convertToU32String(_("Load")), false);
 
 	int slotNum;
 	{
@@ -784,14 +784,14 @@ bool Engine::saveGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Save game:")), Common::convertToU32String(_("Save")), true);
 	int slotNum;
 	{
 		PauseToken pt = pauseEngine();
 		slotNum = dialog->runModalWithCurrentTarget();
 	}
 
-	Common::String desc = dialog->getResultString();
+	Common::U32String desc = dialog->getResultString();
 	if (desc.empty())
 		desc = dialog->createDefaultSaveDescription(slotNum);
 
@@ -800,7 +800,7 @@ bool Engine::saveGameDialog() {
 	if (slotNum < 0)
 		return false;
 
-	Common::Error saveError = saveGameState(slotNum, desc);
+	Common::Error saveError = saveGameState(slotNum, Common::convertFromU32String(desc));
 	if (saveError.getCode() != Common::kNoError) {
 		GUI::MessageDialog errorDialog(saveError.getDesc());
 		errorDialog.runModal();

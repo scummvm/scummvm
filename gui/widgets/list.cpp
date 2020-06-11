@@ -165,7 +165,7 @@ ThemeEngine::FontColor ListWidget::getSelectionColor() const {
 		return _listColors[_listIndex[_selectedItem]];
 }
 
-void ListWidget::setList(const StringArray &list, const ColorList *colors) {
+void ListWidget::setList(const U32StringArray &list, const ColorList *colors) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
@@ -287,7 +287,7 @@ void ListWidget::handleMouseMoved(int x, int y, int button) {
 
 	if (item != -1) {
 		if(_lastRead != item) {
-			read(_dataList[item]);
+			read(Common::convertFromU32String(_dataList[item]));
 			_lastRead = item;
 		}
 	}
@@ -350,8 +350,8 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			int newSelectedItem = 0;
 			int bestMatch = 0;
 			bool stop;
-			for (StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
-				const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
+			for (U32StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
+				const int match = matchingCharsIgnoringCase(i->encode().c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
 				if (match > bestMatch || stop) {
 					_selectedItem = newSelectedItem;
 					bestMatch = match;
@@ -535,7 +535,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 void ListWidget::drawWidget() {
 	int i, pos, len = _list.size();
-	Common::String buffer;
+	Common::U32String buffer;
 
 	// Draw a thin frame around the list.
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
@@ -758,8 +758,8 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		_list.clear();
 		_listIndex.clear();
 
-		for (StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
-			tmp = *i;
+		for (U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+			tmp = Common::convertFromU32String(*i);
 			tmp.toLowercase();
 			bool matches = true;
 			tok.reset();

@@ -42,8 +42,9 @@ namespace GUI {
 class EditableWidget : public Widget, public CommandSender {
 public:
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 protected:
-	String		_editString;
+	U32String	_editString;
 
 	uint32		_cmd;
 
@@ -69,8 +70,8 @@ public:
 
 	void init();
 
-	virtual void setEditString(const String &str);
-	virtual const String &getEditString() const		{ return _editString; }
+	virtual void setEditString(const U32String &str);
+	virtual const U32String &getEditString() const		{ return _editString; }
 
 	void handleTickle() override;
 	bool handleKeyDown(Common::KeyState state) override;

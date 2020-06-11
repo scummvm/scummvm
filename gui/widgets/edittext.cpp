@@ -28,7 +28,7 @@
 
 namespace GUI {
 
-EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd, ThemeEngine::FontStyle font)
+EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &text, const char *tooltip, uint32 cmd, uint32 finishCmd, ThemeEngine::FontStyle font)
 	: EditableWidget(boss, x, y - 1, w, h + 2, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
@@ -40,7 +40,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	_leftPadding = _rightPadding = 0;
 }
 
-EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd, ThemeEngine::FontStyle font)
+EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const U32String &text, const char *tooltip, uint32 cmd, uint32 finishCmd, ThemeEngine::FontStyle font)
 	: EditableWidget(boss, name, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
@@ -52,7 +52,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String
 	_leftPadding = _rightPadding = 0;
 }
 
-void EditTextWidget::setEditString(const String &str) {
+void EditTextWidget::setEditString(const U32String &str) {
 	EditableWidget::setEditString(str);
 	_backupString = str;
 }

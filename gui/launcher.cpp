@@ -204,10 +204,10 @@ void LauncherDialog::build() {
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new BrowserDialog(_("Select directory with game data"), true);
+	_browser = new BrowserDialog(Common::convertToU32String(_("Select directory with game data")), true);
 
 	// Create Load dialog
-	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
+	_loadDialog = new SaveLoadChooser(Common::convertToU32String(_("Load game:")), Common::convertToU32String(_("Load")), false);
 }
 
 void LauncherDialog::clean() {
@@ -255,7 +255,7 @@ void LauncherDialog::close() {
 }
 
 void LauncherDialog::updateListing() {
-	StringArray l;
+	U32StringArray l;
 	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 
@@ -293,7 +293,7 @@ void LauncherDialog::updateListing() {
 			// Insert the game into the launcher list
 			int pos = 0, size = l.size();
 
-			while (pos < size && (scumm_compareDictionary(description.c_str(), l[pos].c_str()) > 0))
+			while (pos < size && (scumm_compareDictionary(description.c_str(), l[pos].encode().c_str()) > 0))
 				pos++;
 
 			color = ThemeEngine::kFontColorNormal;
@@ -323,7 +323,7 @@ void LauncherDialog::updateListing() {
 
 	// Update the filter settings, those are lost when "setList"
 	// is called.
-	_list->setFilter(_searchWidget->getEditString());
+	_list->setFilter(Common::convertFromU32String(_searchWidget->getEditString()));
 }
 
 void LauncherDialog::addGame() {
@@ -562,7 +562,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		idx = 0;
 	} else {
 		// Display the candidates to the user and let her/him pick one
-		StringArray list;
+		U32StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++) {
 			Common::String description = candidates[idx].description;
 
@@ -673,11 +673,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchCmd:
 		// Update the active search filter.
-		_list->setFilter(_searchWidget->getEditString());
+		_list->setFilter(Common::convertFromU32String(_searchWidget->getEditString()));
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
-		_searchWidget->setEditString("");
+		_searchWidget->setEditString(Common::convertToU32String(""));
 		_list->setFilter("");
 		break;
 	default:
