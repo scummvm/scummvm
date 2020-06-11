@@ -645,20 +645,20 @@ void KingdomGame::drawRect(uint minX, uint minY, uint maxX, uint maxY, int color
 	g_system->updateScreen();
 }
 
-void KingdomGame::drawEmptyRect(Common::Rect rect, int color) {
+void KingdomGame::drawHotSpot(const HotSpot &hs, int color) {
 	::Graphics::Surface *screen = g_system->lockScreen();
 
-	for (int curX = rect.left; curX < rect.right; curX++) {
-		byte *dst = (byte *)screen->getBasePtr(curX, rect.top);
+	for (int curX = hs.x1; curX < hs.x2; curX++) {
+		byte *dst = (byte *)screen->getBasePtr(curX, hs.y1);
 		*dst = color;
-		dst = (byte *)screen->getBasePtr(curX, rect.bottom);
+		dst = (byte *)screen->getBasePtr(curX, hs.y2);
 		*dst = color;
 	}
 
-	for (int curY = rect.top; curY < rect.bottom; curY++) {
-		byte *dst = (byte *)screen->getBasePtr(rect.left, curY);
+	for (int curY = hs.y1; curY < hs.y2; curY++) {
+		byte *dst = (byte *)screen->getBasePtr(hs.x1, curY);
 		*dst = color;
-		dst = (byte *)screen->getBasePtr(rect.right, curY);
+		dst = (byte *)screen->getBasePtr(hs.x2, curY);
 		*dst = color;
 	}
 
@@ -1526,7 +1526,7 @@ void KingdomGame::cursorType() {
 					return;
 				} else
 					_mouseValue = tmpVal;
-			} else if (mouseMapMS[startId + i]._area.contains(_cursorPos)) {
+			} else if (mouseMapMS[startId + i].contains(_cursorPos)) {
 				_mouseValue = mouseMapMS[startId + i]._mouseValue;
 				break;
 			}
@@ -1655,7 +1655,7 @@ int KingdomGame::checkMouseMapAS() {
 		curSceneHotspots = _mouseMapASFull[_logic->_currMap];
 
 	for (int i = 0; i < 16; i++) {
-		if (curSceneHotspots[i]._area.contains(_cursorPos))
+		if (curSceneHotspots[i].contains(_cursorPos))
 			return curSceneHotspots[i]._mouseValue;
 	}
 
@@ -1668,7 +1668,7 @@ int KingdomGame::checkMouseMapAS() {
 		curSceneHotspots = _mouseMapASFull[12];
 
 	for (int i = 0; i < 16; i++) {
-		if (curSceneHotspots[i]._area.contains(_cursorPos))
+		if (curSceneHotspots[i].contains(_cursorPos))
 			return curSceneHotspots[i]._mouseValue;
 	}
 
@@ -1684,8 +1684,8 @@ void KingdomGame::displayDebugHotSpots() {
 		int hotspotCount = _logic->_statPlay == 901 ? 35 : 16;
 		HotSpot *mouseMapMS = isDemo() ? _mouseMapMSDemo : _mouseMapMSFull;
 		for (int i = 0; i < hotspotCount; i++) {
-			if (mouseMapMS[startId + i]._area != Common::Rect(0, 0, 0, 0))
-				drawEmptyRect(mouseMapMS[startId + i]._area, 0xDF);
+			if (!mouseMapMS[startId + i].dummy())
+				drawHotSpot(mouseMapMS[startId + i], 0xDF);
 		}
 	}
 
@@ -1696,8 +1696,8 @@ void KingdomGame::displayDebugHotSpots() {
 		curSceneHotspots = _mouseMapASFull[_logic->_currMap];
 
 	for (int i = 0; i < 16; i++) {
-		if (curSceneHotspots[i]._area != Common::Rect(0,0,0,0))
-			drawEmptyRect(curSceneHotspots[i]._area, 0xFF);
+		if (!curSceneHotspots[i].dummy())
+			drawHotSpot(curSceneHotspots[i], 0xFF);
 	}
 
 	if (_logic->_currMap != 11)
@@ -1709,8 +1709,8 @@ void KingdomGame::displayDebugHotSpots() {
 		curSceneHotspots = _mouseMapASFull[12];
 
 	for (int i = 0; i < 16; i++) {
-		if (curSceneHotspots[i]._area != Common::Rect(0, 0, 0, 0))
-			drawEmptyRect(curSceneHotspots[i]._area, 0xFF);
+		if (!curSceneHotspots[i].dummy())
+			drawHotSpot(curSceneHotspots[i], 0xFF);
 	}
 }
 

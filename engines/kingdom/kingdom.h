@@ -52,8 +52,16 @@ namespace Kingdom {
 	};
 
 	struct HotSpot {
-		Common::Rect _area;
+		int x1, y1, x2, y2;
 		int16 _mouseValue;
+
+		bool contains(const Common::Point &p) {
+			return (x1 <= p.x) && (p.x < x2) && (y1 <= p.y) && (p.y < y2);
+		}
+
+		bool dummy() {
+			return !(x1 || x2 || y1 || y2);
+		}
 	};
 
 	extern byte _finalFrameTable[];
@@ -196,7 +204,7 @@ namespace Kingdom {
 		void restoreAS(); // TODO: Rename later as restoreVideoBackground
 		void drawHelpScreen();
 		void drawRect(uint minX, uint minY, uint maxX, uint maxY, int color);
-		void drawEmptyRect(Common::Rect rect, int color);
+		void drawHotSpot(const HotSpot &hs, int color);
 		void drawInventory();
 		void playSound(int idx);
 		void eraseCursor();

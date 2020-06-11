@@ -758,8 +758,8 @@ int _hgaSeq[4][2] = {
 	{50, 0}
 };
 
-#define INITHOTSPOT(x1, x2, y1, y2, id)  { Common::Rect(x1, y1, x2, y2), id }
-#define DUMMYHOTSPOT(id) { Common::Rect(0, 0, 0, 0), id }
+#define INITHOTSPOT(x1, x2, y1, y2, id)  { x1, y1, x2, y2, id }
+#define DUMMYHOTSPOT(id) { 0, 0, 0, 0, id }
 HotSpot _mouseMapMSFull[51] = {
 	INITHOTSPOT( 11,  35, 178, 197, 0x181),
 	INITHOTSPOT( 38,  62, 178, 197, 0x182),
