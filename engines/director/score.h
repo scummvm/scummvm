@@ -99,7 +99,7 @@ public:
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
 	static int compareLabels(const void *a, const void *b);
-	bool loadArchive();
+	bool loadArchive(bool isSharedCast);
 	void setStartToLabel(Common::String label);
 	void gotoLoop();
 	void gotoNext();

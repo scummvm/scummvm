@@ -286,7 +286,7 @@ void DirectorEngine::runTests() {
 	_mainArchive->openStream(stream, 0);
 	_currentScore = new Score(this);
 	_currentScore->setArchive(_mainArchive);
-	_currentScore->loadArchive();
+	_currentScore->loadArchive(false);
 
 	if (debugChannelSet(-1, kDebugText)) {
 		testFontScaling();

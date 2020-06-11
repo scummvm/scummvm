@@ -77,7 +77,7 @@ void Score::setArchive(Archive *archive) {
 	}
 }
 
-bool Score::loadArchive() {
+bool Score::loadArchive(bool isSharedCast) {
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
 	Common::SeekableSubReadStreamEndian *r = nullptr;
 
@@ -98,16 +98,20 @@ bool Score::loadArchive() {
 
 	// Font Directory
 	if (_movieArchive->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
-		debug("STUB: Unhandled FOND resource");
+		debug("Score::loadArchive(): Movie has fonts. Loading....");
+
+		g_director->_wm->_fontMan->loadFonts(_movieArchive->getFileName());
 	}
 
 	// Score
-	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
-		warning("Score::loadArchive(): Wrong movie format. VWSC resource missing");
-		return false;
+	if (!isSharedCast) {
+		if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
+			warning("Score::loadArchive(): Wrong movie format. VWSC resource missing");
+			return false;
+		}
+		loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))));
+		delete r;
 	}
-	loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))));
-	delete r;
 
 	// Configuration Information
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
@@ -250,8 +254,8 @@ bool Score::loadArchive() {
 	copyCastStxts();
 
 	setSpriteCasts();
-	loadSpriteImages(false);
-	loadSpriteSounds(false);
+	loadSpriteImages(isSharedCast);
+	loadSpriteSounds(isSharedCast);
 	setSpriteBboxes();
 
 	return true;

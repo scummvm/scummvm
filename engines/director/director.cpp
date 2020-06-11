@@ -230,7 +230,7 @@ Common::Error DirectorEngine::run() {
 			debug(0, "@@@@   Score name '%s' in '%s'", _currentScore->getMacName().c_str(), _currentPath.c_str());
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-			bool goodMovie = _currentScore->loadArchive();
+			bool goodMovie = _currentScore->loadArchive(false);
 
 			// If we came in a loop, then skip as requested
 			if (!_nextMovie.frameS.empty()) {

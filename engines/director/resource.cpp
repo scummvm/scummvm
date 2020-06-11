@@ -281,8 +281,6 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 			return;
 	}
 
-	Common::SeekableSubReadStreamEndian *r;
-
 	clearSharedCast();
 
 	Archive *sharedCast = createArchive();
@@ -303,78 +301,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_lingo->_archiveIndex = 1;
 	_sharedScore = new Score(this);
 	_sharedScore->setArchive(sharedCast);
-
-	if (sharedCast->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
-		debug("loadSharedCastsFrom(): Shared cast has fonts. Loading....");
-
-		_wm->_fontMan->loadFonts(filename);
-	}
-
-	_sharedScore->loadConfig(*(r = sharedCast->getResource(MKTAG('V','W','C','F'), 1024)));
-	delete r;
-
-	if (getVersion() < 4) {
-		_sharedScore->_castIDoffset = sharedCast->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
-		_sharedScore->loadCastDataVWCR(*(r = sharedCast->getResource(MKTAG('V','W','C','R'), _sharedScore->_castIDoffset)));
-		delete r;
-	}
-
-	// Try to load script context
-	if (getVersion() >= 4) {
-		Common::Array<uint16> lctx = sharedCast->getResourceIDList(MKTAG('L','c','t','x'));
-		if (lctx.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
-
-			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				_sharedScore->loadLingoContext(*(r = sharedCast->getResource(MKTAG('L','c','t','x'), *iterator)));
-				delete r;
-			}
-		}
-	}
-
-	// Try to load script name lists
-	if (getVersion() >= 4) {
-		Common::Array<uint16> lnam = sharedCast->getResourceIDList(MKTAG('L','n','a','m'));
-		if (lnam.size() > 0) {
-
-			int maxLnam = -1;
-			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
-				maxLnam = MAX(maxLnam, (int)*iterator);
-			}
-			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			_sharedScore->loadLingoNames(*(r = sharedCast->getResource(MKTAG('L','n','a','m'), maxLnam)));
-			delete r;
-		}
-	}
-
-	Common::Array<uint16> vwci = sharedCast->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
-	if (vwci.size() > 0) {
-		debug(0, "****** Loading %d CastInfo resources", vwci.size());
-
-		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator) {
-			_sharedScore->loadCastInfo(*(r = sharedCast->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator)), *iterator);
-			delete r;
-		}
-	}
-
-	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
-	if (!_sharedScore->_loadedCast)
-		_sharedScore->_loadedCast = new Common::HashMap<int, Cast *>();
-
-	if (cast.size() > 0) {
-		debug(0, "****** Loading %d CASt resources", cast.size());
-
-		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
-			Common::SeekableSubReadStreamEndian *stream = sharedCast->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
-			Resource res = sharedCast->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
-			_sharedScore->loadCastData(*stream, *iterator, &res);
-			delete stream;
-		}
-	}
-
-	_sharedScore->setSpriteCasts();
-	_sharedScore->loadSpriteImages(true);
-
+	_sharedScore->loadArchive(true);
 	_lingo->_archiveIndex = 0;
 }
 
