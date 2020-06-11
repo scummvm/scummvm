@@ -43,6 +43,12 @@ class Material;
 class ModelX;
 class ShadowVolume;
 class VideoTheoraPlayer;
+struct SkinWeights {
+	Common::String _boneName;
+	Math::Matrix4 _offsetMatrix;
+	BaseArray<uint32> _vertexIndices;
+	BaseArray<float> _vertexWeights;
+};
 
 class MeshX : public BaseNamedObject {
 public:
@@ -78,6 +84,7 @@ protected:
 	uint32 _indexCount;
 
 	BaseArray<Math::Matrix4 *> _boneMatrices;
+	BaseArray<SkinWeights> skinWeightsList;
 
 	uint32 *_skinAdjacency;
 	uint32 *_adjacency;
