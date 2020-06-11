@@ -171,17 +171,19 @@ void FileIO::m_new(int nargs) {
 			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
-		me->outFile = g_system->getSavefileManager()->openForSaving(filename, false);
 		me->outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+		byte b = inFile->readByte();
+		while (!inFile->eos() && !inFile->err()) {
+			me->outStream->writeByte(b);
+			b = inFile->readByte();
+		}
+		delete inFile;
+		me->outFile = g_system->getSavefileManager()->openForSaving(filename, false);
 		if (!me->outFile) {
 			delete me;
 			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
-		while (!inFile->eos() && !inFile->err()) {
-			me->outStream->writeByte(inFile->readByte());
-		}
-		delete inFile;
 	} else {
 		error("Unsupported FileIO option: '%s'", option.c_str());
 	}
