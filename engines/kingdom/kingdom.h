@@ -56,7 +56,7 @@ namespace Kingdom {
 		int16 _mouseValue;
 	};
 
-	extern bool _finalFrameTable[];
+	extern byte _finalFrameTable[];
 	extern const char *_rezNames[];
 	extern const char *_movieNames[];
 	extern int _mapExit[];

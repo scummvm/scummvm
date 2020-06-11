@@ -24,28 +24,18 @@
 
 namespace Kingdom {
 
-bool _finalFrameTable[] = {
-    false, false, true, false, true, false, true, true, true, false,
-    false, true, true, true, false, true, true, true, true, false,
-    true, true, true, true, true, true, true, false, true, true,
-    false, false, false, true, true, true, true, true, true, true,
-    true, true, true, false, true, false, false, true, true, true,
-    false, true, true, true, false, true, true, true, true, false,
-    false, true, true, true, true, true, true, true, false, false,
-    false, true, false, false, false, false, true, true, false, true,
-    true, true, true, true, true, true, true, true, true, false,
-    true, true, false, false, false, false, true, true, true, false,
-    true, true, true, true, false, false, false, true, false, false,
-    true, true, true, true, true, true, true, false, true, true,
-    false, true, true, true, true, false, true, true, true, true,
-    true, true, true, true, false, true, false, false, false, true,
-    true, true, false, true, true, false, true, true, false, true,
-    true, true, true, false, true, false, false, true, true, true,
-    true, true, false, true, true, true, false, false, false, true,
-    false, true, true, true, true, true, true, false, false, true,
-    true, true, false, false, false, false, true, true, false, true,
-    true, true, true, true, false, false, false, false, false, false,
-    false, false, true, false, false, false, false, false, false, true
+byte _finalFrameTable[] = {
+	0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+	1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0,
+	1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
+	0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1,
+	1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1,
+	1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1,
+	1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+	0, 0, 1, 0, 0, 0, 0, 0, 0, 1
 };
 
 const char *_rezNames[] = {
@@ -664,7 +654,7 @@ int _zoomTable[81][9][2] = {
 	{{   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}, {   0, 0x0A}},
 	{{0x64, 0x48}, {0x5C, 0x0A}, {0x36, 0x0A}, {0x0F, 0x0A}, {0x0A, 0x0A}, {   7, 0x0A}, {   4, 0x0A}, {   3, 0x0A}, {   1, 0x0A}},
 	{{   0, 0x0A}, {0x3C, 0x0A}, {0x15, 0x0A}, {0x0B, 0x0A}, {   8, 0x0A}, {   5, 0x0A}, {   4, 0x0A}, {   2, 0x0A}, {   1, 0x0A}},
-	{{   0, 0x0A}, {0x3A, 0x0A}, {0x12, 0x24}, {0x0B, 0x0A}, {   8, 0x0A}, {   5, 0x0A}, {   4, 0x0A}, {   2, 0x0A}, {   1, 0x0A}} 
+	{{   0, 0x0A}, {0x3A, 0x0A}, {0x12, 0x24}, {0x0B, 0x0A}, {   8, 0x0A}, {   5, 0x0A}, {   4, 0x0A}, {   2, 0x0A}, {   1, 0x0A}}
 };
 
 int _iconActTable[82][7] = {
@@ -749,7 +739,7 @@ int _iconActTable[82][7] = {
 	{ 3, 18, 17,  2,  0, 18,  1},
 	{ 3, 18, 18, 18, 18, 18, 18},
 	{ 3, 18,  2,  4, 18,  1, 18},
-	{ 3, 18, 18, 18,  0, 18, 18} 
+	{ 3, 18, 18, 18,  0, 18, 18}
 };
 
 int _teaSeq[6][2] = {
