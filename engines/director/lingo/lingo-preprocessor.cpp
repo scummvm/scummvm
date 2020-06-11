@@ -490,7 +490,8 @@ Common::String preprocessReturn(Common::String in) {
 		debugC(2, kDebugParse | kDebugPreprocess, "RETURN: prevtok: %s nexttok: %s", prev.c_str(), next.c_str());
 
 		if (prev.hasSuffix("&") || prev.hasSuffix("&&") || prev.hasSuffix("=") ||
-				next.hasPrefix("&") || next.hasPrefix("&&")) {
+				next.hasPrefix("&") || next.hasPrefix("&&") || prev.hasSuffix(",") ||
+				next.hasPrefix(")")) {
 			res += "scummvm_"; // Turn it into scummvm_return
 		}
 
