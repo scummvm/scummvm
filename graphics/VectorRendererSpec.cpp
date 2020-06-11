@@ -1115,7 +1115,7 @@ drawString(const Graphics::Font *font, const Common::U32String &text, const Comm
 
 	if (!drawArea.isEmpty()) {
 		Surface textAreaSurface = _activeSurface->getSubArea(drawArea);
-		font->drawString(&textAreaSurface, text, area.left - drawArea.left, offset - drawArea.top, area.width() - deltax, _fgColor, alignH, deltax);
+		font->drawString(&textAreaSurface, text, area.left - drawArea.left, offset - drawArea.top, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
 	}
 }
 
