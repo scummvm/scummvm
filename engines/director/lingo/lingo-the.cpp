@@ -591,6 +591,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		// bpp. 1, 2, 4, 8, 32
 		warning("STUB: Lingo::setTheEntity(): Set color depth to %d", _vm->_colorDepth);
 		break;
+	case kTheField:
+		setTheField(id, field, d);
+		break;
 	case kTheFloatPrecision:
 		_floatPrecision = d.asInt();
 		_floatPrecision = MAX(0, MIN(_floatPrecision, 19)); // 0 to 19
@@ -1122,6 +1125,89 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		break;
 	default:
 		warning("Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+	}
+}
+
+Datum Lingo::getTheField(Datum &id1, int field) {
+	Datum d;
+	int id = g_lingo->castIdFetch(id1);
+
+	Cast *member = _vm->getCastMember(id);
+	if (!member) {
+		warning("Lingo::getTheField(): Cast id %d doesn't exist", id);
+		return d;
+	} else if (member->_type != kCastText) {
+		warning("Lingo::getTheField(): Cast id %d is not a field", id);
+		return d;
+	}
+
+	switch (field) {
+	case kTheTextAlign:
+		d.type = STRING;
+		switch (((Graphics::MacEditableText *)member->_widget)->getAlign()) {
+		case Graphics::kTextAlignLeft:
+			d.u.s = new Common::String("left");
+			break;
+		case Graphics::kTextAlignCenter:
+			d.u.s = new Common::String("center");
+			break;
+		case Graphics::kTextAlignRight:
+			d.u.s = new Common::String("right");
+			break;
+		case Graphics::kTextAlignInvalid:
+			warning("Lingo::getTheField: Invalid text align spec");
+			break;
+		}
+		break;
+	default:
+		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
+	}
+
+	return d;
+}
+
+void Lingo::setTheField(Datum &id1, int field, Datum &d) {
+	int id = 0;
+
+	if (id1.type == INT) {
+		id = id1.u.i;
+	} else {
+		warning("Lingo::setTheField(): Unknown the cast id type: %s", id1.type2str());
+		return;
+	}
+
+	Cast *member = _vm->getCastMember(id);
+	if (!member) {
+		warning("Lingo::setTheField(): Cast id %d doesn't exist", id);
+		return;
+	} else if (member->_type != kCastText) {
+		warning("Lingo::setTheField(): Cast id %d is not a field", id);
+	}
+
+	switch (field) {
+	case kTheTextAlign: {
+		Common::String select = d.asString(true);
+		select.toLowercase();
+
+		Graphics::TextAlign align;
+		if (select == "\"left\"") {
+			align = Graphics::kTextAlignLeft;
+		} else if (select == "\"center\"") {
+			align = Graphics::kTextAlignCenter;
+		} else if (select == "\"right\"") {
+			align = Graphics::kTextAlignRight;
+		} else {
+			warning("Lingo::setTheField: Unknown text align spec: %s", d.asString(true).c_str());
+			break;
+		}
+
+		((Graphics::MacEditableText *)member->_widget)->setAlignOffset(align);
+		((Graphics::MacEditableText *)member->_widget)->draw();
+		member->_modified = true;
+		break;
+	}
+	default:
+		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
 	}
 }
 

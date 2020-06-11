@@ -433,8 +433,10 @@ public:
 	void setTheSprite(Datum &id, int field, Datum &d);
 	void setTheCast(Datum &id, int field, Datum &d);
 	Datum getTheEntity(int entity, Datum &id, int field);
+	void setTheField(Datum &id1, int field, Datum &d);
 	Datum getTheSprite(Datum &id, int field);
 	Datum getTheCast(Datum &id, int field);
+	Datum getTheField(Datum &id1, int field);
 	Datum getObjectField(Common::String &obj, int field);
 	void setObjectField(Common::String &obj, int field, Datum &d);
 	Datum getObjectRef(Common::String &obj, Common::String &field);
