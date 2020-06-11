@@ -648,19 +648,7 @@ void KingdomGame::drawRect(uint minX, uint minY, uint maxX, uint maxY, int color
 void KingdomGame::drawHotSpot(const HotSpot &hs, int color) {
 	::Graphics::Surface *screen = g_system->lockScreen();
 
-	for (int curX = hs.x1; curX < hs.x2; curX++) {
-		byte *dst = (byte *)screen->getBasePtr(curX, hs.y1);
-		*dst = color;
-		dst = (byte *)screen->getBasePtr(curX, hs.y2);
-		*dst = color;
-	}
-
-	for (int curY = hs.y1; curY < hs.y2; curY++) {
-		byte *dst = (byte *)screen->getBasePtr(hs.x1, curY);
-		*dst = color;
-		dst = (byte *)screen->getBasePtr(hs.x2, curY);
-		*dst = color;
-	}
+	screen->frameRect(Common::Rect(hs.x1, hs.y1, hs.x2, hs.y2), color);
 
 	g_system->unlockScreen();
 	g_system->updateScreen();
