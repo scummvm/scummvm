@@ -36,6 +36,7 @@
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_quick_msg.h"
@@ -142,6 +143,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 #ifdef ENABLE_WME3D
 	_useD3D = true;
+	_renderer3D = nullptr;
 #else
 	_useD3D = false;
 #endif
@@ -488,6 +490,7 @@ bool BaseGame::initialize1() {
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	_renderer = makeOpenGL3DRenderer(this);
+	_renderer3D = static_cast<BaseRenderOpenGL3D *>(_renderer);
 #else
 	_renderer = makeOSystemRenderer(this);
 #endif
