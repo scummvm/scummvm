@@ -1453,13 +1453,33 @@ void LB::b_duplicate(int nargs) {
 }
 
 void LB::b_editableText(int nargs) {
-	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
-
-	if (g_lingo->_currentChannelId == -1) {
-		warning("b_editableText: channel Id is missing");
+	Score *sc = g_director->getCurrentScore();
+	if (!sc) {
+		warning("b_editableText: no score");
+		g_lingo->dropStack(nargs);
 		return;
 	}
-	frame->_sprites[g_lingo->_currentChannelId]->_editable = true;
+
+	if (nargs == 2) {
+		Datum state = g_lingo->pop();
+		Datum sprite = g_lingo->pop();
+		if ((uint)sprite.asInt() < sc->_sprites.size()) {
+			sc->_sprites[sprite.asInt()]->_editable = state.asInt();
+		} else {
+			warning("b_editableText: sprite index out of bounds");
+		}
+	} else if (nargs == 0 && g_director->getVersion() < 4) {
+		g_lingo->dropStack(nargs);
+
+		if (g_lingo->_currentChannelId == -1) {
+			warning("b_editableText: channel Id is missing");
+			return;
+		}
+		sc->_sprites[g_lingo->_currentChannelId]->_editable = true;
+	} else {
+		warning("b_editableText: unexpectedly received %d arguments", nargs);
+		g_lingo->dropStack(nargs);
+	}
 }
 
 void LB::b_erase(int nargs) {
@@ -1683,7 +1703,7 @@ void LB::b_puppetSprite(int nargs) {
 		return;
 	}
 
-	if (nargs == 2 && g_director->getVersion() >= 4) {
+	if (nargs == 2) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
 		if ((uint)sprite.asInt() < sc->_sprites.size()) {
