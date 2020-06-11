@@ -99,7 +99,7 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 		if (!_eventHandlerTypeIds.contains(name)) {
 			_archives[_archiveIndex].functionHandlers[name] = sym;
 		} else {
-			_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+			_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId)] = sym;
 		}
 	}
 

@@ -237,9 +237,13 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	}
 
 	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
-	// event handlers should only be defined locally, the score in a shared file is ignored
+	// local scripts
 	if (_archives[0].eventHandlers.contains(entityIndex))
 		return _archives[0].eventHandlers[entityIndex];
+
+	// shared scripts
+	if (_archives[1].eventHandlers.contains(entityIndex))
+		return _archives[1].eventHandlers[entityIndex];
 
 	return result;
 }
@@ -611,9 +615,10 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	execute(_pc);
 }
 
-void Lingo::executeHandler(Common::String name) {
+void Lingo::executeHandler(const Common::String &name) {
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
-	LC::call(name, 0);
+	Symbol sym = getHandler(name);
+	LC::call(sym, 0);
 	execute(_pc);
 }
 

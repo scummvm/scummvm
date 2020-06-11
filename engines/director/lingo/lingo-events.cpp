@@ -323,7 +323,8 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId, int channelI
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	if (_archives[_archiveIndex].eventHandlers.contains(ENTITY_INDEX(event, entityId))) {
+	if (_archives[0].eventHandlers.contains(ENTITY_INDEX(event, entityId)) ||
+		_archives[1].eventHandlers.contains(ENTITY_INDEX(event, entityId))) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 		executeHandler(_eventHandlerTypes[event]); // D4+ Events
 	} else if (_vm->getVersion() < 4 && event == kEventNone && getScriptContext(st, entityId)) {
