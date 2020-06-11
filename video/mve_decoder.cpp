@@ -282,10 +282,10 @@ void MveDecoder::readNextPacket() {
 			case 0x0300: // init audio
 			{
 				assert(opLen == 8);
-				uint16 unk = _s->readUint16LE();
+				/*uint16 unk =*/ _s->readUint16LE();
 				uint16 flags = _s->readUint16LE();
 				uint16 sampleRate = _s->readUint16LE();
-				uint16 bufLen = _s->readUint16LE();
+				/*uint16 bufLen =*/ _s->readUint16LE();
 
 				/*
 				warning("\t\tAudio: %dHz %s %s",
@@ -314,8 +314,8 @@ void MveDecoder::readNextPacket() {
 
 				uint16 width = _s->readUint16LE();
 				uint16 height = _s->readUint16LE();
-				uint16 count = _s->readUint16LE();
-				uint16 trueColor = _s->readUint16LE();
+				/*uint16 count =*/ _s->readUint16LE();
+				/*uint16 trueColor =*/ _s->readUint16LE();
 
 				_widthInBlocks = width;
 				_heightInBlocks = height;
@@ -367,7 +367,7 @@ void MveDecoder::readNextPacket() {
 			}
 			case 0x0800: // audio frame
 			{
-				uint16 seq = _s->readUint16LE();
+				/*uint16 seq =*/ _s->readUint16LE();
 				uint16 mask = _s->readUint16LE();
 				uint16 len = _s->readUint16LE();
 
@@ -387,18 +387,18 @@ void MveDecoder::readNextPacket() {
 			case 0x0900: // audio frame (silent)
 			{
 				assert(opLen == 6);
-				uint16 seq = _s->readUint16LE();
-				uint16 mask = _s->readUint16LE();
-				uint16 len = _s->readUint16LE();
+				/*uint16 seq =*/ _s->readUint16LE();
+				/*uint16 mask =*/ _s->readUint16LE();
+				/*uint16 len =*/ _s->readUint16LE();
 
 				break;
 			}
 			case 0x0a00: // set video mode
 			{
 				assert(opLen == 6);
-				uint16 width = _s->readUint16LE();
-				uint16 height = _s->readUint16LE();
-				uint16 flags = _s->readUint16LE();
+				/*uint16 width =*/ _s->readUint16LE();
+				/*uint16 height =*/ _s->readUint16LE();
+				/*uint16 flags =*/ _s->readUint16LE();
 
 				break;
 			}
