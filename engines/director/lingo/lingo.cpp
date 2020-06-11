@@ -632,6 +632,10 @@ void Lingo::restartLingo(bool keepSharedCast) {
 		LingoArchive *arch = &_archives[a];
 		for (int i = 0; i <= kMaxScriptType; i++) {
 			for (ScriptContextHash::iterator it = arch->scriptContexts[i].begin(); it != arch->scriptContexts[i].end(); ++it) {
+				// FIXME: Menu callbacks should not be in the movie's lingo archive
+				if (it->_key == 1337)
+					continue;
+
 				it->_value->functions.clear();
 				delete it->_value;
 			}
@@ -641,7 +645,11 @@ void Lingo::restartLingo(bool keepSharedCast) {
 
 		arch->names.clear();
 		arch->eventHandlers.clear();
-		arch->functionHandlers.clear();
+		// FIXME: Menu callbacks should not be in the movie's lingo archive
+		for (SymbolHash::iterator it = arch->functionHandlers.begin(); it != arch->functionHandlers.end(); ++it) {
+			if (!it->_key.hasPrefixIgnoreCase("scummvm"))
+				arch->functionHandlers.erase(it->_key);
+		}
 
 	}
 
