@@ -95,6 +95,7 @@ public:
 	bool _contentIsDirty;
 	bool _active;
 	bool _editable;
+	uint _priority;
 
 	Common::Rect _dims;
 

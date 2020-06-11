@@ -30,6 +30,7 @@ namespace Graphics {
 	MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border, uint16 gutter, uint16 shadow) :
 	_focusable(focusable), _parent(parent), _border(border), _gutter(gutter), _shadow(shadow) {
 	_contentIsDirty = true;
+	_priority = 0;
 
 	_dims.left = x;
 	_dims.right = x + w + 2 * border + 2 * gutter + shadow + 1;
@@ -110,12 +111,15 @@ MacWidget *MacWidget::findEventHandler(Common::Event &event, int dx, int dy) {
 			pos = g_system->getEventManager()->getMousePos();
 
 			if (_dims.contains(pos.x - dx, pos.y - dy)) {
+				uint priority = 0;
+				MacWidget *widget = nullptr;
+
 				for (uint i = 0; i < _children.size(); i++) {
 					MacWidget *res = _children[i]->findEventHandler(event, dx + _dims.left, dy + _dims.top);
-					if (res)
-						return res;
+					if (res && res->_priority > priority)
+						widget = res;
 				}
-				return this;
+				return widget ? widget : this;
 			}
 			break;
 		}
