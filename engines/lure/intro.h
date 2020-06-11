@@ -28,11 +28,16 @@
 namespace Lure {
 
 class Introduction {
+public:
+	Introduction() : _currentSound(0xFF) { }
+
+	bool show();
 private:
+	uint8 _currentSound;
+
 	bool showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize, bool fadeOut = true);
 	bool interruptableDelay(uint32 milliseconds);
-public:
-	bool show();
+	void playMusic(uint8 soundNumber, bool fadeOut);
 };
 
 } // End of namespace Lure
