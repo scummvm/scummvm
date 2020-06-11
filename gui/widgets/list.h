@@ -51,10 +51,14 @@ class ListWidget : public EditableWidget {
 public:
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
+
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
+
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
 protected:
-	StringArray		_list;
-	StringArray		_dataList;
+	U32StringArray	_list;
+	U32StringArray		_dataList;
 	ColorList		_listColors;
 	Common::Array<int>		_listIndex;
 	bool			_editable;
@@ -94,15 +98,15 @@ public:
 	bool containsWidget(Widget *) const override;
 	Widget *findWidget(int x, int y) override;
 
-	void setList(const StringArray &list, const ColorList *colors = nullptr);
-	const StringArray &getList()	const			{ return _dataList; }
+	void setList(const U32StringArray &list, const ColorList *colors = nullptr);
+	const U32StringArray &getList()	const			{ return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 
 	void setSelected(int item);
 	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
-	const String &getSelectedString() const		{ return _list[_selectedItem]; }
+	const U32String &getSelectedString() const		{ return _list[_selectedItem]; }
 	ThemeEngine::FontColor getSelectionColor() const;
 
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }

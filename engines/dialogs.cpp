@@ -99,8 +99,8 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		new GUI::ButtonWidget(this, "GlobalMenu.Quit", Common::convertToU32String(_("~Q~uit")), 0, kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	_loadDialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Load game:")), Common::convertToU32String(_("Load")), false);
+	_saveDialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Save game:")), Common::convertToU32String(_("Save")), true);
 }
 
 MainMenuDialog::~MainMenuDialog() {
@@ -206,13 +206,13 @@ void MainMenuDialog::save() {
 	int slot = _saveDialog->runModalWithCurrentTarget();
 
 	if (slot >= 0) {
-		Common::String result(_saveDialog->getResultString());
+		Common::U32String result(_saveDialog->getResultString());
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
 			result = _saveDialog->createDefaultSaveDescription(slot);
 		}
 
-		Common::Error status = _engine->saveGameState(slot, result);
+		Common::Error status = _engine->saveGameState(slot, Common::convertFromU32String(result));
 		if (status.getCode() != Common::kNoError) {
 			Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "

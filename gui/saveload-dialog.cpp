@@ -371,7 +371,7 @@ enum {
 	kDelCmd = 'DEL '
 };
 
-SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode)
+SaveLoadChooserSimple::SaveLoadChooserSimple(const U32String &title, const U32String &buttonLabel, bool saveMode)
 	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(nullptr), _chooseButton(nullptr), _deleteButton(nullptr), _gfxWidget(nullptr),
 	_container(nullptr) {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
@@ -391,7 +391,7 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 
 	// Buttons
 	new ButtonWidget(this, "SaveLoadChooser.Cancel", Common::convertToU32String(_("Cancel")), nullptr, kCloseCmd);
-	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", Common::U32String(buttonLabel), nullptr, kChooseCmd);
+	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, nullptr, kChooseCmd);
 	_chooseButton->setEnabled(false);
 
 	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", Common::convertToU32String(_("Delete")), nullptr, kDelCmd);
@@ -424,7 +424,7 @@ int SaveLoadChooserSimple::runIntern() {
 	return Dialog::runModal();
 }
 
-const Common::String &SaveLoadChooserSimple::getResultString() const {
+const Common::U32String &SaveLoadChooserSimple::getResultString() const {
 	int selItem = _list->getSelected();
 	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
 }
@@ -616,7 +616,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled saved game") &&
 					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
-				_list->setEditString("");
+				_list->setEditString(Common::convertToU32String(""));
 				_list->setEditColor(ThemeEngine::kFontColorNormal);
 			}
 		}
@@ -666,7 +666,7 @@ void SaveLoadChooserSimple::close() {
 	_metaEngine = nullptr;
 	_target.clear();
 	_saveList.clear();
-	_list->setList(StringArray());
+	_list->setList(U32StringArray());
 
 	SaveLoadChooserDialog::close();
 }
@@ -676,7 +676,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 
 	int curSlot = 0;
 	int saveSlot = 0;
-	StringArray saveNames;
+	U32StringArray saveNames;
 	ListWidget::ColorList colors;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games
@@ -752,7 +752,7 @@ enum {
 	kNewSaveCmd = 'SAVE'
 };
 
-SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveMode)
+SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::U32String &title, bool saveMode)
 	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _lines(0), _columns(0), _entriesPerPage(0),
 	_curPage(0), _newSaveContainer(nullptr), _nextFreeSaveSlot(0), _buttons() {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
@@ -772,7 +772,7 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 	_prevButton->setEnabled(false);
 
 	// Page display
-	_pageDisplay = new StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::String());
+	_pageDisplay = new StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::U32String());
 	_pageDisplay->setAlign(Graphics::kTextAlignEnd);
 }
 
@@ -784,7 +784,7 @@ SaveLoadChooserGrid::~SaveLoadChooserGrid() {
 	delete _pageDisplay;
 }
 
-const Common::String &SaveLoadChooserGrid::getResultString() const {
+const Common::U32String &SaveLoadChooserGrid::getResultString() const {
 	return _resultString;
 }
 
@@ -1170,11 +1170,11 @@ SavenameDialog::SavenameDialog()
 	_targetSlot = 0;
 }
 
-void SavenameDialog::setDescription(const Common::String &desc) {
+void SavenameDialog::setDescription(const Common::U32String &desc) {
 	_description->setEditString(desc);
 }
 
-const Common::String &SavenameDialog::getDescription() {
+const Common::U32String &SavenameDialog::getDescription() {
 	return _description->getEditString();
 }
 

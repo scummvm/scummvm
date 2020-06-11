@@ -32,16 +32,17 @@ class SaveLoadChooserDialog;
 
 class SaveLoadChooser {
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 protected:
 	SaveLoadChooserDialog *_impl;
 
-	const String _title;
-	const String _buttonLabel;
+	const U32String _title;
+	const U32String _buttonLabel;
 	const bool _saveMode;
 
 	void selectChooser(const MetaEngine &engine);
 public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode);
+	SaveLoadChooser(const U32String &title, const U32String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
 
 	/**
@@ -53,7 +54,7 @@ public:
 	int runModalWithCurrentTarget();
 	int runModalWithPluginAndTarget(const Plugin *plugin, const String &target);
 
-	const Common::String &getResultString() const;
+	const Common::U32String &getResultString() const;
 
 	/**
 	 * Creates a default save description for the specified slot. Depending
@@ -68,7 +69,7 @@ public:
 	 * @param slot The slot number (must be >= 0).
 	 * @return The slot description.
 	 */
-	Common::String createDefaultSaveDescription(const int slot) const;
+	Common::U32String createDefaultSaveDescription(const int slot) const;
 };
 
 } // End of namespace GUI

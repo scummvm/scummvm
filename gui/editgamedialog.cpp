@@ -438,7 +438,7 @@ void EditGameDialog::open() {
 }
 
 void EditGameDialog::apply() {
-	ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
+	ConfMan.set("description", Common::convertFromU32String(_descriptionWidget->getEditString()), _domain);
 
 	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 	if (lang < 0)
@@ -506,7 +506,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kCmdChooseSoundFontCmd:
 	{
-		BrowserDialog browser(_("Select SoundFont"), false);
+		BrowserDialog browser(Common::convertToU32String(_("Select SoundFont")), false);
 
 		if (browser.runModal() > 0) {
 			// User made this choice...
@@ -526,7 +526,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	// Change path for the game
 	case kCmdGameBrowser:
 	{
-		BrowserDialog browser(_("Select directory with game data"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select directory with game data")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -545,7 +545,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
 	case kCmdExtraBrowser:
 	{
-		BrowserDialog browser(_("Select additional game directory"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select additional game directory")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -558,7 +558,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	// Change path for stored save game (perm and temp) data
 	case kCmdSaveBrowser:
 	{
-		BrowserDialog browser(_("Select directory for saved games"), true);
+		BrowserDialog browser(Common::convertToU32String(_("Select directory for saved games")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -584,7 +584,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kOKCmd:
 	{
 		// Write back changes made to config object
-		String newDomain(_domainWidget->getEditString());
+		String newDomain(Common::convertFromU32String(_domainWidget->getEditString()));
 		if (newDomain != _domain) {
 			if (newDomain.empty()
 				|| newDomain.hasPrefix("_")

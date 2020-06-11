@@ -49,7 +49,7 @@ enum {
  * - others???
  */
 
-BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
+BrowserDialog::BrowserDialog(Common::U32String &title, bool dirBrowser)
 	: Dialog("Browser") {
 
 	_title = title;
@@ -59,10 +59,10 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_showHidden = false;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, "Browser.Headline", Common::convertToU32String(title));
+	new StaticTextWidget(this, "Browser.Headline", title);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new EditTextWidget(this, "Browser.Path", "", nullptr, 0, kPathEditedCmd);
+	_currentPath = new EditTextWidget(this, "Browser.Path", Common::convertToU32String(""), nullptr, 0, kPathEditedCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -89,7 +89,7 @@ int BrowserDialog::runModal() {
 	Common::DialogManager *dialogManager = g_system->getDialogManager();
 	if (dialogManager) {
 		if (ConfMan.getBool("gui_browser_native", Common::ConfigManager::kApplicationDomain)) {
-			Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title.c_str(), _choice, _isDirBrowser);
+			Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title.encode().c_str(), _choice, _isDirBrowser);
 			if (result != Common::DialogManager::kDialogError) {
 				return result;
 			}
@@ -119,7 +119,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	switch (cmd) {
 	//Search for typed-in directory
 	case kPathEditedCmd:
-		_node = Common::FSNode(_currentPath->getEditString());
+		_node = Common::FSNode(Common::convertFromU32String(_currentPath->getEditString()));
 		updateListing();
 		break;
 	//Search by text input
@@ -201,7 +201,7 @@ void BrowserDialog::updateListing() {
 		Common::sort(_nodeContent.begin(), _nodeContent.end());
 
 	// Populate the ListWidget
-	ListWidget::StringArray list;
+	ListWidget::U32StringArray list;
 	ListWidget::ColorList colors;
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		if (i->isDirectory())

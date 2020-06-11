@@ -92,7 +92,7 @@ public:
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	int run(const Common::String &target, const MetaEngine *metaEngine);
-	virtual const Common::String &getResultString() const = 0;
+	virtual const Common::U32String &getResultString() const = 0;
 
 protected:
 	virtual int runIntern() = 0;
@@ -133,12 +133,15 @@ protected:
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
+
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
 public:
-	SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode);
+	SaveLoadChooserSimple(const U32String &title, const U32String &buttonLabel, bool saveMode);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	const Common::String &getResultString() const override;
+	const Common::U32String &getResultString() const override;
 
 	void reflowLayout() override;
 
@@ -163,7 +166,7 @@ private:
 	StaticTextWidget	*_playtime;
 	StaticTextWidget	*_pageTitle;
 
-	String					_resultString;
+	U32String			_resultString;
 
 	void addThumbnailContainer();
 	void updateSelection(bool redraw);
@@ -177,8 +180,8 @@ class SavenameDialog : public Dialog {
 public:
 	SavenameDialog();
 
-	void setDescription(const Common::String &desc);
-	const Common::String &getDescription();
+	void setDescription(const Common::U32String &desc);
+	const Common::U32String &getDescription();
 
 	void setTargetSlot(int slot) { _targetSlot = slot; }
 
@@ -193,10 +196,10 @@ private:
 
 class SaveLoadChooserGrid : public SaveLoadChooserDialog {
 public:
-	SaveLoadChooserGrid(const Common::String &title, bool saveMode);
+	SaveLoadChooserGrid(const Common::U32String &title, bool saveMode);
 	~SaveLoadChooserGrid() override;
 
-	const Common::String &getResultString() const override;
+	const Common::U32String &getResultString() const override;
 
 	void open() override;
 
@@ -224,7 +227,7 @@ private:
 
 	ContainerWidget *_newSaveContainer;
 	int _nextFreeSaveSlot;
-	Common::String _resultString;
+	Common::U32String _resultString;
 
 	SavenameDialog _savenameDialog;
 	bool selectDescription();

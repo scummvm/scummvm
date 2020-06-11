@@ -64,7 +64,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirProgressText(nullptr),
 	_gameProgressText(nullptr) {
 
-	StringArray l;
+	U32StringArray l;
 
 	// The dir we start our scan at
 	_scanStack.push(startDir);
