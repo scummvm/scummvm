@@ -928,11 +928,18 @@ Common::Error Ultima8Engine::saveGameStream(Common::WriteStream *stream, bool is
 	if (gump)
 		gump->onMouseLeft();
 
+	Gump *modalGump = _desktopGump->FindGump<ModalGump>();
+	if (modalGump)
+		modalGump->HideGump();
+
 	_mouse->pushMouseCursor();
 	_mouse->setMouseCursor(Mouse::MOUSE_PENTAGRAM);
-	_screen->BeginPainting();
-	_mouse->paint();
-	_screen->EndPainting();
+
+	// Redraw to indicate busy and for save thumbnail
+	paint();
+
+	if (modalGump)
+		modalGump->UnhideGump();
 
 	_saveCount++;
 
