@@ -211,6 +211,12 @@ int WintermuteEngine::init() {
 	if (!_game) {
 		return 1;
 	}
+
+	#ifdef ENABLE_WME3D
+	Common::ArchiveMemberList actors3d;
+	_game->_playing3DGame = BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d");
+	#endif
+
 	BaseEngine::instance().setGameRef(_game);
 	BasePlatform::initialize(this, _game, 0, nullptr);
 

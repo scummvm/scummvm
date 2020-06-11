@@ -144,6 +144,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 #ifdef ENABLE_WME3D
 	_useD3D = true;
 	_renderer3D = nullptr;
+	_playing3DGame = false;
 #else
 	_useD3D = false;
 #endif

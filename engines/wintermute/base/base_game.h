@@ -159,6 +159,7 @@ public:
 	BaseRenderer *_renderer;
 #ifdef ENABLE_WME3D
 	BaseRenderOpenGL3D *_renderer3D;
+	bool _playing3DGame;
 #endif
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED
