@@ -291,7 +291,7 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 			else
 				return THEENTITY;
 		} else {
-			if (g_director->getVersion() >= 4) {
+			if (g_director->getVersion() >= 3) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				if (!g_lingo->_theEntityFields.contains(key)) { // Okay, this must be an object reference

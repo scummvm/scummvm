@@ -427,7 +427,7 @@ static const YY_CHAR yy_ec[256] =
 
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    2,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1
@@ -1441,7 +1441,7 @@ YY_RULE_SETUP
 			else
 				return THEENTITY;
 		} else {
-			if (g_director->getVersion() >= 4) {
+			if (g_director->getVersion() >= 3) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				if (!g_lingo->_theEntityFields.contains(key)) { // Okay, this must be an object reference
