@@ -75,6 +75,18 @@ Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 }
 
 void DirectorEngine::loadEXE(const Common::String movie) {
+	Common::SeekableReadStream *iniStream = SearchMan.createReadStreamForMember("LINGO.INI");
+	if (iniStream) {
+		char *script = (char *)calloc(iniStream->size() + 1, 1);
+		iniStream->read(script, iniStream->size());
+		_lingo->addCode(script, kMovieScript, 0);
+		_lingo->processEvent(kEventStartUp);
+		free(script);
+		_lingo->restartLingo(false);
+	} else {
+		warning("No LINGO.INI");
+	}
+
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(movie);
 	if (!exeStream)
 		error("Failed to open EXE '%s'", getEXEName().c_str());

@@ -69,6 +69,8 @@ struct EventHandlerType {
 
 	{ kEventTimeout,			"timeout" },			// D2 as when
 
+	{ kEventStartUp,			"startUp" },
+
 	{ kEventNone,				0 },
 };
 
@@ -238,7 +240,7 @@ void Lingo::registerFrameEvent(LEvent event) {
 
 void Lingo::registerGenericEvent(LEvent event) {
 	// Movie Script
-	if (event == kEventStart || event == kEventPrepareMovie ||
+	if (event == kEventStart || event == kEventStartUp || event == kEventPrepareMovie ||
 			event == kEventStartMovie || event == kEventStopMovie)
 		; // we're OK
 	else
@@ -279,6 +281,7 @@ void Lingo::registerEvent(LEvent event) {
 			break;
 
 		case kEventStart:
+		case kEventStartUp:
 		case kEventStartMovie:
 		case kEventStopMovie:
 		case kEventTimeout:
