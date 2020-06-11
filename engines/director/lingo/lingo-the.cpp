@@ -54,7 +54,7 @@ TheEntity entities[] = {
 	{ kTheColorQD,			"colorQD",			false, 2 },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false, 2 },	// D2 f
 	{ kTheControlDown,		"controlDown",		false, 2 },	// D2 f
-	{ kTheDate,				"date",				false, 3 },	//		 D3
+	{ kTheDate,				"date",				false, 2 },	// D2 f
 	{ kTheDoubleClick,		"doubleClick",		false, 2 },	// D2 f
 	{ kTheExitLock,			"exitLock",			false, 2 },	// D2 p
 	{ kTheField,			"field",			true,  3 },	//		 D3
@@ -142,7 +142,7 @@ TheEntity entities[] = {
 	{ kTheTimeoutMouse,		"timeoutMouse",		false, 2 },	// D2 p
 	{ kTheTimeoutPlay,		"timeoutPlay",		false, 2 },	// D2 p
 	{ kTheTimeoutScript,	"timeoutScript",	false, 2 },	// D2 p
-	{ kTheTime,				"time",				false, 3 },	// 		D3 f
+	{ kTheTime,				"time",				false, 2 },	// D2 f
 	{ kTheTimer,			"timer",			false, 2 },	// D2 p
 	{ kTheTrace,			"trace",			false, 4 },	//				D4 p
 	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//				D4 p
