@@ -309,7 +309,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"remorse",
 			"",
-			AD_ENTRY1s("eusecode.flx", 3fb211f4adfd80595078afc85bdfe7b4", 433143),
+			AD_ENTRY1s("eusecode.flx", "3fb211f4adfd80595078afc85bdfe7b4", 433143),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
