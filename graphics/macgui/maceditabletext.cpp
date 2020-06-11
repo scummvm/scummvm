@@ -49,9 +49,10 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 
 	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 
-	MacText::render();
+	reallocSurface();
 	setAlignOffset(_textAlignment);
 	updateCursorPos();
+	MacText::render();
 }
 
 MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
@@ -63,9 +64,10 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 
 	setDefaultFormatting(macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 
-	MacText::render();
+	reallocSurface();
 	setAlignOffset(_textAlignment);
 	updateCursorPos();
+	MacText::render();
 }
 
 void MacEditableText::init() {
@@ -102,17 +104,26 @@ MacEditableText::~MacEditableText() {
 }
 
 void MacEditableText::setAlignOffset(TextAlign align) {
+	Common::Point offset;
 	switch(align) {
 	case kTextAlignLeft:
 	default:
-		_alignOffset = Common::Point(0, 0);
+		offset = Common::Point(0, 0);
 		break;
 	case kTextAlignCenter:
-		_alignOffset = Common::Point((_maxWidth / 2) - (_surface->w / 2), 0);
+		offset = Common::Point((_maxWidth / 2) - (_surface->w / 2), 0);
 		break;
 	case kTextAlignRight:
-		_alignOffset = Common::Point(_maxWidth - (_surface->w + 1), 0);
+		offset = Common::Point(_maxWidth - (_surface->w + 1), 0);
 		break;
+	}
+
+	if (offset != _alignOffset) {
+		_contentIsDirty = true;
+		_fullRefresh = true;
+		_alignOffset = offset;
+		_textAlignment = align;
+		MacText::render();
 	}
 }
 

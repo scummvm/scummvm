@@ -66,6 +66,7 @@ public:
 	virtual bool draw(bool forceRedraw = false) override;
 
 	void setAlignOffset(TextAlign align);
+	TextAlign getAlign() { return _textAlignment; }
 	Common::Point calculateOffset();
 	virtual void setActive(bool active) override;
 	void setEditable(bool editable);
