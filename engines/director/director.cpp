@@ -258,8 +258,6 @@ Common::Error DirectorEngine::run() {
 
 		// If a loop was requested, do it
 		if (!_nextMovie.movie.empty()) {
-			_lingo->restartLingo();
-
 			// Persist screen between the movies
 			// TODO: this is a workaround until the rendering pipeline is reworked
 			if (_currentScore && _currentScore->_surface) {
@@ -273,7 +271,13 @@ Common::Error DirectorEngine::run() {
 
 			_currentPath = getPath(_nextMovie.movie, _currentPath);
 
-			loadSharedCastsFrom(_currentPath + _sharedCastFile);
+			if (_sharedScore && _sharedScore->_movieArchive
+					&& _sharedScore->_movieArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
+				_lingo->restartLingo(true);
+			} else {
+				_lingo->restartLingo(false);
+				loadSharedCastsFrom(_currentPath + _sharedCastFile);
+			}
 
 			Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, '/'));
 

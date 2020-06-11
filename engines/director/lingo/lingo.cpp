@@ -617,10 +617,13 @@ void Lingo::executeHandler(Common::String name) {
 	execute(_pc);
 }
 
-void Lingo::restartLingo() {
+void Lingo::restartLingo(bool keepSharedCast) {
 	debugC(3, kDebugLingoExec, "Resetting Lingo!");
 
 	for (int a = 0; a < 2; a++) {
+		if (a == 1 && keepSharedCast)
+			continue;
+
 		LingoArchive *arch = &_archives[a];
 		for (int i = 0; i <= kMaxScriptType; i++) {
 			for (ScriptContextHash::iterator it = arch->scriptContexts[i].begin(); it != arch->scriptContexts[i].end(); ++it) {

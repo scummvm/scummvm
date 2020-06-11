@@ -276,11 +276,6 @@ void DirectorEngine::clearSharedCast() {
 }
 
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
-	if (_sharedScore && _sharedScore->_movieArchive) {
-		if (_sharedScore->_movieArchive->getFileName().equalsIgnoreCase(filename))
-			return;
-	}
-
 	clearSharedCast();
 
 	Archive *sharedCast = createArchive();

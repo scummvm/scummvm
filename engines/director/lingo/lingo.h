@@ -314,7 +314,7 @@ public:
 	Lingo(DirectorEngine *vm);
 	~Lingo();
 
-	void restartLingo();
+	void restartLingo(bool keepSharedCast);
 
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id, Common::String &archName);
