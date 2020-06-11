@@ -554,6 +554,7 @@ void Score::renderSprite(uint16 id) {
 	} else {
 		Cast *cast = _sprites[id]->_cast;
 		if (cast && cast->_widget) {
+			cast->_widget->_priority = id;
 			cast->_widget->draw();
 			inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), _sprites[id]->_ink, _sprites[id]->_currentBbox, id);
 		} else {
