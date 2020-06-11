@@ -1359,6 +1359,8 @@ uint32 Actor::I_setDead(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
+	// TODO: In crusader this function also sets flag 0x8000 on
+	// the actor.  Do we need to do that here?
 	actor->setActorFlag(ACT_DEAD);
 
 	return 0;

@@ -421,8 +421,19 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
-uint32 MainActor::I_teleportToEgg(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_UINT16(mapnum);
+uint32 MainActor::I_teleportToEgg(const uint8 *args, unsigned int argsize) {
+	uint16 mapnum;
+	if (argsize == 12) {
+		ARG_UINT16(map);
+		mapnum = map;
+	} else {
+		// TODO: Confirm this works right.
+		// Crusader teleport uses main actor map.
+		assert(argsize == 8);
+		MainActor *av = getMainActor();
+		mapnum = av->getMapNum();
+	}
+
 	ARG_UINT16(teleport_id);
 	ARG_UINT16(unknown); // 0/1
 

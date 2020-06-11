@@ -121,7 +121,8 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
 	if (_playingStream) {
-		delete _playingStream;
+		// FIXME: This gets use-after-free.. is it deleted already?
+		//delete _playingStream;
 		_playingStream = nullptr;
 	}
 

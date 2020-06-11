@@ -78,14 +78,14 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Actor::I_isNPC(Item *)", // proably - actually checks is itemno < 256?
 	"byte Item::I_getZ(Item *)",
 	"void Item::I_destroy(Item *)", // probably? often called after creating a replacement object and setting it to the same position (eg, LUGGAGE::gotHit)
-	"int16 I_getSOMETHING_0B(MainActor *?)", // could be getNPCNum? Called from ANDROID::calledFromAnim, goes to NPCDEATH
-	"void Intrinsic00C(2 bytes)",
-	"byte Item::Intrinsic00D(Item *, itemno)",
-	"int16 Intrinsic00E(8 bytes)",
+	"int16 I_GetNPCDataField0x63_00B(Actor *)", // could be getNPCNum? Called from ANDROID::calledFromAnim, goes to NPCDEATH
+	"void I_NPCsetSomething_00C(int)",
+	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
+	"int16 I_NPCSomething00E(Actor *, int, int)",
 	"void I_playFlic(void), int16 I_playFlic(Item *, char *name, int16 sizex, int16 sizey)",
 	// 0010
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff as 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
-	"int16 Intrinsic011(4 bytes)",
+	"int16 Actor::I_getMap(4 bytes)", // based on disasm.
 	"void Intrinsic012(2 bytes)",
 	"int16 Item::I_getX(Item *)",
 	"int16 Item::I_getY(Item *)",
@@ -96,127 +96,127 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_legalCreateAtCoords(Item *, int16 shapeno, int16 frame, int16 x, int16 y, int16 z)", // probably, see usage in DOOR2::ordinal37
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132. Always associated with a bitwise-not or bitmask
 	"int16 Intrinsic01B(void)",
-	"byte Intrinsic01C(4 bytes)", // same coff as 112, 121
-	"int16 Intrinsic01D(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
+	"byte Actor::I_getDir(4 bytes)", // based on disasm. same coff as 112, 121
+	"int16 Actor::I_getLastAnimSet(4 bytes)", // based on disasm. part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"int16 Intrinsic01E(16 bytes)",
 	"byte Item::I_create(Item *, uint16 shapenum, uint16 framenum)", // probably - used in MISS1EGG referencing keycards and NPCDEATH in creating blood spills
 	// 0020
 	"void Item::I_popToCoords(Item *, uint16 x, uint16 y, uint16 z)", // set coords, used after creating blood spills in NPCDEATH
-	"void Intrinsic021(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
-	"void Intrinsic022(Item *)", // I_push??
+	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"void I_push(Item *)", // same code as U8
 	"int16 Intrinsic023(void)", // returns some ItemCache global in disassembly
 	"void Item::I_setShape(Item *, int16 shapeno)", // probably. See PEPSIEW::gotHit.
-	"void I_maybeTouch025(4 bytes)", // I_touch??
+	"void Item::I_touch(Item *)", // same code as U8
 	"int16 Item::I_getQHi(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
-	"int16 Intrinsic027(14 bytes)",
-	"int16 Intrinsic028(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
-	"int16 Intrinsic029([pid, [byte]])",
+	"int16 I_getDirectionSomething(x1, y1, x2, y2, numdirs, aa, bb)",  // TODO: understand the decompile of this better.. what is it doing with aa and bb?
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"int16 I_GetGlobal7e2d_029(void)",
 	"void AudioProcess::I_playAmbientSFXCru(Item *, sndno)",
 	"int16 Item::I_getQLo(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"byte Item::I_inFastArea(Item *)",
 	"void Item::I_setQHi(Item *, uint16 qhi)", // probably setQHi, see usage in FREE::ordinal2E where object position is copied
-	"byte Intrinsic02E(Item *, 8 bytes)",
+	"byte I_legalMoveToPoint(Item *, Point *, int16 force)", // based on disasm
 	"byte Intrinsic02F(10 bytes)",
 	// 0030
-	"void I_maybePop030(4 bytes)", // I_pop??
+	"void Item::I_pop(Item *)", // same code as U8
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void Intrinsic032(12 bytes)",
-	"byte Intrinsic033(4 bytes)",
-	"int16 Intrinsic034(8 bytes)",
-	"byte Intrinsic035(4 bytes)",
-	"int16 Intrinsic036(12 bytes)",
+	"byte Actor::I_isBusy(4 bytes)", // same code as U8
+	"int16 Actor::I_getDir16(x1, y1, x2, y2)",
+	"byte Actor::I_getSomeFlagMaybeCrouch(Item *)",
+	"int16 Actor::I_doAnim(12 bytes)", // v. similar code to U8
 	"byte Intrinsic037(4 bytes)", // same coff as 0B8
 	"void AudioProcess::Intrinsic038(Item *, int16 sndno)",
-	"byte Intrinsic039(4 bytes)", // same coff as 122, 12E
+	"byte Actor::I_isDead(Item *)", // same coff as 122, 12E
 	"byte AudioProcess::Intrinsic03A(Item *, int16 unk)",
 	"void Item::I_setQLo(Item *, int16 qlo)", // probably setQLo, see usage in FREE::ordinal2E where object position is copied.  Disassembly confirms.
-	"int16 Item::I_getSomethingShapey(Item *)", // something shape related according to disasm
-	"void Intrinsic03D(4 bytes)",
-	"void Intrinsic03E(4 bytes)",
-	"int16 Intrinsic03F(4 bytes)",
+	"int16 Item::I_getItemFamily(Item *)", // based on disasm
+	"void Container::I_destroyContents(Item *)",
+	"void Item::I_fallProbably(Item *)", // similar disasm to U8, but not totally the same.
+	"int16 Egg::I_getEggId(Item *)", // from disasm
 	// 0040
-	"void Intrinsic040(8 bytes)",
-	"void Intrinsic041(2 bytes)",
+	"void CameraProcess::I_move_to(x, y, z)",
+	"void CameraProcess::I_setCenterOn(objid)",
 	"byte Intrinsic042(6 bytes)",
 	"void AudioProcess::Intrinsic043(Item *, soundno)", // something with sound, probably Item *, soundno based on disassembly, maybe stopSFX?
-	"byte Item::Intrinsic044(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"byte Item::Intrinsic046(Item *, uint16 itemno))", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"byte Item::I_IsOn(Item *, uint16 itemno))", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"byte Item::Intrinsic048(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"byte Item::Intrinsic04A(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"byte Item::Intrinsic04C(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"byte Item::Intrinsic04E(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	// 0050
-	"int16 Intrinsic050(4 bytes)",
-	"void Intrinsic051(4 bytes)",
+	"int16 I_GetNPCDataField0x2_050(Actor *)",
+	"void I_NPCSomething_051(Actor *)",
 	"void Intrinsic052(6 bytes)",
-	"void Intrinsic053(6 bytes)",
-	"void Intrinsic054(6 bytes)",
-	"void Intrinsic055(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void I_SetNPCDataField0x8_053(Actor *, int)",
+	"void I_SetNPCDataField0xA_054(Actor *, int)",
+	"void I_NPCSetActivityProbably_055(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"void Intrinsic056(2 bytes)",
 	"int16 Item::I_getSOMETHING_57(Item *)",
 	"byte Item::I_doSOMETHING_58(Item *, uint16 unk)",
 	"void Item::I_setFrame(Item *, frame)", // based on same coff as 002
-	"int16 Intrinsic05A(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
+	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Point *)", // see PEPSIEW::use
 	"void Item::I_getPoint(Item *, Point *)",
 	"void Intrinsic05D(void)",
 	"int16 I_playFlicsomething(uint32, char *, int16 a, int16 b)", // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
 	"void Intrinsic05F(void)",
 	// 0060
-	"void Intrinsic060(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
-	"void Intrinsic061(8 bytes)",
+	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"void Actor::I_create(8 bytes)",
 	"void Intrinsic062(void)",
-	"void Intrinsic063(12 bytes)",
-	"void Item::Intrinsic064(Item *, uint *, uint *, uint *)", // same coff as 12D
-	"byte Intrinsic065(4 bytes)",
-	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
+	"void Actor::I_teleport(12 bytes)", // based on disasm same as U8
+	"void Item::I_getFootpad(Item *, uint *, uint *, uint *)", // based on disasm. same coff as 12D
+	"byte Item::I_isInNPC(Item *)", // based on disasm - following parent containers, is one of them an NPC
+	"int16 	Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Item::I_setNpcNum(Item *, uint16 npcnum)", // maybe, see EVENT::func0A or VALUEBOX::ordinal20.. right next to getNPCNum in coff (confirmed by disassembly)
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
-	"void Item::Intrinsic06A(Item *, int16 x, int16 y, uint16 z)",
+	"void Item::I_move(Item *, int16 x, int16 y, uint16 z)",
 	"int16 Intrinsic06B(void)",
 	"void Intrinsic06C(sometimes Item *)", // TODO: when param not item, what is it?
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
-	"byte Intrinsic06F(6 bytes)",
+	"byte Item::I_isCompletelyOn(Item *, uint16 other)",
 	// 0070
 	"byte Intrinsic070(void)",
 	"void Intrinsic071(void)",
 	"void Intrinsic072(void)",
-	"void Intrinsic073(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void Intrinsic074(void)",
 	"void Intrinsic075(void)",
-	"void AudioProcess::Intrinsic076(Item *)",
+	"void AudioProcess::I_stopSFX(Item *)",
 	"int16 Intrinsic077_Fade(void)", // something about fades
 	"void Intrinsic078(void)",
-	"int16 Intrinsic079(6 bytes)",
+	"int16 MainActor::I_teleportToEgg(int, int, int)",
 	"int16 Intrinsic07A_Fade(void)", // something about fades
-	"void Intrinsic07B(4 bytes)", // same coff as 130
-	"int16 Intrinsic07C(4 bytes)",
-	"void Intrinsic07D(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
-	"int16 I_getQIfSomething(Item *)", // based on disassembly
-	"void Intrinsic07F(6 bytes)", // same coff as 0BA, 125
+	"void Actor::I_clrImmortal(Actor *)", // same coff as 130
+	"int16 I_GetNPCDataField0_07C(Actor *)",
+	"void I_NPCSetActivityProbably_07D(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"int16 Item::I_getQuality(Item *)", // based on disassembly
+	"void Item::I_setQuality(Item *, int)", // based on disassembly. same coff as 0BA, 125
 	// 0080
-	"int16 Intrinsic080(4 bytes)", // same coff as 0D0, 0D5
+	"int16 Item::I_use(Item *)", // same coff as 0D0, 0D5
 	"int16 Intrinsic081(4 bytes)",
-	"int16 Intrinsic082(4 bytes)",
-	"void Intrinsic083(6 bytes)",
+	"int16 I_GetNPCDataField0x57_082(Actor *)",
+	"void I_SetNPCDataField0x57_083(Actor *, int)",
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
-	"void Intrinsic085(4 bytes)",
+	"void Actor::I_setImmortal(Actor *)",
 	"int16 Intrinsic086(void)",
 	"int16 Intrinsic087(void)",
 	"void Item::I_setMapArray(Item *, uint16 maparray)", // based on decompile - sets same value as read by getmaparray .. see VALUEBOX:ordinal20
 	"int16 Item::I_getNpcNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Intrinsic08A(12 bytes)",
-	"int16 Item::I_enterFastArea(Item *)", // maybe.. based on disasm
+	"int16 Item::I_enterFastArea(Item *)", // based on disasm, v similar to U8
 	"void Item::I_DoSomethingAndSetStatusFlag0x8000(Item *)", // same coff as 119, 12A
-	"int16 Intrinsic08D(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Intrinsic08F_Fade(void)", // something about fades
 	// 0090
@@ -226,9 +226,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic093(void)", // clears som global (set by 91)
 	"UNUSEDInt0094()",
 	"byte Intrinsic095(void)", // get global - something about keyboard (by disasm)
-	"int16 Intrinsic096(4 bytes)",
+	"int16 MainActor::I_teleportToEgg(int, int)", // a bit different to the U8 one - uses main actor map by default.
 	"void Intrinsic097(void)",
-	"void Intrinsic098(void)",
+	"void I_ProcessDeathSilence_098(void)",
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void Intrinsic09A_Fade(void)", // something about fades
 	"int16 Intrinsic09B_Fade(2 bytes)", // something about fades
@@ -237,105 +237,105 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Intrinsic09E_Fade(4 bytes)", // something about fades
 	"int16 Intrinsic09F_Fade(10 bytes)", // something about fades
 	// 00A0
-	"void Intrinsic0A0(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"void I_SetItemFlag0x8000AndNPCField0x13Flag0_0A0(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
-	"int16 Item::getQLoIfSomething(Item *)", // based on disassembly
-	"void Intrinsic0A3(6 bytes)",
-	"byte Item::Intrinsic0A4(Item *, uint16 unk)",
-	"byte Intrinsic0A5(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"int16 Item::I_getUnkEggType(Item *)", // based on disassembly, same as U8
+	"void Egg::I_setEggXRange(Egg *, int)", // based on disasm
+	"byte Item::I_overlaps(Item *, uint16 unk)", // same disasm as U8
+	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Intrinsic0A6(void)",
-	"int16 Intrinsic0A7(4 bytes)",
-	"void Intrinsic0A8(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"int16 Egg::I_getEggXRange(Egg *)", // based on disasm
+	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void I_playFlic0A9(char *)", // same coff as 092
 	"void I_playSFX(2 bytes)", // same coff as 0D4
-	"byte Intrinsic0AB(4 bytes)",
+	"byte I_NPCGetField0x59Flag1_0AB(Actor *)",
 	"int16 I_maybeGetFamilyOfType(2 bytes)", // per pentagram notes
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	// 00B0
-	"int16 Intrinsic0B0(6 bytes)",
-	"int16 Intrinsic0B1(6 bytes)",
+	"int16 Item::I_unequip(6 bytes)",
+	"int16 Item::I_spawnUsecodeEvent0x13(Item *, 2 bytes)", // based on disasm - what is event 0x13? "avatar stole something" in U8..
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int32 I_getCurrentTimerTick(void)",
 	"void Intrinsic0B4(void)",  // set or clear alert? (based on coff)
-	"int16 Intrinsic0B5(6 bytes)",
+	"int16 Item::I_equip(6 bytes)",
 	"void Intrinsic0B6(void)",  // set or clear alert? (based on coff)
-	"int16 Intrinsic0B7(void)",
+	"int16 I_GetNPCGlobal0x7e24_0B7(void)",
 	"byte Intrinsic0B8(4 bytes)", // same coff as 037
-	"int16 Intrinsic0B9(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"void Intrinsic0BA(6 bytes)", // same coff as 07F, 125
+	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
+	"void Item::I_setQuality(Item *, int)", // same coff as 07F, 125
 	"byte Intrinsic0BB(8 bytes)",
-	"byte Intrinsic0BC(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"int16 Intrinsic0BD(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	// 00C0
-	"int16 Intrinsic0C0(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
-	"int16 Intrinsic0C2(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Intrinsic0C4(2 bytes)",
-	"byte Intrinsic0C5(6 bytes)",
-	"void Intrinsic0C6(14 bytes)",
-	"byte Item::Intrinsic0C7(Item *, itemno)", // does something with the x/y from itemno
-	"int16 Intrinsic0C8(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"void SpriteProcess::I_createSprite(word, word, word, word, uword, uword, ubyte)",
+	"byte Item::I_getDirFromItem(Item *, itemno)", // same disasm as U8
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"byte Intrinsic0CA(6 bytes)",
+	"byte I_NPCSomething_0CA(Actor *, int)",
 	"void Intrinsic0CB(2 bytes)",
-	"byte Intrinsic0CC(4 bytes)",
-	"void Intrinsic0CD(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"byte I_GetNPCDataField0x59Flag3_0CC(Actor *)",
+	"void I_NPCSetActivityProbably_0CD(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Intrinsic0CE(void)",
 	"void Item::setQAndCallSomething(Item *, int16 q)", // based on disassembly
 	// 00D0
-	"int16 Intrinsic0D0(4 bytes)", // same coff as 080, 0D5
+	"int16 Item::I_use(Item *)", // same coff as 080, 0D5
 	"UNUSEDInt00D1()", // I_StopAllSFX (unused so not implmeneted)
 	"void Intrinsic0D2(int *item,char *flicname,word sizex,word sizey)", // play flic
 	"UNUSEDInt00D3()",
 	"void I_playSFX(2 bytes)", // same coff as 0AA.  Based on disasm.
-	"int16 Intrinsic0D5(4 bytes)", // same coff as 080, 0D0
+	"int16 Item::I_use(Item *)", // same coff as 080, 0D0
 	"byte Intrinsic0D6(void)",
-	"int16 Intrinsic0D7(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"void Intrinsic0D8(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
+	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
 	"void Intrinsic0DA_Fade(void)", // something about fades
-	"void Intrinsic0DB(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
-	"byte Intrinsic0DC(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"int16 Intrinsic0DD(4 bytes)",
-	"void Intrinsic0DE(6 bytes)",
-	"int16 Intrinsic0DF(6 bytes)",
+	"void I_NPCSetActivityProbably_0DB(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"int16 I_GetNPCDataField0x4_0DD(Actor *)",
+	"void I_SetNPCDataField0x5c_0DE(Actor *, int)",
+	"int16 Actor::I_getEquip(6 bytes)", // based on disasm
 	// 00E0
-	"void Intrinsic0E0(8 bytes)",
-	"int16 Intrinsic0E1(4 bytes)",
-	"int16 Intrinsic0E2(4 bytes)",
-	"int16 Intrinsic0E3(4 bytes)",
-	"int16 Intrinsic0E4(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"void Intrinsic0E5(6 bytes)",
-	"void Intrinsic0E6(6 bytes)",
-	"void Intrinsic0E7(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
-	"int16 Intrinsic0E8(6 bytes)",
+	"void Actor::I_setEquip(8 bytes)",
+	"int16 I_GetNPCDataField0x6_0E1(Actor *)",
+	"int16 I_GetNPCDataField0x8_0E2(Actor *)",
+	"int16 I_GetNPCDataField0xa_0E3(Actor *)",
+	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
+	"void I_NPCSomething0E5(Actor *, uint16)",
+	"void I_SetNPCDataField0x63_0E6(Actor *, int)",
+	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"int16 Item::I_cast(6 bytes)",
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
-	"int16 Intrinsic0EB(void)",
-	"void Intrinsic0EC(6 bytes)",
-	"void Intrinsic0ED(6 bytes)", // poptocontainer??
+	"int16 I_GetQOfAvatarInventoryItem0x4ed_0EB(void)",
+	"void Item::I_popToEnd(Item*, int)", // similar code to U8
+	"void Item::I_popToContainer(Item*, int)",  // same code as U8
 	"void Intrinsic0EE(void)",
 	"int16 Intrinsic0EF(4 bytes not Item *)",
 	// 00F0
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"byte Intrinsic0F1(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"void Intrinsic0F2(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"void I_NPCSetActivityProbably_0F2(Actor *, int)(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"int16 Item::I_getQ(Item *)", // based on disassembly
 	"void Item::I_setQ(Item *, uint16 q)", // based on disassembly
 	"void Intrinsic0F6(void)",
-	"int16 Intrinsic0F7(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"int16 Intrinsic0F9(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
-	"byte Intrinsic0FA(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
-	"byte Intrinsic0FD(2 bytes)",
+	"byte I_SomethingAboutGlobal7e2f_0FD(int)",
 	"void Intrinsic0FE(4 bytes)",
 	"int16 UCMachine::I_numToStr(int16 num)", // same as 113 based on same coff set 0FF, 113, 126
 	// 0100
@@ -358,44 +358,44 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 0110
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"byte Intrinsic112(4 bytes)", // same coff as 01C, 121
+	"byte Actor::I_getDir(4 bytes)", // same coff as 01C, 121
 	"int16 UCMachine::I_numToStr(int16 num)", // based on VMAIL::func0A example usage
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"byte Intrinsic116(14 bytes)",
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
-	"int16 Intrinsic118(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"void Item::I_DoSomethingAndSetStatusFlag0x8000(Item *)", // same coff as 08C, 12A
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"byte Item::I_getSomeFlag(Item *, uint16 unk)",
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"int16 Intrinsic11D(12 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
+	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Intrinsic11E(Item *)", // same coff as 12B
 	"byte Intrinsic11F(Item *)",
 	// 0120
 	"int16 Intrinsic120(Item *)",
-	"byte Intrinsic121(4 bytes)", // same coff as 01C, 112
-	"byte Intrinsic122(4 bytes)", // same coff as 12E, 039
+	"byte Actor::I_getDir(4 bytes)", // same coff as 01C, 112
+	"byte Actor::I_isDead(Item *)", // same coff as 12E, 039
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"int16 Intrinsic124(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"void Intrinsic125(6 bytes)", // same coff as 07F, 0BA
+	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
+	"void Item::I_setQuality(Item *, int)", // same coff as 07F, 0BA
 	"int16 UCMachine::I_numToStr(int16 num)", // same as 113 based on same coff set 0FF, 113, 126
-	"byte Item::Intrinsic127(Item *, uin16 x, uint16 y)", // based on disassembly
+	"byte Item::I_getDirToCoords(Item *, uin16 x, uint16 y)", // based on disassembly - FIXME: returns 2* values from U8
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Item::I_DoSomethingAndSetStatusFlag0x8000(Item *)", // same coff as 08C, 119
 	"int16 Intrinsic12B(Item *)", // same coff as 11E
-	"byte Intrinsic12C(6 bytes)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"void Item::Intrinsic12D(Item *, uint *, uint *, uint *)", // same coff as 064
-	"byte Intrinsic12E(4 bytes)", // same coff as 122, 039
+	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
+	"void Item::I_getFootpadData(Item *, uint *, uint *, uint *)", // same coff as 064
+	"byte Actor::I_isDead(Item *)", // same coff as 122, 039
 	"int16 Intrinsic12F(Item *, uint16 unk)",
 	// 0130
-	"void Intrinsic130(4 bytes)", // same coff as 07B
-	"void Intrinsic131(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
-	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
+	"void Actor::I_clrImmortal(Actor *)", // same coff as 07B
+	"void I_NPCSetActivityProbably_131(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"void Intrinsic134(2 bytes)",
-	"void UNUSEDInt135(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void UNUSEDInt136()",
 	"void UNUSEDInt137()"
 };
@@ -421,7 +421,7 @@ const char * const ConvertUsecodeCrusader::_event_names[] = {
 	"leaveFastArea()",				// 0x10
 	"cast(uword)",					// 0x11
 	"justMoved()",					// 0x12
-	"AvatarStoleSomething(uword)",	// 0x13
+	"avatarStoleSomething(uword)",	// 0x13
 	"animGetHit()",					// 0x14
 	"guardianBark(word)",			// 0x15
 	"func16",						// 0x16

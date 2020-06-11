@@ -388,6 +388,8 @@ public:
 	uint32 callUsecodeEvent_hatch();                            // event 7
 	uint32 callUsecodeEvent_schedule(uint32 time);              // event 8
 	uint32 callUsecodeEvent_release();                          // event 9
+	uint32 callUsecodeEvent_equip();                            // event A
+	uint32 callUsecodeEvent_unequip();                          // event B
 	uint32 callUsecodeEvent_combine();                          // event C
 	uint32 callUsecodeEvent_enterFastArea();                    // event F
 	uint32 callUsecodeEvent_leaveFastArea();                    // event 10
@@ -502,6 +504,7 @@ public:
 	INTRINSIC(I_use);
 	INTRINSIC(I_gotHit);
 	INTRINSIC(I_enterFastArea);
+	INTRINSIC(I_cast);
 	INTRINSIC(I_ask);
 	INTRINSIC(I_getSliderInput);
 	INTRINSIC(I_openGump);
@@ -536,6 +539,9 @@ public:
 	INTRINSIC(I_isCrusTypeNPC);
 	INTRINSIC(I_doSomethingAndSetUnkCruFlag);
 	INTRINSIC(I_inFastArea);
+	INTRINSIC(I_equip);
+	INTRINSIC(I_unequip);
+	INTRINSIC(I_avatarStoleSomething);
 
 private:
 	uint32 _shape;   // DO NOT modify this directly! Always use setShape()!

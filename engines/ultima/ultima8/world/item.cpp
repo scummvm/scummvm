@@ -1114,6 +1114,14 @@ uint32 Item::callUsecodeEvent_release() {                       // event 9
 	return callUsecodeEvent(9);     // CONSTANT
 }
 
+uint32 Item::callUsecodeEvent_equip() {                           // event A
+	return callUsecodeEvent(0xA); // CONSTANT
+}
+
+uint32 Item::callUsecodeEvent_unequip() {                           // event B
+	return callUsecodeEvent(0xB); // CONSTANT
+}
+
 uint32 Item::callUsecodeEvent_combine() {                       // event C
 	return callUsecodeEvent(0xC);   // CONSTANT
 }
@@ -2253,12 +2261,47 @@ uint32 Item::I_gotHit(const uint8 *args, unsigned int /*argsize*/) {
 	return item->callUsecodeEvent_gotHit(hitter, unk);
 }
 
+uint32 Item::I_equip(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	if (!item) return 0;
+
+	return item->callUsecodeEvent_equip();
+}
+
+uint32 Item::I_unequip(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	if (!item) return 0;
+
+	return item->callUsecodeEvent_unequip();
+}
 
 uint32 Item::I_enterFastArea(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
 	return item->callUsecodeEvent_enterFastArea();
+}
+
+uint32 Item::I_cast(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	if (!item) return 0;
+	ARG_UINT16(arg);
+
+	return item->callUsecodeEvent_cast(arg);
+}
+
+uint32 Item::I_avatarStoleSomething(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	if (!item) return 0;
+
+	// Check if dead to match original game behavior here..
+	Actor *actor = dynamic_cast<Actor *>(item);
+	if (!actor || actor->isDead())
+		return 0;
+
+	ARG_UINT16(arg);
+
+	return item->callUsecodeEvent_AvatarStoleSomething(arg);
 }
 
 uint32 Item::I_ask(const uint8 *args, unsigned int /*argsize*/) {
@@ -2391,6 +2434,8 @@ uint32 Item::I_getFootpadData(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(yptr);
 	ARG_UC_PTR(zptr);
 	if (!item) return 0;
+
+	// TODO: Data is packed differently in Crusader - check that this still works.
 
 	uint8 buf[2];
 	int32 x, y, z;
@@ -2615,7 +2660,7 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
-uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_WORLDPOINT(point);
 	ARG_UINT16(force); // 0/1
@@ -2691,6 +2736,8 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
+	// FIXME: Crusader directions have double value
+	// - does that make any difference here?
 	return Get_WorldDirection(y - iy, x - ix);
 }
 

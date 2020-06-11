@@ -81,6 +81,7 @@ public:
 	INTRINSIC(I_isSFXPlaying);
 	INTRINSIC(I_setVolumeSFX);
 	INTRINSIC(I_stopSFX);
+	INTRINSIC(I_stopSFXCru);
 
 	void run() override;
 
@@ -94,6 +95,7 @@ public:
 		playSFX(sfxNum, priority, objId, loops, no_duplicates, pitchShift, volume, -1, -1);
 	}
 
+	//! stop sfx on object.  set sfxNum = -1 to stop all for object.
 	void stopSFX(int sfxNum, ObjId objId);
 	bool isSFXPlaying(int sfxNum);
 	void setVolumeSFX(int sfxNum, uint8 volume);

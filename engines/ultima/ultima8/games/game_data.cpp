@@ -597,7 +597,7 @@ void GameData::loadRemorseData() {
 	RawArchive *dtableflex = new RawArchive(dtableds);
 
 	// TODO: What's in this flex file?
-	// Object 1: 35 * 142 byte blocks of .. something
+	// Object 1: 35 * 142-byte blocks of .. something. Shapeno at 0x3E (based on disasm)
 	// Object 2: 35 * 32-byte long names of NPCs?
 	//_dtable = new DtableDat();
 	//_dtable->load(dtableflex);

@@ -299,7 +299,8 @@ void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
 
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
-		if (it->_sfxNum == sfxNum && it->_objId == objId) {
+		if ((sfxNum == -1 || it->_sfxNum == sfxNum)
+			 && it->_objId == objId) {
 			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
 			it = _sampleInfo.erase(it);
 		} else {
@@ -587,6 +588,28 @@ uint32 AudioProcess::I_stopSFX(const uint8 *args, unsigned int argsize) {
 
 	return 0;
 }
+
+uint32 AudioProcess::I_stopSFXCru(const uint8 *args, unsigned int argsize) {
+	int16 sfxNum = -1;
+	ARG_ITEM_FROM_PTR(item);
+
+	if (!item) {
+		perr << "Invalid item in I_stopSFXCru";
+		return 0;
+	}
+
+	if (argsize == 6) {
+		ARG_SINT16(sfxNumber);
+		sfxNum = sfxNumber;
+	}
+
+	AudioProcess *ap = AudioProcess::get_instance();
+	if (ap) ap->stopSFX(sfxNum, item->getObjId());
+	else perr << "Error: No AudioProcess" << Std::endl;
+
+	return 0;
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

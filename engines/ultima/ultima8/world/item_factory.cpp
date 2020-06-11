@@ -65,6 +65,9 @@ static Item *getItemForFamily(uint32 family) {
 		return new Egg();
 
 	case ShapeInfo::SF_MONSTEREGG:
+		// FIXME: For crusader, item family 7 is also treated like a container
+		// (it can have contents, and the contents can be destroyed.
+		// Is it not the same as monster egg?
 		return new MonsterEgg();
 
 	case ShapeInfo::SF_TELEPORTEGG:
