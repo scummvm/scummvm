@@ -160,7 +160,7 @@ void GameHeader::clear() {
 
 /*-------------------------------------------------------*/
 
-void GameInfo::clearInfo() {
+void GameData::clearGame() {
 	_header.clear();
 	_comprehendVersion = 0;
 	_startRoom = 0;
@@ -169,9 +169,10 @@ void GameInfo::clearInfo() {
 	_nr_words = 0;
 	_currentReplaceWord = 0;
 	_updateFlags = 0;
+	_colorTable = 0;
+
 	_strings.clear();
 	_strings2.clear();
-
 	_rooms.clear();
 	_items.clear();
 	_wordMaps.clear();
@@ -183,22 +184,12 @@ void GameInfo::clearInfo() {
 	Common::fill(&_variables[0], &_variables[MAX_VARIABLES], 0);
 }
 
-static void parse_header_le16(FileBuffer *fb, uint16 *val) {
+void GameData::parse_header_le16(FileBuffer *fb, uint16 *val) {
 	*val = fb->readUint16LE();
 	*val += (uint16)magic_offset;
 }
 
-static size_t opcode_nr_operands(uint8 opcode) {
-	/* Number of operands is encoded in the low 2 bits */
-	return opcode & 0x3;
-}
-
-static bool opcode_is_command(uint8 opcode) {
-	/* If the MSB is set the instruction is a command */
-	return opcode & 0x80;
-}
-
-static uint8 parse_vm_instruction(FileBuffer *fb,
+uint8 GameData::parse_vm_instruction(FileBuffer *fb,
                                   Instruction *instr) {
 	uint i;
 
@@ -215,7 +206,7 @@ static uint8 parse_vm_instruction(FileBuffer *fb,
 	return instr->opcode;
 }
 
-static void parse_function(FileBuffer *fb, Function *func) {
+void GameData::parse_function(FileBuffer *fb, Function *func) {
 	Instruction *instruction;
 	const uint8 *p;
 	uint8 opcode;
@@ -237,8 +228,8 @@ static void parse_function(FileBuffer *fb, Function *func) {
 	}
 }
 
-static void parse_vm(ComprehendGame *game, FileBuffer *fb) {
-	fb->seek(game->_header.addr_vm);
+void GameData::parse_vm(FileBuffer *fb) {
+	fb->seek(_header.addr_vm);
 
 	while (1) {
 		Function func;
@@ -247,11 +238,11 @@ static void parse_vm(ComprehendGame *game, FileBuffer *fb) {
 		if (func.nr_instructions == 0)
 			break;
 
-		game->_functions.push_back(func);
+		_functions.push_back(func);
 	}
 }
 
-static void parse_action_table_vvnn(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_action_table_vvnn(FileBuffer *fb) {
 	uint8 verb, count;
 	int i, j;
 
@@ -265,7 +256,7 @@ static void parse_action_table_vvnn(ComprehendGame *game, FileBuffer *fb) {
 	*     u8:   noun2
 	*     le16: action
 	*/
-	fb->seek(game->_header.addr_actions_vvnn);
+	fb->seek(_header.addr_actions_vvnn);
 	while (1) {
 		verb = fb->readByte();
 		if (verb == 0)
@@ -288,12 +279,12 @@ static void parse_action_table_vvnn(ComprehendGame *game, FileBuffer *fb) {
 				action.word[j + 1] = fb->readByte();
 			action.function = fb->readUint16LE();
 
-			game->_actions.push_back(action);
+			_actions.push_back(action);
 		}
 	}
 }
 
-static void parse_action_table_vnjn(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_action_table_vnjn(FileBuffer *fb) {
 	uint8 join, count;
 	int i;
 
@@ -307,7 +298,7 @@ static void parse_action_table_vnjn(ComprehendGame *game, FileBuffer *fb) {
 	*     u8:   noun2
 	*     le16: action
 	*/
-	fb->seek(game->_header.addr_actions_vnjn);
+	fb->seek(_header.addr_actions_vnjn);
 	while (1) {
 		join = fb->readByte();
 		if (join == 0)
@@ -331,12 +322,12 @@ static void parse_action_table_vnjn(ComprehendGame *game, FileBuffer *fb) {
 			action.word[3] = fb->readByte();
 			action.function = fb->readUint16LE();
 
-			game->_actions.push_back(action);
+			_actions.push_back(action);
 		}
 	}
 }
 
-static void parse_action_table_vjn(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_action_table_vjn(FileBuffer *fb) {
 	uint8 join, count;
 	int i;
 
@@ -349,7 +340,7 @@ static void parse_action_table_vjn(ComprehendGame *game, FileBuffer *fb) {
 	*     u8:   noun
 	*     le16: action
 	*/
-	fb->seek(game->_header.addr_actions_vjn);
+	fb->seek(_header.addr_actions_vjn);
 	while (1) {
 		join = fb->readByte();
 		if (join == 0)
@@ -370,12 +361,12 @@ static void parse_action_table_vjn(ComprehendGame *game, FileBuffer *fb) {
 			action.word[2] = fb->readByte();
 			action.function = fb->readUint16LE();
 
-			game->_actions.push_back(action);
+			_actions.push_back(action);
 		}
 	}
 }
 
-static void parse_action_table_vdn(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_action_table_vdn(FileBuffer *fb) {
 	uint8 verb, count;
 	int i;
 
@@ -388,7 +379,7 @@ static void parse_action_table_vdn(ComprehendGame *game, FileBuffer *fb) {
 	*     u8:   noun
 	*     le16: action
 	*/
-	fb->seek(game->_header.addr_actions_vdn);
+	fb->seek(_header.addr_actions_vdn);
 	while (1) {
 		verb = fb->readByte();
 		if (verb == 0)
@@ -409,12 +400,12 @@ static void parse_action_table_vdn(ComprehendGame *game, FileBuffer *fb) {
 			action.word[2] = fb->readByte();
 			action.function = fb->readUint16LE();
 
-			game->_actions.push_back(action);
+			_actions.push_back(action);
 		}
 	}
 }
 
-static void parse_action_table_vnn(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_action_table_vnn(FileBuffer *fb) {
 	uint8 verb, count;
 	int i;
 
@@ -427,7 +418,7 @@ static void parse_action_table_vnn(ComprehendGame *game, FileBuffer *fb) {
 	*     u8:   noun2
 	*     le16: action
 	*/
-	fb->seek(game->_header.addr_actions_vnn);
+	fb->seek(_header.addr_actions_vnn);
 	while (1) {
 		/* 2-byte header */
 		verb = fb->readByte();
@@ -449,12 +440,12 @@ static void parse_action_table_vnn(ComprehendGame *game, FileBuffer *fb) {
 			action.word[2] = fb->readByte();
 			action.function = fb->readUint16LE();
 
-			game->_actions.push_back(action);
+			_actions.push_back(action);
 		}
 	}
 }
 
-static void parse_action_table_vn(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_action_table_vn(FileBuffer *fb) {
 	uint8 verb, count;
 	int i;
 
@@ -466,7 +457,7 @@ static void parse_action_table_vn(ComprehendGame *game, FileBuffer *fb) {
 	*     u8:   noun
 	*     le16: action
 	*/
-	fb->seek(game->_header.addr_actions_vn);
+	fb->seek(_header.addr_actions_vn);
 	while (1) {
 		/* 2-byte header */
 		verb = fb->readByte();
@@ -486,12 +477,12 @@ static void parse_action_table_vn(ComprehendGame *game, FileBuffer *fb) {
 			action.word[1] = fb->readByte();
 			action.function = fb->readUint16LE();
 
-			game->_actions.push_back(action);
+			_actions.push_back(action);
 		}
 	}
 }
 
-static void parse_action_table_v(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_action_table_v(FileBuffer *fb) {
 	uint8 verb, nr_funcs;
 	uint16 func;
 	int i;
@@ -503,7 +494,7 @@ static void parse_action_table_v(ComprehendGame *game, FileBuffer *fb) {
 	* u8: count (num actions)
 	*     le16: action
 	*/
-	fb->seek(game->_header.addr_actions_v);
+	fb->seek(_header.addr_actions_v);
 	while (1) {
 		verb = fb->readByte();
 		if (verb == 0)
@@ -528,45 +519,44 @@ static void parse_action_table_v(ComprehendGame *game, FileBuffer *fb) {
 				action.function = func;
 		}
 
-		game->_actions.push_back(action);
+		_actions.push_back(action);
 	}
 }
 
-static void parse_action_table(ComprehendGame *game,
-                               FileBuffer *fb) {
-	game->_actions.clear();
+void GameData::parse_action_table(FileBuffer *fb) {
+	_actions.clear();
 
-	if (game->_comprehendVersion == 1) {
-		parse_action_table_vvnn(game, fb);
-		parse_action_table_vdn(game, fb);
+	if (_comprehendVersion == 1) {
+		parse_action_table_vvnn(fb);
+		parse_action_table_vdn(fb);
 	}
-	if (game->_comprehendVersion >= 2) {
-		parse_action_table_vnn(game, fb);
+	if (_comprehendVersion >= 2) {
+		parse_action_table_vnn(fb);
 	}
 
-	parse_action_table_vnjn(game, fb);
-	parse_action_table_vjn(game, fb);
-	parse_action_table_vn(game, fb);
-	parse_action_table_v(game, fb);
+	parse_action_table_vnjn(fb);
+	parse_action_table_vjn(fb);
+	parse_action_table_vn(fb);
+	parse_action_table_v(fb);
 }
 
-static void parse_dictionary(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_dictionary(FileBuffer *fb) {
 	uint i;
 
 	// FIXME - fixed size 0xff array?
-	game->_words = (Word *)malloc(game->_nr_words * sizeof(Word));
+	_words = (Word *)malloc(_nr_words * sizeof(Word));
 
-	fb->seek(game->_header.addr_dictionary);
-	for (i = 0; i < game->_nr_words; i++)
-		game->_words[i].load(fb);
+	fb->seek(_header.addr_dictionary);
+	for (i = 0; i < _nr_words; i++)
+		_words[i].load(fb);
 }
 
-static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_word_map(FileBuffer *fb) {
 	uint8 index, type;
 	uint i;
 
-	game->_wordMaps.clear();
-	fb->seek(game->_header.addr_word_map);
+	_wordMaps.clear();
+	fb->seek(_header.addr_word_map);
 
 	/*
 	* Parse the word pair table. Each entry has a pair of dictionary
@@ -588,7 +578,7 @@ static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
 		map.word[1].index = fb->readByte();
 		map.word[1].type = fb->readByte();
 
-		game->_wordMaps.push_back(map);
+		_wordMaps.push_back(map);
 	}
 
 	/* Consume two more null bytes (type and index were also null) */
@@ -599,71 +589,71 @@ static void parse_word_map(ComprehendGame *game, FileBuffer *fb) {
 	* index/type. The first and second words from above map to the
 	* target word here. E.g. 'go north' -> 'north'.
 	*/
-	for (i = 0; i < game->_wordMaps.size(); i++) {
-		WordMap &map = game->_wordMaps[i];
+	for (i = 0; i < _wordMaps.size(); i++) {
+		WordMap &map = _wordMaps[i];
 
 		map.word[2].index = fb->readByte();
 		map.word[2].type = fb->readByte();
 	}
 }
 
-static void parse_items(ComprehendGame *game, FileBuffer *fb) {
-	size_t nr_items = game->_header.nr_items;
-	game->_items.resize(nr_items);
+void GameData::parse_items(FileBuffer *fb) {
+	size_t nr_items = _header.nr_items;
+	_items.resize(nr_items);
 
 	/* Item descriptions */
-	fb->seek(game->_header.addr_item_strings);
-	file_buf_get_array_le16(fb, 0, game->_items, string_desc, nr_items);
+	fb->seek(_header.addr_item_strings);
+	file_buf_get_array_le16(fb, 0, _items, string_desc, nr_items);
 
-	if (game->_comprehendVersion == 2) {
+	if (_comprehendVersion == 2) {
 		/* Comprehend version 2 adds long string descriptions */
-		fb->seek(game->_header.addr_item_strings +
-		         (game->_items.size() * sizeof(uint16)));
-		file_buf_get_array_le16(fb, 0, game->_items, long_string, nr_items);
+		fb->seek(_header.addr_item_strings +
+		         (_items.size() * sizeof(uint16)));
+		file_buf_get_array_le16(fb, 0, _items, long_string, nr_items);
 	}
 
 	/* Item flags */
-	fb->seek(game->_header.addr_item_flags);
-	file_buf_get_array_u8(fb, 0, game->_items, flags, nr_items);
+	fb->seek(_header.addr_item_flags);
+	file_buf_get_array_u8(fb, 0, _items, flags, nr_items);
 
 	/* Item word */
-	fb->seek(game->_header.addr_item_word);
-	file_buf_get_array_u8(fb, 0, game->_items, word, nr_items);
+	fb->seek(_header.addr_item_word);
+	file_buf_get_array_u8(fb, 0, _items, word, nr_items);
 
 	/* Item locations */
-	fb->seek(game->_header.addr_item_locations);
-	file_buf_get_array_u8(fb, 0, game->_items, room, nr_items);
+	fb->seek(_header.addr_item_locations);
+	file_buf_get_array_u8(fb, 0, _items, room, nr_items);
 
 	/* Item graphic */
-	fb->seek(game->_header.addr_item_graphics);
-	file_buf_get_array_u8(fb, 0, game->_items, graphic, nr_items);
+	fb->seek(_header.addr_item_graphics);
+	file_buf_get_array_u8(fb, 0, _items, graphic, nr_items);
 }
 
-static void parse_rooms(ComprehendGame *game, FileBuffer *fb) {
-	size_t nr_rooms = game->_rooms.size() - 1;
+void GameData::parse_rooms(FileBuffer *fb) {
+	size_t nr_rooms = _rooms.size() - 1;
 	int i;
 
 	/* Room exit directions */
 	for (i = 0; i < NR_DIRECTIONS; i++) {
-		fb->seek(game->_header.room_direction_table[i]);
-		file_buf_get_array_u8(fb, 1, game->_rooms,
+		fb->seek(_header.room_direction_table[i]);
+		file_buf_get_array_u8(fb, 1, _rooms,
 		                      direction[i], nr_rooms);
 	}
 
 	/* Room string descriptions */
-	fb->seek(game->_header.room_desc_table);
-	file_buf_get_array_le16(fb, 1, game->_rooms, string_desc, nr_rooms);
+	fb->seek(_header.room_desc_table);
+	file_buf_get_array_le16(fb, 1, _rooms, string_desc, nr_rooms);
 
 	/* Room flags */
-	fb->seek(game->_header.room_flags_table);
-	file_buf_get_array_u8(fb, 1, game->_rooms, flags, nr_rooms);
+	fb->seek(_header.room_flags_table);
+	file_buf_get_array_u8(fb, 1, _rooms, flags, nr_rooms);
 
 	/* Room graphic */
-	fb->seek(game->_header.room_graphics_table);
-	file_buf_get_array_u8(fb, 1, game->_rooms, graphic, nr_rooms);
+	fb->seek(_header.room_graphics_table);
+	file_buf_get_array_u8(fb, 1, _rooms, graphic, nr_rooms);
 }
 
-static uint64 string_get_chunk(uint8 *string) {
+uint64 GameData::string_get_chunk(uint8 *string) {
 	uint64 c, val = 0;
 	int i;
 
@@ -675,7 +665,7 @@ static uint64 string_get_chunk(uint8 *string) {
 	return val;
 }
 
-static char decode_string_elem(uint8 c, bool capital, bool special) {
+char GameData::decode_string_elem(uint8 c, bool capital, bool special) {
 	if (special) {
 		if (c < sizeof(SPECIAL_CHARSET) - 1)
 			return SPECIAL_CHARSET[c];
@@ -703,15 +693,7 @@ static char decode_string_elem(uint8 c, bool capital, bool special) {
 	return '*';
 }
 
-/*
-* Game strings are stored using 5-bit characters. By default a character
-* value maps to the lower-case letter table. If a character has the value 0x1e
-* then the next character is upper-case. An upper-case space is used to
-* specify that the character should be replaced at runtime (like a '%s'
-* specifier). If a character has the value 0x1f then the next character is
-* taken from the symbols table.
-*/
-static Common::String parseString(FileBuffer *fb) {
+Common::String GameData::parseString(FileBuffer *fb) {
 	bool capital_next = false, special_next = false;
 	unsigned i, j;
 	uint64 chunk;
@@ -759,7 +741,7 @@ done:
 	return string;
 }
 
-static void parse_string_table(FileBuffer *fb, unsigned start_addr,
+void GameData::parse_string_table(FileBuffer *fb, unsigned start_addr,
                                uint32 end_addr, StringTable *table) {
 	fb->seek(start_addr);
 	while (1) {
@@ -769,35 +751,34 @@ static void parse_string_table(FileBuffer *fb, unsigned start_addr,
 	}
 }
 
-static void parse_variables(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_variables(FileBuffer *fb) {
 	uint i;
 
-	for (i = 0; i < ARRAY_SIZE(game->_variables); i++)
-		game->_variables[i] = fb->readUint16LE();
+	for (i = 0; i < ARRAY_SIZE(_variables); i++)
+		_variables[i] = fb->readUint16LE();
 }
 
-static void parse_flags(ComprehendGame *game, FileBuffer *fb) {
+void GameData::parse_flags(FileBuffer *fb) {
 	uint i, flag_index = 0;
 	int bit;
 	uint8 bitmask;
 
-	for (i = 0; i < ARRAY_SIZE(game->_flags) / 8; i++) {
+	for (i = 0; i < ARRAY_SIZE(_flags) / 8; i++) {
 		bitmask = fb->readByte();
 		for (bit = 7; bit >= 0; bit--) {
-			game->_flags[flag_index] = !!(bitmask & (1 << bit));
+			_flags[flag_index] = !!(bitmask & (1 << bit));
 			flag_index++;
 		}
 	}
 }
 
-static void parse_replace_words(ComprehendGame *game,
-                                FileBuffer *fb) {
+void GameData::parse_replace_words(FileBuffer *fb) {
 	size_t len;
 	bool eof;
 	int i;
 
 	/* FIXME - Rename addr_strings_end */
-	fb->seek(game->_header.addr_strings_end);
+	fb->seek(_header.addr_strings_end);
 
 	/* FIXME - what is this for */
 	fb->skip(2);
@@ -807,19 +788,15 @@ static void parse_replace_words(ComprehendGame *game,
 		if (len == 0)
 			break;
 
-		game->_replaceWords.push_back(Common::String((const char *)fb->dataPtr(), len));
+		_replaceWords.push_back(Common::String((const char *)fb->dataPtr(), len));
 		fb->skip(len + (eof ? 0 : 1));
 		if (eof)
 			break;
 	}
 }
 
-/*
-* The main game data file header has the offsets for where each bit of
-* game data is. The offsets have a magic constant value added to them.
-*/
-static void parse_header(ComprehendGame *game, FileBuffer *fb) {
-	GameHeader *header = &game->_header;
+void GameData::parse_header(FileBuffer *fb) {
+	GameHeader *header = &_header;
 	uint16 dummy, addr_dictionary_end;
 
 	fb->seek(0);
@@ -827,17 +804,17 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 	switch (header->magic) {
 	case 0x2000: /* Transylvania, Crimson Crown disk one */
 	case 0x4800: /* Crimson Crown disk two */
-		game->_comprehendVersion = 1;
+		_comprehendVersion = 1;
 		magic_offset = (uint16)(-0x5a00 + 0x4);
 		break;
 
 	case 0x93f0: /* OO-Topos */
-		game->_comprehendVersion = 2;
+		_comprehendVersion = 2;
 		magic_offset = (uint16) - 0x5a00;
 		break;
 
 	case 0xa429: /* Talisman */
-		game->_comprehendVersion = 2;
+		_comprehendVersion = 2;
 		magic_offset = (uint16) - 0x5a00;
 		break;
 
@@ -845,8 +822,6 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 		error("Unknown game_data magic %.4x\n", header->magic);
 		break;
 	}
-
-	game->loadOpcodes(game->_comprehendVersion);
 
 	/* FIXME - Second word in header has unknown usage */
 	parse_header_le16(fb, &dummy);
@@ -856,14 +831,14 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 	*
 	* Layout depends on the comprehend version.
 	*/
-	if (game->_comprehendVersion == 1) {
+	if (_comprehendVersion == 1) {
 		parse_header_le16(fb, &header->addr_actions_vvnn);
 		parse_header_le16(fb, &header->addr_actions_unknown);
 		parse_header_le16(fb, &header->addr_actions_vnjn);
 		parse_header_le16(fb, &header->addr_actions_vjn);
 		parse_header_le16(fb, &header->addr_actions_vdn);
 	}
-	if (game->_comprehendVersion >= 2) {
+	if (_comprehendVersion >= 2) {
 		parse_header_le16(fb, &header->addr_actions_vnjn);
 		parse_header_le16(fb, &header->addr_actions_vjn);
 		parse_header_le16(fb, &header->addr_actions_vnn);
@@ -897,7 +872,7 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 	*
 	* Layout is dependent on comprehend version.
 	*/
-	if (game->_comprehendVersion == 1) {
+	if (_comprehendVersion == 1) {
 		parse_header_le16(fb, &header->addr_item_locations);
 		parse_header_le16(fb, &header->addr_item_flags);
 		parse_header_le16(fb, &header->addr_item_word);
@@ -923,22 +898,21 @@ static void parse_header(ComprehendGame *game, FileBuffer *fb) {
 	parse_header_le16(fb, &header->addr_strings_end);
 
 	fb->skip(1);
-	game->_startRoom = fb->readByte();
+	_startRoom = fb->readByte();
 	fb->skip(1);
 
-	parse_variables(game, fb);
-	parse_flags(game, fb);
+	parse_variables(fb);
+	parse_flags(fb);
 
-	game->_rooms.resize(header->room_direction_table[DIRECTION_SOUTH] -
+	_rooms.resize(header->room_direction_table[DIRECTION_SOUTH] -
 	                    header->room_direction_table[DIRECTION_NORTH] + 1);
 
-	game->_nr_words = (addr_dictionary_end -
+	_nr_words = (addr_dictionary_end -
 	                   header->addr_dictionary) /
 	                  8;
 }
 
-static void load_extra_string_file(ComprehendGame *game,
-                                   StringFile *string_file) {
+void GameData::load_extra_string_file(StringFile *string_file) {
 	FileBuffer fb(string_file->filename);
 	unsigned end;
 
@@ -948,56 +922,56 @@ static void load_extra_string_file(ComprehendGame *game,
 		end = fb.size();
 
 	parse_string_table(&fb, string_file->base_offset,
-	                   end, &game->_strings2);
+	                   end, &_strings2);
 }
 
-static void load_extra_string_files(ComprehendGame *game) {
+void GameData::load_extra_string_files() {
 	uint i;
 
-	for (i = 0; i < game->_stringFiles.size(); i++) {
+	for (i = 0; i < _stringFiles.size(); i++) {
 		// HACK - get string offsets correct
-		game->_strings2.resize(0x40 * i);
-		if (game->_strings2.empty())
-			game->_strings2.push_back("");
+		_strings2.resize(0x40 * i);
+		if (_strings2.empty())
+			_strings2.push_back("");
 
-		load_extra_string_file(game, &game->_stringFiles[i]);
+		load_extra_string_file(&_stringFiles[i]);
 	}
 }
 
-static void load_game_data(ComprehendGame *game) {
-	FileBuffer fb(game->_gameDataFile);
+void GameData::loadGameData() {
+	FileBuffer fb(_gameDataFile);
 
-	game->clearInfo();
+	clearGame();
 
-	parse_header(game, &fb);
-	parse_rooms(game, &fb);
-	parse_items(game, &fb);
-	parse_dictionary(game, &fb);
-	parse_word_map(game, &fb);
-	parse_string_table(&fb, game->_header.addr_strings,
-	                   game->_header.addr_strings_end,
-	                   &game->_strings);
-	load_extra_string_files(game);
-	parse_vm(game, &fb);
-	parse_action_table(game, &fb);
-	parse_replace_words(game, &fb);
+	parse_header(&fb);
+	parse_rooms(&fb);
+	parse_items(&fb);
+	parse_dictionary(&fb);
+	parse_word_map(&fb);
+	parse_string_table(&fb, _header.addr_strings,
+	                   _header.addr_strings_end,
+	                   &_strings);
+	load_extra_string_files();
+	parse_vm(&fb);
+	parse_action_table(&fb);
+	parse_replace_words(&fb);
 }
 
-void comprehend_load_game(ComprehendGame *game) {
+void GameData::loadGame() {
 	/* Load the main game data file */
-	load_game_data(game);
+	loadGameData();
 
 	if (g_comprehend->_graphicsEnabled) {
 		// Set up the picture archive
-		g_comprehend->_pics->load(game->_locationGraphicFiles,
-		                          game->_itemGraphicFiles, game->_titleGraphicFile);
+		g_comprehend->_pics->load(_locationGraphicFiles,
+		                          _itemGraphicFiles, _titleGraphicFile);
 
-		if (game->_colorTable)
-			g_comprehend->_drawSurface->setColorTable(game->_colorTable);
+		if (_colorTable)
+			g_comprehend->_drawSurface->setColorTable(_colorTable);
 	}
 
 	// FIXME: This can be merged, don't need to keep start room around
-	game->_currentRoom = game->_startRoom;
+	_currentRoom = _startRoom;
 }
 
 } // namespace Comprehend

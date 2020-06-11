@@ -38,15 +38,8 @@ namespace Comprehend {
 struct GameStrings;
 struct Sentence;
 
-class ComprehendGame : public GameInfo, public OpcodeMap {
+class ComprehendGame : public GameData, public OpcodeMap {
 public:
-	Common::String _gameDataFile;
-	Common::Array<StringFile> _stringFiles;
-	Common::StringArray _locationGraphicFiles;
-	Common::StringArray _itemGraphicFiles;
-	Common::String _titleGraphicFile;
-	unsigned _colorTable;
-
 	const GameStrings *_gameStrings;
 
 private:
@@ -88,6 +81,11 @@ protected:
 	 * next test sequence (if there is one) is tried.
 	 */
 	void eval_function(Function *func, Word *verb, Word *noun);
+
+	void parse_header(FileBuffer *fb) override {
+		GameData::parse_header(fb);
+		loadOpcodes(_comprehendVersion);
+	}
 
 public:
 	ComprehendGame();

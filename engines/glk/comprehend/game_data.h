@@ -48,6 +48,129 @@ enum {
 	NR_DIRECTIONS
 };
 
+
+enum {
+	OPCODE_UNKNOWN,
+	OPCODE_TEST_FALSE,
+	OPCODE_HAVE_OBJECT,
+	OPCODE_OR,
+	OPCODE_IN_ROOM,
+	OPCODE_VAR_EQ,
+	OPCODE_CURRENT_OBJECT_TAKEABLE,
+	OPCODE_OBJECT_PRESENT,
+	OPCODE_ELSE,
+	OPCODE_OBJECT_IN_ROOM,
+	OPCODE_OBJECT_NOT_VALID,
+	OPCODE_INVENTORY_FULL,
+	OPCODE_TEST_FLAG,
+	OPCODE_CURRENT_OBJECT_IN_ROOM,
+	OPCODE_HAVE_CURRENT_OBJECT,
+	OPCODE_OBJECT_IS_NOT_NOWHERE,
+	OPCODE_CURRENT_OBJECT_PRESENT,
+	OPCODE_TEST_ROOM_FLAG,
+	OPCODE_NOT_HAVE_OBJECT,
+	OPCODE_NOT_IN_ROOM,
+	OPCODE_CURRENT_OBJECT_IS_NOWHERE,
+	OPCODE_OBJECT_NOT_PRESENT,
+	OPCODE_OBJECT_NOT_IN_ROOM,
+	OPCODE_TEST_NOT_FLAG,
+	OPCODE_NOT_HAVE_CURRENT_OBJECT,
+	OPCODE_OBJECT_IS_NOWHERE,
+	OPCODE_CURRENT_OBJECT_NOT_PRESENT,
+	OPCODE_CURRENT_OBJECT_NOT_TAKEABLE,
+	OPCODE_TEST_NOT_ROOM_FLAG,
+	OPCODE_INVENTORY,
+	OPCODE_TAKE_OBJECT,
+	OPCODE_MOVE_OBJECT_TO_ROOM,
+	OPCODE_SAVE_ACTION,
+	OPCODE_MOVE_TO_ROOM,
+	OPCODE_VAR_ADD,
+	OPCODE_SET_ROOM_DESCRIPTION,
+	OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM,
+	OPCODE_VAR_SUB,
+	OPCODE_SET_OBJECT_DESCRIPTION,
+	OPCODE_SET_OBJECT_LONG_DESCRIPTION,
+	OPCODE_MOVE,
+	OPCODE_MOVE_DIRECTION,
+	OPCODE_PRINT,
+	OPCODE_REMOVE_OBJECT,
+	OPCODE_SET_FLAG,
+	OPCODE_CALL_FUNC,
+	OPCODE_TURN_TICK,
+	OPCODE_CLEAR_FLAG,
+	OPCODE_INVENTORY_ROOM,
+	OPCODE_TAKE_CURRENT_OBJECT,
+	OPCODE_SPECIAL,
+	OPCODE_DROP_OBJECT,
+	OPCODE_DROP_CURRENT_OBJECT,
+	OPCODE_SET_ROOM_GRAPHIC,
+	OPCODE_SET_OBJECT_GRAPHIC,
+	OPCODE_REMOVE_CURRENT_OBJECT,
+	OPCODE_DO_VERB,
+	OPCODE_VAR_INC,
+	OPCODE_VAR_DEC,
+	OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM,
+	OPCODE_DESCRIBE_CURRENT_OBJECT,
+	OPCODE_SET_STRING_REPLACEMENT,
+	OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT,
+	OPCODE_CURRENT_NOT_OBJECT,
+	OPCODE_CURRENT_IS_OBJECT,
+	OPCODE_DRAW_ROOM,
+	OPCODE_DRAW_OBJECT,
+	OPCODE_WAIT_KEY
+};
+
+/* Game state update flags */
+#define UPDATE_GRAPHICS (1 << 0) /* Implies UPDATE_GRAPHICS_ITEMS */
+#define UPDATE_GRAPHICS_ITEMS (1 << 1)
+#define UPDATE_ROOM_DESC (1 << 2)
+#define UPDATE_ITEM_LIST (1 << 3)
+#define UPDATE_ALL (~0U)
+
+/* Action types */
+enum {
+	ACTION_VERB_VERB_NOUN_NOUN,
+	ACTION_VERB_NOUN_JOIN_NOUN,
+	ACTION_VERB_JOIN_NOUN,
+	ACTION_VERB_DIR_NOUN,
+	ACTION_VERB_NOUN_NOUN,
+	ACTION_VERB_NOUN,
+	ACTION_VERB_OPT_NOUN
+};
+
+/* Standard strings (main string table) */
+#define STRING_CANT_GO 0
+#define STRING_DONT_UNDERSTAND 1
+#define STRING_YOU_SEE 2
+#define STRING_INVENTORY 3
+#define STRING_INVENTORY_EMPTY 4
+#define STRING_BEFORE_CONTINUE 5
+#define STRING_SAVE_GAME 6
+#define STRING_RESTORE_GAME 7
+
+/* Special variables */
+#define VAR_INVENTORY_WEIGHT 0
+#define VAR_INVENTORY_LIMIT 1
+#define VAR_TURN_COUNT 2
+
+/* Special rooms */
+#define ROOM_INVENTORY 0x00
+#define ROOM_NOWHERE 0xff
+
+/* Item flags */
+#define ITEMF_WEIGHT_MASK (0x3)
+#define ITEMF_CAN_TAKE (1 << 3)
+
+/* Word types */
+#define WORD_TYPE_VERB 0x01
+#define WORD_TYPE_JOIN 0x02
+#define WORD_TYPE_FEMALE 0x10
+#define WORD_TYPE_MALE 0x20
+#define WORD_TYPE_NOUN 0x40
+#define WORD_TYPE_NOUN_PLURAL 0x80
+#define WORD_TYPE_NOUN_MASK (WORD_TYPE_FEMALE | WORD_TYPE_MALE | \
+                             WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
+
 struct FunctionState {
 	bool test_result;
 	bool else_result;
@@ -173,6 +296,17 @@ struct Function {
 
 typedef Common::StringArray StringTable;
 
+struct StringFile {
+	Common::String filename;
+	uint32 base_offset;
+	uint32 end_offset;
+
+	StringFile() : base_offset(0), end_offset(0) {
+	}
+	StringFile(const Common::String &fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
+	}
+};
+
 struct GameHeader {
 	uint16 magic;
 
@@ -212,7 +346,16 @@ struct GameHeader {
 	void clear();
 };
 
-struct GameInfo {
+class GameData {
+protected:
+	Common::String _gameDataFile;
+	Common::Array<StringFile> _stringFiles;
+	Common::StringArray _locationGraphicFiles;
+	Common::StringArray _itemGraphicFiles;
+	Common::String _titleGraphicFile;
+	uint _colorTable;
+
+public:
 	GameHeader _header;
 
 	unsigned _comprehendVersion;
@@ -226,11 +369,6 @@ struct GameInfo {
 	Word *_words;
 	size_t _nr_words;
 
-	Common::Array<WordMap> _wordMaps;
-	Common::Array<Action> _actions;
-	Common::Array<Function> _functions;
-	Common::StringArray _replaceWords;
-
 	StringTable _strings;
 	StringTable _strings2;
 
@@ -240,152 +378,81 @@ struct GameInfo {
 	uint8 _currentReplaceWord;
 	uint _updateFlags;
 
-	GameInfo() {
-		clearInfo();
+	Common::Array<WordMap> _wordMaps;
+	Common::Array<Action> _actions;
+	Common::Array<Function> _functions;
+	Common::StringArray _replaceWords;
+
+private:
+	size_t opcode_nr_operands(uint8 opcode) const {
+		// Number of operands is encoded in the low 2 bits
+		return opcode & 0x3;
 	}
-	~GameInfo() {
-		clearInfo();
+
+	bool opcode_is_command(uint8 opcode) const {
+		/* If the MSB is set the instruction is a command */
+		return opcode & 0x80;
 	}
 
-	void clearInfo();
-};
+	void load_extra_string_files();
+	void load_extra_string_file(StringFile *string_file);
+	void parse_header_le16(FileBuffer *fb, uint16 *val);
+	uint8 parse_vm_instruction(FileBuffer *fb, Instruction *instr);
+	void parse_function(FileBuffer *fb, Function *func);
+	void parse_vm(FileBuffer *fb);
+	void parse_action_table_vvnn(FileBuffer *fb);
+	void parse_action_table_vnjn(FileBuffer *fb);
+	void parse_action_table_vjn(FileBuffer *fb);
+	void parse_action_table_vdn(FileBuffer *fb);
+	void parse_action_table_vnn(FileBuffer *fb);
+	void parse_action_table_vn(FileBuffer *fb);
+	void parse_action_table_v(FileBuffer *fb);
+	void parse_action_table(FileBuffer *fb);
+	void parse_dictionary(FileBuffer *fb);
+	void parse_word_map(FileBuffer *fb);
+	void parse_items(FileBuffer *fb);
+	void parse_rooms(FileBuffer *fb);
+	uint64 string_get_chunk(uint8 *string);
+	char decode_string_elem(uint8 c, bool capital, bool special);
 
-struct StringFile {
-	Common::String filename;
-	uint32 base_offset;
-	uint32 end_offset;
+	/**
+	 * Game strings are stored using 5-bit characters. By default a character
+	 * value maps to the lower-case letter table. If a character has the value 0x1e
+	 * then the next character is upper-case. An upper-case space is used to
+	 * specify that the character should be replaced at runtime (like a '%s'
+	 * specifier). If a character has the value 0x1f then the next character is
+	 * taken from the symbols table.
+	 */
+	Common::String parseString(FileBuffer *fb);
 
-	StringFile() : base_offset(0), end_offset(0) {}
-	StringFile(const Common::String &fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
+	void parse_string_table(FileBuffer *fb, unsigned start_addr,
+		uint32 end_addr, StringTable *table);
+	void parse_variables(FileBuffer *fb);
+	void parse_flags(FileBuffer *fb);
+	void parse_replace_words(FileBuffer *fb);
+
+	void loadGameData();
+
+protected:
+	/**
+	 * The main game data file header has the offsets for where each bit of
+	 * game data is. The offsets have a magic constant value added to them.
+	 */
+	virtual void parse_header(FileBuffer *fb);
+
+public:
+	GameData() {
+		clearGame();
 	}
+	virtual ~GameData() {
+		clearGame();
+	}
+
+	void clearGame();
+	void loadGame();
+	//void restoreGame(ComprehendGame *game, const char *filename);
+	//void saveGame(const char *filename);
 };
-
-enum {
-	OPCODE_UNKNOWN,
-	OPCODE_TEST_FALSE,
-	OPCODE_HAVE_OBJECT,
-	OPCODE_OR,
-	OPCODE_IN_ROOM,
-	OPCODE_VAR_EQ,
-	OPCODE_CURRENT_OBJECT_TAKEABLE,
-	OPCODE_OBJECT_PRESENT,
-	OPCODE_ELSE,
-	OPCODE_OBJECT_IN_ROOM,
-	OPCODE_OBJECT_NOT_VALID,
-	OPCODE_INVENTORY_FULL,
-	OPCODE_TEST_FLAG,
-	OPCODE_CURRENT_OBJECT_IN_ROOM,
-	OPCODE_HAVE_CURRENT_OBJECT,
-	OPCODE_OBJECT_IS_NOT_NOWHERE,
-	OPCODE_CURRENT_OBJECT_PRESENT,
-	OPCODE_TEST_ROOM_FLAG,
-	OPCODE_NOT_HAVE_OBJECT,
-	OPCODE_NOT_IN_ROOM,
-	OPCODE_CURRENT_OBJECT_IS_NOWHERE,
-	OPCODE_OBJECT_NOT_PRESENT,
-	OPCODE_OBJECT_NOT_IN_ROOM,
-	OPCODE_TEST_NOT_FLAG,
-	OPCODE_NOT_HAVE_CURRENT_OBJECT,
-	OPCODE_OBJECT_IS_NOWHERE,
-	OPCODE_CURRENT_OBJECT_NOT_PRESENT,
-	OPCODE_CURRENT_OBJECT_NOT_TAKEABLE,
-	OPCODE_TEST_NOT_ROOM_FLAG,
-	OPCODE_INVENTORY,
-	OPCODE_TAKE_OBJECT,
-	OPCODE_MOVE_OBJECT_TO_ROOM,
-	OPCODE_SAVE_ACTION,
-	OPCODE_MOVE_TO_ROOM,
-	OPCODE_VAR_ADD,
-	OPCODE_SET_ROOM_DESCRIPTION,
-	OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM,
-	OPCODE_VAR_SUB,
-	OPCODE_SET_OBJECT_DESCRIPTION,
-	OPCODE_SET_OBJECT_LONG_DESCRIPTION,
-	OPCODE_MOVE,
-	OPCODE_MOVE_DIRECTION,
-	OPCODE_PRINT,
-	OPCODE_REMOVE_OBJECT,
-	OPCODE_SET_FLAG,
-	OPCODE_CALL_FUNC,
-	OPCODE_TURN_TICK,
-	OPCODE_CLEAR_FLAG,
-	OPCODE_INVENTORY_ROOM,
-	OPCODE_TAKE_CURRENT_OBJECT,
-	OPCODE_SPECIAL,
-	OPCODE_DROP_OBJECT,
-	OPCODE_DROP_CURRENT_OBJECT,
-	OPCODE_SET_ROOM_GRAPHIC,
-	OPCODE_SET_OBJECT_GRAPHIC,
-	OPCODE_REMOVE_CURRENT_OBJECT,
-	OPCODE_DO_VERB,
-	OPCODE_VAR_INC,
-	OPCODE_VAR_DEC,
-	OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM,
-	OPCODE_DESCRIBE_CURRENT_OBJECT,
-	OPCODE_SET_STRING_REPLACEMENT,
-	OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT,
-	OPCODE_CURRENT_NOT_OBJECT,
-	OPCODE_CURRENT_IS_OBJECT,
-	OPCODE_DRAW_ROOM,
-	OPCODE_DRAW_OBJECT,
-	OPCODE_WAIT_KEY
-};
-
-/* Game state update flags */
-#define UPDATE_GRAPHICS (1 << 0) /* Implies UPDATE_GRAPHICS_ITEMS */
-#define UPDATE_GRAPHICS_ITEMS (1 << 1)
-#define UPDATE_ROOM_DESC (1 << 2)
-#define UPDATE_ITEM_LIST (1 << 3)
-#define UPDATE_ALL (~0U)
-
-/* Action types */
-enum {
-	ACTION_VERB_VERB_NOUN_NOUN,
-	ACTION_VERB_NOUN_JOIN_NOUN,
-	ACTION_VERB_JOIN_NOUN,
-	ACTION_VERB_DIR_NOUN,
-	ACTION_VERB_NOUN_NOUN,
-	ACTION_VERB_NOUN,
-	ACTION_VERB_OPT_NOUN
-};
-
-/* Standard strings (main string table) */
-#define STRING_CANT_GO 0
-#define STRING_DONT_UNDERSTAND 1
-#define STRING_YOU_SEE 2
-#define STRING_INVENTORY 3
-#define STRING_INVENTORY_EMPTY 4
-#define STRING_BEFORE_CONTINUE 5
-#define STRING_SAVE_GAME 6
-#define STRING_RESTORE_GAME 7
-
-/* Special variables */
-#define VAR_INVENTORY_WEIGHT 0
-#define VAR_INVENTORY_LIMIT 1
-#define VAR_TURN_COUNT 2
-
-/* Special rooms */
-#define ROOM_INVENTORY 0x00
-#define ROOM_NOWHERE 0xff
-
-/* Item flags */
-#define ITEMF_WEIGHT_MASK (0x3)
-#define ITEMF_CAN_TAKE (1 << 3)
-
-/* Word types */
-#define WORD_TYPE_VERB 0x01
-#define WORD_TYPE_JOIN 0x02
-#define WORD_TYPE_FEMALE 0x10
-#define WORD_TYPE_MALE 0x20
-#define WORD_TYPE_NOUN 0x40
-#define WORD_TYPE_NOUN_PLURAL 0x80
-#define WORD_TYPE_NOUN_MASK (WORD_TYPE_FEMALE | WORD_TYPE_MALE | \
-                             WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
-
-void comprehend_load_game(ComprehendGame *game);
-void comprehend_restore_game(ComprehendGame *game,
-                             const char *filename);
-void comprehend_save_game(ComprehendGame *game, const char *filename);
 
 } // namespace Comprehend
 } // namespace Glk

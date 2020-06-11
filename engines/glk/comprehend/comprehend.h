@@ -34,8 +34,6 @@ namespace Comprehend {
 
 #define PATH_MAX 256
 
-struct GameInfo;
-struct gameState;
 class DrawSurface;
 class Pics;
 

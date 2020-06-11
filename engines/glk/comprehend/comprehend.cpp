@@ -69,7 +69,7 @@ void Comprehend::runGame() {
 	// Lookup game
 	createGame();
 
-	comprehend_load_game(_game);
+	_game->loadGame();
 	_game->playGame();
 
 	deinitialize();

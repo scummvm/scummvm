@@ -48,7 +48,7 @@ struct Sentence {
 	}
 };
 
-ComprehendGame::ComprehendGame() : _colorTable(0), _gameStrings(nullptr) {
+ComprehendGame::ComprehendGame() : _gameStrings(nullptr) {
 }
 
 ComprehendGame::~ComprehendGame() {
@@ -284,7 +284,7 @@ void ComprehendGame::game_restart() {
 	console_println(stringLookup(_gameStrings->game_restart).c_str());
 	console_get_key();
 
-	comprehend_load_game(this);
+	loadGame();
 	_updateFlags = UPDATE_ALL;
 }
 
