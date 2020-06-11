@@ -231,6 +231,8 @@ public:
     /** Python-like method **/
     String encode(CodePage page = kUtf8) const;
 
+	uint64 asUint64() const;
+
 private:
 	void makeUnique();
 	void ensureCapacity(uint32 new_size, bool keep_old);

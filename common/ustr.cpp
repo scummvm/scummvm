@@ -489,4 +489,13 @@ U32String operator+(const U32String &x, const U32String &y) {
 	return temp;
 }
 
+uint64 U32String::asUint64() const {
+	uint64 result = 0;
+	for (uint32 i = 0; i < _size; ++i) {
+		if (_str[i] < '0' || _str[i] > '9') break;
+		result = result * 10L + (_str[i] - '0');
+	}
+	return result;
+}
+
 } // End of namespace Common
