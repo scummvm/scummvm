@@ -53,3 +53,5 @@ put the sqrt of 9
 put 5 into field the number of cast "MasterList"
 
 set the text of field 1 = "Hello"
+
+set gMarkerName = the length of h + 2

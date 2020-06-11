@@ -290,8 +290,21 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 				return THEENTITYWITHID;
 			else
 				return THEENTITY;
+		} else if (g_lingo->_builtins.contains(field)) {
+			if (g_lingo->_builtins[field].type == FBLTIN &&
+					g_lingo->_builtins[field].nargs == 1 && g_lingo->_builtins[field].maxArgs == 1) {
+				yylval.s = new Common::String(field);
+				Common::String rest(ptr);
+
+				for (int i = rest.size() - 1; i >= 0; i--)
+					unput(rest[i]);
+
+				unput(' '); unput('f'); unput('o');
+
+				return THEFBLTIN;
+			}
 		} else {
-			if (g_director->getVersion() >= 3) {
+			if (g_director->getVersion() >= 4) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				if (!g_lingo->_theEntityFields.contains(key)) { // Okay, this must be an object reference
