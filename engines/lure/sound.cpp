@@ -712,10 +712,6 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 
 	_numChannels = numChannels;
 	_volume = 0;
-	for (int i = 0; i < _numChannels; ++i) {
-		/* 90 is power on default for midi compliant devices */
-		_channels[_channelNumber + i].volume = 90;
-	}
 
 	if (_isMusic)
 		setVolume(Sound.musicVolume());
