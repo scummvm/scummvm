@@ -406,7 +406,9 @@ void ComprehendGame::update() {
 	if (_updateFlags & UPDATE_ROOM_DESC)
 		console_println(stringLookup(room_desc_string).c_str());
 
-	if ((_updateFlags & UPDATE_ITEM_LIST) &&
+	// TODO: Transylvania at least doesn't describe items in the room explicitly.
+	// Determine which games actually do so
+	if ((_updateFlags & UPDATE_ITEM_LIST) && _comprehendVersion == 2 &&
 	        room_type == ROOM_IS_NORMAL)
 		describe_objects_in_current_room();
 
