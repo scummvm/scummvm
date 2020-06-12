@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/achievements.h"
 #include "common/debug-channels.h"
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -196,12 +197,29 @@ void TestbedEngine::invokeTestsuites(TestbedConfigManager &cfMan) {
 			Testsuite::updateStats("Testsuite", (*iter)->getName(), count++, numSuitesEnabled, pt);
 			(*iter)->execute();
 		}
+		if ((*iter)->getNumTests() == (*iter)->getNumTestsPassed()) {
+			AchMan.setAchievement((*iter)->getName(), (*iter)->getDescription());
+			checkForAllAchievements();
+		}
 	}
+}
+
+void TestbedEngine::checkForAllAchievements() {
+	Common::Array<Testsuite *>::const_iterator iter;
+	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
+		if (!AchMan.isAchieved((*iter)->getName())) {
+			return;
+		}
+	}
+	AchMan.setAchievement("EVERYTHINGWORKS", "Everything works!");
 }
 
 Common::Error TestbedEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200);
+
+	// Initialize achievements manager
+	AchMan.setActiveDomain(Common::UNK_ACHIEVEMENTS, "testbed");
 
 	// As of now we are using GUI::MessageDialog for interaction, Test if it works.
 	// interactive mode could also be modified by a config parameter "non-interactive=1"

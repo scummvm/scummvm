@@ -60,6 +60,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 
 private:
+	void checkForAllAchievements();
 	Common::Array<Testsuite *> _testsuiteList;
 };
 
