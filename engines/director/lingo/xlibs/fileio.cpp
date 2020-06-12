@@ -22,6 +22,9 @@
 
 #include "gui/filebrowser-dialog.h"
 
+#include "common/memstream.h"
+#include "common/savefile.h"
+
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/fileio.h"

@@ -31,7 +31,6 @@
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
 
-#include "director/stxt.h"
 #include "director/types.h"
 
 namespace Common {
@@ -59,6 +58,7 @@ class DirectorSound;
 class Lingo;
 class Score;
 class Cast;
+class Stxt;
 
 enum {
 	kDebugLingoExec		= 1 << 0,

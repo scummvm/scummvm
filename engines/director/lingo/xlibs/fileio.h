@@ -23,8 +23,12 @@
 #ifndef DIRECTOR_LINGO_XOBJECT_FILEIO_H
 #define DIRECTOR_LINGO_XOBJECT_FILEIO_H
 
-#include "common/memstream.h"
-#include "common/savefile.h"
+namespace Common {
+class SeekableReadStream;
+typedef SeekableReadStream InSaveFile;
+class OutSaveFile;
+class MemoryWriteStreamDynamic;
+}
 
 namespace Director {
 
