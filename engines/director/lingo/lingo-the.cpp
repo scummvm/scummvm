@@ -454,8 +454,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->_machineType;
 		break;
 	case kTheMovie:
+	case kTheMovieName:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentScore()->getArchive()->getFileName());
+		d.u.s = new Common::String(_vm->getCurrentScore()->getMacName());
+		break;
+	case kTheMoviePath:
+	case kThePathName:
+		d.type = STRING;
+		d.u.s = new Common::String(_vm->getCurrentPath());
 		break;
 	case kTheMouseCast:
 		{
