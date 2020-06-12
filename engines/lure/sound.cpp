@@ -721,6 +721,8 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
+	// All Notes Off on all channels does not work with multiple MIDI sources
+	_parser->property(MidiParser::mpDisableAllNotesOffMidiEvents, 1);
 
 	_soundData = (uint8 *)soundData;
 	_soundSize = size;
