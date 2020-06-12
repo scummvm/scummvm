@@ -188,6 +188,8 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 		_palinfo2 = stream.readUint16();
 		_palinfo3 = stream.readUint16();
 
+		_bgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
+
 		uint32 pad2;
 		uint16 pad3;
 		uint16 pad4 = 0;
