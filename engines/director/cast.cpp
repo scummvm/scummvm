@@ -158,10 +158,9 @@ SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
 	}
 }
 
-TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor, bool asButton) {
+TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButton) {
 	_type = kCastText;
 
-	_bgcolor = bgcolor;
 	_borderSize = kSizeNone;
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
@@ -175,7 +174,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 	_textAlign = kTextAlignLeft;
 	_textShadow = kSizeNone;
 	_textSlant = 0;
-	_palinfo1 = _palinfo2 = _palinfo3 = 0;
+	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
 
 	if (version <= 3) {
 		_flags = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
@@ -184,11 +183,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 		_boxShadow = static_cast<SizeType>(stream.readByte());
 		byte pad1 = stream.readByte();
 		_textAlign = static_cast<TextAlignType>(stream.readUint16());
-		_palinfo1 = stream.readUint16();
-		_palinfo2 = stream.readUint16();
-		_palinfo3 = stream.readUint16();
-
-		_bgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
+		_bgpalinfo1 = stream.readUint16();
+		_bgpalinfo2 = stream.readUint16();
+		_bgpalinfo3 = stream.readUint16();
 
 		uint32 pad2;
 		uint16 pad3;
@@ -220,8 +217,8 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 
 		debugC(2, kDebugLoading, "TextCast(): flags1: %d, border: %d gutter: %d shadow: %d pad1: %x align: %04x",
 				_flags, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
-		debugC(2, kDebugLoading, "TextCast(): rgb: 0x%04x 0x%04x 0x%04x, pad2: %x pad3: %d pad4: %d shadow: %d flags: %d totHeight: %d",
-				_palinfo1, _palinfo2, _palinfo3, pad2, pad3, pad4, _textShadow, _textFlags, totalTextHeight);
+		debugC(2, kDebugLoading, "TextCast(): background rgb: 0x%04x 0x%04x 0x%04x, pad2: %x pad3: %d pad4: %d shadow: %d flags: %d totHeight: %d",
+				_bgpalinfo1, _bgpalinfo2, _bgpalinfo3, pad2, pad3, pad4, _textShadow, _textFlags, totalTextHeight);
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCast(): rect:");
 		}
@@ -231,9 +228,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 		_boxShadow = static_cast<SizeType>(stream.readByte());
 		_textType = static_cast<TextType>(stream.readByte());
 		_textAlign = static_cast<TextAlignType>(stream.readSint16()); // this is because 'right' is -1? or should that be 255?
-		stream.readUint16();
-		stream.readUint16();
-		stream.readUint16();
+		_bgpalinfo1 = stream.readUint16();
+		_bgpalinfo2 = stream.readUint16();
+		_bgpalinfo3 = stream.readUint16();
 		stream.readUint16();
 
 		_fontId = 1; // this is in STXT
@@ -307,13 +304,21 @@ Graphics::TextAlign TextCast::getAlignment() {
 	}
 }
 
+uint TextCast::getForeColor() {
+	return g_director->_wm->findBestColor(_fgpalinfo1 & 0xff, _fgpalinfo2 & 0xff, _fgpalinfo3 & 0xff);
+}
+
+uint TextCast::getBackColor() {
+	return g_director->_wm->findBestColor(_bgpalinfo1 & 0xff, _bgpalinfo2 & 0xff, _bgpalinfo3 & 0xff);
+}
+
 void TextCast::importStxt(const Stxt *stxt) {
 	_fontId = stxt->_fontId;
 	_textSlant = stxt->_textSlant;
 	_fontSize = stxt->_fontSize;
-	_palinfo1 = stxt->_palinfo1;
-	_palinfo2 = stxt->_palinfo2;
-	_palinfo3 = stxt->_palinfo3;
+	_fgpalinfo1 = stxt->_palinfo1;
+	_fgpalinfo2 = stxt->_palinfo2;
+	_fgpalinfo3 = stxt->_palinfo3;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
 }
@@ -321,19 +326,17 @@ void TextCast::importStxt(const Stxt *stxt) {
 void TextCast::createWidget() {
 	Cast::createWidget();
 
-	uint fgcolor = g_director->_wm->findBestColor(_palinfo1 & 0xff, _palinfo2 & 0xff, _palinfo3 & 0xff);
-
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 
 	switch (_type) {
 	case kCastText:
-		_widget = new Graphics::MacEditableText(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor, _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		_widget = new Graphics::MacEditableText(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
 
 		((Graphics::MacEditableText *)_widget)->draw();
 		break;
 
 	case kCastButton:
-		_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, fgcolor, _bgcolor);
+		_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
 		((Graphics::MacButton *)_widget)->draw();
 		_widget->_focusable = true;
 
@@ -518,7 +521,7 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	}
 }
 
-RTECast::RTECast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor) : TextCast(stream, version, bgcolor) {
+RTECast::RTECast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {
 
 	_type = kCastRTE;
 }

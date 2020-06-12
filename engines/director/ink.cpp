@@ -66,7 +66,7 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 void Score::drawBackgndTransSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, int spriteId) {
 	byte skipColor = _sprites[spriteId]->_backColor;
 	if (_sprites[spriteId]->_castType == kCastText && _sprites[spriteId]->_cast) {
-		skipColor = ((TextCast *)_sprites[spriteId]->_cast)->_bgcolor;
+		skipColor = ((TextCast *)_sprites[spriteId]->_cast)->getBackColor();
 	}
 
 	Common::Rect srcRect(sprite.w, sprite.h);

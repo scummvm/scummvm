@@ -648,7 +648,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			break;
 		case kCastText:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) TextCast", id, numToCastNum(id));
-			_loadedCast->setVal(id, new TextCast(stream, _vm->getVersion(), _stageColor));
+			_loadedCast->setVal(id, new TextCast(stream, _vm->getVersion()));
 			break;
 		case kCastShape:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ShapeCast", id, numToCastNum(id));
@@ -656,7 +656,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			break;
 		case kCastButton:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
-			_loadedCast->setVal(id, new TextCast(stream, _vm->getVersion(), 0xff, true));
+			_loadedCast->setVal(id, new TextCast(stream, _vm->getVersion(), true));
 			break;
 		default:
 			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
@@ -764,7 +764,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastText:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastText (%d children)", res->children.size());
-		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion(), _stageColor));
+		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion()));
 		break;
 	case kCastShape:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastShape (%d children)", res->children.size());
@@ -772,7 +772,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastButton:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastButton (%d children)", res->children.size());
-		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion(), 0xff, true));
+		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion(), true));
 		break;
 	case kCastLingoScript:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastLingoScript");
@@ -780,7 +780,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastRTE:
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastRTE (%d children)", res->children.size());
-		_loadedCast->setVal(id, new RTECast(castStream, _vm->getVersion(), _stageColor));
+		_loadedCast->setVal(id, new RTECast(castStream, _vm->getVersion()));
 		break;
 	case kCastFilmLoop:
 		warning("STUB: Score::loadCastData(): kCastFilmLoop (%d children)", res->children.size());

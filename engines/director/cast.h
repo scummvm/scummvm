@@ -115,7 +115,7 @@ public:
 
 class TextCast : public Cast {
 public:
-	TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor, bool asButton = false);
+	TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
 
 	void setText(const char *text);
 	virtual void createWidget() override;
@@ -124,6 +124,9 @@ public:
 	virtual bool isEditable() override;
 	virtual bool setEditable(bool editable) override;
 	Graphics::TextAlign getAlignment();
+
+	uint getBackColor();
+	uint getForeColor();
 
 	SizeType _borderSize;
 	SizeType _gutterSize;
@@ -137,8 +140,8 @@ public:
 	SizeType _textShadow;
 	byte _textSlant;
 	byte _textFlags;
-	uint16 _palinfo1, _palinfo2, _palinfo3;
-	int32 _bgcolor;
+	uint16 _bgpalinfo1, _bgpalinfo2, _bgpalinfo3;
+	uint16 _fgpalinfo1, _fgpalinfo2, _fgpalinfo3;
 	ButtonType _buttonType;
 
 	Common::String _ftext;
@@ -159,7 +162,7 @@ public:
 
 class RTECast : public TextCast {
 public:
-	RTECast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcolor);
+	RTECast(Common::ReadStreamEndian &stream, uint16 version);
 
 	void loadChunks();
 };
