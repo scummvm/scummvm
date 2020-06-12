@@ -122,46 +122,50 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	DebugMan.addDebugChannel(kTestbedEngineDebug, "Debug", "Engine-specific debug statements");
 	DebugMan.enableDebugChannel("LOG");
 
+	pushTestsuites(_testsuiteList);
+}
+
+void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	// Initialize testsuites here
 	Testsuite *ts;
 	// GFX
 	ts = new GFXTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// FS
 	ts = new FSTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Savegames
 	ts = new SaveGameTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Misc.
 	ts = new MiscTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Events
 	ts = new EventTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Sound
 	ts = new SoundSubsystemTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Midi
 	ts = new MidiTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 #ifdef USE_TTS
 	 // TextToSpeech
 	 ts = new SpeechTestSuite();
-	 _testsuiteList.push_back(ts);
+	 testsuiteList.push_back(ts);
 #endif
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud
 	ts = new CloudTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 #endif
 #ifdef USE_SDL_NET
 	// Webserver
 	ts = new WebserverTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 #endif
 	ts = new EncodingTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 }
 
 TestbedEngine::~TestbedEngine() {
