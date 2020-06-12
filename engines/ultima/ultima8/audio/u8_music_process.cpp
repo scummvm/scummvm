@@ -225,9 +225,15 @@ void U8MusicProcess::run() {
 				bool repeat = (_trackState._queued == 0);
 				_midiPlayer->load(xmidi->_data, xmidi->_size, 0, false);
 				_midiPlayer->setLooping(repeat);
-				if (_songBranches[_trackState._wanted] >= 0 && !_midiPlayer->hasBranchIndex(_songBranches[_trackState._wanted]))
-					// Current branch is past the end of the list of branches. Reset to 0.
-					_songBranches[_trackState._wanted] = 0;
+				if (_songBranches[_trackState._wanted] >= 0 && !_midiPlayer->hasBranchIndex(_songBranches[_trackState._wanted])) {
+					if (_songBranches[_trackState._wanted] == 0) {
+						// This track does not have any branches.
+						_songBranches[_trackState._wanted] = -1;
+					} else {
+						// Current branch is past the end of the list of branches. Reset to 0.
+						_songBranches[_trackState._wanted] = 0;
+					}
+				}
 				_midiPlayer->play(0, _songBranches[_trackState._wanted]);
 			}
 
