@@ -135,7 +135,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 }
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(nullptr, x, y, w, h, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w, h, true, border, gutter, boxShadow) {
 
 	_str = Common::U32String(s);
 	_fullRefresh = true;
@@ -741,7 +741,7 @@ void MacText::setAlignOffset(TextAlign align) {
 		_fullRefresh = true;
 		_alignOffset = offset;
 		_textAlignment = align;
-		MacText::render();
+		render();
 	}
 }
 
@@ -786,7 +786,7 @@ void MacText::resize(int w, int h) {
 		return;
 
 	_maxWidth = w;
-	MacText::setMaxWidth(_maxWidth);
+	setMaxWidth(_maxWidth);
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
@@ -811,7 +811,7 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 	_contentIsDirty = true;
 
 	if (_editable) {
-		_scrollPos = MAX(0, MacText::getTextHeight() - getDimensions().height());
+		_scrollPos = MAX(0, getTextHeight() - getDimensions().height());
 
 		_cursorRow = getLineCount();
 		_cursorCol = getLineCharWidth(_cursorRow);
@@ -922,7 +922,7 @@ bool MacText::draw(bool forceRedraw) {
 }
 
 bool MacText::draw(ManagedSurface *g, bool forceRedraw) {
-	if (!MacText::draw(forceRedraw))
+	if (!draw(forceRedraw))
 		return false;
 
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
@@ -979,7 +979,7 @@ void MacText::drawSelection() {
 	}
 
 	int lastLineStart = s.endY;
-	s.endY += MacText::getLineHeight(s.endRow);
+	s.endY += getLineHeight(s.endRow);
 
 	int start = s.startY - _scrollPos;
 	start = MAX(0, start);
@@ -1003,11 +1003,11 @@ void MacText::drawSelection() {
 			x2 = getDimensions().width() - 1;
 
 			if (y + _scrollPos == s.startY && s.startX > 0) {
-				numLines = MacText::getLineHeight(s.startRow);
+				numLines = getLineHeight(s.startRow);
 				x1 = s.startX;
 			}
 			if (y + _scrollPos >= lastLineStart) {
-				numLines = MacText::getLineHeight(s.endRow);
+				numLines = getLineHeight(s.endRow);
 				x2 = s.endX;
 			}
 		} else {
@@ -1035,7 +1035,7 @@ Common::U32String MacText::getSelection(bool formatted, bool newlines) {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	return MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
+	return getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
 }
 
 void MacText::clearSelection() {
@@ -1209,7 +1209,7 @@ bool MacText::processEvent(Common::Event &event) {
 				int x = event.mouse.x - getDimensions().left;
 				int y = event.mouse.y - getDimensions().top + _scrollPos;
 
-				MacText::getRowCol(x, y, nullptr, nullptr, &_cursorRow, &_cursorCol);
+				getRowCol(x, y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 				updateCursorPos();
 			} else {
 				if (_menu) {
@@ -1255,7 +1255,7 @@ void MacText::startMarking(int x, int y) {
 
 	y += _scrollPos;
 
-	MacText::getRowCol(x, y, &_selectedText.startX, &_selectedText.startY, &_selectedText.startRow, &_selectedText.startCol);
+	getRowCol(x, y, &_selectedText.startX, &_selectedText.startY, &_selectedText.startRow, &_selectedText.startCol);
 
 	_selectedText.endY = -1;
 
@@ -1268,7 +1268,7 @@ void MacText::updateTextSelection(int x, int y) {
 
 	y += _scrollPos;
 
-	MacText::getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
+	getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
 
 	debug(3, "s: %d,%d (%d, %d) e: %d,%d (%d, %d)", _selectedText.startX, _selectedText.startY,
 			_selectedText.startRow, _selectedText.startCol, _selectedText.endX,
