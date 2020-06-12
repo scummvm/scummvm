@@ -80,6 +80,13 @@ void MacWidget::blit(ManagedSurface *g, Common::Rect &dest) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
 }
 
+void MacWidget::setColors(int fg, int bg) {
+	_fgcolor = fg;
+	_bgcolor = bg;
+
+	_contentIsDirty = true;
+}
+
 bool MacWidget::processEvent(Common::Event &event) {
 	return false;
 }

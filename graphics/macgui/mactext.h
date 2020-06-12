@@ -240,6 +240,8 @@ public:
 
 	int _scrollPos;
 
+	bool _fullRefresh;
+
 protected:
 	Common::Point _alignOffset;
 
@@ -247,7 +249,6 @@ protected:
 
 	Common::U32String _str;
 	const MacFont *_macFont;
-	int _fgcolor, _bgcolor;
 
 	int _maxWidth;
 	int _interLinear;
@@ -257,7 +258,6 @@ protected:
 	int _textMaxHeight;
 
 	ManagedSurface *_surface;
-	bool _fullRefresh;
 
 	TextAlign _textAlignment;
 
