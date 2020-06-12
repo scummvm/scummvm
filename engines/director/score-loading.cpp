@@ -270,7 +270,7 @@ void Score::copyCastStxts() {
 		if (_vm->getVersion() >= 4 && c->_value->_children.size() > 0)
 			stxtid = c->_value->_children[0].index;
 		else
-			stxtid = c->_key + _castIDoffset;
+			stxtid = c->_key;
 
 		if (_loadedStxts->getVal(stxtid)) {
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
