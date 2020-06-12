@@ -28,6 +28,30 @@
 
 namespace Wintermute {
 
+void applyColorKey(Graphics::Surface &surf, byte ckRed, byte ckGreen, byte ckBlue, bool replaceAlpha) {
+	// this is taken from Graphics::TransparentSurface
+	// only difference is that we set the pixel
+	// color to transparent black, like D3DX,
+	// if it matches the color key
+	for (int y = 0; y < surf.h; y++) {
+		for (int x = 0; x < surf.w; x++) {
+			uint32 pix = ((uint32 *)surf.getPixels())[y * surf.w + x];
+			uint8 r, g, b, a;
+			surf.format.colorToARGB(pix, a, r, g, b);
+			if (r == ckRed && g == ckGreen && b == ckBlue) {
+				a = 0;
+				r = 0;
+				g = 0;
+				b = 0;
+				((uint32 *)surf.getPixels())[y * surf.w + x] = surf.format.ARGBToColor(a, r, g, b);
+			} else if (replaceAlpha) {
+				a = 255;
+				((uint32 *)surf.getPixels())[y * surf.w + x] = surf.format.ARGBToColor(a, r, g, b);
+			}
+		}
+	}
+}
+
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *renderer)
 	: BaseSurface(game), _tex(0), renderer(renderer), _imageData(nullptr), _texWidth(0), _texHeight(0) {
 	glGenTextures(1, &_tex);
@@ -140,8 +164,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 	}
 
 	if (needsColorKey) {
-		Graphics::TransparentSurface trans(*surf);
-		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
+		applyColorKey(*surf, ckRed, ckGreen, ckBlue, replaceAlpha);
 	}
 
 	_width = surf->w;
