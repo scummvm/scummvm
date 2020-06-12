@@ -166,6 +166,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButt
 	_boxShadow = kSizeNone;
 	_buttonType = kTypeButton;
 
+	_bgcolor = 0;
+	_fgcolor = 0;
+
 	_flags = 0;
 	_textFlags = 0;
 	_fontId = 0;
@@ -289,6 +292,8 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButt
 		}
 	}
 
+	_bgcolor = g_director->_wm->findBestColor(_bgpalinfo1 & 0xff, _bgpalinfo2 & 0xff, _bgpalinfo3 & 0xff);
+
 	_modified = true;
 }
 
@@ -304,14 +309,6 @@ Graphics::TextAlign TextCast::getAlignment() {
 	}
 }
 
-uint TextCast::getForeColor() {
-	return g_director->_wm->findBestColor(_fgpalinfo1 & 0xff, _fgpalinfo2 & 0xff, _fgpalinfo3 & 0xff);
-}
-
-uint TextCast::getBackColor() {
-	return g_director->_wm->findBestColor(_bgpalinfo1 & 0xff, _bgpalinfo2 & 0xff, _bgpalinfo3 & 0xff);
-}
-
 void TextCast::importStxt(const Stxt *stxt) {
 	_fontId = stxt->_fontId;
 	_textSlant = stxt->_textSlant;
@@ -321,6 +318,8 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_fgpalinfo3 = stxt->_palinfo3;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
+
+	_fgcolor = g_director->_wm->findBestColor(_fgpalinfo1 & 0xff, _fgpalinfo2 & 0xff, _fgpalinfo3 & 0xff);
 }
 
 void TextCast::createWidget() {

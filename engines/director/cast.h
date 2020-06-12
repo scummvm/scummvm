@@ -125,8 +125,8 @@ public:
 	virtual bool setEditable(bool editable) override;
 	Graphics::TextAlign getAlignment();
 
-	uint getBackColor();
-	uint getForeColor();
+	uint getBackColor() { return _bgcolor; }
+	uint getForeColor() { return _fgcolor; }
 
 	SizeType _borderSize;
 	SizeType _gutterSize;
@@ -150,6 +150,10 @@ public:
 	void importRTE(byte* text);
 
 	Common::String getText();
+
+private:
+	uint _bgcolor;
+	uint _fgcolor;
 };
 
 class ScriptCast : public Cast {
