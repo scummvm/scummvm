@@ -281,7 +281,7 @@ protected:
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
 	bool   _disableAllNotesOffMidiEvents;   ///< Don't send All Notes Off MIDI messages
-	bool   _doNotAutoStartPlayback;  ///< Do not automatically start playback after parsing MIDI data or setting the track
+	bool   _disableAutoStartPlayback;  ///< Do not automatically start playback after parsing MIDI data or setting the track
 	byte  *_tracks[MAXIMUM_TRACKS];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _numTracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _activeTrack;   ///< Keeps track of the currently active track, in multi-track formats.
@@ -388,7 +388,7 @@ public:
 		  * or setting the track. Use startPlaying to start playback.
 		  * Note that not every parser implementation might support this.
 		  */
-		  mpDoNotAutoStartPlayback = 7
+		  mpDisableAutoStartPlayback = 7
 	};
 
 public:

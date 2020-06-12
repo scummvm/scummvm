@@ -76,7 +76,7 @@ void MidiPlayer::load(byte *data, size_t size, int seqNo, bool speedHack) {
 			_parser->setTempo(_driver->getBaseTempo() * 2);
 		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
-		_parser->property(MidiParser::mpDoNotAutoStartPlayback, 1);
+		_parser->property(MidiParser::mpDisableAutoStartPlayback, 1);
 
 		int volume = g_engine->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		setVolume(volume);
