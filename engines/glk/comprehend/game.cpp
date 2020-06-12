@@ -1188,12 +1188,21 @@ void ComprehendGame::read_input() {
 	beforePrompt();
 	doBeforeTurn();
 
-	do {
+	for (;;) {
 		g_comprehend->print("> ");
 		g_comprehend->readLine(buffer, sizeof(buffer));
 		if (g_comprehend->shouldQuit())
 			return;
-	} while (strlen(buffer) == 0);
+
+		if (strlen(buffer) != 0)
+			break;
+
+		// Empty line, so toggle picture window visibility
+		g_comprehend->togglePictureVisibility();
+		_updateFlags |= UPDATE_GRAPHICS;
+		update_graphics();
+		continue;
+	}
 
 	// Re-comprehend special commands start with '!'
 	line = &buffer[0];

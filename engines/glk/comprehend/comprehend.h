@@ -149,6 +149,18 @@ public:
 	 * Clear the picture area
 	 */
 	void clearScreen(bool isBright);
+
+	/**
+	 * Toggles whether the picture window is visible
+	 */
+	void togglePictureVisibility();
+
+	/**
+	 * Returns true if the picture area is visible
+	 */
+	bool isPictureVisible() const {
+		return _graphicsEnabled;
+	}
 };
 
 extern Comprehend *g_comprehend;

@@ -82,14 +82,12 @@ void Comprehend::initialize() {
 	g_conf->_tMarginY = 4;
 
 	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	_topWindow = (GraphicsWindow *)glk_window_open(_bottomWindow,
-	             winmethod_Above | winmethod_Fixed,
-	             160 * SCALE_FACTOR, wintype_Graphics, 2);
-
 	glk_set_window(_bottomWindow);
+
+	togglePictureVisibility();
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
 
-	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	const Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	_bottomWindow->_stream->setZColors(
 		pixelFormat.RGBToColor(0xff, 0xff, 0xff),
 		pixelFormat.RGBToColor(0, 0, 0)
@@ -183,8 +181,9 @@ Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
 }
 
 void Comprehend::drawPicture(uint pictureNum) {
-	glk_image_draw_scaled(_topWindow, pictureNum,
-	                      20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
+	if (_topWindow)
+		glk_image_draw_scaled(_topWindow, pictureNum,
+			20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
 }
 
 void Comprehend::drawLocationPicture(int pictureNum, bool clearBg) {
@@ -198,6 +197,23 @@ void Comprehend::drawItemPicture(int pictureNum) {
 void Comprehend::clearScreen(bool isBright) {
 	drawPicture(isBright ? BRIGHT_ROOM : DARK_ROOM);
 }
+
+void Comprehend::togglePictureVisibility() {
+	if (_topWindow) {
+		// Remove the picture window
+		glk_window_close(_topWindow);
+		_topWindow = nullptr;
+	} else {
+		// Create the window again
+		_topWindow = (GraphicsWindow *)glk_window_open(_bottomWindow,
+			winmethod_Above | winmethod_Fixed,
+			160 * SCALE_FACTOR, wintype_Graphics, 2);
+	}
+
+	_graphicsEnabled = _topWindow != nullptr;
+	print(_("Picture window toggled\n"));
+}
+
 
 } // namespace Comprehend
 } // namespace Glk
