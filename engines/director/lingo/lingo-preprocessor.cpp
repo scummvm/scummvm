@@ -83,6 +83,34 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 	return res;
 }
 
+static const char *findtokstart(const char *start, const char *token) {
+	// First, determine, if we sit inside of a string
+	//
+	// Since we do not have escaping characters, simple count is enough
+	int numquotes = 0;
+	const char *ptr = start;
+
+	while (*ptr && ptr <= token) {
+		if (*ptr == '"')
+			numquotes++;
+		ptr++;
+	}
+
+	// We're inside of quote. Scan backwards
+	if (numquotes % 2) {
+		while (*ptr != '"')
+			ptr--;
+
+		return ptr;
+	}
+
+	// If we're in the middle of a word
+	while (ptr > start && Common::isAlnum(*(ptr - 1)))
+		ptr--;
+
+	return ptr;
+}
+
 Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple) {
 	Common::String res;
 
@@ -406,7 +434,7 @@ Common::String preprocessWhen(Common::String in, bool *changed) {
 	const char *nextPtr;
 
 	while ((ptr = strcasestr(beg, "when")) != NULL) {
-		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
 			res += *beg++;
 			continue;
 		}
@@ -478,6 +506,11 @@ Common::String preprocessReturn(Common::String in) {
 	const char *beg = ptr;
 
 	while ((ptr = strcasestr(beg, "return")) != NULL) {
+		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
+			res += *beg++;
+			continue;
+		}
+
 		res += Common::String(beg, ptr);
 
 		if (ptr == beg)
@@ -515,7 +548,7 @@ Common::String preprocessPlay(Common::String in) {
 	const char *nextPtr;
 
 	while ((ptr = strcasestr(beg, "play")) != NULL) {
-		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
 			res += *beg++;
 			continue;
 		}
@@ -562,7 +595,7 @@ Common::String preprocessSound(Common::String in) {
 	const char *nextPtr;
 
 	while ((ptr = strcasestr(beg, "sound")) != NULL) {
-		if (ptr > in.c_str() && Common::isAlnum(*(ptr - 1))) { // If we're in the middle of a word
+		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
 			res += *beg++;
 			continue;
 		}
