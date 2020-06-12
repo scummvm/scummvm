@@ -263,6 +263,14 @@ MacMenu *MacWindowManager::addMenu() {
 	return _menu;
 }
 
+void MacWindowManager::removeMenu() {
+	if (_menu) {
+		_windows[_menu->getId()] = nullptr;
+		delete _menu;
+		_menu = nullptr;
+	}
+}
+
 void MacWindowManager::activateMenu() {
 	if (!_menu || ((_mode & kWMModeAutohideMenu) && _menu->isVisible()))
 		return;

@@ -155,6 +155,7 @@ public:
 	 */
 	MacMenu *addMenu();
 
+	void removeMenu();
 	void activateMenu();
 
 	void activateScreenCopy();
