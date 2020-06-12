@@ -75,6 +75,7 @@ public:
 	const char *getDescription() const override {
 		return "Graphics Subsystem";
 	}
+	void prepare() override;
 	static void setCustomColor(uint r, uint g, uint b);
 
 private:
