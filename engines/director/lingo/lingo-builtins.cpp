@@ -1616,7 +1616,7 @@ void LB::b_installMenu(int nargs) {
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 	}
 
-	// FIXME: Menu callbacks should not be in the movie's lingo archive
+	// TODO: Menu callbacks should probably not be in the movie's lingo archive
 	g_lingo->addCode(handlers.c_str(), kMovieScript, 1337);
 }
 
