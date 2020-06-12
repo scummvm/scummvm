@@ -136,7 +136,7 @@ void FileIO::m_new(int nargs) {
 
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
-		GUI::FileBrowserDialog browser(0, "txt", option.equalsIgnoreCase("read") ? GUI::kFBModeLoad : GUI::kFBModeSave);
+		GUI::FileBrowserDialog browser(0, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad);
 		if (browser.runModal() <= 0) {
 			g_lingo->push(Datum(kErrorFileNotFound));
 			return;
