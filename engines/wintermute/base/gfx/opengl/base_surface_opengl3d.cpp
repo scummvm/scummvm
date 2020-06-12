@@ -29,12 +29,13 @@
 namespace Wintermute {
 
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *renderer)
-	: BaseSurface(game), _tex(0), renderer(renderer), pixelOpReady(false), _texWidth(0), _texHeight(0) {
+	: BaseSurface(game), _tex(0), renderer(renderer), _imageData(nullptr), _texWidth(0), _texHeight(0) {
 	glGenTextures(1, &_tex);
 }
 
 BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
 	glDeleteTextures(1, &_tex);
+	delete[] _imageData;
 }
 
 bool BaseSurfaceOpenGL3D::invalidate() {
@@ -48,8 +49,17 @@ bool BaseSurfaceOpenGL3D::displayHalfTrans(int x, int y, Rect32 rect) {
 }
 
 bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
-	warning("BaseSurfaceOpenGL3D::isTransparentAt not yet implemented");
-	return true;
+	uint8 *imageData = new uint8[4 * _texWidth * _texHeight]();
+
+	// assume 32 bit rgba for now
+	glBindTexture(GL_TEXTURE_2D, _tex);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	uint8 alpha = imageData[y * _texWidth * 4 + x * 4 + 3];
+
+	delete[] imageData;
+	return alpha < 128;
 }
 
 bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
@@ -190,13 +200,20 @@ bool BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g, byte b, int
 }
 
 bool BaseSurfaceOpenGL3D::startPixelOp() {
+	if (_imageData) {
+		return true;
+	}
+
+	_imageData = new uint8[4 * _texWidth * _texHeight]();
 	glBindTexture(GL_TEXTURE_2D, _tex);
-	pixelOpReady = true;
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, _imageData);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::endPixelOp() {
 	glBindTexture(GL_TEXTURE_2D, 0);
+	delete[] _imageData;
+	_imageData = nullptr;
 	return true;
 }
 
@@ -205,18 +222,13 @@ bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 		return false;
 	}
 
-	if (!pixelOpReady) {
+	if (_imageData == nullptr) {
 		return false;
 	}
 
-	uint8 *image_data = nullptr;
-
-	// assume 32 bit rgba for now
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
-
-	uint32 pixel = *reinterpret_cast<uint32 *>(image_data + y * _width * 4 + x * 4);
-	pixel &= 0x000000FF;
-	return pixel == 0;
+	//TODO: Check for endianness issues
+	uint8 alpha = _imageData[y * _texWidth * 4 + x * 4 + 3];
+	return alpha == 0;
 }
 
 void BaseSurfaceOpenGL3D::setTexture() {

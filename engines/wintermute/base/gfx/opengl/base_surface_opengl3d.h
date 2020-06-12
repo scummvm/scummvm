@@ -69,7 +69,7 @@ public:
 private:
 	GLuint _tex;
 	BaseRenderOpenGL3D* renderer;
-	bool pixelOpReady;
+	uint8 *_imageData;
 	uint _texWidth;
 	uint _texHeight;
 };
