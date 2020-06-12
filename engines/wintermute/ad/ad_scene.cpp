@@ -1183,7 +1183,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 #ifdef ENABLE_WME3D
 	if (!doUpdate && _sceneGeometry) {
 		// always display geometry for the moment
-		_sceneGeometry->render(true);
+		_sceneGeometry->render(_showGeometry);
 	}
 #endif
 
