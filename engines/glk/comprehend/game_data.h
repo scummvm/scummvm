@@ -347,6 +347,8 @@ struct GameHeader {
 };
 
 class GameData {
+private:
+	uint16 _magicWord;
 protected:
 	Common::String _gameDataFile;
 	Common::Array<StringFile> _stringFiles;

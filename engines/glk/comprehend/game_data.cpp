@@ -34,8 +34,6 @@ namespace Comprehend {
 static const char CHARSET[] = "..abcdefghijklmnopqrstuvwxyz .";
 static const char SPECIAL_CHARSET[] = "[]\n!\"#$%&'(),-/0123456789:;?<>";
 
-static uint16 magic_offset;
-
 void FunctionState::clear() {
 	test_result = true;
 	else_result = false;
@@ -154,7 +152,7 @@ void GameHeader::clear() {
 	addr_actions_vnn = 0;
 	addr_actions_vn = 0;
 	addr_actions_v = 0;
-	addr_vm = 0; // FIXME - functions
+	addr_vm = 0;
 	Common::fill(&room_direction_table[0], &room_direction_table[NR_DIRECTIONS], 0);
 }
 
@@ -162,6 +160,7 @@ void GameHeader::clear() {
 
 void GameData::clearGame() {
 	_header.clear();
+	_magicWord = 0;
 	_comprehendVersion = 0;
 	_startRoom = 0;
 	_currentRoom = 0;
@@ -186,7 +185,7 @@ void GameData::clearGame() {
 
 void GameData::parse_header_le16(FileBuffer *fb, uint16 *val) {
 	*val = fb->readUint16LE();
-	*val += (uint16)magic_offset;
+	*val += _magicWord;
 }
 
 uint8 GameData::parse_vm_instruction(FileBuffer *fb,
@@ -805,17 +804,17 @@ void GameData::parse_header(FileBuffer *fb) {
 	case 0x2000: /* Transylvania, Crimson Crown disk one */
 	case 0x4800: /* Crimson Crown disk two */
 		_comprehendVersion = 1;
-		magic_offset = (uint16)(-0x5a00 + 0x4);
+		_magicWord = (uint16)(-0x5a00 + 0x4);
 		break;
 
 	case 0x93f0: /* OO-Topos */
 		_comprehendVersion = 2;
-		magic_offset = (uint16) - 0x5a00;
+		_magicWord = (uint16)-0x5a00;
 		break;
 
 	case 0xa429: /* Talisman */
 		_comprehendVersion = 2;
-		magic_offset = (uint16) - 0x5a00;
+		_magicWord = (uint16)-0x5a00;
 		break;
 
 	default:
