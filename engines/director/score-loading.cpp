@@ -239,7 +239,7 @@ bool Score::loadArchive(bool isSharedCast) {
 	_loadedStxts = new Common::HashMap<int, const Stxt *>();
 
 	for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-		_loadedStxts->setVal(*iterator,
+		_loadedStxts->setVal(*iterator - _castIDoffset,
 				 new Stxt(*(r = _movieArchive->getResource(MKTAG('S','T','X','T'), *iterator))));
 
 		delete r;

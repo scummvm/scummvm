@@ -31,6 +31,7 @@
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
 
+#include "director/stxt.h"
 #include "director/types.h"
 
 namespace Common {
@@ -119,6 +120,7 @@ public:
 	void loadSharedCastsFrom(Common::String filename);
 	void clearSharedCast();
 	Cast *getCastMember(int castId);
+	const Stxt *getStxt(int castId);
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();

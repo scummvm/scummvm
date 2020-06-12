@@ -1514,10 +1514,7 @@ void LB::b_installMenu(int nargs) {
 
 	int castId = d.asInt();
 
-	if (g_director->getVersion() < 4)
-		castId += g_director->getCurrentScore()->_castIDoffset;
-
-	const Stxt *stxt = g_director->getCurrentScore()->_loadedStxts->getVal(castId, nullptr);
+	const Stxt *stxt = g_director->getStxt(castId);
 
 	if (!stxt) {
 		warning("installMenu: Unknown cast number #%d", castId);

@@ -792,4 +792,13 @@ Cast *Score::getCastMember(int castId) {
 	return result;
 }
 
+const Stxt *Score::getStxt(int castId) {
+	const Stxt *result = nullptr;
+
+	if (_loadedStxts->contains(castId)) {
+		result = _loadedStxts->getVal(castId);
+	}
+	return result;
+}
+
 } // End of namespace Director

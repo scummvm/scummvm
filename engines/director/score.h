@@ -140,6 +140,7 @@ public:
 	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
 	Cast *getCastMember(int castId);
+	const Stxt *getStxt(int castId);
 	void renderFrame(uint16 frameId, bool forceUpdate = false, bool updateStageOnly = false);
 	void renderSprite(uint16 id);
 	void unrenderSprite(uint16 spriteId);

@@ -323,4 +323,15 @@ Cast *DirectorEngine::getCastMember(int castId) {
 	return result;
 }
 
+const Stxt *DirectorEngine::getStxt(int castId) {
+	const Stxt *result = nullptr;
+	if (_currentScore) {
+		result = _currentScore->getStxt(castId);
+	}
+	if (result == nullptr && _sharedScore) {
+		result = _sharedScore->getStxt(castId);
+	}
+	return result;
+}
+
 } // End of namespace Director
