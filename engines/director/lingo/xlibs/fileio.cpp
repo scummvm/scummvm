@@ -250,6 +250,12 @@ void FileIO::m_readWord(int nargs) {
 	FileIO::m_readToken(2);
 }
 
+bool FileIO::charInMatchString(char ch, const Common::String &matchString) {
+	if (ch == '\r')
+		ch = '\n';
+	return matchString.contains(ch);
+}
+
 void FileIO::m_readToken(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
@@ -272,9 +278,9 @@ void FileIO::m_readToken(int nargs) {
 			g_lingo->push(Datum(tok));
 			return;
 		}
-	} while (skipString.contains(ch));
+	} while (charInMatchString(ch, skipString));
 
-	while (!breakString.contains(ch)) {
+	while (!charInMatchString(ch, breakString)) {
 		tok += ch;
 		ch = me->inStream->readByte();
 

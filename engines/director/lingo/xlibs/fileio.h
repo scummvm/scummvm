@@ -75,6 +75,7 @@ struct FileObject : Object {
 };
 
 namespace FileIO {
+	bool charInMatchString(char ch, const Common::String &matchString);
 	void initialize(int type);
 	void saveFileError();
 	void m_delete(int nargs);
