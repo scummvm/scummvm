@@ -128,12 +128,23 @@ void FileObject::dispose() {
 	}
 }
 
+void FileIO::saveFileError() {
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	if (saves->getError().getCode()) {
+		warning("SaveFileManager error %d: %s", saves->getError().getCode(), saves->getErrorDesc().c_str());
+		g_lingo->push(Datum(kErrorIO));
+	} else {
+		g_lingo->push(Datum(kErrorFileNotFound));
+	}
+}
+
 void FileIO::m_new(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
 
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	Common::String option = *d1.u.s;
 	Common::String filename = *d2.u.s;
 
@@ -150,28 +161,28 @@ void FileIO::m_new(int nargs) {
 	}
 
 	if (option.equalsIgnoreCase("read")) {
-		me->inFile = g_system->getSavefileManager()->openForLoading(filename);
+		me->inFile = saves->openForLoading(filename);
 		me->inStream = me->inFile;
 		if (!me->inFile) {
+			saveFileError();
 			delete me;
-			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
 	} else if (option.equalsIgnoreCase("write")) {
 		// OutSaveFile is not seekable so create a separate seekable stream
 		// which will be written to the outfile upon disposal
-		me->outFile = g_system->getSavefileManager()->openForSaving(filename, false);
+		me->outFile = saves->openForSaving(filename, false);
 		me->outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 		if (!me->outFile) {
+			saveFileError();
 			delete me;
-			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
 	} else if (option.equalsIgnoreCase("append")) {
-		Common::InSaveFile *inFile = g_system->getSavefileManager()->openForLoading(filename);
+		Common::InSaveFile *inFile = saves->openForLoading(filename);
 		if (!inFile) {
+			saveFileError();
 			delete me;
-			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
 		me->outStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
@@ -181,10 +192,10 @@ void FileIO::m_new(int nargs) {
 			b = inFile->readByte();
 		}
 		delete inFile;
-		me->outFile = g_system->getSavefileManager()->openForSaving(filename, false);
+		me->outFile = saves->openForSaving(filename, false);
 		if (!me->outFile) {
+			saveFileError();
 			delete me;
-			g_lingo->push(Datum(kErrorIO));
 			return;
 		}
 	} else {

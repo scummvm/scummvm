@@ -76,6 +76,7 @@ struct FileObject : Object {
 
 namespace FileIO {
 	void initialize(int type);
+	void saveFileError();
 	void m_delete(int nargs);
 	void m_dispose(int nargs);
 	void m_fileName(int nargs);
