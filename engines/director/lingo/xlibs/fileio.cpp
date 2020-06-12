@@ -139,7 +139,7 @@ void FileIO::saveFileError() {
 }
 
 void FileIO::m_new(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
@@ -204,21 +204,18 @@ void FileIO::m_new(int nargs) {
 
 	me->filename = new Common::String(filename);
 
-	Datum res;
-	res.type = OBJECT;
-	res.u.obj = me;
-	g_lingo->push(res);
+	g_lingo->push(g_lingo->_currentMe);
 }
 
 void FileIO::m_dispose(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 	me->dispose();
 }
 
 // Read
 
 void FileIO::m_readChar(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (!me->inStream || me->inStream->eos() || me->inStream->err()) {
 		g_lingo->push(Datum(kErrorEOF));
@@ -257,7 +254,7 @@ bool FileIO::charInMatchString(char ch, const Common::String &matchString) {
 }
 
 void FileIO::m_readToken(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
@@ -303,7 +300,7 @@ void FileIO::m_readToken(int nargs) {
 // Write
 
 void FileIO::m_writeChar(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 	Datum d = g_lingo->pop();
 
 	if (!me->outStream) {
@@ -316,7 +313,7 @@ void FileIO::m_writeChar(int nargs) {
 }
 
 void FileIO::m_writeString(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 	Datum d = g_lingo->pop();
 
 	if (!me->outStream) {
@@ -331,7 +328,7 @@ void FileIO::m_writeString(int nargs) {
 // Other
 
 void FileIO::m_getPosition(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (me->inStream) {
 		g_lingo->push(Datum(me->inStream->pos()));
@@ -344,7 +341,7 @@ void FileIO::m_getPosition(int nargs) {
 }
 
 void FileIO::m_setPosition(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 	Datum d = g_lingo->pop();
 	int pos = d.asInt();
 
@@ -371,7 +368,7 @@ void FileIO::m_setPosition(int nargs) {
 }
 
 void FileIO::m_getLength(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (me->inStream) {
 		g_lingo->push(Datum(me->inStream->size()));
@@ -384,7 +381,7 @@ void FileIO::m_getLength(int nargs) {
 }
 
 void FileIO::m_fileName(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (me->filename) {
 		g_lingo->push(Datum(*me->filename));
@@ -395,7 +392,7 @@ void FileIO::m_fileName(int nargs) {
 }
 
 void FileIO::m_delete(int nargs) {
-	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMeObj);
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (me->filename) {
 		Common::String filename = *me->filename;

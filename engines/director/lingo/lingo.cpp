@@ -155,7 +155,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_currentScript = 0;
 	_currentScriptContext = nullptr;
-	_currentMeObj = nullptr;
 
 	_currentEntityId = 0;
 	_currentChannelId = -1;
@@ -567,8 +566,8 @@ void Lingo::execute(uint pc) {
 		if (debugChannelSet(9, kDebugLingoExec)) {
 			debug("Vars before");
 			printAllVars();
-			if (_currentMeObj)
-				debug("me: %s", _currentMeObj->name->c_str());
+			if (_currentMe.type == OBJECT)
+				debug("me: %s", _currentMe.asString(true).c_str());
 		}
 
 		debugC(1, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
@@ -1055,7 +1054,7 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
 			push(Datum(frame));
 			push(Datum(subframe));
-			LC::call(method, 2, _perFrameHook.u.obj);
+			LC::call(method, 2, _perFrameHook);
 			execute(_pc);
 		}
 	}
@@ -1072,9 +1071,9 @@ void Lingo::printAllVars() {
 	}
 	debugN("\n");
 
-	if (_currentMeObj) {
+	if (_currentMe.type == OBJECT) {
 		debugN("  Instance/property vars: ");
-		for (SymbolHash::iterator i = _currentMeObj->properties.begin(); i != _currentMeObj->properties.end(); ++i) {
+		for (SymbolHash::iterator i = _currentMe.u.obj->properties.begin(); i != _currentMe.u.obj->properties.end(); ++i) {
 			debugN("%s, ", (*i)._key.c_str());
 		}
 		debugN("\n");
@@ -1134,8 +1133,8 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, SymbolHash *localva
 			sym = &(*localvars)[name];
 			if (global)
 				warning("varAssign: variable %s is local, not global", name.c_str());
-		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
-			sym = &_currentMeObj->getVar(name);
+		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasVar(name)) {
+			sym = &_currentMe.u.obj->getVar(name);
 			if (global)
 				warning("varAssign: variable %s is instance or property, not global", sym->name->c_str());
 		} else if (_globalvars.contains(name)) {
@@ -1218,17 +1217,16 @@ Datum Lingo::varFetch(Datum &var, bool global, SymbolHash *localvars) {
 		Symbol *sym = nullptr;
 		Common::String name = *var.u.s;
 
-		if (_currentMeObj != nullptr && name.equalsIgnoreCase("me")) {
-			result.type = OBJECT;
-			result.u.obj = _currentMeObj;
+		if (_currentMe.type == OBJECT && name.equalsIgnoreCase("me")) {
+			result = _currentMe;
 			return result;
 		}
 		if (localvars && localvars->contains(name)) {
 			sym = &(*localvars)[name];
 			if (global)
 				warning("varFetch: variable %s is local, not global", sym->name->c_str());
-		} else if (_currentMeObj && _currentMeObj->hasVar(name)) {
-			sym = &_currentMeObj->getVar(name);
+		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasVar(name)) {
+			sym = &_currentMe.u.obj->getVar(name);
 			if (global)
 				warning("varFetch: variable %s is instance or property, not global", sym->name->c_str());
 		} else if (_globalvars.contains(name)) {

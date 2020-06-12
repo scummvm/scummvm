@@ -264,7 +264,6 @@ struct Object {
 	}
 
 	virtual Object *clone();
-	void addProperty(const Common::String &propName);
 	Symbol getMethod(const Common::String &methodName);
 	bool hasVar(const Common::String &varName);
 	Symbol &getVar(const Common::String &varName);
@@ -277,7 +276,7 @@ struct CFrame {	/* proc/func call stack frame */
 	ScriptContext	*retctx;   /* which script context to use after return */
 	int 	retarchive;	/* which archive to use after return */
 	SymbolHash *localvars;
-	Object *retMeObj; /* which me obj to use after return */
+	Datum retMe; /* which me obj to use after return */
 };
 
 struct LingoEvent {
@@ -493,7 +492,7 @@ public:
 	int _currentChannelId;
 	ScriptContext *_currentScriptContext;
 	ScriptData *_currentScript;
-	Object *_currentMeObj;
+	Datum _currentMe;
 
 	bool _abort;
 	bool _immediateMode;

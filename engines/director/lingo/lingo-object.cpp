@@ -120,11 +120,6 @@ Object *Object::clone() {
 	return res;
 }
 
-void Object::addProperty(const Common::String &propName) {
-	g_lingo->_currentMeObj->properties[propName] = Symbol();
-	g_lingo->_currentMeObj->properties[propName].name = new Common::String(propName);
-}
-
 Symbol Object::getMethod(const Common::String &methodName) {
 	if (disposed) {
 		error("Method '%s' called on disposed object <%s>", methodName.c_str(), Datum(this).asString(true).c_str());
@@ -176,33 +171,32 @@ Symbol &Object::getVar(const Common::String &varName) {
 void LM::m_new(int nargs) {
 	// This is usually overridden by a user-defined mNew
 	g_lingo->printSTUBWithArglist("m_new", nargs);
-	Datum res;
-	res.type = OBJECT;
-	res.u.obj = g_lingo->_currentMeObj;
-	g_lingo->push(res);
+	g_lingo->push(g_lingo->_currentMe);
 }
 
 void LM::m_dispose(int nargs) {
-	g_lingo->_currentMeObj->disposed = true;
+	g_lingo->_currentMe.u.obj->disposed = true;
 }
 
 // Object array
 
 void LM::m_get(int nargs) {
+	Object *me = g_lingo->_currentMe.u.obj;
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
-	if (g_lingo->_currentMeObj->objArray->contains(index)) {
-		g_lingo->push((*g_lingo->_currentMeObj->objArray)[index]);
+	if (me->objArray->contains(index)) {
+		g_lingo->push((*me->objArray)[index]);
 	} else {
 		g_lingo->push(Datum(0));
 	}
 }
 
 void LM::m_put(int nargs) {
+	Object *me = g_lingo->_currentMe.u.obj;
 	Datum value = g_lingo->pop();
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
-	(*g_lingo->_currentMeObj->objArray)[index] = value;
+	(*me->objArray)[index] = value;
 }
 
 // Other
@@ -210,10 +204,11 @@ void LM::m_put(int nargs) {
 void LM::m_perform(int nargs) {
 	// Lingo doesn't seem to bother cloning the object when
 	// mNew is called with mPerform
+	Object *me = g_lingo->_currentMe.u.obj;
 	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 	nargs -= 1;
-	Symbol funcSym = g_lingo->_currentMeObj->getMethod(*methodName.u.s);
-	LC::call(funcSym, nargs, g_lingo->_currentMeObj);
+	Symbol funcSym = me->getMethod(*methodName.u.s);
+	LC::call(funcSym, nargs, g_lingo->_currentMe);
 }
 
 // XObject
@@ -223,7 +218,7 @@ void LM::m_describe(int nargs) {
 }
 
 void LM::m_instanceRespondsTo(int nargs) {
-	Object *me = g_lingo->_currentMeObj;
+	Object *me = g_lingo->_currentMe.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
@@ -244,12 +239,12 @@ void LM::m_messageList(int nargs) {
 }
 
 void LM::m_name(int nargs) {
-	Common::String name = *g_lingo->_currentMeObj->name;
-	g_lingo->push(Datum(name));
+	Object *me = g_lingo->_currentMe.u.obj;
+	g_lingo->push(Datum(*me->name));
 }
 
 void LM::m_respondsTo(int nargs) {
-	Object *me = g_lingo->_currentMeObj;
+	Object *me = g_lingo->_currentMe.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 

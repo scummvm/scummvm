@@ -216,10 +216,11 @@ void Lingo::pushContext(const Symbol *funcSym, bool newVarFrame) {
 	fp->retctx = g_lingo->_currentScriptContext;
 	fp->retarchive = g_lingo->_archiveIndex;
 	fp->localvars = g_lingo->_localvars;
-	fp->retMeObj = g_lingo->_currentMeObj;
+	fp->retMe = g_lingo->_currentMe;
 	if (funcSym)
 		fp->sp = *funcSym;
 
+	g_lingo->_currentMe = Datum();
 	if (newVarFrame)
 		g_lingo->_localvars = new SymbolHash;
 
@@ -239,7 +240,7 @@ void Lingo::popContext() {
 	g_lingo->_currentScriptContext = fp->retctx;
 	g_lingo->_archiveIndex = fp->retarchive;
 	g_lingo->_pc = fp->retpc;
-	g_lingo->_currentMeObj = fp->retMeObj;
+	g_lingo->_currentMe = fp->retMe;
 
 	// Restore local variables
 	g_lingo->cleanLocalVars();
@@ -1296,13 +1297,13 @@ void LC::call(const Common::String &name, int nargs) {
 		Datum d = g_lingo->varFetch(eventName);
 		if (d.type == OBJECT && (d.u.obj->type & (kFactoryObj | kXObj))) {
 			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to <%s>", name.c_str(), d.asString(true).c_str());
-			Object *target = d.u.obj;
+			Datum target = d;
 			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 			nargs -= 1;
 			if (methodName.u.s->equalsIgnoreCase("mNew")) {
-				target = target->clone();
+				target = Datum(target.u.obj->clone());
 			}
-			funcSym = target->getMethod(*methodName.u.s);
+			funcSym = target.u.obj->getMethod(*methodName.u.s);
 			call(funcSym, nargs, target);
 			return;
 		}
@@ -1310,7 +1311,7 @@ void LC::call(const Common::String &name, int nargs) {
 	call(funcSym, nargs);
 }
 
-void LC::call(const Symbol &funcSym, int nargs, Object *target) {
+void LC::call(const Symbol &funcSym, int nargs, Datum target) {
 	bool dropArgs = false;
 
 	if (funcSym.type == VOID) {
@@ -1348,13 +1349,13 @@ void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 	if (funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
 		int stackSize = g_lingo->_stack.size() - nargs;
 
-		if (target) {
+		if (target.type == OBJECT) {
 			// Only need to update the me obj
 			// Pushing an entire stack frame is not necessary
-			Object *retMeObj = g_lingo->_currentMeObj;
-			g_lingo->_currentMeObj = target;
+			Datum retMe = g_lingo->_currentMe;
+			g_lingo->_currentMe = target;
 			(*funcSym.u.bltin)(nargs);
-			g_lingo->_currentMeObj = retMeObj;
+			g_lingo->_currentMe = retMe;
 		} else {
 			(*funcSym.u.bltin)(nargs);
 		}
@@ -1422,10 +1423,8 @@ void LC::call(const Symbol &funcSym, int nargs, Object *target) {
 	}
 	g_lingo->_localvars = localvars;
 
-	if (target) {
-		g_lingo->_currentMeObj = target;
-	} else {
-		g_lingo->_currentMeObj = nullptr;
+	if (target.type == OBJECT) {
+		g_lingo->_currentMe = target;
 	}
 
 	g_lingo->_currentScript = funcSym.u.defn;
@@ -1445,12 +1444,9 @@ void LC::c_procret() {
 	}
 
 	CFrame *fp = g_lingo->_callstack.back();
-	if (g_lingo->_currentMeObj && g_lingo->_currentMeObj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
+	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
 		// Return the newly created object after executing mNew
-		Datum d;
-		d.type = OBJECT;
-		d.u.obj = g_lingo->_currentMeObj;
-		g_lingo->push(d);
+		g_lingo->push(g_lingo->_currentMe);
 	}
 
 	g_lingo->popContext();
