@@ -286,6 +286,8 @@ void Lingo::varCreate(const Common::String &name, bool global, SymbolHash *local
 	if (global) {
 		_globalvars[name] = Symbol();
 		_globalvars[name].name = new Common::String(name);
+		_globalvars[name].type = INT;
+		_globalvars[name].u.i = 0;
 	} else {
 		(*localvars)[name] = Symbol();
 		(*localvars)[name].name = new Common::String(name);
