@@ -30,7 +30,7 @@
 
 namespace Graphics {
 struct Surface;
-class MacEditableText;
+class MacText;
 class MacWindowManager;
 class MacButton;
 class MacWidget;

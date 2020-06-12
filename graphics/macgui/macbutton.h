@@ -24,7 +24,6 @@
 #define GRAPHICS_MACGUI_MACBUTTON_H
 
 #include "graphics/macgui/mactext.h"
-#include "graphics/macgui/maceditabletext.h"
 #include "graphics/macgui/macwidget.h"
 
 namespace Graphics {
@@ -38,7 +37,7 @@ enum MacButtonType {
 	kRadio
 };
 
-class MacButton : public MacEditableText {
+class MacButton : public MacText {
 public:
 	MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor);
 

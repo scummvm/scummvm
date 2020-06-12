@@ -23,13 +23,21 @@
 #ifndef GRAPHICS_MACGUI_MACTEXT_H
 #define GRAPHICS_MACGUI_MACTEXT_H
 
-#include "graphics/fontman.h"
-#include "graphics/managed_surface.h"
-#include "graphics/font.h"
+#include "common/timer.h"
+#include "common/system.h"
+
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwidget.h"
+#include "graphics/macgui/macwindow.h"
 
 namespace Graphics {
 
+class MacMenu;
+class MacText;
+class MacWidget;
+class MacWindow;
 class MacWindowManager;
 
 struct MacFontRun {
@@ -104,28 +112,60 @@ struct MacTextLine {
 	uint getChunkNum(int *col);
 };
 
-class MacText {
-	friend class MacEditableText;
+struct SelectedText {
+	int startX, startY;
+	int endX, endY;
+	int startRow, startCol;
+	int endRow, endCol;
 
+	SelectedText() {
+		startX = startY = -1;
+		endX = endY = -1;
+		startRow = startCol = -1;
+		endRow = endCol = -1;
+	}
+
+	bool needsRender() {
+		return startX != endX || startY != endY;
+	}
+};
+
+class MacText : public MacWidget {
 public:
-	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 textShadow = 0);
-	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 textShadow = 0);
-			// 0 pixels between the lines by default
-	~MacText();
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0);
+	// 0 pixels between the lines by default
 
+	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
+	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
+
+	virtual ~MacText();
+
+	virtual void resize(int w, int h);
+	virtual bool processEvent(Common::Event &event) override;
+
+	void render();
+	void undrawCursor();
+	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
+	virtual bool draw(bool forceRedraw = false) override;
+	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
+	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
+
+	Graphics::ManagedSurface *getSurface() { return _surface; }
 	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
 	void setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
-			uint16 palinfo1, uint16 palinfo2, uint16 palinfo3);
-
+														uint16 palinfo1, uint16 palinfo2, uint16 palinfo3);
 	const MacFontRun &getDefaultFormatting() { return _defaultFormatting; }
 
-	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
-	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
+	void setAlignOffset(TextAlign align);
+	TextAlign getAlign() { return _textAlignment; }
+	Common::Point calculateOffset();
+	virtual void setActive(bool active) override;
+	void setEditable(bool editable);
+
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
@@ -141,19 +181,20 @@ public:
 	void addNewLine(int *row, int *col);
 	void insertChar(byte c, int *row, int *col);
 
-	void render();
-	Graphics::ManagedSurface *getSurface() { return _surface; }
-
 	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col);
-
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
+	Common::U32String getSelection(bool formatted = false, bool newlines = true);
+	void clearSelection();
+	Common::U32String cutSelection();
+	const SelectedText *getSelectedText() { return &_selectedText; }
+
+	Common::U32String getEditedString();
+
 private:
-	void chopChunk(const Common::U32String &str, int *curLine);
-	void splitString(const Common::U32String &s, int curLine = -1);
-	void render(int from, int to);
-	void recalcDims();
-	void reallocSurface();
+	void init();
+	bool isCutAllowed();
+
 	/**
 	 * Returns line width in pixels. This takes into account chunks.
 	 * The result is cached for faster subsequent calls.
@@ -173,7 +214,35 @@ private:
 	 */
 	void reshuffleParagraph(int *row, int *col);
 
+	void chopChunk(const Common::U32String &str, int *curLine);
+	void splitString(const Common::U32String &s, int curLine = -1);
+	void render(int from, int to);
+	void recalcDims();
+	void reallocSurface();
+
+	void scroll(int delta);
+
+	void drawSelection();
+	void updateCursorPos();
+
+	void startMarking(int x, int y);
+	void updateTextSelection(int x, int y);
+
+public:
+	int _cursorX, _cursorY;
+	bool _cursorState;
+	int _cursorRow, _cursorCol;
+
+	bool _cursorDirty;
+	Common::Rect *_cursorRect;
+	bool _cursorOff;
+	bool _selectable;
+
+	int _scrollPos;
+
 protected:
+	Common::Point _alignOffset;
+
 	MacWindowManager *_wm;
 
 	Common::U32String _str;
@@ -187,7 +256,7 @@ protected:
 	int _textMaxWidth;
 	int _textMaxHeight;
 
-	Graphics::ManagedSurface *_surface;
+	ManagedSurface *_surface;
 	bool _fullRefresh;
 
 	TextAlign _textAlignment;
@@ -195,6 +264,16 @@ protected:
 	Common::Array<MacTextLine> _textLines;
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
+
+private:
+	ManagedSurface *_cursorSurface;
+
+	int _editableRow;
+
+	bool _inTextSelection;
+	SelectedText _selectedText;
+
+	MacMenu *_menu;
 };
 
 } // End of namespace Graphics

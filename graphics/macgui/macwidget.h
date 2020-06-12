@@ -38,7 +38,6 @@ class ManagedSurface;
 class MacWindowManager;
 
 class MacWidget {
-	friend class MacEditableText;
 
 public:
 	MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border = 0, uint16 gutter = 0, uint16 shadow = 0);

@@ -25,7 +25,7 @@
 #include "engines/util.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/maceditabletext.h"
+#include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
 #include "director/cast.h"

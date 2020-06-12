@@ -1144,7 +1144,7 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 	switch (field) {
 	case kTheTextAlign:
 		d.type = STRING;
-		switch (((Graphics::MacEditableText *)member->_widget)->getAlign()) {
+		switch (((Graphics::MacText *)member->_widget)->getAlign()) {
 		case Graphics::kTextAlignLeft:
 			d.u.s = new Common::String("left");
 			break;
@@ -1201,8 +1201,8 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 			break;
 		}
 
-		((Graphics::MacEditableText *)member->_widget)->setAlignOffset(align);
-		((Graphics::MacEditableText *)member->_widget)->draw();
+		((Graphics::MacText *)member->_widget)->setAlignOffset(align);
+		((Graphics::MacText *)member->_widget)->draw();
 		member->_modified = true;
 		break;
 	}

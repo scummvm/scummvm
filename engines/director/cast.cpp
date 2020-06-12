@@ -23,7 +23,7 @@
 #include "common/substream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/maceditabletext.h"
+#include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macbutton.h"
 #include "image/image_decoder.h"
 
@@ -330,9 +330,9 @@ void TextCast::createWidget() {
 
 	switch (_type) {
 	case kCastText:
-		_widget = new Graphics::MacEditableText(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		_widget = new Graphics::MacText(g_director->getCurrentScore()->_window, 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
 
-		((Graphics::MacEditableText *)_widget)->draw();
+		((Graphics::MacText *)_widget)->draw();
 		break;
 
 	case kCastButton:
@@ -366,7 +366,7 @@ void TextCast::setText(const char *text) {
 	_ptext = _ftext = text;
 
 	if (_widget) {
-		Graphics::MacEditableText *wtext = (Graphics::MacEditableText *)_widget;
+		Graphics::MacText *wtext = (Graphics::MacText *)_widget;
 		wtext->clearText();
 		wtext->appendTextDefault(_ftext);
 		wtext->draw();
@@ -377,13 +377,13 @@ void TextCast::setText(const char *text) {
 
 Common::String TextCast::getText() {
 	if (_widget)
-		_ptext = ((Graphics::MacEditableText *)_widget)->getEditedString().encode();
+		_ptext = ((Graphics::MacText *)_widget)->getEditedString().encode();
 
 	return _ptext;
 }
 
 bool TextCast::isModified() {
-	return _modified || (_widget ? ((Graphics::MacEditableText *)_widget)->_contentIsDirty : false);
+	return _modified || (_widget ? ((Graphics::MacText *)_widget)->_contentIsDirty : false);
 }
 
 bool TextCast::isEditable() {
@@ -392,7 +392,7 @@ bool TextCast::isEditable() {
 		return false;
 	}
 
-	return (Graphics::MacEditableText *)_widget->_editable;
+	return (Graphics::MacText *)_widget->_editable;
 }
 
 bool TextCast::setEditable(bool editable) {
@@ -401,7 +401,7 @@ bool TextCast::setEditable(bool editable) {
 		return false;
 	}
 
-	Graphics::MacEditableText *text = (Graphics::MacEditableText *)_widget;
+	Graphics::MacText *text = (Graphics::MacText *)_widget;
 	text->_focusable = editable;
 	text->setEditable(editable);
 	text->_selectable = editable;

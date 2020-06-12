@@ -28,24 +28,6 @@
 
 namespace Graphics {
 
-struct SelectedText {
-	int startX, startY;
-	int endX, endY;
-	int startRow, startCol;
-	int endRow, endCol;
-
-	SelectedText() {
-		startX = startY = -1;
-		endX = endY = -1;
-		startRow = startCol = -1;
-		endRow = endCol = -1;
-	}
-
-	bool needsRender() {
-		return startX != endX || startY != endY;
-	}
-};
-
 class MacTextWindow : public MacWindow {
 public:
 	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);

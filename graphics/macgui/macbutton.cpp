@@ -26,7 +26,6 @@
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/maceditabletext.h"
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macbutton.h"
 #include "graphics/macgui/macwidget.h"
@@ -35,7 +34,7 @@
 namespace Graphics {
 
 MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor) :
-	MacEditableText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment) {
+	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment) {
 
 	_buttonType = buttonType;
 
@@ -110,7 +109,7 @@ bool MacButton::draw(bool forceRedraw) {
 		return false;
 
 	_maskSurface->clear(0);
-	MacEditableText::draw();
+	MacText::draw();
 
 	Common::Rect r(_dims.width() - 1, _dims.height() - 1);
 	Graphics::MacPlotData pd(_composeSurface, _maskSurface, &_wm->getPatterns(), 1, 0, 0, 1, 0);
