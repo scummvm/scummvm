@@ -43,7 +43,7 @@ _smartJump(false),
 _centerPitchWheelOnUnload(false),
 _sendSustainOffOnNotesOff(false),
 _disableAllNotesOffMidiEvents(false),
-_doNotAutoStartPlayback(false),
+_disableAutoStartPlayback(false),
 _numTracks(0),
 _activeTrack(255),
 _abortParse(false),
@@ -74,8 +74,8 @@ void MidiParser::property(int prop, int value) {
 	case mpDisableAllNotesOffMidiEvents:
 		_disableAllNotesOffMidiEvents = (value != 0);
 		break;
-	case mpDoNotAutoStartPlayback:
-		_doNotAutoStartPlayback = (value != 0);
+	case mpDisableAutoStartPlayback:
+		_disableAutoStartPlayback = (value != 0);
 		break;
 	default:
 		break;
@@ -353,7 +353,7 @@ bool MidiParser::setTrack(int track) {
 
 	resetTracking();
 	memset(_activeNotes, 0, sizeof(_activeNotes));
-	if (_doNotAutoStartPlayback)
+	if (_disableAutoStartPlayback)
 		_doParse = false;
 	_activeTrack = track;
 	_position._playPos = _tracks[track];
