@@ -34,17 +34,21 @@ namespace Glk {
 namespace Comprehend {
 
 struct Sentence {
-	Word words[4];
-	size_t nr_words;
+	Word _words[4];
+	size_t _nr_words;
 
 	Sentence() {
 		clear();
 	}
 
+	bool empty() const {
+		return _nr_words == 0;
+	}
+
 	void clear() {
 		for (uint idx = 0; idx < 4; ++idx)
-			words[idx].clear();
-		nr_words = 0;
+			_words[idx].clear();
+		_nr_words = 0;
 	}
 };
 
@@ -1068,18 +1072,23 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 	Action *action;
 	uint i, j;
 
-	if (sentence->nr_words == 0)
+	if (sentence->empty())
 		return false;
+
+	if (sentence->_nr_words == 1 && !strcmp(sentence->_words[0]._word, "quit")) {
+		g_comprehend->quitGame();
+		return true;
+	}
 
 	/* Find a matching action */
 	for (i = 0; i < _actions.size(); i++) {
 		action = &_actions[i];
 
 		if (action->type == ACTION_VERB_OPT_NOUN &&
-		        sentence->nr_words > action->nr_words + 1)
+		        sentence->_nr_words > action->nr_words + 1)
 			continue;
 		if (action->type != ACTION_VERB_OPT_NOUN &&
-		        sentence->nr_words != action->nr_words)
+		        sentence->_nr_words != action->nr_words)
 			continue;
 
 		/*
@@ -1087,8 +1096,8 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		 * run that action's function.
 		 */
 		for (j = 0; j < action->nr_words; j++) {
-			if (sentence->words[j]._index == action->word[j] &&
-			        (sentence->words[j]._type & action->word_type[j]))
+			if (sentence->_words[j]._index == action->word[j] &&
+			        (sentence->_words[j]._type & action->word_type[j]))
 				continue;
 
 			/* Word didn't match */
@@ -1098,7 +1107,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 			/* Match */
 			func = &_functions[action->function];
 			eval_function(func,
-			              &sentence->words[0], &sentence->words[1]);
+			              &sentence->_words[0], &sentence->_words[1]);
 			return true;
 		}
 	}
@@ -1136,28 +1145,28 @@ void ComprehendGame::read_sentence(char **line,
 		/* Find the dictionary word for this */
 		word = dict_find_word_by_string(this, word_string);
 		if (!word)
-			sentence->words[sentence->nr_words].clear();
+			sentence->_words[sentence->_nr_words].clear();
 		else
-			sentence->words[sentence->nr_words] = *word;
+			sentence->_words[sentence->_nr_words] = *word;
 
-		sentence->nr_words++;
+		sentence->_nr_words++;
 
-		if (sentence->nr_words > 1) {
-			index = sentence->nr_words;
+		if (sentence->_nr_words > 1) {
+			index = sentence->_nr_words;
 
 			/* See if this word and the previous are a word pair */
-			pair = is_word_pair(&sentence->words[index - 2],
-			                    &sentence->words[index - 1]);
+			pair = is_word_pair(&sentence->_words[index - 2],
+			                    &sentence->_words[index - 1]);
 			if (pair) {
-				sentence->words[index - 2]._index = pair->index;
-				sentence->words[index - 2]._type = pair->type;
-				strcpy(sentence->words[index - 2]._word,
+				sentence->_words[index - 2]._index = pair->index;
+				sentence->_words[index - 2]._type = pair->type;
+				strcpy(sentence->_words[index - 2]._word,
 				       "[PAIR]");
-				sentence->nr_words--;
+				sentence->_nr_words--;
 			}
 		}
 
-		if (sentence->nr_words >= ARRAY_SIZE(sentence->words) ||
+		if (sentence->_nr_words >= ARRAY_SIZE(sentence->_words) ||
 		        sentence_end)
 			break;
 	}
