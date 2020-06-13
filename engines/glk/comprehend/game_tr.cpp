@@ -114,41 +114,50 @@ bool TransylvaniaGame::beforeTurn() {
 
 void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
-	case 0x01:
+	case 1:
 		// FIXME: Called when the mice are dropped and the cat chases them.
 		break;
 
-	case 0x02:
+	case 2:
 		// FIXME: Called when the gun is fired
 		break;
 
-	case 0x06:
+	case 3:
+	case 4:
+		// Game over - failure
+		console_println(_strings2[138].c_str());
+		if (tolower(console_get_key()) == 'r')
+			game_restart();
+		else
+			g_comprehend->quitGame();
+		break;
+
+	case 0x05:
+		// Won the game
+		break;
+
+	case 6:
 		game_save();
 		break;
 
-	case 0x07:
+	case 7:
 		game_restore();
 		break;
 
-	case 0x03:
-	// Game over - failure
-	// fall through
-	case 0x05:
-	// Won the game
-	// fall through
-	case 0x08:
+	case 8:
 		// Restart game
 		game_restart();
 		break;
 
-	case 0x09:
-		/*
-		 * Show the Zin screen in reponse to doing 'sing some enchanted
-		 * evening' in his cabin.
-		 */
+	case 9:
+		// Show the Zin screen in reponse to doing
+		// 'sing some enchanted evening' in his cabin.
 		g_comprehend->drawLocationPicture(41);
 		console_get_key();
 		_updateFlags |= UPDATE_GRAPHICS;
+		break;
+
+	default:
 		break;
 	}
 }
