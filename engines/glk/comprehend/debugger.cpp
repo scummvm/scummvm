@@ -35,6 +35,7 @@ Debugger::Debugger() : Glk::Debugger() {
 	registerCmd("floodfills", WRAP_METHOD(Debugger, cmdFloodfills));
 	registerCmd("room", WRAP_METHOD(Debugger, cmdRoom));
 	registerCmd("itemroom", WRAP_METHOD(Debugger, cmdItemRoom));
+	registerCmd("findstring", WRAP_METHOD(Debugger, cmdFindString));
 }
 
 Debugger::~Debugger() {
@@ -110,6 +111,27 @@ bool Debugger::cmdItemRoom(int argc, const char **argv) {
 			}
 
 			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Debugger::cmdFindString(int argc, const char **argv) {
+	ComprehendGame *game = g_comprehend->getGame();
+
+	if (argc == 1) {
+		debugPrintf("findstring <string>\n");
+
+	} else {
+		for (int arrNum = 0; arrNum < 2; ++arrNum) {
+			const StringTable &table = (arrNum == 0) ? game->_strings : game->_strings2;
+			const char *name = (arrNum == 0) ? "_strings" : "_strings2";
+
+			for (uint idx = 0; idx < table.size(); ++idx) {
+				if (table[idx].contains(argv[1]))
+					debugPrintf("%s[%u] = %s\n", name, idx, table[idx].c_str());
+			}
 		}
 	}
 

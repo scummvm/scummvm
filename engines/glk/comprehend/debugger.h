@@ -51,6 +51,11 @@ private:
 	 */
 	bool cmdItemRoom(int argc, const char **argv);
 
+	/**
+	 * Find a string given a partial specified
+	 */
+	bool cmdFindString(int argc, const char **argv);
+
 protected:
 	void print(const char *fmt, ...) override;
 
