@@ -70,21 +70,21 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	room = &_rooms[_currentRoom];
 	turn_count = _variables[VAR_TURN_COUNT];
 
-	monster = get_item(monsterInfo->object);
+	monster = get_item(monsterInfo->_object);
 	if (monster->room == _currentRoom) {
 		// The monster is in the current room - leave it there
 		return;
 	}
 
-	if ((room->flags & monsterInfo->room_allow_flag) &&
-	        !_flags[monsterInfo->dead_flag] &&
-	        turn_count > monsterInfo->min_turns_before) {
+	if ((room->flags & monsterInfo->_roomAllowFlag) &&
+	        !_flags[monsterInfo->_deadFlag] &&
+	        turn_count > monsterInfo->_minTurnsBefore) {
 		/*
 		 * The monster is alive and allowed to move to the current
 		 * room. Randomly decide whether on not to. If not, move
 		 * it back to limbo.
 		 */
-		if ((g_comprehend->getRandomNumber(0x7fffffff) % monsterInfo->randomness) == 0) {
+		if ((g_comprehend->getRandomNumber(0x7fffffff) % monsterInfo->_randomness) == 0) {
 			move_object(monster, _currentRoom);
 			_variables[0xf] = turn_count + 1;
 		} else {

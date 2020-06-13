@@ -29,11 +29,11 @@ namespace Glk {
 namespace Comprehend {
 
 struct TransylvaniaMonster {
-	uint8 object;
-	uint8 dead_flag;
-	unsigned min_turns_before;
-	unsigned room_allow_flag;
-	unsigned randomness;
+	uint8 _object;
+	uint8 _deadFlag;
+	unsigned _minTurnsBefore;
+	unsigned _roomAllowFlag;
+	unsigned _randomness;
 };
 
 class TransylvaniaGame : public ComprehendGame {
