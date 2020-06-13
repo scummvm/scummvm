@@ -152,7 +152,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", (_("Language:")), _("Language of the game. This will not turn your Spanish game version into English"));
 	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
 	_langPopUp->appendEntry((_("<default>")), (uint32)Common::UNK_LANG);
-	_langPopUp->appendEntry(Common::convertToU32String(""), (uint32)Common::UNK_LANG);
+	_langPopUp->appendEntry(Common::U32String(""), (uint32)Common::UNK_LANG);
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
 		if (checkGameGUIOptionLanguage(l->id, _guioptionsString))
@@ -166,7 +166,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", (_c("Platform:", "lowres")), _("Platform the game was originally designed for"));
 	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup", _("Platform the game was originally designed for"));
 	_platformPopUp->appendEntry((_("<default>")));
-	_platformPopUp->appendEntry(Common::convertToU32String(""));
+	_platformPopUp->appendEntry(Common::U32String(""));
 	const Common::PlatformDescription *p = Common::g_platforms;
 	for (; p->code; ++p) {
 		_platformPopUp->appendEntry(Common::convertToU32String(p->description), p->id);
