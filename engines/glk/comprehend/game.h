@@ -45,10 +45,8 @@ public:
 private:
 	WordIndex *is_word_pair(Word *word1, Word *word2);
 	Item *get_item_by_noun(Word *noun);
-	void update_graphics();
 	void describe_objects_in_current_room();
 	void update();
-	void move_to(uint8 room);
 	void func_set_test_result(FunctionState *func_state, bool value);
 	size_t num_objects_in_room(int room);
 	void eval_instruction(FunctionState *func_state, Instruction *instr,
@@ -67,8 +65,6 @@ protected:
 	void game_restart();
 	int console_get_key();
 	void console_println(const char *text);
-	Room *get_room(uint16 index);
-	Item *get_item(uint16 index);
 	void move_object(Item *item, int new_room);
 
 	/*
@@ -110,20 +106,12 @@ public:
 	Common::String instrStringLookup(uint8 index, uint8 table);
 
 	void playGame();
+
+	void move_to(uint8 room);
+	Room *get_room(uint16 index);
+	Item *get_item(uint16 index);
+	void update_graphics();
 };
-
-void console_println(ComprehendGame *game, const char *text);
-int console_get_key(void);
-
-Item *get_item(ComprehendGame *game, uint16 index);
-void move_object(ComprehendGame *game, Item *item, int new_room);
-void eval_function(ComprehendGame *game, Function *func,
-                   Word *verb, Word *noun);
-
-void comprehend_play_game(ComprehendGame *game);
-void game_save(ComprehendGame *game);
-void game_restore(ComprehendGame *game);
-void game_restart(ComprehendGame *game);
 
 } // namespace Comprehend
 } // namespace Glk

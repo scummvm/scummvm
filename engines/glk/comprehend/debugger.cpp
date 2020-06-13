@@ -33,6 +33,8 @@ Debugger::Debugger() : Glk::Debugger() {
 	g_debugger = this;
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
 	registerCmd("floodfills", WRAP_METHOD(Debugger, cmdFloodfills));
+	registerCmd("room", WRAP_METHOD(Debugger, cmdRoom));
+	registerCmd("itemroom", WRAP_METHOD(Debugger, cmdItemRoom));
 }
 
 Debugger::~Debugger() {
@@ -65,6 +67,50 @@ bool Debugger::cmdFloodfills(int argc, const char **argv) {
 	} else {
 		g_comprehend->_drawFlags &= ~IMAGEF_NO_FLOODFILL;
 		debugPrintf("Floodfills are on\n");
+	}
+
+	return true;
+}
+
+bool Debugger::cmdRoom(int argc, const char **argv) {
+	ComprehendGame *game = g_comprehend->getGame();
+
+	if (argc == 1) {
+		debugPrintf("Current room = %d\n", game->_currentRoom);
+		return true;
+	} else {
+		game->move_to(strToInt(argv[1]));
+		game->update_graphics();
+		return false;
+	}
+}
+
+bool Debugger::cmdItemRoom(int argc, const char **argv) {
+	ComprehendGame *game = g_comprehend->getGame();
+
+	if (argc == 1) {
+		debugPrintf("itemroom <item> [<room>]\n");
+	} else {
+		Item *item = game->get_item(strToInt(argv[1]));
+
+		if (argc == 2) {
+			debugPrintf("Item room = %d\n", item->_room);
+		} else {
+			int room = strToInt(argv[2]);
+			if (room == 0)
+				room = game->_currentRoom;
+			bool visibleChange = item->_room == game->_currentRoom ||
+				room == game->_currentRoom;
+
+			item->_room = room;
+
+			if (visibleChange) {
+				game->_updateFlags |= UPDATE_GRAPHICS_ITEMS;
+				game->update_graphics();
+			}
+
+			return false;
+		}
 	}
 
 	return true;

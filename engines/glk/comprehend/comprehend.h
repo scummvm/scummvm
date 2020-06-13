@@ -166,6 +166,10 @@ public:
 	bool isGraphicsEnabled() const {
 		return _graphicsEnabled;
 	}
+
+	ComprehendGame *getGame() const {
+		return _game;
+	}
 };
 
 extern Comprehend *g_comprehend;

@@ -41,6 +41,16 @@ private:
 	 */
 	bool cmdFloodfills(int argc, const char **argv);
 
+	/**
+	 * Sets or lists the current room
+	 */
+	bool cmdRoom(int argc, const char **argv);
+
+	/**
+	 * Sets or lists the room for an item
+	 */
+	bool cmdItemRoom(int argc, const char **argv);
+
 protected:
 	void print(const char *fmt, ...) override;
 
