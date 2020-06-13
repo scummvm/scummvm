@@ -597,17 +597,8 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		break;
 
 	case OPCODE_MOVE_TO_ROOM:
-		if (instr->operand[0] == 0xff) {
-			/*
-			 * FIXME - Not sure what this is for. Transylvania
-			 * uses it in the 'go north' case when in room
-			 * 0x01 or 0x0c, and Oo-Topos uses it when you shoot
-			 * the alien. Ignore it for now.
-			 */
-			break;
-		}
-
-		move_to(instr->operand[0]);
+		if (instr->operand[0] != 0xff)
+			move_to(instr->operand[0]);
 		break;
 
 	case OPCODE_MOVE:
