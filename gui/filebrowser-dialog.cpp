@@ -47,7 +47,7 @@ FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtensio
 	_fileList = nullptr;
 
 	new StaticTextWidget(this, "FileBrowser.Headline", title ? Common::convertToU32String(title) :
-					mode == kFBModeLoad ? Common::convertToU32String(_("Choose file for loading")) : Common::convertToU32String(_("Enter filename for saving")));
+					mode == kFBModeLoad ? (_("Choose file for loading")) : (_("Enter filename for saving")));
 
 	_fileName = new EditTextWidget(this, "FileBrowser.Filename", Common::convertToU32String(""));
 
@@ -62,8 +62,8 @@ FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtensio
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "FileBrowser.Cancel", Common::convertToU32String(_("Cancel")), nullptr, kCloseCmd);
-	new ButtonWidget(this, "FileBrowser.Choose", Common::convertToU32String(_("Choose")), nullptr, kChooseCmd);
+	new ButtonWidget(this, "FileBrowser.Cancel", (_("Cancel")), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "FileBrowser.Choose", (_("Choose")), Common::U32String(""), kChooseCmd);
 }
 
 void FileBrowserDialog::open() {

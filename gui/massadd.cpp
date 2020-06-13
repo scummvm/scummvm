@@ -73,10 +73,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	// new StaticTextWidget(this, "massadddialog_caption", "Mass Add Dialog");
 
 	_dirProgressText = new StaticTextWidget(this, "MassAdd.DirProgressText",
-											Common::convertToU32String(_("... progress ...")));
+											(_("... progress ...")));
 
 	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
-											Common::convertToU32String(_("... progress ...")));
+											(_("... progress ...")));
 
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
@@ -86,10 +86,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(l);
 
-	_okButton = new ButtonWidget(this, "MassAdd.Ok", Common::convertToU32String("Ok"), nullptr, kOkCmd, Common::ASCII_RETURN);
+	_okButton = new ButtonWidget(this, "MassAdd.Ok", Common::convertToU32String("Ok"), Common::U32String(""), kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "MassAdd.Cancel", Common::convertToU32String("Cancel"), nullptr, kCancelCmd, Common::ASCII_ESCAPE);
+	new ButtonWidget(this, "MassAdd.Cancel", Common::convertToU32String("Cancel"), Common::U32String(""), kCancelCmd, Common::ASCII_ESCAPE);
 
 	// Build a map from all configured game paths to the targets using them
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
@@ -257,7 +257,7 @@ void MassAddDialog::handleTickle() {
 
 
 	// Update the dialog
-	Common::String buf;
+	Common::U32String buf;
 
 	if (_scanStack.empty()) {
 		// Enable the OK button
@@ -266,14 +266,14 @@ void MassAddDialog::handleTickle() {
 		buf = _("Scan complete!");
 		_dirProgressText->setLabel(buf);
 
-		buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
+		buf = Common::String::format(Common::convertFromU32String(_("Discovered %d new games, ignored %d previously added games.")).c_str(), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 
 	} else {
-		buf = Common::String::format(_("Scanned %d directories ..."), _dirsScanned);
+		buf = Common::String::format(Common::convertFromU32String(_("Scanned %d directories ...")).c_str(), _dirsScanned);
 		_dirProgressText->setLabel(buf);
 
-		buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games ..."), _games.size(), _oldGamesCount);
+		buf = Common::String::format(Common::convertFromU32String(_("Discovered %d new games, ignored %d previously added games ...")).c_str(), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 	}
 

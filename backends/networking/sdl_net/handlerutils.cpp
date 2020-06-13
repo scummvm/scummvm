@@ -210,7 +210,7 @@ void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, Common::St
 			message.c_str(),
 			client.queryParameter("ajax") == "true" ? "AJAX" : "",
 			"%2F", //that's encoded "/"
-			toUtf8(_("Back to the files manager")).c_str()
+			Common::convertFromU32String(_("Back to the files manager")).c_str()
 		),
 		redirectTo
 	);

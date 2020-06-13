@@ -315,7 +315,8 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
 		Common::String message;
-		message = Common::String::format(_("Could not switch to resolution '%dx%d'."), width, height);
+		message = Common::String::format(
+			Common::convertFromU32String(_("Could not switch to resolution '%dx%d'.")).c_str(), width, height);
 
 		GUIErrorMessage(message);
 		error("%s", message.c_str());
@@ -324,7 +325,7 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 	// Just show warnings then these occur:
 #ifdef USE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionFormatNotSupported) {
-		Common::String message = _("Could not initialize color format.");
+		Common::U32String message = _("Could not initialize color format.");
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -333,7 +334,8 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 		Common::String message;
-		message = Common::String::format(_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
+		message = Common::String::format(
+			Common::convertFromU32String(_("Could not switch to video mode '%s'.")).c_str(), ConfMan.get("gfx_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -341,7 +343,8 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
 		Common::String message;
-		message = Common::String::format(_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
+		message = Common::String::format(
+			Common::convertFromU32String(_("Could not switch to stretch mode '%s'.")).c_str(), ConfMan.get("stretch_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -516,7 +519,7 @@ void Engine::saveAutosaveIfEnabled() {
 			saveFlag = desc.getSaveSlot() == -1 || desc.isAutosave();
 		}
 
-		if (saveFlag && saveGameState(getAutosaveSlot(), _("Autosave"), true).getCode() != Common::kNoError) {
+		if (saveFlag && saveGameState(getAutosaveSlot(), Common::convertFromU32String(_("Autosave")), true).getCode() != Common::kNoError) {
 			// Couldn't autosave at the designated time
 			g_system->displayMessageOnOSD(_("Error occurred making autosave"));
 			saveFlag = false;
@@ -597,9 +600,9 @@ void Engine::openMainMenuDialog() {
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Failed to load saved game (%s)! "
+			Common::U32String failMessage = Common::String::format(Common::convertFromU32String(_("Failed to load saved game (%s)! "
 				  "Please consult the README for basic information, and for "
-				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+				  "instructions on how to obtain further assistance.")).c_str(), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
 			dialog.runModal();
 		}
@@ -762,7 +765,7 @@ bool Engine::loadGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Load game:")), Common::convertToU32String(_("Load")), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser((_("Load game:")), (_("Load")), false);
 
 	int slotNum;
 	{
@@ -791,7 +794,7 @@ bool Engine::saveGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Save game:")), Common::convertToU32String(_("Save")), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser((_("Save game:")), (_("Save")), true);
 	int slotNum;
 	{
 		PauseToken pt = pauseEngine();

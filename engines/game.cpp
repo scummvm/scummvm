@@ -169,13 +169,13 @@ Common::String generateUnknownGameReport(const DetectedGames &detectedGames, boo
 	assert(!detectedGames.empty());
 
 	const char *reportStart = _s("The game in '%s' seems to be an unknown game variant.\n\n"
-	                             "Please report the following data to the ScummVM team at %s "
-	                             "along with the name of the game you tried to add and "
-	                             "its version, language, etc.:");
+									"Please report the following data to the ScummVM team at %s "
+									"along with the name of the game you tried to add and "
+									"its version, language, etc.:");
 	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
 
 	Common::String report = Common::String::format(
-			translate ? _(reportStart) : reportStart,
+			translate ? Common::convertFromU32String(_(reportStart)).c_str() : reportStart,
 			fullPath ? detectedGames[0].path.c_str() : detectedGames[0].shortPath.c_str(),
 			"https://bugs.scummvm.org/"
 	);
@@ -195,7 +195,7 @@ Common::String generateUnknownGameReport(const DetectedGames &detectedGames, boo
 			// If the engine is not the same as for the previous entry, print an engine line header
 			report += "\n";
 			report += Common::String::format(
-					translate ? _(reportEngineHeader) : reportEngineHeader,
+					translate ? Common::convertFromU32String(_(reportEngineHeader)).c_str() : reportEngineHeader,
 					game.engineId.c_str()
 			);
 			report += " ";

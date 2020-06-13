@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/ptr.h"
 
 namespace Graphics {
@@ -51,7 +52,7 @@ private:
 	};
 public:
 	SaveStateDescriptor();
-	SaveStateDescriptor(int s, const Common::String &d);
+	SaveStateDescriptor(int s, const Common::U32String &d);
 
 	/**
 	 * @param slot The saveslot id, as it would be passed to the "-x" command line switch.
@@ -66,12 +67,12 @@ public:
 	/**
 	 * @param desc A human readable description of the save state.
 	 */
-	void setDescription(const Common::String &desc) { _description = desc; }
+	void setDescription(const Common::U32String &desc) { _description = desc; }
 
 	/**
 	 * @return A human readable description of the save state.
 	 */
-	const Common::String &getDescription() const { return _description; }
+	const Common::U32String &getDescription() const { return _description; }
 
 	/** Optional entries only included when querying via MetaEngine::querySaveMetaInfo */
 
@@ -181,7 +182,7 @@ public:
 	 *
 	 * This will return an empty string in case the value is not set.
 	 */
-	const Common::String &getPlayTime() const { return _playTime; }
+	const Common::U32String &getPlayTime() const { return _playTime; }
 
 	/**
 	 * Returns the time the game was played before the save state was created
@@ -209,7 +210,7 @@ private:
 	/**
 	 * A human readable description of the save state.
 	 */
-	Common::String _description;
+	Common::U32String _description;
 
 	/**
 	 * Whether the save state can be deleted.
@@ -240,7 +241,7 @@ private:
 	 * Human readable description of the time the game was played till the
 	 * save state was created.
 	 */
-	Common::String _playTime;
+	Common::U32String _playTime;
 
 	/**
 	 * The time the game was played before the save state was created

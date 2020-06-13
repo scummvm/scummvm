@@ -33,7 +33,7 @@
 
 #include "gui/message.h"
 
-void BaseBackend::displayMessageOnOSD(const char *msg) {
+void BaseBackend::displayMessageOnOSD(const Common::U32String &msg) {
 	// Display the message for 1.5 seconds
 	GUI::TimedMessageDialog dialog(msg, 1500);
 	dialog.runModal();

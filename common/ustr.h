@@ -233,6 +233,22 @@ public:
 
 	uint64 asUint64() const;
 
+	void trim();
+
+	/**
+	 * Print formatted data into a String object. Similar to sprintf,
+	 * except that it stores the result in (variably sized) String
+	 * instead of a fixed size buffer.
+	 */
+	static U32String format(const char *fmt, ...) GCC_PRINTF(1, 2);
+
+	/**
+	 * Print formatted data into a String object. Similar to vsprintf,
+	 * except that it stores the result in (variably sized) String
+	 * instead of a fixed size buffer.
+	 */
+	static U32String vformat(const char *fmt, va_list args);
+
 private:
 	void makeUnique();
 	void ensureCapacity(uint32 new_size, bool keep_old);

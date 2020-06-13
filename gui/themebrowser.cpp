@@ -42,7 +42,7 @@ enum {
 ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_fileList = nullptr;
 
-	new StaticTextWidget(this, "Browser.Headline", Common::convertToU32String(_("Select a Theme")));
+	new StaticTextWidget(this, "Browser.Headline", (_("Select a Theme")));
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -52,8 +52,8 @@ ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "Browser.Cancel", Common::convertToU32String(_("Cancel")), nullptr, kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", Common::convertToU32String(_("Choose")), nullptr, kChooseCmd);
+	new ButtonWidget(this, "Browser.Cancel", (_("Cancel")), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", (_("Choose")), Common::U32String(""), kChooseCmd);
 }
 
 void ThemeBrowser::open() {

@@ -88,9 +88,9 @@ bool AchievementsManager::setAchievement(const String &id, const String &display
 	_iniFile->saveToSaveFile(_iniFileName);
 
 	if (!displayedMessage.empty() && g_system) {
-		String msg;
+		U32String msg;
 		msg = Common::String::format("%s\n%s", _("Achievement unlocked!"), displayedMessage.c_str());
-		g_system->displayMessageOnOSD(msg.c_str());
+		g_system->displayMessageOnOSD(msg);
 	}
 
 	return true;

@@ -1305,7 +1305,7 @@ public:
 	 *
 	 * @param msg	the message to display on screen
 	 */
-	virtual void displayMessageOnOSD(const char *msg) = 0;
+	virtual void displayMessageOnOSD(const Common::U32String &msg) = 0;
 
 	/**
 	 * Display an icon indicating background activity

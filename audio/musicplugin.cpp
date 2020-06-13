@@ -29,8 +29,8 @@ MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String na
 	_name(_(name)), _type(mt) {
 }
 
-Common::String MusicDevice::getCompleteName() {
-	Common::String name;
+Common::U32String MusicDevice::getCompleteName() {
+	Common::U32String name;
 
 	if (_name.empty()) {
 		// Default device, just show the driver name
@@ -38,18 +38,18 @@ Common::String MusicDevice::getCompleteName() {
 	} else {
 		// Show both device and driver names
 		name = _name;
-		name += " [";
+		name += Common::U32String(" [");
 		name += _musicDriverName;
-		name += "]";
+		name += Common::U32String("]");
 	}
 
 	return name;
 }
 
-Common::String MusicDevice::getCompleteId() {
-	Common::String id = _musicDriverId;
+Common::U32String MusicDevice::getCompleteId() {
+	Common::U32String id = _musicDriverId;
 	if (!_name.empty()) {
-		id += "_";
+		id += Common::U32String("_");
 		id += _name;
 	}
 
@@ -57,5 +57,5 @@ Common::String MusicDevice::getCompleteId() {
 }
 
 MidiDriver::DeviceHandle MusicDevice::getHandle() {
-	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId().c_str());
+	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId().encode().c_str());
 }

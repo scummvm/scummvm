@@ -66,7 +66,7 @@ void UploadFileClientHandler::handle(Client *client) {
 
 			// fail on suspicious headers
 			if (_headersStream->size() > Reader::SUSPICIOUS_HEADERS_SIZE) {
-				setErrorMessageHandler(*client, HandlerUtils::toUtf8(_("Invalid request: headers are too long!")));
+				setErrorMessageHandler(*client, Common::convertFromU32String(_("Invalid request: headers are too long!")));
 			}
 			break;
 
@@ -108,7 +108,7 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 
 	// fail on suspicious headers
 	if (_headersStream->size() > Reader::SUSPICIOUS_HEADERS_SIZE) {
-		setErrorMessageHandler(*client, HandlerUtils::toUtf8(_("Invalid request: headers are too long!")));
+		setErrorMessageHandler(*client, Common::convertFromU32String(_("Invalid request: headers are too long!")));
 	}
 
 	// search for "upload_file" field
@@ -134,11 +134,11 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 		path += '/';
 	AbstractFSNode *originalNode = g_system->getFilesystemFactory()->makeFileNodePath(path + filename);
 	if (!HandlerUtils::permittedPath(originalNode->getPath())) {
-		setErrorMessageHandler(*client, HandlerUtils::toUtf8(_("Invalid path!")));
+		setErrorMessageHandler(*client, Common::convertFromU32String(_("Invalid path!")));
 		return;
 	}
 	if (originalNode->exists()) {
-		setErrorMessageHandler(*client, HandlerUtils::toUtf8(_("There is a file with that name in the parent directory!")));
+		setErrorMessageHandler(*client, Common::convertFromU32String(_("There is a file with that name in the parent directory!")));
 		return;
 	}
 
@@ -152,7 +152,7 @@ void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	Common::DumpFile *f = new Common::DumpFile();
 	if (!f->open(originalNode->getPath(), true)) {
 		delete f;
-		setErrorMessageHandler(*client, HandlerUtils::toUtf8(_("Failed to upload the file!")));
+		setErrorMessageHandler(*client, Common::convertFromU32String(_("Failed to upload the file!")));
 		return;
 	}
 
@@ -181,7 +181,7 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 	if (client->noMoreContent()) {
 		// if no file field was found - failure
 		if (_uploadedFiles == 0) {
-			setErrorMessageHandler(*client, HandlerUtils::toUtf8(_("No file was passed!")));
+			setErrorMessageHandler(*client, Common::convertFromU32String(_("No file was passed!")));
 		} else {
 			setSuccessHandler(*client);
 		}
@@ -199,9 +199,9 @@ void UploadFileClientHandler::setSuccessHandler(Client &client) {
 		client,
 		Common::String::format(
 			"%s<br/><a href=\"files?path=%s\">%s</a>",
-			HandlerUtils::toUtf8(_("Uploaded successfully!")).c_str(),
+			Common::convertFromU32String(_("Uploaded successfully!")).c_str(),
 			client.queryParameter("path").c_str(),
-			HandlerUtils::toUtf8(_("Back to parent directory")).c_str()
+			Common::convertFromU32String(_("Back to parent directory")).c_str()
 			),
 		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
 		LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))

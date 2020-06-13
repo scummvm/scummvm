@@ -41,7 +41,7 @@ enum {
  */
 class MessageDialog : public Dialog {
 public:
-	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = nullptr, Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
+	MessageDialog(const Common::U32String &message, Common::U32String defaultButton = Common::U32String("OK"), Common::U32String altButton = Common::U32String(""), Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
@@ -54,7 +54,7 @@ private:
  */
 class TimedMessageDialog : public MessageDialog {
 public:
-	TimedMessageDialog(const Common::String &message, uint32 duration);
+	TimedMessageDialog(const Common::U32String &message, uint32 duration);
 
 	void handleTickle() override;
 

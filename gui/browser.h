@@ -36,7 +36,7 @@ class CommandSender;
 
 class BrowserDialog : public Dialog {
 public:
-	BrowserDialog(Common::U32String &title, bool dirBrowser);
+	BrowserDialog(const Common::U32String &title, bool dirBrowser);
 
 	int runModal() override;
 	void open() override;

@@ -498,4 +498,90 @@ uint64 U32String::asUint64() const {
 	return result;
 }
 
+void U32String::trim() {
+	if (_size == 0)
+		return;
+
+	makeUnique();
+
+	// Trim trailing whitespace
+	while (_size >= 1 && isSpace(_str[_size - 1]))
+		--_size;
+	_str[_size] = 0;
+
+	// Trim leading whitespace
+	uint *t = _str;
+	while (isSpace(*t))
+		t++;
+
+	if (t != _str) {
+		_size -= t - _str;
+		memmove(_str, t, _size + 1);
+	}
+}
+
+// static
+U32String U32String::format(const char *fmt, ...) {
+	U32String output;
+
+	va_list va;
+	va_start(va, fmt);
+	output = U32String::vformat(fmt, va);
+	va_end(va);
+
+	return output;
+}
+
+// static
+U32String U32String::vformat(const char *fmt, va_list args) {
+	U32String output = "";
+	assert(output.isStorageIntern());
+	output._str;
+	va_list va;
+	scumm_va_copy(va, args);
+	int len = vsnprintf((char *)output._str, _builtinCapacity, fmt, va);
+	va_end(va);
+
+	if (len == -1 || len == _builtinCapacity - 1) {
+		// MSVC and IRIX don't return the size the full string would take up.
+		// MSVC returns -1, IRIX returns the number of characters actually written,
+		// which is at the most the size of the buffer minus one, as the string is
+		// truncated to fit.
+
+		// We assume MSVC failed to output the correct, null-terminated string
+		// if the return value is either -1 or size.
+		// For IRIX, because we lack a better mechanism, we assume failure
+		// if the return value equals size - 1.
+		// The downside to this is that whenever we try to format a string where the
+		// size is 1 below the built-in capacity, the size is needlessly increased.
+
+		// Try increasing the size of the string until it fits.
+		int size = _builtinCapacity;
+		do {
+			size *= 2;
+			output.ensureCapacity(size - 1, false);
+			assert(!output.isStorageIntern());
+			size = output._extern._capacity;
+
+			scumm_va_copy(va, args);
+			len = vsnprintf((char *)output._str, size, fmt, va);
+			va_end(va);
+		} while (len == -1 || len >= size - 1);
+		output._size = len;
+	} else if (len < (int)_builtinCapacity) {
+		// vsnprintf succeeded
+		output._size = len;
+	} else {
+		// vsnprintf didn't have enough space, so grow buffer
+		output.ensureCapacity(len, false);
+		scumm_va_copy(va, args);
+		int len2 = vsnprintf((char *)output._str, len + 1, fmt, va);
+		va_end(va);
+		assert(len == len2);
+		output._size = len2;
+	}
+
+	return output;
+}
+
 } // End of namespace Common

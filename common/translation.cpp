@@ -108,11 +108,11 @@ void TranslationManager::setLanguage(const String &lang) {
 	}
 }
 
-const char *TranslationManager::getTranslation(const char *message) const {
+U32String TranslationManager::getTranslation(const char *message) const {
 	return getTranslation(message, nullptr);
 }
 
-const char *TranslationManager::getTranslation(const char *message, const char *context) const {
+U32String TranslationManager::getTranslation(const char *message, const char *context) const {
 	// If no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
 		return message;
@@ -161,7 +161,7 @@ const char *TranslationManager::getTranslation(const char *message, const char *
 			leftIndex = midIndex + 1;
 	}
 
-	return message;
+	return U32String(message);
 }
 
 String TranslationManager::getCurrentCharset() const {
@@ -176,11 +176,11 @@ String TranslationManager::getCurrentLanguage() const {
 	return _langs[_currentLang];
 }
 
-String TranslationManager::getTranslation(const String &message) const {
+U32String TranslationManager::getTranslation(const String &message) const {
 	return getTranslation(message.c_str());
 }
 
-String TranslationManager::getTranslation(const String &message, const String &context) const {
+U32String TranslationManager::getTranslation(const String &message, const String &context) const {
 	return getTranslation(message.c_str(), context.c_str());
 }
 

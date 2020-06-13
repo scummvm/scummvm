@@ -583,8 +583,8 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef USE_OSD
 		int windowWidth = 0, windowHeight = 0;
 		getWindowSizeFromSdl(&windowWidth, &windowHeight);
-		const Common::String osdMsg = Common::String::format(_("Resolution: %dx%d"), windowWidth, windowHeight);
-		displayMessageOnOSD(osdMsg.c_str());
+		const Common::U32String osdMsg = Common::String::format(Common::convertFromU32String(_("Resolution: %dx%d")).c_str(), windowWidth, windowHeight);
+		displayMessageOnOSD(osdMsg);
 #endif
 
 		return true;
@@ -659,11 +659,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		endGFXTransaction();
 
 #ifdef USE_OSD
-		Common::String message = Common::String::format("%s: %s",
+		Common::U32String message = Common::String::format("%s: %s",
 			_("Stretch mode"),
 			_(stretchModes[index].description)
 			);
-		displayMessageOnOSD(message.c_str());
+		displayMessageOnOSD(message);
 #endif
 
 		return true;

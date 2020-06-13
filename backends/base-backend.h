@@ -30,7 +30,7 @@ class BaseBackend : public OSystem {
 public:
 	virtual void initBackend();
 
-	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayMessageOnOSD(const Common::U32String &msg);
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
 	virtual void fillScreen(uint32 col);
 };

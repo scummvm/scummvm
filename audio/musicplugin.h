@@ -26,6 +26,7 @@
 #include "base/plugins.h"
 #include "audio/mididrv.h"
 #include "common/list.h"
+#include "common/ustr.h"
 
 namespace Common {
 class Error;
@@ -42,29 +43,29 @@ class MusicDevice {
 public:
 	MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt);
 
-	const Common::String &getName() const { return _name; }
-	const Common::String &getMusicDriverName() const { return _musicDriverName; }
-	const Common::String &getMusicDriverId() const { return _musicDriverId; }
+	const Common::U32String &getName() const { return _name; }
+	const Common::U32String &getMusicDriverName() const { return _musicDriverName; }
+	const Common::U32String &getMusicDriverId() const { return _musicDriverId; }
 	MusicType getMusicType() const { return _type; }
 
 	/**
 	 * Returns a user readable string that contains the name of the current
 	 * device name (if it isn't the default one) and the name of the driver.
 	 */
-	Common::String getCompleteName();
+	Common::U32String getCompleteName();
 
 	/**
 	 * Returns a user readable string that contains the name of the current
 	 * device name (if it isn't the default one) and the id of the driver.
 	 */
-	Common::String getCompleteId();
+	Common::U32String getCompleteId();
 
 	MidiDriver::DeviceHandle getHandle();
 
 private:
-	Common::String _name;
-	Common::String _musicDriverName;
-	Common::String _musicDriverId;
+	Common::U32String _name;
+	Common::U32String _musicDriverName;
+	Common::U32String _musicDriverId;
 	MusicType _type;
 };
 

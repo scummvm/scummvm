@@ -649,7 +649,7 @@ bool EventRecorder::switchMode() {
 			g_system->getEventManager()->pushEvent(eventReturnToLauncher);
 		}
 	}
-	ConfMan.set("record_mode", "", Common::ConfigManager::kTransientDomain);
+	ConfMan.set("record_mode", Common::U32String(""), Common::ConfigManager::kTransientDomain);
 	ConfMan.setInt("save_slot", emptySlot, Common::ConfigManager::kTransientDomain);
 	_needcontinueGame = true;
 	return true;

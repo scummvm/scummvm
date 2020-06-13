@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/singleton.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/queue.h"
 #include "common/mutex.h"
 
@@ -48,7 +49,7 @@ public:
 	/**
 	 * Add a message to the OSD message queue.
 	 */
-	void addMessage(const char *msg);
+	void addMessage(const Common::U32String &msg);
 
 	/**
 	 * Common::EventSource interface
@@ -63,7 +64,7 @@ public:
 
 private:
 	Mutex _mutex;
-	Queue<String> _messages;
+	Queue<U32String> _messages;
 	uint32 _lastUpdate;
 };
 

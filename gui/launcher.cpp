@@ -137,14 +137,14 @@ void LauncherDialog::build() {
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
-		new ButtonWidget(this, "Launcher.QuitButton", Common::convertToU32String(_("~Q~uit")), _("Quit ScummVM"), kQuitCmd);
-	new ButtonWidget(this, "Launcher.AboutButton", Common::convertToU32String(_("A~b~out...")), _("About ScummVM"), kAboutCmd);
-	new ButtonWidget(this, "Launcher.OptionsButton", Common::convertToU32String(_("~O~ptions...")), _("Change global ScummVM options"), kOptionsCmd);
+		new ButtonWidget(this, "Launcher.QuitButton", (_("~Q~uit")), _("Quit ScummVM"), kQuitCmd);
+	new ButtonWidget(this, "Launcher.AboutButton", (_("A~b~out...")), _("About ScummVM"), kAboutCmd);
+	new ButtonWidget(this, "Launcher.OptionsButton", (_("~O~ptions...")), _("Change global ScummVM options"), kOptionsCmd);
 	_startButton =
-		new ButtonWidget(this, "Launcher.StartButton", Common::convertToU32String(_("~S~tart")), _("Start selected game"), kStartCmd);
+		new ButtonWidget(this, "Launcher.StartButton", (_("~S~tart")), _("Start selected game"), kStartCmd);
 
 	DropdownButtonWidget *loadButton =
-	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", Common::convertToU32String(_("~L~oad...")), _("Load saved game for selected game"), kLoadGameCmd);
+	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", (_("~L~oad...")), _("Load saved game for selected game"), kLoadGameCmd);
 #ifdef ENABLE_EVENTRECORDER
 	loadButton->appendEntry(_("Record..."), kRecordGameCmd);
 #endif
@@ -153,24 +153,24 @@ void LauncherDialog::build() {
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
 		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "Launcher.AddGameButton", Common::convertToU32String(_("~A~dd Game...")), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(Common::convertToU32String(_("Mass Add...")), kMassAddGameCmd);
+			new DropdownButtonWidget(this, "Launcher.AddGameButton", (_("~A~dd Game...")), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry((_("Mass Add...")), kMassAddGameCmd);
 		_addButton = addButton;
 
 		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", Common::convertToU32String(_("~E~dit Game...")), _("Change game options"), kEditGameCmd);
+			new ButtonWidget(this, "Launcher.EditGameButton", (_("~E~dit Game...")), _("Change game options"), kEditGameCmd);
 		_removeButton =
-			new ButtonWidget(this, "Launcher.RemoveGameButton", Common::convertToU32String(_("~R~emove Game")), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+			new ButtonWidget(this, "Launcher.RemoveGameButton", (_("~R~emove Game")), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
 		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "Launcher.AddGameButton", Common::convertToU32String(_c("~A~dd Game...", "lowres")), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(Common::convertToU32String(_c("Mass Add...", "lowres")), kMassAddGameCmd);
+			new DropdownButtonWidget(this, "Launcher.AddGameButton", (_c("~A~dd Game...", "lowres")), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry((_c("Mass Add...", "lowres")), kMassAddGameCmd);
 		_addButton = addButton;
 
 		_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", Common::convertToU32String(_c("~E~dit Game...", "lowres")), _("Change game options"), kEditGameCmd);
+		new ButtonWidget(this, "Launcher.EditGameButton", (_c("~E~dit Game...", "lowres")), _("Change game options"), kEditGameCmd);
 		_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", Common::convertToU32String(_c("~R~emove Game", "lowres")), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+		new ButtonWidget(this, "Launcher.RemoveGameButton", (_c("~R~emove Game", "lowres")), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	}
 
 	// Search box
@@ -182,13 +182,13 @@ void LauncherDialog::build() {
 		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
 	} else
 #endif
-		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", Common::convertToU32String(_("Search:")));
+		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", (_("Search:")));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, nullptr, kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(""), kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", nullptr, kListSearchCmd);
+	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(""), kListSearchCmd);
 	_list->setEditable(false);
 	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
@@ -204,10 +204,10 @@ void LauncherDialog::build() {
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new BrowserDialog(Common::convertToU32String(_("Select directory with game data")), true);
+	_browser = new BrowserDialog((_("Select directory with game data")), true);
 
 	// Create Load dialog
-	_loadDialog = new SaveLoadChooser(Common::convertToU32String(_("Load game:")), Common::convertToU32String(_("Load")), false);
+	_loadDialog = new SaveLoadChooser((_("Load game:")), (_("Load")), false);
 }
 
 void LauncherDialog::clean() {
@@ -564,10 +564,10 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		// Display the candidates to the user and let her/him pick one
 		U32StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++) {
-			Common::String description = candidates[idx].description;
+			Common::U32String description = candidates[idx].description;
 
 			if (candidates[idx].hasUnknownFiles) {
-				description += " - ";
+				description += Common::U32String(" - ");
 				description += _("Unknown variant");
 			}
 
@@ -753,7 +753,7 @@ void LauncherDialog::reflowLayout() {
 		}
 	} else {
 		if (!_searchDesc)
-			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", Common::convertToU32String(_("Search:")));
+			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", (_("Search:")));
 
 		if (_searchPic) {
 			removeWidget(_searchPic);

@@ -129,11 +129,11 @@ enum {
 	kApplyCmd = 'appl'
 };
 
-static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr };
+static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), "" };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
-static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
+static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", "" };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
@@ -261,7 +261,7 @@ void OptionsDialog::build() {
 		int value = ConfMan.getInt("kbdmouse_speed", _domain);
 		if (_kbdMouseSpeedSlider && value < ARRAYSIZE(kbdMouseSpeedLabels) - 1 && value >= 0) {
 			_kbdMouseSpeedSlider->setValue(value);
-			_kbdMouseSpeedLabel->setLabel(Common::convertToU32String(_(kbdMouseSpeedLabels[value])));
+			_kbdMouseSpeedLabel->setLabel((_(kbdMouseSpeedLabels[value])));
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
@@ -392,7 +392,7 @@ void OptionsDialog::build() {
 
 		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
-			_soundFont->setLabel(Common::convertToU32String(_c("None", "soundfont")));
+			_soundFont->setLabel((_c("None", "soundfont")));
 			_soundFontClearButton->setEnabled(false);
 		} else {
 			_soundFont->setLabel(soundFont);
@@ -610,7 +610,7 @@ void OptionsDialog::apply() {
 
 		if (gfxError != OSystem::kTransactionSuccess) {
 			// Revert ConfMan to what OSystem is using.
-			Common::String message = _("Failed to apply some of the graphic options changes:");
+			Common::U32String message = _("Failed to apply some of the graphic options changes:");
 
 			if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 				const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
@@ -621,7 +621,7 @@ void OptionsDialog::apply() {
 					}
 					gm++;
 				}
-				message += "\n";
+				message += Common::U32String("\n");
 				message += _("the video mode could not be changed");
 			}
 
@@ -634,25 +634,25 @@ void OptionsDialog::apply() {
 					}
 					sm++;
 				}
-				message += "\n";
+				message += Common::U32String("\n");
 				message += _("the stretch mode could not be changed");
 			}
 
 			if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 				ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
-				message += "\n";
+				message += Common::U32String("\n");
 				message += _("the aspect ratio setting could not be changed");
 			}
 
 			if (gfxError & OSystem::kTransactionFullscreenFailed) {
 				ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
-				message += "\n";
+				message += Common::U32String("\n");
 				message += _("the fullscreen setting could not be changed");
 			}
 
 			if (gfxError & OSystem::kTransactionFilteringFailed) {
 				ConfMan.setBool("filtering", g_system->getFeatureState(OSystem::kFeatureFilteringMode), _domain);
-				message += "\n";
+				message += Common::U32String("\n");
 				message += _("the filtering setting could not be changed");
 			}
 
@@ -745,7 +745,7 @@ void OptionsDialog::apply() {
 			ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
 			Common::String soundFont(Common::convertFromU32String(_soundFont->getLabel()));
-			if (!soundFont.empty() && (soundFont != _c("None", "soundfont")))
+			if (!soundFont.empty() && (soundFont != Common::convertFromU32String(_c("None", "soundfont"))))
 				ConfMan.set("soundfont", soundFont, _domain);
 			else
 				ConfMan.removeKey("soundfont", _domain);
@@ -883,12 +883,12 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_subSpeedLabel->markAsDirty();
 		break;
 	case kClearSoundFontCmd:
-		_soundFont->setLabel(Common::convertToU32String(_c("None", "soundfont")));
+		_soundFont->setLabel((_c("None", "soundfont")));
 		_soundFontClearButton->setEnabled(false);
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kKbdMouseSpeedChanged:
-		_kbdMouseSpeedLabel->setLabel(Common::convertToU32String(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()])));
+		_kbdMouseSpeedLabel->setLabel((_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()])));
 		_kbdMouseSpeedLabel->markAsDirty();
 		break;
 	case kJoystickDeadzoneChanged:
@@ -1068,22 +1068,22 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &prefix) {
 	// Show On-Screen control
 	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl))
-		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", Common::convertToU32String(_("Show On-screen control")));
+		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", (_("Show On-screen control")));
 
 	// Touchpad Mouse mode
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
-		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", Common::convertToU32String(_("Touchpad mouse mode")));
+		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
 
 	// Swap menu and back buttons
 	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons))
-		_swapMenuAndBackBtnsCheckbox = new CheckboxWidget(boss, prefix + "grSwapMenuAndBackBtnsCheckbox", Common::convertToU32String(_("Swap Menu and Back buttons")));
+		_swapMenuAndBackBtnsCheckbox = new CheckboxWidget(boss, prefix + "grSwapMenuAndBackBtnsCheckbox", (_("Swap Menu and Back buttons")));
 
 	// Keyboard and joystick mouse speed
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
 		if (g_system->getOverlayWidth() > 320)
-			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", Common::convertToU32String(_("Pointer Speed:")), _("Speed for keyboard/joystick mouse pointer control"));
+			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", (_("Pointer Speed:")), _("Speed for keyboard/joystick mouse pointer control"));
 		else
-			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", Common::convertToU32String(_c("Pointer Speed:", "lowres")), _("Speed for keyboard/joystick mouse pointer control"));
+			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", (_c("Pointer Speed:", "lowres")), _("Speed for keyboard/joystick mouse pointer control"));
 		_kbdMouseSpeedSlider = new SliderWidget(boss, prefix + "grKbdMouseSpeedSlider", _("Speed for keyboard/joystick mouse pointer control"), kKbdMouseSpeedChanged);
 		_kbdMouseSpeedLabel = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedLabel", Common::convertToU32String("  "));
 		_kbdMouseSpeedSlider->setMinValue(0);
@@ -1094,9 +1094,9 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 	// Joystick deadzone
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
 		if (g_system->getOverlayWidth() > 320)
-			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", Common::convertToU32String(_("Joy Deadzone:")), _("Analog joystick Deadzone"));
+			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", (_("Joy Deadzone:")), _("Analog joystick Deadzone"));
 		else
-			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", Common::convertToU32String(_c("Joy Deadzone:", "lowres")), _("Analog joystick Deadzone"));
+			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", (_c("Joy Deadzone:", "lowres")), _("Analog joystick Deadzone"));
 		_joystickDeadzoneSlider = new SliderWidget(boss, prefix + "grJoystickDeadzoneSlider", _("Analog joystick Deadzone"), kJoystickDeadzoneChanged);
 		_joystickDeadzoneLabel = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneLabel", Common::convertToU32String("  "));
 		_joystickDeadzoneSlider->setMinValue(1);
@@ -1161,7 +1161,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			yPos += yStep;
 
 	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
-				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, Common::convertToU32String(info.descriptions[idx].comment), Graphics::kTextAlignStart, "", ThemeEngine::kFontStyleNormal);
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, Common::convertToU32String(info.descriptions[idx].comment), Graphics::kTextAlignStart, Common::U32String(""), ThemeEngine::kFontStyleNormal);
 				yPos += yStep;
 			}
 
@@ -1170,13 +1170,13 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	}
 
 	if (nHidden) {
-		Common::String hiddenStr = Common::String::format(_("%d hidden achievements remaining"), nHidden);
+		Common::String hiddenStr = Common::String::format(Common::convertFromU32String(_("%d hidden achievements remaining")).c_str(), nHidden);
 		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, Common::convertToU32String(hiddenStr.c_str()), Graphics::kTextAlignStart);
 	}
 
 	if (nMax) {
-		Common::String totalStr = Common::String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
-		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, Common::convertToU32String(totalStr.c_str()), Graphics::kTextAlignStart);
+		Common::U32String totalStr = Common::String::format(Common::convertFromU32String(_("Achievements unlocked: %d/%d")).c_str(), nAchieved, nMax);
+		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr, Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;
 		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
@@ -1194,13 +1194,13 @@ void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &pre
 
 	// Shader selector
 	if (g_system->getOverlayWidth() > 320)
-		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", Common::convertToU32String(_("HW Shader:")), _("Different hardware shaders give different visual effects"));
+		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", (_("HW Shader:")), _("Different hardware shaders give different visual effects"));
 	else
-		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", Common::convertToU32String(_c("HW Shader:", "lowres")), _("Different hardware shaders give different visual effects"));
+		_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", (_c("HW Shader:", "lowres")), _("Different hardware shaders give different visual effects"));
 	_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
 	const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
 
-	_shaderPopUp->appendEntry(Common::convertToU32String(_("<default>")));
+	_shaderPopUp->appendEntry((_("<default>")));
 	_shaderPopUp->appendEntry(Common::convertToU32String(""));
 	while (p->name) {
 		_shaderPopUp->appendEntry(_c(p->description, context), p->id);
@@ -1217,10 +1217,10 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		context = "lowres";
 
 	// The GFX mode popup
-	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", Common::convertToU32String(_("Graphics mode:")));
+	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", (_("Graphics mode:")));
 	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
 
-	_gfxPopUp->appendEntry(Common::convertToU32String(_("<default>")));
+	_gfxPopUp->appendEntry((_("<default>")));
 	_gfxPopUp->appendEntry(Common::convertToU32String(""));
 	while (gm->name) {
 		_gfxPopUp->appendEntry(_c(gm->description, context), gm->id);
@@ -1231,9 +1231,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	const Common::String allFlags = Common::allRenderModesGUIOs();
 	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
 
-	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", Common::convertToU32String(_("Render mode:")), _("Special dithering modes supported by some games"));
+	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", (_("Render mode:")), _("Special dithering modes supported by some games"));
 	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
-	_renderModePopUp->appendEntry(Common::convertToU32String(_("<default>")), Common::kRenderDefault);
+	_renderModePopUp->appendEntry((_("<default>")), Common::kRenderDefault);
 	_renderModePopUp->appendEntry(Common::convertToU32String(""));
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
@@ -1244,10 +1244,10 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// The Stretch mode popup
 	const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
-	_stretchPopUpDesc = new StaticTextWidget(boss, prefix + "grStretchModePopupDesc", Common::convertToU32String(_("Stretch mode:")));
+	_stretchPopUpDesc = new StaticTextWidget(boss, prefix + "grStretchModePopupDesc", (_("Stretch mode:")));
 	_stretchPopUp = new PopUpWidget(boss, prefix + "grStretchModePopup");
 
-	_stretchPopUp->appendEntry(Common::convertToU32String(_("<default>")));
+	_stretchPopUp->appendEntry((_("<default>")));
 	_stretchPopUp->appendEntry(Common::convertToU32String(""));
 	while (sm->name) {
 		_stretchPopUp->appendEntry(_c(sm->description, context), sm->id);
@@ -1255,13 +1255,13 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", Common::convertToU32String(_("Fullscreen mode")));
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", (_("Fullscreen mode")));
 
 	// Filtering checkbox
-	_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", Common::convertToU32String(_("Filter graphics")), _("Use linear filtering when scaling graphics"));
+	_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", (_("Filter graphics")), _("Use linear filtering when scaling graphics"));
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", Common::convertToU32String(_("Aspect ratio correction")), _("Correct aspect ratio for 320x200 games"));
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", (_("Aspect ratio correction")), _("Correct aspect ratio for 320x200 games"));
 
 	_enableGraphicSettings = true;
 }
@@ -1269,9 +1269,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
 	if (g_system->getOverlayWidth() > 320)
-		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? Common::convertToU32String(_("Preferred device:")) : Common::convertToU32String(_("Music device:")), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
+		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? (_("Preferred device:")) : (_("Music device:")), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	else
-		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? Common::convertToU32String(_c("Preferred dev.:", "lowres")) : Common::convertToU32String(_c("Music device:", "lowres")), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
+		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? (_c("Preferred dev.:", "lowres")) : (_c("Music device:", "lowres")), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
@@ -1298,13 +1298,13 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	}
 
 	// The OPL emulator popup & a label
-	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", Common::convertToU32String(_("AdLib emulator:")), _("AdLib is used for music in many games"));
+	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", (_("AdLib emulator:")), _("AdLib is used for music in many games"));
 	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", _("AdLib is used for music in many games"));
 
 	// Populate it
 	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
 	while (ed->name) {
-		_oplPopUp->appendEntry(Common::convertToU32String(_(ed->description)), ed->id);
+		_oplPopUp->appendEntry((_(ed->description)), ed->id);
 		++ed;
 	}
 
@@ -1312,7 +1312,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 }
 
 void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
-	_gmDevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefGmPopupDesc", Common::convertToU32String(_("GM device:")), _("Specifies default sound device for General MIDI output"));
+	_gmDevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefGmPopupDesc", (_("GM device:")), _("Specifies default sound device for General MIDI output"));
 	_gmDevicePopUp = new PopUpWidget(boss, prefix + "auPrefGmPopup");
 
 	// Populate
@@ -1323,7 +1323,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicDriverId() == "null")
-				_gmDevicePopUp->appendEntry(Common::convertToU32String(_("Don't use General MIDI music")), d->getHandle());
+				_gmDevicePopUp->appendEntry((_("Don't use General MIDI music")), d->getHandle());
 		}
 	}
 	// Now we add the other devices.
@@ -1334,7 +1334,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 				if (d->getMusicType() != MT_MT32)
 					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
 			} else if (d->getMusicDriverId() == "auto") {
-				_gmDevicePopUp->appendEntry(Common::convertToU32String(_("Use first available device")), d->getHandle());
+				_gmDevicePopUp->appendEntry((_("Use first available device")), d->getHandle());
 			}
 		}
 	}
@@ -1346,19 +1346,19 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 
 	// SoundFont
 	if (g_system->getOverlayWidth() > 320)
-		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", Common::convertToU32String(_("SoundFont:")), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"), kChooseSoundFontCmd);
+		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", (_("SoundFont:")), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"), kChooseSoundFontCmd);
 	else
-		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", Common::convertToU32String(_c("SoundFont:", "lowres")), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"), kChooseSoundFontCmd);
-	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", Common::convertToU32String(_c("None", "soundfont")), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"));
+		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", (_c("SoundFont:", "lowres")), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"), kChooseSoundFontCmd);
+	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", (_c("None", "soundfont")), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"));
 
 	_soundFontClearButton = addClearButton(boss, prefix + "mcFontClearButton", kClearSoundFontCmd);
 
 	// Multi midi setting
-	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", Common::convertToU32String(_("Mixed AdLib/MIDI mode")), _("Use both MIDI and AdLib sound generation"));
+	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", (_("Mixed AdLib/MIDI mode")), _("Use both MIDI and AdLib sound generation"));
 
 	// MIDI gain setting (FluidSynth uses this)
-	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", Common::convertToU32String(_("MIDI gain:")));
-	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", nullptr, kMidiGainChanged);
+	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", (_("MIDI gain:")));
+	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", Common::U32String(""), kMidiGainChanged);
 	_midiGainSlider->setMinValue(0);
 	_midiGainSlider->setMaxValue(1000);
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", Common::convertToU32String("1.00"));
@@ -1367,17 +1367,17 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 }
 
 void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefix) {
-	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", Common::convertToU32String(_("MT-32 Device:")), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
+	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", (_("MT-32 Device:")), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
 	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
 
 	// Native mt32 setting
 	if (g_system->getOverlayWidth() > 320)
-		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", Common::convertToU32String(_("True Roland MT-32 (disable GM emulation)")), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
+		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", (_("True Roland MT-32 (disable GM emulation)")), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 	else
-		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", Common::convertToU32String(_c("True Roland MT-32 (no GM emulation)", "lowres")), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
+		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", (_c("True Roland MT-32 (no GM emulation)", "lowres")), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 
 	// GS Extensions setting
-	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", Common::convertToU32String(_("Roland GS device (enable MT-32 mappings)")), _("Check if you want to enable patch mappings to emulate an MT-32 on a Roland GS device"));
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", (_("Roland GS device (enable MT-32 mappings)")), _("Check if you want to enable patch mappings to emulate an MT-32 on a Roland GS device"));
 
 	const PluginList p = MusicMan.getPlugins();
 	// Make sure the null device is the first one in the list to avoid undesired
@@ -1386,7 +1386,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicDriverId() == "null")
-				_mt32DevicePopUp->appendEntry(Common::convertToU32String(_("Don't use Roland MT-32 music")), d->getHandle());
+				_mt32DevicePopUp->appendEntry((_("Don't use Roland MT-32 music")), d->getHandle());
 		}
 	}
 	// Now we add the other devices.
@@ -1396,7 +1396,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 			if (d->getMusicType() >= MT_GM)
 				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
 			else if (d->getMusicDriverId() == "auto")
-				_mt32DevicePopUp->appendEntry(Common::convertToU32String(_("Use first available device")), d->getHandle());
+				_mt32DevicePopUp->appendEntry((_("Use first available device")), d->getHandle());
 		}
 	}
 
@@ -1413,29 +1413,29 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
 	if (g_system->getOverlayWidth() > 320) {
-		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", Common::convertToU32String(_("Text and speech:")));
+		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", (_("Text and speech:")));
 
 		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
 
-		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, Common::convertToU32String(_("Speech")));
-		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, Common::convertToU32String(_("Subtitles")));
-		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, Common::convertToU32String(_("Both")));
+		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, (_("Speech")));
+		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, (_("Subtitles")));
+		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, (_("Both")));
 
-		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", Common::convertToU32String(_("Subtitle speed:")));
+		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", (_("Subtitle speed:")));
 	} else {
-		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", Common::convertToU32String(_c("Text and speech:", "lowres")));
+		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", (_c("Text and speech:", "lowres")));
 
 		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
 
-		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, Common::convertToU32String(_("Spch")), _("Speech"));
-		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, Common::convertToU32String(_("Subs")), _("Subtitles"));
-		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, Common::convertToU32String(_c("Both", "lowres")), _("Show subtitles and play speech"));
+		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, (_("Spch")), _("Speech"));
+		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, (_("Subs")), _("Subtitles"));
+		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, (_c("Both", "lowres")), _("Show subtitles and play speech"));
 
-		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", Common::convertToU32String(_c("Subtitle speed:", "lowres")));
+		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", (_c("Subtitle speed:", "lowres")));
 	}
 
 	// Subtitle speed
-	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", nullptr, kSubtitleSpeedChanged);
+	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", Common::U32String(""), kSubtitleSpeedChanged);
 	_subSpeedLabel = new StaticTextWidget(boss, prefix + "subSubtitleSpeedLabel", Common::convertToU32String("100%"));
 	_subSpeedSlider->setMinValue(0); _subSpeedSlider->setMaxValue(maxSliderVal);
 	_subSpeedLabel->setFlags(WIDGET_CLEARBG);
@@ -1447,21 +1447,21 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 
 	// Volume controllers
 	if (g_system->getOverlayWidth() > 320)
-		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", Common::convertToU32String(_("Music volume:")));
+		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", (_("Music volume:")));
 	else
-		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", Common::convertToU32String(_c("Music volume:", "lowres")));
-	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", nullptr, kMusicVolumeChanged);
+		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _c("Music volume:", "lowres"));
+	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", Common::U32String(""), kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", Common::convertToU32String("100%"));
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", Common::convertToU32String(_("Mute all")), nullptr, kMuteAllChanged);
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", (_("Mute all")), Common::U32String(""), kMuteAllChanged);
 
 	if (g_system->getOverlayWidth() > 320)
-		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", Common::convertToU32String(_("SFX volume:")), _("Special sound effects volume"));
+		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", (_("SFX volume:")), _("Special sound effects volume"));
 	else
-		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", Common::convertToU32String(_c("SFX volume:", "lowres")), _("Special sound effects volume"));
+		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", (_c("SFX volume:", "lowres")), _("Special sound effects volume"));
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", _("Special sound effects volume"), kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", Common::convertToU32String("100%"));
 	_sfxVolumeSlider->setMinValue(0);
@@ -1469,10 +1469,10 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
 	if (g_system->getOverlayWidth() > 320)
-		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , Common::convertToU32String(_("Speech volume:")));
+		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , (_("Speech volume:")));
 	else
-		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , Common::convertToU32String(_c("Speech volume:", "lowres")));
-	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", nullptr, kSpeechVolumeChanged);
+		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , (_c("Speech volume:", "lowres")));
+	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", Common::U32String(""), kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", Common::convertToU32String("100%"));
 	_speechVolumeSlider->setMinValue(0);
 	_speechVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
@@ -1486,7 +1486,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		return true;
 
 	if (_domain != Common::ConfigManager::kApplicationDomain || ConfMan.hasKey(setting, _domain) || preferredType) {
-		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain);
+		const Common::U32String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain);
 		const PluginList p = MusicMan.getPlugins();
 
 		for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
@@ -1513,7 +1513,7 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getHandle() == popup->getSelectedTag()) {
-				ConfMan.set(setting, d->getCompleteId(), _domain);
+				ConfMan.set(setting, d->getCompleteId().encode().c_str(), _domain);
 				found = true;
 				break;
 			}
@@ -1564,7 +1564,7 @@ void OptionsDialog::updateSpeechVolume(const int newValue) const {
 
 void OptionsDialog::reflowLayout() {
 	if (_graphicsTabId != -1 && _tabWidget)
-		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? Common::convertToU32String(_("Graphics")) : Common::convertToU32String(_("GFX")));
+		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? (_("Graphics")) : (_("GFX")));
 
 	Dialog::reflowLayout();
 	setupGraphicsTab();
@@ -1695,7 +1695,7 @@ void GlobalOptionsDialog::build() {
 	//
 	// 1) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? Common::convertToU32String(_("Graphics")) : Common::convertToU32String(_("GFX")), "GlobalOptions_Graphics");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? (_("Graphics")) : (_("GFX")), "GlobalOptions_Graphics");
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", "GlobalOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setTarget(this);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -1706,7 +1706,7 @@ void GlobalOptionsDialog::build() {
 	//
 
 	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		tab->addTab(Common::convertToU32String(_("Shader")), "GlobalOptions_Shader");
+		tab->addTab((_("Shader")), "GlobalOptions_Shader");
 		addShaderControls(tab, "GlobalOptions_Shader.");
 	}
 
@@ -1718,7 +1718,7 @@ void GlobalOptionsDialog::build() {
 		g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons) ||
 		g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed) ||
 		g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
-		tab->addTab(Common::convertToU32String(_("Control")), "GlobalOptions_Control");
+		tab->addTab((_("Control")), "GlobalOptions_Control");
 		addControlControls(tab, "GlobalOptions_Control.");
 	}
 
@@ -1740,21 +1740,21 @@ void GlobalOptionsDialog::build() {
 	}
 
 	if (!keymaps.empty()) {
-		tab->addTab(Common::convertToU32String(_("Keymaps")), "GlobalOptions_KeyMapper");
+		tab->addTab((_("Keymaps")), "GlobalOptions_KeyMapper");
 		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps, Common::ConfigManager::kKeymapperDomain);
 	}
 
 	//
 	// 2) The audio tab
 	//
-	tab->addTab(Common::convertToU32String(_("Audio")), "GlobalOptions_Audio");
+	tab->addTab((_("Audio")), "GlobalOptions_Audio");
 	addAudioControls(tab, "GlobalOptions_Audio.");
 	addSubtitleControls(tab, "GlobalOptions_Audio.");
 
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(Common::convertToU32String(_("Volume")), "GlobalOptions_Volume");
+		tab->addTab((_("Volume")), "GlobalOptions_Volume");
 	else
-		tab->addTab(Common::convertToU32String(_c("Volume", "lowres")), "GlobalOptions_Volume");
+		tab->addTab((_c("Volume", "lowres")), "GlobalOptions_Volume");
 	addVolumeControls(tab, "GlobalOptions_Volume.");
 
 	// TODO: cd drive setting
@@ -1762,31 +1762,31 @@ void GlobalOptionsDialog::build() {
 	//
 	// 3) The MIDI tab
 	//
-	_midiTabId = tab->addTab(Common::convertToU32String(_("MIDI")), "GlobalOptions_MIDI");
+	_midiTabId = tab->addTab((_("MIDI")), "GlobalOptions_MIDI");
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
 	// 4) The MT-32 tab
 	//
-	tab->addTab(Common::convertToU32String(_("MT-32")), "GlobalOptions_MT32");
+	tab->addTab((_("MT-32")), "GlobalOptions_MT32");
 	addMT32Controls(tab, "GlobalOptions_MT32.");
 
 	//
 	// 5) The Paths tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		_pathsTabId = tab->addTab(Common::convertToU32String(_("Paths")), "GlobalOptions_Paths");
+		_pathsTabId = tab->addTab((_("Paths")), "GlobalOptions_Paths");
 	else
-		_pathsTabId = tab->addTab(Common::convertToU32String(_c("Paths", "lowres")), "GlobalOptions_Paths");
+		_pathsTabId = tab->addTab((_c("Paths", "lowres")), "GlobalOptions_Paths");
 	addPathsControls(tab, "GlobalOptions_Paths.", g_system->getOverlayWidth() <= 320);
 
 	//
 	// 6) The miscellaneous tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(Common::convertToU32String(_("Misc")), "GlobalOptions_Misc");
+		tab->addTab((_("Misc")), "GlobalOptions_Misc");
 	else
-		tab->addTab(Common::convertToU32String(_c("Misc", "lowres")), "GlobalOptions_Misc");
+		tab->addTab((_c("Misc", "lowres")), "GlobalOptions_Misc");
 	ScrollContainerWidget *miscContainer = new ScrollContainerWidget(tab, "GlobalOptions_Misc.Container", "GlobalOptions_Misc_Container");
 	miscContainer->setTarget(this);
 	miscContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -1798,9 +1798,9 @@ void GlobalOptionsDialog::build() {
 	// 7) The Cloud tab (remote storages)
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(Common::convertToU32String(_("Cloud")), "GlobalOptions_Cloud");
+		tab->addTab((_("Cloud")), "GlobalOptions_Cloud");
 	else
-		tab->addTab(Common::convertToU32String(_c("Cloud", "lowres")), "GlobalOptions_Cloud");
+		tab->addTab((_c("Cloud", "lowres")), "GlobalOptions_Cloud");
 
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", "GlobalOptions_Cloud_Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
@@ -1814,9 +1814,9 @@ void GlobalOptionsDialog::build() {
 	// 8) The LAN tab (local "cloud" webserver)
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(Common::convertToU32String(_("LAN")), "GlobalOptions_Network");
+		tab->addTab((_("LAN")), "GlobalOptions_Network");
 	else
-		tab->addTab(Common::convertToU32String(_c("LAN", "lowres")), "GlobalOptions_Network");
+		tab->addTab((_c("LAN", "lowres")), "GlobalOptions_Network");
 	addNetworkControls(tab, "GlobalOptions_Network.", g_system->getOverlayWidth() <= 320);
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
@@ -1824,9 +1824,9 @@ void GlobalOptionsDialog::build() {
 	//Accessibility
 #ifdef USE_TTS
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(Common::convertToU32String(_("Accessibility")), "GlobalOptions_Accessibility");
+		tab->addTab((_("Accessibility")), "GlobalOptions_Accessibility");
 	else
-		tab->addTab(Common::convertToU32String(_c("Accessibility", "lowres")), "GlobalOptions_Accessibility");
+		tab->addTab((_c("Accessibility", "lowres")), "GlobalOptions_Accessibility");
 	addAccessibilityControls(tab, "GlobalOptions_Accessibility.");
 #endif // USE_TTS
 
@@ -1835,9 +1835,9 @@ void GlobalOptionsDialog::build() {
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GlobalOptions.Cancel", Common::convertToU32String(_("Cancel")), nullptr, kCloseCmd);
-	new ButtonWidget(this, "GlobalOptions.Apply", Common::convertToU32String(_("Apply")), nullptr, kApplyCmd);
-	new ButtonWidget(this, "GlobalOptions.Ok", Common::convertToU32String(_("OK")), nullptr, kOKCmd);
+	new ButtonWidget(this, "GlobalOptions.Cancel", (_("Cancel")), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "GlobalOptions.Apply", (_("Apply")), Common::U32String(""), kApplyCmd);
+	new ButtonWidget(this, "GlobalOptions.Ok", (_("OK")), Common::U32String(""), kOKCmd);
 
 #ifdef GUI_ENABLE_KEYSDIALOG
 	_keysDialog = new KeysDialog();
@@ -1856,19 +1856,19 @@ void GlobalOptionsDialog::build() {
 	Common::U32String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel(Common::convertToU32String(_("Default")));
+		_savePath->setLabel((_("Default")));
 	} else {
 		_savePath->setLabel(savePath);
 	}
 
 	if (themePath.empty() || !ConfMan.hasKey("themepath", _domain)) {
-		_themePath->setLabel(Common::convertToU32String(_c("None", "path")));
+		_themePath->setLabel((_c("None", "path")));
 	} else {
 		_themePath->setLabel(themePath);
 	}
 
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPath->setLabel(Common::convertToU32String(_c("None", "path")));
+		_extraPath->setLabel((_c("None", "path")));
 	} else {
 		_extraPath->setLabel(extraPath);
 	}
@@ -1900,7 +1900,7 @@ void GlobalOptionsDialog::build() {
 #ifdef USE_SDL_NET
 	Common::String rootPath(ConfMan.get("rootpath", "cloud"));
 	if (rootPath.empty() || !ConfMan.hasKey("rootpath", "cloud")) {
-		_rootPath->setLabel(Common::convertToU32String(_c("None", "path")));
+		_rootPath->setLabel((_c("None", "path")));
 	} else {
 		_rootPath->setLabel(rootPath);
 	}
@@ -1926,7 +1926,7 @@ void GlobalOptionsDialog::addMIDIControls(GuiObject *boss, const Common::String 
 	OptionsDialog::addMIDIControls(boss, prefix);
 
 #ifdef USE_FLUIDSYNTH
-	new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), nullptr, kFluidSynthSettingsCmd);
+	new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), Common::U32String(""), kFluidSynthSettingsCmd);
 #endif
 }
 
@@ -1937,34 +1937,34 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 
 	// Save game path
 	if (!lowres)
-		new ButtonWidget(boss, prefix + "SaveButton", Common::convertToU32String(_("Save Path:")), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
+		new ButtonWidget(boss, prefix + "SaveButton", (_("Save Path:")), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
 	else
-		new ButtonWidget(boss, prefix + "SaveButton", Common::convertToU32String(_c("Save Path:", "lowres")), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
+		new ButtonWidget(boss, prefix + "SaveButton", (_c("Save Path:", "lowres")), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
 	_savePath = new StaticTextWidget(boss, prefix + "SavePath", Common::convertToU32String("/foo/bar"), _("Specifies where your saved games are put"));
 
 	_savePathClearButton = addClearButton(boss, prefix + "SavePathClearButton", kSavePathClearCmd);
 
 	if (!lowres)
-		new ButtonWidget(boss, prefix + "ThemeButton", Common::convertToU32String(_("Theme Path:")), nullptr, kChooseThemeDirCmd);
+		new ButtonWidget(boss, prefix + "ThemeButton", (_("Theme Path:")), Common::U32String(""), kChooseThemeDirCmd);
 	else
-		new ButtonWidget(boss, prefix + "ThemeButton", Common::convertToU32String(_c("Theme Path:", "lowres")), nullptr, kChooseThemeDirCmd);
-	_themePath = new StaticTextWidget(boss, prefix + "ThemePath", Common::convertToU32String(_c("None", "path")));
+		new ButtonWidget(boss, prefix + "ThemeButton", (_c("Theme Path:", "lowres")), Common::U32String(""), kChooseThemeDirCmd);
+	_themePath = new StaticTextWidget(boss, prefix + "ThemePath", (_c("None", "path")));
 
 	_themePathClearButton = addClearButton(boss, prefix + "ThemePathClearButton", kThemePathClearCmd);
 
 	if (!lowres)
-		new ButtonWidget(boss, prefix + "ExtraButton", Common::convertToU32String(_("Extra Path:")), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+		new ButtonWidget(boss, prefix + "ExtraButton", (_("Extra Path:")), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
 	else
-		new ButtonWidget(boss, prefix + "ExtraButton", Common::convertToU32String(_c("Extra Path:", "lowres")), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
-	_extraPath = new StaticTextWidget(boss, prefix + "ExtraPath", Common::convertToU32String(_c("None", "path")), _("Specifies path to additional data used by all games or ScummVM"));
+		new ButtonWidget(boss, prefix + "ExtraButton", (_c("Extra Path:", "lowres")), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+	_extraPath = new StaticTextWidget(boss, prefix + "ExtraPath", (_c("None", "path")), _("Specifies path to additional data used by all games or ScummVM"));
 
 	_extraPathClearButton = addClearButton(boss, prefix + "ExtraPathClearButton", kExtraPathClearCmd);
 
 #ifdef DYNAMIC_MODULES
 	if (!lowres)
-		new ButtonWidget(boss, prefix + "PluginsButton", _("Plugins Path:"), nullptr, kChoosePluginsDirCmd);
+		new ButtonWidget(boss, prefix + "PluginsButton", _("Plugins Path:"), Common::U32String(""), kChoosePluginsDirCmd);
 	else
-		new ButtonWidget(boss, prefix + "PluginsButton", _c("Plugins Path:", "lowres"), nullptr, kChoosePluginsDirCmd);
+		new ButtonWidget(boss, prefix + "PluginsButton", _c("Plugins Path:", "lowres"), Common::U32String(""), kChoosePluginsDirCmd);
 	_pluginsPath = new StaticTextWidget(boss, prefix + "PluginsPath", _c("None", "path"));
 
 	_pluginsPathClearButton = addClearButton(boss, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
@@ -1973,43 +1973,43 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 }
 
 void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
-	new ButtonWidget(boss, prefix + "ThemeButton", Common::convertToU32String(_("Theme:")), nullptr, kChooseThemeCmd);
+	new ButtonWidget(boss, prefix + "ThemeButton", (_("Theme:")), Common::U32String(""), kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(boss, prefix + "CurTheme", g_gui.theme()->getThemeName());
 
 
-	_rendererPopUpDesc = new StaticTextWidget(boss, prefix + "RendererPopupDesc", Common::convertToU32String(_("GUI renderer:")));
+	_rendererPopUpDesc = new StaticTextWidget(boss, prefix + "RendererPopupDesc", (_("GUI renderer:")));
 	_rendererPopUp = new PopUpWidget(boss, prefix + "RendererPopup");
 
 	if (!lowres) {
 		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-			_rendererPopUp->appendEntry(Common::convertToU32String(_(GUI::ThemeEngine::_rendererModes[i].name)), GUI::ThemeEngine::_rendererModes[i].mode);
+			_rendererPopUp->appendEntry((_(GUI::ThemeEngine::_rendererModes[i].name)), GUI::ThemeEngine::_rendererModes[i].mode);
 	} else {
 		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-			_rendererPopUp->appendEntry(Common::convertToU32String(_(GUI::ThemeEngine::_rendererModes[i].shortname)), GUI::ThemeEngine::_rendererModes[i].mode);
+			_rendererPopUp->appendEntry((_(GUI::ThemeEngine::_rendererModes[i].shortname)), GUI::ThemeEngine::_rendererModes[i].mode);
 	}
 
 	if (!lowres)
-		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", Common::convertToU32String(_("Autosave:")));
+		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", (_("Autosave:")));
 	else
-		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", Common::convertToU32String(_c("Autosave:", "lowres")));
+		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", (_c("Autosave:", "lowres")));
 	_autosavePeriodPopUp = new PopUpWidget(boss, prefix + "AutosavePeriodPopup");
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
-		_autosavePeriodPopUp->appendEntry(Common::convertToU32String(_(savePeriodLabels[i])), savePeriodValues[i]);
+		_autosavePeriodPopUp->appendEntry((_(savePeriodLabels[i])), savePeriodValues[i]);
 	}
 
 #ifdef GUI_ENABLE_KEYSDIALOG
-	new ButtonWidget(boss, prefix + "KeysButton", _("Keys"), nullptr, kChooseKeyMappingCmd);
+	new ButtonWidget(boss, prefix + "KeysButton", _("Keys"), Common::U32String(""), kChooseKeyMappingCmd);
 #endif
 
 	// TODO: joystick setting
 
 
 #ifdef USE_TRANSLATION
-	_guiLanguagePopUpDesc = new StaticTextWidget(boss, prefix + "GuiLanguagePopupDesc", Common::convertToU32String(_("GUI language:")), _("Language of ScummVM GUI"));
+	_guiLanguagePopUpDesc = new StaticTextWidget(boss, prefix + "GuiLanguagePopupDesc", (_("GUI language:")), _("Language of ScummVM GUI"));
 	_guiLanguagePopUp = new PopUpWidget(boss, prefix + "GuiLanguagePopup");
 #ifdef USE_DETECTLANG
-	_guiLanguagePopUp->appendEntry(Common::convertToU32String(_("<default>")), Common::kTranslationAutodetectId);
+	_guiLanguagePopUp->appendEntry((_("<default>")), Common::kTranslationAutodetectId);
 #endif // USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(Common::convertToU32String("English"), Common::kTranslationBuiltinId);
 	_guiLanguagePopUp->appendEntry(Common::convertToU32String(""), 0);
@@ -2046,7 +2046,7 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 
 	if (g_system->hasFeature(OSystem::kFeatureSystemBrowserDialog)) {
 		_useSystemDialogsCheckbox = new CheckboxWidget(boss, prefix + "UseSystemDialogs",
-			Common::convertToU32String(_("Use native system file browser")),
+			(_("Use native system file browser")),
 			_("Use the native system file browser instead of the ScummVM one to select a file or directory.")
 		);
 
@@ -2066,14 +2066,14 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 
 	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
 
-	new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), nullptr, kUpdatesCheckCmd);
+	new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), Common::U32String(""), kUpdatesCheckCmd);
 #endif
 }
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
-	_storagePopUpDesc = new StaticTextWidget(boss, prefix + "StoragePopupDesc", Common::convertToU32String(_("Active storage:")), _("Active cloud storage"));
+	_storagePopUpDesc = new StaticTextWidget(boss, prefix + "StoragePopupDesc", (_("Active storage:")), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(boss, prefix + "StoragePopup");
 	Common::StringArray list = CloudMan.listStorages();
 	for (uint32 i = 0; i < list.size(); ++i) {
@@ -2082,50 +2082,50 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
 	if (lowres)
-		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", Common::convertToU32String(_c("4. Storage is not yet enabled. Verify that username is correct and enable it:", "lowres")));
+		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", (_c("4. Storage is not yet enabled. Verify that username is correct and enable it:", "lowres")));
 	else
-		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", Common::convertToU32String(_("4. Storage is not yet enabled. Verify that username is correct and enable it:")));
-	_storageEnableButton = new ButtonWidget(boss, prefix + "StorageEnableButton", Common::convertToU32String(_("Enable storage")), _("Confirm you want to use this account for this storage"), kEnableStorageCmd);
+		_storageDisabledHint = new StaticTextWidget(boss, prefix + "StorageDisabledHint", (_("4. Storage is not yet enabled. Verify that username is correct and enable it:")));
+	_storageEnableButton = new ButtonWidget(boss, prefix + "StorageEnableButton", (_("Enable storage")), _("Confirm you want to use this account for this storage"), kEnableStorageCmd);
 
-	_storageUsernameDesc = new StaticTextWidget(boss, prefix + "StorageUsernameDesc", Common::convertToU32String(_("Username:")), _("Username used by this storage"));
-	_storageUsername = new StaticTextWidget(boss, prefix + "StorageUsernameLabel", Common::convertToU32String(_("<none>")), "", ThemeEngine::kFontStyleNormal);
+	_storageUsernameDesc = new StaticTextWidget(boss, prefix + "StorageUsernameDesc", (_("Username:")), _("Username used by this storage"));
+	_storageUsername = new StaticTextWidget(boss, prefix + "StorageUsernameLabel", (_("<none>")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
 
-	_storageUsedSpaceDesc = new StaticTextWidget(boss, prefix + "StorageUsedSpaceDesc", Common::convertToU32String(_("Used space:")), _("Space used by ScummVM's saved games on this storage"));
-	_storageUsedSpace = new StaticTextWidget(boss, prefix + "StorageUsedSpaceLabel", Common::convertToU32String("0 bytes"), "", ThemeEngine::kFontStyleNormal);
+	_storageUsedSpaceDesc = new StaticTextWidget(boss, prefix + "StorageUsedSpaceDesc", (_("Used space:")), _("Space used by ScummVM's saved games on this storage"));
+	_storageUsedSpace = new StaticTextWidget(boss, prefix + "StorageUsedSpaceLabel", Common::convertToU32String("0 bytes"), Common::U32String(""), ThemeEngine::kFontStyleNormal);
 
-	_storageLastSyncDesc = new StaticTextWidget(boss, prefix + "StorageLastSyncDesc", Common::convertToU32String(_("Last sync:")), _("When was the last time saved games were synced with this storage"));
-	_storageLastSync = new StaticTextWidget(boss, prefix + "StorageLastSyncLabel", Common::convertToU32String(_("<never>")), "", ThemeEngine::kFontStyleNormal);
+	_storageLastSyncDesc = new StaticTextWidget(boss, prefix + "StorageLastSyncDesc", (_("Last sync:")), _("When was the last time saved games were synced with this storage"));
+	_storageLastSync = new StaticTextWidget(boss, prefix + "StorageLastSyncLabel", (_("<never>")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
 	if (lowres)
-		_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", Common::convertToU32String(_c("Saved games sync automatically on launch, after saving and on loading.", "lowres")), "", ThemeEngine::kFontStyleNormal);
+		_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", (_c("Saved games sync automatically on launch, after saving and on loading.", "lowres")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
 	else
-		_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", Common::convertToU32String(_("Saved games sync automatically on launch, after saving and on loading.")), "", ThemeEngine::kFontStyleNormal);
-	_storageSyncSavesButton = new ButtonWidget(boss, prefix + "SyncSavesButton", Common::convertToU32String(_("Sync now")), _("Start saved games sync"), kSyncSavesStorageCmd);
-
-	if (lowres)
-		_storageDownloadHint = new StaticTextWidget(boss, prefix + "StorageDownloadHint", Common::convertToU32String(_c("You can download game files from your cloud ScummVM folder:", "lowres")));
-	else
-		_storageDownloadHint = new StaticTextWidget(boss, prefix + "StorageDownloadHint", Common::convertToU32String(_("You can download game files from your cloud ScummVM folder:")));
-	_storageDownloadButton = new ButtonWidget(boss, prefix + "DownloadButton", Common::convertToU32String(_("Download game files")), _("Open downloads manager dialog"), kDownloadStorageCmd);
+		_storageSyncHint = new StaticTextWidget(boss, prefix + "StorageSyncHint", (_("Saved games sync automatically on launch, after saving and on loading.")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
+	_storageSyncSavesButton = new ButtonWidget(boss, prefix + "SyncSavesButton", (_("Sync now")), _("Start saved games sync"), kSyncSavesStorageCmd);
 
 	if (lowres)
-		_storageDisconnectHint = new StaticTextWidget(boss, prefix + "StorageDisconnectHint", Common::convertToU32String(_c("To change account for this storage, disconnect and connect again:", "lowres")));
+		_storageDownloadHint = new StaticTextWidget(boss, prefix + "StorageDownloadHint", (_c("You can download game files from your cloud ScummVM folder:", "lowres")));
 	else
-		_storageDisconnectHint = new StaticTextWidget(boss, prefix + "StorageDisconnectHint", Common::convertToU32String(_("To change account for this storage, disconnect and connect again:")));
-	_storageDisconnectButton = new ButtonWidget(boss, prefix + "DisconnectButton", Common::convertToU32String(_("Disconnect")), _("Stop using this storage on this device"), kDisconnectStorageCmd);
+		_storageDownloadHint = new StaticTextWidget(boss, prefix + "StorageDownloadHint", (_("You can download game files from your cloud ScummVM folder:")));
+	_storageDownloadButton = new ButtonWidget(boss, prefix + "DownloadButton", (_("Download game files")), _("Open downloads manager dialog"), kDownloadStorageCmd);
 
 	if (lowres)
-		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", Common::convertToU32String(_c("This storage is not connected yet! To connect,", "lowres")));
+		_storageDisconnectHint = new StaticTextWidget(boss, prefix + "StorageDisconnectHint", (_c("To change account for this storage, disconnect and connect again:", "lowres")));
 	else
-		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", Common::convertToU32String(_("This storage is not connected yet! To connect,")));
-	_storageWizardOpenLinkHint = new StaticTextWidget(boss, prefix + "StorageWizardOpenLinkHint", Common::convertToU32String(_("1. Open this link:")));
+		_storageDisconnectHint = new StaticTextWidget(boss, prefix + "StorageDisconnectHint", (_("To change account for this storage, disconnect and connect again:")));
+	_storageDisconnectButton = new ButtonWidget(boss, prefix + "DisconnectButton", (_("Disconnect")), _("Stop using this storage on this device"), kDisconnectStorageCmd);
+
+	if (lowres)
+		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", (_c("This storage is not connected yet! To connect,", "lowres")));
+	else
+		_storageWizardNotConnectedHint = new StaticTextWidget(boss, prefix + "StorageWizardNotConnectedHint", (_("This storage is not connected yet! To connect,")));
+	_storageWizardOpenLinkHint = new StaticTextWidget(boss, prefix + "StorageWizardOpenLinkHint", (_("1. Open this link:")));
 	_storageWizardLink = new ButtonWidget(boss, prefix + "StorageWizardLink", Common::convertToU32String("https://cloud.scummvm.org/"), _("Open URL"), kOpenUrlStorageCmd);
 	if (lowres)
-		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", Common::convertToU32String(_c("2. Get the code and enter it here:", "lowres")));
+		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", (_c("2. Get the code and enter it here:", "lowres")));
 	else
-		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", Common::convertToU32String(_("2. Get the code and enter it here:")));
-	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", Common::convertToU32String(""), nullptr, 0, 0, ThemeEngine::kFontStyleConsole);
-	_storageWizardPasteButton = new ButtonWidget(boss, prefix + "StorageWizardPasteButton", Common::convertToU32String(_("Paste")), _("Paste code from clipboard"), kPasteCodeStorageCmd);
-	_storageWizardConnectButton = new ButtonWidget(boss, prefix + "StorageWizardConnectButton", Common::convertToU32String(_("3. Connect")), _("Connect your cloud storage account"), kConnectStorageCmd);
+		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", (_("2. Get the code and enter it here:")));
+	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", Common::convertToU32String(""), Common::U32String(""), 0, 0, ThemeEngine::kFontStyleConsole);
+	_storageWizardPasteButton = new ButtonWidget(boss, prefix + "StorageWizardPasteButton", (_("Paste")), _("Paste code from clipboard"), kPasteCodeStorageCmd);
+	_storageWizardConnectButton = new ButtonWidget(boss, prefix + "StorageWizardConnectButton", (_("3. Connect")), _("Connect your cloud storage account"), kConnectStorageCmd);
 	_storageWizardConnectionStatusHint = new StaticTextWidget(boss, prefix + "StorageWizardConnectionStatusHint", Common::convertToU32String("..."));
 
 	setupCloudTab();
@@ -2134,29 +2134,29 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 
 #ifdef USE_SDL_NET
 void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
-	_runServerButton = new ButtonWidget(boss, prefix + "RunServerButton", Common::convertToU32String(_("Run server")), _("Run local webserver"), kRunServerCmd);
-	_serverInfoLabel = new StaticTextWidget(boss, prefix + "ServerInfoLabel", Common::convertToU32String(_("Not running")));
+	_runServerButton = new ButtonWidget(boss, prefix + "RunServerButton", (_("Run server")), _("Run local webserver"), kRunServerCmd);
+	_serverInfoLabel = new StaticTextWidget(boss, prefix + "ServerInfoLabel", (_("Not running")));
 
 	// Root path
 	if (lowres)
-		_rootPathButton = new ButtonWidget(boss, prefix + "RootPathButton", Common::convertToU32String(_c("/root/ Path:", "lowres")), _("Select which directory will be shown as /root/ in the Files Manager"), kChooseRootDirCmd);
+		_rootPathButton = new ButtonWidget(boss, prefix + "RootPathButton", (_c("/root/ Path:", "lowres")), _("Select which directory will be shown as /root/ in the Files Manager"), kChooseRootDirCmd);
 	else
-		_rootPathButton = new ButtonWidget(boss, prefix + "RootPathButton", Common::convertToU32String(_("/root/ Path:")), _("Select which directory will be shown as /root/ in the Files Manager"), kChooseRootDirCmd);
+		_rootPathButton = new ButtonWidget(boss, prefix + "RootPathButton", (_("/root/ Path:")), _("Select which directory will be shown as /root/ in the Files Manager"), kChooseRootDirCmd);
 	_rootPath = new StaticTextWidget(boss, prefix + "RootPath", Common::convertToU32String("/foo/bar"), _("Select which directory will be shown as /root/ in the Files Manager"));
 	_rootPathClearButton = addClearButton(boss, prefix + "RootPathClearButton", kRootPathClearCmd);
 
 	uint32 port = Networking::LocalWebserver::getPort();
 
-	_serverPortDesc = new StaticTextWidget(boss, prefix + "ServerPortDesc", Common::convertToU32String(_("Server's port:")), _("Port for server to use"));
-	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), nullptr);
+	_serverPortDesc = new StaticTextWidget(boss, prefix + "ServerPortDesc", (_("Server's port:")), _("Port for server to use"));
+	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), Common::U32String(""));
 	_serverPortClearButton = addClearButton(boss, prefix + "ServerPortClearButton", kServerPortClearCmd);
 
 	if (lowres) {
-		_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", Common::convertToU32String(_c("Run server to manage files with browser (in the same network).", "lowres")), "", ThemeEngine::kFontStyleNormal);
-		_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", Common::convertToU32String(_c("Closing options dialog will stop the server.", "lowres")), "", ThemeEngine::kFontStyleNormal);
+		_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", (_c("Run server to manage files with browser (in the same network).", "lowres")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
+		_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", (_c("Closing options dialog will stop the server.", "lowres")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
 	} else {
-		_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", Common::convertToU32String(_("Run server to manage files with browser (in the same network).")), "", ThemeEngine::kFontStyleNormal);
-		_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", Common::convertToU32String(_("Closing options dialog will stop the server.")), "", ThemeEngine::kFontStyleNormal);
+		_featureDescriptionLine1 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine1", (_("Run server to manage files with browser (in the same network).")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
+		_featureDescriptionLine2 = new StaticTextWidget(boss, prefix + "FeatureDescriptionLine2", (_("Closing options dialog will stop the server.")), Common::U32String(""), ThemeEngine::kFontStyleNormal);
 	}
 
 	reflowNetworkTabLayout();
@@ -2168,7 +2168,7 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 #ifdef USE_TTS
 void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common::String &prefix) {
 	_ttsCheckbox = new CheckboxWidget(boss, prefix + "TTSCheckbox",
-		Common::convertToU32String(_("Use Text to speech")), _("Will read text in gui on mouse over."));
+		(_("Use Text to speech")), _("Will read text in gui on mouse over."));
 	if (ConfMan.hasKey("tts_enabled"))
 		_ttsCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
 	else
@@ -2181,7 +2181,7 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 		voices = ttsMan->getVoicesArray();
 
 	if (voices.empty())
-		_ttsVoiceSelectionPopUp->appendEntry(Common::convertToU32String(_("None")), 0);
+		_ttsVoiceSelectionPopUp->appendEntry(_("None"), 0);
 	else {
 		_ttsVoiceSelectionPopUp->appendEntry(_("<default>"));
 		for(unsigned i = 0; i < voices.size(); i++)
@@ -2201,19 +2201,19 @@ void GlobalOptionsDialog::apply() {
 	bool isRebuildNeeded = false;
 
 	Common::String savePath(Common::convertFromU32String(_savePath->getLabel()));
-	if (!savePath.empty() && (savePath != _("Default")))
+	if (!savePath.empty() && (savePath != Common::convertFromU32String(_("Default"))))
 		ConfMan.set("savepath", savePath, _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
 
 	Common::String themePath(Common::convertFromU32String(_themePath->getLabel()));
-	if (!themePath.empty() && (themePath != _c("None", "path")))
+	if (!themePath.empty() && (themePath != Common::convertFromU32String(_c("None", "path"))))
 		ConfMan.set("themepath", themePath, _domain);
 	else
 		ConfMan.removeKey("themepath", _domain);
 
 	Common::String extraPath(Common::convertFromU32String(_extraPath->getLabel()));
-	if (!extraPath.empty() && (extraPath != _c("None", "path")))
+	if (!extraPath.empty() && (extraPath != Common::convertFromU32String(_c("None", "path"))))
 		ConfMan.set("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
@@ -2229,7 +2229,7 @@ void GlobalOptionsDialog::apply() {
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	Common::String rootPath(Common::convertFromU32String(_rootPath->getLabel()));
-	if (!rootPath.empty() && (rootPath != _c("None", "path")))
+	if (!rootPath.empty() && (rootPath != Common::convertFromU32String(_c("None", "path"))))
 		ConfMan.set("rootpath", rootPath, "cloud");
 	else
 		ConfMan.removeKey("rootpath", "cloud");
@@ -2256,9 +2256,9 @@ void GlobalOptionsDialog::apply() {
 	if (CloudMan.getStorageIndex() != _selectedStorageIndex) {
 		if (!CloudMan.switchStorage(_selectedStorageIndex)) {
 			bool anotherStorageIsWorking = CloudMan.isWorking();
-			Common::String message = _("Failed to change cloud storage!");
+			Common::U32String message = _("Failed to change cloud storage!");
 			if (anotherStorageIsWorking) {
-				message += "\n";
+				message += Common::U32String("\n");
 				message += _("Another cloud storage is already active.");
 			}
 			MessageDialog dialog(message);
@@ -2319,7 +2319,7 @@ void GlobalOptionsDialog::apply() {
 		_newTheme = oldThemeId;
 
 	if (!g_gui.loadNewTheme(_newTheme, gfxMode, true)) {
-		Common::String errorMessage;
+		Common::U32String errorMessage;
 
 		_curTheme->setLabel(oldThemeName);
 		_newTheme = oldThemeId;
@@ -2394,7 +2394,7 @@ void GlobalOptionsDialog::close() {
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kChooseSaveDirCmd: {
-		BrowserDialog browser(Common::convertToU32String(_("Select directory for saved games")), true);
+		BrowserDialog browser((_("Select directory for saved games")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2410,7 +2410,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kChooseThemeDirCmd: {
-		BrowserDialog browser(Common::convertToU32String(_("Select directory for GUI themes")), true);
+		BrowserDialog browser((_("Select directory for GUI themes")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2420,7 +2420,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kChooseExtraDirCmd: {
-		BrowserDialog browser(Common::convertToU32String(_("Select directory for extra files")), true);
+		BrowserDialog browser((_("Select directory for extra files")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2431,7 +2431,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #ifdef DYNAMIC_MODULES
 	case kChoosePluginsDirCmd: {
-		BrowserDialog browser(Common::convertToU32String(_("Select directory for plugins")), true);
+		BrowserDialog browser((_("Select directory for plugins")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2444,7 +2444,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kChooseRootDirCmd: {
-		BrowserDialog browser(Common::convertToU32String(_("Select directory for Files Manager /root/")), true);
+		BrowserDialog browser((_("Select directory for Files Manager /root/")), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -2459,13 +2459,13 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #endif
 #endif
 	case kThemePathClearCmd:
-		_themePath->setLabel(Common::convertToU32String(_c("None", "path")));
+		_themePath->setLabel((_c("None", "path")));
 		break;
 	case kExtraPathClearCmd:
-		_extraPath->setLabel(Common::convertToU32String(_c("None", "path")));
+		_extraPath->setLabel((_c("None", "path")));
 		break;
 	case kSavePathClearCmd:
-		_savePath->setLabel(Common::convertToU32String(_("Default")));
+		_savePath->setLabel((_("Default")));
 		break;
 #ifdef DYNAMIC_MODULES
 	case kPluginsPathClearCmd:
@@ -2475,18 +2475,18 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kRootPathClearCmd:
-		_rootPath->setLabel(Common::convertToU32String(_c("None", "path")));
+		_rootPath->setLabel((_c("None", "path")));
 		break;
 #endif
 #endif
 	case kChooseSoundFontCmd: {
-		BrowserDialog browser(Common::convertToU32String(_("Select SoundFont")), false);
+		BrowserDialog browser((_("Select SoundFont")), false);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (file.getPath() != _c("None", "path")))
+			if (!file.getPath().empty() && (Common::convertToU32String(file.getPath().c_str()) != _c("None", "path")))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);
@@ -2603,7 +2603,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 
 		if (_storageWizardConnectionStatusHint)
-			_storageWizardConnectionStatusHint->setLabel(Common::convertToU32String(_("Connecting...")));
+			_storageWizardConnectionStatusHint->setLabel((_("Connecting...")));
 		CloudMan.connectStorage(
 			_selectedStorageIndex, Common::convertFromU32String(code),
 			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageConnectionCallback)
@@ -2805,7 +2805,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
 		Common::String usedSpaceNumber, usedSpaceUnits;
 		usedSpaceNumber = Common::getHumanReadableBytes(usedSpace, usedSpaceUnits);
-		_storageUsedSpace->setLabel(Common::String::format("%s %s", usedSpaceNumber.c_str(), _(usedSpaceUnits.c_str())));
+		_storageUsedSpace->setLabel(Common::U32String::format("%s %s", usedSpaceNumber.c_str(), _(usedSpaceUnits.c_str()).encode().c_str()));
 		_storageUsedSpace->setVisible(shownConnectedInfo);
 	}
 	if (_storageSyncHint) {
@@ -2814,7 +2814,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	}
 	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(shownConnectedInfo);
 	if (_storageLastSync) {
-		Common::String sync = CloudMan.getStorageLastSync(_selectedStorageIndex);
+		Common::U32String sync = CloudMan.getStorageLastSync(_selectedStorageIndex);
 		if (sync == "") {
 			if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isSyncing())
 				sync = _("<right now>");
@@ -2926,15 +2926,15 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 
 	if (_runServerButton) {
 		_runServerButton->setVisible(true);
-		_runServerButton->setLabel(Common::convertToU32String(_(serverIsRunning ? "Stop server" : "Run server")));
-		_runServerButton->setTooltip(_(serverIsRunning ? "Stop local webserver" : "Run local webserver"));
+		_runServerButton->setLabel((_(serverIsRunning ? "Stop server" : "Run server")));
+		_runServerButton->setTooltip((_(serverIsRunning ? "Stop local webserver" : "Run local webserver")));
 	}
 	if (_serverInfoLabel) {
 		_serverInfoLabel->setVisible(true);
 		if (serverIsRunning)
 			_serverInfoLabel->setLabel(LocalServer.getAddress());
 		else
-			_serverInfoLabel->setLabel(Common::convertToU32String(_("Not running")));
+			_serverInfoLabel->setLabel((_("Not running")));
 	}
 	if (_rootPathButton) _rootPathButton->setVisible(true);
 	if (_rootPath) _rootPath->setVisible(true);
@@ -2976,14 +2976,14 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 
 #ifdef USE_LIBCURL
 void GlobalOptionsDialog::storageConnectionCallback(Networking::ErrorResponse response) {
-	Common::String message = "...";
+	Common::U32String message = "...";
 	if (!response.failed && !response.interrupted) {
 		// success
 		g_system->displayMessageOnOSD(_("Storage connected."));
 	} else {
 		message = _("Failed to connect storage.");
 		if (response.failed) {
-			message = Common::String(_("Failed to connect storage: ")) + _(response.response.c_str());
+			message = _("Failed to connect storage: ") + _(response.response.c_str());
 		}
 	}
 
