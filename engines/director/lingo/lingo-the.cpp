@@ -866,7 +866,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->setPattern(d.asInt());
 		break;
 	case kThePuppet:
-		warning("kThePuppet: %d", d.asInt());
 		sprite->_puppet = d.asInt();
 		if (!d.asInt()) {
 			sprite->_currentPoint = sprite->_startPoint;
