@@ -71,12 +71,12 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	turn_count = _variables[VAR_TURN_COUNT];
 
 	monster = get_item(monsterInfo->_object);
-	if (monster->room == _currentRoom) {
+	if (monster->_room == _currentRoom) {
 		// The monster is in the current room - leave it there
 		return;
 	}
 
-	if ((room->flags & monsterInfo->_roomAllowFlag) &&
+	if ((room->_flags & monsterInfo->_roomAllowFlag) &&
 	        !_flags[monsterInfo->_deadFlag] &&
 	        turn_count > monsterInfo->_minTurnsBefore) {
 		/*
@@ -99,7 +99,7 @@ int TransylvaniaGame::roomIsSpecial(unsigned room_index,
 
 	if (room_index == 0x28) {
 		if (roomDescString)
-			*roomDescString = room->string_desc;
+			*roomDescString = room->_stringDesc;
 		return ROOM_IS_DARK;
 	}
 

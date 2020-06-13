@@ -112,24 +112,24 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 
 	if (func_state)
 		line = Common::String::format("[or=%d,and=%d,test=%d,else=%d]",
-		                              func_state->or_count, func_state->_and,
-		                              func_state->test_result, func_state->else_result);
+		                              func_state->_orCount, func_state->_and,
+		                              func_state->_testResult, func_state->_elseResult);
 
 	opcode_map = game->_opcodeMap;
-	opcode = opcode_map[instr->opcode];
+	opcode = opcode_map[instr->_opcode];
 
-	line += Common::String::format("  [%.2x] ", instr->opcode);
+	line += Common::String::format("  [%.2x] ", instr->_opcode);
 	if (_opcodes.contains(opcode))
 		line += _opcodes[opcode];
 	else
 		line += "unknown";
 
-	if (instr->nr_operands) {
+	if (instr->_nr_operands) {
 		line += "(";
-		for (i = 0; i < instr->nr_operands; i++)
+		for (i = 0; i < instr->_nr_operands; i++)
 			line += Common::String::format("%.2x%s",
-			                               instr->operand[i],
-			                               i == (instr->nr_operands - 1) ? ")" : ", ");
+			                               instr->_operand[i],
+			                               i == (instr->_nr_operands - 1) ? ")" : ", ");
 	}
 
 	switch (opcode) {
@@ -139,18 +139,18 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 	case OPCODE_SET_OBJECT_LONG_DESCRIPTION:
 
 		if (opcode == OPCODE_PRINT) {
-			str_index = instr->operand[0];
-			str_table = instr->operand[1];
+			str_index = instr->_operand[0];
+			str_table = instr->_operand[1];
 		} else {
-			str_index = instr->operand[1];
-			str_table = instr->operand[2];
+			str_index = instr->_operand[1];
+			str_table = instr->_operand[2];
 		}
 
 		line += Common::String::format(" %s", game->instrStringLookup(str_index, str_table).c_str());
 		break;
 
 	case OPCODE_SET_STRING_REPLACEMENT:
-		line += Common::String::format(" %s", game->_replaceWords[instr->operand[0] - 1].c_str());
+		line += Common::String::format(" %s", game->_replaceWords[instr->_operand[0] - 1].c_str());
 		break;
 	}
 
@@ -166,9 +166,9 @@ void DebuggerDumper::dumpFunctions() {
 	for (i = 0; i < _game->_functions.size(); i++) {
 		func = &_game->_functions[i];
 
-		print("[%.4x] (%u instructions)\n", i, (uint)func->nr_instructions);
-		for (j = 0; j < func->nr_instructions; j++) {
-			Common::String line = dumpInstruction(_game, NULL, &func->instructions[j]);
+		print("[%.4x] (%u instructions)\n", i, (uint)func->_nr_instructions);
+		for (j = 0; j < func->_nr_instructions; j++) {
+			Common::String line = dumpInstruction(_game, NULL, &func->_instructions[j]);
 			print("%s", line.c_str());
 		}
 		print("\n");
@@ -186,8 +186,8 @@ void DebuggerDumper::dumpActionTable() {
 
 		print("(");
 		for (j = 0; j < 4; j++) {
-			if (j < action->nr_words) {
-				switch (action->word_type[j]) {
+			if (j < action->_nr_words) {
+				switch (action->_wordType[j]) {
 				case WORD_TYPE_VERB:
 					print("v");
 					break;
@@ -208,23 +208,23 @@ void DebuggerDumper::dumpActionTable() {
 
 		print(") [%.4x] ", i);
 
-		for (j = 0; j < action->nr_words; j++)
+		for (j = 0; j < action->_nr_words; j++)
 			print("%.2x:%.2x ",
-			      action->word[j], action->word_type[j]);
+			      action->_word[j], action->_wordType[j]);
 
 		print("| ");
 
-		for (j = 0; j < action->nr_words; j++) {
-			word = find_dict_word_by_index(_game, action->word[j],
-			                               action->word_type[j]);
+		for (j = 0; j < action->_nr_words; j++) {
+			word = find_dict_word_by_index(_game, action->_word[j],
+			                               action->_wordType[j]);
 			if (word)
 				print("%-6s ", word->_word);
 			else
-				print("%.2x:%.2x  ", action->word[j],
-				      action->word_type[j]);
+				print("%.2x:%.2x  ", action->_word[j],
+				      action->_wordType[j]);
 		}
 
-		print("-> %.4x\n", action->function);
+		print("-> %.4x\n", action->_function);
 	}
 }
 
@@ -272,13 +272,13 @@ void DebuggerDumper::dumpWordMap() {
 
 		for (j = 0; j < 3; j++) {
 			word[j] = dict_find_word_by_index_type(
-			              _game, map->word[j].index, map->word[j].type);
+			              _game, map->_word[j]._index, map->_word[j]._type);
 			if (word[j])
 				snprintf(str[j], sizeof(str[j]),
 				         "%s", word[j]->_word);
 			else
 				snprintf(str[j], sizeof(str[j]), "%.2x:%.2x ",
-				         map->word[j].index, map->word[j].type);
+				         map->_word[j]._index, map->_word[j]._type);
 		}
 
 		print("  [%.2x] %-6s %-6s -> %-6s\n",
@@ -296,18 +296,18 @@ void DebuggerDumper::dumpRooms() {
 		room = &_game->_rooms[i];
 
 		print("  [%.2x] flags=%.2x, graphic=%.2x\n",
-		      i, room->flags, room->graphic);
-		print("    %s\n", _game->stringLookup(room->string_desc).c_str());
+		      i, room->_flags, room->_graphic);
+		print("    %s\n", _game->stringLookup(room->_stringDesc).c_str());
 		print("    n: %.2x  s: %.2x  e: %.2x  w: %.2x\n",
-		      room->direction[DIRECTION_NORTH],
-		      room->direction[DIRECTION_SOUTH],
-		      room->direction[DIRECTION_EAST],
-		      room->direction[DIRECTION_WEST]);
+		      room->_direction[DIRECTION_NORTH],
+		      room->_direction[DIRECTION_SOUTH],
+		      room->_direction[DIRECTION_EAST],
+		      room->_direction[DIRECTION_WEST]);
 		print("    u: %.2x  d: %.2x  i: %.2x  o: %.2x\n",
-		      room->direction[DIRECTION_UP],
-		      room->direction[DIRECTION_DOWN],
-		      room->direction[DIRECTION_IN],
-		      room->direction[DIRECTION_OUT]);
+		      room->_direction[DIRECTION_UP],
+		      room->_direction[DIRECTION_DOWN],
+		      room->_direction[DIRECTION_IN],
+		      room->_direction[DIRECTION_OUT]);
 		print("\n");
 	}
 }
@@ -321,22 +321,22 @@ void DebuggerDumper::dumpItems() {
 		item = &_game->_items[i];
 
 		print("  [%.2x] %s\n", i + 1,
-		      item->string_desc ? _game->stringLookup(item->string_desc).c_str() : "");
+		      item->_stringDesc ? _game->stringLookup(item->_stringDesc).c_str() : "");
 		if (_game->_comprehendVersion == 2)
 			print("    long desc: %s\n",
-			      _game->stringLookup(item->long_string).c_str());
+			      _game->stringLookup(item->_longString).c_str());
 
 		print("    words: ");
 		for (j = 0; j < _game->_nr_words; j++)
-			if (_game->_words[j]._index == item->word &&
+			if (_game->_words[j]._index == item->_word &&
 			        (_game->_words[j]._type & WORD_TYPE_NOUN_MASK))
 				print("%s ", _game->_words[j]._word);
 		print("\n");
 		print("    flags=%.2x (takeable=%d, weight=%d)\n",
-		      item->flags, !!(item->flags & ITEMF_CAN_TAKE),
-		      (item->flags & ITEMF_WEIGHT_MASK));
+		      item->_flags, !!(item->_flags & ITEMF_CAN_TAKE),
+		      (item->_flags & ITEMF_WEIGHT_MASK));
 		print("    room=%.2x, graphic=%.2x\n",
-		      item->room, item->graphic);
+		      item->_room, item->_graphic);
 		print("\n");
 	}
 }

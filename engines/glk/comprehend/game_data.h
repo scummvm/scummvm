@@ -172,12 +172,12 @@ enum {
                              WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
 
 struct FunctionState {
-	bool test_result;
-	bool else_result;
-	unsigned or_count;
+	bool _testResult;
+	bool _elseResult;
+	uint _orCount;
 	bool _and;
-	bool in_command;
-	bool executed;
+	bool _inCommand;
+	bool _executed;
 
 	FunctionState() {
 		clear();
@@ -187,10 +187,10 @@ struct FunctionState {
 };
 
 struct Room {
-	uint8 direction[NR_DIRECTIONS];
-	uint8 flags;
-	uint8 graphic;
-	uint16 string_desc;
+	uint8 _direction[NR_DIRECTIONS];
+	uint8 _flags;
+	uint8 _graphic;
+	uint16 _stringDesc;
 
 	Room() {
 		clear();
@@ -200,12 +200,12 @@ struct Room {
 };
 
 struct Item {
-	uint16 string_desc;
-	uint16 long_string; /* Only used by version 2 */
-	uint8 room;
-	uint8 flags;
-	uint8 word;
-	uint8 graphic;
+	uint16 _stringDesc;
+	uint16 _longString; /* Only used by version 2 */
+	uint8 _room;
+	uint8 _flags;
+	uint8 _word;
+	uint8 _graphic;
 
 	Item() {
 		clear();
@@ -231,22 +231,22 @@ struct Word {
 };
 
 struct WordIndex {
-	uint8 index;
-	uint8 type;
+	uint8 _index;
+	uint8 _type;
 
 	WordIndex() {
 		clear();
 	}
 
 	void clear() {
-		index = type = 0;
+		_index = _type = 0;
 	}
 };
 
 struct WordMap {
 	/* <word[0]>, <word[1]> == <word[2]> */
-	WordIndex word[3];
-	uint8 flags;
+	WordIndex _word[3];
+	uint8 _flags;
 
 	WordMap() {
 		clear();
@@ -256,12 +256,12 @@ struct WordMap {
 };
 
 struct Action {
-	int type;
-	size_t nr_words;
+	int _type;
+	size_t _nr_words;
 	// FIXME - use struct word_index here.
-	uint8 word[4];
-	uint8 word_type[4];
-	uint16 function;
+	uint8 _word[4];
+	uint8 _wordType[4];
+	uint16 _function;
 
 	Action() {
 		clear();
@@ -271,10 +271,10 @@ struct Action {
 };
 
 struct Instruction {
-	uint8 opcode;
-	size_t nr_operands;
-	uint8 operand[3];
-	bool is_command;
+	uint8 _opcode;
+	size_t _nr_operands;
+	uint8 _operand[3];
+	bool _isCommand;
 
 	Instruction() {
 		clear();
@@ -284,8 +284,8 @@ struct Instruction {
 };
 
 struct Function {
-	Instruction instructions[0x100];
-	size_t nr_instructions;
+	Instruction _instructions[0x100];
+	size_t _nr_instructions;
 
 	Function() {
 		clear();
@@ -297,13 +297,13 @@ struct Function {
 typedef Common::StringArray StringTable;
 
 struct StringFile {
-	Common::String filename;
-	uint32 base_offset;
-	uint32 end_offset;
+	Common::String _filename;
+	uint32 _baseOffset;
+	uint32 _endOffset;
 
-	StringFile() : base_offset(0), end_offset(0) {
+	StringFile() : _baseOffset(0), _endOffset(0) {
 	}
-	StringFile(const Common::String &fname, uint32 baseOfs, uint32 endO = 0) : filename(fname), base_offset(baseOfs), end_offset(endO) {
+	StringFile(const Common::String &fname, uint32 baseOfs, uint32 endO = 0) : _filename(fname), _baseOffset(baseOfs), _endOffset(endO) {
 	}
 };
 
@@ -360,7 +360,7 @@ protected:
 public:
 	GameHeader _header;
 
-	unsigned _comprehendVersion;
+	uint _comprehendVersion;
 
 	Common::Array<Room> _rooms;
 	uint8 _currentRoom;
@@ -427,7 +427,7 @@ private:
 	 */
 	Common::String parseString(FileBuffer *fb);
 
-	void parse_string_table(FileBuffer *fb, unsigned start_addr,
+	void parse_string_table(FileBuffer *fb, uint start_addr,
 		uint32 end_addr, StringTable *table);
 	void parse_variables(FileBuffer *fb);
 	void parse_flags(FileBuffer *fb);

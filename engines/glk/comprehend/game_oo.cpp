@@ -61,7 +61,7 @@ int OOToposGame::roomIsSpecial(unsigned room_index,
 	Room *room = &_rooms[room_index];
 
 	// Is the room dark
-	if ((room->flags & OO_ROOM_FLAG_DARK) &&
+	if ((room->_flags & OO_ROOM_FLAG_DARK) &&
 	        !(_flags[OO_FLAG_FLASHLIGHT_ON])) {
 		if (roomDescString)
 			*roomDescString = 0xb3;
@@ -89,7 +89,7 @@ bool OOToposGame::beforeTurn() {
 	 * was switch off or on.
 	 */
 	if (_flags[OO_FLAG_FLASHLIGHT_ON] != flashlight_was_on &&
-	        (room->flags & OO_ROOM_FLAG_DARK)) {
+	        (room->_flags & OO_ROOM_FLAG_DARK)) {
 		flashlight_was_on = _flags[OO_FLAG_FLASHLIGHT_ON];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
