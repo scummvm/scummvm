@@ -64,16 +64,16 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	Common::String path = client.queryParameter("path");
 
 	//these occur twice:
-	replace(response, "{create_directory_button}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Create directory")).c_str()));
-	replace(response, "{create_directory_button}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Create directory")).c_str()));
-	replace(response, "{upload_files_button}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Upload files")).c_str())); //tab
-	replace(response, "{upload_file_button}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Upload files")).c_str())); //button in the tab
-	replace(response, "{create_directory_desc}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Type new directory name:")).c_str()));
-	replace(response, "{upload_file_desc}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Select a file to upload:")).c_str()));
-	replace(response, "{or_upload_directory_desc}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Or select a directory (works in Chrome only):")).c_str()));
-	replace(response, "{index_of}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Index of ")).c_str()));
-	replace(response, "{loading}", HandlerUtils::toUtf8(("Loading...")));
-	replace(response, "{error}", HandlerUtils::toUtf8(Common::convertFromU32String(_("Error occurred")).c_str()));
+	replace(response, "{create_directory_button}", _("Create directory").encode());
+	replace(response, "{create_directory_button}", _("Create directory").encode());
+	replace(response, "{upload_files_button}", _("Upload files").encode()); //tab
+	replace(response, "{upload_file_button}", _("Upload files").encode()); //button in the tab
+	replace(response, "{create_directory_desc}", _("Type new directory name:").encode());
+	replace(response, "{upload_file_desc}", _("Select a file to upload:").encode());
+	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):").encode());
+	replace(response, "{index_of}", _("Index of ").encode());
+	replace(response, "{loading}", ("Loading..."));
+	replace(response, "{error}", _("Error occurred").encode());
 	replace(response, "{start_path}", encodeDoubleQuotesAndSlashes(path));
 	LocalWebserver::setClientGetHandler(client, response);
 }

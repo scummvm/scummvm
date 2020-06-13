@@ -84,7 +84,7 @@ void PopUpDialog::open() {
 		_w = 0;
 
 		for (uint i = 0; i < _entries.size(); i++) {
-			int width = g_gui.getStringWidth(Common::convertFromU32String(_entries[i]));
+			int width = g_gui.getStringWidth(_entries[i]);
 
 			if (width > _w)
 				_w = width;
