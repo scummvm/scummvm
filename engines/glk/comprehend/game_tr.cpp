@@ -153,6 +153,11 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	}
 }
 
+#define READ_LINE do { \
+	g_comprehend->readLine(buffer, sizeof(buffer)); \
+	if (g_comprehend->shouldQuit()) return; \
+	} while (strlen(buffer) == 0)
+
 void TransylvaniaGame::beforeGame() {
 	char buffer[128];
 
@@ -161,14 +166,14 @@ void TransylvaniaGame::beforeGame() {
 
 	// Welcome to Transylvania - sign your name
 	console_println(_strings[0x20].c_str());
-	g_comprehend->readLine(buffer, sizeof(buffer));
+	READ_LINE;
 
 	// The player's name is stored in word 0
 	_replaceWords[0] = Common::String(buffer);
 
 	// And your next of kin - This isn't stored by the game
 	console_println(_strings[0x21].c_str());
-	g_comprehend->readLine(buffer, sizeof(buffer));
+	READ_LINE;
 }
 
 } // namespace Comprehend

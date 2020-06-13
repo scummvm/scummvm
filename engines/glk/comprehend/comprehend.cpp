@@ -214,6 +214,5 @@ void Comprehend::togglePictureVisibility() {
 	print(_("Picture window toggled\n"));
 }
 
-
 } // namespace Comprehend
 } // namespace Glk
