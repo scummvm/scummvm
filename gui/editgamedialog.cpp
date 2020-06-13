@@ -446,19 +446,19 @@ void EditGameDialog::apply() {
 	else
 		ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 
-	String gamePath(Common::convertFromU32String(_gamePathWidget->getLabel()));
+	U32String gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
-		ConfMan.set("path", gamePath, _domain);
+		ConfMan.set("path", gamePath.encode(), _domain);
 
-	String extraPath(Common::convertFromU32String(_extraPathWidget->getLabel()));
-	if (!extraPath.empty() && (extraPath != Common::convertFromU32String(_c("None", "path"))))
-		ConfMan.set("extrapath", extraPath, _domain);
+	U32String extraPath(_extraPathWidget->getLabel());
+	if (!extraPath.empty() && (extraPath != _c("None", "path")))
+		ConfMan.set("extrapath", extraPath.encode(), _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
 
-	String savePath(Common::convertFromU32String(_savePathWidget->getLabel()));
-	if (!savePath.empty() && (savePath != Common::convertFromU32String(_("Default"))))
-		ConfMan.set("savepath", savePath, _domain);
+	U32String savePath(_savePathWidget->getLabel());
+	if (!savePath.empty() && (savePath != _("Default")))
+		ConfMan.set("savepath", savePath.encode(), _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
 

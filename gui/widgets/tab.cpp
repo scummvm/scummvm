@@ -120,7 +120,7 @@ int TabWidget::addTab(const U32String &title, const String &dialogName) {
 	newTab.firstWidget = nullptr;
 
 	// Determine the new tab width
-	int newWidth = g_gui.getStringWidth(Common::convertFromU32String(title)) + kTabTitleSpacing;
+	int newWidth = g_gui.getStringWidth(title) + kTabTitleSpacing;
 	if (newWidth < _minTabWidth)
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
@@ -350,7 +350,7 @@ void TabWidget::reflowLayout() {
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		// Determine the new tab width
-		int newWidth = g_gui.getStringWidth(Common::convertFromU32String(_tabs[i].title)) + kTabTitleSpacing;
+		int newWidth = g_gui.getStringWidth(_tabs[i].title) + kTabTitleSpacing;
 		if (newWidth < _minTabWidth)
 			newWidth = _minTabWidth;
 		_tabs[i]._tabWidth = newWidth;

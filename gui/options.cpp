@@ -744,9 +744,9 @@ void OptionsDialog::apply() {
 			ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
 			ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
-			Common::String soundFont(Common::convertFromU32String(_soundFont->getLabel()));
-			if (!soundFont.empty() && (soundFont != Common::convertFromU32String(_c("None", "soundfont"))))
-				ConfMan.set("soundfont", soundFont, _domain);
+			Common::U32String soundFont(_soundFont->getLabel());
+			if (!soundFont.empty() && (soundFont != _c("None", "soundfont")))
+				ConfMan.set("soundfont", soundFont.encode(), _domain);
 			else
 				ConfMan.removeKey("soundfont", _domain);
 		} else {
@@ -1170,12 +1170,12 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	}
 
 	if (nHidden) {
-		Common::String hiddenStr = Common::String::format(Common::convertFromU32String(_("%d hidden achievements remaining")).c_str(), nHidden);
-		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, Common::convertToU32String(hiddenStr.c_str()), Graphics::kTextAlignStart);
+		Common::U32String hiddenStr = Common::U32String::format(Common::convertFromU32String(_("%d hidden achievements remaining")).c_str(), nHidden);
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr, Graphics::kTextAlignStart);
 	}
 
 	if (nMax) {
-		Common::U32String totalStr = Common::String::format(Common::convertFromU32String(_("Achievements unlocked: %d/%d")).c_str(), nAchieved, nMax);
+		Common::U32String totalStr = Common::U32String::format(Common::convertFromU32String(_("Achievements unlocked: %d/%d")).c_str(), nAchieved, nMax);
 		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr, Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;
@@ -2148,7 +2148,7 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 	uint32 port = Networking::LocalWebserver::getPort();
 
 	_serverPortDesc = new StaticTextWidget(boss, prefix + "ServerPortDesc", (_("Server's port:")), _("Port for server to use"));
-	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), Common::U32String(""));
+	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::U32String::format("%u", port), Common::U32String(""));
 	_serverPortClearButton = addClearButton(boss, prefix + "ServerPortClearButton", kServerPortClearCmd);
 
 	if (lowres) {
@@ -2200,21 +2200,21 @@ void GlobalOptionsDialog::apply() {
 
 	bool isRebuildNeeded = false;
 
-	Common::String savePath(Common::convertFromU32String(_savePath->getLabel()));
-	if (!savePath.empty() && (savePath != Common::convertFromU32String(_("Default"))))
-		ConfMan.set("savepath", savePath, _domain);
+	Common::U32String savePath(_savePath->getLabel());
+	if (!savePath.empty() && (savePath != (_("Default"))))
+		ConfMan.set("savepath", savePath.encode(), _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
 
-	Common::String themePath(Common::convertFromU32String(_themePath->getLabel()));
-	if (!themePath.empty() && (themePath != Common::convertFromU32String(_c("None", "path"))))
-		ConfMan.set("themepath", themePath, _domain);
+	Common::U32String themePath((_themePath->getLabel()));
+	if (!themePath.empty() && (themePath != _c("None", "path")))
+		ConfMan.set("themepath", themePath.encode(), _domain);
 	else
 		ConfMan.removeKey("themepath", _domain);
 
-	Common::String extraPath(Common::convertFromU32String(_extraPath->getLabel()));
-	if (!extraPath.empty() && (extraPath != Common::convertFromU32String(_c("None", "path"))))
-		ConfMan.set("extrapath", extraPath, _domain);
+	Common::U32String extraPath(_extraPath->getLabel());
+	if (!extraPath.empty() && (extraPath != _c("None", "path")))
+		ConfMan.set("extrapath", extraPath.encode(), _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
 
@@ -2228,9 +2228,9 @@ void GlobalOptionsDialog::apply() {
 
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
-	Common::String rootPath(Common::convertFromU32String(_rootPath->getLabel()));
-	if (!rootPath.empty() && (rootPath != Common::convertFromU32String(_c("None", "path"))))
-		ConfMan.set("rootpath", rootPath, "cloud");
+	Common::U32String rootPath(_rootPath->getLabel());
+	if (!rootPath.empty() && (rootPath != _c("None", "path")))
+		ConfMan.set("rootpath", rootPath.encode(), "cloud");
 	else
 		ConfMan.removeKey("rootpath", "cloud");
 #endif
