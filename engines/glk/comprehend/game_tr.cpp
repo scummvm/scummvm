@@ -97,33 +97,33 @@ bool TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	uint16 turn_count;
 
 	room = &_rooms[_currentRoom];
-	turn_count = _variables[VAR_TURN_COUNT];
+	if (!(room->_flags & monsterInfo->_roomAllowFlag))
+		return false;
 
+	turn_count = _variables[VAR_TURN_COUNT];
 	monster = get_item(monsterInfo->_object);
+
 	if (monster->_room == _currentRoom) {
 		// The monster is in the current room - leave it there
 		return true;
 	}
 
-	if ((room->_flags & monsterInfo->_roomAllowFlag) &&
-	        !_flags[monsterInfo->_deadFlag] &&
+	if (!_flags[monsterInfo->_deadFlag] &&
 	        turn_count > monsterInfo->_minTurnsBefore) {
 		/*
 		 * The monster is alive and allowed to move to the current
 		 * room. Randomly decide whether on not to. If not, move
 		 * it back to limbo.
 		 */
-		if ((getRandomNumber(0x7fffffff) % monsterInfo->_randomness) == 0) {
+		if (getRandomNumber(255) > monsterInfo->_randomness) {
 			move_object(monster, _currentRoom);
 			_variables[15] = turn_count + 1;
 		} else {
 			move_object(monster, ROOM_NOWHERE);
 		}
-
-		return true;
 	}
 
-	return false;
+	return true;
 }
 
 bool TransylvaniaGame::isMonsterInRoom(const TransylvaniaMonster *monsterInfo) {
@@ -165,7 +165,7 @@ void TransylvaniaGame::beforeTurn() {
 		return;
 
 	Room *room = &_rooms[_currentRoom];
-	if (!(room->_flags & ROOMFLAG_FOREST) && (_variables[VAR_TURN_COUNT] % 255) >= 4
+	if ((room->_flags & ROOMFLAG_FOREST) && (_variables[VAR_TURN_COUNT] % 255) >= 4
 			&& getRandomNumber(255) < 40) {
 		int stringNum = _miceReleased ? 108 : 107;
 		console_println(_strings[stringNum].c_str());
