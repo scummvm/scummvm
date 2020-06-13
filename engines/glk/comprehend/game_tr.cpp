@@ -41,6 +41,7 @@ enum RoomFlag {
 
 enum ItemId {
 	ITEM_GOBLIN = 9,
+	ITEM_SILVER_BULLET = 21,
 	ITEM_BLACK_CAT = 23,
 	ITEM_WEREWOLF = 33,
 	ITEM_VAMPIRE = 38
@@ -193,12 +194,14 @@ void TransylvaniaGame::synchronizeSave(Common::Serializer &s) {
 void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 1:
-		// Flag that the mice have been released
+		// Mice have been released
 		_miceReleased = true;
 		break;
 
 	case 2:
-		// FIXME: Called when the gun is fired
+		// Gun is fired. Drop the bullet in a random room
+		get_item(ITEM_SILVER_BULLET)->_room = getRandomNumber(7) + 1;
+		_updateFlags |= UPDATE_GRAPHICS;
 		break;
 
 	case 3:
