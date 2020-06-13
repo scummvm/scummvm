@@ -139,11 +139,6 @@ void CharacterInfo::execute(int charIndex) {
 			w.update();
 			break;
 
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER:
-			_buttonValue = _cursorCell + Common::KEYCODE_a;
-			// fall through
-
 		case 1001:
 		case 1002:
 		case 1003:
@@ -163,12 +158,15 @@ void CharacterInfo::execute(int charIndex) {
 		case 1017:
 		case 1018:
 		case 1019:
-		case 1020: {
+		case 1020:
 			showCursor(false);
 			_cursorCell = _buttonValue - 1001;
 			showCursor(true);
 			w.update();
+			// fall through
 
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER: {
 			bool result = expandStat(_cursorCell, *c);
 			_vm->_mode = MODE_COMBAT;
 			if (result)
