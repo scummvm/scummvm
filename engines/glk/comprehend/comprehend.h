@@ -105,6 +105,11 @@ public:
 	void runGame() override;
 
 	/**
+	 * Handles loading a savegame selected from the launcher
+	 */
+	bool loadLauncherSavegameIfNeeded();
+
+	/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
 	Common::Error readSaveData(Common::SeekableReadStream *rs) override;

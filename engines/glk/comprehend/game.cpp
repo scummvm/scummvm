@@ -1236,7 +1236,8 @@ void ComprehendGame::read_input() {
 }
 
 void ComprehendGame::playGame() {
-	beforeGame();
+	if (!g_comprehend->loadLauncherSavegameIfNeeded())
+		beforeGame();
 
 	_updateFlags = (uint)UPDATE_ALL;
 	while (!g_comprehend->shouldQuit())

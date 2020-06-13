@@ -98,6 +98,9 @@ void Comprehend::initialize() {
 	_drawSurface = new DrawSurface();
 	_pics = new Pics();
 	SearchMan.add("Pics", _pics, 99, true);
+
+	// Check for savegame to load
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
 void Comprehend::deinitialize() {
@@ -179,6 +182,15 @@ Common::Error Comprehend::writeGameData(Common::WriteStream *ws) {
 
 	return Common::kNoError;
 }
+
+bool Comprehend::loadLauncherSavegameIfNeeded() {
+	if (_saveSlot != -1) {
+		return loadGameState(_saveSlot).getCode() == Common::kNoError;
+	}
+
+	return false;
+}
+
 
 void Comprehend::drawPicture(uint pictureNum) {
 	if (_topWindow)
