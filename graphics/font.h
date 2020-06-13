@@ -189,9 +189,6 @@ public:
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, bool evenWidthLinesModeEnabled = false, bool wrapOnExplicitNewLines = true) const;
 	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, bool evenWidthLinesModeEnabled = false, bool wrapOnExplicitNewLines = true) const;
 
-private:
-	Common::String handleEllipsis(const Common::String &str, int w) const;
-	Common::U32String handleEllipsis(const Common::U32String &str, int w) const;
 };
 
 } // End of namespace Graphics
