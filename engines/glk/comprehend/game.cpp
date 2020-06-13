@@ -141,15 +141,7 @@ Common::String ComprehendGame::instrStringLookup(uint8 index, uint8 table) {
 }
 
 int ComprehendGame::console_get_key() {
-	int c, dummy;
-
-	dummy = c = g_comprehend->readChar();
-
-	/* Clear input buffer */
-	while (dummy != '\n' && dummy != EOF)
-		dummy = g_comprehend->readChar();
-
-	return c;
+	return g_comprehend->readChar();
 }
 
 void ComprehendGame::console_println(const char *text) {
@@ -254,6 +246,9 @@ void ComprehendGame::game_save() {
 	console_println(_strings[STRING_SAVE_GAME].c_str());
 
 	c = console_get_key();
+	if (g_comprehend->shouldQuit())
+		return;
+
 	if (c < '1' || c > '3') {
 		/*
 		 * The original Comprehend games just silently ignore any
@@ -272,6 +267,9 @@ void ComprehendGame::game_restore() {
 	console_println(_strings[STRING_RESTORE_GAME].c_str());
 
 	c = console_get_key();
+	if (g_comprehend->shouldQuit())
+		return;
+
 	if (c < '1' || c > '3') {
 		/*
 		 * The original Comprehend games just silently ignore any
