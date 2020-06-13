@@ -330,7 +330,7 @@ void ComprehendGame::update_graphics() {
 	int type;
 	uint i;
 
-	if (!g_comprehend->_graphicsEnabled)
+	if (!g_comprehend->isGraphicsEnabled())
 		return;
 
 	type = roomIsSpecial(_currentRoom, NULL);
@@ -1176,7 +1176,6 @@ void ComprehendGame::doBeforeTurn() {
 }
 
 void ComprehendGame::doAfterTurn() {
-	// Do post turn game specific bits
 	afterTurn();
 }
 
@@ -1185,8 +1184,14 @@ void ComprehendGame::read_input() {
 	char *line = NULL, buffer[1024];
 	bool handled;
 
+
 	beforePrompt();
 	doBeforeTurn();
+
+	// If we're in full screen text, we can afford a blank row between
+	// any game response and the next line of text
+	if (!g_comprehend->isGraphicsEnabled())
+		g_comprehend->print("\n");
 
 	for (;;) {
 		g_comprehend->print("> ");

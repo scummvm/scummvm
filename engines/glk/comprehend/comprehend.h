@@ -49,13 +49,13 @@ struct GameStrings {
 class Comprehend : public GlkAPI {
 private:
 	int _saveSlot; ///< Save slot when loading savegame from launcher
+	bool _graphicsEnabled;
 public:
 	GraphicsWindow *_topWindow;
 	TextBufferWindow *_bottomWindow;
 	DrawSurface *_drawSurface;
 	ComprehendGame *_game;
 	Pics *_pics;
-	bool _graphicsEnabled;
 	uint _drawFlags;
 
 private:
@@ -156,9 +156,9 @@ public:
 	void togglePictureVisibility();
 
 	/**
-	 * Returns true if the picture area is visible
+	 * Returns true if the graphics area is visible
 	 */
-	bool isPictureVisible() const {
+	bool isGraphicsEnabled() const {
 		return _graphicsEnabled;
 	}
 };

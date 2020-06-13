@@ -960,7 +960,7 @@ void GameData::loadGame() {
 	/* Load the main game data file */
 	loadGameData();
 
-	if (g_comprehend->_graphicsEnabled) {
+	if (g_comprehend->isGraphicsEnabled()) {
 		// Set up the picture archive
 		g_comprehend->_pics->load(_locationGraphicFiles,
 		                          _itemGraphicFiles, _titleGraphicFile);
