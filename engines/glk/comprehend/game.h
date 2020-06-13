@@ -111,6 +111,11 @@ public:
 	Room *get_room(uint16 index);
 	Item *get_item(uint16 index);
 	void update_graphics();
+
+	/**
+	 * Gets a random number
+	 */
+	uint getRandomNumber(uint max) const;
 };
 
 } // namespace Comprehend

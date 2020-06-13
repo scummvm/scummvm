@@ -28,12 +28,39 @@
 namespace Glk {
 namespace Comprehend {
 
+enum RoomId {
+	ROOM_CLAY_HUT = 7,
+	ROOM_FIELD = 26
+};
+
+enum RoomFlag {
+	ROOMFLAG_OUTSIDE = 1 << 0,
+	ROOMFLAG_WEREWOLF = 1 << 6,
+	ROOMFLAG_VAMPIRE = 1 << 7
+};
+
+enum ItemId {
+	ITEM_GOBLIN = 9,
+	ITEM_BLACK_CAT = 23,
+	ITEM_WEREWOLF = 33,
+	ITEM_VAMPIRE = 38
+};
+
+struct TransylvaniaMonster {
+	uint8 _object;
+	uint8 _deadFlag;
+	uint _roomAllowFlag;
+	uint _minTurnsBefore;
+	uint _randomness;
+};
+
+
 const TransylvaniaMonster TransylvaniaGame::WEREWOLF = {
-	0x21, 7, (1 << 6), 5, 5
+	ITEM_WEREWOLF, 7, ROOMFLAG_WEREWOLF, 10, 172
 };
 
 const TransylvaniaMonster TransylvaniaGame::VAMPIRE = {
-	0x26, 5, (1 << 7), 0, 5
+	ITEM_VAMPIRE, 5, ROOMFLAG_VAMPIRE, 0, 200
 };
 
 static const GameStrings TR_STRINGS = {
@@ -41,7 +68,8 @@ static const GameStrings TR_STRINGS = {
 };
 
 
-TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
+TransylvaniaGame::TransylvaniaGame() : ComprehendGame(),
+		_randomActionThreshold(39) {
 	_gameDataFile = "tr.gda";
 
 	_stringFiles.push_back(StringFile("MA.MS1", 0x88));
@@ -62,7 +90,7 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame() {
 	_gameStrings = &TR_STRINGS;
 }
 
-void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
+bool TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	Item *monster;
 	Room *room;
 	uint16 turn_count;
@@ -73,7 +101,7 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	monster = get_item(monsterInfo->_object);
 	if (monster->_room == _currentRoom) {
 		// The monster is in the current room - leave it there
-		return;
+		return true;
 	}
 
 	if ((room->_flags & monsterInfo->_roomAllowFlag) &&
@@ -84,13 +112,22 @@ void TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 		 * room. Randomly decide whether on not to. If not, move
 		 * it back to limbo.
 		 */
-		if ((g_comprehend->getRandomNumber(0x7fffffff) % monsterInfo->_randomness) == 0) {
+		if ((getRandomNumber(0x7fffffff) % monsterInfo->_randomness) == 0) {
 			move_object(monster, _currentRoom);
-			_variables[0xf] = turn_count + 1;
+			_variables[15] = turn_count + 1;
 		} else {
 			move_object(monster, ROOM_NOWHERE);
 		}
+
+		return true;
 	}
+
+	return false;
+}
+
+bool TransylvaniaGame::isMonsterInRoom(const TransylvaniaMonster *monsterInfo) {
+	Item *monster = get_item(monsterInfo->_object);
+	return monster->_room == _currentRoom;
 }
 
 int TransylvaniaGame::roomIsSpecial(unsigned room_index,
@@ -107,15 +144,56 @@ int TransylvaniaGame::roomIsSpecial(unsigned room_index,
 }
 
 bool TransylvaniaGame::beforeTurn() {
-	updateMonster(&WEREWOLF);
-	updateMonster(&VAMPIRE);
+	if (!isMonsterInRoom(&WEREWOLF) && !isMonsterInRoom(&VAMPIRE)) {
+		if (_currentRoom == ROOM_CLAY_HUT) {
+			Item *blackCat = get_item(ITEM_BLACK_CAT);
+			if (blackCat->_room == _currentRoom && getRandomNumber(255) >= 128)
+				console_println(_strings2[109].c_str());
+			return true;
+
+		} else if (_currentRoom == ROOM_FIELD) {
+			Item *goblin = get_item(ITEM_GOBLIN);
+			if (goblin->_room == _currentRoom)
+				console_println(_strings2[94 + getRandomNumber(3)].c_str());
+			return true;
+
+		}
+	}
+
+	if (updateMonster(&WEREWOLF) || updateMonster(&VAMPIRE))
+		return true;
+
+	Room *room = &_rooms[_currentRoom];
+	if (!(room->_flags & ROOMFLAG_OUTSIDE) && (_variables[VAR_TURN_COUNT] % 255) >= 4
+			&& getRandomNumber(255) < _randomActionThreshold) {
+		// TODO: This looks suspect in the original. Since the threshold is only
+		// ever 39 or 43.. was still meant to be a random range of possible responses
+		int stringNum = 98 + (_randomActionThreshold / 4);
+		console_println(_strings[stringNum].c_str());
+
+		// Extra stuff for eagle seizing player
+		if (stringNum == 107) {
+			// Get new room to get moved to
+			int roomNum = getRandomNumber(3) + 1;
+			if (roomNum == _currentRoom)
+				roomNum += 15;
+
+			move_to(roomNum);
+
+			// Make sure Werwolf and Vampire aren't present
+			get_item(ITEM_WEREWOLF)->_room = 0xff;
+			get_item(ITEM_VAMPIRE)->_room = 0xff;
+		}
+	}
+
 	return false;
 }
 
 void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 1:
-		// FIXME: Called when the mice are dropped and the cat chases them.
+		// Called when the mice are dropped and the cat chases them
+		_randomActionThreshold = 43;
 		break;
 
 	case 2:

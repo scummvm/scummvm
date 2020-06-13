@@ -1235,5 +1235,9 @@ void ComprehendGame::playGame() {
 		read_input();
 }
 
+uint ComprehendGame::getRandomNumber(uint max) const {
+	return g_comprehend->getRandomNumber(max);
+}
+
 } // namespace Comprehend
 } // namespace Glk
