@@ -28,12 +28,12 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, U32String tooltip, uint32 cmd)
 	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }
 
-EditableWidget::EditableWidget(GuiObject *boss, const String &name, const char *tooltip, uint32 cmd)
+EditableWidget::EditableWidget(GuiObject *boss, const String &name, U32String tooltip, uint32 cmd)
 	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd) {
 	init();
 }

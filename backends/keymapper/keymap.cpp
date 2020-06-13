@@ -33,7 +33,7 @@
 
 namespace Common {
 
-Keymap::Keymap(KeymapType type, const String &id, const String &description) :
+Keymap::Keymap(KeymapType type, const String &id, const U32String &description) :
 		_type(type),
 		_id(id),
 		_description(description),

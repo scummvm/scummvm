@@ -419,7 +419,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 #ifdef USE_SCALERS
 	struct ActionEntry {
 		const char *id;
-		const char *description;
+		U32String description;
 	};
 	static const ActionEntry filters[] = {
 			{ "FLT1", _s("Switch to nearest neighbour scaling") },

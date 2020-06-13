@@ -2221,11 +2221,11 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 #pragma mark -
 
 #ifdef USE_OSD
-void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
+void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	assert(_transactionMode == kTransactionNone);
-	assert(msg);
+	assert(!msg.empty());
 #ifdef USE_TTS
-	Common::String textToSay = msg;
+	Common::String textToSay = Common::convertFromU32String(msg);
 #endif // USE_TTS
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
@@ -2236,15 +2236,17 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 
 	// Split the message into separate lines.
-	Common::Array<Common::String> lines;
-	const char *ptr;
-	for (ptr = msg; *ptr; ++ptr) {
-		if (*ptr == '\n') {
-			lines.push_back(Common::String(msg, ptr - msg));
-			msg = ptr + 1;
+	Common::Array<Common::U32String> lines;
+	Common::U32String singleMessage;
+
+	for (Common::U32String::const_iterator itr = msg.begin(); itr != msg.end(); itr++) {
+		if (*itr == '\n') {
+			lines.push_back(singleMessage);
+			singleMessage.clear();
+			continue;
 		}
+		singleMessage += (*itr);
 	}
-	lines.push_back(Common::String(msg, ptr - msg));
 
 	// Determine a rect which would contain the message string (clipped to the
 	// screen dimensions).
@@ -2462,13 +2464,13 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerT
 			g++;
 		}
 		if (newScalerName) {
-			const Common::String message = Common::String::format(
+			const Common::U32String message = Common::String::format(
 				"%s %s\n%d x %d -> %d x %d",
 				_("Active graphics filter:"),
 				newScalerName,
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwScreen->w, _hwScreen->h);
-			displayMessageOnOSD(message.c_str());
+			displayMessageOnOSD(message);
 		}
 #endif
 
@@ -2495,7 +2497,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
 		endGFXTransaction();
 #ifdef USE_OSD
-		Common::String message;
+		Common::U32String message;
 		if (_videoMode.aspectRatioCorrection)
 			message = Common::String::format("%s\n%d x %d -> %d x %d",
 			                                 _("Enabled aspect ratio correction"),
@@ -2508,7 +2510,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);
-		displayMessageOnOSD(message.c_str());
+		displayMessageOnOSD(message);
 #endif
 		internUpdateScreen();
 		return true;
@@ -2550,11 +2552,11 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		endGFXTransaction();
 
 #ifdef USE_OSD
-		Common::String message = Common::String::format("%s: %s",
+		Common::U32String message = Common::String::format("%s: %s",
 		                                                _("Stretch mode"),
 		                                                _(s_supportedStretchModes[index].description)
 		);
-		displayMessageOnOSD(message.c_str());
+		displayMessageOnOSD(message);
 #endif
 		_forceRedraw = true;
 		internUpdateScreen();

@@ -99,14 +99,14 @@ AboutDialog::AboutDialog()
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
-	Common::String date = Common::String::format(_("(built on %s)"), gScummVMBuildDate);
+	Common::String date = Common::String::format(Common::convertFromU32String(_("(built on %s)")).c_str(), gScummVMBuildDate);
 	_lines.push_back("C2" + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
 		addLine(copyright_text[i]);
 
 	Common::String features("C1");
-	features += _("Features compiled in:");
+	features += Common::convertFromU32String(_("Features compiled in:"));
 	addLine(features.c_str());
 	Common::String featureList("C0");
 	featureList += gScummVMFeatures;
@@ -115,7 +115,7 @@ AboutDialog::AboutDialog()
 	_lines.push_back("");
 
 	Common::String engines("C1");
-	engines += _("Available engines:");
+	engines += Common::convertFromU32String(_("Available engines:"));
 	addLine(engines.c_str());
 
 	const PluginList &plugins = EngineMan.getPlugins();

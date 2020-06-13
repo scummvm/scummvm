@@ -134,7 +134,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 		hr = dialog->SetTitle(str);
 		free(str);
 
-		str = Win32::ansiToUnicode(_("Choose"), Win32::getCurrentCharset());
+		str = Win32::ansiToUnicode(Common::convertFromU32String(_("Choose")).c_str(), Win32::getCurrentCharset());
 		hr = dialog->SetOkButtonLabel(str);
 		free(str);
 

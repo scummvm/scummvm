@@ -49,7 +49,7 @@ enum {
  * - others???
  */
 
-BrowserDialog::BrowserDialog(Common::U32String &title, bool dirBrowser)
+BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 	: Dialog("Browser") {
 
 	_title = title;
@@ -62,7 +62,7 @@ BrowserDialog::BrowserDialog(Common::U32String &title, bool dirBrowser)
 	new StaticTextWidget(this, "Browser.Headline", title);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new EditTextWidget(this, "Browser.Path", Common::convertToU32String(""), nullptr, 0, kPathEditedCmd);
+	_currentPath = new EditTextWidget(this, "Browser.Path", Common::convertToU32String(""), Common::U32String(""), 0, kPathEditedCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -72,15 +72,15 @@ BrowserDialog::BrowserDialog(Common::U32String &title, bool dirBrowser)
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Checkbox for the "show hidden files" state.
-	_showHiddenWidget = new CheckboxWidget(this, "Browser.Hidden", Common::convertToU32String(_("Show hidden files")), _("Show files marked with the hidden attribute"), kHiddenCmd);
+	_showHiddenWidget = new CheckboxWidget(this, "Browser.Hidden", (_("Show hidden files")), _("Show files marked with the hidden attribute"), kHiddenCmd);
 
 	// Buttons
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(this, "Browser.Up", Common::convertToU32String(_("Go up")), _("Go to previous directory level"), kGoUpCmd);
+		new ButtonWidget(this, "Browser.Up", (_("Go up")), _("Go to previous directory level"), kGoUpCmd);
 	else
-		new ButtonWidget(this, "Browser.Up", Common::convertToU32String(_c("Go up", "lowres")), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", Common::convertToU32String(_("Cancel")), nullptr, kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", Common::convertToU32String(_("Choose")), nullptr, kChooseCmd);
+		new ButtonWidget(this, "Browser.Up", (_c("Go up", "lowres")), _("Go to previous directory level"), kGoUpCmd);
+	new ButtonWidget(this, "Browser.Cancel", (_("Cancel")), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", (_("Choose")), Common::U32String(""), kChooseCmd);
 }
 
 int BrowserDialog::runModal() {

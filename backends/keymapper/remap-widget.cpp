@@ -220,7 +220,7 @@ void RemapWidget::startRemapping(uint actionIndex) {
 	_remapInputWatcher->startWatching();
 
 	_actions[actionIndex].keyButton->setLabel(Common::convertToU32String("..."));
-	_actions[actionIndex].keyButton->setTooltip("");
+	_actions[actionIndex].keyButton->setTooltip(Common::convertToU32String(""));
 	_actions[actionIndex].keyButton->markAsDirty();
 }
 
@@ -274,12 +274,12 @@ void RemapWidget::refreshKeymap() {
 		ActionRow &row = _actions[i];
 
 		if (!row.actionText) {
-			row.actionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, Common::convertToU32String(""), Graphics::kTextAlignStart, nullptr, GUI::ThemeEngine::kFontStyleNormal);
+			row.actionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, U32String(""), Graphics::kTextAlignStart, U32String(""), GUI::ThemeEngine::kFontStyleNormal);
 			row.actionText->setLabel(row.action->description);
 
-			row.keyButton = new GUI::DropdownButtonWidget(widgetsBoss(), 0, 0, 0, 0, Common::convertToU32String(""), nullptr, kRemapCmd + i);
-			row.keyButton->appendEntry(Common::convertToU32String(_("Reset to defaults")), kResetActionCmd + i);
-			row.keyButton->appendEntry(Common::convertToU32String(_("Clear mapping")), kClearCmd + i);
+			row.keyButton = new GUI::DropdownButtonWidget(widgetsBoss(), 0, 0, 0, 0, U32String(""), U32String(""), kRemapCmd + i);
+			row.keyButton->appendEntry((_("Reset to defaults")), kResetActionCmd + i);
+			row.keyButton->appendEntry((_("Clear mapping")), kClearCmd + i);
 		}
 
 		Array<HardwareInput> mappedInputs = row.keymap->getActionMapping(row.action);
@@ -298,17 +298,17 @@ void RemapWidget::refreshKeymap() {
 			row.keyButton->setTooltip(keysLabel);
 		} else {
 			row.keyButton->setLabel(Common::convertToU32String("-"));
-			row.keyButton->setTooltip("");
+			row.keyButton->setTooltip(Common::convertToU32String(""));
 		}
 
 		KeymapTitleRow &keymapTitle = _keymapSeparators[row.keymap];
 		if (!keymapTitle.descriptionText) {
 			keymapTitle.descriptionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, row.keymap->getDescription(), Graphics::kTextAlignStart);
-			keymapTitle.resetButton = new GUI::ButtonWidget(widgetsBoss(), 0, 0, 0, 0, Common::convertToU32String(""), nullptr, kResetKeymapCmd + i);
+			keymapTitle.resetButton = new GUI::ButtonWidget(widgetsBoss(), 0, 0, 0, 0, U32String(""), U32String(""), kResetKeymapCmd + i);
 
 			// I18N: Button to reset keymap mappings to defaults
-			keymapTitle.resetButton->setLabel(Common::convertToU32String(_("Reset")));
-			keymapTitle.resetButton->setTooltip(_("Reset to defaults"));
+			keymapTitle.resetButton->setLabel((_("Reset")));
+			keymapTitle.resetButton->setTooltip((_("Reset to defaults")));
 		}
 	}
 }

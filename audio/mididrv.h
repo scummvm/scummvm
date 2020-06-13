@@ -253,7 +253,7 @@ public:
 	static DeviceHandle detectDevice(int flags);
 
 	/** Find the music driver matching the given driver name/description. */
-	static DeviceHandle getDeviceHandle(const Common::String &identifier);
+	static DeviceHandle getDeviceHandle(const Common::U32String &identifier);
 
 	/** Check whether the device with the given handle is available. */
 	static bool checkDevice(DeviceHandle handle);
@@ -262,7 +262,7 @@ public:
 	static MusicType getMusicType(DeviceHandle handle);
 
 	/** Get the device description string matching the given device handle and the given type. */
-	static Common::String getDeviceString(DeviceHandle handle, DeviceStringType type);
+	static Common::U32String getDeviceString(DeviceHandle handle, DeviceStringType type);
 
 	/** Common operations to be done by all drivers on start of send */
 	void midiDriverCommonSend(uint32 b);

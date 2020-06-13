@@ -59,48 +59,48 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::convertToU32String("ScummVM"));
+		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", "ScummVM");
+	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
 	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::convertToU32String(gScummVMVersionDate));
 	version->setAlign(Graphics::kTextAlignCenter);
 
-	new GUI::ButtonWidget(this, "GlobalMenu.Resume", Common::convertToU32String(_("~R~esume")), 0, kPlayCmd, 'P');
+	new GUI::ButtonWidget(this, "GlobalMenu.Resume", (_("~R~esume")), Common::U32String(""), kPlayCmd, 'P');
 
-	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", Common::convertToU32String(_("~L~oad")), 0, kLoadCmd);
+	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", (_("~L~oad")), Common::U32String(""), kLoadCmd);
 	_loadButton->setVisible(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 
-	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", Common::convertToU32String(_("~S~ave")), 0, kSaveCmd);
+	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), Common::U32String(""), kSaveCmd);
 	_saveButton->setVisible(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 
-	new GUI::ButtonWidget(this, "GlobalMenu.Options", Common::convertToU32String(_("~O~ptions")), 0, kOptionsCmd);
+	new GUI::ButtonWidget(this, "GlobalMenu.Options", (_("~O~ptions")), Common::U32String(""), kOptionsCmd);
 
 	// The help button is disabled by default.
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
-	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", Common::convertToU32String(_("~H~elp")), 0, kHelpCmd);
+	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", (_("~H~elp")), Common::U32String(""), kHelpCmd);
 
-	new GUI::ButtonWidget(this, "GlobalMenu.About", Common::convertToU32String(_("~A~bout")), 0, kAboutCmd);
+	new GUI::ButtonWidget(this, "GlobalMenu.About", (_("~A~bout")), Common::U32String(""), kAboutCmd);
 
 	if (g_system->getOverlayWidth() > 320)
-		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", Common::convertToU32String(_("~R~eturn to Launcher")), 0, kLauncherCmd);
+		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", (_("~R~eturn to Launcher")), Common::U32String(""), kLauncherCmd);
 	else
-		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", Common::convertToU32String(_c("~R~eturn to Launcher", "lowres")), 0, kLauncherCmd);
+		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", (_c("~R~eturn to Launcher", "lowres")), Common::U32String(""), kLauncherCmd);
 	_returnToLauncherButton->setEnabled(_engine->hasFeature(Engine::kSupportsReturnToLauncher));
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
-		new GUI::ButtonWidget(this, "GlobalMenu.Quit", Common::convertToU32String(_("~Q~uit")), 0, kQuitCmd);
+		new GUI::ButtonWidget(this, "GlobalMenu.Quit", (_("~Q~uit")), Common::U32String(""), kQuitCmd);
 
 	_aboutDialog = new GUI::AboutDialog();
-	_loadDialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Load game:")), Common::convertToU32String(_("Load")), false);
-	_saveDialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Save game:")), Common::convertToU32String(_("Save")), true);
+	_loadDialog = new GUI::SaveLoadChooser((_("Load game:")), (_("Load")), false);
+	_saveDialog = new GUI::SaveLoadChooser((_("Save game:")), (_("Save")), true);
 }
 
 MainMenuDialog::~MainMenuDialog() {
@@ -166,9 +166,9 @@ void MainMenuDialog::reflowLayout() {
 	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual
 	// and to reimplement it in GUI::ButtonWidget to handle the hotkey.
 	if (g_system->getOverlayWidth() > 320)
-		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(Common::convertToU32String(_("~R~eturn to Launcher"))));
+		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_("~R~eturn to Launcher")));
 	else
-		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(Common::convertToU32String(_c("~R~eturn to Launcher", "lowres"))));
+		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_c("~R~eturn to Launcher", "lowres")));
 
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowGlobalMenuLogo", 0) == 1 && g_gui.theme()->supportsImages()) {
@@ -214,9 +214,9 @@ void MainMenuDialog::save() {
 
 		Common::Error status = _engine->saveGameState(slot, Common::convertFromU32String(result));
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
+			Common::U32String failMessage = Common::String::format(Common::convertFromU32String(_("Failed to save game (%s)! ")).c_str(),
 				  "Please consult the README for basic information, and for "
-				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+				  "instructions on how to obtain further assistance.");
 			GUI::MessageDialog dialog(failMessage);
 			dialog.runModal();
 		}
@@ -282,7 +282,7 @@ ConfigDialog::ConfigDialog() :
 	// The game specific options tab
 	//
 
-	int tabId = tab->addTab(Common::convertToU32String(_("Game")), "GlobalConfig_Engine");
+	int tabId = tab->addTab((_("Game")), "GlobalConfig_Engine");
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
 		_engineOptions = metaEngine.buildEngineOptionsWidget(tab, "GlobalConfig_Engine.Container", gameDomain);
@@ -298,7 +298,7 @@ ConfigDialog::ConfigDialog() :
 	// The Audio / Subtitles tab
 	//
 
-	tab->addTab(Common::convertToU32String(_("Audio")), "GlobalConfig_Audio");
+	tab->addTab((_("Audio")), "GlobalConfig_Audio");
 
 	//
 	// Sound controllers
@@ -323,7 +323,7 @@ ConfigDialog::ConfigDialog() :
 
 	Common::KeymapArray keymaps = metaEngine.initKeymaps(gameDomain.c_str());
 	if (!keymaps.empty()) {
-		tab->addTab(Common::convertToU32String(_("Keymaps")), "GlobalConfig_KeyMapper");
+		tab->addTab((_("Keymaps")), "GlobalConfig_KeyMapper");
 		addKeyMapperControls(tab, "GlobalConfig_KeyMapper.", keymaps, gameDomain);
 	}
 
@@ -332,7 +332,7 @@ ConfigDialog::ConfigDialog() :
 	//
 	Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(gameDomain);
 	if (achievementsInfo.descriptions.size() > 0) {
-		tab->addTab(Common::convertToU32String(_("Achievements")), "GlobalConfig_Achievements");
+		tab->addTab((_("Achievements")), "GlobalConfig_Achievements");
 		addAchievementsControls(tab, "GlobalConfig_Achievements.", achievementsInfo);
 	}
 
@@ -343,8 +343,8 @@ ConfigDialog::ConfigDialog() :
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "GlobalConfig.Ok", Common::convertToU32String(_("~O~K")), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", Common::convertToU32String(_("~C~ancel")), 0, GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "GlobalConfig.Ok", (_("~O~K")), Common::U32String(""), GUI::kOKCmd);
+	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", (_("~C~ancel")), Common::U32String(""), GUI::kCloseCmd);
 
 #ifdef GUI_ENABLE_KEYSDIALOG
 	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), 0, kKeysCmd);
@@ -408,7 +408,7 @@ ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Com
 	for (iter = _options.begin(); iter != _options.end(); ++iter, ++i) {
 		Common::String id = Common::String::format("%d", i);
 		_checkboxes.push_back(new CheckboxWidget(widgetsBoss(),
-			_dialogLayout + ".customOption" + id + "Checkbox", Common::convertToU32String(_(iter->label)), _(iter->tooltip)));
+			_dialogLayout + ".customOption" + id + "Checkbox", (_(iter->label)), _(iter->tooltip)));
 	}
 }
 

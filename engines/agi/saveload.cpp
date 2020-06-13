@@ -756,7 +756,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Save game:")), Common::convertToU32String(("Save")), true);
+		dialog = new GUI::SaveLoadChooser((_("Save game:")), Common::convertToU32String(("Save")), true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
@@ -769,7 +769,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 		if (desc.size() > 28)
 			desc = Common::U32String(desc.c_str(), 28);
 	} else {
-		dialog = new GUI::SaveLoadChooser(Common::convertToU32String(_("Restore game:")), Common::convertToU32String(_("Restore")), false);
+		dialog = new GUI::SaveLoadChooser((_("Restore game:")), (_("Restore")), false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 

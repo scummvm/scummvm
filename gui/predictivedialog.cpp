@@ -68,10 +68,10 @@ enum {
 };
 
 PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
-	new StaticTextWidget(this, "Predictive.Headline", Common::convertToU32String"Enter Text"));
+	new StaticTextWidget(this, "Predictive.Headline", Common::convertToU32String("Enter Text"));
 
-	_button[kCancelAct] =  new ButtonWidget(this, "Predictive.Cancel",  Common::convertToU32String_("Cancel"))   , nullptr, kCancelCmd);
-	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      Common::convertToU32String_("Ok"))       , nullptr, kOkCmd);
+	_button[kCancelAct] =  new ButtonWidget(this, "Predictive.Cancel",  Common::convertToU32String_("Cancel"))   , Common::U32String(""), kCancelCmd);
+	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      Common::convertToU32String_("Ok"))       , Common::U32String(""), kOkCmd);
 
 	if (g_gui.useRTL()) {
 		/** If using RTL, swap the internal name of odd columns, to be flipped again when drawing.
@@ -79,32 +79,32 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 			The rest, like okButton, cancel, etc are all flipped.
 		*/
 
-		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button1", Common::convertToU32String("3  def"      ), nullptr, kBut3Cmd);
-		_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", Common::convertToU32String("2  abc"      ), nullptr, kBut2Cmd);
-		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button3", Common::convertToU32String("1  `-.&"     ), nullptr, kBut1Cmd);
-		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button4", Common::convertToU32String("6  mno"      ), nullptr, kBut6Cmd);
-		_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", Common::convertToU32String("5  jkl"      ), nullptr, kBut5Cmd);
-		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button6", Common::convertToU32String("4  ghi"      ), nullptr, kBut4Cmd);
-		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button7", Common::convertToU32String("9  wxyz"     ), nullptr, kBut9Cmd);
-		_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", Common::convertToU32String("8  tuv"      ), nullptr, kBut8Cmd);
-		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button9", Common::convertToU32String("7  pqrs"     ), nullptr, kBut7Cmd);
-		_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", Common::convertToU32String("0"           ), nullptr, kBut0Cmd);
+		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button1", Common::convertToU32String("3  def"      ), Common::U32String(""), kBut3Cmd);
+		_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", Common::convertToU32String("2  abc"      ), Common::U32String(""), kBut2Cmd);
+		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button3", Common::convertToU32String("1  `-.&"     ), Common::U32String(""), kBut1Cmd);
+		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button4", Common::convertToU32String("6  mno"      ), Common::U32String(""), kBut6Cmd);
+		_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", Common::convertToU32String("5  jkl"      ), Common::U32String(""), kBut5Cmd);
+		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button6", Common::convertToU32String("4  ghi"      ), Common::U32String(""), kBut4Cmd);
+		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button7", Common::convertToU32String("9  wxyz"     ), Common::U32String(""), kBut9Cmd);
+		_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", Common::convertToU32String("8  tuv"      ), Common::U32String(""), kBut8Cmd);
+		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button9", Common::convertToU32String("7  pqrs"     ), Common::U32String(""), kBut7Cmd);
+		_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", Common::convertToU32String("0"           ), Common::U32String(""), kBut0Cmd);
 	} else {
-		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", Common::convertToU32String("1  `-.&"     ), nullptr, kBut1Cmd);
-		_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", Common::convertToU32String("2  abc"      ), nullptr, kBut2Cmd);
-		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", Common::convertToU32String("3  def"      ), nullptr, kBut3Cmd);
-		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", Common::convertToU32String("4  ghi"      ), nullptr, kBut4Cmd);
-		_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", Common::convertToU32String("5  jkl"      ), nullptr, kBut5Cmd);
-		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", Common::convertToU32String("6  mno"      ), nullptr, kBut6Cmd);
-		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", Common::convertToU32String("7  pqrs"     ), nullptr, kBut7Cmd);
-		_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", Common::convertToU32String("8  tuv"      ), nullptr, kBut8Cmd);
-		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", Common::convertToU32String("9  wxyz"     ), nullptr, kBut9Cmd);
-		_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", Common::convertToU32String("0"           ), nullptr, kBut0Cmd);
+		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", Common::convertToU32String("1  `-.&"     ), Common::U32String(""), kBut1Cmd);
+		_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", Common::convertToU32String("2  abc"      ), Common::U32String(""), kBut2Cmd);
+		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", Common::convertToU32String("3  def"      ), Common::U32String(""), kBut3Cmd);
+		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", Common::convertToU32String("4  ghi"      ), Common::U32String(""), kBut4Cmd);
+		_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", Common::convertToU32String("5  jkl"      ), Common::U32String(""), kBut5Cmd);
+		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", Common::convertToU32String("6  mno"      ), Common::U32String(""), kBut6Cmd);
+		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", Common::convertToU32String("7  pqrs"     ), Common::U32String(""), kBut7Cmd);
+		_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", Common::convertToU32String("8  tuv"      ), Common::U32String(""), kBut8Cmd);
+		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", Common::convertToU32String("9  wxyz"     ), Common::U32String(""), kBut9Cmd);
+		_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", Common::convertToU32String("0"           ), Common::U32String(""), kBut0Cmd);
 	}
 
 	// I18N: You must leave "#" as is, only word 'next' is translatable
-	_button[kNextAct] =    new ButtonWidget(this, "Predictive.Next",    Common::convertToU32String(_("#  next"))  , nullptr, kNextCmd);
-	_button[kAddAct] =     new ButtonWidget(this, "Predictive.Add",     Common::convertToU32String(_("add"))      , nullptr, kAddCmd);
+	_button[kNextAct] =    new ButtonWidget(this, "Predictive.Next",    (_("#  next"))  , Common::U32String(""), kNextCmd);
+	_button[kAddAct] =     new ButtonWidget(this, "Predictive.Add",     (_("add"))      , Common::U32String(""), kAddCmd);
 	_button[kAddAct]->setEnabled(false);
 
 #ifndef DISABLE_FANCY_THEMES
@@ -114,10 +114,10 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
 	} else
 #endif
-		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , Common::convertToU32String(_("<")) , nullptr, kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , (_("<")) , Common::U32String(""), kDelCmd);
 	// I18N: Pre means 'Predictive', leave '*' as is
-	_button[kModeAct] = new ButtonWidget(this, "Predictive.Pre", Common::convertToU32String(_("*  Pre")), nullptr, kModeCmd);
-	_editText = new EditTextWidget(this, "Predictive.Word", _search, nullptr, 0, 0);
+	_button[kModeAct] = new ButtonWidget(this, "Predictive.Pre", _("*  Pre"), Common::U32String(""), kModeCmd);
+	_editText = new EditTextWidget(this, "Predictive.Word", _search, Common::U32String(""), 0, 0);
 
 	_userDictHasChanged = false;
 
@@ -190,7 +190,7 @@ void PredictiveDialog::reflowLayout() {
 		((PicButtonWidget *)_button[kDelAct])->useThemeTransparency(true);
 		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
 	} else {
-		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , Common::convertToU32String(_("<")) , nullptr, kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , (_("<")) , Common::U32String(""), kDelCmd);
 	}
 #endif
 
@@ -485,7 +485,7 @@ void PredictiveDialog::processButton(ButtonId button) {
 		"next",    "add",
 		"<",
 		"Cancel",  "OK",
-		"Pre", "(0) ", nullptr
+		"Pre", "(0) ", ""
 	};
 
 	if (_mode == kModeAbc) {
@@ -603,13 +603,13 @@ void PredictiveDialog::processButton(ButtonId button) {
 			if (_mode > kModeAbc) {
 				_mode = kModePre;
 				// I18N: Pre means 'Predictive', leave '*' as is
-				_button[kModeAct]->setLabel(Common::convertToU32String(_("*  Pre")));
+				_button[kModeAct]->setLabel((_("*  Pre")));
 			} else if (_mode == kModeNum) {
 				// I18N: 'Num' means Numbers
-				_button[kModeAct]->setLabel(Common::convertToU32String(_("*  Num")));
+				_button[kModeAct]->setLabel((_("*  Num")));
 			} else {
 				// I18N: 'Abc' means Latin alphabet input
-				_button[kModeAct]->setLabel(Common::convertToU32String(_("*  Abc")));
+				_button[kModeAct]->setLabel((_("*  Abc")));
 				_button[kAddAct]->setEnabled(true);
 			}
 
@@ -1024,7 +1024,7 @@ void PredictiveDialog::loadAllDictionary(Dict &dict) {
 void PredictiveDialog::pressEditText() {
 	Common::strlcpy(_predictiveResult, _prefix.c_str(), sizeof(_predictiveResult));
 	Common::strlcat(_predictiveResult, _currentWord.c_str(), sizeof(_predictiveResult));
-	_editText->setEditString(Common::convertToU32String(_predictiveResult));
+	_editText->setEditString(Common::convertToU32String((_predictiveResult)));
 	//_editText->setCaretPos(_prefix.size() + _currentWord.size());
 	_editText->markAsDirty();
 }

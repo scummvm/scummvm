@@ -41,7 +41,7 @@ public:
 	static bool hasPermittedPrefix(const Common::String &path);
 	static bool permittedPath(const Common::String path);
 
-	static Common::String toUtf8(const char*);
+	static Common::String toUtf8(const char *);
 
 	static void setMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");
 	static void setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");

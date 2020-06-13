@@ -46,11 +46,11 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	Dialog("GlobalOptions_Cloud_DownloadDialog"), _launcher(launcher), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
-	_browser = new BrowserDialog(Common::convertToU32String(_("Select directory where to download game data")), true);
+	_browser = new BrowserDialog((_("Select directory where to download game data")), true);
 	_remoteBrowser = new RemoteBrowserDialog(_("Select directory with game data"));
 
-	_remoteDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.RemoteDirectory", Common::convertToU32String(_("From: ")));
-	_localDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.LocalDirectory", Common::convertToU32String(_("To: ")));
+	_remoteDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.RemoteDirectory", (_("From: ")));
+	_localDirectoryLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.LocalDirectory", (_("To: ")));
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
 	_progressBar = new SliderWidget(this, "GlobalOptions_Cloud_DownloadDialog.ProgressBar");
 	_progressBar->setMinValue(0);
@@ -61,11 +61,11 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", Common::convertToU32String(""));
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", Common::convertToU32String(""));
 	if (g_system->getOverlayWidth() > 320)
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", Common::convertToU32String(_("Cancel download")), nullptr, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", (_("Cancel download")), Common::U32String(""), kDownloadDialogButtonCmd);
 	else
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", Common::convertToU32String(_c("Cancel download", "lowres")), nullptr, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", (_c("Cancel download", "lowres")), Common::U32String(""), kDownloadDialogButtonCmd);
 
-	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", Common::convertToU32String(_("Hide")), nullptr, kCloseCmd);
+	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", (_("Hide")), Common::U32String(""), kCloseCmd);
 	refreshWidgets();
 
 	CloudMan.setDownloadTarget(this);
@@ -149,7 +149,7 @@ bool DownloadDialog::selectDirectories() {
 				return false;
 			}
 			GUI::MessageDialog alert(
-				Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
+				Common::String::format(Common::convertFromU32String(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?")).c_str(), remoteDirectory.name().c_str()),
 				_("Yes"),
 				_("No")
 				);
@@ -208,18 +208,18 @@ void DownloadDialog::reflowLayout() {
 	refreshWidgets();
 }
 
-Common::String DownloadDialog::getSizeLabelText() {
+Common::U32String DownloadDialog::getSizeLabelText() {
 	Common::String downloaded, downloadedUnits, total, totalUnits;
 	downloaded = getHumanReadableBytes(CloudMan.getDownloadBytesNumber(), downloadedUnits);
 	total = getHumanReadableBytes(CloudMan.getDownloadTotalBytesNumber(), totalUnits);
-	return Common::String::format(_("Downloaded %s %s / %s %s"), downloaded.c_str(), _(downloadedUnits.c_str()), total.c_str(), _(totalUnits.c_str()));
+	return Common::U32String::format(Common::convertFromU32String(_("Downloaded %s %s / %s %s")).c_str(), downloaded.c_str(), _(downloadedUnits.c_str()), total.c_str(), _(totalUnits.c_str()));
 }
 
-Common::String DownloadDialog::getSpeedLabelText() {
+Common::U32String DownloadDialog::getSpeedLabelText() {
 	Common::String speed, speedUnits;
 	speed = getHumanReadableBytes(CloudMan.getDownloadSpeed(), speedUnits);
 	speedUnits += "/s";
-	return Common::String::format(_("Download speed: %s %s"), speed.c_str(), _(speedUnits.c_str()));
+	return Common::U32String::format(_("Download speed: %s %s").encode().c_str(), speed.c_str(), _(speedUnits).encode().c_str());
 }
 
 void DownloadDialog::refreshWidgets() {

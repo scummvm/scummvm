@@ -41,12 +41,12 @@ enum {
 	kGoUpCmd = 'GoUp'
 };
 
-RemoteBrowserDialog::RemoteBrowserDialog(const char *title):
+RemoteBrowserDialog::RemoteBrowserDialog(const Common::U32String &title):
 	Dialog("Browser"), _navigationLocked(false), _updateList(false), _showError(false),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
-	new StaticTextWidget(this, "Browser.Headline", Common::convertToU32String(title));
+	new StaticTextWidget(this, "Browser.Headline", title);
 	_currentPath = new StaticTextWidget(this, "Browser.Path", Common::convertToU32String("DUMMY"));
 
 	_fileList = new ListWidget(this, "Browser.List");
@@ -54,11 +54,11 @@ RemoteBrowserDialog::RemoteBrowserDialog(const char *title):
 	_fileList->setEditable(false);
 
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(this, "Browser.Up", Common::convertToU32String(_("Go up")), _("Go to previous directory level"), kGoUpCmd);
+		new ButtonWidget(this, "Browser.Up", (_("Go up")), _("Go to previous directory level"), kGoUpCmd);
 	else
-		new ButtonWidget(this, "Browser.Up", Common::convertToU32String(_c("Go up", "lowres")), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", Common::convertToU32String(_("Cancel")), nullptr, kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", Common::convertToU32String(_("Choose")), nullptr, kChooseCmd);
+		new ButtonWidget(this, "Browser.Up", (_c("Go up", "lowres")), _("Go to previous directory level"), kGoUpCmd);
+	new ButtonWidget(this, "Browser.Cancel", (_("Cancel")), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", (_("Choose")), Common::U32String(""), kChooseCmd);
 }
 
 RemoteBrowserDialog::~RemoteBrowserDialog() {

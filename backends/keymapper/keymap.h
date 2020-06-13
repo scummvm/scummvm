@@ -80,7 +80,7 @@ public:
 
 	typedef Array<Action *> ActionArray;
 
-	Keymap(KeymapType type, const String &id, const String &description);
+	Keymap(KeymapType type, const String &id, const U32String &description);
 	~Keymap();
 	void setConfigDomain(ConfigManager::Domain *configDomain);
 	void setHardwareInputs(HardwareInputSet *hardwareInputSet);
@@ -155,7 +155,7 @@ public:
 	void saveMappings();
 
 	const String &getId() const { return _id; }
-	const String &getDescription() const { return _description; }
+	const U32String &getDescription() const { return _description; }
 	KeymapType getType() const { return _type; }
 
 	/**
@@ -180,7 +180,7 @@ private:
 
 	KeymapType _type;
 	String _id;
-	String _description;
+	U32String _description;
 
 	bool _enabled;
 

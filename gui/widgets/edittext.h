@@ -41,8 +41,8 @@ protected:
 	int				_rightPadding;
 
 public:
-	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &text, const char *tooltip = nullptr, uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
-	EditTextWidget(GuiObject *boss, const String &name, const U32String &text, const char *tooltp = nullptr, uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
+	EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const U32String &text, Common::U32String tooltip = Common::U32String(""), uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
+	EditTextWidget(GuiObject *boss, const String &name, const U32String &text, Common::U32String tooltip = Common::U32String(""), uint32 cmd = 0, uint32 finishCmd = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleNormal);
 
 	void setEditString(const U32String &str) override;
 

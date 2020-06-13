@@ -112,25 +112,14 @@ public:
 	 * message. In case the message isn't found in the translation catalog,
 	 * it returns the original untranslated message.
 	 */
-	const char *getTranslation(const char *message) const;
+	U32String getTranslation(const char *message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
 	 * it returns the original untranslated message.
 	 */
-	String getTranslation(const String &message) const;
-
-	/**
-	 * Returns the translation into the current language of the parameter
-	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
-	 *
-	 * If a translation is found for the given context it will return that
-	 * translation, otherwise it will look for a translation for the same
-	 * massage without a context or with a different context.
-	 */
-	const char *getTranslation(const char *message, const char *context) const;
+	U32String getTranslation(const String &message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
@@ -141,7 +130,18 @@ public:
 	 * translation, otherwise it will look for a translation for the same
 	 * massage without a context or with a different context.
 	 */
-	String getTranslation(const String &message, const String &context) const;
+	U32String getTranslation(const char *message, const char *context) const;
+
+	/**
+	 * Returns the translation into the current language of the parameter
+	 * message. In case the message isn't found in the translation catalog,
+	 * it returns the original untranslated message.
+	 *
+	 * If a translation is found for the given context it will return that
+	 * translation, otherwise it will look for a translation for the same
+	 * massage without a context or with a different context.
+	 */
+	U32String getTranslation(const String &message, const String &context) const;
 
 	/**
 	 * Returns a list of supported languages.
