@@ -266,6 +266,13 @@ Common::Rect Sprite::getBbox() {
 		result.translate(offsetx, offsety);
 	}
 
+	if (_puppet && _stretch) {
+		// TODO: Properly align the bounding box
+
+		result.setHeight(_height);
+		result.setWidth(_width);
+	}
+
 	return result;
 }
 

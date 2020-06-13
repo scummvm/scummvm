@@ -37,11 +37,11 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 
 	switch (ink) {
 	case kInkTypeCopy:
-			_surface->transBlitFrom(spriteSurface, Common::Point(t.left, t.top), *maskSurface);
+		_surface->transBlitFrom(spriteSurface, Common::Rect(spriteSurface.w, spriteSurface.h), t, 0, false, 0, 0xff, &maskSurface->rawSurface(), true);
 		break;
 	case kInkTypeTransparent:
 		// FIXME: is it always white (last entry in pallette)?
-		_surface->transBlitFrom(spriteSurface, Common::Point(t.left, t.top), _vm->getPaletteColorCount() - 1);
+		_surface->transBlitFrom(spriteSurface, Common::Rect(spriteSurface.w, spriteSurface.h), t, _vm->getPaletteColorCount() - 1);
 		break;
 	case kInkTypeBackgndTrans:
 		drawBackgndTransSprite(spriteSurface, t, spriteId);

@@ -177,7 +177,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"right",		kTheRight,		2 },// D2 p
 	{ kTheSprite,	"scoreColor",	kTheScoreColor,	4 },//				D4 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum,	4 },//				D4 p
-	{ kTheSprite,	"stretch",		kTheStrech,		2 },// D2 p
+	{ kTheSprite,	"stretch",		kTheStretch,		2 },// D2 p
 	{ kTheSprite,	"top",			kTheTop,		2 },// D2 p
 	{ kTheSprite,	"trails",		kTheTrails,		3 },//		D3.1 p
 	{ kTheSprite,	"type",			kTheType,		2 },// D2 p
@@ -833,7 +833,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_foreColor = d.asInt();
 		break;
 	case kTheHeight:
-		sprite->_height = d.asInt();
+		if (sprite->_puppet && sprite->_stretch) {
+			sprite->_height = d.asInt();
+		}
 		break;
 	case kTheImmediate:
 		sprite->_immediate = d.asInt();
@@ -897,7 +899,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_volume = d.asInt();
 		break;
 	case kTheWidth:
-		sprite->_width = d.asInt();
+		if (sprite->_puppet && sprite->_stretch) {
+			sprite->_width = d.asInt();
+		}
 		break;
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
