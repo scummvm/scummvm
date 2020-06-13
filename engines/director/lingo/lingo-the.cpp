@@ -950,16 +950,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	switch (field) {
 	case kTheBackColor:
-		{
-			if (castType != kCastShape) {
-				warning("Lingo::getTheCast(): Field \"%s\" of cast %d not found", field2str(field), id);
-				d.type = VOID;
-				return d;
-			}
-
-			ShapeCast *shape = (ShapeCast *)member;
-			d.u.i = shape->_bgCol;
-		}
+		member->getColors(nullptr, &d.u.i);
 		break;
 	case kTheCastType:
 		d.u.i = castType;
@@ -968,16 +959,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d = Datum(castInfo->fileName);
 		break;
 	case kTheForeColor:
-		{
-			if (castType != kCastShape) {
-				warning("Lingo::getTheCast(): Field \"%s\" of cast %d not found", field2str(field), id);
-				d.type = VOID;
-				return d;
-			}
-
-			ShapeCast *shape = (ShapeCast *)member;
-			d.u.i = shape->_fgCol;
-		}
+		member->getColors(&d.u.i, nullptr);
 		break;
 	case kTheHeight:
 		d.u.i = score->getCastMemberInitialRect(id).height();
@@ -1046,17 +1028,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	CastInfo *castInfo = score->_castsInfo[id];
 
 	switch (field) {
-	case kTheBackColor:
-		{
-			if (castType != kCastShape) {
-				warning("Lingo::setTheCast(): Field \"%s\" of cast %d not found", field2str(field), id);
-			}
-			ShapeCast *shape = (ShapeCast *)member;
-
-			shape->_bgCol = d.asInt();
-			shape->_modified = 1;
-		}
+	case kTheBackColor: {
+		int color = _vm->transformColor(d.asInt());
+		member->setColors(nullptr, &color);
 		break;
+	}
 	case kTheCastType:
 		// TODO: You can actually switch the cast type!?
 		warning("Lingo::setTheCast(): Tried to switch cast type of %d", id);
@@ -1070,17 +1046,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		castInfo->fileName = d.asString();
 		break;
-	case kTheForeColor:
-		{
-			if (castType != kCastShape) {
-				warning("Lingo::setTheCast(): Field \"%s\" of cast %d not found", field2str(field), id);
-				return;
-			}
-			ShapeCast *shape = (ShapeCast *)member;
-			shape->_fgCol = d.u.i;
-			shape->_modified = 1;
-		}
+	case kTheForeColor: {
+		int color = _vm->transformColor(d.asInt());
+		member->setColors(&color, nullptr);
 		break;
+	}
 	case kTheHeight:
 		score->getCastMemberInitialRect(id).setHeight(d.asInt());
 		score->setCastMemberModified(id);

@@ -59,6 +59,9 @@ public:
 	virtual bool isModified() { return _modified; }
 	virtual void createWidget();
 
+	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
+	virtual void getColors(int *fgcolor, int *bgcolor) { return; }
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
@@ -75,6 +78,7 @@ public:
 	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
 	~BitmapCast();
 	virtual void createWidget() override;
+	// virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	Image::ImageDecoder *_img;
 
@@ -116,6 +120,8 @@ public:
 class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
+	virtual void setColors(int *fgcolor, int *bgcolor) override;
+	virtual void getColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);
 	virtual void createWidget() override;

@@ -297,6 +297,28 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButt
 	_modified = true;
 }
 
+void TextCast::setColors(int *fgcolor, int *bgcolor) {
+	if (!_widget)
+		return;
+
+	if (fgcolor)
+		_fgcolor = *fgcolor;
+
+	if (bgcolor)
+		_bgcolor = *bgcolor;
+
+	_widget->setColors(_fgcolor, _bgcolor);
+	((Graphics::MacText *)_widget)->_fullRefresh = true;
+}
+
+void TextCast::getColors(int *fgcolor, int *bgcolor) {
+	if (fgcolor)
+		*fgcolor = _fgcolor;
+
+	if (bgcolor)
+		*bgcolor = _bgcolor;
+}
+
 Graphics::TextAlign TextCast::getAlignment() {
 	switch (_textAlign) {
 	case kTextAlignRight:
