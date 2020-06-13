@@ -367,7 +367,7 @@ void MidiParser::stopPlaying() {
 }
 
 bool MidiParser::startPlaying() {
-	if (_activeTrack < 0 || _activeTrack >= _numTracks)
+	if (_activeTrack >= _numTracks)
 		return false;
 	if (!_position._playPos) {
 		_position._playPos = _tracks[_activeTrack];

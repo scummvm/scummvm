@@ -133,14 +133,14 @@ uint32 MidiParser_XMIDI::read4low(byte *&data) {
 }
 
 bool MidiParser_XMIDI::hasJumpIndex(uint8 index) {
-	if (_activeTrack < 0 || _activeTrack >= _numTracks)
+	if (_activeTrack >= _numTracks)
 		return false;
 
 	return index < MAXIMUM_TRACK_BRANCHES && _trackBranches[_activeTrack][index] != 0;
 }
 
 bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
-	if (_activeTrack < 0 || _activeTrack >= _numTracks)
+	if (_activeTrack >= _numTracks)
 		return false;
 
 	if (index >= MAXIMUM_TRACK_BRANCHES || _trackBranches[_activeTrack][index] == 0) {
