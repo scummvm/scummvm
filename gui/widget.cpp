@@ -404,9 +404,9 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 	} else
 #endif
 		if (!name.empty())
-			button = new ButtonWidget(boss, name, Common::convertToU32String("C"), (_("Clear value")), cmd);
+			button = new ButtonWidget(boss, name, Common::U32String("C"), (_("Clear value")), cmd);
 		else
-			button = new ButtonWidget(boss, x, y, w, h, Common::convertToU32String("C"), (_("Clear value")), cmd);
+			button = new ButtonWidget(boss, x, y, w, h, Common::U32String("C"), (_("Clear value")), cmd);
 
 	return button;
 }
@@ -536,7 +536,7 @@ void DropdownButtonWidget::drawWidget() {
 #pragma mark -
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, Common::U32String tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, Common::convertToU32String(""), tooltip, cmd, hotkey),
+	: ButtonWidget(boss, x, y, w, h, Common::U32String(""), tooltip, cmd, hotkey),
 	  _alpha(255), _transparency(false), _showButton(true) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
@@ -544,7 +544,7 @@ PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, Co
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, Common::U32String tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, name, Common::convertToU32String(""), tooltip, cmd, hotkey),
+	: ButtonWidget(boss, name, Common::U32String(""), tooltip, cmd, hotkey),
 	  _alpha(255), _transparency(false), _showButton(true) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -584,7 +584,7 @@ void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
 
 void PicButtonWidget::drawWidget() {
 	if (_showButton)
-		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), Common::convertToU32String(""), _state, getFlags());
+		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(""), _state, getFlags());
 
 	Graphics::Surface *gfx;
 

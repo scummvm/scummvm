@@ -129,9 +129,9 @@ void LauncherDialog::build() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 
-		new StaticTextWidget(this, "Launcher.Version", Common::convertToU32String(gScummVMVersionDate));
+		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate));
 	} else
-		new StaticTextWidget(this, "Launcher.Version", Common::convertToU32String(gScummVMFullVersion));
+		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
 #else
 	// Show ScummVM version
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
@@ -677,7 +677,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
-		_searchWidget->setEditString(Common::convertToU32String(""));
+		_searchWidget->setEditString(Common::U32String(""));
 		_list->setFilter("");
 		break;
 	default:
@@ -718,7 +718,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(Common::convertToU32String(gScummVMVersionDate));
+			ver->setLabel(Common::U32String(gScummVMVersionDate));
 		}
 
 		if (!_logo)
@@ -729,7 +729,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(Common::convertToU32String(gScummVMFullVersion));
+			ver->setLabel(Common::U32String(gScummVMFullVersion));
 		}
 
 		if (_logo) {

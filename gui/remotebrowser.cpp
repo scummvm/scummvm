@@ -47,7 +47,7 @@ RemoteBrowserDialog::RemoteBrowserDialog(const Common::U32String &title):
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	new StaticTextWidget(this, "Browser.Headline", title);
-	_currentPath = new StaticTextWidget(this, "Browser.Path", Common::convertToU32String("DUMMY"));
+	_currentPath = new StaticTextWidget(this, "Browser.Path", Common::U32String("DUMMY"));
 
 	_fileList = new ListWidget(this, "Browser.List");
 	_fileList->setNumberingMode(kListNumberingOff);

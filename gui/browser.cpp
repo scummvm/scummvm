@@ -62,7 +62,7 @@ BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 	new StaticTextWidget(this, "Browser.Headline", title);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new EditTextWidget(this, "Browser.Path", Common::convertToU32String(""), Common::U32String(""), 0, kPathEditedCmd);
+	_currentPath = new EditTextWidget(this, "Browser.Path", Common::U32String(""), Common::U32String(""), 0, kPathEditedCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");

@@ -49,7 +49,7 @@ enum {
 };
 
 SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground): Dialog("SaveLoadCloudSyncProgress"), _close(false) {
-	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", Common::convertToU32String("Downloading saves..."));
+	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", Common::U32String("Downloading saves..."));
 	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
 	_progressBar = new SliderWidget(this, "SaveLoadCloudSyncProgress.ProgressBar");
 	_progressBar->setMinValue(0);
@@ -57,8 +57,8 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.PercentText", Common::String::format("%u %%", progress));
-	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", Common::convertToU32String("Cancel"), Common::U32String(""), kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
-	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", Common::convertToU32String("Run in background"), Common::U32String(""), kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
+	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", Common::U32String("Cancel"), Common::U32String(""), kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", Common::U32String("Run in background"), Common::U32String(""), kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
 	g_gui.scheduleTopDialogRedraw();
 }
@@ -616,7 +616,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled saved game") &&
 					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
-				_list->setEditString(Common::convertToU32String(""));
+				_list->setEditString(Common::U32String(""));
 				_list->setEditColor(ThemeEngine::kFontColorNormal);
 			}
 		}

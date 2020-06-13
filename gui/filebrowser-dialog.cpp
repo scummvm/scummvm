@@ -49,7 +49,7 @@ FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtensio
 	new StaticTextWidget(this, "FileBrowser.Headline", title ? Common::convertToU32String(title) :
 					mode == kFBModeLoad ? (_("Choose file for loading")) : (_("Enter filename for saving")));
 
-	_fileName = new EditTextWidget(this, "FileBrowser.Filename", Common::convertToU32String(""));
+	_fileName = new EditTextWidget(this, "FileBrowser.Filename", Common::U32String(""));
 
 	if (mode == kFBModeLoad)
 		_fileName->setEnabled(false);
