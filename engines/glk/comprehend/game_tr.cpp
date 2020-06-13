@@ -34,7 +34,7 @@ enum RoomId {
 };
 
 enum RoomFlag {
-	ROOMFLAG_OUTSIDE = 1 << 0,
+	ROOMFLAG_FOREST = 1 << 0,
 	ROOMFLAG_WEREWOLF = 1 << 6,
 	ROOMFLAG_VAMPIRE = 1 << 7
 };
@@ -69,7 +69,7 @@ static const GameStrings TR_STRINGS = {
 
 
 TransylvaniaGame::TransylvaniaGame() : ComprehendGame(),
-		_randomActionThreshold(39) {
+		_miceReleased(false) {
 	_gameDataFile = "tr.gda";
 
 	_stringFiles.push_back(StringFile("MA.MS1", 0x88));
@@ -143,36 +143,34 @@ int TransylvaniaGame::roomIsSpecial(unsigned room_index,
 	return ROOM_IS_NORMAL;
 }
 
-bool TransylvaniaGame::beforeTurn() {
+void TransylvaniaGame::beforeTurn() {
 	if (!isMonsterInRoom(&WEREWOLF) && !isMonsterInRoom(&VAMPIRE)) {
 		if (_currentRoom == ROOM_CLAY_HUT) {
 			Item *blackCat = get_item(ITEM_BLACK_CAT);
 			if (blackCat->_room == _currentRoom && getRandomNumber(255) >= 128)
-				console_println(_strings2[109].c_str());
-			return true;
+				console_println(_strings[109].c_str());
+			return;
 
 		} else if (_currentRoom == ROOM_FIELD) {
 			Item *goblin = get_item(ITEM_GOBLIN);
 			if (goblin->_room == _currentRoom)
-				console_println(_strings2[94 + getRandomNumber(3)].c_str());
-			return true;
+				console_println(_strings[94 + getRandomNumber(3)].c_str());
+			return;
 
 		}
 	}
 
 	if (updateMonster(&WEREWOLF) || updateMonster(&VAMPIRE))
-		return true;
+		return;
 
 	Room *room = &_rooms[_currentRoom];
-	if (!(room->_flags & ROOMFLAG_OUTSIDE) && (_variables[VAR_TURN_COUNT] % 255) >= 4
-			&& getRandomNumber(255) < _randomActionThreshold) {
-		// TODO: This looks suspect in the original. Since the threshold is only
-		// ever 39 or 43.. was still meant to be a random range of possible responses
-		int stringNum = 98 + (_randomActionThreshold / 4);
+	if (!(room->_flags & ROOMFLAG_FOREST) && (_variables[VAR_TURN_COUNT] % 255) >= 4
+			&& getRandomNumber(255) < 40) {
+		int stringNum = _miceReleased ? 108 : 107;
 		console_println(_strings[stringNum].c_str());
 
-		// Extra stuff for eagle seizing player
-		if (stringNum == 107) {
+		// Until the mice are released, an eagle moves player to a random room
+		if (!_miceReleased) {
 			// Get new room to get moved to
 			int roomNum = getRandomNumber(3) + 1;
 			if (roomNum == _currentRoom)
@@ -185,15 +183,18 @@ bool TransylvaniaGame::beforeTurn() {
 			get_item(ITEM_VAMPIRE)->_room = 0xff;
 		}
 	}
+}
 
-	return false;
+void TransylvaniaGame::synchronizeSave(Common::Serializer &s) {
+	ComprehendGame::synchronizeSave(s);
+	s.syncAsByte(_miceReleased);
 }
 
 void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 1:
-		// Called when the mice are dropped and the cat chases them
-		_randomActionThreshold = 43;
+		// Flag that the mice have been released
+		_miceReleased = true;
 		break;
 
 	case 2:

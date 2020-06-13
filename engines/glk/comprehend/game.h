@@ -89,9 +89,7 @@ public:
 
 	virtual void beforeGame() {}
 	virtual void beforePrompt() {}
-	virtual bool beforeTurn() {
-		return false;
-	}
+	virtual void beforeTurn() {}
 	virtual bool afterTurn() {
 		return false;
 	}
@@ -100,7 +98,7 @@ public:
 	}
 	virtual void handleSpecialOpcode(uint8 operand) {}
 
-	void synchronizeSave(Common::Serializer &s);
+	virtual void synchronizeSave(Common::Serializer &s);
 
 	Common::String stringLookup(uint16 index);
 	Common::String instrStringLookup(uint8 index, uint8 table);

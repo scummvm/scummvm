@@ -33,7 +33,7 @@ public:
 	OOToposGame();
 	~OOToposGame() override {}
 
-	bool beforeTurn() override;
+	void beforeTurn() override;
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
 	void handleSpecialOpcode(uint8 operand) override;
 };

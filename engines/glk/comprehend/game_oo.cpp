@@ -79,7 +79,7 @@ int OOToposGame::roomIsSpecial(unsigned room_index,
 	return ROOM_IS_NORMAL;
 }
 
-bool OOToposGame::beforeTurn() {
+void OOToposGame::beforeTurn() {
 	// FIXME: Probably doesn't work correctly with restored games
 	static bool flashlight_was_on = false, googles_were_worn = false;
 	Room *room = &_rooms[_currentRoom];
@@ -103,8 +103,6 @@ bool OOToposGame::beforeTurn() {
 		googles_were_worn = _flags[OO_FLAG_WEARING_GOGGLES];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
-
-	return false;
 }
 
 void OOToposGame::handleSpecialOpcode(uint8 operand) {

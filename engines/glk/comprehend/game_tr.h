@@ -34,7 +34,7 @@ class TransylvaniaGame : public ComprehendGame {
 private:
 	static const TransylvaniaMonster WEREWOLF;
 	static const TransylvaniaMonster VAMPIRE;
-	byte _randomActionThreshold;
+	bool _miceReleased;
 
 	bool updateMonster(const TransylvaniaMonster *monsterInfo);
 	bool isMonsterInRoom(const TransylvaniaMonster *monsterInfo);
@@ -43,7 +43,8 @@ public:
 	~TransylvaniaGame() override {}
 
 	void beforeGame() override;
-	bool beforeTurn() override;
+	void beforeTurn() override;
+	void synchronizeSave(Common::Serializer &s) override;
 	int roomIsSpecial(unsigned room_index, unsigned *roomDescString) override;
 	void handleSpecialOpcode(uint8 operand) override;
 };
