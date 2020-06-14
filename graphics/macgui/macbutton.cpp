@@ -164,4 +164,8 @@ bool MacButton::processEvent(Common::Event &event) {
 	return false;
 }
 
+Common::Point MacButton::calculateOffset() {
+	return Common::Point(_alignOffset.x + _border + _gutter, _alignOffset.y + _border + _gutter/2);
+}
+
 } // End of namespace Graphics
