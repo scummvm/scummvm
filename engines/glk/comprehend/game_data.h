@@ -451,9 +451,7 @@ public:
 	}
 
 	void clearGame();
-	void loadGame();
-	//void restoreGame(ComprehendGame *game, const char *filename);
-	//void saveGame(const char *filename);
+	virtual void loadGame();
 };
 
 } // namespace Comprehend

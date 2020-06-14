@@ -273,5 +273,14 @@ void TransylvaniaGame::beforeGame() {
 	g_comprehend->setDisableSaves(false);
 }
 
+void TransylvaniaGame::loadGame() {
+	ComprehendGame::loadGame();
+
+	// TODO: Figure out why the corrupt string happened, since it could
+	// affect other strings
+	_strings2[192] = "envelopes the sarcophagus. In a violent blast, the lid flies off "
+		"and explodes in a cascade of glowing dust!";
+}
+
 } // namespace Comprehend
 } // namespace Glk
