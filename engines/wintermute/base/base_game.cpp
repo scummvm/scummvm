@@ -246,8 +246,6 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
-	delete _cachedThumbnail;
-
 	delete _mathClass;
 	delete _directoryClass;
 
@@ -263,8 +261,6 @@ BaseGame::~BaseGame() {
 	delete _renderer;
 	delete _musicSystem;
 	delete _settings;
-
-	_cachedThumbnail = nullptr;
 
 	_mathClass = nullptr;
 	_directoryClass = nullptr;
@@ -295,6 +291,8 @@ BaseGame::~BaseGame() {
 bool BaseGame::cleanup() {
 	delete _loadingIcon;
 	_loadingIcon = nullptr;
+
+	deleteSaveThumbnail();
 
 	_engineLogCallback = nullptr;
 	_engineLogCallbackData = nullptr;
