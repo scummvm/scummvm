@@ -81,19 +81,21 @@ bool Score::loadArchive(bool isSharedCast) {
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
 	Common::SeekableSubReadStreamEndian *r = nullptr;
 
-	if (clutList.size() > 1)
-		warning("More than one palette was found (%d)", clutList.size());
+	if (!isSharedCast) {
+		if (clutList.size() > 1)
+			warning("More than one palette was found (%d)", clutList.size());
 
-	if (clutList.size() == 0) {
-		warning("CLUT resource not found, using default Mac palette");
-		_vm->setPalette(-1);
-	} else {
-		Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
+		if (clutList.size() == 0) {
+			warning("CLUT resource not found, using default Mac palette");
+			_vm->setPalette(-1);
+		} else {
+			Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
-		debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[0]);
-		loadPalette(*pal);
+			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[0]);
+			loadPalette(*pal);
 
-		delete pal;
+			delete pal;
+		}
 	}
 
 	// Font Directory
@@ -123,9 +125,11 @@ bool Score::loadArchive(bool isSharedCast) {
 		_stageColor = 1;
 	}
 
-	_window = _vm->_wm->addWindow(false, false, false);
-	_window->disableBorder();
-	_window->resize(_movieRect.width(), _movieRect.height());
+	if (!isSharedCast) {
+		_window = _vm->_wm->addWindow(false, false, false);
+		_window->disableBorder();
+		_window->resize(_movieRect.width(), _movieRect.height());
+	}
 
 	// Cast Information Array
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
