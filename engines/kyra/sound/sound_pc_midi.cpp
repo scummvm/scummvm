@@ -43,10 +43,12 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, 0);
 	assert(_music);
 	_music->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+	_music->property(MidiParser::mpDisableAutoStartPlayback, true);
 	for (int i = 0; i < 3; ++i) {
 		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, i + 1);
 		assert(_sfx[i]);
 		_sfx[i]->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+		_sfx[i]->property(MidiParser::mpDisableAutoStartPlayback, true);
 	}
 
 	_musicVolume = _sfxVolume = 0;
@@ -248,14 +250,12 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	_mFileName = file;
 
 	_music->loadMusic(_musicFile, fileSize);
-	_music->stopPlaying();
 
 	// Since KYRA1 uses the same file for SFX and Music
 	// we setup sfx to play from music file as well
 	if (_vm->game() == GI_KYRA1) {
 		for (int i = 0; i < 3; ++i) {
 			_sfx[i]->loadMusic(_musicFile, fileSize);
-			_sfx[i]->stopPlaying();
 		}
 	}
 }
@@ -304,6 +304,7 @@ void SoundMidiPC::playTrack(uint8 track) {
 	_output->setSourceVolume(0, _musicVolume);
 
 	_music->setTrack(track);
+	_music->startPlaying();
 }
 
 void SoundMidiPC::haltTrack() {
@@ -327,6 +328,7 @@ void SoundMidiPC::playSoundEffect(uint8 track, uint8) {
 	for (int i = 0; i < 3; ++i) {
 		if (!_sfx[i]->isPlaying()) {
 			_sfx[i]->setTrack(track);
+			_sfx[i]->startPlaying();
 			return;
 		}
 	}
