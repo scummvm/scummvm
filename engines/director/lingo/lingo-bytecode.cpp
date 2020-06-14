@@ -706,7 +706,7 @@ void LC::cb_zeropush() {
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &archName) {
 	debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
-	if (getScriptContext(type, id)) {
+	if (getScriptContext(archiveIndex, type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
 		// Abort on double definitions.
 		error("Script already defined for type %d, id %d", id, type);

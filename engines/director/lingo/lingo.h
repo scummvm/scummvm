@@ -315,7 +315,7 @@ public:
 
 	void restartLingo(bool keepSharedCast);
 
-	void addCode(const char *code, int archiveIndex, ScriptType type, uint16 id);
+	ScriptContext *addCode(const char *code, int archiveIndex, ScriptType type, uint16 id);
 	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex);
 	void executeHandler(const Common::String &name);
@@ -360,7 +360,7 @@ private:
 	Common::Queue<LingoEvent> _eventQueue;
 
 public:
-	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	ScriptContext *getScriptContext(int archiveIndex, ScriptType type, uint16 id);
 	Common::String getName(uint16 id);
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
@@ -372,7 +372,7 @@ public:
 
 public:
 	void execute(uint pc);
-	void pushContext(const Symbol *funcSym = nullptr, bool newVarFrame = true);
+	void pushContext(const Symbol *funcSym = nullptr, bool preserveVarFrame = false);
 	void popContext();
 	void cleanLocalVars();
 	int castIdFetch(Datum &var);

@@ -91,7 +91,7 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 			warning("Redefining method '%s' on factory '%s'", name.c_str(), factory->name->c_str());
 		}
 		factory->methods[name] = sym;
-	} else {
+	} else if (_assemblyArchive >= 0) {
 		Symbol existing = getHandler(name);
 		if (existing.type != VOID)
 			warning("Redefining handler '%s'", name.c_str());

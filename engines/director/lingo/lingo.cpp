@@ -205,13 +205,16 @@ Lingo::~Lingo() {
 	cleanupBuiltins();
 }
 
-ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
-	if (type >= ARRAYSIZE(_archives[_archiveIndex].scriptContexts) ||
-			!_archives[_archiveIndex].scriptContexts[type].contains(id)) {
+ScriptContext *Lingo::getScriptContext(int archiveIndex, ScriptType type, uint16 id) {
+	if (archiveIndex < 0)
+		return NULL;
+
+	if (type >= ARRAYSIZE(_archives[archiveIndex].scriptContexts) ||
+			!_archives[archiveIndex].scriptContexts[type].contains(id)) {
 		return NULL;
 	}
 
-	return _archives[_archiveIndex].scriptContexts[type][id];
+	return _archives[archiveIndex].scriptContexts[type][id];
 }
 
 Common::String Lingo::getName(uint16 id) {
@@ -290,11 +293,11 @@ const char *Lingo::findNextDefinition(const char *s) {
 	return NULL;
 }
 
-void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id) {
+ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
-	if (getScriptContext(type, id)) {
+	if (getScriptContext(archiveIndex, type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
 		// Although it has a legit case when kTheScriptText re sets code.
 		// Warn on double definitions.
@@ -302,10 +305,11 @@ void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 
 	}
 
 	_assemblyArchive = archiveIndex;
-	_assemblyContext = new ScriptContext;
+	ScriptContext *sc = _assemblyContext = new ScriptContext;
 	_currentAssembly = new ScriptData;
 	_currentEntityId = id;
-	_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
+	if (archiveIndex >= 0)
+		_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
 	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 	_linenumber = _colnumber = 1;
@@ -317,7 +321,7 @@ void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 
 		debugC(1, kDebugCompile, "Parsing menu");
 		parseMenu(code);
 
-		return;
+		return nullptr;
 	}
 
 	// Preprocess the code for ease of the parser
@@ -435,6 +439,7 @@ void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 
 	_assemblyContext->functions.push_back(currentFunc);
 	_assemblyContext = nullptr;
 	_currentAssembly = nullptr;
+	return sc;
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -600,7 +605,7 @@ void Lingo::execute(uint pc) {
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
-	ScriptContext *sc = getScriptContext(type, id);
+	ScriptContext *sc = getScriptContext(_archiveIndex, type, id);
 
 	if (!sc) {
 		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
