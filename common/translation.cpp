@@ -144,17 +144,17 @@ U32String TranslationManager::getTranslation(const char *message, const char *co
 			}
 			// Find the context we want
 			if (context == nullptr || *context == '\0' || leftIndex == rightIndex)
-				return _currentTranslationMessages[leftIndex].msgstr.c_str();
+				return _currentTranslationMessages[leftIndex].msgstr;
 			// We could use again binary search, but there should be only a small number of contexts.
 			while (rightIndex > leftIndex) {
 				compareResult = strcmp(context, _currentTranslationMessages[rightIndex].msgctxt.c_str());
 				if (compareResult == 0)
-					return _currentTranslationMessages[rightIndex].msgstr.c_str();
+					return _currentTranslationMessages[rightIndex].msgstr;
 				else if (compareResult > 0)
 					break;
 				--rightIndex;
 			}
-			return _currentTranslationMessages[leftIndex].msgstr.c_str();
+			return _currentTranslationMessages[leftIndex].msgstr;
 		} else if (compareResult < 0)
 			rightIndex = midIndex - 1;
 		else

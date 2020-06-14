@@ -2466,7 +2466,7 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerT
 		if (newScalerName) {
 			const Common::U32String message = Common::String::format(
 				"%s %s\n%d x %d -> %d x %d",
-				_("Active graphics filter:"),
+				_("Active graphics filter:").encode().c_str(),
 				newScalerName,
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwScreen->w, _hwScreen->h);
@@ -2500,13 +2500,13 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		Common::U32String message;
 		if (_videoMode.aspectRatioCorrection)
 			message = Common::String::format("%s\n%d x %d -> %d x %d",
-			                                 _("Enabled aspect ratio correction"),
+			                                 _("Enabled aspect ratio correction").encode().c_str(),
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);
 		else
 			message = Common::String::format("%s\n%d x %d -> %d x %d",
-			                                 _("Disabled aspect ratio correction"),
+			                                 _("Disabled aspect ratio correction").encode().c_str(),
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);
@@ -2553,8 +2553,8 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 #ifdef USE_OSD
 		Common::U32String message = Common::String::format("%s: %s",
-		                                                _("Stretch mode"),
-		                                                _(s_supportedStretchModes[index].description)
+		                                                _("Stretch mode").encode().c_str(),
+		                                                _(s_supportedStretchModes[index].description).encode().c_str()
 		);
 		displayMessageOnOSD(message);
 #endif

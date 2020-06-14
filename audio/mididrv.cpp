@@ -173,7 +173,7 @@ Common::U32String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringT
 
 MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
-	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	Common::U32String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
 	if ((flags & MDT_PREFER_FLUID) && selDevStr == "auto") {
 		selDevStr = "fluidsynth";
 	}
@@ -256,8 +256,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		// we display a warning and continue.
 		failedDevStr = selDevStr;
 		Common::U32String warningMsg = Common::String::format(
-			Common::convertFromU32String(_("The selected audio device '%s' was not found (e.g. might be turned off or disconnected).")).c_str(),
-			failedDevStr.c_str()) + " " + Common::convertFromU32String(_("Attempting to fall back to the next available device...")).c_str();
+			_("The selected audio device '%s' was not found (e.g. might be turned off or disconnected).").encode().c_str(),
+			failedDevStr.encode() + " " + _("Attempting to fall back to the next available device...").encode());
 		GUI::MessageDialog dialog(warningMsg);
 		dialog.runModal();
 	}
@@ -269,9 +269,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		} else {
 			// If the expressly selected device cannot be used we display a warning and continue.
 			failedDevStr = getDeviceString(hdl, MidiDriver::kDeviceName);
-			Common::String warningMsg = Common::String::format(
-				Common::convertFromU32String(_("The selected audio device '%s' cannot be used. See log file for more information.")).c_str(),
-				failedDevStr.c_str()) + " " + Common::convertFromU32String(_("Attempting to fall back to the next available device...")).c_str();
+			Common::U32String warningMsg = Common::String::format(
+				_("The selected audio device '%s' cannot be used. See log file for more information.").encode().c_str(),
+				failedDevStr.encode() + " " + _("Attempting to fall back to the next available device...").encode());
 			GUI::MessageDialog dialog(warningMsg);
 			dialog.runModal();
 		}
@@ -307,9 +307,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					// we display a warning and continue. Don't warn about the missing device if we did already (this becomes relevant if the
 					// missing device is selected as preferred device and also as GM or MT-32 device).
 					if (failedDevStr != devStr) {
-						Common::String warningMsg = Common::String::format(
-							Common::convertFromU32String(_("The preferred audio device '%s' was not found (e.g. might be turned off or disconnected).")).c_str(),
-							devStr.c_str()) + " " + Common::convertFromU32String(_("Attempting to fall back to the next available device...")).c_str();
+						Common::U32String warningMsg = Common::String::format(
+							_("The preferred audio device '%s' was not found (e.g. might be turned off or disconnected).").encode().c_str(),
+							devStr + " " + _("Attempting to fall back to the next available device...").encode());
 						GUI::MessageDialog dialog(warningMsg);
 						dialog.runModal();
 					}
@@ -324,9 +324,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						// Don't warn about the failing device if we did already (this becomes relevant if the failing
 						// device is selected as preferred device and also as GM or MT-32 device).
 						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {
-							Common::String warningMsg = Common::String::format(
-								Common::convertFromU32String(_("The preferred audio device '%s' cannot be used. See log file for more information.")).c_str(),
-								getDeviceString(hdl, MidiDriver::kDeviceName).c_str()) + " " + Common::convertFromU32String(_("Attempting to fall back to the next available device...")).c_str();
+							Common::U32String warningMsg = Common::String::format(
+								_("The preferred audio device '%s' cannot be used. See log file for more information.").encode().c_str(),
+								getDeviceString(hdl, MidiDriver::kDeviceName).encode() + " " + _("Attempting to fall back to the next available device...").encode());
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
 						}
