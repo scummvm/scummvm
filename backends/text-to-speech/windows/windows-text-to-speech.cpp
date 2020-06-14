@@ -192,7 +192,7 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 	}
 
 	// We have to set the pitch by prepending xml code at the start of the said string;
-	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
+	Common::String pitch = Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
 	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", charset, str.c_str(), str.size());
 	if (strW == nullptr) {
