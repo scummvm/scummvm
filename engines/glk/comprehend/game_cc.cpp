@@ -50,6 +50,11 @@ void CrimsonCrownGame::setupDisk(uint diskNum) {
 		_gameStrings = nullptr;
 }
 
+void CrimsonCrownGame::synchronizeSave(Common::Serializer &s) {
+	ComprehendGame::synchronizeSave(s);
+	s.syncAsByte(_diskNum);
+}
+
 void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 0x01:
