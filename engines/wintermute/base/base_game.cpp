@@ -1624,6 +1624,13 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		byte blue = stack->pop()->getInt(0);
 		byte alpha = stack->pop()->getInt(0xFF);
 
+		// HACK: Corrosion fades screen to black while opening main menu
+		// Thus, we get black screenshots when saving game from in-game menus
+		// Let's take & keep screenshot before entering main menu
+		if (duration == 750 && BaseEngine::instance().getGameId() == "corrosion") {
+			storeSaveThumbnail();
+		}
+
 		bool system = (strcmp(name, "SystemFadeOut") == 0 || strcmp(name, "SystemFadeOutAsync") == 0);
 
 		_fader->fadeOut(BYTETORGBA(red, green, blue, alpha), duration, system);
