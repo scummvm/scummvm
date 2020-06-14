@@ -241,6 +241,7 @@ public:
 	INTRINSIC(I_setAlignment);
 	INTRINSIC(I_setEnemyAlignment);
 	INTRINSIC(I_getMap);
+	INTRINSIC(I_addHp);
 	INTRINSIC(I_teleport);
 	INTRINSIC(I_doAnim);
 	INTRINSIC(I_isInCombat);

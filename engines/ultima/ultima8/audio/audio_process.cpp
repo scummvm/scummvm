@@ -319,6 +319,16 @@ bool AudioProcess::isSFXPlaying(int sfxNum) {
 	return false;
 }
 
+bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
+	Std::list<SampleInfo>::iterator it;
+	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
+		if (it->_sfxNum == sfxNum && (objId == it->_objId))
+			return true;
+	}
+
+	return false;
+}
+
 void AudioProcess::setVolumeSFX(int sfxNum, uint8 volume) {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
@@ -561,6 +571,22 @@ uint32 AudioProcess::I_isSFXPlaying(const uint8 *args, unsigned int argsize) {
 	return 0;
 }
 
+uint32 AudioProcess::I_isSFXPlayingForObject(const uint8 *args, unsigned int argsize) {
+	ARG_ITEM_FROM_PTR(item)
+	ARG_SINT16(sfxNum);
+
+	if (!item) {
+		warning("I_isSFXPlayingForObject: Couldn't get item");
+	} else {
+		AudioProcess *ap = AudioProcess::get_instance();
+		if (ap)
+			return ap->isSFXPlayingForObject(sfxNum, item->getObjId());
+		else
+			warning("I_isSFXPlayingForObject Error: No AudioProcess");
+	}
+	return 0;
+}
+
 uint32 AudioProcess::I_setVolumeSFX(const uint8 *args, unsigned int /*argsize*/) {
 	// Sets volume for last played instances of sfxNum (???)
 	ARG_SINT16(sfxNum);
@@ -610,6 +636,14 @@ uint32 AudioProcess::I_stopSFXCru(const uint8 *args, unsigned int argsize) {
 	return 0;
 }
 
+uint32 AudioProcess::I_stopAllSFX(const uint8 */*args*/, unsigned int /*argsize*/) {
+	AudioProcess *ap = AudioProcess::get_instance();
+	// Not *exactly* the same, but close enough for this intrinsic.
+	if (ap) ap->stopAllExceptSpeech();
+	else perr << "Error: No AudioProcess" << Std::endl;
+
+	return 0;
+}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

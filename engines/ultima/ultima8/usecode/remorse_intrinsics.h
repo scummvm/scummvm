@@ -36,7 +36,7 @@ namespace Ultima8 {
 Intrinsic RemorseIntrinsics[] = {
 	// 0x000
 	Ultima8Engine::I_getAlertActive,  // basically confirmed.. see eg, ALARM_NS::enterFastArea - set frame for alert siren based on value.
-	Item::I_getFrame, // ? int Intrinsic001(4 bytes)
+	Item::I_getFrame, // int Intrinsic001(4 bytes)
 	Item::I_setFrame, // basically confirmed..
 	Item::I_getMapArray, // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
 	Item::I_getStatus, // probably - see usage in GATGUNEW::enterFastArea - always followed by an AND against a single bit
@@ -106,7 +106,7 @@ Intrinsic RemorseIntrinsics[] = {
 	CameraProcess::I_move_to, // void Intrinsic040(8 bytes)
 	CameraProcess::I_setCenterOn, // void Intrinsic041(2 bytes)
 	0, // int Intrinsic042(6 bytes)
-	0, // void Intrinsic043(6 bytes) // maybe stopSFX (based on coff)
+	AudioProcess::I_isSFXPlaying, // void Intrinsic043(6 bytes) // maybe isPlaying (based on coff)
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_isOn,
@@ -128,7 +128,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic055(6 bytes)
 	0, // void Intrinsic056(2 bytes)
 	0, // void Intrinsic057(4 bytes)
-	0, // ? Item::I_setFrame, int Intrinsic058(6 bytes)
+	0, // int Intrinsic058(6 bytes)
 	Item::I_setFrame, // based on same coff as 002
 	Actor::I_getLastAnimSet, // void Intrinsic05A(4 bytes)
 	Item::I_legalCreateAtPoint, // probably. see PEPSIEW::use
@@ -154,27 +154,27 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_andStatus, // void Intrinsic06E(6 bytes)
 	0, // TODO: Item::I_isCompletelyOn int Intrinsic06F(6 bytes)
 	// 0x070
-	0, // int Intrinsic070(void)
-	0, // void Intrinsic071(void)
-	0, // void Intrinsic072(void)
+	Ultima8Engine::I_getUnkCrusaderFlag, // int Intrinsic070(void)
+	Ultima8Engine::I_setUnkCrusaderFlag, // void Intrinsic071(void)
+	Ultima8Engine::I_setAvatarInStasis,
 	Actor::I_setDead,
-	0, // void Intrinsic074(void)
-	0, // void Intrinsic075(void)
+	Ultima8Engine::I_clrUnkCrusaderFlag, // void Intrinsic074(void)
+	Ultima8Engine::I_clrAvatarInStasis,
 	AudioProcess::I_stopSFXCru, // takes Item *, from disasm
-	0, // ? Item::I_getQuality, void Intrinsic077(void)
-	0, // ? Item::I_setQuality, void Intrinsic078(void)
+	0, // void Intrinsic077(void)
+	0, // void Intrinsic078(void)
 	MainActor::I_teleportToEgg, // different than U8's? void Intrinsic079(6 bytes)
 	0, // void Intrinsic07A(void)
 	Actor::I_clrImmortal, // based on disasm
 	0, // void Intrinsic07C(4 bytes) // I_getQIfSomething, see disassembly
-	0, // ? Item::I_getQLo, void Intrinsic07D(6 bytes)
+	0, // void Intrinsic07D(6 bytes)
 	Item::I_getQuality,
 	Item::I_setQuality,
 	// 0x080
 	Item::I_use, // void Intrinsic080(4 bytes)
-	0, // void Intrinsic081(4 bytes)
-	0, // ? Item::I_getNpcNum, void Intrinsic082(4 bytes)
-	0, // void Intrinsic083(6 bytes)
+	MainActor::I_getMaxEnergy, // void Intrinsic081(4 bytes)
+	Actor::I_getMana, // Actually energy, but map to mana as we don't need that in Crusader.
+	Actor::I_setMana, //
 	Item::I_getQLo, // based on same coff set as 02B
 	Actor::I_setImmortal, // void Intrinsic085(4 bytes)
 	0, // void Intrinsic086(void)
@@ -192,14 +192,14 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic091(void)
 	0, // I_playFlic(char *)? void Intrinsic092(void)
 	0, // void Intrinsic093(void)
-	0, // UNUSEDInt0094()
+	Game::I_playCredits,
 	0, // int Intrinsic095(void) // get global - something about keyboard (by disasm)
 	MainActor::I_teleportToEgg, // void Intrinsic096(4 bytes)
 	0, // void Intrinsic097(void)
 	0, // void Intrinsic098(void)
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
-	0, // ? Item::I_getQLo, void Intrinsic09A(void)
-	0, // ? Item::I_getUnkEggType, void Intrinsic09B(2 bytes)
+	0, // void Intrinsic09A(void)
+	0, // void Intrinsic09B(2 bytes)
 	0, // void Intrinsic09C(4 bytes)
 	0, // void Intrinsic09D(2 bytes)
 	0, // void Intrinsic09E(4 bytes)
@@ -211,13 +211,13 @@ Intrinsic RemorseIntrinsics[] = {
 	Egg::I_setEggXRange, // void Intrinsic0A3(6 bytes)
 	Item::I_overlaps,
 	Item::I_isOn,
-	0, // ? Item::I_getNpcNum, void Intrinsic0A6(void)
-	Egg::I_getEggXRange, // ? Item::I_getQLo, void Intrinsic0A7(4 bytes)
+	0, // ? TODO: I_getAnimationsDiabled -> default to 0 (it's fine..)
+	Egg::I_getEggXRange, // void Intrinsic0A7(4 bytes)
 	Actor::I_setDead,
 	0, // I_playFlic(char *) Intrinsic0A9(void)
 	AudioProcess::I_playSFX, // void Intrinsic0AA(2 bytes)
-	0, // ? Item::I_andStatus, int Intrinsic0AB(4 bytes)
-	0, // ? Ultima8Engine::I_getCurrentTimerTick, void Intrinsic0AC(2 bytes)
+	0, // int Intrinsic0AB(4 bytes)
+	0, // void Intrinsic0AC(2 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_getQLo, // based on same coff set as 02B
 	Item::I_getQHi,  // based on same coff set as 026
@@ -228,12 +228,12 @@ Intrinsic RemorseIntrinsics[] = {
 	Ultima8Engine::I_getCurrentTimerTick, // int32 Intrinsic0B3(void), probably, see FREE::ordinal32
 	0, // void Intrinsic0B4(void)
 	Item::I_equip, // void Intrinsic0B5(6 bytes)
-	0, // ? Item::I_getQHi, void Intrinsic0B6(void)
-	0, // ? Item::I_andStatus, void Intrinsic0B7(void)
+	0, // void Intrinsic0B6(void)
+	0, // void Intrinsic0B7(void)
 	0, // int Intrinsic0B8(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0B9(4 bytes)
 	Item::I_setQuality,
-	0, // ? Item::I_andStatus, int Intrinsic0BB(8 bytes)
+	0, // int Intrinsic0BB(8 bytes)
 	Item::I_isOn,
 	Item::I_hurl, // void Intrinsic0BD(12 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
@@ -249,7 +249,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getDirFromItem, // int Intrinsic0C7(6 bytes)
 	Item::I_hurl, // void Intrinsic0C8(12 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
-	0, // int Intrinsic0CA(6 bytes)
+	Actor::I_setHp, // int Intrinsic0CA(6 bytes)
 	0, // void Intrinsic0CB(2 bytes)
 	0, // int Intrinsic0CC(4 bytes)
 	0, // void Intrinsic0CD(6 bytes)
@@ -257,7 +257,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic0CF(6 bytes)
 	// 0x0D0
 	Item::I_use, // void Intrinsic0D0(4 bytes)
-	0, // 0D1 - I_StopAllSFX (unused so not implmeneted)
+	AudioProcess::I_stopAllSFX,
 	0, // void I_playFlic(int *item,char *flicname,word sizex,word sizey) // play flic
 	0, // UNUSEDInt00D3()
 	AudioProcess::I_playSFX, // void Intrinsic0D4(2 bytes)
@@ -275,11 +275,11 @@ Intrinsic RemorseIntrinsics[] = {
 	// 0x0E0
 	Actor::I_setEquip, // void Intrinsic0E0(8 bytes)
 	0, // void Intrinsic0E1(4 bytes)
-	0, // ? Item::I_andStatus, void Intrinsic0E2(4 bytes)
-	0, // ? Item::I_getQLo, void Intrinsic0E3(4 bytes)
+	0, // void Intrinsic0E2(4 bytes)
+	0, // void Intrinsic0E3(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0E4(4 bytes)
 	0, // void Intrinsic0E5(6 bytes)
-	0, // ? Item::I_popToContainer, void Intrinsic0E6(6 bytes)
+	0, // void Intrinsic0E6(6 bytes)
 	Actor::I_setDead,
 	Item::I_cast, // void Intrinsic0E8(6 bytes)
 	Item::I_andStatus, // void Intrinsic0E9(6 bytes)
@@ -287,7 +287,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic0EB(void)
 	Item::I_popToEnd,
 	Item::I_popToContainer,
-	0, // ? Item::I_setQ, void Intrinsic0EE(void)
+	0, // void Intrinsic0EE(void)
 	0, // void Intrinsic0EF(4 bytes)
 	// 0x0F0
 	Item::I_getQHi,  // based on same coff set as 026
@@ -303,15 +303,14 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_andStatus, // void Intrinsic0FC(6 bytes)
-	0, // ? Item::I_getNpcNum, int Intrinsic0FD(2 bytes)
+	0, // int Intrinsic0FD(2 bytes)
 	0, // void Intrinsic0FE(4 bytes)
 	UCMachine::I_numToStr, // same as 113 based on same coff set 0FF, 113, 126
 	// 0x100
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	Item::I_andStatus, // ? Item::I_getNpcNum, void Intrinsic101(6 bytes)
+	Item::I_andStatus, // void Intrinsic101(6 bytes)
 	Item::I_getNpcNum, // Based on variable name in TRIGGER::ordinal21
-	0, // ? Item::I_getNpcNum, // byte Intrinsic103(uint16 shapenum),
-
+	0, // // byte Intrinsic103(uint16 shapenum)
 	Item::I_andStatus, // void Intrinsic104(6 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic106(6 bytes)
@@ -332,15 +331,15 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_andStatus, // void Intrinsic114(6 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // ? Item::I_getTypeFlag, byte Intrinsic116(14 bytes)
-	Item::I_andStatus, // ? Item::I_getNpcNum, void Intrinsic117(6 bytes)
+	Item::I_andStatus, // void Intrinsic117(6 bytes)
 	Item::I_hurl, // int16 Intrinsic118(12 bytes)
 	0, // void Intrinsic119(4 bytes)
 	Item::I_andStatus, // void Intrinsic11A(6 bytes)
-	0, // byte Intrinsic11B(6 bytes)
+	Item::I_getTypeFlag, // byte Intrinsic11B(6 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_hurl, // int16 Intrinsic11D(12 bytes)
 	0, // int16 Intrinsic11E(4 bytes)
-	0, // ? Item::I_getNpcNum, byte Intrinsic11F(4 bytes)
+	0, // byte Intrinsic11F(4 bytes)
 	// 0x120
 	0, // void Intrinsic120(4 bytes)
 	Actor::I_getDir, // int Intrinsic121(4 bytes)
@@ -357,7 +356,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getFootpadData, // void Intrinsic12D(16 bytes)
 	Actor::I_isDead, // int Intrinsic12E(4 bytes)
-	0, // ? Item::I_getQHi, void Intrinsic12F(6 bytes)
+	0, // void Intrinsic12F(6 bytes)
 	// 0x130
 	Actor::I_clrImmortal, // void Intrinsic130(4 bytes)
 	0, // void Intrinsic131(6 bytes)

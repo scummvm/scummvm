@@ -69,7 +69,7 @@ public:
 		SF_MONSTEREGG  = 7,
 		SF_TELEPORTEGG = 8,
 		SF_REAGENT     = 9,
-		SF_10		   = 10, // ?? Used in Crusader
+		SF_10		   = 10, // Used in Crusader .. weapon?
 		SF_11		   = 11, // ?? Used in Crusader
 		SF_12		   = 12, // ?? Used in Crusader
 		SF_13		   = 13, // ?? Used in Crusader

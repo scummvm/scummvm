@@ -34,6 +34,13 @@ struct WeaponOverlayFrame;
 class MainActor : public Actor {
 	friend class Debugger;
 public:
+	enum CruBatteryType {
+		NoBattery = 0,
+		ChemicalBattery = 1,
+		FissionBattery = 2,
+		FusionBattery = 3
+	};
+
 	MainActor();
 	~MainActor() override;
 
@@ -90,6 +97,8 @@ public:
 		_name = name;
 	}
 
+	int16 getMaxEnergy();
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
@@ -102,6 +111,7 @@ public:
 	INTRINSIC(I_clrAvatarInCombat);
 	INTRINSIC(I_setAvatarInCombat);
 	INTRINSIC(I_isAvatarInCombat);
+	INTRINSIC(I_getMaxEnergy);
 
 	void getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_);
 
@@ -114,6 +124,8 @@ protected:
 	int _accumStr;
 	int _accumDex;
 	int _accumInt;
+
+	CruBatteryType _cruBatteryType;
 
 	Std::string _name;
 };

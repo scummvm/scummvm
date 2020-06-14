@@ -139,7 +139,8 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_ttfOverrides(false), _audioMixer(0), _scalerGump(nullptr),
-		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false), _alertActive(false) {
+		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false), _alertActive(false),
+		_unkCrusaderFlag(false) {
 	_application = this;
 }
 
@@ -1404,9 +1405,19 @@ uint32 Ultima8Engine::I_getCurrentTimerTick(const uint8 * /*args*/,
 	return Kernel::get_instance()->getFrameNum() * 2;
 }
 
-uint32 Ultima8Engine::I_setAvatarInStasis(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_SINT16(stasis);
-	get_instance()->setAvatarInStasis(stasis != 0);
+uint32 Ultima8Engine::I_setAvatarInStasis(const uint8 *args, unsigned int argsize) {
+	if (argsize) {
+		ARG_SINT16(stasis);
+		get_instance()->setAvatarInStasis(stasis != 0);
+	} else {
+		// TODO: this is for crusader - does it have the same meaning?
+		get_instance()->setAvatarInStasis(true);
+	}
+	return 0;
+}
+
+uint32 Ultima8Engine::I_clrAvatarInStasis(const uint8 *args, unsigned int argsize) {
+	get_instance()->setAvatarInStasis(false);
 	return 0;
 }
 
@@ -1426,6 +1437,23 @@ uint32 Ultima8Engine::I_getTimeInGameHours(const uint8 * /*args*/,
 uint32 Ultima8Engine::I_getAlertActive(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
 	return get_instance()->isAlertActive() ? 1 : 0;
+}
+
+uint32 Ultima8Engine::I_getUnkCrusaderFlag(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	return get_instance()->isUnkCrusaderFlag() ? 1 : 0;
+}
+
+uint32 Ultima8Engine::I_setUnkCrusaderFlag(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	get_instance()->setUnkCrusaderFlag(true);
+	return 0;
+}
+
+uint32 Ultima8Engine::I_clrUnkCrusaderFlag(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	get_instance()->setUnkCrusaderFlag(false);
+	return 0;
 }
 
 uint32 Ultima8Engine::I_getTimeInMinutes(const uint8 * /*args*/,

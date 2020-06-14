@@ -41,6 +41,7 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/audio/music_process.h"
@@ -52,7 +53,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor)
 
 MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
-	_accumInt(0) {
+	_accumInt(0), _cruBatteryType(ChemicalBattery) {
 }
 
 MainActor::~MainActor() {
@@ -391,6 +392,19 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	if (frame_ == 0) shape_ = 0;
 }
 
+int16 MainActor::getMaxEnergy() {
+	switch (_cruBatteryType) {
+		case ChemicalBattery:
+			return 0x9c4; // docs say 2500, code says otherwise..
+		case FissionBattery:
+			return 5000;
+		case FusionBattery:
+			return 10000;
+		default:
+			return 0;
+	}
+}
+
 void MainActor::saveData(Common::WriteStream *ws) {
 	Actor::saveData(ws);
 	uint8 jt = _justTeleported ? 1 : 0;
@@ -491,6 +505,16 @@ uint32 MainActor::I_isAvatarInCombat(const uint8 * /*args*/,
 		return 1;
 	else
 		return 0;
+}
+
+uint32 MainActor::I_getMaxEnergy(const uint8 *args,
+								 unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	MainActor *av = getMainActor();
+	if (actor != av) {
+		return 0;
+	}
+	return av->getMaxEnergy();
 }
 
 void MainActor::useInventoryItem(uint32 shapenum) {

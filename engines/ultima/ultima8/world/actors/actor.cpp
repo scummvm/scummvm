@@ -24,6 +24,7 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/world.h"
@@ -1242,6 +1243,21 @@ uint32 Actor::I_setHp(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	actor->setHP(hp);
+	return 0;
+}
+
+uint32 Actor::I_addHp(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(hp);
+
+	if (actor) {
+		int max = actor->getMaxHP();
+		int cur = actor->getHP();
+		if (cur < max) {
+			actor->setHP(MIN(max, cur + hp));
+			return 1;
+		}
+	}
 	return 0;
 }
 
