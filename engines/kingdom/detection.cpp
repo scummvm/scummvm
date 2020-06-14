@@ -56,6 +56,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// Kingdom PC DOS version v1.26 EN, provided by Strangerke
+	// Also detects the GOG.COM version
 	{
 		"kingdom",
 		0,
@@ -65,6 +66,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
+
+	// Kingdom 3DO, provided by Strangerke
+    {
+        "kingdom",
+        0,
+        AD_ENTRY1s("launchme", "60d2c64e3cb3e22859c4fadbc121b0db", 183452),
+        Common::EN_ANY,
+        Common::kPlatform3DO,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NONE)
+    },
 
 	AD_TABLE_END_MARKER
 };
