@@ -109,6 +109,16 @@ void BasePlatform::handleEvent(Common::Event *event) {
 			_gameRef->handleMouseWheel(event->type == Common::EVENT_WHEELUP ? 1 : -1);
 		}
 		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (_gameRef) {
+			_gameRef->handleCustomActionStart((BaseGameCustomAction)event->customType);
+		}
+		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		if (_gameRef) {
+			_gameRef->handleCustomActionEnd((BaseGameCustomAction)event->customType);
+		}
+		break;
 	case Common::EVENT_SCREEN_CHANGED:
 		if (_gameRef) {
 			_gameRef->_renderer->onWindowChange();
