@@ -315,9 +315,9 @@ public:
 
 	void restartLingo(bool keepSharedCast);
 
-	void addCode(const char *code, ScriptType type, uint16 id);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id, Common::String &archName);
-	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
+	void addCode(const char *code, int archiveIndex, ScriptType type, uint16 id);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &archName);
+	void addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id, uint16 function);
 	void printStack(const char *s, uint pc);
@@ -468,6 +468,8 @@ public:
 	void processIf(int toplabel, int endlabel);
 	void varCreate(const Common::String &name, bool global, SymbolHash *localvars = nullptr);
 
+	int _assemblyArchive;
+	ScriptContext *_assemblyContext;
 	ScriptData *_currentAssembly;
 	LexerDefineState _indef;
 	LexerDefineState _indefStore;

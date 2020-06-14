@@ -156,6 +156,10 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentScript = 0;
 	_currentScriptContext = nullptr;
 
+	_assemblyArchive = 0;
+	_currentAssembly = nullptr;
+	_assemblyContext = nullptr;
+
 	_currentEntityId = 0;
 	_currentChannelId = -1;
 	_pc = 0;
@@ -286,9 +290,7 @@ const char *Lingo::findNextDefinition(const char *s) {
 	return NULL;
 }
 
-void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	pushContext();
-
+void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
@@ -299,10 +301,11 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		warning("Script already defined for type %d, id %d", id, type);
 	}
 
-	_currentScriptContext = new ScriptContext;
+	_assemblyArchive = archiveIndex;
+	_assemblyContext = new ScriptContext;
 	_currentAssembly = new ScriptData;
 	_currentEntityId = id;
-	_archives[_archiveIndex].scriptContexts[type][id] = _currentScriptContext;
+	_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
 	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 	_linenumber = _colnumber = 1;
@@ -399,7 +402,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		currentFunc.name = new Common::String("[unknown]");
 	}
 	currentFunc.ctx = _currentScriptContext;
-	currentFunc.archiveIndex = _archiveIndex;
+	currentFunc.archiveIndex = _assemblyArchive;
 	// arg names should be empty, but just in case
 	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
 	for (uint i = 0; i < _argstack.size(); i++) {
@@ -429,10 +432,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	currentFunc.argNames = argNames;
 	currentFunc.varNames = varNames;
-	_currentScriptContext->functions.push_back(currentFunc);
+	_assemblyContext->functions.push_back(currentFunc);
+	_assemblyContext = nullptr;
 	_currentAssembly = nullptr;
-
-	popContext();
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -1019,7 +1021,7 @@ void Lingo::runTests() {
 			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
-			addCode(script, kMovieScript, counter);
+			addCode(script, 0, kMovieScript, counter);
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_hadError)

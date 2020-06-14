@@ -239,6 +239,7 @@ private:
 	uint16 _castArrayEnd;
 	uint16 _movieScriptCount;
 	Lingo *_lingo;
+	int _lingoArchive;
 	DirectorSound *_soundManager;
 	DirectorEngine *_vm;
 

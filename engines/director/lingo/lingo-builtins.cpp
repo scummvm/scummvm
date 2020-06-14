@@ -1617,7 +1617,7 @@ void LB::b_installMenu(int nargs) {
 	}
 
 	// TODO: Menu callbacks should probably not be in the movie's lingo archive
-	g_lingo->addCode(handlers.c_str(), kMovieScript, 1337);
+	g_lingo->addCode(handlers.c_str(), 0, kMovieScript, 1337);
 }
 
 Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {

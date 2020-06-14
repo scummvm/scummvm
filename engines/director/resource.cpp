@@ -79,7 +79,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	if (iniStream) {
 		char *script = (char *)calloc(iniStream->size() + 1, 1);
 		iniStream->read(script, iniStream->size());
-		_lingo->addCode(script, kMovieScript, 0);
+		_lingo->addCode(script, 0, kMovieScript, 0);
 		_lingo->processEvent(kEventStartUp);
 		free(script);
 	} else {
@@ -304,11 +304,9 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	_lingo->_archiveIndex = 1;
 	_sharedScore = new Score(this);
 	_sharedScore->setArchive(sharedCast);
 	_sharedScore->loadArchive(true);
-	_lingo->_archiveIndex = 0;
 }
 
 Cast *DirectorEngine::getCastMember(int castId) {

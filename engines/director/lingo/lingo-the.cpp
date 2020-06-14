@@ -378,15 +378,15 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheKeyDownScript:
 		d.type = STRING;
-		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventKeyDown))
-			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventKeyDown]);
+		if (_archives[0].primaryEventHandlers.contains(kEventKeyDown))
+			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventKeyDown]);
 		else
 			d.u.s = new Common::String();
 		break;
 	case kTheKeyUpScript:
 		d.type = STRING;
-		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventKeyUp))
-			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventKeyUp]);
+		if (_archives[0].primaryEventHandlers.contains(kEventKeyUp))
+			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventKeyUp]);
 		else
 			d.u.s = new Common::String();
 		break;
@@ -480,8 +480,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseDownScript:
 		d.type = STRING;
-		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventMouseDown))
-			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventMouseDown]);
+		if (_archives[0].primaryEventHandlers.contains(kEventMouseDown))
+			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventMouseDown]);
 		else
 			d.u.s = new Common::String();
 		break;
@@ -499,8 +499,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseUpScript:
 		d.type = STRING;
-		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventMouseUp))
-			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventMouseUp]);
+		if (_archives[0].primaryEventHandlers.contains(kEventMouseUp))
+			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventMouseUp]);
 		else
 			d.u.s = new Common::String();
 		break;
@@ -563,8 +563,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheTimeoutScript:
 		d.type = STRING;
-		if (_archives[_archiveIndex].primaryEventHandlers.contains(kEventTimeout))
-			d.u.s = new Common::String(_archives[_archiveIndex].primaryEventHandlers[kEventTimeout]);
+		if (_archives[0].primaryEventHandlers.contains(kEventTimeout))
+			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventTimeout]);
 		else
 			d.u.s = new Common::String();
 		break;
@@ -1082,7 +1082,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
-		addCode(d.u.s->c_str(), kSpriteScript, id);
+		// FIXME: What if the cast member is in a different archive than the current one?
+		addCode(d.u.s->c_str(), _archiveIndex, kSpriteScript, id);
 
 		castInfo->script = d.asString();
 		break;

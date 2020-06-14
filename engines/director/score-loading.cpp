@@ -78,6 +78,8 @@ void Score::setArchive(Archive *archive) {
 }
 
 bool Score::loadArchive(bool isSharedCast) {
+	_lingoArchive = isSharedCast ? 1 : 0;
+
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
 	Common::SeekableSubReadStreamEndian *r = nullptr;
 
@@ -876,7 +878,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 			if (scriptId < _castScriptIds.size()) {
 				int resourceId = _castScriptIds[scriptId];
 				Common::SeekableSubReadStreamEndian *r;
-				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), ((ScriptCast *)member)->_scriptType, id, _macName);
+				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), _lingoArchive, ((ScriptCast *)member)->_scriptType, id, _macName);
 				delete r;
 			} else {
 				warning("Score::loadCastData(): Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
@@ -888,7 +890,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 					if (ConfMan.getBool("dump_scripts"))
 						dumpScript(ci->script.c_str(), ((ScriptCast *)member)->_scriptType, id);
 
-					_lingo->addCode(ci->script.c_str(), ((ScriptCast *)member)->_scriptType, id);
+					_lingo->addCode(ci->script.c_str(), _lingoArchive, ((ScriptCast *)member)->_scriptType, id);
 				} else {
 					warning("Score::loadCastData(): Wrong cast type: %d", member->_type);
 				}
@@ -1012,7 +1014,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			// continue;
 		}
 		if (!j->_value.empty()) {
-			_lingo->addCode(j->_value.c_str(), kFrameScript, j->_key);
+			_lingo->addCode(j->_value.c_str(), _lingoArchive, kFrameScript, j->_key);
 
 			processImmediateFrameScript(j->_value, j->_key);
 		}
@@ -1023,7 +1025,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 
 void Score::loadLingoNames(Common::SeekableSubReadStreamEndian &stream) {
 	if (_vm->getVersion() >= 4) {
-		_lingo->addNamesV4(stream);
+		_lingo->addNamesV4(stream, _lingoArchive);
 	} else {
 		error("Score::loadLingoNames: unsuported Director version (%d)", _vm->getVersion());
 	}
@@ -1098,7 +1100,7 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 	if (script.contains("\nmenu:") || script.hasPrefix("menu:"))
 		return;
 
-	_lingo->addCode(script.c_str(), kMovieScript, _movieScriptCount);
+	_lingo->addCode(script.c_str(), _lingoArchive, kMovieScript, _movieScriptCount);
 
 	_movieScriptCount++;
 }
@@ -1129,7 +1131,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		dumpScript(ci->script.c_str(), kSpriteScript, id);
 
 	if (!ci->script.empty())
-		_lingo->addCode(ci->script.c_str(), kSpriteScript, id);
+		_lingo->addCode(ci->script.c_str(), _lingoArchive, kSpriteScript, id);
 
 	ci->name = getString(castStrings[1]);
 	ci->directory = getString(castStrings[2]);
@@ -1157,7 +1159,7 @@ void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 		dumpScript(_script.c_str(), kMovieScript, _movieScriptCount);
 
 	if (!_script.empty())
-		_lingo->addCode(_script.c_str(), kMovieScript, _movieScriptCount);
+		_lingo->addCode(_script.c_str(), _lingoArchive, kMovieScript, _movieScriptCount);
 
 	_movieScriptCount++;
 	_changedBy = fileInfoStrings[1];

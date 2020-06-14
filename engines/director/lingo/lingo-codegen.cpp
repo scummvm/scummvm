@@ -73,8 +73,8 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 	sym.maxArgs = nargs;
 	sym.argNames = argNames;
 	sym.varNames = varNames;
-	sym.ctx = _currentScriptContext;
-	sym.archiveIndex = _archiveIndex;
+	sym.ctx = _assemblyContext;
+	sym.archiveIndex = _assemblyArchive;
 
 	if (debugChannelSet(1, kDebugCompile)) {
 		uint pc = 0;
@@ -97,9 +97,9 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 			warning("Redefining handler '%s'", name.c_str());
 
 		if (!_eventHandlerTypeIds.contains(name)) {
-			_archives[_archiveIndex].functionHandlers[name] = sym;
+			_archives[_assemblyArchive].functionHandlers[name] = sym;
 		} else {
-			_archives[_archiveIndex].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId)] = sym;
+			_archives[_assemblyArchive].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId)] = sym;
 		}
 	}
 
