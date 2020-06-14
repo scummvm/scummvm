@@ -208,14 +208,13 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	case 4:
 		// Game over - failure
 		console_println(_strings2[138].c_str());
-		if (tolower(console_get_key()) == 'r')
-			game_restart();
-		else
-			g_comprehend->quitGame();
+		checkForRestart();
 		break;
 
-	case 0x05:
+	case 5:
 		// Won the game
+		g_comprehend->drawLocationPicture(40);
+		checkForRestart();
 		break;
 
 	case 6:
@@ -242,6 +241,13 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	default:
 		break;
 	}
+}
+
+void TransylvaniaGame::checkForRestart() {
+	if (tolower(console_get_key()) == 'r')
+		game_restart();
+	else
+		g_comprehend->quitGame();
 }
 
 #define READ_LINE do { \
