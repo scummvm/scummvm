@@ -876,8 +876,11 @@ Common::String Datum::asString(bool printonly) {
 			}
 		}
 		break;
+	case POINT:
+		s = "point:";
+		// fallthrough
 	case ARRAY:
-		s = "[";
+		s += "[";
 
 		for (uint i = 0; i < u.farr->size(); i++) {
 			if (i > 0)
