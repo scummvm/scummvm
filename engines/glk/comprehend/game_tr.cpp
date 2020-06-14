@@ -257,6 +257,7 @@ void TransylvaniaGame::checkForRestart() {
 
 void TransylvaniaGame::beforeGame() {
 	char buffer[128];
+	g_comprehend->setDisableSaves(true);
 
 	// Draw the title
 	g_comprehend->drawPicture(TITLE_IMAGE);
@@ -271,6 +272,8 @@ void TransylvaniaGame::beforeGame() {
 	// And your next of kin - This isn't stored by the game
 	console_println(_strings[0x21].c_str());
 	READ_LINE;
+
+	g_comprehend->setDisableSaves(false);
 }
 
 } // namespace Comprehend

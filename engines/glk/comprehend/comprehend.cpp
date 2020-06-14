@@ -46,7 +46,7 @@ Comprehend *g_comprehend;
 
 Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
 	_drawSurface(nullptr), _game(nullptr), _pics(nullptr), _saveSlot(-1),
-	_graphicsEnabled(true), _drawFlags(0) {
+	_graphicsEnabled(true), _drawFlags(0), _disableSaves(false) {
 	g_comprehend = this;
 }
 
@@ -154,6 +154,7 @@ void Comprehend::readLine(char *buffer, size_t maxLen) {
 
 int Comprehend::readChar() {
 	glk_request_char_event(_bottomWindow);
+	setDisableSaves(true);
 
 	event_t ev;
 	while (ev.type != evtype_CharInput) {
@@ -165,6 +166,7 @@ int Comprehend::readChar() {
 		}
 	}
 
+	setDisableSaves(false);
 	return ev.val1;
 }
 
