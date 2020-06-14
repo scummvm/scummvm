@@ -22,6 +22,7 @@
 
 #include "glk/comprehend/game_cc.h"
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/pics.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -48,6 +49,14 @@ void CrimsonCrownGame::setupDisk(uint diskNum) {
 		_gameStrings = &CC1_STRINGS;
 	else
 		_gameStrings = nullptr;
+
+	_titleGraphicFile = "cctitle.ms1";
+}
+
+void CrimsonCrownGame::beforeGame() {
+	// Draw the title
+	g_comprehend->drawPicture(TITLE_IMAGE);
+	g_comprehend->readChar();
 }
 
 void CrimsonCrownGame::synchronizeSave(Common::Serializer &s) {

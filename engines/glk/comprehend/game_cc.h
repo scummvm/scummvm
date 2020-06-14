@@ -36,6 +36,7 @@ public:
 	CrimsonCrownGame();
 	~CrimsonCrownGame() override {}
 
+	void beforeGame() override;
 	void beforePrompt() override;
 	void handleSpecialOpcode(uint8 operand) override;
 	void synchronizeSave(Common::Serializer &s) override;
