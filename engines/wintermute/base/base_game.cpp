@@ -3786,6 +3786,56 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::handleCustomActionStart(BaseGameCustomAction action) {
+	Point32 p;
+
+	switch (action) {
+	case kClickAtCenter:
+		p.x = _renderer->getWidth() / 2;
+		p.y = _renderer->getHeight() / 2;
+		break;
+	case kClickAtLeft:
+		p.x = 30;
+		p.y = _renderer->getHeight() / 2;
+		break;
+	case kClickAtRight:
+		p.x = _renderer->getWidth() - 30;
+		p.y = _renderer->getHeight() / 2;
+		break;
+	case kClickAtTop:
+		p.x = _renderer->getWidth() / 2;
+		p.y = 10;
+		break;
+	case kClickAtBottom:
+		p.x = _renderer->getWidth() / 2;
+		p.y = _renderer->getHeight() - 35;
+		break;
+	default:
+		return false;
+	}
+
+	BasePlatform::setCursorPos(p.x, p.y);
+	setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y)); 
+
+	return onMouseLeftDown();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::handleCustomActionEnd(BaseGameCustomAction action) {
+	switch (action) {
+	case kClickAtCenter:
+	case kClickAtLeft:
+	case kClickAtRight:
+	case kClickAtTop:
+	case kClickAtBottom:
+		return onMouseLeftUp();
+	default:
+		break;
+	}
+
+	return false;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
