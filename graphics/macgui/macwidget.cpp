@@ -27,15 +27,15 @@
 
 namespace Graphics {
 
-	MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border, uint16 gutter, uint16 shadow) :
+MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border, uint16 gutter, uint16 shadow) :
 	_focusable(focusable), _parent(parent), _border(border), _gutter(gutter), _shadow(shadow) {
 	_contentIsDirty = true;
 	_priority = 0;
 
 	_dims.left = x;
-	_dims.right = x + w + 2 * border + 2 * gutter + shadow + 1;
+	_dims.right = x + w + (2 * border) + (2 * gutter) + shadow;
 	_dims.top = y;
-	_dims.bottom = y + h + 2 * border + gutter + shadow;
+	_dims.bottom = y + h + (2 * border) + gutter + shadow;
 
 	if (parent)
 		parent->_children.push_back(this);

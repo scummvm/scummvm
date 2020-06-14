@@ -95,7 +95,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w, h, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, true, border, gutter, boxShadow) {
 
 	_str = s;
 	_fullRefresh = true;
@@ -120,22 +120,11 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 		_defaultFormatting.font = NULL;
 	}
 
-	_defaultFormatting.wm = wm;
-	_currentFormatting = _defaultFormatting;
-
-	splitString(_str);
-
-	recalcDims();
 	init();
-
-	reallocSurface();
-	setAlignOffset(_textAlignment);
-	updateCursorPos();
-	render();
 }
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w, h, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, true, border, gutter, boxShadow) {
 
 	_str = Common::U32String(s);
 	_fullRefresh = true;
@@ -160,18 +149,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 		_defaultFormatting.font = NULL;
 	}
 
-	_defaultFormatting.wm = wm;
-	_currentFormatting = _defaultFormatting;
-
-	splitString(_str);
-
-	recalcDims();
 	init();
-
-	reallocSurface();
-	setAlignOffset(_textAlignment);
-	updateCursorPos();
-	render();
 }
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
@@ -200,18 +178,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 		_defaultFormatting.font = NULL;
 	}
 
-	_defaultFormatting.wm = wm;
-	_currentFormatting = _defaultFormatting;
-
-	splitString(_str);
-
-	recalcDims();
 	init();
-
-	reallocSurface();
-	setAlignOffset(_textAlignment);
-	updateCursorPos();
-	render();
 }
 
 MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
@@ -239,21 +206,17 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 		_defaultFormatting.font = NULL;
 	}
 
-	_defaultFormatting.wm = wm;
-	_currentFormatting = _defaultFormatting;
-
-	splitString(_str);
-
-	recalcDims();
 	init();
-
-	reallocSurface();
-	setAlignOffset(_textAlignment);
-	updateCursorPos();
-	render();
 }
 
 void MacText::init() {
+	_defaultFormatting.wm = _wm;
+	_currentFormatting = _defaultFormatting;
+
+	splitString(_str);
+	recalcDims();
+
+	_fullRefresh = true;
 	_inTextSelection = false;
 
 	_scrollPos = 0;
@@ -276,6 +239,11 @@ void MacText::init() {
 
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
 	_cursorSurface->clear(_wm->_colorBlack);
+
+	reallocSurface();
+	setAlignOffset(_textAlignment);
+	updateCursorPos();
+	render();
 }
 
 MacText::~MacText() {
@@ -741,12 +709,11 @@ void MacText::setAlignOffset(TextAlign align) {
 		_fullRefresh = true;
 		_alignOffset = offset;
 		_textAlignment = align;
-		render();
 	}
 }
 
 Common::Point MacText::calculateOffset() {
-	return Common::Point(_alignOffset.x + _border + _gutter + 1, _alignOffset.y + _border + _gutter/2);
+	return Common::Point(_alignOffset.x + _border + _gutter + 2, _alignOffset.y + _border + _gutter/2);
 }
 
 void MacText::setActive(bool active) {
@@ -899,18 +866,18 @@ bool MacText::draw(bool forceRedraw) {
 	_contentIsDirty = false;
 	_cursorDirty = false;
 
+	Common::Point offset(calculateOffset());
+	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
+
 	for (int bb = 0; bb < _shadow; bb ++) {
 		_composeSurface->hLine(_shadow, _composeSurface->h - _shadow + bb, _composeSurface->w, 0);
 		_composeSurface->vLine(_composeSurface->w - _shadow + bb, _shadow, _composeSurface->h - _shadow, 0);
 	}
 
 	for (int bb = 0; bb < _border; bb++) {
-		Common::Rect borderRect(bb, bb, _composeSurface->w - _shadow - bb, _composeSurface->h - _shadow - bb);
+		Common::Rect borderRect(bb, bb, _composeSurface->w - bb, _composeSurface->h - bb);
 		_composeSurface->frameRect(borderRect, 0);
 	}
-
-	Common::Point offset(calculateOffset());
-	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
 	if (_cursorState)
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
