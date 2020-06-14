@@ -1170,12 +1170,12 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	}
 
 	if (nHidden) {
-		Common::U32String hiddenStr = Common::U32String::format(Common::convertFromU32String(_("%d hidden achievements remaining")).c_str(), nHidden);
+		Common::U32String hiddenStr = Common::String::format(Common::convertFromU32String(_("%d hidden achievements remaining")).c_str(), nHidden);
 		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr, Graphics::kTextAlignStart);
 	}
 
 	if (nMax) {
-		Common::U32String totalStr = Common::U32String::format(Common::convertFromU32String(_("Achievements unlocked: %d/%d")).c_str(), nAchieved, nMax);
+		Common::U32String totalStr = Common::String::format(Common::convertFromU32String(_("Achievements unlocked: %d/%d")).c_str(), nAchieved, nMax);
 		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr, Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;
@@ -2148,7 +2148,7 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 	uint32 port = Networking::LocalWebserver::getPort();
 
 	_serverPortDesc = new StaticTextWidget(boss, prefix + "ServerPortDesc", (_("Server's port:")), _("Port for server to use"));
-	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::U32String::format("%u", port), Common::U32String(""));
+	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), Common::U32String(""));
 	_serverPortClearButton = addClearButton(boss, prefix + "ServerPortClearButton", kServerPortClearCmd);
 
 	if (lowres) {
@@ -2805,7 +2805,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		uint64 usedSpace = CloudMan.getStorageUsedSpace(_selectedStorageIndex);
 		Common::String usedSpaceNumber, usedSpaceUnits;
 		usedSpaceNumber = Common::getHumanReadableBytes(usedSpace, usedSpaceUnits);
-		_storageUsedSpace->setLabel(Common::U32String::format("%s %s", usedSpaceNumber.c_str(), _(usedSpaceUnits.c_str()).encode().c_str()));
+		_storageUsedSpace->setLabel(Common::String::format("%s %s", usedSpaceNumber.c_str(), _(usedSpaceUnits.c_str()).encode().c_str()));
 		_storageUsedSpace->setVisible(shownConnectedInfo);
 	}
 	if (_storageSyncHint) {

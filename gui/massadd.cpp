@@ -266,14 +266,14 @@ void MassAddDialog::handleTickle() {
 		buf = _("Scan complete!");
 		_dirProgressText->setLabel(buf);
 
-		buf = Common::U32String::format(Common::convertFromU32String(_("Discovered %d new games, ignored %d previously added games.")).c_str(), _games.size(), _oldGamesCount);
+		buf = Common::String::format(Common::convertFromU32String(_("Discovered %d new games, ignored %d previously added games.")).c_str(), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 
 	} else {
-		buf = Common::U32String::format(Common::convertFromU32String(_("Scanned %d directories ...")).c_str(), _dirsScanned);
+		buf = Common::String::format(Common::convertFromU32String(_("Scanned %d directories ...")).c_str(), _dirsScanned);
 		_dirProgressText->setLabel(buf);
 
-		buf = Common::U32String::format(Common::convertFromU32String(_("Discovered %d new games, ignored %d previously added games ...")).c_str(), _games.size(), _oldGamesCount);
+		buf = Common::String::format(Common::convertFromU32String(_("Discovered %d new games, ignored %d previously added games ...")).c_str(), _games.size(), _oldGamesCount);
 		_gameProgressText->setLabel(buf);
 	}
 
