@@ -379,12 +379,15 @@ void Pics::drawPicture(int pictureNum) const {
 
 	} else if (pictureNum >= ITEMS_OFFSET) {
 		pictureNum -= ITEMS_OFFSET;
+		ctx._drawSurface->clear(0);
 		_items[pictureNum / IMAGES_PER_FILE].draw(
 		    pictureNum % IMAGES_PER_FILE, &ctx);
 
 	} else {
 		if (pictureNum < LOCATIONS_NO_BG_OFFSET)
 			ctx._drawSurface->clearScreen(G_COLOR_WHITE);
+		else
+			ctx._drawSurface->clear(0);
 
 		pictureNum %= 100;
 		_rooms[pictureNum / IMAGES_PER_FILE].draw(
