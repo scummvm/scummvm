@@ -189,6 +189,10 @@ void TransylvaniaGame::beforeTurn() {
 void TransylvaniaGame::synchronizeSave(Common::Serializer &s) {
 	ComprehendGame::synchronizeSave(s);
 	s.syncAsByte(_miceReleased);
+
+	// As a post-step, ensure the vampire and werewolf aren't present
+	get_item(ITEM_WEREWOLF)->_room = 0xff;
+	get_item(ITEM_VAMPIRE)->_room = 0xff;
 }
 
 void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
