@@ -264,6 +264,11 @@ public:
 	bool hasAward(int awardId) const;
 
 	/**
+	 * Returns the number of times a character has received a given award
+	 */
+	int getAwardCount(int awardId) const;
+
+	/**
 	 * Returns the character's armor class
 	 */
 	int getArmorClass(bool baseOnly = false) const;
