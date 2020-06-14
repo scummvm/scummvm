@@ -485,24 +485,26 @@ bool Character::noActions() {
 	}
 }
 
-void Character::setAward(int awardId, bool value) {
+static int fixAwardId(int awardId) {
 	int v = awardId;
 	if (awardId == 73)
 		v = 126;
 	else if (awardId == 81)
 		v = 127;
 
-	_awards[v] = value ? 1 : 0;
+	return v;
+}
+
+void Character::setAward(int awardId, bool value) {
+	_awards[fixAwardId(awardId)] = value ? 1 : 0;
 }
 
 bool Character::hasAward(int awardId) const {
-	int v = awardId;
-	if (awardId == 73)
-		v = 126;
-	else if (awardId == 81)
-		v = 127;
+	return _awards[fixAwardId(awardId)] ? true : false;
+}
 
-	return _awards[v];
+int Character::getAwardCount(int awardId) const {
+	return _awards[fixAwardId(awardId)];
 }
 
 int Character::getArmorClass(bool baseOnly) const {
