@@ -38,7 +38,6 @@ private:
 
 	bool updateMonster(const TransylvaniaMonster *monsterInfo);
 	bool isMonsterInRoom(const TransylvaniaMonster *monsterInfo);
-	void checkForRestart();
 public:
 	TransylvaniaGame();
 	~TransylvaniaGame() override {}

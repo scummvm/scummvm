@@ -52,7 +52,7 @@ struct Sentence {
 	}
 };
 
-ComprehendGame::ComprehendGame() : _gameStrings(nullptr) {
+ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false) {
 }
 
 ComprehendGame::~ComprehendGame() {
@@ -282,12 +282,18 @@ void ComprehendGame::game_restore() {
 	(void)g_comprehend->loadGameState(c - '0');
 }
 
-void ComprehendGame::game_restart() {
+bool ComprehendGame::handle_restart() {
 	console_println(stringLookup(_gameStrings->game_restart).c_str());
-	console_get_key();
+	_ended = false;
 
-	loadGame();
-	_updateFlags = UPDATE_ALL;
+	if (tolower(console_get_key()) == 'r') {
+		loadGame();
+		_updateFlags = UPDATE_ALL;
+		return true;
+	} else {
+		g_comprehend->quitGame();
+		return false;
+	}
 }
 
 WordIndex *ComprehendGame::is_word_pair(Word *word1, Word *word2) {
@@ -1185,6 +1191,8 @@ void ComprehendGame::read_input() {
 
 	beforePrompt();
 	doBeforeTurn();
+	if (_ended)
+		return;
 
 	// If we're in full screen text, we can afford a blank row between
 	// any game response and the next line of text
@@ -1231,8 +1239,12 @@ void ComprehendGame::playGame() {
 		beforeGame();
 
 	_updateFlags = (uint)UPDATE_ALL;
-	while (!g_comprehend->shouldQuit())
+	while (!g_comprehend->shouldQuit()) {
 		read_input();
+
+		if (_ended && !handle_restart())
+			break;
+	}
 }
 
 uint ComprehendGame::getRandomNumber(uint max) const {

@@ -39,6 +39,8 @@ struct GameStrings;
 struct Sentence;
 
 class ComprehendGame : public GameData, public OpcodeMap {
+private:
+	bool _ended;
 public:
 	const GameStrings *_gameStrings;
 
@@ -62,7 +64,10 @@ private:
 protected:
 	void game_save();
 	void game_restore();
-	void game_restart();
+	void game_restart() {
+		_ended = true;
+	}
+	bool handle_restart();
 	int console_get_key();
 	void console_println(const char *text);
 	void move_object(Item *item, int new_room);
