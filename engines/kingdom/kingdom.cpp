@@ -158,7 +158,12 @@ bool KingdomGame::isDemo() const {
 }
 
 Common::Error KingdomGame::run() {
-	initGraphics(320, 200);
+	if (_gameDescription->platform == Common::kPlatform3DO) {
+		Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+		initGraphics(320, 200, &format);
+	} else
+		initGraphics(320, 200);
+
 	_console = new Console(this);
 
 	_logic = new Logic(this);
