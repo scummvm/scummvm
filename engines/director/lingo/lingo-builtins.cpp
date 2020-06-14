@@ -155,7 +155,7 @@ static struct BuiltinProto {
 	{ "quit",			LB::b_quit,			0, 0, false, 2, BLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, false, 2, BLTIN },	// D2 f
-	{ "scummvm_returnNumber", LB::b_returnNumber, 0, 1, false, 2, BLTIN },	// D2 f
+	{ "scummvm_returnNumber", LB::b_returnNumber, 1, 1, false, 2, BLTIN },	// D2 f
 	{ "shutDown",		LB::b_shutDown,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "startTimer",		LB::b_startTimer,	0, 0, false, 2, BLTIN },	// D2 c
 		// when keyDown													// D2
@@ -512,7 +512,12 @@ void LB::b_string(int nargs) {
 
 void LB::b_value(int nargs) {
 	Datum d = g_lingo->pop();
-	Common::String code = "scummvm_returnNumber " + d.asString();
+	Common::String expr = d.asString();
+	if (expr.empty()) {
+		g_lingo->push(Datum(0));
+		return;
+	}
+	Common::String code = "scummvm_returnNumber " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->addCode(code.c_str(), -1, kNoneScript, 0);
 	Symbol sym = sc->functions[0];
