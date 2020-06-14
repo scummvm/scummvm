@@ -225,7 +225,6 @@ void Comprehend::togglePictureVisibility() {
 	}
 
 	_graphicsEnabled = _topWindow != nullptr;
-	print(_("Picture window toggled\n"));
 }
 
 } // namespace Comprehend
