@@ -415,6 +415,17 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		AdObject *obj = (AdObject *)val->getNative();
+
+		// HACK: We take corrosion screenshot before entering main menu
+		// Unused screenshots must be deleted, after main menu is closed
+		if (obj && BaseEngine::instance().getGameId() == "corrosion") {
+			const char *mm = "interface\\system\\mainmenu.window";
+			const char *fn = obj->getFilename();
+			if (fn && strcmp(fn, mm) == 0) {
+				deleteSaveThumbnail();
+			}
+		}
+
 		removeObject(obj);
 		if (val->getType() == VAL_VARIABLE_REF) {
 			val->setNULL();
