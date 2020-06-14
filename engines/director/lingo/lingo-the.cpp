@@ -639,7 +639,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheStageColor: {
 		Score *score = _vm->getCurrentScore();
-		score->_stageColor = d.asInt();
+		score->_stageColor = _vm->transformColor(d.asInt());
 		if (score->_surface) {
 			score->_surface->clear(score->_stageColor);
 			score->renderFrame(score->getCurrentFrame(), true);
