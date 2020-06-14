@@ -198,14 +198,7 @@ void ComprehendGame::console_println(const char *text) {
 
 		if (!word || !word_len)
 			continue;
-#ifdef DEPRECATED
-		/* Print this word */
-		if (line_length + word_len > console_winsize.ws_col) {
-			/* Too long - insert a line break */
-			g_comprehend->print("\n");
-			line_length = 0;
-		}
-#endif
+
 		Common::String wordStr(word, word_len);
 		g_comprehend->print("%s", wordStr.c_str());
 
