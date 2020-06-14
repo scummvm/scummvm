@@ -144,6 +144,7 @@ namespace LB {
 	void b_shutDown(int nargs);
 	void b_startTimer(int nargs);
 	void b_return(int nargs);
+	void b_returnNumber(int nargs);
 
 	void b_closeDA(int nargs);
 	void b_closeResFile(int nargs);
