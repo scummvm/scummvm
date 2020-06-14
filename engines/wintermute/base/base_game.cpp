@@ -1931,16 +1931,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StoreSaveThumbnail") == 0) {
 		stack->correctParams(0);
-		delete _cachedThumbnail;
-		_cachedThumbnail = new SaveThumbHelper(this);
-		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
-			delete _cachedThumbnail;
-			_cachedThumbnail = nullptr;
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(true);
-		}
-
+		stack->pushBool(storeSaveThumbnail());
 		return STATUS_OK;
 	}
 
@@ -1949,10 +1940,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteSaveThumbnail") == 0) {
 		stack->correctParams(0);
-		delete _cachedThumbnail;
-		_cachedThumbnail = nullptr;
+		deleteSaveThumbnail();
 		stack->pushNULL();
-
 		return STATUS_OK;
 	}
 
@@ -4078,6 +4067,23 @@ bool BaseGame::drawCursor(BaseSprite *cursor) {
 		_lastCursor = cursor;
 	}
 	return cursor->draw(_mousePos.x, _mousePos.y);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::storeSaveThumbnail() {
+	delete _cachedThumbnail;
+	_cachedThumbnail = new SaveThumbHelper(this);
+	if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
+		deleteSaveThumbnail();
+		return false;
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseGame::deleteSaveThumbnail() {
+	delete _cachedThumbnail;
+	_cachedThumbnail = nullptr;
 }
 
 

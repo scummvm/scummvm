@@ -259,6 +259,8 @@ public:
 	bool setActiveObject(BaseObject *Obj);
 	BaseSprite *_lastCursor;
 	bool drawCursor(BaseSprite *Cursor);
+	bool storeSaveThumbnail();
+	void deleteSaveThumbnail();
 
 	SaveThumbHelper *_cachedThumbnail;
 	void addMem(int32 bytes);
