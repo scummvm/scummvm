@@ -89,6 +89,7 @@ SoundMidiPC::~SoundMidiPC() {
 	delete _music;
 	for (int i = 0; i < 3; ++i)
 		delete _sfx[i];
+	_output->allNotesOff();
 
 	delete _output; // This automatically frees _driver (!)
 
@@ -239,10 +240,10 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
-	// When loading a new file we stop all notes
-	// still running on our own, just to prevent
-	// glitches
-	_output->allNotesOff();
+	haltTrack();
+	if (_vm->game() == GI_KYRA1) {
+		stopAllSoundEffects();
+	}
 
 	delete[] _musicFile;
 	uint32 fileSize = 0;
@@ -275,6 +276,8 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
+	stopAllSoundEffects();
+
 	delete[] _sfxFile;
 
 	uint32 fileSize = 0;
@@ -292,11 +295,6 @@ void SoundMidiPC::playTrack(uint8 track) {
 		return;
 
 	haltTrack();
-
-	// The following two lines are meant as a fix for bug #6314.
-	// It is on purpose that they are outside the mutex lock.
-	_output->allNotesOff();
-	//_vm->delay(250);
 
 	Common::StackLock lock(_mutex);
 	_fadeMusicOut = false;
@@ -379,14 +377,8 @@ void SoundMidiPC::onTimer(void *data) {
 			int volume = (byte)((musicFadeTime - (midi->_vm->_system->getMillis() - midi->_fadeStartTime)) * midi->_musicVolume / musicFadeTime);
 			midi->_output->setSourceVolume(0, volume);
 		} else {
-			midi->_music->stopPlaying();
-
-			for (int i = 0; i < 3; ++i) {
-				midi->_sfx[i]->stopPlaying();
-			}
-
-			for (int i = 0; i < 4; ++i)
-				midi->_output->deinitSource(i);
+			midi->haltTrack();
+			midi->stopAllSoundEffects();
 
 			midi->_fadeMusicOut = false;
 
