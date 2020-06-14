@@ -57,7 +57,7 @@ struct TransylvaniaMonster {
 
 
 const TransylvaniaMonster TransylvaniaGame::WEREWOLF = {
-	ITEM_WEREWOLF, 7, ROOMFLAG_WEREWOLF, 10, 172
+	ITEM_WEREWOLF, 7, ROOMFLAG_WEREWOLF, 10, 190
 };
 
 const TransylvaniaMonster TransylvaniaGame::VAMPIRE = {
