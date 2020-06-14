@@ -67,6 +67,8 @@ class MveDecoder : public VideoDecoder {
 
 	Common::Rational _frameRate;
 
+	bool      _trueColor;
+	Graphics::PixelFormat _pixelFormat;
 	bool      _dirtyPalette;
 	uint16    _palStart;
 	uint16    _palCount;
@@ -86,7 +88,8 @@ class MveDecoder : public VideoDecoder {
 	Audio::QueuingAudioStream *_audioStream;
 
 	void readPacketHeader();
-	void copyBlock(Graphics::Surface &dst, Common::MemoryReadStream &s, int block);
+	void copyBlock_8bit(Graphics::Surface &dst, Common::MemoryReadStream &s, int block);
+	void copyBlock_16bit(Graphics::Surface &dst, Common::MemoryReadStream &s, int block);
 	void copyBlock(Graphics::Surface &dst, Graphics::Surface &src, int block, int offset = 0);
 	void copyBlock(Graphics::Surface &dst, Graphics::Surface &src, int dx, int dy, int off_x, int off_y);
 

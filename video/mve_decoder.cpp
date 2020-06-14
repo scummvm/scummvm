@@ -101,7 +101,7 @@ void MveDecoder::applyPalette(PaletteManager *paletteManager) {
 	paletteManager->setPalette(_palette + 3 * _palStart, _palStart, _palCount);
 }
 
-void MveDecoder::copyBlock(Graphics::Surface &dst, Common::MemoryReadStream &s, int block) {
+void MveDecoder::copyBlock_8bit(Graphics::Surface &dst, Common::MemoryReadStream &s, int block) {
 	int x = (block % _widthInBlocks) * 8;
 	int y = (block / _widthInBlocks) * 8;
 
@@ -109,6 +109,20 @@ void MveDecoder::copyBlock(Graphics::Surface &dst, Common::MemoryReadStream &s, 
 
 	for (int i = 0; i != 8; ++i) {
 		s.read(p, 8);
+		p += dst.pitch;
+	}
+}
+
+void MveDecoder::copyBlock_16bit(Graphics::Surface &dst, Common::MemoryReadStream &s, int block) {
+	int x = (block % _widthInBlocks) * 8;
+	int y = (block / _widthInBlocks) * 8;
+
+	byte *p = (byte*)dst.getBasePtr(x, y);
+
+	for (int i = 0; i != 8; ++i) {
+		for (int j = 0; j != 8; ++j) {
+			WRITE_UINT16(p+2*j, s.readUint16LE());
+		}
 		p += dst.pitch;
 	}
 }
@@ -124,21 +138,21 @@ void MveDecoder::copyBlock(Graphics::Surface &dst, Graphics::Surface &src, int b
 	byte *sp = (byte*)src.getBasePtr(sx, sy);
 
 	for (int i = 0; i != 8; ++i) {
-		memmove(dp, sp, 8);
+		memmove(dp, sp, !_trueColor ? 8 : 16);
 		dp += dst.pitch;
 		sp += src.pitch;
 	}
 }
 
 void MveDecoder::copyBlock(Graphics::Surface &dst, Graphics::Surface &src, int dx, int dy, int off_x, int off_y) {
-	int sx = dx + + off_x;
-	int sy = dy + + off_y;
+	int sx = dx + off_x;
+	int sy = dy + off_y;
 
 	byte *dp = (byte*)dst.getBasePtr(dx, dy);
 	byte *sp = (byte*)src.getBasePtr(sx, sy);
 
 	for (int i = 0; i != 8; ++i) {
-		memmove(dp, sp, 8);
+		memmove(dp, sp, !_trueColor ? 8 : 16);
 		dp += dst.pitch;
 		sp += src.pitch;
 	}
@@ -156,7 +170,11 @@ void MveDecoder::decodeFormat6() {
 	for (int b = 0; b != _widthInBlocks * _heightInBlocks; ++b) {
 		uint16 op = opStream.readUint16LE();
 		if (op == 0) {
-			copyBlock(_decodeSurface0, frameStream, b);
+			if (!_trueColor) {
+				copyBlock_8bit(_decodeSurface0, frameStream, b);
+			} else {
+				copyBlock_16bit(_decodeSurface0, frameStream, b);
+			}
 		}
 	}
 
@@ -195,7 +213,11 @@ void MveDecoder::decodeFormat10() {
 		if (skipStream.skip()) continue;
 		uint16 op = opStream.readUint16LE();
 		if (op == 0) {
-			copyBlock(_decodeSurface0, frameStream, b);
+			if (!_trueColor) {
+				copyBlock_8bit(_decodeSurface0, frameStream, b);
+			} else {
+				copyBlock_16bit(_decodeSurface0, frameStream, b);
+			}
 		}
 	}
 
@@ -315,7 +337,7 @@ void MveDecoder::readNextPacket() {
 				uint16 width = _s->readUint16LE();
 				uint16 height = _s->readUint16LE();
 				/*uint16 count =*/ _s->readUint16LE();
-				/*uint16 trueColor =*/ _s->readUint16LE();
+				uint16 trueColor = _s->readUint16LE();
 
 				_widthInBlocks = width;
 				_heightInBlocks = height;
@@ -323,13 +345,21 @@ void MveDecoder::readNextPacket() {
 				_width = 8 * width;
 				_height = 8 * height;
 
-				_decodeSurface0.create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+				_trueColor = !!trueColor;
+
+				if (!_trueColor) {
+					_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+				} else {
+					_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+				}
+
+				_decodeSurface0.create(_width, _height, _pixelFormat);
 				_decodeSurface0.fillRect(Common::Rect(_width, _height), 0);
 
-				_decodeSurface1.create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+				_decodeSurface1.create(_width, _height, _pixelFormat);
 				_decodeSurface1.fillRect(Common::Rect(_width, _height), 0);
 
-				_frameSurface.create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+				_frameSurface.create(_width, _height, _pixelFormat);
 				_frameSurface.fillRect(Common::Rect(_width, _height), 0);
 
 				addTrack(new MveVideoTrack(this));
