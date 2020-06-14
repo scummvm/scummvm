@@ -24,6 +24,8 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "engines/wintermute/base/base_game_custom_actions.h"
+
 #include "common/translation.h"
 
 namespace Wintermute {
@@ -69,7 +71,6 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "bickadoodle" ||
 		gameId == "bthreshold" ||
 		gameId == "colorsoncanvas" ||
-		gameId == "corrosion" ||
 		gameId == "deadcity" ||
 		gameId == "darkfallls" ||
 		gameId == "drbohus" ||
@@ -518,6 +519,34 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
 		act->addDefaultInputMapping("DOWN"); // extra keyboard
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		gameKeyMap->addAction(act);
+	} else if (gameId == "corrosion") {
+		act = new Action(kStandardActionMoveUp, _("Walk forward"));
+		act->setCustomEngineActionEvent(kClickAtCenter);
+		act->addDefaultInputMapping("UP"); // extra keyboard
+		act->addDefaultInputMapping("KP8"); // extra keyboard
+		act->addDefaultInputMapping("JOY_UP"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveDown, _("Walk backward"));
+		act->setCustomEngineActionEvent(kClickAtBottom);
+		act->addDefaultInputMapping("DOWN"); // extra keyboard
+		act->addDefaultInputMapping("KP2"); // extra keyboard
+		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveLeft, _("Turn left"));
+		act->setCustomEngineActionEvent(kClickAtLeft);
+		act->addDefaultInputMapping("LEFT"); // extra keyboard
+		act->addDefaultInputMapping("KP4"); // extra keyboard
+		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveRight, _("Turn right"));
+		act->setCustomEngineActionEvent(kClickAtRight);
+		act->addDefaultInputMapping("RIGHT"); // extra keyboard
+		act->addDefaultInputMapping("KP6"); // extra keyboard
+		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
 		gameKeyMap->addAction(act);
 	} else if (gameId == "erinmyers") {
 		act = new Action("GUIB", _("Change font size"));
