@@ -548,7 +548,7 @@ void Score::renderSprite(uint16 id) {
 
 	sprite->updateCast();
 
-	debugC(1, kDebugImages, "Score::renderFrame(): channel: %d,  castType: %d", id, sprite->_castType);
+	debugC(1, kDebugImages, "Score::renderSprite(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
 	if (sprite->_castType == kCastShape) {
 		renderShape(id);
 	} else {
