@@ -49,9 +49,9 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 
 		if (*s == '"')
 			res += *s++;
-	} else if (Common::isAlnum(*s)) {
+	} else if (Common::isAlnum(*s) || *s == '#') {
 		// Now copy everything till whitespace
-		while (*s && (Common::isAlnum(*s) || *s == '.'))
+		while (*s && (Common::isAlnum(*s) || *s == '.' || *s == '#' || *s == '_'))
 			res += *s++;
 	} else {
 		while (*s && isspec(*s))
@@ -85,7 +85,7 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 			res = *s-- + res;
 	} else if (Common::isAlnum(*s)) { 	// Now copy everything till whitespace
 		// Now copy everything till whitespace
-		while (s >= lineStart && (Common::isAlnum(*s) || *s == '.'))
+		while (s >= lineStart && (Common::isAlnum(*s) || *s == '.' || *s == '#' || *s == '_'))
 			res = *s-- + res;
 	} else {
 		while (s >= lineStart && isspec(*s))
