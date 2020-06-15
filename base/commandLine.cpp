@@ -917,7 +917,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 					   "  ---- ------------------------------------------------------\n");
 
 			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().c_str());
+				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().encode().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 			atLeastOneFound = true;
@@ -961,7 +961,7 @@ static void listAudioDevices() {
 		const MusicPluginObject &musicObject = (*i)->get<MusicPluginObject>();
 		MusicDevices deviceList = musicObject.getDevices();
 		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
-			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
+			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().encode().c_str()).c_str(), j->getCompleteName().encode().c_str());
 		}
 	}
 }
