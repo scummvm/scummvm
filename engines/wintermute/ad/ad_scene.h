@@ -57,6 +57,7 @@ public:
 
 #ifdef ENABLE_WME3D
 	bool _2DPathfinding;
+	float _waypointHeight;
 #endif
 	bool afterLoad();
 

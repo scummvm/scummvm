@@ -621,6 +621,7 @@ TOKEN_DEF(EDITOR_SHOW_GEOMETRY) // WME3D
 TOKEN_DEF(EDITOR_RESOLUTION_WIDTH) // WME3D
 TOKEN_DEF(EDITOR_RESOLUTION_HEIGHT) // WME3D
 TOKEN_DEF(FOV_OVERRIDE) // WME3D
+TOKEN_DEF(WAYPOINT_HEIGHT) // WME3D
 TOKEN_DEF(NEARCLIPPING_PLANE) // WME3D
 TOKEN_DEF(FAR_CLIPPING_PLANE) // WME3D
 TOKEN_DEF(2D_PATHFINDING) // WME3D
@@ -673,6 +674,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(EDITOR_RESOLUTION_WIDTH) // WME3D
 	TOKEN_TABLE(EDITOR_RESOLUTION_HEIGHT) // WME3D
 	TOKEN_TABLE(FOV_OVERRIDE) // WME3D
+	TOKEN_TABLE(WAYPOINT_HEIGHT) // WME3D
 	TOKEN_TABLE(NEARCLIPPING_PLANE) // WME3D
 	TOKEN_TABLE(FAR_CLIPPING_PLANE) // WME3D
 	TOKEN_TABLE(2D_PATHFINDING) // WME3D
@@ -809,6 +811,9 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			}
 
 			break;
+
+		case TOKEN_WAYPOINT_HEIGHT:
+			parser.scanStr(params, "%f", &_waypointHeight);
 #endif
 		case TOKEN_CAMERA:
 			Common::strlcpy(camera, params, MAX_PATH_LENGTH);
@@ -960,7 +965,10 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
-		// TODO: original wme code does a check on waypoint height here
+		if (_waypointHeight >= 0.0f) {
+			_sceneGeometry->_waypointHeight = _waypointHeight;
+			_sceneGeometry->dropWaypoints();
+		}
 
 		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
 
