@@ -2563,7 +2563,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kPasteCodeStorageCmd: {
 		if (g_system->hasTextInClipboard()) {
-			Common::String message = g_system->getTextFromClipboard();
+			Common::U32String message = g_system->getTextFromClipboard();
 			if (!message.empty()) {
 				_storageWizardCodeBox->setEditString(message);
 				_redrawCloudTab = true;

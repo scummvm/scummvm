@@ -197,7 +197,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_v:
 		if (state.flags & Common::KBD_CTRL) {
 			if (g_system->hasTextInClipboard()) {
-				String text = g_system->getTextFromClipboard();
+				U32String text = g_system->getTextFromClipboard();
 				for (uint32 i = 0; i < text.size(); ++i) {
 					if (tryInsertChar(text[i], _caretPos))
 						++_caretPos;
@@ -212,7 +212,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_c:
 		if (state.flags & Common::KBD_CTRL) {
 			if (!getEditString().empty())
-				g_system->setTextInClipboard(Common::convertFromU32String(getEditString()));
+				g_system->setTextInClipboard(getEditString());
 		} else {
 			defaultKeyDownHandler(state, dirty, forcecaret, handled);
 		}

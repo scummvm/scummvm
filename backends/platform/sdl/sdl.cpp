@@ -495,7 +495,7 @@ bool OSystem_SDL::hasTextInClipboard() {
 	return SDL_HasClipboardText() == SDL_TRUE;
 }
 
-Common::String OSystem_SDL::getTextFromClipboard() {
+Common::U32String OSystem_SDL::getTextFromClipboard() {
 	if (!hasTextInClipboard()) return "";
 
 	char *text = SDL_GetClipboardText();
@@ -510,17 +510,17 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 		SDL_free(text);
 		text = conv_text;
 	}
-	Common::String strText = text;
+	Common::U32String strText = text;
 	SDL_free(text);
 
 	return strText;
 }
 
-bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
+bool OSystem_SDL::setTextInClipboard(const Common::U32String &text) {
 	// The encoding we need to use is UTF-8. Assume we currently have the
 	// current TranslationManager encoding or ISO-8859-1.
 #ifdef USE_TRANSLATION
-	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.c_str(), text.size() + 1);
+	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.encode().c_str(), text.size() + 1);
 #else
 	char *utf8_text = SDL_iconv_string("UTF-8", "ISO-8859-1", text.c_str(), text.size() + 1);
 #endif
@@ -529,7 +529,7 @@ bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
 		SDL_free(utf8_text);
 		return status == 0;
 	}
-	return SDL_SetClipboardText(text.c_str()) == 0;
+	return SDL_SetClipboardText(text.encode().c_str()) == 0;
 }
 #endif
 
