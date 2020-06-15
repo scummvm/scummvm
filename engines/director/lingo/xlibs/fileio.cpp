@@ -143,8 +143,8 @@ void FileIO::m_new(int nargs) {
 	Datum d1 = g_lingo->pop();
 
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
-	Common::String option = *d1.u.s;
-	Common::String filename = *d2.u.s;
+	Common::String option = d1.asString();
+	Common::String filename = d2.asString();
 
 	if (option.hasPrefix("?")) {
 		option = option.substr(1);
@@ -257,8 +257,8 @@ void FileIO::m_readToken(int nargs) {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	Common::String skipString = *d1.u.s;
-	Common::String breakString = *d2.u.s;
+	Common::String skipString = d1.asString();
+	Common::String breakString = d2.asString();
 
 	if (!me->inStream || me->inStream->eos() || me->inStream->err()) {
 		g_lingo->push(Datum(""));
