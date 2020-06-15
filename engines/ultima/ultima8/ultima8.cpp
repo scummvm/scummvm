@@ -378,6 +378,7 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	if (_audioMixer) {
 		_audioMixer->closeMidiOutput();
 		_audioMixer->reset();
+		FORGET_OBJECT(_audioMixer);
 	}
 
 	_desktopGump = nullptr;
@@ -730,6 +731,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 		return;
 
 	case Common::EVENT_QUIT:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		_isRunning = false;
 		break;
 

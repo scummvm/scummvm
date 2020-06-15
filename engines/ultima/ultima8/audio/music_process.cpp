@@ -41,6 +41,10 @@ MusicProcess::MusicProcess() {
 	setRunPaused();
 }
 
+MusicProcess::~MusicProcess() {
+	_theMusicProcess = nullptr;
+}
+
 uint32 MusicProcess::I_musicStop(const uint8 * /*args*/,
                                  unsigned int /*argsize*/) {
 	if (_theMusicProcess) _theMusicProcess->playMusic_internal(0);

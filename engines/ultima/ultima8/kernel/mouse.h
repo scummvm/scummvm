@@ -129,6 +129,7 @@ public:
 	static Mouse *get_instance() { return _instance; }
 public:
 	Mouse();
+	~Mouse();
 
 	/**
 	 * Setup the mouse cursors

@@ -61,6 +61,8 @@ void AudioMixer::createProcesses() {
 }
 
 AudioMixer::~AudioMixer(void) {
+	_audioMixer = nullptr;
+
 	debugN(MM_INFO, "Destroying AudioMixer...\n");
 
 	closeMidiOutput();
