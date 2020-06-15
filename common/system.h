@@ -27,6 +27,7 @@
 #include "common/noncopyable.h"
 #include "common/array.h" // For OSystem::getGlobalKeymaps()
 #include "common/list.h" // For OSystem::getSupportedFormats()
+#include "common/ustr.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
 
@@ -221,7 +222,7 @@ protected:
 	 * Used by the default clipboard implementation, for backends that don't
 	 * implement clipboard support.
 	 */
-	Common::String _clipboard;
+	Common::U32String _clipboard;
 
 	// WORKAROUND. The 014bef9eab9fb409cfb3ec66830e033e4aaa29a9 triggered a bug
 	// in the osx_intel toolchain. Adding this variable fixes it.
@@ -1482,7 +1483,7 @@ public:
 	 *
 	 * @return clipboard contents ("" if hasTextInClipboard() == false)
 	 */
-	virtual Common::String getTextFromClipboard() { return _clipboard; }
+	virtual Common::U32String getTextFromClipboard() { return _clipboard; }
 
 	/**
 	 * Set the content of the clipboard to the given string.
@@ -1493,7 +1494,7 @@ public:
 	 *
 	 * @return true if the text was properly set in the clipboard, false otherwise
 	 */
-	virtual bool setTextInClipboard(const Common::String &text) { _clipboard = text; return true; }
+	virtual bool setTextInClipboard(const Common::U32String &text) { _clipboard = text; return true; }
 
 	/**
 	 * Open the given Url in the default browser (if available on the target
