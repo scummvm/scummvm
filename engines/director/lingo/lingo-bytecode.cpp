@@ -85,7 +85,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x55, LC::c_jumpifz,		"jb" },
 	{ 0x56, LC::cb_localcall,	"b" },
 	{ 0x57, LC::cb_call,		"b" },
-	{ 0x58, LC::cb_methodcall,  "b" },
+	{ 0x58, LC::cb_objectcall,  "b" },
 	{ 0x59, LC::cb_v4assign,	"b" },
 	{ 0x5a, LC::cb_v4assign2,	"b" },
 	{ 0x5b, LC::cb_delete, 		"b" },
@@ -118,7 +118,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x95, LC::c_jumpifz,		"jw" },
 	{ 0x96, LC::cb_localcall,	"w" },
 	{ 0x97, LC::cb_call,		"w" },
-	{ 0x98, LC::cb_methodcall,  "w" },
+	{ 0x98, LC::cb_objectcall,  "w" },
 	{ 0x99, LC::cb_v4assign,	"w" },
 	{ 0x9a, LC::cb_v4assign2,	"w" },
 	{ 0x9c, LC::cb_v4theentitypush, "w" },
@@ -307,20 +307,46 @@ void LC::cb_localcall() {
 }
 
 
-void LC::cb_methodcall() {
+void LC::cb_objectcall() {
 	g_lingo->readInt();
-	Common::String name = g_lingo->pop().asString();
-	warning("STUB: cb_methodcall(%s)", name.c_str());
-
+	Datum object = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
-	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		if (debugChannelSet(3, kDebugLingoExec))
-			g_lingo->printSTUBWithArglist("", nargs.u.i, "methodcall:");
-
+	if (object.type != SYMBOL) {
+		warning("cb_objectcall: first arg should be of type SYMBOL, not %s", object.type2str());
+	} else if ((nargs.type != ARGC) && (nargs.type != ARGCNORET)) {
+		warning("cb_objectcall: second arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	} else {
-		warning("cb_methodcall: second arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
-	}
+		// first, try looking up an object with that name
+		object.type = VAR;
+		Datum target = g_lingo->varFetch(object);
 
+		if (target.type == OBJECT) {
+			StackData args;
+			for (int i = 0; i < nargs.u.i - 1; i++) {
+				args.push_back(g_lingo->pop());
+			}
+			Datum methodName = g_lingo->pop();
+			Symbol method = target.u.obj->getMethod(methodName.asString());
+			if (method.type != VOID) {
+				for (int i = 0; i < nargs.u.i - 1; i++) {
+					g_lingo->push(args.back());
+					args.pop_back();
+				}
+				LC::call(method, nargs.u.i - 1);
+			} else {
+				warning("cb_objectcall: object %s has no method named %s", object.u.s->c_str(), methodName.asString().c_str());
+			}
+			return;
+		}
+
+		// if there's nothing, try calling a function with that name
+		Symbol func = g_lingo->getHandler(*object.u.s);
+		if (func.type != VOID) {
+			LC::call(*object.u.s, nargs.u.i);
+		} else {
+			warning("cb_objectcall: could not find object or function with name %s", object.u.s->c_str());
+		}
+	}
 }
 
 
@@ -465,8 +491,8 @@ void LC::cb_objectpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
 	warning("STUB: cb_objectpush(%s)", name.c_str());
-	Datum result;
-	result.type = VOID;
+	Datum result(name);
+	result.type = SYMBOL;
 	g_lingo->push(result);
 }
 

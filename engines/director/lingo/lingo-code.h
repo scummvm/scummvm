@@ -146,7 +146,7 @@ namespace LC {
 	void cb_globalpush();
 	void cb_list();
 	void cb_localcall();
-	void cb_methodcall();
+	void cb_objectcall();
 	void cb_objectfieldassign();
 	void cb_objectfieldpush();
 	void cb_objectpush();

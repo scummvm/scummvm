@@ -140,7 +140,7 @@ static struct FuncDescr {
 	{ LC::cb_list,			"cb_list",			"" },
 	{ LC::cb_proplist,		"cb_proplist",		"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
-	{ LC::cb_methodcall,	"cb_methodcall",	"N" },
+	{ LC::cb_objectcall,	"cb_objectcall",	"i" },
 	{ LC::cb_objectfieldassign, "cb_objectfieldassign", "N" },
 	{ LC::cb_objectfieldpush, "cb_objectfieldpush", "N" },
 	{ LC::cb_objectpush,	"cb_objectpush",	"N" },
