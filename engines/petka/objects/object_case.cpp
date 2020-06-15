@@ -86,7 +86,7 @@ void QObjectCase::update(int time) {
 	_time += time;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(kFirstButtonResourceId + _clickedObjIndex);
 	if (flc) {
-		while (_time >= flc->getDelay()) {
+		while (_time >= (int32)flc->getDelay()) {
 			flc->setFrame(-1);
 			_time -= flc->getDelay();
 			g_vm->videoSystem()->addDirtyMskRects(*flc);

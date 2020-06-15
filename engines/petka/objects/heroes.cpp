@@ -277,10 +277,10 @@ void QObjectPetka::update(int time) {
 				_startSound = true;
 			}
 			flc->setFrame(-1);
-			if (flc->getCurFrame() == flc->getFrameCount() - 1) {
+			if (flc->getCurFrame() == (int32)flc->getFrameCount() - 1) {
 				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, 0);
 			}
-			if (flc->getCurFrame() + 1 == flc->getFrameCount() / 2) {
+			if (flc->getCurFrame() + 1 == (int32)flc->getFrameCount() / 2) {
 				g_vm->getQSystem()->addMessage(_id, kHalf, _resourceId, 0, 0, 0, 0);
 			}
 

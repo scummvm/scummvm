@@ -505,16 +505,16 @@ void QObject::update(int time) {
 	_time += time;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
-		while (_time >= flc->getDelay()) {
+		while (_time >= (int32)flc->getDelay()) {
 			if (_sound && flc->getCurFrame() == 0) {
 				_startSound = true;
 			}
 			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 			flc->setFrame(-1);
-			if (flc->getCurFrame() == flc->getFrameCount() - 1) {
+			if (flc->getCurFrame() == (int32)flc->getFrameCount() - 1) {
 				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, 0);
 			}
-			if (flc->getCurFrame() + 1 == flc->getFrameCount() / 2) {
+			if (flc->getCurFrame() + 1 == (int32)flc->getFrameCount() / 2) {
 				g_vm->getQSystem()->addMessage(_id, kHalf, _resourceId, 0, 0, 0, 0);
 			}
 			_time -= flc->getDelay();
