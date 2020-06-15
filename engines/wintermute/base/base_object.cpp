@@ -102,7 +102,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_shadowModel = nullptr;
 	_posVector = Math::Vector3d(0.0f, 0.0f, 0.0f);
 	_angle = 0.0f;
-	_scale = 1.0f;
+	_scale3D = 1.0f;
 	_worldMatrix.setToIdentity();
 
 	_shadowImage = nullptr;
