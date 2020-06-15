@@ -89,6 +89,7 @@ MODULE_OBJS := \
 	base/gfx/x/animation_set.o \
 	base/gfx/x/frame_node.o \
 	base/gfx/x/modelx.o \
+	base/gfx/x/loader_x.o \
 	base/particles/part_particle.o \
 	base/particles/part_emitter.o \
 	base/particles/part_force.o \
