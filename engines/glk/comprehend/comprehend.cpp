@@ -84,7 +84,7 @@ void Comprehend::initialize() {
 	_bottomWindow = (TextBufferWindow *)glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
 	glk_set_window(_bottomWindow);
 
-	togglePictureVisibility();
+	showGraphics();
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
 
 	const Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
@@ -212,19 +212,25 @@ void Comprehend::clearScreen(bool isBright) {
 	drawPicture(isBright ? BRIGHT_ROOM : DARK_ROOM);
 }
 
-void Comprehend::togglePictureVisibility() {
+void Comprehend::toggleGraphics() {
 	if (_topWindow) {
 		// Remove the picture window
 		glk_window_close(_topWindow);
 		_topWindow = nullptr;
+		_graphicsEnabled = false;
 	} else {
 		// Create the window again
+		showGraphics();
+	}
+}
+
+void Comprehend::showGraphics() {
+	if (!_topWindow) {
 		_topWindow = (GraphicsWindow *)glk_window_open(_bottomWindow,
 			winmethod_Above | winmethod_Fixed,
 			160 * SCALE_FACTOR, wintype_Graphics, 2);
+		_graphicsEnabled = true;
 	}
-
-	_graphicsEnabled = _topWindow != nullptr;
 }
 
 } // namespace Comprehend

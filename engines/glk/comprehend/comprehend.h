@@ -159,7 +159,12 @@ public:
 	/**
 	 * Toggles whether the picture window is visible
 	 */
-	void togglePictureVisibility();
+	void toggleGraphics();
+
+	/**
+	 * Ensures the picture window is visible
+	 */
+	void showGraphics();
 
 	/**
 	 * Returns true if the graphics area is visible

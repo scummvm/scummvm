@@ -32,6 +32,12 @@ class CrimsonCrownGame : public ComprehendGame {
 private:
 	uint _diskNum;
 
+private:
+	/**
+	 * Cutscene triggered when looking at crystal ball
+	 */
+	void crystalBallCutscene();
+
 public:
 	CrimsonCrownGame();
 	~CrimsonCrownGame() override {}

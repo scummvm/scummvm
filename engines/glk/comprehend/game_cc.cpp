@@ -29,7 +29,7 @@ namespace Comprehend {
 
 static const GameStrings CC1_STRINGS = {0x9};
 
-CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame() {
+CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame(), _diskNum(1) {
 	setupDisk(1);
 }
 
@@ -66,19 +66,19 @@ void CrimsonCrownGame::synchronizeSave(Common::Serializer &s) {
 
 void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
-	case 0x01:
-		// Enter the Vampire's throne room
+	case 1:
+		// Crystyal ball cutscene
 		assert(_diskNum == 1);
-		eval_function(&_functions[0xe], nullptr, nullptr);
+		crystalBallCutscene();
 		break;
 
-	case 0x03:
+	case 3:
 		// Game over - failure
 		setupDisk(1);
 		game_restart();
 		break;
 
-	case 0x05:
+	case 5:
 		if (_diskNum == 1) {
 			// Finished disk 1
 			error("[Completed disk 1 - handle switch to disk 2]");
@@ -89,11 +89,11 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 		}
 		break;
 
-	case 0x06:
+	case 6:
 		game_save();
 		break;
 
-	case 0x07:
+	case 7:
 		game_restore();
 		break;
 
@@ -101,6 +101,20 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 		break;
 	}
 }
+
+void CrimsonCrownGame::crystalBallCutscene() {
+	g_comprehend->showGraphics();
+
+	for (int screenNum = 38; screenNum <= 40; ++screenNum) {
+		g_comprehend->drawLocationPicture(screenNum);
+		g_comprehend->readChar();
+		if (g_comprehend->shouldQuit())
+			return;
+	}
+
+	// TODO: Is this actually a function call?
+	eval_function(&_functions[14], nullptr, nullptr);
+} 
 
 void CrimsonCrownGame::beforePrompt() {
 	// Clear the Sabrina/Erik action flags

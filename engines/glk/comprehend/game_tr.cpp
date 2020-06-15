@@ -217,6 +217,7 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 
 	case 5:
 		// Won the game
+		g_comprehend->showGraphics();
 		g_comprehend->drawLocationPicture(40);
 		game_restart();
 		break;
@@ -237,6 +238,7 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	case 9:
 		// Show the Zin screen in reponse to doing
 		// 'sing some enchanted evening' in his cabin.
+		g_comprehend->showGraphics();
 		g_comprehend->drawLocationPicture(41);
 		console_get_key();
 		_updateFlags |= UPDATE_GRAPHICS;
