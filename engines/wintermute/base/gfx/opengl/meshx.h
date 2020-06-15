@@ -43,6 +43,8 @@ class Material;
 class ModelX;
 class ShadowVolume;
 class VideoTheoraPlayer;
+class XFileLexer;
+
 struct SkinWeights {
 	Common::String _boneName;
 	Math::Matrix4 _offsetMatrix;
@@ -55,7 +57,7 @@ public:
 	MeshX(BaseGame *inGame);
 	virtual ~MeshX();
 
-	bool loadFromX(char *filename);
+	bool loadFromX(const Common::String &filename, XFileLexer &lexer);
 	bool findBones(FrameNode *rootFrame);
 	bool update(FrameNode *parentFrame);
 	bool render(ModelX *model);
@@ -73,6 +75,18 @@ public:
 	bool restoreDeviceObjects();
 
 protected:
+	static const int kVertexComponentCount = 8;
+	static const int kPositionOffset = 5;
+	static const int kTextureCoordOffset = 0;
+	static const int kNormalOffset = 2;
+
+	bool parsePositionCoords(XFileLexer &lexer);
+	bool parseFaces(XFileLexer &lexer, int faceCount);
+	bool parseTextureCoords(XFileLexer &lexer);
+	bool parseNormalCoords(XFileLexer &lexer);
+	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename);
+	bool parseSkinWeights(XFileLexer &lexer);
+
 	bool generateMesh();
 	uint32 _numAttrs;
 	uint32 _maxFaceInfluence;
@@ -90,6 +104,7 @@ protected:
 	uint32 *_adjacency;
 
 	BaseArray<Material *> _materials;
+	BaseArray<int> _indexRanges;
 
 	// Wintermute3D used the ID3DXSKININFO interface
 	// we will only store, whether this mesh is skinned at all

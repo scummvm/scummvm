@@ -38,6 +38,7 @@
 namespace Wintermute {
 
 class ModelX;
+class XFileLexer;
 
 class AnimationSet : public BaseNamedObject {
 public:
@@ -76,6 +77,7 @@ public:
 	AnimationSet(BaseGame *inGame, ModelX *model);
 	virtual ~AnimationSet();
 
+	bool loadFromX(XFileLexer &lexer, const Common::String &filename);
 	bool findBones(FrameNode *rootFrame);
 	bool addAnimation(Animation *anim);
 	bool addEvent(AnimationEvent *event);

@@ -26,12 +26,14 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/x/frame_node.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/x/loader_x.h"
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/utils.h"
@@ -98,36 +100,24 @@ void ModelX::cleanup(bool complete) {
 bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 	cleanup(false);
 
+	uint32 fileSize = 0;
+	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
+
+	byte *dataFormatBlock = buffer + 8;
+
+	bool textMode = strcmp((char *)dataFormatBlock, "txt");
+
+	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
+		warning("ModelX::loadFromFile compressed .X files are not supported yet");
+	}
+
+	XFileLexer lexer(buffer + 16, fileSize, textMode);
+
 	bool res = true;
-	bool ResLoop = true;
 
 	_parentModel = parentModel;
-
-	// get top level objects
 	_rootFrame = new FrameNode(_gameRef);
-
-	size_t numChildren;
-
-	for (size_t i = 0; i < numChildren; i++) {
-		if (!ResLoop) {
-			break;
-		}
-	}
-
-	if (!_rootFrame->hasChildren()) {
-		_gameRef->LOG(ResLoop, "Error getting any top level objects in '%s'", filename.c_str());
-		res = false;
-	}
-
-	if (res) {
-		res = findBones(false, parentModel);
-	}
-
-	// setup animation channels
-	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; i++) {
-		_channels[i] = new AnimationChannel(_gameRef, this);
-	}
-
+	res = _rootFrame->loadFromXAsRoot(filename, lexer, this);
 	setFilename(filename.c_str());
 
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; ++i) {
@@ -142,19 +132,26 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ModelX::loadAnimationSet(char *filename) {
+bool ModelX::loadAnimationSet(XFileLexer &lexer, const Common::String &filename) {
 	bool res = true;
 
-	// create the animation set object
-	AnimationSet *AnimSet = new AnimationSet(_gameRef, this);
+	AnimationSet *animSet = new AnimationSet(_gameRef, this);
 
-	_animationSets.add(AnimSet);
+	if (animSet->loadFromX(lexer, filename)) {
+		_animationSets.add(animSet);
+	} else {
+		delete animSet;
+		res = false;
+	}
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool ModelX::loadAnimation(const Common::String &filename, AnimationSet *parentAnimSet) {
+	// not sure if we need this here (not completely implemented anyways and also not called)
+	// are there animation objects in .X outside of an animation set?
+
 	// if no parent anim set is specified, create one
 	bool newAnimSet = false;
 	if (parentAnimSet == nullptr) {

@@ -45,6 +45,7 @@
 namespace Wintermute {
 
 class ShadowVolume;
+class XFileLexer;
 
 #define X_NUM_ANIMATION_CHANNELS 10
 
@@ -151,7 +152,7 @@ public:
 
 	bool isTransparentAt(int x, int y);
 
-	bool loadAnimationSet(char *filename);
+	bool loadAnimationSet(XFileLexer &lexer, const Common::String &filename);
 	bool loadAnimation(const Common::String &filename, AnimationSet *parentAnimSet);
 
 	Rect32 _boundingRect;

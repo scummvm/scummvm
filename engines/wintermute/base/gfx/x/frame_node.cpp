@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/x/frame_node.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/x/loader_x.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -95,12 +96,114 @@ void FrameNode::setTransformation(int slot, Math::Vector3d pos, Math::Vector3d s
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::loadFromX(const Common::String &filename, ModelX *model) {
+bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model) {
 	_gameRef->miniUpdate();
 
-	bool res = true;
+	bool ret = true;
 
-	return true; // unknown type, ignore
+	setName(lexer.tokenToString().c_str());
+	lexer.advanceToNextToken();
+	lexer.advanceOnOpenBraces();
+
+	while (!lexer.eof()) {
+		if (lexer.tokenIsIdentifier("Frame")) {
+			lexer.advanceToNextToken();
+			FrameNode *child = new FrameNode(_gameRef);
+			if (child->loadFromX(filename, lexer, model)) {
+				_frames.add(child);
+			} else {
+				delete child;
+			}
+		} else if (lexer.tokenIsIdentifier("Mesh")) {
+			lexer.advanceToNextToken();
+			MeshX *mesh = new MeshX(_gameRef);
+
+			if (mesh->loadFromX(filename, lexer)) {
+				_meshes.add(mesh);
+			} else {
+				delete mesh;
+			}
+		} else if (lexer.tokenIsIdentifier("FrameTransformMatrix")) {
+			lexer.advanceToNextToken();
+			lexer.advanceToNextToken(); // skip optional name
+			lexer.advanceOnOpenBraces();
+
+			// TODO: check if this is the right format
+			for (int r = 0; r < 4; ++r) {
+				for (int c = 0; c < 4; ++c) {
+					_transformationMatrix(c, r) = readFloat(lexer);
+				}
+			}
+
+			lexer.advanceToNextToken();
+			lexer.advanceToNextToken();
+
+		} else if (lexer.reachedClosedBraces()) {
+			lexer.advanceToNextToken();
+			break;
+		} else {
+			warning("FrameNode::loadFromX unexpected %i token excountered", lexer.getTypeOfToken());
+			ret = false;
+			break;
+		}
+	}
+
+	return ret;
+}
+
+bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, ModelX *model) {
+	// technically, there is no root node in a .X file
+	// so we just start parsing it here
+	lexer.advanceToNextToken();
+
+	while (!lexer.eof()) {
+		if (lexer.tokenIsIdentifier("Frame")) {
+			lexer.advanceToNextToken();
+			FrameNode *child = new FrameNode(_gameRef);
+			if (child->loadFromX(filename, lexer, model)) {
+				_frames.add(child);
+			} else {
+				delete child;
+			}
+		} else if (lexer.tokenIsIdentifier("Mesh")) {
+			lexer.advanceToNextToken();
+			MeshX *mesh = new MeshX(_gameRef);
+
+			if (mesh->loadFromX(filename, lexer)) {
+				_meshes.add(mesh);
+			} else {
+				delete mesh;
+			}
+		} else if (lexer.tokenIsIdentifier("AnimTicksPerSecond")) {
+			lexer.advanceToNextToken();
+			lexer.advanceOnOpenBraces();
+
+			model->_ticksPerSecond = readInt(lexer);
+			lexer.advanceToNextToken(); // skip closed braces
+		} else if (lexer.tokenIsIdentifier("AnimationSet")) {
+			lexer.advanceToNextToken();
+			model->loadAnimationSet(lexer, filename);
+		} else if (lexer.tokenIsIdentifier("template")) {
+			// we can ignore templates
+			while (!lexer.eof()) {
+				if (lexer.reachedClosedBraces()) {
+					break;
+				}
+
+				lexer.advanceToNextToken();
+			}
+
+			lexer.advanceToNextToken();
+		} else if (lexer.tokenIsOfType(NULL_CHAR)) {
+			// prevents some unnecessary warnings
+			lexer.advanceToNextToken();
+		} else {
+			warning("FrameNode::loadFromXAsRoot unknown token %i encountered", lexer.getTypeOfToken());
+			lexer.advanceToNextToken(); // just ignore it for the moment
+		}
+	}
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/opengl/material.h"
+#include "engines/wintermute/base/gfx/x/loader_x.h"
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/video/video_theora_player.h"
@@ -137,6 +138,52 @@ BaseSurface *Material::getSurface() {
 	} else {
 		return _surface;
 	}
+}
+
+bool Material::loadFromX(XFileLexer &lexer, const Common::String &filename) {
+	lexer.advanceToNextToken(); // skip optional name
+	lexer.advanceOnOpenBraces();
+
+	_diffuse.r() = readFloat(lexer);
+	_diffuse.g() = readFloat(lexer);
+	_diffuse.b() = readFloat(lexer);
+	_diffuse.a() = readFloat(lexer);
+	lexer.advanceToNextToken(); // skip semicolon
+
+	_shininess = readFloat(lexer);
+
+	_specular.r() = readFloat(lexer);
+	_specular.g() = readFloat(lexer);
+	_specular.b() = readFloat(lexer);
+	lexer.advanceToNextToken(); // skip semicolon
+
+	_emissive.r() = readFloat(lexer);
+	_emissive.g() = readFloat(lexer);
+	_emissive.b() = readFloat(lexer);
+	lexer.advanceToNextToken();
+
+	while (!lexer.eof()) {
+		// according to assimp sources, we got both possibilities
+		// wine also seems to support this
+		// MSDN only names the first option
+		if (lexer.tokenIsIdentifier("TextureFilename") || lexer.tokenIsIdentifier("TextureFileName")) {
+			lexer.advanceToNextToken(); // skip optional name
+			lexer.advanceOnOpenBraces();
+
+			Common::String textureFilename = readString(lexer);
+			PathUtil::getDirectoryName(filename);
+			setTexture(PathUtil::getDirectoryName(filename) + textureFilename);
+			lexer.advanceToNextToken(); // skip semicolon
+		} else if (lexer.tokenIsIdentifier()) {
+			warning("Material::loadFromX unexpected token %i", lexer.getTypeOfToken());
+			return false;
+		} else {
+			break;
+		}
+	}
+
+	lexer.advanceToNextToken(); // skip semicolon
+	return true;
 }
 
 } // namespace Wintermute
