@@ -94,7 +94,7 @@ void RecorderDialog::reflowLayout() {
 
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
 		int16 x, y;
-		uint16 w, h;
+		int16 w, h;
 
 		if (!g_gui.xmlEval()->getWidgetData("RecorderDialog.Thumbnail", x, y, w, h)) {
 			error("Error when loading position data for Recorder Thumbnails");
