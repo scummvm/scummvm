@@ -352,15 +352,15 @@ void SoundMidiPC::pause(bool paused) {
 	Common::StackLock lock(_mutex);
 
 	if (paused) {
-		_music->setMidiDriver(0);
+		_music->pausePlaying();
 		for (int i = 0; i < 3; i++)
-			_sfx[i]->setMidiDriver(0);
+			_sfx[i]->pausePlaying();
 		if (_output)
 			_output->allNotesOff();
 	} else {
-		_music->setMidiDriver(_output);
+		_music->resumePlaying();
 		for (int i = 0; i < 3; ++i)
-			_sfx[i]->setMidiDriver(_output);
+			_sfx[i]->resumePlaying();
 		// Possible TODO (IMHO unnecessary): restore notes and/or update _fadeStartTime
 	}
 }

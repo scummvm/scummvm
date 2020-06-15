@@ -140,7 +140,7 @@ bool MidiParser_XMIDI::hasJumpIndex(uint8 index) {
 }
 
 bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
-	if (_activeTrack >= _numTracks)
+	if (_activeTrack >= _numTracks || _pause)
 		return false;
 
 	if (index >= MAXIMUM_TRACK_BRANCHES || _trackBranches[_activeTrack][index] == 0) {

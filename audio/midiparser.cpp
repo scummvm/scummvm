@@ -49,7 +49,8 @@ _numTracks(0),
 _activeTrack(255),
 _abortParse(false),
 _jumpingToTick(false),
-_doParse(true) {
+_doParse(true),
+_pause(false) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	memset(_tracks, 0, sizeof(_tracks));
 	_nextEvent.start = NULL;
@@ -186,7 +187,7 @@ void MidiParser::onTimer() {
 	// even if the parser does not parse events.
 	_sysExDelay -= (_sysExDelay > _timerRate) ? _timerRate : _sysExDelay;
 
-	if (!_position._playPos || !_driver || !_doParse)
+	if (!_position._playPos || !_driver || !_doParse || _pause)
 		return;
 
 	_abortParse = false;
@@ -367,6 +368,7 @@ bool MidiParser::setTrack(int track) {
 		allNotesOff();
 
 	resetTracking();
+	_pause = false;
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	if (_disableAutoStartPlayback)
 		_doParse = false;
@@ -379,10 +381,11 @@ bool MidiParser::setTrack(int track) {
 void MidiParser::stopPlaying() {
 	allNotesOff();
 	resetTracking();
+	_pause = false;
 }
 
 bool MidiParser::startPlaying() {
-	if (_activeTrack >= _numTracks)
+	if (_activeTrack >= _numTracks || _pause)
 		return false;
 	if (!_position._playPos) {
 		_position._playPos = _tracks[_activeTrack];
@@ -390,6 +393,17 @@ bool MidiParser::startPlaying() {
 	}
 	_doParse = true;
 	return true;
+}
+
+void MidiParser::pausePlaying() {
+	if (isPlaying() && !_pause) {
+		_pause = true;
+		allNotesOff();
+	}
+}
+
+void MidiParser::resumePlaying() {
+	_pause = false;
 }
 
 void MidiParser::hangAllActiveNotes() {
@@ -429,7 +443,7 @@ void MidiParser::hangAllActiveNotes() {
 }
 
 bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool dontSendNoteOn) {
-	if (_activeTrack >= _numTracks)
+	if (_activeTrack >= _numTracks || _pause)
 		return false;
 
 	assert(!_jumpingToTick); // This function is not re-entrant
@@ -501,6 +515,7 @@ void MidiParser::unloadMusic() {
 	_numTracks = 0;
 	_activeTrack = 255;
 	_abortParse = true;
+	_pause = false;
 
 	if (_centerPitchWheelOnUnload) {
 		// Center the pitch wheels in preparation for the next piece of
