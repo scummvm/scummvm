@@ -666,7 +666,10 @@ Common::String preprocessSimpleMacro(Common::String in) {
 	Common::String next = nexttok(in.c_str(), &second);
 
 	if (!next.empty() && Common::isAlpha(next[0]))
-		if (nexttok(second).empty() && !next.equals("end") && !next.equals("exit") && !next.equals("else")) {
+		if (nexttok(second).empty() && // Filter out possible standalone tokens
+				!next.equalsIgnoreCase("end") &&
+				!next.equalsIgnoreCase("exit") &&
+				!next.equalsIgnoreCase("else")) {
 			debugC(2, kDebugParse | kDebugPreprocess, "MACRO: in: %s\nout: %s()", in.c_str(), in.c_str());
 
 			return in + "()";
