@@ -34,6 +34,8 @@
 
 namespace Wintermute {
 
+class BaseSurfaceOpenGL3D;
+
 class BaseRenderOpenGL3D : public BaseRenderer {
 public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
@@ -160,10 +162,10 @@ public:
 
 	void endSaveLoad() override;
 
-	bool drawSprite(const OpenGL::Texture& tex, const Rect32& rect, float zoomX, float zoomY, const Vector2& pos,
-					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
-	bool drawSpriteEx(const OpenGL::Texture& tex, const Rect32& rect, const Vector2& pos, const Vector2& rot, const Vector2& scale,
-					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
+	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+	bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
+	                  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
 
 private:
 	Math::Matrix4 _lastProjectionMatrix;

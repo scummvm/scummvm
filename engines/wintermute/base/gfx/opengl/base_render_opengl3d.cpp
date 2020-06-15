@@ -350,18 +350,18 @@ void BaseRenderOpenGL3D::endSaveLoad() {
 	warning("BaseRenderOpenGL3D::endLoad not yet implemented");
 }
 
-bool BaseRenderOpenGL3D::drawSprite(const OpenGL::Texture &tex, const Wintermute::Rect32 &rect,
-                                                float zoomX, float zoomY, const Wintermute::Vector2 &pos,
-                                                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-                                                bool mirrorX, bool mirrorY) {
+bool BaseRenderOpenGL3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
+                                    float zoomX, float zoomY, const Wintermute::Vector2 &pos,
+                                    uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+                                    bool mirrorX, bool mirrorY) {
 	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
 	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
-bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermute::Rect32 &rect,
-                                                  const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
-                                                  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-                                                  bool mirrorX, bool mirrorY) {
+bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
+                                      const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
+                                      float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+                                      bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
 
 	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
@@ -370,10 +370,22 @@ bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermu
 	float width = (rect.right - rect.left) * scale.x;
 	float height = (rect.bottom - rect.top) * scale.y;
 
-	float texLeft = (float)rect.left / (float)tex.getWidth();
-	float texTop = (float)rect.top / (float)tex.getHeight();
-	float texRight = (float)rect.right / (float)tex.getWidth();
-	float texBottom = (float)rect.bottom / (float)tex.getHeight();
+	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// might as well provide getters for those
+	int texWidth;
+	int texHeight;
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
+
+
+	float texLeft = (float)rect.left / (float)texWidth;
+	float texTop = (float)rect.top / (float)texHeight;
+	float texRight = (float)rect.right / (float)texWidth;
+	float texBottom = (float)rect.bottom / (float)texHeight;
 
 	float offset = _viewportRect.height() / 2.0f;
 	float corrected_y = (pos.y - offset) * -1.0f + offset;
@@ -456,8 +468,6 @@ bool BaseRenderOpenGL3D::drawSpriteEx(const OpenGL::Texture &tex, const Wintermu
 	glVertexPointer(3, GL_FLOAT, 24, vertices + 12);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 24, vertices + 8);
 	glTexCoordPointer(2, GL_FLOAT, 24, vertices);
-
-	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
 
 	// we probably should do this in a vertex buffer anyways
 	//glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);

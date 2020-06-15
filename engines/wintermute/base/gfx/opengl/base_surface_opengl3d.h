@@ -34,6 +34,7 @@ class BaseRenderOpenGL3D;
 class BaseSurfaceOpenGL3D : public BaseSurface {
 public:
 	BaseSurfaceOpenGL3D(BaseGame* game, BaseRenderOpenGL3D* renderer);
+	~BaseSurfaceOpenGL3D();
 
 	bool invalidate() override;
 
@@ -59,19 +60,18 @@ public:
 	bool endPixelOp() override;
 	bool isTransparentAtLite(int x, int y) override;
 
-	int getWidth() override {
-		return tex->getWidth();
-	}
-	int getHeight() override {
-		return tex->getHeight();
-	}
-
 	void setTexture();
 
+	GLuint getTextureName() {
+		return _tex;
+	}
+
 private:
-	OpenGL::Texture* tex;
+	GLuint _tex;
 	BaseRenderOpenGL3D* renderer;
 	bool pixelOpReady;
+	uint _texWidth;
+	uint _texHeight;
 };
 
 }

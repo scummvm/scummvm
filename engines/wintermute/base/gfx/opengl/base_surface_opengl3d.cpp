@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/base_image.h"
@@ -28,7 +29,12 @@
 namespace Wintermute {
 
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *renderer)
-    : BaseSurface(game), tex(nullptr), renderer(renderer), pixelOpReady(false) {
+	: BaseSurface(game), _tex(0), renderer(renderer), pixelOpReady(false), _texWidth(0), _texHeight(0) {
+	glGenTextures(1, &_tex);
+}
+
+BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
+	glDeleteTextures(1, &_tex);
 }
 
 bool BaseSurfaceOpenGL3D::invalidate() {
@@ -52,7 +58,7 @@ bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoom
 }
 
 bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(*tex, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
+	renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
@@ -62,7 +68,7 @@ bool BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Rect32 rect, uint32 a
 }
 
 bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(*tex, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
+	renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
@@ -78,7 +84,7 @@ bool BaseSurfaceOpenGL3D::displayZoom(int x, int y, Rect32 rect, float zoomX, fl
 
 bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
 	Vector2 scale(numTimesX, numTimesY);
-	renderer->drawSpriteEx(*tex, rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
+	renderer->drawSpriteEx(*this, rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
 	return true;
 }
 
@@ -128,7 +134,17 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
 	}
 
-	tex = new OpenGL::Texture(*surf);
+	_width = surf->w;
+	_height = surf->h;
+
+	glBindTexture(GL_TEXTURE_2D, _tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf->w, surf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surf->getPixels());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	delete surf;
 
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
@@ -146,7 +162,14 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 }
 
 bool BaseSurfaceOpenGL3D::create(int width, int height) {
-	tex = new OpenGL::Texture(width, height);
+	_width = width;
+	_height = height;
+	_texWidth = Common::nextHigher2(width);
+	_texHeight = Common::nextHigher2(height);
+
+	glBindTexture(GL_TEXTURE_2D, _tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	_valid = true;
 	return true;
 }
@@ -167,7 +190,8 @@ bool BaseSurfaceOpenGL3D::comparePixel(int x, int y, byte r, byte g, byte b, int
 }
 
 bool BaseSurfaceOpenGL3D::startPixelOp() {
-	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
+	glBindTexture(GL_TEXTURE_2D, _tex);
+	pixelOpReady = true;
 	return true;
 }
 
@@ -177,7 +201,7 @@ bool BaseSurfaceOpenGL3D::endPixelOp() {
 }
 
 bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
-	if (x < 0 || y < 0 || static_cast<uint>(x) >= tex->getWidth() || static_cast<uint>(y) >= tex->getHeight()) {
+	if (x < 0 || y < 0 || x >= _width || y >= _height) {
 		return false;
 	}
 
@@ -190,13 +214,13 @@ bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 	// assume 32 bit rgba for now
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 
-	uint32 pixel = *reinterpret_cast<uint32 *>(image_data + y * tex->getWidth() * 4 + x * 4);
+	uint32 pixel = *reinterpret_cast<uint32 *>(image_data + y * _width * 4 + x * 4);
 	pixel &= 0x000000FF;
 	return pixel == 0;
 }
 
 void BaseSurfaceOpenGL3D::setTexture() {
-	glBindTexture(GL_TEXTURE_2D, tex->getTextureName());
+	glBindTexture(GL_TEXTURE_2D, _tex);
 }
 
 }
