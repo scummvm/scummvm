@@ -329,9 +329,9 @@ void FileIO::m_getPosition(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (me->inStream) {
-		g_lingo->push(Datum(me->inStream->pos()));
+		g_lingo->push(Datum((int)me->inStream->pos()));
 	} else if (me->outStream) {
-		g_lingo->push(Datum(me->outStream->pos()));
+		g_lingo->push(Datum((int)me->outStream->pos()));
 	} else {
 		warning("FileIO: No file open");
 		g_lingo->push(Datum(kErrorFileNotOpen));
@@ -369,9 +369,9 @@ void FileIO::m_getLength(int nargs) {
 	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
 
 	if (me->inStream) {
-		g_lingo->push(Datum(me->inStream->size()));
+		g_lingo->push(Datum((int)me->inStream->size()));
 	} else if (me->outStream) {
-		g_lingo->push(Datum(me->outStream->size()));
+		g_lingo->push(Datum((int)me->outStream->size()));
 	} else {
 		warning("FileIO: No file open");
 		g_lingo->push(Datum(kErrorFileNotOpen));
