@@ -45,7 +45,7 @@ Score::Score(DirectorEngine *vm) {
 	_backSurface = nullptr;
 	_backSurface2 = nullptr;
 	_lingo = _vm->getLingo();
-	_lingoArchive = 0;
+	_lingoArchive = kArchMain;
 	_soundManager = _vm->getSoundManager();
 	_currentMouseDownSpriteId = 0;
 	_currentClickOnSpriteId = 0;

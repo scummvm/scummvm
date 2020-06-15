@@ -79,7 +79,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	if (iniStream) {
 		char *script = (char *)calloc(iniStream->size() + 1, 1);
 		iniStream->read(script, iniStream->size());
-		_lingo->addCode(script, 0, kMovieScript, 0);
+		_lingo->addCode(script, kArchMain, kMovieScript, 0);
 		_lingo->processEvent(kEventStartUp);
 		free(script);
 	} else {

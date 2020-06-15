@@ -52,7 +52,7 @@ Symbol::Symbol() {
 	argNames = nullptr;
 	varNames = nullptr;
 	ctx = nullptr;
-	archiveIndex = 0;
+	archiveIndex = kArchMain;
 }
 
 Symbol::Symbol(const Symbol &s) {
@@ -157,7 +157,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_dontPassEvent = false;
 
-	_archiveIndex = 0;
+	_archiveIndex = kArchMain;
 
 	_perFrameHook = Datum();
 
@@ -203,12 +203,12 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	Symbol result;
 	if (!_eventHandlerTypeIds.contains(name)) {
 		// local scripts
-		if (_archives[0].functionHandlers.contains(name))
-			return _archives[0].functionHandlers[name];
+		if (_archives[kArchMain].functionHandlers.contains(name))
+			return _archives[kArchMain].functionHandlers[name];
 
 		// shared scripts
-		if (_archives[1].functionHandlers.contains(name))
-			return _archives[1].functionHandlers[name];
+		if (_archives[kArchShared].functionHandlers.contains(name))
+			return _archives[kArchShared].functionHandlers[name];
 
 		if (_builtins.contains(name))
 			return _builtins[name];
@@ -218,12 +218,12 @@ Symbol Lingo::getHandler(const Common::String &name) {
 
 	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
 	// local scripts
-	if (_archives[0].eventHandlers.contains(entityIndex))
-		return _archives[0].eventHandlers[entityIndex];
+	if (_archives[kArchMain].eventHandlers.contains(entityIndex))
+		return _archives[kArchMain].eventHandlers[entityIndex];
 
 	// shared scripts
-	if (_archives[1].eventHandlers.contains(entityIndex))
-		return _archives[1].eventHandlers[entityIndex];
+	if (_archives[kArchShared].eventHandlers.contains(entityIndex))
+		return _archives[kArchShared].eventHandlers[entityIndex];
 
 	return result;
 }
@@ -998,7 +998,7 @@ void Lingo::runTests() {
 			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
-			addCode(script, 0, kMovieScript, counter);
+			addCode(script, kArchMain, kMovieScript, counter);
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_hadError)

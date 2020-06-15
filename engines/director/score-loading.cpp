@@ -78,7 +78,7 @@ void Score::setArchive(Archive *archive) {
 }
 
 bool Score::loadArchive(bool isSharedCast) {
-	_lingoArchive = isSharedCast ? 1 : 0;
+	_lingoArchive = isSharedCast ? kArchShared : kArchMain;
 
 	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
 	Common::SeekableSubReadStreamEndian *r = nullptr;

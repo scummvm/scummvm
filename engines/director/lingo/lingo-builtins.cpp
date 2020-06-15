@@ -519,7 +519,7 @@ void LB::b_value(int nargs) {
 	}
 	Common::String code = "scummvm_returnNumber " + expr;
 	// Compile the code to an anonymous function and call it
-	ScriptContext *sc = g_lingo->addCode(code.c_str(), -1, kNoneScript, 0);
+	ScriptContext *sc = g_lingo->addCode(code.c_str(), kArchNone, kNoneScript, 0);
 	Symbol sym = sc->functions[0];
 	LC::call(sym, 0);
 	delete sc;
@@ -1637,7 +1637,7 @@ void LB::b_installMenu(int nargs) {
 	}
 
 	// TODO: Menu callbacks should probably not be in the movie's lingo archive
-	g_lingo->addCode(handlers.c_str(), 0, kMovieScript, 1337);
+	g_lingo->addCode(handlers.c_str(), kArchMain, kMovieScript, 1337);
 }
 
 Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {

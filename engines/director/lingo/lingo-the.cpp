@@ -378,15 +378,15 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheKeyDownScript:
 		d.type = STRING;
-		if (_archives[0].primaryEventHandlers.contains(kEventKeyDown))
-			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventKeyDown]);
+		if (_archives[kArchMain].primaryEventHandlers.contains(kEventKeyDown))
+			d.u.s = new Common::String(_archives[kArchMain].primaryEventHandlers[kEventKeyDown]);
 		else
 			d.u.s = new Common::String();
 		break;
 	case kTheKeyUpScript:
 		d.type = STRING;
-		if (_archives[0].primaryEventHandlers.contains(kEventKeyUp))
-			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventKeyUp]);
+		if (_archives[kArchMain].primaryEventHandlers.contains(kEventKeyUp))
+			d.u.s = new Common::String(_archives[kArchMain].primaryEventHandlers[kEventKeyUp]);
 		else
 			d.u.s = new Common::String();
 		break;
@@ -480,8 +480,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseDownScript:
 		d.type = STRING;
-		if (_archives[0].primaryEventHandlers.contains(kEventMouseDown))
-			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventMouseDown]);
+		if (_archives[kArchMain].primaryEventHandlers.contains(kEventMouseDown))
+			d.u.s = new Common::String(_archives[kArchMain].primaryEventHandlers[kEventMouseDown]);
 		else
 			d.u.s = new Common::String();
 		break;
@@ -499,8 +499,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseUpScript:
 		d.type = STRING;
-		if (_archives[0].primaryEventHandlers.contains(kEventMouseUp))
-			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventMouseUp]);
+		if (_archives[kArchMain].primaryEventHandlers.contains(kEventMouseUp))
+			d.u.s = new Common::String(_archives[kArchMain].primaryEventHandlers[kEventMouseUp]);
 		else
 			d.u.s = new Common::String();
 		break;
@@ -563,8 +563,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheTimeoutScript:
 		d.type = STRING;
-		if (_archives[0].primaryEventHandlers.contains(kEventTimeout))
-			d.u.s = new Common::String(_archives[0].primaryEventHandlers[kEventTimeout]);
+		if (_archives[kArchMain].primaryEventHandlers.contains(kEventTimeout))
+			d.u.s = new Common::String(_archives[kArchMain].primaryEventHandlers[kEventTimeout]);
 		else
 			d.u.s = new Common::String();
 		break;

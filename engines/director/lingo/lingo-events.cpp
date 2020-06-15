@@ -102,8 +102,8 @@ int Lingo::getEventCount() {
 
 void Lingo::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	debugC(3, kDebugLingoExec, "setting primary event handler (%s)", _eventHandlerTypes[event]);
-	_archives[0].primaryEventHandlers[event] = code;
-	addCode(code.c_str(), 0, kGlobalScript, event);
+	_archives[kArchMain].primaryEventHandlers[event] = code;
+	addCode(code.c_str(), kArchMain, kGlobalScript, event);
 }
 
 void Lingo::primaryEventHandler(LEvent event) {
@@ -326,8 +326,8 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId, int channelI
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	if (_archives[0].eventHandlers.contains(ENTITY_INDEX(event, entityId)) ||
-		_archives[1].eventHandlers.contains(ENTITY_INDEX(event, entityId))) {
+	if (_archives[kArchMain].eventHandlers.contains(ENTITY_INDEX(event, entityId)) ||
+		_archives[kArchShared].eventHandlers.contains(ENTITY_INDEX(event, entityId))) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 		executeHandler(_eventHandlerTypes[event]); // D4+ Events
 	} else if (_vm->getVersion() < 4 && event == kEventNone && getScriptContext(_archiveIndex, st, entityId)) {
