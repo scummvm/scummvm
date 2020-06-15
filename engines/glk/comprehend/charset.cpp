@@ -47,7 +47,7 @@ void CharSet::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 
 	assert(dst->format.bytesPerPixel == 4);
 	assert(chr >= 32 && chr < 128);
 
-	for (uint yp = 0; yp < 8; ++yp) {
+	for (int yp = 0; yp < 8; ++yp) {
 		if ((y + yp) < 0 || (y + yp) >= dst->h)
 			continue;
 
