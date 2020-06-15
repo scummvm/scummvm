@@ -51,6 +51,9 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusab
 
 	_active = false;
 	_editable = false;
+
+	_fgcolor = 0xff;
+	_bgcolor = 0;
 }
 
 MacWidget::~MacWidget() {
