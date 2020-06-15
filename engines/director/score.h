@@ -83,6 +83,7 @@ struct TransParams {
 		type = kTransNone;
 		duration = 250;
 		chunkSize = 1;
+		area = 0;
 		steps = 0;
 		stepDuration = 0;
 		stripSize = 0;
