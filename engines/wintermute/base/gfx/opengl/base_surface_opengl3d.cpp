@@ -167,16 +167,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 		applyColorKey(*surf, ckRed, ckGreen, ckBlue, replaceAlpha);
 	}
 
-	_width = surf->w;
-	_height = surf->h;
-
-	glBindTexture(GL_TEXTURE_2D, _tex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf->w, surf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surf->getPixels());
-	glBindTexture(GL_TEXTURE_2D, 0);
+	putSurface(*surf);
 
 	delete surf;
 
@@ -204,6 +195,24 @@ bool BaseSurfaceOpenGL3D::create(int width, int height) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	_valid = true;
+	return true;
+}
+
+bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
+	_width = surface.w;
+	_height = surface.h;
+	_texWidth = Common::nextHigher2(_width);
+	_texHeight = Common::nextHigher2(_height);
+
+	glBindTexture(GL_TEXTURE_2D, _tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, surface.getPixels());
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	return true;
 }
 

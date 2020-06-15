@@ -50,9 +50,7 @@ public:
 	bool restore() override;
 	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
 	bool create(int width, int height) override;
-	bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override {
-		return STATUS_FAILED;
-	}
+	bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
 	bool putPixel(int x, int y, byte r, byte g, byte b, int a = -1) override;
 	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr) override;
 	bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1) override;
