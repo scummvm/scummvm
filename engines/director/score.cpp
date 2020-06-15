@@ -85,6 +85,8 @@ Score::Score(DirectorEngine *vm) {
 	_framesRan = 0; // used by kDebugFewFramesOnly
 
 	_window = nullptr;
+
+	_stageColor = 0;
 }
 
 Score::~Score() {
