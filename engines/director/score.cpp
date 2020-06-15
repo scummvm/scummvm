@@ -363,7 +363,7 @@ void Score::startLoop() {
 
 void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
-		renderZoomBox(true);
+		_vm->_wm->renderZoomBox(true);
 
 		if (!_vm->_newMovieStarted)
 			_vm->_wm->draw();
@@ -512,7 +512,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		renderSprite(i);
 
 	if (!updateStageOnly) {
-		renderZoomBox();
+		_vm->_wm->renderZoomBox();
 
 		_vm->_wm->draw();
 
@@ -525,8 +525,6 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 			playSoundChannel(frameId);
 		}
 
-		if (_vm->getCurrentScore()->haveZoomBox())
-			_backSurface->copyFrom(*_surface);
 	}
 
 	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
@@ -686,6 +684,24 @@ void Score::renderShape(uint16 spriteId) {
 	inkBasedBlit(&maskSurface, tmpSurface, ink, shapeRect, spriteId);
 }
 
+Cast *Score::getCastMember(int castId) {
+	Cast *result = nullptr;
+
+	if (_loadedCast->contains(castId)) {
+		result = _loadedCast->getVal(castId);
+	}
+	return result;
+}
+
+const Stxt *Score::getStxt(int castId) {
+	const Stxt *result = nullptr;
+
+	if (_loadedStxts->contains(castId)) {
+		result = _loadedStxts->getVal(castId);
+	}
+	return result;
+}
+
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {
 	for (int i = _sprites.size() - 1; i >= 0; i--)
 		if (_sprites[i]->_currentBbox.contains(pos))
@@ -702,7 +718,10 @@ bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
 }
 
 Common::Rect *Score::getSpriteRect(uint16 spriteId) {
-	return &_sprites[spriteId]->_currentBbox;
+	if (!_sprites[spriteId]->_currentBbox.isEmpty())
+		return &_sprites[spriteId]->_currentBbox;
+
+	return nullptr;
 }
 
 Sprite *Score::getSpriteById(uint16 id) {
@@ -725,83 +744,6 @@ void Score::playSoundChannel(uint16 frameId) {
 	DirectorSound *sound = _vm->getSoundManager();
 	sound->playCastMember(frame->_sound1, 1, false);
 	sound->playCastMember(frame->_sound2, 2, false);
-}
-
-void Score::addZoomBox(ZoomBox *box) {
-	_zoomBoxes.push_back(box);
-}
-
-void Score::renderZoomBox(bool redraw) {
-	if (!_zoomBoxes.size())
-		return;
-
-	ZoomBox *box = _zoomBoxes.front();
-	uint32 t = g_system->getMillis();
-
-	if (box->nextTime > t)
-		return;
-
-	if (redraw) {
-		_surface->copyFrom(*_backSurface);
-	}
-
-	const int numSteps = 14;
-	// We have 15 steps in total, and we have flying rectange
-	// from switching 3/4 frames
-
-	int start, end;
-	// Determine, how many rectangles and what are their numbers
-	if (box->step < 5) {
-		start = 1;
-		end = box->step;
-	} else {
-		start = box->step - 4;
-		end = MIN(start + 3 - box->step % 2, 8);
-	}
-
-	Graphics::MacPlotData pd(_surface, nullptr, &_vm->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
-
-	for (int i = start; i <= end; i++) {
-		Common::Rect r(box->start.left   + (box->end.left   - box->start.left)   * i / 8,
-					   box->start.top    + (box->end.top    - box->start.top)    * i / 8,
-					   box->start.right  + (box->end.right  - box->start.right)  * i / 8,
-					   box->start.bottom + (box->end.bottom - box->start.bottom) * i / 8);
-
-		Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xffff, Graphics::macDrawPixel, &pd);
-		Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-		Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-		Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-	}
-
-	box->step++;
-
-	if (box->step >= numSteps) {
-		_zoomBoxes.remove_at(0);
-	}
-
-	box->nextTime = box->startTime + 1000 * box->step * box->delay / 60;
-
-	if (redraw) {
-		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height()); // zoomBox
-	}
-}
-
-Cast *Score::getCastMember(int castId) {
-	Cast *result = nullptr;
-
-	if (_loadedCast->contains(castId)) {
-		result = _loadedCast->getVal(castId);
-	}
-	return result;
-}
-
-const Stxt *Score::getStxt(int castId) {
-	const Stxt *result = nullptr;
-
-	if (_loadedStxts->contains(castId)) {
-		result = _loadedStxts->getVal(castId);
-	}
-	return result;
 }
 
 } // End of namespace Director

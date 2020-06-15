@@ -1840,21 +1840,26 @@ void LB::b_zoomBox(int nargs) {
 		if ((uint)curFrame + 1 < score->_frames.size())
 			endRect = &score->_frames[curFrame + 1]->_sprites[endSprite]->_currentBbox;
 	}
+	if (!endRect) {
+		if ((uint)curFrame - 1 > 0)
+			endRect = &score->_frames[curFrame - 1]->_sprites[endSprite]->_currentBbox;
+	}
 
 	if (!endRect) {
 		warning("b_zoomBox: unknown end sprite #%d", endSprite);
 		return;
 	}
 
-	ZoomBox *box = new ZoomBox;
+	Graphics::ZoomBox *box = new Graphics::ZoomBox;
 	box->start = *startRect;
 	box->end = *endRect;
+	// box->last = Common::Rect(0, 0);
 	box->delay = delayTicks;
 	box->step = 0;
 	box->startTime = g_system->getMillis();
 	box->nextTime  = g_system->getMillis() + 1000 * box->step / 60;
 
-	score->addZoomBox(box);
+	g_director->_wm->addZoomBox(box);
 }
 
 void LB::b_updateStage(int nargs) {

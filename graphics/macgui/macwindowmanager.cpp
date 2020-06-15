@@ -544,6 +544,75 @@ void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
 	}
 }
 
+
+void MacWindowManager::addZoomBox(ZoomBox *box) {
+	_zoomBoxes.push_back(box);
+}
+
+void MacWindowManager::renderZoomBox(bool redraw) {
+	if (!_zoomBoxes.size())
+		return;
+
+	ZoomBox *box = _zoomBoxes.front();
+	uint32 t = g_system->getMillis();
+
+	MacPlotData pd(_screen, nullptr, &getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0, true);
+
+	// Undraw the previous boxes
+	if (box->last.size() != 0) {
+		for (uint i = 0; i < box->last.size(); i++) {
+			Common::Rect r = box->last.remove_at(i);
+			zoomBoxInner(r, pd);
+		}
+	}
+
+	if (box->nextTime > t)
+		return;
+
+	const int numSteps = 14;
+	// We have 15 steps in total, and we have flying rectange
+	// from switching 3/4 frames
+
+	int start, end;
+	// Determine, how many rectangles and what are their numbers
+	if (box->step <= 5) {
+		start = 1;
+		end = box->step - 1;
+	} else {
+		start = box->step - 4;
+		end = MIN(start + 3 - box->step % 2, 7);
+	}
+
+	for (int i = start; i <= end; i++) {
+		Common::Rect r(box->start.left   + (box->end.left   - box->start.left)   * i / 8,
+					   box->start.top    + (box->end.top    - box->start.top)    * i / 8,
+					   box->start.right  + (box->end.right  - box->start.right)  * i / 8,
+					   box->start.bottom + (box->end.bottom - box->start.bottom) * i / 8);
+
+		zoomBoxInner(r, pd);
+		box->last.push_back(r);
+	}
+
+	box->step++;
+	box->nextTime = box->startTime + 1000 * box->step * box->delay / 60;
+
+	if (redraw) {
+		g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->getBounds().width(), _screen->getBounds().height()); // zoomBox
+	}
+
+	if (box->step >= numSteps) {
+		delete _zoomBoxes[0];
+		_zoomBoxes.remove_at(0);
+	}
+}
+
+void MacWindowManager::zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd) {
+	Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xff, Graphics::macDrawPixel, &pd);
+}
+
 /////////////////
 // Cursor stuff
 /////////////////

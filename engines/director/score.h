@@ -24,11 +24,13 @@
 #define DIRECTOR_SCORE_H
 
 #include "common/hash-str.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
 	class ManagedSurface;
 	class Font;
 	class MacWindow;
+	class ZoomBox;
 }
 
 namespace Common {
@@ -52,16 +54,6 @@ class BitmapCast;
 class ScriptCast;
 class ShapeCast;
 class TextCast;
-
-struct ZoomBox {
-	Common::Rect start;
-	Common::Rect end;
-	int delay;
-	int step;
-	uint32 startTime;
-	uint32 nextTime;
-};
-
 
 struct TransParams {
 	TransitionType type;
@@ -135,10 +127,6 @@ public:
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 	Common::Rect *getSpriteRect(uint16 spriteId);
-
-	void addZoomBox(ZoomBox *box);
-	void renderZoomBox(bool redraw = false);
-	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
 	Cast *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
@@ -243,8 +231,6 @@ private:
 	int _lingoArchive;
 	DirectorSound *_soundManager;
 	DirectorEngine *_vm;
-
-	Common::Array<ZoomBox *> _zoomBoxes;
 };
 
 } // End of namespace Director

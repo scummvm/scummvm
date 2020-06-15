@@ -103,6 +103,16 @@ struct MacPlotData {
 	}
 };
 
+struct ZoomBox {
+	Common::Rect start;
+	Common::Rect end;
+	Common::Array<Common::Rect> last;
+	int delay;
+	int step;
+	uint32 startTime;
+	uint32 nextTime;
+};
+
 void macDrawPixel(int x, int y, int color, void *data);
 void macInvertPixel(int x, int y, int color, void *data);
 
@@ -251,6 +261,9 @@ public:
 	void passPalette(const byte *palette, uint size);
 	uint findBestColor(byte cr, byte cg, byte cb);
 
+	void renderZoomBox(bool redraw = false);
+	void addZoomBox(ZoomBox *box);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
@@ -272,6 +285,9 @@ private:
 	void removeMarked();
 	void removeFromStack(BaseMacWindow *target);
 	void removeFromWindowList(BaseMacWindow *target);
+
+	void zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd);
+	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
 public:
 	ManagedSurface *_screen;
@@ -305,6 +321,8 @@ private:
 	MacWidget *_activeWidget;
 
 	PauseToken _screenCopyPauseToken;
+
+	Common::Array<ZoomBox *> _zoomBoxes;
 };
 
 } // End of namespace Graphics
