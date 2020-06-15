@@ -334,7 +334,7 @@ void Surface::drawPixel(int16 x, int16 y, uint32 color) {
 
 uint32 Surface::getPixelColor(int16 x, int16 y) const {
 	assert(x >= 0 && y >= 0 && x < this->w && y < this->h);
-	const uint32 *ptr = (uint32 *)getBasePtr(x, y);
+	const uint32 *ptr = (const uint32 *)getBasePtr(x, y);
 	return *ptr;
 }
 
