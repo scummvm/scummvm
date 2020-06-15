@@ -135,6 +135,8 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 				}
 			}
 
+			_originalMatrix = _transformationMatrix;
+
 			lexer.advanceToNextToken();
 			lexer.advanceToNextToken();
 
