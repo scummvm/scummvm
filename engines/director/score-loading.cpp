@@ -208,7 +208,7 @@ bool Score::loadArchive(bool isSharedCast) {
 		debugC(2, kDebugLoading, "****** Loading %d CastInfos VWCI", vwci.size());
 
 		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator) {
-			loadCastInfo(*(r = _movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator)), *iterator);
+			loadCastInfo(*(r = _movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator)), *iterator - _castIDoffset);
 			delete r;
 		}
 	}

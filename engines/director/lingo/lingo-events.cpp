@@ -180,8 +180,8 @@ void Lingo::registerInputEvent(LEvent event) {
 				_eventQueue.push(LingoEvent(kEventNone, kFrameScript, sprite->_scriptId, spriteId));
 		} else {
 			if (queueEventNone)
-				_eventQueue.push(LingoEvent(kEventNone, kSpriteScript, sprite->_castId + score->_castIDoffset));
-			_eventQueue.push(LingoEvent(event, kSpriteScript, sprite->_castId + score->_castIDoffset));
+				_eventQueue.push(LingoEvent(kEventNone, kSpriteScript, sprite->_castId));
+			_eventQueue.push(LingoEvent(event, kSpriteScript, sprite->_castId));
 		}
 	}
 
