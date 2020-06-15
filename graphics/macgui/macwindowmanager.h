@@ -96,9 +96,10 @@ struct MacPlotData {
 	int fillOriginY;
 	int thickness;
 	uint bgColor;
+	bool invert;
 
-	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg) :
-		surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg) {
+	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg, bool inv = false) :
+		surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg), invert(inv) {
 	}
 };
 
