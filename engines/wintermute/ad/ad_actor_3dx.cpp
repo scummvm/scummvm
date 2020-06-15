@@ -166,13 +166,16 @@ bool AdActor3DX::update() {
 			float walkVel = _directWalkVelocity == 0.0f ? _velocity : _directWalkVelocity;
 			Math::Vector3d newPos = _posVector;
 			if (_directWalkMode == DIRECT_WALK_FW) {
-				newPos.x() += -sinf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-				newPos.z() += -cosf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				// we add the direction vector since in a right handed coordinate system
+				// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
+				newPos.x() += sinf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos.z() += cosf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 			}
 
 			if (_directWalkMode == DIRECT_WALK_BK) {
-				newPos.x() -= -sinf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-				newPos.z() -= -cosf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				// but here we subtract
+				newPos.x() -= sinf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+				newPos.z() -= cosf(_angle.getRadians()) * walkVel * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 			}
 
 			AdScene *scene = ((AdGame *)_gameRef)->_scene;
@@ -597,8 +600,10 @@ void AdActor3DX::getNextStep3D() {
 		turnToStep(_angVelocity);
 
 	Math::Vector3d newPos = _posVector;
-	newPos.x() += -sinf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-	newPos.z() += -cosf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	// we add the direction vector since in a right handed coordinate system
+	// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
+	newPos.x() += sinf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos.z() += cosf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
 	Math::Vector3d origVec, newVec;
 	Math::Vector3d *currentPos = _path3D->getCurrent();
@@ -633,9 +638,12 @@ void AdActor3DX::getNextStep3D() {
 void AdActor3DX::initLine3D(Math::Vector3d startPt, Math::Vector3d endPt, bool firstStep) {
 	if (firstStep) {
 		_nextState = STATE_FOLLOWING_PATH;
-		turnTo(Common::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) - 90);
+		// wme subtracted 90 dregrees from the angle, so that the angle zero points downwards
+		// and the angle 90 goes left
+		// now we have a right handed coordinate system, so we add 90 degrees instead
+		turnTo(Common::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
 	} else {
-		_turningLeft = prepareTurn(Common::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) - 90);
+		_turningLeft = prepareTurn(Common::rad2deg(-atan2(endPt.z() - startPt.z(), endPt.x() - startPt.x())) + 90);
 	}
 }
 
@@ -654,8 +662,10 @@ void AdActor3DX::getNextStep2D() {
 	}
 
 	Math::Vector3d newPos = _posVector;
-	newPos.x() += -sinf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
-	newPos.z() += -cosf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	// we add the direction vector since in a right handed coordinate system
+	// angles turn counter-clockwise (wme uses a left handed coordinate system, so there it's a subtraction)
+	newPos.x() += sinf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
+	newPos.z() += cosf(_targetAngle.getRadians()) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
 	Math::Vector3d currentPoint;
 	adGame->_scene->_sceneGeometry->convert2Dto3DTolerant(_path2D->getCurrent()->x,
@@ -1167,19 +1177,19 @@ float AdActor3DX::dirToAngle(TDirection dir) {
 	case DI_UP:
 		return 180.0f;
 	case DI_UPRIGHT:
-		return 225.0f;
+		return 135.0f;
 	case DI_RIGHT:
-		return 270.0f;
+		return 90.0f;
 	case DI_DOWNRIGHT:
-		return 315.0f;
+		return 45.0f;
 	case DI_DOWN:
 		return 0.0f;
 	case DI_DOWNLEFT:
-		return 45.0f;
+		return 315.0f;
 	case DI_LEFT:
-		return 90.0f;
+		return 270.0f;
 	case DI_UPLEFT:
-		return 135.0f;
+		return 225.0f;
 	case DI_NONE:
 		return -1.0f;
 	default:
@@ -1192,19 +1202,19 @@ TDirection AdActor3DX::angleToDir(float angle) {
 	if (angle >= 337.0f || angle < 22.0f)
 		return DI_DOWN;
 	if (angle >= 22.0f && angle < 67.0f)
-		return DI_DOWNLEFT;
+		return DI_DOWNRIGHT;
 	if (angle >= 67.0f && angle < 112.0f)
-		return DI_LEFT;
+		return DI_RIGHT;
 	if (angle >= 112.0f && angle < 157.0f)
-		return DI_UPLEFT;
+		return DI_UPRIGHT;
 	if (angle >= 157.0f && angle < 202.0f)
 		return DI_UP;
 	if (angle >= 202.0f && angle < 247.0f)
-		return DI_UPRIGHT;
+		return DI_UPLEFT;
 	if (angle >= 247.0f && angle < 292.0f)
-		return DI_RIGHT;
+		return DI_LEFT;
 	if (angle >= 292.0f && angle < 337.0f)
-		return DI_DOWNRIGHT;
+		return DI_DOWNLEFT;
 
 	return DI_NONE;
 }
