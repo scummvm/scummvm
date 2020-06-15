@@ -386,7 +386,7 @@ void Score::loadSpriteSounds(bool isSharedCast) {
 			continue;
 
 		SoundCast *soundCast = (SoundCast *)c->_value;
-		uint32 tag = MKTAG('s', 'n', 'd', ' ');
+		uint32 tag = MKTAG('S', 'N', 'D', ' ');
 		uint16 sndId = (uint16)(c->_key + _castIDoffset);
 
 		if (_vm->getVersion() >= 4 && soundCast->_children.size() > 0) {
@@ -397,6 +397,12 @@ void Score::loadSpriteSounds(bool isSharedCast) {
 		Common::SeekableSubReadStreamEndian *sndData = NULL;
 
 		switch (tag) {
+		case MKTAG('S', 'N', 'D', ' '):
+			if (_movieArchive->hasResource(MKTAG('S', 'N', 'D', ' '), sndId)) {
+				debugC(2, kDebugLoading, "****** Loading 'SND ' id: %d", sndId);
+				sndData = _movieArchive->getResource(MKTAG('S', 'N', 'D', ' '), sndId);
+			}
+			break;
 		case MKTAG('s', 'n', 'd', ' '):
 			if (_movieArchive->hasResource(MKTAG('s', 'n', 'd', ' '), sndId)) {
 				debugC(2, kDebugLoading, "****** Loading 'snd ' id: %d", sndId);
@@ -663,6 +669,10 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		case kCastButton:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
 			_loadedCast->setVal(id, new TextCast(stream, _vm->getVersion(), true));
+			break;
+		case kCastSound:
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) SoundCast", id, numToCastNum(id));
+			_loadedCast->setVal(id, new SoundCast(stream, _vm->getVersion()));
 			break;
 		default:
 			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
