@@ -89,7 +89,7 @@ void Sprite::updateCast() {
 		_cast->createWidget();
 	}
 
-	int offsetx, offsety = 0;
+	int offsetx = 0, offsety = 0;
 	if (_cast->_type == kCastBitmap) {
 		BitmapCast *bc = (BitmapCast *)_cast;
 		offsety = bc->_initialRect.top - bc->_regY;
