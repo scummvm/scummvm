@@ -80,15 +80,10 @@ struct Symbol {	/* symbol table entry */
 	Common::String *name;
 	int type;
 	union {
-		int		i;			/* VAR */
-		double	f;			/* FLOAT */
 		ScriptData	*defn;	/* HANDLER */
 		void (*func)();		/* OPCODE */
 		void (*bltin)(int);	/* BUILTIN */
 		Common::String	*s;	/* STRING */
-		DatumArray *farr;	/* ARRAY, POINT, RECT */
-		PropertyArray *parr;
-		Object *obj;
 	} u;
 
 	int *refCount;
@@ -98,7 +93,6 @@ struct Symbol {	/* symbol table entry */
 	bool parens;	/* whether parens required or not, for builitins */
 	int targetType;	/* valid target objects, for method builtins */
 
-	bool global;
 	Common::Array<Common::String> *argNames;
 	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */

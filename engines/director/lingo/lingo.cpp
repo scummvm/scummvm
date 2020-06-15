@@ -49,7 +49,6 @@ Symbol::Symbol() {
 	maxArgs = 0;
 	parens = true;
 	targetType = kNoneObj;
-	global = false;
 	argNames = nullptr;
 	varNames = nullptr;
 	ctx = nullptr;
@@ -59,14 +58,13 @@ Symbol::Symbol() {
 Symbol::Symbol(const Symbol &s) {
 	name = s.name;
 	type = s.type;
-	u.s = s.u.s;
+	u = s.u;
 	refCount = s.refCount;
 	*refCount += 1;
 	nargs = s.nargs;
 	maxArgs = s.maxArgs;
 	parens = s.parens;
 	targetType = s.targetType;
-	global = s.global;
 	argNames = s.argNames;
 	varNames = s.varNames;
 	ctx = s.ctx;
@@ -78,14 +76,13 @@ Symbol& Symbol::operator=(const Symbol &s) {
 		reset();
 		name = s.name;
 		type = s.type;
-		u.s = s.u.s;
+		u = s.u;
 		refCount = s.refCount;
 		*refCount += 1;
 		nargs = s.nargs;
 		maxArgs = s.maxArgs;
 		parens = s.parens;
 		targetType = s.targetType;
-		global = s.global;
 		argNames = s.argNames;
 		varNames = s.varNames;
 		ctx = s.ctx;
@@ -99,37 +96,12 @@ void Symbol::reset() {
 	if (*refCount <= 0) {
 		if (name)
 			delete name;
-		switch (type) {
-		case HANDLER:
+
+		if (type == HANDLER)
 			delete u.defn;
-			break;
-		case STRING:
+		else if (type == STRING)
 			delete u.s;
-			break;
-		case ARRAY:
-			// fallthrough
-		case POINT:
-			// fallthrough
-		case RECT:
-			delete u.farr;
-			break;
-		case PARRAY:
-			delete u.parr;
-			break;
-		case OBJECT:
-			delete u.obj;
-			break;
-		case VAR:
-			// fallthrough
-		case REFERENCE:
-			// fallthrough
-		case INT:
-			// fallthrough
-		case FLOAT:
-			// fallthrough
-		default:
-			break;
-		}
+
 		if (argNames)
 			delete argNames;
 		if (varNames)
