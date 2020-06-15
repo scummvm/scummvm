@@ -251,6 +251,8 @@ struct Object {
 		disposed = false;
 		inheritanceLevel = 1;
 		scriptContext = objContext;
+		prototype = nullptr;
+
 		if (objType == kFactoryObj) {
 			objArray = new Common::HashMap<uint32, Datum>;
 		} else {
