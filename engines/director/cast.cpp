@@ -178,6 +178,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButt
 	_textShadow = kSizeNone;
 	_textSlant = 0;
 	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
+	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
 
 	if (version <= 3) {
 		_flags = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
