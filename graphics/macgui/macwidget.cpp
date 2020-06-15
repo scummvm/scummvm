@@ -37,6 +37,9 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusab
 	_dims.top = y;
 	_dims.bottom = y + h + (2 * border) + gutter + shadow;
 
+	_fgcolor = 0xff;
+	_bgcolor = 0;
+
 	if (parent)
 		parent->_children.push_back(this);
 
@@ -44,16 +47,13 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusab
 	_maskSurface = nullptr;
 
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
-	_composeSurface->clear(255);
+	_composeSurface->clear(_bgcolor);
 
 	_maskSurface = new ManagedSurface(_dims.width(), _dims.height());
-	_maskSurface->clear(0);
+	_maskSurface->clear(1);
 
 	_active = false;
 	_editable = false;
-
-	_fgcolor = 0xff;
-	_bgcolor = 0;
 }
 
 MacWidget::~MacWidget() {
