@@ -50,7 +50,7 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 
 		if (*s == '"')
 			res += *s++;
-	} else if (Common::isAlnum(*s) || *s == '#') {
+	} else if (Common::isAlnum(*s) || *s == '#' || *s == '.') {
 		// Now copy everything till whitespace
 		while (*s && (Common::isAlnum(*s) || *s == '.' || *s == '#' || *s == '_'))
 			res += *s++;
