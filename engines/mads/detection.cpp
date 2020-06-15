@@ -30,7 +30,6 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "mads/events.h"
 #include "mads/game.h"

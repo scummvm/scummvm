@@ -25,7 +25,6 @@
 #include "common/math.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
-#include "graphics/colormasks.h"
 
 namespace ZVision {
 

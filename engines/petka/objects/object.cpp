@@ -25,7 +25,6 @@
 #include "common/system.h"
 #include "common/events.h"
 
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 #include "petka/big_dialogue.h"

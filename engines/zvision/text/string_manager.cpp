@@ -25,7 +25,6 @@
 #include "common/tokenizer.h"
 #include "common/debug.h"
 #include "graphics/fontman.h"
-#include "graphics/colormasks.h"
 
 #include "zvision/zvision.h"
 #include "zvision/file/search_manager.h"

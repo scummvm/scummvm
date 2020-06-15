@@ -24,7 +24,6 @@
 #include "common/bufferedstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"

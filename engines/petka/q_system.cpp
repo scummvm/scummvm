@@ -24,8 +24,6 @@
 #include "common/substream.h"
 #include "common/system.h"
 
-#include "graphics/colormasks.h"
-
 #include "petka/petka.h"
 #include "petka/interfaces/startup.h"
 #include "petka/interfaces/main.h"

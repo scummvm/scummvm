@@ -25,7 +25,6 @@
 #include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 #include "tony/tony.h"

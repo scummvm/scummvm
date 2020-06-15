@@ -63,7 +63,6 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/file.h"

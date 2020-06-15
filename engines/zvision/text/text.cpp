@@ -26,7 +26,6 @@
 #include "common/debug.h"
 #include "common/rect.h"
 #include "graphics/fontman.h"
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"

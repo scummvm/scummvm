@@ -27,7 +27,6 @@
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"
-#include "graphics/colormasks.h"
 
 #include "gui/ThemeEngine.h"
 #include "graphics/VectorRenderer.h"

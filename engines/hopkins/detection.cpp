@@ -29,7 +29,6 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 #define MAX_SAVES 99
