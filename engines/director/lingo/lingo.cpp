@@ -1073,7 +1073,7 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 void Lingo::printAllVars() {
 	debugN("  Local vars: ");
 	if (_localvars) {
-		for (SymbolHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
+		for (DatumHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
 			debugN("%s, ", (*i)._key.c_str());
 		}
 	} else {
@@ -1083,14 +1083,14 @@ void Lingo::printAllVars() {
 
 	if (_currentMe.type == OBJECT) {
 		debugN("  Instance/property vars: ");
-		for (SymbolHash::iterator i = _currentMe.u.obj->properties.begin(); i != _currentMe.u.obj->properties.end(); ++i) {
+		for (DatumHash::iterator i = _currentMe.u.obj->properties.begin(); i != _currentMe.u.obj->properties.end(); ++i) {
 			debugN("%s, ", (*i)._key.c_str());
 		}
 		debugN("\n");
 	}
 
 	debugN("  Global vars: ");
-	for (SymbolHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
+	for (DatumHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
 		debugN("%s, ", (*i)._key.c_str());
 	}
 	debugN("\n");
@@ -1125,7 +1125,7 @@ int Lingo::castIdFetch(Datum &var) {
 	return id;
 }
 
-void Lingo::varAssign(Datum &var, Datum &value, bool global, SymbolHash *localvars) {
+void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvars) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
@@ -1136,59 +1136,29 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, SymbolHash *localva
 	}
 
 	if (var.type == VAR) {
-		Symbol *sym = nullptr;
+		Datum *d = nullptr;
 		Common::String name = *var.u.s;
 
 		if (localvars && localvars->contains(name)) {
-			sym = &(*localvars)[name];
+			d = &(*localvars)[name];
 			if (global)
 				warning("varAssign: variable %s is local, not global", name.c_str());
 		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasVar(name)) {
-			sym = &_currentMe.u.obj->getVar(name);
+			d = &_currentMe.u.obj->getVar(name);
 			if (global)
-				warning("varAssign: variable %s is instance or property, not global", sym->name->c_str());
+				warning("varAssign: variable %s is instance or property, not global", name.c_str());
 		} else if (_globalvars.contains(name)) {
-			sym = &_globalvars[name];
+			d = &_globalvars[name];
 			if (!global)
 				warning("varAssign: variable %s is global, not local", name.c_str());
 		}
 
-		if (!sym) {
+		if (!d) {
 			warning("varAssign: variable %s not defined", name.c_str());
 			return;
 		}
 
-		if (sym->type != INT && sym->type != VOID &&
-				sym->type != FLOAT && sym->type != STRING &&
-				sym->type != ARRAY && sym->type != PARRAY && sym->type != OBJECT &&
-				sym->type != POINT) {
-			warning("varAssign: assignment to non-variable '%s'", sym->name->c_str());
-			return;
-		}
-
-		sym->reset();
-		sym->refCount = value.refCount;
-		*sym->refCount += 1;
-		sym->name = new Common::String(name);
-		sym->type = value.type;
-		if (value.type == INT) {
-			sym->u.i = value.u.i;
-		} else if (value.type == FLOAT) {
-			sym->u.f = value.u.f;
-		} else if (value.type == STRING || value.type == SYMBOL) {
-			sym->u.s = value.u.s;
-		} else if (value.type == POINT || value.type == ARRAY) {
-			sym->u.farr = value.u.farr;
-		} else if (value.type == PARRAY) {
-			sym->u.parr = value.u.parr;
-		} else if (value.type == OBJECT) {
-			sym->u.obj = value.u.obj;
-		} else if (value.type == VOID) {
-			sym->u.i = 0;
-		} else {
-			warning("varAssign: unhandled type: %s", value.type2str());
-			sym->u.s = value.u.s;
-		}
+		*d = value;
 	} else if (var.type == REFERENCE) {
 		Score *score = g_director->getCurrentScore();
 		if (!score) {
@@ -1212,7 +1182,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, SymbolHash *localva
 	}
 }
 
-Datum Lingo::varFetch(Datum &var, bool global, SymbolHash *localvars) {
+Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
@@ -1225,7 +1195,7 @@ Datum Lingo::varFetch(Datum &var, bool global, SymbolHash *localvars) {
 	}
 
 	if (var.type == VAR) {
-		Symbol *sym = nullptr;
+		Datum *d = nullptr;
 		Common::String name = *var.u.s;
 
 		if (_currentMe.type == OBJECT && name.equalsIgnoreCase("me")) {
@@ -1233,48 +1203,25 @@ Datum Lingo::varFetch(Datum &var, bool global, SymbolHash *localvars) {
 			return result;
 		}
 		if (localvars && localvars->contains(name)) {
-			sym = &(*localvars)[name];
+			d = &(*localvars)[name];
 			if (global)
-				warning("varFetch: variable %s is local, not global", sym->name->c_str());
+				warning("varFetch: variable %s is local, not global", name.c_str());
 		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasVar(name)) {
-			sym = &_currentMe.u.obj->getVar(name);
+			d = &_currentMe.u.obj->getVar(name);
 			if (global)
-				warning("varFetch: variable %s is instance or property, not global", sym->name->c_str());
+				warning("varFetch: variable %s is instance or property, not global", name.c_str());
 		} else if (_globalvars.contains(name)) {
-			sym = &_globalvars[name];
+			d = &_globalvars[name];
 			if (!global)
-				warning("varFetch: variable %s is global, not local", sym->name->c_str());
+				warning("varFetch: variable %s is global, not local", name.c_str());
 		}
 
-		if (!sym) {
+		if (!d) {
 			warning("varFetch: variable %s not found", name.c_str());
 			return result;
 		}
 
-		result.type = sym->type;
-		delete result.refCount;
-		result.refCount = sym->refCount;
-		*result.refCount += 1;
-
-		if (sym->type == INT)
-			result.u.i = sym->u.i;
-		else if (sym->type == FLOAT)
-			result.u.f = sym->u.f;
-		else if (sym->type == STRING || sym->type == SYMBOL)
-			result.u.s = sym->u.s;
-		else if (sym->type == POINT || sym->type == ARRAY)
-			result.u.farr = sym->u.farr;
-		else if (sym->type == PARRAY)
-			result.u.parr = sym->u.parr;
-		else if (sym->type == OBJECT)
-			result.u.obj = sym->u.obj;
-		else if (sym->type == VOID)
-			result.u.i = 0;
-		else {
-			warning("varFetch: unhandled type: %s", var.type2str());
-			result.type = VOID;
-		}
-
+		return *d;
 	} else if (var.type == REFERENCE) {
 		Cast *cast = _vm->getCastMember(var.u.i);
 		if (cast) {

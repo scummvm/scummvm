@@ -224,7 +224,7 @@ void Lingo::pushContext(const Symbol *funcSym, bool preserveVarFrame) {
 	// Functions with an archiveIndex of -1 are anonymous.
 	// Execute them within the current var frame.
 	if (!preserveVarFrame && funcSym && funcSym->archiveIndex >= 0)
-		g_lingo->_localvars = new SymbolHash;
+		g_lingo->_localvars = new DatumHash;
 
 	g_lingo->_callstack.push_back(fp);
 
@@ -1388,7 +1388,7 @@ void LC::call(const Symbol &funcSym, int nargs, Datum target) {
 
 	if (funcSym.archiveIndex >= 0) {
 		// Create new set of local variables
-		SymbolHash *localvars = new SymbolHash;
+		DatumHash *localvars = new DatumHash;
 		if (funcSym.argNames) {
 			int symNArgs = funcSym.nargs;
 			if ((int)funcSym.argNames->size() < symNArgs) {
@@ -1419,8 +1419,7 @@ void LC::call(const Symbol &funcSym, int nargs, Datum target) {
 			for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
 				Common::String name = *it;
 				if (!localvars->contains(name)) {
-					(*localvars)[name] = Symbol();
-					(*localvars)[name].name = new Common::String(name);
+					(*localvars)[name] = Datum();
 				} else {
 					warning("Variable %s already defined", name.c_str());
 				}

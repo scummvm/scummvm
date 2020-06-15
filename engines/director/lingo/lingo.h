@@ -218,6 +218,7 @@ struct ScriptContext {
 typedef Common::HashMap<int32, ScriptContext *> ScriptContextHash;
 typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
+typedef Common::HashMap<Common::String, Datum, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DatumHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
@@ -237,7 +238,7 @@ struct Object {
 	bool disposed;
 
 	Object *prototype;
-	SymbolHash properties;
+	DatumHash properties;
 	SymbolHash methods;
 	int inheritanceLevel; // 1 for original object
 	ScriptContext *scriptContext;
@@ -268,7 +269,7 @@ struct Object {
 	virtual Object *clone();
 	Symbol getMethod(const Common::String &methodName);
 	bool hasVar(const Common::String &varName);
-	Symbol &getVar(const Common::String &varName);
+	Datum &getVar(const Common::String &varName);
 };
 
 struct CFrame {	/* proc/func call stack frame */
@@ -277,7 +278,7 @@ struct CFrame {	/* proc/func call stack frame */
 	ScriptData	*retscript;	 /* which script to resume after return */
 	ScriptContext	*retctx;   /* which script context to use after return */
 	int 	retarchive;	/* which archive to use after return */
-	SymbolHash *localvars;
+	DatumHash *localvars;
 	Datum retMe; /* which me obj to use after return */
 };
 
@@ -378,8 +379,8 @@ public:
 	void popContext();
 	void cleanLocalVars();
 	int castIdFetch(Datum &var);
-	void varAssign(Datum &var, Datum &value, bool global = false, SymbolHash *localvars = nullptr);
-	Datum varFetch(Datum &var, bool global = false, SymbolHash *localvars = nullptr);
+	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
+	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr);
 
 	int getAlignedType(Datum &d1, Datum &d2);
 
@@ -468,7 +469,7 @@ public:
 	int codeString(const char *s);
 	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr, Object *obj = nullptr);
 	void processIf(int toplabel, int endlabel);
-	void varCreate(const Common::String &name, bool global, SymbolHash *localvars = nullptr);
+	void varCreate(const Common::String &name, bool global, DatumHash *localvars = nullptr);
 
 	int _assemblyArchive;
 	ScriptContext *_assemblyContext;
@@ -538,8 +539,8 @@ public:
 	Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
-	SymbolHash _globalvars;
-	SymbolHash *_localvars;
+	DatumHash _globalvars;
+	DatumHash *_localvars;
 
 	FuncHash _functions;
 

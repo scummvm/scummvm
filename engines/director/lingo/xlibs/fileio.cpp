@@ -62,9 +62,7 @@ void FileIO::initialize(int type) {
 		if (!g_lingo->_globalvars.contains(xlibName)) {
 			FileObject *xobj = new FileObject(kXObj);
 			xobj->initMethods();
-			g_lingo->_globalvars[xlibName] = Symbol();
-			g_lingo->_globalvars[xlibName].name = new Common::String(xlibName);
-			g_lingo->_globalvars[xlibName].global = true;
+			g_lingo->_globalvars[xlibName] = Datum();
 			g_lingo->_globalvars[xlibName].type = OBJECT;
 			g_lingo->_globalvars[xlibName].u.obj = xobj;
 		} else {

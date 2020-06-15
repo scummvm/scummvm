@@ -162,7 +162,7 @@ bool Object::hasVar(const Common::String &varName) {
 	return properties.contains(varName);
 }
 
-Symbol &Object::getVar(const Common::String &varName) {
+Datum &Object::getVar(const Common::String &varName) {
 	return properties[varName];
 }
 

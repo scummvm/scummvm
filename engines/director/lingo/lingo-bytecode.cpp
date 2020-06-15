@@ -769,9 +769,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			const char *name = _archives[_assemblyArchive].names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			if (!_globalvars.contains(name)) {
-				_globalvars[name] = Symbol();
-				_globalvars[name].name = new Common::String(name);
-				_globalvars[name].global = true;
+				_globalvars[name] = Datum();
 			} else {
 				warning("Global %d (%s) already defined", i, name);
 			}

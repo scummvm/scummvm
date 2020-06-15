@@ -264,7 +264,7 @@ void Lingo::processIf(int toplabel, int endlabel) {
 	}
 }
 
-void Lingo::varCreate(const Common::String &name, bool global, SymbolHash *localvars) {
+void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localvars) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
@@ -284,13 +284,11 @@ void Lingo::varCreate(const Common::String &name, bool global, SymbolHash *local
 	}
 
 	if (global) {
-		_globalvars[name] = Symbol();
-		_globalvars[name].name = new Common::String(name);
+		_globalvars[name] = Datum();
 		_globalvars[name].type = INT;
 		_globalvars[name].u.i = 0;
 	} else {
-		(*localvars)[name] = Symbol();
-		(*localvars)[name].name = new Common::String(name);
+		(*localvars)[name] = Datum();
 	}
 }
 
@@ -299,9 +297,7 @@ void Lingo::codeFactory(Common::String &name) {
 
 	_currentFactory = obj;
 	if (!_globalvars.contains(name)) {
-		_globalvars[name] = Symbol();
-		_globalvars[name].name = new Common::String(name);
-		_globalvars[name].global = true;
+		_globalvars[name] = Datum();
 		_globalvars[name].type = OBJECT;
 		_globalvars[name].u.obj = obj;
 	} else {
