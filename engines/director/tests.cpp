@@ -283,7 +283,9 @@ void DirectorEngine::runTests() {
 	Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(movie);
 
 	_mainArchive = new RIFXArchive();
-	_mainArchive->openStream(stream, 0);
+	if (!_mainArchive->openStream(stream, 0)) {
+		error("DirectorEngine::runTests(): Bad movie data");
+	}
 	_currentScore = new Score(this);
 	_currentScore->setArchive(_mainArchive);
 	_currentScore->loadArchive(false);
