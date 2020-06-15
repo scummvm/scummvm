@@ -63,7 +63,7 @@ Intrinsic RemorseIntrinsics[] = {
 	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
 	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes),  probably, see usage in DOOR2::ordinal37
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
-	0, // // different than U8's? int Intrinsic01B(void)
+	UCMachine::I_true, // FIXME: get the num of some npc - maybe currently controlled NPC? For now default to 1 (avatar).
 	Actor::I_getDir, // byte Intrinsic01C(4 bytes)
 	Actor::I_getLastAnimSet, // int Intrinsic01D(4 bytes)
 	0, // int Intrinsic01E(16 bytes)
@@ -78,7 +78,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQHi, // int16 Intrinsic026(Item *), // guess, based on variable name in BOUNCBOX::gotHit
 	0, // int Intrinsic027(14 bytes)
 	Item::I_hurl, // int Intrinsic028(12 bytes)
-	0, // int Intrinsic029(void)
+	UCMachine::I_true, // TODO: This is actually game difficulty level.  Make an intrinsic for that once it's implemented (for now return 1, easiest difficulty).
 	AudioProcess::I_playAmbientSFXCru, // Confirmed!
 	Item::I_getQLo, // int16 Intrinsic02B(4 bytes), // guess, based on variable name in BOUNCBOX::gotHit
 	Item::I_inFastArea, // byte Intrinsic02C(4 bytes) // based on disassembly - checks for flag 0x2000
@@ -88,7 +88,7 @@ Intrinsic RemorseIntrinsics[] = {
 	// 0x030
 	Item::I_pop,
 	Item::I_andStatus,
-	0, // void Intrinsic032(12 bytes)
+	Item::I_receiveHit, // void Intrinsic032(12 bytes)
 	Actor::I_isBusy, // int Intrinsic033(4 bytes)
 	0, // TODO: void Actor::I_getDir16(8 bytes)
 	0, // int Intrinsic035(4 bytes)
@@ -96,7 +96,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // int Intrinsic037(4 bytes)
 	AudioProcess::I_stopSFXCru, // takes Item *, sndno (from disasm)
 	Actor::I_isDead, // int Intrinsic039(4 bytes)
-	0, // something with sound maybe? int Intrinsic03A(6 bytes)
+	AudioProcess::I_isSFXPlayingForObject,
 	Item::I_setQLo,
 	Item::I_getFamily,
 	Container::I_destroyContents,
@@ -106,7 +106,7 @@ Intrinsic RemorseIntrinsics[] = {
 	CameraProcess::I_move_to, // void Intrinsic040(8 bytes)
 	CameraProcess::I_setCenterOn, // void Intrinsic041(2 bytes)
 	0, // int Intrinsic042(6 bytes)
-	AudioProcess::I_isSFXPlaying, // void Intrinsic043(6 bytes) // maybe isPlaying (based on coff)
+	AudioProcess::I_playSFXCru, // TODO: Work out how this is different from Int015 - to a first approximation they are quite similar.
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_isOn,
@@ -148,8 +148,8 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setNpcNum, // void Item::I_setSomething068(Item *, int16 something) , see VALUEBOX:ordinal20
 	Item::I_andStatus, // void Intrinsic069(6 bytes)
 	Item::I_move, // void Intrinsic06A(10 bytes)
-	0, // int16 Intrinsic06B(void)
-	0, // void Intrinsic06C(4 bytes)
+	UCMachine::I_true, // TODO: This is actualy "is compiled with VIOLENCE=1" (was set to 0 in germany). For now just always say yes.
+	Kernel::I_resetRef, // void Intrinsic06C(4 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic06E(6 bytes)
 	0, // TODO: Item::I_isCompletelyOn int Intrinsic06F(6 bytes)
@@ -179,11 +179,11 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setImmortal, // void Intrinsic085(4 bytes)
 	0, // void Intrinsic086(void)
 	0, // void Intrinsic087(void)
-	Item::I_setMapArray, // maybe I_setNpcNum -- based on use for VALUEBOX (like getNPCNum is) and coff being right next to getNPCNum.. see VALUEBOX:ordinal20.  Could also be I_setMapArray??
+	Item::I_setMapArray,
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic08A(12 bytes)
 	Item::I_enterFastArea, // void Intrinsic08B(4 bytes)
-	0, // void Intrinsic08C(4 bytes)
+	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic08F(void)
@@ -217,7 +217,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // I_playFlic(char *) Intrinsic0A9(void)
 	AudioProcess::I_playSFX, // void Intrinsic0AA(2 bytes)
 	0, // int Intrinsic0AB(4 bytes)
-	0, // void Intrinsic0AC(2 bytes)
+	Item::I_getFamilyOfType, // void Intrinsic0AC(2 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_getQLo, // based on same coff set as 02B
 	Item::I_getQHi,  // based on same coff set as 026
@@ -253,7 +253,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic0CB(2 bytes)
 	0, // int Intrinsic0CC(4 bytes)
 	0, // void Intrinsic0CD(6 bytes)
-	0, // void Intrinsic0CE(void)
+	UCMachine::I_true, // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see how this changes the game.. for now just set to true.
 	0, // void Intrinsic0CF(6 bytes)
 	// 0x0D0
 	Item::I_use, // void Intrinsic0D0(4 bytes)
@@ -310,7 +310,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic101(6 bytes)
 	Item::I_getNpcNum, // Based on variable name in TRIGGER::ordinal21
-	0, // // byte Intrinsic103(uint16 shapenum)
+	Item::I_isCrusTypeNPC,
 	Item::I_andStatus, // void Intrinsic104(6 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic106(6 bytes)
@@ -333,15 +333,15 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // ? Item::I_getTypeFlag, byte Intrinsic116(14 bytes)
 	Item::I_andStatus, // void Intrinsic117(6 bytes)
 	Item::I_hurl, // int16 Intrinsic118(12 bytes)
-	0, // void Intrinsic119(4 bytes)
+	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic119(4 bytes)
 	Item::I_andStatus, // void Intrinsic11A(6 bytes)
 	Item::I_getTypeFlag, // byte Intrinsic11B(6 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_hurl, // int16 Intrinsic11D(12 bytes)
-	0, // int16 Intrinsic11E(4 bytes)
-	0, // byte Intrinsic11F(4 bytes)
+	Item::I_getCY, // int16 Intrinsic11E(4 bytes)
+	Item::I_getCZ, // byte Intrinsic11F(4 bytes)
 	// 0x120
-	0, // void Intrinsic120(4 bytes)
+	Item::I_getCX, // void Intrinsic120(4 bytes)
 	Actor::I_getDir, // int Intrinsic121(4 bytes)
 	Actor::I_isDead, // int Intrinsic122(4 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
@@ -351,8 +351,8 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getDirToCoords, // int Intrinsic127(8 bytes)
 	Item::I_andStatus, // void Intrinsic128(6 bytes) // maybe Item::andStatus?? see ITEM::ordinal22
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	0, // void Intrinsic12A(4 bytes)
-	0, // void Intrinsic12B(4 bytes)
+	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic12A(4 bytes)
+	Item::I_getCY, // void Intrinsic12B(4 bytes)
 	Item::I_isOn,
 	Item::I_getFootpadData, // void Intrinsic12D(16 bytes)
 	Actor::I_isDead, // int Intrinsic12E(4 bytes)

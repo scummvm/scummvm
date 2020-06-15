@@ -1240,7 +1240,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			_globals->setBits(ui16a, ui16b, ui32a);
 
 			if (ui32a & ~(((1 << ui16b) - 1))) {
-				perr << "Warning: value popped into a bitflag it doesn't fit in" << Std::endl;
+				perr << "Warning: value popped into a bitflag it doesn't fit in (" << Std::hex
+					 << ui16a << " " << ui16b << " " << ui32a << ")" << Std::endl;
 			}
 
 			// paranoid :-)
