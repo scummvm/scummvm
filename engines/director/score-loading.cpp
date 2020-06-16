@@ -259,10 +259,9 @@ bool Score::loadArchive(bool isSharedCast) {
 	}
 	copyCastStxts();
 
-	setSpriteCasts();
 	loadSpriteImages(isSharedCast);
 	loadSpriteSounds(isSharedCast);
-	setSpriteBboxes();
+	setSpriteCasts();
 
 	return true;
 }
@@ -514,10 +513,6 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
 	}
 
-	for (int i = 0; i < _numChannelsDisplayed + 1; i++) {
-		_spriteChannels.push_back(new SpriteChannel());
-	}
-
 	uint16 channelSize;
 	uint16 channelOffset;
 
@@ -691,20 +686,8 @@ void Score::setSpriteCasts() {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			_frames[i]->_sprites[j]->setCast(_frames[i]->_sprites[j]->_castId);
+
 			debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d castId: %d type: %d", i, j, _frames[i]->_sprites[j]->_castId, _frames[i]->_sprites[j]->_spriteType);
-		}
-	}
-}
-
-void Score::setSpriteBboxes() {
-	// Initialise the sprite cache for all the initial bounding boxes
-	for (uint16 i = 0; i < _frames.size(); i++) {
-		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
-			Sprite *sp = _frames[i]->_sprites[j];
-			sp->updateCast();
-
-			sp->_startBbox = sp->getBbox();
-			sp->_currentBbox = sp->_startBbox;
 		}
 	}
 }

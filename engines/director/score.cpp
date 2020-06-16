@@ -38,6 +38,43 @@
 
 namespace Director {
 
+Channel::Channel(Sprite *sp) {
+	_sprite = sp;
+	_currentPoint = sp->_startPoint;
+	_delta = Common::Point(0, 0);
+
+	_visible = true;
+
+	if (_sprite && _sprite->_castType != kCastTypeNull) {
+		_sprite->updateCast();
+		updateLocation();
+	}
+}
+
+Common::Rect Channel::getBbox() {
+	Common::Rect bbox = _sprite->getDims();
+	bbox.moveTo(_currentPoint);
+
+	return bbox;
+}
+
+void Channel::updateLocation() {
+	_currentPoint += _delta;
+	_delta = Common::Point(0, 0);
+
+	_sprite->translate(_currentPoint, true);
+}
+
+void Channel::addDelta(Common::Point pos) {
+	// This method is for easily implementing constraint of sprite
+
+	_delta += pos;
+}
+
+void Channel::resetPosition() {
+	_delta = _sprite->_startPoint;
+}
+
 Score::Score(DirectorEngine *vm) {
 	_vm = vm;
 	_surface = nullptr;
@@ -109,8 +146,8 @@ Score::~Score() {
 	for (uint i = 0; i < _frames.size(); i++)
 		delete _frames[i];
 
-	for (uint i = 0; i < _spriteChannels.size(); i++)
-		delete _spriteChannels[i];
+	for (uint i = 0; i < _channels.size(); i++)
+		delete _channels[i];
 
 	if (_loadedStxts)
 		for (Common::HashMap<int, const Stxt *>::iterator it = _loadedStxts->begin(); it != _loadedStxts->end(); ++it)
@@ -328,15 +365,17 @@ void Score::startLoop() {
 	_stopPlay = false;
 	_nextFrameTime = 0;
 
-	_sprites = _frames[_currentFrame]->_sprites;
-	_lingo->processEvent(kEventStartMovie);
-
-	renderFrame(_currentFrame, true);
-
 	if (_frames.size() <= 1) {	// We added one empty sprite
 		warning("Score::startLoop(): Movie has no frames");
 		_stopPlay = true;
 	}
+
+	// All frames in the same movie have the same number of channels
+	for (int i = _frames[1]->_sprites.size() - 1; i >= 0; i--) {
+		_channels.push_back(new Channel(_frames[1]->_sprites[i]));
+	}
+
+	_lingo->processEvent(kEventStartMovie);
 
 	while (!_stopPlay) {
 		if (_currentFrame >= _frames.size()) {
@@ -488,8 +527,9 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 
 	Frame *currentFrame = _frames[frameId];
 
-	for (uint16 i = 0; i < _sprites.size(); i++) {
-		Sprite *currentSprite = _sprites[i];
+	for (uint16 i = 0; i < _channels.size(); i++) {
+		Channel *channel = _channels[i];
+		Sprite *currentSprite = channel->_sprite;
 		Sprite *nextSprite;
 
 		if (currentSprite->_puppet)
@@ -502,38 +542,53 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		// - The cast member ID of the sprite has changed (_dirty flag set)
 		// - The sprite slot from the current frame is different (cast member ID or bounding box) from the cached sprite slot
 		// (maybe we have to compare all the sprite attributes, not just these two?)
-		bool needsUpdate = currentSprite->isDirty() || currentSprite->_castId != nextSprite->_castId || currentSprite->_currentBbox != nextSprite->_currentBbox;
+		bool needsUpdate = currentSprite->isDirty() ||
+			currentSprite->_castId != nextSprite->_castId ||
+			channel->_delta != Common::Point(0, 0) ||
+			currentSprite->_startPoint != nextSprite->_startPoint ||
+			currentSprite->getDims() != nextSprite->getDims() ||
+			(channel->_currentPoint != nextSprite->_startPoint &&
+			 currentSprite != nextSprite);
+
 
 		if (needsUpdate || forceUpdate) {
 			if (!currentSprite->_trails) {
-				_maskSurface->fillRect(currentSprite->_currentBbox, 1);
-				_surface->fillRect(currentSprite->_currentBbox, _stageColor);
+				Common::Rect currentBbox = channel->getBbox();
+				_maskSurface->fillRect(currentBbox, 1);
+				_surface->fillRect(currentBbox, _stageColor);
 			}
-
-			currentSprite->_currentBbox = currentSprite->getBbox();
 		}
 
-		_maskSurface->fillRect(nextSprite->_currentBbox, 1);
-		_sprites[i] = nextSprite;
+		channel->_sprite = nextSprite;
+		channel->updateLocation();
 	}
 
-	for (uint id = 0; id < _sprites.size(); id++) {
-		Sprite *sprite = _sprites[id];
+	for (uint id = 0; id < _channels.size(); id++) {
+		Channel *channel = _channels[id];
+		Sprite *sprite = channel->_sprite;
 
 		if (!sprite || !sprite->_enabled || !sprite->_castType)
 			continue;
 
 		sprite->updateCast();
 
+		// Sprites marked moveable are constrained to the same bounding box until
+		// the moveable is disabled
+		if (!sprite->_moveable)
+			channel->_currentPoint = sprite->_startPoint;
+
+		Common::Rect currentBbox = channel->getBbox();
+		_maskSurface->fillRect(currentBbox, 1);
+
 		debugC(1, kDebugImages, "Score::renderSprite(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
 		if (sprite->_castType == kCastShape) {
 			renderShape(id);
 		} else {
-			Cast *cast = _sprites[id]->_cast;
+			Cast *cast = sprite->_cast;
 			if (cast && cast->_widget) {
 				cast->_widget->_priority = id;
 				cast->_widget->draw();
-				inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), _sprites[id]->_ink, _sprites[id]->_currentBbox, id);
+				inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), channel->_sprite->_ink, currentBbox, id);
 			} else {
 				warning("Score::renderSprite: No widget for channel ID %d", id);
 			}
@@ -562,7 +617,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 }
 
 void Score::renderShape(uint16 spriteId) {
-	Sprite *sp = _sprites[spriteId];
+	Sprite *sp = _channels[spriteId]->_sprite;
 
 	InkType ink = sp->_ink;
 	byte spriteType = sp->_spriteType;
@@ -617,7 +672,7 @@ void Score::renderShape(uint16 spriteId) {
 	// for outlined shapes, line thickness of 1 means invisible.
 	lineSize -= 1;
 
-	Common::Rect shapeRect = sp->_currentBbox;
+	Common::Rect shapeRect = _channels[spriteId]->getBbox();
 
 	Graphics::ManagedSurface tmpSurface, maskSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
@@ -698,46 +753,37 @@ const Stxt *Score::getStxt(int castId) {
 }
 
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {
-	for (int i = _sprites.size() - 1; i >= 0; i--)
-		if (_sprites[i]->_currentBbox.contains(pos))
+	for (int i = _channels.size() - 1; i >= 0; i--)
+		if (_channels[i]->getBbox().contains(pos))
 			return i;
 
 	return 0;
 }
 
 bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
-	if (_sprites[spriteId]->_currentBbox.contains(pos))
+	if (_channels[spriteId]->getBbox().contains(pos))
 		return true;
 
 	return false;
 }
 
-Common::Rect *Score::getSpriteRect(uint16 spriteId) {
-	if (!_sprites[spriteId]->_currentBbox.isEmpty())
-		return &_sprites[spriteId]->_currentBbox;
-
-	return nullptr;
-}
-
 Sprite *Score::getSpriteById(uint16 id) {
-	if (id >= _sprites.size()) {
-		warning("Score::getSpriteById(%d): out of bounds. frame: %d", id, _currentFrame);
-		return nullptr;
-	}
-	if (_sprites[id]) {
-		return _sprites[id];
+	Channel *channel = getChannelById(id);
+
+	if (channel) {
+		return channel->_sprite;
 	} else {
-		warning("Sprite on frame %d width id %d not found", _currentFrame, id);
+		warning("Score::getSpriteById: sprite on frame %d with id %d not found", _currentFrame, id);
 		return nullptr;
 	}
 }
 
-SpriteChannel *Score::getSpriteChannelById(uint16 id) {
-	if (id >= _spriteChannels.size()) {
+Channel *Score::getChannelById(uint16 id) {
+	if (id >= _channels.size()) {
 		warning("Score::getSpriteChannelById(%d): out of bounds", id);
 		return nullptr;
 	}
-	return _spriteChannels[id];
+	return _channels[id];
 }
 
 void Score::playSoundChannel(uint16 frameId) {

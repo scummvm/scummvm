@@ -82,11 +82,11 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				sc->_lastRollTime =	 sc->_lastEventTime;
 
 				if (_draggingSprite) {
-					Sprite *draggedSprite = sc->_sprites[_draggingSpriteId];
+					Sprite *draggedSprite = sc->getSpriteById(_draggingSpriteId);
 					if (draggedSprite->_moveable) {
 						pos = g_system->getEventManager()->getMousePos();
-						Common::Point delta = pos - _draggingSpritePos;
-						draggedSprite->translate(delta);
+
+						sc->_channels[_draggingSpriteId]->addDelta(pos - _draggingSpritePos);
 						_draggingSpritePos = pos;
 					} else {
 						releaseDraggedSprite();
@@ -101,7 +101,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				// But we still want to know if the mouse is down for press effects.
 				spriteId = sc->getSpriteIDFromPos(pos);
 				sc->_currentMouseDownSpriteId = spriteId;
-				if (sc->_sprites[spriteId]->_scriptId)
+				if (sc->getSpriteById(spriteId)->_scriptId)
 					sc->_currentClickOnSpriteId = spriteId;
 
 				sc->_lastEventTime = g_director->getMacTicks();
@@ -110,7 +110,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->registerEvent(kEventMouseDown);
 
-				if (sc->_sprites[spriteId]->_moveable)
+				if (sc->getSpriteById(spriteId)->_moveable)
 					g_director->setDraggedSprite(spriteId);
 
 				break;
@@ -120,7 +120,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				spriteId = sc->getSpriteIDFromPos(pos);
 
-				if (!sc->_sprites[sc->_currentMouseDownSpriteId]->_currentBbox.contains(pos))
+				if (!sc->getChannelById(sc->_currentMouseDownSpriteId)->getBbox().contains(pos))
 					sc->_currentMouseDownSpriteId = 0;
 
 				if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle))
@@ -131,7 +131,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				releaseDraggedSprite();
 
 				{
-					Cast *cast = g_director->getCastMember(sc->_sprites[spriteId]->_castId);
+					Cast *cast = g_director->getCastMember(sc->getSpriteById(spriteId)->_castId);
 					if (cast && cast->_type == kCastButton)
 						cast->_hilite = !cast->_hilite;
 				}

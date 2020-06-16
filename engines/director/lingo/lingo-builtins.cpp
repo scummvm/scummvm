@@ -1483,8 +1483,8 @@ void LB::b_editableText(int nargs) {
 	if (nargs == 2) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
-		if ((uint)sprite.asInt() < sc->_sprites.size()) {
-			sc->_sprites[sprite.asInt()]->_editable = state.asInt();
+		if ((uint)sprite.asInt() < sc->_channels.size()) {
+			sc->getSpriteById(sprite.asInt())->_editable = state.asInt();
 		} else {
 			warning("b_editableText: sprite index out of bounds");
 		}
@@ -1495,7 +1495,7 @@ void LB::b_editableText(int nargs) {
 			warning("b_editableText: channel Id is missing");
 			return;
 		}
-		sc->_sprites[g_lingo->_currentChannelId]->_editable = true;
+		sc->getSpriteById(g_lingo->_currentChannelId)->_editable = true;
 	} else {
 		warning("b_editableText: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);
@@ -1724,8 +1724,8 @@ void LB::b_puppetSprite(int nargs) {
 	if (nargs == 2) {
 		Datum state = g_lingo->pop();
 		Datum sprite = g_lingo->pop();
-		if ((uint)sprite.asInt() < sc->_sprites.size()) {
-			sc->_sprites[sprite.asInt()]->_puppet = state.asInt();
+		if ((uint)sprite.asInt() < sc->_channels.size()) {
+			sc->getSpriteById(sprite.asInt())->_puppet = state.asInt();
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
@@ -1736,7 +1736,7 @@ void LB::b_puppetSprite(int nargs) {
 			warning("b_puppetSprite: channel Id is missing");
 			return;
 		}
-		sc->_sprites[g_lingo->_currentChannelId]->_puppet = true;
+		sc->getSpriteById(g_lingo->_currentChannelId)->_puppet = true;
 	} else {
 		warning("b_puppetSprite: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);
@@ -1773,7 +1773,7 @@ void LB::b_rollOver(int nargs) {
 		return;
 	}
 
-	if (arg >= (int32) score->_sprites.size()) {
+	if (arg >= (int32) score->_channels.size()) {
 		g_lingo->push(res);
 		return;
 	}
@@ -1827,33 +1827,32 @@ void LB::b_zoomBox(int nargs) {
 	Score *score = g_director->getCurrentScore();
 	uint16 curFrame = score->getCurrentFrame();
 
-	Common::Rect *startRect = score->getSpriteRect(startSprite);
-	if (!startRect) {
+	Common::Rect startRect = score->_channels[startSprite]->getBbox();
+	if (startRect.isEmpty()) {
 		warning("b_zoomBox: unknown start sprite #%d", startSprite);
 		return;
 	}
 
 	// Looks for endSprite in the current frame, otherwise
 	// Looks for endSprite in the next frame
-	Common::Rect *endRect = score->getSpriteRect(endSprite);
-	if (!endRect) {
+	Common::Rect endRect = score->_channels[endSprite]->getBbox();
+	if (endRect.isEmpty()) {
 		if ((uint)curFrame + 1 < score->_frames.size())
-			endRect = &score->_frames[curFrame + 1]->_sprites[endSprite]->_currentBbox;
+			endRect = score->_frames[curFrame + 1]->_sprites[endSprite]->getDims();
 	}
-	if (!endRect) {
+	if (endRect.isEmpty()) {
 		if ((uint)curFrame - 1 > 0)
-			endRect = &score->_frames[curFrame - 1]->_sprites[endSprite]->_currentBbox;
+			endRect = score->_frames[curFrame - 1]->_sprites[endSprite]->getDims();
 	}
 
-	if (!endRect) {
+	if (endRect.isEmpty()) {
 		warning("b_zoomBox: unknown end sprite #%d", endSprite);
 		return;
 	}
 
 	Graphics::ZoomBox *box = new Graphics::ZoomBox;
-	box->start = *startRect;
-	box->end = *endRect;
-	// box->last = Common::Rect(0, 0);
+	box->start = startRect;
+	box->end = endRect;
 	box->delay = delayTicks;
 	box->step = 0;
 	box->startTime = g_system->getMillis();

@@ -65,9 +65,9 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 }
 
 void Score::drawBackgndTransSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, int spriteId) {
-	byte skipColor = _sprites[spriteId]->_backColor;
-	if (_sprites[spriteId]->_castType == kCastText && _sprites[spriteId]->_cast) {
-		skipColor = ((TextCast *)_sprites[spriteId]->_cast)->getBackColor();
+	byte skipColor = _channels[spriteId]->_sprite->_backColor;
+	if (_channels[spriteId]->_sprite->_castType == kCastText && _channels[spriteId]->_sprite->_cast) {
+		skipColor = ((TextCast *)_channels[spriteId]->_sprite->_cast)->getBackColor();
 	}
 
 	Common::Rect srcRect(sprite.w, sprite.h);
@@ -123,7 +123,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 		byte srcColor = *src;
 
 		for (int j = 0; j < drawRect.width(); j++) {
-			if (!_sprites[spriteId]->_cast || _sprites[spriteId]->_cast->_type == kCastShape)
+			if (!_channels[spriteId]->_sprite->_cast || _channels[spriteId]->_sprite->_cast->_type == kCastShape)
 				srcColor = 0x0;
 			else
 				srcColor = *src;
@@ -132,7 +132,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 				// TODO: This entire reverse colour attempt needs a lot more testing on
 				// a lot more colour depths.
 				if (srcColor != skipColor) {
-					if (!_sprites[targetSprite]->_cast || _sprites[targetSprite]->_cast->_type != kCastBitmap) {
+					if (!_channels[targetSprite]->_sprite->_cast || _channels[targetSprite]->_sprite->_cast->_type != kCastBitmap) {
 						if (*dst == 0 || *dst == 255) {
 							*dst = _vm->transformColor(*dst);
 						} else if (srcColor == 255 || srcColor == 0) {
@@ -142,7 +142,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 						}
 					} else {
 						if (*dst == 0 && _vm->getVersion() == 3 &&
-							((BitmapCast*)_sprites[spriteId]->_cast)->_bitsPerPixel > 1) {
+							((BitmapCast*)_channels[spriteId]->_sprite->_cast)->_bitsPerPixel > 1) {
 							*dst = _vm->transformColor(*src - 40);
 						} else {
 							*dst ^= _vm->transformColor(srcColor);

@@ -30,13 +30,6 @@
 
 namespace Director {
 
-SpriteChannel::SpriteChannel() {
-	_visible = true;
-}
-
-SpriteChannel::~SpriteChannel() {
-}
-
 Sprite::Sprite() {
 	_scriptId = 0;
 	_scriptCastIndex = 0;
@@ -95,35 +88,23 @@ void Sprite::updateCast() {
 		_cast->createWidget();
 	}
 
-	int offsetx = 0, offsety = 0;
-	if (_cast->_type == kCastBitmap) {
-		BitmapCast *bc = (BitmapCast *)_cast;
-		offsety = bc->_initialRect.top - bc->_regY;
-		offsetx = bc->_initialRect.left - bc->_regX;
-	}
-
-	if (_cast && _cast->_widget)
-		_cast->_widget->_dims.moveTo(_currentPoint.x + offsetx, _currentPoint.y + offsety);
-
 	if (_cast->isEditable() != _editable && !_puppet)
 		_cast->setEditable(_editable);
 }
 
 void Sprite::translate(Common::Point delta, bool moveTo) {
-	_currentPoint += delta;
-
 	if (_cast && _cast->_widget) {
 		if (moveTo)
-			_cast->_widget->_dims.translate(delta.x, delta.y);
-		else
 			_cast->_widget->_dims.moveTo(delta.x, delta.y);
+		else
+			_cast->_widget->_dims.translate(delta.x, delta.y);
 	}
 
 	_dirty = true;
 }
 
 bool Sprite::isDirty() {
-	return _dirty || (_cast && _cast->isModified());
+	return _castType != kCastTypeNull && (_dirty || (_cast && _cast->isModified()));
 }
 
 void Sprite::setClean() {
@@ -246,11 +227,16 @@ void Sprite::setCast(uint16 castId) {
 		}
 	}
 
+	if (_castType == kCastBitmap && _cast) {
+		BitmapCast *bc = (BitmapCast *)_cast;
+
+		_startPoint += Common::Point(bc->_initialRect.left - bc->_regX, bc->_initialRect.top - bc->_regY);
+	}
 
 	_dirty = true;
 }
 
-Common::Rect Sprite::getBbox() {
+Common::Rect Sprite::getDims() {
 	Common::Rect result;
 	if (_castId == 0) {
 		return result;
@@ -258,18 +244,18 @@ Common::Rect Sprite::getBbox() {
 
 	if (_castType == kCastShape) {
 		// WORKAROUND: Shape widgets not fully implemented.
-		result = Common::Rect(_currentPoint.x, _currentPoint.y, _currentPoint.x + _width, _currentPoint.y + _height);
+		result = Common::Rect(_width, _height);
 	} else {
-		result = _cast && _cast->_widget ? _cast->_widget->getDimensions() : Common::Rect(0, 0, _width, _height);
-	}
+		if (_cast && _cast->_widget) {
+			result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
 
-	result.moveTo(_currentPoint.x, _currentPoint.y);
-
-	if (_cast && _castType == kCastBitmap) {
-		BitmapCast *bc = (BitmapCast *)_cast;
-		int offsety = bc->_initialRect.top - bc->_regY;
-		int offsetx = bc->_initialRect.left - bc->_regX;
-		result.translate(offsetx, offsety);
+			if (_castType == kCastBitmap) {
+				BitmapCast *bc = (BitmapCast *)_cast;
+				int offsety = bc->_initialRect.top - bc->_regY;
+				int offsetx = bc->_initialRect.left - bc->_regX;
+				result.translate(offsetx, offsety);
+			}
+		}
 	}
 
 	if (_puppet && _stretch) {

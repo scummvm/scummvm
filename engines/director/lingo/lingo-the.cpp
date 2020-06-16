@@ -469,7 +469,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			Score *sc = _vm->getCurrentScore();
 			uint16 spriteId = sc->getSpriteIDFromPos(pos);
 			d.type = INT;
-			d.u.i = sc->_sprites[spriteId]->_castId;
+			d.u.i = sc->getSpriteById(spriteId)->_castId;
 			if (d.u.i == 0)
 				d.u.i = -1;
 		}
@@ -688,8 +688,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		return d;
 	}
 
-	Sprite *sprite = score->getSpriteById(id);
-	SpriteChannel *channel = score->getSpriteChannelById(id);
+	Channel *channel = score->getChannelById(id);
+	Sprite *sprite = channel->_sprite;
 
 	if (!sprite)
 		return d;
@@ -704,7 +704,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_blend;
 		break;
 	case kTheBottom:
-		d.u.i = sprite->_currentBbox.bottom;
+		d.u.i = sprite->getDims().bottom + channel->_currentPoint.y;
 		break;
 	case kTheCastNum:
 		d.u.i = sprite->_castId;
@@ -728,16 +728,16 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_ink;
 		break;
 	case kTheLeft:
-		d.u.i = sprite->_currentBbox.left;
+		d.u.i = sprite->getDims().left + channel->_currentPoint.x;
 		break;
 	case kTheLineSize:
 		d.u.i = sprite->_thickness & 0x3;
 		break;
 	case kTheLocH:
-		d.u.i = sprite->_currentPoint.x;
+		d.u.i = channel->_currentPoint.x;
 		break;
 	case kTheLocV:
-		d.u.i = sprite->_currentPoint.y;
+		d.u.i = channel->_currentPoint.y;
 		break;
 	case kTheMoveableSprite:
 		d.u.i = sprite->_moveable;
@@ -755,7 +755,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_puppet;
 		break;
 	case kTheRight:
-		d.u.i = sprite->_currentBbox.right;
+		d.u.i = sprite->getDims().right + channel->_currentPoint.x;
 		break;
 	case kTheStartTime:
 		d.u.i = sprite->_startTime;
@@ -767,7 +767,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_stretch;
 		break;
 	case kTheTop:
-		d.u.i = sprite->_currentBbox.top;
+		d.u.i = sprite->getDims().top + channel->_currentPoint.y;
 		break;
 	case kTheTrails:
 		d.u.i = sprite->_trails;
@@ -809,8 +809,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	Sprite *sprite = score->getSpriteById(id);
-	SpriteChannel *channel = score->getSpriteChannelById(id);
+	Channel *channel = score->getChannelById(id);
+	Sprite *sprite = channel->_sprite;
 
 	if (!sprite)
 		return;
@@ -849,16 +849,15 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_thickness = d.asInt();
 		break;
 	case kTheLocH:
-		sprite->_currentPoint.x = d.asInt();
+		channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.x, 0));
 		break;
 	case kTheLocV:
-		sprite->_currentPoint.y = d.asInt();
+		channel->addDelta(Common::Point(0, d.asInt() - channel->_currentPoint.y));
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.asInt();
-		if (!d.u.i) {
-			sprite->_currentPoint = sprite->_startPoint;
-		}
+		if (!d.u.i)
+			channel->resetPosition();
 		break;
 	case kTheMovieRate:
 		sprite->_movieRate = d.asInt();
@@ -872,7 +871,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kThePuppet:
 		sprite->_puppet = d.asInt();
 		if (!d.asInt()) {
-			sprite->_currentPoint = sprite->_startPoint;
+			channel->resetPosition();
 
 			// TODO: Properly reset sprite properties after puppet disabled.
 			sprite->_moveable = false;

@@ -288,8 +288,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._startPoint.y = (int16)stream->readUint16();
 			sprite._startPoint.x = (int16)stream->readUint16();
 
-			sprite._currentPoint = sprite._startPoint;
-
 			sprite._height = (int16)stream->readUint16();
 			sprite._width = (int16)stream->readUint16();
 

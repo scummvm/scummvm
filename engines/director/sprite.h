@@ -56,14 +56,6 @@ enum MainChannelsPosition {
 	kPalettePosition = 15
 };
 
-class SpriteChannel {
-public:
-	SpriteChannel();
-	~SpriteChannel();
-
-	bool _visible;
-};
-
 class Sprite {
 public:
 	Sprite();
@@ -78,7 +70,7 @@ public:
 
 	void setCast(uint16 castid);
 
-	Common::Rect getBbox();
+	Common::Rect getDims();
 
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;
@@ -100,9 +92,6 @@ public:
 	byte _thickness;
 	bool _dirty;
 	Common::Point _startPoint;
-	Common::Point _currentPoint;
-	Common::Rect _startBbox;
-	Common::Rect _currentBbox;
 	int16 _width;
 	int16 _height;
 	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect

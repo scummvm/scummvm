@@ -48,8 +48,8 @@ class Frame;
 struct Label;
 class Lingo;
 struct Resource;
+class Channel;
 class Sprite;
-class SpriteChannel;
 class Stxt;
 class BitmapCast;
 class ScriptCast;
@@ -86,6 +86,20 @@ struct TransParams {
 	}
 };
 
+struct Channel {
+	Sprite *_sprite;
+
+	bool _visible;
+	Common::Point _currentPoint;
+	Common::Point _delta;
+
+	Channel(Sprite *sp);
+	Common::Rect getBbox();
+	void updateLocation();
+	void addDelta(Common::Point pos);
+	void resetPosition();
+};
+
 class Score {
 public:
 	Score(DirectorEngine *vm);
@@ -110,10 +124,9 @@ public:
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }
+	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);
-	SpriteChannel *getSpriteChannelById(uint16 id);
 	void setSpriteCasts();
-	void setSpriteBboxes();
 	void loadSpriteImages(bool isSharedCast);
 	void loadSpriteSounds(bool isSharedCast);
 	void copyCastStxts();
@@ -128,7 +141,6 @@ public:
 
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
-	Common::Rect *getSpriteRect(uint16 spriteId);
 
 	Cast *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
@@ -171,9 +183,8 @@ private:
 	bool processImmediateFrameScript(Common::String s, int id);
 
 public:
+	Common::Array<Channel *> _channels;
 	Common::Array<Frame *> _frames;
-	Common::Array<Sprite *> _sprites;
-	Common::Array<SpriteChannel *> _spriteChannels;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::SortedArray<Label *> *_labels;

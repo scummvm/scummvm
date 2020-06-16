@@ -790,8 +790,8 @@ void LC::c_intersects() {
 	Datum d1 = g_lingo->pop();
 
 	Score *score = g_director->getCurrentScore();
-	Sprite *sprite1 = score->getSpriteById(d1.asInt());
-	Sprite *sprite2 = score->getSpriteById(d2.asInt());
+	Channel *sprite1 = score->getChannelById(d1.asInt());
+	Channel *sprite2 = score->getChannelById(d2.asInt());
 
 	if (!sprite1 || !sprite2) {
 		g_lingo->push(Datum(0));
@@ -806,8 +806,8 @@ void LC::c_within() {
 	Datum d1 = g_lingo->pop();
 
 	Score *score = g_director->getCurrentScore();
-	Sprite *sprite1 = score->getSpriteById(d1.asInt());
-	Sprite *sprite2 = score->getSpriteById(d2.asInt());
+	Channel *sprite1 = score->getChannelById(d1.asInt());
+	Channel *sprite2 = score->getChannelById(d2.asInt());
 
 	if (!sprite1 || !sprite2) {
 		g_lingo->push(Datum(0));
