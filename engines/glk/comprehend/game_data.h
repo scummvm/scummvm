@@ -158,8 +158,12 @@ enum {
 #define ROOM_NOWHERE 0xff
 
 /* Item flags */
-#define ITEMF_WEIGHT_MASK (0x3)
-#define ITEMF_CAN_TAKE (1 << 3)
+enum ItemFlag {
+	ITEMF_WEIGHT_MASK = 0x3,
+	ITEMF_CAN_TAKE    = 1 << 3,
+	ITEMF_UNKNOWN     = 1 << 6,
+	ITEMF_INVISIBLE   = 1 << 7
+};
 
 /* Word types */
 #define WORD_TYPE_VERB 0x01
