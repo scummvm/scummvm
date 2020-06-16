@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
-#include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
@@ -110,7 +109,7 @@ public:
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();
-	Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
+	Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12); }
 
 	// Mouse related
 	bool showMouse(bool visible);

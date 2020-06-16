@@ -116,18 +116,10 @@ struct ColorMasks<555> {
 		kGreenBits  = 5,
 		kBlueBits   = 5,
 
-#ifdef __N64__
-		/* Nintendo 64 uses a BGR555 color format for 16bit display */
-		kAlphaShift = 0,
-		kRedShift   = kBlueBits+kGreenBits+1,
-		kGreenShift = kBlueBits + 1,
-		kBlueShift  = 1,
-#else   /* RGB555 */
 		kAlphaShift = 0,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
-#endif
 
 		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
 		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,
@@ -206,17 +198,10 @@ struct ColorMasks<4444> {
 		kGreenBits  = 4,
 		kBlueBits   = 4,
 
-#ifdef __PSP__	//PSP uses ABGR
-		kAlphaShift = kRedBits+kGreenBits+kBlueBits,
-		kRedShift   = 0,
-		kGreenShift = kRedBits,
-		kBlueShift  = kRedBits+kGreenBits,
-#else		//ARGB
 		kAlphaShift = kRedBits+kGreenBits+kBlueBits,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
-#endif
 
 		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
 		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,

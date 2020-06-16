@@ -35,7 +35,6 @@
 #include "backends/saves/default/default-saves.h"
 #include "audio/mixer_intern.h"
 #include "graphics/surface.h"
-#include "graphics/colormasks.h"
 #include "graphics/palette.h"
 
 class OSystem_DS : public EventsBaseBackend, public PaletteManager {
@@ -108,7 +107,7 @@ public:
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<1555>(); }
+	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15); }
 
 	virtual bool showMouse(bool visible);
 

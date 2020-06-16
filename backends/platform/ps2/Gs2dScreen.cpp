@@ -34,7 +34,6 @@
 #include "DmaPipe.h"
 #include "GsDefs.h"
 #include "graphics/surface.h"
-#include "graphics/colormasks.h"
 #include "backends/platform/ps2/ps2debug.h"
 
 extern void *_gp;
@@ -668,7 +667,6 @@ void Gs2dScreen::hideOverlay(void) {
 
 Graphics::PixelFormat Gs2dScreen::getOverlayFormat(void) {
 	return _overlayFormat;
-	// return Graphics::createPixelFormat<1555>();
 }
 
 int16 Gs2dScreen::getOverlayWidth(void) {
