@@ -45,6 +45,7 @@ public:
 
 protected:
 	typedef Common::String String;
+	typedef Common::U32String U32String;
 };
 
 #ifndef DISABLE_HELP
@@ -68,16 +69,16 @@ protected:
 class InfoDialog : public ScummDialog {
 protected:
 	ScummEngine		*_vm;
-	String _message;
+	U32String _message;
 	GUI::StaticTextWidget *_text;
 
 public:
 	// arbitrary message
-	InfoDialog(ScummEngine *scumm, const String& message);
+	InfoDialog(ScummEngine *scumm, const U32String& message);
 	// from resources
 	InfoDialog(ScummEngine *scumm, int res);
 
-	void setInfoText(const String& message);
+	void setInfoText(const U32String& message);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		setResult(0);

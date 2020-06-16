@@ -697,12 +697,12 @@ MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIn
 
 void MenuActionSaveGame::execute() {
 	GUI::SaveLoadChooser *dialog;
-	Common::String desc;
+	Common::U32String desc;
 	int slot;
 
 	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 	slot = dialog->runModalWithCurrentTarget();
-	desc = dialog->getResultString().c_str();
+	desc = dialog->getResultString().encode().c_str();
 
 	delete dialog;
 

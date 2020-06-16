@@ -2238,13 +2238,13 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	if ((_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && !_cutContent)
 	    || (!_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && _cutContent)
 	) {
-		Common::String warningMsg;
+		Common::U32String warningMsg;
 		if (!_cutContent) {
 			warningMsg = _("WARNING: This game was saved in Restored Cut Content mode, but you are playing in Original Content mode. The mode will be adjusted to Restored Cut Content for this session until you completely Quit the game.");
 		} else {
 			warningMsg = _("WARNING: This game was saved in Original Content mode, but you are playing in Restored Cut Content mode. The mode will be adjusted to Original Content mode for this session until you completely Quit the game.");
 		}
-		GUI::MessageDialog dialog(warningMsg, _("Continue"), 0);
+		GUI::MessageDialog dialog(warningMsg, _("Continue"));
 		dialog.runModal();
 		_cutContent = !_cutContent;
 		// force a Key Down event, since we need it to remove the KIA

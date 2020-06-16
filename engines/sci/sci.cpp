@@ -256,7 +256,7 @@ SciEngine::~SciEngine() {
 	g_sci = 0;
 }
 
-extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String& message, Common::U32String altButton = Common::U32String(""), bool alignCenter = true);
 
 Common::Error SciEngine::run() {
 	_resMan = new ResourceManager();
@@ -511,15 +511,15 @@ bool SciEngine::gameHasFanMadePatch() {
 }
 
 void SciEngine::suggestDownloadGK2SubTitlesPatch() {
-	const char* altButton;
-	Common::String downloadMessage;
+	Common::U32String altButton;
+	Common::U32String downloadMessage;
 
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		altButton = _("Download patch");
 		downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
 	}
 	else {
-		altButton = nullptr;
+		altButton = "";
 		downloadMessage = "";
 	}
 

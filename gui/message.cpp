@@ -100,6 +100,12 @@ MessageDialog::MessageDialog(const Common::U32String &message, Common::U32String
 		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(""), kCancelCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 }
 
+MessageDialog::MessageDialog(const char *message, const char *defaultButton, const char *altButton, Graphics::TextAlign alignment)
+	: Dialog(30, 20, 260, 124) {
+
+	MessageDialog::MessageDialog(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment);
+}
+
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {

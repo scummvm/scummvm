@@ -53,6 +53,7 @@ private:
 public:
 	SaveStateDescriptor();
 	SaveStateDescriptor(int s, const Common::U32String &d);
+	SaveStateDescriptor(int s, const Common::String &d);
 
 	/**
 	 * @param slot The saveslot id, as it would be passed to the "-x" command line switch.

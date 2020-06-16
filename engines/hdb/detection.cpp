@@ -254,7 +254,7 @@ SaveStateList HDBMetaEngine::listSaves(const char *target) const {
 				if (slotNum < 8)
 					desc.setDescription(Common::String::format("Auto: %s", mapName));
 				else
-					desc.setDescription(mapName);
+					desc.setDescription(Common::convertToU32String(mapName));
 
 				saveList.push_back(desc);
 			}
@@ -284,7 +284,7 @@ SaveStateDescriptor HDBMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		desc.setSaveSlot(slot);
 		desc.setPlayTime(timeSeconds * 1000);
-		desc.setDescription(mapName);
+		desc.setDescription(Common::convertToU32String(mapName));
 
 		return desc;
 	}

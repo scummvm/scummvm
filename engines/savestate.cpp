@@ -38,6 +38,10 @@ SaveStateDescriptor::SaveStateDescriptor(int s, const Common::U32String &d)
 	_thumbnail(), _saveType(kSaveTypeUndetermined) {
 }
 
+SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d) {
+	SaveStateDescriptor(s, Common::U32String(d));
+}
+
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	if (_thumbnail.get() == t)
 		return;

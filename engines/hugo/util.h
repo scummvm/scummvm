@@ -47,7 +47,8 @@ void  reverseByte(byte *data);
  * Show a dialog notifying the user about something, with
  * only a simple "OK" button to dismiss it.
  */
-void notifyBox(const Common::String &msg);
+void notifyBox(const Common::String &msg);	// Redirect to call notifyBox with u32strings
+void notifyBox(const Common::U32String &msg);
 
 /**
  * Show a dialog prompting the player to input some text.
@@ -57,7 +58,8 @@ Common::String promptBox(const Common::String &msg);
 /**
  * Show a dialog prompting the player for a "yes"/"no" choice.
  */
-bool yesNoBox(const Common::String &msg);
+bool yesNoBox(const Common::String &msg);	// Redirect to call yesNoBox with u32strings
+bool yesNoBox(const Common::U32String &msg);
 
 /**
  * Convert a string to lower case, in place.

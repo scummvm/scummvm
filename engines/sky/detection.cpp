@@ -209,7 +209,7 @@ Common::KeymapArray SkyMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace Sky;
 
-	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "sky-main", "Beneath a Steel Sky");
+	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "sky-main", Common::convertToU32String("Beneath a Steel Sky"));
 
 	Action *act;
 
@@ -237,7 +237,7 @@ Common::KeymapArray SkyMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_Y");
 	mainKeymap->addAction(act);
 
-	Keymap *shortcutsKeymap = new Keymap(Keymap::kKeymapTypeGame, SkyEngine::shortcutsKeymapId, "Beneath a Steel Sky - Shortcuts");
+	Keymap *shortcutsKeymap = new Keymap(Keymap::kKeymapTypeGame, SkyEngine::shortcutsKeymapId, Common::convertToU32String("Beneath a Steel Sky - Shortcuts"));
 
 	act = new Action(kStandardActionOpenMainMenu, _("Open control panel"));
 	act->setCustomEngineActionEvent(kSkyActionOpenControlPanel);
@@ -313,7 +313,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
 			saveList.push_back(SaveStateDescriptor(slotNum,
-				(slotNum == 0) ? _("Autosave") : savenames[slotNum - 1]));
+				(slotNum == 0) ? _("Autosave").encode() : savenames[slotNum - 1]));
 			delete in;
 		}
 	}
