@@ -1239,7 +1239,7 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	return true;
 }
 
-extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String& message, Common::U32String altButton = Common::U32String(""), bool alignCenter = true);
 
 void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 	switch (g_sci->getGameId()) {
@@ -1406,7 +1406,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 			if (meta.version < MINIMUM_SAVEGAME_VERSION) {
 				showScummVMDialog(_("The format of this saved game is obsolete, unable to load it"));
 			} else {
-				Common::String msg = Common::String::format(_("Savegame version is %d, maximum supported is %0d"), meta.version, CURRENT_SAVEGAME_VERSION);
+				Common::U32String msg = Common::String::format(_("Savegame version is %d, maximum supported is %0d").encode().c_str(), meta.version, CURRENT_SAVEGAME_VERSION);
 				showScummVMDialog(msg);
 			}
 

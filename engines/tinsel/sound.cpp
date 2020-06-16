@@ -483,12 +483,12 @@ void SoundManager::setSFXVolumes(uint8 volume) {
 }
 
 void SoundManager::showSoundError(const char *errorMsg, const char *soundFile) {
-	Common::String msg;
+	Common::U32String msg;
 	msg = Common::String::format(errorMsg, soundFile);
-	GUI::MessageDialog dialog(msg, "OK");
+	GUI::MessageDialog dialog(msg);
 	dialog.runModal();
 
-	error("%s", msg.c_str());
+	error("%s", msg.encode().c_str());
 }
 
 /**

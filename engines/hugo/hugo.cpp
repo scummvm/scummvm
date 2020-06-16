@@ -433,7 +433,7 @@ bool HugoEngine::loadHugoDat() {
 	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
+		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file.").encode().c_str(), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 		return false;
@@ -444,7 +444,7 @@ bool HugoEngine::loadHugoDat() {
 	in.read(buf, 4);
 
 	if (memcmp(buf, "HUGO", 4)) {
-		Common::String errorMessage = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
+		Common::String errorMessage = Common::String::format(_("The '%s' engine data file is corrupt.").encode().c_str(), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		return false;
 	}
@@ -454,7 +454,7 @@ bool HugoEngine::loadHugoDat() {
 
 	if ((majVer != HUGO_DAT_VER_MAJ) || (minVer != HUGO_DAT_VER_MIN)) {
 		Common::String errorMessage = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.").encode().c_str(),
 			filename.c_str(),HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(errorMessage);
 		return false;

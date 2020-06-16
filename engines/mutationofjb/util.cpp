@@ -30,7 +30,7 @@
 namespace MutationOfJB {
 
 void reportFileMissingError(const char *fileName) {
-	Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file"), fileName);
+	Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file").encode().c_str(), fileName);
 	GUIErrorMessage(errorMessage);
 	warning("%s", errorMessage.c_str());
 }

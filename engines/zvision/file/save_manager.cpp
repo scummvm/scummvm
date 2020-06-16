@@ -221,7 +221,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 			Common::String::format(
 				_("This saved game uses version %u, but this engine only "
 				  "supports up to version %d. You will need an updated version "
-				  "of the engine to use this saved game."), tempVersion, SAVE_VERSION
+				  "of the engine to use this saved game.").encode().c_str(), tempVersion, SAVE_VERSION
 			),
 		_("OK"));
 		dialog.runModal();

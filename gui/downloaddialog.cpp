@@ -224,8 +224,8 @@ Common::U32String DownloadDialog::getSpeedLabelText() {
 
 void DownloadDialog::refreshWidgets() {
 	_localDirectory = CloudMan.getDownloadLocalDirectory();
-	_remoteDirectoryLabel->setLabel(_("From: ") + CloudMan.getDownloadRemoteDirectory());
-	_localDirectoryLabel->setLabel(_("To: ") + _localDirectory);
+	_remoteDirectoryLabel->setLabel(_("From: ").encode() + CloudMan.getDownloadRemoteDirectory());
+	_localDirectoryLabel->setLabel(_("To: ").encode() + _localDirectory);
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
 	_percentLabel->setLabel(Common::String::format("%u %%", progress));
 	_downloadSizeLabel->setLabel(getSizeLabelText());

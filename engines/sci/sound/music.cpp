@@ -157,10 +157,10 @@ void SciMusic::init() {
 		} else {
 			const char *missingFiles = _pMidiDrv->reportMissingFiles();
 			if (missingFiles) {
-				Common::String message = _(
+				Common::U32String message = _(
 					"The selected audio driver requires the following file(s):\n\n"
 				);
-				message += missingFiles;
+				message += Common::convertToU32String(missingFiles);
 				message += _("\n\n"
 					"Some audio drivers (at least for some games) were made\n"
 					"available by Sierra as aftermarket patches and thus might not\n"
@@ -170,7 +170,7 @@ void SciMusic::init() {
 					"separately but only as content of (patched) resource bundles.\n"
 					"In that case you may need to apply the original Sierra patch.\n\n"
 				);
-				::GUI::displayErrorDialog(message.c_str());
+				::GUI::displayErrorDialog(message);
 			}
 			error("Failed to initialize sound driver");
 		}

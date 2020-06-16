@@ -86,11 +86,11 @@ MainMenu::~MainMenu() {
 }
 
 void MainMenu::init() {
-	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[1] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[2] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[3] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
-	_buttons[4] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
+	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""), Common::U32String(""), 0);
+	_buttons[1] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""), Common::U32String(""), 0);
+	_buttons[2] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""), Common::U32String(""), 0);
+	_buttons[3] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""), Common::U32String(""), 0);
+	_buttons[4] = new GUI::ButtonWidget(this, 0, 0, 1, 1, Common::U32String(""), Common::U32String(""), 0);
 	gotoMenuScreen(kMainMenuScr);
 }
 
@@ -192,7 +192,7 @@ void MainMenu::gotoMenuScreen(int screen) {
 		} else {
 			btn = &kMenuButtons[screen * 5 + i];
 		}
-		_buttons[i]->setLabel(btn->label);
+		_buttons[i]->setLabel(Common::U32String(btn->label));
 		_buttons[i]->setCmd(btn->cmd);
 		_buttons[i]->setEnabled(btn->cmd != 0);
 	}

@@ -795,7 +795,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String& message, Common::U32String altButton = Common::U32String(""), bool alignCenter = true);
 
 #ifdef ENABLE_SCI32
 reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
@@ -870,7 +870,7 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 	switch (operation) {
 	case 0:	// load DLL
 		if (dllName == "PENGIN16.DLL")
-			showScummVMDialog("The Poker logic is hardcoded in an external DLL, and is not implemented yet. There exists some dummy logic for now, where opponent actions are chosen randomly");
+			showScummVMDialog(Common::convertToU32String("The Poker logic is hardcoded in an external DLL, and is not implemented yet. There exists some dummy logic for now, where opponent actions are chosen randomly"));
 
 		// This is originally a call to LoadLibrary() and to the Watcom function GetIndirectFunctionHandle
 		return make_reg(0, 1000);	// fake ID for loaded DLL, normally returned from Windows LoadLibrary()

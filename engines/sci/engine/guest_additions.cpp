@@ -672,7 +672,7 @@ reg_t GuestAdditions::promptSaveRestoreRama(EngineState *s, int argc, reg_t *arg
 int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, const int forcedSaveId) const {
 	assert(!(isSave && outDescription.isNull()));
 
-	Common::String descriptionString;
+	Common::U32String descriptionString;
 	int saveId = runSaveRestore(isSave, descriptionString, forcedSaveId);
 
 	if (!outDescription.isNull()) {
@@ -686,14 +686,14 @@ int GuestAdditions::runSaveRestore(const bool isSave, reg_t outDescription, cons
 	return saveId;
 }
 
-int GuestAdditions::runSaveRestore(const bool isSave, Common::String &outDescription, const int forcedSaveId) const {
+int GuestAdditions::runSaveRestore(const bool isSave, Common::U32String &outDescription, const int forcedSaveId) const {
 	int saveId;
 
 	if (!isSave && forcedSaveId != -1) {
 		saveId = forcedSaveId;
 	} else {
-		const char *title;
-		const char *action;
+		Common::U32String title;
+		Common::U32String action;
 		if (isSave) {
 			title = _("Save game:");
 			action = _("Save");

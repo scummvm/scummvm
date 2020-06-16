@@ -573,7 +573,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 	}
 
 	if (!vm->isPsx() || scumm_stricmp(sequenceList[id], "enddemo") != 0) {
-		Common::String buf = Common::String::format(_("Cutscene '%s' not found"), sequenceList[id]);
+		Common::U32String buf = Common::String::format(_("Cutscene '%s' not found").encode().c_str(), sequenceList[id]);
 		GUI::MessageDialog dialog(buf, _("OK"));
 		dialog.runModal();
 	}

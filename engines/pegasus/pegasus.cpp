@@ -384,7 +384,7 @@ Common::Error PegasusEngine::showSaveDialog() {
 void PegasusEngine::showSaveFailedDialog(const Common::Error &status) {
 	Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
 			"Please consult the README for basic information, and for "
-			"instructions on how to obtain further assistance."), status.getDesc().c_str());
+			"instructions on how to obtain further assistance.").encode().c_str(), status.getDesc().c_str());
 	GUI::MessageDialog dialog(failMessage);
 	dialog.runModal();
 }
@@ -2476,7 +2476,7 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 Common::KeymapArray PegasusEngine::initKeymaps() {
 	using namespace Common;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "pegasus", "Pegasus Prime");
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "pegasus", Common::convertToU32String("Pegasus Prime"));
 
 	Action *act;
 

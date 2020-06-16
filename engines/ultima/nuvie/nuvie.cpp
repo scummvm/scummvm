@@ -321,7 +321,7 @@ Common::Error NuvieEngine::saveGameState(int slot, const Common::String &desc, b
 
 			// Display that the game was saved
 			MsgScroll *scroll = Game::get_game()->get_scroll();
-			scroll->display_string(_("\nGame Saved\n\n"));
+			scroll->display_string(_("\nGame Saved\n\n").encode().c_str());
 			scroll->display_prompt();
 		}
 
@@ -370,12 +370,12 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 		if (!canLoadGameStateCurrently(false))
 			return false;
 
-		text = _("loading quick save %d");
+		text = Common::convertFromU32String(_("loading quick save %d"));
 	} else {
 		if (!canSaveGameStateCurrently(false))
 			return false;
 
-		text = _("saving quick save %d");
+		text = Common::convertFromU32String(_("saving quick save %d"));
 	}
 
 	text = Std::string::format(text.c_str(), saveSlot);
@@ -389,7 +389,7 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 			return false;
 		}
 	} else {
-		Common::String saveDesc = Common::String::format(_("Quicksave %03d"), saveSlot);
+		Common::String saveDesc = Common::String::format(_("Quicksave %03d").encode().c_str(), saveSlot);
 		return saveGameState(saveSlot, saveDesc, false).getCode() == Common::kNoError;
 	}
 }

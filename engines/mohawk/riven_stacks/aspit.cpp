@@ -387,14 +387,14 @@ void ASpit::xaNewGame(const ArgumentArray &args) {
 	_vm->_scriptMan->runScript(script, false);
 }
 
-bool ASpit::showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton) {
+bool ASpit::showConfirmationDialog(const Common::U32String &message, const Common::U32String &confirmButton, const Common::U32String &cancelButton) {
 	if (!_vm->isGameStarted()) {
 		return true;
 	}
 
 	GUI::MessageDialog dialog(message, confirmButton, cancelButton);
 
-	return dialog.runModal() !=0;
+	return dialog.runModal() != 0;
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {

@@ -591,11 +591,11 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		if (_saveDateSupport) {
 			const Common::String &saveDate = desc.getSaveDate();
 			if (!saveDate.empty())
-				_date->setLabel(_("Date: ") + saveDate);
+				_date->setLabel(_("Date: ").encode() + saveDate);
 
 			const Common::String &saveTime = desc.getSaveTime();
 			if (!saveTime.empty())
-				_time->setLabel(_("Time: ") + saveTime);
+				_time->setLabel(_("Time: ").encode() + saveTime);
 		}
 
 		if (_playTimeSupport) {
@@ -1108,13 +1108,13 @@ void SaveLoadChooserGrid::updateSaves() {
 		tooltip += desc.getDescription();
 
 		if (_saveDateSupport) {
-			const Common::String &saveDate = desc.getSaveDate();
+			const Common::U32String &saveDate = desc.getSaveDate();
 			if (!saveDate.empty()) {
 				tooltip += Common::U32String("\n");
 				tooltip +=  _("Date: ") + saveDate;
 			}
 
-			const Common::String &saveTime = desc.getSaveTime();
+			const Common::U32String &saveTime = desc.getSaveTime();
 			if (!saveTime.empty()) {
 				tooltip += Common::U32String("\n");
 				tooltip += _("Time: ") + saveTime;

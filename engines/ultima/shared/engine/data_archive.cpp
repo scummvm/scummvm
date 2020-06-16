@@ -78,7 +78,7 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 			(dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
 			!f.open(Common::String::format("%s/version.txt", subfolder.c_str()), *dataArchive)) {
 			delete dataArchive;
-			errorMsg = Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME);
+			errorMsg = Common::String::format(_("Could not locate engine data %s").encode().c_str(), DATA_FILENAME);
 			return false;
 		}
 	}
@@ -96,7 +96,7 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 
 	if (major != reqMajorVersion || minor != reqMinorVersion) {
 		delete dataArchive;
-		errorMsg = Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
+		errorMsg = Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d").encode().c_str(),
 			reqMajorVersion, reqMinorVersion, major, minor);
 		return false;
 	}

@@ -99,7 +99,7 @@ AboutDialog::AboutDialog()
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
-	Common::String date = Common::String::format(_("(built on %s)").encode().c_str(), gScummVMBuildDate);
+	Common::U32String date = Common::String::format(_("(built on %s)").encode().c_str(), gScummVMBuildDate);
 	_lines.push_back(U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)

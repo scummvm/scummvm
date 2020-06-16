@@ -122,16 +122,16 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		assert(vm);
 
 		// I18N: Drop book page
-		_dropPageButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.DropPage", _("~D~rop Page"), nullptr, kDropCmd);
+		_dropPageButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.DropPage", _("~D~rop Page"), Common::U32String(""), kDropCmd);
 
 		// Myst ME only has maps
 		if (vm->isGameVariant(GF_ME)) {
-			_showMapButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.ShowMap", _("Show ~M~ap"), nullptr, kMapCmd);
+			_showMapButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.ShowMap", _("Show ~M~ap"), Common::U32String(""), kMapCmd);
 		}
 
 		// Myst demo only has a menu
 		if (vm->isGameVariant(GF_DEMO)) {
-			_returnToMenuButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.MainMenu", _("Main Men~u~"), nullptr, kMenuCmd);
+			_returnToMenuButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.MainMenu", _("Main Men~u~"), Common::U32String(""), kMenuCmd);
 		}
 
 		if (vm->isGameVariant(GF_25TH)) {
@@ -142,7 +142,7 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 
 			const MystLanguage *languages = MohawkEngine_Myst::listLanguages();
 			while (languages->language != Common::UNK_LANG) {
-				_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
+				_languagePopUp->appendEntry(Common::convertToU32String(Common::getLanguageDescription(languages->language)), languages->language);
 				languages++;
 			}
 		}
@@ -344,7 +344,7 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 
 		const RivenLanguage *languages = MohawkEngine_Riven::listLanguages();
 		while (languages->language != Common::UNK_LANG) {
-			_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
+			_languagePopUp->appendEntry(Common::convertToU32String(Common::getLanguageDescription(languages->language)), languages->language);
 			languages++;
 		}
 	}

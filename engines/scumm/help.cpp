@@ -82,9 +82,9 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 #ifdef MACOSX
 		ADD_BIND("Cmd q", _("Quit"));
 #else
-		ADD_BIND(String(_("Alt")) + " x, " + _("Ctrl") + " z", _("Quit"));
+		ADD_BIND(String(_("Alt")) + " x, " + _("Ctrl").encode() + " z", _("Quit").encode());
 #endif
-		ADD_BIND(String(_("Alt")) + " " + _("Enter"), _("Toggle fullscreen"));
+		ADD_BIND(String(_("Alt")) + " " + _("Enter").encode(), _("Toggle fullscreen"));
 		ADD_BIND("[, ]", _("Music volume up / down"));
 		ADD_BIND("-, +", _("Text speed slower / faster"));
 		ADD_BIND(_("Enter"), _("Simulate left mouse button"));
@@ -98,9 +98,9 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		ADD_BIND(String(_("Ctrl")) + " f", _("Run in fast mode (*)"));
 		ADD_BIND(String(_("Ctrl")) + " g", _("Run in really fast mode (*)"));
 		ADD_BIND(String(_("Ctrl")) + " m", _("Toggle mouse capture"));
-		ADD_BIND(String(_("Ctrl")) + " " + _("Alt") + " 1-8", _("Switch between graphics filters"));
-		ADD_BIND(String(_("Ctrl")) + " " + _("Alt") + " +, -", _("Increase / Decrease scale factor"));
-		ADD_BIND(String(_("Ctrl")) + " " + _("Alt") + " a", _("Toggle aspect-ratio correction"));
+		ADD_BIND(String(_("Ctrl")) + " " + _("Alt").encode() + " 1-8", _("Switch between graphics filters"));
+		ADD_BIND(String(_("Ctrl")) + " " + _("Alt").encode() + " +, -", _("Increase / Decrease scale factor"));
+		ADD_BIND(String(_("Ctrl")) + " " + _("Alt").encode() + " a", _("Toggle aspect-ratio correction"));
 		ADD_LINE;
 		ADD_LINE;
 		// FIXME: This should use word-wrapping, and should not assume

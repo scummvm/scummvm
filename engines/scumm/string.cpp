@@ -115,7 +115,7 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	InfoDialog dialog(this, (char *)buf);
+	InfoDialog dialog(this, Common::convertToU32String((char *)buf));
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
 }
 

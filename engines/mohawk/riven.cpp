@@ -498,7 +498,7 @@ bool MohawkEngine_Riven::checkDatafiles() {
 		return true;
 	}
 
-	Common::String message = _("You are missing the following required Riven data files:\n") + missingFiles;
+	Common::String message = _("You are missing the following required Riven data files:\n").encode() + missingFiles;
 	warning("%s", message.c_str());
 	GUIErrorMessage(message);
 
@@ -829,7 +829,7 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
 	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", "Riven");
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", Common::convertToU32String("Riven"));
 
 	Action *act;
 

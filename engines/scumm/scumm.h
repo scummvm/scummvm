@@ -500,7 +500,7 @@ protected:
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
-	void messageDialog(const char *message);
+	void messageDialog(const Common::U32String &message);
 	void versionDialog();
 
 public:

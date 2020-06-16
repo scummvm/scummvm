@@ -141,7 +141,7 @@ Common::Error ZCode::saveGameState(int slot, const Common::String &desc, bool is
 	bool success = q.save(*file, this, desc);
 
 	if (!success)
-		print_string(_("Error writing save file\n"));
+		print_string(_("Error writing save file\n").encode().c_str());
 
 	return Common::kNoError;
 

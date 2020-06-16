@@ -222,12 +222,12 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, "")) {
 						// ok
-						Common::String buf = Common::String::format(_("Saved game in slot #%d "), slotNum);
+						Common::U32String buf = Common::String::format(_("Saved game in slot #%d ").encode().c_str(), slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						Common::String buf = Common::String::format(_("Could not quick save into slot #%d"), slotNum);
-						GUI::MessageDialog dialog(buf, "OK", 0);
+						Common::U32String buf = Common::String::format(_("Could not quick save into slot #%d").encode().c_str(), slotNum);
+						GUI::MessageDialog dialog(buf);
 						dialog.runModal();
 
 					}
@@ -239,12 +239,12 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
-						Common::String buf = Common::String::format(_("Saved game #%d quick loaded"), slotNum);
+						Common::U32String buf = Common::String::format(_("Saved game #%d quick loaded").encode().c_str(), slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						Common::String buf = Common::String::format(_("Could not quick load the saved game #%d"), slotNum);
-						GUI::MessageDialog dialog(buf, "OK", 0);
+						Common::U32String buf = Common::String::format(_("Could not quick load the saved game #%d").encode().c_str(), slotNum);
+						GUI::MessageDialog dialog(buf);
 						warning("%s", buf.c_str());
 						dialog.runModal();
 					}
@@ -1524,7 +1524,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 
 	// load package
 	if (!resources()->openPackage(createRoomFilename(locationName + ".PAK"))) {
-		Common::String msg = Common::String::format(_("Unable to locate the '%s' data file."), createRoomFilename(locationName + ".PAK").c_str());
+		Common::String msg = Common::String::format(_("Unable to locate the '%s' data file.").encode().c_str(), createRoomFilename(locationName + ".PAK").c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		_shouldQuit = true;
@@ -4949,7 +4949,7 @@ bool ToonEngine::loadToonDat() {
 	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
+		msg = Common::String::format(_("Unable to locate the '%s' engine data file.").encode().c_str(), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -4961,7 +4961,7 @@ bool ToonEngine::loadToonDat() {
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TOON")) {
-		msg = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
+		msg = Common::String::format(_("The '%s' engine data file is corrupt.").encode().c_str(), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -4972,7 +4972,7 @@ bool ToonEngine::loadToonDat() {
 
 	if ((majVer != TOON_DAT_VER_MAJ) || (minVer != TOON_DAT_VER_MIN)) {
 		msg = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.").encode().c_str(),
 			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());

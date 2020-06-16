@@ -201,7 +201,7 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 	for (int kCtr = 0; recPtr->_id; ++recPtr, ++kCtr) {
 		// Core keymaps
 		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
-			recPtr->_id, recPtr->_desc);
+			recPtr->_id, Common::convertToU32String(recPtr->_desc));
 		keymapArray.push_back(keyMap);
 
 		if (kCtr == 0) {

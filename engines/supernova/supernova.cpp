@@ -184,7 +184,7 @@ Common::Error SupernovaEngine::loadGameStrings() {
 
 	if (stream == nullptr) {
 		Common::Language l = Common::parseLanguage(ConfMan.get("language"));
-		GUIErrorMessageFormat(_("Unable to locate the text for %s language in engine data file."), Common::getLanguageDescription(l));
+		GUIErrorMessageFormat(_("Unable to locate the text for %s language in engine data file.").encode().c_str(), Common::getLanguageDescription(l));
 		return Common::kReadingFailed;
 	}
 
@@ -455,19 +455,19 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 	char id[5], lang[5];
 	id[4] = lang[4] = '\0';
 	if (!f.open(SUPERNOVA_DAT)) {
-		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file.").encode().c_str(), SUPERNOVA_DAT);
 		return nullptr;
 	}
 	f.read(id, 3);
 	if (strncmp(id, "MSN", 3) != 0) {
-		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
+		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt.").encode().c_str(), SUPERNOVA_DAT);
 		return nullptr;
 	}
 
 	int version = f.readByte();
 	if (version != SUPERNOVA_DAT_VERSION) {
 		GUIErrorMessageFormat(
-			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d.").encode().c_str(),
 			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
 		return nullptr;
 	}
@@ -477,7 +477,7 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 		int part = f.readByte();
 		gameBlockSize = f.readUint32LE();
 		if (f.eos()){
-			GUIErrorMessageFormat(_("Unable to find block for part %d"), _MSPart);
+			GUIErrorMessageFormat(_("Unable to find block for part %d").encode().c_str(), _MSPart);
 			return nullptr;
 		}
 		if (part == _MSPart) {
@@ -520,7 +520,7 @@ Common::Error SupernovaEngine::showTextReader(const char *extension) {
 			filename = Common::String::format("ms2.%s", extension);
 
 		if (!file.open(filename)) {
-			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file."), filename.c_str());
+			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file.").encode().c_str(), filename.c_str());
 			return Common::kReadingFailed;
 		}
 		stream = file.readStream(file.size());

@@ -296,13 +296,13 @@ void U8SaveGump::loadDescriptions() {
 		// FIXME: move version checks elsewhere!!
 		switch (state) {
 		case SavegameReader::SAVE_CORRUPT:
-			_descriptions[i] = _("[corrupt]");
+			_descriptions[i] = Common::convertFromU32String(_("[corrupt]"));
 			break;
 		case SavegameReader::SAVE_OUT_OF_DATE:
-			_descriptions[i] = _("[outdated]");
+			_descriptions[i] = Common::convertFromU32String(_("[outdated]"));
 			break;
 		case SavegameReader::SAVE_TOO_RECENT:
-			_descriptions[i] = _("[too modern]");
+			_descriptions[i] = Common::convertFromU32String(_("[too modern]"));
 			break;
 		default:
 			break;

@@ -391,7 +391,7 @@ void Scott::outputNumber(int a) {
 
 void Scott::look(void) {
 	const char *const ExitNames[6] = {
-		_("North"), _("South"), _("East"), _("West"), _("Up"), _("Down")
+		_("North").encode().c_str(), _("South").encode().c_str(), _("East").encode().c_str(), _("West").encode().c_str(), _("Up").encode().c_str(), _("Down").encode().c_str()
 	};
 	Room *r;
 	int ct, f;
@@ -403,9 +403,9 @@ void Scott::look(void) {
 	if ((_bitFlags & (1 << DARKBIT)) && _items[LIGHT_SOURCE]._location != CARRIED
 			&& _items[LIGHT_SOURCE]._location != MY_LOC) {
 		if (_options & YOUARE)
-			display(_topWindow, _("You can't see. It is too dark!\n"));
+			display(_topWindow, _("You can't see. It is too dark!\n").encode().c_str());
 		else
-			display(_topWindow, _("I can't see. It is too dark!\n"));
+			display(_topWindow, _("I can't see. It is too dark!\n").encode().c_str());
 		if (_options & TRS80_STYLE)
 			display(_topWindow, TRS80_LINE);
 		return;
@@ -415,14 +415,14 @@ void Scott::look(void) {
 		display(_topWindow, "%s\n", r->_text.c_str() + 1);
 	else {
 		if (_options & YOUARE)
-			display(_topWindow, _("You are in a %s\n"), r->_text.c_str());
+			display(_topWindow, _("You are in a %s\n").encode().c_str(), r->_text.c_str());
 		else
-			display(_topWindow, _("I'm in a %s\n"), r->_text.c_str());
+			display(_topWindow, _("I'm in a %s\n").encode().c_str(), r->_text.c_str());
 	}
 
 	ct = 0;
 	f = 0;
-	display(_topWindow, _("\nObvious exits: "));
+	display(_topWindow, _("\nObvious exits: ").encode().c_str());
 	while (ct < 6) {
 		if (r->_exits[ct] != 0) {
 			if (f == 0)
@@ -435,7 +435,7 @@ void Scott::look(void) {
 	}
 
 	if (f == 0)
-		display(_topWindow, _("none"));
+		display(_topWindow, _("none").encode().c_str());
 	display(_topWindow, ".\n");
 	ct = 0;
 	f = 0;
@@ -444,10 +444,10 @@ void Scott::look(void) {
 		if (_items[ct]._location == MY_LOC) {
 			if (f == 0) {
 				if (_options & YOUARE) {
-					display(_topWindow, _("\nYou can also see: "));
+					display(_topWindow, _("\nYou can also see: ").encode().c_str());
 					pos = 18;
 				} else {
-					display(_topWindow, _("\nI can also see: "));
+					display(_topWindow, _("\nI can also see: ").encode().c_str());
 					pos = 16;
 				}
 				f++;
