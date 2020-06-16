@@ -416,13 +416,6 @@ void LC::c_varpush() {
 		}
 	}
 
-	if (g_lingo->getHandler(name).type != VOID) {
-		d.type = HANDLER;
-		d.u.s = new Common::String(name);
-		g_lingo->push(d);
-		return;
-	}
-
 	d.type = VAR;
 	d.u.s = new Common::String(name);
 	g_lingo->push(d);
@@ -457,12 +450,6 @@ void LC::c_eval() {
 
 	Datum d;
 	d = g_lingo->pop();
-
-	if (d.type == HANDLER) {
-		LC::call(*d.u.s, 0);
-		delete d.u.s;
-		return;
-	}
 
 	if (d.type != VAR) { // It could be cast ref
 		g_lingo->push(d);
