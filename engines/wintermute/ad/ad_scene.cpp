@@ -97,6 +97,10 @@ void AdScene::setDefaults() {
 #ifdef ENABLE_WME3D
 	_sceneGeometry = nullptr;
 	_showGeometry = false;
+
+	_fov = -1.0f;
+	_nearPlane = -1.0f;
+	_farPlane = -1.0f;
 #endif
 
 	_pfPointsNum = 0;
@@ -814,6 +818,19 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_WAYPOINT_HEIGHT:
 			parser.scanStr(params, "%f", &_waypointHeight);
+			break;
+
+		case TOKEN_FOV_OVERRIDE:
+			parser.scanStr(params, "%f", &_fov);
+			break;
+
+		case TOKEN_NEARCLIPPING_PLANE:
+			parser.scanStr(params, "%f", &_nearPlane);
+			break;
+
+		case TOKEN_FAR_CLIPPING_PLANE:
+			parser.scanStr(params, "%f", &_farPlane);
+			break;
 #endif
 		case TOKEN_CAMERA:
 			Common::strlcpy(camera, params, MAX_PATH_LENGTH);
@@ -954,7 +971,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry && camera[0] != '\0') {
-		_sceneGeometry->setActiveCamera(camera, -1.0f, -1.0f, -1.0f);
+		_sceneGeometry->setActiveCamera(camera, _fov, _nearPlane, _farPlane);
 	}
 #endif
 
