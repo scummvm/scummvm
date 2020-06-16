@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str-enc.h"
+#include "common/ustr.h"
 
 #include <stdarg.h>
 
@@ -128,11 +129,15 @@ public:
 	/** Construct a string consisting of the given character. */
 	explicit String(char c);
 
+	/** Construct a new string from the given u32 string. */
+	String(const U32String &str);
+
 	~String();
 
 	String &operator=(const char *str);
 	String &operator=(const String &str);
 	String &operator=(char c);
+	String &operator=(const U32String &str);
 	String &operator+=(const char *str);
 	String &operator+=(const String &str);
 	String &operator+=(char c);
