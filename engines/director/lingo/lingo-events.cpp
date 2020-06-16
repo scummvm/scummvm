@@ -79,6 +79,7 @@ void Lingo::initEventHandlerTypes() {
 		_eventHandlerTypeIds[t->name] = t->handler;
 		_eventHandlerTypes[t->handler] = t->name;
 	}
+	_eventHandlerTypes[kEventNone] = 0;
 }
 
 ScriptType Lingo::event2script(LEvent ev) {
@@ -319,8 +320,6 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId, int channelI
 	if (_dontPassEvent)
 		return;
 
-	debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
-
 	_currentEntityId = entityId;
 	_currentChannelId = channelId;
 
@@ -328,15 +327,16 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId, int channelI
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
 	if (_archives[kArchMain].eventHandlers.contains(ENTITY_INDEX(event, entityId)) ||
-		_archives[kArchShared].eventHandlers.contains(ENTITY_INDEX(event, entityId))) {
-		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
-		executeHandler(_eventHandlerTypes[event]); // D4+ Events
+			_archives[kArchShared].eventHandlers.contains(ENTITY_INDEX(event, entityId))) {
+		// handler
+		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d): executing event handler", _eventHandlerTypes[event], scriptType2str(st), entityId);
+		executeHandler(_eventHandlerTypes[event]);
 	} else if (_vm->getVersion() < 4 && event == kEventNone && getScriptContext(_archiveIndex, st, entityId)) {
-		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), script", _eventHandlerTypes[event], scriptType2str(st), entityId);
-
-		executeScript(st, entityId, 0); // D3 list of scripts.
+		// script (D3)
+		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d): executing event script", _eventHandlerTypes[event], scriptType2str(st), entityId);
+		executeScript(st, entityId, 0);
 	} else {
-		debugC(9, kDebugEvents, "STUB: processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
+		debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d): no handler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 	}
 }
 
