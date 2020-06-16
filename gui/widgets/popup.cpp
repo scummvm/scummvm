@@ -199,7 +199,7 @@ void PopUpDialog::handleMouseLeft(int button) {
 	_lastRead = -1;
 }
 
-void PopUpDialog::read(Common::String str) {
+void PopUpDialog::read(Common::U32String str) {
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {

@@ -2225,7 +2225,7 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 	assert(_transactionMode == kTransactionNone);
 	assert(!msg.empty());
 #ifdef USE_TTS
-	Common::String textToSay = Common::convertFromU32String(msg);
+	Common::U32String textToSay = msg;
 #endif // USE_TTS
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends

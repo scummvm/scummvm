@@ -857,7 +857,7 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan)
-			ttsMan->say(Common::convertFromU32String(_osdMessageNextData));
+			ttsMan->say(_osdMessageNextData);
 	}
 #endif // USE_TTS
 	// Clear the text update request

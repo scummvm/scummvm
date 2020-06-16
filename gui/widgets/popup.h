@@ -140,7 +140,7 @@ protected:
 
 	void moveUp();
 	void moveDown();
-	void read(Common::String);
+	void read(Common::U32String);
 };
 
 } // End of namespace GUI
