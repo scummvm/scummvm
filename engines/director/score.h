@@ -30,7 +30,7 @@ namespace Graphics {
 	class ManagedSurface;
 	class Font;
 	class MacWindow;
-	class ZoomBox;
+	struct ZoomBox;
 }
 
 namespace Common {
