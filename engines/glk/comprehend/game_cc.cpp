@@ -111,9 +111,6 @@ void CrimsonCrownGame::crystalBallCutscene() {
 		if (g_comprehend->shouldQuit())
 			return;
 	}
-
-	// TODO: Is this actually a function call?
-	eval_function(&_functions[14], nullptr, nullptr);
 } 
 
 void CrimsonCrownGame::beforePrompt() {
