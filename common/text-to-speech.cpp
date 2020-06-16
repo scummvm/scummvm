@@ -31,12 +31,12 @@ TTSVoice::TTSVoice()
 	: _gender(UNKNOWN_GENDER)
 	, _age(UNKNOWN_AGE)
 	, _data(nullptr)
-	, _description("") {
+	, _description(Common::U32String("")) {
 	_refCount = new int;
 	*_refCount = 1;
 }
 
-TTSVoice::TTSVoice(Gender gender, Age age, void *data, String description)
+TTSVoice::TTSVoice(Gender gender, Age age, void *data, U32String description)
 	: _gender(gender)
 	, _age(age)
 	, _data(data)

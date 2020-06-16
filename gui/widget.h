@@ -175,7 +175,7 @@ public:
 
 	virtual bool containsWidget(Widget *) const { return false; }
 
-	void read(Common::String str);
+	void read(Common::U32String str);
 
 protected:
 	void updateState(int oldFlags, int newFlags);
