@@ -199,10 +199,11 @@ void Lingo::runMovieScript(LEvent event) {
 
 	for (ScriptContextHash::iterator it = _archives[_archiveIndex].scriptContexts[kMovieScript].begin();
 			it != _archives[_archiveIndex].scriptContexts[kMovieScript].end(); ++it) {
-		_eventQueue.push(LingoEvent(event, kMovieScript, it->_key));
-		// TODO: How do know which script handles the message?
+		if (_archives[_archiveIndex].eventHandlers.contains(ENTITY_INDEX(event, it->_key))) {
+			_eventQueue.push(LingoEvent(event, kMovieScript, it->_key));
+			break;
+		}
 	}
-	debugC(9, kDebugEvents, "STUB: processEvent(event, kMovieScript, ?)");
 }
 
 void Lingo::registerFrameEvent(LEvent event) {
