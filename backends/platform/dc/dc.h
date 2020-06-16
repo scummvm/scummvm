@@ -22,7 +22,6 @@
 
 #include "backends/base-backend.h"
 #include <graphics/surface.h>
-#include <graphics/colormasks.h>
 #include <graphics/palette.h>
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
@@ -160,7 +159,7 @@ public:
   void clearOverlay();
   void grabOverlay(void *buf, int pitch);
   void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
-  virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
+  virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12); }
 
   // Mutex handling
   MutexRef createMutex();
