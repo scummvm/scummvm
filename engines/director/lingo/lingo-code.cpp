@@ -793,6 +793,11 @@ void LC::c_intersects() {
 	Sprite *sprite1 = score->getSpriteById(d1.asInt());
 	Sprite *sprite2 = score->getSpriteById(d2.asInt());
 
+	if (!sprite1 || !sprite2) {
+		g_lingo->push(Datum(0));
+		return;
+	}
+
 	g_lingo->push(Datum(sprite1->getBbox().intersects(sprite2->getBbox())));
 }
 
@@ -803,6 +808,11 @@ void LC::c_within() {
 	Score *score = g_director->getCurrentScore();
 	Sprite *sprite1 = score->getSpriteById(d1.asInt());
 	Sprite *sprite2 = score->getSpriteById(d2.asInt());
+
+	if (!sprite1 || !sprite2) {
+		g_lingo->push(Datum(0));
+		return;
+	}
 
 	g_lingo->push(Datum(sprite2->getBbox().contains(sprite1->getBbox())));
 }
