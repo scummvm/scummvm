@@ -504,15 +504,43 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		// (maybe we have to compare all the sprite attributes, not just these two?)
 		bool needsUpdate = currentSprite->isDirty() || currentSprite->_castId != nextSprite->_castId || currentSprite->_currentBbox != nextSprite->_currentBbox;
 
-		if (needsUpdate || forceUpdate)
-			unrenderSprite(i);
+		if (needsUpdate || forceUpdate) {
+			if (!currentSprite->_trails) {
+				_maskSurface->fillRect(currentSprite->_currentBbox, 1);
+				_surface->fillRect(currentSprite->_currentBbox, _stageColor);
+			}
+
+			currentSprite->_currentBbox = currentSprite->getBbox();
+		}
 
 		_maskSurface->fillRect(nextSprite->_currentBbox, 1);
 		_sprites[i] = nextSprite;
 	}
 
-	for (uint i = 0; i < _sprites.size(); i++)
-		renderSprite(i);
+	for (uint id = 0; id < _sprites.size(); id++) {
+		Sprite *sprite = _sprites[id];
+
+		if (!sprite || !sprite->_enabled || !sprite->_castType)
+			continue;
+
+		sprite->updateCast();
+
+		debugC(1, kDebugImages, "Score::renderSprite(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
+		if (sprite->_castType == kCastShape) {
+			renderShape(id);
+		} else {
+			Cast *cast = _sprites[id]->_cast;
+			if (cast && cast->_widget) {
+				cast->_widget->_priority = id;
+				cast->_widget->draw();
+				inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), _sprites[id]->_ink, _sprites[id]->_currentBbox, id);
+			} else {
+				warning("Score::renderSprite: No widget for channel ID %d", id);
+			}
+		}
+
+		sprite->setClean();
+	}
 
 	if (!updateStageOnly) {
 		_vm->_wm->renderZoomBox();
@@ -531,43 +559,6 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 	}
 
 	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
-}
-
-void Score::unrenderSprite(uint16 spriteId) {
-	Sprite *currentSprite = _sprites[spriteId];
-
-	if (!currentSprite->_trails) {
-		_maskSurface->fillRect(currentSprite->_currentBbox, 1);
-		_surface->fillRect(currentSprite->_currentBbox, _stageColor);
-	}
-
-	currentSprite->_currentBbox = currentSprite->getBbox();
-}
-
-void Score::renderSprite(uint16 id) {
-	Sprite *sprite = _sprites[id];
-	SpriteChannel *channel = _spriteChannels[id];
-
-	if (!sprite || !sprite->_enabled || !channel->_visible || !sprite->_castType)
-		return;
-
-	sprite->updateCast();
-
-	debugC(1, kDebugImages, "Score::renderSprite(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
-	if (sprite->_castType == kCastShape) {
-		renderShape(id);
-	} else {
-		Cast *cast = _sprites[id]->_cast;
-		if (cast && cast->_widget) {
-			cast->_widget->_priority = id;
-			cast->_widget->draw();
-			inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), _sprites[id]->_ink, _sprites[id]->_currentBbox, id);
-		} else {
-			warning("Score::renderSprite: No widget for channel ID %d", id);
-		}
-	}
-
-	sprite->setClean();
 }
 
 void Score::renderShape(uint16 spriteId) {
