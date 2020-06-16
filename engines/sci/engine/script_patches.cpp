@@ -3427,10 +3427,39 @@ static const uint16 gk1LoreleiDanceTimerPatch[] = {
 	PATCH_END
 };
 
+// GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
+//  Look on the talisman from inventory is supposed to display an inset with
+//  view 56 and say a message, but instead this would crash the Mac interpreter.
+//
+// We fix this by skipping the talisman inset when view 56 isn't present in the
+//  Mac version. The default verb handler still says the talisman message.
+//
+// Applies to: Mac Floppy
+// Responsible method: talisman:doVerb
+static const uint16 gk1MacTalismanInsetSignature[] = {
+	0x31, 0x3e,                             // bnt 3e [ super doVerb: verb &rest ]
+	0x39, SIG_SELECTOR8(hide),              // pushi hide
+	0x78,                                   // push1
+	0x78,                                   // push1
+	0x81, 0x09,                             // lag 09
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ GKInventory hide: 1 ] 
+	0x39, SIG_SELECTOR8(doit),              // pushi doit
+	0x38, SIG_MAGICDWORD,                   // pushi 0008
+	      SIG_UINT16(0x0008),
+	0x39, 0x38,                             // pushi 38 [ talisman view ]
+	SIG_END
+};
+
+static const uint16 gk1MacTalismanInsetPatch[] = {
+	0x33,                                   // jmp [ super doVerb: verb &rest ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
 	{  true,    17, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
+	{  false,   24, "mac: fix missing talisman view",              1, gk1MacTalismanInsetSignature,     gk1MacTalismanInsetPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
 	{  true,    93, "fix inventory on restart",                    1, gk1RestartInventorySignature,     gk1RestartInventoryPatch },
 	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
@@ -19308,6 +19337,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 			case GID_FREDDYPHARKAS:
 				if (_isMacSci11 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 844))) {
 					enablePatch(signatureTable, "Mac: skip broken hop singh scene");
+				}
+				break;
+			case GID_GK1:
+				if (_isMacSci11 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 56))) {
+					enablePatch(signatureTable, "mac: fix missing talisman view");
 				}
 				break;
 			case GID_GK2:
