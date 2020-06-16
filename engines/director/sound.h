@@ -77,6 +77,8 @@ public:
 	~SNDDecoder();
 
 	bool loadStream(Common::SeekableSubReadStreamEndian &stream);
+	bool processCommands(Common::SeekableSubReadStreamEndian &stream);
+	bool processBufferCommand(Common::SeekableSubReadStreamEndian &stream);
 	Audio::SeekableAudioStream *getAudioStream();
 	Audio::AudioStream *getLoopingAudioStream();
 

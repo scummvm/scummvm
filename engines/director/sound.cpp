@@ -20,6 +20,10 @@
  *
  */
 
+// SNDDecoder based on snd2wav by Abraham Macias Paredes
+// https://github.com/System25/drxtract/blob/master/snd2wav
+// License: GNU GPL v2 (see COPYING file for details)
+
 #include "common/file.h"
 #include "common/substream.h"
 
@@ -261,42 +265,113 @@ bool SNDDecoder::loadStream(Common::SeekableSubReadStreamEndian &stream) {
 		stream.hexdump(0x4e);
 	}
 
-	// unk1
-	for (uint32 i = 0; i < 0x14; i++) {
-		stream.readByte();
-	}
-	_channels = stream.readUint16();
-	if (!(_channels == 1 || _channels == 2)) {
-		warning("STUB: SNDDecoder::loadStream: no support for old sound format");
+	uint16 format = stream.readUint16();
+	if (format == 1) {
+		uint16 dataTypeCount = stream.readUint16();
+		for (uint16 i = 0; i < dataTypeCount; i++) {
+			uint16 dataType = stream.readUint16();
+			if (dataType == 5) {
+				// Sampled sound data
+				uint32 options = stream.readUint32();
+				_channels = (options & 0x80) ? 1 : 2;
+				if (!processCommands(stream))
+					return false;
+			} else {
+				warning("SNDDecoder: Unsupported data type: %d", dataType);
+				return false;
+			}
+		}
+	} else if (format == 2) {
+		_channels = 1;
+		/*uint16 refCount =*/stream.readUint16();
+		if (!processCommands(stream))
+			return false;
+	} else {
+		warning("SNDDecoder: Bad format: %d", format);
 		return false;
 	}
-	_rate = stream.readUint16();
 
-	// unk2
-	for (uint32 i = 0; i < 0x06; i++) {
-		stream.readByte();
+	return true;
+}
+
+bool SNDDecoder::processCommands(Common::SeekableSubReadStreamEndian &stream) {
+	uint16 cmdCount = stream.readUint16();
+	for (uint16 i = 0; i < cmdCount; i++) {
+		uint16 cmd = stream.readUint16();
+		if (cmd == 0x8051) {
+			if (!processBufferCommand(stream))
+				return false;
+		} else {
+			warning("SNDDecoder: Unsupported command: %d", cmd);
+			return false;
+		}
 	}
-	uint32 length = stream.readUint32();
-	/*uint16 unk3 =*/stream.readUint16();
-	/*uint32 length_copy =*/stream.readUint32();
-	/*uint8 unk4 =*/stream.readByte();
-	/*uint8 unk5 =*/stream.readByte();
-	/*uint16 unk6 =*/stream.readUint16();
-	// unk7
-	for (uint32 i = 0; i < 0x12; i++) {
-		stream.readByte();
+
+	return true;
+}
+
+bool SNDDecoder::processBufferCommand(Common::SeekableSubReadStreamEndian &stream) {
+	if (_data) {
+		warning("SNDDecoder: Already read data");
+		return false;
 	}
-	uint16 bits = stream.readUint16();
-	// unk8
-	for (uint32 i = 0; i < 0x0e; i++) {
-		stream.readByte();
+
+	/*uint16 unk1 =*/stream.readUint16();
+	int32 offset = stream.readUint32();
+	if (offset != stream.pos()) {
+		warning("SNDDecoder: Bad sound header offset. Expected: %d, read: %d", stream.pos(), offset);
+		return false;
+	}
+	/*uint32 dataPtr =*/stream.readUint32();
+	uint32 param = stream.readUint32();
+	_rate = stream.readUint16();
+	/*uint16 rateExt =*/stream.readUint16();
+	/*uint32 loopStart =*/stream.readUint32();
+	/*uint32 loopEnd =*/stream.readUint32();
+	byte encoding = stream.readByte();
+	byte baseFrequency = stream.readByte();
+	if (baseFrequency != 0x3c) {
+		warning("SNDDecoder: Unsupported base frequency: %d", baseFrequency);
+		return false;
+	}
+	uint32 frameCount = 0;
+	uint16 bits = 8;
+	if (encoding == 0x00) {
+		// Standard sound header
+		uint16 dataLength = param;
+		frameCount = dataLength / _channels;
+	} else if (encoding == 0xff) {
+		// Extended sound header
+		_channels = param;
+		frameCount = stream.readUint32();
+		for (uint32 i = 0; i < 0x0a; i++) {
+			// aiff sample rate
+			stream.readByte();
+		}
+		/*uint32 markerChunk =*/stream.readUint32();
+		/*uint32 instrumentsChunk =*/stream.readUint32();
+		/*uint32 aesRecording =*/stream.readUint32();
+		bits = stream.readUint16();
+
+		// future use
+		stream.readUint16();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+	} else if (encoding == 0xfe) {
+		// Compressed sound header
+		warning("SNDDecoder: Compressed sound header not supported");
+		return false;
+	} else {
+		warning("SNDDecoder: Bad encoding: %d", encoding);
+		return false;
 	}
 
 	_flags = 0;
-	_flags |= _channels == 2 ? Audio::FLAG_STEREO : 0;
-	_flags |= bits == 16 ? Audio::FLAG_16BITS : 0;
-	_flags |= bits == 8 ? Audio::FLAG_UNSIGNED : 0;
-	_size = length * _channels * (bits == 16 ? 2 : 1);
+	_flags |= (_channels == 2) ? Audio::FLAG_STEREO : 0;
+	_flags |= (bits == 16) ? Audio::FLAG_16BITS : 0;
+	_flags |= (bits == 8) ? Audio::FLAG_UNSIGNED : 0;
+	_size = frameCount * _channels * (bits == 16 ? 2 : 1);
 
 	_data = (byte *)malloc(_size);
 	assert(_data);
