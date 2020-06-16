@@ -1475,7 +1475,8 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		Math::Vector3d pos;
 		pos.x() = stack->pop()->getFloat();
 		pos.y() = stack->pop()->getFloat();
-		pos.z() = stack->pop()->getFloat();
+		// scripts will expect a Direct3D coordinate system
+		pos.z() = -stack->pop()->getFloat();
 		goTo3D(pos);
 
 		if (strcmp(name, "GoTo3DAsync") != 0) {
@@ -1624,7 +1625,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			BaseObject *obj = (BaseObject *)val->getNative();
 			Math::Vector3d objPos;
 			((AdGame *)_gameRef)->_scene->_sceneGeometry->convert2Dto3D(obj->_posX, obj->_posY, &objPos);
-			angle = Common::rad2deg(-atan2(objPos.z() - _posVector.z(), objPos.x() - _posVector.x())) - 90;
+			angle = Common::rad2deg(-atan2(objPos.z() - _posVector.z(), objPos.x() - _posVector.x())) + 90;
 		} else {
 			// otherwise turn to direction
 			dir = val->getInt();
@@ -1653,7 +1654,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnToAngle") == 0 || strcmp(name, "TurnToAngleAsync") == 0) {
 		stack->correctParams(1);
-		float angle = stack->pop()->getFloat();
+		float angle = -stack->pop()->getFloat();
 
 		if (_path2D) {
 			_path2D->reset();
