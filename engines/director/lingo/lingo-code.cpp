@@ -46,6 +46,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/score.h"
+#include "director/sprite.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
@@ -788,18 +789,22 @@ void LC::c_intersects() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_intersects: %d %d", d1.u.i, d2.u.i);
+	Score *score = g_director->getCurrentScore();
+	Sprite *sprite1 = score->getSpriteById(d1.asInt());
+	Sprite *sprite2 = score->getSpriteById(d2.asInt());
 
-	g_lingo->push(d1);
+	g_lingo->push(Datum(sprite1->getBbox().intersects(sprite2->getBbox())));
 }
 
 void LC::c_within() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_within: %d %d", d1.u.i, d2.u.i);
+	Score *score = g_director->getCurrentScore();
+	Sprite *sprite1 = score->getSpriteById(d1.asInt());
+	Sprite *sprite2 = score->getSpriteById(d2.asInt());
 
-	g_lingo->push(d1);
+	g_lingo->push(Datum(sprite2->getBbox().contains(sprite1->getBbox())));
 }
 
 void LC::c_of() {
