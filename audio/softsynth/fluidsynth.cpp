@@ -136,7 +136,7 @@ static void *SoundFontMemLoader_open(const char *filename) {
 }
 
 static int SoundFontMemLoader_read(void *buf, int count, void *handle) {
-	return ((Common::SeekableReadStream *) handle)->read(buf, count) == count ? FLUID_OK : FLUID_FAILED;
+	return ((Common::SeekableReadStream *) handle)->read(buf, count) == (uint32)count ? FLUID_OK : FLUID_FAILED;
 }
 
 static int SoundFontMemLoader_seek(void *handle, long offset, int origin) {
