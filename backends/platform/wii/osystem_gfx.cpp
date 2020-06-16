@@ -28,7 +28,6 @@
 #include <gxflux/gfx_con.h>
 
 #include "common/config-manager.h"
-#include "graphics/colormasks.h"
 #include "graphics/conversion.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
@@ -332,7 +331,7 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	u16 *d = _texGame.palette;
 
 	for (uint i = 0; i < num; ++i, s +=3)
-		d[start + i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(s[0], s[1], s[2]);
+		d[start + i] = _pfRGB565.RGBToColor(s[0], s[1], s[2]);
 
 	gfx_tex_flush_palette(&_texGame);
 
@@ -340,7 +339,7 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	d = _cursorPalette;
 
 	for (uint i = 0; i < num; ++i, s += 3) {
-		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
+		d[start + i] = _pfRGB3444.ARGBToColor(0xff, s[0], s[1], s[2]);
 	}
 
 	if (_cursorPaletteDisabled) {
@@ -363,7 +362,7 @@ void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) const {
 
 	u8 r, g, b;
 	for (uint i = 0; i < num; ++i, d += 3) {
-		Graphics::colorToRGB<Graphics::ColorMasks<565> >(s[start + i], r, g, b);
+		_pfRGB565.colorToRGB(s[start + i], r, g, b);
 		d[0] = r;
 		d[1] = g;
 		d[2] = b;
@@ -392,7 +391,7 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 	u16 *d = _texMouse.palette;
 
 	for (uint i = 0; i < num; ++i, s += 3)
-		d[start + i] = Graphics::ARGBToColor<Graphics::ColorMasks<3444> >(0xff, s[0], s[1], s[2]);
+		d[start + i] = _pfRGB3444.ARGBToColor(0xff, s[0], s[1], s[2]);
 
 	_cursorPaletteDirty = true;
 }
@@ -631,7 +630,7 @@ int16 OSystem_Wii::getOverlayHeight() {
 }
 
 Graphics::PixelFormat OSystem_Wii::getOverlayFormat() const {
-	return Graphics::createPixelFormat<3444>();
+	return _pfRGB3444;
 }
 
 bool OSystem_Wii::showMouse(bool visible) {
