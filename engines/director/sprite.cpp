@@ -30,6 +30,13 @@
 
 namespace Director {
 
+SpriteChannel::SpriteChannel() {
+	_visible = true;
+}
+
+SpriteChannel::~SpriteChannel() {
+}
+
 Sprite::Sprite() {
 	_scriptId = 0;
 	_scriptCastIndex = 0;
@@ -61,7 +68,6 @@ Sprite::Sprite() {
 	_foreColor = 0;
 
 	_blend = 0;
-	_visible = false;
 	_movieRate = 0;
 	_movieTime = 0;
 	_startTime = 0;

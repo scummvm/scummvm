@@ -689,6 +689,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	}
 
 	Sprite *sprite = score->getSpriteById(id);
+	SpriteChannel *channel = score->getSpriteChannelById(id);
 
 	if (!sprite)
 		return d;
@@ -776,7 +777,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	case kTheVisibility:
 	case kTheVisible:
-		d.u.i = (sprite->_visible ? 1 : 0);
+		d.u.i = (channel->_visible ? 1 : 0);
 		break;
 	case kTheVolume:
 		d.u.i = sprite->_volume;
@@ -809,6 +810,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	}
 
 	Sprite *sprite = score->getSpriteById(id);
+	SpriteChannel *channel = score->getSpriteChannelById(id);
 
 	if (!sprite)
 		return;
@@ -893,7 +895,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheVisibility:
 	case kTheVisible:
-		sprite->_visible = (d.asInt() == 0 ? false : true);
+		channel->_visible = (d.asInt() == 0 ? false : true);
 		break;
 	case kTheVolume:
 		sprite->_volume = d.asInt();

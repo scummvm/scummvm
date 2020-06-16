@@ -342,7 +342,7 @@ void LC::cb_objectcall() {
 		// if there's nothing, try calling a function with that name
 		Symbol func = g_lingo->getHandler(*object.u.s);
 		if (func.type != VOID) {
-			LC::call(*object.u.s, nargs.u.i);
+			LC::call(func, nargs.u.i);
 		} else {
 			warning("cb_objectcall: could not find object or function with name %s", object.u.s->c_str());
 		}

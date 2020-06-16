@@ -56,6 +56,14 @@ enum MainChannelsPosition {
 	kPalettePosition = 15
 };
 
+class SpriteChannel {
+public:
+	SpriteChannel();
+	~SpriteChannel();
+
+	bool _visible;
+};
+
 class Sprite {
 public:
 	Sprite();
@@ -108,7 +116,6 @@ public:
 	byte _foreColor;
 
 	byte _blend;
-	bool _visible;
 	// Using in digital movie sprites
 	byte _movieRate;
 	uint16 _movieTime;

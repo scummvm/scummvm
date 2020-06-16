@@ -514,6 +514,10 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
 	}
 
+	for (int i = 0; i < _numChannelsDisplayed + 1; i++) {
+		_spriteChannels.push_back(new SpriteChannel());
+	}
+
 	uint16 channelSize;
 	uint16 channelOffset;
 

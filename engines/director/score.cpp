@@ -109,6 +109,9 @@ Score::~Score() {
 	for (uint i = 0; i < _frames.size(); i++)
 		delete _frames[i];
 
+	for (uint i = 0; i < _spriteChannels.size(); i++)
+		delete _spriteChannels[i];
+
 	if (_loadedStxts)
 		for (Common::HashMap<int, const Stxt *>::iterator it = _loadedStxts->begin(); it != _loadedStxts->end(); ++it)
 			delete it->_value;
@@ -543,8 +546,9 @@ void Score::unrenderSprite(uint16 spriteId) {
 
 void Score::renderSprite(uint16 id) {
 	Sprite *sprite = _sprites[id];
+	SpriteChannel *channel = _spriteChannels[id];
 
-	if (!sprite || !sprite->_enabled || !sprite->_castType)
+	if (!sprite || !sprite->_enabled || !channel->_visible || !sprite->_castType)
 		return;
 
 	sprite->updateCast();
@@ -735,6 +739,14 @@ Sprite *Score::getSpriteById(uint16 id) {
 		warning("Sprite on frame %d width id %d not found", _currentFrame, id);
 		return nullptr;
 	}
+}
+
+SpriteChannel *Score::getSpriteChannelById(uint16 id) {
+	if (id >= _spriteChannels.size()) {
+		warning("Score::getSpriteChannelById(%d): out of bounds", id);
+		return nullptr;
+	}
+	return _spriteChannels[id];
 }
 
 void Score::playSoundChannel(uint16 frameId) {

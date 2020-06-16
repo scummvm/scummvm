@@ -49,6 +49,7 @@ struct Label;
 class Lingo;
 struct Resource;
 class Sprite;
+class SpriteChannel;
 class Stxt;
 class BitmapCast;
 class ScriptCast;
@@ -110,6 +111,7 @@ public:
 	uint16 getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
+	SpriteChannel *getSpriteChannelById(uint16 id);
 	void setSpriteCasts();
 	void setSpriteBboxes();
 	void loadSpriteImages(bool isSharedCast);
@@ -173,6 +175,7 @@ private:
 public:
 	Common::Array<Frame *> _frames;
 	Common::Array<Sprite *> _sprites;
+	Common::Array<SpriteChannel *> _spriteChannels;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::SortedArray<Label *> *_labels;
