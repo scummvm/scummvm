@@ -34,7 +34,7 @@ class Debugger;
 class Process;
 class UCProcess;
 class ConvertUsecode;
-class BitSet;
+class GlobalStorage;
 class UCList;
 class idMan;
 
@@ -98,7 +98,7 @@ private:
 	Intrinsic *_intrinsics;
 	unsigned int _intrinsicCount;
 
-	BitSet *_globals;
+	GlobalStorage *_globals;
 
 	Std::map<uint16, UCList *> _listHeap;
 	Std::map<uint16, Std::string> _stringHeap;

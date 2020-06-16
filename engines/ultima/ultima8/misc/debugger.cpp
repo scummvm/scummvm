@@ -1566,7 +1566,7 @@ bool Debugger::cmdGetGlobal(int argc, const char **argv) {
 	unsigned int offset = strtol(argv[1], 0, 0);
 	unsigned int size = strtol(argv[2], 0, 0);
 
-	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getBits(offset, size));
+	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getEntries(offset, size));
 	return true;
 }
 
@@ -1581,9 +1581,9 @@ bool Debugger::cmdSetGlobal(int argc, const char **argv) {
 	unsigned int size = strtol(argv[2], 0, 0);
 	unsigned int value = strtol(argv[3], 0, 0);
 
-	uc->_globals->setBits(offset, size, value);
+	uc->_globals->setEntries(offset, size, value);
 
-	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getBits(offset, size));
+	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getEntries(offset, size));
 	return true;
 }
 

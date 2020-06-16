@@ -31,6 +31,7 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/usecode/bit_set.h"
+#include "ultima/ultima8/usecode/byte_set.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -87,13 +88,15 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	_ucMachine = this;
 
 	// zero _globals
-	_globals = new BitSet(0x1000);
 
 	if (GAME_IS_U8) {
+		_globals = new BitSet(0x1000);
 		_convUse = new ConvertUsecodeU8();
 	} else if (GAME_IS_REMORSE) {
+		_globals = new ByteSet(0x1000);
 		_convUse = new ConvertUsecodeCrusader();
 	} else {
+		_globals = new ByteSet(0x1000);
 		// TODO: Need a separate convertor for Regret
 		_convUse = new ConvertUsecodeCrusader();
 	}
@@ -409,7 +412,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// https://sourceforge.net/tracker/index.php?func=detail&aid=1018748&group_id=53819&atid=471709
 			if (GAME_IS_U8 && p->_classId == 0x48B && func == 0xD0) {
 				// 0xD0 = setAvatarInStasis
-				_globals->setBits(0, 1, 1);
+				_globals->setEntries(0, 1, 1);
 			}
 
 		}
@@ -1225,7 +1228,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16b = cs.readByte();
 			// TODO: get flagname for output?
 
-			ui32a = _globals->getBits(ui16a, ui16b);
+			ui32a = _globals->getEntries(ui16a, ui16b);
 			p->_stack.push2(static_cast<uint16>(ui32a));
 			LOGPF(("push\t\tglobal [%04X %02X] = %02X\n", ui16a, ui16b, ui32a));
 			break;
@@ -1237,15 +1240,19 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16b = cs.readByte();
 			// TODO: get flagname for output?
 			ui32a = p->_stack.pop2();
-			_globals->setBits(ui16a, ui16b, ui32a);
+			_globals->setEntries(ui16a, ui16b, ui32a);
 
-			if (ui32a & ~(((1 << ui16b) - 1))) {
-				perr << "Warning: value popped into a bitflag it doesn't fit in (" << Std::hex
+			if ((GAME_IS_U8 && (ui32a & ~(((1 << ui16b) - 1)))) || ui16b > 2) {
+				perr << "Warning: value popped into a flag it doesn't fit in (" << Std::hex
 					 << ui16a << " " << ui16b << " " << ui32a << ")" << Std::endl;
 			}
 
 			// paranoid :-)
-			assert(_globals->getBits(ui16a, ui16b) == (ui32a & ((1 << ui16b) - 1)));
+			if (GAME_IS_U8) {
+				assert(_globals->getEntries(ui16a, ui16b) == (ui32a & ((1 << ui16b) - 1)));
+			} else {
+				assert(_globals->getEntries(ui16a, ui16b) == ui32a);
+		    }
 
 			LOGPF(("pop\t\tglobal [%04X %02X] = %02X\n", ui16a, ui16b, ui32a));
 			break;

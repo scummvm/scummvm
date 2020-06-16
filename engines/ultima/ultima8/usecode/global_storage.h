@@ -20,43 +20,32 @@
  *
  */
 
-#ifndef ULTIMA8_USECODE_BITSET_H
-#define ULTIMA8_USECODE_BITSET_H
-
-#include "ultima/ultima8/usecode/global_storage.h"
+#ifndef ULTIMA8_USECODE_GLOBAL_STORAGE_H
+#define ULTIMA8_USECODE_GLOBAL_STORAGE_H
 
 namespace Ultima {
 namespace Ultima8 {
 
-class BitSet : public GlobalStorage {
+class GlobalStorage {
 public:
-	BitSet();
-	BitSet(unsigned int size);
-	~BitSet();
+	virtual ~GlobalStorage() {};
 
-	//! set the size. The old value is cleared
-	//! \param size the new size (in bits)
-	void setSize(unsigned int size) override;
+	virtual void setSize(unsigned int size) = 0;
 
 	//! get a value
-	//! \param pos zero-based position (in bits)
-	//! \param n number of bits (no greater than 32)
-	//! \return the value these bits represent
-	uint32 getEntries(unsigned int pos, unsigned int n) const override;
+	//! \param pos zero-based position
+	//! \param n number of entries to read
+	//! \return the value these entries represent
+	virtual uint32 getEntries(unsigned int pos, unsigned int n) const = 0;
 
 	//! set a value
-	//! \param pos zero-based position (in bits)
-	//! \param n number of bits (no greater than 32)
-	//! \param bits the value to set
-	void setEntries(unsigned int pos, unsigned int n, uint32 bits) override;
+	//! \param pos zero-based position
+	//! \param n number of entries (no greater than one uint32-worth)
+	//! \param val the value to set
+	virtual void setEntries(unsigned int pos, unsigned int n, uint32 val) = 0;
 
-	void save(Common::WriteStream *ws) override;
-	bool load(Common::ReadStream *rs, uint32 version) override;
-
-private:
-	unsigned int _size;
-	unsigned int _bytes;
-	uint8 *_data;
+	virtual void save(Common::WriteStream *ws) = 0;
+	virtual bool load(Common::ReadStream *rs, uint32 version) = 0;
 };
 
 } // End of namespace Ultima8

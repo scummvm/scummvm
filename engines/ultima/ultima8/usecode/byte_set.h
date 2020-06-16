@@ -20,42 +20,43 @@
  *
  */
 
-#ifndef ULTIMA8_USECODE_BITSET_H
-#define ULTIMA8_USECODE_BITSET_H
+#ifndef ULTIMA8_USECODE_BYTESET_H
+#define ULTIMA8_USECODE_BYTESET_H
 
 #include "ultima/ultima8/usecode/global_storage.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class BitSet : public GlobalStorage {
+// This is a minimal implementation just to support what Crusader needs.
+
+class ByteSet : public GlobalStorage {
 public:
-	BitSet();
-	BitSet(unsigned int size);
-	~BitSet();
+	ByteSet();
+	ByteSet(unsigned int size);
+	~ByteSet();
 
 	//! set the size. The old value is cleared
-	//! \param size the new size (in bits)
+	//! \param size the new size (in bytes)
 	void setSize(unsigned int size) override;
 
 	//! get a value
-	//! \param pos zero-based position (in bits)
-	//! \param n number of bits (no greater than 32)
-	//! \return the value these bits represent
+	//! \param pos zero-based position (in bytes:)
+	//! \param n number of bytes (no greater than 2)
+	//! \return the value these bytes represent
 	uint32 getEntries(unsigned int pos, unsigned int n) const override;
 
 	//! set a value
-	//! \param pos zero-based position (in bits)
-	//! \param n number of bits (no greater than 32)
-	//! \param bits the value to set
-	void setEntries(unsigned int pos, unsigned int n, uint32 bits) override;
+	//! \param pos zero-based position (in bytes)
+	//! \param n number of bytes (no greater than 2)
+	//! \param val the value to set
+	void setEntries(unsigned int pos, unsigned int n, uint32 val) override;
 
 	void save(Common::WriteStream *ws) override;
 	bool load(Common::ReadStream *rs, uint32 version) override;
 
 private:
 	unsigned int _size;
-	unsigned int _bytes;
 	uint8 *_data;
 };
 
