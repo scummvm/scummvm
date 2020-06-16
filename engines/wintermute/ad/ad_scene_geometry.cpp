@@ -793,11 +793,11 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 
 	Math::Vector3d direction((((2.0f * x) / viewport.width()) - 1) / projectionMatrix(0, 0),
 	                         -(((2.0f * y) / viewport.height()) - 1) / projectionMatrix(1, 1),
-	                         1.0f);
+	                         -1.0f);
 	Math::Matrix4 m = _viewMatrix;
 	m.inverse();
+	m.transpose();
 	m.transform(&direction, false);
-	direction.z() *= -1.0f;
 
 	bool intFound = false;
 	float minDist = FLT_MAX;
