@@ -125,6 +125,11 @@ String::String(char c)
 	_size = (c == 0) ? 0 : 1;
 }
 
+String::String(const U32String &str) {
+	String internString = str.encode();
+	String::String(internString);
+}
+
 String::~String() {
 	decRefCount(_extern._refCount);
 }
@@ -281,6 +286,11 @@ String &String::operator=(char c) {
 
 	_size = (c == 0) ? 0 : 1;
 	return *this;
+}
+
+String &String::operator=(const U32String &str) {
+	String internString = str.encode();
+	return String::operator=(internString);
 }
 
 String &String::operator+=(const char *str) {
