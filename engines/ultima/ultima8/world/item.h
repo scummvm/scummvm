@@ -263,13 +263,19 @@ public:
 	virtual void destroy(bool delnow = false);
 
 	//! Check if this item overlaps another item in 3D world-space
-	bool overlaps(Item &item2) const;
+	bool overlaps(const Item &item2) const;
 
 	//! Check if this item overlaps another item in the xy dims in 3D space
-	bool overlapsxy(Item &item2) const;
+	bool overlapsxy(const Item &item2) const;
 
-	//! Check if this item is on top another item
-	bool isOn(Item &item2) const;
+	//! Check if this item is on top of another item
+	bool isOn(const Item &item2) const;
+
+	//! Check if this item is on completely on top of another item
+	bool isCompletelyOn(const Item &item2) const;
+
+	//! Check if the centre of this item is on top of another item
+	bool isCentreOn(const Item &item2) const;
 
 	//! Check if this item can exist at the given coordinates
 	bool canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport = false) const;
@@ -487,6 +493,8 @@ public:
 	INTRINSIC(I_overlaps);
 	INTRINSIC(I_overlapsXY);
 	INTRINSIC(I_isOn);
+	INTRINSIC(I_isCompletelyOn);
+	INTRINSIC(I_isCentreOn);
 	INTRINSIC(I_ascend);
 	INTRINSIC(I_getWeight);
 	INTRINSIC(I_getWeightIncludingContents);

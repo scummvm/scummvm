@@ -128,7 +128,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic055(6 bytes)
 	0, // void Intrinsic056(2 bytes)
 	0, // void Intrinsic057(4 bytes)
-	0, // int Intrinsic058(6 bytes)
+	Item::I_isCentreOn, // int Intrinsic058(6 bytes)
 	Item::I_setFrame, // based on same coff as 002
 	Actor::I_getLastAnimSet, // void Intrinsic05A(4 bytes)
 	Item::I_legalCreateAtPoint, // probably. see PEPSIEW::use

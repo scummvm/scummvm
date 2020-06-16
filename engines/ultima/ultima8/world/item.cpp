@@ -462,7 +462,7 @@ void Item::setShape(uint32 shape_) {
 	_cachedShape = nullptr;
 }
 
-bool Item::overlaps(Item &item2) const {
+bool Item::overlaps(const Item &item2) const {
 	int32 x1a, y1a, z1a, x1b, y1b, z1b;
 	int32 x2a, y2a, z2a, x2b, y2b, z2b;
 	getLocation(x1b, y1b, z1a);
@@ -485,7 +485,7 @@ bool Item::overlaps(Item &item2) const {
 	return true;
 }
 
-bool Item::overlapsxy(Item &item2) const {
+bool Item::overlapsxy(const Item &item2) const {
 	int32 x1a, y1a, z1a, x1b, y1b;
 	int32 x2a, y2a, z2a, x2b, y2b;
 	getLocation(x1b, y1b, z1a);
@@ -505,7 +505,7 @@ bool Item::overlapsxy(Item &item2) const {
 	return true;
 }
 
-bool Item::isOn(Item &item2) const {
+bool Item::isOn(const Item &item2) const {
 	int32 x1a, y1a, z1a, x1b, y1b;
 	int32 x2a, y2a, z2a, x2b, y2b, z2b;
 	getLocation(x1b, y1b, z1a);
@@ -526,6 +526,49 @@ bool Item::isOn(Item &item2) const {
 	if (z2b == z1a) return true;
 	return false;
 }
+
+bool Item::isCompletelyOn(const Item &item2) const {
+	// FIXME: this is just a copy of isOn at the moment
+	int32 x1a, y1a, z1a, x1b, y1b;
+	int32 x2a, y2a, z2a, x2b, y2b, z2b;
+	getLocation(x1b, y1b, z1a);
+	item2.getLocation(x2b, y2b, z2a);
+
+	int32 xd, yd, zd;
+	getFootpadWorld(xd, yd, zd);
+	x1a = x1b - xd;
+	y1a = y1b - yd;
+
+	item2.getFootpadWorld(xd, yd, zd);
+	x2a = x2b - xd;
+	y2a = y2b - yd;
+	z2b = z2a + zd;
+
+	if (x1b <= x2a || x2b <= x1a) return false;
+	if (y1b <= y2a || y2b <= y1a) return false;
+	if (z2b == z1a) return true;
+	return false;
+}
+
+bool Item::isCentreOn(const Item &item2) const {
+	int32 x1c, y1c, z1c;
+	int32 x2a, y2a, z2a, x2b, y2b, z2b;
+	item2.getLocation(x2b, y2b, z2a);
+
+	getCentre(x1c, y1c, z1c);
+
+	int32 xd, yd, zd;
+	item2.getFootpadWorld(xd, yd, zd);
+	x2a = x2b - xd;
+	y2a = y2b - yd;
+	z2b = z2a + zd;
+
+	if (x1c <= x2a || x2b <= x1c) return false;
+	if (y1c <= y2a || y2b <= y1c) return false;
+	if (z2b == z1c) return true;
+	return false;
+}
+
 
 bool Item::canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
@@ -2487,6 +2530,18 @@ uint32 Item::I_isOn(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item2) return 0;
 
 	if (item->isOn(*item2))
+		return 1;
+	else
+		return 0;
+}
+
+uint32 Item::I_isCentreOn(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_ITEM_FROM_ID(item2);
+	if (!item) return 0;
+	if (!item2) return 0;
+
+	if (item->isCentreOn(*item2))
 		return 1;
 	else
 		return 0;

@@ -160,7 +160,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void I_NPCSetActivityProbably_055(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"void Intrinsic056(2 bytes)",
 	"int16 Item::I_getSOMETHING_57(Item *)",
-	"byte Item::I_doSOMETHING_58(Item *, uint16 unk)",
+	"byte Item::Item::I_isCentreOn(Item *, uint16 other)",
 	"void Item::I_setFrame(Item *, frame)", // based on same coff as 002
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Point *)", // see PEPSIEW::use
@@ -388,7 +388,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"void Item::I_getFootpadData(Item *, uint *, uint *, uint *)", // same coff as 064
 	"byte Actor::I_isDead(Item *)", // same coff as 122, 039
-	"int16 Intrinsic12F(Item *, uint16 other_itemno)",
+	"int16 MonsterEgg::I_monsterEggHatch(Item *, uint16 other_itemno)",
 	// 0130
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 07B
 	"void I_NPCSetActivityProbably_131(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
