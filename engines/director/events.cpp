@@ -141,25 +141,10 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				break;
 
 			case Common::EVENT_KEYDOWN:
-				_keyCode = event.kbd.keycode;
+				_keyCode = _macKeyCodes.contains(event.kbd.keycode) ? _macKeyCodes[event.kbd.keycode] : 0;
 				_key = (unsigned char)(event.kbd.ascii & 0xff);
 
-				switch (_keyCode) {
-				case Common::KEYCODE_LEFT:
-					_keyCode = 123;
-					break;
-				case Common::KEYCODE_RIGHT:
-					_keyCode = 124;
-					break;
-				case Common::KEYCODE_DOWN:
-					_keyCode = 125;
-					break;
-				case Common::KEYCODE_UP:
-					_keyCode = 126;
-					break;
-				default:
-					debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
-				}
+				debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 
 				sc->_lastEventTime = g_director->getMacTicks();
 				sc->_lastKeyTime = sc->_lastEventTime;

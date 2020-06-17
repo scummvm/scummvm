@@ -125,6 +125,7 @@ public:
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
 	void setCursor(int type); // graphics.cpp
+	void loadKeyCodes();
 
 	void loadInitialMovie(const Common::String movie);
 	Archive *openMainArchive(const Common::String movie);
@@ -147,6 +148,7 @@ public:
 	int _colorDepth;
 	unsigned char _key;
 	int _keyCode;
+	Common::HashMap<int, int> _macKeyCodes;
 	int _machineType;
 	bool _playbackPaused;
 	bool _skipFrameAdvance;

@@ -73,6 +73,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load Patterns
 	loadPatterns();
 
+	// Load key codes
+	loadKeyCodes();
+
 	_currentScore = nullptr;
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
