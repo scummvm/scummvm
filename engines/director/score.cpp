@@ -47,13 +47,12 @@ Channel::Channel(Sprite *sp) {
 
 	if (_sprite && _sprite->_castType != kCastTypeNull) {
 		_sprite->updateCast();
-		updateLocation();
 	}
 }
 
 Common::Rect Channel::getBbox() {
 	Common::Rect bbox = _sprite->getDims();
-	bbox.moveTo(_currentPoint);
+	bbox.moveTo(getPosition());
 
 	return bbox;
 }
@@ -69,6 +68,19 @@ void Channel::addDelta(Common::Point pos) {
 	// This method is for easily implementing constraint of sprite
 
 	_delta += pos;
+}
+
+Common::Point Channel::getPosition() {
+	Common::Point res = _currentPoint;
+
+	if (_sprite->_castType == kCastBitmap) {
+		BitmapCast *bc = (BitmapCast *)(_sprite->_cast);
+
+		res += Common::Point(bc->_initialRect.left - bc->_regX,
+												 bc->_initialRect.top - bc->_regY);
+	}
+
+	return res;
 }
 
 void Channel::resetPosition() {
@@ -371,7 +383,7 @@ void Score::startLoop() {
 	}
 
 	// All frames in the same movie have the same number of channels
-	for (int i = _frames[1]->_sprites.size() - 1; i >= 0; i--) {
+	for (uint i = 0; i < _frames[1]->_sprites.size(); i++) {
 		_channels.push_back(new Channel(_frames[1]->_sprites[i]));
 	}
 

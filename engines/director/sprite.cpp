@@ -227,12 +227,6 @@ void Sprite::setCast(uint16 castId) {
 		}
 	}
 
-	if (_castType == kCastBitmap && _cast) {
-		BitmapCast *bc = (BitmapCast *)_cast;
-
-		_startPoint += Common::Point(bc->_initialRect.left - bc->_regX, bc->_initialRect.top - bc->_regY);
-	}
-
 	_dirty = true;
 }
 
@@ -248,13 +242,6 @@ Common::Rect Sprite::getDims() {
 	} else {
 		if (_cast && _cast->_widget) {
 			result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
-
-			if (_castType == kCastBitmap) {
-				BitmapCast *bc = (BitmapCast *)_cast;
-				int offsety = bc->_initialRect.top - bc->_regY;
-				int offsetx = bc->_initialRect.left - bc->_regX;
-				result.translate(offsetx, offsety);
-			}
 		}
 	}
 

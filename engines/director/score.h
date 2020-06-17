@@ -95,6 +95,7 @@ struct Channel {
 
 	Channel(Sprite *sp);
 	Common::Rect getBbox();
+	Common::Point getPosition();
 	void updateLocation();
 	void addDelta(Common::Point pos);
 	void resetPosition();

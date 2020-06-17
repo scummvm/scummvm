@@ -706,7 +706,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_blend;
 		break;
 	case kTheBottom:
-		d.u.i = sprite->getDims().bottom + channel->_currentPoint.y;
+		d.u.i = channel->getBbox().bottom;
 		break;
 	case kTheCastNum:
 		d.u.i = sprite->_castId;
@@ -730,7 +730,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_ink;
 		break;
 	case kTheLeft:
-		d.u.i = sprite->getDims().left + channel->_currentPoint.x;
+		d.u.i = channel->getBbox().left;
 		break;
 	case kTheLineSize:
 		d.u.i = sprite->_thickness & 0x3;
@@ -757,7 +757,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_puppet;
 		break;
 	case kTheRight:
-		d.u.i = sprite->getDims().right + channel->_currentPoint.x;
+		d.u.i = channel->getBbox().right;
 		break;
 	case kTheStartTime:
 		d.u.i = sprite->_startTime;
@@ -769,7 +769,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_stretch;
 		break;
 	case kTheTop:
-		d.u.i = sprite->getDims().top + channel->_currentPoint.y;
+		d.u.i = channel->getBbox().top;
 		break;
 	case kTheTrails:
 		d.u.i = sprite->_trails;
@@ -856,7 +856,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.x, 0));
 		break;
 	case kTheLocV:
-		channel->addDelta(Common::Point(0, d.asInt() - channel->_currentPoint.y));
+		channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.y, 0));
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.asInt();
