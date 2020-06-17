@@ -81,7 +81,8 @@ MacOSXTextToSpeechManager::~MacOSXTextToSpeechManager() {
 	[synthesizerDelegate release];
 }
 
-bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::String encoding) {
+bool MacOSXTextToSpeechManager::say(const Common::U32String &text, Action action, Common::String encoding) {
+	Common::String strToSpeak = text.encode();
 	if (isSpeaking()) {
 		// Interruptions are done on word boundaries for nice transitions.
 		// Should we interrupt immediately?
@@ -94,14 +95,14 @@ bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::
 			// If the new speech is the one being currently said, continue that speech but clear the queue.
 			// And otherwise both clear the queue and interrupt the current speech.
 			_messageQueue.clear();
-			if (_currentSpeech == text)
+			if (_currentSpeech == strToSpeak)
 				return true;
 			[synthesizer stopSpeakingAtBoundary:NSSpeechWordBoundary];
 		} else if (action == QUEUE_NO_REPEAT) {
 			if (!_messageQueue.empty()) {
-				if (_messageQueue.back().text == text)
+				if (_messageQueue.back().text == strToSpeak)
 					return true;
-			} else if (_currentSpeech == text)
+			} else if (_currentSpeech == strToSpeak)
 				return true;
 		}
 	}
@@ -112,7 +113,7 @@ bool MacOSXTextToSpeechManager::say(Common::String text, Action action, Common::
 #endif
 	}
 
-	_messageQueue.push(SpeechText(text, encoding));
+	_messageQueue.push(SpeechText(strToSpeak, encoding));
 	if (!isSpeaking())
 		startNextSpeech();
 	return true;
