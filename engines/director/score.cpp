@@ -383,9 +383,9 @@ void Score::startLoop() {
 	}
 
 	// All frames in the same movie have the same number of channels
-	for (uint i = 0; i < _frames[1]->_sprites.size(); i++) {
-		_channels.push_back(new Channel(_frames[1]->_sprites[i]));
-	}
+	if (!_stopPlay)
+		for (uint i = 0; i < _frames[1]->_sprites.size(); i++)
+			_channels.push_back(new Channel(_frames[1]->_sprites[i]));
 
 	_lingo->processEvent(kEventStartMovie);
 
