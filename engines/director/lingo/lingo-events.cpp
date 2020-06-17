@@ -309,6 +309,10 @@ void Lingo::processEvent(LEvent event) {
 void Lingo::processEvents() {
 	while (!_eventQueue.empty()) {
 		LingoEvent el = _eventQueue.pop();
+
+		if (_vm->getCurrentScore()->_stopPlay && el.event != kEventStopMovie)
+			continue;
+
 		processEvent(el.event, el.st, el.entityId, el.channelId);
 	}
 }
