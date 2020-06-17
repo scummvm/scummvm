@@ -508,8 +508,13 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 				data = (byte *)malloc(resources[i].size);
 				dataSize = resources[i].size;
 			}
+			Common::String prepend;
+			if (_fileName.size() != 0)
+				prepend = _fileName;
+			else
+				prepend = "stream";
 
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", _fileName.c_str(), tag2str(resources[i].tag), i);
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(resources[i].tag), i);
 			stream->read(data, len);
 
 			if (!out.open(filename)) {
