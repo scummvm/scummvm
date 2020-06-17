@@ -597,8 +597,8 @@ struct AgiGame {
 
 		automaticRestoreGame = false;
 
-		appleIIgsSpeedControllerSlot = 0xffff;
-		appleIIgsSpeedLevel = 2;  // normal
+		appleIIgsSpeedControllerSlot = 0xffff;	// we didn't add yet speed menu
+		appleIIgsSpeedLevel = 2;  // normal speed
 	}
 };
 

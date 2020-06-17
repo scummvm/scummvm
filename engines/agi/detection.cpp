@@ -191,6 +191,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_APPLE2GS_ADD_SPEED_MENU,
+		{
+			_s("Add speed menu"),
+			_s("Add game speed menu (similar to PC version)"),
+			"apple2gs_speedmenu",
+			false
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
