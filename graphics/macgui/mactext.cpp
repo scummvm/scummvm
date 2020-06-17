@@ -853,7 +853,8 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 }
 
 bool MacText::draw(bool forceRedraw) {
-	if ((!_contentIsDirty && !_cursorDirty && !forceRedraw) || _textLines.empty())
+
+	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
 		return false;
 
 	if (!_surface) {
@@ -1217,6 +1218,9 @@ void MacText::scroll(int delta) {
 }
 
 void MacText::startMarking(int x, int y) {
+	if (_textLines.size() == 0)
+		return;
+
 	x -= getDimensions().left - 2;
 	y -= getDimensions().top;
 
