@@ -121,8 +121,7 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
 	if (_playingStream) {
-		// FIXME: This gets use-after-free.. is it deleted already?
-		//delete _playingStream;
+		delete _playingStream;
 		_playingStream = nullptr;
 	}
 
@@ -137,18 +136,22 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 			return;
 		}
 
-		_playingStream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::YES);
+		_playingStream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::NO);
 		if (!_playingStream) {
 			error("Couldn't create stream from AMF file: %s", fname.c_str());
 			return;
 		}
-		mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _playingStream);
+		mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _playingStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 }
 
 void RemorseMusicProcess::run() {
-	if (!_playingStream || !_playingStream->endOfStream()) {
-		// nothing to do
+	if (!_playingStream) {
+		return;
+	}
+	if (_playingStream->endOfStream()) {
+		delete _playingStream;
+		_playingStream = nullptr;
 		return;
 	}
 	// hit end of stream, play it again.
