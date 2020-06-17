@@ -2266,7 +2266,7 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 			perr << "Trying to access stack of non-existent "
 			     << "process (pid: " << segment << ")" << Std::endl;
 			return 0;
-		} else if (proc->_stack.getSize() < offset + 2) {
+		} else if (proc->_stack.getSize() < (uint32)offset + 2) {
 			perr << "Trying to access past end of stack offset " << offset
 			     << " (size: " << proc->_stack.getSize()
 				 << ") process (pid: " << segment << ")" << Std::endl;
