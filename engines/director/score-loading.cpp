@@ -880,15 +880,16 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 			}
 		} else {
 			if (!ci->script.empty()) {
+				ScriptType scriptType = kCastScript;
+				// the script type here could be wrong!
 				if (member->_type == kCastLingoScript) {
-					// the script type here could be wrong!
-					if (ConfMan.getBool("dump_scripts"))
-						dumpScript(ci->script.c_str(), ((ScriptCast *)member)->_scriptType, id);
-
-					_lingo->addCode(ci->script.c_str(), _lingoArchive, ((ScriptCast *)member)->_scriptType, id);
-				} else {
-					warning("Score::loadCastData(): Wrong cast type: %d", member->_type);
+					scriptType = ((ScriptCast *)member)->_scriptType;
 				}
+
+				if (ConfMan.getBool("dump_scripts"))
+					dumpScript(ci->script.c_str(), scriptType, id);
+
+				_lingo->addCode(ci->script.c_str(), _lingoArchive, scriptType, id);
 			}
 		}
 
