@@ -370,10 +370,10 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	currentFunc.u.defn = _currentAssembly;
 	// guess the name. don't actually bind it to the event, there's a seperate
 	// triggering mechanism for that.
-	if (type == kFrameScript) {
-		currentFunc.name = new Common::String("enterFrame");
-	} else if (type == kSpriteScript) {
-		currentFunc.name = new Common::String("mouseUp");
+	if (type == kScoreScript) {
+		currentFunc.name = new Common::String("[score script]");
+	} else if (type == kCastScript) {
+		currentFunc.name = new Common::String("[cast script");
 	} else {
 		currentFunc.name = new Common::String("[unknown]");
 	}
@@ -1023,9 +1023,9 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 5)
-				g_lingo->processEvent(kEventNone, kFrameScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventNone, kScoreScript, frame->_sprites[i]->_scriptId, i);
 			else
-				g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);
 		}
 	}
 }

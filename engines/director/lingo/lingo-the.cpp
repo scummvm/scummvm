@@ -1088,7 +1088,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			return;
 		}
 		// FIXME: What if the cast member is in a different archive than the current one?
-		addCode(d.u.s->c_str(), _archiveIndex, kSpriteScript, id);
+		addCode(d.u.s->c_str(), _archiveIndex, kCastScript, id);
 
 		castInfo->script = d.asString();
 		break;

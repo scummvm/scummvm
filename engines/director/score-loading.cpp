@@ -44,8 +44,6 @@ namespace Director {
 
 const char *scriptTypes[] = {
 	"MovieScript",
-	"SpriteScript",
-	"FrameScript",
 	"CastScript",
 	"GlobalScript",
 	"ScoreScript"
@@ -1002,7 +1000,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	if (ConfMan.getBool("dump_scripts"))
 		for (j = _actions.begin(); j != _actions.end(); ++j) {
 			if (!j->_value.empty())
-				dumpScript(j->_value.c_str(), kFrameScript, j->_key);
+				dumpScript(j->_value.c_str(), kScoreScript, j->_key);
 		}
 
 	for (j = _actions.begin(); j != _actions.end(); ++j) {
@@ -1011,7 +1009,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			// continue;
 		}
 		if (!j->_value.empty()) {
-			_lingo->addCode(j->_value.c_str(), _lingoArchive, kFrameScript, j->_key);
+			_lingo->addCode(j->_value.c_str(), _lingoArchive, kScoreScript, j->_key);
 
 			processImmediateFrameScript(j->_value, j->_key);
 		}
@@ -1125,10 +1123,10 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	ci->script = castStrings[0];
 
 	if (!ci->script.empty() && ConfMan.getBool("dump_scripts"))
-		dumpScript(ci->script.c_str(), kSpriteScript, id);
+		dumpScript(ci->script.c_str(), kCastScript, id);
 
 	if (!ci->script.empty())
-		_lingo->addCode(ci->script.c_str(), _lingoArchive, kSpriteScript, id);
+		_lingo->addCode(ci->script.c_str(), _lingoArchive, kCastScript, id);
 
 	ci->name = getString(castStrings[1]);
 	ci->directory = getString(castStrings[2]);

@@ -522,14 +522,8 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	case kNoneScript:
 	default:
 		error("dumpScriptName(): Incorrect call (type %d)", type);
-	case kFrameScript:
-		typeName = "frame";
-		break;
 	case kMovieScript:
 		typeName = "movie";
-		break;
-	case kSpriteScript:
-		typeName = "sprite";
 		break;
 	case kCastScript:
 		typeName = "cast";

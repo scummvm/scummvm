@@ -88,7 +88,7 @@ ScriptType Lingo::event2script(LEvent ev) {
 		//case kEventStartMovie: // We are precompiling it now
 		//	return kMovieScript;
 		case kEventEnterFrame:
-			return kFrameScript;
+			return kScoreScript;
 		default:
 			return kNoneScript;
 		}
@@ -161,10 +161,10 @@ void Lingo::registerInputEvent(LEvent event) {
 	if (_vm->getVersion() > 3) {
 		if (true) {
 			// TODO: Check whether occurring over a sprite
-			_eventQueue.push(LingoEvent(event, kSpriteScript, sprite->_scriptId));
+			_eventQueue.push(LingoEvent(event, kScoreScript, sprite->_scriptId));
 		}
 		_eventQueue.push(LingoEvent(event, kCastScript, sprite->_castId));
-		_eventQueue.push(LingoEvent(event, kFrameScript, currentFrame->_actionId));
+		_eventQueue.push(LingoEvent(event, kScoreScript, currentFrame->_actionId));
 		// TODO: Is the kFrameScript call above correct?
 	} else if (event == kEventMouseDown || event == kEventMouseUp) {
 		// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
@@ -175,14 +175,14 @@ void Lingo::registerInputEvent(LEvent event) {
 			queueEventNone = true;
 		}
 	
-		// Frame script overrides sprite script
+		// Score (sprite) script overrides cast script
 		if (sprite->_scriptId) {
 			if (queueEventNone)
-				_eventQueue.push(LingoEvent(kEventNone, kFrameScript, sprite->_scriptId, spriteId));
+				_eventQueue.push(LingoEvent(kEventNone, kScoreScript, sprite->_scriptId, spriteId));
 		} else {
 			if (queueEventNone)
-				_eventQueue.push(LingoEvent(kEventNone, kSpriteScript, sprite->_castId));
-			_eventQueue.push(LingoEvent(event, kSpriteScript, sprite->_castId));
+				_eventQueue.push(LingoEvent(kEventNone, kCastScript, sprite->_castId));
+			_eventQueue.push(LingoEvent(event, kCastScript, sprite->_castId));
 		}
 	}
 
@@ -235,7 +235,7 @@ void Lingo::registerFrameEvent(LEvent event) {
 		assert(score->_frames[score->getCurrentFrame()] != nullptr);
 		entity = score->_frames[score->getCurrentFrame()]->_actionId;
 	}
-	_eventQueue.push(LingoEvent(event, kFrameScript, entity));
+	_eventQueue.push(LingoEvent(event, kScoreScript, entity));
 
 	runMovieScript(event);
 }
