@@ -689,8 +689,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	}
 
 	Channel *channel = score->getChannelById(id);
-	Sprite *sprite = channel->_sprite;
+	if (!channel)
+		return d;
 
+	Sprite *sprite = channel->_sprite;
 	if (!sprite)
 		return d;
 
@@ -810,8 +812,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	}
 
 	Channel *channel = score->getChannelById(id);
-	Sprite *sprite = channel->_sprite;
+	if (!channel)
+		return;
 
+	Sprite *sprite = channel->_sprite;
 	if (!sprite)
 		return;
 
