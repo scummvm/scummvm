@@ -64,6 +64,7 @@ public:
 	void updateCast();
 	void translate(Common::Point delta, bool moveTo = false);
 	bool isDirty();
+	bool isActive();
 	void setClean();
 	uint16 getPattern();
 	void setPattern(uint16 pattern);

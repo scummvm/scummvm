@@ -107,6 +107,10 @@ bool Sprite::isDirty() {
 	return _castType != kCastTypeNull && (_dirty || (_cast && _cast->isModified()));
 }
 
+bool Sprite::isActive() {
+	return _moveable || _puppet || _scriptId;
+}
+
 void Sprite::setClean() {
 	_dirty = false;
 	if (_cast)

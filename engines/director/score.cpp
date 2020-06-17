@@ -766,9 +766,9 @@ const Stxt *Score::getStxt(int castId) {
 	return result;
 }
 
-uint16 Score::getSpriteIDFromPos(Common::Point pos) {
+uint16 Score::getSpriteIDFromPos(Common::Point pos, bool onlyActive) {
 	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->getBbox().contains(pos))
+		if (_channels[i]->getBbox().contains(pos) && (!onlyActive || _channels[i]->_sprite->isActive()))
 			return i;
 
 	return 0;

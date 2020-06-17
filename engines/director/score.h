@@ -140,7 +140,7 @@ public:
 	int getCurrentLabelNumber();
 	int getNextLabelNumber(int referenceFrame);
 
-	uint16 getSpriteIDFromPos(Common::Point pos);
+	uint16 getSpriteIDFromPos(Common::Point pos, bool onlyActive = false);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 
 	Cast *getCastMember(int castId);

@@ -99,7 +99,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				// D3 doesn't have both mouse up and down.
 				// But we still want to know if the mouse is down for press effects.
-				spriteId = sc->getSpriteIDFromPos(pos);
+				spriteId = sc->getSpriteIDFromPos(pos, true);
 				sc->_currentMouseDownSpriteId = spriteId;
 				if (sc->getSpriteById(spriteId)->_scriptId)
 					sc->_currentClickOnSpriteId = spriteId;
@@ -118,7 +118,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 			case Common::EVENT_LBUTTONUP:
 				pos = g_system->getEventManager()->getMousePos();
 
-				spriteId = sc->getSpriteIDFromPos(pos);
+				spriteId = sc->getSpriteIDFromPos(pos, true);
 
 				if (!sc->getChannelById(sc->_currentMouseDownSpriteId)->getBbox().contains(pos))
 					sc->_currentMouseDownSpriteId = 0;
