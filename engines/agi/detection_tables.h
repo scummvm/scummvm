@@ -27,10 +27,12 @@ namespace Agi {
 #define GAMEOPTION_DISABLE_MOUSE              GUIO_GAMEOPTIONS3
 #define GAMEOPTION_USE_HERCULES_FONT          GUIO_GAMEOPTIONS4
 #define GAMEOPTION_COMMAND_PROMPT_WINDOW      GUIO_GAMEOPTIONS5
-// TODO: properly implement GAMEOPTIONs
+#define GAMEOPTION_APPLE2GS_ADD_SPEED_MENU    GUIO_GAMEOPTIONS6
+	// TODO: properly implement GAMEOPTIONs
 
 #define GAMEOPTIONS_DEFAULT                   GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
 #define GAMEOPTIONS_AMIGA                     GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_APPLE2GS                  GUIO5(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW, GAMEOPTION_APPLE2GS_ADD_SPEED_MENU)
 #define GAMEOPTIONS_FANMADE_MOUSE             GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
 
 #define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
@@ -420,7 +422,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
 	// Menus not tested
-	GAME3_P("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS),
+	GAME3_PO("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// King's Quest 4 demo (PC) [AGI 3.002.102]
 	// Menus not tested
@@ -523,13 +525,13 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("pq1", "2.0G 1987-12-03", "805750b66c1c5b88a214e67bfdca17a1", 0x2440, GID_PQ1, Common::kPlatformMacintosh),
 
 	// Police Quest 1 (IIgs) 2.0B-88421
-	GAME_P("pq1", "2.0B 1988-04-21", "e7c175918372336461e3811d594f482f", 0x2917, GID_PQ1, Common::kPlatformApple2GS),
+	GAME_PO("pq1", "2.0B 1988-04-21", "e7c175918372336461e3811d594f482f", 0x2917, GID_PQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Police Quest 1 (Amiga) 2.0B 2/22/89  # 2.310
 	GAME3_PSO("pq1", "2.0B 1989-02-22", "dirs", "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613, 0x3149, 0, GID_PQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Police Quest 1 (IIgs) 2.0A-88318
-	GAME_P("pq1", "2.0A 1988-03-18", "8994e39d0901de3d07cecfb954075bb5", 0x2917, GID_PQ1, Common::kPlatformApple2GS),
+	GAME_PO("pq1", "2.0A 1988-03-18", "8994e39d0901de3d07cecfb954075bb5", 0x2917, GID_PQ1, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	// Police Quest 1 (PC) 2.0A 10/23/87 [AGI 2.903/2.911]
 	GAME("pq1", "2.0A 1987-10-23", "b9dbb305092851da5e34d6a9f00240b1", 0x2917, GID_PQ1),
@@ -602,7 +604,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// The SQ2 IIgs AGI definitely has 177 kernel functions, but it seems that Sierra shuffled the last few around / added a few extras at the end.
 	// For KQ3 set.pri.base is called with parameters that seem to be sound resources, which means
 	// set.pri.base was possibly discard.sound. For KQ4 onwards it seems this was cleaned up.
-	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2917, GID_SQ2, Common::kPlatformApple2GS),
+	GAME_PO("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2917, GID_SQ2, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
 	{
 		// Space Quest 2 (Amiga) 2.0F
