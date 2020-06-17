@@ -701,4 +701,23 @@ void AgiEngine::artificialDelayTrigger_DrawPicture(int16 newPictureNr) {
 	_artificialDelayCurrentPicture = newPictureNr;
 }
 
+void AgiGame::setAppleIIgsSpeedLevel(int i) {
+	appleIIgsSpeedLevel = i;
+	_vm->setVar(VM_VAR_WINDOW_AUTO_CLOSE_TIMER, 6);
+	switch (i) {
+	case 0:
+		_vm->_text->messageBox("Fastest speed.");
+		break;
+	case 1:
+		_vm->_text->messageBox("Fast speed.");
+		break;
+	case 2:
+		_vm->_text->messageBox("Normal speed.");
+		break;
+	case 3:
+		_vm->_text->messageBox("Slow speed.");
+		break;
+	}
+}
+
 } // End of namespace Agi
