@@ -103,7 +103,7 @@ void SoundPC98_EoB::haltTrack() {
 	playTrack(0);
 }
 
-void SoundPC98_EoB::playSoundEffect(uint8 track, uint8) {
+void SoundPC98_EoB::playSoundEffect(uint16 track, uint8) {
 	if (_currentResourceSet != kMusicIngame || !_sfxEnabled || !_ready || track >= 120 || (track != 28 && _sfxDelay > _vm->_system->getMillis()))
 		return;
 	_driver->startSoundEffect(track);

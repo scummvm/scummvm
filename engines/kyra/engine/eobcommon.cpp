@@ -447,8 +447,6 @@ Common::Error EoBCoreEngine::init() {
 
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSfxFile("EFECT.OBJ");
-	else if (_flags.platform == Common::kPlatformSegaCD)
-		_sound->loadSfxFile("FMSE");
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);
@@ -2282,7 +2280,7 @@ void EoBCoreEngine::inflictCharacterDamage(int charIndex, int damage) {
 		c->flags &= 1;
 		c->food = 0;
 		removeAllCharacterEffects(charIndex);
-		snd_playSoundEffect(22);
+		snd_playSoundEffect(_flags.platform == Common::kPlatformSegaCD ? 0x8001 + (c->raceSex & 1) : 22);
 	}
 
 	if (c->effectsRemainder[0]) {
@@ -2711,6 +2709,9 @@ void EoBCoreEngine::snd_playLevelScore() {
 void EoBCoreEngine::snd_playSoundEffect(int track, int volume) {
 	if ((track < 1) || (_flags.gameID == GI_EOB2 && track > 119) || shouldQuit())
 		return;
+
+	if (_flags.platform == Common::kPlatformSegaCD && volume == 0xFF)
+		volume = 0x0E;
 
 	_sound->playSoundEffect(track, volume);
 }

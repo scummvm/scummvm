@@ -124,7 +124,7 @@ void SoundPC98_LoK::beginFadeOut() {
 	haltTrack();
 }
 
-void SoundPC98_LoK::playSoundEffect(uint8 track, uint8) {
+void SoundPC98_LoK::playSoundEffect(uint16 track, uint8) {
 	if (!_sfxTrackData)
 		return;
 

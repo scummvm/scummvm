@@ -235,7 +235,7 @@ bool MixedSoundDriver::isPlaying() const {
 	return _music->isPlaying() | _sfx->isPlaying();
 }
 
-void MixedSoundDriver::playSoundEffect(uint8 track, uint8 volume) {
+void MixedSoundDriver::playSoundEffect(uint16 track, uint8 volume) {
 	_sfx->playSoundEffect(track, volume);
 }
 

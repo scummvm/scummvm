@@ -141,6 +141,7 @@ MODULE_OBJS += \
 	sound/drivers/audiomaster2.o \
 	sound/drivers/mlalf98.o \
 	sound/drivers/pcspeaker_v1.o \
+	sound/drivers/segacd.o \
 	text/text_eob_segacd.o
 endif
 
