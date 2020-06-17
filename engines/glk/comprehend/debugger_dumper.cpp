@@ -104,7 +104,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
-        FunctionState *func_state, Instruction *instr) {
+        const FunctionState *func_state, const Instruction *instr) {
 	uint i;
 	int str_index, str_table;
 	uint8 *opcode_map, opcode;

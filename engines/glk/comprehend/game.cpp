@@ -289,7 +289,7 @@ bool ComprehendGame::handle_restart() {
 	}
 }
 
-WordIndex *ComprehendGame::is_word_pair(Word *word1, Word *word2) {
+WordIndex *ComprehendGame::is_word_pair(const Word *word1, const Word *word2) {
 	WordMap *map;
 	uint i;
 
@@ -307,7 +307,7 @@ WordIndex *ComprehendGame::is_word_pair(Word *word1, Word *word2) {
 	return nullptr;
 }
 
-Item *ComprehendGame::get_item_by_noun(Word *noun) {
+Item *ComprehendGame::get_item_by_noun(const Word *noun) {
 	uint i;
 
 	if (!noun || !(noun->_type & WORD_TYPE_NOUN_MASK))
@@ -482,8 +482,7 @@ void ComprehendGame::move_object(Item *item, int new_room) {
 }
 
 void ComprehendGame::eval_instruction(FunctionState *func_state,
-                             Instruction *instr,
-                             Word *verb, Word *noun) {
+		const Instruction *instr, const Word *verb, const Word *noun) {
 	const byte *opcode_map = _opcodeMap;
 	Room *room;
 	Item *item;
@@ -943,7 +942,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			      index, _functions.size());
 
 		debugC(kDebugScripts, "Calling subfunction %.4x", index);
-		eval_function(&_functions[index], verb, noun);
+		eval_function(_functions[index], verb, noun);
 		break;
 
 	case OPCODE_TEST_FALSE:
@@ -1020,16 +1019,16 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 	}
 }
 
-void ComprehendGame::eval_function(Function *func,
-                   Word *verb, Word *noun) {
+void ComprehendGame::eval_function(const Function &func,
+		const Word *verb, const Word *noun) {
 	FunctionState func_state;
 	uint i;
 
 	func_state._elseResult = true;
 	func_state._executed = false;
 
-	for (i = 0; i < func->_nr_instructions; i++) {
-		if (func_state._executed && !func->_instructions[i]._isCommand) {
+	for (i = 0; i < func._nr_instructions; i++) {
+		if (func_state._executed && !func._instructions[i]._isCommand) {
 			/*
 			 * At least one command has been executed and the
 			 * current instruction is a test. Exit the function.
@@ -1037,7 +1036,7 @@ void ComprehendGame::eval_function(Function *func,
 			break;
 		}
 
-		eval_instruction(&func_state, &func->_instructions[i],
+		eval_instruction(&func_state, &func._instructions[i],
 		                 verb, noun);
 	}
 }
@@ -1053,7 +1052,6 @@ void ComprehendGame::skip_non_whitespace(char **p) {
 }
 
 bool ComprehendGame::handle_sentence(Sentence *sentence) {
-	Function *func;
 	Action *action;
 	uint i, j;
 
@@ -1090,9 +1088,8 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		}
 		if (j == action->_nr_words) {
 			/* Match */
-			func = &_functions[action->_function];
-			eval_function(func,
-			              &sentence->_words[0], &sentence->_words[1]);
+			const Function &func = _functions[action->_function];
+			eval_function(func, &sentence->_words[0], &sentence->_words[1]);
 			return true;
 		}
 	}
@@ -1164,7 +1161,7 @@ void ComprehendGame::doBeforeTurn() {
 	beforeTurn();
 
 	// Run the each turn functions
-	eval_function(&_functions[0], NULL, NULL);
+	eval_function(_functions[0], nullptr, nullptr);
 
 	update();
 }

@@ -45,14 +45,14 @@ public:
 	const GameStrings *_gameStrings;
 
 private:
-	WordIndex *is_word_pair(Word *word1, Word *word2);
-	Item *get_item_by_noun(Word *noun);
+	WordIndex *is_word_pair(const Word *word1, const Word *word2);
+	Item *get_item_by_noun(const Word *noun);
 	void describe_objects_in_current_room();
 	void update();
 	void func_set_test_result(FunctionState *func_state, bool value);
 	size_t num_objects_in_room(int room);
-	void eval_instruction(FunctionState *func_state, Instruction *instr,
-		Word *verb, Word *noun);
+	void eval_instruction(FunctionState *func_state, const Instruction *instr,
+		const Word *verb, const Word *noun);
 	void skip_whitespace(char **p);
 	void skip_non_whitespace(char **p);
 	bool handle_sentence(Sentence *sentence);
@@ -81,7 +81,7 @@ protected:
 	 * is reached. Otherwise the commands instructions are skipped over and the
 	 * next test sequence (if there is one) is tried.
 	 */
-	void eval_function(Function *func, Word *verb, Word *noun);
+	void eval_function(const Function &func, const Word *verb, const Word *noun);
 
 	void parse_header(FileBuffer *fb) override {
 		GameData::parse_header(fb);
