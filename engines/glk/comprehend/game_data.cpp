@@ -121,14 +121,6 @@ void Instruction::clear() {
 
 /*-------------------------------------------------------*/
 
-void Function::clear() {
-	_nr_instructions = 0;
-	for (int idx = 0; idx < 0x100; ++idx)
-		_instructions[idx].clear();
-}
-
-/*-------------------------------------------------------*/
-
 void GameHeader::clear() {
 	magic = 0;
 	room_desc_table = 0;
@@ -205,8 +197,9 @@ uint8 GameData::parse_vm_instruction(FileBuffer *fb,
 	return instr->_opcode;
 }
 
+#define MAX_FUNCTION_SIZE 0x100
+
 void GameData::parse_function(FileBuffer *fb, Function *func) {
-	Instruction *instruction;
 	const uint8 *p;
 	uint8 opcode;
 
@@ -214,17 +207,18 @@ void GameData::parse_function(FileBuffer *fb, Function *func) {
 	if (!p)
 		error("bad function @ %.4x", fb->pos());
 
-	while (1) {
-		instruction = &func->_instructions[func->_nr_instructions];
+	for (;;) {
+		Instruction instruction;
 
-		opcode = parse_vm_instruction(fb, instruction);
+		opcode = parse_vm_instruction(fb, &instruction);
 		if (opcode == 0)
 			break;
 
-		func->_nr_instructions++;
-		if (func->_nr_instructions >= ARRAY_SIZE(func->_instructions))
-			error("Function has too many instructions");
+		func->push_back(instruction);
+		assert(func->size() <= MAX_FUNCTION_SIZE);
 	}
+
+	assert(fb->dataPtr() == (p + 1));
 }
 
 void GameData::parse_vm(FileBuffer *fb) {
@@ -234,7 +228,7 @@ void GameData::parse_vm(FileBuffer *fb) {
 		Function func;
 
 		parse_function(fb, &func);
-		if (func._nr_instructions == 0)
+		if (func.empty())
 			break;
 
 		_functions.push_back(func);

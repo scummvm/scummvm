@@ -1027,8 +1027,8 @@ void ComprehendGame::eval_function(const Function &func,
 	func_state._elseResult = true;
 	func_state._executed = false;
 
-	for (i = 0; i < func._nr_instructions; i++) {
-		if (func_state._executed && !func._instructions[i]._isCommand) {
+	for (i = 0; i < func.size(); i++) {
+		if (func_state._executed && !func[i]._isCommand) {
 			/*
 			 * At least one command has been executed and the
 			 * current instruction is a test. Exit the function.
@@ -1036,7 +1036,7 @@ void ComprehendGame::eval_function(const Function &func,
 			break;
 		}
 
-		eval_instruction(&func_state, &func._instructions[i],
+		eval_instruction(&func_state, &func[i],
 		                 verb, noun);
 	}
 }

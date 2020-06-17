@@ -287,16 +287,7 @@ struct Instruction {
 	void clear();
 };
 
-struct Function {
-	Instruction _instructions[0x100];
-	size_t _nr_instructions;
-
-	Function() {
-		clear();
-	}
-
-	void clear();
-};
+typedef Common::Array<Instruction> Function;
 
 typedef Common::StringArray StringTable;
 

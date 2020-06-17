@@ -159,16 +159,15 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 }
 
 void DebuggerDumper::dumpFunctions() {
-	Function *func;
 	uint i, j;
 
 	print("Functions (%u entries)\n", _game->_functions.size());
 	for (i = 0; i < _game->_functions.size(); i++) {
-		func = &_game->_functions[i];
+		const Function &func = _game->_functions[i];
 
-		print("[%.4x] (%u instructions)\n", i, (uint)func->_nr_instructions);
-		for (j = 0; j < func->_nr_instructions; j++) {
-			Common::String line = dumpInstruction(_game, NULL, &func->_instructions[j]);
+		print("[%.4x] (%u instructions)\n", i, func.size());
+		for (j = 0; j < func.size(); j++) {
+			Common::String line = dumpInstruction(_game, NULL, &func[j]);
 			print("%s", line.c_str());
 		}
 		print("\n");
