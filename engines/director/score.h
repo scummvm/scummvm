@@ -48,7 +48,7 @@ class Frame;
 struct Label;
 class Lingo;
 struct Resource;
-class Channel;
+struct Channel;
 class Sprite;
 class Stxt;
 class BitmapCast;
