@@ -177,7 +177,7 @@ void SpeechDispatcherManager::updateState(SpeechDispatcherManager::SpeechEvent e
 	}
 }
 
-bool SpeechDispatcherManager::say(Common::String str, Action action, Common::String charset) {
+bool SpeechDispatcherManager::say(const Common::U32String &str, Action action, Common::String charset) {
 
 	pthread_mutex_lock(&_speechMutex);
 	// reinitialize if needed
@@ -202,7 +202,9 @@ bool SpeechDispatcherManager::say(Common::String str, Action action, Common::Str
 #endif
 	}
 
-	char *tmpStr = Common::Encoding::convert("UTF-8", charset, str.c_str(), str.size());
+	Common::String strToSpeak = str.encode();
+
+	char *tmpStr = Common::Encoding::convert("UTF-8", charset, strToSpeak.c_str(), strToSpeak.size());
 	if (tmpStr == nullptr) {
 		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
 		pthread_mutex_unlock(&_speechMutex);
