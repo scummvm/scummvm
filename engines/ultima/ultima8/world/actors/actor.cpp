@@ -38,6 +38,7 @@
 #include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/clear_feign_death_process.h"
@@ -698,7 +699,8 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 		}
 	}
 
-	if (damage && !fallingprocid) {
+	// FIXME: What are the equivalent Crusader animations here?
+	if (damage && !fallingprocid && GAME_IS_U8) {
 		ProcId anim1pid = doAnim(Animation::stumbleBackwards, dir);
 		ProcId anim2pid;
 		if (isInCombat())

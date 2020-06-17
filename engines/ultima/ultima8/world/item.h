@@ -277,6 +277,9 @@ public:
 	//! Check if the centre of this item is on top of another item
 	bool isCentreOn(const Item &item2) const;
 
+	//! Check if the item is currently visible on screen
+	bool isOnScreen() const;
+
 	//! Check if this item can exist at the given coordinates
 	bool canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport = false) const;
 
@@ -508,6 +511,8 @@ public:
 	INTRINSIC(I_getDirFromCoords);
 	INTRINSIC(I_getDirToItem);
 	INTRINSIC(I_getDirFromItem);
+	INTRINSIC(I_getDirFromTo16);
+	INTRINSIC(I_getClosestDirectionInRange);
 	INTRINSIC(I_look);
 	INTRINSIC(I_use);
 	INTRINSIC(I_gotHit);
@@ -550,6 +555,7 @@ public:
 	INTRINSIC(I_equip);
 	INTRINSIC(I_unequip);
 	INTRINSIC(I_avatarStoleSomething);
+	INTRINSIC(I_isOnScreen);
 
 private:
 	uint32 _shape;   // DO NOT modify this directly! Always use setShape()!

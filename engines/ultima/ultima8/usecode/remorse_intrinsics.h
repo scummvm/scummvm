@@ -42,7 +42,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getStatus, // probably - see usage in GATGUNEW::enterFastArea - always followed by an AND against a single bit
 	Item::I_orStatus, // probably - see usage in GATGUNEW::enterFastArea
 	Item::I_equip, // void Intrinsic006(6 bytes)
-	0, // ? byte Item::I_getSOMETHING_07(Item *)
+	Item::I_isOnScreen, //
 	Actor::I_isNPC, // byte Intrinsic008(Item *) // probably.. disasm checks for < 256
 	Item::I_getZ, // byte Intrinsic009(4 bytes) // probably, see PEPSIEW::use() variable names
 	Item::I_destroy, // void Intrinsic00A(4 bytes) // probably, often called after creating replacement object in same position eg, LUGGAGE::gotHit
@@ -76,7 +76,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setShape, // Probably, see PEPSIEW::gotHit
 	Item::I_touch,
 	Item::I_getQHi, // int16 Intrinsic026(Item *), // guess, based on variable name in BOUNCBOX::gotHit
-	0, // int Intrinsic027(14 bytes)
+	Item::I_getClosestDirectionInRange, // int Intrinsic027(14 bytes)
 	Item::I_hurl, // int Intrinsic028(12 bytes)
 	UCMachine::I_true, // TODO: This is actually game difficulty level.  Make an intrinsic for that once it's implemented (for now return 1, easiest difficulty).
 	AudioProcess::I_playAmbientSFXCru, // Confirmed!
@@ -90,7 +90,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_andStatus,
 	Item::I_receiveHit, // void Intrinsic032(12 bytes)
 	Actor::I_isBusy, // int Intrinsic033(4 bytes)
-	0, // TODO: void Actor::I_getDir16(8 bytes)
+	Item::I_getDirFromTo16,
 	0, // int Intrinsic035(4 bytes)
 	Actor::I_doAnim, // void Intrinsic036(12 bytes)
 	0, // int Intrinsic037(4 bytes)
@@ -161,10 +161,10 @@ Intrinsic RemorseIntrinsics[] = {
 	Ultima8Engine::I_clrUnkCrusaderFlag, // void Intrinsic074(void)
 	Ultima8Engine::I_clrAvatarInStasis,
 	AudioProcess::I_stopSFXCru, // takes Item *, from disasm
-	0, // void Intrinsic077(void)
+	PaletteFaderProcess::I_fadeToBlack, // void Intrinsic077(void)
 	0, // void Intrinsic078(void)
 	MainActor::I_teleportToEgg, // different than U8's? void Intrinsic079(6 bytes)
-	0, // void Intrinsic07A(void)
+	PaletteFaderProcess::I_fadeFromBlack, // void Intrinsic07A(void)
 	Actor::I_clrImmortal, // based on disasm
 	0, // void Intrinsic07C(4 bytes) // I_getQIfSomething, see disassembly
 	0, // void Intrinsic07D(6 bytes)
@@ -186,7 +186,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	0, // void Intrinsic08F(void)
+	0, // TODO: PaletteFaderProcess::I_setPalToAllBlack
 	// 0x090
 	0, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
@@ -198,12 +198,12 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic097(void)
 	0, // void Intrinsic098(void)
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
-	0, // void Intrinsic09A(void)
-	0, // void Intrinsic09B(2 bytes)
-	0, // void Intrinsic09C(4 bytes)
-	0, // void Intrinsic09D(2 bytes)
-	0, // void Intrinsic09E(4 bytes)
-	0, // void Intrinsic09F(10 bytes)
+	0, // TODO: PaletteFaderProcess::I_stopFadesAndResetToGamePal(void),
+	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
+	0, // TODO: PaletteFaderProcess::I_fadeFromBlackWithParam
+	PaletteFaderProcess::I_fadeToBlack, // fade to black with number of steps
+	0, // TODO: PaletteFaderProcess::I_fadeToBlackWithParam
+	0, // TODO: PaletteFaderProcess::I_fadeToColor
 	// 0x0A0
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
@@ -211,7 +211,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Egg::I_setEggXRange, // void Intrinsic0A3(6 bytes)
 	Item::I_overlaps,
 	Item::I_isOn,
-	0, // ? TODO: I_getAnimationsDiabled -> default to 0 (it's fine..)
+	0, // TODO: I_getAnimationsDiabled -> default to 0 (fine for now..)
 	Egg::I_getEggXRange, // void Intrinsic0A7(4 bytes)
 	Actor::I_setDead,
 	0, // I_playFlic(char *) Intrinsic0A9(void)
@@ -356,7 +356,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getFootpadData, // void Intrinsic12D(16 bytes)
 	Actor::I_isDead, // int Intrinsic12E(4 bytes)
-	0, // void Intrinsic12F(6 bytes)
+	MonsterEgg::I_monsterEggHatch, // void Intrinsic12F(6 bytes) - FIXME: this is pretty different .. will it work?
 	// 0x130
 	Actor::I_clrImmortal, // void Intrinsic130(4 bytes)
 	0, // void Intrinsic131(6 bytes)

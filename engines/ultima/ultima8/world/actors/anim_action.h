@@ -35,6 +35,8 @@ struct AnimFrame {
 	int _deltaZ;
 	int _deltaDir;
 	int _sfx;
+	uint16 _unk1;
+	uint16 _unk2;
 	uint32 _flags;
 
 	enum AnimFrameFlags {

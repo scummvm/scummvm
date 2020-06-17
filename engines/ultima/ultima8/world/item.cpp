@@ -33,6 +33,7 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -569,6 +570,28 @@ bool Item::isCentreOn(const Item &item2) const {
 	return false;
 }
 
+bool Item::isOnScreen() const {
+	// TODO: would be cleaner to have this logic inside GameMapGump itself.
+	GameMapGump *game_map = Ultima8Engine::get_instance()->getGameMapGump();
+
+	if (!game_map)
+		return false;
+
+	Rect game_map_dims;
+	int32 screenx = -1;
+	int32 screeny = -1;
+	game_map->GetLocationOfItem(_objId, screenx, screeny);
+	game_map->GetDims(game_map_dims);
+	int32 xd, yd, zd;
+	getFootpadWorld(xd, yd, zd);
+
+	if (game_map_dims.InRect(screenx, screeny) &&
+		game_map_dims.InRect(screenx + xd, screeny + yd)) {
+		return true;
+	}
+
+	return false;
+}
 
 bool Item::canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
@@ -2635,7 +2658,7 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 	item->move(x, y, z);
 
-#if 0
+#if 1
 	perr << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << Std::endl;
 #endif
 
@@ -2791,9 +2814,10 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	// FIXME: Crusader directions have double value
-	// - does that make any difference here?
-	return Get_WorldDirection(y - iy, x - ix);
+	uint32 retval = static_cast<uint32>(Get_WorldDirection(y - iy, x - ix));
+	if (GAME_IS_CRUSADER)
+		retval *= 2;
+	return retval;
 }
 
 uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
@@ -2805,7 +2829,10 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	return Get_WorldDirection(iy - y, ix - x);
+	uint32 retval = static_cast<uint32>(Get_WorldDirection(iy - y, ix - x));
+	if (GAME_IS_CRUSADER)
+		retval *= 2;
+	return retval;
 }
 
 uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -2820,7 +2847,10 @@ uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	return Get_WorldDirection(i2y - iy, i2x - ix);
+	uint32 retval = static_cast<uint32>(Get_WorldDirection(i2y - iy, i2x - ix));
+	if (GAME_IS_CRUSADER)
+		retval *= 2;
+	return retval;
 }
 
 uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
@@ -2835,7 +2865,70 @@ uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	return (Get_WorldDirection(i2y - iy, i2x - ix) + 4) % 8;
+	uint32 retval = static_cast<uint32>((Get_WorldDirection(i2y - iy, i2x - ix) + 4) % 8);
+	if (GAME_IS_CRUSADER)
+		retval *= 2;
+	return retval;
+}
+
+uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_UINT16(x1);
+	ARG_UINT16(y1);
+	ARG_UINT16(x2);
+	ARG_UINT16(y2);
+
+	if (x1 == x2 && y1 == y2)
+		return 16;
+
+	// TODO: Implement proper 16 directions here.
+	uint32 retval = static_cast<uint32>(Get_WorldDirection(y2 - y1, x2 - x1));
+	return retval * 2;
+}
+
+uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_UINT16(x1);
+	ARG_UINT16(y1);
+	ARG_UINT16(x2);
+	ARG_UINT16(y2);
+	ARG_UINT16(ndirs);
+	ARG_UINT16(mindir);
+	ARG_UINT16(maxdir);
+
+	// TODO: Implement proper 16 directions here.
+	uint32 dir = static_cast<uint32>(Get_WorldDirection(y2 - y1, x2 - x1));
+	if (ndirs == 16) {
+		dir *= 2;
+	}
+
+	if ((dir < mindir) || (dir > maxdir)) {
+		int32 dmin1 = dir - mindir;
+		int32 dmin2 = mindir - dir;
+		if (dmin1 < 0) {
+			dmin1 = dmin1 + ndirs;
+		}
+		if (dmin2 < 0) {
+			dmin2 = dmin2 + ndirs;
+		}
+		int32 dist_to_min = MIN(dmin1, dmin2);
+
+		int dmax1 = dir - maxdir;
+		int dmax2 = maxdir - dir;
+		if (dmax1 < 0) {
+			dmax1 = dmax1 + ndirs;
+		}
+		if (dmax2 < 0) {
+			dmax2 = dmax2 + ndirs;
+		}
+		int32 dist_to_max = MIN(dmax1, dmax2);
+
+		if (dist_to_min < dist_to_max) {
+			return mindir;
+		} else {
+			return maxdir;
+		}
+	}
+
+	return dir;
 }
 
 uint32 Item::I_hurl(const uint8 *args, unsigned int /*argsize*/) {
@@ -3050,6 +3143,14 @@ uint32 Item::I_inFastArea(const uint8 *args, unsigned int /*argsize*/) {
 
 	return item->hasFlags(FLG_FASTAREA);
 }
+
+uint32 Item::I_isOnScreen(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	if (!item) return 0;
+
+	return item->isOnScreen();
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
