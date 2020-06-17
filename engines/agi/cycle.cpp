@@ -290,6 +290,14 @@ uint16 AgiEngine::processAGIEvents() {
 		}
 	}
 
+	// WORKAROUND: For Apple II gs we added a Speed menu; here the user choose some speed setting from the menu
+	if (getPlatform() == Common::kPlatformApple2GS && _game.appleIIgsSpeedControllerSlot != 0xffff)
+		for (int i = 0; i < 4; i++)
+			if (_game.controllerOccured[_game.appleIIgsSpeedControllerSlot + i]) {
+				_game.controllerOccured[_game.appleIIgsSpeedControllerSlot + i] = false;
+				_game.setAppleIIgsSpeedLevel(i);
+			}
+
 	_gfx->updateScreen();
 
 	return key;
@@ -356,7 +364,7 @@ int AgiEngine::playGame() {
 
 		inGameTimerUpdate();
 
-		uint16 timeDelay = getVar(VM_VAR_TIME_DELAY);
+		uint8 timeDelay = getVar(VM_VAR_TIME_DELAY);
 
 		if (getPlatform() == Common::kPlatformApple2GS) {
 			timeDelay++;
@@ -391,19 +399,23 @@ int AgiEngine::playGame() {
 					}
 					appleIIgsDelayRoomOverwrite++;
 				}
-
-				if (timeDelayOverwrite == -99) {
-					// use default time delay in case no room specific one was found
-					timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
-				}
-			} else {
-				timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
 			}
+
+			if (timeDelayOverwrite == -99) {
+				// use default time delay in case no room specific one was found ...
+				if (_game.appleIIgsSpeedLevel == 2)
+					// ... and the user set the speed to "Normal" ...
+					timeDelayOverwrite = appleIIgsDelayOverwrite->defaultTimeDelayOverwrite;
+				else
+					// ... otherwise, use the speed the user requested (either from menu, or from text parser)
+					timeDelayOverwrite = _game.appleIIgsSpeedLevel;
+			}
+
 
 			if (timeDelayOverwrite >= 0) {
 				if (timeDelayOverwrite != timeDelay) {
 					// delayOverwrite is not the same as the delay taken from the scripts? overwrite it
-					//warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
+					warning("AppleIIgs: time delay overwrite from %d to %d", timeDelay, timeDelayOverwrite);
 
 					setVar(VM_VAR_TIME_DELAY, timeDelayOverwrite - 1); // adjust for Apple IIgs
 					timeDelay = timeDelayOverwrite;
