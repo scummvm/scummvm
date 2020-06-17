@@ -287,7 +287,7 @@ void ListWidget::handleMouseMoved(int x, int y, int button) {
 
 	if (item != -1) {
 		if(_lastRead != item) {
-			read(Common::convertFromU32String(_dataList[item]));
+			read(_dataList[item]);
 			_lastRead = item;
 		}
 	}

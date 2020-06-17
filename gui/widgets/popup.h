@@ -78,7 +78,7 @@ public:
 	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
 //	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
-	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(Common::convertFromU32String(_entries[_selectedItem].name)); setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void reflowLayout() override;
@@ -140,7 +140,7 @@ protected:
 
 	void moveUp();
 	void moveDown();
-	void read(Common::U32String);
+	void read(const Common::U32String &str);
 };
 
 } // End of namespace GUI

@@ -64,7 +64,7 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan == nullptr)
 			return;
-		ttsMan->say(Common::convertFromU32String(widget->getTooltip()), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+		ttsMan->say(widget->getTooltip(), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	}
 #endif
 }

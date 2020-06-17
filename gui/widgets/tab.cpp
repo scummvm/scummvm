@@ -260,7 +260,7 @@ void TabWidget::handleMouseMoved(int x, int y, int button) {
 
 	if (tabID <= _lastVisibleTab) {
 		if (tabID != _lastRead) {
-			read(Common::convertFromU32String(_tabs[tabID].title));
+			read(_tabs[tabID].title);
 			_lastRead = tabID;
 		}
 	}
