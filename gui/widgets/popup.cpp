@@ -190,7 +190,7 @@ void PopUpDialog::handleMouseMoved(int x, int y, int button) {
 	// ...and update the selection accordingly
 	setSelection(item);
 	if (_lastRead != item && _entries.size() > 0 && item != -1) {
-		read(Common::convertFromU32String(_entries[item]));
+		read(_entries[item]);
 		_lastRead = item;
 	}
 }
@@ -199,7 +199,7 @@ void PopUpDialog::handleMouseLeft(int button) {
 	_lastRead = -1;
 }
 
-void PopUpDialog::read(Common::U32String str) {
+void PopUpDialog::read(const Common::U32String &str) {
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {

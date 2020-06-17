@@ -175,7 +175,7 @@ public:
 
 	virtual bool containsWidget(Widget *) const { return false; }
 
-	void read(Common::U32String str);
+	void read(const Common::U32String &str);
 
 protected:
 	void updateState(int oldFlags, int newFlags);
@@ -208,7 +208,7 @@ public:
 	const Common::U32String &getLabel() const		{ return _label; }
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
-	void readLabel() { read(Common::convertFromU32String(_label)); }
+	void readLabel() { read(_label); }
 
 protected:
 	void drawWidget() override;

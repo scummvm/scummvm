@@ -53,7 +53,7 @@ class TTSVoice {
 	public:
 		TTSVoice();
 
-		TTSVoice(Gender gender, Age age, void *data, U32String description) ;
+		TTSVoice(Gender gender, Age age, void *data, String description) ;
 
 		TTSVoice(const TTSVoice& voice);
 
@@ -111,13 +111,13 @@ class TTSVoice {
 		 * Returns the voice description. This description is really tts engine
 		 * specific and might be not be available with some tts engines.
 		 */
-		U32String getDescription() { return _description; };
+		String getDescription() { return _description; };
 
 	protected:
 		Gender _gender; ///< Gender of the voice
 		Age _age; ///< Age of the voice
 		void *_data; ///< Pointer to tts engine specific data about the voice
-		U32String _description; ///< Description of the voice (gets displayed in GUI)
+		String _description; ///< Description of the voice (gets displayed in GUI)
 		int *_refCount; ///< Reference count (serves for proper feeing of _data)
 };
 
@@ -158,7 +158,7 @@ public:
 	 * @param charset The encoding of the string. If empty this is assumed to be the
 	 *        encoding used for the GUI.
 	 */
-	bool say(U32String str, String charset = "") { return say(str.encode(), INTERRUPT_NO_REPEAT, charset); }
+	bool say(const U32String &str, String charset = "") { return say(str, INTERRUPT_NO_REPEAT, charset); }
 
 	/**
 	 * Says the given string
@@ -178,7 +178,7 @@ public:
 	 * @param charset The encoding of the string. If empty this is assumed to be the
 	 *        encoding used for the GUI.
 	 */
-	virtual bool say(String str, Action action, String charset = "") { return false; }
+	virtual bool say(const U32String &str, Action action, String charset = "") { return false; }
 
 	/**
 	 * Stops the speech

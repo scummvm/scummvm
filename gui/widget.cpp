@@ -277,7 +277,7 @@ Common::U32String Widget::cleanupHotkey(const Common::U32String &label) {
 	return Common::U32String(res);
 }
 
-void Widget::read(Common::U32String str) {
+void Widget::read(const Common::U32String &str) {
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
