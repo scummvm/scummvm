@@ -582,7 +582,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		Common::Rect currentBbox = channel->getBbox();
 		_maskSurface->fillRect(currentBbox, 1);
 
-		debugC(1, kDebugImages, "Score::renderSprite(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
+		debugC(1, kDebugImages, "Score::renderFrame(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
 		if (sprite->_castType == kCastShape) {
 			renderShape(id);
 		} else {
@@ -592,7 +592,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 				cast->_widget->draw();
 				inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), channel->_sprite->_ink, currentBbox, id);
 			} else {
-				warning("Score::renderSprite: No widget for channel ID %d", id);
+				warning("Score::renderFrame(): No widget for channel ID %d", id);
 			}
 		}
 
@@ -775,16 +775,17 @@ Sprite *Score::getSpriteById(uint16 id) {
 	if (channel) {
 		return channel->_sprite;
 	} else {
-		warning("Score::getSpriteById: sprite on frame %d with id %d not found", _currentFrame, id);
+		warning("Score::getSpriteById(): sprite on frame %d with id %d not found", _currentFrame, id);
 		return nullptr;
 	}
 }
 
 Channel *Score::getChannelById(uint16 id) {
 	if (id >= _channels.size()) {
-		warning("Score::getSpriteChannelById(%d): out of bounds", id);
+		warning("Score::getChannelById(%d): out of bounds", id);
 		return nullptr;
 	}
+
 	return _channels[id];
 }
 
