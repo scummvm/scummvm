@@ -448,7 +448,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	vertices[2 * vertexSize + 8 + 2] = b;
 	vertices[2 * vertexSize + 8 + 3] = a;
 	vertices[3 * vertexSize + 8 + 0] = r;
-	vertices[3 * vertexSize + 8 + 2] = g;
+	vertices[3 * vertexSize + 8 + 1] = g;
 	vertices[3 * vertexSize + 8 + 2] = b;
 	vertices[3 * vertexSize + 8 + 3] = a;
 
