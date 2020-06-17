@@ -72,7 +72,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_popToCoords, // void Intrinsic020(10 bytes)
 	Actor::I_setDead, // void Intrinsic021(4 bytes)
 	Item::I_push,
-	0, // int Intrinsic023(void)
+	Item::I_getEtherealTop, // int Intrinsic023(void)
 	Item::I_setShape, // Probably, see PEPSIEW::gotHit
 	Item::I_touch,
 	Item::I_getQHi, // int16 Intrinsic026(Item *), // guess, based on variable name in BOUNCBOX::gotHit

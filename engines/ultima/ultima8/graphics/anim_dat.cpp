@@ -185,8 +185,8 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						f._frame += (x & 0xF) << 8;
 						// byte 2, 3: unknown; byte 3 might contain flags
 						f._unk1 = rs->readSint16LE();
-						// byte 4: deltadir (signed)
-						f._deltaDir = rs->readSByte();
+						// byte 4: deltadir (signed) - convert to pixels
+						f._deltaDir = rs->readSByte() * 2;
 						// byte 5: flags?
 						f._flags = rs->readByte();
 						// byte 6, 7: unknown

@@ -103,7 +103,7 @@ void Item::dumpInfo() const {
 
 	pout << ") q:" << getQuality()
 	     << ", m:" << getMapNum() << ", n:" << getNpcNum()
-	     << ", f: 0x" << Std::hex << getFlags() << ", ef:0x"
+	     << ", f:0x" << Std::hex << getFlags() << ", ef:0x"
 		 << getExtFlags();
 
 	ShapeInfo *info = getShapeInfo();
@@ -1955,7 +1955,10 @@ uint32 Item::I_getX(const uint8 *args, unsigned int /*argsize*/) {
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
-	return x;
+	if (GAME_IS_CRUSADER)
+		return x / 2;
+	else
+		return x;
 }
 
 uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
@@ -1964,7 +1967,10 @@ uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
-	return y;
+	if (GAME_IS_CRUSADER)
+		return y / 2;
+	else
+		return y;
 }
 
 uint32 Item::I_getZ(const uint8 *args, unsigned int /*argsize*/) {
@@ -2019,6 +2025,11 @@ uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
+
+	if (GAME_IS_CRUSADER) {
+		x /= 2;
+		y /= 2;
+	}
 
 	WorldPoint point;
 	point.setX(x);
@@ -2579,7 +2590,13 @@ uint32 Item::I_getFamilyOfType(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
+
+	#if 1
+		perr << "Pushing item to ethereal void: " << item->getShape() << "," << item->getFrame() << Std::endl;
+	#endif
+
 
 	item->moveToEtherealVoid();
 
@@ -2600,8 +2617,8 @@ uint32 Item::I_create(const uint8 *args, unsigned int /*argsize*/) {
 	uint16 objID = newitem->getObjId();
 
 #if 0
-	pout << "Item::create: created item " << objID << " (" << _shape
-	     << "," << _frame << ")" << Std::endl;
+	pout << "Item::create: created item " << objID << " (" << shape
+	     << "," << frame << ")" << Std::endl;
 #endif
 
 	newitem->moveToEtherealVoid();
@@ -2619,7 +2636,8 @@ uint32 Item::I_pop(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 _objId = w->etherealPeek();
 	Item *item = getItem(_objId);
@@ -2647,7 +2665,8 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 objId = w->etherealPeek();
 	Item *item = getItem(objId);
@@ -2656,9 +2675,14 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 		return 0; // top item was invalid
 	}
 
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	item->move(x, y, z);
 
-#if 1
+#if 0
 	perr << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << Std::endl;
 #endif
 
@@ -2678,7 +2702,8 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 _objId = w->etherealPeek();
 	Item *item = getItem(_objId);
@@ -2705,7 +2730,8 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 _objId = w->etherealPeek();
 	Item *item = getItem(_objId);
@@ -2729,9 +2755,18 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	ARG_UINT16(z);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	//! What should this do to ethereal items?
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
+	#if 0
+		perr << "Moving item: " << item->getShape() << "," << item->getFrame() << " to (" << x << "," << y << "," << z << ")" << Std::endl;
+	#endif
 
 	item->move(x, y, z);
 	//item->collideMove(x, y, z, true, true);
@@ -2743,6 +2778,11 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	ARG_WORLDPOINT(point);
 	ARG_UINT16(force); // 0/1
 	ARG_UINT16(unknown2); // always 0
+
+	if (GAME_IS_CRUSADER) {
+		point.setX(point.getX() * 2);
+		point.setY(point.getY() * 2);
+	}
 
 	//! What should this do to ethereal items?
 
@@ -2811,6 +2851,11 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(y);
 	if (!item) return 0;
 
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
@@ -2825,6 +2870,11 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	if (!item) return 0;
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
