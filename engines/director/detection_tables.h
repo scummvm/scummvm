@@ -102,8 +102,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("warlock", "v1.0", "Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271093, 2),
 	MACGAME("warlock", "v1.1.1", "Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271107, 2),
 	MACDEMO("warlock", "Demo", "Spaceship Warlock Demo", "cfa68a1bc49251497ebde18e5fc9c217", 271099, 2),
-	WINGAME("warlock", "", "SSWARLCK.EXE", "65d06b5fef155a2473434571aff5bc29", 370867, 2),
-	WINDEMO("warlock", "", "SSWDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370934, 2),
 
 ////////////////////////////////////////
 //
@@ -197,6 +195,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME("vvharp", "", "HYPNOTIC.EXE", "88f4f7406f34ec36e751a64f7c76f2c4", 370272, 3),
 	MACGAME("vvvampire", "", "The Vampire's Coffin", "d41d8cd98f00b204e9800998ecf8427e", -1, 3),
 	WINGAME("vvvampire", "", "VAMPIRE.EXE", "88f4f7406f34ec36e751a64f7c76f2c4", -1, 3),
+
+	WINGAME("warlock", "", "SSWARLCK.EXE", "65d06b5fef155a2473434571aff5bc29", 370867, 3),
+	WINDEMO("warlock", "", "SSWDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370934, 3),
 
 	MACGAME("wrath", "", "Wrath of the Gods", "2ce360c9ea2da80a2c6d1040b0ad92dd", 413986, 3),
 
@@ -302,6 +303,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304714, 4),
 	WINGAME("alice", "", "ALICE.EXE", "c67ece9b657ee80355520ac37a25fe55", 684733, 4),
+
+	WINGAME_l("ankh1", "", "ANKH.EXE", "12345", 12345, Common::JA_JPN, 4),
 
 	MACGAME("arcofdoom", "", "Arc Player (4mb)", "ea553e3f3fa123ad38fa5249621e8c8b", 295426, 4),
 	MACDEMO("arcofdoom", "Demo", "ArcDemo", "cdb27c916044ae4dceb4b7326063fa03", 301925, 4),
@@ -672,6 +675,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("planetarizona", "", "Planet Arizona", "0c7bbb4b24823e5ab871cb4c1d6f3710", 488433, 4),
 	WINGAME("planetarizona", "", "ARIZONA.EXE", "a23462ec87eff973d2cdb2ddfd4a59fa", 698651, 4),
 
+	// original file name is Paradise*Rescue
+	MACGAME_l("prescue", "", "ParadiseRescue", "0c7bbb4b24823e5ab871cb4c1d6f3710", 488433, Common::JA_JPN, 4),
+	WINGAME_l("prescue", "", "P_RESCUE.EXE", "a23462ec87eff973d2cdb2ddfd4a59fa", 698651, Common::JA_JPN, 4),
+
 	WINDEMO("santafe1", "Demo", "ELKMOON.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 	WINDEMO("shanghai", "Demo", "SHGMDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 4), // full game is not Director
 
@@ -691,6 +698,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME("teamxtreme1", "", "XTREME.EXE", "45ab80997efedec388ff5200722e673c", 690123, 4),
 	WINGAME("teamxtreme2", "", "TX2.EXE", "50c80bd2add25e574494838772973beb", 2585471, 4),
+
+	// original name is TD MAC/PPC
+	MACGAME("totaldistortion", "", "TD MACPPC", "12345", 12345, 4),
+	WINGAME("totaldistortion", "", "TOTAL_DN", "12345", 12345, 4),
 
 	MACGAME("trekborg", "", "Picard Dossier", "e1dc28c1dd8409c2d2e0d5d269df5ffc", 520069, 4),
 	WINGAME("trekborg", "", "OMNIBORG.EXE", "1580ebad7599fb6c18815e244b0bfda3", 811363, 4),
@@ -722,6 +733,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 ////////////////////////////////////////
 
 	WINGAME("amber", "", "amber_jb.exe", "1a7acbba10a7246ba58c1d53fc7203f5", -1, 5),
+
+	// original file names are ' ANKH2 ' and ' ANKH3 '
+	MACGAME_l("ankh2", "", "ANKH2", "12345", 12345, Common::JA_JPN, 5),
+	MACGAME_l("ankh3", "", "ANKH3", "12345", 12345, Common::JA_JPN, 5),
 
 	WINGAME_l("ernie", "", "Ernie.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1417481, Common::SE_SWE, 5),
 	WINDEMO_l("ernie", "Demo", "ERNIE.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1417371, Common::SE_SWE, 5),
