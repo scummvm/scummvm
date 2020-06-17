@@ -538,10 +538,19 @@ void LC::cb_thepush() {
 
 void LC::cb_thepush2() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
-	warning("STUB: cb_thepush2(%s)", name.c_str());
 	Datum result;
-	result.type = VOID;
+	Common::String name = g_lingo->getName(nameId);
+	if (g_lingo->_theEntities.contains(name)) {
+		TheEntity *entity = g_lingo->_theEntities[name];
+		Datum id;
+		id.u.i = 0;
+		id.type = VOID;
+		debugC(3, kDebugLingoExec, "cb_thepush: pushing value of entity %s to stack", name.c_str());
+		result = g_lingo->getTheEntity(entity->entity, id, kTEANOArgs);
+	} else {
+		warning("LC::cb_thepush2 Can't find theEntity: (%s)", name.c_str());
+		result.type = VOID;
+	}
 	g_lingo->push(result);
 }
 
