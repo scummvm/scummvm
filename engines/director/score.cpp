@@ -73,7 +73,7 @@ void Channel::addDelta(Common::Point pos) {
 Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
 
-	if (_sprite->_castType == kCastBitmap) {
+	if (_sprite->_castType == kCastBitmap && _sprite->_cast) {
 		BitmapCast *bc = (BitmapCast *)(_sprite->_cast);
 
 		res += Common::Point(bc->_initialRect.left - bc->_regX,
