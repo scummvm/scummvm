@@ -20,12 +20,19 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/file.h"
 #include "common/system.h"
 
 #include "engines/util.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/mactext.h"
+#include "graphics/surface.h"
+
+#ifdef USE_PNG
+#include "image/png.h"
+#endif
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -34,6 +41,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -144,7 +152,7 @@ Score::Score(DirectorEngine *vm) {
 
 	_numChannelsDisplayed = 0;
 
-	_framesRan = 0; // used by kDebugFewFramesOnly
+	_framesRan = 0; // used by kDebugFewFramesOnly and kDebugScreenshot
 
 	_window = nullptr;
 
@@ -415,14 +423,16 @@ void Score::startLoop() {
 		if (_currentFrame < _frames.size())
 			_vm->processEvents();
 
-		if (debugChannelSet(-1, kDebugFewFramesOnly)) {
+		if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot))
 			_framesRan++;
 
-			if (_framesRan > 9) {
-				warning("Score::startLoop(): exiting due to debug few frames only");
-				break;
-			}
+		if (debugChannelSet(-1, kDebugFewFramesOnly) && _framesRan > 9) {
+			warning("Score::startLoop(): exiting due to debug few frames only");
+			break;
 		}
+
+		if (debugChannelSet(-1, kDebugScreenshot))
+			screenShot();
 	}
 
 	_lingo->processEvent(kEventStopMovie);
@@ -640,6 +650,26 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 	}
 
 	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
+
+}
+
+void Score::screenShot() {
+	Graphics::Surface rawSurface = _surface->rawSurface();
+	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	Graphics::Surface newSurface = *(rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette()));
+	Common::String currentPath = _vm->getCurrentPath().c_str();
+	Common::replace(currentPath, "/", "-"); // exclude '/' from screenshot filename prefix
+	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), _macName.c_str());
+	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, _framesRan, "png");
+
+	Common::DumpFile screenshotFile;
+	if (screenshotFile.open(filename)) {
+#ifdef USE_PNG
+		Image::writePNG(screenshotFile, newSurface);
+#else
+		warning("Screenshot requested, but PNG support is not compiled in");
+#endif
+	}
 }
 
 void Score::unrenderSprite(int spriteId) {

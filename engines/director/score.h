@@ -180,6 +180,7 @@ private:
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
 	void dumpScript(const char *script, ScriptType type, uint16 id);
+	void screenShot();
 	Common::String getString(Common::String str);
 	Common::Array<Common::String> loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader = true);
 
