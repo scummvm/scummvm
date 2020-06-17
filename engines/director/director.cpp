@@ -61,6 +61,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
 	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
 	DebugMan.addDebugChannel(kDebugPreprocess, "preprocess", "Lingo preprocessing");
+	DebugMan.addDebugChannel(kDebugScreenshot, "screenshot", "screenshot each frame");
 
 	g_director = this;
 

@@ -74,7 +74,8 @@ enum {
 	kDebugNoLoop		= 1 << 10,
 	kDebugBytecode		= 1 << 11,
 	kDebugFewFramesOnly	= 1 << 12,
-	kDebugPreprocess	= 1 << 13
+	kDebugPreprocess	= 1 << 13,
+	kDebugScreenshot	= 1 << 14
 };
 
 struct MovieReference {
