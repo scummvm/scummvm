@@ -49,6 +49,7 @@ void Debugger::print(const char *fmt, ...) {
 	va_end(argp);
 
 	debugPrintf("%s", msg.c_str());
+	debugN("%s", msg.c_str());
 }
 
 bool Debugger::cmdDump(int argc, const char **argv) {
