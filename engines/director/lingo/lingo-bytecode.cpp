@@ -738,7 +738,7 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &archName) {
+void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &scriptName, Common::String &archName) {
 	debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
 	if (getScriptContext(archiveIndex, type, id)) {
@@ -751,6 +751,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	_assemblyArchive = archiveIndex;
 	_assemblyContext = new ScriptContext;
 	_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
+
+	_assemblyContext->name = !scriptName.empty() ? scriptName : Common::String::format("%d", id);
 
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");

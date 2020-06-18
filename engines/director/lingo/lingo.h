@@ -214,6 +214,7 @@ typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Co
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
 struct ScriptContext {
+	Common::String name;
 	Common::Array<Symbol> functions; // used only by bytecode
 	Common::HashMap<uint32, Symbol> eventHandlers;
 	SymbolHash functionHandlers;
@@ -315,8 +316,8 @@ public:
 
 	void restartLingo(bool keepSharedCast);
 
-	ScriptContext *addCode(const char *code, int archiveIndex, ScriptType type, uint16 id);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &archName);
+	ScriptContext *addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName = nullptr);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &scriptName, Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id);

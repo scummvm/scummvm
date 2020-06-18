@@ -873,7 +873,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 			if (scriptId < _castScriptIds.size()) {
 				int resourceId = _castScriptIds[scriptId];
 				Common::SeekableSubReadStreamEndian *r;
-				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), _lingoArchive, ((ScriptCast *)member)->_scriptType, id, _macName);
+				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), _lingoArchive, ((ScriptCast *)member)->_scriptType, id, ci->name, _macName);
 				delete r;
 			} else {
 				warning("Score::loadCastData(): Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
@@ -889,7 +889,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 				if (ConfMan.getBool("dump_scripts"))
 					dumpScript(ci->script.c_str(), scriptType, id);
 
-				_lingo->addCode(ci->script.c_str(), _lingoArchive, scriptType, id);
+				_lingo->addCode(ci->script.c_str(), _lingoArchive, scriptType, id, ci->name.c_str());
 			}
 		}
 
@@ -1127,7 +1127,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		dumpScript(ci->script.c_str(), kCastScript, id);
 
 	if (!ci->script.empty())
-		_lingo->addCode(ci->script.c_str(), _lingoArchive, kCastScript, id);
+		_lingo->addCode(ci->script.c_str(), _lingoArchive, kCastScript, id, ci->name.c_str());
 
 	ci->name = getString(castStrings[1]);
 	ci->directory = getString(castStrings[2]);

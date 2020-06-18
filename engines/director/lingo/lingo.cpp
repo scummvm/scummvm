@@ -253,7 +253,7 @@ const char *Lingo::findNextDefinition(const char *s) {
 	return NULL;
 }
 
-ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id) {
+ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
@@ -269,6 +269,11 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	_currentAssembly = new ScriptData;
 	if (archiveIndex >= 0)
 		_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
+
+	if (scriptName && strlen(scriptName) > 0)
+		_assemblyContext->name = Common::String(scriptName);
+	else
+		_assemblyContext->name = Common::String::format("%d", id);
 
 	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 	_linenumber = _colnumber = 1;
@@ -355,15 +360,8 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 
 	currentFunc.type = HANDLER;
 	currentFunc.u.defn = _currentAssembly;
-	// guess the name. don't actually bind it to the event, there's a seperate
-	// triggering mechanism for that.
-	if (type == kScoreScript) {
-		currentFunc.name = new Common::String("[score script]");
-	} else if (type == kCastScript) {
-		currentFunc.name = new Common::String("[cast script");
-	} else {
-		currentFunc.name = new Common::String("[unknown]");
-	}
+	Common::String typeStr = Common::String(scriptType2str(type));
+	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->name + "]");
 	currentFunc.ctx = _currentScriptContext;
 	currentFunc.archiveIndex = _assemblyArchive;
 	// arg names should be empty, but just in case
