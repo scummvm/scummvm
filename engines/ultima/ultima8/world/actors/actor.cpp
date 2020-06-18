@@ -1589,6 +1589,11 @@ uint32 Actor::I_pathfindToPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL16(); // unknown. Only one instance of this in U8, value is 5.
 	if (!actor) return 0;
 
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	return Kernel::get_instance()->addProcess(
 	           new PathfinderProcess(actor, x, y, z));
 }

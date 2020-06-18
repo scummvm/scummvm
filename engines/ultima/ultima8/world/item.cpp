@@ -116,7 +116,7 @@ void Item::dumpInfo() const {
 }
 
 Container *Item::getParentAsContainer() const {
-	// No _parent, no container
+	// No parent, no container
 	if (!_parent)
 		return nullptr;
 
@@ -529,6 +529,7 @@ bool Item::isOn(const Item &item2) const {
 }
 
 bool Item::isCompletelyOn(const Item &item2) const {
+	warning("TODO: Properly implement Item::isCompletelyOn");
 	// FIXME: this is just a copy of isOn at the moment
 	int32 x1a, y1a, z1a, x1b, y1b;
 	int32 x2a, y2a, z2a, x2b, y2b, z2b;
@@ -2475,6 +2476,11 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 	ARG_UINT16(y);
 	ARG_UINT16(z);
 
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
@@ -2613,6 +2619,18 @@ uint32 Item::I_isOn(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 }
 
+uint32 Item::I_isCompletelyOn(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_ITEM_FROM_ID(item2);
+	if (!item) return 0;
+	if (!item2) return 0;
+
+	if (item->isCompletelyOn(*item2))
+		return 1;
+	else
+		return 0;
+}
+
 uint32 Item::I_isCentreOn(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_ITEM_FROM_ID(item2);
@@ -2623,6 +2641,21 @@ uint32 Item::I_isCentreOn(const uint8 *args, unsigned int /*argsize*/) {
 		return 1;
 	else
 		return 0;
+}
+
+uint32 Item::I_isInNpc(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	if (!item)
+		return 0;
+
+	const Container *container = item->getParentAsContainer();
+	while (container) {
+		const Actor *actor = dynamic_cast<const Actor *>(container);
+		if (actor)
+			return 1;
+		container = container->getParentAsContainer();
+	}
+	return 0;
 }
 
 uint32 Item::I_getFamilyOfType(const uint8 *args, unsigned int /*argsize*/) {
@@ -2640,7 +2673,6 @@ uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 	#if 1
 		perr << "Pushing item to ethereal void: " << item->getShape() << "," << item->getFrame() << Std::endl;
 	#endif
-
 
 	item->moveToEtherealVoid();
 
@@ -3112,6 +3144,8 @@ uint32 Item::I_guardianBark(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(num);
 	if (!item) return 0;
 
+	assert(GAME_IS_U8);
+
 	return item->callUsecodeEvent_guardianBark(num);
 }
 
@@ -3175,6 +3209,8 @@ uint32 Item::I_igniteChaos(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	ARG_NULL8();
+
+	assert(GAME_IS_U8);
 
 	UCList itemlist(2);
 	LOOPSCRIPT(script, LS_SHAPE_EQUAL(592)); // all oilflasks (CONSTANT!)

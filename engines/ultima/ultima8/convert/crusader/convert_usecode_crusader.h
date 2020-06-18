@@ -78,10 +78,10 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Actor::I_isNPC(Item *)", // proably - actually checks is itemno < 256?
 	"byte Item::I_getZ(Item *)",
 	"void Item::I_destroy(Item *)", // probably? often called after creating a replacement object and setting it to the same position (eg, LUGGAGE::gotHit)
-	"int16 I_GetNPCDataField0x63_00B(Actor *)", // could be getNPCNum? Called from ANDROID::calledFromAnim, goes to NPCDEATH
+	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // could be getNPCNum? Called from ANDROID::calledFromAnim, goes to NPCDEATH
 	"void I_NPCsetSomething_00C(int)",
 	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
-	"int16 I_NPCSomething00E(Actor *, int, int)",
+	"int16 Actor::I_NPCSomething00E(Actor *, int, int)",
 	"void I_playFlic(void), int16 I_playFlic(Item *, char *name, int16 sizex, int16 sizey)",
 	// 0010
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff as 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
@@ -237,7 +237,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 PaletteFaderProcess::I_fadeToBlackWithParam(nsteps, unk)", // TODO: what's the param?
 	"int16 PaletteFaderProcess::I_fadeToColor(r, g, b, nsteps, unk)", // TODO: what's the other param?
 	// 00A0
-	"void I_SetItemFlag0x8000AndNPCField0x13Flag0_0A0(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
+	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
 	"int16 Item::I_getUnkEggType(Item *)", // based on disassembly, same as U8
 	"void Egg::I_setEggXRange(Egg *, int)", // based on disasm
@@ -248,7 +248,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void I_playFlic0A9(char *)", // same coff as 092
 	"void I_playSFX(2 bytes)", // same coff as 0D4
-	"byte I_NPCGetField0x59Flag1_0AB(Actor *)",
+	"byte Actor::I_NPCGetField0x59Flag1_0AB(Actor *)",
 	"int16 Item::I_getFamilyOfType(Item *)", // per pentagram notes, matches disasm.
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
@@ -283,7 +283,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"byte Actor::I_addHp(Actor *, int)",
 	"void Intrinsic0CB(2 bytes)",
-	"byte I_GetNPCDataField0x59Flag3_0CC(Actor *)",
+	"byte Actor::I_GetNPCDataField0x59Flag3_0CC(Actor *)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Game::I_isReleaseBuild(void)", // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see what this does..
 	"void Item::setQAndCallSomething(Item *, int16 q)", // based on disassembly
@@ -301,17 +301,17 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic0DA_Fade(void)", // something about fades
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"int16 I_GetNPCDataField0x4_0DD(Actor *)",
-	"void I_SetNPCDataField0x5c_0DE(Actor *, int)",
+	"int16 Actor::I_GetNPCDataField0x4_0DD(Actor *)",
+	"void Actor::I_SetNPCDataField0x5c_0DE(Actor *, int)",
 	"int16 Actor::I_getEquip(6 bytes)", // based on disasm
 	// 00E0
 	"void Actor::I_setEquip(8 bytes)",
-	"int16 I_GetNPCDataField0x6_0E1(Actor *)",
-	"int16 I_GetNPCDataField0x8_0E2(Actor *)",
-	"int16 I_GetNPCDataField0xa_0E3(Actor *)",
+	"int16 Actor::I_GetNPCDataField0x6_0E1(Actor *)",
+	"int16 Actor::I_GetNPCDataField0x8_0E2(Actor *)",
+	"int16 Actor::I_GetNPCDataField0xa_0E3(Actor *)",
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"void I_NPCSomething0E5(Actor *, uint16)",
-	"void I_SetNPCDataField0x63_0E6(Actor *, int)",
+	"void Actor::I_NPCSomething0E5(Actor *, uint16)",
+	"void Actor::I_SetNPCDataField0x63_0E6(Actor *, int)",
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_cast(6 bytes)",
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132

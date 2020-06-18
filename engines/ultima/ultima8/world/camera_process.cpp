@@ -320,6 +320,11 @@ uint32 CameraProcess::I_moveTo(const uint8 *args, unsigned int argsize) {
 	if (argsize > 6) {
 		ARG_SINT16(unk);
 	}
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
 	CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
 	return 0;
 }
@@ -337,6 +342,12 @@ uint32 CameraProcess::I_scrollTo(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(y);
 	ARG_UINT8(z);
 	ARG_SINT16(unk);
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	return CameraProcess::SetCameraProcess(new CameraProcess(x, y, z, 25));
 }
 

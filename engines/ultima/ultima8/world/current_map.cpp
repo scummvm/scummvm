@@ -1207,6 +1207,11 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(unk2); // looks like it could be an objid
 	ARG_UINT16(unk3); // always zero
 
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
 	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 

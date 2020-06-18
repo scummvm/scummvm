@@ -499,6 +499,7 @@ public:
 	INTRINSIC(I_isOn);
 	INTRINSIC(I_isCompletelyOn);
 	INTRINSIC(I_isCentreOn);
+	INTRINSIC(I_isInNpc);
 	INTRINSIC(I_ascend);
 	INTRINSIC(I_getWeight);
 	INTRINSIC(I_getWeightIncludingContents);

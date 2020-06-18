@@ -142,7 +142,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic062(void)
 	Actor::I_teleport, // void Intrinsic063(12 bytes)
 	Item::I_getFootpadData, // void Intrinsic064(16 bytes)
-	0, // TODO: Item::I_isInNPC
+	Item::I_isInNpc,
 	Item::I_getQLo, // based on same coff set as 02B
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_setNpcNum, // void Item::I_setSomething068(Item *, int16 something) , see VALUEBOX:ordinal20
@@ -152,7 +152,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Kernel::I_resetRef, // void Intrinsic06C(4 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_andStatus, // void Intrinsic06E(6 bytes)
-	0, // TODO: Item::I_isCompletelyOn int Intrinsic06F(6 bytes)
+	Item::I_isCompletelyOn,
 	// 0x070
 	Ultima8Engine::I_getUnkCrusaderFlag, // int Intrinsic070(void)
 	Ultima8Engine::I_setUnkCrusaderFlag, // void Intrinsic071(void)

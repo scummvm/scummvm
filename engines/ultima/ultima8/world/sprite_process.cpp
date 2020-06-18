@@ -26,6 +26,7 @@
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -106,6 +107,12 @@ uint32 SpriteProcess::I_createSprite(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	ARG_UINT8(z);
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	Process *p = new SpriteProcess(shape, frame, lastFrame, repeats, delay, x, y, z);
 	return Kernel::get_instance()->addProcess(p);
 }
