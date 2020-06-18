@@ -94,6 +94,9 @@ static void startDef() {
 	g_lingo->_methodVarsStash = g_lingo->_methodVars;
 	g_lingo->_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 
+	for (Common::Array<Common::String>::iterator i = g_lingo->_assemblyContext->_propNames.begin(); i != g_lingo->_assemblyContext->_propNames.end(); ++i) {
+		(*g_lingo->_methodVars)[*i] = kVarProperty;
+	}
 	if (g_lingo->_inFactory) {
 		for (DatumHash::iterator i = g_lingo->_currentFactory->properties.begin(); i != g_lingo->_currentFactory->properties.end(); ++i) {
 			(*g_lingo->_methodVars)[i->_key] = kVarInstance;
@@ -144,7 +147,9 @@ static VarType globalCheck() {
 static void mVar(Common::String *s, VarType type) {
 	if (!g_lingo->_methodVars->contains(*s)) {
 		(*g_lingo->_methodVars)[*s] = type;
-		if (type == kVarInstance) {
+		if (type == kVarProperty) {
+			g_lingo->_assemblyContext->_propNames.push_back(*s);
+		} else if (type == kVarInstance) {
 			if (g_lingo->_inFactory) {
 				g_lingo->_currentFactory->properties[*s] = Datum();
 			} else {
@@ -168,14 +173,9 @@ static void mVar(Common::String *s, VarType type) {
 	Director::DatumArray *arr;
 
 	struct {
-		Common::String *os;
-		int oe;
-	} objectfield;
-
-	struct {
 		Common::String *obj;
-		Common::String *field;
-	} objectref;
+		Common::String *prop;
+	} objectprop;
 }
 
 %token UNARY
@@ -189,8 +189,7 @@ static void mVar(Common::String *s, VarType type) {
 %token<s> BLTIN FBLTIN RBLTIN THEFBLTIN
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
-%token<objectfield> THEOBJECTFIELD
-%token<objectref> THEOBJECTREF
+%token<objectprop> THEOBJECTPROP
 %token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tGOLOOP tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
@@ -213,7 +212,6 @@ static void mVar(Common::String *s, VarType type) {
 %right UNARY
 
 %destructor { delete $$; } <s>
-%destructor { delete $$.os; } <objectfield>
 
 %%
 
@@ -300,11 +298,12 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEMENUITEMENTITY[0]);
 		g_lingo->codeInt($THEMENUITEMENTITY[1]);
 		$$ = $expr; }
-	| tSET THEOBJECTFIELD tTO expr	{
-		g_lingo->code1(LC::c_objectfieldassign);
-		g_lingo->codeString($THEOBJECTFIELD.os->c_str());
-		g_lingo->codeInt($THEOBJECTFIELD.oe);
-		delete $THEOBJECTFIELD.os;
+	| tSET THEOBJECTPROP tTO expr	{
+		g_lingo->code1(LC::c_objectpropassign);
+		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
+		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
+		delete $THEOBJECTPROP.obj;
+		delete $THEOBJECTPROP.prop;
 		$$ = $expr; }
 
 stmtoneliner: macro
@@ -574,17 +573,12 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| THEFBLTIN tOF simpleexpr	{
 		$$ = g_lingo->codeFunc($THEFBLTIN, 1);
 		delete $THEFBLTIN; }
-	| THEOBJECTFIELD {
-		g_lingo->code1(LC::c_objectfieldpush);
-		g_lingo->codeString($THEOBJECTFIELD.os->c_str());
-		g_lingo->codeInt($THEOBJECTFIELD.oe);
-		delete $THEOBJECTFIELD.os; }
-	| THEOBJECTREF {
-		g_lingo->code1(LC::c_objectrefpush);
-		g_lingo->codeString($THEOBJECTREF.obj->c_str());
-		g_lingo->codeString($THEOBJECTREF.field->c_str());
-		delete $THEOBJECTREF.obj;
-		delete $THEOBJECTREF.field; }
+	| THEOBJECTPROP {
+		g_lingo->code1(LC::c_objectproppush);
+		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
+		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
+		delete $THEOBJECTPROP.obj;
+		delete $THEOBJECTPROP.prop; }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
 	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }

@@ -1207,26 +1207,31 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 	}
 }
 
-Datum Lingo::getObjectField(Common::String &obj, int field) {
-	warning("STUB: getObjectField(\"%s\", %d)", obj.c_str(), field);
+Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
+	if (obj.type != OBJECT) {
+		warning("LC::c_objectproppush: Invalid object: %s", obj.asString(true).c_str());
+		return Datum();
+	}
 
-	Datum d;
-	d.type = VOID;
-
-	return d;
+	if (obj.u.obj->hasProp(propName)) {
+		return obj.u.obj->getProp(propName);
+	} else {
+		warning("Lingo::getObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		return Datum();
+	}
 }
 
-void Lingo::setObjectField(Common::String &obj, int field, Datum &d) {
-	warning("STUB: setObjectField(\"%s\", %d, ...)", obj.c_str(), field);
-}
+void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &d) {
+	if (obj.type != OBJECT) {
+		warning("LC::c_objectproppush: Invalid object: %s", obj.asString(true).c_str());
+		return;
+	}
 
-Datum Lingo::getObjectRef(Common::String &obj, Common::String &field) {
-	warning("STUB: getObjectRef(\"%s\", \"%s\")", obj.c_str(), field.c_str());
-
-	Datum d;
-	d.type = VOID;
-
-	return d;
+	if (obj.u.obj->hasProp(propName)) {
+		obj.u.obj->getProp(propName) = d;
+	} else {
+		warning("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+	}
 }
 
 } // End of namespace Director

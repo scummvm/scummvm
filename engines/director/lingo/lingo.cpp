@@ -374,8 +374,6 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
 		if (it->_value == kVarLocal)
 			varNames->push_back(Common::String(it->_key));
-		else if (it->_value == kVarProperty)
-			_assemblyContext->_propNames.push_back(Common::String(it->_key));
 	}
 	delete _methodVars;
 	_methodVars = nullptr;

@@ -91,9 +91,8 @@ namespace LC {
 	void c_themenuentitypush();
 	void c_theentityassign();
 	void c_themenuitementityassign();
-	void c_objectfieldpush();
-	void c_objectfieldassign();
-	void c_objectrefpush();
+	void c_objectproppush();
+	void c_objectpropassign();
 
 	void c_whencode();
 	void c_tell();

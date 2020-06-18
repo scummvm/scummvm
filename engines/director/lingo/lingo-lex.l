@@ -294,17 +294,10 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 			if (g_director->getVersion() >= 4) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
-				if (!g_lingo->_theEntityFields.contains(key)) { // Okay, this must be an object reference
-					yylval.objectref.obj = new Common::String(ptr);
-					yylval.objectref.field = new Common::String(field);
+				yylval.objectprop.obj = new Common::String(ptr);
+				yylval.objectprop.prop = new Common::String(field);
 
-					return THEOBJECTREF;
-				}
-
-				yylval.objectfield.os = new Common::String(ptr);
-				yylval.objectfield.oe = g_lingo->_theEntityFields[key]->field;
-
-				return THEOBJECTFIELD;
+				return THEOBJECTPROP;
 			} else if (g_lingo->_builtins.contains(field)) { // Let's hope they don't do it in D4+
 				if (g_lingo->_builtins[field].type == FBLTIN &&
 						g_lingo->_builtins[field].nargs == 1 && g_lingo->_builtins[field].maxArgs == 1) {

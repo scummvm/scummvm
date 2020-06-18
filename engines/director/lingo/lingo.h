@@ -275,6 +275,8 @@ struct Object {
 	Symbol getMethod(const Common::String &methodName);
 	bool hasVar(const Common::String &varName);
 	Datum &getVar(const Common::String &varName);
+	bool hasProp(const Common::String &propName);
+	Datum &getProp(const Common::String &propName);
 };
 
 struct CFrame {	/* proc/func call stack frame */
@@ -443,9 +445,8 @@ public:
 	Datum getTheSprite(Datum &id, int field);
 	Datum getTheCast(Datum &id, int field);
 	Datum getTheField(Datum &id1, int field);
-	Datum getObjectField(Common::String &obj, int field);
-	void setObjectField(Common::String &obj, int field, Datum &d);
-	Datum getObjectRef(Common::String &obj, Common::String &field);
+	Datum getObjectProp(Datum &obj, Common::String &propName);
+	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
 	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);
 	const char *entity2str(int id);
 	const char *field2str(int id);

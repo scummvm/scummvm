@@ -103,9 +103,8 @@ static struct FuncDescr {
 	{ LC::c_negate,			"c_negate",			"" },
 	{ LC::c_neq,			"c_neq",			"" },
 	{ LC::c_not,			"c_not",			"" },
-	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
-	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
-	{ LC::c_objectrefpush,	"c_objectrefpush",	"ss" }, // object, field
+	{ LC::c_objectpropassign,"c_objectpropassign","ss" }, // object, prop
+	{ LC::c_objectproppush,	"c_objectproppush","ss" }, // object, prop
 	{ LC::c_of,				"c_of",				"" },
 	{ LC::c_open,			"c_open",			"" },
 	{ LC::c_or,				"c_or",				"" },
@@ -523,29 +522,24 @@ void LC::c_themenuitementityassign() {
 	g_lingo->setTheMenuItemEntity(entity, menuId, field, menuItemId, d);
 }
 
-void LC::c_objectfieldpush() {
-	Common::String object(g_lingo->readString());
-	int field  = g_lingo->readInt();
+void LC::c_objectproppush() {
+	Datum objName(g_lingo->readString());
+	objName.type = VAR;
+	Datum obj = g_lingo->varFetch(objName);
+	Common::String propName = g_lingo->readString();
 
-	Datum d = g_lingo->getObjectField(object, field);
-	g_lingo->push(d);
+	g_lingo->push(g_lingo->getObjectProp(obj, propName));
 }
 
-void LC::c_objectfieldassign() {
-	Common::String object(g_lingo->readString());
-	int field  = g_lingo->readInt();
+void LC::c_objectpropassign() {
+	Datum objName(g_lingo->readString());
+	objName.type = VAR;
+	Datum obj = g_lingo->varFetch(objName);
+	Common::String propName = g_lingo->readString();
 
 	Datum d = g_lingo->pop();
 
-	g_lingo->setObjectField(object, field, d);
-}
-
-void LC::c_objectrefpush() {
-	Common::String object(g_lingo->readString());
-	Common::String field(g_lingo->readString());
-
-	Datum d = g_lingo->getObjectRef(object, field);
-	g_lingo->push(d);
+	g_lingo->setObjectProp(obj, propName, d);
 }
 
 void LC::c_swap() {
