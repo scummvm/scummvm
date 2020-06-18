@@ -28,9 +28,17 @@
 namespace Director {
 
 void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
-	// drawRect could be bigger than the spriteSurface. Clip it
-	Common::Rect t(spriteSurface.w, spriteSurface.h);
-	t.moveTo(drawRect.left, drawRect.top);
+
+	// FIXME: If we try to use one of the draw* methods below for a sprite that
+	// has width and height changed, there is a butter overflow. But we don't want
+	// to clip `t`, so width and height can be changed and stretched automatically.
+	Common::Rect t;
+	if (ink == kInkTypeCopy || ink == kInkTypeTransparent) {
+		t = drawRect;
+	} else {
+		Common::Rect t(spriteSurface.w, spriteSurface.h);
+		t.moveTo(drawRect.left, drawRect.top);
+	}
 
 	Common::Point maskOrigin(MAX(0, -drawRect.left), MAX(0, -drawRect.top));
 	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));

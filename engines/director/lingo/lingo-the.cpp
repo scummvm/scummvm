@@ -849,6 +849,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheHeight:
 		if (sprite->_puppet && sprite->_stretch) {
+			score->unrenderSprite(id);
 			sprite->_height = d.asInt();
 		}
 		break;
@@ -914,6 +915,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheWidth:
 		if (sprite->_puppet && sprite->_stretch) {
+			score->unrenderSprite(id);
 			sprite->_width = d.asInt();
 		}
 		break;
