@@ -90,6 +90,7 @@ struct Channel {
 	Sprite *_sprite;
 
 	bool _visible;
+	uint _constraint;
 	Common::Point _currentPoint;
 	Common::Point _delta;
 

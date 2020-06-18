@@ -712,7 +712,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_castId;
 		break;
 	case kTheConstraint:
-		d.u.i = sprite->_constraint;
+		d.u.i = channel->_constraint;
 		break;
 	case kTheEditableText:
 		d.u.i = sprite->_cast ? sprite->_cast->isEditable() : 0;
@@ -831,7 +831,15 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->setCast(d.asInt());
 		break;
 	case kTheConstraint:
-		sprite->_constraint = d.asInt();
+		if (d.type == REFERENCE) {
+			// Reference: Cast ID
+			// Find the first channel that uses this cast.
+			for (uint i = 0; i < score->_channels.size(); i++)
+				if (score->_channels[i]->_sprite->_castId == d.u.i)
+					d.u.i = i;
+		}
+
+		channel->_constraint = d.u.i;
 		break;
 	case kTheEditableText:
 		sprite->_cast ? sprite->_cast->setEditable(d.asInt()) : false;

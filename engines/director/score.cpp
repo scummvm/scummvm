@@ -65,7 +65,16 @@ void Channel::updateLocation() {
 }
 
 void Channel::addDelta(Common::Point pos) {
-	// This method is for easily implementing constraint of sprite
+	if (_sprite->_moveable && _constraint > 0) {
+		Common::Rect constraintBbox = g_director->getCurrentScore()->_channels[_constraint]->getBbox();
+
+		Common::Rect currentBbox = getBbox();
+		currentBbox.translate(pos.x, pos.y);
+
+		// TODO: Snap to the nearest point on the rectangle.
+		if (constraintBbox.findIntersectingRect(currentBbox) != currentBbox)
+			return;
+	}
 
 	_delta += pos;
 }

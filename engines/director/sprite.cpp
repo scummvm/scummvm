@@ -53,7 +53,6 @@ Sprite::Sprite() {
 	_dirty = false;
 	_width = 0;
 	_height = 0;
-	_constraint = 0;
 	_moveable = false;
 	_editable = false;
 	_puppet = false;
