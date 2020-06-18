@@ -1303,7 +1303,7 @@ void LC::call(const Common::String &name, int nargs) {
 	if (nargs > 0) {
 		Datum target = g_lingo->peek(nargs - 1);
 		if (target.type == OBJECT && (target.u.obj->type & (kScriptObj | kXtraObj))) {
-			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to <%s>", name.c_str(), target.asString(true).c_str());
+			debugC(3, kDebugLingoExec, "Method called on object: <%s>", target.asString(true).c_str());
 			g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take object out of stack
 			nargs -= 1;
 			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
@@ -1324,7 +1324,7 @@ void LC::call(const Common::String &name, int nargs) {
 		objName.type = VAR;
 		Datum target = g_lingo->varFetch(objName);
 		if (target.type == OBJECT && (target.u.obj->type & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to <%s>", name.c_str(), target.asString(true).c_str());
+			debugC(3, kDebugLingoExec, "Method called on object: <%s>", target.asString(true).c_str());
 			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 			nargs -= 1;
 			if (methodName.u.s->equalsIgnoreCase("mNew")) {
