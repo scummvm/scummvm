@@ -146,6 +146,13 @@ Symbol Object::getMethod(const Common::String &methodName) {
 		if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].type)) {
 			return g_lingo->_methods[methodName];
 		}
+
+		// ancestor method
+		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
+				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
+			debugC(3, kDebugLingoExec, "Calling method '%s' on ancestor: <%s>", methodName.c_str(), properties["ancestor"].asString(true).c_str());
+			return properties["ancestor"].u.obj->getMethod(methodName);
+		}
 	}
 
 	return Symbol();
@@ -155,16 +162,33 @@ bool Object::hasVar(const Common::String &varName) {
 	if (disposed) {
 		error("Variable '%s' accessed on disposed object <%s>", varName.c_str(), Datum(this).asString(true).c_str());
 	}
-	// Factory object instance vars are accessed like normal vars
-	// Script object properties cannot be accessed like normal vars until D5
-	if (type == kScriptObj && g_lingo->_vm->getVersion() < 5) {
-		return false;
+	if (properties.contains(varName)) {
+		return true;
 	}
-	return properties.contains(varName);
+	if (type & (kScriptObj | kXtraObj)) {
+		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
+				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
+			return properties["ancestor"].u.obj->hasVar(varName);
+		}
+	}
+	return false;
 }
 
 Datum &Object::getVar(const Common::String &varName) {
-	return properties[varName];
+	if (disposed) {
+		error("Variable '%s' accessed on disposed object <%s>", varName.c_str(), Datum(this).asString(true).c_str());
+	}
+	if (properties.contains(varName)) {
+		return properties[varName];
+	}
+	if (type & (kScriptObj | kXtraObj)) {
+		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
+				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
+			debugC(3, kDebugLingoExec, "Getting var '%s' from ancestor: <%s>", varName.c_str(), properties["ancestor"].asString(true).c_str());
+			return properties["ancestor"].u.obj->getVar(varName);
+		}
+	}
+	return properties[varName]; // return new variable
 }
 
 // Initialization/disposal
