@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "graphics/font.h"
+#include "gui/ThemeEngine.h"
 
 #ifdef LAYOUT_DEBUG_DIALOG
 namespace Graphics {
@@ -63,7 +64,7 @@ public:
 	ThemeLayout(ThemeLayout *p) :
 		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
 		_defaultW(-1), _defaultH(-1),
-		_textHAlign(Graphics::kTextAlignInvalid) {}
+		_textHAlign(GUI::ThemeEngine::kTextAlignHInvalid) {}
 
 	virtual ~ThemeLayout() {
 		for (uint i = 0; i < _children.size(); ++i)
@@ -100,7 +101,7 @@ protected:
 
 	void setWidth(int16 width) { _w = width; }
 	void setHeight(int16 height) { _h = height; }
-	void setTextHAlign(Graphics::TextAlign align) { _textHAlign = align; }
+	void setTextHAlign(GUI::ThemeEngine::TextAlignH align) { _textHAlign = align; }
 
 	/**
 	 * Checks if the layout element is attached to a GUI widget
@@ -116,11 +117,11 @@ protected:
 public:
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL);
 
-	virtual Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
+	virtual GUI::ThemeEngine::TextAlignH getWidgetTextHAlign(const Common::String &name);
 
 	void importLayout(ThemeLayout *layout);
 
-	Graphics::TextAlign getTextHAlign() { return _textHAlign; }
+	GUI::ThemeEngine::TextAlignH getTextHAlign() { return _textHAlign; }
 
 #ifdef LAYOUT_DEBUG_DIALOG
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font);
@@ -135,7 +136,7 @@ protected:
 	Common::Rect _padding;
 	Common::Array<ThemeLayout *> _children;
 	int16 _defaultW, _defaultH;
-	Graphics::TextAlign _textHAlign;
+	GUI::ThemeEngine::TextAlignH _textHAlign;
 };
 
 class ThemeLayoutMain : public ThemeLayout {
@@ -220,7 +221,7 @@ protected:
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, bool &useRTL) : ThemeLayout(p), _name(name) {
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, GUI::ThemeEngine::TextAlignH align, bool &useRTL) : ThemeLayout(p), _name(name) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
 		_useRTL = useRTL;
@@ -229,7 +230,7 @@ public:
 	}
 
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL) override;
-	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name) override;
+	GUI::ThemeEngine::TextAlignH getWidgetTextHAlign(const Common::String &name) override;
 
 	void reflowLayout(Widget *widgetChain) override;
 
@@ -254,7 +255,7 @@ class ThemeLayoutTabWidget : public ThemeLayoutWidget {
 	int _tabHeight;
 
 public:
-	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight):
+	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, GUI::ThemeEngine::TextAlignH align, int tabHeight):
 		ThemeLayoutWidget(p, name, w, h, align, _useRTL) {
 		_tabHeight = tabHeight;
 	}

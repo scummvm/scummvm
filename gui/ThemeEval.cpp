@@ -71,7 +71,7 @@ bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, 
 	return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h, useRTL);
 }
 
-Graphics::TextAlign ThemeEval::getWidgetTextHAlign(const Common::String &widget) {
+GUI::ThemeEngine::TextAlignH ThemeEval::getWidgetTextHAlign(const Common::String &widget) {
 	Common::StringTokenizer tokenizer(widget, ".");
 
 	if (widget.hasPrefix("Dialog."))
@@ -81,20 +81,20 @@ Graphics::TextAlign ThemeEval::getWidgetTextHAlign(const Common::String &widget)
 	Common::String widgetName = tokenizer.nextToken();
 
 	if (!_layouts.contains(dialogName))
-		return Graphics::kTextAlignInvalid;
+		return GUI::ThemeEngine::kTextAlignHInvalid;
 
 	return _layouts[dialogName]->getWidgetTextHAlign(widgetName);
 }
 
-ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String &type, int w, int h, Graphics::TextAlign align, bool useRTL) {
+ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String &type, int w, int h, GUI::ThemeEngine::TextAlignH align, bool useRTL) {
 	int typeW = -1;
 	int typeH = -1;
-	Graphics::TextAlign typeAlign = Graphics::kTextAlignInvalid;
+	GUI::ThemeEngine::TextAlignH typeAlign = GUI::ThemeEngine::kTextAlignHInvalid;
 
 	if (!type.empty()) {
 		typeW = getVar("Globals." + type + ".Width", -1);
 		typeH = getVar("Globals." + type + ".Height", -1);
-		typeAlign = (Graphics::TextAlign)getVar("Globals." + type + ".Align", Graphics::kTextAlignInvalid);
+		typeAlign = (GUI::ThemeEngine::TextAlignH)getVar("Globals." + type + ".Align", GUI::ThemeEngine::kTextAlignHInvalid);
 	}
 
 	ThemeLayoutWidget *widget;
@@ -102,13 +102,13 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 		widget = new ThemeLayoutTabWidget(_curLayout.top(), name,
 									typeW == -1 ? w : typeW,
 									typeH == -1 ? h : typeH,
-									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
+									typeAlign == GUI::ThemeEngine::kTextAlignHInvalid ? align : typeAlign,
 									getVar("Globals.TabWidget.Tab.Height", 0));
 	else
 		widget = new ThemeLayoutWidget(_curLayout.top(), name,
 									typeW == -1 ? w : typeW,
 									typeH == -1 ? h : typeH,
-									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
+									typeAlign == GUI::ThemeEngine::kTextAlignHInvalid ? align : typeAlign,
 									useRTL);
 
 	_curLayout.top()->addChild(widget);
