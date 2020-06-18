@@ -36,13 +36,14 @@ static struct MethodProto {
 	int type;
 	int version;
 } predefinedMethods[] = {
+	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	4 },			// D4
 	{ "describe",				LM::m_describe,				 0, 0,	kXObj,					2 },	// D2
 	{ "dispose",				LM::m_dispose,				 0, 0,	kFactoryObj | kXObj,	2 },	// D2
 	{ "get",					LM::m_get,					 1, 1,	kFactoryObj,			2 },	// D2
 	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					3 },		// D3
 	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					3 },		// D3
 	{ "name",					LM::m_name,					 0, 0,	kXObj,					3 },		// D3
-	{ "new",					LM::m_new,					-1, 0,	kFactoryObj | kXObj, 	2 },	// D2
+	{ "new",					LM::m_new,					-1, 0,	kAllObj, 				2 },	// D2
 	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj, 	3 },		// D3
 	{ "put",					LM::m_put,					 2, 2,	kFactoryObj,			2 },	// D2
 	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					2 },	// D2

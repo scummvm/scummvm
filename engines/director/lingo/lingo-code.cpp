@@ -200,6 +200,9 @@ Datum Lingo::peek(uint offset) {
 	assert (_stack.size() > offset);
 
 	Datum ret = _stack[_stack.size() - 1 - offset];
+	if (ret.lazy) {
+		ret = ret.eval();
+	}
 	return ret;
 }
 
@@ -1294,15 +1297,34 @@ void LC::call(const Common::String &name, int nargs) {
 	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
-	Symbol funcSym = g_lingo->getHandler(name);
+	Symbol funcSym;
 
+	// Script/Xtra method call
+	if (nargs > 0) {
+		Datum target = g_lingo->peek(nargs - 1);
+		if (target.type == OBJECT && (target.u.obj->type & (kScriptObj | kXtraObj))) {
+			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to <%s>", name.c_str(), target.asString(true).c_str());
+			g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take object out of stack
+			nargs -= 1;
+			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
+				target = Datum(target.u.obj->clone());
+			}
+			funcSym = target.u.obj->getMethod(name);
+			call(funcSym, nargs, target);
+			return;
+		}
+	}
+
+	// Normal handler call
+	funcSym = g_lingo->getHandler(name);
+
+	// Factory/XObject method call
 	if (funcSym.type == VOID) {
-		Datum eventName(name);
-		eventName.type = VAR;
-		Datum d = g_lingo->varFetch(eventName);
-		if (d.type == OBJECT && (d.u.obj->type & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to <%s>", name.c_str(), d.asString(true).c_str());
-			Datum target = d;
+		Datum objName(name);
+		objName.type = VAR;
+		Datum target = g_lingo->varFetch(objName);
+		if (target.type == OBJECT && (target.u.obj->type & (kFactoryObj | kXObj))) {
+			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to <%s>", name.c_str(), target.asString(true).c_str());
 			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 			nargs -= 1;
 			if (methodName.u.s->equalsIgnoreCase("mNew")) {
@@ -1313,6 +1335,7 @@ void LC::call(const Common::String &name, int nargs) {
 			return;
 		}
 	}
+
 	call(funcSym, nargs);
 }
 

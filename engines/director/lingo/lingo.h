@@ -233,7 +233,8 @@ enum ObjectType {
 	kFactoryObj = 1 << 0,
 	kXObj = 1 << 1,
 	kScriptObj = 1 << 2,
-	kXtraObj = 1 << 3
+	kXtraObj = 1 << 3,
+	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj
 };
 
 struct Object {
