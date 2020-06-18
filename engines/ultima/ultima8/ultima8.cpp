@@ -709,8 +709,6 @@ void Ultima8Engine::leaveTextMode(Gump *gump) {
 }
 
 void Ultima8Engine::handleEvent(const Common::Event &event) {
-	//bool handled = false;
-
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		break;
@@ -721,6 +719,34 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		break;
+
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN: {
+		Shared::MouseButton button = Shared::BUTTON_LEFT;
+		if (event.type == Common::EVENT_RBUTTONDOWN)
+			button = Shared::BUTTON_RIGHT;
+		else if (event.type == Common::EVENT_MBUTTONDOWN)
+			button = Shared::BUTTON_MIDDLE;
+
+		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
+		_mouse->buttonDown(button);
+		break;
+	}
+
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_MBUTTONUP:
+	case Common::EVENT_RBUTTONUP: {
+		Shared::MouseButton button = Shared::BUTTON_LEFT;
+		if (event.type == Common::EVENT_RBUTTONUP)
+			button = Shared::BUTTON_RIGHT;
+		else if (event.type == Common::EVENT_MBUTTONUP)
+			button = Shared::BUTTON_MIDDLE;
+
+		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
+		_mouse->buttonUp(button);
+		break;
+	}
 
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		MetaEngine::pressAction((KeybindingAction)event.customType);
@@ -786,58 +812,6 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 				break;
 			}
 		}
-	}
-
-	// Old style input begins here
-	switch (event.type) {
-
-		//!! TODO: handle mouse handedness. (swap left/right mouse buttons here)
-
-		// most of these events will probably be passed to a gump manager,
-		// since almost all (all?) user input will be handled by a gump
-
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN: {
-		Shared::MouseButton button = Shared::BUTTON_LEFT;
-		if (event.type == Common::EVENT_RBUTTONDOWN)
-			button = Shared::BUTTON_RIGHT;
-		else if (event.type == Common::EVENT_MBUTTONDOWN)
-			button = Shared::BUTTON_MIDDLE;
-
-		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
-		_mouse->buttonDown(button);
-		//if (_mouse->buttonDown(button)) handled = true;
-		break;
-	}
-
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_MBUTTONUP:
-	case Common::EVENT_RBUTTONUP: {
-		Shared::MouseButton button = Shared::BUTTON_LEFT;
-		if (event.type == Common::EVENT_RBUTTONUP)
-			button = Shared::BUTTON_RIGHT;
-		else if (event.type == Common::EVENT_MBUTTONUP)
-			button = Shared::BUTTON_MIDDLE;
-
-		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
-		_mouse->buttonUp(button);
-		//if (_mouse->buttonUp(button)) handled = true;
-		break;
-	}
-
-	case Common::EVENT_KEYDOWN:
-		if (_mouse->dragging() != Mouse::DRAG_NOT)
-			break;
-
-		// Any special key handling goes here
-		if ((event.kbd.keycode == Common::KEYCODE_q || event.kbd.keycode == Common::KEYCODE_x) &&
-			(event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)) != 0)
-			ForceQuit();
-		break;
-
-	default:
-		break;
 	}
 }
 
