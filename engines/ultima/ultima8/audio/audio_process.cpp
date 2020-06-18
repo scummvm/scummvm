@@ -636,7 +636,7 @@ uint32 AudioProcess::I_stopSFXCru(const uint8 *args, unsigned int argsize) {
 	return 0;
 }
 
-uint32 AudioProcess::I_stopAllSFX(const uint8 */*args*/, unsigned int /*argsize*/) {
+uint32 AudioProcess::I_stopAllSFX(const uint8 * /*args*/, unsigned int /*argsize*/) {
 	AudioProcess *ap = AudioProcess::get_instance();
 	// Not *exactly* the same, but close enough for this intrinsic.
 	if (ap) ap->stopAllExceptSpeech();
