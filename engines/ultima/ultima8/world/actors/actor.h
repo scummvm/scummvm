@@ -189,9 +189,12 @@ public:
 	//! check if NPCs are near which are in combat mode and hostile
 	bool areEnemiesNear();
 
+	//! check if NPCs are near which are in combat mode and hostile
+	void notifyNearbyItems();
+
 	//! starts an activity
 	//! \return processID of process handling the activity or zero
-	uint16 cSetActivity(int activity);
+	uint16 setActivity(int activity);
 
 	//! run the given animation
 	//! \return the PID of the ActorAnimProcess
@@ -208,6 +211,10 @@ public:
 	//! \param dir _direction to walk in
 	//! \param state the state to start from, or 0 to use the current state
 	Animation::Result tryAnim(Animation::Sequence anim, int dir, unsigned int steps = 0, PathfindingState *state = 0);
+
+	//! overrides the standard item collideMove so we  can notify nearby objects.
+	int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
+	                  ObjId *hititem = 0, uint8 *dirs = 0) override;
 
 	//! create an actor, assign objid, make it ethereal and load monster stats.
 	static Actor *createActor(uint32 shape, uint32 frame);
@@ -265,7 +272,7 @@ public:
 	INTRINSIC(I_areEnemiesNear);
 	INTRINSIC(I_isBusy);
 	INTRINSIC(I_createActor);
-	INTRINSIC(I_cSetActivity);
+	INTRINSIC(I_setActivity);
 	INTRINSIC(I_setAirWalkEnabled);
 	INTRINSIC(I_getAirWalkEnabled);
 	INTRINSIC(I_schedule);
@@ -309,6 +316,15 @@ protected:
 	uint8 _unk0C; // unknown byte 0x0C from npcdata.dat
 
 	uint32 _actorFlags;
+
+	//! starts an activity (Ultima 8 version)
+	//! \return processID of process handling the activity or zero
+	uint16 setActivityU8(int activity);
+
+	//! starts an activity (Crusader version)
+	//! \return processID of process handling the activity or zero
+	uint16 setActivityCru(int activity);
+
 };
 
 } // End of namespace Ultima8

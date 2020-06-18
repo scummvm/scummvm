@@ -423,6 +423,8 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 		_y = newy;
 		_z = newz;
 	}
+	if (GAME_IS_CRUSADER)
+		notifyNearbyItems();
 }
 
 uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
@@ -507,7 +509,14 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	return Animation::END_OFF_LAND;
 }
 
-uint16 Actor::cSetActivity(int activity) {
+uint16 Actor::setActivity(int activity) {
+	if (GAME_IS_CRUSADER)
+		return setActivityCru(activity);
+	else
+		return setActivityU8(activity);
+}
+
+uint16 Actor::setActivityU8(int activity) {
 	switch (activity) {
 	case 0: // loiter
 		Kernel::get_instance()->addProcess(new LoiterProcess(this));
@@ -521,12 +530,53 @@ uint16 Actor::cSetActivity(int activity) {
 		return doAnim(Animation::stand, 8);
 
 	default:
-		perr << "Actor::cSetActivity: invalid activity (" << activity << ")"
+		perr << "Actor::setActivityU8: invalid activity (" << activity << ")"
 		     << Std::endl;
 	}
 
 	return 0;
 }
+
+uint16 Actor::setActivityCru(int activity) {
+	if (isDead())
+		return 0;
+
+	switch (activity) {
+	case 1: // stand
+		return doAnim(Animation::stand, 8);
+	case 3: // pace
+		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);";
+		// TODO: Implement me as separate from loiter. (fall through for now)
+	case 2: // loiter
+		Kernel::get_instance()->addProcess(new LoiterProcess(this));
+		return Kernel::get_instance()->addProcess(new DelayProcess(1));
+	case 4:
+	case 6:
+	    // Does nothing in game..
+	    break;
+	case 7:
+		perr << "Actor::setActivityCru TODO: Implement new SurrenderProcess(this);";
+	    break;
+	case 8:
+		perr << "Actor::setActivityCru TODO: Implement new GuardProcess(this);";
+	    break;
+	case 5:
+	case 9:
+	case 10:
+	case 0xb:
+	case 0xc:
+		// attack
+	   setInCombat();
+	   return 0;
+
+	default:
+		perr << "Actor::setActivityCru: invalid activity (" << activity << ")"
+		     << Std::endl;
+	}
+
+	return 0;
+}
+
 
 uint32 Actor::getArmourClass() const {
 	const ShapeInfo *si = getShapeInfo();
@@ -1000,6 +1050,26 @@ void Actor::clearInCombat() {
 		cp->terminate();
 
 	clearActorFlag(ACT_INCOMBAT);
+}
+
+int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
+						 ObjId *hititem, uint8 *dirs) {
+	int32 result = Item::collideMove(x, y, z, teleport, force, hititem, dirs);
+	if (GAME_IS_CRUSADER)
+		notifyNearbyItems();
+	return result;
+}
+
+void Actor::notifyNearbyItems() {
+	UCList uclist(2);
+	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
+	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+	currentmap->areaSearch(&uclist, script, sizeof(script), this, 0x40, false);
+
+	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
+		Item *item = getItem(uclist.getuint16(i));
+		item->callUsecodeEvent_npcNearby(_objId);
+	}
 }
 
 bool Actor::areEnemiesNear() {
@@ -1571,12 +1641,12 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 	return objID;
 }
 
-uint32 Actor::I_cSetActivity(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Actor::I_setActivity(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	ARG_UINT16(activity);
 	if (!actor) return 0;
 
-	return actor->cSetActivity(activity);
+	return actor->setActivity(activity);
 }
 
 uint32 Actor::I_setAirWalkEnabled(const uint8 *args, unsigned int /*argsize*/) {

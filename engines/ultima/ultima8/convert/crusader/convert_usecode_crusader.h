@@ -91,7 +91,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getY(Item *)",
 	"void AudioProcess::I_playSFXCru(Item *, uint16 sfxnum)",
 	"int16 Item::I_getShape(Item *)", // in STEAMBOX::func0A, is compared to 0x511 (the STEAM2 shape number) to determine direction
-	"void Intrinsic017(8 bytes)",
+	"void Item::I_explode(Item *, exptype, destroy_item)",
 	"int16 UCMachine::I_rndRange(uint16 x, uint16 y)", // // probably.. always called with 2 constants, then result often compared to some number between
 	"byte Item::I_legalCreateAtCoords(Item *, int16 shapeno, int16 frame, int16 x, int16 y, int16 z)", // probably, see usage in DOOR2::ordinal37
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132. Always associated with a bitwise-not or bitmask
@@ -108,7 +108,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_setShape(Item *, int16 shapeno)", // probably. See PEPSIEW::gotHit.
 	"void Item::I_touch(Item *)", // same code as U8
 	"int16 Item::I_getQHi(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
-	"int16 I_getClosestDirectionInRange(x1, y1, x2, y2, numdirs, aa, bb)",  // TODO: understand the decompile of this better.. what is it doing with aa and bb?
+	"int16 I_getClosestDirectionInRange(x1, y1, x2, y2, numdirs, mindir, maxdir)",
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Game::I_getDifficultyLevel(void)",
 	"void AudioProcess::I_playAmbientSFXCru(Item *, sndno)",
@@ -132,10 +132,10 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_setQLo(Item *, int16 qlo)", // probably setQLo, see usage in FREE::ordinal2E where object position is copied.  Disassembly confirms.
 	"int16 Item::I_getItemFamily(Item *)", // based on disasm
 	"void Container::I_destroyContents(Item *)",
-	"void Item::I_fallProbably(Item *)", // similar disasm to U8, but not totally the same.
+	"void Item::I_fallProbably_03E(Item *)", // similar disasm to U8, but not totally the same.
 	"int16 Egg::I_getEggId(Item *)", // from disasm
 	// 0040
-	"void CameraProcess::I_move_to(x, y, z)",
+	"void CameraProcess::I_moveTo(x, y, z)",
 	"void CameraProcess::I_setCenterOn(objid)",
 	"byte Intrinsic042(6 bytes)",
 	"void AudioProcess::I_playSFXCru(Item *, soundno)", // TODO: Work out how this is different from Int015 - to a first approximation they are quite similar.
@@ -157,7 +157,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Intrinsic052(6 bytes)",
 	"void I_SetNPCDataField0x8_053(Actor *, int)",
 	"void I_SetNPCDataField0xA_054(Actor *, int)",
-	"void I_NPCSetActivityProbably_055(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"void Intrinsic056(2 bytes)",
 	"int16 Item::I_getSOMETHING_57(Item *)",
 	"byte Item::Item::I_isCentreOn(Item *, uint16 other)",
@@ -199,7 +199,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 PaletteFaderProcess::I_fadeFromBlack(void)", // from black, no arg (40 frames)
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 130
 	"int16 I_GetNPCDataField0_07C(Actor *)",
-	"void I_NPCSetActivityProbably_07D(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Item::I_getQuality(Item *)", // based on disassembly
 	"void Item::I_setQuality(Item *, int)", // based on disassembly. same coff as 0BA, 125
 	// 0080
@@ -243,7 +243,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Egg::I_setEggXRange(Egg *, int)", // based on disasm
 	"byte Item::I_overlaps(Item *, uint16 unk)", // same disasm as U8
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"int16 I_getAnimationsDiabled(void)", // From disasm. Not implemented, that's ok..
+	"int16 I_getAnimationsDisabled(void)", // From disasm. Not implemented, that's ok..
 	"int16 Egg::I_getEggXRange(Egg *)", // based on disasm
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void I_playFlic0A9(char *)", // same coff as 092
@@ -284,7 +284,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Actor::I_addHp(Actor *, int)",
 	"void Intrinsic0CB(2 bytes)",
 	"byte I_GetNPCDataField0x59Flag3_0CC(Actor *)",
-	"void I_NPCSetActivityProbably_0CD(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Game::I_isReleaseBuild(void)", // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see what this does..
 	"void Item::setQAndCallSomething(Item *, int16 q)", // based on disassembly
 	// 00D0
@@ -299,7 +299,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
 	"void Intrinsic0DA_Fade(void)", // something about fades
-	"void I_NPCSetActivityProbably_0DB(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 I_GetNPCDataField0x4_0DD(Actor *)",
 	"void I_SetNPCDataField0x5c_0DE(Actor *, int)",
@@ -324,11 +324,11 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 00F0
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"void I_NPCSetActivityProbably_0F2(Actor *, int)(6 bytes)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"int16 Item::I_getQ(Item *)", // based on disassembly
 	"void Item::I_setQ(Item *, uint16 q)", // based on disassembly
-	"void Intrinsic0F6(void)",
+	"void CruHealer::I_create_0F6(void)",
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
@@ -391,7 +391,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 MonsterEgg::I_monsterEggHatch(Item *, uint16 other_itemno)",
 	// 0130
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 07B
-	"void I_NPCSetActivityProbably_131(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
+	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"void Intrinsic134(2 bytes)",

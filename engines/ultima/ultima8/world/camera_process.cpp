@@ -313,7 +313,7 @@ bool CameraProcess::loadData(Common::ReadStream *rs, uint32 version) {
 }
 
 //	"Camera::move_to(uword, uword, ubyte, word)",
-uint32 CameraProcess::I_move_to(const uint8 *args, unsigned int argsize) {
+uint32 CameraProcess::I_moveTo(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	ARG_UINT8(z);

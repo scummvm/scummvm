@@ -312,7 +312,7 @@ public:
 	//!          0 = didn't move
 	//!          0x4000 = reached destination
 	//! \note This can destroy the object
-	int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
+	virtual int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	                  ObjId *hititem = 0, uint8 *dirs = 0);
 
 	//! Make the item move up (delta>0) or down (delta<0),
@@ -359,8 +359,8 @@ public:
 	//! Get the volume this item takes up in a container
 	virtual uint32 getVolume() const;
 
-	//! explode
-	void explode();
+	//! explode with explosion type (0,1,2) and flag of whether to destroy the item.
+	void explode(int explosion_type, bool destroy_item);
 
 	//! get the damage type this object does when hitting something
 	virtual uint16 getDamageType() const;
@@ -398,6 +398,7 @@ public:
 	uint32 callUsecodeEvent_schedule(uint32 time);              // event 8
 	uint32 callUsecodeEvent_release();                          // event 9
 	uint32 callUsecodeEvent_equip();                            // event A
+	uint32 callUsecodeEvent_npcNearby(ObjId npc);               // event A
 	uint32 callUsecodeEvent_unequip();                          // event B
 	uint32 callUsecodeEvent_combine();                          // event C
 	uint32 callUsecodeEvent_enterFastArea();                    // event F

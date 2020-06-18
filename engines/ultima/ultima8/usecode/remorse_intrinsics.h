@@ -59,7 +59,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getY, //int Intrinsic014(4 bytes) // probably - see FREE::ordinal34
 	AudioProcess::I_playSFXCru, // pretty sure, see SWITCH::ordinal21 which plays various sfx related to access status
 	Item::I_getShape, // in STEAMBOX::func0A, is compared to 0x511 (the STEAM2 shape number) to determine direction
-	0, // void Intrinsic017(8 bytes)
+	Item::I_explode, // void Intrinsic017(8 bytes)
 	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
 	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes),  probably, see usage in DOOR2::ordinal37
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
@@ -100,10 +100,10 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setQLo,
 	Item::I_getFamily,
 	Container::I_destroyContents,
-	0, // void Intrinsic03E(4 bytes)
+	Item::I_fall, // FIXME: Not really the same as the U8 version.. does this work?
 	Egg::I_getEggId, // void Intrinsic03F(4 bytes)
 	// 0x040
-	CameraProcess::I_move_to, // void Intrinsic040(8 bytes)
+	CameraProcess::I_moveTo, // void Intrinsic040(8 bytes)
 	CameraProcess::I_setCenterOn, // void Intrinsic041(2 bytes)
 	0, // int Intrinsic042(6 bytes)
 	AudioProcess::I_playSFXCru, // TODO: Work out how this is different from Int015 - to a first approximation they are quite similar.
@@ -125,7 +125,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic052(6 bytes)
 	0, // void Intrinsic053(6 bytes)
 	0, // void Intrinsic054(6 bytes)
-	0, // void Intrinsic055(6 bytes)
+	Actor::I_setActivity, // void Intrinsic055(6 bytes)
 	0, // void Intrinsic056(2 bytes)
 	0, // void Intrinsic057(4 bytes)
 	Item::I_isCentreOn, // int Intrinsic058(6 bytes)
@@ -167,7 +167,7 @@ Intrinsic RemorseIntrinsics[] = {
 	PaletteFaderProcess::I_fadeFromBlack, // void Intrinsic07A(void)
 	Actor::I_clrImmortal, // based on disasm
 	0, // void Intrinsic07C(4 bytes) // I_getQIfSomething, see disassembly
-	0, // void Intrinsic07D(6 bytes)
+	Actor::I_setActivity, // void Intrinsic07D(6 bytes)
 	Item::I_getQuality,
 	Item::I_setQuality,
 	// 0x080
@@ -211,7 +211,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Egg::I_setEggXRange, // void Intrinsic0A3(6 bytes)
 	Item::I_overlaps,
 	Item::I_isOn,
-	0, // TODO: I_getAnimationsDiabled -> default to 0 (fine for now..)
+	0, // TODO: I_getAnimationsDisabled -> default to 0 (fine for now..)
 	Egg::I_getEggXRange, // void Intrinsic0A7(4 bytes)
 	Actor::I_setDead,
 	0, // I_playFlic(char *) Intrinsic0A9(void)
@@ -252,7 +252,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setHp, // int Intrinsic0CA(6 bytes)
 	0, // void Intrinsic0CB(2 bytes)
 	0, // int Intrinsic0CC(4 bytes)
-	0, // void Intrinsic0CD(6 bytes)
+	Actor::I_setActivity, // void Intrinsic0CD(6 bytes)
 	UCMachine::I_true, // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see how this changes the game.. for now just set to true.
 	0, // void Intrinsic0CF(6 bytes)
 	// 0x0D0
@@ -267,7 +267,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
 	0, // void Intrinsic0DA(void)
-	0, // void Intrinsic0DB(6 bytes)
+	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
 	0, // void Intrinsic0DD(4 bytes)
 	0, // void Intrinsic0DE(6 bytes)
@@ -292,11 +292,11 @@ Intrinsic RemorseIntrinsics[] = {
 	// 0x0F0
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_isOn,
-	0, // void Intrinsic0F2(6 bytes)
+	Actor::I_setActivity, // void Intrinsic0F2(6 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_getQ, // void Intrinsic0F4(4 bytes)
 	Item::I_setQ, // void Intrinsic0F5(6 bytes)
-	0, // void Intrinsic0F6(void)
+	0, // TODO: Implement CruHealer::I_create
 	Item::I_hurl, // void Intrinsic0F7(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_hurl, // void Intrinsic0F9(12 bytes)
@@ -359,7 +359,7 @@ Intrinsic RemorseIntrinsics[] = {
 	MonsterEgg::I_monsterEggHatch, // void Intrinsic12F(6 bytes) - FIXME: this is pretty different .. will it work?
 	// 0x130
 	Actor::I_clrImmortal, // void Intrinsic130(4 bytes)
-	0, // void Intrinsic131(6 bytes)
+	Actor::I_setActivity, // void Intrinsic131(6 bytes)
 	Item::I_andStatus, // void Intrinsic132(6 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
     0, // void Intrinsic134(2 bytes)

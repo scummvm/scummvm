@@ -1184,6 +1184,12 @@ uint32 Item::callUsecodeEvent_equip() {                           // event A
 	return callUsecodeEvent(0xA); // CONSTANT
 }
 
+uint32 Item::callUsecodeEvent_npcNearby(ObjId npc) {                           // event A
+	DynamicUCStack  arg_stack(2);
+	arg_stack.push2(npc);
+	return callUsecodeEvent(0xA, arg_stack.access(), 2);
+}
+
 uint32 Item::callUsecodeEvent_unequip() {                           // event B
 	return callUsecodeEvent(0xB); // CONSTANT
 }
@@ -1601,20 +1607,54 @@ void Item::hurl(int xs, int ys, int zs, int grav) {
 }
 
 
-void Item::explode() {
-	Process *p = new SpriteProcess(578, 20, 34, 1, 1, //!! constants
+void Item::explode(int explosion_type, bool destroy_item) {
+	Process *p;
+
+	if (GAME_IS_CRUSADER) {
+		// TODO: original game puts them at cx/cy/cz, but that looks wrong..
+		//int32 cx, cy, cz;
+		//getCentre(cx, cy, cz);
+		static const int expshapes[] = {0x31C, 0x31F, 0x326, 0x320, 0x321, 0x324, 0x323, 0x325};
+		int rnd = getRandom();
+		int spriteno;
+		// NOTE: The game does some weird 32-bit struff to decide what
+		// shapenum to use.  Just simplified to a random.
+		switch (explosion_type) {
+		case 0:
+			spriteno = expshapes[rnd % 2];
+			break;
+		case 1:
+			spriteno = expshapes[2 + rnd % 3];
+			break;
+		case 2:
+		default:
+			spriteno = expshapes[5 + rnd % 3];
+			break;
+		}
+		p = new SpriteProcess(spriteno, 0, 39, 1, 1, //!! constants
 	                               _x, _y, _z);
+	} else {
+		p = new SpriteProcess(578, 20, 34, 1, 1, //!! constants
+	                               _x, _y, _z);
+	}
 	Kernel::get_instance()->addProcess(p);
 
-	int sfx = (getRandom() % 2) ? 31 : 158;
+	int sfx;
+	if (GAME_IS_CRUSADER)
+		sfx = (getRandom() % 2) ? 28 : 108;
+	else
+		sfx = (getRandom() % 2) ? 31 : 158;
+
 	AudioProcess *audioproc = AudioProcess::get_instance();
 	if (audioproc) audioproc->playSFX(sfx, 0x60, 0, 0);
 
 	int32 xv, yv, zv;
 	getLocation(xv, yv, zv);
 
-	destroy(); // delete self
-	// WARNING: we are deleted at this point
+	if (destroy_item) {
+		destroy(); // delete self
+		// WARNING: we are deleted at this point
+	}
 
 	UCList itemlist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
@@ -1650,7 +1690,7 @@ void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
 
 	// explosive?
 	if (getShapeInfo()->is_explode()) {
-		explode(); // warning: deletes this
+		explode(0, true); // warning: deletes this
 		return;
 	}
 
@@ -1989,10 +2029,12 @@ uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
+	int mul = ((GAME_IS_CRUSADER) ? 8 : 16);
+
 	if (item->_flags & FLG_FLIPPED)
-		return x - item->getShapeInfo()->_y * 16;
+		return x - item->getShapeInfo()->_y * mul;
 	else
-		return x - item->getShapeInfo()->_x * 16;
+		return x - item->getShapeInfo()->_x * mul;
 }
 
 uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
@@ -2002,10 +2044,12 @@ uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
+	int mul = ((GAME_IS_CRUSADER) ? 8 : 16);
+
 	if (item->_flags & FLG_FLIPPED)
-		return y - item->getShapeInfo()->_x * 16;
+		return y - item->getShapeInfo()->_x * mul;
 	else
-		return y - item->getShapeInfo()->_y * 16;
+		return y - item->getShapeInfo()->_y * mul;
 }
 
 uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
@@ -3110,11 +3154,20 @@ uint32 Item::I_receiveHit(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
-uint32 Item::I_explode(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Item::I_explode(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	item->explode();
+	int exptype = 0;
+	bool destroy_item = true;
+	if (argsize > 4) {
+		ARG_UINT16(etype)
+		ARG_UINT16(destroy)
+		exptype = etype;
+		destroy_item = (destroy != 0);
+	}
+
+	item->explode(exptype, destroy_item);
 	return 0;
 }
 

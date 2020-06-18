@@ -80,8 +80,7 @@ uint16 MonsterEgg::hatch() {
 	newactor->setMapNum(World::get_instance()->getCurrentMap()->getNum());
 	newactor->setNpcNum(objID);
 	newactor->move(_x, _y, _z);
-
-	newactor->cSetActivity(getActivity());
+	newactor->setActivity(getActivity());
 
 	return objID;
 }
