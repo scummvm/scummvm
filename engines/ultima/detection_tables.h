@@ -154,8 +154,8 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 	// Ultima VI - German Patch https://sirjohn.de/ultima-6/
-    // Note: Not all user interface elements are translated in ScummVM
-    {
+	// Note: Not all user interface elements are translated in ScummVM
+	{
 		{
 			"ultima6_enh",
 			0,
@@ -289,7 +289,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	// Crusader games use basically the same engine as ultima8, but still
 	// need a lot of work.
 
-	// GOG Crusader - No Remorse
+	// GOG Crusader - No Remorse (V1.21)
 	{
 		{
 			"remorse",
@@ -319,13 +319,73 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG Crusader - No Regret
+	// Crusader - No Remorse (Spanish) provided by Wesker
+	{
+		{
+			"remorse",
+			"",
+			AD_ENTRY1s("eusecode.flx", "36a16d70c97d0379f1133cc743c31313", 558493),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
+	// Crusader - No Remorse - Demo V1.12D
+	{
+		{
+			"remorse_demo",
+			"",
+			AD_ENTRY1s("eusecode.flx", "41cdca35b62f4b2a7bb4c3b1ec782423", 556613),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
+	// GOG Crusader - No Regret (V1.06)
 	{
 		{
 			"regret",
 			"",
 			AD_ENTRY1s("eusecode.flx", "1bb360156b7240a1f05eb9bda01c54db", 481652),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REG,
+		0
+	},
+
+	// Crusader - No Regret - Demo - V1.08
+	{
+		{
+			"regret_demo",
+			"",
+			AD_ENTRY1s("eusecode.flx", "c6416e4716f3c008dba113a2a460367e", 556613),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REG,
+		0
+	},
+
+	// Crusader - No Regret (Spanish) provided by Wesker
+	{
+		{
+			"regret",
+			"",
+			AD_ENTRY1s("eusecode.flx", "f5906654047ed1dab75760da6426ecfa", 478125),
+			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
