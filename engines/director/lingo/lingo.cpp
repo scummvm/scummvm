@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "common/str.h"
 #include "common/str-array.h"
 
 #include "director/director.h"
@@ -281,7 +282,7 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 
 	const char *begin, *end;
 
-	if (!strncmp(code, "menu:", 5) || strcasestr(code, "\nmenu:")) {
+	if (!strncmp(code, "menu:", 5) || scumm_strcasestr(code, "\nmenu:")) {
 		debugC(1, kDebugCompile, "Parsing menu");
 		parseMenu(code);
 
