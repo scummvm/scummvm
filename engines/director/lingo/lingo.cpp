@@ -180,8 +180,7 @@ ScriptContext *Lingo::getScriptContext(int archiveIndex, ScriptType type, uint16
 	if (archiveIndex < 0)
 		return NULL;
 
-	if (type >= ARRAYSIZE(_archives[archiveIndex].scriptContexts) ||
-			!_archives[archiveIndex].scriptContexts[type].contains(id)) {
+	if (!_archives[archiveIndex].scriptContexts[type].contains(id)) {
 		return NULL;
 	}
 
