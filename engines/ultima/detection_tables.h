@@ -337,8 +337,8 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	// Crusader - No Remorse - Demo V1.12D
 	{
 		{
-			"remorse_demo",
-			"",
+			"remorse",
+			"Demo",
 			AD_ENTRY1s("eusecode.flx", "41cdca35b62f4b2a7bb4c3b1ec782423", 556613),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
@@ -367,9 +367,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	// Crusader - No Regret - Demo - V1.08
 	{
 		{
-			"regret_demo",
-			"",
-			AD_ENTRY1s("eusecode.flx", "c6416e4716f3c008dba113a2a460367e", 556613),
+			"regret",
+			"Demo",
+			AD_ENTRY1s("eusecode.flx", "c6416e4716f3c008dba113a2a460367e", 483174),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_DEMO,
