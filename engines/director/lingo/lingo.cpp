@@ -132,7 +132,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentAssembly = nullptr;
 	_assemblyContext = nullptr;
 
-	_currentEntityId = 0;
 	_currentChannelId = -1;
 	_pc = 0;
 	_abort = false;
@@ -215,16 +214,6 @@ Symbol Lingo::getHandler(const Common::String &name) {
 
 		return result;
 	}
-
-	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
-	// local scripts
-	if (_archives[kArchMain].eventHandlers.contains(entityIndex))
-		return _archives[kArchMain].eventHandlers[entityIndex];
-
-	// shared scripts
-	if (_archives[kArchShared].eventHandlers.contains(entityIndex))
-		return _archives[kArchShared].eventHandlers[entityIndex];
-
 	return result;
 }
 
@@ -279,7 +268,6 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	_assemblyArchive = archiveIndex;
 	ScriptContext *sc = _assemblyContext = new ScriptContext;
 	_currentAssembly = new ScriptData;
-	_currentEntityId = id;
 	if (archiveIndex >= 0)
 		_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
@@ -408,7 +396,7 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 
 	currentFunc.argNames = argNames;
 	currentFunc.varNames = varNames;
-	_assemblyContext->functions.push_back(currentFunc);
+	_assemblyContext->eventHandlers[kEventNone] = currentFunc;
 	_assemblyContext = nullptr;
 	_currentAssembly = nullptr;
 	return sc;
@@ -577,21 +565,17 @@ void Lingo::execute(uint pc) {
 	_abort = false;
 }
 
-void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
+void Lingo::executeScript(ScriptType type, uint16 id) {
 	ScriptContext *sc = getScriptContext(_archiveIndex, type, id);
 
 	if (!sc) {
 		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
 		return;
 	}
-	if (function >= sc->functions.size()) {
-		debugC(3, kDebugLingoExec, "Request to execute non-existant function %d in script type %d id %d", function, type, id);
-		return;
-	}
 
-	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
+	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
-	Symbol sym = sc->functions[function];
+	Symbol sym = sc->eventHandlers[kEventNone];
 	LC::call(sym, 0);
 	execute(_pc);
 }
@@ -613,7 +597,8 @@ void Lingo::restartLingo(bool keepSharedCast) {
 		LingoArchive *arch = &_archives[a];
 		for (int i = 0; i <= kMaxScriptType; i++) {
 			for (ScriptContextHash::iterator it = arch->scriptContexts[i].begin(); it != arch->scriptContexts[i].end(); ++it) {
-				it->_value->functions.clear();
+				it->_value->eventHandlers.clear();
+				it->_value->functionHandlers.clear();
 				delete it->_value;
 			}
 
@@ -621,7 +606,6 @@ void Lingo::restartLingo(bool keepSharedCast) {
 		}
 
 		arch->names.clear();
-		arch->eventHandlers.clear();
 		arch->functionHandlers.clear();
 	}
 
@@ -1003,7 +987,7 @@ void Lingo::runTests() {
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_hadError)
-					executeScript(kMovieScript, counter, 0);
+					executeScript(kMovieScript, counter);
 				else
 					debug(">> Skipping execution");
 			}
@@ -1023,9 +1007,9 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 5)
-				g_lingo->processEvent(kEventNone, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventNone, kArchMain, kScoreScript, frame->_sprites[i]->_scriptId, i);
 			else
-				g_lingo->processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventMouseUp, kArchMain, kScoreScript, frame->_sprites[i]->_scriptId, i);
 		}
 	}
 }

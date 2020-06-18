@@ -108,7 +108,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				sc->_lastClickTime = sc->_lastEventTime;
 
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
-				_lingo->registerEvent(kEventMouseDown);
+				_lingo->registerEvent(kEventMouseDown, spriteId);
 
 				if (sc->getSpriteById(spriteId)->_moveable)
 					g_director->setDraggedSprite(spriteId);
@@ -136,7 +136,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 						cast->_hilite = !cast->_hilite;
 				}
 
-				_lingo->registerEvent(kEventMouseUp);
+				_lingo->registerEvent(kEventMouseUp, spriteId);
 				sc->_currentMouseDownSpriteId = 0;
 				break;
 

@@ -98,8 +98,9 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 
 		if (!_eventHandlerTypeIds.contains(name)) {
 			_archives[_assemblyArchive].functionHandlers[name] = sym;
+			_assemblyContext->functionHandlers[name] = sym;
 		} else {
-			_archives[_assemblyArchive].eventHandlers[ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId)] = sym;
+			_assemblyContext->eventHandlers[_eventHandlerTypeIds[name]] = sym;
 		}
 	}
 
@@ -107,9 +108,8 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 }
 
 Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *factory, int end, bool removeCode) {
-	debugC(1, kDebugCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
-			name.c_str(), _currentAssembly->size() - 1, start, nargs, (factory ? factory->name->c_str() : ""),
-			end, _currentEntityId);
+	debugC(1, kDebugCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d)",
+			name.c_str(), _currentAssembly->size() - 1, start, nargs, (factory ? factory->name->c_str() : ""), end);
 
 	if (end == -1)
 		end = _currentAssembly->size();

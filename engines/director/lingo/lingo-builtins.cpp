@@ -520,7 +520,7 @@ void LB::b_value(int nargs) {
 	Common::String code = "scummvm_returnNumber " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->addCode(code.c_str(), kArchNone, kNoneScript, 0);
-	Symbol sym = sc->functions[0];
+	Symbol sym = sc->eventHandlers[kEventNone];
 	LC::call(sym, 0);
 	delete sc;
 }

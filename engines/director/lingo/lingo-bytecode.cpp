@@ -741,7 +741,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 
 	_assemblyArchive = archiveIndex;
 	_assemblyContext = new ScriptContext;
-	_currentEntityId = id;
 	_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
 	if (stream.size() < 0x5c) {

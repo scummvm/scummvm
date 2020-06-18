@@ -204,11 +204,6 @@ struct Builtin {
 	Builtin(void (*func1)(void), int nargs1) : func(func1), nargs(nargs1) {}
 };
 
-struct ScriptContext {
-	Common::Array<Symbol> functions;
-	Common::Array<Datum> constants;
-};
-
 typedef Common::HashMap<int32, ScriptContext *> ScriptContextHash;
 typedef Common::Array<Datum> StackData;
 typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SymbolHash;
@@ -217,6 +212,13 @@ typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Comm
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
+
+struct ScriptContext {
+	Common::Array<Symbol> functions; // used only by bytecode
+	Common::HashMap<uint32, Symbol> eventHandlers;
+	SymbolHash functionHandlers;
+	Common::Array<Datum> constants;
+};
 
 enum ObjectType {
 	kNoneObj = 0,
@@ -278,14 +280,16 @@ struct CFrame {	/* proc/func call stack frame */
 
 struct LingoEvent {
 	LEvent event;
+	int archiveIndex;
 	ScriptType st;
-	int entityId;
+	int scriptId;
 	int channelId;
 
-	LingoEvent (LEvent e, ScriptType s, int ei, int ci = -1) {
+	LingoEvent (LEvent e, int ai, ScriptType s, int si, int ci = -1) {
 		event = e;
+		archiveIndex = ai;
 		st = s;
-		entityId = ei;
+		scriptId = si;
 		channelId = ci;
 	}
 };
@@ -294,7 +298,6 @@ struct LingoEvent {
 struct LingoArchive {
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
-	Common::HashMap<uint32, Symbol> eventHandlers;
 	Common::HashMap<uint32, Common::String> primaryEventHandlers;
 	SymbolHash functionHandlers;
 };
@@ -316,7 +319,7 @@ public:
 	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex);
 	void executeHandler(const Common::String &name);
-	void executeScript(ScriptType type, uint16 id, uint16 function);
+	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s, uint pc);
 	void printCallStack(uint pc);
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
@@ -347,12 +350,10 @@ private:
 	void initEventHandlerTypes();
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
 	void primaryEventHandler(LEvent event);
-	void registerInputEvent(LEvent event);
+	void registerSpriteEvent(LEvent event, int spriteId);
 	void registerFrameEvent(LEvent event);
-	void registerGenericEvent(LEvent event);
-	void runMovieScript(LEvent event);
-	void registerSpriteEvent(LEvent event);
-	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
+	void registerMovieEvent(LEvent event);
+	void processEvent(LEvent event, int archiveIndex, ScriptType st, int entityId, int channelId = -1);
 
 	Common::Queue<LingoEvent> _eventQueue;
 
@@ -363,9 +364,9 @@ public:
 	Symbol getHandler(const Common::String &name);
 
 	int getEventCount();
-	void processEvent(LEvent event);
+	void processEvent(LEvent event, int spriteId = 0);
 	void processEvents();
-	void registerEvent(LEvent event);
+	void registerEvent(LEvent event, int spriteId = 0);
 
 public:
 	void execute(uint pc);

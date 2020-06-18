@@ -106,7 +106,7 @@ Score::Score(DirectorEngine *vm) {
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {
-		_lingo->executeScript(kMovieScript, 0, 0);
+		_lingo->executeScript(kMovieScript, 0);
 	}
 	_movieScriptCount = 0;
 	_labels = nullptr;
@@ -484,9 +484,9 @@ void Score::update() {
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
 	if (_vm->getVersion() >= 6) {
-		_lingo->processEvent(kEventBeginSprite);
+		// _lingo->processEvent(kEventBeginSprite);
 		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
-		_lingo->processEvent(kEventPrepareFrame);
+		// _lingo->processEvent(kEventPrepareFrame);
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
 
