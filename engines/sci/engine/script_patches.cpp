@@ -5106,6 +5106,32 @@ static const uint16 kq6CDPatchAudioTextSupportAzureAriel[] = {
 	PATCH_END
 };
 
+// Fixes Alexander's yell in dual mode when the Minotaur knocks him into the
+//  firey pit in room 440.
+//
+// Applies to: PC-CD
+// Patched method: hornSwaggled:changeState
+static const uint16 kq6CDSignatureAudioTextSupportMinotaurLair[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	SIG_ADDTOOFFSET(+41),
+	0x89, 0x5a,                         // lsg global[5a]
+	0x35, 0x02,                         // ldi 02
+	0x1c,                               // ne?
+	SIG_END
+};
+
+static const uint16 kq6CDPatchAudioTextSupportMinotaurLair[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x12,                               // and
+	PATCH_ADDTOOFFSET(+43),
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	PATCH_END
+};
+
 // Additional patch specifically for King's Quest 6
 //  Adds another button state for the text/audio button. We currently use the "speech" view for "dual" mode.
 // View 947, loop 9, cel 0+1 -> "text"
@@ -5207,6 +5233,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,    52, "CD: audio + text support KQ6 Girl In The Tower", 1, kq6CDSignatureAudioTextSupportGirlInTheTower, kq6CDPatchAudioTextSupportGirlInTheTower },
 	{ false,   740, "CD: audio + text support KQ6 Girl In The Tower", 1, kq6CDSignatureAudioTextSupportGirlInTheTower, kq6CDPatchAudioTextSupportGirlInTheTower },
 	{ false,   370, "CD: audio + text support KQ6 Azure & Ariel",     6, kq6CDSignatureAudioTextSupportAzureAriel,     kq6CDPatchAudioTextSupportAzureAriel },
+	{ false,   441, "CD: audio + text support KQ6 Minotaur lair",     1, kq6CDSignatureAudioTextSupportMinotaurLair,   kq6CDPatchAudioTextSupportMinotaurLair },
 	{ false,   903, "CD: audio + text support KQ6 menu",              1, kq6CDSignatureAudioTextMenuSupport,           kq6CDPatchAudioTextMenuSupport },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
