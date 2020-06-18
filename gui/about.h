@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/array.h"
 #include "common/keyboard.h"
 
@@ -33,6 +34,7 @@ namespace GUI {
 class EEHandler;
 
 class AboutDialog : public Dialog {
+	typedef Common::String String;
 	typedef Common::U32String U32String;
 	typedef Common::Array<Common::U32String> U32StringArray;
 protected:

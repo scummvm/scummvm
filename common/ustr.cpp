@@ -238,6 +238,12 @@ void U32String::insertChar(value_type c, uint32 p) {
 	_str[p] = c;
 }
 
+void U32String::insertString(String s, uint32 p) {
+	for (String::iterator i = s.begin(); i != s.end(); i++) {
+		U32String::insertChar(*i, p++);
+	}
+}
+
 void U32String::deleteChar(uint32 p) {
 	assert(p < _size);
 
@@ -520,68 +526,65 @@ void U32String::trim() {
 	}
 }
 
-// static
-U32String U32String::format(const char *fmt, ...) {
-	U32String output;
+U32String U32String::format(U32String fmt, ...) {
+	U32String output = fmt;
+	int len;
 
 	va_list va;
 	va_start(va, fmt);
-	output = U32String::vformat(fmt, va);
+	len = U32String::vformat(output, output.begin(), va);
 	va_end(va);
 
 	return output;
 }
 
-// static
-U32String U32String::vformat(const char *fmt, va_list args) {
-	U32String output = "";
-	assert(output.isStorageIntern());
-	output._str;
-	va_list va;
-	scumm_va_copy(va, args);
-	int len = vsnprintf((char *)output._str, _builtinCapacity, fmt, va);
-	va_end(va);
+int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args) {
+	int int_temp;
+	char char_temp;
+	char *string_temp;
 
-	if (len == -1 || len == _builtinCapacity - 1) {
-		// MSVC and IRIX don't return the size the full string would take up.
-		// MSVC returns -1, IRIX returns the number of characters actually written,
-		// which is at the most the size of the buffer minus one, as the string is
-		// truncated to fit.
+	char ch;
+	int length = 0;
+	int len = 0;
+	int pos = 0;
 
-		// We assume MSVC failed to output the correct, null-terminated string
-		// if the return value is either -1 or size.
-		// For IRIX, because we lack a better mechanism, we assume failure
-		// if the return value equals size - 1.
-		// The downside to this is that whenever we try to format a string where the
-		// size is 1 below the built-in capacity, the size is needlessly increased.
+	char buffer[512];
 
-		// Try increasing the size of the string until it fits.
-		int size = _builtinCapacity;
-		do {
-			size *= 2;
-			output.ensureCapacity(size - 1, false);
-			assert(!output.isStorageIntern());
-			size = output._extern._capacity;
-
-			scumm_va_copy(va, args);
-			len = vsnprintf((char *)output._str, size, fmt, va);
-			va_end(va);
-		} while (len == -1 || len >= size - 1);
-		output._size = len;
-	} else if (len < (int)_builtinCapacity) {
-		// vsnprintf succeeded
-		output._size = len;
-	} else {
-		// vsnprintf didn't have enough space, so grow buffer
-		output.ensureCapacity(len, false);
-		scumm_va_copy(va, args);
-		int len2 = vsnprintf((char *)output._str, len + 1, fmt, va);
-		va_end(va);
-		assert(len == len2);
-		output._size = len2;
+	while (fmt != output.end() && pos < output.size()) {
+		ch = *fmt++;
+		if (ch == '%') {
+			switch (ch = *fmt++)
+			{
+			case 's':
+				string_temp = va_arg(args, char *);
+				len = strlen(string_temp);
+				length += len;
+				fmt -= 2;
+				output.deleteChar(pos); // remove %
+				output.deleteChar(pos); // remove s
+				output.insertString(string_temp, pos);
+				fmt += len;
+				pos += len;
+				break;
+			case 'd':
+				int_temp = va_arg(args, int);
+				fmt -= 2;
+				output.deleteChar(pos); // remove %
+				output.deleteChar(pos); // remove d
+				itoa(int_temp, buffer, 10);
+				output.insertString(buffer, pos);
+				len = strlen(buffer);
+				length += len;
+				fmt += len;
+				break;
+			default:
+				break;
+			}
+		}
+		pos++;
 	}
 
-	return output;
+	return length;
 }
 
 } // End of namespace Common

@@ -2464,9 +2464,8 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerT
 			g++;
 		}
 		if (newScalerName) {
-			const Common::U32String message = Common::String::format(
-				"%s %s\n%d x %d -> %d x %d",
-				_("Active graphics filter:").encode().c_str(),
+			const Common::U32String message = Common::U32String::format(
+				_("Active graphics filter: ") + Common::U32String("%s\n%d x %d -> %d x %d"),
 				newScalerName,
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwScreen->w, _hwScreen->h);
