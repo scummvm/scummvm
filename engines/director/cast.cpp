@@ -37,6 +37,7 @@ namespace Director {
 
 Cast::Cast() {
 	_type = kCastTypeNull;
+	_score = nullptr;
 	_widget = nullptr;
 	_hilite = false;
 

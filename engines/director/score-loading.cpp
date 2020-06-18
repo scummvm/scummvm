@@ -674,8 +674,9 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		default:
 			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
 			stream.skip(size - 1);
-			break;
+			continue;
 		}
+		_loadedCast->getVal(id)->_score = this;
 	}
 }
 
@@ -894,6 +895,8 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		}
 
 		_castsInfo[id] = ci;
+
+		member->_score = this;
 	}
 
 	if (size3)
