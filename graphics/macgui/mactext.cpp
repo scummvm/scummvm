@@ -1127,6 +1127,11 @@ bool MacText::processEvent(Common::Event &event) {
 
 			return true;
 
+		case Common::KEYCODE_DELETE:
+			// TODO
+			warning("MacText::processEvent(): Delete is not yet implemented");
+			return true;
+
 		default:
 			if (event.kbd.ascii == '~')
 				return false;
