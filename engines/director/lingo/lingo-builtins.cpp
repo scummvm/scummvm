@@ -2142,9 +2142,7 @@ void LB::b_version(int nargs) {
 void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
 
-	warning("STUB: b_cast");
-
-	Datum res(0);
+	Datum res(g_lingo->castIdFetch(d));
 	res.type = REFERENCE;
 	g_lingo->push(res);
 }
