@@ -113,7 +113,6 @@ static struct FuncDescr {
 	{ LC::c_printtop,		"c_printtop",		""  },
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
-	{ LC::c_property,		"c_property",		"s" },
 	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
 	{ LC::c_starts,			"c_starts",			"" },
 	{ LC::c_stringpush,		"c_stringpush",		"s" },
@@ -1463,12 +1462,6 @@ void LC::c_procret() {
 		g_lingo->_abort = true;
 		return;
 	}
-}
-
-void LC::c_property() {
-	Common::String name(g_lingo->readString());
-
-	warning("STUB: c_property()");
 }
 
 void LC::c_open() {

@@ -126,7 +126,6 @@ namespace LC {
 	void c_gotoloop();
 	void c_gotonext();
 	void c_gotoprevious();
-	void c_property();
 
 	void c_play();
 
