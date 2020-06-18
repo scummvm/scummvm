@@ -276,7 +276,7 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 
 	const char *begin, *end;
 
-	if (!strncmp(code, "menu:", 5)) {
+	if (!strncmp(code, "menu:", 5) || strcasestr(code, "\nmenu:")) {
 		debugC(1, kDebugCompile, "Parsing menu");
 		parseMenu(code);
 
