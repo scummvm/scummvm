@@ -1006,13 +1006,10 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 
 	default:
 		if (instr->_opcode & 0x80) {
-			debugC(kDebugScripts,
-			       "Unhandled command opcode %.2x",
-			       instr->_opcode);
+			warning("Unhandled command opcode %.2x", instr->_opcode);
 		} else {
-			debugC(kDebugScripts,
-			       "Unhandled test opcode %.2x - returning false",
-			       instr->_opcode);
+			warning("Unhandled test opcode %.2x - returning false",
+			    instr->_opcode);
 			func_set_test_result(func_state, false);
 		}
 		break;
