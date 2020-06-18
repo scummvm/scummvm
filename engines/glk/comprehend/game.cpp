@@ -596,7 +596,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			move_to(instr->_operand[0]);
 		break;
 
-	case OPCODE_MOVE:
+	case OPCODE_MOVE_DEFAULT:
 		/* Move in the direction dictated by the current verb */
 		if (verb->_index - 1 >= NR_DIRECTIONS)
 			error("Bad verb %d:%d in move",
@@ -1000,8 +1000,12 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		break;
 
 	case OPCODE_SPECIAL:
-		/* Game specific opcode */
+		// Game specific opcode
 		handleSpecialOpcode(instr->_operand[0]);
+		break;
+
+	case OPCODE_MOVE_DIR:
+		doMovementVerb(instr->_operand[0]);
 		break;
 
 	default:
@@ -1235,6 +1239,17 @@ void ComprehendGame::playGame() {
 
 uint ComprehendGame::getRandomNumber(uint max) const {
 	return g_comprehend->getRandomNumber(max);
+}
+
+void ComprehendGame::doMovementVerb(uint verbNum) {
+	assert(verbNum >= 1 && verbNum <= NR_DIRECTIONS);
+	Room *room = get_room(_currentRoom);
+	byte newRoom = room->_direction[verbNum - 1];
+
+	if (newRoom)
+		move_to(newRoom);
+	else
+		console_println(_strings[0].c_str());
 }
 
 } // namespace Comprehend

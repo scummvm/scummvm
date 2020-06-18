@@ -77,7 +77,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_VAR_SUB] = "var_sub";
 	_opcodes[OPCODE_SET_OBJECT_DESCRIPTION] = "set_object_description";
 	_opcodes[OPCODE_SET_OBJECT_LONG_DESCRIPTION] = "set_object_long_description";
-	_opcodes[OPCODE_MOVE] = "move";
+	_opcodes[OPCODE_MOVE_DEFAULT] = "move_default";
 	_opcodes[OPCODE_PRINT] = "print";
 	_opcodes[OPCODE_REMOVE_OBJECT] = "remove_object";
 	_opcodes[OPCODE_SET_FLAG] = "set_flag";
@@ -89,7 +89,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_SET_ROOM_GRAPHIC] = "set_room_graphic";
 	_opcodes[OPCODE_SET_OBJECT_GRAPHIC] = "set_object_graphic";
 	_opcodes[OPCODE_REMOVE_CURRENT_OBJECT] = "remove_current_object";
-	_opcodes[OPCODE_DO_VERB] = "do_verb";
+	_opcodes[OPCODE_MOVE_DIR] = "move_dir";
 	_opcodes[OPCODE_VAR_INC] = "var_inc";
 	_opcodes[OPCODE_VAR_DEC] = "var_dec";
 	_opcodes[OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM] = "move_current_object_to_room";

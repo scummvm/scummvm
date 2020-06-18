@@ -60,6 +60,7 @@ private:
 	void doBeforeTurn();
 	void doAfterTurn();
 	void read_input();
+	void doMovementVerb(uint verbNum);
 
 protected:
 	void game_save();
