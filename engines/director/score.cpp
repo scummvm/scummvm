@@ -565,12 +565,11 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		// WORKAROUND, HACK: Redraw reverse ink sprites each time to prevent flickering
 		needsUpdate = needsUpdate || (currentSprite->_ink == kInkTypeReverse);
 
-		if (needsUpdate || forceUpdate) {
+		if (needsUpdate || forceUpdate)
 			unrenderSprite(i);
 
-			channel->_sprite = nextSprite;
-			channel->updateLocation();
-		}
+		channel->_sprite = nextSprite;
+		channel->updateLocation();
 	}
 
 	for (uint id = 0; id < _channels.size(); id++) {
