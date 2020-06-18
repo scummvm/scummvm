@@ -36,7 +36,7 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	if (ink == kInkTypeCopy || ink == kInkTypeTransparent) {
 		t = drawRect;
 	} else {
-		t(spriteSurface.w, spriteSurface.h);
+		t = spriteSurface.w, spriteSurface.h;
 		t.moveTo(drawRect.left, drawRect.top);
 	}
 
