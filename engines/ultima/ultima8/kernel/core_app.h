@@ -60,10 +60,6 @@ public:
 		return false;
 	}
 
-	virtual void ForceQuit() {
-		_isRunning = false;
-	};
-
 	//! Startup the application. This will prepare the application for run().
 	//! Should call parent class' startup().
 	void startup();
