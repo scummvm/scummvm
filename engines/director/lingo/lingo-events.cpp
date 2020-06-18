@@ -161,7 +161,7 @@ void Lingo::registerSpriteEvent(LEvent event, int spriteId) {
 			}
 		} else {
 			ScriptContext *script = getScriptContext(kArchMain, kScoreScript, sprite->_scriptId);
-			if (script && script->eventHandlers.contains(event)) {
+			if (script && script->_eventHandlers.contains(event)) {
 				_eventQueue.push(LingoEvent(event, kArchMain, kScoreScript, sprite->_scriptId, spriteId));
 				return;
 			}
@@ -175,7 +175,7 @@ void Lingo::registerSpriteEvent(LEvent event, int spriteId) {
 		archiveIndex = kArchShared;
 		script = getScriptContext(archiveIndex, kCastScript, sprite->_castId);
 	}
-	if (script && script->eventHandlers.contains(event)) {
+	if (script && script->_eventHandlers.contains(event)) {
 		_eventQueue.push(LingoEvent(event, archiveIndex, kCastScript, sprite->_castId, spriteId));
 		return;
 	}
@@ -222,14 +222,14 @@ void Lingo::registerMovieEvent(LEvent event) {
 	// FIXME: shared cast movie scripts could come before main movie ones
 	for (ScriptContextHash::iterator it = _archives[kArchMain].scriptContexts[kMovieScript].begin();
 			it != _archives[kArchMain].scriptContexts[kMovieScript].end(); ++it) {
-		if (it->_value->eventHandlers.contains(event)) {
+		if (it->_value->_eventHandlers.contains(event)) {
 			_eventQueue.push(LingoEvent(event, kArchMain, kMovieScript, it->_key));
 			return;
 		}
 	}
 	for (ScriptContextHash::iterator it = _archives[kArchShared].scriptContexts[kMovieScript].begin();
 			it != _archives[kArchShared].scriptContexts[kMovieScript].end(); ++it) {
-		if (it->_value->eventHandlers.contains(event)) {
+		if (it->_value->_eventHandlers.contains(event)) {
 			_eventQueue.push(LingoEvent(event, kArchShared, kMovieScript, it->_key));
 			return;
 		}
@@ -303,9 +303,9 @@ void Lingo::processEvent(LEvent event, int archiveIndex, ScriptType st, int scri
 
 	ScriptContext *script = getScriptContext(archiveIndex, st, scriptId);
 
-	if (script && script->eventHandlers.contains(event)) {
+	if (script && script->_eventHandlers.contains(event)) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %d, %s, %d): executing event handler", _eventHandlerTypes[event], archiveIndex, scriptType2str(st), scriptId);
-		LC::call(script->eventHandlers[event], 0);
+		LC::call(script->_eventHandlers[event], 0);
 		execute(_pc);
 	} else {
 		debugC(9, kDebugEvents, "Lingo::processEvent(%s, %d, %s, %d): no handler", _eventHandlerTypes[event], archiveIndex, scriptType2str(st), scriptId);

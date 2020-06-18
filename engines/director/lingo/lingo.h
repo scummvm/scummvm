@@ -43,7 +43,7 @@ struct TheEntityField;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
 struct Object;
-struct ScriptContext;
+class ScriptContext;
 class DirectorEngine;
 class Frame;
 
@@ -213,12 +213,19 @@ typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Comm
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
-struct ScriptContext {
-	Common::String name;
-	Common::Array<Symbol> functions; // used only by bytecode
-	Common::HashMap<uint32, Symbol> eventHandlers;
-	SymbolHash functionHandlers;
-	Common::Array<Datum> constants;
+class ScriptContext {
+public:
+	Common::String _name;
+	Common::Array<Symbol> _functions; // used only by bytecode
+	Common::HashMap<uint32, Symbol> _eventHandlers;
+	SymbolHash _functionHandlers;
+	Common::Array<Datum> _constants;
+	Common::Array<Common::String> _propNames;
+
+	Datum getObject();
+
+private:
+	Datum _obj;
 };
 
 enum ObjectType {

@@ -520,7 +520,7 @@ void LB::b_value(int nargs) {
 	Common::String code = "scummvm_returnNumber " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->addCode(code.c_str(), kArchNone, kNoneScript, 0);
-	Symbol sym = sc->eventHandlers[kEventNone];
+	Symbol sym = sc->_eventHandlers[kEventNone];
 	LC::call(sym, 0);
 	delete sc;
 }
@@ -2159,12 +2159,24 @@ void LB::b_field(int nargs) {
 
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
+	int castId = g_lingo->castIdFetch(d);
+	Cast *cast = g_director->getCastMember(castId);
 
-	warning("STUB: b_script");
+	if (cast) {
+		ScriptContext *script = nullptr;
 
-	Datum res(0);
-	d.type = REFERENCE;
-	g_lingo->push(res);
+		if (cast->_type == kCastLingoScript)
+			script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kMovieScript, castId);
+		else
+			script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kCastScript, castId);
+
+		if (script) {
+			g_lingo->push(Datum(script->getObject()));
+			return;
+		}
+	}
+
+	g_lingo->push(Datum());
 }
 
 void LB::b_window(int nargs) {

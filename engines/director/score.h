@@ -225,6 +225,8 @@ public:
 
 	uint16 _framesRan; // used by kDebugFewFramesOnly
 
+	int _lingoArchive;
+
 private:
 	uint16 _versionMinor;
 	uint16 _versionMajor;
@@ -242,7 +244,6 @@ private:
 	uint16 _castArrayEnd;
 	uint16 _movieScriptCount;
 	Lingo *_lingo;
-	int _lingoArchive;
 	DirectorSound *_soundManager;
 	DirectorEngine *_vm;
 };

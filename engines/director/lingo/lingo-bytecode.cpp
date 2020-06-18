@@ -294,7 +294,7 @@ void LC::cb_localcall() {
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		Symbol sym = g_lingo->_currentScriptContext->functions[functionId];
+		Symbol sym = g_lingo->_currentScriptContext->_functions[functionId];
 		if (debugChannelSet(3, kDebugLingoExec))
 			g_lingo->printSTUBWithArglist(sym.name->c_str(), nargs.u.i, "localcall:");
 
@@ -752,7 +752,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	_assemblyContext = new ScriptContext;
 	_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
-	_assemblyContext->name = !scriptName.empty() ? scriptName : Common::String::format("%d", id);
+	_assemblyContext->_name = !scriptName.empty() ? scriptName : Common::String::format("%d", id);
 
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
@@ -944,7 +944,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			break;
 		}
 
-		_assemblyContext->constants.push_back(constant);
+		_assemblyContext->_constants.push_back(constant);
 	}
 	free(constsStore);
 
@@ -1092,7 +1092,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 					warning("Opcode 0x%02x arg %d not a multiple of 6!", opcode, arg);
 				}
 				arg /= 6;
-				Datum constant = _assemblyContext->constants[arg];
+				Datum constant = _assemblyContext->_constants[arg];
 				switch (constant.type) {
 				case INT:
 					g_lingo->code1(LC::c_intpush);
@@ -1266,7 +1266,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			out.writeString(Common::String::format("<end code>\n\n"));
 		}
 
-		_assemblyContext->functions.push_back(sym);
+		_assemblyContext->_functions.push_back(sym);
 		_currentAssembly = nullptr;
 	}
 

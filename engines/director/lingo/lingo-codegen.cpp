@@ -98,9 +98,9 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 
 		if (!_eventHandlerTypeIds.contains(name)) {
 			_archives[_assemblyArchive].functionHandlers[name] = sym;
-			_assemblyContext->functionHandlers[name] = sym;
+			_assemblyContext->_functionHandlers[name] = sym;
 		} else {
-			_assemblyContext->eventHandlers[_eventHandlerTypeIds[name]] = sym;
+			_assemblyContext->_eventHandlers[_eventHandlerTypeIds[name]] = sym;
 		}
 	}
 

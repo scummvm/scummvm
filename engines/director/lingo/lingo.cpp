@@ -271,9 +271,9 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 		_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
 	if (scriptName && strlen(scriptName) > 0)
-		_assemblyContext->name = Common::String(scriptName);
+		_assemblyContext->_name = Common::String(scriptName);
 	else
-		_assemblyContext->name = Common::String::format("%d", id);
+		_assemblyContext->_name = Common::String::format("%d", id);
 
 	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 	_linenumber = _colnumber = 1;
@@ -361,7 +361,7 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	currentFunc.type = HANDLER;
 	currentFunc.u.defn = _currentAssembly;
 	Common::String typeStr = Common::String(scriptType2str(type));
-	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->name + "]");
+	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->_name + "]");
 	currentFunc.ctx = _currentScriptContext;
 	currentFunc.archiveIndex = _assemblyArchive;
 	// arg names should be empty, but just in case
@@ -373,6 +373,8 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
 		if (it->_value == kVarLocal)
 			varNames->push_back(Common::String(it->_key));
+		else if (it->_value == kVarProperty)
+			_assemblyContext->_propNames.push_back(Common::String(it->_key));
 	}
 	delete _methodVars;
 	_methodVars = nullptr;
@@ -393,7 +395,7 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 
 	currentFunc.argNames = argNames;
 	currentFunc.varNames = varNames;
-	_assemblyContext->eventHandlers[kEventNone] = currentFunc;
+	_assemblyContext->_eventHandlers[kEventNone] = currentFunc;
 	_assemblyContext = nullptr;
 	_currentAssembly = nullptr;
 	return sc;
@@ -572,7 +574,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
-	Symbol sym = sc->eventHandlers[kEventNone];
+	Symbol sym = sc->_eventHandlers[kEventNone];
 	LC::call(sym, 0);
 	execute(_pc);
 }
@@ -594,8 +596,8 @@ void Lingo::restartLingo(bool keepSharedCast) {
 		LingoArchive *arch = &_archives[a];
 		for (int i = 0; i <= kMaxScriptType; i++) {
 			for (ScriptContextHash::iterator it = arch->scriptContexts[i].begin(); it != arch->scriptContexts[i].end(); ++it) {
-				it->_value->eventHandlers.clear();
-				it->_value->functionHandlers.clear();
+				it->_value->_eventHandlers.clear();
+				it->_value->_functionHandlers.clear();
 				delete it->_value;
 			}
 
@@ -944,6 +946,22 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 	} else {
 		error("Invalid comparison between types %s and %s", type2str(), d.type2str());
 	}
+}
+
+Datum ScriptContext::getObject() {
+	if (_obj.type != OBJECT) {
+		_obj.type = OBJECT;
+		_obj.u.obj = new Object(_name, kScriptObj);
+		for (Common::Array<Common::String>::iterator it = _propNames.begin(); it != _propNames.end(); ++it) {
+			_obj.u.obj->properties[*it] = Datum();
+		}
+		for (SymbolHash::iterator it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
+			Symbol sym = it->_value;
+			sym.targetType = kScriptObj;
+			_obj.u.obj->methods[it->_key] = sym;
+		}
+	}
+	return _obj;
 }
 
 void Lingo::parseMenu(const char *code) {

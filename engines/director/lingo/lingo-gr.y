@@ -655,13 +655,9 @@ globallist: ID					{
 		delete $ID; }
 
 propertylist: ID				{
-		g_lingo->code1(LC::c_property);
-		g_lingo->codeString($ID->c_str());
 		mVar($ID, kVarProperty);
 		delete $ID; }
 	| propertylist ',' ID		{
-		g_lingo->code1(LC::c_property);
-		g_lingo->codeString($ID->c_str());
 		mVar($ID, kVarProperty);
 		delete $ID; }
 
