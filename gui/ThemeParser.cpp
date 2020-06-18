@@ -717,8 +717,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			useRTL = false;
 		}
 
-		Graphics::TextAlign textAlign = GUI::convertTextAlignH(alignH, false);
-		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, textAlign, useRTL);
+		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH, useRTL);
 	}
 
 	return true;

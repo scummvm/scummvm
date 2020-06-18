@@ -299,20 +299,22 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_font = font;
 }
 
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, GUI::ThemeEngine::TextAlignH align, const char *tooltip, ThemeEngine::FontStyle font)
+	: Widget(boss, x, y, w, h, tooltip) {
+	setFlags(WIDGET_ENABLED);
+	_type = kStaticTextWidget;
+	_label = text;
+	_font = font;
+	_align = GUI::convertTextAlignH(align, g_gui.useRTL() && _useRTL);
+}
+
 StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip, ThemeEngine::FontStyle font)
 	: Widget(boss, name, tooltip) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kStaticTextWidget;
 	_label = text;
 
-	_align = g_gui.xmlEval()->getWidgetTextHAlign(name);
-	if (g_gui.useRTL() && _useRTL) {
-		if (_align == Graphics::kTextAlignLeft) {
-			_align = Graphics::kTextAlignRight;
-		} else if (_align == Graphics::kTextAlignRight) {
-			_align = Graphics::kTextAlignLeft;
-		}
-	}
+	_align = GUI::convertTextAlignH(g_gui.xmlEval()->getWidgetTextHAlign(name), g_gui.useRTL() && _useRTL);
 
 	_font = font;
 }
@@ -337,6 +339,9 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 	}
 }
 
+void StaticTextWidget::setAlign(GUI::ThemeEngine::TextAlignH align) {
+	setAlign(GUI::convertTextAlignH(align, g_gui.useRTL() && _useRTL));
+}
 
 void StaticTextWidget::drawWidget() {
 	g_gui.theme()->drawText(

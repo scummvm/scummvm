@@ -377,8 +377,6 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	_pageTitle = new StaticTextWidget(this, "SaveLoadChooser.Title", title);
-	if (g_gui.useRTL())
-		_pageTitle->setAlign(Graphics::kTextAlignRight);
 
 	// Add choice list
 	_list = new ListWidget(this, "SaveLoadChooser.List");
@@ -760,8 +758,6 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	_pageTitle = new StaticTextWidget(this, "SaveLoadChooser.Title", title);
-	if (g_gui.useRTL())
-		_pageTitle->setAlign(Graphics::kTextAlignRight);
 
 	// The list widget needs to be bound so it takes space in the layout
 	ContainerWidget *list = new ContainerWidget(this, "SaveLoadChooser.List");
@@ -777,11 +773,7 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 
 	// Page display
 	_pageDisplay = new StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::String());
-	if (g_gui.useRTL()) {
-		_pageDisplay->setAlign(Graphics::kTextAlignLeft);
-	} else {
-		_pageDisplay->setAlign(Graphics::kTextAlignRight);
-	}
+	_pageDisplay->setAlign(GUI::ThemeEngine::kTextAlignHEnd);
 }
 
 SaveLoadChooserGrid::~SaveLoadChooserGrid() {
@@ -955,8 +947,6 @@ void SaveLoadChooserGrid::reflowLayout() {
 	_lines = MAX<uint>(1, availableHeight / slotAreaHeight);
 	_entriesPerPage = _columns * _lines;
 
-	Graphics::TextAlign alignment = Graphics::kTextAlignLeft;
-
 	// In save mode the first button is always "New Save", thus we need to
 	// adjust the entries per page here.
 	if (_saveMode) {
@@ -1004,14 +994,10 @@ void SaveLoadChooserGrid::reflowLayout() {
 				buttonCmd += 1;
 			}
 
-			if (g_gui.useRTL()) {
-				alignment = Graphics::kTextAlignRight;
-			}
-
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, nullptr, buttonCmd);
 			dstY += buttonHeight;
 
-			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), alignment);
+			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), GUI::ThemeEngine::kTextAlignHStart);
 
 			_buttons.push_back(SlotButton(container, button, description));
 		}

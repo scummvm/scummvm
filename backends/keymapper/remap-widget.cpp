@@ -270,13 +270,11 @@ void RemapWidget::loadKeymap() {
 }
 
 void RemapWidget::refreshKeymap() {
-	Graphics::TextAlign alignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
-
 	for (uint i = 0; i < _actions.size(); i++) {
 		ActionRow &row = _actions[i];
 
 		if (!row.actionText) {
-			row.actionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, "", alignment, nullptr, GUI::ThemeEngine::kFontStyleNormal);
+			row.actionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, "", GUI::ThemeEngine::kTextAlignHStart, nullptr, GUI::ThemeEngine::kFontStyleNormal);
 			row.actionText->setLabel(row.action->description);
 
 			row.keyButton = new GUI::DropdownButtonWidget(widgetsBoss(), 0, 0, 0, 0, "", nullptr, kRemapCmd + i);
@@ -305,7 +303,7 @@ void RemapWidget::refreshKeymap() {
 
 		KeymapTitleRow &keymapTitle = _keymapSeparators[row.keymap];
 		if (!keymapTitle.descriptionText) {
-			keymapTitle.descriptionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, row.keymap->getDescription(), alignment);
+			keymapTitle.descriptionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, row.keymap->getDescription(), GUI::ThemeEngine::kTextAlignHStart);
 			keymapTitle.resetButton = new GUI::ButtonWidget(widgetsBoss(), 0, 0, 0, 0, "", nullptr, kResetKeymapCmd + i);
 
 			// I18N: Button to reset keymap mappings to defaults

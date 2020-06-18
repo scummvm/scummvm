@@ -1135,8 +1135,6 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	uint16 width = g_system->getOverlayWidth() <= 320 ? 240 : 410;
 	uint16 descrDelta = g_system->getOverlayWidth() <= 320 ? 25 : 30;
 
-	Graphics::TextAlign alignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
-
 	for (int16 viewAchieved = 1; viewAchieved >= 0; viewAchieved--) {
 		// run this twice, first view all achieved, then view all non-hidden & non-achieved
 
@@ -1163,7 +1161,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			yPos += yStep;
 
 	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
-				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, alignment, "", ThemeEngine::kFontStyleNormal);
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, GUI::ThemeEngine::kTextAlignHStart, "", ThemeEngine::kFontStyleNormal);
 				yPos += yStep;
 			}
 
@@ -1173,12 +1171,12 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 
 	if (nHidden) {
 		Common::String hiddenStr = Common::String::format(_("%d hidden achievements remaining"), nHidden);
-		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), alignment);
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), GUI::ThemeEngine::kTextAlignHStart);
 	}
 
 	if (nMax) {
 		Common::String totalStr = Common::String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
-		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), alignment);
+		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), GUI::ThemeEngine::kTextAlignHStart);
 
 		SliderWidget *progressBar;
 		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
