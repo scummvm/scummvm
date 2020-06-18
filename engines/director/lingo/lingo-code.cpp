@@ -1416,47 +1416,51 @@ void LC::call(const Symbol &funcSym, int nargs, Datum target) {
 
 	g_lingo->pushContext(&funcSym, true);
 
+	DatumHash *localvars = g_lingo->_localvars;
 	if (funcSym.archiveIndex >= 0) {
 		// Create new set of local variables
-		DatumHash *localvars = new DatumHash;
-		if (funcSym.argNames) {
-			int symNArgs = funcSym.nargs;
-			if ((int)funcSym.argNames->size() < symNArgs) {
-				int dropSize = symNArgs - funcSym.argNames->size();
-				warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
-				for (int i = 0; i < dropSize; i++) {
-					g_lingo->pop();
-					symNArgs -= 1;
-				}
-			} else if ((int)funcSym.argNames->size() > symNArgs) {
-				warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
-			}
-			for (int i = symNArgs - 1; i >= 0; i--) {
-				Common::String name = (*funcSym.argNames)[i];
-				if (!localvars->contains(name)) {
-					g_lingo->varCreate(name, false, localvars);
-					Datum arg(name);
-					arg.type = VAR;
-					Datum value = g_lingo->pop();
-					g_lingo->varAssign(arg, value, false, localvars);
-				} else {
-					warning("Argument %s already defined", name.c_str());
-					g_lingo->pop();
-				}
-			}
-		}
-		if (funcSym.varNames) {
-			for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
-				Common::String name = *it;
-				if (!localvars->contains(name)) {
-					(*localvars)[name] = Datum();
-				} else {
-					warning("Variable %s already defined", name.c_str());
-				}
-			}
-		}
-		g_lingo->_localvars = localvars;
+		// g_lingo->_localvars is not set until later so any lazy arguments
+		// can be evaluated within the current variable frame
+		localvars = new DatumHash;
 	}
+
+	if (funcSym.argNames) {
+		int symNArgs = funcSym.nargs;
+		if ((int)funcSym.argNames->size() < symNArgs) {
+			int dropSize = symNArgs - funcSym.argNames->size();
+			warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
+			for (int i = 0; i < dropSize; i++) {
+				g_lingo->pop();
+				symNArgs -= 1;
+			}
+		} else if ((int)funcSym.argNames->size() > symNArgs) {
+			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
+		}
+		for (int i = symNArgs - 1; i >= 0; i--) {
+			Common::String name = (*funcSym.argNames)[i];
+			if (!localvars->contains(name)) {
+				g_lingo->varCreate(name, false, localvars);
+				Datum arg(name);
+				arg.type = VAR;
+				Datum value = g_lingo->pop();
+				g_lingo->varAssign(arg, value, false, localvars);
+			} else {
+				warning("Argument %s already defined", name.c_str());
+				g_lingo->pop();
+			}
+		}
+	}
+	if (funcSym.varNames) {
+		for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
+			Common::String name = *it;
+			if (!localvars->contains(name)) {
+				(*localvars)[name] = Datum();
+			} else {
+				warning("Variable %s already defined", name.c_str());
+			}
+		}
+	}
+	g_lingo->_localvars = localvars;
 
 	if (target.type == OBJECT) {
 		g_lingo->_currentMe = target;
