@@ -423,26 +423,6 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 	return res;
 }
 
-#ifndef strcasestr
-const char *strcasestr(const char *s, const char *find) {
-	char c, sc;
-	size_t len;
-
-	if ((c = *find++) != 0) {
-		c = (char)tolower((unsigned char)c);
-		len = strlen(find);
-		do {
-			do {
-				if ((sc = *s++) == 0)
-					return (NULL);
-			} while ((char)tolower((unsigned char)sc) != c);
-		} while (scumm_strnicmp(s, find, len) != 0);
-		s--;
-	}
-	return s;
-}
-#endif
-
 // when ID then statement -> when ID then "statement"
 Common::String preprocessWhen(Common::String in, bool *changed) {
 	Common::String res, next;
@@ -450,7 +430,7 @@ Common::String preprocessWhen(Common::String in, bool *changed) {
 	const char *beg = ptr;
 	const char *nextPtr;
 
-	while ((ptr = strcasestr(beg, "when")) != NULL) {
+	while ((ptr = scumm_strcasestr(beg, "when")) != NULL) {
 		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
 			res += *beg++;
 			continue;
@@ -522,7 +502,7 @@ Common::String preprocessReturn(Common::String in) {
 	const char *ptr = in.c_str();
 	const char *beg = ptr;
 
-	while ((ptr = strcasestr(beg, "return")) != NULL) {
+	while ((ptr = scumm_strcasestr(beg, "return")) != NULL) {
 		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
 			res += *beg++;
 			continue;
@@ -564,7 +544,7 @@ Common::String preprocessPlay(Common::String in) {
 	const char *beg = ptr;
 	const char *nextPtr;
 
-	while ((ptr = strcasestr(beg, "play")) != NULL) {
+	while ((ptr = scumm_strcasestr(beg, "play")) != NULL) {
 		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
 			res += *beg++;
 			continue;
@@ -611,7 +591,7 @@ Common::String preprocessSound(Common::String in) {
 	const char *beg = ptr;
 	const char *nextPtr;
 
-	while ((ptr = strcasestr(beg, "sound")) != NULL) {
+	while ((ptr = scumm_strcasestr(beg, "sound")) != NULL) {
 		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
 			res += *beg++;
 			continue;
