@@ -142,7 +142,8 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 						}
 					} else {
 						if (*dst == 0 && _vm->getVersion() == 3 &&
-							((BitmapCast*)_channels[spriteId]->_sprite->_cast)->_bitsPerPixel > 1) {
+								_channels[spriteId]->_sprite->_cast->_type == kCastBitmap &&
+								((BitmapCast*)_channels[spriteId]->_sprite->_cast)->_bitsPerPixel > 1) {
 							*dst = _vm->transformColor(*src - 40);
 						} else {
 							*dst ^= _vm->transformColor(srcColor);
