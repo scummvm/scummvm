@@ -74,8 +74,8 @@ public:
 		Common::AchievementsInfo result;
 		result.platform = Common::UNK_ACHIEVEMENTS;
 		result.appId = "testbed";
-		Common::AchievementDescription final = {"EVERYTHINGWORKS", true, "Everything works!", "Completed all available testsuites"};
-		result.descriptions.push_back(final);
+		Common::AchievementDescription testSuiteFinalAchievement = {"EVERYTHINGWORKS", true, "Everything works!", "Completed all available testsuites"};
+		result.descriptions.push_back(testSuiteFinalAchievement);
 
 		Common::Array<Testbed::Testsuite *> testsuiteList;
 		Testbed::TestbedEngine::pushTestsuites(testsuiteList);
