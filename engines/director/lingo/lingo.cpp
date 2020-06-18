@@ -1171,7 +1171,9 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 		Datum *d = nullptr;
 		Common::String name = *var.u.s;
 
-		if (_currentMe.type == OBJECT && name.equalsIgnoreCase("me")) {
+		// For kScriptObj handlers the target is an argument
+		// (and can be renamed from 'me)
+		if (_currentMe.type == OBJECT && _currentMe.u.obj->type != kScriptObj && name.equalsIgnoreCase("me")) {
 			result = _currentMe;
 			return result;
 		}
