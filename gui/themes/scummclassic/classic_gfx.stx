@@ -346,7 +346,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_idle_rtl' cache = 'false' resolution = 'y>399'>
@@ -380,7 +380,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -415,7 +415,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_idle_rtl' cache = 'false' resolution = 'y<400'>
@@ -449,7 +449,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -482,7 +482,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_disabled_rtl' cache = 'false' resolution = 'y>399'>
@@ -514,7 +514,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -549,7 +549,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_disabled_rtl' cache = 'false' resolution = 'y<400'>
@@ -583,7 +583,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -616,7 +616,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_hover_rtl' cache = 'false' resolution = 'y>399'>
@@ -648,7 +648,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -683,7 +683,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_hover_rtl' cache = 'false' resolution = 'y<400'>
@@ -717,7 +717,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -1398,7 +1398,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
@@ -1408,22 +1408,6 @@
 					fill = 'foreground'
 					stroke = '2'
 					fg_color = 'lightgrey'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_disabled_selected_rtl' cache = 'false'>
-		<drawstep	func = 'bevelsq'
-					bevel = '2'
-					fill = 'none'
-		/>
-		<drawstep	func = 'cross'
-					fill = 'foreground'
-					stroke = '2'
-					fg_color = 'lightgrey'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal_disabled'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1431,22 +1415,11 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_disabled_rtl' cache = 'false'>
-		<drawstep	func = 'bevelsq'
-					bevel = '2'
-					fill = 'none'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal_disabled'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1454,7 +1427,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
@@ -1464,22 +1437,6 @@
 					fill = 'foreground'
 					stroke = '2'
 					fg_color = 'green'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_selected_rtl' cache = 'false'>
-		<drawstep	func = 'bevelsq'
-					bevel = '2'
-					fill = 'none'
-		/>
-		<drawstep	func = 'cross'
-					fill = 'foreground'
-					stroke = '2'
-					fg_color = 'green'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1487,22 +1444,11 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_default_rtl' cache = 'false'>
-		<drawstep	func = 'bevelsq'
-					bevel = '2'
-					fill = 'none'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1511,7 +1457,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'circle'
 					width = '7'
@@ -1521,22 +1467,6 @@
 					bg_color = 'darkgrey'
 					xpos = '0'
 					ypos = '0'
-		/>
-	</drawdata>
-	<drawdata id = 'radiobutton_default_rtl' cache = 'false'>
-		<drawstep	func = 'circle'
-					width = '7'
-					height = '7'
-					radius = '7'
-					fill = 'background'
-					bg_color = 'darkgrey'
-					xpos = '0'
-					ypos = '0'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'center'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1545,7 +1475,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'circle'
 					width = '7'
@@ -1564,31 +1494,6 @@
 					fill = 'foreground'
 					xpos = '2'
 					ypos = '2'
-		/>
-	</drawdata>
-	<drawdata id = 'radiobutton_selected_rtl' cache = 'false'>
-		<drawstep	func = 'circle'
-					width = '7'
-					height = '7'
-					radius = '7'
-					fg_color = 'darkgrey'
-					fill = 'none'
-					xpos = '0'
-					ypos = '0'
-		/>
-		<drawstep	func = 'circle'
-					width = '7'
-					height = '7'
-					radius = '5'
-					fg_color = 'green'
-					fill = 'foreground'
-					xpos = '2'
-					ypos = '2'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'center'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1597,7 +1502,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'circle'
 					width = '7'
@@ -1607,22 +1512,6 @@
 					fill = 'background'
 					xpos = '0'
 					ypos = '0'
-		/>
-	</drawdata>
-	<drawdata id = 'radiobutton_disabled_rtl' cache = 'false'>
-		<drawstep	func = 'circle'
-					width = '7'
-					height = '7'
-					radius = '7'
-					bg_color = 'lightgrey'
-					fill = 'background'
-					xpos = '0'
-					ypos = '0'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal_disabled'
-				vertical_align = 'center'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 

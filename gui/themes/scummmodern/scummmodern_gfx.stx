@@ -523,7 +523,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_idle_rtl' cache = 'false' resolution = 'y>399'>
@@ -561,7 +561,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -600,7 +600,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_idle_rtl' cache = 'false' resolution ='y<400'>
@@ -638,7 +638,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -678,7 +678,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_disabled_rtl' cache = 'false' resolution = 'y>399'>
@@ -716,7 +716,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -755,7 +755,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_disabled_rtl' cache = 'false' resolution = 'y<400'>
@@ -793,7 +793,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -833,7 +833,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_hover_rtl' cache = 'false' resolution = 'y>399'>
@@ -871,7 +871,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -910,7 +910,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 	<drawdata id = 'popup_hover_rtl' cache = 'false' resolution = 'y<400'>
@@ -948,7 +948,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'right'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -1796,20 +1796,10 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_disabled.bmp'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_disabled_selected_rtl' cache = 'false'>
-		<drawstep	func = 'bitmap'
-					file = 'checkbox_disabled.bmp'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal_disabled'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1818,20 +1808,10 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_empty.bmp'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_disabled_rtl' cache = 'false'>
-		<drawstep	func = 'bitmap'
-					file = 'checkbox_empty.bmp'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal_disabled'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1840,20 +1820,10 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox.bmp'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_selected_rtl' cache = 'false'>
-		<drawstep	func = 'bitmap'
-					file = 'checkbox.bmp'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1862,20 +1832,10 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_empty.bmp'
-		/>
-	</drawdata>
-	<drawdata id = 'checkbox_default_rtl' cache = 'false'>
-		<drawstep	func = 'bitmap'
-					file = 'checkbox_empty.bmp'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'top'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1884,20 +1844,10 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'radiobutton_empty.bmp'
-		/>
-	</drawdata>
-	<drawdata id = 'radiobutton_default_rtl' cache = 'false'>
-		<drawstep	func = 'bitmap'
-					file = 'radiobutton_empty.bmp'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'center'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1906,20 +1856,10 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'radiobutton.bmp'
-		/>
-	</drawdata>
-	<drawdata id = 'radiobutton_selected_rtl' cache = 'false'>
-		<drawstep	func = 'bitmap'
-					file = 'radiobutton.bmp'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal'
-				vertical_align = 'center'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 
@@ -1928,20 +1868,10 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'radiobutton_empty.bmp'
-		/>
-	</drawdata>
-	<drawdata id = 'radiobutton_disabled_rtl' cache = 'false'>
-		<drawstep	func = 'bitmap'
-					file = 'radiobutton_empty.bmp'
-		/>
-		<text	font = 'text_default'
-				text_color = 'color_normal_disabled'
-				vertical_align = 'center'
-				horizontal_align = 'right'
 		/>
 	</drawdata>
 

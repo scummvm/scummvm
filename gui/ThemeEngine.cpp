@@ -76,7 +76,7 @@ struct WidgetDrawData {
 
 	TextData _textDataId;
 	TextColor _textColorId;
-	Graphics::TextAlign _textAlignH;
+	GUI::ThemeEngine::TextAlignH _textAlignH;
 	GUI::ThemeEngine::TextAlignVertical _textAlignV;
 
 	/** Extra space that the widget occupies when it's drawn.
@@ -153,18 +153,9 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDCheckboxSelected,           "checkbox_selected",          kDrawLayerForeground,  kDDCheckboxDefault},
 	{kDDCheckboxDisabledSelected,   "checkbox_disabled_selected", kDrawLayerForeground,  kDDCheckboxDisabled},
 
-	{kDDCheckboxDefaultRTL,            "checkbox_default_rtl",           kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxDisabledRTL,           "checkbox_disabled_rtl",          kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxSelectedRTL,           "checkbox_selected_rtl",          kDrawLayerForeground,  kDDCheckboxDefaultRTL},
-	{kDDCheckboxDisabledSelectedRTL,   "checkbox_disabled_selected_rtl", kDrawLayerForeground,  kDDCheckboxDisabledRTL},
-
 	{kDDRadiobuttonDefault,         "radiobutton_default",      kDrawLayerBackground,   kDDNone},
 	{kDDRadiobuttonDisabled,        "radiobutton_disabled",     kDrawLayerBackground,   kDDNone},
 	{kDDRadiobuttonSelected,        "radiobutton_selected",     kDrawLayerForeground,  kDDRadiobuttonDefault},
-
-	{kDDRadiobuttonDefaultRTL,		"radiobutton_default_rtl",	kDrawLayerBackground,	kDDNone},
-	{kDDRadiobuttonDisabledRTL,		"radiobutton_disabled_rtl",	kDrawLayerBackground,	kDDNone},
-	{kDDRadiobuttonSelectedRTL,		"radiobutton_selected_rtl",	kDrawLayerForeground,	kDDRadiobuttonDefaultRTL},
 
 	{kDDTabActive,                  "tab_active",               kDrawLayerForeground,  kDDTabInactive},
 	{kDDTabInactive,                "tab_inactive",             kDrawLayerBackground,   kDDNone},
@@ -513,7 +504,7 @@ void ThemeEngine::addDrawStep(const Common::String &drawDataId, const Graphics::
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId, TextColor colorId, Graphics::TextAlign alignH, TextAlignVertical alignV) {
+bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId, TextColor colorId, TextAlignH alignH, TextAlignVertical alignV) {
 	DrawData id = parseDrawDataId(drawDataId);
 
 	if (id == -1 || textId == -1 || colorId == kTextColorMAX || !_widgets[id])
@@ -968,7 +959,7 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 		dd = kDDButtonPressed;
 
 	drawDD(dd, r, 0, hints & WIDGET_CLEARBG);
-	drawDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH,
+	drawDDText(getTextData(dd), getTextColor(dd), r, str, false, true, convertTextAlignH(_widgets[dd]->_textAlignH, false),
 	           _widgets[dd]->_textAlignV);
 }
 
@@ -998,7 +989,7 @@ void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth
 	Common::Rect textRect = r;
 	textRect.left  = r.left  + dropdownWidth;
 	textRect.right = r.right - dropdownWidth;
-	drawDDText(getTextData(dd), getTextColor(dd), textRect, str, false, true, _widgets[dd]->_textAlignH,
+	drawDDText(getTextData(dd), getTextColor(dd), textRect, str, false, true, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 	           _widgets[dd]->_textAlignV);
 }
 
@@ -1014,40 +1005,32 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 		return;
 
 	Common::Rect r2 = r;
-	DrawData dd = rtl ? kDDCheckboxDefaultRTL : kDDCheckboxDefault;
+	DrawData dd = kDDCheckboxDefault;
 
 	if (checked)
-		dd = rtl ? kDDCheckboxSelectedRTL : kDDCheckboxSelected;
+		dd = kDDCheckboxSelected;
 
-	if (state == kStateDisabled) {
-		if (checked)
-			dd = rtl ? kDDCheckboxDisabledSelectedRTL : kDDCheckboxDisabledSelected;
-		else
-			dd = rtl ? kDDCheckboxDisabledRTL : kDDCheckboxDisabled;
-	}
+	if (state == kStateDisabled)
+		dd = checked ? kDDCheckboxDisabledSelected : kDDCheckboxDisabled;
 
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
-	r2.bottom = r2.top + checkBoxSize;
 
-	if (rtl) {
-		r2.left = r.right - checkBoxSize;
-		r2.right = r.right;
-	} else {
-		r2.right = r2.left + checkBoxSize;
-	}
+	r2.left = rtl ? r.right - checkBoxSize : r2.left;
+	r2.bottom = r2.top + checkBoxSize;
+	r2.right = r2.left + checkBoxSize;
 
 	drawDD(dd, r2);
 
 	if (rtl) {
+		r2.right = r2.left - checkBoxSize;
 		r2.left = r.left;
-		r2.right = r.right - (checkBoxSize * 2);
 	} else {
 		r2.left = r2.right + checkBoxSize;
 		r2.right = r.right;
 	}
 
 	if (r2.right > r2.left) {
-		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[dd]->_textAlignH,
+		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 		           _widgets[dd]->_textAlignV);
 	}
 }
@@ -1057,36 +1040,32 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 		return;
 
 	Common::Rect r2 = r;
-	DrawData dd = rtl ? kDDRadiobuttonDefaultRTL : kDDRadiobuttonDefault;
+	DrawData dd = kDDRadiobuttonDefault;
 
 	if (checked)
-		dd = rtl ? kDDRadiobuttonSelectedRTL : kDDRadiobuttonSelected;
+		dd = kDDRadiobuttonSelected;
 
 	if (state == kStateDisabled)
-		dd = rtl ? kDDRadiobuttonDisabledRTL : kDDRadiobuttonDisabled;
+		dd = kDDRadiobuttonDisabled;
 
-	const int radioButtonSize = MIN((int)r.height(), getFontHeight());
-	r2.bottom = r2.top + radioButtonSize;
+	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
-	if (rtl) {
-		r2.left = r.right - radioButtonSize;
-		r2.right = r.right;
-	} else {
-		r2.right = r2.left + radioButtonSize;
-	}
+	r2.left = rtl ? r2.right - checkBoxSize : r2.left;
+	r2.bottom = r2.top + checkBoxSize;
+	r2.right = r2.left + checkBoxSize;
 
 	drawDD(dd, r2);
 
 	if (rtl) {
+		r2.right = r2.left - checkBoxSize;
 		r2.left = r.left;
-		r2.right = r.right - (radioButtonSize * 2);
 	} else {
-		r2.left = r2.right + radioButtonSize;
+		r2.left = r2.right + checkBoxSize;
 		r2.right = MAX(r2.left, r.right);
 	}
 
-	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[dd]->_textAlignH,
-		_widgets[dd]->_textAlignV);
+	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
+	           _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state, bool rtl) {
@@ -1199,7 +1178,7 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 
 	if (!sel.empty() && r.width() >= 13 && r.height() >= 1) {
 		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);
-		drawDDText(getTextData(dd), getTextColor(dd), text, sel, true, false, _widgets[dd]->_textAlignH,
+		drawDDText(getTextData(dd), getTextColor(dd), text, sel, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 		           _widgets[dd]->_textAlignV, deltax);
 	}
 }
@@ -1286,7 +1265,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 		Common::Rect tabRect(r.left + width, r.top, r.left + width + tabWidths[current], r.top + tabHeight);
 		drawDD(kDDTabInactive, tabRect);
 		drawDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[current], false, false,
-		           _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
+		           convertTextAlignH(_widgets[kDDTabInactive]->_textAlignH, rtl), _widgets[kDDTabInactive]->_textAlignV);
 		width += tabWidths[current];
 	}
 
@@ -1296,7 +1275,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 		const uint16 tabRight = MAX(r.right - tabRect.right, 0);
 		drawDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
 		drawDDText(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, tabs[active], false, false,
-		           _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
+		           convertTextAlignH(_widgets[kDDTabActive]->_textAlignH, rtl), _widgets[kDDTabActive]->_textAlignV);
 	}
 }
 
@@ -2015,6 +1994,23 @@ void ThemeEngine::drawToBackbuffer() {
 
 void ThemeEngine::drawToScreen() {
 	_vectorRenderer->setSurface(&_screen);
+}
+
+Graphics::TextAlign convertTextAlignH(GUI::ThemeEngine::TextAlignH alignH, bool rtl) {
+	switch (alignH) {
+		case GUI::ThemeEngine::kTextAlignHStart:
+			return rtl ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
+		case GUI::ThemeEngine::kTextAlignHEnd:
+			return rtl ? Graphics::kTextAlignLeft : Graphics::kTextAlignRight;
+		case GUI::ThemeEngine::kTextAlignHLeft:
+			return Graphics::kTextAlignLeft;
+		case GUI::ThemeEngine::kTextAlignHCenter:
+			return Graphics::kTextAlignCenter;
+		case GUI::ThemeEngine::kTextAlignHRight:
+			return Graphics::kTextAlignRight;
+		default:
+			return Graphics::kTextAlignInvalid;
+	}
 }
 
 Common::Rect ThemeEngine::swapClipRect(const Common::Rect &newRect) {
