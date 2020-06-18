@@ -159,19 +159,23 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 }
 
 void DebuggerDumper::dumpFunctions() {
-	uint i, j;
+	uint i;
 
 	print("Functions (%u entries)\n", _game->_functions.size());
-	for (i = 0; i < _game->_functions.size(); i++) {
-		const Function &func = _game->_functions[i];
+	for (i = 0; i < _game->_functions.size(); i++)
+		dumpFunction(i);
+}
 
-		print("[%.4x] (%u instructions)\n", i, func.size());
-		for (j = 0; j < func.size(); j++) {
-			Common::String line = dumpInstruction(_game, NULL, &func[j]);
-			print("%s", line.c_str());
-		}
-		print("\n");
+void DebuggerDumper::dumpFunction(uint functionNum) {
+	const Function &func = _game->_functions[functionNum];
+
+	print("[%.4x] (%u instructions)\n", functionNum, func.size());
+	for (uint i = 0; i < func.size(); i++) {
+		Common::String line = dumpInstruction(_game, NULL, &func[i]);
+		print("%s", line.c_str());
 	}
+
+	print("\n");
 }
 
 void DebuggerDumper::dumpActionTable() {
@@ -424,7 +428,7 @@ void DebuggerDumper::dumpState() {
 	print("\n");
 }
 
-bool DebuggerDumper::dumpGameData(ComprehendGame *game, const Common::String &type) {
+bool DebuggerDumper::dumpGameData(ComprehendGame *game, const Common::String &type, int param) {
 	_game = game;
 
 	if (type == "header")
@@ -445,6 +449,8 @@ bool DebuggerDumper::dumpGameData(ComprehendGame *game, const Common::String &ty
 		dumpActionTable();
 	else if (type == "functions")
 		dumpFunctions();
+	else if (type == "function")
+		dumpFunction(param);
 	else if (type == "replace_words")
 		dumpReplaceWords();
 	else if (type == "state")

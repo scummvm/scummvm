@@ -52,10 +52,11 @@ void Debugger::print(const char *fmt, ...) {
 }
 
 bool Debugger::cmdDump(int argc, const char **argv) {
-	Common::String param = (argc == 2) ? argv[1] : "";
+	Common::String type = (argc >= 2) ? argv[1] : "";
+	uint param = (argc == 3) ? strToInt(argv[2]) : 0;
 	ComprehendGame *game = g_comprehend->_game;
 
-	if (!dumpGameData(game, param))
+	if (!dumpGameData(game, type, param))
 		debugPrintf("Unknown dump option\n");
 
 	return true;
