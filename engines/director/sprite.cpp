@@ -22,6 +22,7 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/lingo/lingo.h"
 #include "director/sprite.h"
 
 #include "director/score.h"
@@ -108,7 +109,14 @@ bool Sprite::isDirty() {
 }
 
 bool Sprite::isActive() {
-	return _moveable || _puppet || _scriptId;
+	if (_moveable || _puppet || _scriptId)
+		return true;
+	
+	if (g_lingo->getScriptContext(kArchMain, kCastScript, _castId)
+			|| g_lingo->getScriptContext(kArchShared, kCastScript, _castId))
+		return true;
+
+	return false;
 }
 
 void Sprite::setClean() {
