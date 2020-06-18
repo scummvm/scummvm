@@ -856,7 +856,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.x, 0));
 		break;
 	case kTheLocV:
-		channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.y, 0));
+		channel->addDelta(Common::Point(0, d.asInt() - channel->_currentPoint.y));
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.asInt();
