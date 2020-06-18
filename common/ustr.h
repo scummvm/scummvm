@@ -167,6 +167,7 @@ public:
 
 	/** Insert character c before position p. */
 	void insertChar(value_type c, uint32 p);
+	void insertString(String s, uint32 p);
 
 	/**
 	 * Removes the value at position p from the string.
@@ -240,14 +241,14 @@ public:
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.
 	 */
-	static U32String format(const char *fmt, ...) GCC_PRINTF(1, 2);
+	static U32String format(U32String fmt, ...) GCC_PRINTF(1, 2);
 
 	/**
 	 * Print formatted data into a String object. Similar to vsprintf,
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.
 	 */
-	static U32String vformat(const char *fmt, va_list args);
+	static int vformat(U32String &output, U32String::iterator fmt, va_list args);
 
 private:
 	void makeUnique();
