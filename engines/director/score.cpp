@@ -566,15 +566,11 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		needsUpdate = needsUpdate || (currentSprite->_ink == kInkTypeReverse);
 
 		if (needsUpdate || forceUpdate) {
-			if (!currentSprite->_trails) {
-				Common::Rect currentBbox = channel->getBbox();
-				_maskSurface->fillRect(currentBbox, 1);
-				_surface->fillRect(currentBbox, _stageColor);
-			}
-		}
+			unrenderSprite(i);
 
-		channel->_sprite = nextSprite;
-		channel->updateLocation();
+			channel->_sprite = nextSprite;
+			channel->updateLocation();
+		}
 	}
 
 	for (uint id = 0; id < _channels.size(); id++) {
@@ -588,7 +584,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 
 		// Sprites marked moveable are constrained to the same bounding box until
 		// the moveable is disabled
-		if (!sprite->_moveable)
+		if (!sprite->_puppet && !sprite->_moveable)
 			channel->_currentPoint = sprite->_startPoint;
 
 		Common::Rect currentBbox = channel->getBbox();
@@ -628,6 +624,17 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 	}
 
 	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
+}
+
+void Score::unrenderSprite(int spriteId) {
+	Channel *channel = _channels[spriteId];
+	Sprite *currentSprite = channel->_sprite;
+
+	if (!currentSprite->_trails) {
+		Common::Rect currentBbox = channel->getBbox();
+		_maskSurface->fillRect(currentBbox, 1);
+		_surface->fillRect(currentBbox, _stageColor);
+	}
 }
 
 void Score::renderShape(uint16 spriteId) {
