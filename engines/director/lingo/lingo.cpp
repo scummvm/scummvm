@@ -118,7 +118,7 @@ Symbol::~Symbol() {
 PCell::PCell() {
 }
 
-PCell::PCell(Datum &prop, Datum &val) {
+PCell::PCell(const Datum &prop, const Datum &val) {
 	p = prop;
 	v = val;
 }

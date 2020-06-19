@@ -194,7 +194,7 @@ struct PCell {
 	Datum v;
 
 	PCell();
-	PCell(Datum &prop, Datum &val);
+	PCell(const Datum &prop, const Datum &val);
 };
 
 struct Builtin {

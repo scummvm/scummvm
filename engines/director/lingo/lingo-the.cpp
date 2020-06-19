@@ -33,6 +33,7 @@
 #include "director/sprite.h"
 #include "director/score.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -1208,29 +1209,42 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 }
 
 Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
-	if (obj.type != OBJECT) {
-		warning("LC::c_objectproppush: Invalid object: %s", obj.asString(true).c_str());
-		return Datum();
-	}
-
-	if (obj.u.obj->hasProp(propName)) {
-		return obj.u.obj->getProp(propName);
+	Datum d;
+	if (obj.type == OBJECT) {
+		if (obj.u.obj->hasProp(propName)) {
+			return obj.u.obj->getProp(propName);
+		} else {
+			warning("Lingo::getObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+	} else if (obj.type == PARRAY) {
+		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
+		if (index > 0) {
+			d = obj.u.parr->operator[](index - 1).v;
+		}
+		return d;
 	} else {
-		warning("Lingo::getObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
-		return Datum();
+		warning("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}
+	return d;
 }
 
-void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &d) {
-	if (obj.type != OBJECT) {
-		warning("LC::c_objectproppush: Invalid object: %s", obj.asString(true).c_str());
-		return;
-	}
-
-	if (obj.u.obj->hasProp(propName)) {
-		obj.u.obj->getProp(propName) = d;
+void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
+	if (obj.type == OBJECT) {
+		if (obj.u.obj->hasProp(propName)) {
+			obj.u.obj->getProp(propName) = val;
+		} else {
+			warning("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		}
+	} else if (obj.type == PARRAY) {
+		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
+		if (index > 0) {
+			obj.u.parr->operator[](index - 1).v = val;
+		} else {
+			PCell cell = PCell(propName, val);
+			obj.u.parr->push_back(cell);
+		}
 	} else {
-		warning("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+		warning("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}
 }
 
