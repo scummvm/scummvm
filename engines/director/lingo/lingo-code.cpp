@@ -1302,16 +1302,18 @@ void LC::call(const Common::String &name, int nargs) {
 				target = Datum(target.u.obj->clone());
 			}
 			funcSym = target.u.obj->getMethod(name);
-			if (target.u.obj->type == kScriptObj && funcSym.type == HANDLER) {
-				// For kScriptObj handlers the target is the first argument
-				g_lingo->_stack[g_lingo->_stack.size() - nargs] = target;
-			} else {
-				// Otherwise, take the target object out of the stack
-				g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
-				nargs -= 1;
+			if (funcSym.type != VOID) {
+				if (target.u.obj->type == kScriptObj && funcSym.type == HANDLER) {
+					// For kScriptObj handlers the target is the first argument
+					g_lingo->_stack[g_lingo->_stack.size() - nargs] = target;
+				} else {
+					// Otherwise, take the target object out of the stack
+					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
+					nargs -= 1;
+				}
+				call(funcSym, nargs, target);
+				return;
 			}
-			call(funcSym, nargs, target);
-			return;
 		}
 	}
 
