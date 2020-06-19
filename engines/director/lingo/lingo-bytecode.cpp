@@ -345,6 +345,13 @@ void LC::cb_objectcall() {
 			LC::call(func, nargs.u.i);
 		} else {
 			warning("cb_objectcall: could not find object or function with name %s", object.u.s->c_str());
+			for (int i = 0; i < nargs.u.i; i++) {
+				g_lingo->pop();
+			}
+			// Push a VOID to the stack if function is supposed to return
+			if (nargs.type == ARGC)
+				g_lingo->push(Datum());
+
 		}
 	}
 }
