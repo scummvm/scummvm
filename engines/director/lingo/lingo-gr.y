@@ -92,10 +92,11 @@ static void inLast() { g_lingo->_indef = g_lingo->_indefStore; }
 static void startDef() {
 	inArgs();
 	g_lingo->_methodVarsStash = g_lingo->_methodVars;
-	g_lingo->_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
+	g_lingo->_methodVars = new VarTypeHash;
 
-	for (Common::Array<Common::String>::iterator i = g_lingo->_assemblyContext->_propNames.begin(); i != g_lingo->_assemblyContext->_propNames.end(); ++i) {
-		(*g_lingo->_methodVars)[*i] = kVarProperty;
+	for (VarTypeHash::iterator i = g_lingo->_methodVarsStash->begin(); i != g_lingo->_methodVarsStash->end(); ++i) {
+		if (i->_value == kVarGlobal || i->_value == kVarProperty)
+			(*g_lingo->_methodVars)[i->_key] = i->_value;
 	}
 	if (g_lingo->_inFactory) {
 		for (DatumHash::iterator i = g_lingo->_currentFactory->properties.begin(); i != g_lingo->_currentFactory->properties.end(); ++i) {

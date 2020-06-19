@@ -277,7 +277,7 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	if (archiveIndex >= 0)
 		_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
-	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
+	_methodVars = new VarTypeHash;
 	_linenumber = _colnumber = 1;
 	_hadError = false;
 
