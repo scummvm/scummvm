@@ -66,7 +66,7 @@
 
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
-				textalign = 'right'
+				textalign = 'end'
 		/>
 		<widget name = 'SmallLabel'
 				size = '18, Globals.Line.Height'
@@ -130,7 +130,7 @@
 				<widget name = 'SearchDesc'
 						width = '50'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'Search'
 						width = '150'
@@ -575,7 +575,7 @@
 				<widget name = 'RendererPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'RendererPopup'
 						type = 'PopUp'
@@ -585,7 +585,7 @@
 				<widget name = 'AutosavePeriodPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'AutosavePeriodPopup'
 						type = 'PopUp'
@@ -595,7 +595,7 @@
 				<widget name = 'GuiLanguagePopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'GuiLanguagePopup'
 						type = 'PopUp'
@@ -615,7 +615,7 @@
 				<widget name = 'UpdatesPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'UpdatesPopup'
 						type = 'PopUp'
@@ -643,7 +643,7 @@
 					<widget name = 'StoragePopupDesc'
 							width = '80'
 							height = 'Globals.Line.Height'
-							textalign = 'right'
+							textalign = 'end'
 					/>
 				</layout>
 				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '1'>
@@ -796,7 +796,7 @@
 				<widget name = 'ServerPortDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'ServerPortEditText'
 						width = '60'
@@ -1069,7 +1069,7 @@
 				<widget name = 'Id'
 						width = '35'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'Domain'
 						type = 'PopUp'
@@ -1079,7 +1079,7 @@
 				<widget name = 'Name'
 						width = '35'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'Desc'
 						type = 'PopUp'
@@ -1090,7 +1090,7 @@
 				<widget name = 'LangPopupDesc'
 						width = '60'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'LangPopup'
 						type = 'PopUp'
@@ -1100,7 +1100,7 @@
 				<widget name = 'PlatformPopupDesc'
 						width = '60'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'PlatformPopup'
 						type = 'PopUp'

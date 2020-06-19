@@ -55,7 +55,7 @@
 
 		<widget name = 'OptionsLabel'
 				size = '110, Globals.Line.Height'
-				textalign = 'right'
+				textalign = 'end'
 		/>
 		<widget name = 'SmallLabel'
 				size = '24, Globals.Line.Height'
@@ -134,7 +134,7 @@
 				<widget name = 'SearchDesc'
 						width = '60'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'Search'
 						width = '150'
