@@ -251,6 +251,9 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_after);
 		$$ = $expr;
 		delete $ID; }		// D3
+	| tPUT expr tAFTER reference 		{
+		g_lingo->code1(LC::c_after);
+		$$ = $expr; }
 	| tPUT expr tBEFORE ID 		{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
@@ -258,6 +261,9 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_before);
 		$$ = $expr;
 		delete $ID; }		// D3
+	| tPUT expr tBEFORE reference 		{
+		g_lingo->code1(LC::c_before);
+		$$ = $expr; }
 	| tSET ID tEQ expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());

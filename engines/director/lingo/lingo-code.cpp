@@ -736,8 +736,14 @@ void LC::c_ampersand() {
 
 void LC::c_before() {
 	Datum var = g_lingo->pop();
-	Datum b = g_lingo->varFetch(var);
 	Datum a = g_lingo->pop();
+
+	if (var.type != VAR) {
+		warning("STUB: c_before(%s, %s)", a.asString(true).c_str(), var.asString(true).c_str());
+		return;
+	}
+
+	Datum b = g_lingo->varFetch(var);
 
 	Datum res(a.asString() + b.asString());
 	g_lingo->varAssign(var, res);
@@ -745,8 +751,14 @@ void LC::c_before() {
 
 void LC::c_after() {
 	Datum var = g_lingo->pop();
-	Datum b = g_lingo->varFetch(var);
 	Datum a = g_lingo->pop();
+
+	if (var.type != VAR) {
+		warning("STUB: c_after(%s, %s)", a.asString(true).c_str(), var.asString(true).c_str());
+		return;
+	}
+
+	Datum b = g_lingo->varFetch(var);
 
 	Datum res(b.asString() + a.asString());
 	g_lingo->varAssign(var, res);
