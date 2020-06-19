@@ -139,7 +139,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_ttfOverrides(false), _audioMixer(0), _scalerGump(nullptr),
-		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false), _alertActive(false),
+		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false),
 		_unkCrusaderFlag(false) {
 	_application = this;
 }
@@ -1408,11 +1408,6 @@ uint32 Ultima8Engine::I_getTimeInGameHours(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
 	// 900 seconds per _game hour
 	return get_instance()->getGameTimeInSeconds() / 900;
-}
-
-uint32 Ultima8Engine::I_getAlertActive(const uint8 * /*args*/,
-	unsigned int /*argsize*/) {
-	return get_instance()->isAlertActive() ? 1 : 0;
 }
 
 uint32 Ultima8Engine::I_getUnkCrusaderFlag(const uint8 * /*args*/,

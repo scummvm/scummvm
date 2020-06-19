@@ -121,7 +121,6 @@ private:
 	bool _hasCheated;
 	bool _cheatsEnabled;
 	unsigned int _inversion;
-	bool _alertActive; //!< is intruder alert active (Crusader)
 	bool _unkCrusaderFlag; //!< not sure what this is but it's only used in usecode for crusader, so just keep track of it..
 private:
 	/**
@@ -226,7 +225,6 @@ public:
 	INTRINSIC(I_clrUnkCrusaderFlag);
 	INTRINSIC(I_makeAvatarACheater);
 	INTRINSIC(I_closeItemGumps);
-	INTRINSIC(I_getAlertActive); // for Crusader
 
 	void setAvatarInStasis(bool stat) {
 		_avatarInStasis = stat;
@@ -248,13 +246,6 @@ public:
 	}
 	void toggleShowTouchingItems() {
 		_showTouching = !_showTouching;
-	}
-
-	bool isAlertActive() const {
-		return _alertActive;
-	}
-	void setAlertActive(bool active) {
-		_alertActive = active;
 	}
 
 	bool isUnkCrusaderFlag() const {

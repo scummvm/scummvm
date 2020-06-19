@@ -2260,6 +2260,17 @@ uint32 Item::I_setQuantity(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
+uint32 Item::I_setQAndCombine(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_UINT16(q);
+	if (!item) return 0;
+
+	item->setQuality(q);
+	item->callUsecodeEvent_combine();
+
+	return 0;
+}
+
 uint32 Item::I_getFamily(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;

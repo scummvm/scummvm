@@ -554,7 +554,7 @@ uint32 AudioProcess::I_playAmbientSFXCru(const uint8 *args, unsigned int argsize
 	} else {
 		AudioProcess *ap = AudioProcess::get_instance();
 		if (ap)
-			ap->playSFX(sfxNum, 0x10, item->getObjId(), -1, true);
+			ap->playSFX(sfxNum, 0x10, 1, -1, true);
 		else
 			warning("I_playAmbientSFXCru Error: No AudioProcess");
 	}

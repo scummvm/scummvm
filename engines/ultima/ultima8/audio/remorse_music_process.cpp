@@ -34,6 +34,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 static const int MAX_TRACK = 20;
+
+// TODO: Ensure this is the right order for the uses of this from Usecode.
 static const char *TRACK_FILE_NAMES[] = {
 	nullptr,
 	"cred",

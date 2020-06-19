@@ -66,6 +66,9 @@ public:
 	INTRINSIC(I_scrollTo);
 	INTRINSIC(I_startQuake);
 	INTRINSIC(I_stopQuake);
+	INTRINSIC(I_getCameraX);
+	INTRINSIC(I_getCameraY);
+	INTRINSIC(I_getCameraZ);
 
 	static void             GetCameraLocation(int32 &x, int32 &y, int32 &z);
 	static CameraProcess   *GetCameraProcess() {

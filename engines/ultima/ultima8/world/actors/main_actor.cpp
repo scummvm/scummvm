@@ -53,7 +53,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor)
 
 MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
-	_accumInt(0), _cruBatteryType(ChemicalBattery) {
+	_accumInt(0), _cruBatteryType(ChemicalBattery), _keycards(0) {
 }
 
 MainActor::~MainActor() {
@@ -405,6 +405,13 @@ int16 MainActor::getMaxEnergy() {
 	}
 }
 
+bool MainActor::hasKeycard(int num) {
+	if (num > 31)
+		return 0;
+
+	return _keycards & (1 << num);
+}
+
 void MainActor::saveData(Common::WriteStream *ws) {
 	Actor::saveData(ws);
 	uint8 jt = _justTeleported ? 1 : 0;
@@ -412,6 +419,12 @@ void MainActor::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(_accumStr);
 	ws->writeUint32LE(_accumDex);
 	ws->writeUint32LE(_accumInt);
+
+	if (GAME_IS_CRUSADER) {
+		ws->writeByte(static_cast<byte>(_cruBatteryType));
+		ws->writeUint32LE(_keycards);
+	}
+
 	uint8 namelength = static_cast<uint8>(_name.size());
 	ws->writeByte(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
@@ -426,6 +439,11 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 	_accumStr = static_cast<int32>(rs->readUint32LE());
 	_accumDex = static_cast<int32>(rs->readUint32LE());
 	_accumInt = static_cast<int32>(rs->readUint32LE());
+
+	if (GAME_IS_CRUSADER) {
+		_cruBatteryType = static_cast<CruBatteryType>(rs->readByte());
+		_keycards = rs->readUint32LE();
+	}
 
 	uint8 namelength = rs->readByte();
 	_name.resize(namelength);
@@ -515,6 +533,20 @@ uint32 MainActor::I_getMaxEnergy(const uint8 *args,
 		return 0;
 	}
 	return av->getMaxEnergy();
+}
+
+uint32 MainActor::I_hasKeycard(const uint8 *args,
+								 unsigned int /*argsize*/) {
+	ARG_UINT16(num);
+	MainActor *av = getMainActor();
+	return av->hasKeycard(num);
+}
+
+uint32 MainActor::I_clrKeycards(const uint8 *args,
+								 unsigned int /*argsize*/) {
+	MainActor *av = getMainActor();
+	av->clrKeycards();
+	return 0;
 }
 
 void MainActor::useInventoryItem(uint32 shapenum) {

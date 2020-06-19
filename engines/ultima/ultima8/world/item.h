@@ -488,6 +488,7 @@ public:
 	INTRINSIC(I_setQLo);
 	INTRINSIC(I_setQuality);
 	INTRINSIC(I_setQuantity);
+	INTRINSIC(I_setQAndCombine);
 	INTRINSIC(I_getFamily);
 	INTRINSIC(I_getTypeFlag);
 	INTRINSIC(I_getStatus);

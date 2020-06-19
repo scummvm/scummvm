@@ -41,20 +41,20 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getMapArray, // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
 	Item::I_getStatus,
 	Item::I_orStatus,
-	Item::I_equip, // void Intrinsic006(6 bytes)
+	Item::I_equip, // void Intrinsic006(6 bytes) - TODO: confirm this
 	Item::I_isOnScreen, //
 	Actor::I_isNPC, // byte Intrinsic008(Item *)
 	Item::I_getZ, // byte Intrinsic009(Item *)
 	Item::I_destroy, // void Intrinsic00A(Item *)
-	0, // something with npcdata void Intrinsic00B(4 bytes)
+	0, // get something npcdata, maybe HP void Intrinsic00B(4 bytes)
 	0, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
 	0, // int Intrinsic00E(8 bytes)
-	0, // based on TESTFLIC, appears to be I_playVideo(item*, char *vidname, int16 sizex, int16 sizey)
+	0, // TODO: I_playVideo(item, vidname, int16 sizex, int16 sizey)
 	// 0x010
 	Item::I_getQLo, // Based on having same coff as 02B
 	Actor::I_getMap, // int Intrinsic011(4 bytes)
-	0, // void Intrinsic012(2 bytes)
+	MusicProcess::I_playMusic, // void Intrinsic012(2 bytes) TODO: Make sure the track list order is right (I don't think it is..)
 	Item::I_getX, //int Intrinsic013(4 bytes)
 	Item::I_getY, //int Intrinsic014(4 bytes)
 	AudioProcess::I_playSFXCru,
@@ -79,7 +79,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getClosestDirectionInRange, // int Intrinsic027(14 bytes)
 	Item::I_hurl, // int Intrinsic028(12 bytes)
 	UCMachine::I_true, // TODO: This is actually game difficulty level.  Make an intrinsic for that once it's implemented (for now return 1, easiest difficulty).
-	AudioProcess::I_playAmbientSFXCru, // Confirmed!
+	AudioProcess::I_playAmbientSFXCru,
 	Item::I_getQLo, // int16 Intrinsic02B(4 bytes)
 	Item::I_inFastArea, // byte Intrinsic02C(4 bytes) // based on disassembly - checks for flag 0x2000
 	Item::I_setQHi,
@@ -91,9 +91,9 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_receiveHit, // void Intrinsic032(12 bytes)
 	Actor::I_isBusy, // int Intrinsic033(4 bytes)
 	Item::I_getDirFromTo16,
-	0, // int Intrinsic035(4 bytes)
+	0, // TODO: Actor::I_getSomeFlagProbablyCrouch(Actor *)
 	Actor::I_doAnim, // void Intrinsic036(12 bytes)
-	0, // int Intrinsic037(4 bytes)
+	0, // int Intrinsic037(4 bytes) (probably pick up)
 	AudioProcess::I_stopSFXCru, // takes Item *, sndno (from disasm)
 	Actor::I_isDead, // int Intrinsic039(4 bytes)
 	AudioProcess::I_isSFXPlayingForObject,
@@ -162,11 +162,11 @@ Intrinsic RemorseIntrinsics[] = {
 	Ultima8Engine::I_clrAvatarInStasis,
 	AudioProcess::I_stopSFXCru, // takes Item *, from disasm
 	PaletteFaderProcess::I_fadeToBlack, // void Intrinsic077(void)
-	0, // void Intrinsic078(void)
+	MainActor::I_clrKeycards, // void Intrinsic078(void)
 	MainActor::I_teleportToEgg, // different than U8's? void Intrinsic079(6 bytes)
 	PaletteFaderProcess::I_fadeFromBlack, // void Intrinsic07A(void)
 	Actor::I_clrImmortal, // based on disasm
-	0, // void Intrinsic07C(4 bytes) // I_getQIfSomething, see disassembly
+	Actor::I_getHp, // void Intrinsic07C(4 bytes)
 	Actor::I_setActivity, // void Intrinsic07D(6 bytes)
 	Item::I_getQuality,
 	Item::I_setQuality,
@@ -177,8 +177,8 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setMana, //
 	Item::I_getQLo, // based on same coff set as 02B
 	Actor::I_setImmortal, // void Intrinsic085(4 bytes)
-	0, // void Intrinsic086(void)
-	0, // void Intrinsic087(void)
+	CameraProcess::I_getCameraX, // void Intrinsic086(void)
+	CameraProcess::I_getCameraY, // void Intrinsic087(void)
 	Item::I_setMapArray,
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic08A(12 bytes)
@@ -188,15 +188,15 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // TODO: PaletteFaderProcess::I_setPalToAllBlack
 	// 0x090
-	0, // void Intrinsic090(void)
+	MusicProcess::I_musicStop, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
-	0, // I_playFlic(char *)? void Intrinsic092(void)
+	0, // TODO: I_playFlic(char *)? void Intrinsic092(void)
 	0, // void Intrinsic093(void)
-	Game::I_playCredits,
-	0, // int Intrinsic095(void) // get global - something about keyboard (by disasm)
+	Game::I_playCredits, // TODO: Implement this
+	0, // TODO: Kernel::I_getCurrentKeyDown
 	MainActor::I_teleportToEgg, // void Intrinsic096(4 bytes)
-	0, // void Intrinsic097(void)
-	0, // void Intrinsic098(void)
+	0, // TODO: PaletteFaderProcess:I_setScreenGreyscale(void) (converts all colors to their Y values on each channel)
+	0, // void Intrinsic098(void) // TODO: reset vargas health to 500.. weird.
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
 	0, // TODO: PaletteFaderProcess::I_stopFadesAndResetToGamePal(void),
 	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
@@ -243,30 +243,30 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_andStatus, // void Intrinsic0C1(6 bytes)
 	Item::I_hurl, // void Intrinsic0C2(12 bytes)
 	Item::I_andStatus, // void Intrinsic0C3(6 bytes)
-	0, // void Intrinsic0C4(2 bytes)
+	0, // void Intrinsic0C4(2 bytes) // TODO: Implement keypad gump (gump shape 10 for the border, shape 11 frames for the buttons.)
 	Item::I_isOn,
 	SpriteProcess::I_createSprite, // void Intrinsic0C6(14 bytes)
 	Item::I_getDirFromItem, // int Intrinsic0C7(6 bytes)
 	Item::I_hurl, // void Intrinsic0C8(12 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
 	Actor::I_setHp, // int Intrinsic0CA(6 bytes)
-	0, // void Intrinsic0CB(2 bytes)
+	0, // 0CB void I_createMapJumpProcess(int16 mapnum)", // TODO: Implement me
 	0, // int Intrinsic0CC(4 bytes)
 	Actor::I_setActivity, // void Intrinsic0CD(6 bytes)
 	UCMachine::I_true, // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see how this changes the game.. for now just set to true.
-	0, // void Intrinsic0CF(6 bytes)
+	Item::I_setQAndCombine, // void Intrinsic0CF(6 bytes)
 	// 0x0D0
 	Item::I_use, // void Intrinsic0D0(4 bytes)
 	AudioProcess::I_stopAllSFX,
 	0, // void I_playFlic(int *item,char *flicname,word sizex,word sizey) // play flic
-	0, // UNUSEDInt00D3()
+	0, // void Intrinsic0D3(void)
 	AudioProcess::I_playSFX, // void Intrinsic0D4(2 bytes)
 	Item::I_use, // void Intrinsic0D5(4 bytes)
-	0, // int Intrinsic0D6(void)
+	CameraProcess::I_getCameraZ, // int Intrinsic0D6(void)
 	Actor::I_getLastAnimSet, // void Intrinsic0D7(4 bytes)
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
-	0, // void Intrinsic0DA(void)
+	0, // TODO: PaletteFaderProcess::I_setPalToAllGrey // sets all colors to 0x3F3F3F
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
 	0, // void Intrinsic0DD(4 bytes)
@@ -287,8 +287,8 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic0EB(void)
 	Item::I_popToEnd,
 	Item::I_popToContainer,
-	0, // void Intrinsic0EE(void)
-	0, // void Intrinsic0EF(4 bytes)
+	0, // TODO: Implement BatteryChargerProcess::I_create
+	Kernel::I_getNumProcesses, // void Intrinsic0EF(4 bytes)
 	// 0x0F0
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_isOn,
@@ -303,7 +303,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_andStatus, // void Intrinsic0FC(6 bytes)
-	0, // int Intrinsic0FD(2 bytes)
+	MainActor::I_hasKeycard, // int Intrinsic0FD(2 bytes)
 	0, // void Intrinsic0FE(4 bytes)
 	UCMachine::I_numToStr, // same as 113 based on same coff set 0FF, 113, 126
 	// 0x100
@@ -330,7 +330,7 @@ Intrinsic RemorseIntrinsics[] = {
 	UCMachine::I_numToStr, // see VMAIL::func0A for example usage
 	Item::I_andStatus, // void Intrinsic114(6 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	0, // ? Item::I_getTypeFlag, byte Intrinsic116(14 bytes)
+	0, // byte Intrinsic116(14 bytes)
 	Item::I_andStatus, // void Intrinsic117(6 bytes)
 	Item::I_hurl, // int16 Intrinsic118(12 bytes)
 	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic119(4 bytes)
