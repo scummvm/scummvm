@@ -714,8 +714,6 @@ int Datum::asInt() {
 	int res = 0;
 
 	switch (type) {
-	case REFERENCE:
-		// fallthrough
 	case STRING:
 		{
 			Common::String src = asString();
@@ -732,6 +730,7 @@ int Datum::asInt() {
 		// no-op
 		break;
 	case INT:
+	case REFERENCE:
 		res = u.i;
 		break;
 	case FLOAT:
@@ -748,8 +747,6 @@ double Datum::asFloat() {
 	double res = 0.0;
 
 	switch (type) {
-	case REFERENCE:
-		// fallthrough
 	case STRING:
 		{
 			Common::String src = asString();
@@ -766,6 +763,7 @@ double Datum::asFloat() {
 		// no-op
 		break;
 	case INT:
+	case REFERENCE:
 		res = (double)u.i;
 		break;
 	case FLOAT:
