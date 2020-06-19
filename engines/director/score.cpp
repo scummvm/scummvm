@@ -65,7 +65,10 @@ void Channel::updateLocation() {
 }
 
 void Channel::addDelta(Common::Point pos) {
-	if (_sprite->_moveable && _constraint > 0) {
+	if (_constraint > g_director->getCurrentScore()->_channels.size() - 1) {
+		warning("Channel::addDelta: Received out-of-bounds constraint: %d", _constraint);
+		_constraint = 0;
+	} else if (_sprite->_moveable && _constraint > 0) {
 		Common::Rect constraintBbox = g_director->getCurrentScore()->_channels[_constraint]->getBbox();
 
 		Common::Rect currentBbox = getBbox();
