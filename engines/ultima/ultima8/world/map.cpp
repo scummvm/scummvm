@@ -261,7 +261,11 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 			ShapeInfo *info = item->getShapeInfo();
 			assert(info);
 			if (info->_family > 10) {
-				warning("Created fixed item unknown family %d, shape (%d, %d) at (%d, %d, %d)", info->_family, shape, frame, x, y, z);
+				//warning("Created fixed item unknown family %d, shape (%d, %d) at (%d, %d, %d)", info->_family, shape, frame, x, y, z);
+			}
+			if (shape == 0x90D) {
+				warning("Created MISS1EGG item unknown family %d, shape (%d, %d) at (%d, %d, %d) q:%d", info->_family, shape, frame, x, y, z, quality);
+
 			}
 		}
 		item->setLocation(x, y, z);

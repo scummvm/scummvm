@@ -35,17 +35,17 @@ namespace Ultima8 {
 // Most up-to-date version of unknown functions is in convert_usecode_crusader.h
 Intrinsic RemorseIntrinsics[] = {
 	// 0x000
-	Ultima8Engine::I_getAlertActive,  // basically confirmed.. see eg, ALARM_NS::enterFastArea - set frame for alert siren based on value.
-	Item::I_getFrame, // int Intrinsic001(4 bytes)
-	Item::I_setFrame, // basically confirmed..
+	World::I_getAlertActive,
+	Item::I_getFrame, // int Intrinsic001(Item *)
+	Item::I_setFrame, //
 	Item::I_getMapArray, // See TRIGGER::ordinal21 - stored in a variable 'mapNum'
-	Item::I_getStatus, // probably - see usage in GATGUNEW::enterFastArea - always followed by an AND against a single bit
-	Item::I_orStatus, // probably - see usage in GATGUNEW::enterFastArea
+	Item::I_getStatus,
+	Item::I_orStatus,
 	Item::I_equip, // void Intrinsic006(6 bytes)
 	Item::I_isOnScreen, //
-	Actor::I_isNPC, // byte Intrinsic008(Item *) // probably.. disasm checks for < 256
-	Item::I_getZ, // byte Intrinsic009(4 bytes) // probably, see PEPSIEW::use() variable names
-	Item::I_destroy, // void Intrinsic00A(4 bytes) // probably, often called after creating replacement object in same position eg, LUGGAGE::gotHit
+	Actor::I_isNPC, // byte Intrinsic008(Item *)
+	Item::I_getZ, // byte Intrinsic009(Item *)
+	Item::I_destroy, // void Intrinsic00A(Item *)
 	0, // something with npcdata void Intrinsic00B(4 bytes)
 	0, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
@@ -55,19 +55,19 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQLo, // Based on having same coff as 02B
 	Actor::I_getMap, // int Intrinsic011(4 bytes)
 	0, // void Intrinsic012(2 bytes)
-	Item::I_getX, //int Intrinsic013(4 bytes) // probably - see FREE::ordinal34
-	Item::I_getY, //int Intrinsic014(4 bytes) // probably - see FREE::ordinal34
-	AudioProcess::I_playSFXCru, // pretty sure, see SWITCH::ordinal21 which plays various sfx related to access status
-	Item::I_getShape, // in STEAMBOX::func0A, is compared to 0x511 (the STEAM2 shape number) to determine direction
+	Item::I_getX, //int Intrinsic013(4 bytes)
+	Item::I_getY, //int Intrinsic014(4 bytes)
+	AudioProcess::I_playSFXCru,
+	Item::I_getShape,
 	Item::I_explode, // void Intrinsic017(8 bytes)
 	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
-	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes),  probably, see usage in DOOR2::ordinal37
+	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes)
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
 	UCMachine::I_true, // FIXME: get the num of some npc - maybe currently controlled NPC? For now default to 1 (avatar).
 	Actor::I_getDir, // byte Intrinsic01C(4 bytes)
 	Actor::I_getLastAnimSet, // int Intrinsic01D(4 bytes)
 	0, // int Intrinsic01E(16 bytes)
-	Item::I_create, // probably - used in MISS1EGG creating keycards and NPCDEATH in creating blood spills
+	Item::I_create,
 	// 0x020
 	Item::I_popToCoords, // void Intrinsic020(10 bytes)
 	Actor::I_setDead, // void Intrinsic021(4 bytes)
@@ -75,12 +75,12 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getEtherealTop, // int Intrinsic023(void)
 	Item::I_setShape, // Probably, see PEPSIEW::gotHit
 	Item::I_touch,
-	Item::I_getQHi, // int16 Intrinsic026(Item *), // guess, based on variable name in BOUNCBOX::gotHit
+	Item::I_getQHi, // int16 Intrinsic026(Item *)
 	Item::I_getClosestDirectionInRange, // int Intrinsic027(14 bytes)
 	Item::I_hurl, // int Intrinsic028(12 bytes)
 	UCMachine::I_true, // TODO: This is actually game difficulty level.  Make an intrinsic for that once it's implemented (for now return 1, easiest difficulty).
 	AudioProcess::I_playAmbientSFXCru, // Confirmed!
-	Item::I_getQLo, // int16 Intrinsic02B(4 bytes), // guess, based on variable name in BOUNCBOX::gotHit
+	Item::I_getQLo, // int16 Intrinsic02B(4 bytes)
 	Item::I_inFastArea, // byte Intrinsic02C(4 bytes) // based on disassembly - checks for flag 0x2000
 	Item::I_setQHi,
 	Item::I_legalMoveToPoint, // byte Intrinsic02E(12 bytes)
@@ -226,9 +226,9 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_avatarStoleSomething, // void Intrinsic0B1(6 bytes)
 	Item::I_andStatus, // void Intrinsic0B2(6 bytes)
 	Ultima8Engine::I_getCurrentTimerTick, // int32 Intrinsic0B3(void), probably, see FREE::ordinal32
-	0, // void Intrinsic0B4(void)
+	World::I_setAlertActive, // void Intrinsic0B4(void)
 	Item::I_equip, // void Intrinsic0B5(6 bytes)
-	0, // void Intrinsic0B6(void)
+	World::I_clrAlertActive, // void Intrinsic0B6(void)
 	0, // void Intrinsic0B7(void)
 	0, // int Intrinsic0B8(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0B9(4 bytes)

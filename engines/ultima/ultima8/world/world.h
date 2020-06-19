@@ -57,6 +57,7 @@
 //  game data need this, actually.)
 
 #include "ultima/ultima8/misc/common_types.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
@@ -138,6 +139,16 @@ public:
 	//! load World data
 	bool load(Common::ReadStream *rs, uint32 version);
 
+	bool isAlertActive() {
+		return _alertActive;
+	}
+
+	void setAlertActive(bool active);
+
+	INTRINSIC(I_getAlertActive); // for Crusader
+	INTRINSIC(I_setAlertActive); // for Crusader
+	INTRINSIC(I_clrAlertActive); // for Crusader
+
 private:
 	static World *_world;
 
@@ -145,6 +156,9 @@ private:
 	CurrentMap *_currentMap;
 
 	Std::list<ObjId> _ethereal;
+
+	bool _alertActive; //!< is intruder alert active (Crusader)
+
 };
 
 } // End of namespace Ultima8

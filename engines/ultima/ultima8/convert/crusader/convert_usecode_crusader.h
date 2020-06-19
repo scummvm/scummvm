@@ -258,9 +258,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_spawnUsecodeEvent0x13(Item *, 2 bytes)", // based on disasm - what is event 0x13? "avatar stole something" in U8..
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int32 I_getCurrentTimerTick(void)",
-	"void Intrinsic0B4(void)",  // set or clear alert? (based on coff)
+	"void Ultima8Engine::I_setAlertActive(void)",
 	"int16 Item::I_equip(6 bytes)",
-	"void Intrinsic0B6(void)",  // set or clear alert? (based on coff)
+	"void Ultima8Engine::I_clrAlertActive(void)",
 	"int16 I_GetNPCGlobal0x7e24_0B7(void)",
 	"byte Intrinsic0B8(4 bytes)", // same coff as 037
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
