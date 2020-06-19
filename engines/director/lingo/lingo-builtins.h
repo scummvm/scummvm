@@ -86,7 +86,6 @@ namespace LB {
 	void b_voidP(int nargs);
 
 	void b_alert(int nargs);
-	void b_birth(int nargs);
 	void b_clearGlobals(int nargs);
 	void b_cursor(int nargs);
 	void b_framesToHMS(int nargs);

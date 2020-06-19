@@ -174,7 +174,6 @@ static struct BuiltinProto {
 	{ "voidP",			LB::b_voidP,		1, 1, true,  4, FBLTIN },	//			D4 f
 	// Misc
 	{ "alert",	 		LB::b_alert,		1, 1, false, 2, BLTIN },	// D2 c
-	{ "birth",	 		LB::b_birth,		-1,0, false, 4, FBLTIN },	//			D4 f
 	{ "clearGlobals",	LB::b_clearGlobals,	0, 0, false, 3, BLTIN },	//		D3.1 c
 	{ "cursor",	 		LB::b_cursor,		1, 1, false, 2, BLTIN },	// D2 c
 	{ "framesToHMS",	LB::b_framesToHMS,	4, 4, false, 3, FBLTIN },	//		D3 f
@@ -1389,14 +1388,6 @@ void LB::b_alert(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_alert(%s)", d.asString().c_str());
-}
-
-void LB::b_birth(int nargs) {
-	g_lingo->printSTUBWithArglist("b_birth", nargs);
-
-	g_lingo->dropStack(nargs);
-
-	g_lingo->push(Datum(0));
 }
 
 void LB::b_clearGlobals(int nargs) {
