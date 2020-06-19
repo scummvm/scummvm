@@ -42,6 +42,7 @@ Channel::Channel(Sprite *sp) {
 	_sprite = sp;
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
+	_constraint = 0;
 
 	_visible = true;
 
