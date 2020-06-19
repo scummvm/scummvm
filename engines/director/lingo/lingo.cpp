@@ -832,10 +832,14 @@ Common::String Datum::asString(bool printonly) {
 				break;
 			}
 
-			if (!printonly) {
-				s = ((TextCast *)member)->getText();
+			if (member->_type == kCastText) {
+				if (!printonly) {
+					s = ((TextCast *)member)->getText();
+				} else {
+					s = Common::String::format("reference: \"%s\"", ((TextCast *)member)->getText().c_str());
+				}
 			} else {
-				s = Common::String::format("reference: \"%s\"", ((TextCast *)member)->getText().c_str());
+				s = Common::String::format("cast %d", idx);
 			}
 		}
 		break;
