@@ -819,8 +819,8 @@ list: '[' valuelist ']'			{ $$ = $valuelist; }
 
 valuelist:	/* nothing */		{ $$ = g_lingo->code2(LC::c_arraypush, 0); }
 	| ':'						{ $$ = g_lingo->code2(LC::c_proparraypush, 0); }
-	| linearlist { $$ = g_lingo->code1(LC::c_arraypush); $$ = g_lingo->codeInt($linearlist); }
 	| proplist	 { $$ = g_lingo->code1(LC::c_proparraypush); $$ = g_lingo->codeInt($proplist); }
+	| linearlist { $$ = g_lingo->code1(LC::c_arraypush); $$ = g_lingo->codeInt($linearlist); }
 
 linearlist: expr				{ $$ = 1; }
 	| linearlist ',' expr		{ $$ = $1 + 1; }
@@ -828,14 +828,18 @@ linearlist: expr				{ $$ = 1; }
 proplist:  proppair				{ $$ = 1; }
 	| proplist ',' proppair		{ $$ = $1 + 1; }
 
-proppair: SYMBOL ':' simpleexpr {
+proppair: SYMBOL ':' expr {
 		g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString($SYMBOL->c_str());
 		delete $SYMBOL; }
-	| STRING ':' simpleexpr 	{
+	| STRING ':' expr 	{
 		g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString($STRING->c_str());
 		delete $STRING; }
+	| ID ':' expr 	{
+		g_lingo->code1(LC::c_stringpush);
+		g_lingo->codeString($ID->c_str());
+		delete $ID; }
 
 
 %%
