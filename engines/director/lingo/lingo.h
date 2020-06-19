@@ -215,6 +215,7 @@ typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Has
 
 class ScriptContext {
 public:
+	ScriptType _type;
 	Common::String _name;
 	Common::Array<Symbol> _functions; // used only by bytecode
 	Common::HashMap<uint32, Symbol> _eventHandlers;
@@ -222,6 +223,7 @@ public:
 	Common::Array<Datum> _constants;
 	Common::Array<Common::String> _propNames;
 
+	ScriptContext(ScriptType type, Common::String name) : _type(type), _name(name) {}
 	Datum getObject();
 
 private:

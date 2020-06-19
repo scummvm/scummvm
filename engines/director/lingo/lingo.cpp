@@ -265,16 +265,17 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 		warning("Script already defined for type %d, id %d", id, type);
 	}
 
+	Common::String contextName;
+	if (scriptName && strlen(scriptName) > 0)
+		contextName = Common::String(scriptName);
+	else
+		contextName = Common::String::format("%d", id);
+
 	_assemblyArchive = archiveIndex;
-	ScriptContext *sc = _assemblyContext = new ScriptContext;
+	ScriptContext *sc = _assemblyContext = new ScriptContext(type, contextName);
 	_currentAssembly = new ScriptData;
 	if (archiveIndex >= 0)
 		_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
-
-	if (scriptName && strlen(scriptName) > 0)
-		_assemblyContext->_name = Common::String(scriptName);
-	else
-		_assemblyContext->_name = Common::String::format("%d", id);
 
 	_methodVars = new Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>();
 	_linenumber = _colnumber = 1;

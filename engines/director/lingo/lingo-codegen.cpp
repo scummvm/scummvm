@@ -97,7 +97,8 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 			warning("Redefining handler '%s'", name.c_str());
 
 		if (!_eventHandlerTypeIds.contains(name)) {
-			_archives[_assemblyArchive].functionHandlers[name] = sym;
+			if (_assemblyContext->_type == kMovieScript && !_archives[_assemblyArchive].functionHandlers.contains(name))
+				_archives[_assemblyArchive].functionHandlers[name] = sym;
 			_assemblyContext->_functionHandlers[name] = sym;
 		} else {
 			_assemblyContext->_eventHandlers[_eventHandlerTypeIds[name]] = sym;

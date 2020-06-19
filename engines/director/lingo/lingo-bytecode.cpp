@@ -749,10 +749,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	}
 
 	_assemblyArchive = archiveIndex;
-	_assemblyContext = new ScriptContext;
+	_assemblyContext = new ScriptContext(type, !scriptName.empty() ? scriptName : Common::String::format("%d", id));
 	_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
-
-	_assemblyContext->_name = !scriptName.empty() ? scriptName : Common::String::format("%d", id);
 
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
