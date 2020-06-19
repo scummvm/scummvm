@@ -735,15 +735,21 @@ void LC::c_ampersand() {
 }
 
 void LC::c_before() {
-	LC::c_ampersand();
+	Datum var = g_lingo->pop();
+	Datum b = g_lingo->varFetch(var);
+	Datum a = g_lingo->pop();
+
+	Datum res(a.asString() + b.asString());
+	g_lingo->varAssign(var, res);
 }
 
 void LC::c_after() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
+	Datum var = g_lingo->pop();
+	Datum b = g_lingo->varFetch(var);
+	Datum a = g_lingo->pop();
 
-	Datum res(d2.asString() + d1.asString());
-	g_lingo->push(res);
+	Datum res(b.asString() + a.asString());
+	g_lingo->varAssign(var, res);
 }
 
 void LC::c_concat() {

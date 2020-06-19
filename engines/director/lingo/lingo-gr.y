@@ -244,8 +244,20 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEMENUITEMSENTITY[1]);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr; }
-	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(LC::c_after); }		// D3
-	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(LC::c_before); }		// D3
+	| tPUT expr tAFTER ID 		{
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		mVar($ID, globalCheck());
+		g_lingo->code1(LC::c_after);
+		$$ = $expr;
+		delete $ID; }		// D3
+	| tPUT expr tBEFORE ID 		{
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		mVar($ID, globalCheck());
+		g_lingo->code1(LC::c_before);
+		$$ = $expr;
+		delete $ID; }		// D3
 	| tSET ID tEQ expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());

@@ -521,7 +521,7 @@ Common::String preprocessReturn(Common::String in) {
 
 		if (prev.hasSuffix("&") || prev.hasSuffix("&&") || prev.hasSuffix("=") ||
 				next.hasPrefix("&") || next.hasPrefix("&&") || prev.hasSuffix(",") ||
-				next.hasPrefix(")")) {
+				next.hasPrefix(")") || prev.equalsIgnoreCase("put")) {
 			res += "scummvm_"; // Turn it into scummvm_return
 		}
 
