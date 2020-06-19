@@ -820,6 +820,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	if (!sprite)
 		return;
 
+	if (!sprite->_enabled)
+		sprite->_enabled = true;
+
 	switch (field) {
 	case kTheBackColor:
 		sprite->_backColor = d.asInt();
