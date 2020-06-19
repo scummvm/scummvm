@@ -712,5 +712,19 @@
 	kFeaturesAdLib,
 	0, "AVT003.TOT", 0
 },
+{ // Found on ADI Accompagnement Scolaire - Francais-Maths
+	{
+		"gob1",
+		"",
+		AD_ENTRY1s("intro.stk", "ca15cc119fea5ee432083e7f6b873c38", 2441216),
+		FR_FRA,
+		kPlatformCDi,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob1,
+	kFeaturesAdLib,
+	0, "AVT003.TOT", 0
+},
 
 #endif // GOB_DETECTION_TABLES_GOB1_H
