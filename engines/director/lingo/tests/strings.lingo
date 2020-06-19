@@ -6,12 +6,12 @@ put z1
 put chars("Macromedia", 6, 6)
 put chars("Macromedia", 6, 10)
 put chars("Macromedia", -1, 15)
-if z1 contains "MeÍW" then
+if z1 contains "Meï¿½W" then
 	put "Contains"
 else
 	put "Doesn't contain"
 end if
-if "meow" = "MeÍW" then
+if "meow" = "Meï¿½W" then
 	put "Equals"
 else
 	put "Doesn't equal"
@@ -25,3 +25,15 @@ end if
 
 when keydown then if the key=return then set the stagecolor to random (256)
 file(mWritestring, return)
+
+put return
+
+put "foo" into test
+put return after test
+put test
+
+put return before test
+put test
+
+put return into test
+put test
