@@ -310,7 +310,25 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEMENUITEMENTITY[0]);
 		g_lingo->codeInt($THEMENUITEMENTITY[1]);
 		$$ = $expr; }
+	| tSET THEMENUITEMENTITY simpleexpr tOF ID simpleexpr tEQ expr	{
+		if (!$ID->equalsIgnoreCase("menu")) {
+			warning("LEXER: keyword 'menu' expected");
+			YYERROR;
+		}
+
+		warning("STUB: menuItem entity");
+		g_lingo->code1(LC::c_themenuitementityassign);
+		g_lingo->codeInt($THEMENUITEMENTITY[0]);
+		g_lingo->codeInt($THEMENUITEMENTITY[1]);
+		$$ = $expr; }
 	| tSET THEOBJECTPROP tTO expr	{
+		g_lingo->code1(LC::c_objectpropassign);
+		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
+		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
+		delete $THEOBJECTPROP.obj;
+		delete $THEOBJECTPROP.prop;
+		$$ = $expr; }
+	| tSET THEOBJECTPROP tEQ expr	{
 		g_lingo->code1(LC::c_objectpropassign);
 		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
 		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
