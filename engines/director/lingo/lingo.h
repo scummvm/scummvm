@@ -186,6 +186,7 @@ struct Datum {	/* interpreter stack type */
 
 	const char *type2str(bool isk = false);
 
+	int equalTo(Datum &d, bool ignoreCase = false);
 	int compareTo(Datum &d, bool ignoreCase = false);
 };
 

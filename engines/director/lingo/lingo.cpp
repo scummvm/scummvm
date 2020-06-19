@@ -913,21 +913,30 @@ const char *Datum::type2str(bool isk) {
 	}
 }
 
-int Datum::compareTo(Datum &d, bool ignoreCase) {
-	if (type == SYMBOL && d.type == SYMBOL) {
-		// TODO: Implement union comparisons
-		return ignoreCase ? u.s->compareToIgnoreCase(*d.u.s) : u.s->compareTo(*d.u.s);
-	}
-
+int Datum::equalTo(Datum &d, bool ignoreCase) {
 	int alignType = g_lingo->getAlignedType(*this, d);
 
-	if ((alignType == VOID && (type == STRING || d.type == STRING)) || (type == STRING && d.type == STRING)) {
+	if (alignType == FLOAT) {
+		return asFloat() == d.asFloat();
+	} else if (alignType == INT) {
+		return asInt() == d.asInt();
+	} else if ((type == STRING && d.type == STRING) || (type == SYMBOL && d.type == SYMBOL)) {
 		if (ignoreCase) {
-			return toLowercaseMac(asString()).compareTo(toLowercaseMac(d.asString()));
+			return toLowercaseMac(asString()).equals(toLowercaseMac(d.asString()));
 		} else {
-			return asString().compareTo(d.asString());
+			return asString().equals(d.asString());
 		}
-	} else if (alignType == FLOAT) {
+	} else if (type == OBJECT && d.type == OBJECT) {
+		return u.obj == d.u.obj;
+	} else {
+		return 0;
+	}
+}
+
+int Datum::compareTo(Datum &d, bool ignoreCase) {
+	int alignType = g_lingo->getAlignedType(*this, d);
+
+	if (alignType == FLOAT) {
 		double f1 = asFloat();
 		double f2 = d.asFloat();
 		if (f1 < f2) {
@@ -947,8 +956,15 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 		} else {
 			return 1;
 		}
+	} else if ((type == STRING && d.type == STRING) || (type == SYMBOL && d.type == SYMBOL)) {
+		if (ignoreCase) {
+			return toLowercaseMac(asString()).compareTo(toLowercaseMac(d.asString()));
+		} else {
+			return asString().compareTo(d.asString());
+		}
 	} else {
-		error("Invalid comparison between types %s and %s", type2str(), d.type2str());
+		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
+		return 0;
 	}
 }
 

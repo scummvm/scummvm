@@ -1121,7 +1121,7 @@ Datum LC::eqData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::eqData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2, true) == 0) ? 1 : 0;
+	d1.u.i = d1.equalTo(d2, true);
 	d1.type = INT;
 	return d1;
 }
@@ -1137,7 +1137,7 @@ Datum LC::neqData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::neqData, d1, d2, false, true);
 	}
-	d1.u.i = (d1.compareTo(d2, true) != 0) ? 1 : 0;
+	d1.u.i = !d1.equalTo(d2, true);
 	d1.type = INT;
 	return d1;
 }
