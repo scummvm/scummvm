@@ -2163,10 +2163,14 @@ void LB::b_script(int nargs) {
 	if (cast) {
 		ScriptContext *script = nullptr;
 
-		if (cast->_type == kCastLingoScript)
+		if (cast->_type == kCastLingoScript) {
+			// script cast can be either a movie script or score script
 			script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kMovieScript, castId);
-		else
+			if (!script)
+				script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kScoreScript, castId);
+		} else {
 			script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kCastScript, castId);
+		}
 
 		if (script) {
 			g_lingo->push(Datum(script->getObject()));
