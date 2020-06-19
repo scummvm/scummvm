@@ -581,6 +581,10 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 			unrenderSprite(i);
 
 		channel->_sprite = nextSprite;
+
+		if (currentSprite->_castId == 0 && nextSprite->_castId != 0)
+			channel->resetPosition();
+
 		channel->updateLocation();
 	}
 
