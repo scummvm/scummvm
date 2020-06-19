@@ -779,7 +779,6 @@ void LB::b_getPos(int nargs) {
 	ARGNUMCHECK(2);
 	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
-	TYPECHECK2(val, INT, FLOAT);
 	TYPECHECK2(list, ARRAY, PARRAY);
 
 	switch (list.type) {
