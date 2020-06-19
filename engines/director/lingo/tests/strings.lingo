@@ -6,12 +6,12 @@ put z1
 put chars("Macromedia", 6, 6)
 put chars("Macromedia", 6, 10)
 put chars("Macromedia", -1, 15)
-if z1 contains "Meï¿½W" then
+if z1 contains "MeÍW" then
 	put "Contains"
 else
 	put "Doesn't contain"
 end if
-if "meow" = "Meï¿½W" then
+if "meow" = "MeÍW" then
 	put "Equals"
 else
 	put "Doesn't equal"
