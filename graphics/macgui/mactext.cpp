@@ -85,7 +85,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 	if (i == chunks.size()) {
 		i--;	// touch the last chunk
-		pos = chunks[i].text.size() - 1;
+		pos = chunks[i].text.size();
 	}
 
 	*col = pos;
@@ -1493,6 +1493,9 @@ void MacText::deletePreviousChar(int *row, int *col) {
 	} else {
 		int pos = *col - 1;
 		uint ch = _textLines[*row].getChunkNum(&pos);
+
+		if (pos == _textLines[*row].chunks[ch].text.size())
+			pos--;
 
 		_textLines[*row].chunks[ch].text.deleteChar(pos);
 
