@@ -378,7 +378,7 @@ bool CmidPlayer::update() {
 								//midiprintf ("%c",(unsigned char)getnext(1));
 								debugN("%c", (unsigned char)getnext(1));
 							}
-							debug("");
+							debug("%s", "");
 						} else {
 							for (i = 0; i < l; i++)
 								midiprintf("%2X ", (unsigned int)getnext(1));
