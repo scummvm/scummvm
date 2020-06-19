@@ -971,7 +971,7 @@ void LB::b_setAt(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
-		if ((uint)index < list.u.farr->size()) {
+		if ((uint)index <= list.u.farr->size()) {
 			list.u.farr->operator[](index - 1) = value;
 		} else {
 			// TODO: Extend the list if we request an index beyond it
