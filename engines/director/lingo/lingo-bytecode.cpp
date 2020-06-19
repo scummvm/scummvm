@@ -320,19 +320,35 @@ void LC::cb_objectcall() {
 		object.type = VAR;
 		Datum target = g_lingo->varFetch(object);
 
+		StackData args;
 		if (target.type == OBJECT) {
-			StackData args;
-			for (int i = 0; i < nargs.u.i - 1; i++) {
-				args.push_back(g_lingo->pop());
+			// last arg on the stack is the method name
+			nargs.u.i -= 1;
+		}
+
+		for (int i = 0; i < nargs.u.i; i++) {
+			Datum arg = g_lingo->pop();
+			// for some reason, strings that are sent to here are actually variable names???
+			// other constants (e.g. ints) are fine.
+			if (arg.type == STRING) {
+				Datum varTest(arg);
+				varTest.type = VAR;
+				varTest = g_lingo->varFetch(varTest);
+				if (varTest.type != VOID)
+					arg = varTest;
 			}
+			args.push_back(arg);
+		}
+
+		if (target.type == OBJECT) {
 			Datum methodName = g_lingo->pop();
 			Symbol method = target.u.obj->getMethod(methodName.asString());
 			if (method.type != VOID) {
-				for (int i = 0; i < nargs.u.i - 1; i++) {
+				for (int i = 0; i < nargs.u.i; i++) {
 					g_lingo->push(args.back());
 					args.pop_back();
 				}
-				LC::call(method, nargs.u.i - 1);
+				LC::call(method, nargs.u.i);
 			} else {
 				warning("cb_objectcall: object %s has no method named %s", object.u.s->c_str(), methodName.asString().c_str());
 			}
@@ -342,12 +358,14 @@ void LC::cb_objectcall() {
 		// if there's nothing, try calling a function with that name
 		Symbol func = g_lingo->getHandler(*object.u.s);
 		if (func.type != VOID) {
+			for (int i = 0; i < nargs.u.i; i++) {
+				g_lingo->push(args.back());
+				args.pop_back();
+			}
+
 			LC::call(func, nargs.u.i);
 		} else {
 			warning("cb_objectcall: could not find object or function with name %s", object.u.s->c_str());
-			for (int i = 0; i < nargs.u.i; i++) {
-				g_lingo->pop();
-			}
 			// Push a VOID to the stack if function is supposed to return
 			if (nargs.type == ARGC)
 				g_lingo->push(Datum());
