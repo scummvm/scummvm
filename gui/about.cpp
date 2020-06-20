@@ -212,7 +212,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 
 		Graphics::TextAlign align = Graphics::kTextAlignCenter;
 		ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled;
-		if (*strLineItrBegin) {
+		if (strLineItrBegin != strLineItrEnd) {
 			switch (*strLineItrBegin) {
 			case 'C':
 				align = Graphics::kTextAlignCenter;
