@@ -301,8 +301,8 @@ void SoundMidiPC::playTrack(uint8 track) {
 	
 	_output->setSourceVolume(0, _musicVolume);
 
-	_music->setTrack(track);
-	_music->startPlaying();
+	if (_music->setTrack(track))
+		_music->startPlaying();
 }
 
 void SoundMidiPC::haltTrack() {
@@ -325,8 +325,8 @@ void SoundMidiPC::playSoundEffect(uint8 track, uint8) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < 3; ++i) {
 		if (!_sfx[i]->isPlaying()) {
-			_sfx[i]->setTrack(track);
-			_sfx[i]->startPlaying();
+			if (_sfx[i]->setTrack(track))
+				_sfx[i]->startPlaying();
 			return;
 		}
 	}
