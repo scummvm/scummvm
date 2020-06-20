@@ -255,14 +255,14 @@ bool FileManager::setup() {
 	// Ensure the custom CC archive is present
 	File f;
 	if (!f.exists("xeen.ccs")) {
-		GUIErrorMessage("Could not find xeen.ccs data file");
+		GUIErrorMessage(Common::convertToU32String("Could not find xeen.ccs data file"));
 		return false;
 	}
 
 	// Verify the version of the CC is correct
 	CCArchive *dataCc = new CCArchive("xeen.ccs", "data", true);
 	if (!f.open("VERSION", *dataCc) || f.readUint32LE() != 3) {
-		GUIErrorMessage("xeen.ccs is out of date");
+		GUIErrorMessage(Common::convertToU32String("xeen.ccs is out of date"));
 		return false;
 	}
 	SearchMan.add("data", dataCc);

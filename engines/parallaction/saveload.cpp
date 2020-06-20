@@ -127,7 +127,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	Common::OutSaveFile *f = getOutSaveFile(slot);
 	if (f == 0) {
-		Common::String buf = Common::String::format(_("Can't save game in slot %i\n\n").encode().c_str(), slot);
+		Common::U32String buf = Common::U32String::format(_("Can't save game in slot %i\n\n"), slot);
 		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
 		return;

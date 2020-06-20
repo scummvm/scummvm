@@ -229,7 +229,7 @@ void FilesPageHandler::handle(Client &client) {
 	replace(response, "{create_directory_desc}", _("Type new directory name:").encode());
 	replace(response, "{upload_file_desc}", _("Select a file to upload:").encode());
 	replace(response, "{or_upload_directory_desc}", _("Or select a directory (works in Chrome only):").encode());
-	replace(response, "{index_of_directory}", Common::String::format("%s %s", _("Index of").encode().c_str(), encodeHtmlEntities(getDisplayPath(client.queryParameter("path")))));
+	replace(response, "{index_of_directory}", Common::String::format("%s %s", _("Index of").encode().c_str(), encodeHtmlEntities(getDisplayPath(client.queryParameter("path"))).c_str()));
 	replace(response, "{content}", content);
 	LocalWebserver::setClientGetHandler(client, response);
 }

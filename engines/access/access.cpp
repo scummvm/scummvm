@@ -210,7 +210,7 @@ void AccessEngine::initialize() {
 
 Common::Error AccessEngine::run() {
 	_res = Resources::init(this);
-	Common::String errorMessage;
+	Common::U32String errorMessage;
 	if (!_res->load(errorMessage)) {
 		GUIErrorMessage(errorMessage);
 		return Common::kNoError;

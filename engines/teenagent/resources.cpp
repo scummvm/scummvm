@@ -94,8 +94,8 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::String filename = "teenagent.dat";
 	if (!dat_file->open(filename.c_str())) {
 		delete dat_file;
-		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file.").encode().c_str(), filename.c_str());
-		warning("%s", errorMessage.c_str());
+		Common::U32String errorMessage = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
+		warning("%s", errorMessage.encode().c_str());
 		GUIErrorMessage(errorMessage);
 		return false;
 	}

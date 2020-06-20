@@ -1406,7 +1406,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 			if (meta.version < MINIMUM_SAVEGAME_VERSION) {
 				showScummVMDialog(_("The format of this saved game is obsolete, unable to load it"));
 			} else {
-				Common::U32String msg = Common::String::format(_("Savegame version is %d, maximum supported is %0d").encode().c_str(), meta.version, CURRENT_SAVEGAME_VERSION);
+				Common::U32String msg = Common::U32String::format(_("Savegame version is %d, maximum supported is %0d"), meta.version, CURRENT_SAVEGAME_VERSION);
 				showScummVMDialog(msg);
 			}
 

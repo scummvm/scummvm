@@ -1182,7 +1182,7 @@ void SavenameDialog::open() {
 	Dialog::open();
 	setResult(-1);
 
-	_title->setLabel(Common::String::format(Common::convertFromU32String(_("Enter a description for slot %d:")).c_str(), _targetSlot));
+	_title->setLabel(Common::U32String::format(_("Enter a description for slot %d:"), _targetSlot));
 }
 
 void SavenameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

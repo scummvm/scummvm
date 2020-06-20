@@ -433,7 +433,7 @@ bool HugoEngine::loadHugoDat() {
 	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file.").encode().c_str(), filename.c_str());
+		Common::U32String errorMessage = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 		return false;
@@ -444,7 +444,7 @@ bool HugoEngine::loadHugoDat() {
 	in.read(buf, 4);
 
 	if (memcmp(buf, "HUGO", 4)) {
-		Common::String errorMessage = Common::String::format(_("The '%s' engine data file is corrupt.").encode().c_str(), filename.c_str());
+		Common::U32String errorMessage = Common::U32String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		return false;
 	}

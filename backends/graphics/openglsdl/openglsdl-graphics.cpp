@@ -583,7 +583,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef USE_OSD
 		int windowWidth = 0, windowHeight = 0;
 		getWindowSizeFromSdl(&windowWidth, &windowHeight);
-		const Common::U32String osdMsg = Common::String::format(_("Resolution: %dx%d").encode().c_str(), windowWidth, windowHeight);
+		const Common::U32String osdMsg = Common::U32String::format(_("Resolution: %dx%d"), windowWidth, windowHeight);
 		displayMessageOnOSD(osdMsg);
 #endif
 

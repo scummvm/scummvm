@@ -179,14 +179,14 @@ Common::Error Hugo::readSaveData(Common::SeekableReadStream *rs) {
 	if (hugo_ferror(rs)) goto RestoreError;
 
 	if (strcmp(testid, id)) {
-		GUIErrorMessage("Incorrect rs file.");
+		GUIErrorMessage(Common::convertToU32String("Incorrect rs file."));
 		goto RestoreError;
 	}
 
 	/* Check serial number */
 	if (!hugo_fgets(testserial, 9, rs)) goto RestoreError;
 	if (strcmp(testserial, serial)) {
-		GUIErrorMessage("Save file created by different version.");
+		GUIErrorMessage(Common::convertToU32String("Save file created by different version."));
 		goto RestoreError;
 	}
 

@@ -594,7 +594,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 				}
 
 				delete fs;
-				::GUI::MessageDialog dialog(Common::String::format(_("The following original saved game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this saved game file with ScummVM?\n\n").encode().c_str(), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
+				::GUI::MessageDialog dialog(Common::U32String::format(_("The following original saved game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
 				if (dialog.runModal())
 					origFiles.push_back(temp);
 			}
@@ -627,7 +627,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 
 	if (destSlot != -1) {
 		if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), destSlot) != _gui->_saveSlots.end()) {
-			::GUI::MessageDialog dialog(Common::String::format(_("A saved game file was found in the specified slot %d. Overwrite?\n\n").encode().c_str(), destSlot), _("Yes"), _("No"));
+			::GUI::MessageDialog dialog(Common::U32String::format(_("A saved game file was found in the specified slot %d. Overwrite?\n\n"), destSlot), _("Yes"), _("No"));
 			if (!dialog.runModal())
 				return false;
 		}
@@ -660,7 +660,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 	_inf->reset();
 
 	if (destSlot == -1 && importedCount) {
-		::GUI::MessageDialog dialog(Common::String::format(_("%d original saved games have been successfully imported into\nScummVM. If you want to manually import original saved game later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n").encode().c_str(), importedCount));
+		::GUI::MessageDialog dialog(Common::U32String::format(_("%d original saved games have been successfully imported into\nScummVM. If you want to manually import original saved game later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"), importedCount));
 		dialog.runModal();
 	}
 

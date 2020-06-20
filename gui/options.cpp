@@ -1170,12 +1170,12 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	}
 
 	if (nHidden) {
-		Common::U32String hiddenStr = Common::String::format(Common::convertFromU32String(_("%d hidden achievements remaining")).c_str(), nHidden);
+		Common::U32String hiddenStr = Common::U32String::format(_("%d hidden achievements remaining"), nHidden);
 		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr, Graphics::kTextAlignStart);
 	}
 
 	if (nMax) {
-		Common::U32String totalStr = Common::String::format(Common::convertFromU32String(_("Achievements unlocked: %d/%d")).c_str(), nAchieved, nMax);
+		Common::U32String totalStr = Common::U32String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
 		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr, Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;

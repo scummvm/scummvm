@@ -53,8 +53,8 @@ class Dialog;
 /**
  * Initializes graphics and shows error message.
  */
-void GUIErrorMessage(const Common::String &msg, const char *url = nullptr);
-void GUIErrorMessageWithURL(const Common::String &msg, const char *url);
+void GUIErrorMessage(const Common::U32String &msg, const char *url = nullptr);
+void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url);
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 class Engine;
