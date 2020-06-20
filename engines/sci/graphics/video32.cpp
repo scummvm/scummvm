@@ -66,7 +66,7 @@ bool VideoPlayer::open(const Common::String &fileName) {
 	// system with no RGB support
 	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
 		void showScummVMDialog(const Common::U32String &message, Common::U32String altButton = Common::U32String(""), bool alignCenter = true);
-		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp").encode().c_str(), _decoder->getPixelFormat().bpp()));
+		showScummVMDialog(Common::U32String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
 		_decoder->close();
 		return false;
 	}

@@ -355,7 +355,7 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		// Load a help file
 		// Maybe in the future we can implement this, but for now this message should suffice
-		showScummVMDialog(Common::String::format(_("Please use an external viewer to open the game's help file: %s").encode().c_str(), s->_segMan->getString(argv[1]).c_str()));
+		showScummVMDialog(Common::U32String::format(_("Please use an external viewer to open the game's help file: %s"), s->_segMan->getString(argv[1]).c_str()));
 		break;
 	case 2:
 		// Looks like some init function

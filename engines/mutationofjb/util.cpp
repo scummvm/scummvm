@@ -30,9 +30,9 @@
 namespace MutationOfJB {
 
 void reportFileMissingError(const char *fileName) {
-	Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file").encode().c_str(), fileName);
+	Common::U32String errorMessage = Common::U32String::format(_("Unable to locate the '%s' engine data file"), fileName);
 	GUIErrorMessage(errorMessage);
-	warning("%s", errorMessage.c_str());
+	warning("%s", errorMessage.encode().c_str());
 }
 
 Common::String toUpperCP895(const Common::String &str) {

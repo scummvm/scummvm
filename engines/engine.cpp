@@ -314,9 +314,9 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	// Error out on size switch failure
 	if (gfxError & OSystem::kTransactionSizeChangeFailed) {
-		Common::String message;
-		message = Common::String::format(
-			Common::convertFromU32String(_("Could not switch to resolution '%dx%d'.")).c_str(), width, height);
+		Common::U32String message;
+		message = Common::U32String::format(
+			_("Could not switch to resolution '%dx%d'."), width, height);
 
 		GUIErrorMessage(message);
 		error("%s", message.c_str());
@@ -333,18 +333,18 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 #endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
-		Common::String message;
-		message = Common::String::format(
-			Common::convertFromU32String(_("Could not switch to video mode '%s'.")).c_str(), ConfMan.get("gfx_mode").c_str());
+		Common::U32String message;
+		message = Common::U32String::format(
+			_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
 	}
 
 	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
-		Common::String message;
-		message = Common::String::format(
-			Common::convertFromU32String(_("Could not switch to stretch mode '%s'.")).c_str(), ConfMan.get("stretch_mode").c_str());
+		Common::U32String message;
+		message = Common::U32String::format(
+			_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -397,11 +397,11 @@ void initGraphics(int width, int height) {
 	initGraphics(width, height, &format);
 }
 
-void GUIErrorMessageWithURL(const Common::String &msg, const char *url) {
+void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
 	GUIErrorMessage(msg, url);
 }
 
-void GUIErrorMessage(const Common::String &msg, const char *url) {
+void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
 		initCommonGFX();
@@ -415,7 +415,7 @@ void GUIErrorMessage(const Common::String &msg, const char *url) {
 			dialog.runModal();
 		}
 	} else {
-		error("%s", msg.c_str());
+		error("%s", msg.encode().c_str());
 	}
 }
 
@@ -593,9 +593,9 @@ void Engine::openMainMenuDialog() {
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
-			Common::U32String failMessage = Common::String::format(Common::convertFromU32String(_("Failed to load saved game (%s)! "
+			Common::U32String failMessage = Common::U32String::format(_("Failed to load saved game (%s)! "
 				  "Please consult the README for basic information, and for "
-				  "instructions on how to obtain further assistance.")).c_str(), status.getDesc().c_str());
+				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
 			dialog.runModal();
 		}

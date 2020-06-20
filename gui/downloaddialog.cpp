@@ -149,7 +149,7 @@ bool DownloadDialog::selectDirectories() {
 				return false;
 			}
 			GUI::MessageDialog alert(
-				Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?").encode().c_str(), remoteDirectory.name().c_str()),
+				Common::U32String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
 				_("Yes"),
 				_("No")
 				);
@@ -212,14 +212,14 @@ Common::U32String DownloadDialog::getSizeLabelText() {
 	Common::String downloaded, downloadedUnits, total, totalUnits;
 	downloaded = getHumanReadableBytes(CloudMan.getDownloadBytesNumber(), downloadedUnits);
 	total = getHumanReadableBytes(CloudMan.getDownloadTotalBytesNumber(), totalUnits);
-	return Common::String::format(_("Downloaded %s %s / %s %s").encode().c_str(), downloaded.c_str(), _(downloadedUnits.c_str()).encode().c_str(), total.c_str(), _(totalUnits.c_str()).encode().c_str());
+	return Common::U32String::format(_("Downloaded %s %s / %s %s"), downloaded.c_str(), _(downloadedUnits.c_str()).encode().c_str(), total.c_str(), _(totalUnits.c_str()).encode().c_str());
 }
 
 Common::U32String DownloadDialog::getSpeedLabelText() {
 	Common::String speed, speedUnits;
 	speed = getHumanReadableBytes(CloudMan.getDownloadSpeed(), speedUnits);
 	speedUnits += "/s";
-	return Common::String::format(_("Download speed: %s %s").encode().c_str(), speed.c_str(), _(speedUnits).encode().c_str());
+	return Common::U32String::format(_("Download speed: %s %s"), speed.c_str(), _(speedUnits).encode().c_str());
 }
 
 void DownloadDialog::refreshWidgets() {

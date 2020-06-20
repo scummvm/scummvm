@@ -243,7 +243,7 @@ Common::Error SagaEngine::run() {
 
 	// Detect game and open resource files
 	if (!initGame()) {
-		GUIErrorMessage("Error loading game resources.");
+		GUIErrorMessage(Common::convertToU32String("Error loading game resources."));
 		return Common::kUnknownError;
 	}
 
