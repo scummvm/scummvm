@@ -39,6 +39,8 @@ namespace Audio {
 #define MILES_CONTROLLER_PROTECT_TIMBRE 113
 #define MILES_CONTROLLER_LOCK_CHANNEL 110
 #define MILES_CONTROLLER_PROTECT_CHANNEL 111
+#define MILES_CONTROLLER_BANK_SELECT_MSB 0
+#define MILES_CONTROLLER_BANK_SELECT_LSB 32
 #define MILES_CONTROLLER_MODULATION 1
 #define MILES_CONTROLLER_VOLUME 7
 #define MILES_CONTROLLER_EXPRESSION 11
@@ -125,6 +127,7 @@ public:
 	void send(uint32 b) override;
 	void send(int8 source, uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
+	uint16 sysExNoDelay(const byte *msg, uint16 length) override;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 
 	/**
@@ -326,7 +329,7 @@ private:
 	 * @param controlData The new program value will be set on this MidiChannelControlData
 	 * @param sendMessage True if the message should be sent out to the device
 	 */
-	void programChange(byte outputChannel, byte patchId, MidiChannelControlData &controlData, bool sendMessage);
+	void programChange(byte outputChannel, byte patchId, uint8 source, MidiChannelControlData &controlData, bool sendMessage);
 
 	void stopNotesOnChannel(uint8 outputChannelNumber);
 

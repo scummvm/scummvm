@@ -125,7 +125,7 @@ public:
 	void send(int8 source, byte status, byte firstOp, byte secondOp);
 
 	/**
-	 * Transmit a sysEx to the midi device.
+	 * Transmit a SysEx to the MIDI device.
 	 *
 	 * The given msg MUST NOT contain the usual SysEx frame, i.e.
 	 * do NOT include the leading 0xF0 and the trailing 0xF7.
@@ -135,6 +135,20 @@ public:
 	 * undefined behavior (most likely, a crash).
 	 */
 	virtual void sysEx(const byte *msg, uint16 length) { }
+
+	/**
+	 * Transmit a SysEx to the MIDI device and return the necessary
+	 * delay until the next SysEx event in milliseconds.
+	 *
+	 * This can be used to implement an alternate delay method than the
+	 * OSystem::delayMillis function used by most sysEx implementations.
+	 * Note that not every driver needs a delay, or supports this method.
+	 * In this case, 0 is returned and the driver itself will do a delay 
+	 * if necessary.
+	 *
+	 * For information on the SysEx data requirements, see the sysEx method.
+	 */
+	virtual uint16 sysExNoDelay(const byte *msg, uint16 length) { sysEx(msg, length); return 0; }
 
 	// TODO: Document this.
 	virtual void metaEvent(byte type, byte *data, uint16 length) { }
@@ -233,6 +247,8 @@ protected:
 	bool _reversePanning;
 	// True if GS percussion channel volume should be scaled to match MT-32 volume.
 	bool _scaleGSPercussionVolumeToMT32;
+	// The currently selected GS instrument bank / variation for each channel.
+	byte _gsBank[16];
 
 private:
 	// If detectDevice() detects MT32 and we have a preferred MT32 device
@@ -347,6 +363,18 @@ public:
 
 	// Does this driver accept soundFont data?
 	virtual bool acceptsSoundFontData() { return false; }
+
+protected:
+	/**
+	 * Checks if the currently selected GS bank / instrument variation
+	 * on the specified channel is valid for the specified patch.
+	 * If this is not the case, the correct bank will be returned which
+	 * can be set by sending a bank select message. If no correction is
+	 * needed, 0xFF will be returned.
+	 * This emulates the fallback functionality of the Roland SC-55 v1.2x,
+	 * on which some games rely to correct wrong bank selects.
+	 */
+	byte correctInstrumentBank(byte outputChannel, byte patchId);
 };
 
 class MidiChannel {

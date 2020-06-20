@@ -75,6 +75,7 @@ MidiDriver_Miles_Midi::MidiDriver_Miles_Midi(MusicType midiType, MilesMT32Instru
 		break;
 	}
 
+	memset(_gsBank, 0, sizeof(_gsBank));
 	memset(_patchesBank, 0, sizeof(_patchesBank));
 
 	_instrumentTablePtr = instrumentTablePtr;
@@ -208,21 +209,28 @@ void MidiDriver_Miles_Midi::initMidiDevice() {
 }
 
 void MidiDriver_Miles_Midi::sysEx(const byte *msg, uint16 length) {
+	uint16 delay = sysExNoDelay(msg, length);
+
+	if (delay > 0)
+		g_system->delayMillis(delay);
+}
+
+uint16 MidiDriver_Miles_Midi::sysExNoDelay(const byte *msg, uint16 length) {
 	if (!_nativeMT32 && length >= 3 && msg[0] == 0x41 && msg[2] == 0x16)
 		// MT-32 SysExes have no effect on GM devices.
-		return;
+		return 0;
 
 	// Send SysEx
 	_driver->sysEx(msg, length);
 
 	// Wait the time it takes to send the SysEx data
-	uint32 delay = (length + 2) * 1000 / 3125;
+	uint16 delay = (length + 2) * 1000 / 3125;
 
 	// Plus an additional delay for the MT-32 rev00
 	if (_nativeMT32)
 		delay += 40;
 
-	g_system->delayMillis(delay);
+	return delay;
 }
 
 void MidiDriver_Miles_Midi::MT32SysEx(const uint32 targetAddress, const byte *dataPtr) {
@@ -376,7 +384,7 @@ void MidiDriver_Miles_Midi::send(int8 source, uint32 b) {
 		controlChange(outputChannel, op1, op2, source, controlData, sendMessage);
 		break;
 	case 0xc0: // Program Change
-		programChange(outputChannel, op1, controlData, sendMessage);
+		programChange(outputChannel, op1, source, controlData, sendMessage);
 		break;
 	case 0xf0: // SysEx
 		warning("MILES-MIDI: SysEx: %x", b);
@@ -462,7 +470,10 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 	}
 
 	// XMIDI MT-32 SysEx controllers
-	if (_nativeMT32 && (controllerNumber >= MILES_CONTROLLER_SYSEX_RANGE_BEGIN) && (controllerNumber <= MILES_CONTROLLER_SYSEX_RANGE_END)) {
+	if (_midiType == MT_MT32 && (controllerNumber >= MILES_CONTROLLER_SYSEX_RANGE_BEGIN) && (controllerNumber <= MILES_CONTROLLER_SYSEX_RANGE_END)) {
+		if (!_nativeMT32)
+			return;
+
 		// send SysEx
 		byte sysExQueueNr = 0;
 
@@ -533,6 +544,10 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 
 	// Standard MIDI controllers
 	switch (controllerNumber) {
+	case MILES_CONTROLLER_BANK_SELECT_MSB:
+		// Keep track of the current bank for each channel
+		_gsBank[outputChannel] = controllerValue;
+		break;
 	case MILES_CONTROLLER_MODULATION:
 		controlData.modulation = controllerValue;
 		break;
@@ -715,7 +730,7 @@ void MidiDriver_Miles_Midi::unlockChannel(uint8 outputChannel) {
 	if (channel.currentData.currentPatchBank != channel.unlockData.currentPatchBank)
 		controlChange(outputChannel, MILES_CONTROLLER_SELECT_PATCH_BANK, channel.unlockData.currentPatchBank, channel.currentData.source, channel.currentData, true);
 	if (channel.unlockData.program != 0xFF && (channel.currentData.program != channel.unlockData.program || channel.currentData.currentPatchBank != channel.unlockData.currentPatchBank))
-		programChange(outputChannel, channel.unlockData.program, channel.currentData, true);
+		programChange(outputChannel, channel.unlockData.program, channel.currentData.source, channel.currentData, true);
 	if (channel.currentData.pitchWheel != channel.unlockData.pitchWheel)
 		send(channel.currentData.source, 0xE0 | outputChannel, channel.unlockData.pitchWheel & 0x7F, (channel.unlockData.pitchWheel >> 7) & 0x7F);
 }
@@ -745,7 +760,7 @@ void MidiDriver_Miles_Midi::allNotesOff() {
 	}
 }
 
-void MidiDriver_Miles_Midi::programChange(byte outputChannel, byte patchId, MidiChannelControlData &controlData, bool sendMessage) {
+void MidiDriver_Miles_Midi::programChange(byte outputChannel, byte patchId, uint8 source, MidiChannelControlData &controlData, bool sendMessage) {
 	// remember patch id for the current MIDI-channel
 	controlData.program = patchId;
 
@@ -787,8 +802,15 @@ void MidiDriver_Miles_Midi::programChange(byte outputChannel, byte patchId, Midi
 		if (outputChannel == MILES_RHYTHM_CHANNEL) {
 			// Correct possible wrong GS drumkit number
 			patchId = _gsDrumkitFallbackMap[patchId];
-		}
-		else if (_nativeMT32) {
+		} else if (!_nativeMT32) {
+			// Correct possible wrong bank / instrument variation
+			byte correctedBank = correctInstrumentBank(outputChannel, patchId);
+			if (correctedBank != 0xFF) {
+				// Send out a bank select for the corrected bank number
+				controlChange(outputChannel, MILES_CONTROLLER_BANK_SELECT_MSB, correctedBank, source, controlData, sendMessage);
+				controlChange(outputChannel, MILES_CONTROLLER_BANK_SELECT_LSB, 0, source, controlData, sendMessage);
+			}
+		} else {
 			// GM on an MT-32: map the patch to the MT-32 equivalent
 			patchId = _gmToMt32[patchId];
 		}

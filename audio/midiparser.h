@@ -276,6 +276,7 @@ protected:
 	uint32 _ppqn;           ///< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
 	uint32 _tempo;          ///< Microseconds per quarter note.
 	uint32 _psecPerTick;  ///< Microseconds per tick (_tempo / _ppqn).
+	uint32 _sysExDelay;     ///< Number of microseconds until the next SysEx event can be sent.
 	bool   _autoLoop;       ///< For lightweight clients that don't provide their own flow control.
 	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
@@ -293,6 +294,7 @@ protected:
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 	bool   _jumpingToTick; ///< True if currently inside jumpToTick
 	bool   _doParse;       ///< True if the parser should be parsing; false if it should be active
+	bool   _pause;		   ///< True if the parser has paused parsing
 
 protected:
 	static uint32 readVLQ(byte * &data);
@@ -419,6 +421,24 @@ public:
 	 * Stops playback. This resets the current playback position.
 	 */
 	void stopPlaying();
+	/**
+	 * Pauses playback and stops all active notes. Use resumePlaying to
+	 * continue playback at the current track position; startPlaying will
+	 * do nothing if the parser is paused.
+	 * stopPlaying, unloadMusic, loadMusic and setTrack will unpause the
+	 * parser. jumpToTick and jumpToIndex do nothing while the parser is
+	 * paused.
+	 * If the parser is not playing or already paused, this function does
+	 * nothing. Note that isPlaying will continue to return true while
+	 * playback is paused.
+	 * Not every parser implementation might support pausing properly.
+	 */
+	void pausePlaying();
+	/**
+	 * Resumes playback at the current track position.
+	 * If the parser is not paused, this function does nothing.
+	 */
+	void resumePlaying();
 
 	bool setTrack(int track);
 	bool jumpToTick(uint32 tick, bool fireEvents = false, bool stopNotes = true, bool dontSendNoteOn = false);

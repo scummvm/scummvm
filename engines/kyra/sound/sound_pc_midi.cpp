@@ -43,10 +43,12 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, 0);
 	assert(_music);
 	_music->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+	_music->property(MidiParser::mpDisableAutoStartPlayback, true);
 	for (int i = 0; i < 3; ++i) {
 		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, i + 1);
 		assert(_sfx[i]);
 		_sfx[i]->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+		_sfx[i]->property(MidiParser::mpDisableAutoStartPlayback, true);
 	}
 
 	_musicVolume = _sfxVolume = 0;
@@ -87,6 +89,7 @@ SoundMidiPC::~SoundMidiPC() {
 	delete _music;
 	for (int i = 0; i < 3; ++i)
 		delete _sfx[i];
+	_output->allNotesOff();
 
 	delete _output; // This automatically frees _driver (!)
 
@@ -121,9 +124,10 @@ bool SoundMidiPC::init() {
 
 	_output->setTimerCallback(this, SoundMidiPC::onTimer);
 
+	// Load MT-32 and GM initialization files
+	const char* midiFile = 0;
+	const char* pakFile = 0;
 	if (_nativeMT32 && _type == kMidiMT32) {
-		const char *midiFile = 0;
-		const char *pakFile = 0;
 		if (_vm->game() == GI_KYRA1) {
 			midiFile = "INTRO";
 		} else if (_vm->game() == GI_KYRA2) {
@@ -133,7 +137,7 @@ bool SoundMidiPC::init() {
 			midiFile = "LOREINTR";
 
 			if (_vm->gameFlags().isDemo) {
-				if (_vm->gameFlags().useAltShapeHeader) {
+				if (_vm->resource()->exists("INTROVOC.PAK")) {
 					// Intro demo
 					pakFile = "INTROVOC.PAK";
 				} else {
@@ -148,26 +152,35 @@ bool SoundMidiPC::init() {
 					pakFile = "INTROVOC.PAK";
 			}
 		}
-
-		if (!midiFile)
-			return true;
-
-		if (pakFile)
-			_vm->resource()->loadPakFile(pakFile);
-
-		loadSoundFile(midiFile);
-		playTrack(0);
-
-		Common::Event event;
-		while (isPlaying() && !_vm->shouldQuit()) {
-			_vm->_system->updateScreen();
-			_vm->_eventMan->pollEvent(event);
-			_vm->_system->delayMillis(10);
+	} else if (_type == kMidiGM && _vm->game() == GI_LOL) {
+		if (_vm->gameFlags().isDemo && _vm->resource()->exists("INTROVOC.PAK")) {
+			// Intro demo
+			midiFile = "LOREINTR";
+			pakFile = "INTROVOC.PAK";
+		} else {
+			midiFile = "LOLSYSEX";
+			pakFile = "GENERAL.PAK";
 		}
-
-		if (pakFile)
-			_vm->resource()->unloadPakFile(pakFile);
 	}
+
+	if (!midiFile)
+		return true;
+
+	if (pakFile)
+		_vm->resource()->loadPakFile(pakFile);
+
+	loadSoundFile(midiFile);
+	playTrack(0);
+
+	Common::Event event;
+	while (isPlaying() && !_vm->shouldQuit()) {
+		_vm->_system->updateScreen();
+		_vm->_eventMan->pollEvent(event);
+		_vm->_system->delayMillis(10);
+	}
+
+	if (pakFile)
+		_vm->resource()->unloadPakFile(pakFile);
 
 	return true;
 }
@@ -227,10 +240,10 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
-	// When loading a new file we stop all notes
-	// still running on our own, just to prevent
-	// glitches
-	_output->allNotesOff();
+	haltTrack();
+	if (_vm->game() == GI_KYRA1) {
+		stopAllSoundEffects();
+	}
 
 	delete[] _musicFile;
 	uint32 fileSize = 0;
@@ -238,14 +251,12 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	_mFileName = file;
 
 	_music->loadMusic(_musicFile, fileSize);
-	_music->stopPlaying();
 
 	// Since KYRA1 uses the same file for SFX and Music
 	// we setup sfx to play from music file as well
 	if (_vm->game() == GI_KYRA1) {
 		for (int i = 0; i < 3; ++i) {
 			_sfx[i]->loadMusic(_musicFile, fileSize);
-			_sfx[i]->stopPlaying();
 		}
 	}
 }
@@ -265,6 +276,8 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 	if (!_vm->resource()->exists(file.c_str()))
 		return;
 
+	stopAllSoundEffects();
+
 	delete[] _sfxFile;
 
 	uint32 fileSize = 0;
@@ -283,17 +296,13 @@ void SoundMidiPC::playTrack(uint8 track) {
 
 	haltTrack();
 
-	// The following two lines are meant as a fix for bug #6314.
-	// It is on purpose that they are outside the mutex lock.
-	_output->allNotesOff();
-	//_vm->delay(250);
-
 	Common::StackLock lock(_mutex);
 	_fadeMusicOut = false;
 	
 	_output->setSourceVolume(0, _musicVolume);
 
-	_music->setTrack(track);
+	if (_music->setTrack(track))
+		_music->startPlaying();
 }
 
 void SoundMidiPC::haltTrack() {
@@ -316,7 +325,8 @@ void SoundMidiPC::playSoundEffect(uint8 track, uint8) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < 3; ++i) {
 		if (!_sfx[i]->isPlaying()) {
-			_sfx[i]->setTrack(track);
+			if (_sfx[i]->setTrack(track))
+				_sfx[i]->startPlaying();
 			return;
 		}
 	}
@@ -342,15 +352,15 @@ void SoundMidiPC::pause(bool paused) {
 	Common::StackLock lock(_mutex);
 
 	if (paused) {
-		_music->setMidiDriver(0);
+		_music->pausePlaying();
 		for (int i = 0; i < 3; i++)
-			_sfx[i]->setMidiDriver(0);
+			_sfx[i]->pausePlaying();
 		if (_output)
 			_output->allNotesOff();
 	} else {
-		_music->setMidiDriver(_output);
+		_music->resumePlaying();
 		for (int i = 0; i < 3; ++i)
-			_sfx[i]->setMidiDriver(_output);
+			_sfx[i]->resumePlaying();
 		// Possible TODO (IMHO unnecessary): restore notes and/or update _fadeStartTime
 	}
 }
@@ -367,14 +377,8 @@ void SoundMidiPC::onTimer(void *data) {
 			int volume = (byte)((musicFadeTime - (midi->_vm->_system->getMillis() - midi->_fadeStartTime)) * midi->_musicVolume / musicFadeTime);
 			midi->_output->setSourceVolume(0, volume);
 		} else {
-			midi->_music->stopPlaying();
-
-			for (int i = 0; i < 3; ++i) {
-				midi->_sfx[i]->stopPlaying();
-			}
-
-			for (int i = 0; i < 4; ++i)
-				midi->_output->deinitSource(i);
+			midi->haltTrack();
+			midi->stopAllSoundEffects();
 
 			midi->_fadeMusicOut = false;
 

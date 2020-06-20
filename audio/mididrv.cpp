@@ -631,6 +631,80 @@ void MidiDriver::sendGMReset() {
 	g_system->delayMillis(100);
 }
 
+byte MidiDriver::correctInstrumentBank(byte outputChannel, byte patchId) {
+	if (_gsBank[outputChannel] == 0 || patchId >= 120 || _gsBank[outputChannel] >= 64)
+		// Usually, no bank select has been sent and no correction is
+		// necessary.
+		// No correction is performed on banks 64-127 or on the SFX
+		// instruments (120-127).
+		return 0xFF;
+
+	// Determine the intended bank. This emulates the behavior of the
+	// Roland SC-55 v1.2x. Instruments have 2, 1 or 0 sub-capital tones.
+	// Depending on the selected bank and the selected instrument, the
+	// bank will "fall back" to a sub-capital tone or to the capital
+	// tone (bank 0).
+	byte correctedBank = 0xFF;
+
+	switch (patchId) {
+	case 25:  // Steel-String Guitar / 12-string Guitar / Mandolin
+		// This instrument has 2 sub-capital tones. Bank selects 17-63 
+		// are corrected to the second sub-capital tone at 16.
+		if (_gsBank[outputChannel] >= 16) {
+			correctedBank = 16;
+			break;
+		}
+		// Corrections for values below 16 are handled below.
+
+		// fall through
+	case 4:   // Electric Piano 1 / Detuned Electric Piano 1
+	case 5:   // Electric Piano 2 / Detuned Electric Piano 2
+	case 6:   // Harpsichord / Coupled Harpsichord
+	case 14:  // Tubular-bell / Church Bell
+	case 16:  // Organ 1 / Detuned Organ 1
+	case 17:  // Organ 2 / Detuned Organ 2
+	case 19:  // Church Organ 1 / Church Organ 2
+	case 21:  // Accordion Fr / Accordion It
+	case 24:  // Nylon-string Guitar / Ukelele
+	case 26:  // Jazz Guitar / Hawaiian Guitar
+	case 27:  // Clean Guitar / Chorus Guitar
+	case 28:  // Muted Guitar / Funk Guitar
+	case 30:  // Distortion Guitar / Feedback Guitar
+	case 31:  // Guitar Harmonics / Guitar Feedback
+	case 38:  // Synth Bass 1 / Synth Bass 3
+	case 39:  // Synth Bass 2 / Synth Bass 4
+	case 48:  // Strings / Orchestra
+	case 50:  // Synth Strings 1 / Synth Strings 3
+	case 61:  // Brass 1 / Brass 2
+	case 62:  // Synth Brass 1 / Synth Brass 3
+	case 63:  // Synth Brass 2 / Synth Brass 4
+	case 80:  // Square Wave / Sine Wave
+	case 107: // Koto / Taisho Koto
+	case 115: // Woodblock / Castanets
+	case 116: // Taiko / Concert BD
+	case 117: // Melodic Tom 1 / Melodic Tom 2
+	case 118: // Synth Drum / 808 Tom
+		// These instruments have one sub-capital tone. Bank selects 9-63
+		// are corrected to the sub-capital tone at 8.
+		if (_gsBank[outputChannel] >= 8) {
+			correctedBank = 8;
+			break;
+		}
+		// Corrections for values below 8 are handled below.
+
+		// fall through
+	default:
+		// The other instruments only have a capital tone. Bank selects
+		// 1-63 are corrected to the capital tone.
+		if (_gsBank[outputChannel] >= 0)
+			correctedBank = 0;
+		break;
+	}
+
+	// Return the corrected bank, or 0xFF if no correction is needed.
+	return _gsBank[outputChannel] != correctedBank ? correctedBank : 0xFF;
+}
+
 void MidiDriver_BASE::midiDumpInit() {
 	g_system->displayMessageOnOSD(_("Starting MIDI dump"));
 	_midiDumpCache.clear();
