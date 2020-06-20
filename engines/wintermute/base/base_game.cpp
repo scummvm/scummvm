@@ -491,6 +491,7 @@ bool BaseGame::initialize1() {
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
+	g_system->setupScreen(_settings->getResWidth(), _settings->getResHeight(), false, true);
 	_renderer = makeOpenGL3DRenderer(this);
 	_renderer3D = static_cast<BaseRenderOpenGL3D *>(_renderer);
 #else
