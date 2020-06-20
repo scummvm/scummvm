@@ -35,6 +35,30 @@ int Input::show(XeenEngine *vm, Window *window, Common::String &line,
 	return result;
 }
 
+static bool xeenIsLower(char chr) {
+	return chr >= 'a' && chr <= 'z';
+}
+
+static bool xeenIsUpper(char chr) {
+	return chr >= 'A' && chr <= 'Z';
+}
+
+static char upper(char chr) {
+	if (xeenIsUpper(chr)) {
+		return chr;
+	}
+
+	return chr - ('a' - 'A');
+}
+
+static char lower(char chr) {
+	if (xeenIsLower(chr)) {
+		return chr;
+	}
+
+	return chr + ('a' - 'A');
+}
+
 int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric) {
 	_vm->_noDirectionSense = true;
 	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x3""c", maxWidth);
@@ -53,7 +77,19 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 		} else if (line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)
 				&& ((isNumeric && keyState.ascii >= '0' && keyState.ascii <= '9') ||
 				   (!isNumeric && keyState.ascii >= ' ' && keyState.ascii <= (char)127))) {
-			line += keyState.ascii;
+			if (!isNumeric && (xeenIsLower(keyState.ascii) || xeenIsUpper(keyState.ascii))) {
+				// The original game doesn't care about Shift or Caps Locks. The
+				// capitalization is done for the user automatically at the beginning of
+				// words.
+				if (line.size() == 0 || line.hasSuffix(" ")) {
+					line += upper(keyState.ascii);
+				} else {
+					line += lower(keyState.ascii);
+				}
+			} else {
+				line += keyState.ascii;
+			}
+
 			refresh = true;
 		} else if (keyCode == Common::KEYCODE_RETURN || keyCode == Common::KEYCODE_KP_ENTER) {
 			break;
