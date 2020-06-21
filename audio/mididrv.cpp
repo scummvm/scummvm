@@ -696,8 +696,7 @@ byte MidiDriver::correctInstrumentBank(byte outputChannel, byte patchId) {
 	default:
 		// The other instruments only have a capital tone. Bank selects
 		// 1-63 are corrected to the capital tone.
-		if (_gsBank[outputChannel] >= 0)
-			correctedBank = 0;
+		correctedBank = 0;
 		break;
 	}
 
