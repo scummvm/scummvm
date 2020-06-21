@@ -671,6 +671,10 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) SoundCast", id, numToCastNum(id));
 			_loadedCast->setVal(id, new SoundCast(stream, _vm->getVersion()));
 			break;
+		case kCastDigitalVideo:
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) DigitalVideoCast", id, numToCastNum(id));
+			_loadedCast->setVal(id, new DigitalVideoCast(stream, _vm->getVersion()));
+			break;
 		default:
 			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
 			stream.skip(size - 1);
@@ -784,6 +788,10 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastRTE (%d children)", res->children.size());
 		_loadedCast->setVal(id, new RTECast(castStream, _vm->getVersion()));
 		break;
+	case kCastDigitalVideo:
+		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastDigitalVideo (%d children)", res->children.size());
+		_loadedCast->setVal(id, new DigitalVideoCast(castStream, _vm->getVersion()));
+		break;
 	case kCastFilmLoop:
 		warning("STUB: Score::loadCastData(): kCastFilmLoop (%d children)", res->children.size());
 		size2 = 0;
@@ -798,10 +806,6 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastMovie:
 		warning("STUB: Score::loadCastData(): kCastMovie (%d children)", res->children.size());
-		size2 = 0;
-		break;
-	case kCastDigitalVideo:
-		warning("STUB: Score::loadCastData(): kCastDigitalVideo (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	default:

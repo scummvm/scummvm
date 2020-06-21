@@ -95,6 +95,23 @@ public:
 	uint32 _tag;
 };
 
+class DigitalVideoCast : public Cast {
+public:
+	DigitalVideoCast(Common::ReadStreamEndian &stream, uint16 version);
+
+	bool _looping;
+	bool _pauseAtStart;
+	bool _enableVideo;
+	bool _enableSound;
+	bool _enableCrop;
+	bool _center;
+	bool _preload;
+	bool _showControls;
+	FrameRateType _frameRateType;
+
+	uint16 _frameRate;
+};
+
 class SoundCast : public Cast {
 public:
 	SoundCast(Common::ReadStreamEndian &stream, uint16 version);

@@ -90,6 +90,13 @@ enum ButtonType {
 	kTypeRadio
 };
 
+enum FrameRateType {
+	kFrameRateDefault = -1,
+	kFrameRateNormal = 0,
+	kFrameRateFastest = 1,
+	kFrameRateFixed = 2
+};
+
 enum SpriteType {
 	kInactiveSprite					= 0,	// turns the sprite off
 	kBitmapSprite					= 1,

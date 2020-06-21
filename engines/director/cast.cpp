@@ -146,6 +146,32 @@ void BitmapCast::createWidget() {
 	_widget->getSurface()->blitFrom(*_img->getSurface());
 }
 
+DigitalVideoCast::DigitalVideoCast(Common::ReadStreamEndian &stream, uint16 version) {
+	_type = kCastDigitalVideo;
+
+	for (int i = 0; i < 4; i++) {
+		stream.readUint16();
+	}
+	_frameRate = stream.readByte();
+	stream.readByte();
+
+	byte flags1 = stream.readByte();
+	_frameRateType = kFrameRateDefault;
+	if (flags1 & 0x08) {
+		_frameRateType = (FrameRateType)((flags1 & 0x30) >> 4);
+	}
+	_preload = flags1 & 0x04;
+	_enableVideo = ~(flags1 & 0x02);
+	_pauseAtStart = flags1 & 0x01;
+
+	byte flags2 = stream.readByte();
+	_showControls = flags2 & 0x40;
+	_looping = flags2 & 0x10;
+	_enableSound = flags2 & 0x08;
+	_enableCrop = ~(flags2 & 0x02);
+	_center = flags2 & 0x01;
+}
+
 SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_type = kCastSound;
 	_audio = nullptr;
