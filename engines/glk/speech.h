@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 #include "glk/glk_types.h"
+#include "common/singleton.h"
 
 #if defined(USE_TTS)
 #include "common/text-to-speech.h"
@@ -33,21 +34,40 @@
 
 namespace Glk {
 
-/**
- * Currently not implemented
- */
-class Speech {
+class Speech;
+
+class SpeechManager {
+public:
+	static SpeechManager* getSpeechManagerInstance();
+	void releaseSpeechManagerInstance();
+
+	void flushSpeech(Speech *);
+	void purgeSpeech(Speech *);
+	void addSpeech(const uint32 *buf, size_t len, Speech *);
+
 private:
+	SpeechManager();
+	~SpeechManager();
+
+	static SpeechManager *_instance;
+	int _refCount;
+
 #if defined(USE_TTS)
 	Common::U32String _speechBuffer;
 	Common::TextToSpeechManager *_ttsMan;
+	Common::TextToSpeechManager::Action _nextSpeechAction;
+	Speech *_lastSpeechSource;
 #endif
+};
+
+
+class Speech {
+private:
+	SpeechManager *_speechManager;
 
 protected:
-#if defined(USE_TTS)
-	Speech() : _ttsMan(nullptr) {}
-	~Speech() { if (_ttsMan) _ttsMan->popState(); }
-#endif
+	Speech();
+	~Speech();
 
 	void gli_initialize_tts(void);
 
