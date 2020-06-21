@@ -86,6 +86,7 @@ public:
 	bool tick();
 	ScValue *_globals;
 	ScScript *runScript(const char *filename, BaseScriptHolder *owner = nullptr);
+	bool isRunningScript(const char *filename);
 	static const bool _compilerAvailable = false;
 
 	ScEngine(BaseGame *inGame);

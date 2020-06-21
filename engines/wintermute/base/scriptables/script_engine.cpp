@@ -185,6 +185,17 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 
 
 //////////////////////////////////////////////////////////////////////////
+bool ScEngine::isRunningScript(const char *filename) {
+	for (uint32 i = 0; i < _scripts.size(); i++) {
+		if (strcmp(_scripts[i]->_filename, filename) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache) {
 	// is script in cache?
 	if (!ignoreCache) {
