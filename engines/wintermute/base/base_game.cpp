@@ -3789,9 +3789,9 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::handleCustomActionStart(BaseGameCustomAction action) {
 	if (BaseEngine::instance().getGameId() == "corrosion") {
-		// Keyboark walking is added, for both original game & Enchanced Edition
+		// Keyboard walking is added, for both original game & Enhanced Edition
 
-		// However, Enchanced Edition contain city map screen, which is
+		// However, Enhanced Edition contain city map screen, which is
 		// mouse controlled and conflicts with those custom actions
 		const char *m = "items\\street_map\\windows\\street_map_window.script";
 		if (_scEngine->isRunningScript(m)) {
