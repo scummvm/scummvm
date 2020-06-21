@@ -386,11 +386,9 @@ void TabWidget::reflowLayout() {
 void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
 	Common::Array<int> widths;
-	int totalWidth = 0;
 	for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
 		tabs.push_back(_tabs[i].title);
 		widths.push_back(_tabs[i]._tabWidth);
-		totalWidth += _tabs[i]._tabWidth;
 	}
 
 	g_gui.theme()->drawDialogBackground(
