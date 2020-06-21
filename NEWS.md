@@ -3,6 +3,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.2.0 (XXXX-XX-XX)
 
+New games:
+   - Added support for English translation of Prince and the Coward.
+   - Added support for Ultima IV - Quest of the Avatar.
+   - Added support for Ultima VI - The False Prophet.
+   - Added support for Ultima VIII - Pagan.
+
  General:
    - Autosaves are now supported for all the engines.
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
