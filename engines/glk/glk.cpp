@@ -57,6 +57,7 @@ GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
+	DebugMan.addDebugChannel(kDebugSpeech, "speech", "Text to Speech handling");
 
 	g_vm = this;
 }
