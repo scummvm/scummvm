@@ -216,7 +216,8 @@ void Conf::get(const Common::String &key, int &field, int defaultVal) {
 }
 
 void Conf::get(const Common::String &key, bool &field, bool defaultVal) {
-	field = ConfMan.hasKey(key) ? strToInt(ConfMan.get(key).c_str()) != 0 : defaultVal;
+	if (!ConfMan.hasKey(key) || !Common::parseBool(ConfMan.get(key), field))
+		field = defaultVal;
 }
 
 void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {
