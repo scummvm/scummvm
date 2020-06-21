@@ -48,7 +48,7 @@ class ImageDecoder;
 namespace Director {
 
 class Stxt;
-class SNDDecoder;
+class AudioDecoder;
 
 class Cast {
 public:
@@ -117,7 +117,7 @@ public:
 	SoundCast(Common::ReadStreamEndian &stream, uint16 version);
 
 	bool _looping;
-	SNDDecoder *_audio;
+	AudioDecoder *_audio;
 };
 
 class ShapeCast : public Cast {

@@ -29,7 +29,7 @@ namespace Audio {
 	class AudioStream;
 	class SoundHandle;
 	class PCSpeaker;
-	class SeekableAudioStream;
+	class RewindableAudioStream;
 }
 
 namespace Director {
@@ -57,8 +57,6 @@ public:
 	~DirectorSound();
 
 	SoundChannel *getChannel(uint8 soundChannel);
-	void playWAV(Common::String filename, uint8 soundChannel);
-	void playAIFF(Common::String filename, uint8 soundChannel);
 	void playFile(Common::String filename, uint8 soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
@@ -70,8 +68,15 @@ public:
 	void stopSound();
 };
 
+class AudioDecoder {
+public:
+	virtual ~AudioDecoder() {};
+public:
+	virtual Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) = 0;
+	virtual Audio::AudioStream *getLoopingAudioStream();
+};
 
-class SNDDecoder {
+class SNDDecoder : public AudioDecoder {
 public:
 	SNDDecoder();
 	~SNDDecoder();
@@ -79,8 +84,7 @@ public:
 	bool loadStream(Common::SeekableSubReadStreamEndian &stream);
 	bool processCommands(Common::SeekableSubReadStreamEndian &stream);
 	bool processBufferCommand(Common::SeekableSubReadStreamEndian &stream);
-	Audio::SeekableAudioStream *getAudioStream();
-	Audio::AudioStream *getLoopingAudioStream();
+	Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 private:
 	byte *_data;
@@ -88,6 +92,19 @@ private:
 	uint32 _size;
 	uint16 _rate;
 	byte _flags;
+};
+
+class AudioFileDecoder: public AudioDecoder {
+public:
+	AudioFileDecoder(Common::String &path): _path(path) {};
+	~AudioFileDecoder() {};
+
+	void setPath(Common::String &path);
+
+	Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+private:
+	Common::String _path;
 };
 
 } // End of namespace Director

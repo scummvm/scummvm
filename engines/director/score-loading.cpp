@@ -409,10 +409,16 @@ void Score::loadSpriteSounds(bool isSharedCast) {
 		}
 
 		if (sndData != NULL && soundCast != NULL) {
-			SNDDecoder *audio = new SNDDecoder();
-			audio->loadStream(*sndData);
+			if (sndData->size() == 0) {
+				// audio file is linked, load from the filesystem
+				AudioFileDecoder *audio = new AudioFileDecoder(_castsInfo[c->_key]->fileName);
+				soundCast->_audio = audio;
+			} else {
+				SNDDecoder *audio = new SNDDecoder();
+				audio->loadStream(*sndData);
+				soundCast->_audio = audio;
+			}
 			delete sndData;
-			soundCast->_audio = audio;
 		}
 	}
 }

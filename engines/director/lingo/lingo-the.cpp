@@ -505,6 +505,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		else
 			d.u.s = new Common::String();
 		break;
+	case kTheMultiSound:
+		// We always support multiple sound channels!
+		d.type = INT;
+		d.u.i = 1;
+		break;
 	case kThePerFrameHook:
 		d = _perFrameHook;
 		break;
