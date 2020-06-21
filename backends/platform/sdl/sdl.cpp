@@ -496,7 +496,7 @@ bool OSystem_SDL::hasTextInClipboard() {
 }
 
 Common::U32String OSystem_SDL::getTextFromClipboard() {
-	if (!hasTextInClipboard()) return "";
+	if (!hasTextInClipboard()) return Common::U32String("");
 
 	char *text = SDL_GetClipboardText();
 	// The string returned by SDL is in UTF-8. Convert to the
@@ -510,7 +510,7 @@ Common::U32String OSystem_SDL::getTextFromClipboard() {
 		SDL_free(text);
 		text = conv_text;
 	}
-	Common::U32String strText = text;
+	Common::U32String strText(text);
 	SDL_free(text);
 
 	return strText;
