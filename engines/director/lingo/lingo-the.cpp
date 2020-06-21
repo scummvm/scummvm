@@ -1160,6 +1160,7 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 			d.u.s = new Common::String("right");
 			break;
 		case Graphics::kTextAlignInvalid:
+		default:
 			warning("Lingo::getTheField: Invalid text align spec");
 			break;
 		}
