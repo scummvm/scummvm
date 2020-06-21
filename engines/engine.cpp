@@ -589,12 +589,13 @@ void Engine::openMainMenuDialog() {
 		}
 	}
 
-	applyGameSettings();
-	syncSoundSettings();
 #ifdef USE_TTS
 	if (ttsMan != nullptr)
 		ttsMan->popState();
 #endif
+
+	applyGameSettings();
+	syncSoundSettings();
 }
 
 bool Engine::warnUserAboutUnsupportedGame() {
