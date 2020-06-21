@@ -201,15 +201,12 @@ protected:
 	ThemeEngine::FontStyle	_font;
 public:
 	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, GUI::ThemeEngine::TextAlignH align, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = nullptr, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	void setValue(int value);
 	void setLabel(const Common::String &label);
 	void handleMouseEntered(int button) override	{ readLabel(); }
 	const Common::String &getLabel() const		{ return _label; }
 	void setAlign(Graphics::TextAlign align);
-	void setAlign(GUI::ThemeEngine::TextAlignH align);
-
 	Graphics::TextAlign getAlign() const		{ return _align; }
 	void readLabel() { read(_label); }
 

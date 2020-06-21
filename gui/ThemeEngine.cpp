@@ -76,7 +76,7 @@ struct WidgetDrawData {
 
 	TextData _textDataId;
 	TextColor _textColorId;
-	GUI::ThemeEngine::TextAlignH _textAlignH;
+	Graphics::TextAlign _textAlignH;
 	GUI::ThemeEngine::TextAlignVertical _textAlignV;
 
 	/** Extra space that the widget occupies when it's drawn.
@@ -504,7 +504,7 @@ void ThemeEngine::addDrawStep(const Common::String &drawDataId, const Graphics::
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId, TextColor colorId, TextAlignH alignH, TextAlignVertical alignV) {
+bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId, TextColor colorId, Graphics::TextAlign alignH, TextAlignVertical alignV) {
 	DrawData id = parseDrawDataId(drawDataId);
 
 	if (id == -1 || textId == -1 || colorId == kTextColorMAX || !_widgets[id])
@@ -1065,7 +1065,7 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 	}
 
 	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
-	           _widgets[dd]->_textAlignV);
+		_widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state, bool rtl) {
@@ -1994,23 +1994,6 @@ void ThemeEngine::drawToBackbuffer() {
 
 void ThemeEngine::drawToScreen() {
 	_vectorRenderer->setSurface(&_screen);
-}
-
-Graphics::TextAlign convertTextAlignH(GUI::ThemeEngine::TextAlignH alignH, bool rtl) {
-	switch (alignH) {
-		case GUI::ThemeEngine::kTextAlignHStart:
-			return rtl ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
-		case GUI::ThemeEngine::kTextAlignHEnd:
-			return rtl ? Graphics::kTextAlignLeft : Graphics::kTextAlignRight;
-		case GUI::ThemeEngine::kTextAlignHLeft:
-			return Graphics::kTextAlignLeft;
-		case GUI::ThemeEngine::kTextAlignHCenter:
-			return Graphics::kTextAlignCenter;
-		case GUI::ThemeEngine::kTextAlignHRight:
-			return Graphics::kTextAlignRight;
-		default:
-			return Graphics::kTextAlignInvalid;
-	}
 }
 
 Common::Rect ThemeEngine::swapClipRect(const Common::Rect &newRect) {

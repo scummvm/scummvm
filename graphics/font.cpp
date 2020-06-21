@@ -466,4 +466,15 @@ Common::String Font::handleEllipsis(const Common::String &input, int w) const {
 	}
 }
 
+TextAlign convertTextAlignH(TextAlign alignH, bool rtl) {
+	switch (alignH) {
+	case kTextAlignStart:
+		return rtl ? kTextAlignRight : kTextAlignLeft;
+	case kTextAlignEnd:
+		return rtl ? kTextAlignLeft : kTextAlignRight;
+	default:
+		return alignH;
+	}
+}
+
 } // End of namespace Graphics

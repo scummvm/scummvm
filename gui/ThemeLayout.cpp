@@ -89,20 +89,20 @@ bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, 
 	return false;
 }
 
-GUI::ThemeEngine::TextAlignH ThemeLayout::getWidgetTextHAlign(const Common::String &name) {
+Graphics::TextAlign ThemeLayout::getWidgetTextHAlign(const Common::String &name) {
 	if (name.empty()) {
 		assert(getLayoutType() == kLayoutMain);
 		return _textHAlign;
 	}
 
-	GUI::ThemeEngine::TextAlignH res;
+	Graphics::TextAlign res;
 
 	for (uint i = 0; i < _children.size(); ++i) {
-		if ((res = _children[i]->getWidgetTextHAlign(name)) != GUI::ThemeEngine::kTextAlignHInvalid)
+		if ((res = _children[i]->getWidgetTextHAlign(name)) != Graphics::kTextAlignInvalid)
 			return res;
 	}
 
-	return GUI::ThemeEngine::kTextAlignHInvalid;
+	return Graphics::kTextAlignInvalid;
 }
 
 int16 ThemeLayoutStacked::getParentWidth() {
@@ -172,12 +172,12 @@ bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int1
 	return false;
 }
 
-GUI::ThemeEngine::TextAlignH ThemeLayoutWidget::getWidgetTextHAlign(const Common::String &name) {
+Graphics::TextAlign ThemeLayoutWidget::getWidgetTextHAlign(const Common::String &name) {
 	if (name == _name) {
 		return _textHAlign;
 	}
 
-	return GUI::ThemeEngine::kTextAlignHInvalid;
+	return Graphics::kTextAlignInvalid;
 }
 
 void ThemeLayoutWidget::reflowLayout(Widget *widgetChain) {
