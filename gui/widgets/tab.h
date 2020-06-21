@@ -51,10 +51,6 @@ protected:
 	TabList _tabs;
 	int _tabHeight;
 	int _minTabWidth;
-	int _widthTillLastTab;
-	int _rtlTabOffset;
-	int _rtlSpaceOffset;
-	int _rtlBackgroundOffset;
 
 	int _bodyRP, _bodyTP, _bodyLP, _bodyBP;
 	ThemeEngine::DialogBackground _bodyBackgroundType;

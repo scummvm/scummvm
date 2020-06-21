@@ -1249,36 +1249,45 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 }
 
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-                          const Common::Array<Common::String> &tabs, int active, bool rtl, int rtlBackgroundOffset) {
+                          const Common::Array<Common::String> &tabs, int active, bool rtl) {
 	if (!ready())
 		return;
 
 	assert(tabs.size() == tabWidths.size());
 
+	drawDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
+
+	const int numTabs = (int)tabs.size();
+	int width = 0;
+
 	if (rtl) {
-		Common::Rect r2 = r;
-		r2.translate(-rtlBackgroundOffset, 0);
-		drawDD(kDDTabBackground, Common::Rect(r2.left, r2.top, r2.right, r2.top + tabHeight));
-	} else {
-		drawDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
+		for (int i = 0; i < numTabs; i++) {
+			width += tabWidths[i];
+		}
+		width = r.width() - width;
 	}
 
-	int width = 0;
 	int activePos = -1;
-	for (int i = 0; i < (int)tabs.size(); width += tabWidths[i++]) {
-		if (r.left + width > r.right || r.left + width + tabWidths[i] > r.right)
-			continue;
+	for (int i = 0; i < numTabs; i++) {
+		int current = rtl ? (numTabs - i - 1) : i;
 
-		if (i == active) {
+		if (r.left + width > r.right || r.left + width + tabWidths[current] > r.right) {
+			width += tabWidths[current];
+			continue;
+		}
+
+		if (current == active) {
 			activePos = width;
+			width += tabWidths[current];
 			continue;
 		}
 
 
-		Common::Rect tabRect(r.left + width, r.top, r.left + width + tabWidths[i], r.top + tabHeight);
+		Common::Rect tabRect(r.left + width, r.top, r.left + width + tabWidths[current], r.top + tabHeight);
 		drawDD(kDDTabInactive, tabRect);
-		drawDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[i], false, false,
+		drawDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[current], false, false,
 		           _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
+		width += tabWidths[current];
 	}
 
 	if (activePos >= 0) {
