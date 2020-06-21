@@ -32,7 +32,6 @@
 #include "graphics/font.h"
 
 #include "gui/ThemeLayout.h"
-#include "gui/ThemeEngine.h"
 
 namespace GUI {
 
@@ -77,7 +76,7 @@ public:
 
 	ThemeEval &addDialog(const Common::String &name, const Common::String &overlays, int16 maxWidth = -1, int16 maxHeight = -1, int inset = 0);
 	ThemeEval &addLayout(ThemeLayout::LayoutType type, int spacing = -1, ThemeLayout::ItemAlign itemAlign = ThemeLayout::kItemAlignStart);
-	ThemeEval &addWidget(const Common::String &name, const Common::String &type, int w = -1, int h = -1, GUI::ThemeEngine::TextAlignH align = GUI::ThemeEngine::kTextAlignHStart, bool useRTL = false);
+	ThemeEval &addWidget(const Common::String &name, const Common::String &type, int w = -1, int h = -1, Graphics::TextAlign align = Graphics::kTextAlignStart, bool useRTL = false);
 	ThemeEval &addImportedLayout(const Common::String &name);
 	ThemeEval &addSpace(int size = -1);
 
@@ -92,7 +91,7 @@ public:
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h);
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL);
 
-	GUI::ThemeEngine::TextAlignH getWidgetTextHAlign(const Common::String &widget);
+	Graphics::TextAlign getWidgetTextHAlign(const Common::String &widget);
 
 #ifdef LAYOUT_DEBUG_DIALOG
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font) {

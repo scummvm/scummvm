@@ -80,19 +80,19 @@ static TextColor parseTextColorId(const Common::String &name) {
 	return kTextColorMAX;
 }
 
-GUI::ThemeEngine::TextAlignH parseTextHAlign(const Common::String &val) {
+Graphics::TextAlign parseTextHAlign(const Common::String &val) {
 	if (val == "start")
-		return GUI::ThemeEngine::kTextAlignHStart;
+		return Graphics::kTextAlignStart;
 	else if (val == "end")
-		return GUI::ThemeEngine::kTextAlignHEnd;
+		return Graphics::kTextAlignEnd;
 	else if (val == "left")
-		return GUI::ThemeEngine::kTextAlignHLeft;
+		return Graphics::kTextAlignLeft;
 	else if (val == "right")
-		return GUI::ThemeEngine::kTextAlignHRight;
+		return Graphics::kTextAlignRight;
 	else if (val == "center")
-		return GUI::ThemeEngine::kTextAlignHCenter;
+		return Graphics::kTextAlignCenter;
 	else
-		return GUI::ThemeEngine::kTextAlignHInvalid;
+		return Graphics::kTextAlignInvalid;
 }
 
 static GUI::ThemeEngine::TextAlignVertical parseTextVAlign(const Common::String &val) {
@@ -257,10 +257,10 @@ bool ThemeParser::parserCallback_alphabitmap(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_text(ParserNode *node) {
-	GUI::ThemeEngine::TextAlignH alignH;
+	Graphics::TextAlign alignH;
 	GUI::ThemeEngine::TextAlignVertical alignV;
 
-	if ((alignH = parseTextHAlign(node->values["horizontal_align"])) == GUI::ThemeEngine::kTextAlignHInvalid)
+	if ((alignH = parseTextHAlign(node->values["horizontal_align"])) == Graphics::kTextAlignInvalid)
 		return parserError("Invalid value for text alignment.");
 
 	if ((alignV = parseTextVAlign(node->values["vertical_align"])) == GUI::ThemeEngine::kTextAlignVInvalid)
@@ -706,10 +706,10 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 				return parserError("Corrupted height value in key for " + var);
 		}
 
-		GUI::ThemeEngine::TextAlignH alignH = GUI::ThemeEngine::kTextAlignHStart;
+		Graphics::TextAlign alignH = Graphics::kTextAlignStart;
 
 		if (node->values.contains("textalign")) {
-			if ((alignH = parseTextHAlign(node->values["textalign"])) == GUI::ThemeEngine::kTextAlignHInvalid)
+			if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 				return parserError("Invalid value for text alignment.");
 		}
 
@@ -965,9 +965,9 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 
 
 	if (node->values.contains("textalign")) {
-		GUI::ThemeEngine::TextAlignH alignH = GUI::ThemeEngine::kTextAlignHStart;
+		Graphics::TextAlign alignH = Graphics::kTextAlignStart;
 
-		if ((alignH = parseTextHAlign(node->values["textalign"])) == GUI::ThemeEngine::kTextAlignHInvalid)
+		if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 			return parserError("Invalid value for text alignment.");
 
 		_theme->getEvaluator()->setVar(var + "Align", alignH);

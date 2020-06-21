@@ -773,7 +773,7 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 
 	// Page display
 	_pageDisplay = new StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::String());
-	_pageDisplay->setAlign(GUI::ThemeEngine::kTextAlignHEnd);
+	_pageDisplay->setAlign(Graphics::kTextAlignEnd);
 }
 
 SaveLoadChooserGrid::~SaveLoadChooserGrid() {
@@ -997,7 +997,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, nullptr, buttonCmd);
 			dstY += buttonHeight;
 
-			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), GUI::ThemeEngine::kTextAlignHStart);
+			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignStart);
 
 			_buttons.push_back(SlotButton(container, button, description));
 		}

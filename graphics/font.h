@@ -39,10 +39,19 @@ class ManagedSurface;
 /** Text alignment modes */
 enum TextAlign {
 	kTextAlignInvalid,
+	kTextAlignStart,     ///< Text should be aligned to start of line (virtual)
 	kTextAlignLeft,     ///< Text should be aligned to the left
 	kTextAlignCenter,   ///< Text should be centered
+	kTextAlignEnd,     ///< Text should be aligned to end of line (virtual)
 	kTextAlignRight     ///< Text should be aligned to the right
 };
+
+/**
+ * Converts virtual text alignments (start + end)
+ * to actual text alignment (left + right + center) for drawing,
+ * if given actual text alignments it is returned as-is
+ */
+TextAlign convertTextAlignH(TextAlign alignH, bool rtl);
 
 /**
  * Instances of this class represent a distinct font, with a built-in renderer.

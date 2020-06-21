@@ -186,15 +186,6 @@ public:
 		kTextAlignVTop
 	};
 
-	enum TextAlignH {
-		kTextAlignHInvalid,
-		kTextAlignHStart,     ///< Text should be aligned to start of line
-		kTextAlignHLeft,     ///< Text should be aligned to the left
-		kTextAlignHCenter,   ///< Text should be centered
-		kTextAlignHEnd,     ///< Text should be aligned to end of line
-		kTextAlignHRight     ///< Text should be aligned to the right
-	};
-
 	/// Widget background type
 	enum WidgetBackground {
 		kWidgetBackgroundNo,            ///< No background at all
@@ -555,7 +546,7 @@ public:
 	 * Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
 	 * new Font API is in place. FIXME: Is that so ???
 	 */
-	bool addTextData(const Common::String &drawDataId, TextData textId, TextColor id, TextAlignH alignH, TextAlignVertical alignV);
+	bool addTextData(const Common::String &drawDataId, TextData textId, TextColor id, Graphics::TextAlign alignH, TextAlignVertical alignV);
 
 protected:
 	/**
@@ -775,8 +766,6 @@ protected:
 
 	Common::Rect _clip;
 };
-
-Graphics::TextAlign convertTextAlignH(GUI::ThemeEngine::TextAlignH alignH, bool rtl);
 
 } // End of namespace GUI.
 

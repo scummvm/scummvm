@@ -1161,7 +1161,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			yPos += yStep;
 
 	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
-				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, GUI::ThemeEngine::kTextAlignHStart, "", ThemeEngine::kFontStyleNormal);
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, Graphics::kTextAlignStart, "", ThemeEngine::kFontStyleNormal);
 				yPos += yStep;
 			}
 
@@ -1171,12 +1171,12 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 
 	if (nHidden) {
 		Common::String hiddenStr = Common::String::format(_("%d hidden achievements remaining"), nHidden);
-		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), GUI::ThemeEngine::kTextAlignHStart);
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), Graphics::kTextAlignStart);
 	}
 
 	if (nMax) {
 		Common::String totalStr = Common::String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
-		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), GUI::ThemeEngine::kTextAlignHStart);
+		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;
 		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
