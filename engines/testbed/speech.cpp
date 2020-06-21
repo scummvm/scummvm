@@ -116,7 +116,7 @@ TestExitStatus Speechtests::testStop() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech stop test. You should expect a voice to start speaking and after approximately a second it should stop the speech";
 
@@ -152,7 +152,7 @@ TestExitStatus Speechtests::testPauseResume() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech pause test. You should expect a voice to start speaking, then after approximately a second of speech, it should pause and then continue from where it left.";
 
@@ -197,7 +197,7 @@ TestExitStatus Speechtests::testRate() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech rate test. You should expect a voice to say: \"Text to speech slow rate.\" really slowly and then \"Text to speech fast rate\" really fast";
 
@@ -230,7 +230,7 @@ TestExitStatus Speechtests::testVolume() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech volume test. You should expect a voice to say: \"Text to speech low volume.\" quietly and then \"Text to speech max volume\" at a higher volume";
 
@@ -262,7 +262,7 @@ TestExitStatus Speechtests::testPitch() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech pitch test. You should expect a high pitched voice to say: \"Text to speech high pitch.\" and then a low pitched voice: \"Text to speech low pitch\"";
 
@@ -294,7 +294,7 @@ TestExitStatus Speechtests::testStateStacking() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech state stacking test. You should expect a speech from three different voices (different pitch, gender, volume and speech rate), each voice will say: \"Voice number X is speaking.\", the voices will speak in this order: 1, 2, 3, 2, 1. A voice with the same number should sound the same every time";
 
@@ -348,7 +348,7 @@ TestExitStatus Speechtests::testQueueing() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech queue test. You should expect a voice to say: \"This is first speech. This is  second speech\"";
 
@@ -377,7 +377,7 @@ TestExitStatus Speechtests::testInterrupting() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech interrupt test. You should expect a voice to start saying english alphabet and after about a second it should get interrupted and say: \"Speech interrupted\" instead.";
 
@@ -407,7 +407,7 @@ TestExitStatus Speechtests::testDroping() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech drop test. You should expect a voice to start say:\"Today is a really nice weather, perfect day to use ScummVM, don't you think?\" and nothing else.";
 
@@ -436,7 +436,7 @@ TestExitStatus Speechtests::testInterruptNoRepeat() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech interrupt no repeat test. You should expect a voice to start saying:\"This is the first sentence, this should get interrupted\", but the speech gets interrupted and \"This is the second sentence, it should play only once\" is said instead.";
 
@@ -473,7 +473,7 @@ TestExitStatus Speechtests::testQueueNoRepeat() {
 	ttsMan->setVolume(100);
 	ttsMan->setRate(0);
 	ttsMan->setPitch(0);
-	ttsMan->setVoice(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
 	Testsuite::clearScreen();
 	Common::String info = "Text to speech queue no repeat test. You should expect a voice to start say:\"This is the first sentence. This is the second sentence\" and nothing else";
 
