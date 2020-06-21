@@ -70,14 +70,12 @@ void TabWidget::init() {
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
 
-	if (g_gui.useRTL() && false) {			// GUI TODO: Incomplete
-		//x = g_system->getOverlayWidth() - x - _w;		// GUI TODO: This is wrong. How am I fixing the navbars?
-		_navLeft = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", nullptr, kCmdLeft);	// OK!
-		_navRight = new ButtonWidget(this, x, y, _butW, _butH, "<", nullptr, kCmdRight);
+	if (g_gui.useRTL()) {							// GUI TODO: Incomplete and possibly incorrect too. Unusable atm.
+		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, ">", nullptr, kCmdLeft);
+		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, "<", nullptr, kCmdRight);
 		_navLeft->setEnabled(true);
 		_navRight->setEnabled(false);
-	}
-	else {
+	} else {
 		_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", nullptr, kCmdLeft);
 		_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", nullptr, kCmdRight);
 		_navLeft->setEnabled(false);
@@ -130,22 +128,11 @@ int TabWidget::addTab(const String &title, const String &dialogName) {
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
 
-	if (g_gui.useRTL() && false) {					// GUI TODO: Incomplete, unusable atm
-		_tabs.insert_at(0, newTab);
+	_tabs.push_back(newTab);
+	int numTabs = _tabs.size();
 
-		// Activate the first tab, because it's been added at that position.
-		//setActiveTab(0);				// GUI TODO: Is this the root of errors?
-		/*int numTabs = _tabs.size();
-		setActiveTab(numTabs - 1);*/
-	}
-	else {
-		_tabs.push_back(newTab);
-		int numTabs = _tabs.size();
-
-		// Activate the new tab
-		setActiveTab(numTabs - 1);
-	}
-
+	// Activate the new tab
+	setActiveTab(numTabs - 1);
 
 	return _activeTab;
 }
@@ -245,33 +232,17 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (x < 0)
 		return;
 
-	if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions"))
-		;//_x = g_system->getOverlayWidth() - _w - _x;
-
 	// Determine which tab was clicked
 	int tabID;
-	if (g_gui.useRTL() && false) {				// GUI TODO: Incomplete
-		for (tabID = _lastVisibleTab; tabID >= _firstVisibleTab; --tabID) {
-			x -= _tabs[tabID]._tabWidth;
-			if (x < 0)
-				break;
-		}
-
-		if (tabID <= _lastVisibleTab)
-			setActiveTab(tabID);
-	}
-	else {
-		for (tabID = _firstVisibleTab; tabID <= _lastVisibleTab; ++tabID) {
-			x -= _tabs[tabID]._tabWidth;
-			if (x < 0)
-				break;
-		}
-
-		// If a tab was clicked, switch to that pane
-		if (tabID <= _lastVisibleTab)
-			setActiveTab(tabID);
+	for (tabID = _firstVisibleTab; tabID <= _lastVisibleTab; ++tabID) {
+		x -= _tabs[tabID]._tabWidth;
+		if (x < 0)
+			break;
 	}
 
+	// If a tab was clicked, switch to that pane
+	if (tabID <= _lastVisibleTab)
+		setActiveTab(tabID);
 }
 
 void TabWidget::handleMouseMoved(int x, int y, int button) {
@@ -415,6 +386,9 @@ void TabWidget::reflowLayout() {
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
+	if (g_gui.useRTL()) {
+		x = x - g_gui.getOverlayOffset();
+	}
 	_navLeft->resize(x, y, _butW, _butH);
 	_navRight->resize(x + _butW + 2, y, _butW, _butH);
 }
@@ -422,13 +396,12 @@ void TabWidget::reflowLayout() {
 void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
 	Common::Array<int> widths;
-	if (g_gui.useRTL() && false) {		// GUI TODO: Incomplete										// Keeping this disabled means that tabs are reversed, but windows are not shown anymore.
+	if (g_gui.useRTL()) {		// GUI TODO: Incomplete										// Keeping this disabled means that tabs are reversed, but windows are not shown anymore.
 		for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
 			tabs.insert_at(0, _tabs[i].title);
 			widths.insert_at(0, _tabs[i]._tabWidth);
 		}
-	}
-	else {
+	} else {
 		for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
 			tabs.push_back(_tabs[i].title);
 			widths.push_back(_tabs[i]._tabWidth);
@@ -439,11 +412,19 @@ void TabWidget::drawWidget() {
 
 	g_gui.theme()->drawDialogBackground(r1, _bodyBackgroundType);
 
+	int drawTab = _activeTab - _firstVisibleTab;
 	Common::Rect r2(_x, _y, _x + _w, _y + _h);
+
 	if (g_gui.useRTL()) {
-		r2.translate(g_system->getOverlayWidth() - _x - _w, 0);
+		r2.translate(g_system->getOverlayWidth() - _x - _w + 6, 0);
+		if (_navButtonsVisible) {
+			r2.translate(_butW - 2, 0);
+		}
+
+		drawTab = _lastVisibleTab - drawTab;
 	}
-	g_gui.theme()->drawTab(r2, _tabHeight, widths, tabs, _activeTab - _firstVisibleTab);
+
+	g_gui.theme()->drawTab(r2, _tabHeight, widths, tabs, drawTab);
 }
 
 void TabWidget::draw() {
