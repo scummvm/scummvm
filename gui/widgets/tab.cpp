@@ -80,10 +80,6 @@ void TabWidget::init() {
 	_navRight->setEnabled(true);
 
 	_lastRead = -1;
-	_widthTillLastTab = 0;
-	_rtlTabOffset = 0;
-	_rtlSpaceOffset = 0;
-	_rtlBackgroundOffset = 0;
 }
 
 TabWidget::~TabWidget() {
@@ -129,9 +125,6 @@ int TabWidget::addTab(const String &title, const String &dialogName) {
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
 
-	if (g_gui.useRTL())
-		_widthTillLastTab += newWidth;
-
 	_tabs.push_back(newTab);
 
 	int numTabs = _tabs.size();
@@ -150,11 +143,6 @@ void TabWidget::removeTab(int tabID) {
 		_tabs[tabID].firstWidget = _firstWidget;
 		releaseFocus();
 		_firstWidget = nullptr;
-	}
-
-	// Remove this tab's width from class variable, which is used to adjust position in RTL based GUI
-	if (g_gui.useRTL()) {
-		_widthTillLastTab -= _tabs[tabID]._tabWidth;
 	}
 
 	// Dispose the widgets in that tab and then the tab itself
@@ -212,9 +200,6 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 		if (_firstVisibleTab > 0) {
 			setFirstVisible(_firstVisibleTab - 1);
-			if (g_gui.useRTL()) {
-				_rtlTabOffset++;
-			}
 		}
 		if (_firstVisibleTab == 0) {
 			_navLeft->setEnabled(false);
@@ -228,9 +213,6 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 		if (_lastVisibleTab + 1 < (int)_tabs.size()) {
 			setFirstVisible(_firstVisibleTab + 1, false);
-			if (g_gui.useRTL()) {
-				_rtlTabOffset--;
-			}
 		}
 		if (_lastVisibleTab + 1 == (int)_tabs.size()) {
 			_navRight->setEnabled(false);
@@ -298,12 +280,26 @@ bool TabWidget::handleKeyDown(Common::KeyState state) {
 void TabWidget::adjustTabs(int value) {
 	// Determine which tab is next
 	int tabID = _activeTab + value;
+	int lastVis = _lastVisibleTab;
+
 	if (tabID >= (int)_tabs.size())
 		tabID = 0;
 	else if (tabID < 0)
 		tabID = ((int)_tabs.size() - 1);
 
 	setActiveTab(tabID);
+
+	if (_navButtonsVisible) {
+		if (lastVis != _lastVisibleTab) {
+			_navLeft->setEnabled(true);
+			_navRight->setEnabled(true);
+		}
+
+		if (_firstVisibleTab == 0)
+			_navLeft->setEnabled(false);
+		else if (_lastVisibleTab == _tabs.size() - 1)
+			_navRight->setEnabled(false);
+	}
 }
 
 int TabWidget::getFirstVisible() const {
@@ -390,46 +386,19 @@ void TabWidget::reflowLayout() {
 void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
 	Common::Array<int> widths;
+	int totalWidth = 0;
 	for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
-		int idx = g_gui.useRTL() ? (_lastVisibleTab - i - _rtlTabOffset) : i;
-
-		tabs.push_back(_tabs[idx].title);
-		widths.push_back(_tabs[idx]._tabWidth);
+		tabs.push_back(_tabs[i].title);
+		widths.push_back(_tabs[i]._tabWidth);
+		totalWidth += _tabs[i]._tabWidth;
 	}
 
-	Common::Rect r1(_x + _bodyLP, _y + _bodyTP, _x + _w - _bodyRP, _y + _h - _bodyBP + _tabHeight);
+	g_gui.theme()->drawDialogBackground(
+			Common::Rect(_x + _bodyLP, _y + _bodyTP, _x + _w - _bodyRP, _y + _h - _bodyBP + _tabHeight),
+			_bodyBackgroundType);
 
-	g_gui.theme()->drawDialogBackground(r1, _bodyBackgroundType);
-
-	int drawTab = _activeTab - _firstVisibleTab;
-	Common::Rect r2(_x, _y, _x + _w, _y + _h);
-
-	if (g_gui.useRTL()) {
-		int pad = this->getWidth() - (_x + _widthTillLastTab) + g_gui.getOverlayOffset();
-		if (pad < 0) {
-			pad = 6;
-		}
-
-		if (g_gui.getOverlayOffset() == 0 && g_system->getOverlayHeight() < 400) {
-			/** When the overlay offset is 0 and overlay height < 400, we have a top stacked dialog with no
-				relative padding and are in lowres mode. The minimum size of TabWidget.Tab is in _minTabWidth,
-				we add half of that towards our pad.
-			*/
-			pad += (_minTabWidth / 2);
-		}
-
-		_rtlBackgroundOffset = ABS(this->getWidth() - _widthTillLastTab);
-
-		r2.translate(g_system->getOverlayWidth() - _x - _w + pad + _rtlSpaceOffset, 0);
-		if (_navButtonsVisible) {
-			r2.translate(_butW - 6, 0);
-			_rtlBackgroundOffset += (_butW * 2);
-		}
-
-		drawTab = _lastVisibleTab - drawTab + _rtlTabOffset;
-	}
-
-	g_gui.theme()->drawTab(r2, _tabHeight, widths, tabs, drawTab, (g_gui.useRTL() && _useRTL), _rtlBackgroundOffset);
+	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x + _w, _y + _h), _tabHeight, widths, tabs,
+				_activeTab - _firstVisibleTab, (g_gui.useRTL() && _useRTL));
 }
 
 void TabWidget::draw() {
@@ -499,10 +468,6 @@ void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
 			availableWidth -= _tabs[_firstVisibleTab-1]._tabWidth;
 			_firstVisibleTab--;
 		}
-	}
-
-	if (g_gui.useRTL() && _navButtonsVisible) {
-		_rtlSpaceOffset = availableWidth;
 	}
 }
 
