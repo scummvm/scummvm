@@ -66,7 +66,7 @@ public:
 
 private:
 	GLuint _tex;
-	BaseRenderOpenGL3D* renderer;
+	BaseRenderOpenGL3D *_renderer;
 	uint8 *_imageData;
 	uint _texWidth;
 	uint _texHeight;

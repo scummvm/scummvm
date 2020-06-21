@@ -53,7 +53,7 @@ void applyColorKey(Graphics::Surface &surf, byte ckRed, byte ckGreen, byte ckBlu
 }
 
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *renderer)
-	: BaseSurface(game), _tex(0), renderer(renderer), _imageData(nullptr), _texWidth(0), _texHeight(0) {
+	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _texWidth(0), _texHeight(0) {
 	glGenTextures(1, &_tex);
 }
 
@@ -87,22 +87,22 @@ bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
 }
 
 bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(*this, rect, zoomX, zoomY, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
+	_renderer->drawSprite(*this, rect, zoomX, zoomY, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
+	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
-	renderer->drawSprite(*this, rect, 100, 100, Vector2(x + offsetX, y + offsetY), alpha, false, blendMode, mirrorX, mirrorY);
+	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x + offsetX, y + offsetY), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
+	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
@@ -118,7 +118,7 @@ bool BaseSurfaceOpenGL3D::displayZoom(int x, int y, Rect32 rect, float zoomX, fl
 
 bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
 	Vector2 scale(numTimesX, numTimesY);
-	renderer->drawSpriteEx(*this, rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
+	_renderer->drawSpriteEx(*this, rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
 	return true;
 }
 
