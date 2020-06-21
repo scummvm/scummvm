@@ -260,7 +260,9 @@ private:
 
 public:
 	MidiDriver() : _reversePanning(false),
-					_scaleGSPercussionVolumeToMT32(false) { }
+					_scaleGSPercussionVolumeToMT32(false) {
+		memset(_gsBank, 0, sizeof(_gsBank));
+	}
 	virtual ~MidiDriver() { }
 
 	static const byte _mt32ToGm[128];
