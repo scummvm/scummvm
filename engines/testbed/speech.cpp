@@ -146,6 +146,43 @@ TestExitStatus Speechtests::testStop() {
 	return kTestPassed;
 }
 
+TestExitStatus Speechtests::testStopAndSpeak() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	ttsMan->setLanguage("en");
+	ttsMan->setVolume(100);
+	ttsMan->setRate(0);
+	ttsMan->setPitch(0);
+	ttsMan->setVoice(ttsMan->getDefaultVoice());
+	Testsuite::clearScreen();
+	Common::String info = "Text to speech stop and speak test. You should expect a voice to start speaking and after approximately a second it should stop the speech and start another sentence.";
+
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Testing TTS stop and speak", pt);
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : testStop\n");
+		return kTestSkipped;
+	}
+
+	ttsMan->say("Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this.");
+	g_system->delayMillis(1000);
+	ttsMan->stop();
+	ttsMan->say("Now starting the second sentence.", Common::TextToSpeechManager::QUEUE);
+	ttsMan->say("You should hear that one in totality.", Common::TextToSpeechManager::QUEUE);
+	if (!ttsMan->isSpeaking()) {
+		Testsuite::logDetailedPrintf("Male TTS failed\n");
+		return kTestFailed;
+	}
+	waitForSpeechEnd(ttsMan);
+
+	Common::String prompt = "Did you hear a voice saying: \"Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this.\" but stopping in the middle, and then saying \"Now starting the second sentence. You should hear that one in totality.\"?";
+	if (!Testsuite::handleInteractiveInput(prompt, "Yes", "No", kOptionLeft)) {
+		Testsuite::logDetailedPrintf("TTS stop failed\n");
+		return kTestFailed;
+	}
+	return kTestPassed;
+}
+
 TestExitStatus Speechtests::testPauseResume() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	ttsMan->setLanguage("en");
@@ -509,6 +546,7 @@ SpeechTestSuite::SpeechTestSuite() {
 	addTest("testMale", &Speechtests::testMale, true);
 	addTest("testFemale", &Speechtests::testFemale, true);
 	addTest("testStop", &Speechtests::testStop, true);
+	addTest("testStopAndSpeak", &Speechtests::testStopAndSpeak, true);
 	addTest("testPauseResume", &Speechtests::testPauseResume, true);
 	addTest("testRate", &Speechtests::testRate, true);
 	addTest("testVolume", &Speechtests::testVolume, true);
