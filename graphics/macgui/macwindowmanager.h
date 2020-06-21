@@ -260,6 +260,7 @@ public:
 
 	void passPalette(const byte *palette, uint size);
 	uint findBestColor(byte cr, byte cg, byte cb);
+	void decomposeColor(byte color, byte &r, byte &g, byte &b);
 
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);

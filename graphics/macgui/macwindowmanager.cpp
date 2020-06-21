@@ -738,6 +738,12 @@ uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	return bestColor;
 }
 
+void MacWindowManager::decomposeColor(byte color, byte &r, byte &g, byte &b) {
+	r = *(_palette + 3 * color + 0);
+	g = *(_palette + 3 * color + 1);
+	b = *(_palette + 3 * color + 2);
+}
+
 PauseToken MacWindowManager::pauseEngine() {
 	return _engineP->pauseEngine();
 }
