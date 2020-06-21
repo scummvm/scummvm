@@ -649,6 +649,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 
 		uint8 castType = stream.readByte();
 
+		int returnPos = stream.pos() + size - 1;
 		switch (castType) {
 		case kCastBitmap:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCast", id, numToCastNum(id));
@@ -686,6 +687,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			stream.skip(size - 1);
 			continue;
 		}
+		stream.seek(returnPos);
 		_loadedCast->getVal(id)->_score = this;
 	}
 }
