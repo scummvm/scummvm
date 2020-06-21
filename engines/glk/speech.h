@@ -45,6 +45,8 @@ public:
 	void purgeSpeech(Speech *);
 	void addSpeech(const uint32 *buf, size_t len, Speech *);
 
+	static void syncSoundSettings();
+
 private:
 	SpeechManager();
 	~SpeechManager();

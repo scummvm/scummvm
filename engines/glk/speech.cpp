@@ -51,6 +51,19 @@ void SpeechManager::releaseSpeechManagerInstance() {
 	}
 }
 
+void SpeechManager::syncSoundSettings() {
+#if defined(USE_TTS)
+	debugC(kDebugSpeech, "SpeechManager::syncSoundSettings");
+	if (_instance && _instance->_ttsMan) {
+		int volume = (ConfMan.getInt("speech_volume") * 100) / 256;
+		if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
+			volume = 0;
+		debugC(kDebugSpeech, "Set speech volume to %d", volume);
+		_instance->_ttsMan->setVolume(volume);
+	}
+#endif
+}
+
 SpeechManager::SpeechManager() :
 	_refCount(0)
 #if defined(USE_TTS)
@@ -68,7 +81,7 @@ SpeechManager::SpeechManager() :
 		_ttsMan->setLanguage(ConfMan.get("language"));
 		// Volume
 		int volume = (ConfMan.getInt("speech_volume") * 100) / 256;
-		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
+		if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
 			volume = 0;
 		_ttsMan->setVolume(volume);
 		// Voice
