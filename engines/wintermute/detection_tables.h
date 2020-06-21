@@ -732,7 +732,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Everyday Grey (work name was Philip Kane)
 	// NOTE: This game seems to be mistakenly marked as 2.5D at Wintermute wiki
 	WME_WINENTRY("everydaygray", "",
-		WME_ENTRY1s("data.dcp", "77afff4101adbddac07ecf22ffbb8212", 24436150), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "77afff4101adbddac07ecf22ffbb8212", 24436150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Face Noir (Bundle version)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope	
