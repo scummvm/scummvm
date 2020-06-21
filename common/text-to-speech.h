@@ -294,6 +294,11 @@ public:
 	Array<int> getVoiceIndicesByGender (TTSVoice::Gender gender);
 
 	/**
+	 * returns the index for the default voice.
+	 */
+	virtual int getDefaultVoice() { return 0; }
+
+	/**
 	 * Pushes the current state of the TTS
 	 */
 	void pushState();
