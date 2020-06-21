@@ -1,3 +1,4 @@
+engines/glk/detection.cpp
 engines/glk/glk_api.cpp
 engines/glk/quetzal.cpp
 engines/glk/streams.cpp

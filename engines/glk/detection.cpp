@@ -66,6 +66,7 @@
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/translation.h"
 
 namespace Glk {
 
@@ -336,6 +337,27 @@ void GlkMetaEngine::detectClashes() const {
 	Glk::Scott::ScottMetaEngine::detectClashes(map);
 	Glk::TADS::TADSMetaEngine::detectClashes(map);
 	Glk::ZCode::ZCodeMetaEngine::detectClashes(map);
+}
+
+const ExtraGuiOptions GlkMetaEngine::getExtraGuiOptions(const Common::String &) const {
+	ExtraGuiOptions  options;
+#if defined(USE_TTS)
+	static const ExtraGuiOption ttsSpeakOptions = {
+		_s("Enable Text to Speech"),
+		_s("Use TTS to read the text"),
+		"speak",
+		false
+	};
+	static const ExtraGuiOption ttsSpeakInputOptions = {
+		_s("Also read input text"),
+		_s("Use TTS to read the input text"),
+		"speak_input",
+		false
+	};
+	options.push_back(ttsSpeakOptions);
+	options.push_back(ttsSpeakInputOptions);
+#endif
+	return options;
 }
 
 SaveStateList GlkMetaEngine::listSaves(const char *target) const {

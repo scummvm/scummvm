@@ -50,11 +50,15 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : TextWindow(win
 	_attrs = _lines[0]._attrs;
 
 	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], _styles);
-	gli_initialize_tts();
+
+	if (g_conf->_speak)
+		gli_initialize_tts();
 }
 
 TextBufferWindow::~TextBufferWindow() {
-	gli_free_tts();
+	if (g_conf->_speak)
+		gli_free_tts();
+
 	if (_inBuf) {
 		if (g_vm->gli_unregister_arr)
 			(*g_vm->gli_unregister_arr)(_inBuf, _inMax, "&+#!Cn", _inArrayRock);
