@@ -38,6 +38,7 @@
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/sound.h"
+#include "glk/speech.h"
 #include "glk/streams.h"
 #include "glk/windows.h"
 
@@ -271,6 +272,8 @@ void GlkEngine::syncSoundSettings() {
 
 	int volume = ConfMan.getBool("sfx_mute") ? 0 : CLIP(ConfMan.getInt("sfx_volume"), 0, 255);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
+
+	SpeechManager::syncSoundSettings();
 }
 
 void GlkEngine::beep() {
