@@ -390,16 +390,11 @@ void TabWidget::reflowLayout() {
 void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
 	Common::Array<int> widths;
-	if (g_gui.useRTL()) {
-		for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
-			tabs.insert_at(0, _tabs[i].title);
-			widths.insert_at(0, _tabs[i]._tabWidth);
-		}
-	} else {
-		for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
-			tabs.push_back(_tabs[i].title);
-			widths.push_back(_tabs[i]._tabWidth);
-		}
+	for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
+		int idx = g_gui.useRTL() ? (_lastVisibleTab - i - _rtlTabOffset) : i;
+
+		tabs.push_back(_tabs[idx].title);
+		widths.push_back(_tabs[idx]._tabWidth);
 	}
 
 	Common::Rect r1(_x + _bodyLP, _y + _bodyTP, _x + _w - _bodyRP, _y + _h - _bodyBP + _tabHeight);
