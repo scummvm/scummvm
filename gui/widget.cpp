@@ -268,13 +268,15 @@ uint8 Widget::parseHotkey(const Common::U32String &label) {
 }
 
 Common::U32String Widget::cleanupHotkey(const Common::U32String &label) {
-	Common::String res;
+	Common::U32String res = "";
 
-	for (uint i = 0; i < label.size(); i++)
-		if (label[i] != '~') 
-			res = res + label[i];
+	for (Common::U32String::const_iterator itr = label.begin(); itr != label.end(); itr++) {
+		if (*itr != '~') {
+			res += *itr;
+		}
+	}
 
-	return Common::U32String(res);
+	return res;
 }
 
 void Widget::read(const Common::U32String &str) {
