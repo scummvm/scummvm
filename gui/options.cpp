@@ -2176,16 +2176,18 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 	if (ttsMan != nullptr)
 		voices = ttsMan->getVoicesArray();
 
-	for(unsigned i = 0; i < voices.size(); i++) {
-		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
-	}
 	if (voices.empty())
 		_ttsVoiceSelectionPopUp->appendEntry(_("None"), 0);
+	else {
+		_ttsVoiceSelectionPopUp->appendEntry(_("<default>"));
+		for(unsigned i = 0; i < voices.size(); i++)
+			_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
+	}
 
-	if (ConfMan.hasKey("tts_voice") && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
+	if (ConfMan.hasKey("tts_voice", _domain) && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
 		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
 	else
-		_ttsVoiceSelectionPopUp->setSelectedTag(0);
+		_ttsVoiceSelectionPopUp->setSelected(0);
 }
 #endif
 
@@ -2347,15 +2349,17 @@ void GlobalOptionsDialog::apply() {
 			else {
 				ttsMan->setLanguage(newLang);
 			}
-			_ttsVoiceSelectionPopUp->setSelectedTag(0);
+			_ttsVoiceSelectionPopUp->setSelected(0);
 		}
 		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
 		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
 			volume = 0;
 		ttsMan->setVolume(volume);
 		ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
-		int selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
+		unsigned selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
 		ConfMan.setInt("tts_voice", selectedVoice, _domain);
+		if (selectedVoice >= ttsMan->getVoicesArray().size())
+			selectedVoice = ttsMan->getDefaultVoice();
 		ttsMan->setVoice(selectedVoice);
 	}
 #endif

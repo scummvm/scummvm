@@ -664,12 +664,12 @@ void GuiManager::initTextToSpeech() {
 	ttsMan->setVolume(volume);
 
 	unsigned voice;
-	if(ConfMan.hasKey("tts_voice"))
+	if(ConfMan.hasKey("tts_voice")) {
 		voice = ConfMan.getInt("tts_voice", "scummvm");
-	else
-		voice = 0;
-	if (voice >= ttsMan->getVoicesArray().size())
-		voice = 0;
+		if (voice >= ttsMan->getVoicesArray().size())
+			voice = ttsMan->getDefaultVoice();
+	} else
+		voice = ttsMan->getDefaultVoice();
 	ttsMan->setVoice(voice);
 }
 #endif
