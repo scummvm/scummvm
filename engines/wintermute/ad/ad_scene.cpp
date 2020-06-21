@@ -1879,7 +1879,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EnableNode3D") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+		const char *nodeName = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			script->runtimeError("Scene.EnableNode3D: Scene doesn't contain any geometry");
+			stack->pushBool(false);
+		} else {
+			bool ret = _sceneGeometry->enableNode(nodeName, true);
+			stack->pushBool(ret);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1888,7 +1897,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableNode3D") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+		const char *nodeName = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			script->runtimeError("Scene.EnableNode3D: Scene doesn't contain any geometry");
+			stack->pushBool(false);
+		} else {
+			bool ret = _sceneGeometry->enableNode(nodeName, false);
+			stack->pushBool(ret);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1897,7 +1915,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsNode3DEnabled") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+		const char *nodeName = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			script->runtimeError("Scene.EnableNode3D: Scene doesn't contain any geometry");
+			stack->pushBool(false);
+		} else {
+			bool ret = _sceneGeometry->isNodeEnabled(nodeName);
+			stack->pushBool(ret);
+		}
+
 		return STATUS_OK;
 	}
 

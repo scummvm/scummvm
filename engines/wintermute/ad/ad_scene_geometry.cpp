@@ -1206,7 +1206,7 @@ bool AdSceneGeometry::correctTargetPoint(const Math::Vector3d &source, Math::Vec
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::enableNode(char *nodeName, bool enable) {
+bool AdSceneGeometry::enableNode(const char *nodeName, bool enable) {
 	bool ret = false;
 
 	uint i;
@@ -1235,7 +1235,7 @@ bool AdSceneGeometry::enableNode(char *nodeName, bool enable) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::isNodeEnabled(char *nodeName) {
+bool AdSceneGeometry::isNodeEnabled(const char *nodeName) {
 	for (uint i = 0; i < _blocks.size(); i++) {
 		if (scumm_stricmp(nodeName, _blocks[i]->getName()) == 0) {
 			return _blocks[i]->_active;

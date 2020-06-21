@@ -55,8 +55,8 @@ public:
 	bool setLightColor(char *lightName, uint32 color);
 	uint32 getLightColor(char *lightName);
 	Math::Vector3d getLightPos(char *lightName);
-	bool enableNode(char *nodeName, bool enable = true);
-	bool isNodeEnabled(char *nodeName);
+	bool enableNode(const char *nodeName, bool enable = true);
+	bool isNodeEnabled(const char *nodeName);
 	bool enableLight(char *lightName, bool enable = true);
 	bool isLightEnabled(char *lightName);
 	DECLARE_PERSISTENT(AdSceneGeometry, BaseObject)
