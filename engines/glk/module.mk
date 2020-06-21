@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	screen.o \
 	selection.o \
 	sound.o \
+	speech.o \
 	streams.o \
 	time.o \
 	unicode.o \
