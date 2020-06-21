@@ -1,0 +1,250 @@
+name: scummvm
+base: core18
+license: GPL-2.0
+adopt-info: scummvm
+summary: ScummVM
+description: |
+    ScummVM is a program which allows you to run certain classic graphical
+    point-and-click adventure games, provided you already have their data
+    files. The clever part about this: ScummVM just replaces the executables
+    shipped with the game, allowing you to play them on systems for which
+    they were never designed!
+
+    Currently, ScummVM supports a huge library of adventures with over
+    250 games in total.
+    
+    It supports many classics published by legendary studios like LucasArts,
+    Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood Studios.
+    Next to ground-breaking titles like the Monkey Island series,
+    Broken Sword, Myst, Blade Runner and countless other games,
+    you will find some really obscure adventures and truly hidden gems to explore.
+confinement: strict
+grade: stable
+
+# **Workaround** The following are duplicated for "daemon" (putting them at the top level doesn't work in *this* snap)
+plugs:
+  wayland:
+  opengl:
+  alsa:
+  audio-playback:
+  network:
+  network-bind:
+  removable-media:
+
+apps:
+  scummvm:
+    command-chain: ["snap/command-chain/alsa-launch"]
+    extensions: [gnome-3-28]
+    command: desktop-launch $SNAP/bin/wayland-if-possible.sh $SNAP/bin/scummvm-launch.sh
+    plugs:
+      - wayland
+      - x11
+      - opengl
+      - unity7
+      - pulseaudio
+      - alsa
+      - audio-playback
+      - network
+      - network-bind
+      - removable-media
+      - home
+      - gsettings
+      - mount-observe
+    environment:
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
+      ESPEAK_DATA_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/espeak-ng-data"
+      DBUS_FATAL_WARNINGS: 0
+
+  daemon:
+    command: daemon-start.sh $SNAP/bin/scummvm-launch.sh -f
+    daemon: simple
+    restart-condition: always
+    plugs:
+      - pulseaudio
+      # **Workaround** The following are duplicated for "daemon" (putting them at the top level doesn't work in *this* snap)
+      - wayland
+      - opengl
+      - alsa
+      - audio-playback
+      - network
+      - network-bind
+      - removable-media
+    environment:
+      SDL_VIDEODRIVER: wayland
+      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
+      ESPEAK_DATA_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/espeak-ng-data"
+      PULSE_SYSTEM: 1
+      PULSE_RUNTIME_PATH: /var/run/pulse
+
+layout:
+  /usr/share/glvnd/egl_vendor.d:
+    bind: $SNAP/usr/share/glvnd/egl_vendor.d
+  /usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri:
+    bind: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri
+  /usr/share/X11/xkb:
+    bind: $SNAP/usr/share/X11/xkb
+  /usr/share/scummvm:
+    bind: $SNAP/usr/share/scummvm
+  /usr/share/applications:
+    bind: $SNAP/usr/share/applications
+  /usr/share/alsa:
+    bind: $SNAP/usr/share/alsa
+
+parts:
+  scummvm:
+    after: [alsa-mixin]
+    source: https://github.com/scummvm/scummvm.git
+    override-build: |
+      last_committed_tag="$(git tag --list | tac | head -n1)"
+      trimmed_tag="$(echo $last_committed_tag | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')"
+      last_released_tag="$(snap info scummvm | awk '$1 == "latest/beta:" { print $2 }')"
+      # If the latest tag from the upstream project has not been released to
+      # beta, build that tag instead of master.
+      if [ "${trimmed_tag}" != "${last_released_tag}" ]; then
+        git fetch
+        git checkout "${last_committed_tag}"
+        snapcraftctl set-version $(git -C ../src tag --list | tac | head -n1 | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')
+      else
+        snapcraftctl set-version $(git -C ../src describe | sed 's/desc\///')
+      fi    
+      snapcraftctl build
+      
+    plugin: autotools
+    configflags:
+      - --enable-release
+      - --enable-tts
+      - --enable-opl2lpt
+      - --enable-c++11
+      - --disable-debug
+
+    build-packages:
+      - libsdl2-dev
+      - libgtk-3-dev
+      - libjpeg62-dev
+      - libmpeg2-4-dev
+      - liba52-dev
+      - libogg-dev
+      - libvorbis-dev
+      - libflac-dev
+      - libmad0-dev
+      - libpng-dev
+      - libtheora-dev
+      - libfaad-dev
+      - libfluidsynth-dev
+      - libfreetype6-dev
+      - libfribidi-dev
+      - zlib1g-dev
+      - libunity-dev
+      - libcurl4-openssl-dev
+      - libsdl2-net-dev
+      - libieee1284-3-dev
+      - libspeechd-dev
+    stage-packages:
+      - libicu60
+      - libfaad2
+      - libflac8
+      - libfluidsynth1
+      - libfribidi0
+      - libgl1-mesa-dri
+      - libgl1-mesa-glx
+      - libglu1-mesa
+      - libwayland-egl1-mesa
+      - libjpeg62
+      - libjpeg8
+      - libmad0
+      - libmpeg2-4
+      - libogg0
+      - libpng16-16
+      - libpulse0
+      - libsdl2-2.0-0
+      - libsndio6.1
+      - libtheora0
+      - libvorbis0a
+      - libvorbisfile3
+      - zlib1g
+      - libdbusmenu-glib4
+      - libdee-1.0-4
+      - libslang2
+      - libunity-protocol-private0
+      - libunity9
+      - freeglut3
+      - libcurl4
+      - libsdl2-net-2.0-0
+      - liba52-0.7.4
+      - libieee1284-3
+      - locales-all
+      - ttf-ubuntu-font-family
+      - espeak-ng
+      - espeak-ng-data
+      - libspeechd2
+      - speech-dispatcher
+      - speech-dispatcher-audio-plugins
+      - speech-dispatcher-espeak-ng
+
+  alsa-mixin:
+    plugin: nil
+    source: https://github.com/diddlesnaps/snapcraft-alsa.git
+    override-pull: |
+      cat > asound.conf <<EOF
+      pcm.!default {
+          type pulse
+          fallback "sysdefault"
+          hint {
+              show on
+              description "Default ALSA Output (currently PulseAudio Sound Server)"
+          }
+      }
+      ctl.!default {
+          type pulse
+          fallback "sysdefault"
+      }
+      seq.default {
+          type hw
+      }
+      seq.hw {
+          type hw
+      }
+      EOF
+      cat > alsa-launch <<EOF
+      #!/bin/bash
+      export ALSA_CONFIG_PATH="\$SNAP/etc/asound.conf"
+
+      if [ -d "\$SNAP/usr/lib/alsa-lib" ]; then
+          export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:\$SNAP/usr/lib/alsa-lib"
+      elif [ -d "\$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib" ]; then
+          export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:\$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/alsa-lib"
+      fi
+      export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:\$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio"
+
+      # Make PulseAudio socket available inside the snap-specific \$XDG_RUNTIME_DIR
+      if [ -n "\$XDG_RUNTIME_DIR" ]; then
+          pulsenative="pulse/native"
+          pulseaudio_sockpath="\$XDG_RUNTIME_DIR/../\$pulsenative"
+          if [ -S "\$pulseaudio_sockpath" ]; then
+              export PULSE_SERVER="unix:\${pulseaudio_sockpath}"
+          fi
+      fi
+
+      exec "\$@"
+      EOF
+      chmod +x alsa-launch
+    override-build: |
+      snapcraftctl build
+      install -m644 -D -t $SNAPCRAFT_PART_INSTALL/etc asound.conf
+      install -m755 -D -t $SNAPCRAFT_PART_INSTALL/snap/command-chain alsa-launch
+    build-packages:
+      - libasound2-dev
+    stage-packages:
+      - libasound2
+      - libasound2-plugins
+
+  scripts:
+    plugin: dump
+    source: scripts
+
+  games:
+    plugin: dump
+    source: https://www.scummvm.org/frs/extras/storefront/games-bundle.zip
+    source-checksum: sha256/5c16f3db7fda3660d1bddb52e76aa27ada8eb8268872f5e045490f3eabb603e1
+    organize:
+      games-bundle: usr/share/scummvm/

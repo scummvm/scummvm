@@ -1,0 +1,3 @@
+#!/bin/sh
+
+touch $SNAP_COMMON/wayland.connected
