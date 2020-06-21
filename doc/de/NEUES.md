@@ -4,9 +4,15 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 2.2.0 (DD.MM.YYYY)
 
+ Neue Spiele:
+   - Unterstützung für die englische Übersetzung von "Prince and the Coward" hinzugefügt.
+   - Unterstützung für Ultima IV - Quest of the Avatar hinzugefügt.
+   - Unterstützung für Ultima VI - The False Prophet hinzugefügt.
+   - Unterstützung für Ultima VIII - Pagan hinzugefügt.
+
  Allgemein:
    - Alle Engines unterstützen nun automatisch gespeicherte Spielstände.
-   - Fehler starten nun den Debugger, anstatt ScummVM einfach abstürzen zu lassen.
+   - Fehler werden nun im Debugger angezeigt, anstatt ScummVM einfach abstürzen zu lassen.
    - Artikel werden bei der Sortierung der Spiele im Launcher nicht mehr berücksichtigt.
    - Hebräisch wird nun korrekt in der Benutzeroberfläche dargestellt (benötigt die FriBiDi-Bibliothek).
 
