@@ -42,7 +42,10 @@ void Speech::gli_initialize_tts(void) {
 		// Language
 		_ttsMan->setLanguage(ConfMan.get("language"));
 		// Volume
-		_ttsMan->setVolume(75);
+		int volume = (ConfMan.getInt("speech_volume") * 100) / 256;
+		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
+			volume = 0;
+		_ttsMan->setVolume(volume);
 		// Voice
 		unsigned voice;
 		if(ConfMan.hasKey("tts_voice")) {

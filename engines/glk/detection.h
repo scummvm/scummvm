@@ -127,6 +127,8 @@ public:
 	GlkDetectedGame(const char *id, const char *desc, const char *extra,
 		const Common::String &filename, Common::Language lang,
 		GameSupportLevel supportLevel = kTestingGame);
+
+	static Common::String getGlkGUIOptions();
 };
 
 /**

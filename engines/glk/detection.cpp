@@ -70,17 +70,25 @@
 
 namespace Glk {
 
+Common::String GlkDetectedGame::getGlkGUIOptions() {
+#if defined (USE_TTS)
+	return GUIO2(GUIO_NOMUSIC, GUIO_NOSUBTITLES);
+#else
+	return GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES);
+#endif
+}
+
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
 		GameSupportLevel supportLevel) :
 		DetectedGame("glk", id, desc, Common::EN_ANY, Common::kPlatformUnknown) {
-	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	setGUIOptions(getGlkGUIOptions());
 	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
 		Common::Language lang, GameSupportLevel supportLevel) : DetectedGame("glk", id, desc, lang, Common::kPlatformUnknown) {
-	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	setGUIOptions(getGlkGUIOptions());
 	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 }
@@ -89,7 +97,7 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const char *x
 		const Common::String &filename, Common::Language lang,
 		GameSupportLevel supportLevel) :
 		DetectedGame("glk", id, desc, lang, Common::kPlatformUnknown, xtra) {
-	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	setGUIOptions(getGlkGUIOptions());
 	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 }
@@ -97,7 +105,7 @@ GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const char *x
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
 		const Common::String &md5, size_t filesize, GameSupportLevel supportLevel) :
 		DetectedGame("glk", id, desc, Common::UNK_LANG, Common::kPlatformUnknown) {
-	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	setGUIOptions(getGlkGUIOptions());
 	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 
