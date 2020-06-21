@@ -554,9 +554,10 @@ void ListWidget::drawWidget() {
 
 		Common::Rect r(getEditRect());
 		int pad = g_gui.useRTL() ? _rightPadding : _leftPadding;
+		int rtlPad = (_x + r.left + _leftPadding) - (_x + _hlLeftPadding);
 
-		// If in numbering mode, we first print a number prefix
-		if (_numberingMode != kListNumberingOff) {
+		// If in numbering mode & not in RTL based GUI, we first print a number prefix
+		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
 			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
 									buffer, _state, alignment, inverted, _leftPadding, true);
@@ -574,8 +575,14 @@ void ListWidget::drawWidget() {
 
 		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight - 2);
 
-		if (g_gui.useRTL() && _numberingMode == kListNumberingOff && _scrollBar->isVisible()) {
-			r1.translate(_scrollBarWidth, 0);
+		if (g_gui.useRTL()) {
+			if (_scrollBar->isVisible()) {
+				r1.translate(_scrollBarWidth, 0);
+			}
+
+			if (_numberingMode != kListNumberingOff) {
+				r1.translate(-rtlPad, 0);
+			}
 		}
 
 		if (_selectedItem == pos && _editMode) {
@@ -588,6 +595,18 @@ void ListWidget::drawWidget() {
 			buffer = _list[pos];
 			g_gui.theme()->drawText(r1, buffer, _state,
 									alignment, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
+		}
+
+		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
+		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
+			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
+
+			Common::Rect r2 = r1;
+
+			r2.left = r1.right;
+			r2.right = r1.right + rtlPad;
+
+			g_gui.theme()->drawText(r2, buffer, _state, alignment, inverted, _leftPadding, true);
 		}
 	}
 }
