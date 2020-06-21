@@ -227,6 +227,19 @@ void MacOSXTextToSpeechManager::setLanguage(Common::String language) {
 	updateVoices();
 }
 
+int MacOSXTextToSpeechManager::getDefaultVoice() {
+	if (_ttsState->_availableVoices.size() < 2)
+		return 0;
+	NSString *defaultVoice = [NSSpeechSynthesizer defaultVoice];
+	if (defaultVoice == nil)
+		return 0;
+	for (int i = 0 ; i < _ttsState->_availableVoices.size() ; ++i) {
+		if ([defaultVoice isEqualToString:(NSString*)(_ttsState->_availableVoices[i].getData())])
+			return i;
+	}
+	return 0;
+}
+
 void MacOSXTextToSpeechManager::freeVoiceData(void *data) {
 	NSString* voiceId = (NSString*)data;
 	[voiceId release];

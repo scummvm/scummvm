@@ -55,6 +55,8 @@ public:
 
 	virtual void setLanguage(Common::String language);
 
+	virtual int getDefaultVoice();
+
 	virtual void freeVoiceData(void *data);
 
 	bool startNextSpeech();
