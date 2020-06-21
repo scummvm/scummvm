@@ -274,7 +274,7 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 }
 
 int EditableWidget::getCaretOffset() const {
-	Common::String substr(_editString.c_str(), _caretPos);
+	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 
