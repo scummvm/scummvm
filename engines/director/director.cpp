@@ -162,6 +162,9 @@ Common::Error DirectorEngine::run() {
 	_currentScore = new Score(this);
 	_currentPath = getPath(getEXEName(), _currentPath);
 
+	if (getPlatform() == Common::kPlatformWindows)
+		_machineType = 256; // IBM PC-type machine
+
 	if (getVersion() < 4) {
 		if (getPlatform() == Common::kPlatformWindows) {
 			_sharedCastFile = "SHARDCST.MMM";
