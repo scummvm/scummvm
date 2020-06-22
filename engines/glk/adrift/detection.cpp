@@ -58,12 +58,24 @@ void AdriftMetaEngine::getSupportedGames(PlainGameList &games) {
 	for (const PlainGameDescriptor *pd = ADRIFT_GAME_LIST; pd->gameId; ++pd) {
 		games.push_back(*pd);
 	}
+
+	for (const PlainGameDescriptor *pd = ADRIFT5_GAME_LIST; pd->gameId; ++pd) {
+		games.push_back(*pd);
+	}
 }
 
 GameDescriptor AdriftMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = ADRIFT_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
+	}
+
+	for (const PlainGameDescriptor *pd = ADRIFT5_GAME_LIST; pd->gameId; ++pd) {
+		if (!strcmp(gameId, pd->gameId)) {
+			GameDescriptor gd = *pd;
+			gd._supportLevel = kUnstableGame;
+			return gd;
+		}
 	}
 
 	return PlainGameDescriptor();
@@ -124,6 +136,12 @@ bool AdriftMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 
 void AdriftMetaEngine::detectClashes(Common::StringMap &map) {
 	for (const PlainGameDescriptor *pd = ADRIFT_GAME_LIST; pd->gameId; ++pd) {
+		if (map.contains(pd->gameId))
+			error("Duplicate game Id found - %s", pd->gameId);
+		map[pd->gameId] = "";
+	}
+
+	for (const PlainGameDescriptor *pd = ADRIFT5_GAME_LIST; pd->gameId; ++pd) {
 		if (map.contains(pd->gameId))
 			error("Duplicate game Id found - %s", pd->gameId);
 		map[pd->gameId] = "";
