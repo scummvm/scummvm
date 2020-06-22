@@ -330,8 +330,9 @@ public:
 
 	void restartLingo(bool keepSharedCast);
 
-	ScriptContext *addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName = nullptr);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &scriptName, Common::String &archName);
+	void addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName = nullptr);
+	ScriptContext *compileAnonymous(const char *code);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName, Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id);
@@ -358,6 +359,7 @@ public:
 
 	// lingo.cpp
 private:
+	ScriptContext *compileLingo(const char *code, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName);
 	const char *findNextDefinition(const char *s);
 
 	// lingo-events.cpp

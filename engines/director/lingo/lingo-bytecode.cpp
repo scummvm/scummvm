@@ -763,7 +763,7 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, Common::String &scriptName, Common::String &archName) {
+void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName, Common::String &archName) {
 	debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
 	if (getScriptContext(archiveIndex, type, id)) {

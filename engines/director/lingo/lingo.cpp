@@ -258,7 +258,12 @@ const char *Lingo::findNextDefinition(const char *s) {
 	return NULL;
 }
 
-ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName) {
+void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName) {
+	if (_archiveIndex < 0) {
+		warning("Lingo::addCode(): Invalid archiveIndex");
+		return;
+	}
+
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
@@ -274,12 +279,22 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 		contextName = Common::String(scriptName);
 	else
 		contextName = Common::String::format("%d", id);
+	
+	ScriptContext *sc = compileLingo(code, archiveIndex, type, id, contextName);
+	_archives[_assemblyArchive].scriptContexts[type][id] = sc;
+}
 
+ScriptContext *Lingo::compileAnonymous(const char *code) {
+	debugC(1, kDebugCompile, "Compiling anonymous lingo\n"
+			"***********\n%s\n\n***********", code);
+	
+	return compileLingo(code, kArchNone, kNoneScript, 0, "[anonymous]");
+}
+
+ScriptContext *Lingo::compileLingo(const char *code, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName) {
 	_assemblyArchive = archiveIndex;
-	ScriptContext *sc = _assemblyContext = new ScriptContext(type, contextName);
+	ScriptContext *sc = _assemblyContext = new ScriptContext(type, scriptName);
 	_currentAssembly = new ScriptData;
-	if (archiveIndex >= 0)
-		_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
 
 	_methodVars = new VarTypeHash;
 	_linenumber = _colnumber = 1;
