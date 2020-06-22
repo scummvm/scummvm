@@ -633,7 +633,7 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 	int d1Type = d1.type;
 	int d2Type = d2.type;
 
-	if (d1Type == STRING || d1Type == REFERENCE) {
+	if (d1Type == STRING) {
 		Common::String src = d1.asString();
 		char *endPtr = 0;
 		strtod(src.c_str(), &endPtr);
@@ -641,7 +641,7 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 			d1Type = FLOAT;
 		}
 	}
-	if (d2Type == STRING || d2Type == REFERENCE) {
+	if (d2Type == STRING) {
 		Common::String src = d1.asString();
 		char *endPtr = 0;
 		strtod(src.c_str(), &endPtr);
@@ -658,7 +658,7 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 
 	if (d1Type == FLOAT || d2Type == FLOAT) {
 		opType = FLOAT;
-	} else if (d1Type == INT && d2Type == INT) {
+	} else if ((d1Type == INT || d1Type == REFERENCE) && (d2Type == INT || d2Type == REFERENCE)) {
 		opType = INT;
 	}
 
