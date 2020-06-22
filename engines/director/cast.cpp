@@ -178,14 +178,14 @@ DigitalVideoCast::DigitalVideoCast(Common::ReadStreamEndian &stream, uint16 vers
 			_frameRateType = (FrameRateType)((flags1 & 0x30) >> 4);
 		}
 		_preload = flags1 & 0x04;
-		_enableVideo = ~(flags1 & 0x02);
+		_enableVideo = !(flags1 & 0x02);
 		_pauseAtStart = flags1 & 0x01;
 
 		byte flags2 = stream.readByte();
 		_showControls = flags2 & 0x40;
 		_looping = flags2 & 0x10;
 		_enableSound = flags2 & 0x08;
-		_enableCrop = ~(flags2 & 0x02);
+		_enableCrop = !(flags2 & 0x02);
 		_center = flags2 & 0x01;
 	}
 }
