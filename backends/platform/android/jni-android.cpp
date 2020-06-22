@@ -99,6 +99,8 @@ jmethodID JNI::_MID_AudioTrack_play = 0;
 jmethodID JNI::_MID_AudioTrack_stop = 0;
 jmethodID JNI::_MID_AudioTrack_write = 0;
 
+PauseToken JNI::_pauseToken;
+
 const JNINativeMethod JNI::_natives[] = {
 	{ "create", "(Landroid/content/res/AssetManager;"
 				"Ljavax/microedition/khronos/egl/EGL10;"
@@ -586,7 +588,7 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	_system->destroy();
 
 	g_system = 0;
-	_system = 0;
+	_system  = 0;
 
 	sem_destroy(&pause_sem);
 
@@ -689,7 +691,10 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	if (g_engine) {
 		LOGD("pauseEngine: %d", value);
 
-		g_engine->pauseEngine(value);
+		if (value)
+			JNI::_pauseToken = g_engine->pauseEngine();
+		else
+			JNI::_pauseToken.clear();
 
 		if (value &&
 				g_engine->hasFeature(Engine::kSupportsSavingDuringRuntime) &&
