@@ -115,7 +115,7 @@ U32String TranslationManager::getTranslation(const char *message) const {
 U32String TranslationManager::getTranslation(const char *message, const char *context) const {
 	// If no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
-		return message;
+		return U32String(message);
 
 	// Binary-search for the msgid
 	int leftIndex = 0;

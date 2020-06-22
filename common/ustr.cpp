@@ -21,6 +21,7 @@
  */
 
 #include "common/ustr.h"
+#include "common/str.h"
 #include "common/memorypool.h"
 #include "common/util.h"
 #include "unicode-bidi.h"
@@ -550,7 +551,7 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 
 	char buffer[512];
 
-	while (fmt != output.end() && pos < output.size()) {
+	while (fmt != output.end() && pos < (int)output.size()) {
 		ch = *fmt++;
 		if (ch == '%') {
 			switch (ch = *fmt++)

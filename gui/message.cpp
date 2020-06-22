@@ -103,7 +103,7 @@ MessageDialog::MessageDialog(const Common::U32String &message, Common::U32String
 MessageDialog::MessageDialog(const char *message, const char *defaultButton, const char *altButton, Graphics::TextAlign alignment)
 	: Dialog(30, 20, 260, 124) {
 
-	MessageDialog::MessageDialog(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment);
+	MessageDialog(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment);
 }
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

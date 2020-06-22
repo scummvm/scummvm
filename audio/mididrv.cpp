@@ -177,7 +177,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	if ((flags & MDT_PREFER_FLUID) && selDevStr == "auto") {
 		selDevStr = "fluidsynth";
 	}
-	DeviceHandle hdl = getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
+	DeviceHandle hdl = getDeviceHandle(selDevStr.empty() ? Common::U32String("auto") : selDevStr);
 	DeviceHandle reslt = 0;
 
 	_forceTypeMT32 = false;
@@ -296,7 +296,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 			// Default to Null device here, since we also register a default null setting for
 			// the MT32 or GM device in the config manager.
-			hdl = getDeviceHandle(devStr.empty() ? Common::String("null") : devStr);
+			hdl = getDeviceHandle(devStr.empty() ? Common::U32String("null") : devStr);
 			const MusicType type = getMusicType(hdl);
 
 			// If we have a "Don't use GM/MT-32" setting we skip this part and jump

@@ -139,11 +139,12 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		case MT_GM:
 			if (!ConfMan.getBool("native_mt32")) {
 				// Not a real MT32 / no MUNT
-				::GUI::MessageDialog dialog(("You appear to be using a General MIDI device,\n"
+				::GUI::MessageDialog dialog(Common::convertToU32String((
+											"You appear to be using a General MIDI device,\n"
 											"but your game only supports Roland MT32 MIDI.\n"
 											"We try to map the Roland MT32 instruments to\n"
 											"General MIDI ones. It is still possible that\n"
-											"some tracks sound incorrect."));
+											"some tracks sound incorrect.")));
 				dialog.runModal();
 			}
 			// Switch to MT32 driver in any case
