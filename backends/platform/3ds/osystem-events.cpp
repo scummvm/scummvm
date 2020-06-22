@@ -224,12 +224,19 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 			osys->sleeping = false;
 			loadConfig();
 			break;
-		default: {
+		case APTHOOK_ONEXIT: {
+			if (osys->_sleepPauseToken.isActive()) {
+				osys->_sleepPauseToken.clear();
+			}
+
 			Common::StackLock lock(*eventMutex);
 			Common::Event event;
 			event.type = Common::EVENT_QUIT;
 			g_system->getEventManager()->pushEvent(event);
+			break;
 		}
+		default:
+			warning("Unhandled APT hook, type: %d", hookType);
 	}
 }
 
