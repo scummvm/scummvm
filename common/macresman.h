@@ -166,6 +166,8 @@ public:
 	 */
 	String getBaseFileName() const { return _baseFileName; }
 
+	void setBaseFileName(Common::String str) { _baseFileName = str; }
+
 	/**
 	 * Return list of resource IDs with specified type ID
 	 */

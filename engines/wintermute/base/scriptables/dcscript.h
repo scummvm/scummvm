@@ -111,6 +111,15 @@ typedef enum {
 	II_DEF_CONST_VAR
 } TInstruction;
 
+// operation code types
+typedef enum {
+	OPCODES_UNCHANGED = 0,
+#ifdef ENABLE_FOXTAIL
+	OPCODES_FOXTAIL_1_2_896,
+	OPCODES_FOXTAIL_1_2_902
+#endif
+} TOpcodesType;
+
 // external data types
 typedef enum {
 	TYPE_VOID = 0,

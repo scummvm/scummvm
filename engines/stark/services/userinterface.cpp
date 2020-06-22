@@ -521,8 +521,12 @@ void UserInterface::handleKeyPress(const Common::KeyState &keyState) {
 		confirm(GameMessage::kQuitPrompt, this, &UserInterface::notifyShouldExit);
 	} else if (keyState.keycode == Common::KEYCODE_p) {
 		if (isInGameScreen()) {
-			g_engine->pauseEngine(true);
-			debug("The game is paused");
+			if (g_engine->isPaused()) {
+				_gamePauseToken.clear();
+			} else {
+				_gamePauseToken = g_engine->pauseEngine();
+				debug("The game is paused");
+			}
 		}
 	} else if (keyState.keycode == Common::KEYCODE_PAGEUP) {
 		if (isInGameScreen()) {

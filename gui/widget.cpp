@@ -113,6 +113,22 @@ void Widget::draw() {
 
 		Common::Rect oldClip = g_gui.theme()->swapClipRect(_boss->getClipRect());
 
+		if (g_gui.useRTL()) {
+			_x = g_system->getOverlayWidth() - _x - _w;
+
+			if (this->_name.contains("GameOptions") || this->_name.contains("GlobalOptions") || this->_name.contains("Browser") || this->_name.empty()) {
+				/** The dialogs named above are the stacked dialogs for which the left+right paddings need to be adjusted for RTL.
+					The _name is empty for some special widgets - like RemapWidgets, NavBars, ScrollBars and they need to be adjusted too.
+				*/
+				_x = _x + g_gui.getOverlayOffset();
+			}
+
+			Common::Rect r = _boss->getClipRect();
+			r.moveTo(_x, r.top);
+
+			g_gui.theme()->swapClipRect(r);
+		}
+
 		// Draw border
 		if (_flags & WIDGET_BORDER) {
 			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
@@ -210,6 +226,10 @@ bool Widget::isVisible() const {
 	return !(_flags & WIDGET_INVISIBLE);
 }
 
+bool Widget::useRTL() const {
+	return _useRTL;
+}
+
 uint8 Widget::parseHotkey(const Common::String &label) {
 	if (!label.contains('~'))
 		return 0;
@@ -272,11 +292,12 @@ void Widget::read(Common::String str) {
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip, ThemeEngine::FontStyle font)
-	: Widget(boss, x, y, w, h, tooltip), _align(align) {
+	: Widget(boss, x, y, w, h, tooltip) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
 	_font = font;
+	_align = Graphics::convertTextAlignH(align, g_gui.useRTL() && _useRTL);
 }
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip, ThemeEngine::FontStyle font)
@@ -285,7 +306,8 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_type = kStaticTextWidget;
 	_label = text;
 
-	_align = g_gui.xmlEval()->getWidgetTextHAlign(name);
+	_align = Graphics::convertTextAlignH(g_gui.xmlEval()->getWidgetTextHAlign(name), g_gui.useRTL() && _useRTL);
+
 	_font = font;
 }
 
@@ -302,6 +324,7 @@ void StaticTextWidget::setLabel(const Common::String &label) {
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
+	align = Graphics::convertTextAlignH(align, g_gui.useRTL() && _useRTL);
 	if (_align != align){
 		_align = align;
 
@@ -506,7 +529,7 @@ void DropdownButtonWidget::drawWidget() {
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state);
 	} else {
 		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, _label,
-		                                  _state, _inButton, _inDropdown);
+										  _state, _inButton, _inDropdown, (g_gui.useRTL() && _useRTL));
 	}
 }
 
@@ -623,7 +646,7 @@ void CheckboxWidget::setState(bool state) {
 }
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state);
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
 }
 
 #pragma mark -
@@ -692,7 +715,7 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 }
 
 void RadiobuttonWidget::drawWidget() {
-	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state);
+	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
 }
 
 #pragma mark -
@@ -712,6 +735,9 @@ SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, const ch
 }
 
 void SliderWidget::handleMouseMoved(int x, int y, int button) {
+	if (g_gui.useRTL() && _useRTL == false) {
+		x = _w - x;		// If internal flipping is off, adjust the mouse to behave as if it were LTR.
+	}
 	if (isEnabled() && _isDragging) {
 		int newValue = posToValue(x);
 		if (newValue < _valueMin)
@@ -760,7 +786,8 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void SliderWidget::drawWidget() {
-	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(_value), _state);
+	Common::Rect r1(_x, _y, _x + _w, _y + _h);
+	g_gui.theme()->drawSlider(r1, valueToBarWidth(_value), _state, (g_gui.useRTL() && _useRTL));
 }
 
 int SliderWidget::valueToBarWidth(int value) {

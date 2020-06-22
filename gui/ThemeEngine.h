@@ -37,7 +37,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.36"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.38"
 
 class OSystem;
 
@@ -87,6 +87,13 @@ enum DrawData {
 	kDDDropDownButtonPressedLeft,
 	kDDDropDownButtonPressedRight,
 
+	kDDDropDownButtonIdleRTL,
+	kDDDropDownButtonHoverLeftRTL,
+	kDDDropDownButtonHoverRightRTL,
+	kDDDropDownButtonDisabledRTL,
+	kDDDropDownButtonPressedLeftRTL,
+	kDDDropDownButtonPressedRightRTL,
+
 	kDDSliderFull,
 	kDDSliderHover,
 	kDDSliderDisabled,
@@ -113,6 +120,10 @@ enum DrawData {
 	kDDPopUpIdle,
 	kDDPopUpHover,
 	kDDPopUpDisabled,
+
+	kDDPopUpIdleRTL,
+	kDDPopUpHoverRTL,
+	kDDPopUpDisabledRTL,
 
 	kDDCaret,
 	kDDSeparator,
@@ -409,25 +420,25 @@ public:
 	                uint16 hints = 0);
 
 	void drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::String &str,
-	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown);
+	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl = false);
 
 	void drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans = false);
 
-	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled);
+	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked,
-	                  WidgetStateInfo state = kStateEnabled);
+	                  WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked,
-	                     WidgetStateInfo state = kStateEnabled);
+	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-	             const Common::Array<Common::String> &tabs, int active);
+	             const Common::Array<Common::String> &tabs, int active, bool rtl = false);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState);
 
 	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax,
-	                     WidgetStateInfo state = kStateEnabled);
+	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCaret(const Common::Rect &r, bool erase);
 

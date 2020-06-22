@@ -46,7 +46,7 @@ public:
 		kHelpCmd = 'HELP',
 		kAboutCmd = 'ABOU',
 		kQuitCmd = 'QUIT',
-		kRTLCmd = 'RTL ',
+		kLauncherCmd = 'LNCR',
 		kChooseCmd = 'CHOS'
 	};
 
@@ -67,7 +67,7 @@ protected:
 
 	GUI::GraphicsWidget  *_logo;
 
-	GUI::ButtonWidget    *_rtlButton;
+	GUI::ButtonWidget    *_returnToLauncherButton;
 	GUI::ButtonWidget    *_loadButton;
 	GUI::ButtonWidget    *_saveButton;
 	GUI::ButtonWidget    *_helpButton;

@@ -51,6 +51,12 @@ void ThemeEval::reset() {
 }
 
 bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h) {
+	bool useRTL;
+
+	return getWidgetData(widget, x, y, w, h, useRTL);
+}
+
+bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL) {
 	Common::StringTokenizer tokenizer(widget, ".");
 
 	if (widget.hasPrefix("Dialog."))
@@ -62,7 +68,7 @@ bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, 
 	if (!_layouts.contains(dialogName))
 		return false;
 
-	return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h);
+	return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h, useRTL);
 }
 
 Graphics::TextAlign ThemeEval::getWidgetTextHAlign(const Common::String &widget) {
@@ -80,7 +86,7 @@ Graphics::TextAlign ThemeEval::getWidgetTextHAlign(const Common::String &widget)
 	return _layouts[dialogName]->getWidgetTextHAlign(widgetName);
 }
 
-ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String &type, int w, int h, Graphics::TextAlign align) {
+ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String &type, int w, int h, Graphics::TextAlign align, bool useRTL) {
 	int typeW = -1;
 	int typeH = -1;
 	Graphics::TextAlign typeAlign = Graphics::kTextAlignInvalid;
@@ -102,7 +108,8 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 		widget = new ThemeLayoutWidget(_curLayout.top(), name,
 									typeW == -1 ? w : typeW,
 									typeH == -1 ? h : typeH,
-									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
+									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
+									useRTL);
 
 	_curLayout.top()->addChild(widget);
 

@@ -270,6 +270,7 @@ add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
+add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1210,6 +1211,8 @@ for ac_option in $@; do
 	--disable-mad)                _mad=no                ;;
 	--enable-fribidi)             _fribidi=yes           ;;
 	--disable-fribidi)            _fribidi=no            ;;
+	--enable-test-c++11)          _test_cxx11=yes        ;;
+	--disable-test-c++11)         _test_cxx11=no         ;;
 	--enable-zlib)                _zlib=yes              ;;
 	--disable-zlib)               _zlib=no               ;;
 	--enable-sparkle)             _sparkle=yes           ;;
@@ -1249,6 +1252,10 @@ for ac_option in $@; do
 	--disable-updates)            _updates=no            ;;
 	--enable-libunity)            _libunity=yes          ;;
 	--disable-libunity)           _libunity=no           ;;
+	--enable-tts)                 _tts=yes               ;;
+	--disable-tts)                _tts=no                ;;
+	--enable-gtk)                 _gtk=yes               ;;
+	--disable-gtk)                _gtk=no                ;;
 	--enable-glew)                _glew=yes              ;; #ResidualVM specific option
 	--disable-glew)               _glew=no               ;; #ResidualVM specific option
 	--enable-opengl)              _opengl=yes            ;; #ResidualVM specific option
@@ -1563,7 +1570,7 @@ case $_host in
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
 	;;
-android | android-arm | android-v7a | android-arm-v7a | ouya)
+android-arm-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
@@ -1767,6 +1774,8 @@ switch)
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
+	# Switch SDK has C++11 constructs so we must enable it
+	_use_cxx11=yes
 	;;
 tizen)
  	_host_os=tizen
@@ -2181,16 +2190,17 @@ if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
 		# Try to use ANSI mode when C++11 is disabled.
 		if test "$_use_cxx11" = "no" ; then
-			case $_host_os in
-			# newlib-based system include files suppress non-C89 function
-			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
-				;;
-			*)
-				append_var CXXFLAGS "-ansi"
-				;;
-			esac
+			append_var CXXFLAGS "-ansi"
 		fi
+		case $_host_os in
+		# newlib-based system include files suppress non-C89 function
+		# declarations under __STRICT_ANSI__, undefine it
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
+			append_var CXXFLAGS "-U__STRICT_ANSI__"
+			;;
+		*)
+			;;
+		esac
 		append_var CXXFLAGS "-W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
 		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
@@ -2202,6 +2212,7 @@ if test "$have_gcc" = yes ; then
 	else
 		append_var CXXFLAGS "-Wconversion"
 	fi;
+	append_var CXXFLAGS "-fno-operator-names"
 elif test "$have_icc" = yes ; then
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
@@ -2498,7 +2509,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			android | android-arm | androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen)
+			androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo | tizen)
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				# FIXME: The following feature exhibits a bug. It produces distorted
 				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
@@ -2578,45 +2589,45 @@ case $_host_os in
 		;;
 	android)
 		case $_host in
-			android | android-arm)
-				append_var CXXFLAGS "-march=armv5te"
-				append_var CXXFLAGS "-mtune=xscale"
-				append_var CXXFLAGS "-mfloat-abi=softfp"
-				append_var LDFLAGS "-mthumb"
-				ABI="armeabi"
-				;;
-			android-v7a | android-arm-v7a)
-				append_var CXXFLAGS "-march=armv7-a"
-				append_var CXXFLAGS "-mfloat-abi=softfp"
+			android-arm-v7a)
+				# Disable NEON for older devices (like with Tegra 2)
 				append_var CXXFLAGS "-mfpu=vfp"
+				# This is really old CPU but might be still used with android 4.1, it slightly increases code size and decreases performance.
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
 				;;
-			android-mips)
-				append_var CXXFLAGS "-march=mips32"
-				append_var CXXFLAGS "-mtune=mips32"
-				ABI="mips"
+			android-arm64-v8a)
+				ABI="arm64-v8a"
 				;;
 			android-x86)
-				append_var CXXFLAGS "-march=i686"
-				append_var CXXFLAGS "-mtune=i686"
 				ABI="x86"
+				;;
+			android-x86_64)
+				ABI="x86_64"
+				;;
+			ouya)
+				append_var CXXFLAGS "-mtune=cortex-a9"
+				ABI="armeabi-v7a"
 				;;
 		esac
 
-		append_var LDFLAGS "-static-libstdc++"
-		append_var LDFLAGS "-Wl,--build-id=sha1"
+		append_var CXXFLAGS "-Wno-inconsistent-missing-override"
+
 		append_var CXXFLAGS "-fpic"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-funwind-tables"
-		if test "$_debug_build" = yes; then
-			append_var CXXFLAGS "-fno-omit-frame-pointer"
-			append_var CXXFLAGS "-fno-strict-aliasing"
-		else
+		if test "$_debug_build" = no; then
+			_optimization_level=-Os
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fstrict-aliasing"
+		else
+			_optimization_level=-O0
+			append_var CXXFLAGS "-fno-omit-frame-pointer"
+			append_var CXXFLAGS "-fno-strict-aliasing"
 		fi
-		_optimization_level=-Os
+
+		# Build ID is needed for native debugging in Android Studio
+		append_var LDFLAGS "-Wl,--build-id=sha1"
 
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
@@ -3108,7 +3119,7 @@ if test -n "$_host"; then
 			_vorbis=no
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
-		android | android-arm | android-v7a | android-arm-v7a | android-arm64-v8a | android-mips | android-x86 | ouya)
+		android-arm-v7a | android-arm64-v8a | android-x86 | android-x86_64 | ouya)
 			# also __ANDROID__ is defined by Clang in the NDK
 			DEFINES="$DEFINES -D__ANDROID_PLAIN_PORT__ -DANDROID_PLAIN_PORT"
 			# we link a .so as default
@@ -3651,7 +3662,7 @@ case $_backend in
 		;;
 	ps2)
 		append_var DEFINES "-D_EE"
-		append_var DEFINES "-DFORCE_RTL"
+		append_var DEFINES "-DFORCE_RETURN_TO_LAUNCHER"
 		append_var INCLUDES "-I$PS2SDK/ee/include"
 		append_var INCLUDES "-I$PS2SDK/common/include"
 		append_var INCLUDES "-I$PS2SDK/ports/include"
@@ -5601,6 +5612,12 @@ fi
 define_in_config_if_yes "$_fribidi" 'USE_FRIBIDI'
 echo "$_fribidi"
 
+#
+# Test C++11 Compatibility
+#
+define_in_config_if_yes "$_test_cxx11" 'ENABLE_TEST_CPP_11'
+echo_n "Test C++11 compatibility during compilation... "
+echo "$_test_cxx11"
 
 # Default to plain text output for pandoc
 if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then

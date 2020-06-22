@@ -523,7 +523,45 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
+		/>
+	</drawdata>
+	<drawdata id = 'popup_idle_rtl' cache = 'false' resolution = 'y>399'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+					shadow = '1'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'left'
+					ypos = '10'
+					padding = '2, 0, 6, 0'
+					orientation = 'bottom'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'left'
+					ypos = '4'
+					padding = '2, 0, 6, 0'
+					orientation = 'top'
+		/>
+
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -562,7 +600,45 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
+		/>
+	</drawdata>
+	<drawdata id = 'popup_idle_rtl' cache = 'false' resolution ='y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+					shadow = '1'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'left'
+					ypos = '9'
+					padding = '2, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'left'
+					ypos = '4'
+					padding = '2, 0, 3, 0'
+					orientation = 'top'
+		/>
+
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -602,7 +678,45 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
+		/>
+	</drawdata>
+	<drawdata id = 'popup_disabled_rtl' cache = 'false' resolution = 'y>399'>
+		<drawstep	func = 'roundedsq'
+					stroke = '1'
+					fg_color = 'lightgray'
+					radius = '5'
+					fill = 'gradient'
+					gradient_start = 'blandyellow'
+					gradient_end = 'xtrabrightred'
+					shadow = '0'
+		/>
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'left'
+					ypos = '10'
+					padding = '2, 0, 6, 0'
+					orientation = 'bottom'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'left'
+					ypos = '4'
+					padding = '2, 0, 6, 0'
+					orientation = 'top'
+		/>
+
+		<text	font = 'text_default'
+				text_color = 'color_normal_hover'
+				vertical_align = 'center'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -641,7 +755,45 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
+		/>
+	</drawdata>
+	<drawdata id = 'popup_disabled_rtl' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+					shadow = '2'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'left'
+					ypos = '9'
+					padding = '2, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'left'
+					ypos = '4'
+					padding = '2, 0, 3, 0'
+					orientation = 'top'
+		/>
+
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -681,7 +833,45 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
+		/>
+	</drawdata>
+	<drawdata id = 'popup_hover_rtl' cache = 'false' resolution = 'y>399'>
+		<drawstep	func = 'roundedsq'
+					stroke = '1'
+					fg_color = 'lightgray'
+					radius = '5'
+					fill = 'gradient'
+					gradient_start = 'blandyellow'
+					gradient_end = 'xtrabrightred'
+					shadow = '0'
+		/>
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'left'
+					ypos = '10'
+					padding = '2, 0, 6, 0'
+					orientation = 'bottom'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '10'
+					height = '5'
+					xpos = 'left'
+					ypos = '4'
+					padding = '2, 0, 6, 0'
+					orientation = 'top'
+		/>
+
+		<text	font = 'text_default'
+				text_color = 'color_normal_hover'
+				vertical_align = 'center'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -720,7 +910,45 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
+		/>
+	</drawdata>
+	<drawdata id = 'popup_hover_rtl' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+					shadow = '1'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'left'
+					ypos = '9'
+					padding = '2, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+
+		<drawstep	func = 'triangle'
+					bg_color = 'shadowcolor'
+					fill = 'background'
+					width = '7'
+					height = '4'
+					xpos = 'left'
+					ypos = '4'
+					padding = '2, 0, 3, 0'
+					orientation = 'top'
+		/>
+
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'start'
 		/>
 	</drawdata>
 
@@ -889,6 +1117,34 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_idle_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightred'
+					gradient_end = 'darkred'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_idle' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -912,6 +1168,34 @@
 					width = '6'
 					height = '6'
 					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_idle_rtl' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightred'
+					gradient_end = 'darkred'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'left'
 					ypos = 'center'
 					padding = '0,0,0,0'
 					orientation = 'bottom'
@@ -947,6 +1231,35 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_hover_left_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '13,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_hover_left' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -971,6 +1284,35 @@
 					width = '6'
 					height = '6'
 					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_hover_left_rtl' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '7,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'left'
 					ypos = 'center'
 					padding = '0,0,0,0'
 					orientation = 'bottom'
@@ -1006,6 +1348,35 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_hover_right_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '0,0,13,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_hover_right' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -1030,6 +1401,35 @@
 					width = '6'
 					height = '6'
 					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_hover_right_rtl' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'darkredborder'
+					gradient_start = 'brightpink'
+					gradient_end = 'darkpink'
+					bevel = '1'
+					bevel_color = 'brightredborder'
+					clip = '0,0,7,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'left'
 					ypos = 'center'
 					padding = '0,0,0,0'
 					orientation = 'bottom'
@@ -1064,6 +1464,34 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_disabled_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button_disabled'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'shadowcolor'
+					gradient_start = 'darkenedbrightred'
+					gradient_end = 'darkeneddarkred'
+					bevel = '1'
+					bevel_color = 'darkgray'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'darkgray2'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_disabled' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button_disabled'
@@ -1087,6 +1515,34 @@
 					width = '6'
 					height = '6'
 					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_disabled_rtl' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button_disabled'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'gradient'
+					shadow = '0'
+					fg_color = 'shadowcolor'
+					gradient_start = 'darkenedbrightred'
+					gradient_end = 'darkeneddarkred'
+					bevel = '1'
+					bevel_color = 'darkgray'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'darkgray2'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'left'
 					ypos = 'center'
 					padding = '0,0,0,0'
 					orientation = 'bottom'
@@ -1123,6 +1579,36 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_left_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '40, 120, 16'
+					gradient_start = '0, 255, 0'
+					gradient_end = '0, 255, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '13,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_pressed_left' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -1148,6 +1634,36 @@
 					width = '6'
 					height = '6'
 					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_left_rtl' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '40, 120, 16'
+					gradient_start = '0, 255, 0'
+					gradient_end = '0, 255, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '7,0,0,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'left'
 					ypos = 'center'
 					padding = '0,0,0,0'
 					orientation = 'bottom'
@@ -1184,6 +1700,36 @@
 					orientation = 'bottom'
 		/>
 	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_right_rtl' cache = 'false' resolution = 'y>399'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '40, 120, 16'
+					gradient_start = '0, 255, 0'
+					gradient_end = '0, 255, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '0,0,13,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '8'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
+					padding = '2,0,2,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
 	<drawdata id = 'dropdown_button_pressed_right' cache = 'false' resolution = 'y<400'>
 		<text	font = 'text_button'
 				text_color = 'color_button'
@@ -1210,6 +1756,36 @@
 					height = '6'
 					xpos = 'right'
 					ypos = 'center'
+					padding = '2,0,0,0'
+					orientation = 'bottom'
+		/>
+	</drawdata>
+	<drawdata id = 'dropdown_button_pressed_right_rtl' cache = 'false' resolution = 'y<400'>
+		<text	font = 'text_button'
+				text_color = 'color_button'
+				vertical_align = 'center'
+				horizontal_align = 'center'
+		/>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '1'
+					fill = 'foreground'
+					shadow = '0'
+					factor = '0'
+					fg_color = '40, 120, 16'
+					gradient_start = '0, 255, 0'
+					gradient_end = '0, 255, 0'
+					bevel = '1'
+					bevel_color = 'black'
+					clip = '0,0,7,0'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'white'
+					fill = 'foreground'
+					width = '6'
+					height = '6'
+					xpos = 'left'
+					ypos = 'center'
 					padding = '0,0,0,0'
 					orientation = 'bottom'
 		/>
@@ -1220,7 +1796,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_disabled.bmp'
@@ -1232,7 +1808,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_empty.bmp'
@@ -1244,7 +1820,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox.bmp'
@@ -1256,7 +1832,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'top'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_empty.bmp'
@@ -1268,7 +1844,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'radiobutton_empty.bmp'
@@ -1280,7 +1856,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'radiobutton.bmp'
@@ -1292,7 +1868,7 @@
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
 				vertical_align = 'center'
-				horizontal_align = 'left'
+				horizontal_align = 'start'
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'radiobutton_empty.bmp'

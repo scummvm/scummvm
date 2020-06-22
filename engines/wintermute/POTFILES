@@ -1,2 +1,3 @@
 engines/wintermute/detection.cpp
 engines/wintermute/wintermute.cpp
+engines/wintermute/keymapper_tables.h

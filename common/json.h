@@ -53,7 +53,7 @@
 #include "common/str.h"
 
 // Win32 incompatibilities
-#if defined(WIN32) && !defined(__GNUC__)
+#if (defined(WIN32) && !defined(__GNUC__)) || defined(__PLAYSTATION2__)
 static inline bool isnan(double x) {
 	return x != x;
 }

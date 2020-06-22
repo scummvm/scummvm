@@ -30,6 +30,7 @@
 #define WINTERMUTE_BASE_GAME_H
 
 #include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/base/base_game_custom_actions.h"
 #include "engines/wintermute/base/timer.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
@@ -210,6 +211,8 @@ public:
 
 	bool handleKeypress(Common::Event *event, bool printable = false) override;
 	virtual void handleKeyRelease(Common::Event *event);
+	bool handleCustomActionStart(BaseGameCustomAction action);
+	bool handleCustomActionEnd(BaseGameCustomAction action);
 
 	bool unfreeze();
 	bool freeze(bool includingMusic = true);
@@ -267,6 +270,8 @@ public:
 	bool setActiveObject(BaseObject *Obj);
 	BaseSprite *_lastCursor;
 	bool drawCursor(BaseSprite *Cursor);
+	bool storeSaveThumbnail();
+	void deleteSaveThumbnail();
 
 	SaveThumbHelper *_cachedThumbnail;
 	void addMem(int32 bytes);

@@ -376,7 +376,7 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 	_container(nullptr) {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
-	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
+	_pageTitle = new StaticTextWidget(this, "SaveLoadChooser.Title", title);
 
 	// Add choice list
 	_list = new ListWidget(this, "SaveLoadChooser.List");
@@ -757,7 +757,7 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 	_curPage(0), _newSaveContainer(nullptr), _nextFreeSaveSlot(0), _buttons() {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
-	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
+	_pageTitle = new StaticTextWidget(this, "SaveLoadChooser.Title", title);
 
 	// The list widget needs to be bound so it takes space in the layout
 	ContainerWidget *list = new ContainerWidget(this, "SaveLoadChooser.List");
@@ -773,10 +773,13 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 
 	// Page display
 	_pageDisplay = new StaticTextWidget(this, "SaveLoadChooser.PageDisplay", Common::String());
-	_pageDisplay->setAlign(Graphics::kTextAlignRight);
+	_pageDisplay->setAlign(Graphics::kTextAlignEnd);
 }
 
 SaveLoadChooserGrid::~SaveLoadChooserGrid() {
+	removeWidget(_pageTitle);
+	delete _pageTitle;
+
 	removeWidget(_pageDisplay);
 	delete _pageDisplay;
 }
@@ -994,7 +997,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, nullptr, buttonCmd);
 			dstY += buttonHeight;
 
-			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignLeft);
+			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignStart);
 
 			_buttons.push_back(SlotButton(container, button, description));
 		}

@@ -78,6 +78,10 @@ enum WMETargetExecutable {
 	WME_1_8_8,  // DEAD:CODE 2008, released as "1.8.8 beta"
 	WME_1_8_9,  // DEAD:CODE 2008, released as "1.8.9 beta"
 	WME_1_8_10, // DEAD:CODE 2009
+
+	// fork of WME_1_8_10
+	WME_ANDISHE_VARAN, // Andishe Varan Engine 1.0.0.0
+
 	WME_1_8_11, // DEAD:CODE 2009
 	WME_1_9_0,  // DEAD:CODE 2009, released as "1.9.0 beta"
 
@@ -115,6 +119,8 @@ enum WMETargetExecutable {
 	FOXTAIL_1_2_304,
 	FOXTAIL_1_2_362,
 	FOXTAIL_1_2_527,
+	FOXTAIL_1_2_896,
+	FOXTAIL_1_2_902,
 	FOXTAIL_LATEST_VERSION
 };
 
@@ -168,6 +174,7 @@ public:
 	bool isFoxTail(WMETargetExecutable v1=FOXTAIL_OLDEST_VERSION, WMETargetExecutable v2=FOXTAIL_LATEST_VERSION) const {
 		return isFoxTailCheck(_targetExecutable, v1, v2);
 	}
+	void addFlags(uint32 flags) { _flags |= flags; }
 };
 
 } // End of namespace Wintermute

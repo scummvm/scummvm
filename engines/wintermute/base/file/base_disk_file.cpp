@@ -61,8 +61,8 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 	}
 
 	// Relative path:
-	if (filename.contains('\\')) {
-		Common::StringTokenizer path(filename, "\\");
+	if (filename.contains('/')) {
+		Common::StringTokenizer path(filename, "/");
 
 		// Start traversing relative to the game-data-dir
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -70,7 +70,7 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 
 		// Parse all path-elements
 		while (!path.empty()) {
-			// Get the next path-component by slicing on '\\'
+			// Get the next path-component by slicing on '/'
 			Common::String pathPart = path.nextToken();
 			// Get the next FSNode in the chain, if it exists as a child from the previous.
 			curNode = curNode.getChild(pathPart);
@@ -109,6 +109,11 @@ bool diskFileExists(const Common::String &filename) {
 	return false;
 }
 
+
+int listMatchingDiskFileMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
+	return Common::FSDirectory(ConfMan.get("path")).listMatchingMembers(list, pattern);
+}
+			
 Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = nullptr;

@@ -31,6 +31,7 @@
 
 #include "common/archive.h"
 #include "common/str.h"
+#include "common/str-array.h"
 #include "common/fs.h"
 #include "common/file.h"
 #include "common/language.h"
@@ -42,7 +43,8 @@ public:
 
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
-	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern);
+	int listMatchingPackageMembers(Common::ArchiveMemberList &list, const Common::String &pattern);
+	int listMatchingFiles(Common::StringArray &list, const Common::String &pattern);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
 	Common::WriteStream *openFileForWrite(const Common::String &filename);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = nullptr, bool mustExist = true);

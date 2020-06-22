@@ -27,6 +27,8 @@
 
 #include "engines/stark/services/gamemessage.h"
 
+#include "engines/engine.h"
+
 #include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/str-array.h"
@@ -215,6 +217,7 @@ private:
 	Gfx::Driver *_gfx;
 	bool _exitGame;
 	bool _quitToMainMenu;
+	PauseToken _gamePauseToken;
 
 	bool _interactive;
 	bool _interactionAttemptDenied;

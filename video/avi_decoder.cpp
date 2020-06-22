@@ -201,6 +201,7 @@ bool AVIDecoder::parseNextChunk() {
 	case ID_STRH:
 		handleStreamHeader(size);
 		break;
+	case ID_HDRL: // Header list.. what's it doing here? Probably ok to ignore?
 	case ID_STRD: // Extra stream info, safe to ignore
 	case ID_VEDT: // Unknown, safe to ignore
 	case ID_JUNK: // Alignment bytes, should be ignored
@@ -990,7 +991,8 @@ bool AVIDecoder::AVIVideoTrack::rewind() {
 }
 
 Image::Codec *AVIDecoder::AVIVideoTrack::createCodec() {
-	return Image::createBitmapCodec(_bmInfo.compression, _bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
+	return Image::createBitmapCodec(_bmInfo.compression, _vidsHeader.streamHandler, _bmInfo.width,
+									_bmInfo.height, _bmInfo.bitCount);
 }
 
 void AVIDecoder::AVIVideoTrack::forceTrackEnd() {

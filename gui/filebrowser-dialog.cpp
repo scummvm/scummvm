@@ -109,7 +109,7 @@ void FileBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 void FileBrowserDialog::normalieFileName() {
 	Common::String filename = _fileName->getEditString();
 
-	if (filename.matchString(_fileMask))
+	if (filename.matchString(_fileMask, true))
 		return;
 
 	_fileName->setEditString(filename + "." + _fileExt);

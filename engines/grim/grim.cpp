@@ -1382,7 +1382,7 @@ void GrimEngine::clearEventQueue() {
 
 bool GrimEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsJoystick);
 }

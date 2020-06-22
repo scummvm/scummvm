@@ -625,11 +625,11 @@ void UIButton::correctSize() {
 	}
 
 	if (_text) {
-		int textHeight;
-		if (_font) {
-			textHeight = _font->getTextHeight((byte *)_text, _width);
-		} else {
-			textHeight = _gameRef->getSystemFont()->getTextHeight((byte *)_text, _width);
+		int textHeight = 0;
+		BaseFont *font = _font ? _font : _gameRef->getSystemFont();
+
+		if (font) {
+			textHeight = font->getTextHeight((byte *)_text, _width);
 		}
 
 		if (textHeight > _height) {
@@ -871,6 +871,21 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		}
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] HeightToFit
+	// Used to autofit widget's height to it's content
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "HeightToFit") == 0) {
+		stack->correctParams(0);
+
+		correctSize();
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// SetDisabledImage

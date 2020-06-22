@@ -122,11 +122,11 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 }
 
 void OnScreenDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	Common::Event eventRTL;
+	Common::Event eventReturnToLauncher;
 	switch (cmd) {
 	case kStopCmd:
-		eventRTL.type = Common::EVENT_RTL;
-		g_system->getEventManager()->pushEvent(eventRTL);
+		eventReturnToLauncher.type = Common::EVENT_RETURN_TO_LAUNCHER;
+		g_system->getEventManager()->pushEvent(eventReturnToLauncher);
 		close();
 		break;
 	case kEditCmd:

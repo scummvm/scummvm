@@ -94,7 +94,6 @@ void AdScene::setDefaults() {
 	_pfTargetPath = nullptr;
 	_pfRequester = nullptr;
 	_mainLayer = nullptr;
-
 #ifdef ENABLE_WME3D
 	_sceneGeometry = nullptr;
 	_showGeometry = false;
@@ -191,7 +190,6 @@ void AdScene::cleanup() {
 		_gameRef->unregisterObject(_objects[i]);
 	}
 	_objects.clear();
-
 #ifdef ENABLE_WME3D
 	delete _sceneGeometry;
 #endif
@@ -552,7 +550,6 @@ bool AdScene::initLoop() {
 		return _sceneGeometry->initLoop();
 	}
 #endif
-
 	return STATUS_OK;
 }
 
@@ -1239,7 +1236,6 @@ bool AdScene::updateFreeObjects() {
 			}
 		}
 #endif
-
 		adGame->_objects[i]->update();
 		adGame->_objects[i]->_drawn = false;
 	}
@@ -1249,7 +1245,6 @@ bool AdScene::updateFreeObjects() {
 		if (!_objects[i]->_active) {
 			continue;
 		}
-
 #ifdef ENABLE_WME3D
 		if (_objects[i]->_is3D && _sceneGeometry) {
 			Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
@@ -1355,8 +1350,6 @@ bool AdScene::compareObjs(const AdObject *obj1, const AdObject *obj2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::displayRegionContentOld(AdRegion *region) {
-	// is this function actually used?
-
 	AdGame *adGame = (AdGame *)_gameRef;
 	AdObject *obj;
 

@@ -37,9 +37,10 @@
  */
 void PS3SdlEventSource::preprocessEvents(SDL_Event *event) {
 	if (event->type == SDL_APP_DIDENTERBACKGROUND) {
+		PauseToken pt;
 		// XMB opened
 		if (g_engine)
-			g_engine->pauseEngine(true);
+			pt = g_engine->pauseEngine();
 
 		for (;;) {
 			if (!SDL_PollEvent(event)) {
@@ -56,8 +57,6 @@ void PS3SdlEventSource::preprocessEvents(SDL_Event *event) {
 				return;
 			if (event->type == SDL_APP_DIDENTERFOREGROUND) {
 				// XMB closed
-				if (g_engine)
-					g_engine->pauseEngine(false);
 				return;
 			}
 		}

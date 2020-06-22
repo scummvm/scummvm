@@ -86,7 +86,6 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, ModelX *mode
 }
 #endif
 
-
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::~BaseActiveRect() {
 	_owner = nullptr;

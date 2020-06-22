@@ -150,7 +150,7 @@ private:
 
 	bool _joystickAxisPreviouslyPressed[6];
 
-	bool mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Event> &mappedEvents);
+	Keymap::KeymapMatch getMappedActions(const Event &event, Keymap::ActionArray &actions, Keymap::KeymapType keymapType) const;
 	Event executeAction(const Action *act, const Event &incomingEvent);
 	EventType convertStartToEnd(EventType eventType);
 	IncomingEventType convertToIncomingEventType(const Event &ev) const;

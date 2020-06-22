@@ -109,13 +109,23 @@ void BasePlatform::handleEvent(Common::Event *event) {
 			_gameRef->handleMouseWheel(event->type == Common::EVENT_WHEELUP ? 1 : -1);
 		}
 		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (_gameRef) {
+			_gameRef->handleCustomActionStart((BaseGameCustomAction)event->customType);
+		}
+		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		if (_gameRef) {
+			_gameRef->handleCustomActionEnd((BaseGameCustomAction)event->customType);
+		}
+		break;
 	case Common::EVENT_SCREEN_CHANGED:
 		if (_gameRef) {
 			_gameRef->_renderer->onWindowChange();
 		}
 		break;
 // Focus-events have been removed (_gameRef->onActivate originally)
-	case Common::EVENT_RTL:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		_gameRef->_quitting = true;
 		break;
 	case Common::EVENT_QUIT:

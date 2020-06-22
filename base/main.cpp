@@ -555,13 +555,17 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 #ifdef USE_TTS
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-			ttsMan->pushState();
+			if (ttsMan != nullptr) {
+				ttsMan->pushState();
+			}
 #endif
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
 #ifdef USE_TTS
-			ttsMan->popState();
+			if (ttsMan != nullptr) {
+				ttsMan->popState();
+			}
 #endif
 
 #ifdef ENABLE_EVENTRECORDER
@@ -586,13 +590,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
-#ifndef FORCE_RTL
-			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldRTL())
+#ifndef FORCE_RETURN_TO_LAUNCHER
+			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldReturnToLauncher())
 				break;
 #endif
-			// Reset RTL flag in case we want to load another engine
-			g_system->getEventManager()->resetRTL();
-#ifdef FORCE_RTL
+			// Reset the return to launcher flag in case we want to load another engine
+			g_system->getEventManager()->resetReturnToLauncher();
+#ifdef FORCE_RETURN_TO_LAUNCHER
 			g_system->getEventManager()->resetQuit();
 #endif
 #ifdef ENABLE_EVENTRECORDER

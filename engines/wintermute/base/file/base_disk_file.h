@@ -29,12 +29,14 @@
 #ifndef WINTERMUTE_BASE_DISKFILE_H
 #define WINTERMUTE_BASE_DISKFILE_H
 
+#include "common/archive.h"
 #include "common/stream.h"
 
 namespace Wintermute {
 
 Common::SeekableReadStream *openDiskFile(const Common::String &filename);
 bool diskFileExists(const Common::String &filename);
+int listMatchingDiskFileMembers(Common::ArchiveMemberList &list, const Common::String &pattern);
 
 } // End of namespace Wintermute
 

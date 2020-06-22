@@ -30,7 +30,6 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 namespace Image {

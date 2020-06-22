@@ -138,7 +138,7 @@ bool Myst3Engine::hasFeature(EngineFeature f) const {
 	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 
 	return
-		(f == kSupportsRTL) ||
+		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsArbitraryResolutions && !softRenderer);

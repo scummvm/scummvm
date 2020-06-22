@@ -317,7 +317,7 @@ protected:
 	bool getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 
 	/** Convert an AD game description into the shared game description format */
-	DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
+	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
 };
 
 #endif

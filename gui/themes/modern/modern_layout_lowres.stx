@@ -66,7 +66,7 @@
 
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
-				textalign = 'right'
+				textalign = 'end'
 		/>
 		<widget name = 'SmallLabel'
 				size = '18, Globals.Line.Height'
@@ -130,7 +130,7 @@
 				<widget name = 'SearchDesc'
 						width = '50'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'Search'
 						width = '150'
@@ -261,6 +261,7 @@
 				/>
 				<widget name = 'grKbdMouseSpeedSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'grKbdMouseSpeedLabel'
 						type = 'SmallLabel'
@@ -272,6 +273,7 @@
 				/>
 				<widget name = 'grJoystickDeadzoneSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'grJoystickDeadzoneLabel'
 						type = 'SmallLabel'
@@ -403,6 +405,7 @@
 				/>
 				<widget name = 'subSubtitleSpeedSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'subSubtitleSpeedLabel'
 						type = 'SmallLabel'
@@ -419,6 +422,7 @@
 				/>
 				<widget name = 'vcMusicSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'vcMusicLabel'
 						type = 'SmallLabel'
@@ -430,6 +434,7 @@
 				/>
 				<widget name = 'vcSfxSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'vcSfxLabel'
 						type = 'SmallLabel'
@@ -441,6 +446,7 @@
 				/>
 				<widget name = 'vcSpeechSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'vcSpeechLabel'
 						type = 'SmallLabel'
@@ -486,6 +492,7 @@
 				/>
 				<widget name = 'mcMidiGainSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'mcMidiGainLabel'
 						width = '32'
@@ -591,7 +598,7 @@
 				<widget name = 'RendererPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'RendererPopup'
 						type = 'PopUp'
@@ -601,7 +608,7 @@
 				<widget name = 'AutosavePeriodPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'AutosavePeriodPopup'
 						type = 'PopUp'
@@ -611,7 +618,7 @@
 				<widget name = 'GuiLanguagePopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'GuiLanguagePopup'
 						type = 'PopUp'
@@ -631,7 +638,7 @@
 				<widget name = 'UpdatesPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'UpdatesPopup'
 						type = 'PopUp'
@@ -659,7 +666,7 @@
 					<widget name = 'StoragePopupDesc'
 							width = '80'
 							height = 'Globals.Line.Height'
-							textalign = 'right'
+							textalign = 'end'
 					/>
 				</layout>
 				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '1'>
@@ -812,7 +819,7 @@
 				<widget name = 'ServerPortDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'ServerPortEditText'
 						width = '60'
@@ -1085,7 +1092,7 @@
 				<widget name = 'Id'
 						width = '35'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'Domain'
 						type = 'PopUp'
@@ -1095,7 +1102,7 @@
 				<widget name = 'Name'
 						width = '35'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'Desc'
 						type = 'PopUp'
@@ -1106,7 +1113,7 @@
 				<widget name = 'LangPopupDesc'
 						width = '60'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'LangPopup'
 						type = 'PopUp'
@@ -1116,7 +1123,7 @@
 				<widget name = 'PlatformPopupDesc'
 						width = '60'
 						height = 'Globals.Line.Height'
-						textalign = 'right'
+						textalign = 'end'
 				/>
 				<widget name = 'PlatformPopup'
 						type = 'PopUp'
@@ -1231,7 +1238,7 @@
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
-			<widget name = 'RTL'
+			<widget name = 'ReturnToLauncher'
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
@@ -1282,6 +1289,7 @@
 				/>
 				<widget name = 'vcMusicSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'vcMusicLabel'
 						type = 'SmallLabel'
@@ -1293,6 +1301,7 @@
 				/>
 				<widget name = 'vcSfxSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'vcSfxLabel'
 						type = 'SmallLabel'
@@ -1304,6 +1313,7 @@
 				/>
 				<widget name = 'vcSpeechSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'vcSpeechLabel'
 						type = 'SmallLabel'
@@ -1343,6 +1353,7 @@
 				/>
 				<widget name = 'subSubtitleSpeedSlider'
 						type = 'Slider'
+						rtl = 'no'
 				/>
 				<widget name = 'subSubtitleSpeedLabel'
 						type = 'SmallLabel'
@@ -1392,6 +1403,7 @@
 				/>
 				<widget name = 'VoiceCountSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'VoiceCountLabel'
 					width = '32'
@@ -1404,6 +1416,7 @@
 				/>
 				<widget name = 'LevelSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'LevelLabel'
 					width = '32'
@@ -1416,6 +1429,7 @@
 				/>
 				<widget name = 'SpeedSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'SpeedLabel'
 					width = '32'
@@ -1428,6 +1442,7 @@
 				/>
 				<widget name = 'DepthSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'DepthLabel'
 					width = '32'
@@ -1456,6 +1471,7 @@
 				/>
 				<widget name = 'RoomSizeSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'RoomSizeLabel'
 					width = '32'
@@ -1468,6 +1484,7 @@
 				/>
 				<widget name = 'DampingSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'DampingLabel'
 					width = '32'
@@ -1480,6 +1497,7 @@
 				/>
 				<widget name = 'WidthSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'WidthLabel'
 					width = '32'
@@ -1492,6 +1510,7 @@
 				/>
 				<widget name = 'LevelSlider'
 					type = 'Slider'
+					rtl = 'no'
 				/>
 				<widget name = 'LevelLabel'
 					width = '32'

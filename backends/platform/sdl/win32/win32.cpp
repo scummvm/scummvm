@@ -33,6 +33,7 @@
 #define _WIN32_IE 0x500
 #endif
 #include <shlobj.h>
+#include <wchar.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -436,9 +437,11 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 #endif
 	// UTF-32 is really important for us, because it is used for the
 	// transliteration in Common::Encoding and Win32 cannot convert it
+	Common::String tempString;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
 		Common::U32String UTF32Str((const uint32 *)string, length / 4);
-		string = Common::convertUtf32ToUtf8(UTF32Str).c_str();
+		tempString = Common::convertUtf32ToUtf8(UTF32Str);
+		string = tempString.c_str();
 		from = "utf-8";
 	}
 	if (Common::String(to).hasPrefixIgnoreCase("utf-32")) {

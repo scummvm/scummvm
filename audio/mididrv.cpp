@@ -57,6 +57,22 @@ const byte MidiDriver::_gmToMt32[128] = {
 	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
 };
 
+// These are the power-on default instruments of the Roland MT-32 family.
+const byte MidiDriver::_mt32DefaultInstruments[8] = {
+	0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A
+};
+
+// These are the power-on default panning settings for channels 2-9 of the Roland MT-32 family.
+// Internally, the MT-32 has 15 panning positions (0-E with 7 being center).
+// This has been translated to the equivalent MIDI panning values (0-127).
+// These are used for setting default panning on GM devices when using them with MT-32 data.
+// Note that MT-32 panning is reversed compared to the MIDI specification. This is not reflected
+// here; the driver is expected to flip these values based on the _reversePanning variable.
+const byte MidiDriver::_mt32DefaultPanning[8] = {
+	// 7,    8,    7,    8,    4,    A,    0,    E 
+	0x40, 0x49,	0x40, 0x49, 0x25, 0x5B, 0x00, 0x7F
+};
+
 // This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism 
 // to correct invalid drumkit selections. Some games rely on this mechanism to select the 
 // correct Roland GS drumkit. Use this map to emulate this mechanism.
@@ -157,6 +173,9 @@ Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType
 MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
 	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	if ((flags & MDT_PREFER_FLUID) && selDevStr == "auto") {
+		selDevStr = "fluidsynth";
+	}
 	DeviceHandle hdl = getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
 	DeviceHandle reslt = 0;
 
@@ -431,19 +450,78 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	return 0;
 }
 
+void MidiDriver::initMT32(bool initForGM) {
+	sendMT32Reset();
+
+	if (initForGM) {
+		// Set up MT-32 for GM data.
+		// This is based on Roland's GM settings for MT-32.
+		debug("Initializing MT-32 for General MIDI data");
+
+		byte buffer[17];
+
+		// Roland MT-32 SysEx for system area
+		memcpy(&buffer[0], "\x41\x10\x16\x12\x10\x00", 6);
+
+		// Set reverb parameters:
+		// - Mode 2 (Plate)
+		// - Time 3
+		// - Level 4
+		memcpy(&buffer[6], "\x01\x02\x03\x04\x66", 5);
+		sysEx(buffer, 11);
+
+		// Set partial reserve to match SC-55
+		memcpy(&buffer[6], "\x04\x08\x04\x04\x03\x03\x03\x03\x02\x02\x4C", 11);
+		sysEx(buffer, 17);
+
+		// Use MIDI instrument channels 1-8 instead of 2-9
+		memcpy(&buffer[6], "\x0D\x00\x01\x02\x03\x04\x05\x06\x07\x09\x3E", 11);
+		sysEx(buffer, 17);
+
+		// The MT-32 has reversed stereo panning compared to the MIDI spec.
+		// GM does use panning as specified by the MIDI spec.
+		_reversePanning = true;
+
+		int i;
+
+		// Set default GM panning (center on all channels)
+		for (i = 0; i < 8; ++i) {
+			send((0x40 << 16) | (10 << 8) | (0xB0 | i));
+		}
+
+		// Set default GM instruments (0 on all channels).
+		// This is expected to be mapped to the MT-32 equivalent by the driver.
+		for (i = 0; i < 8; ++i) {
+			send((0 << 8) | (0xC0 | i));
+		}
+
+		// Set Pitch Bend Sensitivity to 2 semitones.
+		for (i = 0; i < 8; ++i) {
+			setPitchBendRange(i, 2);
+		}
+		setPitchBendRange(9, 2);
+	}
+}
+
 void MidiDriver::sendMT32Reset() {
 	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
 	sysEx(resetSysEx, sizeof(resetSysEx));
 	g_system->delayMillis(100);
 }
 
-void MidiDriver::sendGMReset() {
-	static const byte resetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
-	sysEx(resetSysEx, sizeof(resetSysEx));
-	g_system->delayMillis(100);
+void MidiDriver::initGM(bool initForMT32, bool enableGS) {
+// ResidualVM - not used
 }
 
+void MidiDriver::sendGMReset() {
+// ResidualVM - not used
+}
 
+byte MidiDriver::correctInstrumentBank(byte outputChannel, byte patchId) {
+// ResidualVM - not used
+		return 0xFF;
+
+}
 void MidiDriver_BASE::midiDumpInit() {
 // ResidualVM - not used
 }
@@ -480,6 +558,10 @@ MidiDriver_BASE::~MidiDriver_BASE() {
 
 void MidiDriver_BASE::send(byte status, byte firstOp, byte secondOp) {
 	send(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+}
+
+void MidiDriver_BASE::send(int8 source, byte status, byte firstOp, byte secondOp) {
+	send(source, status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 }
 
 void MidiDriver::midiDriverCommonSend(uint32 b) {

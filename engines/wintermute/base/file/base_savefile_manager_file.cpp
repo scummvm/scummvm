@@ -42,6 +42,9 @@ Common::String makeSfmFilename(const Common::String &filename) {
 			smFilename.setChar('_', i);
 		}
 	}
+	while (smFilename.hasPrefix("._")) {
+		smFilename = smFilename.substr(2);
+	}
 	return BaseEngine::instance().getGameTargetName() + "." + smFilename;
 }
 
@@ -58,6 +61,16 @@ Common::SeekableReadStream *openSfmFile(const Common::String &filename) {
 Common::WriteStream *openSfmFileForWrite(const Common::String &filename) {
 	Common::String smFilename = makeSfmFilename(filename);
 	return g_system->getSavefileManager()->openForSaving(smFilename, false);
+}
+
+Common::StringArray sfmFileList(const Common::String &mask) {
+	Common::String prefix = BaseEngine::instance().getGameTargetName() + ".";
+	Common::String smMask = makeSfmFilename(mask);
+	Common::StringArray array = g_system->getSavefileManager()->listSavefiles(smMask);
+	for (uint32 i = 0; i < array.size(); i++) {
+		array[i] = array[i].substr(prefix.size());
+	}
+	return array;
 }
 
 } // End of namespace Wintermute

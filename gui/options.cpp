@@ -150,6 +150,10 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 
 OptionsDialog::~OptionsDialog() {
 	delete _subToggleGroup;
+	if (g_gui.useRTL()) {
+		g_gui.setDialogPaddings(0, 0);
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 void OptionsDialog::init() {
@@ -1214,7 +1218,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			yPos += yStep;
 
 	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
-				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, Graphics::kTextAlignLeft, "", ThemeEngine::kFontStyleNormal);
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, Graphics::kTextAlignStart, "", ThemeEngine::kFontStyleNormal);
 				yPos += yStep;
 			}
 
@@ -1224,12 +1228,12 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 
 	if (nHidden) {
 		Common::String hiddenStr = Common::String::format(_("%d hidden achievements remaining"), nHidden);
-		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), Graphics::kTextAlignLeft);
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), Graphics::kTextAlignStart);
 	}
 
 	if (nMax) {
 		Common::String totalStr = Common::String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
-		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), Graphics::kTextAlignLeft);
+		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;
 		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
@@ -1356,13 +1360,14 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
+#if 0 // not used by ResidualVM
 	// The MIDI mode popup & a label
 	if (g_system->getOverlayWidth() > 320)
 		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred device:") : _("Music device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	else
 		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _c("Preferred dev.:", "lowres") : _c("Music device:", "lowres"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
-
+#endif
 	// Populate it
 	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
 	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
@@ -1386,12 +1391,12 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 		}
 	}
 
+#if 0 // ResidualVM specific
 	// The OPL emulator popup & a label
 	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", _("AdLib emulator:"), _("AdLib is used for music in many games"));
 	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", _("AdLib is used for music in many games"));
 
 	// Populate it
-#if 0 // ResidualVM specific
 	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
 	while (ed->name) {
 		_oplPopUp->appendEntry(_(ed->description), ed->id);
@@ -2279,16 +2284,18 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 	if (ttsMan != nullptr)
 		voices = ttsMan->getVoicesArray();
 
-	for(unsigned i = 0; i < voices.size(); i++) {
-		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
-	}
 	if (voices.empty())
 		_ttsVoiceSelectionPopUp->appendEntry(_("None"), 0);
+	else {
+		_ttsVoiceSelectionPopUp->appendEntry(_("<default>"));
+		for(unsigned i = 0; i < voices.size(); i++)
+			_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
+	}
 
-	if (ConfMan.hasKey("tts_voice") && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
+	if (ConfMan.hasKey("tts_voice", _domain) && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
 		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
 	else
-		_ttsVoiceSelectionPopUp->setSelectedTag(0);
+		_ttsVoiceSelectionPopUp->setSelected(0);
 }
 #endif
 
@@ -2394,6 +2401,7 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.set("gui_language", newLang);
 		newCharset = TransMan.getCurrentCharset();
 		isRebuildNeeded = true;
+		g_gui.setLanguageRTL();
 	}
 
 	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
@@ -2450,15 +2458,17 @@ void GlobalOptionsDialog::apply() {
 			else {
 				ttsMan->setLanguage(newLang);
 			}
-			_ttsVoiceSelectionPopUp->setSelectedTag(0);
+			_ttsVoiceSelectionPopUp->setSelected(0);
 		}
 		int volume = (ConfMan.getInt("speech_volume", "residualvm") * 100) / 256;
 		if (ConfMan.hasKey("mute", "residualvm") && ConfMan.getBool("mute", "residualvm"))
 			volume = 0;
 		ttsMan->setVolume(volume);
 		ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
-		int selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
+		unsigned selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
 		ConfMan.setInt("tts_voice", selectedVoice, _domain);
+		if (selectedVoice >= ttsMan->getVoicesArray().size())
+			selectedVoice = ttsMan->getDefaultVoice();
 		ttsMan->setVoice(selectedVoice);
 	}
 #endif

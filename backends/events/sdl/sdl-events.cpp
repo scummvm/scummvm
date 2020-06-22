@@ -114,7 +114,7 @@ SdlEventSource::~SdlEventSource() {
 int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
 
-	// Keep unicode in case it's regular ASCII text or in case we didn't get a valid keycode
+	// Keep unicode in case it's regular ASCII text, Hebrew or in case we didn't get a valid keycode
 	//
 	// We need to use unicode in those cases, simply because SDL1.x passes us non-layout-adjusted keycodes.
 	// So unicode is the only way to get layout-adjusted keys.
@@ -136,6 +136,10 @@ int SdlEventSource::mapKey(SDL_Keycode sdlKey, SDL_Keymod mod, Uint16 unicode) {
 				if (unicode > 0x7E)
 					unicode = 0; // do not allow any characters above 0x7E
 			} else {
+				// We allow Hebrew characters
+				if (unicode >= 0x05D0 && unicode <= 0x05EA)
+					return unicode;
+
 				// We must not restrict as much as when Ctrl/Alt-modifiers are active, otherwise
 				// we wouldn't let umlauts through for SDL1. For SDL1 umlauts may set for example KEYCODE_QUOTE, KEYCODE_MINUS, etc.
 				if (unicode > 0xFF)

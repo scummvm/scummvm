@@ -164,6 +164,8 @@ public:
 	void setVisible(bool e);
 	bool isVisible() const override;
 
+	bool useRTL() const;
+
 	uint8 parseHotkey(const Common::String &label);
 	Common::String cleanupHotkey(const Common::String &label);
 

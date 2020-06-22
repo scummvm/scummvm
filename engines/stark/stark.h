@@ -89,6 +89,7 @@ private:
 	static void checkRecommendedDatafiles();
 
 	Gfx::FrameLimiter *_frameLimiter;
+	PauseToken _gamePauseToken;
 
 	const ADGameDescription *_gameDescription;
 

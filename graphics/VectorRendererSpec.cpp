@@ -27,7 +27,6 @@
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"
-#include "graphics/colormasks.h"
 
 #include "gui/ThemeEngine.h"
 #include "graphics/VectorRenderer.h"
@@ -1062,8 +1061,17 @@ drawString(const Graphics::Font *font, const Common::String &text, const Common:
 	drawArea = drawArea.findIntersectingRect(Common::Rect(0, 0, _activeSurface->w, _activeSurface->h));
 
 	if (!drawArea.isEmpty()) {
+		Common::Rect textArea(area);
+		textArea.right -= deltax;
+
 		Surface textAreaSurface = _activeSurface->getSubArea(drawArea);
-		font->drawString(&textAreaSurface, text, area.left - drawArea.left, offset - drawArea.top, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
+
+		if (deltax >= 0) {
+			textArea.left += deltax;
+			deltax = 0;
+		}
+
+		font->drawString(&textAreaSurface, text, textArea.left - drawArea.left, offset - drawArea.top, textArea.width(), _fgColor, alignH, deltax, ellipsis);
 	}
 }
 

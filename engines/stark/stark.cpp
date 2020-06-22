@@ -187,7 +187,7 @@ void StarkEngine::processEvents() {
 		if (isPaused()) {
 			// Only pressing key P to resume the game is allowed when the game is paused
 			if (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_p) {
-				pauseEngine(false);
+				_gamePauseToken.clear();
 			}
 			continue;
 		}
@@ -202,7 +202,7 @@ void StarkEngine::processEvents() {
 					StarkGfx->toggleFullscreen();
 			} else if (e.kbd.keycode == Common::KEYCODE_p) {
 				if (StarkUserInterface->isInGameScreen()) {
-					pauseEngine(true);
+					_gamePauseToken = pauseEngine();
 					debug("The game is paused");
 				}
 			} else {
@@ -341,7 +341,7 @@ bool StarkEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsArbitraryResolutions) ||
-		(f == kSupportsRTL);
+		(f == kSupportsReturnToLauncher);
 }
 
 bool StarkEngine::canLoadGameStateCurrently() {

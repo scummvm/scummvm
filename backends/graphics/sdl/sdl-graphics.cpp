@@ -176,7 +176,7 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 #endif
 }
 
-bool SdlGraphicsManager::showMouse(const bool visible) {
+bool SdlGraphicsManager::showMouse(bool visible) {
 	if (visible == _cursorVisible) {
 		return visible;
 	}

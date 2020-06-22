@@ -124,7 +124,7 @@ enum {
 	CR = 0x0D
 };
 
-char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
+char *SeekableReadStream::readLine(char *buf, size_t bufSize, bool handleCR) {
 	assert(buf != nullptr && bufSize > 1);
 	char *p = buf;
 	size_t len = 0;
@@ -159,7 +159,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 		// * DOS and Windows use CRLF line breaks
 		// * Unix and OS X use LF line breaks
 		// * Macintosh before OS X used CR line breaks
-		if (c == CR) {
+		if (c == CR && handleCR) {
 			// Look at the next char -- is it LF? If not, seek back
 			c = readByte();
 
@@ -187,12 +187,12 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 	return buf;
 }
 
-String SeekableReadStream::readLine() {
+String SeekableReadStream::readLine(bool handleCR) {
 	// Read a line
 	String line;
 	while (line.lastChar() != '\n') {
 		char buf[256];
-		if (!readLine(buf, 256))
+		if (!readLine(buf, 256, handleCR))
 			break;
 		line += buf;
 	}

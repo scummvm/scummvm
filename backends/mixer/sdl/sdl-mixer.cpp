@@ -146,14 +146,12 @@ static uint32 roundDownPowerOfTwo(uint32 samples) {
 SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	SDL_AudioSpec desired;
 
-	const char *const appDomain = Common::ConfigManager::kApplicationDomain;
-
-	// There was once a GUI option for this, but it was never used;
-	// configurability is retained for advanced users only who wish to modify
-	// their ScummVM config file directly
+	// There was once a GUI option for this, which was removed. Configurability
+	// is retained for advanced users only who wish to use the commandline
+	// option (--output-rate) or modify their ScummVM config file directly.
 	uint32 freq = 0;
-	if (ConfMan.hasKey("output_rate", appDomain))
-		freq = ConfMan.getInt("output_rate", appDomain);
+	if (ConfMan.hasKey("output_rate"))
+		freq = ConfMan.getInt("output_rate");
 	if (freq <= 0)
 		freq = outputRate;
 
@@ -164,8 +162,8 @@ SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	// characteristics which are not easily measured, so allow advanced users to
 	// tweak their audio buffer size if they are experience excess latency or
 	// drop-outs by setting this value in their ScummVM config file directly
-	if (ConfMan.hasKey("audio_buffer_size", appDomain))
-		samples = ConfMan.getInt("audio_buffer_size", appDomain);
+	if (ConfMan.hasKey("audio_buffer_size", Common::ConfigManager::kApplicationDomain))
+		samples = ConfMan.getInt("audio_buffer_size", Common::ConfigManager::kApplicationDomain);
 
 	// 256 is an arbitrary minimum; 32768 is the largest power-of-two value
 	// representable with uint16

@@ -29,6 +29,7 @@
 #ifndef WINTERMUTE_BASE_SAVEFILEMANAGERFILE_H
 #define WINTERMUTE_BASE_SAVEFILEMANAGERFILE_H
 
+#include "common/str-array.h"
 #include "common/stream.h"
 
 namespace Wintermute {
@@ -36,6 +37,7 @@ namespace Wintermute {
 Common::SeekableReadStream *openSfmFile(const Common::String &filename);
 Common::WriteStream *openSfmFileForWrite(const Common::String &filename);
 bool sfmFileExists(const Common::String &filename);
+Common::StringArray sfmFileList(const Common::String &mask);
 
 } // End of namespace Wintermute
 

@@ -49,6 +49,8 @@ BaseGameMusic::BaseGameMusic(BaseGame *gameRef) : _gameRef(gameRef) {
 	_musicCrossfadeChannel1 = -1;
 	_musicCrossfadeChannel2 = -1;
 	_musicCrossfadeSwap = false;
+	_musicCrossfadeVolume1 = 0;
+	_musicCrossfadeVolume2 = 100;
 }
 
 void BaseGameMusic::cleanup() {
@@ -152,8 +154,6 @@ bool BaseGameMusic::setMusicStartTime(int channel, uint32 time) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGameMusic::updateMusicCrossfade() {
-	/* byte globMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
-
 	if (!_musicCrossfadeRunning) {
 		return STATUS_OK;
 	}
@@ -181,13 +181,22 @@ bool BaseGameMusic::updateMusicCrossfade() {
 
 	if (currentTime >= _musicCrossfadeLength) {
 		_musicCrossfadeRunning = false;
-		//_music[_musicCrossfadeChannel2]->setVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel2]->setVolumePercent(100);
 
-		_music[_musicCrossfadeChannel1]->stop();
-		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->setVolumePercent(100);
+		if (_musicCrossfadeVolume2 == 0) {
+			_music[_musicCrossfadeChannel2]->stop();
+			_music[_musicCrossfadeChannel2]->setVolumePercent(100);
+		} else {
+			_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume2);
+		}
 
+		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
+			if (_musicCrossfadeVolume1 == 0) {
+				_music[_musicCrossfadeChannel1]->stop();
+				_music[_musicCrossfadeChannel1]->setVolumePercent(100);
+			} else {
+				_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume1);
+			}
+		}
 
 		if (_musicCrossfadeSwap) {
 			// swap channels
@@ -201,12 +210,15 @@ bool BaseGameMusic::updateMusicCrossfade() {
 			_musicStartTime[_musicCrossfadeChannel2] = dummyInt;
 		}
 	} else {
-		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol - (float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		//_music[_musicCrossfadeChannel2]->setVolume((float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->setVolumePercent((int)(100.0f - (float)currentTime / (float)_musicCrossfadeLength * 100.0f));
-		_music[_musicCrossfadeChannel2]->setVolumePercent((int)((float)currentTime / (float)_musicCrossfadeLength * 100.0f));
+		float progress = (float)currentTime / (float)_musicCrossfadeLength;
+		int volumeDelta = (int)((_musicCrossfadeVolume1 - _musicCrossfadeVolume2)*progress);
+		_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume1 - volumeDelta);
+		BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel2, _musicCrossfadeVolume1 - volumeDelta);
 
-		//_gameRef->QuickMessageForm("%d %d", _music[_musicCrossfadeChannel1]->GetVolume(), _music[_musicCrossfadeChannel2]->GetVolume());
+		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
+			_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume2 + volumeDelta);
+			BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel1, _musicCrossfadeVolume2 + volumeDelta);
+		}
 	}
 
 	return STATUS_OK;
@@ -227,6 +239,12 @@ bool BaseGameMusic::persistCrossfadeSettings(BasePersistenceManager *persistMgr)
 	persistMgr->transferSint32(TMEMBER(_musicCrossfadeChannel1));
 	persistMgr->transferSint32(TMEMBER(_musicCrossfadeChannel2));
 	persistMgr->transferBool(TMEMBER(_musicCrossfadeSwap));
+
+	// let's keep savegame compatibility for the price of small possibility of wrong volume at game load
+	if (!persistMgr->getIsSaving()) {
+		_musicCrossfadeVolume1 = 0;
+		_musicCrossfadeVolume2 = 100;
+	}
 	return true;
 }
 
@@ -472,6 +490,8 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		_musicCrossfadeStartTime = _gameRef->getLiveTimer()->getTime();
 		_musicCrossfadeChannel1 = channel1;
 		_musicCrossfadeChannel2 = channel2;
+		_musicCrossfadeVolume1 = 0;
+		_musicCrossfadeVolume2 = 100;
 		_musicCrossfadeLength = fadeLength;
 		_musicCrossfadeSwap = swap;
 
@@ -480,6 +500,38 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		stack->pushBool(true);
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] MusicCrossfadeVolume
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "MusicCrossfadeVolume") == 0) {
+		stack->correctParams(4);
+		int channel = stack->pop()->getInt(0);
+		int volume1 = stack->pop()->getInt(0);
+		int volume2 = stack->pop()->getInt(0);
+		uint32 fadeLength = (uint32)stack->pop()->getInt(0);
+
+		if (_musicCrossfadeRunning) {
+			script->runtimeError("Game.MusicCrossfade: Music crossfade is already in progress.");
+			stack->pushBool(false);
+			return STATUS_OK;
+		}
+
+		_musicCrossfadeStartTime = _gameRef->getLiveTimer()->getTime();
+		_musicCrossfadeChannel1 = channel;
+		_musicCrossfadeChannel2 = channel;
+		_musicCrossfadeVolume1 = volume1;
+		_musicCrossfadeVolume2 = volume2;
+		_musicCrossfadeLength = fadeLength;
+		_musicCrossfadeSwap = false;
+
+		_musicCrossfadeRunning = true;
+
+		stack->pushBool(true);
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// GetSoundLength

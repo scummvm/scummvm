@@ -530,18 +530,25 @@ void Engine::errorString(const char *buf1, char *buf2, int size) {
 	Common::strlcpy(buf2, buf1, size);
 }
 
-void Engine::pauseEngine(bool pause) {
-	assert((pause && _pauseLevel >= 0) || (!pause && _pauseLevel));
+PauseToken Engine::pauseEngine() {
+	assert(_pauseLevel >= 0);
 
-	if (pause)
-		_pauseLevel++;
-	else
-		_pauseLevel--;
+	_pauseLevel++;
 
-	if (_pauseLevel == 1 && pause) {
+	if (_pauseLevel == 1) {
 		_pauseStartTime = _system->getMillis();
 		pauseEngineIntern(true);
-	} else if (_pauseLevel == 0) {
+	}
+
+	return PauseToken(this);
+}
+
+void Engine::resumeEngine() {
+	assert(_pauseLevel > 0);
+
+	_pauseLevel--;
+
+	if (_pauseLevel == 0) {
 		pauseEngineIntern(false);
 		_engineStartTime += _system->getMillis() - _pauseStartTime;
 		_pauseStartTime = 0;
@@ -558,8 +565,10 @@ void Engine::openMainMenuDialog() {
 		_mainMenuDialog = new MainMenuDialog(this);
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	ttsMan->pushState();
-	g_gui.initTextToSpeech();
+	if (ttsMan != nullptr) {
+		ttsMan->pushState();
+		g_gui.initTextToSpeech();
+	}
 #endif
 
 	setGameToLoadSlot(-1);
@@ -584,7 +593,8 @@ void Engine::openMainMenuDialog() {
 	applyGameSettings();
 	syncSoundSettings();
 #ifdef USE_TTS
-	ttsMan->popState();
+	if (ttsMan != nullptr)
+		ttsMan->popState();
 #endif
 }
 
@@ -618,9 +628,8 @@ void Engine::setTotalPlayTime(uint32 time) {
 }
 
 int Engine::runDialog(GUI::Dialog &dialog) {
-	pauseEngine(true);
+	PauseToken pt = pauseEngine();
 	int result = dialog.runModal();
-	pauseEngine(false);
 
 	return result;
 }
@@ -738,9 +747,13 @@ bool Engine::loadGameDialog() {
 	}
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	pauseEngine(true);
-	int slotNum = dialog->runModalWithCurrentTarget();
-	pauseEngine(false);
+
+	int slotNum;
+	{
+		PauseToken pt = pauseEngine();
+		slotNum = dialog->runModalWithCurrentTarget();
+	}
+
 	delete dialog;
 
 	if (slotNum < 0)
@@ -763,9 +776,11 @@ bool Engine::saveGameDialog() {
 	}
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-	pauseEngine(true);
-	int slotNum = dialog->runModalWithCurrentTarget();
-	pauseEngine(false);
+	int slotNum;
+	{
+		PauseToken pt = pauseEngine();
+		slotNum = dialog->runModalWithCurrentTarget();
+	}
 
 	Common::String desc = dialog->getResultString();
 	if (desc.empty())
@@ -795,7 +810,7 @@ void Engine::quitGame() {
 
 bool Engine::shouldQuit() {
 	Common::EventManager *eventMan = g_system->getEventManager();
-	return (eventMan->shouldQuit() || eventMan->shouldRTL());
+	return (eventMan->shouldQuit() || eventMan->shouldReturnToLauncher());
 }
 
 GUI::Debugger *Engine::getOrCreateDebugger() {
@@ -819,3 +834,51 @@ MetaEngine &Engine::getMetaEngine() {
 	assert(plugin);
 	return plugin->get<MetaEngine>();
 }
+
+PauseToken::PauseToken() : _engine(nullptr) {}
+
+PauseToken::PauseToken(Engine *engine) : _engine(engine) {}
+
+void PauseToken::operator=(const PauseToken &t2) {
+	if (_engine) {
+		error("Tried to assign to an already busy PauseToken");
+	}
+	_engine = t2._engine;
+	if (_engine) {
+		_engine->_pauseLevel++;
+	}
+}
+
+PauseToken::PauseToken(const PauseToken &t2) : _engine(t2._engine) {
+	if (_engine) {
+		_engine->_pauseLevel++;
+	}
+}
+
+void PauseToken::clear() {
+	if (!_engine) {
+		error("Tried to clear an already cleared PauseToken");
+	}
+	_engine->resumeEngine();
+	_engine = nullptr;
+}
+
+PauseToken::~PauseToken() {
+	if (_engine) {
+		_engine->resumeEngine();
+	}
+}
+
+#if __cplusplus >= 201103L
+PauseToken::PauseToken(PauseToken &&t2) : _engine(t2._engine) {
+	t2._engine = nullptr;
+}
+
+void PauseToken::operator=(PauseToken &&t2) {
+	if (_engine) {
+		error("Tried to assign to an already busy PauseToken");
+	}
+	_engine = t2._engine;
+	t2._engine = nullptr;
+}
+#endif

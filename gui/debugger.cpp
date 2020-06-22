@@ -147,11 +147,11 @@ void Debugger::debugPrintColumns(const Common::StringArray &list) {
 }
 
 void Debugger::preEnter() {
-	g_engine->pauseEngine(true);
+	_debugPauseToken = g_engine->pauseEngine();
 }
 
 void Debugger::postEnter() {
-	g_engine->pauseEngine(false);
+	_debugPauseToken.clear();
 }
 
 void Debugger::attach(const char *entry) {

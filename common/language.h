@@ -55,6 +55,7 @@ enum Language {
 	KO_KOR,
 	LV_LAT,
 	NB_NOR,
+	FA_IRN,
 	PL_POL,
 	PT_BRA,
 	PT_POR,

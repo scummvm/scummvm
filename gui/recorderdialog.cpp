@@ -24,7 +24,6 @@
 #include "common/bufferedstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
@@ -95,7 +94,7 @@ void RecorderDialog::reflowLayout() {
 
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
 		int16 x, y;
-		uint16 w, h;
+		int16 w, h;
 
 		if (!g_gui.xmlEval()->getWidgetData("RecorderDialog.Thumbnail", x, y, w, h)) {
 			error("Error when loading position data for Recorder Thumbnails");

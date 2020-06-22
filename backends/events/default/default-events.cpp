@@ -41,7 +41,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_buttonState(0),
 	_modifierState(0),
 	_shouldQuit(false),
-	_shouldRTL(false),
+	_shouldReturnToLauncher(false),
 	_confirmExitDialogActive(false) {
 
 	assert(boss);
@@ -95,9 +95,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	event = _eventQueue.pop();
 	bool forwardEvent = true;
 
-	// If the backend has the kFeatureNoQuit, replace Quit event with RTL
+	// If the backend has the kFeatureNoQuit, replace Quit event with Return to Launcher
 	if (event.type == Common::EVENT_QUIT && g_system->hasFeature(OSystem::kFeatureNoQuit))
-		event.type = Common::EVENT_RTL;
+		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -149,8 +149,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 		if (_shouldQuit)
 			event.type = Common::EVENT_QUIT;
-		else if (_shouldRTL)
-			event.type = Common::EVENT_RTL;
+		else if (_shouldReturnToLauncher)
+			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		break;
 #ifdef ENABLE_VKEYBD
 	case Common::EVENT_VIRTUAL_KEYBOARD:
@@ -160,25 +160,23 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		if (_vk->isDisplaying()) {
 			_vk->close(true);
 		} else {
+			PauseToken pt;
 			if (g_engine)
-				g_engine->pauseEngine(true);
+				pt = g_engine->pauseEngine();
 			_vk->show();
-			if (g_engine)
-				g_engine->pauseEngine(false);
 			forwardEvent = false;
 		}
 		break;
 #endif
-	case Common::EVENT_RTL:
+	case Common::EVENT_RETURN_TO_LAUNCHER:
 		if (ConfMan.getBool("confirm_exit")) {
+			PauseToken pt;
 			if (g_engine)
-				g_engine->pauseEngine(true);
+				pt = g_engine->pauseEngine();
 			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
-			forwardEvent = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
-			if (g_engine)
-				g_engine->pauseEngine(false);
+			forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
 		} else
-			_shouldRTL = true;
+			_shouldReturnToLauncher = true;
 		break;
 
 	case Common::EVENT_MUTE:
@@ -193,12 +191,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				break;
 			}
 			_confirmExitDialogActive = true;
-			if (g_engine)
-				g_engine->pauseEngine(true);
-			GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
-			forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
-			if (g_engine)
-				g_engine->pauseEngine(false);
+
+			{
+				PauseToken pt;
+				if (g_engine)
+					pt = g_engine->pauseEngine();
+				GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
+				forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+			}
 			_confirmExitDialogActive = false;
 		} else {
 			_shouldQuit = true;

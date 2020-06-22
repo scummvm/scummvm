@@ -30,7 +30,7 @@
 namespace GUI {
 
 GuiObject::GuiObject(const Common::String &name)
-	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(nullptr) {
+	: _x(-1000), _y(-1000), _w(0), _h(0), _useRTL(true), _name(name), _firstWidget(nullptr) {
 }
 
 GuiObject::~GuiObject() {
@@ -41,12 +41,13 @@ GuiObject::~GuiObject() {
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		int16 w, h;
-
-		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h) || w == -1 || h == -1) {
-			error("Could not load widget position for '%s'", _name.c_str());
+		bool useRTL = true;
+		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h, useRTL) || w == -1 || h == -1) {
+			error("Unable to load widget position for '%s'. Please check your theme files", _name.c_str());
 		}
 		_w = w;
 		_h = h;
+		_useRTL = useRTL;
 	}
 }
 
