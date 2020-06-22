@@ -122,7 +122,7 @@ void LabEngine::handleTrialWarning() {
 			// Wyrmkeep trial version
 			_extraGameFeatures = GF_WINDOWS_TRIAL;
 
-			GUI::MessageDialog trialMessage(_("This is a trial Windows version of the game. To play the full version, you will need to use the original interpreter and purchase a key from Wyrmkeep"));
+			GUI::MessageDialog trialMessage(Common::convertToU32String("This is a trial Windows version of the game. To play the full version, you will need to use the original interpreter and purchase a key from Wyrmkeep"));
 			trialMessage.runModal();
 		}
 		else {

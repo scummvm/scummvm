@@ -2572,7 +2572,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kConnectStorageCmd: {
-		Common::U32String code = "";
+		Common::U32String code("");
 		if (_storageWizardCodeBox)
 			code = _storageWizardCodeBox->getEditString();
 		if (code.size() == 0)
@@ -2976,7 +2976,7 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 
 #ifdef USE_LIBCURL
 void GlobalOptionsDialog::storageConnectionCallback(Networking::ErrorResponse response) {
-	Common::U32String message = "...";
+	Common::U32String message("...");
 	if (!response.failed && !response.interrupted) {
 		// success
 		g_system->displayMessageOnOSD(_("Storage connected."));

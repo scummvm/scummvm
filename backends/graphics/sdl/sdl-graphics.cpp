@@ -419,7 +419,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 #ifdef USE_SCALERS
 	struct ActionEntry {
 		const char *id;
-		U32String description;
+		const char *description;
 	};
 	static const ActionEntry filters[] = {
 			{ "FLT1", _s("Switch to nearest neighbour scaling") },
@@ -435,7 +435,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(filters); i++) {
-		act = new Action(filters[i].id, filters[i].description);
+		act = new Action(filters[i].id, _(filters[i].description));
 		act->addDefaultInputMapping(String::format("C+A+%d", i + 1));
 		act->addDefaultInputMapping(String::format("C+A+KP%d", i + 1));
 		act->setCustomBackendActionEvent(kActionSetScaleFilter1 + i);

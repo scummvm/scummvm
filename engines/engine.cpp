@@ -319,7 +319,7 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 			_("Could not switch to resolution '%dx%d'."), width, height);
 
 		GUIErrorMessage(message);
-		error("%s", message.c_str());
+		error("%s", message.encode().c_str());
 	}
 
 	// Just show warnings then these occur:

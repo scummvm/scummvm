@@ -164,11 +164,11 @@ TestExitStatus Speechtests::testStopAndSpeak() {
 		return kTestSkipped;
 	}
 
-	ttsMan->say("Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this.");
+	ttsMan->say(Common::convertToU32String("Testing text to speech, the speech should stop after approximately a second after it started, so it shouldn't have the time to read this."));
 	g_system->delayMillis(1000);
 	ttsMan->stop();
-	ttsMan->say("Now starting the second sentence.", Common::TextToSpeechManager::QUEUE);
-	ttsMan->say("You should hear that one in totality.", Common::TextToSpeechManager::QUEUE);
+	ttsMan->say(Common::convertToU32String("Now starting the second sentence."), Common::TextToSpeechManager::QUEUE);
+	ttsMan->say(Common::convertToU32String("You should hear that one in totality."), Common::TextToSpeechManager::QUEUE);
 	if (!ttsMan->isSpeaking()) {
 		Testsuite::logDetailedPrintf("Male TTS failed\n");
 		return kTestFailed;

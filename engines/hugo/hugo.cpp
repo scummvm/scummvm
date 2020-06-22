@@ -435,7 +435,7 @@ bool HugoEngine::loadHugoDat() {
 	if (!in.isOpen()) {
 		Common::U32String errorMessage = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.c_str());
+		warning("%s", errorMessage.encode().c_str());
 		return false;
 	}
 

@@ -1494,7 +1494,7 @@ void Script::o_checkvalidsaves() {
 	while (it != list.end()) {
 		int8 slot = it->getSaveSlot();
 		if (SaveLoad::isSlotValid(slot)) {
-			debugC(2, kDebugScript, "  Found valid savegame: %s", it->getDescription().c_str());
+			debugC(2, kDebugScript, "  Found valid savegame: %s", it->getDescription().encode().c_str());
 
 			// Mark this slot as used
 			setVariable(slot, 1);

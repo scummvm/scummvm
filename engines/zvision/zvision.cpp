@@ -308,7 +308,7 @@ Common::Error ZVision::run() {
 	}
 
 	if (!foundAllFonts) {
-		GUI::MessageDialog dialog(
+		GUI::MessageDialog dialog(Common::convertToU32String(
 				"Before playing this game, you'll need to copy the required "
 				"fonts into ScummVM's extras directory, or into the game directory. "
 				"On Windows, you'll need the following font files from the Windows "
@@ -318,7 +318,7 @@ Common::Error ZVision::run() {
 				"fonts from the font package you choose, i.e., LiberationMono, "
 				"LiberationSans and LiberationSerif, or FreeMono, FreeSans and "
 				"FreeSerif respectively."
-		);
+		));
 		dialog.runModal();
 		quitGame();
 		return Common::kUnknownError;

@@ -126,8 +126,7 @@ String::String(char c)
 }
 
 String::String(const U32String &str) {
-	String internString = str.encode();
-	String::String(internString);
+	*this = String(str.encode());
 }
 
 String::~String() {
