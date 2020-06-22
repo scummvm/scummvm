@@ -44,6 +44,13 @@ GameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 		if (!strcmp(gameId, pd->gameId)) {
 			GameDescriptor gd(*pd);
 			gd._options |= OPTION_INFOCOM;
+
+			if (!strcmp(gameId, "questforexcalibur") ||
+				!strcmp(gameId, "journey") ||
+				!strcmp(gameId, "shogun") ||
+				!strcmp(gameId, "zork0"))
+				gd._supportLevel = kUnstableGame;
+
 			return gd;
 		}
 	}

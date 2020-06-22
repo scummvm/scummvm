@@ -37,8 +37,11 @@ void ComprehendMetaEngine::getSupportedGames(PlainGameList &games) {
 
 GameDescriptor ComprehendMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = COMPREHEND_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+		if (!strcmp(gameId, pd->gameId)) {
+			GameDescriptor gd = *pd;
+			gd._supportLevel = kUnstableGame;
+			return gd;
+		}
 	}
 
 	return GameDescriptor::empty();

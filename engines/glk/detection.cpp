@@ -69,29 +69,35 @@
 
 namespace Glk {
 
-GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename) :
+GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
+		GameSupportLevel supportLevel) :
 		DetectedGame("glk", id, desc, Common::EN_ANY, Common::kPlatformUnknown) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		Common::Language lang) : DetectedGame("glk", id, desc, lang, Common::kPlatformUnknown) {
+		Common::Language lang, GameSupportLevel supportLevel) : DetectedGame("glk", id, desc, lang, Common::kPlatformUnknown) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const char *xtra,
-		const Common::String &filename, Common::Language lang) :
+		const Common::String &filename, Common::Language lang,
+		GameSupportLevel supportLevel) :
 		DetectedGame("glk", id, desc, lang, Common::kPlatformUnknown, xtra) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		const Common::String &md5, size_t filesize) :
+		const Common::String &md5, size_t filesize, GameSupportLevel supportLevel) :
 		DetectedGame("glk", id, desc, Common::UNK_LANG, Common::kPlatformUnknown) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
+	gameSupportLevel = supportLevel;
 	addExtraEntry("filename", filename);
 
 	canBeAdded = true;
@@ -123,13 +129,33 @@ bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsSavingDuringRuntime);
 }
 
-template<class META, class ENG>Engine *create(OSystem *syst, Glk::GlkGameDescription &gameDesc) {
+bool isGameAllowed(GameSupportLevel supportLevel) {
+	bool showTestingWarning = false;
+#ifdef RELEASE_BUILD
+	showTestingWarning = true;
+#endif
+
+	if (((supportLevel == kUnstableGame
+		|| (supportLevel == kTestingGame && showTestingWarning)))
+		&& !Engine::warnUserAboutUnsupportedGame())
+		return false;
+
+	return true;
+}
+
+template<class META, class ENG>bool create(OSystem *syst,
+		Glk::GlkGameDescription &gameDesc, Engine *&engine) {
+
 	Glk::GameDescriptor gd = META::findGame(gameDesc._gameId.c_str());
 	if (gd._description) {
+		if (!isGameAllowed(gd._supportLevel))
+			return true;
+
 		gameDesc._options = gd._options;
-		return new ENG(syst, gameDesc);
+		engine = new ENG(syst, gameDesc);
+		return true;
 	} else {
-		return nullptr;
+		return false;
 	}
 }
 
@@ -167,31 +193,33 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 
 	// Create the correct engine
 	*engine = nullptr;
-	if ((*engine = create<Glk::Adrift::AdriftMetaEngine, Glk::Adrift::Adrift>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::AdvSys::AdvSysMetaEngine, Glk::AdvSys::AdvSys>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::AGT::AGTMetaEngine, Glk::AGT::AGT>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Magnetic::MagneticMetaEngine, Glk::Magnetic::Magnetic>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Quest::QuestMetaEngine, Glk::Quest::Quest>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc)) != nullptr) {}
+	if ((create<Glk::Adrift::AdriftMetaEngine, Glk::Adrift::Adrift>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::AdvSys::AdvSysMetaEngine, Glk::AdvSys::AdvSys>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::AGT::AGTMetaEngine, Glk::AGT::AGT>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Magnetic::MagneticMetaEngine, Glk::Magnetic::Magnetic>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Quest::QuestMetaEngine, Glk::Quest::Quest>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc, *engine))) {}
 	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
-		if (td._options & Glk::TADS::OPTION_TADS3)
-			*engine = new Glk::TADS::TADS3::TADS3(syst, gameDesc);
+		if (!isGameAllowed(td._supportLevel))
+			return Common::kUserCanceled;
+		else if (td._options & Glk::TADS::OPTION_TADS3)
+			new Glk::TADS::TADS3::TADS3(syst, gameDesc);
 		else
-			*engine = new Glk::TADS::TADS2::TADS2(syst, gameDesc);
+			new Glk::TADS::TADS2::TADS2(syst, gameDesc);
 	} else {
 		return Common::kNoGameDataFoundError;
 	}
 
-	return Common::kNoError;
+	return *engine ? Common::kNoError : Common::kUserCanceled;
 }
 
 Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) const {

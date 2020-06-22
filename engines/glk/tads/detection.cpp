@@ -43,6 +43,7 @@ GameDescriptor TADSMetaEngine::findGame(const char *gameId) {
 		if (!strcmp(gameId, pd->gameId)) {
 			GameDescriptor gd = *pd;
 			gd._options = OPTION_TADS2;
+			gd._supportLevel = kUnstableGame;
 			return gd;
 		}
 	}
@@ -51,6 +52,7 @@ GameDescriptor TADSMetaEngine::findGame(const char *gameId) {
 		if (!strcmp(gameId, pd->gameId)) {
 			GameDescriptor gd = *pd;
 			gd._options = OPTION_TADS3;
+			gd._supportLevel = kUnstableGame;
 			return gd;
 		}
 	}
