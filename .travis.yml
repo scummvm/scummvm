@@ -76,7 +76,7 @@ matrix:
       install:
         - cp -v /usr/local/Cellar/{bzip2,libiconv,zlib}/*/lib/*.a /usr/local/lib
       script:
-        - ./configure --enable-all-engines && make -j4
+        - ./configure --enable-all-unstable-engines && make -j4
       before_deploy:
         - make osxsnap
         - mkdir artifacts && cp -r ResidualVM-snapshot.dmg artifacts
