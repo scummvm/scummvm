@@ -67,7 +67,7 @@ void SpeechManager::syncSoundSettings() {
 SpeechManager::SpeechManager() :
 	_refCount(0)
 #if defined(USE_TTS)
-	, _ttsMan(nullptr), _lastSpeechSource(nullptr), _nextSpeechAction(Common::TextToSpeechManager::QUEUE)
+	, _ttsMan(nullptr), _lastSpeechSource(nullptr)
 #endif
 {
 #if defined(USE_TTS)
@@ -108,66 +108,34 @@ SpeechManager::~SpeechManager() {
 #endif
 }
 
-void SpeechManager::flushSpeech(Speech * source) {
+void SpeechManager::speak(const Common::U32String &text, Speech *speechSource) {
 #if defined(USE_TTS)
-	if (source != _lastSpeechSource) {
-		debugC(kDebugSpeech, "SpeechManager::flushSpeech() called with a different source than the last text source");
-		purgeSpeech(source);
-	} else {
-		if (_ttsMan != nullptr && !_speechBuffer.empty()) {
-			// Curently the TextToSpeechManager takes a String, which does not properly support
-			// UTF-32. So convert to UTF-8.
-			Common::String text = _speechBuffer.encode();
-			debugC(kDebugSpeech, "Speaking: \"%s\"", text.c_str());
-			_ttsMan->say(text, _nextSpeechAction, "utf-8");
-			_speechBuffer.clear();
-			_nextSpeechAction = Common::TextToSpeechManager::QUEUE;
+	if (_ttsMan != nullptr) {
+		// If the previous speech is from a different source, interrupt it.
+		// Otherwise queeue the speech.
+		Common::TextToSpeechManager::Action speechAction = Common::TextToSpeechManager::QUEUE;
+		if (speechSource != _lastSpeechSource) {
+			debugC(kDebugSpeech, "Interrupting speech from another source.");
+			speechAction = Common::TextToSpeechManager::INTERRUPT;
+			_lastSpeechSource = speechSource;
 		}
+		// Curently the TextToSpeechManager takes a String, which does not properly support
+		// UTF-32. So convert to UTF-8.
+		Common::String textUtf8 = text.encode();
+		debugC(kDebugSpeech, "Speaking: \"%s\"", textUtf8.c_str());
+		_ttsMan->say(textUtf8, speechAction, "utf-8");
 	}
 #endif
 }
 
-void SpeechManager::purgeSpeech(Speech *source) {
+void SpeechManager::stopSpeech(Speech *speechSource) {
 #if defined(USE_TTS)
-	debugC(kDebugSpeech, "SpeechManager::purgeSpeech()");
-	if (_ttsMan != nullptr) {
-		_speechBuffer.clear();
+	debugC(kDebugSpeech, "SpeechManager::stopSpeech()");
+	// Only interrupt the speech if it is from the given speech source.
+	if (_ttsMan != nullptr && speechSource == _lastSpeechSource)
 		_ttsMan->stop();
-	}
-	_nextSpeechAction = Common::TextToSpeechManager::QUEUE;
-	_lastSpeechSource = source;
 #endif
 }
-
-void SpeechManager::addSpeech(const uint32 *buf, size_t len, Speech *source) {
-#if defined(USE_TTS)
-	if (source != _lastSpeechSource) {
-		debugC(kDebugSpeech, "Flushing SpeechManager buffer for a different speech source");
-		if (!_speechBuffer.empty()) {
-			// Flush the pending speech, but allow interupting it if we flush the text
-			// for the new source before it has finished.
-			flushSpeech(_lastSpeechSource);
-			_nextSpeechAction = Common::TextToSpeechManager::INTERRUPT;
-		}
-		_lastSpeechSource = source;
-	}
-	if (_ttsMan != nullptr) {
-		debugC(1, kDebugSpeech, "SpeechManager add speech");
-		for (int i = 0 ; i < len ; ++i, ++buf) {
-			// Should we automatically flush on new lines without waiting for the call to gli_tts_flush?
-			// Should we also flush on '.', '?', and '!'?
-			//if (*buf == '\n') {
-			//	debugC(1, kDebugSpeech, "Flushing SpeechManager buffer on new line");
-			//	gli_tts_flush();
-			//} else {
-			_speechBuffer += *buf;
-			//}
-		}
-//		debugC(1, kDebugSpeech, "SpeechManager buffer: %s", _speechBuffer.encode().c_str());
-	}
-#endif
-}
-
 
 Speech::Speech() : _speechManager(nullptr) {
 }
@@ -187,20 +155,34 @@ void Speech::gli_initialize_tts(void) {
 
 void Speech::gli_tts_flush(void) {
 	debugC(kDebugSpeech, "gli_tts_flush");
-	if (_speechManager)
-		_speechManager->flushSpeech(this);
+	if (_speechManager && !_speechBuffer.empty())
+		_speechManager->speak(_speechBuffer, this);
+	_speechBuffer.clear();
 }
 
 void Speech::gli_tts_purge(void) {
 	debugC(kDebugSpeech, "gli_tts_purge");
-	if (_speechManager)
-		_speechManager->purgeSpeech(this);
+	if (_speechManager) {
+		_speechBuffer.clear();
+		_speechManager->stopSpeech(this);
+	}
 }
 
 void Speech::gli_tts_speak(const uint32 *buf, size_t len) {
 	debugC(1, kDebugSpeech, "gli_tts_speak");
-	if (_speechManager)
-		_speechManager->addSpeech(buf, len, this);
+	if (_speechManager) {
+		for (int i = 0 ; i < len ; ++i, ++buf) {
+			// Should we automatically flush on new lines without waiting for the call to gli_tts_flush?
+			// Should we also flush on '.', '?', and '!'?
+			//if (*buf == '\n') {
+			//	debugC(1, kDebugSpeech, "Flushing SpeechManager buffer on new line");
+			//	gli_tts_flush();
+			//} else {
+			_speechBuffer += *buf;
+			//}
+		}
+		//debugC(1, kDebugSpeech, "SpeechManager buffer: %s", _speechBuffer.encode().c_str());
+	}
 }
 
 void Speech::gli_free_tts(void) {

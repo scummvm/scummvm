@@ -25,11 +25,10 @@
 
 #include "common/events.h"
 #include "glk/glk_types.h"
-#include "common/singleton.h"
+#include "common/ustr.h"
 
 #if defined(USE_TTS)
 #include "common/text-to-speech.h"
-#include "common/ustr.h"
 #endif
 
 namespace Glk {
@@ -41,9 +40,8 @@ public:
 	static SpeechManager* getSpeechManagerInstance();
 	void releaseSpeechManagerInstance();
 
-	void flushSpeech(Speech *);
-	void purgeSpeech(Speech *);
-	void addSpeech(const uint32 *buf, size_t len, Speech *);
+	void speak(const Common::U32String &, Speech *);
+	void stopSpeech(Speech *);
 
 	static void syncSoundSettings();
 
@@ -55,9 +53,7 @@ private:
 	int _refCount;
 
 #if defined(USE_TTS)
-	Common::U32String _speechBuffer;
 	Common::TextToSpeechManager *_ttsMan;
-	Common::TextToSpeechManager::Action _nextSpeechAction;
 	Speech *_lastSpeechSource;
 #endif
 };
@@ -66,6 +62,7 @@ private:
 class Speech {
 private:
 	SpeechManager *_speechManager;
+	Common::U32String _speechBuffer;
 
 protected:
 	Speech();
