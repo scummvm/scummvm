@@ -2239,6 +2239,7 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 	Common::Array<Common::U32String> lines;
 	Common::U32String singleMessage;
 
+	// GUI U32 TODO: This can be better optimized perhaps?
 	for (Common::U32String::const_iterator itr = msg.begin(); itr != msg.end(); itr++) {
 		if (*itr == '\n') {
 			lines.push_back(singleMessage);
@@ -2247,6 +2248,7 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 		}
 		singleMessage += (*itr);
 	}
+	lines.push_back(singleMessage);
 
 	// Determine a rect which would contain the message string (clipped to the
 	// screen dimensions).
@@ -2465,7 +2467,7 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerT
 		}
 		if (newScalerName) {
 			const Common::U32String message = Common::U32String::format(
-				_("Active graphics filter: ") + Common::U32String("%s\n%d x %d -> %d x %d"),
+				_("Active graphics filter:") + Common::U32String("%s\n%d x %d -> %d x %d"),
 				newScalerName,
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwScreen->w, _hwScreen->h);

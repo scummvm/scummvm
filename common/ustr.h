@@ -237,16 +237,13 @@ public:
 	void trim();
 
 	/**
-	 * Print formatted data into a String object. Similar to sprintf,
-	 * except that it stores the result in (variably sized) String
-	 * instead of a fixed size buffer.
+	 * Print formatted data into a U32String object.
 	 */
-	static U32String format(U32String fmt, ...) GCC_PRINTF(1, 2);
+	static U32String format(U32String fmt, ...);
 
 	/**
-	 * Print formatted data into a String object. Similar to vsprintf,
-	 * except that it stores the result in (variably sized) String
-	 * instead of a fixed size buffer.
+	 * Print formatted data into a U32String object. It takes in the
+	 * output by reference and works with iterators.
 	 */
 	static int vformat(U32String &output, U32String::iterator fmt, va_list args);
 
