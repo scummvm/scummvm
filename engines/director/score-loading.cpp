@@ -737,11 +737,10 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		unk3 = stream.readByte();
 	} else if (_vm->getVersion() == 4) {
 		size1 = stream.readUint16();
-		sizeToRead = size1 + 2 + 16; // 16 is for bounding rects
+		sizeToRead = size1 + 2 + 16 + 1; // 16 is for bounding rects + 1 is for moved _flag
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
-		unk1 = stream.readByte();
 	} else if (_vm->getVersion() == 5) {
 		castType = stream.readUint32();
 		size3 = stream.readUint32();
