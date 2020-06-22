@@ -1260,6 +1260,13 @@ void Item::destroy(bool delnow) {
 		World::get_instance()->getCurrentMap()->removeItemFromList(this, _x, _y);
 	}
 
+	if (GAME_IS_CRUSADER) {
+		// Ensure sounds for this object are stopped
+		AudioProcess *audio = AudioProcess::get_instance();
+		if (audio)
+			audio->stopSFX(-1, _objId);
+	}
+
 	if (_extendedFlags & Item::EXT_CAMERA)
 		CameraProcess::SetCameraProcess(0);
 
