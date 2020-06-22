@@ -836,8 +836,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_blend = d.asInt();
 		break;
 	case kTheCastNum:
-		score->unrenderSprite(id);
-		sprite->setCast(d.asInt());
+		// Don't cause unnecessary flashing
+		if (d.asInt() != sprite->_castId) {
+			score->markDirtyRect(channel->getBbox());
+			sprite->setCast(d.asInt());
+		}
 		break;
 	case kTheConstraint:
 		if (d.type == CASTREF) {
@@ -858,7 +861,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheHeight:
 		if (sprite->_puppet && sprite->_stretch) {
-			score->unrenderSprite(id);
+			score->markDirtyRect(channel->getBbox());
 			sprite->_height = d.asInt();
 		}
 		break;
@@ -924,7 +927,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheWidth:
 		if (sprite->_puppet && sprite->_stretch) {
-			score->unrenderSprite(id);
+			score->markDirtyRect(channel->getBbox());
 			sprite->_width = d.asInt();
 		}
 		break;

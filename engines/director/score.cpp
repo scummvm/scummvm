@@ -410,6 +410,7 @@ void Score::startLoop() {
 
 	_lingo->processEvent(kEventStartMovie);
 
+	_maskSurface->clear(1);
 	while (!_stopPlay) {
 		if (_currentFrame >= _frames.size()) {
 			if (debugChannelSet(-1, kDebugNoLoop))
@@ -419,6 +420,7 @@ void Score::startLoop() {
 		}
 
 		update();
+		_maskSurface->clear(0);
 
 		if (_currentFrame < _frames.size())
 			_vm->processEvents();
@@ -558,7 +560,6 @@ void Score::update() {
 }
 
 void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) {
-	_maskSurface->clear(0);
 
 	Frame *currentFrame = _frames[frameId];
 
@@ -580,43 +581,37 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		bool needsUpdate = currentSprite->isDirty() ||
 			currentSprite->_castId != nextSprite->_castId ||
 			channel->_delta != Common::Point(0, 0) ||
-			currentSprite->_startPoint != nextSprite->_startPoint ||
 			currentSprite->getDims() != nextSprite->getDims() ||
-			(channel->_currentPoint != nextSprite->_startPoint &&
-			 currentSprite != nextSprite);
+			channel->_currentPoint != nextSprite->_startPoint;
 
-		// WORKAROUND, HACK: Redraw reverse ink sprites each time to prevent flickering
-		needsUpdate = needsUpdate || (currentSprite->_ink == kInkTypeReverse);
-
-		if (needsUpdate || forceUpdate)
-			unrenderSprite(i);
+		if ((needsUpdate || forceUpdate) && !currentSprite->_trails)
+			markDirtyRect(channel->getBbox());
 
 		channel->_sprite = nextSprite;
+		channel->_sprite->updateCast();
 
-		if (currentSprite->_castId == 0 && nextSprite->_castId != 0)
-			channel->resetPosition();
+		// Sprites marked moveable are constrained to the same bounding box until
+		// the moveable is disabled
+		if (!nextSprite->_puppet && !nextSprite->_moveable)
+			channel->_currentPoint = nextSprite->_startPoint;
 
 		channel->updateLocation();
+
+		// TODO: Understand why conditioning this causes so many problems
+		markDirtyRect(channel->getBbox());
 	}
 
 	for (uint id = 0; id < _channels.size(); id++) {
 		Channel *channel = _channels[id];
 		Sprite *sprite = channel->_sprite;
 
-		if (!sprite || !sprite->_enabled || !sprite->_castType)
+		if (!sprite || !sprite->_enabled || !sprite->_castId)
 			continue;
 
-		sprite->updateCast();
-
-		// Sprites marked moveable are constrained to the same bounding box until
-		// the moveable is disabled
-		if (!sprite->_puppet && !sprite->_moveable)
-			channel->_currentPoint = sprite->_startPoint;
-
 		Common::Rect currentBbox = channel->getBbox();
-		_maskSurface->fillRect(currentBbox, 1);
 
 		debugC(1, kDebugImages, "Score::renderFrame(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
+
 		if (sprite->_castType == kCastShape) {
 			renderShape(id);
 		} else {
@@ -653,6 +648,11 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 
 }
 
+void Score::markDirtyRect(Common::Rect dirty) {
+	_maskSurface->fillRect(dirty, 1);
+	_surface->fillRect(dirty, _stageColor);
+}
+
 void Score::screenShot() {
 	Graphics::Surface rawSurface = _surface->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
@@ -672,17 +672,6 @@ void Score::screenShot() {
 	}
 
 	newSurface->free();
-}
-
-void Score::unrenderSprite(int spriteId) {
-	Channel *channel = _channels[spriteId];
-	Sprite *currentSprite = channel->_sprite;
-
-	if (!currentSprite->_trails) {
-		Common::Rect currentBbox = channel->getBbox();
-		_maskSurface->fillRect(currentBbox, 1);
-		_surface->fillRect(currentBbox, _stageColor);
-	}
 }
 
 void Score::renderShape(uint16 spriteId) {

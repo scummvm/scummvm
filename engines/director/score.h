@@ -147,7 +147,7 @@ public:
 	Cast *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
 	void renderFrame(uint16 frameId, bool forceUpdate = false, bool updateStageOnly = false);
-	void unrenderSprite(int spriteId);
+	void markDirtyRect(Common::Rect dirty);
 
 private:
 	void update();
