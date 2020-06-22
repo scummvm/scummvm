@@ -79,6 +79,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		if (_pitch % 16)
 			_pitch += 16 - (_initialRect.width() % 16);
 	} else if (version == 4) {
+		_flags = stream.readByte();
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
@@ -161,7 +162,7 @@ DigitalVideoCast::DigitalVideoCast(Common::ReadStreamEndian &stream, uint16 vers
 		_enableCrop = false;
 		_center = false;
 	} else {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			stream.readUint16();
 		}
 		_frameRate = stream.readByte();
@@ -191,7 +192,7 @@ SoundCast::SoundCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_looping = 0;
 
 	if (version == 4) {
-		for (int i = 0; i < 0xe; i++) {
+		for (int i = 0; i < 0xf; i++) {
 			stream.readByte();
 		}
 		_looping = stream.readByte() & 0x10 ? 0 : 1;
@@ -267,6 +268,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButt
 			_initialRect.debugPrint(2, "TextCast(): rect:");
 		}
 	} else if (version == 4) {
+		byte flags = stream.readByte();
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -282,10 +284,10 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButt
 		_initialRect = Score::readRect(stream);
 		stream.readUint16();
 		_textShadow = static_cast<SizeType>(stream.readByte());
-		byte flags = stream.readByte();
+		byte flags2 = stream.readByte();
 
-		if (flags)
-			warning("Unprocessed text cast flags: %x", flags);
+		if (flags || flags2)
+			warning("Unprocessed text cast flags: %x, flags:2 %x", flags, flags2);
 
 		_fontSize = stream.readUint16();
 		_textSlant = 0;
@@ -493,7 +495,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else if (version == 4) {
-		flags = 0;
+		flags = stream.readByte();
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Score::readRect(stream);
@@ -545,6 +547,7 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	if (version < 4) {
 		error("Unhandled Script cast");
 	} else if (version == 4) {
+		byte flags = stream.readByte();
 		byte unk1 = stream.readByte();
 		byte type = stream.readByte();
 
@@ -564,7 +567,7 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 		_id = stream.readUint32();
 
-		debugC(4, kDebugLoading, "CASt: Script id: %d type: %s (%d) unk1: %d", _id, scriptType2str(_scriptType), type, unk1);
+		debugC(3, kDebugLoading, "CASt: Script id: %d type: %s (%d), flags: (%x), unk1: %d", _id, scriptType2str(_scriptType), type, flags, unk1);
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
