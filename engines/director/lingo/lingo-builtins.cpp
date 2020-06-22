@@ -420,7 +420,7 @@ void LB::b_chars(int nargs) {
 	int to = g_lingo->pop().asInt();
 	int from = g_lingo->pop().asInt();
 	Datum s = g_lingo->pop();
-	TYPECHECK2(s, STRING, REFERENCE);
+	TYPECHECK2(s, STRING, FIELDREF);
 
 	Common::String src = s.asString();
 
@@ -472,7 +472,7 @@ void LB::b_hilite(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
-	TYPECHECK2(d, STRING, REFERENCE);
+	TYPECHECK2(d, STRING, FIELDREF);
 
 	int len = strlen(d.asString().c_str());
 
@@ -560,7 +560,7 @@ void LB::b_addProp(int nargs) {
 	Datum list = g_lingo->pop();
 
 	TYPECHECK(list, PARRAY);
-	if (prop.type == REFERENCE)
+	if (prop.type == FIELDREF)
 		prop = g_lingo->varFetch(prop);
 
 	PCell cell = PCell(prop, value);
@@ -991,7 +991,7 @@ void LB::b_setProp(int nargs) {
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK(list, PARRAY);
-	if (prop.type == REFERENCE)
+	if (prop.type == FIELDREF)
 		prop = g_lingo->varFetch(prop);
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
@@ -2133,7 +2133,7 @@ void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
 
 	Datum res(g_lingo->castIdFetch(d));
-	res.type = REFERENCE;
+	res.type = CASTREF;
 	g_lingo->push(res);
 }
 
@@ -2141,7 +2141,7 @@ void LB::b_field(int nargs) {
 	Datum d = g_lingo->pop();
 
 	Datum res(g_lingo->castIdFetch(d));
-	res.type = REFERENCE;
+	res.type = FIELDREF;
 	g_lingo->push(res);
 }
 
@@ -2176,9 +2176,7 @@ void LB::b_window(int nargs) {
 
 	warning("STUB: b_window");
 
-	Datum res(0);
-	res.type = REFERENCE;
-	g_lingo->push(res);
+	g_lingo->push(Datum());
 }
 
 void LB::b_numberofchars(int nargs) {

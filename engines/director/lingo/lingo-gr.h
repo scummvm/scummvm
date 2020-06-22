@@ -62,7 +62,7 @@ extern int yydebug;
     RECT = 263,                    /* RECT  */
     ARRAY = 264,                   /* ARRAY  */
     OBJECT = 265,                  /* OBJECT  */
-    REFERENCE = 266,               /* REFERENCE  */
+    FIELDREF = 266,                /* FIELDREF  */
     LEXERROR = 267,                /* LEXERROR  */
     PARRAY = 268,                  /* PARRAY  */
     INT = 269,                     /* INT  */

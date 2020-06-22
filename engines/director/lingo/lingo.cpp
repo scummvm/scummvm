@@ -637,7 +637,7 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 	int d1Type = d1.type;
 	int d2Type = d2.type;
 
-	if (d1Type == STRING) {
+	if (d1Type == STRING || d1Type == FIELDREF) {
 		Common::String src = d1.asString();
 		char *endPtr = 0;
 		strtod(src.c_str(), &endPtr);
@@ -645,7 +645,7 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 			d1Type = FLOAT;
 		}
 	}
-	if (d2Type == STRING) {
+	if (d2Type == STRING || d2Type == FIELDREF) {
 		Common::String src = d1.asString();
 		char *endPtr = 0;
 		strtod(src.c_str(), &endPtr);
@@ -662,7 +662,7 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 
 	if (d1Type == FLOAT || d2Type == FLOAT) {
 		opType = FLOAT;
-	} else if ((d1Type == INT || d1Type == REFERENCE) && (d2Type == INT || d2Type == REFERENCE)) {
+	} else if ((d1Type == INT || d1Type == CASTREF) && (d2Type == INT || d2Type == CASTREF)) {
 		opType = INT;
 	}
 
@@ -691,7 +691,8 @@ void Datum::reset() {
 		case OBJECT:
 			delete u.obj;
 			break;
-		case REFERENCE:
+		case CASTREF:
+		case FIELDREF:
 			// fallthrough
 		case INT:
 			// fallthrough
@@ -719,6 +720,7 @@ int Datum::asInt() {
 
 	switch (type) {
 	case STRING:
+	case FIELDREF:
 		{
 			Common::String src = asString();
 			char *endPtr = 0;
@@ -734,7 +736,7 @@ int Datum::asInt() {
 		// no-op
 		break;
 	case INT:
-	case REFERENCE:
+	case CASTREF:
 		res = u.i;
 		break;
 	case FLOAT:
@@ -752,6 +754,7 @@ double Datum::asFloat() {
 
 	switch (type) {
 	case STRING:
+	case FIELDREF:
 		{
 			Common::String src = asString();
 			char *endPtr = 0;
@@ -767,7 +770,7 @@ double Datum::asFloat() {
 		// no-op
 		break;
 	case INT:
-	case REFERENCE:
+	case CASTREF:
 		res = (double)u.i;
 		break;
 	case FLOAT:
@@ -824,7 +827,8 @@ Common::String Datum::asString(bool printonly) {
 	case VAR:
 		s = Common::String::format("var: #%s", u.s->c_str());
 		break;
-	case REFERENCE:
+	case CASTREF:
+	case FIELDREF:
 		{
 			int idx = u.i;
 			Cast *member = g_director->getCastMember(idx);
@@ -834,7 +838,7 @@ Common::String Datum::asString(bool printonly) {
 				break;
 			}
 
-			if (member->_type == kCastText) {
+			if (type == FIELDREF) {
 				if (!printonly) {
 					s = ((TextCast *)member)->getText();
 				} else {
@@ -905,8 +909,8 @@ const char *Datum::type2str(bool isk) {
 		return isk ? "#symbol" : "SYMBOL";
 	case OBJECT:
 		return isk ? "#object" : "OBJECT";
-	case REFERENCE:
-		return "REFERENCE";
+	case FIELDREF:
+		return "FIELDREF";
 	case VAR:
 		return isk ? "#var" : "VAR";
 	default:
@@ -1124,7 +1128,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 		localvars = _localvars;
 	}
 
-	if (var.type != VAR && var.type != REFERENCE) {
+	if (var.type != VAR && var.type != FIELDREF) {
 		warning("varAssign: assignment to non-variable");
 		return;
 	}
@@ -1153,7 +1157,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 		}
 
 		*d = value;
-	} else if (var.type == REFERENCE) {
+	} else if (var.type == FIELDREF) {
 		Score *score = g_director->getCurrentScore();
 		if (!score) {
 			warning("varAssign: Assigning to a reference to an empty score");
@@ -1183,7 +1187,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 
 	Datum result;
 	result.type = VOID;
-	if (var.type != VAR && var.type != REFERENCE) {
+	if (var.type != VAR && var.type != FIELDREF) {
 		warning("varFetch: fetch from non-variable");
 		return result;
 	}
@@ -1218,7 +1222,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 		}
 
 		return *d;
-	} else if (var.type == REFERENCE) {
+	} else if (var.type == FIELDREF) {
 		Cast *cast = _vm->getCastMember(var.u.i);
 		if (cast) {
 			switch (cast->_type) {

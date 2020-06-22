@@ -232,7 +232,7 @@ extern int yydebug;
     RECT = 263,                    /* RECT  */
     ARRAY = 264,                   /* ARRAY  */
     OBJECT = 265,                  /* OBJECT  */
-    REFERENCE = 266,               /* REFERENCE  */
+    FIELDREF = 266,                /* FIELDREF  */
     LEXERROR = 267,                /* LEXERROR  */
     PARRAY = 268,                  /* PARRAY  */
     INT = 269,                     /* INT  */
@@ -360,7 +360,7 @@ enum yysymbol_kind_t
   YYSYMBOL_RECT = 8,                       /* RECT  */
   YYSYMBOL_ARRAY = 9,                      /* ARRAY  */
   YYSYMBOL_OBJECT = 10,                    /* OBJECT  */
-  YYSYMBOL_REFERENCE = 11,                 /* REFERENCE  */
+  YYSYMBOL_FIELDREF = 11,                  /* FIELDREF  */
   YYSYMBOL_LEXERROR = 12,                  /* LEXERROR  */
   YYSYMBOL_PARRAY = 13,                    /* PARRAY  */
   YYSYMBOL_INT = 14,                       /* INT  */
@@ -921,7 +921,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
   static const char *const yy_sname[] =
   {
   "end of file", "error", "invalid token", "UNARY", "CASTREF", "VOID",
-  "VAR", "POINT", "RECT", "ARRAY", "OBJECT", "REFERENCE", "LEXERROR",
+  "VAR", "POINT", "RECT", "ARRAY", "OBJECT", "FIELDREF", "LEXERROR",
   "PARRAY", "INT", "ARGC", "ARGCNORET", "THEENTITY", "THEENTITYWITHID",
   "THEMENUITEMENTITY", "THEMENUITEMSENTITY", "FLOAT", "BLTIN", "FBLTIN",
   "RBLTIN", "THEFBLTIN", "ID", "STRING", "HANDLER", "SYMBOL", "ENDCLAUSE",

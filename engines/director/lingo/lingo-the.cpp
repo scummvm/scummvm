@@ -840,7 +840,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->setCast(d.asInt());
 		break;
 	case kTheConstraint:
-		if (d.type == REFERENCE) {
+		if (d.type == CASTREF) {
 			// Reference: Cast ID
 			// Find the first channel that uses this cast.
 			for (uint i = 0; i < score->_channels.size(); i++)
