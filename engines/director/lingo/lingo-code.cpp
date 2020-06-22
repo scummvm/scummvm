@@ -240,6 +240,11 @@ void Lingo::popContext() {
 	CFrame *fp = g_lingo->_callstack.back();
 	g_lingo->_callstack.pop_back();
 
+	// Destroy anonymous context
+	if (g_lingo->_archiveIndex < 0) {
+		delete g_lingo->_currentScriptContext;
+	}
+
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_currentScriptContext = fp->retctx;
 	g_lingo->_archiveIndex = fp->retarchive;
@@ -654,10 +659,8 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 	}
 
 	if ((d2.type == INT && d2.u.i == 0) ||
-			(d2.type == FLOAT && d2.u.f == 0.0)) {
-		warning("LC::divData(): division by zero");
-		d2 = Datum(1);
-	}
+			(d2.type == FLOAT && d2.u.f == 0.0))
+		error("division by zero");
 
 	int alignedType = g_lingo->getAlignedType(d1, d2);
 
@@ -686,10 +689,8 @@ Datum LC::modData(Datum &d1, Datum &d2) {
 
 	int i1 = d1.asInt();
 	int i2 = d2.asInt();
-	if (i2 == 0) {
-		warning("LC::modData(): division by zero");
-		i2 = 1;
-	}
+	if (i2 == 0)
+		error("division by zero");
 
 	Datum res(i1 % i2);
 	return res;

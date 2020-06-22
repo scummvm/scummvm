@@ -521,7 +521,6 @@ void LB::b_value(int nargs) {
 	ScriptContext *sc = g_lingo->compileAnonymous(code.c_str());
 	Symbol sym = sc->_eventHandlers[kEventNone];
 	LC::call(sym, 0);
-	delete sc;
 }
 
 ///////////////////
