@@ -767,7 +767,7 @@ double Datum::asFloat() {
 		res = (double)u.i;
 		break;
 	case FLOAT:
-		// no-op
+		res = u.f;
 		break;
 	default:
 		warning("Incorrect operation makeFloat() for type: %s", type2str());
