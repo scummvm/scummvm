@@ -81,7 +81,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Maybe get HP? Called from ANDROID::calledFromAnim, goes to NPCDEATH
 	"void I_NPCsetSomething_00C(int)",
 	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
-	"int16 Actor::I_NPCSomething00E(Actor *, int, int)",
+	"int16 Actor::I_turnToward(Actor *, direction, unk)", // TODO: work out what unk is
 	"void I_playFlic(void), int16 I_playFlic(Item *, char *name, int16 sizex, int16 sizey)",
 	// 0010
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff as 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
@@ -198,7 +198,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 MainActor::I_teleportToEgg(int, int, int)",
 	"int16 PaletteFaderProcess::I_fadeFromBlack(void)", // from black, no arg (40 frames)
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 130
-	"int16 Actir::I_getHp(Actor *)", // TODO: double-check whether field 0 of NPC data is HP or *max* HP.
+	"int16 Actor::I_getHp(Actor *)", // TODO: double-check whether field 0 of NPC data is HP or *max* HP.
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Item::I_getQuality(Item *)", // based on disassembly
 	"void Item::I_setQuality(Item *, int)", // based on disassembly. same coff as 0BA, 125
@@ -275,7 +275,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
-	"int16 I_showKeypadGump_0C4(int unk)", // TODO: what's the parameter?
+	"int16 KeypadGump::I_showKeypad(int targetCode)",
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"void SpriteProcess::I_createSprite(word, word, word, word, uword, uword, ubyte)",
 	"byte Item::I_getDirFromItem(Item *, itemno)", // same disasm as U8

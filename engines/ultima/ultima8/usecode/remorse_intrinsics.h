@@ -243,7 +243,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_andStatus, // void Intrinsic0C1(6 bytes)
 	Item::I_hurl, // void Intrinsic0C2(12 bytes)
 	Item::I_andStatus, // void Intrinsic0C3(6 bytes)
-	0, // void Intrinsic0C4(2 bytes) // TODO: Implement keypad gump (gump shape 10 for the border, shape 11 frames for the buttons.)
+	KeypadGump::I_showKeypad, // void Intrinsic0C4(2 bytes)
 	Item::I_isOn,
 	SpriteProcess::I_createSprite, // void Intrinsic0C6(14 bytes)
 	Item::I_getDirFromItem, // int Intrinsic0C7(6 bytes)

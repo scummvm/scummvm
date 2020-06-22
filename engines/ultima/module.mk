@@ -473,6 +473,7 @@ MODULE_OBJS := \
 	ultima8/gumps/gump_notify_process.o \
 	ultima8/gumps/inverter_gump.o \
 	ultima8/gumps/item_relative_gump.o \
+	ultima8/gumps/keypad_gump.o \
 	ultima8/gumps/main_menu_process.o \
 	ultima8/gumps/menu_gump.o \
 	ultima8/gumps/message_box_gump.o \
