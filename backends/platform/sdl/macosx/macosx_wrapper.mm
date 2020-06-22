@@ -36,39 +36,46 @@ bool hasTextInClipboardMacOSX() {
 	return [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]] != nil;
 }
 
-Common::String getTextFromClipboardMacOSX() {
+Common::U32String getTextFromClipboardMacOSX() {
 	if (!hasTextInClipboardMacOSX())
-		return Common::String();
+		return Common::U32String();
 	// Note: on OS X 10.6 and above it is recommanded to use NSPasteboardTypeString rather than NSStringPboardType.
 	// But since we still target older version use NSStringPboardType.
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	NSString *str = [pb  stringForType:NSStringPboardType];
 	if (str == nil)
-		return Common::String();
+		return Common::U32String();
 
 	// If translations are supported, use the current TranslationManager charset and otherwise
 	// use ASCII. If the string cannot be represented using the requested encoding we get a null
 	// pointer below, which is fine as ScummVM would not know what to do with the string anyway.
-#ifdef USE_TRANSLATION
-	NSString* encStr = [NSString stringWithCString:TransMan.getCurrentCharset().c_str() encoding:NSASCIIStringEncoding];
-	NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)encStr));
+#ifdef SCUMM_LITTLE_ENDIAN
+	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
 #else
-	NSStringEncoding encoding = NSISOLatin1StringEncoding;
+	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
-	return Common::String([str cStringUsingEncoding:encoding]);
+	NSUInteger textLength = [str length];
+	uint32 *text = new uint32[textLength];
+	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength-1) remainingRange:NULL]) {
+		delete[] text;
+		return Common::U32String();
+	}
+	Common::U32String u32String(text, textLength);
+	delete[] text;
+
+	return u32String;
 }
 
-bool setTextInClipboardMacOSX(const Common::String &text) {
+bool setTextInClipboardMacOSX(const Common::U32String &text) {
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	[pb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
 
-#ifdef USE_TRANSLATION
-	NSString* encStr = [NSString stringWithCString:TransMan.getCurrentCharset().c_str() encoding:NSASCIIStringEncoding];
-	NSStringEncoding encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)encStr));
+#ifdef SCUMM_LITTLE_ENDIAN
+	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
 #else
-	NSStringEncoding encoding = NSISOLatin1StringEncoding;
+	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
-	return [pb setString:[NSString stringWithCString:text.c_str() encoding:encoding] forType:NSStringPboardType];
+	return [pb setString:[[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding] forType:NSStringPboardType];
 }
 
 Common::String getDesktopPathMacOSX() {
