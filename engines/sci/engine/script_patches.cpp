@@ -6091,6 +6091,54 @@ static const uint16 longbowPatchAmigaSpeedTest[] = {
 	PATCH_END
 };
 
+// When Robin is sentenced to death, King Richard and Robin discuss Marian's
+//  death even if she is alive and just finished testifying at the trial.
+//
+// At the end of the game, troub:init calculates which ending to use based on
+//  the ransom raised, the number of outlaws left, interactions with others, and
+//  whether or not Marian lived. These calculations are complex and the worst of
+//  the four endings is to be hung. Room 422 handles this ending, but unlike the
+//  other trial scripts, it doesn't test any flags. Instead it always displays
+//  messages that begin with Marian's death even though this ending is possible
+//  when Marian is alive.
+//
+// We fix this by skipping the messages that discuss Marian's death if she is
+//  alive. We make room for this by overwriting redundant code that disables the
+//  icon bar. The icon bar is already disabled by the previous room, and even if
+//  it weren't, the subsequent call to HandsOff would have disabled it.
+//
+// Applies to: All versions
+// Responsible method: hanging:init
+static const uint16 longbowSignatureMarianMessagesFix[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(disable),  // pushi disable
+	0x39, 0x08,                     // pushi 08
+	0x76,                           // push0
+	0x78,                           // push1
+	0x7a,                           // push2
+	0x39, 0x03,                     // pushi 03
+	0x39, 0x04,                     // pushi 04
+	0x39, 0x05,                     // pushi 05
+	0x39, 0x06,                     // pushi 06
+	0x39, 0x07,                     // pushi 07
+	0x81, 0x45,                     // lag 45
+	0x4a, 0x14,                     // send 14 [ IconBar disable: 1 2 3 4 5 6 7 ]
+	SIG_END
+};
+
+static const uint16 longbowPatchMarianMessagesFix[] = {
+	0x76,                           // push0
+	0x39, 0x3e,                     // pushi 3e      [ flag 62 ]
+	0x45, 0x05, 0x02,               // callb proc0_5 [ is Marian alive? ]
+	0x31, 0x0e,                     // bnt 0e
+	0x38, PATCH_UINT16(0x0093),     // pushi 0093
+	0xab, 0x0a,                     // ssl 0a [ start message sequence at 147 ]
+	0x76,                           // push0
+	0xab, 0x0c,                     // ssl 0c [ stop sequence after first message ]
+	0x33, 0x04,                     // jmp 04
+	PATCH_END
+};
+
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
@@ -6102,6 +6150,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   260, "day 5/6 town map sunset fix",                 1, longbowSignatureTownMapSunsetFix,        longbowPatchTownMapSunsetFix },
 	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding,       longbowPatchArcherPathfinding },
 	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,              longbowPatchCobblerHut },
+	{  true,   422, "marian messages fix",                         1, longbowSignatureMarianMessagesFix,       longbowPatchMarianMessagesFix },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
 	{  true,   600, "amiga fulk rescue fix",                       1, longbowSignatureAmigaFulkRescue,         longbowPatchAmigaFulkRescue },
 	{  true,   803, "amiga speed test",                            1, longbowSignatureAmigaSpeedTest,          longbowPatchAmigaSpeedTest },
