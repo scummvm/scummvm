@@ -154,6 +154,17 @@ DigitalVideoCast::DigitalVideoCast(Common::ReadStreamEndian &stream, uint16 vers
 		for (int i = 0; i < 0xd; i++) {
 			stream.readByte();
 		}
+		_frameRate = 12;
+		_frameRateType = kFrameRateDefault;
+
+		_preload = false;
+		_enableVideo = false;
+		_pauseAtStart = false;
+		_showControls = false;
+		_looping = false;
+		_enableSound = false;
+		_enableCrop = false;
+		_center = false;
 	} else {
 		for (int i = 0; i < 4; i++) {
 			stream.readUint16();
