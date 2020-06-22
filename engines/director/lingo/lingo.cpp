@@ -201,6 +201,10 @@ Common::String Lingo::getName(uint16 id) {
 Symbol Lingo::getHandler(const Common::String &name) {
 	Symbol result;
 	if (!_eventHandlerTypeIds.contains(name)) {
+		// local functions
+		if (_currentScriptContext && _currentScriptContext->_functionHandlers.contains(name))
+			return _currentScriptContext->_functionHandlers[name];
+
 		// local scripts
 		if (_archives[kArchMain].functionHandlers.contains(name))
 			return _archives[kArchMain].functionHandlers[name];
