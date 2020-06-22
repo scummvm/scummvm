@@ -656,7 +656,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 void Score::screenShot() {
 	Graphics::Surface rawSurface = _surface->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	Graphics::Surface newSurface = *(rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette()));
+	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 	Common::String currentPath = _vm->getCurrentPath().c_str();
 	Common::replace(currentPath, "/", "-"); // exclude '/' from screenshot filename prefix
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), _macName.c_str());
@@ -665,11 +665,13 @@ void Score::screenShot() {
 	Common::DumpFile screenshotFile;
 	if (screenshotFile.open(filename)) {
 #ifdef USE_PNG
-		Image::writePNG(screenshotFile, newSurface);
+		Image::writePNG(screenshotFile, *newSurface);
 #else
 		warning("Screenshot requested, but PNG support is not compiled in");
 #endif
 	}
+
+	newSurface->free();
 }
 
 void Score::unrenderSprite(int spriteId) {
