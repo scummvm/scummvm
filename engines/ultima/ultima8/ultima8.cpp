@@ -70,6 +70,8 @@
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
+#include "ultima/ultima8/world/actors/battery_charger_process.h"
+#include "ultima/ultima8/world/actors/cru_healer_process.h"
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/usecode/u8_intrinsics.h"
 #include "ultima/ultima8/usecode/remorse_intrinsics.h"
@@ -1357,7 +1359,6 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 
 	return true;
 }
-
 
 //
 // Intrinsics

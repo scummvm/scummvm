@@ -287,7 +287,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // void Intrinsic0EB(void)
 	Item::I_popToEnd,
 	Item::I_popToContainer,
-	0, // TODO: Implement BatteryChargerProcess::I_create
+	BatteryChargerProcess::I_create,
 	Kernel::I_getNumProcesses, // void Intrinsic0EF(4 bytes)
 	// 0x0F0
 	Item::I_getQHi,  // based on same coff set as 026
@@ -296,7 +296,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_getQ, // void Intrinsic0F4(4 bytes)
 	Item::I_setQ, // void Intrinsic0F5(6 bytes)
-	0, // TODO: Implement CruHealer::I_create
+	CruHealerProcess::I_create,
 	Item::I_hurl, // void Intrinsic0F7(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_hurl, // void Intrinsic0F9(12 bytes)

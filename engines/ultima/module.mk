@@ -549,7 +549,9 @@ MODULE_OBJS := \
 	ultima8/world/actors/avatar_death_process.o \
 	ultima8/world/actors/avatar_gravity_process.o \
 	ultima8/world/actors/avatar_mover_process.o \
+	ultima8/world/actors/battery_charger_process.o \
 	ultima8/world/actors/clear_feign_death_process.o \
+	ultima8/world/actors/cru_healer_process.o \
 	ultima8/world/actors/combat_process.o \
 	ultima8/world/actors/grant_peace_process.o \
 	ultima8/world/actors/heal_process.o \
