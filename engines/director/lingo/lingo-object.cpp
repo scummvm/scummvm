@@ -114,7 +114,6 @@ Object *Object::clone() {
 	res->properties = properties;
 	res->methods = methods;
 	res->inheritanceLevel = inheritanceLevel + 1;
-	res->scriptContext = scriptContext;
 	if (objArray) {
 		res->objArray = new Common::HashMap<uint32, Datum>(*objArray);
 	}

@@ -250,17 +250,15 @@ struct Object {
 	DatumHash properties;
 	SymbolHash methods;
 	int inheritanceLevel; // 1 for original object
-	ScriptContext *scriptContext;
 
 	// used only for factories
 	Common::HashMap<uint32, Datum> *objArray;
 
-	Object(const Common::String &objName, ObjectType objType, ScriptContext *objContext = nullptr) {
+	Object(const Common::String &objName, ObjectType objType) {
 		name = new Common::String(objName);
 		type = objType;
 		disposed = false;
 		inheritanceLevel = 1;
-		scriptContext = objContext;
 		prototype = nullptr;
 
 		if (objType == kFactoryObj) {
