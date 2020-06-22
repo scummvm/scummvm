@@ -31,6 +31,7 @@
 #include "graphics/opengl/texture.h"
 #include "graphics/transform_struct.h"
 #include "math/matrix4.h"
+#include "math/ray.h"
 
 namespace Wintermute {
 
@@ -116,6 +117,7 @@ public:
 	bool setupLines() override;
 
 	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y);
+	Math::Ray rayIntoScene(int x, int y);
 
 	Math::Matrix4 lastProjectionMatrix() {
 		return _lastProjectionMatrix;

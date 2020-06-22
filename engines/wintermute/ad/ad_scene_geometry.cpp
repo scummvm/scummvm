@@ -788,19 +788,10 @@ bool AdSceneGeometry::convert2Dto3DTolerant(int x, int y, Math::Vector3d *pos) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
-	Rect32 viewport = _gameRef->_renderer3D->getViewPort();
-	Math::Matrix4 projectionMatrix = _gameRef->_renderer3D->lastProjectionMatrix();
-
-	Math::Vector3d direction((((2.0f * x) / viewport.width()) - 1) / projectionMatrix(0, 0),
-	                         -(((2.0f * y) / viewport.height()) - 1) / projectionMatrix(1, 1),
-	                         -1.0f);
-	Math::Matrix4 m = _viewMatrix;
-	m.inverse();
-	m.transpose();
-	m.transform(&direction, false);
-
 	bool intFound = false;
 	float minDist = FLT_MAX;
+
+	Math::Ray ray = _gameRef->_renderer3D->rayIntoScene(x, y);
 
 	for (uint32 i = 0; i < _planes.size(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->faceCount(); j++) {
@@ -810,7 +801,7 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, Math::Vector3d *pos) {
 			float *v2 = _planes[i]->_mesh->getVertexPosition(triangle[2]);
 			Math::Vector3d intersection;
 
-			if (lineIntersectsTriangle(getActiveCamera()->_position, direction,
+			if (lineIntersectsTriangle(ray.getOrigin(), ray.getDirection(),
 			                           Math::Vector3d(v0[0], v0[1], v0[2]),
 			                           Math::Vector3d(v1[0], v1[1], v1[2]),
 			                           Math::Vector3d(v2[0], v2[1], v2[2]),
