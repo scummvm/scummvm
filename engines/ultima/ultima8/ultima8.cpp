@@ -67,6 +67,7 @@
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/message_box_gump.h"
+#include "ultima/ultima8/gumps/keypad_gump.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
