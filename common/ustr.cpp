@@ -559,23 +559,26 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 				string_temp = va_arg(args, char *);
 				len = strlen(string_temp);
 				length += len;
-				fmt -= 2;
+
 				output.deleteChar(pos); // remove %
 				output.deleteChar(pos); // remove s
 				output.insertString(string_temp, pos);
-				fmt += len;
-				pos += len;
+
+				fmt += len - 2;
+				pos += len - 1;
 				break;
 			case 'd':
 				int_temp = va_arg(args, int);
-				fmt -= 2;
-				output.deleteChar(pos); // remove %
-				output.deleteChar(pos); // remove d
 				itoa(int_temp, buffer, 10);
-				output.insertString(buffer, pos);
 				len = strlen(buffer);
 				length += len;
-				fmt += len;
+
+				output.deleteChar(pos); // remove %
+				output.deleteChar(pos); // remove d
+				output.insertString(buffer, pos);
+
+				fmt += len - 2;
+				pos += len - 1;
 				break;
 			default:
 				break;
@@ -583,7 +586,6 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 		}
 		pos++;
 	}
-
 	return length;
 }
 
