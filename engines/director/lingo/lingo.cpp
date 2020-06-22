@@ -641,7 +641,7 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 			d1Type = FLOAT;
 		}
 	}
-	if (d2Type == STRING || d1Type == REFERENCE) {
+	if (d2Type == STRING || d2Type == REFERENCE) {
 		Common::String src = d1.asString();
 		char *endPtr = 0;
 		strtod(src.c_str(), &endPtr);
