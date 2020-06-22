@@ -364,7 +364,7 @@ ScriptContext *Lingo::addCode(const char *code, int archiveIndex, ScriptType typ
 	currentFunc.u.defn = _currentAssembly;
 	Common::String typeStr = Common::String(scriptType2str(type));
 	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->_name + "]");
-	currentFunc.ctx = _currentScriptContext;
+	currentFunc.ctx = _assemblyContext;
 	currentFunc.archiveIndex = _assemblyArchive;
 	// arg names should be empty, but just in case
 	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
