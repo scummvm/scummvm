@@ -52,9 +52,14 @@ void Cast::createWidget() {
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	_type = kCastBitmap;
 	_img = nullptr;
+	_bytes = 0;
+	_pitch = 0;
+	_flags = 0;
+	_clut = 0;
+	_regX = _regY = 0;
+	_bitsPerPixel = 1;
 
 	if (version < 4) {
-		_pitch = 0;
 		_flags = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled
 		_bytes = stream.readUint16();
 		_initialRect = Score::readRect(stream);
@@ -77,10 +82,6 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
-		_flags = 0;
-		_bytes = 0;
-		_clut = 0;
-
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
 		_regY = stream.readUint16();
@@ -102,8 +103,6 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		warning("BitmapCast: %d bytes left", tail);
 	} else if (version == 5) {
-		_bytes = 0;
-		_pitch = 0;
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
 			stream.readUint32();
@@ -119,10 +118,6 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		_boundingRect = Score::readRect(stream);
 
 		_bitsPerPixel = stream.readUint16();
-
-		_regX = 0;
-		_regY = 0;
-		_clut = 0;
 
 		stream.readUint32();
 	}
