@@ -297,7 +297,7 @@ void TabWidget::adjustTabs(int value) {
 
 		if (_firstVisibleTab == 0)
 			_navLeft->setEnabled(false);
-		else if (_lastVisibleTab == _tabs.size() - 1)
+		else if (_lastVisibleTab == (int)_tabs.size() - 1)
 			_navRight->setEnabled(false);
 	}
 }
