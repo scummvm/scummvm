@@ -383,13 +383,13 @@ bool FrameNode::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::getBoundingBox(Math::Vector3d *boxStart, Math::Vector3d *boxEnd) {
 	for (uint32 i = 0; i < _meshes.size(); i++) {
-		//		BoxStart->x = min(BoxStart->x, m_Meshes[i]->m_BBoxStart.x);
-		//		BoxStart->y = min(BoxStart->y, m_Meshes[i]->m_BBoxStart.y);
-		//		BoxStart->z = min(BoxStart->z, m_Meshes[i]->m_BBoxStart.z);
+		boxStart->x() = MIN(boxStart->x(), _meshes[i]->_BBoxStart.x());
+		boxStart->y() = MIN(boxStart->y(), _meshes[i]->_BBoxStart.y());
+		boxStart->z() = MIN(boxStart->z(), _meshes[i]->_BBoxStart.z());
 
-		//		BoxEnd->x = max(BoxEnd->x, m_Meshes[i]->m_BBoxEnd.x);
-		//		BoxEnd->y = max(BoxEnd->y, m_Meshes[i]->m_BBoxEnd.y);
-		//		BoxEnd->z = max(BoxEnd->z, m_Meshes[i]->m_BBoxEnd.z);
+		boxEnd->x() = MAX(boxEnd->x(), _meshes[i]->_BBoxEnd.x());
+		boxEnd->y() = MAX(boxEnd->y(), _meshes[i]->_BBoxEnd.y());
+		boxEnd->z() = MAX(boxEnd->z(), _meshes[i]->_BBoxEnd.z());
 	}
 
 	for (uint32 i = 0; i < _frames.size(); i++) {

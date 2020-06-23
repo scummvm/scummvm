@@ -155,6 +155,7 @@ public:
 	bool loadAnimationSet(XFileLexer &lexer, const Common::String &filename);
 	bool loadAnimation(const Common::String &filename, AnimationSet *parentAnimSet);
 
+	Math::Matrix4 _lastWorldMat;
 	Rect32 _boundingRect;
 	BaseObject *_owner;
 
@@ -186,9 +187,8 @@ private:
 	bool findBones(bool animOnly = false, ModelX *parentModel = nullptr);
 
 	void updateBoundingRect();
-	void static inline updateRect(Rect32 *rc, Math::Vector3d *vec);
+	void static inline updateRect(Rect32 *rc, int x, int y);
 	Rect32 _drawingViewport;
-	Math::Matrix4 _lastWorldMat;
 	Math::Matrix4 _lastViewMat;
 	Math::Matrix4 _lastProjMat;
 	int _lastOffsetX;

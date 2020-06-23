@@ -37,6 +37,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
@@ -428,63 +429,61 @@ bool ModelX::isTransparentAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void ModelX::updateBoundingRect() {
-	_BBoxStart = _BBoxEnd = Math::Vector3d(0, 0, 0);
+	_BBoxStart = Math::Vector3d(0, 0, 0);
+	_BBoxStart = Math::Vector3d(0, 0, 0);
 
 	if (_rootFrame) {
 		_rootFrame->getBoundingBox(&_BBoxStart, &_BBoxEnd);
 	}
 
-	//	m_BoundingRect.left = m_BoundingRect.top = INT_MAX;
-	//	m_BoundingRect.right = m_BoundingRect.bottom = INT_MIN;
+	_boundingRect.left = INT_MAX_VALUE;
+	_boundingRect.top = INT_MAX_VALUE;
+	_boundingRect.right = INT_MIN_VALUE;
+	_boundingRect.bottom = INT_MIN_VALUE;
 
-	//	CBRenderD3D* Rend = (CBRenderD3D*)Game->m_Renderer;
-	//	LPDIRECT3DDEVICE dev = Rend->m_Device;
+	Math::Vector3d vec2d(0,0,0);
 
-	//	D3DXMATRIX viewMat, projMat, worldMat;
-	//	Math::Vector3d vec2d(0,0,0);
-	//	dev->GetTransform(D3DTS_VIEW, &viewMat);
-	//	dev->GetTransform(D3DTS_PROJECTION, &projMat);
-	//	dev->GetTransform(D3DTS_WORLD, &worldMat);
+	float x1 = _BBoxStart.x();
+	float x2 = _BBoxEnd.x();
+	float y1 = _BBoxStart.y();
+	float y2 = _BBoxEnd.y();
+	float z1 = _BBoxStart.z();
+	float z2 = _BBoxEnd.z();
 
-	//	dev->GetViewport(&_drawingViewport);
+	int screenX = 0;
+	int screenY = 0;
 
-	//	float x1 = m_BBoxStart.x;
-	//	float x2 = m_BBoxEnd.x;
-	//	float y1 = m_BBoxStart.y;
-	//	float y2 = m_BBoxEnd.y;
-	//	float z1 = m_BBoxStart.z;
-	//	float z2 = m_BBoxEnd.z;
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y1, z1), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
 
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x1,y1,z1), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x2,y1,z1), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x1,y1,z2), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x2,y1,z2), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y1, z2), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
 
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x1,y2,z1), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x2,y2,z1), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x1,y2,z2), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
-	//	D3DXVec3Project(&vec2d, &Math::Vector3d(x2,y2,z2), &_drawingViewport, &projMat, &viewMat, &worldMat);
-	//	UpdateRect(&m_BoundingRect, &vec2d);
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y2, z1), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
 
-	//	m_BoundingRect.left -= Rend->m_DrawOffsetX;
-	//	m_BoundingRect.right -= Rend->m_DrawOffsetX;
-	//	m_BoundingRect.bottom -= Rend->m_DrawOffsetY;
-	//	m_BoundingRect.top -= Rend->m_DrawOffsetY;
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x1, y2, z2), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
+
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y1, z1), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
+
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y1, z2), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
+
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y2, z1), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
+
+	_gameRef->_renderer3D->project(_lastWorldMat, Math::Vector3d(x2, y2, z2), screenX, screenY);
+	updateRect(&_boundingRect, screenX, screenY);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ModelX::updateRect(Rect32 *rc, Math::Vector3d *vec) {
-	//	rc->left   = min(rc->left,   vec->x());
-	//	rc->right  = max(rc->right,  vec->x());
-	//	rc->top    = min(rc->top,    vec->y());
-	//	rc->bottom = max(rc->bottom, vec->y());
+void ModelX::updateRect(Rect32 *rc, int x, int y) {
+	rc->left   = MIN(rc->left, x);
+	rc->right  = MAX(rc->right, x);
+	rc->top    = MIN(rc->top, y);
+	rc->bottom = MAX(rc->bottom, y);
 }
 
 //////////////////////////////////////////////////////////////////////////

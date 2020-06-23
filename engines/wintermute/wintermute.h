@@ -36,6 +36,7 @@ class DebuggerController;
 struct WMEGameDescription;
 
 const int INT_MAX_VALUE = 0x7fffffff;
+const int INT_MIN_VALUE = -INT_MAX_VALUE - 1; // WME3D
 
 // our engine debug channels
 enum {
