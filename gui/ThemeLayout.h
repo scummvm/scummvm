@@ -115,6 +115,7 @@ protected:
 
 public:
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL);
+	bool getUseRTL() { return _useRTL; }
 
 	virtual Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
 
@@ -255,7 +256,7 @@ class ThemeLayoutTabWidget : public ThemeLayoutWidget {
 
 public:
 	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight):
-		ThemeLayoutWidget(p, name, w, h, align, _useRTL) {
+		ThemeLayoutWidget(p, name, w, h, align, p->getUseRTL()) {
 		_tabHeight = tabHeight;
 	}
 
