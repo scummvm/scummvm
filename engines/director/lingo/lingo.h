@@ -243,10 +243,10 @@ public:
 		_propNames = sc._propNames;
 	}
 
-	Datum getObject();
+	Datum getParentScript();
 
 private:
-	Datum _obj;
+	Datum _parentScript;
 };
 
 enum ObjectType {

@@ -2162,7 +2162,7 @@ void LB::b_script(int nargs) {
 		}
 
 		if (script) {
-			g_lingo->push(Datum(script->getObject()));
+			g_lingo->push(Datum(script->getParentScript()));
 			return;
 		}
 	}

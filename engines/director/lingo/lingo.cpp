@@ -992,20 +992,15 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 	}
 }
 
-Datum ScriptContext::getObject() {
-	if (_obj.type != OBJECT) {
-		_obj.type = OBJECT;
-		_obj.u.obj = new Object(_name, kScriptObj);
+Datum ScriptContext::getParentScript() {
+	if (_parentScript.type != OBJECT) {
+		_parentScript.type = OBJECT;
+		_parentScript.u.obj = new Object(_name, kScriptObj, new ScriptContext(*this));
 		for (Common::Array<Common::String>::iterator it = _propNames.begin(); it != _propNames.end(); ++it) {
-			_obj.u.obj->properties[*it] = Datum();
-		}
-		for (SymbolHash::iterator it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
-			Symbol sym = it->_value;
-			sym.targetType = kScriptObj;
-			_obj.u.obj->methods[it->_key] = sym;
+			_parentScript.u.obj->properties[*it] = Datum();
 		}
 	}
-	return _obj;
+	return _parentScript;
 }
 
 void Lingo::parseMenu(const char *code) {
