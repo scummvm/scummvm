@@ -37,6 +37,7 @@
 #include "engines/wintermute/base/gfx/x/loader_x.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/math/math_util.h"
 
 namespace Wintermute {
 
@@ -268,7 +269,24 @@ bool MeshX::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 
 	bool res = false;
 
-	// to be implemented
+	for (uint16 i = 0; i < _indexCount; i += 3) {
+		uint16 index1 = _indexData[i + 0];
+		uint16 index2 = _indexData[i + 1];
+		uint16 index3 = _indexData[i + 2];
+
+		Math::Vector3d v0;
+		v0.setData(&_vertexData[index1 * kVertexComponentCount + kPositionOffset]);
+		Math::Vector3d v1;
+		v1.setData(&_vertexData[index2 * kVertexComponentCount + kPositionOffset]);
+		Math::Vector3d v2;
+		v2.setData(&_vertexData[index3 * kVertexComponentCount + kPositionOffset]);
+
+		Math::Vector3d intersection;
+		if (lineIntersectsTriangle(*pickRayOrig, *pickRayDir, v0, v1, v2, intersection.x(), intersection.y(), intersection.z())) {
+			res = true;
+			break;
+		}
+	}
 
 	return res;
 }
