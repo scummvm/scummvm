@@ -144,12 +144,12 @@ Common::ErrorCode Blorb::load() {
 		} else if (ce._type == ID_Exec) {
 			if (
 				(_interpType == INTERPRETER_ADRIFT && ce._id == ID_ADRI) ||
-				(_interpType == INTERPRETER_FROTZ && ce._id == ID_ZCOD) ||
 				(_interpType == INTERPRETER_GLULXE && ce._id == ID_GLUL) ||
+				(_interpType == INTERPRETER_HUGO && ce._id == ID_HUGO) ||
+				(_interpType == INTERPRETER_SCOTT && ce._id == ID_SAAI) ||
 				(_interpType == INTERPRETER_TADS2 && ce._id == ID_TAD2) ||
 				(_interpType == INTERPRETER_TADS3 && ce._id == ID_TAD3) ||
-				(_interpType == INTERPRETER_HUGO && ce._id == ID_HUGO) ||
-				(_interpType == INTERPRETER_SCOTT && ce._id == ID_SAAI)
+				(_interpType == INTERPRETER_ZCODE && ce._id == ID_ZCOD)
 			) {
 				// Game executable
 				ce._filename = "game";
@@ -283,7 +283,7 @@ void Blorb::getBlorbFilenames(const Common::String &srcFilename, Common::StringA
 	case INTERPRETER_ALAN3:
 		filenames.push_back(filename + "a3r");
 		break;
-	case INTERPRETER_FROTZ:
+	case INTERPRETER_ZCODE:
 		filenames.push_back(filename + "zblorb");
 		getInfocomBlorbFilenames(filenames, gameId);
 		break;

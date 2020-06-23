@@ -99,7 +99,7 @@ bool ZCodeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			gameFile.read(&serial[1], 6);
 			strcpy(&serial[7], "\"");
 		} else {
-			Blorb b(*file, INTERPRETER_FROTZ);
+			Blorb b(*file, INTERPRETER_ZCODE);
 			Common::SeekableReadStream *f = b.createReadStreamForMember("game");
 			emptyBlorb = f == nullptr;
 

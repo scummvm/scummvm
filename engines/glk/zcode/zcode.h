@@ -64,7 +64,7 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_ZCODE; }
 
 	/**
 	 * Execute the game
