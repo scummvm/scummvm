@@ -87,6 +87,8 @@ protected:
 	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename);
 	bool parseSkinWeights(XFileLexer &lexer);
 
+	void updateBoundingBox();
+
 	bool generateMesh();
 	uint32 _numAttrs;
 	uint32 _maxFaceInfluence;

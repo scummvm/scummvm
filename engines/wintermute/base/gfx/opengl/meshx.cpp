@@ -216,6 +216,9 @@ bool MeshX::update(FrameNode *parentFrame) {
 	} else { // update static
 		warning("MeshX::update update of static mesh is not implemented yet");
 	}
+
+	updateBoundingBox();
+
 	return res;
 }
 
@@ -518,6 +521,29 @@ bool MeshX::parseSkinWeights(XFileLexer &lexer) {
 	lexer.advanceToNextToken(); // closed braces of skin weights object
 
 	return true;
+}
+
+void MeshX::updateBoundingBox() {
+	if (_vertexData == nullptr || _vertexCount == 0) {
+		return;
+	}
+
+	_BBoxStart.setData(&_vertexData[0 + kPositionOffset]);
+	_BBoxEnd.setData(&_vertexData[0 + kPositionOffset]);
+
+	for (uint16 i = 1; i < _vertexCount; ++i) {
+
+		Math::Vector3d v;
+		v.setData(&_vertexData[i * kVertexComponentCount + kPositionOffset]);
+
+		_BBoxStart.x() = MIN(_BBoxStart.x(), v.x());
+		_BBoxStart.y() = MIN(_BBoxStart.y(), v.y());
+		_BBoxStart.z() = MIN(_BBoxStart.z(), v.z());
+
+		_BBoxEnd.x() = MAX(_BBoxEnd.x(), v.x());
+		_BBoxEnd.y() = MAX(_BBoxEnd.y(), v.y());
+		_BBoxEnd.z() = MAX(_BBoxEnd.z(), v.z());
+	}
 }
 
 } // namespace Wintermute
