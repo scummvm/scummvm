@@ -372,59 +372,18 @@ bool ModelX::isTransparentAt(int x, int y) {
 		return false;
 	}
 
-	x += _lastOffsetX;
-	y += _lastOffsetY;
-
-	//	if (!Rend->m_Camera) {
-	//		return true;
-	//	}
-
-//	float resWidth, resHeight;
-//	float layerWidth, layerHeight;
-	float modWidth = 0.0f;
-	float modHeight = 0.0f;
-	bool customViewport = false;
-	//	Rend->GetProjectionParams(&ResWidth, &ResHeight, &LayerWidth, &LayerHeight, &ModWidth, &ModHeight, &CustomViewport);
-
-	x -= _drawingViewport.left + modWidth;
-	y -= _drawingViewport.top + modHeight;
-
-	if (customViewport) {
-		x += _gameRef->_renderer->_drawOffsetX;
-		y += _gameRef->_renderer->_drawOffsetY;
-	}
-
-	Math::Vector3d pickRayDir;
-	Math::Vector3d pickRayOrig;
-
-	// Compute the vector of the pick ray in screen space
-	Math::Vector3d vec;
-	vec.x() = (((2.0f * x) / _drawingViewport.width()) - 1) / _lastProjMat(0, 0);
-	vec.y() = -(((2.0f * y) / _drawingViewport.height()) - 1) / _lastProjMat(1, 1);
-	vec.z() = 1.0f;
-
-	// Get the inverse view matrix
-	Math::Matrix4 m = _lastViewMat;
-	m.inverse();
-
-	// Transform the screen space pick ray into 3D space
-	// TODO: Pretty sure this is not correct, since it assumes a Direct3D coordinate system
-	pickRayDir.x() = vec.x() * m(0, 0) + vec.y() * m(1, 0) + vec.z() * m(2, 0);
-	pickRayDir.y() = vec.x() * m(0, 1) + vec.y() * m(1, 1) + vec.z() * m(2, 1);
-	pickRayDir.z() = vec.x() * m(0, 2) + vec.y() * m(1, 2) + vec.z() * m(2, 2);
-	pickRayOrig.x() = m(3, 0);
-	pickRayOrig.y() = m(3, 1);
-	pickRayOrig.z() = m(3, 2);
+	Math::Ray ray = _gameRef->_renderer3D->rayIntoScene(x, y);
 
 	// transform to model space
-	Math::Vector3d end = pickRayOrig + pickRayDir;
-	m = _lastWorldMat;
+	Math::Vector3d end = ray.getOrigin() + ray.getDirection();
+	Math::Matrix4 m = _lastWorldMat;
 	m.inverse();
-	m.transform(&pickRayOrig, false);
-	m.transform(&end, false);
-	pickRayDir = end - pickRayOrig;
+	m.transpose();
+	m.transform(&ray.getOrigin(), true);
+	m.transform(&end, true);
+	Math::Vector3d pickRayDirection = end - ray.getOrigin();
 
-	return !_rootFrame->pickPoly(&pickRayOrig, &pickRayDir);
+	return !_rootFrame->pickPoly(&ray.getOrigin(), &pickRayDirection);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -441,7 +400,7 @@ void ModelX::updateBoundingRect() {
 	_boundingRect.right = INT_MIN_VALUE;
 	_boundingRect.bottom = INT_MIN_VALUE;
 
-	Math::Vector3d vec2d(0,0,0);
+	Math::Vector3d vec2d(0, 0, 0);
 
 	float x1 = _BBoxStart.x();
 	float x2 = _BBoxEnd.x();
