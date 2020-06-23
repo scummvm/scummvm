@@ -155,9 +155,7 @@ private:
 
 	// ink.cpp
 	void inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId);
-	void drawBackgndTransSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, int spriteId);
 	void drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawGhostSprite(const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId);
 
 	// transitions.cpp

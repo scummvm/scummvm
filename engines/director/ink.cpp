@@ -29,91 +29,130 @@ namespace Director {
 
 void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
 
-	// FIXME: If we try to use one of the draw* methods below for a sprite that
-	// has width and height changed, there is a butter overflow. But we don't want
-	// to clip `t`, so width and height can be changed and stretched automatically.
-	Common::Rect t;
-	if (ink == kInkTypeCopy || ink == kInkTypeTransparent) {
-		t = drawRect;
-	} else {
-		t = Common::Rect(spriteSurface.w, spriteSurface.h);
-		t.moveTo(drawRect.left, drawRect.top);
-	}
+	byte rSrc, gSrc, bSrc;
+	byte rDst, gDst, bDst;
+	int numColors = _vm->getPaletteColorCount();
+
+	Common::Rect t = Common::Rect(spriteSurface.w, spriteSurface.h);
+	t.moveTo(drawRect.left, drawRect.top);
 
 	Common::Point maskOrigin(MAX(0, -drawRect.left), MAX(0, -drawRect.top));
 	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
-	maskSurface->transBlitFrom(*_maskSurface, drawRect, maskOrigin, _stageColor);
 
-	switch (ink) {
-	case kInkTypeCopy:
-		_surface->transBlitFrom(spriteSurface, Common::Rect(spriteSurface.w, spriteSurface.h), t, 0, false, 0, 0xff, &maskSurface->rawSurface(), true);
-		break;
-	case kInkTypeTransparent:
-		// FIXME: is it always white (last entry in pallette)?
-		_surface->transBlitFrom(spriteSurface, Common::Rect(spriteSurface.w, spriteSurface.h), t, _vm->getPaletteColorCount() - 1);
-		break;
-	case kInkTypeBackgndTrans:
-		drawBackgndTransSprite(spriteSurface, t, spriteId);
-		break;
-	case kInkTypeMatte:
-		drawMatteSprite(spriteSurface, t);
-		break;
-	case kInkTypeGhost:
-		drawGhostSprite(spriteSurface, t);
-		break;
-	case kInkTypeReverse:
-		drawReverseSprite(spriteSurface, t, spriteId);
-		break;
-	default:
-		warning("Score::inkBasedBlit(): Unhandled ink type %d", ink);
-		_surface->blitFrom(spriteSurface, Common::Point(t.left, t.top));
-		break;
-	}
-
-}
-
-void Score::drawBackgndTransSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, int spriteId) {
-	byte skipColor = _channels[spriteId]->_sprite->_backColor;
-	if (_channels[spriteId]->_sprite->_castType == kCastText && _channels[spriteId]->_sprite->_cast) {
-		skipColor = ((TextCast *)_channels[spriteId]->_sprite->_cast)->getBackColor();
-	}
-
-	Common::Rect srcRect(sprite.w, sprite.h);
-
-	if (!_surface->clip(srcRect, drawRect))
-		return; // Out of screen
-
+	// HACK: A custom blitter is needed for the logical AND necessary here;
+	// surface class doesn't provide it.
 	for (int ii = 0; ii < drawRect.height(); ii++) {
-		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
-		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
+		const byte *src = (const byte *)maskSurface->getBasePtr(maskOrigin.x, ii + maskOrigin.y);
+		byte *dst = (byte *)_maskSurface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
 
 		for (int j = 0; j < drawRect.width(); j++) {
-			if (*src != skipColor)
-				*dst = *src;
+			*dst &= *src;
 
 			src++;
 			dst++;
 		}
 	}
-}
 
-void Score::drawGhostSprite(const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	Common::Rect srcRect(sprite.w, sprite.h);
+	// TODO: Merge these two into the switch logic that is below
+	if (ink == kInkTypeMatte) {
+		Common::Rect spriteRect(spriteSurface.w, spriteSurface.h);
+		drawMatteSprite(spriteSurface, t);
+		return;
+	} else if (ink == kInkTypeReverse) {
+		drawReverseSprite(spriteSurface, t, spriteId);
+		return;
+	} else if (ink == kInkTypeMask) {
+		// TODO: Implement masked drawing
+		warning("Score::inkBasedBlit(): Masked drawing not yet implemented");
+	}
 
-	if (!_surface->clip(srcRect, drawRect))
-		return; // Out of screen
-
-	uint8 skipColor = _vm->getPaletteColorCount() - 1;
 	for (int ii = 0; ii < drawRect.height(); ii++) {
-		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
-		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
+		const byte *msk = (const byte *)maskSurface->getBasePtr(maskOrigin.x, maskOrigin.y + ii);
+		const byte *src = (const byte *)spriteSurface.getBasePtr(0 + maskOrigin.x, ii + maskOrigin.y);
+		byte *dst = (byte *)_surface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
 
 		for (int j = 0; j < drawRect.width(); j++) {
-			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0) && (*src != skipColor))
-				*dst = (_vm->getPaletteColorCount() - 1) - *src; // Oposite color
+			if (*msk != 0) {
+				_vm->_wm->decomposeColor(*src, rSrc, gSrc, bSrc);
+				_vm->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+
+				switch (ink) {
+				case kInkTypeBackgndTrans:
+					if (*src == _channels[spriteId]->_sprite->_backColor)
+						break;
+					// fall through
+				case kInkTypeCopy:
+					*dst = *src;
+					break;
+				case kInkTypeTransparent:
+					// FIXME: Is colour to ignore always white (last entry in pallette)?
+					if (*src != numColors - 1)
+						*dst &= *src;
+					break;
+				case kInkTypeReverse:
+					if (*src != numColors - 1)
+						*dst ^= *src;
+					break;
+				case kInkTypeGhost:
+					if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0) && *src != numColors - 1)
+						*dst = *dst | ~(*src);
+					break;
+				case kInkTypeNotCopy:
+					if (*src != numColors - 1)
+						*dst = ~(*src);
+					break;
+				case kInkTypeNotTrans:
+					if (*src != numColors - 1)
+						*dst = *dst & ~(*src);
+					break;
+				case kInkTypeNotReverse:
+					if (*src != numColors - 1)
+						*dst = *dst ^ *src;
+					break;
+				case kInkTypeNotGhost:
+					if (*src != numColors - 1)
+						*dst = *dst | *src;
+					break;
+				case kInkTypeMatte:
+					break;
+				case kInkTypeMask:
+					*dst = *src;
+					break;
+					// Arithmetic ink types
+				case kInkTypeBlend:
+					if (*src != numColors - 1)
+						*dst = _vm->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
+					break;
+				case kInkTypeAddPin:
+					if (*src != numColors - 1)
+						*dst = _vm->_wm->findBestColor(MIN((rSrc + rDst), numColors - 1), MIN((gSrc + gDst), numColors - 1), MIN((bSrc + bDst), numColors - 1));
+					break;
+				case kInkTypeAdd:
+					if (*src != numColors - 1)
+						*dst = _vm->_wm->findBestColor(abs(rSrc + rDst) % numColors, abs(gSrc + gDst) % numColors, abs(bSrc + bDst) % numColors);
+					break;
+				case kInkTypeSubPin:
+					if (*src != numColors - 1)
+						*dst = _vm->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
+					break;
+				case kInkTypeLight:
+					if (*src != numColors - 1)
+						*dst = _vm->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
+					break;
+				case kInkTypeSub:
+					if (*src != numColors - 1)
+						*dst = _vm->_wm->findBestColor(abs(rSrc - rDst) % numColors, abs(gSrc - gDst) % numColors, abs(bSrc - bDst) % numColors);
+					break;
+				case kInkTypeDark:
+					if (*src != numColors - 1)
+						*dst = _vm->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
+					break;
+				}
+			}
 
 			src++;
 			dst++;
+			msk++;
 		}
 	}
 }
@@ -126,41 +165,45 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 
 	uint8 skipColor = _vm->getPaletteColorCount() - 1;
 	for (int ii = 0; ii < drawRect.height(); ii++) {
+		const byte *msk = (const byte *)_maskSurface->getBasePtr(drawRect.left, drawRect.top + ii);
 		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
 		byte srcColor = *src;
 
 		for (int j = 0; j < drawRect.width(); j++) {
-			if (!_channels[spriteId]->_sprite->_cast || _channels[spriteId]->_sprite->_cast->_type == kCastShape)
-				srcColor = 0x0;
-			else
-				srcColor = *src;
-			uint16 targetSprite = getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii));
-			if ((targetSprite != 0)) {
-				// TODO: This entire reverse colour attempt needs a lot more testing on
-				// a lot more colour depths.
-				if (srcColor != skipColor) {
-					if (!_channels[targetSprite]->_sprite->_cast || _channels[targetSprite]->_sprite->_cast->_type != kCastBitmap) {
-						if (*dst == 0 || *dst == 255) {
-							*dst = _vm->transformColor(*dst);
-						} else if (srcColor == 255 || srcColor == 0) {
-							*dst = _vm->transformColor(*dst - 40);
+			if (*msk != 0) {
+				if (!_channels[spriteId]->_sprite->_cast || _channels[spriteId]->_sprite->_cast->_type == kCastShape)
+					srcColor = 0x0;
+				else
+					srcColor = *src;
+				uint16 targetSprite = getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii));
+				if ((targetSprite != 0)) {
+					// TODO: This entire reverse colour attempt needs a lot more testing on
+					// a lot more colour depths.
+					if (srcColor != skipColor) {
+						if (!_channels[targetSprite]->_sprite->_cast || _channels[targetSprite]->_sprite->_cast->_type != kCastBitmap) {
+							if (*dst == 0 || *dst == 255) {
+								*dst = _vm->transformColor(*dst);
+							} else if (srcColor == 255 || srcColor == 0) {
+								*dst = _vm->transformColor(*dst - 40);
+							} else {
+								*dst = _vm->transformColor(*src - 40);
+							}
 						} else {
-							*dst = _vm->transformColor(*src - 40);
-						}
-					} else {
-						if (*dst == 0 && _vm->getVersion() == 3 &&
-								_channels[spriteId]->_sprite->_cast->_type == kCastBitmap &&
-								((BitmapCast*)_channels[spriteId]->_sprite->_cast)->_bitsPerPixel > 1) {
-							*dst = _vm->transformColor(*src - 40);
-						} else {
-							*dst ^= _vm->transformColor(srcColor);
+							if (*dst == 0 && _vm->getVersion() == 3 &&
+									_channels[spriteId]->_sprite->_cast->_type == kCastBitmap &&
+									((BitmapCast*)_channels[spriteId]->_sprite->_cast)->_bitsPerPixel > 1) {
+								*dst = _vm->transformColor(*src - 40);
+							} else {
+								*dst ^= _vm->transformColor(srcColor);
+							}
 						}
 					}
+				} else if (srcColor != skipColor) {
+					*dst = _vm->transformColor(srcColor);
 				}
-			} else if (srcColor != skipColor) {
-				*dst = _vm->transformColor(srcColor);
 			}
+			msk++;
 			src++;
 			dst++;
 		}
@@ -196,11 +239,13 @@ void Score::drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawR
 		debugC(1, kDebugImages, "Score::drawMatteSprite(): No white color for Matte image");
 
 		for (int yy = 0; yy < drawRect.height(); yy++) {
+			const byte *msk = (const byte *)_maskSurface->getBasePtr(drawRect.left, drawRect.top + yy);
 			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);
 			byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + yy);
 
-			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++)
-				*dst = *src;
+			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, msk++)
+				if (*msk != 0)
+					*dst = *src;
 		}
 	} else {
 		Graphics::FloodFill ff(&tmp, whiteColor, 0, true);
