@@ -108,7 +108,7 @@ bool MacButton::draw(bool forceRedraw) {
 	if (!_contentIsDirty && !forceRedraw)
 		return false;
 
-	_maskSurface->clear(0);
+	_maskSurface->clear(1);
 	MacText::draw();
 
 	Common::Rect r(_dims.width() - 1, _dims.height() - 1);
