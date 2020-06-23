@@ -547,6 +547,7 @@ uint16 Actor::setActivityCru(int activity) {
 	case 3: // pace
 		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);";
 		// TODO: Implement me as separate from loiter. (fall through for now)
+		// fall through
 	case 2: // loiter
 		Kernel::get_instance()->addProcess(new LoiterProcess(this));
 		return Kernel::get_instance()->addProcess(new DelayProcess(1));
