@@ -883,8 +883,8 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 // Do a sweepTest of an item from start to end point.
 // dims is the bounding box size.
 // item is the item that we are checking to move
-// blocking_only forces us to check against blocking _items only.
-// skip will skip all _items until item num skip is reached
+// blocking_only forces us to check against blocking items only.
+// skip will skip all items until item num skip is reached
 // Returns item hit or 0 if no hit.
 // end is set to the colision point
 bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
@@ -961,7 +961,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				// If the objects overlapped at the start, ignore collision.
 				// The -1 and +1 portions are to still consider collisions
-				// for _items which were merely touching at the start for all
+				// for items which were merely touching at the start for all
 				// intents and purposes, but partially overlapped due to an
 				// off-by-one error (hypothetically, but they do happen so
 				// protect against it).
