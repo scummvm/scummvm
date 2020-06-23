@@ -882,8 +882,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.asInt();
-		if (!d.u.i)
-			channel->resetPosition();
 		break;
 	case kTheMovieRate:
 		sprite->_movieRate = d.asInt();
@@ -897,8 +895,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kThePuppet:
 		sprite->_puppet = d.asInt();
 		if (!d.asInt()) {
-			channel->resetPosition();
-
 			// TODO: Properly reset sprite properties after puppet disabled.
 			sprite->_moveable = false;
 		}
