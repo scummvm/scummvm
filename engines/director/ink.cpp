@@ -39,17 +39,29 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	Common::Point maskOrigin(MAX(0, -drawRect.left), MAX(0, -drawRect.top));
 	drawRect.clip(Common::Rect(_maskSurface->w, _maskSurface->h));
 
+	Graphics::ManagedSurface *castMask = nullptr;
+	if (ink == kInkTypeMask) {
+		Cast *member = g_director->getCastMember(_channels[spriteId]->_sprite->_castId + 1);
+
+		if (!member->_widget)
+			member->createWidget();
+
+		if (member->_initialRect == _channels[spriteId]->_sprite->_cast->_initialRect)
+			castMask = member->_widget->getSurface();
+	}
+
 	// HACK: A custom blitter is needed for the logical AND necessary here;
 	// surface class doesn't provide it.
 	for (int ii = 0; ii < drawRect.height(); ii++) {
-		const byte *src = (const byte *)maskSurface->getBasePtr(maskOrigin.x, ii + maskOrigin.y);
+		const byte *msk = castMask ? (const byte *)castMask->getBasePtr(maskOrigin.x, maskOrigin.y + ii) : nullptr;
+		const byte *src = (const byte *)maskSurface->getBasePtr(maskOrigin.x, maskOrigin.y + ii);
 		byte *dst = (byte *)_maskSurface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
 
-		for (int j = 0; j < drawRect.width(); j++) {
+		for (int j = 0; j < drawRect.width(); j++, src++, dst++) {
 			*dst &= *src;
 
-			src++;
-			dst++;
+			if (msk)
+				*dst = (*(msk++) ? 0 : *dst);
 		}
 	}
 
@@ -61,9 +73,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	} else if (ink == kInkTypeReverse) {
 		drawReverseSprite(spriteSurface, t, spriteId);
 		return;
-	} else if (ink == kInkTypeMask) {
-		// TODO: Implement masked drawing
-		warning("Score::inkBasedBlit(): Masked drawing not yet implemented");
 	}
 
 	for (int ii = 0; ii < drawRect.height(); ii++) {
@@ -82,6 +91,7 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 						break;
 					// fall through
 				case kInkTypeCopy:
+				case kInkTypeMask:
 					*dst = *src;
 					break;
 				case kInkTypeTransparent:
@@ -114,9 +124,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 						*dst = *dst | *src;
 					break;
 				case kInkTypeMatte:
-					break;
-				case kInkTypeMask:
-					*dst = *src;
 					break;
 					// Arithmetic ink types
 				case kInkTypeBlend:
