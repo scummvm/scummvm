@@ -535,10 +535,13 @@ uint32 AudioProcess::I_playSFXCru(const uint8 *args, unsigned int argsize) {
 		warning("I_playSFXCru: Couldn't get item");
 	} else {
 		AudioProcess *ap = AudioProcess::get_instance();
-		if (ap)
+		if (ap) {
+			// Crusader stops any existing item sounds before starting the next.
+			ap->stopSFX(item->getObjId(), -1);
 			ap->playSFX(sfxNum, 0x10, item->getObjId(), 0, true);
-		else
+		} else {
 			warning("I_playSFXCru Error: No AudioProcess");
+		}
 	}
 	return 0;
 }

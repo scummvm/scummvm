@@ -651,6 +651,40 @@ int Item::getRange(const Item &item2, bool checkz) const {
 	return range;
 }
 
+int Item::getRangeIfVisible(const Item &item2) const {
+	World *world = World::get_instance();
+	CurrentMap *map = world->getCurrentMap();
+	int32 start[3];
+	int32 end[3];
+	int32 dims[3] = {1, 1, 1};
+	Std::list<CurrentMap::SweepItem> hitItems;
+	getCentre(start[0], start[1], start[2]);
+	item2.getCentre(end[0], end[1], end[2]);
+
+	int xdiff = abs(start[0] - end[0]);
+	int ydiff = abs(start[1] - end[1]);
+	int zdiff = abs(start[2] - end[2]);
+
+	map->sweepTest(start, end, dims, getShapeInfo()->_flags, _objId, true, &hitItems);
+
+	if (hitItems.size() > 0) {
+		for (Std::list<CurrentMap::SweepItem>::const_iterator it = hitItems.begin();
+			 it != hitItems.end();
+			 it++) {
+			int objId = it->_item;
+			if (it->_blocking && objId != _objId && objId != item2.getObjId()) {
+				//int out[3];
+				//it->GetInterpolatedCoords(out, start, end);
+				//warning("found blocking item %d at %d %d %d.", objId, out[0], out[1], out[2]);
+				return 0;
+			}
+		}
+	}
+
+	int distance = MAX(MAX(xdiff, ydiff), zdiff);
+	return distance;
+}
+
 ShapeInfo *Item::getShapeInfoFromGameInstance() const {
 	return GameData::get_instance()->getMainShapes()->getShapeInfo(_shape);
 }
@@ -1647,14 +1681,17 @@ void Item::explode(int explosion_type, bool destroy_item) {
 	}
 	Kernel::get_instance()->addProcess(p);
 
-	int sfx;
-	if (GAME_IS_CRUSADER)
-		sfx = (getRandom() % 2) ? 28 : 108;
-	else
-		sfx = (getRandom() % 2) ? 31 : 158;
-
 	AudioProcess *audioproc = AudioProcess::get_instance();
-	if (audioproc) audioproc->playSFX(sfx, 0x60, 0, 0);
+	if (audioproc) {
+		int sfx;
+		if (GAME_IS_CRUSADER) {
+			sfx = (getRandom() % 2) ? 28 : 108;
+			audioproc->stopSFX(-1, _objId);
+		} else {
+			sfx = (getRandom() % 2) ? 31 : 158;
+		}
+		audioproc->playSFX(sfx, 0x60, 0, 0);
+	}
 
 	int32 xv, yv, zv;
 	getLocation(xv, yv, zv);
@@ -3266,6 +3303,26 @@ uint32 Item::I_getRange(const uint8 *args, unsigned int /*argsize*/) {
 	if (!other) return 0;
 
 	return item->getRange(*other);
+}
+
+uint32 Item::I_getRangeIfVisible(const uint8 *args, unsigned int /*argsize*/) {
+	// TODO: This is not exactly the same as the implementation in Cruasder,
+	// but it should work?
+	ARG_ITEM_FROM_PTR(item);
+	ARG_ITEM_FROM_ID(other);
+
+	if (!item || !other)
+		return 0;
+
+	// Somewhat arbitrary maths in here to replicate Crusader behavior.
+	int range = item->getRangeIfVisible(*other) / 16;
+	if ((range & 0xf) != 0)
+		range++;
+
+	if (range <= 48) {
+		return range;
+	}
+	return 0;
 }
 
 uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {

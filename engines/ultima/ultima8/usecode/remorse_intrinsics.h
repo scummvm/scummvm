@@ -105,7 +105,7 @@ Intrinsic RemorseIntrinsics[] = {
 	// 0x040
 	CameraProcess::I_moveTo, // void Intrinsic040(8 bytes)
 	CameraProcess::I_setCenterOn, // void Intrinsic041(2 bytes)
-	0, // int Intrinsic042(6 bytes)
+	Item::I_getRangeIfVisible, // int Intrinsic042(6 bytes)
 	AudioProcess::I_playSFXCru, // TODO: Work out how this is different from Int015 - to a first approximation they are quite similar.
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026

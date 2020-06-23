@@ -137,7 +137,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 0040
 	"void CameraProcess::I_moveTo(x, y, z)",
 	"void CameraProcess::I_setCenterOn(objid)",
-	"byte Intrinsic042(Item *, otheritem)", // Something about whether item1 can see item2?
+	"byte Item::I_getRangeIfVisible(Item *, otheritem)",
 	"void AudioProcess::I_playSFXCru(Item *, soundno)", // TODO: Work out how this is different from Int015 - to a first approximation they are quite similar.
 	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133

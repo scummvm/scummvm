@@ -291,6 +291,9 @@ public:
 	//! between the x, y (and possibly z) coordinates of the items.
 	int getRange(const Item &item2, bool checkz = false) const;
 
+	//! get 'distance' to other item if it's visible (ie, there's nothing blocking the path)
+	int getRangeIfVisible(const Item &item2) const;
+
 	//! Check if this item can reach another item. (This includes LoS.)
 	//! \param other item to be reached
 	//! \param range range
@@ -552,6 +555,7 @@ public:
 	INTRINSIC(I_explode);
 	INTRINSIC(I_canReach);
 	INTRINSIC(I_getRange);
+	INTRINSIC(I_getRangeIfVisible);
 	INTRINSIC(I_isCrusTypeNPC);
 	INTRINSIC(I_doSomethingAndSetUnkCruFlag);
 	INTRINSIC(I_inFastArea);
