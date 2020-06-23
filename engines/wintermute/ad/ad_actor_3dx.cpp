@@ -383,6 +383,8 @@ bool AdActor3DX::display() {
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);
 	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
+	_modelX->_lastWorldMat = _worldMatrix;
+
 	bool res = _modelX->render();
 
 	if (_registrable) {
@@ -432,6 +434,12 @@ bool AdActor3DX::renderModel() {
 	} else {
 		res = _modelX->render();
 	}
+
+	if (!res) {
+		return false;
+	}
+
+	_modelX->_lastWorldMat = _worldMatrix;
 
 	displayAttachments(false);
 	_gameRef->_renderer3D->popWorldTransform();
