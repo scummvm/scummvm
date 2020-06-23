@@ -499,17 +499,14 @@ void LC::cb_objectfieldassign() {
 	Common::String fieldName = g_lingo->getName(fieldNameId);
 	Datum object = g_lingo->pop();
 	Datum value = g_lingo->pop();
-	warning("STUB: cb_objectfieldassign(%s, %s, %s)", object.asString(true).c_str(), fieldName.c_str(), value.asString(true).c_str());
+	g_lingo->setObjectProp(object, fieldName, value);
 }
 
 void LC::cb_objectfieldpush() {
 	int fieldNameId = g_lingo->readInt();
 	Common::String fieldName = g_lingo->getName(fieldNameId);
 	Datum object = g_lingo->pop();
-	warning("STUB: cb_objectfieldpush(%s, %s)", object.asString(true).c_str(), fieldName.c_str());
-	Datum result;
-	result.type = VOID;
-	g_lingo->push(result);
+	g_lingo->push(g_lingo->getObjectProp(object, fieldName));
 }
 
 void LC::cb_objectpush() {
@@ -542,7 +539,15 @@ void LC::cb_theassign() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
 	Datum value = g_lingo->pop();
-	warning("STUB: cb_theassign(%s, %s)", name.c_str(), value.asString().c_str());
+	if (g_lingo->_currentMe.type == OBJECT) {
+		if (g_lingo->_currentMe.u.obj->hasProp(name)) {
+			g_lingo->_currentMe.u.obj->getProp(name) = value;
+		} else {
+			warning("cb_theassign: me object has no property '%s'", name.c_str());
+		}
+	} else {
+		warning("cb_theassign: no me object");
+	}
 }
 
 void LC::cb_theassign2() {
@@ -555,7 +560,15 @@ void LC::cb_theassign2() {
 void LC::cb_thepush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->getName(nameId);
-	warning("STUB: cb_thepush(%s)", name.c_str());
+	if (g_lingo->_currentMe.type == OBJECT) {
+		if (g_lingo->_currentMe.u.obj->hasProp(name)) {
+			g_lingo->push(g_lingo->_currentMe.u.obj->getProp(name));
+			return;
+		}
+		warning("cb_thepush: me object has no property '%s'", name.c_str());
+	} else {
+		warning("cb_thepush: no me object");
+	}
 	Datum result;
 	result.type = VOID;
 	g_lingo->push(result);
