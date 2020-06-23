@@ -1494,7 +1494,7 @@ void MacText::deletePreviousChar(int *row, int *col) {
 		int pos = *col - 1;
 		uint ch = _textLines[*row].getChunkNum(&pos);
 
-		if (pos == _textLines[*row].chunks[ch].text.size())
+		if (pos == (int)_textLines[*row].chunks[ch].text.size())
 			pos--;
 
 		_textLines[*row].chunks[ch].text.deleteChar(pos);
