@@ -788,34 +788,72 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	}
 
 	// read the Lscr header!
+	// documentation:
+	// https://docs.google.com/document/d/1jDBXE4Wv1AEga-o1Wi8xtlNZY4K2fHxW2Xs8RgARrqk/edit
+	// https://github.com/Earthquake-Project/Format-Documentation/blob/master/structure/scripting/FormatNotes_Scripts.txt
+	// https://github.com/Earthquake-Project/ProjectorRays/blob/master/src/chunk/Script.ts
+	// (none of the above are totally complete)
+
 	// unk1
+	for (uint32 i = 0; i < 0x8; i++) {
+		stream.readByte();
+	}
+
+	// offset 8
+	/* uint32 length = */ stream.readUint32();
+	/* uint32 length2 = */ stream.readUint32();
+	uint16 codeStoreOffset = stream.readUint16();
+	/* uint16 scriptNumber = */ stream.readUint16();
+	// unk2
 	for (uint32 i = 0; i < 0x10; i++) {
 		stream.readByte();
 	}
-	uint16 codeStoreOffset = stream.readUint16();
-	// unk2
-	for (uint32 i = 0; i < 0x2e; i++) {
-		stream.readByte();
-	}
-	uint16 globalsOffset = stream.readUint16();
-	uint16 globalsCount = stream.readUint16();
+
+	// offset 36
+	/* uint16 scriptNumber2 = */ stream.readUint16();
+	/* uint32 scriptType = */ stream.readUint32();
 	// unk3
-	for (uint32 i = 0; i < 0x4; i++) {
+	for (uint32 i = 0; i < 0x8; i++) {
 		stream.readByte();
 	}
+
+	// offset 50 - contents map
+	// TODO: I believe the handler vectors map handlers to some sort of identifier
+	/* uint16 handlerVectorsCount = */ stream.readUint16();
+	/* uint32 handlerVectorsOffset = */ stream.readUint32();
+	/* uint32 handlerVectorFlags = */ stream.readUint32();
+	uint16 propertiesCount = stream.readUint16();
+	uint32 propertiesOffset = stream.readUint32();
+	uint16 globalsCount = stream.readUint16();
+	uint32 globalsOffset = stream.readUint32();
 	uint16 functionsCount = stream.readUint16();
-	stream.readUint16();
-	uint16 functionsOffset = stream.readUint16();
+	uint32 functionsOffset = stream.readUint32();
 	uint16 constsCount = stream.readUint16();
-	stream.readUint16();
-	uint16 constsOffset = stream.readUint16();
-	stream.readUint16();
-	stream.readUint16();
-	stream.readUint16();
-	/*uint16 constsBase = */stream.readUint16();
+	uint32 constsOffset = stream.readUint32();
+	/* uint16 constsStoreCount = */ stream.readUint32();
+	uint32 constsStoreOffset = stream.readUint32();
+
+	// initialise each property
+	if ((uint32)stream.size() < propertiesOffset + propertiesCount * 2) {
+		warning("Lscr properties store missing");
+		return;
+	}
+
+	debugC(5, kDebugLoading, "Lscr property list:");
+	stream.seek(propertiesOffset);
+	for (uint16 i = 0; i < propertiesCount; i++) {
+		uint16 index = stream.readUint16();
+		if (index < _archives[_assemblyArchive].names.size()) {
+			const char *name = _archives[_assemblyArchive].names[index].c_str();
+			debugC(5, kDebugLoading, "%d: %s", i, name);
+			_assemblyContext->_propNames.push_back(name);
+		} else {
+			warning("Property %d has unknown name id %d, skipping define", i, index);
+		}
+	}
 
 	// initialise each global variable
-	if (stream.size() < globalsOffset + globalsCount * 2) {
+	if ((uint32)stream.size() < globalsOffset + globalsCount * 2) {
 		warning("Lscr globals store missing");
 		return;
 	}
@@ -841,13 +879,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	// these are stored as a reference table of 6 byte entries, followed by a storage area.
 
 	// copy the storage area first.
-	uint32 constsStoreOffset = constsOffset + 6 * constsCount;
-
-	if (constsStoreOffset > (uint32)stream.size()) {
-		warning("Lingo::addCodeV4(): Too big constsStoreOffset. %d > %d", constsStoreOffset, stream.size());
-		return;
-	}
-
 	uint32 constsStoreSize = stream.size() - constsStoreOffset;
 
 	if ((uint32)stream.size() < constsStoreOffset) {
@@ -975,7 +1006,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	// these are stored as a code storage area, followed by a reference table of 42 byte entries.
 
 	// copy the storage area first.
-	if (stream.size() < functionsOffset) {
+	if ((uint32)stream.size() < functionsOffset) {
 		warning("Lscr functions store missing");
 		return;
 	}
