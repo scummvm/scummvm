@@ -219,7 +219,7 @@ class ScriptContext {
 public:
 	ScriptType _type;
 	Common::String _name;
-	Common::Array<Symbol> _functions; // used only by bytecode
+	Common::Array<Common::String> _functionNames; // used by cb_localcall
 	Common::HashMap<uint32, Symbol> _eventHandlers;
 	SymbolHash _functionHandlers;
 	Common::Array<Datum> _constants;

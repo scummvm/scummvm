@@ -294,11 +294,11 @@ void LC::cb_localcall() {
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		Symbol sym = g_lingo->_currentScriptContext->_functions[functionId];
+		Common::String name = g_lingo->_currentScriptContext->_functionNames[functionId];
 		if (debugChannelSet(3, kDebugLingoExec))
-			g_lingo->printSTUBWithArglist(sym.name->c_str(), nargs.u.i, "localcall:");
+			g_lingo->printSTUBWithArglist(name.c_str(), nargs.u.i, "localcall:");
 
-		LC::call(sym, nargs.u.i);
+		LC::call(name, nargs.u.i);
 
 	} else {
 		warning("cb_localcall: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
@@ -1333,7 +1333,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			out.writeString(Common::String::format("<end code>\n\n"));
 		}
 
-		_assemblyContext->_functions.push_back(sym);
+		_assemblyContext->_functionNames.push_back(*sym.name);
 		_currentAssembly = nullptr;
 	}
 
