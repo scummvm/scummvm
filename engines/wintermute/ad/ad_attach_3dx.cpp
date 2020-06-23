@@ -85,7 +85,8 @@ bool AdAttach3DX::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerObjects) {
-	Math::Matrix4 finalMat = _worldMatrix * viewMat;
+	Math::Matrix4 finalMat = viewMat * _worldMatrix;
+	finalMat.transpose();
 	_gameRef->_renderer3D->pushWorldTransform(finalMat);
 
 	if (_modelX) {
