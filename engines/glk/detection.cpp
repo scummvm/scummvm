@@ -37,8 +37,8 @@
 #include "glk/archetype/detection.h"
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/detection.h"
-#include "glk/frotz/detection.h"
-#include "glk/frotz/frotz.h"
+#include "glk/zcode/detection.h"
+#include "glk/zcode/zcode.h"
 #include "glk/glulxe/detection.h"
 #include "glk/glulxe/glulxe.h"
 #include "glk/hugo/detection.h"
@@ -200,7 +200,6 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	else if ((create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc, *engine))) {}
@@ -215,6 +214,7 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 			new Glk::TADS::TADS3::TADS3(syst, gameDesc);
 		else
 			new Glk::TADS::TADS2::TADS2(syst, gameDesc);
+	} else if ((create<Glk::ZCode::ZCodeMetaEngine, Glk::ZCode::ZCode>(syst, gameDesc, *engine))) {
 	} else {
 		return Common::kNoGameDataFoundError;
 	}
@@ -253,7 +253,6 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	Glk::Alan3::Alan3MetaEngine::getSupportedGames(list);
 	Glk::Archetype::ArchetypeMetaEngine::getSupportedGames(list);
 	Glk::Comprehend::ComprehendMetaEngine::getSupportedGames(list);
-	Glk::Frotz::FrotzMetaEngine::getSupportedGames(list);
 	Glk::Glulxe::GlulxeMetaEngine::getSupportedGames(list);
 	Glk::Hugo::HugoMetaEngine::getSupportedGames(list);
 	Glk::JACL::JACLMetaEngine::getSupportedGames(list);
@@ -262,6 +261,7 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	Glk::Quest::QuestMetaEngine::getSupportedGames(list);
 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
 	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
+	Glk::ZCode::ZCodeMetaEngine::getSupportedGames(list);
 
 	return list;
 }
@@ -278,7 +278,6 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	FIND_GAME(Alan3);
 	FIND_GAME(Archetype);
 	FIND_GAME(Comprehend);
-	FIND_GAME(Frotz);
 	FIND_GAME(Glulxe);
 	FIND_GAME(Hugo);
 	FIND_GAME(JACL);
@@ -287,6 +286,7 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	FIND_GAME(Quest);
 	FIND_GAME(Scott);
 	FIND_GAME(TADS);
+	FIND_GAME(ZCode);
 
 	return PlainGameDescriptor();
 }
@@ -305,7 +305,6 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Glk::Alan3::Alan3MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Archetype::ArchetypeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Comprehend::ComprehendMetaEngine::detectGames(fslist, detectedGames);
-	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Hugo::HugoMetaEngine::detectGames(fslist, detectedGames);
 	Glk::JACL::JACLMetaEngine::detectGames(fslist, detectedGames);
@@ -314,6 +313,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Glk::Quest::QuestMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
 	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
+	Glk::ZCode::ZCodeMetaEngine::detectGames(fslist, detectedGames);
 
 	return detectedGames;
 }
@@ -327,7 +327,6 @@ void GlkMetaEngine::detectClashes() const {
 	Glk::Alan3::Alan3MetaEngine::detectClashes(map);
 	Glk::Archetype::ArchetypeMetaEngine::detectClashes(map);
 	Glk::Comprehend::ComprehendMetaEngine::detectClashes(map);
-	Glk::Frotz::FrotzMetaEngine::detectClashes(map);
 	Glk::Glulxe::GlulxeMetaEngine::detectClashes(map);
 	Glk::Hugo::HugoMetaEngine::detectClashes(map);
 	Glk::JACL::JACLMetaEngine::detectClashes(map);
@@ -336,6 +335,7 @@ void GlkMetaEngine::detectClashes() const {
 	Glk::Quest::QuestMetaEngine::detectClashes(map);
 	Glk::Scott::ScottMetaEngine::detectClashes(map);
 	Glk::TADS::TADSMetaEngine::detectClashes(map);
+	Glk::ZCode::ZCodeMetaEngine::detectClashes(map);
 }
 
 SaveStateList GlkMetaEngine::listSaves(const char *target) const {
