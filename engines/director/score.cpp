@@ -722,11 +722,6 @@ void Score::renderShape(uint16 spriteId) {
 		}
 	}
 
-	// shapes should be rendered with transparency by default
-	if (ink == kInkTypeCopy) {
-		ink = kInkTypeTransparent;
-	}
-
 	// for outlined shapes, line thickness of 1 means invisible.
 	lineSize -= 1;
 
@@ -773,7 +768,6 @@ void Score::renderShape(uint16 spriteId) {
 		// fall through
 	case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
 		Graphics::drawRect(strokeRect, foreColor, Graphics::macDrawPixel, &plotStroke);
-		//tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
 		break;
 	case kRoundedRectangleSprite:
 		// fall through
