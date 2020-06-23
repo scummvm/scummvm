@@ -57,7 +57,7 @@ struct FileObject : Object {
 	Common::OutSaveFile *outFile;
 	Common::MemoryWriteStreamDynamic *outStream;
 
-	FileObject(ObjectType objType) : Object("FileIO", objType) {
+	FileObject(ObjectType objType, ScriptContext *objCtx) : Object("FileIO", objType, objCtx) {
 		filename = nullptr;
 		inFile = nullptr;
 		inStream = nullptr;

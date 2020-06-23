@@ -49,6 +49,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
+#include "director/types.h"
 
 #include "director/util.h"
 
@@ -87,10 +88,10 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 	}
 
 	if (factory) {
-		if (factory->methods.contains(name)) {
+		if (factory->ctx->_functionHandlers.contains(name)) {
 			warning("Redefining method '%s' on factory '%s'", name.c_str(), factory->name->c_str());
 		}
-		factory->methods[name] = sym;
+		factory->ctx->_functionHandlers[name] = sym;
 	} else if (_assemblyArchive >= 0) {
 		Symbol existing = getHandler(name);
 		if (existing.type != VOID)
@@ -294,7 +295,8 @@ void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localv
 }
 
 void Lingo::codeFactory(Common::String &name) {
-	Object *obj = new Object(name, kFactoryObj);
+	ScriptContext *ctx = new ScriptContext(kNoneScript, name);
+	Object *obj = new Object(name, kFactoryObj, ctx);
 
 	_currentFactory = obj;
 	if (!_globalvars.contains(name)) {

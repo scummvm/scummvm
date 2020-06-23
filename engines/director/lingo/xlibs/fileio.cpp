@@ -28,6 +28,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "director/types.h"
 
 namespace Director {
 
@@ -60,7 +61,8 @@ static struct MethodProto {
 void FileIO::initialize(int type) {
 	if (type & kXObj) {
 		if (!g_lingo->_globalvars.contains(xlibName)) {
-			FileObject *xobj = new FileObject(kXObj);
+			ScriptContext *ctx = new ScriptContext(kNoneScript, Common::String(xlibName));
+			FileObject *xobj = new FileObject(kXObj, ctx);
 			xobj->initMethods();
 			g_lingo->_globalvars[xlibName] = Datum();
 			g_lingo->_globalvars[xlibName].type = OBJECT;
@@ -88,16 +90,14 @@ void FileObject::initMethods() {
 		sym.maxArgs = mtd->maxArgs;
 		sym.targetType = mtd->type;
 		sym.u.bltin = mtd->func;
-		methods[mtd->name] = sym;
+		ctx->_functionHandlers[mtd->name] = sym;
 	}
 }
 
 Object *FileObject::clone() {
-	FileObject *res = new FileObject(type);
+	FileObject *res = new FileObject(type, new ScriptContext(*ctx));
 	res->disposed = disposed;
-	res->prototype = this;
 	res->properties = properties;
-	res->methods = methods;
 	res->inheritanceLevel = inheritanceLevel + 1;
 	return res;
 }

@@ -220,12 +220,29 @@ public:
 	ScriptType _type;
 	Common::String _name;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
-	Common::HashMap<uint32, Symbol> _eventHandlers;
 	SymbolHash _functionHandlers;
+	Common::HashMap<uint32, Symbol> _eventHandlers;
 	Common::Array<Datum> _constants;
 	Common::Array<Common::String> _propNames;
+	Datum _target;
 
 	ScriptContext(ScriptType type, Common::String name) : _type(type), _name(name) {}
+	ScriptContext(const ScriptContext &sc) {
+		_type = sc._type;
+		_name = sc._name;
+		_functionNames = sc._functionNames;
+		for (SymbolHash::iterator it = sc._functionHandlers.begin(); it != sc._functionHandlers.end(); ++it) {
+			_functionHandlers[it->_key] = it->_value;
+			_functionHandlers[it->_key].ctx = this;
+		}
+		for (Common::HashMap<uint32, Symbol>::iterator it = sc._eventHandlers.begin(); it != sc._eventHandlers.end(); ++it) {
+			_eventHandlers[it->_key] = it->_value;
+			_eventHandlers[it->_key].ctx = this;
+		}
+		_constants = sc._constants;
+		_propNames = sc._propNames;
+	}
+
 	Datum getObject();
 
 private:
@@ -246,20 +263,25 @@ struct Object {
 	ObjectType type;
 	bool disposed;
 
-	Object *prototype;
 	DatumHash properties;
-	SymbolHash methods;
+	ScriptContext *ctx;
 	int inheritanceLevel; // 1 for original object
 
 	// used only for factories
 	Common::HashMap<uint32, Datum> *objArray;
 
-	Object(const Common::String &objName, ObjectType objType) {
+	Object(const Common::String &objName, ObjectType objType, ScriptContext *objCtx) {
 		name = new Common::String(objName);
 		type = objType;
 		disposed = false;
 		inheritanceLevel = 1;
-		prototype = nullptr;
+		ctx = objCtx;
+		ctx->_target = this;
+
+		// Don't include the ctx's reference to me in the refCount.
+		// Once that's the only remaining reference,
+		// I should be destroyed, killing the ctx with me.
+		*ctx->_target.refCount -= 1;
 
 		if (objType == kFactoryObj) {
 			objArray = new Common::HashMap<uint32, Datum>;
@@ -271,6 +293,8 @@ struct Object {
 	virtual ~Object() {
 		delete name;
 		delete objArray;
+		ctx->_target.refCount = nullptr; // refCount has already been freed
+		delete ctx;
 	}
 
 	virtual Object *clone();
@@ -385,7 +409,7 @@ public:
 
 public:
 	void execute(uint pc);
-	void pushContext(const Symbol *funcSym = nullptr, bool preserveVarFrame = false);
+	void pushContext(const Symbol funcSym, bool preserveVarFrame = false);
 	void popContext();
 	void cleanLocalVars();
 	int castIdFetch(Datum &var);

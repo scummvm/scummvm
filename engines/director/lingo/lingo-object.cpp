@@ -108,11 +108,9 @@ void Lingo::openXLib(const Common::String &name, ObjectType type) {
 }
 
 Object *Object::clone() {
-	Object *res = new Object(*name, type);
+	Object *res = new Object(*name, type, new ScriptContext(*ctx));
 	res->disposed = disposed;
-	res->prototype = this;
 	res->properties = properties;
-	res->methods = methods;
 	res->inheritanceLevel = inheritanceLevel + 1;
 	if (objArray) {
 		res->objArray = new Common::HashMap<uint32, Datum>(*objArray);
@@ -126,15 +124,15 @@ Symbol Object::getMethod(const Common::String &methodName) {
 	}
 
 	// instance method (factory, script object, and Xtra)
-	if ((type | (kFactoryObj & kScriptObj & kXtraObj)) && methods.contains(methodName)) {
-		return methods[methodName];
+	if ((type | (kFactoryObj & kScriptObj & kXtraObj)) && ctx->_functionHandlers.contains(methodName)) {
+		return ctx->_functionHandlers[methodName];
 	}
 
 	if ((type & (kFactoryObj | kXObj)) && methodName.hasPrefixIgnoreCase("m")) {
 		Common::String shortName = methodName.substr(1);
 		// instance method (XObject)
-		if (type == kXObj && methods.contains(shortName) && inheritanceLevel > 1) {
-			return methods[shortName];
+		if (type == kXObj && ctx->_functionHandlers.contains(shortName) && inheritanceLevel > 1) {
+			return ctx->_functionHandlers[shortName];
 		}
 		// predefined method (factory and XObject)
 		if (g_lingo->_methods.contains(shortName) && (type & g_lingo->_methods[shortName].type)) {
@@ -269,7 +267,7 @@ void LM::m_perform(int nargs) {
 	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 	nargs -= 1;
 	Symbol funcSym = me->getMethod(*methodName.u.s);
-	LC::call(funcSym, nargs, g_lingo->_currentMe);
+	LC::call(funcSym, nargs);
 }
 
 // XObject
@@ -283,7 +281,7 @@ void LM::m_instanceRespondsTo(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
-	if (me->methods.contains(methodName)) {
+	if (me->ctx->_functionHandlers.contains(methodName)) {
 		g_lingo->push(Datum(1));
 		return;
 	}
@@ -309,7 +307,7 @@ void LM::m_respondsTo(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
-	if (me->methods.contains(methodName) && me->inheritanceLevel > 1) {
+	if (me->ctx->_functionHandlers.contains(methodName) && me->inheritanceLevel > 1) {
 		g_lingo->push(Datum(1));
 		return;
 	}

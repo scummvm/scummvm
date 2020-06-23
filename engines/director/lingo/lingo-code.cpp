@@ -209,7 +209,7 @@ void LC::c_xpop() {
 	g_lingo->pop();
 }
 
-void Lingo::pushContext(const Symbol *funcSym, bool preserveVarFrame) {
+void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
@@ -219,13 +219,18 @@ void Lingo::pushContext(const Symbol *funcSym, bool preserveVarFrame) {
 	fp->retarchive = g_lingo->_archiveIndex;
 	fp->localvars = g_lingo->_localvars;
 	fp->retMe = g_lingo->_currentMe;
-	if (funcSym)
-		fp->sp = *funcSym;
+	fp->sp = funcSym;
 
-	g_lingo->_currentMe = Datum();
+	g_lingo->_currentScript = funcSym.u.defn;
+	if (funcSym.ctx) {
+		g_lingo->_currentScriptContext = funcSym.ctx;
+		g_lingo->_currentMe = funcSym.ctx->_target;
+	}
+	g_lingo->_archiveIndex = funcSym.archiveIndex;
+
 	// Functions with an archiveIndex of -1 are anonymous.
 	// Execute them within the current var frame.
-	if (!preserveVarFrame && funcSym && funcSym->archiveIndex >= 0)
+	if (!preserveVarFrame && funcSym.archiveIndex >= 0)
 		g_lingo->_localvars = new DatumHash;
 
 	g_lingo->_callstack.push_back(fp);
@@ -1322,23 +1327,24 @@ void LC::call(const Common::String &name, int nargs) {
 
 	// Script/Xtra method call
 	if (nargs > 0) {
-		Datum target = g_lingo->peek(nargs - 1);
-		if (target.type == OBJECT && (target.u.obj->type & (kScriptObj | kXtraObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", target.asString(true).c_str());
+		Datum d = g_lingo->peek(nargs - 1);
+		if (d.type == OBJECT && (d.u.obj->type & (kScriptObj | kXtraObj))) {
+			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
+			Object *target = d.u.obj;
 			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
-				target = Datum(target.u.obj->clone());
+				target = target->clone();
 			}
-			funcSym = target.u.obj->getMethod(name);
+			funcSym = target->getMethod(name);
 			if (funcSym.type != VOID) {
-				if (target.u.obj->type == kScriptObj && funcSym.type == HANDLER) {
+				if (target->type == kScriptObj && funcSym.type == HANDLER) {
 					// For kScriptObj handlers the target is the first argument
-					g_lingo->_stack[g_lingo->_stack.size() - nargs] = target;
+					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.ctx->_target;
 				} else {
 					// Otherwise, take the target object out of the stack
 					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
 					nargs -= 1;
 				}
-				call(funcSym, nargs, target);
+				call(funcSym, nargs);
 				return;
 			}
 		}
@@ -1351,24 +1357,23 @@ void LC::call(const Common::String &name, int nargs) {
 	if (funcSym.type == VOID) {
 		Datum objName(name);
 		objName.type = VAR;
-		Datum target = g_lingo->varFetch(objName);
-		if (target.type == OBJECT && (target.u.obj->type & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", target.asString(true).c_str());
+		Datum d = g_lingo->varFetch(objName);
+		if (d.type == OBJECT && (d.u.obj->type & (kFactoryObj | kXObj))) {
+			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
+			Object *target = d.u.obj;
 			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 			nargs -= 1;
 			if (methodName.u.s->equalsIgnoreCase("mNew")) {
-				target = Datum(target.u.obj->clone());
+				target = target->clone();
 			}
-			funcSym = target.u.obj->getMethod(*methodName.u.s);
-			call(funcSym, nargs, target);
-			return;
+			funcSym = target->getMethod(*methodName.u.s);
 		}
 	}
 
 	call(funcSym, nargs);
 }
 
-void LC::call(const Symbol &funcSym, int nargs, Datum target) {
+void LC::call(const Symbol &funcSym, int nargs) {
 	bool dropArgs = false;
 
 	if (funcSym.type == VOID) {
@@ -1406,6 +1411,11 @@ void LC::call(const Symbol &funcSym, int nargs, Datum target) {
 	if (funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
 		int stackSize = g_lingo->_stack.size() - nargs;
 
+		Datum target;
+		if (funcSym.ctx) {
+			target = funcSym.ctx->_target;
+		}
+
 		if (target.type == OBJECT) {
 			// Only need to update the me obj
 			// Pushing an entire stack frame is not necessary
@@ -1437,7 +1447,7 @@ void LC::call(const Symbol &funcSym, int nargs, Datum target) {
 		g_lingo->push(d);
 	}
 
-	g_lingo->pushContext(&funcSym, true);
+	g_lingo->pushContext(funcSym, true);
 
 	DatumHash *localvars = g_lingo->_localvars;
 	if (funcSym.archiveIndex >= 0) {
@@ -1484,16 +1494,6 @@ void LC::call(const Symbol &funcSym, int nargs, Datum target) {
 		}
 	}
 	g_lingo->_localvars = localvars;
-
-	if (target.type == OBJECT) {
-		g_lingo->_currentMe = target;
-	}
-
-	g_lingo->_currentScript = funcSym.u.defn;
-	if (funcSym.ctx) {
-		g_lingo->_currentScriptContext = funcSym.ctx;
-	}
-	g_lingo->_archiveIndex = funcSym.archiveIndex;
 
 	g_lingo->_pc = 0;
 }

@@ -685,6 +685,9 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 }
 
 void Datum::reset() {
+	if (!refCount)
+		return;
+
 	*refCount -= 1;
 	if (*refCount <= 0) {
 		switch (type) {
@@ -1077,7 +1080,7 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
 			push(Datum(frame));
 			push(Datum(subframe));
-			LC::call(method, 2, _perFrameHook);
+			LC::call(method, 2);
 			execute(_pc);
 		}
 	}
