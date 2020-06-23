@@ -76,12 +76,12 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	}
 
 	for (int ii = 0; ii < drawRect.height(); ii++) {
-		const byte *msk = (const byte *)maskSurface->getBasePtr(maskOrigin.x, maskOrigin.y + ii);
-		const byte *src = (const byte *)spriteSurface.getBasePtr(0 + maskOrigin.x, ii + maskOrigin.y);
+		const byte *msk = (const byte *)_maskSurface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
+		const byte *src = (const byte *)spriteSurface.getBasePtr(maskOrigin.x, ii + maskOrigin.y);
 		byte *dst = (byte *)_surface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
 
-		for (int j = 0; j < drawRect.width(); j++) {
-			if (*msk != 0) {
+		for (int j = 0; j < drawRect.width(); j++, msk++, src++, dst++) {
+			if (*msk) {
 				_vm->_wm->decomposeColor(*src, rSrc, gSrc, bSrc);
 				_vm->_wm->decomposeColor(*dst, rDst, gDst, bDst);
 
@@ -156,10 +156,6 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 					break;
 				}
 			}
-
-			src++;
-			dst++;
-			msk++;
 		}
 	}
 }
@@ -177,7 +173,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
 		byte srcColor = *src;
 
-		for (int j = 0; j < drawRect.width(); j++) {
+		for (int j = 0; j < drawRect.width(); j++, msk++, src++, dst++) {
 			if (*msk != 0) {
 				if (!_channels[spriteId]->_sprite->_cast || _channels[spriteId]->_sprite->_cast->_type == kCastShape)
 					srcColor = 0x0;
@@ -210,9 +206,6 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 					*dst = _vm->transformColor(srcColor);
 				}
 			}
-			msk++;
-			src++;
-			dst++;
 		}
 	}
 }
