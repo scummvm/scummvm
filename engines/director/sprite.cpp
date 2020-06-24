@@ -92,17 +92,6 @@ void Sprite::updateCast() {
 		_cast->setEditable(_editable);
 }
 
-void Sprite::translate(Common::Point delta, bool moveTo) {
-	if (_cast && _cast->_widget) {
-		if (moveTo)
-			_cast->_widget->_dims.moveTo(delta.x, delta.y);
-		else
-			_cast->_widget->_dims.translate(delta.x, delta.y);
-	}
-
-	_dirty = true;
-}
-
 bool Sprite::isDirty() {
 	return _castType != kCastTypeNull && (_dirty || (_cast && _cast->isModified()));
 }

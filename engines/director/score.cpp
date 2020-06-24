@@ -70,7 +70,10 @@ void Channel::updateLocation() {
 	_currentPoint += _delta;
 	_delta = Common::Point(0, 0);
 
-	_sprite->translate(_currentPoint, true);
+	if (_sprite->_cast && _sprite->_cast->_widget) {
+		Common::Point p(getPosition());
+		_sprite->_cast->_widget->_dims.moveTo(p.x, p.y);
+	}
 }
 
 void Channel::addDelta(Common::Point pos) {
