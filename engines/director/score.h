@@ -149,6 +149,9 @@ public:
 	void renderFrame(uint16 frameId, bool forceUpdate = false, bool updateStageOnly = false);
 	void markDirtyRect(Common::Rect dirty);
 
+	// transition.cpp
+	void playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType);
+
 private:
 	void update();
 	void renderShape(uint16 spriteId);
@@ -159,7 +162,6 @@ private:
 	void drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId);
 
 	// transitions.cpp
-	void playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType);
 	void initTransParams(TransParams &t, Common::Rect &clipRect);
 	void dissolveTrans(TransParams &t, Common::Rect &clipRect);
 	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect);

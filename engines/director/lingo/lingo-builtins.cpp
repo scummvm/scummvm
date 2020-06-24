@@ -1738,9 +1738,31 @@ void LB::b_puppetTempo(int nargs) {
 }
 
 void LB::b_puppetTransition(int nargs) {
-	g_lingo->printSTUBWithArglist("b_puppetTransition", nargs);
+	// puppetTransition whichTransition [, time] [, chunkSize] [, changeArea]
+	Score *score = g_director->getCurrentScore();
+	uint16 duration = 250, area = 1, chunkSize = 1, type;
+	if (nargs == 4) {
+		area = g_lingo->pop().asInt();
+		nargs--;
+	}
 
-	g_lingo->dropStack(nargs);
+	if (nargs == 3) {
+		chunkSize = g_lingo->pop().asInt();
+		nargs--;
+	}
+
+	if (nargs == 2) {
+	  duration = g_lingo->pop().asInt();
+		nargs--;
+	}
+
+	if (nargs == 1) {
+		type = ((TransitionType)(g_lingo->pop().asInt()));
+	} else {
+		ARGNUMCHECK(1);
+	}
+
+	score->playTransition(duration, area, chunkSize, ((TransitionType)type));
 }
 
 void LB::b_ramNeeded(int nargs) {
