@@ -1116,16 +1116,13 @@ bool AdScene::display() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::updateFreeObjects() {
 	AdGame *adGame = (AdGame *)_gameRef;
-	// 3D-code removed
-	// bool is3DSet;
 
 	// *** update all active objects
-	// is3DSet = false;
 	for (uint32 i = 0; i < adGame->_objects.size(); i++) {
 		if (!adGame->_objects[i]->_active) {
 			continue;
 		}
-		// 3D-code removed
+
 		adGame->_objects[i]->update();
 		adGame->_objects[i]->_drawn = false;
 	}
