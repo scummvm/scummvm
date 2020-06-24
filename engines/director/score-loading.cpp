@@ -221,7 +221,7 @@ bool Score::loadArchive(bool isSharedCast) {
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
 			Common::SeekableSubReadStreamEndian *stream = _movieArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = _movieArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
-			loadCastData(*stream, *iterator, &res);
+			loadCastData(*stream, res.castId, &res);
 			delete stream;
 		}
 	}

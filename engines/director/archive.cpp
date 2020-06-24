@@ -444,7 +444,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.skip(8); // all 0xFF
 	subStream.readUint32(); // unknown
 
-	Common::Array<Resource> resources;
+	Common::Array<Resource *> resources;
 	resources.reserve(resCount);
 
 	// Need to look for these two resources
@@ -462,33 +462,22 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x unk2: %x",
 			i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
 
-		Resource res;
-		res.offset = offset;
-		res.size = size;
-		res.tag = tag;
-		resources.push_back(res);
-
 		// APPL is a special case; it has an embedded "normal" archive
 		if (rifxType == MKTAG('A', 'P', 'P', 'L') && tag == MKTAG('F', 'i', 'l', 'e'))
 			return openStream(stream, offset);
 
+		Resource &res = _types[tag][i];
+		res.index = i;
+		res.offset = offset;
+		res.size = size;
+		res.tag = tag;
+		resources.push_back(&res);
+
 		// Looking for two types here
 		if (tag == MKTAG('K', 'E', 'Y', '*'))
-			keyRes = &resources.back();
+			keyRes = &res;
 		else if (tag == MKTAG('C', 'A', 'S', '*'))
-			casRes = &resources.back();
-		// or the children of
-		else if (tag == MKTAG('S', 'T', 'X', 'T') ||
-				 tag == MKTAG('B', 'I', 'T', 'D') ||
-				 tag == MKTAG('D', 'I', 'B', ' ') ||
-				 tag == MKTAG('R', 'T', 'E', '0') ||
-				 tag == MKTAG('R', 'T', 'E', '1') ||
-				 tag == MKTAG('R', 'T', 'E', '2') ||
-				 tag == MKTAG('s', 'n', 'd', ' ') ||
-				 tag == MKTAG('L', 'c', 't', 'x') ||
-				 tag == MKTAG('L', 'n', 'a', 'm') ||
-				 tag == MKTAG('L', 's', 'c', 'r'))
-			_types[tag][i] = res;
+			casRes = &res;
 	}
 
 	if (ConfMan.getBool("dump_scripts")) {
@@ -499,14 +488,14 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Common::DumpFile out;
 
 		for (uint i = 0; i < resources.size(); i++) {
-			stream->seek(resources[i].offset);
+			stream->seek(resources[i]->offset);
 
-			uint32 len = resources[i].size;
+			uint32 len = resources[i]->size;
 
-			if (dataSize < resources[i].size) {
+			if (dataSize < resources[i]->size) {
 				free(data);
-				data = (byte *)malloc(resources[i].size);
-				dataSize = resources[i].size;
+				data = (byte *)malloc(resources[i]->size);
+				dataSize = resources[i]->size;
 			}
 			Common::String prepend;
 			if (_fileName.size() != 0)
@@ -514,7 +503,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			else
 				prepend = "stream";
 
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(resources[i].tag), i);
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(resources[i]->tag), i);
 			stream->read(data, len);
 
 			if (!out.open(filename)) {
@@ -560,41 +549,29 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			if (castIndex == 0) {
 				continue;
 			}
-			Resource &res = resources[castIndex];
-			res.index = castIndex;
+			Resource &res = _types[castTag][castIndex];
 			res.castId = i;
-			_types[castTag][res.castId] = res;
 		}
 		debugC(2, kDebugLoading, "]");
 	}
 
 	// Parse the KEY*
 	Common::SeekableSubReadStreamEndian keyStream(stream, keyRes->offset + 8, keyRes->offset + 8 + keyRes->size, _isBigEndian, DisposeAfterUse::NO);
-	uint16 unk1 = keyStream.readUint16();
-	uint16 unk2 = keyStream.readUint16();
-	uint32 unk3 = keyStream.readUint32();
-	uint32 keyCount = keyStream.readUint32();
+	uint16 entrySize = keyStream.readUint16(); // Should always be 12 (3 uint32's)
+	uint16 entrySize2 = keyStream.readUint16();
+	uint32 entryCount = keyStream.readUint32(); // There are more entries than actually used
+	uint32 usedCount = keyStream.readUint32();
 
-	debugC(2, kDebugLoading, "KEY*: unk1: %d unk2: %d unk3: %d keyCount: %d", unk1, unk2, unk3, keyCount);
+	debugC(2, kDebugLoading, "KEY*: entrySize: %d entrySize2: %d entryCount: %d usedCount: %d", entrySize, entrySize2, entryCount, usedCount);
 
-	for (uint32 i = 0; i < keyCount; i++) {
-		uint32 sectionIndex = keyStream.readUint32();
-		uint32 castIndex = keyStream.readUint32();
-		uint32 resTag = keyStream.readUint32();
+	for (uint16 i = 0; i < usedCount; i++) {
+		uint32 childIndex = keyStream.readUint32();
+		uint32 parentIndex = keyStream.readUint32();
+		uint32 childTag = keyStream.readUint32();
 
-		debugC(2, kDebugLoading, "KEY*: sectionIndex: %d castIndex: %d resTag: %s", sectionIndex, castIndex, tag2str(resTag));
-
-		Resource &res = resources[sectionIndex];
-		debug(3, "Found RIFX resource: '%s' sectionIndex: 0x%04x, castIndex: 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), sectionIndex, castIndex, res.size, res.offset, res.offset);
-		_types[resTag][castIndex] = res;
-
-		for (uint cast = 0; cast < _types[castTag].size(); cast++) {
-			if (_types[castTag][cast].index == castIndex) {
-				res.index = sectionIndex;
-				_types[castTag][cast].children.push_back(res);
-				break;
-			}
-		}
+		debugC(2, kDebugLoading, "KEY*: childIndex: %d parentIndex: %d childTag: %s", childIndex, parentIndex, tag2str(childTag));
+		if (childIndex < resources.size() && parentIndex < resources.size())
+			resources[parentIndex]->children.push_back(*resources[childIndex]);
 	}
 
 	_stream = stream;
