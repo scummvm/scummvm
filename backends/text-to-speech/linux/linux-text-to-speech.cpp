@@ -33,7 +33,6 @@
 #include "common/ustr.h"
 #include "common/config-manager.h"
 #include "common/encoding.h"
-#include <pthread.h>
 
 SPDConnection *_connection;
 
