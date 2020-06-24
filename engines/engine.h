@@ -80,6 +80,13 @@ public:
 	* currently represents a pause request.
 	*/
 	void clear();
+
+	/**
+	 * Returns true if the PauseToken represents a pause level,
+	 * false if it is empty.
+	 */
+	bool isActive() const { return _engine != nullptr; }
+
 private:
 	PauseToken(Engine *);
 

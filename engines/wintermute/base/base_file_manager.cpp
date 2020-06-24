@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/file/base_package.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/str.h"
 #include "common/tokenizer.h"
@@ -372,6 +373,10 @@ uint32 BaseFileManager::getPackageVersion(const Common::String &filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::hasFile(const Common::String &filename) {
+	Common::String backwardSlashesPath = filename;
+	// correct slashes
+	Common::replace(backwardSlashesPath.begin(), backwardSlashesPath.end(), '/', '\\');
+
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
 		BasePersistenceManager pm(BaseEngine::instance().getGameTargetName());
 		if (filename.size() <= 9) {
@@ -386,7 +391,7 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (diskFileExists(filename)) {
 		return true;
 	}
-	if (_packages.hasFile(filename)) {
+	if (_packages.hasFile(backwardSlashesPath)) {
 		return true;    // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
 	}
 	if (!_detectionMode && _resources->hasFile(filename)) {

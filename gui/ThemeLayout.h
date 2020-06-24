@@ -63,7 +63,7 @@ public:
 	ThemeLayout(ThemeLayout *p) :
 		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
 		_defaultW(-1), _defaultH(-1),
-		_textHAlign(Graphics::kTextAlignInvalid) {}
+		_textHAlign(Graphics::kTextAlignInvalid), _useRTL(true) {}
 
 	virtual ~ThemeLayout() {
 		for (uint i = 0; i < _children.size(); ++i)
@@ -115,6 +115,7 @@ protected:
 
 public:
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL);
+	bool getUseRTL() { return _useRTL; }
 
 	virtual Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
 
@@ -220,7 +221,7 @@ protected:
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, bool &useRTL) : ThemeLayout(p), _name(name) {
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, bool useRTL) : ThemeLayout(p), _name(name) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
 		_useRTL = useRTL;
@@ -255,7 +256,7 @@ class ThemeLayoutTabWidget : public ThemeLayoutWidget {
 
 public:
 	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight):
-		ThemeLayoutWidget(p, name, w, h, align, _useRTL) {
+		ThemeLayoutWidget(p, name, w, h, align, p->getUseRTL()) {
 		_tabHeight = tabHeight;
 	}
 
@@ -266,7 +267,7 @@ public:
 	}
 
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, int16 &w, int16 &h, bool &useRTL) override {
-		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h, _useRTL)) {
+		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h, useRTL)) {
 			h -= _tabHeight;
 			return true;
 		}

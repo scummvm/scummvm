@@ -197,7 +197,6 @@ public:
 
 	int32 getWidth() const { return _width; }
 	int32 getHeight() const { return _height; }
-
 protected:
 	int32 _height;
 	int32 _width;
