@@ -173,34 +173,6 @@ bool Score::loadArchive(bool isSharedCast) {
 		debug("STUB: Unhandled 'STR ' resource");
 	}
 
-	// Try to load script context
-	if (_vm->getVersion() >= 4) {
-		Common::Array<uint16> lctx =  _movieArchive->getResourceIDList(MKTAG('L','c','t','x'));
-		if (lctx.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
-
-			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				loadLingoContext(*(r = _movieArchive->getResource(MKTAG('L','c','t','x'), *iterator)));
-				delete r;
-			}
-		}
-	}
-
-	// Try to load script name lists
-	if (_vm->getVersion() >= 4) {
-		Common::Array<uint16> lnam =  _movieArchive->getResourceIDList(MKTAG('L','n','a','m'));
-		if (lnam.size() > 0) {
-
-			int maxLnam = -1;
-			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
-				maxLnam = MAX(maxLnam, (int)*iterator);
-			}
-			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			loadLingoNames(*(r = _movieArchive->getResource(MKTAG('L','n','a','m'), maxLnam)));
-			delete r;
-		}
-	}
-
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CastInfos VWCI", vwci.size());
@@ -223,6 +195,34 @@ bool Score::loadArchive(bool isSharedCast) {
 			Resource res = _movieArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
 			loadCastData(*stream, res.castId, &res);
 			delete stream;
+		}
+	}
+
+	// Try to load script name lists
+	if (_vm->getVersion() >= 4) {
+		Common::Array<uint16> lnam =  _movieArchive->getResourceIDList(MKTAG('L','n','a','m'));
+		if (lnam.size() > 0) {
+
+			int maxLnam = -1;
+			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
+				maxLnam = MAX(maxLnam, (int)*iterator);
+			}
+			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
+			loadLingoNames(*(r = _movieArchive->getResource(MKTAG('L','n','a','m'), maxLnam)));
+			delete r;
+		}
+	}
+
+	// Try to load script context
+	if (_vm->getVersion() >= 4) {
+		Common::Array<uint16> lctx =  _movieArchive->getResourceIDList(MKTAG('L','c','t','x'));
+		if (lctx.size() > 0) {
+			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
+
+			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
+				loadLingoContext(*(r = _movieArchive->getResource(MKTAG('L','c','t','x'), *iterator)));
+				delete r;
+			}
 		}
 	}
 
@@ -879,18 +879,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 		Cast *member = _loadedCast->getVal(id);
 		// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
-		if (_vm->getVersion() >= 4 && castType == kCastLingoScript && debugChannelSet(-1, kDebugBytecode)) {
-			// Try and load the compiled Lingo script associated with this cast
-			uint scriptId = ((ScriptCast *)member)->_id - 1;
-			if (scriptId < _castScriptIds.size()) {
-				int resourceId = _castScriptIds[scriptId];
-				Common::SeekableSubReadStreamEndian *r;
-				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId)), _lingoArchive, ((ScriptCast *)member)->_scriptType, id, ci->name, _macName);
-				delete r;
-			} else {
-				warning("Score::loadCastData(): Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
-			}
-		} else {
+		if (_vm->getVersion() < 4 || !debugChannelSet(-1, kDebugBytecode)) {
 			if (!ci->script.empty()) {
 				ScriptType scriptType = kCastScript;
 				// the script type here could be wrong!
@@ -1050,8 +1039,6 @@ void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			stream.hexdump(0x2a);
 		}
 
-		_castScriptIds.clear();
-
 		stream.readUint16();
 		stream.readUint16();
 		stream.readUint16();
@@ -1076,7 +1063,12 @@ void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			stream.readUint16();
 			stream.readUint16();
 
-			_castScriptIds.push_back(index);
+			// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
+			if (_vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
+				Common::SeekableSubReadStreamEndian *r;
+				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), index)), _lingoArchive, _macName);
+				delete r;
+			}
 		}
 	} else {
 		error("Score::loadLingoContext: unsuported Director version (%d)", _vm->getVersion());

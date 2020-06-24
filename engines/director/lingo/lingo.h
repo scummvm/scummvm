@@ -371,7 +371,7 @@ public:
 
 	void addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	ScriptContext *compileAnonymous(const char *code);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName, Common::String &archName);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, const Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id);

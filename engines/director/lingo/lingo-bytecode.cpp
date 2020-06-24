@@ -25,6 +25,7 @@
 #include "common/substream.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
@@ -776,20 +777,7 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName, Common::String &archName) {
-	debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
-
-	if (getScriptContext(archiveIndex, type, id)) {
-		// We can't undefine context data because it could be used in e.g. symbols.
-		// Abort on double definitions.
-		error("Script already defined for type %d, id %d", id, type);
-		return;
-	}
-
-	_assemblyArchive = archiveIndex;
-	_assemblyContext = new ScriptContext(type, !scriptName.empty() ? scriptName : Common::String::format("%d", id));
-	_archives[_assemblyArchive].scriptContexts[type][id] = _assemblyContext;
-
+void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, const Common::String &archName) {
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
 		return;
@@ -816,19 +804,21 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	/* uint32 length = */ stream.readUint32();
 	/* uint32 length2 = */ stream.readUint32();
 	uint16 codeStoreOffset = stream.readUint16();
-	/* uint16 scriptNumber = */ stream.readUint16();
+	/* uint16 lctxIndex = */ stream.readUint16();
 	// unk2
 	for (uint32 i = 0; i < 0x10; i++) {
 		stream.readByte();
 	}
 
 	// offset 36
-	/* uint16 scriptNumber2 = */ stream.readUint16();
-	/* uint32 scriptType = */ stream.readUint32();
-	// unk3
-	for (uint32 i = 0; i < 0x8; i++) {
+	/* uint16 unk3 = */ stream.readUint16();
+	uint32 scriptTypeId = stream.readUint32();
+	// unk4
+	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
 	}
+	uint16 castId = stream.readUint16();
+	/* uint16 unk5 = */ stream.readUint16();
 
 	// offset 50 - contents map
 	// TODO: I believe the handler vectors map handlers to some sort of identifier
@@ -845,6 +835,35 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	uint32 constsOffset = stream.readUint32();
 	/* uint16 constsStoreCount = */ stream.readUint32();
 	uint32 constsStoreOffset = stream.readUint32();
+
+	// initialise the script
+	ScriptType scriptType = kCastScript;
+	Common::String castName;
+	Cast *member = g_director->getCastMember(castId);
+	if (member) {
+		if (member->_type == kCastLingoScript) {
+			if (scriptTypeId == kScoreScript || scriptTypeId == kMovieScript)
+				scriptType = (ScriptType)scriptTypeId;
+			else
+				warning("Unknown script type: %d", scriptTypeId);
+		}
+		CastInfo *info = member->_score->_castsInfo[castId];
+		if (info)
+			castName = info->name;
+	}
+
+	debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(scriptType), castId);
+
+	if (getScriptContext(archiveIndex, scriptType, castId)) {
+		// We can't undefine context data because it could be used in e.g. symbols.
+		// Abort on double definitions.
+		error("Script already defined for type %d, id %d", castId, scriptType);
+		return;
+	}
+
+	_assemblyArchive = archiveIndex;
+	_assemblyContext = new ScriptContext(scriptType, !castName.empty() ? castName : Common::String::format("%d", castId));
+	_archives[_assemblyArchive].scriptContexts[scriptType][castId] = _assemblyContext;
 
 	// initialise each property
 	if ((uint32)stream.size() < propertiesOffset + propertiesCount * 2) {
@@ -1007,7 +1026,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			}
 			break;
 		default:
-			warning("Unknown constant type %d", type);
+			warning("Unknown constant type %d", constType);
 			break;
 		}
 
@@ -1033,7 +1052,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	bool skipdump = false;
 
 	if (ConfMan.getBool("dump_scripts")) {
-		Common::String buf = dumpScriptName(archName.c_str(), type, id, "lscr");
+		Common::String buf = dumpScriptName(archName.c_str(), scriptType, castId, "lscr");
 
 		if (!out.open(buf)) {
 			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.c_str());

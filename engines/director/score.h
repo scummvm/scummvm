@@ -195,7 +195,6 @@ public:
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 	Common::HashMap<uint16, Common::String> _fontMap;
-	Common::Array<uint16> _castScriptIds;
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_maskSurface;
 	Graphics::ManagedSurface *_backSurface;
