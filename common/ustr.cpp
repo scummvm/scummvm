@@ -528,20 +528,19 @@ void U32String::trim() {
 }
 
 U32String U32String::format(U32String fmt, ...) {
-	U32String output = fmt;
+	U32String output;
 	int len;
 
 	va_list va;
 	va_start(va, fmt);
-	len = U32String::vformat(output, output.begin(), va);
+	len = U32String::vformat(fmt.begin(), fmt.end(), output, va);
 	va_end(va);
 
 	return output;
 }
 
-int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args) {
+int U32String::vformat(U32String::const_iterator fmt, const U32String::const_iterator inputItrEnd, U32String &output, va_list args) {
 	int int_temp;
-	char char_temp;
 	char *string_temp;
 
 	char ch;
@@ -551,7 +550,7 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 
 	char buffer[512];
 
-	while (fmt != output.end() && pos < (int)output.size()) {
+	while (fmt != inputItrEnd) {
 		ch = *fmt++;
 		if (ch == '%') {
 			switch (ch = *fmt++) {
@@ -560,11 +559,7 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 				len = strlen(string_temp);
 				length += len;
 
-				output.deleteChar(pos); // remove %
-				output.deleteChar(pos); // remove s
 				output.insertString(string_temp, pos);
-
-				fmt += len - 2;
 				pos += len - 1;
 				break;
 			case 'd':
@@ -573,16 +568,15 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 				len = strlen(buffer);
 				length += len;
 
-				output.deleteChar(pos); // remove %
-				output.deleteChar(pos); // remove d
 				output.insertString(buffer, pos);
-
-				fmt += len - 2;
 				pos += len - 1;
 				break;
 			default:
+				warning("Unexpected formatting type for U32String::Format.");
 				break;
 			}
+		} else {
+			output += *(fmt - 1);
 		}
 		pos++;
 	}
