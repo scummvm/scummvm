@@ -793,7 +793,7 @@ void Score::renderShape(uint16 spriteId) {
 Cast *Score::getCastMember(int castId) {
 	Cast *result = nullptr;
 
-	if (_loadedCast->contains(castId)) {
+	if (_loadedCast && _loadedCast->contains(castId)) {
 		result = _loadedCast->getVal(castId);
 	}
 	return result;
