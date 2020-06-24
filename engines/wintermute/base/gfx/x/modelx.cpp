@@ -112,7 +112,7 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 		warning("ModelX::loadFromFile compressed .X files are not supported yet");
 	}
 
-	XFileLexer lexer(buffer + 16, fileSize, textMode);
+	XFileLexer lexer(buffer + 16, fileSize - 16, textMode);
 
 	bool res = true;
 
