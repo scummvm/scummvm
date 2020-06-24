@@ -48,7 +48,7 @@ This port of ScummVM to the PS3 is based on SDL2. It uses the open source SDK PS
 The dependencies needed to build it are :
 
 - The toolchain from https://github.com/ps3dev/ps3toolchain
-- SDL from https://bitbucket.org/bgK/sdl_psl1ght
+- SDL from https://github.com/bgK/sdl_psl1ght/tree/psl1ght-2.0.3
 - ScummVM from https://github.com/scummvm/scummvm
 
 ScummVM doesn't provide the CA certificates bundle required by the cloud synchronization features.
