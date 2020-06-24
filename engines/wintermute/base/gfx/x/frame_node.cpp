@@ -135,6 +135,17 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 				}
 			}
 
+			// mirror at orign
+			_transformationMatrix(2, 3) *= -1.0f;
+
+			// mirror base vectors
+			_transformationMatrix(2, 0) *= -1.0f;
+			_transformationMatrix(2, 1) *= -1.0f;
+
+			// change handedness
+			_transformationMatrix(0, 2) *= -1.0f;
+			_transformationMatrix(1, 2) *= -1.0f;
+
 			_originalMatrix = _transformationMatrix;
 
 			lexer.advanceToNextToken();
