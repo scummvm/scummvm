@@ -1116,7 +1116,6 @@ bool AdScene::display() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::updateFreeObjects() {
 	AdGame *adGame = (AdGame *)_gameRef;
-	bool is3DSet = false;
 
 	// *** update all active objects
 	for (uint32 i = 0; i < adGame->_objects.size(); i++) {
