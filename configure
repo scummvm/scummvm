@@ -4375,7 +4375,7 @@ int main(void) { return 0; }
 EOF
 			cc_check -lsapi -lole32 && _tts=yes
 			;;
-		linux*)
+		linux* | freebsd*)
 			cat > $TMPC << EOF
 #include <speech-dispatcher/libspeechd.h>
 int main(void) { return 0; }
@@ -5697,8 +5697,8 @@ if test "$_tts" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	linux*)
-		echo "linux"
+	linux* | freebsd*)
+		echo "speech dispatcher"
 		_tts=yes
 		define_in_config_if_yes $_tts 'USE_SPEECH_DISPATCHER'
 		append_var LIBS '-lspeechd -lpthread'

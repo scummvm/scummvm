@@ -32,6 +32,8 @@
 #include "common/list.h"
 #include "common/mutex.h"
 
+#include <pthread.h>
+
 struct StartSpeechParams {
 	pthread_mutex_t *mutex;
 	Common::List<Common::String> *speechQueue;
