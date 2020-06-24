@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-06-08 19:22+0000\n"
+"PO-Revision-Date: 2020-06-24 11:43+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -3863,6 +3863,11 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+"Fout: Het bestand '%s' is er niet goed uit gehaald.\n"
+"Kijk a.u.b. op de wiki pagina\n"
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos voor "
+"instructies hoe de \"DTSPEECH.XA\" en *.STR bestanden op de juiste manier "
+"van de disc gehaald moeten worden."
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -6225,6 +6230,8 @@ msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
 msgstr ""
+"Dit spel vereist 3D ondersteuning wat niet in scope is van ScummVM. Het is "
+"aannemelijk dat het daardoor geheel of gedeeltelijk niet speelbaar is."
 
 #: engines/wintermute/wintermute.cpp:200
 msgid ""
@@ -6431,16 +6438,14 @@ msgid "Volume max"
 msgstr "Volume max"
 
 #: engines/wintermute/keymapper_tables.h:427
-#, fuzzy
 msgid "Show debug parser"
-msgstr "Toon/Verberg Wijzer"
+msgstr "Toon foutopspoor verwerker"
 
 #: engines/wintermute/keymapper_tables.h:434
 #: engines/wintermute/keymapper_tables.h:535
 #: engines/wintermute/keymapper_tables.h:1273
-#, fuzzy
 msgid "Debug print"
-msgstr "Debugger"
+msgstr "Debug print"
 
 #: engines/wintermute/keymapper_tables.h:439
 #: engines/wintermute/keymapper_tables.h:1246
@@ -6448,9 +6453,8 @@ msgid "Exit"
 msgstr "Uitgang"
 
 #: engines/wintermute/keymapper_tables.h:444
-#, fuzzy
 msgid "Light helper window"
-msgstr "Maak passend aan window"
+msgstr "Licht hulp venster"
 
 #: engines/wintermute/keymapper_tables.h:469
 msgid "Run forward"
@@ -6469,9 +6473,8 @@ msgid "Turn right fast"
 msgstr "Snelle draai rechtsom"
 
 #: engines/wintermute/keymapper_tables.h:489
-#, fuzzy
 msgid "Show blueprint"
-msgstr "Toon Object Regel"
+msgstr "Toon blauwdruk"
 
 #: engines/wintermute/keymapper_tables.h:516
 msgid "Volume off"
@@ -6529,7 +6532,7 @@ msgstr "Tool spel credits"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
-msgstr ""
+msgstr "Speel geselecteerde muziekstuk"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
@@ -6589,7 +6592,7 @@ msgstr "Gave: Geluid"
 
 #: engines/wintermute/keymapper_tables.h:763
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Gave: Esence"
 
 #: engines/wintermute/keymapper_tables.h:768
 msgid "Ability: Exorcist"
@@ -6667,9 +6670,8 @@ msgid "Spin faster"
 msgstr "Sneller draaien"
 
 #: engines/wintermute/keymapper_tables.h:1278
-#, fuzzy
 msgid "Bezier window"
-msgstr "Maak passend aan window"
+msgstr "Bezier venster"
 
 #: engines/wintermute/keymapper_tables.h:1294
 msgid "Droid action"
