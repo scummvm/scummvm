@@ -40,7 +40,7 @@ class MacWindowManager;
 class MacWidget {
 
 public:
-	MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable, uint16 border = 0, uint16 gutter = 0, uint16 shadow = 0);
+	MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, bool focusable, uint16 border = 0, uint16 gutter = 0, uint16 shadow = 0);
 	virtual ~MacWidget();
 
 	/**
@@ -102,6 +102,7 @@ public:
 
 	Common::Rect _dims;
 
+	MacWindowManager *_wm;
 	MacWidget *_parent;
 	Common::Array<MacWidget *> _children;
 };

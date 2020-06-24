@@ -245,8 +245,6 @@ public:
 protected:
 	Common::Point _alignOffset;
 
-	MacWindowManager *_wm;
-
 	Common::U32String _str;
 	const MacFont *_macFont;
 

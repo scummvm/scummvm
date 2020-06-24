@@ -95,12 +95,11 @@ uint MacTextLine::getChunkNum(int *col) {
 
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w + 2, h, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow) {
 
 	_str = s;
 	_fullRefresh = true;
 
-	_wm = wm;
 	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
@@ -124,7 +123,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 }
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w + 2, h, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow) {
 
 	_str = Common::U32String(s);
 	_fullRefresh = true;
@@ -154,7 +153,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-	MacWidget(nullptr, 0, 0, 0, 0, false, 0, 0, 0) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0) {
 
 	_str = s;
 	_fullRefresh = true;
@@ -182,7 +181,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 }
 
 MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-	MacWidget(nullptr, 0, 0, 0, 0, false, 0, 0, 0) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0) {
 
 	_str = Common::U32String(s);
 	_fullRefresh = true;

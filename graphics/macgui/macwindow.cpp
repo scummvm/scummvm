@@ -32,7 +32,7 @@
 namespace Graphics {
 
 BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
-		MacWidget(nullptr, 0, 0, 0, 0, true), _id(id), _editable(editable), _wm(wm) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, true), _id(id), _editable(editable) {
 	_callback = 0;
 	_dataPtr = 0;
 
