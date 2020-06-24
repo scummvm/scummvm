@@ -59,8 +59,13 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const char
 	if (isDirBrowser) {
 		action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
 	}
+#if GTK_CHECK_VERSION(3,20,0)
 	GtkFileChooserNative *native = gtk_file_chooser_native_new(utf8Title, NULL, action, utf8Choose, utf8Cancel);
 	GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
+#else
+	GtkWidget *dialog = gtk_file_chooser_dialog_new(utf8Title, NULL, action, utf8Choose, GTK_RESPONSE_ACCEPT, utf8Cancel, GTK_RESPONSE_CANCEL, NULL);
+	GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+#endif
 	free(utf8Cancel);
 	free(utf8Choose);
 	free(utf8Title);
@@ -73,7 +78,11 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const char
 
 	// Show dialog
 	beginDialog();
+#if GTK_CHECK_VERSION(3,20,0)
 	int res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(native));
+#else
+	int res = gtk_dialog_run(GTK_DIALOG(dialog));
+#endif
 	if (res == GTK_RESPONSE_ACCEPT) {
 		// Get the selection from the user
 		char *path = gtk_file_chooser_get_filename(chooser);
@@ -87,7 +96,11 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const char
 		g_free(last);
 	}
 	
+#if GTK_CHECK_VERSION(3,20,0)
 	g_object_unref(native);
+#else
+	gtk_widget_destroy(dialog);
+#endif
 
 	while (gtk_events_pending())
 		gtk_main_iteration();
