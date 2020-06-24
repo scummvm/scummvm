@@ -1059,12 +1059,12 @@ void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			stream.readUint16();
 			stream.readUint16();
 			stream.readUint16();
-			uint16 index = stream.readUint16();
+			int16 index = stream.readSint16();
 			stream.readUint16();
 			stream.readUint16();
 
 			// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
-			if (_vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
+			if (index >= 0 && _vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
 				Common::SeekableSubReadStreamEndian *r;
 				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), index)), _lingoArchive, _macName);
 				delete r;
