@@ -43,11 +43,11 @@ enum CastType {
 
 enum ScriptType {
 	kNoneScript = -1,
-	kMovieScript = 0,
-	kCastScript = 1,
-	kGlobalScript = 2,
-	kScoreScript = 3,
-	kMaxScriptType = 3	// Sync with score.cpp:45, array scriptTypes[]
+	kScoreScript = 0,
+	kCastScript = 1,	// not a canonical ID - change if it's actually used by Director
+	kMovieScript = 2,
+	kGlobalScript = 3,	// not a canonical ID
+	kMaxScriptType = 3	// Sync with score-loading.cpp:45, array scriptTypes[]
 };
 
 enum ShapeType {

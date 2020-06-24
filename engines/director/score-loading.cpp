@@ -43,10 +43,10 @@
 namespace Director {
 
 const char *scriptTypes[] = {
-	"MovieScript",
+	"ScoreScript",
 	"CastScript",
-	"GlobalScript",
-	"ScoreScript"
+	"MovieScript",
+	"GlobalScript"
 };
 
 const char *scriptType2str(ScriptType scr) {
