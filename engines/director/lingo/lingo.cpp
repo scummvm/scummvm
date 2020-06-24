@@ -174,6 +174,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 }
 
 Lingo::~Lingo() {
+	resetLingo(false);
 	cleanupBuiltins();
 }
 
@@ -605,7 +606,7 @@ void Lingo::executeHandler(const Common::String &name) {
 	execute(_pc);
 }
 
-void Lingo::restartLingo(bool keepSharedCast) {
+void Lingo::resetLingo(bool keepSharedCast) {
 	debugC(3, kDebugLingoExec, "Resetting Lingo!");
 
 	for (int a = 0; a < 2; a++) {

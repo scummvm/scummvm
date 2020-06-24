@@ -280,9 +280,9 @@ Common::Error DirectorEngine::run() {
 
 			if (_sharedScore && _sharedScore->_movieArchive
 					&& _sharedScore->_movieArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
-				_lingo->restartLingo(true);
+				_lingo->resetLingo(true);
 			} else {
-				_lingo->restartLingo(false);
+				_lingo->resetLingo(false);
 				loadSharedCastsFrom(_currentPath + _sharedCastFile);
 			}
 

@@ -350,7 +350,7 @@ public:
 	Lingo(DirectorEngine *vm);
 	~Lingo();
 
-	void restartLingo(bool keepSharedCast);
+	void resetLingo(bool keepSharedCast);
 
 	void addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	ScriptContext *compileAnonymous(const char *code);
