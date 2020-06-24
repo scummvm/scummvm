@@ -5460,6 +5460,7 @@ case $_host_os in
 		linuxcd=no
 		cat > $TMPC << EOF
 #include <linux/cdrom.h>
+#include <sys/sysmacros.h>
 #include <sys/types.h>
 int main(void) {
 	int x = CDROMREADAUDIO;
