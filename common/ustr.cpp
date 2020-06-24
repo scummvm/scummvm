@@ -554,8 +554,7 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 	while (fmt != output.end() && pos < (int)output.size()) {
 		ch = *fmt++;
 		if (ch == '%') {
-			switch (ch = *fmt++)
-			{
+			switch (ch = *fmt++) {
 			case 's':
 				string_temp = va_arg(args, char *);
 				len = strlen(string_temp);
@@ -588,6 +587,33 @@ int U32String::vformat(U32String &output, U32String::iterator fmt, va_list args)
 		pos++;
 	}
 	return length;
+}
+
+char* U32String::itoa(int num, char* str, int base) {
+	int i = 0;
+
+	// go digit by digit
+	while (num != 0) {
+		int rem = num % base;
+		str[i++] = rem + '0';
+		num /= base;
+	}
+
+	// append string terminator
+	str[i] = '\0';
+	int k = 0;
+	int j = i - 1;
+
+	// reverse the string
+	while (k < j) {
+		char temp = str[k];
+		str[k] = str[j];
+		str[j] = temp;
+		k++;
+		j--;
+	}
+
+	return str;
 }
 
 } // End of namespace Common
