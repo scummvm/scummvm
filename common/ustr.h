@@ -247,6 +247,12 @@ public:
 	 */
 	static int vformat(U32String &output, U32String::iterator fmt, va_list args);
 
+	/**
+	 * Helper function for vformat, convert an int to string
+	 * minimal implementation, only for base 10
+	*/
+	static char* itoa(int num, char* str, int base);
+
 private:
 	void makeUnique();
 	void ensureCapacity(uint32 new_size, bool keep_old);
