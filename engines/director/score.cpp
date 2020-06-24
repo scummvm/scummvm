@@ -127,6 +127,7 @@ Score::Score(DirectorEngine *vm) {
 	_lastClickTime = _lastEventTime;
 	_lastRollTime = _lastEventTime;
 	_lastTimerReset = _lastEventTime;
+	_puppetTempo = 0x00;
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {
@@ -526,7 +527,7 @@ void Score::update() {
 	_lingo->processEvent(kEventNone);
 	// TODO Director 6 - another order
 
-	byte tempo = _frames[_currentFrame]->_tempo;
+	byte tempo = _puppetTempo ? _puppetTempo : _frames[_currentFrame]->_tempo;
 
 	if (tempo) {
 		if (tempo > 161) {

@@ -212,6 +212,7 @@ public:
 	uint32 _lastTimerReset;
 	uint16 _stageColor;
 
+	byte _puppetTempo;
 	bool _stopPlay;
 	uint32 _nextFrameTime;
 

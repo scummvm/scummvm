@@ -1733,8 +1733,8 @@ void LB::b_puppetSprite(int nargs) {
 }
 
 void LB::b_puppetTempo(int nargs) {
-	Datum d = g_lingo->pop();
-	warning("STUB: b_puppetTempo(%d)", d.asInt());
+	// TODO: Check if >D4 permitted tempo higher than 60.
+	g_director->getCurrentScore()->_puppetTempo = MIN(g_lingo->pop().asInt(), 60);
 }
 
 void LB::b_puppetTransition(int nargs) {
