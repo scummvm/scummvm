@@ -64,9 +64,7 @@ void FileIO::initialize(int type) {
 			ScriptContext *ctx = new ScriptContext(kNoneScript, Common::String(xlibName));
 			FileObject *xobj = new FileObject(kXObj, ctx);
 			xobj->initMethods();
-			g_lingo->_globalvars[xlibName] = Datum();
-			g_lingo->_globalvars[xlibName].type = OBJECT;
-			g_lingo->_globalvars[xlibName].u.obj = xobj;
+			g_lingo->_globalvars[xlibName] = xobj->ctx->_target;
 		} else {
 			warning("FileIO XObject already initialized");
 		}
@@ -95,11 +93,7 @@ void FileObject::initMethods() {
 }
 
 Object *FileObject::clone() {
-	FileObject *res = new FileObject(type, new ScriptContext(*ctx));
-	res->disposed = disposed;
-	res->properties = properties;
-	res->inheritanceLevel = inheritanceLevel + 1;
-	return res;
+	return new FileObject(*this);
 }
 
 void FileObject::dispose() {

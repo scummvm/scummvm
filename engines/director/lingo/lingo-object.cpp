@@ -108,14 +108,7 @@ void Lingo::openXLib(const Common::String &name, ObjectType type) {
 }
 
 Object *Object::clone() {
-	Object *res = new Object(*name, type, new ScriptContext(*ctx));
-	res->disposed = disposed;
-	res->properties = properties;
-	res->inheritanceLevel = inheritanceLevel + 1;
-	if (objArray) {
-		res->objArray = new Common::HashMap<uint32, Datum>(*objArray);
-	}
-	return res;
+	return new Object(*this);
 }
 
 Symbol Object::getMethod(const Common::String &methodName) {

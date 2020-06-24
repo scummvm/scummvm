@@ -65,6 +65,14 @@ struct FileObject : Object {
 		outStream = nullptr;
 	}
 
+	FileObject(const FileObject &obj) : Object(obj) {
+		filename = nullptr;
+		inFile = nullptr;
+		inStream = nullptr;
+		outFile = nullptr;
+		outStream = nullptr;
+	}
+
 	virtual ~FileObject() {
 		dispose();
 	}

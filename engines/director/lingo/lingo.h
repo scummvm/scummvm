@@ -290,6 +290,23 @@ struct Object {
 		}
 	}
 
+	Object(const Object &obj) {
+		name = new Common::String(*obj.name);
+		type = obj.type;
+		disposed = obj.disposed;
+		inheritanceLevel = obj.inheritanceLevel + 1;
+		properties = obj.properties;
+		ctx = new ScriptContext(*obj.ctx);
+		ctx->_target = this;
+		*ctx->_target.refCount -= 1;
+
+		if (obj.objArray) {
+			objArray = new Common::HashMap<uint32, Datum>(*obj.objArray);
+		} else {
+			objArray = nullptr;
+		}
+	}
+
 	virtual ~Object() {
 		delete name;
 		delete objArray;
