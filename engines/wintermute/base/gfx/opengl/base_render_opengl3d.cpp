@@ -490,6 +490,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 		glDisable(GL_ALPHA_TEST);
 	}
 
+	setSpriteBlendMode(blendMode);
+
 	glEnable(GL_TEXTURE_2D);
 
 	glEnableClientState(GL_COLOR_ARRAY);
