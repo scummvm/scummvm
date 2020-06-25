@@ -1862,12 +1862,17 @@ esac
 #
 case $_host_os in
 android)
-	if test -z "$ANDROID_SDK_ROOT"; then
-		echo "Please set ANDROID_SDK_ROOT in your environment. export ANDROID_SDK_ROOT=<path to Android SDK>"
+	if test -z "$ANDROID_SDK"; then
+		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
  		exit 1
 	fi
-	if test -z "$ANDROID_NDK_ROOT"; then
-		echo "Please set ANDROID_NDK_ROOT in your environment. export ANDROID_NDK_ROOT=<path to Android NDK>"
+	if test -z "$ANDROID_NDK"; then
+		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
+		exit 1
+	fi
+	ndk_version=$(sed -En -e 's/^Pkg.Revision *= *([0-9a-f]+).*/\1/p' "$ANDROID_NDK/source.properties")
+	if [ -z "$ndk_version" -o "$ndk_version" -lt 18 ]; then
+		echo "Need Android NDK r18 or later to compile! Found version '$ndk_version'"
  		exit 1
  	fi
 	;;
@@ -2624,9 +2629,7 @@ case $_host_os in
 		# Build ID is needed for native debugging in Android Studio
 		append_var LDFLAGS "-Wl,--build-id=sha1"
 
-		add_line_to_config_mk "ANDROID_SDK_ROOT := $ANDROID_SDK_ROOT"
-		add_line_to_config_mk "ANDROID_NDK_ROOT := $ANDROID_NDK_ROOT"
-
+		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
 		;;
 	beos*)
