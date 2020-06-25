@@ -49,33 +49,33 @@ public:
 	};
 
 	WindowsTextToSpeechManager();
-	virtual ~WindowsTextToSpeechManager();
+	virtual ~WindowsTextToSpeechManager() override;
 
-	virtual bool say(Common::String str, Action action, Common::String charset = "");
+	virtual bool say(Common::String str, Action action, Common::String charset = "") override;
 
-	virtual bool stop();
-	virtual bool pause();
-	virtual bool resume();
+	virtual bool stop() override;
+	virtual bool pause() override;
+	virtual bool resume() override;
 
-	virtual bool isSpeaking();
-	virtual bool isPaused();
-	virtual bool isReady();
+	virtual bool isSpeaking() override;
+	virtual bool isPaused() override;
+	virtual bool isReady() override;
 
-	virtual void setVoice(unsigned index);
+	virtual void setVoice(unsigned index) override;
 
-	virtual void setRate(int rate);
+	virtual void setRate(int rate) override;
 
-	virtual void setPitch(int pitch);
+	virtual void setPitch(int pitch) override;
 
-	virtual void setVolume(unsigned volume);
+	virtual void setVolume(unsigned volume) override;
 
-	virtual void setLanguage(Common::String language);
+	virtual void setLanguage(Common::String language) override;
 
-	virtual void freeVoiceData(void *data);
+	virtual void freeVoiceData(void *data) override;
 
 private:
 	void init();
-	virtual void updateVoices();
+	virtual void updateVoices() override;
 	void createVoice(void *cpVoiceToken);
 	Common::String lcidToLocale(Common::String lcid);
 	SpeechState _speechState;

@@ -72,21 +72,28 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (_caretVisible)
 		drawCaret(true);
 
-	x += _editScrollOffset;
+	if (g_gui.useRTL()) {
+		x = _w - x;
+	}
 
+	x += _editScrollOffset;
 	int width = 0;
+	if (_drawAlign == Graphics::kTextAlignRight)
+		width = _editScrollOffset + getEditRect().width() - g_gui.getStringWidth(_editString, _font);
+
 	uint i;
 
 	uint last = 0;
 	for (i = 0; i < _editString.size(); ++i) {
 		const uint cur = _editString[i];
 		width += g_gui.getCharWidth(cur, _font) + g_gui.getKerningOffset(last, cur, _font);
-		if (width >= x)
+		if (width >= x && width > _editScrollOffset + _leftPadding)
 			break;
 		last = cur;
 	}
-	if (setCaretPos(i))
-		markAsDirty();
+
+	setCaretPos(i);
+	markAsDirty();
 }
 
 void EditTextWidget::drawWidget() {
@@ -101,7 +108,7 @@ void EditTextWidget::drawWidget() {
 
 	g_gui.theme()->drawText(
 			Common::Rect(_x + 2 + _leftPadding, _y + 1, _x + _leftPadding + getEditRect().width() + 2, _y + _h),
-			_editString, _state, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone,
+			_editString, _state, _drawAlign, ThemeEngine::kTextInversionNone,
 			-_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 }
 

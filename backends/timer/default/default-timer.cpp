@@ -62,6 +62,7 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 
 
 DefaultTimerManager::DefaultTimerManager() :
+	_timerCallbackNext(0),
 	_head(0) {
 
 	_head = new TimerSlot();
@@ -83,6 +84,10 @@ void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
 
 	uint32 curTime = g_system->getMillis(true);
+
+	// On slow systems this could still be run after destructor
+	if (!_head)
+		return;
 
 	// Repeat as long as there is a TimerSlot that is scheduled to fire.
 	TimerSlot *slot = _head->next;
@@ -107,6 +112,16 @@ void DefaultTimerManager::handler() {
 
 		// Look at the next scheduled timer
 		slot = _head->next;
+	}
+}
+
+void DefaultTimerManager::checkTimers(uint32 interval) {
+	uint32 curTime = g_system->getMillis();
+
+	// Timer checking & firing
+	if (curTime >= _timerCallbackNext) {
+		handler();
+		_timerCallbackNext = curTime + interval;
 	}
 }
 
@@ -163,7 +178,7 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	// callbacks.
 	//
 	// Another issues occurs when one plays a game with ALSA as music driver,
-	// does RTL and starts a different engine game with ALSA as music driver.
+	// returns to launcher and starts a different engine game with ALSA as music driver.
 	// In this case the MPU401 code will add different timer procs with the
 	// same name, resulting in two different callbacks added with the same
 	// name and causing installTimerProc to error out.

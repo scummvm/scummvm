@@ -33,20 +33,29 @@
 
 @interface MacOSXTextToSpeechManagerDelegate : NSObject<NSSpeechSynthesizerDelegate> {
 	MacOSXTextToSpeechManager *_ttsManager;
+	BOOL _ignoreNextFinishedSpeaking;
 }
 - (id)initWithManager:(MacOSXTextToSpeechManager*)ttsManager;
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking;
+- (void)ignoreNextFinishedSpeaking:(BOOL)ignore;
 @end
 
 @implementation MacOSXTextToSpeechManagerDelegate
 - (id)initWithManager:(MacOSXTextToSpeechManager*)ttsManager {
 	self = [super init];
 	_ttsManager = ttsManager;
+	_ignoreNextFinishedSpeaking = NO;
 	return self;
 }
 
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking {
-	_ttsManager->startNextSpeech();
+	if (!_ignoreNextFinishedSpeaking)
+		_ttsManager->startNextSpeech();
+	_ignoreNextFinishedSpeaking = NO;
+}
+
+- (void)ignoreNextFinishedSpeaking:(BOOL)ignore {
+	_ignoreNextFinishedSpeaking = ignore;
 }
 @end
 
@@ -133,9 +142,15 @@ bool MacOSXTextToSpeechManager::startNextSpeech() {
 
 bool MacOSXTextToSpeechManager::stop() {
 	_messageQueue.clear();
-	_currentSpeech.clear(); // so that it immediately reports that it is no longer speeking
-	// Stop as soon as possible
-	[synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
+	if (isSpeaking()) {
+		_currentSpeech.clear(); // so that it immediately reports that it is no longer speeking
+		// Stop as soon as possible
+		// Also tell the MacOSXTextToSpeechManagerDelegate to ignore the next finishedSpeaking as
+		// it has already been handled, but we might have started another speach by the time we
+		// receive it, and we don't want to stop that one.
+		[synthesizerDelegate ignoreNextFinishedSpeaking:YES];
+		[synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
+	}
 	return true;
 }
 
@@ -225,6 +240,19 @@ void MacOSXTextToSpeechManager::setVolume(unsigned volume) {
 void MacOSXTextToSpeechManager::setLanguage(Common::String language) {
 	Common::TextToSpeechManager::setLanguage(language);
 	updateVoices();
+}
+
+int MacOSXTextToSpeechManager::getDefaultVoice() {
+	if (_ttsState->_availableVoices.size() < 2)
+		return 0;
+	NSString *defaultVoice = [NSSpeechSynthesizer defaultVoice];
+	if (defaultVoice == nil)
+		return 0;
+	for (int i = 0 ; i < _ttsState->_availableVoices.size() ; ++i) {
+		if ([defaultVoice isEqualToString:(NSString*)(_ttsState->_availableVoices[i].getData())])
+			return i;
+	}
+	return 0;
 }
 
 void MacOSXTextToSpeechManager::freeVoiceData(void *data) {

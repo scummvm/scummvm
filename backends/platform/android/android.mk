@@ -44,8 +44,8 @@ $(PATH_BUILD_GRADLE): $(PATH_BUILD_ASSETS) $(PATH_DIST)/build.gradle
 	@echo "gradle.ext.androidAbi = '$(ABIS)'" >> $@
 	@echo "include ':ResidualVM'" >> $@
 	@echo "project(':ResidualVM').projectDir = new File('$(abspath $(PATH_DIST))')" >> $@
-	@echo "ndk.dir=$(ANDROID_NDK)" > $(PATH_BUILD)/local.properties
-	@echo "sdk.dir=$(ANDROID_SDK)" >> $(PATH_BUILD)/local.properties
+	@echo "ndk.dir=$(ANDROID_NDK_ROOT)" > $(PATH_BUILD)/local.properties
+	@echo "sdk.dir=$(ANDROID_SDK_ROOT)" >> $(PATH_BUILD)/local.properties
 
 
 $(PATH_BUILD_SETUPAPK): $(PATH_BUILD_ASSETS) $(PATH_BUILD_JNI) $(PATH_BUILD_GRADLE) | $(PATH_BUILD) 
