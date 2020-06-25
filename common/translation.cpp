@@ -291,15 +291,6 @@ void TranslationManager::loadTranslationsInfoDat() {
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
 
-	// Get number of codepages
-	int nbCodepages = in.readUint16BE();
-
-	// Determine where the codepages start
-	_charmapStart = 0;
-	for (int i = 0; i < nbTranslations + 3; ++i)
-		_charmapStart += in.readUint16BE();
-	_charmapStart += in.pos();
-
 	// Read list of languages
 	_langs.resize(nbTranslations);
 	_langNames.resize(nbTranslations);
@@ -310,14 +301,6 @@ void TranslationManager::loadTranslationsInfoDat() {
 		len = in.readUint16BE();
 		in.read(buf, len);
 		_langNames[i] = String(buf, len - 1);
-	}
-
-	// Read list of codepages
-	_charmaps.resize(nbCodepages);
-	for (int i = 0; i < nbCodepages; ++i) {
-		len = in.readUint16BE();
-		in.read(buf, len);
-		_charmaps[i] = String(buf, len - 1);
 	}
 
 	// Read messages
@@ -359,13 +342,6 @@ void TranslationManager::loadLanguageDat(int index) {
 		return;
 	}
 
-	// Get the number of codepages
-	int nbCodepages = in.readUint16BE();
-	if (nbCodepages != (int)_charmaps.size()) {
-		warning("The 'translations.dat' file has changed since starting ScummVM. GUI translation will not be available");
-		return;
-	}
-
 	// Get size of blocks to skip.
 	int skipSize = 0;
 	for (int i = 0; i < index + 3; ++i)
@@ -380,10 +356,7 @@ void TranslationManager::loadLanguageDat(int index) {
 	int nbMessages = in.readUint16BE();
 	_currentTranslationMessages.resize(nbMessages);
 
-	// Read charset
-	len = in.readUint16BE();
-	in.read(buf, len);
-	_currentCharset = String(buf, len - 1);
+	_currentCharset = "UTF-32";
 
 	// Read messages
 	for (int i = 0; i < nbMessages; ++i) {
@@ -395,36 +368,13 @@ void TranslationManager::loadLanguageDat(int index) {
 			msg += String(buf, len > 256 ? 256 : len - 1);
 			len -= 256;
 		}
-		_currentTranslationMessages[i].msgstr = msg;
+		_currentTranslationMessages[i].msgstr = msg.decode();
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);
 			_currentTranslationMessages[i].msgctxt = String(buf, len - 1);
 		}
 	}
-
-	// Find the charset
-	int charmapNum = -1;
-	for (uint i = 0; i < _charmaps.size(); ++i) {
-		if (_charmaps[i].equalsIgnoreCase(_currentCharset)) {
-			charmapNum = i;
-			break;
-		}
-	}
-
-	// Setup the new charset mapping
-	if (charmapNum == -1) {
-		delete[] _charmap;
-		_charmap = nullptr;
-	} else {
-		if (!_charmap)
-			_charmap = new uint32[256];
-
-		in.seek(_charmapStart + charmapNum * 256 * 4, SEEK_SET);
-		for (int i = 0; i < 256; ++i)
-			_charmap[i] = in.readUint32BE();
-	}
-
 }
 
 bool TranslationManager::checkHeader(File &in) {
