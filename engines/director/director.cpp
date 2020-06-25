@@ -199,6 +199,15 @@ Common::Error DirectorEngine::run() {
 		if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
 			warning("Detected Projector file");
 
+			if (_mainArchive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
+				Common::Array<uint16> xcod = _mainArchive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
+				for (Common::Array<uint16>::iterator iterator = xcod.begin(); iterator != xcod.end(); ++iterator) {
+					Resource res = _mainArchive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), *iterator);
+					debug(0, "Detected XObject '%s'", res.name.c_str());
+					g_lingo->openXLib(res.name, kXObj);
+				}
+			}
+
 			if (_mainArchive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
 				_currentScore->setArchive(_mainArchive);
 
