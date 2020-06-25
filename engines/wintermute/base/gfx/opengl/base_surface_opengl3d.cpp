@@ -54,7 +54,6 @@ void applyColorKey(Graphics::Surface &surf, byte ckRed, byte ckGreen, byte ckBlu
 
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *renderer)
 	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _texWidth(0), _texHeight(0) {
-	glGenTextures(1, &_tex);
 }
 
 BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
@@ -63,7 +62,11 @@ BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
 }
 
 bool BaseSurfaceOpenGL3D::invalidate() {
-	warning("BaseSurfaceOpenGL3D::invalidate not yet implemented");
+	glDeleteTextures(1, &_tex);
+	delete[] _imageData;
+	_imageData = nullptr;
+
+	_valid = false;
 	return true;
 }
 
@@ -73,6 +76,8 @@ bool BaseSurfaceOpenGL3D::displayHalfTrans(int x, int y, Rect32 rect) {
 }
 
 bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
+	prepareToDraw();
+
 	uint8 *imageData = new uint8[4 * _texWidth * _texHeight]();
 
 	// assume 32 bit rgba for now
@@ -87,21 +92,29 @@ bool BaseSurfaceOpenGL3D::isTransparentAt(int x, int y) {
 }
 
 bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	prepareToDraw();
+
 	_renderer->drawSprite(*this, rect, zoomX, zoomY, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	prepareToDraw();
+
 	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+	prepareToDraw();
+
 	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x + offsetX, y + offsetY), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	prepareToDraw();
+
 	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
@@ -117,6 +130,8 @@ bool BaseSurfaceOpenGL3D::displayZoom(int x, int y, Rect32 rect, float zoomX, fl
 }
 
 bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
+	prepareToDraw();
+
 	Vector2 scale(numTimesX, numTimesY);
 	_renderer->drawSpriteEx(*this, rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, true, Graphics::BLEND_NORMAL, false, false);
 	return true;
@@ -191,6 +206,7 @@ bool BaseSurfaceOpenGL3D::create(int width, int height) {
 	_texWidth = Common::nextHigher2(width);
 	_texHeight = Common::nextHigher2(height);
 
+	glGenTextures(1, &_tex);
 	glBindTexture(GL_TEXTURE_2D, _tex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -204,6 +220,11 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	_texWidth = Common::nextHigher2(_width);
 	_texHeight = Common::nextHigher2(_height);
 
+	if (_valid) {
+		invalidate();
+	}
+
+	glGenTextures(1, &_tex);
 	glBindTexture(GL_TEXTURE_2D, _tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -212,6 +233,7 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, surface.getPixels());
 	glBindTexture(GL_TEXTURE_2D, 0);
+	_valid = true;
 
 	return true;
 }
@@ -235,6 +257,8 @@ bool BaseSurfaceOpenGL3D::startPixelOp() {
 	if (_imageData) {
 		return true;
 	}
+
+	prepareToDraw();
 
 	_imageData = new uint8[4 * _texWidth * _texHeight]();
 	glBindTexture(GL_TEXTURE_2D, _tex);
@@ -264,6 +288,8 @@ bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) {
 }
 
 void BaseSurfaceOpenGL3D::setTexture() {
+	prepareToDraw();
+
 	glBindTexture(GL_TEXTURE_2D, _tex);
 }
 
