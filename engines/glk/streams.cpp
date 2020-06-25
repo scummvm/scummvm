@@ -1407,6 +1407,9 @@ void Streams::removeStream(Stream *stream) {
 		if ((*i)->_echoStream == stream)
 			(*i)->_echoStream = nullptr;
 	}
+
+	if (_currentStream == stream)
+		_currentStream = nullptr; 
 }
 
 Stream *Streams::getFirst(uint *rock) {
