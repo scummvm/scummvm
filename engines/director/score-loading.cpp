@@ -198,8 +198,9 @@ bool Score::loadArchive(bool isSharedCast) {
 		}
 	}
 
-	// Try to load script name lists
-	if (_vm->getVersion() >= 4) {
+	// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
+	if (_vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
+		// Try to load script name lists
 		Common::Array<uint16> lnam =  _movieArchive->getResourceIDList(MKTAG('L','n','a','m'));
 		if (lnam.size() > 0) {
 
@@ -211,10 +212,8 @@ bool Score::loadArchive(bool isSharedCast) {
 			loadLingoNames(*(r = _movieArchive->getResource(MKTAG('L','n','a','m'), maxLnam)));
 			delete r;
 		}
-	}
 
-	// Try to load script context
-	if (_vm->getVersion() >= 4) {
+		// Try to load script context
 		Common::Array<uint16> lctx =  _movieArchive->getResourceIDList(MKTAG('L','c','t','x'));
 		if (lctx.size() > 0) {
 			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
@@ -1049,6 +1048,7 @@ void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		/*uint16 itemCount2 = */ stream.readUint16();
 		uint16 itemsOffset = stream.readUint16();
 
+		Common::Array<int16> lscr;
 		stream.seek(itemsOffset);
 		for (uint16 i = 0; i < itemCount; i++) {
 			if (debugChannelSet(5, kDebugLoading)) {
@@ -1060,13 +1060,15 @@ void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			stream.readUint16();
 			stream.readUint16();
 			int16 index = stream.readSint16();
+			lscr.push_back(index);
 			stream.readUint16();
 			stream.readUint16();
+		}
 
-			// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
-			if (index >= 0 && _vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
+		for (Common::Array<int16>::iterator iterator = lscr.begin(); iterator != lscr.end(); ++iterator) {
+			if (*iterator >= 0) {
 				Common::SeekableSubReadStreamEndian *r;
-				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), index)), _lingoArchive, _macName);
+				_lingo->addCodeV4(*(r = _movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), *iterator)), _lingoArchive, _macName);
 				delete r;
 			}
 		}
