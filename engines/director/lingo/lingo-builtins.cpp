@@ -1740,7 +1740,7 @@ void LB::b_puppetTempo(int nargs) {
 void LB::b_puppetTransition(int nargs) {
 	// puppetTransition whichTransition [, time] [, chunkSize] [, changeArea]
 	Score *score = g_director->getCurrentScore();
-	uint16 duration = 250, area = 1, chunkSize = 1, type;
+	uint16 duration = 250, area = 1, chunkSize = 1, type = 0;
 	if (nargs == 4) {
 		area = g_lingo->pop().asInt();
 		nargs--;
