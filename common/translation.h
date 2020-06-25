@@ -56,7 +56,7 @@ typedef Array<TLanguage> TLangArray;
 struct PoMessageEntry {
 	int msgid;
 	String msgctxt;
-	String msgstr;
+	U32String msgstr;
 };
 
 /**
