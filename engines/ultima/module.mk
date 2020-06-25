@@ -558,6 +558,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/heal_process.o \
 	ultima8/world/actors/loiter_process.o \
 	ultima8/world/actors/main_actor.o \
+	ultima8/world/actors/npc_dat.o \
 	ultima8/world/actors/pathfinder.o \
 	ultima8/world/actors/pathfinder_process.o \
 	ultima8/world/actors/quick_avatar_mover_process.o \

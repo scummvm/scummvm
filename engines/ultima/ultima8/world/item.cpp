@@ -695,7 +695,10 @@ Shape *Item::getShapeObject() const {
 }
 
 uint16 Item::getFamily() const {
-	return static_cast<uint16>(getShapeInfo()->_family);
+	const ShapeInfo *info = getShapeInfo();
+	if (!info)
+		return 0;
+	return static_cast<uint16>(info->_family);
 }
 
 uint32 Item::getWeight() const {

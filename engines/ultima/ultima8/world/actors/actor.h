@@ -272,6 +272,7 @@ public:
 	INTRINSIC(I_areEnemiesNear);
 	INTRINSIC(I_isBusy);
 	INTRINSIC(I_createActor);
+	INTRINSIC(I_createActorCru);
 	INTRINSIC(I_setActivity);
 	INTRINSIC(I_setAirWalkEnabled);
 	INTRINSIC(I_getAirWalkEnabled);

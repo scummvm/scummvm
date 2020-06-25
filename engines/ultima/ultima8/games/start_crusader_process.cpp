@@ -37,6 +37,7 @@
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 
@@ -108,6 +109,11 @@ void StartCrusaderProcess::run() {
 		egg->hatch();
 		*/
 
+		// TODO: How is this created in the game??
+		Egg *miss1egg = new Egg();
+		miss1egg->setShape(2317);
+		miss1egg->assignObjId();
+		miss1egg->callUsecodeEvent_hatch();
 	}
 
 	//MusicProcess::get_instance()->playMusic(2);

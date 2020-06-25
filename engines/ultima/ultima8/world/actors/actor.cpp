@@ -37,6 +37,7 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/actors/npc_dat.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
@@ -573,6 +574,7 @@ uint16 Actor::setActivityCru(int activity) {
 	default:
 		perr << "Actor::setActivityCru: invalid activity (" << activity << ")"
 		     << Std::endl;
+		return doAnim(Animation::stand, 8);
 	}
 
 	return 0;
@@ -1065,7 +1067,7 @@ void Actor::notifyNearbyItems() {
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
-	currentmap->areaSearch(&uclist, script, sizeof(script), this, 0x40, false);
+	currentmap->areaSearch(&uclist, script, sizeof(script), this, 0x80, false);
 
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *item = getItem(uclist.getuint16(i));
@@ -1645,6 +1647,70 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 #endif
 
 	return objID;
+}
+
+uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_ITEM_FROM_ID(other);
+
+	if (!item || !other)
+		return 0;
+
+	// TODO: get game difficulty here.
+	static const int gameDifficulty = 1;
+	int npcDifficulty = (item->getMapNum() & 3) + 1;
+
+	if (gameDifficulty < npcDifficulty)
+		return 0;
+
+	uint16 dtableidx = other->getNpcNum();
+	const NPCDat *npcData = GameData::get_instance()->getNPCData(dtableidx);
+	if (!npcData)
+		return 0;
+
+	int dir = item->getNpcNum() & 0xf;
+	int frame = (dir * 2 + 4) & 0xf;
+	uint16 shape = npcData->getShapeNo();
+
+	enum extflags ext = static_cast<extflags>(0);
+	if (shape == 0x597 || shape == 0x3ac)
+		ext = EXT_FEMALE;
+
+	Actor *newactor = ItemFactory::createActor(shape, frame, 0,
+	                  Item::FLG_IN_NPC_LIST | Item::FLG_DISPOSABLE,
+	                  0, 0, ext, true);
+	if (!newactor) {
+		perr << "I_createActorCru failed to create actor ("
+			 << npcData->getShapeNo() << ")." << Std::endl;
+		return 0;
+	}
+
+	newactor->setStr(npcData->getMaxHp() / 2);
+	newactor->setDir(dir);
+
+	int32 x, y, z;
+	item->getLocation(x, y, z);
+	newactor->move(x, y, z);
+
+	// TODO: once I know what these fields are...
+	/*
+	 newactor->setField0x5c(0);
+	 newactor->setField0x5e(x, y);
+	 newactor->setField0x12(item->getNpcNum() >> 4);
+	 newactor->setField0x06(other->getQuality() >> 8);
+	 newactor->setField0x08(item->getQuality() >> 8);
+	 newactor->setField0x0A(other->getMapArray());
+	 newactor->setField0x63(item->getQuality() & 0xff);
+
+	 uint16 wpnType = npcData->getWpnType();
+	 if (gameDifficulty == 4) {
+		wpnType = randomlyGetHigherWeaponType(shape, wpntype);
+	 }
+
+	 // give weapon to NPC.
+	 */
+
+	return newactor->getObjId();
 }
 
 uint32 Actor::I_setActivity(const uint8 *args, unsigned int /*argsize*/) {

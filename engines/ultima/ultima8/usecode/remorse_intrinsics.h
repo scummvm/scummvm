@@ -356,7 +356,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getFootpadData, // void Intrinsic12D(16 bytes)
 	Actor::I_isDead, // int Intrinsic12E(4 bytes)
-	MonsterEgg::I_monsterEggHatch, // void Intrinsic12F(6 bytes) - FIXME: this is pretty different .. will it work?
+	Actor::I_createActorCru, // void Intrinsic12F(6 bytes)
 	// 0x130
 	Actor::I_clrImmortal, // void Intrinsic130(4 bytes)
 	Actor::I_setActivity, // void Intrinsic131(6 bytes)

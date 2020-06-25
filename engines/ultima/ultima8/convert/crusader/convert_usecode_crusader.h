@@ -388,7 +388,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"void Item::I_getFootpadData(Item *, uint *, uint *, uint *)", // same coff as 064
 	"byte Actor::I_isDead(Item *)", // same coff as 122, 039
-	"int16 MonsterEgg::I_monsterEggHatch(Item *, uint16 other_itemno)",
+	"int16 Actor::I_createActorCru(Item *, uint16 other_itemno)",
 	// 0130
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 07B
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131

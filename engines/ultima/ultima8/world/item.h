@@ -635,7 +635,8 @@ public:
 		EXT_CAMERA       = 0x0020,  //!< Item is being followed by the camera
 		EXT_SPRITE       = 0x0040,  //!< Item is a sprite
 		EXT_TRANSPARENT  = 0x0080,  //!< Item should be painted transparent
-		EXT_PERMANENT_NPC = 0x0100  //!< Item is a permanent NPC
+		EXT_PERMANENT_NPC = 0x0100, //!< Item is a permanent NPC
+		EXT_FEMALE       = 0x8000	//!< Crusader Female NPC (controls sfx)
 	};
 };
 

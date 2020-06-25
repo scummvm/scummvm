@@ -39,6 +39,7 @@ class MapGlob;
 class Shape;
 class MusicFlex;
 class WpnOvlayDat;
+class NPCDat;
 class ShapeFrame;
 class SoundFlex;
 class SpeechFlex;
@@ -91,6 +92,9 @@ public:
 	Shape *getShape(FrameID frameid) const;
 	const ShapeFrame *getFrame(FrameID frameid) const;
 
+	const NPCDat *getNPCData(uint16 entry) const;
+	const NPCDat *getNPCDataForShape(uint16 shapeno) const;
+
 	Std::string translate(const Std::string &text);
 	FrameID translate(FrameID frame);
 
@@ -113,6 +117,7 @@ private:
 	Shape *_mouse;
 	MusicFlex *_music;
 	WpnOvlayDat *_weaponOverlay;
+	Std::vector<NPCDat *> _npcTable;
 
 	SoundFlex *_soundFlex;
 	Std::vector<SpeechFlex **> _speech;
