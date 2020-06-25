@@ -32,7 +32,7 @@ BaseRenderer *makeOpenGL3DRenderer(BaseGame *inGame) {
 }
 
 BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
-    : _spriteBatchMode(false) {
+	: BaseRenderer(inGame), _spriteBatchMode(false) {
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
@@ -361,7 +361,7 @@ Math::Ray BaseRenderOpenGL3D::rayIntoScene(int x, int y) {
 }
 
 BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {
-	return new BaseSurfaceOpenGL3D(nullptr, this);
+	return new BaseSurfaceOpenGL3D(_gameRef, this);
 }
 
 void BaseRenderOpenGL3D::endSaveLoad() {
