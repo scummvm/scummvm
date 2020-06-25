@@ -858,7 +858,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	if (getScriptContext(archiveIndex, scriptType, castId)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
 		// Abort on double definitions.
-		error("Script already defined for type %d, id %d", castId, scriptType);
+		error("Script already defined for type %d, id %d", scriptType, castId);
 		return;
 	}
 

@@ -272,7 +272,7 @@ void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 
 		// We can't undefine context data because it could be used in e.g. symbols.
 		// Although it has a legit case when kTheScriptText re sets code.
 		// Warn on double definitions.
-		warning("Script already defined for type %d, id %d", id, type);
+		warning("Script already defined for type %d, id %d", type, id);
 	}
 
 	Common::String contextName;
