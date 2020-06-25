@@ -812,7 +812,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 
 	// offset 36
 	/* uint16 unk3 = */ stream.readUint16();
-	uint32 scriptTypeId = stream.readUint32();
+	uint32 scriptTypeMask = stream.readUint32();
 	// unk4
 	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
@@ -842,10 +842,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	Cast *member = g_director->getCastMember(castId);
 	if (member) {
 		if (member->_type == kCastLingoScript) {
-			if (scriptTypeId == kScoreScript || scriptTypeId == kMovieScript)
-				scriptType = (ScriptType)scriptTypeId;
+			// TODO: Determine what the other bits in the mask mean
+			if (scriptTypeMask & (1 << 1))
+				scriptType = kMovieScript;
 			else
-				warning("Unknown script type: %d", scriptTypeId);
+				scriptType = kScoreScript;
 		}
 		CastInfo *info = member->_score->_castsInfo[castId];
 		if (info)
