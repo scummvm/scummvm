@@ -57,10 +57,10 @@ public:
 
 	static void setReadyForEvents(bool ready);
 
-	static void setWindowCaption(const char *caption);
+	static void setWindowCaption(const Common::String &caption);
 	static void getDPI(float *values);
-	static void displayMessageOnOSD(const char *msg);
-	static bool openUrl(const char *url);
+	static void displayMessageOnOSD(const Common::String &msg);
+	static bool openUrl(const Common::String &url);
 	static bool hasTextInClipboard();
 	static Common::String getTextFromClipboard();
 	static bool setTextInClipboard(const Common::String &text);
@@ -139,7 +139,10 @@ private:
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
-	static jstring getCurrentCharset(JNIEnv *env, jobject self);
+	static Common::String getCurrentCharset();
+
+	static jstring convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from);
+	static Common::String convertFromJString(JNIEnv *env, const jstring &jstr, const Common::String &to);
 
 	static PauseToken _pauseToken;
 };

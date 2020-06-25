@@ -526,7 +526,7 @@ Common::String OSystem_Android::getSystemLanguage() const {
 }
 
 bool OSystem_Android::openUrl(const Common::String &url) {
-	return JNI::openUrl(url.c_str());
+	return JNI::openUrl(url);
 }
 
 bool OSystem_Android::hasTextInClipboard() {
