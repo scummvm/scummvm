@@ -81,6 +81,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 		iniStream->read(script, iniStream->size());
 		_lingo->addCode(script, kArchMain, kMovieScript, 0);
 		_lingo->processEvent(kEventStartUp);
+		_lingo->resetLingo(true);
 		free(script);
 	} else {
 		warning("No LINGO.INI");
