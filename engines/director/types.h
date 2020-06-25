@@ -44,10 +44,29 @@ enum CastType {
 enum ScriptType {
 	kNoneScript = -1,
 	kScoreScript = 0,
-	kCastScript = 1,	// not a canonical ID - change if it's actually used by Director
+	kCastScript = 1,
 	kMovieScript = 2,
-	kGlobalScript = 3,	// not a canonical ID
+	kGlobalScript = 3,
 	kMaxScriptType = 3	// Sync with score-loading.cpp:45, array scriptTypes[]
+};
+
+enum ScriptFlag {
+	kScriptFlagUnk0			= (1 << 0x0),
+	kScriptFlagGlobal		= (1 << 0x1),
+	kScriptFlagUnk2			= (1 << 0x2),
+	kScriptFlagUnk3			= (1 << 0x3),
+	kScriptFlagFactoryDef	= (1 << 0x4),
+	kScriptFlagUnk5			= (1 << 0x5),
+	kScriptFlagUnk6			= (1 << 0x6),
+	kScriptFlagUnk7			= (1 << 0x7),
+	kScriptFlagHasFactory	= (1 << 0x8),
+	kScriptFlagUnk9			= (1 << 0x9),
+	kScriptFlagUnkA			= (1 << 0xa),
+	kScriptFlagUnkB			= (1 << 0xb),
+	kScriptFlagUnkC			= (1 << 0xc),
+	kScriptFlagUnkD			= (1 << 0xd),
+	kScriptFlagUnkE			= (1 << 0xe),
+	kScriptFlagUnkF			= (1 << 0xf)
 };
 
 enum ShapeType {

@@ -812,13 +812,18 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 
 	// offset 36
 	/* uint16 unk3 = */ stream.readUint16();
-	uint32 scriptTypeMask = stream.readUint32();
+	uint32 scriptFlags = stream.readUint32();
+	debugC(1, kDebugCompile, "Script flags:");
+	debugC(1, kDebugCompile, "unk0: %d global: %d unk2: %d unk3: %d", (scriptFlags & kScriptFlagUnk0) != 0, (scriptFlags & kScriptFlagGlobal) != 0, (scriptFlags & kScriptFlagUnk2) != 0, (scriptFlags & kScriptFlagUnk3) != 0);
+	debugC(1, kDebugCompile, "factoryDef: %d unk5: %d unk6: %d unk7: %d", (scriptFlags & kScriptFlagFactoryDef) != 0, (scriptFlags & kScriptFlagUnk5) != 0, (scriptFlags & kScriptFlagUnk6) != 0, (scriptFlags & kScriptFlagUnk7) != 0);
+	debugC(1, kDebugCompile, "hasFactory: %d unk9: %d unkA: %d unkB: %d", (scriptFlags & kScriptFlagHasFactory) != 0, (scriptFlags & kScriptFlagUnk9) != 0, (scriptFlags & kScriptFlagUnkA) != 0, (scriptFlags & kScriptFlagUnkB) != 0);
+	debugC(1, kDebugCompile, "unkC: %d unkD: %d unkE: %d unkF: %d", (scriptFlags & kScriptFlagUnkC) != 0, (scriptFlags & kScriptFlagUnkD) != 0, (scriptFlags & kScriptFlagUnkE) != 0, (scriptFlags & kScriptFlagUnkF) != 0);
 	// unk4
 	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
 	}
 	uint16 castId = stream.readUint16();
-	/* uint16 unk5 = */ stream.readUint16();
+	int16 factoryNameId = stream.readSint16();
 
 	// offset 50 - contents map
 	// TODO: I believe the handler vectors map handlers to some sort of identifier
@@ -841,30 +846,41 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	Common::String castName;
 	Cast *member = g_director->getCastMember(castId);
 	if (member) {
-		if (member->_type == kCastLingoScript) {
-			// TODO: Determine what the other bits in the mask mean
-			if (scriptTypeMask & (1 << 1))
-				scriptType = kMovieScript;
-			else
-				scriptType = kScoreScript;
-		}
+		if (member->_type == kCastLingoScript)
+			scriptType = ((ScriptCast *)member)->_scriptType;
+
 		CastInfo *info = member->_score->_castsInfo[castId];
 		if (info)
 			castName = info->name;
 	}
 
-	debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(scriptType), castId);
-
-	if (getScriptContext(archiveIndex, scriptType, castId)) {
-		// We can't undefine context data because it could be used in e.g. symbols.
-		// Abort on double definitions.
-		error("Script already defined for type %d, id %d", scriptType, castId);
-		return;
-	}
-
 	_assemblyArchive = archiveIndex;
-	_assemblyContext = new ScriptContext(scriptType, !castName.empty() ? castName : Common::String::format("%d", castId));
-	_archives[_assemblyArchive].scriptContexts[scriptType][castId] = _assemblyContext;
+
+	Common::String factoryName;
+	if (scriptFlags & kScriptFlagFactoryDef) {
+		if (0 <= factoryNameId && factoryNameId < (int16)_archives[_assemblyArchive].names.size()) {
+			factoryName = _archives[_assemblyArchive].names[factoryNameId];
+		} else {
+			warning("Factory %d has unknown name id %d, skipping define", castId, factoryNameId);
+			return;
+		}
+		debugC(1, kDebugCompile, "Add V4 bytecode for factory '%s' with id %d", factoryName.c_str(), castId);
+
+		codeFactory(factoryName);
+		_assemblyContext = _currentFactory->ctx;
+	} else {
+		debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(scriptType), castId);
+
+		if (getScriptContext(archiveIndex, scriptType, castId)) {
+			// We can't undefine context data because it could be used in e.g. symbols.
+			// Abort on double definitions.
+			error("Script already defined for type %d, id %d", scriptType, castId);
+			return;
+		}
+
+		_assemblyContext = new ScriptContext(scriptType, !castName.empty() ? castName : Common::String::format("%d", castId));
+		_archives[_assemblyArchive].scriptContexts[scriptType][castId] = _assemblyContext;
+	}
 
 	// initialise each property
 	if ((uint32)stream.size() < propertiesOffset + propertiesCount * 2) {
@@ -879,7 +895,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 		if (index < _archives[_assemblyArchive].names.size()) {
 			const char *name = _archives[_assemblyArchive].names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
-			_assemblyContext->_propNames.push_back(name);
+			if (scriptFlags & kScriptFlagFactoryDef) {
+				_currentFactory->properties[name] = Datum();
+			} else {
+				_assemblyContext->_propNames.push_back(name);
+			}
 		} else {
 			warning("Property %d has unknown name id %d, skipping define", i, index);
 		}
@@ -1363,6 +1383,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	}
 
 	free(codeStore);
+	_currentFactory = nullptr;
 }
 
 
