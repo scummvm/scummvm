@@ -360,7 +360,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			//! TODO
 			uint16 arg_bytes = cs.readByte();
 			uint16 func = cs.readUint16LE();
-			debug(10, "calli\t\t%04Xh (%02Xh arg bytes) %s ", func, arg_bytes, _convUse->intrinsics()[func]);
+			LOGPF(("calli\t\t%04Xh (%02Xh arg bytes) %s ", func, arg_bytes, _convUse->intrinsics()[func]));
 
 			// !constants
 			if (func >= _intrinsicCount || _intrinsics[func] == 0) {
@@ -2005,16 +2005,20 @@ void UCMachine::execProcess(UCProcess *p) {
 				LOGPF(("\n"));
 			}
 
-
 			break;
 
-
 		case 0x79:
+			// 79
+			// push address of global (Crusader only)
+			ui16a = cs.readUint16LE(); // global address
+			ui32a = globalToPtr(ui16a);
+			p->_stack.push4(ui32a);
+			break;
+
 		case 0x7A:
 			// 7A
 			// end of function
 			// shouldn't happen
-			//! 0x79 is U8 only. Should be removed
 			LOGPF(("end\n"));
 			perr.Print("end of function opcode %02X reached!\n", opcode);
 			error = true;
@@ -2201,7 +2205,17 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 			proc->_stack.assign(offset, data, size);
 		}
 	} else if (segment == SEG_GLOBAL) {
-		CANT_HAPPEN_MSG("pointers to _globals not implemented yet");
+		if (!GAME_IS_CRUSADER)
+			CANT_HAPPEN_MSG("Global pointers not supported in U8");
+
+		if (size == 1) {
+			_globals->setEntries(offset, data[0], 1);
+		} else if (size == 2) {
+			uint16 val = ((data[0] << 8) | data[1]);
+			_globals->setEntries(offset, val, 2);
+		} else {
+			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
+		}
 	} else {
 		perr << "Trying to access segment " << Std::hex
 		     << segment << Std::dec << Std::endl;
@@ -2248,7 +2262,18 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 			data[1] = static_cast<uint8>(offset >> 8);
 		}
 	} else if (segment == SEG_GLOBAL) {
-		CANT_HAPPEN_MSG("pointers to _globals not implemented yet");
+		if (!GAME_IS_CRUSADER)
+			CANT_HAPPEN_MSG("Global pointers not supported in U8");
+
+		if (size == 1) {
+			data[0] = static_cast<uint8>(_globals->getEntries(offset, 1));
+		} else if (size == 2) {
+			uint16 val = _globals->getEntries(offset, 2);
+			data[0] = static_cast<uint8>(val);
+			data[1] = static_cast<uint8>(val >> 8);
+		} else {
+			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
+		}
 	} else {
 		perr << "Trying to access segment " << Std::hex
 		     << segment << Std::dec << Std::endl;
@@ -2281,11 +2306,8 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		} else {
 			return proc->_stack.access2(offset);
 		}
-	} else if (segment == SEG_OBJ || segment == SEG_STRING) {
+	} else if (segment == SEG_OBJ || segment == SEG_STRING || segment == SEG_GLOBAL) {
 		return offset;
-	} else if (segment == SEG_GLOBAL) {
-		CANT_HAPPEN_MSG("pointers to _globals not implemented yet");
-		return 0;
 	} else {
 		perr << "Trying to access segment " << Std::hex
 		     << segment << Std::dec << Std::endl;
