@@ -822,6 +822,8 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	}
 
 	if (_loadedCast->contains(id)) { // Skip unhandled casts
+		_loadedCast->getVal(id)->_score = this;
+
 		debugCN(3, kDebugLoading, "Children: ");
 		for (uint child = 0; child < res->children.size(); child++) {
 			debugCN(3, kDebugLoading, "%d ", res->children[child].index);
@@ -894,8 +896,6 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		}
 
 		_castsInfo[id] = ci;
-
-		member->_score = this;
 	}
 
 	if (size3)
