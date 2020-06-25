@@ -2016,7 +2016,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// shouldn't happen
 			//! 0x79 is U8 only. Should be removed
 			LOGPF(("end\n"));
-			perr.Print("end of function opcode reached!\n");
+			perr.Print("end of function opcode %02X reached!\n", opcode);
 			error = true;
 			break;
 
@@ -2050,8 +2050,8 @@ void UCMachine::execProcess(UCProcess *p) {
 	} // while(!cede && !error && !p->terminated && !p->terminate_deferred)
 
 	if (error) {
-		perr.Print("Process %d caused an error at %04X:%04X. Killing process.\n",
-		            p->_pid, p->_classId, p->_ip);
+		perr.Print("Process %d caused an error at %04X:%04X (item %d). Killing process.\n",
+		            p->_pid, p->_classId, p->_ip, p->_itemNum);
 		p->terminateDeferred();
 	}
 }
