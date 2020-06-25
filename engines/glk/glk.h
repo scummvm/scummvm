@@ -31,6 +31,7 @@
 #include "glk/glk_types.h"
 #include "glk/streams.h"
 #include "glk/pc_speaker.h"
+#include "glk/quetzal.h"
 
 namespace Glk {
 
@@ -207,6 +208,16 @@ public:
 	 * Save the game to a given slot
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	/**
+	 * Loads Quetzal chunks from the passed savegame
+	 */
+	virtual Common::Error loadGameChunks(QuetzalReader &quetzal);
+
+	/**
+	 * Writes out the Quetzal chunks within a savegame
+	 */
+	virtual Common::Error saveGameChunks(QuetzalWriter &quetzal);
 
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream

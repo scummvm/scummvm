@@ -35,7 +35,6 @@
 #include "glk/debugger.h"
 #include "glk/events.h"
 #include "glk/picture.h"
-#include "glk/quetzal.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/sound.h"
@@ -194,39 +193,9 @@ Common::Error GlkEngine::loadGameState(int slot) {
 
 	Common::ErrorCode errCode = Common::kNoError;
 	QuetzalReader r;
-	if (r.open(*file, ID_IFSF)) {
-		// First scan for a SCVM chunk. It has information of the game the save is for,
-		// so if present we can validate the save is for this game
-		for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
-			if ((*it)._id == ID_SCVM) {
-				// Skip over date/time & playtime
-				Common::SeekableReadStream *rs = it.getStream();
-				rs->skip(14);
-
-				uint32 interpType = rs->readUint32BE();
-				Common::String langCode = QuetzalReader::readString(rs);
-				Common::String md5 = QuetzalReader::readString(rs);
-				delete rs;
-
-				if (interpType != QuetzalBase::getInterpreterTag(getInterpreterType()) ||
-					parseLanguage(langCode) !=getLanguage() || md5 != getGameMD5())
-					errCode = Common::kReadingFailed;
-			}
-		}
-
-		if (errCode == Common::kNoError) {
-			// Scan for an uncompressed memory chunk
-			errCode = Common::kReadingFailed;		// Presume we won't find chunk
-			for (QuetzalReader::Iterator it = r.begin(); it != r.end(); ++it) {
-				if ((*it)._id == ID_UMem) {
-					Common::SeekableReadStream *rs = it.getStream();
-					errCode = readSaveData(rs).getCode();
-					delete rs;
-					break;
-				}
-			}
-		}
-	}
+	if (r.open(*file, ID_IFSF))
+		// Load in the savegame chunks
+		errCode = loadGameChunks(r).getCode();
 
 	file->close();
 	return errCode;
@@ -240,14 +209,9 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc, boo
 	if (file == nullptr)
 		return Common::kWritingFailed;
 
-	Common::ErrorCode errCode = Common::kNoError;
+	// Write out savegame chunks
 	QuetzalWriter w;
-
-	// Add the uncompressed memory chunk with the game's save data
-	{
-		Common::WriteStream &ws = w.add(ID_UMem);
-		errCode = writeGameData(&ws).getCode();
-	}
+	Common::ErrorCode errCode = saveGameChunks(w).getCode();
 
 	if (errCode == Common::kNoError) {
 		w.save(*file, desc);
@@ -255,6 +219,47 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc, boo
 
 	file->close();
 	return errCode;
+}
+
+Common::Error GlkEngine::loadGameChunks(QuetzalReader &quetzal) {
+	// First scan for a SCVM chunk. It has information of the game the save is for,
+	// so if present we can validate the save is for this game
+	for (QuetzalReader::Iterator it = quetzal.begin(); it != quetzal.end(); ++it) {
+		if ((*it)._id == ID_SCVM) {
+			// Skip over date/time & playtime
+			Common::SeekableReadStream *rs = it.getStream();
+			rs->skip(14);
+
+			uint32 interpType = rs->readUint32BE();
+			Common::String langCode = QuetzalReader::readString(rs);
+			Common::String md5 = QuetzalReader::readString(rs);
+			delete rs;
+
+			if (interpType != QuetzalBase::getInterpreterTag(getInterpreterType()) ||
+				parseLanguage(langCode) != getLanguage() || md5 != getGameMD5())
+				return Common::kReadingFailed;
+		}
+	}
+
+	// Scan for an uncompressed memory chunk
+	for (QuetzalReader::Iterator it = quetzal.begin(); it != quetzal.end(); ++it) {
+		if ((*it)._id == ID_UMem) {
+			Common::SeekableReadStream *rs = it.getStream();
+			Common::Error err = readSaveData(rs);
+			delete rs;
+
+			return err;
+		}
+	}
+
+	// Couldn't find any data chunk, so reading failed
+	return Common::kReadingFailed;
+}
+
+Common::Error GlkEngine::saveGameChunks(QuetzalWriter &quetzal) {
+	// Add the uncompressed memory chunk with the game's save data
+	Common::WriteStream &ws = quetzal.add(ID_UMem);
+	return writeGameData(&ws);
 }
 
 void GlkEngine::syncSoundSettings() {
