@@ -27,7 +27,7 @@
 
 namespace Director {
 
-void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
+void Score::inkBasedBlit(Graphics::ManagedSurface *destSurface, Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId) {
 
 	byte rSrc, gSrc, bSrc;
 	byte rDst, gDst, bDst;
@@ -68,17 +68,17 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	// TODO: Merge these two into the switch logic that is below
 	if (ink == kInkTypeMatte) {
 		Common::Rect spriteRect(spriteSurface.w, spriteSurface.h);
-		drawMatteSprite(spriteSurface, t);
+		drawMatteSprite(destSurface, spriteSurface, t);
 		return;
 	} else if (ink == kInkTypeReverse) {
-		drawReverseSprite(spriteSurface, t, spriteId);
+		drawReverseSprite(destSurface, spriteSurface, t, spriteId);
 		return;
 	}
 
 	for (int ii = 0; ii < drawRect.height(); ii++) {
 		const byte *msk = (const byte *)_maskSurface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
 		const byte *src = (const byte *)spriteSurface.getBasePtr(maskOrigin.x, ii + maskOrigin.y);
-		byte *dst = (byte *)_surface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
+		byte *dst = (byte *)destSurface->getBasePtr(t.left + maskOrigin.x, t.top + maskOrigin.y + ii);
 
 		for (int j = 0; j < drawRect.width(); j++, msk++, src++, dst++) {
 			if (*msk) {
@@ -160,7 +160,7 @@ void Score::inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::
 	}
 }
 
-void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId) {
+void Score::drawReverseSprite(Graphics::ManagedSurface *destSurface, const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId) {
 	Common::Rect srcRect(sprite.w, sprite.h);
 
 	if (!_surface->clip(srcRect, drawRect))
@@ -170,7 +170,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 	for (int ii = 0; ii < drawRect.height(); ii++) {
 		const byte *msk = (const byte *)_maskSurface->getBasePtr(drawRect.left, drawRect.top + ii);
 		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
-		byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + ii);
+		byte *dst = (byte *)destSurface->getBasePtr(drawRect.left, drawRect.top + ii);
 		byte srcColor = *src;
 
 		for (int j = 0; j < drawRect.width(); j++, msk++, src++, dst++) {
@@ -210,7 +210,7 @@ void Score::drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &dra
 	}
 }
 
-void Score::drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawRect) {
+	void Score::drawMatteSprite(Graphics::ManagedSurface *destSurface, const Graphics::Surface &sprite, Common::Rect &drawRect) {
 	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
 	Graphics::Surface tmp;
 	tmp.copyFrom(sprite);
@@ -241,7 +241,7 @@ void Score::drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawR
 		for (int yy = 0; yy < drawRect.height(); yy++) {
 			const byte *msk = (const byte *)_maskSurface->getBasePtr(drawRect.left, drawRect.top + yy);
 			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);
-			byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + yy);
+			byte *dst = (byte *)destSurface->getBasePtr(drawRect.left, drawRect.top + yy);
 
 			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, msk++)
 				if (*msk != 0)
@@ -264,7 +264,7 @@ void Score::drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawR
 		for (int yy = 0; yy < drawRect.height(); yy++) {
 			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);
 			const byte *mask = (const byte *)ff.getMask()->getBasePtr(srcRect.left, srcRect.top + yy);
-			byte *dst = (byte *)_surface->getBasePtr(drawRect.left, drawRect.top + yy);
+			byte *dst = (byte *)destSurface->getBasePtr(drawRect.left, drawRect.top + yy);
 
 			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, mask++)
 				if (*mask == 0)

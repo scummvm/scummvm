@@ -1889,7 +1889,7 @@ void LB::b_updateStage(int nargs) {
 		return;
 	}
 
-	score->renderFrame(score->getCurrentFrame(), false, true);
+	score->renderFrame(score->getCurrentFrame(), kRenderUpdateStageOnly);
 	g_director->processEvents(true);
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {

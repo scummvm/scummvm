@@ -648,7 +648,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		score->_stageColor = _vm->transformColor(d.asInt());
 		if (score->_surface) {
 			score->_surface->clear(score->_stageColor);
-			score->renderFrame(score->getCurrentFrame(), true);
+			score->renderFrame(score->getCurrentFrame(), kRenderForceUpdate);
 		} else {
 			warning("setStageColor: score has no surface, skipping");
 		}

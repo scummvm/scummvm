@@ -563,10 +563,29 @@ void Score::update() {
 		_nextFrameTime += 1000;
 }
 
-void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) {
-
+void Score::renderFrame(uint16 frameId,  RenderMode mode) {
 	Frame *currentFrame = _frames[frameId];
 
+	renderSprites(frameId, _surface, mode);
+	if (mode != kRenderUpdateStageOnly) {
+		_vm->_wm->renderZoomBox();
+
+		_vm->_wm->draw();
+
+		if (currentFrame->_transType != 0) {
+			// TODO Handle changing area case
+			playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType);
+		}
+
+		if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0) {
+			playSoundChannel(frameId);
+		}
+	}
+
+	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
+}
+
+void Score::renderSprites(uint16 frameId, Graphics::ManagedSurface *surface, RenderMode mode) {
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		Sprite *currentSprite = channel->_sprite;
@@ -575,7 +594,7 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		if (currentSprite->_puppet)
 			nextSprite = currentSprite;
 		else
-			nextSprite = currentFrame->_sprites[i];
+			nextSprite = _frames[frameId]->_sprites[i];
 
 		// A sprite needs to be updated if one of the following happens:
 		// - The dimensions/bounding box of the sprite has changed (_dirty flag set)
@@ -588,7 +607,9 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 			currentSprite->getDims() != nextSprite->getDims() ||
 			channel->_currentPoint != nextSprite->_startPoint;
 
-		if ((needsUpdate || forceUpdate) && !currentSprite->_trails)
+		if (mode != kRenderNoUnrender &&
+				(needsUpdate || mode == kRenderForceUpdate) &&
+				!currentSprite->_trails)
 			markDirtyRect(channel->getBbox());
 
 		channel->_sprite = nextSprite;
@@ -617,13 +638,13 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 		debugC(1, kDebugImages, "Score::renderFrame(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
 
 		if (sprite->_castType == kCastShape) {
-			renderShape(id);
+			renderShape(id, surface);
 		} else {
 			Cast *cast = sprite->_cast;
 			if (cast && cast->_widget) {
 				cast->_widget->_priority = id;
 				cast->_widget->draw();
-				inkBasedBlit(cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), channel->_sprite->_ink, currentBbox, id);
+				inkBasedBlit(surface, cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), channel->_sprite->_ink, currentBbox, id);
 			} else {
 				warning("Score::renderFrame(): No widget for channel ID %d", id);
 			}
@@ -631,25 +652,6 @@ void Score::renderFrame(uint16 frameId, bool forceUpdate, bool updateStageOnly) 
 
 		sprite->setClean();
 	}
-
-	if (!updateStageOnly) {
-		_vm->_wm->renderZoomBox();
-
-		_vm->_wm->draw();
-
-		if (currentFrame->_transType != 0) {
-			// TODO Handle changing area case
-			playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType);
-		}
-
-		if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0) {
-			playSoundChannel(frameId);
-		}
-
-	}
-
-	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
-
 }
 
 void Score::markDirtyRect(Common::Rect dirty) {
@@ -678,7 +680,7 @@ void Score::screenShot() {
 	newSurface->free();
 }
 
-void Score::renderShape(uint16 spriteId) {
+void Score::renderShape(uint16 spriteId, Graphics::ManagedSurface *surface) {
 	Sprite *sp = _channels[spriteId]->_sprite;
 
 	InkType ink = sp->_ink;
@@ -787,7 +789,7 @@ void Score::renderShape(uint16 spriteId) {
 		break;
 	}
 
-	inkBasedBlit(&maskSurface, tmpSurface, ink, shapeRect, spriteId);
+	inkBasedBlit(surface, &maskSurface, tmpSurface, ink, shapeRect, spriteId);
 }
 
 Cast *Score::getCastMember(int castId) {

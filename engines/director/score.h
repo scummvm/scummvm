@@ -56,6 +56,13 @@ class ScriptCast;
 class ShapeCast;
 class TextCast;
 
+enum RenderMode {
+	kRenderModeNormal,
+	kRenderForceUpdate,
+	kRenderUpdateStageOnly,
+	kRenderNoUnrender
+};
+
 struct TransParams {
 	TransitionType type;
 	uint duration;
@@ -146,7 +153,8 @@ public:
 
 	Cast *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
-	void renderFrame(uint16 frameId, bool forceUpdate = false, bool updateStageOnly = false);
+	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderSprites(uint16 frameId, Graphics::ManagedSurface *surface, RenderMode mode = kRenderModeNormal);
 	void markDirtyRect(Common::Rect dirty);
 
 	// transition.cpp
@@ -154,12 +162,12 @@ public:
 
 private:
 	void update();
-	void renderShape(uint16 spriteId);
+	void renderShape(uint16 spriteId, Graphics::ManagedSurface *surface);
 
 	// ink.cpp
-	void inkBasedBlit(Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId);
-	void drawMatteSprite(const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawReverseSprite(const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId);
+	void inkBasedBlit(Graphics::ManagedSurface *destSurface, Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId);
+	void drawMatteSprite(Graphics::ManagedSurface *destSurface, const Graphics::Surface &sprite, Common::Rect &drawRect);
+	void drawReverseSprite(Graphics::ManagedSurface *destSurface, const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId);
 
 	// transitions.cpp
 	void initTransParams(TransParams &t, Common::Rect &clipRect);
