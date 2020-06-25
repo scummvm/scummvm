@@ -49,6 +49,7 @@ struct MacFontRun {
 	uint16 palinfo1;
 	uint16 palinfo2;
 	uint16 palinfo3;
+	uint16 fgcolor;
 
 	const Font *font;
 	MacWindowManager *wm;
@@ -74,6 +75,7 @@ struct MacFontRun {
 		palinfo1  = palinfo1_;
 		palinfo2  = palinfo2_;
 		palinfo3  = palinfo3_;
+		fgcolor   = wm_->findBestColor(palinfo1_ & 0xff, palinfo2_ & 0xff, palinfo3_ & 0xff);
 		font      = nullptr;
 	}
 
