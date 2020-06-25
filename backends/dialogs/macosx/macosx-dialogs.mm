@@ -82,7 +82,7 @@
 #else
 		CFStringEncoding stringEncoding = kCFStringEncodingASCII;
 #endif
-		CFStringRef hiddenFilesString = CFStringCreateWithCString(0, _("Show hidden files"), stringEncoding);
+		CFStringRef hiddenFilesString = CFStringCreateWithCString(0, _("Show hidden files").encode().c_str(), stringEncoding);
 		[showHiddenFilesButton setTitle:(NSString*)hiddenFilesString];
 		CFRelease(hiddenFilesString);
 
@@ -143,7 +143,7 @@ Common::DialogManager::DialogResult MacOSXDialogManager::showFileBrowser(const c
 
 	// Convert labels to NSString
 	CFStringRef titleRef = CFStringCreateWithCString(0, title, stringEncoding);
-	CFStringRef chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
+	CFStringRef chooseRef = CFStringCreateWithCString(0, _("Choose").encode().c_str(), stringEncoding);
 
 	beginDialog();
 
