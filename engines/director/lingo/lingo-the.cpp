@@ -838,7 +838,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheCastNum:
 		// Don't cause unnecessary flashing
 		if (d.asInt() != sprite->_castId) {
-			score->markDirtyRect(channel->getBbox());
 			sprite->setCast(d.asInt());
 		}
 		break;
