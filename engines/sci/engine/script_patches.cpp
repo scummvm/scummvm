@@ -4766,6 +4766,70 @@ static const uint16 kq6PatchTruncatedMessagesFix[] = {
 	PATCH_END
 };
 
+// Clicking Look or Do on the secret passage peephole outside of Cassima's room
+//  multiple times can lockup the game and crash the original.
+//
+// The bug is in the Feature and CueObj classes but room 800 and cassimaScript
+//  happen to expose it. Clicking on a Feature such as the hole causes ego to
+//  walk towards it, then face it, wait three cycles, and then call doVerb.
+//  Feature:handleEvent calls ego:setMotion and then has CueObj orchestrate the
+//  rest of the sequence. If ego is instead already within approachDist and
+//  facing the clicked Feature then handleEvent sets CueObj to its final state
+//  so that doVerb is called immediately. handleEvent resets CueObj's state and
+//  stops any ego movement to prevent a conflict from an earlier call but it
+//  doesn't stop ego's looper from turning to face the Feature. Clicking on a
+//  Feature while ego is within approachDist and in the process of turning to
+//  face that Feature from a previous click causes both clicks to generate calls
+//  to doVerb, and out of order. In room 800 that causes cassimaScript to run a
+//  a second time and interrupt the first which breaks the game in various ways.
+//
+// We fix room 800 by adding a check to prevent running a peephole script if
+//  there's already a script running.
+//
+// Applies to: All versions
+// Responsible method: chink:doVerb
+static const uint16 kq6SignatureCassimaSecretPassage[] = {
+	SIG_MAGICDWORD,
+	0x67, 0x1a,                         // pTos noun         
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	0x31, 0x12,                         // bnt 12
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x78,                               // push1
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x0321),           // pushi 0321
+	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 801 ] 
+	0x36,                               // push
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x06,                         // send 06 [ rm800 setScript: cassimaScript ]
+	0x33, 0x10,                         // jmp 10
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	SIG_ADDTOOFFSET(+5),
+	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 802 ] 
+	SIG_END
+};
+
+static const uint16 kq6PatchCassimaSecretPassage[] = {
+	0x38, PATCH_SELECTOR16(script),     // pushi script
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x04,                         // send 04 [ rm800 script? ]
+	0x31, 0x01,                         // bnt 01
+	0x48,                               // ret [ do nothing if script is running ]
+	0x67, 0x1a,                         // pTos noun         
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 04
+	0x1a,                               // eq?
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x31, 0x07,                         // bnt 07
+	0x78,                               // push1
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0321),         // pushi 0321
+	0x33, 0x05,                         // jmp 05 [ callk ScriptID 02 ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5214,6 +5278,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
+	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	{  true,   924, "CD/Mac: fix truncated messages",                 1, kq6SignatureTruncatedMessagesFix,         kq6PatchTruncatedMessagesFix },
