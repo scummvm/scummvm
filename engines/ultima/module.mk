@@ -564,6 +564,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/quick_avatar_mover_process.o \
 	ultima8/world/actors/resurrection_process.o \
 	ultima8/world/actors/scheduler_process.o \
+	ultima8/world/actors/surrender_process.o \
 	ultima8/world/actors/targeted_anim_process.o \
 	ultima8/world/actors/teleport_to_egg_process.o
 

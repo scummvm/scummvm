@@ -47,6 +47,7 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -584,8 +585,7 @@ uint16 Actor::setActivityCru(int activity) {
 	    // Does nothing in game..
 	    break;
 	case 7:
-		perr << "Actor::setActivityCru TODO: Implement new SurrenderProcess(this);" << Std::endl;
-		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
+		return Kernel::get_instance()->addProcess(new SurrenderProcess(this));
 	    break;
 	case 8:
 		perr << "Actor::setActivityCru TODO: Implement new GuardProcess(this);" << Std::endl;
