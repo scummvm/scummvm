@@ -430,12 +430,6 @@ void Score::update() {
 
 	// For previous frame
 	if (_currentFrame > 0 && !_vm->_playbackPaused) {
-		// If there is a transition, the perFrameHook is called
-		// after each transition subframe instead.
-		if (_frames[_currentFrame]->_transType == 0) {
-			_lingo->executePerFrameHook(_currentFrame, 0);
-		}
-
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
 		// However, the exitFrame event can overwrite the value
@@ -449,6 +443,12 @@ void Score::update() {
 			_nextFrame = nextFrameCache;
 		} else {
 			_lingo->processEvent(kEventExitFrame);
+		}
+
+		// If there is a transition, the perFrameHook is called
+		// after each transition subframe instead.
+		if (_frames[_currentFrame]->_transType == 0) {
+			_lingo->executePerFrameHook(_currentFrame, 0);
 		}
 	}
 
