@@ -171,10 +171,10 @@ private:
 
 	// transitions.cpp
 	void initTransParams(TransParams &t, Common::Rect &clipRect);
-	void dissolveTrans(TransParams &t, Common::Rect &clipRect);
-	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect);
-	void transMultiPass(TransParams &t, Common::Rect &clipRect);
-	void transZoom(TransParams &t, Common::Rect &clipRect);
+	void dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
+	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
+	void transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
+	void transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 
 	// score.cpp
 	void playSoundChannel(uint16 frameId);

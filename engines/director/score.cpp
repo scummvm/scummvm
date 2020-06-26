@@ -115,8 +115,6 @@ Score::Score(DirectorEngine *vm) {
 	_vm = vm;
 	_surface = nullptr;
 	_maskSurface = nullptr;
-	_backSurface = nullptr;
-	_backSurface2 = nullptr;
 	_lingo = _vm->getLingo();
 	_lingoArchive = kArchMain;
 	_soundManager = _vm->getSoundManager();
@@ -167,14 +165,6 @@ Score::~Score() {
 	if (_maskSurface && _maskSurface->w)
 		_maskSurface->free();
 
-	if (_backSurface && _backSurface->w)
-		_backSurface->free();
-
-	if (_backSurface2 && _backSurface2->w)
-		_backSurface2->free();
-
-	delete _backSurface;
-	delete _backSurface2;
 	delete _maskSurface;
 
 	if (_window)
@@ -374,27 +364,10 @@ void Score::startLoop() {
 	initGraphics(_movieRect.width(), _movieRect.height());
 
 	_surface = _window->getWindowSurface();
-	_maskSurface = new Graphics::ManagedSurface;
-	_backSurface = new Graphics::ManagedSurface;
-	_backSurface2 = new Graphics::ManagedSurface;
-
-	_maskSurface->create(_movieRect.width(), _movieRect.height());
-	_backSurface->create(_movieRect.width(), _movieRect.height());
-	_backSurface2->create(_movieRect.width(), _movieRect.height());
-
-	if (_vm->_backSurface.w > 0) {
-		// Persist screen between the movies
-		// TODO: this is a workaround until the rendering pipeline is reworked
-
-		_backSurface2->copyFrom(g_director->_backSurface);
-		_surface->copyFrom(g_director->_backSurface);
-
-		_vm->_backSurface.free();
-	}
-
-	_vm->_backSurface.create(_movieRect.width(), _movieRect.height());
-
 	_vm->_wm->setScreen(_surface);
+
+	_maskSurface = new Graphics::ManagedSurface;
+	_maskSurface->create(_movieRect.width(), _movieRect.height());
 
 	_surface->clear(_stageColor);
 
@@ -504,10 +477,6 @@ void Score::update() {
 	}
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
-
-	if (_frames[_currentFrame]->_transType != 0 && !_vm->_newMovieStarted)	// Store screen, so we could draw a nice transition
-		_backSurface2->copyFrom(*_surface);
-
 	_vm->_newMovieStarted = false;
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
@@ -563,29 +532,31 @@ void Score::update() {
 		_nextFrameTime += 1000;
 }
 
-void Score::renderFrame(uint16 frameId,  RenderMode mode) {
+void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	Frame *currentFrame = _frames[frameId];
 
-	renderSprites(frameId, _surface, mode);
-	if (mode != kRenderUpdateStageOnly) {
-		_vm->_wm->renderZoomBox();
-
-		_vm->_wm->draw();
-
-		if (currentFrame->_transType != 0) {
-			// TODO Handle changing area case
-			playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType);
-		}
-
-		if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0) {
-			playSoundChannel(frameId);
-		}
+	// When a transition is played, the next frame is rendered as a part of it.
+	if (currentFrame->_transType != 0 && mode != kRenderUpdateStageOnly) {
+		// TODO Handle changing area case
+		playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType);
+	} else {
+		renderSprites(frameId, _surface, mode);
 	}
 
-	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
+		_vm->_wm->renderZoomBox();
+		_vm->_wm->draw();
+
+		if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0)
+			playSoundChannel(frameId);
+
+		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
 }
 
 void Score::renderSprites(uint16 frameId, Graphics::ManagedSurface *surface, RenderMode mode) {
+	// HACK: Determine a batter way to do this.
+	if (mode == kRenderNoUnrender)
+		_maskSurface->clear(1);
+
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		Sprite *currentSprite = channel->_sprite;
@@ -623,7 +594,8 @@ void Score::renderSprites(uint16 frameId, Graphics::ManagedSurface *surface, Ren
 		channel->updateLocation();
 
 		// TODO: Understand why conditioning this causes so many problems
-		markDirtyRect(channel->getBbox());
+		if (mode != kRenderNoUnrender)
+			markDirtyRect(channel->getBbox());
 	}
 
 	for (uint id = 0; id < _channels.size(); id++) {
