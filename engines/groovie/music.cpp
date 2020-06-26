@@ -296,6 +296,10 @@ void MusicPlayerMidi::sysEx(const byte *msg, uint16 length) {
 		_driver->sysEx(msg, length);
 }
 
+uint16 MusicPlayerMidi::sysExNoDelay(const byte *msg, uint16 length) {
+	return _driver ? _driver->sysExNoDelay(msg, length) : 0;
+}
+
 void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:
@@ -559,6 +563,10 @@ void MusicPlayerXMI::metaEvent(int8 source, byte type, byte *data, uint16 length
 	} else {
 		MusicPlayerMidi::metaEvent(type, data, length);
 	}
+}
+
+bool MusicPlayerXMI::isReady() {
+	return _driver ? _driver->isReady() : false;
 }
 
 void MusicPlayerXMI::updateVolume() {

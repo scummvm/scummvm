@@ -61,7 +61,11 @@ MidiDriver_Miles_Midi::MidiDriver_Miles_Midi(MusicType midiType, MilesMT32Instru
 		_enableGS(false),
 		_outputChannelMask(65535), // Channels 1-16
 		_baseFreq(250),
-		_noteCounter(0) {
+		_timerRate(0),
+		_noteCounter(0),
+		_sysExDelay(0), 
+		_timer_param(0),
+		_timer_proc(0) {
 	switch (midiType) {
 	case MT_MT32:
 		_midiType = MT_MT32;
@@ -139,6 +143,9 @@ int MidiDriver_Miles_Midi::open(MidiDriver *driver, bool nativeMT32) {
 	int ret = _driver->open();
 	if (ret != MidiDriver::MERR_ALREADY_OPEN && ret != 0)
 		return ret;
+
+	_timerRate = _driver->getBaseTempo();
+	_driver->setTimerCallback(this, timerCallback);
 
 	initMidiDevice();
 
@@ -233,7 +240,7 @@ uint16 MidiDriver_Miles_Midi::sysExNoDelay(const byte *msg, uint16 length) {
 	return delay;
 }
 
-void MidiDriver_Miles_Midi::MT32SysEx(const uint32 targetAddress, const byte *dataPtr) {
+void MidiDriver_Miles_Midi::MT32SysEx(const uint32 targetAddress, const byte *dataPtr, bool useSysExQueue) {
 	if (!_nativeMT32)
 		// MT-32 SysExes have no effect on GM devices.
 		return;
@@ -277,7 +284,17 @@ void MidiDriver_Miles_Midi::MT32SysEx(const uint32 targetAddress, const byte *da
 	assert(sysExPos < sizeof(sysExMessage));
 	sysExMessage[sysExPos++] = sysExChecksum & 0x7f;
 
-	sysEx(sysExMessage, sysExPos);
+	if (useSysExQueue) {
+		SysExData sysEx;
+		memcpy(sysEx.data, sysExMessage, sysExPos);
+		sysEx.length = sysExPos;
+
+		_sysExQueueMutex.lock();
+		_sysExQueue.push(sysEx);
+		_sysExQueueMutex.unlock();
+	} else {
+		sysEx(sysExMessage, sysExPos);
+	}
 }
 
 void MidiDriver_Miles_Midi::metaEvent(int8 source, byte type, byte *data, uint16 length) {
@@ -485,28 +502,28 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 		}
 		assert(sysExQueueNr < MILES_CONTROLLER_SYSEX_QUEUE_COUNT);
 
-		byte sysExPos = _sysExQueues[sysExQueueNr].dataPos;
+		byte sysExPos = _milesSysExQueues[sysExQueueNr].dataPos;
 		bool sysExSend = false;
 
 		switch(controllerNumber) {
 		case MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS1:
-			_sysExQueues[sysExQueueNr].targetAddress &= 0x00FFFF;
-			_sysExQueues[sysExQueueNr].targetAddress |= (controllerValue << 16);
+			_milesSysExQueues[sysExQueueNr].targetAddress &= 0x00FFFF;
+			_milesSysExQueues[sysExQueueNr].targetAddress |= (controllerValue << 16);
 			break;
 		case MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS2:
-			_sysExQueues[sysExQueueNr].targetAddress &= 0xFF00FF;
-			_sysExQueues[sysExQueueNr].targetAddress |= (controllerValue << 8);
+			_milesSysExQueues[sysExQueueNr].targetAddress &= 0xFF00FF;
+			_milesSysExQueues[sysExQueueNr].targetAddress |= (controllerValue << 8);
 			break;
 		case MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS3:
-			_sysExQueues[sysExQueueNr].targetAddress &= 0xFFFF00;
-			_sysExQueues[sysExQueueNr].targetAddress |= controllerValue;
+			_milesSysExQueues[sysExQueueNr].targetAddress &= 0xFFFF00;
+			_milesSysExQueues[sysExQueueNr].targetAddress |= controllerValue;
 			break;
 		case MILES_CONTROLLER_SYSEX_COMMAND_DATA:
 			if (sysExPos < MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
 				// Space left? put current byte into queue
-				_sysExQueues[sysExQueueNr].data[sysExPos] = controllerValue;
+				_milesSysExQueues[sysExQueueNr].data[sysExPos] = controllerValue;
 				sysExPos++;
-				_sysExQueues[sysExQueueNr].dataPos = sysExPos;
+				_milesSysExQueues[sysExQueueNr].dataPos = sysExPos;
 				if (sysExPos >= MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
 					// overflow? -> send it now
 					sysExSend = true;
@@ -516,7 +533,7 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 		case MILES_CONTROLLER_SYSEX_COMMAND_FINAL_DATA:
 			if (sysExPos < MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
 				// Space left? put current byte into queue
-				_sysExQueues[sysExQueueNr].data[sysExPos] = controllerValue;
+				_milesSysExQueues[sysExQueueNr].data[sysExPos] = controllerValue;
 				sysExPos++;
 				// Do not increment dataPos. Subsequent Final Data commands will
 				// re-send the last address byte with the new controller value.
@@ -530,18 +547,18 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 		if (sysExSend) {
 			if (sysExPos > 0) {
 				// data actually available? -> send it
-				_sysExQueues[sysExQueueNr].data[sysExPos] = MILES_MT32_SYSEX_TERMINATOR; // put terminator
+				_milesSysExQueues[sysExQueueNr].data[sysExPos] = MILES_MT32_SYSEX_TERMINATOR; // put terminator
 
 				// Execute SysEx
-				MT32SysEx(_sysExQueues[sysExQueueNr].targetAddress, _sysExQueues[sysExQueueNr].data);
+				MT32SysEx(_milesSysExQueues[sysExQueueNr].targetAddress, _milesSysExQueues[sysExQueueNr].data);
 
 				// Adjust target address to point at the final data byte, or at the
 				// end of the current data in case of an overflow
 				// Note that the address bytes are actually 7 bits
-				byte addressByte1 = (_sysExQueues[sysExQueueNr].targetAddress & 0xFF0000) >> 16;
-				byte addressByte2 = (_sysExQueues[sysExQueueNr].targetAddress & 0x00FF00) >> 8;
-				byte addressByte3 = _sysExQueues[sysExQueueNr].targetAddress & 0x0000FF;
-				addressByte3 += _sysExQueues[sysExQueueNr].dataPos;
+				byte addressByte1 = (_milesSysExQueues[sysExQueueNr].targetAddress & 0xFF0000) >> 16;
+				byte addressByte2 = (_milesSysExQueues[sysExQueueNr].targetAddress & 0x00FF00) >> 8;
+				byte addressByte3 = _milesSysExQueues[sysExQueueNr].targetAddress & 0x0000FF;
+				addressByte3 += _milesSysExQueues[sysExQueueNr].dataPos;
 				if (addressByte3 > 0x7F) {
 					addressByte3 -= 0x80;
 					addressByte2++;
@@ -550,10 +567,10 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 					addressByte2 -= 0x80;
 					addressByte1++;
 				}
-				_sysExQueues[sysExQueueNr].targetAddress = addressByte1 << 16 | addressByte2 << 8 | addressByte3;
+				_milesSysExQueues[sysExQueueNr].targetAddress = addressByte1 << 16 | addressByte2 << 8 | addressByte3;
 
 				// reset queue data buffer
-				_sysExQueues[sysExQueueNr].dataPos = 0;
+				_milesSysExQueues[sysExQueueNr].dataPos = 0;
 			}
 		}
 		return;
@@ -868,7 +885,7 @@ const MilesMT32InstrumentEntry *MidiDriver_Miles_Midi::searchCustomInstrument(by
 	return NULL;
 }
 
-void MidiDriver_Miles_Midi::setupPatch(byte patchBank, byte patchId) {
+void MidiDriver_Miles_Midi::setupPatch(byte patchBank, byte patchId, bool useSysExQueue) {
 	_patchesBank[patchId] = patchBank;
 
 	if (patchBank) {
@@ -876,7 +893,7 @@ void MidiDriver_Miles_Midi::setupPatch(byte patchBank, byte patchId) {
 		int16 customTimbreId = searchCustomTimbre(patchBank, patchId);
 		if (customTimbreId >= 0) {
 			// now available? -> use this timbre
-			writePatchTimbre(patchId, 2, customTimbreId); // Group MEMORY
+			writePatchTimbre(patchId, 2, customTimbreId, useSysExQueue); // Group MEMORY
 			return;
 		}
 	}
@@ -884,9 +901,9 @@ void MidiDriver_Miles_Midi::setupPatch(byte patchBank, byte patchId) {
 	// for built-in bank (or timbres, that are not available) use default MT32 timbres
 	byte timbreId = patchId & 0x3F;
 	if (!(patchId & 0x40)) {
-		writePatchTimbre(patchId, 0, timbreId); // Group A
+		writePatchTimbre(patchId, 0, timbreId, useSysExQueue); // Group A
 	} else {
-		writePatchTimbre(patchId, 1, timbreId); // Group B
+		writePatchTimbre(patchId, 1, timbreId, useSysExQueue); // Group B
 	}
 }
 
@@ -1023,14 +1040,14 @@ int16 MidiDriver_Miles_Midi::installCustomTimbre(byte patchBank, byte patchId) {
 #endif
 
 	// upload common parameter data
-	MT32SysEx(targetAddressCommon, instrumentPtr->commonParameter);
+	MT32SysEx(targetAddressCommon, instrumentPtr->commonParameter, true);
 	// upload partial parameter data
-	MT32SysEx(targetAddressPartial1, instrumentPtr->partialParameters[0]);
-	MT32SysEx(targetAddressPartial2, instrumentPtr->partialParameters[1]);
-	MT32SysEx(targetAddressPartial3, instrumentPtr->partialParameters[2]);
-	MT32SysEx(targetAddressPartial4, instrumentPtr->partialParameters[3]);
+	MT32SysEx(targetAddressPartial1, instrumentPtr->partialParameters[0], true);
+	MT32SysEx(targetAddressPartial2, instrumentPtr->partialParameters[1], true);
+	MT32SysEx(targetAddressPartial3, instrumentPtr->partialParameters[2], true);
+	MT32SysEx(targetAddressPartial4, instrumentPtr->partialParameters[3], true);
 
-	setupPatch(patchBank, patchId);
+	setupPatch(patchBank, patchId, true);
 
 	return customTimbreId;
 }
@@ -1072,7 +1089,7 @@ void MidiDriver_Miles_Midi::writeRhythmSetup(byte note, byte customTimbreId) {
 	MT32SysEx(targetAddress, sysExData);
 }
 
-void MidiDriver_Miles_Midi::writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId) {
+void MidiDriver_Miles_Midi::writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId, bool useSysExQueue) {
 	byte   sysExData[3];
 	uint32 targetAddress = 0;
 
@@ -1083,7 +1100,7 @@ void MidiDriver_Miles_Midi::writePatchTimbre(byte patchId, byte timbreGroup, byt
 	sysExData[1] = timbreId;    // timbre number (0-63)
 	sysExData[2] = MILES_MT32_SYSEX_TERMINATOR; // terminator
 
-	MT32SysEx(targetAddress, sysExData);
+	MT32SysEx(targetAddress, sysExData, useSysExQueue);
 }
 
 void MidiDriver_Miles_Midi::writePatchByte(byte patchId, byte index, byte patchValue) {
@@ -1288,6 +1305,18 @@ void MidiDriver_Miles_Midi::setSourceVolume(uint8 source, uint16 volume) {
 
 		if (channelData && channelData->volume != 0xFF)
 			controlChange(i, MILES_CONTROLLER_VOLUME, channelData->volume, source, *channelData, sendMessage);
+	}
+}
+
+void MidiDriver_Miles_Midi::onTimer() {
+	Common::StackLock lock(_sysExQueueMutex);
+
+	_sysExDelay -= (_sysExDelay > _timerRate) ? _timerRate : _sysExDelay;
+
+	if (!_sysExQueue.empty() && _sysExDelay == 0) {
+		// Ready to send next SysEx message to the MIDI device
+		SysExData sysEx = _sysExQueue.pop();
+		_sysExDelay = sysExNoDelay(sysEx.data, sysEx.length) * 1000;
 	}
 }
 

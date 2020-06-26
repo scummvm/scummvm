@@ -577,16 +577,17 @@ void Script::o_videofromref() {			// 0x09
 		debugCN(1, kDebugScript, "\n");
 	}
 
-	// Determine if the GM initialization video is being played
-	bool gmInitVideo = (_version == kGroovieT7G && fileref == 0x2460);
+	// Determine if the MT-32 or GM initialization video is being played
+	bool gmInitVideo = _version == kGroovieT7G && fileref == 0x2460;
+	bool mt32InitVideo = _version == kGroovieT7G && fileref == 0x2461;
 	// Play the video
-	// If the GM init video is being played, loop it until the "audio"
+	// If a MIDI init video is being played, loop it until the "audio"
 	// (init commands) has finished playing
-	if (!playvideofromref(fileref, gmInitVideo)) {
+	if (!playvideofromref(fileref, gmInitVideo || mt32InitVideo)) {
 		// Move _currentInstruction back
 		_currentInstruction -= 3;
 	} else if (gmInitVideo) {
-		// The script plays the GM init video twice to give the "audio"
+		// The script plays the MIDI init video twice to give the "audio"
 		// enough time to play. It has just looped until the audio finished,
 		// so the second play is no longer necessary.
 		// Skip the next instruction.
