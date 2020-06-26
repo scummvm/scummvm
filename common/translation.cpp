@@ -25,7 +25,7 @@
 #include <windows.h>
 #endif
 
-#define TRANSLATIONS_DAT_VER 3
+#define TRANSLATIONS_DAT_VER 4
 
 #include "common/translation.h"
 #include "common/config-manager.h"
