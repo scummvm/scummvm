@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class ScummVMActivity extends Activity {
@@ -162,6 +163,12 @@ public class ScummVMActivity extends Activity {
 		@Override
 		protected String[] getSysArchives() {
 			return new String[0];
+		}
+
+		@Override
+		protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException {
+			String str = new String(string, from);
+			return str.getBytes(to);
 		}
 
 		@Override
