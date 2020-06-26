@@ -224,7 +224,7 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 	g_lingo->_currentScript = funcSym.u.defn;
 	if (funcSym.ctx) {
 		g_lingo->_currentScriptContext = funcSym.ctx;
-		g_lingo->_currentMe = funcSym.ctx->_target;
+		g_lingo->_currentMe = funcSym.ctx->_target; // reference-counted datum
 	}
 	g_lingo->_archiveIndex = funcSym.archiveIndex;
 
@@ -1338,7 +1338,7 @@ void LC::call(const Common::String &name, int nargs) {
 			if (funcSym.type != VOID) {
 				if (target->type == kScriptObj && funcSym.type == HANDLER) {
 					// For kScriptObj handlers the target is the first argument
-					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.ctx->_target;
+					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.ctx->_target; // reference-counted datum
 				} else {
 					// Otherwise, take the target object out of the stack
 					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
@@ -1361,12 +1361,19 @@ void LC::call(const Common::String &name, int nargs) {
 		if (d.type == OBJECT && (d.u.obj->type & (kFactoryObj | kXObj))) {
 			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
 			Object *target = d.u.obj;
-			Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
-			nargs -= 1;
+			Datum methodName = g_lingo->_stack[g_lingo->_stack.size() - nargs];
 			if (methodName.u.s->equalsIgnoreCase("mNew")) {
 				target = target->clone();
 			}
 			funcSym = target->getMethod(*methodName.u.s);
+			if (target->type == kScriptObj && funcSym.type == HANDLER) {
+				// For kFactoryObj handlers the target is the first argument
+				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.ctx->_target; // reference-counted datum
+			} else {
+				// Otherwise, take the methodName out of the stack
+				g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
+				nargs -= 1;
+			}
 		}
 	}
 
@@ -1413,7 +1420,7 @@ void LC::call(const Symbol &funcSym, int nargs) {
 
 		Datum target;
 		if (funcSym.ctx) {
-			target = funcSym.ctx->_target;
+			target = funcSym.ctx->_target; // reference-counted datum
 		}
 
 		if (target.type == OBJECT) {

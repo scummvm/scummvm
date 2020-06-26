@@ -774,10 +774,10 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
 		endDef();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$ID); delete $ID; }
-	| tMETHOD { startDef(); }
+	| tMETHOD { startDef(); (*g_lingo->_methodVars)["me"] = kVarArgument; }
 			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef, g_lingo->_currentFactory);
+		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1, g_lingo->_currentFactory);
 		endDef();
 		delete $tMETHOD; }
 	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
