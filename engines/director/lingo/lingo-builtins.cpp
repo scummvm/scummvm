@@ -1095,7 +1095,7 @@ void LB::b_continue(int nargs) {
 }
 
 void LB::b_dontPassEvent(int nargs) {
-	g_lingo->_dontPassEvent = true;
+	g_lingo->_passEvent = false;
 	warning("dontPassEvent raised");
 }
 
@@ -1181,9 +1181,8 @@ void LB::b_halt(int nargs) {
 }
 
 void LB::b_pass(int nargs) {
-	g_lingo->printSTUBWithArglist("b_pass", nargs);
-
-	g_lingo->dropStack(nargs);
+	g_lingo->_passEvent = true;
+	warning("pass raised");
 }
 
 void LB::b_pause(int nargs) {

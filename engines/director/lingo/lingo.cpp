@@ -155,10 +155,11 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_localvars = NULL;
 
-	_dontPassEvent = false;
-
 	_archiveIndex = kArchMain;
 
+	// events
+	_nextEventId = 0;
+	_passEvent = false;
 	_perFrameHook = Datum();
 
 	initEventHandlerTypes();

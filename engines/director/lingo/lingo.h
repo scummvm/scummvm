@@ -332,16 +332,20 @@ struct CFrame {	/* proc/func call stack frame */
 
 struct LingoEvent {
 	LEvent event;
+	int eventId;
 	int archiveIndex;
-	ScriptType st;
+	ScriptType scriptType;
 	int scriptId;
+	bool passByDefault;
 	int channelId;
 
-	LingoEvent (LEvent e, int ai, ScriptType s, int si, int ci = -1) {
+	LingoEvent (LEvent e, int ei, int ai, ScriptType st, int si, bool pass, int ci = -1) {
 		event = e;
+		eventId = ei;
 		archiveIndex = ai;
-		st = s;
+		scriptType = st;
 		scriptId = si;
+		passByDefault = pass;
 		channelId = ci;
 	}
 };
@@ -403,12 +407,12 @@ private:
 private:
 	void initEventHandlerTypes();
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
-	void primaryEventHandler(LEvent event);
-	void registerSpriteEvent(LEvent event, int spriteId);
-	void registerFrameEvent(LEvent event);
-	void registerMovieEvent(LEvent event);
+	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
+	void queueFrameEvent(LEvent event, int eventId);
+	void queueMovieEvent(LEvent event, int eventId);
 	void processEvent(LEvent event, int archiveIndex, ScriptType st, int entityId, int channelId = -1);
 
+	int _nextEventId;
 	Common::Queue<LingoEvent> _eventQueue;
 
 public:
@@ -541,7 +545,6 @@ public:
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
 
 public:
-	uint16 _currentEntityId;
 	int _currentChannelId;
 	ScriptContext *_currentScriptContext;
 	ScriptData *_currentScript;
@@ -606,8 +609,8 @@ public:
 
 	int _floatPrecision;
 
-	bool _dontPassEvent;
-
+	// events
+	bool _passEvent;
 	Datum _perFrameHook;
 
 public:

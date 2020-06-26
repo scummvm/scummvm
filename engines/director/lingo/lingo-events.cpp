@@ -107,33 +107,7 @@ void Lingo::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	addCode(code.c_str(), kArchMain, kGlobalScript, event);
 }
 
-void Lingo::primaryEventHandler(LEvent event) {
-	/* When an event occurs the message [...] is first sent to a
-	 * primary event handler: [... if exists it is executed] and the
-	 * event is passed on to other objects unless you explicitly stop
-	 * the message by including the dontPassEventCommand in the script
-	 * [D4 docs page 77]
-	 */
-	/* N.B.: No primary event handlers for events other than
-	 * keyup, keydown, mouseup, mousedown, timeout
-	 * [see: www.columbia.edu/itc/visualarts/r4110/s2001/handouts
-	 * /03_03_Event_Hierarchy.pdf]
-	 */
-	switch (event) {
-	case kEventMouseDown:
-	case kEventMouseUp:
-	case kEventKeyUp:
-	case kEventKeyDown:
-	case kEventTimeout:
-		debugC(3, kDebugLingoExec, "calling primary event handler (%s)", _eventHandlerTypes[event]);
-		executeScript(kGlobalScript, event);
-		break;
-	default:
-		break;
-	}
-}
-
-void Lingo::registerSpriteEvent(LEvent event, int spriteId) {
+void Lingo::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 	/* When the mouseDown or mouseUp occurs over a sprite, the message
 	 * goes first to the sprite script, then to the script of the cast
 	 * member, to the frame script and finally to the movie scripts.
@@ -156,14 +130,12 @@ void Lingo::registerSpriteEvent(LEvent event, int spriteId) {
 			// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
 			if ((event == kEventMouseDown && sprite->_immediate)
 					|| (event == kEventMouseUp && !sprite->_immediate)) {
-				_eventQueue.push(LingoEvent(kEventNone, kArchMain, kScoreScript, sprite->_scriptId, spriteId));
-				return;
+				_eventQueue.push(LingoEvent(kEventNone, eventId, kArchMain, kScoreScript, sprite->_scriptId, false, spriteId));
 			}
 		} else {
 			ScriptContext *script = getScriptContext(kArchMain, kScoreScript, sprite->_scriptId);
 			if (script && script->_eventHandlers.contains(event)) {
-				_eventQueue.push(LingoEvent(event, kArchMain, kScoreScript, sprite->_scriptId, spriteId));
-				return;
+				_eventQueue.push(LingoEvent(event, eventId, kArchMain, kScoreScript, sprite->_scriptId, false, spriteId));
 			}
 		}
 	}
@@ -176,15 +148,11 @@ void Lingo::registerSpriteEvent(LEvent event, int spriteId) {
 		script = getScriptContext(archiveIndex, kCastScript, sprite->_castId);
 	}
 	if (script && script->_eventHandlers.contains(event)) {
-		_eventQueue.push(LingoEvent(event, archiveIndex, kCastScript, sprite->_castId, spriteId));
-		return;
+		_eventQueue.push(LingoEvent(event, eventId, archiveIndex, kCastScript, sprite->_castId, false, spriteId));
 	}
-
-	// Delegate to the frame
-	registerFrameEvent(event);	
 }
 
-void Lingo::registerFrameEvent(LEvent event) {
+void Lingo::queueFrameEvent(LEvent event, int eventId) {
 	/* [in D4] the enterFrame, exitFrame, idle and timeout messages
 	 * are sent to a frame script and then a movie script.	If the
 	 * current frame has no frame script when the event occurs, the
@@ -202,15 +170,11 @@ void Lingo::registerFrameEvent(LEvent event) {
 	int scriptId = score->_frames[score->getCurrentFrame()]->_actionId;
 
 	if (scriptId) {
-		_eventQueue.push(LingoEvent(event, kArchMain, kScoreScript, scriptId));
-		return;
+		_eventQueue.push(LingoEvent(event, eventId, kArchMain, kScoreScript, scriptId, false));
 	}
-
-	// Delegate to the movie
-	registerMovieEvent(event);
 }
 
-void Lingo::registerMovieEvent(LEvent event) {
+void Lingo::queueMovieEvent(LEvent event, int eventId) {
 	/* If more than one movie script handles the same message, Lingo
 	 * searches the movie scripts according to their order in the cast
 	 * window [p.81 of D4 docs]
@@ -223,59 +187,89 @@ void Lingo::registerMovieEvent(LEvent event) {
 	for (ScriptContextHash::iterator it = _archives[kArchMain].scriptContexts[kMovieScript].begin();
 			it != _archives[kArchMain].scriptContexts[kMovieScript].end(); ++it) {
 		if (it->_value->_eventHandlers.contains(event)) {
-			_eventQueue.push(LingoEvent(event, kArchMain, kMovieScript, it->_key));
+			_eventQueue.push(LingoEvent(event, eventId, kArchMain, kMovieScript, it->_key, false));
 			return;
 		}
 	}
 	for (ScriptContextHash::iterator it = _archives[kArchShared].scriptContexts[kMovieScript].begin();
 			it != _archives[kArchShared].scriptContexts[kMovieScript].end(); ++it) {
 		if (it->_value->_eventHandlers.contains(event)) {
-			_eventQueue.push(LingoEvent(event, kArchShared, kMovieScript, it->_key));
+			_eventQueue.push(LingoEvent(event, eventId, kArchShared, kMovieScript, it->_key, false));
 			return;
 		}
 	}
-
-	debugC(9, kDebugEvents, "Lingo::registerEvent(%s): no handler", _eventHandlerTypes[event]);
 }
 
 void Lingo::registerEvent(LEvent event, int spriteId) {
-	primaryEventHandler(event);
+	int eventId = _nextEventId++;
+	if (_nextEventId < 0)
+		_nextEventId = 0;
 
-	if (_dontPassEvent) {
-		_dontPassEvent = false;
-		return;
+	int oldQueueSize = _eventQueue.size();
+
+	/* When an event occurs the message [...] is first sent to a
+	 * primary event handler: [... if exists it is executed] and the
+	 * event is passed on to other objects unless you explicitly stop
+	 * the message by including the dontPassEvent command in the script
+	 * [D4 docs page 77]
+	 */
+	/* N.B.: No primary event handlers for events other than
+	 * keyup, keydown, mouseup, mousedown, timeout
+	 * [see: www.columbia.edu/itc/visualarts/r4110/s2001/handouts
+	 * /03_03_Event_Hierarchy.pdf]
+	 */
+	switch (event) {
+	case kEventMouseDown:
+	case kEventMouseUp:
+	case kEventKeyUp:
+	case kEventKeyDown:
+	case kEventTimeout:
+		if (getScriptContext(kArchMain, kGlobalScript, event)) {
+			_eventQueue.push(LingoEvent(kEventNone, eventId, kArchMain, kGlobalScript, event, true));
+		}
+		break;
+	default:
+		break;
 	}
 
+	/* Now queue any objects that responds to this event, in order of precedence.
+	 *   (Sprite -> Cast Member -> Frame -> Movie)
+	 * Once one of these objects handles the event, any event handlers queued
+	 * for the same event will be ignored unless the pass command was called.
+	 */
 	switch (event) {
-		case kEventKeyUp:
-		case kEventKeyDown:
-		case kEventMouseUp:
-		case kEventMouseDown:
-		case kEventBeginSprite:
-			if (spriteId) {
-				registerSpriteEvent(event, spriteId);
-				break;
-			}
-			// fall through
+	case kEventKeyUp:
+	case kEventKeyDown:
+	case kEventMouseUp:
+	case kEventMouseDown:
+	case kEventBeginSprite:
+		if (spriteId) {
+			queueSpriteEvent(event, eventId, spriteId);
+		}
+		// fall through
 
-		case kEventIdle:
-		case kEventEnterFrame:
-		case kEventExitFrame:
-		case kEventNone:
-			registerFrameEvent(event);
-			break;
+	case kEventIdle:
+	case kEventEnterFrame:
+	case kEventExitFrame:
+	case kEventNone:
+		queueFrameEvent(event, eventId);
+		// fall through
 
-		case kEventStart:
-		case kEventStartUp:
-		case kEventStartMovie:
-		case kEventStopMovie:
-		case kEventTimeout:
-		case kEventPrepareMovie:
-			registerMovieEvent(event);
-			break;
+	case kEventStart:
+	case kEventStartUp:
+	case kEventStartMovie:
+	case kEventStopMovie:
+	case kEventTimeout:
+	case kEventPrepareMovie:
+		queueMovieEvent(event, eventId);
+		break;
 
-		default:
-			warning("registerEvent: Unhandled event %s", _eventHandlerTypes[event]);
+	default:
+		warning("registerEvent: Unhandled event %s", _eventHandlerTypes[event]);
+	}
+
+	if (oldQueueSize == _eventQueue.size()) {
+		debugC(9, kDebugEvents, "Lingo::registerEvent(%s): no event handler", _eventHandlerTypes[event]);
 	}
 }
 
@@ -285,13 +279,20 @@ void Lingo::processEvent(LEvent event, int spriteId) {
 }
 
 void Lingo::processEvents() {
+	int lastEventId = -1;
+
 	while (!_eventQueue.empty()) {
 		LingoEvent el = _eventQueue.pop();
 
 		if (_vm->getCurrentScore()->_stopPlay && el.event != kEventStopMovie)
 			continue;
 
-		processEvent(el.event, el.archiveIndex, el.st, el.scriptId, el.channelId);
+		if (lastEventId == el.eventId && !_passEvent)
+			continue;
+
+		_passEvent = el.passByDefault;
+		processEvent(el.event, el.archiveIndex, el.scriptType, el.scriptId, el.channelId);
+		lastEventId = el.eventId;
 	}
 }
 
