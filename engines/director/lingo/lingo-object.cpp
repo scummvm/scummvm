@@ -111,7 +111,7 @@ Symbol Object::getMethod(const Common::String &methodName) {
 	}
 
 	// instance method (factory, script object, and Xtra)
-	if ((type | (kFactoryObj & kScriptObj & kXtraObj)) && ctx->_functionHandlers.contains(methodName)) {
+	if ((type & (kFactoryObj | kScriptObj | kXtraObj)) && ctx->_functionHandlers.contains(methodName)) {
 		return ctx->_functionHandlers[methodName];
 	}
 
@@ -122,13 +122,17 @@ Symbol Object::getMethod(const Common::String &methodName) {
 			return ctx->_functionHandlers[shortName];
 		}
 		// predefined method (factory and XObject)
-		if (g_lingo->_methods.contains(shortName) && (type & g_lingo->_methods[shortName].type)) {
-			return g_lingo->_methods[shortName];
+		if (g_lingo->_methods.contains(shortName) && (type & g_lingo->_methods[shortName].targetType)) {
+			Symbol sym = g_lingo->_methods[shortName];
+			sym.ctx = ctx;
+			return sym;
 		}
 	} else if (type & (kScriptObj | kXtraObj)) {
 		// predefined method (script object and Xtra)
-		if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].type)) {
-			return g_lingo->_methods[methodName];
+		if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].targetType)) {
+			Symbol sym = g_lingo->_methods[methodName];
+			sym.ctx = ctx;
+			return sym;
 		}
 
 		// ancestor method
