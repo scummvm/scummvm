@@ -187,7 +187,7 @@ void MidiParser::onTimer() {
 	// even if the parser does not parse events.
 	_sysExDelay -= (_sysExDelay > _timerRate) ? _timerRate : _sysExDelay;
 
-	if (!_position._playPos || !_driver || !_doParse || _pause)
+	if (!_position._playPos || !_driver || !_doParse || _pause || !_driver->isReady())
 		return;
 
 	_abortParse = false;
