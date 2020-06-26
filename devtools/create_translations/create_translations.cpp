@@ -172,11 +172,11 @@ int main(int argc, char *argv[]) {
 	writeUint16BE(outFile, len);
 
 	// Then comes the size of each translation block.
-	// It starts with the number of strings coded on 2 bytes, the charset and then the strings.
+	// It starts with the number of strings coded on 2 bytes, and then the strings.
 	// For each string we have the string id (on two bytes) followed by
 	// the string size (two bytes for the number of chars and the string itself).
 	for (lang = 0; lang < numLangs; lang++) {
-		len = 2 + stringSize(translations[lang]->charset());
+		len = 2;
 		for (i = 0; i < translations[lang]->size(); ++i) {
 			len += 2 + stringSize(translations[lang]->entry(i)->msgstr);
 			len += stringSize(translations[lang]->entry(i)->msgctxt);
@@ -199,7 +199,6 @@ int main(int argc, char *argv[]) {
 	// Write translations
 	for (lang = 0; lang < numLangs; lang++) {
 		writeUint16BE(outFile, translations[lang]->size());
-		writeString(outFile, translations[lang]->charset());
 		for (i = 0; i < translations[lang]->size(); ++i) {
 			writeUint16BE(outFile, messageIds.findIndex(translations[lang]->entry(i)->msgid));
 			writeString(outFile, translations[lang]->entry(i)->msgstr);

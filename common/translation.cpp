@@ -348,7 +348,7 @@ void TranslationManager::loadLanguageDat(int index) {
 
 	// Get size of blocks to skip.
 	int skipSize = 0;
-	for (int i = 0; i < index + 3; ++i)
+	for (int i = 0; i < index + 2; ++i)
 		skipSize += in.readUint16BE();
 	// We also need to skip the remaining block sizes
 	skipSize += 2 * (nbTranslations - index);
