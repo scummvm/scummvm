@@ -2803,7 +2803,7 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_width));
 
 #ifdef ENABLE_WME3D
-	if (_gameRef->_playing3DGame) {
+	if (BaseEngine::instance().getFlags() & GF_3D) {
 		persistMgr->transferPtr(TMEMBER(_sceneGeometry));
 		persistMgr->transferBool(TMEMBER(_2DPathfinding));
 		persistMgr->transferBool(TMEMBER(_showGeometry));
