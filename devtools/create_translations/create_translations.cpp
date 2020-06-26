@@ -39,7 +39,7 @@
 #include "po_parser.h"
 #include "cp_parser.h"
 
-#define TRANSLATIONS_DAT_VER 3	// 1 byte
+#define TRANSLATIONS_DAT_VER 4	// 1 byte
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.
 int scumm_stricmp(const char *s1, const char *s2) {
