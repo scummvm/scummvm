@@ -430,8 +430,6 @@ void Score::update() {
 
 	// For previous frame
 	if (_currentFrame > 0 && !_vm->_playbackPaused) {
-		// TODO: Confirm when the perFrameHook is called if
-		// there's no transition.
 		// If there is a transition, the perFrameHook is called
 		// after each transition subframe instead.
 		if (_frames[_currentFrame]->_transType == 0) {
