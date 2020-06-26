@@ -93,6 +93,15 @@
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/system/sys_class.h"
 
+#ifdef ENABLE_WME3D
+#include "engines/wintermute/ad/ad_actor_3dx.h"
+#include "engines/wintermute/ad/ad_attach_3dx.h"
+#include "engines/wintermute/ad/ad_object_3d.h"
+#include "engines/wintermute/ad/ad_path3d.h"
+#include "engines/wintermute/ad/ad_path_point3d.h"
+#include "engines/wintermute/base/gfx/x/modelx.h"
+#endif
+
 // SystemClass adds these objects to the registry, thus they aren't as leaked as they look
 #define REGISTER_CLASS(class_name, persistent_class)\
 	new Wintermute::SystemClass(class_name::_className, class_name::persistBuild, class_name::persistLoad, persistent_class);
@@ -173,5 +182,16 @@ void SystemClassRegistry::registerClasses() {
 	REGISTER_CLASS(UIWindow, false)
 	REGISTER_CLASS(VideoTheoraPlayer, false)
 }
+
+#ifdef ENABLE_WME3D
+void SystemClassRegistry::register3DClasses() {
+	REGISTER_CLASS(AdActor3DX, false)
+	REGISTER_CLASS(AdAttach3DX, false)
+	REGISTER_CLASS(AdObject3D, false)
+	REGISTER_CLASS(AdPath3D, false)
+	REGISTER_CLASS(AdPathPoint3D, false)
+	REGISTER_CLASS(ModelX, false)
+}
+#endif
 
 }
