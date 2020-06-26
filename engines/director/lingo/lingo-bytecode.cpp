@@ -892,8 +892,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	debugC(5, kDebugLoading, "Lscr property list:");
 	stream.seek(propertiesOffset);
 	for (uint16 i = 0; i < propertiesCount; i++) {
-		uint16 index = stream.readUint16();
-		if (index < _archives[_assemblyArchive].names.size()) {
+		int16 index = stream.readSint16();
+		if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
 			const char *name = _archives[_assemblyArchive].names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			if (scriptFlags & kScriptFlagFactoryDef) {
@@ -915,8 +915,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	debugC(5, kDebugLoading, "Lscr globals list:");
 	stream.seek(globalsOffset);
 	for (uint16 i = 0; i < globalsCount; i++) {
-		uint16 index = stream.readUint16();
-		if (index < _archives[_assemblyArchive].names.size()) {
+		int16 index = stream.readSint16();
+		if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
 			const char *name = _archives[_assemblyArchive].names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			if (!_globalvars.contains(name)) {
@@ -1092,7 +1092,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			stream.hexdump(0x2a);
 		}
 
-		uint16 nameIndex = stream.readUint16();
+		int16 nameIndex = stream.readUint16();
 		stream.readUint16();
 		uint32 length = stream.readUint32();
 		uint32 startOffset = stream.readUint32();
@@ -1129,15 +1129,27 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			debugC(5, kDebugLoading, "Function %d argument list:", i);
 			uint16 namePointer = argOffset - codeStoreOffset;
 			for (int j = 0; j < argCount; j++) {
-				uint16 index = (uint16)READ_BE_UINT16(&codeStore[namePointer]);
+				int16 index = READ_BE_INT16(&codeStore[namePointer]);
 				namePointer += 2;
 				Common::String name;
-				if (index < _archives[_assemblyArchive].names.size()) {
+				if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
 					name = _archives[_assemblyArchive].names[index];
+					argMap[j] = index;
+				} else if (j == 0 && (scriptFlags & kScriptFlagFactoryDef)) {
+					name = "me";
+
+					// find or add "me" in the names list
+					for (index = 0; index < (int16)_archives[_assemblyArchive].names.size(); index++) {
+						if (_archives[_assemblyArchive].names[index].equalsIgnoreCase(name))
+							break;
+					}
+					if (index == (int16)_archives[_assemblyArchive].names.size())
+						_archives[_assemblyArchive].names.push_back(name);
+
 					argMap[j] = index;
 				} else {
 					name = Common::String::format("arg_%d", j);
-					warning("Argument has unknown name id %d, using name %s", j, name.c_str());
+					warning("Argument has unknown name id %d, using name %s", index, name.c_str());
 				}
 				debugC(5, kDebugLoading, "%d: %s", j, name.c_str());
 				argNames->push_back(name);
@@ -1155,10 +1167,10 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			debugC(5, kDebugLoading, "Function %d variable list:", i);
 			uint16 namePointer = varOffset - codeStoreOffset;
 			for (int j = 0; j < varCount; j++) {
-				uint16 index = (uint16)READ_BE_UINT16(&codeStore[namePointer]);
+				int16 index = READ_BE_INT16(&codeStore[namePointer]);
 				namePointer += 2;
 				Common::String name;
-				if (index < _archives[_assemblyArchive].names.size()) {
+				if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
 					name = _archives[_assemblyArchive].names[index];
 					varMap[j] = index;
 				} else {
@@ -1345,7 +1357,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 
 		// Attach to handlers
 		Symbol sym;
-		if (nameIndex < _archives[_assemblyArchive].names.size()) {
+		if (0 <= nameIndex && nameIndex < (int16)_archives[_assemblyArchive].names.size()) {
 			debugC(5, kDebugLoading, "Function %d binding: %s()", i, _archives[_assemblyArchive].names[nameIndex].c_str());
 			sym = g_lingo->define(_archives[_assemblyArchive].names[nameIndex], argCount, _currentAssembly, argNames, varNames);
 		} else {
@@ -1360,7 +1372,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 		}
 
 		if (!skipdump && ConfMan.getBool("dump_scripts")) {
-			if (nameIndex < _archives[_assemblyArchive].names.size())
+			if (0 <= nameIndex && nameIndex < (int16)_archives[_assemblyArchive].names.size())
 				out.writeString(Common::String::format("function %s, %d args\n", _archives[_assemblyArchive].names[nameIndex].c_str(), argCount));
 			else
 				out.writeString(Common::String::format("<noname>, %d args\n", argCount));
