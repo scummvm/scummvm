@@ -38,6 +38,7 @@ namespace Director {
 
 static LingoV4Bytecode lingoV4[] = {
 	{ 0x01, LC::c_procret,		"" },
+	{ 0x02, LC::c_procret,		"" },
 	{ 0x03, LC::cb_zeropush,	"" },
 	{ 0x04, LC::c_mul,			"" },
 	{ 0x05, LC::c_add,			"" },
