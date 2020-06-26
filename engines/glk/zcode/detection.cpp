@@ -64,7 +64,7 @@ GameDescriptor ZCodeMetaEngine::findGame(const char *gameId) {
 
 bool ZCodeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
 	const char *const EXTENSIONS[] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8",
-		".dat", ".zip", nullptr };
+		".dat", ".data", ".zip", nullptr };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
