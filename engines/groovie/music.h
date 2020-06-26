@@ -122,7 +122,7 @@ protected:
 	bool loadParser(Common::SeekableReadStream *stream, bool loop);
 };
 
-class MusicPlayerXMI : public MusicPlayerMidi {
+class MusicPlayerXMI : public MusicPlayerMidi, public Audio::MidiDriver_Miles_Xmidi_Timbres {
 public:
 	MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName);
 	~MusicPlayerXMI() override;
@@ -130,6 +130,10 @@ public:
 	void send(uint32 b) override;
 	void send(int8 source, uint32 b) override;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override {
+		if (_milesMidiDriver)
+			_milesMidiDriver->processXMIDITimbreChunk(timbreListPtr, timbreListSize);
+	};
 	bool isReady() override;
 
 protected:

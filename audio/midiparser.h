@@ -293,7 +293,7 @@ protected:
 	                        ///< simulated events in certain formats.
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 	bool   _jumpingToTick; ///< True if currently inside jumpToTick
-	bool   _doParse;       ///< True if the parser should be parsing; false if it should be active
+	bool   _doParse;       ///< True if the parser should be parsing; false if it should not be active
 	bool   _pause;		   ///< True if the parser has paused parsing
 
 protected:
@@ -402,7 +402,6 @@ public:
 
 public:
 	typedef void (*XMidiCallbackProc)(byte eventData, void *refCon);
-	typedef void (*XMidiNewTimbreListProc)(MidiDriver_BASE *driver, const byte *timbreListPtr, uint32 timbreListSize);
 
 	MidiParser();
 	virtual ~MidiParser() { allNotesOff(); }
@@ -411,7 +410,7 @@ public:
 	virtual void unloadMusic();
 	virtual void property(int prop, int value);
 
-	void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
+	virtual void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
 	void setTimerRate(uint32 rate) { _timerRate = rate; }
 	void setTempo(uint32 tempo);
 	void onTimer();
@@ -470,7 +469,7 @@ public:
 	static void defaultXMidiCallback(byte eventData, void *refCon);
 
 	static MidiParser *createParser_SMF();
-	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, XMidiNewTimbreListProc newTimbreListProc = NULL, MidiDriver_BASE *newTimbreListDriver = NULL, int source = -1);
+	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, int source = -1);
 	static MidiParser *createParser_QT();
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };
