@@ -428,7 +428,7 @@ void Score::update() {
 	}
 
 	// For previous frame
-	if (_currentFrame > 0) {
+	if (_currentFrame > 0 && !_vm->_playbackPaused) {
 		// TODO: Confirm when the perFrameHook is called if
 		// there's no transition.
 		// If there is a transition, the perFrameHook is called
@@ -492,7 +492,8 @@ void Score::update() {
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 
 	// Enter and exit from previous frame (Director 4)
-	_lingo->processEvent(kEventEnterFrame);
+	if (!_vm->_playbackPaused)
+		_lingo->processEvent(kEventEnterFrame);
 	// TODO Director 6 - another order
 
 	byte tempo = _puppetTempo ? _puppetTempo : _frames[_currentFrame]->_tempo;
