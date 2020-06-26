@@ -40,12 +40,12 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	_currentResourceSet = 0;
 	memset(&_resInfo, 0, sizeof(_resInfo));
 
-	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, 0);
+	_music = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, 0);
 	assert(_music);
 	_music->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
 	_music->property(MidiParser::mpDisableAutoStartPlayback, true);
 	for (int i = 0; i < 3; ++i) {
-		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, NULL, NULL, i + 1);
+		_sfx[i] = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, NULL, i + 1);
 		assert(_sfx[i]);
 		_sfx[i]->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
 		_sfx[i]->property(MidiParser::mpDisableAutoStartPlayback, true);

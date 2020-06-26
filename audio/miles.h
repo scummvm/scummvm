@@ -111,7 +111,29 @@ struct MilesMT32InstrumentEntry {
 	byte partialParameters[MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT][MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE + 1];
 };
 
-class MidiDriver_Miles_Midi : public MidiDriver {
+/**
+ * Abstract class containing the interface for loading
+ * the XMIDI timbres specified in the timbre chunks of
+ * an XMIDI file.
+ */
+class MidiDriver_Miles_Xmidi_Timbres {
+public:
+	/**
+	 * Processes the timbre chunk specified for a track
+	 * in an XMIDI file. This will load the necessary
+	 * timbres into the MIDI device using SysEx messages.
+	 *
+	 * This function will likely return before all SysEx
+	 * messages have been sent. Use the isReady method to
+	 * check if the driver has finished preparing for
+	 * playback. Playback should not be started before
+	 * this process has finished.
+	 */
+	virtual void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) = 0;
+	virtual ~MidiDriver_Miles_Xmidi_Timbres() { }
+};
+
+class MidiDriver_Miles_Midi : public MidiDriver, public MidiDriver_Miles_Xmidi_Timbres {
 public:
 	MidiDriver_Miles_Midi(MusicType midiType, MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
 	virtual ~MidiDriver_Miles_Midi();
@@ -194,18 +216,7 @@ protected:
 	uint32 _timerRate;
 
 public:
-	/**
-	 * Processes the timbre chunk specified for a track
-	 * in an XMIDI file. This will load the necessary
-	 * timbres into the MIDI device using SysEx messages.
-	 *
-	 * This function will likely return before all SysEx
-	 * messages have been sent. Use the isReady method to
-	 * check if the driver has finished preparing for
-	 * playback. Playback should not be started before
-	 * this process has finished.
-	 */
-	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize);
+	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override;
 	bool isReady() override { return _sysExQueue.empty(); }
 
 private:
@@ -483,8 +494,6 @@ extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameA
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename);
 
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Common::String &instrumentDataFilename);
-
-extern void MidiDriver_Miles_MT32_processXMIDITimbreChunk(MidiDriver_BASE *driver, const byte *timbreListPtr, uint32 timbreListSize);
 
 } // End of namespace Audio
 

@@ -402,7 +402,6 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	// new Miles Audio support, to disable set milesAudioEnabled to false
 	_milesAudioMode = false;
 	bool milesAudioEnabled = true;
-	MidiParser::XMidiNewTimbreListProc newTimbreListProc = NULL;
 
 	_musicType = 0;
 
@@ -418,7 +417,6 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 			break;
 		case MT_MT32:
 			_driver = _milesMidiDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, gtlName + ".MT");
-			newTimbreListProc = Audio::MidiDriver_Miles_MT32_processXMIDITimbreChunk;
 			break;
 		case MT_GM:
 			_driver = _milesMidiDriver = Audio::MidiDriver_Miles_MIDI_create(musicType, "");
@@ -441,7 +439,7 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	assert(_driver);
 
 	// Create the parser
-	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, newTimbreListProc, _milesMidiDriver, 0);
+	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, 0);
 
 	int result = _driver->open();
 	if (result > 0 && result != MidiDriver::MERR_ALREADY_OPEN)
