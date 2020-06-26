@@ -48,7 +48,9 @@ namespace Ultima {
 namespace Ultima4 {
 
 #define MOUSE_CURSOR_SIZE 20
+#ifndef DBL_MAX
 #define DBL_MAX 1e99
+#endif
 #define BUFFER_SIZE 1024
 
 Screen *g_screen;
