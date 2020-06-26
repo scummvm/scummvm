@@ -449,7 +449,7 @@ void MidiDriver_Miles_Midi::controlChange(byte outputChannel, byte controllerNum
 	}
 
 	// XMIDI MT-32 specific controllers
-	if (_nativeMT32) {
+	if (_midiType == MT_MT32 && _nativeMT32) {
 		switch (controllerNumber) {
 		case MILES_CONTROLLER_PATCH_REVERB:
 			writePatchByte(controlData.program, 6, controllerValue);
@@ -908,6 +908,11 @@ void MidiDriver_Miles_Midi::setupPatch(byte patchBank, byte patchId, bool useSys
 }
 
 void MidiDriver_Miles_Midi::processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) {
+	if (_midiType != MT_MT32)
+		// Some GM files contain timbre chunks, but custom patches cannot
+		// be loaded on a GM device.
+		return;
+
 	uint16 timbreCount = 0;
 	uint32 expectedSize = 0;
 	const byte *timbreListSeeker = timbreListPtr;
@@ -1233,14 +1238,6 @@ MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Co
 	}
 
 	return new MidiDriver_Miles_Midi(midiType, instrumentTablePtr, instrumentTableCount);
-}
-
-void MidiDriver_Miles_MT32_processXMIDITimbreChunk(MidiDriver_BASE *driver, const byte *timbreListPtr, uint32 timbreListSize) {
-	MidiDriver_Miles_Midi *driverMT32 = dynamic_cast<MidiDriver_Miles_Midi *>(driver);
-
-	if (driverMT32) {
-		driverMT32->processXMIDITimbreChunk(timbreListPtr, timbreListSize);
-	}
 }
 
 void MidiDriver_Miles_Midi::deinitSource(uint8 source) {
