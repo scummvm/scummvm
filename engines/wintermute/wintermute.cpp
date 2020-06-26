@@ -168,6 +168,12 @@ int WintermuteEngine::init() {
 		}
 	}
 
+	#ifdef ENABLE_WME3D
+	if (instance.getFlags() & GF_3D) {
+		instance.getClassRegistry()->register3DClasses();
+	}
+	#endif
+
 	// check dependencies for games with high resolution assets
 	#if !defined(USE_PNG) || !defined(USE_JPEG) || !defined(USE_VORBIS)
 		if (!(instance.getFlags() & GF_LOWSPEC_ASSETS)) {

@@ -99,6 +99,7 @@
 #include "engines/wintermute/ad/ad_object_3d.h"
 #include "engines/wintermute/ad/ad_path3d.h"
 #include "engines/wintermute/ad/ad_path_point3d.h"
+#include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #endif
 
@@ -190,6 +191,7 @@ void SystemClassRegistry::register3DClasses() {
 	REGISTER_CLASS(AdObject3D, false)
 	REGISTER_CLASS(AdPath3D, false)
 	REGISTER_CLASS(AdPathPoint3D, false)
+	REGISTER_CLASS(AdSceneGeometry, false)
 	REGISTER_CLASS(ModelX, false)
 }
 #endif
