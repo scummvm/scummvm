@@ -134,6 +134,9 @@ struct {
 void Score::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType) {
 	// Play a transition and return the number of subframes rendered
 
+	if (!_surface)
+		return;
+
 	TransParams t;
 
 	t.type = transType;
