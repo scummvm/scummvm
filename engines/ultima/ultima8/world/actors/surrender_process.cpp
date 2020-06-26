@@ -102,19 +102,26 @@ void SurrenderProcess::run() {
 	switch (a->getShape()) {
 	case 0x2f7: // suit
 		soundno = SUIT_SUR_SNDS[getRandom() % NUM_SUIT_SUR_SNDS];
+		break;
 	case 0x2f5: // hardhat
 		soundno = HARDHAT_SUR_SNDS[getRandom() % NUM_HARDHAT_SUR_SNDS];
+		break;
 	case 0x2f6: // chemsuit
 		soundno = CHEMSUIT_SUR_SNDS[getRandom() % NUM_CHEMSUIT_SUR_SNDS];
+		break;
 	case 0x344: // chemsuit
 		soundno = SCIENTIST_SUR_SNDS[getRandom() % NUM_SCIENTIST_SUR_SNDS];
+		break;
 	case 0x597: // female office worker
 		soundno = FEMALE_SUR_SNDS[getRandom() % NUM_FEMALE_SUR_SNDS];
+		break;
 	}
 
 	AudioProcess *audio = AudioProcess::get_instance();
-	if (audio)
+	if (audio && soundno != -1) {
 		audio->playSFX(soundno, 0x80, _itemNum, 1);
+		_playedSound = true;
+	}
 }
 
 void SurrenderProcess::saveData(Common::WriteStream *ws) {
