@@ -457,6 +457,7 @@ MODULE_OBJS := \
 	ultima8/gumps/ask_gump.o \
 	ultima8/gumps/bark_gump.o \
 	ultima8/gumps/book_gump.o \
+	ultima8/gumps/computer_gump.o \
 	ultima8/gumps/container_gump.o \
 	ultima8/gumps/credits_gump.o \
 	ultima8/gumps/cru_ammo_gump.o \

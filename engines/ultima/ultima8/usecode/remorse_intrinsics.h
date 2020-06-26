@@ -304,7 +304,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQHi,  // based on same coff set as 026
 	Item::I_andStatus, // void Intrinsic0FC(6 bytes)
 	MainActor::I_hasKeycard, // int Intrinsic0FD(2 bytes)
-	0, // void Intrinsic0FE(4 bytes)
+	ComputerGump::I_readComputer, // void Intrinsic0FE(4 bytes)
 	UCMachine::I_numToStr, // same as 113 based on same coff set 0FF, 113, 126
 	// 0x100
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
