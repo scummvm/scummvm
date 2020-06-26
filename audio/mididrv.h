@@ -159,6 +159,14 @@ public:
 	 * ignored.
 	 */
 	virtual void metaEvent(int8 source, byte type, byte *data, uint16 length) { metaEvent(type, data, length); }
+
+	/**
+	 * A driver implementation might need time to prepare playback of
+	 * a track. Use this function to check if the driver is ready to
+	 * receive MIDI events.
+	 */
+	virtual bool isReady() { return true; }
+
 protected:
 
 	/**
