@@ -87,42 +87,38 @@ uint Glulxe::perform_saveundo() {
 	if (undo_chain_size == 0)
 		return 1;
 
-	dest.ismem = true;
-	dest.size = 0;
-	dest.pos = 0;
-	dest.ptr = nullptr;
-	dest.str = nullptr;
+	dest._isMem = true;
 
 	res = 0;
 	if (res == 0) {
 		res = write_long(&dest, 0); /* space for chunk length */
 	}
 	if (res == 0) {
-		memstart = dest.pos;
+		memstart = dest._pos;
 		res = write_memstate(&dest);
-		memlen = dest.pos - memstart;
+		memlen = dest._pos - memstart;
 	}
 	if (res == 0) {
 		res = write_long(&dest, 0); /* space for chunk length */
 	}
 	if (res == 0) {
-		heapstart = dest.pos;
+		heapstart = dest._pos;
 		res = write_heapstate(&dest, false);
-		heaplen = dest.pos - heapstart;
+		heaplen = dest._pos - heapstart;
 	}
 	if (res == 0) {
 		res = write_long(&dest, 0); /* space for chunk length */
 	}
 	if (res == 0) {
-		stackstart = dest.pos;
+		stackstart = dest._pos;
 		res = write_stackstate(&dest, false);
-		stacklen = dest.pos - stackstart;
+		stacklen = dest._pos - stackstart;
 	}
 
 	if (res == 0) {
 		/* Trim it down to the perfect size. */
-		dest.ptr = (byte *)glulx_realloc(dest.ptr, dest.pos);
-		if (!dest.ptr)
+		dest._ptr = (byte *)glulx_realloc(dest._ptr, dest._pos);
+		if (!dest._ptr)
 			res = 1;
 	}
 	if (res == 0) {
@@ -153,15 +149,15 @@ uint Glulxe::perform_saveundo() {
 		if (undo_chain_size > 1)
 			memmove(undo_chain + 1, undo_chain,
 			        (undo_chain_size - 1) * sizeof(unsigned char *));
-		undo_chain[0] = dest.ptr;
+		undo_chain[0] = dest._ptr;
 		if (undo_chain_num < undo_chain_size)
 			undo_chain_num += 1;
-		dest.ptr = nullptr;
+		dest._ptr = nullptr;
 	} else {
 		/* It didn't work. */
-		if (dest.ptr) {
-			glulx_free(dest.ptr);
-			dest.ptr = nullptr;
+		if (dest._ptr) {
+			glulx_free(dest._ptr);
+			dest._ptr = nullptr;
 		}
 	}
 
@@ -183,11 +179,8 @@ uint Glulxe::perform_restoreundo() {
 	if (undo_chain_size == 0 || undo_chain_num == 0)
 		return 1;
 
-	dest.ismem = true;
-	dest.size = 0;
-	dest.pos = 0;
-	dest.ptr = undo_chain[0];
-	dest.str = nullptr;
+	dest._isMem = true;
+	dest._ptr = undo_chain[0];
 
 	res = 0;
 	if (res == 0) {
@@ -222,11 +215,11 @@ uint Glulxe::perform_restoreundo() {
 			memmove(undo_chain, undo_chain + 1,
 			        (undo_chain_size - 1) * sizeof(unsigned char *));
 		undo_chain_num -= 1;
-		glulx_free(dest.ptr);
-		dest.ptr = nullptr;
+		glulx_free(dest._ptr);
+		dest._ptr = nullptr;
 	} else {
 		/* It didn't work. */
-		dest.ptr = nullptr;
+		dest._ptr = nullptr;
 	}
 
 	return res;
@@ -249,11 +242,11 @@ Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
 	if (ws == nullptr)
 		return Common::kUnknownError;
 
-	dest.ismem = false;
-	dest.size = 0;
-	dest.pos = 0;
-	dest.ptr = nullptr;
-	dest.str = ws;
+	dest._isMem = false;
+	dest._size = 0;
+	dest._pos = 0;
+	dest._ptr = nullptr;
+	dest._str = ws;
 
 	res = 0;
 
@@ -263,7 +256,7 @@ Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
 	}
 	if (res == 0) {
 		res = write_long(&dest, 0); /* space for file length */
-		filestart = dest.pos;
+		filestart = dest._pos;
 	}
 
 	if (res == 0) {
@@ -290,9 +283,9 @@ Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
 		res = write_long(&dest, 0); /* space for chunk length */
 	}
 	if (res == 0) {
-		memstart = dest.pos;
+		memstart = dest._pos;
 		res = write_memstate(&dest);
-		memlen = dest.pos - memstart;
+		memlen = dest._pos - memstart;
 	}
 	if (res == 0 && (memlen & 1) != 0) {
 		res = write_byte(&dest, 0);
@@ -306,9 +299,9 @@ Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
 		res = write_long(&dest, 0); /* space for chunk length */
 	}
 	if (res == 0) {
-		heapstart = dest.pos;
+		heapstart = dest._pos;
 		res = write_heapstate(&dest, true);
-		heaplen = dest.pos - heapstart;
+		heaplen = dest._pos - heapstart;
 	}
 	/* Always even, so no padding necessary. */
 
@@ -320,15 +313,15 @@ Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
 		res = write_long(&dest, 0); /* space for chunk length */
 	}
 	if (res == 0) {
-		stackstart = dest.pos;
+		stackstart = dest._pos;
 		res = write_stackstate(&dest, true);
-		stacklen = dest.pos - stackstart;
+		stacklen = dest._pos - stackstart;
 	}
 	if (res == 0 && (stacklen & 1) != 0) {
 		res = write_byte(&dest, 0);
 	}
 
-	filelen = dest.pos - filestart;
+	filelen = dest._pos - filestart;
 
 	/* Okay, fill in all the lengths. */
 	if (res == 0) {
@@ -388,11 +381,11 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 	if (str == 0)
 		return Common::kUnknownError;
 
-	dest.ismem = false;
-	dest.size = 0;
-	dest.pos = 0;
-	dest.ptr = nullptr;
-	dest.str = str;
+	dest._isMem = false;
+	dest._size = 0;
+	dest._pos = 0;
+	dest._ptr = nullptr;
+	dest._str = str;
 
 	res = 0;
 
@@ -409,7 +402,7 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 	if (res == 0) {
 		res = read_long(&dest, &filelen);
 	}
-	filestart = dest.pos;
+	filestart = dest._pos;
 
 	if (res == 0) {
 		res = read_long(&dest, &val);
@@ -419,7 +412,7 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 		return Common::kUnknownError;
 	}
 
-	while (res == 0 && dest.pos < filestart + filelen) {
+	while (res == 0 && dest._pos < filestart + filelen) {
 		/* Read a chunk and deal with it. */
 		uint chunktype = 0, chunkstart = 0, chunklen = 0;
 		unsigned char dummy;
@@ -430,7 +423,7 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 		if (res == 0) {
 			res = read_long(&dest, &chunklen);
 		}
-		chunkstart = dest.pos;
+		chunkstart = dest._pos;
 
 		if (chunktype == IFFID('I', 'F', 'h', 'd')) {
 			for (ix = 0; res == 0 && ix < 128; ix++) {
@@ -453,7 +446,7 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 			}
 		}
 
-		if (chunkstart + chunklen != dest.pos) {
+		if (chunkstart + chunklen != dest._pos) {
 			/* ### funny chunk length */
 			return Common::kUnknownError;
 		}
@@ -481,34 +474,33 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 }
 
 int Glulxe::reposition_write(dest_t *dest, uint pos) {
-	if (dest->ismem) {
-		dest->pos = pos;
+	if (dest->_isMem) {
+		dest->_pos = pos;
 	} else {
-		glk_stream_set_position(dest->str, pos, seekmode_Start);
-		dest->pos = pos;
+		error("Seeking a WriteStream isn't allowed");
 	}
 
 	return 0;
 }
 
 int Glulxe::write_buffer(dest_t *dest, const byte *ptr, uint len) {
-	if (dest->ismem) {
-		if (dest->pos + len > dest->size) {
-			dest->size = dest->pos + len + 1024;
-			if (!dest->ptr) {
-				dest->ptr = (byte *)glulx_malloc(dest->size);
+	if (dest->_isMem) {
+		if (dest->_pos + len > dest->_size) {
+			dest->_size = dest->_pos + len + 1024;
+			if (!dest->_ptr) {
+				dest->_ptr = (byte *)glulx_malloc(dest->_size);
 			} else {
-				dest->ptr = (byte *)glulx_realloc(dest->ptr, dest->size);
+				dest->_ptr = (byte *)glulx_realloc(dest->_ptr, dest->_size);
 			}
-			if (!dest->ptr)
+			if (!dest->_ptr)
 				return 1;
 		}
-		memcpy(dest->ptr + dest->pos, ptr, len);
+		memcpy(dest->_ptr + dest->_pos, ptr, len);
 	} else {
-		glk_put_buffer_stream(dest->str, (const char *)ptr, len);
+		dest->_dest->write(ptr, len);
 	}
 
-	dest->pos += len;
+	dest->_pos += len;
 
 	return 0;
 }
@@ -516,15 +508,15 @@ int Glulxe::write_buffer(dest_t *dest, const byte *ptr, uint len) {
 int Glulxe::read_buffer(dest_t *dest, byte *ptr, uint len) {
 	uint newlen;
 
-	if (dest->ismem) {
-		memcpy(ptr, dest->ptr + dest->pos, len);
+	if (dest->_isMem) {
+		memcpy(ptr, dest->_ptr + dest->_pos, len);
 	} else {
-		newlen = glk_get_buffer_stream(dest->str, (char *)ptr, len);
+		newlen = dest->_src->read(ptr, len);
 		if (newlen != len)
 			return 1;
 	}
 
-	dest->pos += len;
+	dest->_pos += len;
 
 	return 0;
 }
@@ -631,7 +623,7 @@ uint Glulxe::write_memstate(dest_t *dest) {
 }
 
 uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
-	uint chunkend = dest->pos + chunklen;
+	uint chunkend = dest->_pos + chunklen;
 	uint newlen;
 	uint res, pos;
 	int val;
@@ -675,7 +667,7 @@ uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
 			ch = 0;
 		}
 
-		if (dest->pos >= chunkend) {
+		if (dest->_pos >= chunkend) {
 			/* we're into the final, unstored run. */
 		} else if (runlen) {
 			runlen--;
