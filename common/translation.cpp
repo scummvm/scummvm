@@ -291,6 +291,10 @@ void TranslationManager::loadTranslationsInfoDat() {
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
 
+	for (int i = 0; i < nbTranslations + 2; i++) {
+		in.readUint16BE(); // skip
+	}
+
 	// Read list of languages
 	_langs.resize(nbTranslations);
 	_langNames.resize(nbTranslations);
