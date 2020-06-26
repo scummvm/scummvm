@@ -87,6 +87,7 @@ jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
+jmethodID JNI::_MID_convertEncoding = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
@@ -408,6 +409,36 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	}
 }
 
+char *JNI::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
+	JNIEnv *env = JNI::getEnv();
+
+	jstring javaTo = env->NewStringUTF(to);
+	jstring javaFrom = env->NewStringUTF(from);
+	jbyteArray javaString = env->NewByteArray(length);
+	env->SetByteArrayRegion(javaString, 0, length, reinterpret_cast<const jbyte*>(string));
+
+	jbyteArray javaOut = (jbyteArray)env->CallObjectMethod(_jobj, _MID_convertEncoding, javaTo, javaFrom, javaString);
+
+	if (!javaOut || env->ExceptionCheck()) {
+		LOGE("Failed to convert text from %s to %s", from, to);
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+
+		return nullptr;
+	}
+
+	int outLength = env->GetArrayLength(javaOut);
+	char *buf = (char *)malloc(outLength + 1);
+	if (!buf)
+		return nullptr;
+
+	env->GetByteArrayRegion(javaOut, 0, outLength, reinterpret_cast<jbyte *>(buf));
+	buf[outLength] = 0;
+
+	return buf;
+}
+
 bool JNI::initSurface() {
 	JNIEnv *env = JNI::getEnv();
 
@@ -536,6 +567,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
+	FIND_METHOD(, convertEncoding, "(Ljava/lang/String;Ljava/lang/String;[B)[B");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
 

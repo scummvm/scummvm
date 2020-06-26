@@ -68,6 +68,7 @@ public:
 	static void showVirtualKeyboard(bool enable);
 	static void showKeyboardControl(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
+	static char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 
 	static inline bool haveSurface();
 	static inline bool swapBuffers();
@@ -108,6 +109,7 @@ private:
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_showKeyboardControl;
 	static jmethodID _MID_getSysArchives;
+	static jmethodID _MID_convertEncoding;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;
 	static jmethodID _MID_deinitSurface;

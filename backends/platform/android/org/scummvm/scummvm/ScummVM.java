@@ -15,6 +15,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
 	abstract protected String[] getSysArchives();
+	abstract protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException;
 	abstract protected String[] getAllStorageLocations();
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder) {
