@@ -1155,8 +1155,8 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 			d = &(*localvars)[name];
 			if (global)
 				warning("varAssign: variable %s is local, not global", name.c_str());
-		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasVar(name)) {
-			d = &_currentMe.u.obj->getVar(name);
+		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
+			d = &_currentMe.u.obj->getProp(name);
 			if (global)
 				warning("varAssign: variable %s is instance or property, not global", name.c_str());
 		} else if (_globalvars.contains(name)) {
@@ -1220,8 +1220,8 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 			d = &(*localvars)[name];
 			if (global)
 				warning("varFetch: variable %s is local, not global", name.c_str());
-		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasVar(name)) {
-			d = &_currentMe.u.obj->getVar(name);
+		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
+			d = &_currentMe.u.obj->getProp(name);
 			if (global)
 				warning("varFetch: variable %s is instance or property, not global", name.c_str());
 		} else if (_globalvars.contains(name)) {

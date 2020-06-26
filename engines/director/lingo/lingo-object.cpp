@@ -146,51 +146,16 @@ Symbol Object::getMethod(const Common::String &methodName) {
 	return Symbol();
 }
 
-// Variable access (e.g. `put variable`, within a method)
-
-bool Object::hasVar(const Common::String &varName) {
-	if (disposed) {
-		error("Variable '%s' accessed on disposed object <%s>", varName.c_str(), Datum(this).asString(true).c_str());
-	}
-	if (properties.contains(varName)) {
-		return true;
-	}
-	if (type & (kScriptObj | kXtraObj)) {
-		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
-				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
-			return properties["ancestor"].u.obj->hasVar(varName);
-		}
-	}
-	return false;
-}
-
-Datum &Object::getVar(const Common::String &varName) {
-	if (disposed) {
-		error("Variable '%s' accessed on disposed object <%s>", varName.c_str(), Datum(this).asString(true).c_str());
-	}
-	if (properties.contains(varName)) {
-		return properties[varName];
-	}
-	if (type & (kScriptObj | kXtraObj)) {
-		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
-				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
-			debugC(3, kDebugLingoExec, "Getting var '%s' from ancestor: <%s>", varName.c_str(), properties["ancestor"].asString(true).c_str());
-			return properties["ancestor"].u.obj->getVar(varName);
-		}
-	}
-	return properties[varName]; // return new variable
-}
-
-// Property access (e.g. `put the property of object`)
+// Property access
 
 bool Object::hasProp(const Common::String &propName) {
 	if (disposed) {
 		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
 	}
+	if (properties.contains(propName)) {
+		return true;
+	}
 	if (type & (kScriptObj | kXtraObj)) {
-		if (properties.contains(propName)) {
-			return true;
-		}
 		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
 				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
 			return properties["ancestor"].u.obj->hasProp(propName);
@@ -203,10 +168,10 @@ Datum &Object::getProp(const Common::String &propName) {
 	if (disposed) {
 		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
 	}
+	if (properties.contains(propName)) {
+		return properties[propName];
+	}
 	if (type & (kScriptObj | kXtraObj)) {
-		if (properties.contains(propName)) {
-			return properties[propName];
-		}
 		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
 				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
 			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), properties["ancestor"].asString(true).c_str());

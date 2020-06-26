@@ -316,8 +316,6 @@ struct Object {
 
 	virtual Object *clone();
 	Symbol getMethod(const Common::String &methodName);
-	bool hasVar(const Common::String &varName);
-	Datum &getVar(const Common::String &varName);
 	bool hasProp(const Common::String &propName);
 	Datum &getProp(const Common::String &propName);
 };

@@ -275,7 +275,7 @@ void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localv
 		if (global)
 			warning("varCreate: variable %s is local, not global", name.c_str());
 		return;
-	} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasVar(name)) {
+	} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
 		if (global)
 			warning("varCreate: variable %s is instance or property, not global", name.c_str());
 		return;
