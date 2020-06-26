@@ -415,6 +415,7 @@ void Score::startLoop() {
 	}
 
 	_lingo->processEvent(kEventStopMovie);
+	_lingo->executePerFrameHook(-1, 0);
 }
 
 void Score::update() {
