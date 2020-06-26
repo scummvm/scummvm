@@ -54,6 +54,11 @@ public:
 		return _wpnType;
 	};
 
+	uint16 getDefaultActivity(int no) const {
+		assert(no >= 0 && no < 3);
+		return _defaultActivity[no];
+	}
+
 private:
     NPCDat(Common::SeekableReadStream &datars, Common::SeekableReadStream &namers);
 
@@ -62,6 +67,7 @@ private:
 	uint16 _maxHp;
 	uint16 _shapeNo;
 	uint16 _wpnType;
+	uint16 _defaultActivity[3];  // activities 0x6, 0x8, and 0xA in game.
 };
 
 } // End of namespace Ultima8

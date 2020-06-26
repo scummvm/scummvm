@@ -154,9 +154,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 0050
 	"int16 I_GetNPCDataField0x2_050(Actor *)",
 	"void I_NPCSomething_051(Actor *)",  // TODO: check usecode to understand this.
-	"void I_SetNPCDataField0x6_052(Actor *, int)", // TODO: check usecode to understand this.
-	"void I_SetNPCDataField0x8_053(Actor *, int)", // TODO: check usecode to understand this.
-	"void I_SetNPCDataField0xA_054(Actor *, int)", // TODO: check usecode to understand this.
+	"void Actor::I_setDefaultActivity0(Actor *, int)",
+	"void Actor::I_setDefaultActivity1(Actor *, int)",
+	"void Actor::I_setDefaultActivity2(Actor *, int)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"void Intrinsic056(int itemno)", // Maybe set new target? TODO: check usecode to understand this.
 	"int16 Item::I_getSOMETHING_57(Item *)",
@@ -306,9 +306,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_getEquip(6 bytes)", // based on disasm
 	// 00E0
 	"void Actor::I_setEquip(8 bytes)",
-	"int16 Actor::I_GetNPCDataField0x6_0E1(Actor *)",
-	"int16 Actor::I_GetNPCDataField0x8_0E2(Actor *)",
-	"int16 Actor::I_GetNPCDataField0xa_0E3(Actor *)",
+	"int16 Actor::I_getDefaultActivity0(Actor *)",
+	"int16 Actor::I_getDefaultActivity1(Actor *)",
+	"int16 Actor::I_getDefaultActivity2(Actor *)",
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"void Actor::I_attackProbably(Actor *, uint16 target)", // TODO: game checks 0x59 flag 3 first.. what is that?
 	"void Actor::I_SetNPCDataField0x63_0E6(Actor *, int)",

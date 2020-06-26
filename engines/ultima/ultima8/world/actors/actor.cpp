@@ -67,6 +67,9 @@ Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 	  _hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
 	  _lastAnim(Animation::stand), _animFrame(0), _direction(0),
 		_fallStart(0), _unk0C(0), _actorFlags(0) {
+	_defaultActivity[0] = 0;
+	_defaultActivity[1] = 0;
+	_defaultActivity[2] = 0;
 }
 
 Actor::~Actor() {
@@ -94,6 +97,31 @@ uint16 Actor::getMaxHP() const {
 }
 
 bool Actor::loadMonsterStats() {
+	if (GAME_IS_CRUSADER)
+		return loadMonsterStatsCru();
+	else
+		return loadMonsterStatsU8();
+}
+
+bool Actor::loadMonsterStatsCru() {
+	const NPCDat *npcData = GameData::get_instance()->getNPCDataForShape(getShape());
+
+	if (!npcData)
+		return false;
+
+	setStr(npcData->getMaxHp() / 2);
+	setHP(npcData->getMaxHp());
+	_defaultActivity[0] = npcData->getDefaultActivity(0);
+	_defaultActivity[1] = npcData->getDefaultActivity(1);
+	_defaultActivity[2] = npcData->getDefaultActivity(2);
+
+	// TODO: Give them the default weapon for their type here.
+
+	return true;
+}
+
+bool Actor::loadMonsterStatsU8() {
+
 	ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
@@ -546,9 +574,8 @@ uint16 Actor::setActivityCru(int activity) {
 	case 1: // stand
 		return doAnim(Animation::stand, 8);
 	case 3: // pace
-		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);";
-		// TODO: Implement me as separate from loiter. (fall through for now)
-		// fall through
+		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);" << Std::endl;
+		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
 	case 2: // loiter
 		Kernel::get_instance()->addProcess(new LoiterProcess(this));
 		return Kernel::get_instance()->addProcess(new DelayProcess(1));
@@ -557,10 +584,12 @@ uint16 Actor::setActivityCru(int activity) {
 	    // Does nothing in game..
 	    break;
 	case 7:
-		perr << "Actor::setActivityCru TODO: Implement new SurrenderProcess(this);";
+		perr << "Actor::setActivityCru TODO: Implement new SurrenderProcess(this);" << Std::endl;
+		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
 	    break;
 	case 8:
-		perr << "Actor::setActivityCru TODO: Implement new GuardProcess(this);";
+		perr << "Actor::setActivityCru TODO: Implement new GuardProcess(this);" << Std::endl;
+		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
 	    break;
 	case 5:
 	case 9:
@@ -570,7 +599,12 @@ uint16 Actor::setActivityCru(int activity) {
 		// attack
 	   setInCombat();
 	   return 0;
-
+	case 0x70:
+		return setActivity(getDefaultActivity(0));
+	case 0x71:
+		return setActivity(getDefaultActivity(1));
+	case 0x72:
+		return setActivity(getDefaultActivity(2));
 	default:
 		perr << "Actor::setActivityCru: invalid activity (" << activity << ")"
 		     << Std::endl;
@@ -629,6 +663,15 @@ int Actor::getDamageAmount() const {
 	}
 }
 
+void Actor::setDefaultActivity(int no, uint16 activity) {
+	assert(no >= 0 && no < 3);
+	_defaultActivity[no] = activity;
+}
+
+uint16 Actor::getDefaultActivity(int no) const {
+	assert(no >= 0 && no < 3);
+	return _defaultActivity[no];
+}
 
 void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	if (isDead())
@@ -1064,6 +1107,10 @@ int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 }
 
 void Actor::notifyNearbyItems() {
+/*
+	TODO: This is not right - maybe we want to trigger each item only when it gets close,
+	then reset the status after it moves away?  Need to dig into the assembly more.
+ 
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
@@ -1072,7 +1119,7 @@ void Actor::notifyNearbyItems() {
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *item = getItem(uclist.getuint16(i));
 		item->callUsecodeEvent_npcNearby(_objId);
-	}
+	}*/
 }
 
 bool Actor::areEnemiesNear() {
@@ -1133,7 +1180,6 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 
 	return newactor;
 }
-
 
 void Actor::dumpInfo() const {
 	Container::dumpInfo();
@@ -1664,6 +1710,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 
 	uint16 dtableidx = other->getNpcNum();
+
 	const NPCDat *npcData = GameData::get_instance()->getNPCData(dtableidx);
 	if (!npcData)
 		return 0;
@@ -1685,21 +1732,29 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	newactor->setStr(npcData->getMaxHp() / 2);
+	// Most of these will be overwritten below, but this is cleaner..
+	bool loaded = newactor->loadMonsterStats();
+	if (!loaded) {
+		perr << "I_createActorCru failed to load monster stats ("
+			 << npcData->getShapeNo() << ")." << Std::endl;
+		return 0;
+	}
+
 	newactor->setDir(dir);
 
 	int32 x, y, z;
 	item->getLocation(x, y, z);
 	newactor->move(x, y, z);
 
+	newactor->setDefaultActivity(0, other->getQuality() >> 8);
+	newactor->setDefaultActivity(1, item->getQuality() >> 8);
+	newactor->setDefaultActivity(2, other->getMapNum());
+
 	// TODO: once I know what these fields are...
 	/*
 	 newactor->setField0x5c(0);
 	 newactor->setField0x5e(x, y);
 	 newactor->setField0x12(item->getNpcNum() >> 4);
-	 newactor->setField0x06(other->getQuality() >> 8);
-	 newactor->setField0x08(item->getQuality() >> 8);
-	 newactor->setField0x0A(other->getMapArray());
 	 newactor->setField0x63(item->getQuality() & 0xff);
 
 	 uint16 wpnType = npcData->getWpnType();
@@ -1777,6 +1832,55 @@ uint32 Actor::I_setEquip(const uint8 *args, unsigned int /*argsize*/) {
 
 	return 1;
 }
+
+uint32 Actor::I_setDefaultActivity0(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(activity);
+	if (!actor) return 0;
+
+	actor->setDefaultActivity(0, activity);
+	return 0;
+}
+
+uint32 Actor::I_setDefaultActivity1(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(activity);
+	if (!actor) return 0;
+
+	actor->setDefaultActivity(1, activity);
+	return 0;
+}
+
+uint32 Actor::I_setDefaultActivity2(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(activity);
+	if (!actor) return 0;
+
+	actor->setDefaultActivity(2, activity);
+	return 0;
+}
+
+uint32 Actor::I_getDefaultActivity0(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getDefaultActivity(0);
+}
+
+uint32 Actor::I_getDefaultActivity1(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getDefaultActivity(1);
+}
+
+uint32 Actor::I_getDefaultActivity2(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getDefaultActivity(2);
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

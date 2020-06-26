@@ -39,10 +39,17 @@ NPCDat::NPCDat(Common::SeekableReadStream &rs, Common::SeekableReadStream &namer
 	rs.skip(22);
 	// offset 0x1a (26): wpntype
 	_wpnType = rs.readUint16LE();
+	rs.skip(2);
+	// offset 30: default activity 0x6
+	_defaultActivity[0] = rs.readUint16LE();
 	// offset 0x3e (62): shape
-	rs.skip(62 - 28);
+	rs.skip(62 - 32);
 	_shapeNo = rs.readUint16LE();
-	rs.skip(142 - 64);
+	// offset 64: default activity 0x8
+	_defaultActivity[1] = rs.readUint16LE();
+	// offset 66: default activity 0xA
+	_defaultActivity[2] = rs.readUint16LE();
+	rs.skip(142 - 68);
 }
 
 /*static*/

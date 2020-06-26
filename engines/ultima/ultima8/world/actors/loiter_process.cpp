@@ -26,6 +26,7 @@
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -41,7 +42,10 @@ LoiterProcess::LoiterProcess(Actor *actor, int32 c) : _count(c) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 
-	_type = 0x205; // CONSTANT!
+	if (GAME_IS_U8)
+		_type = 0x205; // CONSTANT!
+	else
+		_type = 599;
 }
 
 void LoiterProcess::run() {

@@ -136,8 +136,9 @@ public:
 		_actorFlags &= ~mask;
 	}
 
-	//! set stats from MonsterInfo (hp, dex, _alignment, _enemyAlignment)
-	//! \return true if a MonsterInfo struct was found, false otherwise
+	//! set stats from MonsterInfo (hp, dex, alignment, enemyAlignment)
+	//! in Crusader this comes from the NPC Data
+	//! \return true if info was found, false otherwise
 	bool loadMonsterStats();
 
 	//! add treasure according to the TreasureInfo in the MonsterInfo
@@ -161,6 +162,9 @@ public:
 
 	uint16 getDamageType() const override;
 	virtual int getDamageAmount() const;
+
+	void setDefaultActivity(int no, uint16 activity);
+	uint16 getDefaultActivity(int no) const;
 
 	//! calculate the damage an attack against this Actor does.
 	//! \param other the attacker (can be zero)
@@ -279,6 +283,12 @@ public:
 	INTRINSIC(I_schedule);
 	INTRINSIC(I_getEquip);
 	INTRINSIC(I_setEquip);
+	INTRINSIC(I_setDefaultActivity0);
+	INTRINSIC(I_setDefaultActivity1);
+	INTRINSIC(I_setDefaultActivity2);
+	INTRINSIC(I_getDefaultActivity0);
+	INTRINSIC(I_getDefaultActivity1);
+	INTRINSIC(I_getDefaultActivity2);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B
@@ -318,6 +328,9 @@ protected:
 
 	uint32 _actorFlags;
 
+	//! the 3 default NPC activities from Crusader
+	uint16 _defaultActivity[3];
+
 	//! starts an activity (Ultima 8 version)
 	//! \return processID of process handling the activity or zero
 	uint16 setActivityU8(int activity);
@@ -325,6 +338,9 @@ protected:
 	//! starts an activity (Crusader version)
 	//! \return processID of process handling the activity or zero
 	uint16 setActivityCru(int activity);
+
+	bool loadMonsterStatsU8();
+	bool loadMonsterStatsCru();
 
 };
 
