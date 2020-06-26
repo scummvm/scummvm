@@ -134,7 +134,7 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 		}
 
 		if (cmd == 6) {
-			_textColor = *pos++;
+			_textColor = (uint8)*pos++;
 		} else if (cmd == 2) {
 			pos++;
 		} else if (cmd == 13) {

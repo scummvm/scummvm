@@ -1547,7 +1547,7 @@ void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 	Screen::FontId of = _screen->setFont((_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : _screen->_currentFont);
 
 	for (int i = 0; i < numStr; i++) {
-		const char *s = va_arg(args, const char *);
+		const char *s = va_arg(args, const char*);
 		if (s)
 			_dialogueButtonString[i] = s;
 		else
