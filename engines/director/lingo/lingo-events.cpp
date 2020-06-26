@@ -170,7 +170,14 @@ void Lingo::queueFrameEvent(LEvent event, int eventId) {
 	int scriptId = score->_frames[score->getCurrentFrame()]->_actionId;
 
 	if (scriptId) {
-		_eventQueue.push(LingoEvent(event, eventId, kArchMain, kScoreScript, scriptId, false));
+		if (event == kEventEnterFrame && _vm->getVersion() <= 3) {
+			_eventQueue.push(LingoEvent(kEventNone, eventId, kArchMain, kScoreScript, scriptId, false));
+		} else {
+			ScriptContext *script = getScriptContext(kArchMain, kScoreScript, scriptId);
+			if (script && script->_eventHandlers.contains(event)) {
+				_eventQueue.push(LingoEvent(event, eventId, kArchMain, kScoreScript, scriptId, false));
+			}
+		}
 	}
 }
 
@@ -179,9 +186,6 @@ void Lingo::queueMovieEvent(LEvent event, int eventId) {
 	 * searches the movie scripts according to their order in the cast
 	 * window [p.81 of D4 docs]
 	 */
-
-	if (event == kEventNone)
-		return;
 
 	// FIXME: shared cast movie scripts could come before main movie ones
 	for (ScriptContextHash::iterator it = _archives[kArchMain].scriptContexts[kMovieScript].begin();

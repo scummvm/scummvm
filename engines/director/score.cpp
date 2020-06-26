@@ -493,7 +493,6 @@ void Score::update() {
 
 	// Enter and exit from previous frame (Director 4)
 	_lingo->processEvent(kEventEnterFrame);
-	_lingo->processEvent(kEventNone);
 	// TODO Director 6 - another order
 
 	byte tempo = _puppetTempo ? _puppetTempo : _frames[_currentFrame]->_tempo;
