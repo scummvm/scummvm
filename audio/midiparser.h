@@ -404,7 +404,7 @@ public:
 	typedef void (*XMidiCallbackProc)(byte eventData, void *refCon);
 
 	MidiParser();
-	virtual ~MidiParser() { allNotesOff(); }
+	virtual ~MidiParser() { stopPlaying(); }
 
 	virtual bool loadMusic(byte *data, uint32 size) = 0;
 	virtual void unloadMusic();
