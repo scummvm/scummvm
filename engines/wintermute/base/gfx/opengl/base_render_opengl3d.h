@@ -81,7 +81,7 @@ public:
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override; 	// Unused outside indicator-display
 	bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1) override; 	// Unused outside indicator-display
 
-	bool setProjection();
+	bool setProjection() override;
 	bool setProjection2D();
 	void resetModelViewTransform();
 	void pushWorldTransform(const Math::Matrix4 &transform);

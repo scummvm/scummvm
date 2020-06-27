@@ -140,7 +140,7 @@ public:
 
 	bool loadFromFile(const Common::String &filename, ModelX *parentModel = nullptr);
 
-	bool update();
+	bool update() override;
 	bool render();
 	bool reset();
 
@@ -173,8 +173,8 @@ public:
 	bool setMaterialTheora(const char *materialName, const char *theoraFilename);
 	bool initializeSimple();
 
-	virtual bool invalidateDeviceObjects();
-	virtual bool restoreDeviceObjects();
+	virtual bool invalidateDeviceObjects() override;
+	virtual bool restoreDeviceObjects() override;
 
 	bool unloadAnimation(const char *animName);
 
