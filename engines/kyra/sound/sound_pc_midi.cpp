@@ -89,7 +89,7 @@ SoundMidiPC::~SoundMidiPC() {
 	delete _music;
 	for (int i = 0; i < 3; ++i)
 		delete _sfx[i];
-	_output->allNotesOff();
+	_output->stopAllNotes();
 
 	delete _output; // This automatically frees _driver (!)
 
@@ -356,7 +356,7 @@ void SoundMidiPC::pause(bool paused) {
 		for (int i = 0; i < 3; i++)
 			_sfx[i]->pausePlaying();
 		if (_output)
-			_output->allNotesOff();
+			_output->stopAllNotes();
 	} else {
 		_music->resumePlaying();
 		for (int i = 0; i < 3; ++i)

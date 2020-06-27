@@ -784,12 +784,15 @@ void MidiDriver_Miles_Midi::stopNotesOnChannel(uint8 outputChannelNumber) {
 	}
 }
 
-void MidiDriver_Miles_Midi::allNotesOff() {
+void MidiDriver_Miles_Midi::stopAllNotes(bool stopSustainedNotes) {
 	for (int i = 0; i < MILES_MIDI_CHANNEL_COUNT; ++i) {
 		if (!isOutputChannelUsed(i))
 			continue;
-		_driver->send(0xB0 | i, MILES_CONTROLLER_SUSTAIN, 0);
-		_midiChannels[i].currentData.sustain = false;
+
+		if (stopSustainedNotes) {
+			_driver->send(0xB0 | i, MILES_CONTROLLER_SUSTAIN, 0);
+			_midiChannels[i].currentData.sustain = false;
+		}
 		_driver->send(0xB0 | i, MILES_CONTROLLER_ALL_NOTES_OFF, 0);
 		_midiChannels[i].activeNotes = 0;
 	}

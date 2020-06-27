@@ -161,6 +161,24 @@ public:
 	virtual void metaEvent(int8 source, byte type, byte *data, uint16 length) { metaEvent(type, data, length); }
 
 	/**
+	 * Stops all currently active notes. Specify stopSustainedNotes if
+	 * the MIDI data makes use of the sustain controller to also stop
+	 * sustained notes.
+	 *
+	 * Usually, the MIDI parser tracks active notes and terminates them
+	 * when playback is stopped. This method should be used as a backup
+	 * to silence the MIDI output in case the MIDI parser makes a
+	 * mistake when tracking acive notes. It can also be used when
+	 * quitting or pausing a game.
+	 *
+	 * By default, this method sends an All Notes Off message and, if
+	 * stopSustainedNotes is true, a Sustain off message on all MIDI
+	 * channels. Driver implementations can override this if they want
+	 * to implement this functionality in a different way.
+	 */
+	virtual void stopAllNotes(bool stopSustainedNotes = false);
+
+	/**
 	 * A driver implementation might need time to prepare playback of
 	 * a track. Use this function to check if the driver is ready to
 	 * receive MIDI events.
