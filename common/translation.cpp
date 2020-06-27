@@ -292,12 +292,8 @@ void TranslationManager::loadTranslationsInfoDat() {
 	int nbTranslations = in.readUint16BE();
 
 	// Skip translation description & size for the original language (english) block
-	for (int i = 0; i < 2; i++) {
-		in.readUint16BE();
-	}
-
-	// Skip size of each translation block. Each is written in Uint32BE.
-	for (int i = 0; i < nbTranslations; i++) {
+	// Also skip size of each translation block. Each block is written in Uint32BE.
+	for (int i = 0; i < nbTranslations + 2; i++) {
 		in.readUint32BE();
 	}
 
@@ -356,11 +352,8 @@ void TranslationManager::loadLanguageDat(int index) {
 	int skipSize = 0;
 
 	// Skip translation description & size for the original language (english) block
-	for (int i = 0; i < 2; ++i)
-		skipSize += in.readUint16BE();
-
-	// Skip size of each translation block. Each is written in Uint32BE.
-	for (int i = 0; i < index; ++i)
+	// Also skip size of each translation block. All block sizes are written in Uint32BE.
+	for (int i = 0; i < index + 2; ++i)
 		skipSize += in.readUint32BE();
 
 	// We also need to skip the remaining block sizes

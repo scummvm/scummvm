@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
 		len += stringSize(translations[lang]->language());
 		len += stringSize(translations[lang]->languageName());
 	}
-	writeUint16BE(outFile, len);
+	writeUint32BE(outFile, len);
 
 	// Write size for the original language (english) block
 	// It starts with the number of strings coded on 2 bytes followed by each
@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
 	len = 2;
 	for (i = 0; i < messageIds.size(); ++i)
 		len += stringSize(messageIds[i]);
-	writeUint16BE(outFile, len);
+	writeUint32BE(outFile, len);
 
 	// Then comes the size of each translation block.
 	// It starts with the number of strings coded on 2 bytes, and then the strings.
