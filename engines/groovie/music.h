@@ -125,6 +125,7 @@ protected:
 class MusicPlayerXMI : public MusicPlayerMidi, public Audio::MidiDriver_Miles_Xmidi_Timbres {
 public:
 	MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName);
+	~MusicPlayerXMI();
 
 	void send(int8 source, uint32 b) override;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;

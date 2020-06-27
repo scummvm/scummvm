@@ -440,6 +440,10 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	_midiParser->setTimerRate(_driver->getBaseTempo());
 }
 
+MusicPlayerXMI::~MusicPlayerXMI() {
+	_midiParser->stopPlaying();
+}
+
 void MusicPlayerXMI::send(int8 source, uint32 b) {
 	if (_milesMidiDriver) {
 		_milesMidiDriver->send(source, b);

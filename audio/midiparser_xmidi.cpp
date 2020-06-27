@@ -103,7 +103,7 @@ public:
 		memset(_tracksTimbreList, 0, sizeof(_tracksTimbreList));
 		memset(_tracksTimbreListSize, 0, sizeof(_tracksTimbreListSize));
 	}
-	~MidiParser_XMIDI() { }
+	~MidiParser_XMIDI() { stopPlaying(); }
 
 	void setMidiDriver(MidiDriver_BASE *driver) override;
 	bool loadMusic(byte *data, uint32 size) override;
