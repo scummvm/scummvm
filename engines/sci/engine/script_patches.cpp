@@ -536,17 +536,17 @@ static const uint16 torinLarry7NumSavesPatch[] = {
 // Applies to: Most games that use Messager/Narrator
 // Responsible method: Narrator:say
 static const uint16 sciNarratorLockupSignature[] = {
-    0x67, SIG_ADDTOOFFSET(+1),          // pTos ticks
-    SIG_MAGICDWORD,
-    0x35, 0x3c,                         // ldi 3c
-    0x02,                               // add
-    0x36,                               // push
-    0x81, 0x58,                         // lag 58 [ game time ]
-    0x02,                               // add
-    0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks [ ticks += 60 + game time ]
-    0x35, 0x01,                         // ldi 01 [ true ]
-    0x48,                               // ret
-    SIG_END
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos ticks
+	SIG_MAGICDWORD,
+	0x35, 0x3c,                         // ldi 3c
+	0x02,                               // add
+	0x36,                               // push
+	0x81, 0x58,                         // lag 58 [ game time ]
+	0x02,                               // add
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks [ ticks += 60 + game time ]
+	0x35, 0x01,                         // ldi 01 [ true ]
+	0x48,                               // ret
+	SIG_END
 };
 
 static const uint16 sciNarratorLockupPatch[] = {
@@ -583,22 +583,22 @@ static const uint16 sciNarratorLockupLinePatch[] = {
 
 // ECO1 CD and SQ4 CD share an early Narrator:say variant
 static const uint16 ecoquest1Sq4CdNarratorLockupSignature[] = {
-    0x67, SIG_ADDTOOFFSET(+1),          // pTos ticks
-    SIG_MAGICDWORD,
-    0x35, 0x3c,                         // ldi 3c
-    0x02,                               // add
-    0x36,                               // push
-    0x81, 0x58,                         // lag 58 [ game time ]
-    0x02,                               // add
-    0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks [ ticks += 60 + game time ]
-    0x63, SIG_ADDTOOFFSET(+1),          // pToa modeless
-    0x18,                               // not
-    0x31, SIG_ADDTOOFFSET(+1),          // bnt [ skip fastCast event handling ]
-    0x81, 0x54,                         // lag 54
-    0x31, SIG_ADDTOOFFSET(+1),          // bnt [ skip fastCast event handling ]
-    0x81, 0x54,                         // lag 54
-    0x31, SIG_ADDTOOFFSET(+1),          // bnt [ skip fastCast event handling ]
-    SIG_END
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos ticks
+	SIG_MAGICDWORD,
+	0x35, 0x3c,                         // ldi 3c
+	0x02,                               // add
+	0x36,                               // push
+	0x81, 0x58,                         // lag 58 [ game time ]
+	0x02,                               // add
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks [ ticks += 60 + game time ]
+	0x63, SIG_ADDTOOFFSET(+1),          // pToa modeless
+	0x18,                               // not
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt [ skip fastCast event handling ]
+	0x81, 0x54,                         // lag 54
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt [ skip fastCast event handling ]
+	0x81, 0x54,                         // lag 54
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt [ skip fastCast event handling ]
+	SIG_END
 };
 
 static const uint16 ecoquest1Sq4CdNarratorLockupPatch[] = {
@@ -1114,21 +1114,21 @@ static const uint16 ecoquest1PatchProphecyScroll[] = {
 // Responsible method: rm220:init
 // Fixes bug #10903
 static const uint16 ecoquest1SignatureEmptyApartmentMessages[] = {
-    SIG_MAGICDWORD,
-    0x54, 0x0c,                     // self 0c [ self setRegions: 51, addObstacle: ... ]
-    0x39, SIG_SELECTOR8(init),      // pushi init
-    0x76,                           // push0
-    0x59, 0x01,                     // &rest 01 [ unused by ApartmentRoom:init ]
-    0x57, 0x96, 0x04,               // super ApartmentRoom 04 [ super init: &rest ]
-    SIG_END
+	SIG_MAGICDWORD,
+	0x54, 0x0c,                     // self 0c [ self setRegions: 51, addObstacle: ... ]
+	0x39, SIG_SELECTOR8(init),      // pushi init
+	0x76,                           // push0
+	0x59, 0x01,                     // &rest 01 [ unused by ApartmentRoom:init ]
+	0x57, 0x96, 0x04,               // super ApartmentRoom 04 [ super init: &rest ]
+	SIG_END
 };
 
 static const uint16 ecoquest1PatchEmptyApartmentMessages[] = {
-    0x35, 0x01,                     // ldi 01 [ the room's noun ]
-    PATCH_ADDTOOFFSET(+3),
-    0xa1, 0xfa,                     // sag fa [ global250 = 1 ]
-    0x57, 0x96, 0x10,               // super ApartmentRoom 10 [ combine self and super ]
-    PATCH_END
+	0x35, 0x01,                     // ldi 01 [ the room's noun ]
+	PATCH_ADDTOOFFSET(+3),
+	0xa1, 0xfa,                     // sag fa [ global250 = 1 ]
+	0x57, 0x96, 0x10,               // super ApartmentRoom 10 [ combine self and super ]
+	PATCH_END
 };
 
 // The temple has a complex script bug in the CD version which can crash the
@@ -8877,7 +8877,7 @@ static const uint16 phant1CopyChaseFileSignature[] = {
 	0x85, 0x02,                     // lat 02
 	0x4a, SIG_UINT16(0x0004),       // send 04 [ temp2 data? ]
 	0x36,                           // push    [ "chase.dat" ]
-    0x43, 0x5d, SIG_UINT16(0x0006), // callk FileIO 06
+	0x43, 0x5d, SIG_UINT16(0x0006), // callk FileIO 06
 	SIG_END
 };
 
