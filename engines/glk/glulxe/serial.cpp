@@ -225,240 +225,47 @@ uint Glulxe::perform_restoreundo() {
 	return res;
 }
 
-Common::Error Glulxe::writeGameData(Common::WriteStream *ws) {
-#ifdef TODO
-	dest_t dest;
-	int ix;
-	uint res = 0, lx, val;
-	uint memstart = 0, memlen = 0, stackstart = 0, stacklen = 0;
-	uint heapstart = 0, heaplen = 0, filestart = 0, filelen = 0;
-	stream_get_iosys(&val, &lx);
-	if (val != 2) {
-		/* Not using the Glk I/O system, so bail. This function only
-		   knows how to write to a Glk stream. */
-		fatal_error("Streams are only available in Glk I/O system.");
-	}
-
-	if (ws == nullptr)
-		return Common::kUnknownError;
-
-	dest._isMem = false;
-	dest._size = 0;
-	dest._pos = 0;
-	dest._ptr = nullptr;
-	dest._str = ws;
-
-	res = 0;
-
-	/* Quetzal header. */
-	if (res == 0) {
-		res = write_long(&dest, IFFID('F', 'O', 'R', 'M'));
-	}
-	if (res == 0) {
-		res = write_long(&dest, 0); /* space for file length */
-		filestart = dest._pos;
-	}
-
-	if (res == 0) {
-		res = write_long(&dest, IFFID('I', 'F', 'Z', 'S')); /* ### ? */
-	}
-
-	/* Header chunk. This is the first 128 bytes of memory. */
-	if (res == 0) {
-		res = write_long(&dest, IFFID('I', 'F', 'h', 'd'));
-	}
-	if (res == 0) {
-		res = write_long(&dest, 128);
-	}
-	for (ix = 0; res == 0 && ix < 128; ix++) {
-		res = write_byte(&dest, Mem1(ix));
-	}
-	/* Always even, so no padding necessary. */
-
-	/* Memory chunk. */
-	if (res == 0) {
-		res = write_long(&dest, IFFID('C', 'M', 'e', 'm'));
-	}
-	if (res == 0) {
-		res = write_long(&dest, 0); /* space for chunk length */
-	}
-	if (res == 0) {
-		memstart = dest._pos;
-		res = write_memstate(&dest);
-		memlen = dest._pos - memstart;
-	}
-	if (res == 0 && (memlen & 1) != 0) {
-		res = write_byte(&dest, 0);
-	}
-
-	/* Heap chunk. */
-	if (res == 0) {
-		res = write_long(&dest, IFFID('M', 'A', 'l', 'l'));
-	}
-	if (res == 0) {
-		res = write_long(&dest, 0); /* space for chunk length */
-	}
-	if (res == 0) {
-		heapstart = dest._pos;
-		res = write_heapstate(&dest, true);
-		heaplen = dest._pos - heapstart;
-	}
-	/* Always even, so no padding necessary. */
-
-	/* Stack chunk. */
-	if (res == 0) {
-		res = write_long(&dest, IFFID('S', 't', 'k', 's'));
-	}
-	if (res == 0) {
-		res = write_long(&dest, 0); /* space for chunk length */
-	}
-	if (res == 0) {
-		stackstart = dest._pos;
-		res = write_stackstate(&dest, true);
-		stacklen = dest._pos - stackstart;
-	}
-	if (res == 0 && (stacklen & 1) != 0) {
-		res = write_byte(&dest, 0);
-	}
-
-	filelen = dest._pos - filestart;
-
-	/* Okay, fill in all the lengths. */
-	if (res == 0) {
-		res = reposition_write(&dest, memstart - 4);
-	}
-	if (res == 0) {
-		res = write_long(&dest, memlen);
-	}
-	if (res == 0) {
-		res = reposition_write(&dest, heapstart - 4);
-	}
-	if (res == 0) {
-		res = write_long(&dest, heaplen);
-	}
-	if (res == 0) {
-		res = reposition_write(&dest, stackstart - 4);
-	}
-	if (res == 0) {
-		res = write_long(&dest, stacklen);
-	}
-	if (res == 0) {
-		res = reposition_write(&dest, filestart - 4);
-	}
-	if (res == 0) {
-		res = write_long(&dest, filelen);
-	}
-
-	/* All done. */
-	return res ? Common::kUnknownError : Common::kNoError;
-#endif
-	return Common::kUnknownError;
-}
-
-Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
-#ifdef TODO
-	dest_t dest;
-	int ix;
-	uint lx = 0, res, val;
-	uint filestart, filelen = 0;
+Common::Error Glulxe::loadGameChunks(QuetzalReader &quetzal) {
+	uint res = 0;
 	uint heapsumlen = 0;
 	uint *heapsumarr = nullptr;
-	bool fromshell = false;
-	/* If profiling is enabled and active then fail. */
-#if VM_PROFILING
-	if (profile_profiling_active())
-		return 1;
-#endif /* VM_PROFILING */
 
-	stream_get_iosys(&val, &lx);
-	if (val != 2 && !fromshell) {
-		/* Not using the Glk I/O system, so bail. This function only
-		   knows how to read from a Glk stream. (But in the autorestore
-		   case, iosys hasn't been set yet, so ignore this test.) */
-		fatal_error("Streams are only available in Glk I/O system.");
-	}
+	for (QuetzalReader::Iterator it = quetzal.begin();
+			it != quetzal.end() && !res; ++it) {
+		Common::SeekableReadStream *rs = it.getStream();
+		dest_t dest;
+		dest._src = rs;
 
-	if (str == 0)
-		return Common::kUnknownError;
-
-	dest._isMem = false;
-	dest._size = 0;
-	dest._pos = 0;
-	dest._ptr = nullptr;
-	dest._str = str;
-
-	res = 0;
-
-	/* ### the format errors checked below should send error messages to
-	   the current stream. */
-
-	if (res == 0) {
-		res = read_long(&dest, &val);
-	}
-	if (res == 0 && val != IFFID('F', 'O', 'R', 'M')) {
-		/* ### bad header */
-		return Common::kUnknownError;
-	}
-	if (res == 0) {
-		res = read_long(&dest, &filelen);
-	}
-	filestart = dest._pos;
-
-	if (res == 0) {
-		res = read_long(&dest, &val);
-	}
-	if (res == 0 && val != IFFID('I', 'F', 'Z', 'S')) { /* ### ? */
-		/* ### bad header */
-		return Common::kUnknownError;
-	}
-
-	while (res == 0 && dest._pos < filestart + filelen) {
-		/* Read a chunk and deal with it. */
-		uint chunktype = 0, chunkstart = 0, chunklen = 0;
-		unsigned char dummy;
-
-		if (res == 0) {
-			res = read_long(&dest, &chunktype);
-		}
-		if (res == 0) {
-			res = read_long(&dest, &chunklen);
-		}
-		chunkstart = dest._pos;
-
-		if (chunktype == IFFID('I', 'F', 'h', 'd')) {
-			for (ix = 0; res == 0 && ix < 128; ix++) {
-				res = read_byte(&dest, &dummy);
-				if (res == 0 && Mem1(ix) != dummy) {
-					/* ### non-matching header */
-					return Common::kUnknownError;
-				}
+		switch ((*it)._id) {
+		case ID_IFhd:
+			for (int ix = 0; ix < 128 && !res; ix++) {
+				byte v = rs->readByte();
+				if (Mem1(ix) != v)
+					// ### non-matching header
+					res = 1;
 			}
-		} else if (chunktype == IFFID('C', 'M', 'e', 'm')) {
-			res = read_memstate(&dest, chunklen);
-		} else if (chunktype == IFFID('M', 'A', 'l', 'l')) {
-			res = read_heapstate(&dest, chunklen, true, &heapsumlen, &heapsumarr);
-		} else if (chunktype == IFFID('S', 't', 'k', 's')) {
-			res = read_stackstate(&dest, chunklen, true);
-		} else {
-			/* Unknown chunk type. Skip it. */
-			for (lx = 0; res == 0 && lx < chunklen; lx++) {
-				res = read_byte(&dest, &dummy);
-			}
+			break;
+
+		case ID_CMem:
+			res = read_memstate(&dest, rs->size());
+			break;
+
+		case MKTAG('M', 'A', 'l', 'l'):
+			res = read_heapstate(&dest, rs->size(), true, &heapsumlen, &heapsumarr);
+			break;
+
+		case ID_Stks:
+			res = read_stackstate(&dest, rs->size(), true);
+			break;
+
+		default:
+			break;
 		}
 
-		if (chunkstart + chunklen != dest._pos) {
-			/* ### funny chunk length */
-			return Common::kUnknownError;
-		}
-
-		if ((chunklen & 1) != 0) {
-			if (res == 0) {
-				res = read_byte(&dest, &dummy);
-			}
-		}
+		delete rs;
 	}
 
-	if (res == 0) {
+	if (!res) {
 		if (heapsumarr) {
 			/* The summary might have come from any interpreter, so it could
 			   be out of order. We'll sort it. */
@@ -467,10 +274,45 @@ Common::Error Glulxe::readSaveData(Common::SeekableReadStream *rs) {
 		}
 	}
 
-	if (res)
-		return Common::kUnknownError;
-#endif
-	return Common::kNoError;
+	return res ? Common::kReadingFailed : Common::kNoError;
+}
+
+Common::Error Glulxe::saveGameChunks(QuetzalWriter &quetzal) {
+	uint res = 0;
+
+	// IFHd
+	if (!res) {
+		Common::WriteStream &ws = quetzal.add(ID_IFhd);
+		for (int ix = 0; res == 0 && ix < 128; ix++)
+			ws.writeByte(Mem1(ix));
+	}
+
+	// CMem
+	if (!res) {
+		Common::WriteStream &ws = quetzal.add(ID_CMem);
+		dest_t dest;
+		dest._dest = &ws;
+		res = write_memstate(&dest);
+	}
+
+	// MAll
+	if (!res) {
+		Common::WriteStream &ws = quetzal.add(MKTAG('M', 'A', 'l', 'l'));
+		dest_t dest;
+		dest._dest = &ws;
+		res = write_heapstate(&dest, true);
+	}
+
+	// Stks
+	if (!res) {
+		Common::WriteStream &ws = quetzal.add(ID_Stks);
+		dest_t dest;
+		dest._dest = &ws;
+		res = write_stackstate(&dest, true);
+	}
+
+	// All done
+	return res ? Common::kUnknownError : Common::kNoError;
 }
 
 int Glulxe::reposition_write(dest_t *dest, uint pos) {
