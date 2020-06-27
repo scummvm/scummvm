@@ -156,10 +156,7 @@ void AboutDialog::addLine(const U32String &str) {
 		if (format[0] == 'A') {
 			bool useAscii = false;
 #ifdef USE_TRANSLATION
-			// We could use TransMan.getCurrentCharset() but rather than compare strings
-			// it is easier to use TransMan.getCharsetMapping() (non null in case of non
-			// ISO-8859-1 mapping)
-			useAscii = (TransMan.getCharsetMapping() != nullptr);
+			useAscii = TransMan.getCurrentCharset().equals("ASCII");
 #endif
 			if (useAscii)
 				asciiStr = renderStr;

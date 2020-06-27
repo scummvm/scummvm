@@ -1614,11 +1614,7 @@ DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
 
 const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filename, const Common::String &charset, const int pointsize, Common::String &name) {
 #ifdef USE_FREETYPE2
-#ifdef USE_TRANSLATION
-	const uint32 *mapping = TransMan.getCharsetMapping();
-#else
 	const uint32 *mapping = 0;
-#endif
 	name = Common::String::format("%s-%s@%d", filename.c_str(), charset.c_str(), pointsize);
 
 	// Try already loaded fonts.

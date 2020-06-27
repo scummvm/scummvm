@@ -181,10 +181,6 @@ char *Encoding::conversion(const String &to, const String &from, const char *str
 				addUtfEndianness(from).c_str(), string, length);
 
 	if (result == nullptr) {
-		result = convertTransManMapping(addUtfEndianness(to).c_str(), addUtfEndianness(from).c_str(), string, length);
-	}
-
-	if (result == nullptr) {
 		result = convertConversionTable(addUtfEndianness(to).c_str(), addUtfEndianness(from).c_str(), string, length);
 	}
 
@@ -275,81 +271,6 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 #else
 	return nullptr;
 #endif //USE_ICONV
-}
-
-// This algorithm is able to convert only between the current TransMan charset
-// and UTF-32, but if it fails, it tries to at least convert from the current
-// TransMan encoding to UTF-32 and then it calls convert() again with that.
-char *Encoding::convertTransManMapping(const char *to, const char *from, const char *string, size_t length) {
-#ifdef USE_TRANSLATION
-	String currentCharset = TransMan.getCurrentCharset();
-	if (currentCharset.equalsIgnoreCase(from)) {
-		// We can use the transMan mapping directly
-		uint32 *partialResult = (uint32 *)calloc(sizeof(uint32), (length + 1));
-		if (!partialResult) {
-			warning("Couldn't allocate memory for encoding conversion");
-			return nullptr;
-		}
-		const uint32 *mapping = TransMan.getCharsetMapping();
-		if (mapping == 0) {
-			for(unsigned i = 0; i < length; i++) {
-				partialResult[i] = string[i];
-			}
-		} else {
-			for(unsigned i = 0; i < length; i++) {
-				partialResult[i] = mapping[(unsigned char)string[i]] & 0x7FFFFFFF;
-			}
-		}
-		char *finalResult = convert(to, "UTF-32", (char *)partialResult, length * 4);
-		free(partialResult);
-		return finalResult;
-	} else if (currentCharset.equalsIgnoreCase(to) && String(from).hasPrefixIgnoreCase("utf-32")) {
-		bool swapEndian = false;
-		char *newString = nullptr;
-
-#ifdef SCUMM_BIG_ENDIAN
-		if (String(from).hasSuffixIgnoreCase("LE"))
-			swapEndian = true;
-#else
-		if (String(from).hasSuffixIgnoreCase("BE"))
-			swapEndian = true;
-#endif
-		if (swapEndian) {
-			if (String(from).hasPrefixIgnoreCase("utf-16"))
-				newString = switchEndian(string, length, 16);
-			if (String(from).hasPrefixIgnoreCase("utf-32"))
-				newString = switchEndian(string, length, 32);
-			if (newString != nullptr)
-				string = newString;
-			else
-				return nullptr;
-		}
-		// We can do reverse mapping
-		const uint32 *mapping = TransMan.getCharsetMapping();
-		const uint32 *src = (const uint32 *)string;
-		char *result = (char *)calloc(sizeof(char), (length + 4));
-		if (!result) {
-			warning("Couldn't allocate memory for encoding conversion");
-			if (newString != nullptr)
-				free(newString);
-			return nullptr;
-		}
-		for (unsigned i = 0; i < length; i++) {
-			for (int j = 0; j < 256; j++) {
-				if ((mapping[j] & 0x7FFFFFFF) == src[i]) {
-					result[i] = j;
-					break;
-				}
-			}
-		}
-		if (newString != nullptr)
-			free(newString);
-		return result;
-	} else
-		return nullptr;
-#else
-	return nullptr;
-#endif // USE_TRANSLATION
 }
 
 static uint32 g_cp850ConversionTable[] = {
