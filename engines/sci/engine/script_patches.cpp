@@ -5017,6 +5017,35 @@ static const uint16 kq6PatchCassimaSecretPassage[] = {
 	PATCH_END
 };
 
+// WORKAROUND
+//
+// Dangling Participle and Rotten Tomato are inventory items that can talk, but
+//  their mouths are animated by inner loops that call kDrawCel with unthrottled
+//  inner inner loops that spin to create a delay between frames. This prevents
+//  updating the screen and responding to input. We replace the spin loops with
+//  calls to kGameIsRestarting, which detects and throttles these calls so that
+//  the speed is reasonable, the screen updates, and the game is responsive.
+//
+// Applies to: All versions
+// Responsible method: participle:doVerb, tomato:doVerb
+static const uint16 kq6SignatureTalkingInventory[] = {
+	0x35, 0x00,                         // ldi 00
+	0xa5, 0x01,                         // sat 01
+	0x8d, 0x01,                         // lst 01
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x1b58),           // ldi 1b58
+	0x22,                               // lt? [ temp1 < 7000 ]
+	SIG_END
+};
+
+static const uint16 kq6PatchTalkingInventory[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x00,                         // pushi 00
+	0x43, 0x2c, 0x00,                   // callk GameIsRestarting [ custom throttling ]
+	0x34, PATCH_UINT16(0x0000),         // ldi 0000 [ exit loop ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5468,6 +5497,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
+	{  true,   907, "talking inventory workaround",                   4, kq6SignatureTalkingInventory,             kq6PatchTalkingInventory },
 	{  true,   924, "CD/Mac: fix truncated messages",                 1, kq6SignatureTruncatedMessagesFix,         kq6PatchTruncatedMessagesFix },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,               sciNarratorLockupPatch },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support

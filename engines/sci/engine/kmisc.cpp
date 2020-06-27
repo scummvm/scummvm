@@ -95,6 +95,25 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			neededSleep = 60;
 		}
 		break;
+	case GID_KQ6: {
+		// KQ6 has talking inventory items that animate in the inventory window.
+		//  This is done with unthrottled inner loops which we replace with
+		//  calls to kGameIsRestarting so that the screen updates and responds
+		//  to input. Since this can happen in any room, we detect if the caller
+		//  is inventory script 907. See kq6PatchTalkingInventory.
+		if (s->_executionStack.size() >= 2) {
+			Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
+			--iter; // skip this kernel call
+			if (iter->type == EXEC_STACK_TYPE_CALL) {
+				int callerScriptNumber = s->_segMan->getScript(iter->addr.pc.getSegment())->getScriptNumber();
+				if (callerScriptNumber == 907) {
+					s->_throttleTrigger = true;
+					neededSleep = 90; // talk animation interval
+				}
+			}
+		}
+		break;
+	}
 	case GID_LSL3:
 		// LSL3 calculates a machinespeed variable during game startup
 		// (right after the filthy questions). This one would go through w/o
