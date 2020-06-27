@@ -348,11 +348,11 @@ StringType handleEllipsis(const Font &font, const StringType &input, int w) {
 		// for now.
 		const int halfWidth = (w - ellipsisWidth) / 2;
 		int w2 = 0;
-		Common::String::unsigned_type last = 0;
+		typename StringType::unsigned_type last = 0;
 		uint i = 0;
 
 		for (; i < s.size(); ++i) {
-			const Common::String::unsigned_type cur = s[i];
+			const typename StringType::unsigned_type cur = s[i];
 			int charWidth = font.getCharWidth(cur) + font.getKerningOffset(last, cur);
 			if (w2 + charWidth > halfWidth)
 				break;
@@ -374,7 +374,7 @@ StringType handleEllipsis(const Font &font, const StringType &input, int w) {
 		// (width + ellipsisWidth - w)
 		int skip = width + ellipsisWidth - w;
 		for (; i < s.size() && skip > 0; ++i) {
-			const Common::String::unsigned_type cur = s[i];
+			const typename StringType::unsigned_type cur = s[i];
 			skip -= font.getCharWidth(cur) + font.getKerningOffset(last, cur);
 			last = cur;
 		}
