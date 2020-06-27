@@ -359,7 +359,7 @@ bool MidiParser::setTrack(int track) {
 
 	if (_smartJump)
 		hangAllActiveNotes();
-	else
+	else if (isPlaying())
 		allNotesOff();
 
 	resetTracking();
@@ -377,7 +377,8 @@ bool MidiParser::setTrack(int track) {
 }
 
 void MidiParser::stopPlaying() {
-	allNotesOff();
+	if (isPlaying())
+		allNotesOff();
 	resetTracking();
 	_pause = false;
 }
@@ -508,12 +509,14 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool d
 }
 
 void MidiParser::unloadMusic() {
-	resetTracking();
-	allNotesOff();
+	if (_numTracks == 0)
+		// No music data loaded
+		return;
+
+	stopPlaying();
 	_numTracks = 0;
 	_activeTrack = 255;
 	_abortParse = true;
-	_pause = false;
 
 	if (_centerPitchWheelOnUnload) {
 		// Center the pitch wheels in preparation for the next piece of
