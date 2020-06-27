@@ -260,7 +260,7 @@ bool Blorb::isBlorb(const Common::String &filename, uint32 type) {
 bool Blorb::hasBlorbExt(const Common::String &filename) {
 	return filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")
 		|| filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb")
-		|| filename.hasSuffixIgnoreCase(".a3r");
+		|| filename.hasSuffixIgnoreCase(".zlb") || filename.hasSuffixIgnoreCase(".a3r");
 }
 
 void Blorb::getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
