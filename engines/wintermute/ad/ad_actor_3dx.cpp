@@ -154,12 +154,14 @@ bool AdActor3DX::update() {
 			float turnVel = _directTurnVelocity == 0.0f ? _angVelocity : _directTurnVelocity;
 
 			if (_directTurnMode == DIRECT_TURN_CW) {
-				_angle += turnVel * (float)_gameRef->_deltaTime / 1000.f;
+				// we have a right handed coordinate system now, so we subtract
+				_angle -= turnVel * (float)_gameRef->_deltaTime / 1000.f;
 				_angle.normalize(0.0f);
 			}
 
 			if (_directTurnMode == DIRECT_TURN_CCW) {
-				_angle -= turnVel * (float)_gameRef->_deltaTime / 1000.f;
+				// we have a right handed coordinate system now, so we add
+				_angle += turnVel * (float)_gameRef->_deltaTime / 1000.f;
 				_angle.normalize(0.0f);
 			}
 
