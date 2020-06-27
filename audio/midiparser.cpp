@@ -330,12 +330,7 @@ void MidiParser::allNotesOff() {
 	if (!_disableAllNotesOffMidiEvents) {
 		// To be sure, send an "All Note Off" event (but not all MIDI devices
 		// support this...).
-
-		for (i = 0; i < 16; ++i) {
-			sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
-			if (_sendSustainOffOnNotesOff)
-				sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
-		}
+		_driver->stopAllNotes(_sendSustainOffOnNotesOff);
 	}
 
 	memset(_activeNotes, 0, sizeof(_activeNotes));
