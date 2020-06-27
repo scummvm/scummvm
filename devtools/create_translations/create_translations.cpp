@@ -37,7 +37,6 @@
 #endif // main
 
 #include "po_parser.h"
-#include "cp_parser.h"
 
 #define TRANSLATIONS_DAT_VER 4	// 1 byte
 

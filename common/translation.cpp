@@ -45,7 +45,7 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
 }
 
-TranslationManager::TranslationManager() : _currentLang(-1), _charmap(nullptr) {
+TranslationManager::TranslationManager() : _currentLang(-1) {
 	loadTranslationsInfoDat();
 
 	// Set the default language
@@ -53,7 +53,7 @@ TranslationManager::TranslationManager() : _currentLang(-1), _charmap(nullptr) {
 }
 
 TranslationManager::~TranslationManager() {
-	delete[] _charmap;
+
 }
 
 int32 TranslationManager::findMatchingLanguage(const String &lang) {
