@@ -108,14 +108,11 @@ const char *PoMessageList::operator[](int index) const {
 }
 
 PoMessageEntryList::PoMessageEntryList(const char *lang) :
-	_lang(NULL), _charset(NULL), _langName(NULL), _langNameAlt(NULL),
+	_lang(NULL), _langName(NULL), _langNameAlt(NULL), _useUTF8(true),
 	_list(NULL), _size(0), _allocated(0)
 {
 	_lang = new char[1 + strlen(lang)];
 	strcpy(_lang, lang);
-	// Set default charset to empty string
-	_charset = new char[1];
-	_charset[0] = '\0';
 	// Set default langName to lang
 	_langNameAlt = new char[1 + strlen(lang)];
 	strcpy(_langNameAlt, lang);
@@ -123,7 +120,6 @@ PoMessageEntryList::PoMessageEntryList(const char *lang) :
 
 PoMessageEntryList::~PoMessageEntryList() {
 	delete[] _lang;
-	delete[] _charset;
 	delete[] _langName;
 	delete[] _langNameAlt;
 	for (int i = 0; i < _size; ++i)
@@ -146,9 +142,8 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 			_langNameAlt = str;
 		}
 		str = parseLine(translation, "charset=");
-		if (str != NULL) {
-			delete[] _charset;
-			_charset = str;
+		if (str[0] != 'U' || str[1] != 'T' || str[2] != 'F' || str[3] != '-' || str[4] != '8') {
+			_useUTF8 = false;
 		}
 		return;
 	}
@@ -245,8 +240,8 @@ const char *PoMessageEntryList::languageName() const {
 	return _langName ? _langName : _langNameAlt;
 }
 
-const char *PoMessageEntryList::charset() const {
-	return _charset;
+const bool PoMessageEntryList::useUTF8() const {
+	return _useUTF8;
 }
 
 int PoMessageEntryList::size() const {
