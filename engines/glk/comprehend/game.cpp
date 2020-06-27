@@ -289,24 +289,6 @@ bool ComprehendGame::handle_restart() {
 	}
 }
 
-WordIndex *ComprehendGame::is_word_pair(const Word *word1, const Word *word2) {
-	WordMap *map;
-	uint i;
-
-	/* Check if this is a word pair */
-	for (i = 0; i < _wordMaps.size(); i++) {
-		map = &_wordMaps[i];
-
-		if (map->_word[0]._index == word1->_index &&
-		        map->_word[0]._type == word1->_type &&
-		        map->_word[1]._index == word2->_index &&
-		        map->_word[1]._type == word2->_type)
-			return &map->_word[2];
-	}
-
-	return nullptr;
-}
-
 Item *ComprehendGame::get_item_by_noun(const Word *noun) {
 	uint i;
 
@@ -1103,9 +1085,7 @@ void ComprehendGame::read_sentence(char **line,
                           Sentence *sentence) {
 	bool sentence_end = false;
 	char *word_string, *p = *line;
-	WordIndex *pair;
 	Word *word;
-	int index;
 
 	sentence->clear();
 	while (1) {
@@ -1133,27 +1113,43 @@ void ComprehendGame::read_sentence(char **line,
 
 		sentence->_nr_words++;
 
-		if (sentence->_nr_words > 1) {
-			index = sentence->_nr_words;
-
-			/* See if this word and the previous are a word pair */
-			pair = is_word_pair(&sentence->_words[index - 2],
-			                    &sentence->_words[index - 1]);
-			if (pair) {
-				sentence->_words[index - 2]._index = pair->_index;
-				sentence->_words[index - 2]._type = pair->_type;
-				strcpy(sentence->_words[index - 2]._word,
-				       "[PAIR]");
-				sentence->_nr_words--;
-			}
-		}
-
 		if (sentence->_nr_words >= ARRAY_SIZE(sentence->_words) ||
 		        sentence_end)
 			break;
 	}
 
+	parse_sentence_word_pairs(sentence);
+
 	*line = p;
+}
+
+void ComprehendGame::parse_sentence_word_pairs(Sentence *sentence) {
+	if (sentence->_nr_words < 2)
+		return;
+
+	// Iterate through the pairs
+	for (uint idx = 0; idx < _wordMaps.size(); ++idx) {
+		for (int firstWord = 0; firstWord < (int)sentence->_nr_words - 1; ++firstWord) {
+			for (int secondWord = firstWord + 1; secondWord < (int)sentence->_nr_words; ) {
+				if (sentence->_words[firstWord] == _wordMaps[idx]._word[0] &&
+					sentence->_words[secondWord] == _wordMaps[idx]._word[1]) {
+					// Found a word pair match
+					// Delete the second word
+					for (; secondWord < (int)sentence->_nr_words - 1; ++secondWord)
+						sentence->_words[secondWord] = sentence->_words[secondWord + 1];
+
+					sentence->_words[sentence->_nr_words - 1].clear();
+					sentence->_nr_words--;
+
+					// Replace the first word with the target
+					sentence->_words[firstWord] = _wordMaps[idx]._word[2];
+				} else {
+					// Move to next word
+					++secondWord;
+				}
+			}
+		}
+	}
 }
 
 void ComprehendGame::doBeforeTurn() {

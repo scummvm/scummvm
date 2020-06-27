@@ -220,20 +220,6 @@ struct Item {
 	void synchronize(Common::Serializer &s);
 };
 
-struct Word {
-	char _word[7];
-	uint8 _index;
-	uint8 _type;
-
-	Word() {
-		clear();
-	}
-
-	void clear();
-
-	void load(FileBuffer *fb);
-};
-
 struct WordIndex {
 	uint8 _index;
 	uint8 _type;
@@ -245,6 +231,24 @@ struct WordIndex {
 	void clear() {
 		_index = _type = 0;
 	}
+
+	bool operator==(WordIndex &src) {
+		return _index == src._index && _type == src._type;
+	}
+};
+
+struct Word : public WordIndex {
+	char _word[7];
+
+	Word() : WordIndex() {
+		Word::clear();
+	}
+
+	void clear();
+
+	void load(FileBuffer *fb);
+
+	Word &operator=(const WordIndex &src);
 };
 
 struct WordMap {

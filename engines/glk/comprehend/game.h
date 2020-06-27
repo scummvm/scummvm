@@ -45,7 +45,6 @@ public:
 	const GameStrings *_gameStrings;
 
 private:
-	WordIndex *is_word_pair(const Word *word1, const Word *word2);
 	Item *get_item_by_noun(const Word *noun);
 	void describe_objects_in_current_room();
 	void update();
@@ -57,6 +56,7 @@ private:
 	void skip_non_whitespace(char **p);
 	bool handle_sentence(Sentence *sentence);
 	void read_sentence(char **line, Sentence *sentence);
+	void parse_sentence_word_pairs(Sentence *sentence);
 	void doBeforeTurn();
 	void doAfterTurn();
 	void read_input();

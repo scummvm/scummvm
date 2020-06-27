@@ -75,9 +75,15 @@ void Item::synchronize(Common::Serializer &s) {
 /*-------------------------------------------------------*/
 
 void Word::clear() {
-	_index = 0;
-	_type = 0;
+	WordIndex::clear();
 	Common::fill(&_word[0], &_word[7], '\0');
+}
+
+Word &Word::operator=(const WordIndex &src) {
+	_index = src._index;
+	_type = src._type;
+	Common::fill(&_word[0], &_word[7], '\0');
+	return *this;
 }
 
 void Word::load(FileBuffer *fb) {
