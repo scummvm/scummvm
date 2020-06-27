@@ -169,8 +169,7 @@ public:
 	 */
 	void setSourceVolume(uint8 source, uint16 volume);
 
-	/** Stops all notes currently playing on the MIDI device. */
-	void allNotesOff();
+	void stopAllNotes(bool stopSustainedNotes = false) override;
 
 	MidiChannel *allocateChannel() override {
 		if (_driver)

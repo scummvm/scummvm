@@ -128,6 +128,7 @@ public:
 
 	void send(int8 source, uint32 b) override;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void stopAllNotes(bool stopSustainedNotes) override;
 	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override {
 		if (_milesMidiDriver)
 			_milesMidiDriver->processXMIDITimbreChunk(timbreListPtr, timbreListSize);

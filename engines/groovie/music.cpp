@@ -458,6 +458,11 @@ void MusicPlayerXMI::metaEvent(int8 source, byte type, byte *data, uint16 length
 	}
 }
 
+void MusicPlayerXMI::stopAllNotes(bool stopSustainedNotes) {
+	if (_driver)
+		_driver->stopAllNotes(stopSustainedNotes);
+}
+
 bool MusicPlayerXMI::isReady() {
 	return _driver ? _driver->isReady() : false;
 }
