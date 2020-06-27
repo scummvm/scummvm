@@ -574,14 +574,13 @@ void GameData::parse_word_map(FileBuffer *fb) {
 		_wordMaps.push_back(map);
 	}
 
-	/* Consume two more null bytes (type and index were also null) */
-	fb->skip(2);
-
 	/*
 	* Parse the target word table. Each entry has a dictionary
 	* index/type. The first and second words from above map to the
 	* target word here. E.g. 'go north' -> 'north'.
 	*/
+	fb->seek(_header.addr_word_map_target);
+
 	for (i = 0; i < _wordMaps.size(); i++) {
 		WordMap &map = _wordMaps[i];
 
@@ -842,8 +841,7 @@ void GameData::parse_header(FileBuffer *fb) {
 	parse_header_le16(fb, &header->addr_dictionary);
 
 	parse_header_le16(fb, &header->addr_word_map);
-	/* FIXME - what is this for? */
-	parse_header_le16(fb, &dummy);
+	parse_header_le16(fb, &header->addr_word_map_target);
 	addr_dictionary_end = header->addr_word_map;
 
 	/* Rooms */

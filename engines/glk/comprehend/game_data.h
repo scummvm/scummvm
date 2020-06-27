@@ -319,6 +319,7 @@ struct GameHeader {
 
 	uint16 addr_dictionary;
 	uint16 addr_word_map;
+	uint16 addr_word_map_target;
 
 	uint16 addr_strings;
 	uint16 addr_strings_end;
