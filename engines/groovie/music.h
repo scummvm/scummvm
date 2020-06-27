@@ -125,9 +125,7 @@ protected:
 class MusicPlayerXMI : public MusicPlayerMidi, public Audio::MidiDriver_Miles_Xmidi_Timbres {
 public:
 	MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName);
-	~MusicPlayerXMI() override;
 
-	void send(uint32 b) override;
 	void send(int8 source, uint32 b) override;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override {
@@ -142,29 +140,10 @@ protected:
 	void unload() override;
 
 private:
-	// Channel banks
-	byte _chanBanks[0x10];
-
 	// Output music type
 	uint8 _musicType;
 
-	bool _milesAudioMode;
 	Audio::MidiDriver_Miles_Midi *_milesMidiDriver;
-
-	// Timbres
-	class Timbre {
-	public:
-		Timbre() : data(NULL), patch(0), bank(0), size(0) {}
-		byte patch;
-		byte bank;
-		uint32 size;
-		byte *data;
-	};
-	Common::Array<Timbre> _timbres;
-	void loadTimbres(const Common::String &filename);
-	void clearTimbres();
-	void setTimbreAD(byte channel, const Timbre &timbre);
-	void setTimbreMT(byte channel, const Timbre &timbre);
 };
 
 class MusicPlayerMac_t7g : public MusicPlayerMidi {
