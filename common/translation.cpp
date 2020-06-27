@@ -291,8 +291,14 @@ void TranslationManager::loadTranslationsInfoDat() {
 	// Get number of translations
 	int nbTranslations = in.readUint16BE();
 
-	for (int i = 0; i < nbTranslations + 2; i++) {
-		in.readUint16BE(); // skip
+	// Skip translation description & size for the original language (english) block
+	for (int i = 0; i < 2; i++) {
+		in.readUint16BE();
+	}
+
+	// Skip size of each translation block. Each is written in Uint32BE.
+	for (int i = 0; i < nbTranslations; i++) {
+		in.readUint32BE();
 	}
 
 	// Read list of languages
@@ -348,10 +354,17 @@ void TranslationManager::loadLanguageDat(int index) {
 
 	// Get size of blocks to skip.
 	int skipSize = 0;
-	for (int i = 0; i < index + 2; ++i)
+
+	// Skip translation description & size for the original language (english) block
+	for (int i = 0; i < 2; ++i)
 		skipSize += in.readUint16BE();
+
+	// Skip size of each translation block. Each is written in Uint32BE.
+	for (int i = 0; i < index; ++i)
+		skipSize += in.readUint32BE();
+
 	// We also need to skip the remaining block sizes
-	skipSize += 2 * (nbTranslations - index);
+	skipSize += 4 * (nbTranslations - index);	// 4 because block sizes are written in Uint32BE in the .dat file.
 
 	// Seek to start of block we want to read
 	in.seek(skipSize, SEEK_CUR);

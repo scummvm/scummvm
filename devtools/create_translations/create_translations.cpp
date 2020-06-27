@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
 			len += 2 + stringSize(translations[lang]->entry(i)->msgstr);
 			len += stringSize(translations[lang]->entry(i)->msgctxt);
 		}
-		writeUint16BE(outFile, len);
+		writeUint32BE(outFile, len);
 	}
 
 	// Write list of languages
