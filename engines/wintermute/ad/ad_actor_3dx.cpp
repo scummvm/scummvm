@@ -195,7 +195,7 @@ bool AdActor3DX::update() {
 				}
 
 				if (canWalk) {
-					if (_directWalkAnim != nullptr) {
+					if (!_directWalkAnim.empty()) {
 						_modelX->playAnim(0, _directWalkAnim, _defaultTransTime, false, _defaultStopTransTime);
 					} else {
 						_modelX->playAnim(0, _walkAnimName, _defaultTransTime, false, _defaultStopTransTime);
