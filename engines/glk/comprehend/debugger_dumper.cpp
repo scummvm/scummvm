@@ -101,6 +101,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_DRAW_ROOM] = "draw_room";
 	_opcodes[OPCODE_DRAW_OBJECT] = "draw_object";
 	_opcodes[OPCODE_WAIT_KEY] = "wait_key";
+	_opcodes[OPCODE_TEST_FALSE] = "test_false";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,

@@ -61,9 +61,10 @@ void OpcodeMap::loadVersion1() {
 	_opcodeMap[0x45] = OPCODE_NOT_IN_ROOM;
 	_opcodeMap[0x48] = OPCODE_CURRENT_OBJECT_IS_NOWHERE;
 	_opcodeMap[0x49] = OPCODE_OBJECT_NOT_PRESENT;
-	_opcodeMap[0x4E] = OPCODE_NULL;
-	_opcodeMap[0x50] = OPCODE_TEST_FALSE;
+	_opcodeMap[0x4E] = OPCODE_TEST_FALSE;
+	_opcodeMap[0x50] = OPCODE_TEST_FALSE_FIXME;
 	_opcodeMap[0x59] = OPCODE_TEST_NOT_FLAG;
+	_opcodeMap[0x5D] = OPCODE_TEST_FALSE;
 	_opcodeMap[0x60] = OPCODE_NOT_HAVE_CURRENT_OBJECT;
 	_opcodeMap[0x61] = OPCODE_OBJECT_IS_NOWHERE;
 	_opcodeMap[0x64] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;

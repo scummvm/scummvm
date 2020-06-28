@@ -1010,6 +1010,12 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		break;
 
 	case OPCODE_TEST_FALSE:
+		// The original had two opcodes mapped to the same code that does
+		// a test, but ignores the result, and is always false
+		func_set_test_result(func_state, false);
+		break;
+
+	case OPCODE_TEST_FALSE_FIXME:
 		/*
 		 * FIXME - not sure what this is for. In Transylvania
 		 * it is opcode 0x50 and is used when attempting to
@@ -1070,9 +1076,6 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 
 	case OPCODE_MOVE_DIR:
 		doMovementVerb(instr->_operand[0]);
-		break;
-
-	case OPCODE_NULL:
 		break;
 
 	default:
