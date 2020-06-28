@@ -5785,6 +5785,12 @@ if test `get_engine_build monkey4` = yes && test ! "$_mpeg2" = yes ; then
 	echo "...disabling support for video cutscenes in PS2 version of Escape from Monkey Island. mpeg2dec is required"
 fi
 
+# Added define for ICB - ResidualVM specific
+# TODO: remove it
+if test `get_engine_build icb` = yes ; then
+	append_var DEFINES "-D_PC=1"
+fi
+
 #
 # Figure out installation directories
 #
