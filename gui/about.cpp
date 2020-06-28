@@ -152,22 +152,8 @@ void AboutDialog::addLine(const U32String &str) {
 		strBeginItr += 2;
 		U32String renderStr(strBeginItr, str.end());
 
-		static Common::U32String asciiStr;
-		if (format[0] == 'A') {
-			bool useAscii = false;
-#ifdef USE_TRANSLATION
-			useAscii = TransMan.getCurrentCharset().equals("ASCII");
-#endif
-			if (useAscii)
-				asciiStr = renderStr;
-			return;
-		}
 		U32StringArray wrappedLines;
-		if (!asciiStr.empty()) {
-			g_gui.getFont().wordWrapText(asciiStr, _w - 2 * _xOff, wrappedLines);
-			asciiStr.clear();
-		} else
-			g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
+		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
 
 		for (U32StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
