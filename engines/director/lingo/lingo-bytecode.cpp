@@ -314,11 +314,12 @@ void LC::cb_objectcall() {
 	Datum d = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
 
-	Object *target;
+	Object *target = nullptr;
 
 	if (d.type == INT) {
 		if (g_lingo->_callstack.empty()) {
 			warning("cb_objectcall: no call frame");
+			return;
 		}
 		Common::Array<Common::String> *varNames = g_lingo->_callstack.back()->sp.varNames;
 		if ((d.asInt() % 6 == 0) && varNames && (d.asInt() / 6 < (int)varNames->size())) {
