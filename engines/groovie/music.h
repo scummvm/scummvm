@@ -45,6 +45,10 @@ public:
 	void playCD(uint8 track);
 	void startBackground();
 	bool isPlaying() { return _isPlaying; }
+	// Pause or resume the music. Note that digital music
+	// already pauses when the ScummVM menu is open, so
+	// it does not seem to need an implementation.
+	virtual void pause(bool pause) { }
 
 	void frameTick();
 	void setBackgroundDelay(uint16 delay);
@@ -103,6 +107,8 @@ public:
 	void sysEx(const byte* msg, uint16 length) override;
 	uint16 sysExNoDelay(const byte *msg, uint16 length) override;
 	void metaEvent(byte type, byte *data, uint16 length) override;
+
+	void pause(bool pause) override;
 
 private:
 	// Channel volumes

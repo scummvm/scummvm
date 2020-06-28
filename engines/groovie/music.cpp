@@ -313,6 +313,16 @@ void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
+void MusicPlayerMidi::pause(bool pause) {
+	if (_midiParser) {
+		if (pause) {
+			_midiParser->pausePlaying();
+		} else {
+			_midiParser->resumePlaying();
+		}
+	}
+}
+
 void MusicPlayerMidi::updateChanVolume(byte channel) {
 	// Generate a MIDI Control change message for the volume
 	uint32 b = 0x7B0;
