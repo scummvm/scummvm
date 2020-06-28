@@ -1072,6 +1072,9 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		doMovementVerb(instr->_operand[0]);
 		break;
 
+	case OPCODE_NULL:
+		break;
+
 	default:
 		if (instr->_opcode & 0x80) {
 			warning("Unhandled command opcode %.2x", instr->_opcode);
