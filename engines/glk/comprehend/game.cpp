@@ -803,25 +803,26 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			                     !(item->_flags & ITEMF_CAN_TAKE));
 		break;
 
-	case OPCODE_CURRENT_OBJECT_IS_NOWHERE:
+	case OPCODE_CURRENT_OBJECT_IS_IN_INVENTORY:
 		item = get_item_by_noun(noun);
-		if (!item)
-			func_set_test_result(func_state, false);
-		else
-			func_set_test_result(func_state,
-			                     item->_room == ROOM_NOWHERE);
+		assert(item);
+		func_set_test_result(func_state, item->_room == ROOM_INVENTORY);
 		break;
 
 	case OPCODE_OBJECT_IS_NOWHERE:
 		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state,
-		                     item->_room == ROOM_NOWHERE);
+		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
+		break;
+
+	case OPCODE_CURRENT_OBJECT_IS_NOWHERE:
+		item = get_item_by_noun(noun);
+		assert(item);
+		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
 		break;
 
 	case OPCODE_OBJECT_IS_NOT_NOWHERE:
 		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state,
-		                     item->_room != ROOM_NOWHERE);
+		func_set_test_result(func_state, item->_room != ROOM_NOWHERE);
 		break;
 
 	case OPCODE_OBJECT_NOT_PRESENT:
@@ -1012,16 +1013,6 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 	case OPCODE_TEST_FALSE:
 		// The original had two opcodes mapped to the same code that does
 		// a test, but ignores the result, and is always false
-		func_set_test_result(func_state, false);
-		break;
-
-	case OPCODE_TEST_FALSE_FIXME:
-		/*
-		 * FIXME - not sure what this is for. In Transylvania
-		 * it is opcode 0x50 and is used when attempting to
-		 * take the bar in the cellar. If it returns true then
-		 * the response is "there's none here".
-		 */
 		func_set_test_result(func_state, false);
 		break;
 
