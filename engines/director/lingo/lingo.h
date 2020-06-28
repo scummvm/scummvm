@@ -498,6 +498,7 @@ public:
 	void setTheField(Datum &id1, int field, Datum &d);
 	Datum getObjectProp(Datum &obj, Common::String &propName);
 	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
+	Datum getTheDate(int field);
 	Datum getTheTime(int field);
 
 private:

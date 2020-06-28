@@ -361,6 +361,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = 1;
 		break;
+	case kTheDate:
+		d = getTheDate(field);
+		break;
 	case kTheFloatPrecision:
 		d.type = INT;
 		d.u.i = _floatPrecision;
@@ -1256,6 +1259,46 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 	} else {
 		warning("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}
+}
+
+static const char *mfull[] = {
+	"January", "February", "March", "April", "May", "June",
+	"July", "August" "September", "October", "Novemver", "December"
+};
+
+static const char *wday[] = {
+	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+};
+
+Datum Lingo::getTheDate(int field) {
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+
+	Common::String s;
+
+	Datum d;
+	d.type = STRING;
+
+	const char *m = mfull[t.tm_mon];
+	const char *w = wday[t.tm_wday];
+
+	switch (field) {
+	case kTheAbbr:	// "Sat, Sep 7, 1991"
+		s = Common::String::format("%c%c%c, %c%c%c %d, %d", w[0], w[1], w[2], m[0], m[1], m[2], t.tm_mday, t.tm_year + 1900);
+		break;
+
+	case kTheLong:	// "Saturday, September 7, 1991"
+		s = Common::String::format("%s, %s %d, %d", w, m, t.tm_mday, t.tm_year + 1900);
+		break;
+
+	default:		// "9/7/91"
+		s = Common::String::format("%d/%d/%02d", t.tm_mday, t.tm_mon, t.tm_year % 100);
+		break;
+	}
+
+	d.u.s = new Common::String(s);
+
+	return d;
 }
 
 Datum Lingo::getTheTime(int field) {
