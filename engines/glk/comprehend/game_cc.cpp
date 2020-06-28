@@ -81,7 +81,12 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 	case 5:
 		if (_diskNum == 1) {
 			// Finished disk 1
-			error("[Completed disk 1 - handle switch to disk 2]");
+			g_comprehend->readChar();
+			g_comprehend->drawLocationPicture(41);
+			console_println(_strings2[26].c_str());
+			g_comprehend->readChar();
+
+			// TODO: Switch to disk 2
 		} else {
 			// Won the game.
 			// FIXME: The merchant ship should arrives, etc.
