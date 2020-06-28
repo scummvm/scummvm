@@ -130,8 +130,8 @@ private:
 	short m_lpx16, m_lpz16;
 #else
 	PXfloat m_lpx, m_lpz;   // Main barrier
-//	PXfloat m_alpx, m_alpz; // End A.
-//	PXfloat m_blpx, m_blpz; // End B.
+	PXfloat m_alpx, m_alpz; // End A.
+	PXfloat m_blpx, m_blpz; // End B.
 #endif
 
 public:
