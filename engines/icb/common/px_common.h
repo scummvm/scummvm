@@ -28,6 +28,8 @@
 #ifndef _PX_INC_PROJECT_X_COMMON_H
 #define _PX_INC_PROJECT_X_COMMON_H
 
+#include "common/scummsys.h"
+
 #include "px_rccommon.h"
 #include "px_rcutypes.h"
 

@@ -28,7 +28,9 @@
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_windows.h"
 
+#if defined (SDL_BACKEND)
 #include <SDL/SDL_joystick.h>
+#endif
 #include "p4_generic.h"
 #include "debug.h"
 #include "p4.h"
@@ -111,7 +113,9 @@ typedef struct {
 class NTJoystickHandler {
       private:
 	int joyThere[16]; // 1  if joystick is plugged in, 0 otherwise
+#if defined (SDL_BACKEND)
 	SDL_Joystick *joy[16];
+#endif
 	JoyInfo cached_joyinfo[16];
 
       public:
@@ -147,19 +151,26 @@ NTJoystickHandler::~NTJoystickHandler(void) {
 
 void NTJoystickHandler::Init() {
 	for (int x = 0; x < QueryJoystick(); x++) {
+#if defined (SDL_BACKEND)
 		SDL_Joystick *j = SDL_JoystickOpen(x);
 		if (j) {
 			// there *is* a joystick 'x' installed!
 			++joyThere[x];
 			joy[x] = j;
 		}
+#endif
 	}
 	UpdateJoystick();
 }
 
 int NTJoystickHandler::QueryJoystick(void) {
 	// if no joystick(s), returns 0 else number of joysticks attached.
-	return (SDL_NumJoysticks());
+	return
+#if defined (SDL_BACKEND)
+	(SDL_NumJoysticks());
+#else
+	0;
+#endif
 }
 
 int normalize(int val, int minval, int maxval) {

@@ -39,7 +39,8 @@ typedef const char *cstr;
 typedef unsigned int uint; // Short hand for unsigned int
 
 #if CHAR_MAX == 255
-#error Char type must be signed - (WATCOM compile with /j option)
+typedef signed char int8;
+typedef unsigned char uint8;
 #else
 typedef char int8;
 typedef unsigned char uint8;

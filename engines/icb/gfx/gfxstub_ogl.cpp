@@ -25,7 +25,7 @@
  *
  */
 
-#ifdef ENABLE_OPENGL
+#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
 
 #include <stdlib.h>
 #include <stdio.h>

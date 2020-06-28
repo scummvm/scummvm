@@ -30,7 +30,7 @@
 
 #include "gfxstub_dutch.h"
 
-#ifdef ENABLE_OPENGL
+#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
 #include <SDL/SDL_opengl.h>
 #endif
 
@@ -43,7 +43,7 @@ public:
 	int w;
 	int h;
 	int bpp;
-#ifdef ENABLE_OPENGL
+#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
 	GLuint textureId;
 #endif
 };

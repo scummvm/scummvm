@@ -38,6 +38,7 @@
 
 namespace ICB {
 
+#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
 PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffers;
 PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffers;
 PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
@@ -51,14 +52,14 @@ PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorage;
 
 GLuint g_RGBFrameBuffer;
 
+#endif
+
 #define FIRST_CLIENT_SURFACE 2
 
 uint32 working_buffer_id;
 uint32 bg_buffer_id;
 uint32 effect_time; // Time spent doing postprocessing effects (fades ect)
 uint32 flipTime;
-
-HWND g_mainHWnd = NULL;
 
 _surface::~_surface() {
 	// Is the surface there
@@ -81,9 +82,6 @@ _surface::_surface() {
 }
 
 void _surface_manager::PrintDebugLabel(const char *mess, uint32 c) {
-#if 0
-	HDC dc;
-#endif
 	static int y = 100;
 
 	if (mess == NULL) {
@@ -106,9 +104,6 @@ void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
                                   0x00ff0000,   // 4x - 5x
                                   0x00ffffff }; // 5x +
 */
-#if 0
-	HDC dc;
-#endif
 	static int x = 20;
 
 	if (limit == 0) {

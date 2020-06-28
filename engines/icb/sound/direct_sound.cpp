@@ -25,7 +25,9 @@
  *
  */
 
+#if defined (SDL_BACKEND)
 #include <SDL/SDL.h>
+#endif
 
 #include "engines/icb/sound/direct_sound.h"
 #include "engines/icb/sound/music_manager.h"
@@ -41,6 +43,7 @@ SpeechManager *g_theSpeechManager = NULL;
 FxManager *g_theFxManager = NULL;
 bool8 g_TimerOn = TRUE8;
 
+#if defined (SDL_BACKEND)
 SDL_TimerID g_timer_id = 0;
 
 Uint32 SoundEngineTimer(Uint32 interval, void *) {
@@ -59,11 +62,14 @@ Uint32 SoundEngineTimer(Uint32 interval, void *) {
 
 	return interval;
 }
+#endif
 
 bool8 Init_Sound_Engine() {
 	// DO THIS FIRST INCASE REST OF INIT FAILS
 	// Create a timer to poll the sound engine at 100 millisecond intervals
+#if defined (SDL_BACKEND)
 	g_timer_id = SDL_AddTimer(100, SoundEngineTimer, NULL);
+#endif
 
 	// Initalize the other sections (ie music, fx and speech)
 	g_theMusicManager = new MusicManager();
@@ -74,8 +80,10 @@ bool8 Init_Sound_Engine() {
 }
 
 bool8 Close_Sound_Engine() {
+#if defined (SDL_BACKEND)
 	// Kill the sound engine timer
 	SDL_RemoveTimer(g_timer_id);
+#endif
 
 	// Destroy the fx manager
 	if (g_theFxManager) {

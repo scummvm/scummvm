@@ -31,6 +31,11 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fread
 #define FORBIDDEN_SYMBOL_EXCEPTION_ftell
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_getwd
+#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
+#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
 #include "engines/icb/common/px_common.h"
 
@@ -134,18 +139,18 @@ int async_loadThread(void *v) {
 		{
 			if (rm->async_loading == 1) {
 				z = rm->async_data.zipped;
-				fn = new char[1 + strlen(rm->async_data.fn)];
-				strcpy(fn, rm->async_data.fn);
+				fn = new int8[1 + strlen(rm->async_data.fn)];
+				strcpy((char *)fn, rm->async_data.fn);
 				p = rm->async_data.p;
 				size = rm->async_data.size;
 
 				g_system->unlockMutex(rm->hResManMutex); // ReleaseMutex(rm->hResManMutex);
 
 				if (z)
-					memUncompress(p, fn); // TODO: Use wrapCompressedStream to solve?
+					memUncompress(p, (const char *)fn); // TODO: Use wrapCompressedStream to solve?
 				else {
 					uint32 timer = g_system->getMillis();
-					in = openDiskFileForBinaryRead(fn);
+					in = openDiskFileForBinaryRead((char *)fn);
 					newSize = size;
 					while (newSize != 0) {
 						if (newSize > 1024) {
@@ -259,7 +264,7 @@ async_PacketType res_man::async_shiftArray() {
 // Add item to list
 void res_man::async_addFile(const int8 *fn, uint8 *p, int32 size, int32 zipped, int32 memListNo) {
 	async_PacketType a;
-	a.fn = fn;
+	a.fn = (char *)fn;
 	a.p = p;
 	a.size = size;
 	a.zipped = zipped;

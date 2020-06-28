@@ -32,7 +32,9 @@
 #include "engines/icb/common/px_array.h"
 #include "engines/icb/common/px_assert.h"
 
+#ifdef ENABLE_OPENGL
 #include <SDL/SDL_opengl.h>
+#endif
 
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
@@ -60,8 +62,10 @@ extern uint32 bg_buffer_id;
 // Define this here so we can get rid of the <ddraw.h> include
 #define DDBLT_KEYSRC 0x00008000l
 
+#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
 extern PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
 extern GLuint g_RGBFrameBuffer;
+#endif
 
 class _surface {
 public:
@@ -80,11 +84,12 @@ class _surface_manager {
 private:
 	Graphics::Surface *sdl_screen;
 	TinyGL::FrameBuffer *_zb;
+#if defined (SDL_BACKEND) && defined (ENABLE_OPENGL)
 	GLuint RGBFrameBufferTexture;
 	GLuint RGBFrameBuffer;
 	GLuint renderBuffer;
 	GLuint sdlTextureId;
-
+#endif
 	RECT m_screen_rect; // The screen rectangle
 public:
 	rcAutoPtrArray<_surface> m_Surfaces; // List of client surface
