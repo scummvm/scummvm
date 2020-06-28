@@ -2820,10 +2820,10 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 bool AdScene::afterLoad() {
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
-		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
+		int activeCamera = _sceneGeometry->_activeCamera;
 
-		if (activeCamera) {
-			// TODO: set active camera
+		if (activeCamera >= 0 && static_cast<uint>(activeCamera) < _sceneGeometry->_cameras.size()) {
+			_sceneGeometry->setActiveCamera(activeCamera, _fov, _nearPlane, _farPlane);
 		}
 	}
 #endif
