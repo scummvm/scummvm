@@ -34,12 +34,6 @@
 
 namespace ICB {
 
-// MFC 4 does not allow the use of the explicit keyword
-// Explanation of why explicit is used is to follow
-#if _MSC_VER < 1100 // Version 5
-#define explicit
-#endif
-
 #define MY_TEMPLATE template <class Type>
 #define T_MYACTARRAY rcActArray<Type>
 #define T_MYPTRARRAY rcAutoPtrArray<Type>
@@ -110,8 +104,8 @@ const Type &T_MYACTARRAY::operator[](uint n) const {
 	// that the contents are valid
 	if (n >= m_userPosition) {
 		// We must cast this to a type that can change
-		((rcActArray<Type> *)this)->ResizeArray(n);
-		((rcActArray<Type> *)this)->m_userPosition = n + 1;
+		((const rcActArray<Type> *)this)->ResizeArray(n);
+		((const rcActArray<Type> *)this)->m_userPosition = n + 1;
 	}
 
 	return (*(m_contents[n]));
@@ -313,8 +307,8 @@ template <class Type> const Type rcIntArray<Type>::operator[](uint index) const 
 	// It is permissable to look at an element that has not been defined, as it will have been set to 0
 	if (index >= m_userPosition) {
 		// Remove any 'constness' for a resize
-		((rcIntArray<Type> *)this)->ResizeArray(index);
-		((rcIntArray<Type> *)this)->m_userPosition = index + 1;
+		((const rcIntArray<Type> *)this)->ResizeArray(index);
+		((const rcIntArray<Type> *)this)->m_userPosition = index + 1;
 	}
 
 	return m_contents[index];

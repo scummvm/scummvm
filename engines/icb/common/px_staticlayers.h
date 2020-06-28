@@ -45,7 +45,7 @@ class pcStaticLayers {
       private:
 	char id[4];
 	uint32 schema;
-	uint32 mapping;
+	//uint32 mapping;
 	uint32 tilePtrs[TILE_COUNT]; // 10 x 10 array of tiles (null means an empty tile)
 	uint32 semiPtrs[TILE_COUNT]; // 10 x 10 array of tiles (null means an empty tile)
 
