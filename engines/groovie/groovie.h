@@ -99,6 +99,7 @@ protected:
 
 	// Engine APIs
 	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
 
 	bool hasFeature(EngineFeature f) const override;
 
