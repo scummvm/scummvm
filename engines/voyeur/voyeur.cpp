@@ -244,7 +244,7 @@ void VoyeurEngine::showConversionScreen() {
 }
 
 bool VoyeurEngine::doLock() {
-	bool result = true;
+	bool result = true, setPassword = false;
 	int buttonVocSize, wrongVocSize;
 	byte *buttonVoc = _filesManager->fload("button.voc", &buttonVocSize);
 	byte *wrongVoc = _filesManager->fload("wrong.voc", &wrongVocSize);
@@ -351,18 +351,24 @@ bool VoyeurEngine::doLock() {
 				}
 			} else if (key == 10) {
 				// Accept key
-				if ((password.empty() && displayString.empty()) || (password == displayString)) {
+				if (setPassword) {
+					// Set a new password
+					password = displayString;
+					ConfMan.setAndFlush("lockCode", password);
+				}
+
+				if (password == displayString) {
 					breakFlag = true;
 					result = true;
 					break;
 				}
 			} else if (key == 11) {
 				// New code
-				if ((password.empty() && displayString.empty()) || (password != displayString)) {
+				if (password == displayString) {
 					_screen->_vPort->setupViewPort();
 					password = displayString;
-					ConfMan.setAndFlush("lockCode", password);
 					displayString = "";
+					setPassword = true;
 					continue;
 				}
 			} else if (key == 12) {
@@ -374,6 +380,8 @@ bool VoyeurEngine::doLock() {
 				continue;
 			}
 
+			_screen->_vPort->setupViewPort();
+			displayString = "";
 			_soundManager->playVOCMap(wrongVoc, wrongVocSize);
 		}
 
