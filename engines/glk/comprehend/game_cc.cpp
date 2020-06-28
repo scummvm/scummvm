@@ -29,7 +29,8 @@ namespace Comprehend {
 
 static const GameStrings CC1_STRINGS = {0x9};
 
-CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame(), _diskNum(1) {
+CrimsonCrownGame::CrimsonCrownGame() : ComprehendGame(),
+		_diskNum(1), _newDiskNum(1) {
 	setupDisk(1);
 }
 
@@ -37,7 +38,11 @@ void CrimsonCrownGame::setupDisk(uint diskNum) {
 	assert(diskNum == 1 || diskNum == 2);
 
 	_gameDataFile = Common::String::format("cc%u.gda", diskNum);
+
+	_stringFiles.clear();
 	_stringFiles.push_back(StringFile(Common::String::format("ma.ms%u", diskNum), 0x89));
+
+	_locationGraphicFiles.clear();
 	_locationGraphicFiles.push_back(Common::String::format("ra.ms%u", diskNum));
 	_locationGraphicFiles.push_back(Common::String::format("rb.ms%u", diskNum));
 	if (diskNum == 1)
@@ -51,6 +56,7 @@ void CrimsonCrownGame::setupDisk(uint diskNum) {
 		_gameStrings = nullptr;
 
 	_titleGraphicFile = "cctitle.ms1";
+	_diskNum = diskNum;
 }
 
 void CrimsonCrownGame::beforeGame() {
@@ -86,7 +92,10 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 			console_println(_strings2[26].c_str());
 			g_comprehend->readChar();
 
-			// TODO: Switch to disk 2
+			_newDiskNum = 2;
+			move_to(21);
+			console_println(_strings[407].c_str());
+
 		} else {
 			// Won the game.
 			// FIXME: The merchant ship should arrives, etc.
@@ -122,6 +131,14 @@ void CrimsonCrownGame::beforePrompt() {
 	// Clear the Sabrina/Erik action flags
 	_flags[0xa] = 0;
 	_flags[0xb] = 0;
+}
+
+void CrimsonCrownGame::beforeTurn() {
+	if (_newDiskNum != _diskNum) {
+		setupDisk(_newDiskNum);
+		loadGame();
+		move_to(_currentRoom);
+	}
 }
 
 } // namespace Comprehend

@@ -31,6 +31,7 @@ namespace Comprehend {
 class CrimsonCrownGame : public ComprehendGame {
 private:
 	uint _diskNum;
+	uint _newDiskNum;
 
 private:
 	/**
@@ -44,6 +45,7 @@ public:
 
 	void beforeGame() override;
 	void beforePrompt() override;
+	void beforeTurn() override;
 	void handleSpecialOpcode(uint8 operand) override;
 	void synchronizeSave(Common::Serializer &s) override;
 
