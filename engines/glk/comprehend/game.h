@@ -55,6 +55,7 @@ private:
 	void skip_whitespace(char **p);
 	void skip_non_whitespace(char **p);
 	bool handle_sentence(Sentence *sentence);
+	bool handle_sentence(Sentence *sentence, Common::Array<byte> &words);
 	void read_sentence(char **line, Sentence *sentence);
 	void parse_sentence_word_pairs(Sentence *sentence);
 	void doBeforeTurn();

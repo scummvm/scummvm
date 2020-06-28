@@ -235,6 +235,10 @@ struct WordIndex {
 	bool operator==(WordIndex &src) {
 		return _index == src._index && _type == src._type;
 	}
+
+	bool operator()() const {
+		return _index != 0;
+	}
 };
 
 struct Word : public WordIndex {

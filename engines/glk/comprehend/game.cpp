@@ -36,6 +36,8 @@ namespace Comprehend {
 struct Sentence {
 	Word _words[4];
 	size_t _nr_words;
+	byte _formattedWords[6];
+	byte _specialOpcodeVal2;
 
 	Sentence() {
 		clear();
@@ -45,12 +47,93 @@ struct Sentence {
 		return _nr_words == 0;
 	}
 
-	void clear() {
-		for (uint idx = 0; idx < 4; ++idx)
-			_words[idx].clear();
-		_nr_words = 0;
-	}
+	void clear();
+
+	/**
+	 * Splits up the array of _words into a _formattedWords
+	 * array, placing the words in appropriate noun, verb, etc.
+	 * positions appropriately
+	 */
+	void format();
 };
+
+void Sentence::clear() {
+	for (uint idx = 0; idx < 4; ++idx)
+		_words[idx].clear();
+	for (uint idx = 0; idx < 6; ++idx)
+		_formattedWords[idx] = 0;
+
+	_nr_words = 0;
+	_specialOpcodeVal2 = 0;
+}
+
+void Sentence::format() {
+	for (uint idx = 0; idx < 6; ++idx)
+		_formattedWords[idx] = 0;
+	byte wordTypes[5] = { 0, 0, 0, 0, 0 };
+
+	for (uint idx = 0; idx < _nr_words; ++idx) {
+		const Word &w = _words[idx];
+
+		if (w._type & 8) {
+			if (w._type < 24) {
+				int index, type;
+
+				if (w._type & 0xf0 & wordTypes[2]) {
+					index = _formattedWords[2];
+					type = wordTypes[2];
+				} else if (w._type & 0xf0 & wordTypes[3]) {
+					index = _formattedWords[3];
+					type = wordTypes[3];
+				} else {
+					continue;
+				}
+
+				if (!_formattedWords[2]) {
+					_formattedWords[2] = index;
+					wordTypes[2] = type;
+				} else if (!_formattedWords[3]) {
+					_formattedWords[3] = index;
+					wordTypes[3] = type;
+				}
+			} else {
+				if (w._type == 8)
+					_specialOpcodeVal2 = 1;
+				else if (w._type == 9)
+					_specialOpcodeVal2 = 2;
+			}
+		} else {
+			int val = w._type & 0xf0;
+
+			if (val) {
+				if ((w._type & 1) && !_formattedWords[0]) {
+					_formattedWords[0] = w._index;
+				} else if (!_formattedWords[2]) {
+					_formattedWords[2] = w._index;
+					wordTypes[2] = val;
+				} else if (!_formattedWords[3]) {
+					_formattedWords[3] = w._index;
+					wordTypes[3] = val;
+				}
+			} else if (w._type & 1) {
+				if (!_formattedWords[0]) {
+					_formattedWords[0] = w._index;
+				} else if (!_formattedWords[1]) {
+					_formattedWords[1] = w._index;
+				}
+			} else if (w._type == 2) {
+				if (!_formattedWords[4])
+					_formattedWords[4] = w._index;
+			} else if (w._type == 4) {
+				if (!_formattedWords[5])
+					_formattedWords[5] = w._index;
+			}
+		}
+	}
+}
+
+/*-------------------------------------------------------*/
+
 
 ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false) {
 }
@@ -1034,9 +1117,6 @@ void ComprehendGame::skip_non_whitespace(char **p) {
 }
 
 bool ComprehendGame::handle_sentence(Sentence *sentence) {
-	Action *action;
-	uint i, j;
-
 	if (sentence->empty())
 		return false;
 
@@ -1045,39 +1125,108 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		return true;
 	}
 
-	/* Find a matching action */
-	for (i = 0; i < _actions.size(); i++) {
+	// Set up default sentence
+	Common::Array<byte> words;
+	const byte *src = &sentence->_formattedWords[0];
+
+	if (src[1] && src[3]) {
+		words.clear();
+
+		for (int idx = 0; idx < 4; ++idx)
+			words.push_back(src[idx]);
+
+		if (handle_sentence(sentence, words))
+			return true;
+	}
+
+	if (src[1]) {
+		words.clear();
+
+		for (int idx = 0; idx < 3; ++idx)
+			words.push_back(src[idx]);
+
+		if (handle_sentence(sentence, words))
+			return true;
+	}
+
+	if (src[3] && src[4]) {
+		words.clear();
+
+		words.push_back(src[4]);
+		words.push_back(src[0]);
+		words.push_back(src[2]);
+		words.push_back(src[3]);
+
+		if (handle_sentence(sentence, words))
+			return true;
+	}
+
+	if (src[4]) {
+		words.clear();
+
+		words.push_back(src[4]);
+		words.push_back(src[0]);
+		words.push_back(src[2]);
+
+		if (handle_sentence(sentence, words))
+			return true;
+	}
+
+	if (src[3]) {
+		words.clear();
+
+		words.push_back(src[0]);
+		words.push_back(src[2]);
+		words.push_back(src[3]);
+
+		if (handle_sentence(sentence, words))
+			return true;
+	}
+
+	if (src[2]) {
+		words.clear();
+
+		words.push_back(src[0]);
+		words.push_back(src[2]);
+
+		if (handle_sentence(sentence, words))
+			return true;
+	}
+
+	if (src[0]) {
+		words.clear();
+		words.push_back(src[0]);
+
+		if (handle_sentence(sentence, words))
+			return true;
+	}
+
+	console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
+	return false;
+}
+
+bool ComprehendGame::handle_sentence(Sentence *sentence, Common::Array<byte> &words) {
+	Action *action;
+
+	// Find a matching action
+	for (uint i = 0; i < _actions.size(); i++) {
 		action = &_actions[i];
 
-		if (action->_type == ACTION_VERB_OPT_NOUN &&
-		        sentence->_nr_words > action->_nr_words + 1)
-			continue;
-		if (action->_type != ACTION_VERB_OPT_NOUN &&
-		        sentence->_nr_words != action->_nr_words)
-			continue;
+		if (action->_nr_words <= words.size()) {
+			bool isMatch = true;
+			for (uint idx = 0; idx < action->_nr_words && isMatch; ++idx)
+				isMatch = action->_word[idx] == words[idx];
 
-		/*
-		 * If all words in a sentence match those for an action then
-		 * run that action's function.
-		 */
-		for (j = 0; j < action->_nr_words; j++) {
-			if (sentence->_words[j]._index == action->_word[j] &&
-			        (sentence->_words[j]._type & action->_wordType[j]))
-				continue;
-
-			/* Word didn't match */
-			break;
-		}
-		if (j == action->_nr_words) {
-			/* Match */
-			const Function &func = _functions[action->_function];
-			eval_function(func, &sentence->_words[0], &sentence->_words[1]);
-			return true;
+			if (isMatch) {
+				// Match
+				const Function &func = _functions[action->_function];
+				eval_function(func, &sentence->_words[0], &sentence->_words[1]);
+				return true;
+			}
 		}
 	}
 
-	/* No matching action */
-	console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
+	// No matching action
 	return false;
 }
 
@@ -1119,6 +1268,7 @@ void ComprehendGame::read_sentence(char **line,
 	}
 
 	parse_sentence_word_pairs(sentence);
+	sentence->format();
 
 	*line = p;
 }
