@@ -365,10 +365,6 @@ template <class Type> uint rcIntArray<Type>::Add(Type f) {
 	return (m_userPosition - 1);
 }
 
-#if _MSC_VER < 1100 // Version 5
-#undef explicit
-#endif
-
 } // End of namespace ICB
 
 #endif // ndef _LIBRARY_CMYACTARRAY

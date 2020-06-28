@@ -229,7 +229,7 @@ void _game_session::Camera_director() {
 	// if no camera run a script
 	// else if new camera switch it in
 
-	__aWalkArea *wa;
+	const __aWalkArea *wa;
 	uint32 k;
 	uint32 hit;
 	PXreal sub1, sub2, len, y;
@@ -417,7 +417,7 @@ void _game_session::Prepare_camera_floors() {
 }
 
 bool8 _game_session::Process_wa_list() {
-	__aWalkArea *wa;
+	const __aWalkArea *wa;
 	uint32 j, k;
 	uint32 hit;
 	char *name;

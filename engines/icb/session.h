@@ -988,7 +988,7 @@ public:
 
 	uint32 total_was; // how many individual walk-areas
 	_linked_data_file *walk_areas;
-	__aWalkArea *wa_list[MAX_was]; // walk areas
+	const __aWalkArea *wa_list[MAX_was]; // walk areas
 
 	bool8 manual_camera; // overiden by a script command
 	bool8 camera_lock; // lock camera director - used to fix ladder problems (easier to fix like this than at animation end)

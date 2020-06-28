@@ -483,7 +483,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 			Tdebug("walkareas.txt", "\nclump %d has %d inner items", k, inner_wa->GetNoAreas());
 
 			for (j = 0; j < inner_wa->GetNoAreas(); j++) {
-				__aWalkArea *wa;
+				const __aWalkArea *wa;
 
 				wa = inner_wa->GetWalkArea(j);
 

@@ -75,7 +75,7 @@ public:
 	uint32 GetNoAreas(void) const { return noAreas; }
 
 	// Get pointer to a specific WalkArea
-	inline __aWalkArea *GetWalkArea(uint32 number) const;
+	inline const __aWalkArea *GetWalkArea(uint32 number) const;
 	inline uint32 GetNoPoints(uint32 number) const;
 	inline int32 GetBox_X(uint32 number) const;
 	inline int32 GetBox_Y(uint32 number) const;
@@ -93,7 +93,7 @@ public:
 	uint32 offsetTable[1];
 };
 
-inline __aWalkArea *INTEGER_WalkAreaFile::GetWalkArea(uint32 number) const { return ((__aWalkArea *)(((const char *)this) + offsetTable[number])); }
+inline const __aWalkArea *INTEGER_WalkAreaFile::GetWalkArea(uint32 number) const { return ((const __aWalkArea *)(((const char *)this) + offsetTable[number])); }
 
 inline uint32 INTEGER_WalkAreaFile::GetNoPoints(uint32 number) const { return (GetWalkArea(number)->noPoints); }
 
@@ -141,7 +141,7 @@ inline bool8 INTEGER_WalkAreaFile::GetCameraName(uint32 number, const char *&nam
 		return FALSE8;
 
 	// Get the address of the start of the cameraName (by asking for a point that isn't there
-	name = (char *)&GetWalkArea(number)->points[GetNoPoints(number)];
+	name = (const char *)&GetWalkArea(number)->points[GetNoPoints(number)];
 
 	return TRUE8;
 }
