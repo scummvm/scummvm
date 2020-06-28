@@ -56,6 +56,11 @@ private:
 	 */
 	bool cmdFindString(int argc, const char **argv);
 
+	/**
+	 * Draw an image to the screen
+	 */
+	bool cmdDraw(int argc, const char **argv);
+
 protected:
 	void print(const char *fmt, ...) override;
 

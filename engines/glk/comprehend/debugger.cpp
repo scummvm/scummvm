@@ -36,6 +36,7 @@ Debugger::Debugger() : Glk::Debugger() {
 	registerCmd("room", WRAP_METHOD(Debugger, cmdRoom));
 	registerCmd("itemroom", WRAP_METHOD(Debugger, cmdItemRoom));
 	registerCmd("findstring", WRAP_METHOD(Debugger, cmdFindString));
+	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
 }
 
 Debugger::~Debugger() {
@@ -139,6 +140,17 @@ bool Debugger::cmdFindString(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Debugger::cmdDraw(int argc, const char **argv) {
+	if (argc == 1) {
+		debugPrintf("draw <number>\n");
+		return true;
+	} else {
+		g_comprehend->drawLocationPicture(strToInt(argv[1]), true);
+		return false;
+	}
+}
+
 
 } // namespace Comprehend
 } // namespace Glk
