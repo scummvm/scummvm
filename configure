@@ -1985,8 +1985,29 @@ esac
 
 # Toolchain for Android is in NDK and is using different naming convention
 if test "$_host_os" = android; then
-	# Try to use a known to work (on linux) toolchain
-	_android_toolchain="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64"
+	
+	# Check that we have the correct NDK version
+	echo_n "Checking NDK version... "
+	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" dists/android/build.gradle | sed 's/[^0-9\.]//g')
+	_ndk_version=$(grep "Pkg.Revision" $ANDROID_NDK_ROOT/source.properties | sed 's/[^0-9\.]//g' | sed 's/.//')
+	if test "$_ndk_version" = "$_ndk_gradle"; then
+		echo "$_ndk_version"
+	else
+		echo "$_ndk_version (Expected $_ndk_gradle)"
+		exit 1
+	fi
+
+	# Try to use a known to work toolchain
+	android_toolchains="windows-x86_64 darwin-x86_64 linux-x86_64"	
+	for toolchain in $android_toolchains; do 
+		_android_toolchain="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/$toolchain"
+
+		if test -d "$_android_toolchain"; then
+			break
+		fi
+	done
+
+	# See if an explicit toolchain is used
 	if test -n "$ANDROID_TOOLCHAIN"; then
 		_android_toolchain="$ANDROID_TOOLCHAIN"
 	fi
