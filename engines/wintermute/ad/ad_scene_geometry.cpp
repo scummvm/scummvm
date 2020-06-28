@@ -182,6 +182,14 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	filenameTmp.replace(filenameTmp.size() - 3, 3, "geometry", 0, 8);
 	AdGeomExt *geomExt = getGeometryExtension(filenameTmp.begin());
 
+	// Light3D, AdBlock, AdGeneric and AdWalkplane all inherit from BaseScriptable
+	// the latter one is overriding the new operator such that instances are registered
+	// in the system class registry
+	// for the most part, the subclasses of BaseScriptable override the new operator themselves,
+	// but here this is not the case. So these instances are not supposed to be registered
+	// and doing so would create faulty savegames. The persistence of them will be handled by AdSceneGeometry
+	SystemClassRegistry::getInstance()->_disabled = true;
+
 	BaseArray<Mesh3DS *> meshes;
 	BaseArray<Common::String> meshNames;
 
@@ -191,8 +199,6 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	}
 
 	uint i;
-
-	SystemClassRegistry::getInstance()->_disabled = true;
 
 	// load meshes
 	for (i = 0; i < meshes.size(); i++) {
