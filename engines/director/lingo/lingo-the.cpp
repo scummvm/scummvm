@@ -563,6 +563,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_wm->_mouseDown;
 		break;
+	case kTheTime:
+		d = getTheTime(field);
+		break;
 	case kTheTimer:
 		d.type = INT;
 		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastTimerReset;
@@ -665,16 +668,16 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	}
 }
 
-void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
-	warning("STUB: setTheMenuItemEntity(%s, %s, %s, %s, %s)", entity2str(entity), menuId.asString(true).c_str(), field2str(field),
-				menuItemId.asString(true).c_str(), d.asString(true).c_str());
-}
-
 Datum Lingo::getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId) {
 	warning("STUB: getTheMenuItemEntity(%s, %s, %s, %s)", entity2str(entity), menuId.asString(true).c_str(), field2str(field),
 				menuItemId.asString(true).c_str());
 
 	return Datum();
+}
+
+void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
+	warning("STUB: setTheMenuItemEntity(%s, %s, %s, %s, %s)", entity2str(entity), menuId.asString(true).c_str(), field2str(field),
+				menuItemId.asString(true).c_str(), d.asString(true).c_str());
 }
 
 Datum Lingo::getTheSprite(Datum &id1, int field) {
@@ -1253,6 +1256,30 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 	} else {
 		warning("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}
+}
+
+Datum Lingo::getTheTime(int field) {
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+
+	Common::String s;
+
+	Datum d;
+	d.type = STRING;
+
+	switch (field) {
+	case kTheLong:
+		s = Common::String::format("%d:%02d:%02d %s", t.tm_hour % 12, t.tm_min, t.tm_sec, t.tm_hour < 12 ? "AM" : "PM");
+		break;
+
+	default:
+		s = Common::String::format("%d:%02d %s", t.tm_hour % 12, t.tm_min, t.tm_hour < 12 ? "AM" : "PM");
+		break;
+	}
+
+	d.u.s = new Common::String(s);
+
+	return d;
 }
 
 } // End of namespace Director

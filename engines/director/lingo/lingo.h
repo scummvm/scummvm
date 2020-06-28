@@ -483,20 +483,22 @@ public:
 	// lingo-the.cpp
 public:
 	void initTheEntities();
-	void setTheEntity(int entity, Datum &id, int field, Datum &d);
-	void setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d);
-	void setTheSprite(Datum &id, int field, Datum &d);
-	void setTheCast(Datum &id, int field, Datum &d);
-	Datum getTheEntity(int entity, Datum &id, int field);
-	void setTheField(Datum &id1, int field, Datum &d);
-	Datum getTheSprite(Datum &id, int field);
-	Datum getTheCast(Datum &id, int field);
-	Datum getTheField(Datum &id1, int field);
-	Datum getObjectProp(Datum &obj, Common::String &propName);
-	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
-	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);
 	const char *entity2str(int id);
 	const char *field2str(int id);
+
+	Datum getTheEntity(int entity, Datum &id, int field);
+	void setTheEntity(int entity, Datum &id, int field, Datum &d);
+	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);
+	void setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d);
+	Datum getTheSprite(Datum &id, int field);
+	void setTheSprite(Datum &id, int field, Datum &d);
+	Datum getTheCast(Datum &id, int field);
+	void setTheCast(Datum &id, int field, Datum &d);
+	Datum getTheField(Datum &id1, int field);
+	void setTheField(Datum &id1, int field, Datum &d);
+	Datum getObjectProp(Datum &obj, Common::String &propName);
+	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
+	Datum getTheTime(int field);
 
 private:
 	Common::StringArray _entityNames;
