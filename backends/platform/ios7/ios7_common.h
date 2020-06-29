@@ -25,8 +25,6 @@
 
 #include "graphics/surface.h"
 
-#define ENABLE_IOS7_SCALERS
-
 
 enum InputEvent {
 	kInputMouseDown,
@@ -65,26 +63,11 @@ enum UIViewTapDescription {
 	kUIViewTapDouble = 2
 };
 
-enum GraphicsModes {
-	kGraphicsModeNone = 1,
-
-	kGraphicsMode2xSaI,
-	kGraphicsModeSuper2xSaI,
-	kGraphicsModeSuperEagle,
-	kGraphicsModeAdvMame2x,
-	kGraphicsModeAdvMame3x,
-	kGraphicsModeHQ2x,
-	kGraphicsModeHQ3x,
-	kGraphicsModeTV2x,
-	kGraphicsModeDotMatrix
-};
-
 struct VideoContext {
 	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
 	                 overlayWidth(), overlayHeight(), mouseX(), mouseY(),
 	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
-	                 mouseIsVisible(), graphicsMode(kGraphicsModeNone), filtering(false),
-	                 shakeXOffset(), shakeYOffset() {
+	                 mouseIsVisible(), filtering(false), shakeXOffset(), shakeYOffset() {
 	}
 
 	// Game screen state
@@ -105,7 +88,6 @@ struct VideoContext {
 	Graphics::Surface mouseTexture;
 
 	// Misc state
-	GraphicsModes graphicsMode;
 	bool filtering;
 	int shakeXOffset;
 	int shakeYOffset;

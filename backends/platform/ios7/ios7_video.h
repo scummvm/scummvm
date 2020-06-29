@@ -35,7 +35,6 @@
 #include "backends/platform/ios7/ios7_common.h"
 
 #include "common/list.h"
-#include "graphics/scaler.h"
 
 typedef struct {
 	GLfloat x, y;
@@ -92,15 +91,6 @@ typedef struct {
 
 	UITouch *_firstTouch;
 	UITouch *_secondTouch;
-
-#ifdef ENABLE_IOS7_SCALERS
-	uint8_t *_scalerMemorySrc;
-	uint8_t *_scalerMemoryDst;
-	size_t _scalerMemorySrcSize;
-	size_t _scalerMemoryDstSize;
-	int _scalerScale;
-	ScalerProc *_scaler;
-#endif
 }
 
 - (id)initWithFrame:(struct CGRect)frame;

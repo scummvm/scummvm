@@ -56,7 +56,6 @@ struct AQCallbackStruct {
 
 class OSystem_iOS7 : public EventsBaseBackend, public ModularMutexBackend, public PaletteManager {
 protected:
-	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
 	static void *s_soundParam;
@@ -132,10 +131,6 @@ public:
 	virtual bool hasFeature(Feature f) override;
 	virtual void setFeatureState(Feature f, bool enable) override;
 	virtual bool getFeatureState(Feature f) override;
-	virtual const GraphicsMode *getSupportedGraphicsModes() const override;
-	virtual int getDefaultGraphicsMode() const override;
-	virtual bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override;
-	virtual int getGraphicsMode() const override;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
 
 	virtual void beginGFXTransaction() override;
