@@ -790,7 +790,9 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	if (_flags.platform == Common::kPlatformSegaCD)
 		_screen->sega_fadeToBlack(1);
 
-	quitGame();
+	if (!shouldQuit())
+		quitGame();
+
 	return false;
 }
 
