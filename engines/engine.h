@@ -55,6 +55,7 @@ class Dialog;
  */
 void GUIErrorMessage(const Common::U32String &msg, const char *url = nullptr);
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url);
+void GUIErrorMessageFormat(Common::U32String fmt, ...);
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 class Engine;

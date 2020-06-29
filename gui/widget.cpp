@@ -294,7 +294,7 @@ void Widget::read(const Common::U32String &str) {
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, Common::U32String tooltip, ThemeEngine::FontStyle font)
-	: Widget(boss, x, y, w, h, tooltip), _align(align) {
+	: Widget(boss, x, y, w, h, tooltip) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;

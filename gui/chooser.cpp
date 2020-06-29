@@ -48,7 +48,7 @@ ChooserDialog::ChooserDialog(const U32String &title, String dialogId)
 	_chooseButton->setEnabled(false);
 }
 
-void ChooserDialog::setList(const U32StringArray& list) {
+void ChooserDialog::setList(const U32StringArray &list) {
 	_list->setList(list);
 }
 

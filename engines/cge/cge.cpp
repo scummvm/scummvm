@@ -228,7 +228,7 @@ Common::Error CGEEngine::run() {
 		Common::U32String msg = Common::U32String(_text->getText(kSayTheEnd));
 		if (!msg.empty()) {
 			g_system->delayMillis(10);
-			GUI::MessageDialog dialog(msg, Common::U32String("OK"));
+			GUI::MessageDialog dialog(msg);
 			dialog.runModal();
 		}
 	}

@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include "common/ustr.h"
 
 namespace GUI {
 class LauncherDialog;

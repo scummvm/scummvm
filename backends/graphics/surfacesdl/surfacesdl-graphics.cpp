@@ -2500,14 +2500,12 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef USE_OSD
 		Common::U32String message;
 		if (_videoMode.aspectRatioCorrection)
-			message = Common::String::format("%s\n%d x %d -> %d x %d",
-			                                 _("Enabled aspect ratio correction").encode().c_str(),
+			message = Common::U32String::format(_("Enabled aspect ratio correction") + Common::U32String("\n%d x %d -> %d x %d"),
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);
 		else
-			message = Common::String::format("%s\n%d x %d -> %d x %d",
-			                                 _("Disabled aspect ratio correction").encode().c_str(),
+			message = Common::U32String::format(_("Disabled aspect ratio correction") + Common::U32String("%s\n%d x %d -> %d x %d"),
 			                                 _videoMode.screenWidth, _videoMode.screenHeight,
 			                                 _hwScreen->w, _hwScreen->h
 			);

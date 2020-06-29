@@ -74,11 +74,11 @@ protected:
 
 public:
 	// arbitrary message
-	InfoDialog(ScummEngine *scumm, const U32String& message);
+	InfoDialog(ScummEngine *scumm, const U32String &message);
 	// from resources
 	InfoDialog(ScummEngine *scumm, int res);
 
-	void setInfoText(const U32String& message);
+	void setInfoText(const U32String &message);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		setResult(0);

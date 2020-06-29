@@ -952,11 +952,11 @@ bool DrasculaEngine::loadDrasculaDat() {
 	ver = in.readByte();
 
 	if (ver != DRASCULA_DAT_VER) {
-		Common::String errorMessage = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.").encode().c_str(),
+		Common::U32String errorMessage = Common::U32String::format(
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
 			filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
 		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.c_str());
+		warning("%s", errorMessage.encode().c_str());
 
 		return false;
 	}

@@ -593,8 +593,8 @@ bool VM::getWord(Common::String &line) {
 		_words.push_back(iw);
 		return true;
 	} else {
-		Common::String msg = Common::String::format(_("I don't know the word \"%s\".\n").encode().c_str(), iw._text.c_str());
-		print(msg);
+		Common::U32String msg = Common::U32String::format(_("I don't know the word \"%s\".\n"), iw._text.c_str());
+		print(msg.encode());
 		return false;
 	}
 }

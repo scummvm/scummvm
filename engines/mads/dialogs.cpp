@@ -352,7 +352,7 @@ void TextDialog::draw() {
 	// Draw the text lines
 	int lineYp = _position.y + 5;
 #ifdef USE_TTS
-	Common::U32String text;
+	Common::String text;
 #endif
 	for (int lineNum = 0; lineNum <= _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
@@ -393,7 +393,7 @@ void TextDialog::draw() {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
 			ttsMan->stop();
-			ttsMan->say(text);
+			ttsMan->say(Common::convertToU32String(text.c_str()));
 		}
 	}
 #endif

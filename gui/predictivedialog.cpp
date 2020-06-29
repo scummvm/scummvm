@@ -485,7 +485,7 @@ void PredictiveDialog::processButton(ButtonId button) {
 		"next",    "add",
 		"<",
 		"Cancel",  "OK",
-		"Pre", "(0) ", ""
+		"Pre", "(0) ", nullptr
 	};
 
 	if (_mode == kModeAbc) {
