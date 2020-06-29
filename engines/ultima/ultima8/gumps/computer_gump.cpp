@@ -46,12 +46,12 @@ static const int COMPUTER_GUMP_SHAPE = 30;
 static const int COMPUTER_GUMP_SOUND = 0x33;
 
 ComputerGump::ComputerGump()
-	: ModalGump() {
+	: ModalGump(), _textWidget(nullptr) {
 
 }
 
 ComputerGump::ComputerGump(const Std::string &msg) :
-	ModalGump(0, 0, 100, 100), _text(msg) {
+	ModalGump(0, 0, 100, 100), _text(msg), _textWidget(nullptr) {
 }
 
 ComputerGump::~ComputerGump(void) {
@@ -86,7 +86,7 @@ void ComputerGump::InitGump(Gump *newparent, bool take_focus) {
 	botGump->SetShape(shape, 1);
 	botGump->InitGump(this, false);
 
-	_textWidget = new TextWidget(42, 42, _text, true, COMPUTER_FONT, _dims.w - 42 * 2, 0, Font::TEXT_LEFT);
+	_textWidget = new TextWidget(41, 38, _text, true, COMPUTER_FONT, _dims.w - 100, 0, Font::TEXT_LEFT);
 	_textWidget->InitGump(this);
 
 	AudioProcess *audio = AudioProcess::get_instance();
