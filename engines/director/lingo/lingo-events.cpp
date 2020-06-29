@@ -236,41 +236,66 @@ void Lingo::registerEvent(LEvent event, int spriteId) {
 		break;
 	}
 
-	/* Now queue any objects that responds to this event, in order of precedence.
-	 *   (Sprite -> Cast Member -> Frame -> Movie)
-	 * Once one of these objects handles the event, any event handlers queued
-	 * for the same event will be ignored unless the pass command was called.
-	 */
-	switch (event) {
-	case kEventKeyUp:
-	case kEventKeyDown:
-	case kEventMouseUp:
-	case kEventMouseDown:
-	case kEventBeginSprite:
-		if (spriteId) {
-			queueSpriteEvent(event, eventId, spriteId);
+	if (_vm->getVersion() <= 3) {
+		// In D2-3, specific objects handle each event, with no passing
+		switch(event) {
+		case kEventMouseUp:
+		case kEventMouseDown:
+			if (spriteId) {
+				queueSpriteEvent(event, eventId, spriteId);
+			}
+			break;
+
+		case kEventEnterFrame:
+			queueFrameEvent(event, eventId);
+			break;
+		
+		case kEventIdle:
+		case kEventStartUp:
+		case kEventStartMovie:
+		case kEventStepMovie:
+		case kEventStopMovie:
+			queueMovieEvent(event, eventId);
+			break;
+
+		default:
+			warning("registerEvent: Unhandled event %s", _eventHandlerTypes[event]);	
 		}
-		// fall through
+	} else {
+		/* In D4+, queue any objects that responds to this event, in order of precedence.
+		 *   (Sprite -> Cast Member -> Frame -> Movie)
+		 * Once one of these objects handles the event, any event handlers queued
+		 * for the same event will be ignored unless the pass command was called.
+		 */
+		switch (event) {
+		case kEventKeyUp:
+		case kEventKeyDown:
+		case kEventMouseUp:
+		case kEventMouseDown:
+		case kEventBeginSprite:
+			if (spriteId) {
+				queueSpriteEvent(event, eventId, spriteId);
+			}
+			// fall through
 
-	case kEventIdle:
-	case kEventEnterFrame:
-	case kEventExitFrame:
-	case kEventNone:
-		queueFrameEvent(event, eventId);
-		// fall through
+		case kEventIdle:
+		case kEventEnterFrame:
+		case kEventExitFrame:
+			queueFrameEvent(event, eventId);
+			// fall through
 
-	case kEventStart:
-	case kEventStartUp:
-	case kEventStartMovie:
-	case kEventStepMovie:
-	case kEventStopMovie:
-	case kEventTimeout:
-	case kEventPrepareMovie:
-		queueMovieEvent(event, eventId);
-		break;
+		case kEventStart:
+		case kEventStartUp:
+		case kEventStartMovie:
+		case kEventStopMovie:
+		case kEventTimeout:
+		case kEventPrepareMovie:
+			queueMovieEvent(event, eventId);
+			break;
 
-	default:
-		warning("registerEvent: Unhandled event %s", _eventHandlerTypes[event]);
+		default:
+			warning("registerEvent: Unhandled event %s", _eventHandlerTypes[event]);
+		}
 	}
 
 	if (oldQueueSize == _eventQueue.size()) {
