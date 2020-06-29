@@ -104,9 +104,12 @@ struct EventInfo {
 	               ///< For Note On events, a non-zero value indicates that no Note Off event
 	               ///< will occur, and the MidiParser will have to generate one itself.
 	               ///< For all other events, this value should always be zero.
+	bool   loop;   ///< Indicates that this event loops (part of) the MIDI data.
 
 	byte channel() const { return event & 0x0F; } ///< Separates the MIDI channel from the event.
 	byte command() const { return event >> 4; }   ///< Separates the command code from the event.
+
+	EventInfo() : start(0), delta(0), event(0), length(0), loop(false) { basic.param1 = 0; basic.param2 = 0; ext.type = 0; ext.data = 0; }
 };
 
 /**
