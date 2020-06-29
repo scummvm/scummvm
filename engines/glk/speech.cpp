@@ -115,8 +115,10 @@ void SpeechManager::speak(const Common::U32String &text, Speech *speechSource) {
 		// Otherwise queeue the speech.
 		Common::TextToSpeechManager::Action speechAction = Common::TextToSpeechManager::QUEUE;
 		if (speechSource != _lastSpeechSource) {
-			debugC(kDebugSpeech, "Interrupting speech from another source.");
-			speechAction = Common::TextToSpeechManager::INTERRUPT;
+			debugC(kDebugSpeech, "Changing speack text source.");
+			// Should we interrupt the text from the other source?
+			// Just queueing the text seems to provide a better experience.
+			//speechAction = Common::TextToSpeechManager::INTERRUPT;
 			_lastSpeechSource = speechSource;
 		}
 		// Curently the TextToSpeechManager takes a String, which does not properly support
@@ -131,8 +133,10 @@ void SpeechManager::speak(const Common::U32String &text, Speech *speechSource) {
 void SpeechManager::stopSpeech(Speech *speechSource) {
 #if defined(USE_TTS)
 	debugC(kDebugSpeech, "SpeechManager::stopSpeech()");
-	// Only interrupt the speech if it is from the given speech source.
-	if (_ttsMan != nullptr && speechSource == _lastSpeechSource)
+	// Should we only interrupt the speech if it is from the given speech source.
+	// If we do that we probably want to change speak to interrupt the speech when
+	// called with a different speech source as the current one.
+	if (_ttsMan != nullptr)
 		_ttsMan->stop();
 #endif
 }
