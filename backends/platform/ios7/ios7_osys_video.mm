@@ -99,38 +99,6 @@ void OSystem_iOS7::initVideoContext() {
 	_videoContext = [[iOS7AppDelegate iPhoneView] getVideoContext];
 }
 
-const OSystem::GraphicsMode *OSystem_iOS7::getSupportedGraphicsModes() const {
-	return s_supportedGraphicsModes;
-}
-
-int OSystem_iOS7::getDefaultGraphicsMode() const {
-	return kGraphicsModeNone;
-}
-
-bool OSystem_iOS7::setGraphicsMode(int mode, uint /*flags*/) {
-	switch (mode) {
-	case kGraphicsModeNone:
-	case kGraphicsMode2xSaI:
-	case kGraphicsModeSuper2xSaI:
-	case kGraphicsModeSuperEagle:
-	case kGraphicsModeAdvMame2x:
-	case kGraphicsModeAdvMame3x:
-	case kGraphicsModeHQ2x:
-	case kGraphicsModeHQ3x:
-	case kGraphicsModeTV2x:
-	case kGraphicsModeDotMatrix:
-		_videoContext->graphicsMode = (GraphicsModes)mode;
-		return true;
-
-	default:
-		return false;
-	}
-}
-
-int OSystem_iOS7::getGraphicsMode() const {
-	return _videoContext->graphicsMode;
-}
-
 #ifdef USE_RGB_COLOR
 Common::List<Graphics::PixelFormat> OSystem_iOS7::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;

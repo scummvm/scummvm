@@ -422,22 +422,9 @@ uint getSizeNextPOT(uint size) {
 
 	_backgroundSaveStateTask = UIBackgroundTaskInvalid;
 
-#if defined(USE_SCALERS) || defined(USE_HQ_SCALERS)
-	InitScalers(565);
-#endif
-
 	[self setupGestureRecognizers];
 
 	[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
-
-#ifdef ENABLE_IOS7_SCALERS
-	_scalerMemorySrc = NULL;
-	_scalerMemoryDst = NULL;
-	_scalerMemorySrcSize = 0;
-	_scalerMemoryDstSize = 0;
-	_scaler = NULL;
-	_scalerScale = 1;
-#endif
 
 	_keyboardView = nil;
 	_keyboardVisible = NO;
@@ -470,11 +457,6 @@ uint getSizeNextPOT(uint size) {
 	_videoContext.overlayTexture.free();
 	_videoContext.mouseTexture.free();
 
-#ifdef ENABLE_IOS7_SCALERS
-	free(_scalerMemorySrc);
-	free(_scalerMemoryDst);
-#endif
-
 	[_eventLock release];
 	[super dealloc];
 }
@@ -497,79 +479,10 @@ uint getSizeNextPOT(uint size) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); printOpenGLError();
 }
 
-#ifdef ENABLE_IOS7_SCALERS
-- (void)setScaler {
-	ScalerProc *scaler = NULL;
-	int scalerScale = 1;
-
-	switch (_videoContext.graphicsMode) {
-	case kGraphicsModeNone:
-		break;
-#ifdef USE_SCALERS
-	case kGraphicsMode2xSaI:
-		scaler = _2xSaI;
-		scalerScale = 2;
-		break;
-
-	case kGraphicsModeSuper2xSaI:
-		scaler = Super2xSaI;
-		scalerScale = 2;
-		break;
-
-	case kGraphicsModeSuperEagle:
-		scaler = SuperEagle;
-		scalerScale = 2;
-		break;
-
-	case kGraphicsModeAdvMame2x:
-		scaler = AdvMame2x;
-		scalerScale = 2;
-		break;
-
-	case kGraphicsModeAdvMame3x:
-		scaler = AdvMame3x;
-		scalerScale = 3;
-		break;
-
-#ifdef USE_HQ_SCALERS
-	case kGraphicsModeHQ2x:
-		scaler = HQ2x;
-		scalerScale = 2;
-		break;
-
-	case kGraphicsModeHQ3x:
-		scaler = HQ3x;
-		scalerScale = 3;
-		break;
-#endif
-
-	case kGraphicsModeTV2x:
-		scaler = TV2x;
-		scalerScale = 2;
-		break;
-
-	case kGraphicsModeDotMatrix:
-		scaler = DotMatrix;
-		scalerScale = 2;
-		break;
-#endif
-
-	default:
-		break;
-	}
-
-	_scaler = scaler;
-	_scalerScale = scalerScale;
-}
-#endif
-
 - (void)setGraphicsMode {
 	[self setFilterModeForTexture:_screenTexture];
 	[self setFilterModeForTexture:_overlayTexture];
 	[self setFilterModeForTexture:_mouseCursorTexture];
-#ifdef ENABLE_IOS7_SCALERS
-	[self setScaler];
-#endif
 }
 
 - (void)updateSurface {
@@ -663,40 +576,7 @@ uint getSizeNextPOT(uint size) {
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
-#ifdef ENABLE_IOS7_SCALERS
-	if (_scaler) {
-		size_t neededSrcMemorySize = (size_t) (_videoContext.screenTexture.pitch * (_videoContext.screenTexture.h + 4));
-		size_t neededDstMemorySize = (size_t) (_videoContext.screenTexture.pitch * (_videoContext.screenTexture.h + 4) * _scalerScale * _scalerScale);
-		if (neededSrcMemorySize != _scalerMemorySrcSize) {
-			_scalerMemorySrc = (uint8_t *) realloc(_scalerMemorySrc, neededSrcMemorySize);
-			_scalerMemorySrcSize = neededSrcMemorySize;
-		}
-		if (neededDstMemorySize != _scalerMemoryDstSize) {
-			_scalerMemoryDst = (uint8_t *) realloc(_scalerMemoryDst, neededDstMemorySize);
-			_scalerMemoryDstSize = neededDstMemorySize;
-		}
-
-		// Clear two lines before
-		memset(_scalerMemorySrc, 0, (size_t) (_videoContext.screenTexture.pitch * 2));
-		// Copy original buffer
-		memcpy(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2, _videoContext.screenTexture.getPixels(), _videoContext.screenTexture.pitch * _videoContext.screenTexture.h);
-		// Clear two lines after
-		memset(_scalerMemorySrc + _videoContext.screenTexture.pitch * (2 + _videoContext.screenTexture.h), 0, (size_t) (_videoContext.screenTexture.pitch * 2));
-		// Apply scaler
-		_scaler(_scalerMemorySrc + _videoContext.screenTexture.pitch * 2,
-		        _videoContext.screenTexture.pitch,
-		        _scalerMemoryDst,
-		        (uint32) (_videoContext.screenTexture.pitch * _scalerScale),
-		        _videoContext.screenTexture.w,
-		        _videoContext.screenTexture.h);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w * _scalerScale, _videoContext.screenTexture.h * _scalerScale, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _scalerMemoryDst); printOpenGLError();
-	}
-	else {
-#endif
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.getPixels()); printOpenGLError();
-#ifdef ENABLE_IOS7_SCALERS
-	}
-#endif
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.getPixels()); printOpenGLError();
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
