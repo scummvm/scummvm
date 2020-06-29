@@ -262,6 +262,7 @@ void Lingo::registerEvent(LEvent event, int spriteId) {
 	case kEventStart:
 	case kEventStartUp:
 	case kEventStartMovie:
+	case kEventStepMovie:
 	case kEventStopMovie:
 	case kEventTimeout:
 	case kEventPrepareMovie:

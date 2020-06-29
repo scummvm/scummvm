@@ -490,9 +490,16 @@ void Score::update() {
 	renderFrame(_currentFrame);
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 
-	// Enter and exit from previous frame (Director 4)
-	if (!_vm->_playbackPaused)
-		_lingo->processEvent(kEventEnterFrame);
+	// Enter and exit from previous frame
+	if (!_vm->_playbackPaused) {
+		_lingo->processEvent(kEventEnterFrame); // Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
+		if (_vm->getVersion() == 3) {
+			// Movie version of enterFrame, for D3 only. The Lingo Dictionary claims
+			// "This handler executes before anything else when the playback head moves."
+			// but this is incorrect. The frame script is executed first.
+			_lingo->processEvent(kEventStepMovie);
+		}
+	}
 	// TODO Director 6 - another order
 
 	byte tempo = _puppetTempo ? _puppetTempo : _frames[_currentFrame]->_tempo;
