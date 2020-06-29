@@ -166,6 +166,7 @@ bool MidiParser_XMIDI::jumpToIndex(uint8 index, bool stopNotes) {
 void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 	info.start = _position._playPos;
 	info.delta = readVLQ2(_position._playPos);
+	info.loop = false;
 
 	// Process the next event.
 	info.event = *(_position._playPos++);
@@ -230,12 +231,15 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				} else {
 					// Repeat 0 means "loop forever".
 					if (_loop[_loopCount].repeat) {
-						if (--_loop[_loopCount].repeat == 0)
+						if (--_loop[_loopCount].repeat == 0) {
 							_loopCount--;
-						else
+						} else {
 							_position._playPos = _loop[_loopCount].pos;
+							info.loop = true;
+						}
 					} else {
 						_position._playPos = _loop[_loopCount].pos;
+						info.loop = true;
 					}
 				}
 			}

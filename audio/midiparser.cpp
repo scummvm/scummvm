@@ -211,6 +211,7 @@ void MidiParser::onTimer() {
 		}
 	}
 
+	bool loopEvent = false;
 	while (!_abortParse) {
 		EventInfo &info = _nextEvent;
 
@@ -219,7 +220,6 @@ void MidiParser::onTimer() {
 			break;
 
 		// Process the next info.
-		_position._lastEventTick += info.delta;
 		if (info.event < 0x80) {
 			warning("Bad command or running status %02X", info.event);
 			_position._playPos = 0;
@@ -241,8 +241,11 @@ void MidiParser::onTimer() {
 		if (!ret)
 			return;
 
+		loopEvent |= info.loop;
+
 		if (!_abortParse) {
 			_position._lastEventTime = eventTime;
+			_position._lastEventTick += info.delta;
 			parseNextEvent(_nextEvent);
 		}
 	}
@@ -250,6 +253,15 @@ void MidiParser::onTimer() {
 	if (!_abortParse) {
 		_position._playTime = endTime;
 		_position._playTick = (_position._playTime - _position._lastEventTime) / _psecPerTick + _position._lastEventTick;
+		if (loopEvent) {
+			// One of the processed events has looped (part of) the MIDI data.
+			// Infinite looping will cause the tracker to overflow eventually.
+			// Reset the tracker positions to prevent this from happening.
+			_position._playTime -= _position._lastEventTime;
+			_position._lastEventTime = 0;
+			_position._playTick -= _position._lastEventTick;
+			_position._lastEventTick = 0;
+		}
 	}
 }
 
