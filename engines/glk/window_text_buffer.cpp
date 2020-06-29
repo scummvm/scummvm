@@ -822,6 +822,8 @@ void TextBufferWindow::redraw() {
 	int tx, tsc, tsw, lsc, rsc;
 	Screen &screen = *g_vm->_screen;
 
+	gli_tts_flush();
+
 	Window::redraw();
 
 	_lines[0]._len = _numChars;
