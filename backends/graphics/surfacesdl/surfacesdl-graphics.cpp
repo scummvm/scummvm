@@ -264,6 +264,7 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFilteringMode:
 		return _videoMode.filtering;
+#endif
 	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:
@@ -288,8 +289,8 @@ static void initGraphicsModes() {
 		for (uint j = 0; j < factors.size(); ++j) {
 			Common::String n1 = Common::String::format("%s%dx", name, factors[j]);
 			Common::String n2 = Common::String::format("%s%dx", prettyName, factors[j]);
-			gm.name = strdup(n1.c_str());
-			gm.description = strdup(n2.c_str());
+			gm.name = scumm_strdup(n1.c_str());
+			gm.description = scumm_strdup(n2.c_str());
 			gm.id = s_supportedGraphicsModes->size();
 
 			// if normal2x exists, it is the default
@@ -318,8 +319,8 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes()
 	// Do deep copy. Each can be freed independently of the other.
 	OSystem::GraphicsMode *gm = modes;
 	while (gm->name) {
-		gm->name = strdup(gm->name);
-		gm->description = strdup(gm->description);
+		gm->name = scumm_strdup(gm->name);
+		gm->description = scumm_strdup(gm->description);
 		++gm;
 	}
 
@@ -598,7 +599,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 		// Get our currently set hardware format
 		Graphics::PixelFormat hwFormat = convertSDLPixelFormat(_hwScreen->format);
 
-		_supportedFormats.push_back(format);
+		_supportedFormats.push_back(hwFormat);
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 		format = hwFormat;
@@ -710,8 +711,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 
 	// If the _scalerIndex has changed, change scaler plugins
 	if (&_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin || _transactionDetails.formatChanged) {
-		Graphics::PixelFormat format;
-		convertSDLPixelFormat(_hwScreen->format, &format);
+		Graphics::PixelFormat format = convertSDLPixelFormat(_hwScreen->format);
 		if (_scalerPlugin)
 			_scalerPlugin->deinitialize();
 
@@ -1343,15 +1343,15 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 				if (_overlayVisible) {
 					blitSurface((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-					            (byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w * 2, dst_h);
+					            (byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w * 2, dst_h);
 				} else {
 					if (_useOldSrc) {
 						// scale into _destbuffer instead of _hwScreen to avoid AR problems
 						_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-							(byte *)_destbuffer->pixels + rx1 * 2 + orig_dst_y * scale1 * _destbuffer->pitch, _destbuffer->pitch, r->w, dst_h, r->x, r->y);
+							(byte *)_destbuffer->pixels + dst_x * 2 + orig_dst_y * scale1 * _destbuffer->pitch, _destbuffer->pitch, r->w, dst_h, r->x, r->y);
 					} else
 						_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-							(byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
+							(byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
 				}
 			}
 
@@ -1366,8 +1366,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				int y = orig_dst_y * scale1;
 				int h = r->h;
 				int w = r->w;
-				byte *dest = (byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch;
-				byte *src = (byte *)_destbuffer->pixels + rx1 * 2 + y * _destbuffer->pitch;
+				byte *dest = (byte *)_hwScreen->pixels + dst_x * 2 + dst_y * dstPitch;
+				byte *src = (byte *)_destbuffer->pixels + dst_x * 2 + y * _destbuffer->pitch;
 				while (h--) {
 					memcpy(dest, src, w*2);
 					dest += dstPitch;
@@ -1379,9 +1379,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #ifdef USE_ASPECT
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible) {
 				if (_useOldSrc)
-					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
 				else
-					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
 			}
 #endif
 		}
@@ -1697,9 +1697,8 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 	}
 
 #ifdef USE_ASPECT
-	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates) {
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates)
 		makeRectStretchable(x, y, w, h, _videoMode.filtering);
-	}
 #endif
 
 	if (w == width && h == height) {

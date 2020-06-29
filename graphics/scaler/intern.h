@@ -289,35 +289,6 @@ uint32 interpolate32_1_1_1(uint32 pixel1, uint32 pixel2, uint32 pixel3) {
 }
 
 /**
- * Interpolate three 32 bit pixels with weights 1, 1, and 1, i.e., (p1+p2+p3)/3.
- */
-
-template<typename ColorMask>
-uint32 interpolate32_1_1_1(uint32 pixel1, uint32 pixel2, uint32 pixel3) {
-	uint32 rsum, gsum, bsum;
-
-	rsum =  ((pixel1 & ColorMask::kRedMask) >> ColorMask::kRedShift);
-	rsum += ((pixel2 & ColorMask::kRedMask) >> ColorMask::kRedShift);
-	rsum += ((pixel3 & ColorMask::kRedMask) >> ColorMask::kRedShift);
-	rsum /= 3;
-	rsum <<= ColorMask::kRedShift;
-
-	gsum =  ((pixel1 & ColorMask::kGreenMask) >> ColorMask::kGreenShift);
-	gsum += ((pixel2 & ColorMask::kGreenMask) >> ColorMask::kGreenShift);
-	gsum += ((pixel3 & ColorMask::kGreenMask) >> ColorMask::kGreenShift);
-	gsum /= 3;
-	gsum <<= ColorMask::kGreenShift;
-
-	bsum =  ((pixel1 & ColorMask::kBlueMask) >> ColorMask::kBlueShift);
-	bsum += ((pixel2 & ColorMask::kBlueMask) >> ColorMask::kBlueShift);
-	bsum += ((pixel3 & ColorMask::kBlueMask) >> ColorMask::kBlueShift);
-	bsum /= 3;
-	bsum <<= ColorMask::kBlueShift;
-
-	return (rsum & ColorMask::kRedMask) | (gsum & ColorMask::kGreenMask) | (bsum & ColorMask::kBlueMask);
-}
-
-/**
  * Interpolate four 32 bit pixels with weights 1, 1, 1, and 1, i.e., (p1+p2+p3+p4)/4.
  *
  * @see interpolate32_3_1 for similar method
