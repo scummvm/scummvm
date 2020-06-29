@@ -1046,6 +1046,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 
 	if (id1.type == INT) {
 		id = id1.u.i;
+	} else if (id1.type == STRING) {
+		id = g_lingo->castIdFetch(id1);
 	} else {
 		warning("Lingo::setTheCast(): Unknown the cast id type: %s", id1.type2str());
 		return;
