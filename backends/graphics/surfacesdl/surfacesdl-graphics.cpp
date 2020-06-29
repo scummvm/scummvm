@@ -2429,60 +2429,6 @@ void SurfaceSdlGraphicsManager::handleResizeImpl(const int width, const int heig
 	recalculateDisplayAreas();
 }
 
-void SurfaceSdlGraphicsManager::handleScalerHotkeys(int scalefactor, int scalerType) {
-	assert(scalerType >= 0 && scalerType < ARRAYSIZE(s_gfxModeSwitchTable));
-
-	int factor = CLIP(scalefactor - 1, 0, 4);
-
-	while (s_gfxModeSwitchTable[scalerType][factor] < 0) {
-		assert(factor > 0);
-		factor--;
-	}
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	bool sizeChanged = _videoMode.scaleFactor != factor;
-#endif
-
-	int newMode = s_gfxModeSwitchTable[scalerType][factor];
-	if (newMode >= 0) {
-		_scalerType = scalerType;
-
-		beginGFXTransaction();
-			setGraphicsMode(newMode);
-		endGFXTransaction();
-#ifdef USE_OSD
-		const char *newScalerName = 0;
-		const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
-		while (g->name) {
-			if (g->id == _videoMode.mode) {
-				newScalerName = g->description;
-				break;
-			}
-			g++;
-		}
-		if (newScalerName) {
-			const Common::U32String message = Common::U32String::format(
-				"%S %s\n%d x %d -> %d x %d",
-				_("Active graphics filter:").c_str(),
-				newScalerName,
-				_videoMode.screenWidth, _videoMode.screenHeight,
-				_hwScreen->w, _hwScreen->h);
-			displayMessageOnOSD(message);
-		}
-#endif
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		if (sizeChanged) {
-			// Forcibly resizing the window here since a user switching scaler
-			// size will not normally cause the window to update
-			_window->createOrUpdateWindow(_hwScreen->w, _hwScreen->h, _lastFlags);
-		}
-#endif
-
-		internUpdateScreen();
-	}
-}
-
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
 		return SdlGraphicsManager::notifyEvent(event);
@@ -2560,25 +2506,6 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return true;
 	}
 #endif
-
-	case kActionIncreaseScaleFactor:
-		handleScalerHotkeys(_videoMode.scaleFactor + 1, _scalerType);
-		return true;
-
-	case kActionDecreaseScaleFactor:
-		handleScalerHotkeys(_videoMode.scaleFactor - 1, _scalerType);
-		return true;
-
-	case kActionSetScaleFilter1:
-	case kActionSetScaleFilter2:
-	case kActionSetScaleFilter3:
-	case kActionSetScaleFilter4:
-	case kActionSetScaleFilter5:
-	case kActionSetScaleFilter6:
-	case kActionSetScaleFilter7:
-	case kActionSetScaleFilter8:
-		handleScalerHotkeys(_videoMode.scaleFactor, event.customType - kActionSetScaleFilter1);
-		return true;
 
 	default:
 		return SdlGraphicsManager::notifyEvent(event);
