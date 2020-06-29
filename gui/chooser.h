@@ -50,7 +50,7 @@ protected:
 public:
 	ChooserDialog(const U32String &title, String dialogId = "Browser");
 
-	void setList(const U32StringArray& list);
+	void setList(const U32StringArray &list);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };

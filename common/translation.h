@@ -110,21 +110,21 @@ public:
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 */
 	U32String getTranslation(const char *message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 */
 	U32String getTranslation(const String &message) const;
 
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 *
 	 * If a translation is found for the given context it will return that
 	 * translation, otherwise it will look for a translation for the same
@@ -135,7 +135,7 @@ public:
 	/**
 	 * Returns the translation into the current language of the parameter
 	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message.
+	 * it returns the original untranslated message, as a U32String.
 	 *
 	 * If a translation is found for the given context it will return that
 	 * translation, otherwise it will look for a translation for the same

@@ -498,8 +498,8 @@ bool MohawkEngine_Riven::checkDatafiles() {
 		return true;
 	}
 
-	Common::String message = _("You are missing the following required Riven data files:\n").encode() + missingFiles;
-	warning("%s", message.c_str());
+	Common::U32String message = _("You are missing the following required Riven data files:\n") + Common::convertToU32String(missingFiles.c_str());
+	warning("%s", message.encode().c_str());
 	GUIErrorMessage(message);
 
 	return false;

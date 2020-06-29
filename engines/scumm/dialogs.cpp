@@ -389,7 +389,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter);
 }
 
-InfoDialog::InfoDialog(ScummEngine *scumm, const U32String& message)
+InfoDialog::InfoDialog(ScummEngine *scumm, const U32String &message)
 : ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
 
 	_message = message;
@@ -398,7 +398,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const U32String& message)
 	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter);
 }
 
-void InfoDialog::setInfoText(const U32String& message) {
+void InfoDialog::setInfoText(const U32String &message) {
 	_message = message;
 	_text->setLabel(_message);
 	//reflowLayout(); // FIXME: Should we call this here? Depends on the usage patterns, I guess...
@@ -477,8 +477,11 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
 	: InfoDialog(scumm, res), _yesKey('y'), _noKey('n') {
 
-	if (_message.encode().lastChar() != ')') {
-		_yesKey = _message.encode().lastChar();
+	if (_message.empty())
+		return;
+
+	if (_message[_message.size() - 1] != ')') {
+		_yesKey = _message[_message.size() - 1];
 		_message.deleteLastChar();
 
 		if (_yesKey >= 'A' && _yesKey <= 'Z')

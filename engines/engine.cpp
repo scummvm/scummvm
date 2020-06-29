@@ -38,6 +38,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/error.h"
 #include "common/list.h"
 #include "common/memstream.h"
@@ -425,6 +426,17 @@ void GUIErrorMessageFormat(const char *fmt, ...) {
 	va_list va;
 	va_start(va, fmt);
 	msg = Common::String::vformat(fmt, va);
+	va_end(va);
+
+	GUIErrorMessage(msg);
+}
+
+void GUIErrorMessageFormat(Common::U32String fmt, ...) {
+	Common::U32String msg("");
+
+	va_list va;
+	va_start(va, fmt);
+	Common::U32String::vformat(fmt.begin(), fmt.end(), msg, va);
 	va_end(va);
 
 	GUIErrorMessage(msg);

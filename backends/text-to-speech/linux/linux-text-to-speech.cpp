@@ -194,24 +194,7 @@ bool SpeechDispatcherManager::say(const Common::U32String &str, Action action, C
 		return true;
 	}
 
-	if (charset.empty()) {
-#ifdef USE_TRANSLATION
-		charset = TransMan.getCurrentCharset();
-#else
-		charset = "ASCII";
-#endif
-	}
-
-	Common::String strToSpeak = str.encode();
-
-	char *tmpStr = Common::Encoding::convert("UTF-8", charset, strToSpeak.c_str(), strToSpeak.size());
-	if (tmpStr == nullptr) {
-		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
-		pthread_mutex_unlock(&_speechMutex);
-		return true;
-	}
-	Common::String strUtf8 = tmpStr;
-	free(tmpStr);
+	Common::String strUtf8 = str.encode();;
 
 	if (!_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
 			_speechQueue.front() == strUtf8 && isSpeaking()) {
