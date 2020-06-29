@@ -151,7 +151,7 @@ static const byte macCursorCrossBar[] = {
 
 static void menuTimerHandler(void *refCon);
 
-MacWindowManager::MacWindowManager(uint32 mode) {
+MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_screen = 0;
 	_screenCopy = nullptr;
 	_lastId = 0;
@@ -181,8 +181,12 @@ MacWindowManager::MacWindowManager(uint32 mode) {
 	_palette = nullptr;
 	_paletteSize = 0;
 
-	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
-		_patterns.push_back(fillPatterns[i]);
+	if (patterns) {
+		_patterns = *patterns;
+	} else {
+		for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
+			_patterns.push_back(fillPatterns[i]);
+	}
 
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 

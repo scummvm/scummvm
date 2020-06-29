@@ -122,7 +122,7 @@ void macInvertPixel(int x, int y, int color, void *data);
  */
 class MacWindowManager {
 public:
-	MacWindowManager(uint32 mode = 0);
+	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr);
 	~MacWindowManager();
 
 	/**
