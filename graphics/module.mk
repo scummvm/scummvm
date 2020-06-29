@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	macgui/macmenu.o \
 	macgui/mactext.o \
 	macgui/mactextwindow.o \
+	macgui/macshape.o \
 	macgui/macwidget.o \
 	macgui/macwindow.o \
 	macgui/macwindowborder.o \
