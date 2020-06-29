@@ -23,9 +23,9 @@
 #ifndef BACKENDS_GRAPHICS_GPH_H
 #define BACKENDS_GRAPHICS_GPH_H
 
-#include "backends/graphics/downscalesdl/downscalesdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-class GPHGraphicsManager : public DownscaleSdlGraphicsManager {
+class GPHGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	GPHGraphicsManager(SdlEventSource *boss, SdlWindow *window);
 
