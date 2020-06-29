@@ -196,7 +196,6 @@ enum LEvent {
 	kEventMouseUpOutSide,
 	kEventMouseWithin,
 
-	kEventStart,
 	kEventStartUp
 };
 

@@ -54,7 +54,6 @@ struct EventHandlerType {
 	{ kEventResizeWindow,		"resizeWindow" },
 	{ kEventOpenWindow,			"openWindow" },
 	{ kEventCloseWindow,		"closeWindow" },
-	{ kEventStart,				"start" },
 
 	{ kEventKeyUp,				"keyUp" },				//			D4
 	{ kEventKeyDown,			"keyDown" },			// D2 w		D4 (as when from D2)
@@ -284,7 +283,6 @@ void Lingo::registerEvent(LEvent event, int spriteId) {
 			queueFrameEvent(event, eventId);
 			// fall through
 
-		case kEventStart:
 		case kEventStartUp:
 		case kEventStartMovie:
 		case kEventStopMovie:

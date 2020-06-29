@@ -91,8 +91,6 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	if (!exeStream)
 		error("Failed to open EXE '%s'", getEXEName().c_str());
 
-	_lingo->processEvent(kEventStart);
-
 	uint32 initialTag = exeStream->readUint32LE();
 	if (initialTag == MKTAG('R', 'I', 'F', 'X') || initialTag == MKTAG('X', 'F', 'I', 'R')) {
 		// we've encountered a movie saved from Director, not a projector.
