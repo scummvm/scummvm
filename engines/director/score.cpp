@@ -385,7 +385,8 @@ void Score::startLoop() {
 		for (uint i = 0; i < _frames[1]->_sprites.size(); i++)
 			_channels.push_back(new Channel(_frames[1]->_sprites[i]));
 
-	_lingo->processEvent(kEventStartMovie);
+	if (_vm->getVersion() >= 3)
+		_lingo->processEvent(kEventStartMovie);
 
 	_maskSurface->clear(1);
 	while (!_stopPlay) {
@@ -416,7 +417,8 @@ void Score::startLoop() {
 			screenShot();
 	}
 
-	_lingo->processEvent(kEventStopMovie);
+	if (_vm->getVersion() >= 3)
+		_lingo->processEvent(kEventStopMovie);
 	_lingo->executePerFrameHook(-1, 0);
 }
 
@@ -441,10 +443,12 @@ void Score::update() {
 		// of _nextFrame so it doesn't get wiped.
 		if (_vm->_skipFrameAdvance) {
 			uint16 nextFrameCache = _nextFrame;
-			_lingo->processEvent(kEventExitFrame);
+			if (_vm->getVersion() >= 4)
+				_lingo->processEvent(kEventExitFrame);
 			_nextFrame = nextFrameCache;
 		} else {
-			_lingo->processEvent(kEventExitFrame);
+			if (_vm->getVersion() >= 4)
+				_lingo->processEvent(kEventExitFrame);
 		}
 
 		// If there is a transition, the perFrameHook is called
