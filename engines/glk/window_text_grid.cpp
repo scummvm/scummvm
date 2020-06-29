@@ -41,9 +41,15 @@ TextGridWindow::TextGridWindow(Windows *windows, uint rock) : TextWindow(windows
 	_lineTerminators = nullptr;
 
 	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], _styles);
+
+	if (g_conf->_speak)
+		gli_initialize_tts();
 }
 
 TextGridWindow::~TextGridWindow() {
+	if (g_conf->_speak)
+		gli_free_tts();
+
 	if (_inBuf) {
 		if (g_vm->gli_unregister_arr)
 			(*g_vm->gli_unregister_arr)(_inBuf, _inMax, "&+#!Cn", _inArrayRock);
@@ -86,6 +92,12 @@ uint TextGridWindow::getSplit(uint size, bool vertical) const {
 
 void TextGridWindow::putCharUni(uint32 ch) {
 	TextGridRow *ln;
+
+	// This may not be the best way to do this, but some games use user styles to
+	// display some gliphs from ASCII characters. Those should not be spoken as
+	// they make no sense.
+	if (_attr.style < style_User1)
+		gli_tts_speak(&ch, 1);
 
 	// Canonicalize the cursor position. That is, the cursor may have been
 	// left outside the window area; wrap it if necessary.
@@ -165,6 +177,11 @@ void TextGridWindow::moveCursor(const Point &pos) {
 	// If the values are negative, they're really huge positive numbers --
 	// remember that they were cast from uint. So set them huge and
 	// let canonicalization take its course.
+	if (_curY >= 0 && _curY < _height && _lines[_curY].dirty) {
+		const uint32 NEWLINE = '\n';
+		gli_tts_speak((const uint32 *)&NEWLINE, 1);
+	}
+
 	_curX = (pos.x < 0) ? 32767 : pos.x;
 	_curY = (pos.y < 0) ? 32767 : pos.y;
 }
@@ -222,6 +239,7 @@ void TextGridWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 	}
 
 	_lineRequest = true;
+	gli_tts_flush();
 
 	if ((int)maxlen > (_width - _curX))
 		maxlen = (_width - _curX);
@@ -277,6 +295,7 @@ void TextGridWindow::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen)
 	}
 
 	_lineRequestUni = true;
+	gli_tts_flush();
 
 	if ((int)maxlen > (_width - _curX))
 		maxlen = (_width - _curX);
@@ -417,6 +436,8 @@ void TextGridWindow::acceptReadChar(uint arg) {
 		key = arg;
 	}
 
+	gli_tts_purge();
+
 	if (key > 0xff && key < (0xffffffff - keycode_MAXVAL + 1)) {
 		if (!(_charRequestUni) || key > 0x10ffff)
 			key = keycode_Unknown;
@@ -442,16 +463,28 @@ void TextGridWindow::acceptLine(uint32 keycode) {
 	inmax = _inMax;
 	inarrayrock = _inArrayRock;
 
+	gli_tts_purge();
+
 	if (!unicode) {
 		for (ix = 0; ix < _inLen; ix++)
 			((char *)inbuf)[ix] = (char)ln->_chars[_inOrgX + ix];
 		if (_echoStream)
 			_echoStream->echoLine((char *)inbuf, _inLen);
+		if (g_conf->_speakInput) {
+			const char NEWLINE = '\n';
+			gli_tts_speak((const char *)inbuf, _inLen);
+			gli_tts_speak((const char *)&NEWLINE, 1);
+		}
 	} else {
 		for (ix = 0; ix < _inLen; ix++)
 			((uint *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
 			_echoStream->echoLineUni((const uint32 *)inbuf, _inLen);
+		if (g_conf->_speakInput) {
+			const uint32 NEWLINE = '\n';
+			gli_tts_speak((const uint32 *)inbuf, _inLen);
+			gli_tts_speak((const uint32 *)&NEWLINE, 1);
+		}
 	}
 
 	_curY = _inOrgY + 1;
@@ -594,6 +627,8 @@ void TextGridWindow::redraw() {
 	int font;
 	uint fgcolor, bgcolor;
 	Screen &screen = *g_vm->_screen;
+
+	gli_tts_flush();
 
 	Window::redraw();
 
