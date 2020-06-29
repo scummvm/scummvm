@@ -1556,6 +1556,14 @@ void MacText::reshuffleParagraph(int *row, int *col) {
 	while (end < (int)_textLines.size() - 1 && !_textLines[end].paragraphEnd) // stop at last line
 		end++;
 
+	// Get character pos within paragraph
+	int ppos = 0;
+
+	for (int i = start; i < *row; i++)
+		ppos += getLineCharWidth(i);
+
+	ppos += *col;
+
 	// Get whole paragraph
 	Common::U32String paragraph = getTextChunk(start, 0, end, -1, true, false);
 
@@ -1566,6 +1574,15 @@ void MacText::reshuffleParagraph(int *row, int *col) {
 
 	// And now readd it
 	splitString(paragraph, start);
+
+	// Find new pos within paragraph after reshuffling
+	*row = start;
+
+	while (ppos > getLineCharWidth(*row)) {
+		ppos -= getLineCharWidth(*row);
+		(*row)++;
+	}
+	*col = ppos;
 }
 
 //////////////////
