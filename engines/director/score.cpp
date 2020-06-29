@@ -402,8 +402,10 @@ void Score::startLoop() {
 		if (_currentFrame < _frames.size())
 			_vm->processEvents();
 
-		if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot))
+		if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot)) {
+			warning("Score::startLoop(): ran frame %0d", _framesRan);
 			_framesRan++;
+		}
 
 		if (debugChannelSet(-1, kDebugFewFramesOnly) && _framesRan > 9) {
 			warning("Score::startLoop(): exiting due to debug few frames only");
