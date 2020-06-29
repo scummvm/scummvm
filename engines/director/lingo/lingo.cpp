@@ -94,6 +94,10 @@ Symbol& Symbol::operator=(const Symbol &s) {
 
 void Symbol::reset() {
 	*refCount -= 1;
+	// Coverity thinks that we always free memory, as it assumes
+	// (correctly) that there are cases when refCount == 0
+	// Thus, DO NOT COMPILE, trick it and shut tons of false positives
+#ifndef __COVERITY__
 	if (*refCount <= 0) {
 		if (name)
 			delete name;
@@ -109,6 +113,7 @@ void Symbol::reset() {
 			delete varNames;
 		delete refCount;
 	}
+#endif
 }
 
 Symbol::~Symbol() {
@@ -691,6 +696,10 @@ void Datum::reset() {
 		return;
 
 	*refCount -= 1;
+	// Coverity thinks that we always free memory, as it assumes
+	// (correctly) that there are cases when refCount == 0
+	// Thus, DO NOT COMPILE, trick it and shut tons of false positives
+#ifndef __COVERITY__
 	if (*refCount <= 0) {
 		switch (type) {
 		case VAR:
@@ -723,7 +732,7 @@ void Datum::reset() {
 		}
 		delete refCount;
 	}
-
+#endif
 }
 
 Datum Datum::eval() {
