@@ -59,7 +59,7 @@ void KeypadGump::InitGump(Gump *newparent, bool take_focus) {
 	UpdateDimsFromShape();
 
 	static const int buttonShapeNum = 11;
-	static const uint16 xoffs[] = {0x31, 0x49, 0x61};
+	static const uint16 xoffs[] = {0xc, 0x27, 0x42};
 	static const uint16 yoffs[] = {0x19, 0x32, 0x4a, 0x62};
 
 	for (int y = 0; y < 4; y++) {
@@ -97,7 +97,7 @@ void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 	//ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
 		int buttonNo = child->GetIndex();
-		if (buttonNo < 10) {
+		if (buttonNo < 9) {
 			_value *= 10;
 			_value += buttonNo + 1;
 		} else if (buttonNo == 10) {
@@ -112,8 +112,10 @@ void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 					audio->playSFX(0x32, 0x10, _objId, 1);
 				Close();
 			} else {
+				// wrong.
 				if (audio)
 					audio->playSFX(0x31, 0x10, _objId, 1);
+				_value = 0;
 			}
 		}
 	}
@@ -133,6 +135,7 @@ uint32 KeypadGump::I_showKeypad(const uint8 *args, unsigned int /*argsize*/) {
 	ModalGump *gump = new KeypadGump(target);
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
+	gump->CreateNotifier();
 
 	return gump->GetNotifyProcess()->getPid();
 }
