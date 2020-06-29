@@ -60,9 +60,9 @@ typedef struct _RECT {
 	LONG bottom;
 } RECT, *PRECT;
 
-#endif
-
 } // End of namespace ICB
+
+#endif
 
 #include "px_rccommon.h" // To restore our level for warning 4237 because windows.h
 

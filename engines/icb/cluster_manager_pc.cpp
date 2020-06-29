@@ -25,6 +25,11 @@
  *
  */
 
+#ifdef _WIN32
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 #include "engines/icb/common/px_rccommon.h"
 #include "engines/icb/common/px_windows.h"
 #include "engines/icb/common/px_string.h"

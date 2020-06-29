@@ -37,16 +37,16 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_chdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
-#include "engines/icb/common/px_common.h"
-
-#include <stdlib.h>
-#include <string.h>
-
 #ifdef _WIN32
 #include <io.h>
 #else
 #include <unistd.h>
 #endif
+
+#include "engines/icb/common/px_common.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 #include "engines/icb/common/px_array.h"
 
