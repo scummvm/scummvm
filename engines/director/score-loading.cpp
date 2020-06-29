@@ -126,9 +126,15 @@ bool Score::loadArchive(bool isSharedCast) {
 	}
 
 	if (!isSharedCast) {
-		_window = _vm->_wm->addWindow(false, false, false);
-		_window->disableBorder();
-		_window->resize(_movieRect.width(), _movieRect.height());
+		Stage *stage = g_director->getStage();
+
+		// If the stage dimensions are different, delete it and start again.
+		// Otherwise, do not clear it so there can be a nice transition.
+		if (stage->getSurface()->w != _movieRect.width() || stage->getSurface()->h != _movieRect.height()) {
+			stage->resize(_movieRect.width(), _movieRect.height());
+		}
+
+		stage->setStageColor(_stageColor);
 	}
 
 	// Cast Information Array

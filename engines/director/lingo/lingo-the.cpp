@@ -649,16 +649,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 			}
 		}
 		break;
-	case kTheStageColor: {
-		Score *score = _vm->getCurrentScore();
-		score->_stageColor = _vm->transformColor(d.asInt());
-		if (score->_surface) {
-			score->_surface->clear(score->_stageColor);
-			score->renderFrame(score->getCurrentFrame(), kRenderForceUpdate);
-		} else {
-			warning("setStageColor: score has no surface, skipping");
-		}
-	}
+	case kTheStageColor:
+		g_director->getStage()->setStageColor(d.asInt());
 		break;
 	case kTheSprite:
 		setTheSprite(id, field, d);
@@ -866,7 +858,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheHeight:
 		if (sprite->_puppet && sprite->_stretch) {
-			score->markDirtyRect(channel->getBbox());
+			g_director->getStage()->addDirtyRect(channel->getBbox());
 			sprite->_height = d.asInt();
 		}
 		break;
@@ -928,7 +920,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheWidth:
 		if (sprite->_puppet && sprite->_stretch) {
-			score->markDirtyRect(channel->getBbox());
+			g_director->getStage()->addDirtyRect(channel->getBbox());
 			sprite->_width = d.asInt();
 		}
 		break;

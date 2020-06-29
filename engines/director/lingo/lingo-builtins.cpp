@@ -1744,6 +1744,7 @@ void LB::b_puppetTempo(int nargs) {
 void LB::b_puppetTransition(int nargs) {
 	// puppetTransition whichTransition [, time] [, chunkSize] [, changeArea]
 	Score *score = g_director->getCurrentScore();
+	Stage *stage = g_director->getStage();
 	uint16 duration = 250, area = 1, chunkSize = 1, type = 0;
 	if (nargs == 4) {
 		area = g_lingo->pop().asInt();
@@ -1766,7 +1767,7 @@ void LB::b_puppetTransition(int nargs) {
 		ARGNUMCHECK(1);
 	}
 
-	score->playTransition(duration, area, chunkSize, ((TransitionType)type));
+	stage->playTransition(duration, area, chunkSize, ((TransitionType)type), score->getCurrentFrame());
 }
 
 void LB::b_ramNeeded(int nargs) {

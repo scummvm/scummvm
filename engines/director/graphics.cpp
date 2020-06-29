@@ -793,4 +793,115 @@ void DirectorEngine::setCursor(int type) {
 	}
 }
 
+void inkDrawPixel(int x, int y, int color, void *data) {
+	DirectorPlotData *p = (DirectorPlotData *)data;
+
+	if (!p->destRect.contains(x, y))
+		return;
+
+	byte rSrc, gSrc, bSrc;
+	byte rDst, gDst, bDst;
+
+	const byte *src;
+	byte *dst;
+
+	byte tmpSrc, tmpDst;
+
+	dst = (byte *)p->dst->getBasePtr(x, y);
+
+	if (p->macPlot) {
+		// Get the pixel that macDrawPixel will give us, but store it to apply the
+		// ink later.
+		tmpDst = *dst;
+		Graphics::macDrawPixel(x, y, color, p->macPlot);
+		tmpSrc = *dst;
+
+		*dst = tmpDst;
+		src = &tmpSrc;
+	} else {
+		if (!p->src)
+			error("Director::inkDrawPixel(): No source surface");
+
+		src = (const byte *)p->src->getBasePtr(p->srcPoint.x, p->srcPoint.y);
+	}
+
+	g_director->_wm->decomposeColor(*src, rSrc, gSrc, bSrc);
+	g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+
+	switch (p->ink) {
+	case kInkTypeBackgndTrans:
+		if (*src == p->backColor)
+			break;
+		// fall through
+	case kInkTypeCopy:
+		*dst = *src;
+	case kInkTypeMask:
+		// TODO: Migrate from Stage to here
+		break;
+	case kInkTypeTransparent:
+		// FIXME: Is colour to ignore always white (last entry in pallette)?
+		if (*src != p->numColors - 1)
+			*dst &= *src;
+		break;
+	case kInkTypeReverse:
+		// TODO: Migrate from Stage to here
+		*dst ^= *src;
+		break;
+	case kInkTypeGhost:
+		if (*src != p->numColors - 1)
+			*dst = *dst | ~(*src);
+		break;
+	case kInkTypeNotCopy:
+		if (*src != p->numColors - 1)
+			*dst = ~(*src);
+		break;
+	case kInkTypeNotTrans:
+		if (*src != p->numColors - 1)
+			*dst = *dst & ~(*src);
+		break;
+	case kInkTypeNotReverse:
+		if (*src != p->numColors - 1)
+			*dst = *dst ^ *src;
+		break;
+	case kInkTypeNotGhost:
+		if (*src != p->numColors - 1)
+			*dst = *dst | *src;
+		break;
+	case kInkTypeMatte:
+		// TODO: Migrate from Stage to here.
+		break;
+		// Arithmetic ink types
+	case kInkTypeBlend:
+		if (*src != p->numColors - 1)
+			*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
+		break;
+	case kInkTypeAddPin:
+		if (*src != p->numColors - 1)
+			*dst = p->_wm->findBestColor(MIN((rSrc + rDst), p->numColors - 1), MIN((gSrc + gDst), p->numColors - 1), MIN((bSrc + bDst), p->numColors - 1));
+		break;
+	case kInkTypeAdd:
+		if (*src != p->numColors - 1)
+			*dst = p->_wm->findBestColor(abs(rSrc + rDst) % p->numColors, abs(gSrc + gDst) % p->numColors, abs(bSrc + bDst) % p->numColors);
+		break;
+	case kInkTypeSubPin:
+		if (*src != p->numColors - 1)
+			*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
+		break;
+	case kInkTypeLight:
+		if (*src != p->numColors - 1)
+			*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
+		break;
+	case kInkTypeSub:
+		if (*src != p->numColors - 1)
+			*dst = p->_wm->findBestColor(abs(rSrc - rDst) % p->numColors, abs(gSrc - gDst) % p->numColors, abs(bSrc - bDst) % p->numColors);
+		break;
+	case kInkTypeDark:
+		if (*src != p->numColors - 1)
+			*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
+		break;
+	default:
+		warning("Stage::inkBlitFrom: Drawing not implemented yet");
+	}
+}
+
 }

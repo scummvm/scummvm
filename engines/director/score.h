@@ -25,6 +25,7 @@
 
 #include "common/hash-str.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "director/stage.h"
 
 namespace Graphics {
 	class ManagedSurface;
@@ -40,6 +41,7 @@ namespace Common {
 
 namespace Director {
 
+class Stage;
 class Archive;
 struct CastInfo;
 class DirectorEngine;
@@ -51,6 +53,7 @@ struct Resource;
 struct Channel;
 class Sprite;
 class Stxt;
+class Cast;
 class BitmapCast;
 class ScriptCast;
 class ShapeCast;
@@ -63,34 +66,12 @@ enum RenderMode {
 	kRenderNoUnrender
 };
 
-struct TransParams {
-	TransitionType type;
-	uint duration;
-	uint chunkSize;
-	uint area;
-
-	int steps;
-	int stepDuration;
-
-	int xStepSize;
-	int yStepSize;
-
-	int xpos, ypos;
-
-	int stripSize;
-
-	TransParams() {
-		type = kTransNone;
-		duration = 250;
-		chunkSize = 1;
-		area = 0;
-		steps = 0;
-		stepDuration = 0;
-		stripSize = 0;
-
-		xStepSize = yStepSize = 0;
-		xpos = ypos = 0;
-	}
+struct MacShape {
+	InkType ink;
+	byte spriteType;
+	byte foreColor;
+	byte backColor;
+	int lineSize;
 };
 
 struct Channel {
@@ -104,6 +85,10 @@ struct Channel {
 	Channel(Sprite *sp);
 	Common::Rect getBbox();
 	Common::Point getPosition();
+	MacShape *getShape();
+	Graphics::ManagedSurface *getSurface();
+	Graphics::ManagedSurface *getMask();
+
 	void updateLocation();
 	void addDelta(Common::Point pos);
 	void resetPosition();
@@ -139,7 +124,6 @@ public:
 	void loadSpriteImages(bool isSharedCast);
 	void loadSpriteSounds(bool isSharedCast);
 	void copyCastStxts();
-	Graphics::ManagedSurface *getSurface() { return _surface; }
 
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
@@ -150,33 +134,16 @@ public:
 
 	uint16 getSpriteIDFromPos(Common::Point pos, bool onlyActive = false);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
+	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 
 	Cast *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void renderSprites(uint16 frameId, Graphics::ManagedSurface *surface, RenderMode mode = kRenderModeNormal);
-	void markDirtyRect(Common::Rect dirty);
-
-	// transition.cpp
-	void playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType);
+	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 
 private:
 	void update();
-	void renderShape(uint16 spriteId, Graphics::ManagedSurface *surface);
 
-	// ink.cpp
-	void inkBasedBlit(Graphics::ManagedSurface *destSurface, Graphics::ManagedSurface *maskSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect, uint spriteId);
-	void drawMatteSprite(Graphics::ManagedSurface *destSurface, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawReverseSprite(Graphics::ManagedSurface *destSurface, const Graphics::Surface &sprite, Common::Rect &drawRect, uint16 spriteId);
-
-	// transitions.cpp
-	void initTransParams(TransParams &t, Common::Rect &clipRect);
-	void dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
-	void dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
-	void transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
-	void transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
-
-	// score.cpp
 	void playSoundChannel(uint16 frameId);
 
 	void readVersion(uint32 rid);
@@ -203,10 +170,6 @@ public:
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 	Common::HashMap<uint16, Common::String> _fontMap;
-	Graphics::ManagedSurface *_surface;
-	Graphics::ManagedSurface *_maskSurface;
-	Graphics::ManagedSurface *_backSurface;
-	Graphics::ManagedSurface *_backSurface2;
 	Graphics::Font *_font;
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
@@ -230,8 +193,6 @@ public:
 	uint16 _castIDoffset;
 
 	int _numChannelsDisplayed;
-
-	Graphics::MacWindow *_window;
 
 	uint16 _framesRan; // used by kDebugFewFramesOnly
 

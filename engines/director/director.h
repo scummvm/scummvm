@@ -41,6 +41,7 @@ class SeekableSubReadStreamEndian;
 
 namespace Graphics {
 class MacWindowManager;
+struct MacPlotData;
 typedef Common::Array<byte *> MacPatterns;
 }
 
@@ -56,6 +57,7 @@ class Archive;
 struct DirectorGameDescription;
 class DirectorSound;
 class Lingo;
+class Stage;
 class Score;
 class Cast;
 class Stxt;
@@ -92,6 +94,28 @@ struct PaletteV4 {
 	int length;
 };
 
+// An extension of MacPlotData for interfacing with inks and patterns without
+// needing extra surfaces.
+struct DirectorPlotData {
+	Graphics::ManagedSurface *src;
+	Graphics::ManagedSurface *dst;
+	Graphics::MacPlotData *macPlot;
+	Common::Rect destRect;
+	Common::Point srcPoint;
+
+	InkType ink;
+	int numColors;
+	uint backColor;
+
+	Graphics::MacWindowManager *_wm;
+
+	DirectorPlotData(Graphics::MacWindowManager *wm, Graphics::ManagedSurface *s, Graphics::ManagedSurface *d, InkType i, uint b, uint n) :
+		src(s), dst(d), ink(i), backColor(b), macPlot(nullptr), numColors(n), _wm(wm) {
+	}
+};
+
+void inkDrawPixel(int x, int y, int color, void *data);
+
 class DirectorEngine : public ::Engine {
 public:
 	DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc);
@@ -109,6 +133,7 @@ public:
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const { return _mainArchive; }
 	Lingo *getLingo() const { return _lingo; }
+	Stage *getStage() const { return _currentStage; }
 	Score *getCurrentScore() const { return _currentScore; }
 	Score *getSharedScore() const { return _sharedScore; }
 	Common::String getCurrentPath() const { return _currentPath; }
@@ -126,6 +151,7 @@ public:
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
 	void setCursor(int type); // graphics.cpp
+
 	void loadKeyCodes();
 
 	void loadInitialMovie(const Common::String movie);
@@ -157,7 +183,6 @@ public:
 	MovieReference _nextMovie;
 	Common::List<MovieReference> _movieStack;
 
-	Graphics::ManagedSurface _backSurface;
 	bool _newMovieStarted;
 
 protected:
@@ -184,6 +209,7 @@ private:
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 
+	Stage *_currentStage;
 	Score *_currentScore;
 	Common::String _currentPath;
 
@@ -201,7 +227,7 @@ private:
 	Common::StringArray _movieQueue;
 
 
-	// tests.cpp
+// tests.cpp
 private:
 	void testFontScaling();
 	void testFonts();

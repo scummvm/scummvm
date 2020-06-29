@@ -59,6 +59,14 @@ Channel::Channel(Sprite *sp) {
 	}
 }
 
+Graphics::ManagedSurface *Channel::getSurface() {
+	if (_sprite->_cast && _sprite->_cast->_widget) {
+		return  _sprite->_cast->_widget->getSurface();
+	} else {
+		return nullptr;
+	}
+}
+
 Common::Rect Channel::getBbox() {
 	Common::Rect bbox = _sprite->getDims();
 	bbox.moveTo(getPosition());
@@ -111,10 +119,65 @@ void Channel::resetPosition() {
 	_delta = _sprite->_startPoint;
 }
 
+MacShape *Channel::getShape() {
+	MacShape *shape = new MacShape();
+
+	if (_sprite->_castType != kCastShape)
+		return nullptr;
+
+	shape->ink = _sprite->_ink;
+	shape->spriteType = _sprite->_spriteType;
+	shape->foreColor = _sprite->_foreColor;
+	shape->backColor = _sprite->_backColor;
+	shape->lineSize = _sprite->_thickness & 0x3;
+
+	if (g_director->getVersion() >= 3 && shape->spriteType == kCastMemberSprite) {
+		if (!_sprite->_cast) {
+			warning("Channel::getShape(): kCastMemberSprite has no cast defined");
+			return nullptr;
+		}
+		switch (_sprite->_cast->_type) {
+		case kCastShape:
+			{
+				ShapeCast *sc = (ShapeCast *)_sprite->_cast;
+				switch (sc->_shapeType) {
+				case kShapeRectangle:
+					shape->spriteType = sc->_fillType ? kRectangleSprite : kOutlinedRectangleSprite;
+					break;
+				case kShapeRoundRect:
+					shape->spriteType = sc->_fillType ? kRoundedRectangleSprite : kOutlinedRoundedRectangleSprite;
+					break;
+				case kShapeOval:
+					shape->spriteType = sc->_fillType ? kOvalSprite : kOutlinedOvalSprite;
+					break;
+				case kShapeLine:
+					shape->spriteType = sc->_lineDirection == 6 ? kLineBottomTopSprite : kLineTopBottomSprite;
+					break;
+				default:
+					break;
+				}
+				if (g_director->getVersion() > 3) {
+					shape->foreColor = sc->_fgCol;
+					shape->backColor = sc->_bgCol;
+					shape->lineSize = sc->_lineThickness;
+					shape->ink = sc->_ink;
+				}
+			}
+			break;
+		default:
+			warning("Channel::getShape(): Unhandled cast type: %d", _sprite->_cast->_type);
+			break;
+		}
+	}
+
+	// for outlined shapes, line thickness of 1 means invisible.
+	shape->lineSize -= 1;
+
+	return shape;
+}
+
 Score::Score(DirectorEngine *vm) {
 	_vm = vm;
-	_surface = nullptr;
-	_maskSurface = nullptr;
 	_lingo = _vm->getLingo();
 	_lingoArchive = kArchMain;
 	_soundManager = _vm->getSoundManager();
@@ -155,21 +218,9 @@ Score::Score(DirectorEngine *vm) {
 	_numChannelsDisplayed = 0;
 
 	_framesRan = 0; // used by kDebugFewFramesOnly and kDebugScreenshot
-
-	_window = nullptr;
-
-	_stageColor = 0;
 }
 
 Score::~Score() {
-	if (_maskSurface && _maskSurface->w)
-		_maskSurface->free();
-
-	delete _maskSurface;
-
-	if (_window)
-		_vm->_wm->removeWindow(_window);
-
 	for (uint i = 0; i < _frames.size(); i++)
 		delete _frames[i];
 
@@ -363,14 +414,6 @@ void Score::startLoop() {
 
 	initGraphics(_movieRect.width(), _movieRect.height());
 
-	_surface = _window->getWindowSurface();
-	_vm->_wm->setScreen(_surface);
-
-	_maskSurface = new Graphics::ManagedSurface;
-	_maskSurface->create(_movieRect.width(), _movieRect.height());
-
-	_surface->clear(_stageColor);
-
 	_currentFrame = 0;
 	_stopPlay = false;
 	_nextFrameTime = 0;
@@ -388,7 +431,6 @@ void Score::startLoop() {
 	if (_vm->getVersion() >= 3)
 		_lingo->processEvent(kEventStartMovie);
 
-	_maskSurface->clear(1);
 	while (!_stopPlay) {
 		if (_currentFrame >= _frames.size()) {
 			if (debugChannelSet(-1, kDebugNoLoop))
@@ -398,7 +440,6 @@ void Score::startLoop() {
 		}
 
 		update();
-		_maskSurface->clear(0);
 
 		if (_currentFrame < _frames.size())
 			_vm->processEvents();
@@ -482,7 +523,6 @@ void Score::update() {
 	}
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
-	_vm->_newMovieStarted = false;
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
@@ -493,8 +533,9 @@ void Score::update() {
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
 
-	renderFrame(_currentFrame);
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
+	renderFrame(_currentFrame);
+	_vm->_newMovieStarted = false;
 
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
@@ -547,37 +588,31 @@ void Score::update() {
 void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	Frame *currentFrame = _frames[frameId];
 
-	// When a transition is played, the next frame is rendered as a part of it.
 	if (currentFrame->_transType != 0 && mode != kRenderUpdateStageOnly) {
 		// TODO Handle changing area case
-		playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType);
+		g_director->getStage()->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
 	} else {
-		renderSprites(frameId, _surface, mode);
+		renderSprites(frameId, mode);
 	}
 
-		_vm->_wm->renderZoomBox();
-		_vm->_wm->draw();
+	_vm->_wm->renderZoomBox();
+	g_director->getStage()->render();
+	_vm->_wm->draw();
 
-		if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0)
-			playSoundChannel(frameId);
-
-		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->getBounds().width(), _surface->getBounds().height());
+	if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0)
+		playSoundChannel(frameId);
 }
 
-void Score::renderSprites(uint16 frameId, Graphics::ManagedSurface *surface, RenderMode mode) {
-	// HACK: Determine a batter way to do this.
-	if (mode == kRenderNoUnrender)
-		_maskSurface->clear(1);
+void Score::renderSprites(uint16 frameId, RenderMode mode) {
+	if (_vm->_newMovieStarted) {
+		// g_director->getStage()->reset();
+		mode = kRenderForceUpdate;
+	}
 
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		Sprite *currentSprite = channel->_sprite;
-		Sprite *nextSprite;
-
-		if (currentSprite->_puppet)
-			nextSprite = currentSprite;
-		else
-			nextSprite = _frames[frameId]->_sprites[i];
+		Sprite *nextSprite = _frames[frameId]->_sprites[i];
 
 		// A sprite needs to be updated if one of the following happens:
 		// - The dimensions/bounding box of the sprite has changed (_dirty flag set)
@@ -588,63 +623,40 @@ void Score::renderSprites(uint16 frameId, Graphics::ManagedSurface *surface, Ren
 			currentSprite->_castId != nextSprite->_castId ||
 			channel->_delta != Common::Point(0, 0) ||
 			currentSprite->getDims() != nextSprite->getDims() ||
-			channel->_currentPoint != nextSprite->_startPoint;
+			currentSprite->_ink != nextSprite->_ink ||
+			(channel->_currentPoint != nextSprite->_startPoint &&
+			 !currentSprite->_puppet && !currentSprite->_moveable);
 
-		if (mode != kRenderNoUnrender &&
-				(needsUpdate || mode == kRenderForceUpdate) &&
-				!currentSprite->_trails)
-			markDirtyRect(channel->getBbox());
+		if ((needsUpdate || mode == kRenderForceUpdate) && !currentSprite->_trails)
+			g_director->getStage()->addDirtyRect(channel->getBbox());
 
-		channel->_sprite = nextSprite;
-		channel->_sprite->updateCast();
+		currentSprite->setClean();
 
-		// Sprites marked moveable are constrained to the same bounding box until
-		// the moveable is disabled
-		if (!nextSprite->_puppet && !nextSprite->_moveable)
-			channel->_currentPoint = nextSprite->_startPoint;
+		if (!currentSprite->_puppet) {
+			channel->_sprite = nextSprite;
+			channel->_sprite->updateCast();
+
+			// Sprites marked moveable are constrained to the same bounding box until
+			// the moveable is disabled
+			if (!channel->_sprite->_moveable)
+				channel->_currentPoint = channel->_sprite->_startPoint;
+		}
 
 		channel->updateLocation();
 
-		// TODO: Understand why conditioning this causes so many problems
-		if (mode != kRenderNoUnrender)
-			markDirtyRect(channel->getBbox());
-	}
-
-	for (uint id = 0; id < _channels.size(); id++) {
-		Channel *channel = _channels[id];
-		Sprite *sprite = channel->_sprite;
-
-		if (!sprite || !sprite->_enabled || !sprite->_castId)
-			continue;
-
-		Common::Rect currentBbox = channel->getBbox();
-
-		debugC(1, kDebugImages, "Score::renderFrame(): channel: %d,  castType: %d,  castId: %d", id, sprite->_castType, sprite->_castId);
-
-		if (sprite->_castType == kCastShape) {
-			renderShape(id, surface);
-		} else {
-			Cast *cast = sprite->_cast;
-			if (cast && cast->_widget) {
-				cast->_widget->_priority = id;
-				cast->_widget->draw();
-				inkBasedBlit(surface, cast->_widget->getMask(), cast->_widget->getSurface()->rawSurface(), channel->_sprite->_ink, currentBbox, id);
-			} else {
-				warning("Score::renderFrame(): No widget for channel ID %d", id);
-			}
+		if (channel->_sprite->_cast && channel->_sprite->_cast->_widget) {
+			channel->_sprite->_cast->_widget->_priority = i;
+			channel->_sprite->_cast->_widget->draw();
+			channel->_sprite->_cast->_widget->_contentIsDirty = false;
 		}
 
-		sprite->setClean();
+		if (needsUpdate || mode == kRenderForceUpdate)
+			g_director->getStage()->addDirtyRect(channel->getBbox());
 	}
-}
-
-void Score::markDirtyRect(Common::Rect dirty) {
-	_maskSurface->fillRect(dirty, 1);
-	_surface->fillRect(dirty, _stageColor);
 }
 
 void Score::screenShot() {
-	Graphics::Surface rawSurface = _surface->rawSurface();
+	Graphics::Surface rawSurface = g_director->getStage()->getSurface()->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 	Common::String currentPath = _vm->getCurrentPath().c_str();
@@ -662,118 +674,6 @@ void Score::screenShot() {
 	}
 
 	newSurface->free();
-}
-
-void Score::renderShape(uint16 spriteId, Graphics::ManagedSurface *surface) {
-	Sprite *sp = _channels[spriteId]->_sprite;
-
-	InkType ink = sp->_ink;
-	byte spriteType = sp->_spriteType;
-	byte foreColor = sp->_foreColor;
-	byte backColor = sp->_backColor;
-	int lineSize = sp->_thickness & 0x3;
-
-	if (_vm->getVersion() >= 3 && spriteType == kCastMemberSprite) {
-		if (!sp->_cast) {
-			warning("Score::renderShape(): kCastMemberSprite has no cast defined");
-			return;
-		}
-		switch (sp->_cast->_type) {
-		case kCastShape:
-			{
-				ShapeCast *sc = (ShapeCast *)sp->_cast;
-				switch (sc->_shapeType) {
-				case kShapeRectangle:
-					spriteType = sc->_fillType ? kRectangleSprite : kOutlinedRectangleSprite;
-					break;
-				case kShapeRoundRect:
-					spriteType = sc->_fillType ? kRoundedRectangleSprite : kOutlinedRoundedRectangleSprite;
-					break;
-				case kShapeOval:
-					spriteType = sc->_fillType ? kOvalSprite : kOutlinedOvalSprite;
-					break;
-				case kShapeLine:
-					spriteType = sc->_lineDirection == 6 ? kLineBottomTopSprite : kLineTopBottomSprite;
-					break;
-				default:
-					break;
-				}
-				if (_vm->getVersion() > 3) {
-					foreColor = sc->_fgCol;
-					backColor = sc->_bgCol;
-					lineSize = sc->_lineThickness;
-					ink = sc->_ink;
-				}
-			}
-			break;
-		default:
-			warning("Score::renderShape(): Unhandled cast type: %d", sp->_cast->_type);
-			break;
-		}
-	}
-
-	// for outlined shapes, line thickness of 1 means invisible.
-	lineSize -= 1;
-
-	Common::Rect shapeRect = _channels[spriteId]->getBbox();
-
-	Graphics::ManagedSurface tmpSurface, maskSurface;
-	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	tmpSurface.clear(backColor);
-
-	maskSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	maskSurface.clear(0);
-
-	// Draw fill
-	Common::Rect fillRect((int)shapeRect.width(), (int)shapeRect.height());
-	Graphics::MacPlotData plotFill(&tmpSurface, &maskSurface, &_vm->getPatterns(), sp->getPattern(), -shapeRect.left, -shapeRect.top, 1, backColor);
-	switch (spriteType) {
-	case kRectangleSprite:
-		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &plotFill);
-		break;
-	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillRect, 12, foreColor, true, Graphics::macDrawPixel, &plotFill);
-		break;
-	case kOvalSprite:
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, true, Graphics::macDrawPixel, &plotFill);
-		break;
-	case kCastMemberSprite: 		// Face kit D3
-		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &plotFill);
-		break;
-	default:
-		break;
-	}
-
-	// Draw stroke
-	Common::Rect strokeRect(MAX((int)shapeRect.width() - lineSize, 0), MAX((int)shapeRect.height() - lineSize, 0));
-	Graphics::MacPlotData plotStroke(&tmpSurface, &maskSurface, &_vm->getPatterns(), 1, -shapeRect.left, -shapeRect.top, lineSize, backColor);
-	switch (spriteType) {
-	case kLineTopBottomSprite:
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, foreColor, Graphics::macDrawPixel, &plotStroke);
-		break;
-	case kLineBottomTopSprite:
-		Graphics::drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, foreColor, Graphics::macDrawPixel, &plotStroke);
-		break;
-	case kRectangleSprite:
-		// fall through
-	case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
-		Graphics::drawRect(strokeRect, foreColor, Graphics::macDrawPixel, &plotStroke);
-		break;
-	case kRoundedRectangleSprite:
-		// fall through
-	case kOutlinedRoundedRectangleSprite:
-		Graphics::drawRoundRect(strokeRect, 12, foreColor, false, Graphics::macDrawPixel, &plotStroke);
-		break;
-	case kOvalSprite:
-		// fall through
-	case kOutlinedOvalSprite:
-		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, foreColor, false, Graphics::macDrawPixel, &plotStroke);
-		break;
-	default:
-		break;
-	}
-
-	inkBasedBlit(surface, &maskSurface, tmpSurface, ink, shapeRect, spriteId);
 }
 
 Cast *Score::getCastMember(int castId) {
@@ -807,6 +707,16 @@ bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
 		return true;
 
 	return false;
+}
+
+Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
+	Common::List<Channel *>intersections;
+
+	for (uint i = 0; i < _channels.size(); i++)
+		if (!r.findIntersectingRect(_channels[i]->getBbox()).isEmpty())
+			intersections.push_back(_channels[i]);
+
+	return intersections;
 }
 
 Sprite *Score::getSpriteById(uint16 id) {

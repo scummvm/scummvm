@@ -93,13 +93,13 @@ void Sprite::updateCast() {
 }
 
 bool Sprite::isDirty() {
-	return _castType != kCastTypeNull && (_dirty || (_cast && _cast->isModified()));
+	return _castType != kCastTypeNull && (_cast && _cast->isModified());
 }
 
 bool Sprite::isActive() {
 	if (_moveable || _puppet || _scriptId)
 		return true;
-	
+
 	if (g_lingo->getScriptContext(kArchMain, kCastScript, _castId)
 			|| g_lingo->getScriptContext(kArchShared, kCastScript, _castId))
 		return true;

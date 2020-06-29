@@ -32,6 +32,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
+#include "director/stage.h"
 #include "director/archive.h"
 #include "director/score.h"
 #include "director/sound.h"
@@ -120,6 +121,8 @@ DirectorEngine::~DirectorEngine() {
 	delete _sharedScore;
 	delete _currentScore;
 
+	_wm->removeWindow(_currentStage);
+
 	if (_macBinary) {
 		delete _macBinary;
 		_macBinary = nullptr;
@@ -144,6 +147,11 @@ Common::Error DirectorEngine::run() {
 
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
+
+	_currentStage = new Stage(_wm->getNextId(), false, false, false, _wm);
+	_currentStage->disableBorder();
+	_wm->addWindowInitialized(_currentStage);
+	_wm->setScreen(_currentStage->getSurface());
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound(this);
@@ -274,13 +282,7 @@ Common::Error DirectorEngine::run() {
 
 		// If a loop was requested, do it
 		if (!_nextMovie.movie.empty()) {
-			// Persist screen between the movies
-			// TODO: this is a workaround until the rendering pipeline is reworked
-			if (_currentScore && _currentScore->_surface) {
-				_backSurface.copyFrom(*_currentScore->_surface);
-
-				_newMovieStarted = true;
-			}
+			_newMovieStarted = true;
 
 			delete _currentScore;
 			_currentScore = nullptr;

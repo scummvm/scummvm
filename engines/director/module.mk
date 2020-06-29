@@ -9,9 +9,9 @@ MODULE_OBJS = \
 	frame.o \
 	graphics.o \
 	images.o \
-	ink.o \
 	movie.o \
 	resource.o \
+	stage.o \
 	score-loading.o \
 	score.o \
 	sound.o \
