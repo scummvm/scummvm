@@ -66,8 +66,16 @@ void CrimsonCrownGame::beforeGame() {
 }
 
 void CrimsonCrownGame::synchronizeSave(Common::Serializer &s) {
+	if (s.isSaving()) {
+		s.syncAsByte(_diskNum);
+	} else {
+		// Get the disk the save is for. The beforeTurn call allows
+		// for the currently loaded disk to be switched if necessary
+		s.syncAsByte(_newDiskNum);
+		beforeTurn();
+	}
+
 	ComprehendGame::synchronizeSave(s);
-	s.syncAsByte(_diskNum);
 }
 
 void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
