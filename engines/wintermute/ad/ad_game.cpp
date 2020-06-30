@@ -43,6 +43,7 @@
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_transition_manager.h"
@@ -1583,6 +1584,50 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 	case kClickAtBottom:
 		p.x = xCenter;
 		p.y = yBottom;
+		break;
+	case kClickAtEntityNearestToCenter:
+		p.x = xCenter;
+		p.y = yCenter;
+		// Looking through all objects for entities near to the center
+		if (_scene && _scene->getSceneObjects(objects, true)) {
+			for (uint32 i = 0; i < objects.size(); i++) {
+				BaseRegion *region;
+				if (objects[i]->getType() != OBJECT_ENTITY ||
+					!objects[i]->_active || 
+					!objects[i]->_registrable ||
+					(!(region = ((AdEntity *)objects[i])->_region))
+				) {
+					continue;
+				}
+
+				// Something exactly at center? Great!
+				if (region->pointInRegion(xCenter, yCenter)) {
+					distance = 0;
+					p.x = xCenter;
+					p.y = yCenter;
+					break;
+				}
+
+				// Something at the edge? Available with other actions. 
+				if (region->pointInRegion(xLeft, yCenter) ||
+					region->pointInRegion(xRight, yCenter) ||
+					region->pointInRegion(xCenter, yBottom) ||
+					region->pointInRegion(xCenter, yTop)
+				) {
+					continue;
+				}
+
+				// Keep entities that has less distance to center
+				int x = ((AdEntity *)objects[i])->_posX;
+				int y = ((AdEntity *)objects[i])->_posY - ((AdEntity *)objects[i])->getHeight() / 2;
+				int d = (x - xCenter) * (x - xCenter) + (y - yCenter) * (y - yCenter);
+				if (distance > d) {
+					distance = d;
+					p.x = x;
+					p.y = y;
+				}
+			}
+		}
 		break;
 	default:
 		return false;

@@ -1516,7 +1516,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 
 	if (gameId == "corrosion") {
 		act = new Action(kStandardActionMoveUp, _("Walk forward"));
-		act->setCustomEngineActionEvent(kClickAtCenter);
+		act->setCustomEngineActionEvent(kClickAtEntityNearestToCenter);
 		act->addDefaultInputMapping("UP"); // extra keyboard
 		act->addDefaultInputMapping("KP5"); // extra keyboard
 		act->addDefaultInputMapping("JOY_UP"); // extra joy
