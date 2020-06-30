@@ -256,6 +256,11 @@ static struct BuiltinProto {
 	{ "lastLineOf",		LB::b_lastlineof,	1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "lastWordOf",		LB::b_lastwordof,	1, 1, false, 4, FBLTIN },	//			D4 f
 
+	//scummVM Asserts: Used for testing scummvm's lingo implementation
+	{ "scummvmAssert",	LB::b_scummvmassert,1, 1, true,  2, FBLTIN },
+	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,2,true,2,FBLTIN },
+
+
 	{ 0, 0, 0, 0, false, 0, 0 }
 };
 
@@ -2287,6 +2292,28 @@ void LB::b_lastwordof(int nargs) {
 	warning("STUB: b_lastwordof");
 
 	g_lingo->push(Datum(0));
+}
+
+void LB::b_scummvmassert(int nargs) {
+	Datum d = g_lingo->pop();
+
+	if (d.asInt() != 1) {
+		warning("LB::b_scummvmassert: is false");
+	}
+	assert(d.asInt() == 1);
+	g_lingo->push(d);
+}
+
+void LB::b_scummvmassertequal(int nargs) {
+	Datum d1 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+
+	int result = d1.equalTo(d2);
+	if (!result) {
+		warning("LB::b_scummvmassertequals: is false");
+	}
+	assert(result == 1);
+	g_lingo->push(Datum(result));
 }
 
 } // End of namespace Director
