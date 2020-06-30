@@ -35,6 +35,8 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 	using namespace Common;
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "wintermute", "Wintermute engine");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, gameId, gameDescr);
+	Keymap *extraKeyMap = new Keymap(Keymap::kKeymapTypeGame, "extras", "ScummVM extra actions");
 
 	Action *act;
 
@@ -102,12 +104,8 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "tradestory" ||
 		gameId == "wmedemo"
 	) {
-		return Keymap::arrayOf(engineKeyMap);
-	}
-
-	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, gameId, gameDescr);
-
-	if (gameId == "dfafadventure" ||
+		/* no game-specific keymap */
+	} else if (gameId == "dfafadventure" ||
 		gameId == "dreamcat" ||
 		gameId == "openquest"
 	) {
@@ -519,34 +517,6 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
 		act->addDefaultInputMapping("DOWN"); // extra keyboard
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
-		gameKeyMap->addAction(act);
-	} else if (gameId == "corrosion") {
-		act = new Action(kStandardActionMoveUp, _("Walk forward"));
-		act->setCustomEngineActionEvent(kClickAtCenter);
-		act->addDefaultInputMapping("UP"); // extra keyboard
-		act->addDefaultInputMapping("KP8"); // extra keyboard
-		act->addDefaultInputMapping("JOY_UP"); // extra joy
-		gameKeyMap->addAction(act);
-
-		act = new Action(kStandardActionMoveDown, _("Walk backward"));
-		act->setCustomEngineActionEvent(kClickAtBottom);
-		act->addDefaultInputMapping("DOWN"); // extra keyboard
-		act->addDefaultInputMapping("KP2"); // extra keyboard
-		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
-		gameKeyMap->addAction(act);
-
-		act = new Action(kStandardActionMoveLeft, _("Turn left"));
-		act->setCustomEngineActionEvent(kClickAtLeft);
-		act->addDefaultInputMapping("LEFT"); // extra keyboard
-		act->addDefaultInputMapping("KP4"); // extra keyboard
-		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
-		gameKeyMap->addAction(act);
-
-		act = new Action(kStandardActionMoveRight, _("Turn right"));
-		act->setCustomEngineActionEvent(kClickAtRight);
-		act->addDefaultInputMapping("RIGHT"); // extra keyboard
-		act->addDefaultInputMapping("KP6"); // extra keyboard
-		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
 		gameKeyMap->addAction(act);
 	} else if (gameId == "erinmyers") {
 		act = new Action("GUIB", _("Change font size"));
@@ -1542,8 +1512,39 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("TAB"); // original keyboard
 		gameKeyMap->addAction(act);
 	}
-
 	result.push_back(gameKeyMap);
+
+	if (gameId == "corrosion") {
+		act = new Action(kStandardActionMoveUp, _("Walk forward"));
+		act->setCustomEngineActionEvent(kClickAtCenter);
+		act->addDefaultInputMapping("UP"); // extra keyboard
+		act->addDefaultInputMapping("KP5"); // extra keyboard
+		act->addDefaultInputMapping("JOY_UP"); // extra joy
+		extraKeyMap->addAction(act);
+	
+		act = new Action(kStandardActionMoveDown, _("Walk backward"));
+		act->setCustomEngineActionEvent(kClickAtBottom);
+		act->addDefaultInputMapping("DOWN"); // extra keyboard
+		act->addDefaultInputMapping("KP2"); // extra keyboard
+		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		extraKeyMap->addAction(act);
+	
+		act = new Action(kStandardActionMoveLeft, _("Turn left"));
+		act->setCustomEngineActionEvent(kClickAtLeft);
+		act->addDefaultInputMapping("LEFT"); // extra keyboard
+		act->addDefaultInputMapping("KP4"); // extra keyboard
+		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
+		extraKeyMap->addAction(act);
+
+		act = new Action(kStandardActionMoveRight, _("Turn right"));
+		act->setCustomEngineActionEvent(kClickAtRight);
+		act->addDefaultInputMapping("RIGHT"); // extra keyboard
+		act->addDefaultInputMapping("KP6"); // extra keyboard
+		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
+		extraKeyMap->addAction(act);
+	}
+	result.push_back(extraKeyMap);
+	
 	return result;
 
 }
