@@ -61,6 +61,7 @@
 #include "engines/wintermute/video/video_player.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "common/config-manager.h"
 #include "common/str.h"
 
 namespace Wintermute {
@@ -1529,6 +1530,75 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 
 		return STATUS_OK;
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
+	bool isCorrosion = BaseEngine::instance().getGameId() == "corrosion";
+	
+	if (isCorrosion) {
+		// Corrosion Enhanced Edition contain city map screen, which is
+		// mouse controlled and conflicts with those custom actions
+		const char *m = "items\\street_map\\windows\\street_map_window.script";
+		if (_scEngine->isRunningScript(m)) {
+			return false;
+		}
+	}
+
+	int xLeft   = 30;
+	int xCenter = _renderer->getWidth() / 2;
+	int xRight  = _renderer->getWidth() - 30;
+
+	int yTop    = 35;
+	int yCenter = _renderer->getHeight() / 2;
+	int yBottom = _renderer->getHeight() - 35;
+	if (isCorrosion && !(ConfMan.get("extra").contains("Enhanced"))) {
+		// original version of Corrosion has a toolbar under the game screen
+		yBottom -= 60;
+	}
+
+	BaseArray<AdObject *> objects;
+
+	Point32 p;
+	int distance = xCenter * xCenter + yCenter * yCenter;
+
+	switch (action) {
+	case kClickAtCenter:
+		p.x = xCenter;
+		p.y = yCenter;
+		break;
+	case kClickAtLeft:
+		p.x = xLeft;
+		p.y = yCenter;
+		break;
+	case kClickAtRight:
+		p.x = xRight;
+		p.y = yCenter;
+		break;
+	case kClickAtTop:
+		p.x = xCenter;
+		p.y = yTop;
+		break;
+	case kClickAtBottom:
+		p.x = xCenter;
+		p.y = yBottom;
+		break;
+	default:
+		return false;
+	}
+
+	BasePlatform::setCursorPos(p.x, p.y);
+	setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y)); 
+	onMouseLeftDown();
+	onMouseLeftUp();
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool AdGame::handleCustomActionEnd(BaseGameCustomAction action) {
+	return false;
 }
 
 
