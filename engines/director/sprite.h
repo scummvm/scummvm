@@ -62,9 +62,7 @@ public:
 	~Sprite();
 
 	void updateCast();
-	bool isDirty();
 	bool isActive();
-	void setClean();
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
 
@@ -90,7 +88,6 @@ public:
 	Cast *_cast;
 
 	byte _thickness;
-	bool _dirty;
 	Common::Point _startPoint;
 	int16 _width;
 	int16 _height;

@@ -50,7 +50,6 @@ Sprite::Sprite() {
 	_cast = nullptr;
 
 	_thickness = 0;
-	_dirty = false;
 	_width = 0;
 	_height = 0;
 	_moveable = false;
@@ -80,10 +79,6 @@ void Sprite::updateCast() {
 		_cast->setEditable(_editable);
 }
 
-bool Sprite::isDirty() {
-	return _castType != kCastTypeNull && (_cast && _cast->isModified());
-}
-
 bool Sprite::isActive() {
 	if (_moveable || _puppet || _scriptId)
 		return true;
@@ -93,12 +88,6 @@ bool Sprite::isActive() {
 		return true;
 
 	return false;
-}
-
-void Sprite::setClean() {
-	_dirty = false;
-	if (_cast)
-		_cast->_modified = false;
 }
 
 uint16 Sprite::getPattern() {
@@ -224,8 +213,6 @@ void Sprite::setCast(uint16 castId) {
 			_castType = member->_type;
 		}
 	}
-
-	_dirty = true;
 }
 
 Common::Rect Sprite::getDims() {

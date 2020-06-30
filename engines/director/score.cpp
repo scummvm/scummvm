@@ -53,6 +53,7 @@ Channel::Channel(Sprite *sp) {
 	_constraint = 0;
 
 	_visible = true;
+	_dirty = true;
 
 	if (_sprite && _sprite->_castType != kCastTypeNull) {
 		_sprite->updateCast();
@@ -67,6 +68,25 @@ Graphics::ManagedSurface *Channel::getSurface() {
 	}
 }
 
+bool Channel::isDirty(Sprite *nextSprite) {
+	// When a sprite is puppeted setTheSprite ensures that the dirty flag here is
+	// set. Otherwise, we need to rerender when the position, bounding box, or
+	// cast of the sprite changes.
+	bool isDirty = _dirty ||
+		_delta != Common::Point(0, 0) ||
+		((_sprite->_castType != kCastTypeNull) &&
+		 (_sprite->_cast && _sprite->_cast->isModified()));
+
+	if (nextSprite) {
+		isDirty |= _sprite->_castId != nextSprite->_castId ||
+			_sprite->getDims() != nextSprite->getDims() ||
+			(_currentPoint != nextSprite->_startPoint &&
+			 !_sprite->_puppet && !_sprite->_moveable);
+	}
+
+	return isDirty;
+}
+
 Common::Rect Channel::getBbox() {
 	Common::Rect bbox = _sprite->getDims();
 	bbox.moveTo(getPosition());
@@ -74,13 +94,30 @@ Common::Rect Channel::getBbox() {
 	return bbox;
 }
 
-void Channel::updateLocation() {
+void Channel::setClean(Sprite *nextSprite, int spriteId) {
+	_dirty = false;
+
+	if (!_sprite->_puppet) {
+		_sprite = nextSprite;
+		_sprite->updateCast();
+
+		// Sprites marked moveable are constrained to the same bounding box until
+		// the moveable is disabled
+		if (!_sprite->_moveable)
+			_currentPoint = _sprite->_startPoint;
+	}
+
 	_currentPoint += _delta;
 	_delta = Common::Point(0, 0);
 
 	if (_sprite->_cast && _sprite->_cast->_widget) {
 		Common::Point p(getPosition());
+		_sprite->_cast->_modified = false;
 		_sprite->_cast->_widget->_dims.moveTo(p.x, p.y);
+
+		_sprite->_cast->_widget->_priority = spriteId;
+		_sprite->_cast->_widget->draw();
+		_sprite->_cast->_widget->_contentIsDirty = false;
 	}
 }
 
@@ -113,10 +150,6 @@ Common::Point Channel::getPosition() {
 	}
 
 	return res;
-}
-
-void Channel::resetPosition() {
-	_delta = _sprite->_startPoint;
 }
 
 MacShape *Channel::getShape() {
@@ -604,53 +637,22 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 }
 
 void Score::renderSprites(uint16 frameId, RenderMode mode) {
-	if (_vm->_newMovieStarted) {
-		// g_director->getStage()->reset();
+	if (_vm->_newMovieStarted)
 		mode = kRenderForceUpdate;
-	}
 
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		Sprite *currentSprite = channel->_sprite;
 		Sprite *nextSprite = _frames[frameId]->_sprites[i];
 
-		// A sprite needs to be updated if one of the following happens:
-		// - The dimensions/bounding box of the sprite has changed (_dirty flag set)
-		// - The cast member ID of the sprite has changed (_dirty flag set)
-		// - The sprite slot from the current frame is different (cast member ID or bounding box) from the cached sprite slot
-		// (maybe we have to compare all the sprite attributes, not just these two?)
-		bool needsUpdate = currentSprite->isDirty() ||
-			currentSprite->_castId != nextSprite->_castId ||
-			channel->_delta != Common::Point(0, 0) ||
-			currentSprite->getDims() != nextSprite->getDims() ||
-			currentSprite->_ink != nextSprite->_ink ||
-			(channel->_currentPoint != nextSprite->_startPoint &&
-			 !currentSprite->_puppet && !currentSprite->_moveable);
+		bool needsUpdate = channel->isDirty(nextSprite) || mode == kRenderForceUpdate;
 
-		if ((needsUpdate || mode == kRenderForceUpdate) && !currentSprite->_trails)
+		if (needsUpdate && !currentSprite->_trails)
 			g_director->getStage()->addDirtyRect(channel->getBbox());
 
-		currentSprite->setClean();
+		channel->setClean(nextSprite, i);
 
-		if (!currentSprite->_puppet) {
-			channel->_sprite = nextSprite;
-			channel->_sprite->updateCast();
-
-			// Sprites marked moveable are constrained to the same bounding box until
-			// the moveable is disabled
-			if (!channel->_sprite->_moveable)
-				channel->_currentPoint = channel->_sprite->_startPoint;
-		}
-
-		channel->updateLocation();
-
-		if (channel->_sprite->_cast && channel->_sprite->_cast->_widget) {
-			channel->_sprite->_cast->_widget->_priority = i;
-			channel->_sprite->_cast->_widget->draw();
-			channel->_sprite->_cast->_widget->_contentIsDirty = false;
-		}
-
-		if (needsUpdate || mode == kRenderForceUpdate)
+		if (needsUpdate)
 			g_director->getStage()->addDirtyRect(channel->getBbox());
 	}
 }

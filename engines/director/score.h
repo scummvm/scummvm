@@ -77,21 +77,21 @@ struct MacShape {
 struct Channel {
 	Sprite *_sprite;
 
+	bool _dirty;
 	bool _visible;
 	uint _constraint;
 	Common::Point _currentPoint;
 	Common::Point _delta;
 
 	Channel(Sprite *sp);
+	bool isDirty(Sprite *nextSprite = nullptr);
 	Common::Rect getBbox();
 	Common::Point getPosition();
 	MacShape *getShape();
 	Graphics::ManagedSurface *getSurface();
-	Graphics::ManagedSurface *getMask();
 
-	void updateLocation();
+	void setClean(Sprite *nextSprite, int spriteId);
 	void addDelta(Common::Point pos);
-	void resetPosition();
 };
 
 class Score {

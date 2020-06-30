@@ -927,7 +927,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 	}
-	sprite->_dirty = true;
+	channel->_dirty = true;
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {
