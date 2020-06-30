@@ -202,8 +202,6 @@ void Sprite::setCast(uint16 castId) {
 				}
 			} else {
 				_castType = kCastShape;
-
-				g_director->getCurrentScore()->_loadedCast->setVal(_castId, new ShapeCast());
 			}
 			break;
 		case kTextSprite:
