@@ -30,7 +30,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
@@ -308,8 +308,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_sharedScore->loadArchive(true);
 }
 
-Cast *DirectorEngine::getCastMember(int castId) {
-	Cast *result = nullptr;
+CastMember *DirectorEngine::getCastMember(int castId) {
+	CastMember *result = nullptr;
 	if (_currentScore) {
 		result = _currentScore->getCastMember(castId);
 	}

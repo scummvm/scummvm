@@ -25,9 +25,9 @@
 
 namespace Director {
 
-class BitmapCast;
-class ShapeCast;
-class TextCast;
+class BitmapCastMember;
+class ShapeCastMember;
+class TextCastMember;
 
 enum SpritePosition {
 	kSpritePositionUnk1 = 0,
@@ -85,7 +85,7 @@ public:
 	InkType _ink;
 	uint16 _trails;
 
-	Cast *_cast;
+	CastMember *_cast;
 
 	byte _thickness;
 	Common::Point _startPoint;

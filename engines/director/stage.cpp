@@ -25,7 +25,7 @@
 #include "director/director.h"
 #include "director/stage.h"
 #include "director/score.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/sprite.h"
 
 #include "common/file.h"
@@ -292,7 +292,7 @@ void Stage::drawReverseSprite(Channel *channel, Common::Rect &srcRect, Common::R
 					} else {
 						if (*dst == 0 && g_director->getVersion() == 3 &&
 								g_director->getCurrentScore()->_channels[targetSprite]->_sprite->_cast->_type == kCastBitmap &&
-								((BitmapCast*)g_director->getCurrentScore()->_channels[targetSprite]->_sprite->_cast)->_bitsPerPixel > 1) {
+								((BitmapCastMember*)g_director->getCurrentScore()->_channels[targetSprite]->_sprite->_cast)->_bitsPerPixel > 1) {
 							*dst = g_director->transformColor(*src - 40);
 						} else {
 							*dst ^= g_director->transformColor(srcColor);

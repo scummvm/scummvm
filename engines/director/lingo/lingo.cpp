@@ -28,7 +28,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"
@@ -860,7 +860,7 @@ Common::String Datum::asString(bool printonly) {
 	case FIELDREF:
 		{
 			int idx = u.i;
-			Cast *member = g_director->getCastMember(idx);
+			CastMember *member = g_director->getCastMember(idx);
 			if (!member) {
 				warning("asString(): Unknown cast id %d", idx);
 				s = "";
@@ -869,9 +869,9 @@ Common::String Datum::asString(bool printonly) {
 
 			if (type == FIELDREF) {
 				if (!printonly) {
-					s = ((TextCast *)member)->getText();
+					s = ((TextCastMember *)member)->getText();
 				} else {
-					s = Common::String::format("reference: \"%s\"", ((TextCast *)member)->getText().c_str());
+					s = Common::String::format("reference: \"%s\"", ((TextCastMember *)member)->getText().c_str());
 				}
 			} else {
 				s = Common::String::format("cast %d", idx);
@@ -1188,14 +1188,14 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 			return;
 		}
 		int referenceId = var.u.i;
-		Cast *member = g_director->getCastMember(referenceId);
+		CastMember *member = g_director->getCastMember(referenceId);
 		if (!member) {
 			warning("varAssign: Unknown cast id %d", referenceId);
 			return;
 		}
 		switch (member->_type) {
 		case kCastText:
-			((TextCast *)member)->setText(value.asString().c_str());
+			((TextCastMember *)member)->setText(value.asString().c_str());
 			break;
 		default:
 			warning("varAssign: Unhandled cast type %s", tag2str(member->_type));
@@ -1247,12 +1247,12 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 
 		return *d;
 	} else if (var.type == FIELDREF) {
-		Cast *cast = _vm->getCastMember(var.u.i);
+		CastMember *cast = _vm->getCastMember(var.u.i);
 		if (cast) {
 			switch (cast->_type) {
 			case kCastText:
 				result.type = STRING;
-				result.u.s = new Common::String(((TextCast *)cast)->getText());
+				result.u.s = new Common::String(((TextCastMember *)cast)->getText());
 				break;
 			default:
 				warning("varFetch: Unhandled cast type %s", tag2str(cast->_type));

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DIRECTOR_CAST_H
-#define DIRECTOR_CAST_H
+#ifndef DIRECTOR_CASTMEMBER_H
+#define DIRECTOR_CASTMEMBER_H
 
 #include "director/archive.h"
 #include "director/types.h"
@@ -50,10 +50,10 @@ namespace Director {
 class Stxt;
 class AudioDecoder;
 
-class Cast {
+class CastMember {
 public:
-	Cast();
-	virtual ~Cast() {};
+	CastMember();
+	virtual ~CastMember() {};
 	virtual bool isEditable() { return false; }
 	virtual bool setEditable(bool editable) { return false; }
 	virtual bool isModified() { return _modified; }
@@ -74,10 +74,10 @@ public:
 	Graphics::MacWidget *_widget;
 };
 
-class BitmapCast : public Cast {
+class BitmapCastMember : public CastMember {
 public:
-	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
-	~BitmapCast();
+	BitmapCastMember(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
+	~BitmapCastMember();
 	virtual void createWidget() override;
 	// virtual void setColors(int *fgcolor, int *bgcolor) override;
 
@@ -95,9 +95,9 @@ public:
 	uint32 _tag;
 };
 
-class DigitalVideoCast : public Cast {
+class DigitalVideoCastMember : public CastMember {
 public:
-	DigitalVideoCast(Common::ReadStreamEndian &stream, uint16 version);
+	DigitalVideoCastMember(Common::ReadStreamEndian &stream, uint16 version);
 
 	bool _looping;
 	bool _pauseAtStart;
@@ -112,18 +112,18 @@ public:
 	uint16 _frameRate;
 };
 
-class SoundCast : public Cast {
+class SoundCastMember : public CastMember {
 public:
-	SoundCast(Common::ReadStreamEndian &stream, uint16 version);
+	SoundCastMember(Common::ReadStreamEndian &stream, uint16 version);
 
 	bool _looping;
 	AudioDecoder *_audio;
 };
 
-class ShapeCast : public Cast {
+class ShapeCastMember : public CastMember {
 public:
-	ShapeCast(Common::ReadStreamEndian &stream, uint16 version);
-	ShapeCast();
+	ShapeCastMember(Common::ReadStreamEndian &stream, uint16 version);
+	ShapeCastMember();
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -135,9 +135,9 @@ public:
 	InkType _ink;
 };
 
-class TextCast : public Cast {
+class TextCastMember : public CastMember {
 public:
-	TextCast(Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
+	TextCastMember(Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
 	virtual void getColors(int *fgcolor, int *bgcolor) override;
 
@@ -180,22 +180,22 @@ private:
 	uint _fgcolor;
 };
 
-class ScriptCast : public Cast {
+class ScriptCastMember : public CastMember {
 public:
-	ScriptCast(Common::ReadStreamEndian &stream, uint16 version);
+	ScriptCastMember(Common::ReadStreamEndian &stream, uint16 version);
 
 	uint32 _id;
 	ScriptType _scriptType;
 };
 
-class RTECast : public TextCast {
+class RTECastMember : public TextCastMember {
 public:
-	RTECast(Common::ReadStreamEndian &stream, uint16 version);
+	RTECastMember(Common::ReadStreamEndian &stream, uint16 version);
 
 	void loadChunks();
 };
 
-struct CastInfo {
+struct CastMemberInfo {
 	Common::String script;
 	Common::String name;
 	Common::String directory;

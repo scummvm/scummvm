@@ -59,7 +59,7 @@ class DirectorSound;
 class Lingo;
 class Stage;
 class Score;
-class Cast;
+class CastMember;
 class Stxt;
 
 enum {
@@ -145,7 +145,7 @@ public:
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
 	void clearSharedCast();
-	Cast *getCastMember(int castId);
+	CastMember *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
 	void loadPatterns();
 	uint32 transformColor(uint32 color);

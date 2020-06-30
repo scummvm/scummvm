@@ -40,7 +40,7 @@ namespace Director {
 
 class Score;
 class Sprite;
-class TextCast;
+class TextCastMember;
 
 enum {
 	kChannelDataSize = (25 * 50)
@@ -81,7 +81,7 @@ private:
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
-	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCast *textCast);
+	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCastMember *textCast);
 
 
 public:

@@ -35,7 +35,7 @@
 #endif
 
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/score.h"
 #include "director/frame.h"
 #include "director/sound.h"
@@ -143,7 +143,7 @@ Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
 
 	if (_sprite->_castType == kCastBitmap && _sprite->_cast) {
-		BitmapCast *bc = (BitmapCast *)(_sprite->_cast);
+		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
 
 		res += Common::Point(bc->_initialRect.left - bc->_regX,
 												 bc->_initialRect.top - bc->_regY);
@@ -172,7 +172,7 @@ MacShape *Channel::getShape() {
 		switch (_sprite->_cast->_type) {
 		case kCastShape:
 			{
-				ShapeCast *sc = (ShapeCast *)_sprite->_cast;
+				ShapeCastMember *sc = (ShapeCastMember *)_sprite->_cast;
 				switch (sc->_shapeType) {
 				case kShapeRectangle:
 					shape->spriteType = sc->_fillType ? kRectangleSprite : kOutlinedRectangleSprite;
@@ -271,7 +271,7 @@ Score::~Score() {
 	}
 
 	if (_loadedCast)
-		for (Common::HashMap<int, Cast *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
+		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			delete it->_value;
 
 	if (_labels)
@@ -285,7 +285,7 @@ Score::~Score() {
 }
 
 Common::Rect Score::getCastMemberInitialRect(int castId) {
-	Cast *cast = _loadedCast->getVal(castId);
+	CastMember *cast = _loadedCast->getVal(castId);
 
 	if (!cast) {
 		warning("Score::getCastMemberInitialRect(%d): empty cast", castId);
@@ -296,7 +296,7 @@ Common::Rect Score::getCastMemberInitialRect(int castId) {
 }
 
 void Score::setCastMemberModified(int castId) {
-	Cast *cast = _loadedCast->getVal(castId);
+	CastMember *cast = _loadedCast->getVal(castId);
 
 	if (!cast) {
 		warning("Score::setCastMemberModified(%d): empty cast", castId);
@@ -678,8 +678,8 @@ void Score::screenShot() {
 	newSurface->free();
 }
 
-Cast *Score::getCastMember(int castId) {
-	Cast *result = nullptr;
+CastMember *Score::getCastMember(int castId) {
+	CastMember *result = nullptr;
 
 	if (_loadedCast && _loadedCast->contains(castId)) {
 		result = _loadedCast->getVal(castId);

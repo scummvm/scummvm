@@ -29,7 +29,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/util.h"
@@ -334,8 +334,8 @@ void Lingo::func_cursor(int cursorId, int maskId) {
 	}
 
 	if (maskId != -1) {
-		Cast *cursorCast = _vm->getCastMember(cursorId);
-		Cast *maskCast = _vm->getCastMember(maskId);
+		CastMember *cursorCast = _vm->getCastMember(cursorId);
+		CastMember *maskCast = _vm->getCastMember(maskId);
 		if (!cursorCast || !maskCast) {
 			warning("func_cursor(): non-existent cast reference");
 			return;

@@ -23,7 +23,7 @@
 #include "common/system.h"
 
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
@@ -2174,7 +2174,7 @@ void LB::b_field(int nargs) {
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
 	int castId = g_lingo->castIdFetch(d);
-	Cast *cast = g_director->getCastMember(castId);
+	CastMember *cast = g_director->getCastMember(castId);
 
 	if (cast) {
 		ScriptContext *script = nullptr;

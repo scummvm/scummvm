@@ -26,7 +26,7 @@
 #include "graphics/primitives.h"
 
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"

@@ -44,7 +44,7 @@
 // THIS SOFTWARE.
 
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"

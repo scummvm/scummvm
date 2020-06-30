@@ -21,7 +21,7 @@
  */
 
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/lingo/lingo.h"
 #include "director/sprite.h"
 
@@ -105,7 +105,7 @@ uint16 Sprite::getPattern() {
 	case kCastMemberSprite:
 		switch (_cast->_type) {
 		case kCastShape:
-			return ((ShapeCast *)_cast)->_pattern;
+			return ((ShapeCastMember *)_cast)->_pattern;
 			break;
 		default:
 			warning("Sprite::getPattern(): Unhandled cast type: %d", _cast->_type);
@@ -141,7 +141,7 @@ void Sprite::setPattern(uint16 pattern) {
 }
 
 void Sprite::setCast(uint16 castId) {
-	Cast *member = g_director->getCastMember(castId);
+	CastMember *member = g_director->getCastMember(castId);
 	_castType = kCastTypeNull;
 	_castId = castId;
 
@@ -159,11 +159,11 @@ void Sprite::setCast(uint16 castId) {
 
 			delete _cast->_widget;
 			_cast->_type = kCastButton;
-			((TextCast *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
-			((TextCast *)_cast)->createWidget();
+			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
+			((TextCastMember *)_cast)->createWidget();
 		}
 	} else {
-		warning("Sprite::setCast: Cast id %d has null member", castId);
+		warning("Sprite::setCast: CastMember id %d has null member", castId);
 	}
 
 	if (g_director->getVersion() < 4) {
@@ -208,7 +208,7 @@ void Sprite::setCast(uint16 castId) {
 		}
 	} else {
 		if (!member) {
-			debugC(1, kDebugImages, "Sprite::setCast(): Cast id %d not found", _castId);
+			debugC(1, kDebugImages, "Sprite::setCast(): CastMember id %d not found", _castId);
 		} else {
 			_castType = member->_type;
 		}

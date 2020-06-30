@@ -34,7 +34,7 @@
 #include "audio/decoders/aiff.h"
 
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/sound.h"
 
 namespace Director {
@@ -102,15 +102,15 @@ void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRep
 	if (castId == 0) {
 		stopSound(soundChannel);
 	} else {
-		Cast *soundCast = _vm->getCastMember(castId);
+		CastMember *soundCast = _vm->getCastMember(castId);
 		if (soundCast) {
 			if (soundCast->_type != kCastSound) {
-				warning("DirectorSound::playCastMember: attempted to play a non-SoundCast cast member %d", castId);
+				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember cast member %d", castId);
 			} else {
 				if (!allowRepeat && lastPlayingCast(soundChannel) == castId)
 					return;
-				bool looping = ((SoundCast *)soundCast)->_looping;
-				AudioDecoder *ad = ((SoundCast *)soundCast)->_audio;
+				bool looping = ((SoundCastMember *)soundCast)->_looping;
+				AudioDecoder *ad = ((SoundCastMember *)soundCast)->_audio;
 				if (!ad) {
 					warning("DirectorSound::playCastMember: no audio data attached to cast member %d", castId);
 					return;

@@ -43,7 +43,7 @@ namespace Director {
 
 class Stage;
 class Archive;
-struct CastInfo;
+struct CastMemberInfo;
 class DirectorEngine;
 class DirectorSound;
 class Frame;
@@ -53,11 +53,11 @@ struct Resource;
 struct Channel;
 class Sprite;
 class Stxt;
-class Cast;
-class BitmapCast;
-class ScriptCast;
-class ShapeCast;
-class TextCast;
+class CastMember;
+class BitmapCastMember;
+class ScriptCastMember;
+class ShapeCastMember;
+class TextCastMember;
 
 enum RenderMode {
 	kRenderModeNormal,
@@ -137,7 +137,7 @@ public:
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 
-	Cast *getCastMember(int castId);
+	CastMember *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
@@ -165,7 +165,7 @@ private:
 public:
 	Common::Array<Channel *> _channels;
 	Common::Array<Frame *> _frames;
-	Common::HashMap<uint16, CastInfo *> _castsInfo;
+	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
@@ -187,7 +187,7 @@ public:
 	bool _stopPlay;
 	uint32 _nextFrameTime;
 
-	Common::HashMap<int, Cast *> *_loadedCast;
+	Common::HashMap<int, CastMember *> *_loadedCast;
 
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
 

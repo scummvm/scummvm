@@ -27,7 +27,7 @@
 #include "graphics/macgui/macbutton.h"
 
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
 #include "director/frame.h"
 #include "director/sound.h"
 #include "director/sprite.h"
@@ -227,7 +227,7 @@ TheEntityField fields[] = {
 	{ kTheCast,		"palette",		kThePalette,	4 },//				D4 p
 	{ kTheCast,		"picture",		kThePicture,	3 },//		D3 p
 
-	// TextCast fields
+	// TextCastMember fields
 	{ kTheCast,		"hilite",		kTheHilite,		2 },// D2 p
 	{ kTheCast,		"size",			kTheSize,		3 },//		D3.1 p
 	{ kTheCast,		"text",			kTheText,		2 },// D2 p
@@ -841,7 +841,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheConstraint:
 		if (d.type == CASTREF) {
-			// Reference: Cast ID
+			// Reference: CastMember ID
 			// Find the first channel that uses this cast.
 			for (uint i = 0; i < score->_channels.size(); i++)
 				if (score->_channels[i]->_sprite->_castId == d.u.i)
@@ -955,12 +955,12 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
-	Cast *member = _vm->getCastMember(id);
+	CastMember *member = _vm->getCastMember(id);
 	if (!member) {
 		if (field == kTheLoaded) {
 			d.u.i = 0;
 		} else {
-			warning("Lingo::getTheCast(): Cast %d not found", id);
+			warning("Lingo::getTheCast(): CastMember %d not found", id);
 		}
 		return d;
 	}
@@ -971,7 +971,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	}
 
 	CastType castType = member->_type;
-	CastInfo *castInfo = nullptr;
+	CastMemberInfo *castInfo = nullptr;
 	if (score->_castsInfo.contains(id)) {
 		castInfo = score->_castsInfo.getVal(id);
 	} else {
@@ -979,7 +979,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		if (shared && shared->_castsInfo.contains(id)) {
 			castInfo = shared->_castsInfo.getVal(id);
 		} else {
-			warning("Lingo::getTheCast(): Cast info for %d not found", id);
+			warning("Lingo::getTheCast(): CastMember info for %d not found", id);
 			return d;
 		}
 	}
@@ -1014,7 +1014,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 			Common::String text;
 			if (castType == kCastText) {
 				if (member && member->_type == kCastText) {
-					text = ((TextCast *)member)->getText();
+					text = ((TextCastMember *)member)->getText();
 				} else {
 					warning("Lingo::getTheCast(): Unknown STXT cast id %d", id);
 				}
@@ -1057,13 +1057,13 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	Cast *member = _vm->getCastMember(id);
+	CastMember *member = _vm->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheCast(): Cast id %d doesn't exist", id);
+		warning("Lingo::setTheCast(): CastMember id %d doesn't exist", id);
 		return;
 	}
 	CastType castType = member->_type;
-	CastInfo *castInfo = score->_castsInfo[id];
+	CastMemberInfo *castInfo = score->_castsInfo[id];
 
 	switch (field) {
 	case kTheBackColor: {
@@ -1096,7 +1096,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheHilite:
 		// TODO: Understand how texts can be selected programmatically as well.
 		if (member->_type == kCastButton) {
-			TextCast *button = (TextCast *)member;
+			TextCastMember *button = (TextCastMember *)member;
 			if ((bool)d.asInt() !=  member->_hilite) {
 				((Graphics::MacButton *) button->_widget)->invertInner();
 				button->_hilite = !!d.asInt();
@@ -1125,7 +1125,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheText:
 		if (castType == kCastText) {
 			if (member->_type == kCastText) {
-				((TextCast *)member)->setText(d.asString().c_str());
+				((TextCastMember *)member)->setText(d.asString().c_str());
 			} else {
 				warning("Lingo::setTheCast(): Unknown STXT cast id %d", id);
 				return;
@@ -1147,12 +1147,12 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 	Datum d;
 	int id = g_lingo->castIdFetch(id1);
 
-	Cast *member = _vm->getCastMember(id);
+	CastMember *member = _vm->getCastMember(id);
 	if (!member) {
-		warning("Lingo::getTheField(): Cast id %d doesn't exist", id);
+		warning("Lingo::getTheField(): CastMember id %d doesn't exist", id);
 		return d;
 	} else if (member->_type != kCastText) {
-		warning("Lingo::getTheField(): Cast id %d is not a field", id);
+		warning("Lingo::getTheField(): CastMember id %d is not a field", id);
 		return d;
 	}
 
@@ -1192,12 +1192,12 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	Cast *member = _vm->getCastMember(id);
+	CastMember *member = _vm->getCastMember(id);
 	if (!member) {
-		warning("Lingo::setTheField(): Cast id %d doesn't exist", id);
+		warning("Lingo::setTheField(): CastMember id %d doesn't exist", id);
 		return;
 	} else if (member->_type != kCastText) {
-		warning("Lingo::setTheField(): Cast id %d is not a field", id);
+		warning("Lingo::setTheField(): CastMember id %d is not a field", id);
 	}
 
 	switch (field) {
