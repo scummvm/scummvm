@@ -96,28 +96,33 @@ bool KeypadGump::OnKeyDown(int key, int mod) {
 void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 	//ObjId cid = child->getObjId();
 	if (message == ButtonWidget::BUTTON_CLICK) {
+		uint16 sfxno = 0;
 		int buttonNo = child->GetIndex();
 		if (buttonNo < 9) {
 			_value *= 10;
 			_value += buttonNo + 1;
+			sfxno = 0x3b;
 		} else if (buttonNo == 10) {
 			_value *= 10;
+			sfxno = 0x3b;
 		} else if (buttonNo == 9) {
 			_value /= 10;
+			sfxno = 0x3a;
 		} else if (buttonNo == 11) {
-			AudioProcess *audio = AudioProcess::get_instance();
 			// TODO: Do something as a result of this other than just play a sound.
 			if (_value == _targetValue) {
-				if (audio)
-					audio->playSFX(0x32, 0x10, _objId, 1);
+				sfxno = 0x32;
 				Close();
+				// Note: careful, this is now deleted.
 			} else {
 				// wrong.
-				if (audio)
-					audio->playSFX(0x31, 0x10, _objId, 1);
+				sfxno = 0x31;
 				_value = 0;
 			}
 		}
+		AudioProcess *audio = AudioProcess::get_instance();
+		if (audio && sfxno)
+			audio->playSFX(sfxno, 0x10, _objId, 1);
 	}
 }
 
