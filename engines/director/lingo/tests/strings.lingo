@@ -1,8 +1,9 @@
 set z = "foo bar baz"
 set z1 = z & " meow"
 set z1 = z1 && "woof"
-put z
-put z1
+scummvmAssert(z1 contains "bar")
+scummvmAssert(z1 contains "MeÍW")
+
 set c = chars("Macromedia", 6, 6)
 scummvmAssertEqual(c, "m")
 set c = chars("Macromedia", 6, 10)
@@ -10,17 +11,7 @@ scummvmAssertEqual(c, "media")
 set c = chars("Macromedia", -1, 15)
 scummvmAssertEqual(c, "Macromedia")
 
-set x to z1 contains "bar"
-scummvmAssert(x)
-
-set x to z1 contains "MeÍW"
-scummvmAssert(x)
-
-set x to FALSE
-if "meow" = "MeÍW" then
-    set x = TRUE
-end if
-scummvmAssert(x)
+scummvmAssert("meow" = "MeÍW")
 
 put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
 
@@ -36,9 +27,10 @@ put return
 put "foo" into test
 put return after test
 put test
+scummvmAssertEqual(test, "foo" & return)
 
 put return before test
-put test
+scummvmAssertEqual(test, return & "foo" & return)
 
 put return into test
-put test
+scummvmAssertEqual(test, return)
