@@ -256,7 +256,7 @@ static struct BuiltinProto {
 	{ "lastLineOf",		LB::b_lastlineof,	1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "lastWordOf",		LB::b_lastwordof,	1, 1, false, 4, FBLTIN },	//			D4 f
 
-	//scummVM Asserts: Used for testing scummvm's lingo implementation
+	// ScummVM Asserts: Used for testing ScummVM's Lingo implementation
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 1, true,  2, FBLTIN },
 	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,2,true,2,FBLTIN },
 
@@ -2297,10 +2297,10 @@ void LB::b_lastwordof(int nargs) {
 void LB::b_scummvmassert(int nargs) {
 	Datum d = g_lingo->pop();
 
-	if (d.asInt() != 1) {
+	if (d.asInt() == 0) {
 		warning("LB::b_scummvmassert: is false");
 	}
-	assert(d.asInt() == 1);
+	assert(d.asInt() != 0);
 	g_lingo->push(d);
 }
 
