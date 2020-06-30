@@ -184,6 +184,7 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 
 	putSurface(*surf);
 
+	surf->free();
 	delete surf;
 
 	if (_lifeTime == 0 || lifeTime == -1 || lifeTime > _lifeTime) {
