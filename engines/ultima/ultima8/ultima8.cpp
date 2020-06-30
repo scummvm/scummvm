@@ -1385,18 +1385,8 @@ uint32 Ultima8Engine::I_getCurrentTimerTick(const uint8 * /*args*/,
 }
 
 uint32 Ultima8Engine::I_setAvatarInStasis(const uint8 *args, unsigned int argsize) {
-	if (argsize) {
-		ARG_SINT16(stasis);
-		get_instance()->setAvatarInStasis(stasis != 0);
-	} else {
-		// TODO: this is for crusader - does it have the same meaning?
-		get_instance()->setAvatarInStasis(true);
-	}
-	return 0;
-}
-
-uint32 Ultima8Engine::I_clrAvatarInStasis(const uint8 *args, unsigned int argsize) {
-	get_instance()->setAvatarInStasis(false);
+	ARG_SINT16(stasis);
+	get_instance()->setAvatarInStasis(stasis != 0);
 	return 0;
 }
 
@@ -1405,6 +1395,17 @@ uint32 Ultima8Engine::I_getAvatarInStasis(const uint8 * /*args*/, unsigned int /
 		return 1;
 	else
 		return 0;
+}
+
+uint32 Ultima8Engine::I_setCruStasis(const uint8 *args, unsigned int argsize) {
+	// This is like avatar stasis, but stops a lot of other keyboard inputs too.
+	warning("I_setCruStasis: TODO: implement me");
+	return 0;
+}
+
+uint32 Ultima8Engine::I_clrCruStasis(const uint8 *args, unsigned int argsize) {
+	warning("I_clrCruStasis: TODO: implement me");
+	return 0;
 }
 
 uint32 Ultima8Engine::I_getTimeInGameHours(const uint8 * /*args*/,

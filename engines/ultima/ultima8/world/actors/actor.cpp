@@ -67,7 +67,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Actor)
 Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 	  _hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
 	  _lastAnim(Animation::stand), _animFrame(0), _direction(0),
-		_fallStart(0), _unk0C(0), _actorFlags(0) {
+		_fallStart(0), _unk0C(0), _actorFlags(0), _combatTactic(0) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
 	_defaultActivity[2] = 0;
@@ -1207,6 +1207,13 @@ void Actor::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(_fallStart);
 	ws->writeUint32LE(_actorFlags);
 	ws->writeByte(_unk0C);
+
+	if (GAME_IS_CRUSADER) {
+		ws->writeUint16LE(_defaultActivity[0]);
+		ws->writeUint16LE(_defaultActivity[1]);
+		ws->writeUint16LE(_defaultActivity[2]);
+		ws->writeUint16LE(_combatTactic);
+	}
 }
 
 bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
@@ -1225,6 +1232,13 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 	_fallStart = rs->readUint32LE();
 	_actorFlags = rs->readUint32LE();
 	_unk0C = rs->readByte();
+
+	if (GAME_IS_CRUSADER) {
+		_defaultActivity[0] = rs->readUint16LE();
+		_defaultActivity[1] = rs->readUint16LE();
+		_defaultActivity[2] = rs->readUint16LE();
+		_combatTactic = rs->readUint16LE();
+	}
 
 	return true;
 }
@@ -1880,6 +1894,16 @@ uint32 Actor::I_getDefaultActivity2(const uint8 *args, unsigned int /*argsize*/)
 
 	return actor->getDefaultActivity(2);
 }
+
+uint32 Actor::I_setCombatTactic(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+	ARG_UINT16(tactic);
+
+	actor->setCombatTactic(tactic);
+	return 0;
+}
+
 
 
 } // End of namespace Ultima8

@@ -79,7 +79,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_getZ(Item *)",
 	"void Item::I_destroy(Item *)", // probably? often called after creating a replacement object and setting it to the same position (eg, LUGGAGE::gotHit)
 	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Maybe get HP? Called from ANDROID::calledFromAnim, goes to NPCDEATH
-	"void I_NPCsetSomething_00C(int)",
+	"void Ultima8Engine::I_setAvatarInStasis(int)",
 	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
 	"int16 Actor::I_turnToward(Actor *, direction, unk)", // TODO: work out what unk is
 	"void I_playFlic(void), int16 I_playFlic(Item *, char *name, int16 sizex, int16 sizey)",
@@ -153,14 +153,14 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	// 0050
 	"int16 I_GetNPCDataField0x2_050(Actor *)",
-	"void I_NPCSomething_051(Actor *)",  // TODO: check usecode to understand this.
+	"void Actor::I_clrInCombat(Actor *)", // probably, based on disasm.
 	"void Actor::I_setDefaultActivity0(Actor *, int)",
 	"void Actor::I_setDefaultActivity1(Actor *, int)",
 	"void Actor::I_setDefaultActivity2(Actor *, int)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"void Intrinsic056(int itemno)", // Maybe set new target? TODO: check usecode to understand this.
-	"int16 Item::I_getSOMETHING_57(Item *)",
-	"byte Item::Item::I_isCentreOn(Item *, uint16 other)",
+	"int16 Item::I_getSurfaceWeight(Item *)",
+	"byte Item::I_isCentreOn(Item *, uint16 other)",
 	"void Item::I_setFrame(Item *, frame)", // based on same coff as 002
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Point *)", // see PEPSIEW::use
@@ -188,10 +188,10 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 0070
 	"byte Ultima8Engine::I_getUnkCrusaderFlag(void)",
 	"void Ultima8Engine::I_setUnkCrusaderFlag(void)",
-	"void Ultima8Engine::I_setAvatarInStasis(void)",
+	"void Ultima8Engine::I_setCruStasis(void)",
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void Ultima8Engine::I_clrUnkCrusaderFlag(void)",
-	"void Ultima8Engine::I_clrAvatarInStasis(void)",
+	"void Ultima8Engine::I_clrCruStasis(void)",
 	"void AudioProcess::I_stopSFX(Item *)",
 	"int16 PaletteFaderProcess::I_fadeToBlack(void)", // fade to black, no args (40 frames)
 	"void MainActor::I_clrKeycards(void)",
@@ -261,7 +261,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Ultima8Engine::I_setAlertActive(void)",
 	"int16 Item::I_equip(6 bytes)",
 	"void Ultima8Engine::I_clrAlertActive(void)",
-	"int16 I_GetNPCGlobal0x7e24_0B7(void)",
+	"int16 Ultima8Engine::I_getAvatarInStasis(void)",
 	"byte I_probablyPickUpItem_0B8(4 bytes)", // same coff as 037
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"void Item::I_setQuality(Item *, int)", // same coff as 07F, 125
@@ -283,7 +283,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"byte Actor::I_addHp(Actor *, int)",
 	"void I_createMapJumpProcess(int16 mapnum)", // TODO: Implement me
-	"byte Actor::I_GetNPCDataField0x59Flag3_0CC(Actor *)",
+	"byte Actor::I_getInCombat(Actor *)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Game::I_isReleaseBuild(void)", // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see what this does..
 	"void Item::I_setQAndCombine(Item *, int16 q)", // based on disassembly
@@ -302,7 +302,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Actor::I_GetNPCDataField0x4_0DD(Actor *)",
-	"void Actor::I_SetNPCDataField0x5c_0DE(Actor *, int)",
+	"void Actor::I_setCombatTactic(Actor *, int)",
 	"int16 Actor::I_getEquip(6 bytes)", // based on disasm
 	// 00E0
 	"void Actor::I_setEquip(8 bytes)",
@@ -310,7 +310,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_getDefaultActivity1(Actor *)",
 	"int16 Actor::I_getDefaultActivity2(Actor *)",
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"void Actor::I_attackProbably(Actor *, uint16 target)", // TODO: game checks 0x59 flag 3 first.. what is that?
+	"void Actor::I_attack(Actor *, uint16 target)",
 	"void Actor::I_SetNPCDataField0x63_0E6(Actor *, int)",
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_cast(6 bytes)",

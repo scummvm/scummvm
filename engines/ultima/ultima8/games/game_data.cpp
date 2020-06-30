@@ -32,6 +32,7 @@
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/world/map_glob.h"
 #include "ultima/ultima8/world/actors/npc_dat.h"
+#include "ultima/ultima8/world/actors/combat_dat.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
@@ -495,6 +496,13 @@ const NPCDat *GameData::getNPCDataForShape(uint16 shapeno) const {
 	return nullptr;
 }
 
+const CombatDat *GameData::getCombatDat(uint16 entry) const {
+	if (entry < _combatData.size()) {
+		return _combatData[entry];
+	}
+	return nullptr;
+}
+
 void GameData::loadRemorseData() {
 	FileSystem *filesystem = FileSystem::get_instance();
 
@@ -638,7 +646,16 @@ void GameData::loadRemorseData() {
 		error("Unable to load static/combat.dat");
 
 	RawArchive *combatflex = new RawArchive(combatds);
+	_combatData.clear();
+	_combatData.resize(combatflex->getCount());
+	for (uint32 i = 0; i < combatflex->getCount(); i++) {
+		Common::SeekableReadStream *combatflexrs = combatflex->get_datasource(i);
 
+		if (combatflexrs && combatflexrs->size() > 20) {
+			_combatData[i] = new CombatDat(*combatflexrs);
+		}
+		delete combatflexrs;
+	}
 	// TODO: What's in this flex file?  Descriptions of combat tactics?
 	// 14 objects with contents:
 	// [ 16 Byte Name ]

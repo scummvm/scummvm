@@ -40,6 +40,7 @@ class Shape;
 class MusicFlex;
 class WpnOvlayDat;
 class NPCDat;
+class CombatDat;
 class ShapeFrame;
 class SoundFlex;
 class SpeechFlex;
@@ -95,6 +96,8 @@ public:
 	const NPCDat *getNPCData(uint16 entry) const;
 	const NPCDat *getNPCDataForShape(uint16 shapeno) const;
 
+	const CombatDat *getCombatDat(uint16 entry) const;
+
 	Std::string translate(const Std::string &text);
 	FrameID translate(FrameID frame);
 
@@ -118,6 +121,7 @@ private:
 	MusicFlex *_music;
 	WpnOvlayDat *_weaponOverlay;
 	Std::vector<NPCDat *> _npcTable;
+	Std::vector<CombatDat *> _combatData;
 
 	SoundFlex *_soundFlex;
 	Std::vector<SpeechFlex **> _speech;

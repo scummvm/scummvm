@@ -213,7 +213,6 @@ public:
 
 	INTRINSIC(I_getCurrentTimerTick);
 	INTRINSIC(I_setAvatarInStasis);
-	INTRINSIC(I_clrAvatarInStasis);
 	INTRINSIC(I_getAvatarInStasis);
 	INTRINSIC(I_getTimeInGameHours);
 	INTRINSIC(I_getTimeInMinutes);
@@ -225,6 +224,8 @@ public:
 	INTRINSIC(I_clrUnkCrusaderFlag);
 	INTRINSIC(I_makeAvatarACheater);
 	INTRINSIC(I_closeItemGumps);
+	INTRINSIC(I_setCruStasis);
+	INTRINSIC(I_clrCruStasis);
 
 	void setAvatarInStasis(bool stat) {
 		_avatarInStasis = stat;

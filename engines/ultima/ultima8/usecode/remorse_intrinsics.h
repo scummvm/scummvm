@@ -47,10 +47,10 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getZ, // byte Intrinsic009(Item *)
 	Item::I_destroy, // void Intrinsic00A(Item *)
 	0, // get something npcdata, maybe HP void Intrinsic00B(4 bytes)
-	0, // void Intrinsic00C(2 bytes)
+	Ultima8Engine::I_setAvatarInStasis, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
-	0, // int Intrinsic00E(8 bytes)
-	0, // TODO: I_playVideo(item, vidname, int16 sizex, int16 sizey)
+	0, // TODO: Actor::I_turnToward(Actor *, direction, unk)
+	0, // TODO: VideoGump::I_playVideo(item, vidname, int16 sizex, int16 sizey)
 	// 0x010
 	Item::I_getQLo, // Based on having same coff as 02B
 	Actor::I_getMap, // int Intrinsic011(4 bytes)
@@ -121,13 +121,13 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQHi,  // based on same coff set as 026
 	// 0x050
 	0, // void Intrinsic050(4 bytes)
-	0, // void Intrinsic051(4 bytes)
+	Actor::I_clrInCombat, // void Intrinsic051(4 bytes)
 	Actor::I_setDefaultActivity0, // void Intrinsic052(6 bytes)
 	Actor::I_setDefaultActivity1, // void Intrinsic053(6 bytes)
 	Actor::I_setDefaultActivity2, // void Intrinsic054(6 bytes)
 	Actor::I_setActivity, // void Intrinsic055(6 bytes)
 	0, // void Intrinsic056(2 bytes)
-	0, // void Intrinsic057(4 bytes)
+	Item::I_getSurfaceWeight, // void Intrinsic057(4 bytes)
 	Item::I_isCentreOn, // int Intrinsic058(6 bytes)
 	Item::I_setFrame, // based on same coff as 002
 	Actor::I_getLastAnimSet, // void Intrinsic05A(4 bytes)
@@ -156,10 +156,10 @@ Intrinsic RemorseIntrinsics[] = {
 	// 0x070
 	Ultima8Engine::I_getUnkCrusaderFlag, // int Intrinsic070(void)
 	Ultima8Engine::I_setUnkCrusaderFlag, // void Intrinsic071(void)
-	Ultima8Engine::I_setAvatarInStasis,
+	Ultima8Engine::I_setCruStasis,
 	Actor::I_setDead,
 	Ultima8Engine::I_clrUnkCrusaderFlag, // void Intrinsic074(void)
-	Ultima8Engine::I_clrAvatarInStasis,
+	Ultima8Engine::I_clrCruStasis,
 	AudioProcess::I_stopSFXCru, // takes Item *, from disasm
 	PaletteFaderProcess::I_fadeToBlack, // void Intrinsic077(void)
 	MainActor::I_clrKeycards, // void Intrinsic078(void)
@@ -229,7 +229,7 @@ Intrinsic RemorseIntrinsics[] = {
 	World::I_setAlertActive, // void Intrinsic0B4(void)
 	Item::I_equip, // void Intrinsic0B5(6 bytes)
 	World::I_clrAlertActive, // void Intrinsic0B6(void)
-	0, // void Intrinsic0B7(void)
+	Ultima8Engine::I_getAvatarInStasis, // void Intrinsic0B7(void)
 	0, // int Intrinsic0B8(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0B9(4 bytes)
 	Item::I_setQuality,
@@ -251,7 +251,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQHi,  // based on same coff set as 026
 	Actor::I_setHp, // int Intrinsic0CA(6 bytes)
 	0, // 0CB void I_createMapJumpProcess(int16 mapnum)", // TODO: Implement me
-	0, // int Intrinsic0CC(4 bytes)
+	Actor::I_isInCombat, // int Intrinsic0CC(4 bytes)
 	Actor::I_setActivity, // void Intrinsic0CD(6 bytes)
 	UCMachine::I_true, // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see how this changes the game.. for now just set to true.
 	Item::I_setQAndCombine, // void Intrinsic0CF(6 bytes)
@@ -270,7 +270,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
 	0, // void Intrinsic0DD(4 bytes)
-	0, // void Intrinsic0DE(6 bytes)
+	Actor::I_setCombatTactic, // void Intrinsic0DE(6 bytes)
 	Actor::I_getEquip, // void Intrinsic0DF(6 bytes)
 	// 0x0E0
 	Actor::I_setEquip, // void Intrinsic0E0(8 bytes)
@@ -278,7 +278,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getDefaultActivity1, // void Intrinsic0E2(4 bytes)
 	Actor::I_getDefaultActivity2, // void Intrinsic0E3(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0E4(4 bytes)
-	0, // void Intrinsic0E5(6 bytes)
+	0, // TODO: Actor::I_attack(Actor *, uint16 target) (implement me)
 	0, // void Intrinsic0E6(6 bytes)
 	Actor::I_setDead,
 	Item::I_cast, // void Intrinsic0E8(6 bytes)

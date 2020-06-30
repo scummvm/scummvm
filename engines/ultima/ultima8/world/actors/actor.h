@@ -136,6 +136,10 @@ public:
 		_actorFlags &= ~mask;
 	}
 
+	void setCombatTactic(int no) {
+		_combatTactic = no;
+	}
+
 	//! set stats from MonsterInfo (hp, dex, alignment, enemyAlignment)
 	//! in Crusader this comes from the NPC Data
 	//! \return true if info was found, false otherwise
@@ -289,6 +293,7 @@ public:
 	INTRINSIC(I_getDefaultActivity0);
 	INTRINSIC(I_getDefaultActivity1);
 	INTRINSIC(I_getDefaultActivity2);
+	INTRINSIC(I_setCombatTactic);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B
@@ -325,6 +330,9 @@ protected:
 
 	int32 _fallStart;
 	uint8 _unk0C; // unknown byte 0x0C from npcdata.dat
+
+	//! tactic being used in combat (for Crusader), the entry in the combat.dat flex.
+	uint16 _combatTactic;
 
 	uint32 _actorFlags;
 
