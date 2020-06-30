@@ -132,7 +132,7 @@ enum SpriteType {
 	kOutlinedRectangleSprite		= 12,	// QuickDraw
 	kOutlinedRoundedRectangleSprite	= 13,	// QuickDraw
 	kOutlinedOvalSprite				= 14,	// QuickDraw
-	kThinkLineSprite				= 15,	// 2pt width line
+	kThickLineSprite				= 15,	// 2pt width line
 	kCastMemberSprite				= 16,	// Specified by cast member
 	kFilmLoopSpite					= 17,
 	kDirMovieSprite					= 18
