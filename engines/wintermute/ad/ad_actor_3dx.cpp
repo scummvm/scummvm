@@ -105,6 +105,8 @@ AdActor3DX::~AdActor3DX() {
 	delete _path3D;
 
 	delete _targetPoint2D;
+
+	delete _modelX;
 }
 
 //////////////////////////////////////////////////////////////////////////
