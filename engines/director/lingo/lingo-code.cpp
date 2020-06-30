@@ -296,7 +296,7 @@ void LC::c_printtop(void) {
 		warning("%s", d.asString(true).c_str());
 		break;
 	case POINT:
-		warning("point(%s, %s", (*d.u.farr)[0].asString(true).c_str(), (*d.u.farr)[1].asString(true).c_str());
+		warning("point(%s, %s)", (*d.u.farr)[0].asString(true).c_str(), (*d.u.farr)[1].asString(true).c_str());
 		break;
 	case SYMBOL:
 		warning("%s", d.type2str(true));
