@@ -60,7 +60,7 @@ void CruHealerProcess::run() {
 	AudioProcess *audio = AudioProcess::get_instance();
 
 	if (!avatar || avatar->isDead() || avatar->getHP() >= _targetMaxHP) {
-		if (avatar->getHP() >= _targetMaxHP) {
+		if (avatar && avatar->getHP() >= _targetMaxHP) {
 			Ultima8Engine::get_instance()->setAvatarInStasis(false);
 		}
 		// dead or finished healing
