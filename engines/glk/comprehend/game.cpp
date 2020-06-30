@@ -1201,23 +1201,31 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 }
 
 bool ComprehendGame::handle_sentence(Sentence *sentence, Common::Array<byte> &words) {
-	Action *action;
-
-	// Find a matching action
 	for (uint i = 0; i < _actions.size(); i++) {
-		action = &_actions[i];
+		const Action &action = _actions[i];
 
-		if (action->_nr_words <= words.size()) {
-			bool isMatch = true;
-			for (uint idx = 0; idx < action->_nr_words && isMatch; ++idx)
-				isMatch = action->_word[idx] == words[idx];
+		// Check the verb first. It must match the first passed word
+		if (action._word[0] != words[0])
+			continue;
 
-			if (isMatch) {
-				// Match
-				const Function &func = _functions[action->_function];
-				eval_function(func, &sentence->_words[0], &sentence->_words[1]);
-				return true;
-			}
+		// Check for the remaining words of the action. They can be in
+		// any order in the passed words
+		uint actionWord;
+		for (actionWord = 1; actionWord < action._nr_words; ++actionWord) {
+			// Scan for next action word
+			bool isMatch = false;
+			for (uint idx = 0; idx < words.size() && !isMatch; ++idx)
+				isMatch = action._word[actionWord] == words[idx];
+
+			if (!isMatch)
+				break;
+		}
+
+		if (actionWord == action._nr_words) {
+			// Match
+			const Function &func = _functions[action._function];
+			eval_function(func, &sentence->_words[0], &sentence->_words[1]);
+			return true;
 		}
 	}
 
