@@ -2758,6 +2758,12 @@ Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
                                 The player can then click to walk towards that
                                 direction.
 
+Maniac Mansion NES adds the following non-standard keyword:
+
+    mm_nes_classic_palette  bool    If true, use a more natural palette that 
+                                    closely resembles the Nintendo NES Classic 
+                                    instead of the default NTSC palette
+
 Space Quest IV CD adds the following non-standard keyword:
 
     silver_cursors     bool     If true, an alternate set of silver mouse
