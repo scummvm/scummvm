@@ -9,7 +9,6 @@ MODULE_OBJS = \
 	frame.o \
 	graphics.o \
 	images.o \
-	movie.o \
 	resource.o \
 	stage.o \
 	score-loading.o \
@@ -20,6 +19,7 @@ MODULE_OBJS = \
 	tests.o \
 	transitions.o \
 	util.o \
+	video.o \
 	lingo/lingo-gr.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \

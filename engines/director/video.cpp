@@ -24,12 +24,12 @@
 #include "graphics/managed_surface.h"
 #include "video/qt_decoder.h"
 
-#include "director/movie.h"
+#include "director/video.h"
 #include "director/util.h"
 
 namespace Director {
 
-Movie::Movie(Common::String fileName, DirectorEngine *vm) {
+DigitalVideo::DigitalVideo(Common::String fileName, DirectorEngine *vm) {
 	_vm = vm;
 	_currentVideo = new Video::QuickTimeDecoder();
 	if (!_currentVideo->loadFile(fileName)) {
@@ -38,7 +38,7 @@ Movie::Movie(Common::String fileName, DirectorEngine *vm) {
 	}
 }
 
-void Movie::play(Common::Point dest) {
+void DigitalVideo::play(Common::Point dest) {
 
 	_currentVideo->start();
 
@@ -56,11 +56,11 @@ void Movie::play(Common::Point dest) {
 	}
 }
 
-void Movie::stop() {
+void DigitalVideo::stop() {
 	_currentVideo->stop();
 }
 
-Movie::~Movie() {
+DigitalVideo::~DigitalVideo() {
 	delete _currentVideo;
 }
 

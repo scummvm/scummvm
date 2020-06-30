@@ -31,10 +31,10 @@ namespace Director {
 
 class DirectorEngine;
 
-class Movie {
+class DigitalVideo {
 public:
-	Movie(Common::String fileName, DirectorEngine *vm);
-	~Movie();
+	DigitalVideo(Common::String fileName, DirectorEngine *vm);
+	~DigitalVideo();
 	void play(Common::Point dest);
 	void stop();
 
