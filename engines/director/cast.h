@@ -57,7 +57,7 @@ public:
 	virtual bool isEditable() { return false; }
 	virtual bool setEditable(bool editable) { return false; }
 	virtual bool isModified() { return _modified; }
-	virtual void createWidget();
+	virtual void createWidget() {}
 
 	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
 	virtual void getColors(int *fgcolor, int *bgcolor) { return; }

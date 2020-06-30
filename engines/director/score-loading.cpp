@@ -267,6 +267,7 @@ bool Score::loadArchive(bool isSharedCast) {
 
 	loadSpriteImages(isSharedCast);
 	loadSpriteSounds(isSharedCast);
+	createCastWidgets();
 	setSpriteCasts();
 
 	return true;
@@ -289,6 +290,15 @@ void Score::copyCastStxts() {
 
 			tc->importStxt(stxt);
 		}
+	}
+}
+
+void Score::createCastWidgets() {
+	for (Common::HashMap<int, Cast *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
+		if (!c->_value)
+			continue;
+
+		c->_value->createWidget();
 	}
 }
 

@@ -124,6 +124,7 @@ public:
 	void loadSpriteImages(bool isSharedCast);
 	void loadSpriteSounds(bool isSharedCast);
 	void copyCastStxts();
+	void createCastWidgets();
 
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);

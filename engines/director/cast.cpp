@@ -44,11 +44,6 @@ Cast::Cast() {
 	_modified = true;
 }
 
-void Cast::createWidget() {
-	if (_widget)
-		error("TextCast::createWidget: Attempted to create widget twice");
-}
-
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	_type = kCastBitmap;
 	_img = nullptr;

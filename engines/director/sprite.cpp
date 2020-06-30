@@ -76,18 +76,6 @@ void Sprite::updateCast() {
 	if (!_cast)
 		return;
 
-	if (!_cast->_widget) {
-		if (_cast->_type == kCastText && (_spriteType == kButtonSprite || _spriteType == kCheckboxSprite || _spriteType == kRadioButtonSprite)) {
-			// WORKAROUND: In D2/D3 there can be text casts that have button
-			// information set in the sprite.
-			warning("Sprite::updateCast: Working around D2/3 button glitch");
-			_cast->_type = kCastButton;
-			((TextCast *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
-		}
-
-		_cast->createWidget();
-	}
-
 	if (_cast->isEditable() != _editable && !_puppet)
 		_cast->setEditable(_editable);
 }
@@ -171,9 +159,21 @@ void Sprite::setCast(uint16 castId) {
 	if (castId == 0)
 		return;
 
-	if (member)
+	if (member) {
 		_cast = member;
-	else {
+
+		if (_cast->_type == kCastText &&
+				(_spriteType == kButtonSprite || _spriteType == kCheckboxSprite || _spriteType == kRadioButtonSprite)) {
+			// WORKAROUND: In D2/D3 there can be text casts that have button
+			// information set in the sprite.
+			warning("Sprite::updateCast: Working around D2/3 button glitch");
+
+			delete _cast->_widget;
+			_cast->_type = kCastButton;
+			((TextCast *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
+			((TextCast *)_cast)->createWidget();
+		}
+	} else {
 		warning("Sprite::setCast: Cast id %d has null member", castId);
 	}
 
