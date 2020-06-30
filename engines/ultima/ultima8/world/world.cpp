@@ -417,20 +417,22 @@ void World::setAlertActive(bool active)
 
 	UCList itemlist(2);
 	_world->getCurrentMap()->areaSearch(&itemlist, script, sizeof(script),
-										nullptr, 0x7fff, false);
+										nullptr, 0xffff, false);
 	for (uint32 i = 0; i < itemlist.getSize(); i++) {
 		uint16 itemid = itemlist.getuint16(i);
 		Item *item = getItem(itemid);
 		int frame = item->getFrame();
 		if (_alertActive) {
-			if (item->getShape() == 0x477 && frame < 2) {
-				item->setFrame(frame + 2);
+			if (item->getShape() == 0x477) {
+				if (frame < 2)
+					item->setFrame(frame + 2);
 			} else if (frame == 0) {
 				item->setFrame(1);
 			}
 		} else {
-			if (item->getShape() == 0x477 && frame > 1) {
-				item->setFrame(frame + 2);
+			if (item->getShape() == 0x477) {
+				if (frame > 1)
+					item->setFrame(frame - 2);
 			} else if (frame == 1) {
 				item->setFrame(0);
 			}
