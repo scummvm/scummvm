@@ -3,19 +3,24 @@ set z1 = z & " meow"
 set z1 = z1 && "woof"
 put z
 put z1
-put chars("Macromedia", 6, 6)
-put chars("Macromedia", 6, 10)
-put chars("Macromedia", -1, 15)
-if z1 contains "MeÍW" then
-	put "Contains"
-else
-	put "Doesn't contain"
-end if
+set c = chars("Macromedia", 6, 6)
+scummvmAssertEqual(c, "m")
+set c = chars("Macromedia", 6, 10)
+scummvmAssertEqual(c, "media")
+set c = chars("Macromedia", -1, 15)
+scummvmAssertEqual(c, "Macromedia")
+
+set x to z1 contains "bar"
+scummvmAssert(x)
+
+set x to z1 contains "MeÍW"
+scummvmAssert(x)
+
+set x to FALSE
 if "meow" = "MeÍW" then
-	put "Equals"
-else
-	put "Doesn't equal"
+    set x = TRUE
 end if
+scummvmAssert(x)
 
 put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
 

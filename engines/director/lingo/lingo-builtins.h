@@ -202,6 +202,9 @@ namespace LB {
 	void b_lastlineof(int nargs);
 	void b_lastwordof(int nargs);
 
+	void b_scummvmassert(int nargs);
+	void b_scummvmassertequal(int nargs);
+
 } // End of namespace LB
 
 } // End of namespace Director
