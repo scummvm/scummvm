@@ -40,7 +40,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_CURRENT_OBJECT_TAKEABLE] = "current_object_takeable";
 	_opcodes[OPCODE_CURRENT_OBJECT_NOT_TAKEABLE] = "current_object_not_takeable";
 
-	_opcodes[OPCODE_CURRENT_OBJECT_IS_IN_INVENTORY] = "current_object_is_in_inventory";
+	_opcodes[OPCODE_CURRENT_OBJECT_IN_INVENTORY] = "current_object_in_inventory";
 	_opcodes[OPCODE_CURRENT_OBJECT_IS_NOWHERE] = "current_object_is_nowhere";
 
 	_opcodes[OPCODE_CURRENT_OBJECT_NOT_PRESENT] = "current_object_not_present";

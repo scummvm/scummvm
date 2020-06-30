@@ -803,10 +803,9 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			                     !(item->_flags & ITEMF_CAN_TAKE));
 		break;
 
-	case OPCODE_CURRENT_OBJECT_IS_IN_INVENTORY:
+	case OPCODE_CURRENT_OBJECT_IN_INVENTORY:
 		item = get_item_by_noun(noun);
-		assert(item);
-		func_set_test_result(func_state, item->_room == ROOM_INVENTORY);
+		func_set_test_result(func_state, item && item->_room == ROOM_INVENTORY);
 		break;
 
 	case OPCODE_OBJECT_IS_NOWHERE:
@@ -816,8 +815,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 
 	case OPCODE_CURRENT_OBJECT_IS_NOWHERE:
 		item = get_item_by_noun(noun);
-		assert(item);
-		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
+		func_set_test_result(func_state, item && item->_room == ROOM_NOWHERE);
 		break;
 
 	case OPCODE_OBJECT_IS_NOT_NOWHERE:
