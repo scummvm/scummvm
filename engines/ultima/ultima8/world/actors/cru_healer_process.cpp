@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
 #include "common/util.h"
@@ -49,6 +50,7 @@ CruHealerProcess::CruHealerProcess() : Process() {
 			audio->playSFX(0xdb, 0x80, _itemNum, 1, false);
 		}
 	}
+	Ultima8Engine::get_instance()->setAvatarInStasis(true);
 	_type = 0x254; // CONSTANT!
 }
 
@@ -58,6 +60,9 @@ void CruHealerProcess::run() {
 	AudioProcess *audio = AudioProcess::get_instance();
 
 	if (!avatar || avatar->isDead() || avatar->getHP() >= _targetMaxHP) {
+		if (avatar->getHP() >= _targetMaxHP) {
+			Ultima8Engine::get_instance()->setAvatarInStasis(false);
+		}
 		// dead or finished healing
 		if (audio)
 			audio->stopSFX(0xdb, _itemNum);
