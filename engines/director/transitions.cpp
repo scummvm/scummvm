@@ -28,6 +28,7 @@
 
 #include "director/director.h"
 #include "director/frame.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
@@ -151,7 +152,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 	// If a transition is being played, render the frame after the transition.
 	Graphics::ManagedSurface *nextFrame = new Graphics::ManagedSurface(_surface.w, _surface.h);
-	g_director->getCurrentScore()->renderSprites(t.frame, kRenderForceUpdate);
+	g_director->getCurrentMovie()->getScore()->renderSprites(t.frame, kRenderForceUpdate);
 	render(true, nextFrame);
 
 	if (t.area)

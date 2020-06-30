@@ -54,9 +54,11 @@ enum DirectorGameGID {
 };
 
 class Archive;
+class Cast;
 struct DirectorGameDescription;
 class DirectorSound;
 class Lingo;
+class Movie;
 class Stage;
 class Score;
 class CastMember;
@@ -134,8 +136,8 @@ public:
 	Archive *getMainArchive() const { return _mainArchive; }
 	Lingo *getLingo() const { return _lingo; }
 	Stage *getStage() const { return _currentStage; }
-	Score *getCurrentScore() const { return _currentScore; }
-	Score *getSharedScore() const { return _sharedScore; }
+	Movie *getCurrentMovie() const { return _currentMovie; }
+	Cast *getSharedCast() const { return _sharedCast; }
 	Common::String getCurrentPath() const { return _currentPath; }
 	void setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
@@ -191,7 +193,7 @@ protected:
 private:
 	const DirectorGameDescription *_gameDescription;
 
-	Common::HashMap<Common::String, Score *> *scanMovies(const Common::String &folder);
+	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
 	void loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);
@@ -200,7 +202,7 @@ private:
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac(const Common::String movie);
 
-	Score *_sharedScore;
+	Cast *_sharedCast;
 
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
@@ -210,7 +212,7 @@ private:
 	Lingo *_lingo;
 
 	Stage *_currentStage;
-	Score *_currentScore;
+	Movie *_currentMovie;
 	Common::String _currentPath;
 
 	Graphics::MacPatterns _director3Patterns;

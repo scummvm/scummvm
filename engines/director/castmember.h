@@ -63,7 +63,7 @@ public:
 	virtual void getColors(int *fgcolor, int *bgcolor) { return; }
 
 	CastType _type;
-	Score *_score;
+	Cast *_cast;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
 	Common::Array<Resource> _children;

@@ -25,6 +25,7 @@
 #include "common/substream.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember.h"
 #include "director/score.h"
 #include "director/util.h"
@@ -887,7 +888,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 		if (member->_type == kCastLingoScript)
 			scriptType = ((ScriptCastMember *)member)->_scriptType;
 
-		CastMemberInfo *info = member->_score->_castsInfo[castId];
+		CastMemberInfo *info = member->_cast->_castsInfo[castId];
 		if (info)
 			castName = info->name;
 	}

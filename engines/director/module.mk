@@ -2,6 +2,7 @@ MODULE := engines/director
 
 MODULE_OBJS = \
 	archive.o \
+	cast.o \
 	castmember.o \
 	detection.o \
 	director.o \
@@ -9,9 +10,9 @@ MODULE_OBJS = \
 	frame.o \
 	graphics.o \
 	images.o \
+	movie.o \
 	resource.o \
 	stage.o \
-	score-loading.o \
 	score.o \
 	sound.o \
 	sprite.o \

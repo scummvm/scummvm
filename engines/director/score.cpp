@@ -22,6 +22,8 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/memstream.h"
+#include "common/substream.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -35,12 +37,13 @@
 #endif
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember.h"
 #include "director/score.h"
 #include "director/frame.h"
+#include "director/movie.h"
 #include "director/sound.h"
 #include "director/sprite.h"
-#include "director/stxt.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 
@@ -122,11 +125,12 @@ void Channel::setClean(Sprite *nextSprite, int spriteId) {
 }
 
 void Channel::addDelta(Common::Point pos) {
-	if (_constraint > g_director->getCurrentScore()->_channels.size() - 1) {
+	// TODO: Channel should have a pointer to its score
+	if (_constraint > g_director->getCurrentMovie()->getScore()->_channels.size() - 1) {
 		warning("Channel::addDelta: Received out-of-bounds constraint: %d", _constraint);
 		_constraint = 0;
 	} else if (_sprite->_moveable && _constraint > 0) {
-		Common::Rect constraintBbox = g_director->getCurrentScore()->_channels[_constraint]->getBbox();
+		Common::Rect constraintBbox = g_director->getCurrentMovie()->getScore()->_channels[_constraint]->getBbox();
 
 		Common::Rect currentBbox = getBbox();
 		currentBbox.translate(pos.x, pos.y);
@@ -209,44 +213,22 @@ MacShape *Channel::getShape() {
 	return shape;
 }
 
-Score::Score(DirectorEngine *vm) {
+Score::Score(DirectorEngine *vm, Movie *movie) {
 	_vm = vm;
 	_lingo = _vm->getLingo();
-	_lingoArchive = kArchMain;
+	_movie = movie;
+
 	_soundManager = _vm->getSoundManager();
-	_currentMouseDownSpriteId = 0;
-	_currentClickOnSpriteId = 0;
-	_lastEventTime = _vm->getMacTicks();
-	_lastKeyTime = _lastEventTime;
-	_lastClickTime = _lastEventTime;
-	_lastRollTime = _lastEventTime;
-	_lastTimerReset = _lastEventTime;
 	_puppetTempo = 0x00;
 
-	// FIXME: TODO: Check whether the original truely does it
-	if (_vm->getVersion() <= 3) {
-		_lingo->executeScript(kMovieScript, 0);
-	}
-	_movieScriptCount = 0;
 	_labels = nullptr;
-	_font = nullptr;
 
-	_versionMinor = _versionMajor = 0;
 	_currentFrameRate = 20;
-	_castArrayStart = _castArrayEnd = 0;
 	_currentFrame = 0;
 	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
-	_flags = 0;
 	_stopPlay = false;
-
-	_castIDoffset = 0;
-
-	_movieArchive = nullptr;
-
-	_loadedStxts = nullptr;
-	_loadedCast = nullptr;
 
 	_numChannelsDisplayed = 0;
 
@@ -260,50 +242,11 @@ Score::~Score() {
 	for (uint i = 0; i < _channels.size(); i++)
 		delete _channels[i];
 
-	if (_loadedStxts)
-		for (Common::HashMap<int, const Stxt *>::iterator it = _loadedStxts->begin(); it != _loadedStxts->end(); ++it)
-			delete it->_value;
-
-	if (_movieArchive) {
-		_movieArchive->close();
-		delete _movieArchive;
-		_movieArchive = nullptr;
-	}
-
-	if (_loadedCast)
-		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
-			delete it->_value;
-
 	if (_labels)
 		for (Common::SortedArray<Label *>::iterator it = _labels->begin(); it != _labels->end(); ++it)
 			delete *it;
 
-	delete _font;
 	delete _labels;
-	delete _loadedStxts;
-	delete _loadedCast;
-}
-
-Common::Rect Score::getCastMemberInitialRect(int castId) {
-	CastMember *cast = _loadedCast->getVal(castId);
-
-	if (!cast) {
-		warning("Score::getCastMemberInitialRect(%d): empty cast", castId);
-		return Common::Rect(0, 0);
-	}
-
-	return cast->_initialRect;
-}
-
-void Score::setCastMemberModified(int castId) {
-	CastMember *cast = _loadedCast->getVal(castId);
-
-	if (!cast) {
-		warning("Score::setCastMemberModified(%d): empty cast", castId);
-		return;
-	}
-
-	cast->_modified = 1;
 }
 
 bool Score::processImmediateFrameScript(Common::String s, int id) {
@@ -418,34 +361,10 @@ int Score::getPreviousLabelNumber(int referenceFrame) {
 	return 0;
 }
 
-Common::String Score::getString(Common::String str) {
-	if (str.size() == 0) {
-		return str;
-	}
-
-	uint8 f = static_cast<uint8>(str.firstChar());
-
-	if (f == 0) {
-		return "";
-	}
-
-	//TODO: check if all versions need to cut off the first character.
-	if (_vm->getVersion() > 3) {
-		str.deleteChar(0);
-	}
-
-	if (str.lastChar() == '\x00') {
-		str.deleteLastChar();
-	}
-
-	return str;
-}
-
 void Score::startLoop() {
-
-	debugC(1, kDebugImages, "Score dims: %dx%d", _movieRect.width(), _movieRect.height());
-
-	initGraphics(_movieRect.width(), _movieRect.height());
+	// TODO: Should the dims be set by the movie?
+	debugC(1, kDebugImages, "Score dims: %dx%d", _movie->_movieRect.width(), _movie->_movieRect.height());
+	initGraphics(_movie->_movieRect.width(), _movie->_movieRect.height());
 
 	_currentFrame = 0;
 	_stopPlay = false;
@@ -663,7 +582,7 @@ void Score::screenShot() {
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 	Common::String currentPath = _vm->getCurrentPath().c_str();
 	Common::replace(currentPath, "/", "-"); // exclude '/' from screenshot filename prefix
-	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), _macName.c_str());
+	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), _movie->getMacName().c_str());
 	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, _framesRan, "png");
 
 	Common::DumpFile screenshotFile;
@@ -676,24 +595,6 @@ void Score::screenShot() {
 	}
 
 	newSurface->free();
-}
-
-CastMember *Score::getCastMember(int castId) {
-	CastMember *result = nullptr;
-
-	if (_loadedCast && _loadedCast->contains(castId)) {
-		result = _loadedCast->getVal(castId);
-	}
-	return result;
-}
-
-const Stxt *Score::getStxt(int castId) {
-	const Stxt *result = nullptr;
-
-	if (_loadedStxts->contains(castId)) {
-		result = _loadedStxts->getVal(castId);
-	}
-	return result;
 }
 
 uint16 Score::getSpriteIDFromPos(Common::Point pos, bool onlyActive) {
@@ -748,6 +649,259 @@ void Score::playSoundChannel(uint16 frameId) {
 	DirectorSound *sound = _vm->getSoundManager();
 	sound->playCastMember(frame->_sound1, 1, false);
 	sound->playCastMember(frame->_sound2, 2, false);
+}
+
+void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "****** Loading frames VWSC");
+
+	//stream.hexdump(stream.size());
+
+	uint32 size = stream.readUint32();
+	size -= 4;
+
+	if (_vm->getVersion() < 4) {
+		_numChannelsDisplayed = 30;
+	} else if (_vm->getVersion() == 4) {
+		uint32 frame1Offset = stream.readUint32();
+		uint32 numFrames = stream.readUint32();
+		uint16 version = stream.readUint16();
+		uint16 spriteRecordSize = stream.readUint16();
+		uint16 numChannels = stream.readUint16();
+		size -= 14;
+
+		if (version > 13) {
+			_numChannelsDisplayed = stream.readUint16();
+		} else {
+			if (version <= 7)	// Director5
+				_numChannelsDisplayed = 48;
+			else
+				_numChannelsDisplayed = 120;	// D6
+
+			stream.readUint16(); // Skip
+		}
+
+		size -= 2;
+
+		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x numChannelsDisplayed: %x",
+			frame1Offset, numFrames, version, spriteRecordSize, numChannels, _numChannelsDisplayed);
+		// Unknown, some bytes - constant (refer to contuinity).
+	} else if (_vm->getVersion() > 4) {
+		//what data is up the top of D5 VWSC?
+		uint32 unk1 = stream.readUint32();
+		uint32 unk2 = stream.readUint32();
+
+		uint16 unk3, unk4, unk5, unk6;
+
+		if (unk2 > 0) {
+			uint32 blockSize = stream.readUint32() - 1;
+			stream.readUint32();
+			stream.readUint32();
+			stream.readUint32();
+			stream.readUint32();
+			for (uint32 skip = 0; skip < blockSize * 4; skip++)
+				stream.readByte();
+
+			//header number two... this is our actual score entry point.
+			unk1 = stream.readUint32();
+			unk2 = stream.readUint32();
+			stream.readUint32();
+			unk3 = stream.readUint16();
+			unk4 = stream.readUint16();
+			unk5 = stream.readUint16();
+			unk6 = stream.readUint16();
+		} else {
+			unk3 = stream.readUint16();
+			unk4 = stream.readUint16();
+			unk5 = stream.readUint16();
+			unk6 = stream.readUint16();
+			size -= 16;
+		}
+		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
+	}
+
+	uint16 channelSize;
+	uint16 channelOffset;
+
+	Frame *initial = new Frame(_vm, _numChannelsDisplayed);
+	// Push a frame at frame#0 position.
+	// This makes all indexing simpler
+	_frames.push_back(initial);
+
+	// This is a representation of the channelData. It gets overridden
+	// partically by channels, hence we keep it and read the score from left to right
+	//
+	// TODO Merge it with shared cast
+	byte channelData[kChannelDataSize];
+	memset(channelData, 0, kChannelDataSize);
+
+	while (size != 0 && !stream.eos()) {
+		uint16 frameSize = stream.readUint16();
+		debugC(8, kDebugLoading, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
+
+		if (frameSize > 0) {
+			Frame *frame = new Frame(_vm, _numChannelsDisplayed);
+			size -= frameSize;
+			frameSize -= 2;
+
+			while (frameSize != 0) {
+
+				if (_vm->getVersion() < 4) {
+					channelSize = stream.readByte() * 2;
+					channelOffset = stream.readByte() * 2;
+					frameSize -= channelSize + 2;
+				} else {
+					channelSize = stream.readUint16();
+					channelOffset = stream.readUint16();
+					frameSize -= channelSize + 4;
+				}
+
+				assert(channelOffset + channelSize < kChannelDataSize);
+				stream.read(&channelData[channelOffset], channelSize);
+			}
+
+			Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
+			// str->hexdump(str->size(), 32);
+			frame->readChannels(str);
+			delete str;
+
+			debugC(8, kDebugLoading, "Score::loadFrames(): Frame %d actionId: %d", _frames.size(), frame->_actionId);
+
+			_frames.push_back(frame);
+		} else {
+			warning("zero sized frame!? exiting loop until we know what to do with the tags that follow.");
+			size = 0;
+		}
+	}
+}
+
+void Score::setSpriteCasts() {
+	// Update sprite cache of cast pointers/info
+	for (uint16 i = 0; i < _frames.size(); i++) {
+		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
+			_frames[i]->_sprites[j]->setCast(_frames[i]->_sprites[j]->_castId);
+
+			debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d castId: %d type: %d", i, j, _frames[i]->_sprites[j]->_castId, _frames[i]->_sprites[j]->_spriteType);
+		}
+	}
+}
+
+void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
+	if (debugChannelSet(5, kDebugLoading)) {
+		debug("Score::loadLabels()");
+		stream.hexdump(stream.size());
+	}
+
+	_labels = new Common::SortedArray<Label *>(compareLabels);
+	uint16 count = stream.readUint16() + 1;
+	uint32 offset = count * 4 + 2;
+
+	uint16 frame = stream.readUint16();
+	uint32 stringPos = stream.readUint16() + offset;
+
+	for (uint16 i = 1; i < count; i++) {
+		uint16 nextFrame = stream.readUint16();
+		uint32 nextStringPos = stream.readUint16() + offset;
+		uint32 streamPos = stream.pos();
+
+		stream.seek(stringPos);
+		Common::String label;
+
+		for (uint32 j = stringPos; j < nextStringPos; j++) {
+			label += stream.readByte();
+		}
+
+		_labels->insert(new Label(label, frame));
+		stream.seek(streamPos);
+
+		frame = nextFrame;
+		stringPos = nextStringPos;
+	}
+
+	Common::SortedArray<Label *>::iterator j;
+
+	debugC(2, kDebugLoading, "****** Loading labels");
+	for (j = _labels->begin(); j != _labels->end(); ++j) {
+		debugC(2, kDebugLoading, "Frame %d, Label '%s'", (*j)->number, Common::toPrintable((*j)->name).c_str());
+	}
+}
+
+int Score::compareLabels(const void *a, const void *b) {
+	return ((const Label *)a)->number - ((const Label *)b)->number;
+}
+
+void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(2, kDebugLoading, "****** Loading Actions VWAC");
+
+	uint16 count = stream.readUint16() + 1;
+	uint32 offset = count * 4 + 2;
+
+	byte id = stream.readByte();
+
+	byte subId = stream.readByte(); // I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
+	uint32 stringPos = stream.readUint16() + offset;
+
+	for (uint16 i = 0; i < count; i++) {
+		uint16 nextId = stream.readByte();
+		byte nextSubId = stream.readByte();
+		uint32 nextStringPos = stream.readUint16() + offset;
+		uint32 streamPos = stream.pos();
+
+		stream.seek(stringPos);
+
+		for (uint16 j = stringPos; j < nextStringPos; j++) {
+			byte ch = stream.readByte();
+			if (ch == 0x0d) {
+				ch = '\n';
+			}
+			_actions[i + 1] += ch;
+		}
+
+		debugC(3, kDebugLoading, "Action id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
+
+		stream.seek(streamPos);
+
+		id = nextId;
+		subId = nextSubId;
+		stringPos = nextStringPos;
+
+		if ((int32)stringPos == stream.size())
+			break;
+	}
+
+	bool *scriptRefs = (bool *)calloc(_actions.size() + 1, sizeof(int));
+
+	// Now let's scan which scripts are actually referenced
+	for (uint i = 0; i < _frames.size(); i++) {
+		if (_frames[i]->_actionId <= _actions.size())
+			scriptRefs[_frames[i]->_actionId] = true;
+
+		for (uint16 j = 0; j <= _frames[i]->_numChannels; j++) {
+			if (_frames[i]->_sprites[j]->_scriptId <= _actions.size())
+				scriptRefs[_frames[i]->_sprites[j]->_scriptId] = true;
+		}
+	}
+
+	Common::HashMap<uint16, Common::String>::iterator j;
+
+	if (ConfMan.getBool("dump_scripts"))
+		for (j = _actions.begin(); j != _actions.end(); ++j) {
+			if (!j->_value.empty())
+				_movie->getCast()->dumpScript(j->_value.c_str(), kScoreScript, j->_key);
+		}
+
+	for (j = _actions.begin(); j != _actions.end(); ++j) {
+		if (!scriptRefs[j->_key]) {
+			warning("Action id %d is not referenced, the code is:\n-----\n%s\n------", j->_key, j->_value.c_str());
+			// continue;
+		}
+		if (!j->_value.empty()) {
+			_lingo->addCode(j->_value.c_str(), _movie->getCast()->_lingoArchive, kScoreScript, j->_key);
+
+			processImmediateFrameScript(j->_value, j->_key);
+		}
+	}
+
+	free(scriptRefs);
 }
 
 } // End of namespace Director

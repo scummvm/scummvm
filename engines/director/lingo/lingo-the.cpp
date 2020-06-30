@@ -27,8 +27,10 @@
 #include "graphics/macgui/macbutton.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember.h"
 #include "director/frame.h"
+#include "director/movie.h"
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/score.h"
@@ -337,8 +339,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 
 	Datum d;
 
-	if (!_vm->getCurrentScore()) {
-		warning("Lingo::getTheEntity(): Score is missing");
+	if (!_vm->getCurrentMovie()) {
+		warning("Lingo::getTheEntity(): Movie is missing");
 		d.type = VOID;
 
 		return d;
@@ -350,7 +352,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheClickOn:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_currentClickOnSpriteId;
+		d.u.i = _vm->getCurrentMovie()->_currentClickOnSpriteId;
 		break;
 	case kTheColorDepth:
 		// bpp. 1, 2, 4, 8, 32
@@ -370,7 +372,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheFrame:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->getCurrentFrame();
+		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 		break;
 	case kTheKey:
 		d.type = STRING;
@@ -396,23 +398,23 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheLastClick:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastClickTime;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastClickTime;
 		break;
 	case kTheLastEvent:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastEventTime;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastEventTime;
 		break;
 	case kTheLastFrame:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_frames.size() - 1;
+		d.u.i = _vm->getCurrentMovie()->getScore()->_frames.size() - 1;
 		break;
 	case kTheLastKey:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastKeyTime;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastKeyTime;
 		break;
 	case kTheLastRoll:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastRollTime;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastRollTime;
 		break;
 	case kTheMachineType:
 		// 1 - Macintosh 512Ke			D2
@@ -460,7 +462,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMovie:
 	case kTheMovieName:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentScore()->getMacName());
+		d.u.s = new Common::String(_vm->getCurrentMovie()->getMacName());
 		break;
 	case kTheMoviePath:
 	case kThePathName:
@@ -470,7 +472,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMouseCast:
 		{
 			Common::Point pos = g_system->getEventManager()->getMousePos();
-			Score *sc = _vm->getCurrentScore();
+			Score *sc = _vm->getCurrentMovie()->getScore();
 			uint16 spriteId = sc->getSpriteIDFromPos(pos);
 			d.type = INT;
 			d.u.i = sc->getSpriteById(spriteId)->_castId;
@@ -548,19 +550,19 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheStageBottom:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_movieRect.bottom;
+		d.u.i = _vm->getCurrentMovie()->_movieRect.bottom;
 		break;
 	case kTheStageLeft:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_movieRect.left;
+		d.u.i = _vm->getCurrentMovie()->_movieRect.left;
 		break;
 	case kTheStageRight:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_movieRect.right;
+		d.u.i = _vm->getCurrentMovie()->_movieRect.right;
 		break;
 	case kTheStageTop:
 		d.type = INT;
-		d.u.i = _vm->getCurrentScore()->_movieRect.top;
+		d.u.i = _vm->getCurrentMovie()->_movieRect.top;
 		break;
 	case kTheStillDown:
 		d.type = INT;
@@ -571,7 +573,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheTimer:
 		d.type = INT;
-		d.u.i = _vm->getMacTicks() - _vm->getCurrentScore()->_lastTimerReset;
+		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastTimerReset;
 		break;
 	case kTheTimeoutScript:
 		d.type = STRING;
@@ -678,7 +680,7 @@ void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &me
 Datum Lingo::getTheSprite(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
-	Score *score = _vm->getCurrentScore();
+	Score *score = _vm->getCurrentMovie()->getScore();
 
 	if (!score) {
 		warning("Lingo::getTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
@@ -801,7 +803,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 
 void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	int id = 0;
-	Score *score = _vm->getCurrentScore();
+	Score *score = _vm->getCurrentMovie()->getScore();
 
 	if (!score) {
 		warning("Lingo::setTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
@@ -946,12 +948,12 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
 	int id = g_lingo->castIdFetch(id1);
 
-	Score *score = _vm->getCurrentScore();
+	Cast *cast = _vm->getCurrentMovie()->getCast();
 	// Setting default type
 	d.type = INT;
 
-	if (!score) {
-		warning("Lingo::getTheCast(): No score loaded");
+	if (!cast) {
+		warning("Lingo::getTheCast(): No cast loaded");
 		return d;
 	}
 
@@ -972,10 +974,10 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	CastType castType = member->_type;
 	CastMemberInfo *castInfo = nullptr;
-	if (score->_castsInfo.contains(id)) {
-		castInfo = score->_castsInfo.getVal(id);
+	if (cast->_castsInfo.contains(id)) {
+		castInfo = cast->_castsInfo.getVal(id);
 	} else {
-		Score *shared = _vm->getSharedScore();
+		Cast *shared = _vm->getSharedCast();
 		if (shared && shared->_castsInfo.contains(id)) {
 			castInfo = shared->_castsInfo.getVal(id);
 		} else {
@@ -998,7 +1000,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		member->getColors(&d.u.i, nullptr);
 		break;
 	case kTheHeight:
-		d.u.i = score->getCastMemberInitialRect(id).height();
+		d.u.i = cast->getCastMemberInitialRect(id).height();
 		break;
 	case kTheLoaded:
 		d.u.i = 1; //Not loaded handled above
@@ -1025,7 +1027,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		}
 		break;
 	case kTheWidth:
-		d.u.i = score->getCastMemberInitialRect(id).width();
+		d.u.i = cast->getCastMemberInitialRect(id).width();
 		break;
 	case kTheNumber:
 		d.u.i = id;
@@ -1041,10 +1043,10 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	int id = 0;
-	Score *score = _vm->getCurrentScore();
+	Cast *cast = _vm->getCurrentMovie()->getCast();
 
-	if (!score) {
-		warning("Lingo::setTheCast(): The cast %d field \"%s\" setting over non-active score", id, field2str(field));
+	if (!cast) {
+		warning("Lingo::setTheCast(): The cast %d field \"%s\" setting over non-active cast", id, field2str(field));
 		return;
 	}
 
@@ -1063,7 +1065,9 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 	CastType castType = member->_type;
-	CastMemberInfo *castInfo = score->_castsInfo[id];
+	CastMemberInfo *castInfo = cast->_castsInfo[id];
+
+	// FIXME: Properly handle shared cast
 
 	switch (field) {
 	case kTheBackColor: {
@@ -1090,8 +1094,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		break;
 	}
 	case kTheHeight:
-		score->getCastMemberInitialRect(id).setHeight(d.asInt());
-		score->setCastMemberModified(id);
+		cast->getCastMemberInitialRect(id).setHeight(d.asInt());
+		cast->setCastMemberModified(id);
 		break;
 	case kTheHilite:
 		// TODO: Understand how texts can be selected programmatically as well.
@@ -1135,8 +1139,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheWidth:
-		score->getCastMemberInitialRect(id).setWidth(d.asInt());
-		score->setCastMemberModified(id);
+		cast->getCastMemberInitialRect(id).setWidth(d.asInt());
+		cast->setCastMemberModified(id);
 		break;
 	default:
 		warning("Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);

@@ -32,10 +32,12 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/stage.h"
 #include "director/archive.h"
+#include "director/cast.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
+#include "director/stage.h"
 #include "director/lingo/lingo.h"
 #include "director/util.h"
 
@@ -78,13 +80,13 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load key codes
 	loadKeyCodes();
 
-	_currentScore = nullptr;
+	_currentMovie = nullptr;
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
 	_lingo = nullptr;
 
-	_sharedScore = nullptr;
+	_sharedCast = nullptr;
 
 	_mainArchive = nullptr;
 	_macBinary = nullptr;
@@ -118,8 +120,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _sharedScore;
-	delete _currentScore;
+	delete _sharedCast;
+	delete _currentMovie;
 
 	_wm->removeWindow(_currentStage);
 
@@ -167,7 +169,7 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	_currentScore = new Score(this);
+	_currentMovie = new Movie(this);
 	_currentPath = getPath(getEXEName(), _currentPath);
 
 	if (getPlatform() == Common::kPlatformWindows)
@@ -217,7 +219,7 @@ Common::Error DirectorEngine::run() {
 			}
 
 			if (_mainArchive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
-				_currentScore->setArchive(_mainArchive);
+				_currentMovie->setArchive(_mainArchive);
 
 				Common::SeekableSubReadStreamEndian *name = _mainArchive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
 				int num = name->readUint16();
@@ -233,46 +235,46 @@ Common::Error DirectorEngine::run() {
 				_nextMovie.movie = pathMakeRelative(sname);
 				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
 
-				delete _currentScore;
-				_currentScore = nullptr;
+				delete _currentMovie;
+				_currentMovie = nullptr;
 
 				delete name;
 			}
 		}
 	}
 
-	if (_currentScore)
-		_currentScore->setArchive(_mainArchive);
+	if (_currentMovie)
+		_currentMovie->setArchive(_mainArchive);
 
 	bool loop = true;
 
 	while (loop) {
 		loop = false;
 
-		if (_currentScore) {
+		if (_currentMovie) {
 			debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			debug(0, "@@@@   Score name '%s' in '%s'", _currentScore->getMacName().c_str(), _currentPath.c_str());
+			debug(0, "@@@@   Movie name '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
 			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-			bool goodMovie = _currentScore->loadArchive(false);
+			bool goodMovie = _currentMovie->loadArchive();
 
 			// If we came in a loop, then skip as requested
 			if (!_nextMovie.frameS.empty()) {
-				_currentScore->setStartToLabel(_nextMovie.frameS);
+				_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
 				_nextMovie.frameS.clear();
 			}
 
 			if (_nextMovie.frameI != -1) {
-				_currentScore->setCurrentFrame(_nextMovie.frameI);
+				_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
 				_nextMovie.frameI = -1;
 			}
 
 			if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
-				debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+				debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
 
-				_currentScore->startLoop();
+				_currentMovie->getScore()->startLoop();
 
-				debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+				debugC(1, kDebugEvents, "Finished playback of movie '%s'", _currentMovie->getMacName().c_str());
 			}
 		}
 
@@ -284,13 +286,13 @@ Common::Error DirectorEngine::run() {
 		if (!_nextMovie.movie.empty()) {
 			_newMovieStarted = true;
 
-			delete _currentScore;
-			_currentScore = nullptr;
+			delete _currentMovie;
+			_currentMovie = nullptr;
 
 			_currentPath = getPath(_nextMovie.movie, _currentPath);
 
-			if (_sharedScore && _sharedScore->_movieArchive
-					&& _sharedScore->_movieArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
+			if (_sharedCast && _sharedCast->_castArchive
+					&& _sharedCast->_castArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
 				_lingo->resetLingo(true);
 			} else {
 				_lingo->resetLingo(false);
@@ -300,7 +302,7 @@ Common::Error DirectorEngine::run() {
 			Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, '/'));
 
 			if (!mov) {
-				warning("nextMovie: No score is loaded");
+				warning("nextMovie: No movie is loaded");
 
 				if (getGameGID() == GID_TESTALL) {
 					loop = true;
@@ -310,9 +312,9 @@ Common::Error DirectorEngine::run() {
 				return Common::kNoError;
 			}
 
-			_currentScore = new Score(this);
-			_currentScore->setArchive(mov);
-			debug(0, "Switching to score '%s'", _currentScore->getMacName().c_str());
+			_currentMovie = new Movie(this);
+			_currentMovie->setArchive(mov);
+			debug(0, "Switching to movie '%s'", _currentMovie->getMacName().c_str());
 
 			_nextMovie.movie.clear();
 			loop = true;

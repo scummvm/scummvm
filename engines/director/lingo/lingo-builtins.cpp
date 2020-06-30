@@ -23,11 +23,13 @@
 #include "common/system.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/frame.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
@@ -1111,7 +1113,7 @@ void LB::b_nothing(int nargs) {
 void LB::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
 
-	g_director->getCurrentScore()->_nextFrameTime = g_system->getMillis() + (float)d.asInt() / 60 * 1000;
+	g_director->getCurrentMovie()->getScore()->_nextFrameTime = g_system->getMillis() + (float)d.asInt() / 60 * 1000;
 }
 
 void LB::b_do(int nargs) {
@@ -1273,8 +1275,8 @@ void LB::b_printFrom(int nargs) {
 }
 
 void LB::b_quit(int nargs) {
-	if (g_director->getCurrentScore())
-		g_director->getCurrentScore()->_stopPlay = true;
+	if (g_director->getCurrentMovie())
+		g_director->getCurrentMovie()->getScore()->_stopPlay = true;
 
 	g_lingo->pushVoid();
 }
@@ -1312,7 +1314,7 @@ void LB::b_shutDown(int nargs) {
 }
 
 void LB::b_startTimer(int nargs) {
-	g_director->getCurrentScore()->_lastTimerReset = g_director->getMacTicks();
+	g_director->getCurrentMovie()->_lastTimerReset = g_director->getMacTicks();
 }
 
 ///////////////////
@@ -1466,7 +1468,7 @@ void LB::b_duplicate(int nargs) {
 }
 
 void LB::b_editableText(int nargs) {
-	Score *sc = g_director->getCurrentScore();
+	Score *sc = g_director->getCurrentMovie()->getScore();
 	if (!sc) {
 		warning("b_editableText: no score");
 		g_lingo->dropStack(nargs);
@@ -1665,7 +1667,7 @@ void LB::b_move(int nargs) {
 }
 
 void LB::b_moveableSprite(int nargs) {
-	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
+	Frame *frame = g_director->getCurrentMovie()->getScore()->_frames[g_director->getCurrentMovie()->getScore()->getCurrentFrame()];
 
 	if (g_lingo->_currentChannelId == -1) {
 		warning("b_moveableSprite: channel Id is missing");
@@ -1695,7 +1697,7 @@ void LB::b_puppetSound(int nargs) {
 
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum castMember = g_lingo->pop();
-	Score *score = g_director->getCurrentScore();
+	Score *score = g_director->getCurrentMovie()->getScore();
 
 	if (!score) {
 		warning("b_puppetSound(): no score");
@@ -1707,7 +1709,7 @@ void LB::b_puppetSound(int nargs) {
 }
 
 void LB::b_puppetSprite(int nargs) {
-	Score *sc = g_director->getCurrentScore();
+	Score *sc = g_director->getCurrentMovie()->getScore();
 	if (!sc) {
 		warning("b_puppetSprite: no score");
 		g_lingo->dropStack(nargs);
@@ -1738,12 +1740,12 @@ void LB::b_puppetSprite(int nargs) {
 
 void LB::b_puppetTempo(int nargs) {
 	// TODO: Check if >D4 permitted tempo higher than 60.
-	g_director->getCurrentScore()->_puppetTempo = MIN(g_lingo->pop().asInt(), 60);
+	g_director->getCurrentMovie()->getScore()->_puppetTempo = MIN(g_lingo->pop().asInt(), 60);
 }
 
 void LB::b_puppetTransition(int nargs) {
 	// puppetTransition whichTransition [, time] [, chunkSize] [, changeArea]
-	Score *score = g_director->getCurrentScore();
+	Score *score = g_director->getCurrentMovie()->getScore();
 	Stage *stage = g_director->getStage();
 	uint16 duration = 250, area = 1, chunkSize = 1, type = 0;
 	if (nargs == 4) {
@@ -1782,7 +1784,7 @@ void LB::b_rollOver(int nargs) {
 	Datum res(0);
 	int arg = d.asInt();
 
-	Score *score = g_director->getCurrentScore();
+	Score *score = g_director->getCurrentMovie()->getScore();
 
 	if (!score) {
 		warning("b_rollOver: Reference to an empty score");
@@ -1840,7 +1842,7 @@ void LB::b_zoomBox(int nargs) {
 	int endSprite = g_lingo->pop().asInt();
 	int startSprite = g_lingo->pop().asInt();
 
-	Score *score = g_director->getCurrentScore();
+	Score *score = g_director->getCurrentMovie()->getScore();
 	uint16 curFrame = score->getCurrentFrame();
 
 	Common::Rect startRect = score->_channels[startSprite]->getBbox();
@@ -1886,13 +1888,15 @@ void LB::b_updateStage(int nargs) {
 		return;
 	}
 
-	Score *score = g_director->getCurrentScore();
+	Movie *movie = g_director->getCurrentMovie();
 
-	if (!score) {
-		warning("b_updateStage: no score");
+	if (!movie) {
+		warning("b_updateStage: no movie");
 
 		return;
 	}
+
+	Score *score = movie->getScore();
 
 	score->renderFrame(score->getCurrentFrame(), kRenderUpdateStageOnly);
 	g_director->processEvents(true);
@@ -2181,11 +2185,11 @@ void LB::b_script(int nargs) {
 
 		if (cast->_type == kCastLingoScript) {
 			// script cast can be either a movie script or score script
-			script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kMovieScript, castId);
+			script = g_lingo->getScriptContext(cast->_cast->_lingoArchive, kMovieScript, castId);
 			if (!script)
-				script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kScoreScript, castId);
+				script = g_lingo->getScriptContext(cast->_cast->_lingoArchive, kScoreScript, castId);
 		} else {
-			script = g_lingo->getScriptContext(cast->_score->_lingoArchive, kCastScript, castId);
+			script = g_lingo->getScriptContext(cast->_cast->_lingoArchive, kCastScript, castId);
 		}
 
 		if (script) {

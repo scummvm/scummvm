@@ -23,6 +23,7 @@
 #include "graphics/primitives.h"
 
 #include "director/director.h"
+#include "director/movie.h"
 #include "director/stage.h"
 #include "director/score.h"
 #include "director/castmember.h"
@@ -56,7 +57,7 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		const Common::Rect &r = *i;
 		blitTo->fillRect(r, _stageColor);
 
-		_dirtyChannels = g_director->getCurrentScore()->getSpriteIntersections(r);
+		_dirtyChannels = g_director->getCurrentMovie()->getScore()->getSpriteIntersections(r);
 		for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++)
 			inkBlitFrom(*j, r, blitTo);
 	}
@@ -276,12 +277,12 @@ void Stage::drawReverseSprite(Channel *channel, Common::Rect &srcRect, Common::R
 				srcColor = 0x0;
 			else
 				srcColor = *src;
-			uint16 targetSprite = g_director->getCurrentScore()->getSpriteIDFromPos(Common::Point(destRect.left + j, destRect.top + ii));
+			uint16 targetSprite = g_director->getCurrentMovie()->getScore()->getSpriteIDFromPos(Common::Point(destRect.left + j, destRect.top + ii));
 			if ((targetSprite != 0)) {
 				// TODO: This entire reverse colour attempt needs a lot more testing on
 				// a lot more colour depths.
 				if (srcColor != skipColor) {
-					if (!g_director->getCurrentScore()->_channels[targetSprite]->_sprite->_cast ||  g_director->getCurrentScore()->_channels[targetSprite]->_sprite->_cast->_type != kCastBitmap) {
+					if (!g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast ||  g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast->_type != kCastBitmap) {
 						if (*dst == 0 || *dst == 255) {
 							*dst = g_director->transformColor(*dst);
 						} else if (srcColor == 255 || srcColor == 0) {
@@ -291,8 +292,8 @@ void Stage::drawReverseSprite(Channel *channel, Common::Rect &srcRect, Common::R
 						}
 					} else {
 						if (*dst == 0 && g_director->getVersion() == 3 &&
-								g_director->getCurrentScore()->_channels[targetSprite]->_sprite->_cast->_type == kCastBitmap &&
-								((BitmapCastMember*)g_director->getCurrentScore()->_channels[targetSprite]->_sprite->_cast)->_bitsPerPixel > 1) {
+								g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast->_type == kCastBitmap &&
+								((BitmapCastMember*)g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast)->_bitsPerPixel > 1) {
 							*dst = g_director->transformColor(*src - 40);
 						} else {
 							*dst ^= g_director->transformColor(srcColor);

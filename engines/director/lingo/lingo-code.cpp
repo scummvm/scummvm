@@ -45,6 +45,7 @@
 
 #include "director/director.h"
 #include "director/castmember.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
@@ -817,7 +818,7 @@ void LC::c_intersects() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	Score *score = g_director->getCurrentScore();
+	Score *score = g_director->getCurrentMovie()->getScore();
 	Channel *sprite1 = score->getChannelById(d1.asInt());
 	Channel *sprite2 = score->getChannelById(d2.asInt());
 
@@ -833,7 +834,7 @@ void LC::c_within() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	Score *score = g_director->getCurrentScore();
+	Score *score = g_director->getCurrentMovie()->getScore();
 	Channel *sprite1 = score->getChannelById(d1.asInt());
 	Channel *sprite2 = score->getChannelById(d2.asInt());
 

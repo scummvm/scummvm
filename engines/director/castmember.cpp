@@ -29,6 +29,7 @@
 
 #include "director/director.h"
 #include "director/castmember.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/stxt.h"
@@ -37,7 +38,7 @@ namespace Director {
 
 CastMember::CastMember() {
 	_type = kCastTypeNull;
-	_score = nullptr;
+	_cast = nullptr;
 	_widget = nullptr;
 	_hilite = false;
 
@@ -57,8 +58,8 @@ BitmapCastMember::BitmapCastMember(Common::ReadStreamEndian &stream, uint32 cast
 	if (version < 4) {
 		_flags = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled
 		_bytes = stream.readUint16();
-		_initialRect = Score::readRect(stream);
-		_boundingRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
+		_boundingRect = Movie::readRect(stream);
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
 
@@ -78,8 +79,8 @@ BitmapCastMember::BitmapCastMember(Common::ReadStreamEndian &stream, uint32 cast
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
-		_initialRect = Score::readRect(stream);
-		_boundingRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
+		_boundingRect = Movie::readRect(stream);
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
 
@@ -108,10 +109,10 @@ BitmapCastMember::BitmapCastMember(Common::ReadStreamEndian &stream, uint32 cast
 			stream.readByte();
 
 		/*uint16 width =*/ stream.readUint16LE(); //maybe?
-		_initialRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
 
 		/*uint32 somethingElse =*/ stream.readUint32();
-		_boundingRect = Score::readRect(stream);
+		_boundingRect = Movie::readRect(stream);
 
 		_bitsPerPixel = stream.readUint16();
 
@@ -238,7 +239,7 @@ TextCastMember::TextCastMember(Common::ReadStreamEndian &stream, uint16 version,
 				warning("TextCastMember: pad2: %x", pad2);
 			}
 
-			_initialRect = Score::readRect(stream);
+			_initialRect = Movie::readRect(stream);
 			pad3 = stream.readUint16();
 
 			_textShadow = static_cast<SizeType>(stream.readByte());
@@ -249,7 +250,7 @@ TextCastMember::TextCastMember(Common::ReadStreamEndian &stream, uint16 version,
 			totalTextHeight = stream.readUint16();
 		} else {
 			pad2 = stream.readUint16();
-			_initialRect = Score::readRect(stream);
+			_initialRect = Movie::readRect(stream);
 			pad3 = stream.readUint16();
 			pad4 = stream.readUint16();
 			totalTextHeight = stream.readUint16();
@@ -276,7 +277,7 @@ TextCastMember::TextCastMember(Common::ReadStreamEndian &stream, uint16 version,
 
 		_fontId = 1; // this is in STXT
 
-		_initialRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
 		stream.readUint16();
 		_textShadow = static_cast<SizeType>(stream.readByte());
 		byte flags2 = stream.readByte();
@@ -305,8 +306,8 @@ TextCastMember::TextCastMember(Common::ReadStreamEndian &stream, uint16 version,
 		stream.readUint32();
 		stream.readUint32();
 
-		_initialRect = Score::readRect(stream);
-		_boundingRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
+		_boundingRect = Movie::readRect(stream);
 
 		stream.readUint32();
 		stream.readUint16();
@@ -480,7 +481,7 @@ ShapeCastMember::ShapeCastMember(Common::ReadStreamEndian &stream, uint16 versio
 		flags = stream.readByte();
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
-		_initialRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
 		_pattern = stream.readUint16BE();
 		// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
 		_fgCol = g_director->transformColor((128 + stream.readByte()) & 0xff);
@@ -493,7 +494,7 @@ ShapeCastMember::ShapeCastMember(Common::ReadStreamEndian &stream, uint16 versio
 		flags = stream.readByte();
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
-		_initialRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
 		_pattern = stream.readUint16BE();
 		_fgCol = g_director->transformColor((uint8)stream.readByte());
 		_bgCol = g_director->transformColor((uint8)stream.readByte());
@@ -505,8 +506,8 @@ ShapeCastMember::ShapeCastMember(Common::ReadStreamEndian &stream, uint16 versio
 		flags = stream.readByte();
 		unk1 = stream.readByte();
 
-		_initialRect = Score::readRect(stream);
-		_boundingRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
+		_boundingRect = Movie::readRect(stream);
 
 		_shapeType = kShapeRectangle;
 		_pattern = 0;
@@ -557,8 +558,8 @@ ScriptCastMember::ScriptCastMember(Common::ReadStreamEndian &stream, uint16 vers
 			error("ScriptCastMember: Unprocessed script type: %d", type);
 		}
 
-		_initialRect = Score::readRect(stream);
-		_boundingRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
+		_boundingRect = Movie::readRect(stream);
 
 		_id = stream.readUint32();
 
@@ -570,8 +571,8 @@ ScriptCastMember::ScriptCastMember(Common::ReadStreamEndian &stream, uint16 vers
 		stream.readByte();
 		stream.readByte();
 
-		_initialRect = Score::readRect(stream);
-		_boundingRect = Score::readRect(stream);
+		_initialRect = Movie::readRect(stream);
+		_boundingRect = Movie::readRect(stream);
 
 		_id = stream.readUint32();
 

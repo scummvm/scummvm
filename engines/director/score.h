@@ -43,21 +43,15 @@ namespace Director {
 
 class Stage;
 class Archive;
-struct CastMemberInfo;
 class DirectorEngine;
 class DirectorSound;
 class Frame;
 struct Label;
-class Lingo;
+class Movie;
 struct Resource;
 struct Channel;
 class Sprite;
-class Stxt;
 class CastMember;
-class BitmapCastMember;
-class ScriptCastMember;
-class ShapeCastMember;
-class TextCastMember;
 
 enum RenderMode {
 	kRenderModeNormal,
@@ -96,38 +90,25 @@ struct Channel {
 
 class Score {
 public:
-	Score(DirectorEngine *vm);
+	Score(DirectorEngine *vm, Movie *movie);
 	~Score();
 
-	static Common::Rect readRect(Common::ReadStreamEndian &stream);
+	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
+	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
+	void loadActions(Common::SeekableSubReadStreamEndian &stream);
+
 	static int compareLabels(const void *a, const void *b);
-	bool loadArchive(bool isSharedCast);
 	void setStartToLabel(Common::String label);
 	void gotoLoop();
 	void gotoNext();
 	void gotoPrevious();
 	void startLoop();
-	void setArchive(Archive *archive);
-	Archive *getArchive() const { return _movieArchive; };
-	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res);
-	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
-	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
-	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
-	Common::String getMacName() const { return _macName; }
 	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);
-	void setSpriteCasts();
-	void loadSpriteImages(bool isSharedCast);
-	void loadSpriteSounds(bool isSharedCast);
-	void copyCastStxts();
-	void createCastWidgets();
 
-	Common::Rect getCastMemberInitialRect(int castId);
-	void setCastMemberModified(int castId);
+	void setSpriteCasts();
 
 	int getPreviousLabelNumber(int referenceFrame);
 	int getCurrentLabelNumber();
@@ -137,8 +118,6 @@ public:
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 
-	CastMember *getCastMember(int castId);
-	const Stxt *getStxt(int castId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 
@@ -147,77 +126,36 @@ private:
 
 	void playSoundChannel(uint16 frameId);
 
-	void readVersion(uint32 rid);
-	void loadPalette(Common::SeekableSubReadStreamEndian &stream);
-	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
-	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
-	void loadActions(Common::SeekableSubReadStreamEndian &stream);
-	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
-	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
-	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
-	void dumpScript(const char *script, ScriptType type, uint16 id);
 	void screenShot();
-	Common::String getString(Common::String str);
-	Common::Array<Common::String> loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader = true);
 
 	bool processImmediateFrameScript(Common::String s, int id);
 
 public:
 	Common::Array<Channel *> _channels;
 	Common::Array<Frame *> _frames;
-	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
-	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
-	Common::HashMap<uint16, Common::String> _fontMap;
-	Graphics::Font *_font;
-	Archive *_movieArchive;
-	Common::Rect _movieRect;
-	uint16 _currentMouseDownSpriteId;
-	uint16 _currentClickOnSpriteId;
-	uint32 _lastEventTime;
-	uint32 _lastRollTime;
-	uint32 _lastClickTime;
-	uint32 _lastKeyTime;
-	uint32 _lastTimerReset;
-	uint16 _stageColor;
+
+	byte _currentFrameRate;
 
 	byte _puppetTempo;
 	bool _stopPlay;
 	uint32 _nextFrameTime;
 
-	Common::HashMap<int, CastMember *> *_loadedCast;
-
-	Common::HashMap<int, const Stxt *> *_loadedStxts;
-
-	uint16 _castIDoffset;
-
 	int _numChannelsDisplayed;
 
 	uint16 _framesRan; // used by kDebugFewFramesOnly
 
-	int _lingoArchive;
-
 private:
-	uint16 _versionMinor;
-	uint16 _versionMajor;
-	Common::String _macName;
-	Common::String _createdBy;
-	Common::String _changedBy;
-	Common::String _script;
-	Common::String _directory;
-	byte _currentFrameRate;
-	uint16 _castArrayStart;
+	DirectorEngine *_vm;
+	Lingo *_lingo;
+	Movie *_movie;
+
 	uint16 _currentFrame;
 	uint16 _nextFrame;
 	int _currentLabel;
-	uint32 _flags;
-	uint16 _castArrayEnd;
-	uint16 _movieScriptCount;
-	Lingo *_lingo;
 	DirectorSound *_soundManager;
-	DirectorEngine *_vm;
 };
 
 } // End of namespace Director

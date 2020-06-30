@@ -35,6 +35,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/lingo/lingo.h"
 
@@ -137,7 +138,7 @@ void DirectorEngine::testFonts() {
 //////////////////////
 // Movie iteration
 //////////////////////
-Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Common::String &folder) {
+Common::HashMap<Common::String, Movie *> *DirectorEngine::scanMovies(const Common::String &folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
 	const char *sharedMMMname;
@@ -148,7 +149,7 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 		sharedMMMname = "Shared Cast";
 
 
-	Common::HashMap<Common::String, Score *> *nameMap = new Common::HashMap<Common::String, Score *>();
+	Common::HashMap<Common::String, Movie *> *nameMap = new Common::HashMap<Common::String, Movie *>();
 	if (!directory.getChildren(movies, Common::FSNode::kListFilesOnly))
 		return nameMap;
 
@@ -167,11 +168,11 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 
 			warning("name: %s", i->getName().c_str());
 			arc->openFile(i->getName());
-			Score *sc = new Score(this);
-			sc->setArchive(arc);
-			nameMap->setVal(sc->getMacName(), sc);
+			Movie *m = new Movie(this);
+			m->setArchive(arc);
+			nameMap->setVal(m->getMacName(), m);
 
-			debugC(2, kDebugLoading, "Movie name: \"%s\"", sc->getMacName().c_str());
+			debugC(2, kDebugLoading, "Movie name: \"%s\"", m->getMacName().c_str());
 		}
 	}
 
@@ -286,9 +287,9 @@ void DirectorEngine::runTests() {
 	if (!_mainArchive->openStream(stream, 0)) {
 		error("DirectorEngine::runTests(): Bad movie data");
 	}
-	_currentScore = new Score(this);
-	_currentScore->setArchive(_mainArchive);
-	_currentScore->loadArchive(false);
+	_currentMovie = new Movie(this);
+	_currentMovie->setArchive(_mainArchive);
+	_currentMovie->loadArchive();
 
 	if (debugChannelSet(-1, kDebugText)) {
 		testFontScaling();

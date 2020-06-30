@@ -23,6 +23,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
+#include "director/movie.h"
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"
@@ -117,7 +118,7 @@ void Lingo::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 	 * When more than one movie script [...]
 	 * [D4 docs] */
 
-	Score *score = _vm->getCurrentScore();
+	Score *score = _vm->getCurrentMovie()->getScore();
 	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
 	assert(currentFrame != nullptr);
 	Sprite *sprite = score->getSpriteById(spriteId);
@@ -159,7 +160,7 @@ void Lingo::queueFrameEvent(LEvent event, int eventId) {
 	 * [p.81 of D4 docs]
 	 */
 
-	Score *score = _vm->getCurrentScore();
+	Score *score = _vm->getCurrentMovie()->getScore();
 
 	// if (event == kEventPrepareFrame || event == kEventIdle) {
 	// 	entity = score->getCurrentFrame();
@@ -312,7 +313,7 @@ void Lingo::processEvents() {
 	while (!_eventQueue.empty()) {
 		LingoEvent el = _eventQueue.pop();
 
-		if (_vm->getCurrentScore()->_stopPlay && el.event != kEventStopMovie)
+		if (_vm->getCurrentMovie()->getScore()->_stopPlay && el.event != kEventStopMovie)
 			continue;
 
 		if (lastEventId == el.eventId && !_passEvent)

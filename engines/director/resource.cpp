@@ -30,7 +30,9 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/cast.h"
 #include "director/castmember.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
@@ -270,19 +272,19 @@ void DirectorEngine::loadMac(const Common::String movie) {
 
 		if (!_mainArchive->openStream(dataFork, startOffset)) {
 			warning("Failed to load RIFX from Mac binary");
-			delete _currentScore;
-			_currentScore = nullptr;
+			delete _currentMovie;
+			_currentMovie = nullptr;
 		}
 	}
 }
 
 void DirectorEngine::clearSharedCast() {
-	if (!_sharedScore)
+	if (!_sharedCast)
 		return;
 
-	delete _sharedScore;
+	delete _sharedCast;
 
-	_sharedScore = nullptr;
+	_sharedCast = nullptr;
 }
 
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
@@ -303,29 +305,29 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	_sharedScore = new Score(this);
-	_sharedScore->setArchive(sharedCast);
-	_sharedScore->loadArchive(true);
+	_sharedCast = new Cast(this);
+	_sharedCast->setArchive(sharedCast);
+	_sharedCast->loadArchive();
 }
 
 CastMember *DirectorEngine::getCastMember(int castId) {
 	CastMember *result = nullptr;
-	if (_currentScore) {
-		result = _currentScore->getCastMember(castId);
+	if (_currentMovie) {
+		result = _currentMovie->getCast()->getCastMember(castId);
 	}
-	if (result == nullptr && _sharedScore) {
-		result = _sharedScore->getCastMember(castId);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->getCastMember(castId);
 	}
 	return result;
 }
 
 const Stxt *DirectorEngine::getStxt(int castId) {
 	const Stxt *result = nullptr;
-	if (_currentScore) {
-		result = _currentScore->getStxt(castId);
+	if (_currentMovie) {
+		result = _currentMovie->getCast()->getStxt(castId);
 	}
-	if (result == nullptr && _sharedScore) {
-		result = _sharedScore->getStxt(castId);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->getStxt(castId);
 	}
 	return result;
 }

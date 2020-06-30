@@ -21,7 +21,7 @@
  */
 
 #include "director/director.h"
-#include "director/score.h"
+#include "director/movie.h"
 #include "director/lingo/lingo.h"
 
 
@@ -72,11 +72,11 @@ struct ScriptPatch {
 };
 
 Common::String Lingo::patchLingoCode(Common::String &line, ScriptType type, uint16 id, int linenum) {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return line;
 
 	const ScriptPatch *patch = scriptPatches;
-	Common::String movie = _vm->getCurrentPath() + _vm->getCurrentScore()->getMacName();
+	Common::String movie = _vm->getCurrentPath() + _vm->getCurrentMovie()->getMacName();
 
 	// So far, we have not many patches, so do linear lookup
 	while (patch->gameId) {

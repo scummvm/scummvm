@@ -28,8 +28,10 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
+#include "director/cast.h"
 #include "director/castmember.h"
 #include "director/frame.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
@@ -582,7 +584,7 @@ void Lingo::execute(uint pc) {
 
 		if (++counter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
-			_vm->getCurrentScore()->_stopPlay = true;
+			_vm->getCurrentMovie()->getScore()->_stopPlay = true;
 			break;
 		}
 	}
@@ -1067,8 +1069,8 @@ void Lingo::runTests() {
 }
 
 void Lingo::executeImmediateScripts(Frame *frame) {
-	for (uint16 i = 0; i <= _vm->getCurrentScore()->_numChannelsDisplayed; i++) {
-		if (_vm->getCurrentScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
+	for (uint16 i = 0; i <= _vm->getCurrentMovie()->getScore()->_numChannelsDisplayed; i++) {
+		if (_vm->getCurrentMovie()->getScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 5)
@@ -1119,16 +1121,18 @@ void Lingo::printAllVars() {
 }
 
 int Lingo::castIdFetch(Datum &var) {
-	Score *score = _vm->getCurrentScore();
-	if (!score) {
-		warning("castIdFetch: Score is empty");
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("castIdFetch: No movie");
 		return 0;
 	}
 
+	Cast *cast = movie->getCast();
+
 	int id = 0;
 	if (var.type == STRING) {
-		if (score->_castsNames.contains(*var.u.s))
-			id = score->_castsNames[*var.u.s];
+		if (cast->_castsNames.contains(*var.u.s))
+			id = cast->_castsNames[*var.u.s];
 		else
 			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
 	} else if (var.type == INT || var.type == FLOAT) {
@@ -1182,9 +1186,9 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 
 		*d = value;
 	} else if (var.type == FIELDREF) {
-		Score *score = g_director->getCurrentScore();
-		if (!score) {
-			warning("varAssign: Assigning to a reference to an empty score");
+		Movie *movie = g_director->getCurrentMovie();
+		if (!movie) {
+			warning("varAssign: Assigning to a reference to an empty movie");
 			return;
 		}
 		int referenceId = var.u.i;

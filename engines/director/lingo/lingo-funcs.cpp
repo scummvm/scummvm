@@ -30,6 +30,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/castmember.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/util.h"
@@ -178,7 +179,7 @@ void Lingo::func_mciwait(const Common::String &name) {
 void Lingo::func_goto(Datum &frame, Datum &movie) {
 	_vm->_playbackPaused = false;
 
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
 	if (movie.type != VOID) {
@@ -222,7 +223,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		}
 
 		_vm->_nextMovie.movie = cleanedFilename;
-		_vm->getCurrentScore()->_stopPlay = true;
+		_vm->getCurrentMovie()->getScore()->_stopPlay = true;
 
 		_vm->_nextMovie.frameS.clear();
 		_vm->_nextMovie.frameI = -1;
@@ -246,38 +247,38 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	_vm->_skipFrameAdvance = true;
 
 	if (frame.type == STRING) {
-		if (_vm->getCurrentScore())
-			_vm->getCurrentScore()->setStartToLabel(*frame.u.s);
+		if (_vm->getCurrentMovie())
+			_vm->getCurrentMovie()->getScore()->setStartToLabel(*frame.u.s);
 		return;
 	}
 
-	if (_vm->getCurrentScore())
-		_vm->getCurrentScore()->setCurrentFrame(frame.asInt());
+	if (_vm->getCurrentMovie())
+		_vm->getCurrentMovie()->getScore()->setCurrentFrame(frame.asInt());
 }
 
 void Lingo::func_gotoloop() {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentScore()->gotoLoop();
+	_vm->getCurrentMovie()->getScore()->gotoLoop();
 
 	_vm->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotonext() {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentScore()->gotoNext();
+	_vm->getCurrentMovie()->getScore()->gotoNext();
 
 	_vm->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotoprevious() {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentScore()->gotoPrevious();
+	_vm->getCurrentMovie()->getScore()->gotoPrevious();
 
 	_vm->_skipFrameAdvance = true;
 }
@@ -315,12 +316,12 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		return;
 	}
 
-	if (!_vm->getCurrentScore()) {
-		warning("Lingo::func_play(): no score");
+	if (!_vm->getCurrentMovie()) {
+		warning("Lingo::func_play(): no movie");
 		return;
 	}
 
-	ref.frameI = _vm->getCurrentScore()->getCurrentFrame();
+	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 
 	_vm->_movieStack.push_back(ref);
 
@@ -416,17 +417,17 @@ void Lingo::func_beep(int repeats) {
 }
 
 int Lingo::func_marker(int m) 	{
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return 0;
 
-	int labelNumber = _vm->getCurrentScore()->getCurrentLabelNumber();
+	int labelNumber = _vm->getCurrentMovie()->getScore()->getCurrentLabelNumber();
 	if (m != 0) {
 		if (m < 0) {
 			for (int marker = 0; marker > m; marker--)
-				labelNumber = _vm->getCurrentScore()->getPreviousLabelNumber(labelNumber);
+				labelNumber = _vm->getCurrentMovie()->getScore()->getPreviousLabelNumber(labelNumber);
 		} else {
 			for (int marker = 0; marker < m; marker++)
-				labelNumber = _vm->getCurrentScore()->getNextLabelNumber(labelNumber);
+				labelNumber = _vm->getCurrentMovie()->getScore()->getNextLabelNumber(labelNumber);
 		}
 	}
 
