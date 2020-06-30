@@ -872,9 +872,21 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_thickness = d.asInt();
 		break;
 	case kTheLocH:
+		if (!sprite->_moveable) {
+			// WORKAROUND: Chop Suey moon cursor is marked neither puppet nor moveable
+			warning("Lingo::setTheSprite(): Attempting to set \"%s\" of non-moveable sprite. Enabling moveable for now", field2str(field));
+			sprite->_moveable = true;
+		}
+
 		channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.x, 0));
 		break;
 	case kTheLocV:
+		if (!sprite->_moveable) {
+			// WORKAROUND: Chop Suey moon cursor is marked neither puppet nor moveable
+			warning("Lingo::setTheSprite(): Attempting to set \"%s\" of non-moveable sprite. Enabling moveable for now", field2str(field));
+			sprite->_moveable = true;
+		}
+
 		channel->addDelta(Common::Point(0, d.asInt() - channel->_currentPoint.y));
 		break;
 	case kTheMoveableSprite:
