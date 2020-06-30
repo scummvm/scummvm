@@ -122,7 +122,9 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 }
 
 MacFontManager::~MacFontManager() {
-	for(Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
+	for (Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
+		delete it->_value;	
+	for (Common::HashMap<int, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
 		delete it->_value;
 }
 
@@ -261,9 +263,21 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				if (!fontstream)
 					fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
 
+#ifdef USE_FREETYPE2
 				if (!fontstream) {
-					warning("MacFontManager: Unknown FontId: %d", (*assoc)[i]._fontID);
+					// The sfnt resource should be just a copy of a TTF
+					fontstream = fontFile->getResource(MKTAG('s', 'f', 'n', 't'), (*assoc)[i]._fontID);
+					_ttfData[_fontIds.getVal(familyName, kMacFontNonStandard)] = fontstream;
+					return;
+				}
+#endif
 
+				if (!fontstream) {
+					if ((*assoc)[i]._fontSize == 0) {
+						warning("MacFontManager: Detected possible TrueType FontID %d, but no TrueType support detected", (*assoc)[i]._fontID);
+					} else {
+						warning("MacFontManager: Unknown FontId: %d", (*assoc)[i]._fontID);
+					}
 					continue;
 				}
 
@@ -279,7 +293,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				macfont = new MacFont(_fontIds.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
 
 				FontMan.assignFontToName(fontName, font);
-				macfont->setFont(font);
+				macfont->setFont(font, false);
 				_fontRegistry.setVal(fontName, macfont);
 
 				debug(2, " %s", fontName.c_str());
@@ -416,10 +430,18 @@ int MacFontManager::getFontIdByName(Common::String name) {
 void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	Common::String name;
 
+#ifdef USE_FREETYPE2
+	// First check if it's a TTF font
+	if (_ttfData.contains(macFont.getId())) {
+		generateTTFFont(macFont, _ttfData[macFont.getId()]);
+		return;
+	}
+#endif
+
 	// First we try twice size
 	name = getFontName(macFont.getId(), macFont.getSize() * 2, macFont.getSlant());
 	if (_fontRegistry.contains(name) && !_fontRegistry[name]->isGenerated()) {
-		generateFont(macFont, *_fontRegistry[name]);
+		generateFONTFont(macFont, *_fontRegistry[name]);
 
 		return;
 	}
@@ -427,7 +449,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	// Now half size
 	name = getFontName(macFont.getId(), macFont.getSize() / 2, macFont.getSlant());
 	if (_fontRegistry.contains(name) && !_fontRegistry[name]->isGenerated()) {
-		generateFont(macFont, *_fontRegistry[name]);
+		generateFONTFont(macFont, *_fontRegistry[name]);
 
 		return;
 	}
@@ -477,15 +499,43 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	}
 
 	if (candidate) {
-		generateFont(macFont, *candidate);
+		generateFONTFont(macFont, *candidate);
 		return;
 	}
 
 	// Now next smaller font, which is the biggest we have
-	generateFont(macFont, *maxSize);
+	generateFONTFont(macFont, *maxSize);
 }
 
-void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
+#ifdef USE_FREETYPE2
+void MacFontManager::generateTTFFont(MacFont &toFont, Common::SeekableReadStream *stream) {
+	debug("Generating TTF font '%s'", getFontName(toFont).c_str());
+
+	// TODO: Handle getSlant() flags
+
+	stream->seek(0);
+	Font *font = Graphics::loadTTFFont(*stream, toFont.getSize());
+
+	if (!font) {
+		warning("Failed to generate font '%s'", getFontName(toFont).c_str());
+	}
+
+	toFont.setGenerated(true);
+	toFont.setFont(font, true);
+
+	FontMan.assignFontToName(getFontName(toFont), font);
+	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
+
+	debug("Generated font '%s'", getFontName(toFont).c_str());
+}
+#endif
+
+void MacFontManager::generateFONTFont(MacFont &toFont, MacFont &fromFont) {
+	if (fromFont.isTrueType()) {
+		warning("Cannot generate FONT font '%s' from TTF font '%s'", getFontName(toFont).c_str(), getFontName(fromFont).c_str());
+		return;
+	}
+
 	debugN("Found font substitute for font '%s' ", getFontName(toFont).c_str());
 	debug("as '%s'", getFontName(fromFont).c_str());
 
@@ -497,14 +547,15 @@ void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 		outline = toFont.getSlant() & kMacFontOutline;
 	}
 
-	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFont.getFont(), toFont.getSize(), bold, italic, outline);
+	MacFONTFont *fromFONTFont = static_cast<MacFONTFont *>(fromFont.getFont());
+	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFONTFont, toFont.getSize(), bold, italic, outline);
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont).c_str());
 	}
 
 	toFont.setGenerated(true);
-	toFont.setFont(font);
+	toFont.setFont(font, false);
 
 	FontMan.assignFontToName(getFontName(toFont), font);
 	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
