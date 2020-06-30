@@ -249,6 +249,9 @@ bool Score::loadArchive(bool isSharedCast) {
 
 		// Try to load movie script, it starts with a comment
 		if (_vm->getVersion() <= 3) {
+			if (debugChannelSet(-1, kDebugFewFramesOnly))
+				warning("Compiling STXT %d", *iterator);
+
 			loadScriptText(*(r = _movieArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
 			delete r;
 		}
