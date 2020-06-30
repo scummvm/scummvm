@@ -27,6 +27,3 @@
 #include "common/textconsole.h"
 
 int gBitFormat = 565;
-
-void DestroyScalers() {
-}

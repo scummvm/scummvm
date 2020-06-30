@@ -26,16 +26,6 @@
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 
-extern void InitScalers(uint32 BitFormat);
-extern void DestroyScalers();
-
-typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height);
-
-#define DECLARE_SCALER(x)	\
-	extern void x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, \
-					uint32 dstPitch, int width, int height)
-
 // creates a 160x100 thumbnail for 320x200 games
 // and 160x120 thumbnail for 320x240 and 640x480 games
 // only 565 mode

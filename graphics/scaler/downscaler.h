@@ -24,12 +24,12 @@
 #define GRAPHICS_SCALER_DOWNSCALER_H
 
 #include "common/scummsys.h"
-#include "graphics/scaler.h"
 
 /**
  * This filter (down)scales the source image by a factor of 1/2.
  * For example, a 320x200 image is scaled to 160x100.
  */
-DECLARE_SCALER(DownscaleAllByHalf);
+extern void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
+                               uint32 dstPitch, int width, int height);
 
 #endif
