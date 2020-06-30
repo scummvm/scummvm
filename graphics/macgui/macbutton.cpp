@@ -85,6 +85,8 @@ void MacButton::invertOuter() {
 		Graphics::drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, Graphics::macInvertPixel, _composeSurface);
 		break;
 	}
+
+	_contentIsDirty = true;
 }
 
 void MacButton::invertInner() {
@@ -102,10 +104,12 @@ void MacButton::invertInner() {
 		Graphics::drawEllipse(r.left + 3, r.top + 5, r.left + 8, r.top + 10, 0, true, Graphics::macInvertPixel, _composeSurface);
 		break;
 	}
+
+	_contentIsDirty = true;
 }
 
 bool MacButton::draw(bool forceRedraw) {
-	if (!_contentIsDirty && !forceRedraw)
+	if ((!_contentIsDirty && !forceRedraw) || _active)
 		return false;
 
 	_maskSurface->clear(1);
