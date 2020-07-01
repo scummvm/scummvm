@@ -729,16 +729,16 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 		}
 		_scalerPlugin = &_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>();
 		_scalerPlugin->initialize(format);
-		_extraPixels = _scalerPlugin->extraPixels();
-		_useOldSrc = _scalerPlugin->useOldSource();
-		if (_useOldSrc) {
-			_scalerPlugin->enableSource(true);
-			_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
-										_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
-		}
 	}
 
 	_scalerPlugin->setFactor(_videoMode.scaleFactor);
+	_extraPixels = _scalerPlugin->extraPixels();
+	_useOldSrc = _scalerPlugin->useOldSource();
+	if (_useOldSrc) {
+		_scalerPlugin->enableSource(true);
+		_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
+									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
+	}
 
 	// Blit everything to the screen
 	_forceRedraw = true;
