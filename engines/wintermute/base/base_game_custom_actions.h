@@ -36,7 +36,8 @@ enum BaseGameCustomAction {
 	kClickAtLeft = 1,
 	kClickAtRight = 2,
 	kClickAtTop = 3,
-	kClickAtBottom = 4
+	kClickAtBottom = 4,
+	kClickAtEntityNearestToCenter = 5
 };
 
 } // End of namespace Wintermute
