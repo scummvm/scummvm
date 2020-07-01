@@ -398,17 +398,17 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		if (!name.empty())
-			button = new PicButtonWidget(boss, name, (_("Clear value")), cmd);
+			button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
 		else
-			button = new PicButtonWidget(boss, x, y, w, h, (_("Clear value")), cmd);
+			button = new PicButtonWidget(boss, x, y, w, h, _("Clear value"), cmd);
 		((PicButtonWidget *)button)->useThemeTransparency(true);
 		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
 	} else
 #endif
 		if (!name.empty())
-			button = new ButtonWidget(boss, name, Common::U32String("C"), (_("Clear value")), cmd);
+			button = new ButtonWidget(boss, name, Common::U32String("C"), _("Clear value"), cmd);
 		else
-			button = new ButtonWidget(boss, x, y, w, h, Common::U32String("C"), (_("Clear value")), cmd);
+			button = new ButtonWidget(boss, x, y, w, h, Common::U32String("C"), _("Clear value"), cmd);
 
 	return button;
 }

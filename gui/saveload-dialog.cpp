@@ -385,16 +385,16 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const U32String &title, const U32St
 
 	_gfxWidget = new GraphicsWidget(this, 0, 0, 10, 10);
 
-	_date = new StaticTextWidget(this, 0, 0, 10, 10, (_("No date saved")), Graphics::kTextAlignCenter);
-	_time = new StaticTextWidget(this, 0, 0, 10, 10, (_("No time saved")), Graphics::kTextAlignCenter);
-	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, (_("No playtime saved")), Graphics::kTextAlignCenter);
+	_date = new StaticTextWidget(this, 0, 0, 10, 10, _("No date saved"), Graphics::kTextAlignCenter);
+	_time = new StaticTextWidget(this, 0, 0, 10, 10, _("No time saved"), Graphics::kTextAlignCenter);
+	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, _("No playtime saved"), Graphics::kTextAlignCenter);
 
 	// Buttons
-	new ButtonWidget(this, "SaveLoadChooser.Cancel", (_("Cancel")), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
 	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, Common::U32String(""), kChooseCmd);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", (_("Delete")), Common::U32String(""), kDelCmd);
+	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), Common::U32String(""), kDelCmd);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
@@ -564,9 +564,9 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	// We used to support letting the themes specify the fill color with our
 	// initial theme based GUI. But this support was dropped.
 	_gfxWidget->setGfx(-1, -1, 0, 0, 0);
-	_date->setLabel((_("No date saved")));
-	_time->setLabel((_("No time saved")));
-	_playtime->setLabel((_("No playtime saved")));
+	_date->setLabel(_("No date saved"));
+	_time->setLabel(_("No time saved"));
+	_playtime->setLabel(_("No playtime saved"));
 
 	if (selItem >= 0 && _metaInfoSupport) {
 		SaveStateDescriptor desc = (_saveList[selItem].getLocked() ? _saveList[selItem] : _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot()));
@@ -589,13 +589,13 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		}
 
 		if (_saveDateSupport) {
-			const Common::String &saveDate = desc.getSaveDate();
+			const Common::U32String &saveDate = desc.getSaveDate();
 			if (!saveDate.empty())
-				_date->setLabel(_("Date: ").encode() + saveDate);
+				_date->setLabel(_("Date: ") + saveDate);
 
-			const Common::String &saveTime = desc.getSaveTime();
+			const Common::U32String &saveTime = desc.getSaveTime();
 			if (!saveTime.empty())
-				_time->setLabel(_("Time: ").encode() + saveTime);
+				_time->setLabel(_("Time: ") + saveTime);
 		}
 
 		if (_playTimeSupport) {
@@ -764,11 +764,11 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::U32String &title, bool sa
 	list->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 
 	// Buttons
-	new ButtonWidget(this, "SaveLoadChooser.Delete", (_("Cancel")), Common::U32String(""), kCloseCmd);
-	_nextButton = new ButtonWidget(this, "SaveLoadChooser.Choose", (_("Next")), Common::U32String(""), kNextCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), Common::U32String(""), kCloseCmd);
+	_nextButton = new ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), Common::U32String(""), kNextCmd);
 	_nextButton->setEnabled(false);
 
-	_prevButton = new ButtonWidget(this, "SaveLoadChooser.Cancel", (_("Prev")), Common::U32String(""), kPrevCmd);
+	_prevButton = new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), Common::U32String(""), kPrevCmd);
 	_prevButton->setEnabled(false);
 
 	// Page display
@@ -975,7 +975,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			// In the save mode we will always create a new save button as the first button.
 			if (_saveMode && curLine == 0 && curColumn == 0) {
 				_newSaveContainer = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
-				ButtonWidget *newSave = new ButtonWidget(_newSaveContainer, dstX, dstY, buttonWidth, buttonHeight, (_("New Save")), _("Create a new saved game"), kNewSaveCmd);
+				ButtonWidget *newSave = new ButtonWidget(_newSaveContainer, dstX, dstY, buttonWidth, buttonHeight, _("New Save"), _("Create a new saved game"), kNewSaveCmd);
 				// In case no more slots are free, we will disable the new save button
 				if (_nextFreeSaveSlot == -1) {
 					newSave->setEnabled(false);
@@ -1162,7 +1162,7 @@ SavenameDialog::SavenameDialog()
 	: Dialog("SavenameDialog") {
 	_title = new StaticTextWidget(this, "SavenameDialog.DescriptionText", Common::String());
 
-	new ButtonWidget(this, "SavenameDialog.Cancel", (_("Cancel")), Common::U32String(""), kCloseCmd);
+	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
 	new ButtonWidget(this, "SavenameDialog.Ok", _("OK"), Common::U32String(""), kOKCmd);
 
 	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::String(), Common::U32String(""), 0, kOKCmd);

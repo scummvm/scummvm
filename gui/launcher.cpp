@@ -137,14 +137,14 @@ void LauncherDialog::build() {
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
-		new ButtonWidget(this, "Launcher.QuitButton", (_("~Q~uit")), _("Quit ScummVM"), kQuitCmd);
-	new ButtonWidget(this, "Launcher.AboutButton", (_("A~b~out...")), _("About ScummVM"), kAboutCmd);
-	new ButtonWidget(this, "Launcher.OptionsButton", (_("~O~ptions...")), _("Change global ScummVM options"), kOptionsCmd);
+		new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
+	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
+	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
 	_startButton =
-		new ButtonWidget(this, "Launcher.StartButton", (_("~S~tart")), _("Start selected game"), kStartCmd);
+		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
 	DropdownButtonWidget *loadButton =
-	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", (_("~L~oad...")), _("Load saved game for selected game"), kLoadGameCmd);
+	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
 #ifdef ENABLE_EVENTRECORDER
 	loadButton->appendEntry(_("Record..."), kRecordGameCmd);
 #endif
@@ -153,24 +153,24 @@ void LauncherDialog::build() {
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
 		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "Launcher.AddGameButton", (_("~A~dd Game...")), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry((_("Mass Add...")), kMassAddGameCmd);
+			new DropdownButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
 		_addButton = addButton;
 
 		_editButton =
-			new ButtonWidget(this, "Launcher.EditGameButton", (_("~E~dit Game...")), _("Change game options"), kEditGameCmd);
+			new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
 		_removeButton =
-			new ButtonWidget(this, "Launcher.RemoveGameButton", (_("~R~emove Game")), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+			new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
 		DropdownButtonWidget *addButton =
 			new DropdownButtonWidget(this, "Launcher.AddGameButton", (_c("~A~dd Game...", "lowres")), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry((_c("Mass Add...", "lowres")), kMassAddGameCmd);
+		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
 		_addButton = addButton;
 
 		_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", (_c("~E~dit Game...", "lowres")), _("Change game options"), kEditGameCmd);
+		new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
 		_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", (_c("~R~emove Game", "lowres")), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+		new ButtonWidget(this, "Launcher.RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	}
 
 	// Search box
@@ -182,7 +182,7 @@ void LauncherDialog::build() {
 		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
 	} else
 #endif
-		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", (_("Search:")));
+		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(""), kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
@@ -204,10 +204,10 @@ void LauncherDialog::build() {
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new BrowserDialog((_("Select directory with game data")), true);
+	_browser = new BrowserDialog(_("Select directory with game data"), true);
 
 	// Create Load dialog
-	_loadDialog = new SaveLoadChooser((_("Load game:")), (_("Load")), false);
+	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
 }
 
 void LauncherDialog::clean() {
@@ -753,7 +753,7 @@ void LauncherDialog::reflowLayout() {
 		}
 	} else {
 		if (!_searchDesc)
-			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", (_("Search:")));
+			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
 		if (_searchPic) {
 			removeWidget(_searchPic);
