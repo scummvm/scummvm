@@ -49,7 +49,7 @@ public:
 	virtual uint increaseFactor();
 	virtual uint decreaseFactor();
 	virtual bool canDrawCursor() const { return true; }
-	virtual uint extraPixels() const { return 2; }
+	virtual uint extraPixels() const { return 4; }
 	virtual const char *getName() const;
 	virtual const char *getPrettyName() const;
 };
