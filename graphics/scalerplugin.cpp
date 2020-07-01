@@ -60,7 +60,7 @@ void ScalerPluginObject::scale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstP
 	}
 }
 
-SourceScaler::SourceScaler() : _oldSrc(NULL), _enable(false) {
+SourceScaler::SourceScaler() : _width(0), _height(0), _oldSrc(NULL), _enable(false) {
 }
 
 SourceScaler::~SourceScaler() {
@@ -77,13 +77,27 @@ void SourceScaler::setSource(const byte *src, uint pitch, int width, int height,
 	if (_oldSrc != NULL)
 		delete[] _oldSrc;
 
+	_width = width;
+	_height = height;
 	_padding = padding;
+
 	// Give _oldSrc same pitch
 	int size = (height + padding * 2) * pitch;
 	_oldSrc = new byte[size];
 	memset(_oldSrc, 0, size);
 
-	_bufferedOutput.create(width * _factor, height * _factor, _format);
+	_bufferedOutput.create(_width * _factor, _height * _factor, _format);
+}
+
+uint SourceScaler::setFactor(uint factor) {
+	uint oldFactor = _factor;
+	_factor = factor;
+
+	if (factor != oldFactor && _width != 0 && _height != 0) {
+		_bufferedOutput.create(_width * _factor, _height * _factor, _format);
+	}
+
+	return oldFactor;
 }
 
 void SourceScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,

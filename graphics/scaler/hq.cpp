@@ -5067,13 +5067,13 @@ void HQPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 
 uint HQPlugin::increaseFactor() {
 	if (_factor < 3)
-		++_factor;
+		setFactor(_factor + 1);
 	return _factor;
 }
 
 uint HQPlugin::decreaseFactor() {
 	if (_factor > 2)
-		--_factor;
+		setFactor(_factor - 1);
 	return _factor;
 }
 
