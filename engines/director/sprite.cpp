@@ -20,14 +20,12 @@
  *
  */
 
+#include "graphics/macgui/macwidget.h"
+
 #include "director/director.h"
 #include "director/castmember.h"
-#include "director/lingo/lingo.h"
 #include "director/sprite.h"
-
-#include "director/score.h"
-
-#include "graphics/macgui/macwidget.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 

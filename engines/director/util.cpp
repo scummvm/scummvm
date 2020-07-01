@@ -22,8 +22,6 @@
 
 #include "common/file.h"
 #include "common/keyboard.h"
-#include "common/str.h"
-#include "common/textconsole.h"
 
 #include "director/director.h"
 #include "director/util.h"

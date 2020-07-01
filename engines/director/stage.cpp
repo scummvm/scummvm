@@ -30,8 +30,6 @@
 #include "director/castmember.h"
 #include "director/sprite.h"
 
-#include "common/file.h"
-
 namespace Director {
 
 Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm)

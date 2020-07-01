@@ -24,13 +24,9 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/substream.h"
-#include "common/system.h"
 
 #include "engines/util.h"
-#include "graphics/primitives.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/surface.h"
 
 #ifdef USE_PNG
 #include "image/png.h"

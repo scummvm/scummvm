@@ -24,8 +24,8 @@
 #include "graphics/managed_surface.h"
 #include "video/qt_decoder.h"
 
-#include "director/video.h"
 #include "director/util.h"
+#include "director/video.h"
 
 namespace Director {
 

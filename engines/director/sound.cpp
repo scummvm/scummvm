@@ -29,7 +29,6 @@
 
 #include "audio/decoders/wave.h"
 #include "audio/decoders/raw.h"
-#include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
 #include "audio/decoders/aiff.h"
 

@@ -22,12 +22,10 @@
 
 #include "common/system.h"
 
-#include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/stage.h"
