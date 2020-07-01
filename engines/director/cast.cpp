@@ -179,7 +179,7 @@ bool Cast::loadArchive() {
 		delete r;
 	} else if (_movie) {
 		// TODO: Source this from somewhere!
-		_movie->_movieRect = Common::Rect(0, 0, 640, 480);
+		_movie->_movieRect = Common::Rect(0, 0, 639, 479);
 		_movie->_stageColor = 1;
 	}
 

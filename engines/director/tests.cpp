@@ -46,10 +46,9 @@ namespace Director {
 void DirectorEngine::testFontScaling() {
 	int x = 10;
 	int y = 10;
-	int w = 640;
-	int h = 480;
+	int w = g_system->getWidth();
+	int h = g_system->getHeight();
 
-	initGraphics(w, h);
 	setPalette(-1);
 
 	Graphics::ManagedSurface surface;
@@ -281,6 +280,8 @@ const byte testMovie[] = {
 void DirectorEngine::runTests() {
 	Common::MemoryReadStream *movie = new Common::MemoryReadStream(testMovie, ARRAYSIZE(testMovie));
 	Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(movie);
+
+	initGraphics(640, 480);
 
 	_mainArchive = new RIFXArchive();
 	if (!_mainArchive->openStream(stream, 0)) {
