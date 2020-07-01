@@ -161,16 +161,16 @@ public:
 	SourceScaler();
 	virtual ~SourceScaler();
 
-	virtual void deinitialize();
+	virtual void deinitialize() override;
 
-	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding);
+	virtual void setSource(const byte *src, uint pitch, int width, int height, int padding) final;
 
-	virtual void enableSource(bool enable) { _enable = enable; }
+	virtual void enableSource(bool enable) final { _enable = enable; }
 
 protected:
 
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
-	                         uint32 dstPitch, int width, int height, int x, int y);
+	                         uint32 dstPitch, int width, int height, int x, int y) final;
 
 	/**
 	 * Scalers must implement this function. It will be called by oldSrcScale.
