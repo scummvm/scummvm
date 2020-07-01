@@ -90,14 +90,17 @@
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/split_item_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
-#include "ultima/ultima8/world/split_item_process.h"
 #include "ultima/ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/avatar_death_process.h"
 #include "ultima/ultima8/world/actors/grant_peace_process.h"
+#include "ultima/ultima8/world/actors/cru_healer_process.h"
+#include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/fireball_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
@@ -273,6 +276,14 @@ void Ultima8Engine::startup() {
 		ProcessLoader<ActorBarkNotifyProcess>::load);
 	_kernel->addProcessLoader("AmbushProcess",
 		ProcessLoader<AmbushProcess>::load);
+	_kernel->addProcessLoader("TargetReticleProcess",
+		ProcessLoader<TargetReticleProcess>::load);
+	_kernel->addProcessLoader("SurrenderProcess",
+		ProcessLoader<SurrenderProcess>::load);
+	_kernel->addProcessLoader("CruHealerProcess",
+		ProcessLoader<CruHealerProcess>::load);
+	_kernel->addProcessLoader("BatteryChargerProcess",
+		ProcessLoader<BatteryChargerProcess>::load);
 
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();
@@ -1099,6 +1110,10 @@ bool Ultima8Engine::newGame(int saveSlot) {
 	//	av->teleport(5, 5104,22464,48); // East road (tenebrae end)
 
 	_game->startInitialUsecode(saveSlot);
+
+	if (GAME_IS_CRUSADER) {
+		_kernel->addProcess(new TargetReticleProcess());
+	}
 
 	if (saveSlot == -1)
 		_settingMan->set("lastSave", "");

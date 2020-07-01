@@ -461,6 +461,8 @@ void Item::setShape(uint32 shape_) {
 	_shape = shape_;
 	_cachedShapeInfo = nullptr;
 	_cachedShape = nullptr;
+	// FIXME: In Crusader, here we should check if the shape
+	// changed from targetable to not-targetable, or vice-versa
 }
 
 bool Item::overlaps(const Item &item2) const {
@@ -1438,7 +1440,8 @@ void Item::animateItem() {
 // Called when an item has entered the fast area
 void Item::enterFastArea() {
 	//!! HACK to get rid of endless SFX loops
-	if (_shape == 0x2c8) return;
+	if (_shape == 0x2c8 && GAME_IS_U8)
+		return;
 
 	// Call usecode
 	if (!(_flags & FLG_FASTAREA)) {
@@ -1448,6 +1451,13 @@ void Item::enterFastArea() {
 			// dead actor, don't call the usecode
 		} else {
 			callUsecodeEvent_enterFastArea();
+		}
+	}
+
+	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
+		ShapeInfo *si = getShapeInfo();
+		if ((si->_flags & ShapeInfo::SI_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
+			World::get_instance()->getCurrentMap()->addTargetItem(this);
 		}
 	}
 
@@ -1470,6 +1480,10 @@ void Item::leaveFastArea() {
 
 	// Unset the flag
 	_flags &= ~FLG_FASTAREA;
+
+	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
+		World::get_instance()->getCurrentMap()->removeTargetItem(this);
+	}
 
 	// CHECKME: what do we need to do exactly?
 	// currently,  destroy object
@@ -1656,13 +1670,14 @@ void Item::explode(int explosion_type, bool destroy_item) {
 	Process *p;
 
 	if (GAME_IS_CRUSADER) {
+		setFlag(FLG_BROKEN);
 		// TODO: original game puts them at cx/cy/cz, but that looks wrong..
 		//int32 cx, cy, cz;
 		//getCentre(cx, cy, cz);
 		static const int expshapes[] = {0x31C, 0x31F, 0x326, 0x320, 0x321, 0x324, 0x323, 0x325};
 		int rnd = getRandom();
 		int spriteno;
-		// NOTE: The game does some weird 32-bit struff to decide what
+		// NOTE: The game does some weird 32-bit stuff to decide what
 		// shapenum to use.  Just simplified to a random.
 		switch (explosion_type) {
 		case 0:
@@ -3343,12 +3358,13 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 }
 
-uint32 Item::I_doSomethingAndSetUnkCruFlag(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Item::I_setBroken(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
+	if (!item)
+		return 0;
 
-	// TODO: Do something.. (to match disassembly)
-
-	item->setFlag(FLG_UNK_CRU);
+	World::get_instance()->getCurrentMap()->removeTargetItem(item);
+	item->setFlag(FLG_BROKEN);
 	return 0;
 }
 

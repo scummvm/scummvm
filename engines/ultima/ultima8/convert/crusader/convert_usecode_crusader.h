@@ -215,7 +215,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getNpcNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void Intrinsic08A(12 bytes)", // TODO: No idea here.. something about hurling? look at the usecode.
 	"int16 Item::I_enterFastArea(Item *)", // based on disasm, v similar to U8
-	"void Item::I_doSomethingAndSetStatusFlag0x8000(Item *)", // same coff as 119, 12A
+	"void Item::I_setIsBroken(Item *)", // same coff as 119, 12A
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
 	"void PaletteFaderProcess::I_setPalToAllBlack(void)",
@@ -365,7 +365,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Intrinsic116(14 bytes)", // something like distance-to?
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
-	"void Item::I_doSomethingAndSetStatusFlag0x8000(Item *)", // same coff as 08C, 12A
+	"void Item::I_setIsBroken(Item *)", // same coff as 08C, 12A
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"byte Item::I_getTypeFlag(Item *, uint16 shift)",
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
@@ -383,7 +383,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_getDirToCoords(Item *, uin16 x, uint16 y)", // based on disassembly - FIXME: returns 2* values from U8
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Item::I_doSomethingAndSetStatusFlag0x8000(Item *)", // same coff as 08C, 119
+	"void Item::I_setIsBroken(Item *)", // same coff as 08C, 119
 	"int16 IItem::I_getCY(Item *)", // same coff as 11E
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"void Item::I_getFootpadData(Item *, uint *, uint *, uint *)", // same coff as 064

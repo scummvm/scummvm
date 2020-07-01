@@ -557,7 +557,7 @@ public:
 	INTRINSIC(I_getRange);
 	INTRINSIC(I_getRangeIfVisible);
 	INTRINSIC(I_isCrusTypeNPC);
-	INTRINSIC(I_doSomethingAndSetUnkCruFlag);
+	INTRINSIC(I_setBroken);
 	INTRINSIC(I_inFastArea);
 	INTRINSIC(I_equip);
 	INTRINSIC(I_unequip);
@@ -624,7 +624,7 @@ public:
 		FLG_HANGING      = 0x1000,  //!< Item is suspended in the air
 		FLG_FASTAREA     = 0x2000,  //!< Item is in the fast area
 		FLG_LOW_FRICTION = 0x4000,  //!< Item has low friction
-		FLG_UNK_CRU      = 0x8000   //!< Unknown crusader flag
+		FLG_BROKEN       = 0x8000   //!< Item is broken - Crusader only - broken items are not targetable.
 	};
 
 	enum extflags {
@@ -636,7 +636,7 @@ public:
 		EXT_SPRITE       = 0x0040,  //!< Item is a sprite
 		EXT_TRANSPARENT  = 0x0080,  //!< Item should be painted transparent
 		EXT_PERMANENT_NPC = 0x0100, //!< Item is a permanent NPC
-		EXT_FEMALE       = 0x8000	//!< Crusader Female NPC (controls sfx)
+		EXT_FEMALE       = 0x8000	//!< Item is Crusader Female NPC (controls sfx)
 	};
 };
 

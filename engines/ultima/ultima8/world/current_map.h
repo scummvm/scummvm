@@ -36,6 +36,7 @@ class TeleportEgg;
 class EggHatcherProcess;
 
 #define MAP_NUM_CHUNKS  64
+#define MAP_NUM_TARGET_ITEMS 200
 
 class CurrentMap {
 	friend class World;
@@ -68,6 +69,13 @@ public:
 
 	void removeItemFromList(Item *item, int32 oldx, int32 oldy);
 	void removeItem(Item *item);
+
+	//! Add an item to the list of possible targets (in Crusader)
+	void addTargetItem(const Item *item);
+	//! Remove an item from the list of possible targets (in Crusader)
+	void removeTargetItem(const Item *item);
+	//! Find the best target item in the given direction
+	Item *findBestTargetItem(int32 x, int32 y, uint8 dir);
 
 	//! Update the fast area for the cameras position
 	void updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 to_x, int32 to_y, int32 to_z);
@@ -223,6 +231,10 @@ private:
 	int32 _fastXMin, _fastYMin, _fastXMax, _fastYMax;
 
 	int _mapChunkSize;
+
+	//! Items that are "targetable" in Crusader. It might be faster to store
+	//! this in a more fancy data structure, but this works fine.
+	ObjId _targets[200];
 
 	void setChunkFast(int32 cx, int32 cy);
 	void unsetChunkFast(int32 cx, int32 cy);

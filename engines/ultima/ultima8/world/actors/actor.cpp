@@ -815,6 +815,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 ProcId Actor::die(uint16 damageType) {
 	setHP(0);
 	setActorFlag(ACT_DEAD);
+	setFlag(FLG_BROKEN);
 	clearActorFlag(ACT_INCOMBAT);
 
 	ProcId animprocid = 0;
@@ -1509,9 +1510,11 @@ uint32 Actor::I_setDead(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	// TODO: In crusader this function also sets flag 0x8000 on
-	// the actor.  Do we need to do that here?
 	actor->setActorFlag(ACT_DEAD);
+	if (GAME_IS_CRUSADER) {
+		actor->setFlag(FLG_BROKEN);
+		World::get_instance()->getCurrentMap()->removeTargetItem(actor);
+	}
 
 	return 0;
 }
@@ -1521,6 +1524,10 @@ uint32 Actor::I_clrDead(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	actor->clearActorFlag(ACT_DEAD);
+	if (GAME_IS_CRUSADER) {
+		actor->clearFlag(FLG_BROKEN);
+		World::get_instance()->getCurrentMap()->addTargetItem(actor);
+	}
 
 	return 0;
 }

@@ -183,7 +183,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // void Intrinsic08A(12 bytes)
 	Item::I_enterFastArea, // void Intrinsic08B(4 bytes)
-	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic08C(4 bytes)
+	Item::I_setBroken, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	0, // TODO: PaletteFaderProcess::I_setPalToAllBlack
@@ -333,7 +333,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // byte Intrinsic116(14 bytes)
 	Item::I_andStatus, // void Intrinsic117(6 bytes)
 	Item::I_hurl, // int16 Intrinsic118(12 bytes)
-	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic119(4 bytes)
+	Item::I_setBroken, // void Intrinsic119(4 bytes)
 	Item::I_andStatus, // void Intrinsic11A(6 bytes)
 	Item::I_getTypeFlag, // byte Intrinsic11B(6 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
@@ -351,7 +351,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getDirToCoords, // int Intrinsic127(8 bytes)
 	Item::I_andStatus, // void Intrinsic128(6 bytes) // maybe Item::andStatus?? see ITEM::ordinal22
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	Item::I_doSomethingAndSetUnkCruFlag, // void Intrinsic12A(4 bytes)
+	Item::I_setBroken, // void Intrinsic12A(4 bytes)
 	Item::I_getCY, // void Intrinsic12B(4 bytes)
 	Item::I_isOn,
 	Item::I_getFootpadData, // void Intrinsic12D(16 bytes)

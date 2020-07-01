@@ -145,7 +145,7 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
 			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
 			if (data[6] & 0x08) si._flags |= ShapeInfo::SI_CRUSUNK63;
-			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_CRUSUNK64;
+			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_TARGETABLE;
 			if (data[6] & 0x20) si._flags |= ShapeInfo::SI_CRUS_NPC;
 			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRUSUNK66;
 			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRUSUNK67;
