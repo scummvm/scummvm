@@ -519,11 +519,7 @@ Common::U32String OSystem_SDL::getTextFromClipboard() {
 bool OSystem_SDL::setTextInClipboard(const Common::U32String &text) {
 	// The encoding we need to use is UTF-8. Assume we currently have the
 	// current TranslationManager encoding or ISO-8859-1.
-#ifdef USE_TRANSLATION
 	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.encode().c_str(), text.size() + 1);
-#else
-	char *utf8_text = SDL_iconv_string("UTF-8", "ISO-8859-1", text.c_str(), text.size() + 1);
-#endif
 	if (utf8_text) {
 		int status = SDL_SetClipboardText(utf8_text);
 		SDL_free(utf8_text);

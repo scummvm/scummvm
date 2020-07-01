@@ -1134,7 +1134,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
 	// debugging purposes).
 	if (!findInMD5Table(res.md5.c_str())) {
-		Common::String md5Warning;
+		Common::U32String md5Warning;
 
 		md5Warning = _("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 		               "version (in particular, not a fan-made translation), please, report the\n"
@@ -1146,7 +1146,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod, res.game.platform).c_str(),
 				res.md5.c_str());
 
-		g_system->logMessage(LogMessageType::kWarning, md5Warning.c_str());
+		g_system->logMessage(LogMessageType::kWarning, md5Warning.encode().c_str());
 	} else {
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}

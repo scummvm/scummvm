@@ -153,10 +153,10 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// We need to have a cursor source, or the game won't work
 	if (!_cursor->hasSource()) {
-		Common::String message = _("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. ");
+		Common::U32String message = _("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. ");
 		message += _("Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.");
 		GUIErrorMessage(message);
-		warning("%s", message.c_str());
+		warning("%s", message.encode().c_str());
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -165,9 +165,9 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// We need extras.mhk for inventory images, marble images, and credits images
 	if (!_extrasFile->openFile("extras.mhk")) {
-		Common::String message = _("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
+		Common::U32String message = _("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
 		GUIErrorMessage(message);
-		warning("%s", message.c_str());
+		warning("%s", message.encode().c_str());
 		return Common::kNoGameDataFoundError;
 	}
 
