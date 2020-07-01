@@ -714,7 +714,11 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 
 
 	// If the _scalerIndex has changed, change scaler plugins
-	if (&_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin || _transactionDetails.formatChanged) {
+	if (&_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin
+#ifdef USE_RGB_COLOR
+		|| _transactionDetails.formatChanged
+#endif
+		) {
 		Graphics::PixelFormat format = convertSDLPixelFormat(_hwScreen->format);
 		if (_scalerPlugin)
 			_scalerPlugin->deinitialize();
