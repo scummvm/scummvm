@@ -535,21 +535,33 @@ void Score::update() {
 }
 
 void Score::renderFrame(uint16 frameId, RenderMode mode) {
-	Frame *currentFrame = _frames[frameId];
-
-	if (currentFrame->_transType != 0 && mode != kRenderUpdateStageOnly) {
-		// TODO Handle changing area case
-		g_director->getStage()->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
-	} else {
+	if (!renderTransition(frameId))
 		renderSprites(frameId, mode);
-	}
 
 	_vm->_wm->renderZoomBox();
 	g_director->getStage()->render();
 	_vm->_wm->draw();
 
-	if (currentFrame->_sound1 != 0 || currentFrame->_sound2 != 0)
+	if (_frames[frameId]->_sound1 || _frames[frameId]->_sound2)
 		playSoundChannel(frameId);
+}
+
+bool Score::renderTransition(uint16 frameId) {
+	Frame *currentFrame = _frames[frameId];
+	TransParams *tp = g_director->getStage()->_puppetTransition;
+
+	if (tp) {
+		g_director->getStage()->playTransition(tp->duration, tp->area, tp->chunkSize, tp->type, frameId);
+
+		delete g_director->getStage()->_puppetTransition;;
+		g_director->getStage()->_puppetTransition = nullptr;
+		return true;
+	} else if (currentFrame->_transType) {
+		g_director->getStage()->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
+		return true;
+	} else {
+		return false;
+ }
 }
 
 void Score::renderSprites(uint16 frameId, RenderMode mode) {

@@ -34,38 +34,7 @@ class MacWindowManager;
 namespace Director {
 
 struct Channel;
-
-struct TransParams {
-	TransitionType type;
-	uint frame;
-	uint duration;
-	uint chunkSize;
-	uint area;
-
-	int steps;
-	int stepDuration;
-
-	int xStepSize;
-	int yStepSize;
-
-	int xpos, ypos;
-
-	int stripSize;
-
-	TransParams() {
-		type = kTransNone;
-		frame = 0;
-		duration = 250;
-		chunkSize = 1;
-		area = 0;
-		steps = 0;
-		stepDuration = 0;
-		stripSize = 0;
-
-		xStepSize = yStepSize = 0;
-		xpos = ypos = 0;
-	}
-};
+struct TransParams;
 
 class Stage : public Graphics::MacWindow {
  public:
@@ -91,6 +60,7 @@ class Stage : public Graphics::MacWindow {
 public:
 	Common::List<Common::Rect> _dirtyRects;
 	Common::List<Channel *> _dirtyChannels;
+	TransParams *_puppetTransition;
 
 private:
 	uint _stageColor;

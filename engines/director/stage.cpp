@@ -35,6 +35,7 @@ namespace Director {
 Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm)
 	: MacWindow(id, scrollable, resizable, editable, wm) {
 	_stageColor = 0;
+	_puppetTransition = nullptr;
 }
 
 bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
