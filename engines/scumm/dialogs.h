@@ -24,6 +24,7 @@
 #define SCUMM_DIALOGS_H
 
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/keyboard.h"
 #include "gui/dialog.h"
 #include "engines/dialogs.h"
@@ -126,7 +127,7 @@ protected:
  */
 class ValueDisplayDialog : public GUI::Dialog {
 public:
-	ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
+	ValueDisplayDialog(const Common::U32String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
 
 	void open() override;
 	void drawDialog(GUI::DrawLayer layerToDraw) override;
@@ -142,7 +143,7 @@ protected:
 	enum {
 		kDisplayDelay = 1500
 	};
-	Common::String _label;
+	Common::U32String _label;
 	const int _min, _max;
 	const uint16 _incKey, _decKey;
 	int _percentBarWidth;

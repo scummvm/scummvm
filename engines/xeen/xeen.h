@@ -313,7 +313,7 @@ public:
 	/**
 	 * Show an error message in a GUI dialog
 	 */
-	void GUIError(const Common::String &msg);
+	void GUIError(const Common::U32String &msg);
 };
 
 extern XeenEngine *g_vm;
