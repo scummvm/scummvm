@@ -33,7 +33,7 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(Dialog *boss, const String &name, U32String tooltip, uint32 cmd)
+ListWidget::ListWidget(Dialog *boss, const String &name, const U32String &tooltip, uint32 cmd)
 	: EditableWidget(boss, name, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
@@ -70,7 +70,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, U32String tooltip, uint
 	_scrollBarWidth = 0;
 }
 
-ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, U32String tooltip, uint32 cmd)
+ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const U32String &tooltip, uint32 cmd)
 	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
