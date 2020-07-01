@@ -23,10 +23,7 @@
 #ifndef DIRECTOR_STAGE_H
 #define DIRECTOR_STAGE_H
 
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
-
-#include "director/types.h"
 
 namespace Graphics {
 class ManagedSurface;

@@ -30,6 +30,7 @@
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/stage.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 

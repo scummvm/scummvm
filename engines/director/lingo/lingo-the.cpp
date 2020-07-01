@@ -34,6 +34,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/score.h"
+#include "director/stage.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-the.h"

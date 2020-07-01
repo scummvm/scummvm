@@ -21,6 +21,7 @@
  */
 
 #include "graphics/primitives.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/movie.h"

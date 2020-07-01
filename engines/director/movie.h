@@ -23,13 +23,9 @@
 #ifndef DIRECTOR_MOVIE_H
 #define DIRECTOR_MOVIE_H
 
-#include "common/hash-str.h"
-#include "common/rect.h"
-#include "director/types.h"
-
 namespace Common {
-	class ReadStreamEndian;
-	class SeekableSubReadStreamEndian;
+class ReadStreamEndian;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Director {

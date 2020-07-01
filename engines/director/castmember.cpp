@@ -20,18 +20,13 @@
  *
  */
 
-#include "graphics/surface.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macbutton.h"
 #include "image/image_decoder.h"
 
 #include "director/director.h"
-#include "director/archive.h"
 #include "director/castmember.h"
 #include "director/movie.h"
-#include "director/score.h"
-#include "director/sound.h"
+#include "director/stage.h"
 #include "director/stxt.h"
 
 namespace Director {

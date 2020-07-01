@@ -23,9 +23,7 @@
 #ifndef DIRECTOR_SCORE_H
 #define DIRECTOR_SCORE_H
 
-#include "common/hash-str.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "director/stage.h"
+//#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
 	class ManagedSurface;

@@ -26,10 +26,10 @@
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/cast.h"
-#include "director/lingo/lingo.h"
 #include "director/movie.h"
 #include "director/score.h"
-#include "director/util.h"
+#include "director/stage.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 

@@ -25,7 +25,6 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"

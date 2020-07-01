@@ -20,15 +20,10 @@
  *
  */
 
-#include "common/system.h"
 #include "common/substream.h"
 
-#include "graphics/primitives.h"
-
 #include "director/director.h"
-#include "director/castmember.h"
 #include "director/frame.h"
-#include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
 

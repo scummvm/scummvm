@@ -44,6 +44,7 @@
 #include "director/movie.h"
 #include "director/sound.h"
 #include "director/sprite.h"
+#include "director/stage.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 

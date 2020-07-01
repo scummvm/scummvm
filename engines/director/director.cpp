@@ -25,8 +25,6 @@
 #include "common/error.h"
 #include "common/substream.h"
 
-#include "audio/mixer.h"
-
 #include "common/macresman.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -38,8 +36,8 @@
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/stage.h"
-#include "director/lingo/lingo.h"
 #include "director/util.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 

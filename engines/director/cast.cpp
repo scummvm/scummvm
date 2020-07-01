@@ -26,19 +26,19 @@
 #include "common/substream.h"
 
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
 
 #include "director/director.h"
-#include "director/archive.h"
 #include "director/cast.h"
 #include "director/castmember.h"
 #include "director/images.h"
-#include "director/lingo/lingo.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/stxt.h"
 #include "director/util.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 
