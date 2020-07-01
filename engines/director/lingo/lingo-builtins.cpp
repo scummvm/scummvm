@@ -1531,7 +1531,7 @@ void LB::b_installMenu(int nargs) {
 
 	int castId = d.asInt();
 
-	const Stxt *stxt = g_director->getStxt(castId);
+	const Stxt *stxt = g_director->getCurrentMovie()->getStxt(castId);
 
 	if (!stxt) {
 		warning("installMenu: Unknown cast number #%d", castId);
@@ -2184,7 +2184,7 @@ void LB::b_field(int nargs) {
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
 	int castId = g_lingo->castIdFetch(d);
-	CastMember *cast = g_director->getCastMember(castId);
+	CastMember *cast = g_director->getCurrentMovie()->getCastMember(castId);
 
 	if (cast) {
 		ScriptContext *script = nullptr;

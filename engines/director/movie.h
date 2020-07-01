@@ -50,7 +50,14 @@ public:
 	Archive *getArchive() const { return _movieArchive; };
 	Common::String getMacName() const { return _macName; }
 	Cast *getCast() { return _cast; }
+	Cast *getSharedCast() { return _sharedCast; }
 	Score *getScore() { return _score; }
+
+	void clearSharedCast();
+	void loadSharedCastsFrom(Common::String filename);
+
+	CastMember *getCastMember(int castId);
+	const Stxt *getStxt(int castId);
 
 private:
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
@@ -66,6 +73,7 @@ public:
 	uint32 _lastKeyTime;
 	uint32 _lastTimerReset;
 	uint16 _stageColor;
+	Cast *_sharedCast;
 
 private:
 	DirectorEngine *_vm;

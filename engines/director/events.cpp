@@ -131,7 +131,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				releaseDraggedSprite();
 
 				{
-					CastMember *cast = g_director->getCastMember(sc->getSpriteById(spriteId)->_castId);
+					CastMember *cast = g_director->getCurrentMovie()->getCastMember(sc->getSpriteById(spriteId)->_castId);
 					if (cast && cast->_type == kCastButton)
 						cast->_hilite = !cast->_hilite;
 				}

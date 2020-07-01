@@ -426,7 +426,7 @@ void Cast::createCastWidgets() {
 void Cast::loadSpriteImages() {
 	debugC(1, kDebugLoading, "****** Preloading sprite images");
 
-	Cast *sharedCast = _vm->getSharedCast();
+	Cast *sharedCast = _movie ? _movie->getSharedCast() : nullptr;
 
 	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
 		if (!c->_value)

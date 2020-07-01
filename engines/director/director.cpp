@@ -84,8 +84,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentPaletteLength = 0;
 	_lingo = nullptr;
 
-	_sharedCast = nullptr;
-
 	_mainArchive = nullptr;
 	_macBinary = nullptr;
 
@@ -118,7 +116,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _sharedCast;
 	delete _currentMovie;
 
 	_wm->removeWindow(_currentStage);
@@ -187,7 +184,7 @@ Common::Error DirectorEngine::run() {
 		_sharedCastFile = "Shared.dir";
 	}
 
-	loadSharedCastsFrom(_currentPath + _sharedCastFile);
+	_currentMovie->loadSharedCastsFrom(_currentPath + _sharedCastFile);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
 
@@ -284,18 +281,13 @@ Common::Error DirectorEngine::run() {
 		if (!_nextMovie.movie.empty()) {
 			_newMovieStarted = true;
 
-			delete _currentMovie;
-			_currentMovie = nullptr;
-
 			_currentPath = getPath(_nextMovie.movie, _currentPath);
 
-			if (_sharedCast && _sharedCast->_castArchive
-					&& _sharedCast->_castArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
-				_lingo->resetLingo(true);
-			} else {
-				_lingo->resetLingo(false);
-				loadSharedCastsFrom(_currentPath + _sharedCastFile);
-			}
+			Cast *sharedCast = _currentMovie->getSharedCast();
+			_currentMovie->_sharedCast = nullptr;
+
+			delete _currentMovie;
+			_currentMovie = nullptr;
 
 			Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, '/'));
 
@@ -313,6 +305,16 @@ Common::Error DirectorEngine::run() {
 			_currentMovie = new Movie(this);
 			_currentMovie->setArchive(mov);
 			debug(0, "Switching to movie '%s'", _currentMovie->getMacName().c_str());
+
+			if (sharedCast && sharedCast->_castArchive
+					&& sharedCast->_castArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
+				_lingo->resetLingo(true);
+				_currentMovie->_sharedCast = sharedCast;
+			} else {
+				delete sharedCast;
+				_lingo->resetLingo(false);
+				_currentMovie->loadSharedCastsFrom(_currentPath + _sharedCastFile);
+			}
 
 			_nextMovie.movie.clear();
 			loop = true;

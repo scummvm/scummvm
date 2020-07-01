@@ -33,6 +33,7 @@
 #include "audio/decoders/aiff.h"
 
 #include "director/director.h"
+#include "director/movie.h"
 #include "director/castmember.h"
 #include "director/sound.h"
 
@@ -101,7 +102,7 @@ void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRep
 	if (castId == 0) {
 		stopSound(soundChannel);
 	} else {
-		CastMember *soundCast = _vm->getCastMember(castId);
+		CastMember *soundCast = _vm->getCurrentMovie()->getCastMember(castId);
 		if (soundCast) {
 			if (soundCast->_type != kCastSound) {
 				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember cast member %d", castId);

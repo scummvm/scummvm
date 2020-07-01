@@ -27,6 +27,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember.h"
+#include "director/movie.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
@@ -883,7 +884,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	// initialise the script
 	ScriptType scriptType = kCastScript;
 	Common::String castName;
-	CastMember *member = g_director->getCastMember(castId);
+	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
 	if (member) {
 		if (member->_type == kCastLingoScript)
 			scriptType = ((ScriptCastMember *)member)->_scriptType;

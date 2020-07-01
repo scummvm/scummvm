@@ -50,12 +50,14 @@ Movie::Movie(DirectorEngine *vm) {
 	_movieArchive = nullptr;
 
 	_cast = new Cast(_vm, this);
+	_sharedCast = nullptr;
 	_score = new Score(_vm, this);
 }
 
 Movie::~Movie() {
 	// _movieArchive is shared with the cast, so the cast will free it
 	delete _cast;
+	delete _sharedCast;
 	delete _score;
 }
 
@@ -193,6 +195,54 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	_changedBy = fileInfoStrings[1];
 	_createdBy = fileInfoStrings[2];
 	_directory = fileInfoStrings[3];
+}
+
+void Movie::clearSharedCast() {
+	if (!_sharedCast)
+		return;
+
+	delete _sharedCast;
+
+	_sharedCast = nullptr;
+}
+
+void Movie::loadSharedCastsFrom(Common::String filename) {
+	clearSharedCast();
+
+	Archive *sharedCast = _vm->createArchive();
+
+	if (!sharedCast->openFile(filename)) {
+		warning("loadSharedCastsFrom(): No shared cast %s", filename.c_str());
+
+		delete sharedCast;
+
+		return;
+	}
+	sharedCast->setFileName(filename);
+
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+	_sharedCast = new Cast(_vm);
+	_sharedCast->setArchive(sharedCast);
+	_sharedCast->loadArchive();
+}
+
+CastMember *Movie::getCastMember(int castId) {
+	CastMember *result = _cast->getCastMember(castId);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->getCastMember(castId);
+	}
+	return result;
+}
+
+const Stxt *Movie::getStxt(int castId) {
+	const Stxt *result = _cast->getStxt(castId);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->getStxt(castId);
+	}
+	return result;
 }
 
 } // End of namespace Director

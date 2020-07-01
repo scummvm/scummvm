@@ -24,6 +24,7 @@
 
 #include "director/director.h"
 #include "director/castmember.h"
+#include "director/movie.h"
 #include "director/sprite.h"
 #include "director/lingo/lingo.h"
 
@@ -139,7 +140,7 @@ void Sprite::setPattern(uint16 pattern) {
 }
 
 void Sprite::setCast(uint16 castId) {
-	CastMember *member = g_director->getCastMember(castId);
+	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
 	_castType = kCastTypeNull;
 	_castId = castId;
 

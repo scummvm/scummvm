@@ -944,16 +944,18 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
 	int id = g_lingo->castIdFetch(id1);
 
-	Cast *cast = _vm->getCurrentMovie()->getCast();
+	Movie *movie = _vm->getCurrentMovie();
 	// Setting default type
 	d.type = INT;
 
-	if (!cast) {
-		warning("Lingo::getTheCast(): No cast loaded");
+	if (!movie) {
+		warning("Lingo::getTheCast(): No movie loaded");
 		return d;
 	}
 
-	CastMember *member = _vm->getCastMember(id);
+	Cast *cast = movie->getCast();
+
+	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
 	if (!member) {
 		if (field == kTheLoaded) {
 			d.u.i = 0;
@@ -973,7 +975,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	if (cast->_castsInfo.contains(id)) {
 		castInfo = cast->_castsInfo.getVal(id);
 	} else {
-		Cast *shared = _vm->getSharedCast();
+		Cast *shared = movie->getSharedCast();
 		if (shared && shared->_castsInfo.contains(id)) {
 			castInfo = shared->_castsInfo.getVal(id);
 		} else {
@@ -1055,7 +1057,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	CastMember *member = _vm->getCastMember(id);
+	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
 	if (!member) {
 		warning("Lingo::setTheCast(): CastMember id %d doesn't exist", id);
 		return;
@@ -1147,7 +1149,7 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 	Datum d;
 	int id = g_lingo->castIdFetch(id1);
 
-	CastMember *member = _vm->getCastMember(id);
+	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
 	if (!member) {
 		warning("Lingo::getTheField(): CastMember id %d doesn't exist", id);
 		return d;
@@ -1192,7 +1194,7 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	CastMember *member = _vm->getCastMember(id);
+	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
 	if (!member) {
 		warning("Lingo::setTheField(): CastMember id %d doesn't exist", id);
 		return;

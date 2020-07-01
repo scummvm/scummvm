@@ -339,8 +339,8 @@ void Lingo::func_cursor(int cursorId, int maskId) {
 	}
 
 	if (maskId != -1) {
-		CastMember *cursorCast = _vm->getCastMember(cursorId);
-		CastMember *maskCast = _vm->getCastMember(maskId);
+		CastMember *cursorCast = _vm->getCurrentMovie()->getCastMember(cursorId);
+		CastMember *maskCast = _vm->getCurrentMovie()->getCastMember(maskId);
 		if (!cursorCast || !maskCast) {
 			warning("func_cursor(): non-existent cast reference");
 			return;

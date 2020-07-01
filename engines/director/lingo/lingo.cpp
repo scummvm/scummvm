@@ -921,7 +921,7 @@ Common::String Datum::asString(bool printonly) {
 	case FIELDREF:
 		{
 			int idx = u.i;
-			CastMember *member = g_director->getCastMember(idx);
+			CastMember *member = g_director->getCurrentMovie()->getCastMember(idx);
 			if (!member) {
 				warning("asString(): Unknown cast id %d", idx);
 				s = "";
@@ -1200,7 +1200,7 @@ int Lingo::castIdFetch(Datum &var) {
 			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
 	} else if (var.type == INT || var.type == FLOAT) {
 		int castId = var.asInt();
-		if (!_vm->getCastMember(castId))
+		if (!_vm->getCurrentMovie()->getCastMember(castId))
 			warning("castIdFetch: reference to non-existent cast ID: %d", castId);
 		else
 			id = castId;
@@ -1255,7 +1255,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 			return;
 		}
 		int referenceId = var.u.i;
-		CastMember *member = g_director->getCastMember(referenceId);
+		CastMember *member = g_director->getCurrentMovie()->getCastMember(referenceId);
 		if (!member) {
 			warning("varAssign: Unknown cast id %d", referenceId);
 			return;
@@ -1314,7 +1314,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 
 		return *d;
 	} else if (var.type == FIELDREF) {
-		CastMember *cast = _vm->getCastMember(var.u.i);
+		CastMember *cast = _vm->getCurrentMovie()->getCastMember(var.u.i);
 		if (cast) {
 			switch (cast->_type) {
 			case kCastText:

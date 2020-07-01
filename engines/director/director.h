@@ -138,7 +138,6 @@ public:
 	Lingo *getLingo() const { return _lingo; }
 	Stage *getStage() const { return _currentStage; }
 	Movie *getCurrentMovie() const { return _currentMovie; }
-	Cast *getSharedCast() const { return _sharedCast; }
 	Common::String getCurrentPath() const { return _currentPath; }
 	void setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
@@ -146,10 +145,6 @@ public:
 	void loadPalettes();
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
-	void loadSharedCastsFrom(Common::String filename);
-	void clearSharedCast();
-	CastMember *getCastMember(int castId);
-	const Stxt *getStxt(int castId);
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
@@ -202,8 +197,6 @@ private:
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac(const Common::String movie);
-
-	Cast *_sharedCast;
 
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;
