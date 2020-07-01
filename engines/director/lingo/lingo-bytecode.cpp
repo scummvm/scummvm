@@ -892,6 +892,9 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 		if (info)
 			castName = info->name;
 	}
+	if (scriptFlags & kScriptFlagGlobal) {
+		scriptType = kGlobalScript;
+	}
 
 	_assemblyArchive = archiveIndex;
 
