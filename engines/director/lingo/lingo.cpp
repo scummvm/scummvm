@@ -344,7 +344,7 @@ ScriptContext *Lingo::compileLingo(const char *code, int archiveIndex, ScriptTyp
 				uint pc = 0;
 				while (pc < _currentAssembly->size()) {
 					uint spc = pc;
-					Common::String instr = decodeInstruction(_currentAssembly, pc, &pc);
+					Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
 					debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 				}
 				debugC(2, kDebugCompile, "<end code>");
@@ -376,7 +376,7 @@ ScriptContext *Lingo::compileLingo(const char *code, int archiveIndex, ScriptTyp
 		uint pc = 0;
 		while (pc < _currentAssembly->size()) {
 			uint spc = pc;
-			Common::String instr = decodeInstruction(_currentAssembly, pc, &pc);
+			Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
 			debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 		}
 		debugC(2, kDebugCompile, "<end code>");
@@ -460,7 +460,7 @@ void Lingo::printCallStack(uint pc) {
 	}
 }
 
-Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
+Common::String Lingo::decodeInstruction(int archiveIndex, ScriptData *sd, uint pc, uint *newPc) {
 	Symbol sym;
 	Common::String res;
 
@@ -527,7 +527,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 					i = (*sd)[pc++];
 					int v = READ_UINT32(&i);
 
-					res += Common::String::format(" \"%s\"", getName(v).c_str());
+					res += Common::String::format(" \"%s\"", _archives[archiveIndex].names[v].c_str());
 					break;
 				}
 			default:
@@ -551,7 +551,7 @@ void Lingo::execute(uint pc) {
 	int counter = 0;
 
 	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP;) {
-		Common::String instr = decodeInstruction(_currentScript, _pc);
+		Common::String instr = decodeInstruction(_archiveIndex, _currentScript, _pc);
 		uint current = _pc;
 
 		if (debugChannelSet(5, kDebugLingoExec))

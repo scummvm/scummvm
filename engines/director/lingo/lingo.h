@@ -379,7 +379,7 @@ public:
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s, uint pc);
 	void printCallStack(uint pc);
-	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
+	Common::String decodeInstruction(int archiveIndex, ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void initBuiltIns();
 	void cleanupBuiltins();

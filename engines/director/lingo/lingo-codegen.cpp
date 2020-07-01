@@ -81,7 +81,7 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 		uint pc = 0;
 		while (pc < sym.u.defn->size()) {
 			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
+			Common::String instr = g_lingo->decodeInstruction(_assemblyArchive, sym.u.defn, pc, &pc);
 			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 		}
 		debugC(1, kDebugCompile, "<end define code>");
