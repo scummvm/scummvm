@@ -27,17 +27,17 @@
 class HQPlugin : public ScalerPluginObject {
 public:
 	HQPlugin();
-	virtual void initialize(const Graphics::PixelFormat &format);
-	virtual void deinitialize();
-	virtual uint increaseFactor();
-	virtual uint decreaseFactor();
-	virtual bool canDrawCursor() const { return false; }
-	virtual uint extraPixels() const { return 1; }
-	virtual const char *getName() const;
-	virtual const char *getPrettyName() const;
+	virtual void initialize(const Graphics::PixelFormat &format) override;
+	virtual void deinitialize() override;
+	virtual uint increaseFactor() override;
+	virtual uint decreaseFactor() override;
+	virtual bool canDrawCursor() const override { return false; }
+	virtual uint extraPixels() const override { return 1; }
+	virtual const char *getName() const override;
+	virtual const char *getPrettyName() const override;
 protected:
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
-							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y);
+							uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) override;
 };
 
 
