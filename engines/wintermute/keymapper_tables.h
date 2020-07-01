@@ -72,7 +72,11 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "agustin" ||
 		gameId == "bickadoodle" ||
 		gameId == "bthreshold" ||
+		gameId == "carolreed6" ||
+		gameId == "carolreed7" ||
+		gameId == "carolreed8" ||
 		gameId == "colorsoncanvas" ||
+		gameId == "corrosion" ||
 		gameId == "deadcity" ||
 		gameId == "darkfallls" ||
 		gameId == "drbohus" ||
@@ -86,6 +90,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "hamlet" ||
 		gameId == "hor" ||
 		gameId == "juliauntold" ||
+		gameId == "lifein3minutes" ||
 		gameId == "lonelyrobot" ||
 		gameId == "machumayu" ||
 		gameId == "mirage" ||
@@ -213,6 +218,10 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 	} else if (gameId == "drdoylemotch" ||
+		gameId == "carolreed9" ||
+		gameId == "carolreed10" ||
+		gameId == "carolreed11" ||
+		gameId == "carolreed12" ||
 		gameId == "kulivocko" ||
 		gameId == "rebeccacarlson1"
 	) {
@@ -517,6 +526,13 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
 		act->addDefaultInputMapping("PAGEDOWN"); // extra keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_DOWN"
+		gameKeyMap->addAction(act);
+	} else if (gameId == "carolreed5") {
+		act = new Action("HINT", _("Show hints"));
+		act->setKeyEvent(KeyState(KEYCODE_TAB, ASCII_TAB));
+		act->addDefaultInputMapping("TAB"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 	} else if (gameId == "erinmyers") {
 		act = new Action("GUIB", _("Change font size"));
