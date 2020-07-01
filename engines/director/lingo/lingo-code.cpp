@@ -44,13 +44,10 @@
 // THIS SOFTWARE.
 
 #include "director/director.h"
-#include "director/castmember.h"
 #include "director/movie.h"
 #include "director/score.h"
-#include "director/sprite.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-gr.h"

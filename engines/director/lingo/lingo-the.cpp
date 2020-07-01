@@ -20,16 +20,11 @@
  *
  */
 
-#include "common/system.h"
-#include "common/events.h"
-
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macbutton.h"
 
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember.h"
-#include "director/frame.h"
 #include "director/movie.h"
 #include "director/sound.h"
 #include "director/sprite.h"

@@ -22,8 +22,6 @@
 
 #include "common/file.h"
 #include "common/config-manager.h"
-#include "common/str.h"
-#include "common/str-array.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
