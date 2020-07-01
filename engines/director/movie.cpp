@@ -104,7 +104,7 @@ bool Movie::loadArchive() {
 
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
-		warning("Score::loadArchive(): Wrong movie format. VWSC resource missing");
+		warning("Movie::loadArchive(): Wrong movie format. VWSC resource missing");
 		return false;
 	}
 	_score->loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))));
@@ -145,7 +145,7 @@ Common::Array<Common::String> Movie::loadStrings(Common::SeekableSubReadStreamEn
 
 	uint16 count = stream.readUint16() + 1;
 
-	debugC(3, kDebugLoading, "Score::loadStrings(): Strings: %d entries", count);
+	debugC(3, kDebugLoading, "Movie::loadStrings(): Strings: %d entries", count);
 
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 

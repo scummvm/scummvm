@@ -205,7 +205,7 @@ bool Cast::loadArchive() {
 
 	// Font Directory
 	if (_castArchive->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
-		debug("Score::loadArchive(): Movie has fonts. Loading....");
+		debug("Cast::loadArchive(): Movie has fonts. Loading....");
 
 		_vm->_wm->_fontMan->loadFonts(_castArchive->getFileName());
 	}
@@ -466,7 +466,7 @@ void Cast::loadSpriteImages() {
 		}
 
 		if (pic == NULL) {
-			warning("Score::loadSpriteImages(): Image %d not found", imgId);
+			warning("Cast::loadSpriteImages(): Image %d not found", imgId);
 			continue;
 		}
 
@@ -489,13 +489,13 @@ void Cast::loadSpriteImages() {
 					img = new Image::BitmapDecoder();
 				}
 			} else {
-				warning("Score::loadSpriteImages(): Image %d not found", imgId);
+				warning("Cast::loadSpriteImages(): Image %d not found", imgId);
 			}
 
 			break;
 
 		default:
-			warning("Score::loadSpriteImages(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
+			warning("Cast::loadSpriteImages(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
 			break;
 		}
 
@@ -508,7 +508,7 @@ void Cast::loadSpriteImages() {
 
 		bitmapCast->_img = img;
 
-		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
+		debugC(4, kDebugImages, "Cast::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
 			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
 	}
 }
@@ -569,10 +569,10 @@ void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 index = (steps * 3) - 1;
 	byte *_palette = new byte[index + 1];
 
-	debugC(3, kDebugLoading, "Score::loadPalette(): %d steps, %d bytes", steps, stream.size());
+	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps, %d bytes", steps, stream.size());
 
 	if (steps > 256) {
-		warning("Score::loadPalette(): steps > 256: %d", steps);
+		warning("Cast::loadPalette(): steps > 256: %d", steps);
 		steps = 256;
 	}
 
@@ -609,38 +609,38 @@ void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		int returnPos = stream.pos() + size - 1;
 		switch (castType) {
 		case kCastBitmap:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCastMember", id, numToCastNum(id));
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCastMember", id, numToCastNum(id));
 			if (_castArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), id + _castIDoffset))
 				tag = MKTAG('B', 'I', 'T', 'D');
 			else if (_castArchive->hasResource(MKTAG('D', 'I', 'B', ' '), id + _castIDoffset))
 				tag = MKTAG('D', 'I', 'B', ' ');
 			else
-				error("Score::loadCastDataVWCR(): non-existent reference to BitmapCastMember");
+				error("Cast::loadCastDataVWCR(): non-existent reference to BitmapCastMember");
 
 			_loadedCast->setVal(id, new BitmapCastMember(stream, tag, _vm->getVersion()));
 			break;
 		case kCastText:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) TextCastMember", id, numToCastNum(id));
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) TextCastMember", id, numToCastNum(id));
 			_loadedCast->setVal(id, new TextCastMember(stream, _vm->getVersion()));
 			break;
 		case kCastShape:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ShapeCastMember", id, numToCastNum(id));
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) ShapeCastMember", id, numToCastNum(id));
 			_loadedCast->setVal(id, new ShapeCastMember(stream, _vm->getVersion()));
 			break;
 		case kCastButton:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
 			_loadedCast->setVal(id, new TextCastMember(stream, _vm->getVersion(), true));
 			break;
 		case kCastSound:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) SoundCastMember", id, numToCastNum(id));
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) SoundCastMember", id, numToCastNum(id));
 			_loadedCast->setVal(id, new SoundCastMember(stream, _vm->getVersion()));
 			break;
 		case kCastDigitalVideo:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) DigitalVideoCastMember", id, numToCastNum(id));
+			debugC(3, kDebugLoading, "Cast::loadCastDataVWCR(): CastTypes id: %d(%s) DigitalVideoCastMember", id, numToCastNum(id));
 			_loadedCast->setVal(id, new DigitalVideoCastMember(stream, _vm->getVersion()));
 			break;
 		default:
-			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
+			warning("Cast::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
 			stream.skip(size - 1);
 			continue;
 		}
@@ -660,11 +660,11 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 	// TODO: Determine if there really is a minimum size.
 	// This value was too small for Shape Casts.
 	if (stream.size() < 10) {
-		warning("Score::loadCastData(): CASt data id %d is too small", id);
+		warning("Cast::loadCastData(): CASt data id %d is too small", id);
 		return;
 	}
 
-	debugC(3, kDebugLoading, "Score::loadCastData(): CASt: id: %d", id);
+	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d", id);
 
 	if (debugChannelSet(5, kDebugLoading) && stream.size() < 2048)
 		stream.hexdump(stream.size());
@@ -701,10 +701,10 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 
 		sizeToRead = stream.size();
 	} else {
-		error("Score::loadCastData: unsupported Director version (%d)", _vm->getVersion());
+		error("Cast::loadCastData: unsupported Director version (%d)", _vm->getVersion());
 	}
 
-	debugC(3, kDebugLoading, "Score::loadCastData(): CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
+	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
 		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
 	byte *data = (byte *)calloc(sizeToRead, 1);
@@ -714,55 +714,55 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 
 	switch (castType) {
 	case kCastBitmap:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastBitmap (%d children)", res->children.size());
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastBitmap (%d children)", res->children.size());
 		_loadedCast->setVal(id, new BitmapCastMember(castStream, res->tag, _vm->getVersion()));
 		break;
 	case kCastSound:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastSound (%d children)", res->children.size());
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastSound (%d children)", res->children.size());
 		_loadedCast->setVal(id, new SoundCastMember(castStream, _vm->getVersion()));
 		break;
 	case kCastText:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastText (%d children)", res->children.size());
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastText (%d children)", res->children.size());
 		_loadedCast->setVal(id, new TextCastMember(castStream, _vm->getVersion()));
 		break;
 	case kCastShape:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastShape (%d children)", res->children.size());
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastShape (%d children)", res->children.size());
 		_loadedCast->setVal(id, new ShapeCastMember(castStream, _vm->getVersion()));
 		break;
 	case kCastButton:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastButton (%d children)", res->children.size());
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastButton (%d children)", res->children.size());
 		_loadedCast->setVal(id, new TextCastMember(castStream, _vm->getVersion(), true));
 		break;
 	case kCastLingoScript:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastLingoScript");
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastLingoScript");
 		_loadedCast->setVal(id, new ScriptCastMember(castStream, _vm->getVersion()));
 		break;
 	case kCastRTE:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastRTE (%d children)", res->children.size());
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastRTE (%d children)", res->children.size());
 		_loadedCast->setVal(id, new RTECastMember(castStream, _vm->getVersion()));
 		break;
 	case kCastDigitalVideo:
-		debugC(3, kDebugLoading, "Score::loadCastData(): loading kCastDigitalVideo (%d children)", res->children.size());
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastDigitalVideo (%d children)", res->children.size());
 		_loadedCast->setVal(id, new DigitalVideoCastMember(castStream, _vm->getVersion()));
 		break;
 	case kCastFilmLoop:
-		warning("STUB: Score::loadCastData(): kCastFilmLoop (%d children)", res->children.size());
+		warning("STUB: Cast::loadCastData(): kCastFilmLoop (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastPalette:
-		warning("STUB: Score::loadCastData(): kCastPalette (%d children)", res->children.size());
+		warning("STUB: Cast::loadCastData(): kCastPalette (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastPicture:
-		warning("STUB: Score::loadCastData(): kCastPicture (%d children)", res->children.size());
+		warning("STUB: Cast::loadCastData(): kCastPicture (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	case kCastMovie:
-		warning("STUB: Score::loadCastData(): kCastMovie (%d children)", res->children.size());
+		warning("STUB: Cast::loadCastData(): kCastMovie (%d children)", res->children.size());
 		size2 = 0;
 		break;
 	default:
-		warning("Score::loadCastData(): Unhandled cast type: %d [%s] (%d children)", castType, tag2str(castType), res->children.size());
+		warning("Cast::loadCastData(): Unhandled cast type: %d [%s] (%d children)", castType, tag2str(castType), res->children.size());
 		// also don't try and read the strings... we don't know what this item is.
 		size2 = 0;
 		break;
@@ -785,7 +785,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		uint32 entryType = 0;
 		Common::Array<Common::String> castStrings = Movie::loadStrings(stream, entryType, false);
 
-		debugCN(4, kDebugLoading, "Score::loadCastData(): str(%d): '", castStrings.size());
+		debugCN(4, kDebugLoading, "Cast::loadCastData(): str(%d): '", castStrings.size());
 
 		for (uint i = 0; i < castStrings.size(); i++) {
 			debugCN(4, kDebugLoading, "%s'", castStrings[i].c_str());
@@ -800,7 +800,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		// adding tons of ifs, we use this switch()
 		switch (castStrings.size()) {
 		default:
-			warning("Score::loadCastData(): extra %d strings", castStrings.size() - 5);
+			warning("Cast::loadCastData(): extra %d strings", castStrings.size() - 5);
 			// fallthrough
 		case 5:
 			ci->type = castStrings[4];
@@ -846,14 +846,14 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 	}
 
 	if (size3)
-		warning("Score::loadCastData(): size3: %x", size3);
+		warning("Cast::loadCastData(): size3: %x", size3);
 }
 
 void Cast::loadLingoNames(Common::SeekableSubReadStreamEndian &stream) {
 	if (_vm->getVersion() >= 4) {
 		_lingo->addNamesV4(stream, _lingoArchive);
 	} else {
-		error("Score::loadLingoNames: unsuported Director version (%d)", _vm->getVersion());
+		error("Cast::loadLingoNames: unsuported Director version (%d)", _vm->getVersion());
 	}
 }
 
@@ -901,7 +901,7 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			}
 		}
 	} else {
-		error("Score::loadLingoContext: unsuported Director version (%d)", _vm->getVersion());
+		error("Cast::loadLingoContext: unsuported Director version (%d)", _vm->getVersion());
 	}
 }
 
@@ -972,7 +972,7 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 
 	castStrings.clear();
 
-	debugC(5, kDebugLoading, "Score::loadCastInfo(): CastMemberInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
+	debugC(5, kDebugLoading, "Cast::loadCastInfo(): CastMemberInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
 				ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
 
 	if (!ci->name.empty())
