@@ -282,8 +282,8 @@ void RemapWidget::refreshKeymap() {
 			row.actionText->setLabel(row.action->description);
 
 			row.keyButton = new GUI::DropdownButtonWidget(widgetsBoss(), 0, 0, 0, 0, U32String(""), U32String(""), kRemapCmd + i);
-			row.keyButton->appendEntry((_("Reset to defaults")), kResetActionCmd + i);
-			row.keyButton->appendEntry((_("Clear mapping")), kClearCmd + i);
+			row.keyButton->appendEntry(_("Reset to defaults"), kResetActionCmd + i);
+			row.keyButton->appendEntry(_("Clear mapping"), kClearCmd + i);
 		}
 
 		Array<HardwareInput> mappedInputs = row.keymap->getActionMapping(row.action);
@@ -311,8 +311,8 @@ void RemapWidget::refreshKeymap() {
 			keymapTitle.resetButton = new GUI::ButtonWidget(widgetsBoss(), 0, 0, 0, 0, U32String(""), U32String(""), kResetKeymapCmd + i);
 
 			// I18N: Button to reset keymap mappings to defaults
-			keymapTitle.resetButton->setLabel((_("Reset")));
-			keymapTitle.resetButton->setTooltip((_("Reset to defaults")));
+			keymapTitle.resetButton->setLabel(_("Reset"));
+			keymapTitle.resetButton->setTooltip(_("Reset to defaults"));
 		}
 	}
 }
