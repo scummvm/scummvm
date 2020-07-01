@@ -2237,18 +2237,16 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 
 	// Split the message into separate lines.
 	Common::Array<Common::U32String> lines;
-	Common::U32String singleMessage;
+	Common::U32String::const_iterator itr = msg.begin(), strLineItrBegin = msg.begin();
 
-	// GUI U32 TODO: This can be better optimized perhaps?
-	for (Common::U32String::const_iterator itr = msg.begin(); itr != msg.end(); itr++) {
+	for ( ; itr != msg.end(); itr++) {
 		if (*itr == '\n') {
-			lines.push_back(singleMessage);
-			singleMessage.clear();
-			continue;
+			lines.push_back(Common::U32String(strLineItrBegin, itr));
+			strLineItrBegin = itr + 1;
 		}
-		singleMessage += (*itr);
 	}
-	lines.push_back(singleMessage);
+	if (strLineItrBegin != msg.end())
+		lines.push_back(Common::U32String(strLineItrBegin, msg.end()));
 
 	// Determine a rect which would contain the message string (clipped to the
 	// screen dimensions).
