@@ -369,13 +369,13 @@ void AdvMamePlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 
 uint AdvMamePlugin::increaseFactor() {
 	if (_factor < 4)
-		++_factor;
+		setFactor(_factor + 1);
 	return _factor;
 }
 
 uint AdvMamePlugin::decreaseFactor() {
 	if (_factor > 2)
-		--_factor;
+		setFactor(_factor - 1);
 	return _factor;
 }
 

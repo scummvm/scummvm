@@ -3604,13 +3604,13 @@ void EdgePlugin::internScale(const uint8 *srcPtr, uint32 srcPitch,
 
 uint EdgePlugin::increaseFactor() {
 	if (_factor == 2)
-		++_factor;
+		setFactor(_factor + 1);
 	return _factor;
 }
 
 uint EdgePlugin::decreaseFactor() {
 	if (_factor == 3)
-		--_factor;
+		setFactor(_factor - 1);
 	return _factor;
 }
 

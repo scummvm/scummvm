@@ -167,6 +167,8 @@ public:
 
 	virtual void enableSource(bool enable) final { _enable = enable; }
 
+	virtual uint setFactor(uint factor) final;
+
 protected:
 
 	virtual void scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
@@ -186,7 +188,7 @@ protected:
 
 private:
 
-	int _padding;
+	int _width, _height, _padding;
 	bool _enable;
 	byte *_oldSrc;
 	Graphics::Surface _bufferedOutput;

@@ -205,7 +205,7 @@ void NormalPlugin::scaleIntern(const uint8 *srcPtr, uint32 srcPitch,
 uint NormalPlugin::increaseFactor() {
 #ifdef USE_SCALERS
 	if (_factor < 4)
-		++_factor;
+		setFactor(_factor + 1);
 #endif
 	return _factor;
 }
@@ -213,7 +213,7 @@ uint NormalPlugin::increaseFactor() {
 uint NormalPlugin::decreaseFactor() {
 #ifdef USE_SCALERS
 	if (_factor > 1)
-		--_factor;
+		setFactor(_factor - 1);
 #endif
 	return _factor;
 }
