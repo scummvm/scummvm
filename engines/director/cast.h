@@ -24,7 +24,6 @@
 #define DIRECTOR_CAST_H
 
 #include "common/hash-str.h"
-#include "director/types.h"
 
 namespace Common {
 	class ReadStreamEndian;

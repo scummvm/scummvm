@@ -24,14 +24,11 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/substream.h"
-#include "common/system.h"
 
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
 
 #include "director/director.h"
-#include "director/archive.h"
 #include "director/cast.h"
 #include "director/castmember.h"
 #include "director/images.h"
@@ -93,7 +90,7 @@ Cast::~Cast() {
 	if (_loadedCast)
 		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			delete it->_value;
-	
+
 	delete _loadedStxts;
 	delete _loadedCast;
 }
