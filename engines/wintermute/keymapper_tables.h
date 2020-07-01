@@ -508,15 +508,15 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act = new Action("VOLMAX", _("Volume max"));
 		act->setMouseWheelUpEvent();
 		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // original mouse
-		act->addDefaultInputMapping("UP"); // extra keyboard
-		act->addDefaultInputMapping("JOY_UP"); // extra joy
+		act->addDefaultInputMapping("PAGEUP"); // extra keyboard
+		//TODO: extra joy control, e.g. "JOY_R+JOY_UP"
 		gameKeyMap->addAction(act);
 
 		act = new Action("VOLOFF", _("Volume off"));
 		act->setMouseWheelDownEvent();
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
-		act->addDefaultInputMapping("DOWN"); // extra keyboard
-		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		act->addDefaultInputMapping("PAGEDOWN"); // extra keyboard
+		//TODO: extra joy control, e.g. "JOY_R+JOY_DOWN"
 		gameKeyMap->addAction(act);
 	} else if (gameId == "erinmyers") {
 		act = new Action("GUIB", _("Change font size"));
