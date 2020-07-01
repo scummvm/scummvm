@@ -23,17 +23,14 @@
 #ifndef DIRECTOR_LINGO_LINGO_H
 #define DIRECTOR_LINGO_LINGO_H
 
-#include "audio/audiostream.h"
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
-#include "common/endian.h"
-#include "common/str-array.h"
 
-#include "director/types.h"
-#include "director/lingo/lingo-gr.h"
-
+namespace Audio {
+class AudioStream;
+}
 namespace Common {
-	class SeekableSubReadStreamEndian;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Director {
@@ -120,59 +117,13 @@ struct Datum {	/* interpreter stack type */
 
 	int *refCount;
 
-	Datum() {
-		u.s = nullptr;
-		type = VOID;
-		lazy = false;
-		refCount = new int;
-		*refCount = 1;
-	}
-	Datum(const Datum &d) {
-		type = d.type;
-		lazy = d.lazy;
-		u = d.u;
-		refCount = d.refCount;
-		*refCount += 1;
-	}
-	Datum& operator=(const Datum &d) {
-		if (this != &d) {
-			reset();
-			type = d.type;
-			u = d.u;
-			refCount = d.refCount;
-			*refCount += 1;
-		}
-		return *this;
-	}
-	Datum(int val) {
-		u.i = val;
-		type = INT;
-		lazy = false;
-		refCount = new int;
-		*refCount = 1;
-	}
-	Datum(double val) {
-		u.f = val;
-		type = FLOAT;
-		lazy = false;
-		refCount = new int;
-		*refCount = 1;
-	}
-	Datum(const Common::String &val) {
-		u.s = new Common::String(val);
-		type = STRING;
-		lazy = false;
-		refCount = new int;
-		*refCount = 1;
-	}
-	Datum(Object *val) {
-		u.obj = val;
-		type = OBJECT;
-		lazy = false;
-		refCount = new int;
-		*refCount = 1;
-	}
-
+	Datum();
+	Datum(const Datum &d);
+	Datum& operator=(const Datum &d);
+	Datum(int val);
+	Datum(double val);
+	Datum(const Common::String &val);
+	Datum(Object *val);
 	void reset();
 
 	~Datum() {
@@ -453,7 +404,7 @@ public:
 	inst readInst() { return getInst(_pc++); }
 	inst getInst(uint pc) { return (*_currentScript)[pc]; }
 	int readInt() { return getInt(_pc++); }
-	int getInt(uint pc) { return (int)READ_UINT32(&((*_currentScript)[pc])); }
+	int getInt(uint pc);
 	double readFloat() { double d = getFloat(_pc); _pc += calcCodeAlignment(sizeof(double)); return d; }
 	double getFloat(uint pc) { return *(double *)(&((*_currentScript)[pc])); }
 	char *readString() { char *s = getString(_pc); _pc += calcStringAlignment(s); return s; }

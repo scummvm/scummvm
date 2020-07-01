@@ -38,7 +38,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-the.h"
-
+#include "director/lingo/lingo-gr.h"
 namespace Director {
 
 class Sprite;

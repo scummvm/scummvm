@@ -43,15 +43,17 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "common/endian.h"
+
 #include "director/director.h"
 #include "director/castmember.h"
 #include "director/score.h"
+#include "director/types.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
-#include "director/types.h"
-
-#include "director/util.h"
+#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 

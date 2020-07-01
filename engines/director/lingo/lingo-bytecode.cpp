@@ -34,6 +34,7 @@
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-bytecode.h"
 #include "director/lingo/lingo-the.h"
+#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 

@@ -25,9 +25,9 @@
 #include "common/str.h"
 #include "common/str-array.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+
 #include "director/director.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-code.h"
 #include "director/cast.h"
 #include "director/castmember.h"
 #include "director/frame.h"
@@ -36,7 +36,9 @@
 #include "director/sprite.h"
 #include "director/util.h"
 
-#include "graphics/macgui/macwindowmanager.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 
@@ -288,7 +290,7 @@ void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 
 		contextName = Common::String(scriptName);
 	else
 		contextName = Common::String::format("%d", id);
-	
+
 	ScriptContext *sc = compileLingo(code, archiveIndex, type, id, contextName);
 	_archives[_assemblyArchive].scriptContexts[type][id] = sc;
 }
@@ -296,7 +298,7 @@ void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 
 ScriptContext *Lingo::compileAnonymous(const char *code) {
 	debugC(1, kDebugCompile, "Compiling anonymous lingo\n"
 			"***********\n%s\n\n***********", code);
-	
+
 	return compileLingo(code, kArchNone, kNoneScript, 0, "[anonymous]");
 }
 
@@ -691,6 +693,65 @@ int Lingo::getAlignedType(Datum &d1, Datum &d2) {
 	}
 
 	return opType;
+}
+
+Datum::Datum() {
+	u.s = nullptr;
+	type = VOID;
+	lazy = false;
+	refCount = new int;
+	*refCount = 1;
+}
+
+Datum::Datum(const Datum &d) {
+	type = d.type;
+	lazy = d.lazy;
+	u = d.u;
+	refCount = d.refCount;
+	*refCount += 1;
+}
+
+Datum& Datum::operator=(const Datum &d) {
+	if (this != &d) {
+		reset();
+		type = d.type;
+		u = d.u;
+		refCount = d.refCount;
+		*refCount += 1;
+	}
+	return *this;
+}
+
+Datum::Datum(int val) {
+	u.i = val;
+	type = INT;
+	lazy = false;
+	refCount = new int;
+	*refCount = 1;
+}
+
+Datum::Datum(double val) {
+	u.f = val;
+	type = FLOAT;
+	lazy = false;
+	refCount = new int;
+	*refCount = 1;
+}
+
+Datum::Datum(const Common::String &val) {
+	u.s = new Common::String(val);
+	type = STRING;
+	lazy = false;
+	refCount = new int;
+	*refCount = 1;
+}
+
+Datum::Datum(Object *val) {
+	u.obj = val;
+	type = OBJECT;
+	lazy = false;
+	refCount = new int;
+	*refCount = 1;
 }
 
 void Datum::reset() {
@@ -1118,6 +1179,10 @@ void Lingo::printAllVars() {
 		debugN("%s, ", (*i)._key.c_str());
 	}
 	debugN("\n");
+}
+
+int Lingo::getInt(uint pc) {
+	return (int)READ_UINT32(&((*_currentScript)[pc]));
 }
 
 int Lingo::castIdFetch(Datum &var) {

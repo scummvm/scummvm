@@ -22,12 +22,12 @@
 
 #include "common/system.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macmenu.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-builtins.h"
-#include "director/lingo/lingo-code.h"
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/score.h"
@@ -36,9 +36,10 @@
 #include "director/stage.h"
 #include "director/stxt.h"
 #include "director/util.h"
-
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macmenu.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
+#include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 

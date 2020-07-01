@@ -26,9 +26,10 @@
 #include "common/savefile.h"
 
 #include "director/director.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/xlibs/fileio.h"
 #include "director/types.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-gr.h"
+#include "director/lingo/xlibs/fileio.h"
 
 namespace Director {
 
