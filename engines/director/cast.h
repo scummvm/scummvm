@@ -40,7 +40,7 @@ class CastMember;
 class DirectorEngine;
 class Lingo;
 struct Resource;
-struct Stxt;
+class Stxt;
 class BitmapCastMember;
 class ScriptCastMember;
 class ShapeCastMember;
