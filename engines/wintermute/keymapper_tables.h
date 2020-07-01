@@ -1530,7 +1530,19 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 	}
 	result.push_back(gameKeyMap);
 
-	if (gameId == "corrosion") {
+
+	if (gameId == "carolreed4" ||
+		gameId == "carolreed5" ||
+		gameId == "carolreed6" ||
+		gameId == "carolreed7" ||
+		gameId == "carolreed8" ||
+		gameId == "carolreed9" ||
+		gameId == "carolreed10" ||
+		gameId == "carolreed11" ||
+		gameId == "carolreed12" ||
+		gameId == "corrosion" ||
+		gameId == "rebeccacarlson1"
+	) {
 		act = new Action(kStandardActionMoveUp, _("Walk forward"));
 		act->setCustomEngineActionEvent(kClickAtEntityNearestToCenter);
 		act->addDefaultInputMapping("UP"); // extra keyboard
