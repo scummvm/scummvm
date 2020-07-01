@@ -697,8 +697,12 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 
 	case OPCODE_OBJECT_NOT_IN_ROOM:
 		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state,
-		                     item->_room != instr->_operand[1]);
+		func_set_test_result(func_state, !item || item->_room != instr->_operand[1]);
+		break;
+
+	case OPCODE_CURRENT_OBJECT_NOT_IN_ROOM:
+		item = get_item_by_noun(noun);
+		func_set_test_result(func_state, !item || item->_room != _currentRoom);
 		break;
 
 	case OPCODE_MOVE_OBJECT_TO_ROOM:
@@ -740,16 +744,6 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		}
 
 		func_set_test_result(func_state, test);
-		break;
-
-	case OPCODE_CURRENT_OBJECT_NOT_PRESENT:
-		/* FIXME - use common code for these two ops */
-		item = get_item_by_noun(noun);
-		if (item)
-			func_set_test_result(func_state,
-			                     item->_room != _currentRoom);
-		else
-			func_set_test_result(func_state, true);
 		break;
 
 	case OPCODE_CURRENT_OBJECT_PRESENT:
@@ -803,11 +797,6 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			                     !(item->_flags & ITEMF_CAN_TAKE));
 		break;
 
-	case OPCODE_CURRENT_OBJECT_IN_INVENTORY:
-		item = get_item_by_noun(noun);
-		func_set_test_result(func_state, item && item->_room == ROOM_INVENTORY);
-		break;
-
 	case OPCODE_OBJECT_IS_NOWHERE:
 		item = get_item(instr->_operand[0] - 1);
 		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
@@ -823,10 +812,14 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		func_set_test_result(func_state, item->_room != ROOM_NOWHERE);
 		break;
 
+	case OPCODE_CURRENT_OBJECT_NOT_PRESENT:
+		item = get_item_by_noun(noun);
+		func_set_test_result(func_state, !isItemPresent(item));
+		break;
+
 	case OPCODE_OBJECT_NOT_PRESENT:
 		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state,
-		                     item->_room != _currentRoom);
+		func_set_test_result(func_state, !isItemPresent(item));
 		break;
 
 	case OPCODE_OBJECT_PRESENT:
@@ -1398,6 +1391,13 @@ void ComprehendGame::doMovementVerb(uint verbNum) {
 		move_to(newRoom);
 	else
 		console_println(_strings[0].c_str());
+}
+
+bool ComprehendGame::isItemPresent(Item *item) const {
+	return item && (
+		item->_room == _currentRoom || item->_room == ROOM_INVENTORY
+		|| item->_room == ROOM_CONTAINER
+	);
 }
 
 } // namespace Comprehend

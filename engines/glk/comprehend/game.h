@@ -62,6 +62,7 @@ private:
 	void doAfterTurn();
 	void read_input();
 	void doMovementVerb(uint verbNum);
+	bool isItemPresent(Item *item) const;
 
 protected:
 	void game_save();
