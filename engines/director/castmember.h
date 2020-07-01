@@ -23,10 +23,9 @@
 #ifndef DIRECTOR_CASTMEMBER_H
 #define DIRECTOR_CASTMEMBER_H
 
-#include "director/archive.h"
-#include "director/types.h"
-
 #include "graphics/font.h"
+
+#include "director/archive.h"
 
 namespace Graphics {
 struct Surface;
@@ -49,6 +48,7 @@ namespace Director {
 
 class Stxt;
 class AudioDecoder;
+struct Resource;
 
 class CastMember {
 public:

@@ -29,7 +29,6 @@
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
-#include "graphics/managed_surface.h"
 
 #include "director/types.h"
 
@@ -43,6 +42,8 @@ namespace Graphics {
 class MacWindowManager;
 struct MacPlotData;
 typedef Common::Array<byte *> MacPatterns;
+
+class ManagedSurface;
 }
 
 namespace Director {

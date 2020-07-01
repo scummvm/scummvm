@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/substream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/mactext.h"
@@ -28,6 +27,7 @@
 #include "image/image_decoder.h"
 
 #include "director/director.h"
+#include "director/archive.h"
 #include "director/castmember.h"
 #include "director/movie.h"
 #include "director/score.h"

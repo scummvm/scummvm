@@ -29,6 +29,7 @@
 #include "image/bmp.h"
 
 #include "director/director.h"
+#include "director/archive.h"
 #include "director/cast.h"
 #include "director/castmember.h"
 #include "director/images.h"
