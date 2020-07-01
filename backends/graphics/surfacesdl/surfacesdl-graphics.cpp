@@ -832,7 +832,7 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 			// 0 will currently always be Normal1x scaling
 			setGraphicsMode(0);
 		} else {
-			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
+			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 		}
 	}
 
@@ -1278,7 +1278,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			int dst_y = r->y + _currentShakeYOffset;
 			int dst_w = 0;
 			int dst_h = 0;
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 			int orig_dst_y = 0;
 #endif
 
@@ -1291,7 +1291,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				if (dst_h > height - dst_y)
 					dst_h = height - dst_y;
 
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 				orig_dst_y = dst_y;
 #endif
 				dst_x *= scale1;
@@ -2002,7 +2002,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	_mouseCurState.vHotX = _mouseCurState.hotX;
 	_mouseCurState.vHotY = _mouseCurState.hotY;
 
-#ifdef USE_SCALERS
+#ifdef USE_ASPECT
 	// store original to pass to aspect-correction function later
 	const int rH1 = rH;
 #endif
