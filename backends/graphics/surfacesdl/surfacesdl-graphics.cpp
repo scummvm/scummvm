@@ -2150,7 +2150,9 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	// otherwise use the Normal scaler
 #ifdef USE_SCALERS
 	if (!_cursorDontScale) {
-		if (_scalerPlugin->canDrawCursor()) {
+		// HACK: AdvMame4x requires a height of at least 4 pixels, so we
+		// fall back on the Normal scaler when a smaller cursor is supplied.
+		if (_scalerPlugin->canDrawCursor() && (uint)_mouseCurState.h >= _extraPixels) {
 #endif
             _scalerPlugin->scale(
                     (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
