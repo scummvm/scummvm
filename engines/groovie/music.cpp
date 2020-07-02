@@ -45,7 +45,7 @@ namespace Groovie {
 MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	_vm(vm), _isPlaying(false), _backgroundFileRef(0), _gameVolume(100),
 	_prevCDtrack(0), _backgroundDelay(0), _fadingStartTime(0), _fadingStartVolume(0),
-	_fadingEndVolume(0), _fadingDuration(0), _userVolume(0) {
+	_fadingEndVolume(0), _fadingDuration(0), _midiInit(false), _userVolume(0) {
 }
 
 MusicPlayer::~MusicPlayer() {
