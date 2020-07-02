@@ -52,8 +52,12 @@ struct Resource;
 
 class CastMember {
 public:
-	CastMember();
+	CastMember(Cast *cast, uint16 castId);
 	virtual ~CastMember() {};
+
+	Cast *getCast() { return _cast; }
+	uint16 getID() { return _castId; }
+
 	virtual bool isEditable() { return false; }
 	virtual bool setEditable(bool editable) { return false; }
 	virtual bool isModified() { return _modified; }
@@ -63,7 +67,6 @@ public:
 	virtual void getColors(int *fgcolor, int *bgcolor) { return; }
 
 	CastType _type;
-	Cast *_cast;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
 	Common::Array<Resource> _children;
@@ -72,11 +75,15 @@ public:
 	bool _hilite;
 
 	Graphics::MacWidget *_widget;
+
+private:
+	Cast *_cast;
+	uint16 _castId;
 };
 
 class BitmapCastMember : public CastMember {
 public:
-	BitmapCastMember(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
+	BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
 	~BitmapCastMember();
 	virtual void createWidget() override;
 	// virtual void setColors(int *fgcolor, int *bgcolor) override;
@@ -97,7 +104,7 @@ public:
 
 class DigitalVideoCastMember : public CastMember {
 public:
-	DigitalVideoCastMember(Common::ReadStreamEndian &stream, uint16 version);
+	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
 
 	bool _looping;
 	bool _pauseAtStart;
@@ -114,7 +121,7 @@ public:
 
 class SoundCastMember : public CastMember {
 public:
-	SoundCastMember(Common::ReadStreamEndian &stream, uint16 version);
+	SoundCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
 
 	bool _looping;
 	AudioDecoder *_audio;
@@ -122,8 +129,8 @@ public:
 
 class ShapeCastMember : public CastMember {
 public:
-	ShapeCastMember(Common::ReadStreamEndian &stream, uint16 version);
-	ShapeCastMember();
+	ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	ShapeCastMember(Cast *cast, uint16 castId);
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -137,7 +144,7 @@ public:
 
 class TextCastMember : public CastMember {
 public:
-	TextCastMember(Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
+	TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
 	virtual void getColors(int *fgcolor, int *bgcolor) override;
 
@@ -182,7 +189,7 @@ private:
 
 class ScriptCastMember : public CastMember {
 public:
-	ScriptCastMember(Common::ReadStreamEndian &stream, uint16 version);
+	ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
 
 	uint32 _id;
 	ScriptType _scriptType;
@@ -190,7 +197,7 @@ public:
 
 class RTECastMember : public TextCastMember {
 public:
-	RTECastMember(Common::ReadStreamEndian &stream, uint16 version);
+	RTECastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
 
 	void loadChunks();
 };

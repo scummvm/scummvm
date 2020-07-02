@@ -31,16 +31,18 @@
 
 namespace Director {
 
-CastMember::CastMember() {
+CastMember::CastMember(Cast* cast, uint16 castId) {
 	_type = kCastTypeNull;
-	_cast = nullptr;
+	_cast = cast;
+	_castId = castId;
 	_widget = nullptr;
 	_hilite = false;
 
 	_modified = true;
 }
 
-BitmapCastMember::BitmapCastMember(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
+BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint32 castTag, uint16 version)
+		: CastMember(cast, castId) {
 	_type = kCastBitmap;
 	_img = nullptr;
 	_bytes = 0;
@@ -133,7 +135,8 @@ void BitmapCastMember::createWidget() {
 	_widget->getSurface()->blitFrom(*_img->getSurface());
 }
 
-DigitalVideoCastMember::DigitalVideoCastMember(Common::ReadStreamEndian &stream, uint16 version) {
+DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId) {
 	_type = kCastDigitalVideo;
 
 	if (version < 4) {
@@ -177,7 +180,8 @@ DigitalVideoCastMember::DigitalVideoCastMember(Common::ReadStreamEndian &stream,
 	}
 }
 
-SoundCastMember::SoundCastMember(Common::ReadStreamEndian &stream, uint16 version) {
+SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId) {
 	_type = kCastSound;
 	_audio = nullptr;
 	_looping = 0;
@@ -190,7 +194,8 @@ SoundCastMember::SoundCastMember(Common::ReadStreamEndian &stream, uint16 versio
 	}
 }
 
-TextCastMember::TextCastMember(Common::ReadStreamEndian &stream, uint16 version, bool asButton) {
+TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version, bool asButton)
+		: CastMember(cast, castId) {
 	_type = kCastText;
 
 	_borderSize = kSizeNone;
@@ -465,7 +470,8 @@ bool TextCastMember::setEditable(bool editable) {
 	return true;
 }
 
-ShapeCastMember::ShapeCastMember(Common::ReadStreamEndian &stream, uint16 version) {
+ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId) {
 	_type = kCastShape;
 
 	byte flags, unk1;
@@ -520,7 +526,7 @@ ShapeCastMember::ShapeCastMember(Common::ReadStreamEndian &stream, uint16 versio
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
 }
 
-ShapeCastMember::ShapeCastMember() {
+ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId) : CastMember(cast, castId) {
 	_shapeType = kShapeRectangle;
 	_pattern = 0;
 	_fgCol = 0;
@@ -531,7 +537,8 @@ ShapeCastMember::ShapeCastMember() {
 	_ink = kInkTypeCopy;
 }
 
-ScriptCastMember::ScriptCastMember(Common::ReadStreamEndian &stream, uint16 version) {
+ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
+		: CastMember(cast, castId) {
 	_type = kCastLingoScript;
 	_scriptType = kNoneScript;
 
@@ -577,7 +584,8 @@ ScriptCastMember::ScriptCastMember(Common::ReadStreamEndian &stream, uint16 vers
 	}
 }
 
-RTECastMember::RTECastMember(Common::ReadStreamEndian &stream, uint16 version) : TextCastMember(stream, version) {
+RTECastMember::RTECastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
+		: TextCastMember(cast, castId, stream, version) {
 
 	_type = kCastRTE;
 }

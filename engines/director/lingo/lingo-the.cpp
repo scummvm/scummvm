@@ -1121,7 +1121,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
-		member->_cast->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, id);
+		member->getCast()->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, id);
 		castInfo->script = d.asString();
 		break;
 	case kTheText:
