@@ -333,7 +333,7 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, uint8 dir) {
 		const ShapeInfo *si = item->getShapeInfo();
 		bool isoccl = si->_flags & ShapeInfo::SI_OCCL;
 
-		int ix, iy, iz;
+		int32 ix, iy, iz;
 		item->getLocation(ix, iy, iz);
 		Direction itemdir = Get_WorldDirection(iy - y, ix - x);
 		if (itemdir != dir)
