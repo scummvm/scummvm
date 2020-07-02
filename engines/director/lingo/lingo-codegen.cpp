@@ -284,7 +284,9 @@ void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localv
 }
 
 void Lingo::codeFactory(Common::String &name) {
-	ScriptContext *ctx = new ScriptContext(name);
+	// FIXME: The factory's context should not be tied to the LingoArchive
+	// but bytecode needs it to resolve names
+	ScriptContext *ctx = new ScriptContext(name, _assemblyArchive);
 	Object *obj = new Object(name, kFactoryObj, ctx);
 
 	_currentFactory = obj;
