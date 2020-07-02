@@ -147,14 +147,8 @@ protected:
 		kActionCycleStretchMode,
 		kActionIncreaseScaleFactor,
 		kActionDecreaseScaleFactor,
-		kActionSetScaleFilter1,
-		kActionSetScaleFilter2,
-		kActionSetScaleFilter3,
-		kActionSetScaleFilter4,
-		kActionSetScaleFilter5,
-		kActionSetScaleFilter6,
-		kActionSetScaleFilter7,
-		kActionSetScaleFilter8
+		kActionNextScaleFilter,
+		kActionPreviousScaleFilter
 	};
 
 	virtual int getGraphicsModeScale(int mode) const = 0;

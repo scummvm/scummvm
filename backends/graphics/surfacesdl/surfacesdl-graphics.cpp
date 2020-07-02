@@ -2495,6 +2495,42 @@ int findGraphicsMode(uint factor, ScalerPluginObject &plugin) {
 	return -1;
 }
 
+void SurfaceSdlGraphicsManager::handleScalerHotkeys(int factor) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	bool sizeChanged = _videoMode.scaleFactor != factor;
+#endif
+
+	int newMode = findGraphicsMode(factor, _scalerPlugins[_scalerIndex]->get<ScalerPluginObject>());
+	if (newMode >= 0) {
+		beginGFXTransaction();
+			setGraphicsMode(newMode);
+		endGFXTransaction();
+#ifdef USE_OSD
+		const char *newScalerName = _scalerPlugin->getPrettyName();
+		if (newScalerName) {
+			const Common::U32String message = Common::U32String::format(
+				"%S %s%d\n%d x %d -> %d x %d",
+				_("Active graphics filter:").c_str(),
+				newScalerName,
+				_scalerPlugin->getFactor(),
+				_videoMode.screenWidth, _videoMode.screenHeight,
+				_hwScreen->w, _hwScreen->h);
+			displayMessageOnOSD(message);
+		}
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (sizeChanged) {
+			// Forcibly resizing the window here since a user switching scaler
+			// size will not normally cause the window to update
+			_window->createOrUpdateWindow(_hwScreen->w, _hwScreen->h, _lastFlags);
+		}
+#endif
+
+		internUpdateScreen();
+	}
+}
+
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
 		return SdlGraphicsManager::notifyEvent(event);
@@ -2572,6 +2608,32 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return true;
 	}
 #endif
+
+	case kActionIncreaseScaleFactor:
+		handleScalerHotkeys(_scalerPlugin->increaseFactor());
+		return true;
+
+	case kActionDecreaseScaleFactor:
+		handleScalerHotkeys(_scalerPlugin->decreaseFactor());
+		return true;
+
+	case kActionNextScaleFilter:
+		_scalerIndex++;
+		if (_scalerIndex >= _scalerPlugins.size()) {
+			_scalerIndex = 0;
+		}
+
+		handleScalerHotkeys(_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>().getFactor());
+		return true;
+
+	case kActionPreviousScaleFilter:
+		if (_scalerIndex == 0) {
+			_scalerIndex = _scalerPlugins.size();
+		}
+		_scalerIndex--;
+
+		handleScalerHotkeys(_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>().getFactor());
+		return true;
 
 	default:
 		return SdlGraphicsManager::notifyEvent(event);
