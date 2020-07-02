@@ -152,23 +152,13 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 		_enableFocusRectDebugCode = ConfMan.getBool("use_sdl_debug_focusrect");
 #endif
 
-#if !defined(__SYMBIAN32__)
-
-#if defined(USE_SCALERS)
-	_videoMode.mode = GFX_DOUBLESIZE;
-	_videoMode.scaleFactor = 2;
-#else // for small screen platforms
-	_videoMode.mode = GFX_NORMAL;
-	_videoMode.scaleFactor = 1;
-#endif
-#if defined(USE_ASPECT)
+#if !defined(__SYMBIAN32__) && defined(USE_ASPECT)
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 #else // for small screen platforms
 	_videoMode.aspectRatioCorrection = false;
 #endif
 
-#endif
 	_normalPlugin = &ScalerMan.findScalerPlugin("normal")->get<ScalerPluginObject>();
 	assert(_normalPlugin);
 	_scalerPlugin = NULL;
@@ -183,6 +173,9 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 	if (!s_supportedGraphicsModes)
 		initGraphicsModes();
+
+	_videoMode.mode = s_defaultGraphicsMode;
+	_videoMode.scaleFactor = getGraphicsModeScale(_videoMode.mode);
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
