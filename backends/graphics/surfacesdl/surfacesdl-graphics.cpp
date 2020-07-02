@@ -258,10 +258,8 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
 #endif
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFilteringMode:
 		return _videoMode.filtering;
-#endif
 	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:
@@ -2523,7 +2521,6 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return true;
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case kActionToggleFilteredScaling:
 		beginGFXTransaction();
 			setFeatureState(OSystem::kFeatureFilteringMode, !_videoMode.filtering);
@@ -2538,7 +2535,6 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		_forceRedraw = true;
 		internUpdateScreen();
 		return true;
-#endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case kActionCycleStretchMode: {
