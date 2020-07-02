@@ -543,19 +543,10 @@ bool AdObject3D::persist(BasePersistenceManager *persistMgr) {
 		_shadowVolume = nullptr;
 	}
 
-	if (persistMgr->checkVersion(1, 8, 5)) {
-		_ignoredLights.persist(persistMgr);
-	} else {
-		clearIgnoredLights();
-	}
+	_ignoredLights.persist(persistMgr);
 
-	if (persistMgr->checkVersion(1, 8, 10)) {
-		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
-		persistMgr->transferBool(TMEMBER(_hasAmbientLightColor));
-	} else {
-		_ambientLightColor = 0x00000000;
-		_hasAmbientLightColor = false;
-	}
+	persistMgr->transferUint32(TMEMBER(_ambientLightColor));
+	persistMgr->transferBool(TMEMBER(_hasAmbientLightColor));
 
 	return true;
 }

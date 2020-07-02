@@ -2260,43 +2260,28 @@ bool AdActor3DX::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferSint32(TMEMBER(_goToTolerance));
 
-	if (persistMgr->checkVersion(1, 7, 94)) {
-		persistMgr->transferUint32(TMEMBER(_defaultStopTransTime));
-	} else {
-		_defaultStopTransTime = 0;
-	}
+	persistMgr->transferUint32(TMEMBER(_defaultStopTransTime));
 
-	// animation transition times
-	if (persistMgr->checkVersion(1, 7, 92)) {
-		if (persistMgr->getIsSaving()) {
-			int numItems = _transitionTimes.size();
-			persistMgr->transferSint32(TMEMBER(numItems));
-			for (uint32 i = 0; i < _transitionTimes.size(); i++) {
-				_transitionTimes[i]->persist(persistMgr);
-			}
-		} else {
-			int numItems = _transitionTimes.size();
-			persistMgr->transferSint32(TMEMBER(numItems));
-			for (int i = 0; i < numItems; i++) {
-				BaseAnimationTransitionTime *trans = new BaseAnimationTransitionTime();
-				trans->persist(persistMgr);
-				_transitionTimes.add(trans);
-			}
+	if (persistMgr->getIsSaving()) {
+		int numItems = _transitionTimes.size();
+		persistMgr->transferSint32(TMEMBER(numItems));
+		for (uint32 i = 0; i < _transitionTimes.size(); i++) {
+			_transitionTimes[i]->persist(persistMgr);
+		}
+	} else {
+		int numItems = _transitionTimes.size();
+		persistMgr->transferSint32(TMEMBER(numItems));
+		for (int i = 0; i < numItems; i++) {
+			BaseAnimationTransitionTime *trans = new BaseAnimationTransitionTime();
+			trans->persist(persistMgr);
+			_transitionTimes.add(trans);
 		}
 	}
 
-	if (persistMgr->checkVersion(1, 7, 92)) {
-		persistMgr->transferSint32(TMEMBER(_talkAnimChannel));
-	} else {
-		_talkAnimChannel = 0;
-	}
+	persistMgr->transferSint32(TMEMBER(_talkAnimChannel));
 
-	if (persistMgr->checkVersion(1, 8, 4)) {
-		persistMgr->transferString(TMEMBER(_partBone));
-		persistMgr->transferVector3d(TMEMBER(_partOffset));
-	} else {
-		_partOffset = Math::Vector3d(0, 0, 0);
-	}
+	persistMgr->transferString(TMEMBER(_partBone));
+	persistMgr->transferVector3d(TMEMBER(_partOffset));
 
 	return true;
 }

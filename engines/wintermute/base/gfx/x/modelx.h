@@ -114,11 +114,7 @@ private:
 			persistMgr->transferCharPtr(TMEMBER(_matName));
 			persistMgr->transferPtr(TMEMBER(_sprite));
 
-			if (persistMgr->checkVersion(1, 8, 5)) {
-				persistMgr->transferPtr(TMEMBER(_theora));
-			} else {
-				_theora = nullptr;
-			}
+			persistMgr->transferPtr(TMEMBER(_theora));
 
 			return true;
 		}
