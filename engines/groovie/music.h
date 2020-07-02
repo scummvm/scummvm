@@ -50,6 +50,11 @@ public:
 	// it does not seem to need an implementation.
 	virtual void pause(bool pause) { }
 
+	// Set the MIDI initialization state
+	void setMidiInit(bool midiInit) { _midiInit = midiInit; }
+	// Returns true if MIDI has been fully initialized
+	bool isMidiInit() { return _midiInit; }
+
 	void frameTick();
 	void setBackgroundDelay(uint16 delay);
 
@@ -80,6 +85,9 @@ private:
 
 protected:
 	GroovieEngine *_vm;
+
+	// True if the MIDI initialization has completed
+	bool _midiInit;
 
 	// Callback
 	static void onTimer(void *data);
