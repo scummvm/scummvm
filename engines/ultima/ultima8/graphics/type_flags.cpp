@@ -131,12 +131,14 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._family = data[1] >> 4;
 			si._family += (data[2] & 1) << 4;
 
+			uint32 unk2data = (data[2] >> 1) & 0xF;
+
 			// (copied from old/viewer/ShapeManager.h)
 			si._x = ((data[3] << 3) | (data[2] >> 5)) & 0x1F;
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			si._unknown = ((data[4] & 0xF0) << 16) | (data[5] << 8) | data[8];
+			si._unknown = (unk2data << 24) + ((data[4] & 0xF0) << 16) | (data[5] << 8) | data[8];
 
 			// This seems to be how it's used..
 			si._weight = data[7];
@@ -194,7 +196,9 @@ void TypeFlags::loadWeaponInfo() {
 		const istring &k = *iter;
 		WeaponInfo *wi = new WeaponInfo;
 
-		int val;
+		int val = 0;
+
+		wi->_name = k;
 
 		config->get(k + "/shape", val);
 		wi->_shape = static_cast<uint32>(val);
@@ -211,14 +215,20 @@ void TypeFlags::loadWeaponInfo() {
 		config->get(k + "/base_damage", val);
 		wi->_baseDamage = static_cast<uint8>(val);
 
-		config->get(k + "/attack_dex", val);
-		wi->_dexAttackBonus = static_cast<uint8>(val);
+		if (config->get(k + "/attack_dex", val))
+			wi->_dexAttackBonus = static_cast<uint8>(val);
+		else
+			wi->_dexAttackBonus = 0;
 
-		config->get(k + "/defend_dex", val);
-		wi->_dexDefendBonus = static_cast<uint8>(val);
+		if (config->get(k + "/defend_dex", val))
+			wi->_dexDefendBonus = static_cast<uint8>(val);
+		else
+			wi->_dexDefendBonus = 0;
 
-		config->get(k + "/armour", val);
-		wi->_armourBonus = static_cast<uint8>(val);
+		if (config->get(k + "/armour", val))
+			wi->_armourBonus = static_cast<uint8>(val);
+		else
+			wi->_armourBonus = 0;
 
 		config->get(k + "/damage_type", val);
 		wi->_damageType = static_cast<uint16>(val);
@@ -227,6 +237,18 @@ void TypeFlags::loadWeaponInfo() {
 			wi->_treasureChance = static_cast<uint16>(val);
 		else
 			wi->_treasureChance = 0;
+
+		// Crusader-specific fields:
+
+		if (config->get(k + "/ammo_type", val))
+			wi->_ammoType = static_cast<uint8>(val);
+		else
+			wi->_ammoType = 0;
+
+		if (config->get(k + "/sound", val))
+			wi->_sound = static_cast<uint8>(val);
+		else
+			wi->_sound = 0;
 
 		assert(wi->_shape < _shapeInfo.size());
 		_shapeInfo[wi->_shape]._weaponInfo = wi;
