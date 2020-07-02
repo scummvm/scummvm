@@ -130,7 +130,6 @@ public:
 class ShapeCastMember : public CastMember {
 public:
 	ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
-	ShapeCastMember(Cast *cast, uint16 castId);
 
 	ShapeType _shapeType;
 	uint16 _pattern;

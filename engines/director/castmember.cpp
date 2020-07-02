@@ -526,17 +526,6 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEn
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
 }
 
-ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId) : CastMember(cast, castId) {
-	_shapeType = kShapeRectangle;
-	_pattern = 0;
-	_fgCol = 0;
-	_bgCol = 0;
-	_fillType = 0;
-	_lineThickness = 0;
-	_lineDirection = 0;
-	_ink = kInkTypeCopy;
-}
-
 ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId) {
 	_type = kCastLingoScript;
