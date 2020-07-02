@@ -277,7 +277,7 @@ bool AdActor3DX::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) ||
-		                (!_sentence->_sound && _sentence->_duration <= _gameRef->_currentTime - _sentence->_startTime);
+		                (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
 		if (_tempSkelAnim == nullptr || !_modelX->isAnimPending(0, _tempSkelAnim) || timeIsUp) {
 			if (timeIsUp) {
 				_sentence->finish();
