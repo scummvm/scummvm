@@ -61,7 +61,7 @@ static struct MethodProto {
 void FileIO::initialize(int type) {
 	if (type & kXObj) {
 		if (!g_lingo->_globalvars.contains(xlibName)) {
-			ScriptContext *ctx = new ScriptContext(kNoneScript, Common::String(xlibName));
+			ScriptContext *ctx = new ScriptContext(Common::String(xlibName));
 			FileObject *xobj = new FileObject(kXObj, ctx);
 			xobj->initMethods();
 			g_lingo->_globalvars[xlibName] = xobj->ctx->_target;

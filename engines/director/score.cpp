@@ -904,7 +904,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			// continue;
 		}
 		if (!j->_value.empty()) {
-			_lingo->addCode(j->_value.c_str(), _movie->getCast()->_lingoArchive, kScoreScript, j->_key);
+			_movie->getMainLingoArch()->addCode(j->_value.c_str(), kScoreScript, j->_key);
 
 			processImmediateFrameScript(j->_value, j->_key);
 		}

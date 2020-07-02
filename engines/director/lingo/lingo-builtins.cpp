@@ -1633,8 +1633,9 @@ void LB::b_installMenu(int nargs) {
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 	}
 
-	// TODO: Menu callbacks should probably not be in the movie's lingo archive
-	g_lingo->addCode(handlers.c_str(), kArchMain, kMovieScript, 1337);
+	// TODO: Menu callbacks should probably not be defined as a movie script
+	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+	mainArchive->addCode(handlers.c_str(), kMovieScript, 1337);
 }
 
 Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
@@ -2191,11 +2192,11 @@ void LB::b_script(int nargs) {
 
 		if (cast->_type == kCastLingoScript) {
 			// script cast can be either a movie script or score script
-			script = g_lingo->getScriptContext(cast->_cast->_lingoArchive, kMovieScript, castId);
+			script = g_director->getCurrentMovie()->getScriptContext(kMovieScript, castId);
 			if (!script)
-				script = g_lingo->getScriptContext(cast->_cast->_lingoArchive, kScoreScript, castId);
+				script = g_director->getCurrentMovie()->getScriptContext(kScoreScript, castId);
 		} else {
-			script = g_lingo->getScriptContext(cast->_cast->_lingoArchive, kCastScript, castId);
+			g_director->getCurrentMovie()->getScriptContext(kCastScript, castId);
 		}
 
 		if (script) {

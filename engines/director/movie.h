@@ -36,6 +36,9 @@ struct CastMemberInfo;
 class CastMember;
 class DirectorEngine;
 class Lingo;
+struct LingoArchive;
+struct ScriptContext;
+struct Symbol;
 
 class Movie {
 public:
@@ -58,6 +61,11 @@ public:
 
 	CastMember *getCastMember(int castId);
 	const Stxt *getStxt(int castId);
+
+	LingoArchive *getMainLingoArch();
+	LingoArchive *getSharedLingoArch();
+	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	Symbol getHandler(const Common::String &name);
 
 private:
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);

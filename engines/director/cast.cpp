@@ -64,7 +64,7 @@ Cast::Cast(DirectorEngine *vm, Movie *movie) {
 	_lingo = _vm->getLingo();
 	_movie = movie;
 
-	_lingoArchive = _movie ? kArchMain : kArchShared;
+	_lingoArchive = new LingoArchive;
 
 	_movieScriptCount = 0;
 	_castArrayStart = _castArrayEnd = 0;
@@ -94,6 +94,19 @@ Cast::~Cast() {
 
 	delete _loadedStxts;
 	delete _loadedCast;
+
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		for (ScriptContextHash::iterator it = _lingoArchive->scriptContexts[i].begin(); it != _lingoArchive->scriptContexts[i].end(); ++it) {
+			it->_value->_eventHandlers.clear();
+			it->_value->_functionHandlers.clear();
+			delete it->_value;
+		}
+
+		_lingoArchive->scriptContexts[i].clear();
+	}
+	_lingoArchive->names.clear();
+	_lingoArchive->functionHandlers.clear();
+	delete _lingoArchive;
 }
 
 CastMember *Cast::getCastMember(int castId) {
@@ -836,7 +849,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 				if (ConfMan.getBool("dump_scripts"))
 					dumpScript(ci->script.c_str(), scriptType, id);
 
-				_lingo->addCode(ci->script.c_str(), _lingoArchive, scriptType, id, ci->name.c_str());
+				_lingoArchive->addCode(ci->script.c_str(), scriptType, id, ci->name.c_str());
 			}
 		}
 
@@ -849,7 +862,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 
 void Cast::loadLingoNames(Common::SeekableSubReadStreamEndian &stream) {
 	if (_vm->getVersion() >= 4) {
-		_lingo->addNamesV4(stream, _lingoArchive);
+		_lingoArchive->addNamesV4(stream);
 	} else {
 		error("Cast::loadLingoNames: unsuported Director version (%d)", _vm->getVersion());
 	}
@@ -894,7 +907,7 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		for (Common::Array<int16>::iterator iterator = lscr.begin(); iterator != lscr.end(); ++iterator) {
 			if (*iterator >= 0) {
 				Common::SeekableSubReadStreamEndian *r;
-				_lingo->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), *iterator)), _lingoArchive, _macName);
+				_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), *iterator)), _macName);
 				delete r;
 			}
 		}
@@ -930,7 +943,7 @@ void Cast::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 	if (script.contains("\nmenu:") || script.hasPrefix("menu:"))
 		return;
 
-	_lingo->addCode(script.c_str(), _lingoArchive, kMovieScript, _movieScriptCount);
+	_lingoArchive->addCode(script.c_str(), kMovieScript, _movieScriptCount);
 
 	_movieScriptCount++;
 }
@@ -961,7 +974,7 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 		dumpScript(ci->script.c_str(), kCastScript, id);
 
 	if (!ci->script.empty())
-		_lingo->addCode(ci->script.c_str(), _lingoArchive, kCastScript, id, ci->name.c_str());
+		_lingoArchive->addCode(ci->script.c_str(), kCastScript, id, ci->name.c_str());
 
 	ci->name = getString(castStrings[1]);
 	ci->directory = getString(castStrings[2]);

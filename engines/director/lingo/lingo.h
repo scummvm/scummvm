@@ -26,6 +26,8 @@
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
 
+#include "director/types.h"
+
 namespace Audio {
 class AudioStream;
 }
@@ -37,6 +39,7 @@ namespace Director {
 
 struct TheEntity;
 struct TheEntityField;
+struct LingoArchive;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
 struct Object;
@@ -93,7 +96,8 @@ struct Symbol {	/* symbol table entry */
 	Common::Array<Common::String> *argNames;
 	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */
-	int archiveIndex; 		/* optional archive to execute with */
+	LingoArchive *archive; 	/* optional archive to execute with */
+	bool anonymous;
 
 	Symbol();
 	Symbol(const Symbol &s);
@@ -168,8 +172,10 @@ typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Has
 
 class ScriptContext {
 public:
-	ScriptType _type;
 	Common::String _name;
+	LingoArchive *_archive;
+	ScriptType _type;
+	uint16 _id;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
 	SymbolHash _functionHandlers;
 	Common::HashMap<uint32, Symbol> _eventHandlers;
@@ -177,7 +183,8 @@ public:
 	Common::Array<Common::String> _propNames;
 	Datum _target;
 
-	ScriptContext(ScriptType type, Common::String name) : _type(type), _name(name) {}
+	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, uint16 id = 0)
+		: _name(name), _archive(archive), _type(type), _id(id) {}
 	ScriptContext(const ScriptContext &sc) {
 		_type = sc._type;
 		_name = sc._name;
@@ -195,6 +202,7 @@ public:
 	}
 
 	Datum getParentScript();
+	Symbol define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
 
 private:
 	Datum _parentScript;
@@ -274,9 +282,9 @@ struct Object {
 struct CFrame {	/* proc/func call stack frame */
 	Symbol	sp;	/* symbol table entry */
 	int		retpc;	/* where to resume after return */
-	ScriptData	*retscript;	 /* which script to resume after return */
-	ScriptContext	*retctx;   /* which script context to use after return */
-	int 	retarchive;	/* which archive to use after return */
+	ScriptData *retscript;		/* which script to resume after return */
+	ScriptContext *retctx;		/* which script context to use after return */
+	LingoArchive *retarchive;	/* which archive to use after return */
 	DatumHash *localvars;
 	Datum retMe; /* which me obj to use after return */
 };
@@ -284,16 +292,14 @@ struct CFrame {	/* proc/func call stack frame */
 struct LingoEvent {
 	LEvent event;
 	int eventId;
-	int archiveIndex;
 	ScriptType scriptType;
 	int scriptId;
 	bool passByDefault;
 	int channelId;
 
-	LingoEvent (LEvent e, int ei, int ai, ScriptType st, int si, bool pass, int ci = -1) {
+	LingoEvent (LEvent e, int ei, ScriptType st, int si, bool pass, int ci = -1) {
 		event = e;
 		eventId = ei;
-		archiveIndex = ai;
 		scriptType = st;
 		scriptId = si;
 		passByDefault = pass;
@@ -307,6 +313,13 @@ struct LingoArchive {
 	Common::Array<Common::String> names;
 	Common::HashMap<uint32, Common::String> primaryEventHandlers;
 	SymbolHash functionHandlers;
+
+	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	Common::String getName(uint16 id);
+
+	void addCode(const char *code, ScriptType type, uint16 id, const char *scriptName = nullptr);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, const Common::String &archName);
+	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
 };
 
 struct RepeatBlock {
@@ -320,17 +333,16 @@ public:
 	Lingo(DirectorEngine *vm);
 	~Lingo();
 
-	void resetLingo(bool keepSharedCast);
+	void resetLingo();
 
-	void addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	ScriptContext *compileAnonymous(const char *code);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, const Common::String &archName);
-	void addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex);
+	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonyomous = false);
+	ScriptContext *compileLingoV4(Common::SeekableSubReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s, uint pc);
 	void printCallStack(uint pc);
-	Common::String decodeInstruction(int archiveIndex, ScriptData *sd, uint pc, uint *newPC = NULL);
+	Common::String decodeInstruction(LingoArchive *archive, ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void initBuiltIns();
 	void cleanupBuiltins();
@@ -351,7 +363,6 @@ public:
 
 	// lingo.cpp
 private:
-	ScriptContext *compileLingo(const char *code, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName);
 	const char *findNextDefinition(const char *s);
 
 	// lingo-events.cpp
@@ -361,14 +372,12 @@ private:
 	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
 	void queueFrameEvent(LEvent event, int eventId);
 	void queueMovieEvent(LEvent event, int eventId);
-	void processEvent(LEvent event, int archiveIndex, ScriptType st, int entityId, int channelId = -1);
+	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
 
 	int _nextEventId;
 	Common::Queue<LingoEvent> _eventQueue;
 
 public:
-	ScriptContext *getScriptContext(int archiveIndex, ScriptType type, uint16 id);
-	Common::String getName(uint16 id);
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
@@ -473,11 +482,10 @@ public:
 	int codeInt(int val);
 	void codeLabel(int label);
 	int codeString(const char *s);
-	Symbol define(Common::String &s, int nargs, ScriptData *code, Common::Array<Common::String> *argNames = nullptr, Common::Array<Common::String> *varNames = nullptr, Object *obj = nullptr);
 	void processIf(int toplabel, int endlabel);
 	void varCreate(const Common::String &name, bool global, DatumHash *localvars = nullptr);
 
-	int _assemblyArchive;
+	LingoArchive *_assemblyArchive;
 	ScriptContext *_assemblyContext;
 	ScriptData *_currentAssembly;
 	LexerDefineState _indef;
@@ -500,6 +508,7 @@ public:
 
 public:
 	int _currentChannelId;
+	LingoArchive *_currentArchive;
 	ScriptContext *_currentScriptContext;
 	ScriptData *_currentScript;
 	Datum _currentMe;
@@ -551,9 +560,6 @@ public:
 
 	Common::HashMap<int, LingoV4Bytecode *> _lingoV4;
 	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
-
-	LingoArchive _archives[2];
-	int _archiveIndex;
 
 	uint _pc;
 

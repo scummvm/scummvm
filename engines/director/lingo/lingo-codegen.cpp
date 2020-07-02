@@ -62,7 +62,7 @@ void Lingo::cleanLocalVars() {
 	g_lingo->_localvars = nullptr;
 }
 
-Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames, Object *factory) {
+Symbol ScriptContext::define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
 	Symbol sym;
 	sym.name = new Common::String(name);
 	sym.type = HANDLER;
@@ -71,36 +71,26 @@ Symbol Lingo::define(Common::String &name, int nargs, ScriptData *code, Common::
 	sym.maxArgs = nargs;
 	sym.argNames = argNames;
 	sym.varNames = varNames;
-	sym.ctx = _assemblyContext;
-	sym.archiveIndex = _assemblyArchive;
+	sym.ctx = this;
+	sym.archive = _archive;
 
 	if (debugChannelSet(1, kDebugCompile)) {
 		uint pc = 0;
 		while (pc < sym.u.defn->size()) {
 			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(_assemblyArchive, sym.u.defn, pc, &pc);
+			Common::String instr = g_lingo->decodeInstruction(_archive, sym.u.defn, pc, &pc);
 			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 		}
 		debugC(1, kDebugCompile, "<end define code>");
 	}
 
-	if (factory) {
-		if (factory->ctx->_functionHandlers.contains(name)) {
-			warning("Redefining method '%s' on factory '%s'", name.c_str(), factory->name->c_str());
+	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
+		_functionHandlers[name] = sym;
+		if (_type == kMovieScript && _archive && !_archive->functionHandlers.contains(name)) {
+			_archive->functionHandlers[name] = sym;
 		}
-		factory->ctx->_functionHandlers[name] = sym;
-	} else if (_assemblyArchive >= 0) {
-		Symbol existing = getHandler(name);
-		if (existing.type != VOID)
-			warning("Redefining handler '%s'", name.c_str());
-
-		if (!_eventHandlerTypeIds.contains(name)) {
-			if (_assemblyContext->_type == kMovieScript && !_archives[_assemblyArchive].functionHandlers.contains(name))
-				_archives[_assemblyArchive].functionHandlers[name] = sym;
-			_assemblyContext->_functionHandlers[name] = sym;
-		} else {
-			_assemblyContext->_eventHandlers[_eventHandlerTypeIds[name]] = sym;
-		}
+	} else {
+		_eventHandlers[g_lingo->_eventHandlerTypeIds[name]] = sym;
 	}
 
 	return sym;
@@ -123,7 +113,9 @@ Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *fac
 		if (it->_value == kVarLocal)
 			varNames->push_back(Common::String(it->_key));
 	}
-	Symbol sym = define(name, nargs, code, argNames, varNames, factory);
+
+	ScriptContext *ctx = factory ? factory->ctx : _assemblyContext;
+	Symbol sym = ctx->define(name, nargs, code, argNames, varNames);
 
 	if (debugChannelSet(1, kDebugCompile)) {
 		debug("Function vars");
@@ -292,7 +284,7 @@ void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localv
 }
 
 void Lingo::codeFactory(Common::String &name) {
-	ScriptContext *ctx = new ScriptContext(kNoneScript, name);
+	ScriptContext *ctx = new ScriptContext(name);
 	Object *obj = new Object(name, kFactoryObj, ctx);
 
 	_currentFactory = obj;

@@ -215,7 +215,7 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 	fp->retpc = g_lingo->_pc;
 	fp->retscript = g_lingo->_currentScript;
 	fp->retctx = g_lingo->_currentScriptContext;
-	fp->retarchive = g_lingo->_archiveIndex;
+	fp->retarchive = g_lingo->_currentArchive;
 	fp->localvars = g_lingo->_localvars;
 	fp->retMe = g_lingo->_currentMe;
 	fp->sp = funcSym;
@@ -225,11 +225,10 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 		g_lingo->_currentScriptContext = funcSym.ctx;
 		g_lingo->_currentMe = funcSym.ctx->_target; // reference-counted datum
 	}
-	g_lingo->_archiveIndex = funcSym.archiveIndex;
+	g_lingo->_currentArchive = funcSym.archive;
 
-	// Functions with an archiveIndex of -1 are anonymous.
-	// Execute them within the current var frame.
-	if (!preserveVarFrame && funcSym.archiveIndex >= 0)
+	// Execute anonymous functions within the current var frame.
+	if (!preserveVarFrame && !funcSym.anonymous)
 		g_lingo->_localvars = new DatumHash;
 
 	g_lingo->_callstack.push_back(fp);
@@ -244,19 +243,19 @@ void Lingo::popContext() {
 	CFrame *fp = g_lingo->_callstack.back();
 	g_lingo->_callstack.pop_back();
 
-	// Destroy anonymous context
-	if (g_lingo->_archiveIndex < 0) {
+	// Destroy anonymous function context
+	if (fp->sp.anonymous) {
 		delete g_lingo->_currentScriptContext;
 	}
 
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_currentScriptContext = fp->retctx;
-	g_lingo->_archiveIndex = fp->retarchive;
+	g_lingo->_currentArchive = fp->retarchive;
 	g_lingo->_pc = fp->retpc;
 	g_lingo->_currentMe = fp->retMe;
 
 	// Restore local variables
-	if (fp->sp.archiveIndex >= 0) {
+	if (!fp->sp.anonymous) {
 		g_lingo->cleanLocalVars();
 		g_lingo->_localvars = fp->localvars;
 	}
@@ -351,7 +350,7 @@ void LC::c_symbolpush() {
 void LC::c_namepush() {
 	Datum d;
 	int i = g_lingo->readInt();
-	g_lingo->push(Datum(Common::String(g_lingo->getName(i))));
+	g_lingo->push(Datum(Common::String(g_lingo->_currentArchive->getName(i))));
 }
 
 void LC::c_argcpush() {
@@ -1456,7 +1455,7 @@ void LC::call(const Symbol &funcSym, int nargs) {
 	g_lingo->pushContext(funcSym, true);
 
 	DatumHash *localvars = g_lingo->_localvars;
-	if (funcSym.archiveIndex >= 0) {
+	if (!funcSym.anonymous) {
 		// Create new set of local variables
 		// g_lingo->_localvars is not set until later so any lazy arguments
 		// can be evaluated within the current variable frame

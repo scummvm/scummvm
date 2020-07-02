@@ -29,6 +29,7 @@
 #include "director/castmember.h"
 #include "director/movie.h"
 #include "director/lingo/lingo.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -51,6 +52,10 @@ void DirectorEngine::loadInitialMovie(const Common::String movie) {
 		loadEXE(movie);
 	else
 		loadMac(movie);
+	
+	_currentMovie = new Movie(this);
+	_currentPath = getPath(getEXEName(), _currentPath);
+	_currentMovie->loadSharedCastsFrom(_currentPath + _sharedCastFile);
 }
 
 Archive *DirectorEngine::openMainArchive(const Common::String movie) {
@@ -74,9 +79,13 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	if (iniStream) {
 		char *script = (char *)calloc(iniStream->size() + 1, 1);
 		iniStream->read(script, iniStream->size());
-		_lingo->addCode(script, kArchMain, kMovieScript, 0);
+
+		_currentMovie = new Movie(this);
+		_currentMovie->getMainLingoArch()->addCode(script, kMovieScript, 0);
 		_lingo->processEvent(kEventStartUp);
-		_lingo->resetLingo(true);
+		delete _currentMovie;
+		_currentMovie = nullptr;
+
 		free(script);
 	} else {
 		warning("No LINGO.INI");

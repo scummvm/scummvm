@@ -38,6 +38,7 @@ struct CastMemberInfo;
 class CastMember;
 class DirectorEngine;
 class Lingo;
+struct LingoArchive;
 struct Resource;
 class Stxt;
 class BitmapCastMember;
@@ -92,7 +93,7 @@ public:
 	uint16 _castArrayEnd;
 
 	uint16 _movieScriptCount;
-	int _lingoArchive;
+	LingoArchive *_lingoArchive;
 
 private:
 	DirectorEngine *_vm;

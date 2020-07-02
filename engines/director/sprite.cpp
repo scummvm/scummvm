@@ -82,8 +82,7 @@ bool Sprite::isActive() {
 	if (_moveable || _puppet || _scriptId)
 		return true;
 
-	if (g_lingo->getScriptContext(kArchMain, kCastScript, _castId)
-			|| g_lingo->getScriptContext(kArchShared, kCastScript, _castId))
+	if (g_director->getCurrentMovie()->getScriptContext(kCastScript, _castId))
 		return true;
 
 	return false;

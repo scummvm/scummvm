@@ -164,9 +164,6 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	_currentMovie = new Movie(this);
-	_currentPath = getPath(getEXEName(), _currentPath);
-
 	if (getPlatform() == Common::kPlatformWindows)
 		_machineType = 256; // IBM PC-type machine
 
@@ -183,8 +180,6 @@ Common::Error DirectorEngine::run() {
 	} else {
 		_sharedCastFile = "Shared.dir";
 	}
-
-	_currentMovie->loadSharedCastsFrom(_currentPath + _sharedCastFile);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
 
@@ -306,13 +301,12 @@ Common::Error DirectorEngine::run() {
 			_currentMovie->setArchive(mov);
 			debug(0, "Switching to movie '%s'", _currentMovie->getMacName().c_str());
 
+			_lingo->resetLingo();
 			if (sharedCast && sharedCast->_castArchive
 					&& sharedCast->_castArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
-				_lingo->resetLingo(true);
 				_currentMovie->_sharedCast = sharedCast;
 			} else {
 				delete sharedCast;
-				_lingo->resetLingo(false);
 				_currentMovie->loadSharedCastsFrom(_currentPath + _sharedCastFile);
 			}
 

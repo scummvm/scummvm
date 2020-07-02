@@ -261,12 +261,6 @@ enum {
 	kCursorMouseUp
 };
 
-enum ArchiveType {
-	kArchNone = -1,
-	kArchMain = 0,
-	kArchShared = 1
-};
-
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;

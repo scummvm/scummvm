@@ -55,7 +55,8 @@ Symbol::Symbol() {
 	argNames = nullptr;
 	varNames = nullptr;
 	ctx = nullptr;
-	archiveIndex = kArchMain;
+	archive = nullptr;
+	anonymous = false;
 }
 
 Symbol::Symbol(const Symbol &s) {
@@ -71,7 +72,8 @@ Symbol::Symbol(const Symbol &s) {
 	argNames = s.argNames;
 	varNames = s.varNames;
 	ctx = s.ctx;
-	archiveIndex = s.archiveIndex;
+	archive = s.archive;
+	anonymous = s.anonymous;
 }
 
 Symbol& Symbol::operator=(const Symbol &s) {
@@ -89,7 +91,8 @@ Symbol& Symbol::operator=(const Symbol &s) {
 		argNames = s.argNames;
 		varNames = s.varNames;
 		ctx = s.ctx;
-		archiveIndex = s.archiveIndex;
+		archive = s.archive;
+		anonymous = s.anonymous;
 	}
 	return *this;
 }
@@ -133,10 +136,11 @@ PCell::PCell(const Datum &prop, const Datum &val) {
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
+	_currentArchive = nullptr;
 	_currentScript = 0;
 	_currentScriptContext = nullptr;
 
-	_assemblyArchive = 0;
+	_assemblyArchive = nullptr;
 	_currentAssembly = nullptr;
 	_assemblyContext = nullptr;
 
@@ -162,8 +166,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_localvars = NULL;
 
-	_archiveIndex = kArchMain;
-
 	// events
 	_nextEventId = 0;
 	_passEvent = false;
@@ -182,52 +184,41 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 }
 
 Lingo::~Lingo() {
-	resetLingo(false);
+	resetLingo();
 	cleanupBuiltins();
 }
 
-ScriptContext *Lingo::getScriptContext(int archiveIndex, ScriptType type, uint16 id) {
-	if (archiveIndex < 0)
-		return NULL;
-
-	if (!_archives[archiveIndex].scriptContexts[type].contains(id)) {
-		return NULL;
+ScriptContext *LingoArchive::getScriptContext(ScriptType type, uint16 id) {
+	if (!scriptContexts[type].contains(id)) {
+		return nullptr;
 	}
-
-	return _archives[archiveIndex].scriptContexts[type][id];
+	return scriptContexts[type][id];
 }
 
-Common::String Lingo::getName(uint16 id) {
+Common::String LingoArchive::getName(uint16 id) {
 	Common::String result;
-	if (id >= _archives[_archiveIndex].names.size()) {
+	if (id >= names.size()) {
 		warning("Name id %d not in list", id);
 		return result;
 	}
-	result = _archives[_archiveIndex].names[id];
+	result = names[id];
 	return result;
 }
 
 Symbol Lingo::getHandler(const Common::String &name) {
-	Symbol result;
 	if (!_eventHandlerTypeIds.contains(name)) {
 		// local functions
 		if (_currentScriptContext && _currentScriptContext->_functionHandlers.contains(name))
 			return _currentScriptContext->_functionHandlers[name];
 
-		// local scripts
-		if (_archives[kArchMain].functionHandlers.contains(name))
-			return _archives[kArchMain].functionHandlers[name];
-
-		// shared scripts
-		if (_archives[kArchShared].functionHandlers.contains(name))
-			return _archives[kArchShared].functionHandlers[name];
+		Symbol sym = g_director->getCurrentMovie()->getHandler(name);
+		if (sym.type != VOID)
+			return sym;
 
 		if (_builtins.contains(name))
 			return _builtins[name];
-
-		return result;
 	}
-	return result;
+	return Symbol();
 }
 
 const char *Lingo::findNextDefinition(const char *s) {
@@ -267,16 +258,11 @@ const char *Lingo::findNextDefinition(const char *s) {
 	return NULL;
 }
 
-void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 id, const char *scriptName) {
-	if (_archiveIndex < 0) {
-		warning("Lingo::addCode(): Invalid archiveIndex");
-		return;
-	}
-
+void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const char *scriptName) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
-	if (getScriptContext(archiveIndex, type, id)) {
+	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
 		// Although it has a legit case when kTheScriptText re sets code.
 		// Warn on double definitions.
@@ -289,20 +275,20 @@ void Lingo::addCode(const char *code, int archiveIndex, ScriptType type, uint16 
 	else
 		contextName = Common::String::format("%d", id);
 
-	ScriptContext *sc = compileLingo(code, archiveIndex, type, id, contextName);
-	_archives[_assemblyArchive].scriptContexts[type][id] = sc;
+	ScriptContext *sc = g_lingo->compileLingo(code, this, type, id, contextName);
+	scriptContexts[type][id] = sc;
 }
 
 ScriptContext *Lingo::compileAnonymous(const char *code) {
 	debugC(1, kDebugCompile, "Compiling anonymous lingo\n"
 			"***********\n%s\n\n***********", code);
 
-	return compileLingo(code, kArchNone, kNoneScript, 0, "[anonymous]");
+	return compileLingo(code, nullptr, kNoneScript, 0, "[anonymous]", true);
 }
 
-ScriptContext *Lingo::compileLingo(const char *code, int archiveIndex, ScriptType type, uint16 id, const Common::String &scriptName) {
-	_assemblyArchive = archiveIndex;
-	ScriptContext *sc = _assemblyContext = new ScriptContext(type, scriptName);
+ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonymous) {
+	_assemblyArchive = archive;
+	ScriptContext *sc = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;
@@ -393,7 +379,8 @@ ScriptContext *Lingo::compileLingo(const char *code, int archiveIndex, ScriptTyp
 	Common::String typeStr = Common::String(scriptType2str(type));
 	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->_name + "]");
 	currentFunc.ctx = _assemblyContext;
-	currentFunc.archiveIndex = _assemblyArchive;
+	currentFunc.archive = archive;
+	currentFunc.anonymous = anonymous;
 	// arg names should be empty, but just in case
 	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
 	for (uint i = 0; i < _argstack.size(); i++) {
@@ -423,9 +410,10 @@ ScriptContext *Lingo::compileLingo(const char *code, int archiveIndex, ScriptTyp
 
 	currentFunc.argNames = argNames;
 	currentFunc.varNames = varNames;
+	_currentAssembly = nullptr;
 	_assemblyContext->_eventHandlers[kEventNone] = currentFunc;
 	_assemblyContext = nullptr;
-	_currentAssembly = nullptr;
+	_assemblyArchive = nullptr;
 	return sc;
 }
 
@@ -460,7 +448,7 @@ void Lingo::printCallStack(uint pc) {
 	}
 }
 
-Common::String Lingo::decodeInstruction(int archiveIndex, ScriptData *sd, uint pc, uint *newPc) {
+Common::String Lingo::decodeInstruction(LingoArchive *archive, ScriptData *sd, uint pc, uint *newPc) {
 	Symbol sym;
 	Common::String res;
 
@@ -527,7 +515,7 @@ Common::String Lingo::decodeInstruction(int archiveIndex, ScriptData *sd, uint p
 					i = (*sd)[pc++];
 					int v = READ_UINT32(&i);
 
-					res += Common::String::format(" \"%s\"", _archives[archiveIndex].names[v].c_str());
+					res += Common::String::format(" \"%s\"", archive->names[v].c_str());
 					break;
 				}
 			default:
@@ -551,7 +539,7 @@ void Lingo::execute(uint pc) {
 	int counter = 0;
 
 	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP;) {
-		Common::String instr = decodeInstruction(_archiveIndex, _currentScript, _pc);
+		Common::String instr = decodeInstruction(_currentArchive, _currentScript, _pc);
 		uint current = _pc;
 
 		if (debugChannelSet(5, kDebugLingoExec))
@@ -593,7 +581,13 @@ void Lingo::execute(uint pc) {
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id) {
-	ScriptContext *sc = getScriptContext(_archiveIndex, type, id);
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Request to execute script with no movie");
+		return;
+	}
+
+	ScriptContext *sc = movie->getScriptContext(type, id);
 
 	if (!sc) {
 		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
@@ -614,27 +608,8 @@ void Lingo::executeHandler(const Common::String &name) {
 	execute(_pc);
 }
 
-void Lingo::resetLingo(bool keepSharedCast) {
+void Lingo::resetLingo() {
 	debugC(3, kDebugLingoExec, "Resetting Lingo!");
-
-	for (int a = 0; a < 2; a++) {
-		if (a == 1 && keepSharedCast)
-			continue;
-
-		LingoArchive *arch = &_archives[a];
-		for (int i = 0; i <= kMaxScriptType; i++) {
-			for (ScriptContextHash::iterator it = arch->scriptContexts[i].begin(); it != arch->scriptContexts[i].end(); ++it) {
-				it->_value->_eventHandlers.clear();
-				it->_value->_functionHandlers.clear();
-				delete it->_value;
-			}
-
-			arch->scriptContexts[i].clear();
-		}
-
-		arch->names.clear();
-		arch->functionHandlers.clear();
-	}
 
 	g_director->_wm->removeMenu();
 
@@ -1085,6 +1060,8 @@ void Lingo::runTests() {
 	SearchMan.listMatchingMembers(fsList, "*.lingo");
 	Common::StringArray fileList;
 
+	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+
 	// Repurpose commandline option --start-movie to run a specific lingo script.
 	if (ConfMan.hasKey("start_movie")) {
 		fileList.push_back(ConfMan.get("start_movie"));
@@ -1109,7 +1086,7 @@ void Lingo::runTests() {
 			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
-			addCode(script, kArchMain, kMovieScript, counter);
+			mainArchive->addCode(script, kMovieScript, counter);
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_hadError)
@@ -1133,9 +1110,9 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 5)
-				g_lingo->processEvent(kEventNone, kArchMain, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventNone, kScoreScript, frame->_sprites[i]->_scriptId, i);
 			else
-				g_lingo->processEvent(kEventMouseUp, kArchMain, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);
 		}
 	}
 }

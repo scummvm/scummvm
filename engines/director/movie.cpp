@@ -189,7 +189,7 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 		_cast->dumpScript(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
 
 	if (!_script.empty())
-		_lingo->addCode(_script.c_str(), _cast->_lingoArchive, kMovieScript, _cast->_movieScriptCount);
+		_cast->_lingoArchive->addCode(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
 
 	_cast->_movieScriptCount++;
 	_changedBy = fileInfoStrings[1];
@@ -243,6 +243,33 @@ const Stxt *Movie::getStxt(int castId) {
 		result = _sharedCast->getStxt(castId);
 	}
 	return result;
+}
+
+LingoArchive *Movie::getMainLingoArch() {
+	return _cast->_lingoArchive;
+}
+
+LingoArchive *Movie::getSharedLingoArch() {
+	return _sharedCast ? _sharedCast->_lingoArchive : nullptr;
+}
+
+ScriptContext *Movie::getScriptContext(ScriptType type, uint16 id) {
+	ScriptContext *result = _cast->_lingoArchive->getScriptContext(type, id);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->_lingoArchive->getScriptContext(type, id);
+	}
+	return result;
+}
+
+Symbol Movie::getHandler(const Common::String &name) {
+	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
+		if (_cast->_lingoArchive->functionHandlers.contains(name))
+			return _cast->_lingoArchive->functionHandlers[name];
+
+		if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
+			return _sharedCast->_lingoArchive->functionHandlers[name];
+	}
+	return Symbol();
 }
 
 } // End of namespace Director

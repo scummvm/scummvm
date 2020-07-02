@@ -498,7 +498,7 @@ void LC::cb_proplist() {
 
 void LC::cb_call() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
@@ -513,7 +513,7 @@ void LC::cb_call() {
 
 void LC::cb_globalpush() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
 	target.type = VAR;
 	debugC(3, kDebugLingoExec, "cb_globalpush: pushing %s to stack", name.c_str());
@@ -524,7 +524,7 @@ void LC::cb_globalpush() {
 
 void LC::cb_globalassign() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
 	target.type = VAR;
 	debugC(3, kDebugLingoExec, "cb_globalassign: assigning to %s", name.c_str());
@@ -538,7 +538,7 @@ void LC::cb_globalassign() {
 
 void LC::cb_objectfieldassign() {
 	int fieldNameId = g_lingo->readInt();
-	Common::String fieldName = g_lingo->getName(fieldNameId);
+	Common::String fieldName = g_lingo->_currentArchive->getName(fieldNameId);
 	Datum object = g_lingo->pop();
 	Datum value = g_lingo->pop();
 	g_lingo->setObjectProp(object, fieldName, value);
@@ -546,14 +546,14 @@ void LC::cb_objectfieldassign() {
 
 void LC::cb_objectfieldpush() {
 	int fieldNameId = g_lingo->readInt();
-	Common::String fieldName = g_lingo->getName(fieldNameId);
+	Common::String fieldName = g_lingo->_currentArchive->getName(fieldNameId);
 	Datum object = g_lingo->pop();
 	g_lingo->push(g_lingo->getObjectProp(object, fieldName));
 }
 
 void LC::cb_objectpush() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum result(name);
 	result.type = SYMBOL;
 	g_lingo->push(result);
@@ -561,7 +561,7 @@ void LC::cb_objectpush() {
 
 void LC::cb_tellcall() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	warning("STUB: cb_tellcall(%s)", name.c_str());
 
 	Datum nargs = g_lingo->pop();
@@ -578,7 +578,7 @@ void LC::cb_tellcall() {
 
 void LC::cb_theassign() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum value = g_lingo->pop();
 	if (g_lingo->_currentMe.type == OBJECT) {
 		if (g_lingo->_currentMe.u.obj->hasProp(name)) {
@@ -593,14 +593,14 @@ void LC::cb_theassign() {
 
 void LC::cb_theassign2() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum value = g_lingo->pop();
 	warning("STUB: cb_theassign2(%s, %s)", name.c_str(), value.asString().c_str());
 }
 
 void LC::cb_thepush() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	if (g_lingo->_currentMe.type == OBJECT) {
 		if (g_lingo->_currentMe.u.obj->hasProp(name)) {
 			g_lingo->push(g_lingo->_currentMe.u.obj->getProp(name));
@@ -618,7 +618,7 @@ void LC::cb_thepush() {
 void LC::cb_thepush2() {
 	int nameId = g_lingo->readInt();
 	Datum result;
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	if (g_lingo->_theEntities.contains(name)) {
 		TheEntity *entity = g_lingo->_theEntities[name];
 		Datum id;
@@ -635,7 +635,7 @@ void LC::cb_thepush2() {
 
 void LC::cb_varpush() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
 	target.type = VAR;
 	debugC(3, kDebugLingoExec, "cb_varpush: pushing %s to stack", name.c_str());
@@ -646,7 +646,7 @@ void LC::cb_varpush() {
 
 void LC::cb_varassign() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
 	target.type = VAR;
 	debugC(3, kDebugLingoExec, "cb_varassign: assigning to %s", name.c_str());
@@ -732,7 +732,7 @@ void LC::cb_v4theentitynamepush() {
 	}
 
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->getName(nameId);
+	Common::String name = g_lingo->_currentArchive->getName(nameId);
 
 	Datum id;
 	id.u.s = NULL;
@@ -817,10 +817,10 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex, const Common::String &archName) {
+ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName) {
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
-		return;
+		return nullptr;
 	}
 
 	if (debugChannelSet(5, kDebugLoading)) {
@@ -894,15 +894,16 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 			castName = info->name;
 	}
 
-	_assemblyArchive = archiveIndex;
+	_assemblyArchive = archive;
 
+	ScriptContext *sc = nullptr;
 	Common::String factoryName;
 	if (scriptFlags & kScriptFlagFactoryDef) {
-		if (0 <= factoryNameId && factoryNameId < (int16)_archives[_assemblyArchive].names.size()) {
-			factoryName = _archives[_assemblyArchive].names[factoryNameId];
+		if (0 <= factoryNameId && factoryNameId < (int16)archive->names.size()) {
+			factoryName = archive->names[factoryNameId];
 		} else {
 			warning("Factory %d has unknown name id %d, skipping define", castId, factoryNameId);
-			return;
+			return nullptr;
 		}
 		debugC(1, kDebugCompile, "Add V4 bytecode for factory '%s' with id %d", factoryName.c_str(), castId);
 
@@ -911,29 +912,28 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	} else {
 		debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(scriptType), castId);
 
-		if (getScriptContext(archiveIndex, scriptType, castId)) {
+		if (archive->getScriptContext(scriptType, castId)) {
 			// We can't undefine context data because it could be used in e.g. symbols.
 			// Abort on double definitions.
 			error("Script already defined for type %d, id %d", scriptType, castId);
-			return;
+			return nullptr;
 		}
 
-		_assemblyContext = new ScriptContext(scriptType, !castName.empty() ? castName : Common::String::format("%d", castId));
-		_archives[_assemblyArchive].scriptContexts[scriptType][castId] = _assemblyContext;
+		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
 	}
 
 	// initialise each property
 	if ((uint32)stream.size() < propertiesOffset + propertiesCount * 2) {
 		warning("Lscr properties store missing");
-		return;
+		return nullptr;
 	}
 
 	debugC(5, kDebugLoading, "Lscr property list:");
 	stream.seek(propertiesOffset);
 	for (uint16 i = 0; i < propertiesCount; i++) {
 		int16 index = stream.readSint16();
-		if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
-			const char *name = _archives[_assemblyArchive].names[index].c_str();
+		if (0 <= index && index < (int16)archive->names.size()) {
+			const char *name = archive->names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			if (scriptFlags & kScriptFlagFactoryDef) {
 				_currentFactory->properties[name] = Datum();
@@ -948,15 +948,15 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	// initialise each global variable
 	if ((uint32)stream.size() < globalsOffset + globalsCount * 2) {
 		warning("Lscr globals store missing");
-		return;
+		return nullptr;
 	}
 
 	debugC(5, kDebugLoading, "Lscr globals list:");
 	stream.seek(globalsOffset);
 	for (uint16 i = 0; i < globalsCount; i++) {
 		int16 index = stream.readSint16();
-		if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
-			const char *name = _archives[_assemblyArchive].names[index].c_str();
+		if (0 <= index && index < (int16)archive->names.size()) {
+			const char *name = archive->names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			if (!_globalvars.contains(name)) {
 				_globalvars[name] = Datum();
@@ -976,7 +976,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 
 	if ((uint32)stream.size() < constsStoreOffset) {
 		warning("Lscr consts store missing");
-		return;
+		return nullptr;
 	}
 
 	stream.seek(constsStoreOffset);
@@ -1101,7 +1101,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	// copy the storage area first.
 	if ((uint32)stream.size() < functionsOffset) {
 		warning("Lscr functions store missing");
-		return;
+		return nullptr;
 	}
 
 	uint32 codeStoreSize = functionsOffset - codeStoreOffset;
@@ -1171,19 +1171,19 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 				int16 index = READ_BE_INT16(&codeStore[namePointer]);
 				namePointer += 2;
 				Common::String name;
-				if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
-					name = _archives[_assemblyArchive].names[index];
+				if (0 <= index && index < (int16)archive->names.size()) {
+					name = archive->names[index];
 					argMap[j] = index;
 				} else if (j == 0 && (scriptFlags & kScriptFlagFactoryDef)) {
 					name = "me";
 
 					// find or add "me" in the names list
-					for (index = 0; index < (int16)_archives[_assemblyArchive].names.size(); index++) {
-						if (_archives[_assemblyArchive].names[index].equalsIgnoreCase(name))
+					for (index = 0; index < (int16)archive->names.size(); index++) {
+						if (archive->names[index].equalsIgnoreCase(name))
 							break;
 					}
-					if (index == (int16)_archives[_assemblyArchive].names.size())
-						_archives[_assemblyArchive].names.push_back(name);
+					if (index == (int16)archive->names.size())
+						archive->names.push_back(name);
 
 					argMap[j] = index;
 				} else {
@@ -1209,8 +1209,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 				int16 index = READ_BE_INT16(&codeStore[namePointer]);
 				namePointer += 2;
 				Common::String name;
-				if (0 <= index && index < (int16)_archives[_assemblyArchive].names.size()) {
-					name = _archives[_assemblyArchive].names[index];
+				if (0 <= index && index < (int16)archive->names.size()) {
+					name = archive->names[index];
 					varMap[j] = index;
 				} else {
 					name = Common::String::format("var_%d", j);
@@ -1396,9 +1396,9 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 
 		// Attach to handlers
 		Symbol sym;
-		if (0 <= nameIndex && nameIndex < (int16)_archives[_assemblyArchive].names.size()) {
-			debugC(5, kDebugLoading, "Function %d binding: %s()", i, _archives[_assemblyArchive].names[nameIndex].c_str());
-			sym = g_lingo->define(_archives[_assemblyArchive].names[nameIndex], argCount, _currentAssembly, argNames, varNames);
+		if (0 <= nameIndex && nameIndex < (int16)archive->names.size()) {
+			debugC(5, kDebugLoading, "Function %d binding: %s()", i, archive->names[nameIndex].c_str());
+			sym = _assemblyContext->define(archive->names[nameIndex], argCount, _currentAssembly, argNames, varNames);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
 			sym.name = new Common::String();
@@ -1411,8 +1411,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 		}
 
 		if (!skipdump && ConfMan.getBool("dump_scripts")) {
-			if (0 <= nameIndex && nameIndex < (int16)_archives[_assemblyArchive].names.size())
-				out.writeString(Common::String::format("function %s, %d args\n", _archives[_assemblyArchive].names[nameIndex].c_str(), argCount));
+			if (0 <= nameIndex && nameIndex < (int16)archive->names.size())
+				out.writeString(Common::String::format("function %s, %d args\n", archive->names[nameIndex].c_str(), argCount));
 			else
 				out.writeString(Common::String::format("<noname>, %d args\n", argCount));
 
@@ -1435,11 +1435,19 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, int archiveIn
 	}
 
 	free(codeStore);
+	_assemblyContext = nullptr;
 	_currentFactory = nullptr;
+
+	return sc;
 }
 
+void LingoArchive::addCodeV4(Common::SeekableSubReadStreamEndian &stream, const Common::String &archName) {
+	ScriptContext *ctx = g_lingo->compileLingoV4(stream, this, archName);
+	if (ctx)
+		scriptContexts[ctx->_type][ctx->_id] = ctx;
+}
 
-void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveIndex) {
+void LingoArchive::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugCompile, "Add V4 script name index");
 
 	if (stream.size() < 0x14) {
@@ -1471,16 +1479,15 @@ void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream, int archiveI
 
 	stream.seek(offset);
 
-	_archives[archiveIndex].names.clear();
+	names.clear();
 
-	Common::Array<Common::String> names;
 	for (uint32 i = 0; i < count; i++) {
 		uint8 size = stream.readByte();
 		Common::String name;
 		for (uint8 j = 0; j < size; j++) {
 			name += stream.readByte();
 		}
-		_archives[archiveIndex].names.push_back(name);
+		names.push_back(name);
 		debugC(5, kDebugLoading, "%d: \"%s\"", i, name.c_str());
 	}
 
