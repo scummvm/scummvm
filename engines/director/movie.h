@@ -37,7 +37,7 @@ class CastMember;
 class DirectorEngine;
 class Lingo;
 struct LingoArchive;
-struct ScriptContext;
+class ScriptContext;
 struct Symbol;
 
 class Movie {
