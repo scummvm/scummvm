@@ -78,7 +78,7 @@ bool TargetReticleProcess::findTargetItem() {
 	bool changed = false;
 
 	if (!mainactor || !currentmap)
-		return nullptr;
+		return false;
 
 	int dir = mainactor->getDir();
 
