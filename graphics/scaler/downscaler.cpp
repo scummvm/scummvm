@@ -22,6 +22,8 @@
 #include "graphics/scaler/downscaler.h"
 #include "graphics/scaler/intern.h"
 
+int gBitFormat = 565;
+
 #ifdef USE_ARM_SCALER_ASM
 extern "C" {
 	void DownscaleAllByHalfARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask, int round);
@@ -31,8 +33,6 @@ void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 	// Rounding constants and masks used for different pixel formats
 	static const int roundingconstants[] = { 0x00200802, 0x00201002 };
 	static const int redbluegreenMasks[] = { 0x03E07C1F, 0x07E0F81F };
-
-	extern int gBitFormat;
 
 	const int maskUsed = (gBitFormat == 565);
 	DownscaleAllByHalfARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed], roundingconstants[maskUsed]);
@@ -64,7 +64,6 @@ void DownscaleAllByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 }
 
 void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	extern int gBitFormat;
 	if (gBitFormat == 565)
 		DownscaleAllByHalfTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else

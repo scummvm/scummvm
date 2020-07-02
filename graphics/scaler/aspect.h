@@ -56,8 +56,9 @@ int stretch200To240(uint8 *buf,
                     int srcX,
                     int srcY,
                     int origSrcY,
-                    bool interpolate);
+                    bool interpolate,
+                    const Graphics::PixelFormat &format);
 
-int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
+int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, const Graphics::PixelFormat &format);
 
 #endif
