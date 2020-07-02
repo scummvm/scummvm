@@ -161,10 +161,17 @@ struct NoteTimer {
  * may also override the default MidiParser behavior for
  * the following methods:
  *   - resetTracking
+ *   - getTick
+ *   - jumpToIndex
+ *   - hasJumpIndex
  *   - allNotesOff
  *   - unloadMusic
  *   - property
- *   - getTick
+ *   - processEvent
+ *   - onTrackStart
+ *   - sendToDriver
+ *   - sendMetaEventToDriver
+ *   - setMidiDriver
  *
  * Please see the documentation for these individual
  * functions for more information on their use.
@@ -189,10 +196,12 @@ struct NoteTimer {
  * MidiDriver. In the simplest configuration, you can plug
  * a single MidiParser directly into the output MidiDriver
  * being used. However, you can only plug in one at a time;
- * otherwise channel conflicts will occur. Furthermore,
- * meta events that may be needed to interactively control
- * music flow cannot be handled because they are being
- * sent directly to the output device.
+ * otherwise channel conflicts will occur. Multiple parsers
+ * can be used if they do not use the same channels, or if
+ * they use some form of dynamic channel allocation.
+ * Furthermore, meta events that may be needed to
+ * interactively control music flow cannot be handled
+ * because they are being sent directly to the output device.
  *
  * If you need more control over the MidiParser while it's
  * playing, you can create your own "pseudo-MidiDriver" and
@@ -200,7 +209,10 @@ struct NoteTimer {
  * MidiDriver. The MidiParser will send events to your
  * pseudo-MidiDriver, which in turn must send them to the
  * output MidiDriver (or do whatever special handling is
- * required).
+ * required). Make sure to implement all functions which
+ * are necessary for proper functioning of the parser and
+ * forward the calls to the real driver (even if you do not
+ * want to customize the functionality).
  *
  * To specify the MidiDriver to send music output to,
  * use the MidiParser::setMidiDriver method.
@@ -233,13 +245,17 @@ struct NoteTimer {
  * to the music data and the size of the data. (NOTE: Some
  * MidiParser variants don't require a size, and 0 is fine.
  * However, when writing client code to use MidiParser, it is
- * best to assume that a valid size will be required.
+ * best to assume that a valid size will be required.)
  *
  * Convention requires that each implementation of
  * MidiParser::loadMusic automatically set up default tempo
  * and current track. This effectively means that the
  * MidiParser will start playing as soon as timer events
- * start coming in.
+ * start coming in. If you want to start playback at a later
+ * point, you can specify the mpDisableAutoStartPlayback
+ * property. You can then specify the track and/or starting
+ * point using setTrack, jumpToTick or jumpToIndex, and then
+ * call startPlaying to start playback.
  *
  * <b>STEP 6: Activate a timer source for the MidiParser.</b>
  * The easiest timer source to use is the timer of the
@@ -250,7 +266,7 @@ struct NoteTimer {
  * and timer_param will be a pointer to your MidiParser object.
  *
  * This configuration only allows one MidiParser to be driven
- * by the MidiDriver at a time. To drive more MidiDrivers, you
+ * by the MidiDriver at a time. To drive more MidiParsers, you
  * will need to create a "pseudo-MidiDriver" as described earlier,
  * In such a configuration, the pseudo-MidiDriver should be set
  * as the timer recipient in MidiDriver::setTimerCallback, and
@@ -258,9 +274,15 @@ struct NoteTimer {
  *
  * <b>STEP 7: Music shall begin to play!</b>
  * Congratulations! At this point everything should be hooked up
- * and the MidiParser should generate music. Note that there is
- * no way to "stop" the MidiParser. You can "pause" the MidiParser
- * simply by not sending timer events to it, or you can call
+ * and the MidiParser should generate music. You can pause
+ * playback and resume playing from the point you left off using
+ * the pausePlaying and resumePlaying functions. (Note that MIDI
+ * does not pause very well and active notes will be missing when
+ * you resume playback.) You can also "pause" the MidiParser
+ * simply by not sending timer events to it. You can stop
+ * playback using the stopPlaying function; you can then later
+ * play the track again from the start using startPlaying (or
+ * select a new track first using setTrack). You can call
  * MidiParser::unloadMusic to permanently stop the music. (This
  * method resets everything and detaches the MidiParser from the
  * memory block containing the music data.)
@@ -400,7 +422,7 @@ public:
 		  * or setting the track. Use startPlaying to start playback.
 		  * Note that not every parser implementation might support this.
 		  */
-		  mpDisableAutoStartPlayback = 7
+		 mpDisableAutoStartPlayback = 7
 	};
 
 public:
