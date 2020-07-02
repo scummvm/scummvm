@@ -431,6 +431,7 @@ protected:
 
 private:
 	void setFullscreenMode(bool enable);
+	void handleScalerHotkeys(int factor);
 
 	/**
 	 * Converts the given point from the overlay's coordinate space to the

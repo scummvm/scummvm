@@ -425,32 +425,15 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	act->setCustomBackendActionEvent(kActionDecreaseScaleFactor);
 	keymap->addAction(act);
 
-#ifdef USE_SCALERS
-	struct ActionEntry {
-		const char *id;
-		const char *description;
-	};
-	static const ActionEntry filters[] = {
-			{ "FLT1", _s("Switch to nearest neighbour scaling") },
-			{ "FLT2", _s("Switch to AdvMame 2x/3x scaling")     },
-#ifdef USE_HQ_SCALERS
-			{ "FLT3", _s("Switch to HQ 2x/3x scaling")          },
-#endif
-			{ "FLT4", _s("Switch to 2xSai scaling")             },
-			{ "FLT5", _s("Switch to Super2xSai scaling")        },
-			{ "FLT6", _s("Switch to SuperEagle scaling")        },
-			{ "FLT7", _s("Switch to TV 2x scaling")             },
-			{ "FLT8", _s("Switch to DotMatrix scaling")         }
-	};
+	act = new Action("FLTN", _("Switch to the next scaler"));
+	act->addDefaultInputMapping("C+A+0");
+	act->setCustomBackendActionEvent(kActionNextScaleFilter);
+	keymap->addAction(act);
 
-	for (uint i = 0; i < ARRAYSIZE(filters); i++) {
-		act = new Action(filters[i].id, _(filters[i].description));
-		act->addDefaultInputMapping(String::format("C+A+%d", i + 1));
-		act->addDefaultInputMapping(String::format("C+A+KP%d", i + 1));
-		act->setCustomBackendActionEvent(kActionSetScaleFilter1 + i);
-		keymap->addAction(act);
-	}
-#endif
+	act = new Action("FLTP", _("Switch to the previous scaler"));
+	act->addDefaultInputMapping("C+A+9");
+	act->setCustomBackendActionEvent(kActionPreviousScaleFilter);
+	keymap->addAction(act);
 
 	return keymap;
 }
