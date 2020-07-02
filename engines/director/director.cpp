@@ -278,8 +278,11 @@ Common::Error DirectorEngine::run() {
 
 			_currentPath = getPath(_nextMovie.movie, _currentPath);
 
-			Cast *sharedCast = _currentMovie->getSharedCast();
-			_currentMovie->_sharedCast = nullptr;
+			Cast *sharedCast = nullptr;
+			if (_currentMovie) {
+				_currentMovie->getSharedCast();
+				_currentMovie->_sharedCast = nullptr;
+			}
 
 			delete _currentMovie;
 			_currentMovie = nullptr;
