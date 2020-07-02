@@ -70,6 +70,8 @@ public:
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
 	CastMember *getCastMember(int castId);
+	CastMember *getCastMemberByName(const Common::String &name);
+	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
@@ -82,8 +84,6 @@ private:
 
 public:
 	Archive *_castArchive;
-	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
-	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::HashMap<uint16, Common::String> _fontMap;
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
@@ -101,6 +101,9 @@ private:
 	Movie *_movie;
 
 	Common::String _macName;
+
+	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
+	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 };
 
 } // End of namespace Director

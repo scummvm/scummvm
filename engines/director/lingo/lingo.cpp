@@ -1167,12 +1167,11 @@ int Lingo::castIdFetch(Datum &var) {
 		return 0;
 	}
 
-	Cast *cast = movie->getCast();
-
 	int id = 0;
 	if (var.type == STRING) {
-		if (cast->_castsNames.contains(*var.u.s))
-			id = cast->_castsNames[*var.u.s];
+		CastMember *member = movie->getCastMemberByName(var.asString());
+		if (member)
+			id = member->getID();
 		else
 			warning("castIdFetch: reference to non-existent cast member: %s", var.u.s->c_str());
 	} else if (var.type == INT || var.type == FLOAT) {

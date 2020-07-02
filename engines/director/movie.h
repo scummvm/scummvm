@@ -60,6 +60,8 @@ public:
 	void loadSharedCastsFrom(Common::String filename);
 
 	CastMember *getCastMember(int castId);
+	CastMember *getCastMemberByName(const Common::String &name);
+	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
 
 	LingoArchive *getMainLingoArch();

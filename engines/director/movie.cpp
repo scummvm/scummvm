@@ -237,6 +237,22 @@ CastMember *Movie::getCastMember(int castId) {
 	return result;
 }
 
+CastMember *Movie::getCastMemberByName(const Common::String &name) {
+	CastMember *result = _cast->getCastMemberByName(name);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->getCastMemberByName(name);
+	}
+	return result;
+}
+
+CastMemberInfo *Movie::getCastMemberInfo(int castId) {
+	CastMemberInfo *result = _cast->getCastMemberInfo(castId);
+	if (result == nullptr && _sharedCast) {
+		result = _sharedCast->getCastMemberInfo(castId);
+	}
+	return result;
+}
+
 const Stxt *Movie::getStxt(int castId) {
 	const Stxt *result = _cast->getStxt(castId);
 	if (result == nullptr && _sharedCast) {

@@ -889,7 +889,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		if (member->_type == kCastLingoScript)
 			scriptType = ((ScriptCastMember *)member)->_scriptType;
 
-		CastMemberInfo *info = member->getCast()->_castsInfo[castId];
+		CastMemberInfo *info = g_director->getCurrentMovie()->getCastMemberInfo(castId);
 		if (info)
 			castName = info->name;
 	}

@@ -955,8 +955,6 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
-	Cast *cast = movie->getCast();
-
 	CastMember *member = _vm->getCurrentMovie()->getCastMember(id);
 	if (!member) {
 		if (field == kTheLoaded) {
@@ -966,6 +964,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		}
 		return d;
 	}
+	Cast *cast = member->getCast();
 
 	if (field == kTheHilite) {
 		d.u.i = member->_hilite;
@@ -973,17 +972,10 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	}
 
 	CastType castType = member->_type;
-	CastMemberInfo *castInfo = nullptr;
-	if (cast->_castsInfo.contains(id)) {
-		castInfo = cast->_castsInfo.getVal(id);
-	} else {
-		Cast *shared = movie->getSharedCast();
-		if (shared && shared->_castsInfo.contains(id)) {
-			castInfo = shared->_castsInfo.getVal(id);
-		} else {
-			warning("Lingo::getTheCast(): CastMember info for %d not found", id);
-			return d;
-		}
+	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
+	if (!castInfo) {
+		warning("Lingo::getTheCast(): CastMember info for %d not found", id);
+		return d;
 	}
 
 	switch (field) {
@@ -1043,12 +1035,6 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	int id = 0;
-	Cast *cast = _vm->getCurrentMovie()->getCast();
-
-	if (!cast) {
-		warning("Lingo::setTheCast(): The cast %d field \"%s\" setting over non-active cast", id, field2str(field));
-		return;
-	}
 
 	if (id1.type == INT) {
 		id = id1.u.i;
@@ -1064,10 +1050,9 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		warning("Lingo::setTheCast(): CastMember id %d doesn't exist", id);
 		return;
 	}
+	Cast *cast = member->getCast();
 	CastType castType = member->_type;
-	CastMemberInfo *castInfo = cast->_castsInfo[id];
-
-	// FIXME: Properly handle shared cast
+	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
 
 	switch (field) {
 	case kTheBackColor: {
@@ -1121,7 +1106,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
-		member->getCast()->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, id);
+		cast->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, id);
 		castInfo->script = d.asString();
 		break;
 	case kTheText:
