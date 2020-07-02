@@ -30,7 +30,6 @@ MODULE_OBJS := \
 	pixelformat.o \
 	primitives.o \
 	renderer.o \
-	scaler.o \
 	scalerplugin.o \
 	scaler/thumbnail_intern.o \
 	screen.o \

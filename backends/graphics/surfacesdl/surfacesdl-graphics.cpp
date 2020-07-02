@@ -1279,7 +1279,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_ASPECT
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
+				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, convertSDLPixelFormat(_hwScreen->format));
 #endif
 		}
 		SDL_UnlockSurface(srcSurf);
@@ -1750,7 +1750,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	if (_videoMode.aspectRatioCorrection)
 		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch,
 						_videoMode.overlayWidth, _videoMode.screenHeight * _videoMode.scaleFactor, 0, 0, 0,
-						_videoMode.filtering);
+						_videoMode.filtering, _overlayFormat);
 #endif
 	SDL_UnlockSurface(_tmpscreen);
 	SDL_UnlockSurface(_overlayscreen);
@@ -2139,7 +2139,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 #ifdef USE_ASPECT
 	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
-		stretch200To240Nearest((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
+		stretch200To240Nearest((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0, convertSDLPixelFormat(_mouseSurface->format));
 #endif
 
 	SDL_UnlockSurface(_mouseSurface);
