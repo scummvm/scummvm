@@ -23,6 +23,7 @@
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/npc_dat.h"
 
+#include "ultima/ultima8/kernel/kernel.h"
 #include "common/memstream.h"
 
 namespace Ultima {
@@ -35,8 +36,10 @@ NPCDat::NPCDat(Common::SeekableReadStream &rs, Common::SeekableReadStream &namer
 
 	_minHp = rs.readUint16LE();
 	_maxHp = rs.readUint16LE();
-	// TODO: Read the other data.
-	rs.skip(22);
+	//
+	rs.skip(20);
+	// offset 0x18 (24): wpntable offset
+	/*uint16 _wpnTableOffset =*/ rs.readUint16LE();
 	// offset 0x1a (26): wpntype
 	_wpnType = rs.readUint16LE();
 	rs.skip(2);
@@ -54,8 +57,8 @@ NPCDat::NPCDat(Common::SeekableReadStream &rs, Common::SeekableReadStream &namer
 
 /*static*/
 Std::vector<NPCDat *> NPCDat::load(RawArchive *archive) {
-    Std::vector<NPCDat *> result;
-    assert(archive);
+	Std::vector<NPCDat *> result;
+	assert(archive);
 	if (archive->getCount() < 2) {
 		warning("NPCDat: Archive does not include the expected objects.");
 		return result;
@@ -75,6 +78,81 @@ Std::vector<NPCDat *> NPCDat::load(RawArchive *archive) {
 
 	return result;
 }
+
+/*static*/
+uint16 NPCDat::randomlyGetStrongerWeaponTypes(uint shapeno) {
+	// Apologies for the massive stack of constants, that's how
+	// it is in the original (fn at 10a0:3b10) :(
+
+	int rnd = getRandom();
+
+	switch (shapeno) {
+	case 899:	/* shape 899 - android */
+		if (rnd % 3 == 0)
+			return 10;
+		else
+			return 7;
+	case 0x2fd:
+	case 0x319: /* shape 793 - guardsq */
+		if (rnd % 4 == 0)
+			return 0xc;
+		else
+			return 3;
+	case 0x1b4:
+		if (rnd % 4 == 0)
+			return 0xd;
+		else
+			return 9;
+	case 0x2cb: /* shape 715 - roaming (robot) */
+		if (rnd % 2 == 0)
+			return 3;
+		else
+			return 7;
+	case 0x338: /* shape 824 - thermatr (robot) */
+		if (rnd % 3 == 0)
+			return 5;
+		else
+			return 7;
+	case 0x371:
+		if (rnd % 3 == 0)
+			return 9;
+		else
+			return 10;
+	case 0x4d1:
+		if (rnd % 2 == 0)
+			return 4;
+		else
+			return 0xb;
+	case 900:
+		if (rnd % 3 == 0)
+			return 5;
+		else
+			return 10;
+	case 0x385:
+		if (rnd % 4 == 0)
+			return 8;
+		else
+			return 9;
+	case 0x3ac:
+		if (rnd % 2 == 0)
+			return 9;
+		else
+			return 0xd;
+	case 0x4e6:
+		if (rnd % 3 == 0)
+			return 5;
+		else
+			return 0xb;
+	case 0x528:
+		if (rnd % 3 == 0)
+			return 9;
+		else
+			return 8;
+	default:
+		return 7;
+	}
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

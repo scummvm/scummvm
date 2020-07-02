@@ -59,6 +59,9 @@ public:
 		return _defaultActivity[no];
 	}
 
+	//!< A function for randomly assigning stronger weapons for the highest difficulty level.
+	static uint16 randomlyGetStrongerWeaponTypes(uint shapeno);
+
 private:
     NPCDat(Common::SeekableReadStream &datars, Common::SeekableReadStream &namers);
 
