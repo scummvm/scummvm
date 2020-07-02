@@ -1280,12 +1280,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			r->h = dst_h * scale1;
 
 #ifdef USE_ASPECT
-			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible) {
-				if (_useOldSrc)
-					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
-				else
-					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
-			}
+			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
+				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
 #endif
 		}
 		SDL_UnlockSurface(srcSurf);
