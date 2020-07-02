@@ -697,7 +697,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 
 	case OPCODE_OBJECT_NOT_IN_ROOM:
 		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state, !item || item->_room != instr->_operand[1]);
+		func_set_test_result(func_state, !item || item->_room != _currentRoom);
 		break;
 
 	case OPCODE_CURRENT_OBJECT_NOT_IN_ROOM:
