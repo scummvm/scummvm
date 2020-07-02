@@ -635,37 +635,10 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 #endif
 
 int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
-	int scale;
-	switch (mode) {
-	case GFX_NORMAL:
-		scale = 1;
-		break;
-#ifdef USE_SCALERS
-	case GFX_DOUBLESIZE:
-	case GFX_2XSAI:
-	case GFX_SUPER2XSAI:
-	case GFX_SUPEREAGLE:
-	case GFX_ADVMAME2X:
-	case GFX_TV2X:
-	case GFX_DOTMATRIX:
-#ifdef USE_HQ_SCALERS
-	case GFX_HQ2X:
-#endif
-		scale = 2;
-		break;
-	case GFX_TRIPLESIZE:
-	case GFX_ADVMAME3X:
-#ifdef USE_HQ_SCALERS
-	case GFX_HQ3X:
-#endif
-		scale = 3;
-		break;
-#endif
-	default:
-		scale = -1;
-	}
+	if (mode >= (int)s_supportedGraphicsModes->size())
+		return -1;
 
-	return scale;
+	return (*s_supportedGraphicsModesData)[mode].scaleFactor;
 }
 
 bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) {
