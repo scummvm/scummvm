@@ -33,7 +33,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const int MAX_TRACK = 20;
+static const int MAX_TRACK = 21;
 
 // TODO: Ensure this is the right order for the uses of this from Usecode.
 static const char *TRACK_FILE_NAMES[] = {
@@ -57,7 +57,8 @@ static const char *TRACK_FILE_NAMES[] = {
 	"M16A",
 	"M16B",
 	"M16C",
-	"menu"
+	"menu",
+	"buyme" // for demo
 };
 
 // p_dynamic_cast stuff
