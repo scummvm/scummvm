@@ -280,7 +280,7 @@ Common::Error DirectorEngine::run() {
 
 			Cast *sharedCast = nullptr;
 			if (_currentMovie) {
-				_currentMovie->getSharedCast();
+				sharedCast = _currentMovie->getSharedCast();
 				_currentMovie->_sharedCast = nullptr;
 			}
 
