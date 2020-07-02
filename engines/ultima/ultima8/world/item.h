@@ -636,6 +636,7 @@ public:
 		EXT_SPRITE       = 0x0040,  //!< Item is a sprite
 		EXT_TRANSPARENT  = 0x0080,  //!< Item should be painted transparent
 		EXT_PERMANENT_NPC = 0x0100, //!< Item is a permanent NPC
+		EXT_TARGET 		 = 0x0200,  //!< Item is the current reticle target in Crusader
 		EXT_FEMALE       = 0x8000	//!< Item is Crusader Female NPC (controls sfx)
 	};
 };

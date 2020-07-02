@@ -34,11 +34,14 @@
 namespace Ultima {
 namespace Ultima8 {
 
+TargetReticleProcess *TargetReticleProcess::_instance;
+
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetReticleProcess)
 
 TargetReticleProcess::TargetReticleProcess() : Process(), _reticleEnabled(true),
-	_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(0x10), _lastTargetItem(0) {
+		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(0x10), _lastTargetItem(0) {
+	_instance = this;
 }
 
 void TargetReticleProcess::run() {
@@ -62,27 +65,17 @@ void TargetReticleProcess::run() {
 		return;
 	}
 
-	Item *item = findTargetItem();
-	if (item && item->getObjId() != _lastTargetItem) {
-		if (spriteProc)
-			spriteProc->terminate();
-		putTargetReticleOnItem(item);
-	} else if (!item) {
-		debug("New reticle target: NONE");
-		if (spriteProc)
-			spriteProc->terminate();
-		_reticleSpriteProcess = 0;
-		_lastTargetItem = 0;
-		_lastTargetDir = 0x10;
-	}
-	// else, already targeting the right thing. do nothing.
-
+	bool changed = findTargetItem();
+	if (spriteProc && changed)
+		// Terminate the old process.
+		spriteProc->terminate();
 	_lastUpdate = frameno;
 }
 
-Item *TargetReticleProcess::findTargetItem() {
+bool TargetReticleProcess::findTargetItem() {
 	MainActor *mainactor = getMainActor();
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+	bool changed = false;
 
 	if (!mainactor || !currentmap)
 		return nullptr;
@@ -93,7 +86,30 @@ Item *TargetReticleProcess::findTargetItem() {
 	mainactor->getCentre(x, y, z);
 
 	Item *item = currentmap->findBestTargetItem(x, y, dir);
-	return item;
+
+	if (item && item->getObjId() != _lastTargetItem) {
+		Item *lastItem = getItem(_lastTargetItem);
+		if (lastItem)
+			lastItem->clearExtFlag(Item::EXT_TARGET);
+		putTargetReticleOnItem(item);
+		_lastTargetDir = dir;
+		changed = true;
+	} else if (!item) {
+		debug("New reticle target: NONE");
+		if (_lastTargetItem) {
+			Item *lastItem = getItem(_lastTargetItem);
+			if (lastItem)
+				lastItem->clearExtFlag(Item::EXT_TARGET);
+		}
+		clearSprite();
+		changed = true;
+	}
+	// else, already targeting the right thing. do nothing.
+	return changed;
+}
+
+void TargetReticleProcess::avatarMoved() {
+	_lastUpdate = 0;
 }
 
 void TargetReticleProcess::putTargetReticleOnItem(Item *item) {
@@ -107,7 +123,50 @@ void TargetReticleProcess::putTargetReticleOnItem(Item *item) {
 
 	_reticleSpriteProcess = Kernel::get_instance()->addProcess(p);
 	_lastTargetItem = item->getObjId();
+	item->setExtFlag(Item::EXT_TARGET);
 	debug("New reticle target: %d (%d, %d, %d)", _lastTargetItem, x, y, z);
+}
+
+void TargetReticleProcess::itemMoved(Item *item) {
+	assert(item);
+	if (!_reticleSpriteProcess || item->getObjId() != _lastTargetItem) {
+		// Shouldn't happen, but to be sure..
+		warning("TargetReticleProcess: no active reticle or notified by the wrong item (%d, expected %d, process %d)",
+				item->getObjId(), _lastTargetItem, _reticleSpriteProcess);
+		clearSprite();
+		return;
+	}
+
+	int32 x, y, z;
+	item->getCentre(x, y, z);
+
+	MainActor *mainactor = getMainActor();
+	int actordir = -1;
+	int dirtoitem = -2;
+	if (!mainactor) {
+		actordir = mainactor->getDir();
+		dirtoitem = mainactor->getDirToItemCentre(*item);
+	}
+
+	SpriteProcess *spriteproc = dynamic_cast<SpriteProcess *>(Kernel::get_instance()->getProcess(_reticleSpriteProcess));
+
+	// TODO: If the item moved outside the direction we're targeting,
+	// the process should be terminated.
+
+	if (spriteproc) {
+		if (actordir != _lastTargetDir || dirtoitem != _lastTargetDir) {
+			spriteproc->terminate();
+			clearSprite();
+		}
+	} else {
+		spriteproc->move(x, y, z);
+	}
+}
+
+void TargetReticleProcess::clearSprite() {
+	_reticleSpriteProcess = 0;
+	_lastTargetItem = 0;
+	_lastTargetDir = 0x10;
 }
 
 void TargetReticleProcess::saveData(Common::WriteStream *ws) {

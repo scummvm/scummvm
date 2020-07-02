@@ -57,6 +57,7 @@
 #include "ultima/ultima8/gumps/slider_gump.h"
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -240,6 +241,9 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	// Note that we don't need to
 	if (_extendedFlags & EXT_CAMERA)
 		CameraProcess::GetCameraProcess()->ItemMoved();
+
+	if (_extendedFlags & EXT_TARGET)
+		TargetReticleProcess::getProcess()->itemMoved(this);
 }
 
 bool Item::moveToContainer(Container *container, bool checkwghtvol) {

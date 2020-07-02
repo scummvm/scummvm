@@ -44,18 +44,31 @@ public:
 
 	void run() override;
 
+	//!< Notify this process that the item we're targetting has moved
+	void itemMoved(Item *item);
+
+	//!< Avatar direction changed - force update of finding a new item next frame.
+	void avatarMoved();
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
+	static TargetReticleProcess *getProcess() {
+		return _instance;
+	}
+
 private:
-	Item *findTargetItem();
+	bool findTargetItem();
 	void putTargetReticleOnItem(Item *);
+	void clearSprite();
 
     bool _reticleEnabled;
 	int32 _lastUpdate;
 	uint16 _reticleSpriteProcess;
 	uint16 _lastTargetDir;
 	uint16 _lastTargetItem;
+
+	static TargetReticleProcess *_instance;
 };
 
 } // End of namespace Ultima8

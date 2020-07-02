@@ -50,6 +50,7 @@
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -1102,8 +1103,10 @@ void Actor::clearInCombat() {
 int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 						 ObjId *hititem, uint8 *dirs) {
 	int32 result = Item::collideMove(x, y, z, teleport, force, hititem, dirs);
-	if (GAME_IS_CRUSADER)
+	if (_objId == 1 && GAME_IS_CRUSADER) {
 		notifyNearbyItems();
+		TargetReticleProcess::getProcess()->avatarMoved();
+	}
 	return result;
 }
 

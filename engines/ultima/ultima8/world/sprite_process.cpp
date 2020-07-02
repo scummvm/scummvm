@@ -64,6 +64,16 @@ SpriteProcess::~SpriteProcess(void) {
 	if (item) item->destroy();
 }
 
+void SpriteProcess::move(int x, int y, int z) {
+	_x = x;
+	_y = y;
+	_z = z;
+
+	Item *item = getItem(_itemNum);
+	if (item)
+		item->move(_x, _y, _z);
+}
+
 void SpriteProcess::run() {
 	if (!_initialized) init();
 
