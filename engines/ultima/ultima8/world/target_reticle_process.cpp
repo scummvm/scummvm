@@ -95,8 +95,8 @@ bool TargetReticleProcess::findTargetItem() {
 		_lastTargetDir = dir;
 		changed = true;
 	} else if (!item) {
-		debug("New reticle target: NONE");
 		if (_lastTargetItem) {
+			debug("New reticle target: NONE");
 			Item *lastItem = getItem(_lastTargetItem);
 			if (lastItem)
 				lastItem->clearExtFlag(Item::EXT_TARGET);
@@ -165,6 +165,12 @@ void TargetReticleProcess::itemMoved(Item *item) {
 
 void TargetReticleProcess::clearSprite() {
 	_reticleSpriteProcess = 0;
+	if (_lastTargetItem) {
+		Item *item = getItem(_lastTargetItem);
+		if (item) {
+			item->clearExtFlag(Item::EXT_TARGET);
+		}
+	}
 	_lastTargetItem = 0;
 	_lastTargetDir = 0x10;
 }
