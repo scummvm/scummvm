@@ -150,16 +150,13 @@ void TargetReticleProcess::itemMoved(Item *item) {
 
 	SpriteProcess *spriteproc = dynamic_cast<SpriteProcess *>(Kernel::get_instance()->getProcess(_reticleSpriteProcess));
 
-	// TODO: If the item moved outside the direction we're targeting,
-	// the process should be terminated.
-
 	if (spriteproc) {
 		if (actordir != _lastTargetDir || dirtoitem != _lastTargetDir) {
 			spriteproc->terminate();
 			clearSprite();
+		} else {
+			spriteproc->move(x, y, z);
 		}
-	} else {
-		spriteproc->move(x, y, z);
 	}
 }
 
