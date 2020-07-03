@@ -390,7 +390,7 @@ void TextCastMember::createWidget() {
 
 	switch (_type) {
 	case kCastText:
-		_widget = new Graphics::MacText(g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 1, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		_widget = new Graphics::MacText(g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 
 		((Graphics::MacText *)_widget)->draw();
 		break;
