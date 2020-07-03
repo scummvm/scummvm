@@ -33,6 +33,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
+#include "director/stage.h"
 #include "director/util.h"
 
 #include "director/lingo/lingo.h"
@@ -226,21 +227,23 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		_vm->_nextMovie.movie = cleanedFilename;
-		_vm->getCurrentMovie()->getScore()->_stopPlay = true;
+		Stage *stage = _vm->getStage();
 
-		_vm->_nextMovie.frameS.clear();
-		_vm->_nextMovie.frameI = -1;
+		stage->_nextMovie.movie = cleanedFilename;
+		stage->getCurrentMovie()->getScore()->_stopPlay = true;
+
+		stage->_nextMovie.frameS.clear();
+		stage->_nextMovie.frameI = -1;
 
 		if (frame.type == VOID)
 			return;
 
 		if (frame.type == STRING) {
-			_vm->_nextMovie.frameS = *frame.u.s;
+			stage->_nextMovie.frameS = *frame.u.s;
 			return;
 		}
 
-		_vm->_nextMovie.frameI = frame.asInt();
+		stage->_nextMovie.frameI = frame.asInt();
 
 		return;
 	}
@@ -289,6 +292,8 @@ void Lingo::func_gotoprevious() {
 
 void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
+	Stage *stage = _vm->getStage();
+
 
 	// play #done
 	if (frame.type == SYMBOL) {
@@ -296,12 +301,12 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 			warning("Lingo::func_play: unknown symbol: #%s", frame.u.s->c_str());
 			return;
 		}
-		if (_vm->_movieStack.empty()) {	// No op if no nested movies
+		if (stage->_movieStack.empty()) {	// No op if no nested movies
 			return;
 		}
-		ref = _vm->_movieStack.back();
+		ref = stage->_movieStack.back();
 
-		_vm->_movieStack.pop_back();
+		stage->_movieStack.pop_back();
 
 		Datum m, f;
 
@@ -327,7 +332,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 
 	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 
-	_vm->_movieStack.push_back(ref);
+	stage->_movieStack.push_back(ref);
 
 	func_goto(frame, movie);
 }

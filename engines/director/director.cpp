@@ -23,9 +23,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "common/substream.h"
-
-#include "common/macresman.h"
+#include "common/file.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -36,7 +34,6 @@
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/stage.h"
-#include "director/util.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -81,18 +78,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load key codes
 	loadKeyCodes();
 
-	_currentMovie = nullptr;
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
 	_lingo = nullptr;
-
-	_mainArchive = nullptr;
-	_macBinary = nullptr;
-
-	_movies = nullptr;
-
-	_nextMovie.frameI = -1;
 
 	_wm = nullptr;
 
@@ -114,25 +103,18 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_draggingSprite = false;
 	_draggingSpriteId = 0;
-
-	_newMovieStarted = true;
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _currentMovie;
-
-	_wm->removeWindow(_currentStage);
-
-	if (_macBinary) {
-		delete _macBinary;
-		_macBinary = nullptr;
-	}
-
 	delete _soundManager;
 	delete _lingo;
 	delete _wm;
 	delete _surface;
 }
+
+Archive *DirectorEngine::getMainArchive() const { return _currentStage->getMainArchive(); }
+Movie *DirectorEngine::getCurrentMovie() const { return _currentStage->getCurrentMovie(); }
+Common::String DirectorEngine::getCurrentPath() const { return _currentStage->getCurrentPath(); }
 
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
@@ -143,14 +125,13 @@ Common::Error DirectorEngine::run() {
 
 	_currentPalette = nullptr;
 
-	_macBinary = nullptr;
 	_soundManager = nullptr;
 
 	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
-	_currentStage = new Stage(_wm->getNextId(), false, false, false, _wm);
+	_currentStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
 
 	if (!debugChannelSet(-1, kDebugDesktop))
 		_currentStage->disableBorder();
@@ -164,15 +145,11 @@ Common::Error DirectorEngine::run() {
 	_soundManager = new DirectorSound(this);
 
 	if (getGameGID() == GID_TEST) {
-		runTests();
+		_currentStage->runTests();
 		return Common::kNoError;
 	} else if (getGameGID() == GID_TESTALL) {
-		enqueueAllMovies();
+		_currentStage->enqueueAllMovies();
 	}
-
-	// FIXME
-	//_mainArchive = new RIFFArchive();
-	//_mainArchive->openFile("bookshelf_example.mmm");
 
 	if (getPlatform() == Common::kPlatformWindows)
 		_machineType = 256; // IBM PC-type machine
@@ -191,141 +168,14 @@ Common::Error DirectorEngine::run() {
 		_sharedCastFile = "Shared.dir";
 	}
 
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
-
-	if (getGameGID() == GID_TESTALL)  {
-		_nextMovie = getNextMovieFromQueue();
-		loadInitialMovie(_nextMovie.movie);
-	} else {
-		loadInitialMovie(getEXEName());
-
-		if (!_mainArchive) {
-			warning("Cannot open main movie");
-			return Common::kNoGameDataFoundError;
-		}
-
-		// Let's check if it is a projector file
-		// So far tested with Spaceship Warlock, D2
-		if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
-			warning("Detected Projector file");
-
-			if (_mainArchive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
-				Common::Array<uint16> xcod = _mainArchive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
-				for (Common::Array<uint16>::iterator iterator = xcod.begin(); iterator != xcod.end(); ++iterator) {
-					Resource res = _mainArchive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), *iterator);
-					debug(0, "Detected XObject '%s'", res.name.c_str());
-					g_lingo->openXLib(res.name, kXObj);
-				}
-			}
-
-			if (_mainArchive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
-				_currentMovie->setArchive(_mainArchive);
-
-				Common::SeekableSubReadStreamEndian *name = _mainArchive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
-				int num = name->readUint16();
-				if (num != 1) {
-					warning("Incorrect number of strings in Projector file");
-				}
-
-				if (num == 0)
-					error("No strings in Projector file");
-
-				Common::String sname = name->readPascalString();
-
-				_nextMovie.movie = pathMakeRelative(sname);
-				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
-
-				delete _currentMovie;
-				_currentMovie = nullptr;
-
-				delete name;
-			}
-		}
-	}
-
-	if (_currentMovie)
-		_currentMovie->setArchive(_mainArchive);
+	Common::Error err = _currentStage->loadInitialMovie();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	bool loop = true;
 
 	while (loop) {
-		loop = false;
-
-		if (_currentMovie) {
-			debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			debug(0, "@@@@   Movie name '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
-			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-
-			bool goodMovie = _currentMovie->loadArchive();
-
-			// If we came in a loop, then skip as requested
-			if (!_nextMovie.frameS.empty()) {
-				_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
-				_nextMovie.frameS.clear();
-			}
-
-			if (_nextMovie.frameI != -1) {
-				_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
-				_nextMovie.frameI = -1;
-			}
-
-			if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
-				debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
-
-				_currentMovie->getScore()->startLoop();
-
-				debugC(1, kDebugEvents, "Finished playback of movie '%s'", _currentMovie->getMacName().c_str());
-			}
-		}
-
-		if (getGameGID() == GID_TESTALL) {
-			_nextMovie = getNextMovieFromQueue();
-		}
-
-		// If a loop was requested, do it
-		if (!_nextMovie.movie.empty()) {
-			_newMovieStarted = true;
-
-			_currentPath = getPath(_nextMovie.movie, _currentPath);
-
-			Cast *sharedCast = nullptr;
-			if (_currentMovie) {
-				sharedCast = _currentMovie->getSharedCast();
-				_currentMovie->_sharedCast = nullptr;
-			}
-
-			delete _currentMovie;
-			_currentMovie = nullptr;
-
-			Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, '/'));
-
-			if (!mov) {
-				warning("nextMovie: No movie is loaded");
-
-				if (getGameGID() == GID_TESTALL) {
-					loop = true;
-					continue;
-				}
-
-				return Common::kNoError;
-			}
-
-			_currentMovie = new Movie(this);
-			_currentMovie->setArchive(mov);
-			debug(0, "Switching to movie '%s'", _currentMovie->getMacName().c_str());
-
-			_lingo->resetLingo();
-			if (sharedCast && sharedCast->_castArchive
-					&& sharedCast->_castArchive->getFileName().equalsIgnoreCase(_currentPath + _sharedCastFile)) {
-				_currentMovie->_sharedCast = sharedCast;
-			} else {
-				delete sharedCast;
-				_currentMovie->loadSharedCastsFrom(_currentPath + _sharedCastFile);
-			}
-
-			_nextMovie.movie.clear();
-			loop = true;
-		}
+		loop = _currentStage->step();
 	}
 
 	return Common::kNoError;

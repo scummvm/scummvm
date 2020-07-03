@@ -36,6 +36,7 @@
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/movie.h"
+#include "director/stage.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -43,13 +44,13 @@ namespace Director {
 //////////////////////
 // Graphics tests
 //////////////////////
-void DirectorEngine::testFontScaling() {
+void Stage::testFontScaling() {
 	int x = 10;
 	int y = 10;
 	int w = g_system->getWidth();
 	int h = g_system->getHeight();
 
-	setPalette(-1);
+	_vm->setPalette(-1);
 
 	Graphics::ManagedSurface surface;
 
@@ -92,7 +93,7 @@ void DirectorEngine::testFontScaling() {
 
 			for (x = x1; x < x1 + 6; x++)
 				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = transformColor(i * 16 + j);
+					*((byte *)surface.getBasePtr(x, y)) = _vm->transformColor(i * 16 + j);
 		}
 	}
 
@@ -110,7 +111,7 @@ void DirectorEngine::testFontScaling() {
 	}
 }
 
-void DirectorEngine::testFonts() {
+void Stage::testFonts() {
 	Common::String fontName("Helvetica");
 
 	Common::MacResManager *fontFile = new Common::MacResManager();
@@ -136,12 +137,12 @@ void DirectorEngine::testFonts() {
 //////////////////////
 // Movie iteration
 //////////////////////
-Common::HashMap<Common::String, Movie *> *DirectorEngine::scanMovies(const Common::String &folder) {
+Common::HashMap<Common::String, Movie *> *Stage::scanMovies(const Common::String &folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
 	const char *sharedMMMname;
 
-	if (getPlatform() == Common::kPlatformWindows)
+	if (_vm->getPlatform() == Common::kPlatformWindows)
 		sharedMMMname = "SHARDCST.MMM";
 	else
 		sharedMMMname = "Shared Cast";
@@ -156,17 +157,17 @@ Common::HashMap<Common::String, Movie *> *DirectorEngine::scanMovies(const Commo
 			debugC(2, kDebugLoading, "File: %s", i->getName().c_str());
 
 			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
-				_sharedCastFile = i->getName();
+				_vm->_sharedCastFile = i->getName();
 
 				debugC(2, kDebugLoading, "Shared cast detected: %s", i->getName().c_str());
 				continue;
 			}
 
-			Archive *arc = createArchive();
+			Archive *arc = _vm->createArchive();
 
 			warning("name: %s", i->getName().c_str());
 			arc->openFile(i->getName());
-			Movie *m = new Movie(this);
+			Movie *m = new Movie(_vm);
 			m->setArchive(arc);
 			nameMap->setVal(m->getMacName(), m);
 
@@ -177,7 +178,7 @@ Common::HashMap<Common::String, Movie *> *DirectorEngine::scanMovies(const Commo
 	return nameMap;
 }
 
-void DirectorEngine::enqueueAllMovies() {
+void Stage::enqueueAllMovies() {
 	Common::FSNode dir(ConfMan.get("path"));
 	Common::FSList files;
 	if (!dir.getChildren(files, Common::FSNode::kListFilesOnly)) {
@@ -193,7 +194,7 @@ void DirectorEngine::enqueueAllMovies() {
 	debug(1, "=========> Enqueued %d movies", _movieQueue.size());
 }
 
-MovieReference DirectorEngine::getNextMovieFromQueue() {
+MovieReference Stage::getNextMovieFromQueue() {
 	MovieReference res;
 
 	if (_movieQueue.empty())
@@ -277,7 +278,7 @@ const byte testMovie[] = {
 	0x00, 0x00
 };
 
-void DirectorEngine::runTests() {
+void Stage::runTests() {
 	Common::MemoryReadStream *movie = new Common::MemoryReadStream(testMovie, ARRAYSIZE(testMovie));
 	Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(movie);
 
@@ -287,7 +288,7 @@ void DirectorEngine::runTests() {
 	if (!_mainArchive->openStream(stream, 0)) {
 		error("DirectorEngine::runTests(): Bad movie data");
 	}
-	_currentMovie = new Movie(this);
+	_currentMovie = new Movie(_vm);
 	_currentMovie->setArchive(_mainArchive);
 	_currentMovie->loadArchive();
 
@@ -296,7 +297,7 @@ void DirectorEngine::runTests() {
 		testFonts();
 	}
 
-	_lingo->runTests();
+	g_lingo->runTests();
 }
 
 } // End of namespace Director

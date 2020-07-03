@@ -448,7 +448,7 @@ void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
 		_vm->_wm->renderZoomBox(true);
 
-		if (!_vm->_newMovieStarted)
+		if (!_vm->getStage()->_newMovieStarted)
 			_vm->_wm->draw();
 
 		return;
@@ -516,7 +516,7 @@ void Score::update() {
 
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_currentFrame);
-	_vm->_newMovieStarted = false;
+	_vm->getStage()->_newMovieStarted = false;
 
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
@@ -597,7 +597,7 @@ bool Score::renderTransition(uint16 frameId) {
 }
 
 void Score::renderSprites(uint16 frameId, RenderMode mode) {
-	if (_vm->_newMovieStarted)
+	if (_vm->getStage()->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
 	for (uint16 i = 0; i < _channels.size(); i++) {

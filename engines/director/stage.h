@@ -25,6 +25,10 @@
 
 #include "graphics/macgui/macwindow.h"
 
+namespace Common {
+class Error;
+}
+
 namespace Graphics {
 class ManagedSurface;
 class MacWindow;
@@ -38,8 +42,8 @@ struct TransParams;
 
 class Stage : public Graphics::MacWindow {
  public:
-	Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm);
-	// ~Stage();
+	Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm);
+	~Stage();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
 
@@ -60,16 +64,52 @@ class Stage : public Graphics::MacWindow {
 
 	Common::Point getMousePos();
 
+	Archive *getMainArchive() const { return _mainArchive; }
+	Movie *getCurrentMovie() const { return _currentMovie; }
+	Common::String getCurrentPath() const { return _currentPath; }
+
+	bool step();
+
+	// tests.cpp
+	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
+	void testFontScaling();
+	void testFonts();
+	void enqueueAllMovies();
+	MovieReference getNextMovieFromQueue();
+	void runTests();
+
+	// resource.cpp
+	Common::Error loadInitialMovie();
+	Archive *openMainArchive(const Common::String movie);
+	void loadEXE(const Common::String movie);
+	void loadEXEv3(Common::SeekableReadStream *stream);
+	void loadEXEv4(Common::SeekableReadStream *stream);
+	void loadEXEv5(Common::SeekableReadStream *stream);
+	void loadEXEv7(Common::SeekableReadStream *stream);
+	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
+	void loadMac(const Common::String movie);
+
 public:
 	Common::List<Common::Rect> _dirtyRects;
 	Common::List<Channel *> _dirtyChannels;
 	TransParams *_puppetTransition;
+
+	MovieReference _nextMovie;
+	Common::List<MovieReference> _movieStack;
+	bool _newMovieStarted;
 
 private:
 	uint _stageColor;
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 	void drawReverseSprite(Channel *channel, Common::Rect &srcRect, Common::Rect &destRect, Graphics::ManagedSurface *blitTo);
 	void drawMatteSprite(Channel *channel, Common::Rect &srcRect, Common::Rect &destRect, Graphics::ManagedSurface *blitTo);
+
+	DirectorEngine *_vm;
+	Archive *_mainArchive;
+	Common::MacResManager *_macBinary;
+	Movie *_currentMovie;
+	Common::String _currentPath;
+	Common::StringArray _movieQueue;
 };
 
 } // end of namespace Director

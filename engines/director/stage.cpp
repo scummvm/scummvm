@@ -21,23 +21,42 @@
  */
 
 #include "common/system.h"
+#include "common/macresman.h"
 
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
+#include "director/cast.h"
+#include "director/lingo/lingo.h"
 #include "director/movie.h"
 #include "director/stage.h"
 #include "director/score.h"
 #include "director/castmember.h"
 #include "director/sprite.h"
+#include "director/util.h"
 
 namespace Director {
 
-Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm)
+Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm)
 	: MacWindow(id, scrollable, resizable, editable, wm) {
+	_vm = vm;
 	_stageColor = 0;
 	_puppetTransition = nullptr;
+
+	_currentMovie = nullptr;
+	_mainArchive = nullptr;
+	_macBinary = nullptr;
+	_nextMovie.frameI = -1;
+	_newMovieStarted = true;
+}
+
+Stage::~Stage() {
+	delete _currentMovie;
+	if (_macBinary) {
+		delete _macBinary;
+		_macBinary = nullptr;
+	}
 }
 
 bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
@@ -201,6 +220,87 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 
 Common::Point Stage::getMousePos() {
 	return g_system->getEventManager()->getMousePos() - Common::Point(_dims.left, _dims.top);
+}
+
+bool Stage::step() {
+	bool loop = false;
+
+	if (_currentMovie) {
+		debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		debug(0, "@@@@   Movie name '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
+		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+		bool goodMovie = _currentMovie->loadArchive();
+
+		// If we came in a loop, then skip as requested
+		if (!_nextMovie.frameS.empty()) {
+			_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
+			_nextMovie.frameS.clear();
+		}
+
+		if (_nextMovie.frameI != -1) {
+			_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
+			_nextMovie.frameI = -1;
+		}
+
+		if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
+			debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
+
+			_currentMovie->getScore()->startLoop();
+
+			debugC(1, kDebugEvents, "Finished playback of movie '%s'", _currentMovie->getMacName().c_str());
+		}
+	}
+
+	if (_vm->getGameGID() == GID_TESTALL) {
+		_nextMovie = getNextMovieFromQueue();
+	}
+
+	// If a loop was requested, do it
+	if (!_nextMovie.movie.empty()) {
+		_newMovieStarted = true;
+
+		_currentPath = getPath(_nextMovie.movie, _currentPath);
+
+		Cast *sharedCast = nullptr;
+		if (_currentMovie) {
+			sharedCast = _currentMovie->getSharedCast();
+			_currentMovie->_sharedCast = nullptr;
+		}
+
+		delete _currentMovie;
+		_currentMovie = nullptr;
+
+		Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, '/'));
+
+		if (!mov) {
+			warning("nextMovie: No movie is loaded");
+
+			if (_vm->getGameGID() == GID_TESTALL) {
+				return true;
+			}
+
+			return false;
+		}
+
+		_currentMovie = new Movie(_vm);
+		_currentMovie->setArchive(mov);
+		debug(0, "Switching to movie '%s'", _currentMovie->getMacName().c_str());
+
+		g_lingo->resetLingo();
+		if (sharedCast && sharedCast->_castArchive
+				&& sharedCast->_castArchive->getFileName().equalsIgnoreCase(_currentPath + _vm->_sharedCastFile)) {
+			_currentMovie->_sharedCast = sharedCast;
+		} else {
+			delete sharedCast;
+			_currentMovie->loadSharedCastsFrom(_currentPath + _vm->_sharedCastFile);
+		}
+
+		_nextMovie.movie.clear();
+		loop = true;
+	}
+
+	return loop;
 }
 
 } // end of namespace Director
