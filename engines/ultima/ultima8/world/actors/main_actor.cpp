@@ -53,7 +53,8 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor)
 
 MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
-	_accumInt(0), _cruBatteryType(ChemicalBattery), _keycards(0) {
+	_accumInt(0), _cruBatteryType(ChemicalBattery), _keycards(0),
+	_activeWeapon(0), _activeInvItem(0) {
 }
 
 MainActor::~MainActor() {
@@ -74,7 +75,6 @@ GravityProcess *MainActor::ensureGravityProcess() {
 }
 
 bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
-	const unsigned int backpack_shape = 529; //!! *cough* constant
 
 	if (!Actor::CanAddItem(item, checkwghtvol)) return false;
 	if (item->getParent() == _objId) return true; // already in here
@@ -82,19 +82,26 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack
 
-	uint32 equiptype = item->getShapeInfo()->_equipType;
-	bool backpack = (item->getShape() == backpack_shape);
+	if (GAME_IS_U8) {
+		const unsigned int backpack_shape = 529; //!! *cough* constant
+		uint32 equiptype = item->getShapeInfo()->_equipType;
+		bool backpack = (item->getShape() == backpack_shape);
 
-	// valid item type?
-	if (equiptype == ShapeInfo::SE_NONE && !backpack) return false;
+		// valid item type?
+		if (equiptype == ShapeInfo::SE_NONE && !backpack) return false;
 
-	Std::list<Item *>::iterator iter;
-	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-		uint32 cet = (*iter)->getShapeInfo()->_equipType;
-		bool cbackpack = ((*iter)->getShape() == backpack_shape);
+		Std::list<Item *>::iterator iter;
+		for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+			uint32 cet = (*iter)->getShapeInfo()->_equipType;
+			bool cbackpack = ((*iter)->getShape() == backpack_shape);
 
-		// already have an item with the same equiptype
-		if (cet == equiptype || (cbackpack && backpack)) return false;
+			// already have an item with the same equiptype
+			if (cet == equiptype || (cbackpack && backpack)) return false;
+		}
+	} else if (GAME_IS_CRUSADER) {
+		// TODO: Enforce the number of slots by family here (weapon / ammo / other)
+		// For now just enforce no limit.
+		return true;
 	}
 
 	return true;
@@ -109,6 +116,192 @@ bool MainActor::addItem(Item *item, bool checkwghtvol) {
 	item->setZ(equiptype);
 
 	return true;
+}
+
+int16 MainActor::addItemCru(Item *item, bool showtoast) {
+	// This code is a little ugly, it's a somewhat close
+	// re-implementation of the original and could do
+	// with some cleanup.
+
+	if (!item || !item->getShape())
+		return 0;
+
+	int shapeno = item->getShape();
+	int x, y, z;
+	getLocation(x, y, z);
+
+	if (shapeno == 0x4ed) {
+		Item *credits = getFirstItemWithShape(shapeno, true);
+		if (credits) {
+			uint16 q = item->getQuality();
+			uint32 newq = credits->getQuality() + q;
+			if (newq > 64000)
+				newq = 64000;
+			credits->setQuality(newq);
+			credits->callUsecodeEvent_combine();
+			if (showtoast) {
+				warning("TODO: show toast for added credits %d", q);
+			}
+			item->destroy();
+		} else {
+			item->setFrame(0);
+			item->moveToContainer(this);
+			if (!_activeInvItem)
+				_activeInvItem = item->getObjId();
+			if (showtoast) {
+				warning("TODO: show toast for new credits %d", item->getQuality());
+			}
+		}
+		return 1;
+	}
+
+	switch (static_cast<ShapeInfo::SFamily>(item->getShapeInfo()->_family)) {
+	case ShapeInfo::SF_CRUWEAPON: {	// 0xa
+		Item *weapon = getFirstItemWithShape(shapeno, true);
+		if (!weapon) {
+			// New weapon. Add it.
+			const WeaponInfo *winfo = item->getShapeInfo()->_weaponInfo;
+			assert(winfo);
+			if (winfo->_ammoType == 0) {
+				item->setQuality(0);
+				item->callUsecodeEvent_combine();
+			} else {
+				warning("TODO: Get default count for ammo type %d", winfo->_ammoType);
+				item->setQuality(100);
+			}
+			item->setLocation(x, y, z);
+			item->moveToContainer(this);
+			if (!_activeWeapon)
+				_activeWeapon = item->getObjId();
+			warning("TODO: Set new weapon as active weapon if there is none");
+			if (showtoast)
+				warning("TODO: Show toast for new weapon %d", shapeno);
+		}
+		break;
+	}
+	case ShapeInfo::SF_CRUAMMO:	{	// 0xb
+		Item *ammo = getFirstItemWithShape(shapeno, true);
+		if (!ammo) {
+			// don't have this ammo yet, add it
+			item->setQuality(1);
+			item->callUsecodeEvent_combine();
+			item->moveToContainer(this);
+			if (showtoast)
+				warning("TODO: Show toast for new ammo %d", shapeno);
+			return 1;
+		} else {
+			// already have this, add some ammo.
+			uint16 q = ammo->getQuality();
+			if (q < 0x14) {
+				ammo->setQuality(q + 1);
+				ammo->callUsecodeEvent_combine();
+				if (showtoast)
+					warning("TODO: Show toast for combined ammo %d (%d)", shapeno, q + 1);
+				item->destroy();
+				return 1;
+			}
+		}
+		break;
+	}
+	case ShapeInfo::SF_CRUBOMB:		// 0xc
+	case ShapeInfo::SF_CRUINVITEM:	// 0xd
+		if (shapeno == 0x111) {
+			addKeycard(item->getQuality() & 0xff);
+			if (showtoast) {
+				warning("TODO: show toast for added keycard %d", item->getQuality() & 0xff);
+			}
+			item->destroy();
+			return 1;
+		} else if ((shapeno == 0x3a2) || (shapeno == 0x3a3) || (shapeno == 0x3a4)) {
+			// Batteries
+			if (showtoast) {
+				warning("TODO: show toast for added battery %d", shapeno);
+			}
+			item->destroy();
+			int plusenergy = 0;
+			CruBatteryType oldbattery = _cruBatteryType;
+			if (shapeno == 0x3a2) {
+				if (oldbattery == NoBattery) {
+					setBatteryType(ChemicalBattery);
+				} else {
+					plusenergy = 0x9c4;
+				}
+			} else if (shapeno == 0x3a4) {
+				if (oldbattery < FusionBattery) {
+					setBatteryType(FusionBattery);
+				} else {
+					plusenergy = 5000;
+				}
+			} else if (shapeno == 0x3a3) {
+				if (oldbattery < FissionBattery) {
+					setBatteryType(FissionBattery);
+				} else {
+					plusenergy = 10000;
+				}
+			}
+			if (plusenergy) {
+				int newenergy = getMana() + plusenergy;
+				if (newenergy > getMaxEnergy())
+					newenergy = getMaxEnergy();
+				setMana(newenergy);
+			}
+			return 1;
+		} else {
+			Item *existing = getFirstItemWithShape(shapeno, true);
+			if (!existing) {
+				if ((shapeno == 0x52e) || (shapeno == 0x52f) || (shapeno == 0x530)) {
+					warning("TODO: Properly handle giving avatar a shield 0x%x", shapeno);
+					return 0;
+				} else {
+					item->setFrame(0);
+					item->setQuality(1);
+					item->callUsecodeEvent_combine();
+					bool added = item->moveToContainer(this);
+					if (showtoast) {
+						warning("TODO: show toast new item %d (%s)",
+								shapeno, added ? "added" : "failed");
+					}
+					if (!_activeInvItem)
+						_activeInvItem = item->getObjId();
+					return 1;
+				}
+			} else {
+				// Already have this item..
+				if ((shapeno == 0x52e) || (shapeno == 0x52f) || (shapeno == 0x530)) {
+					// shields, already have one, destroy the new one.
+					item->destroy();
+					return 1;
+				} else if (shapeno == 0x560) {
+					uint16 q = existing->getQuality();
+					if (q < 0x14) {
+						existing->setQuality(q + 1);
+						existing->callUsecodeEvent_combine();
+						if (showtoast) {
+							warning("TODO: show toast for combined cru spider q=%d", q + 1);
+						}
+						item->destroy();
+						return 1;
+					}
+				} else {
+					uint16 q = existing->getQuality();
+					if (q < 10) {
+						existing->setQuality(q + 1);
+						existing->callUsecodeEvent_combine();
+						if (showtoast) {
+							warning("TODO: show toast for combined other item %d q=%d", shapeno, q + 1);
+						}
+						item->destroy();
+						return 1;
+					}
+				}
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
+	return 0;
 }
 
 void MainActor::teleport(int mapNum_, int32 x_, int32 y_, int32 z_) {
@@ -405,11 +598,17 @@ int16 MainActor::getMaxEnergy() {
 	}
 }
 
-bool MainActor::hasKeycard(int num) {
+bool MainActor::hasKeycard(int num) const {
 	if (num > 31)
 		return 0;
 
 	return _keycards & (1 << num);
+}
+
+void MainActor::addKeycard(int bitno) {
+	if (bitno > 31 || bitno < 0)
+		return;
+	_keycards |= (1 << bitno);
 }
 
 void MainActor::saveData(Common::WriteStream *ws) {
@@ -423,6 +622,8 @@ void MainActor::saveData(Common::WriteStream *ws) {
 	if (GAME_IS_CRUSADER) {
 		ws->writeByte(static_cast<byte>(_cruBatteryType));
 		ws->writeUint32LE(_keycards);
+		ws->writeUint16LE(_activeWeapon);
+		ws->writeUint16LE(_activeInvItem);
 	}
 
 	uint8 namelength = static_cast<uint8>(_name.size());
@@ -443,6 +644,8 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 	if (GAME_IS_CRUSADER) {
 		_cruBatteryType = static_cast<CruBatteryType>(rs->readByte());
 		_keycards = rs->readUint32LE();
+		_activeWeapon = rs->readUint16LE();
+		_activeInvItem = rs->readUint16LE();
 	}
 
 	uint8 namelength = rs->readByte();
@@ -529,7 +732,7 @@ uint32 MainActor::I_getMaxEnergy(const uint8 *args,
 								 unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	MainActor *av = getMainActor();
-	if (actor != av) {
+	if (!av || actor != av) {
 		return 0;
 	}
 	return av->getMaxEnergy();
@@ -539,13 +742,32 @@ uint32 MainActor::I_hasKeycard(const uint8 *args,
 								 unsigned int /*argsize*/) {
 	ARG_UINT16(num);
 	MainActor *av = getMainActor();
+	if (!av)
+		return 0;
 	return av->hasKeycard(num);
 }
 
 uint32 MainActor::I_clrKeycards(const uint8 *args,
 								 unsigned int /*argsize*/) {
 	MainActor *av = getMainActor();
+	if (!av)
+		return 0;
 	av->clrKeycards();
+	return 0;
+}
+
+uint32 MainActor::I_addItemCru(const uint8 *args,
+								 unsigned int /*argsize*/) {
+	MainActor *av = getMainActor();
+	ARG_ITEM_FROM_ID(item);
+	ARG_UINT16(showtoast);
+
+	if (!av || !item)
+		return 0;
+
+	if (av->addItemCru(item, showtoast != 0))
+		return 1;
+
 	return 0;
 }
 
@@ -554,16 +776,9 @@ void MainActor::useInventoryItem(uint32 shapenum) {
 		pout << "Can't use item: avatarInStasis" << Std::endl;
 		return;
 	}
-	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shapenum));
-	UCList uclist(2);
-	this->containerSearch(&uclist, script, sizeof(script), true);
-	if (uclist.getSize() < 1)
-		return;
-
-	uint16 oId = uclist.getuint16(0);
-	Item *item = getItem(oId);
-	item->callUsecodeEvent_use();
-
+	Item *item = this->getFirstItemWithShape(shapenum, true);
+	if (item)
+		item->callUsecodeEvent_use();
 }
 
 } // End of namespace Ultima8

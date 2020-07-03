@@ -125,7 +125,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getDirFromTo16(x1, y1, x2, y2)",
 	"byte Actor::I_getSomeFlagProbablyCrouch(Item *)",
 	"int16 Actor::I_doAnim(12 bytes)", // v. similar code to U8
-	"byte I_probablyPickUpItem_037(4 bytes)", // same coff as 0B8
+	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 0B8
 	"void AudioProcess::I_stopSFXCru(Item *, int16 sndno)",
 	"byte Actor::I_isDead(Item *)", // same coff as 122, 12E
 	"byte AudioProcess::I_isSFXPlayingForObject(Item *, int16 unk)",
@@ -262,7 +262,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_equip(6 bytes)",
 	"void Ultima8Engine::I_clrAlertActive(void)",
 	"int16 Ultima8Engine::I_getAvatarInStasis(void)",
-	"byte I_probablyPickUpItem_0B8(4 bytes)", // same coff as 037
+	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 037
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"void Item::I_setQuality(Item *, int)", // same coff as 07F, 125
 	"byte Intrinsic0BB(8 bytes)", // TODO: check usecode.. code is weird, something with an imaginary chequered wall shape? (0x31A)

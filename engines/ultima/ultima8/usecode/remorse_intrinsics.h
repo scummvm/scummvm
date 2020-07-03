@@ -93,7 +93,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getDirFromTo16,
 	0, // TODO: Actor::I_getSomeFlagProbablyCrouch(Actor *)
 	Actor::I_doAnim, // void Intrinsic036(12 bytes)
-	0, // int Intrinsic037(4 bytes) (probably pick up)
+	MainActor::I_addItemCru, // int Intrinsic037(4 bytes)
 	AudioProcess::I_stopSFXCru, // takes Item *, sndno (from disasm)
 	Actor::I_isDead, // int Intrinsic039(4 bytes)
 	AudioProcess::I_isSFXPlayingForObject,
@@ -230,7 +230,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_equip, // void Intrinsic0B5(6 bytes)
 	World::I_clrAlertActive, // void Intrinsic0B6(void)
 	Ultima8Engine::I_getAvatarInStasis, // void Intrinsic0B7(void)
-	0, // int Intrinsic0B8(4 bytes)
+	MainActor::I_addItemCru, // int Intrinsic0B8(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0B9(4 bytes)
 	Item::I_setQuality,
 	0, // int Intrinsic0BB(8 bytes)

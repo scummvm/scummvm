@@ -47,6 +47,10 @@ public:
 	bool CanAddItem(Item *item, bool checkwghtvol = false) override;
 	bool addItem(Item *item, bool checkwghtvol = false) override;
 
+	//! Add item to avatar's inventory, but with some extra logic to do things like combine
+	//! ammo and credits, use batteries, etc.
+	int16 addItemCru(Item *item, bool showtoast);
+
 	//! teleport to the given location on the given map
 	void teleport(int mapNum_, int32 x_, int32 y_, int32 z_) override;
 
@@ -99,10 +103,27 @@ public:
 
 	int16 getMaxEnergy();
 
-	bool hasKeycard(int num);
+	CruBatteryType getBatteryType() const {
+		return _cruBatteryType;
+	}
+	void setBatteryType(CruBatteryType newbattery) {
+		_cruBatteryType = newbattery;
+		setMana(getMaxEnergy());
+	}
+
+	bool hasKeycard(int num) const;
+	void addKeycard(int bitno);
 
 	void clrKeycards() {
 		_keycards = 0;
+	}
+
+	uint16 getActiveWeapon() const {
+		return _activeWeapon;
+	}
+
+	uint16 getActiveInvItem() const {
+		return _activeInvItem;
 	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
@@ -120,6 +141,7 @@ public:
 	INTRINSIC(I_getMaxEnergy);
 	INTRINSIC(I_hasKeycard);
 	INTRINSIC(I_clrKeycards);
+	INTRINSIC(I_addItemCru);
 
 	void getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_);
 
@@ -135,8 +157,11 @@ protected:
 
 	uint32 _keycards;
 	CruBatteryType _cruBatteryType;
+	uint16 _activeWeapon;
+	uint16 _activeInvItem;
 
 	Std::string _name;
+
 };
 
 } // End of namespace Ultima8
