@@ -12,3 +12,4 @@ engines/glk/quest/quest.cpp
 engines/glk/scott/scott.cpp
 engines/glk/zcode/detection.cpp
 engines/glk/zcode/zcode.cpp
+engines/glk/hugo/hugo.cpp
