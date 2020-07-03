@@ -86,6 +86,16 @@ public:
 	void containerSearch(UCList *itemlist, const uint8 *loopscript,
 	                     uint32 scriptsize, bool recurse) const;
 
+	//! A simpler search of the container which just gets the
+	//! first item with a given shape number, optionally recursively.
+	//! \return The first item with that shape, or nullptr if nothing found.
+	Item *getFirstItemWithShape(uint16 shapeno, bool recurse);
+
+	//! A simpler search of the container which just gets the
+	//! items with a given shape family, optionally recursively.
+	//! \return The first item with that shape, or nullptr if nothing found.
+	void getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse);
+
 	//! Get the weight of the container and its contents
 	//! \return weight
 	uint32 getTotalWeight() const override;

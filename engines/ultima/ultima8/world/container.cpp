@@ -296,6 +296,43 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 	}
 }
 
+Item *Container::getFirstItemWithShape(uint16 shapeno, bool recurse) {
+	Std::list<Item *>::iterator iter;
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+		if ((*iter)->getShape() == shapeno)
+			return *iter;
+
+		if (recurse) {
+			// recurse into child-containers
+			Container *container = dynamic_cast<Container *>(*iter);
+			if (container) {
+				Item *result = container->getFirstItemWithShape(shapeno, recurse);
+				if (result)
+					return result;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void Container::getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse) {
+	Std::list<Item *>::iterator iter;
+	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
+		if ((*iter)->getShapeInfo()->_family == family)
+			itemlist.push_back(*iter);
+
+		if (recurse) {
+			// recurse into child-containers
+			Container *container = dynamic_cast<Container *>(*iter);
+			if (container) {
+				container->getItemsWithShapeFamily(itemlist, family, recurse);
+			}
+		}
+	}
+
+}
+
 void Container::dumpInfo() const {
 	Item::dumpInfo();
 
