@@ -79,6 +79,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 
 	if (nextSprite) {
 		isDirty |= _sprite->_castId != nextSprite->_castId ||
+			_sprite->_ink != nextSprite->_ink ||
 			_sprite->getDims() != nextSprite->getDims() ||
 			(_currentPoint != nextSprite->_startPoint &&
 			 !_sprite->_puppet && !_sprite->_moveable);
