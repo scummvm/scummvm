@@ -1123,7 +1123,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		for (int idx = 0; idx < 4; ++idx)
 			words.push_back(src[idx]);
 
-		if (handle_sentence(sentence, words))
+		if (handle_sentence(0, sentence, words))
 			return true;
 	}
 
@@ -1133,7 +1133,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		for (int idx = 0; idx < 3; ++idx)
 			words.push_back(src[idx]);
 
-		if (handle_sentence(sentence, words))
+		if (handle_sentence(1, sentence, words))
 			return true;
 	}
 
@@ -1145,7 +1145,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		words.push_back(src[2]);
 		words.push_back(src[3]);
 
-		if (handle_sentence(sentence, words))
+		if (handle_sentence(2, sentence, words))
 			return true;
 	}
 
@@ -1156,7 +1156,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		words.push_back(src[0]);
 		words.push_back(src[2]);
 
-		if (handle_sentence(sentence, words))
+		if (handle_sentence(3, sentence, words))
 			return true;
 	}
 
@@ -1167,7 +1167,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		words.push_back(src[2]);
 		words.push_back(src[3]);
 
-		if (handle_sentence(sentence, words))
+ 		if (handle_sentence(4, sentence, words))
 			return true;
 	}
 
@@ -1177,7 +1177,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		words.push_back(src[0]);
 		words.push_back(src[2]);
 
-		if (handle_sentence(sentence, words))
+		if (handle_sentence(5, sentence, words))
 			return true;
 	}
 
@@ -1185,7 +1185,7 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 		words.clear();
 		words.push_back(src[0]);
 
-		if (handle_sentence(sentence, words))
+		if (handle_sentence(6, sentence, words))
 			return true;
 	}
 
@@ -1193,28 +1193,18 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 	return false;
 }
 
-bool ComprehendGame::handle_sentence(Sentence *sentence, Common::Array<byte> &words) {
-	for (uint i = 0; i < _actions.size(); i++) {
-		const Action &action = _actions[i];
+bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::Array<byte> &words) {
+	const ActionTable &table = _actions[tableNum];
 
-		// Check the verb first. It must match the first passed word
-		if (action._word[0] != words[0])
-			continue;
+	for (uint i = 0; i < table.size(); i++) {
+		const Action &action = table[i];
 
-		// Check for the remaining words of the action. They can be in
-		// any order in the passed words
-		uint actionWord;
-		for (actionWord = 1; actionWord < action._nr_words; ++actionWord) {
-			// Scan for next action word
-			bool isMatch = false;
-			for (uint idx = 0; idx < words.size() && !isMatch; ++idx)
-				isMatch = action._word[actionWord] == words[idx];
+		// Check for a match on the words of the action
+		bool isMatch = true;
+		for (uint idx = 0; idx < action._nr_words && isMatch; ++idx)
+			isMatch = action._words[idx] == words[idx];
 
-			if (!isMatch)
-				break;
-		}
-
-		if (actionWord == action._nr_words) {
+		if (isMatch) {
 			// Match
 			const Function &func = _functions[action._function];
 			eval_function(func, &sentence->_words[0], &sentence->_words[1]);

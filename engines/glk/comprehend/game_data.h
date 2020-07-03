@@ -270,11 +270,8 @@ struct WordMap {
 };
 
 struct Action {
-	int _type;
 	size_t _nr_words;
-	// FIXME - use struct word_index here.
-	uint8 _word[4];
-	uint8 _wordType[4];
+	uint8 _words[4];
 	uint16 _function;
 
 	Action() {
@@ -334,14 +331,7 @@ struct GameHeader {
 	uint16 addr_strings;
 	uint16 addr_strings_end;
 
-	uint16 addr_actions_vvnn;
-	uint16 addr_actions_unknown;
-	uint16 addr_actions_vnjn;
-	uint16 addr_actions_vjn;
-	uint16 addr_actions_vdn;
-	uint16 addr_actions_vnn;
-	uint16 addr_actions_vn;
-	uint16 addr_actions_v;
+	uint16 addr_actions[7];
 
 	uint16 addr_vm; // FIXME - functions
 
@@ -351,6 +341,8 @@ struct GameHeader {
 
 	void clear();
 };
+
+typedef Common::Array<Action> ActionTable;
 
 class GameData {
 private:
@@ -387,7 +379,7 @@ public:
 	uint _updateFlags;
 
 	Common::Array<WordMap> _wordMaps;
-	Common::Array<Action> _actions;
+	Common::Array<ActionTable> _actions;
 	Common::Array<Function> _functions;
 	Common::StringArray _replaceWords;
 
@@ -408,14 +400,7 @@ private:
 	uint8 parse_vm_instruction(FileBuffer *fb, Instruction *instr);
 	void parse_function(FileBuffer *fb, Function *func);
 	void parse_vm(FileBuffer *fb);
-	void parse_action_table_vvnn(FileBuffer *fb);
-	void parse_action_table_vnjn(FileBuffer *fb);
-	void parse_action_table_vjn(FileBuffer *fb);
-	void parse_action_table_vdn(FileBuffer *fb);
-	void parse_action_table_vnn(FileBuffer *fb);
-	void parse_action_table_vn(FileBuffer *fb);
-	void parse_action_table_v(FileBuffer *fb);
-	void parse_action_table(FileBuffer *fb);
+	void parse_action_tables(FileBuffer *fb);
 	void parse_dictionary(FileBuffer *fb);
 	void parse_word_map(FileBuffer *fb);
 	void parse_items(FileBuffer *fb);

@@ -182,54 +182,24 @@ void DebuggerDumper::dumpFunction(uint functionNum) {
 
 void DebuggerDumper::dumpActionTable() {
 	Action *action;
-	Word *word;
 	uint i, j;
 
-	print("Action table (%u entries)\n", _game->_actions.size());
-	for (i = 0; i < _game->_actions.size(); i++) {
-		action = &_game->_actions[i];
+	print("Action tables: %u tables\n", _game->_actions.size());
 
-		print("(");
-		for (j = 0; j < 4; j++) {
-			if (j < action->_nr_words) {
-				switch (action->_wordType[j]) {
-				case WORD_TYPE_VERB:
-					print("v");
-					break;
-				case WORD_TYPE_JOIN:
-					print("j");
-					break;
-				case WORD_TYPE_NOUN_MASK:
-					print("n");
-					break;
-				default:
-					print("?");
-					break;
-				}
-			} else {
-				print(" ");
-			}
+	for (uint tableNum = 0; tableNum < _game->_actions.size(); ++tableNum) {
+		ActionTable &table = _game->_actions[tableNum];
+
+		print("Action table #u (%u entries)\n", tableNum, table.size());
+		for (i = 0; i < table.size(); i++) {
+			action = &table[i];
+
+			print(" [%.4x] ", i);
+
+			for (j = 0; j < action->_nr_words; j++)
+				print("%.2x ", action->_words[j]);
+
+			print("-> %.4x\n", action->_function);
 		}
-
-		print(") [%.4x] ", i);
-
-		for (j = 0; j < action->_nr_words; j++)
-			print("%.2x:%.2x ",
-			      action->_word[j], action->_wordType[j]);
-
-		print("| ");
-
-		for (j = 0; j < action->_nr_words; j++) {
-			word = find_dict_word_by_index(_game, action->_word[j],
-			                               action->_wordType[j]);
-			if (word)
-				print("%-6s ", word->_word);
-			else
-				print("%.2x:%.2x  ", action->_word[j],
-				      action->_wordType[j]);
-		}
-
-		print("-> %.4x\n", action->_function);
 	}
 }
 
@@ -380,14 +350,7 @@ void DebuggerDumper::dumpHeader() {
 
 	print("Game header:\n");
 	print("  magic:                %.4x\n", header->magic);
-	print("  action(vvnn):         %.4x\n", header->addr_actions_vvnn);
-	print("  actions(?):\n");
-	print("  actions(vnjn):        %.4x\n", header->addr_actions_vnjn);
-	print("  actions(vjn):         %.4x\n", header->addr_actions_vjn);
-	print("  actions(vdn):         %.4x\n", header->addr_actions_vdn);
-	print("  actions(vnn):         %.4x\n", header->addr_actions_vnn);
-	print("  actions(vn):          %.4x\n", header->addr_actions_vn);
-	print("  actions(v):           %.4x\n", header->addr_actions_v);
+
 	print("  functions:            %.4x\n", header->addr_vm);
 	print("  dictionary:           %.4x\n", header->addr_dictionary);
 	print("  word map pairs:       %.4x\n", header->addr_word_map);
