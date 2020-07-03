@@ -45,6 +45,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 		: CastMember(cast, castId) {
 	_type = kCastBitmap;
 	_img = nullptr;
+	_matte = nullptr;
 	_bytes = 0;
 	_pitch = 0;
 	_flags = 0;
@@ -121,6 +122,9 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 BitmapCastMember::~BitmapCastMember() {
 	if (_img)
 		delete _img;
+
+	if (_matte)
+		delete _matte;
 }
 
 void BitmapCastMember::createWidget() {
@@ -133,6 +137,61 @@ void BitmapCastMember::createWidget() {
 
 	_widget = new Graphics::MacWidget(g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, false);
 	_widget->getSurface()->blitFrom(*_img->getSurface());
+}
+
+void BitmapCastMember::createMatte() {
+	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels
+	// are transparent
+	Graphics::Surface tmp;
+	tmp.create(_initialRect.width(), _initialRect.height(), Graphics::PixelFormat::createFormatCLUT8());
+	tmp.copyFrom(*_img->getSurface());
+
+	// Searching white color in the corners
+	int whiteColor = -1;
+
+	for (int y = 0; y < tmp.h; y++) {
+		for (int x = 0; x < tmp.w; x++) {
+			byte color = *(byte *)tmp.getBasePtr(x, y);
+
+			if (g_director->getPalette()[color * 3 + 0] == 0xff &&
+					g_director->getPalette()[color * 3 + 1] == 0xff &&
+					g_director->getPalette()[color * 3 + 2] == 0xff) {
+				whiteColor = color;
+				break;
+			}
+		}
+	}
+
+	if (whiteColor == -1) {
+		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image");
+	} else {
+		delete _matte;
+
+		_matte = new Graphics::FloodFill(&tmp, whiteColor, 0, true);
+
+		for (int yy = 0; yy < tmp.h; yy++) {
+			_matte->addSeed(0, yy);
+			_matte->addSeed(tmp.w - 1, yy);
+		}
+
+		for (int xx = 0; xx < tmp.w; xx++) {
+			_matte->addSeed(xx, 0);
+			_matte->addSeed(xx, tmp.h - 1);
+		}
+
+		_matte->fillMask();
+	}
+
+	tmp.free();
+}
+
+Graphics::Surface *BitmapCastMember::getMatte() {
+	// Lazy loading of mattes
+	if (!_matte) {
+		createMatte();
+	}
+
+	return _matte ? _matte->getMask() : nullptr;
 }
 
 DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)

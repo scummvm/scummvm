@@ -185,84 +185,18 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 		return;
 	}
 
-	// Otherwise, we are drawing a cast type that does have a built-in surface, so
-	// blit from that.
-	// TODO: Work this ink type into inkDrawPixel.
-	if (sprite->_ink == kInkTypeMatte) {
-		drawMatteSprite(channel, srcRect, destRect, blitTo);
-		return;
-	}
+	// First, get any masks that might be needed.
+	const Graphics::Surface *mask = channel->getMask();
 
 	pd.srcPoint.y = MAX(abs(srcRect.top - destRect.top), 0);
 	for (int i = 0; i < destRect.height(); i++, pd.srcPoint.y++) {
 		pd.srcPoint.x = MAX(abs(srcRect.left - destRect.left), 0);
+		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd.srcPoint.x, pd.srcPoint.y) : nullptr;
 
 		for (int j = 0; j < destRect.width(); j++, pd.srcPoint.x++)
-			inkDrawPixel(destRect.left + j, destRect.top + i, 0, &pd);
+			if (!mask || (msk && (sprite->_ink == kInkTypeMatte ? !(*msk++) : *msk++)))
+				inkDrawPixel(destRect.left + j, destRect.top + i, 0, &pd);
 	}
-}
-
-void Stage::drawMatteSprite(Channel *channel, Common::Rect &srcRect, Common::Rect &destRect, Graphics::ManagedSurface *blitTo) {
-	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
-	Graphics::Surface tmp;
-	tmp.create(destRect.width(), destRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	tmp.copyFrom(channel->getSurface()->rawSurface());
-
-	if (!blitTo->clip(srcRect, destRect))
-		return; // Out of screen
-
-	// Searching white color in the corners
-	int whiteColor = -1;
-
-	for (int y = 0; y < tmp.h; y++) {
-		for (int x = 0; x < tmp.w; x++) {
-			byte color = *(byte *)tmp.getBasePtr(x, y);
-
-			if (g_director->getPalette()[color * 3 + 0] == 0xff &&
-				g_director->getPalette()[color * 3 + 1] == 0xff &&
-				g_director->getPalette()[color * 3 + 2] == 0xff) {
-				whiteColor = color;
-				break;
-			}
-		}
-	}
-
-	if (whiteColor == -1) {
-		debugC(1, kDebugImages, "Score::drawMatteSprite(): No white color for Matte image");
-
-		for (int yy = 0; yy < destRect.height(); yy++) {
-		const byte *src = (const byte *)channel->getSurface()->getBasePtr(MAX(abs(srcRect.left - destRect.left), 0), MAX(abs(srcRect.top - destRect.top + yy), 0));
-		byte *dst = (byte *)blitTo->getBasePtr(destRect.left, destRect.top + yy);
-
-			for (int xx = 0; xx < destRect.width(); xx++, src++, dst++)
-				*dst = *src;
-		}
-	} else {
-		Graphics::FloodFill ff(&tmp, whiteColor, 0, true);
-
-		for (int yy = 0; yy < tmp.h; yy++) {
-			ff.addSeed(0, yy);
-			ff.addSeed(tmp.w - 1, yy);
-		}
-
-		for (int xx = 0; xx < tmp.w; xx++) {
-			ff.addSeed(xx, 0);
-			ff.addSeed(xx, tmp.h - 1);
-		}
-		ff.fillMask();
-
-		for (int yy = 0; yy < destRect.height(); yy++) {
-			const byte *mask = (const byte *)ff.getMask()->getBasePtr(MAX(abs(srcRect.left - destRect.left), 0), MAX(abs(srcRect.top - destRect.top - yy), 0));
-			const byte *src = (const byte *)channel->getSurface()->getBasePtr(MAX(abs(srcRect.left - destRect.left), 0), MAX(abs(srcRect.top - destRect.top - yy), 0));
-			byte *dst = (byte *)blitTo->getBasePtr(destRect.left, destRect.top + yy);
-
-			for (int xx = 0; xx < destRect.width(); xx++, src++, dst++, mask++)
-				if (*mask == 0)
-					*dst = *src;
-		}
-	}
-
-	tmp.free();
 }
 
 Common::Point Stage::getMousePos() {

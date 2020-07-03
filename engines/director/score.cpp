@@ -68,6 +68,37 @@ Graphics::ManagedSurface *Channel::getSurface() {
 	}
 }
 
+const Graphics::Surface *Channel::getMask() {
+	switch (_sprite->_ink) {
+	case kInkTypeMatte:
+		// Mattes are only supported in bitmaps for now. Shapes don't need mattes,
+		// as they already have all non-enclosed white pixels transparent.
+		// Matte on text has a trivial enough effect to not worry about implementing.
+		if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
+			return ((BitmapCastMember *)_sprite->_cast)->getMatte();
+		} else {
+			return nullptr;
+		}
+
+	case kInkTypeMask: {
+		CastMember *member = g_director->getCurrentMovie()->getCastMember(_sprite->_castId + 1);
+
+		if (_sprite->_cast && member->_initialRect == _sprite->_cast->_initialRect) {
+			return &member->_widget->getSurface()->rawSurface();
+		} else {
+			warning("Channel::getMask(): Requested cast mask, but no matching mask was found");
+			return nullptr;
+		}
+
+		// Silence warning
+		break;
+	}
+
+	default:
+		return nullptr;
+	}
+}
+
 bool Channel::isDirty(Sprite *nextSprite) {
 	// When a sprite is puppeted setTheSprite ensures that the dirty flag here is
 	// set. Otherwise, we need to rerender when the position, bounding box, or

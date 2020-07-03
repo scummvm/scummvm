@@ -29,6 +29,7 @@
 
 namespace Graphics {
 struct Surface;
+struct FloodFill;
 class MacText;
 class MacWindowManager;
 class MacButton;
@@ -86,9 +87,13 @@ public:
 	BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
 	~BitmapCastMember();
 	virtual void createWidget() override;
+
+	void createMatte();
+	Graphics::Surface *getMatte();
 	// virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	Image::ImageDecoder *_img;
+	Graphics::FloodFill *_matte;
 
 	uint16 _pitch;
 	uint16 _regX;

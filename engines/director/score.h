@@ -26,6 +26,7 @@
 //#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
+	struct Surface;
 	class ManagedSurface;
 	class Font;
 	class MacWindow;
@@ -112,10 +113,12 @@ struct Channel {
 
 	Channel(Sprite *sp);
 	bool isDirty(Sprite *nextSprite = nullptr);
+
 	Common::Rect getBbox();
 	Common::Point getPosition();
 	MacShape *getShape();
 	Graphics::ManagedSurface *getSurface();
+	const Graphics::Surface *getMask();
 
 	void setClean(Sprite *nextSprite, int spriteId);
 	void addDelta(Common::Point pos);
