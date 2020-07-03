@@ -127,7 +127,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 		return 0;
 
 	int shapeno = item->getShape();
-	int x, y, z;
+	int32 x, y, z;
 	getLocation(x, y, z);
 
 	if (shapeno == 0x4ed) {
