@@ -153,7 +153,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 		return;
 	}
 	desc.setSaveSlot(slot);
-	desc.setDescription(Common::convertToU32String(_savedDescription));
+	desc.setDescription(_savedDescription);
 	desc.setDeletableFlag(true);
 	desc.setWriteProtectedFlag(false);
 

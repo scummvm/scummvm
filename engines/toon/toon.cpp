@@ -245,7 +245,7 @@ void ToonEngine::parseInput() {
 					} else {
 						Common::U32String buf = Common::U32String::format(_("Could not quick load the saved game #%d"), slotNum);
 						GUI::MessageDialog dialog(buf);
-						warning("%s", buf.encode().c_str());
+						warning("Could not quick load the saved game #%d", slotNum);
 						dialog.runModal();
 					}
 				}
@@ -1526,7 +1526,7 @@ void ToonEngine::loadScene(int32 SceneId, bool forGameLoad) {
 	if (!resources()->openPackage(createRoomFilename(locationName + ".PAK"))) {
 		Common::U32String msg = Common::U32String::format(_("Unable to locate the '%s' data file."), createRoomFilename(locationName + ".PAK").c_str());
 		GUIErrorMessage(msg);
-		warning("%s", msg.encode().c_str());
+		warning("Unable to locate the '%s' data file.", createRoomFilename(locationName + ".PAK").c_str());
 		_shouldQuit = true;
 		return;
 	}
@@ -4951,7 +4951,7 @@ bool ToonEngine::loadToonDat() {
 	if (!in.isOpen()) {
 		msg = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(msg);
-		warning("%s", msg.encode().c_str());
+		warning("Unable to locate the '%s' engine data file.", filename.c_str());
 		return false;
 	}
 
@@ -4963,7 +4963,7 @@ bool ToonEngine::loadToonDat() {
 	if (strcmp(buf, "TOON")) {
 		msg = Common::U32String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		GUIErrorMessage(msg);
-		warning("%s", msg.encode().c_str());
+		warning("The '%s' engine data file is corrupt.", filename.c_str());
 		return false;
 	}
 
@@ -4975,7 +4975,8 @@ bool ToonEngine::loadToonDat() {
 			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
 			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
-		warning("%s", msg.encode().c_str());
+		warning("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.",
+			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 
 		return false;
 	}

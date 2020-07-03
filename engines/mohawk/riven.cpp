@@ -156,7 +156,8 @@ Common::Error MohawkEngine_Riven::run() {
 		Common::U32String message = _("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. ");
 		message += _("Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.");
 		GUIErrorMessage(message);
-		warning("%s", message.encode().c_str());
+		warning("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. \
+			Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.");
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -167,7 +168,7 @@ Common::Error MohawkEngine_Riven::run() {
 	if (!_extrasFile->openFile("extras.mhk")) {
 		Common::U32String message = _("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
 		GUIErrorMessage(message);
-		warning("%s", message.encode().c_str());
+		warning("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -498,8 +499,8 @@ bool MohawkEngine_Riven::checkDatafiles() {
 		return true;
 	}
 
-	Common::U32String message = _("You are missing the following required Riven data files:\n") + Common::convertToU32String(missingFiles.c_str());
-	warning("%s", message.encode().c_str());
+	Common::U32String message = _("You are missing the following required Riven data files:\n") + Common::U32String(missingFiles);
+	warning("You are missing the following required Riven data files:\n%s", missingFiles.c_str());
 	GUIErrorMessage(message);
 
 	return false;
@@ -829,7 +830,7 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
 	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", Common::convertToU32String("Riven"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", "Riven");
 
 	Action *act;
 

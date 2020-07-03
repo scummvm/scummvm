@@ -44,6 +44,10 @@ Keymap::Keymap(KeymapType type, const String &id, const U32String &description) 
 
 }
 
+Keymap::Keymap(KeymapType type, const String &id, const String &description) {
+	Keymap(type, id, U32String(description));
+}
+
 Keymap::~Keymap() {
 	for (ActionArray::iterator it = _actions.begin(); it != _actions.end(); ++it)
 		delete *it;

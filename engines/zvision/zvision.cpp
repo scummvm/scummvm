@@ -44,6 +44,7 @@
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
 #include "common/timer.h"
+#include "common/translation.h"
 #include "common/error.h"
 #include "common/system.h"
 #include "common/file.h"
@@ -308,7 +309,7 @@ Common::Error ZVision::run() {
 	}
 
 	if (!foundAllFonts) {
-		GUI::MessageDialog dialog(Common::convertToU32String(
+		GUI::MessageDialog dialog(_(
 				"Before playing this game, you'll need to copy the required "
 				"fonts into ScummVM's extras directory, or into the game directory. "
 				"On Windows, you'll need the following font files from the Windows "

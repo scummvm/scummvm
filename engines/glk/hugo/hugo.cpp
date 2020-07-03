@@ -23,6 +23,7 @@
 #include "glk/hugo/hugo.h"
 #include "glk/hugo/resource_archive.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace Hugo {
@@ -179,14 +180,14 @@ Common::Error Hugo::readSaveData(Common::SeekableReadStream *rs) {
 	if (hugo_ferror(rs)) goto RestoreError;
 
 	if (strcmp(testid, id)) {
-		GUIErrorMessage(Common::convertToU32String("Incorrect rs file."));
+		GUIErrorMessage(_("Incorrect rs file."));
 		goto RestoreError;
 	}
 
 	/* Check serial number */
 	if (!hugo_fgets(testserial, 9, rs)) goto RestoreError;
 	if (strcmp(testserial, serial)) {
-		GUIErrorMessage(Common::convertToU32String("Save file created by different version."));
+		GUIErrorMessage(_("Save file created by different version."));
 		goto RestoreError;
 	}
 

@@ -73,7 +73,7 @@ public:
 
 	void markAsSelected(int i) {
 		if (!_list[i].encode().contains("selected")) {
-			_list[i] += Common::convertToU32String(" (selected)");
+			_list[i] += Common::U32String(" (selected)");
 		}
 		_listColors[i] = GUI::ThemeEngine::kFontColorNormal;
 		draw();

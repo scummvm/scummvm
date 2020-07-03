@@ -345,9 +345,7 @@ void Storage::directoryDownloadedCallback(FileArrayResponse response) {
 
 	Common::U32String message;
 	if (response.value.size()) {
-		message = Common::U32String::format(
-			_("Download complete.\nFailed to download %u files."),
-			response.value.size());
+		message = Common::U32String::format(_("Download complete.\nFailed to download %u files."), response.value.size());
 	} else {
 		message = _("Download complete.");
 	}

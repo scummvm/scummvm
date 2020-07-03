@@ -435,7 +435,7 @@ bool HugoEngine::loadHugoDat() {
 	if (!in.isOpen()) {
 		Common::U32String errorMessage = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.encode().c_str());
+		warning("Unable to locate the '%s' engine data file.", filename.c_str());
 		return false;
 	}
 
@@ -453,9 +453,9 @@ bool HugoEngine::loadHugoDat() {
 	int minVer = in.readByte();
 
 	if ((majVer != HUGO_DAT_VER_MAJ) || (minVer != HUGO_DAT_VER_MIN)) {
-		Common::String errorMessage = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.").encode().c_str(),
-			filename.c_str(),HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
+		Common::U32String errorMessage = Common::U32String::format(
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			filename.c_str(), HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(errorMessage);
 		return false;
 	}

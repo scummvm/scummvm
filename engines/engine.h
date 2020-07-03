@@ -54,7 +54,9 @@ class Dialog;
  * Initializes graphics and shows error message.
  */
 void GUIErrorMessage(const Common::U32String &msg, const char *url = nullptr);
+void GUIErrorMessage(const Common::String &msg, const char *url = nullptr); // Redirect to GUIErrorMessage with U32Strings
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url);
+void GUIErrorMessageWithURL(const Common::String &msg, const char *url); // Redirect to GUIErrorMessageWithURL with U32Strings
 void GUIErrorMessageFormat(Common::U32String fmt, ...);
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
 

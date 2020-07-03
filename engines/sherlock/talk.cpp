@@ -362,7 +362,7 @@ void Talk::talkTo(const Common::String filename) {
 				Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 				if (ttsMan != nullptr) {
 					ttsMan->stop();
-					ttsMan->say(Common::convertToU32String(_statements[select]._reply.c_str()));
+					ttsMan->say(_statements[select]._reply.c_str());
 				}
 			}
 #endif

@@ -609,7 +609,7 @@ void SubtitleSettingsDialog::cycleValue() {
 		_value = 0;
 
 	if (_value == 1 && g_system->getOverlayWidth() <= 320)
-		setInfoText(Common::convertToU32String(_sc("Speech & Subs", "lowres")));
+		setInfoText(Common::U32String(_sc("Speech & Subs", "lowres")));
 	else
 		setInfoText(_(subtitleDesc[_value]));
 
@@ -617,7 +617,7 @@ void SubtitleSettingsDialog::cycleValue() {
 }
 
 Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
-	: InfoDialog(scumm, U32String(text)) {
+	: InfoDialog(scumm, Common::U32String(text)) {
 }
 
 void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {

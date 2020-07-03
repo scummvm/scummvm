@@ -184,7 +184,7 @@ Start:
 	// Handle any savegame selected directly from the ScummVM launcher
 	if (_savegameSlot != -1) {
 		if (loadGameState(_savegameSlot).getCode() != Common::kNoError) {
-			GUIErrorMessage(Common::convertToU32String("Loading failed"));
+			GUIErrorMessage("Loading failed");
 			_savegameSlot = -1;
 		}
 	}

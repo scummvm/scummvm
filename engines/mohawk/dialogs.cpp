@@ -142,7 +142,7 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 
 			const MystLanguage *languages = MohawkEngine_Myst::listLanguages();
 			while (languages->language != Common::UNK_LANG) {
-				_languagePopUp->appendEntry(Common::convertToU32String(Common::getLanguageDescription(languages->language)), languages->language);
+				_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
 				languages++;
 			}
 		}
@@ -344,7 +344,7 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 
 		const RivenLanguage *languages = MohawkEngine_Riven::listLanguages();
 		while (languages->language != Common::UNK_LANG) {
-			_languagePopUp->appendEntry(Common::convertToU32String(Common::getLanguageDescription(languages->language)), languages->language);
+			_languagePopUp->appendEntry(Common::getLanguageDescription(languages->language), languages->language);
 			languages++;
 		}
 	}

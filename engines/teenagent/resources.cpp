@@ -95,7 +95,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	if (!dat_file->open(filename.c_str())) {
 		delete dat_file;
 		Common::U32String errorMessage = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
-		warning("%s", errorMessage.encode().c_str());
+		warning("Unable to locate the '%s' engine data file.", filename.c_str());
 		GUIErrorMessage(errorMessage);
 		return false;
 	}

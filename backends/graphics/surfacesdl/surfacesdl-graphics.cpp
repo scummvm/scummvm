@@ -2549,10 +2549,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		endGFXTransaction();
 
 #ifdef USE_OSD
-		Common::U32String message = Common::String::format("%s: %s",
-		                                                _("Stretch mode").encode().c_str(),
-		                                                _(s_supportedStretchModes[index].description).encode().c_str()
-		);
+		Common::U32String message = _("Stretch mode") + Common::U32String(": ") + _(s_supportedStretchModes[index].description);
 		displayMessageOnOSD(message);
 #endif
 		_forceRedraw = true;

@@ -34,9 +34,9 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 
 	using namespace Common;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "wintermute", Common::convertToU32String("Wintermute engine"));
-	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, gameId, Common::convertToU32String(gameDescr));
-	Keymap *extraKeyMap = new Keymap(Keymap::kKeymapTypeGame, "extras", Common::convertToU32String("ScummVM extra actions"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "wintermute", "Wintermute engine");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, gameId, gameDescr);
+	Keymap *extraKeyMap = new Keymap(Keymap::kKeymapTypeGame, "extras", "ScummVM extra actions");
 
 	Action *act;
 

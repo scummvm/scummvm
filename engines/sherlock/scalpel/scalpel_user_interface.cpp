@@ -2069,7 +2069,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
 			ttsMan->stop();
-			ttsMan->say(Common::convertToU32String(str.c_str()));
+			ttsMan->say(str.c_str());
 		}
 	}
 #endif

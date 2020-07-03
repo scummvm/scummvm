@@ -230,6 +230,7 @@ public:
 	uint32 getCmd() const				{ return _cmd; }
 
 	void setLabel(const Common::U32String &label);
+	void setLabel(const Common::String &label);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;

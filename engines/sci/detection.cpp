@@ -1017,7 +1017,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 			// invalid
 			delete in;
 
-			descriptor.setDescription(Common::convertToU32String("*Invalid*"));
+			descriptor.setDescription("*Invalid*");
 			return descriptor;
 		}
 
@@ -1028,7 +1028,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 			// invalid
 			delete in;
 
-			descriptor.setDescription(Common::convertToU32String("*Invalid*"));
+			descriptor.setDescription("*Invalid*");
 			return descriptor;
 		}
 		descriptor.setThumbnail(thumbnail);

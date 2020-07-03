@@ -67,7 +67,7 @@ void TestbedExitDialog::init() {
 		if ((*i)->isEnabled()) {
 			strArray.push_back(Common::String::format("Passed: %d  Failed: %d Skipped: %d", (*i)->getNumTestsPassed(), (*i)->getNumTestsFailed(), (*i)->getNumTestsSkipped()));
 		} else {
-			strArray.push_back(Common::convertToU32String("Skipped"));
+			strArray.push_back(Common::U32String("Skipped"));
 		}
 		colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 	}

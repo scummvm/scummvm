@@ -930,7 +930,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	if (!in.isOpen()) {
 		Common::U32String errorMessage = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.encode().c_str());
+		warning("Unable to locate the '%s' engine data file.", filename.c_str());
 
 		return false;
 	}
@@ -944,7 +944,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	if (strcmp(buf, "DRASCULA") != 0) {
 		Common::U32String errorMessage = Common::U32String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.encode().c_str());
+		warning("The '%s' engine data file is corrupt.", filename.c_str());
 
 		return false;
 	}
@@ -956,7 +956,8 @@ bool DrasculaEngine::loadDrasculaDat() {
 			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
 			filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
 		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.encode().c_str());
+		warning("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d.",
+			filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
 
 		return false;
 	}

@@ -560,7 +560,7 @@ Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
 	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
 	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "myst", Common::convertToU32String("Myst"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "myst", "Myst");
 
 	Action *act;
 

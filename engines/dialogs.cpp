@@ -214,9 +214,9 @@ void MainMenuDialog::save() {
 
 		Common::Error status = _engine->saveGameState(slot, Common::convertFromU32String(result));
 		if (status.getCode() != Common::kNoError) {
-			Common::U32String failMessage = Common::U32String::format(_("Failed to save game (%s)! "),
+			Common::U32String failMessage = Common::U32String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "
-				  "instructions on how to obtain further assistance.");
+				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
 			dialog.runModal();
 		}

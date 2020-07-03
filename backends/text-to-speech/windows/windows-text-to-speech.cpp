@@ -246,6 +246,10 @@ bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action
 	return false;
 }
 
+bool WindowsTextToSpeechManager::say(const Common::String &str, Action action, Common::String charset) {
+	return say(Common::U32String(str), action, charset);
+}
+
 bool WindowsTextToSpeechManager::stop() {
 	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return true;

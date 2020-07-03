@@ -104,7 +104,7 @@ bool ResourceManager::init() {
 	Common::File file;
 
 	if (!file.open("resource.inf")) {
-		GUIErrorMessage(Common::convertToU32String("Broken Sword II: Cannot open resource.inf"));
+		GUIErrorMessage("Broken Sword II: Cannot open resource.inf");
 		return false;
 	}
 
@@ -125,7 +125,7 @@ bool ResourceManager::init() {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
 		if (++_totalClusters >= MAX_res_files) {
-			GUIErrorMessage(Common::convertToU32String("Broken Sword II: Too many entries in resource.inf"));
+			GUIErrorMessage("Broken Sword II: Too many entries in resource.inf");
 			return false;
 		}
 	}
@@ -134,7 +134,7 @@ bool ResourceManager::init() {
 
 	// Now load in the binary id to res conversion table
 	if (!file.open("resource.tab")) {
-		GUIErrorMessage(Common::convertToU32String("Broken Sword II: Cannot open resource.tab"));
+		GUIErrorMessage("Broken Sword II: Cannot open resource.tab");
 		return false;
 	}
 
@@ -151,7 +151,7 @@ bool ResourceManager::init() {
 
 	if (file.eos() || file.err()) {
 		file.close();
-		GUIErrorMessage(Common::convertToU32String("Broken Sword II: Cannot read resource.tab"));
+		GUIErrorMessage("Broken Sword II: Cannot read resource.tab");
 		return false;
 	}
 
@@ -161,7 +161,7 @@ bool ResourceManager::init() {
 	// version, which has all files on one disc.
 
 	if (!file.open("cd.inf") && !Sword2Engine::isPsx()) {
-		GUIErrorMessage(Common::convertToU32String("Broken Sword II: Cannot open cd.inf"));
+		GUIErrorMessage("Broken Sword II: Cannot open cd.inf");
 		return false;
 	}
 
@@ -179,7 +179,7 @@ bool ResourceManager::init() {
 			if (file.eos() || file.err()) {
 				delete[] cdInf;
 				file.close();
-				GUIErrorMessage(Common::convertToU32String("Broken Sword II: Cannot read cd.inf"));
+				GUIErrorMessage("Broken Sword II: Cannot read cd.inf");
 				return false;
 			}
 

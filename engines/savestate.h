@@ -69,6 +69,7 @@ public:
 	 * @param desc A human readable description of the save state.
 	 */
 	void setDescription(const Common::U32String &desc) { _description = desc; }
+	void setDescription(const Common::String &desc) { _description = Common::U32String(desc); }
 
 	/**
 	 * @return A human readable description of the save state.
