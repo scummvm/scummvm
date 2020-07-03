@@ -2810,6 +2810,8 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_fov));
 		persistMgr->transferFloat(TMEMBER(_nearPlane));
 		persistMgr->transferFloat(TMEMBER(_farPlane));
+	} else {
+		_sceneGeometry = nullptr;
 	}
 #endif
 
