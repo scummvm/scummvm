@@ -845,7 +845,7 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 		break;
 	case kInkTypeReverse:
 		// TODO: Migrate from Stage to here
-		*dst ^= *src;
+		*dst ^= ~(*src);
 		break;
 	case kInkTypeGhost:
 		if (*src != p->numColors - 1)
