@@ -48,7 +48,7 @@ class TextCastMember;
 
 class Cast {
 public:
-	Cast(DirectorEngine *vm, Movie *movie = nullptr);
+	Cast(Movie *movie, bool shared = false);
 	~Cast();
 
 	bool loadArchive();
@@ -99,6 +99,8 @@ private:
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Movie *_movie;
+
+	bool _isShared;
 
 	Common::String _macName;
 

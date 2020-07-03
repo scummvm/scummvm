@@ -59,10 +59,12 @@ const char *scriptType2str(ScriptType scr) {
 	return scriptTypes[scr];
 }
 
-Cast::Cast(DirectorEngine *vm, Movie *movie) {
-	_vm = vm;
-	_lingo = _vm->getLingo();
+Cast::Cast(Movie *movie, bool isShared) {
 	_movie = movie;
+	_vm = _movie->getVM();
+	_lingo = _vm->getLingo();
+
+	_isShared = isShared;
 
 	_lingoArchive = new LingoArchive;
 
@@ -208,13 +210,13 @@ bool Cast::loadArchive() {
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F'))));
 		delete r;
-	} else if (_movie) {
+	} else if (!_isShared) {
 		// TODO: Source this from somewhere!
 		_movie->_movieRect = Common::Rect(0, 0, 639, 479);
 		_movie->_stageColor = 1;
 	}
 
-	if (_movie) {
+	if (!_isShared) {
 		// TODO: Can shared casts have palettes?
 		if (clutList.size() > 1)
 			warning("More than one palette was found (%d)", clutList.size());
@@ -372,13 +374,13 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 len = stream.readUint16();
 	uint16 ver1 = stream.readUint16();
 	Common::Rect movieRect = Movie::readRect(stream);
-	if (_movie)
+	if (!_isShared)
 		_movie->_movieRect = movieRect;
 
 	_castArrayStart = stream.readUint16();
 	_castArrayEnd = stream.readUint16();
 	byte currentFrameRate = stream.readByte();
-	if (_movie) {
+	if (!_isShared) {
 		_movie->getScore()->_currentFrameRate = currentFrameRate;
 		if (_movie->getScore()->_currentFrameRate == 0)
 			_movie->getScore()->_currentFrameRate = 20;
@@ -391,7 +393,7 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 commentStyle = stream.readUint16();
 	uint32 stageColor = _vm->transformColor(stream.readUint16());
 
-	if (_movie)
+	if (!_isShared)
 		_movie->_stageColor = stageColor;
 
 	uint16 bitdepth = stream.readUint16();

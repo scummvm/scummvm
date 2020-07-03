@@ -33,8 +33,9 @@
 
 namespace Director {
 
-Movie::Movie(DirectorEngine *vm) {
-	_vm = vm;
+Movie::Movie(Stage *stage) {
+	_stage = stage;
+	_vm = _stage->getVM();
 	_lingo = _vm->getLingo();
 
 	_flags = 0;
@@ -49,9 +50,9 @@ Movie::Movie(DirectorEngine *vm) {
 
 	_movieArchive = nullptr;
 
-	_cast = new Cast(_vm, this);
+	_cast = new Cast(this);
 	_sharedCast = nullptr;
-	_score = new Score(_vm, this);
+	_score = new Score(this);
 }
 
 Movie::~Movie() {
@@ -94,12 +95,10 @@ bool Movie::loadArchive() {
 
 	// _movieRect and _stageColor are in VWCF, which the cast handles
 
-	Stage *stage = g_director->getStage();
-
 	// If the stage dimensions are different, delete it and start again.
 	// Otherwise, do not clear it so there can be a nice transition.
-	if (stage->getSurface()->w != _movieRect.width() || stage->getSurface()->h != _movieRect.height()) {
-		stage->resize(_movieRect.width(), _movieRect.height());
+	if (_stage->getSurface()->w != _movieRect.width() || _stage->getSurface()->h != _movieRect.height()) {
+		_stage->resize(_movieRect.width(), _movieRect.height());
 	}
 	// TODO: Add more options for desktop dimensions
 	uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
@@ -109,7 +108,7 @@ bool Movie::loadArchive() {
 		g_director->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	stage->setStageColor(_stageColor);
+	_stage->setStageColor(_stageColor);
 
 	// Score
 	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
@@ -231,7 +230,7 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	_sharedCast = new Cast(_vm);
+	_sharedCast = new Cast(this, true);
 	_sharedCast->setArchive(sharedCast);
 	_sharedCast->loadArchive();
 }

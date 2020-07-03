@@ -38,11 +38,12 @@ class DirectorEngine;
 class Lingo;
 struct LingoArchive;
 class ScriptContext;
+class Stage;
 struct Symbol;
 
 class Movie {
 public:
-	Movie(DirectorEngine *vm);
+	Movie(Stage *stage);
 	~Movie();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
@@ -52,9 +53,11 @@ public:
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _movieArchive; };
 	Common::String getMacName() const { return _macName; }
-	Cast *getCast() { return _cast; }
-	Cast *getSharedCast() { return _sharedCast; }
-	Score *getScore() { return _score; }
+	Stage *getStage() const { return _stage; }
+	DirectorEngine *getVM() const { return _vm; }
+	Cast *getCast() const { return _cast; }
+	Cast *getSharedCast() const { return _sharedCast; }
+	Score *getScore() const { return _score; }
 
 	void clearSharedCast();
 	void loadSharedCastsFrom(Common::String filename);
@@ -86,6 +89,7 @@ public:
 	Cast *_sharedCast;
 
 private:
+	Stage *_stage;
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Cast *_cast;

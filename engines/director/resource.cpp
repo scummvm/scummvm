@@ -64,7 +64,7 @@ Common::Error Stage::loadInitialMovie() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	_currentMovie = new Movie(_vm);
+	_currentMovie = new Movie(this);
 	_currentPath = getPath(movie, _currentPath);
 	_currentMovie->loadSharedCastsFrom(_currentPath + g_director->_sharedCastFile);
 
@@ -134,7 +134,7 @@ void Stage::loadEXE(const Common::String movie) {
 		char *script = (char *)calloc(iniStream->size() + 1, 1);
 		iniStream->read(script, iniStream->size());
 
-		_currentMovie = new Movie(_vm);
+		_currentMovie = new Movie(this);
 		_currentMovie->getMainLingoArch()->addCode(script, kMovieScript, 0);
 		g_lingo->processEvent(kEventStartUp);
 		delete _currentMovie;

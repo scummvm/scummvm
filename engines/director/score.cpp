@@ -242,10 +242,11 @@ MacShape *Channel::getShape() {
 	return shape;
 }
 
-Score::Score(DirectorEngine *vm, Movie *movie) {
-	_vm = vm;
-	_lingo = _vm->getLingo();
+Score::Score(Movie *movie) {
 	_movie = movie;
+	_stage = movie->getStage();
+	_vm = _movie->getVM();
+	_lingo = _vm->getLingo();
 
 	_soundManager = _vm->getSoundManager();
 	_puppetTempo = 0x00;
@@ -448,7 +449,7 @@ void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
 		_vm->_wm->renderZoomBox(true);
 
-		if (!_vm->getStage()->_newMovieStarted)
+		if (!_stage->_newMovieStarted)
 			_vm->_wm->draw();
 
 		return;
@@ -516,7 +517,7 @@ void Score::update() {
 
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell, p.100)
 	renderFrame(_currentFrame);
-	_vm->getStage()->_newMovieStarted = false;
+	_stage->_newMovieStarted = false;
 
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
@@ -571,7 +572,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		renderSprites(frameId, mode);
 
 	_vm->_wm->renderZoomBox();
-	g_director->getStage()->render();
+	_stage->render();
 	_vm->_wm->draw();
 
 	if (_frames[frameId]->_sound1 || _frames[frameId]->_sound2)
@@ -580,16 +581,16 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 bool Score::renderTransition(uint16 frameId) {
 	Frame *currentFrame = _frames[frameId];
-	TransParams *tp = g_director->getStage()->_puppetTransition;
+	TransParams *tp = _stage->_puppetTransition;
 
 	if (tp) {
-		g_director->getStage()->playTransition(tp->duration, tp->area, tp->chunkSize, tp->type, frameId);
+		_stage->playTransition(tp->duration, tp->area, tp->chunkSize, tp->type, frameId);
 
-		delete g_director->getStage()->_puppetTransition;;
-		g_director->getStage()->_puppetTransition = nullptr;
+		delete _stage->_puppetTransition;;
+		_stage->_puppetTransition = nullptr;
 		return true;
 	} else if (currentFrame->_transType) {
-		g_director->getStage()->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
+		_stage->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
 		return true;
 	} else {
 		return false;
@@ -597,7 +598,7 @@ bool Score::renderTransition(uint16 frameId) {
 }
 
 void Score::renderSprites(uint16 frameId, RenderMode mode) {
-	if (_vm->getStage()->_newMovieStarted)
+	if (_stage->_newMovieStarted)
 		mode = kRenderForceUpdate;
 
 	for (uint16 i = 0; i < _channels.size(); i++) {
@@ -608,17 +609,17 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		bool needsUpdate = channel->isDirty(nextSprite) || mode == kRenderForceUpdate;
 
 		if (needsUpdate && !currentSprite->_trails)
-			g_director->getStage()->addDirtyRect(channel->getBbox());
+			_stage->addDirtyRect(channel->getBbox());
 
 		channel->setClean(nextSprite, i);
 
 		if (needsUpdate)
-			g_director->getStage()->addDirtyRect(channel->getBbox());
+			_stage->addDirtyRect(channel->getBbox());
 	}
 }
 
 void Score::screenShot() {
-	Graphics::Surface rawSurface = g_director->getStage()->getSurface()->rawSurface();
+	Graphics::Surface rawSurface = _stage->getSurface()->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 	Common::String currentPath = _vm->getCurrentPath().c_str();

@@ -167,7 +167,7 @@ Common::HashMap<Common::String, Movie *> *Stage::scanMovies(const Common::String
 
 			warning("name: %s", i->getName().c_str());
 			arc->openFile(i->getName());
-			Movie *m = new Movie(_vm);
+			Movie *m = new Movie(this);
 			m->setArchive(arc);
 			nameMap->setVal(m->getMacName(), m);
 
@@ -288,7 +288,7 @@ void Stage::runTests() {
 	if (!_mainArchive->openStream(stream, 0)) {
 		error("DirectorEngine::runTests(): Bad movie data");
 	}
-	_currentMovie = new Movie(_vm);
+	_currentMovie = new Movie(this);
 	_currentMovie->setArchive(_mainArchive);
 	_currentMovie->loadArchive();
 

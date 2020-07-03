@@ -126,7 +126,7 @@ struct Channel {
 
 class Score {
 public:
-	Score(DirectorEngine *vm, Movie *movie);
+	Score(Movie *movie);
 	~Score();
 
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
@@ -188,6 +188,7 @@ private:
 	DirectorEngine *_vm;
 	Lingo *_lingo;
 	Movie *_movie;
+	Stage *_stage;
 
 	uint16 _currentFrame;
 	uint16 _nextFrame;

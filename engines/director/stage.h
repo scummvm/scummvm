@@ -64,6 +64,7 @@ class Stage : public Graphics::MacWindow {
 
 	Common::Point getMousePos();
 
+	DirectorEngine *getVM() const { return _vm; }
 	Archive *getMainArchive() const { return _mainArchive; }
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }

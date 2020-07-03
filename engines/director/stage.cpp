@@ -283,7 +283,7 @@ bool Stage::step() {
 			return false;
 		}
 
-		_currentMovie = new Movie(_vm);
+		_currentMovie = new Movie(this);
 		_currentMovie->setArchive(mov);
 		debug(0, "Switching to movie '%s'", _currentMovie->getMacName().c_str());
 
