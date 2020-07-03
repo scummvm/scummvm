@@ -50,7 +50,8 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 private:
-	const Shape *_weaponShape;
+	Shape *_weaponShape;
+	Gump *_weaponGump;
 };
 
 } // End of namespace Ultima8

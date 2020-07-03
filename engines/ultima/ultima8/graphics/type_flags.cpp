@@ -241,14 +241,19 @@ void TypeFlags::loadWeaponInfo() {
 		// Crusader-specific fields:
 
 		if (config->get(k + "/ammo_type", val))
-			wi->_ammoType = static_cast<uint8>(val);
+			wi->_ammoType = static_cast<uint16>(val);
 		else
 			wi->_ammoType = 0;
 
 		if (config->get(k + "/sound", val))
-			wi->_sound = static_cast<uint8>(val);
+			wi->_sound = static_cast<uint16>(val);
 		else
 			wi->_sound = 0;
+
+		if (config->get(k + "/display_frame", val))
+			wi->_displayFrame = static_cast<uint16>(val);
+		else
+			wi->_displayFrame = 0;
 
 		assert(wi->_shape < _shapeInfo.size());
 		_shapeInfo[wi->_shape]._weaponInfo = wi;

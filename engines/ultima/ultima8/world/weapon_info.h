@@ -42,8 +42,9 @@ struct WeaponInfo {
 	int _treasureChance;
 
 	// Crusader-specific fields:
-	uint16 _sound;
-	uint16 _ammoType;
+	uint16 _sound;		//!< The sound this weapon makes when fired
+	uint16 _ammoType;	//!< The type of ammo it uses
+	uint16 _displayFrame;	//!< The frame to use in the inventory gump
 
 	enum DmgType {
 		DMG_NORMAL = 0x0001,
