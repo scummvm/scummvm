@@ -30,6 +30,7 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -88,13 +89,15 @@ void StartCrusaderProcess::run() {
 	//UCList uclist(2);
 
 	if (!_skipStart) {
+		// TODO:
+		// * Give avatar item 0x4d4 and item 0x598
 		// TODO: Find the first MISS1EGG egg like in U8 - should teleport in
-		// Game starts a teleport process to Egg 0x1e:
-		// Item 9115 (class TeleportEgg, shape 404, 1, (60656,59312,16) q:99, m:0, n:0, f: 0x2000, ef:0x3 shapeinfo f:1009, fam:8, et:0)
+		//Kernel::get_instance()->addProcess(new TeleportToEggProcess(1, 0x1e));
+
 		/*
-		LOOPSCRIPT(script, LS_AND(LS_SHAPE_EQUAL1(73), LS_Q_EQUAL(36)));
+		LOOPSCRIPT(script, LS_AND(LS_SHAPE_EQUAL1(0x90D), LS_Q_EQUAL(36)));
 		currentmap->areaSearch(&uclist, script, sizeof(script),
-		                       0, 256, false, 16188, 7500);
+							   0, 256, false, 16188, 7500);
 		if (uclist.getSize() < 1) {
 			perr << "Unable to find FIRST egg!" << Std::endl;
 			return;
@@ -109,9 +112,17 @@ void StartCrusaderProcess::run() {
 		egg->hatch();
 		*/
 
+		MainActor *avatar = getMainActor();
+		int mapnum = avatar->getMapNum();
+		Item *datalink = ItemFactory::createItem(0x4d4, 0, 0, 0, 0, mapnum, 0, true);
+		avatar->addItemCru(datalink, false);
+		Item *smiley = ItemFactory::createItem(0x598, 0, 0, 0, 0, mapnum, 0, true);
+		smiley->moveToContainer(avatar);
+
 		// TODO: How is this created in the game??
 		Egg *miss1egg = new Egg();
 		miss1egg->setShape(2317);
+		miss1egg->setMapNum(mapnum);
 		miss1egg->assignObjId();
 		miss1egg->callUsecodeEvent_hatch();
 	}
