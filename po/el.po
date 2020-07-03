@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-05-11 02:16+0000\n"
+"PO-Revision-Date: 2020-07-03 22:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-7\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.11\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Greek\n"
 
 #: gui/about.cpp:102
@@ -3916,6 +3916,11 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+"Σφάλμα: Το αρχείο '%s' δεν έχει εξαχθεί σωστά.\n"
+"Παρακαλώ ανατρέξτε στη wiki σελίδα\n"
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos για την "
+"περιγραφή της διαδικασίας εξαγωγής των αρχείων DTSPEECH.XA και *.STR από το "
+"δισκάκι του παιχνιδιού."
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4372,11 +4377,11 @@ msgstr "Στρίψε Δεξιά"
 
 #: engines/kyra/engine/eobcommon.cpp:396
 msgid "Open/Close Inventory"
-msgstr "Άνοιγμα/Κλείσιμο Αντικειμένων"
+msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
 
 #: engines/kyra/engine/eobcommon.cpp:402
 msgid "Switch Inventory/Character screen"
-msgstr "Εναλλαγή οθόνης Αντικειμένων/Χαρακτήρων"
+msgstr "Εναλλαγή οθόνης Υπαρχόντων/Χαρακτήρων"
 
 #: engines/kyra/engine/eobcommon.cpp:408
 msgid "Camp"
@@ -4564,7 +4569,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:104 engines/mads/detection.cpp:105
 msgid "Animated inventory items"
-msgstr "Κινούμενα αντικείμενα"
+msgstr "Κινούμενα αντικείμενα στα υπάρχοντα"
 
 #: engines/mads/detection.cpp:114 engines/mads/detection.cpp:115
 msgid "Animated game interface"
@@ -4894,15 +4899,15 @@ msgstr "Ενέργεια/Επιλογή"
 
 #: engines/pegasus/pegasus.cpp:2531
 msgid "Display/Hide Inventory Tray"
-msgstr "Εμφάνιση/Απόκρυψη Δίσκου Αντικειμένων"
+msgstr "Προβολή/Απόκρυψη Υπαρχόντων"
 
 #: engines/pegasus/pegasus.cpp:2538
 msgid "Display/Hide Biochip Tray"
-msgstr "Εμφάνιση/Απόκρυψη Δίσκου Biochip"
+msgstr "Προβολή/Απόκρυψη μπάρας Biochip"
 
 #: engines/pegasus/pegasus.cpp:2546
 msgid "Toggle Center Data Display"
-msgstr "Εναλλαγή Κεντρικής Παρουσίασης Δεδομένων"
+msgstr "Εναλλαγή Κεντρικής Προβολής Δεδομένων"
 
 #: engines/pegasus/pegasus.cpp:2553
 msgid "Display/Hide Info Screen"
@@ -5714,7 +5719,7 @@ msgstr "Περπάτησε"
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
 #: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
 msgid "Inventory"
-msgstr "Αντικείμενα"
+msgstr "Υπάρχοντα"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -5763,7 +5768,7 @@ msgstr "Άλλοι χειρισμοί του παιχνιδιού:"
 
 #: engines/scumm/help.cpp:260 engines/scumm/help.cpp:270
 msgid "Inventory:"
-msgstr "Αντικείμενα:"
+msgstr "Υπάρχοντα:"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:277
 msgid "Scroll list up"
@@ -5811,7 +5816,7 @@ msgstr "Τρίτο παιδί"
 
 #: engines/scumm/help.cpp:294
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Εναλλαγή Αντικειμένων/προβολή Πόντων IQ"
+msgstr "Εναλλαγή προβολής υπαρχόντων/Πόντων IQ"
 
 #: engines/scumm/help.cpp:295
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -6110,8 +6115,8 @@ msgstr "Βελτιωμένη λειτουργία"
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
-"Αφαιρεί κάποιες επαναλαμβανόμενες πράξεις, προσθέτει δυνατότητα επιλογής "
-"μεταξύ ρημάτων από το πληκτρολόγιο"
+"Αφαιρεί κάποιες επαναλαμβανόμενες ενέργειες, προσθέτει δυνατότητα εναλλαγής "
+"ρημάτων από το πληκτρολόγιο"
 
 #: engines/sword1/animation.cpp:532
 #, c-format
@@ -6318,6 +6323,8 @@ msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
 msgstr ""
+"Αυτό το παιχνίδι απαιτεί δυνατότητες 3D που βρίσκονται εκτός του πεδίου του "
+"ScummVM. Ως εκ τούτου, ενδέχεται να μην παίζει σωστά εξ'ολοκλήρου ή εν μέρει."
 
 #: engines/wintermute/wintermute.cpp:200
 msgid ""
@@ -6327,52 +6334,45 @@ msgstr ""
 "στόχων του ScummVM."
 
 #: engines/wintermute/keymapper_tables.h:57
-#, fuzzy
 msgid "Escape"
 msgstr "Πλήκτρο Escape"
 
 #: engines/wintermute/keymapper_tables.h:113
-#, fuzzy
 msgid "Look At"
-msgstr "Κοίταξε το"
+msgstr "Κοίταξε"
 
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:449
 #: engines/wintermute/keymapper_tables.h:1436
-#, fuzzy
 msgid "Walk forward"
-msgstr "Περπάτησε σε"
+msgstr "Περπάτα μπροστά"
 
 #: engines/wintermute/keymapper_tables.h:146
 #: engines/wintermute/keymapper_tables.h:454
-#, fuzzy
 msgid "Walk backward"
-msgstr "Περπάτησε σε"
+msgstr "Οπισθοχώρησε"
 
 #: engines/wintermute/keymapper_tables.h:164
 #: engines/wintermute/keymapper_tables.h:407
 #: engines/wintermute/keymapper_tables.h:1251
-#, fuzzy
 msgid "Show scene geometry"
-msgstr "Εμφάνιση των στοιχείων χειρισμού στην οθόνη"
+msgstr "Προβολή γεωμετρίας της σκηνής"
 
 #: engines/wintermute/keymapper_tables.h:173
 #: engines/wintermute/keymapper_tables.h:189
 #: engines/wintermute/keymapper_tables.h:588
 #: engines/wintermute/keymapper_tables.h:784
 #: engines/wintermute/keymapper_tables.h:912
-#, fuzzy
 msgid "Previous page"
-msgstr "~Π~ροηγούμενο"
+msgstr "Προηγούμενη σελίδα"
 
 #: engines/wintermute/keymapper_tables.h:180
 #: engines/wintermute/keymapper_tables.h:197
 #: engines/wintermute/keymapper_tables.h:595
 #: engines/wintermute/keymapper_tables.h:791
 #: engines/wintermute/keymapper_tables.h:917
-#, fuzzy
 msgid "Next page"
-msgstr "Επόμενο"
+msgstr "Επόμενη σελίδα"
 
 #: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:243
@@ -6389,9 +6389,8 @@ msgstr "Επόμενο"
 #: engines/wintermute/keymapper_tables.h:1172
 #: engines/wintermute/keymapper_tables.h:1221
 #: engines/wintermute/keymapper_tables.h:1423
-#, fuzzy
 msgid "Show hints"
-msgstr "Εμφάνιση κρυφών αρχείων"
+msgstr "Προβολή υποδείξεων"
 
 #: engines/wintermute/keymapper_tables.h:230
 #: engines/wintermute/keymapper_tables.h:381
@@ -6401,104 +6400,100 @@ msgstr "Εμφάνιση κρυφών αρχείων"
 #: engines/wintermute/keymapper_tables.h:1191
 #: engines/wintermute/keymapper_tables.h:1200
 #: engines/wintermute/keymapper_tables.h:1343
-#, fuzzy
 msgid "Show inventory"
-msgstr "Αντικείμενα"
+msgstr "Προβολή υπαρχόντων"
 
 #: engines/wintermute/keymapper_tables.h:250
 #: engines/wintermute/keymapper_tables.h:277
 #: engines/wintermute/keymapper_tables.h:1325
-#, fuzzy
 msgid "GUI variant A"
-msgstr "Άγνωστη εκδοχή παιχνιδιού"
+msgstr "Α' εκδοχή διεπαφής"
 
 #: engines/wintermute/keymapper_tables.h:257
 #: engines/wintermute/keymapper_tables.h:284
 #: engines/wintermute/keymapper_tables.h:1331
-#, fuzzy
 msgid "GUI variant B"
-msgstr "Άγνωστη εκδοχή παιχνιδιού"
+msgstr "Β' εκδοχή διεπαφής"
 
 #: engines/wintermute/keymapper_tables.h:291
 #: engines/wintermute/keymapper_tables.h:798
 msgid "Phone cancel button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί ακύρωσης"
 
 #: engines/wintermute/keymapper_tables.h:296
 #: engines/wintermute/keymapper_tables.h:803
 msgid "Phone up button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί για Πάνω"
 
 #: engines/wintermute/keymapper_tables.h:302
 #: engines/wintermute/keymapper_tables.h:809
 msgid "Phone down button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί για Κάτω"
 
 #: engines/wintermute/keymapper_tables.h:308
 #: engines/wintermute/keymapper_tables.h:815
 msgid "Phone 0 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 0"
 
 #: engines/wintermute/keymapper_tables.h:313
 #: engines/wintermute/keymapper_tables.h:820
 msgid "Phone 1 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 1"
 
 #: engines/wintermute/keymapper_tables.h:318
 #: engines/wintermute/keymapper_tables.h:825
 msgid "Phone 2 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 2"
 
 #: engines/wintermute/keymapper_tables.h:323
 #: engines/wintermute/keymapper_tables.h:830
 msgid "Phone 3 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 3"
 
 #: engines/wintermute/keymapper_tables.h:328
 #: engines/wintermute/keymapper_tables.h:835
 msgid "Phone 4 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 4"
 
 #: engines/wintermute/keymapper_tables.h:333
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Phone 5 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 5"
 
 #: engines/wintermute/keymapper_tables.h:338
 #: engines/wintermute/keymapper_tables.h:845
 msgid "Phone 6 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 6"
 
 #: engines/wintermute/keymapper_tables.h:343
 #: engines/wintermute/keymapper_tables.h:850
 msgid "Phone 7 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 7"
 
 #: engines/wintermute/keymapper_tables.h:348
 #: engines/wintermute/keymapper_tables.h:855
 msgid "Phone 8 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 8"
 
 #: engines/wintermute/keymapper_tables.h:353
 #: engines/wintermute/keymapper_tables.h:860
 msgid "Phone 9 button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί 9"
 
 #: engines/wintermute/keymapper_tables.h:358
 #: engines/wintermute/keymapper_tables.h:865
 msgid "Phone * button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί *"
 
 #: engines/wintermute/keymapper_tables.h:363
 #: engines/wintermute/keymapper_tables.h:870
 msgid "Phone # button"
-msgstr ""
+msgstr "Τηλέφωνο: Κουμπί #"
 
 #: engines/wintermute/keymapper_tables.h:387
 #: engines/wintermute/keymapper_tables.h:1005
-#, fuzzy
 msgid "Show help"
-msgstr "Προβολή όλων"
+msgstr "Προβολή βοήθειας"
 
 #: engines/wintermute/keymapper_tables.h:393
 #: engines/wintermute/keymapper_tables.h:553
@@ -6510,9 +6505,8 @@ msgstr "Προβολή όλων"
 #: engines/wintermute/keymapper_tables.h:1207
 #: engines/wintermute/keymapper_tables.h:1362
 #: engines/wintermute/keymapper_tables.h:1491
-#, fuzzy
 msgid "Scroll up"
-msgstr "Κύλιση λίστας πάνω"
+msgstr "Κύλιση πάνω"
 
 #: engines/wintermute/keymapper_tables.h:400
 #: engines/wintermute/keymapper_tables.h:560
@@ -6524,333 +6518,293 @@ msgstr "Κύλιση λίστας πάνω"
 #: engines/wintermute/keymapper_tables.h:1214
 #: engines/wintermute/keymapper_tables.h:1369
 #: engines/wintermute/keymapper_tables.h:1496
-#, fuzzy
 msgid "Scroll down"
-msgstr "Κύλιση λίστας κάτω"
+msgstr "Κύλιση κάτω"
 
 #: engines/wintermute/keymapper_tables.h:412
 msgid "Change shadow type"
-msgstr ""
+msgstr "Αλλαγή τύπου σκιάς"
 
 #: engines/wintermute/keymapper_tables.h:422
 #: engines/wintermute/keymapper_tables.h:509
-#, fuzzy
 msgid "Volume max"
-msgstr "Ένταση"
+msgstr "Μέγιστο έντασης"
 
 #: engines/wintermute/keymapper_tables.h:427
-#, fuzzy
 msgid "Show debug parser"
-msgstr "Εμφάνιση/Απόκρυψη Δρομέα"
+msgstr "Προβολή εργαλείου αποσφαλμάτωσης"
 
 #: engines/wintermute/keymapper_tables.h:434
 #: engines/wintermute/keymapper_tables.h:535
 #: engines/wintermute/keymapper_tables.h:1273
-#, fuzzy
 msgid "Debug print"
-msgstr "Εντοπιστής σφαλμάτων"
+msgstr "Εκτύπωση πληροφορίας αποσφαλμάτωσης"
 
 #: engines/wintermute/keymapper_tables.h:439
 #: engines/wintermute/keymapper_tables.h:1246
 msgid "Exit"
-msgstr ""
+msgstr "Έξοδος"
 
 #: engines/wintermute/keymapper_tables.h:444
-#, fuzzy
 msgid "Light helper window"
-msgstr "Προσαρμογή στο παράθυρο"
+msgstr "Ρύθμιση παραμέτρων φωτισμού"
 
 #: engines/wintermute/keymapper_tables.h:469
-#, fuzzy
 msgid "Run forward"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Τρέξε μπροστά"
 
 #: engines/wintermute/keymapper_tables.h:474
-#, fuzzy
 msgid "Run backward"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Τρέξε προς τα πίσω"
 
 #: engines/wintermute/keymapper_tables.h:479
-#, fuzzy
 msgid "Turn left fast"
-msgstr "Στρίψε Αριστερά"
+msgstr "Στρίψε γρήγορα αριστερά"
 
 #: engines/wintermute/keymapper_tables.h:484
-#, fuzzy
 msgid "Turn right fast"
-msgstr "Στρίψε Δεξιά"
+msgstr "Στρίψε γρήγορα δεξιά"
 
 #: engines/wintermute/keymapper_tables.h:489
-#, fuzzy
 msgid "Show blueprint"
-msgstr "Προβολή Γραμμής Αντικειμένων"
+msgstr "Προβολή προσχεδίου"
 
 #: engines/wintermute/keymapper_tables.h:516
-#, fuzzy
 msgid "Volume off"
-msgstr "Ένταση"
+msgstr "Σίγαση"
 
 #: engines/wintermute/keymapper_tables.h:523
 msgid "Change font size"
-msgstr ""
+msgstr "Αλλαγή μεγέθους γραμματοσειράς"
 
 #: engines/wintermute/keymapper_tables.h:602
-#, fuzzy
 msgid "Save game"
-msgstr "Αποθήκευση παιχνιδιού:"
+msgstr "Αποθήκευση παιχνιδιού"
 
 #: engines/wintermute/keymapper_tables.h:612
-#, fuzzy
 msgid "Quick save"
-msgstr "Λειτουργία Click"
+msgstr "Γρήγορη αποθήκευση"
 
 #: engines/wintermute/keymapper_tables.h:617
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "Ρυθμός περπατήματος: Αργός"
 
 #: engines/wintermute/keymapper_tables.h:622
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Ρυθμός περπατήματος: Μέτριος"
 
 #: engines/wintermute/keymapper_tables.h:627
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Ρυθμός περπατήματος: Γρήγορος"
 
 #: engines/wintermute/keymapper_tables.h:632
-#, fuzzy
 msgid "Quick load"
-msgstr "Λειτουργία Click"
+msgstr "Γρήγορη φόρτωση"
 
 #: engines/wintermute/keymapper_tables.h:637
 #: engines/wintermute/keymapper_tables.h:967
 #: engines/wintermute/keymapper_tables.h:1268
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "Ακύρωση λήψης"
+msgstr "Ακύρωση αναμονής"
 
 #: engines/wintermute/keymapper_tables.h:647
-#, fuzzy
 msgid "First page"
-msgstr "Κάνε Ξόρκι"
+msgstr "Πρώτη σελίδα"
 
 #: engines/wintermute/keymapper_tables.h:652
-#, fuzzy
 msgid "Last page"
-msgstr "Κάνε Ξόρκι"
+msgstr "Τελευταία σελίδα"
 
 #: engines/wintermute/keymapper_tables.h:659
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Ρυθμός περπατήματος: Απίστευτα Άπιαστα Γρήγορος"
 
 #: engines/wintermute/keymapper_tables.h:675
-#, fuzzy
 msgid "Show game credits"
-msgstr "Προβολή δρομέα ποντικιού"
+msgstr "Προβολή συντελεστών παιχνιδιού"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
-msgstr ""
+msgstr "Αναπαραγωγή επιλεγμένου κομματιού"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
-msgstr ""
+msgstr "Επιλογή επόμενου κομματιού"
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Παίξε τη νότα 1: Λα"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Παίξε τη νότα 2: Φα δίεση"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Παίξε τη νότα 3: Ρε δίεση"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Παίξε τη νότα 4: Ντο δίεση"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Παίξε τη νότα 5: Μι"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Παίξε τη νότα 6: Σολ δίεση"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Παίξε τη νότα 7: Σι"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Ικανότητα: Τηλεκίνηση"
 
 #: engines/wintermute/keymapper_tables.h:738
 msgid "Ability: Push"
-msgstr ""
+msgstr "Ικανότητα: Απώθηση"
 
 #: engines/wintermute/keymapper_tables.h:743
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Ικανότητα: Αστραπή"
 
 #: engines/wintermute/keymapper_tables.h:748
 msgid "Ability: Light"
-msgstr ""
+msgstr "Ικανότητα: Φως"
 
 #: engines/wintermute/keymapper_tables.h:753
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Ικανότητα: Άνεμος"
 
 #: engines/wintermute/keymapper_tables.h:758
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Ικανότητα: Ήχος"
 
 #: engines/wintermute/keymapper_tables.h:763
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Ικανότητα: Απόσταγμα"
 
 #: engines/wintermute/keymapper_tables.h:768
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Ικανότητα: Εξορκιστής"
 
 #: engines/wintermute/keymapper_tables.h:773
-#, fuzzy
 msgid "Skip minigame"
-msgstr "Παράλειψη γραμμής"
+msgstr "Παράλειψη μίνι παιχνιδιού"
 
 #: engines/wintermute/keymapper_tables.h:881
-#, fuzzy
 msgid "Show hints / Dance move"
-msgstr "Εμφάνιση κρυφών αρχείων"
+msgstr "Προβολή υποδείξεων / Χορευτική φιγούρα"
 
 #: engines/wintermute/keymapper_tables.h:888
-#, fuzzy
 msgid "Dance move up"
-msgstr "Ακύρωση λήψης"
+msgstr "Χορευτική κίνηση πάνω"
 
 #: engines/wintermute/keymapper_tables.h:894
-#, fuzzy
 msgid "Dance move down"
-msgstr "Ακύρωση λήψης"
+msgstr "Χορευτική κίνηση κάτω"
 
 #: engines/wintermute/keymapper_tables.h:900
-#, fuzzy
 msgid "Dance move left"
-msgstr "Προχώρησε Δεξιά"
+msgstr "Χορευτική κίνηση αριστερά"
 
 #: engines/wintermute/keymapper_tables.h:906
-#, fuzzy
 msgid "Dance move right"
-msgstr "Προχώρησε Δεξιά"
+msgstr "Χορευτική κίνηση δεξιά"
 
 #: engines/wintermute/keymapper_tables.h:936
-#, fuzzy
 msgid "Cancel input"
-msgstr "Ακύρωση"
+msgstr "Ακύρωση εντολής"
 
 #: engines/wintermute/keymapper_tables.h:1046
 msgid "Shift"
-msgstr ""
+msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1101
 #: engines/wintermute/keymapper_tables.h:1409
-#, fuzzy
 msgid "Next action"
-msgstr "~Π~ροηγούμενο"
+msgstr "Επόμενη ενέργεια"
 
 #: engines/wintermute/keymapper_tables.h:1109
 #: engines/wintermute/keymapper_tables.h:1417
-#, fuzzy
 msgid "Previous action"
-msgstr "~Π~ροηγούμενο"
+msgstr "Προηγούμενη ενέργεια"
 
 #: engines/wintermute/keymapper_tables.h:1128
 #: engines/wintermute/keymapper_tables.h:1263
-#, fuzzy
 msgid "Settings"
-msgstr "Άνοιγμα Ρυθμίσεων 3DS"
+msgstr "Ρυθμίσεις"
 
 #: engines/wintermute/keymapper_tables.h:1133
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "1η απάντηση διαλόγου"
 
 #: engines/wintermute/keymapper_tables.h:1138
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "2η απάντηση διαλόγου"
 
 #: engines/wintermute/keymapper_tables.h:1143
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "3η απάντηση διαλόγου"
 
 #: engines/wintermute/keymapper_tables.h:1148
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "4η απάντηση διαλόγου"
 
 #: engines/wintermute/keymapper_tables.h:1158
 msgid "Spin slower"
-msgstr ""
+msgstr "Πιο αργή περιστροφή"
 
 #: engines/wintermute/keymapper_tables.h:1165
 msgid "Spin faster"
-msgstr ""
+msgstr "Πιο γρήγορη περιστροφή"
 
 #: engines/wintermute/keymapper_tables.h:1278
-#, fuzzy
 msgid "Bezier window"
-msgstr "Προσαρμογή στο παράθυρο"
+msgstr "Παράθυρο Bezier"
 
 #: engines/wintermute/keymapper_tables.h:1294
-#, fuzzy
 msgid "Droid action"
-msgstr "~Π~ροηγούμενο"
+msgstr "Ενέργεια ρομπότ"
 
 #: engines/wintermute/keymapper_tables.h:1350
-#, fuzzy
 msgid "Show journal"
-msgstr "Προβολή όλων"
+msgstr "Προβολή ημερολογίου"
 
 #: engines/wintermute/keymapper_tables.h:1356
-#, fuzzy
 msgid "Music menu"
-msgstr "Ένταση μουσικής:"
+msgstr "Μενού μουσικής"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Rotate"
 msgstr "Περιστροφή"
 
 #: engines/wintermute/keymapper_tables.h:1401
-#, fuzzy
 msgid "Drop"
-msgstr "~Ρ~ίξιμο σελίδας"
+msgstr "Απόρριψη"
 
 #: engines/wintermute/keymapper_tables.h:1501
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:1506
 msgid "Key i"
-msgstr ""
+msgstr "Πλήκτρο i"
 
 #: engines/xeen/detection.cpp:96
 msgid "Show item costs in standard inventory mode"
-msgstr "Προβολή των τιμών στη λειτουργία απλής παρουσίασης αντικειμένων"
+msgstr "Εμφάνιση τιμών αντικειμένων στη βασική προβολή υπαρχόντων"
 
 #: engines/xeen/detection.cpp:97
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
-"Εμφανίζει το κόστος στην λειτουργία απλής παρουσίασης αντικειμένων, "
-"επιτρέποντας την σύγκριση της αξίας τους"
+"Εμφανίζει το κόστος των αντικειμένων στη βασική προβολή των υπαρχόντων του "
+"παίκτη, επιτρέποντας την σύγκριση της αξίας τους"
 
 #: engines/xeen/detection.cpp:106
 msgid "More durable armor"
@@ -6859,7 +6813,7 @@ msgstr "Πιο ανθεκτική πανοπλία"
 #: engines/xeen/detection.cpp:107
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
-"Πανοπλία που δεν θα σπάσει ώσπου ο χαρακτήρας να είναι σε -80HP, αντί για "
+"Η πανοπλία δεν θα σπάσει ώσπου να βρεθεί ο χαρακτήρας στα -80HP, αντί για "
 "μόλις στα -10HP"
 
 #: engines/zvision/detection_tables.h:60
