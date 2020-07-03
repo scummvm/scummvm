@@ -816,6 +816,9 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 		Graphics::macDrawPixel(x, y, color, p->macPlot);
 		tmpSrc = *dst;
 
+		if (p->ink == kInkTypeReverse)
+			tmpSrc = 0;
+
 		*dst = tmpDst;
 		src = &tmpSrc;
 	} else {

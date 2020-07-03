@@ -183,15 +183,11 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 
 	// Otherwise, we are drawing a cast type that does have a built-in surface, so
 	// blit from that.
-	// TODO: Work these ink types into inkDrawPixel.
+	// TODO: Work this ink type into inkDrawPixel.
 	if (sprite->_ink == kInkTypeMatte) {
 		drawMatteSprite(channel, srcRect, destRect, blitTo);
 		return;
-	} else if (sprite->_ink == kInkTypeReverse) {
-		drawReverseSprite(channel, srcRect, destRect, blitTo);
-		return;
 	}
-	// Otherwise, fall through to inkDrawPixel
 
 	pd.srcPoint.y = MAX(abs(srcRect.top - destRect.top), 0);
 	for (int i = 0; i < destRect.height(); i++, pd.srcPoint.y++) {
@@ -263,48 +259,6 @@ void Stage::drawMatteSprite(Channel *channel, Common::Rect &srcRect, Common::Rec
 	}
 
 	tmp.free();
-}
-
-void Stage::drawReverseSprite(Channel *channel, Common::Rect &srcRect, Common::Rect &destRect, Graphics::ManagedSurface *blitTo) {
-	uint8 skipColor = g_director->getPaletteColorCount() - 1;
-	for (int ii = 0; ii < destRect.height(); ii++) {
-		const byte *src = (const byte *)channel->getSurface()->getBasePtr(MAX(abs(srcRect.left - destRect.left), 0), MAX(abs(srcRect.top - destRect.top - ii), 0));
-		byte *dst = (byte *)blitTo->getBasePtr(destRect.left, destRect.top + ii);
-		byte srcColor = *src;
-
-		for (int j = 0; j < destRect.width(); j++, src++, dst++) {
-			if (!channel->_sprite->_cast || channel->_sprite->_cast->_type == kCastShape)
-				srcColor = 0x0;
-			else
-				srcColor = *src;
-			uint16 targetSprite = g_director->getCurrentMovie()->getScore()->getSpriteIDFromPos(Common::Point(destRect.left + j, destRect.top + ii));
-			if ((targetSprite != 0)) {
-				// TODO: This entire reverse colour attempt needs a lot more testing on
-				// a lot more colour depths.
-				if (srcColor != skipColor) {
-					if (!g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast ||  g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast->_type != kCastBitmap) {
-						if (*dst == 0 || *dst == 255) {
-							*dst = g_director->transformColor(*dst);
-						} else if (srcColor == 255 || srcColor == 0) {
-							*dst = g_director->transformColor(*dst - 40);
-						} else {
-							*dst = g_director->transformColor(*src - 40);
-						}
-					} else {
-						if (*dst == 0 && g_director->getVersion() == 3 &&
-								g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast->_type == kCastBitmap &&
-								((BitmapCastMember*)g_director->getCurrentMovie()->getScore()->_channels[targetSprite]->_sprite->_cast)->_bitsPerPixel > 1) {
-							*dst = g_director->transformColor(*src - 40);
-						} else {
-							*dst ^= g_director->transformColor(srcColor);
-						}
-					}
-				}
-			} else if (srcColor != skipColor) {
-				*dst = g_director->transformColor(srcColor);
-			}
-		}
-	}
 }
 
 } // end of namespace Director
