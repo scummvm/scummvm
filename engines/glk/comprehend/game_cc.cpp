@@ -47,6 +47,8 @@ void CrimsonCrownGame::setupDisk(uint diskNum) {
 	_locationGraphicFiles.push_back(Common::String::format("rb.ms%u", diskNum));
 	if (diskNum == 1)
 		_locationGraphicFiles.push_back("RC.ms1");
+
+	_itemGraphicFiles.clear();
 	_itemGraphicFiles.push_back(Common::String::format("oa.ms%u", diskNum));
 	_itemGraphicFiles.push_back(Common::String::format("ob.ms%u", diskNum));
 
@@ -88,7 +90,7 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 
 	case 3:
 		// Game over - failure
-		setupDisk(1);
+		_newDiskNum = 1;
 		game_restart();
 		break;
 
