@@ -611,6 +611,34 @@ void MainActor::addKeycard(int bitno) {
 	_keycards |= (1 << bitno);
 }
 
+static uint16 getIdOfNextItemInList(const Std::vector<Item *> &items, uint16 current) {
+	const int n = items.size();
+	if (n <= 1)
+		return current;
+
+	int i;
+	for (i = 0; i < n; i++) {
+		if (items[i]->getObjId() == current) {
+			i++;
+			break;
+		}
+	}
+	return items[i % n]->getObjId();
+}
+
+void MainActor::nextWeapon() {
+	Std::vector<Item *> weapons;
+	getItemsWithShapeFamily(weapons, ShapeInfo::SF_CRUWEAPON, true);
+	_activeWeapon = getIdOfNextItemInList(weapons, _activeWeapon);
+}
+
+void MainActor::nextInvItem() {
+	Std::vector<Item *> items;
+	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUINVITEM, true);
+	_activeInvItem = getIdOfNextItemInList(items, _activeInvItem);
+}
+
+
 void MainActor::saveData(Common::WriteStream *ws) {
 	Actor::saveData(ws);
 	uint8 jt = _justTeleported ? 1 : 0;

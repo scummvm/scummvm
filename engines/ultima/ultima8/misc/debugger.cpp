@@ -36,6 +36,7 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/misc/util.h"
@@ -139,6 +140,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::useRecall", WRAP_METHOD(Debugger, cmdUseRecall));
 	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
 	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
+	registerCmd("MainActor::nextWeapon", WRAP_METHOD(Debugger, cmdNextWeapon));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
 
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
@@ -1083,9 +1085,23 @@ bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 		return false;
 	}
 	MainActor *av = getMainActor();
-	Item *backpack = getItem(av->getEquip(7));
-	if (backpack)
-		backpack->callUsecodeEvent_use();
+	if (GAME_IS_U8) {
+		Item *backpack = getItem(av->getEquip(7));
+		if (backpack)
+			backpack->callUsecodeEvent_use();
+	} else {
+		av->nextInvItem();
+	}
+	return false;
+}
+
+bool Debugger::cmdNextWeapon(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't change weapon: avatarInStasis\n");
+		return false;
+	}
+	MainActor *av = getMainActor();
+	av->nextWeapon();
 	return false;
 }
 

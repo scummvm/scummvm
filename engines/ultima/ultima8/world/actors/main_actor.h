@@ -126,6 +126,12 @@ public:
 		return _activeInvItem;
 	}
 
+	//!< Swap to the next active weapon (in Crusader)
+	void nextWeapon();
+
+	//!< Swap to the next inventory item (in Crusader)
+	void nextInvItem();
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
