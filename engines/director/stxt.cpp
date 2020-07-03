@@ -60,7 +60,7 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 		}
 		text += ch;
 	}
-	debugC(3, kDebugText, "Stxt init: unk1: %d strLen: %d dataLen: %d textlen: %u", offset, strLen, dataLen, text.size());
+	debugC(3, kDebugText, "Stxt init: offset: %d strLen: %d dataLen: %d textlen: %u", offset, strLen, dataLen, text.size());
 	if (strLen < 200)
 		debugC(3, kDebugText, "text: '%s'", Common::toPrintable(text).c_str());
 
