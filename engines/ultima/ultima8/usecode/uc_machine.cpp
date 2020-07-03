@@ -1743,7 +1743,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					                                   ui16b, recurse);
 				} else {
 					// return error or return empty list?
-					perr << "Warning: invalid item passed to area search"
+					perr << "Warning: invalid item " << ui16a << " passed to area search"
 					     << Std::endl;
 				}
 				break;
@@ -1771,7 +1771,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					                           scriptsize, recurse);
 				} else {
 					// return error or return empty list?
-					perr << "Warning: invalid container passed to "
+					perr << "Warning: invalid container "<< ui16b << " passed to "
 					     << "container search" << Std::endl;
 				}
 				break;
