@@ -131,6 +131,11 @@ struct {
 	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
 };
 
+void Stage::exitTransition(Graphics::ManagedSurface *nextFrame, Common::Rect clipRect) {
+	_surface.blitFrom(*nextFrame, clipRect, Common::Point(clipRect.left, clipRect.top));
+	g_system->copyRectToScreen(_surface.getBasePtr(clipRect.left, clipRect.top), _surface.pitch, clipRect.left, clipRect.top, clipRect.width(), clipRect.height());
+}
+
 void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, uint frame) {
 	// Play a transition and return the number of subframes rendered
 	TransParams t;
@@ -504,8 +509,10 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		_surface.blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
 		g_system->delayMillis(t.stepDuration);
-		if (processQuitEvent(true))
+		if (processQuitEvent(true)) {
+			exitTransition(nextFrame, clipRect);
 			break;
+		}
 
 		if (fullredraw) {
 			g_system->copyRectToScreen(_surface.getBasePtr(clipRect.left, clipRect.top), _surface.pitch, clipRect.left, clipRect.top, w, h);
@@ -702,8 +709,10 @@ void Stage::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Mana
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
-		if (processQuitEvent(true))
+		if (processQuitEvent(true)) {
+			exitTransition(nextFrame, clipRect);
 			break;
+		}
 
 		g_system->delayMillis(t.stepDuration);
 	}
@@ -804,8 +813,10 @@ void Stage::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphi
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
-		if (processQuitEvent(true))
+		if (processQuitEvent(true)) {
+			exitTransition(nextFrame, clipRect);
 			break;
+		}
 
 		g_system->delayMillis(t.stepDuration);
 	}
@@ -978,8 +989,11 @@ void Stage::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Man
 		g_lingo->executePerFrameHook(t.frame, i);
 
 		g_system->delayMillis(t.stepDuration);
-		if (processQuitEvent(true))
+
+		if (processQuitEvent(true)) {
+			exitTransition(nextFrame, clipRect);
 			break;
+		}
 
 	}
 }
@@ -1025,8 +1039,11 @@ void Stage::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedS
 		g_lingo->executePerFrameHook(t.frame, i);
 
 		g_system->delayMillis(t.stepDuration);
-		if (processQuitEvent(true))
+
+		if (processQuitEvent(true)) {
+			exitTransition(nextFrame, clipRect);
 			break;
+		}
 	}
 }
 
