@@ -102,8 +102,6 @@ public:
 private:
 	uint _stageColor;
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
-	void drawReverseSprite(Channel *channel, Common::Rect &srcRect, Common::Rect &destRect, Graphics::ManagedSurface *blitTo);
-	void drawMatteSprite(Channel *channel, Common::Rect &srcRect, Common::Rect &destRect, Graphics::ManagedSurface *blitTo);
 
 	DirectorEngine *_vm;
 	Archive *_mainArchive;
