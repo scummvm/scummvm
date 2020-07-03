@@ -151,14 +151,41 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 	// If a transition is being played, render the frame after the transition.
 	Graphics::ManagedSurface *nextFrame = new Graphics::ManagedSurface(_surface.w, _surface.h);
-	g_director->getCurrentMovie()->getScore()->renderSprites(t.frame, kRenderForceUpdate);
-	render(true, nextFrame);
 
-	if (t.area)
-		warning("STUB: Transition over changed area transition");
+	Common::Rect clipRect;
+	if (t.area) {
+		// Changed area transition
+		g_director->getCurrentMovie()->getScore()->renderSprites(t.frame);
 
-	Common::Rect clipRect(_dims);
-	clipRect.moveTo(0, 0);
+		if (_dirtyRects.size() == 0)
+			return;
+
+		clipRect = *_dirtyRects.begin();
+
+		for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i)
+			clipRect.extend(*i);
+
+		// Ensure we redraw any other sprites intersecting the non-clip area.
+		_dirtyRects.clear();
+
+		// Some transitions depend upon an even clipRect size
+		if (clipRect.width() % 2 == 1)
+			clipRect.right += 1;
+
+		if (clipRect.height() % 2 == 1)
+			clipRect.bottom += 1;
+
+		_dirtyRects.push_back(clipRect);
+
+		render(false, nextFrame);
+	} else {
+		// Full stage transition
+		g_director->getCurrentMovie()->getScore()->renderSprites(t.frame, kRenderForceUpdate);
+		render(true, nextFrame);
+
+		clipRect = _dims;
+		clipRect.moveTo(0, 0);
+	}
 
 	Common::Rect rfrom, rto;
 
@@ -191,7 +218,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		blitFrom = nextFrame;
 		break;
 
-	case kTransAlgoEdgesIn:
+ 	case kTransAlgoEdgesIn:
 	case kTransAlgoReveal:
 	case kTransAlgoPush:
 		blitFrom = currentFrame;
@@ -199,7 +226,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		break;
 
 	default:
-		blitFrom = currentFrame;
+		blitFrom = nextFrame;
 		break;
 	}
 
@@ -212,8 +239,8 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		rfrom = clipRect;
 
 		if (transProps[t.type].algo == kTransAlgoReveal ||
-				transProps[t.type].algo == kTransAlgoEdgesIn) {
-			_surface.copyFrom(*nextFrame);
+ 				transProps[t.type].algo == kTransAlgoEdgesIn) {
+			_surface.copyRectToSurface(*nextFrame, clipRect.left, clipRect.top, clipRect);
 		}
 
 		switch (t.type) {
@@ -224,7 +251,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 		case kTransWipeLeft:								// 2
 			rto.setWidth(t.xStepSize * i);
-			rto.moveTo(w - t.xStepSize * i, 0);
+			rto.translate(w - t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
@@ -235,33 +262,33 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 		case kTransWipeUp:									// 4
 			rto.setHeight(t.yStepSize * i);
-			rto.moveTo(0, h - t.yStepSize * i);
+			rto.translate(0, h - t.yStepSize * i);
 			rfrom = rto;
 			break;
 
 		case kTransCenterOutHorizontal:						// 5
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
-			rto.moveTo(w / 2 - t.xpos, 0);
+			rto.translate(w / 2 - t.xpos, 0);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInHorizontal:						// 6
 			rto.setWidth(w - t.xStepSize * i * 2);
-			rto.moveTo(t.xStepSize * i, 0);
+			rto.translate(t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
 		case kTransCenterOutVertical:						// 7
 			t.ypos += t.yStepSize;
 			rto.setHeight(t.ypos * 2);
-			rto.moveTo(0, h / 2 - t.ypos);
+			rto.translate(0, h / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
 		case kTransEdgesInVertical:							// 8
 			rto.setHeight(h - t.yStepSize * i * 2);
-			rto.moveTo(0, t.yStepSize * i);
+			rto.translate(0, t.yStepSize * i);
 			rfrom = rto;
 			break;
 
@@ -270,7 +297,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 			rto.setHeight(t.ypos * 2);
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
-			rto.moveTo(w / 2 - t.xpos, h / 2 - t.ypos);
+			rto.translate(w / 2 - t.xpos, h / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
@@ -282,75 +309,97 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 			break;
 
 		case kTransPushLeft:								// 11
-			rto.moveTo(w - t.xStepSize * i, 0);
+			rto.translate(w - t.xStepSize * i, 0);
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
-			rfrom.moveTo(t.xStepSize * i, 0);
+			rfrom.translate(t.xStepSize * i, 0);
 			rfrom.setWidth(w - t.xStepSize * i);
-			rto.moveTo(0, 0);
+			rto.moveTo(clipRect.left, clipRect.top);
 			break;
 
 		case kTransPushRight:								// 12
-			rfrom.moveTo(w - t.xStepSize * i, 0);
+			rfrom.translate(w - t.xStepSize * i, 0);
 			rfrom.setWidth(t.xStepSize * i);
 			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setWidth(w - t.xStepSize * i);
-			rto.moveTo(t.xStepSize * i, 0);
-			rfrom.moveTo(0, 0);
+			rto.translate(t.xStepSize * i, 0);
+			rfrom.moveTo(clipRect.left, clipRect.top);
 			rfrom.setWidth(w - t.xStepSize * i);
 			break;
 
 		case kTransPushDown:								// 13
-			rfrom.moveTo(0, h - t.yStepSize * i);
+			rfrom.translate(0, h - t.yStepSize * i);
 			rfrom.setHeight(t.yStepSize * i);
 			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setHeight(h - t.yStepSize * i);
-			rto.moveTo(0, t.yStepSize * i);
-			rfrom.moveTo(0, 0);
+			rto.translate(0, t.yStepSize * i);
+			rfrom.moveTo(clipRect.left, clipRect.top);
 			rfrom.setHeight(h - t.yStepSize * i);
 			break;
 
 		case kTransPushUp:									// 14
-			rto.moveTo(0, h - t.yStepSize * i);
+			rto.translate(0, h - t.yStepSize * i);
 			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
-			rfrom.moveTo(0, t.yStepSize * i);
+			rfrom.translate(0, t.yStepSize * i);
 			rfrom.setHeight(h - t.yStepSize * i);
-			rto.moveTo(0, 0);
+			rto.moveTo(clipRect.left, clipRect.top);
 			break;
 
 		case kTransRevealUp:								// 15
-			rto.moveTo(0, -t.yStepSize * i);
+			rto.translate(0, -t.yStepSize * i);
+			rfrom.top += h - clipRect.findIntersectingRect(rto).height();
+			rto.clip(clipRect);
 			break;
 
 		case kTransRevealUpRight:							// 16
-			rto.moveTo(t.xStepSize * i, -t.yStepSize * i);
+			rto.translate(t.xStepSize * i, -t.yStepSize * i);
+			rfrom.top += h - clipRect.findIntersectingRect(rto).height();
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransRevealRight:								// 17
-			rto.moveTo(t.xStepSize * i, 0);
+			rto.translate(t.xStepSize * i, 0);
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransRevealDownRight:							// 18
-			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
+			rto.translate(t.xStepSize * i, t.yStepSize * i);
+			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransRevealDown:								// 19
-			rto.moveTo(0, t.yStepSize * i);
+			rto.translate(0, t.yStepSize * i);
+			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
+			rto.clip(clipRect);
 			break;
 
 		case kTransRevealDownLeft:							// 20
-			rto.moveTo(-t.xStepSize * i, t.yStepSize * i);
+			rto.translate(-t.xStepSize * i, t.yStepSize * i);
+			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
+			rfrom.left += w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransRevealLeft:								// 21
-			rto.moveTo(-t.xStepSize * i, 0);
+			rto.translate(-t.xStepSize * i, 0);
+			rfrom.left += w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransRevealUpLeft:							// 22
 			rto.moveTo(-t.xStepSize * i, -t.yStepSize * i);
+			rfrom.top += h - clipRect.findIntersectingRect(rto).height();
+			rfrom.left += w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransDissolvePixelsFast:						// 23
@@ -364,35 +413,55 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 		case kTransCoverDown:								// 29
 			rto.setHeight(h);
-			rto.moveTo(0, t.yStepSize * i - h);
+			rto.translate(0, t.yStepSize * i - h);
+			rfrom.top += h - clipRect.findIntersectingRect(rto).height();
+			rto.clip(clipRect);
 			break;
 
 		case kTransCoverDownLeft:							// 30
-			rto.moveTo(w - t.xStepSize * i, t.yStepSize * i - h);
+			rto.translate(w - t.xStepSize * i, t.yStepSize * i - h);
+			rfrom.top += h - clipRect.findIntersectingRect(rto).height();
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransCoverDownRight:							// 31
-			rto.moveTo(t.xStepSize * i - w, t.yStepSize * i - h);
+			rto.translate(t.xStepSize * i - w, t.yStepSize * i - h);
+			rfrom.top += h - clipRect.findIntersectingRect(rto).height();
+			rfrom.left += w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransCoverLeft:								// 32
-			rto.moveTo(w - t.xStepSize * i, 0);
+			rto.translate(w - t.xStepSize * i, 0);
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransCoverRight:								// 33
-			rto.moveTo(t.xStepSize * i - w, 0);
+			rto.translate(t.xStepSize * i - w, 0);
+			rfrom.left += w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransCoverUp:									// 34
-			rto.moveTo(0, h - t.yStepSize * i);
+			rto.translate(0, h - t.yStepSize * i);
+			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
+			rto.clip(clipRect);
 			break;
 
 		case kTransCoverUpLeft:								// 35
-			rto.moveTo(w - t.xStepSize * i, h - t.yStepSize * i);
+			rto.translate(w - t.xStepSize * i, h - t.yStepSize * i);
+			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransCoverUpRight:							// 36
-			rto.moveTo(t.xStepSize * i - w, h - t.yStepSize * i);
+			rto.translate(t.xStepSize * i - w, h - t.yStepSize * i);
+			rfrom.bottom -= h - clipRect.findIntersectingRect(rto).height();
+			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
+			rto.clip(clipRect);
 			break;
 
 		case kTransVenetianBlind:							// 37
@@ -439,7 +508,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 			break;
 
 		if (fullredraw) {
-			g_system->copyRectToScreen(_surface.getPixels(), _surface.pitch, 0, 0, w, h);
+			g_system->copyRectToScreen(_surface.getBasePtr(clipRect.left, clipRect.top), _surface.pitch, clipRect.left, clipRect.top, w, h);
 		} else {
 			rto.clip(clipRect);
 
@@ -541,8 +610,8 @@ void Stage::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Mana
 		break;
 
 	case kTransDissolveBoxySquares:
-		t.xStepSize = w * t.chunkSize / h;
-		t.yStepSize = h * t.chunkSize / w;
+		t.xStepSize = MAX(w * t.chunkSize / h, (uint)1);
+		t.yStepSize = MAX(h * t.chunkSize / w, (uint)1);
 
 		w = (w + t.xStepSize - 1) / t.xStepSize;
 		h = (h + t.yStepSize - 1) / t.yStepSize;
@@ -597,18 +666,25 @@ void Stage::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Mana
 					y = y * t.yStepSize;
 
 					if (x < realw && y < realh) {
+						x += clipRect.left;
+						y += clipRect.top;
 						r.moveTo(x, y);
 						r.clip(clipRect);
-						_surface.copyRectToSurface(*nextFrame, x, y, r);
+
+						if (!r.isEmpty())
+							_surface.copyRectToSurface(*nextFrame, x, y, r);
 					}
 				} else {
 					mask = pixmask[x % -t.xStepSize];
 					x = x / -t.xStepSize;
 
-					byte *color1 = (byte *)_surface.getBasePtr(x, y);
-					byte *color2 = (byte *)nextFrame->getBasePtr(x, y);
+					x += clipRect.left;
+					y += clipRect.top;
 
-					*color1 = ((*color1 & ~mask) | (*color2 & mask)) & 0xff;
+					byte *dst = (byte *)_surface.getBasePtr(x, y);
+					byte *src = (byte *)nextFrame->getBasePtr(x, y);
+
+					*dst = ((*dst & ~mask) | (*src & mask)) & 0xff;
 				}
 			}
 
@@ -621,7 +697,7 @@ void Stage::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Mana
 			}
 		} while (rnd != seed);
 
-		g_system->copyRectToScreen(_surface.getPixels(), _surface.pitch, 0, 0, realw, realh);
+		g_system->copyRectToScreen(_surface.getBasePtr(clipRect.left, clipRect.top), _surface.pitch, clipRect.left, clipRect.top, clipRect.width(), clipRect.height());
 		g_system->updateScreen();
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
@@ -701,21 +777,18 @@ static byte dissolvePatterns[][8] = {
 };
 
 void Stage::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
-	uint w = clipRect.width();
-	uint h = clipRect.height();
-
 	t.steps = 64;
 	t.stepDuration = t.duration / t.steps;
 
 	for (int i = 0; i < t.steps; i++) {
-		for (uint y = 0; y < h; y++) {
+		for (int y = clipRect.top; y < clipRect.bottom; y++) {
 			byte pat = dissolvePatterns[i][y % 8];
-			byte *dst = (byte *)_surface.getBasePtr(0, y);
-			byte *src = (byte *)nextFrame->getBasePtr(0, y);
+			byte *dst = (byte *)_surface.getBasePtr(clipRect.left, y);
+			byte *src = (byte *)nextFrame->getBasePtr(clipRect.left, y);
 
-			for (uint x = 0; x < w;) {
+			for (int x = clipRect.left; x < clipRect.right;) {
 				byte mask = 0x80;
-				for (int b = 0; b < 8 && x < w; b++, x++) {
+				for (int b = 0; b < 8 && x < clipRect.right; b++, x++) {
 					if (pat & mask)
 						*dst = *src;
 
@@ -726,7 +799,7 @@ void Stage::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graphi
 			}
 		}
 
-		g_system->copyRectToScreen(_surface.getPixels(), _surface.pitch, 0, 0, w, h);
+		g_system->copyRectToScreen(_surface.getBasePtr(clipRect.left, clipRect.top), _surface.pitch, clipRect.left, clipRect.top, clipRect.width(), clipRect.height());
 		g_system->updateScreen();
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
@@ -890,6 +963,7 @@ void Stage::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Man
 
 		for (uint r = 0; r < rects.size(); r++) {
 			rto = rects[r];
+			rto.translate(clipRect.left, clipRect.top);
 			rto.clip(clipRect);
 
 			if (rto.height() > 0 && rto.width() > 0) {
