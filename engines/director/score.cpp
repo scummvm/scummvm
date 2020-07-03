@@ -196,6 +196,7 @@ MacShape *Channel::getShape() {
 	shape->foreColor = _sprite->_foreColor;
 	shape->backColor = _sprite->_backColor;
 	shape->lineSize = _sprite->_thickness & 0x3;
+	shape->pattern = _sprite->getPattern();
 
 	if (g_director->getVersion() >= 3 && shape->spriteType == kCastMemberSprite) {
 		if (!_sprite->_cast) {

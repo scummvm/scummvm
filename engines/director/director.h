@@ -104,7 +104,7 @@ struct DirectorPlotData {
 	Graphics::ManagedSurface *src;
 	Graphics::ManagedSurface *dst;
 	Graphics::MacPlotData *macPlot;
-	Common::Rect destRect;
+	Common::Rect &destRect;
 	Common::Point srcPoint;
 
 	InkType ink;
@@ -113,8 +113,8 @@ struct DirectorPlotData {
 
 	Graphics::MacWindowManager *_wm;
 
-	DirectorPlotData(Graphics::MacWindowManager *wm, Graphics::ManagedSurface *s, Graphics::ManagedSurface *d, InkType i, uint b, uint n) :
-		src(s), dst(d), ink(i), backColor(b), macPlot(nullptr), numColors(n), _wm(wm) {
+	DirectorPlotData(Graphics::MacWindowManager *wm, Graphics::ManagedSurface *s, Graphics::ManagedSurface *ds, Common::Rect &dr, InkType i, uint b, uint n) :
+		src(s), dst(ds), ink(i), backColor(b), destRect(dr), macPlot(nullptr), numColors(n), _wm(wm) {
 	}
 };
 

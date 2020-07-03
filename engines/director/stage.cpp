@@ -137,79 +137,77 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 	Common::Rect srcRect = channel->getBbox();
 	destRect.clip(srcRect);
 
-	Sprite *sprite = channel->_sprite;
 	MacShape *ms = channel->getShape();
-	DirectorPlotData pd(_wm, channel->getSurface(), blitTo, sprite->_ink, sprite->_backColor, g_director->getPaletteColorCount());
-	pd.destRect = destRect;
+	DirectorPlotData pd(_wm, channel->getSurface(), blitTo, destRect, channel->_sprite->_ink, channel->_sprite->_backColor, g_director->getPaletteColorCount());
 
-	// Shapes do not have surfaces of their own, so draw the shape directly upon
-	// stage surface.
 	if (ms) {
-		if (ms->foreColor == ms->backColor) {
-			delete ms;
-			return;
-		}
+		inkBlitShape(&pd, srcRect, ms);
+	} else {
+		inkBlitSurface(&pd, srcRect, channel->getMask());
+	}
+}
 
-		Common::Rect fillRect((int)srcRect.width(), (int)srcRect.height());
-		fillRect.moveTo(srcRect.left, srcRect.top);
-		Graphics::MacPlotData plotFill(blitTo, nullptr, &g_director->getPatterns(), sprite->getPattern(), srcRect.left, srcRect.top, 1, ms->backColor);
-
-		Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
-		strokeRect.moveTo(srcRect.left, srcRect.top);
-		Graphics::MacPlotData plotStroke(blitTo, nullptr, &g_director->getPatterns(), 1, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
-
-		switch (ms->spriteType) {
-		case kRectangleSprite:
-			pd.macPlot = &plotFill;
-			Graphics::drawFilledRect(fillRect, ms->foreColor, inkDrawPixel, &pd);
-			// fall through
-		case kOutlinedRectangleSprite:
-			pd.macPlot = &plotStroke;
-			Graphics::drawRect(strokeRect, ms->foreColor, inkDrawPixel, &pd);
-			break;
-		case kRoundedRectangleSprite:
-			pd.macPlot = &plotFill;
-			Graphics::drawRoundRect(fillRect, 12, ms->foreColor, true, inkDrawPixel, &pd);
-			// fall through
-		case kOutlinedRoundedRectangleSprite:
-			pd.macPlot = &plotStroke;
-			Graphics::drawRoundRect(strokeRect, 12, ms->foreColor, false, inkDrawPixel, &pd);
-			break;
-		case kOvalSprite:
-			pd.macPlot = &plotFill;
-			Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, ms->foreColor, true, inkDrawPixel, &plotFill);
-			// fall through
-		case kOutlinedOvalSprite:
-			pd.macPlot = &plotStroke;
-			Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, inkDrawPixel, &plotStroke);
-			break;
-		case kLineTopBottomSprite:
-			pd.macPlot = &plotStroke;
-			Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, &plotStroke);
-			break;
-		case kLineBottomTopSprite:
-			pd.macPlot = &plotStroke;
-			Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, &plotStroke);
-			break;
-		default:
-			warning("Stage::inkBlitFrom: Expected shape type but got type %d", ms->spriteType);
-		}
-
-		delete ms;
+void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect, MacShape *ms) {
+	if (ms->foreColor == ms->backColor)
 		return;
+
+	Common::Rect fillRect((int)srcRect.width(), (int)srcRect.height());
+	fillRect.moveTo(srcRect.left, srcRect.top);
+	Graphics::MacPlotData plotFill(pd->dst, nullptr, &g_director->getPatterns(), ms->pattern, srcRect.left, srcRect.top, 1, ms->backColor);
+
+	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
+	strokeRect.moveTo(srcRect.left, srcRect.top);
+	Graphics::MacPlotData plotStroke(pd->dst, nullptr, &g_director->getPatterns(), 1, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
+
+	switch (ms->spriteType) {
+	case kRectangleSprite:
+		pd->macPlot = &plotFill;
+		Graphics::drawFilledRect(fillRect, ms->foreColor, inkDrawPixel, pd);
+		// fall through
+	case kOutlinedRectangleSprite:
+		pd->macPlot = &plotStroke;
+		Graphics::drawRect(strokeRect, ms->foreColor, inkDrawPixel, pd);
+		break;
+	case kRoundedRectangleSprite:
+		pd->macPlot = &plotFill;
+		Graphics::drawRoundRect(fillRect, 12, ms->foreColor, true, inkDrawPixel, pd);
+		// fall through
+	case kOutlinedRoundedRectangleSprite:
+		pd->macPlot = &plotStroke;
+		Graphics::drawRoundRect(strokeRect, 12, ms->foreColor, false, inkDrawPixel, pd);
+		break;
+	case kOvalSprite:
+		pd->macPlot = &plotFill;
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, ms->foreColor, true, inkDrawPixel, pd);
+		// fall through
+	case kOutlinedOvalSprite:
+		pd->macPlot = &plotStroke;
+		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, inkDrawPixel, pd);
+		break;
+	case kLineTopBottomSprite:
+		pd->macPlot = &plotStroke;
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, pd);
+		break;
+	case kLineBottomTopSprite:
+		pd->macPlot = &plotStroke;
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, pd);
+		break;
+	default:
+		warning("Stage::inkBlitFrom: Expected shape type but got type %d", ms->spriteType);
 	}
 
-	// First, get any masks that might be needed.
-	const Graphics::Surface *mask = channel->getMask();
+	delete ms;
+}
 
-	pd.srcPoint.y = MAX(abs(srcRect.top - destRect.top), 0);
-	for (int i = 0; i < destRect.height(); i++, pd.srcPoint.y++) {
-		pd.srcPoint.x = MAX(abs(srcRect.left - destRect.left), 0);
-		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd.srcPoint.x, pd.srcPoint.y) : nullptr;
+void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {
+	pd->srcPoint.y = MAX(abs(srcRect.top - pd->destRect.top), 0);
+	for (int i = 0; i < pd->destRect.height(); i++, pd->srcPoint.y++) {
+		pd->srcPoint.x = MAX(abs(srcRect.left - pd->destRect.left), 0);
+		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
-		for (int j = 0; j < destRect.width(); j++, pd.srcPoint.x++)
-			if (!mask || (msk && (sprite->_ink == kInkTypeMatte ? !(*msk++) : *msk++)))
-				inkDrawPixel(destRect.left + j, destRect.top + i, 0, &pd);
+		for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++)
+			if (!mask || (msk && (pd->ink == kInkTypeMatte ? !(*msk++) : *msk++)))
+				inkDrawPixel(pd->destRect.left + j, pd->destRect.top + i, 0, pd);
 	}
 }
 

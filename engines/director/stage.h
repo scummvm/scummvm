@@ -38,6 +38,7 @@ class MacWindowManager;
 namespace Director {
 
 struct Channel;
+struct MacShape;
 struct TransParams;
 
 class Stage : public Graphics::MacWindow {
@@ -100,7 +101,6 @@ public:
 
 private:
 	uint _stageColor;
-	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 
 	DirectorEngine *_vm;
 	Archive *_mainArchive;
@@ -108,6 +108,11 @@ private:
 	Movie *_currentMovie;
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;
+
+private:
+	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
+	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect, MacShape *ms);
+	void inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);
 };
 
 } // end of namespace Director

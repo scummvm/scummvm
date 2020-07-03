@@ -108,6 +108,7 @@ struct MacShape {
 	byte foreColor;
 	byte backColor;
 	int lineSize;
+	uint pattern;
 };
 
 struct Channel {
