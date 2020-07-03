@@ -29,7 +29,7 @@
 
 namespace Graphics {
 struct Surface;
-struct FloodFill;
+class FloodFill;
 class MacText;
 class MacWindowManager;
 class MacButton;
