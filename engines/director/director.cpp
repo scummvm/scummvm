@@ -41,8 +41,10 @@
 
 namespace Director {
 
-const uint32 wmMode = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
+const uint32 wmModeDesktop = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
+const uint32 wmModeFullscreen = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
 	| Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen;
+uint32 wmMode = 0;
 
 DirectorEngine *g_director;
 
@@ -63,6 +65,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
 	DebugMan.addDebugChannel(kDebugPreprocess, "preprocess", "Lingo preprocessing");
 	DebugMan.addDebugChannel(kDebugScreenshot, "screenshot", "screenshot each frame");
+	DebugMan.addDebugChannel(kDebugDesktop, "desktop", "Show the Classic Mac desktop");
 
 	g_director = this;
 
@@ -128,6 +131,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _soundManager;
 	delete _lingo;
 	delete _wm;
+	delete _surface;
 }
 
 Common::Error DirectorEngine::run() {
@@ -142,13 +146,19 @@ Common::Error DirectorEngine::run() {
 	_macBinary = nullptr;
 	_soundManager = nullptr;
 
+	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
 	_currentStage = new Stage(_wm->getNextId(), false, false, false, _wm);
-	_currentStage->disableBorder();
+
+	if (!debugChannelSet(-1, kDebugDesktop))
+		_currentStage->disableBorder();
+
+	_surface = new Graphics::ManagedSurface;
+	_wm->setScreen(_surface);
 	_wm->addWindowInitialized(_currentStage);
-	_wm->setScreen(_currentStage->getSurface());
+	_wm->setActiveWindow(_currentStage->getId());
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound(this);

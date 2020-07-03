@@ -101,6 +101,13 @@ bool Movie::loadArchive() {
 	if (stage->getSurface()->w != _movieRect.width() || stage->getSurface()->h != _movieRect.height()) {
 		stage->resize(_movieRect.width(), _movieRect.height());
 	}
+	// TODO: Add more options for desktop dimensions
+	uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
+	uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
+	if (g_director->_surface->w != windowWidth || g_director->_surface->h != windowHeight) {
+		g_director->_surface->free();
+		g_director->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
+	}
 
 	stage->setStageColor(_stageColor);
 

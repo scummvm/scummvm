@@ -469,7 +469,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseCast:
 		{
-			Common::Point pos = g_system->getEventManager()->getMousePos();
+			Common::Point pos = g_director->getStage()->getMousePos();
 			Score *sc = _vm->getCurrentMovie()->getScore();
 			uint16 spriteId = sc->getSpriteIDFromPos(pos);
 			d.type = INT;
@@ -491,11 +491,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseH:
 		d.type = INT;
-		d.u.i = g_system->getEventManager()->getMousePos().x;
+		d.u.i = g_director->getStage()->getMousePos().x;
 		break;
 	case kTheMouseV:
 		d.type = INT;
-		d.u.i = g_system->getEventManager()->getMousePos().y;
+		d.u.i = g_director->getStage()->getMousePos().y;
 		break;
 	case kTheMouseUp:
 		d.type = INT;

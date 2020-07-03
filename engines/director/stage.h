@@ -58,6 +58,8 @@ class Stage : public Graphics::MacWindow {
 	void transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 	void transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 
+	Common::Point getMousePos();
+
 public:
 	Common::List<Common::Rect> _dirtyRects;
 	Common::List<Channel *> _dirtyChannels;

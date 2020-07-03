@@ -362,7 +362,7 @@ int Score::getPreviousLabelNumber(int referenceFrame) {
 void Score::startLoop() {
 	// TODO: Should the dims be set by the movie?
 	debugC(1, kDebugImages, "Score dims: %dx%d", _movie->_movieRect.width(), _movie->_movieRect.height());
-	initGraphics(_movie->_movieRect.width(), _movie->_movieRect.height());
+	initGraphics(_vm->_surface->w, _vm->_surface->h);
 
 	_currentFrame = 0;
 	_stopPlay = false;

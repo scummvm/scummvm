@@ -1803,7 +1803,7 @@ void LB::b_rollOver(int nargs) {
 		return;
 	}
 
-	Common::Point pos = g_system->getEventManager()->getMousePos();
+	Common::Point pos = g_director->getStage()->getMousePos();
 
 	if (score->checkSpriteIntersection(arg, pos))
 		res.u.i = 1; // TRUE

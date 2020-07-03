@@ -80,7 +80,8 @@ enum {
 	kDebugBytecode		= 1 << 11,
 	kDebugFewFramesOnly	= 1 << 12,
 	kDebugPreprocess	= 1 << 13,
-	kDebugScreenshot	= 1 << 14
+	kDebugScreenshot	= 1 << 14,
+	kDebugDesktop		= 1 << 15
 };
 
 struct MovieReference {
@@ -167,6 +168,7 @@ public:
 	Common::HashMap<Common::String, Score *> *_movies;
 
 	Common::RandomSource _rnd;
+	Graphics::ManagedSurface *_surface;
 	Graphics::MacWindowManager *_wm;
 
 public:
@@ -235,7 +237,7 @@ private:
 };
 
 extern DirectorEngine *g_director;
-extern const uint32 wmMode;
+extern uint32 wmMode;
 
 } // End of namespace Director
 

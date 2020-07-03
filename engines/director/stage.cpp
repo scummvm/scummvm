@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -82,7 +84,9 @@ void Stage::reset() {
 
 void Stage::addDirtyRect(const Common::Rect &r) {
 	Common::Rect bounds = r;
-	bounds.clip(_dims);
+	Common::Rect clip = _dims;
+	clip.moveTo(0, 0);
+	bounds.clip(clip);
 
 	if (bounds.width() > 0 && bounds.height() > 0)
 		_dirtyRects.push_back(bounds);
@@ -259,6 +263,10 @@ void Stage::drawMatteSprite(Channel *channel, Common::Rect &srcRect, Common::Rec
 	}
 
 	tmp.free();
+}
+
+Common::Point Stage::getMousePos() {
+	return g_system->getEventManager()->getMousePos() - Common::Point(_dims.left, _dims.top);
 }
 
 } // end of namespace Director

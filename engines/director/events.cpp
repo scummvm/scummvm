@@ -28,6 +28,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/stage.h"
 #include "director/castmember.h"
 #include "director/lingo/lingo.h"
 
@@ -85,7 +86,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				if (_draggingSprite) {
 					Sprite *draggedSprite = sc->getSpriteById(_draggingSpriteId);
 					if (draggedSprite->_moveable) {
-						pos = g_system->getEventManager()->getMousePos();
+						pos = getStage()->getMousePos();
 
 						sc->_channels[_draggingSpriteId]->addDelta(pos - _draggingSpritePos);
 						_draggingSpritePos = pos;
@@ -96,7 +97,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				pos = g_system->getEventManager()->getMousePos();
+				pos = _currentStage->getMousePos();
 
 				// D3 doesn't have both mouse up and down.
 				// But we still want to know if the mouse is down for press effects.
@@ -116,7 +117,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				break;
 
 			case Common::EVENT_LBUTTONUP:
-				pos = g_system->getEventManager()->getMousePos();
+				pos = _currentStage->getMousePos();
 
 				spriteId = sc->getSpriteIDFromPos(pos, true);
 
@@ -173,7 +174,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 void DirectorEngine::setDraggedSprite(uint16 id) {
 	_draggingSprite = true;
 	_draggingSpriteId = id;
-	_draggingSpritePos = g_system->getEventManager()->getMousePos();
+	_draggingSpritePos = _currentStage->getMousePos();
 }
 
 void DirectorEngine::releaseDraggedSprite() {
