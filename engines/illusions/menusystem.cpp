@@ -697,7 +697,7 @@ MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIn
 
 void MenuActionSaveGame::execute() {
 	GUI::SaveLoadChooser *dialog;
-	Common::U32String desc;
+	Common::String desc;
 	int slot;
 
 	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);

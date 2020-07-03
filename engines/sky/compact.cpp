@@ -130,7 +130,7 @@ SkyCompact::SkyCompact() {
 	if (!_cptFile->open(filename.c_str())) {
                 Common::U32String msg = Common::U32String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
                 GUIErrorMessage(msg);
-                error("%s", msg.encode().c_str());
+                error("Unable to locate the '%s' engine data file.", filename.c_str());
 	}
 
 	uint16 fileVersion = _cptFile->readUint16LE();

@@ -320,7 +320,7 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 			_("Could not switch to resolution '%dx%d'."), width, height);
 
 		GUIErrorMessage(message);
-		error("%s", message.encode().c_str());
+		error("Could not switch to resolution '%dx%d'.", width, height);
 	}
 
 	// Just show warnings then these occur:
@@ -335,8 +335,7 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 		Common::U32String message;
-		message = Common::U32String::format(
-			_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
+		message = Common::U32String::format(_("Could not switch to video mode '%s'."), ConfMan.get("gfx_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -344,8 +343,7 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
 		Common::U32String message;
-		message = Common::U32String::format(
-			_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
+		message = Common::U32String::format(_("Could not switch to stretch mode '%s'."), ConfMan.get("stretch_mode").c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
@@ -400,6 +398,14 @@ void initGraphics(int width, int height) {
 
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
 	GUIErrorMessage(msg, url);
+}
+
+void GUIErrorMessageWithURL(const Common::String &msg, const char *url) {
+	GUIErrorMessage(Common::U32String(msg), url);
+}
+
+void GUIErrorMessage(const Common::String &msg, const char *url) {
+	GUIErrorMessage(Common::U32String(msg), url);
 }
 
 void GUIErrorMessage(const Common::U32String &msg, const char *url) {

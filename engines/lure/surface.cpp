@@ -491,7 +491,7 @@ Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bo
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
 			ttsMan->stop();
-			ttsMan->say(Common::convertToU32String(text.c_str()));
+			ttsMan->say(text.c_str());
 		}
 	}
 #endif

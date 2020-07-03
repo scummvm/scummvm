@@ -393,7 +393,7 @@ void TextDialog::draw() {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
 			ttsMan->stop();
-			ttsMan->say(Common::convertToU32String(text.c_str()));
+			ttsMan->say(text.c_str());
 		}
 	}
 #endif

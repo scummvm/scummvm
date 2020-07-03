@@ -81,6 +81,7 @@ public:
 	typedef Array<Action *> ActionArray;
 
 	Keymap(KeymapType type, const String &id, const U32String &description);
+	Keymap(KeymapType type, const String &id, const String &description);
 	~Keymap();
 	void setConfigDomain(ConfigManager::Domain *configDomain);
 	void setHardwareInputs(HardwareInputSet *hardwareInputSet);

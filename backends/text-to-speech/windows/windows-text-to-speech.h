@@ -53,6 +53,7 @@ public:
 	virtual ~WindowsTextToSpeechManager() override;
 
 	virtual bool say(const Common::U32String &str, Action action, Common::String charset = "") override;
+	virtual bool say(const Common::String &str, Action action, Common::String charset = "") override;
 
 	virtual bool stop() override;
 	virtual bool pause() override;

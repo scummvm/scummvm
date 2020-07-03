@@ -129,7 +129,7 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace ZVision;
 
-	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, mainKeymapId, Common::convertToU32String("Z-Vision"));
+	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, mainKeymapId, "Z-Vision");
 
 	Action *act;
 
@@ -145,7 +145,7 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	mainKeymap->addAction(act);
 
-	Keymap *gameKeymap = new Keymap(Keymap::kKeymapTypeGame, gameKeymapId, Common::convertToU32String("Z-Vision - Game"));
+	Keymap *gameKeymap = new Keymap(Keymap::kKeymapTypeGame, gameKeymapId, "Z-Vision - Game");
 
 	act = new Action(kStandardActionMoveUp, _("Look Up"));
 	act->setCustomEngineActionEvent(kZVisionActionUp);
@@ -232,7 +232,7 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("C+p");
 	gameKeymap->addAction(act);
 
-	Keymap *cutscenesKeymap = new Keymap(Keymap::kKeymapTypeGame, cutscenesKeymapId, Common::convertToU32String("Z-Vision - Cutscenes"));
+	Keymap *cutscenesKeymap = new Keymap(Keymap::kKeymapTypeGame, cutscenesKeymapId, "Z-Vision - Cutscenes");
 
 	act = new Action(kStandardActionSkip, _("Skip cutscene"));
 	act->setCustomEngineActionEvent(kZVisionActionSkipCutscene);

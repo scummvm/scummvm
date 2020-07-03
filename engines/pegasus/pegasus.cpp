@@ -2476,7 +2476,7 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 Common::KeymapArray PegasusEngine::initKeymaps() {
 	using namespace Common;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "pegasus", Common::convertToU32String("Pegasus Prime"));
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "pegasus", "Pegasus Prime");
 
 	Action *act;
 

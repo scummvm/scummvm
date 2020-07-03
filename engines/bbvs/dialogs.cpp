@@ -192,7 +192,7 @@ void MainMenu::gotoMenuScreen(int screen) {
 		} else {
 			btn = &kMenuButtons[screen * 5 + i];
 		}
-		_buttons[i]->setLabel(Common::U32String(btn->label));
+		_buttons[i]->setLabel(btn->label);
 		_buttons[i]->setCmd(btn->cmd);
 		_buttons[i]->setEnabled(btn->cmd != 0);
 	}

@@ -34,8 +34,8 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 		GUI::Dialog("TestbedOptions"),
 		_testbedConfMan(tsConfMan) {
 
-	new GUI::StaticTextWidget(this, "TestbedOptions.Headline", Common::convertToU32String("Select Testsuites to Execute"));
-	new GUI::StaticTextWidget(this, "TestbedOptions.Info", Common::convertToU32String("Use Doubleclick to select/deselect"));
+	new GUI::StaticTextWidget(this, "TestbedOptions.Headline", Common::U32String("Select Testsuites to Execute"));
+	new GUI::StaticTextWidget(this, "TestbedOptions.Info", Common::U32String("Use Doubleclick to select/deselect"));
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
@@ -63,12 +63,12 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	_testListDisplay->setEditable(false);
 
 	if (selected > (tsList.size() - selected)) {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::convertToU32String("Deselect All"), Common::U32String(""), kTestbedDeselectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Deselect All"), Common::U32String(""), kTestbedDeselectAll, 0);
 	} else {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::convertToU32String("Select All"), Common::U32String(""), kTestbedSelectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Select All"), Common::U32String(""), kTestbedSelectAll, 0);
 	}
-	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", Common::convertToU32String("Run tests"), Common::U32String(""), GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, "TestbedOptions.Quit", Common::convertToU32String("Exit Testbed"), Common::U32String(""), kTestbedQuitCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", Common::U32String("Run tests"), Common::U32String(""), GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.Quit", Common::U32String("Exit Testbed"), Common::U32String(""), kTestbedQuitCmd);
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}
@@ -102,7 +102,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		break;
 
 	case kTestbedDeselectAll:
-		_selectButton->setLabel(Common::convertToU32String("Select All"));
+		_selectButton->setLabel("Select All");
 		_selectButton->setCmd(kTestbedSelectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
 			_testListDisplay->markAsDeselected(i);
@@ -114,7 +114,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		break;
 
 	case kTestbedSelectAll:
-		_selectButton->setLabel(Common::convertToU32String("Deselect All"));
+		_selectButton->setLabel("Deselect All");
 		_selectButton->setCmd(kTestbedDeselectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
 			_testListDisplay->markAsSelected(i);

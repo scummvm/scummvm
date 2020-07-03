@@ -159,6 +159,7 @@ public:
 	 *        encoding used for the GUI.
 	 */
 	bool say(const U32String &str, String charset = "") { return say(str, INTERRUPT_NO_REPEAT, charset); }
+	bool say(const String &str, String charset = "") { return say(U32String(str), charset); }
 
 	/**
 	 * Says the given string
@@ -179,6 +180,7 @@ public:
 	 *        encoding used for the GUI.
 	 */
 	virtual bool say(const U32String &str, Action action, String charset = "") { return false; }
+	virtual bool say(const String &str, Action action, String charset = "") { return false; }
 
 	/**
 	 * Stops the speech

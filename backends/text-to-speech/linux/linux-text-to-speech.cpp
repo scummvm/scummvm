@@ -194,7 +194,7 @@ bool SpeechDispatcherManager::say(const Common::U32String &str, Action action, C
 		return true;
 	}
 
-	Common::String strUtf8 = str.encode();;
+	Common::String strUtf8 = str.encode();
 
 	if (!_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
 			_speechQueue.front() == strUtf8 && isSpeaking()) {

@@ -392,6 +392,10 @@ void ButtonWidget::setLabel(const Common::U32String &label) {
 	StaticTextWidget::setLabel(cleanupHotkey(label));
 }
 
+void ButtonWidget::setLabel(const Common::String &label) {
+	ButtonWidget::setLabel(Common::U32String(label));
+}
+
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x, int y, int w, int h) {
 	ButtonWidget *button;
 

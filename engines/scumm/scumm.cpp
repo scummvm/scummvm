@@ -2476,7 +2476,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 			char buf[256];
 			snprintf(buf, sizeof(buf), _("Successfully saved game in file:\n\n%s").encode().c_str(), filename.c_str());
 
-			GUI::TimedMessageDialog dialog(Common::convertToU32String(buf), 1500);
+			GUI::TimedMessageDialog dialog(Common::U32String(buf), 1500);
 			runDialog(dialog);
 		}
 		if (success && _saveLoadFlag != 1)

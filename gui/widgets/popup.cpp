@@ -503,6 +503,10 @@ void PopUpWidget::appendEntry(const U32String &entry, uint32 tag) {
 	_entries.push_back(e);
 }
 
+void PopUpWidget::appendEntry(const String &entry, uint32 tag) {
+	appendEntry(U32String(entry), tag);
+}
+
 void PopUpWidget::clearEntries() {
 	_entries.clear();
 	_selectedItem = -1;
