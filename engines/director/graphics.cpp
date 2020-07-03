@@ -799,9 +799,6 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 	if (!p->destRect.contains(x, y))
 		return;
 
-	byte rSrc, gSrc, bSrc;
-	byte rDst, gDst, bDst;
-
 	const byte *src;
 	byte *dst;
 
@@ -827,9 +824,6 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 
 		src = (const byte *)p->src->getBasePtr(p->srcPoint.x, p->srcPoint.y);
 	}
-
-	g_director->_wm->decomposeColor(*src, rSrc, gSrc, bSrc);
-	g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
 
 	switch (p->ink) {
 	case kInkTypeBackgndTrans:
@@ -872,36 +866,46 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 			*dst = *dst | *src;
 		break;
 		// Arithmetic ink types
-	case kInkTypeBlend:
-		if (*src != p->numColors - 1)
-			*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
-		break;
-	case kInkTypeAddPin:
-		if (*src != p->numColors - 1)
-			*dst = p->_wm->findBestColor(MIN((rSrc + rDst), p->numColors - 1), MIN((gSrc + gDst), p->numColors - 1), MIN((bSrc + bDst), p->numColors - 1));
-		break;
-	case kInkTypeAdd:
-		if (*src != p->numColors - 1)
-			*dst = p->_wm->findBestColor(abs(rSrc + rDst) % p->numColors, abs(gSrc + gDst) % p->numColors, abs(bSrc + bDst) % p->numColors);
-		break;
-	case kInkTypeSubPin:
-		if (*src != p->numColors - 1)
-			*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
-		break;
-	case kInkTypeLight:
-		if (*src != p->numColors - 1)
-			*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
-		break;
-	case kInkTypeSub:
-		if (*src != p->numColors - 1)
-			*dst = p->_wm->findBestColor(abs(rSrc - rDst) % p->numColors, abs(gSrc - gDst) % p->numColors, abs(bSrc - bDst) % p->numColors);
-		break;
-	case kInkTypeDark:
-		if (*src != p->numColors - 1)
-			*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
-		break;
-	default:
-		warning("Stage::inkBlitFrom: Drawing not implemented yet");
+	default: {
+		byte rSrc, gSrc, bSrc;
+		byte rDst, gDst, bDst;
+
+		g_director->_wm->decomposeColor(*src, rSrc, gSrc, bSrc);
+		g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+
+		switch (p->ink) {
+		case kInkTypeBlend:
+			if (*src != p->numColors - 1)
+				*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
+			break;
+		case kInkTypeAddPin:
+			if (*src != p->numColors - 1)
+				*dst = p->_wm->findBestColor(MIN((rSrc + rDst), p->numColors - 1), MIN((gSrc + gDst), p->numColors - 1), MIN((bSrc + bDst), p->numColors - 1));
+			break;
+		case kInkTypeAdd:
+			if (*src != p->numColors - 1)
+				*dst = p->_wm->findBestColor(abs(rSrc + rDst) % p->numColors, abs(gSrc + gDst) % p->numColors, abs(bSrc + bDst) % p->numColors);
+			break;
+		case kInkTypeSubPin:
+			if (*src != p->numColors - 1)
+				*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
+			break;
+		case kInkTypeLight:
+			if (*src != p->numColors - 1)
+				*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
+			break;
+		case kInkTypeSub:
+			if (*src != p->numColors - 1)
+				*dst = p->_wm->findBestColor(abs(rSrc - rDst) % p->numColors, abs(gSrc - gDst) % p->numColors, abs(bSrc - bDst) % p->numColors);
+			break;
+		case kInkTypeDark:
+			if (*src != p->numColors - 1)
+				*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
+			break;
+		default:
+			break;
+		}
+	}
 	}
 }
 
