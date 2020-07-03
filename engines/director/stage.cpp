@@ -121,7 +121,7 @@ void Stage::mergeDirtyRects() {
 
 			if ((*rOuter).intersects(*rInner)) {
 				// These two rectangles overlap, so merge them
-				unionRectangle(*rOuter, *rOuter, *rInner);
+				rOuter->extend(*rInner);
 
 				// remove the inner rect from the list
 				_dirtyRects.erase(rInner);
@@ -131,13 +131,6 @@ void Stage::mergeDirtyRects() {
 			}
 		}
 	}
-}
-
-bool Stage::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2) {
-	destRect = src1;
-	destRect.extend(src2);
-
-	return !destRect.isEmpty();
 }
 
 void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {

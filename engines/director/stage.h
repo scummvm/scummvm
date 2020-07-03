@@ -47,7 +47,6 @@ class Stage : public Graphics::MacWindow {
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
 
-	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 	void setStageColor(uint stageColor);
 	void addDirtyRect(const Common::Rect &r);
 	void mergeDirtyRects();
