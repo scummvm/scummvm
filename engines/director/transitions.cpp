@@ -660,8 +660,8 @@ void Stage::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Mana
 	for (int i = 0; i < t.steps; i++) {
 		uint32 pixPerStep = pixPerStepInit;
 		do {
-			uint32 x = rnd >> vShift;
-			uint32 y = rnd & hMask;
+			uint32 x = (rnd - 1) >> vShift;
+			uint32 y = (rnd - 1) & hMask;
 			byte mask = 0;
 
 			r.setWidth(MAX(1, t.xStepSize));
