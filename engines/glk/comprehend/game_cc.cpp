@@ -151,5 +151,14 @@ void CrimsonCrownGame::beforeTurn() {
 	}
 }
 
+bool CrimsonCrownGame::handle_restart() {
+	if (_diskNum != 1) {
+		setupDisk(1);
+		loadGame();
+	}
+
+	return ComprehendGame::handle_restart();
+}
+
 } // namespace Comprehend
 } // namespace Glk

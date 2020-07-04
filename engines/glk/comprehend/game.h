@@ -70,7 +70,7 @@ protected:
 	void game_restart() {
 		_ended = true;
 	}
-	bool handle_restart();
+	virtual bool handle_restart();
 	int console_get_key();
 	void console_println(const char *text);
 	void move_object(Item *item, int new_room);

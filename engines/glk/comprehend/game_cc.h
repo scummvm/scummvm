@@ -39,6 +39,8 @@ private:
 	 */
 	void crystalBallCutscene();
 
+protected:
+	bool handle_restart() override;
 public:
 	CrimsonCrownGame();
 	~CrimsonCrownGame() override {}
