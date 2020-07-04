@@ -48,7 +48,7 @@ void OpcodeMap::loadVersion1() {
 	_opcodeMap[0x09] = OPCODE_OBJECT_PRESENT;
 	_opcodeMap[0x0c] = OPCODE_ELSE;
 	_opcodeMap[0x0e] = OPCODE_OBJECT_IN_ROOM;
-	_opcodeMap[0x14] = OPCODE_OBJECT_NOT_VALID;
+	_opcodeMap[0x14] = OPCODE_CURRENT_OBJECT_NOT_VALID;
 	_opcodeMap[0x18] = OPCODE_INVENTORY_FULL;
 	_opcodeMap[0x19] = OPCODE_TEST_FLAG;
 	_opcodeMap[0x1d] = OPCODE_CURRENT_OBJECT_IN_ROOM;
@@ -108,7 +108,7 @@ void OpcodeMap::loadVersion2() {
 	_opcodeMap[0x09] = OPCODE_OBJECT_PRESENT;
 	_opcodeMap[0x0c] = OPCODE_ELSE;
 	_opcodeMap[0x11] = OPCODE_OBJECT_IS_NOWHERE;
-	_opcodeMap[0x14] = OPCODE_OBJECT_NOT_VALID;
+	_opcodeMap[0x14] = OPCODE_CURRENT_OBJECT_NOT_VALID;
 	_opcodeMap[0x19] = OPCODE_TEST_FLAG;
 	_opcodeMap[0x1d] = OPCODE_TEST_ROOM_FLAG;
 	_opcodeMap[0x20] = OPCODE_HAVE_CURRENT_OBJECT;

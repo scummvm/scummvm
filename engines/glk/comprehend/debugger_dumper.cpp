@@ -53,7 +53,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_OR] = "or";
 	_opcodes[OPCODE_IN_ROOM] = "in_room";
 	_opcodes[OPCODE_VAR_EQ] = "var_eq";
-	_opcodes[OPCODE_OBJECT_NOT_VALID] = "object_not_valid";
+	_opcodes[OPCODE_CURRENT_OBJECT_NOT_VALID] = "current_object_not_valid";
 	_opcodes[OPCODE_INVENTORY_FULL] = "inventory_full";
 	_opcodes[OPCODE_OBJECT_PRESENT] = "object_present";
 	_opcodes[OPCODE_ELSE] = "else";

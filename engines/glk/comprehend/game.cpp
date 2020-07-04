@@ -828,7 +828,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		                     item->_room == _currentRoom);
 		break;
 
-	case OPCODE_OBJECT_NOT_VALID:
+	case OPCODE_CURRENT_OBJECT_NOT_VALID:
 		func_set_test_result(func_state, !noun);
 		break;
 
