@@ -2597,10 +2597,13 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	// WaypointsHeight
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WaypointsHeight") == 0) {
+		if (_sceneGeometry) {
+			_sceneGeometry->_waypointHeight = _scValue->getFloat();
+			_sceneGeometry->dropWaypoints();
+		}
 
-		return _scValue;
+		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// MaxShadowType
