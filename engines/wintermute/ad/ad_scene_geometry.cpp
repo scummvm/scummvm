@@ -432,7 +432,7 @@ bool AdSceneGeometry::render(bool render) {
 	// render walk planes
 	for (i = 0; i < _planes.size(); i++) {
 		if (!_planes[i]->_active) {
-			//			continue;
+			continue;
 		}
 
 		_planes[i]->_mesh->render();
@@ -443,7 +443,7 @@ bool AdSceneGeometry::render(bool render) {
 	// render blocks
 	for (i = 0; i < _blocks.size(); i++) {
 		if (!_blocks[i]->_active) {
-			//			continue;
+			continue;
 		}
 
 		_blocks[i]->_mesh->render();
@@ -454,7 +454,7 @@ bool AdSceneGeometry::render(bool render) {
 	// render generic objects
 	for (i = 0; i < _generics.size(); i++) {
 		if (!_generics[i]->_active) {
-			//			continue;
+			continue;
 		}
 
 		_generics[i]->_mesh->render();
