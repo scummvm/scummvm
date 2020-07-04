@@ -304,8 +304,9 @@ struct StringFile {
 	uint32 _endOffset;
 
 	StringFile() : _baseOffset(0), _endOffset(0) {
-	}
-	StringFile(const Common::String &fname, uint32 baseOfs, uint32 endO = 0) : _filename(fname), _baseOffset(baseOfs), _endOffset(endO) {
+	} 
+	StringFile(const char *fname, uint32 baseOfs = 0, uint32 endO = 0) :
+		_filename(fname), _baseOffset(baseOfs), _endOffset(endO) {
 	}
 };
 
@@ -395,7 +396,7 @@ private:
 	}
 
 	void load_extra_string_files();
-	void load_extra_string_file(StringFile *string_file);
+	void load_extra_string_file(const StringFile &stringFile);
 	void parse_header_le16(FileBuffer *fb, uint16 *val);
 	uint8 parse_vm_instruction(FileBuffer *fb, Instruction *instr);
 	void parse_function(FileBuffer *fb, Function *func);
@@ -442,7 +443,7 @@ public:
 	}
 
 	void clearGame();
-	virtual void loadGame();
+	void loadGame();
 };
 
 } // namespace Comprehend

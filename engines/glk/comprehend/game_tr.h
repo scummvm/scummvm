@@ -47,7 +47,6 @@ public:
 	void synchronizeSave(Common::Serializer &s) override;
 	int roomIsSpecial(unsigned room_index, unsigned *roomDescString) override;
 	void handleSpecialOpcode(uint8 operand) override;
-	void loadGame() override;
 };
 
 } // namespace Comprehend

@@ -34,6 +34,8 @@ namespace Comprehend {
 static const char CHARSET[] = "..abcdefghijklmnopqrstuvwxyz .";
 static const char SPECIAL_CHARSET[] = "[]\n!\"#$%&'(),-/0123456789:;?<>";
 
+#define STRING_FILE_COUNT 64
+
 void FunctionState::clear() {
 	_testResult = true;
 	_elseResult = false;
@@ -234,7 +236,7 @@ void GameData::parse_vm(FileBuffer *fb) {
 
 void GameData::parse_action_tables(FileBuffer *fb) {
 	uint8 verb, count;
-	int i, j;
+	uint i, j;
 
 	_actions.clear();
 	_actions.resize(7);
@@ -629,30 +631,52 @@ void GameData::parse_header(FileBuffer *fb) {
 	                  8;
 }
 
-void GameData::load_extra_string_file(StringFile *string_file) {
-	FileBuffer fb(string_file->_filename);
-	unsigned end;
+void GameData::load_extra_string_file(const StringFile &stringFile) {
+	FileBuffer fb(stringFile._filename);
 
-	if (string_file->_endOffset)
-		end = string_file->_endOffset;
-	else
-		end = fb.size();
+	if (stringFile._baseOffset > 0) {
+		// Explicit offset specified, so read the strings in sequentially
+		uint endOffset = stringFile._baseOffset;
+		if (!endOffset)
+			endOffset = fb.size();
 
-	parse_string_table(&fb, string_file->_baseOffset,
-	                   end, &_strings2);
+		parse_string_table(&fb, stringFile._baseOffset, endOffset, &_strings2);
+	} else {
+		// Standard strings file. Has a 4-byte header we can ignore,
+		// followed by 64 2-byte string offsets
+		fb.seek(4);
+		uint fileSize = fb.size();
+
+		// Read in the index
+		uint16 index[STRING_FILE_COUNT];
+		Common::fill(&index[0], &index[STRING_FILE_COUNT], 0);
+
+		for (int i = 0; i < STRING_FILE_COUNT; ++i) {
+			uint v = fb.readUint16LE();
+			if (v > fileSize)
+				break;
+
+			index[i] = v;
+		}
+
+		// Iterate through parsing the strings
+		for (int i = 0; i < STRING_FILE_COUNT; ++i) {
+			if (index[i]) {
+				fb.seek(index[i] + 4);
+				_strings2.push_back(parseString(&fb));
+			} else {
+				_strings2.push_back("");
+			}
+		}
+	}
 }
 
 void GameData::load_extra_string_files() {
-	uint i;
+	_strings2.clear();
+	_strings2.reserve(STRING_FILE_COUNT * _stringFiles.size());
 
-	for (i = 0; i < _stringFiles.size(); i++) {
-		// HACK - get string offsets correct
-		_strings2.resize(0x40 * i);
-		if (_strings2.empty())
-			_strings2.push_back("");
-
-		load_extra_string_file(&_stringFiles[i]);
-	}
+	for (uint i = 0; i < _stringFiles.size(); i++)
+		load_extra_string_file(_stringFiles[i]);
 }
 
 void GameData::loadGameData() {

@@ -40,7 +40,7 @@ void CrimsonCrownGame::setupDisk(uint diskNum) {
 	_gameDataFile = Common::String::format("cc%u.gda", diskNum);
 
 	_stringFiles.clear();
-	_stringFiles.push_back(StringFile(Common::String::format("ma.ms%u", diskNum), 0x89));
+	_stringFiles.push_back(Common::String::format("ma.ms%u", diskNum).c_str());
 
 	_locationGraphicFiles.clear();
 	_locationGraphicFiles.push_back(Common::String::format("ra.ms%u", diskNum));

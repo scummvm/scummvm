@@ -73,11 +73,11 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGame(),
 		_miceReleased(false) {
 	_gameDataFile = "tr.gda";
 
-	_stringFiles.push_back(StringFile("MA.MS1", 0x88));
-	_stringFiles.push_back(StringFile("MB.MS1", 0x88));
-	_stringFiles.push_back(StringFile("MC.MS1", 0x88));
-	_stringFiles.push_back(StringFile("MD.MS1", 0x88));
-	_stringFiles.push_back(StringFile("ME.MS1", 0x88));
+	_stringFiles.push_back("MA.MS1");
+	_stringFiles.push_back("MB.MS1");
+	_stringFiles.push_back("MC.MS1");
+	_stringFiles.push_back("MD.MS1");
+	_stringFiles.push_back("ME.MS1");
 
 	_locationGraphicFiles.push_back("RA.MS1");
 	_locationGraphicFiles.push_back("RB.MS1");
@@ -273,15 +273,6 @@ void TransylvaniaGame::beforeGame() {
 	READ_LINE;
 
 	g_comprehend->setDisableSaves(false);
-}
-
-void TransylvaniaGame::loadGame() {
-	ComprehendGame::loadGame();
-
-	// TODO: Figure out why the corrupt string happened, since it could
-	// affect other strings
-	_strings2[192] = "envelopes the sarcophagus. In a violent blast, the lid flies off "
-		"and explodes in a cascade of glowing dust!";
 }
 
 } // namespace Comprehend
