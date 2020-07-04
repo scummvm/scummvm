@@ -501,6 +501,24 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// SetLightPosition
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetLightPosition") == 0) {
+		stack->correctParams(3);
+
+		double x = stack->pop()->getFloat();
+		double y = stack->pop()->getFloat();
+		double z = stack->pop()->getFloat();
+		// invert z coordinate because of OpenGL coordinate system
+		_shadowLightPos = Math::Vector3d(x, y, -z);
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
+
 #ifdef ENABLE_FOXTAIL
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] GetSoundFilename
