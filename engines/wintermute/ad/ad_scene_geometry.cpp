@@ -496,74 +496,49 @@ bool AdSceneGeometry::render(bool render) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::renderShadowGeometry() {
-	storeDrawingParams();
+	_gameRef->_renderer3D->resetModelViewTransform();
+	_gameRef->_renderer3D->setup3D(getActiveCamera(), true);
 
-	warning("AdSceneGeometry::renderShadowGeometry not yet implemented");
+	// disable color write
+	glBlendFunc(GL_ZERO, GL_ONE);
 
-	// implement this later
+	glFrontFace(GL_CW);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
-	//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
+	// render walk planes
+	for (uint i = 0; i < _planes.size(); i++) {
+		if (!_planes[i]->_active || !_planes[i]->_receiveShadows) {
+			continue;
+		}
 
-	//	// render the geometry
-	//	Math::Matrix4 matIdentity;
-	//	matIdentity.setToIdentity();
+		_planes[i]->_mesh->render();
 
-	//	if(m_ActiveCamera>=0 && m_ActiveCamera<_cameras.size())
-	//		m_Renderer->Setup3D(_cameras[m_ActiveCamera]);
+		//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
+	}
 
-	//	m_Renderer->m_Device->SetTransform(D3DTS_WORLD, &matIdentity);
+	// render blocks
+	for (uint i = 0; i < _blocks.size(); i++) {
+		if (!_blocks[i]->_active || !_blocks[i]->_receiveShadows) {
+			continue;
+		}
 
-	//	// disable color write
-	//	m_Renderer->SetSpriteBlendMode(BLEND_UNKNOWN);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ZERO);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+		_blocks[i]->_mesh->render();
 
-	//	m_Renderer->m_Device->SetTransform(D3DTS_WORLD, &matIdentity);
-	//	C3DUtils::SetFixedVertexShader(m_Renderer->m_Device, D3DFVF_MODELVERTEXCOLOR);
+		//		m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
+	}
 
-	//	// no texture
-	//	m_Renderer->m_LastTexture = NULL;
-	//	m_Renderer->m_Device->SetTexture(0, NULL);
+	// render generic objects
+	for (uint i = 0; i < _generics.size(); i++) {
+		if (!_generics[i]->_active || !_generics[i]->_receiveShadows) {
+			continue;
+		}
 
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+		_generics[i]->_mesh->render();
 
-	//	// render blocks
-	//	for(int i=0; i<_blocks.size(); i++)
-	//	{
-	//		if(!_blocks[i]->m_Active) continue;
-	//		if(!_blocks[i]->m_Mesh->m_VB) continue;
-	//		if(!_blocks[i]->m_ReceiveShadows) continue;
-	//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _blocks[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-	//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _blocks[i]->m_Mesh->m_NumFaces);
+		//		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
+	}
 
-	//		m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
-	//	}
-
-	//	// render walkplanes
-	//	for(int i=0; i<_planes.size(); i++)
-	//	{
-	//		if(!_planes[i]->m_Active) continue;
-	//		if(!_planes[i]->m_Mesh->m_VB) continue;
-	//		if(!_planes[i]->m_ReceiveShadows) continue;
-	//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _planes[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-	//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _planes[i]->m_Mesh->m_NumFaces);
-
-	//		m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
-	//	}
-
-	//	// render generic meshes
-	//	for(int i=0; i<_generics.size(); i++)
-	//	{
-	//		if(!_generics[i]->m_Active) continue;
-	//		if(!_generics[i]->m_Mesh->m_VB) continue;
-	//		if(!_generics[i]->m_ReceiveShadows) continue;
-	//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _generics[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-	//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _generics[i]->m_Mesh->m_NumFaces);
-
-	//		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
-	//	}
-
-	//	m_Renderer->SetSpriteBlendMode(BLEND_NORMAL);
+	_gameRef->_renderer3D->setSpriteBlendMode(Graphics::BLEND_NORMAL);
 
 	return true;
 }
