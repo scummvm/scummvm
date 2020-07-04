@@ -78,12 +78,19 @@ void Sprite::updateCast() {
 		_cast->setEditable(_editable);
 }
 
-bool Sprite::isActive() {
+bool Sprite::isFocusable() {
 	if (_moveable || _puppet || _scriptId)
 		return true;
 
-	if (g_director->getCurrentMovie()->getScriptContext(kCastScript, _castId))
-		return true;
+	return false;
+}
+
+bool Sprite::shouldHilite() {
+	if ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte))
+		if (g_director->getVersion() < 4 && !_moveable)
+			if (g_director->getCurrentMovie()->getScriptContext(kScoreScript, _scriptId) ||
+					g_director->getCurrentMovie()->getScriptContext(kCastScript, _castId))
+				return true;
 
 	return false;
 }

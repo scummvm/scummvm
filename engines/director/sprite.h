@@ -62,7 +62,10 @@ public:
 	~Sprite();
 
 	void updateCast();
-	bool isActive();
+
+	bool isFocusable();
+	bool shouldHilite();
+
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
 
