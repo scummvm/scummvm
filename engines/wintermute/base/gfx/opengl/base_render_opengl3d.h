@@ -47,6 +47,10 @@ public:
 
 	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode);
 
+	bool enableShadows();
+	bool disableShadows();
+	bool stencilSupported();
+
 	void dumpData(const char *filename) override {}
 	/**
 	 * Take a screenshot of the current screenstate

@@ -74,6 +74,21 @@ void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode
 	}
 }
 
+bool BaseRenderOpenGL3D::enableShadows() {
+	warning("BaseRenderOpenGL3D::enableShadows not implemented yet");
+	return true;
+}
+
+bool BaseRenderOpenGL3D::disableShadows() {
+	warning("BaseRenderOpenGL3D::disableDhadows not implemented yet");
+	return true;
+}
+
+bool BaseRenderOpenGL3D::stencilSupported() {
+	// assume that we have a stencil buffer
+	return true;
+}
+
 BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
 	warning("BaseRenderOpenGL3D::takeScreenshot not yet implemented");
 	return nullptr;
