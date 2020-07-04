@@ -148,6 +148,9 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_useD3D = true;
 	_renderer3D = nullptr;
 	_playing3DGame = false;
+
+	_supportsRealTimeShadows = false;
+	_maxShadowType = SHADOW_STENCIL;
 #else
 	_useD3D = false;
 #endif
@@ -577,6 +580,37 @@ void BaseGame::LOG(bool res, const char *fmt, ...) {
 	//QuickMessage(buff);
 }
 
+#ifdef ENABLE_WME3D
+bool BaseGame::setMaxShadowType(TShadowType maxShadowType) {
+	if (maxShadowType > SHADOW_STENCIL) {
+		maxShadowType = SHADOW_STENCIL;
+	}
+
+	if (maxShadowType < 0) {
+		maxShadowType = SHADOW_NONE;
+	}
+
+	if (maxShadowType == SHADOW_FLAT && !_supportsRealTimeShadows) {
+		maxShadowType = SHADOW_SIMPLE;
+	}
+
+	_maxShadowType = maxShadowType;
+
+	return STATUS_OK;
+}
+
+TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
+	if (object) {
+		return MIN(_maxShadowType, object->_shadowType);
+	} else {
+		return _maxShadowType;
+	}
+}
+
+uint32 BaseGame::getAmbientLightColor() {
+	return 0x00000000;
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
@@ -1946,6 +1980,36 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// IsShadowTypeSupported
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "IsShadowTypeSupported") == 0) {
+		stack->correctParams(1);
+		TShadowType type = static_cast<TShadowType>(stack->pop()->getInt());
+
+		switch (type) {
+		case SHADOW_NONE:
+		case SHADOW_SIMPLE:
+			stack->pushBool(true);
+			break;
+
+		case SHADOW_FLAT:
+			stack->pushBool(_supportsRealTimeShadows);
+			break;
+
+		case SHADOW_STENCIL:
+			stack->pushBool(_gameRef->_renderer3D->stencilSupported());
+			break;
+
+		default:
+			stack->pushBool(false);
+		}
+
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// StoreSaveThumbnail
 	//////////////////////////////////////////////////////////////////////////
@@ -2465,6 +2529,16 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// MaxShadowType
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "MaxShadowType") {
+		_scValue->setInt(_maxShadowType);
+		return _scValue;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// AcceleratedMode / Accelerated (RO)
 	//////////////////////////////////////////////////////////////////////////
@@ -2898,6 +2972,16 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 		_videoSubtitles = value->getBool();
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// MaxShadowType
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "MaxShadowType") == 0) {
+		setMaxShadowType(static_cast<TShadowType>(value->getInt()));
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// TextEncoding
@@ -3667,6 +3751,12 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		_quitting = false;
 	}
+
+#ifdef ENABLE_WME3D
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
+	}
+#endif
 
 	return STATUS_OK;
 }

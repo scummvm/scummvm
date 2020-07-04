@@ -1682,6 +1682,23 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 	}
 }
 
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+uint32 Wintermute::AdGame::getAmbientLightColor() {
+	if (_scene) {
+		return _scene->_ambientLightColor;
+	} else {
+		return BaseGame::getAmbientLightColor();
+	}
+}
+
+Wintermute::TShadowType Wintermute::AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
+	TShadowType ret = BaseGame::getMaxShadowType(object);
+
+	return MIN(ret, _scene->_maxShadowType);
+}
+#endif
+
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {

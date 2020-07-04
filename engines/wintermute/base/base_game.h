@@ -161,6 +161,14 @@ public:
 #ifdef ENABLE_WME3D
 	BaseRenderOpenGL3D *_renderer3D;
 	bool _playing3DGame;
+
+	bool _supportsRealTimeShadows;
+	TShadowType _maxShadowType;
+
+	bool setMaxShadowType(TShadowType maxShadowType);
+	virtual TShadowType getMaxShadowType(BaseObject *object);
+
+	virtual uint32 getAmbientLightColor();
 #endif
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED

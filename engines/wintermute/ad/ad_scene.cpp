@@ -102,6 +102,9 @@ void AdScene::setDefaults() {
 	_fov = -1.0f;
 	_nearPlane = -1.0f;
 	_farPlane = -1.0f;
+
+	_maxShadowType = SHADOW_FLAT;
+	_ambientLightColor = 0x00000000;
 #endif
 
 	_pfPointsNum = 0;
@@ -831,6 +834,18 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FAR_CLIPPING_PLANE:
 			parser.scanStr(params, "%f", &_farPlane);
+			break;
+
+		case TOKEN_MAX_SHADOW_TYPE: {
+			int maxShadowType = SHADOW_NONE;
+			parser.scanStr(params, "%d", &maxShadowType);
+			setMaxShadowType(static_cast<TShadowType>(maxShadowType));
+		}
+		break;
+
+		case TOKEN_AMBIENT_LIGHT_COLOR:
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
+			_ambientLightColor = BYTETORGBA(ar, ag, ab, 255);
 			break;
 #endif
 		case TOKEN_CAMERA:
@@ -2418,7 +2433,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	// MaxShadowType
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "MaxShadowType") {
-		_scValue->setInt(0);
+		_scValue->setInt(_maxShadowType);
 		return _scValue;
 	}
 
@@ -2426,7 +2441,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	// AmbientLightColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "AmbientLightColor") {
-		_scValue->setInt(0);
+		_scValue->setInt(_ambientLightColor);
 		return _scValue;
 	}
 
@@ -2591,19 +2606,22 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	// MaxShadowType
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxShadowType") == 0) {
-		return _scValue;
+		setMaxShadowType(static_cast<TShadowType>(_scValue->getInt()));
+		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// AmbientLightColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmbientLightColor") == 0) {
-		return _scValue;
-	} else {
-		return BaseObject::scSetProperty(name, value);
+		_ambientLightColor = _scValue->getInt();
+		return STATUS_OK;
 	}
 #endif
+
+	else {
+		return BaseObject::scSetProperty(name, value);
+	}
 }
 
 
@@ -2891,6 +2909,8 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_fov));
 		persistMgr->transferFloat(TMEMBER(_nearPlane));
 		persistMgr->transferFloat(TMEMBER(_farPlane));
+		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
+		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
 	} else {
 		_sceneGeometry = nullptr;
 	}
@@ -3542,6 +3562,20 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 	return STATUS_OK;
 }
 
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+void Wintermute::AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
+	if (shadowType > SHADOW_STENCIL) {
+		shadowType = SHADOW_STENCIL;
+	}
+
+	if (shadowType < 0) {
+		shadowType = SHADOW_NONE;
+	}
+
+	_maxShadowType = shadowType;
+}
+#endif
 
 Common::String AdScene::debuggerToString() const {
 	return Common::String::format("%p: Scene \"%s\", paralax: %d, autoscroll: %d", (const void *)this, getName(), _paralaxScrolling, _autoScroll);

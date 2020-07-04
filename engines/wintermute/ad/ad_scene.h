@@ -56,6 +56,11 @@ public:
 	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
 
 #ifdef ENABLE_WME3D
+	uint32 _ambientLightColor;
+	TShadowType _maxShadowType;
+
+	void setMaxShadowType(TShadowType shadowType);
+
 	bool _2DPathfinding;
 	float _waypointHeight;
 
