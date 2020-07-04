@@ -1155,8 +1155,9 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 #ifdef ENABLE_WME3D
 		if (!doUpdate && _sceneGeometry && _layers[j]->_main) {
-			// TODO: render shadow geometry in case of
-			// shadow type being stencil
+			if (_gameRef->getMaxShadowType(nullptr) >= SHADOW_STENCIL) {
+				_sceneGeometry->renderShadowGeometry();
+			}
 		}
 #endif
 

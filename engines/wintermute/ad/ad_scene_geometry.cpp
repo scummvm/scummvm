@@ -507,35 +507,26 @@ bool AdSceneGeometry::renderShadowGeometry() {
 
 	// render walk planes
 	for (uint i = 0; i < _planes.size(); i++) {
-		if (!_planes[i]->_active || !_planes[i]->_receiveShadows) {
-			continue;
+		if (_planes[i]->_active && _planes[i]->_receiveShadows) {
+			_planes[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
 		}
-
-		_planes[i]->_mesh->render();
-
-		//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
 	}
 
 	// render blocks
 	for (uint i = 0; i < _blocks.size(); i++) {
-		if (!_blocks[i]->_active || !_blocks[i]->_receiveShadows) {
-			continue;
+		if (_blocks[i]->_active && _blocks[i]->_receiveShadows) {
+			_blocks[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
 		}
-
-		_blocks[i]->_mesh->render();
-
-		//		m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
 	}
 
 	// render generic objects
 	for (uint i = 0; i < _generics.size(); i++) {
-		if (!_generics[i]->_active || !_generics[i]->_receiveShadows) {
-			continue;
+		if (_generics[i]->_active && _generics[i]->_receiveShadows) {
+			_generics[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
 		}
-
-		_generics[i]->_mesh->render();
-
-		//		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
 	}
 
 	_gameRef->_renderer3D->setSpriteBlendMode(Graphics::BLEND_NORMAL);
