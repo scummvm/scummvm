@@ -829,8 +829,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		break;
 
 	case OPCODE_OBJECT_NOT_VALID:
-		func_set_test_result(func_state, !noun || !get_item_by_noun(noun)
-			|| (noun->_type & WORD_TYPE_NOUN_MASK) == 0);
+		func_set_test_result(func_state, !noun);
 		break;
 
 	case OPCODE_CURRENT_IS_OBJECT:
