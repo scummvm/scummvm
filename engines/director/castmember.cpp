@@ -37,6 +37,7 @@ CastMember::CastMember(Cast* cast, uint16 castId) {
 	_castId = castId;
 	_widget = nullptr;
 	_hilite = false;
+	_autoHilite = false;
 
 	_modified = true;
 }
@@ -48,13 +49,15 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 	_matte = nullptr;
 	_bytes = 0;
 	_pitch = 0;
-	_flags = 0;
-	_clut = 0;
+	_flags1 = 0;
+	_flags2 = 0;
 	_regX = _regY = 0;
-	_bitsPerPixel = 1;
 
 	if (version < 4) {
-		_flags = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled
+		_flags1 = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
+		if (_flags1 >> 4 == 0x0)
+			_autoHilite = true;
+
 		_bytes = stream.readUint16();
 		_initialRect = Movie::readRect(stream);
 		_boundingRect = Movie::readRect(stream);
@@ -63,17 +66,18 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 
 		if (_bytes & 0x8000) {
 			_bitsPerPixel = stream.readUint16();
-			_clut = stream.readUint16();
+			_clut = (PaletteType)stream.readUint16();
 		} else {
 			_bitsPerPixel = 1;
-			_clut = 0;
+			_clut = kClutSystemMac;
 		}
 
 		_pitch = _initialRect.width();
 		if (_pitch % 16)
 			_pitch += 16 - (_initialRect.width() % 16);
+
 	} else if (version == 4) {
-		_flags = stream.readByte();
+		_flags1 = stream.readByte();
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
@@ -88,6 +92,17 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 
 		if (_bitsPerPixel == 1)
 			_pitch *= 8;
+
+		_clut = (PaletteType)stream.readUint16();
+		stream.readUint16();
+		/* uint16 unk1 = */ stream.readUint16();
+		stream.readUint16();
+
+		stream.readUint32();
+		stream.readUint32();
+
+		_flags2 = stream.readUint16();
+		_autoHilite = (_flags2 % 4 != 0);
 
 		int tail = 0;
 
@@ -116,6 +131,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 
 		stream.readUint32();
 	}
+
 	_tag = castTag;
 }
 

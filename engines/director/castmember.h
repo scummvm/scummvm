@@ -74,6 +74,7 @@ public:
 
 	bool _modified;
 	bool _hilite;
+	bool _autoHilite;
 
 	Graphics::MacWidget *_widget;
 
@@ -98,9 +99,10 @@ public:
 	uint16 _pitch;
 	uint16 _regX;
 	uint16 _regY;
-	uint8 _flags;
+	uint8 _flags1;
+	uint16 _flags2;
 	uint16 _bytes;
-	uint16 _clut;
+	PaletteType _clut;
 
 	uint16 _bitsPerPixel;
 

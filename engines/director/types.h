@@ -255,6 +255,18 @@ enum TransitionType {
 	kTransDissolveBits
 };
 
+// TODO: Can there be any more built-in palette types?
+enum PaletteType {
+ kClutSystemMac = 0x0000,
+ kClutSystemWin = 0xff9c,
+ kClutRainbow = 0xffff,
+ kClutGrayscale = 0xfffe,
+ kClutPastels = 0xfffd,
+ kClutVivid = 0xfffc,
+ kClutNTSC = 0xfffb,
+ kClutMetallic = 0xfffa
+};
+
 enum {
 	kCursorDefault,
 	kCursorMouseDown,
