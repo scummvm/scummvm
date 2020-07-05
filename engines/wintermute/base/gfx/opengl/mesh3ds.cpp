@@ -36,6 +36,33 @@ Mesh3DS::~Mesh3DS() {
 }
 
 void Mesh3DS::computeNormals() {
+	for (int i = 0; i < _vertexCount; ++i) {
+		_vertexData[i].n1 = 0.0f;
+		_vertexData[i].n2 = 0.0f;
+		_vertexData[i].n3 = 0.0f;
+	}
+
+	for (int i = 0; i < faceCount(); ++i) {
+		uint16 index1 = _indexData[3 * i + 0];
+		uint16 index2 = _indexData[3 * i + 1];
+		uint16 index3 = _indexData[3 * i + 2];
+
+		Math::Vector3d v1(getVertexPosition(index1));
+		Math::Vector3d v2(getVertexPosition(index2));
+		Math::Vector3d v3(getVertexPosition(index3));
+
+		Math::Vector3d edge1 = v2 - v1;
+		Math::Vector3d edge2 = v3 - v2;
+		Math::Vector3d normal = Math::Vector3d::crossProduct(edge1, edge2);
+
+		_vertexData[index1].addToNormal(normal);
+		_vertexData[index2].addToNormal(normal);
+		_vertexData[index3].addToNormal(normal);
+	}
+
+	for (int i = 0; i < _vertexCount; ++i) {
+		_vertexData[i].normalizeNormal();
+	}
 }
 
 void Mesh3DS::fillVertexBuffer(uint32 color) {
@@ -103,10 +130,12 @@ bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 
 void Mesh3DS::render() {
 	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	glColorPointer(4, GL_UNSIGNED_BYTE, kVertexSize, _vertexData);
-	glVertexPointer(3, GL_FLOAT, kVertexSize, reinterpret_cast<byte *>(_vertexData) + 4);
+	glNormalPointer(3, kVertexSize, reinterpret_cast<byte *>(_vertexData) + 4);
+	glVertexPointer(3, GL_FLOAT, kVertexSize, reinterpret_cast<byte *>(_vertexData) + 16);
 
 	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, _indexData);
 }

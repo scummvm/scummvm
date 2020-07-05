@@ -26,16 +26,38 @@
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "graphics/opengl/system_headers.h"
+#include "math/vector3d.h"
 
 namespace Wintermute {
 
 #include "common/pack-start.h"
 
 struct GeometryVertex {
+	void addToNormal(const Math::Vector3d &normal) {
+		n1 += normal.x();
+		n2 += normal.y();
+		n3 += normal.z();
+	}
+
+	void normalizeNormal() {
+		Math::Vector3d normal;
+		normal.x() = n1;
+		normal.y() = n2;
+		normal.z() = n3;
+		normal.normalize();
+
+		n1 = normal.x();
+		n2 = normal.y();
+		n3 = normal.z();
+	}
+
 	uint8 r;
 	uint8 g;
 	uint8 b;
 	uint8 a;
+	float n1;
+	float n2;
+	float n3;
 	float x;
 	float y;
 	float z;
@@ -47,7 +69,7 @@ class Mesh3DS {
 public:
 	// vertex size in bytes, for the moment we only have
 	// position and color components
-	static const int kVertexSize = 16;
+	static const int kVertexSize = 28;
 	Mesh3DS();
 	~Mesh3DS();
 	void computeNormals();
