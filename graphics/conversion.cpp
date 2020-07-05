@@ -221,5 +221,201 @@ bool scaleBlit(byte *dst, const byte *src,
 
 	return true;
 }
-			
+
+/*
+
+The function below is adapted from SDL_rotozoom.c,
+taken from SDL_gfx-2.0.18.
+
+Its copyright notice:
+
+=============================================================================
+SDL_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
+
+Copyright (C) 2001-2012  Andreas Schiffler
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+claim that you wrote the original software. If you use this software
+in a product, an acknowledgment in the product documentation would be
+appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be
+misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source
+distribution.
+
+Andreas Schiffler -- aschiffler at ferzkopp dot net
+=============================================================================
+
+
+The functions have been adapted for different structures and coordinate
+systems.
+
+*/
+
+struct tColorRGBA { byte r; byte g; byte b; byte a; };
+
+bool scaleBlitBilinear(byte *dst, const byte *src,
+                       const uint dstPitch, const uint srcPitch,
+                       const uint dstW, const uint dstH,
+                       const uint srcW, const uint srcH,
+                       const Graphics::PixelFormat &fmt) {
+	assert(fmt.bytesPerPixel == 4);
+
+	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
+
+
+	int *sax = new int[dstW + 1];
+	int *say = new int[dstH + 1];
+	assert(sax && say);
+
+	/*
+	* Precalculate row increments
+	*/
+	int spixelw = (srcW - 1);
+	int spixelh = (srcH - 1);
+	int sx = (int)(65536.0f * (float) spixelw / (float) (dstW - 1));
+	int sy = (int)(65536.0f * (float) spixelh / (float) (dstH - 1));
+
+	/* Maximum scaled source size */
+	int ssx = (srcW << 16) - 1;
+	int ssy = (srcH << 16) - 1;
+
+	/* Precalculate horizontal row increments */
+	int csx = 0;
+	int *csax = sax;
+	for (uint x = 0; x <= dstW; x++) {
+		*csax = csx;
+		csax++;
+		csx += sx;
+
+		/* Guard from overflows */
+		if (csx > ssx) {
+			csx = ssx;
+		}
+	}
+
+	/* Precalculate vertical row increments */
+	int csy = 0;
+	int *csay = say;
+	for (uint y = 0; y <= dstH; y++) {
+		*csay = csy;
+		csay++;
+		csy += sy;
+
+		/* Guard from overflows */
+		if (csy > ssy) {
+			csy = ssy;
+		}
+	}
+
+	const tColorRGBA *sp = (const tColorRGBA *) src;
+	tColorRGBA *dp = (tColorRGBA *) dst;
+	int spixelgap = srcW;
+
+	if (flipx) {
+		sp += spixelw;
+	}
+	if (flipy) {
+		sp += spixelgap * spixelh;
+	}
+
+	csay = say;
+	for (uint y = 0; y < dstH; y++) {
+		const tColorRGBA *csp = sp;
+		csax = sax;
+		for (uint x = 0; x < dstW; x++) {
+			/*
+			* Setup color source pointers
+			*/
+			int ex = (*csax & 0xffff);
+			int ey = (*csay & 0xffff);
+			int cx = (*csax >> 16);
+			int cy = (*csay >> 16);
+
+			const tColorRGBA *c00, *c01, *c10, *c11;
+			c00 = sp;
+			c01 = sp;
+			c10 = sp;
+			if (cy < spixelh) {
+				if (flipy) {
+					c10 -= spixelgap;
+				} else {
+					c10 += spixelgap;
+				}
+			}
+			c11 = c10;
+			if (cx < spixelw) {
+				if (flipx) {
+					c01--;
+					c11--;
+				} else {
+					c01++;
+					c11++;
+				}
+			}
+
+			/*
+			* Draw and interpolate colors
+			*/
+			int t1, t2;
+			t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
+			t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
+			dp->r = (((t2 - t1) * ey) >> 16) + t1;
+			t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
+			t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
+			dp->g = (((t2 - t1) * ey) >> 16) + t1;
+			t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
+			t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
+			dp->b = (((t2 - t1) * ey) >> 16) + t1;
+			t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
+			t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
+			dp->a = (((t2 - t1) * ey) >> 16) + t1;
+
+			/*
+			* Advance source pointer x
+			*/
+			int *salastx = csax;
+			csax++;
+			int sstepx = (*csax >> 16) - (*salastx >> 16);
+			if (flipx) {
+				sp -= sstepx;
+			} else {
+				sp += sstepx;
+			}
+
+			/*
+			* Advance destination pointer x
+			*/
+			dp++;
+		}
+		/*
+		* Advance source pointer y
+		*/
+		int *salasty = csay;
+		csay++;
+		int sstepy = (*csay >> 16) - (*salasty >> 16);
+		sstepy *= spixelgap;
+		if (flipy) {
+			sp = csp - sstepy;
+		} else {
+			sp = csp + sstepy;
+		}
+	}
+
+	delete[] sax;
+	delete[] say;
+
+	return true;
+}
+
 } // End of namespace Graphics
