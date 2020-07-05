@@ -84,7 +84,9 @@ void GlkEngine::initialize() {
 	initGraphicsMode();
 	createDebugger();
 
-	_conf = new Conf(getInterpreterType());
+	createConfiguration();
+	_conf->load();
+
 	_screen = createScreen();
 	_screen->initialize();
 	_clipboard = new Clipboard();
@@ -122,6 +124,10 @@ void GlkEngine::initGraphicsMode() {
 
 void GlkEngine::createDebugger() {
 	setDebugger(new Debugger());
+}
+
+void GlkEngine::createConfiguration() {
+	_conf = new Conf(getInterpreterType());
 }
 
 Common::Error GlkEngine::run() {

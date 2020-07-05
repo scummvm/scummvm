@@ -63,22 +63,70 @@ WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
 
 Conf *g_conf;
 
-Conf::Conf(InterpreterType interpType) {
+Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true),
+		_rows(25), _cols(60), _lockRows(0), _lockCols(0), _wPaddingX(0),
+		_wPaddingY(0), _wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7),
+		_gamma(1.0), _borderColor(0), _borderSave(0),
+		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
+		_sound(true), _speak(false), _speakInput(false), _styleHint(1),
+		_scrollBg(parseColor(SCROLL_BG)), _scrollFg(parseColor(SCROLL_FG)),
+		_lcd(1), _scrollWidth(0), _safeClicks(false)
+{
 	g_conf = this;
 	_imageW = g_system->getWidth();
 	_imageH = g_system->getHeight();
 
-	get("moreprompt", _propInfo._morePrompt, "\207 more \207");
-	get("morecolor", _propInfo._moreColor, nullptr);
-	get("morecolor", _propInfo._moreSave, nullptr);
-	get("morefont", _propInfo._moreFont, PROPB);
+	_propInfo._morePrompt = "\207 more \207";
+	_propInfo._moreColor = 0;
+	_propInfo._moreSave = 0;
+	_propInfo._moreFont = PROPB;
+	_propInfo._moreAlign = 0;
+	_monoInfo._aspect = 1.0;
+	_propInfo._aspect = 1.0;
+	_monoInfo._size = 11;
+	_propInfo._size = 12;
+	_propInfo._linkColor = parseColor(BLUE);
+	_monoInfo._linkColor = _propInfo._linkColor;
+	_propInfo._linkSave = _propInfo._linkColor;
+	_propInfo._caretColor = 0;
+	_propInfo._caretSave = 0;
+	_propInfo._caretShape = 2;
+	_propInfo._linkStyle = 1;
+	_monoInfo._linkStyle = 1;
+	_propInfo._justify = 0;
+	_propInfo._quotes = 1;
+	_propInfo._dashes = 1;
+	_propInfo._spaces = 0;
+	_propInfo._caps = 0;
+
+	const int DEFAULT_MARGIN_X = (_interpType == INTERPRETER_ZCODE) ? 0 : 15;
+	const int DEFAULT_MARGIN_Y = (_interpType == INTERPRETER_ZCODE) ? 0 : 15;
+	_wMarginX = _wMarginSaveX = DEFAULT_MARGIN_X;
+	_wMarginY = _wMarginSaveY = DEFAULT_MARGIN_Y;
+
+	// For simplicity's sake, only allow graphics when in non-paletted graphics modes
+	if (g_system->getScreenFormat().bytesPerPixel == 1)
+		_graphics = false;
+
+	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
+	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
+
+	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
+	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
+}
+
+void Conf::load() {
+	get("moreprompt", _propInfo._morePrompt);
+	get("morecolor", _propInfo._moreColor);
+	get("morecolor", _propInfo._moreSave);
+	get("morefont", _propInfo._moreFont);
 	get("morealign", _propInfo._moreAlign);
-	get("monoaspect", _monoInfo._aspect, 1.0);
-	get("propaspect", _propInfo._aspect, 1.0);
-	get("monosize", _monoInfo._size, 11);
-	get("propsize", _propInfo._size, 12);
-	get("rows", _rows, 25);
-	get("cols", _cols, 60);
+	get("monoaspect", _monoInfo._aspect);
+	get("propaspect", _propInfo._aspect);
+	get("monosize", _monoInfo._size);
+	get("propsize", _propInfo._size);
+	get("rows", _rows);
+	get("cols", _cols);
 
 	if (ConfMan.hasKey("leading"))
 		_monoInfo._leading = _propInfo._leading = static_cast<int>(atof(ConfMan.get("leading").c_str()) + 0.5);
@@ -94,13 +142,10 @@ Conf::Conf(InterpreterType interpType) {
 	if (ConfMan.hasKey("maxcols"))
 		_cols = MIN(_cols, strToInt(ConfMan.get("maxcols").c_str()));
 
-	const int DEFAULT_MARGIN_X = (interpType == INTERPRETER_ZCODE) ? 0 : 15;
-	const int DEFAULT_MARGIN_Y = (interpType == INTERPRETER_ZCODE) ? 0 : 15;
-
 	get("lockrows", _lockRows);
 	get("lockcols", _lockCols);
-	get("wmarginx", _wMarginX, DEFAULT_MARGIN_X);
-	get("wmarginy", _wMarginY, DEFAULT_MARGIN_Y);
+	get("wmarginx", _wMarginX);
+	get("wmarginy", _wMarginY);
 	_wMarginSaveX = _wMarginX;
 	_wMarginSaveY = _wMarginY;
 
@@ -108,48 +153,42 @@ Conf::Conf(InterpreterType interpType) {
 	get("wpaddingy", _wPaddingY);
 	get("wborderx", _wBorderX);
 	get("wbordery", _wBorderY);
-	get("tmarginx", _tMarginX, 7);
-	get("tmarginy", _tMarginY, 7);
-	get("gamma", _gamma, 1.0);
+	get("tmarginx", _tMarginX);
+	get("tmarginy", _tMarginY);
+	get("gamma", _gamma);
 
-	get("linkcolor", _propInfo._linkColor, BLUE);
+	get("linkcolor", _propInfo._linkColor);
 	_monoInfo._linkColor = _propInfo._linkColor;
 	_propInfo._linkSave = _propInfo._linkColor;
 
-	get("bordercolor", _borderColor, nullptr);
-	get("bordercolor", _borderSave, nullptr);
-	get("windowcolor", _windowColor, WHITE);
-	get("windowcolor", _windowSave, WHITE);
-	get("lcd", _lcd, 1);
-	get("caretcolor", _propInfo._caretColor, nullptr);
-	get("caretcolor", _propInfo._caretSave, nullptr);
-	get("caretshape", _propInfo._caretShape, 2);
+	get("bordercolor", _borderColor);
+	get("bordercolor", _borderSave);
+	get("windowcolor", _windowColor);
+	get("windowcolor", _windowSave);
+	get("lcd", _lcd);
+	get("caretcolor", _propInfo._caretColor);
+	get("caretcolor", _propInfo._caretSave);
+	get("caretshape", _propInfo._caretShape);
 
-	_propInfo._linkStyle = _monoInfo._linkStyle = ConfMan.hasKey("linkstyle")
-		&& !strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;
+	if (ConfMan.hasKey("linkstyle"))
+		_propInfo._linkStyle = _monoInfo._linkStyle = 
+			!strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;
 
 	get("scrollwidth", _scrollWidth);
-	get("scrollbg", _scrollBg, SCROLL_BG);
-	get("scrollfg", _scrollFg, SCROLL_FG);
+	get("scrollbg", _scrollBg);
+	get("scrollfg", _scrollFg);
 	get("justify", _propInfo._justify);
-	get("quotes", _propInfo._quotes, 1);
-	get("dashes", _propInfo._dashes, 1);
+	get("quotes", _propInfo._quotes);
+	get("dashes", _propInfo._dashes);
 	get("spaces", _propInfo._spaces);
 	get("caps", _propInfo._caps);
-	get("graphics", _graphics, true);
-	get("sound", _sound, true);
+	get("graphics", _graphics);
+	get("sound", _sound);
 	get("speak", _speak);
 	get("speak_input", _speakInput);
 	get("speak_language", _speakLanguage);
-	get("stylehint", _styleHint, 1);
+	get("stylehint", _styleHint);
 	get("safeclicks", _safeClicks);
-
-	// For simplicity's sake, only allow graphics when in non-paletted graphics modes
-	if (g_system->getScreenFormat().bytesPerPixel == 1)
-		_graphics = false;
-
-	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
-	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
 
 	char buffer[256];
 	const char *const TG_COLOR[2] = { "tcolor_%d", "gcolor_%d" };
@@ -196,36 +235,36 @@ Conf::Conf(InterpreterType interpType) {
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
 }
 
-void Conf::get(const Common::String &key, Common::String &field, const char *defaultVal) {
-	field = ConfMan.hasKey(key) ? ConfMan.get(key) : defaultVal;
-	field.trim();
-}
-
-void Conf::get(const Common::String &key, uint &color, const byte *defaultColor) {
+void Conf::get(const Common::String &key, Common::String &field) {
 	if (ConfMan.hasKey(key)) {
-		color = parseColor(ConfMan.get(key));
-	} else if (defaultColor) {
-		color = g_system->getScreenFormat().RGBToColor(defaultColor[0], defaultColor[1], defaultColor[2]);
-	} else {
-		color = 0;
+		field = ConfMan.get(key);
+		field.trim();
 	}
 }
 
-void Conf::get(const Common::String &key, int &field, int defaultVal) {
-	field = ConfMan.hasKey(key) ? strToInt(ConfMan.get(key).c_str()) : defaultVal;
+void Conf::get(const Common::String &key, uint &color) {
+	if (ConfMan.hasKey(key))
+		color = parseColor(ConfMan.get(key));
 }
 
-void Conf::get(const Common::String &key, bool &field, bool defaultVal) {
-	if (!ConfMan.hasKey(key) || !Common::parseBool(ConfMan.get(key), field))
-		field = defaultVal;
+void Conf::get(const Common::String &key, int &field) {
+	if (ConfMan.hasKey(key))
+		field = strToInt(ConfMan.get(key).c_str());
 }
 
-void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {
-	field = ConfMan.hasKey(key) ? Screen::getFontId(ConfMan.get(key)) : defaultFont;
+void Conf::get(const Common::String &key, bool &field) {
+	if (ConfMan.hasKey(key))
+		Common::parseBool(ConfMan.get(key), field);
 }
 
-void Conf::get(const Common::String &key, double &field, double defaultVal) {
-	field = ConfMan.hasKey(key) ?  atof(ConfMan.get(key).c_str()) : defaultVal;
+void Conf::get(const Common::String &key, FACES &field) {
+	if (ConfMan.hasKey(key))
+		field = Screen::getFontId(ConfMan.get(key));
+}
+
+void Conf::get(const Common::String &key, double &field) {
+	if (ConfMan.hasKey(key))
+		field = atof(ConfMan.get(key).c_str());
 }
 
 uint Conf::parseColor(const Common::String &str) {
@@ -250,6 +289,10 @@ uint Conf::parseColor(const Common::String &str) {
 	}
 
 	return 0;
+}
+
+uint Conf::parseColor(const byte *rgb) {
+	return g_system->getScreenFormat().RGBToColor(rgb[0], rgb[1], rgb[2]);
 }
 
 } // End of namespace Glk

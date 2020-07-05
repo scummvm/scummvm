@@ -34,40 +34,47 @@ namespace Glk {
  */
 class Conf {
 private:
+	InterpreterType _interpType;
+
 	/**
 	 * Get a string
 	 */
-	void get(const Common::String &key, Common::String &field, const char *defaultVal = nullptr);
+	void get(const Common::String &key, Common::String &field);
 
 	/**
 	 * Get a color
 	 */
-	void get(const Common::String &key, uint &color, const byte *defaultColor);
+	void get(const Common::String &key, uint &color);
 
 	/**
 	 * Get a font name into a font Id
 	 */
-	void get(const Common::String &key, FACES &field, FACES defaultFont);
+	void get(const Common::String &key, FACES &field);
 
 	/**
 	 * Get a numeric value
 	 */
-	void get(const Common::String &key, int &field, int defaultVal = 0);
+	void get(const Common::String &key, int &field);
 
 	/**
 	 * Get a numeric value
 	 */
-	void get(const Common::String &key, bool &field, bool defaultVal = false);
+	void get(const Common::String &key, bool &field);
 
 	/**
 	 * Get a double
 	 */
-	void get(const Common::String &key, double &field, double defaultVal = 0.0);
+	void get(const Common::String &key, double &field);
 
 	/**
 	 * Parse a color
 	 */
 	uint parseColor(const Common::String &str);
+
+	/**
+	 * Convert an RGB tuplet to a color
+	 */
+	uint parseColor(const byte *rgb);
 public:
 	MonoFontInfo _monoInfo;
 	PropFontInfo _propInfo;
@@ -102,6 +109,11 @@ public:
 	 * Constructor
 	 */
 	Conf(InterpreterType interpType);
+
+	/**
+	 * Loads the configuration from the ScummVM configuration
+	 */
+	void load();
 };
 
 extern Conf *g_conf;

@@ -107,6 +107,11 @@ protected:
 	virtual Screen *createScreen();
 
 	/**
+	 * Loads the configuration
+	 */
+	virtual void createConfiguration();
+
+	/**
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame() = 0;
