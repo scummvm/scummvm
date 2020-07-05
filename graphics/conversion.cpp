@@ -167,4 +167,59 @@ bool crossBlit(byte *dst, const byte *src,
 	return true;
 }
 
+namespace {
+
+template <typename Size>
+void scaleNN(byte *dst, const byte *src,
+               const uint dstPitch, const uint srcPitch,
+               const uint dstW, const uint dstH,
+               const uint srcW, const uint srcH,
+               int *scaleCacheX) {
+
+	const uint dstDelta = (dstPitch - dstW * sizeof(Size));
+
+	for (uint y = 0; y < dstH; y++) {
+		const Size *srcP = (const Size *)(src + ((y * srcH) / dstH) * srcPitch);
+		for (uint x = 0; x < dstW; x++) {
+			int val = srcP[scaleCacheX[x]];
+			*(Size *)dst = val;
+			dst += sizeof(Size);
+		}
+		dst += dstDelta;
+	}
+}
+
+} // End of anonymous namespace
+
+bool scaleBlit(byte *dst, const byte *src,
+               const uint dstPitch, const uint srcPitch,
+               const uint dstW, const uint dstH,
+               const uint srcW, const uint srcH,
+               const Graphics::PixelFormat &fmt) {
+
+	int *scaleCacheX = new int[dstW];
+	for (uint x = 0; x < dstW; x++) {
+		scaleCacheX[x] = (x * srcW) / dstW;
+	}
+
+	switch (fmt.bytesPerPixel) {
+	case 1:
+		scaleNN<uint8>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX);
+		break;
+	case 2:
+		scaleNN<uint16>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX);
+		break;
+	case 4:
+		scaleNN<uint32>(dst, src, dstPitch, srcPitch, dstW,  dstH, srcW, srcH, scaleCacheX);
+		break;
+	default:
+		delete[] scaleCacheX;
+		return false;
+	}
+
+	delete[] scaleCacheX;
+
+	return true;
+}
+			
 } // End of namespace Graphics
