@@ -2803,8 +2803,15 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_width));
 
 #ifdef ENABLE_WME3D
-	if (_gameRef->_playing3DGame) {
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		persistMgr->transferPtr(TMEMBER(_sceneGeometry));
 		persistMgr->transferBool(TMEMBER(_2DPathfinding));
+		persistMgr->transferBool(TMEMBER(_showGeometry));
+		persistMgr->transferFloat(TMEMBER(_fov));
+		persistMgr->transferFloat(TMEMBER(_nearPlane));
+		persistMgr->transferFloat(TMEMBER(_farPlane));
+	} else {
+		_sceneGeometry = nullptr;
 	}
 #endif
 
@@ -2815,10 +2822,10 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 bool AdScene::afterLoad() {
 #ifdef ENABLE_WME3D
 	if (_sceneGeometry) {
-		Camera3D* activeCamera = _sceneGeometry->getActiveCamera();
+		int activeCamera = _sceneGeometry->_activeCamera;
 
-		if (activeCamera) {
-			// TODO: set active camera
+		if (activeCamera >= 0 && static_cast<uint>(activeCamera) < _sceneGeometry->_cameras.size()) {
+			_sceneGeometry->setActiveCamera(activeCamera, _fov, _nearPlane, _farPlane);
 		}
 	}
 #endif

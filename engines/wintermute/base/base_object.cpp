@@ -36,6 +36,11 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
 
+#ifdef ENABLE_WME3D
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/wintermute.h"
+#endif
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseObject, false)
@@ -1032,6 +1037,21 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferFloat(TMEMBER(_sFXParam3));
 	persistMgr->transferFloat(TMEMBER(_sFXParam4));
 
+#ifdef ENABLE_WME3D
+	if (BaseEngine::instance().getFlags() & GF_3D) {
+		persistMgr->transferAngle(TMEMBER(_angle));
+		persistMgr->transferPtr(TMEMBER(_modelX));
+		persistMgr->transferPtr(TMEMBER(_shadowModel));
+		persistMgr->transferVector3d(TMEMBER(_posVector));
+		persistMgr->transferMatrix4(TMEMBER(_worldMatrix));
+		persistMgr->transferFloat(TMEMBER(_shadowSize));
+		persistMgr->transferSint32(TMEMBER_INT(_shadowType));
+		persistMgr->transferUint32(TMEMBER(_shadowColor));
+		persistMgr->transferFloat(TMEMBER(_scale3D));
+		persistMgr->transferVector3d(TMEMBER(_shadowLightPos));
+		persistMgr->transferBool(TMEMBER(_drawBackfaces));
+	}
+#endif
 
 	persistMgr->transferSint32(TMEMBER_INT(_blendMode));
 

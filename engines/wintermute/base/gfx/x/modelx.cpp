@@ -129,6 +129,8 @@ bool ModelX::loadFromFile(const Common::String &filename, ModelX *parentModel) {
 		findBones(false, parentModel);
 	}
 
+	delete[] buffer;
+
 	return res;
 }
 

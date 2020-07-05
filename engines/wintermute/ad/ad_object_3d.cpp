@@ -543,19 +543,10 @@ bool AdObject3D::persist(BasePersistenceManager *persistMgr) {
 		_shadowVolume = nullptr;
 	}
 
-	if (persistMgr->checkVersion(1, 8, 5)) {
-		_ignoredLights.persist(persistMgr);
-	} else {
-		clearIgnoredLights();
-	}
+	_ignoredLights.persist(persistMgr);
 
-	if (persistMgr->checkVersion(1, 8, 10)) {
-		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
-		persistMgr->transferBool(TMEMBER(_hasAmbientLightColor));
-	} else {
-		_ambientLightColor = 0x00000000;
-		_hasAmbientLightColor = false;
-	}
+	persistMgr->transferUint32(TMEMBER(_ambientLightColor));
+	persistMgr->transferBool(TMEMBER(_hasAmbientLightColor));
 
 	return true;
 }
@@ -629,18 +620,14 @@ bool AdObject3D::getBonePosition3D(const char *boneName, Math::Vector3d *pos, Ma
 		return false;
 	}
 
-	if (!offset) {
-		*offset = Math::Vector3d(0, 0, 0);
+	Math::Matrix4 bonePosMat = *boneMat * _worldMatrix;
+	*pos = Math::Vector3d(0.0f, 0.0f, 0.0f);
+
+	if (offset) {
+		*pos = *offset;
 	}
 
-	Math::Matrix4 bonePosMat = *boneMat * _worldMatrix;
-
-	Math::Vector4d vectBone4;
-	bonePosMat.transform(vectBone4);
-
-	pos->x() = vectBone4.x();
-	pos->y() = vectBone4.y();
-	pos->z() = vectBone4.z();
+	bonePosMat.transform(pos, true);
 
 	return true;
 }

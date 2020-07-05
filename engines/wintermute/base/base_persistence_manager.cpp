@@ -887,12 +887,16 @@ bool BasePersistenceManager::transferMatrix4(const char *name, Math::Matrix4 *va
 bool BasePersistenceManager::transferAngle(const char *name, Math::Angle *val) {
 	if (_saving) {
 		putFloat(val->getDegrees());
+
+		if (_saveStream->err()) {
+			return STATUS_FAILED;
+		}
 	} else {
 		*val = getFloat();
-	}
 
-	if (_loadStream->err()) {
-		return STATUS_FAILED;
+		if (_loadStream->err()) {
+			return STATUS_FAILED;
+		}
 	}
 
 	return STATUS_OK;

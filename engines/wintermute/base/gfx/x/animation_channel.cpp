@@ -185,11 +185,7 @@ bool AnimationChannel::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_transitionStart));
 	persistMgr->transferUint32(TMEMBER(_transtitionTime));
 
-	if (persistMgr->checkVersion(1, 7, 94)) {
-		persistMgr->transferUint32(TMEMBER(_stopTransitionTime));
-	} else {
-		_stopTransitionTime = 0;
-	}
+	persistMgr->transferUint32(TMEMBER(_stopTransitionTime));
 
 	for (int i = 0; i < 2; i++) {
 		bool animExists = false;

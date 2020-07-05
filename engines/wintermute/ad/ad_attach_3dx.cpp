@@ -91,15 +91,15 @@ bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerO
 
 	if (_modelX) {
 		_modelX->render();
-	}
 
-	if (registerObjects && _owner && _owner->_registrable) {
-		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, _owner, _modelX,
-		                                                      _modelX->_boundingRect.left,
-		                                                      _modelX->_boundingRect.top,
-		                                                      _modelX->_boundingRect.right - _modelX->_boundingRect.left,
-		                                                      _modelX->_boundingRect.bottom - _modelX->_boundingRect.top,
-		                                                      true));
+		if (registerObjects && _owner && _owner->_registrable) {
+			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, _owner, _modelX,
+			                                                      _modelX->_boundingRect.left,
+			                                                      _modelX->_boundingRect.top,
+			                                                      _modelX->_boundingRect.right - _modelX->_boundingRect.left,
+			                                                      _modelX->_boundingRect.bottom - _modelX->_boundingRect.top,
+			                                                      true));
+		}
 	}
 
 	_gameRef->_renderer3D->popWorldTransform();
