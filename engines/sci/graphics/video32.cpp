@@ -30,7 +30,6 @@
 #include "common/system.h"               // for g_system
 #include "engines/engine.h"              // for Engine, g_engine
 #include "graphics/palette.h"            // for PaletteManager
-#include "graphics/transparent_surface.h" // for TransparentSurface
 #include "sci/console.h"                 // for Console
 #include "sci/engine/features.h"         // for GameFeatures
 #include "sci/engine/state.h"            // for EngineState
@@ -242,20 +241,16 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 
 	if (_decoder->getWidth() != _drawRect.width() || _decoder->getHeight() != _drawRect.height()) {
 		Graphics::Surface *const unscaledFrame(convertedFrame);
-		// TODO: The only reason TransparentSurface is used here because it is
-		// where common scaler code is right now, which should just be part of
-		// Graphics::Surface (or some free functions).
-		const Graphics::TransparentSurface tsUnscaledFrame(*unscaledFrame);
 #ifdef USE_RGB_COLOR
 		if (_hqVideoMode) {
-			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_BILINEAR>(_drawRect.width(), _drawRect.height());
+			convertedFrame = unscaledFrame->scale(_drawRect.width(), _drawRect.height(), true);
 		} else {
 #elif 1
 		{
 #else
 		}
 #endif
-			convertedFrame = tsUnscaledFrame.scaleT<Graphics::FILTER_NEAREST>(_drawRect.width(), _drawRect.height());
+			convertedFrame = unscaledFrame->scale(_drawRect.width(), _drawRect.height(), false);
 		}
 		assert(convertedFrame);
 		if (freeConvertedFrame) {
