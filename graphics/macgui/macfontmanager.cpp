@@ -430,6 +430,18 @@ int MacFontManager::getFontIdByName(Common::String name) {
 void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	Common::String name;
 
+	// Try to see if we have regular font
+	if (macFont.getSlant() != kMacFontRegular) {
+		name = getFontName(macFont.getId(), macFont.getSize(), kMacFontRegular);
+
+		if (_fontRegistry.contains(name) && !_fontRegistry[name]->isGenerated()) {
+			generateFONTFont(macFont, *_fontRegistry[name]);
+
+			return;
+		}
+	}
+
+
 #ifdef USE_FREETYPE2
 	// Checking if it's a TTF font. Restrict it only to regular fonts now
 	if (_ttfData.contains(macFont.getId()) && macFont.getSlant() == kMacFontRegular) {
