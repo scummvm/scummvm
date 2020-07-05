@@ -224,7 +224,7 @@ bool scaleBlit(byte *dst, const byte *src,
 
 /*
 
-The function below is adapted from SDL_rotozoom.c,
+The functions below are adapted from SDL_rotozoom.c,
 taken from SDL_gfx-2.0.18.
 
 Its copyright notice:
@@ -257,22 +257,140 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 =============================================================================
 
 
-The functions have been adapted for different structures and coordinate
-systems.
+The functions have been adapted for different structures, coordinate
+systems and pixel formats.
 
 */
 
-struct tColorRGBA { byte r; byte g; byte b; byte a; };
+namespace {
+
+inline byte scaleBlitBilinearInterpolate(byte c01, byte c00, byte c11, byte c10, int ex, int ey) {
+	int t1 = ((((c01 - c00) * ex) >> 16) + c00) & 0xff;
+	int t2 = ((((c11 - c10) * ex) >> 16) + c10) & 0xff;
+	return (((t2 - t1) * ey) >> 16) + t1;
+}
+
+template <typename Size>
+Size scaleBlitBilinearInterpolate(Size c01, Size c00, Size c11, Size c10, int ex, int ey,
+                                  const Graphics::PixelFormat &fmt) {
+	byte c01_a, c01_r, c01_g, c01_b;
+	fmt.colorToARGB(c01, c01_a, c01_r, c01_g, c01_b);
+
+	byte c00_a, c00_r, c00_g, c00_b;
+	fmt.colorToARGB(c00, c00_a, c00_r, c00_g, c00_b);
+
+	byte c11_a, c11_r, c11_g, c11_b;
+	fmt.colorToARGB(c11, c11_a, c11_r, c11_g, c11_b);
+
+	byte c10_a, c10_r, c10_g, c10_b;
+	fmt.colorToARGB(c10, c10_a, c10_r, c10_g, c10_b);
+
+	byte dp_a = scaleBlitBilinearInterpolate(c01_a, c00_a, c11_a, c10_a, ex, ey);
+	byte dp_r = scaleBlitBilinearInterpolate(c01_r, c00_r, c11_r, c10_r, ex, ey);
+	byte dp_g = scaleBlitBilinearInterpolate(c01_g, c00_g, c11_g, c10_g, ex, ey);
+	byte dp_b = scaleBlitBilinearInterpolate(c01_b, c00_b, c11_b, c10_b, ex, ey);
+	return fmt.ARGBToColor(dp_a, dp_r, dp_g, dp_b);
+}
+
+template <typename Size, bool flipx, bool flipy> // TODO: See mirroring comment in RenderTicket ctor
+void scaleBlitBilinearLogic(byte *dst, const byte *src,
+                            const uint dstPitch, const uint srcPitch,
+                            const uint dstW, const uint dstH,
+							const uint srcW, const uint srcH,
+                            const Graphics::PixelFormat &fmt,
+                            int *sax, int *say) {
+
+	int spixelw = (srcW - 1);
+	int spixelh = (srcH - 1);
+
+	const byte *sp = src;
+
+	if (flipx) {
+		sp += spixelw;
+	}
+	if (flipy) {
+		sp += srcPitch * spixelh;
+	}
+
+	int *csay = say;
+	for (uint y = 0; y < dstH; y++) {
+		Size *dp = (Size *)(dst + (dstPitch * y));
+		const byte *csp = sp;
+		int *csax = sax;
+		for (uint x = 0; x < dstW; x++) {
+			/*
+			* Setup color source pointers
+			*/
+			int ex = (*csax & 0xffff);
+			int ey = (*csay & 0xffff);
+			int cx = (*csax >> 16);
+			int cy = (*csay >> 16);
+
+			const byte *c00, *c01, *c10, *c11;
+			c00 = c01 = c10 = sp;
+			if (cy < spixelh) {
+				if (flipy) {
+					c10 -= srcPitch;
+				} else {
+					c10 += srcPitch;
+				}
+			}
+			c11 = c10;
+			if (cx < spixelw) {
+				if (flipx) {
+					c01 -= sizeof(Size);
+					c11 -= sizeof(Size);
+				} else {
+					c01 += sizeof(Size);
+					c11 += sizeof(Size);
+				}
+			}
+
+			/*
+			* Draw and interpolate colors
+			*/
+			*dp = scaleBlitBilinearInterpolate(*(const Size *)c01, *(const Size *)c00, *(const Size *)c11, *(const Size *)c10, ex, ey, fmt);
+			/*
+			* Advance source pointer x
+			*/
+			int *salastx = csax;
+			csax++;
+			int sstepx = (*csax >> 16) - (*salastx >> 16);
+			if (flipx) {
+				sp -= sstepx * sizeof(Size);
+			} else {
+				sp += sstepx * sizeof(Size);
+			}
+
+			/*
+			* Advance destination pointer x
+			*/
+			dp++;
+		}
+		/*
+		* Advance source pointer y
+		*/
+		int *salasty = csay;
+		csay++;
+		int sstepy = (*csay >> 16) - (*salasty >> 16);
+		sstepy *= srcPitch;
+		if (flipy) {
+			sp = csp - sstepy;
+		} else {
+			sp = csp + sstepy;
+		}
+	}
+}
+
+} // End of anonymous namespace
 
 bool scaleBlitBilinear(byte *dst, const byte *src,
                        const uint dstPitch, const uint srcPitch,
                        const uint dstW, const uint dstH,
                        const uint srcW, const uint srcH,
                        const Graphics::PixelFormat &fmt) {
-	assert(fmt.bytesPerPixel == 4);
-
-	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
-
+	if (fmt.bytesPerPixel != 2 && fmt.bytesPerPixel != 4)
+		return false;
 
 	int *sax = new int[dstW + 1];
 	int *say = new int[dstH + 1];
@@ -318,98 +436,15 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
 		}
 	}
 
-	const tColorRGBA *sp = (const tColorRGBA *) src;
-	tColorRGBA *dp = (tColorRGBA *) dst;
-	int spixelgap = srcW;
+	if (fmt.bytesPerPixel == 4) {
+		scaleBlitBilinearLogic<uint32, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+	} else if (fmt.bytesPerPixel == 2) {
+		scaleBlitBilinearLogic<uint16, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, sax, say);
+	} else {
+		delete[] sax;
+		delete[] say;
 
-	if (flipx) {
-		sp += spixelw;
-	}
-	if (flipy) {
-		sp += spixelgap * spixelh;
-	}
-
-	csay = say;
-	for (uint y = 0; y < dstH; y++) {
-		const tColorRGBA *csp = sp;
-		csax = sax;
-		for (uint x = 0; x < dstW; x++) {
-			/*
-			* Setup color source pointers
-			*/
-			int ex = (*csax & 0xffff);
-			int ey = (*csay & 0xffff);
-			int cx = (*csax >> 16);
-			int cy = (*csay >> 16);
-
-			const tColorRGBA *c00, *c01, *c10, *c11;
-			c00 = sp;
-			c01 = sp;
-			c10 = sp;
-			if (cy < spixelh) {
-				if (flipy) {
-					c10 -= spixelgap;
-				} else {
-					c10 += spixelgap;
-				}
-			}
-			c11 = c10;
-			if (cx < spixelw) {
-				if (flipx) {
-					c01--;
-					c11--;
-				} else {
-					c01++;
-					c11++;
-				}
-			}
-
-			/*
-			* Draw and interpolate colors
-			*/
-			int t1, t2;
-			t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
-			t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
-			dp->r = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
-			t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
-			dp->g = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
-			t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
-			dp->b = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
-			t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
-			dp->a = (((t2 - t1) * ey) >> 16) + t1;
-
-			/*
-			* Advance source pointer x
-			*/
-			int *salastx = csax;
-			csax++;
-			int sstepx = (*csax >> 16) - (*salastx >> 16);
-			if (flipx) {
-				sp -= sstepx;
-			} else {
-				sp += sstepx;
-			}
-
-			/*
-			* Advance destination pointer x
-			*/
-			dp++;
-		}
-		/*
-		* Advance source pointer y
-		*/
-		int *salasty = csay;
-		csay++;
-		int sstepy = (*csay >> 16) - (*salasty >> 16);
-		sstepy *= spixelgap;
-		if (flipy) {
-			sp = csp - sstepy;
-		} else {
-			sp = csp + sstepy;
-		}
+		return false;
 	}
 
 	delete[] sax;
