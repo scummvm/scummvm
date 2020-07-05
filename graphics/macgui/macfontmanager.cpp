@@ -123,7 +123,7 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 
 MacFontManager::~MacFontManager() {
 	for (Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
-		delete it->_value;	
+		delete it->_value;
 	for (Common::HashMap<int, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
 		delete it->_value;
 }
@@ -431,14 +431,14 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	Common::String name;
 
 #ifdef USE_FREETYPE2
-	// First check if it's a TTF font
-	if (_ttfData.contains(macFont.getId())) {
+	// Checking if it's a TTF font. Restrict it only to regular fonts now
+	if (_ttfData.contains(macFont.getId()) && macFont.getSlant() == kMacFontRegular) {
 		generateTTFFont(macFont, _ttfData[macFont.getId()]);
 		return;
 	}
 #endif
 
-	// First we try twice size
+	// Now try twice size
 	name = getFontName(macFont.getId(), macFont.getSize() * 2, macFont.getSlant());
 	if (_fontRegistry.contains(name) && !_fontRegistry[name]->isGenerated()) {
 		generateFONTFont(macFont, *_fontRegistry[name]);
