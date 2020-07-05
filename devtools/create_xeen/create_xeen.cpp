@@ -57,7 +57,7 @@ void writeVersion(CCArchive &cc) {
 int main(int argc, char *argv[]) {
 	if (argc != 3) {
 		printf("Format: %s dark.cc \"swords xeen.dat\"\n", argv[0]);
-		exit(0);
+		return 1;
 	}
 
 	if (!outputFile.open("xeen.ccs", Common::kFileWriteMode)) {
