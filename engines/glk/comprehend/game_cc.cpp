@@ -109,9 +109,14 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 			console_println(_strings[407].c_str());
 
 		} else {
-			// Won the game.
-			// FIXME: The merchant ship should arrives, etc.
-			game_restart();
+			// Won the game
+			g_comprehend->drawLocationPicture(29, false);
+			g_comprehend->drawItemPicture(20);
+			console_println(stringLookup(0x21c).c_str());
+			console_println(stringLookup(0x21d).c_str());
+
+			g_comprehend->readChar();
+			g_comprehend->quitGame();
 		}
 		break;
 
