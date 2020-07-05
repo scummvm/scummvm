@@ -127,7 +127,7 @@ struct Channel {
 	Common::Point getPosition();
 	MacShape *getShape();
 	Graphics::ManagedSurface *getSurface();
-	const Graphics::Surface *getMask();
+	const Graphics::Surface *getMask(bool forceMatte = false);
 
 	void setClean(Sprite *nextSprite, int spriteId);
 	void addDelta(Common::Point pos);
