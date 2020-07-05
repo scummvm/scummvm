@@ -1305,8 +1305,8 @@ const char *const WEAPON_NAMES[41] = {
 	"wakazashi ", "dagger ", "mace ", "flail ", "cudgel ", "maul ", "spear ",
 	"bardiche ", "glaive ", "halberd ", "pike ", "flamberge ", "trident ",
 	"staff ", "hammer ", "naginata ", "battle axe ", "grand axe ", "great axe ",
-	"short bow ", "long bow ", "crossbow ", "sling ", "Xeen Slayer Sword",
-	"Elder LongSword", "Elder Dagger ", "Elder Mace ", "Elder Spear ",
+	"short bow ", "long bow ", "crossbow ", "sling ", "Xeen Slayer Sword ",
+	"Elder LongSword ", "Elder Dagger ", "Elder Mace ", "Elder Spear ",
 	"Elder Staff ", "Elder LongBow "
 };
 
