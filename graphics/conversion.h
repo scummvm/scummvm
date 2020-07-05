@@ -78,6 +78,12 @@ bool scaleBlit(byte *dst, const byte *src,
                const uint srcW, const uint srcH,
                const Graphics::PixelFormat &fmt);
 
+bool scaleBlitBilinear(byte *dst, const byte *src,
+                       const uint dstPitch, const uint srcPitch,
+                       const uint dstW, const uint dstH,
+                       const uint srcW, const uint srcH,
+                       const Graphics::PixelFormat &fmt);
+
 } // End of namespace Graphics
 
 #endif // GRAPHICS_CONVERSION_H
