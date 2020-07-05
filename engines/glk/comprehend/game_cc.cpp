@@ -84,13 +84,15 @@ void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 1:
 		// Crystyal ball cutscene
-		assert(_diskNum == 1);
-		crystalBallCutscene();
+		if (_diskNum == 1) {
+			crystalBallCutscene();
+		} else {
+			throneCutscene();
+		}
 		break;
 
 	case 3:
 		// Game over - failure
-		_newDiskNum = 1;
 		game_restart();
 		break;
 
@@ -135,7 +137,16 @@ void CrimsonCrownGame::crystalBallCutscene() {
 		if (g_comprehend->shouldQuit())
 			return;
 	}
-} 
+}
+
+void CrimsonCrownGame::throneCutscene() {
+	// Show the screen
+	update();
+	console_println(stringLookup(0x20A).c_str());
+
+	// Handle what happens in climatic showdown
+	eval_function(_functions[14], nullptr);
+}
 
 void CrimsonCrownGame::beforePrompt() {
 	// Clear the Sabrina/Erik action flags

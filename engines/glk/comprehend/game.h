@@ -47,7 +47,6 @@ public:
 private:
 	Item *get_item_by_noun(byte noun);
 	void describe_objects_in_current_room();
-	void update();
 	void func_set_test_result(FunctionState *func_state, bool value);
 	size_t num_objects_in_room(int room);
 	void eval_instruction(FunctionState *func_state, const Instruction *instr,
@@ -116,6 +115,7 @@ public:
 	void move_to(uint8 room);
 	Room *get_room(uint16 index);
 	Item *get_item(uint16 index);
+	void update();
 	void update_graphics();
 
 	/**

@@ -39,6 +39,11 @@ private:
 	 */
 	void crystalBallCutscene();
 
+	/**
+	 * Start of throneroom cutscene
+	 */
+	void throneCutscene();
+
 protected:
 	bool handle_restart() override;
 public:
