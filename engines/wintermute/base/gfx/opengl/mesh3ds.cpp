@@ -80,9 +80,9 @@ bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 			_indexData = new uint16[_indexCount];
 
 			for (int i = 0; i < faceCount; ++i) {
-				_indexData[i * 3] = fileStream.readUint16LE();
-				_indexData[i * 3 + 2] = fileStream.readUint16LE();
+				_indexData[i * 3 + 0] = fileStream.readUint16LE();
 				_indexData[i * 3 + 1] = fileStream.readUint16LE();
+				_indexData[i * 3 + 2] = fileStream.readUint16LE();
 				// not used appearently
 				fileStream.readUint16LE();
 			}

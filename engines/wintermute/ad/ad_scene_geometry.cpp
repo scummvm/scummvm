@@ -414,7 +414,7 @@ bool AdSceneGeometry::render(bool render) {
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CCW);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -502,7 +502,7 @@ bool AdSceneGeometry::renderShadowGeometry() {
 	// disable color write
 	glBlendFunc(GL_ZERO, GL_ONE);
 
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CCW);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// render walk planes
