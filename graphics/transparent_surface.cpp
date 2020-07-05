@@ -33,6 +33,7 @@
 #include "common/rect.h"
 #include "common/math.h"
 #include "common/textconsole.h"
+#include "graphics/conversion.h"
 #include "graphics/primitives.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
@@ -1068,26 +1069,7 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 		delete[] say;
 
 	} else {
-		int *scaleCacheX = new int[dstW];
-		for (int x = 0; x < dstW; x++) {
-			scaleCacheX[x] = (x * srcW) / dstW;
-		}
-
-		switch (format.bytesPerPixel) {
-		case 1:
-			scaleNN<uint8>(scaleCacheX, target);
-			break;
-		case 2:
-			scaleNN<uint16>(scaleCacheX, target);
-			break;
-		case 4:
-			scaleNN<uint32>(scaleCacheX, target);
-			break;
-		default:
-			error("Can only scale 8bpp, 16bpp, and 32bpp");
-		}
-
-		delete[] scaleCacheX;
+		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, dstW, dstH, srcW, srcH, format);
 	}
 
 	return target;
@@ -1171,25 +1153,10 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 	return surface;
 }
 
-template <typename Size>
-void TransparentSurface::scaleNN(int *scaleCacheX, TransparentSurface *target) const {
-	for (int y = 0; y < target->h; y++) {
-		Size *destP = (Size *)target->getBasePtr(0, y);
-		const Size *srcP = (const Size *)getBasePtr(0, (y * h) / target->h);
-		for (int x = 0; x < target->w; x++) {
-			*destP++ = srcP[scaleCacheX[x]];
-		}
-	}
-}
-
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
 template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
-
-template void TransparentSurface::scaleNN<uint8>(int *scaleCacheX, TransparentSurface *target) const;
-template void TransparentSurface::scaleNN<uint16>(int *scaleCacheX, TransparentSurface *target) const;
-template void TransparentSurface::scaleNN<uint32>(int *scaleCacheX, TransparentSurface *target) const;
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 	return rotoscaleT<FILTER_BILINEAR>(transform);

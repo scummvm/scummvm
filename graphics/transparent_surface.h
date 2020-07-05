@@ -177,9 +177,6 @@ struct TransparentSurface : public Graphics::Surface {
 	void setAlphaMode(AlphaType);
 private:
 	AlphaType _alphaMode;
-
-	template <typename Size>
-	void scaleNN(int *scaleCacheX, TransparentSurface *target) const;
 };
 
 /**
