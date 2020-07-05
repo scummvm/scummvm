@@ -268,7 +268,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 					// The sfnt resource should be just a copy of a TTF
 					fontstream = fontFile->getResource(MKTAG('s', 'f', 'n', 't'), (*assoc)[i]._fontID);
 					_ttfData[_fontIds.getVal(familyName, kMacFontNonStandard)] = fontstream;
-					return;
+					continue;
 				}
 #endif
 
