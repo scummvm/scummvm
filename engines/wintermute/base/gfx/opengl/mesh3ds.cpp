@@ -23,20 +23,14 @@
 #include "common/file.h"
 #include "engines/wintermute/base/gfx/opengl/loader3ds.h"
 #include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
+#include "engines/wintermute/wintypes.h"
 
 namespace Wintermute {
 
-Mesh3DS::Mesh3DS()
-    : _vertexData(nullptr), _vertexCount(0),
-      _indexData(nullptr), _indexCount(0),
-      _vertexBuffer(0), _indexBuffer(0) {
+Mesh3DS::Mesh3DS() : _vertexData(nullptr), _vertexCount(0), _indexData(nullptr), _indexCount(0) {
 }
 
 Mesh3DS::~Mesh3DS() {
-
-	GLuint bufferNames[2] = {_vertexBuffer, _indexBuffer};
-	glDeleteBuffers(2, bufferNames);
-
 	delete[] _vertexData;
 	delete[] _indexData;
 }
@@ -45,33 +39,17 @@ void Mesh3DS::computeNormals() {
 }
 
 void Mesh3DS::fillVertexBuffer(uint32 color) {
-	if (_vertexBuffer == 0) {
-		GLuint bufferNames[2];
-		glGenBuffers(2, bufferNames);
-		_vertexBuffer = *bufferNames;
-		_indexBuffer = *(bufferNames + 1);
-	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, _vertexCount * kVertexSize, 0, GL_STATIC_DRAW);
-	uint32 *bufferData = reinterpret_cast<uint32 *>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-	float *bufferFloatData = reinterpret_cast<float *>(bufferData);
-	float *vertexFloatData = reinterpret_cast<float *>(_vertexData);
+	byte r = RGBCOLGetR(color);
+	byte g = RGBCOLGetG(color);
+	byte b = RGBCOLGetB(color);
+	byte a = RGBCOLGetA(color);
 
 	for (int i = 0; i < _vertexCount; ++i) {
-		bufferData[4 * i] = color;
-		bufferFloatData[4 * i + 1] = vertexFloatData[3 * i + 0];
-		bufferFloatData[4 * i + 2] = vertexFloatData[3 * i + 1];
-		bufferFloatData[4 * i + 3] = vertexFloatData[3 * i + 2];
+		_vertexData[i].r = r;
+		_vertexData[i].g = g;
+		_vertexData[i].b = b;
+		_vertexData[i].a = a;
 	}
-
-	glUnmapBuffer(GL_ARRAY_BUFFER);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indexCount * 2, _indexData, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
@@ -85,15 +63,14 @@ bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 		switch (chunkId) {
 		case VERTICES:
 			_vertexCount = fileStream.readUint16LE();
-			_vertexData = new byte[4 * 3 * _vertexCount];
+			_vertexData = new GeometryVertex[_vertexCount]();
 
 			for (int i = 0; i < _vertexCount; ++i) {
-				float *floatVertexData = reinterpret_cast<float *>(_vertexData);
 				// note that .3ds has a right handed coordinate system
 				// with the z axis pointing upwards
-				floatVertexData[3 * i + 0] = fileStream.readFloatLE();
-				floatVertexData[3 * i + 2] = -fileStream.readFloatLE();
-				floatVertexData[3 * i + 1] = fileStream.readFloatLE();
+				_vertexData[i].x = fileStream.readFloatLE();
+				_vertexData[i].z = -fileStream.readFloatLE();
+				_vertexData[i].y = fileStream.readFloatLE();
 			}
 			break;
 
@@ -125,44 +102,29 @@ bool Wintermute::Mesh3DS::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 }
 
 void Mesh3DS::render() {
-	if (_vertexBuffer == 0) {
-		return;
-	}
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	glInterleavedArrays(GL_C4UB_V3F, 0, 0);
+	glColorPointer(4, GL_UNSIGNED_BYTE, kVertexSize, _vertexData);
+	glVertexPointer(3, GL_FLOAT, kVertexSize, reinterpret_cast<byte *>(_vertexData) + 4);
 
-	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_SHORT, _indexData);
 }
 
 void Mesh3DS::dumpVertexCoordinates(const char *filename) {
 	Common::DumpFile dump;
 	dump.open(filename);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	uint32 *vertices = reinterpret_cast<uint32 *>(glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY));
-	uint16 *indices = reinterpret_cast<uint16 *>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY));
-
-	for (uint16 *index = indices; index < indices + _indexCount; ++index) {
-		float x = *reinterpret_cast<float *>(vertices + 4 * *index + 1);
-		float y = *reinterpret_cast<float *>(vertices + 4 * *index + 2);
-		float z = *reinterpret_cast<float *>(vertices + 4 * *index + 3);
+	for (uint16 *index = _indexData; index < _indexData + _indexCount; ++index) {
+		float x = _vertexData[*index].x;
+		float y = _vertexData[*index].y;
+		float z = _vertexData[*index].z;
 
 		dump.writeString(Common::String::format("%u ", *index));
 		dump.writeString(Common::String::format("%g ", x));
 		dump.writeString(Common::String::format("%g ", y));
 		dump.writeString(Common::String::format("%g\n", z));
 	}
-
-	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-	glUnmapBuffer(GL_ARRAY_BUFFER);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 int Mesh3DS::faceCount() {
@@ -175,7 +137,7 @@ uint16 *Mesh3DS::getFace(int index) {
 }
 
 float *Mesh3DS::getVertexPosition(int index) {
-	return reinterpret_cast<float *>(_vertexData + 12 * index);
+	return reinterpret_cast<float *>(&((_vertexData + index)->x));
 }
 
 int Wintermute::Mesh3DS::vertexCount() {

@@ -29,6 +29,20 @@
 
 namespace Wintermute {
 
+#include "common/pack-start.h"
+
+struct GeometryVertex {
+	uint8 r;
+	uint8 g;
+	uint8 b;
+	uint8 a;
+	float x;
+	float y;
+	float z;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"
+
 class Mesh3DS {
 public:
 	// vertex size in bytes, for the moment we only have
@@ -48,12 +62,10 @@ public:
 	float *getVertexPosition(int index);
 
 private:
-	byte *_vertexData;
+	GeometryVertex *_vertexData;
 	uint16 _vertexCount;
 	uint16 *_indexData;
 	uint16 _indexCount;
-	GLuint _vertexBuffer;
-	GLuint _indexBuffer;
 };
 
 } // namespace Wintermute
