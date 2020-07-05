@@ -909,14 +909,13 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 	return target;
 }
 
-template <TFilteringMode filteringMode>
-TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight) const {
+TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight, bool filtering) const {
 
 	TransparentSurface *target = new TransparentSurface();
 
 	target->create(newWidth, newHeight, format);
 
-	if (filteringMode == FILTER_BILINEAR) {
+	if (filtering) {
 		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
 	} else {
 		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
@@ -1005,15 +1004,9 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
-template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
-template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 	return rotoscaleT<FILTER_BILINEAR>(transform);
-}
-
-TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
-	return scaleT<FILTER_NEAREST>(newWidth, newHeight);
 }
 
 } // End of namespace Graphics

@@ -368,6 +368,21 @@ void Surface::flipVertical(const Common::Rect &r) {
 	delete[] temp;
 }
 
+Graphics::Surface *Surface::scale(uint16 newWidth, uint16 newHeight, bool filtering) const {
+
+	Graphics::Surface *target = new Graphics::Surface();
+
+	target->create(newWidth, newHeight, format);
+
+	if (filtering) {
+		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+	} else {
+		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+	}
+
+	return target;
+}
+
 void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette) {
 	// Do not convert to the same format and ignore empty surfaces.
 	if (format == dstFormat || pixels == 0) {

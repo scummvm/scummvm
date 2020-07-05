@@ -334,6 +334,19 @@ public:
 	 * @param r Rect to flip
 	 */
 	void flipVertical(const Common::Rect &r);
+
+	/**
+	 * Scale the data to the given size.
+	 *
+	 * The calling code must call free on the returned surface and then delete
+	 * it.
+	 *
+	 * @param newWidth the resulting width.
+	 * @param newHeight the resulting height.
+	 * @param filtering Whether or not to use bilinear filtering.
+	 */
+	Graphics::Surface *scale(uint16 newWidth, uint16 newHeight, bool filtering = false) const;
+
 };
 
 /**
