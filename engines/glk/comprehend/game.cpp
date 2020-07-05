@@ -372,11 +372,11 @@ bool ComprehendGame::handle_restart() {
 	}
 }
 
-Item *ComprehendGame::get_item_by_noun(const Word *noun) {
+Item *ComprehendGame::get_item_by_noun(byte noun) {
 	uint i;
 
-	if (!noun || !(noun->_type & WORD_TYPE_NOUN_MASK))
-		return NULL;
+	if (!noun)
+		return nullptr;
 
 	/*
 	 * FIXME - in oo-topos the word 'box' matches more than one object
@@ -384,7 +384,7 @@ Item *ComprehendGame::get_item_by_noun(const Word *noun) {
 	 *         to drop the latter because this will match the former.
 	 */
 	for (i = 0; i < _items.size(); i++)
-		if (_items[i]._word == noun->_index)
+		if (_items[i]._word == noun)
 			return &_items[i];
 
 	return NULL;
@@ -547,8 +547,10 @@ void ComprehendGame::move_object(Item *item, int new_room) {
 }
 
 void ComprehendGame::eval_instruction(FunctionState *func_state,
-		const Instruction *instr, const Word *verb, const Word *noun) {
+		const Instruction *instr, const Sentence *sentence) {
 	const byte *opcode_map = _opcodeMap;
+	byte verb = sentence ? sentence->_formattedWords[0] : 0;
+	byte noun = sentence ? sentence->_formattedWords[2] : 0;
 	Room *room;
 	Item *item;
 	uint16 index;
@@ -662,13 +664,12 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		break;
 
 	case OPCODE_MOVE_DEFAULT:
-		/* Move in the direction dictated by the current verb */
-		if (verb->_index - 1 >= NR_DIRECTIONS)
-			error("Bad verb %d:%d in move",
-			      verb->_index, verb->_type);
+		// Move in the direction dictated by the current verb
+		if (verb - 1 >= NR_DIRECTIONS)
+			error("Bad verb %d in move", verb);
 
-		if (room->_direction[verb->_index - 1])
-			move_to(room->_direction[verb->_index - 1]);
+		if (room->_direction[verb - 1])
+			move_to(room->_direction[verb - 1]);
 		else
 			console_println(stringLookup(STRING_CANT_GO).c_str());
 		break;
@@ -735,8 +736,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			for (i = 0; i < _items.size(); i++) {
 				Item *itemP = &_items[i];
 
-				if (itemP->_word == noun->_index &&
-				        itemP->_room == instr->_operand[0]) {
+				if (itemP->_word == noun && itemP->_room == instr->_operand[0]) {
 					test = true;
 					break;
 				}
@@ -997,7 +997,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			      index, _functions.size());
 
 		debugC(kDebugScripts, "Calling subfunction %.4x", index);
-		eval_function(_functions[index], verb, noun);
+		eval_function(_functions[index], sentence);
 		break;
 
 	case OPCODE_TEST_FALSE:
@@ -1024,6 +1024,9 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		break;
 
 	case OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT:
+		#if 1
+		error("TODO: OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT");
+		#else
 		/*
 		 * FIXME - Not sure what the operand is for,
 		 * maybe capitalisation?
@@ -1036,6 +1039,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 			_currentReplaceWord = 1;
 		else
 			_currentReplaceWord = 2;
+		#endif
 		break;
 
 	case OPCODE_DRAW_ROOM:
@@ -1071,8 +1075,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 	}
 }
 
-void ComprehendGame::eval_function(const Function &func,
-		const Word *verb, const Word *noun) {
+void ComprehendGame::eval_function(const Function &func, const Sentence *sentence) {
 	FunctionState func_state;
 	uint i;
 
@@ -1088,8 +1091,7 @@ void ComprehendGame::eval_function(const Function &func,
 			break;
 		}
 
-		eval_instruction(&func_state, &func[i],
-		                 verb, noun);
+		eval_instruction(&func_state, &func[i], sentence);
 	}
 }
 
@@ -1206,7 +1208,7 @@ bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::
 		if (isMatch) {
 			// Match
 			const Function &func = _functions[action._function];
-			eval_function(func, &sentence->_words[0], &sentence->_words[1]);
+			eval_function(func, sentence);
 			return true;
 		}
 	}
@@ -1292,7 +1294,7 @@ void ComprehendGame::doBeforeTurn() {
 	beforeTurn();
 
 	// Run the each turn functions
-	eval_function(_functions[0], nullptr, nullptr);
+	eval_function(_functions[0], nullptr);
 
 	update();
 }
