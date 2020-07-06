@@ -91,7 +91,15 @@ struct TransParams {
 	}
 
 	TransParams(uint16 d, uint16 a, uint16 c, TransitionType t) :
-		duration(d), area(a), chunkSize(c), type(t) {}
+			duration(d), area(a), chunkSize(c), type(t) {
+		frame = 0;
+		steps = 0;
+		stepDuration = 0;
+		stripSize = 0;
+
+		xStepSize = yStepSize = 0;
+		xpos = ypos = 0;
+	}
 };
 
 struct MacShape {
