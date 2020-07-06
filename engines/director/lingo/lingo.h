@@ -199,6 +199,9 @@ public:
 		}
 		_constants = sc._constants;
 		_propNames = sc._propNames;
+
+		_archive = sc._archive;
+		_id = sc._id;
 	}
 
 	Datum getParentScript();
