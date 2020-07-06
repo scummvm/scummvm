@@ -371,6 +371,8 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 
 		setAmbientLight();
 
+		glEnable(GL_NORMALIZE);
+
 		_fov = camera->_fov;
 		setProjection();
 
