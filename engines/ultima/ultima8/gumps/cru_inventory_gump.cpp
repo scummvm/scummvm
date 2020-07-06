@@ -30,13 +30,14 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 static const int INVENTORY_GUMP_SHAPE = 5;
+static const int INVENTORY_TEXT_FONT = 12;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruInventoryGump)
 CruInventoryGump::CruInventoryGump() : CruStatGump(), _inventoryShape(nullptr),
@@ -69,6 +70,9 @@ void CruInventoryGump::InitGump(Gump *newparent, bool take_focus) {
 	_inventoryItemGump = new Gump();
 	_inventoryItemGump->InitGump(this, false);
 	// we'll set the shape for this gump later.
+
+	_inventoryText = new TextWidget();
+	_inventoryText->InitGump(this, false);
 }
 
 // TODO: This is a bit of a hack.. should be configured
@@ -122,7 +126,25 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 			_inventoryItemGump->SetShape(_inventoryShape, frame);
 			_inventoryItemGump->UpdateDimsFromShape();
 			_inventoryItemGump->setRelativePosition(CENTER);
-			// TODO: Add text for count (from q)
+
+			uint16 q = item->getQuality();
+			if (q > 1) {
+				// This isn't the most efficient way to work out if we need to make new
+				// text, but it works..
+				const Std::string qtext = Std::string::format("%d", q);
+				const Std::string &currenttext = _inventoryText->getText();
+				if (!qtext.equals(currenttext)) {
+					RemoveChild(_inventoryText);
+					_inventoryText = new TextWidget(_dims.w / 2 + 22, _dims.h / 2 + 3, qtext, true, 12);
+					_inventoryText->InitGump(this, false);
+				}
+			} else {
+				if (_inventoryText->getText().length() > 0) {
+					RemoveChild(_inventoryText);
+					_inventoryText = new TextWidget();
+					_inventoryText->InitGump(this, false);
+				}
+			}
 		}
 	}
 

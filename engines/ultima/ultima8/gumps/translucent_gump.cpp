@@ -21,44 +21,28 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/gumps/cru_stat_gump.h"
-
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/gumps/translucent_gump.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruStatGump)
-
-CruStatGump::CruStatGump() : TranslucentGump() {
-
+DEFINE_RUNTIME_CLASSTYPE_CODE(TranslucentGump)
+TranslucentGump::TranslucentGump() : Gump() {
 }
 
-CruStatGump::CruStatGump(Shape *shape, int x)
-	: TranslucentGump(x, 0, 5, 5, 0) {
-	_shape = shape;
+TranslucentGump::TranslucentGump(int x, int y, int width, int height,
+								 uint16 owner, uint32 flags, int32 layer) :
+	Gump(x, y, width, height, owner, flags ,layer) {
 }
 
-CruStatGump::~CruStatGump() {
+TranslucentGump::~TranslucentGump() {
 }
 
-void CruStatGump::InitGump(Gump *newparent, bool take_focus) {
-	Gump::InitGump(newparent, take_focus);
-
-	UpdateDimsFromShape();
-}
-
-void CruStatGump::saveData(Common::WriteStream *ws) {
-	Gump::saveData(ws);
-}
-
-bool CruStatGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
+void TranslucentGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
+	if (_shape) {
+		surf->PaintTranslucent(_shape, _frameNum, 0, 0);
+	}
 }
 
 } // End of namespace Ultima8

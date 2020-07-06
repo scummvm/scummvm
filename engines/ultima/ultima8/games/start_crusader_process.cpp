@@ -36,6 +36,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
+#include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
@@ -75,7 +76,10 @@ void StartCrusaderProcess::run() {
 	}
 
 	Gump *statusGump = new CruStatusGump();
-	statusGump->InitGump(nullptr);
+	statusGump->InitGump(nullptr, false);
+
+	Gump *cruPickupAreaGump = new CruPickupAreaGump();
+	cruPickupAreaGump->InitGump(nullptr, false);
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
 	if (_saveSlot >= 0 &&Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {

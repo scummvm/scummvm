@@ -37,6 +37,7 @@
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
 #include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/gumps/cru_pickup_area_gump.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -130,6 +131,9 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 	int32 x, y, z;
 	getLocation(x, y, z);
 
+	CruPickupAreaGump *pickupArea = CruPickupAreaGump::get_instance();
+	assert(pickupArea);
+
 	if (shapeno == 0x4ed) {
 		Item *credits = getFirstItemWithShape(shapeno, true);
 		if (credits) {
@@ -139,18 +143,16 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 				newq = 64000;
 			credits->setQuality(newq);
 			credits->callUsecodeEvent_combine();
-			if (showtoast) {
-				warning("TODO: show toast for added credits %d", q);
-			}
+			if (showtoast)
+				pickupArea->addPickup(item);
 			item->destroy();
 		} else {
 			item->setFrame(0);
 			item->moveToContainer(this);
 			if (!_activeInvItem)
 				_activeInvItem = item->getObjId();
-			if (showtoast) {
-				warning("TODO: show toast for new credits %d", item->getQuality());
-			}
+			if (showtoast)
+				pickupArea->addPickup(item);
 		}
 		return 1;
 	}
@@ -175,7 +177,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 				_activeWeapon = item->getObjId();
 			warning("TODO: Set new weapon as active weapon if there is none");
 			if (showtoast)
-				warning("TODO: Show toast for new weapon %d", shapeno);
+				pickupArea->addPickup(item);
 		}
 		break;
 	}
@@ -187,7 +189,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			item->callUsecodeEvent_combine();
 			item->moveToContainer(this);
 			if (showtoast)
-				warning("TODO: Show toast for new ammo %d", shapeno);
+				pickupArea->addPickup(item);
 			return 1;
 		} else {
 			// already have this, add some ammo.
@@ -196,7 +198,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 				ammo->setQuality(q + 1);
 				ammo->callUsecodeEvent_combine();
 				if (showtoast)
-					warning("TODO: Show toast for combined ammo %d (%d)", shapeno, q + 1);
+					pickupArea->addPickup(item);
 				item->destroy();
 				return 1;
 			}
@@ -208,15 +210,14 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 		if (shapeno == 0x111) {
 			addKeycard(item->getQuality() & 0xff);
 			if (showtoast) {
-				warning("TODO: show toast for added keycard %d", item->getQuality() & 0xff);
+				pickupArea->addPickup(item);
 			}
 			item->destroy();
 			return 1;
 		} else if ((shapeno == 0x3a2) || (shapeno == 0x3a3) || (shapeno == 0x3a4)) {
 			// Batteries
-			if (showtoast) {
-				warning("TODO: show toast for added battery %d", shapeno);
-			}
+			if (showtoast)
+				pickupArea->addPickup(item);
 			item->destroy();
 			int plusenergy = 0;
 			CruBatteryType oldbattery = _cruBatteryType;
@@ -256,11 +257,9 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 					item->setFrame(0);
 					item->setQuality(1);
 					item->callUsecodeEvent_combine();
-					bool added = item->moveToContainer(this);
-					if (showtoast) {
-						warning("TODO: show toast new item %d (%s)",
-								shapeno, added ? "added" : "failed");
-					}
+					item->moveToContainer(this);
+					if (showtoast)
+						pickupArea->addPickup(item);
 					if (!_activeInvItem)
 						_activeInvItem = item->getObjId();
 					return 1;
@@ -276,9 +275,8 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 					if (q < 0x14) {
 						existing->setQuality(q + 1);
 						existing->callUsecodeEvent_combine();
-						if (showtoast) {
-							warning("TODO: show toast for combined cru spider q=%d", q + 1);
-						}
+						if (showtoast)
+							pickupArea->addPickup(item);
 						item->destroy();
 						return 1;
 					}
@@ -287,9 +285,8 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 					if (q < 10) {
 						existing->setQuality(q + 1);
 						existing->callUsecodeEvent_combine();
-						if (showtoast) {
-							warning("TODO: show toast for combined other item %d q=%d", shapeno, q + 1);
-						}
+						if (showtoast)
+							pickupArea->addPickup(item);
 						item->destroy();
 						return 1;
 					}

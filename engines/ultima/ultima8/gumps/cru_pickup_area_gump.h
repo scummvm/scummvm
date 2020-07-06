@@ -20,46 +20,37 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/gumps/cru_stat_gump.h"
+#ifndef ULTIMA8_GUMPS_CRUPICKUPAREAGUMP_H
+#define ULTIMA8_GUMPS_CRUPICKUPAREAGUMP_H
 
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/gumps/gump.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(CruStatGump)
+class TextWidget;
 
-CruStatGump::CruStatGump() : TranslucentGump() {
+/**
+ * The area that manages all the "pickup" gumps (the notifications that a new
+ * item has been picked up)
+ */
+class CruPickupAreaGump : public Gump {
+public:
+	ENABLE_RUNTIME_CLASSTYPE()
 
-}
+	CruPickupAreaGump();
+	CruPickupAreaGump(Item *item, int y);
+	~CruPickupAreaGump() override;
 
-CruStatGump::CruStatGump(Shape *shape, int x)
-	: TranslucentGump(x, 0, 5, 5, 0) {
-	_shape = shape;
-}
+	void addPickup(Item *item);
 
-CruStatGump::~CruStatGump() {
-}
-
-void CruStatGump::InitGump(Gump *newparent, bool take_focus) {
-	Gump::InitGump(newparent, take_focus);
-
-	UpdateDimsFromShape();
-}
-
-void CruStatGump::saveData(Common::WriteStream *ws) {
-	Gump::saveData(ws);
-}
-
-bool CruStatGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
-}
+	static CruPickupAreaGump *get_instance();
+private:
+    static CruPickupAreaGump *_instance;
+};
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
+
+#endif

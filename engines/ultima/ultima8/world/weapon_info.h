@@ -43,7 +43,8 @@ struct WeaponInfo {
 
 	// Crusader-specific fields:
 	uint16 _sound;		//!< The sound this weapon makes when fired
-	uint16 _ammoType;	//!< The type of ammo it uses
+	uint16 _ammoType;	//!< The inventory frame for the ammo used
+	uint16 _ammoShape;	//!< The shape number for the ammo used
 	uint16 _displayFrame;	//!< The frame to use in the inventory gump
 
 	enum DmgType {

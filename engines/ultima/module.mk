@@ -464,6 +464,8 @@ MODULE_OBJS := \
 	ultima8/gumps/cru_energy_gump.o \
 	ultima8/gumps/cru_health_gump.o \
 	ultima8/gumps/cru_inventory_gump.o \
+	ultima8/gumps/cru_pickup_area_gump.o \
+	ultima8/gumps/cru_pickup_gump.o \
 	ultima8/gumps/cru_stat_gump.o \
 	ultima8/gumps/cru_status_gump.o \
 	ultima8/gumps/cru_weapon_gump.o \
@@ -493,6 +495,7 @@ MODULE_OBJS := \
 	ultima8/gumps/shape_viewer_gump.o \
 	ultima8/gumps/slider_gump.o \
 	ultima8/gumps/target_gump.o \
+	ultima8/gumps/translucent_gump.o \
 	ultima8/gumps/u8_save_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \

@@ -24,6 +24,7 @@
 #define ULTIMA8_GUMPS_CRUSTATGUMP_H
 
 #include "ultima/ultima8/gumps/gump.h"
+#include "ultima/ultima8/gumps/translucent_gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -32,7 +33,7 @@ namespace Ultima8 {
 /**
  * Superclass for the 5 status boxes along the bottom of the screen
  */
-class CruStatGump : public Gump {
+class CruStatGump : public TranslucentGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -42,9 +43,6 @@ public:
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
-
-	// Paint this Gump
-	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;

@@ -211,6 +211,11 @@ public:
 		_y += y;
 	}
 
+	void getLocation(int32 &x, int32 &y) const {
+		x = _x;
+		y = _y;
+	}
+
 	enum Position {
 		CENTER = 1,
 		TOP_LEFT = 2,

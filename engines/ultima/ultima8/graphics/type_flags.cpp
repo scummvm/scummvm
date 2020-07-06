@@ -245,6 +245,11 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_ammoType = 0;
 
+		if (config->get(k + "/ammo_shape", val))
+			wi->_ammoShape = static_cast<uint16>(val);
+		else
+			wi->_ammoShape = 0;
+
 		if (config->get(k + "/sound", val))
 			wi->_sound = static_cast<uint16>(val);
 		else

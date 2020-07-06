@@ -29,6 +29,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class TextWidget;
+
 /**
  * Inventory box, the 3rd box along the bottom of the screen
  */
@@ -52,6 +54,7 @@ public:
 private:
 	Shape *_inventoryShape;
 	Gump *_inventoryItemGump;
+	TextWidget *_inventoryText;
 };
 
 } // End of namespace Ultima8

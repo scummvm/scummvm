@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef ULTIMA8_GUMPS_CRUAMMOGUMP_H
-#define ULTIMA8_GUMPS_CRUAMMOGUMP_H
+#ifndef ULTIMA8_GUMPS_CRUPICKUPGUMP_H
+#define ULTIMA8_GUMPS_CRUPICKUPGUMP_H
 
-#include "ultima/ultima8/gumps/cru_stat_gump.h"
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -32,15 +32,17 @@ namespace Ultima8 {
 class TextWidget;
 
 /**
- * Second box along the bottom of the screen, shows current ammo
+ * Pickup box, the box that appears in the top left when a new item is picked up
  */
-class CruAmmoGump : public CruStatGump {
+class CruPickupGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	CruAmmoGump();
-	CruAmmoGump(Shape *shape, int x);
-	~CruAmmoGump() override;
+	CruPickupGump();
+	//! Create a new gump for an item pickup. CurrentQ is the value of an existing gump
+	//! so they can be combined (eg, pick up one medikit then another -> show medikit 2)
+	CruPickupGump(Item *item, int y, uint16 currentq);
+	~CruPickupGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
@@ -48,14 +50,21 @@ public:
 	// Paint this Gump
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
+	uint32 getShapeNo() const {
+		return _shapeno;
+	}
+
+	uint16 getQ() {
+		return _q;
+	}
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
 private:
-	Shape *_ammoShape;
-
-	TextWidget *_bulletsText;
-	TextWidget *_clipsText;
+	uint32 _startFrame;
+	uint32 _shapeno;
+	uint16 _q;
 };
 
 } // End of namespace Ultima8
