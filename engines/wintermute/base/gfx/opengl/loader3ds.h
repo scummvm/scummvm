@@ -27,12 +27,13 @@
 
 namespace Wintermute {
 
+class BaseGame;
 class Light3D;
 class Camera3D;
 class Mesh3DS;
 
 bool load3DSFile(const char *filename, BaseArray<Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
-                 BaseArray<Light3D *> &lights, BaseArray<Camera3D *> &cameras);
+                 BaseArray<Light3D *> &lights, BaseArray<Camera3D *> &cameras, BaseGame *gameRef);
 
 enum Chunks3DS {
 	RGB_FLOAT = 0x0010,

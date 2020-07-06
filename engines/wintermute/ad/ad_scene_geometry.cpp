@@ -193,7 +193,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	BaseArray<Mesh3DS *> meshes;
 	BaseArray<Common::String> meshNames;
 
-	if (!load3DSFile(filename, meshes, meshNames, _lights, _cameras)) {
+	if (!load3DSFile(filename, meshes, meshNames, _lights, _cameras, _gameRef)) {
 		delete geomExt;
 		return false;
 	}
