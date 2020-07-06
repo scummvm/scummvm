@@ -48,6 +48,7 @@ class Stage : public Graphics::MacWindow {
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
 
+	void invertChannel(Channel *channel);
 	void setStageColor(uint stageColor);
 	void addDirtyRect(const Common::Rect &r);
 	void mergeDirtyRects();

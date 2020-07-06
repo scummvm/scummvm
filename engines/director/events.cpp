@@ -105,6 +105,9 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				m->_currentMouseDownSpriteId = spriteId;
 				m->_currentClickOnSpriteId = spriteId;
 
+				if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
+					g_director->getStage()->invertChannel(sc->_channels[spriteId]);
+
 				m->_lastEventTime = g_director->getMacTicks();
 				m->_lastClickTime = m->_lastEventTime;
 
@@ -123,6 +126,9 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				if (!sc->getChannelById(m->_currentMouseDownSpriteId)->getBbox().contains(pos))
 					m->_currentMouseDownSpriteId = 0;
+
+				if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
+					g_director->getStage()->invertChannel(sc->_channels[spriteId]);
 
 				if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle))
 					m->_currentMouseDownSpriteId = spriteId;
