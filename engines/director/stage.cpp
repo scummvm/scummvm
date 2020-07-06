@@ -111,7 +111,7 @@ void Stage::reset() {
 
 void Stage::addDirtyRect(const Common::Rect &r) {
 	Common::Rect bounds = r;
-	Common::Rect clip = _dims;
+	Common::Rect clip = _innerDims;
 	clip.moveTo(0, 0);
 	bounds.clip(clip);
 
@@ -222,7 +222,7 @@ void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Gr
 }
 
 Common::Point Stage::getMousePos() {
-	return g_system->getEventManager()->getMousePos() - Common::Point(_dims.left, _dims.top);
+	return g_system->getEventManager()->getMousePos() - Common::Point(_innerDims.left, _innerDims.top);
 }
 
 bool Stage::step() {

@@ -188,7 +188,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		g_director->getCurrentMovie()->getScore()->renderSprites(t.frame, kRenderForceUpdate);
 		render(true, nextFrame);
 
-		clipRect = _dims;
+		clipRect = _innerDims;
 		clipRect.moveTo(0, 0);
 	}
 

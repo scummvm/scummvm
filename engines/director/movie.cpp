@@ -99,7 +99,7 @@ bool Movie::loadArchive() {
 	// If the stage dimensions are different, delete it and start again.
 	// Otherwise, do not clear it so there can be a nice transition.
 	if (_stage->getSurface()->w != _movieRect.width() || _stage->getSurface()->h != _movieRect.height()) {
-		_stage->resize(_movieRect.width(), _movieRect.height());
+		_stage->resize(_movieRect.width(), _movieRect.height(), true);
 	}
 	// TODO: Add more options for desktop dimensions
 	uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();

@@ -107,25 +107,30 @@ void MacWindow::setActive(bool active) {
 
 bool MacWindow::isActive() { return _active; }
 
-void MacWindow::resize(int w, int h) {
+void MacWindow::resize(int w, int h, bool inner) {
 	if (_surface.w == w && _surface.h == h)
 		return;
 
+	if (inner) {
+		_innerDims.setWidth(w);
+		_innerDims.setHeight(h);
+		updateOuterDims();
+	} else {
+		_dims.setWidth(w);
+		_dims.setHeight(h);
+		updateInnerDims();
+	}
+
 	_surface.free();
-	_surface.create(w, h, PixelFormat::createFormatCLUT8());
+	_surface.create(_innerDims.width(), _innerDims.height(), PixelFormat::createFormatCLUT8());
 
 	if (_hasPattern)
 		drawPattern();
 
 	_borderSurface.free();
-	_borderSurface.create(w, h, PixelFormat::createFormatCLUT8());
+	_borderSurface.create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
 	_composeSurface->free();
-	_composeSurface->create(w, h, PixelFormat::createFormatCLUT8());
-
-	_dims.setWidth(w);
-	_dims.setHeight(h);
-
-	updateInnerDims();
+	_composeSurface->create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
 
 	_contentIsDirty = true;
 	_borderIsDirty = true;
@@ -166,7 +171,7 @@ bool MacWindow::draw(bool forceRedraw) {
 	_contentIsDirty = false;
 
 	// Compose
-	_composeSurface->blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
+	_composeSurface->blitFrom(_surface, Common::Rect(0, 0, _surface.w, _surface.h), Common::Point(_innerDims.left - _dims.left, _innerDims.top - _dims.top));
 	_composeSurface->transBlitFrom(_borderSurface, kColorGreen);
 
 	return true;
@@ -176,7 +181,7 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left, _dims.top), kColorGreen2);
 
 	return true;
 }
@@ -208,6 +213,22 @@ void MacWindow::updateInnerDims() {
 	} else {
 		_innerDims = _dims;
 		_innerDims.grow(-kBorderWidth);
+	}
+}
+
+void MacWindow::updateOuterDims() {
+	if (_innerDims.isEmpty())
+		return;
+
+	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+		_dims = Common::Rect(
+			_innerDims.left - _macBorder.getOffset().left,
+			_innerDims.top - _macBorder.getOffset().top,
+			_innerDims.right + _macBorder.getOffset().right,
+			_innerDims.bottom + _macBorder.getOffset().bottom);
+	} else {
+		_dims = _innerDims;
+		_dims.grow(kBorderWidth);
 	}
 }
 
