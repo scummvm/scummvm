@@ -99,6 +99,9 @@ Cast::~Cast() {
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
 		for (ScriptContextHash::iterator it = _lingoArchive->scriptContexts[i].begin(); it != _lingoArchive->scriptContexts[i].end(); ++it) {
+			if (!it->_value)
+				continue;
+
 			it->_value->_eventHandlers.clear();
 			it->_value->_functionHandlers.clear();
 			delete it->_value;
