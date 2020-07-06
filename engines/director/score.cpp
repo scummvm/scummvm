@@ -186,10 +186,10 @@ Common::Point Channel::getPosition() {
 }
 
 MacShape *Channel::getShape() {
-	MacShape *shape = new MacShape();
-
 	if (_sprite->_castType != kCastShape)
 		return nullptr;
+
+	MacShape *shape = new MacShape();
 
 	shape->ink = _sprite->_ink;
 	shape->spriteType = _sprite->_spriteType;
