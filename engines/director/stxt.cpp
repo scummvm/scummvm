@@ -30,19 +30,6 @@ namespace Director {
 Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 	// TODO: Side effects on textStream make this a little hard to understand in context?
 
-	// D4+ variant
-	if (textStream.size() == 0)
-		return;
-
-	uint32 offset = textStream.readUint32();
-	if (offset != 12){
-		error("Stxt init: unhandlef offset");
-		return;
-	}
-	uint32 strLen = textStream.readUint32();
-	uint32 dataLen = textStream.readUint32();
-	Common::String text;
-
 	_fontId = 0;
 	_fontSize = 12;
 	_textType = kTextTypeFixed;
@@ -52,6 +39,19 @@ Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 	_palinfo1 = _palinfo2 = _palinfo3 = 0;
 	_unk1f = _unk2f = 0;
 	_unk3f = 0;
+
+	// D4+ variant
+	if (textStream.size() == 0)
+		return;
+
+	uint32 offset = textStream.readUint32();
+	if (offset != 12) {
+		error("Stxt init: unhandlef offset");
+		return;
+	}
+	uint32 strLen = textStream.readUint32();
+	uint32 dataLen = textStream.readUint32();
+	Common::String text;
 
 	for (uint32 i = 0; i < strLen; i++) {
 		byte ch = textStream.readByte();
