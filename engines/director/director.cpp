@@ -81,9 +81,11 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
+	_currentStage = nullptr;
 	_lingo = nullptr;
 
 	_wm = nullptr;
+	_surface = nullptr;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
