@@ -345,8 +345,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		glEnable(GL_BLEND);
 		glAlphaFunc(GL_GEQUAL, 0x08);
 
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
 		_fov = camera->_fov;
 		setProjection();
 
