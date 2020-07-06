@@ -211,68 +211,6 @@ private:
 	Datum _parentScript;
 };
 
-struct Object {
-	Common::String *name;
-	ObjectType type;
-	bool disposed;
-
-	DatumHash properties;
-	ScriptContext *ctx;
-	int inheritanceLevel; // 1 for original object
-
-	// used only for factories
-	Common::HashMap<uint32, Datum> *objArray;
-
-	Object(const Common::String &objName, ObjectType objType, ScriptContext *objCtx) {
-		name = new Common::String(objName);
-		type = objType;
-		disposed = false;
-		inheritanceLevel = 1;
-		ctx = objCtx;
-		ctx->_target = this;
-
-		// Don't include the ctx's reference to me in the refCount.
-		// Once that's the only remaining reference,
-		// I should be destroyed, killing the ctx with me.
-		*ctx->_target.refCount -= 1;
-
-		if (objType == kFactoryObj) {
-			objArray = new Common::HashMap<uint32, Datum>;
-		} else {
-			objArray = nullptr;
-		}
-	}
-
-	Object(const Object &obj) {
-		name = new Common::String(*obj.name);
-		type = obj.type;
-		disposed = obj.disposed;
-		inheritanceLevel = obj.inheritanceLevel + 1;
-		properties = obj.properties;
-		ctx = new ScriptContext(*obj.ctx);
-		ctx->_target = this;
-		*ctx->_target.refCount -= 1;
-
-		if (obj.objArray) {
-			objArray = new Common::HashMap<uint32, Datum>(*obj.objArray);
-		} else {
-			objArray = nullptr;
-		}
-	}
-
-	virtual ~Object() {
-		delete name;
-		delete objArray;
-		ctx->_target.refCount = nullptr; // refCount has already been freed
-		delete ctx;
-	}
-
-	virtual Object *clone();
-	Symbol getMethod(const Common::String &methodName);
-	bool hasProp(const Common::String &propName);
-	Datum &getProp(const Common::String &propName);
-};
-
 struct CFrame {	/* proc/func call stack frame */
 	Symbol	sp;	/* symbol table entry */
 	int		retpc;	/* where to resume after return */

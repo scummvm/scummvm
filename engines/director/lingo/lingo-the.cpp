@@ -32,6 +32,7 @@
 #include "director/stage.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-gr.h"
 namespace Director {
@@ -1237,7 +1238,7 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 	if (obj.type == OBJECT) {
 		if (obj.u.obj->hasProp(propName)) {
-			obj.u.obj->getProp(propName) = val;
+			obj.u.obj->setProp(propName, val);
 		} else {
 			warning("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}

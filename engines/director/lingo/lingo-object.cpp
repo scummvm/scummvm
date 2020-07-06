@@ -39,17 +39,23 @@ static struct MethodProto {
 	int type;
 	int version;
 } predefinedMethods[] = {
-	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	4 },			// D4
+	// all except window
+	{ "new",					LM::m_new,					-1, 0,	kAllObj, 				2 },	// D2
+
+	// factory and XObject
 	{ "describe",				LM::m_describe,				 0, 0,	kXObj,					2 },	// D2
 	{ "dispose",				LM::m_dispose,				 0, 0,	kFactoryObj | kXObj,	2 },	// D2
 	{ "get",					LM::m_get,					 1, 1,	kFactoryObj,			2 },	// D2
 	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					3 },		// D3
 	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					3 },		// D3
 	{ "name",					LM::m_name,					 0, 0,	kXObj,					3 },		// D3
-	{ "new",					LM::m_new,					-1, 0,	kAllObj, 				2 },	// D2
 	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj, 	3 },		// D3
 	{ "put",					LM::m_put,					 2, 2,	kFactoryObj,			2 },	// D2
 	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					2 },	// D2
+
+	// script object and Xtra
+	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	4 },			// D4
+
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
@@ -104,6 +110,50 @@ void Lingo::openXLib(const Common::String &name, ObjectType type) {
 	}
 }
 
+Object::Object(const Common::String &objName, ObjectType objType, ScriptContext *objCtx) {
+	name = new Common::String(objName);
+	type = objType;
+	disposed = false;
+	inheritanceLevel = 1;
+	ctx = objCtx;
+	ctx->_target = this;
+
+	// Don't include the ctx's reference to me in the refCount.
+	// Once that's the only remaining reference,
+	// I should be destroyed, killing the ctx with me.
+	*ctx->_target.refCount -= 1;
+
+	if (objType == kFactoryObj) {
+		objArray = new Common::HashMap<uint32, Datum>;
+	} else {
+		objArray = nullptr;
+	}
+}
+
+Object::Object(const Object &obj) {
+	name = new Common::String(*obj.name);
+	type = obj.type;
+	disposed = obj.disposed;
+	inheritanceLevel = obj.inheritanceLevel + 1;
+	properties = obj.properties;
+	ctx = new ScriptContext(*obj.ctx);
+	ctx->_target = this;
+	*ctx->_target.refCount -= 1;
+
+	if (obj.objArray) {
+		objArray = new Common::HashMap<uint32, Datum>(*obj.objArray);
+	} else {
+		objArray = nullptr;
+	}
+}
+
+Object::~Object() {
+	delete name;
+	delete objArray;
+	ctx->_target.refCount = nullptr; // refCount has already been freed
+	delete ctx;
+}
+
 Object *Object::clone() {
 	return new Object(*this);
 }
@@ -119,28 +169,29 @@ Symbol Object::getMethod(const Common::String &methodName) {
 	}
 
 	if ((type & (kFactoryObj | kXObj)) && methodName.hasPrefixIgnoreCase("m")) {
+		// factory or XObject
 		Common::String shortName = methodName.substr(1);
-		// instance method (XObject)
 		if (type == kXObj && ctx->_functionHandlers.contains(shortName) && inheritanceLevel > 1) {
+			// instance method (XObject)
 			return ctx->_functionHandlers[shortName];
 		}
-		// predefined method (factory and XObject)
 		if (g_lingo->_methods.contains(shortName) && (type & g_lingo->_methods[shortName].targetType)) {
+			// predefined method
 			Symbol sym = g_lingo->_methods[shortName];
 			sym.ctx = ctx;
 			return sym;
 		}
-	} else if (type & (kScriptObj | kXtraObj)) {
-		// predefined method (script object and Xtra)
+	} else {
+		// script object, Xtra, etc.
 		if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].targetType)) {
+			// predefined method
 			Symbol sym = g_lingo->_methods[methodName];
 			sym.ctx = ctx;
 			return sym;
 		}
-
-		// ancestor method
 		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
 				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
+			// ancestor method
 			debugC(3, kDebugLingoExec, "Calling method '%s' on ancestor: <%s>", methodName.c_str(), properties["ancestor"].asString(true).c_str());
 			return properties["ancestor"].u.obj->getMethod(methodName);
 		}
@@ -167,7 +218,7 @@ bool Object::hasProp(const Common::String &propName) {
 	return false;
 }
 
-Datum &Object::getProp(const Common::String &propName) {
+Datum Object::getProp(const Common::String &propName) {
 	if (disposed) {
 		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
 	}
@@ -182,6 +233,24 @@ Datum &Object::getProp(const Common::String &propName) {
 		}
 	}
 	return properties[propName]; // return new property
+}
+
+bool Object::setProp(const Common::String &propName, const Datum &value) {
+	if (disposed) {
+		error("Property '%s' accessed on disposed object <%s>", propName.c_str(), Datum(this).asString(true).c_str());
+	}
+	if (properties.contains(propName)) {
+		properties[propName] = value;
+		return true;
+	}
+	if (type & (kScriptObj | kXtraObj)) {
+		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT
+				&& (properties["ancestor"].u.obj->type & (kScriptObj | kXtraObj))) {
+			debugC(3, kDebugLingoExec, "Getting prop '%s' from ancestor: <%s>", propName.c_str(), properties["ancestor"].asString(true).c_str());
+			return properties["ancestor"].u.obj->setProp(propName, value);
+		}
+	}
+	return false;
 }
 
 // Initialization/disposal

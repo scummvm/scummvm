@@ -37,6 +37,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Director {
 
@@ -1201,29 +1202,28 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 	}
 
 	if (var.type == VAR) {
-		Datum *d = nullptr;
 		Common::String name = *var.u.s;
 
 		if (localvars && localvars->contains(name)) {
-			d = &(*localvars)[name];
+			(*localvars)[name] = value;
 			if (global)
 				warning("varAssign: variable %s is local, not global", name.c_str());
-		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-			d = &_currentMe.u.obj->getProp(name);
+			return;
+		}
+		if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
+			_currentMe.u.obj->setProp(name, value);
 			if (global)
 				warning("varAssign: variable %s is instance or property, not global", name.c_str());
-		} else if (_globalvars.contains(name)) {
-			d = &_globalvars[name];
+			return;
+		}
+		if (_globalvars.contains(name)) {
+			_globalvars[name] = value;
 			if (!global)
 				warning("varAssign: variable %s is global, not local", name.c_str());
-		}
-
-		if (!d) {
-			warning("varAssign: variable %s not defined", name.c_str());
 			return;
 		}
 
-		*d = value;
+		warning("varAssign: variable %s not defined", name.c_str());
 	} else if (var.type == FIELDREF) {
 		Movie *movie = g_director->getCurrentMovie();
 		if (!movie) {
@@ -1260,7 +1260,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 	}
 
 	if (var.type == VAR) {
-		Datum *d = nullptr;
+		Datum d;
 		Common::String name = *var.u.s;
 
 		// For kScriptObj handlers the target is an argument
@@ -1270,25 +1270,23 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 			return result;
 		}
 		if (localvars && localvars->contains(name)) {
-			d = &(*localvars)[name];
 			if (global)
 				warning("varFetch: variable %s is local, not global", name.c_str());
-		} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-			d = &_currentMe.u.obj->getProp(name);
+			return (*localvars)[name];
+		}
+		if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
 			if (global)
 				warning("varFetch: variable %s is instance or property, not global", name.c_str());
-		} else if (_globalvars.contains(name)) {
-			d = &_globalvars[name];
+			return _currentMe.u.obj->getProp(name);
+		}
+		if (_globalvars.contains(name)) {
 			if (!global)
 				warning("varFetch: variable %s is global, not local", name.c_str());
+			return _globalvars[name];
 		}
 
-		if (!d) {
-			warning("varFetch: variable %s not found", name.c_str());
-			return result;
-		}
-
-		return *d;
+		warning("varFetch: variable %s not found", name.c_str());
+		return result;
 	} else if (var.type == FIELDREF) {
 		CastMember *cast = _vm->getCurrentMovie()->getCastMember(var.u.i);
 		if (cast) {

@@ -33,6 +33,7 @@
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-bytecode.h"
+#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-gr.h"
 
@@ -582,7 +583,7 @@ void LC::cb_theassign() {
 	Datum value = g_lingo->pop();
 	if (g_lingo->_currentMe.type == OBJECT) {
 		if (g_lingo->_currentMe.u.obj->hasProp(name)) {
-			g_lingo->_currentMe.u.obj->getProp(name) = value;
+			g_lingo->_currentMe.u.obj->setProp(name, value);
 		} else {
 			warning("cb_theassign: me object has no property '%s'", name.c_str());
 		}

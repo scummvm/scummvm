@@ -25,6 +25,29 @@
 
 namespace Director {
 
+struct Object {
+	Common::String *name;
+	ObjectType type;
+	bool disposed;
+
+	DatumHash properties;
+	ScriptContext *ctx;
+	int inheritanceLevel; // 1 for original object
+
+	// used only for factories
+	Common::HashMap<uint32, Datum> *objArray;
+
+	Object(const Common::String &objName, ObjectType objType, ScriptContext *objCtx);
+	Object(const Object &obj);
+	virtual ~Object();
+
+	virtual Object *clone();
+	Symbol getMethod(const Common::String &methodName);
+	bool hasProp(const Common::String &propName);
+	Datum getProp(const Common::String &propName);
+	bool setProp(const Common::String &propName, const Datum &value);
+};
+
 namespace LM {
 	// predefined methods
 	void m_describe(int nargs);
