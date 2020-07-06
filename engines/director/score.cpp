@@ -525,7 +525,12 @@ void Score::update() {
 	}
 	// TODO Director 6 - another order
 
-	byte tempo = _puppetTempo ? _puppetTempo : _frames[_currentFrame]->_tempo;
+	byte tempo = _frames[_currentFrame]->_tempo;
+	if (tempo) {
+		_puppetTempo = 0;
+	} else if (_puppetTempo) {
+		tempo = _puppetTempo;
+	}
 
 	if (tempo) {
 		if (tempo > 161) {
