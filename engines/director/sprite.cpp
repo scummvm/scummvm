@@ -39,9 +39,10 @@ Sprite::Sprite() {
 
 	_enabled = false;
 	_castId = 0;
+	_pattern = 0;
+
 	_castIndex = 0;
 	_spriteType = kInactiveSprite;
-	_castType = kCastTypeNull;
 	_inkData = 0;
 	_ink = kInkTypeCopy;
 	_trails = 0;
@@ -70,6 +71,18 @@ Sprite::Sprite() {
 Sprite::~Sprite() {
 }
 
+bool Sprite::isQDShape() {
+	return _spriteType == kRectangleSprite ||
+		_spriteType == kRoundedRectangleSprite ||
+		_spriteType == kOvalSprite ||
+		_spriteType == kLineTopBottomSprite ||
+		_spriteType == kLineBottomTopSprite ||
+		_spriteType == kOutlinedRectangleSprite ||
+		_spriteType == kOutlinedRoundedRectangleSprite ||
+		_spriteType == kOutlinedOvalSprite ||
+		_spriteType == kThickLineSprite;
+}
+
 void Sprite::updateCast() {
 	if (!_cast)
 		return;
@@ -96,30 +109,14 @@ bool Sprite::shouldHilite() {
 }
 
 uint16 Sprite::getPattern() {
-	switch (_spriteType) {
-	case kRectangleSprite:
-	case kRoundedRectangleSprite:
-	case kOvalSprite:
-	case kLineTopBottomSprite:
-	case kLineBottomTopSprite:
-	case kOutlinedRectangleSprite:
-	case kOutlinedRoundedRectangleSprite:
-	case kOutlinedOvalSprite:
-		return _castId;
-
-	case kCastMemberSprite:
-		switch (_cast->_type) {
-		case kCastShape:
-			return ((ShapeCastMember *)_cast)->_pattern;
-			break;
-		default:
-			warning("Sprite::getPattern(): Unhandled cast type: %d", _cast->_type);
-			break;
-		}
-		// fallthrough
-	default:
-		return 0;
+	if (!_cast) {
+		if (isQDShape())
+			return _pattern;
+	} else if (_cast->_type == kCastShape) {
+		return ((ShapeCastMember *)_cast)->_pattern;
 	}
+
+	return 0;
 }
 
 void Sprite::setPattern(uint16 pattern) {
@@ -132,7 +129,7 @@ void Sprite::setPattern(uint16 pattern) {
 	case kOutlinedRectangleSprite:
 	case kOutlinedRoundedRectangleSprite:
 	case kOutlinedOvalSprite:
-		_castId = pattern;
+		_pattern = pattern;
 		break;
 
 	case kCastMemberSprite:
@@ -147,7 +144,6 @@ void Sprite::setPattern(uint16 pattern) {
 
 void Sprite::setCast(uint16 castId) {
 	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
-	_castType = kCastTypeNull;
 	_castId = castId;
 
 	if (castId == 0)
@@ -157,10 +153,12 @@ void Sprite::setCast(uint16 castId) {
 		_cast = member;
 
 		if (_cast->_type == kCastText &&
-				(_spriteType == kButtonSprite || _spriteType == kCheckboxSprite || _spriteType == kRadioButtonSprite)) {
+				(_spriteType == kButtonSprite ||
+				 _spriteType == kCheckboxSprite ||
+				 _spriteType == kRadioButtonSprite)) {
 			// WORKAROUND: In D2/D3 there can be text casts that have button
 			// information set in the sprite.
-			warning("Sprite::updateCast: Working around D2/3 button glitch");
+			warning("Sprite::setCast(): Working around D2/3 button glitch");
 
 			delete _cast->_widget;
 			_cast->_type = kCastButton;
@@ -168,71 +166,19 @@ void Sprite::setCast(uint16 castId) {
 			((TextCastMember *)_cast)->createWidget();
 		}
 	} else {
-		warning("Sprite::setCast: CastMember id %d has null member", castId);
-	}
-
-	if (g_director->getVersion() < 4) {
-		switch (_spriteType) {
-		case kBitmapSprite:
-			_castType = kCastBitmap;
-			break;
-		case kRectangleSprite:
-		case kRoundedRectangleSprite:
-		case kOvalSprite:
-		case kLineTopBottomSprite:
-		case kLineBottomTopSprite:
-		case kOutlinedRectangleSprite:
-		case kOutlinedRoundedRectangleSprite:
-		case kOutlinedOvalSprite:
-		case kCastMemberSprite:
-			if (_cast) {
-				switch (_cast->_type) {
-				case kCastButton:
-					_castType = kCastButton;
-					break;
-				default:
-					_castType = kCastShape;
-					break;
-				}
-			} else {
-				_castType = kCastShape;
-			}
-			break;
-		case kTextSprite:
-			_castType = kCastText;
-			break;
-		case kButtonSprite:
-		case kCheckboxSprite:
-		case kRadioButtonSprite:
-			_castType = kCastButton;
-
-			break;
-		default:
-			warning("Sprite::setCast(): Unhandled sprite type %d", _spriteType);
-			break;
-		}
-	} else {
-		if (!member) {
-			debugC(1, kDebugImages, "Sprite::setCast(): CastMember id %d not found", _castId);
-		} else {
-			_castType = member->_type;
-		}
+		warning("Sprite::setCast(): CastMember id %d has null member", castId);
 	}
 }
 
 Common::Rect Sprite::getDims() {
 	Common::Rect result;
-	if (_castId == 0) {
-		return result;
-	}
 
-	if (_castType == kCastShape) {
-		// WORKAROUND: Shape widgets not fully implemented.
+	if (!_cast || _cast->_type == kCastShape) {
 		result = Common::Rect(_width, _height);
+	} else if (_cast->_widget) {
+		result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
 	} else {
-		if (_cast && _cast->_widget) {
-			result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
-		}
+		warning("Sprite::getDims(): Unable to find sprite dimensions");
 	}
 
 	if (_puppet && _stretch) {

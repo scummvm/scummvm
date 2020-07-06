@@ -55,9 +55,7 @@ Channel::Channel(Sprite *sp) {
 	_visible = true;
 	_dirty = true;
 
-	if (_sprite && _sprite->_castType != kCastTypeNull) {
-		_sprite->updateCast();
-	}
+	_sprite->updateCast();
 }
 
 Graphics::ManagedSurface *Channel::getSurface() {
@@ -69,11 +67,14 @@ Graphics::ManagedSurface *Channel::getSurface() {
 }
 
 const Graphics::Surface *Channel::getMask(bool forceMatte) {
+	if (!_sprite->_cast)
+		return nullptr;
+
 	if (_sprite->_ink == kInkTypeMatte || forceMatte) {
 		// Mattes are only supported in bitmaps for now. Shapes don't need mattes,
 		// as they already have all non-enclosed white pixels transparent.
 		// Matte on text has a trivial enough effect to not worry about implementing.
-		if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
+		if (_sprite->_cast->_type == kCastBitmap) {
 			return ((BitmapCastMember *)_sprite->_cast)->getMatte();
 		} else {
 			return nullptr;
@@ -81,7 +82,7 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 	} else if (_sprite->_ink == kInkTypeMask) {
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(_sprite->_castId + 1);
 
-		if (_sprite->_cast && member && member->_initialRect == _sprite->_cast->_initialRect) {
+		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
 			return &member->_widget->getSurface()->rawSurface();
 		} else {
 			warning("Channel::getMask(): Requested cast mask, but no matching mask was found");
@@ -98,8 +99,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	// cast of the sprite changes.
 	bool isDirty = _dirty ||
 		_delta != Common::Point(0, 0) ||
-		((_sprite->_castType != kCastTypeNull) &&
-		 (_sprite->_cast && _sprite->_cast->isModified()));
+		(_sprite->_cast && _sprite->_cast->isModified());
 
 	if (nextSprite) {
 		isDirty |= _sprite->_castId != nextSprite->_castId ||
@@ -168,7 +168,7 @@ void Channel::addDelta(Common::Point pos) {
 Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
 
-	if (_sprite->_castType == kCastBitmap && _sprite->_cast) {
+	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
 		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
 
 		res += Common::Point(bc->_initialRect.left - bc->_regX,
@@ -179,7 +179,7 @@ Common::Point Channel::getPosition() {
 }
 
 MacShape *Channel::getShape() {
-	if (_sprite->_castType != kCastShape)
+	if (!_sprite->isQDShape())
 		return nullptr;
 
 	MacShape *shape = new MacShape();

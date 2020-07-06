@@ -70,6 +70,7 @@ public:
 	void setPattern(uint16 pattern);
 
 	void setCast(uint16 castid);
+	bool isQDShape();
 
 	Common::Rect getDims();
 
@@ -80,14 +81,14 @@ public:
 	uint32 _unk3;
 
 	bool _enabled;
-	uint16 _castId;
 	uint16 _castIndex;
 	SpriteType _spriteType;
-	CastType _castType;
 	byte _inkData;
 	InkType _ink;
 	uint16 _trails;
 
+	uint16 _castId;
+	uint16 _pattern;
 	CastMember *_cast;
 
 	byte _thickness;

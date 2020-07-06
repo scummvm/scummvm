@@ -278,7 +278,11 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._thickness = stream->readByte();
 			sprite._inkData = stream->readByte();
 
-			sprite._castId = stream->readUint16();
+			if (_vm->getVersion() < 4 && sprite.isQDShape()) {
+				sprite._pattern = stream->readUint16();
+			} else {
+				sprite._castId = stream->readUint16();
+			}
 
 			sprite._startPoint.y = (int16)stream->readUint16();
 			sprite._startPoint.x = (int16)stream->readUint16();
