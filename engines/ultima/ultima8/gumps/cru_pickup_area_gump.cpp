@@ -51,7 +51,6 @@ void CruPickupAreaGump::addPickup(Item *item) {
 
 	uint32 shapeno = item->getShape();
 
-	// TODO: This is not quite right.  We want to add the "q" values of the existing one and the new one.  Eg, if we have 5 medikits and add 2, we should show "2" in the toast.
 	Std::list<Gump *>::iterator it;
 	int32 yoff = 0;
 	uint16 qval = 0;

@@ -51,7 +51,7 @@ public:
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	uint32 getShapeNo() const {
-		return _shapeno;
+		return _itemShapeNo;
 	}
 
 	uint16 getQ() {
@@ -63,7 +63,10 @@ public:
 
 private:
 	uint32 _startFrame;
-	uint32 _shapeno;
+	uint32 _itemShapeNo;
+	uint16 _gumpShapeNo;
+	uint16 _gumpFrameNo;
+	Std::string _itemName;
 	uint16 _q;
 };
 

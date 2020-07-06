@@ -198,7 +198,8 @@ void TypeFlags::loadWeaponInfo() {
 
 		int val = 0;
 
-		wi->_name = k;
+		// Slight hack.. get the name after the the /
+		wi->_name = k.substr(k.findLastOf('/') + 1, Std::string::npos);
 
 		config->get(k + "/shape", val);
 		wi->_shape = static_cast<uint32>(val);
@@ -256,9 +257,14 @@ void TypeFlags::loadWeaponInfo() {
 			wi->_sound = 0;
 
 		if (config->get(k + "/display_frame", val))
-			wi->_displayFrame = static_cast<uint16>(val);
+			wi->_displayGumpFrame = static_cast<uint16>(val);
 		else
-			wi->_displayFrame = 0;
+			wi->_displayGumpFrame = 0;
+
+		if (config->get(k + "/display_shape", val))
+			wi->_displayGumpShape = static_cast<uint16>(val);
+		else
+			wi->_displayGumpShape = 3;
 
 		assert(wi->_shape < _shapeInfo.size());
 		_shapeInfo[wi->_shape]._weaponInfo = wi;

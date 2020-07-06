@@ -93,7 +93,7 @@ string INIFile::Section::dump() {
 	return s;
 }
 
-bool INIFile::readConfigFile(string fname) {
+bool INIFile::readConfigFile(const string &fname) {
 	IDataSource *f = FileSystem::get_instance()->ReadFile(fname, true);
 	if (!f) return false;
 
@@ -183,7 +183,7 @@ bool INIFile::readConfigString(string config) {
 			// is, verify that it only consists of alphanumerics,
 			// dashes, underscores and colons).
 			while (p < line.size() && (Common::isAlnum(line[p]) || line[p] == '-' ||
-			                           line[p] == '_' || line[p] == ':'))
+			                           line[p] == '_' || line[p] == ':' || line[p] == ' '))
 				p++;
 
 			if (p >= line.size()) {

@@ -135,7 +135,7 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 				const Std::string &currenttext = _inventoryText->getText();
 				if (!qtext.equals(currenttext)) {
 					RemoveChild(_inventoryText);
-					_inventoryText = new TextWidget(_dims.w / 2 + 22, _dims.h / 2 + 3, qtext, true, 12);
+					_inventoryText = new TextWidget(_dims.w / 2 + 22, _dims.h / 2 + 3, qtext, true, INVENTORY_TEXT_FONT);
 					_inventoryText->InitGump(this, false);
 				}
 			} else {

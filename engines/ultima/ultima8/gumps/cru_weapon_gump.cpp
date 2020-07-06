@@ -90,7 +90,9 @@ void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
 			uint16 frameno = 0;
 			if (weaponinfo) {
-				frameno = weaponinfo->_displayFrame;
+				// this should be a weapon, otherwise why are we here?
+				assert(WEAPON_GUMP_SHAPE == weaponinfo->_displayGumpShape);
+				frameno = weaponinfo->_displayGumpFrame;
 			}
 			_weaponGump->SetShape(_weaponShape, frameno);
 			_weaponGump->UpdateDimsFromShape();

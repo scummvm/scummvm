@@ -35,8 +35,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const int AMMO_GUMP_SHAPE = 2;
-
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruAmmoGump)
 
 CruAmmoGump::CruAmmoGump() : CruStatGump() {

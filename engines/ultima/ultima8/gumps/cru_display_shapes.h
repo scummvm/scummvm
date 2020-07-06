@@ -20,45 +20,41 @@
  *
  */
 
-#ifndef ULTIMA8_WORLD_WEAPONINFO_H
-#define ULTIMA8_WORLD_WEAPONINFO_H
+#ifndef ULTIMA8_GUMPS_CRUINVENTORYGUMP_H
+#define ULTIMA8_GUMPS_CRUINVENTORYGUMP_H
 
-#include "ultima/shared/std/string.h"
+#include "ultima/ultima8/gumps/cru_stat_gump.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-struct WeaponInfo {
-	Std::string _name;
-	uint32 _shape;
-	uint8 _overlayType;
-	uint32 _overlayShape;
-	uint8 _damageModifier;
-	uint8 _baseDamage;
-	uint8 _dexAttackBonus;
-	uint8 _dexDefendBonus;
-	uint8 _armourBonus;
-	uint16 _damageType;
-	int _treasureChance;
+class TextWidget;
 
-	// Crusader-specific fields:
-	uint16 _sound;		//!< The sound this weapon makes when fired
-	uint16 _ammoType;	//!< The inventory frame for the ammo used
-	uint16 _ammoShape;	//!< The shape number for the ammo used
-	uint16 _displayGumpShape; //! The gump shape to use for inventory display (3,4,5)
-	uint16 _displayGumpFrame; //!< The frame to use in the inventory gump
+/**
+ * Inventory box, the 3rd box along the bottom of the screen
+ */
+class CruInventoryGump : public CruStatGump {
+public:
+	ENABLE_RUNTIME_CLASSTYPE()
 
-	enum DmgType {
-		DMG_NORMAL = 0x0001,
-		DMG_BLADE  = 0x0002,
-		DMG_BLUNT  = 0x0004,
-		DMG_FIRE   = 0x0008,
-		DMG_UNDEAD = 0x0010,
-		DMG_MAGIC  = 0x0020,
-		DMG_SLAYER = 0x0040,
-		DMG_PIERCE = 0x0080,
-		DMG_FALLING = 0x0100
-	};
+	CruInventoryGump();
+	CruInventoryGump(Shape *shape, int x);
+	~CruInventoryGump() override;
+
+	// Init the gump, call after construction
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+
+	// Paint this Gump
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
+
+private:
+	Shape *_inventoryShape;
+	Gump *_inventoryItemGump;
+	TextWidget *_inventoryText;
 };
 
 } // End of namespace Ultima8
