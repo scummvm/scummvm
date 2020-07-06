@@ -69,6 +69,15 @@ enum ScriptFlag {
 	kScriptFlagUnkF			= (1 << 0xf)
 };
 
+enum ObjectType {
+	kNoneObj = 0,
+	kFactoryObj = 1 << 0,
+	kXObj = 1 << 1,
+	kScriptObj = 1 << 2,
+	kXtraObj = 1 << 3,
+	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj
+};
+
 enum ShapeType {
 	kShapeRectangle = 1,
 	kShapeRoundRect = 2,
