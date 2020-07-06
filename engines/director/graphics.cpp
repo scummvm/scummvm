@@ -818,10 +818,10 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 
 		*dst = tmpDst;
 		src = &tmpSrc;
-	} else {
-		if (!p->src)
+	} else if (!p->src) {
 			error("Director::inkDrawPixel(): No source surface");
-
+			return;
+	} else {
 		src = (const byte *)p->src->getBasePtr(p->srcPoint.x, p->srcPoint.y);
 	}
 

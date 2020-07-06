@@ -142,8 +142,10 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 
 	if (ms) {
 		inkBlitShape(&pd, srcRect, ms);
-	} else {
+	} else if (pd.src) {
 		inkBlitSurface(&pd, srcRect, channel->getMask());
+	} else {
+		warning("Stage::inkBlitFrom: No source surface");
 	}
 }
 
