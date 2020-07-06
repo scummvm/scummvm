@@ -57,6 +57,7 @@ Symbol::Symbol() {
 	varNames = nullptr;
 	ctx = nullptr;
 	archive = nullptr;
+	target = nullptr;
 	anonymous = false;
 }
 
@@ -74,6 +75,7 @@ Symbol::Symbol(const Symbol &s) {
 	varNames = s.varNames;
 	ctx = s.ctx;
 	archive = s.archive;
+	target = s.target;
 	anonymous = s.anonymous;
 }
 
@@ -93,6 +95,7 @@ Symbol& Symbol::operator=(const Symbol &s) {
 		varNames = s.varNames;
 		ctx = s.ctx;
 		archive = s.archive;
+		target = s.target;
 		anonymous = s.anonymous;
 	}
 	return *this;
@@ -686,7 +689,9 @@ Datum::Datum(const Datum &d) {
 }
 
 Datum& Datum::operator=(const Datum &d) {
-	if (this != &d) {
+	if (d.type == OBJECT)
+		warning("%p = REFCOUNT %d", (void *)this, *refCount);
+	if (this != &d && refCount != d.refCount) {
 		reset();
 		type = d.type;
 		u = d.u;
@@ -724,8 +729,9 @@ Datum::Datum(Object *val) {
 	u.obj = val;
 	type = OBJECT;
 	lazy = false;
-	refCount = new int;
-	*refCount = 1;
+	refCount = val->refCount;
+	*refCount += 1;
+	warning("%p create REFCOUNT %d", (void *)this, *refCount);
 }
 
 void Datum::reset() {
@@ -767,7 +773,8 @@ void Datum::reset() {
 		default:
 			break;
 		}
-		delete refCount;
+		if (type != OBJECT) // object owns refCount
+			delete refCount;
 	}
 #endif
 }
@@ -1037,6 +1044,16 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 	} else {
 		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return 0;
+	}
+}
+
+void ScriptContext::setTarget(Object *target) {
+	_target = target;
+	for (SymbolHash::iterator it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
+		it->_value.target = target;
+	}
+	for (Common::HashMap<uint32, Symbol>::iterator it = _eventHandlers.begin(); it != _eventHandlers.end(); ++it) {
+		it->_value.target = target;
 	}
 }
 

@@ -115,13 +115,11 @@ Object::Object(const Common::String &objName, ObjectType objType, ScriptContext 
 	type = objType;
 	disposed = false;
 	inheritanceLevel = 1;
+	refCount = new int;
+	*refCount = 0;
 	ctx = objCtx;
-	ctx->_target = this;
-
-	// Don't include the ctx's reference to me in the refCount.
-	// Once that's the only remaining reference,
-	// I should be destroyed, killing the ctx with me.
-	*ctx->_target.refCount -= 1;
+	if (ctx)
+		ctx->setTarget(this);
 
 	if (objType == kFactoryObj) {
 		objArray = new Common::HashMap<uint32, Datum>;
@@ -136,9 +134,14 @@ Object::Object(const Object &obj) {
 	disposed = obj.disposed;
 	inheritanceLevel = obj.inheritanceLevel + 1;
 	properties = obj.properties;
-	ctx = new ScriptContext(*obj.ctx);
-	ctx->_target = this;
-	*ctx->_target.refCount -= 1;
+	refCount = new int;
+	*refCount = 0;
+	if (obj.ctx) {
+		ctx = new ScriptContext(*obj.ctx);
+		ctx->setTarget(this);
+	} else {
+		ctx = nullptr;
+	}
 
 	if (obj.objArray) {
 		objArray = new Common::HashMap<uint32, Datum>(*obj.objArray);
@@ -150,7 +153,7 @@ Object::Object(const Object &obj) {
 Object::~Object() {
 	delete name;
 	delete objArray;
-	ctx->_target.refCount = nullptr; // refCount has already been freed
+	delete refCount;
 	delete ctx;
 }
 
@@ -178,7 +181,7 @@ Symbol Object::getMethod(const Common::String &methodName) {
 		if (g_lingo->_methods.contains(shortName) && (type & g_lingo->_methods[shortName].targetType)) {
 			// predefined method
 			Symbol sym = g_lingo->_methods[shortName];
-			sym.ctx = ctx;
+			sym.target = this;
 			return sym;
 		}
 	} else {
@@ -186,7 +189,7 @@ Symbol Object::getMethod(const Common::String &methodName) {
 		if (g_lingo->_methods.contains(methodName) && (type & g_lingo->_methods[methodName].targetType)) {
 			// predefined method
 			Symbol sym = g_lingo->_methods[methodName];
-			sym.ctx = ctx;
+			sym.target = this;
 			return sym;
 		}
 		if (properties.contains("ancestor") && properties["ancestor"].type == OBJECT

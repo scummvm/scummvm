@@ -292,7 +292,7 @@ void Lingo::codeFactory(Common::String &name) {
 
 	_currentFactory = obj;
 	if (!_globalvars.contains(name)) {
-		_globalvars[name] = obj->ctx->_target;
+		_globalvars[name] = obj;
 	} else {
 		warning("Factory '%s' already defined", name.c_str());
 	}

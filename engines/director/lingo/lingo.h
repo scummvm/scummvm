@@ -97,6 +97,7 @@ struct Symbol {	/* symbol table entry */
 	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */
 	LingoArchive *archive; 	/* optional archive to execute with */
+	Object *target;			/* optional method target */
 	bool anonymous;
 
 	Symbol();
@@ -181,10 +182,9 @@ public:
 	Common::HashMap<uint32, Symbol> _eventHandlers;
 	Common::Array<Datum> _constants;
 	Common::Array<Common::String> _propNames;
-	Datum _target;
 
 	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, uint16 id = 0)
-		: _name(name), _archive(archive), _type(type), _id(id) {}
+		: _name(name), _archive(archive), _type(type), _id(id), _target(nullptr) {}
 	ScriptContext(const ScriptContext &sc) {
 		_type = sc._type;
 		_name = sc._name;
@@ -204,11 +204,14 @@ public:
 		_id = sc._id;
 	}
 
+	Object *getTarget() const { return _target; }
+	void setTarget(Object *target);
 	Datum getParentScript();
 	Symbol define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
 
 private:
 	Datum _parentScript;
+	Object *_target;
 };
 
 struct CFrame {	/* proc/func call stack frame */

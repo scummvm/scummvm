@@ -222,10 +222,13 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 	fp->sp = funcSym;
 
 	g_lingo->_currentScript = funcSym.u.defn;
-	if (funcSym.ctx) {
+
+	if (funcSym.target)
+		g_lingo->_currentMe = funcSym.target;
+
+	if (funcSym.ctx)
 		g_lingo->_currentScriptContext = funcSym.ctx;
-		g_lingo->_currentMe = funcSym.ctx->_target; // reference-counted datum
-	}
+
 	g_lingo->_currentArchive = funcSym.archive;
 
 	// Execute anonymous functions within the current var frame.
@@ -1337,7 +1340,7 @@ void LC::call(const Common::String &name, int nargs) {
 			if (funcSym.type != VOID) {
 				if (target->type == kScriptObj && funcSym.type == HANDLER) {
 					// For kScriptObj handlers the target is the first argument
-					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.ctx->_target; // reference-counted datum
+					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
 				} else {
 					// Otherwise, take the target object out of the stack
 					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
@@ -1367,7 +1370,7 @@ void LC::call(const Common::String &name, int nargs) {
 			funcSym = target->getMethod(*methodName.u.s);
 			if (target->type == kScriptObj && funcSym.type == HANDLER) {
 				// For kFactoryObj handlers the target is the first argument
-				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.ctx->_target; // reference-counted datum
+				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
 			} else {
 				// Otherwise, take the methodName out of the stack
 				g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
@@ -1419,7 +1422,7 @@ void LC::call(const Symbol &funcSym, int nargs) {
 
 		Datum target;
 		if (funcSym.ctx) {
-			target = funcSym.ctx->_target; // reference-counted datum
+			target = funcSym.target;
 		}
 
 		if (target.type == OBJECT) {

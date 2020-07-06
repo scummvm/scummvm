@@ -31,13 +31,14 @@ struct Object {
 	bool disposed;
 
 	DatumHash properties;
+	int *refCount;
 	ScriptContext *ctx;
 	int inheritanceLevel; // 1 for original object
 
 	// used only for factories
 	Common::HashMap<uint32, Datum> *objArray;
 
-	Object(const Common::String &objName, ObjectType objType, ScriptContext *objCtx);
+	Object(const Common::String &objName, ObjectType objType, ScriptContext *objCtx = nullptr);
 	Object(const Object &obj);
 	virtual ~Object();
 

@@ -65,7 +65,7 @@ void FileIO::initialize(int type) {
 			ScriptContext *ctx = new ScriptContext(Common::String(xlibName));
 			FileObject *xobj = new FileObject(kXObj, ctx);
 			xobj->initMethods();
-			g_lingo->_globalvars[xlibName] = xobj->ctx->_target;
+			g_lingo->_globalvars[xlibName] = xobj;
 		} else {
 			warning("FileIO XObject already initialized");
 		}

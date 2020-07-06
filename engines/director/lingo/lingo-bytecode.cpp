@@ -383,7 +383,7 @@ void LC::cb_objectcall() {
 		if (method.type != VOID) {
 			if (target->type == kFactoryObj && method.type == HANDLER) {
 				// For kFactoryObj handlers the target is the first argument
-				g_lingo->push(method.ctx->_target); // reference-counted datum
+				g_lingo->push(method.target);
 				nargs.u.i += 1;
 			}
 			while (args.size()) {
