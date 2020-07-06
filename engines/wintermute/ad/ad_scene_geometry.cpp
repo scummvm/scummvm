@@ -1254,7 +1254,7 @@ bool AdSceneGeometry::isNodeEnabled(const char *nodeName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::enableLight(char *lightName, bool enable) {
+bool AdSceneGeometry::enableLight(const char *lightName, bool enable) {
 	bool ret = false;
 
 	uint i;
@@ -1270,7 +1270,7 @@ bool AdSceneGeometry::enableLight(char *lightName, bool enable) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::isLightEnabled(char *lightName) {
+bool AdSceneGeometry::isLightEnabled(const char *lightName) {
 	for (uint i = 0; i < _lights.size(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_active;
@@ -1280,7 +1280,7 @@ bool AdSceneGeometry::isLightEnabled(char *lightName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::setLightColor(char *lightName, uint32 color) {
+bool AdSceneGeometry::setLightColor(const char *lightName, uint32 color) {
 	bool ret = false;
 
 	uint i;
@@ -1296,7 +1296,7 @@ bool AdSceneGeometry::setLightColor(char *lightName, uint32 color) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 AdSceneGeometry::getLightColor(char *lightName) {
+uint32 AdSceneGeometry::getLightColor(const char *lightName) {
 	for (uint i = 0; i < _lights.size(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_diffuseColor;
@@ -1306,7 +1306,7 @@ uint32 AdSceneGeometry::getLightColor(char *lightName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d AdSceneGeometry::getLightPos(char *lightName) {
+Math::Vector3d AdSceneGeometry::getLightPos(const char *lightName) {
 	for (uint i = 0; i < _lights.size(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_position;
