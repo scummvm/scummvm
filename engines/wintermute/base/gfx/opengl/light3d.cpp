@@ -123,9 +123,9 @@ bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 			byte g = fileStream.readByte();
 			byte b = fileStream.readByte();
 
-			_diffuseColor = r;
+			_diffuseColor = r << 16;
 			_diffuseColor |= g << 8;
-			_diffuseColor |= b << 16;
+			_diffuseColor |= b;
 			_diffuseColor |= 255 << 24;
 			break;
 		}
@@ -135,9 +135,9 @@ bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 			float g = fileStream.readFloatLE();
 			float b = fileStream.readFloatLE();
 
-			_diffuseColor = static_cast<int32>(r * 255);
+			_diffuseColor = static_cast<int32>(r * 255) << 16;
 			_diffuseColor |= static_cast<int32>(g * 255) << 8;
-			_diffuseColor |= static_cast<int32>(b * 255) << 16;
+			_diffuseColor |= static_cast<int32>(b * 255);
 			_diffuseColor |= 255 << 24;
 			break;
 		}
