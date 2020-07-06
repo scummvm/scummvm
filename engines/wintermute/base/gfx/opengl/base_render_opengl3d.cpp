@@ -341,6 +341,7 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		_state3D = true;
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
 		glEnable(GL_BLEND);
 		glAlphaFunc(GL_GEQUAL, 0x08);
 
