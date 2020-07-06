@@ -1742,8 +1742,7 @@ void LB::b_puppetSprite(int nargs) {
 }
 
 void LB::b_puppetTempo(int nargs) {
-	// TODO: Check if >D4 permitted tempo higher than 60.
-	g_director->getCurrentMovie()->getScore()->_puppetTempo = MIN(g_lingo->pop().asInt(), 60);
+	g_director->getCurrentMovie()->getScore()->_puppetTempo = g_lingo->pop().asInt();
 }
 
 void LB::b_puppetTransition(int nargs) {
