@@ -54,6 +54,20 @@ bool BaseRenderOpenGL3D::setDefaultAmbientLightColor() {
 	return true;
 }
 
+int BaseRenderOpenGL3D::maximumLightsCount() {
+	GLint maxLightCount = 0;
+	glGetIntegerv(GL_MAX_LIGHTS, &maxLightCount);
+	return maxLightCount;
+}
+
+void BaseRenderOpenGL3D::enableLight(int index) {
+	glEnable(GL_LIGHT0 + index);
+}
+
+void BaseRenderOpenGL3D::disableLight(int index) {
+	glDisable(GL_LIGHT0 + index);
+}
+
 void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
 	switch (blendMode) {
 	case Graphics::BLEND_NORMAL:

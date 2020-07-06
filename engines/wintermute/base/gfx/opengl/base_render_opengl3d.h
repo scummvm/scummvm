@@ -45,6 +45,10 @@ public:
 	bool setAmbientLightColor(uint32 color);
 	bool setDefaultAmbientLightColor();
 
+	int maximumLightsCount();
+	void enableLight(int index);
+	void disableLight(int index);
+
 	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode);
 
 	bool enableShadows();
