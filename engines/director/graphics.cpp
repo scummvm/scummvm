@@ -853,20 +853,16 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 			*dst = *dst | ~(src);
 		break;
 	case kInkTypeNotCopy:
-		if (src != p->numColors - 1)
-			*dst = ~(src);
+		*dst = ~(src);
 		break;
 	case kInkTypeNotTrans:
-		if (src != p->numColors - 1)
-			*dst = *dst & ~(src);
+		*dst = *dst & ~(src);
 		break;
 	case kInkTypeNotReverse:
-		if (src != p->numColors - 1)
-			*dst = *dst ^ src;
+		*dst = *dst ^ src;
 		break;
 	case kInkTypeNotGhost:
-		if (src != p->numColors - 1)
-			*dst = *dst | src;
+		*dst = *dst | src;
 		break;
 		// Arithmetic ink types
 	default: {

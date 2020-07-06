@@ -70,7 +70,13 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 	if (!_sprite->_cast)
 		return nullptr;
 
-	if (_sprite->_ink == kInkTypeMatte || forceMatte) {
+	bool needsMatte = _sprite->_ink == kInkTypeMatte ||
+		_sprite->_ink == kInkTypeNotCopy ||
+		_sprite->_ink == kInkTypeNotTrans ||
+		_sprite->_ink == kInkTypeNotReverse ||
+		_sprite->_ink == kInkTypeNotGhost;
+
+	if (needsMatte || forceMatte) {
 		// Mattes are only supported in bitmaps for now. Shapes don't need mattes,
 		// as they already have all non-enclosed white pixels transparent.
 		// Matte on text has a trivial enough effect to not worry about implementing.

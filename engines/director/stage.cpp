@@ -216,7 +216,7 @@ void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Gr
 		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 		for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++)
-			if (!mask || (msk && (pd->ink == kInkTypeMatte ? !(*msk++) : *msk++)))
+			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++))))
 				inkDrawPixel(pd->destRect.left + j, pd->destRect.top + i, 0, pd);
 	}
 }
