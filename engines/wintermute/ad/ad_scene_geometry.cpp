@@ -27,6 +27,7 @@
  */
 
 #include "common/math.h"
+#include "common/util.h"
 #include "engines/wintermute/ad/ad_block.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_generic.h"
@@ -940,22 +941,16 @@ bool AdSceneGeometry::initLoop() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::createLights() {
-	warning("AdSceneGeometry::createLights");
+	// disable all lights
+	for (int i = 0; i < _gameRef->_renderer3D->maximumLightsCount(); i++) {
+		_gameRef->_renderer3D->disableLight(i);
+	}
 
-	//	int i;
+	int lightCount = MIN(static_cast<int>(_lights.size()), _gameRef->_renderer3D->maximumLightsCount());
 
-	//	// disable all lights
-	//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
-	//	int MaxLights = m_Renderer->GetMaxActiveLights();
-
-	//	for(i=0; i<100; i++)
-	//		m_Renderer->m_Device->LightEnable(i, FALSE);
-
-	//	for(i=0; i<_lights.size(); i++)
-	//	{
-	//		if(i >= 100) break;
-	//		_lights[i]->SetLight(i);
-	//	}
+	for (int i = 0; i < lightCount; i++) {
+		_lights[i]->setLight(i);
+	}
 
 	return true;
 }
