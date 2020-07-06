@@ -83,7 +83,7 @@ const Graphics::Surface *Channel::getMask() {
 	case kInkTypeMask: {
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(_sprite->_castId + 1);
 
-		if (_sprite->_cast && member->_initialRect == _sprite->_cast->_initialRect) {
+		if (_sprite->_cast && member && member->_initialRect == _sprite->_cast->_initialRect) {
 			return &member->_widget->getSurface()->rawSurface();
 		} else {
 			warning("Channel::getMask(): Requested cast mask, but no matching mask was found");
