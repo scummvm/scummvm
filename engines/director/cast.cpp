@@ -297,8 +297,8 @@ bool Cast::loadArchive() {
 		}
 	}
 
-	// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
-	if (_vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
+	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
+	if (_vm->getVersion() >= 4 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script name lists
 		Common::Array<uint16> lnam =  _castArchive->getResourceIDList(MKTAG('L','n','a','m'));
 		if (lnam.size() > 0) {
@@ -854,8 +854,8 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		}
 
 		CastMember *member = _loadedCast->getVal(id);
-		// FIXME. Bytecode disabled by default, requires --debugflags=bytecode for now
-		if (_vm->getVersion() < 4 || !debugChannelSet(-1, kDebugBytecode)) {
+		// For D4+ we may force Lingo scripts
+		if (_vm->getVersion() < 4 || debugChannelSet(-1, kDebugNoBytecode)) {
 			if (!ci->script.empty()) {
 				ScriptType scriptType = kCastScript;
 				// the script type here could be wrong!
