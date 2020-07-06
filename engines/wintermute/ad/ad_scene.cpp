@@ -2599,7 +2599,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WaypointsHeight") == 0) {
 		if (_sceneGeometry) {
-			_sceneGeometry->_waypointHeight = _scValue->getFloat();
+			_sceneGeometry->_waypointHeight = value->getFloat();
 			_sceneGeometry->dropWaypoints();
 		}
 
@@ -2610,7 +2610,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	// MaxShadowType
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxShadowType") == 0) {
-		setMaxShadowType(static_cast<TShadowType>(_scValue->getInt()));
+		setMaxShadowType(static_cast<TShadowType>(value->getInt()));
 		return STATUS_OK;
 	}
 
@@ -2618,7 +2618,7 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	// AmbientLightColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmbientLightColor") == 0) {
-		_ambientLightColor = _scValue->getInt();
+		_ambientLightColor = value->getInt();
 		return STATUS_OK;
 	}
 #endif
