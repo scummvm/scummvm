@@ -242,6 +242,7 @@ bool MeshX::render(ModelX *model) {
 	// is this correct?
 	for (uint32 i = 0; i < _numAttrs; i++) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[i]->_diffuse.data);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[i]->_diffuse.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[i]->_specular.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[i]->_emissive.data);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[i]->_shininess);
