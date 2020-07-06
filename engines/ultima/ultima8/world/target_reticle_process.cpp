@@ -143,7 +143,7 @@ void TargetReticleProcess::itemMoved(Item *item) {
 	MainActor *mainactor = getMainActor();
 	int actordir = -1;
 	int dirtoitem = -2;
-	if (!mainactor) {
+	if (mainactor) {
 		actordir = mainactor->getDir();
 		dirtoitem = mainactor->getDirToItemCentre(*item);
 	}
