@@ -44,6 +44,10 @@ public:
 
 	bool setAmbientLightColor(uint32 color);
 	bool setDefaultAmbientLightColor();
+	void setAmbientLight();
+
+	uint32 _ambientLightColor;
+	bool _overrideAmbientLightColor;
 
 	int maximumLightsCount();
 	void enableLight(int index);

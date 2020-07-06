@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
@@ -32,26 +33,49 @@ BaseRenderer *makeOpenGL3DRenderer(BaseGame *inGame) {
 }
 
 BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
-	: BaseRenderer(inGame), _spriteBatchMode(false) {
+	: BaseRenderer(inGame), _overrideAmbientLightColor(false), _spriteBatchMode(false) {
+	setDefaultAmbientLightColor();
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
 }
 
 bool BaseRenderOpenGL3D::setAmbientLightColor(uint32 color) {
-	byte a = RGBCOLGetA(color);
-	byte r = RGBCOLGetR(color);
-	byte g = RGBCOLGetG(color);
-	byte b = RGBCOLGetB(color);
-
-	float value[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
+	_ambientLightColor = color;
+	_overrideAmbientLightColor = true;
+	setAmbientLight();
 	return true;
 }
 
 bool BaseRenderOpenGL3D::setDefaultAmbientLightColor() {
-	setAmbientLightColor(0x00000000);
+	_ambientLightColor = 0x00000000;
+	_overrideAmbientLightColor = false;
+	setAmbientLight();
 	return true;
+}
+
+void BaseRenderOpenGL3D::setAmbientLight() {
+	byte a = 0;
+	byte r = 0;
+	byte g = 0;
+	byte b = 0;
+
+	if (_overrideAmbientLightColor) {
+		a = RGBCOLGetA(_ambientLightColor);
+		r = RGBCOLGetR(_ambientLightColor);
+		g = RGBCOLGetG(_ambientLightColor);
+		b = RGBCOLGetB(_ambientLightColor);
+	} else {
+		uint32 color = _gameRef->getAmbientLightColor();
+
+		a = RGBCOLGetA(color);
+		r = RGBCOLGetR(color);
+		g = RGBCOLGetG(color);
+		b = RGBCOLGetB(color);
+	}
+
+	float value[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
 }
 
 int BaseRenderOpenGL3D::maximumLightsCount() {
@@ -344,6 +368,8 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 		glEnable(GL_LIGHTING);
 		glEnable(GL_BLEND);
 		glAlphaFunc(GL_GEQUAL, 0x08);
+
+		setAmbientLight();
 
 		_fov = camera->_fov;
 		setProjection();
