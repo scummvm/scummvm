@@ -961,119 +961,101 @@ bool AdSceneGeometry::createLights() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::enableLights(Math::Vector3d point, BaseArray<char *> &ignoreLights) {
-	warning("AdScene::enableLights not yet implemented");
-
-	//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
-	//	int MaxLights = m_Renderer->GetMaxActiveLights();
-
-	//	int NumActiveLights = 0;
-	//	for(int i=0; i<_lights.size(); i++)
-	//	{
-	//		_lights[i]->m_IsAvailable = false;
-	//		if(_lights[i]->m_Active) NumActiveLights++;
-	//	}
-	//	if(NumActiveLights <= MaxLights)
-	//	{
-	//		for(int i=0; i<_lights.size(); i++)
-	//		{
-	//			_lights[i]->m_IsAvailable = true;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		if(!m_MaxLightsWarning)
-	//		{
-	//			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", MaxLights);
-	//			m_MaxLightsWarning = true;
-	//		}
-
-	//		BaseArray<Light3D*> ActiveLights;
-
-	//		// compute distance to point
-	//		for(int i=0; i<_lights.size(); i++)
-	//		{
-	//			if(!_lights[i]->m_Active) continue;
-
-	//			Math::Vector3d Dif;
-	//			if(_lights[i]->m_IsSpotlight)
-	//			{
-	//				//Dif = _lights[i]->m_Target - Point;
-	//				Math::Vector3d Dir = _lights[i]->m_Target - _lights[i]->m_Pos;
-	//				Dif = (_lights[i]->m_Pos + Dir * 0.75f) - Point;
-	//			}
-	//			else
-	//				Dif = _lights[i]->m_Pos - Point;
-
-	//			_lights[i]->m_Distance = fabs(D3DXVec3Length(&Dif));
-
-	//			ActiveLights.add(_lights[i]);
-	//		}
-
-	//		// sort by distance
-	//		if(ActiveLights.size() > 0)
-	//		{
-	//			qsort(ActiveLights.GetData(), ActiveLights.size(), sizeof(Light3D*), AdSceneGeometry::CompareLights);
-
-	//			for(int i=0; i<ActiveLights.size(); i++)
-	//			{
-	//				ActiveLights[i]->m_IsAvailable = i < MaxLights;
-	//			}
-	//		}
-	//	}
-
-	//	// light all available lights
-	//	for(int i=0; i<100; i++)
-	//	{
-	//		m_Renderer->m_Device->LightEnable(i, FALSE);
-	//	}
-
-	//	NumActiveLights = 0;
-	//	for(int i=0; i<_lights.size(); i++)
-	//	{
-	//		if(NumActiveLights >= MaxLights) break;
-
-	//		if(IgnoreLights.size())
-	//		{
-	//			bool Ignore = false;
-	//			for(int j=0; j<IgnoreLights.size(); j++)
-	//			{
-	//				char* c1 = _lights[i]->m_Name;
-	//				char* c2 = IgnoreLights[j];
-	//				if(stricmp(_lights[i]->m_Name, IgnoreLights[j])==0)
-	//				{
-	//					Ignore = true;
-	//					break;
-	//				}
-	//			}
-	//			if(Ignore) continue; // ship this light
-	//		}
-
-	//		if(_lights[i]->m_IsAvailable)
-	//		{
-	//			m_Renderer->m_Device->LightEnable(i, _lights[i]->m_Active);
-	//			if(_lights[i]->m_Active) NumActiveLights++;
-	//		}
-	//	}
-
-	return true;
+bool compareLights(const Light3D *light1, const Light3D *light2) {
+	return light1->_distance < light2->_distance;
 }
 
 //////////////////////////////////////////////////////////////////////////
-// keep this commented out for later, although we are going to
-// use a different siganture anyways since we want to use ScummVM's sort
-//int AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
-//	Light3D *Light1 = *(Light3D **)obj1;
-//	Light3D *Light2 = *(Light3D **)obj2;
+bool AdSceneGeometry::enableLights(Math::Vector3d point, BaseArray<char *> &ignoreLights) {
+	const int maxLightCount = 100;
 
-//	if (Light1->_distance < Light2->_distance) {
-//		return -1;
-//	} else if (Light1->_distance > Light2->_distance) {
-//		return 1;
-//	} else {
-//		return 0;
-//	}
-//}
+	int activeLightCount = 0;
+	for (uint i = 0; i < _lights.size(); i++) {
+		_lights[i]->_isAvailable = false;
+		if (_lights[i]->_active) {
+			++activeLightCount;
+		}
+	}
+
+	if (activeLightCount <= _gameRef->_renderer3D->maximumLightsCount()) {
+		for (uint i = 0; i < _lights.size(); i++) {
+			_lights[i]->_isAvailable = true;
+		}
+	} else {
+		if (!_maxLightsWarning) {
+			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", _gameRef->_renderer3D->maximumLightsCount());
+			_maxLightsWarning = true;
+		}
+
+		Common::Array<Light3D *> activeLights;
+
+		// compute distance to point
+		for (uint i = 0; i < _lights.size(); i++) {
+			if (!_lights[i]->_active) {
+				continue;
+			}
+
+			Math::Vector3d dif;
+
+			if (_lights[i]->_isSpotlight) {
+				Math::Vector3d dir = _lights[i]->_target - _lights[i]->_position;
+				dif = (_lights[i]->_position + dir * 0.75f) - point;
+			} else {
+				dif = _lights[i]->_position - point;
+			}
+
+			_lights[i]->_distance = dif.getMagnitude();
+
+			activeLights.push_back(_lights[i]);
+		}
+
+		// sort by distance
+		if (activeLights.size() > 0) {
+			Common::sort(activeLights.begin(), activeLights.end(), compareLights);
+
+			for (uint i = 0; i < activeLights.size(); i++) {
+				activeLights[i]->_isAvailable = static_cast<int>(i) < _gameRef->_renderer3D->maximumLightsCount();
+			}
+		}
+	}
+
+	// light all available lights
+	for (int i = 0; i < maxLightCount; i++) {
+		_gameRef->_renderer3D->disableLight(i);
+	}
+
+	activeLightCount = 0;
+
+	for (uint i = 0; i < _lights.size(); i++) {
+		if (activeLightCount >= _gameRef->_renderer3D->maximumLightsCount()) {
+			break;
+		}
+
+		if (ignoreLights.size()) {
+			bool ignore = false;
+
+			for (uint j = 0; j < ignoreLights.size(); j++) {
+				if (scumm_stricmp(_lights[i]->getName(), ignoreLights[j]) == 0) {
+					ignore = true;
+					break;
+				}
+			}
+
+			if (ignore) {
+				continue; // skip this light
+			}
+		}
+
+		if (_lights[i]->_isAvailable) {
+			if (_lights[i]->_active) {
+				_gameRef->_renderer3D->enableLight(i);
+				++activeLightCount;
+			}
+		}
+	}
+
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::correctTargetPoint(const Math::Vector3d &source, Math::Vector3d *target) {
