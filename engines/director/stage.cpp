@@ -145,8 +145,10 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 	// Shapes do not have surfaces of their own, so draw the shape directly upon
 	// stage surface.
 	if (ms) {
-		if (ms->foreColor == ms->backColor)
+		if (ms->foreColor == ms->backColor) {
+			delete ms;
 			return;
+		}
 
 		Common::Rect fillRect((int)srcRect.width(), (int)srcRect.height());
 		fillRect.moveTo(srcRect.left, srcRect.top);
