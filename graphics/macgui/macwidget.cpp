@@ -27,7 +27,7 @@
 
 namespace Graphics {
 
-MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, bool focusable, uint16 border, uint16 gutter, uint16 shadow, uint fgcolor, uint bgcolor) :
+MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, bool focusable, uint16 border, uint16 gutter, uint16 shadow) :
 	_focusable(focusable), _parent(parent), _border(border), _gutter(gutter), _shadow(shadow), _wm(wm) {
 	_contentIsDirty = true;
 	_priority = 0;
@@ -37,9 +37,6 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 	_dims.top = y;
 	_dims.bottom = y + h + (2 * border) + gutter + shadow;
 
-	_fgcolor = fgcolor;
-	_bgcolor = bgcolor;
-
 	if (parent)
 		parent->_children.push_back(this);
 
@@ -47,7 +44,7 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 	_maskSurface = nullptr;
 
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
-	_composeSurface->clear(_bgcolor);
+	_composeSurface->clear(0xff);
 
 	_maskSurface = new ManagedSurface(_dims.width(), _dims.height());
 	_maskSurface->clear(1);
@@ -81,13 +78,6 @@ bool MacWidget::draw(ManagedSurface *g, bool forceRedraw) {
 
 void MacWidget::blit(ManagedSurface *g, Common::Rect &dest) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
-}
-
-void MacWidget::setColors(int fg, int bg) {
-	_fgcolor = fg;
-	_bgcolor = bg;
-
-	_contentIsDirty = true;
 }
 
 bool MacWidget::processEvent(Common::Event &event) {
