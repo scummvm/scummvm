@@ -213,7 +213,7 @@ void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
 			Common::String fname = Common::String::format("./dumps/%s", mmmFileName.c_str());
 
 
-			if (!out.open(fname.c_str())) {
+			if (!out.open(fname.c_str(), true)) {
 				warning("Stage::loadEXEv3(): Can not open dump file %s", fname.c_str());
 			} else {
 				out.write(buf, mmmSize);

@@ -1116,7 +1116,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	if (ConfMan.getBool("dump_scripts")) {
 		Common::String buf = dumpScriptName(archName.c_str(), scriptType, castId, "lscr");
 
-		if (!out.open(buf)) {
+		if (!out.open(buf, true)) {
 			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.c_str());
 			skipdump = true;
 		} else {

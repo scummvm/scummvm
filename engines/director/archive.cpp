@@ -397,7 +397,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		char buf[256];
 		sprintf(buf, "./dumps/%s-%08x", g_director->getEXEName().c_str(), startOffset);
 
-		if (out.open(buf)) {
+		if (out.open(buf, true)) {
 			byte *data = (byte *)malloc(sz);
 
 			stream->seek(startOffset);
@@ -506,7 +506,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(resources[i]->tag), i);
 			stream->read(data, len);
 
-			if (!out.open(filename)) {
+			if (!out.open(filename, true)) {
 				warning("MacResManager::dumpRaw(): Can not open dump file %s", filename.c_str());
 				break;
 			}

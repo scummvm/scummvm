@@ -971,7 +971,7 @@ void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 	Common::DumpFile out;
 	Common::String buf = dumpScriptName(_macName.c_str(), type, id, "txt");
 
-	if (!out.open(buf)) {
+	if (!out.open(buf, true)) {
 		warning("Cast::dumpScript(): Can not open dump file %s", buf.c_str());
 		return;
 	}
