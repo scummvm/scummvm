@@ -126,6 +126,10 @@ Common::Rect Channel::getBbox() {
 }
 
 void Channel::setClean(Sprite *nextSprite, int spriteId) {
+	if (!nextSprite)
+		return;
+
+	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 	_dirty = false;
 
 	if (!_sprite->_puppet) {
@@ -134,7 +138,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId) {
 
 		// Sprites marked moveable are constrained to the same bounding box until
 		// the moveable is disabled
-		if (!_sprite->_moveable)
+		if (!_sprite->_moveable || newSprite)
 			_currentPoint = _sprite->_startPoint;
 	}
 
