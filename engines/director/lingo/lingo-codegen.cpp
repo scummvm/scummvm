@@ -286,6 +286,7 @@ void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localv
 void Lingo::codeFactory(Common::String &name) {
 	// FIXME: The factory's context should not be tied to the LingoArchive
 	// but bytecode needs it to resolve names
+	_assemblyContext->setName(name);
 	_assemblyContext->setFactory(true);
 	if (!_globalvars.contains(name)) {
 		_globalvars[name] = _assemblyContext;

@@ -47,9 +47,11 @@ public:
 	virtual int *getRefCount() const = 0;
 	virtual int getInheritanceLevel() const = 0;
 
+	virtual void setName(const Common::String &name) = 0;
+	virtual void dispose() = 0;
+
 	virtual Common::String asString() = 0;
 	virtual AbstractObject *clone() = 0;
-	virtual void dispose() = 0;
 	virtual Symbol getMethod(const Common::String &methodName) = 0;
 	virtual bool hasProp(const Common::String &propName) = 0;
 	virtual Datum getProp(const Common::String &propName) = 0;
@@ -107,16 +109,15 @@ public:
 	virtual int *getRefCount() const { return _refCount; };
 	virtual int getInheritanceLevel() const { return _inheritanceLevel; };
 
+	virtual void setName(const Common::String &name) { _name = name; };
+	virtual void dispose() { _disposed = true; };
+
 	virtual Common::String asString() {
 		return Common::String::format("object: #%s %d %p", _name.c_str(), _inheritanceLevel, (void *)this);
 	};
 
 	virtual AbstractObject *clone() {
 		return new Derived(static_cast<Derived const &>(*this));
-	};
-
-	virtual void dispose() {
-		_disposed = true;
 	};
 
 	virtual Symbol getMethod(const Common::String &methodName) {
