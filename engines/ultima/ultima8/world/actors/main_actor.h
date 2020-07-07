@@ -154,6 +154,7 @@ public:
 
 protected:
 	void useInventoryItem(uint32 shapenum);
+	void useInventoryItem(Item *item);
 
 	bool _justTeleported;
 

@@ -141,6 +141,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
 	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
 	registerCmd("MainActor::nextWeapon", WRAP_METHOD(Debugger, cmdNextWeapon));
+	registerCmd("MainActor::useInventoryItem", WRAP_METHOD(Debugger, cmdUseInventoryItem));
+	registerCmd("MainActor::useMedikit", WRAP_METHOD(Debugger, cmdUseMedikit));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
 
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
@@ -1102,6 +1104,32 @@ bool Debugger::cmdNextWeapon(int argc, const char **argv) {
 	}
 	MainActor *av = getMainActor();
 	av->nextWeapon();
+	return false;
+}
+
+bool Debugger::cmdUseInventoryItem(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't use active inventory item: avatarInStasis\n");
+		return false;
+	}
+	MainActor *av = getMainActor();
+	ObjId activeitemid = av->getActiveInvItem();
+	if (activeitemid) {
+		Item *item = getItem(activeitemid);
+		if (item) {
+			av->useInventoryItem(item);
+		}
+	}
+	return false;
+}
+
+bool Debugger::cmdUseMedikit(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't use medikit: avatarInStasis\n");
+		return false;
+	}
+	MainActor *av = getMainActor();
+	av->useInventoryItem(0x351);
 	return false;
 }
 

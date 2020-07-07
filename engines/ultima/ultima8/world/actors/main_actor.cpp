@@ -563,7 +563,12 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 
 	if (!isInCombat() && _lastAnim != Animation::unreadyWeapon) return;
 
-	ObjId weaponid = getEquip(ShapeInfo::SE_WEAPON);
+	ObjId weaponid;
+	if (GAME_IS_U8)
+		weaponid = getEquip(ShapeInfo::SE_WEAPON);
+	else
+		weaponid = getActiveWeapon();
+
 	Item *weapon = getItem(weaponid);
 	if (!weapon) return;
 
@@ -610,8 +615,10 @@ void MainActor::addKeycard(int bitno) {
 
 static uint16 getIdOfNextItemInList(const Std::vector<Item *> &items, uint16 current) {
 	const int n = items.size();
-	if (n <= 1)
-		return current;
+	if (n == 0)
+		return 0;
+	if (n == 1)
+		return items[0]->getObjId();
 
 	int i;
 	for (i = 0; i < n; i++) {
@@ -797,13 +804,38 @@ uint32 MainActor::I_addItemCru(const uint8 *args,
 }
 
 void MainActor::useInventoryItem(uint32 shapenum) {
+	Item *item = getFirstItemWithShape(shapenum, true);
+	useInventoryItem(item);
+}
+
+void MainActor::useInventoryItem(Item *item) {
+	if (!item)
+		return;
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		pout << "Can't use item: avatarInStasis" << Std::endl;
 		return;
 	}
-	Item *item = this->getFirstItemWithShape(shapenum, true);
-	if (item)
-		item->callUsecodeEvent_use();
+	const int32 shapenum = item->getShape();
+	if (shapenum == 0x4ed && GAME_IS_CRUSADER) {
+		// Do nothing for Credits
+		return;
+	}
+	item->callUsecodeEvent_use();
+
+	if (GAME_IS_CRUSADER && (shapenum != 0x4d4 && shapenum != 0x52d &&
+							 shapenum != 0x530 && shapenum != 0x52f &&
+							 shapenum != 0x52e)) {
+		uint16 q = item->getQuality();
+		item->setQuality(q - 1);
+		item->callUsecodeEvent_combine();
+		q = item->getQuality();
+		if (q == 0) {
+			const ObjId id = item->getObjId();
+			item->destroy();
+			if (id == _activeInvItem)
+				nextInvItem();
+		}
+	}
 }
 
 } // End of namespace Ultima8

@@ -216,6 +216,8 @@ private:
 	bool cmdUseKeyring(int argc, const char **argv);
 	bool cmdNextWeapon(int argc, const char **argv);
 	bool cmdToggleCombat(int argc, const char **argv);
+	bool cmdUseInventoryItem(int argc, const char **argv);
+	bool cmdUseMedikit(int argc, const char **argv);
 
 	// Object Manager
 	bool cmdObjectTypes(int argc, const char **argv);
