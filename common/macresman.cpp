@@ -37,7 +37,6 @@
 
 namespace Common {
 
-#define MBI_INFOHDR 128
 #define MBI_ZERO1 0
 #define MBI_NAMELEN 1
 #define MBI_ZERO2 74
