@@ -189,7 +189,7 @@ Common::Point Channel::getPosition() {
 }
 
 MacShape *Channel::getShape() {
-	if (!_sprite->isQDShape() && (_sprite->_cast && _sprite->_cast->_type != kCastShape))
+	if (!_sprite->isQDShape() || (_sprite->_cast && _sprite->_cast->_type != kCastShape))
 		return nullptr;
 
 	MacShape *shape = new MacShape();
