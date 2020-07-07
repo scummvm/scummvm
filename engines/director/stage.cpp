@@ -39,7 +39,7 @@
 namespace Director {
 
 Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm)
-	: MacWindow(id, scrollable, resizable, editable, wm) {
+	: MacWindow(id, scrollable, resizable, editable, wm), Object("Stage") {
 	_vm = vm;
 	_stageColor = 0;
 	_puppetTransition = nullptr;
@@ -49,6 +49,8 @@ Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::M
 	_macBinary = nullptr;
 	_nextMovie.frameI = -1;
 	_newMovieStarted = true;
+
+	_objType = kWindowObj;
 }
 
 Stage::~Stage() {

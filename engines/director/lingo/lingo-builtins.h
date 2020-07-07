@@ -166,11 +166,6 @@ namespace LB {
 	void b_rect(int nargs);
 	void b_union(int nargs);
 
-	void b_close(int nargs);
-	void b_forget(int nargs);
-	void b_inflate(int nargs);
-	void b_moveToBack(int nargs);
-	void b_moveToFront(int nargs);
 	void b_window(int nargs);
 
 	void b_beep(int nargs);

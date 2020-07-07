@@ -230,12 +230,6 @@ static struct BuiltinProto {
 	{ "mciwait",		LB::b_mciwait,		1, 1, false, 4, BLTIN },	//			D4 c
 	{ "sound",			LB::b_sound,		2, 3, false, 3, BLTIN },	//		D3 c
 	{ "soundBusy",		LB::b_soundBusy,	1, 1, true,  3, FBLTIN },	//		D3 f
-	// Window
-	{ "close",			LB::b_close,		1, 1, false, 4, BLTIN },	//			D4 c
-	{ "forget",			LB::b_forget,		1, 1, false, 4, BLTIN },	//			D4 c
-	{ "inflate",		LB::b_inflate,		3, 3, true,  4, FBLTIN },	//			D4 f
-	{ "moveToBack",		LB::b_moveToBack,	1, 1, false, 4, BLTIN },	//			D4 c
-	{ "moveToFront",	LB::b_moveToFront,	1, 1, false, 4, BLTIN },	//			D4 c
 	// Constants
 	{ "backspace",		LB::b_backspace,	0, 0, false, 2, FBLTIN },	// D2
 	{ "empty",			LB::b_empty,		0, 0, false, 2, FBLTIN },	// D2
@@ -1916,36 +1910,6 @@ void LB::b_updateStage(int nargs) {
 			score->_stopPlay = true;
 		}
 	}
-}
-
-
-///////////////////
-// Window
-///////////////////
-
-void LB::b_close(int nargs) {
-	g_lingo->printSTUBWithArglist("b_close", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_forget(int nargs) {
-	g_lingo->printSTUBWithArglist("b_forget", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_inflate(int nargs) {
-	g_lingo->printSTUBWithArglist("b_inflate", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_moveToBack(int nargs) {
-	g_lingo->printSTUBWithArglist("b_moveToBack", nargs);
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_moveToFront(int nargs) {
-	g_lingo->printSTUBWithArglist("b_moveToFront", nargs);
-	g_lingo->dropStack(nargs);
 }
 
 

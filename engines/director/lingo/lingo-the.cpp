@@ -547,6 +547,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheSprite:
 		d = getTheSprite(id, field);
 		break;
+	case kTheStage:
+		d = _vm->getStage();
+		break;
 	case kTheStageBottom:
 		d.type = INT;
 		d.u.i = _vm->getCurrentMovie()->_movieRect.bottom;

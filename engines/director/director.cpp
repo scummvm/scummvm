@@ -134,6 +134,7 @@ Common::Error DirectorEngine::run() {
 	_wm->setEngine(this);
 
 	_currentStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
+	*_currentStage->_refCount += 1;
 
 	if (!debugChannelSet(-1, kDebugDesktop))
 		_currentStage->disableBorder();

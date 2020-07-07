@@ -24,6 +24,7 @@
 #define DIRECTOR_STAGE_H
 
 #include "graphics/macgui/macwindow.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Common {
 class Error;
@@ -41,7 +42,7 @@ struct Channel;
 struct MacShape;
 struct TransParams;
 
-class Stage : public Graphics::MacWindow {
+class Stage : public Graphics::MacWindow, public Object<Stage> {
  public:
 	Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm);
 	~Stage();

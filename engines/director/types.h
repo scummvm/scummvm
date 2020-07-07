@@ -75,7 +75,8 @@ enum ObjectType {
 	kXObj = 1 << 1,
 	kScriptObj = 1 << 2,
 	kXtraObj = 1 << 3,
-	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj
+	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj,
+	kWindowObj = 1 << 4
 };
 
 enum ShapeType {

@@ -23,6 +23,7 @@
 #include "common/endian.h"
 
 #include "director/director.h"
+#include "director/stage.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
@@ -59,6 +60,16 @@ static struct PredefinedProto {
 	{ 0, 0, 0, 0, 0, 0 }
 };
 
+static MethodProto windowMethods[] = {
+	// window / stage
+	{ "close",					LM::m_close,				 0, 0,	4 },			// D4
+	{ "forget",					LM::m_forget,				 0, 0,	4 },			// D4
+	{ "open",					LM::m_open,					 0, 0,	4 },			// D4
+	{ "moveToBack",				LM::m_moveToBack,			 0, 0,	4 },			// D4
+	{ "moveToFront",			LM::m_moveToFront,			 0, 0,	4 },			// D4
+	{ 0, 0, 0, 0, 0 }
+};
+
 void Lingo::initMethods() {
 	for (PredefinedProto *mtd = predefinedMethods; mtd->name; mtd++) {
 		if (mtd->version > _vm->getVersion())
@@ -73,6 +84,7 @@ void Lingo::initMethods() {
 		sym.u.bltin = mtd->func;
 		_methods[mtd->name] = sym;
 	}
+	Stage::initMethods(windowMethods);
 }
 
 static struct XLibProto {
@@ -301,6 +313,28 @@ void LM::m_respondsTo(int nargs) {
 	} else {
 		g_lingo->push(Datum(0));
 	}
+}
+
+// Window
+
+void LM::m_close(int nargs) {
+	g_lingo->printSTUBWithArglist("m_close", nargs);
+}
+
+void LM::m_forget(int nargs) {
+	g_lingo->printSTUBWithArglist("m_forget", nargs);
+}
+
+void LM::m_open(int nargs) {
+	g_lingo->printSTUBWithArglist("m_open", nargs);
+}
+
+void LM::m_moveToBack(int nargs) {
+	g_lingo->printSTUBWithArglist("m_moveToBack", nargs);
+}
+
+void LM::m_moveToFront(int nargs) {
+	g_lingo->printSTUBWithArglist("m_moveToFront", nargs);
 }
 
 } // End of namespace Director
