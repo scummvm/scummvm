@@ -319,22 +319,27 @@ void LM::m_respondsTo(int nargs) {
 
 void LM::m_close(int nargs) {
 	g_lingo->printSTUBWithArglist("m_close", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LM::m_forget(int nargs) {
 	g_lingo->printSTUBWithArglist("m_forget", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LM::m_open(int nargs) {
 	g_lingo->printSTUBWithArglist("m_open", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LM::m_moveToBack(int nargs) {
 	g_lingo->printSTUBWithArglist("m_moveToBack", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LM::m_moveToFront(int nargs) {
 	g_lingo->printSTUBWithArglist("m_moveToFront", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 } // End of namespace Director
