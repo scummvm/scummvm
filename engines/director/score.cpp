@@ -197,8 +197,12 @@ MacShape *Channel::getShape() {
 	shape->lineSize = _sprite->_thickness & 0x3;
 	shape->pattern = _sprite->getPattern();
 
-	// We have already ahove checked for the proper cast type
 	if (g_director->getVersion() >= 3 && shape->spriteType == kCastMemberSprite) {
+		if (!_sprite->_cast) {
+			warning("Channel::getShape(): kCastMemberSprite has no cast defined");
+			return nullptr;
+		}
+
 		ShapeCastMember *sc = (ShapeCastMember *)_sprite->_cast;
 		switch (sc->_shapeType) {
 		case kShapeRectangle:
