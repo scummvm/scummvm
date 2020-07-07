@@ -343,6 +343,14 @@ bool AnimationTracker::step() {
 		//       It shouldn't be necessary in that case, and may provide a
 		//       worthwhile speed-up.
 		if ((f._flags & AnimFrame::AFF_ONGROUND) && zd > 8) {
+			if (GAME_IS_CRUSADER && !targetok && support) {
+				// Possibly trying to step onto an elevator platform which stops at a z slightly
+				// above the floor.  Re-scan with a small adjustment.
+				// This is a bit of a temporary hack to make navigation possible.. it "hurls"
+				// the avatar sometimes, so it needs fixing properly.
+				tz += 2;
+			}
+
 			targetok = cm->scanForValidPosition(tx, ty, tz, a, _dir,
 			                                    true, tx, ty, tz);
 
