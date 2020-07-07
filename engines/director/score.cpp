@@ -204,6 +204,7 @@ MacShape *Channel::getShape() {
 	if (g_director->getVersion() >= 3 && shape->spriteType == kCastMemberSprite) {
 		if (!_sprite->_cast) {
 			warning("Channel::getShape(): kCastMemberSprite has no cast defined");
+			delete shape;
 			return nullptr;
 		}
 
