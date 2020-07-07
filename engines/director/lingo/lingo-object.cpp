@@ -285,7 +285,7 @@ void LM::m_instanceRespondsTo(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
-	if (g_lingo->_methods.contains(methodName) && (me->getObjType() & g_lingo->_methods[methodName].type)) {
+	if (me->getMethod(methodName).type != VOID) {
 		g_lingo->push(Datum(1));
 	} else {
 		g_lingo->push(Datum(0));
@@ -308,7 +308,7 @@ void LM::m_respondsTo(int nargs) {
 	Common::String methodName = d.asString();
 
 	// TODO: Check inheritance level
-	if (g_lingo->_methods.contains(methodName) && (me->getObjType() & g_lingo->_methods[methodName].type)) {
+	if (me->getMethod(methodName).type != VOID) {
 		g_lingo->push(Datum(1));
 	} else {
 		g_lingo->push(Datum(0));
