@@ -180,6 +180,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		if (clipRect.height() % 2 == 1)
 			clipRect.bottom += 1;
 
+		clipRect.clip(Common::Rect(_innerDims.width(), _innerDims.height()));
 		_dirtyRects.push_back(clipRect);
 
 		render(false, nextFrame);
