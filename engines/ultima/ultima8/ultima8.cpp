@@ -80,6 +80,7 @@
 #include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/graphics/inverter_process.h"
+#include "ultima/ultima8/graphics/cycle_process.h"
 #include "ultima/ultima8/world/actors/heal_process.h"
 #include "ultima/ultima8/world/actors/scheduler_process.h"
 #include "ultima/ultima8/world/egg_hatcher_process.h" // for a hack
@@ -284,6 +285,8 @@ void Ultima8Engine::startup() {
 		ProcessLoader<CruHealerProcess>::load);
 	_kernel->addProcessLoader("BatteryChargerProcess",
 		ProcessLoader<BatteryChargerProcess>::load);
+	_kernel->addProcessLoader("CycleProcess",
+		ProcessLoader<CycleProcess>::load);
 
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();
@@ -1113,6 +1116,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 
 	if (GAME_IS_CRUSADER) {
 		_kernel->addProcess(new TargetReticleProcess());
+		_kernel->addProcess(new CycleProcess());
 	}
 
 	if (saveSlot == -1)

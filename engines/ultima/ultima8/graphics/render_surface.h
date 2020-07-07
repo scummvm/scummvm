@@ -147,7 +147,7 @@ public:
 	// Get The Surface Palette
 	// TODO: virtual void GetPalette(uint8 palette[768]) = 0;
 
-	virtual void CreateNativePalette(Palette *palette) = 0;
+	virtual void CreateNativePalette(Palette *palette, int maxindex = 0) = 0;
 
 
 	//

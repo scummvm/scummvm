@@ -164,7 +164,7 @@ public:
 	// Get The Surface Palette
 	// TODO: virtual void GetPalette(uint8 palette[768]);
 
-	void CreateNativePalette(Palette *palette) override;
+	void CreateNativePalette(Palette *palette, int maxindex = 0) override;
 
 	Graphics::ManagedSurface *getRawSurface() const override {
 		return _surface;
