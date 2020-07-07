@@ -380,13 +380,28 @@ Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16
 }
 
 // RIFX Archive code
-
 bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
 	close();
 
 	stream->seek(startOffset);
 
 	uint32 headerTag = stream->readUint32BE();
+
+	if (headerTag != MKTAG('R', 'I', 'F', 'X') &&
+		headerTag != MKTAG('X', 'F', 'I', 'R')) {
+		// Check if it is MacBinary
+
+		stream->seek(startOffset);
+
+		if (Common::MacResManager::isMacBinary(*stream)) {
+			warning("RIFXArchive::openStream(): MacBinary detected, overriding");
+
+			startOffset += Common::MacResManager::getDataForkOffset();
+			stream->seek(startOffset);
+
+			headerTag = stream->readUint32BE();
+		}
+	}
 
 	if (headerTag == MKTAG('R', 'I', 'F', 'X')) {
 		_isBigEndian = true;
@@ -438,7 +453,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	subStream.readUint32(); // imap length
 	subStream.readUint32(); // unknown
-	uint32 mmapOffset = subStream.readUint32() - startOffset - 4;
+	uint32 mmapOffset = subStream.readUint32() - 4;
 	uint32 version = subStream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
 	warning("RIFX: version: %x type: %s", version, tag2str(rifxType));
 
@@ -467,7 +482,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	for (uint32 i = 0; i < resCount; i++) {
 		uint32 tag = subStream.readUint32();
 		uint32 size = subStream.readUint32();
-		uint32 offset = subStream.readUint32();
+		uint32 offset = subStream.readUint32() + startOffset;
 		uint16 flags = subStream.readUint16();
 		uint16 unk1 = subStream.readUint16();
 		uint32 unk2 = subStream.readUint32();
