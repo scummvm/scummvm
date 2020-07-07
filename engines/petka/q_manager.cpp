@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/substream.h"
 #include "common/tokenizer.h"
@@ -34,6 +35,9 @@
 #include "petka/petka.h"
 
 namespace Petka {
+
+const uint32 kHeaderSize = 14 + 40;
+const uint32 kAdditionalDataSize = 8;
 
 QManager::QManager(PetkaEngine &vm)
 	: _vm(vm) {}
@@ -198,14 +202,15 @@ Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &strea
 	if (stream.readByte() != 'M')
 		return nullptr;
 
-	stream.skip(12);
+	uint32 realFileSize = stream.readUint32LE();
 
-	uint32 infoSize = stream.readUint32LE();
-	assert(infoSize == 40);
+	stream.skip(12);
 
 	uint32 width = stream.readUint32LE();
 	uint32 height = stream.readUint32LE();
+
 	stream.skip(2);
+
 	uint16 bitsPerPixel = stream.readUint16LE();
 	if (bitsPerPixel != 16 && bitsPerPixel != 1) {
 		stream.seek(0, SEEK_SET);
@@ -220,30 +225,30 @@ Graphics::Surface *QManager::loadBitmapSurface(Common::SeekableReadStream &strea
 		return s;
 	}
 
-	/* uint32 compression = stream.readUint32BE(); */
-	/* uint32 imageSize = stream.readUint32LE(); */
-	/* uint32 pixelsPerMeterX = stream.readUint32LE(); */
-	/* uint32 pixelsPerMeterY = stream.readUint32LE(); */
-	/* uint32 paletteColorCount = stream.readUint32LE(); */
-	/* uint32 colorsImportant = stream.readUint32LE(); */
-	/* uint32 unk = stream.readUint32LE(); */
-	/* uint32 fileSize_ = stream.readUint32LE(); */
-	stream.skip(32);
+	stream.seek(0, SEEK_SET);
+	byte *convertedBmp = new byte[realFileSize];
 
-	int srcPitch = width * (bitsPerPixel >> 3);
-	int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
+	stream.read(convertedBmp, kHeaderSize);
+	WRITE_LE_INT16(convertedBmp + 28, 24); // bitsPerPixel
 
-	Graphics::Surface *s = new Graphics::Surface;
-	s->create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0));
+	uint32 align = stream.readUint32LE();
+	uint32 fileSize = stream.readUint32LE();
 
-	uint16 *dst = (uint16 *)s->getPixels();
-	for (uint i = 0; i < height; ++i) {
-		for (uint j = 0; j < width; ++j) {
-			dst[(height - i - 1) * width + j] = stream.readUint16BE();
-		}
-		stream.skip(extraDataLength);
+	byte *pixels = convertedBmp + kHeaderSize;
+	uint32 pixelsCount = (fileSize - (kHeaderSize + kAdditionalDataSize) - align + 1) / 2;
+
+	Graphics::PixelFormat fmt(2, 5, 6, 5, 0, 0, 5, 11, 0);
+	while (pixelsCount) {
+		fmt.colorToRGB(stream.readUint16BE(), *(pixels + 2), *(pixels + 1), *pixels);
+		pixels += 3;
+		pixelsCount--;
 	}
-	return s;
+
+	Common::MemoryReadStream convBmpStream(convertedBmp, realFileSize, DisposeAfterUse::YES);
+	Image::BitmapDecoder decoder;
+	if (!decoder.loadStream(convBmpStream))
+		return nullptr;
+	return decoder.getSurface()->convertTo(g_system->getScreenFormat(), decoder.getPalette());
 }
 
 } // End of namespace Petka
