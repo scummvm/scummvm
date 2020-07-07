@@ -42,6 +42,11 @@ CastMember::CastMember(Cast* cast, uint16 castId) {
 	_modified = true;
 }
 
+CastMember::~CastMember() {
+	if (_widget)
+		delete _widget;
+}
+
 BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint32 castTag, uint16 version)
 		: CastMember(cast, castId) {
 	_type = kCastBitmap;
