@@ -78,7 +78,7 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 }
 
-void MacTextWindow::resize(int w, int h) {
+void MacTextWindow::resize(int w, int h, bool inner) {
 	if (_surface.w == w && _surface.h == h)
 		return;
 

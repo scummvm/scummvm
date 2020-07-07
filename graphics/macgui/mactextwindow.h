@@ -33,7 +33,7 @@ public:
 	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 	virtual ~MacTextWindow();
 
-	virtual void resize(int w, int h);
+	virtual void resize(int w, int h, bool inner = false);
 
 	virtual bool processEvent(Common::Event &event);
 
