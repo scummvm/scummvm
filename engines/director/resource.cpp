@@ -73,6 +73,32 @@ Common::Error Stage::loadInitialMovie() {
 	if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
 		warning("Detected Projector file");
 
+		if (_mainArchive->hasResource(MKTAG('v', 'e', 'r', 's'), -1)) {
+			Common::Array<uint16> vers = _mainArchive->getResourceIDList(MKTAG('v', 'e', 'r', 's'));
+			for (Common::Array<uint16>::iterator iterator = vers.begin(); iterator != vers.end(); ++iterator) {
+				Common::SeekableSubReadStreamEndian *vvers = _mainArchive->getResource(MKTAG('v', 'e', 'r', 's'), *iterator);
+				byte majorVer = vvers->readByte();
+				byte minorVer = vvers->readByte();
+				byte devStage = vvers->readByte();
+				const char *devStr;
+				switch (devStage) {
+				case 0x20: devStr = "Prealpha"; break;
+				case 0x40: devStr = "Alpha";    break;
+				case 0x60: devStr = "Beta";     break;
+				case 0x80: devStr = "Final";    break;
+				default:   devStr = "";
+				}
+
+				byte preReleaseVer = vvers->readByte();
+				uint16 region = vvers->readUint16BE();
+				Common::String str = vvers->readPascalString();
+				Common::String msg = vvers->readPascalString();
+
+				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", majorVer, minorVer, devStr,
+					preReleaseVer, region, str.c_str(), msg.c_str());
+			}
+		}
+
 		if (_mainArchive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
 			Common::Array<uint16> xcod = _mainArchive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
 			for (Common::Array<uint16>::iterator iterator = xcod.begin(); iterator != xcod.end(); ++iterator) {
