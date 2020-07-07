@@ -185,7 +185,7 @@ Common::Point Channel::getPosition() {
 }
 
 MacShape *Channel::getShape() {
-	if (!_sprite->isQDShape())
+	if (!_sprite->isQDShape() && (_sprite->_cast && _sprite->_cast->_type != kCastShape))
 		return nullptr;
 
 	MacShape *shape = new MacShape();
@@ -197,42 +197,31 @@ MacShape *Channel::getShape() {
 	shape->lineSize = _sprite->_thickness & 0x3;
 	shape->pattern = _sprite->getPattern();
 
+	// We have already ahove checked for the proper cast type
 	if (g_director->getVersion() >= 3 && shape->spriteType == kCastMemberSprite) {
-		if (!_sprite->_cast) {
-			warning("Channel::getShape(): kCastMemberSprite has no cast defined");
-			return nullptr;
-		}
-		switch (_sprite->_cast->_type) {
-		case kCastShape:
-			{
-				ShapeCastMember *sc = (ShapeCastMember *)_sprite->_cast;
-				switch (sc->_shapeType) {
-				case kShapeRectangle:
-					shape->spriteType = sc->_fillType ? kRectangleSprite : kOutlinedRectangleSprite;
-					break;
-				case kShapeRoundRect:
-					shape->spriteType = sc->_fillType ? kRoundedRectangleSprite : kOutlinedRoundedRectangleSprite;
-					break;
-				case kShapeOval:
-					shape->spriteType = sc->_fillType ? kOvalSprite : kOutlinedOvalSprite;
-					break;
-				case kShapeLine:
-					shape->spriteType = sc->_lineDirection == 6 ? kLineBottomTopSprite : kLineTopBottomSprite;
-					break;
-				default:
-					break;
-				}
-				if (g_director->getVersion() > 3) {
-					shape->foreColor = sc->_fgCol;
-					shape->backColor = sc->_bgCol;
-					shape->lineSize = sc->_lineThickness;
-					shape->ink = sc->_ink;
-				}
-			}
+		ShapeCastMember *sc = (ShapeCastMember *)_sprite->_cast;
+		switch (sc->_shapeType) {
+		case kShapeRectangle:
+			shape->spriteType = sc->_fillType ? kRectangleSprite : kOutlinedRectangleSprite;
+			break;
+		case kShapeRoundRect:
+			shape->spriteType = sc->_fillType ? kRoundedRectangleSprite : kOutlinedRoundedRectangleSprite;
+			break;
+		case kShapeOval:
+			shape->spriteType = sc->_fillType ? kOvalSprite : kOutlinedOvalSprite;
+			break;
+		case kShapeLine:
+			shape->spriteType = sc->_lineDirection == 6 ? kLineBottomTopSprite : kLineTopBottomSprite;
 			break;
 		default:
-			warning("Channel::getShape(): Unhandled cast type: %d", _sprite->_cast->_type);
 			break;
+		}
+
+		if (g_director->getVersion() > 3) {
+			shape->foreColor = sc->_fgCol;
+			shape->backColor = sc->_bgCol;
+			shape->lineSize = sc->_lineThickness;
+			shape->ink = sc->_ink;
 		}
 	}
 
