@@ -1988,7 +1988,7 @@ if test "$_host_os" = android; then
 	
 	# Check that we have the correct NDK version
 	echo_n "Checking NDK version... "
-	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" dists/android/build.gradle | sed 's/[^0-9\.]//g')
+	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" $_srcdir/dists/android/build.gradle | sed 's/[^0-9\.]//g')
 	_ndk_version=$(grep "Pkg.Revision" $ANDROID_NDK_ROOT/source.properties | sed 's/[^0-9\.]//g' | sed 's/.//')
 	if test "$_ndk_version" = "$_ndk_gradle"; then
 		echo "$_ndk_version"
