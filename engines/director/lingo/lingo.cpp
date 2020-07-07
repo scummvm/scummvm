@@ -689,8 +689,6 @@ Datum::Datum(const Datum &d) {
 }
 
 Datum& Datum::operator=(const Datum &d) {
-	if (d.type == OBJECT)
-		warning("%p = REFCOUNT %d", (void *)this, *refCount);
 	if (this != &d && refCount != d.refCount) {
 		reset();
 		type = d.type;
@@ -731,7 +729,6 @@ Datum::Datum(Object *val) {
 	lazy = false;
 	refCount = val->refCount;
 	*refCount += 1;
-	warning("%p create REFCOUNT %d", (void *)this, *refCount);
 }
 
 void Datum::reset() {
