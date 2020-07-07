@@ -173,12 +173,10 @@ void Sprite::setCast(uint16 castId) {
 Common::Rect Sprite::getDims() {
 	Common::Rect result;
 
-	if (!_cast || _cast->_type == kCastShape) {
-		result = Common::Rect(_width, _height);
-	} else if (_cast->_widget) {
+	if (_cast && _cast->_widget) {
 		result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
 	} else {
-		warning("Sprite::getDims(): Unable to find sprite dimensions");
+		result = Common::Rect(_width, _height);
 	}
 
 	if (_puppet && _stretch) {
