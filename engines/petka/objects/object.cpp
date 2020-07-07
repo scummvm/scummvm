@@ -25,7 +25,6 @@
 #include "common/system.h"
 #include "common/events.h"
 
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 #include "petka/big_dialogue.h"
@@ -43,7 +42,13 @@
 
 namespace Petka {
 
-QReaction *g_dialogReaction = nullptr; // FIXME
+QReaction *createReaction(QMessage *messages, QMessage *end) {
+	QReaction *reaction = new QReaction();
+	while (messages != end) {
+		reaction->messages.push_back(*messages++);
+	}
+	return reaction;
+}
 
 QVisibleObject::QVisibleObject()
 	: _resourceId(-1), _z(240) {}
@@ -56,59 +61,11 @@ QMessageObject::QMessageObject() {
 	_animate = true;
 	_isShown = true;
 	_isActive = true;
-	_updateZ = 0;
+	_updateZ = false;
 	_holdMessages = false;
-	_notLoopedSound = true;
+	_loopedSound = false;
 	_startSound = false;
-	_hasSound = false;
 	_reaction = nullptr;
-}
-
-void processSavedReaction(QReaction **reaction, QMessageObject *sender) {
-	QReaction *r = *reaction;
-	for (uint i = 0; i < r->messages.size(); ++i) {
-		QMessage &msg = r->messages[i];
-		if (msg.opcode == kCheck && g_vm->getQSystem()->findObject(msg.objId)->_status != msg.arg1) {
-			break;
-		}
-		g_vm->getQSystem()->addMessage(msg.objId, msg.opcode, msg.arg1, msg.arg2, msg.arg3, 0, sender);
-		bool processed = true;
-		switch (msg.opcode) {
-		case kDialog:
-			g_dialogReaction = new QReaction();
-			for (uint j = i + 1; j < r->messages.size(); ++j) {
-				g_dialogReaction->messages.push_back(r->messages[j]);
-			}
-			break;
-		case kPlay: {
-			QMessageObject *obj = g_vm->getQSystem()->findObject(msg.objId);
-			obj->_reaction = new QReaction();
-			obj->_reactionResId = msg.arg1;
-			for (uint j = i + 1; j < r->messages.size(); ++j) {
-				obj->_reaction->messages.push_back(r->messages[j]);
-			}
-			break;
-		}
-		case kWalk:
-		case kWalkTo:
-			g_vm->getQSystem()->_petka->setReactionAfterWalk(i, reaction, sender, 1);
-			return;
-		case kWalkVich:
-			g_vm->getQSystem()->_chapayev->setReactionAfterWalk(i, reaction, sender, 1);
-			return;
-		default:
-			processed = false;
-			break;
-		}
-		if (processed)
-			break;
-	}
-	if (*reaction != r) {
-		delete r;
-	} else if (*reaction) {
-		delete *reaction;
-		*reaction = nullptr;
-	}
 }
 
 void QMessageObject::processMessage(const QMessage &msg) {
@@ -120,74 +77,25 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			(r->senderId != -1 && r->senderId != msg.sender->_id)) {
 			continue;
 		}
-		bool res;
-		if (g_vm->getBigDialogue()->findHandler(_id, msg.opcode, &res) && res == 0) {
-			g_vm->getBigDialogue()->setHandler(_id, msg.opcode, -1);
-			g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
+		bool fallback;
+		if (g_vm->getBigDialogue()->findHandler(_id, msg.opcode, &fallback) && !fallback) {
+			g_vm->getBigDialogue()->setHandler(_id, msg.opcode);
+			g_vm->getQSystem()->_mainInterface->_dialog.setSender(this);
 		}
-		for (uint j = 0; j < r->messages.size(); ++j) {
-			QMessage &rMsg = r->messages[j];
-			if (rMsg.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
-				break;
-			}
-			if (rMsg.opcode == kIf &&
-				((rMsg.arg1 != 0xffff && rMsg.arg1 != msg.arg1) ||
-			    (rMsg.arg2 != -1 && rMsg.arg2 != msg.arg2) ||
-			    (rMsg.arg3 != -1 && rMsg.arg3 != msg.arg3))) {
-				break;
-			}
-			if (rMsg.opcode == kRandom && rMsg.arg2 != -1) {
-				rMsg.arg1 = (int16) g_vm->getRnd().getRandomNumber((uint) (rMsg.arg2 - 1));
-			}
-			g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk,
-										   rMsg.sender);
-			bool processed = true;
-			switch (rMsg.opcode) {
-			case kDialog:
-				delete g_dialogReaction;
-				g_dialogReaction = new QReaction();
-				for (uint z = j + 1; z < r->messages.size(); ++z) {
-					g_dialogReaction->messages.push_back(r->messages[z]);
-				}
-				break;
-			case kPlay: {
-				QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
-				delete obj->_reaction;
-				obj->_reaction = new QReaction();
-				obj->_reactionResId = rMsg.arg1;
-				for (uint z = j + 1; z < r->messages.size(); ++z) {
-					obj->_reaction->messages.push_back(r->messages[z]);
-				}
-				break;
-			}
-
-			case kWalk:
-			case kWalkTo:
-				g_vm->getQSystem()->_petka->setReactionAfterWalk(j, &r, this, 0);
-				break;
-			case kWalkVich:
-				g_vm->getQSystem()->_chapayev->setReactionAfterWalk(j, &r, this, 0);
-				break;
-			default:
-				processed = false;
-				break;
-			}
-			if (processed)
-				break;
-		}
+		processReaction(r, &msg);
 		reacted = true;
 	}
 
 	if (reacted || !g_vm->getBigDialogue()->findHandler(_id, msg.opcode, nullptr)) {
 		switch (msg.opcode) {
 		case kAddInv:
-			g_vm->getQSystem()->_case->addItem(msg.objId);
+			g_vm->getQSystem()->getCase()->addItem(msg.objId);
 			break;
 		case kDelInv:
-			g_vm->getQSystem()->_case->removeItem(msg.objId);
+			g_vm->getQSystem()->getCase()->removeItem(msg.objId);
 			break;
 		case kSetInv:
-			g_vm->getQSystem()->_case->transformItem(msg.sender->_id, msg.objId);
+			g_vm->getQSystem()->getCase()->transformItem(msg.sender->_id, msg.objId);
 			break;
 		case kAvi: {
 			Common::String videoName = g_vm->resMgr()->findResourceName((uint16) msg.arg1);
@@ -195,73 +103,30 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			break;
 		}
 		case kContinue:
-			g_vm->getQSystem()->_mainInterface->_dialog._isUserMsg = 0;
-			g_vm->getQSystem()->_mainInterface->_dialog.next(-1);
+			g_vm->getQSystem()->_mainInterface->_dialog.endUserMsg();
 			break;
 		case kCursor:
-			if (msg.arg1 == 0xffff) {
-				g_vm->getQSystem()->_cursor->returnInvItem();
-				g_vm->getQSystem()->_cursor->_resourceId = 5002;
-				g_vm->getQSystem()->_cursor->_actionType = 0;
-				g_vm->getQSystem()->_cursor->_invObj = nullptr;
-			} else {
-				g_vm->getQSystem()->_cursor->returnInvItem();
-				g_vm->getQSystem()->_cursor->_resourceId = msg.arg1;
-				g_vm->getQSystem()->_cursor->_actionType = kActionObjUse;
-				g_vm->getQSystem()->_cursor->_invObj = this;
-				_isShown = 0;
-				_isActive = 0;
-			}
+			g_vm->getQSystem()->getCursor()->setInvItem(this, msg.arg1);
 			g_vm->videoSystem()->makeAllDirty();
 			break;
 		case kDialog:
 			g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 			break;
 		case kSetPos:
-			setPos(msg.arg1, msg.arg2);
+			setPos(Common::Point(msg.arg1, msg.arg2), false);
 			break;
 		case kSet:
 		case kPlay:
-			if (dynamic_cast<QObjectBG *>(this)) {
-				break;
-			}
-			if (g_vm->getQSystem()->_isIniting) {
-				_resourceId = msg.arg1;
-				_notLoopedSound = msg.arg2 != 5;
-			} else {
-				_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(msg.arg1),
-													Audio::Mixer::kSFXSoundType);
-				_hasSound = _sound != nullptr;
-				_startSound = false;
-				FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-				if (flc) {
-					g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
-				}
-
-				flc = g_vm->resMgr()->loadFlic(msg.arg1);
-				flc->setFrame(1);
-				_time = 0;
-				if (!_notLoopedSound) {
-					g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(_resourceId));
-				}
-				_resourceId = msg.arg1;
-			}
-			if (msg.arg2 == 1) {
-				FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-				flc->setFrame(1);
-				g_vm->videoSystem()->makeAllDirty();
-				_time = 0;
-			} else if (msg.arg2 == 2) {
-				g_vm->resMgr()->loadFlic(_resourceId);
-			}
-			_notLoopedSound = msg.arg2 != 5;
+			play(msg.arg1, msg.arg2);
 			break;
 		case kAnimate:
 			_animate = msg.arg1;
 			break;
 		case kEnd:
-			if (_reaction && _reactionResId == msg.arg1) {
-				processSavedReaction(&_reaction, this);
+			if (_reaction && _reactionId == msg.arg1) {
+				QReaction *reaction = _reaction;
+				_reaction = nullptr;
+				processReaction(reaction);
 			}
 			break;
 		case kStatus:
@@ -276,8 +141,8 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			show(false);
 			break;
 		case kStop:
-			g_vm->getQSystem()->_cursor.get()->show(msg.arg1);
-			g_vm->getQSystem()->_star.get()->_isActive = msg.arg1;
+			g_vm->getQSystem()->getCursor()->show(msg.arg1);
+			g_vm->getQSystem()->getStar()->_isActive = msg.arg1;
 			break;
 		case kShow:
 			show(true);
@@ -288,13 +153,13 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kSystem:
 			switch (msg.arg1){
 			case 0:
-				g_vm->getQSystem()->_star->_isActive = 0;
+				g_vm->getQSystem()->getStar()->_isActive = false;
 				break;
 			case 1:
-				g_vm->getQSystem()->_star->_isActive = 1;
+				g_vm->getQSystem()->getStar()->_isActive = true;
 				break;
 			case 242:
-				g_system->quit();
+				Engine::quitGame();
 				break;
 			default:
 				break;
@@ -313,19 +178,27 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kPassive:
 			_isActive = false;
 			break;
-		case kJump:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+		case kJump: {
+			Common::Point p;
+			p.x = (msg.arg1 == 0xffff ? _walkX : msg.arg1);
+			p.y = (msg.arg2 == -1 ? _walkY : msg.arg2);
+			g_vm->getQSystem()->getPetka()->setPos(p, false);
 			break;
-		case kJumpVich:
-			g_vm->getQSystem()->_petka->setPos((msg.arg1 == 0xffff ? _walkX : msg.arg1), (msg.arg2 == -1 ? _walkY : msg.arg2));
+		}
+		case kJumpVich: {
+			Common::Point p;
+			p.x = (msg.arg1 == 0xffff ? _walkX : msg.arg1);
+			p.y = (msg.arg2 == -1 ? _walkY : msg.arg2);
+			g_vm->getQSystem()->getPetka()->setPos(p, false);
 			break;
+		}
 		case kWalk:
 			if (!reacted) {
 				if (_walkX == -1) {
-					g_vm->getQSystem()->_petka->walk(msg.arg1, msg.arg2);
+					g_vm->getQSystem()->getPetka()->walk(msg.arg1, msg.arg2);
 
 				} else {
-					g_vm->getQSystem()->_petka->walk(_walkX, _walkY);
+					g_vm->getQSystem()->getPetka()->walk(_walkX, _walkY);
 				}
 			}
 			break;
@@ -337,12 +210,12 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				destY = _walkY;
 			}
 			if (destX != -1) {
-				g_vm->getQSystem()->_petka->walk(destX, destY);
-				QReaction *r = g_vm->getQSystem()->_petka->_heroReaction;
+				g_vm->getQSystem()->getPetka()->walk(destX, destY);
+				QReaction *r = g_vm->getQSystem()->getPetka()->_heroReaction;
 				if (r) {
 					for (uint i = 0; i < r->messages.size(); ++i) {
 						if (r->messages[i].opcode == kGoTo) {
-							g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
+							g_vm->getQSystem()->getChapay()->walk(_walkX, _walkY);
 							break;
 						}
 					}
@@ -352,13 +225,13 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		}
 		case kWalkVich:
 			if (msg.arg1 == 0xffff || msg.arg2 == -1) {
-				g_vm->getQSystem()->_chapayev->walk(msg.arg1, msg.arg2);
+				g_vm->getQSystem()->getChapay()->walk(msg.arg1, msg.arg2);
 			} else if (_walkX != -1) {
-				g_vm->getQSystem()->_chapayev->walk(_walkX, _walkY);
+				g_vm->getQSystem()->getChapay()->walk(_walkX, _walkY);
 			}
 			break;
 		case kDescription: {
-			Common::ScopedPtr<Common::SeekableReadStream> invStream(g_vm->openFile("invntr.txt", false));
+			Common::ScopedPtr<Common::SeekableReadStream> invStream(g_vm->openFile("invntr.txt", true));
 			if (invStream) {
 				Common::String desc;
 				Common::INIFile invIni;
@@ -371,13 +244,16 @@ void QMessageObject::processMessage(const QMessage &msg) {
 			}
 			break;
 		}
+		case kPart:
+			g_vm->loadPartAtNextFrame(msg.arg1);
+			break;
+		case kChapter:
+			g_vm->loadChapter(msg.arg1);
+			break;
 		default:
-			debug("Opcode %d is not implemented", msg.opcode);
 			break;
 		}
 	} else {
-		g_vm->getBigDialogue()->setHandler(_id, msg.opcode, -1);
-		g_vm->getQSystem()->_mainInterface->_dialog._sender = this;
 		for (uint i = 0; i < _reactions.size(); ++i) {
 			QReaction &r = _reactions[i];
 			if (r.opcode != msg.opcode ||
@@ -385,12 +261,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 				(r.senderId != -1 && r.senderId != msg.sender->_id)) {
 				continue;
 			}
-			delete g_dialogReaction;
-			g_dialogReaction = new QReaction();
-			for (uint j = 0; j < r.messages.size(); ++j) {
-				g_dialogReaction->messages.push_back(r.messages[j]);
-			}
+			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(r.messages.data(), r.messages.end()));
 		}
+		g_vm->getBigDialogue()->setHandler(_id, msg.opcode);
 		g_vm->getQSystem()->_mainInterface->_dialog.start(msg.arg1, this);
 	}
 
@@ -398,6 +271,137 @@ void QMessageObject::processMessage(const QMessage &msg) {
 
 void QMessageObject::show(bool v) {
 	_isShown = v;
+}
+
+void QMessageObject::setReaction(int16 id, QReaction *reaction) {
+	delete _reaction;
+	_reaction = reaction;
+	_reactionId = id;
+}
+
+void QMessageObject::processReaction(QReaction *r, const QMessage *msg) {
+	bool deleteReaction = (msg == nullptr);
+	for (uint j = 0; j < r->messages.size(); ++j) {
+		QMessage &rMsg = r->messages[j];
+		if (rMsg.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
+			break;
+		}
+		if (msg && rMsg.opcode == kIf &&
+			((rMsg.arg1 != 0xffff && rMsg.arg1 != msg->arg1) ||
+			 (rMsg.arg2 != -1 && rMsg.arg2 != msg->arg2) ||
+			 (rMsg.arg3 != -1 && rMsg.arg3 != msg->arg3))) {
+			break;
+		}
+		if (msg && rMsg.opcode == kRandom && rMsg.arg2 != -1) {
+			rMsg.arg1 = (int16) g_vm->getRnd().getRandomNumber((uint) (rMsg.arg2 - 1));
+		}
+		g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk, this);
+		bool processed = true;
+		switch (rMsg.opcode) {
+		case kDialog: {
+			g_vm->getQSystem()->_mainInterface->_dialog.setReaction(createReaction(r->messages.data() + j + 1, r->messages.end()));
+			break;
+		}
+		case kPlay: {
+			QMessageObject *obj = g_vm->getQSystem()->findObject(rMsg.objId);
+			obj->setReaction(rMsg.arg1, createReaction(r->messages.data() + j + 1, r->messages.end()));
+			break;
+		}
+		case kWalk:
+		case kWalkTo:
+			g_vm->getQSystem()->getPetka()->setReactionAfterWalk(j, r, this, deleteReaction);
+			return;
+		case kWalkVich:
+			g_vm->getQSystem()->getChapay()->setReactionAfterWalk(j, r, this, deleteReaction);
+			return;
+		default:
+			processed = false;
+			break;
+		}
+		if (processed)
+			break;
+	}
+	if (deleteReaction)
+		delete r;
+}
+
+void QMessageObject::play(int id, int type) {
+	if (g_vm->getQSystem()->_totalInit) {
+		_resourceId = id;
+		_loopedSound = (type == 5);
+		return;
+	}
+
+	if (_loopedSound || g_vm->isDemo()) {
+		removeSound();
+	}
+
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	if (flc) {
+		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
+	}
+
+	_resourceId = id;
+
+	loadSound();
+
+	flc = g_vm->resMgr()->loadFlic(id);
+	flc->setFrame(1);
+	_time = 0;
+	_loopedSound = (type == 5);
+}
+
+void QMessageObject::loadSound() {
+	Common::String name = g_vm->resMgr()->findSoundName(_resourceId);
+	_sound = g_vm->soundMgr()->addSound(name, Audio::Mixer::kSFXSoundType);
+	_startSound = false;
+}
+
+void QMessageObject::removeSound() {
+	Common::String name = g_vm->resMgr()->findSoundName(_resourceId);
+	g_vm->soundMgr()->removeSound(name);
+	_sound = nullptr;
+}
+
+static Common::String readString(Common::ReadStream &readStream) {
+	uint32 stringSize = readStream.readUint32LE();
+	byte *data = (byte *)malloc(stringSize + 1);
+	readStream.read(data, stringSize);
+	data[stringSize] = '\0';
+	Common::String str((char *)data);
+	return str;
+}
+
+void QMessageObject::readScriptData(Common::SeekableReadStream &stream) {
+	_id = stream.readUint16LE();
+	_name = readString(stream);
+	_reactions.resize(stream.readUint32LE());
+
+	for (uint i = 0; i < _reactions.size(); ++i) {
+		QReaction *reaction = &_reactions[i];
+		reaction->opcode = stream.readUint16LE();
+		reaction->status = stream.readByte();
+		reaction->senderId = stream.readUint16LE();
+		reaction->messages.resize(stream.readUint32LE());
+		for (uint j = 0; j < reaction->messages.size(); ++j) {
+			QMessage *msg = &reaction->messages[j];
+			msg->objId = stream.readUint16LE();
+			msg->opcode = stream.readUint16LE();
+			msg->arg1 = stream.readUint16LE();
+			msg->arg2 = stream.readUint16LE();
+			msg->arg3 = stream.readUint16LE();
+		}
+	}
+}
+
+void QMessageObject::readInisData(Common::INIFile &names, Common::INIFile &cast, Common::INIFile *bgs) {
+	names.getKey(_name, "all", _nameOnScreen);
+	Common::String rgbString;
+	if (cast.getKey(_name, "all", rgbString)) {
+		int r, g, b;
+		sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
+		_dialogColor = g_vm->_system->getScreenFormat().RGBToColor((byte)r, (byte)g, (byte)b);
+	}
 }
 
 QObject::QObject() {
@@ -411,14 +415,22 @@ QObject::QObject() {
 	_walkY = -1;
 }
 
-bool QObject::isInPoint(int x, int y) {
+bool QObject::isInPoint(Common::Point p) {
 	if (!_isActive)
 		return false;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc) {
-		if (!flc->getBounds().contains(x - _x, y - _y))
+		if (!flc->getBounds().contains(p.x - _x, p.y - _y))
 			return false;
-		return *(const byte *)flc->getCurrentFrame()->getBasePtr(x - _x - flc->getPos().x, y - _y - flc->getPos().y) != 0;
+		const Graphics::Surface *s = flc->getCurrentFrame();
+		if (s->format.bytesPerPixel == 1) {
+			byte index = *(const byte *) flc->getCurrentFrame()->getBasePtr(p.x - _x - flc->getPos().x,
+																			p.y - _y - flc->getPos().y);
+			const byte *pal = flc->getPalette();
+			return (pal[0] != pal[index * 3] || pal[1] != pal[index * 3 + 1] || pal[2] != pal[index * 3 + 2]);
+		}
+		if (s->format.bytesPerPixel == 2)
+			return *(const uint16*)flc->getCurrentFrame()->getBasePtr(p.x - _x - flc->getPos().x, p.y - _y - flc->getPos().y) != flc->getTransColor(s->format);
 	}
 	return false;
 }
@@ -433,7 +445,10 @@ void QObject::draw() {
 	}
 	if (_animate && _startSound) {
 		if (_sound) {
-			_sound->play(!_notLoopedSound);
+			_sound->play(_loopedSound);
+			if (_loopedSound) {
+				_sound = nullptr;
+			}
 		}
 		_startSound = false;
 	}
@@ -477,11 +492,9 @@ void QObject::updateZ() {
 }
 
 void QObject::show(bool v) {
-	if (g_vm->getQSystem()->_mainInterface->findObject(_resourceId)) {
-		FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
-		if (flc) {
-			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
-		}
+	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
+	if (flc) {
+		g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 	}
 	QMessageObject::show(v);
 }
@@ -492,20 +505,16 @@ void QObject::update(int time) {
 	_time += time;
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc && flc->getFrameCount() != 1) {
-		while (_time >= flc->getDelay()) {
-			if (_sound && _hasSound && flc->getCurFrame() == 0) {
+		while (_time >= (int32)flc->getDelay()) {
+			if (_sound && flc->getCurFrame() == 0) {
 				_startSound = true;
-				_hasSound = false;
 			}
 			g_vm->videoSystem()->addDirtyRect(Common::Point(_x, _y), *flc);
 			flc->setFrame(-1);
-			if (flc->getCurFrame() == flc->getFrameCount() - 1) {
-				if (_notLoopedSound) {
-					_hasSound = _sound != nullptr;
-				}
+			if (flc->getCurFrame() == (int32)flc->getFrameCount() - 1) {
 				g_vm->getQSystem()->addMessage(_id, kEnd, _resourceId, 0, 0, 0, 0);
 			}
-			if (flc->getCurFrame() + 1 == flc->getFrameCount() / 2) {
+			if (flc->getCurFrame() + 1 == (int32)flc->getFrameCount() / 2) {
 				g_vm->getQSystem()->addMessage(_id, kHalf, _resourceId, 0, 0, 0, 0);
 			}
 			_time -= flc->getDelay();
@@ -513,24 +522,24 @@ void QObject::update(int time) {
 	}
 }
 
-void QObject::setPos(int x, int y) {
+void QObject::setPos(Common::Point p, bool) {
 	FlicDecoder *flc = g_vm->resMgr()->loadFlic(_resourceId);
 	if (flc) {
 		g_vm->videoSystem()->addDirtyMskRects(Common::Point(_x, _y), *flc);
-		g_vm->videoSystem()->addDirtyMskRects(Common::Point(x, y), *flc);
-		_x = x;
-		_y = y;
+		g_vm->videoSystem()->addDirtyMskRects(p, *flc);
+		_x = p.x;
+		_y = p.y;
 	}
 }
 
-void QObject::onClick(int x, int y) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+void QObject::onClick(Common::Point p) {
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	switch (cursor->_actionType) {
 	case kActionLook:
 		g_vm->getQSystem()->addMessage(_id, kLook, 0, 0, 0, 0, this);
 		break;
 	case kActionWalk:
-		g_vm->getQSystem()->addMessage(_id, kWalk, x, y, 0, 0, this);
+		g_vm->getQSystem()->addMessage(_id, kWalk, p.x, p.y, 0, 0, this);
 		break;
 	case kActionUse:
 		g_vm->getQSystem()->addMessage(_id, kUse, 0, 0, 0, 0, this);
@@ -541,10 +550,10 @@ void QObject::onClick(int x, int y) {
 	case kActionTalk:
 		g_vm->getQSystem()->addMessage(_id, kTalk, 0, 0, 0, 0, this);
 		break;
-	case kActionObjUse:
-		g_vm->getQSystem()->addMessage(_id, kObjectUse, x, y, 0, 0, g_vm->getQSystem()->_chapayev.get());
-		break;
 	case kActionObjUseChapayev:
+		g_vm->getQSystem()->addMessage(_id, kObjectUse, p.x, p.y, 0, 0, g_vm->getQSystem()->getChapay());
+		break;
+	case kActionObjUse:
 		g_vm->getQSystem()->addMessage(_id, kObjectUse, 0, 0, 0, 0, cursor->_invObj);
 		break;
 	default:
@@ -552,7 +561,7 @@ void QObject::onClick(int x, int y) {
 	}
 }
 
-void QObject::onMouseMove(int x, int y) {
+void QObject::onMouseMove(Common::Point p) {
 	g_vm->getQSystem()->_mainInterface->_objUnderCursor = this;
 }
 

@@ -20,15 +20,10 @@
  *
  */
 
-#include "common/system.h"
 #include "common/substream.h"
 
-#include "graphics/primitives.h"
-
 #include "director/director.h"
-#include "director/cast.h"
 #include "director/frame.h"
-#include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
 
@@ -283,15 +278,17 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._thickness = stream->readByte();
 			sprite._inkData = stream->readByte();
 
-			sprite._castId = stream->readUint16();
+			if (_vm->getVersion() < 4 && sprite.isQDShape()) {
+				sprite._pattern = stream->readUint16();
+			} else {
+				sprite._castId = stream->readUint16();
+			}
 
-			sprite._startPoint.y = stream->readUint16();
-			sprite._startPoint.x = stream->readUint16();
+			sprite._startPoint.y = (int16)stream->readUint16();
+			sprite._startPoint.x = (int16)stream->readUint16();
 
-			sprite._currentPoint = sprite._startPoint;
-
-			sprite._height = stream->readUint16();
-			sprite._width = stream->readUint16();
+			sprite._height = (int16)stream->readUint16();
+			sprite._width = (int16)stream->readUint16();
 
 			if (_vm->getVersion() == 4) {
 				sprite._scriptId = stream->readUint16();
@@ -316,11 +313,11 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 			sprite._backColor = _vm->transformColor((uint8)stream->readByte());
 
-			sprite._startPoint.y = stream->readUint16();
-			sprite._startPoint.x = stream->readUint16();
+			sprite._startPoint.y = (int16)stream->readUint16();
+			sprite._startPoint.x = (int16)stream->readUint16();
 
-			sprite._height = stream->readUint16();
-			sprite._width = stream->readUint16();
+			sprite._height = (int16)stream->readUint16();
+			sprite._width = (int16)stream->readUint16();
 
 			sprite._colorcode = stream->readByte();
 			sprite._blendAmount = stream->readByte();
@@ -338,17 +335,22 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 
 			/* uint32 spriteId = */stream->readUint32();
 
-			sprite._startPoint.y = stream->readUint16();
-			sprite._startPoint.x = stream->readUint16();
+			sprite._startPoint.y = (int16)stream->readUint16();
+			sprite._startPoint.x = (int16)stream->readUint16();
 
-			sprite._height = stream->readUint16();
-			sprite._width = stream->readUint16();
+			sprite._height = (int16)stream->readUint16();
+			sprite._width = (int16)stream->readUint16();
 
 			sprite._colorcode = stream->readByte();
 			sprite._blendAmount = stream->readByte();
 			sprite._thickness = stream->readByte();
 			stream->readByte();	// unused
 		}
+
+		// Sometimes removed sprites leave garbage in the channel
+		// We set it to zero, so then could skip
+		if (sprite._width <= 0 || sprite._height <= 0)
+			sprite._width = sprite._height = 0;
 
 		sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 		sprite._editable = ((sprite._colorcode & 0x40) == 0x40);

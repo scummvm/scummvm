@@ -38,6 +38,7 @@ namespace Speechtests {
 TestExitStatus testMale();
 TestExitStatus testFemale();
 TestExitStatus testStop();
+TestExitStatus testStopAndSpeak();
 TestExitStatus testPauseResume();
 TestExitStatus testRate();
 TestExitStatus testVolume();

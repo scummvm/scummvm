@@ -33,7 +33,6 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "backends/base-backend.h"
-#include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "audio/mixer_intern.h"

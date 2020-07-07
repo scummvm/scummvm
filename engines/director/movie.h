@@ -23,24 +23,85 @@
 #ifndef DIRECTOR_MOVIE_H
 #define DIRECTOR_MOVIE_H
 
-namespace Video {
-class VideoDecoder;
+namespace Common {
+class ReadStreamEndian;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Director {
 
+class Archive;
+class Cast;
+struct CastMemberInfo;
+class CastMember;
 class DirectorEngine;
+class Lingo;
+struct LingoArchive;
+class ScriptContext;
+class Stage;
+struct Symbol;
 
 class Movie {
 public:
-	Movie(Common::String fileName, DirectorEngine *vm);
+	Movie(Stage *stage);
 	~Movie();
-	void play(Common::Point dest);
-	void stop();
+
+	static Common::Rect readRect(Common::ReadStreamEndian &stream);
+	static Common::Array<Common::String> loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader = true);
+
+	bool loadArchive();
+	void setArchive(Archive *archive);
+	Archive *getArchive() const { return _movieArchive; };
+	Common::String getMacName() const { return _macName; }
+	Stage *getStage() const { return _stage; }
+	DirectorEngine *getVM() const { return _vm; }
+	Cast *getCast() const { return _cast; }
+	Cast *getSharedCast() const { return _sharedCast; }
+	Score *getScore() const { return _score; }
+
+	void clearSharedCast();
+	void loadSharedCastsFrom(Common::String filename);
+
+	CastMember *getCastMember(int castId);
+	CastMember *getCastMemberByName(const Common::String &name);
+	CastMemberInfo *getCastMemberInfo(int castId);
+	const Stxt *getStxt(int castId);
+
+	LingoArchive *getMainLingoArch();
+	LingoArchive *getSharedLingoArch();
+	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	Symbol getHandler(const Common::String &name);
 
 private:
-	Video::VideoDecoder *_currentVideo;
+	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
+
+public:
+	Archive *_movieArchive;
+	Common::Rect _movieRect;
+	uint16 _currentMouseDownSpriteId;
+	uint16 _currentClickOnSpriteId;
+	uint32 _lastEventTime;
+	uint32 _lastRollTime;
+	uint32 _lastClickTime;
+	uint32 _lastKeyTime;
+	uint32 _lastTimerReset;
+	uint16 _stageColor;
+	Cast *_sharedCast;
+
+private:
+	Stage *_stage;
 	DirectorEngine *_vm;
+	Lingo *_lingo;
+	Cast *_cast;
+	Score *_score;
+
+	uint32 _flags;
+
+	Common::String _macName;
+	Common::String _createdBy;
+	Common::String _changedBy;
+	Common::String _script;
+	Common::String _directory;
 };
 
 } // End of namespace Director

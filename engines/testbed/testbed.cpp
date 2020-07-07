@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/achievements.h"
 #include "common/debug-channels.h"
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -122,46 +123,50 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	DebugMan.addDebugChannel(kTestbedEngineDebug, "Debug", "Engine-specific debug statements");
 	DebugMan.enableDebugChannel("LOG");
 
+	pushTestsuites(_testsuiteList);
+}
+
+void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	// Initialize testsuites here
 	Testsuite *ts;
 	// GFX
 	ts = new GFXTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// FS
 	ts = new FSTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Savegames
 	ts = new SaveGameTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Misc.
 	ts = new MiscTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Events
 	ts = new EventTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Sound
 	ts = new SoundSubsystemTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 	// Midi
 	ts = new MidiTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 #ifdef USE_TTS
 	 // TextToSpeech
 	 ts = new SpeechTestSuite();
-	 _testsuiteList.push_back(ts);
+	 testsuiteList.push_back(ts);
 #endif
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud
 	ts = new CloudTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 #endif
 #ifdef USE_SDL_NET
 	// Webserver
 	ts = new WebserverTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 #endif
 	ts = new EncodingTestSuite();
-	_testsuiteList.push_back(ts);
+	testsuiteList.push_back(ts);
 }
 
 TestbedEngine::~TestbedEngine() {
@@ -192,12 +197,29 @@ void TestbedEngine::invokeTestsuites(TestbedConfigManager &cfMan) {
 			Testsuite::updateStats("Testsuite", (*iter)->getName(), count++, numSuitesEnabled, pt);
 			(*iter)->execute();
 		}
+		if ((*iter)->getNumTests() == (*iter)->getNumTestsPassed()) {
+			AchMan.setAchievement((*iter)->getName(), (*iter)->getDescription());
+			checkForAllAchievements();
+		}
 	}
+}
+
+void TestbedEngine::checkForAllAchievements() {
+	Common::Array<Testsuite *>::const_iterator iter;
+	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
+		if (!AchMan.isAchieved((*iter)->getName())) {
+			return;
+		}
+	}
+	AchMan.setAchievement("EVERYTHINGWORKS", "Everything works!");
 }
 
 Common::Error TestbedEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200);
+
+	// Initialize achievements manager
+	AchMan.setActiveDomain(Common::UNK_ACHIEVEMENTS, "testbed");
 
 	// As of now we are using GUI::MessageDialog for interaction, Test if it works.
 	// interactive mode could also be modified by a config parameter "non-interactive=1"

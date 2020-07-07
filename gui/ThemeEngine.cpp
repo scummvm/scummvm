@@ -137,6 +137,13 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDDropDownButtonPressedLeft,  "dropdown_button_pressed_left",  kDrawLayerForeground, kDDDropDownButtonIdle},
 	{kDDDropDownButtonPressedRight, "dropdown_button_pressed_right", kDrawLayerForeground, kDDDropDownButtonIdle},
 
+	{kDDDropDownButtonIdleRTL,			"dropdown_button_idle_rtl",				kDrawLayerBackground, kDDNone},
+	{kDDDropDownButtonHoverLeftRTL,		"dropdown_button_hover_left_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+	{kDDDropDownButtonHoverRightRTL,	"dropdown_button_hover_right_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+	{kDDDropDownButtonDisabledRTL,		"dropdown_button_disabled_rtl",			kDrawLayerForeground, kDDNone},
+	{kDDDropDownButtonPressedLeftRTL,	"dropdown_button_pressed_left_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+	{kDDDropDownButtonPressedRightRTL,	"dropdown_button_pressed_right_rtl",	kDrawLayerForeground, kDDDropDownButtonIdleRTL},
+
 	{kDDSliderFull,                 "slider_full",      kDrawLayerForeground,  kDDNone},
 	{kDDSliderHover,                "slider_hover",     kDrawLayerForeground,  kDDNone},
 	{kDDSliderDisabled,             "slider_disabled",  kDrawLayerForeground,  kDDNone},
@@ -165,6 +172,10 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDPopUpIdle,                  "popup_idle",       kDrawLayerBackground,   kDDNone},
 	{kDDPopUpHover,                 "popup_hover",      kDrawLayerForeground,  kDDPopUpIdle},
 	{kDDPopUpDisabled,              "popup_disabled",   kDrawLayerBackground,   kDDNone},
+
+	{kDDPopUpIdleRTL,				"popup_idle_rtl",		kDrawLayerBackground,   kDDNone},
+	{kDDPopUpHoverRTL,              "popup_hover_rtl",		kDrawLayerForeground,	kDDPopUpIdleRTL},
+	{kDDPopUpDisabledRTL,           "popup_disabled_rtl",   kDrawLayerBackground,   kDDNone},
 
 	{kDDCaret,                      "caret",        kDrawLayerForeground,  kDDNone},
 	{kDDSeparator,                  "separator",    kDrawLayerBackground,   kDDNone},
@@ -948,28 +959,29 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 		dd = kDDButtonPressed;
 
 	drawDD(dd, r, 0, hints & WIDGET_CLEARBG);
-	drawDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH,
+	drawDDText(getTextData(dd), getTextColor(dd), r, str, false, true, convertTextAlignH(_widgets[dd]->_textAlignH, false),
 	           _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::String &str,
-                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown) {
+                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl) {
 	if (!ready())
 		return;
 
 	DrawData dd;
+
 	if (buttonState == kStateHighlight && inButton)
-		dd = kDDDropDownButtonHoverLeft;
+		dd = rtl ? kDDDropDownButtonHoverLeftRTL : kDDDropDownButtonHoverLeft;
 	else if (buttonState == kStateHighlight && inDropdown)
-		dd = kDDDropDownButtonHoverRight;
+		dd = rtl ? kDDDropDownButtonHoverRightRTL : kDDDropDownButtonHoverRight;
 	else if (buttonState == kStateDisabled)
-		dd = kDDDropDownButtonDisabled;
+		dd = rtl ? kDDDropDownButtonDisabledRTL : kDDDropDownButtonDisabled;
 	else if (buttonState == kStatePressed && inButton)
-		dd = kDDDropDownButtonPressedLeft;
+		dd = rtl ? kDDDropDownButtonPressedLeftRTL : kDDDropDownButtonPressedLeft;
 	else if (buttonState == kStatePressed && inDropdown)
-		dd = kDDDropDownButtonPressedRight;
+		dd = rtl ? kDDDropDownButtonPressedRightRTL : kDDDropDownButtonPressedRight;
 	else
-		dd = kDDDropDownButtonIdle;
+		dd = rtl ? kDDDropDownButtonIdleRTL : kDDDropDownButtonIdle;
 
 	drawDD(dd, r);
 
@@ -977,7 +989,7 @@ void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth
 	Common::Rect textRect = r;
 	textRect.left  = r.left  + dropdownWidth;
 	textRect.right = r.right - dropdownWidth;
-	drawDDText(getTextData(dd), getTextColor(dd), textRect, str, false, true, _widgets[dd]->_textAlignH,
+	drawDDText(getTextData(dd), getTextColor(dd), textRect, str, false, true, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 	           _widgets[dd]->_textAlignV);
 }
 
@@ -988,7 +1000,7 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 	drawDD(kDDSeparator, r);
 }
 
-void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1003,21 +1015,27 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
+	r2.left = rtl ? r.right - checkBoxSize : r2.left;
 	r2.bottom = r2.top + checkBoxSize;
 	r2.right = r2.left + checkBoxSize;
 
 	drawDD(dd, r2);
 
-	r2.left = r2.right + checkBoxSize;
-	r2.right = r.right;
+	if (rtl) {
+		r2.right = r2.left - checkBoxSize;
+		r2.left = r.left;
+	} else {
+		r2.left = r2.right + checkBoxSize;
+		r2.right = r.right;
+	}
 
 	if (r2.right > r2.left) {
-		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDCheckboxDefault]->_textAlignH,
+		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 		           _widgets[dd]->_textAlignV);
 	}
 }
 
-void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1032,19 +1050,25 @@ void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &s
 
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
+	r2.left = rtl ? r2.right - checkBoxSize : r2.left;
 	r2.bottom = r2.top + checkBoxSize;
 	r2.right = r2.left + checkBoxSize;
 
 	drawDD(dd, r2);
 
-	r2.left = r2.right + checkBoxSize;
-	r2.right = MAX(r2.left, r.right);
+	if (rtl) {
+		r2.right = r2.left - checkBoxSize;
+		r2.left = r.left;
+	} else {
+		r2.left = r2.right + checkBoxSize;
+		r2.right = MAX(r2.left, r.right);
+	}
 
-	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH,
-	           _widgets[dd]->_textAlignV);
+	drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
+		_widgets[dd]->_textAlignV);
 }
 
-void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
+void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1058,6 +1082,11 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 	Common::Rect r2 = r;
 	r2.setWidth(MIN((int16)width, r.width()));
 	//	r2.top++; r2.bottom--; r2.left++; r2.right--;
+
+	if (rtl) {
+		r2.left = r.right - r2.width();
+		r2.right = r.right;
+	}
 
 	drawWidgetBackground(r, kWidgetBackgroundSlider);
 
@@ -1132,24 +1161,24 @@ void ThemeEngine::drawCaret(const Common::Rect &r, bool erase) {
 		drawDD(kDDCaret, r);
 }
 
-void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state) {
+void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, bool rtl) {
 	if (!ready())
 		return;
 
-	DrawData dd = kDDPopUpIdle;
+	DrawData dd = rtl ? kDDPopUpIdleRTL : kDDPopUpIdle;
 
 	if (state == kStateEnabled)
-		dd = kDDPopUpIdle;
+		dd = rtl ? kDDPopUpIdleRTL : kDDPopUpIdle;
 	else if (state == kStateHighlight)
-		dd = kDDPopUpHover;
+		dd = rtl ? kDDPopUpHoverRTL : kDDPopUpHover;
 	else if (state == kStateDisabled)
-		dd = kDDPopUpDisabled;
+		dd = rtl ? kDDPopUpDisabledRTL : kDDPopUpDisabled;
 
 	drawDD(dd, r);
 
 	if (!sel.empty() && r.width() >= 13 && r.height() >= 1) {
 		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);
-		drawDDText(getTextData(dd), getTextColor(dd), text, sel, true, false, _widgets[dd]->_textAlignH,
+		drawDDText(getTextData(dd), getTextColor(dd), text, sel, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 		           _widgets[dd]->_textAlignV, deltax);
 	}
 }
@@ -1199,7 +1228,7 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 }
 
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-                          const Common::Array<Common::String> &tabs, int active) {
+                          const Common::Array<Common::String> &tabs, int active, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1207,22 +1236,37 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 
 	drawDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
 
+	const int numTabs = (int)tabs.size();
 	int width = 0;
-	int activePos = -1;
-	for (int i = 0; i < (int)tabs.size(); width += tabWidths[i++]) {
-		if (r.left + width > r.right || r.left + width + tabWidths[i] > r.right)
-			continue;
 
-		if (i == active) {
+	if (rtl) {
+		for (int i = 0; i < numTabs; i++) {
+			width += tabWidths[i];
+		}
+		width = r.width() - width;
+	}
+
+	int activePos = -1;
+	for (int i = 0; i < numTabs; i++) {
+		int current = rtl ? (numTabs - i - 1) : i;
+
+		if (r.left + width > r.right || r.left + width + tabWidths[current] > r.right) {
+			width += tabWidths[current];
+			continue;
+		}
+
+		if (current == active) {
 			activePos = width;
+			width += tabWidths[current];
 			continue;
 		}
 
 
-		Common::Rect tabRect(r.left + width, r.top, r.left + width + tabWidths[i], r.top + tabHeight);
+		Common::Rect tabRect(r.left + width, r.top, r.left + width + tabWidths[current], r.top + tabHeight);
 		drawDD(kDDTabInactive, tabRect);
-		drawDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[i], false, false,
-		           _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
+		drawDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[current], false, false,
+		           convertTextAlignH(_widgets[kDDTabInactive]->_textAlignH, rtl), _widgets[kDDTabInactive]->_textAlignV);
+		width += tabWidths[current];
 	}
 
 	if (activePos >= 0) {
@@ -1231,7 +1275,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 		const uint16 tabRight = MAX(r.right - tabRect.right, 0);
 		drawDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
 		drawDDText(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, tabs[active], false, false,
-		           _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
+		           convertTextAlignH(_widgets[kDDTabActive]->_textAlignH, rtl), _widgets[kDDTabActive]->_textAlignV);
 	}
 }
 

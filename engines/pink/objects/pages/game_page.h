@@ -30,7 +30,7 @@
 namespace Pink {
 
 class CursorMgr;
-class HandlerStartPage;
+class HandlerSequences;
 
 class GamePage : public Page {
 public:
@@ -71,7 +71,7 @@ private:
 	CursorMgr *_cursorMgr;
 	WalkMgr *_walkMgr;
 	Sequencer *_sequencer;
-	Array<HandlerStartPage *> _handlers;
+	Array<HandlerSequences *> _handlers;
 	StringMap _variables;
 };
 

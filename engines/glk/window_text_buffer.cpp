@@ -50,9 +50,15 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : TextWindow(win
 	_attrs = _lines[0]._attrs;
 
 	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], _styles);
+
+	if (g_conf->_speak)
+		gli_initialize_tts();
 }
 
 TextBufferWindow::~TextBufferWindow() {
+	if (g_conf->_speak)
+		gli_free_tts();
+
 	if (_inBuf) {
 		if (g_vm->gli_unregister_arr)
 			(*g_vm->gli_unregister_arr)(_inBuf, _inMax, "&+#!Cn", _inArrayRock);
@@ -815,6 +821,8 @@ void TextBufferWindow::redraw() {
 	bool selBuf;
 	int tx, tsc, tsw, lsc, rsc;
 	Screen &screen = *g_vm->_screen;
+
+	gli_tts_flush();
 
 	Window::redraw();
 

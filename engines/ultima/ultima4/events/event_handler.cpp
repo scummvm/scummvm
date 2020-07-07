@@ -191,6 +191,9 @@ void EventHandler::run() {
 
 		// Poll the timer manager
 		_timer.poll();
+
+		// Update the screen
+		g_screen->screenFrame();
 	}
 }
 

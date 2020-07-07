@@ -105,7 +105,7 @@ private:
 	char _buffer[STRING_BUFFER_SIZE];
 private:
 	/**
-	 * Loads all the constants data stored in the xeen.css
+	 * Loads all the constants data stored in the xeen.ccs archive shipped with ScummVM
 	 */
 	void loadData();
 public:

@@ -1,11 +1,12 @@
+engines/glk/detection.cpp
 engines/glk/glk_api.cpp
 engines/glk/quetzal.cpp
 engines/glk/streams.cpp
 engines/glk/advsys/advsys.cpp
 engines/glk/advsys/vm.cpp
 engines/glk/alan2/alan2.cpp
-engines/glk/frotz/detection.cpp
-engines/glk/frotz/frotz.cpp
+engines/glk/zcode/detection.cpp
+engines/glk/zcode/zcode.cpp
 engines/glk/glulxe/glulxe.cpp
 engines/glk/magnetic/magnetic.cpp
 engines/glk/scott/scott.cpp

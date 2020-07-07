@@ -141,7 +141,7 @@ void InventoryMgr::update() {
 	}
 }
 
-void InventoryMgr::onClick(const Common::Point point) {
+void InventoryMgr::onClick(Common::Point point) {
 	if (_state != kReady)
 		return;
 

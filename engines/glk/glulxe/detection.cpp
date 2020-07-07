@@ -39,8 +39,11 @@ void GlulxeMetaEngine::getSupportedGames(PlainGameList &games) {
 
 GameDescriptor GlulxeMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+		if (!strcmp(gameId, pd->gameId)) {
+			GameDescriptor gd = *pd;
+			gd._supportLevel = kUnstableGame;
+			return gd;
+		}
 	}
 
 	return GameDescriptor::empty();

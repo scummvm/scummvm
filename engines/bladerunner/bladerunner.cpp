@@ -92,6 +92,7 @@
 #include "engines/advancedDetector.h"
 
 #include "graphics/pixelformat.h"
+#include "audio/mididrv.h"
 
 namespace BladeRunner {
 
@@ -595,6 +596,19 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_audioSpeech = new AudioSpeech(this);
 
 	_ambientSounds = new AmbientSounds(this);
+
+	// Query the selected music device (defaults to MT_AUTO device).
+	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
+	//
+	// We just respect the "No Music" choice (or an invalid choice)
+	//
+	// We're lenient with all the invalid/ irrelevant choices in the Audio Driver dropdown
+	// TODO Ideally these controls (OptionsDialog::addAudioControls()) ie. "Music Device" and "Adlib Emulator"
+	//      should not appear in games like Blade Runner, since they are largely irrelevant
+	//      and may cause confusion when combined/ conflicting with the global settings
+	//      which are by default applied, if the user does not explicitly override them.
+	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
 
 	// BLADE.INI was read here, but it was replaced by ScummVM configuration
 	//
@@ -1979,10 +1993,17 @@ void BladeRunnerEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(_mixer->kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	// debug("syncSoundSettings: Volumes synced as Music: %d, Sfx: %d, Speech: %d", ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"), ConfMan.getInt("speech_volume"));
 
+	if (_noMusicDriver) {
+		// This affects *only* the music muting.
+		_mixer->muteSoundType(_mixer->kMusicSoundType, true);
+	}
+
 	bool allSoundIsMuted = false;
 	if (ConfMan.hasKey("mute")) {
 		allSoundIsMuted = ConfMan.getBool("mute");
-		_mixer->muteSoundType(_mixer->kMusicSoundType, allSoundIsMuted);
+		if (!_noMusicDriver) {
+			_mixer->muteSoundType(_mixer->kMusicSoundType, allSoundIsMuted);
+		}
 		_mixer->muteSoundType(_mixer->kSFXSoundType, allSoundIsMuted);
 		_mixer->muteSoundType(_mixer->kSpeechSoundType, allSoundIsMuted);
 	}
@@ -1993,6 +2014,7 @@ void BladeRunnerEngine::syncSoundSettings() {
 		// but we need to mute the speech
 		_mixer->muteSoundType(_mixer->kSpeechSoundType, ConfMan.getBool("speech_mute"));
 	}
+
 	// write-back to ini file for persistence
 	ConfMan.flushToDisk(); // TODO Or maybe call this only when game is shut down?
 }

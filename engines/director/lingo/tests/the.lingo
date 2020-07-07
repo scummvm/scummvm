@@ -5,10 +5,14 @@ put the loch of sprite 4
 set the loch of sprite 5 to 10
 set the castnum of sprite 8 to the number of cast "A Blank Castmember"
 
+put the time
+put the abbrev time
+put the long time
+
 put the date
+put the short date
+put the abbrev date
 put the long date
-put the abbreviated time
-put the short time
 
 set a = 5
 
@@ -49,3 +53,9 @@ set castname = the name of cast(the castnum of sprite 15)
 set res = the soundBusy of 1
 
 put the sqrt of 9
+
+put 5 into field the number of cast "MasterList"
+
+set the text of field 1 = "Hello"
+
+set gMarkerName = the length of h + 2

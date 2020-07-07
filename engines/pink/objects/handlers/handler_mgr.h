@@ -44,17 +44,15 @@ public:
 
 	void toConsole() const override;
 
-	bool isLeftClickHandler(const Actor *actor) const;
-	bool isUseClickHandler(const Actor *actor, const Common::String &itemName) const;
+	HandlerUseClick *findSuitableHandlerUseClick(const Actor *actor, const Common::String &itemName) const;
+	HandlerLeftClick *findSuitableHandlerLeftClick(const Actor *actor) const;
 
 	void onTimerMessage(Actor *actor);
 	void onLeftClickMessage(Actor *actor);
 	void onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr);
 
 private:
-	Handler *findSuitableHandlerTimer(Actor *actor);
-	HandlerLeftClick *findSuitableHandlerLeftClick(Actor *actor);
-	HandlerUseClick *findSuitableHandlerUseClick(Actor *actor, InventoryItem *item);
+	Handler *findSuitableHandlerTimer(const Actor *actor);
 
 	Array<HandlerLeftClick *> _leftClickHandlers;
 	Array<HandlerUseClick *> _useClickHandlers;

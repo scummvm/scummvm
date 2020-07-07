@@ -146,7 +146,7 @@ void OriginFXAdLibDriver::program_change(sint8 channel, uint8 program_number) {
 	unsigned char *tim_data = get_tim_data(program_number);
 	int i, j;
 
-	debug("Program change channel: %d program: %d\n", channel, program_number);
+	debug("Program change channel: %d program: %d", channel, program_number);
 	for (i = 0; i < 11; i++) {
 		if (adlib_ins[i].channel == channel) {
 			play_note(channel, adlib_ins[i].note, 0); //note off.
@@ -187,7 +187,7 @@ void OriginFXAdLibDriver::pitch_bend(uint8 channel, uint8 pitch_lsb, uint8 pitch
 	unsigned char *cur_tim_ptr = midi_chan_tim_ptr[channel];
 
 	midi_chan_pitch[channel] = ((sint16)((pitch_msb << 7) + pitch_lsb - 8192) * cur_tim_ptr[0xe]) / 256;
-	debug("pitch_bend: c=%d, pitch=%d %d,%d,%d\n", channel, midi_chan_pitch[channel], pitch_msb, pitch_lsb, cur_tim_ptr[0xe]);
+	debug("pitch_bend: c=%d, pitch=%d %d,%d,%d", channel, midi_chan_pitch[channel], pitch_msb, pitch_lsb, cur_tim_ptr[0xe]);
 
 	for (int i = 0; i < adlib_num_active_channels; i++) {
 		if (adlib_ins[i].byte_68 > 1 && adlib_ins[i].channel == channel) {
@@ -208,7 +208,7 @@ void OriginFXAdLibDriver::pitch_bend(uint8 channel, uint8 pitch_lsb, uint8 pitch
 
 void OriginFXAdLibDriver::control_mode_change(uint8 channel, uint8 function, uint8 value) {
 	uint8 c = channel;
-	debug("control_mode_change: c=%d, func=%2x, value=%d\n", channel, function, value);
+	debug("control_mode_change: c=%d, func=%2x, value=%d", channel, function, value);
 	if (c == 9) {
 		c++;
 		do {
@@ -342,7 +342,7 @@ void OriginFXAdLibDriver::play_note(uint8 channel, sint8 note, uint8 velocity) {
 }
 
 uint16 OriginFXAdLibDriver::sub_60D(sint16 val) {
-	const uint16 word_20f[] = {0x1E5, 0x202, 0x220, 0x241, 0x263, 0x287, 0x2AE, 0x2D7, 0x302, 0x330, 0x360, 0x393, 0x3CA};
+	static const uint16 word_20f[] = {0x1E5, 0x202, 0x220, 0x241, 0x263, 0x287, 0x2AE, 0x2D7, 0x302, 0x330, 0x360, 0x393, 0x3CA};
 
 	sint16 var_2 = val / 256;
 
@@ -356,7 +356,11 @@ uint16 OriginFXAdLibDriver::sub_60D(sint16 val) {
 
 	uint16 di = word_20f[(var_2 + 6) % 0xc];
 	if ((val & 0xff) != 0) {
-		di += ((word_20f[((var_2 - 18) % 0xc) + 1] - di) * (val & 0xff)) / 256;
+		int offset = ((var_2 - 18) % 0xc) + 1;
+		// FIXME: This offset is negative near the end of the Savage Empire Origin FX
+		// intro.. what should it do?
+		if (offset >= 0)
+			di += ((word_20f[offset] - di) * (val & 0xff)) / 256;
 	}
 
 	return (si << 10) + di;

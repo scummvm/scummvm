@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-05-10 07:57+0200\n"
+"POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-05-24 23:41+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -64,9 +64,9 @@ msgstr "Pfad hoch"
 #: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:465
 #: gui/saveload-dialog.cpp:767 gui/saveload-dialog.cpp:1162
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:54
-#: engines/engine.cpp:595 backends/dialogs/gtk/gtk-dialogs.cpp:55
+#: engines/engine.cpp:605 backends/dialogs/gtk/gtk-dialogs.cpp:55
 #: backends/events/default/default-events.cpp:176
-#: backends/events/default/default-events.cpp:198
+#: backends/events/default/default-events.cpp:199
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
@@ -75,7 +75,8 @@ msgstr "Pfad hoch"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
-#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:191
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:189
+#: engines/wintermute/wintermute.cpp:202
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -132,7 +133,7 @@ msgstr ""
 #: gui/options.cpp:2574 gui/options.cpp:2612
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/kyra/gui/saveload_eob.cpp:569 engines/kyra/gui/saveload_eob.cpp:602
-#: engines/sci/graphics/controls32.cpp:927
+#: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
 msgstr "Ja"
 
@@ -142,7 +143,7 @@ msgstr "Ja"
 #: gui/options.cpp:2574 gui/options.cpp:2612
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/kyra/gui/saveload_eob.cpp:569 engines/kyra/gui/saveload_eob.cpp:602
-#: engines/sci/graphics/controls32.cpp:927
+#: engines/sci/graphics/controls32.cpp:928
 msgid "No"
 msgstr "Nein"
 
@@ -165,7 +166,7 @@ msgstr ""
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:433
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:924 engines/scumm/dialogs.cpp:189
+#: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:189
 #: engines/scumm/scumm.cpp:1900 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
@@ -270,7 +271,7 @@ msgid "Engine"
 msgstr "Engine"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1563 gui/options.cpp:1694
-#: backends/graphics/sdl/sdl-graphics.cpp:357
+#: backends/graphics/sdl/sdl-graphics.cpp:365
 msgid "Graphics"
 msgstr "Grafik"
 
@@ -587,20 +588,34 @@ msgid "Close"
 msgstr "Schließen"
 
 #: gui/gui-manager.cpp:131 backends/platform/symbian/src/SymbianActions.cpp:38
-#: engines/glk/scott/scott.cpp:394
+#: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:943
+#: engines/wintermute/keymapper_tables.h:1032
+#: engines/wintermute/keymapper_tables.h:1313
+#: engines/wintermute/keymapper_tables.h:1474
 msgid "Up"
 msgstr "Hoch"
 
 #: gui/gui-manager.cpp:136 backends/platform/symbian/src/SymbianActions.cpp:39
-#: engines/glk/scott/scott.cpp:394
+#: engines/glk/scott/scott.cpp:394 engines/wintermute/keymapper_tables.h:949
+#: engines/wintermute/keymapper_tables.h:1039
+#: engines/wintermute/keymapper_tables.h:1319
+#: engines/wintermute/keymapper_tables.h:1480
 msgid "Down"
 msgstr "Runter"
 
 #: gui/gui-manager.cpp:141 backends/platform/symbian/src/SymbianActions.cpp:40
+#: engines/wintermute/keymapper_tables.h:955
+#: engines/wintermute/keymapper_tables.h:1301
+#: engines/wintermute/keymapper_tables.h:1385
+#: engines/wintermute/keymapper_tables.h:1462
 msgid "Left"
 msgstr "Links"
 
 #: gui/gui-manager.cpp:146 backends/platform/symbian/src/SymbianActions.cpp:41
+#: engines/wintermute/keymapper_tables.h:961
+#: engines/wintermute/keymapper_tables.h:1307
+#: engines/wintermute/keymapper_tables.h:1393
+#: engines/wintermute/keymapper_tables.h:1468
 msgid "Right"
 msgstr "Rechts"
 
@@ -733,13 +748,13 @@ msgstr "In Spieleliste suchen"
 msgid "Search:"
 msgstr "Suchen:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:739
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:748
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742
 msgid "Load game:"
 msgstr "Spiel laden:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:739
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:748
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742
@@ -960,7 +975,7 @@ msgstr "Spezielle Dithering-Methoden unterstützt von manchen Spielen"
 msgid "Stretch mode:"
 msgstr "Skaliermodus:"
 
-#: gui/options.cpp:1254 backends/graphics/sdl/sdl-graphics.cpp:348
+#: gui/options.cpp:1254 backends/graphics/sdl/sdl-graphics.cpp:356
 msgid "Fullscreen mode"
 msgstr "Vollbildmodus"
 
@@ -1883,11 +1898,11 @@ msgstr "Wert löschen"
 msgid "Engine does not support debug level '%s'"
 msgstr "Engine unterstützt den Debug-Level \"%s\" nicht"
 
-#: base/main.cpp:583
+#: base/main.cpp:587
 msgid "Error running game:"
 msgstr "Fehler beim Ausführen des Spiels:"
 
-#: base/main.cpp:630
+#: base/main.cpp:634
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Konnte keine Spiel-Engine finden, die dieses Spiel starten kann"
 
@@ -2041,7 +2056,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Zur Spiele~l~iste"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:764 engines/agi/saveload.cpp:759
+#: engines/dialogs.cpp:103 engines/engine.cpp:777 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:348
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1424
@@ -2057,7 +2072,7 @@ msgstr "Zur Spiele~l~iste"
 msgid "Save game:"
 msgstr "Speichern:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:764
+#: engines/dialogs.cpp:103 engines/engine.cpp:777
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
 #: engines/cine/various.cpp:348 engines/dm/loadsave.cpp:199
@@ -2175,7 +2190,7 @@ msgstr "Automatisches Speichern"
 msgid "Error occurred making autosave"
 msgstr "Beim automatischen Speichern ist ein Fehler aufgetreten"
 
-#: engines/engine.cpp:575
+#: engines/engine.cpp:584
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2184,7 +2199,7 @@ msgstr ""
 "Laden des Spielstands %s fehlgeschlagen! Bitte lesen Sie die LIESMICH-Datei "
 "für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
-#: engines/engine.cpp:592
+#: engines/engine.cpp:602
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2195,15 +2210,16 @@ msgstr ""
 "und jegliche Spielstände, die Sie erstellen, könnten in zukünftigen "
 "Versionen von ScummVM nicht mehr funktionieren."
 
-#: engines/engine.cpp:595 engines/wintermute/wintermute.cpp:190
+#: engines/engine.cpp:605 engines/wintermute/wintermute.cpp:189
+#: engines/wintermute/wintermute.cpp:201
 msgid "Start anyway"
 msgstr "Trotzdem starten"
 
-#: engines/engine.cpp:735
+#: engines/engine.cpp:744
 msgid "Loading game is currently unavailable"
 msgstr "Das Laden des Spiels ist derzeit nicht möglich"
 
-#: engines/engine.cpp:760
+#: engines/engine.cpp:773
 msgid "Saving game is currently unavailable"
 msgstr "Das Speichern des Spiels ist derzeit nicht möglich"
 
@@ -2254,7 +2270,7 @@ msgstr "OPL2LPT"
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/mididrv.cpp:233
+#: audio/mididrv.cpp:252
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
@@ -2263,12 +2279,12 @@ msgstr ""
 "Das ausgewählte Audiogerät \"%s\" wurde nicht gefunden (könnte "
 "beispielsweise ausgeschaltet oder nicht angeschlossen sein)."
 
-#: audio/mididrv.cpp:233 audio/mididrv.cpp:245 audio/mididrv.cpp:281
-#: audio/mididrv.cpp:296
+#: audio/mididrv.cpp:252 audio/mididrv.cpp:264 audio/mididrv.cpp:300
+#: audio/mididrv.cpp:315
 msgid "Attempting to fall back to the next available device..."
 msgstr "Es wird versucht, auf das nächste verfügbare Gerät zurückzugreifen."
 
-#: audio/mididrv.cpp:245
+#: audio/mididrv.cpp:264
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
@@ -2277,7 +2293,7 @@ msgstr ""
 "Das ausgewählte Audiogerät \"%s\" kann nicht verwendet werden. Schauen Sie "
 "für weitere Informationen in der Log-Datei nach."
 
-#: audio/mididrv.cpp:281
+#: audio/mididrv.cpp:300
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -2286,7 +2302,7 @@ msgstr ""
 "Das bevorzugte Audiogerät \"%s\" wurde nicht gefunden (könnte beispielsweise "
 "ausgeschaltet oder nicht angeschlossen sein)."
 
-#: audio/mididrv.cpp:296
+#: audio/mididrv.cpp:315
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -2295,7 +2311,7 @@ msgstr ""
 "Das bevorzugte Audiogerät \"%s\" kann nicht verwendet werden. Schauen Sie "
 "für weitere Informationen in der Log-Datei nach."
 
-#: audio/mididrv.cpp:448
+#: audio/mididrv.cpp:635
 msgid "Starting MIDI dump"
 msgstr "MIDI-Dump starten"
 
@@ -2384,11 +2400,11 @@ msgstr "Möchten Sie wirklich zur Spieleliste zurückkehren?"
 msgid "Launcher"
 msgstr "Spieleliste"
 
-#: backends/events/default/default-events.cpp:198
+#: backends/events/default/default-events.cpp:199
 msgid "Do you really want to quit?"
 msgstr "Möchten Sie wirklich beenden?"
 
-#: backends/events/default/default-events.cpp:198
+#: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:315
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/mohawk/myst_stacks/menu.cpp:318
@@ -2526,33 +2542,33 @@ msgstr "Auf Fenstergröße strecken"
 msgid "Fit to window (4:3)"
 msgstr "An Fenster anpassen (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:600
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:586
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Auflösung: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:623
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2556
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:609
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2540
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:625
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2562
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:611
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2546
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2579
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:632
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2563
 msgid "Filtering enabled"
 msgstr "Bilineare Filterung aktiviert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2581
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:634
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
 msgid "Filtering disabled"
 msgstr "Bilineare Filterung deaktiviert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:677
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2609
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:663
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
 msgid "Stretch mode"
 msgstr "Skaliermodus"
 
@@ -2565,75 +2581,84 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal ohn.Skalieren"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
 msgid "Active graphics filter:"
 msgstr "Aktiver Grafikfilter:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:350
+#: backends/graphics/sdl/sdl-graphics.cpp:358
 msgid "Windowed mode"
 msgstr "Fenstermodus"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:361 engines/scumm/help.cpp:87
+#: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Vollbild umschalten"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:368 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:100
+#: engines/wintermute/keymapper_tables.h:642
 msgid "Toggle mouse capture"
 msgstr "Mauszeiger einfangen"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:373
+#: backends/graphics/sdl/sdl-graphics.cpp:381
+#: engines/wintermute/keymapper_tables.h:417
+#: engines/wintermute/keymapper_tables.h:779
+#: engines/wintermute/keymapper_tables.h:993
+#: engines/wintermute/keymapper_tables.h:1061
+#: engines/wintermute/keymapper_tables.h:1153
+#: engines/wintermute/keymapper_tables.h:1241
+#: engines/wintermute/keymapper_tables.h:1258
+#: engines/wintermute/keymapper_tables.h:1289
 msgid "Save screenshot"
 msgstr "Screenshot speichern"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:379
+#: backends/graphics/sdl/sdl-graphics.cpp:387
 msgid "Toggle aspect ratio correction"
 msgstr "Seitenverhältnis-Korrektur umschalten"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:386
+#: backends/graphics/sdl/sdl-graphics.cpp:394
 msgid "Toggle linear filtered scaling"
 msgstr "Bilineare Filterung zur Grafik-Skalierung umschalten"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:393
+#: backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Cycle through stretch modes"
 msgstr "Durch Skalier-Modi wechseln"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:399
+#: backends/graphics/sdl/sdl-graphics.cpp:407
 msgid "Increase the scale factor"
 msgstr "Skalier-Faktor erhöhen"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:405
+#: backends/graphics/sdl/sdl-graphics.cpp:413
 msgid "Decrease the scale factor"
 msgstr "Skalier-Faktor verringern"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:417
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
 msgstr "Nearest-Neighbour-Skalierung"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to AdvMame 2x/3x scaling"
 msgstr "Zu Skalierung mit AdvMame 2x/3x wechseln"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:420
+#: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
 msgstr "Zu Skalierung mit HQ 2x/3x wechseln"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:422
+#: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
 msgstr "Zu Skalierung mit 2xSai wechseln"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:423
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
 msgstr "Zu Skalierung mit Super2xSai wechseln"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:424
+#: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Switch to SuperEagle scaling"
 msgstr "Zu Skalierung mit SuperEagle wechseln"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to TV 2x scaling"
 msgstr "Zu Skalierung mit TV 2x wechseln"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:426
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to DotMatrix scaling"
 msgstr "Zu Skalierung mit DotMatrix wechseln"
 
@@ -3220,16 +3245,20 @@ msgstr "Klickmodus"
 #: backends/platform/maemo/maemo.cpp:174
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
+#: engines/wintermute/keymapper_tables.h:39
 msgid "Left Click"
 msgstr "Linksklick"
 
 #: backends/platform/maemo/maemo.cpp:178
+#: engines/wintermute/keymapper_tables.h:237
+#: engines/wintermute/keymapper_tables.h:1486
 msgid "Middle Click"
 msgstr "Mittelklick"
 
 #: backends/platform/maemo/maemo.cpp:182
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
+#: engines/wintermute/keymapper_tables.h:45
 msgid "Right Click"
 msgstr "Rechtsklick"
 
@@ -3335,6 +3364,11 @@ msgstr "R2"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:848
+#: engines/wintermute/keymapper_tables.h:210
+#: engines/wintermute/keymapper_tables.h:929
+#: engines/wintermute/keymapper_tables.h:1115
+#: engines/wintermute/keymapper_tables.h:1228
+#: engines/wintermute/keymapper_tables.h:1430
 msgid "Skip"
 msgstr "Überspringen"
 
@@ -3356,7 +3390,7 @@ msgstr "Text überspringen"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:50
 #: engines/mohawk/myst.cpp:608 engines/mohawk/riven.cpp:877
-#: engines/sky/detection.cpp:253
+#: engines/sky/detection.cpp:253 engines/wintermute/keymapper_tables.h:1122
 msgid "Pause"
 msgstr "Pause"
 
@@ -3744,15 +3778,15 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Zwischensequenz \"%s\" nicht gefunden!"
 
-#: engines/bladerunner/bladerunner.cpp:356
+#: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr "Konnte Ressourcen nicht initialisieren"
 
-#: engines/bladerunner/bladerunner.cpp:1028
+#: engines/bladerunner/bladerunner.cpp:1063
 msgid "A required game resource was not found"
 msgstr "Eine benötigte Spiel-Ressource konnte nicht gefunden werden"
 
-#: engines/bladerunner/bladerunner.cpp:2188
+#: engines/bladerunner/bladerunner.cpp:2243
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3763,7 +3797,7 @@ msgstr ""
 "Modus wird für diese Spielesitzung auf \"Entfernte Inhalte wiederherstellen"
 "\" gesetzt, bis Sie das Spiel komplett beenden."
 
-#: engines/bladerunner/bladerunner.cpp:2190
+#: engines/bladerunner/bladerunner.cpp:2245
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3774,7 +3808,7 @@ msgstr ""
 "Der Modus wird für diese Spielesitzung auf \"Original-Inhalte\" gesetzt, bis "
 "Sie das Spiel komplett beenden."
 
-#: engines/bladerunner/bladerunner.cpp:2192
+#: engines/bladerunner/bladerunner.cpp:2247
 msgid "Continue"
 msgstr "Fortsetzen"
 
@@ -3833,6 +3867,16 @@ msgstr ""
 "Wenn McCoy läuft, wird er nicht langsamer laufen, sobald der Spieler "
 "aufhört, mit der Maus zu klicken"
 
+#: engines/dragons/dragons.cpp:1759
+#, c-format
+msgid ""
+"Error: The file '%s' hasn't been extracted properly.\n"
+"Please refer to the wiki page\n"
+"https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos for "
+"details on how to properly extract the DTSPEECH.XA and *.STR files from your "
+"game disc."
+msgstr ""
+
 #: engines/drascula/saveload.cpp:47
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
@@ -3863,7 +3907,7 @@ msgstr "Zeigt Grafiken über helle Spielpalette an"
 msgid "[ press any key to exit ]"
 msgstr "[ zum Beenden beliebige Taste drücken ]"
 
-#: engines/glk/quetzal.cpp:146 engines/glk/quetzal.cpp:155
+#: engines/glk/quetzal.cpp:148 engines/glk/quetzal.cpp:157
 msgid "Untitled Savegame"
 msgstr "Unbenannter Spielstand"
 
@@ -4251,13 +4295,13 @@ msgstr "Linker Button um anzugreifen, rechter Button, um Items aufzuheben"
 
 #: engines/kyra/engine/eobcommon.cpp:348 engines/kyra/engine/lol.cpp:468
 #: engines/ultima/ultima4/meta_engine.cpp:232
-#: engines/ultima/ultima8/meta_engine.cpp:101
+#: engines/ultima/ultima8/meta_engine.cpp:111
 msgid "Interact via Left Click"
 msgstr "Interaktion via Linksklick"
 
 #: engines/kyra/engine/eobcommon.cpp:354 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:238
-#: engines/ultima/ultima8/meta_engine.cpp:107
+#: engines/ultima/ultima8/meta_engine.cpp:117
 msgid "Interact via Right Click"
 msgstr "Interaktion via Rechtsklick"
 
@@ -4278,12 +4322,12 @@ msgid "Move Right"
 msgstr "Nach rechts gehen"
 
 #: engines/kyra/engine/eobcommon.cpp:384 engines/kyra/engine/lol.cpp:522
-#: engines/pegasus/pegasus.cpp:2501
+#: engines/pegasus/pegasus.cpp:2497
 msgid "Turn Left"
 msgstr "Nach links drehen"
 
 #: engines/kyra/engine/eobcommon.cpp:390 engines/kyra/engine/lol.cpp:528
-#: engines/pegasus/pegasus.cpp:2508
+#: engines/pegasus/pegasus.cpp:2504
 msgid "Turn Right"
 msgstr "Nach rechts drehen"
 
@@ -4584,7 +4628,8 @@ msgstr "Optionsmenü anzeigen"
 msgid "Drop page"
 msgstr "Seite ablegen"
 
-#: engines/mohawk/myst.cpp:619
+#: engines/mohawk/myst.cpp:619 engines/wintermute/keymapper_tables.h:1185
+#: engines/wintermute/keymapper_tables.h:1234
 msgid "Show map"
 msgstr "Karte anzeigen"
 
@@ -4599,6 +4644,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
+#: engines/wintermute/keymapper_tables.h:607
 msgid "Load game"
 msgstr "Spiel laden"
 
@@ -4666,11 +4712,15 @@ msgstr "Nach rechts vorne bewegen"
 msgid "Move backwards"
 msgstr "Rückwärts bewegen"
 
-#: engines/mohawk/riven.cpp:902
+#: engines/mohawk/riven.cpp:902 engines/wintermute/keymapper_tables.h:152
+#: engines/wintermute/keymapper_tables.h:459
+#: engines/wintermute/keymapper_tables.h:1442
 msgid "Turn left"
 msgstr "Nach links drehen"
 
-#: engines/mohawk/riven.cpp:908
+#: engines/mohawk/riven.cpp:908 engines/wintermute/keymapper_tables.h:158
+#: engines/wintermute/keymapper_tables.h:464
+#: engines/wintermute/keymapper_tables.h:1448
 msgid "Turn right"
 msgstr "Nach rechts drehen"
 
@@ -4789,47 +4839,55 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Dateiname zum Speichern eingeben"
 
-#: engines/pegasus/pegasus.cpp:2487
+#: engines/pegasus/pegasus.cpp:2483
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Hoch/Hineinzoomen/Nach vorn/Türen öffnen"
 
-#: engines/pegasus/pegasus.cpp:2494
+#: engines/pegasus/pegasus.cpp:2490
 msgid "Down/Zoom Out"
 msgstr "Runter/Hinauszoomen"
 
-#: engines/pegasus/pegasus.cpp:2515
+#: engines/pegasus/pegasus.cpp:2511
 msgid "Action/Select"
 msgstr "Aktion/Auswählen"
 
-#: engines/pegasus/pegasus.cpp:2535
+#: engines/pegasus/pegasus.cpp:2531
 msgid "Display/Hide Inventory Tray"
 msgstr "Inventarleiste anzeigen/verbergen"
 
-#: engines/pegasus/pegasus.cpp:2542
+#: engines/pegasus/pegasus.cpp:2538
 msgid "Display/Hide Biochip Tray"
 msgstr "Biochip-Leiste anzeigen/verbergen"
 
-#: engines/pegasus/pegasus.cpp:2550
+#: engines/pegasus/pegasus.cpp:2546
 msgid "Toggle Center Data Display"
 msgstr "Mittige Datenanzeige wechseln"
 
-#: engines/pegasus/pegasus.cpp:2557
+#: engines/pegasus/pegasus.cpp:2553
 msgid "Display/Hide Info Screen"
 msgstr "Info-Bildschirm anzeigen/verbergen"
 
-#: engines/pegasus/pegasus.cpp:2564
+#: engines/pegasus/pegasus.cpp:2560
 msgid "Display/Hide Pause Menu"
 msgstr "Pause-Menü anzeigen/verbergen"
 
-#: engines/pegasus/pegasus.cpp:2575
+#: engines/pegasus/pegasus.cpp:2571 engines/wintermute/keymapper_tables.h:264
+#: engines/wintermute/keymapper_tables.h:368
+#: engines/wintermute/keymapper_tables.h:496
+#: engines/wintermute/keymapper_tables.h:529
+#: engines/wintermute/keymapper_tables.h:667
+#: engines/wintermute/keymapper_tables.h:875
+#: engines/wintermute/keymapper_tables.h:922
+#: engines/wintermute/keymapper_tables.h:1283
+#: engines/wintermute/keymapper_tables.h:1337
 msgid "???"
 msgstr "???"
 
-#: engines/pegasus/pegasus.cpp:2581
+#: engines/pegasus/pegasus.cpp:2577
 msgid "Save Game"
 msgstr "Spiel speichern"
 
-#: engines/pegasus/pegasus.cpp:2587
+#: engines/pegasus/pegasus.cpp:2583
 msgid "Load Game"
 msgstr "Spiel laden"
 
@@ -4951,7 +5009,7 @@ msgstr "Videos hochskalieren"
 msgid "Upscale videos to double their size"
 msgstr "Videos auf das Doppelte ihrer Größe skalieren"
 
-#: engines/sci/detection.cpp:856 engines/sci/engine/kfile.cpp:484
+#: engines/sci/detection.cpp:857 engines/sci/engine/kfile.cpp:484
 msgid "(Autosave)"
 msgstr "(Automatisch speichern)"
 
@@ -5072,7 +5130,7 @@ msgstr ""
 "- http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip "
 "herunterladen\n"
 
-#: engines/sci/sci.cpp:879
+#: engines/sci/sci.cpp:883
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -5125,7 +5183,7 @@ msgstr ""
 "In diesem Fall müssen Sie den origialen Patch von Sierra anwenden.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:1140
+#: engines/scumm/detection.cpp:1139
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
@@ -5138,7 +5196,7 @@ msgstr ""
 "Sie bitte dem ScummVM-Team die folgenden Daten sowie den Namen des Spiels,\n"
 "welches Sie hinzufügen wollten, dessen Version, Sprache usw. mit:\n"
 
-#: engines/scumm/detection.cpp:1158
+#: engines/scumm/detection.cpp:1157
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -5149,19 +5207,19 @@ msgstr ""
 "um Software-Piraterie zu verhindern. Die Vollversion ist im iTunes Store "
 "erhältlich."
 
-#: engines/scumm/detection.cpp:1369
+#: engines/scumm/detection.cpp:1368
 msgid "Show Object Line"
 msgstr "Objektzeile zeigen"
 
-#: engines/scumm/detection.cpp:1370
+#: engines/scumm/detection.cpp:1369
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Objektnamen und Verben am unteren Bildrand anzeigen"
 
-#: engines/scumm/detection.cpp:1376
+#: engines/scumm/detection.cpp:1375
 msgid "Use NES Classic Palette"
 msgstr "Verwende die klassische NES Farbpalette"
 
-#: engines/scumm/detection.cpp:1377
+#: engines/scumm/detection.cpp:1376
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Verwende eine neutralere Farbpalette, die den NES Classic genauer emuliert"
@@ -5302,7 +5360,7 @@ msgstr "Esc"
 msgid "Skip cutscene"
 msgstr "Zwischensequenz überspringen"
 
-#: engines/scumm/help.cpp:79
+#: engines/scumm/help.cpp:79 engines/wintermute/keymapper_tables.h:1456
 msgid "Space"
 msgstr "Leertaste"
 
@@ -5348,7 +5406,7 @@ msgstr "Texttempo langsamer/schneller"
 msgid "Simulate left mouse button"
 msgstr "Linke Maustaste simulieren"
 
-#: engines/scumm/help.cpp:91
+#: engines/scumm/help.cpp:91 engines/wintermute/keymapper_tables.h:1511
 msgid "Tab"
 msgstr "Tabulator"
 
@@ -5450,6 +5508,7 @@ msgstr "Nimm"
 #: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
 #: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:251 engines/sky/detection.cpp:222
+#: engines/wintermute/keymapper_tables.h:131
 msgid "Use"
 msgstr "Benutze"
 
@@ -5478,7 +5537,7 @@ msgstr "Gehe zu"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
-#: engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:228 engines/wintermute/keymapper_tables.h:125
 msgid "Pick up"
 msgstr "Nimm"
 
@@ -5564,7 +5623,7 @@ msgid "pull (Yank)"
 msgstr "Ziehe"
 
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:213
-#: engines/scumm/help.cpp:249
+#: engines/scumm/help.cpp:249 engines/wintermute/keymapper_tables.h:119
 msgid "Talk to"
 msgstr "Rede mit"
 
@@ -5942,7 +6001,7 @@ msgstr "Verwendet den Vorspann der Diskettenversion (nur bei CD-Version)"
 msgid "Walk / Look / Talk"
 msgstr "Gehen / schauen / sprechen"
 
-#: engines/sky/detection.cpp:228
+#: engines/sky/detection.cpp:228 engines/wintermute/keymapper_tables.h:51
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -6145,27 +6204,27 @@ msgstr "Veraltete Engine-Daten. %d.%d erwartet, aber %d.%d gefunden"
 msgid "Transfer Character"
 msgstr "Charakter übertragen"
 
-#: engines/ultima/ultima8/meta_engine.cpp:96
+#: engines/ultima/ultima8/meta_engine.cpp:106
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:126
+#: engines/ultima/ultima8/meta_engine.cpp:137
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII-Cheats"
 
-#: engines/ultima/ultima8/meta_engine.cpp:140
+#: engines/ultima/ultima8/meta_engine.cpp:152
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII-Fehlersuche"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:304
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
 msgid "[corrupt]"
 msgstr "[korrupt]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:307
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
 msgid "[outdated]"
 msgstr "[veraltet]"
 
-#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:310
+#: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
 msgid "[too modern]"
 msgstr "[zu modern]"
 
@@ -6200,12 +6259,491 @@ msgstr ""
 "Dieses Spiel benötigt die HeroCraft-Engine, welche nicht zu dem Programmcode "
 "hinzugefügt wurde."
 
-#: engines/wintermute/wintermute.cpp:189
+#: engines/wintermute/wintermute.cpp:188
+msgid ""
+"This game requires 3D capabilities that are out ScummVM scope. As such, it "
+"is likely to be unplayable totally or partially."
+msgstr ""
+
+#: engines/wintermute/wintermute.cpp:200
 msgid ""
 "This game requires 3D characters support, which is out of ScummVM's scope."
 msgstr ""
 "Dieses Spiel benötigt die Unterstützung von 3D-Charakteren, welche nicht in "
 "ScummVM enthalten ist."
+
+#: engines/wintermute/keymapper_tables.h:57
+msgid "Escape"
+msgstr "Escape-Taste"
+
+#: engines/wintermute/keymapper_tables.h:113
+msgid "Look At"
+msgstr "Schaue zu"
+
+#: engines/wintermute/keymapper_tables.h:140
+#: engines/wintermute/keymapper_tables.h:449
+#: engines/wintermute/keymapper_tables.h:1436
+msgid "Walk forward"
+msgstr "Nach vorne gehen"
+
+#: engines/wintermute/keymapper_tables.h:146
+#: engines/wintermute/keymapper_tables.h:454
+msgid "Walk backward"
+msgstr "Rückwärts gehen"
+
+#: engines/wintermute/keymapper_tables.h:164
+#: engines/wintermute/keymapper_tables.h:407
+#: engines/wintermute/keymapper_tables.h:1251
+msgid "Show scene geometry"
+msgstr "Szenen-Geometrie anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:173
+#: engines/wintermute/keymapper_tables.h:189
+#: engines/wintermute/keymapper_tables.h:588
+#: engines/wintermute/keymapper_tables.h:784
+#: engines/wintermute/keymapper_tables.h:912
+msgid "Previous page"
+msgstr "Vorherige Seite"
+
+#: engines/wintermute/keymapper_tables.h:180
+#: engines/wintermute/keymapper_tables.h:197
+#: engines/wintermute/keymapper_tables.h:595
+#: engines/wintermute/keymapper_tables.h:791
+#: engines/wintermute/keymapper_tables.h:917
+msgid "Next page"
+msgstr "Nächste Seite"
+
+#: engines/wintermute/keymapper_tables.h:220
+#: engines/wintermute/keymapper_tables.h:243
+#: engines/wintermute/keymapper_tables.h:270
+#: engines/wintermute/keymapper_tables.h:374
+#: engines/wintermute/keymapper_tables.h:502
+#: engines/wintermute/keymapper_tables.h:540
+#: engines/wintermute/keymapper_tables.h:567
+#: engines/wintermute/keymapper_tables.h:726
+#: engines/wintermute/keymapper_tables.h:972
+#: engines/wintermute/keymapper_tables.h:998
+#: engines/wintermute/keymapper_tables.h:1054
+#: engines/wintermute/keymapper_tables.h:1080
+#: engines/wintermute/keymapper_tables.h:1172
+#: engines/wintermute/keymapper_tables.h:1221
+#: engines/wintermute/keymapper_tables.h:1423
+msgid "Show hints"
+msgstr "Hinweise anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:230
+#: engines/wintermute/keymapper_tables.h:381
+#: engines/wintermute/keymapper_tables.h:546
+#: engines/wintermute/keymapper_tables.h:1025
+#: engines/wintermute/keymapper_tables.h:1179
+#: engines/wintermute/keymapper_tables.h:1191
+#: engines/wintermute/keymapper_tables.h:1200
+#: engines/wintermute/keymapper_tables.h:1343
+msgid "Show inventory"
+msgstr "Inventar anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:250
+#: engines/wintermute/keymapper_tables.h:277
+#: engines/wintermute/keymapper_tables.h:1325
+msgid "GUI variant A"
+msgstr "GUI-Variante A"
+
+#: engines/wintermute/keymapper_tables.h:257
+#: engines/wintermute/keymapper_tables.h:284
+#: engines/wintermute/keymapper_tables.h:1331
+msgid "GUI variant B"
+msgstr "GUI-Variante B"
+
+#: engines/wintermute/keymapper_tables.h:291
+#: engines/wintermute/keymapper_tables.h:798
+msgid "Phone cancel button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:296
+#: engines/wintermute/keymapper_tables.h:803
+msgid "Phone up button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:302
+#: engines/wintermute/keymapper_tables.h:809
+msgid "Phone down button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:308
+#: engines/wintermute/keymapper_tables.h:815
+msgid "Phone 0 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:313
+#: engines/wintermute/keymapper_tables.h:820
+msgid "Phone 1 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:318
+#: engines/wintermute/keymapper_tables.h:825
+msgid "Phone 2 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:323
+#: engines/wintermute/keymapper_tables.h:830
+msgid "Phone 3 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:328
+#: engines/wintermute/keymapper_tables.h:835
+msgid "Phone 4 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:333
+#: engines/wintermute/keymapper_tables.h:840
+msgid "Phone 5 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:338
+#: engines/wintermute/keymapper_tables.h:845
+msgid "Phone 6 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:343
+#: engines/wintermute/keymapper_tables.h:850
+msgid "Phone 7 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:348
+#: engines/wintermute/keymapper_tables.h:855
+msgid "Phone 8 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:353
+#: engines/wintermute/keymapper_tables.h:860
+msgid "Phone 9 button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:358
+#: engines/wintermute/keymapper_tables.h:865
+msgid "Phone * button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:363
+#: engines/wintermute/keymapper_tables.h:870
+msgid "Phone # button"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:387
+#: engines/wintermute/keymapper_tables.h:1005
+msgid "Show help"
+msgstr "Hilfe anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:393
+#: engines/wintermute/keymapper_tables.h:553
+#: engines/wintermute/keymapper_tables.h:574
+#: engines/wintermute/keymapper_tables.h:979
+#: engines/wintermute/keymapper_tables.h:1011
+#: engines/wintermute/keymapper_tables.h:1066
+#: engines/wintermute/keymapper_tables.h:1087
+#: engines/wintermute/keymapper_tables.h:1207
+#: engines/wintermute/keymapper_tables.h:1362
+#: engines/wintermute/keymapper_tables.h:1491
+msgid "Scroll up"
+msgstr "Nach oben scrollen"
+
+#: engines/wintermute/keymapper_tables.h:400
+#: engines/wintermute/keymapper_tables.h:560
+#: engines/wintermute/keymapper_tables.h:581
+#: engines/wintermute/keymapper_tables.h:986
+#: engines/wintermute/keymapper_tables.h:1018
+#: engines/wintermute/keymapper_tables.h:1073
+#: engines/wintermute/keymapper_tables.h:1094
+#: engines/wintermute/keymapper_tables.h:1214
+#: engines/wintermute/keymapper_tables.h:1369
+#: engines/wintermute/keymapper_tables.h:1496
+msgid "Scroll down"
+msgstr "Nach unten scrollen"
+
+#: engines/wintermute/keymapper_tables.h:412
+msgid "Change shadow type"
+msgstr "Schatten-Typ ändern"
+
+#: engines/wintermute/keymapper_tables.h:422
+#: engines/wintermute/keymapper_tables.h:509
+msgid "Volume max"
+msgstr "Maximale Lautstärke"
+
+#: engines/wintermute/keymapper_tables.h:427
+msgid "Show debug parser"
+msgstr "Debug-Parser anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:434
+#: engines/wintermute/keymapper_tables.h:535
+#: engines/wintermute/keymapper_tables.h:1273
+msgid "Debug print"
+msgstr "Debug-Ausgabe"
+
+#: engines/wintermute/keymapper_tables.h:439
+#: engines/wintermute/keymapper_tables.h:1246
+msgid "Exit"
+msgstr "Beenden"
+
+#: engines/wintermute/keymapper_tables.h:444
+msgid "Light helper window"
+msgstr "Beleuchtungseinstellungen bearbeiten"
+
+#: engines/wintermute/keymapper_tables.h:469
+msgid "Run forward"
+msgstr "Nach vorne laufen"
+
+#: engines/wintermute/keymapper_tables.h:474
+msgid "Run backward"
+msgstr "Rückwärts laufen"
+
+#: engines/wintermute/keymapper_tables.h:479
+msgid "Turn left fast"
+msgstr "Schnell nach links drehen"
+
+#: engines/wintermute/keymapper_tables.h:484
+msgid "Turn right fast"
+msgstr "Schnell nach rechts drehen"
+
+#: engines/wintermute/keymapper_tables.h:489
+msgid "Show blueprint"
+msgstr "Blaupause anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:516
+msgid "Volume off"
+msgstr "Ton aus"
+
+#: engines/wintermute/keymapper_tables.h:523
+msgid "Change font size"
+msgstr "Schriftgröße anpassen"
+
+#: engines/wintermute/keymapper_tables.h:602
+msgid "Save game"
+msgstr "Spiel speichern"
+
+#: engines/wintermute/keymapper_tables.h:612
+msgid "Quick save"
+msgstr "Schnellspeichern"
+
+#: engines/wintermute/keymapper_tables.h:617
+msgid "Walking speed: Low"
+msgstr "Lauf-Geschwindigkeit: Niedrig"
+
+#: engines/wintermute/keymapper_tables.h:622
+msgid "Walking speed: Medium"
+msgstr "Lauf-Geschwindigkeit: Mittel"
+
+#: engines/wintermute/keymapper_tables.h:627
+msgid "Walking speed: High"
+msgstr "Lauf-Geschwindigkeit: Hoch"
+
+#: engines/wintermute/keymapper_tables.h:632
+msgid "Quick load"
+msgstr "Schnellladen"
+
+#: engines/wintermute/keymapper_tables.h:637
+#: engines/wintermute/keymapper_tables.h:967
+#: engines/wintermute/keymapper_tables.h:1268
+msgid "Cancel waiting"
+msgstr "Warten abbrechen"
+
+#: engines/wintermute/keymapper_tables.h:647
+msgid "First page"
+msgstr "Erste Seite"
+
+#: engines/wintermute/keymapper_tables.h:652
+msgid "Last page"
+msgstr "Letzte Seite"
+
+#: engines/wintermute/keymapper_tables.h:659
+msgid "Walking speed: Ultra Super Mega Fast"
+msgstr "Lauf-Geschwindigkeit: Ultrasupermegaschnell"
+
+#: engines/wintermute/keymapper_tables.h:675
+#, fuzzy
+msgid "Show game credits"
+msgstr "Mauszeiger anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:680
+msgid "Play selected music record"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:685
+msgid "Select next music record"
+msgstr ""
+
+#: engines/wintermute/keymapper_tables.h:690
+#, fuzzy
+msgid "Play note 1: A"
+msgstr "Spieldauer: "
+
+#: engines/wintermute/keymapper_tables.h:695
+#, fuzzy
+msgid "Play note 2: F#"
+msgstr "Spieldauer: "
+
+#: engines/wintermute/keymapper_tables.h:700
+#, fuzzy
+msgid "Play note 3: D#"
+msgstr "Spieldauer: "
+
+#: engines/wintermute/keymapper_tables.h:705
+#, fuzzy
+msgid "Play note 4: C#"
+msgstr "Spieldauer: "
+
+#: engines/wintermute/keymapper_tables.h:710
+#, fuzzy
+msgid "Play note 5: E"
+msgstr "Spieldauer: "
+
+#: engines/wintermute/keymapper_tables.h:715
+#, fuzzy
+msgid "Play note 6: G#"
+msgstr "Spieldauer: "
+
+#: engines/wintermute/keymapper_tables.h:720
+#, fuzzy
+msgid "Play note 7: B"
+msgstr "Spieldauer: "
+
+#: engines/wintermute/keymapper_tables.h:733
+msgid "Ability: Telekinesis"
+msgstr "Fähigkeit: Telekinese"
+
+#: engines/wintermute/keymapper_tables.h:738
+msgid "Ability: Push"
+msgstr "Fähigkeit: Stoßen/Schieben"
+
+#: engines/wintermute/keymapper_tables.h:743
+msgid "Ability: Lightning"
+msgstr "Fähigkeit: Blitz"
+
+#: engines/wintermute/keymapper_tables.h:748
+msgid "Ability: Light"
+msgstr "Fähigkeit: Licht"
+
+#: engines/wintermute/keymapper_tables.h:753
+msgid "Ability: Wind"
+msgstr "Fähigkeit: Wind"
+
+#: engines/wintermute/keymapper_tables.h:758
+msgid "Ability: Sound"
+msgstr "Fähigkeit: Ton"
+
+#: engines/wintermute/keymapper_tables.h:763
+msgid "Ability: Esence"
+msgstr "Fähigkeit: Wesen"
+
+#: engines/wintermute/keymapper_tables.h:768
+msgid "Ability: Exorcist"
+msgstr "Fähigkeit: Exorzist"
+
+#: engines/wintermute/keymapper_tables.h:773
+msgid "Skip minigame"
+msgstr "Minispiel überspringen"
+
+#: engines/wintermute/keymapper_tables.h:881
+msgid "Show hints / Dance move"
+msgstr "Hinweise anzeigen / Tanzbewegung"
+
+#: engines/wintermute/keymapper_tables.h:888
+msgid "Dance move up"
+msgstr "Tanzbewegung nach oben"
+
+#: engines/wintermute/keymapper_tables.h:894
+#, fuzzy
+msgid "Dance move down"
+msgstr "Tanzbewegung nach unten"
+
+#: engines/wintermute/keymapper_tables.h:900
+#, fuzzy
+msgid "Dance move left"
+msgstr "Tanzbewegung nach links"
+
+#: engines/wintermute/keymapper_tables.h:906
+#, fuzzy
+msgid "Dance move right"
+msgstr "Tanzbewegung nach rechts"
+
+#: engines/wintermute/keymapper_tables.h:936
+msgid "Cancel input"
+msgstr "Eingabe abbrechen"
+
+#: engines/wintermute/keymapper_tables.h:1046
+msgid "Shift"
+msgstr "Shift"
+
+#: engines/wintermute/keymapper_tables.h:1101
+#: engines/wintermute/keymapper_tables.h:1409
+msgid "Next action"
+msgstr "Nächste Aktion"
+
+#: engines/wintermute/keymapper_tables.h:1109
+#: engines/wintermute/keymapper_tables.h:1417
+msgid "Previous action"
+msgstr "Vorherige Aktion"
+
+#: engines/wintermute/keymapper_tables.h:1128
+#: engines/wintermute/keymapper_tables.h:1263
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: engines/wintermute/keymapper_tables.h:1133
+msgid "Dialogue answer 1"
+msgstr "Dialog-Antwort 1"
+
+#: engines/wintermute/keymapper_tables.h:1138
+msgid "Dialogue answer 2"
+msgstr "Dialog-Antwort 2"
+
+#: engines/wintermute/keymapper_tables.h:1143
+msgid "Dialogue answer 3"
+msgstr "Dialog-Antwort 3"
+
+#: engines/wintermute/keymapper_tables.h:1148
+msgid "Dialogue answer 4"
+msgstr "Dialog-Antwort 4"
+
+#: engines/wintermute/keymapper_tables.h:1158
+msgid "Spin slower"
+msgstr "Langsamer drehen"
+
+#: engines/wintermute/keymapper_tables.h:1165
+msgid "Spin faster"
+msgstr "Schneller drehen"
+
+#: engines/wintermute/keymapper_tables.h:1278
+msgid "Bezier window"
+msgstr "Bezier-Fenster"
+
+#: engines/wintermute/keymapper_tables.h:1294
+#, fuzzy
+msgid "Droid action"
+msgstr "Droiden-Aktion"
+
+#: engines/wintermute/keymapper_tables.h:1350
+msgid "Show journal"
+msgstr "Journal anzeigen"
+
+#: engines/wintermute/keymapper_tables.h:1356
+msgid "Music menu"
+msgstr "Musik-Menü"
+
+#: engines/wintermute/keymapper_tables.h:1376
+msgid "Rotate"
+msgstr "Drehen"
+
+#: engines/wintermute/keymapper_tables.h:1401
+msgid "Drop"
+msgstr "Fallen lassen"
+
+#: engines/wintermute/keymapper_tables.h:1501
+msgid "F1"
+msgstr "F1"
+
+#: engines/wintermute/keymapper_tables.h:1506
+msgid "Key i"
+msgstr "Taste i"
 
 #: engines/xeen/detection.cpp:96
 msgid "Show item costs in standard inventory mode"
@@ -6275,220 +6813,6 @@ msgstr ""
 
 #~ msgid "Return to main menu"
 #~ msgstr "zum Hauptmenü zurückkehren"
-
-#~ msgid "Escape"
-#~ msgstr "Escape-Taste"
-
-#~ msgid "Look At"
-#~ msgstr "Schaue zu"
-
-#~ msgid "Walk forward"
-#~ msgstr "Nach vorne gehen"
-
-#~ msgid "Walk backward"
-#~ msgstr "Rückwärts gehen"
-
-#~ msgid "Show scene geometry"
-#~ msgstr "Szenen-Geometrie anzeigen"
-
-#~ msgid "Previous page"
-#~ msgstr "Vorherige Seite"
-
-#~ msgid "Next page"
-#~ msgstr "Nächste Seite"
-
-#~ msgid "Show hints"
-#~ msgstr "Hinweise anzeigen"
-
-#~ msgid "Show inventory"
-#~ msgstr "Inventar anzeigen"
-
-#~ msgid "GUI variant A"
-#~ msgstr "GUI-Variante A"
-
-#~ msgid "GUI variant B"
-#~ msgstr "GUI-Variante B"
-
-#~ msgid "Show help"
-#~ msgstr "Hilfe anzeigen"
-
-#~ msgid "Scroll up"
-#~ msgstr "Nach oben scrollen"
-
-#~ msgid "Scroll down"
-#~ msgstr "Nach unten scrollen"
-
-#~ msgid "Change shadow type"
-#~ msgstr "Schatten-Typ ändern"
-
-#~ msgid "Volume max"
-#~ msgstr "Maximale Lautstärke"
-
-#~ msgid "Show debug parser"
-#~ msgstr "Debug-Parser anzeigen"
-
-#~ msgid "Debug print"
-#~ msgstr "Debug-Ausgabe"
-
-#~ msgid "Exit"
-#~ msgstr "Beenden"
-
-#~ msgid "Light helper window"
-#~ msgstr "Beleuchtungseinstellungen bearbeiten"
-
-#~ msgid "Run forward"
-#~ msgstr "Nach vorne laufen"
-
-#~ msgid "Run backward"
-#~ msgstr "Rückwärts laufen"
-
-#~ msgid "Turn left fast"
-#~ msgstr "Schnell nach links drehen"
-
-#~ msgid "Turn right fast"
-#~ msgstr "Schnell nach rechts drehen"
-
-#~ msgid "Show blueprint"
-#~ msgstr "Blaupause anzeigen"
-
-#~ msgid "Volume off"
-#~ msgstr "Ton aus"
-
-#~ msgid "Change font size"
-#~ msgstr "Schriftgröße anpassen"
-
-#~ msgid "Save game"
-#~ msgstr "Spiel speichern"
-
-#~ msgid "Quick save"
-#~ msgstr "Schnellspeichern"
-
-#~ msgid "Walking speed: Low"
-#~ msgstr "Lauf-Geschwindigkeit: Niedrig"
-
-#~ msgid "Walking speed: Medium"
-#~ msgstr "Lauf-Geschwindigkeit: Mittel"
-
-#~ msgid "Walking speed: High"
-#~ msgstr "Lauf-Geschwindigkeit: Hoch"
-
-#~ msgid "Quick load"
-#~ msgstr "Schnellladen"
-
-#~ msgid "Cancel waiting"
-#~ msgstr "Warten abbrechen"
-
-#~ msgid "First page"
-#~ msgstr "Erste Seite"
-
-#~ msgid "Last page"
-#~ msgstr "Letzte Seite"
-
-#~ msgid "Walking speed: Ultra Super Mega Fast"
-#~ msgstr "Lauf-Geschwindigkeit: Ultrasupermegaschnell"
-
-#~ msgid "Ability: Telekinesis"
-#~ msgstr "Fähigkeit: Telekinese"
-
-#~ msgid "Ability: Push"
-#~ msgstr "Fähigkeit: Stoßen/Schieben"
-
-#~ msgid "Ability: Lightning"
-#~ msgstr "Fähigkeit: Blitz"
-
-#~ msgid "Ability: Light"
-#~ msgstr "Fähigkeit: Licht"
-
-#~ msgid "Ability: Wind"
-#~ msgstr "Fähigkeit: Wind"
-
-#~ msgid "Ability: Sound"
-#~ msgstr "Fähigkeit: Ton"
-
-#~ msgid "Ability: Esence"
-#~ msgstr "Fähigkeit: Wesen"
-
-#~ msgid "Ability: Exorcist"
-#~ msgstr "Fähigkeit: Exorzist"
-
-#~ msgid "Skip minigame"
-#~ msgstr "Minispiel überspringen"
-
-#~ msgid "Show hints / Dance move"
-#~ msgstr "Hinweise anzeigen / Tanzbewegung"
-
-#~ msgid "Dance move up"
-#~ msgstr "Tanzbewegung nach oben"
-
-#, fuzzy
-#~ msgid "Dance move down"
-#~ msgstr "Tanzbewegung nach unten"
-
-#, fuzzy
-#~ msgid "Dance move left"
-#~ msgstr "Tanzbewegung nach links"
-
-#, fuzzy
-#~ msgid "Dance move right"
-#~ msgstr "Tanzbewegung nach rechts"
-
-#~ msgid "Cancel input"
-#~ msgstr "Eingabe abbrechen"
-
-#~ msgid "Shift"
-#~ msgstr "Shift"
-
-#~ msgid "Next action"
-#~ msgstr "Nächste Aktion"
-
-#~ msgid "Previous action"
-#~ msgstr "Vorherige Aktion"
-
-#~ msgid "Settings"
-#~ msgstr "Einstellungen"
-
-#~ msgid "Dialogue answer 1"
-#~ msgstr "Dialog-Antwort 1"
-
-#~ msgid "Dialogue answer 2"
-#~ msgstr "Dialog-Antwort 2"
-
-#~ msgid "Dialogue answer 3"
-#~ msgstr "Dialog-Antwort 3"
-
-#~ msgid "Dialogue answer 4"
-#~ msgstr "Dialog-Antwort 4"
-
-#~ msgid "Spin slower"
-#~ msgstr "Langsamer drehen"
-
-#~ msgid "Spin faster"
-#~ msgstr "Schneller drehen"
-
-#~ msgid "Bezier window"
-#~ msgstr "Bezier-Fenster"
-
-#, fuzzy
-#~ msgid "Droid action"
-#~ msgstr "Droiden-Aktion"
-
-#~ msgid "Show journal"
-#~ msgstr "Journal anzeigen"
-
-#~ msgid "Music menu"
-#~ msgstr "Musik-Menü"
-
-#~ msgid "Rotate"
-#~ msgstr "Drehen"
-
-#~ msgid "Drop"
-#~ msgstr "Fallen lassen"
-
-#~ msgid "F1"
-#~ msgstr "F1"
-
-#~ msgid "Key i"
-#~ msgstr "Taste i"
 
 #~ msgid "C-Pad Sensitivity:"
 #~ msgstr "C-Pad-Empfindlichkeit:"

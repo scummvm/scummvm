@@ -9,6 +9,8 @@ put a
 
 set gList = [point(70, 190), point(217, 66), point(364, 185)]
 
+set gBugList = [[energy: 10, mood: "Happy"], [energy: -10, mood: "Sad"], [energy: 60, mood: "Hungry"], [energy: 20, mood: "Sad"]]
+
 set b to [4, 5, 6, 7]
 set res to a + b
 set res to a - b

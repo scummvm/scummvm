@@ -35,11 +35,12 @@ namespace Petka {
 
 const uint16 kFallback = 0xFFFE;
 
-BigDialogue::BigDialogue() {
+BigDialogue::BigDialogue(PetkaEngine &vm)
+	: _vm(vm) {
 	_currOp = nullptr;
 	_startOpIndex = 0;
 
-	Common::ScopedPtr<Common::SeekableReadStream> file(g_vm->openFile("dialogue.fix", true));
+	Common::ScopedPtr<Common::SeekableReadStream> file(vm.openFile("dialogue.fix", true));
 	if (!file)
 		return;
 
@@ -72,7 +73,7 @@ void BigDialogue::loadSpeechesInfo() {
 	if (!_speeches.empty())
 		return;
 
-	Common::ScopedPtr<Common::SeekableReadStream> file(g_vm->openFile("dialogue.lod", true));
+	Common::ScopedPtr<Common::SeekableReadStream> file(_vm.openFile("dialogue.lod", true));
 	if (!file)
 		return;
 
@@ -122,23 +123,18 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 
 		uint index = _currOp->play.messageIndex;
 		_currOp = menuOp;
-		*soundName = _speeches[index].soundName;
+		if (soundName)
+			*soundName = _speeches[index].soundName;
 		*talkerId = _speeches[index].speakerId;
 		return &_speeches[index].text;
 	}
-	case kOperationCircle: {
-		const uint current = _currOp->circle.curr;
-		_currOp += 1;
-		for (uint i = 0; i < current; ++i) {
-			while (_currOp->type != kOperationBreak)
-				_currOp += 1;
-			_currOp += 1;
-		}
+	case kOperationCircle:
+		circleMoveTo(_currOp->circle.curr);
 		assert(_currOp->type == kOperationPlay);
-	}
 		// fall through
 	case kOperationPlay:
-		*soundName = _speeches[_currOp->play.messageIndex].soundName;
+		if (soundName)
+			*soundName = _speeches[_currOp->play.messageIndex].soundName;
 		*talkerId = _speeches[_currOp->play.messageIndex].speakerId;
 		return &_speeches[_currOp->play.messageIndex].text;
 	default:
@@ -147,12 +143,12 @@ const Common::U32String *BigDialogue::getSpeechInfo(int *talkerId, const char **
 	return nullptr;
 }
 
-const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res) const {
+const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *fallback) const {
 	if (opcode == kEnd || opcode == kHalf) {
 		return nullptr;
 	}
-	if (res) {
-		*res = false;
+	if (fallback) {
+		*fallback = false;
 	}
 	for (uint i = 0; i < _objDialogs.size(); ++i) {
 		if (_objDialogs[i].objId == objId) {
@@ -166,8 +162,8 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 			}
 			for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
 				if (_objDialogs[i].handlers[j].opcode == kFallback) {
-					if (res)
-						*res = true;
+					if (fallback)
+						*fallback = true;
 					return &_objDialogs[i].handlers[j];
 				}
 
@@ -179,8 +175,8 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 			continue;
 		for (uint j = 0; j < _objDialogs[i].handlers.size(); ++j) {
 			if (_objDialogs[i].handlers[j].opcode == opcode) {
-				if (res)
-					*res = true;
+				if (fallback)
+					*fallback = true;
 				return &_objDialogs[i].handlers[j];
 			}
 		}
@@ -188,7 +184,7 @@ const DialogHandler *BigDialogue::findHandler(uint objId, uint opcode, bool *res
 	return nullptr;
 }
 
-void BigDialogue::setHandler(uint objId, uint opcode, int index) {
+void BigDialogue::setHandler(uint objId, uint opcode) {
 	loadSpeechesInfo();
 	const DialogHandler *h = findHandler(objId, opcode, nullptr);
 	if (h) {
@@ -267,7 +263,7 @@ void BigDialogue::save(Common::WriteStream *s) {
 	for (uint i = 0; i < _ops.size(); ++i) {
 		switch (_ops[i].type) {
 		case kOperationBreak:
-			s->writeUint32LE(MKTAG(0, 0, 0, kOperationBreak));
+			s->writeUint32LE(MKTAG(kOperationBreak, 0, 0, 0));
 			break;
 		case kOperationMenu:
 			s->writeByte(_ops[i].menu.bits);
@@ -276,30 +272,30 @@ void BigDialogue::save(Common::WriteStream *s) {
 			break;
 		case kOperationGoTo:
 			s->writeUint16LE(_ops[i].goTo.opIndex);
-			s->writeUint16LE(MKTAG16(0, kOperationGoTo));
+			s->writeUint16LE(MKTAG16(kOperationGoTo, 0));
 			break;
 		case kOperationDisableMenuItem:
 			s->writeUint16LE(_ops[i].disableMenuItem.opIndex);
-			s->writeUint16LE(MKTAG16(_ops[i].disableMenuItem.bit, kOperationDisableMenuItem));
+			s->writeUint16LE(MKTAG16(kOperationDisableMenuItem, _ops[i].disableMenuItem.bit));
 			break;
 		case kOperationEnableMenuItem:
 			s->writeUint16LE(_ops[i].enableMenuItem.opIndex);
-			s->writeUint16LE(MKTAG16(_ops[i].enableMenuItem.bit, kOperationEnableMenuItem));
+			s->writeUint16LE(MKTAG16(kOperationEnableMenuItem, _ops[i].enableMenuItem.bit));
 			break;
 		case kOperationReturn:
-			s->writeUint32LE(MKTAG(0, 0, 0, kOperationReturn));
+			s->writeUint32LE(MKTAG(kOperationReturn, 0, 0, 0));
 			break;
 		case kOperationPlay:
 			s->writeUint16LE(_ops[i].play.messageIndex);
-			s->writeUint16LE(MKTAG16(0, kOperationPlay));
+			s->writeUint16LE(MKTAG16(kOperationPlay, 0));
 			break;
 		case kOperationCircle:
 			s->writeUint16LE(_ops[i].circle.count);
-			s->writeUint16LE(MKTAG16(_ops[i].circle.curr, kOperationPlay));
+			s->writeUint16LE(MKTAG16(kOperationCircle, _ops[i].circle.curr));
 			break;
 		case kOperationUserMessage:
 			s->writeUint16LE(_ops[i].userMsg.arg);
-			s->writeUint16LE(MKTAG16(0, kOperationUserMessage));
+			s->writeUint16LE(MKTAG16(kOperationUserMessage, 0));
 			break;
 		default:
 			break;
@@ -356,7 +352,7 @@ void BigDialogue::next(int choice) {
 		}
 		case kOperationDisableMenuItem:
 			_ops[_currOp->disableMenuItem.opIndex].menu.bitField &= ~(1 << _currOp->disableMenuItem.bit); // disable menu item
-			checkMenu(_currOp->disableMenuItem.opIndex);
+			checkMenu(_startOpIndex);
 			_currOp += 1;
 			processed = false;
 			break;
@@ -377,21 +373,14 @@ void BigDialogue::next(int choice) {
 			if (!processed)
 				return;
 			_currOp->circle.curr = (byte)((_currOp->circle.curr + 1) % _currOp->circle.count);
-			for (uint i = 0; i < _currOp->circle.count; ++i) {
-				while (_currOp->type != kOperationBreak)
-					_currOp += 1;
-				_currOp += 1;
-			}
+			circleMoveTo(_currOp->circle.count);
 			processed = false;
 			break;
 		case kOperationUserMessage:
 			if (processed)
 				_currOp += 1;
 			else {
-				g_vm->getQSystem()->_mainInterface->_dialog.sendMsg(kSaid);
-				g_vm->getQSystem()->_mainInterface->_dialog._isUserMsg = 1;
-				g_vm->getQSystem()->_mainInterface->_dialog.restoreCursor();
-				g_vm->getQSystem()->addMessage(g_vm->getQSystem()->_chapayev->_id, kUserMsg, _currOp->userMsg.arg);
+				_vm.getQSystem()->_mainInterface->_dialog.startUserMsg(_currOp->userMsg.arg);
 			}
 			return;
 		default:
@@ -468,6 +457,23 @@ bool BigDialogue::checkMenu(uint menuIndex) {
 		bit <<= 1;
 	}
 	return true;
+}
+
+void BigDialogue::getMenuChoices(Common::Array<Common::U32String> &choices) {
+	uint count = choicesCount();
+	for (uint i = 0; i < count; ++i) {
+		int id;
+		choices.push_back(*getSpeechInfo(&id, nullptr, i));
+	}
+}
+
+void BigDialogue::circleMoveTo(byte index) {
+	_currOp += 1;
+	for (uint i = 0; i < index; ++i) {
+		while (_currOp->type != kOperationBreak)
+			_currOp += 1;
+		_currOp += 1;
+	}
 }
 
 } // End of namespace Petka

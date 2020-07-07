@@ -109,7 +109,7 @@ protected:
 		static bool isSpace(Std::string::const_iterator &i, bool u8specials) {
 			char c = *i;
 			return (c == ' ' || c == '\t' || c == '\n' || c == '\r' ||
-			        (u8specials && (c == '%' || c == '~' || c == '*')));
+			        (u8specials && (c == '%' || c == '~' || c == '*' || c == '^')));
 		}
 		static bool isTab(Std::string::const_iterator &i, bool u8specials) {
 			char c = *i;

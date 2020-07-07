@@ -151,7 +151,7 @@ static const byte macCursorCrossBar[] = {
 
 static void menuTimerHandler(void *refCon);
 
-MacWindowManager::MacWindowManager(uint32 mode) {
+MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_screen = 0;
 	_screenCopy = nullptr;
 	_lastId = 0;
@@ -159,6 +159,9 @@ MacWindowManager::MacWindowManager(uint32 mode) {
 	_needsRemoval = false;
 
 	_activeWidget = nullptr;
+	_mouseDown = false;
+	_hoveredWidget = nullptr;
+	_mouseDownWidget = nullptr;
 
 	_mode = mode;
 
@@ -178,8 +181,12 @@ MacWindowManager::MacWindowManager(uint32 mode) {
 	_palette = nullptr;
 	_paletteSize = 0;
 
-	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
-		_patterns.push_back(fillPatterns[i]);
+	if (patterns) {
+		_patterns = *patterns;
+	} else {
+		for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
+			_patterns.push_back(fillPatterns[i]);
+	}
 
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
@@ -260,8 +267,16 @@ MacMenu *MacWindowManager::addMenu() {
 	return _menu;
 }
 
+void MacWindowManager::removeMenu() {
+	if (_menu) {
+		_windows[_menu->getId()] = nullptr;
+		delete _menu;
+		_menu = nullptr;
+	}
+}
+
 void MacWindowManager::activateMenu() {
-	if (!_menu)
+	if (!_menu || ((_mode & kWMModeAutohideMenu) && _menu->isVisible()))
 		return;
 
 	if (_mode & kWMModalMenuMode) {
@@ -313,6 +328,8 @@ void MacWindowManager::setActiveWindow(int id) {
 void MacWindowManager::removeWindow(MacWindow *target) {
 	_windowsToRemove.push_back(target);
 	_needsRemoval = true;
+	_hoveredWidget = nullptr;
+	_mouseDownWidget = nullptr;
 
 	if (target->getId() == _activeWindow)
 		_activeWindow = -1;
@@ -333,7 +350,7 @@ void macDrawPixel(int x, int y, int color, void *data) {
 
 			*((byte *)p->surface->getBasePtr(xu, yu)) =
 				(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
-					color : p->bgColor;
+				color : (p->invert ? 255 - *((byte *)p->surface->getBasePtr(xu, yu)) : p->bgColor);
 
 			if (p->mask)
 				*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
@@ -351,11 +368,22 @@ void macDrawPixel(int x, int y, int color, void *data) {
 					uint yu = (uint)y;
 					*((byte *)p->surface->getBasePtr(xu, yu)) =
 						(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
-							color : p->bgColor;
+						color : (p->invert ? 255 - *((byte *)p->surface->getBasePtr(xu, yu)) : p->bgColor);
 
 					if (p->mask)
 						*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
 				}
+	}
+}
+
+void macInvertPixel(int x, int y, int color, void *data) {
+	// Argument color is unused; we just invert the colors as they are in the surface.
+	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
+
+	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
+		byte *p = (byte *)surface->getBasePtr(x, y);
+
+		*p = abs(255 - *p);
 	}
 }
 
@@ -397,7 +425,7 @@ void MacWindowManager::draw() {
 	}
 
 	// Menu is drawn on top of everything and always
-	if (_menu)
+	if (_menu && !(_mode & kWMModeFullscreen))
 		_menu->draw(_screen, _fullRefresh);
 
 	_fullRefresh = false;
@@ -416,8 +444,19 @@ static void menuTimerHandler(void *refCon) {
 }
 
 bool MacWindowManager::processEvent(Common::Event &event) {
-	if (event.type == Common::EVENT_MOUSEMOVE)
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
 		_lastMousePos = event.mouse;
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+		_mouseDown = true;
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_mouseDown = false;
+		break;
+	default:
+		break;
+	}
 
 	if (_menu && !_menu->isVisible()) {
 		if ((_mode & kWMModeAutohideMenu) && event.type == Common::EVENT_MOUSEMOVE) {
@@ -435,8 +474,9 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 
 	if (_activeWindow != -1) {
 		if ((_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
-				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y))
-				|| (_activeWidget && _activeWidget->isEditable())) {
+				 ((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) ||
+				(_activeWidget && _activeWidget->isEditable() &&
+				 _activeWidget->getDimensions().contains(event.mouse.x, event.mouse.y))) {
 			if (_cursorIsArrow) {
 				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
 				_cursorIsArrow = false;
@@ -506,6 +546,75 @@ void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
 			break;
 		}
 	}
+}
+
+
+void MacWindowManager::addZoomBox(ZoomBox *box) {
+	_zoomBoxes.push_back(box);
+}
+
+void MacWindowManager::renderZoomBox(bool redraw) {
+	if (!_zoomBoxes.size())
+		return;
+
+	ZoomBox *box = _zoomBoxes.front();
+	uint32 t = g_system->getMillis();
+
+	MacPlotData pd(_screen, nullptr, &getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0, true);
+
+	// Undraw the previous boxes
+	if (box->last.size() != 0) {
+		for (uint i = 0; i < box->last.size(); i++) {
+			Common::Rect r = box->last.remove_at(i);
+			zoomBoxInner(r, pd);
+		}
+	}
+
+	if (box->nextTime > t)
+		return;
+
+	const int numSteps = 14;
+	// We have 15 steps in total, and we have flying rectange
+	// from switching 3/4 frames
+
+	int start, end;
+	// Determine, how many rectangles and what are their numbers
+	if (box->step <= 5) {
+		start = 1;
+		end = box->step - 1;
+	} else {
+		start = box->step - 4;
+		end = MIN(start + 3 - box->step % 2, 7);
+	}
+
+	for (int i = start; i <= end; i++) {
+		Common::Rect r(box->start.left   + (box->end.left   - box->start.left)   * i / 8,
+					   box->start.top    + (box->end.top    - box->start.top)    * i / 8,
+					   box->start.right  + (box->end.right  - box->start.right)  * i / 8,
+					   box->start.bottom + (box->end.bottom - box->start.bottom) * i / 8);
+
+		zoomBoxInner(r, pd);
+		box->last.push_back(r);
+	}
+
+	box->step++;
+	box->nextTime = box->startTime + 1000 * box->step * box->delay / 60;
+
+	if (redraw) {
+		g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->getBounds().width(), _screen->getBounds().height()); // zoomBox
+	}
+
+	if (box->step >= numSteps) {
+		delete _zoomBoxes[0];
+		_zoomBoxes.remove_at(0);
+	}
+}
+
+void MacWindowManager::zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd) {
+	Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xff, Graphics::macDrawPixel, &pd);
+	Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xff, Graphics::macDrawPixel, &pd);
 }
 
 /////////////////
@@ -631,6 +740,12 @@ uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	}
 
 	return bestColor;
+}
+
+void MacWindowManager::decomposeColor(byte color, byte &r, byte &g, byte &b) {
+	r = *(_palette + 3 * color + 0);
+	g = *(_palette + 3 * color + 1);
+	b = *(_palette + 3 * color + 2);
 }
 
 PauseToken MacWindowManager::pauseEngine() {

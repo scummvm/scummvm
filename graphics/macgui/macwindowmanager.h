@@ -65,7 +65,9 @@ enum {
 	kWMModalMenuMode 		= (1 << 2),
 	kWMModeForceBuiltinFonts= (1 << 3),
 	kWMModeUnicode			= (1 << 4),
-	kWMModeManualDrawWidgets= (1 << 5)
+	kWMModeManualDrawWidgets= (1 << 5),
+	kWMModeFullscreen       = (1 << 6),
+	kWMModeButtonDialogStyle= (1 << 7)
 };
 
 }
@@ -94,13 +96,25 @@ struct MacPlotData {
 	int fillOriginY;
 	int thickness;
 	uint bgColor;
+	bool invert;
 
-	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg) :
-		surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg) {
+	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg, bool inv = false) :
+		surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg), invert(inv) {
 	}
 };
 
+struct ZoomBox {
+	Common::Rect start;
+	Common::Rect end;
+	Common::Array<Common::Rect> last;
+	int delay;
+	int step;
+	uint32 startTime;
+	uint32 nextTime;
+};
+
 void macDrawPixel(int x, int y, int color, void *data);
+void macInvertPixel(int x, int y, int color, void *data);
 
 /**
  * A manager class to handle window creation, destruction,
@@ -108,7 +122,7 @@ void macDrawPixel(int x, int y, int color, void *data);
  */
 class MacWindowManager {
 public:
-	MacWindowManager(uint32 mode = 0);
+	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr);
 	~MacWindowManager();
 
 	/**
@@ -152,6 +166,7 @@ public:
 	 */
 	MacMenu *addMenu();
 
+	void removeMenu();
 	void activateMenu();
 
 	void activateScreenCopy();
@@ -245,6 +260,10 @@ public:
 
 	void passPalette(const byte *palette, uint size);
 	uint findBestColor(byte cr, byte cg, byte cb);
+	void decomposeColor(byte color, byte &r, byte &g, byte &b);
+
+	void renderZoomBox(bool redraw = false);
+	void addZoomBox(ZoomBox *box);
 
 public:
 	MacFontManager *_fontMan;
@@ -254,8 +273,12 @@ public:
 	Common::Rect _menuHotzone;
 
 	bool _menuTimerActive;
+	bool _mouseDown;
 
 	int _colorBlack, _colorWhite;
+
+	MacWidget *_hoveredWidget;
+	MacWidget *_mouseDownWidget;
 
 private:
 	void drawDesktop();
@@ -263,6 +286,9 @@ private:
 	void removeMarked();
 	void removeFromStack(BaseMacWindow *target);
 	void removeFromWindowList(BaseMacWindow *target);
+
+	void zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd);
+	bool haveZoomBox() { return !_zoomBoxes.empty(); }
 
 public:
 	ManagedSurface *_screen;
@@ -296,6 +322,8 @@ private:
 	MacWidget *_activeWidget;
 
 	PauseToken _screenCopyPauseToken;
+
+	Common::Array<ZoomBox *> _zoomBoxes;
 };
 
 } // End of namespace Graphics

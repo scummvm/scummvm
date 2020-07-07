@@ -1,5 +1,4 @@
 # Android specific build targets
-
 PATH_DIST = $(srcdir)/dists/android
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
@@ -9,6 +8,7 @@ GRADLE_FILES = $(shell find $(PATH_DIST)/gradle -type f) $(PATH_DIST)/gradlew $(
 PATH_BUILD = ./android_project
 PATH_BUILD_GRADLE = $(PATH_BUILD)/build.gradle
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
+PATH_BUILD_LIB = $(PATH_BUILD)/lib/$(ABI)
 PATH_BUILD_LIBSCUMMVM = $(PATH_BUILD)/lib/$(ABI)/libscummvm.so
 
 APK_MAIN = ScummVM-debug.apk
@@ -18,7 +18,7 @@ $(PATH_BUILD):
 	$(MKDIR) $(PATH_BUILD)
 
 $(PATH_BUILD_GRADLE): $(GRADLE_FILES) | $(PATH_BUILD)
-	$(CP) -r $(PATH_DIST)/gradle/ $(PATH_BUILD)
+	$(CP) -r $(PATH_DIST)/gradle/ $(PATH_BUILD)/gradle/
 	$(INSTALL) -c -m 755 $(PATH_DIST)/gradlew $(PATH_BUILD)
 	$(INSTALL) -c -m 644 $(PATH_DIST)/build.gradle $(PATH_BUILD)
 	$(ECHO) "srcdir=$(realpath $(srcdir))" > $(PATH_BUILD)/gradle.properties
@@ -30,7 +30,8 @@ $(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(PORT_DISTFILES) $(PATH_BUILD_ASSETS)/
 
 $(PATH_BUILD_LIBSCUMMVM): libscummvm.so | $(PATH_BUILD)
-	$(INSTALL) -D -c -m 644 libscummvm.so $(PATH_BUILD_LIBSCUMMVM)
+	$(INSTALL) -d  $(PATH_BUILD_LIB)
+	$(INSTALL) -c -m 644 libscummvm.so $(PATH_BUILD_LIBSCUMMVM)
 
 $(APK_MAIN): $(PATH_BUILD_GRADLE) $(PATH_BUILD_ASSETS) $(PATH_BUILD_LIBSCUMMVM) | $(PATH_BUILD)
 	(cd $(PATH_BUILD); ./gradlew assembleDebug)

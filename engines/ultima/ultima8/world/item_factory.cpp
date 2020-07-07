@@ -47,10 +47,10 @@ static Item *getItemForFamily(uint32 family) {
 	case ShapeInfo::SF_QUANTITY:
 	case ShapeInfo::SF_BREAKABLE:
 	case ShapeInfo::SF_REAGENT: // reagents need special handling too
-	case ShapeInfo::SF_10: // TODO: What's this? used in crusader levels
-	case ShapeInfo::SF_11: // TODO: What's this? used in crusader levels
-	case ShapeInfo::SF_12: // TODO: What's this? used in crusader levels
-	case ShapeInfo::SF_13: // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_CRUWEAPON:
+	case ShapeInfo::SF_CRUAMMO:
+	case ShapeInfo::SF_CRUBOMB:
+	case ShapeInfo::SF_CRUINVITEM:
 	case ShapeInfo::SF_15: // what's this?
 		// 'simple' item
 		return new Item();
@@ -65,6 +65,9 @@ static Item *getItemForFamily(uint32 family) {
 		return new Egg();
 
 	case ShapeInfo::SF_MONSTEREGG:
+		// FIXME: For crusader, item family 7 is also treated like a container
+		// (it can have contents, and the contents can be destroyed.
+		// Is it not the same as monster egg?
 		return new MonsterEgg();
 
 	case ShapeInfo::SF_TELEPORTEGG:

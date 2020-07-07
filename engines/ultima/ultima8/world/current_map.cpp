@@ -62,6 +62,10 @@ CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	} else {
 		CANT_HAPPEN_MSG("Unknown game type in CurrentMap constructor.");
 	}
+
+	for (unsigned int i = 0; i < MAP_NUM_TARGET_ITEMS; i++) {
+		_targets[i] = 0;
+	}
 }
 
 
@@ -277,6 +281,80 @@ void CurrentMap::removeItem(Item *item) {
 	item->getLocation(ix, iy, iz);
 
 	removeItemFromList(item, ix, iy);
+}
+
+void CurrentMap::addTargetItem(const Item *item) {
+	assert(item);
+	// The game also maintains a count of non-zero targets, but it
+	// seems to serve little purpose so we just update.
+	ObjId id = item->getObjId();
+	for (int i = 0; i < MAP_NUM_TARGET_ITEMS; i++) {
+		if (_targets[i] == 0) {
+			_targets[i] = id;
+			return;
+		}
+	}
+}
+
+void CurrentMap::removeTargetItem(const Item *item) {
+	assert(item);
+	ObjId id = item->getObjId();
+	for (int i = 0; i < MAP_NUM_TARGET_ITEMS; i++) {
+		if (_targets[i] == id) {
+			_targets[i] = 0;
+			return;
+		}
+	}
+}
+
+
+Item *CurrentMap::findBestTargetItem(int32 x, int32 y, uint8 dir) {
+	// "best" means:
+	// Shape info SI_OCCL
+	// isNPC
+	// Closest
+	// in that order.
+	bool bestisnpc = false;
+	bool bestisoccl = false;
+	Item *bestitem = nullptr;
+	int bestdist = 0xffff;
+
+	for (int i = 0; i < MAP_NUM_TARGET_ITEMS; i++) {
+		if (_targets[i] == 0)
+			continue;
+		Item *item = getItem(_targets[i]);
+		// FIXME: this should probably always be non-null,
+		// but if it's not the item disappeared - remove it from the list.
+		// If we fix this, this function can be const.
+		if (!item) {
+			_targets[i] = 0;
+			continue;
+		}
+		const ShapeInfo *si = item->getShapeInfo();
+		bool isoccl = si->_flags & ShapeInfo::SI_OCCL;
+
+		int32 ix, iy, iz;
+		item->getLocation(ix, iy, iz);
+		Direction itemdir = Get_WorldDirection(iy - y, ix - x);
+		if (itemdir != dir)
+			continue;
+
+		const Actor *actor = dynamic_cast<const Actor *>(item);
+		if ((bestisoccl && !isoccl) || (bestisnpc && !actor) || !item->isOnScreen())
+			continue;
+
+		int xdiff = abs(x - ix);
+		int ydiff = abs(y - iy);
+		int dist = MAX(xdiff, ydiff);
+
+		if (dist < bestdist) {
+			bestitem = item;
+			bestdist = dist;
+			bestisoccl = isoccl;
+			bestisnpc = (actor != nullptr);
+		}
+	}
+	return bestitem;
 }
 
 
@@ -883,8 +961,8 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 // Do a sweepTest of an item from start to end point.
 // dims is the bounding box size.
 // item is the item that we are checking to move
-// blocking_only forces us to check against blocking _items only.
-// skip will skip all _items until item num skip is reached
+// blocking_only forces us to check against blocking items only.
+// skip will skip all items until item num skip is reached
 // Returns item hit or 0 if no hit.
 // end is set to the colision point
 bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
@@ -961,7 +1039,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				// If the objects overlapped at the start, ignore collision.
 				// The -1 and +1 portions are to still consider collisions
-				// for _items which were merely touching at the start for all
+				// for items which were merely touching at the start for all
 				// intents and purposes, but partially overlapped due to an
 				// off-by-one error (hypothetically, but they do happen so
 				// protect against it).
@@ -1206,6 +1284,11 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(unk1); // is either 1 or 4
 	ARG_UINT16(unk2); // looks like it could be an objid
 	ARG_UINT16(unk3); // always zero
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
 	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);

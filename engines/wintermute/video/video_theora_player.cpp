@@ -30,7 +30,7 @@
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
@@ -143,7 +143,7 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 
 	// Additional setup.
 	_surface.create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight(), _theoraDecoder->getPixelFormat());
-	_texture = new BaseSurfaceOSystem(_gameRef);
+	_texture = _gameRef->_renderer->createSurface();
 	_texture->create(_theoraDecoder->getWidth(), _theoraDecoder->getHeight());
 	_state = THEORA_STATE_PLAYING;
 	_playZoom = 100;

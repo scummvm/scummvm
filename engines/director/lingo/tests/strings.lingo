@@ -1,21 +1,17 @@
 set z = "foo bar baz"
 set z1 = z & " meow"
 set z1 = z1 && "woof"
-put z
-put z1
-put chars("Macromedia", 6, 6)
-put chars("Macromedia", 6, 10)
-put chars("Macromedia", -1, 15)
-if z1 contains "MeÍW" then
-	put "Contains"
-else
-	put "Doesn't contain"
-end if
-if "meow" = "MeÍW" then
-	put "Equals"
-else
-	put "Doesn't equal"
-end if
+scummvmAssert(z1 contains "bar")
+scummvmAssert(z1 contains "MeÍW")
+
+set c = chars("Macromedia", 6, 6)
+scummvmAssertEqual(c, "m")
+set c = chars("Macromedia", 6, 10)
+scummvmAssertEqual(c, "media")
+set c = chars("Macromedia", -1, 15)
+scummvmAssertEqual(c, "Macromedia")
+
+scummvmAssert("meow" = "MeÍW")
 
 put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
 
@@ -24,3 +20,17 @@ if the key = Return then
 end if
 
 when keydown then if the key=return then set the stagecolor to random (256)
+file(mWritestring, return)
+
+put return
+
+put "foo" into test
+put return after test
+put test
+scummvmAssertEqual(test, "foo" & return)
+
+put return before test
+scummvmAssertEqual(test, return & "foo" & return)
+
+put return into test
+scummvmAssertEqual(test, return)

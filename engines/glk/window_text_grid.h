@@ -25,13 +25,14 @@
 
 #include "glk/windows.h"
 #include "glk/conf.h"
+#include "glk/speech.h"
 
 namespace Glk {
 
 /**
  * Text Grid window
  */
-class TextGridWindow : public TextWindow {
+class TextGridWindow : public TextWindow, Speech {
 	/**
 	 * Structure for a row within the grid window
 	 */

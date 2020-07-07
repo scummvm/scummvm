@@ -81,10 +81,10 @@ Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType ty
 	Sound *sound = findSound(name);
 	if (sound)
 		return sound;
-	Common::SeekableReadStream *s = g_vm->openFile(name, false);
+	Common::SeekableReadStream *s = _vm.openFile(name, false);
 	if (s) {
 		debug("SoundMgr: added sound %s", name.c_str());
-		sound = new Sound(g_vm->openFile(name, false), type);
+		sound = new Sound(_vm.openFile(name, false), type);
 		_sounds.getVal(name).reset(sound);
 	}
 	return sound;
@@ -102,14 +102,14 @@ void SoundMgr::removeSound(const Common::String &name) {
 
 void SoundMgr::removeAll() {
 	debug("SoundMgr::removeAll");
-	_sounds.clear(0);
+	_sounds.clear(false);
 }
 
 void SoundMgr::removeSoundsWithType(Audio::Mixer::SoundType type) {
 	SoundsMap::iterator it;
 	for (it = _sounds.begin(); it != _sounds.end(); ++it) {
 		Sound *s = it->_value.get();
-		if (s->type() == type && !s->isPlaying()) {
+		if (s->type() == type) {
 			_sounds.erase(it);
 		}
 	}

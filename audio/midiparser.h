@@ -264,6 +264,8 @@ struct NoteTimer {
  */
 class MidiParser {
 protected:
+	static const uint8 MAXIMUM_TRACKS = 120;
+
 	uint16    _activeNotes[128];   ///< Each uint16 is a bit mask for channels that have that note on.
 	NoteTimer _hangingNotes[32];   ///< Maintains expiration info for up to 32 notes.
 	                                ///< Used for "Smart Jump" and MIDI formats that do not include explicit Note Off events.
@@ -274,11 +276,14 @@ protected:
 	uint32 _ppqn;           ///< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
 	uint32 _tempo;          ///< Microseconds per quarter note.
 	uint32 _psecPerTick;  ///< Microseconds per tick (_tempo / _ppqn).
+	uint32 _sysExDelay;     ///< Number of microseconds until the next SysEx event can be sent.
 	bool   _autoLoop;       ///< For lightweight clients that don't provide their own flow control.
 	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
 	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
 	bool   _sendSustainOffOnNotesOff;   ///< Send a sustain off on a notes off event, stopping hanging notes
-	byte  *_tracks[120];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
+	bool   _disableAllNotesOffMidiEvents;   ///< Don't send All Notes Off MIDI messages
+	bool   _disableAutoStartPlayback;  ///< Do not automatically start playback after parsing MIDI data or setting the track
+	byte  *_tracks[MAXIMUM_TRACKS];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
 	byte   _numTracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
 	byte   _activeTrack;   ///< Keeps track of the currently active track, in multi-track formats.
 
@@ -288,6 +293,8 @@ protected:
 	                        ///< simulated events in certain formats.
 	bool   _abortParse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 	bool   _jumpingToTick; ///< True if currently inside jumpToTick
+	bool   _doParse;       ///< True if the parser should be parsing; false if it should be active
+	bool   _pause;		   ///< True if the parser has paused parsing
 
 protected:
 	static uint32 readVLQ(byte * &data);
@@ -304,6 +311,7 @@ protected:
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
+	virtual void sendMetaEventToDriver(byte type, byte *data, uint16 length);
 
 	/**
 	 * Platform independent BE uint32 read-and-advance.
@@ -365,7 +373,24 @@ public:
 		 * Sends a sustain off event when a notes off event is triggered.
 		 * Stops hanging notes.
 		 */
-		 mpSendSustainOffOnNotesOff = 5
+		 mpSendSustainOffOnNotesOff = 5,
+
+		 /**
+		  * Prevent sending out all notes off events on all channels when
+		  * playback of a track is stopped. This option is useful when
+		  * multiple sources are used; otherwise stopping playback of one
+		  * source will interrupt playback of the other sources.
+		  * Any active notes registered by this parser will still be turned
+		  * off.
+		  */
+		 mpDisableAllNotesOffMidiEvents = 6,
+
+		 /**
+		  * Does not automatically start playback after parsing MIDI data
+		  * or setting the track. Use startPlaying to start playback.
+		  * Note that not every parser implementation might support this.
+		  */
+		  mpDisableAutoStartPlayback = 7
 	};
 
 public:
@@ -384,11 +409,53 @@ public:
 	void setTempo(uint32 tempo);
 	void onTimer();
 
-	bool isPlaying() const { return (_position._playPos != 0); }
+	bool isPlaying() const { return (_position._playPos != 0 && _doParse); }
+	/**
+	 * Start playback from the current position in the current track, or at
+	 * the beginning if there is no current position.
+	 * If the parser is already playing or there is no valid current track,
+	 * this function does nothing.
+	 */
+	bool startPlaying();
+	/**
+	 * Stops playback. This resets the current playback position.
+	 */
 	void stopPlaying();
+	/**
+	 * Pauses playback and stops all active notes. Use resumePlaying to
+	 * continue playback at the current track position; startPlaying will
+	 * do nothing if the parser is paused.
+	 * stopPlaying, unloadMusic, loadMusic and setTrack will unpause the
+	 * parser. jumpToTick and jumpToIndex do nothing while the parser is
+	 * paused.
+	 * If the parser is not playing or already paused, this function does
+	 * nothing. Note that isPlaying will continue to return true while
+	 * playback is paused.
+	 * Not every parser implementation might support pausing properly.
+	 */
+	void pausePlaying();
+	/**
+	 * Resumes playback at the current track position.
+	 * If the parser is not paused, this function does nothing.
+	 */
+	void resumePlaying();
 
 	bool setTrack(int track);
 	bool jumpToTick(uint32 tick, bool fireEvents = false, bool stopNotes = true, bool dontSendNoteOn = false);
+	/**
+	 * Returns true if the active track has a jump point defined for the
+	 * specified index number.
+	 * Can be implemented for MIDI formats with support for some form of index
+	 * points.
+	 */
+	virtual bool hasJumpIndex(uint8 index) { return false; }
+	/**
+	 * Stops playback and resumes it at the position defined for the specified
+	 * index number.
+	 * Can be implemented for MIDI formats with support for some form of index
+	 * points.
+	 */
+	virtual bool jumpToIndex(uint8 index, bool stopNotes = true) { return false; }
 
 	uint32 getPPQN() { return _ppqn; }
 	virtual uint32 getTick() { return _position._playTick; }
@@ -396,7 +463,7 @@ public:
 	static void defaultXMidiCallback(byte eventData, void *refCon);
 
 	static MidiParser *createParser_SMF();
-	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, XMidiNewTimbreListProc newTimbreListProc = NULL, MidiDriver_BASE *newTimbreListDriver = NULL);
+	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, XMidiNewTimbreListProc newTimbreListProc = NULL, MidiDriver_BASE *newTimbreListDriver = NULL, int source = -1);
 	static MidiParser *createParser_QT();
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };

@@ -335,8 +335,10 @@ Texture *BaseSoftRenderSurface::GetSurfaceAsTexture() {
 //
 // Desc: Create a palette of colours native to the surface
 //
-void BaseSoftRenderSurface::CreateNativePalette(Palette *palette) {
-	for (int i = 0; i < 256; i++) {
+void BaseSoftRenderSurface::CreateNativePalette(Palette *palette, int maxindex) {
+	if (maxindex == 0)
+		maxindex = 256;
+	for (int i = 0; i < maxindex; i++) {
 		int32 r, g, b;
 
 		// Normal palette

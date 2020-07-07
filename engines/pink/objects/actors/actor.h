@@ -63,8 +63,8 @@ public:
 	virtual bool isLeftClickHandlers() const { return false; }
 	virtual bool isUseClickHandlers(InventoryItem *item) const { return false; }
 
-	virtual void onMouseOver(const Common::Point point, CursorMgr *mgr);
-	virtual void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+	virtual void onMouseOverWithItem(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
 	virtual void onTimerMessage() {}
 	virtual void onLeftClickMessage() {}
@@ -79,15 +79,13 @@ public:
 
 	InventoryMgr *getInventoryMgr() const;
 
-	virtual const Common::String &getPDALink() const;
+	virtual Common::String getPDALink() const;
 
-	virtual const Common::String &getLocation() const;
+	virtual Common::String getLocation() const;
 
 	void setAction(const Common::String &name) { setAction(findAction(name)); }
 	void setAction(Action *newAction);
 	void setAction(Action *newAction, bool loadingSave);
-
-	void setPage(Page *page) { _page = page;}
 
 protected:
 	Page *_page;

@@ -69,7 +69,7 @@ private:
 	ActionPlayWithSfx *_sprite;
 	Common::String _sfxName;
 	Sound _sound;
-	int32 _volume;
+	byte _volume;
 	int32 _frame;
 };
 

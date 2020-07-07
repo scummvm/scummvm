@@ -141,9 +141,6 @@ protected:
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
-
-public:
-	MacWindowManager *_wm;
 };
 
 /**
@@ -176,8 +173,9 @@ public:
 	 * Change the width and the height of the window.
 	 * @param w New width of the window.
 	 * @param h New height of the window.
+	 * @param inner True to set the inner dimensions.
 	 */
-	virtual void resize(int w, int h);
+	virtual void resize(int w, int h, bool inner = false);
 
 	/**
 	 * Change the dimensions of the window ([0, 0, 0, 0] by default).
@@ -277,6 +275,7 @@ private:
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Font *getTitleFont();
 	void updateInnerDims();
+	void updateOuterDims();
 
 	bool isInCloseButton(int x, int y);
 	bool isInResizeButton(int x, int y);
@@ -290,6 +289,7 @@ protected:
 	ManagedSurface _borderSurface;
 
 	bool _borderIsDirty;
+	Common::Rect _innerDims;
 
 private:
 	MacWindowBorder _macBorder;
@@ -303,7 +303,6 @@ private:
 	bool _closeable;
 
 	int _borderWidth;
-	Common::Rect _innerDims;
 
 	bool _beingDragged, _beingResized;
 	int _draggedX, _draggedY;

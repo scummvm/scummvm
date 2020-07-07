@@ -39,10 +39,19 @@ class ManagedSurface;
 /** Text alignment modes */
 enum TextAlign {
 	kTextAlignInvalid,
+	kTextAlignStart,     ///< Text should be aligned to start of line (virtual)
 	kTextAlignLeft,     ///< Text should be aligned to the left
 	kTextAlignCenter,   ///< Text should be centered
+	kTextAlignEnd,     ///< Text should be aligned to end of line (virtual)
 	kTextAlignRight     ///< Text should be aligned to the right
 };
+
+/**
+ * Converts virtual text alignments (start + end)
+ * to actual text alignment (left + right + center) for drawing,
+ * if given actual text alignments it is returned as-is
+ */
+TextAlign convertTextAlignH(TextAlign alignH, bool rtl);
 
 /**
  * Instances of this class represent a distinct font, with a built-in renderer.
@@ -119,7 +128,7 @@ public:
 	 * @return The actual area where the string is drawn.
 	 */
 	Common::Rect getBoundingBox(const Common::String &str, int x = 0, int y = 0, const int w = 0, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
-	Common::Rect getBoundingBox(const Common::U32String &str, int x = 0, int y = 0, const int w = 0, TextAlign align = kTextAlignLeft) const;
+	Common::Rect getBoundingBox(const Common::U32String &str, int x = 0, int _y = 0, const int w = 0, TextAlign align = kTextAlignLeft) const;
 
 	/**
 	 * Draw a character at a specific point on a surface.
@@ -147,7 +156,7 @@ public:
 	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0) const;
-	void drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0) const;
 
 	/**

@@ -14,7 +14,7 @@ MODULE_OBJS := \
 	fonts/winfont.o \
 	larryScale.o \
 	maccursor.o \
-	macgui/maceditabletext.o \
+	macgui/macbutton.o \
 	macgui/macfontmanager.o \
 	macgui/macmenu.o \
 	macgui/mactext.o \

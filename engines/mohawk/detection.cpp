@@ -194,7 +194,7 @@ public:
 		return "Myst and Riven (C) Cyan Worlds\nMohawk OS (C) Ubisoft";
 	}
 
-	DetectedGames detectGames(const Common::FSList &fslist) const override;
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -208,40 +208,36 @@ public:
 	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
-DetectedGames MohawkMetaEngine::detectGames(const Common::FSList &fslist) const {
-	DetectedGames detectedGames = AdvancedMetaEngine::detectGames(fslist);
+DetectedGame MohawkMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
+	DetectedGame game = AdvancedMetaEngine::toDetectedGame(adGame);
 
 	// The AdvancedDetector model only allows specifying a single supported
 	// game language. The 25th anniversary edition Myst games are multilanguage.
 	// Here we amend the detected games to set the list of supported languages.
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		DetectedGame &game = detectedGames[i];
-
 #ifdef ENABLE_MYST
-		if (game.gameId == "myst"
-		        && Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())
-		        && Common::checkGameGUIOption(GAMEOPTION_ME, game.getGUIOptions())) {
-			const Mohawk::MystLanguage *languages = Mohawk::MohawkEngine_Myst::listLanguages();
-			while (languages->language != Common::UNK_LANG) {
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
-				languages++;
-			}
+	if (game.gameId == "myst"
+			&& Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())
+			&& Common::checkGameGUIOption(GAMEOPTION_ME, game.getGUIOptions())) {
+		const Mohawk::MystLanguage *languages = Mohawk::MohawkEngine_Myst::listLanguages();
+		while (languages->language != Common::UNK_LANG) {
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
+			languages++;
 		}
+	}
 #endif
 
 #ifdef ENABLE_RIVEN
-		if (game.gameId == "riven"
-		        && Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())) {
-			const Mohawk::RivenLanguage *languages = Mohawk::MohawkEngine_Riven::listLanguages();
-			while (languages->language != Common::UNK_LANG) {
-				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
-				languages++;
-			}
+	if (game.gameId == "riven"
+			&& Common::checkGameGUIOption(GAMEOPTION_25TH, game.getGUIOptions())) {
+		const Mohawk::RivenLanguage *languages = Mohawk::MohawkEngine_Riven::listLanguages();
+		while (languages->language != Common::UNK_LANG) {
+			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(languages->language));
+			languages++;
 		}
-#endif
 	}
+#endif
 
-	return detectedGames;
+	return game;
 }
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {

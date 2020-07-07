@@ -29,7 +29,6 @@
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
-#include "graphics/managed_surface.h"
 
 #include "director/types.h"
 
@@ -41,7 +40,10 @@ class SeekableSubReadStreamEndian;
 
 namespace Graphics {
 class MacWindowManager;
+struct MacPlotData;
 typedef Common::Array<byte *> MacPatterns;
+
+class ManagedSurface;
 }
 
 namespace Director {
@@ -53,26 +55,33 @@ enum DirectorGameGID {
 };
 
 class Archive;
+class Cast;
 struct DirectorGameDescription;
 class DirectorSound;
 class Lingo;
+class Movie;
+class Stage;
 class Score;
-class Cast;
+class CastMember;
+class Stxt;
 
 enum {
-	kDebugLingoExec			= 1 << 0,
-	kDebugLingoCompile		= 1 << 1,
-	kDebugLoading			= 1 << 2,
-	kDebugImages			= 1 << 3,
-	kDebugText				= 1 << 4,
-	kDebugEvents			= 1 << 5,
-	kDebugLingoParse		= 1 << 6,
-	kDebugLingoCompileOnly	= 1 << 7,
-	kDebugSlow				= 1 << 8,
-	kDebugFast				= 1 << 9,
-	kDebugNoLoop			= 1 << 10,
-	kDebugBytecode			= 1 << 11,
-	kDebugFewFramesOnly		= 1 << 12
+	kDebugLingoExec		= 1 << 0,
+	kDebugCompile		= 1 << 1,
+	kDebugLoading		= 1 << 2,
+	kDebugImages		= 1 << 3,
+	kDebugText			= 1 << 4,
+	kDebugEvents		= 1 << 5,
+	kDebugParse			= 1 << 6,
+	kDebugCompileOnly	= 1 << 7,
+	kDebugSlow			= 1 << 8,
+	kDebugFast			= 1 << 9,
+	kDebugNoLoop		= 1 << 10,
+	kDebugNoBytecode	= 1 << 11,
+	kDebugFewFramesOnly	= 1 << 12,
+	kDebugPreprocess	= 1 << 13,
+	kDebugScreenshot	= 1 << 14,
+	kDebugDesktop		= 1 << 15
 };
 
 struct MovieReference {
@@ -89,6 +98,31 @@ struct PaletteV4 {
 	int length;
 };
 
+// An extension of MacPlotData for interfacing with inks and patterns without
+// needing extra surfaces.
+struct DirectorPlotData {
+	Graphics::ManagedSurface *src;
+	Graphics::ManagedSurface *dst;
+	Graphics::MacPlotData *macPlot;
+	Common::Rect &destRect;
+	Common::Point srcPoint;
+
+	bool ignoreSrc;
+	InkType ink;
+	int numColors;
+	uint backColor;
+	uint foreColor;
+
+	Graphics::MacWindowManager *_wm;
+
+	DirectorPlotData(Graphics::MacWindowManager *wm, Graphics::ManagedSurface *s, Graphics::ManagedSurface *ds, Common::Rect &dr, InkType i, uint b, uint f, uint n) :
+		src(s), dst(ds), ink(i), backColor(b), foreColor(f), destRect(dr), macPlot(nullptr), numColors(n), _wm(wm) {
+		ignoreSrc = false;
+	}
+};
+
+void inkDrawPixel(int x, int y, int color, void *data);
+
 class DirectorEngine : public ::Engine {
 public:
 	DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc);
@@ -104,27 +138,24 @@ public:
 	Common::String getEXEName() const;
 	DirectorSound *getSoundManager() const { return _soundManager; }
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
-	Archive *getMainArchive() const { return _mainArchive; }
+	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
-	Score *getCurrentScore() const { return _currentScore; }
-	Score *getSharedScore() const { return _sharedScore; }
-	Common::String getCurrentPath() const { return _currentPath; }
+	Stage *getStage() const { return _currentStage; }
+	Movie *getCurrentMovie() const;
+	Common::String getCurrentPath() const;
 	void setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const override;
 	void loadPalettes();
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
-	void loadSharedCastsFrom(Common::String filename);
-	void clearSharedCast();
-	Cast *getCastMember(int castId);
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
 	void setCursor(int type); // graphics.cpp
 
-	void loadInitialMovie(const Common::String movie);
-	Archive *openMainArchive(const Common::String movie);
+	void loadKeyCodes();
+
 	Archive *createArchive();
 
 	// events.cpp
@@ -135,24 +166,20 @@ public:
 	void waitForClick();
 
 public:
-	Common::HashMap<Common::String, Score *> *_movies;
-
 	Common::RandomSource _rnd;
+	Graphics::ManagedSurface *_surface;
 	Graphics::MacWindowManager *_wm;
 
 public:
 	int _colorDepth;
 	unsigned char _key;
 	int _keyCode;
+	Common::HashMap<int, int> _macKeyCodes;
 	int _machineType;
 	bool _playbackPaused;
 	bool _skipFrameAdvance;
 
-	MovieReference _nextMovie;
-	Common::List<MovieReference> _movieStack;
-
-	Graphics::ManagedSurface _backSurface;
-	bool _newMovieStarted;
+	Common::String _sharedCastFile;
 
 protected:
 	Common::Error run() override;
@@ -160,49 +187,25 @@ protected:
 private:
 	const DirectorGameDescription *_gameDescription;
 
-	Common::HashMap<Common::String, Score *> *scanMovies(const Common::String &folder);
-	void loadEXE(const Common::String movie);
-	void loadEXEv3(Common::SeekableReadStream *stream);
-	void loadEXEv4(Common::SeekableReadStream *stream);
-	void loadEXEv5(Common::SeekableReadStream *stream);
-	void loadEXEv7(Common::SeekableReadStream *stream);
-	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-	void loadMac(const Common::String movie);
-
-	Score *_sharedScore;
-
-	Archive *_mainArchive;
-	Common::MacResManager *_macBinary;
 	DirectorSound *_soundManager;
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 
-	Score *_currentScore;
-	Common::String _currentPath;
+	Stage *_currentStage;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::HashMap<int, PaletteV4 *> _director4Palettes;
 
-	Common::String _sharedCastFile;
-
 	bool _draggingSprite;
 	uint16 _draggingSpriteId;
 	Common::Point _draggingSpritePos;
-
-	Common::StringArray _movieQueue;
-
-private:
-	void testFontScaling();
-	void testFonts();
-
-	void enqueueAllMovies();
-	MovieReference getNextMovieFromQueue();
 };
 
 extern DirectorEngine *g_director;
+extern uint32 wmMode;
 
 } // End of namespace Director
 

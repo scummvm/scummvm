@@ -50,14 +50,36 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	void setFakeBothButtonClick() {
-		_fakeBothButtonClick = true;
+	bool hasMovementFlags(uint32 flags) const {
+		return (_movementFlags & flags) != 0;
+	}
+	void setMovementFlag(uint32 mask) {
+		_movementFlags |= mask;
+	}
+	void clearMovementFlag(uint32 mask) {
+		_movementFlags &= ~mask;
 	}
 
-	void tryTurnLeft(bool b);
-	void tryTurnRight(bool b);
-	void tryMoveForward(bool b);
-	void tryMoveBack(bool b);
+	enum MovementFlags {
+		MOVE_MOUSE_DIRECTION = 0x001,
+		MOVE_RUN = 0x002,
+		MOVE_STEP = 0x0004,
+		MOVE_JUMP = 0x0008,
+
+		// Tank controls 
+		MOVE_TURN_LEFT = 0x0010,
+		MOVE_TURN_RIGHT = 0x0020,
+		MOVE_FORWARD = 0x0040,
+		MOVE_BACK = 0x0080,
+
+		// Directional controls
+		MOVE_LEFT = 0x0100,
+		MOVE_RIGHT = 0x0200,
+		MOVE_UP = 0x0400,
+		MOVE_DOWN = 0x0800,
+
+		MOVE_ANY_DIRECTION = MOVE_MOUSE_DIRECTION | MOVE_FORWARD | MOVE_BACK | MOVE_LEFT | MOVE_RIGHT | MOVE_UP | MOVE_DOWN
+	};
 
 private:
 	void handleHangingMode();
@@ -78,16 +100,10 @@ private:
 	// shake head when idle
 	uint32 _idleTime;
 	Animation::Sequence _lastHeadShakeAnim;
-
-	//! A fake "both button" event has been requested
-	bool _fakeBothButtonClick;
 	
 	MButton _mouseButton[2];
 
-	bool _tryTurnLeft;
-	bool _tryTurnRight;
-	bool _tryMoveForward;
-	bool _tryMoveBack;
+	uint32 _movementFlags;
 };
 
 } // End of namespace Ultima8

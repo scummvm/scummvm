@@ -62,9 +62,9 @@ void Awards::execute(const Character *ch) {
 
 		for (int awardNum = 0; awardNum < AWARDS_TOTAL; ++awardNum) {
 			if (ch->hasAward(awardNum)) {
-				if (awardNum == 9) {
+				if (awardNum == WARZONE_AWARD) {
 					// # Warzone Wins
-					awards[numAwards] = Common::String::format(_textStrings[9].c_str(), 28);
+					awards[numAwards] = Common::String::format(_textStrings[9].c_str(), ch->getAwardCount(WARZONE_AWARD));
 				} else if (awardNum == 17) {
 					// Legendary Race
 					awards[numAwards] = Common::String::format(_textStrings[17].c_str(),

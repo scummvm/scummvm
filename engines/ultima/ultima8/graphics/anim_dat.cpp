@@ -175,6 +175,8 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						f._deltaDir = rs->readSByte();
 						f._flags = rs->readByte();
 						f._flags += (x & 0xF8) << 8;
+						f._unk1 = 0;
+						f._unk2 = 0;
 					} else if (GAME_IS_CRUSADER) {
 						// byte 0: low byte of frame
 						f._frame = rs->readByte();
@@ -182,13 +184,13 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						uint8 x = rs->readByte();
 						f._frame += (x & 0xF) << 8;
 						// byte 2, 3: unknown; byte 3 might contain flags
-						rs->skip(2);
-						// byte 4: deltadir (signed)
-						f._deltaDir = rs->readSByte();
+						f._unk1 = rs->readSint16LE();
+						// byte 4: deltadir (signed) - convert to pixels
+						f._deltaDir = rs->readSByte() * 2;
 						// byte 5: flags?
 						f._flags = rs->readByte();
 						// byte 6, 7: unknown
-						rs->skip(2);
+						f._unk2 = rs->readSint16LE();
 
 						f._deltaZ = 0;
 						f._sfx = 0;

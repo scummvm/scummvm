@@ -273,6 +273,7 @@ MODULE_OBJS = \
 	ui/ui_input_box.o \
 	ui/ui_scroll_box.o \
 	ui/ui_slider.o \
+	ui/ui_dropdown.o \
 	ui/vk.o \
 	view.o \
 	vqa_decoder.o \

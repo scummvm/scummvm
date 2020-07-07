@@ -92,6 +92,8 @@ public:
 
 private:
 	Common::MacResManager *_resFork;
+
+	void readTags();
 };
 
 class RIFFArchive : public Archive {

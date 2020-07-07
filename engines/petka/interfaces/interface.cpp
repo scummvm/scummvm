@@ -60,13 +60,13 @@ QVisibleObject *Interface::findObject(int resourceId) {
 }
 
 void Interface::initCursor(int id, bool show, bool animate) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	_objs.push_back(cursor);
 	cursor->_resourceId = id;
 	cursor->_isShown = show;
 	cursor->_animate = animate;
 	cursor->_actionType = kActionLook;
-	cursor->setCursorPos(cursor->_x, cursor->_y, 0);
+	cursor->setPos(Common::Point(cursor->_x, cursor->_y), false);
 }
 
 void Interface::removeTexts() {
@@ -80,6 +80,41 @@ void Interface::removeTexts() {
 			++i;
 		}
 	}
+}
+
+void SubInterface::start(int id) {
+	QSystem *sys = g_vm->getQSystem();
+	QObjectCursor *cursor = sys->getCursor();
+
+	_savedCursorId = cursor->_resourceId;
+	_savedCursorType = cursor->_actionType;
+
+	initCursor(4901, true, false);
+
+	_savedXOffset = sys->_xOffset;
+	_savedSceneWidth = sys->_sceneWidth;
+
+	g_vm->getQSystem()->_currInterface = this;
+	g_vm->videoSystem()->updateTime();
+	g_vm->videoSystem()->makeAllDirty();
+}
+
+void SubInterface::stop() {
+	QSystem *sys = g_vm->getQSystem();
+	QObjectCursor *cursor = sys->getCursor();
+
+	sys->_xOffset = _savedXOffset;
+	sys->_sceneWidth = _savedSceneWidth;
+
+	cursor->_resourceId = _savedCursorId;
+	cursor->_actionType = _savedCursorType;
+
+	sys->_currInterface = g_vm->getQSystem()->_prevInterface;
+	sys->_currInterface->onMouseMove(Common::Point(cursor->_x, cursor->_y));
+
+	_objs.clear();
+
+	Interface::stop();
 }
 
 } // End of namespace Petka

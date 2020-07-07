@@ -38,8 +38,6 @@ Actor::~Actor() {
 	for (uint i = 0; i < _actions.size(); ++i) {
 		delete _actions[i];
 	}
-
-	_actions.clear();
 }
 
 void Actor::deserialize(Archive &archive) {
@@ -94,11 +92,11 @@ void Actor::pause(bool paused) {
 		_action->pause(paused);
 }
 
-void Actor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
+void Actor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 	mgr->setCursor(kDefaultCursor, point, Common::String());
 }
 
-void Actor::onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+void Actor::onMouseOverWithItem(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	cursorMgr->setCursor(kHoldingItemCursor, point, itemName);
 }
 
@@ -110,9 +108,8 @@ Action *Actor::findAction(const Common::String &name) {
 	return nullptr;
 }
 
-const Common::String &Actor::getLocation() const {
-	static const Common::String empty;
-	return empty;
+Common::String Actor::getLocation() const {
+	return Common::String();
 }
 
 void Actor::setAction(Action *newAction) {
@@ -140,9 +137,8 @@ InventoryMgr *Actor::getInventoryMgr() const {
 	return _page->getModule()->getInventoryMgr();
 }
 
-const Common::String &Actor::getPDALink() const {
-	static const Common::String empty;
-	return empty;
+Common::String Actor::getPDALink() const {
+	return Common::String();
 }
 
 } // End of namespace Pink

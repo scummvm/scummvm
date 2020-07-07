@@ -20,9 +20,13 @@
  *
  */
 
+#include "graphics/macgui/macwidget.h"
+
 #include "director/director.h"
-#include "director/cast.h"
+#include "director/castmember.h"
+#include "director/movie.h"
 #include "director/sprite.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -35,9 +39,10 @@ Sprite::Sprite() {
 
 	_enabled = false;
 	_castId = 0;
+	_pattern = 0;
+
 	_castIndex = 0;
 	_spriteType = kInactiveSprite;
-	_castType = kCastTypeNull;
 	_inkData = 0;
 	_ink = kInkTypeCopy;
 	_trails = 0;
@@ -45,18 +50,16 @@ Sprite::Sprite() {
 	_cast = nullptr;
 
 	_thickness = 0;
-	_dirty = false;
 	_width = 0;
 	_height = 0;
-	_constraint = 0;
 	_moveable = false;
 	_editable = false;
 	_puppet = false;
+	_immediate = false;
 	_backColor = 255;
 	_foreColor = 0;
 
 	_blend = 0;
-	_visible = false;
 	_movieRate = 0;
 	_movieTime = 0;
 	_startTime = 0;
@@ -68,31 +71,52 @@ Sprite::Sprite() {
 Sprite::~Sprite() {
 }
 
-uint16 Sprite::getPattern() {
-	switch (_spriteType) {
-	case kRectangleSprite:
-	case kRoundedRectangleSprite:
-	case kOvalSprite:
-	case kLineTopBottomSprite:
-	case kLineBottomTopSprite:
-	case kOutlinedRectangleSprite:
-	case kOutlinedRoundedRectangleSprite:
-	case kOutlinedOvalSprite:
-		return _castId;
+bool Sprite::isQDShape() {
+	return _spriteType == kRectangleSprite ||
+		_spriteType == kRoundedRectangleSprite ||
+		_spriteType == kOvalSprite ||
+		_spriteType == kLineTopBottomSprite ||
+		_spriteType == kLineBottomTopSprite ||
+		_spriteType == kOutlinedRectangleSprite ||
+		_spriteType == kOutlinedRoundedRectangleSprite ||
+		_spriteType == kOutlinedOvalSprite ||
+		_spriteType == kThickLineSprite;
+}
 
-	case kCastMemberSprite:
-		switch (_cast->_type) {
-		case kCastShape:
-			return ((ShapeCast *)_cast)->_pattern;
-			break;
-		default:
-			warning("Sprite::getPattern(): Unhandled cast type: %d", _cast->_type);
-			break;
-		}
-		// fallthrough
-	default:
-		return 0;
+void Sprite::updateCast() {
+	if (!_cast)
+		return;
+
+	if (_cast->isEditable() != _editable && !_puppet)
+		_cast->setEditable(_editable);
+}
+
+bool Sprite::isFocusable() {
+	if (_moveable || _puppet || _scriptId)
+		return true;
+
+	return false;
+}
+
+bool Sprite::shouldHilite() {
+	if ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte))
+		if (g_director->getVersion() < 4 && !_moveable)
+			if (g_director->getCurrentMovie()->getScriptContext(kScoreScript, _scriptId) ||
+					g_director->getCurrentMovie()->getScriptContext(kCastScript, _castId))
+				return true;
+
+	return false;
+}
+
+uint16 Sprite::getPattern() {
+	if (!_cast) {
+		if (isQDShape())
+			return _pattern;
+	} else if (_cast->_type == kCastShape) {
+		return ((ShapeCastMember *)_cast)->_pattern;
 	}
+
+	return 0;
 }
 
 void Sprite::setPattern(uint16 pattern) {
@@ -105,7 +129,7 @@ void Sprite::setPattern(uint16 pattern) {
 	case kOutlinedRectangleSprite:
 	case kOutlinedRoundedRectangleSprite:
 	case kOutlinedOvalSprite:
-		_castId = pattern;
+		_pattern = pattern;
 		break;
 
 	case kCastMemberSprite:
@@ -119,172 +143,51 @@ void Sprite::setPattern(uint16 pattern) {
 }
 
 void Sprite::setCast(uint16 castId) {
-	Cast *member = g_director->getCastMember(castId);
+	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
+	_castId = castId;
+
+	if (castId == 0)
+		return;
+
 	if (member) {
 		_cast = member;
-		_castId = castId;
-		_castType = kCastTypeNull;
 
-		if (g_director->getVersion() < 4) {
-			switch (_spriteType) {
-			case kBitmapSprite:
-				_castType = kCastBitmap;
-				break;
-			case kRectangleSprite:
-			case kRoundedRectangleSprite:
-			case kOvalSprite:
-			case kLineTopBottomSprite:
-			case kLineBottomTopSprite:
-			case kOutlinedRectangleSprite:
-			case kOutlinedRoundedRectangleSprite:
-			case kOutlinedOvalSprite:
-			case kCastMemberSprite:
-				if (_cast != nullptr) {
-					switch (_cast->_type) {
-					case kCastButton:
-						_castType = kCastButton;
-						break;
-					default:
-						_castType = kCastShape;
-						break;
-					}
-				} else {
-					_castType = kCastShape;
-				}
-				break;
-			case kTextSprite:
-				_castType = kCastText;
-				break;
-			case kButtonSprite:
-			case kCheckboxSprite:
-			case kRadioButtonSprite:
-				_castType = kCastButton;
-				break;
-			default:
-				warning("Sprite::setCast(): Unhandled sprite type %d", _spriteType);
-				break;
-			}
-		} else {
-			_castType = member->_type;
+		if (_cast->_type == kCastText &&
+				(_spriteType == kButtonSprite ||
+				 _spriteType == kCheckboxSprite ||
+				 _spriteType == kRadioButtonSprite)) {
+			// WORKAROUND: In D2/D3 there can be text casts that have button
+			// information set in the sprite.
+			warning("Sprite::setCast(): Working around D2/3 button glitch");
+
+			delete _cast->_widget;
+			_cast->_type = kCastButton;
+			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
+			((TextCastMember *)_cast)->createWidget();
 		}
+	} else {
+		warning("Sprite::setCast(): CastMember id %d has null member", castId);
 	}
-	_dirty = true;
 }
 
-Common::Rect Sprite::getBbox() {
+Common::Rect Sprite::getDims() {
 	Common::Rect result;
-	if (_castId == 0) {
-		return result;
+
+	if (!_cast || _cast->_type == kCastShape) {
+		result = Common::Rect(_width, _height);
+	} else if (_cast->_widget) {
+		result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
+	} else {
+		warning("Sprite::getDims(): Unable to find sprite dimensions");
 	}
 
-	switch (_castType) {
-	case kCastShape:
-		result = Common::Rect(_currentPoint.x,
-								_currentPoint.y,
-								_currentPoint.x + _width,
-								_currentPoint.y + _height);
-		break;
-	case kCastRTE:
-	case kCastText: {
-		TextCast *textCast = (TextCast*)_cast;
-		int x = _currentPoint.x; // +rectLeft;
-		int y = _currentPoint.y; // +rectTop;
-		int height = textCast->_initialRect.height(); //_sprites[spriteId]->_height;
-		int width;
-		Common::Rect *textRect = NULL;
+	if (_puppet && _stretch) {
+		// TODO: Properly align the bounding box
 
-		if (g_director->getVersion() >= 4) {
-			// where does textRect come from?
-			if (textRect == NULL) {
-				width = textCast->_initialRect.right;
-			} else {
-				width = textRect->width();
-			}
-		} else {
-			width = textCast->_initialRect.width(); //_sprites[spriteId]->_width;
-		}
-
-		result = Common::Rect(x, y, x + width, y + height);
-		break;
+		result.setHeight(_height);
+		result.setWidth(_width);
 	}
-	case kCastButton: {
-		// This may not be a button cast. It could be a textcast with the
-		// channel forcing it to be a checkbox or radio button!
-		ButtonCast *button = (ButtonCast *)_cast;
 
-		// Sometimes, at least in the D3 Workshop Examples, these buttons are
-		// just TextCast. If they are, then we just want to use the spriteType
-		// as the button type. If they are full-bown Cast members, then use the
-		// actual cast member type.
-		int buttonType = _spriteType;
-		if (buttonType == kCastMemberSprite) {
-			switch (button->_buttonType) {
-			case kTypeCheckBox:
-				buttonType = kCheckboxSprite;
-				break;
-			case kTypeButton:
-				buttonType = kButtonSprite;
-				break;
-			case kTypeRadio:
-				buttonType = kRadioButtonSprite;
-				break;
-			}
-		}
-
-		uint32 rectLeft = button->_initialRect.left;
-		uint32 rectTop = button->_initialRect.top;
-
-		int x = _currentPoint.x;
-		int y = _currentPoint.y;
-
-		if (g_director->getVersion() > 3) {
-			x += rectLeft;
-			y += rectTop;
-		}
-
-		int height = button->_initialRect.height();
-		int width = button->_initialRect.width() + 3;
-
-		switch (buttonType) {
-		case kCheckboxSprite:
-			// Magic numbers: checkbox square need to move left about 5px from
-			// text and 12px side size (D4)
-			_startBbox = Common::Rect(x, y + 2, x + 12, y + 14);
-			break;
-		case kButtonSprite:
-			_startBbox = Common::Rect(x, y, x + width, y + height + 3);
-			break;
-		case kRadioButtonSprite:
-			_startBbox = Common::Rect(x, y + 2, x + 12, y + 14);
-			break;
-		default:
-			warning("Score::getBbox(): Unknown buttonType");
-		}
-		break;
-	}
-	case kCastBitmap: {
-		BitmapCast *bc = (BitmapCast *)_cast;
-
-		int32 regX = bc->_regX;
-		int32 regY = bc->_regY;
-		int32 rectLeft = bc->_initialRect.left;
-		int32 rectTop = bc->_initialRect.top;
-
-		int x = _currentPoint.x - regX + rectLeft;
-		int y = _currentPoint.y - regY + rectTop;
-		int height = _height;
-		int width = g_director->getVersion() > 4 ? bc->_initialRect.width() : _width;
-
-		// If one of the dimensions is invalid, invalidate whole thing
-		if (width == 0 || height == 0)
-			width = height = 0;
-
-		result = Common::Rect(x, y, x + width, y + height);
-		break;
-	}
-	default:
-		warning("Sprite::getBbox(): Unhandled cast type: %d", _castType);
-	}
 	return result;
 }
 

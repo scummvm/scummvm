@@ -113,6 +113,12 @@ bool RemorseGame::startGame() {
 	if (!actor)
 		error("Couldn't create MainActor");
 
+	// TODO: these should be read from DTable data.
+	actor->setStr(75);
+	actor->setHP(150);
+	actor->setInt(5000);
+	actor->setMana(2500);
+
 	ObjectManager::get_instance()->assignActorObjId(actor, 1);
 
 	if (GAME_IS_REMORSE) {

@@ -63,6 +63,9 @@ public:
 	//! The SpriteProcess destructor
 	~SpriteProcess(void) override;
 
+	//! Move the sprite to a new location
+	void move(int x, int y, int z);
+
 	//! The SpriteProcess run function
 	void run() override;
 

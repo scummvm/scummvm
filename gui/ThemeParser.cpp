@@ -80,8 +80,12 @@ static TextColor parseTextColorId(const Common::String &name) {
 	return kTextColorMAX;
 }
 
-static Graphics::TextAlign parseTextHAlign(const Common::String &val) {
-	if (val == "left")
+Graphics::TextAlign parseTextHAlign(const Common::String &val) {
+	if (val == "start")
+		return Graphics::kTextAlignStart;
+	else if (val == "end")
+		return Graphics::kTextAlignEnd;
+	else if (val == "left")
 		return Graphics::kTextAlignLeft;
 	else if (val == "right")
 		return Graphics::kTextAlignRight;
@@ -684,6 +688,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		var = node->values["name"];
 		int width = -1;
 		int height = -1;
+		bool useRTL = true;
 
 		if (node->values.contains("width")) {
 			if (_theme->getEvaluator()->hasVar(node->values["width"]) == true)
@@ -701,14 +706,18 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 				return parserError("Corrupted height value in key for " + var);
 		}
 
-		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
+		Graphics::TextAlign alignH = Graphics::kTextAlignStart;
 
 		if (node->values.contains("textalign")) {
 			if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 				return parserError("Invalid value for text alignment.");
 		}
 
-		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH);
+		if (node->values.contains("rtl")) {
+			useRTL = false;
+		}
+
+		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH, useRTL);
 	}
 
 	return true;
@@ -956,7 +965,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 
 
 	if (node->values.contains("textalign")) {
-		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
+		Graphics::TextAlign alignH = Graphics::kTextAlignStart;
 
 		if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 			return parserError("Invalid value for text alignment.");

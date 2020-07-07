@@ -60,25 +60,23 @@ InterfaceMain::InterfaceMain() {
 		}
 	}
 
-	_objs.push_back(g_vm->getQSystem()->_cursor.get());
-	_objs.push_back(g_vm->getQSystem()->_case.get());
-	_objs.push_back(g_vm->getQSystem()->_star.get());
+	_objs.push_back(g_vm->getQSystem()->getCursor());
+	_objs.push_back(g_vm->getQSystem()->getCase());
+	_objs.push_back(g_vm->getQSystem()->getStar());
 }
 
 void InterfaceMain::start(int id) {
-	g_vm->getQSystem()->update();
-	g_vm->getQSystem()->_isIniting = 0;
+	_objs.push_back(g_vm->getQSystem()->getPetka());
+	_objs.push_back(g_vm->getQSystem()->getChapay());
 
-	_objs.push_back(g_vm->getQSystem()->_petka.get());
-	_objs.push_back(g_vm->getQSystem()->_chapayev.get());
-
-	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", false));
+	Common::ScopedPtr<Common::SeekableReadStream> bgsStream(g_vm->openFile("BGs.ini", true));
 	Common::INIFile bgsIni;
 	bgsIni.allowNonEnglishCharacters();
 	bgsIni.loadFromStream(*bgsStream);
 	Common::String startRoom;
 	bgsIni.getKey("StartRoom", "Settings", startRoom);
-	loadRoom(g_vm->getQSystem()->findObject(startRoom)->_id, false);
+	if (g_vm->getSaveSlot() == -1)
+		loadRoom(g_vm->getQSystem()->findObject(startRoom)->_id, false);
 }
 
 void InterfaceMain::loadRoom(int id, bool fromSave) {
@@ -90,38 +88,33 @@ void InterfaceMain::loadRoom(int id, bool fromSave) {
 	_roomId = id;
 	const BGInfo *info = findBGInfo(id);
 	QObjectBG *room = (QObjectBG *)sys->findObject(id);
-	g_vm->getQSystem()->_room = room;
+	sys->_room = room;
 	g_vm->resMgr()->loadBitmap(room->_resourceId);
 	_objs.push_back(room);
 	for (uint i = 0; i < info->attachedObjIds.size(); ++i) {
-		QMessageObject *obj = g_vm->getQSystem()->findObject(info->attachedObjIds[i]);
-		debug("Added sound id %d", obj->_resourceId);
-		obj->_sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(obj->_resourceId), Audio::Mixer::kSFXSoundType);
-		obj->_hasSound = obj->_sound != nullptr;
-		obj->_startSound = false;
+		QMessageObject *obj = sys->findObject(info->attachedObjIds[i]);
+		obj->loadSound();
 		if (obj->_isShown || obj->_isActive)
 			g_vm->resMgr()->loadFlic(obj->_resourceId);
 		_objs.push_back(obj);
 	}
-	if (sys->_musicId != room->_musicId) {
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_musicId));
-		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_musicId), Audio::Mixer::kMusicSoundType);
-		if (sound) {
-			sound->play(true);
-		}
-		sys->_musicId = room->_musicId;
-	}
-	if (sys->_fxId != room->_fxId) {
-		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(sys->_fxId));
-		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(room->_fxId), Audio::Mixer::kMusicSoundType);
-		if (sound) {
-			sound->play(true);
-		}
-		sys->_fxId = room->_fxId;
-	}
+	playSound(room->_musicId, Audio::Mixer::kMusicSoundType);
+	playSound(room->_fxId, Audio::Mixer::kSFXSoundType);
 	if (!fromSave)
-		g_vm->getQSystem()->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
+		sys->addMessageForAllObjects(kInitBG, 0, 0, 0, 0, room);
 	g_vm->videoSystem()->updateTime();
+}
+
+void InterfaceMain::playSound(int id, Audio::Mixer::SoundType type) {
+	int *sysId = (type == Audio::Mixer::kMusicSoundType) ? &g_vm->getQSystem()->_musicId : &g_vm->getQSystem()->_fxId;
+	if (*sysId != id) {
+		g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(*sysId));
+		Sound *sound = g_vm->soundMgr()->addSound(g_vm->resMgr()->findSoundName(id), Audio::Mixer::kMusicSoundType); // kMusicSoundType intended
+		if (sound) {
+			sound->play(true);
+		}
+		*sysId = id;
+	}
 }
 
 const BGInfo *InterfaceMain::findBGInfo(int id) const {
@@ -136,58 +129,46 @@ void InterfaceMain::unloadRoom(bool fromSave) {
 	if (_roomId == -1)
 		return;
 	QSystem *sys = g_vm->getQSystem();
-	QObjectBG *room = (QObjectBG *) sys->findObject(_roomId);
-	if (room) {
-		if (!fromSave)
-			sys->addMessageForAllObjects(kLeaveBG, 0, 0, 0, 0, room);
-		g_vm->resMgr()->clearUnneeded();
-		g_vm->soundMgr()->removeSoundsWithType(Audio::Mixer::kSFXSoundType);
-		const BGInfo *info = findBGInfo(_roomId);
-		if (!info)
-			return;
-		for (uint i = 0; i < _objs.size();) {
-			bool removed = false;
-			if (_roomId == ((QMessageObject *) _objs[i])->_id) {
-				_objs.remove_at(i);
-				removed = true;
-			} else {
-				for (uint j = 0; j < info->attachedObjIds.size(); ++j) {
-					if (info->attachedObjIds[j] == ((QMessageObject *) _objs[i])->_id) {
-						QMessageObject *o = (QMessageObject *) _objs.remove_at(i);
-						g_vm->soundMgr()->removeSound(g_vm->resMgr()->findSoundName(o->_resourceId));
-						o->_sound = nullptr;
-						removed = true;
-						break;
-					}
-				}
-			}
-			if (!removed)
-				++i;
-		}
-	}
+	QObjectBG *room = (QObjectBG *)sys->findObject(_roomId);
+	if (!room)
+		return;
+
+	if (!fromSave)
+		sys->addMessageForAllObjects(kLeaveBG, 0, 0, 0, 0, room);
+
+	g_vm->soundMgr()->removeSoundsWithType(Audio::Mixer::kSFXSoundType);
+	g_vm->resMgr()->clearUnneeded();
+
+	_objs.clear();
+
+	_objs.push_back(sys->getCursor());
+	_objs.push_back(sys->getCase());
+	_objs.push_back(sys->getStar());
+	_objs.push_back(sys->getPetka());
+	_objs.push_back(sys->getChapay());
 }
 
-void InterfaceMain::onLeftButtonDown(const Common::Point p) {
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+void InterfaceMain::onLeftButtonDown(Common::Point p) {
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	if (!cursor->_isShown) {
 		_dialog.next(-1);
 		return;
 	}
 
 	for (int i = _objs.size() - 1; i >= 0; --i) {
-		if (_objs[i]->isInPoint(p.x, p.y)) {
-			_objs[i]->onClick(p.x, p.y);
+		if (_objs[i]->isInPoint(p)) {
+			_objs[i]->onClick(p);
 			return;
 		}
 	}
 
 	switch (cursor->_actionType) {
 	case kActionWalk: {
-		QObjectPetka *petka = g_vm->getQSystem()->_petka.get();
+		QObjectPetka *petka = g_vm->getQSystem()->getPetka();
 		if (petka->_heroReaction) {
 			for (uint i = 0; i < petka->_heroReaction->messages.size(); ++i) {
 				if (petka->_heroReaction->messages[i].opcode == kGoTo) {
-					QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev.get();
+					QObjectChapayev *chapay = g_vm->getQSystem()->getChapay();
 					chapay->stopWalk();
 					break;
 				}
@@ -199,7 +180,7 @@ void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 		break;
 	}
 	case kActionObjUseChapayev: {
-		QObjectChapayev *chapay = g_vm->getQSystem()->_chapayev.get();
+		QObjectChapayev *chapay = g_vm->getQSystem()->getChapay();
 		chapay->walk(p.x, p.y);
 		break;
 	}
@@ -208,51 +189,38 @@ void InterfaceMain::onLeftButtonDown(const Common::Point p) {
 	}
 }
 
-void InterfaceMain::onRightButtonDown(const Common::Point p) {
-	QObjectStar *star = g_vm->getQSystem()->_star.get();
-	// QObjectCase *objCase = g_vm->getQSystem()->_case.get();
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+void InterfaceMain::onRightButtonDown(Common::Point p) {
+	QObjectStar *star = g_vm->getQSystem()->getStar();
+	QObjectCase *objCase = g_vm->getQSystem()->getCase();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	if (!star->_isActive)
 		return;
-	if (g_vm->getQSystem()->_case.get()->_isShown && cursor->_actionType == 6) {
-		cursor->show(0);
-		cursor->_resourceId = 5005;
-		cursor->returnInvItem();
-		cursor->_actionType = 3;
-		cursor->_invObj = nullptr;
-		cursor->setCursorPos(p.x, p.y, 1);
-		cursor->show(1);
+	if (objCase->_isShown && cursor->_actionType == kActionObjUse) {
+		cursor->setAction(kActionTake);
 	} else {
-		if (!star->_isShown) {
-			FlicDecoder *flc = g_vm->resMgr()->loadFlic(star->_resourceId);
-			int x = MAX(p.x - flc->getWidth() / 2, 0);
-			int y = MAX(p.y - flc->getHeight() / 2, 0);
-
-			star->_x = MIN(x, 639 - flc->getWidth());
-			star->_y = MIN(y, 479 - flc->getHeight());
-		}
+		star->setPos(p, false);
 		star->show(star->_isShown == 0);
 	}
 }
 
-void InterfaceMain::onMouseMove(const Common::Point p) {
+void InterfaceMain::onMouseMove(Common::Point p) {
 	QMessageObject *prevObj = (QMessageObject *)_objUnderCursor;
 	_objUnderCursor = nullptr;
 
-	QObjectCursor *cursor = g_vm->getQSystem()->_cursor.get();
+	QObjectCursor *cursor = g_vm->getQSystem()->getCursor();
 	if (cursor->_isShown) {
 		for (int i = _objs.size() - 1; i >= 0; --i) {
-			if (_objs[i]->isInPoint(p.x, p.y)) {
-				_objs[i]->onMouseMove(p.x, p.y);
+			if (_objs[i]->isInPoint(p)) {
+				_objs[i]->onMouseMove(p);
 				break;
 			}
 		}
 	}
 
 	cursor->_animate = _objUnderCursor != nullptr;
-	cursor->setCursorPos(p.x, p.y, true);
+	cursor->setPos(p, true);
 
-	if (prevObj != _objUnderCursor && _objUnderCursor && _dialog._state == kIdle) {
+	if (prevObj != _objUnderCursor && _objUnderCursor && !_dialog.isActive()) {
 		Graphics::PixelFormat fmt = g_system->getScreenFormat();
 		QMessageObject *obj = (QMessageObject *)_objUnderCursor;
 		if (!obj->_nameOnScreen.empty()) {
@@ -260,7 +228,7 @@ void InterfaceMain::onMouseMove(const Common::Point p) {
 		} else {
 			setText(Common::convertToU32String(obj->_name.c_str(), Common::kWindows1251), fmt.RGBToColor(0x80, 0, 0), fmt.RGBToColor(0xA, 0xA, 0xA));
 		}
-	} else if (prevObj && !_objUnderCursor && _dialog._state == kIdle) {
+	} else if (prevObj && !_objUnderCursor && !_dialog.isActive()) {
 		setText(Common::U32String(""), 0, 0);
 	}
 }
@@ -273,8 +241,8 @@ void InterfaceMain::setTextChoice(const Common::Array<Common::U32String> &choice
 
 void InterfaceMain::setTextDescription(const Common::U32String &text, int frame) {
 	removeTexts();
-	QObjectStar *star = g_vm->getQSystem()->_star.get();
-	star->_isActive = 0;
+	QObjectStar *star = g_vm->getQSystem()->getStar();
+	star->_isActive = false;
 	_objUnderCursor = nullptr;
 	_hasTextDesc = true;
 	_objs.push_back(new QTextDescription(text, frame));
@@ -283,7 +251,7 @@ void InterfaceMain::setTextDescription(const Common::U32String &text, int frame)
 void InterfaceMain::removeTextDescription() {
 	_hasTextDesc = false;
 	_objUnderCursor = nullptr;
-	g_vm->getQSystem()->_star->_isActive = true;
+	g_vm->getQSystem()->getStar()->_isActive = true;
 	removeTexts();
 }
 

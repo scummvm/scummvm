@@ -410,17 +410,17 @@ void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 
 MenuActionResetOptionSliders::MenuActionResetOptionSliders(BaseMenuSystem *menuSystem,
 														   MenuActionUpdateSlider *sfxSlider,
-														   MenuActionUpdateSlider *musiclider,
+														   MenuActionUpdateSlider *musicSlider,
 														   MenuActionUpdateSlider *speechSlider,
 														   MenuActionUpdateSlider *textDurationSlider)
-: BaseMenuAction(menuSystem), _sfxSlider(sfxSlider), _musiclider(musiclider),
+: BaseMenuAction(menuSystem), _sfxSlider(sfxSlider), _musicSlider(musicSlider),
   _speechSlider(speechSlider), _textDurationSlider(textDurationSlider) {
 
 }
 
 void MenuActionResetOptionSliders::execute() {
 	_sfxSlider->setSliderValue(11);
-	_musiclider->setSliderValue(11);
+	_musicSlider->setSliderValue(11);
 	_speechSlider->setSliderValue(15);
 	_textDurationSlider->setSliderValue(0);
 }

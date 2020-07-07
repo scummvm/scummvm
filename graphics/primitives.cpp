@@ -290,7 +290,7 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 			drawHLine(rect.left + x + r, rect.right - x - r, rect.bottom + y - r + stop, color, plotProc, data);
 		}
 
-		for (int i = 0; i < dy; i++) {
+		for (int i = 1; i < dy; i++) {
 			if (filled) {
 				drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
 			} else {
@@ -335,7 +335,7 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 			drawVLine(rect.right + x - r + stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
 		}
 
-		for (int i = 0; i < dx; i++) {
+		for (int i = 1; i < dx; i++) {
 			if (filled) {
 				drawVLine(rect.left + r + i, rect.top, rect.bottom, color, plotProc, data);
 			} else {

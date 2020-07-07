@@ -72,6 +72,12 @@ public:
 		kKeymapTypeGame
 	};
 
+	enum KeymapMatch {
+		kKeymapMatchNone,
+		kKeymapMatchPartial,
+		kKeymapMatchExact
+	};
+
 	typedef Array<Action *> ActionArray;
 
 	Keymap(KeymapType type, const String &id, const String &description);
@@ -109,9 +115,10 @@ public:
 	/**
 	 * Find the Actions that a hardware input is mapped to
 	 * @param hardwareInput	the input that is mapped to the required Action
-	 * @return		an array containing pointers to the actions
+	 * @param actions an array containing pointers to the actions
+	 * @return	the matching status for the retieved actions
 	 */
-	ActionArray getMappedActions(const Event &event) const;
+	KeymapMatch getMappedActions(const Event &event, ActionArray &actions) const;
 
 	/**
 	 * Adds a new Action to this Map

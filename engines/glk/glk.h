@@ -31,6 +31,7 @@
 #include "glk/glk_types.h"
 #include "glk/streams.h"
 #include "glk/pc_speaker.h"
+#include "glk/quetzal.h"
 
 namespace Glk {
 
@@ -49,7 +50,8 @@ enum GlkDebugChannels {
 	kDebugCore      = 1 << 0,
 	kDebugScripts   = 1 << 1,
 	kDebugGraphics  = 1 << 2,
-	kDebugSound     = 1 << 3
+	kDebugSound     = 1 << 3,
+	kDebugSpeech    = 1 << 4
 };
 
 
@@ -93,6 +95,11 @@ protected:
 	 * Setup the video mode
 	 */
 	virtual void initGraphicsMode();
+
+	/**
+	 * Create the debugger
+	 */
+	virtual void createDebugger();
 
 	/**
 	 * Create the screen
@@ -202,6 +209,16 @@ public:
 	 * Save the game to a given slot
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+
+	/**
+	 * Loads Quetzal chunks from the passed savegame
+	 */
+	virtual Common::Error loadGameChunks(QuetzalReader &quetzal);
+
+	/**
+	 * Writes out the Quetzal chunks within a savegame
+	 */
+	virtual Common::Error saveGameChunks(QuetzalWriter &quetzal);
 
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream

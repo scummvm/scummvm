@@ -25,9 +25,11 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/frame.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/stage.h"
+#include "director/castmember.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -37,7 +39,7 @@ bool processQuitEvent(bool click) {
 
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_QUIT) {
-			g_director->getCurrentScore()->_stopPlay = true;
+			g_director->getCurrentMovie()->getScore()->_stopPlay = true;
 			return true;
 		}
 
@@ -57,7 +59,8 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 	uint endTime = g_system->getMillis() + 10;
 
-	Score *sc = getCurrentScore();
+	Movie *m = getCurrentMovie();
+	Score *sc = m->getScore();
 	if (sc->getCurrentFrame() >= sc->_frames.size()) {
 		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
 		return;
@@ -77,17 +80,15 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				sc->_lastEventTime = g_director->getMacTicks();
-				sc->_lastRollTime =	 sc->_lastEventTime;
+				m->_lastEventTime = g_director->getMacTicks();
+				m->_lastRollTime =	 m->_lastEventTime;
 
 				if (_draggingSprite) {
-					Sprite *draggedSprite = sc->_sprites[_draggingSpriteId];
+					Sprite *draggedSprite = sc->getSpriteById(_draggingSpriteId);
 					if (draggedSprite->_moveable) {
-						pos = g_system->getEventManager()->getMousePos();
-						Common::Point delta = pos - _draggingSpritePos;
-						draggedSprite->_currentPoint.x += delta.x;
-						draggedSprite->_currentPoint.y += delta.y;
-						draggedSprite->_dirty = true;
+						pos = getStage()->getMousePos();
+
+						sc->_channels[_draggingSpriteId]->addDelta(pos - _draggingSpritePos);
 						_draggingSpritePos = pos;
 					} else {
 						releaseDraggedSprite();
@@ -96,64 +97,64 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				pos = g_system->getEventManager()->getMousePos();
+				pos = _currentStage->getMousePos();
 
 				// D3 doesn't have both mouse up and down.
 				// But we still want to know if the mouse is down for press effects.
-				spriteId = sc->getSpriteIDFromPos(pos);
-				sc->_currentMouseDownSpriteId = spriteId;
-				if (sc->_sprites[spriteId]->_scriptId)
-					sc->_currentClickOnSpriteId = spriteId;
+				spriteId = sc->getSpriteIDFromPos(pos, true);
+				m->_currentMouseDownSpriteId = spriteId;
+				m->_currentClickOnSpriteId = spriteId;
 
-				sc->_mouseIsDown = true;
-				sc->_lastEventTime = g_director->getMacTicks();
-				sc->_lastClickTime = sc->_lastEventTime;
+				if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
+					g_director->getStage()->invertChannel(sc->_channels[spriteId]);
+
+				m->_lastEventTime = g_director->getMacTicks();
+				m->_lastClickTime = m->_lastEventTime;
 
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
-				_lingo->registerEvent(kEventMouseDown);
+				_lingo->registerEvent(kEventMouseDown, spriteId);
 
-				if (sc->_sprites[spriteId]->_moveable)
+				if (sc->getSpriteById(spriteId)->_moveable)
 					g_director->setDraggedSprite(spriteId);
 
 				break;
 
 			case Common::EVENT_LBUTTONUP:
-				pos = g_system->getEventManager()->getMousePos();
+				pos = _currentStage->getMousePos();
 
-				spriteId = sc->getSpriteIDFromPos(pos);
+				spriteId = sc->getSpriteIDFromPos(pos, true);
+
+				if (!sc->getChannelById(m->_currentMouseDownSpriteId)->getBbox().contains(pos))
+					m->_currentMouseDownSpriteId = 0;
+
+				if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
+					g_director->getStage()->invertChannel(sc->_channels[spriteId]);
+
+				if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle))
+					m->_currentMouseDownSpriteId = spriteId;
 
 				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 
-				sc->_mouseIsDown = false;
 				releaseDraggedSprite();
 
-				_lingo->registerEvent(kEventMouseUp);
-				sc->_currentMouseDownSpriteId = 0;
+				{
+					CastMember *cast = g_director->getCurrentMovie()->getCastMember(sc->getSpriteById(spriteId)->_castId);
+					if (cast && cast->_type == kCastButton)
+						cast->_hilite = !cast->_hilite;
+				}
+
+				_lingo->registerEvent(kEventMouseUp, spriteId);
+				m->_currentMouseDownSpriteId = 0;
 				break;
 
 			case Common::EVENT_KEYDOWN:
-				_keyCode = event.kbd.keycode;
+				_keyCode = _macKeyCodes.contains(event.kbd.keycode) ? _macKeyCodes[event.kbd.keycode] : 0;
 				_key = (unsigned char)(event.kbd.ascii & 0xff);
 
-				switch (_keyCode) {
-				case Common::KEYCODE_LEFT:
-					_keyCode = 123;
-					break;
-				case Common::KEYCODE_RIGHT:
-					_keyCode = 124;
-					break;
-				case Common::KEYCODE_DOWN:
-					_keyCode = 125;
-					break;
-				case Common::KEYCODE_UP:
-					_keyCode = 126;
-					break;
-				default:
-					debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
-				}
+				debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 
-				sc->_lastEventTime = g_director->getMacTicks();
-				sc->_lastKeyTime = sc->_lastEventTime;
+				m->_lastEventTime = g_director->getMacTicks();
+				m->_lastKeyTime = m->_lastEventTime;
 				_lingo->registerEvent(kEventKeyDown);
 				break;
 
@@ -168,7 +169,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 
-		if (sc->getCurrentFrame() > 0)
+		if (getVersion() >= 3 && sc->getCurrentFrame() > 0 && !sc->_stopPlay && _lingo->getEventCount() == 0)
 			_lingo->registerEvent(kEventIdle);
 
 		if (!bufferLingoEvents)
@@ -179,7 +180,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 void DirectorEngine::setDraggedSprite(uint16 id) {
 	_draggingSprite = true;
 	_draggingSpriteId = id;
-	_draggingSpritePos = g_system->getEventManager()->getMousePos();
+	_draggingSpritePos = _currentStage->getMousePos();
 }
 
 void DirectorEngine::releaseDraggedSprite() {

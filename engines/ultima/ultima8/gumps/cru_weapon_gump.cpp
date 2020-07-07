@@ -29,8 +29,6 @@
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -40,12 +38,13 @@ static const int WEAPON_GUMP_SHAPE = 3;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruWeaponGump)
 
-CruWeaponGump::CruWeaponGump() : CruStatGump(), _weaponShape(nullptr) {
+CruWeaponGump::CruWeaponGump() : CruStatGump(), _weaponShape(nullptr),
+	_weaponGump(nullptr) {
 
 }
 
 CruWeaponGump::CruWeaponGump(Shape *shape, int x)
-	: CruStatGump(shape, x), _weaponShape(nullptr) {
+	: CruStatGump(shape, x), _weaponShape(nullptr), _weaponGump(nullptr) {
 	_frameNum = 0;
 }
 
@@ -66,20 +65,42 @@ void CruWeaponGump::InitGump(Gump *newparent, bool take_focus) {
 		warning("failed to init stat gump: no weapon shape");
 		return;
 	}
+
+	_weaponGump = new Gump();
+	// We will fill out the shape to paint for this later.
+	_weaponGump->InitGump(this, false);
+
 }
 
 void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	CruStatGump::PaintThis(surf, lerp_factor, scaled);
-
 	const MainActor *a = getMainActor();
 	if (!a) {
 		// avatar gone??
 		return;
 	}
 
-	uint16 weapon = a->getDamageType(); // ?? TODO: Where do we store current weapon?
-	/*const ShapeFrame *frame = */_weaponShape->getFrame(weapon);
-	// TODO: Paint the current weapon
+	uint16 active = a->getActiveWeapon();
+	if (!active) {
+		_weaponGump->SetShape(0, 0);
+	} else {
+		Item *item = getItem(active);
+		if (!item) {
+			_weaponGump->SetShape(0, 0);
+		} else {
+			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
+			uint16 frameno = 0;
+			if (weaponinfo) {
+				// this should be a weapon, otherwise why are we here?
+				assert(WEAPON_GUMP_SHAPE == weaponinfo->_displayGumpShape);
+				frameno = weaponinfo->_displayGumpFrame;
+			}
+			_weaponGump->SetShape(_weaponShape, frameno);
+			_weaponGump->UpdateDimsFromShape();
+			_weaponGump->setRelativePosition(CENTER);
+		}
+	}
+
+	CruStatGump::PaintThis(surf, lerp_factor, scaled);
 }
 
 void CruWeaponGump::saveData(Common::WriteStream *ws) {

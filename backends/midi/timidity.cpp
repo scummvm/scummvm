@@ -352,7 +352,7 @@ void MidiDriver_TIMIDITY::timidity_meta_seq(int p1, int p2, int p3) {
 	/* see _CHN_COMMON from soundcard.h; this is simplified
 	 * to just send seq to the server without any buffers,
 	 * delays and extra functions/macros */
-	u_char seqbuf[8];
+	unsigned char seqbuf[8];
 
 	seqbuf[0] = 0x92;
 	seqbuf[1] = 0;

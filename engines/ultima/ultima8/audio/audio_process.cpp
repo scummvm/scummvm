@@ -76,15 +76,9 @@ bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) c
 	int x = (ix - iy) / 4;
 	int y = (ix + iy) / 8 - iz;
 
-	// Fall off over 350 pixels, or 700 for crusader
-	// (double resolution)..
+	// Fall off over 350 pixels
+	int limit = 350 * 350;
 
-	int limit;
-	if (GAME_IS_U8) {
-		limit = 350 * 350;
-	} else {
-		limit = 700 * 700;
-	}
 	int dist = limit - (x * x + y * y);
 	if (dist < 0) dist = 0;
 	dist = (dist * 256) / limit;
@@ -305,7 +299,8 @@ void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
 
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
-		if (it->_sfxNum == sfxNum && it->_objId == objId) {
+		if ((sfxNum == -1 || it->_sfxNum == sfxNum)
+			 && it->_objId == objId) {
 			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
 			it = _sampleInfo.erase(it);
 		} else {
@@ -318,6 +313,16 @@ bool AudioProcess::isSFXPlaying(int sfxNum) {
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
 		if (it->_sfxNum == sfxNum)
+			return true;
+	}
+
+	return false;
+}
+
+bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
+	Std::list<SampleInfo>::iterator it;
+	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
+		if (it->_sfxNum == sfxNum && (objId == it->_objId))
 			return true;
 	}
 
@@ -530,10 +535,13 @@ uint32 AudioProcess::I_playSFXCru(const uint8 *args, unsigned int argsize) {
 		warning("I_playSFXCru: Couldn't get item");
 	} else {
 		AudioProcess *ap = AudioProcess::get_instance();
-		if (ap)
+		if (ap) {
+			// Crusader stops any existing item sounds before starting the next.
+			ap->stopSFX(item->getObjId(), -1);
 			ap->playSFX(sfxNum, 0x10, item->getObjId(), 0, true);
-		else
+		} else {
 			warning("I_playSFXCru Error: No AudioProcess");
+		}
 	}
 	return 0;
 }
@@ -566,6 +574,22 @@ uint32 AudioProcess::I_isSFXPlaying(const uint8 *args, unsigned int argsize) {
 	return 0;
 }
 
+uint32 AudioProcess::I_isSFXPlayingForObject(const uint8 *args, unsigned int argsize) {
+	ARG_ITEM_FROM_PTR(item)
+	ARG_SINT16(sfxNum);
+
+	if (!item) {
+		warning("I_isSFXPlayingForObject: Couldn't get item");
+	} else {
+		AudioProcess *ap = AudioProcess::get_instance();
+		if (ap)
+			return ap->isSFXPlayingForObject(sfxNum, item->getObjId());
+		else
+			warning("I_isSFXPlayingForObject Error: No AudioProcess");
+	}
+	return 0;
+}
+
 uint32 AudioProcess::I_setVolumeSFX(const uint8 *args, unsigned int /*argsize*/) {
 	// Sets volume for last played instances of sfxNum (???)
 	ARG_SINT16(sfxNum);
@@ -589,6 +613,36 @@ uint32 AudioProcess::I_stopSFX(const uint8 *args, unsigned int argsize) {
 
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->stopSFX(sfxNum, objId);
+	else perr << "Error: No AudioProcess" << Std::endl;
+
+	return 0;
+}
+
+uint32 AudioProcess::I_stopSFXCru(const uint8 *args, unsigned int argsize) {
+	int16 sfxNum = -1;
+	ARG_ITEM_FROM_PTR(item);
+
+	if (!item) {
+		perr << "Invalid item in I_stopSFXCru";
+		return 0;
+	}
+
+	if (argsize == 6) {
+		ARG_SINT16(sfxNumber);
+		sfxNum = sfxNumber;
+	}
+
+	AudioProcess *ap = AudioProcess::get_instance();
+	if (ap) ap->stopSFX(sfxNum, item->getObjId());
+	else perr << "Error: No AudioProcess" << Std::endl;
+
+	return 0;
+}
+
+uint32 AudioProcess::I_stopAllSFX(const uint8 * /*args*/, unsigned int /*argsize*/) {
+	AudioProcess *ap = AudioProcess::get_instance();
+	// Not *exactly* the same, but close enough for this intrinsic.
+	if (ap) ap->stopAllExceptSpeech();
 	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;

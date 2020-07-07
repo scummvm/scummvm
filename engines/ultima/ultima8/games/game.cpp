@@ -79,5 +79,16 @@ uint32 Game::I_playEndgame(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
+uint32 Game::I_playCredits(const uint8 *args, unsigned int /*argsize*/) {
+	perr << "TODO: Implement I_playCredits";
+	// TODO: need a process to wait for here.
+	// Should fade out, credits, fade in.
+	// Double-check in the disasm that this should just play credits and
+	// not also endgame movie.
+	// Game::get_instance()->playCredits();
+
+	return 0;
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima

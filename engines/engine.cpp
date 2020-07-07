@@ -564,8 +564,10 @@ void Engine::openMainMenuDialog() {
 		_mainMenuDialog = new MainMenuDialog(this);
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	ttsMan->pushState();
-	g_gui.initTextToSpeech();
+	if (ttsMan != nullptr) {
+		ttsMan->pushState();
+		g_gui.initTextToSpeech();
+	}
 #endif
 
 	setGameToLoadSlot(-1);
@@ -587,11 +589,13 @@ void Engine::openMainMenuDialog() {
 		}
 	}
 
+#ifdef USE_TTS
+	if (ttsMan != nullptr)
+		ttsMan->popState();
+#endif
+
 	applyGameSettings();
 	syncSoundSettings();
-#ifdef USE_TTS
-	ttsMan->popState();
-#endif
 }
 
 bool Engine::warnUserAboutUnsupportedGame() {

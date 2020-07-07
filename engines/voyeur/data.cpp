@@ -60,7 +60,6 @@ SVoy::SVoy(VoyeurEngine *vm):_vm(vm) {
 	_playStampMode = 0;
 	_switchBGNum = 0;
 	_transitionId = 0;
-	_victimNumber = 0;
 	_videoEventId = 0;
 	_vocSecondsOffset = 0;
 	_RTANum = 0;
@@ -152,7 +151,7 @@ void SVoy::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_fadingStep1);
 	s.syncAsSint16LE(_fadingStep2);
 	s.syncAsSint16LE(_fadingType);
-	s.syncAsSint16LE(_victimNumber);
+	s.skip(sizeof(int16), 0, 2);
 	s.syncAsSint16LE(_incriminatedVictimNumber);
 	s.syncAsSint16LE(_videoEventId);
 

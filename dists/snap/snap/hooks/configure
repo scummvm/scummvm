@@ -1,0 +1,2 @@
+#!/bin/sh
+snapctl restart $SNAP_NAME

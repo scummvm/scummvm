@@ -93,11 +93,11 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			#ifdef USE_TTS
-				GUIO1(GAMEOPTION_TTS_NARRATOR)
-			#else
-				GUIO0()
-			#endif
+#ifdef USE_TTS
+			GUIO1(GAMEOPTION_TTS_NARRATOR)
+#else
+			GUIO0()
+#endif
 		},
 		GF_FLOPPY,
 	},
@@ -110,12 +110,11 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			#ifdef USE_TTS
-				GUIO1(GAMEOPTION_TTS_NARRATOR)
-			#else
-				GUIO0()
-			#endif
-
+#ifdef USE_TTS
+			GUIO1(GAMEOPTION_TTS_NARRATOR)
+#else
+			GUIO0()
+#endif
 		},
 		GF_FLOPPY | GF_EGA,
 	},
@@ -235,9 +234,9 @@ static const LureGameDescription gameDescriptions[] = {
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
 	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames
-			#ifdef USE_TTS
+#ifdef USE_TTS
 			, optionsList
-			#endif
+#endif
 			) {
 		_md5Bytes = 1024;
 

@@ -353,6 +353,9 @@ private:
 	void loadingScreen();
 
 	void mainMenu();
+
+	bool checkAudioVideoFiles();
+	bool validateAVFile(const char *filename);
 };
 
 DragonsEngine *getEngine();

@@ -92,6 +92,8 @@ void Gump::UpdateDimsFromShape() {
 	assert(sf);
 	_dims.w = sf->_width;
 	_dims.h = sf->_height;
+	_dims.x = -sf->_xoff;
+	_dims.y = -sf->_yoff;
 }
 
 void Gump::CreateNotifier() {

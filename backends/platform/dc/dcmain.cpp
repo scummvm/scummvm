@@ -31,6 +31,7 @@
 #include "DCLauncherDialog.h"
 #include <common/config-manager.h>
 #include <common/memstream.h>
+#include <common/endian.h>
 
 #include "audio/mixer_intern.h"
 
@@ -298,8 +299,8 @@ namespace DC_Flash {
       if(!(bm[(b>>3)&63] & (0x80>>(b&7)))) {
 	if((r = syscall_read_flash(info[0] + ((b+1) << 6), buf, 64))<0)
 	  return r;
-	else if((s=*(unsigned short *)(buf+0)) == sec &&
-		flash_crc(buf, 62) == *(unsigned short *)(buf+62)) {
+	else if((s=READ_LE_UINT16(buf+0)) == sec &&
+		flash_crc(buf, 62) == READ_LE_UINT16(buf+62)) {
 	  memcpy(dst+(s-sec)*60, buf+2, 60);
 	  got=1;
 	}

@@ -3,6 +3,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.2.0 (XXXX-XX-XX)
 
+ New games:
+   - Added support for English translation of Prince and the Coward.
+   - Added support for Ultima IV - Quest of the Avatar.
+   - Added support for Ultima VI - The False Prophet.
+   - Added support for Ultima VIII - Pagan.
+
  General:
    - Autosaves are now supported for all the engines.
    - Errors are more likely to open the debugger, and be displayed, than just crash ScummVM.
@@ -15,6 +21,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Kyra:
    - Added support for the PC-98 version of Eye of the Beholder I.
+   - Added support for the Spanish versions of Eye of the Beholder I and II, Legend of
+     Kyrandia 1 (CD-ROM fan translation) and Legend of Kyrandia 2 (floppy version and
+	 CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and
+	 CD-ROM fan translation).
 
  Prince:
    - Fixed inventory item descriptions display.
@@ -31,6 +41,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved colors in Apple //gs Maniac Mansion.
    - Fixed crash when entering garage in Apple //gs Maniac Mansion.
 
+ Sky:
+   - Fixed syncing of music volume between native settings panel and ScummVM configuration.
+
  Sword1:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
@@ -39,10 +52,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Xeen:
    - Add missing sprite drawer for enemies hit by Energy Blast.
-   - Fixed freeze due to bad mob data at the top of Witches Tower
-   - Fix crash loading some savegames directly from the launcher
-   - Fix curing the well in Nightshadow
-   - Fix loading of wall items from savegames
+   - Fixed freeze due to bad mob data at the top of Witches Tower.
+   - Fix crash loading some savegames directly from the launcher.
+   - Fix curing the well in Nightshadow.
+   - Fix loading of wall items from savegames.
 
  Linux port:
    - Added option to use the system file browser instead of the ScummVM file browser.

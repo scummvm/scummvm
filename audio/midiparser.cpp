@@ -38,14 +38,19 @@ _timerRate(0x4A0000),
 _ppqn(96),
 _tempo(500000),
 _psecPerTick(5208), // 500000 / 96
+_sysExDelay(0),
 _autoLoop(false),
 _smartJump(false),
 _centerPitchWheelOnUnload(false),
 _sendSustainOffOnNotesOff(false),
+_disableAllNotesOffMidiEvents(false),
+_disableAutoStartPlayback(false),
 _numTracks(0),
 _activeTrack(255),
 _abortParse(false),
-_jumpingToTick(false) {
+_jumpingToTick(false),
+_doParse(true),
+_pause(false) {
 	memset(_activeNotes, 0, sizeof(_activeNotes));
 	memset(_tracks, 0, sizeof(_tracks));
 	_nextEvent.start = NULL;
@@ -68,6 +73,12 @@ void MidiParser::property(int prop, int value) {
 	case mpSendSustainOffOnNotesOff:
 		_sendSustainOffOnNotesOff = (value != 0);
 		break;
+	case mpDisableAllNotesOffMidiEvents:
+		_disableAllNotesOffMidiEvents = (value != 0);
+		break;
+	case mpDisableAutoStartPlayback:
+		_disableAutoStartPlayback = (value != 0);
+		break;
 	default:
 		break;
 	}
@@ -75,6 +86,10 @@ void MidiParser::property(int prop, int value) {
 
 void MidiParser::sendToDriver(uint32 b) {
 	_driver->send(b);
+}
+
+void MidiParser::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
+	_driver->metaEvent(type, data, length);
 }
 
 void MidiParser::setTempo(uint32 tempo) {
@@ -168,7 +183,11 @@ void MidiParser::onTimer() {
 	uint32 endTime;
 	uint32 eventTime;
 
-	if (!_position._playPos || !_driver)
+	// The SysEx delay can be decreased whenever time passes,
+	// even if the parser does not parse events.
+	_sysExDelay -= (_sysExDelay > _timerRate) ? _timerRate : _sysExDelay;
+
+	if (!_position._playPos || !_driver || !_doParse || _pause)
 		return;
 
 	_abortParse = false;
@@ -239,10 +258,20 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 		// SysEx event
 		// Check for trailing 0xF7 -- if present, remove it.
 		if (fireEvents) {
+			if (_sysExDelay > 0)
+				// Don't process this event if the delay from
+				// the previous SysEx hasn't passed yet.
+				return false;
+
+			uint16 delay;
 			if (info.ext.data[info.length-1] == 0xF7)
-				_driver->sysEx(info.ext.data, (uint16)info.length-1);
+				delay = _driver->sysExNoDelay(info.ext.data, (uint16)info.length-1);
 			else
-				_driver->sysEx(info.ext.data, (uint16)info.length);
+				delay = _driver->sysExNoDelay(info.ext.data, (uint16)info.length);
+
+			// Set the delay in microseconds so the next
+			// SysEx event will be delayed if necessary.
+			_sysExDelay = delay * 1000;
 		}
 	} else if (info.event == 0xFF) {
 		// META event
@@ -255,7 +284,7 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 			} else {
 				stopPlaying();
 				if (fireEvents)
-					_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+					sendMetaEventToDriver(info.ext.type, info.ext.data, (uint16)info.length);
 			}
 			return false;
 		} else if (info.ext.type == 0x51) {
@@ -264,7 +293,7 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 			}
 		}
 		if (fireEvents)
-			_driver->metaEvent(info.ext.type, info.ext.data, (uint16)info.length);
+			sendMetaEventToDriver(info.ext.type, info.ext.data, (uint16)info.length);
 	} else {
 		if (fireEvents)
 			sendToDriver(info.event, info.basic.param1, info.basic.param2);
@@ -298,13 +327,15 @@ void MidiParser::allNotesOff() {
 	}
 	_hangingNotesCount = 0;
 
-	// To be sure, send an "All Note Off" event (but not all MIDI devices
-	// support this...).
+	if (!_disableAllNotesOffMidiEvents) {
+		// To be sure, send an "All Note Off" event (but not all MIDI devices
+		// support this...).
 
-	for (i = 0; i < 16; ++i) {
-		sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
-		if (_sendSustainOffOnNotesOff)
-			sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+		for (i = 0; i < 16; ++i) {
+			sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
+			if (_sendSustainOffOnNotesOff)
+				sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+		}
 	}
 
 	memset(_activeNotes, 0, sizeof(_activeNotes));
@@ -337,7 +368,10 @@ bool MidiParser::setTrack(int track) {
 		allNotesOff();
 
 	resetTracking();
+	_pause = false;
 	memset(_activeNotes, 0, sizeof(_activeNotes));
+	if (_disableAutoStartPlayback)
+		_doParse = false;
 	_activeTrack = track;
 	_position._playPos = _tracks[track];
 	parseNextEvent(_nextEvent);
@@ -347,6 +381,29 @@ bool MidiParser::setTrack(int track) {
 void MidiParser::stopPlaying() {
 	allNotesOff();
 	resetTracking();
+	_pause = false;
+}
+
+bool MidiParser::startPlaying() {
+	if (_activeTrack >= _numTracks || _pause)
+		return false;
+	if (!_position._playPos) {
+		_position._playPos = _tracks[_activeTrack];
+		parseNextEvent(_nextEvent);
+	}
+	_doParse = true;
+	return true;
+}
+
+void MidiParser::pausePlaying() {
+	if (isPlaying() && !_pause) {
+		_pause = true;
+		allNotesOff();
+	}
+}
+
+void MidiParser::resumePlaying() {
+	_pause = false;
 }
 
 void MidiParser::hangAllActiveNotes() {
@@ -386,7 +443,7 @@ void MidiParser::hangAllActiveNotes() {
 }
 
 bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes, bool dontSendNoteOn) {
-	if (_activeTrack >= _numTracks)
+	if (_activeTrack >= _numTracks || _pause)
 		return false;
 
 	assert(!_jumpingToTick); // This function is not re-entrant
@@ -458,6 +515,7 @@ void MidiParser::unloadMusic() {
 	_numTracks = 0;
 	_activeTrack = 255;
 	_abortParse = true;
+	_pause = false;
 
 	if (_centerPitchWheelOnUnload) {
 		// Center the pitch wheels in preparation for the next piece of

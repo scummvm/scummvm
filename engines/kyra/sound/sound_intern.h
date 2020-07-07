@@ -28,6 +28,7 @@
 #include "kyra/sound/sound_pc_v1.h"
 
 #include "audio/midiparser.h"
+#include "audio/miles.h"
 #include "audio/softsynth/emumidi.h"
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 
@@ -105,7 +106,7 @@ private:
 
 	bool _nativeMT32;
 	MidiDriver *_driver;
-	MidiOutput *_output;
+	Audio::MidiDriver_Miles_Midi *_output;
 
 	Common::Mutex _mutex;
 };

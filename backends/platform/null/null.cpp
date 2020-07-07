@@ -20,6 +20,12 @@
  *
  */
 
+#include <time.h>
+#ifdef POSIX
+#include <sys/time.h>
+#include <unistd.h>
+#endif
+
 // We use some stdio.h functionality here thus we need to allow some
 // symbols. Alternatively, we could simply allow everything by defining
 // FORBIDDEN_SYMBOL_ALLOW_ALL
@@ -28,6 +34,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_fputs
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/modular-backend.h"
 #include "base/main.h"
@@ -68,11 +75,16 @@ public:
 
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
-	virtual void getTimeAndDate(TimeDate &t) const {}
+	virtual void getTimeAndDate(TimeDate &t) const;
 
 	virtual void quit();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+#ifdef POSIX
+private:
+	timeval _startTime;
+#endif
 };
 
 OSystem_NULL::OSystem_NULL() {
@@ -95,6 +107,10 @@ OSystem_NULL::~OSystem_NULL() {
 }
 
 void OSystem_NULL::initBackend() {
+#ifdef POSIX
+	gettimeofday(&_startTime, 0);
+#endif
+
 	_mutexManager = new NullMutexManager();
 	_timerManager = new DefaultTimerManager();
 	_eventManager = new DefaultEventManager(this);
@@ -104,22 +120,48 @@ void OSystem_NULL::initBackend() {
 
 	((Audio::MixerImpl *)_mixer)->setReady(false);
 
-	// Note that both the mixer and the timer manager are useless
-	// this way; they need to be hooked into the system somehow to
-	// be functional. Of course, can't do that in a NULL backend :).
+	// Note that the mixer is useless this way; it needs to be hooked
+	// into the system somehow to be functional. Of course, can't do
+	// that in a NULL backend :).
 
 	ModularBackend::initBackend();
 }
 
 bool OSystem_NULL::pollEvent(Common::Event &event) {
+	((DefaultTimerManager *)getTimerManager())->checkTimers();
+
 	return false;
 }
 
 uint32 OSystem_NULL::getMillis(bool skipRecord) {
+#ifdef POSIX
+	timeval curTime;
+
+	gettimeofday(&curTime, 0);
+
+	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) +
+			((curTime.tv_usec - _startTime.tv_usec) / 1000));
+#else
 	return 0;
+#endif
 }
 
 void OSystem_NULL::delayMillis(uint msecs) {
+#ifdef POSIX
+	usleep(msecs * 1000);
+#endif
+}
+
+void OSystem_NULL::getTimeAndDate(TimeDate &td) const {
+	time_t curTime = time(0);
+	struct tm t = *localtime(&curTime);
+	td.tm_sec = t.tm_sec;
+	td.tm_min = t.tm_min;
+	td.tm_hour = t.tm_hour;
+	td.tm_mday = t.tm_mday;
+	td.tm_mon = t.tm_mon;
+	td.tm_year = t.tm_year;
+	td.tm_wday = t.tm_wday;
 }
 
 void OSystem_NULL::quit() {

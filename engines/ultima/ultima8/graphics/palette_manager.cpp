@@ -54,10 +54,10 @@ void PaletteManager::reset() {
 	_palettes.clear();
 }
 
-void PaletteManager::updatedFont(PalIndex index) {
+void PaletteManager::updatedPalette(PalIndex index, int maxindex) {
 	Palette *pal = getPalette(index);
 	if (pal)
-		_renderSurface->CreateNativePalette(pal); // convert to native format
+		_renderSurface->CreateNativePalette(pal, maxindex);
 }
 
 // Reset all the transforms back to default

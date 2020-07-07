@@ -19,12 +19,7 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-#include "common/macresman.h"
 #include "common/system.h"
-#include "engines/util.h"
-
-#include "graphics/fonts/macfont.h"
-#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
@@ -782,97 +777,6 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_wm->passPalette(palette, count);
 }
 
-void DirectorEngine::testFontScaling() {
-	int x = 10;
-	int y = 10;
-	int w = 640;
-	int h = 480;
-
-	initGraphics(w, h);
-	_system->getPaletteManager()->setPalette(macPalette, 0, 256);
-
-	Graphics::ManagedSurface surface;
-
-	surface.create(w, h);
-	surface.clear(255);
-
-	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
-
-	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
-
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 200, 500);
-
-	Graphics::MacFont bigFont(Graphics::kMacFontNewYork, 15);
-
-	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
-
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50 + 200, 500);
-
-	const char *text = "d";
-
-	for (int i = 9; i <= 20; i++) {
-		Graphics::MacFont macFont(Graphics::kMacFontNewYork, i);
-
-		const Graphics::Font *font = _wm->_fontMan->getFont(macFont);
-
-		int width = font->getStringWidth(text);
-
-		Common::Rect bbox = font->getBoundingBox(text, x, y, w);
-		surface.frameRect(bbox, 15);
-
-		font->drawString(&surface, text, x, y, width, 0);
-
-		x += width + 1;
-	}
-
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			int y1 = 80 + i * 7;
-			int x1 = 80 + j * 7;
-
-			for (x = x1; x < x1 + 6; x++)
-				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = transformColor(i * 16 + j);
-		}
-	}
-
-	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
-
-	Common::Event event;
-
-	while (true) {
-		if (g_system->getEventManager()->pollEvent(event))
-			if (event.type == Common::EVENT_QUIT)
-				break;
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
-}
-
-void DirectorEngine::testFonts() {
-	Common::String fontName("Helvetica");
-
-	Common::MacResManager *fontFile = new Common::MacResManager();
-	if (!fontFile->open(fontName))
-		error("testFonts(): Could not open %s as a resource fork", fontName.c_str());
-
-	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
-	if (fonds.size() > 0) {
-		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
-			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
-			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
-
-			debug("Font: %s", name.c_str());
-
-			Graphics::MacFontFamily font;
-			font.load(*stream);
-		}
-	}
-
-	delete fontFile;
-}
-
 void DirectorEngine::setCursor(int type) {
 	switch (type) {
 	case kCursorDefault:
@@ -886,6 +790,116 @@ void DirectorEngine::setCursor(int type) {
 	case kCursorMouseUp:
 		_wm->pushCustomCursor(mouseUp, 16, 16, 0, 0, 3);
 		break;
+	}
+}
+
+void inkDrawPixel(int x, int y, int color, void *data) {
+	DirectorPlotData *p = (DirectorPlotData *)data;
+
+	if (!p->destRect.contains(x, y))
+		return;
+
+	byte *dst;
+	byte src;
+
+	byte tmpDst;
+
+	dst = (byte *)p->dst->getBasePtr(x, y);
+
+	if (p->ignoreSrc) {
+		// This fast-track mode is currently used only for inversions on click
+		*dst = ~(*dst);
+		return;
+	} else if (p->macPlot) {
+		// Get the pixel that macDrawPixel will give us, but store it to apply the
+		// ink later.
+		tmpDst = *dst;
+		Graphics::macDrawPixel(x, y, color, p->macPlot);
+		src = *dst;
+
+		if (p->ink == kInkTypeReverse)
+			src = 0;
+
+		*dst = tmpDst;
+	} else if (!p->src) {
+			error("Director::inkDrawPixel(): No source surface");
+			return;
+	} else {
+		src = *((const byte *)p->src->getBasePtr(p->srcPoint.x, p->srcPoint.y));
+	}
+
+	switch (p->ink) {
+	case kInkTypeBackgndTrans:
+		if (src == p->backColor)
+			break;
+		// fall through
+	case kInkTypeMatte:
+	case kInkTypeMask:
+		// Only unmasked pixels make it here, so copy them straight
+	case kInkTypeCopy:
+		*dst = src;
+		break;
+	case kInkTypeTransparent:
+		// FIXME: Is colour to ignore always white (last entry in pallette)?
+		if (src != p->numColors - 1)
+			*dst &= src;
+		break;
+	case kInkTypeReverse:
+		// TODO: Migrate from Stage to here
+		*dst ^= ~(src);
+		break;
+	case kInkTypeGhost:
+		if (src != p->numColors - 1)
+			*dst = *dst | ~(src);
+		break;
+	case kInkTypeNotCopy:
+		*dst = ~(src);
+		break;
+	case kInkTypeNotTrans:
+		*dst = *dst & ~(src);
+		break;
+	case kInkTypeNotReverse:
+		*dst = *dst ^ src;
+		break;
+	case kInkTypeNotGhost:
+		*dst = *dst | src;
+		break;
+		// Arithmetic ink types
+	default: {
+		if (src != p->numColors - 1) {
+			byte rSrc, gSrc, bSrc;
+			byte rDst, gDst, bDst;
+
+			g_director->_wm->decomposeColor(src, rSrc, gSrc, bSrc);
+			g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+
+			switch (p->ink) {
+			case kInkTypeBlend:
+					*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
+				break;
+			case kInkTypeAddPin:
+					*dst = p->_wm->findBestColor(MIN((rSrc + rDst), p->numColors - 1), MIN((gSrc + gDst), p->numColors - 1), MIN((bSrc + bDst), p->numColors - 1));
+				break;
+			case kInkTypeAdd:
+					*dst = p->_wm->findBestColor(abs(rSrc + rDst) % p->numColors, abs(gSrc + gDst) % p->numColors, abs(bSrc + bDst) % p->numColors);
+				break;
+			case kInkTypeSubPin:
+					*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
+				break;
+			case kInkTypeLight:
+					*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
+				break;
+			case kInkTypeSub:
+					*dst = p->_wm->findBestColor(abs(rSrc - rDst) % p->numColors, abs(gSrc - gDst) % p->numColors, abs(bSrc - bDst) % p->numColors);
+				break;
+			case kInkTypeDark:
+					*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	}
 }
 

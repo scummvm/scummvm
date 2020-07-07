@@ -1003,51 +1003,52 @@ static const char *const kEoB1MonsterDistAttStringsPC98Japanese[5] = {
 
 static const StringListProvider kEoB1MonsterDistAttStringsPC98JapaneseProvider = { ARRAYSIZE(kEoB1MonsterDistAttStringsPC98Japanese), kEoB1MonsterDistAttStringsPC98Japanese };
 
-static const char *const kEoB1IntroStringsTowerPC98[3] = {
+static const char *const kEoB1IntroStringsTowerPC98Japanese[3] = {
 	"\x83""E""\x83""H""\x81""[""\x83""^""\x81""[""\x83""f""\x83""B""\x81""[""\x83""v""\x82\xc9\x8e\xd7\x88\xab\x82\xcc\x89""e""\x82\xaa\x94""E""\x82\xd1\x8a\xf1\x82\xc1\x82\xc4\x82\xa2\x82\xe9\x81""B",
 	"\x82\xed\x82\xea\x82\xed\x82\xea\x97\xcc\x8e\xe5\x82\xcd\x81""A""\x82\xbb\x82\xea\x82\xf0\x8e\xe6\x82\xe8\x8f\x9c\x82\xad\x95\xfb\x8d\xf4\x82\xf0\x8c\xa9\x82\xc2\x82\xaf\x82\xcb\x82\xce\x82\xc8\x82\xe7\x82\xca\x81""B",
 	"\x8d\x91\x92\x86\x82\xcc\x89""p""\x97""Y""\x82\xbd\x82\xbf\x82\xc9\x8c\xc4\x82\xd1\x82\xa9\x82\xaf\x81""A""\x97""E""\x8e""m""\x82\xf0\x91""I""\x82\xda\x82\xa4\x81""B"
 };
 
-static const StringListProvider kEoB1IntroStringsTowerPC98Provider = { ARRAYSIZE(kEoB1IntroStringsTowerPC98), kEoB1IntroStringsTowerPC98 };
+static const StringListProvider kEoB1IntroStringsTowerPC98JapaneseProvider = { ARRAYSIZE(kEoB1IntroStringsTowerPC98Japanese), kEoB1IntroStringsTowerPC98Japanese };
 
-static const char *const kEoB1IntroStringsOrbPC98[1] = {
+static const char *const kEoB1IntroStringsOrbPC98Japanese[1] = {
 	"\x82\xb2\x8e\xe5\x90""l""\x82\xb3\x82\xdc\x81""c""\x81""c""\x81""B"
 };
 
-static const StringListProvider kEoB1IntroStringsOrbPC98Provider = { ARRAYSIZE(kEoB1IntroStringsOrbPC98), kEoB1IntroStringsOrbPC98 };
+static const StringListProvider kEoB1IntroStringsOrbPC98JapaneseProvider = { ARRAYSIZE(kEoB1IntroStringsOrbPC98Japanese), kEoB1IntroStringsOrbPC98Japanese };
 
-static const char *const kEoB1IntroStringsWdEntryPC98[1] = {
+static const char *const kEoB1IntroStringsWdEntryPC98Japanese[1] = {
 	"\x82\xe2\x82\xc2\x82\xe7\x82\xcd\x82\xc2\x82\xdc\x82\xe7\x82\xca\x92\xef\x8d""R""\x82\xf0\x8d""l""\x82\xa6\x82\xbd\x82\xe6\x82\xa4\x82\xc5\x82\xb7\x81""B"
 };
 
-static const StringListProvider kEoB1IntroStringsWdEntryPC98Provider = { ARRAYSIZE(kEoB1IntroStringsWdEntryPC98), kEoB1IntroStringsWdEntryPC98 };
+static const StringListProvider kEoB1IntroStringsWdEntryPC98JapaneseProvider = { ARRAYSIZE(kEoB1IntroStringsWdEntryPC98Japanese), kEoB1IntroStringsWdEntryPC98Japanese };
 
-static const char *const kEoB1IntroStringsKingPC98[1] = {
+static const char *const kEoB1IntroStringsKingPC98Japanese[1] = {
 	"\x8c""N""\x82\xbd\x82\xbf\x82\xc9\x94""C""\x96\xb1\x82\xf0\x82\xbd\x82\xad\x82\xb7\x81""B""\x82\xb1\x82\xcc\x88\xab\x82\xcc\x96""{""\x8e\xbf\x82\xf0\x92""T""\x82\xe8\x81""A""\x82\xb3\x82\xe7\x82\xc9\x82\xcd\x94""j""\x89\xf3\x82\xb9\x82\xe6\x81""B"
 };
 
-static const StringListProvider kEoB1IntroStringsKingPC98Provider = { ARRAYSIZE(kEoB1IntroStringsKingPC98), kEoB1IntroStringsKingPC98 };
+static const StringListProvider kEoB1IntroStringsKingPC98JapaneseProvider = { ARRAYSIZE(kEoB1IntroStringsKingPC98Japanese), kEoB1IntroStringsKingPC98Japanese };
 
-static const char *const kEoB1IntroStringsHandsPC98[1] = {
+static const char *const kEoB1IntroStringsHandsPC98Japanese[1] = {
 	"\x8a\xeb\x8c\xaf\x82\xc8\x97\xb7\x82\xc5\x82\xa0\x82\xeb\x82\xa4\x81""B""\x8f\x80\x94\xf5\x82\xf0\x91\xd3\x82\xe9\x82\xc8\x81""B"
 };
 
-static const StringListProvider kEoB1IntroStringsHandsPC98Provider = { ARRAYSIZE(kEoB1IntroStringsHandsPC98), kEoB1IntroStringsHandsPC98 };
+static const StringListProvider kEoB1IntroStringsHandsPC98JapaneseProvider = { ARRAYSIZE(kEoB1IntroStringsHandsPC98Japanese), kEoB1IntroStringsHandsPC98Japanese };
 
-static const char *const kEoB1IntroStringsWdExitPC98[1] = {
+static const char *const kEoB1IntroStringsWdExitPC98Japanese[1] = {
 	"\x92""T""\x8d\xf5\x82\xcd\x92\xac\x82\xcc\x92""n""\x89\xba\x82\xa9\x82\xe7\x82\xcd\x82\xb6\x82\xdf\x82\xc4\x82\xad\x82\xea\x81""B"
 };
 
-static const StringListProvider kEoB1IntroStringsWdExitPC98Provider = { ARRAYSIZE(kEoB1IntroStringsWdExitPC98), kEoB1IntroStringsWdExitPC98 };
+static const StringListProvider kEoB1IntroStringsWdExitPC98JapaneseProvider = { ARRAYSIZE(kEoB1IntroStringsWdExitPC98Japanese), kEoB1IntroStringsWdExitPC98Japanese };
 
-static const char *const kEoB1IntroStringsTunnelPC98[1] = {
+static const char *const kEoB1IntroStringsTunnelPC98Japanese[2] = {
+	"",
 	"\x82\xe2\x82\xc2\x82\xe7\x82\xcc\x89""^""\x96\xbd\x82\xcd\x95\x95\x82\xb6\x82\xe7\x82\xea\x82\xbd\x81""B"
 };
 
-static const StringListProvider kEoB1IntroStringsTunnelPC98Provider = { ARRAYSIZE(kEoB1IntroStringsTunnelPC98), kEoB1IntroStringsTunnelPC98 };
+static const StringListProvider kEoB1IntroStringsTunnelPC98JapaneseProvider = { ARRAYSIZE(kEoB1IntroStringsTunnelPC98Japanese), kEoB1IntroStringsTunnelPC98Japanese };
 
-static const char *const kEoB1FinaleStringsPC98[17] = {
+static const char *const kEoB1FinaleStringsPC98Japanese[17] = {
 	"\x83""p""\x81""[""\x83""e""\x83""B""\x82\xcd\x82\xae\x82\xbf\x82\xe1\x82\xae\x82\xbf\x82\xe1\x82\xc9\x82\xc8\x82\xc1\x82\xbd\x83""N""\x83""T""\x83""i""\x83""^""\x81""[""\x83\x8b\x82\xcc\x8e\x80\x91\xcc\x82\xcc\x8e""c""\x8a""[""\x82\xf0\x92""T""\x82\xc1\x82\xbd\x81""B",
 	"\x83""p""\x81""[""\x83""e""\x83""B""\x81""[""\x82\xcd\x83""N""\x83""T""\x83""i""\x83""^""\x81""[""\x83\x8b\x82\xf0\x93""|""\x82\xb5\x82\xbd\x81""B",
 	"\x83""p""\x81""[""\x83""e""\x83""B""\x81""[""\x82\xcd\x8e\xe5\x82\xcc\x82\xa2\x82\xc8\x82\xa2\x83""N""\x83""T""\x83""i""\x83""^""\x81""[""\x83\x8b\x82\xcc\x91\x83\x82\xf0\x82\xb3\x82\xdc\x82\xe6\x82\xa2\x81""A",
@@ -1067,4 +1068,4 @@ static const char *const kEoB1FinaleStringsPC98[17] = {
 	"\x82\xb7\x82\xd7\x82\xc4\x82\xcc\x82\xe0\x82\xcc\x82\xaa\x82\xbb\x82\xcc\x97""E""\x8a\xb8\x82\xc8\x82\xd3\x82\xe9\x82\xdc\x82\xa2\x82\xf0\x92""m""\x82\xe9\x82\xb1\x82\xc6\x82\xbe\x82\xeb\x82\xa4\x81""I ""\x92""T""\x8d\xf5\x92""B""\x90\xac\x81""A""\x82\xa8\x82\xdf\x82\xc5\x82\xc6\x82\xa4\x81""I"
 };
 
-static const StringListProvider kEoB1FinaleStringsPC98Provider = { ARRAYSIZE(kEoB1FinaleStringsPC98), kEoB1FinaleStringsPC98 };
+static const StringListProvider kEoB1FinaleStringsPC98JapaneseProvider = { ARRAYSIZE(kEoB1FinaleStringsPC98Japanese), kEoB1FinaleStringsPC98Japanese };

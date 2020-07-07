@@ -24,6 +24,7 @@
 #define PETKA_Q_SYSTEM_H
 
 #include "common/ptr.h"
+#include "common/events.h"
 #include "common/stream.h"
 #include "common/list.h"
 #include "common/hashmap.h"
@@ -47,17 +48,9 @@ class InterfacePanel;
 class InterfaceMap;
 class Interface;
 
-struct UnkStruct {
-	double f1;
-	double f2;
-	int f3;
-	int f4;
-	double f5;
-};
-
 class QSystem {
 public:
-	explicit QSystem();
+	QSystem(PetkaEngine &vm);
 	~QSystem();
 
 	bool init();
@@ -73,21 +66,29 @@ public:
 	QMessageObject *findObject(int16 id);
 	QMessageObject *findObject(const Common::String &name);
 
+	QObjectPetka *getPetka() const;
+	QObjectChapayev *getChapay() const;
+	QObjectCursor *getCursor() const;
+	QObjectCase *getCase() const;
+	QObjectStar *getStar() const;
+
+	void startSaveLoad(int id);
+
 	void togglePanelInterface();
 	void toggleMapInterface();
+	void toggleCase();
 
-	void setChapayev();
+	void goPrevInterface();
+
+	void setCursorAction(int action);
+
+	void onEvent(const Common::Event &event);
 
 public:
-	Common::Array<QObject> _objs;
-	Common::Array<QObjectBG> _bgs;
+	PetkaEngine &_vm;
+
 	Common::Array<QMessageObject *> _allObjects;
 	Common::List<QMessage> _messages;
-	Common::ScopedPtr<QObjectPetka> _petka;
-	Common::ScopedPtr<QObjectChapayev> _chapayev;
-	Common::ScopedPtr<QObjectCursor> _cursor;
-	Common::ScopedPtr<QObjectCase> _case;
-	Common::ScopedPtr<QObjectStar> _star;
 	Common::ScopedPtr<InterfaceMain> _mainInterface;
 	Common::ScopedPtr<InterfaceSaveLoad> _saveLoadInterface;
 	Common::ScopedPtr<InterfaceSequence> _sequenceInterface;
@@ -97,9 +98,7 @@ public:
 	Interface *_currInterface;
 	Interface *_prevInterface;
 
-	Common::HashMap<Common::String, UnkStruct> _unkMap;
-
-	int _isIniting;
+	bool _totalInit;
 	int _fxId;
 	int _musicId;
 

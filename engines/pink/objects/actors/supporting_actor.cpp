@@ -48,14 +48,14 @@ void SupportingActor::toConsole() const {
 }
 
 bool SupportingActor::isLeftClickHandlers() const {
-	return _handlerMgr.isLeftClickHandler(this);
+	return _handlerMgr.findSuitableHandlerLeftClick(this);
 }
 
 bool SupportingActor::isUseClickHandlers(InventoryItem *item) const {
-	return _handlerMgr.isUseClickHandler(this, item->getName());
+	return _handlerMgr.findSuitableHandlerUseClick(this, item->getName());
 }
 
-void SupportingActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
+void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 	if (isLeftClickHandlers()) {
 		if (!_cursor.empty())
 			mgr->setCursor(_cursor, point);
@@ -65,9 +65,9 @@ void SupportingActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 		Actor::onMouseOver(point, mgr);
 }
 
-void SupportingActor::onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+void SupportingActor::onMouseOverWithItem(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	Common::String item = itemName;
-	if (_handlerMgr.isUseClickHandler(this, itemName))
+	if (_handlerMgr.findSuitableHandlerUseClick(this, itemName))
 		item += kClickable;
 	cursorMgr->setCursor(kHoldingItemCursor, point, item);
 }
@@ -84,11 +84,11 @@ void SupportingActor::onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) 
 	_handlerMgr.onUseClickMessage(this, item, mgr);
 }
 
-const Common::String &SupportingActor::getLocation() const {
+Common::String SupportingActor::getLocation() const {
 	return _location;
 }
 
-const Common::String &SupportingActor::getPDALink() const {
+Common::String SupportingActor::getPDALink() const {
 	return _pdaLink;
 }
 

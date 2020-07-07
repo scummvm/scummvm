@@ -1310,12 +1310,12 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 
 	// A line of a BMP image must have a size divisible by 4.
 	// We calculate the padding bytes needed here.
-	// Since we use a 3 byte per pixel mode, we can use width % 4 here, since
-	// it is equal to 4 - (width * 3) % 4. (4 - (width * Bpp) % 4, is the
-	// usual way of computing the padding bytes required).
+	// Since we use a 4 byte per pixel mode, we can use 0 here, since it is
+	// equal to (4 - (width * 4)) % 4. (4 - (width * Bpp)) % 4, is the usual
+	// way of computing the padding bytes required).
 	// GL_PACK_ALIGNMENT is 4, so this line padding is required for PNG too
-	const uint linePaddingSize = width % 4;
-	const uint lineSize        = width * 3 + linePaddingSize;
+	const uint linePaddingSize = 0;
+	const uint lineSize        = width * 4 + linePaddingSize;
 
 	Common::DumpFile out;
 	if (!out.open(filename)) {
@@ -1324,12 +1324,12 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 
 	Common::Array<uint8> pixels;
 	pixels.resize(lineSize * height);
-	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixels.front()));
+	GL_CALL(glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels.front()));
 
 #ifdef SCUMM_LITTLE_ENDIAN
-	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
+	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 0, 8, 16, 24);
 #else
-	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);

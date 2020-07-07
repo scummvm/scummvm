@@ -88,9 +88,10 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 	// movies too (eg, T02 for the intro).  For now just point-scale.
 	if (_doubleSize) {
 		const Scaler *pointScaler = &Ultima8Engine::get_instance()->point_scaler;
-		surf->ScalerBlit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
-						_xoff, _yoff, _currentFrame.w * 2, _currentFrame.h * 2,
-						pointScaler, false);
+		bool ok = surf->ScalerBlit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
+								   _xoff, _yoff, _currentFrame.w * 2, _currentFrame.h * 2,
+								   pointScaler, false);
+		assert(ok);
 	} else {
 		surf->Blit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
 				   _xoff, _yoff);

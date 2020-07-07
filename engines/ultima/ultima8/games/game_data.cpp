@@ -31,6 +31,8 @@
 #include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/world/map_glob.h"
+#include "ultima/ultima8/world/actors/npc_dat.h"
+#include "ultima/ultima8/world/actors/combat_dat.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
@@ -92,6 +94,10 @@ GameData::~GameData() {
 
 	delete _soundFlex;
 	_soundFlex = nullptr;
+
+	for (unsigned int i = 0; i < _npcTable.size(); ++i)
+		delete _npcTable[i];
+	_npcTable.clear();
 
 	_gameData = nullptr;
 
@@ -184,6 +190,7 @@ Std::string GameData::translate(const Std::string &text) {
 
 	Std::string trans;
 	config->get(key, trans);
+
 	return trans;
 }
 
@@ -471,6 +478,30 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapeNum) {
 	return *s;
 }
 
+const NPCDat *GameData::getNPCData(uint16 entry) const {
+	if (entry < _npcTable.size()) {
+		return _npcTable[entry];
+	}
+	return nullptr;
+}
+
+const NPCDat *GameData::getNPCDataForShape(uint16 shapeno) const {
+	for (Std::vector<NPCDat *>::const_iterator it = _npcTable.begin();
+		 it != _npcTable.end();
+		 it++) {
+		const NPCDat *npcdat = *it;
+		if (npcdat->getShapeNo() == shapeno)
+			return npcdat;
+	}
+	return nullptr;
+}
+
+const CombatDat *GameData::getCombatDat(uint16 entry) const {
+	if (entry < _combatData.size()) {
+		return _combatData[entry];
+	}
+	return nullptr;
+}
 
 void GameData::loadRemorseData() {
 	FileSystem *filesystem = FileSystem::get_instance();
@@ -508,9 +539,9 @@ void GameData::loadRemorseData() {
 	                                  &CrusaderShapeFormat);
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-#if 0
 	// Load weapon, armour info
-	config->readConfigFile("@data/u8weapons.ini", "weapons", true);
+	config->readConfigFile("@data/remorseweapons.ini", "weapons", true);
+#if 0
 	config->readConfigFile("@data/u8armour.ini", "armour", true);
 	config->readConfigFile("@data/u8monsters.ini", "monsters", true);
 #endif
@@ -594,13 +625,7 @@ void GameData::loadRemorseData() {
 		error("Unable to load static/dtable.flx");
 
 	RawArchive *dtableflex = new RawArchive(dtableds);
-
-	// TODO: What's in this flex file?
-	// Object 1: 35 * 142 byte blocks of .. something
-	// Object 2: 35 * 32-byte long names of NPCs?
-	//_dtable = new DtableDat();
-	//_dtable->load(dtableflex);
-
+	_npcTable = NPCDat::load(dtableflex);
 	delete dtableflex;
 
 	Common::SeekableReadStream *damageds = filesystem->ReadFile("@game/static/damage.flx");
@@ -621,7 +646,16 @@ void GameData::loadRemorseData() {
 		error("Unable to load static/combat.dat");
 
 	RawArchive *combatflex = new RawArchive(combatds);
+	_combatData.clear();
+	_combatData.resize(combatflex->getCount());
+	for (uint32 i = 0; i < combatflex->getCount(); i++) {
+		Common::SeekableReadStream *combatflexrs = combatflex->get_datasource(i);
 
+		if (combatflexrs && combatflexrs->size() > 20) {
+			_combatData[i] = new CombatDat(*combatflexrs);
+		}
+		delete combatflexrs;
+	}
 	// TODO: What's in this flex file?  Descriptions of combat tactics?
 	// 14 objects with contents:
 	// [ 16 Byte Name ]
@@ -643,16 +677,6 @@ void GameData::loadRemorseData() {
 	// shop data?
 
 	delete stuffds;
-
-	Common::SeekableReadStream *trigds = filesystem->ReadFile("@game/static/trig.dat");
-	if (!trigds)
-		error("Unable to load static/trig.dat");
-
-	// TODO: What's in this dat file?
-	// 12 x 256 bytes. Each block has consistently either 0000 or FFFF in the
-	//vsecond word of each DWORD
-
-	delete trigds;
 
 	Common::SeekableReadStream *xformpalds = filesystem->ReadFile("@game/static/xformpal.dat");
 	if (!xformpalds)

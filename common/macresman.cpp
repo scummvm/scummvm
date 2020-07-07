@@ -162,7 +162,8 @@ bool MacResManager::open(const String &fileName) {
 	if (file->open(fileName)) {
 		_baseFileName = fileName;
 
-		// FIXME: Is this really needed?
+		// Maybe file is in MacBinary but without .bin extension?
+		// Check it here
 		if (isMacBinary(*file)) {
 			file->seek(0);
 			if (loadFromMacBinary(*file))

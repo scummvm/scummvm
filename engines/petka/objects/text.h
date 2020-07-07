@@ -55,8 +55,8 @@ public:
 
 	void draw() override;
 	void update(int time) override;
-	void onClick(int x, int y) override;
-	bool isInPoint(int x, int y) override { return true; }
+	void onClick(Common::Point p) override;
+	bool isInPoint(Common::Point p) override { return true; }
 
 private:
 	Common::U32String _phrase;
@@ -68,17 +68,17 @@ public:
 	QTextDescription(const Common::U32String &desc, uint32 frame);
 
 	void draw() override;
-	void onClick(int x, int y) override;
-	bool isInPoint(int x, int y) override { return true; }
+	void onClick(Common::Point p) override;
+	bool isInPoint(Common::Point p) override { return true; }
 };
 
 class QTextChoice : public QText {
 public:
 	QTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor);
 
-	void onMouseMove(int x, int y) override;
-	void onClick(int x, int y) override;
-	bool isInPoint(int x, int y) override { return true; }
+	void onMouseMove(Common::Point p) override;
+	void onClick(Common::Point p) override;
+	bool isInPoint(Common::Point p) override { return true; }
 
 private:
 	Common::Array<Common::Rect> _rects;

@@ -68,7 +68,7 @@ void UnityTaskbarManager::setProgressState(TaskbarProgressState state) {
 	switch (state) {
 	default:
 		warning("[UnityTaskbarManager::setProgressState] Unknown state / Not implemented (%d)", state);
-		// fallback to noprogress state
+		// fall through
 
 	case kTaskbarNoProgress:
 		unity_launcher_entry_set_progress_visible(_launcher, FALSE);

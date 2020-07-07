@@ -29,6 +29,8 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -48,7 +50,7 @@ namespace Ultima8 {
 
 World *World::_world = nullptr;
 
-World::World() : _currentMap(nullptr) {
+World::World() : _currentMap(nullptr),  _alertActive(false) {
 	debugN(MM_INFO, "Creating World...\n");
 
 	_world = this;
@@ -337,6 +339,10 @@ void World::save(Common::WriteStream *ws) {
 
 	ws->writeUint16LE(_currentMap->_eggHatcher);
 
+	if (GAME_IS_CRUSADER) {
+		ws->writeByte(_alertActive ? 0 : 1);
+	}
+
 	uint16 es = static_cast<uint16>(_ethereal.size());
 	ws->writeUint32LE(es);
 
@@ -362,6 +368,10 @@ bool World::load(Common::ReadStream *rs, uint32 version) {
 
 	_currentMap->_eggHatcher = rs->readUint16LE();
 
+	if (GAME_IS_CRUSADER) {
+		_alertActive = (rs->readByte() != 0);
+	}
+
 	uint32 etherealcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < etherealcount; ++i) {
 		_ethereal.push_front(rs->readUint16LE());
@@ -377,7 +387,6 @@ void World::saveMaps(Common::WriteStream *ws) {
 	}
 }
 
-
 bool World::loadMaps(Common::ReadStream *rs, uint32 version) {
 	uint32 mapcount = rs->readUint32LE();
 
@@ -389,6 +398,65 @@ bool World::loadMaps(Common::ReadStream *rs, uint32 version) {
 
 	return true;
 }
+
+void World::setAlertActive(bool active)
+{
+	assert(GAME_IS_CRUSADER);
+    _alertActive = active;
+
+	// Replicate the behavior of the original game.
+	LOOPSCRIPT(script,
+		LS_OR(
+			LS_OR(
+				LS_OR(
+					LS_OR(LS_SHAPE_EQUAL(0x49), LS_SHAPE_EQUAL(0x21)),
+					LS_SHAPE_EQUAL(0x174)),
+				LS_SHAPE_EQUAL(0x271)),
+			  LS_SHAPE_EQUAL(0x477))
+	);
+
+	UCList itemlist(2);
+	_world->getCurrentMap()->areaSearch(&itemlist, script, sizeof(script),
+										nullptr, 0xffff, false);
+	for (uint32 i = 0; i < itemlist.getSize(); i++) {
+		uint16 itemid = itemlist.getuint16(i);
+		Item *item = getItem(itemid);
+		int frame = item->getFrame();
+		if (_alertActive) {
+			if (item->getShape() == 0x477) {
+				if (frame < 2)
+					item->setFrame(frame + 2);
+			} else if (frame == 0) {
+				item->setFrame(1);
+			}
+		} else {
+			if (item->getShape() == 0x477) {
+				if (frame > 1)
+					item->setFrame(frame - 2);
+			} else if (frame == 1) {
+				item->setFrame(0);
+			}
+		}
+	}
+}
+
+uint32 World::I_getAlertActive(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	return get_instance()->_world->isAlertActive() ? 1 : 0;
+}
+
+uint32 World::I_setAlertActive(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	get_instance()->_world->setAlertActive(true);
+	return 0;
+}
+
+uint32 World::I_clrAlertActive(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	get_instance()->_world->setAlertActive(false);
+	return 0;
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

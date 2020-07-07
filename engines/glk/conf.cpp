@@ -94,8 +94,8 @@ Conf::Conf(InterpreterType interpType) {
 	if (ConfMan.hasKey("maxcols"))
 		_cols = MIN(_cols, strToInt(ConfMan.get("maxcols").c_str()));
 
-	const int DEFAULT_MARGIN_X = (interpType == INTERPRETER_FROTZ) ? 0 : 15;
-	const int DEFAULT_MARGIN_Y = (interpType == INTERPRETER_FROTZ) ? 0 : 15;
+	const int DEFAULT_MARGIN_X = (interpType == INTERPRETER_ZCODE) ? 0 : 15;
+	const int DEFAULT_MARGIN_Y = (interpType == INTERPRETER_ZCODE) ? 0 : 15;
 
 	get("lockrows", _lockRows);
 	get("lockcols", _lockCols);
@@ -216,7 +216,8 @@ void Conf::get(const Common::String &key, int &field, int defaultVal) {
 }
 
 void Conf::get(const Common::String &key, bool &field, bool defaultVal) {
-	field = ConfMan.hasKey(key) ? strToInt(ConfMan.get(key).c_str()) != 0 : defaultVal;
+	if (!ConfMan.hasKey(key) || !Common::parseBool(ConfMan.get(key), field))
+		field = defaultVal;
 }
 
 void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {

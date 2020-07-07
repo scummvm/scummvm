@@ -43,13 +43,39 @@ enum CastType {
 
 enum ScriptType {
 	kNoneScript = -1,
-	kMovieScript = 0,
-	kSpriteScript = 1,
-	kFrameScript = 2,
-	kCastScript = 3,
-	kGlobalScript = 4,
-	kScoreScript = 5,
-	kMaxScriptType = 5	// Sync with score.cpp:45, array scriptTypes[]
+	kScoreScript = 0,
+	kCastScript = 1,
+	kMovieScript = 2,
+	kGlobalScript = 3,
+	kMaxScriptType = 3	// Sync with score-loading.cpp:45, array scriptTypes[]
+};
+
+enum ScriptFlag {
+	kScriptFlagUnk0			= (1 << 0x0),
+	kScriptFlagGlobal		= (1 << 0x1),
+	kScriptFlagUnk2			= (1 << 0x2),
+	kScriptFlagUnk3			= (1 << 0x3),
+	kScriptFlagFactoryDef	= (1 << 0x4),
+	kScriptFlagUnk5			= (1 << 0x5),
+	kScriptFlagUnk6			= (1 << 0x6),
+	kScriptFlagUnk7			= (1 << 0x7),
+	kScriptFlagHasFactory	= (1 << 0x8),
+	kScriptFlagUnk9			= (1 << 0x9),
+	kScriptFlagUnkA			= (1 << 0xa),
+	kScriptFlagUnkB			= (1 << 0xb),
+	kScriptFlagUnkC			= (1 << 0xc),
+	kScriptFlagUnkD			= (1 << 0xd),
+	kScriptFlagUnkE			= (1 << 0xe),
+	kScriptFlagUnkF			= (1 << 0xf)
+};
+
+enum ObjectType {
+	kNoneObj = 0,
+	kFactoryObj = 1 << 0,
+	kXObj = 1 << 1,
+	kScriptObj = 1 << 2,
+	kXtraObj = 1 << 3,
+	kAllObj = kFactoryObj | kXObj | kScriptObj | kXtraObj
 };
 
 enum ShapeType {
@@ -92,6 +118,13 @@ enum ButtonType {
 	kTypeRadio
 };
 
+enum FrameRateType {
+	kFrameRateDefault = -1,
+	kFrameRateNormal = 0,
+	kFrameRateFastest = 1,
+	kFrameRateFixed = 2
+};
+
 enum SpriteType {
 	kInactiveSprite					= 0,	// turns the sprite off
 	kBitmapSprite					= 1,
@@ -108,7 +141,7 @@ enum SpriteType {
 	kOutlinedRectangleSprite		= 12,	// QuickDraw
 	kOutlinedRoundedRectangleSprite	= 13,	// QuickDraw
 	kOutlinedOvalSprite				= 14,	// QuickDraw
-	kThinkLineSprite				= 15,	// 2pt width line
+	kThickLineSprite				= 15,	// 2pt width line
 	kCastMemberSprite				= 16,	// Specified by cast member
 	kFilmLoopSpite					= 17,
 	kDirMovieSprite					= 18
@@ -172,7 +205,7 @@ enum LEvent {
 	kEventMouseUpOutSide,
 	kEventMouseWithin,
 
-	kEventStart
+	kEventStartUp
 };
 
 enum TransitionType {
@@ -229,6 +262,18 @@ enum TransitionType {
 	kTransDissolveBitsFast,	// 50
 	kTransDissolvePixels,
 	kTransDissolveBits
+};
+
+// TODO: Can there be any more built-in palette types?
+enum PaletteType {
+ kClutSystemMac = 0x0000,
+ kClutSystemWin = 0xff9c,
+ kClutRainbow = 0xffff,
+ kClutGrayscale = 0xfffe,
+ kClutPastels = 0xfffd,
+ kClutVivid = 0xfffc,
+ kClutNTSC = 0xfffb,
+ kClutMetallic = 0xfffa
 };
 
 enum {

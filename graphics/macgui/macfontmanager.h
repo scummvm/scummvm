@@ -74,6 +74,7 @@ public:
 		_slant = slant;
 		_fallback = fallback;
 		_generated = false;
+		_truetype = false;
 		_font = NULL;
 	}
 
@@ -86,18 +87,20 @@ public:
 	FontManager::FontUsage getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
-	MacFONTFont *getFont() { return _font; }
-	void setFont(MacFONTFont *font) { _font = font; }
+	bool isTrueType() { return _truetype; }
+	Font *getFont() { return _font; }
+	void setFont(Font *font, bool truetype) { _font = font; _truetype = truetype; }
 
 private:
 	int _id;
 	int _size;
 	int _slant;
+	bool _truetype;
 	Common::String _name;
 	FontManager::FontUsage _fallback;
 
 	bool _generated;
-	MacFONTFont *_font;
+	Font *_font;
 };
 
 class MacFontManager {
@@ -142,7 +145,11 @@ private:
 	void loadFonts();
 
 	void generateFontSubstitute(MacFont &macFont);
-	void generateFont(MacFont &toFont, MacFont &fromFont);
+	void generateFONTFont(MacFont &toFont, MacFont &fromFont);
+
+#ifdef USE_FREETYPE2
+	void generateTTFFont(MacFont &toFront, Common::SeekableReadStream *stream);
+#endif
 
 private:
 	bool _builtInFonts;
@@ -158,6 +165,8 @@ private:
 
 	/* Unicode font */
 	Common::HashMap<int, const Graphics::Font *> _uniFonts;
+
+	Common::HashMap<int, Common::SeekableReadStream *> _ttfData;
 };
 
 } // End of namespace Graphics

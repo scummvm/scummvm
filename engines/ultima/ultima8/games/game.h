@@ -58,6 +58,7 @@ public:
 	static Game *createGame(const GameInfo *info);
 
 	INTRINSIC(I_playEndgame);
+	INTRINSIC(I_playCredits);
 
 protected:
 	static Game *_game;

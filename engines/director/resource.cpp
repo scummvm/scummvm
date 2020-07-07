@@ -21,19 +21,18 @@
  */
 
 #include "common/config-manager.h"
+#include "common/error.h"
+#include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
-#include "common/file.h"
-
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macfontmanager.h"
 
 #include "director/director.h"
-#include "director/archive.h"
 #include "director/cast.h"
-#include "director/score.h"
-#include "director/util.h"
+#include "director/castmember.h"
+#include "director/movie.h"
+#include "director/stage.h"
 #include "director/lingo/lingo.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -51,17 +50,72 @@ Archive *DirectorEngine::createArchive() {
 	}
 }
 
-void DirectorEngine::loadInitialMovie(const Common::String movie) {
-	if (getPlatform() == Common::kPlatformWindows)
+Common::Error Stage::loadInitialMovie() {
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining movie name\n");
+	Common::String movie = (_vm->getGameGID() == GID_TESTALL) ? getNextMovieFromQueue().movie : _vm->getEXEName();
+
+	if (g_director->getPlatform() == Common::kPlatformWindows)
 		loadEXE(movie);
 	else
 		loadMac(movie);
+
+	if (!_mainArchive) {
+		warning("Cannot open main movie");
+		return Common::kNoGameDataFoundError;
+	}
+
+	_currentMovie = new Movie(this);
+	_currentPath = getPath(movie, _currentPath);
+	_currentMovie->loadSharedCastsFrom(_currentPath + g_director->_sharedCastFile);
+
+	// Let's check if it is a projector file
+	// So far tested with Spaceship Warlock, D2
+	if (_mainArchive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
+		warning("Detected Projector file");
+
+		if (_mainArchive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
+			Common::Array<uint16> xcod = _mainArchive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
+			for (Common::Array<uint16>::iterator iterator = xcod.begin(); iterator != xcod.end(); ++iterator) {
+				Resource res = _mainArchive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), *iterator);
+				debug(0, "Detected XObject '%s'", res.name.c_str());
+				g_lingo->openXLib(res.name, kXObj);
+			}
+		}
+
+		if (_mainArchive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
+			_currentMovie->setArchive(_mainArchive);
+
+			Common::SeekableSubReadStreamEndian *name = _mainArchive->getResource(MKTAG('S', 'T', 'R', '#'), 0);
+			int num = name->readUint16();
+			if (num != 1) {
+				warning("Incorrect number of strings in Projector file");
+			}
+
+			if (num == 0)
+				error("No strings in Projector file");
+
+			Common::String sname = name->readPascalString();
+
+			_nextMovie.movie = pathMakeRelative(sname);
+			warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
+
+			delete _currentMovie;
+			_currentMovie = nullptr;
+
+			delete name;
+		}
+	}
+
+	if (_currentMovie)
+		_currentMovie->setArchive(_mainArchive);
+
+	return Common::kNoError;
 }
 
-Archive *DirectorEngine::openMainArchive(const Common::String movie) {
+Archive *Stage::openMainArchive(const Common::String movie) {
 	debug(1, "openMainArchive(\"%s\")", movie.c_str());
 
-	_mainArchive = createArchive();
+	_mainArchive = g_director->createArchive();
 
 	if (!_mainArchive->openFile(movie)) {
 		delete _mainArchive;
@@ -74,12 +128,26 @@ Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 	return _mainArchive;
 }
 
-void DirectorEngine::loadEXE(const Common::String movie) {
+void Stage::loadEXE(const Common::String movie) {
+	Common::SeekableReadStream *iniStream = SearchMan.createReadStreamForMember("LINGO.INI");
+	if (iniStream) {
+		char *script = (char *)calloc(iniStream->size() + 1, 1);
+		iniStream->read(script, iniStream->size());
+
+		_currentMovie = new Movie(this);
+		_currentMovie->getMainLingoArch()->addCode(script, kMovieScript, 0);
+		g_lingo->processEvent(kEventStartUp);
+		delete _currentMovie;
+		_currentMovie = nullptr;
+
+		free(script);
+	} else {
+		warning("No LINGO.INI");
+	}
+
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(movie);
 	if (!exeStream)
-		error("Failed to open EXE '%s'", getEXEName().c_str());
-
-	_lingo->processEvent(kEventStart);
+		error("Failed to open EXE '%s'", g_director->getEXEName().c_str());
 
 	uint32 initialTag = exeStream->readUint32LE();
 	if (initialTag == MKTAG('R', 'I', 'F', 'X') || initialTag == MKTAG('X', 'F', 'I', 'R')) {
@@ -94,7 +162,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 		exeStream->seek(-4, SEEK_END);
 		exeStream->seek(exeStream->readUint32LE());
 
-		switch (getVersion()) {
+		switch (g_director->getVersion()) {
 		case 2:
 		case 3:
 			loadEXEv3(exeStream);
@@ -109,14 +177,14 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 			loadEXEv7(exeStream);
 			break;
 		default:
-			error("Unhandled Windows EXE version %d", getVersion());
+			error("Unhandled Windows EXE version %d", g_director->getVersion());
 		}
 	}
 
 	_mainArchive->setFileName(movie);
 }
 
-void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
+void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
 	uint16 entryCount = stream->readUint16LE();
 	if (entryCount != 1)
 		error("Unhandled multiple entry v3 EXE");
@@ -145,15 +213,14 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 			Common::String fname = Common::String::format("./dumps/%s", mmmFileName.c_str());
 
 
-			if (!out.open(fname.c_str())) {
-				warning("Can not open dump file %s", fname.c_str());
-				return;
+			if (!out.open(fname.c_str(), true)) {
+				warning("Stage::loadEXEv3(): Can not open dump file %s", fname.c_str());
+			} else {
+				out.write(buf, mmmSize);
+
+				out.flush();
+				out.close();
 			}
-
-			out.write(buf, mmmSize);
-
-			out.flush();
-			out.close();
 
 			free(buf);
 		}
@@ -170,7 +237,7 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 	openMainArchive(mmmFileName);
 }
 
-void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
+void Stage::loadEXEv4(Common::SeekableReadStream *stream) {
 	if (stream->readUint32BE() != MKTAG('P', 'J', '9', '3'))
 		error("Invalid projector tag found in v4 EXE");
 
@@ -188,7 +255,7 @@ void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 	loadEXERIFX(stream, rifxOffset);
 }
 
-void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
+void Stage::loadEXEv5(Common::SeekableReadStream *stream) {
 	uint32 ver = stream->readUint32LE();
 
 	if (ver != MKTAG('P', 'J', '9', '5'))
@@ -210,7 +277,7 @@ void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 	loadEXERIFX(stream, rifxOffset);
 }
 
-void DirectorEngine::loadEXEv7(Common::SeekableReadStream *stream) {
+void Stage::loadEXEv7(Common::SeekableReadStream *stream) {
 	if (stream->readUint32LE() != MKTAG('P', 'J', '0', '0'))
 		error("Invalid projector tag found in v7 EXE");
 
@@ -224,15 +291,15 @@ void DirectorEngine::loadEXEv7(Common::SeekableReadStream *stream) {
 	loadEXERIFX(stream, rifxOffset);
 }
 
-void DirectorEngine::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
+void Stage::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
 	_mainArchive = new RIFXArchive();
 
 	if (!_mainArchive->openStream(stream, offset))
 		error("Failed to load RIFX from EXE");
 }
 
-void DirectorEngine::loadMac(const Common::String movie) {
-	if (getVersion() < 4) {
+void Stage::loadMac(const Common::String movie) {
+	if (g_director->getVersion() < 4) {
 		// The data is part of the resource fork of the executable
 		openMainArchive(movie);
 	} else {
@@ -261,133 +328,10 @@ void DirectorEngine::loadMac(const Common::String movie) {
 
 		if (!_mainArchive->openStream(dataFork, startOffset)) {
 			warning("Failed to load RIFX from Mac binary");
-			delete _currentScore;
-			_currentScore = nullptr;
+			delete _currentMovie;
+			_currentMovie = nullptr;
 		}
 	}
-}
-
-void DirectorEngine::clearSharedCast() {
-	if (!_sharedScore)
-		return;
-
-	delete _sharedScore;
-
-	_sharedScore = nullptr;
-}
-
-void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
-	if (_sharedScore && _sharedScore->_movieArchive) {
-		if (_sharedScore->_movieArchive->getFileName().equalsIgnoreCase(filename))
-			return;
-	}
-
-	Common::SeekableSubReadStreamEndian *r;
-
-	clearSharedCast();
-
-	Archive *sharedCast = createArchive();
-
-	if (!sharedCast->openFile(filename)) {
-		warning("loadSharedCastsFrom(): No shared cast %s", filename.c_str());
-
-		delete sharedCast;
-
-		return;
-	}
-	sharedCast->setFileName(filename);
-
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
-	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-
-	_lingo->_archiveIndex = 1;
-	_sharedScore = new Score(this);
-	_sharedScore->setArchive(sharedCast);
-
-	if (sharedCast->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
-		debug("loadSharedCastsFrom(): Shared cast has fonts. Loading....");
-
-		_wm->_fontMan->loadFonts(filename);
-	}
-
-	_sharedScore->loadConfig(*(r = sharedCast->getResource(MKTAG('V','W','C','F'), 1024)));
-	delete r;
-
-	if (getVersion() < 4) {
-		_sharedScore->_castIDoffset = sharedCast->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
-		_sharedScore->loadCastDataVWCR(*(r = sharedCast->getResource(MKTAG('V','W','C','R'), _sharedScore->_castIDoffset)));
-		delete r;
-	}
-
-	// Try to load script context
-	if (getVersion() >= 4) {
-		Common::Array<uint16> lctx = sharedCast->getResourceIDList(MKTAG('L','c','t','x'));
-		if (lctx.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
-
-			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				_sharedScore->loadLingoContext(*(r = sharedCast->getResource(MKTAG('L','c','t','x'), *iterator)));
-				delete r;
-			}
-		}
-	}
-
-	// Try to load script name lists
-	if (getVersion() >= 4) {
-		Common::Array<uint16> lnam = sharedCast->getResourceIDList(MKTAG('L','n','a','m'));
-		if (lnam.size() > 0) {
-
-			int maxLnam = -1;
-			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
-				maxLnam = MAX(maxLnam, (int)*iterator);
-			}
-			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			_sharedScore->loadLingoNames(*(r = sharedCast->getResource(MKTAG('L','n','a','m'), maxLnam)));
-			delete r;
-		}
-	}
-
-	Common::Array<uint16> vwci = sharedCast->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
-	if (vwci.size() > 0) {
-		debug(0, "****** Loading %d CastInfo resources", vwci.size());
-
-		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator) {
-			_sharedScore->loadCastInfo(*(r = sharedCast->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator)), *iterator);
-			delete r;
-		}
-	}
-
-	Common::Array<uint16> cast = sharedCast->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
-	if (!_sharedScore->_loadedCast)
-		_sharedScore->_loadedCast = new Common::HashMap<int, Cast *>();
-
-	if (cast.size() > 0) {
-		debug(0, "****** Loading %d CASt resources", cast.size());
-
-		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
-			Common::SeekableSubReadStreamEndian *stream = sharedCast->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
-			Resource res = sharedCast->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
-			_sharedScore->loadCastData(*stream, *iterator, &res);
-			delete stream;
-		}
-	}
-
-	_sharedScore->setSpriteCasts();
-	_sharedScore->loadSpriteImages(true);
-
-	_lingo->_archiveIndex = 0;
-}
-
-Cast *DirectorEngine::getCastMember(int castId) {
-	Cast *result = nullptr;
-	if (_currentScore) {
-		result = _currentScore->getCastMember(castId);
-	}
-	if (result == nullptr && _sharedScore) {
-		result = _sharedScore->getCastMember(castId);
-	}
-	return result;
 }
 
 } // End of namespace Director

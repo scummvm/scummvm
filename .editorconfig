@@ -4,3 +4,6 @@ indent_size = 4
 trim_trailing_whitespace = true
 insert_final_newline = true
 vc_generate_documentation_comments = doxygen_slash_star
+
+[*.lingo]
+charset = macroman

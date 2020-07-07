@@ -24,23 +24,23 @@
 #define DIRECTOR_FRAME_H
 
 namespace Image {
-	class ImageDecoder;
+class ImageDecoder;
 }
 
 namespace Graphics {
-	class ManagedSurface;
-	struct Surface;
+class ManagedSurface;
+struct Surface;
 }
 
 namespace Common {
-	class ReadStreamEndian;
+class ReadStreamEndian;
 }
 
 namespace Director {
 
 class Score;
 class Sprite;
-class TextCast;
+class TextCastMember;
 
 enum {
 	kChannelDataSize = (25 * 50)
@@ -75,15 +75,13 @@ public:
 
 	void executeImmediateScripts();
 
-	void playTransition(Score *score);
-
 private:
 
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
-	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCast *textCast);
+	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCastMember *textCast);
 
 
 public:

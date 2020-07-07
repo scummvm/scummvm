@@ -169,6 +169,7 @@ _iconv=auto
 _tts=auto
 _gtk=auto
 _fribidi=auto
+_test_cxx11=no
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -261,6 +262,7 @@ add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
+add_feature test_cxx11 "Test C++11" "_test_cxx11"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1241,6 +1243,8 @@ for ac_option in $@; do
 	--disable-mad)                _mad=no                ;;
 	--enable-fribidi)             _fribidi=yes           ;;
 	--disable-fribidi)            _fribidi=no            ;;
+	--enable-test-c++11)          _test_cxx11=yes        ;;
+	--disable-test-c++11)         _test_cxx11=no         ;;
 	--enable-zlib)                _zlib=yes              ;;
 	--disable-zlib)               _zlib=no               ;;
 	--enable-sparkle)             _sparkle=yes           ;;
@@ -1788,6 +1792,8 @@ switch)
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
+	# Switch SDK has C++11 constructs so we must enable it
+	_use_cxx11=yes
 	;;
 tizen)
  	_host_os=tizen
@@ -1985,8 +1991,29 @@ esac
 
 # Toolchain for Android is in NDK and is using different naming convention
 if test "$_host_os" = android; then
-	# Try to use a known to work (on linux) toolchain
-	_android_toolchain="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64"
+	
+	# Check that we have the correct NDK version
+	echo_n "Checking NDK version... "
+	_ndk_gradle=$(grep "^[[:space:]]*ndkVersion" $_srcdir/dists/android/build.gradle | sed 's/[^0-9\.]//g')
+	_ndk_version=$(grep "Pkg.Revision" $ANDROID_NDK_ROOT/source.properties | sed 's/[^0-9\.]//g' | sed 's/.//')
+	if test "$_ndk_version" = "$_ndk_gradle"; then
+		echo "$_ndk_version"
+	else
+		echo "$_ndk_version (Expected $_ndk_gradle)"
+		exit 1
+	fi
+
+	# Try to use a known to work toolchain
+	android_toolchains="windows-x86_64 darwin-x86_64 linux-x86_64"	
+	for toolchain in $android_toolchains; do 
+		_android_toolchain="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/$toolchain"
+
+		if test -d "$_android_toolchain"; then
+			break
+		fi
+	done
+
+	# See if an explicit toolchain is used
 	if test -n "$ANDROID_TOOLCHAIN"; then
 		_android_toolchain="$ANDROID_TOOLCHAIN"
 	fi
@@ -2253,16 +2280,17 @@ if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
 		# Try to use ANSI mode when C++11 is disabled.
 		if test "$_use_cxx11" = "no" ; then
-			case $_host_os in
-			# newlib-based system include files suppress non-C89 function
-			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | morphos* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
-				;;
-			*)
-				append_var CXXFLAGS "-ansi"
-				;;
-			esac
+			append_var CXXFLAGS "-ansi"
 		fi
+		case $_host_os in
+		# newlib-based system include files suppress non-C89 function
+		# declarations under __STRICT_ANSI__, undefine it
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | morphos* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
+			append_var CXXFLAGS "-U__STRICT_ANSI__"
+			;;
+		*)
+			;;
+		esac
 		append_var CXXFLAGS "-W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
 		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
@@ -2274,6 +2302,7 @@ if test "$have_gcc" = yes ; then
 	else
 		append_var CXXFLAGS "-Wconversion"
 	fi;
+	append_var CXXFLAGS "-fno-operator-names"
 elif test "$have_icc" = yes ; then
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
@@ -3970,7 +3999,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | switch | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | null | openpandora | psp | psp2 | samsungtv | sdl | switch | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4397,7 +4426,7 @@ int main(void) { return 0; }
 EOF
 			cc_check -lsapi -lole32 && _tts=yes
 			;;
-		linux*)
+		linux* | freebsd*)
 			cat > $TMPC << EOF
 #include <speech-dispatcher/libspeechd.h>
 int main(void) { return 0; }
@@ -5482,6 +5511,7 @@ case $_host_os in
 		linuxcd=no
 		cat > $TMPC << EOF
 #include <linux/cdrom.h>
+#include <sys/sysmacros.h>
 #include <sys/types.h>
 int main(void) {
 	int x = CDROMREADAUDIO;
@@ -5599,6 +5629,12 @@ fi
 define_in_config_if_yes "$_fribidi" 'USE_FRIBIDI'
 echo "$_fribidi"
 
+#
+# Test C++11 Compatibility
+#
+define_in_config_if_yes "$_test_cxx11" 'ENABLE_TEST_CPP_11'
+echo_n "Test C++11 compatibility during compilation... "
+echo "$_test_cxx11"
 
 # Default to plain text output for pandoc
 if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then
@@ -5713,8 +5749,8 @@ if test "$_tts" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	linux*)
-		echo "linux"
+	linux* | freebsd*)
+		echo "speech dispatcher"
 		_tts=yes
 		define_in_config_if_yes $_tts 'USE_SPEECH_DISPATCHER'
 		append_var LIBS '-lspeechd -lpthread'

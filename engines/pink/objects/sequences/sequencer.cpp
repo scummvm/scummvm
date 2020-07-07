@@ -44,8 +44,8 @@ Sequencer::~Sequencer() {
 		delete _timers[i];
 	}
 	delete _context;
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		delete _parrallelContexts[i];
+	for (uint i = 0; i < _parallelContexts.size(); ++i) {
+		delete _parallelContexts[i];
 	}
 }
 
@@ -68,10 +68,10 @@ void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
 
 	if (sequence) {
 		SequenceContext *context = new SequenceContext(sequence);
-		SequenceContext *confilct;
-		while((confilct = findConfilictingContextWith(context)) != nullptr)
-			confilct->getSequence()->forceEnd();
-
+		SequenceContext *conflict;
+		while ((conflict = findConflictingContextWith(context)) != nullptr) {
+			conflict->getSequence()->forceEnd();
+		}
 		_context = context;
 		sequence->init(loadingSave);
 		debugC(5, kPinkDebugScripts, "Main Sequence %s started", sequence->getName().c_str());
@@ -82,16 +82,16 @@ void Sequencer::authorParallelSequence(Sequence *sequence, bool loadingSave) {
 	if (_context && _context->getSequence() == sequence)
 		return;
 
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		if (_parrallelContexts[i]->getSequence() == sequence)
+	for (uint i = 0; i < _parallelContexts.size(); ++i) {
+		if (_parallelContexts[i]->getSequence() == sequence)
 			return;
 	}
 
 	const Common::String leadName = _page->getLeadActor()->getName();
 	SequenceContext *context = new SequenceContext(sequence);
 
-	if (!context->findState(leadName) && !findConfilictingContextWith(context)) {
-		_parrallelContexts.push_back(context);
+	if (!context->findState(leadName) && !findConflictingContextWith(context)) {
+		_parallelContexts.push_back(context);
 		sequence->init(loadingSave);
 		debugC(6, kPinkDebugScripts, "Parallel Sequence %s started", sequence->getName().c_str());
 	} else
@@ -113,8 +113,8 @@ void Sequencer::update() {
 	if (_context)
 		_context->getSequence()->update();
 
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		_parrallelContexts[i]->getSequence()->update();
+	for (uint i = 0; i < _parallelContexts.size(); ++i) {
+		_parallelContexts[i]->getSequence()->update();
 	}
 
 	uint time = _page->getGame()->getTotalPlayTime();
@@ -133,10 +133,10 @@ void Sequencer::removeContext(SequenceContext *context) {
 		return;
 	}
 
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		if (context == _parrallelContexts[i]) {
-			delete _parrallelContexts[i];
-			_parrallelContexts.remove_at(i);
+	for (uint i = 0; i < _parallelContexts.size(); ++i) {
+		if (context == _parallelContexts[i]) {
+			delete _parallelContexts[i];
+			_parallelContexts.remove_at(i);
 			break;
 		}
 	}
@@ -183,19 +183,19 @@ void Sequencer::saveState(Archive &archive) {
 		sequenceName = _context->getSequence()->getName();
 	archive.writeString(sequenceName);
 
-	archive.writeWORD(_parrallelContexts.size());
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		archive.writeString(_parrallelContexts[i]->getSequence()->getName());
+	archive.writeWORD(_parallelContexts.size());
+	for (uint i = 0; i < _parallelContexts.size(); ++i) {
+		archive.writeString(_parallelContexts[i]->getSequence()->getName());
 	}
 }
 
-SequenceContext *Sequencer::findConfilictingContextWith(SequenceContext *context) {
+SequenceContext *Sequencer::findConflictingContextWith(SequenceContext *context) {
 	if (_context && _context->isConflictingWith(context)) {
 		return _context;
 	}
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		if (_parrallelContexts[i]->isConflictingWith(context))
-			return _parrallelContexts[i];
+	for (uint i = 0; i < _parallelContexts.size(); ++i) {
+		if (_parallelContexts[i]->isConflictingWith(context))
+			return _parallelContexts[i];
 	}
 	return nullptr;
 }
@@ -205,8 +205,8 @@ SequenceActorState *Sequencer::findState(const Common::String &name) {
 	if (_context && (state = _context->findState(name)))
 		return state;
 
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		state = _parrallelContexts[i]->findState(name);
+	for (uint i = 0; i < _parallelContexts.size(); ++i) {
+		state = _parallelContexts[i]->findState(name);
 		if (state)
 			break;
 	}

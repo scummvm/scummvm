@@ -21,7 +21,7 @@
  */
 
 #include "director/director.h"
-#include "director/score.h"
+#include "director/movie.h"
 #include "director/lingo/lingo.h"
 
 
@@ -40,11 +40,11 @@ struct ScriptPatch {
 	const char *replace;
 } const scriptPatches[] = {
 	// Garbage at end of script
-	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kFrameScript, 12,
+	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
-	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kFrameScript, 12,
+	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			3, "Channels 17 to 18", ""},
-	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kFrameScript, 12,
+	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			4, "Frames 150 to 160", ""},
 
 	// Unbalanced 'end if' at the end of the script
@@ -52,11 +52,11 @@ struct ScriptPatch {
 			5, "end if", ""},
 
 	// Garbage at end of script
-	{"warlock", kPlatformWindows, "WRLCKSHP/UpForeECall", kFrameScript, 12,
+	{"warlock", kPlatformWindows, "WRLCKSHP/UpForeECall", kScoreScript, 12,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
-	{"warlock", kPlatformWindows, "WRLCKSHP/UpForeECall", kFrameScript, 12,
+	{"warlock", kPlatformWindows, "WRLCKSHP/UpForeECall", kScoreScript, 12,
 			3, "Channels 17 to 18", ""},
-	{"warlock", kPlatformWindows, "WRLCKSHP/UpForeECall", kFrameScript, 12,
+	{"warlock", kPlatformWindows, "WRLCKSHP/UpForeECall", kScoreScript, 12,
 			4, "Frames 150 to 160", ""},
 
 	// Unbalanced 'end if' at the end of the script
@@ -65,18 +65,18 @@ struct ScriptPatch {
 
 
 	// Unbalanced 'end if' at the end of the script
-	{"jman", kPlatformWindows, "mmm/TSA RR 06", kFrameScript, 26,
+	{"jman", kPlatformWindows, "mmm/TSA RR 06", kScoreScript, 26,
 			17, "end if", ""},
 
 	{nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr, nullptr}
 };
 
 Common::String Lingo::patchLingoCode(Common::String &line, ScriptType type, uint16 id, int linenum) {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return line;
 
 	const ScriptPatch *patch = scriptPatches;
-	Common::String movie = _vm->getCurrentPath() + _vm->getCurrentScore()->getMacName();
+	Common::String movie = _vm->getCurrentPath() + _vm->getCurrentMovie()->getMacName();
 
 	// So far, we have not many patches, so do linear lookup
 	while (patch->gameId) {
@@ -101,7 +101,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, ScriptType type, uint
 		}
 
 		// Now everything matched
-		debugC(1, kDebugLingoParse, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
+		debugC(1, kDebugParse, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
 				patch->gameId, patch->movie, scriptType2str(type), id, linenum,
 				patch->orig, line.c_str());
 		return patch->replace;

@@ -69,12 +69,18 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 
 	_launched = false;
 
+	_useRTL = false;
+
+	_topDialogLeftPadding = 0;
+	_topDialogRightPadding = 0;
+
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
 #ifdef USE_TRANSLATION
 	// Enable translation
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
+	setLanguageRTL();
 #endif // USE_TRANSLATION
 
 #ifdef USE_TTS
@@ -575,6 +581,9 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	int button;
 	uint32 time;
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+	if (g_gui.useRTL()) {
+		mouse.x = g_system->getOverlayWidth() - event.mouse.x - activeDialog->_x + g_gui.getOverlayOffset();
+	}
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -584,7 +593,11 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		activeDialog->handleKeyUp(event.kbd);
 		break;
 	case Common::EVENT_MOUSEMOVE:
-		_globalMousePosition.x = event.mouse.x;
+		if (g_gui.useRTL()) {
+			_globalMousePosition.x = g_system->getOverlayWidth() - event.mouse.x + g_gui.getOverlayOffset();
+		} else {
+			_globalMousePosition.x = event.mouse.x;
+		}
 		_globalMousePosition.y = event.mouse.y;
 		activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
 
@@ -647,6 +660,27 @@ void GuiManager::setLastMousePos(int16 x, int16 y) {
 	_lastMousePosition.time = _system->getMillis(true);
 }
 
+void GuiManager::setLanguageRTL() {
+	if (ConfMan.hasKey("guiRTL")) {		// Put guiRTL = yes to your scummvm.ini to force RTL GUI
+		_useRTL = ConfMan.getBool("guiRTL");
+		return;
+	}
+#ifdef USE_TRANSLATION
+	Common::String language = TransMan.getCurrentLanguage();
+	if (language.equals("he")) {		// GUI TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+		_useRTL = true;
+		return;
+	}
+#endif // USE_TRANSLATION
+
+	_useRTL = false;
+}
+
+void GuiManager::setDialogPaddings(int l, int r) {
+	_topDialogLeftPadding = l;
+	_topDialogRightPadding = r;
+}
+
 #ifdef USE_TTS
 void GuiManager::initTextToSpeech() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -664,12 +698,12 @@ void GuiManager::initTextToSpeech() {
 	ttsMan->setVolume(volume);
 
 	unsigned voice;
-	if(ConfMan.hasKey("tts_voice"))
+	if(ConfMan.hasKey("tts_voice")) {
 		voice = ConfMan.getInt("tts_voice", "scummvm");
-	else
-		voice = 0;
-	if (voice >= ttsMan->getVoicesArray().size())
-		voice = 0;
+		if (voice >= ttsMan->getVoicesArray().size())
+			voice = ttsMan->getDefaultVoice();
+	} else
+		voice = ttsMan->getDefaultVoice();
 	ttsMan->setVoice(voice);
 }
 #endif

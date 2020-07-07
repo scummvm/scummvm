@@ -51,7 +51,7 @@ public:
 	void update();
 
 	void authorSequence(Sequence *sequence, bool loadingSave);
-	void authorParallelSequence(Sequence *seqeunce, bool loadingSave);
+	void authorParallelSequence(Sequence *sequence, bool loadingSave);
 
 	void skipSubSequence();
 	void restartSequence();
@@ -59,7 +59,7 @@ public:
 
 	void removeContext(SequenceContext *context);
 
-	SequenceContext *findConfilictingContextWith(SequenceContext *context);
+	SequenceContext *findConflictingContextWith(SequenceContext *context);
 
 	Sequence *findSequence(const Common::String &name);
 	SequenceActorState *findState(const Common::String &name);
@@ -69,7 +69,7 @@ public:
 private:
 	SequenceContext *_context;
 	GamePage *_page;
-	Common::Array<SequenceContext *> _parrallelContexts;
+	Common::Array<SequenceContext *> _parallelContexts;
 	Array<Sequence *> _sequences;
 	Array<SeqTimer *> _timers;
 	uint _time;

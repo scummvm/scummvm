@@ -28,30 +28,12 @@
 
 namespace Graphics {
 
-struct SelectedText {
-	int startX, startY;
-	int endX, endY;
-	int startRow, startCol;
-	int endRow, endCol;
-
-	SelectedText() {
-		startX = startY = -1;
-		endX = endY = -1;
-		startRow = startCol = -1;
-		endRow = endCol = -1;
-	}
-
-	bool needsRender() {
-		return startX != endX || startY != endY;
-	}
-};
-
 class MacTextWindow : public MacWindow {
 public:
 	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 	virtual ~MacTextWindow();
 
-	virtual void resize(int w, int h);
+	virtual void resize(int w, int h, bool inner = false);
 
 	virtual bool processEvent(Common::Event &event);
 

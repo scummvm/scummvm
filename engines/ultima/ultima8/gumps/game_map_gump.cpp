@@ -394,8 +394,13 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 			item->getLocation(xv, yv, zv);
 			item->dumpInfo();
 
+			int range = 128; // CONSTANT!
+			if (GAME_IS_CRUSADER) {
+				range = 512;
+			}
+
 			if (dynamic_cast<Actor *>(item) ||
-			        avatar->canReach(item, 128)) { // CONSTANT!
+			        avatar->canReach(item, range)) {
 				// call the 'use' event
 				item->use();
 			} else {

@@ -771,8 +771,6 @@ MapTile Map::translateFromRawTileIndex(int raw) const {
 }
 
 uint Map::translateToRawTileIndex(MapTile &tile) const {
-	g_tileSets;
-
 	return _tileMap->untranslate(tile);
 }
 

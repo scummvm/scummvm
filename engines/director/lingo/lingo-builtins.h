@@ -75,7 +75,7 @@ namespace LB {
 	void b_setProp(int nargs);
 	void b_sort(int nargs);
 
-	void b_factoryP(int nargs);
+	void b_factory(int nargs);
 	void b_floatP(int nargs);
 	void b_ilk(int nargs);
 	void b_integerp(int nargs);
@@ -86,7 +86,6 @@ namespace LB {
 	void b_voidP(int nargs);
 
 	void b_alert(int nargs);
-	void b_birth(int nargs);
 	void b_clearGlobals(int nargs);
 	void b_cursor(int nargs);
 	void b_framesToHMS(int nargs);
@@ -135,6 +134,7 @@ namespace LB {
 	void b_nothing(int nargs);
 	void b_pass(int nargs);
 	void b_pause(int nargs);
+	void b_play(int nargs);
 	void b_playAccel(int nargs);
 	void b_preLoad(int nargs);
 	void b_preLoadCast(int nargs);
@@ -143,6 +143,7 @@ namespace LB {
 	void b_shutDown(int nargs);
 	void b_startTimer(int nargs);
 	void b_return(int nargs);
+	void b_returnNumber(int nargs);
 
 	void b_closeDA(int nargs);
 	void b_closeResFile(int nargs);
@@ -188,8 +189,6 @@ namespace LB {
 	void b_true(int nargs);
 	void b_version(int nargs);
 
-	void b_factory(int nargs);
-
 	void b_cast(int nargs);
 	void b_field(int nargs);
 	void b_script(int nargs);
@@ -202,6 +201,9 @@ namespace LB {
 	void b_lastitemof(int nargs);
 	void b_lastlineof(int nargs);
 	void b_lastwordof(int nargs);
+
+	void b_scummvmassert(int nargs);
+	void b_scummvmassertequal(int nargs);
 
 } // End of namespace LB
 

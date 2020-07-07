@@ -24,6 +24,7 @@
 #include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/graphics/palette.h"
+#include "ultima/ultima8/kernel/core_app.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -141,21 +142,33 @@ uint32 PaletteFaderProcess::I_fadeToPaletteTransform(const uint8 *args,
 	return Kernel::get_instance()->addProcess(_fader);
 }
 
-uint32 PaletteFaderProcess::I_fadeToBlack(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+uint32 PaletteFaderProcess::I_fadeToBlack(const uint8 *args,
+        unsigned int argsize) {
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
-	_fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, 30, true);
+	int nsteps = (GAME_IS_U8 ? 30 : 40);
+	if (argsize > 0) {
+		ARG_UINT16(n);
+		nsteps = n;
+	}
+
+	_fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, nsteps, true);
 	return Kernel::get_instance()->addProcess(_fader);
 }
 
-uint32 PaletteFaderProcess::I_fadeFromBlack(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+uint32 PaletteFaderProcess::I_fadeFromBlack(const uint8 *args,
+        unsigned int argsize) {
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
-	_fader = new PaletteFaderProcess(0x00000000, true, 0x7FFF, 30, false);
+	int nsteps = (GAME_IS_U8 ? 30 : 40);
+	if (argsize > 0) {
+		ARG_UINT16(n);
+		nsteps = n;
+	}
+
+	_fader = new PaletteFaderProcess(0x00000000, true, 0x7FFF, nsteps, false);
 	return Kernel::get_instance()->addProcess(_fader);
 }
 

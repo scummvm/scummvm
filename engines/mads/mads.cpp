@@ -178,10 +178,6 @@ int MADSEngine::getRandomNumber(int minNumber, int maxNumber) {
 	return minNumber + _randomSource.getRandomNumber(range);
 }
 
-int MADSEngine::hypotenuse(int xv, int yv) {
-	return (int)sqrt((double)(xv * xv + yv * yv));
-}
-
 bool MADSEngine::canLoadGameStateCurrently() {
 	return !_game->_winStatus && !_game->globals()[5]
 		&& _dialogs->_pendingDialog == DIALOG_NONE

@@ -201,8 +201,9 @@ int TextDialog::estimatePieces(int maxLen) {
 TextDialog::~TextDialog() {
 #ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
-		Common::TextToSpeechManager* _ttsMan = g_system->getTextToSpeechManager();
-		_ttsMan->stop();
+		Common::TextToSpeechManager* ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr)
+			ttsMan->stop();
 	}
 #endif
 
@@ -350,9 +351,9 @@ void TextDialog::draw() {
 
 	// Draw the text lines
 	int lineYp = _position.y + 5;
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	Common::String text;
-	#endif
+#endif
 	for (int lineNum = 0; lineNum <= _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
@@ -387,13 +388,15 @@ void TextDialog::draw() {
 		lineYp += _font->getHeight() + 1;
 	}
 
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
-		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-		_ttsMan->stop();
-		_ttsMan->say(text.c_str());
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->stop();
+			ttsMan->say(text.c_str());
+		}
 	}
-	#endif
+#endif
 }
 
 void TextDialog::calculateBounds() {

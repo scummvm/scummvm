@@ -377,15 +377,19 @@ typedef heapblock_struct heapblock_t;
  * This structure allows us to write either to a Glk stream or to a dynamically-allocated memory chunk.
  */
 struct dest_struct {
-	int ismem;
+	bool _isMem;
 
-	/* If it's a Glk stream: */
-	strid_t str;
+	/* If it's a raw stream */
+	Common::SeekableReadStream *_src;
+	Common::WriteStream *_dest;
 
 	/* If it's a block of memory: */
-	byte *ptr;
-	uint pos;
-	uint size;
+	byte *_ptr;
+	uint _pos;
+	uint _size;
+
+	dest_struct() : _isMem(false), _src(nullptr), _dest(nullptr),
+		_ptr(nullptr), _pos(0), _size(0) {}
 };
 typedef dest_struct dest_t;
 

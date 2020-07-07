@@ -56,7 +56,7 @@ public:
 
 	void init(bool paused) override;
 
-	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
+	void onMouseOver(Common::Point point, CursorMgr *mgr) override;
 
 	void onLeftClickMessage() override;
 
@@ -65,8 +65,8 @@ private:
 
 	Command _command;
 
-	int _x;
-	int _y;
+	int16 _x;
+	int16 _y;
 
 	bool _hideOnStop;
 	bool _opaque;

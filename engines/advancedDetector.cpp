@@ -289,15 +289,11 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	if (!agdDesc.desc)
 		return Common::kNoGameDataFoundError;
 
+	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
+
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
-	Common::String lang = getGameGUIOptionsDescriptionLanguage(agdDesc.desc->language);
-	if (agdDesc.desc->flags & ADGF_ADDENGLISH)
-		lang += " " + getGameGUIOptionsDescriptionLanguage(Common::EN_ANY);
-
-	Common::updateGameGUIOptions(agdDesc.desc->guiOptions + _guiOptions, lang);
-
-	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
+	ConfMan.setAndFlush("guioptions", gameDescriptor.getGUIOptions());
 
 	bool showTestingWarning = false;
 

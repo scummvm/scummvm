@@ -194,45 +194,39 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x = 0, y = 0;
 
+	Common::Array<int> pixels;
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
-	if (stream.size() * 8 == _surface->pitch * _surface->h) {
+	if (stream.size() == _surface->pitch * _surface->h * _bitsPerPixel / 8) {
 		debugC(6, kDebugImages, "Skipping compression");
-		for (y = 0; y < _surface->h; y++) {
-			for (x = 0; x < _surface->pitch; ) {
-				byte color = stream.readByte();
-				for (int c = 0; c < 8; c++)
-					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
-			}
+		for (int i = 0; i < stream.size(); i++) {
+			pixels.push_back((int)stream.readByte());
 		}
-
-		return true;
-	}
-
-	Common::Array<int> pixels;
-	while (!stream.eos()) {
-		// TODO: D3 32-bit bitmap casts seem to just be ARGB pixels in a row and not RLE.
-		// Determine how to distinguish these different types. Maybe stage version.
-		if (_bitsPerPixel == 32) {
-			int data = stream.readByte();
-			pixels.push_back(data);
-		} else {
-			int data = stream.readByte();
-			int len = data + 1;
-			if ((data & 0x80) != 0) {
-				len = ((data ^ 0xFF) & 0xff) + 2;
-				data = stream.readByte();
-				for (int p = 0; p < len; p++) {
-					pixels.push_back(data);
-				}
+	} else {
+		while (!stream.eos()) {
+			// TODO: D3 32-bit bitmap casts seem to just be ARGB pixels in a row and not RLE.
+			// Determine how to distinguish these different types. Maybe stage version.
+			if (_bitsPerPixel == 32) {
+				int data = stream.readByte();
+				pixels.push_back(data);
 			} else {
-				for (int p = 0; p < len; p++) {
+				int data = stream.readByte();
+				int len = data + 1;
+				if ((data & 0x80) != 0) {
+					len = ((data ^ 0xFF) & 0xff) + 2;
 					data = stream.readByte();
-					pixels.push_back(data);
+					for (int p = 0; p < len; p++) {
+						pixels.push_back(data);
+					}
+				} else {
+					for (int p = 0; p < len; p++) {
+						data = stream.readByte();
+						pixels.push_back(data);
+					}
 				}
+				if (_bitsPerPixel == 32 && pixels.size() % (_surface->w * 3) == 0)
+					stream.readUint16BE();
 			}
-			if (_bitsPerPixel == 32 && pixels.size() % (_surface->w * 3) == 0)
-				stream.readUint16BE();
 		}
 	}
 

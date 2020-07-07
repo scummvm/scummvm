@@ -214,7 +214,7 @@ Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {
 	dst = new Picture(sx, sy, src->format);
 	dst->_id = src->_id;
 	dst->_scaled = true;
-	dst->transBlitFrom(*src, src->getBounds(), dst->getBounds(), (uint)-1);
+	dst->transBlitFrom(*src, src->getBounds(), dst->getBounds(), (uint)0x8888);
 
 	storeScaled(dst);
 	return dst;

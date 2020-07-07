@@ -56,8 +56,12 @@ private:
 	Audio::SoundHandle _handle;
 };
 
+class PetkaEngine;
+
 class SoundMgr {
 public:
+	SoundMgr(PetkaEngine &vm) : _vm(vm) {}
+
 	Sound *addSound(const Common::String &name, Audio::Mixer::SoundType type);
 	Sound *findSound(const Common::String &name) const;
 
@@ -67,6 +71,7 @@ public:
 
 private:
 	typedef Common::HashMap<Common::String, Common::ScopedPtr<Sound>, Common::CaseSensitiveString_Hash> SoundsMap;
+	PetkaEngine &_vm;
 	SoundsMap _sounds;
 };
 

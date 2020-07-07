@@ -103,6 +103,18 @@ bool UIImagePicker::setImageLeft(int i, int left) {
 	return true;
 }
 
+bool UIImagePicker::setImageWidth(int i, int16 width) {
+	if (i < 0 || i >= _imageCount || !_images[i].active) {
+		return false;
+	}
+
+	Image &img = _images[i];
+
+	img.rect.setWidth(width);
+
+	return true;
+}
+
 bool UIImagePicker::setImageShapeUp(int i, const Shape *shapeUp) {
 	if (i < 0 || i >= _imageCount || !_images[i].active) {
 		return false;
@@ -145,6 +157,36 @@ bool UIImagePicker::setImageTooltip(int i, const char *tooltip) {
 	}
 
 	return true;
+}
+
+int UIImagePicker::getImageTop(int i) {
+	if (i < 0 || i >= _imageCount || !_images[i].active) {
+		return false;
+	}
+
+	Image &img = _images[i];
+
+	return img.rect.top;
+}
+
+int UIImagePicker::getImageLeft(int i) {
+	if (i < 0 || i >= _imageCount || !_images[i].active) {
+		return false;
+	}
+
+	Image &img = _images[i];
+
+	return img.rect.left;
+}
+
+int UIImagePicker::getImageWidth(int i) {
+	if (i < 0 || i >= _imageCount || !_images[i].active) {
+		return false;
+	}
+
+	Image &img = _images[i];
+
+	return img.rect.width();
 }
 
 bool UIImagePicker::resetActiveImage(int i) {

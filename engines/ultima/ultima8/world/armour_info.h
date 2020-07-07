@@ -23,6 +23,9 @@
 #ifndef ULTIMA8_WORLD_ARMOURINFO_H
 #define ULTIMA8_WORLD_ARMOURINFO_H
 
+namespace Ultima {
+namespace Ultima8 {
+
 struct ArmourInfo {
 	uint32 _shape;
 	uint32 _frame;
@@ -30,5 +33,8 @@ struct ArmourInfo {
 	uint16 _kickAttackBonus;
 	uint16 _defenseType; // see WeaponInfo struct
 };
+
+} // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

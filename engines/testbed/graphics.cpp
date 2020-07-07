@@ -40,15 +40,6 @@ namespace Testbed {
 byte GFXTestSuite::_palette[256 * 3] = {0, 0, 0, 255, 255, 255, 255, 255, 255};
 
 GFXTestSuite::GFXTestSuite() {
-	// Initialize color palettes
-	// The fourth field is for alpha channel which is unused
-	// Assuming 8bpp as of now
-	g_system->getPaletteManager()->setPalette(_palette, 0, 3);
-
-	// Init Mouse Palette (White-black-yellow)
-	GFXtests::initMousePalette();
-	GFXtests::initMouseCursor();
-
 	// Add tests here
 
 	// Blitting buffer on screen
@@ -77,6 +68,17 @@ GFXTestSuite::GFXTestSuite() {
 	addTest("PaletteRotation", &GFXtests::paletteRotation);
 	addTest("cursorTrailsInGUI", &GFXtests::cursorTrails);
 	//addTest("Pixel Formats", &GFXtests::pixelFormats);
+}
+
+void GFXTestSuite::prepare() {
+	// Initialize color palettes
+	// The fourth field is for alpha channel which is unused
+	// Assuming 8bpp as of now
+	g_system->getPaletteManager()->setPalette(_palette, 0, 3);
+
+	// Init Mouse Palette (White-black-yellow)
+	GFXtests::initMousePalette();
+	GFXtests::initMouseCursor();
 }
 
 void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {

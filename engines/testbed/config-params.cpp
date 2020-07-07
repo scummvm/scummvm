@@ -69,6 +69,7 @@ bool ConfigParams::isRerunRequired() {
 void ConfigParams::deleteWriteStream() {
 	if (_ws) {
 		delete _ws;
+		_ws = 0;
 	}
 }
 

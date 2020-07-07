@@ -77,9 +77,12 @@ namespace LC {
 	void c_argcnoretpush();
 	void c_arraypush();
 	void c_proparraypush();
+	void c_stackpeek();
+	void c_stackdrop();
 	void c_assign();
-	bool verify(Symbol *s);
+	bool verify(const Symbol &s);
 	void c_eval();
+	void c_lazyeval();
 	void c_setImmediate();
 
 	void c_swap();
@@ -88,19 +91,12 @@ namespace LC {
 	void c_themenuentitypush();
 	void c_theentityassign();
 	void c_themenuitementityassign();
-	void c_objectfieldpush();
-	void c_objectfieldassign();
-	void c_objectrefpush();
+	void c_objectproppush();
+	void c_objectpropassign();
 
-	void c_repeatwhilecode();
-	void c_repeatwithcode();
-	void c_nextRepeat();
-	void c_ifcode();
 	void c_whencode();
-	void c_tellcode();
 	void c_tell();
 	void c_telldone();
-	void c_exitRepeat();
 	Datum compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location = false, bool value = false);
 	Datum eqData(Datum d1, Datum d2);
 	void c_eq();
@@ -118,8 +114,8 @@ namespace LC {
 	void c_jumpifz();
 	void c_call();
 
-	void call(Symbol *, int nargs);
-	void call(Common::String name, int nargs);
+	void call(const Symbol &targetSym, int nargs);
+	void call(const Common::String &name, int nargs);
 
 	void c_procret();
 
@@ -129,10 +125,6 @@ namespace LC {
 	void c_gotoloop();
 	void c_gotonext();
 	void c_gotoprevious();
-	void c_global();
-	void c_instance();
-	void c_factory();
-	void c_property();
 
 	void c_play();
 
@@ -152,17 +144,16 @@ namespace LC {
 	void cb_globalpush();
 	void cb_list();
 	void cb_localcall();
-	void cb_methodcall();
+	void cb_objectcall();
 	void cb_objectfieldassign();
 	void cb_objectfieldpush();
 	void cb_objectpush();
+	void cb_tellcall();
 	void cb_theassign();
 	void cb_theassign2();
 	void cb_thepush();
 	void cb_thepush2();
 	void cb_proplist();
-	void cb_stackpeek();
-	void cb_stackdrop();
 	void cb_varassign();
 	void cb_varpush();
 	void cb_v4assign();

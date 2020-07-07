@@ -30,21 +30,23 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-static const int INVENTORY_GUMP_SHAPE = 3;
+static const int INVENTORY_GUMP_SHAPE = 5;
+static const int INVENTORY_TEXT_FONT = 12;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruInventoryGump)
-CruInventoryGump::CruInventoryGump() : CruStatGump(), _inventoryShape(nullptr) {
+CruInventoryGump::CruInventoryGump() : CruStatGump(), _inventoryShape(nullptr),
+	_inventoryItemGump(nullptr) {
 
 }
 
 CruInventoryGump::CruInventoryGump(Shape *shape, int x)
-	: CruStatGump(shape, x), _inventoryShape(nullptr) {
+	: CruStatGump(shape, x), _inventoryShape(nullptr), _inventoryItemGump(nullptr) {
 	_frameNum = 0;
 }
 
@@ -65,20 +67,89 @@ void CruInventoryGump::InitGump(Gump *newparent, bool take_focus) {
 		warning("failed to init stat gump: no inventory shape");
 		return;
 	}
+	_inventoryItemGump = new Gump();
+	_inventoryItemGump->InitGump(this, false);
+	// we'll set the shape for this gump later.
+
+	_inventoryText = new TextWidget();
+	_inventoryText->InitGump(this, false);
+}
+
+// TODO: This is a bit of a hack.. should be configured
+// in the weapon ini file.
+static uint16 getDisplayFrameForShape(uint16 shapeno) {
+	switch (shapeno) {
+	case 0x351:
+		return 0x0;
+	case 0x4D4:
+		return 0x1;
+	case 0x52D:
+		return 0x2;
+	case 0x52E:
+		return 0x3;
+	case 0x582:
+		return 0x19;
+	case 0x52F:
+		return 0x5;
+	case 0x55F:
+		return 0x18;
+	case 0x530:
+		return 0x7;
+	case 0x3A2:
+		return 0x16;
+	case 0x3A3:
+		return 0x15;
+	case 0x3A4:
+		return 0x17;
+	default:
+		warning("No inventory gump frame for shape %d", shapeno);
+		return 0;
+	}
 }
 
 void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	CruStatGump::PaintThis(surf, lerp_factor, scaled);
-
 	const MainActor *a = getMainActor();
 	if (!a) {
 		// avatar gone??
 		return;
 	}
 
-	uint16 weapon = a->getDamageType(); // ?? TODO: Where do we store item weapon?
-	/*const ShapeFrame *frame = */_inventoryShape->getFrame(weapon);
-	// TODO: Paint the current selected item
+	uint16 activeitem = a->getActiveInvItem();
+	if (!activeitem) {
+		_inventoryItemGump->SetShape(0, 0);
+	} else {
+		Item *item = getItem(activeitem);
+		if (!item) {
+			_inventoryItemGump->SetShape(0, 0);
+		} else {
+			uint16 frame = getDisplayFrameForShape(item->getShape());
+			_inventoryItemGump->SetShape(_inventoryShape, frame);
+			_inventoryItemGump->UpdateDimsFromShape();
+			_inventoryItemGump->setRelativePosition(CENTER);
+
+			uint16 q = item->getQuality();
+			if (q > 1) {
+				// This isn't the most efficient way to work out if we need to make new
+				// text, but it works..
+				const Std::string qtext = Std::string::format("%d", q);
+				const Std::string &currenttext = _inventoryText->getText();
+				if (!qtext.equals(currenttext)) {
+					RemoveChild(_inventoryText);
+					_inventoryText = new TextWidget(_dims.w / 2 + 22, _dims.h / 2 + 3, qtext, true, INVENTORY_TEXT_FONT);
+					_inventoryText->InitGump(this, false);
+				}
+			} else {
+				if (_inventoryText->getText().length() > 0) {
+					RemoveChild(_inventoryText);
+					_inventoryText = new TextWidget();
+					_inventoryText->InitGump(this, false);
+				}
+			}
+		}
+	}
+
+	// Now that the shape is configured, we can paint.
+	CruStatGump::PaintThis(surf, lerp_factor, scaled);
 }
 
 void CruInventoryGump::saveData(Common::WriteStream *ws) {

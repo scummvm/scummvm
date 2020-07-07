@@ -118,10 +118,16 @@ bool Resource::reset() {
 					continue;
 
 				Common::Archive *archive = loadArchive(name, *i);
-				if (archive)
-					_files.add(name, archive, 0, false);
-				else
+
+				if (archive) {
+					// Hack for the Spanish version of EOB1. It has an invalid item.dat file in the
+					// game directory that needs to have a lower priority than the one in EOBDATA6.PAK.
+					bool highPrio = (_vm->game() == GI_EOB1 && _vm->gameFlags().lang == Common::ES_ESP && archive->hasFile("ITEM.DAT"));
+					_files.add(name, archive, highPrio ? 4 : 0, false);
+				}
+				else {
 					error("Couldn't load PAK file '%s'", name.c_str());
+				}
 			}
 		}
 	} else if (_vm->game() == GI_KYRA2) {

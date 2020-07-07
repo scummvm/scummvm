@@ -33,22 +33,34 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override {}
 	bool getFeatureState(OSystem::Feature f) const override { return false; }
 
-	inline Graphics::PixelFormat getScreenFormat() const override {
-		return Graphics::PixelFormat::createFormatCLUT8();
+	Graphics::PixelFormat getScreenFormat() const override {
+		return _format;
 	}
-	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const override {
+
+	Common::List<Graphics::PixelFormat> getSupportedFormats() const override {
 		Common::List<Graphics::PixelFormat> list;
+		list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0)); // BBDoU, Frotz, HDB, Hopkins, Nuvie, Petka, Riven, Sherlock (3DO), Titanic, Tony, Ultima 4, Ultima 8, ZVision
+		list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0)); // Full Pipe, Gnap (little endian), Griffon, Groovie 2, SCI32 (HQ videos), Sludge, Sword25, Ultima 8, Wintermute
+		list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24)); // Gnap (big endian)
+		list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0)); // SCUMM HE99+, Last Express
+		list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15)); // Dragons
 		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
 	}
-	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override {}
+
+	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override {
+		_width = width;
+		_height = height;
+		_format = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
+	}
+
 	virtual int getScreenChangeID() const override { return 0; }
 
 	void beginGFXTransaction() override {}
 	OSystem::TransactionError endGFXTransaction() override { return OSystem::kTransactionSuccess; }
 
-	int16 getHeight() const override { return 0; }
-	int16 getWidth() const override { return 0; }
+	int16 getHeight() const override { return _height; }
+	int16 getWidth() const override { return _width; }
 	void setPalette(const byte *colors, uint start, uint num) override {}
 	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
@@ -62,17 +74,21 @@ public:
 
 	void showOverlay() override {}
 	void hideOverlay() override {}
-	Graphics::PixelFormat getOverlayFormat() const override { return Graphics::PixelFormat(); }
+	Graphics::PixelFormat getOverlayFormat() const override { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
 	void clearOverlay() override {}
 	void grabOverlay(void *buf, int pitch) const override {}
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override {}
-	int16 getOverlayHeight() const override { return 0; }
-	int16 getOverlayWidth() const override { return 0; }
+	int16 getOverlayHeight() const override { return _height; }
+	int16 getOverlayWidth() const override { return _width; }
 
 	bool showMouse(bool visible) override { return !visible; }
 	void warpMouse(int x, int y) override {}
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override {}
 	void setCursorPalette(const byte *colors, uint start, uint num) override {}
+
+private:
+	uint _width, _height;
+	Graphics::PixelFormat _format;
 };
 
 #endif

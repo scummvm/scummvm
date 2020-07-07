@@ -129,6 +129,13 @@ if [ ! -f $fullname.tar.xz ]; then
   # But do not exit
 fi
 
+echo "Compressing (using lzip) tarball $fullname.tar.lz..."
+lzip -c9 $fullname.tar > $fullname.tar.lz
+if [ ! -f $fullname.tar.lz ]; then
+  echo "Packaging to lz failed, $fullname.tar.lz doesn't exist!"
+  # But do not exit
+fi
+
 echo "Zipping $fullname.zip..."
 zip -r9 $fullname.zip $fullname >/dev/null
 if [ ! -f $fullname.zip ]; then
@@ -140,7 +147,7 @@ fi
 ### finish up
 
 echo "Done:"
-ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.zip
-md5sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.zip
+ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+md5sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
 
 exit 0

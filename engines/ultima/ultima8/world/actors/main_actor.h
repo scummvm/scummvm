@@ -34,11 +34,22 @@ struct WeaponOverlayFrame;
 class MainActor : public Actor {
 	friend class Debugger;
 public:
+	enum CruBatteryType {
+		NoBattery = 0,
+		ChemicalBattery = 1,
+		FissionBattery = 2,
+		FusionBattery = 3
+	};
+
 	MainActor();
 	~MainActor() override;
 
 	bool CanAddItem(Item *item, bool checkwghtvol = false) override;
 	bool addItem(Item *item, bool checkwghtvol = false) override;
+
+	//! Add item to avatar's inventory, but with some extra logic to do things like combine
+	//! ammo and credits, use batteries, etc.
+	int16 addItemCru(Item *item, bool showtoast);
 
 	//! teleport to the given location on the given map
 	void teleport(int mapNum_, int32 x_, int32 y_, int32 z_) override;
@@ -90,6 +101,37 @@ public:
 		_name = name;
 	}
 
+	int16 getMaxEnergy();
+
+	CruBatteryType getBatteryType() const {
+		return _cruBatteryType;
+	}
+	void setBatteryType(CruBatteryType newbattery) {
+		_cruBatteryType = newbattery;
+		setMana(getMaxEnergy());
+	}
+
+	bool hasKeycard(int num) const;
+	void addKeycard(int bitno);
+
+	void clrKeycards() {
+		_keycards = 0;
+	}
+
+	uint16 getActiveWeapon() const {
+		return _activeWeapon;
+	}
+
+	uint16 getActiveInvItem() const {
+		return _activeInvItem;
+	}
+
+	//!< Swap to the next active weapon (in Crusader)
+	void nextWeapon();
+
+	//!< Swap to the next inventory item (in Crusader)
+	void nextInvItem();
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
@@ -102,6 +144,10 @@ public:
 	INTRINSIC(I_clrAvatarInCombat);
 	INTRINSIC(I_setAvatarInCombat);
 	INTRINSIC(I_isAvatarInCombat);
+	INTRINSIC(I_getMaxEnergy);
+	INTRINSIC(I_hasKeycard);
+	INTRINSIC(I_clrKeycards);
+	INTRINSIC(I_addItemCru);
 
 	void getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_);
 
@@ -115,7 +161,13 @@ protected:
 	int _accumDex;
 	int _accumInt;
 
+	uint32 _keycards;
+	CruBatteryType _cruBatteryType;
+	uint16 _activeWeapon;
+	uint16 _activeInvItem;
+
 	Std::string _name;
+
 };
 
 } // End of namespace Ultima8

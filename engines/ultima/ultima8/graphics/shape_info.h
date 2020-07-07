@@ -52,7 +52,7 @@ public:
 		SI_CRUSUNK61 = 0x2000,
 		SI_CRUSUNK62 = 0x4000,
 		SI_CRUSUNK63 = 0x8000,
-		SI_CRUSUNK64 = 0x10000,
+		SI_TARGETABLE= 0x10000,
 		SI_CRUS_NPC  = 0x20000,
 		SI_CRUSUNK66 = 0x40000,
 		SI_CRUSUNK67 = 0x80000
@@ -69,10 +69,10 @@ public:
 		SF_MONSTEREGG  = 7,
 		SF_TELEPORTEGG = 8,
 		SF_REAGENT     = 9,
-		SF_10		   = 10, // ?? Used in Crusader
-		SF_11		   = 11, // ?? Used in Crusader
-		SF_12		   = 12, // ?? Used in Crusader
-		SF_13		   = 13, // ?? Used in Crusader
+		SF_CRUWEAPON   = 10, // Used in Crusader
+		SF_CRUAMMO     = 11, // Used in Crusader
+		SF_CRUBOMB     = 12, // Used in Crusader
+		SF_CRUINVITEM  = 13, // Used in Crusader
 		SF_15          = 15
 	};
 

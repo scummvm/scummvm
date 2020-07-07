@@ -135,6 +135,11 @@ public:
 	void addTest(const Common::String &name, InvokingFunction f, bool isInteractive = true);
 
 	/**
+	 * Testsuite state preparation code, like tweaking mouse cursors should go there
+	 */
+	virtual void prepare() {}
+
+	/**
 	 * The driver function for the testsuite
 	 * All code should go in here.
 	 */

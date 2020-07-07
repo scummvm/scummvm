@@ -703,7 +703,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 					pop_callstub(value);
 				} else {
 					/* We've failed, so we must store the failure in this opcode's
-					   operand. */
+		 			   operand. */
 					store_operand(inst[1].desttype, inst[1].value, value);
 				}
 				break;

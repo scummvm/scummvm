@@ -149,10 +149,20 @@ Common::Error WintermuteEngine::run() {
 
 int WintermuteEngine::init() {
 	BaseEngine::createInstance(_targetName, _gameDescription->adDesc.gameId, _gameDescription->adDesc.language, _gameDescription->targetExecutable, _gameDescription->adDesc.flags);
+	BaseEngine &instance = BaseEngine::instance();
+
+	// check if unknown target is a 2.5D game
+	if (instance.getFlags() & ADGF_AUTOGENTARGET) {
+		Common::ArchiveMemberList actors3d;
+		if (instance.getFileManager()->listMatchingPackageMembers(actors3d, "*.act3d")) {
+			warning("Unknown 2.5D game detected");
+			instance.addFlags(GF_3D);
+		}
+	}
 
 	// check dependencies for games with high resolution assets
-	#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)
-		if (!(_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS)) {
+	#if !defined(USE_PNG) || !defined(USE_JPEG) || !defined(USE_VORBIS)
+		if (!(instance.getFlags() & GF_LOWSPEC_ASSETS)) {
 			GUI::MessageDialog dialog(_("This game requires PNG, JPEG and Vorbis support."));
 			dialog.runModal();
 			delete _game;
@@ -162,8 +172,8 @@ int WintermuteEngine::init() {
 	#endif
 
 	// check dependencies for games with FoxTail subengine
-	#if not defined(ENABLE_FOXTAIL)
-		if (BaseEngine::isFoxTailCheck(_gameDescription->targetExecutable)) {
+	#if !defined(ENABLE_FOXTAIL)
+		if (BaseEngine::isFoxTailCheck(instance.getTargetExecutable())) {
 			GUI::MessageDialog dialog(_("This game requires the FoxTail subengine, which is not compiled in."));
 			dialog.runModal();
 			delete _game;
@@ -173,8 +183,8 @@ int WintermuteEngine::init() {
 	#endif
 
 	// check dependencies for games with HeroCraft subengine
-	#if not defined(ENABLE_HEROCRAFT)
-		if (_gameDescription->targetExecutable == WME_HEROCRAFT) {
+	#if !defined(ENABLE_HEROCRAFT)
+		if (instance.getTargetExecutable() == WME_HEROCRAFT) {
 			GUI::MessageDialog dialog(_("This game requires the HeroCraft subengine, which is not compiled in."));
 			dialog.runModal();
 			delete _game;
@@ -183,13 +193,10 @@ int WintermuteEngine::init() {
 		}
 	#endif
 
-	Common::ArchiveMemberList actors3d;
-	if (BaseEngine::instance().getFileManager()->listMatchingPackageMembers(actors3d, "*.act3d")) {
-		GUI::MessageDialog dialog(
-				_("This game requires 3D characters support, which is out of ScummVM's scope."),
-				_("Start anyway"),
-				_("Cancel")
-			);
+	// check if game require 3D capabilities
+	if (instance.getFlags() & GF_3D) {
+		GUI::MessageDialog dialog(_("This game requires 3D capabilities that are out ScummVM scope. As such, it"
+			" is likely to be unplayable totally or partially."), _("Start anyway"), _("Cancel"));
 		if (dialog.runModal() != GUI::kMessageOK) {
 			delete _game;
 			_game = nullptr;
@@ -201,7 +208,7 @@ int WintermuteEngine::init() {
 	if (!_game) {
 		return 1;
 	}
-	BaseEngine::instance().setGameRef(_game);
+	instance.setGameRef(_game);
 	BasePlatform::initialize(this, _game, 0, nullptr);
 
 	_game->initConfManSettings();

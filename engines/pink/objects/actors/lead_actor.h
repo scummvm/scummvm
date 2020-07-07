@@ -69,14 +69,14 @@ public:
 	void loadPDA(const Common::String &pageName);
 
 	void onKeyboardButtonClick(Common::KeyCode code);
-	void onLeftButtonClick(const Common::Point point);
+	void onLeftButtonClick(Common::Point point);
 	void onLeftButtonUp();
-	void onRightButtonClick(const Common::Point point);
+	virtual void onRightButtonClick(Common::Point point);
 
-	void onMouseMove(const Common::Point point);
+	void onMouseMove(Common::Point point);
 
-	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, Pink::CursorMgr *cursorMgr) override;
-	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
+	void onMouseOverWithItem(Common::Point point, const Common::String &itemName, Pink::CursorMgr *cursorMgr) override;
+	void onMouseOver(Common::Point point, CursorMgr *mgr) override;
 
 	void onLeftClickMessage() override;
 	virtual void onVariableSet() {}
@@ -92,14 +92,14 @@ public:
 
 	AudioInfoMgr *getAudioInfoMgr() { return &_audioInfoMgr; }
 
-	Actor *getActorByPoint(const Common::Point point);
+	Actor *getActorByPoint(Common::Point point);
 
 	Actor *findActor(const Common::String &name);
 
 protected:
 	void forceUpdateCursor();
 
-	virtual void updateCursor(const Common::Point point);
+	virtual void updateCursor(Common::Point point);
 
 	virtual void sendUseClickMessage(Actor *actor);
 	void sendLeftClickMessage(Actor *actor);
@@ -140,11 +140,13 @@ class PubPink : public LeadActor {
 public:
 	void toConsole() const override;
 
+	void onRightButtonClick(Common::Point point) override;
+
 	void onLeftClickMessage() override;
 	void onVariableSet() override;
 
 protected:
-	void updateCursor(const Common::Point point) override;
+	void updateCursor(Common::Point point) override;
 
 	void sendUseClickMessage(Actor *actor) override;
 

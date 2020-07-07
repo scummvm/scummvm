@@ -246,8 +246,6 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
-	delete _cachedThumbnail;
-
 	delete _mathClass;
 	delete _directoryClass;
 
@@ -263,8 +261,6 @@ BaseGame::~BaseGame() {
 	delete _renderer;
 	delete _musicSystem;
 	delete _settings;
-
-	_cachedThumbnail = nullptr;
 
 	_mathClass = nullptr;
 	_directoryClass = nullptr;
@@ -295,6 +291,8 @@ BaseGame::~BaseGame() {
 bool BaseGame::cleanup() {
 	delete _loadingIcon;
 	_loadingIcon = nullptr;
+
+	deleteSaveThumbnail();
 
 	_engineLogCallback = nullptr;
 	_engineLogCallbackData = nullptr;
@@ -1626,6 +1624,13 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		byte blue = stack->pop()->getInt(0);
 		byte alpha = stack->pop()->getInt(0xFF);
 
+		// HACK: Corrosion fades screen to black while opening main menu
+		// Thus, we get black screenshots when saving game from in-game menus
+		// Let's take & keep screenshot before entering main menu
+		if (duration == 750 && BaseEngine::instance().getGameId() == "corrosion") {
+			storeSaveThumbnail();
+		}
+
 		bool system = (strcmp(name, "SystemFadeOut") == 0 || strcmp(name, "SystemFadeOutAsync") == 0);
 
 		_fader->fadeOut(BYTETORGBA(red, green, blue, alpha), duration, system);
@@ -1931,16 +1936,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "StoreSaveThumbnail") == 0) {
 		stack->correctParams(0);
-		delete _cachedThumbnail;
-		_cachedThumbnail = new SaveThumbHelper(this);
-		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
-			delete _cachedThumbnail;
-			_cachedThumbnail = nullptr;
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(true);
-		}
-
+		stack->pushBool(storeSaveThumbnail());
 		return STATUS_OK;
 	}
 
@@ -1949,10 +1945,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DeleteSaveThumbnail") == 0) {
 		stack->correctParams(0);
-		delete _cachedThumbnail;
-		_cachedThumbnail = nullptr;
+		deleteSaveThumbnail();
 		stack->pushNULL();
-
 		return STATUS_OK;
 	}
 
@@ -3792,6 +3786,15 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::handleCustomActionStart(BaseGameCustomAction action) {
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::handleCustomActionEnd(BaseGameCustomAction action) {
+	return false;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
@@ -4078,6 +4081,23 @@ bool BaseGame::drawCursor(BaseSprite *cursor) {
 		_lastCursor = cursor;
 	}
 	return cursor->draw(_mousePos.x, _mousePos.y);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::storeSaveThumbnail() {
+	delete _cachedThumbnail;
+	_cachedThumbnail = new SaveThumbHelper(this);
+	if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
+		deleteSaveThumbnail();
+		return false;
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseGame::deleteSaveThumbnail() {
+	delete _cachedThumbnail;
+	_cachedThumbnail = nullptr;
 }
 
 

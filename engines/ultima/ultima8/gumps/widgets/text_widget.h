@@ -93,6 +93,10 @@ public:
 	//! get the RenderedText's vlead
 	int getVlead();
 
+	const Std::string &getText() const {
+		return _text;
+	}
+
 protected:
 	void renderText();
 

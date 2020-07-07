@@ -568,4 +568,6 @@ extern char *scumm_strdup(const char *in);
 extern int scumm_compareDictionary(const char *s1, const char *s2);
 extern const char *scumm_skipArticle(const char *s1);
 
+extern const char *scumm_strcasestr(const char *s, const char *find);
+
 #endif

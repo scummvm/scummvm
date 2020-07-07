@@ -136,8 +136,13 @@ public:
 		_actorFlags &= ~mask;
 	}
 
-	//! set stats from MonsterInfo (hp, dex, _alignment, _enemyAlignment)
-	//! \return true if a MonsterInfo struct was found, false otherwise
+	void setCombatTactic(int no) {
+		_combatTactic = no;
+	}
+
+	//! set stats from MonsterInfo (hp, dex, alignment, enemyAlignment)
+	//! in Crusader this comes from the NPC Data
+	//! \return true if info was found, false otherwise
 	bool loadMonsterStats();
 
 	//! add treasure according to the TreasureInfo in the MonsterInfo
@@ -161,6 +166,9 @@ public:
 
 	uint16 getDamageType() const override;
 	virtual int getDamageAmount() const;
+
+	void setDefaultActivity(int no, uint16 activity);
+	uint16 getDefaultActivity(int no) const;
 
 	//! calculate the damage an attack against this Actor does.
 	//! \param other the attacker (can be zero)
@@ -189,9 +197,12 @@ public:
 	//! check if NPCs are near which are in combat mode and hostile
 	bool areEnemiesNear();
 
+	//! check if NPCs are near which are in combat mode and hostile
+	void notifyNearbyItems();
+
 	//! starts an activity
 	//! \return processID of process handling the activity or zero
-	uint16 cSetActivity(int activity);
+	uint16 setActivity(int activity);
 
 	//! run the given animation
 	//! \return the PID of the ActorAnimProcess
@@ -208,6 +219,10 @@ public:
 	//! \param dir _direction to walk in
 	//! \param state the state to start from, or 0 to use the current state
 	Animation::Result tryAnim(Animation::Sequence anim, int dir, unsigned int steps = 0, PathfindingState *state = 0);
+
+	//! overrides the standard item collideMove so we  can notify nearby objects.
+	int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
+	                  ObjId *hititem = 0, uint8 *dirs = 0) override;
 
 	//! create an actor, assign objid, make it ethereal and load monster stats.
 	static Actor *createActor(uint32 shape, uint32 frame);
@@ -241,6 +256,7 @@ public:
 	INTRINSIC(I_setAlignment);
 	INTRINSIC(I_setEnemyAlignment);
 	INTRINSIC(I_getMap);
+	INTRINSIC(I_addHp);
 	INTRINSIC(I_teleport);
 	INTRINSIC(I_doAnim);
 	INTRINSIC(I_isInCombat);
@@ -264,12 +280,20 @@ public:
 	INTRINSIC(I_areEnemiesNear);
 	INTRINSIC(I_isBusy);
 	INTRINSIC(I_createActor);
-	INTRINSIC(I_cSetActivity);
+	INTRINSIC(I_createActorCru);
+	INTRINSIC(I_setActivity);
 	INTRINSIC(I_setAirWalkEnabled);
 	INTRINSIC(I_getAirWalkEnabled);
 	INTRINSIC(I_schedule);
 	INTRINSIC(I_getEquip);
 	INTRINSIC(I_setEquip);
+	INTRINSIC(I_setDefaultActivity0);
+	INTRINSIC(I_setDefaultActivity1);
+	INTRINSIC(I_setDefaultActivity2);
+	INTRINSIC(I_getDefaultActivity0);
+	INTRINSIC(I_getDefaultActivity1);
+	INTRINSIC(I_getDefaultActivity2);
+	INTRINSIC(I_setCombatTactic);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B
@@ -307,7 +331,25 @@ protected:
 	int32 _fallStart;
 	uint8 _unk0C; // unknown byte 0x0C from npcdata.dat
 
+	//! tactic being used in combat (for Crusader), the entry in the combat.dat flex.
+	uint16 _combatTactic;
+
 	uint32 _actorFlags;
+
+	//! the 3 default NPC activities from Crusader
+	uint16 _defaultActivity[3];
+
+	//! starts an activity (Ultima 8 version)
+	//! \return processID of process handling the activity or zero
+	uint16 setActivityU8(int activity);
+
+	//! starts an activity (Crusader version)
+	//! \return processID of process handling the activity or zero
+	uint16 setActivityCru(int activity);
+
+	bool loadMonsterStatsU8();
+	bool loadMonsterStatsCru();
+
 };
 
 } // End of namespace Ultima8

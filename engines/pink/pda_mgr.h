@@ -81,10 +81,10 @@ private:
 	CursorMgr _cursorMgr;
 	Common::String _savedPage;
 	Common::Stack<Common::String> _previousPages;
-	uint16 _countryIndex;
-	uint16 _domainIndex;
-	uint16 _iteration;
-	uint16 _handFrame;
+	byte _countryIndex;
+	byte _domainIndex;
+	byte _iteration;
+	byte _handFrame;
 	enum LeftHandAction {
 		kLeft1,
 		kLeft2,

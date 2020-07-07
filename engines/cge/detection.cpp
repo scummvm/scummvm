@@ -95,6 +95,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 	},
 
+	{
+		"soltys", "Russian fan-translation v1.0",
+		{
+			{"vol.cat", 0, "e9f6069c9c4d4156a8dbe004a9c1960d", 50176},
+			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8749623},
+			AD_LISTEND
+		},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
+	},
+
 	AD_TABLE_END_MARKER
 };
 

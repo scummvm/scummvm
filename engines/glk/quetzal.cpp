@@ -48,8 +48,8 @@ uint32 QuetzalBase::getInterpreterTag(InterpreterType interpType) {
 		return MKTAG('A', 'L', 'N', '3');
 	case INTERPRETER_ARCHETYPE:
 		return MKTAG('A', 'R', 'C', 'H');
-	case INTERPRETER_FROTZ:
-		return MKTAG('Z', 'C', 'O', 'D');
+	case INTERPRETER_COMPREHEND:
+		return MKTAG('C', 'O', 'M', 'P');
 	case INTERPRETER_GEAS:
 		return MKTAG('G', 'E', 'A', 'S');
 	case INTERPRETER_GLULXE:
@@ -72,6 +72,8 @@ uint32 QuetzalBase::getInterpreterTag(InterpreterType interpType) {
 		return MKTAG('T', 'A', 'D', '2');
 	case INTERPRETER_TADS3:
 		return MKTAG('T', 'A', 'D', '3');
+	case INTERPRETER_ZCODE:
+		return MKTAG('Z', 'C', 'O', 'D');
 	default:
 		error("Invalid interpreter type");
 	}

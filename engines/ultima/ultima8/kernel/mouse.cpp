@@ -37,12 +37,16 @@
 namespace Ultima {
 namespace Ultima8 {
 
-Mouse *Mouse::_instance;
+Mouse *Mouse::_instance = nullptr;
 
 Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0), _defaultMouse(nullptr),
 		_dragging(DRAG_NOT), _dragging_objId(0), _draggingItem_startGump(0),
 		_draggingItem_lastGump(0) {
 	_instance = this;
+}
+
+Mouse::~Mouse() {
+	_instance = nullptr;
 }
 
 void Mouse::setup() {

@@ -49,6 +49,7 @@ protected:
 };
 
 class Sequence;
+class Sequencer;
 
 class HandlerSequences : public Handler {
 public:
@@ -56,25 +57,19 @@ public:
 	void handle(Actor *actor) override;
 
 protected:
-	virtual void execute(Sequence *sequence) = 0;
+	virtual void authorSequence(Sequencer *sequencer, Sequence *sequence);
 
+protected:
 	StringArray _sequences;
 };
 
 class HandlerStartPage : public HandlerSequences {
-public:
-	void toConsole() const override;
-
-private:
-	void execute(Sequence *sequence) override;
+	void authorSequence(Sequencer *sequencer, Sequence *sequence) override;
 };
 
 class HandlerLeftClick : public HandlerSequences {
 public:
 	void toConsole() const override;
-
-private:
-	void execute(Sequence *sequence) override {}
 };
 
 class HandlerUseClick : public HandlerSequences {
@@ -86,10 +81,22 @@ public:
 	const Common::String &getRecepient() const { return _recepient; }
 
 private:
-	void execute(Sequence *sequence) override {};
-
 	Common::String _inventoryItem;
 	Common::String _recepient;
+};
+
+class HandlerTimerActions : public Handler {
+public:
+	void toConsole() const override;
+	void deserialize(Archive &archive) override;
+	void handle(Actor *actor) override;
+
+private:
+	StringArray _actions;
+};
+
+class HandlerTimerSequences : public HandlerSequences {
+	void authorSequence(Sequencer *sequencer, Sequence *sequence) override;
 };
 
 } // End of namespace Pink

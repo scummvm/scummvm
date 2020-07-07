@@ -39,7 +39,6 @@
 #include "pink/objects/actors/pda_button_actor.h"
 #include "pink/objects/actors/supporting_actor.h"
 #include "pink/objects/handlers/handler.h"
-#include "pink/objects/handlers/handler_timer.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/seq_timer.h"
 #include "pink/objects/sequences/sequence.h"

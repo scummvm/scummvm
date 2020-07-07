@@ -33,7 +33,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const int MAX_TRACK = 20;
+static const int MAX_TRACK = 21;
+
+// TODO: Ensure this is the right order for the uses of this from Usecode.
 static const char *TRACK_FILE_NAMES[] = {
 	nullptr,
 	"cred",
@@ -55,7 +57,8 @@ static const char *TRACK_FILE_NAMES[] = {
 	"M16A",
 	"M16B",
 	"M16C",
-	"menu"
+	"menu",
+	"buyme" // for demo
 };
 
 // p_dynamic_cast stuff
@@ -120,8 +123,10 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 	assert(mixer);
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
-	if (_playingStream)
+	if (_playingStream) {
 		delete _playingStream;
+		_playingStream = nullptr;
+	}
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
@@ -134,18 +139,22 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 			return;
 		}
 
-		_playingStream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::YES);
+		_playingStream = Audio::makeModXmS3mStream(rs, DisposeAfterUse::NO);
 		if (!_playingStream) {
 			error("Couldn't create stream from AMF file: %s", fname.c_str());
 			return;
 		}
-		mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _playingStream);
+		mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _playingStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 }
 
 void RemorseMusicProcess::run() {
-	if (!_playingStream || !_playingStream->endOfStream()) {
-		// nothing to do
+	if (!_playingStream) {
+		return;
+	}
+	if (_playingStream->endOfStream()) {
+		delete _playingStream;
+		_playingStream = nullptr;
 		return;
 	}
 	// hit end of stream, play it again.

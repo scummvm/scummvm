@@ -30,7 +30,6 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "mads/events.h"
 #include "mads/game.h"
@@ -138,7 +137,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},*/
 
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	{
 		GAMEOPTION_TTS_NARRATOR,
 		{
@@ -148,7 +147,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-	#endif
+#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

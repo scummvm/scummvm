@@ -40,9 +40,9 @@ public:
 	virtual void start(int id) {};
 	virtual void stop();
 
-	virtual void onLeftButtonDown(const Common::Point p) {};
-	virtual void onRightButtonDown(const Common::Point p) {};
-	virtual void onMouseMove(const Common::Point p) {};
+	virtual void onLeftButtonDown(Common::Point p) {};
+	virtual void onRightButtonDown(Common::Point p) {};
+	virtual void onMouseMove(Common::Point p) {};
 
 	void setText(const Common::U32String &text, uint16 textColor, uint16 outlineColor);
 	void setTextPhrase(const Common::U32String &text, uint16 textColor, uint16 outlineColor);
@@ -57,6 +57,18 @@ public:
 	Common::Array<QVisibleObject *> _objs;
 	QVisibleObject *_objUnderCursor;
 	uint _startIndex;
+};
+
+class SubInterface : public Interface {
+public:
+	void start(int id) override;
+	void stop() override;
+
+private:
+	int _savedXOffset;
+	int _savedSceneWidth;
+	int _savedCursorId;
+	int _savedCursorType;
 };
 
 } // End of namespace Petka

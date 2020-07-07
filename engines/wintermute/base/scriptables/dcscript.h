@@ -113,8 +113,9 @@ typedef enum {
 
 // operation code types
 typedef enum {
-	OPCODES_UNCHANGED = 0,
+	OPCODES_UNCHANGED = 0
 #ifdef ENABLE_FOXTAIL
+	,
 	OPCODES_FOXTAIL_1_2_896,
 	OPCODES_FOXTAIL_1_2_902
 #endif

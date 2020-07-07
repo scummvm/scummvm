@@ -59,6 +59,9 @@ PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 
 	_part = 0;
 	_chapter = 0;
+	_shouldChangePart = false;
+	_nextPart = 0;
+	_saveSlot = -1;
 	g_vm = this;
 
 	debug("PetkaEngine::ctor");
@@ -87,10 +90,10 @@ Common::Error PetkaEngine::run() {
 
 	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
-	_soundMgr.reset(new SoundMgr());
-	_vsys.reset(new VideoSystem());
+	_soundMgr.reset(new SoundMgr(*this));
+	_vsys.reset(new VideoSystem(*this));
 
-	loadPart(strcmp(_desc->gameId, "petka_demo") == 0 ? 1 : 0);
+	loadPart(2);
 
 	while (!shouldQuit()) {
 		Common::Event event;
@@ -99,24 +102,22 @@ Common::Error PetkaEngine::run() {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return Common::kNoError;
-			case Common::EVENT_MOUSEMOVE:
-				_qsystem->_currInterface->onMouseMove(event.mouse);
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				_qsystem->_currInterface->onLeftButtonDown(event.mouse);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				_qsystem->_currInterface->onRightButtonDown(event.mouse);
-				break;
-			case Common::EVENT_KEYDOWN:
-				break;
 			default:
+				_qsystem->onEvent(event);
 				break;
 			}
 		}
 		_qsystem->update();
+
+		if (_shouldChangePart) {
+			loadPart(_nextPart);
+			if (_saveSlot != -1)
+				loadGameState(_saveSlot);
+			_saveSlot = -1;
+			_shouldChangePart = false;
+			_vsys->makeAllDirty();
+		}
+
 		_vsys->update();
 		_system->delayMillis(20);
 	}
@@ -125,7 +126,6 @@ Common::Error PetkaEngine::run() {
 
 Common::SeekableReadStream *PetkaEngine::openFile(const Common::String &name, bool addCurrentPath) {
 	if (name.empty()) {
-		debug("PetkaEngine::openFile: attempt to open file with empty name");
 		return nullptr;
 	}
 	return _fileMgr->getFileStream(addCurrentPath ? _currentPath + name : name);
@@ -146,7 +146,7 @@ void PetkaEngine::loadStores() {
 		return;
 	}
 
-	const char *const names[] = {"Background", "Flics", "Wavs", "SFX", "Music", "Speech"};
+	const char *const names[] = {"Background", "Flics", "Wav", "SFX", "Music", "Speech"};
 	const Common::String section = Common::String::format("Part %d", _part);
 
 	parts.getKey("CurrentPath", section, _currentPath);
@@ -171,13 +171,13 @@ Common::RandomSource &PetkaEngine::getRnd() {
 }
 
 void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
-	g_system->getMixer()->pauseAll(true);
-	Graphics::PixelFormat fmt = _system->getScreenFormat();
-
 	Video::AVIDecoder decoder;
-	if (!decoder.loadStream(stream)) {
+	if (stream && !decoder.loadStream(stream)) {
 		return;
 	}
+
+	g_system->getMixer()->pauseAll(true);
+	Graphics::PixelFormat fmt = _system->getScreenFormat();
 
 	decoder.start();
 	while (!decoder.endOfVideo()) {
@@ -208,6 +208,10 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 	g_system->getMixer()->pauseAll(false);
 }
 
+bool PetkaEngine::isDemo() const {
+	return strcmp(_desc->gameId, "petka_demo") == 0;
+}
+
 SoundMgr *PetkaEngine::soundMgr() const {
 	return _soundMgr.get();
 }
@@ -233,9 +237,54 @@ void PetkaEngine::loadPart(byte part) {
 
 	_resMgr.reset(new QManager(*this));
 	_resMgr->init();
-	_dialogMan.reset(new BigDialogue());
-	_qsystem.reset(new QSystem());
+	_dialogMan.reset(new BigDialogue(*this));
+	_qsystem.reset(new QSystem(*this));
 	_qsystem->init();
+}
+
+void PetkaEngine::loadPartAtNextFrame(byte part) {
+	_shouldChangePart = true;
+	_nextPart = part;
+	_saveSlot = -1;
+}
+
+void PetkaEngine::loadChapter(byte chapter) {
+	Common::INIFile parts;
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_fileMgr->getFileStream("PARTS.INI"));
+
+	if (!stream || !parts.loadFromStream(*stream)) {
+		debugC(kPetkaDebugResources, "PARTS.INI opening failed");
+		return;
+	}
+
+	_fileMgr->closeStore(_chapterStoreName);
+
+	const Common::String section = Common::String::format("Part %d Chapter %d", _part, chapter);
+	parts.getKey("Chapter", section, _chapterStoreName);
+	if (_chapterStoreName.empty())
+		return;
+
+	_fileMgr->openStore(_chapterStoreName);
+
+	Common::ScopedPtr<Common::SeekableReadStream> namesStream(openFile("Names.ini", true));
+	Common::ScopedPtr<Common::SeekableReadStream> castStream(openFile("Cast.ini", true));
+
+	Common::INIFile namesIni;
+	Common::INIFile castIni;
+
+	namesIni.allowNonEnglishCharacters();
+	castIni.allowNonEnglishCharacters();
+
+	if (namesStream)
+		namesIni.loadFromStream(*namesStream);
+	if (castStream)
+		castIni.loadFromStream(*castStream);
+
+	for (uint i = 0; i < _qsystem->_allObjects.size(); ++i) {
+		QMessageObject *obj = _qsystem->_allObjects[i];
+		obj->readInisData(namesIni, castIni, nullptr);
+	}
+	_chapter = chapter;
 }
 
 BigDialogue *PetkaEngine::getBigDialogue() const {
@@ -244,6 +293,20 @@ BigDialogue *PetkaEngine::getBigDialogue() const {
 
 const Common::String &PetkaEngine::getSpeechPath() {
 	return _speechPath;
+}
+
+bool PetkaEngine::hasFeature(EngineFeature f) const {
+	return
+		f == kSupportsReturnToLauncher ||
+		f == kSupportsLoadingDuringRuntime ||
+		f == kSupportsSavingDuringRuntime ||
+		f == kSupportsChangingOptionsDuringRuntime;
+}
+
+void PetkaEngine::pauseEngineIntern(bool pause) {
+	if (!pause)
+		_vsys->updateTime();
+	Engine::pauseEngineIntern(pause);
 }
 
 } // End of namespace Petka

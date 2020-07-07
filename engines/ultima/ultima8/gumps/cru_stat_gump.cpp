@@ -27,10 +27,7 @@
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -38,15 +35,13 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruStatGump)
 
-CruStatGump::CruStatGump() : Gump() {
+CruStatGump::CruStatGump() : TranslucentGump() {
 
 }
 
 CruStatGump::CruStatGump(Shape *shape, int x)
-	: Gump(0, 0, 5, 5, 0) {
+	: TranslucentGump(x, 0, 5, 5, 0) {
 	_shape = shape;
-	_x = x;
-	_y = 0;
 }
 
 CruStatGump::~CruStatGump() {
@@ -56,10 +51,6 @@ void CruStatGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
 	UpdateDimsFromShape();
-}
-
-void CruStatGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	surf->PaintTranslucent(_shape, _frameNum, 0, 0);
 }
 
 void CruStatGump::saveData(Common::WriteStream *ws) {

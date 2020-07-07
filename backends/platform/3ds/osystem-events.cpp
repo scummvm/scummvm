@@ -92,7 +92,7 @@ static void doJoyEvent(Common::Queue<Common::Event> *queue, u32 keysPressed, u32
 
 static void eventThreadFunc(void *arg) {
 	OSystem_3DS *osys = (OSystem_3DS *)g_system;
-	auto eventQueue = (Common::Queue<Common::Event> *)arg;
+	Common::Queue<Common::Event> *eventQueue = (Common::Queue<Common::Event> *)arg;
 
 	uint32 touchStartTime = osys->getMillis();
 	touchPosition  lastTouch  = {0, 0};
@@ -224,12 +224,19 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 			osys->sleeping = false;
 			loadConfig();
 			break;
-		default: {
+		case APTHOOK_ONEXIT: {
+			if (osys->_sleepPauseToken.isActive()) {
+				osys->_sleepPauseToken.clear();
+			}
+
 			Common::StackLock lock(*eventMutex);
 			Common::Event event;
 			event.type = Common::EVENT_QUIT;
 			g_system->getEventManager()->pushEvent(event);
+			break;
 		}
+		default:
+			warning("Unhandled APT hook, type: %d", hookType);
 	}
 }
 

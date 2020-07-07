@@ -553,13 +553,17 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 #ifdef USE_TTS
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-			ttsMan->pushState();
+			if (ttsMan != nullptr) {
+				ttsMan->pushState();
+			}
 #endif
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
 
 #ifdef USE_TTS
-			ttsMan->popState();
+			if (ttsMan != nullptr) {
+				ttsMan->popState();
+			}
 #endif
 
 #ifdef ENABLE_EVENTRECORDER

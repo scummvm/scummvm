@@ -1,0 +1,12 @@
+#!/bin/sh
+set -x
+
+if [ "$(snapctl get daemon)" = "" ]
+then
+  # We run as a daemon on core, otherwise configure the daemon to stop
+  # (There's no "snapctl disable ...")
+  if grep -q snap_core= /proc/cmdline
+  then snapctl set daemon=true
+  else snapctl set daemon=false
+  fi
+fi

@@ -28,6 +28,7 @@
 #include <gxflux/gfx_con.h>
 
 #include "common/config-manager.h"
+#include "graphics/colormasks.h"
 #include "graphics/conversion.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 

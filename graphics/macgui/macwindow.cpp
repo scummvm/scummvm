@@ -32,7 +32,7 @@
 namespace Graphics {
 
 BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
-		MacWidget(nullptr, 0, 0, 0, 0, true), _id(id), _editable(editable), _wm(wm) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, true), _id(id), _editable(editable) {
 	_callback = 0;
 	_dataPtr = 0;
 
@@ -107,25 +107,30 @@ void MacWindow::setActive(bool active) {
 
 bool MacWindow::isActive() { return _active; }
 
-void MacWindow::resize(int w, int h) {
+void MacWindow::resize(int w, int h, bool inner) {
 	if (_surface.w == w && _surface.h == h)
 		return;
 
+	if (inner) {
+		_innerDims.setWidth(w);
+		_innerDims.setHeight(h);
+		updateOuterDims();
+	} else {
+		_dims.setWidth(w);
+		_dims.setHeight(h);
+		updateInnerDims();
+	}
+
 	_surface.free();
-	_surface.create(w, h, PixelFormat::createFormatCLUT8());
+	_surface.create(_innerDims.width(), _innerDims.height(), PixelFormat::createFormatCLUT8());
 
 	if (_hasPattern)
 		drawPattern();
 
 	_borderSurface.free();
-	_borderSurface.create(w, h, PixelFormat::createFormatCLUT8());
+	_borderSurface.create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
 	_composeSurface->free();
-	_composeSurface->create(w, h, PixelFormat::createFormatCLUT8());
-
-	_dims.setWidth(w);
-	_dims.setHeight(h);
-
-	updateInnerDims();
+	_composeSurface->create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
 
 	_contentIsDirty = true;
 	_borderIsDirty = true;
@@ -166,7 +171,7 @@ bool MacWindow::draw(bool forceRedraw) {
 	_contentIsDirty = false;
 
 	// Compose
-	_composeSurface->blitFrom(_surface, Common::Rect(0, 0, _surface.w - 2, _surface.h - 2), Common::Point(2, 2));
+	_composeSurface->blitFrom(_surface, Common::Rect(0, 0, _surface.w, _surface.h), Common::Point(_innerDims.left - _dims.left, _innerDims.top - _dims.top));
 	_composeSurface->transBlitFrom(_borderSurface, kColorGreen);
 
 	return true;
@@ -176,7 +181,7 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), kColorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left, _dims.top), kColorGreen2);
 
 	return true;
 }
@@ -195,18 +200,6 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{0,1,1,1,1,1,1,1,1,1,1,0},
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
-int localColorWhite, localColorBlack;
-
-static void drawPixelInverted(int x, int y, int color, void *data) {
-	ManagedSurface *surface = (ManagedSurface *)data;
-
-	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
-		byte *p = (byte *)surface->getBasePtr(x, y);
-
-		*p = *p == localColorWhite ? localColorBlack : localColorWhite;
-	}
-}
-
 void MacWindow::updateInnerDims() {
 	if (_dims.isEmpty())
 		return;
@@ -220,6 +213,22 @@ void MacWindow::updateInnerDims() {
 	} else {
 		_innerDims = _dims;
 		_innerDims.grow(-kBorderWidth);
+	}
+}
+
+void MacWindow::updateOuterDims() {
+	if (_innerDims.isEmpty())
+		return;
+
+	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+		_dims = Common::Rect(
+			_innerDims.left - _macBorder.getOffset().left,
+			_innerDims.top - _macBorder.getOffset().top,
+			_innerDims.right + _macBorder.getOffset().right,
+			_innerDims.bottom + _macBorder.getOffset().bottom);
+	} else {
+		_dims = _innerDims;
+		_dims.grow(kBorderWidth);
 	}
 }
 
@@ -304,10 +313,7 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 				int ry2 = ry1 + _dims.height() * _scrollSize;
 				Common::Rect rr(rx1, ry1, rx2, ry2);
 
-				localColorWhite = _wm->_colorWhite;
-				localColorBlack = _wm->_colorBlack;
-
-				Graphics::drawFilledRect(rr, _wm->_colorBlack, drawPixelInverted, g);
+				Graphics::drawFilledRect(rr, _wm->_colorBlack, Graphics::macInvertPixel, g);
 			}
 		}
 		if (closeable) {
@@ -494,6 +500,11 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
+		if (_wm->_mouseDown && _wm->_hoveredWidget && !_wm->_hoveredWidget->_dims.contains(event.mouse.x, event.mouse.y)) {
+			_wm->_hoveredWidget->setActive(false);
+			_wm->_hoveredWidget = nullptr;
+		}
+
 		if (_beingDragged) {
 			_dims.translate(event.mouse.x - _draggedX, event.mouse.y - _draggedY);
 			updateInnerDims();
@@ -542,6 +553,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 		_beingDragged = false;
 		_beingResized = false;
+		_wm->_mouseDownWidget = nullptr;
 
 		setHighlight(kBorderNone);
 		break;
@@ -559,9 +571,16 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return false;
 	}
 
-	MacWidget *w = findEventHandler(event, _dims.left, _dims.top);
-	if (w && w != this && w->processEvent(event))
-		return true;
+	MacWidget *w = _wm->_mouseDownWidget ? _wm->_mouseDownWidget : findEventHandler(event, _dims.left, _dims.top);
+	if (w && w != this) {
+		_wm->_hoveredWidget = w;
+
+		if (event.type == Common::EVENT_LBUTTONDOWN)
+			_wm->_mouseDownWidget = w;
+
+		if (w->processEvent(event))
+			return true;
+	}
 
 	if (_callback)
 		return (*_callback)(click, event, _dataPtr);

@@ -62,6 +62,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/lingo/lingo-object.h"
 
 extern int yylex();
 extern int yyparse();
@@ -84,25 +85,82 @@ static void checkEnd(Common::String *token, const char *expect, bool required) {
 	}
 }
 
-static void inArgs() { g_lingo->_indef = kStateInArgs; }
-static void inDef()  { g_lingo->_indef = kStateInDef; }
-static void inNone() { g_lingo->_indef = kStateNone; }
+static void inArgs() { g_lingo->_indefStore = g_lingo->_indef; g_lingo->_indef = kStateInArgs; }
+static void inDef()  { g_lingo->_indefStore = g_lingo->_indef; g_lingo->_indef = kStateInDef; }
+static void inNone() { g_lingo->_indefStore = g_lingo->_indef; g_lingo->_indef = kStateNone; }
+static void inLast() { g_lingo->_indef = g_lingo->_indefStore; }
 
 static void startDef() {
 	inArgs();
-	g_lingo->_methodVars.clear();
+	g_lingo->_methodVarsStash = g_lingo->_methodVars;
+	g_lingo->_methodVars = new VarTypeHash;
+
+	for (VarTypeHash::iterator i = g_lingo->_methodVarsStash->begin(); i != g_lingo->_methodVarsStash->end(); ++i) {
+		if (i->_value == kVarGlobal || i->_value == kVarProperty)
+			(*g_lingo->_methodVars)[i->_key] = i->_value;
+	}
+	if (g_lingo->_inFactory) {
+		for (DatumHash::iterator i = g_lingo->_currentFactory->properties.begin(); i != g_lingo->_currentFactory->properties.end(); ++i) {
+			(*g_lingo->_methodVars)[i->_key] = kVarInstance;
+		}
+	}
 }
 
 static void endDef() {
 	g_lingo->clearArgStack();
 	inNone();
-	g_lingo->_ignoreMe = false;
 
-	g_lingo->_methodVars.clear();
+	delete g_lingo->_methodVars;
+	g_lingo->_methodVars = g_lingo->_methodVarsStash;
+	g_lingo->_methodVarsStash = nullptr;
 }
 
-static void mArg(Common::String *s) {
-	g_lingo->_methodVars[*s] = true;
+static void startRepeat() {
+	g_lingo->_repeatStack.push_back(new RepeatBlock);
+}
+
+static void endRepeat(uint exitPos, uint nextPos) {
+	RepeatBlock *block = g_lingo->_repeatStack.back();
+	g_lingo->_repeatStack.pop_back();
+	for (uint i = 0; i < block->exits.size(); i++) {
+		uint32 pos = block->exits[i];
+		inst exit = 0;
+		WRITE_UINT32(&exit, exitPos - (pos - 1));
+		(*g_lingo->_currentAssembly)[pos] = exit;
+	}
+	for (uint i = 0; i < block->nexts.size(); i++) {
+		uint32 pos = block->nexts[i];
+		inst next = 0;
+		WRITE_UINT32(&next, nextPos - (pos - 1));
+		(*g_lingo->_currentAssembly)[pos] = next;
+	}
+	delete block;
+}
+
+static VarType globalCheck() {
+	// If in a definition, assume variables are local unless
+	// they were declared global with `global varname`
+	if (g_lingo->_indef == kStateInDef) {
+		return kVarLocal;
+	}
+	return kVarGlobal;
+}
+
+static void mVar(Common::String *s, VarType type) {
+	if (!g_lingo->_methodVars->contains(*s)) {
+		(*g_lingo->_methodVars)[*s] = type;
+		if (type == kVarProperty) {
+			g_lingo->_assemblyContext->_propNames.push_back(*s);
+		} else if (type == kVarInstance) {
+			if (g_lingo->_inFactory) {
+				g_lingo->_currentFactory->properties[*s] = Datum();
+			} else {
+				warning("Instance var '%s' defined outside factory", s->c_str());
+			}
+		} else if (type == kVarGlobal) {
+			g_lingo->varCreate(*s, true);
+		}
+	}
 }
 
 %}
@@ -117,36 +175,34 @@ static void mArg(Common::String *s) {
 	Director::DatumArray *arr;
 
 	struct {
-		Common::String *os;
-		int oe;
-	} objectfield;
-
-	struct {
 		Common::String *obj;
-		Common::String *field;
-	} objectref;
+		Common::String *prop;
+	} objectprop;
 }
 
 %token UNARY
-%token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE LEXERROR PARRAY
+
+// Datum types
+%token CASTREF VOID VAR POINT RECT ARRAY OBJECT FIELDREF LEXERROR PARRAY
 %token<i> INT ARGC ARGCNORET
+
 %token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY THEMENUITEMSENTITY
 %token<f> FLOAT
 %token<s> BLTIN FBLTIN RBLTIN THEFBLTIN
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
-%token<objectfield> THEOBJECTFIELD
-%token<objectref> THEOBJECTREF
+%token<objectprop> THEOBJECTPROP
 %token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tGOLOOP tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
-%token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tINSTANCE
+%token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn begin elseif end expr if when repeatwhile chunkexpr
-%type<code> repeatwith stmtlist tellstart reference simpleexpr list valuelist
+%type<code> asgn lbl expr if chunkexpr
+%type<code> stmtlist tellstart reference simpleexpr list valuelist
+%type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
 %type<s> on
 
@@ -158,7 +214,6 @@ static void mArg(Common::String *s) {
 %right UNARY
 
 %destructor { delete $$; } <s>
-%destructor { delete $$.os; } <objectfield>
 
 %%
 
@@ -172,6 +227,7 @@ programline: /* empty */
 asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
+		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -190,11 +246,30 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEMENUITEMSENTITY[1]);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr; }
-	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(LC::c_after); }		// D3
-	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(LC::c_before); }		// D3
+	| tPUT expr tAFTER ID 		{
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		mVar($ID, globalCheck());
+		g_lingo->code1(LC::c_after);
+		$$ = $expr;
+		delete $ID; }		// D3
+	| tPUT expr tAFTER reference 		{
+		g_lingo->code1(LC::c_after);
+		$$ = $expr; }
+	| tPUT expr tBEFORE ID 		{
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		mVar($ID, globalCheck());
+		g_lingo->code1(LC::c_before);
+		$$ = $expr;
+		delete $ID; }		// D3
+	| tPUT expr tBEFORE reference 		{
+		g_lingo->code1(LC::c_before);
+		$$ = $expr; }
 	| tSET ID tEQ expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
+		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -208,6 +283,7 @@ asgn: tPUT expr tINTO ID 		{
 	| tSET ID tTO expr			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
+		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
@@ -242,21 +318,35 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEMENUITEMENTITY[0]);
 		g_lingo->codeInt($THEMENUITEMENTITY[1]);
 		$$ = $expr; }
-	| tSET THEOBJECTFIELD tTO expr	{
-		g_lingo->code1(LC::c_objectfieldassign);
-		g_lingo->codeString($THEOBJECTFIELD.os->c_str());
-		g_lingo->codeInt($THEOBJECTFIELD.oe);
-		delete $THEOBJECTFIELD.os;
+	| tSET THEMENUITEMENTITY simpleexpr tOF ID simpleexpr tEQ expr	{
+		if (!$ID->equalsIgnoreCase("menu")) {
+			warning("LEXER: keyword 'menu' expected");
+			YYERROR;
+		}
+
+		warning("STUB: menuItem entity");
+		g_lingo->code1(LC::c_themenuitementityassign);
+		g_lingo->codeInt($THEMENUITEMENTITY[0]);
+		g_lingo->codeInt($THEMENUITEMENTITY[1]);
+		$$ = $expr; }
+	| tSET THEOBJECTPROP tTO expr	{
+		g_lingo->code1(LC::c_objectpropassign);
+		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
+		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
+		delete $THEOBJECTPROP.obj;
+		delete $THEOBJECTPROP.prop;
+		$$ = $expr; }
+	| tSET THEOBJECTPROP tEQ expr	{
+		g_lingo->code1(LC::c_objectpropassign);
+		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
+		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
+		delete $THEOBJECTPROP.obj;
+		delete $THEOBJECTPROP.prop;
 		$$ = $expr; }
 
 stmtoneliner: macro
 	| expr
 	| proc
-
-stmtonelinerwithif: macro
-	| expr
-	| proc
-	| ifoneliner
 
 stmt: stmtoneliner
 	| ifstmt
@@ -264,163 +354,192 @@ stmt: stmtoneliner
 	//   statements
 	// end repeat
 	//
-	| repeatwhile expr end[body] stmtlist end[end2] tENDREPEAT	{
-		inst body = 0, end = 0;
-		WRITE_UINT32(&body, $body - $repeatwhile);
-		WRITE_UINT32(&end, $end2 - $repeatwhile);
-		(*g_lingo->_currentScript)[$repeatwhile + 1] = body;	/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwhile + 2] = end; }	/* end, if cond fails */
+	| tREPEAT tWHILE lbl expr jumpifz[body] startrepeat stmtlist jump[end2] tENDREPEAT	{
+		inst start = 0, end = 0;
+		WRITE_UINT32(&start, $lbl - $end2 + 1);
+		WRITE_UINT32(&end, $end2 - $body + 2);
+		(*g_lingo->_currentAssembly)[$body] = end;		/* end, if cond fails */
+		(*g_lingo->_currentAssembly)[$end2] = start;	/* looping back */
+		endRepeat($end2 + 1, $lbl);	}	/* code any exit/next repeats */
 
 	// repeat with index = start to end
 	//   statements
 	// end repeat
 	//
-	| repeatwith tEQ begin[init] expr end tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
-		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, $init - $repeatwith);
-		WRITE_UINT32(&finish, $finish - $repeatwith);
-		WRITE_UINT32(&body, $stmtlist - $repeatwith);
-		WRITE_UINT32(&end, $end3 - $repeatwith);
-		WRITE_UINT32(&inc, 1);
-		(*g_lingo->_currentScript)[$repeatwith + 1] = init;		/* initial count value */
-		(*g_lingo->_currentScript)[$repeatwith + 2] = finish;	/* final count value */
-		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwith + 4] = inc;		/* increment */
-		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
+	| tREPEAT tWITH ID tEQ expr[init]
+				{ g_lingo->code1(LC::c_varpush);
+				  g_lingo->codeString($ID->c_str());
+				  mVar($ID, globalCheck()); }
+			varassign
+				{ g_lingo->code1(LC::c_eval);
+				  g_lingo->codeString($ID->c_str()); }
+			tTO expr[finish]
+				{ g_lingo->code1(LC::c_le); } jumpifz startrepeat stmtlist tENDREPEAT {
+
+		int nextPos = g_lingo->_currentAssembly->size();
+		g_lingo->code1(LC::c_eval);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_intpush);
+		g_lingo->codeInt(1);
+		g_lingo->code1(LC::c_add);
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_assign);
+		g_lingo->code2(LC::c_jump, 0);
+		int pos = g_lingo->_currentAssembly->size() - 1;
+
+		inst loop = 0, end = 0;
+		WRITE_UINT32(&loop, $varassign - pos + 2);
+		WRITE_UINT32(&end, pos - $jumpifz + 2);
+		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;	/* end, if cond fails */
+		endRepeat(pos + 1, nextPos); }	/* code any exit/next repeats */
+
 
 	// repeat with index = high down to low
 	//   statements
 	// end repeat
 	//
-	| repeatwith tEQ begin[init] expr end tDOWN tTO expr[finish] end stmtlist end[end3] tENDREPEAT {
-		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, $init - $repeatwith);
-		WRITE_UINT32(&finish, $finish - $repeatwith);
-		WRITE_UINT32(&body, $stmtlist - $repeatwith);
-		WRITE_UINT32(&end, $end3 - $repeatwith);
-		WRITE_UINT32(&inc, (uint32)-1);
-		(*g_lingo->_currentScript)[$repeatwith + 1] = init;		/* initial count value */
-		(*g_lingo->_currentScript)[$repeatwith + 2] = finish;	/* final count value */
-		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwith + 4] = inc;		/* increment */
-		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
-	| repeatwith tIN begin[list] expr end stmtlist end[end3] tENDREPEAT {
-		inst list = 0, body = 0, end = 0;
-		WRITE_UINT32(&list, $list - $repeatwith);
-		WRITE_UINT32(&body, $stmtlist - $repeatwith);
-		WRITE_UINT32(&end, $end3 - $repeatwith);
-		(*g_lingo->_currentScript)[$repeatwith + 1] = list;		/* initial count value */
-		(*g_lingo->_currentScript)[$repeatwith + 2] = 0;		/* final count value */
-		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
-		(*g_lingo->_currentScript)[$repeatwith + 4] = 0;		/* increment */
-		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
+	| tREPEAT tWITH ID tEQ expr[init]
+				{ g_lingo->code1(LC::c_varpush);
+				  g_lingo->codeString($ID->c_str());
+				  mVar($ID, globalCheck()); }
+			varassign
+				{ g_lingo->code1(LC::c_eval);
+				  g_lingo->codeString($ID->c_str()); }
+			tDOWN tTO expr[finish]
+				{ g_lingo->code1(LC::c_ge); }
+			jumpifz startrepeat stmtlist tENDREPEAT {
+
+		int nextPos = g_lingo->_currentAssembly->size();
+		g_lingo->code1(LC::c_eval);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_intpush);
+		g_lingo->codeInt(1);
+		g_lingo->code1(LC::c_sub);
+		g_lingo->code1(LC::c_varpush);
+		g_lingo->codeString($ID->c_str());
+		g_lingo->code1(LC::c_assign);
+		g_lingo->code2(LC::c_jump, 0);
+		int pos = g_lingo->_currentAssembly->size() - 1;
+
+		inst loop = 0, end = 0;
+		WRITE_UINT32(&loop, $varassign - pos + 2);
+		WRITE_UINT32(&end, pos - $jumpifz + 2);
+		(*g_lingo->_currentAssembly)[pos] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;	/* end, if cond fails */
+		endRepeat(pos + 1, nextPos); }	/* code any exit/next repeats */
+
+	// repeat with index in list
+	//   statements
+	// end repeat
+	//
+	| tREPEAT tWITH ID tIN expr
+				{ g_lingo->code1(LC::c_stackpeek);
+				  g_lingo->codeInt(0);
+				  Common::String count("count");
+				  g_lingo->codeFunc(&count, 1);
+				  g_lingo->code1(LC::c_intpush);	// start counter
+				  g_lingo->codeInt(1); }
+			lbl
+				{ g_lingo->code1(LC::c_stackpeek);	// get counter
+				  g_lingo->codeInt(0);
+				  g_lingo->code1(LC::c_stackpeek);	// get array size
+				  g_lingo->codeInt(2);
+				  g_lingo->code1(LC::c_le); }
+			jumpifz
+				{ g_lingo->code1(LC::c_stackpeek);	// get list
+				  g_lingo->codeInt(2);
+				  g_lingo->code1(LC::c_stackpeek);	// get counter
+				  g_lingo->codeInt(1);
+				  Common::String getAt("getAt");
+				  g_lingo->codeFunc(&getAt, 2);
+				  g_lingo->code1(LC::c_varpush);
+				  g_lingo->codeString($ID->c_str());
+				  mVar($ID, globalCheck());
+				  g_lingo->code1(LC::c_assign); }
+			startrepeat stmtlist tENDREPEAT {
+
+		int nextPos = g_lingo->_currentAssembly->size();
+		g_lingo->code1(LC::c_intpush);
+		g_lingo->codeInt(1);
+		g_lingo->code1(LC::c_add);			// Increment counter
+
+		int jump = g_lingo->code2(LC::c_jump, 0);
+
+		int end2 = g_lingo->code1(LC::c_stackdrop);	// remove list, size, counter
+		g_lingo->codeInt(3);
+
+		inst loop = 0, end = 0;
+		WRITE_UINT32(&loop, $lbl - jump);
+		WRITE_UINT32(&end, end2 - $jumpifz + 1);
+
+		(*g_lingo->_currentAssembly)[jump + 1] = loop;		/* final count value */
+		(*g_lingo->_currentAssembly)[$jumpifz] = end;		/* end, if cond fails */
+		endRepeat(end2, nextPos); }	/* code any exit/next repeats */
 
 	| tNEXT tREPEAT {
-		g_lingo->code1(LC::c_nextRepeat); }
-	| when stmtonelinerwithif end {
-		inst end = 0;
-		WRITE_UINT32(&end, $end - $when);
-		g_lingo->code1(STOP);
-		(*g_lingo->_currentScript)[$when + 1] = end; }
-	| tTELL expr '\n' tellstart stmtlist end tENDTELL {
-		inst end;
-		WRITE_UINT32(&end, $end - $tellstart);
-		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
-	| tTELL expr tTO tellstart stmtoneliner end {
-		inst end;
-		WRITE_UINT32(&end, $end - $tellstart);
-		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
+		if (g_lingo->_repeatStack.size()) {
+			g_lingo->code2(LC::c_jump, 0);
+			int pos = g_lingo->_currentAssembly->size() - 1;
+			g_lingo->_repeatStack.back()->nexts.push_back(pos);
+		} else {
+			warning("# LINGO: next repeat not inside repeat block");
+		} }
+	| tWHEN ID tTHEN expr {
+		g_lingo->code1(LC::c_whencode);
+		g_lingo->codeString($ID->c_str()); }
+	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL { g_lingo->code1(LC::c_telldone); }
+	| tTELL expr tTO tellstart stmtoneliner lbl { g_lingo->code1(LC::c_telldone); }
 
-tellstart:	  /* empty */				{
-		$$ = g_lingo->code1(LC::c_tellcode);
-		g_lingo->code1(STOP); }
+startrepeat:	/* nothing */	{ startRepeat(); }
 
-ifstmt: if expr end[endexpr] tTHEN stmtlist end[else1] elseifstmtlist end[end3] tENDIF {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $endexpr - $if);
-		WRITE_UINT32(&else1, $else1 - $if);
-		WRITE_UINT32(&end, $end3 - $if);
-		(*g_lingo->_currentScript)[$if + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$if + 2] = else1;/* elsepart */
-		(*g_lingo->_currentScript)[$if + 3] = end;	/* end, if cond fails */
+tellstart:	  /* empty */	{ g_lingo->code1(LC::c_tell); }
 
-		g_lingo->processIf($if, $end3 - $if, 0); }
-	| if expr end[endexpr] tTHEN stmtlist end[else1] elseifstmtlist tELSE begin stmtlist end[end3] tENDIF {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $endexpr - $if);
-		WRITE_UINT32(&else1, $else1 - $if);
-		WRITE_UINT32(&end, $end3 - $if);
-		(*g_lingo->_currentScript)[$if + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$if + 2] = else1;/* elsepart */
-		(*g_lingo->_currentScript)[$if + 3] = end;	/* end, if cond fails */
-
-		g_lingo->processIf($if, $end3 - $if, $begin - $if); }
+ifstmt: if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist lbl[end3] tENDIF {
+		inst else1 = 0, end3 = 0;
+		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
+		WRITE_UINT32(&end3, $end3 - $else1 + 1);
+		(*g_lingo->_currentAssembly)[$then] = else1;		/* elsepart */
+		(*g_lingo->_currentAssembly)[$else1] = end3;		/* end, if cond fails */
+		g_lingo->processIf($else1, $end3); }
+	| if expr jumpifz[then] tTHEN stmtlist jump[else1] elseifstmtlist tELSE stmtlist lbl[end3] tENDIF {
+		inst else1 = 0, end = 0;
+		WRITE_UINT32(&else1, $else1 + 1 - $then + 1);
+		WRITE_UINT32(&end, $end3 - $else1 + 1);
+		(*g_lingo->_currentAssembly)[$then] = else1;		/* elsepart */
+		(*g_lingo->_currentAssembly)[$else1] = end;		/* end, if cond fails */
+		g_lingo->processIf($else1, $end3); }
 
 elseifstmtlist:	/* nothing */
 	| elseifstmtlist elseifstmt
 
-elseifstmt: elseif expr end[endexpr] tTHEN stmtlist end {
-		inst then = 0;
-		WRITE_UINT32(&then, $endexpr - $elseif);
-		(*g_lingo->_currentScript)[$elseif + 1] = then;	/* thenpart */
+elseifstmt: tELSIF expr jumpifz[then] tTHEN stmtlist jump[end3] {
+		inst else1 = 0;
+		WRITE_UINT32(&else1, $end3 + 1 - $then + 1);
+		(*g_lingo->_currentAssembly)[$then] = else1;	/* end, if cond fails */
+		g_lingo->codeLabel($end3); }
 
-		g_lingo->codeLabel($elseif); }
+jumpifz:	/* nothing */	{
+		g_lingo->code2(LC::c_jumpifz, 0);
+		$$ = g_lingo->_currentAssembly->size() - 1; }
 
-ifoneliner: if expr end[endexpr] tTHEN stmtoneliner end[else1] tELSE begin stmtoneliner end[end3] tENDIF {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $endexpr - $if);
-		WRITE_UINT32(&else1, $else1 - $if);
-		WRITE_UINT32(&end, $end3 - $if);
-		(*g_lingo->_currentScript)[$if + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$if + 2] = else1;/* elsepart */
-		(*g_lingo->_currentScript)[$if + 3] = end;	/* end, if cond fails */
+jump:		/* nothing */	{
+		g_lingo->code2(LC::c_jump, 0);
+		$$ = g_lingo->_currentAssembly->size() - 1; }
 
-		g_lingo->processIf($if, $end3 - $if, $begin - $if); }
-	| if expr end[endexpr] tTHEN stmtoneliner end[end3] tENDIF {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $endexpr - $if);
-		WRITE_UINT32(&else1, 0);
-		WRITE_UINT32(&end, $end3 - $if);
-		(*g_lingo->_currentScript)[$if + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$if + 2] = else1;/* elsepart */
-		(*g_lingo->_currentScript)[$if + 3] = end;	/* end, if cond fails */
-
-		g_lingo->processIf($if, $end3 - $if, $end3 - $if); }
-
-repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(LC::c_repeatwhilecode, STOP, STOP); }
-
-repeatwith:		tREPEAT tWITH ID	{
-		$$ = g_lingo->code3(LC::c_repeatwithcode, STOP, STOP);
-		g_lingo->code3(STOP, STOP, STOP);
-		g_lingo->codeString($ID->c_str());
-		delete $ID; }
+varassign:		/* nothing */	{
+		g_lingo->code1(LC::c_assign);
+		$$ = g_lingo->_currentAssembly->size() - 1; }
 
 if:	  tIF					{
-		$$ = g_lingo->code1(LC::c_ifcode);
-		g_lingo->code3(STOP, STOP, STOP);
-		g_lingo->code1(0);  // Do not skip end
 		g_lingo->codeLabel(0); } // Mark beginning of the if() statement
 
-elseif:	  tELSIF			{
-		inst skipEnd;
-		WRITE_UINT32(&skipEnd, 1); // We have to skip end to avoid multiple executions
-		$$ = g_lingo->code1(LC::c_ifcode);
-		g_lingo->code3(STOP, STOP, STOP);
-		g_lingo->code1(skipEnd); }
+lbl:	  /* nothing */		{ $$ = g_lingo->_currentAssembly->size(); }
 
-begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
-
-end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
-
-stmtlist: 					{ $$ = g_lingo->_currentScript->size(); }
+stmtlist: 					{ $$ = g_lingo->_currentAssembly->size(); }
 	| stmtlist '\n'
 	| stmtlist stmt
-
-when:	  tWHEN	ID tTHEN	{
-		$$ = g_lingo->code1(LC::c_whencode);
-		g_lingo->code1(STOP);
-		g_lingo->codeString($ID->c_str());
-		delete $ID; }
 
 simpleexpr: INT		{
 		$$ = g_lingo->code1(LC::c_intpush);
@@ -448,6 +567,12 @@ simpleexpr: INT		{
 		WRITE_UINT32(&e, $THEENTITY[0]);
 		WRITE_UINT32(&f, $THEENTITY[1]);
 		g_lingo->code2(e, f); }
+	| THEENTITYWITHID simpleexpr {
+		$$ = g_lingo->code1(LC::c_theentitypush);
+		inst e = 0, f = 0;
+		WRITE_UINT32(&e, $THEENTITYWITHID[0]);
+		WRITE_UINT32(&f, $THEENTITYWITHID[1]);
+		g_lingo->code2(e, f); }
 	| '(' expr[arg] ')'			{ $$ = $arg; }
 	| list
 	| error	'\n'		{
@@ -469,29 +594,29 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| FBLTIN arglist	{
 		g_lingo->codeFunc($FBLTIN, $arglist);
 		delete $FBLTIN; }
+	| ID[func] '(' ID[method] ')' {
+			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->codeString($method->c_str());
+			g_lingo->codeFunc($func, 1);
+			delete $func;
+			delete $method; }
+	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString($method->c_str()); }
+				nonemptyarglist ')' {
+			g_lingo->codeFunc($func, $nonemptyarglist + 1);
+			delete $func;
+			delete $method; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
 	| THEFBLTIN tOF simpleexpr	{
 		$$ = g_lingo->codeFunc($THEFBLTIN, 1);
 		delete $THEFBLTIN; }
-	| THEENTITYWITHID simpleexpr {
-		$$ = g_lingo->code1(LC::c_theentitypush);
-		inst e = 0, f = 0;
-		WRITE_UINT32(&e, $THEENTITYWITHID[0]);
-		WRITE_UINT32(&f, $THEENTITYWITHID[1]);
-		g_lingo->code2(e, f); }
-	| THEOBJECTFIELD {
-		g_lingo->code1(LC::c_objectfieldpush);
-		g_lingo->codeString($THEOBJECTFIELD.os->c_str());
-		g_lingo->codeInt($THEOBJECTFIELD.oe);
-		delete $THEOBJECTFIELD.os; }
-	| THEOBJECTREF {
-		g_lingo->code1(LC::c_objectrefpush);
-		g_lingo->codeString($THEOBJECTREF.obj->c_str());
-		g_lingo->codeString($THEOBJECTREF.field->c_str());
-		delete $THEOBJECTREF.obj;
-		delete $THEOBJECTREF.field; }
+	| THEOBJECTPROP {
+		g_lingo->code1(LC::c_objectproppush);
+		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
+		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
+		delete $THEOBJECTPROP.obj;
+		delete $THEOBJECTPROP.prop; }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
 	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }
@@ -533,11 +658,18 @@ reference: 	RBLTIN simpleexpr	{
 proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| gotofunc
 	| playfunc
-	| tEXIT tREPEAT				{ g_lingo->code1(LC::c_exitRepeat); }
+	| tEXIT tREPEAT				{
+		if (g_lingo->_repeatStack.size()) {
+			g_lingo->code2(LC::c_jump, 0);
+			int pos = g_lingo->_currentAssembly->size() - 1;
+			g_lingo->_repeatStack.back()->exits.push_back(pos);
+		} else {
+			warning("# LINGO: exit repeat not inside repeat block");
+		} }
 	| tEXIT						{ g_lingo->code1(LC::c_procret); }
-	| tGLOBAL					{ inArgs(); } globallist { inNone(); }
-	| tPROPERTY					{ inArgs(); } propertylist { inNone(); }
-	| tINSTANCE					{ inArgs(); } instancelist { inNone(); }
+	| tGLOBAL					{ inArgs(); } globallist { inLast(); }
+	| tPROPERTY					{ inArgs(); } propertylist { inLast(); }
+	| tINSTANCE					{ inArgs(); } instancelist { inLast(); }
 	| BLTIN '(' arglist ')'		{
 		g_lingo->codeFunc($BLTIN, $arglist);
 		delete $BLTIN; }
@@ -548,36 +680,24 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| tOPEN expr 				{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
 
 globallist: ID					{
-		g_lingo->code1(LC::c_global);
-		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mVar($ID, kVarGlobal);
 		delete $ID; }
 	| globallist ',' ID			{
-		g_lingo->code1(LC::c_global);
-		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mVar($ID, kVarGlobal);
 		delete $ID; }
 
 propertylist: ID				{
-		g_lingo->code1(LC::c_property);
-		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mVar($ID, kVarProperty);
 		delete $ID; }
 	| propertylist ',' ID		{
-		g_lingo->code1(LC::c_property);
-		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mVar($ID, kVarProperty);
 		delete $ID; }
 
 instancelist: ID				{
-		g_lingo->code1(LC::c_instance);
-		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mVar($ID, kVarInstance);
 		delete $ID; }
 	| instancelist ',' ID		{
-		g_lingo->code1(LC::c_instance);
-		g_lingo->codeString($ID->c_str());
-		mArg($ID);
+		mVar($ID, kVarInstance);
 		delete $ID; }
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -648,45 +768,45 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 //
 // See also:
 //   on keyword
-defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory.clear(); }
-			begin argdef '\n' argstore stmtlist 		{
+defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
+			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$ID, $begin, $argdef);
+		g_lingo->codeDefine(*$ID, $lbl, $argdef);
 		endDef();
 		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$ID); delete $ID; }
-	| tMETHOD { startDef(); }
-			begin argdef '\n' argstore stmtlist 		{
+	| tMETHOD { startDef(); (*g_lingo->_methodVars)["me"] = kVarArgument; }
+			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
+		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1, g_lingo->_currentFactory);
 		endDef();
 		delete $tMETHOD; }
-	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
+	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$on, $begin, $argdef);
+		g_lingo->codeDefine(*$on, $lbl, $argdef);
 		endDef();
 
 		checkEnd($ENDCLAUSE, $on->c_str(), false);
 		delete $on;
 		delete $ENDCLAUSE; }
-	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
+	| on lbl argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*$on, $begin, $argdef);
+		g_lingo->codeDefine(*$on, $lbl, $argdef);
 		endDef();
 		delete $on; }
 
 on:  tON { startDef(); } ID 	{
-		$$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
+		$$ = $ID; g_lingo->_currentFactory = NULL; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
-	| ID						{ g_lingo->codeArg($ID); mArg($ID); $$ = 1; delete $ID; }
-	| argdef ',' ID				{ g_lingo->codeArg($ID); mArg($ID); $$ = $1 + 1; delete $ID; }
+	| ID						{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = 1; delete $ID; }
+	| argdef ',' ID				{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = $1 + 1; delete $ID; }
 
 endargdef:	/* nothing */
 	| ID						{ delete $ID; }
 	| endargdef ',' ID			{ delete $ID; }
 
-argstore:	  /* nothing */		{ g_lingo->codeArgStore(); inDef(); }
+argstore:	  /* nothing */		{ inDef(); }
 
 macro: ID nonemptyarglist		{
 		g_lingo->code1(LC::c_call);
@@ -707,8 +827,8 @@ list: '[' valuelist ']'			{ $$ = $valuelist; }
 
 valuelist:	/* nothing */		{ $$ = g_lingo->code2(LC::c_arraypush, 0); }
 	| ':'						{ $$ = g_lingo->code2(LC::c_proparraypush, 0); }
-	| linearlist { $$ = g_lingo->code1(LC::c_arraypush); $$ = g_lingo->codeInt($linearlist); }
 	| proplist	 { $$ = g_lingo->code1(LC::c_proparraypush); $$ = g_lingo->codeInt($proplist); }
+	| linearlist { $$ = g_lingo->code1(LC::c_arraypush); $$ = g_lingo->codeInt($linearlist); }
 
 linearlist: expr				{ $$ = 1; }
 	| linearlist ',' expr		{ $$ = $1 + 1; }
@@ -716,14 +836,18 @@ linearlist: expr				{ $$ = 1; }
 proplist:  proppair				{ $$ = 1; }
 	| proplist ',' proppair		{ $$ = $1 + 1; }
 
-proppair: SYMBOL ':' simpleexpr {
+proppair: SYMBOL ':' expr {
 		g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString($SYMBOL->c_str());
 		delete $SYMBOL; }
-	| STRING ':' simpleexpr 	{
+	| STRING ':' expr 	{
 		g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString($STRING->c_str());
 		delete $STRING; }
+	| ID ':' expr 	{
+		g_lingo->code1(LC::c_stringpush);
+		g_lingo->codeString($ID->c_str());
+		delete $ID; }
 
 
 %%

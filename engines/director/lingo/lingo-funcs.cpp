@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "common/file.h"
 #include "common/macresman.h"
@@ -28,11 +29,16 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/lingo/lingo.h"
-#include "director/cast.h"
+#include "director/castmember.h"
+#include "director/movie.h"
 #include "director/score.h"
 #include "director/sound.h"
+#include "director/stage.h"
 #include "director/util.h"
+
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-gr.h"
+
 
 namespace Director {
 
@@ -178,7 +184,7 @@ void Lingo::func_mciwait(const Common::String &name) {
 void Lingo::func_goto(Datum &frame, Datum &movie) {
 	_vm->_playbackPaused = false;
 
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
 	if (movie.type != VOID) {
@@ -221,21 +227,23 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		_vm->_nextMovie.movie = cleanedFilename;
-		_vm->getCurrentScore()->_stopPlay = true;
+		Stage *stage = _vm->getStage();
 
-		_vm->_nextMovie.frameS.clear();
-		_vm->_nextMovie.frameI = -1;
+		stage->_nextMovie.movie = cleanedFilename;
+		stage->getCurrentMovie()->getScore()->_stopPlay = true;
+
+		stage->_nextMovie.frameS.clear();
+		stage->_nextMovie.frameI = -1;
 
 		if (frame.type == VOID)
 			return;
 
 		if (frame.type == STRING) {
-			_vm->_nextMovie.frameS = *frame.u.s;
+			stage->_nextMovie.frameS = *frame.u.s;
 			return;
 		}
 
-		_vm->_nextMovie.frameI = frame.asInt();
+		stage->_nextMovie.frameI = frame.asInt();
 
 		return;
 	}
@@ -246,50 +254,46 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	_vm->_skipFrameAdvance = true;
 
 	if (frame.type == STRING) {
-		if (_vm->getCurrentScore())
-			_vm->getCurrentScore()->setStartToLabel(*frame.u.s);
+		if (_vm->getCurrentMovie())
+			_vm->getCurrentMovie()->getScore()->setStartToLabel(*frame.u.s);
 		return;
 	}
 
-	if (_vm->getCurrentScore())
-		_vm->getCurrentScore()->setCurrentFrame(frame.asInt());
+	if (_vm->getCurrentMovie())
+		_vm->getCurrentMovie()->getScore()->setCurrentFrame(frame.asInt());
 }
 
 void Lingo::func_gotoloop() {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentScore()->gotoLoop();
+	_vm->getCurrentMovie()->getScore()->gotoLoop();
 
 	_vm->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotonext() {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentScore()->gotoNext();
+	_vm->getCurrentMovie()->getScore()->gotoNext();
 
 	_vm->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotoprevious() {
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return;
 
-	_vm->getCurrentScore()->gotoPrevious();
+	_vm->getCurrentMovie()->getScore()->gotoPrevious();
 
 	_vm->_skipFrameAdvance = true;
 }
 
 void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
+	Stage *stage = _vm->getStage();
 
-	if (movie.type != VOID) {
-		warning("STUB: func_play()");
-
-		return;
-	}
 
 	// play #done
 	if (frame.type == SYMBOL) {
@@ -297,12 +301,12 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 			warning("Lingo::func_play: unknown symbol: #%s", frame.u.s->c_str());
 			return;
 		}
-		if (_vm->_movieStack.empty()) {	// No op if no nested movies
+		if (stage->_movieStack.empty()) {	// No op if no nested movies
 			return;
 		}
-		ref = _vm->_movieStack.back();
+		ref = stage->_movieStack.back();
 
-		_vm->_movieStack.pop_back();
+		stage->_movieStack.pop_back();
 
 		Datum m, f;
 
@@ -321,14 +325,14 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		return;
 	}
 
-	if (!_vm->getCurrentScore()) {
-		warning("Lingo::func_play(): no score");
+	if (!_vm->getCurrentMovie()) {
+		warning("Lingo::func_play(): no movie");
 		return;
 	}
 
-	ref.frameI = _vm->getCurrentScore()->getCurrentFrame();
+	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 
-	_vm->_movieStack.push_back(ref);
+	stage->_movieStack.push_back(ref);
 
 	func_goto(frame, movie);
 }
@@ -340,8 +344,8 @@ void Lingo::func_cursor(int cursorId, int maskId) {
 	}
 
 	if (maskId != -1) {
-		Cast *cursorCast = _vm->getCastMember(cursorId);
-		Cast *maskCast = _vm->getCastMember(maskId);
+		CastMember *cursorCast = _vm->getCurrentMovie()->getCastMember(cursorId);
+		CastMember *maskCast = _vm->getCurrentMovie()->getCastMember(maskId);
 		if (!cursorCast || !maskCast) {
 			warning("func_cursor(): non-existent cast reference");
 			return;
@@ -352,30 +356,21 @@ void Lingo::func_cursor(int cursorId, int maskId) {
 			return;
 		}
 
-		if (cursorCast->_surface == nullptr) {
-			warning("func_cursor(): empty surface for bitmap cast %d", cursorId);
-			return;
-		}
-		if (maskCast->_surface == nullptr) {
-			warning("func_cursor(): empty surface for bitmap cast %d", maskId);
-			return;
-		}
-
 		byte *assembly = (byte *)malloc(16 * 16);
 		byte *dst = assembly;
 
 		for (int y = 0; y < 16; y++) {
 			const byte *cursor = nullptr, *mask = nullptr;
 
-			if (y < cursorCast->_surface->h &&
-					y < maskCast->_surface->h) {
-				cursor = (const byte *)cursorCast->_surface->getBasePtr(0, y);
-				mask = (const byte *)maskCast->_surface->getBasePtr(0, y);
+			if (y < cursorCast->_widget->getSurface()->h &&
+					y < maskCast->_widget->getSurface()->h) {
+				cursor = (const byte *)cursorCast->_widget->getSurface()->getBasePtr(0, y);
+				mask = (const byte *)maskCast->_widget->getSurface()->getBasePtr(0, y);
 			}
 
 			for (int x = 0; x < 16; x++) {
-				if (x >= cursorCast->_surface->w ||
-						x >= maskCast->_surface->w) {
+				if (x >= cursorCast->_widget->getSurface()->w ||
+						x >= maskCast->_widget->getSurface()->w) {
 					cursor = mask = nullptr;
 				}
 
@@ -431,17 +426,17 @@ void Lingo::func_beep(int repeats) {
 }
 
 int Lingo::func_marker(int m) 	{
-	if (!_vm->getCurrentScore())
+	if (!_vm->getCurrentMovie())
 		return 0;
 
-	int labelNumber = _vm->getCurrentScore()->getCurrentLabelNumber();
+	int labelNumber = _vm->getCurrentMovie()->getScore()->getCurrentLabelNumber();
 	if (m != 0) {
 		if (m < 0) {
 			for (int marker = 0; marker > m; marker--)
-				labelNumber = _vm->getCurrentScore()->getPreviousLabelNumber(labelNumber);
+				labelNumber = _vm->getCurrentMovie()->getScore()->getPreviousLabelNumber(labelNumber);
 		} else {
 			for (int marker = 0; marker < m; marker++)
-				labelNumber = _vm->getCurrentScore()->getNextLabelNumber(labelNumber);
+				labelNumber = _vm->getCurrentMovie()->getScore()->getNextLabelNumber(labelNumber);
 		}
 	}
 

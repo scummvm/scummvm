@@ -130,6 +130,7 @@ bool Music::startMusic(const Common::String &filename) {
 		// No such file exists
 		return false;
 
+#ifdef USE_MAD
 	if (filename.hasSuffixIgnoreCase(".mp3")) {
 		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(
 			musicFile.readStream(musicFile.size()), DisposeAfterUse::YES);
@@ -137,7 +138,9 @@ bool Music::startMusic(const Common::String &filename) {
 			&_soundHandle, audioStream);
 		return true;
 
-	} else if (filename.hasSuffixIgnoreCase(".mid")) {
+	} else
+#endif
+	if (filename.hasSuffixIgnoreCase(".mid")) {
 		// Load MIDI resource data
 		int midiMusicSize = musicFile.size();
 		free(_midiData);

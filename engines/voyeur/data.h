@@ -137,7 +137,6 @@ public:
 	int _switchBGNum;
 	int _totalPhoneCalls;
 	int _transitionId;
-	int _victimNumber;
 	int _videoEventId;
 	int _vocSecondsOffset;
 	int _RTANum;

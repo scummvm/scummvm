@@ -29,7 +29,6 @@
 #include "common/util.h"                 // for ARRAYSIZE
 #include "common/system.h"               // for g_system
 #include "engines/engine.h"              // for Engine, g_engine
-#include "graphics/colormasks.h"         // for createPixelFormat
 #include "graphics/palette.h"            // for PaletteManager
 #include "graphics/transparent_surface.h" // for TransparentSurface
 #include "sci/console.h"                 // for Console

@@ -411,15 +411,31 @@ public:
 	}
 
 	/**
+	 * Loads Quetzal chunks from the passed savegame
+	 */
+	Common::Error loadGameChunks(QuetzalReader &quetzal) override;
+
+	/**
+	 * Writes out the Quetzal chunks within a savegame
+	 */
+	Common::Error saveGameChunks(QuetzalWriter &quetzal) override;
+
+	/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override {
+		// Unused
+		return Common::kUnknownError;
+	}
 
 	/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	Common::Error writeGameData(Common::WriteStream *ws) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override {
+		// Unused
+		return Common::kUnknownError;
+	}
 
 	/**
 	 * \defgroup Main access methods

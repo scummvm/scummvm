@@ -142,17 +142,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "noblecrook4", "Noble Crook, episode 4" },
 	{ "sonofcamelot", "Son of Camelot" },
 
-#ifndef RELEASE_BUILD
-	// Unsupported English ADRIFT 5 games
-	{ "axeofkolt", "The Axe of Kolt" },
-	{ "castlecoris", "The Spectre of Castle Coris" },
-	{ "fistoffire", "Die Feuerfaust - The Fist of Fire" },
-	{ "magneticmoon", "Magnetic Moon" },
-	{ "starshipquest", "Starship Quest" },
-	{ "sixsilverbullets", "Six Silver Bullets" },
-	{ "tingalan", "Tingalan" },
-#endif
-
 	// Italian Games
 	{ "ilgolem", "Il Golem" },
 
@@ -261,6 +250,19 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 
 	{ nullptr, nullptr }
 };
+
+const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
+	{ "axeofkolt", "The Axe of Kolt" },
+	{ "castlecoris", "The Spectre of Castle Coris" },
+	{ "fistoffire", "Die Feuerfaust - The Fist of Fire" },
+	{ "magneticmoon", "Magnetic Moon" },
+	{ "starshipquest", "Starship Quest" },
+	{ "sixsilverbullets", "Six Silver Bullets" },
+	{ "tingalan", "Tingalan" },
+
+	{ nullptr, nullptr }
+};
+
 
 const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// English Games

@@ -50,9 +50,6 @@ public:
 	ProcId playEndgameMovie(bool fade) override;
 	void playCredits() override;
 	void playQuotes() override { };
-
-protected:
-	static Game *_game;
 };
 
 } // End of namespace Ultima8

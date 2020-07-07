@@ -72,16 +72,36 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 
 	_button[kCancelAct] =  new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , nullptr, kCancelCmd);
 	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      _("Ok")       , nullptr, kOkCmd);
-	_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", "1  `-.&"     , nullptr, kBut1Cmd);
-	_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", "2  abc"      , nullptr, kBut2Cmd);
-	_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", "3  def"      , nullptr, kBut3Cmd);
-	_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", "4  ghi"      , nullptr, kBut4Cmd);
-	_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", "5  jkl"      , nullptr, kBut5Cmd);
-	_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", "6  mno"      , nullptr, kBut6Cmd);
-	_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", "7  pqrs"     , nullptr, kBut7Cmd);
-	_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", "8  tuv"      , nullptr, kBut8Cmd);
-	_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", "9  wxyz"     , nullptr, kBut9Cmd);
-	_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", "0"           , nullptr, kBut0Cmd);
+
+	if (g_gui.useRTL()) {
+		/** If using RTL, swap the internal name of odd columns, to be flipped again when drawing.
+			We flip them back to orignal, because the keyboard layout stays the same in LTR & RTL.
+			The rest, like okButton, cancel, etc are all flipped.
+		*/
+
+		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button1", "3  def"      , nullptr, kBut3Cmd);
+		_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", "2  abc"      , nullptr, kBut2Cmd);
+		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button3", "1  `-.&"     , nullptr, kBut1Cmd);
+		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button4", "6  mno"      , nullptr, kBut6Cmd);
+		_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", "5  jkl"      , nullptr, kBut5Cmd);
+		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button6", "4  ghi"      , nullptr, kBut4Cmd);
+		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button7", "9  wxyz"     , nullptr, kBut9Cmd);
+		_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", "8  tuv"      , nullptr, kBut8Cmd);
+		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button9", "7  pqrs"     , nullptr, kBut7Cmd);
+		_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", "0"           , nullptr, kBut0Cmd);
+	} else {
+		_button[kButton1Act] = new ButtonWidget(this, "Predictive.Button1", "1  `-.&"     , nullptr, kBut1Cmd);
+		_button[kButton2Act] = new ButtonWidget(this, "Predictive.Button2", "2  abc"      , nullptr, kBut2Cmd);
+		_button[kButton3Act] = new ButtonWidget(this, "Predictive.Button3", "3  def"      , nullptr, kBut3Cmd);
+		_button[kButton4Act] = new ButtonWidget(this, "Predictive.Button4", "4  ghi"      , nullptr, kBut4Cmd);
+		_button[kButton5Act] = new ButtonWidget(this, "Predictive.Button5", "5  jkl"      , nullptr, kBut5Cmd);
+		_button[kButton6Act] = new ButtonWidget(this, "Predictive.Button6", "6  mno"      , nullptr, kBut6Cmd);
+		_button[kButton7Act] = new ButtonWidget(this, "Predictive.Button7", "7  pqrs"     , nullptr, kBut7Cmd);
+		_button[kButton8Act] = new ButtonWidget(this, "Predictive.Button8", "8  tuv"      , nullptr, kBut8Cmd);
+		_button[kButton9Act] = new ButtonWidget(this, "Predictive.Button9", "9  wxyz"     , nullptr, kBut9Cmd);
+		_button[kButton0Act] = new ButtonWidget(this, "Predictive.Button0", "0"           , nullptr, kBut0Cmd);
+	}
+
 	// I18N: You must leave "#" as is, only word 'next' is translatable
 	_button[kNextAct] =    new ButtonWidget(this, "Predictive.Next",    _("#  next")  , nullptr, kNextCmd);
 	_button[kAddAct] =     new ButtonWidget(this, "Predictive.Add",     _("add")      , nullptr, kAddCmd);

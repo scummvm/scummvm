@@ -135,7 +135,7 @@ bool find_path(Std::string path, Std::string &dir_str) {
 		return false;
 
 	for (item = readdir(dir); item != NULL; item = readdir(dir)) {
-		debug("trying %s, want %s\n", item->d_name, dir_str.c_str());
+		debug("trying %s, want %s", item->d_name, dir_str.c_str());
 		if (strlen(item->d_name) == dir_str.length() && Common::scumm_stricmp(item->d_name, dir_str.c_str()) == 0) {
 			dir_str = item->d_name;
 			return true;

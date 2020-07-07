@@ -225,7 +225,7 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 	char *dst = buffer;
 	bool error = false;
 
-	while (inSize > 0) {
+	while (true) {
 		if (iconv(iconvHandle, &src, &inSize, &dst, &outSize) == ((size_t)-1)) {
 			// from SDL's implementation of SDL_iconv_string (slightly altered)
 			if (errno == E2BIG) {
@@ -244,9 +244,18 @@ char *Encoding::convertIconv(const char *to, const char *from, const char *strin
 				error = true;
 				break;
 			}
+		} else {
+			// we've successfully finished, after the last call with NULLs
+			if (inSize == 0 && src == NULL) {
+				break;
+			}
+		}
+		if (inSize == 0) {
+			// we're at the end - call one last time with NULLs
+			src = NULL;
 		}
 	}
-	iconv(iconvHandle, NULL, NULL, &dst, &outSize);
+
 	// Add a zero character to the end. Hopefuly UTF32 uses the most bytes from
 	// all possible encodings, so add 4 zero bytes.
 	buffer = (char *)realloc(buffer, stringSize + 4);

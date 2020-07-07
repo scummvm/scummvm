@@ -3249,6 +3249,6 @@ extern "C" void consolePrintf(char * format, ...) __attribute__ ((no_instrument_
 extern "C" void consolePrintf(const char * format, ...) {
 	va_list args;
 	va_start(args, format);
-	viprintf(format, args);
+	vprintf(format, args);
 	va_end(args);
 }

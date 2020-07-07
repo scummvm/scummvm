@@ -33,38 +33,99 @@ void UIContainer::draw(Graphics::Surface &surface) {
 }
 
 void UIContainer::handleMouseMove(int mouseX, int mouseY) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
-		(*component)->handleMouseMove(mouseX, mouseY);
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleMouseMove(mouseX, mouseY);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleMouseMove(mouseX, mouseY);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
 	}
 }
 
 void UIContainer::handleMouseDown(bool alternateButton) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
-		(*component)->handleMouseDown(alternateButton);
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleMouseDown(alternateButton);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleMouseDown(alternateButton);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
 	}
 }
 
 void UIContainer::handleMouseUp(bool alternateButton) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
-		(*component)->handleMouseUp(alternateButton);
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleMouseUp(alternateButton);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleMouseUp(alternateButton);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
 	}
 }
 
 void UIContainer::handleMouseScroll(int direction) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
-		(*component)->handleMouseScroll(direction);
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleMouseScroll(direction);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleMouseScroll(direction);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
 	}
 }
 
 void UIContainer::handleKeyUp(const Common::KeyState &kbd) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
-		(*component)->handleKeyUp(kbd);
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleKeyUp(kbd);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleKeyUp(kbd);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
 	}
 }
 
 void UIContainer::handleKeyDown(const Common::KeyState &kbd) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
-		(*component)->handleKeyDown(kbd);
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleKeyDown(kbd);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleKeyDown(kbd);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
+
 	}
 }
 
@@ -74,6 +135,12 @@ void UIContainer::add(UIComponent *component) {
 
 void UIContainer::clear() {
 	_components.clear();
+	_handleSpecificNumOfTopLayers = 0;
 }
+
+void UIContainer::setHandleSpecificNumOfTopLayers(int count) {
+	_handleSpecificNumOfTopLayers = count;
+}
+
 
 } // End of namespace BladeRunner

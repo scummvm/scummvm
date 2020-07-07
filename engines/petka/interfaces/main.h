@@ -23,6 +23,8 @@
 #ifndef PETKA_MAIN_H
 #define PETKA_MAIN_H
 
+#include "audio/mixer.h"
+
 #include "petka/interfaces/interface.h"
 #include "petka/interfaces/dialog_interface.h"
 
@@ -47,14 +49,17 @@ public:
 
 	void unloadRoom(bool fromSave);
 
-	void onLeftButtonDown(const Common::Point p) override;
-	void onRightButtonDown(const Common::Point p) override;
-	void onMouseMove(const Common::Point p) override;
+	void onLeftButtonDown(Common::Point p) override;
+	void onRightButtonDown(Common::Point p) override;
+	void onMouseMove(Common::Point p) override;
 
 	void setTextChoice(const Common::Array<Common::U32String> &choices, uint16 color, uint16 selectedColor);
 	void setTextDescription(const Common::U32String &text, int frame);
 
 	void removeTextDescription();
+
+private:
+	void playSound(int id, Audio::Mixer::SoundType type);
 
 public:
 	DialogInterface _dialog;

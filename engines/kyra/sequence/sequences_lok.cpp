@@ -256,7 +256,7 @@ bool KyraEngine_LoK::seq_introStory() {
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, &_screen->getPalette(0));
 	else if (_flags.lang == Common::DE_DEU)
 		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, &_screen->getPalette(0));
-	else if (_flags.lang == Common::FR_FRA)
+	else if (_flags.lang == Common::FR_FRA || (_flags.lang == Common::ES_ESP && _flags.isTalkie)  /* Spanish fan made over French CD version */ )
 		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, &_screen->getPalette(0));
 	else if (_flags.lang == Common::ES_ESP)
 		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, &_screen->getPalette(0));

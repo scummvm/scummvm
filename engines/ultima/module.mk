@@ -419,6 +419,7 @@ MODULE_OBJS := \
 	ultima8/graphics/anim_dat.o \
 	ultima8/graphics/avi_player.o \
 	ultima8/graphics/base_soft_render_surface.o \
+	ultima8/graphics/cycle_process.o \
 	ultima8/graphics/frame_id.o \
 	ultima8/graphics/fade_to_modal_process.o \
 	ultima8/graphics/gump_shape_archive.o \
@@ -457,12 +458,15 @@ MODULE_OBJS := \
 	ultima8/gumps/ask_gump.o \
 	ultima8/gumps/bark_gump.o \
 	ultima8/gumps/book_gump.o \
+	ultima8/gumps/computer_gump.o \
 	ultima8/gumps/container_gump.o \
 	ultima8/gumps/credits_gump.o \
 	ultima8/gumps/cru_ammo_gump.o \
 	ultima8/gumps/cru_energy_gump.o \
 	ultima8/gumps/cru_health_gump.o \
 	ultima8/gumps/cru_inventory_gump.o \
+	ultima8/gumps/cru_pickup_area_gump.o \
+	ultima8/gumps/cru_pickup_gump.o \
 	ultima8/gumps/cru_stat_gump.o \
 	ultima8/gumps/cru_status_gump.o \
 	ultima8/gumps/cru_weapon_gump.o \
@@ -473,6 +477,7 @@ MODULE_OBJS := \
 	ultima8/gumps/gump_notify_process.o \
 	ultima8/gumps/inverter_gump.o \
 	ultima8/gumps/item_relative_gump.o \
+	ultima8/gumps/keypad_gump.o \
 	ultima8/gumps/main_menu_process.o \
 	ultima8/gumps/menu_gump.o \
 	ultima8/gumps/message_box_gump.o \
@@ -491,6 +496,7 @@ MODULE_OBJS := \
 	ultima8/gumps/shape_viewer_gump.o \
 	ultima8/gumps/slider_gump.o \
 	ultima8/gumps/target_gump.o \
+	ultima8/gumps/translucent_gump.o \
 	ultima8/gumps/u8_save_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \
@@ -510,6 +516,7 @@ MODULE_OBJS := \
 	ultima8/misc/istring.o \
 	ultima8/misc/util.o \
 	ultima8/usecode/bit_set.o \
+	ultima8/usecode/byte_set.o \
 	ultima8/usecode/uc_list.o \
 	ultima8/usecode/uc_machine.o \
 	ultima8/usecode/uc_process.o \
@@ -536,6 +543,7 @@ MODULE_OBJS := \
 	ultima8/world/monster_egg.o \
 	ultima8/world/split_item_process.o \
 	ultima8/world/sprite_process.o \
+	ultima8/world/target_reticle_process.o \
 	ultima8/world/teleport_egg.o \
 	ultima8/world/world.o \
 	ultima8/world/actors/actor.o \
@@ -548,17 +556,22 @@ MODULE_OBJS := \
 	ultima8/world/actors/avatar_death_process.o \
 	ultima8/world/actors/avatar_gravity_process.o \
 	ultima8/world/actors/avatar_mover_process.o \
+	ultima8/world/actors/battery_charger_process.o \
 	ultima8/world/actors/clear_feign_death_process.o \
+	ultima8/world/actors/cru_healer_process.o \
+	ultima8/world/actors/combat_dat.o \
 	ultima8/world/actors/combat_process.o \
 	ultima8/world/actors/grant_peace_process.o \
 	ultima8/world/actors/heal_process.o \
 	ultima8/world/actors/loiter_process.o \
 	ultima8/world/actors/main_actor.o \
+	ultima8/world/actors/npc_dat.o \
 	ultima8/world/actors/pathfinder.o \
 	ultima8/world/actors/pathfinder_process.o \
 	ultima8/world/actors/quick_avatar_mover_process.o \
 	ultima8/world/actors/resurrection_process.o \
 	ultima8/world/actors/scheduler_process.o \
+	ultima8/world/actors/surrender_process.o \
 	ultima8/world/actors/targeted_anim_process.o \
 	ultima8/world/actors/teleport_to_egg_process.o
 

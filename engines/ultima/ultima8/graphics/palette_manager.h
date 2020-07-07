@@ -57,8 +57,9 @@ public:
 
 	void duplicate(PalIndex src, PalIndex dest);
 
-	//! Re-convert a palette to native format after modifying it
-	void updatedFont(PalIndex index);
+	//! Re-convert a palette to native format after modifying it. If maxindex is set,
+	//! only recalculate color indexes up to that value.
+	void updatedPalette(PalIndex index, int maxindex = 0);
 
 	//! Apply a transform matrix to a palette (-4.11 fixed)
 	void transformPalette(PalIndex index, int16 matrix[12]);

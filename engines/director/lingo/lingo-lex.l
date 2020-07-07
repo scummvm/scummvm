@@ -39,14 +39,12 @@
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
 
-#define register
-
 using namespace Director;
 
 int yyparse();
 
 static void count() {
-	if (debugChannelSet(-1, kDebugLingoParse))
+	if (debugChannelSet(-1, kDebugParse))
 		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
 
 	char *p = yytext;
@@ -67,7 +65,7 @@ static void count() {
 
 static int checkImmediate(int token) {
 	if (g_lingo->_immediateMode || g_lingo->_indef == kStateInArgs ||
-			g_lingo->_methodVars.contains(yytext)) {
+			g_lingo->_methodVars->contains(yytext)) {
 		yylval.s = new Common::String(yytext);
 
 		return ID;
@@ -93,7 +91,7 @@ static Common::String *cleanupString(const char *s) {
 }
 
 static int varCheck(int token, const char *name) {
-	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars.contains(name)) {
+	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars->contains(name)) {
 		yylval.s = new Common::String(name);
 
 		return ID;
@@ -296,17 +294,28 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 			if (g_director->getVersion() >= 4) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
-				if (!g_lingo->_theEntityFields.contains(key)) { // Okay, this must be an object reference
-					yylval.objectref.obj = new Common::String(ptr);
-					yylval.objectref.field = new Common::String(field);
+				yylval.objectprop.obj = new Common::String(ptr);
+				yylval.objectprop.prop = new Common::String(field);
 
-					return THEOBJECTREF;
+				return THEOBJECTPROP;
+			} else if (g_lingo->_builtins.contains(field)) { // Let's hope they don't do it in D4+
+				if (g_lingo->_builtins[field].type == FBLTIN &&
+						g_lingo->_builtins[field].nargs == 1 && g_lingo->_builtins[field].maxArgs == 1) {
+					yylval.s = new Common::String(field);
+					Common::String rest(ptr);
+
+					// It is the dreaded 'the <builtin> of <expr>'
+					// with 'expr' starting with ID, which leads to clash
+					//
+					// put 'of ID' back.
+
+					for (int i = rest.size() - 1; i >= 0; i--)
+						unput(rest[i]);
+
+					unput(' '); unput('f'); unput('o');
+
+					return THEFBLTIN;
 				}
-
-				yylval.objectfield.os = new Common::String(ptr);
-				yylval.objectfield.oe = g_lingo->_theEntityFields[key]->field;
-
-				return THEOBJECTFIELD;
 			}
 		}
 
@@ -364,8 +373,8 @@ the{spc}+[[:alpha:]]+		{
 		}
 
 		if (g_lingo->_builtins.contains(ptr)) {
-			if (g_lingo->_builtins[ptr]->type == FBLTIN &&
-					g_lingo->_builtins[ptr]->nargs == 1 && g_lingo->_builtins[ptr]->maxArgs == 1) {
+			if (g_lingo->_builtins[ptr].type == FBLTIN &&
+					g_lingo->_builtins[ptr].nargs == 1 && g_lingo->_builtins[ptr].maxArgs == 1) {
 				yylval.s = new Common::String(ptr);
 				return THEFBLTIN;
 			}
@@ -392,16 +401,13 @@ word			{ count(); return varCheck(tWORD, "word"); }
 		count();
 		yylval.s = new Common::String(yytext);
 
-		if (g_lingo->_ignoreMe && yylval.s->equalsIgnoreCase("me"))
-			return ID;
-
 		// When we are defining arguments, allow any string
 		if (g_lingo->_indef == kStateInArgs)
 			return ID;
 
 		// Check that this is one of locally used names:
-		// argument, propery, instance or global
-		if (g_lingo->_methodVars.contains(yytext))
+		// argument, property, instance or global
+		if (g_lingo->_methodVars->contains(yytext))
 			return ID;
 
 		// First of all, match against argument list
@@ -410,10 +416,10 @@ word			{ count(); return varCheck(tWORD, "word"); }
 				return ID;
 
 		if (g_lingo->_builtins.contains(yytext)) {
-			int type = g_lingo->_builtins[yytext]->type;
-			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
+			int type = g_lingo->_builtins[yytext].type;
+			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext].parens == false) {
 				if (type == RBLTIN) {
-					if (g_lingo->_builtins[yytext]->nargs != 1 || g_lingo->_builtins[yytext]->maxArgs != 1) {
+					if (g_lingo->_builtins[yytext].nargs != 1 || g_lingo->_builtins[yytext].maxArgs != 1) {
 						warning("Incorrectly set RBLTIN %s", yytext);
 						return LEXERROR;
 					}
@@ -475,7 +481,7 @@ int Lingo::parse(const char *code) {
 
 	YY_BUFFER_STATE bp;
 
-	if (debugChannelSet(-1, kDebugLingoParse))
+	if (debugChannelSet(-1, kDebugParse))
 		yydebug = 1;
 	else
 		yydebug = 0;

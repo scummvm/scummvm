@@ -32,6 +32,7 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/gravity_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -416,11 +417,11 @@ void ActorAnimProcess::doSpecial() {
 	}
 
 	// ghost's fireball
-	if (a->getShape() == 0x19d) {
+	if (a->getShape() == 0x19d && GAME_IS_U8) {
 		Actor *av = getMainActor();
 		if (a->getRange(*av) < 96) {
 			a->setActorFlag(Actor::ACT_DEAD);
-			a->explode(); // explode if close to the avatar
+			a->explode(0, true); // explode if close to the avatar
 		}
 		return;
 	}

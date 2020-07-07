@@ -742,7 +742,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 			map = addExternalMap(file);
 
 		if (filename.contains("resmap.0")) {
-			const char *dot = strrchr(file->getName().c_str(), '.');
+			const char *dot = strrchr(filename.c_str(), '.');
 			uint number = atoi(dot + 1);
 
 			// We need to store each of these maps for use later on

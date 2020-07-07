@@ -147,6 +147,10 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 
 OptionsDialog::~OptionsDialog() {
 	delete _subToggleGroup;
+	if (g_gui.useRTL()) {
+		g_gui.setDialogPaddings(0, 0);
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 void OptionsDialog::init() {
@@ -1157,7 +1161,7 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			yPos += yStep;
 
 	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
-				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, Graphics::kTextAlignLeft, "", ThemeEngine::kFontStyleNormal);
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, info.descriptions[idx].comment, Graphics::kTextAlignStart, "", ThemeEngine::kFontStyleNormal);
 				yPos += yStep;
 			}
 
@@ -1167,12 +1171,12 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 
 	if (nHidden) {
 		Common::String hiddenStr = Common::String::format(_("%d hidden achievements remaining"), nHidden);
-		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), Graphics::kTextAlignLeft);
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, hiddenStr.c_str(), Graphics::kTextAlignStart);
 	}
 
 	if (nMax) {
 		Common::String totalStr = Common::String::format(_("Achievements unlocked: %d/%d"), nAchieved, nMax);
-		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), Graphics::kTextAlignLeft);
+		new StaticTextWidget(scrollContainer, lineHeight, lineHeight, width, yStep, totalStr.c_str(), Graphics::kTextAlignStart);
 
 		SliderWidget *progressBar;
 		progressBar = new SliderWidget(scrollContainer, lineHeight, lineHeight*2, progressBarWidth, lineHeight);
@@ -2176,16 +2180,18 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 	if (ttsMan != nullptr)
 		voices = ttsMan->getVoicesArray();
 
-	for(unsigned i = 0; i < voices.size(); i++) {
-		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
-	}
 	if (voices.empty())
 		_ttsVoiceSelectionPopUp->appendEntry(_("None"), 0);
+	else {
+		_ttsVoiceSelectionPopUp->appendEntry(_("<default>"));
+		for(unsigned i = 0; i < voices.size(); i++)
+			_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
+	}
 
-	if (ConfMan.hasKey("tts_voice") && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
+	if (ConfMan.hasKey("tts_voice", _domain) && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
 		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
 	else
-		_ttsVoiceSelectionPopUp->setSelectedTag(0);
+		_ttsVoiceSelectionPopUp->setSelected(0);
 }
 #endif
 
@@ -2291,6 +2297,7 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.set("gui_language", newLang);
 		newCharset = TransMan.getCurrentCharset();
 		isRebuildNeeded = true;
+		g_gui.setLanguageRTL();
 	}
 
 	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
@@ -2347,15 +2354,17 @@ void GlobalOptionsDialog::apply() {
 			else {
 				ttsMan->setLanguage(newLang);
 			}
-			_ttsVoiceSelectionPopUp->setSelectedTag(0);
+			_ttsVoiceSelectionPopUp->setSelected(0);
 		}
 		int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;
 		if (ConfMan.hasKey("mute", "scummvm") && ConfMan.getBool("mute", "scummvm"))
 			volume = 0;
 		ttsMan->setVolume(volume);
 		ConfMan.setBool("tts_enabled", _ttsCheckbox->getState(), _domain);
-		int selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
+		unsigned selectedVoice = _ttsVoiceSelectionPopUp->getSelectedTag();
 		ConfMan.setInt("tts_voice", selectedVoice, _domain);
+		if (selectedVoice >= ttsMan->getVoicesArray().size())
+			selectedVoice = ttsMan->getDefaultVoice();
 		ttsMan->setVoice(selectedVoice);
 	}
 #endif

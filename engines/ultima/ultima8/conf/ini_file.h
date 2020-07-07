@@ -36,7 +36,7 @@ public:
 	INIFile(Std::string fname, istring root);
 	~INIFile();
 
-	bool readConfigFile(Std::string fname);
+	bool readConfigFile(const Std::string &fname);
 
 	//! read configuration from a string s. Lines must be separated by \n
 	bool readConfigString(Std::string s);

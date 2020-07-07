@@ -163,22 +163,33 @@ void CameraProcess::run() {
 }
 
 void CameraProcess::ItemMoved() {
-	if (_itemNum) {
-		Item *item = getItem(_itemNum);
+	if (!_itemNum)
+		return;
 
-		// We only update for now if lerping has been disabled
-		if (item && item->hasExtFlags(Item::EXT_LERP_NOPREV)) {
-			item->getLocation(_ex, _ey, _ez);
-			_sx = _ex;
-			_sy = _ey;
-			_sz = _ez += 20;
+	Item *item = getItem(_itemNum);
 
-			World::get_instance()->getCurrentMap()->updateFastArea(_sx, _sy, _sz, _ex, _ey, _ez);
-		}
+	// We only update for now if lerping has been disabled
+	if (!item || !item->hasExtFlags(Item::EXT_LERP_NOPREV))
+		return;
+
+	int32 ix, iy, iz;
+	item->getLocation(ix, iy, iz);
+
+	int32 maxdist = MAX(MAX(abs(_ex - iz), abs(_ey - iy)), abs(_ez - iz));
+
+	if (GAME_IS_U8 || (GAME_IS_CRUSADER && maxdist > 0x40)) {
+		_sx = _ex = ix;
+		_sy = _ey = iy;
+		_ez = iz;
+		_sz = _ez += 20;
+		World::get_instance()->getCurrentMap()->updateFastArea(_sx, _sy, _sz, _ex, _ey, _ez);
 	}
 }
 
 void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool noupdate) {
+	// TODO: For Crusader, only update the camera position if the
+	// distance to the target object passes a threshold.
+
 	if (_time == 0) {
 		if (!noupdate) {
 
@@ -313,11 +324,18 @@ bool CameraProcess::loadData(Common::ReadStream *rs, uint32 version) {
 }
 
 //	"Camera::move_to(uword, uword, ubyte, word)",
-uint32 CameraProcess::I_move_to(const uint8 *args, unsigned int /*argsize*/) {
+uint32 CameraProcess::I_moveTo(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 	ARG_UINT8(z);
-	ARG_SINT16(unk);
+	if (argsize > 6) {
+		ARG_SINT16(unk);
+	}
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
 	CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
 	return 0;
 }
@@ -335,6 +353,12 @@ uint32 CameraProcess::I_scrollTo(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(y);
 	ARG_UINT8(z);
 	ARG_SINT16(unk);
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	return CameraProcess::SetCameraProcess(new CameraProcess(x, y, z, 25));
 }
 
@@ -349,6 +373,26 @@ uint32 CameraProcess::I_startQuake(const uint8 *args, unsigned int /*argsize*/) 
 uint32 CameraProcess::I_stopQuake(const uint8 * /*args*/, unsigned int /*argsize*/) {
 	SetEarthquake(0);
 	return 0;
+}
+
+uint32 CameraProcess::I_getCameraX(const uint8 *args, unsigned int argsize) {
+	int32 x, y, z;
+	assert(GAME_IS_CRUSADER);
+	GetCameraLocation(x, y, z);
+	return x / 2;
+}
+
+uint32 CameraProcess::I_getCameraY(const uint8 *args, unsigned int argsize) {
+	int32 x, y, z;
+	assert(GAME_IS_CRUSADER);
+	GetCameraLocation(x, y, z);
+	return y / 2;
+}
+
+uint32 CameraProcess::I_getCameraZ(const uint8 *args, unsigned int argsize) {
+	int32 x, y, z;
+	GetCameraLocation(x, y, z);
+	return z;
 }
 
 } // End of namespace Ultima8

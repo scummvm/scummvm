@@ -472,27 +472,29 @@ Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bo
 
 	Surface *s = new Surface(width, size.y);
 	s->createDialog();
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	Common::String text;
-	#endif
+#endif
 
 	uint16 yP = Surface::textY();
 	for (uint8 ctr = 0; ctr < numLines; ++ctr) {
-		#ifdef USE_TTS
+#ifdef USE_TTS
 		text += lines[ctr];
-		#endif
+#endif
 		s->writeString(Surface::textX(), yP, lines[ctr], true, color, varLength);
 		yP += squashedLines ? FONT_HEIGHT - 1 : FONT_HEIGHT;
 	}
 
 
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
-		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-		_ttsMan->stop();
-		_ttsMan->say(text.c_str());
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->stop();
+			ttsMan->say(text.c_str());
+		}
 	}
-	#endif 
+#endif
 
 	return s;
 }

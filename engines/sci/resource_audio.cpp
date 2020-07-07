@@ -968,7 +968,7 @@ int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 			break;
 		case 9:
 			// Play rhythm channel when requested
-			play = wantsRhythm;
+			play = wantsRhythm || (flags & hardwareMask);
 			break;
 		default:
 			// Otherwise check for flag

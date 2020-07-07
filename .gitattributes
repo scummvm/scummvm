@@ -6,3 +6,4 @@
 /po/uk_UA.po encoding=iso-8859-5
 /po/el.po encoding=iso-8859-7
 /po/he.po encoding=iso-8859-8
+*.lingo	encoding=MacRoman

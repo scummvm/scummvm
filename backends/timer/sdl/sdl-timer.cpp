@@ -29,7 +29,12 @@
 
 #include "common/textconsole.h"
 
+static bool timerInstalled = false;
+
 static Uint32 timer_handler(Uint32 interval, void *param) {
+	if (!timerInstalled)
+		return interval;
+
 	((DefaultTimerManager *)param)->handler();
 	return interval;
 }
@@ -40,11 +45,14 @@ SdlTimerManager::SdlTimerManager() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
+	timerInstalled = true;
+
 	// Creates the timer callback
 	_timerID = SDL_AddTimer(10, &timer_handler, this);
 }
 
 SdlTimerManager::~SdlTimerManager() {
+	timerInstalled = false;
 	// Removes the timer callback
 	SDL_RemoveTimer(_timerID);
 }

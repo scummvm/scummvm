@@ -39,13 +39,16 @@ class TextResource;
 
 class Subtitles {
 	friend class Debugger;
+	friend class KIASectionSettings;
 	//
 	// Subtitles could be in 6 possible languages are EN_ANY, DE_DEU, FR_FRA, IT_ITA, RU_RUS, ES_ESP
 	// with corresponding _vm->_languageCode values: "E", "G", "F", "I", "E", "S" (Russian version is built on top of English one)
-	static const uint kPreferedLine           = 2;      // Prefer drawing from this line (the bottom-most of available subtitle lines index is 0) by default
-	static const int  kMarginBottom           = 12;     // In pixels. This is the bottom margin beneath the subtitles space
-	static const int  kTextMaxWidth           = 610;    // In pixels
-	static const int  kMaxTextResourceEntries = 27; // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue or translatable text
+	static const uint kPreferedLine            = 2;      // Prefer drawing from this line (the bottom-most of available subtitle lines index is 0) by default
+	static const int  kMarginBottom            = 12;     // In pixels. This is the bottom margin beneath the subtitles space
+	static const int  kTextMaxWidth            = 610;    // In pixels
+	static const int  kMaxTextResourceEntries  = 27;     // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue or translatable text
+	static const int  kMaxLanguageSelectionNum = 1024;   // Max allowed number of languages to select from (should be available in the MIX file)
+
 	static const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 	static const char *SUBTITLES_FONT_FILENAME_EXTERNAL;
 	static const char *SUBTITLES_VERSION_TRENAME;

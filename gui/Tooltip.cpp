@@ -54,6 +54,10 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 
 	_x = MIN<int16>(parent->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
 	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
+
+	if (g_gui.useRTL())
+		_x = g_system->getOverlayWidth() - _w - _x + g_gui.getOverlayOffset();
+
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
@@ -71,14 +75,17 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 
 	Dialog::drawDialog(layerToDraw);
 
-	int16 textX = _x + 3; // including 2px padding and 1px original code shift
+	int16 textX = g_gui.useRTL() ? _x - 3 : _x + 3; // including 2px padding and 1px original code shift
 	int16 textY = _y + 3;
+
+	Graphics::TextAlign textAlignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
+
 	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
 		g_gui.theme()->drawText(
 			Common::Rect(textX, textY + num * h, textX + _w, textY + (num + 1) * h),
 			*i,
 			ThemeEngine::kStateEnabled,
-			Graphics::kTextAlignLeft,
+			textAlignment,
 			ThemeEngine::kTextInversionNone,
 			0,
 			false,

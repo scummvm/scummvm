@@ -53,7 +53,19 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 		} else if (line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)
 				&& ((isNumeric && keyState.ascii >= '0' && keyState.ascii <= '9') ||
 				   (!isNumeric && keyState.ascii >= ' ' && keyState.ascii <= (char)127))) {
-			line += keyState.ascii;
+			if (!isNumeric && Common::isAlpha(keyState.ascii)) {
+				// The original game doesn't care about Shift or Caps Locks. The
+				// capitalization is done for the user automatically at the beginning of
+				// words.
+				if (line.empty() || line.hasSuffix(" ")) {
+					line += toupper(keyState.ascii);
+				} else {
+					line += tolower(keyState.ascii);
+				}
+			} else {
+				line += keyState.ascii;
+			}
+
 			refresh = true;
 		} else if (keyCode == Common::KEYCODE_RETURN || keyCode == Common::KEYCODE_KP_ENTER) {
 			break;

@@ -527,6 +527,19 @@ void ConfigManager::set(const String &key, const String &value) {
 		_appDomain[key] = value;
 }
 
+void ConfigManager::setAndFlush(const String &key, const Common::String &value) {
+	if (value.empty() && !hasKey(key)) {
+		return;
+	}
+
+	if (hasKey(key) && get(key) == value) {
+		return;
+	}
+
+	set(key, value);
+	flushToDisk();
+}
+
 void ConfigManager::set(const String &key, const String &value, const String &domName) {
 	// FIXME: For now we continue to allow empty domName to indicate
 	// "use 'default' domain". This is mainly needed for the SCUMM ConfigDialog

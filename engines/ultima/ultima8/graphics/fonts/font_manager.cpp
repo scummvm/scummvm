@@ -183,7 +183,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 		pal->_palette[3 * i + 1] = (rgb >> 8) & 0xFF;
 		pal->_palette[3 * i + 2] = (rgb) & 0xFF;
 	}
-	palman->updatedFont(fontpal);
+	palman->updatedPalette(fontpal);
 
 #ifdef DEBUG
 	pout << "Added JP override for font " << fontnum << Std::endl;

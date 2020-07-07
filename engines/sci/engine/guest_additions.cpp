@@ -906,6 +906,21 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 			_state->variables[VAR_GLOBAL][globalNumber] &= (int16)~0x8000;
 		}
 	}
+
+	if (g_sci->getGameId() == GID_SQ6) {
+		// The SQ6 control panel buttons for speech and text only update
+		//  their states when clicked so they need synchronization.
+		const reg_t iconSpeech = _segMan->findObjectByName("iconSpeech");
+		if (!iconSpeech.isNull()) {
+			const reg_t iconCel = make_reg(0, (value & kMessageTypeSpeech) ? 2 : 0);
+			writeSelector(_segMan, iconSpeech, SELECTOR(mainCel), iconCel);
+		}
+		const reg_t iconText = _segMan->findObjectByName("iconText");
+		if (!iconText.isNull()) {
+			const reg_t iconCel = make_reg(0, (value & kMessageTypeSubtitles) ? 2 : 0);
+			writeSelector(_segMan, iconText, SELECTOR(mainCel), iconCel);
+		}
+	}
 #endif
 }
 

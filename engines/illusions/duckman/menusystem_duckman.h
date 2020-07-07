@@ -117,14 +117,14 @@ class MenuActionResetOptionSliders : public BaseMenuAction {
 public:
 	MenuActionResetOptionSliders(BaseMenuSystem *menuSystem,
 								 MenuActionUpdateSlider *sfxSlider,
-								 MenuActionUpdateSlider *musiclider,
+								 MenuActionUpdateSlider *musicSlider,
 								 MenuActionUpdateSlider *speechSlider,
 								 MenuActionUpdateSlider *textDurationSlider
 	);
 	void execute() override;
 protected:
 	MenuActionUpdateSlider *_sfxSlider;
-	MenuActionUpdateSlider *_musiclider;
+	MenuActionUpdateSlider *_musicSlider;
 	MenuActionUpdateSlider *_speechSlider;
 	MenuActionUpdateSlider *_textDurationSlider;
 };

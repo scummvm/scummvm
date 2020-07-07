@@ -202,7 +202,7 @@ void Director::loadStage() {
 	_savedSprites.clear();
 }
 
-Actor *Director::getActorByPoint(const Common::Point point) {
+Actor *Director::getActorByPoint(Common::Point point) {
 	for (int i = _sprites.size() - 1; i >= 0; --i) {
 		if (_sprites[i]->getActor()->isCursor())
 			continue;

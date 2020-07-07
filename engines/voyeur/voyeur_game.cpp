@@ -87,6 +87,7 @@ void VoyeurEngine::playStamp() {
 					break;
 				case 4:
 					breakFlag = true;
+					_eventsManager->_mouseClicked = false;
 					break;
 				case 5:
 					doGossip();
@@ -238,10 +239,12 @@ void VoyeurEngine::doTailTitle() {
 	_screen->screenReset();
 
 	if (_bVoy->getBoltGroup(0x600)) {
-		RL2Decoder decoder;
-		decoder.loadRL2File("a1100200.rl2", false);
-		decoder.start();
-		decoder.play(this);
+		if (!getIsDemo()) {
+			RL2Decoder decoder;
+			decoder.loadRL2File("a1100200.rl2", false);
+			decoder.start();
+			decoder.play(this);
+		}
 
 		if (!shouldQuit() && !_eventsManager->_mouseClicked) {
 			doClosingCredits();

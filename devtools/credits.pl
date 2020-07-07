@@ -58,7 +58,7 @@ if ($mode eq "") {
 $Text::Wrap::unexpand = 0;
 if ($mode eq "TEXT") {
 	$Text::Wrap::columns = 78;
-	$max_name_width = 28; # The maximal width of a name.
+	$max_name_width = 29; # The maximal width of a name.
 } elsif ($mode eq "CPP") {
 	$Text::Wrap::columns = 48;	# Approx.
 }
@@ -727,6 +727,9 @@ begin_credits("Credits");
 			begin_section("Director");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("Dmitry Iskrich", "", "");
+				add_person("Dylan Servilla", "djsrv", "");
+				add_person("Nathanael Gentry", "npjg", "");
+				add_person("Roland van Laar", "rvanlaar", "");
 				add_person("Scott Percival", "moralrecordings", "");
 				add_person("Steven Hoefel", "", "");
 				add_person("Tobia Tesan", "", "");
@@ -808,6 +811,12 @@ begin_credits("Credits");
 				add_person("Eric Fry", "yuv422", "");
 			end_section();
 
+			begin_section("Kingdom");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Thomas Fach-Pedersen", "madmoose", "");
+				add_person("Hein-Pieter van Braam-Stewart", "TMM", "");
+			end_section();
+
 			begin_section("Kyra");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 				add_person("Oystein Eftevaag", "vinterstum", "");
@@ -883,6 +892,11 @@ begin_credits("Credits");
 
 			begin_section("Pegasus");
 				add_person("Matthew Hoops", "clone2727", "(retired)");
+			end_section();
+
+			begin_section("Petka");
+				add_person("Andrei Prykhodko", "whiterandrek", "");
+				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
 			begin_section("Pink");
@@ -1017,6 +1031,7 @@ begin_credits("Credits");
 			begin_section("Ultima");
 				add_person("Paul Gilbert", "dreammaster", "");
 				add_person("Matthew Duggan", "stauff", "");
+				add_person("Matthew Jimenez", "OMGPizzaGuy", "");
 
 				add_person("Daniel c. W&uuml;rl", "dwuerl", "(Nuvie)");
 				add_person("Eric Fry", "yuv422", "(Nuvie)");
@@ -1033,7 +1048,6 @@ begin_credits("Credits");
 
 				add_person("Brian Tietz", "btietz", "(Pentagram)");
 				add_person("Dominik Reichardt", "Dominus Dragon", "(Pentagram)");
-				add_person("Matthew Jimenez", "mjimenez", "(Pentagram)");
 				add_person("Max Horn", "Fingolfin", "(Pentagram)");
 				add_person("Patrick Burke", "takhisis", "(Pentagram)");
 				add_person("Ryan Nunn", "Colourless Dragon", "(Pentagram)");

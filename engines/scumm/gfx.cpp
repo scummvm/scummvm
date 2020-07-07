@@ -641,9 +641,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 	// In MM NES If we're repainting the entire screen, just make everything black
 	if ((_game.platform == Common::kPlatformNES) && width == 256 && height == 240) {
-		byte blackbuf[256 * 240];
-		memset(blackbuf, 0x1d, 256 * 240);
-		_system->copyRectToScreen(blackbuf, pitch, x, y, width, height);
+		_system->fillScreen(0x1d);
 		return;
 	}
 

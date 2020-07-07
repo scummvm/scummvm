@@ -32,7 +32,7 @@
 
 namespace BladeRunner {
 
-typedef void UIScrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
+typedef void UIScrollBoxClickedCallback(void *callbackData, void *source, int lineData, int mouseButton);
 
 class UIScrollBox : public UIComponent {
 	static const int kLineHeight = 10;
@@ -68,8 +68,8 @@ class UIScrollBox : public UIComponent {
 
 	bool                  _mouseButton;
 
-	UIScrollBoxCallback  *_lineSelectedCallback;
-	void                 *_callbackData;
+	UIScrollBoxClickedCallback   *_lineSelectedCallback;
+	void                         *_callbackData;
 
 	bool                  _isVisible;
 	int                   _style;
@@ -93,7 +93,15 @@ class UIScrollBox : public UIComponent {
 	bool                  _mouseOver;
 
 public:
-	UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect,Common::Rect scrollBarRect);
+	UIScrollBox(BladeRunnerEngine *vm,
+	            UIScrollBoxClickedCallback *lineSelectedCallback,
+	            void *callbackData,
+	            int maxLineCount,
+	            int style,
+	            bool center,
+	            Common::Rect rect,
+	            Common::Rect scrollBarRect);
+
 	~UIScrollBox() override;
 
 	void draw(Graphics::Surface &surface) override;
@@ -105,6 +113,19 @@ public:
 
 	void show();
 	void hide();
+	bool isVisible();
+	bool hasFocus();
+
+	void setBoxTop(int top);
+	void setBoxLeft(int left);
+	void setBoxWidth(uint16 width);
+	void setScrollbarTop(int top);
+	void setScrollbarLeft(int left);
+	void setScrollbarWidth(uint16 width);
+
+	int    getBoxLeft();
+	uint16 getBoxWidth();
+
 
 	void clearLines();
 	void addLine(const Common::String &text, int lineData, int flags);
@@ -112,6 +133,9 @@ public:
 	void sortLines();
 
 	int getSelectedLineData();
+	Common::String getLineText(int lineData);
+	int getMaxLinesVisible();
+	int getLineCount();
 
 	void checkAll();
 	void uncheckAll();

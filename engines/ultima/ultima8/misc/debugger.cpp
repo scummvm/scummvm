@@ -36,6 +36,7 @@
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/misc/util.h"
@@ -82,7 +83,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("Ultima8Engine::toggleShowTouchingItems", WRAP_METHOD(Debugger, cmdToggleShowTouchingItems));
 	registerCmd("Ultima8Engine::closeItemGumps", WRAP_METHOD(Debugger, cmdCloseItemGumps));
 
-	registerCmd("AvatarMoverProcess::setFakeBothButtonClick", WRAP_METHOD(Debugger, cmdBothButtonClick));
+	registerCmd("AvatarMoverProcess::startJump", WRAP_METHOD(Debugger, cmdStartJump));
+	registerCmd("AvatarMoverProcess::stopJump", WRAP_METHOD(Debugger, cmdStopJump));
 	registerCmd("AvatarMoverProcess::startTurnLeft", WRAP_METHOD(Debugger, cmdStartTurnLeft));
 	registerCmd("AvatarMoverProcess::startTurnRight", WRAP_METHOD(Debugger, cmdStartTurnRight));
 	registerCmd("AvatarMoverProcess::startMoveForward", WRAP_METHOD(Debugger, cmdStartMoveForward));
@@ -91,6 +93,20 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AvatarMoverProcess::stopTurnRight", WRAP_METHOD(Debugger, cmdStopTurnRight));
 	registerCmd("AvatarMoverProcess::stopMoveForward", WRAP_METHOD(Debugger, cmdStopMoveForward));
 	registerCmd("AvatarMoverProcess::stopMoveBack", WRAP_METHOD(Debugger, cmdStopMoveBack));
+
+	registerCmd("AvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartMoveLeft));
+	registerCmd("AvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartMoveRight));
+	registerCmd("AvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartMoveUp));
+	registerCmd("AvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartMoveDown));
+	registerCmd("AvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopMoveLeft));
+	registerCmd("AvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopMoveRight));
+	registerCmd("AvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopMoveUp));
+	registerCmd("AvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopMoveDown));
+
+	registerCmd("AvatarMoverProcess::startMoveRun", WRAP_METHOD(Debugger, cmdStartMoveRun));
+	registerCmd("AvatarMoverProcess::stopMoveRun", WRAP_METHOD(Debugger, cmdStopMoveRun));
+	registerCmd("AvatarMoverProcess::startMoveStep", WRAP_METHOD(Debugger, cmdStartMoveStep));
+	registerCmd("AvatarMoverProcess::stopMoveStep", WRAP_METHOD(Debugger, cmdStopMoveStep));
 
 	registerCmd("AudioProcess::listSFX", WRAP_METHOD(Debugger, cmdListSFX));
 	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
@@ -124,23 +140,24 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::useRecall", WRAP_METHOD(Debugger, cmdUseRecall));
 	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
 	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
+	registerCmd("MainActor::nextWeapon", WRAP_METHOD(Debugger, cmdNextWeapon));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
 
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
 
-	registerCmd("QuickAvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartMoveUp));
-	registerCmd("QuickAvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartMoveDown));
-	registerCmd("QuickAvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartMoveLeft));
-	registerCmd("QuickAvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartMoveRight));
-	registerCmd("QuickAvatarMoverProcess::startAscend", WRAP_METHOD(Debugger, cmdStartAscend));
-	registerCmd("QuickAvatarMoverProcess::startDescend", WRAP_METHOD(Debugger, cmdStartDescend));
-	registerCmd("QuickAvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopMoveUp));
-	registerCmd("QuickAvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopMoveDown));
-	registerCmd("QuickAvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopMoveLeft));
-	registerCmd("QuickAvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopMoveRight));
-	registerCmd("QuickAvatarMoverProcess::stopAscend", WRAP_METHOD(Debugger, cmdStopAscend));
-	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopDescend));
+	registerCmd("QuickAvatarMoverProcess::startMoveUp", WRAP_METHOD(Debugger, cmdStartQuickMoveUp));
+	registerCmd("QuickAvatarMoverProcess::startMoveDown", WRAP_METHOD(Debugger, cmdStartQuickMoveDown));
+	registerCmd("QuickAvatarMoverProcess::startMoveLeft", WRAP_METHOD(Debugger, cmdStartQuickMoveLeft));
+	registerCmd("QuickAvatarMoverProcess::startMoveRight", WRAP_METHOD(Debugger, cmdStartQuickMoveRight));
+	registerCmd("QuickAvatarMoverProcess::startAscend", WRAP_METHOD(Debugger, cmdStartQuickMoveAscend));
+	registerCmd("QuickAvatarMoverProcess::startDescend", WRAP_METHOD(Debugger, cmdStartQuickMoveDescend));
+	registerCmd("QuickAvatarMoverProcess::stopMoveUp", WRAP_METHOD(Debugger, cmdStopQuickMoveUp));
+	registerCmd("QuickAvatarMoverProcess::stopMoveDown", WRAP_METHOD(Debugger, cmdStopQuickMoveDown));
+	registerCmd("QuickAvatarMoverProcess::stopMoveLeft", WRAP_METHOD(Debugger, cmdStopQuickMoveLeft));
+	registerCmd("QuickAvatarMoverProcess::stopMoveRight", WRAP_METHOD(Debugger, cmdStopQuickMoveRight));
+	registerCmd("QuickAvatarMoverProcess::stopAscend", WRAP_METHOD(Debugger, cmdStopQuickMoveAscend));
+	registerCmd("QuickAvatarMoverProcess::stopDescend", WRAP_METHOD(Debugger, cmdStopQuickMoveDescend));
 	registerCmd("QuickAvatarMoverProcess::toggleQuarterSpeed", WRAP_METHOD(Debugger, cmdToggleQuarterSpeed));
 	registerCmd("QuickAvatarMoverProcess::toggleClipping", WRAP_METHOD(Debugger, cmdToggleClipping));
 
@@ -1068,9 +1085,23 @@ bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 		return false;
 	}
 	MainActor *av = getMainActor();
-	Item *backpack = getItem(av->getEquip(7));
-	if (backpack)
-		backpack->callUsecodeEvent_use();
+	if (GAME_IS_U8) {
+		Item *backpack = getItem(av->getEquip(7));
+		if (backpack)
+			backpack->callUsecodeEvent_use();
+	} else {
+		av->nextInvItem();
+	}
+	return false;
+}
+
+bool Debugger::cmdNextWeapon(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't change weapon: avatarInStasis\n");
+		return false;
+	}
+	MainActor *av = getMainActor();
+	av->nextWeapon();
 	return false;
 }
 
@@ -1102,7 +1133,7 @@ bool Debugger::cmdUseKeyring(int argc, const char **argv) {
 	return false;
 }
 
-bool Debugger::cmdBothButtonClick(int argc, const char **argv) {
+bool Debugger::cmdStartJump(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't jump: avatarInStasis\n");
 		return false;
@@ -1110,7 +1141,21 @@ bool Debugger::cmdBothButtonClick(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->setFakeBothButtonClick();
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_JUMP);
+	}
+	return false;
+}
+
+
+bool Debugger::cmdStopJump(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't jump: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_JUMP);
 	}
 	return false;
 }
@@ -1123,7 +1168,7 @@ bool Debugger::cmdStartTurnLeft(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryTurnLeft(true);
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_TURN_LEFT);
 	}
 	return false;
 }
@@ -1136,7 +1181,7 @@ bool Debugger::cmdStartTurnRight(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryTurnRight(true);
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_TURN_RIGHT);
 	}
 	return false;
 }
@@ -1149,7 +1194,7 @@ bool Debugger::cmdStartMoveForward(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryMoveForward(true);
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_FORWARD);
 	}
 	return false;
 }
@@ -1162,7 +1207,59 @@ bool Debugger::cmdStartMoveBack(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryMoveBack(true);
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_BACK);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveLeft(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move left: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_LEFT);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveRight(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move right: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_RIGHT);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move up: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_UP);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move down: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_DOWN);
 	}
 	return false;
 }
@@ -1175,7 +1272,7 @@ bool Debugger::cmdStopTurnLeft(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryTurnLeft(false);
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_TURN_LEFT);
 	}
 	return false;
 }
@@ -1188,7 +1285,7 @@ bool Debugger::cmdStopTurnRight(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryTurnRight(false);
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_TURN_RIGHT);
 	}
 	return false;
 }
@@ -1201,7 +1298,7 @@ bool Debugger::cmdStopMoveForward(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryMoveForward(false);
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_FORWARD);
 	}
 	return false;
 }
@@ -1214,10 +1311,116 @@ bool Debugger::cmdStopMoveBack(int argc, const char **argv) {
 	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 
 	if (proc) {
-		proc->tryMoveBack(false);
+		// Clear both back and forward as avatar turns then moves forward when not in combat 
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_BACK | AvatarMoverProcess::MOVE_FORWARD);
 	}
 	return false;
 }
+
+bool Debugger::cmdStopMoveLeft(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move left: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_LEFT);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveRight(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move right: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_RIGHT);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveUp(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move up: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_UP);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveDown(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't move down: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_DOWN);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveRun(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't run: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_RUN);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveRun(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't run: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_RUN);
+	}
+	return false;
+}
+
+bool Debugger::cmdStartMoveStep(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't step: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_STEP);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopMoveStep(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't step: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = Ultima8Engine::get_instance()->getAvatarMoverProcess();
+
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_STEP);
+	}
+	return false;
+}
+
 
 bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
@@ -1262,8 +1465,7 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	return true;
 }
 
-
-bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveUp(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(-64, -64, 0, 0);
 		return false;
@@ -1273,7 +1475,7 @@ bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveDown(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(+64, +64, 0, 1);
 		return false;
@@ -1283,7 +1485,7 @@ bool Debugger::cmdStartMoveDown(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartMoveLeft(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveLeft(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(-64, +64, 0, 2);
 		return false;
@@ -1293,7 +1495,7 @@ bool Debugger::cmdStartMoveLeft(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartMoveRight(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveRight(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(+64, -64, 0, 3);
 		return false;
@@ -1303,7 +1505,7 @@ bool Debugger::cmdStartMoveRight(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartAscend(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveAscend(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(0, 0, 8, 4);
 		return false;
@@ -1313,7 +1515,7 @@ bool Debugger::cmdStartAscend(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStartDescend(int argc, const char **argv) {
+bool Debugger::cmdStartQuickMoveDescend(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(0, 0, -8, 5);
 		return false;
@@ -1323,32 +1525,32 @@ bool Debugger::cmdStartDescend(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdStopMoveUp(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveUp(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(0);
 	return false;
 }
 
-bool Debugger::cmdStopMoveDown(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveDown(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(1);
 	return false;
 }
 
-bool Debugger::cmdStopMoveLeft(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveLeft(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(2);
 	return false;
 }
 
-bool Debugger::cmdStopMoveRight(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveRight(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(3);
 	return false;
 }
 
-bool Debugger::cmdStopAscend(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveAscend(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(4);
 	return false;
 }
 
-bool Debugger::cmdStopDescend(int argc, const char **argv) {
+bool Debugger::cmdStopQuickMoveDescend(int argc, const char **argv) {
 	QuickAvatarMoverProcess::terminateMover(5);
 	return false;
 }
@@ -1380,7 +1582,7 @@ bool Debugger::cmdGetGlobal(int argc, const char **argv) {
 	unsigned int offset = strtol(argv[1], 0, 0);
 	unsigned int size = strtol(argv[2], 0, 0);
 
-	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getBits(offset, size));
+	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getEntries(offset, size));
 	return true;
 }
 
@@ -1395,9 +1597,9 @@ bool Debugger::cmdSetGlobal(int argc, const char **argv) {
 	unsigned int size = strtol(argv[2], 0, 0);
 	unsigned int value = strtol(argv[3], 0, 0);
 
-	uc->_globals->setBits(offset, size, value);
+	uc->_globals->setEntries(offset, size, value);
 
-	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getBits(offset, size));
+	debugPrintf("[%04X %02X] = %d\n", offset, size, uc->_globals->getEntries(offset, size));
 	return true;
 }
 

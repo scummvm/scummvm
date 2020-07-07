@@ -60,6 +60,7 @@ namespace {
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
 #define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB1)
+#define EOB_SPANISH_FLAGS FLAGS(false, false, false, true, false, false, false, false, false, Kyra::GI_EOB1)
 #define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_EOB1)
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
@@ -366,6 +367,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_CD_FLAGS
 	},
 
+	{ // Spanish fan translation
+		{
+			"kyra1",
+			"CD",
+			AD_ENTRY1("GEMCUT.PAK", "d9fb36376939f3d31ec2c3746ff6da1b"),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_CD_FLAGS
+	},
+
 	{ // Kyra 1 Mac CD as mentioned in fr #2766454 "KYRA1: Add support for Macintosh CD" by nnooiissee
 		{
 			"kyra1",
@@ -539,6 +553,19 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra2",
 			"Extracted",
+			AD_ENTRY1("FATE.PAK", "7c6c82f9beac616d2f4accf65c448162"),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
 			AD_ENTRY1("CH01-S00.DLG", "54b7a5a94f6e1ec91f0fb1311eec09ab"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -687,6 +714,20 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		KYRA2_CD_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
+	},
+
+	// Spanish fan translation
+	{ // CD version
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY1("FATE.PAK", "943f6d7fc9a8f0ed15d0a0b5c1f221b0"),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
 
 	{ // Interactive Demo
@@ -1341,6 +1382,23 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"lol",
+			"CD",
+			{
+				{ "LEVEL01.FRE", 0, "3f5a8856e86b8bc6207becd73426017c", -1 },
+				{ "LEVEL02.FRE", 0, "03cf8239fd4b4ead22e6b771af84b036", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_CD_FAN_FLAGS(Common::ES_ESP, Common::FR_FRA)
+	},
+
+	{
+		{
+			"lol",
 			0,
 			{
 				{ "WESTWOOD.1", 0, "c656aa9a2b4032d341e3dc8e3525b917", -1 },
@@ -1707,6 +1765,22 @@ const KYRAGameDescription adGameDescs[] = {
 		EOB_FLAGS
 	},
 
+	{	// Spanish version
+		{
+			"eob",
+			0,
+			{
+				{ "EOBDATA3.PAK", 0, "a7800a8ea8251f678530eb952de7b815", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_MIDIPCJR, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB_SPANISH_FLAGS
+	},
+
 	{
 		{
 			"eob",
@@ -1780,6 +1854,22 @@ const KYRAGameDescription adGameDescs[] = {
 				{ 0, 0, 0, 0 }
 			},
 			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB2_FLAGS
+	},
+
+	{ // Spanish version
+		{
+			"eob2",
+			0,
+			{
+				{ "LEVEL15.INF", 0, "099c683dc4e66171b19b64ea3e90aa12", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)

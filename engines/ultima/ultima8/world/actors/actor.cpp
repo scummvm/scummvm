@@ -37,7 +37,9 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/actors/npc_dat.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/clear_feign_death_process.h"
@@ -45,8 +47,10 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -64,7 +68,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Actor)
 Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 	  _hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
 	  _lastAnim(Animation::stand), _animFrame(0), _direction(0),
-		_fallStart(0), _unk0C(0), _actorFlags(0) {
+		_fallStart(0), _unk0C(0), _actorFlags(0), _combatTactic(0) {
+	_defaultActivity[0] = 0;
+	_defaultActivity[1] = 0;
+	_defaultActivity[2] = 0;
 }
 
 Actor::~Actor() {
@@ -92,6 +99,31 @@ uint16 Actor::getMaxHP() const {
 }
 
 bool Actor::loadMonsterStats() {
+	if (GAME_IS_CRUSADER)
+		return loadMonsterStatsCru();
+	else
+		return loadMonsterStatsU8();
+}
+
+bool Actor::loadMonsterStatsCru() {
+	const NPCDat *npcData = GameData::get_instance()->getNPCDataForShape(getShape());
+
+	if (!npcData)
+		return false;
+
+	setStr(npcData->getMaxHp() / 2);
+	setHP(npcData->getMaxHp());
+	_defaultActivity[0] = npcData->getDefaultActivity(0);
+	_defaultActivity[1] = npcData->getDefaultActivity(1);
+	_defaultActivity[2] = npcData->getDefaultActivity(2);
+
+	// TODO: Give them the default weapon for their type here.
+
+	return true;
+}
+
+bool Actor::loadMonsterStatsU8() {
+
 	ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
@@ -273,7 +305,7 @@ bool Actor::giveTreasure() {
 				}
 
 			} else {
-				pout << "Unhandled _special treasure: " << ti._special
+				pout << "Unhandled special treasure: " << ti._special
 				     << Std::endl;
 			}
 			continue;
@@ -422,6 +454,8 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 		_y = newy;
 		_z = newz;
 	}
+	if (GAME_IS_CRUSADER)
+		notifyNearbyItems();
 }
 
 uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
@@ -506,7 +540,14 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	return Animation::END_OFF_LAND;
 }
 
-uint16 Actor::cSetActivity(int activity) {
+uint16 Actor::setActivity(int activity) {
+	if (GAME_IS_CRUSADER)
+		return setActivityCru(activity);
+	else
+		return setActivityU8(activity);
+}
+
+uint16 Actor::setActivityU8(int activity) {
 	switch (activity) {
 	case 0: // loiter
 		Kernel::get_instance()->addProcess(new LoiterProcess(this));
@@ -520,12 +561,60 @@ uint16 Actor::cSetActivity(int activity) {
 		return doAnim(Animation::stand, 8);
 
 	default:
-		perr << "Actor::cSetActivity: invalid activity (" << activity << ")"
+		perr << "Actor::setActivityU8: invalid activity (" << activity << ")"
 		     << Std::endl;
 	}
 
 	return 0;
 }
+
+uint16 Actor::setActivityCru(int activity) {
+	if (isDead())
+		return 0;
+
+	switch (activity) {
+	case 1: // stand
+		return doAnim(Animation::stand, 8);
+	case 3: // pace
+		perr << "Actor::setActivityCru TODO: Implement new PaceProcess(this);" << Std::endl;
+		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
+	case 2: // loiter
+		Kernel::get_instance()->addProcess(new LoiterProcess(this));
+		return Kernel::get_instance()->addProcess(new DelayProcess(1));
+	case 4:
+	case 6:
+	    // Does nothing in game..
+	    break;
+	case 7:
+		return Kernel::get_instance()->addProcess(new SurrenderProcess(this));
+	    break;
+	case 8:
+		perr << "Actor::setActivityCru TODO: Implement new GuardProcess(this);" << Std::endl;
+		return Kernel::get_instance()->addProcess(new LoiterProcess(this));
+	    break;
+	case 5:
+	case 9:
+	case 10:
+	case 0xb:
+	case 0xc:
+		// attack
+	   setInCombat();
+	   return 0;
+	case 0x70:
+		return setActivity(getDefaultActivity(0));
+	case 0x71:
+		return setActivity(getDefaultActivity(1));
+	case 0x72:
+		return setActivity(getDefaultActivity(2));
+	default:
+		perr << "Actor::setActivityCru: invalid activity (" << activity << ")"
+		     << Std::endl;
+		return doAnim(Animation::stand, 8);
+	}
+
+	return 0;
+}
+
 
 uint32 Actor::getArmourClass() const {
 	const ShapeInfo *si = getShapeInfo();
@@ -575,6 +664,15 @@ int Actor::getDamageAmount() const {
 	}
 }
 
+void Actor::setDefaultActivity(int no, uint16 activity) {
+	assert(no >= 0 && no < 3);
+	_defaultActivity[no] = activity;
+}
+
+uint16 Actor::getDefaultActivity(int no) const {
+	assert(no >= 0 && no < 3);
+	return _defaultActivity[no];
+}
 
 void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	if (isDead())
@@ -698,7 +796,8 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 		}
 	}
 
-	if (damage && !fallingprocid) {
+	// FIXME: What are the equivalent Crusader animations here?
+	if (damage && !fallingprocid && GAME_IS_U8) {
 		ProcId anim1pid = doAnim(Animation::stumbleBackwards, dir);
 		ProcId anim2pid;
 		if (isInCombat())
@@ -717,6 +816,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 ProcId Actor::die(uint16 damageType) {
 	setHP(0);
 	setActorFlag(ACT_DEAD);
+	setFlag(FLG_BROKEN);
 	clearActorFlag(ACT_INCOMBAT);
 
 	ProcId animprocid = 0;
@@ -1000,6 +1100,32 @@ void Actor::clearInCombat() {
 	clearActorFlag(ACT_INCOMBAT);
 }
 
+int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
+						 ObjId *hititem, uint8 *dirs) {
+	int32 result = Item::collideMove(x, y, z, teleport, force, hititem, dirs);
+	if (_objId == 1 && GAME_IS_CRUSADER) {
+		notifyNearbyItems();
+		TargetReticleProcess::getProcess()->avatarMoved();
+	}
+	return result;
+}
+
+void Actor::notifyNearbyItems() {
+/*
+	TODO: This is not right - maybe we want to trigger each item only when it gets close,
+	then reset the status after it moves away?  Need to dig into the assembly more.
+ 
+	UCList uclist(2);
+	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
+	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+	currentmap->areaSearch(&uclist, script, sizeof(script), this, 0x80, false);
+
+	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
+		Item *item = getItem(uclist.getuint16(i));
+		item->callUsecodeEvent_npcNearby(_objId);
+	}*/
+}
+
 bool Actor::areEnemiesNear() {
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
@@ -1059,7 +1185,6 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 	return newactor;
 }
 
-
 void Actor::dumpInfo() const {
 	Container::dumpInfo();
 
@@ -1086,6 +1211,13 @@ void Actor::saveData(Common::WriteStream *ws) {
 	ws->writeUint32LE(_fallStart);
 	ws->writeUint32LE(_actorFlags);
 	ws->writeByte(_unk0C);
+
+	if (GAME_IS_CRUSADER) {
+		ws->writeUint16LE(_defaultActivity[0]);
+		ws->writeUint16LE(_defaultActivity[1]);
+		ws->writeUint16LE(_defaultActivity[2]);
+		ws->writeUint16LE(_combatTactic);
+	}
 }
 
 bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
@@ -1104,6 +1236,13 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 	_fallStart = rs->readUint32LE();
 	_actorFlags = rs->readUint32LE();
 	_unk0C = rs->readByte();
+
+	if (GAME_IS_CRUSADER) {
+		_defaultActivity[0] = rs->readUint16LE();
+		_defaultActivity[1] = rs->readUint16LE();
+		_defaultActivity[2] = rs->readUint16LE();
+		_combatTactic = rs->readUint16LE();
+	}
 
 	return true;
 }
@@ -1245,6 +1384,21 @@ uint32 Actor::I_setHp(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
+uint32 Actor::I_addHp(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(hp);
+
+	if (actor) {
+		int max = actor->getMaxHP();
+		int cur = actor->getHP();
+		if (cur < max) {
+			actor->setHP(MIN(max, cur + hp));
+			return 1;
+		}
+	}
+	return 0;
+}
+
 uint32 Actor::I_setMana(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	ARG_SINT16(mp);
@@ -1360,6 +1514,10 @@ uint32 Actor::I_setDead(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	actor->setActorFlag(ACT_DEAD);
+	if (GAME_IS_CRUSADER) {
+		actor->setFlag(FLG_BROKEN);
+		World::get_instance()->getCurrentMap()->removeTargetItem(actor);
+	}
 
 	return 0;
 }
@@ -1369,6 +1527,10 @@ uint32 Actor::I_clrDead(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	actor->clearActorFlag(ACT_DEAD);
+	if (GAME_IS_CRUSADER) {
+		actor->clearFlag(FLG_BROKEN);
+		World::get_instance()->getCurrentMap()->addTargetItem(actor);
+	}
 
 	return 0;
 }
@@ -1500,6 +1662,11 @@ uint32 Actor::I_pathfindToPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL16(); // unknown. Only one instance of this in U8, value is 5.
 	if (!actor) return 0;
 
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	return Kernel::get_instance()->addProcess(
 	           new PathfinderProcess(actor, x, y, z));
 }
@@ -1552,12 +1719,85 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 	return objID;
 }
 
-uint32 Actor::I_cSetActivity(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_ITEM_FROM_ID(other);
+
+	if (!item || !other)
+		return 0;
+
+	// TODO: get game difficulty here.
+	static const int gameDifficulty = 1;
+	int npcDifficulty = (item->getMapNum() & 3) + 1;
+
+	if (gameDifficulty < npcDifficulty)
+		return 0;
+
+	uint16 dtableidx = other->getNpcNum();
+
+	const NPCDat *npcData = GameData::get_instance()->getNPCData(dtableidx);
+	if (!npcData)
+		return 0;
+
+	int dir = item->getNpcNum() & 0xf;
+	int frame = (dir * 2 + 4) & 0xf;
+	uint16 shape = npcData->getShapeNo();
+
+	enum extflags ext = static_cast<extflags>(0);
+	if (shape == 0x597 || shape == 0x3ac)
+		ext = EXT_FEMALE;
+
+	Actor *newactor = ItemFactory::createActor(shape, frame, 0,
+	                  Item::FLG_IN_NPC_LIST | Item::FLG_DISPOSABLE,
+	                  0, 0, ext, true);
+	if (!newactor) {
+		perr << "I_createActorCru failed to create actor ("
+			 << npcData->getShapeNo() << ")." << Std::endl;
+		return 0;
+	}
+
+	// Most of these will be overwritten below, but this is cleaner..
+	bool loaded = newactor->loadMonsterStats();
+	if (!loaded) {
+		perr << "I_createActorCru failed to load monster stats ("
+			 << npcData->getShapeNo() << ")." << Std::endl;
+		return 0;
+	}
+
+	newactor->setDir(dir);
+
+	int32 x, y, z;
+	item->getLocation(x, y, z);
+	newactor->move(x, y, z);
+
+	newactor->setDefaultActivity(0, other->getQuality() >> 8);
+	newactor->setDefaultActivity(1, item->getQuality() >> 8);
+	newactor->setDefaultActivity(2, other->getMapNum());
+
+	// TODO: once I know what these fields are...
+	/*
+	 newactor->setField0x5c(0);
+	 newactor->setField0x5e(x, y);
+	 newactor->setField0x12(item->getNpcNum() >> 4);
+	 newactor->setField0x63(item->getQuality() & 0xff);
+
+	 uint16 wpnType = npcData->getWpnType();
+	 if (gameDifficulty == 4) {
+		wpnType = randomlyGetHigherWeaponType(shape, wpntype);
+	 }
+
+	 // give weapon to NPC.
+	 */
+
+	return newactor->getObjId();
+}
+
+uint32 Actor::I_setActivity(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	ARG_UINT16(activity);
 	if (!actor) return 0;
 
-	return actor->cSetActivity(activity);
+	return actor->setActivity(activity);
 }
 
 uint32 Actor::I_setAirWalkEnabled(const uint8 *args, unsigned int /*argsize*/) {
@@ -1616,6 +1856,65 @@ uint32 Actor::I_setEquip(const uint8 *args, unsigned int /*argsize*/) {
 
 	return 1;
 }
+
+uint32 Actor::I_setDefaultActivity0(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(activity);
+	if (!actor) return 0;
+
+	actor->setDefaultActivity(0, activity);
+	return 0;
+}
+
+uint32 Actor::I_setDefaultActivity1(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(activity);
+	if (!actor) return 0;
+
+	actor->setDefaultActivity(1, activity);
+	return 0;
+}
+
+uint32 Actor::I_setDefaultActivity2(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(activity);
+	if (!actor) return 0;
+
+	actor->setDefaultActivity(2, activity);
+	return 0;
+}
+
+uint32 Actor::I_getDefaultActivity0(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getDefaultActivity(0);
+}
+
+uint32 Actor::I_getDefaultActivity1(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getDefaultActivity(1);
+}
+
+uint32 Actor::I_getDefaultActivity2(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getDefaultActivity(2);
+}
+
+uint32 Actor::I_setCombatTactic(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+	ARG_UINT16(tactic);
+
+	actor->setCombatTactic(tactic);
+	return 0;
+}
+
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

@@ -27,44 +27,69 @@
 
 namespace Petka {
 
-enum State {
+enum DialogState {
 	kPlaying = 1,
 	kMenu = 2,
 	kIdle = 3
 };
 
+class Sound;
 class QMessageObject;
+class BigDialogue;
+class QSystem;
+struct QReaction;
 
 class DialogInterface {
 public:
 	DialogInterface();
+	~DialogInterface();
 
 	void start(uint id, QMessageObject *sender);
+	void next(int choice);
+
+	void startUserMsg(uint16 arg);
+	void endUserMsg();
+
+	bool isActive();
+
+	Sound *findSound();
+
+	void setSender(QMessageObject *sender);
+	void setReaction(QReaction *reaction);
+
+	void fixCursor();
+
+private:
+	void onPlayOpcode(int prevTalkerId);
+	void onMenuOpcode();
+	void onEndOpcode();
+	void onUserMsgOpcode();
+
+	void removeSound();
+
+	void sendMsg(uint16 opcode);
+	void setPhrase(const Common::U32String *text);
+	void playSound(const Common::String &name);
 
 	void initCursor();
 	void restoreCursor();
 
-	void next(int choice);
-
-	void sendMsg(uint16 opcode);
-	void end();
-
-public:
-	int _isUserMsg;
-	int _afterUserMsg;
-	int _hasSound;
-	int _firstTime;
+private:
+	BigDialogue *_dialog;
+	QSystem *_qsys;
+	bool _isUserMsg;
+	bool _afterUserMsg;
+	bool _firstTime;
 	int _id;
-	int _state;
-	int _field24;
+	DialogState _state;
 	Common::String _soundName;
+	QMessageObject *_talker;
+	QMessageObject *_sender;
+	QReaction *_reaction;
 	int16 _savedCursorActType;
 	int16 _savedCursorId;
 	bool _wasCursorShown;
 	bool _wasCursorAnim;
-	QMessageObject *_talker;
-	QMessageObject *_sender;
-
 };
 
 } // End of namespace Petka

@@ -121,7 +121,7 @@ private:
 	bool _hasCheated;
 	bool _cheatsEnabled;
 	unsigned int _inversion;
-	bool _alertActive; //!< is intruder alert active (Crusader)
+	bool _unkCrusaderFlag; //!< not sure what this is but it's only used in usecode for crusader, so just keep track of it..
 private:
 	/**
 	 * Does engine deinitialization
@@ -219,9 +219,13 @@ public:
 	INTRINSIC(I_getTimeInSeconds);
 	INTRINSIC(I_setTimeInGameHours);
 	INTRINSIC(I_avatarCanCheat);
+	INTRINSIC(I_getUnkCrusaderFlag);
+	INTRINSIC(I_setUnkCrusaderFlag);
+	INTRINSIC(I_clrUnkCrusaderFlag);
 	INTRINSIC(I_makeAvatarACheater);
 	INTRINSIC(I_closeItemGumps);
-	INTRINSIC(I_getAlertActive); // for Crusader
+	INTRINSIC(I_setCruStasis);
+	INTRINSIC(I_clrCruStasis);
 
 	void setAvatarInStasis(bool stat) {
 		_avatarInStasis = stat;
@@ -245,11 +249,11 @@ public:
 		_showTouching = !_showTouching;
 	}
 
-	bool isAlertActive() const {
-		return _alertActive;
+	bool isUnkCrusaderFlag() const {
+		return _unkCrusaderFlag;
 	}
-	void setAlertActive(bool active) {
-		_alertActive = active;
+	void setUnkCrusaderFlag(bool flag) {
+		_unkCrusaderFlag = flag;
 	}
 
 	uint32 getGameTimeInSeconds();
