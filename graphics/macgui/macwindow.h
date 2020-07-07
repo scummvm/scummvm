@@ -160,7 +160,7 @@ public:
 	 * @param wm See BaseMacWindow.
 	 */
 	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
-	virtual ~MacWindow();
+	virtual ~MacWindow() {}
 
 	/**
 	 * Change the window's location to fixed coordinates (not delta).

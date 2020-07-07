@@ -62,15 +62,6 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_closeable = false;
 
 	_borderWidth = kBorderWidth;
-
-	_composeSurface = new Graphics::ManagedSurface();
-}
-
-MacWindow::~MacWindow() {
-	if (_composeSurface)
-		_composeSurface->free();
-
-	delete _composeSurface;
 }
 
 static const byte noborderData[3][3] = {

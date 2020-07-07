@@ -251,7 +251,6 @@ MacText::~MacText() {
 	delete _cursorRect;
 	delete _surface;
 	delete _cursorSurface;
-	delete _composeSurface;
 }
 
 void MacText::setMaxWidth(int maxWidth) {

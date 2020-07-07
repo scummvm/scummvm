@@ -59,6 +59,16 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 MacWidget::~MacWidget() {
 	if (_parent)
 		_parent->removeWidget(this, false);
+
+	if (_composeSurface) {
+		_composeSurface->free();
+		delete _composeSurface;
+	}
+
+	if (_maskSurface) {
+		_maskSurface->free();
+		delete _maskSurface;
+	}
 }
 
 void MacWidget::setActive(bool active) {
