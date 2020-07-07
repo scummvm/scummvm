@@ -507,7 +507,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			stream->read(data, len);
 
 			if (!out.open(filename, true)) {
-				warning("MacResManager::dumpRaw(): Can not open dump file %s", filename.c_str());
+				warning("RIFXArchive::openStream(): Can not open dump file %s", filename.c_str());
 				break;
 			}
 
