@@ -936,7 +936,7 @@ public:
 	int open() override;
 	void close() override;
 	void send(uint32 b) override;
-	void send(byte channel, uint32 b); // Supports higher than channel 15
+	void send(int8 channel, uint32 b) override; // Supports higher than channel 15
 	uint32 property(int prop, uint32 param) override;
 	bool isOpen() const override { return _isOpen; }
 	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
@@ -1488,7 +1488,7 @@ void MidiDriver_ADLIB::send(uint32 b) {
 	send(b & 0xF, b & 0xFFFFFFF0);
 }
 
-void MidiDriver_ADLIB::send(byte chan, uint32 b) {
+void MidiDriver_ADLIB::send(int8 chan, uint32 b) {
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
 	byte param2 = (byte)((b >> 16) & 0xFF);
 	byte param1 = (byte)((b >>  8) & 0xFF);
