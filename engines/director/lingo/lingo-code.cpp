@@ -1420,16 +1420,11 @@ void LC::call(const Symbol &funcSym, int nargs) {
 	if (funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
 		int stackSize = g_lingo->_stack.size() - nargs;
 
-		Datum target;
-		if (funcSym.ctx) {
-			target = funcSym.target;
-		}
-
-		if (target.type == OBJECT) {
+		if (funcSym.target) {
 			// Only need to update the me obj
 			// Pushing an entire stack frame is not necessary
 			Datum retMe = g_lingo->_currentMe;
-			g_lingo->_currentMe = target;
+			g_lingo->_currentMe = funcSym.target;
 			(*funcSym.u.bltin)(nargs);
 			g_lingo->_currentMe = retMe;
 		} else {
