@@ -281,6 +281,7 @@ void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const c
 
 	ScriptContext *sc = g_lingo->compileLingo(code, this, type, id, contextName);
 	scriptContexts[type][id] = sc;
+	*sc->_refCount += 1;
 }
 
 ScriptContext *Lingo::compileAnonymous(const char *code) {
@@ -292,7 +293,7 @@ ScriptContext *Lingo::compileAnonymous(const char *code) {
 
 ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonymous) {
 	_assemblyArchive = archive;
-	ScriptContext *sc = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
+	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;
@@ -318,12 +319,19 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 		do {
 			Common::String chunk(begin, end);
 
-			if (chunk.hasPrefixIgnoreCase("factory") || chunk.hasPrefixIgnoreCase("method"))
+			if (chunk.hasPrefixIgnoreCase("factory")) {
 				_inFactory = true;
-			else if (chunk.hasPrefixIgnoreCase("macro") || chunk.hasPrefixIgnoreCase("on"))
+				_assemblyContext = new ScriptContext(scriptName, archive, type, id);
+			} else if (chunk.hasPrefixIgnoreCase("method")) {
+				_inFactory = true;
+				// remain in factory context
+			} else if (chunk.hasPrefixIgnoreCase("macro") || chunk.hasPrefixIgnoreCase("on")) {
 				_inFactory = false;
-			else
+				_assemblyContext = mainContext;
+			} else {
 				_inFactory = false;
+				_assemblyContext = mainContext;
+			}
 
 			debugC(1, kDebugCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
 
@@ -381,7 +389,7 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 	currentFunc.type = HANDLER;
 	currentFunc.u.defn = _currentAssembly;
 	Common::String typeStr = Common::String(scriptType2str(type));
-	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->_name + "]");
+	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
 	currentFunc.ctx = _assemblyContext;
 	currentFunc.archive = archive;
 	currentFunc.anonymous = anonymous;
@@ -418,7 +426,7 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 	_assemblyContext->_eventHandlers[kEventNone] = currentFunc;
 	_assemblyContext = nullptr;
 	_assemblyArchive = nullptr;
-	return sc;
+	return mainContext;
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -723,11 +731,11 @@ Datum::Datum(const Common::String &val) {
 	*refCount = 1;
 }
 
-Datum::Datum(Object *val) {
+Datum::Datum(AbstractObject *val) {
 	u.obj = val;
 	type = OBJECT;
 	lazy = false;
-	refCount = val->refCount;
+	refCount = val->getRefCount();
 	*refCount += 1;
 }
 
@@ -886,9 +894,9 @@ Common::String Datum::asString(bool printonly) {
 		break;
 	case OBJECT:
 		if (!printonly) {
-			s = Common::String::format("#%s", u.obj->name->c_str());
+			s = Common::String::format("#%s", u.obj->getName().c_str());
 		} else {
-			s = Common::String::format("object: #%s %d %p", u.obj->name->c_str(), u.obj->inheritanceLevel, (void *)u.obj);
+			s = u.obj->asString();
 		}
 		break;
 	case VOID:
@@ -1044,27 +1052,6 @@ int Datum::compareTo(Datum &d, bool ignoreCase) {
 	}
 }
 
-void ScriptContext::setTarget(Object *target) {
-	_target = target;
-	for (SymbolHash::iterator it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
-		it->_value.target = target;
-	}
-	for (Common::HashMap<uint32, Symbol>::iterator it = _eventHandlers.begin(); it != _eventHandlers.end(); ++it) {
-		it->_value.target = target;
-	}
-}
-
-Datum ScriptContext::getParentScript() {
-	if (_parentScript.type != OBJECT) {
-		_parentScript.type = OBJECT;
-		_parentScript.u.obj = new Object(_name, kScriptObj, new ScriptContext(*this));
-		for (Common::Array<Common::String>::iterator it = _propNames.begin(); it != _propNames.end(); ++it) {
-			_parentScript.u.obj->properties[*it] = Datum();
-		}
-	}
-	return _parentScript;
-}
-
 void Lingo::parseMenu(const char *code) {
 	warning("STUB: parseMenu");
 }
@@ -1156,9 +1143,10 @@ void Lingo::printAllVars() {
 	}
 	debugN("\n");
 
-	if (_currentMe.type == OBJECT) {
+	if (_currentMe.type == OBJECT && _currentMe.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
+		ScriptContext *script = static_cast<ScriptContext *>(_currentMe.u.obj);
 		debugN("  Instance/property vars: ");
-		for (DatumHash::iterator i = _currentMe.u.obj->properties.begin(); i != _currentMe.u.obj->properties.end(); ++i) {
+		for (DatumHash::iterator i = script->_properties.begin(); i != script->_properties.end(); ++i) {
 			debugN("%s, ", (*i)._key.c_str());
 		}
 		debugN("\n");
@@ -1279,7 +1267,7 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 
 		// For kScriptObj handlers the target is an argument
 		// (and can be renamed from 'me)
-		if (_currentMe.type == OBJECT && _currentMe.u.obj->type != kScriptObj && name.equalsIgnoreCase("me")) {
+		if (_currentMe.type == OBJECT && _currentMe.u.obj->getObjType() != kScriptObj && name.equalsIgnoreCase("me")) {
 			result = _currentMe;
 			return result;
 		}

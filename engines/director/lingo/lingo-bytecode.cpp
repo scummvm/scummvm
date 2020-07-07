@@ -317,7 +317,7 @@ void LC::cb_objectcall() {
 	Datum d = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
 
-	Object *target = nullptr;
+	AbstractObject *target = nullptr;
 
 	if (d.type == INT) {
 		if (g_lingo->_callstack.empty()) {
@@ -381,7 +381,7 @@ void LC::cb_objectcall() {
 		}
 		Symbol method = target->getMethod(methodName.asString());
 		if (method.type != VOID) {
-			if (target->type == kFactoryObj && method.type == HANDLER) {
+			if (target->getObjType() == kFactoryObj && method.type == HANDLER) {
 				// For kFactoryObj handlers the target is the first argument
 				g_lingo->push(method.target);
 				nargs.u.i += 1;
@@ -909,7 +909,6 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		debugC(1, kDebugCompile, "Add V4 bytecode for factory '%s' with id %d", factoryName.c_str(), castId);
 
 		codeFactory(factoryName);
-		_assemblyContext = _currentFactory->ctx;
 	} else {
 		debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(scriptType), castId);
 
@@ -936,11 +935,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		if (0 <= index && index < (int16)archive->names.size()) {
 			const char *name = archive->names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
-			if (scriptFlags & kScriptFlagFactoryDef) {
-				_currentFactory->properties[name] = Datum();
-			} else {
-				_assemblyContext->_propNames.push_back(name);
-			}
+			_assemblyContext->_properties[name] = Datum();
 		} else {
 			warning("Property %d has unknown name id %d, skipping define", i, index);
 		}
@@ -1437,15 +1432,16 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 
 	free(codeStore);
 	_assemblyContext = nullptr;
-	_currentFactory = nullptr;
 
 	return sc;
 }
 
 void LingoArchive::addCodeV4(Common::SeekableSubReadStreamEndian &stream, const Common::String &archName) {
 	ScriptContext *ctx = g_lingo->compileLingoV4(stream, this, archName);
-	if (ctx)
-		scriptContexts[ctx->_type][ctx->_id] = ctx;
+	if (ctx) {
+		scriptContexts[ctx->_scriptType][ctx->_id] = ctx;
+		*ctx->_refCount += 1;
+	}
 }
 
 void LingoArchive::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {

@@ -100,7 +100,7 @@ static void startDef() {
 			(*g_lingo->_methodVars)[i->_key] = i->_value;
 	}
 	if (g_lingo->_inFactory) {
-		for (DatumHash::iterator i = g_lingo->_currentFactory->properties.begin(); i != g_lingo->_currentFactory->properties.end(); ++i) {
+		for (DatumHash::iterator i = g_lingo->_assemblyContext->_properties.begin(); i != g_lingo->_assemblyContext->_properties.end(); ++i) {
 			(*g_lingo->_methodVars)[i->_key] = kVarInstance;
 		}
 	}
@@ -149,14 +149,8 @@ static VarType globalCheck() {
 static void mVar(Common::String *s, VarType type) {
 	if (!g_lingo->_methodVars->contains(*s)) {
 		(*g_lingo->_methodVars)[*s] = type;
-		if (type == kVarProperty) {
-			g_lingo->_assemblyContext->_propNames.push_back(*s);
-		} else if (type == kVarInstance) {
-			if (g_lingo->_inFactory) {
-				g_lingo->_currentFactory->properties[*s] = Datum();
-			} else {
-				warning("Instance var '%s' defined outside factory", s->c_str());
-			}
+		if (type == kVarProperty || type == kVarInstance) {
+			g_lingo->_assemblyContext->_properties[*s] = Datum();
 		} else if (type == kVarGlobal) {
 			g_lingo->varCreate(*s, true);
 		}
@@ -768,7 +762,7 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 //
 // See also:
 //   on keyword
-defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
+defn: tMACRO { startDef(); } ID
 			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
 		g_lingo->codeDefine(*$ID, $lbl, $argdef);
@@ -778,7 +772,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
 	| tMETHOD { startDef(); (*g_lingo->_methodVars)["me"] = kVarArgument; }
 			lbl argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
-		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1, g_lingo->_currentFactory);
+		g_lingo->codeDefine(*$tMETHOD, $lbl, $argdef + 1);
 		endDef();
 		delete $tMETHOD; }
 	| on lbl argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
@@ -795,8 +789,7 @@ defn: tMACRO { startDef(); } ID { g_lingo->_currentFactory = NULL; }
 		endDef();
 		delete $on; }
 
-on:  tON { startDef(); } ID 	{
-		$$ = $ID; g_lingo->_currentFactory = NULL; }
+on:  tON { startDef(); } ID 	{ $$ = $ID; }
 
 argdef:  /* nothing */ 			{ $$ = 0; }
 	| ID						{ g_lingo->codeArg($ID); mVar($ID, kVarArgument); $$ = 1; delete $ID; }

@@ -87,7 +87,7 @@ Symbol ScriptContext::define(Common::String &name, int nargs, ScriptData *code, 
 
 	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
 		_functionHandlers[name] = sym;
-		if (_type == kMovieScript && _archive && !_archive->functionHandlers.contains(name)) {
+		if (_scriptType == kMovieScript && _archive && !_archive->functionHandlers.contains(name)) {
 			_archive->functionHandlers[name] = sym;
 		}
 	} else {
@@ -97,9 +97,9 @@ Symbol ScriptContext::define(Common::String &name, int nargs, ScriptData *code, 
 	return sym;
 }
 
-Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *factory, int end, bool removeCode) {
-	debugC(1, kDebugCompile, "codeDefine(\"%s\"(len: %d), %d, %d, \"%s\", %d)",
-			name.c_str(), _currentAssembly->size() - 1, start, nargs, (factory ? factory->name->c_str() : ""), end);
+Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, int end, bool removeCode) {
+	debugC(1, kDebugCompile, "codeDefine(\"%s\"(len: %d), %d, %d, %d)",
+			name.c_str(), _currentAssembly->size() - 1, start, nargs, end);
 
 	if (end == -1)
 		end = _currentAssembly->size();
@@ -115,8 +115,7 @@ Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, Object *fac
 			varNames->push_back(Common::String(it->_key));
 	}
 
-	ScriptContext *ctx = factory ? factory->ctx : _assemblyContext;
-	Symbol sym = ctx->define(name, nargs, code, argNames, varNames);
+	Symbol sym = _assemblyContext->define(name, nargs, code, argNames, varNames);
 
 	if (debugChannelSet(1, kDebugCompile)) {
 		debug("Function vars");
@@ -287,12 +286,9 @@ void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localv
 void Lingo::codeFactory(Common::String &name) {
 	// FIXME: The factory's context should not be tied to the LingoArchive
 	// but bytecode needs it to resolve names
-	ScriptContext *ctx = new ScriptContext(name, _assemblyArchive);
-	Object *obj = new Object(name, kFactoryObj, ctx);
-
-	_currentFactory = obj;
+	_assemblyContext->setFactory(true);
 	if (!_globalvars.contains(name)) {
-		_globalvars[name] = obj;
+		_globalvars[name] = _assemblyContext;
 	} else {
 		warning("Factory '%s' already defined", name.c_str());
 	}

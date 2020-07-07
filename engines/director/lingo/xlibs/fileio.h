@@ -50,36 +50,21 @@ enum FileIOError {
 	kErrorDirectoryNotFound = -120
 };
 
-struct FileObject : Object {
-	Common::String *filename;
-	Common::InSaveFile *inFile;
-	Common::SeekableReadStream *inStream;
-	Common::OutSaveFile *outFile;
-	Common::MemoryWriteStreamDynamic *outStream;
+class FileObject : public Object<FileObject> {
+public:
+	Common::String *_filename;
+	Common::InSaveFile *_inFile;
+	Common::SeekableReadStream *_inStream;
+	Common::OutSaveFile *_outFile;
+	Common::MemoryWriteStreamDynamic *_outStream;
 
-	FileObject(ObjectType objType, ScriptContext *objCtx) : Object("FileIO", objType, objCtx) {
-		filename = nullptr;
-		inFile = nullptr;
-		inStream = nullptr;
-		outFile = nullptr;
-		outStream = nullptr;
-	}
+public:
+	FileObject(ObjectType objType);
+	FileObject(const FileObject &obj);
+	virtual ~FileObject();
 
-	FileObject(const FileObject &obj) : Object(obj) {
-		filename = nullptr;
-		inFile = nullptr;
-		inStream = nullptr;
-		outFile = nullptr;
-		outStream = nullptr;
-	}
-
-	virtual ~FileObject() {
-		dispose();
-	}
-
-	void initMethods();
-	virtual Object *clone();
-	void dispose();
+	void clear();
+	virtual void dispose();
 };
 
 namespace FileIO {

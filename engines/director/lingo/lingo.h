@@ -42,7 +42,7 @@ struct TheEntityField;
 struct LingoArchive;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
-struct Object;
+class AbstractObject;
 class ScriptContext;
 class DirectorEngine;
 class Frame;
@@ -97,7 +97,7 @@ struct Symbol {	/* symbol table entry */
 	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */
 	LingoArchive *archive; 	/* optional archive to execute with */
-	Object *target;			/* optional method target */
+	AbstractObject *target;			/* optional method target */
 	bool anonymous;
 
 	Symbol();
@@ -117,7 +117,7 @@ struct Datum {	/* interpreter stack type */
 		Common::String *s;	/* STRING, VAR, OBJECT */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr; /* PARRAY */
-		Object *obj;
+		AbstractObject *obj;
 	} u;
 
 	int *refCount;
@@ -128,7 +128,7 @@ struct Datum {	/* interpreter stack type */
 	Datum(int val);
 	Datum(double val);
 	Datum(const Common::String &val);
-	Datum(Object *val);
+	Datum(AbstractObject *val);
 	void reset();
 
 	~Datum() {
@@ -170,49 +170,6 @@ typedef Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
-
-class ScriptContext {
-public:
-	Common::String _name;
-	LingoArchive *_archive;
-	ScriptType _type;
-	uint16 _id;
-	Common::Array<Common::String> _functionNames; // used by cb_localcall
-	SymbolHash _functionHandlers;
-	Common::HashMap<uint32, Symbol> _eventHandlers;
-	Common::Array<Datum> _constants;
-	Common::Array<Common::String> _propNames;
-
-	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, uint16 id = 0)
-		: _name(name), _archive(archive), _type(type), _id(id), _target(nullptr) {}
-	ScriptContext(const ScriptContext &sc) {
-		_type = sc._type;
-		_name = sc._name;
-		_functionNames = sc._functionNames;
-		for (SymbolHash::iterator it = sc._functionHandlers.begin(); it != sc._functionHandlers.end(); ++it) {
-			_functionHandlers[it->_key] = it->_value;
-			_functionHandlers[it->_key].ctx = this;
-		}
-		for (Common::HashMap<uint32, Symbol>::iterator it = sc._eventHandlers.begin(); it != sc._eventHandlers.end(); ++it) {
-			_eventHandlers[it->_key] = it->_value;
-			_eventHandlers[it->_key].ctx = this;
-		}
-		_constants = sc._constants;
-		_propNames = sc._propNames;
-
-		_archive = sc._archive;
-		_id = sc._id;
-	}
-
-	Object *getTarget() const { return _target; }
-	void setTarget(Object *target);
-	Datum getParentScript();
-	Symbol define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
-
-private:
-	Datum _parentScript;
-	Object *_target;
-};
 
 struct CFrame {	/* proc/func call stack frame */
 	Symbol	sp;	/* symbol table entry */
@@ -410,7 +367,7 @@ public:
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
 	void codeArg(Common::String *s);
-	Symbol codeDefine(Common::String &s, int start, int nargs, Object *obj = nullptr, int end = -1, bool removeCode = true);
+	Symbol codeDefine(Common::String &s, int start, int nargs, int end = -1, bool removeCode = true);
 	void codeFactory(Common::String &s);
 	int codeFloat(double f);
 	int codeFunc(Common::String *s, int numpar);
@@ -434,7 +391,6 @@ public:
 	int _errorbytenumber;
 	bool _ignoreError;
 	bool _inFactory;
-	Object *_currentFactory;
 	Common::Array<RepeatBlock *> _repeatStack;
 
 	Common::Array<Common::String *> _argstack;

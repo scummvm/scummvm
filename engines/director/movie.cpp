@@ -30,6 +30,7 @@
 #include "director/score.h"
 #include "director/stage.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Director {
 

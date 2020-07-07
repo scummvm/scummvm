@@ -1330,15 +1330,15 @@ void LC::call(const Common::String &name, int nargs) {
 	// Script/Xtra method call
 	if (nargs > 0) {
 		Datum d = g_lingo->peek(nargs - 1);
-		if (d.type == OBJECT && (d.u.obj->type & (kScriptObj | kXtraObj))) {
+		if (d.type == OBJECT && (d.u.obj->getObjType() & (kScriptObj | kXtraObj))) {
 			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
-			Object *target = d.u.obj;
+			AbstractObject *target = d.u.obj;
 			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
 				target = target->clone();
 			}
 			funcSym = target->getMethod(name);
 			if (funcSym.type != VOID) {
-				if (target->type == kScriptObj && funcSym.type == HANDLER) {
+				if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
 					// For kScriptObj handlers the target is the first argument
 					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
 				} else {
@@ -1360,15 +1360,15 @@ void LC::call(const Common::String &name, int nargs) {
 		Datum objName(name);
 		objName.type = VAR;
 		Datum d = g_lingo->varFetch(objName);
-		if (d.type == OBJECT && (d.u.obj->type & (kFactoryObj | kXObj))) {
+		if (d.type == OBJECT && (d.u.obj->getObjType() & (kFactoryObj | kXObj))) {
 			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
-			Object *target = d.u.obj;
+			AbstractObject *target = d.u.obj;
 			Datum methodName = g_lingo->_stack[g_lingo->_stack.size() - nargs];
 			if (methodName.u.s->equalsIgnoreCase("mNew")) {
 				target = target->clone();
 			}
 			funcSym = target->getMethod(*methodName.u.s);
-			if (target->type == kScriptObj && funcSym.type == HANDLER) {
+			if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
 				// For kFactoryObj handlers the target is the first argument
 				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
 			} else {
@@ -1510,7 +1510,7 @@ void LC::c_procret() {
 	}
 
 	CFrame *fp = g_lingo->_callstack.back();
-	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
+	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
 		// Return the newly created object after executing mNew
 		g_lingo->push(g_lingo->_currentMe);
 	}

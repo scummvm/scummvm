@@ -1288,7 +1288,7 @@ void LB::b_return(int nargs) {
 	CFrame *fp = g_lingo->_callstack.back();
 	// Do not allow a factory's mNew method to return a value
 	// Otherwise do not touch the top of the stack, it will be returned
-	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->type == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
+	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
 		g_lingo->pop();
 	}
 	LC::c_procret();
@@ -1327,8 +1327,8 @@ void LB::b_factory(int nargs) {
 	Datum factoryName = g_lingo->pop();
 	factoryName.type = VAR;
 	Datum o = g_lingo->varFetch(factoryName, true);
-	if (o.type == OBJECT && (o.u.obj->type & (kFactoryObj | kXObj))
-			&& o.u.obj->name->equalsIgnoreCase(*factoryName.u.s) && o.u.obj->inheritanceLevel == 1) {
+	if (o.type == OBJECT && (o.u.obj->getObjType() & (kFactoryObj | kXObj))
+			&& o.u.obj->getName().equalsIgnoreCase(*factoryName.u.s) && o.u.obj->getInheritanceLevel() == 1) {
 		g_lingo->push(o);
 	} else {
 		g_lingo->push(Datum(0));
@@ -1357,7 +1357,7 @@ void LB::b_objectp(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res;
 	if (d.type == OBJECT) {
-		res = !d.u.obj->disposed;
+		res = !d.u.obj->isDisposed();
 	} else {
 		res = 0;
 	}
@@ -2200,7 +2200,7 @@ void LB::b_script(int nargs) {
 		}
 
 		if (script) {
-			g_lingo->push(Datum(script->getParentScript()));
+			g_lingo->push(script);
 			return;
 		}
 	}
