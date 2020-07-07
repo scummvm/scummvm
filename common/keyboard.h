@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(__amigaos4__)
+#if defined(__amigaos4__) || defined(__MORPHOS__)
 // KEYCODE_LESS and KEYCODE_GREATER are already defined in AmigaOS, inside
 // include/include_h/intuition/intuition.h (bug #3121350)
 #if defined(KEYCODE_LESS) && defined(KEYCODE_GREATER)

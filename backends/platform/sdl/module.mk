@@ -39,6 +39,12 @@ MODULE_OBJS += \
 	riscos/riscos.o
 endif
 
+ifdef MORPHOS
+MODULE_OBJS += \
+	morphos/morphos-main.o \
+	morphos/morphos.o
+endif
+
 ifdef PLAYSTATION3
 MODULE_OBJS += \
 	ps3/ps3-main.o \

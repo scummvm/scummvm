@@ -59,6 +59,9 @@ const char *gScummVMVersion = SCUMMVM_VERSION SCUMMVM_REVISION;
 #ifdef __amigaos4__
 static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" AMIGA_DATE ")";
 #endif
+#ifdef __MORPHOS__
+static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ ")";
+#endif
 #ifdef __PLAYSTATION2__
 const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */
 const char *gScummVMVersionDate = SCUMMVM_VERSION SCUMMVM_REVISION " - PlayStation2";

@@ -218,6 +218,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
+_morphospath="PROGDIR:"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
@@ -1728,6 +1729,11 @@ ppc-amigaos)
 	_host_cpu=powerpc
 	_host_alias=$_host
 	;;
+ppc-morphos)
+	_host_os=morphos
+	_host_cpu=powerpc
+	_host_alias=$_host
+	;;
 ps2)
 	_host_os=ps2
 	_host_cpu=mips64r5900el
@@ -2279,7 +2285,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__, undefine it
-		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
+		3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | morphos* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii )
 			append_var CXXFLAGS "-U__STRICT_ANSI__"
 			;;
 		*)
@@ -2669,6 +2675,20 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
+		_nuked_opl=no
+		;;
+	morphos*)
+		append_var LDFLAGS "-Wl,--export-dynamic"
+		append_var LDFLAGS "-L/usr/local/lib"
+		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
+		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		add_line_to_config_mk 'MORPHOS = 1'
+		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		_sdlconfig=sdl2-config
 		_nuked_opl=no
 		;;
 	android)
@@ -3518,6 +3538,16 @@ if test -n "$_host"; then
 
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
+		ppc-morphos)
+			# PPC Linker requires this to fix relocation errors
+			append_var CXXFLAGS "-mlongcall"
+
+			# Only static builds link successfully on buildbot
+			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
+			append_var LDFLAGS "-static"
+
+			_port_mk="backends/platform/sdl/morphos/morphos.mk"
+			;;
 		ps2)
 			append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			append_var DEFINES "-DDISABLE_COMMAND_LINE"
@@ -4042,7 +4072,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos | n64 | ps2 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux* | webos)
@@ -4125,7 +4155,7 @@ _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k -mfloat-abi=hard
 '
 		;;
-	amigaos)
+	amigaos | morphos)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
 		append_var CXXFLAGS "-fPIC"
@@ -4915,7 +4945,7 @@ if test "$_libcurl" != "no"; then
 		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
 
 		case $_host_os in
-			amigaos*)
+			amigaos* | morphos*)
 				append_var LIBCURL_LIBS "-lpthread"
 			;;
 			# macOS does not allow static libs, overriding
@@ -6142,6 +6172,7 @@ WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
+MORPHOSPATH=$_morphospath
 STATICLIBPATH=$_staticlibpath
 XCODETOOLSPATH=$_xcodetoolspath
 SPARKLEPATH=$_sparklepath
