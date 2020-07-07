@@ -111,9 +111,7 @@ void Stage::reset() {
 
 void Stage::addDirtyRect(const Common::Rect &r) {
 	Common::Rect bounds = r;
-	Common::Rect clip = _innerDims;
-	clip.moveTo(0, 0);
-	bounds.clip(clip);
+	bounds.clip(Common::Rect(_innerDims.width(), _innerDims.height()));
 
 	if (bounds.width() > 0 && bounds.height() > 0)
 		_dirtyRects.push_back(bounds);
