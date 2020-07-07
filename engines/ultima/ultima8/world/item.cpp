@@ -2747,7 +2747,7 @@ uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item)
 		return 0;
 
-	#if 1
+	#if 0
 		perr << "Pushing item to ethereal void: " << item->getShape() << "," << item->getFrame() << Std::endl;
 	#endif
 
