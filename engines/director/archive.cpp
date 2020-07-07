@@ -385,6 +385,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	stream->seek(startOffset);
 
+	uint32 moreOffset = 0;
+
 	uint32 headerTag = stream->readUint32BE();
 
 	if (headerTag != MKTAG('R', 'I', 'F', 'X') &&
@@ -396,8 +398,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		if (Common::MacResManager::isMacBinary(*stream)) {
 			warning("RIFXArchive::openStream(): MacBinary detected, overriding");
 
-			startOffset += Common::MacResManager::getDataForkOffset();
-			stream->seek(startOffset);
+			moreOffset = Common::MacResManager::getDataForkOffset();
+			stream->seek(startOffset + moreOffset);
 
 			headerTag = stream->readUint32BE();
 		}
@@ -412,7 +414,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		return false;
 	}
 
-	Common::SeekableSubReadStreamEndian subStream(stream, startOffset + 4, stream->size(), _isBigEndian, DisposeAfterUse::NO);
+	Common::SeekableSubReadStreamEndian subStream(stream, startOffset + 4 + moreOffset, stream->size(), _isBigEndian, DisposeAfterUse::NO);
 
 	uint32 sz = subStream.readUint32(); // size
 
@@ -435,7 +437,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			free(data);
 
 			stream->seek(startOffset + 8);
-			warning("dumped: %s", buf);
 		} else {
 			warning("RIFXArchive::openStream(): Can not open dump file %s", buf);
 		}
@@ -453,7 +454,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	subStream.readUint32(); // imap length
 	subStream.readUint32(); // unknown
-	uint32 mmapOffset = subStream.readUint32() - 4;
+	uint32 mmapOffset = subStream.readUint32() - startOffset - 4;
 	uint32 version = subStream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
 	warning("RIFX: version: %x type: %s", version, tag2str(rifxType));
 
@@ -482,7 +483,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	for (uint32 i = 0; i < resCount; i++) {
 		uint32 tag = subStream.readUint32();
 		uint32 size = subStream.readUint32();
-		uint32 offset = subStream.readUint32() + startOffset;
+		uint32 offset = subStream.readUint32() + moreOffset;
 		uint16 flags = subStream.readUint16();
 		uint16 unk1 = subStream.readUint16();
 		uint32 unk2 = subStream.readUint32();
