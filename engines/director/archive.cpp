@@ -45,6 +45,7 @@ bool Archive::openFile(const Common::String &fileName) {
 	Common::File *file = new Common::File();
 
 	if (!file->open(fileName)) {
+		warning("Archive::openFile(): Error opening file %s", fileName.c_str());
 		delete file;
 		return false;
 	}
@@ -52,6 +53,7 @@ bool Archive::openFile(const Common::String &fileName) {
 	_fileName = fileName;
 
 	if (!openStream(file)) {
+		warning("Archive::openFile(): Error loading stream from file %s", fileName.c_str());
 		close();
 		return false;
 	}
@@ -237,6 +239,7 @@ bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffs
 	stream->seek(startOffset);
 
 	if (!_resFork->loadFromMacBinary(*stream)) {
+		warning("MacArchive::openStream(): Error loading Mac Binary");
 		close();
 		return false;
 	}
@@ -287,16 +290,22 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	stream->seek(startOffset);
 
-	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F'))
+	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F')) {
+		warning("RIFFArchive::openStream(): RIFF expected but not found");
 		return false;
+	}
 
 	stream->readUint32LE(); // size
 
-	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'M', 'M', 'P'))
+	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'M', 'M', 'P')) {
+		warning("RIFFArchive::openStream(): RMMP expected but not found");
 		return false;
+	}
 
-	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('C', 'F', 'T', 'C'))
+	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('C', 'F', 'T', 'C')) {
+		warning("RIFFArchive::openStream(): CFTC expected but not found");
 		return false;
+	}
 
 	uint32 cftcSize = stream->readUint32LE();
 	uint32 startPos = stream->pos();
@@ -379,12 +388,14 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	uint32 headerTag = stream->readUint32BE();
 
-	if (headerTag == MKTAG('R', 'I', 'F', 'X'))
+	if (headerTag == MKTAG('R', 'I', 'F', 'X')) {
 		_isBigEndian = true;
-	else if (SWAP_BYTES_32(headerTag) == MKTAG('R', 'I', 'F', 'X'))
+	} else if (SWAP_BYTES_32(headerTag) == MKTAG('R', 'I', 'F', 'X')) {
 		_isBigEndian = false;
-	else
+	} else {
+		warning("RIFXArchive::openStream(): RIFX or XFIR expected but %s found", tag2str(headerTag));
 		return false;
+	}
 
 	Common::SeekableSubReadStreamEndian subStream(stream, startOffset + 4, stream->size(), _isBigEndian, DisposeAfterUse::NO);
 
@@ -433,8 +444,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	subStream.seek(mmapOffset);
 
-	if (subStream.readUint32() != MKTAG('m', 'm', 'a', 'p'))
+	if (subStream.readUint32() != MKTAG('m', 'm', 'a', 'p')) {
+		warning("RIFXArchive::openStream(): mmap expected but not found");
 		return false;
+	}
 
 	subStream.readUint32(); // mmap length
 	subStream.readUint16(); // unknown
@@ -481,7 +494,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	}
 
 	if (ConfMan.getBool("dump_scripts")) {
-		debug("Dumping %d resources", resources.size());
+		debug("RIFXArchive::openStream(): Dumping %d resources", resources.size());
 
 		byte *data = nullptr;
 		uint dataSize = 0;
