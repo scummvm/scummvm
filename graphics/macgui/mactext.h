@@ -253,7 +253,6 @@ protected:
 	int _maxWidth;
 	int _interLinear;
 	int _textShadow;
-	uint _fgcolor, _bgcolor;
 
 	int _textMaxWidth;
 	int _textMaxHeight;

@@ -981,11 +981,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	switch (field) {
 	case kTheBackColor:
-		if (member->_type == kCastText) {
-			((TextCastMember *)member)->getColors(nullptr, &d.u.i);
-		} else {
-			warning("Lingo::getTheCast(): Attempted to set access color of non-text cast");
-		}
+		member->getColors(nullptr, &d.u.i);
 		break;
 	case kTheCastType:
 		d.u.i = castType;
@@ -994,11 +990,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d = Datum(castInfo->fileName);
 		break;
 	case kTheForeColor:
-		if (member->_type == kCastText) {
-			((TextCastMember *)member)->getColors(&d.u.i, nullptr);
-		} else {
-			warning("Lingo::getTheCast(): Attempted to access color of non-text cast");
-		}
+		member->getColors(&d.u.i, nullptr);
 		break;
 	case kTheHeight:
 		d.u.i = cast->getCastMemberInitialRect(id).height();
@@ -1066,11 +1058,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	switch (field) {
 	case kTheBackColor: {
 		int color = _vm->transformColor(d.asInt());
-		if (member->_type == kCastText) {
-			((TextCastMember *)member)->setColors(nullptr, &color);
-		} else {
-			warning("Lingo::setTheCast(): Attempted to access color of non-text cast");
-		}
+		member->setColors(nullptr, &color);
 		break;
 	}
 	case kTheCastType:
@@ -1088,12 +1076,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheForeColor: {
 		int color = _vm->transformColor(d.asInt());
-
-		if (member->_type == kCastText) {
-			((TextCastMember *)member)->setColors(&color, nullptr);
-		} else {
-			warning("Lingo::setTheCast(): Attempted to access color of non-text cast");
-		}
+		member->setColors(&color, nullptr);
 		break;
 	}
 	case kTheHeight:

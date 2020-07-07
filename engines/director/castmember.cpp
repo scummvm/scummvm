@@ -420,6 +420,9 @@ void TextCastMember::setColors(int *fgcolor, int *bgcolor) {
 
 	if (bgcolor)
 		_bgcolor = *bgcolor;
+
+	_widget->setColors(_fgcolor, _bgcolor);
+	((Graphics::MacText *)_widget)->_fullRefresh = true;
 }
 
 void TextCastMember::getColors(int *fgcolor, int *bgcolor) {
@@ -462,13 +465,13 @@ void TextCastMember::createWidget() {
 
 	switch (_type) {
 	case kCastText:
-		_widget = new Graphics::MacText(g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, 0, 0xff, _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		_widget = new Graphics::MacText(g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 
 		((Graphics::MacText *)_widget)->draw();
 		break;
 
 	case kCastButton:
-		_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont);
+		_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
 		((Graphics::MacButton *)_widget)->draw();
 		_widget->_focusable = true;
 

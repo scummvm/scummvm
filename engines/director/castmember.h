@@ -64,6 +64,9 @@ public:
 	virtual bool isModified() { return _modified; }
 	virtual void createWidget() {}
 
+	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
+	virtual void getColors(int *fgcolor, int *bgcolor) { return; }
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
@@ -88,6 +91,7 @@ public:
 
 	void createMatte();
 	Graphics::Surface *getMatte();
+	// virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	Image::ImageDecoder *_img;
 	Graphics::FloodFill *_matte;
@@ -147,8 +151,8 @@ public:
 class TextCastMember : public CastMember {
 public:
 	TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
-	void setColors(int *fgcolor, int *bgcolor);
-	void getColors(int *fgcolor, int *bgcolor);
+	virtual void setColors(int *fgcolor, int *bgcolor) override;
+	virtual void getColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);
 	virtual void createWidget() override;
@@ -157,6 +161,9 @@ public:
 	virtual bool isEditable() override;
 	virtual bool setEditable(bool editable) override;
 	Graphics::TextAlign getAlignment();
+
+	uint getBackColor() { return _bgcolor; }
+	uint getForeColor() { return _fgcolor; }
 
 	SizeType _borderSize;
 	SizeType _gutterSize;

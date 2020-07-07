@@ -33,8 +33,8 @@
 
 namespace Graphics {
 
-MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont) :
-	MacText(parent, x, y, w, h, wm, s, macFont, 0, 0xff, w, textAlignment) {
+MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor) :
+	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment) {
 
 	_buttonType = buttonType;
 
