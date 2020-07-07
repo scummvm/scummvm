@@ -411,7 +411,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			stream->seek(startOffset + 8);
 			warning("dumped: %s", buf);
 		} else {
-			warning("Can not open dump file %s", buf);
+			warning("RIFXArchive::openStream(): Can not open dump file %s", buf);
 		}
 	}
 

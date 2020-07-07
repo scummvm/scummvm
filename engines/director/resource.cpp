@@ -214,7 +214,7 @@ void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
 
 
 			if (!out.open(fname.c_str())) {
-				warning("Can not open dump file %s", fname.c_str());
+				warning("Stage::loadEXEv3(): Can not open dump file %s", fname.c_str());
 			} else {
 				out.write(buf, mmmSize);
 
