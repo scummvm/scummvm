@@ -213,6 +213,31 @@ bool MeshX::update(FrameNode *parentFrame) {
 				}
 			}
 		}
+
+		for (uint i = 0; i < skinWeightsList.size(); ++i) {
+			finalBoneMatrices[i].transpose();
+			finalBoneMatrices[i].inverse();
+		}
+
+		for (uint32 i = 0; i < _vertexCount; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				_vertexData[i * kVertexComponentCount + kNormalOffset + j] = 0.0f;
+			}
+		}
+
+		for (uint boneIndex = 0; boneIndex < skinWeightsList.size(); ++boneIndex) {
+			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
+				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
+				Math::Vector3d pos;
+				pos.setData(_vertexNormalData + vertexIndex * 3);
+				finalBoneMatrices[boneIndex].transform(&pos, true);
+				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
+
+				for (uint j = 0; j < 3; ++j) {
+					_vertexData[vertexIndex * kVertexComponentCount + kNormalOffset + j] += pos.getData()[j];
+				}
+			}
+		}
 	} else { // update static
 		warning("MeshX::update update of static mesh is not implemented yet");
 	}
@@ -401,11 +426,16 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	uint vertexNormalCount = readInt(lexer);
 	assert(vertexNormalCount == _vertexCount);
 
+	_vertexNormalData = new float[3 * _vertexCount]();
+
 	for (uint i = 0; i < vertexNormalCount; ++i) {
 		_vertexData[i * kVertexComponentCount + kNormalOffset] = readFloat(lexer);
+		_vertexNormalData[i * 3 + 0] = _vertexData[i * kVertexComponentCount + kNormalOffset];
 		_vertexData[i * kVertexComponentCount + kNormalOffset + 1] = readFloat(lexer);
+		_vertexNormalData[i * 3 + 1] = _vertexData[i * kVertexComponentCount + kNormalOffset + 1];
 		// mirror z coordinate to change to OpenGL coordinate system
 		_vertexData[i * kVertexComponentCount + kNormalOffset + 2] = -readFloat(lexer);
+		_vertexNormalData[i * 3 + 2] = _vertexData[i * kVertexComponentCount + kNormalOffset + 2];
 		lexer.advanceToNextToken(); // skip semicolon
 	}
 

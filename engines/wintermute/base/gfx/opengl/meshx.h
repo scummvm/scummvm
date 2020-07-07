@@ -95,6 +95,7 @@ protected:
 
 	float *_vertexData;
 	float *_vertexPositionData;
+	float *_vertexNormalData;
 	uint32 _vertexCount;
 	uint16 *_indexData;
 	uint32 _indexCount;
