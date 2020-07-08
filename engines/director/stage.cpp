@@ -89,8 +89,10 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		blitTo->fillRect(r, _stageColor);
 
 		_dirtyChannels = g_director->getCurrentMovie()->getScore()->getSpriteIntersections(r);
-		for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++)
-			inkBlitFrom(*j, r, blitTo);
+		for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
+			if ((*j)->_visible)
+				inkBlitFrom(*j, r, blitTo);
+		}
 	}
 
 	_dirtyRects.clear();
