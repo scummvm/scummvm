@@ -82,6 +82,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
 	_mainStage = nullptr;
+	_windowList = new Datum;
+	_windowList->type = ARRAY;
+	_windowList->u.farr = new DatumArray;
 	_currentStage = nullptr;
 	_lingo = nullptr;
 

@@ -196,6 +196,7 @@ private:
 	Lingo *_lingo;
 
 	Stage *_mainStage;
+	Datum *_windowList; // Lingo list
 	Stage *_currentStage;
 
 	Graphics::MacPatterns _director3Patterns;

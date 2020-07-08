@@ -2175,10 +2175,25 @@ void LB::b_script(int nargs) {
 
 void LB::b_window(int nargs) {
 	Datum d = g_lingo->pop();
+	Common::String windowName = d.asString();
+	DatumArray *windowList = g_lingo->_windowList.u.farr;
 
-	warning("STUB: b_window");
+	for (uint i = 0; i < windowList->size(); i++) {
+		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+			continue;
+		
+		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		if (window->getName().equalsIgnoreCase(windowName)) {
+			g_lingo->push(window);
+			return;
+		}
+	}
 
-	g_lingo->push(Datum());
+	Graphics::MacWindowManager *wm = g_director->getMacWindowManager();
+	Stage *window = new Stage(wm->getNextId(), false, false, false, wm, g_director);
+	window->setName(windowName);
+	windowList->push_back(window);
+	g_lingo->push(window);
 }
 
 void LB::b_numberofchars(int nargs) {
