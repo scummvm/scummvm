@@ -185,11 +185,16 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 
 	MacShape *ms = channel->getShape();
 	DirectorPlotData pd(_wm, channel->getSurface(), blitTo, destRect, channel->_sprite->_ink, channel->_sprite->_backColor, channel->_sprite->_foreColor, g_director->getPaletteColorCount());
-	pd.applyColor = needsAppliedColor(&pd);
 
 	if (ms) {
 		inkBlitShape(&pd, srcRect, ms);
 	} else if (pd.src) {
+		if (!(channel->_sprite->_cast &&
+				(channel->_sprite->_cast->_type == kCastText ||
+				 channel->_sprite->_cast->_type == kCastButton))) {
+			pd.applyColor = needsAppliedColor(&pd);
+		}
+
 		inkBlitSurface(&pd, srcRect, channel->getMask());
 	} else {
 		warning("Stage::inkBlitFrom: No source surface");

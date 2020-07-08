@@ -836,33 +836,64 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 	case kInkTypeMatte:
 	case kInkTypeMask:
 		// Only unmasked pixels make it here, so copy them straight
-	case kInkTypeCopy:
-		*dst = src;
+	case kInkTypeCopy: {
+		if (p->applyColor) {
+			// TODO: Improve the efficiency of this composition
+			byte rSrc, gSrc, bSrc;
+			byte rDst, gDst, bDst;
+			byte rFor, gFor, bFor;
+			byte rBak, gBak, bBak;
+
+			g_director->_wm->decomposeColor(src, rSrc, gSrc, bSrc);
+			g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+			g_director->_wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
+			g_director->_wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+
+			*dst = p->_wm->findBestColor((rSrc | rFor) & (~rSrc | rBak),
+																	 (gSrc | gFor) & (~gSrc | gBak),
+																	 (bSrc | bFor) & (~bSrc | bBak));
+		} else {
+			*dst = src;
+		}
+		break;
+	}
+	case kInkTypeNotCopy:
+		if (p->applyColor) {
+			// TODO: Improve the efficiency of this composition
+			byte rSrc, gSrc, bSrc;
+			byte rDst, gDst, bDst;
+			byte rFor, gFor, bFor;
+			byte rBak, gBak, bBak;
+
+			g_director->_wm->decomposeColor(src, rSrc, gSrc, bSrc);
+			g_director->_wm->decomposeColor(*dst, rDst, gDst, bDst);
+			g_director->_wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
+			g_director->_wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+
+			*dst = p->_wm->findBestColor((~rSrc | rFor) & (rSrc | rBak),
+																	 (~gSrc | gFor) & (gSrc | gBak),
+																	 (~bSrc | bFor) & (bSrc | bBak));
+		} else {
+			*dst = src;
+		}
 		break;
 	case kInkTypeTransparent:
-		// FIXME: Is colour to ignore always white (last entry in pallette)?
-		if (src != p->numColors - 1)
-			*dst &= src;
-		break;
-	case kInkTypeReverse:
-		// TODO: Migrate from Stage to here
-		*dst ^= ~(src);
-		break;
-	case kInkTypeGhost:
-		if (src != p->numColors - 1)
-			*dst = *dst | ~(src);
-		break;
-	case kInkTypeNotCopy:
-		*dst = ~(src);
+		*dst = p->applyColor ? (~src & p->foreColor) | (*dst & src) : (*dst & src);
 		break;
 	case kInkTypeNotTrans:
-		*dst = *dst & ~(src);
+		*dst = p->applyColor ? (src & p->foreColor) | (*dst & ~src) : (*dst & ~src);
+		break;
+	case kInkTypeReverse:
+		*dst ^= ~(src);
 		break;
 	case kInkTypeNotReverse:
-		*dst = *dst ^ src;
+		*dst ^= src;
+		break;
+	case kInkTypeGhost:
+		*dst = p->applyColor ? (src | p->backColor) & (*dst | ~src) : (*dst | ~src);
 		break;
 	case kInkTypeNotGhost:
-		*dst = *dst | src;
+		*dst = p->applyColor ? (~src | p->backColor) & (*dst | src) : *dst | src;
 		break;
 		// Arithmetic ink types
 	default: {
