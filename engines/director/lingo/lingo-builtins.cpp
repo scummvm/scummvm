@@ -1743,7 +1743,7 @@ void LB::b_puppetTempo(int nargs) {
 
 void LB::b_puppetTransition(int nargs) {
 	// puppetTransition whichTransition [, time] [, chunkSize] [, changeArea]
-	Stage *stage = g_director->getStage();
+	Stage *stage = g_director->getCurrentStage();
 	uint16 duration = 250, area = 1, chunkSize = 1, type = 0;
 	if (nargs == 4) {
 		area = g_lingo->pop().asInt();
@@ -1798,7 +1798,7 @@ void LB::b_rollOver(int nargs) {
 		return;
 	}
 
-	Common::Point pos = g_director->getStage()->getMousePos();
+	Common::Point pos = g_director->getCurrentStage()->getMousePos();
 
 	if (score->checkSpriteIntersection(arg, pos))
 		res.u.i = 1; // TRUE
