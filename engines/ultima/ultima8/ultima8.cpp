@@ -93,6 +93,7 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/split_item_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/crosshair_process.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
@@ -422,16 +423,18 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		_desktopGump->InitGump(0);
 		_desktopGump->MakeFocus();
 
-		debugN(MM_INFO, "Creating _scalerGump...\n");
-		_scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
-		_scalerGump->InitGump(0);
+		if (GAME_IS_U8) {
+			debugN(MM_INFO, "Creating _scalerGump...\n");
+			_scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
+			_scalerGump->InitGump(0);
 
-		Rect scaled_dims;
-		_scalerGump->GetDims(scaled_dims);
+			Rect scaled_dims;
+			_scalerGump->GetDims(scaled_dims);
 
-		debugN(MM_INFO, "Creating Inverter...\n");
-		_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
-		_inverterGump->InitGump(0);
+			debugN(MM_INFO, "Creating Inverter...\n");
+			_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
+			_inverterGump->InitGump(0);
+		}
 	}
 }
 
@@ -655,14 +658,16 @@ void Ultima8Engine::GraphicSysInit() {
 	_desktopGump->InitGump(0);
 	_desktopGump->MakeFocus();
 
-	_scalerGump = new ScalerGump(0, 0, width, height);
-	_scalerGump->InitGump(0);
+	if (GAME_IS_U8) {
+		_scalerGump = new ScalerGump(0, 0, width, height);
+		_scalerGump->InitGump(0);
 
-	Rect scaled_dims;
-	_scalerGump->GetDims(scaled_dims);
+		Rect scaled_dims;
+		_scalerGump->GetDims(scaled_dims);
 
-	_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
-	_inverterGump->InitGump(0);
+		_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
+		_inverterGump->InitGump(0);
+	}
 
 	_screen = new_screen;
 
@@ -1047,28 +1052,35 @@ void Ultima8Engine::setupCoreGumps() {
 	_desktopGump->InitGump(0);
 	_desktopGump->MakeFocus();
 
-	debugN(MM_INFO, "Creating _scalerGump...\n");
-	_scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
-	_scalerGump->InitGump(0);
+	if (GAME_IS_U8) {
+		debugN(MM_INFO, "Creating _scalerGump...\n");
+		_scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
+		_scalerGump->InitGump(0);
 
-	Rect scaled_dims;
-	_scalerGump->GetDims(scaled_dims);
+		Rect scaled_dims;
+		_scalerGump->GetDims(scaled_dims);
 
-	debugN(MM_INFO, "Creating Inverter...\n");
-	_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
-	_inverterGump->InitGump(0);
+		debugN(MM_INFO, "Creating Inverter...\n");
+		_inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
+		_inverterGump->InitGump(0);
 
-	debugN(MM_INFO, "Creating GameMapGump...\n");
-	_gameMapGump = new GameMapGump(0, 0, scaled_dims.w, scaled_dims.h);
-	_gameMapGump->InitGump(0);
+		debugN(MM_INFO, "Creating GameMapGump...\n");
+		_gameMapGump = new GameMapGump(0, 0, scaled_dims.w, scaled_dims.h);
+		_gameMapGump->InitGump(0);
+	} else {
+		_gameMapGump = new GameMapGump(0, 0, dims.w, dims.h);
+		_gameMapGump->InitGump(0);
+	}
+
 
 
 	// TODO: clean this up
-	assert(_desktopGump->getObjId() == 256);
-	assert(_scalerGump->getObjId() == 257);
-	assert(_inverterGump->getObjId() == 258);
-	assert(_gameMapGump->getObjId() == 259);
-
+	if (GAME_IS_U8) {
+		assert(_desktopGump->getObjId() == 256);
+		assert(_scalerGump->getObjId() == 257);
+		assert(_inverterGump->getObjId() == 258);
+		assert(_gameMapGump->getObjId() == 259);
+	}
 
 	for (uint16 i = 261; i < 384; ++i)
 		_objectManager->reserveObjId(i);
@@ -1116,6 +1128,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 
 	if (GAME_IS_CRUSADER) {
 		_kernel->addProcess(new TargetReticleProcess());
+		_kernel->addProcess(new CrosshairProcess());
 		_kernel->addProcess(new CycleProcess());
 	}
 
@@ -1311,18 +1324,20 @@ void Ultima8Engine::addGump(Gump *gump) {
 		//(_ttfOverrides && (dynamic_cast<BarkGump *>(gump) ||
 		//                dynamic_cast<AskGump *>(gump)))
 		) {
-		//		pout << "adding to desktopgump: "; gump->dumpInfo();
 		_desktopGump->AddChild(gump);
 	} else if (dynamic_cast<GameMapGump *>(gump)) {
-		//		pout << "adding to invertergump: "; gump->dumpInfo();
-		_inverterGump->AddChild(gump);
+		if (GAME_IS_U8)
+			_inverterGump->AddChild(gump);
+		else
+			_desktopGump->AddChild(gump);
 	} else if (dynamic_cast<InverterGump *>(gump)) {
-		//		pout << "adding to _scalerGump: "; gump->dumpInfo();
 		_scalerGump->AddChild(gump);
 	} else if (dynamic_cast<DesktopGump *>(gump)) {
 	} else {
-		//		pout << "adding to _scalerGump: "; gump->dumpInfo();
-		_scalerGump->AddChild(gump);
+		if (GAME_IS_U8)
+			_scalerGump->AddChild(gump);
+		else
+			_desktopGump->AddChild(gump);
 	}
 }
 

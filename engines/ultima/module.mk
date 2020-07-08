@@ -526,6 +526,7 @@ MODULE_OBJS := \
 	ultima8/world/camera_process.o \
 	ultima8/world/container.o \
 	ultima8/world/create_item_process.o \
+	ultima8/world/crosshair_process.o \
 	ultima8/world/current_map.o \
 	ultima8/world/destroy_item_process.o \
 	ultima8/world/egg.o \
