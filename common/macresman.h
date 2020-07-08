@@ -198,6 +198,18 @@ public:
 	 */
 	static bool isMacBinary(SeekableReadStream &stream);
 
+	struct MacVers {
+		byte majorVer;
+		byte minorVer;
+		byte devStage;
+		String devStr;
+		byte preReleaseVer;
+		uint16 region;
+		String str;
+		String msg;
+	};
+	static MacVers *parseVers(SeekableReadStream *vvers);
+
 private:
 	SeekableReadStream *_stream;
 	String _baseFileName;
