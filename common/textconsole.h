@@ -28,6 +28,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_text_console Text console
+ * @ingroup common
+ *
+ * @brief Output formatter, typically used for debugging.
+ *
+ * @{
+ */
+
+/**
  * An output formatter takes a source string and 'decorates' it with
  * extra information, storing the result in a destination buffer.
  * A typical use is to (optionally) enhance the output given by
@@ -56,6 +65,8 @@ typedef void (*ErrorHandler)(const char *msg);
  * This can be used to e.g. show a debugger console.
  */
 void setErrorHandler(ErrorHandler handler);
+
+/** @} */
 
 } // End of namespace Common
 

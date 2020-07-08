@@ -57,6 +57,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_hashmap Hash table (HashMap)
+ * @ingroup common
+ *
+ * @brief API for operations on a hash table.
+ *
+ * @{
+ */
+
 // The sgi IRIX MIPSpro Compiler has difficulties with nested templates.
 // This and the other __sgi conditionals below work around these problems.
 // The Intel C++ Compiler suffers from the same problems.
@@ -623,6 +632,8 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 }
 
 #undef HASHMAP_DUMMY_NODE
+
+/** @} */
 
 } // End of namespace Common
 

@@ -25,6 +25,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_cosinetables Cosine tables
+ * @ingroup common
+ *
+ * @brief  Functions for working with cosine tables.
+ *
+ * @{
+ */
+
 class CosineTable {
 public:
 	/**
@@ -68,6 +77,8 @@ private:
 	int _refSize; // _nPoints / 4
 	int _nPoints; // range of operator[]
 };
+
+/** @} */
 
 } // End of namespace Common
 

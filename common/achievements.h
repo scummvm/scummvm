@@ -31,6 +31,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_achieve Achievements
+ * @ingroup common
+ *
+ * @brief API related to in-game achievements.
+ *
+ * @{
+ */
+
+/**
  * List of game achievements provider platforms.
  * Possible candidates are XBOX Gamerscore, PSN Trophies, Kongregate Badges, etc...
  */
@@ -96,6 +105,7 @@ private:
 /** Shortcut for accessing the achievements manager. */
 #define AchMan Common::AchievementsManager::instance()
 
+/** @} */
 
 } // End of namespace Common
 

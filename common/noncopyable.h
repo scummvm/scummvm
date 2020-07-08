@@ -26,6 +26,14 @@
 namespace Common {
 
 /**
+ * @defgroup common_noncopy NonCopyable class
+ * @ingroup common
+ *
+ * @brief API for NonCopyable class.
+ * @{
+ */
+
+/**
  * Subclass of NonCopyable can not be copied due to the fact that
  * we made the copy constructor and assigment operator private.
  */
@@ -37,6 +45,8 @@ private:
 	NonCopyable(const NonCopyable&);
 	NonCopyable& operator=(const NonCopyable&);
 };
+
+/** @} */
 
 } // End of namespace Common
 

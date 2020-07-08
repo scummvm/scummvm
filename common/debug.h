@@ -38,6 +38,14 @@ inline void debugCN(uint32 debugChannels, const char *s, ...) {}
 
 #else
 
+/**
+ * @defgroup common_debug Debug functions
+ * @ingroup common
+ *
+ * @brief  Debug functions.
+ *
+ * @{
+ */
 
 /**
  * Print a debug message to the text console (stdout).
@@ -143,5 +151,7 @@ extern bool gDebugChannelsOnly;
 enum GlobalDebugLevels {
 	kDebugLevelEventRec = 1 << 30
 };
+
+/** @} */
 
 #endif

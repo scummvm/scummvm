@@ -68,6 +68,15 @@ class Encoding;
 typedef Array<Keymap *> KeymapArray;
 }
 
+/**
+ * @defgroup common_system System
+ * @ingroup common
+ *
+ * @brief Operating system related API.
+ *
+ * @{
+ */
+
 class AudioCDManager;
 class FilesystemFactory;
 class PaletteManager;
@@ -1561,5 +1570,7 @@ protected:
 
 /** The global OSystem instance. Initialized in main(). */
 extern OSystem *g_system;
+
+/** @} */
 
 #endif

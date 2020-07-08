@@ -29,6 +29,14 @@
 namespace Common {
 
 /**
+ * @defgroup common_queue Queue
+ * @ingroup common
+ *
+ * @brief API and templates for queues.
+ * @{
+ */
+
+/**
  * Variable size Queue class, implemented using our List class.
  */
 template<class T>
@@ -81,6 +89,8 @@ public:
 private:
 	List<T>	_impl;
 };
+
+/** @} */
 
 } // End of namespace Common
 

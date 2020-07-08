@@ -27,6 +27,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_unzip ZIP decompressor
+ * @ingroup common
+ *
+ * @brief API related to ZIP archive files.
+ *
+ * @{
+ */
+
 class Archive;
 class FSNode;
 class SeekableReadStream;
@@ -56,6 +65,8 @@ Archive *makeZipArchive(const FSNode &node);
  * May return 0 in case of a failure. In this case stream will still be deleted.
  */
 Archive *makeZipArchive(SeekableReadStream *stream);
+
+/** @} */
 
 } // End of namespace Common
 

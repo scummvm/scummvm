@@ -30,11 +30,21 @@
 namespace Common {
 
 /**
+ * @defgroup common_str_array String array
+ * @ingroup common_str
+ *
+ * @brief String array implementation.
+ *
+ * @{
+ */
+
+/**
  * An array of of strings.
  */
 typedef Array<String>		StringArray;
 typedef Array<U32String>	U32StringArray;
 
+/** @} */
 
 } // End of namespace Common
 

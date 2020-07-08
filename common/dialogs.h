@@ -34,6 +34,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_dialogs Dialog Manager
+ * @ingroup common
+ *
+ * @brief  The Dialog Manager allows GUI code to interact with native system dialogs.
+ *
+ * @{
+ */
+
+/**
  * The DialogManager allows GUI code to interact with native system dialogs.
  */
 class DialogManager {
@@ -96,6 +105,8 @@ protected:
 		}
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

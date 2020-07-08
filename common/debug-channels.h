@@ -34,6 +34,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_debug_channels Debug channels
+ * @ingroup common_debug
+ *
+ * @brief  Functions for managing debug channels.
+ *
+ * @{
+ */
+
 // TODO: Find a better name for this
 class DebugManager : public Singleton<DebugManager> {
 public:
@@ -147,6 +156,8 @@ private:
 
 /** Shortcut for accessing the debug manager. */
 #define DebugMan		Common::DebugManager::instance()
+
+/** @} */
 
 } // End of namespace Common
 

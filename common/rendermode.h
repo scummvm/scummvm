@@ -27,6 +27,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_rendermode Render modes
+ * @ingroup common
+ *
+ * @brief API for render modes.
+ *
+ * @{
+ */
+
 class String;
 
 /**
@@ -70,6 +79,7 @@ extern String renderMode2GUIO(RenderMode id);
 // TODO: Rename the following to something better; also, document it
 extern String allRenderModesGUIOs();
 
+/** @} */
 
 } // End of namespace Common
 

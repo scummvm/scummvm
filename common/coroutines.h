@@ -31,14 +31,16 @@
 namespace Common {
 
 /**
- * @defgroup Coroutine support for simulating multi-threading.
+ * @defgroup common_coroutine Coroutine support for simulating multi-threading
+ * @ingroup common
  *
- * The following is loosely based on an article by Simon Tatham:
- *   <http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html>.
- * However, many improvements and tweaks have been made, in particular
- * by taking advantage of C++ features not available in C.
+ * @brief  The following implementation is loosely based on an article by Simon Tatham:
+ *         @linkCoroutine.
+ *         However, many improvements and tweaks have been made, in particular
+ *         by taking advantage of C++ features not available in C.
+ *
+ * @{
  */
-//@{
 
 #define CoroScheduler (Common::CoroutineScheduler::instance())
 
@@ -555,7 +557,7 @@ public:
 	void pulseEvent(uint32 pidEvent);
 };
 
-//@}
+/** @} */
 
 } // end of namespace Common
 

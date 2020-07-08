@@ -34,6 +34,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_translation Message translation manager
+ * @ingroup common
+ *
+ * @brief API related to translation.
+ *
+ * @{
+ */
+
 class File;
 
 enum TranslationIDs {
@@ -216,6 +225,8 @@ private:
 	String _currentCharset;
 	int _currentLang;
 };
+
+/** @} */
 
 } // End of namespace Common
 

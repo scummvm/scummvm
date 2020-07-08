@@ -25,10 +25,14 @@
 
 #include "common/scummsys.h"
 
+
 /**
- *  \file endian.h
- *  Endian conversion and byteswap conversion functions or macros
+ * @defgroup common_endian Endian conversions
+ * @ingroup common
  *
+ * @brief  Endian conversion and byteswap conversion functions and macros.
+ *
+ * @details 
  *  SWAP_BYTES_??(a)      - inverse byte order
  *  SWAP_CONSTANT_??(a)   - inverse byte order, implemented as macro.
  *                              Use with compiletime-constants only, the result will be a compiletime-constant aswell.
@@ -42,6 +46,8 @@
  *  CONSTANT_??_??(a)     - convert LE/BE value v to native, implemented as macro.
  *                              Use with compiletime-constants only, the result will be a compiletime-constant aswell.
  *                              Unlike most other functions these can be used for eg. switch-case labels
+ *
+ * @{
  */
 
 // Sanity check
@@ -631,5 +637,7 @@ inline int32 READ_BE_INT32(const void *ptr) {
 inline void WRITE_BE_INT32(void *ptr, int32 value) {
 	WRITE_BE_UINT32(ptr, static_cast<uint32>(value));
 }
+
+/** @} */
 
 #endif

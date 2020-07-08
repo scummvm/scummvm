@@ -31,6 +31,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_str Strings
+ * @ingroup common
+ *
+ * @brief API for working with strings.
+ *
+ * @{
+ */
+
 class U32String;
 
 /**
@@ -565,6 +574,8 @@ size_t strnlen(const char *src, size_t maxSize);
  * @return The converted string.
  */
 String toPrintable(const String &src, bool keepNewLines = true);
+
+/** @} */
 
 } // End of namespace Common
 
