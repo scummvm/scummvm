@@ -77,13 +77,13 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 			bullets = 0;
 		} else {
 			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
-			uint16 frameno = 0;
+			//uint16 frameno = 0;
 			if (weaponinfo) {
-				frameno = weaponinfo->_ammoType;
+				//frameno = weaponinfo->_ammoType;
 				ammoitem = weaponinfo->_ammoShape;
 			}
 
-			bullets= item->getQuality();
+			bullets = item->getQuality();
 		}
 	}
 
