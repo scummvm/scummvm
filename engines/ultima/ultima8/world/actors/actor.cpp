@@ -66,9 +66,10 @@ static const unsigned int BACKPACK_SHAPE = 529;
 DEFINE_RUNTIME_CLASSTYPE_CODE(Actor)
 
 Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
-	  _hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
-	  _lastAnim(Animation::stand), _animFrame(0), _direction(0),
-		_fallStart(0), _unk0C(0), _actorFlags(0), _combatTactic(0) {
+		_hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
+		_lastAnim(Animation::stand), _animFrame(0), _direction(0),
+		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
+		_homeX(0), _homeY(0), _homeZ(0) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
 	_defaultActivity[2] = 0;
@@ -674,6 +675,18 @@ uint16 Actor::getDefaultActivity(int no) const {
 	return _defaultActivity[no];
 }
 
+void Actor::setHomePosition(int32 x, int32 y, int32 z) {
+	_homeX = x;
+	_homeY = y;
+	_homeZ = z;
+}
+
+void Actor::getHomePosition(int32 &x, int32 &y, int32 &z) const {
+	x = _homeX;
+	y = _homeY;
+	z = _homeZ;
+}
+
 void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	if (isDead())
 		return; // already dead, so don't bother
@@ -1110,11 +1123,16 @@ int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	return result;
 }
 
+static Std::set<uint16> _notifiedItems;
+
 void Actor::notifyNearbyItems() {
-/*
+	/*
 	TODO: This is not right - maybe we want to trigger each item only when it gets close,
 	then reset the status after it moves away?  Need to dig into the assembly more.
- 
+
+	For now this is a temporary hack to trigger some usecode events so we can
+	debug more of the game.
+	 */
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
@@ -1122,8 +1140,11 @@ void Actor::notifyNearbyItems() {
 
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *item = getItem(uclist.getuint16(i));
+		if (_notifiedItems.find(item->getObjId()) != _notifiedItems.end())
+			continue;
 		item->callUsecodeEvent_npcNearby(_objId);
-	}*/
+		_notifiedItems.insert(item->getObjId());
+	}
 }
 
 bool Actor::areEnemiesNear() {
@@ -1210,13 +1231,16 @@ void Actor::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_direction);
 	ws->writeUint32LE(_fallStart);
 	ws->writeUint32LE(_actorFlags);
-	ws->writeByte(_unk0C);
+	ws->writeByte(_unkByte);
 
 	if (GAME_IS_CRUSADER) {
 		ws->writeUint16LE(_defaultActivity[0]);
 		ws->writeUint16LE(_defaultActivity[1]);
 		ws->writeUint16LE(_defaultActivity[2]);
 		ws->writeUint16LE(_combatTactic);
+		ws->writeUint32LE(_homeX);
+		ws->writeUint32LE(_homeY);
+		ws->writeUint32LE(_homeZ);
 	}
 }
 
@@ -1235,13 +1259,16 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 	_direction = rs->readUint16LE();
 	_fallStart = rs->readUint32LE();
 	_actorFlags = rs->readUint32LE();
-	_unk0C = rs->readByte();
+	_unkByte = rs->readByte();
 
 	if (GAME_IS_CRUSADER) {
 		_defaultActivity[0] = rs->readUint16LE();
 		_defaultActivity[1] = rs->readUint16LE();
 		_defaultActivity[2] = rs->readUint16LE();
 		_combatTactic = rs->readUint16LE();
+		_homeX = rs->readUint32LE();
+		_homeY = rs->readUint32LE();
+		_homeZ = rs->readUint32LE();
 	}
 
 	return true;
@@ -1774,22 +1801,40 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	newactor->setDefaultActivity(1, item->getQuality() >> 8);
 	newactor->setDefaultActivity(2, other->getMapNum());
 
-	// TODO: once I know what these fields are...
+	newactor->setUnkByte(item->getQuality() & 0xff);
+
+	uint16 wpntype = npcData->getWpnType();
+	Item *weapon = ItemFactory::createItem(wpntype, 0, 0, 0, 0, newactor->getMapNum(), 0, true);
+	/* TODO:
+	if (gameDifficulty == 4) {
+	   wpntype = randomlyGetHigherWeaponType(shape, wpntype);
+	}*/
+	// TODO: should this be addItemCru? If so need to move it from MainActor.
+	weapon->moveToContainer(newactor, false);
+	newactor->setCombatTactic(0);
+	newactor->setHomePosition(x, y, z);
+
 	/*
-	 newactor->setField0x5c(0);
-	 newactor->setField0x5e(x, y);
+	 TODO: once I know what this field is.. seems to never be used in game?
 	 newactor->setField0x12(item->getNpcNum() >> 4);
-	 newactor->setField0x63(item->getQuality() & 0xff);
-
-	 uint16 wpnType = npcData->getWpnType();
-	 if (gameDifficulty == 4) {
-		wpnType = randomlyGetHigherWeaponType(shape, wpntype);
-	 }
-
-	 // give weapon to NPC.
 	 */
 
 	return newactor->getObjId();
+}
+
+uint32 Actor::I_setUnkByte(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	ARG_UINT16(value);
+	if (actor)
+		actor->setUnkByte(static_cast<uint8>(value & 0xff));
+	return 0;
+}
+
+uint32 Actor::I_getUnkByte(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getUnkByte();
 }
 
 uint32 Actor::I_setActivity(const uint8 *args, unsigned int /*argsize*/) {

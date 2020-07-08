@@ -46,7 +46,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_isNPC, // byte Intrinsic008(Item *)
 	Item::I_getZ, // byte Intrinsic009(Item *)
 	Item::I_destroy, // void Intrinsic00A(Item *)
-	0, // get something npcdata, maybe HP void Intrinsic00B(4 bytes)
+	Actor::I_getUnkByte, // get something about npcdata - struct byte 0x63 (99)
 	Ultima8Engine::I_setAvatarInStasis, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
 	0, // TODO: Actor::I_turnToward(Actor *, direction, unk)
@@ -120,7 +120,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026
 	// 0x050
-	0, // void Intrinsic050(4 bytes)
+	0, // TODO: int16 Actor::I_getCurrentActivityNo // void Intrinsic050(4 bytes)
 	Actor::I_clrInCombat, // void Intrinsic051(4 bytes)
 	Actor::I_setDefaultActivity0, // void Intrinsic052(6 bytes)
 	Actor::I_setDefaultActivity1, // void Intrinsic053(6 bytes)
@@ -186,7 +186,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setBroken, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	0, // TODO: PaletteFaderProcess::I_setPalToAllBlack
+	0, // TODO: PaletteFaderProcess::I_setPalToAllBlack - should also resume cycle process.
 	// 0x090
 	MusicProcess::I_musicStop, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
@@ -198,7 +198,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // TODO: PaletteFaderProcess:I_setScreenGreyscale(void) (converts all colors to their Y values on each channel)
 	0, // void Intrinsic098(void) // TODO: reset vargas health to 500.. weird.
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
-	0, // TODO: PaletteFaderProcess::I_stopFadesAndResetToGamePal(void),
+	0, // TODO: PaletteFaderProcess::I_stopFadesAndResetToGamePal(void), - should also stop cycle process.
 	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
 	0, // TODO: PaletteFaderProcess::I_fadeFromBlackWithParam
 	PaletteFaderProcess::I_fadeToBlack, // fade to black with number of steps
@@ -269,7 +269,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // TODO: PaletteFaderProcess::I_setPalToAllGrey // sets all colors to 0x3F3F3F
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
-	0, // void Intrinsic0DD(4 bytes)
+	0, // TODO: Actor::I_getLastActivityNo void Intrinsic0DD(4 bytes)
 	Actor::I_setCombatTactic, // void Intrinsic0DE(6 bytes)
 	Actor::I_getEquip, // void Intrinsic0DF(6 bytes)
 	// 0x0E0
@@ -279,12 +279,12 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getDefaultActivity2, // void Intrinsic0E3(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0E4(4 bytes)
 	0, // TODO: Actor::I_attack(Actor *, uint16 target) (implement me)
-	0, // void Intrinsic0E6(6 bytes)
+	Actor::I_setUnkByte, // void Intrinsic0E6(6 bytes)
 	Actor::I_setDead,
 	Item::I_cast, // void Intrinsic0E8(6 bytes)
 	Item::I_andStatus, // void Intrinsic0E9(6 bytes)
 	Item::I_getQLo, // based on same coff set as 02B
-	0, // void Intrinsic0EB(void)
+	MainActor::I_getNumberOfCredits, // void Intrinsic0EB(void)
 	Item::I_popToEnd,
 	Item::I_popToContainer,
 	BatteryChargerProcess::I_create,

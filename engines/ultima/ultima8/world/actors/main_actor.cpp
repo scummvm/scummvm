@@ -175,7 +175,6 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			item->moveToContainer(this);
 			if (!_activeWeapon)
 				_activeWeapon = item->getObjId();
-			warning("TODO: Set new weapon as active weapon if there is none");
 			if (showtoast)
 				pickupArea->addPickup(item);
 		}
@@ -800,6 +799,17 @@ uint32 MainActor::I_addItemCru(const uint8 *args,
 	if (av->addItemCru(item, showtoast != 0))
 		return 1;
 
+	return 0;
+}
+
+uint32 MainActor::I_getNumberOfCredits(const uint8 *args,
+unsigned int /*argsize*/) {
+	MainActor *av = getMainActor();
+	if (av) {
+		Item *item = av->getFirstItemWithShape(0x4ed, true);
+		if (item)
+			return item->getQuality();
+	}
 	return 0;
 }
 

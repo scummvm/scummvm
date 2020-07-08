@@ -148,6 +148,7 @@ public:
 	INTRINSIC(I_hasKeycard);
 	INTRINSIC(I_clrKeycards);
 	INTRINSIC(I_addItemCru);
+	INTRINSIC(I_getNumberOfCredits);
 
 	void getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_);
 

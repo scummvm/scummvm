@@ -78,7 +78,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Actor::I_isNPC(Item *)", // proably - actually checks is itemno < 256?
 	"byte Item::I_getZ(Item *)",
 	"void Item::I_destroy(Item *)", // probably? often called after creating a replacement object and setting it to the same position (eg, LUGGAGE::gotHit)
-	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Maybe get HP? Called from ANDROID::calledFromAnim, goes to NPCDEATH
+	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Some unknown value set for NPCs based on Q of egg.
 	"void Ultima8Engine::I_setAvatarInStasis(int)",
 	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
 	"int16 Actor::I_turnToward(Actor *, direction, unk)", // TODO: work out what unk is
@@ -152,13 +152,13 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Item::I_IsOn(Item *, uint16 itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	// 0050
-	"int16 I_GetNPCDataField0x2_050(Actor *)",
+	"int16 Actor::I_getCurrentActivityNo(Actor *)",
 	"void Actor::I_clrInCombat(Actor *)", // probably, based on disasm.
 	"void Actor::I_setDefaultActivity0(Actor *, int)",
 	"void Actor::I_setDefaultActivity1(Actor *, int)",
 	"void Actor::I_setDefaultActivity2(Actor *, int)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
-	"void Intrinsic056(int itemno)", // Maybe set new target? TODO: check usecode to understand this.
+	"void I_setControlledNPCTo(int itemno)", // when you take over the Thermatron etc.
 	"int16 Item::I_getSurfaceWeight(Item *)",
 	"byte Item::I_isCentreOn(Item *, uint16 other)",
 	"void Item::I_setFrame(Item *, frame)", // based on same coff as 002
@@ -301,7 +301,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void PaletteFaderProcess::I_setPalToAllGrey(void)", // sets all colors to 0x3F3F3F
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"int16 Actor::I_GetNPCDataField0x4_0DD(Actor *)",
+	"int16 Actor::I_getLastActivityNo(Actor *)",
 	"void Actor::I_setCombatTactic(Actor *, int)",
 	"int16 Actor::I_getEquip(6 bytes)", // based on disasm
 	// 00E0

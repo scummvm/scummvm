@@ -288,7 +288,7 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 		uint8 align = npcds->readByte(); // 0x0B: alignments
 		actor->setAlignment(align & 0x0F);
 		actor->setEnemyAlignment(align & 0xF0);
-		actor->setUnk0C(npcds->readByte()); // 0x0C: unknown;
+		actor->setUnkByte(npcds->readByte()); // 0x0C: unknown;
 		// 0x0C is almost always zero, except for
 		// the avatar (0xC0) and
 		// Malchir, Vardion, Gorgrond, Beren (0xE0)

@@ -122,8 +122,11 @@ public:
 	void setFallStart(int32 zp) {
 		_fallStart = zp;
 	}
-	void setUnk0C(uint8 b) {
-		_unk0C = b;
+	void setUnkByte(uint8 b) {
+		_unkByte = b;
+	}
+	uint8 getUnkByte() const {
+		return _unkByte;
 	}
 
 	bool hasActorFlags(uint32 flags) const {
@@ -169,6 +172,9 @@ public:
 
 	void setDefaultActivity(int no, uint16 activity);
 	uint16 getDefaultActivity(int no) const;
+
+	void setHomePosition(int32 x, int32 y, int32 z);
+	void getHomePosition(int32 &x, int32 &y, int32 &z) const;
 
 	//! calculate the damage an attack against this Actor does.
 	//! \param other the attacker (can be zero)
@@ -294,6 +300,8 @@ public:
 	INTRINSIC(I_getDefaultActivity1);
 	INTRINSIC(I_getDefaultActivity2);
 	INTRINSIC(I_setCombatTactic);
+	INTRINSIC(I_setUnkByte);
+	INTRINSIC(I_getUnkByte);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B
@@ -329,7 +337,10 @@ protected:
 	uint16 _direction;
 
 	int32 _fallStart;
-	uint8 _unk0C; // unknown byte 0x0C from npcdata.dat
+
+	//! Unknown byte 0x0C from npcdata.dat in U8, or
+	//! Unknown byte 0x99 from NPC struct in Crusader.
+	uint8 _unkByte;
 
 	//! tactic being used in combat (for Crusader), the entry in the combat.dat flex.
 	uint16 _combatTactic;
@@ -338,6 +349,11 @@ protected:
 
 	//! the 3 default NPC activities from Crusader
 	uint16 _defaultActivity[3];
+
+	//! The "home" position used in some Crusader attack tactics
+	int32 _homeX;
+	int32 _homeY;
+	int32 _homeZ;
 
 	//! starts an activity (Ultima 8 version)
 	//! \return processID of process handling the activity or zero
