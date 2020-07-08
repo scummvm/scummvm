@@ -65,7 +65,8 @@ public:
 	virtual void createWidget() {}
 
 	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
-	virtual void getColors(int *fgcolor, int *bgcolor) { return; }
+	virtual uint getForeColor() { return 0; }
+	virtual uint getBackColor() { return 0; }
 
 	CastType _type;
 	Common::Rect _initialRect;
@@ -91,7 +92,6 @@ public:
 
 	void createMatte();
 	Graphics::Surface *getMatte();
-	// virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	Image::ImageDecoder *_img;
 	Graphics::FloodFill *_matte;
@@ -137,22 +137,25 @@ public:
 class ShapeCastMember : public CastMember {
 public:
 	ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	virtual uint getForeColor() override { return _fgCol; }
+	virtual uint getBackColor() override { return _bgCol; }
 
 	ShapeType _shapeType;
 	uint16 _pattern;
-	byte _fgCol;
-	byte _bgCol;
 	byte _fillType;
 	byte _lineThickness;
 	byte _lineDirection;
 	InkType _ink;
+
+private:
+	byte _fgCol;
+	byte _bgCol;
 };
 
 class TextCastMember : public CastMember {
 public:
 	TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
-	virtual void getColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);
 	virtual void createWidget() override;
@@ -162,8 +165,8 @@ public:
 	virtual bool setEditable(bool editable) override;
 	Graphics::TextAlign getAlignment();
 
-	uint getBackColor() { return _bgcolor; }
-	uint getForeColor() { return _fgcolor; }
+	virtual uint getBackColor() override { return _bgcolor; }
+	virtual uint getForeColor() override { return _fgcolor; }
 
 	SizeType _borderSize;
 	SizeType _gutterSize;

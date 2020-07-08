@@ -995,7 +995,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	switch (field) {
 	case kTheBackColor:
-		member->getColors(nullptr, &d.u.i);
+		d.u.i = member->getBackColor();
 		break;
 	case kTheCastType:
 		d.u.i = castType;
@@ -1004,7 +1004,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d = Datum(castInfo->fileName);
 		break;
 	case kTheForeColor:
-		member->getColors(&d.u.i, nullptr);
+		d.u.i = member->getForeColor();
 		break;
 	case kTheHeight:
 		d.u.i = cast->getCastMemberInitialRect(id).height();

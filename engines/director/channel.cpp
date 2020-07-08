@@ -232,8 +232,8 @@ MacShape *Channel::getShape() {
 		}
 
 		if (g_director->getVersion() > 3) {
-			shape->foreColor = sc->_fgCol;
-			shape->backColor = sc->_bgCol;
+			shape->foreColor = sc->getForeColor();
+			shape->backColor = sc->getBackColor();
 			shape->lineSize = sc->_lineThickness;
 			shape->ink = sc->_ink;
 		}

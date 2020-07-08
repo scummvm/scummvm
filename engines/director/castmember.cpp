@@ -430,14 +430,6 @@ void TextCastMember::setColors(int *fgcolor, int *bgcolor) {
 	((Graphics::MacText *)_widget)->_fullRefresh = true;
 }
 
-void TextCastMember::getColors(int *fgcolor, int *bgcolor) {
-	if (fgcolor)
-		*fgcolor = _fgcolor;
-
-	if (bgcolor)
-		*bgcolor = _bgcolor;
-}
-
 Graphics::TextAlign TextCastMember::getAlignment() {
 	switch (_textAlign) {
 	case kTextAlignRight:
