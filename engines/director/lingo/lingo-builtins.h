@@ -149,6 +149,7 @@ namespace LB {
 	void b_closeResFile(int nargs);
 	void b_closeXlib(int nargs);
 	void b_getNthFileNameInFolder(int nargs);
+	void b_open(int nargs);
 	void b_openDA(int nargs);
 	void b_openResFile(int nargs);
 	void b_openXlib(int nargs);

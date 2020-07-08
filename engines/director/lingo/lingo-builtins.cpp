@@ -133,7 +133,7 @@ static struct BuiltinProto {
 	{ "closeResFile",	LB::b_closeResFile,	0, 1, false, 2, BLTIN },	// D2 c
 	{ "closeXlib",		LB::b_closeXlib,	0, 1, false, 2, BLTIN },	// D2 c
 	{ "getNthFileNameInFolder",LB::b_getNthFileNameInFolder,2,2,true,4,FBLTIN },//	D4 f
-		// open															// D2 c
+	{ "open",			LB::b_open,			1, 2, false, 2, BLTIN },	// D2 c
 	{ "openDA",	 		LB::b_openDA, 		1, 1, false, 2, BLTIN },	// D2 c
 	{ "openResFile",	LB::b_openResFile,	1, 1, false, 2, BLTIN },	// D2 c
 	{ "openXlib",		LB::b_openXlib,		1, 1, false, 2, BLTIN },	// D2 c
@@ -1037,6 +1037,12 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	g_lingo->dropStack(nargs);
 
 	g_lingo->push(Datum(0));
+}
+
+void LB::b_open(int nargs) {
+	g_lingo->printSTUBWithArglist("b_open", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_openDA(int nargs) {
