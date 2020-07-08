@@ -365,6 +365,7 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 	}
 
 	_inFactory = false;
+	_assemblyContext = mainContext;
 
 	if (debugChannelSet(3, kDebugCompile)) {
 		if (_currentAssembly->size() && !_hadError)
