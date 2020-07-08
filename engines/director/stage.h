@@ -48,6 +48,7 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 	~Stage();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
+	bool needsAppliedColor(DirectorPlotData *pd);
 
 	void invertChannel(Channel *channel);
 	void setStageColor(uint stageColor);

@@ -143,12 +143,49 @@ void Stage::mergeDirtyRects() {
 	}
 }
 
+bool Stage::needsAppliedColor(DirectorPlotData *pd) {
+	// TODO: Is colour white always last entry in palette?
+	uint numColors = g_director->getPaletteColorCount() - 1;
+
+	if (pd->foreColor == 0 && pd->backColor == numColors)
+		return false;
+
+	switch (pd->ink) {
+	case kInkTypeReverse:
+	case kInkTypeNotReverse:
+	case kInkTypeAddPin:
+	case kInkTypeAdd:
+ 	case kInkTypeSubPin:
+	case kInkTypeLight:
+	case kInkTypeSub:
+	case kInkTypeDark:
+	case kInkTypeBackgndTrans:
+		return false;
+	default:
+		break;
+	}
+
+	if (pd->foreColor != 0) {
+		if (pd->ink != kInkTypeGhost && pd->ink != kInkTypeNotGhost)
+			return true;
+	}
+
+	if (pd->backColor != numColors) {
+		if (pd->ink != kInkTypeTransparent &&
+				pd->ink != kInkTypeNotTrans)
+			return true;
+	}
+
+	return false;
+}
+
 void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {
 	Common::Rect srcRect = channel->getBbox();
 	destRect.clip(srcRect);
 
 	MacShape *ms = channel->getShape();
 	DirectorPlotData pd(_wm, channel->getSurface(), blitTo, destRect, channel->_sprite->_ink, channel->_sprite->_backColor, channel->_sprite->_foreColor, g_director->getPaletteColorCount());
+	pd.applyColor = needsAppliedColor(&pd);
 
 	if (ms) {
 		inkBlitShape(&pd, srcRect, ms);
