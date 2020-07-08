@@ -286,4 +286,23 @@ void GlkEngine::beep() {
 	_pcSpeaker->speakerOn(50, 50);
 }
 
+void GlkEngine::switchToWhiteOnBlack() {
+	const uint WHITE = Conf::parseColor("ffffff");
+	const uint BLACK = Conf::parseColor("000000");
+
+	_conf->_wMarginX = 0;
+	_conf->_wMarginY = 0;
+	_conf->_tMarginY = 4;
+	_conf->_propInfo._caretColor = WHITE;
+
+	_conf->_windowColor = _conf->_windowSave = 0;
+	WindowStyle &ws1 = _conf->_tStyles[style_Normal];
+	ws1.bg = BLACK;
+	ws1.fg = WHITE;
+
+	WindowStyle &ws2 = _conf->_tStyles[style_Input];
+	ws2.bg = BLACK;
+	ws2.fg = WHITE;
+}
+
 } // End of namespace Glk

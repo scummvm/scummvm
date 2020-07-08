@@ -115,6 +115,12 @@ protected:
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame() = 0;
+
+	/**
+	 * Switches Glk from the default black on white color scheme
+	 * to white on black
+	 */
+	void switchToWhiteOnBlack();
 public:
 	Blorb *_blorb;
 	Clipboard *_clipboard;

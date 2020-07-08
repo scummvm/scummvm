@@ -66,15 +66,17 @@ private:
 	 */
 	void get(const Common::String &key, double &field);
 
+public:
 	/**
 	 * Parse a color
 	 */
-	uint parseColor(const Common::String &str);
+	static uint parseColor(const Common::String &str);
 
 	/**
 	 * Convert an RGB tuplet to a color
 	 */
-	uint parseColor(const byte *rgb);
+	static uint parseColor(const byte *rgb);
+
 public:
 	MonoFontInfo _monoInfo;
 	PropFontInfo _propInfo;
