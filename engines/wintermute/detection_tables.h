@@ -593,7 +593,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Conspiracao Dumont (Demo)
 	WME_WINENTRY("conspiracao", "Demo",
-		WME_ENTRY1s("ConspiracaoDumont.exe", "106f3f2c8f18bb5ffffeed634ace256c", 32908032), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
+		WME_ENTRY1s("ConspiracaoDumont.exe", "106f3f2c8f18bb5ffffeed634ace256c", 32908032), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_0),
 
 	// Corrosion: Cold Winter Waiting
 	WME_WINENTRY("corrosion", "",
