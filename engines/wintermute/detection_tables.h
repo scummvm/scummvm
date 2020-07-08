@@ -130,6 +130,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"sofiasdebt",      "Sofia's Debt"},
 	{"sotv1",           "Shadows on the Vatican - Act I: Greed"},
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
+	{"sunrise",         "Sunrise: The game"},
 	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},
 	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},
 	{"tehran1933",      "Murder In Tehran's Alleys 1933"},
@@ -4864,6 +4865,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("spacemadness", "Demo",
 		WME_ENTRY2s("data.dcp", "5c88a51d010ad24225dee432ed38b238", 25987377,
 					"lang-german.dcp", "78d06de2b4a8c68517eb6df3ded86d82", 1524330), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Sunrise: The game (Demo) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sunrise", "",
+		WME_ENTRY1s("data.dcp", "3bac4da87472d2e7676e9548970d521a", 52095549), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_7_93),
 
 	// Tanya Grotter and the Magical Double Bass
 	WME_WINENTRY("tanya1", "",

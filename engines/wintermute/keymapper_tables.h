@@ -223,6 +223,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "carolreed11" ||
 		gameId == "carolreed12" ||
 		gameId == "kulivocko" ||
+		gameId == "sunrise" ||
 		gameId == "rebeccacarlson1"
 	) {
 		act = new Action("HINT", _("Show hints"));
