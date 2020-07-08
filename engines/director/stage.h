@@ -40,7 +40,49 @@ namespace Director {
 
 struct Channel;
 struct MacShape;
-struct TransParams;
+
+struct TransParams {
+	TransitionType type;
+	uint frame;
+	uint duration;
+	uint chunkSize;
+	uint area;
+
+	int steps;
+	int stepDuration;
+
+	int xStepSize;
+	int yStepSize;
+
+	int xpos, ypos;
+
+	int stripSize;
+
+	TransParams() {
+		type = kTransNone;
+		frame = 0;
+		duration = 250;
+		chunkSize = 1;
+		area = 0;
+		steps = 0;
+		stepDuration = 0;
+		stripSize = 0;
+
+		xStepSize = yStepSize = 0;
+		xpos = ypos = 0;
+	}
+
+	TransParams(uint16 d, uint16 a, uint16 c, TransitionType t) :
+			duration(d), area(a), chunkSize(c), type(t) {
+		frame = 0;
+		steps = 0;
+		stepDuration = 0;
+		stripSize = 0;
+
+		xStepSize = yStepSize = 0;
+		xpos = ypos = 0;
+	}
+};
 
 class Stage : public Graphics::MacWindow, public Object<Stage> {
  public:
