@@ -27,6 +27,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/channel.h"
 #include "director/sprite.h"
 #include "director/stage.h"
 #include "director/castmember.h"

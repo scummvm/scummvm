@@ -102,38 +102,6 @@ struct TransParams {
 	}
 };
 
-struct MacShape {
-	InkType ink;
-	byte spriteType;
-	byte foreColor;
-	byte backColor;
-	int lineSize;
-	uint pattern;
-};
-
-struct Channel {
-	Sprite *_sprite;
-
-	bool _dirty;
-	bool _visible;
-	uint _constraint;
-	Common::Point _currentPoint;
-	Common::Point _delta;
-
-	Channel(Sprite *sp);
-	bool isDirty(Sprite *nextSprite = nullptr);
-
-	void addRegistrationOffset(Common::Point &pos);
-	Common::Rect getBbox();
-	Common::Point getPosition();
-	MacShape *getShape();
-	Graphics::ManagedSurface *getSurface();
-	const Graphics::Surface *getMask(bool forceMatte = false);
-
-	void setClean(Sprite *nextSprite, int spriteId);
-	void addDelta(Common::Point pos);
-};
-
 class Score {
 public:
 	Score(Movie *movie);

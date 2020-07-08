@@ -33,6 +33,7 @@
 #include "director/stage.h"
 #include "director/score.h"
 #include "director/castmember.h"
+#include "director/channel.h"
 #include "director/sprite.h"
 #include "director/util.h"
 

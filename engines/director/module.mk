@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	archive.o \
 	cast.o \
 	castmember.o \
+	channel.o \
 	detection.o \
 	director.o \
 	events.o \

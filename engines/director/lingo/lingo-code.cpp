@@ -46,6 +46,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/channel.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
