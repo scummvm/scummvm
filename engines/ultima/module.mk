@@ -563,6 +563,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/combat_dat.o \
 	ultima8/world/actors/combat_process.o \
 	ultima8/world/actors/grant_peace_process.o \
+	ultima8/world/actors/guard_process.o \
 	ultima8/world/actors/heal_process.o \
 	ultima8/world/actors/loiter_process.o \
 	ultima8/world/actors/main_actor.o \
