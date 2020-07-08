@@ -577,6 +577,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastTimerReset;
 		break;
+	case kTheWindowList:
+		d = g_lingo->_windowList;
+		break;
 	case kTheTimeoutScript:
 		d.type = STRING;
 		if (mainArchive->primaryEventHandlers.contains(kEventTimeout))
@@ -661,6 +664,13 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheTimeoutScript:
 		setPrimaryEventHandler(kEventTimeout, d.asString());
+		break;
+	case kTheWindowList:
+		if (d.type == ARRAY) {
+			g_lingo->_windowList = d;
+		} else {
+			warning("Lingo::setTheEntity(): kTheWindowList must be a list");
+		}
 		break;
 	default:
 		warning("Lingo::setTheEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));

@@ -175,6 +175,9 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_passEvent = false;
 	_perFrameHook = Datum();
 
+	_windowList.type = ARRAY;
+	_windowList.u.farr = new DatumArray;
+
 	initEventHandlerTypes();
 
 	initBuiltIns();

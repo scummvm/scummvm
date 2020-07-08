@@ -464,6 +464,8 @@ public:
 	bool _passEvent;
 	Datum _perFrameHook;
 
+	Datum _windowList;
+
 public:
 	void executeImmediateScripts(Frame *frame);
 	void executePerFrameHook(int frame, int subframe);
