@@ -34,10 +34,19 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_fft Fast Fourier Transform (FFT)
+ * @ingroup common
+ *
+ * @brief  API for the FFT algorithm.
+ *
+ * @{
+ */
+
 class CosineTable;
 
 /**
- * (Inverse) Fast Fourier Transform.
+ * (Inverse) Fast Fourier Transform
  *
  * Used in engines:
  *  - scumm
@@ -79,6 +88,8 @@ private:
 	void fft16(Complex *z);
 	void fft(int n, int logn, Complex *z);
 };
+
+/** @} */
 
 } // End of namespace Common
 

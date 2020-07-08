@@ -30,6 +30,14 @@
 namespace Common {
 
 /**
+ * @defgroup common_memory_pool Memory stream
+ * @ingroup common_memory
+ *
+ * @brief API for managing the memory stream.
+ * @{
+ */
+
+/**
  * Simple memory based 'stream', which implements the ReadStream interface for
  * a plain memory block.
  */
@@ -333,6 +341,8 @@ public:
 
 	byte *getData() { return _data; }
 };
+
+/** @} */
 
 } // End of namespace Common
 

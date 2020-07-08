@@ -25,6 +25,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_sinetables Sine tables
+ * @ingroup common
+ *
+ * @brief API for managing sine tables.
+ *
+ * @{
+ */
+
 class SineTable {
 public:
 	/**
@@ -68,6 +77,8 @@ private:
 	int _refSize; // _nPoints / 4
 	int _nPoints; // range of operator[]
 };
+
+/** @} */
 
 } // End of namespace Common
 

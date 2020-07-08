@@ -34,6 +34,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_bitstream Bit stream
+ * @ingroup common
+ *
+ * @brief  API for implementing a bit stream.
+ *
+ * @{
+ */
+
+/**
  * A template implementing a bit stream for different data memory layouts.
  *
  * Such a bit stream reads valueBits-wide values from the data stream and
@@ -470,6 +479,7 @@ typedef BitStreamImpl<BitStreamMemoryStream, 32, false, true > BitStreamMemory32
 /** 32-bit big-endian data, LSB to MSB. */
 typedef BitStreamImpl<BitStreamMemoryStream, 32, false, false> BitStreamMemory32BELSB;
 
+/** @} */
 
 } // End of namespace Common
 

@@ -30,6 +30,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_tokenizer String tokenizer
+ * @ingroup common
+ *
+ * @brief String tokenizer for creating tokens out of parts of a string.
+ *
+ * @{
+ */
+
+/**
  * A simple non-optimized string tokenizer.
  *
  * Example of use:
@@ -81,6 +90,9 @@ private:
 	U32String::const_iterator            _tokenBegin; ///< Latest found token's begin iterator (Valid after a call to nextToken())
 	U32String::const_iterator            _tokenEnd;   ///< Latest found token's end iterator (Valid after a call to nextToken())
 };
+
+/** @} */
+
 } // End of namespace Common
 
 #endif

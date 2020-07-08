@@ -28,6 +28,16 @@
 namespace Common {
 
 /**
+ * @defgroup common_func Functions
+ * @ingroup common
+ *
+ * @brief API for managing functions.
+ *
+ * @{
+ */
+
+
+/**
  * Generic unary function.
  */
 template<class Arg, class Result>
@@ -535,6 +545,8 @@ GENERATE_TRIVIAL_HASH_FUNCTOR(unsigned int);
 GENERATE_TRIVIAL_HASH_FUNCTOR(unsigned long);
 
 #undef GENERATE_TRIVIAL_HASH_FUNCTOR
+
+/** @} */
 
 } // End of namespace Common
 

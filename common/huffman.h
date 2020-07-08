@@ -31,6 +31,18 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_huffmann Huffman bitstream decoding
+ * @ingroup common
+ *
+ * @brief API for operations related to Huffman bitstream decoding.
+ * 
+ * @details Used in engines:
+ *          - scumm
+ *		
+ * @{
+ */
+
 inline uint32 REVERSEBITS(uint32 x) {
 	x = (((x & ~0x55555555) >> 1) | ((x & 0x55555555) << 1));
 	x = (((x & ~0x33333333) >> 2) | ((x & 0x33333333) << 2));
@@ -43,8 +55,6 @@ inline uint32 REVERSEBITS(uint32 x) {
 /**
  * Huffman bitstream decoding
  *
- * Used in engines:
- *  - scumm
  */
 template<class BITSTREAM>
 class Huffman {
@@ -158,6 +168,8 @@ uint32 Huffman<BITSTREAM>::getSymbol(BITSTREAM &bits) const {
 	error("Unknown Huffman code");
 	return 0;
 }
+
+/** @} */
 
 } // End of namespace Common
 

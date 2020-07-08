@@ -34,6 +34,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_taskbar Taskbar Manager
+ * @ingroup common
+ *
+ * @brief The TaskbarManager module allows for interaction with the ScummVM application icon.
+ *
+ * @{
+ */
+
+/**
  * The TaskbarManager allows interaction with the ScummVM application icon:
  *  - in the taskbar on Windows 7 and later
  *  - in the launcher for Unity
@@ -186,6 +195,8 @@ return (path); \
 		return "";
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

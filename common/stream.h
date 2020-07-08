@@ -29,6 +29,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_stream Streams
+ * @ingroup common
+ *
+ * @brief API for managing readable and writable data streams.
+ *
+ * @{
+ */
+
 class ReadStream;
 class SeekableReadStream;
 
@@ -714,6 +723,7 @@ public:
 	SeekableReadStreamEndian(bool bigEndian) : ReadStreamEndian(bigEndian) {}
 };
 
+/** @} */
 
 } // End of namespace Common
 

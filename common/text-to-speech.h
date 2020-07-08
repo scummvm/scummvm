@@ -33,6 +33,15 @@ namespace Common {
 
 
 /**
+ * @defgroup common_text_speech Text-to-speech Manager
+ * @ingroup common
+ *
+ * @brief The TTS module allows for speech synthesis.
+ *
+ * @{
+ */
+
+/**
  * Text to speech voice class.
  */
 class TTSVoice {
@@ -340,6 +349,8 @@ protected:
 	void clearState();
 	virtual void updateVoices() {};
 };
+
+/** @} */
 
 } // End of namespace Common
 

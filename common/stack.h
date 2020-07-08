@@ -29,6 +29,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_stack Stack
+ * @ingroup common
+ *
+ * @brief Fixed-size stack implementation.
+ *
+ * @{
+ */
+
+/**
  * Extremly simple fixed size stack class.
  */
 template<class T, uint MAX_SIZE = 10>
@@ -139,6 +148,8 @@ public:
 		return _stack[i];
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

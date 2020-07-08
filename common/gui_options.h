@@ -95,6 +95,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_gui_options GUI options
+ * @ingroup common
+ *
+ * @brief API for managing the options of the graphical user interface (GUI).
+ *
+ * @{
+ */
+
 class String;
 
 bool checkGameGUIOption(const String &option, const String &str);
@@ -108,6 +117,7 @@ const String getGameGUIOptionsDescription(const String &options);
  */
 void updateGameGUIOptions(const String &options, const String &langOption);
 
+/** @} */
 
 } // End of namespace Common
 

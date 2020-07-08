@@ -33,6 +33,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_unarj ARJ decompressor
+ * @ingroup common
+ *
+ * @brief API related to ARJ archive files.
+ *
+ * @{
+ */
+
 class Archive;
 
 /**
@@ -42,6 +51,8 @@ class Archive;
  * May return 0 in case of a failure.
  */
 Archive *makeArjArchive(const String &name);
+
+/** @} */
 
 } // End of namespace Common
 

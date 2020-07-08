@@ -25,6 +25,14 @@
 
 #include "common/types.h"
 
+/**
+ * @defgroup lua_ds Double serialization
+ * @ingroup lua
+ *
+ * @brief Functions for encoding and decoding double values.
+ *
+ * @{
+ */
 
 namespace Util {
 
@@ -57,5 +65,7 @@ SerializedDouble encodeDouble(double value);
 double decodeDouble(SerializedDouble value);
 
 } // End of namespace Util
+
+/** @} */
 
 #endif

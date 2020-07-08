@@ -31,6 +31,16 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_config Configuration manager
+ * @ingroup common
+ *
+ * @brief  The (singleton) configuration manager, used to query & set configuration
+ *         values using string keys.
+ *
+ * @{
+ */
+
 class WriteStream;
 class SeekableReadStream;
 
@@ -206,6 +216,8 @@ private:
 
 	String			_filename;
 };
+
+/** @} */
 
 } // End of namespace Common
 

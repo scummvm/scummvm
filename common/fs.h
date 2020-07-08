@@ -34,6 +34,15 @@ class AbstractFSNode;
 
 namespace Common {
 
+/**
+ * @defgroup common_fs File system
+ * @ingroup common
+ *
+ * @brief API for operations on the file system.
+ *
+ * @{
+ */
+
 class FSNode;
 class SeekableReadStream;
 class WriteStream;
@@ -371,6 +380,7 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
+/** @} */
 
 } // End of namespace Common
 

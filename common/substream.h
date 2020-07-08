@@ -30,6 +30,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_substream Substreams
+ * @ingroup common_stream
+ *
+ * @brief API for managing readable data substreams.
+ *
+ * @{
+ */
+
+/**
  * SubReadStream provides access to a ReadStream restricted to the range
  * [currentPosition, currentPosition+end).
  *
@@ -124,6 +133,7 @@ public:
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
+/** @} */
 
 } // End of namespace Common
 

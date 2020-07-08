@@ -27,6 +27,15 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_zlib zlib
+ * @ingroup common
+ *
+ * @brief API for zlib operations.
+ * 
+ * @{
+ */
+
 class SeekableReadStream;
 class WriteStream;
 
@@ -144,6 +153,8 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, ui
  * returned).
  */
 WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped);
+
+/** @} */
 
 } // End of namespace Common
 

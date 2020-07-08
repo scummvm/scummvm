@@ -28,10 +28,13 @@
 namespace Common {
 
 /**
- * This file contains an enum with commonly used error codes.
+ * @defgroup common_error Error codes
+ * @ingroup common
+ *
+ * @brief  Commonly used error codes.
+ *
+ * @{
  */
-
-
 
 /**
  * Error codes which may be reported by plugins under various circumstances.
@@ -102,6 +105,8 @@ public:
 	 */
 	ErrorCode getCode() const { return _code; }
 };
+
+/** @} */
 
 } // End of namespace Common
 

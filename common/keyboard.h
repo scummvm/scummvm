@@ -36,6 +36,16 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_keyboard Keyboard
+ * @ingroup common
+ *
+ * @brief API for keyboard operations.
+ *
+ *		
+ * @{
+ */
+
 enum KeyCode {
 	KEYCODE_INVALID     = 0,
 
@@ -355,6 +365,8 @@ struct KeyState {
 		return keycode == x.keycode && hasFlags(x.flags & ~KBD_STICKY);
 	}
 };
+
+/** @} */
 
 } // End of namespace Common
 

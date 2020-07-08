@@ -21,12 +21,8 @@
  */
 
 /**
- * @file
- * PKWARE DCL ("explode") ("PKWARE data compression library") decompressor used in engines:
- * - agos (exclusively for Simon 2 setup.shr file)
- * - mohawk
- * - neverhood
- * - sci
+ * 
+
  */
 
 #ifndef COMMON_DCL_H
@@ -36,6 +32,21 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_dcl Data compression library
+ * @ingroup common
+ *
+ * @brief  PKWARE data compression library.
+ *
+ * @details PKWARE DCL ("explode") ("PKWARE data compression library") decompressor used in engines:
+ *          - agos (exclusively for Simon 2 setup.shr file)
+ *          - mohawk
+ *          - neverhood
+ *          - sci
+ *
+ * @{
+ */
+ 
 class ReadStream;
 class SeekableReadStream;
 
@@ -56,6 +67,8 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream, uint32 packe
  * if successful and 0 otherwise. This method is meant for cases, where the unpacked size is not known.
  */
 SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream);
+
+/** @} */
 
 } // End of namespace Common
 

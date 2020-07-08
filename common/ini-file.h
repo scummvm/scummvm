@@ -29,6 +29,16 @@
 
 namespace Common {
 
+/**
+ * @defgroup common_ini_file INI files
+ * @ingroup common
+ *
+ * @brief API for operations on INI configuration files.
+ *
+ *		
+ * @{
+ */
+
 class SeekableReadStream;
 class WriteStream;
 
@@ -127,6 +137,8 @@ private:
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;
 };
+
+/** @} */
 
 } // End of namespace Common
 

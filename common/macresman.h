@@ -22,12 +22,7 @@
 
 /**
  * @file
- * Macintosh resource fork manager used in engines:
- * - groovie
- * - mohawk
- * - pegasus
- * - sci
- * - scumm
+
  */
 
 #include "common/array.h"
@@ -39,6 +34,21 @@
 #define COMMON_MACRESMAN_H
 
 namespace Common {
+
+/**
+ * @defgroup common_macresman Macintosh resource fork manager
+ * @ingroup common
+ *
+ * @brief API for Macintosh resource fork manager.
+ *
+ * @details Used in engines:
+ *          - groovie
+ *          - mohawk
+ *          - pegasus
+ *          - sci
+ *          - scumm
+ * @{
+ */
 
 typedef Array<uint16> MacResIDArray;
 typedef Array<uint32> MacResTagArray;
@@ -281,6 +291,8 @@ private:
 	ResType *_resTypes;
 	ResPtr  *_resLists;
 };
+
+/** @} */
 
 } // End of namespace Common
 

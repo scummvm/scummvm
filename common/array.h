@@ -31,6 +31,16 @@
 namespace Common {
 
 /**
+ * @defgroup common_array Arrays
+ * @ingroup common
+ *
+ * @brief  Functions for working on arrays.
+ *
+ * @{
+ */
+
+
+/**
  * This class implements a dynamically sized container, which
  * can be accessed similar to a regular C++ array. Accessing
  * elements is performed in constant time (like with plain arrays).
@@ -455,6 +465,8 @@ private:
 
 	Comparator _comparator;
 };
+
+/** @} */
 
 } // End of namespace Common
 

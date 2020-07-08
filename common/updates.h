@@ -28,6 +28,15 @@
 namespace Common {
 
 /**
+ * @defgroup common_update Update Manager
+ * @ingroup common
+ *
+ * @brief The UpdateManager module allows for automatic update checking.
+ *
+ * @{
+ */
+
+/**
  * The UpdateManager allows configuring of the automatic update checking
  * for systems that support it:
  *  - using Sparkle on Mac OS X
@@ -126,6 +135,8 @@ public:
 	 */
 	static int normalizeInterval(int interval);
 };
+
+/** @} */
 
 } // End of namespace Common
 
