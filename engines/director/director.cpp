@@ -81,6 +81,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
+	_mainStage = nullptr;
 	_currentStage = nullptr;
 	_lingo = nullptr;
 
@@ -133,16 +134,18 @@ Common::Error DirectorEngine::run() {
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
-	_currentStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
-	*_currentStage->_refCount += 1;
+	
+	_mainStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
+	*_mainStage->_refCount += 1;
 
 	if (!debugChannelSet(-1, kDebugDesktop))
-		_currentStage->disableBorder();
+		_mainStage->disableBorder();
 
 	_surface = new Graphics::ManagedSurface;
 	_wm->setScreen(_surface);
-	_wm->addWindowInitialized(_currentStage);
-	_wm->setActiveWindow(_currentStage->getId());
+	_wm->addWindowInitialized(_mainStage);
+	_wm->setActiveWindow(_mainStage->getId());
+	_currentStage = _mainStage;
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound(this);

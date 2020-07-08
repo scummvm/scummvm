@@ -142,7 +142,8 @@ public:
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
-	Stage *getStage() const { return _currentStage; }
+	Stage *getMainStage() const { return _mainStage; }
+	Stage *getCurrentStage() const { return _currentStage; }
 	Movie *getCurrentMovie() const;
 	Common::String getCurrentPath() const;
 	void setPalette(int id);
@@ -194,6 +195,7 @@ private:
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 
+	Stage *_mainStage;
 	Stage *_currentStage;
 
 	Graphics::MacPatterns _director3Patterns;

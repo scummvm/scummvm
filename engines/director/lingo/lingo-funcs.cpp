@@ -227,7 +227,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		Stage *stage = _vm->getStage();
+		Stage *stage = _vm->getCurrentStage();
 
 		stage->_nextMovie.movie = cleanedFilename;
 		stage->getCurrentMovie()->getScore()->_stopPlay = true;
@@ -292,7 +292,7 @@ void Lingo::func_gotoprevious() {
 
 void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
-	Stage *stage = _vm->getStage();
+	Stage *stage = _vm->getCurrentStage();
 
 
 	// play #done

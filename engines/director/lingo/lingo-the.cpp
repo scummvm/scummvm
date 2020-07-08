@@ -470,7 +470,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseCast:
 		{
-			Common::Point pos = g_director->getStage()->getMousePos();
+			Common::Point pos = g_director->getCurrentStage()->getMousePos();
 			Score *sc = _vm->getCurrentMovie()->getScore();
 			uint16 spriteId = sc->getSpriteIDFromPos(pos);
 			d.type = INT;
@@ -492,11 +492,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheMouseH:
 		d.type = INT;
-		d.u.i = g_director->getStage()->getMousePos().x;
+		d.u.i = g_director->getCurrentStage()->getMousePos().x;
 		break;
 	case kTheMouseV:
 		d.type = INT;
-		d.u.i = g_director->getStage()->getMousePos().y;
+		d.u.i = g_director->getCurrentStage()->getMousePos().y;
 		break;
 	case kTheMouseUp:
 		d.type = INT;
@@ -548,7 +548,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheSprite(id, field);
 		break;
 	case kTheStage:
-		d = _vm->getStage();
+		d = _vm->getMainStage();
 		break;
 	case kTheStageBottom:
 		d.type = INT;
@@ -654,7 +654,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		}
 		break;
 	case kTheStageColor:
-		g_director->getStage()->setStageColor(d.asInt());
+		g_director->getCurrentStage()->setStageColor(d.asInt());
 		break;
 	case kTheSprite:
 		setTheSprite(id, field, d);
@@ -839,7 +839,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheCastNum:
 		if (d.asInt() != sprite->_castId) {
-			g_director->getStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
 			sprite->setCast(d.asInt());
 		}
 		break;
@@ -862,7 +862,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheHeight:
 		if (sprite->_puppet && sprite->_stretch) {
-			g_director->getStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
 			sprite->_height = d.asInt();
 		}
 		break;
@@ -936,7 +936,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheWidth:
 		if (sprite->_puppet && sprite->_stretch) {
-			g_director->getStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
 			sprite->_width = d.asInt();
 		}
 		break;
