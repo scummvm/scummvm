@@ -670,8 +670,12 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| BLTIN arglist				{
 		g_lingo->codeFunc($BLTIN, $arglist);
 		delete $BLTIN; }
-	| tOPEN expr tWITH expr		{ g_lingo->code1(LC::c_open); }
-	| tOPEN expr 				{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
+	| tOPEN expr tWITH expr		{
+		Common::String open("open");
+		g_lingo->codeFunc(&open, 2); }
+	| tOPEN expr 				{
+		Common::String open("open");
+		g_lingo->codeFunc(&open, 1); }
 
 globallist: ID					{
 		mVar($ID, kVarGlobal);

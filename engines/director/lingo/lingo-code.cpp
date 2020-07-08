@@ -107,7 +107,6 @@ static struct FuncDescr {
 	{ LC::c_objectpropassign,"c_objectpropassign","ss" }, // object, prop
 	{ LC::c_objectproppush,	"c_objectproppush","ss" }, // object, prop
 	{ LC::c_of,				"c_of",				"" },
-	{ LC::c_open,			"c_open",			"" },
 	{ LC::c_or,				"c_or",				"" },
 	{ LC::c_play,			"c_play",			"" },
 	{ LC::c_printtop,		"c_printtop",		""  },
@@ -1523,13 +1522,6 @@ void LC::c_procret() {
 		g_lingo->_abort = true;
 		return;
 	}
-}
-
-void LC::c_open() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
-
-	warning("STUB: c_open(%s, %s)", d1.asString().c_str(), d2.asString().c_str());
 }
 
 void LC::c_hilite() {
