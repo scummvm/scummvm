@@ -109,6 +109,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "thebox" ||
 		gameId == "thekite" ||
 		gameId == "tradestory" ||
+		gameId == "war" ||
 		gameId == "wmedemo"
 	) {
 		/* no game-specific keymap */
