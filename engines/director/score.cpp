@@ -156,20 +156,47 @@ void Channel::setClean(Sprite *nextSprite, int spriteId) {
 	}
 }
 
+void Channel::addRegistrationOffset(Common::Point &pos) {
+	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
+		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
+
+		pos += Common::Point(bc->_initialRect.left - bc->_regX,
+												 bc->_initialRect.top - bc->_regY);
+	}
+}
+
 void Channel::addDelta(Common::Point pos) {
 	// TODO: Channel should have a pointer to its score
-	if (_constraint > g_director->getCurrentMovie()->getScore()->_channels.size() - 1) {
-		warning("Channel::addDelta: Received out-of-bounds constraint: %d", _constraint);
-		_constraint = 0;
-	} else if (_sprite->_moveable && _constraint > 0) {
+	if (_sprite->_moveable &&
+			_constraint > 0 &&
+			_constraint < g_director->getCurrentMovie()->getScore()->_channels.size()) {
 		Common::Rect constraintBbox = g_director->getCurrentMovie()->getScore()->_channels[_constraint]->getBbox();
 
 		Common::Rect currentBbox = getBbox();
-		currentBbox.translate(pos.x, pos.y);
+		currentBbox.translate(_delta.x + pos.x, _delta.y + pos.y);
 
-		// TODO: Snap to the nearest point on the rectangle.
-		if (constraintBbox.findIntersectingRect(currentBbox) != currentBbox)
-			return;
+		Common::Point regPoint;
+		addRegistrationOffset(regPoint);
+
+		constraintBbox.top += regPoint.y;
+		constraintBbox.bottom -= regPoint.y;
+
+		constraintBbox.left += regPoint.x;
+		constraintBbox.right -= regPoint.x;
+
+		if (!constraintBbox.contains(currentBbox)) {
+			if (currentBbox.top < constraintBbox.top) {
+				pos.y += constraintBbox.top - currentBbox.top;
+			} else if (currentBbox.bottom > constraintBbox.bottom) {
+				pos.y += constraintBbox.bottom - currentBbox.bottom;
+			}
+
+			if (currentBbox.left < constraintBbox.left) {
+				pos.x += constraintBbox.left - currentBbox.left;
+			} else if (currentBbox.right > constraintBbox.right) {
+				pos.x += constraintBbox.right - currentBbox.right;
+			}
+		}
 	}
 
 	_delta += pos;
@@ -177,14 +204,7 @@ void Channel::addDelta(Common::Point pos) {
 
 Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
-
-	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
-		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
-
-		res += Common::Point(bc->_initialRect.left - bc->_regX,
-												 bc->_initialRect.top - bc->_regY);
-	}
-
+	addRegistrationOffset(res);
 	return res;
 }
 

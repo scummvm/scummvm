@@ -123,6 +123,7 @@ struct Channel {
 	Channel(Sprite *sp);
 	bool isDirty(Sprite *nextSprite = nullptr);
 
+	void addRegistrationOffset(Common::Point &pos);
 	Common::Rect getBbox();
 	Common::Point getPosition();
 	MacShape *getShape();
