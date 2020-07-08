@@ -101,6 +101,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "sofiasdebt" ||
 		gameId == "spaceinvaders" ||
 		gameId == "spacemadness" ||
+		gameId == "strangechange" ||
 		gameId == "tanya1" ||
 		gameId == "tanya2" ||
 		gameId == "theancientmark1" ||

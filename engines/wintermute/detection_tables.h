@@ -130,6 +130,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"sofiasdebt",      "Sofia's Debt"},
 	{"sotv1",           "Shadows on the Vatican - Act I: Greed"},
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
+	{"strangechange",   "Strange Change"},
 	{"sunrise",         "Sunrise: The game"},
 	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},
 	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},
@@ -4865,6 +4866,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("spacemadness", "Demo",
 		WME_ENTRY2s("data.dcp", "5c88a51d010ad24225dee432ed38b238", 25987377,
 					"lang-german.dcp", "78d06de2b4a8c68517eb6df3ded86d82", 1524330), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Strange Change
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("strangechange", "",
+		WME_ENTRY1s("data.dcp", "818e53c1584dac28f336195d7dcfb97d", 3762512), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
 
 	// Sunrise: The game (Demo) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
