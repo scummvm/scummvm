@@ -39,7 +39,13 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 	_contentIsDirty = true;
 
 	_type = kWindowUnknown;
+
+	_visible = true;
 }
+
+void BaseMacWindow::setVisible(bool visible) { _visible = visible; }
+
+bool BaseMacWindow::isVisible() { return _visible; }
 
 MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :
 		BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable) {
