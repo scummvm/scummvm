@@ -77,25 +77,12 @@ Common::Error Stage::loadInitialMovie() {
 			Common::Array<uint16> vers = _mainArchive->getResourceIDList(MKTAG('v', 'e', 'r', 's'));
 			for (Common::Array<uint16>::iterator iterator = vers.begin(); iterator != vers.end(); ++iterator) {
 				Common::SeekableSubReadStreamEndian *vvers = _mainArchive->getResource(MKTAG('v', 'e', 'r', 's'), *iterator);
-				byte majorVer = vvers->readByte();
-				byte minorVer = vvers->readByte();
-				byte devStage = vvers->readByte();
-				const char *devStr;
-				switch (devStage) {
-				case 0x20: devStr = "Prealpha"; break;
-				case 0x40: devStr = "Alpha";    break;
-				case 0x60: devStr = "Beta";     break;
-				case 0x80: devStr = "Final";    break;
-				default:   devStr = "";
-				}
+				Common::MacResManager::MacVers *v = Common::MacResManager::parseVers(vvers);
 
-				byte preReleaseVer = vvers->readByte();
-				uint16 region = vvers->readUint16BE();
-				Common::String str = vvers->readPascalString();
-				Common::String msg = vvers->readPascalString();
+				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", v->majorVer, v->minorVer, v->devStr.c_str(),
+					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
 
-				debug(0, "Detected vers %d.%d %s.%d region %d '%s' '%s'", majorVer, minorVer, devStr,
-					preReleaseVer, region, str.c_str(), msg.c_str());
+				delete v;
 			}
 		}
 
