@@ -138,7 +138,7 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			si._unknown = (unk2data << 24) + ((data[4] & 0xF0) << 16) | (data[5] << 8) | data[8];
+			si._unknown = (unk2data << 24) + (((data[4] & 0xF0) << 16) | (data[5] << 8) | data[8]);
 
 			// This seems to be how it's used..
 			si._weight = data[7];
