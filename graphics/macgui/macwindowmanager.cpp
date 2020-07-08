@@ -412,6 +412,9 @@ void MacWindowManager::draw() {
 
 	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
 		BaseMacWindow *w = *it;
+		if (!w->isVisible())
+			continue;
+
 		if (w->draw(_screen, _fullRefresh)) {
 			w->setDirty(false);
 

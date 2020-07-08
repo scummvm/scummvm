@@ -99,6 +99,17 @@ public:
 	bool isEditable() { return _editable; }
 
 	/**
+	 * Mutator to change the visible state of the window.
+	 * @param visible Target state.
+	 */
+	void setVisible(bool visible);
+	/**
+	 * Accessor to determine whether a window is active.
+	 * @return True if the window is active.
+	 */
+	bool isVisible();
+
+	/**
 	 * Method to access the entire surface of the window (e.g. to draw an image).
 	 * @return A pointer to the entire surface of the window.
 	 */
@@ -141,6 +152,8 @@ protected:
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
+
+	bool _visible;
 };
 
 /**
