@@ -25,6 +25,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember.h"
+#include "director/channel.h"
 #include "director/movie.h"
 #include "director/sound.h"
 #include "director/sprite.h"
