@@ -300,7 +300,87 @@ bool MeshX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 		return false;
 	}
 
-	return shadow->addMesh(_adjacency.data(), modelMat, light, extrusionDepth);
+	Math::Vector3d invLight = light;
+	Math::Matrix4 matInverseModel = modelMat;
+	matInverseModel.transpose();
+	matInverseModel.inverse();
+	matInverseModel.transform(&invLight, false);
+
+	uint32 numEdges = 0;
+
+	Common::Array<bool> isFront(_indexCount / 3, false);
+
+	// First pass : for each face, record if it is front or back facing the light
+	for (uint32 i = 0; i < _indexCount / 3; i++) {
+		uint16 index0 = _indexData[3 * i + 0];
+		uint16 index1 = _indexData[3 * i + 1];
+		uint16 index2 = _indexData[3 * i + 2];
+
+		Math::Vector3d v0(_vertexData + index0 * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v1(_vertexData + index1 * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v2(_vertexData + index2 * kVertexComponentCount + kPositionOffset);
+
+		// Transform vertices or transform light?
+		Math::Vector3d vNormal = Math::Vector3d::crossProduct(v2 - v1, v1 - v0);
+
+		if (Math::Vector3d::dotProduct(vNormal, invLight) >= 0.0f) {
+			isFront[i] = false; // back face
+		} else {
+			isFront[i] = true; // front face
+		}
+	}
+
+	// Allocate a temporary edge list
+	Common::Array<uint16> edges(_indexCount * 2, 0);
+
+	// First pass : for each face, record if it is front or back facing the light
+	for (uint32 i = 0; i < _indexCount / 3; i++) {
+		if (isFront[i]) {
+			uint16 wFace0 = _indexData[3 * i + 0];
+			uint16 wFace1 = _indexData[3 * i + 1];
+			uint16 wFace2 = _indexData[3 * i + 2];
+
+			uint32 adjacent0 = _adjacency[3 * i + 0];
+			uint32 adjacent1 = _adjacency[3 * i + 1];
+			uint32 adjacent2 = _adjacency[3 * i + 2];
+
+			if (adjacent0 == kNullIndex || isFront[adjacent0] == false) {
+				//	add edge v0-v1
+				edges[2 * numEdges + 0] = wFace0;
+				edges[2 * numEdges + 1] = wFace1;
+				numEdges++;
+			}
+			if (adjacent1 == kNullIndex || isFront[adjacent1] == false) {
+				//	add edge v1-v2
+				edges[2 * numEdges + 0] = wFace1;
+				edges[2 * numEdges + 1] = wFace2;
+				numEdges++;
+			}
+			if (adjacent2 == kNullIndex || isFront[adjacent2] == false) {
+				//	add edge v2-v0
+				edges[2 * numEdges + 0] = wFace2;
+				edges[2 * numEdges + 1] = wFace0;
+				numEdges++;
+			}
+		}
+	}
+
+	for (uint32 i = 0; i < numEdges; i++) {
+		Math::Vector3d v1(_vertexData + edges[2 * i + 0] * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v2(_vertexData + edges[2 * i + 1] * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v3 = v1 - invLight * extrusionDepth;
+		Math::Vector3d v4 = v2 - invLight * extrusionDepth;
+
+		// Add a quad (two triangles) to the vertex list
+		shadow->addVertex(v1);
+		shadow->addVertex(v2);
+		shadow->addVertex(v3);
+		shadow->addVertex(v2);
+		shadow->addVertex(v4);
+		shadow->addVertex(v3);
+	}
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

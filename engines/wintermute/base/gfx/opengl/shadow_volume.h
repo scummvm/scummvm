@@ -41,8 +41,7 @@ public:
 	ShadowVolume(BaseGame *inGame);
 	virtual ~ShadowVolume();
 
-	// we need to pass mesh information in some way
-	bool addMesh(uint32 *adjacency, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
+	void addVertex(const Math::Vector3d &vertex);
 	bool reset();
 
 	bool renderToStencilBuffer();
@@ -52,7 +51,6 @@ public:
 
 private:
 	bool render();
-	inline void addVertex(Math::Vector3d &vertex);
 	uint32 _color;
 	bool initMask();
 	BaseArray<Math::Vector3d> _vertices; // Vertex data for rendering shadow volume
