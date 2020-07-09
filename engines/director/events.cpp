@@ -40,7 +40,7 @@ bool processQuitEvent(bool click) {
 
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_QUIT) {
-			g_director->getCurrentMovie()->getScore()->_stopPlay = true;
+			g_director->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 			return true;
 		}
 
@@ -77,7 +77,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				sc->_stopPlay = true;
+				sc->_playState = kPlayStopped;
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -170,7 +170,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 
-		if (getVersion() >= 3 && sc->getCurrentFrame() > 0 && !sc->_stopPlay && _lingo->getEventCount() == 0)
+		if (getVersion() >= 3 && sc->getCurrentFrame() > 0 && sc->_playState != kPlayStopped && _lingo->getEventCount() == 0)
 			_lingo->registerEvent(kEventIdle);
 
 		if (!bufferLingoEvents)

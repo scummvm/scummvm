@@ -194,7 +194,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		if (!stage->setNextMovie(movieFilenameRaw))
 			return;
 
-		stage->getCurrentMovie()->getScore()->_stopPlay = true;
+		stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 
 		stage->_nextMovie.frameS.clear();
 		stage->_nextMovie.frameI = -1;

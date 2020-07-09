@@ -283,6 +283,12 @@ enum {
 	kCursorMouseUp
 };
 
+enum PlayState {
+	kPlayNotStarted,
+	kPlayStarted,
+	kPlayStopped
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;

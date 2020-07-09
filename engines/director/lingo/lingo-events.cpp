@@ -318,7 +318,7 @@ void Lingo::processEvents() {
 	while (!_eventQueue.empty()) {
 		LingoEvent el = _eventQueue.pop();
 
-		if (_vm->getCurrentMovie()->getScore()->_stopPlay && el.event != kEventStopMovie)
+		if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped && el.event != kEventStopMovie)
 			continue;
 
 		if (lastEventId == el.eventId && !_passEvent)

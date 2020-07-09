@@ -112,7 +112,7 @@ public:
 	byte _currentFrameRate;
 
 	byte _puppetTempo;
-	bool _stopPlay;
+	PlayState _playState;
 	uint32 _nextFrameTime;
 
 	int _numChannelsDisplayed;

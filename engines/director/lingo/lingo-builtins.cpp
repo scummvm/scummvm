@@ -1280,7 +1280,7 @@ void LB::b_printFrom(int nargs) {
 
 void LB::b_quit(int nargs) {
 	if (g_director->getCurrentMovie())
-		g_director->getCurrentMovie()->getScore()->_stopPlay = true;
+		g_director->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 
 	g_lingo->pushVoid();
 }
@@ -1914,7 +1914,7 @@ void LB::b_updateStage(int nargs) {
 
 		if (score->_framesRan > 9) {
 			warning("b_updateStage(): exiting due to debug few frames only");
-			score->_stopPlay = true;
+			score->_playState = kPlayStopped;
 		}
 	}
 }

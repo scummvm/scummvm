@@ -63,7 +63,7 @@ Score::Score(Movie *movie) {
 	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
-	_stopPlay = false;
+	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
 
@@ -202,23 +202,23 @@ void Score::startLoop() {
 	initGraphics(_vm->_surface->w, _vm->_surface->h);
 
 	_currentFrame = 0;
-	_stopPlay = false;
+	_playState = kPlayStarted;
 	_nextFrameTime = 0;
 
 	if (_frames.size() <= 1) {	// We added one empty sprite
 		warning("Score::startLoop(): Movie has no frames");
-		_stopPlay = true;
+		_playState = kPlayStopped;
 	}
 
 	// All frames in the same movie have the same number of channels
-	if (!_stopPlay)
+	if (_playState != kPlayStopped)
 		for (uint i = 0; i < _frames[1]->_sprites.size(); i++)
 			_channels.push_back(new Channel(_frames[1]->_sprites[i]));
 
 	if (_vm->getVersion() >= 3)
 		_lingo->processEvent(kEventStartMovie);
 
-	while (!_stopPlay) {
+	while (_playState != kPlayStopped) {
 		if (_currentFrame >= _frames.size()) {
 			if (debugChannelSet(-1, kDebugNoLoop))
 				break;

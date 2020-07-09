@@ -589,7 +589,7 @@ void Lingo::execute(uint pc) {
 
 		if (++counter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
-			_vm->getCurrentMovie()->getScore()->_stopPlay = true;
+			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 			break;
 		}
 	}
