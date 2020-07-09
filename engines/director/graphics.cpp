@@ -793,60 +793,25 @@ void DirectorEngine::setCursor(int type) {
 	}
 }
 
-void inkDrawPixel(int x, int y, int color, void *data) {
+void inkDrawPixel(int x, int y, int src, void *data) {
 	DirectorPlotData *p = (DirectorPlotData *)data;
 
 	if (!p->destRect.contains(x, y))
 		return;
 
 	byte *dst;
-	byte src;
-
 	byte tmpDst;
 
 	dst = (byte *)p->dst->getBasePtr(x, y);
 
-	if (p->isShape) {
+	if (p->ms) {
 		// Get the pixel that macDrawPixel will give us, but store it to apply the
 		// ink later.
 		tmpDst = *dst;
-		Graphics::macDrawPixel(x, y, color, ((MacShape *)p->src)->pd);
+		Graphics::macDrawPixel(x, y, src, p->ms->pd);
 		src = *dst;
 
 		*dst = tmpDst;
-	} else if (!p->src) {
-			error("Director::inkDrawPixel(): No source surface");
-			return;
-	} else {
-		src = *((const byte *)((Graphics::ManagedSurface *)p->src)->getBasePtr(p->srcPoint.x, p->srcPoint.y));
-
-		if (p->manualInk) {
-			switch(p->ink) {
-			case kInkTypeMask:
-				src = (src == p->backColor ? 0xff : p->foreColor);
-				break;
-			case kInkTypeReverse:
-				src = (src == p->foreColor ? 0 : p->numColors - 1);
-				break;
-			case kInkTypeNotReverse:
-				src = (src == p->backColor ? p->numColors - 1 : 0);
-				break;
-			case kInkTypeGhost:
-				src = (src == p->foreColor ? p->backColor : p->numColors - 1);
-				break;
-			case kInkTypeNotGhost:
-				src = (src == p->backColor ? p->numColors - 1 : p->backColor);
-				break;
-			case kInkTypeNotCopy:
-				src = (src == p->foreColor ? p->backColor : p->foreColor);
-				break;
-			case kInkTypeNotTrans:
-				src = (src == p->foreColor ? p->backColor : p->numColors - 1);
-				break;
-			default:
-				break;
-			}
-		}
 	}
 
  	switch (p->ink) {
@@ -918,7 +883,7 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 		break;
 		// Arithmetic ink types
 	default: {
-		if (src != p->numColors - 1) {
+		if (src != p->colorWhite) {
 			byte rSrc, gSrc, bSrc;
 			byte rDst, gDst, bDst;
 
@@ -930,10 +895,10 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 					*dst = p->_wm->findBestColor((rSrc + rDst) / 2, (gSrc + gDst) / 2, (bSrc + bDst) / 2);
 				break;
 			case kInkTypeAddPin:
-					*dst = p->_wm->findBestColor(MIN((rSrc + rDst), p->numColors - 1), MIN((gSrc + gDst), p->numColors - 1), MIN((bSrc + bDst), p->numColors - 1));
+					*dst = p->_wm->findBestColor(MIN((rSrc + rDst), p->colorWhite), MIN((gSrc + gDst), p->colorWhite), MIN((bSrc + bDst), p->colorWhite));
 				break;
 			case kInkTypeAdd:
-					*dst = p->_wm->findBestColor(abs(rSrc + rDst) % p->numColors, abs(gSrc + gDst) % p->numColors, abs(bSrc + bDst) % p->numColors);
+					*dst = p->_wm->findBestColor(abs(rSrc + rDst) % p->colorWhite + 1, abs(gSrc + gDst) % p->colorWhite + 1, abs(bSrc + bDst) % p->colorWhite + 1);
 				break;
 			case kInkTypeSubPin:
 					*dst = p->_wm->findBestColor(MAX(rSrc - rDst, 0), MAX(gSrc - gDst, 0), MAX(bSrc - bDst, 0));
@@ -942,7 +907,7 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 					*dst = p->_wm->findBestColor(MAX(rSrc, rDst), MAX(gSrc, gDst), MAX(bSrc, bDst));
 				break;
 			case kInkTypeSub:
-					*dst = p->_wm->findBestColor(abs(rSrc - rDst) % p->numColors, abs(gSrc - gDst) % p->numColors, abs(bSrc - bDst) % p->numColors);
+					*dst = p->_wm->findBestColor(abs(rSrc - rDst) % p->colorWhite + 1, abs(gSrc - gDst) % p->colorWhite + 1, abs(bSrc - bDst) % p->colorWhite + 1);
 				break;
 			case kInkTypeDark:
 					*dst = p->_wm->findBestColor(MIN(rSrc, rDst), MIN(gSrc, gDst), MIN(bSrc, bDst));
@@ -955,16 +920,11 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 	}
 }
 
-bool DirectorPlotData::setNeedsColor() {
-	if (isShape)
-		return false;
-
-	// TODO: Is colour white always last entry in palette?
-	uint colorBlack = 0;
-	uint colorWhite = g_director->getPaletteColorCount() - 1;
+void DirectorPlotData::setApplyColor() {
+	applyColor = false;
 
 	if (foreColor == colorBlack && backColor == colorWhite)
-		return false;
+		applyColor = false;
 
 	switch (ink) {
 	case kInkTypeReverse:
@@ -976,23 +936,21 @@ bool DirectorPlotData::setNeedsColor() {
 	case kInkTypeSub:
 	case kInkTypeDark:
 	case kInkTypeBackgndTrans:
-		return false;
+		applyColor = false;
 	default:
 		break;
 	}
 
 	if (foreColor != colorBlack) {
 		if (ink != kInkTypeGhost && ink != kInkTypeNotGhost)
-			return true;
+			applyColor = true;
 	}
 
 	if (backColor != colorWhite) {
 		if (ink != kInkTypeTransparent &&
 				ink != kInkTypeNotTrans)
-			return true;
+			applyColor = true;
 	}
-
-	return false;
 }
 
 

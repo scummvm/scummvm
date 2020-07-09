@@ -114,31 +114,31 @@ struct MacShape {
 struct DirectorPlotData {
 	Graphics::MacWindowManager *_wm;
 	Graphics::ManagedSurface *dst;
+
 	Common::Rect destRect;
 	Common::Point srcPoint;
 
-	bool isShape;
-	void *src;
+	Graphics::ManagedSurface *srf;
+	MacShape *ms;
 
-	bool applyColor;
-	bool manualInk;
+	SpriteType sprite;
 	InkType ink;
-	int numColors;
-	uint backColor;
-	uint foreColor;
+	int colorWhite;
+	int colorBlack;
 
-	bool setNeedsColor(); // graphics.cpp
+	int backColor;
+	int foreColor;
+	bool applyColor;
 
-	DirectorPlotData(Graphics::MacWindowManager *w, InkType i, uint b, uint f, uint n) : _wm(w), ink(i), backColor(b), foreColor(f), numColors(n) {
-		isShape = false;
-		manualInk = false;
+	void setApplyColor(); // graphics.cpp
 
-		applyColor = setNeedsColor();
+	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s,InkType i, uint b, uint f) : _wm(w), sprite(s), ink(i), backColor(b), foreColor(f) {
+		srf = nullptr;
+		ms = nullptr;
 	}
 
 	~DirectorPlotData() {
-		if (isShape)
-			delete (MacShape *)src;
+		delete ms;
 	}
 };
 

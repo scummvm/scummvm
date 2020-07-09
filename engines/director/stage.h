@@ -163,6 +163,8 @@ private:
 	Common::StringArray _movieQueue;
 
 private:
+	int preprocessColor(DirectorPlotData *p, int src);
+
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect);
 	void inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);

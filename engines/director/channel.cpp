@@ -44,17 +44,17 @@ Channel::Channel(Sprite *sp) {
 }
 
 DirectorPlotData Channel::getPlotData() {
-	DirectorPlotData pd(g_director->_wm, _sprite->_ink, getBackColor(), getForeColor(), g_director->getPaletteColorCount());
+	DirectorPlotData pd(g_director->_wm, _sprite->_spriteType, _sprite->_ink, getBackColor(), getForeColor());
+	pd.colorWhite = pd._wm->_colorWhite;
+	pd.colorBlack = pd._wm->_colorBlack;
 
-	void *src = getSurface();
-	if (src) {
-		pd.isShape = false;
-		pd.src = src;
+	pd.srf = getSurface();
+	if (!pd.srf) {
+		// Shapes come colourized from macDrawPixel
+		pd.ms = getShape();
+		pd.applyColor = false;
 	} else {
-		pd.src = getShape();
-
-		if (pd.src)
-			pd.isShape = true;
+		pd.setApplyColor();
 	}
 
 	return pd;

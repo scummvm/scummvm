@@ -157,17 +157,9 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 	pd.destRect = destRect;
 	pd.dst = blitTo;
 
-	if (pd.isShape) {
+	if (pd.ms) {
 		inkBlitShape(&pd, srcRect);
-	} else if (pd.src) {
-		if (channel->_sprite->_spriteType == kTextSprite) {
-			// Copy colourization is already applied to text by default
-			if (pd.ink != kInkTypeCopy)
-				pd.manualInk = true;
-			else
-				pd.applyColor = false;
-		}
-
+	} else if (pd.srf) {
 		inkBlitSurface(&pd, srcRect, channel->getMask());
 	} else {
 		warning("Stage::inkBlitFrom: No source surface");
@@ -175,19 +167,18 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 }
 
 void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
-	MacShape *ms = ((MacShape *)pd->src);
-
-	if (!ms)
+	if (!pd->ms)
 		return;
 
+	// Preprocess shape colours
 	switch (pd->ink) {
 	case kInkTypeNotTrans:
 	case kInkTypeNotReverse:
 	case kInkTypeNotGhost:
 		return;
 	case kInkTypeReverse:
-		ms->foreColor = 0;
-		ms->backColor = 0;
+		pd->ms->foreColor = 0;
+		pd->ms->backColor = 0;
 		break;
 	default:
 		break;
@@ -195,60 +186,104 @@ void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 
 	Common::Rect fillRect((int)srcRect.width(), (int)srcRect.height());
 	fillRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotFill(pd->dst, nullptr, &g_director->getPatterns(), ms->pattern, srcRect.left, srcRect.top, 1, ms->backColor);
+	Graphics::MacPlotData plotFill(pd->dst, nullptr, &g_director->getPatterns(), pd->ms->pattern, srcRect.left, srcRect.top, 1, pd->ms->backColor);
 
-	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
+	Common::Rect strokeRect(MAX((int)srcRect.width() - pd->ms->lineSize, 0), MAX((int)srcRect.height() - pd->ms->lineSize, 0));
 	strokeRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotStroke(pd->dst, nullptr, &g_director->getPatterns(), 1, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
+	Graphics::MacPlotData plotStroke(pd->dst, nullptr, &g_director->getPatterns(), 1, strokeRect.left, strokeRect.top, pd->ms->lineSize, pd->ms->backColor);
 
-	switch (ms->spriteType) {
+	switch (pd->ms->spriteType) {
 	case kRectangleSprite:
-		ms->pd = &plotFill;
-		Graphics::drawFilledRect(fillRect, ms->foreColor, inkDrawPixel, pd);
+		pd->ms->pd = &plotFill;
+		Graphics::drawFilledRect(fillRect, pd->ms->foreColor, inkDrawPixel, pd);
 		// fall through
 	case kOutlinedRectangleSprite:
-		ms->pd = &plotStroke;
-		Graphics::drawRect(strokeRect, ms->foreColor, inkDrawPixel, pd);
+		pd->ms->pd = &plotStroke;
+		Graphics::drawRect(strokeRect, pd->ms->foreColor, inkDrawPixel, pd);
 		break;
 	case kRoundedRectangleSprite:
-		ms->pd = &plotFill;
-		Graphics::drawRoundRect(fillRect, 12, ms->foreColor, true, inkDrawPixel, pd);
+		pd->ms->pd = &plotFill;
+		Graphics::drawRoundRect(fillRect, 12, pd->ms->foreColor, true, inkDrawPixel, pd);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
-		ms->pd = &plotStroke;
-		Graphics::drawRoundRect(strokeRect, 12, ms->foreColor, false, inkDrawPixel, pd);
+		pd->ms->pd = &plotStroke;
+		Graphics::drawRoundRect(strokeRect, 12, pd->ms->foreColor, false, inkDrawPixel, pd);
 		break;
 	case kOvalSprite:
-		ms->pd = &plotFill;
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, ms->foreColor, true, inkDrawPixel, pd);
+		pd->ms->pd = &plotFill;
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, pd->ms->foreColor, true, inkDrawPixel, pd);
 		// fall through
 	case kOutlinedOvalSprite:
-		ms->pd = &plotStroke;
-		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, inkDrawPixel, pd);
+		pd->ms->pd = &plotStroke;
+		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, false, inkDrawPixel, pd);
 		break;
 	case kLineTopBottomSprite:
-		ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, pd);
+		pd->ms->pd = &plotStroke;
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, inkDrawPixel, pd);
 		break;
 	case kLineBottomTopSprite:
-		ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, pd);
+		pd->ms->pd = &plotStroke;
+		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, inkDrawPixel, pd);
 		break;
 	default:
-		warning("Stage::inkBlitFrom: Expected shape type but got type %d", ms->spriteType);
+		warning("Stage::inkBlitFrom: Expected shape type but got type %d", pd->ms->spriteType);
 	}
 }
 
 void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {
+	if (!pd->srf)
+		return;
+
+	// TODO: Determine why colourization causes problems in Warlock
+	if (pd->sprite == kTextSprite)
+		pd->applyColor = false;
+
 	pd->srcPoint.y = MAX(abs(srcRect.top - pd->destRect.top), 0);
 	for (int i = 0; i < pd->destRect.height(); i++, pd->srcPoint.y++) {
 		pd->srcPoint.x = MAX(abs(srcRect.left - pd->destRect.left), 0);
 		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 		for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++)
-			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++))))
-				inkDrawPixel(pd->destRect.left + j, pd->destRect.top + i, 0, pd);
+			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+				inkDrawPixel(pd->destRect.left + j, pd->destRect.top + i,
+										 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
+			}
 	}
+}
+
+int Stage::preprocessColor(DirectorPlotData *p, int src) {
+	// HACK: Right now this method is just used for adjusting the colourization on text
+	// sprites, as it would be costly to colourize the chunks on the fly each
+	// time a section needs drawing. It's ugly but mostly works.
+	if (p->sprite == kTextSprite) {
+		switch(p->ink) {
+		case kInkTypeMask:
+			src = (src == p->backColor ? 0xff : p->foreColor);
+			break;
+		case kInkTypeReverse:
+			src = (src == p->foreColor ? 0 : p->colorWhite);
+			break;
+		case kInkTypeNotReverse:
+			src = (src == p->backColor ? p->colorWhite : 0);
+			break;
+		case kInkTypeGhost:
+			src = (src == p->foreColor ? p->backColor : p->colorWhite);
+			break;
+		case kInkTypeNotGhost:
+			src = (src == p->backColor ? p->colorWhite : p->backColor);
+			break;
+		case kInkTypeNotCopy:
+			src = (src == p->foreColor ? p->backColor : p->foreColor);
+			break;
+		case kInkTypeNotTrans:
+			src = (src == p->foreColor ? p->backColor : p->colorWhite);
+			break;
+		default:
+			break;
+		}
+	}
+
+	return src;
 }
 
 Common::Point Stage::getMousePos() {
