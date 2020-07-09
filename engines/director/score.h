@@ -73,7 +73,9 @@ public:
 	void gotoLoop();
 	void gotoNext();
 	void gotoPrevious();
-	void startLoop();
+	void startPlay();
+	void step();
+	void stopPlay();
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
 	Channel *getChannelById(uint16 id);

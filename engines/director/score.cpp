@@ -196,7 +196,7 @@ int Score::getPreviousLabelNumber(int referenceFrame) {
 	return 0;
 }
 
-void Score::startLoop() {
+void Score::startPlay() {
 	// TODO: Should the dims be set by the movie?
 	debugC(1, kDebugImages, "Score dims: %dx%d", _movie->_movieRect.width(), _movie->_movieRect.height());
 	initGraphics(_vm->_surface->w, _vm->_surface->h);
@@ -217,34 +217,39 @@ void Score::startLoop() {
 
 	if (_vm->getVersion() >= 3)
 		_lingo->processEvent(kEventStartMovie);
+}
 
-	while (_playState != kPlayStopped) {
-		if (_currentFrame >= _frames.size()) {
-			if (debugChannelSet(-1, kDebugNoLoop))
-				break;
-
-			_currentFrame = 0;
+void Score::step() {
+	if (_currentFrame >= _frames.size()) {
+		if (debugChannelSet(-1, kDebugNoLoop)) {
+			_playState = kPlayStopped;
+			return;
 		}
 
-		update();
-
-		if (_currentFrame < _frames.size())
-			_vm->processEvents();
-
-		if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot)) {
-			warning("Score::startLoop(): ran frame %0d", _framesRan);
-			_framesRan++;
-		}
-
-		if (debugChannelSet(-1, kDebugFewFramesOnly) && _framesRan > 9) {
-			warning("Score::startLoop(): exiting due to debug few frames only");
-			break;
-		}
-
-		if (debugChannelSet(-1, kDebugScreenshot))
-			screenShot();
+		_currentFrame = 0;
 	}
 
+	update();
+
+	if (_currentFrame < _frames.size())
+		_vm->processEvents();
+
+	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot)) {
+		warning("Score::startLoop(): ran frame %0d", _framesRan);
+		_framesRan++;
+	}
+
+	if (debugChannelSet(-1, kDebugFewFramesOnly) && _framesRan > 9) {
+		warning("Score::startLoop(): exiting due to debug few frames only");
+		_playState = kPlayStopped;
+		return;
+	}
+
+	if (debugChannelSet(-1, kDebugScreenshot))
+		screenShot();
+}
+
+void Score::stopPlay() {
 	if (_vm->getVersion() >= 3)
 		_lingo->processEvent(kEventStopMovie);
 	_lingo->executePerFrameHook(-1, 0);

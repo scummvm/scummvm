@@ -184,7 +184,19 @@ Common::Error DirectorEngine::run() {
 	bool loop = true;
 
 	while (loop) {
+		_currentStage = _mainStage;
 		loop = _currentStage->step();
+
+		if (loop) {
+			DatumArray *windowList = g_lingo->_windowList.u.farr;
+			for (uint i = 0; i < windowList->size(); i++) {
+				if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+					continue;
+				
+				_currentStage = static_cast<Stage *>((*windowList)[i].u.obj);
+				_currentStage->step();
+			}
+		}
 	}
 
 	return Common::kNoError;

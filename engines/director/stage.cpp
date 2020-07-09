@@ -341,31 +341,38 @@ bool Stage::setNextMovie(Common::String &movieFilenameRaw) {
 }
 
 bool Stage::step() {
-	bool loop = false;
-
 	if (_currentMovie) {
 		debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		debug(0, "@@@@   Movie name '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
 		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-		bool goodMovie = _currentMovie->loadArchive();
+		switch (_currentMovie->getScore()->_playState) {
+		case kPlayNotStarted:
+			{
+				bool goodMovie = _currentMovie->loadArchive();
 
-		// If we came in a loop, then skip as requested
-		if (!_nextMovie.frameS.empty()) {
-			_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
-			_nextMovie.frameS.clear();
-		}
+				// If we came in a loop, then skip as requested
+				if (!_nextMovie.frameS.empty()) {
+					_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
+					_nextMovie.frameS.clear();
+				}
 
-		if (_nextMovie.frameI != -1) {
-			_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
-			_nextMovie.frameI = -1;
-		}
+				if (_nextMovie.frameI != -1) {
+					_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
+					_nextMovie.frameI = -1;
+				}
 
-		if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
-			debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
-
-			_currentMovie->getScore()->startLoop();
-
+				if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
+					debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
+					_currentMovie->getScore()->startPlay();
+				}
+			}
+			return true;
+		case kPlayStarted:
+			_currentMovie->getScore()->step();
+			return true;
+		case kPlayStopped:
+			_currentMovie->getScore()->stopPlay();
 			debugC(1, kDebugEvents, "Finished playback of movie '%s'", _currentMovie->getMacName().c_str());
 		}
 	}
@@ -415,10 +422,10 @@ bool Stage::step() {
 		}
 
 		_nextMovie.movie.clear();
-		loop = true;
+		return true;
 	}
 
-	return loop;
+	return false;
 }
 
 } // end of namespace Director
