@@ -48,7 +48,7 @@ class Frame;
 struct Label;
 class Movie;
 struct Resource;
-struct Channel;
+class Channel;
 class Sprite;
 class CastMember;
 

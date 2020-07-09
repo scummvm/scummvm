@@ -806,11 +806,11 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 
 	dst = (byte *)p->dst->getBasePtr(x, y);
 
-	if (p->macPlot) {
+	if (p->isShape) {
 		// Get the pixel that macDrawPixel will give us, but store it to apply the
 		// ink later.
 		tmpDst = *dst;
-		Graphics::macDrawPixel(x, y, color, p->macPlot);
+		Graphics::macDrawPixel(x, y, color, ((MacShape *)p->src)->pd);
 		src = *dst;
 
 		*dst = tmpDst;
@@ -818,7 +818,7 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 			error("Director::inkDrawPixel(): No source surface");
 			return;
 	} else {
-		src = *((const byte *)p->src->getBasePtr(p->srcPoint.x, p->srcPoint.y));
+		src = *((const byte *)((Graphics::ManagedSurface *)p->src)->getBasePtr(p->srcPoint.x, p->srcPoint.y));
 
 		if (p->manualInk) {
 			switch(p->ink) {
@@ -954,5 +954,45 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 	}
 	}
 }
+
+bool DirectorPlotData::setNeedsColor() {
+	if (isShape)
+		return false;
+
+	// TODO: Is colour white always last entry in palette?
+	uint numColors = g_director->getPaletteColorCount() - 1;
+
+	if (foreColor == 0 && backColor == numColors)
+		return false;
+
+	switch (ink) {
+	case kInkTypeReverse:
+	case kInkTypeNotReverse:
+	case kInkTypeAddPin:
+	case kInkTypeAdd:
+ 	case kInkTypeSubPin:
+	case kInkTypeLight:
+	case kInkTypeSub:
+	case kInkTypeDark:
+	case kInkTypeBackgndTrans:
+		return false;
+	default:
+		break;
+	}
+
+	if (foreColor != 0) {
+		if (ink != kInkTypeGhost && ink != kInkTypeNotGhost)
+			return true;
+	}
+
+	if (backColor != numColors) {
+		if (ink != kInkTypeTransparent &&
+				ink != kInkTypeNotTrans)
+			return true;
+	}
+
+	return false;
+}
+
 
 }

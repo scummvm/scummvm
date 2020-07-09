@@ -43,6 +43,23 @@ Channel::Channel(Sprite *sp) {
 	_sprite->updateCast();
 }
 
+DirectorPlotData Channel::getPlotData() {
+	DirectorPlotData pd(g_director->_wm, _sprite->_ink, getBackColor(), getForeColor(), g_director->getPaletteColorCount());
+
+	void *src = getSurface();
+	if (src) {
+		pd.isShape = false;
+		pd.src = src;
+	} else {
+		pd.src = getShape();
+
+		if (pd.src)
+			pd.isShape = true;
+	}
+
+	return pd;
+}
+
 Graphics::ManagedSurface *Channel::getSurface() {
 	if (_sprite->_cast && _sprite->_cast->_widget) {
 		return  _sprite->_cast->_widget->getSurface();

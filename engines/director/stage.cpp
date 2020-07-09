@@ -66,9 +66,10 @@ Stage::~Stage() {
 void Stage::invertChannel(Channel *channel) {
 	Common::Rect destRect = channel->getBbox();
 	for (int i = 0; i < destRect.height(); i++) {
-		byte *src = (byte *)_surface->getBasePtr(destRect.left, destRect.top + yy);
+		byte *src = (byte *)_surface.getBasePtr(destRect.left, destRect.top + i);
 		for (int j = 0; j < destRect.width(); j++, src++)
 			*src = ~(*src);
+	}
 }
 
 bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
@@ -148,53 +149,17 @@ void Stage::mergeDirtyRects() {
 	}
 }
 
-bool Stage::needsAppliedColor(DirectorPlotData *pd) {
-	// TODO: Is colour white always last entry in palette?
-	uint numColors = g_director->getPaletteColorCount() - 1;
-
-	if (pd->foreColor == 0 && pd->backColor == numColors)
-		return false;
-
-	switch (pd->ink) {
-	case kInkTypeReverse:
-	case kInkTypeNotReverse:
-	case kInkTypeAddPin:
-	case kInkTypeAdd:
- 	case kInkTypeSubPin:
-	case kInkTypeLight:
-	case kInkTypeSub:
-	case kInkTypeDark:
-	case kInkTypeBackgndTrans:
-		return false;
-	default:
-		break;
-	}
-
-	if (pd->foreColor != 0) {
-		if (pd->ink != kInkTypeGhost && pd->ink != kInkTypeNotGhost)
-			return true;
-	}
-
-	if (pd->backColor != numColors) {
-		if (pd->ink != kInkTypeTransparent &&
-				pd->ink != kInkTypeNotTrans)
-			return true;
-	}
-
-	return false;
-}
-
 void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {
 	Common::Rect srcRect = channel->getBbox();
 	destRect.clip(srcRect);
 
-	MacShape *ms = channel->getShape();
-	DirectorPlotData pd(_wm, channel->getSurface(), blitTo, destRect, channel->_sprite->_ink, channel->getBackColor(), channel->getForeColor(), g_director->getPaletteColorCount());
+	DirectorPlotData pd = channel->getPlotData();
+	pd.destRect = destRect;
+	pd.dst = blitTo;
 
-	if (ms) {
-		inkBlitShape(&pd, srcRect, ms);
+	if (pd.isShape) {
+		inkBlitShape(&pd, srcRect);
 	} else if (pd.src) {
-		pd.applyColor = needsAppliedColor(&pd);
 		if (channel->_sprite->_spriteType == kTextSprite) {
 			// Copy colourization is already applied to text by default
 			if (pd.ink != kInkTypeCopy)
@@ -209,7 +174,9 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 	}
 }
 
-void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect, MacShape *ms) {
+void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
+	MacShape *ms = ((MacShape *)pd->src);
+
 	switch (pd->ink) {
 	case kInkTypeNotTrans:
 	case kInkTypeNotReverse:
@@ -233,42 +200,40 @@ void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect, MacShape *
 
 	switch (ms->spriteType) {
 	case kRectangleSprite:
-		pd->macPlot = &plotFill;
+		ms->pd = &plotFill;
 		Graphics::drawFilledRect(fillRect, ms->foreColor, inkDrawPixel, pd);
 		// fall through
 	case kOutlinedRectangleSprite:
-		pd->macPlot = &plotStroke;
+		ms->pd = &plotStroke;
 		Graphics::drawRect(strokeRect, ms->foreColor, inkDrawPixel, pd);
 		break;
 	case kRoundedRectangleSprite:
-		pd->macPlot = &plotFill;
+		ms->pd = &plotFill;
 		Graphics::drawRoundRect(fillRect, 12, ms->foreColor, true, inkDrawPixel, pd);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
-		pd->macPlot = &plotStroke;
+		ms->pd = &plotStroke;
 		Graphics::drawRoundRect(strokeRect, 12, ms->foreColor, false, inkDrawPixel, pd);
 		break;
 	case kOvalSprite:
-		pd->macPlot = &plotFill;
+		ms->pd = &plotFill;
 		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, ms->foreColor, true, inkDrawPixel, pd);
 		// fall through
 	case kOutlinedOvalSprite:
-		pd->macPlot = &plotStroke;
+		ms->pd = &plotStroke;
 		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, inkDrawPixel, pd);
 		break;
 	case kLineTopBottomSprite:
-		pd->macPlot = &plotStroke;
+		ms->pd = &plotStroke;
 		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, pd);
 		break;
 	case kLineBottomTopSprite:
-		pd->macPlot = &plotStroke;
+		ms->pd = &plotStroke;
 		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, inkDrawPixel, pd);
 		break;
 	default:
 		warning("Stage::inkBlitFrom: Expected shape type but got type %d", ms->spriteType);
 	}
-
-	delete ms;
 }
 
 void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {

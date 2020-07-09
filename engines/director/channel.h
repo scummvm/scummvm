@@ -32,16 +32,20 @@ namespace Director {
 
 class Sprite;
 
-struct MacShape {
-	InkType ink;
-	byte spriteType;
-	byte foreColor;
-	byte backColor;
-	int lineSize;
-	uint pattern;
-};
+class Channel {
+public:
+	Channel(Sprite *sp);
 
-struct Channel {
+	DirectorPlotData getPlotData();
+	const Graphics::Surface *getMask(bool forceMatte = false);
+	Common::Rect getBbox();
+
+	bool isDirty(Sprite *nextSprite = nullptr);
+	void setClean(Sprite *nextSprite, int spriteId);
+
+	void addDelta(Common::Point pos);
+
+public:
 	Sprite *_sprite;
 
 	bool _dirty;
@@ -50,20 +54,14 @@ struct Channel {
 	Common::Point _currentPoint;
 	Common::Point _delta;
 
-	Channel(Sprite *sp);
-	bool isDirty(Sprite *nextSprite = nullptr);
-
-	void addRegistrationOffset(Common::Point &pos);
-	Common::Rect getBbox();
-	Common::Point getPosition();
+private:
+	Graphics::ManagedSurface *getSurface();
 	MacShape *getShape();
+	Common::Point getPosition();
 	uint getForeColor();
 	uint getBackColor();
-	Graphics::ManagedSurface *getSurface();
-	const Graphics::Surface *getMask(bool forceMatte = false);
 
-	void setClean(Sprite *nextSprite, int spriteId);
-	void addDelta(Common::Point pos);
+	void addRegistrationOffset(Common::Point &pos);
 };
 
 } // End of namespace Director

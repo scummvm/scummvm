@@ -164,7 +164,7 @@ private:
 
 private:
 	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
-	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect, MacShape *ms);
+	void inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect);
 	void inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask);
 };
 

@@ -98,28 +98,46 @@ struct PaletteV4 {
 	int length;
 };
 
+struct MacShape {
+	InkType ink;
+	byte spriteType;
+	byte foreColor;
+	byte backColor;
+	int lineSize;
+	uint pattern;
+
+	Graphics::MacPlotData *pd;
+};
+
 // An extension of MacPlotData for interfacing with inks and patterns without
 // needing extra surfaces.
 struct DirectorPlotData {
-	Graphics::ManagedSurface *src;
+	Graphics::MacWindowManager *_wm;
 	Graphics::ManagedSurface *dst;
-	Graphics::MacPlotData *macPlot;
-	Common::Rect &destRect;
+	Common::Rect destRect;
 	Common::Point srcPoint;
 
-	bool manualInk;
+	bool isShape;
+	void *src;
+
 	bool applyColor;
+	bool manualInk;
 	InkType ink;
 	int numColors;
 	uint backColor;
 	uint foreColor;
 
-	Graphics::MacWindowManager *_wm;
+	bool setNeedsColor(); // graphics.cpp
 
-	DirectorPlotData(Graphics::MacWindowManager *wm, Graphics::ManagedSurface *s, Graphics::ManagedSurface *ds, Common::Rect &dr, InkType i, uint b, uint f, uint n) :
-		src(s), dst(ds), ink(i), backColor(b), foreColor(f), destRect(dr), macPlot(nullptr), numColors(n), _wm(wm) {
-		applyColor = false;
+	DirectorPlotData(Graphics::MacWindowManager *w, InkType i, uint b, uint f, uint n) : _wm(w), ink(i), backColor(b), foreColor(f), numColors(n) {
 		manualInk = false;
+
+		applyColor = setNeedsColor();
+	}
+
+	~DirectorPlotData() {
+		if (isShape)
+			delete (MacShape *)src;
 	}
 };
 
