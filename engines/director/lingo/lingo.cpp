@@ -32,6 +32,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/stage.h"
 #include "director/util.h"
 
 #include "director/lingo/lingo.h"
@@ -770,7 +771,13 @@ void Datum::reset() {
 			delete u.parr;
 			break;
 		case OBJECT:
-			delete u.obj;
+			if (u.obj->getObjType() == kWindowObj) {
+				Stage *window = static_cast<Stage *>(u.obj);
+				g_director->_wm->removeWindow(window);
+				g_director->_wm->removeMarked();
+			} else {
+				delete u.obj;
+			}
 			break;
 		case CASTREF:
 		case FIELDREF:
