@@ -646,7 +646,7 @@ void Lingo::resetLingo() {
 	// timeoutScript is not reset
 }
 
-int Lingo::getAlignedType(Datum &d1, Datum &d2) {
+int Lingo::getAlignedType(const Datum &d1, const Datum &d2) {
 	int opType = VOID;
 
 	int d1Type = d1.type;
@@ -797,7 +797,7 @@ Datum Datum::eval() {
 	return g_lingo->varFetch(*this);
 }
 
-int Datum::asInt() {
+int Datum::asInt() const {
 	int res = 0;
 
 	switch (type) {
@@ -831,7 +831,7 @@ int Datum::asInt() {
 	return res;
 }
 
-double Datum::asFloat() {
+double Datum::asFloat() const {
 	double res = 0.0;
 
 	switch (type) {
@@ -865,7 +865,7 @@ double Datum::asFloat() {
 	return res;
 }
 
-Common::String Datum::asString(bool printonly) {
+Common::String Datum::asString(bool printonly) const {
 	Common::String s;
 	switch (type) {
 	case INT:
@@ -971,7 +971,7 @@ Common::String Datum::asString(bool printonly) {
 	return s;
 }
 
-const char *Datum::type2str(bool isk) {
+const char *Datum::type2str(bool isk) const {
 	static char res[20];
 
 	switch (isk ? u.i : type) {
@@ -1001,7 +1001,7 @@ const char *Datum::type2str(bool isk) {
 	}
 }
 
-int Datum::equalTo(Datum &d, bool ignoreCase) {
+int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	int alignType = g_lingo->getAlignedType(*this, d);
 
 	if (alignType == FLOAT) {
@@ -1021,7 +1021,7 @@ int Datum::equalTo(Datum &d, bool ignoreCase) {
 	}
 }
 
-int Datum::compareTo(Datum &d, bool ignoreCase) {
+int Datum::compareTo(Datum &d, bool ignoreCase) const {
 	int alignType = g_lingo->getAlignedType(*this, d);
 
 	if (alignType == FLOAT) {
