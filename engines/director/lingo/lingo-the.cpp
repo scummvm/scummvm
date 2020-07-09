@@ -149,7 +149,7 @@ TheEntity entities[] = {
 	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//				D4 p
 	{ kTheTraceLogFile,		"traceLogFile",		false, 4 },	//				D4 p
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//				D4 p
-	{ kTheWindow,			"window",			true,  4 },	//				D4
+	// { kTheWindow,			"window",			true,  4 },	//				D4
 	{ kTheWindowList,		"windowList",		false, 4 },	//				D4 p
 	{ kTheNOEntity, NULL, false, 0 }
 };

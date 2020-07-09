@@ -189,47 +189,11 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
-		Common::String movieFilename = pathMakeRelative(movieFilenameRaw);
-		Common::String cleanedFilename;
-
-		bool fileExists = false;
-
-		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-			Common::MacResManager resMan;
-
-			for (const byte *p = (const byte *)movieFilename.c_str(); *p; p++)
-				if (*p >= 0x20 && *p <= 0x7f)
-					cleanedFilename += (char) *p;
-
-			if (resMan.open(movieFilename)) {
-				fileExists = true;
-				cleanedFilename = movieFilename;
-			} else if (!movieFilename.equals(cleanedFilename) && resMan.open(cleanedFilename)) {
-				fileExists = true;
-			}
-		} else {
-			Common::File file;
-			cleanedFilename = movieFilename + ".MMM";
-
-			if (file.open(movieFilename)) {
-				fileExists = true;
-				cleanedFilename = movieFilename;
-			} else if (!movieFilename.equals(cleanedFilename) && file.open(cleanedFilename)) {
-				fileExists = true;
-			}
-		}
-
-		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(),
-				movieFilename.c_str(), cleanedFilename.c_str());
-
-		if (!fileExists) {
-			warning("Movie %s does not exist", movieFilename.c_str());
-			return;
-		}
-
 		Stage *stage = _vm->getCurrentStage();
 
-		stage->_nextMovie.movie = cleanedFilename;
+		if (!stage->setNextMovie(movieFilenameRaw))
+			return;
+
 		stage->getCurrentMovie()->getScore()->_stopPlay = true;
 
 		stage->_nextMovie.frameS.clear();
