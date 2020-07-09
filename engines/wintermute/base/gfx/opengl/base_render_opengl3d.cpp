@@ -360,7 +360,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 	return true;
 }
 
-bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
+bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 	if (!_state3D || force) {
 		_state3D = true;
 
@@ -373,14 +373,17 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
 
 		glEnable(GL_NORMALIZE);
 
-		_fov = camera->_fov;
-		setProjection();
+		if (camera) {
+			_fov = camera->_fov;
 
-		Math::Matrix4 viewMatrix;
-		camera->getViewMatrix(&viewMatrix);
-		glMultMatrixf(viewMatrix.getData());
-		glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
-		glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
+			Math::Matrix4 viewMatrix;
+			camera->getViewMatrix(&viewMatrix);
+			glMultMatrixf(viewMatrix.getData());
+			glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
+			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
+		}
+
+		setProjection();
 	}
 
 	return true;
