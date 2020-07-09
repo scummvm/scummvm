@@ -189,7 +189,7 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 	destRect.clip(srcRect);
 
 	MacShape *ms = channel->getShape();
-	DirectorPlotData pd(_wm, channel->getSurface(), blitTo, destRect, channel->_sprite->_ink, channel->_sprite->_backColor, channel->_sprite->_foreColor, g_director->getPaletteColorCount());
+	DirectorPlotData pd(_wm, channel->getSurface(), blitTo, destRect, channel->_sprite->_ink, channel->getBackColor(), channel->getForeColor(), g_director->getPaletteColorCount());
 
 	if (ms) {
 		inkBlitShape(&pd, srcRect, ms);

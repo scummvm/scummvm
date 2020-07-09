@@ -57,6 +57,8 @@ struct Channel {
 	Common::Rect getBbox();
 	Common::Point getPosition();
 	MacShape *getShape();
+	uint getForeColor();
+	uint getBackColor();
 	Graphics::ManagedSurface *getSurface();
 	const Graphics::Surface *getMask(bool forceMatte = false);
 

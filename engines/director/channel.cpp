@@ -245,4 +245,34 @@ MacShape *Channel::getShape() {
 	return shape;
 }
 
+uint Channel::getBackColor() {
+	if (!_sprite->_cast)
+		return _sprite->_backColor;
+
+	switch (_sprite->_cast->_type) {
+	case kCastText:
+	case kCastButton:
+	case kCastShape: {
+		return _sprite->_cast->getBackColor();
+	}
+	default:
+		return _sprite->_backColor;
+	}
+}
+
+uint Channel::getForeColor() {
+	if (!_sprite->_cast)
+		return _sprite->_foreColor;
+
+	switch (_sprite->_cast->_type) {
+	case kCastText:
+	case kCastButton:
+	case kCastShape: {
+		return _sprite->_cast->getForeColor();
+	}
+	default:
+		return _sprite->_foreColor;
+	}
+}
+
 } // End of namespace Director
