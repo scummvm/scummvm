@@ -257,11 +257,6 @@ void Score::stopPlay() {
 
 void Score::update() {
 	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
-		_vm->_wm->renderZoomBox(true);
-
-		if (!_stage->_newMovieStarted)
-			_vm->_wm->draw();
-
 		return;
 	}
 
@@ -386,9 +381,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (!renderTransition(frameId))
 		renderSprites(frameId, mode);
 
-	_vm->_wm->renderZoomBox();
 	_stage->render();
-	_vm->_wm->draw();
 
 	if (_frames[frameId]->_sound1 || _frames[frameId]->_sound2)
 		playSoundChannel(frameId);

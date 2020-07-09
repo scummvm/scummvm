@@ -197,6 +197,9 @@ Common::Error DirectorEngine::run() {
 				_currentStage->step();
 			}
 		}
+
+		_wm->renderZoomBox(true);
+		_wm->draw();
 	}
 
 	return Common::kNoError;
