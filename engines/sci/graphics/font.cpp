@@ -260,8 +260,9 @@ SciSpan<const byte> GfxFontFromResource::getCharData(uint16 chr) {
 		return SciSpan<const byte>();
 	}
 
-	const uint32 size = (chr + 1 >= _numChars ? _resourceData.size() : _chars[chr + 1].offset) - _chars[chr].offset - 2;
-	return _resourceData.subspan(_chars[chr].offset + 2, size);
+	const uint32 bytesPerRow = (_chars[chr].width + 7) / 8;
+	const uint32 charDataSize = bytesPerRow * _chars[chr].height;
+	return _resourceData.subspan(_chars[chr].offset + 2, charDataSize);
 }
 
 void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
