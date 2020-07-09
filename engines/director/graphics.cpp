@@ -806,11 +806,7 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 
 	dst = (byte *)p->dst->getBasePtr(x, y);
 
-	if (p->ignoreSrc) {
-		// This fast-track mode is currently used only for inversions on click
-		*dst = ~(*dst);
-		return;
-	} else if (p->macPlot) {
+	if (p->macPlot) {
 		// Get the pixel that macDrawPixel will give us, but store it to apply the
 		// ink later.
 		tmpDst = *dst;

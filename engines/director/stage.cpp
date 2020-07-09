@@ -65,10 +65,10 @@ Stage::~Stage() {
 
 void Stage::invertChannel(Channel *channel) {
 	Common::Rect destRect = channel->getBbox();
-	DirectorPlotData pd(_wm, &_surface, &_surface, destRect, kInkTypeMatte, 0, 0, g_director->getPaletteColorCount());
-	pd.ignoreSrc = true;
-
-	inkBlitSurface(&pd, destRect, channel->getMask(true));
+	for (int i = 0; i < destRect.height(); i++) {
+		byte *src = (byte *)_surface->getBasePtr(destRect.left, destRect.top + yy);
+		for (int j = 0; j < destRect.width(); j++, src++)
+			*src = ~(*src);
 }
 
 bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
