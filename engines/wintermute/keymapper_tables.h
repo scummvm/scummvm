@@ -250,7 +250,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
-		engineKeyMap->addAction(act);
+		gameKeyMap->addAction(act);
 	} else if (gameId == "qajarycat") {
 		act = new Action("HINT", _("Show hints"));
 		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
@@ -1599,7 +1599,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act = new Action("MCLK", _("Middle Click"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
-		engineKeyMap->addAction(act);
+		gameKeyMap->addAction(act);
 
 		act = new Action("SCRLUP", _("Scroll up"));
 		act->setMouseWheelUpEvent();
