@@ -2444,6 +2444,27 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO_STD16_UNDITHER	},
 
+	// Larry 2 - Polish DOS (from Polish Leisure Suit Larry Collection, official release)
+	// Game version 1.002.000
+	// SCI interpreter version 0.000.409, localized resources are all patch files.
+	// resource_patcher.cpp depends on this entry to fix corrupt Polish fonts.
+	{"lsl2", "", {
+		{"resource.map", 0, "42258cf767a8ebaa9e66b6151a80e601", 5628},
+		{"resource.001", 0, "4a24443a25e2b1492462a52809605dc2", 143847},
+		{"resource.002", 0, "4a24443a25e2b1492462a52809605dc2", 348331},
+		{"resource.003", 0, "4a24443a25e2b1492462a52809605dc2", 236550},
+		{"resource.004", 0, "4a24443a25e2b1492462a52809605dc2", 204861},
+		{"resource.005", 0, "4a24443a25e2b1492462a52809605dc2", 277732},
+		{"resource.006", 0, "4a24443a25e2b1492462a52809605dc2", 345683},
+		// Polish fonts
+		{"font.000",     0, "8b65d8ee6d6041f3ac387d32c759165f", 1919},
+		{"font.001",     0, "48356355a52bb14df7bdaa253d20b26a", 1705},
+		{"font.004",     0, "3ce72dd3e8396f7d0fb81a37f4966a8a", 1458},
+		{"font.007",     0, "29afa8f8d5a211b15885b8f4d90cc2ee", 4029},
+		{"font.999",     0, "54801847b35893632a131171b9cebc15", 1368},
+		AD_LISTEND},
+		Common::PL_POL, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// Larry 3 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.002.032"
 	// SCI interpreter version 0.000.685
@@ -2607,6 +2628,26 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "65f1bdaa20f6d0470e9d969f22473873", 308982},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
+	// Larry 3 - Polish DOS (from Polish Leisure Suit Larry Collection, official release)
+	// Game version 1.021
+	// SCI interpreter version 0.000.572, localized resources are all patch files.
+	// resource_patcher.cpp depends on this entry to fix corrupt Polish fonts.
+	{"lsl3", "", {
+		{"resource.map", 0, "0b6bd3e039682830a51c5755c06591db", 5916},
+		{"resource.001", 0, "f18441027154292836b973c655fa3175", 456722},
+		{"resource.002", 0, "f18441027154292836b973c655fa3175", 578024},
+		{"resource.003", 0, "f18441027154292836b973c655fa3175", 506807},
+		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513651},
+		// Polish fonts
+		{"font.000",     0, "8b65d8ee6d6041f3ac387d32c759165f", 1919},
+		{"font.001",     0, "48356355a52bb14df7bdaa253d20b26a", 1705},
+		{"font.004",     0, "3ce72dd3e8396f7d0fb81a37f4966a8a", 1458},
+		{"font.007",     0, "4341dc13d2be54bf80bb1cbd59aede4c", 4757},
+		{"font.009",     0, "aec40fb5c623ba23bd12123edcf84d7f", 3683},
+		{"font.999",     0, "54801847b35893632a131171b9cebc15", 1368},
+		AD_LISTEND},
+		Common::PL_POL, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Larry 5 - English Amiga
 	// Executable scanning reports "1.004.023"
