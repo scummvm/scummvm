@@ -365,6 +365,8 @@ bool Stage::step() {
 				if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
 					debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
 					_currentMovie->getScore()->startPlay();
+				} else {
+					return false;
 				}
 			}
 			return true;
