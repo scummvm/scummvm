@@ -1424,6 +1424,51 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
+	} else if (gameId == "zilm") {
+		act = new Action("P1UP", _("Player 1: Up"));
+		act->setKeyEvent(KeyState(KEYCODE_w, 'w'));
+		act->addDefaultInputMapping("w"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P1LT", _("Player 1: Left"));
+		act->setKeyEvent(KeyState(KEYCODE_a, 'a'));
+		act->addDefaultInputMapping("a"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P1DN", _("Player 1: Down"));
+		act->setKeyEvent(KeyState(KEYCODE_s, 's'));
+		act->addDefaultInputMapping("s"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P1RT", _("Player 1: Right"));
+		act->setKeyEvent(KeyState(KEYCODE_d, 'd'));
+		act->addDefaultInputMapping("d"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2UP", _("Player 2: Up"));
+		act->setKeyEvent(KEYCODE_UP);
+		act->addDefaultInputMapping("UP"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2LT", _("Player 2: Left"));
+		act->setKeyEvent(KEYCODE_LEFT);
+		act->addDefaultInputMapping("LEFT"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2DN", _("Player 2: Down"));
+		act->setKeyEvent(KEYCODE_DOWN);
+		act->addDefaultInputMapping("DOWN"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("P2RT", _("Player 2: Right"));
+		act->setKeyEvent(KEYCODE_RIGHT);
+		act->addDefaultInputMapping("RIGHT"); // original keyboard
+		gameKeyMap->addAction(act);
+
+		act = new Action("DBGFPS", _("Debug FPS"));
+		act->setKeyEvent(KEYCODE_F2);
+		act->addDefaultInputMapping("F2"); // original keyboard
+		gameKeyMap->addAction(act);
 	} else if (gameId == "zbang") {
 		act = new Action("ACTNXT", _("Next action"));
 		act->setMouseWheelUpEvent();

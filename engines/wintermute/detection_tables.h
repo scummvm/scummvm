@@ -5037,11 +5037,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Zilm: A Game of Reflex
 	WME_WINENTRY("zilm", "",
-		WME_ENTRY1s("data.dcp", "81cece0c8105b4725fc35064a32b4b52", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "81cece0c8105b4725fc35064a32b4b52", 351726), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Zilm: A Game of Reflex 1.0
 	WME_WINENTRY("zilm", "1.0",
-		WME_ENTRY1s("data.dcp", "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Zbang! The Game (Demo)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
