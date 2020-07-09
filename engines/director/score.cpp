@@ -25,7 +25,6 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 
-#include "engines/util.h"
 #include "graphics/macgui/mactext.h"
 
 #ifdef USE_PNG
@@ -197,10 +196,6 @@ int Score::getPreviousLabelNumber(int referenceFrame) {
 }
 
 void Score::startPlay() {
-	// TODO: Should the dims be set by the movie?
-	debugC(1, kDebugImages, "Score dims: %dx%d", _movie->_movieRect.width(), _movie->_movieRect.height());
-	initGraphics(_vm->_surface->w, _vm->_surface->h);
-
 	_currentFrame = 0;
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;

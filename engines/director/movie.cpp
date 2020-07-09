@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/substream.h"
 
+#include "engines/util.h"
+
 #include "director/director.h"
 #include "director/archive.h"
 #include "director/cast.h"
@@ -103,11 +105,14 @@ bool Movie::loadArchive() {
 		_stage->resize(_movieRect.width(), _movieRect.height(), true);
 	}
 	// TODO: Add more options for desktop dimensions
-	uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
-	uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
-	if (g_director->_surface->w != windowWidth || g_director->_surface->h != windowHeight) {
-		g_director->_surface->free();
-		g_director->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
+	if (_stage == _vm->getMainStage()) {
+		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
+		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
+		if (_vm->_surface->w != windowWidth || _vm->_surface->h != windowHeight) {
+			_vm->_surface->free();
+			_vm->_surface->create(windowWidth, windowHeight, Graphics::PixelFormat::createFormatCLUT8());
+		}
+		initGraphics(windowWidth, windowHeight);
 	}
 
 	_stage->setStageColor(_stageColor);
