@@ -38,7 +38,7 @@ class MacWindowManager;
 
 namespace Director {
 
-struct Channel;
+class Channel;
 struct MacShape;
 
 struct TransParams {
