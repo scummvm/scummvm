@@ -210,8 +210,18 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 }
 
 void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect, MacShape *ms) {
-	if (ms->foreColor == ms->backColor)
+	switch (pd->ink) {
+	case kInkTypeNotTrans:
+	case kInkTypeNotReverse:
+	case kInkTypeNotGhost:
 		return;
+	case kInkTypeReverse:
+		ms->foreColor = 0;
+		ms->backColor = 0;
+		break;
+	default:
+		break;
+	}
 
 	Common::Rect fillRect((int)srcRect.width(), (int)srcRect.height());
 	fillRect.moveTo(srcRect.left, srcRect.top);
