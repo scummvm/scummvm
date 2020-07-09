@@ -1847,32 +1847,37 @@ void LB::b_zoomBox(int nargs) {
 		delayTicks = d.asInt();
 	}
 
-	int endSprite = g_lingo->pop().asInt();
-	int startSprite = g_lingo->pop().asInt();
+	int endSpriteId = g_lingo->pop().asInt();
+	int startSpriteId = g_lingo->pop().asInt();
 
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint16 curFrame = score->getCurrentFrame();
 
-	Common::Rect startRect = score->_channels[startSprite]->getBbox();
+	Common::Rect startRect = score->_channels[startSpriteId]->getBbox();
 	if (startRect.isEmpty()) {
-		warning("b_zoomBox: unknown start sprite #%d", startSprite);
+		warning("b_zoomBox: unknown start sprite #%d", startSpriteId);
 		return;
 	}
 
 	// Looks for endSprite in the current frame, otherwise
 	// Looks for endSprite in the next frame
-	Common::Rect endRect = score->_channels[endSprite]->getBbox();
+	Common::Rect endRect = score->_channels[endSpriteId]->getBbox();
 	if (endRect.isEmpty()) {
-		if ((uint)curFrame + 1 < score->_frames.size())
-			endRect = score->_frames[curFrame + 1]->_sprites[endSprite]->getDims();
-	}
-	if (endRect.isEmpty()) {
-		if ((uint)curFrame - 1 > 0)
-			endRect = score->_frames[curFrame - 1]->_sprites[endSprite]->getDims();
+		if ((uint)curFrame + 1 < score->_frames.size()) {
+			Sprite *endSprite = score->_frames[curFrame + 1]->_sprites[endSpriteId];
+			endRect = Common::Rect(endSprite->_width, endSprite->_height);
+		}
 	}
 
 	if (endRect.isEmpty()) {
-		warning("b_zoomBox: unknown end sprite #%d", endSprite);
+		if ((uint)curFrame - 1 > 0) {
+			Sprite *endSprite = score->_frames[curFrame + 1]->_sprites[endSpriteId];
+			endRect = Common::Rect(endSprite->_width, endSprite->_height);
+		}
+	}
+
+	if (endRect.isEmpty()) {
+		warning("b_zoomBox: unknown end sprite #%d", endSpriteId);
 		return;
 	}
 

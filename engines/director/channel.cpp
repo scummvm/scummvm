@@ -37,6 +37,9 @@ Channel::Channel(Sprite *sp) {
 	_delta = Common::Point(0, 0);
 	_constraint = 0;
 
+	_width = 0;
+	_height = 0;
+
 	_visible = true;
 	_dirty = true;
 
@@ -112,7 +115,6 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	if (nextSprite) {
 		isDirty |= _sprite->_castId != nextSprite->_castId ||
 			_sprite->_ink != nextSprite->_ink ||
-			_sprite->getDims() != nextSprite->getDims() ||
 			(_currentPoint != nextSprite->_startPoint &&
 			 !_sprite->_puppet && !_sprite->_moveable);
 	}
@@ -121,10 +123,10 @@ bool Channel::isDirty(Sprite *nextSprite) {
 }
 
 Common::Rect Channel::getBbox() {
-	Common::Rect bbox = _sprite->getDims();
-	bbox.moveTo(getPosition());
+	Common::Rect result(_width, _height);
+	result.moveTo(getPosition());
 
-	return bbox;
+	return result;
 }
 
 void Channel::setClean(Sprite *nextSprite, int spriteId) {
@@ -142,6 +144,11 @@ void Channel::setClean(Sprite *nextSprite, int spriteId) {
 		// the moveable is disabled
 		if (!_sprite->_moveable || newSprite)
 			_currentPoint = _sprite->_startPoint;
+
+		if (!_sprite->_stretch) {
+			_width = _sprite->_width;
+			_height = _sprite->_height;
+		}
 	}
 
 	_currentPoint += _delta;

@@ -751,7 +751,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_foreColor;
 		break;
 	case kTheHeight:
-		d.u.i = sprite->_height;
+		d.u.i = channel->_height;
 		break;
 	case kTheImmediate:
 		d.u.i = sprite->_immediate;
@@ -815,7 +815,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_volume;
 		break;
 	case kTheWidth:
-		d.u.i = sprite->_width;
+		d.u.i = channel->_width;
 		break;
 	default:
 		warning("Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
@@ -885,7 +885,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheHeight:
 		if (sprite->_puppet && sprite->_stretch) {
 			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-			sprite->_height = d.asInt();
+			channel->_height = d.asInt();
 		}
 		break;
 	case kTheImmediate:
@@ -959,7 +959,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheWidth:
 		if (sprite->_puppet && sprite->_stretch) {
 			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-			sprite->_width = d.asInt();
+			channel->_width = d.asInt();
 		}
 		break;
 	default:

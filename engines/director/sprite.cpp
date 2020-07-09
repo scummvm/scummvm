@@ -165,29 +165,14 @@ void Sprite::setCast(uint16 castId) {
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 			((TextCastMember *)_cast)->createWidget();
 		}
+
+		if (_cast->_widget) {
+			_width = _cast->_widget->_dims.width();
+			_height = _cast->_widget->_dims.height();
+		}
 	} else {
 		warning("Sprite::setCast(): CastMember id %d has null member", castId);
 	}
 }
-
-Common::Rect Sprite::getDims() {
-	Common::Rect result;
-
-	if (_cast && _cast->_widget) {
-		result = Common::Rect(_cast->_widget->_dims.width(), _cast->_widget->_dims.height());
-	} else {
-		result = Common::Rect(_width, _height);
-	}
-
-	if (_puppet && _stretch) {
-		// TODO: Properly align the bounding box
-
-		result.setHeight(_height);
-		result.setWidth(_width);
-	}
-
-	return result;
-}
-
 
 } // End of namespace Director

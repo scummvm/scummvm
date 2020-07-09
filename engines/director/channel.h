@@ -54,6 +54,9 @@ public:
 	Common::Point _currentPoint;
 	Common::Point _delta;
 
+	int _width;
+	int _height;
+
 private:
 	Graphics::ManagedSurface *getSurface();
 	MacShape *getShape();

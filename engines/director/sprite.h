@@ -72,8 +72,6 @@ public:
 	void setCast(uint16 castid);
 	bool isQDShape();
 
-	Common::Rect getDims();
-
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;
 	byte _colorcode;  // x40 editable, 0x80 moveable
