@@ -410,20 +410,33 @@ void MacWindowManager::draw() {
 			_redrawEngineCallback(_engineR);
 	}
 
+	Common::Array<Common::Rect> dirtyRects;
 	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {
 		BaseMacWindow *w = *it;
 		if (!w->isVisible())
 			continue;
 
-		if (w->draw(_screen, _fullRefresh)) {
+		Common::Rect clip = w->getDimensions();
+		clip.clip(_screen->getBounds());
+		clip.clip(Common::Rect(0, 0, g_system->getWidth() - 1, g_system->getHeight() - 1));
+
+		if (clip.isEmpty())
+			continue;
+
+		bool forceRedraw = _fullRefresh;
+		if (!forceRedraw) {
+			for (Common::Array<Common::Rect>::iterator dirty = dirtyRects.begin(); dirty != dirtyRects.end(); dirty++) {
+				if (clip.intersects(*dirty)) {
+					forceRedraw = true;
+					break;
+				}
+			}
+		}
+
+		if (w->draw(_screen, forceRedraw)) {
 			w->setDirty(false);
-
-			Common::Rect clip(w->getDimensions().left - 2, w->getDimensions().top - 2, w->getDimensions().right - 2, w->getDimensions().bottom - 2);
-			clip.clip(_screen->getBounds());
-			clip.clip(Common::Rect(0, 0, g_system->getWidth() - 1, g_system->getHeight() - 1));
-
-			if (!clip.isEmpty())
-				g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
+			g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
+			dirtyRects.push_back(clip);
 		}
 	}
 
