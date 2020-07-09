@@ -130,6 +130,7 @@ struct DirectorPlotData {
 	bool setNeedsColor(); // graphics.cpp
 
 	DirectorPlotData(Graphics::MacWindowManager *w, InkType i, uint b, uint f, uint n) : _wm(w), ink(i), backColor(b), foreColor(f), numColors(n) {
+		isShape = false;
 		manualInk = false;
 
 		applyColor = setNeedsColor();

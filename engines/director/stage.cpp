@@ -177,6 +177,9 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 void Stage::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 	MacShape *ms = ((MacShape *)pd->src);
 
+	if (!ms)
+		return;
+
 	switch (pd->ink) {
 	case kInkTypeNotTrans:
 	case kInkTypeNotReverse:
