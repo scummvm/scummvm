@@ -178,53 +178,14 @@ void Stage::loadEXE(const Common::String movie) {
 		for (uint i = 0; i < versions.size(); i++) {
 			Common::SeekableReadStream *res = exe->getResource(Common::kWinVersion, versions[i]);
 
-			while (res->pos() < res->size() && !res->eos()) {
-				while (res->pos() % 4 && !res->eos()) // Pad to 4
-					res->readByte();
+			Common::WinResources::VersionHash *versionMap = Common::WinResources::parseVersionInfo(res);
 
-				/* uint16 len = */ res->readUint16LE();
-				uint16 valLen = res->readUint16LE();
-				uint16 type = res->readUint16LE();
-				uint16 c;
+			for (Common::WinResources::VersionHash::const_iterator it = versionMap->begin(); it != versionMap->end(); ++it)
+				warning("info <%s>: <%s>", it->_key.c_str(), it->_value.encode().c_str());
 
-				Common::U32String info;
-				while ((c = res->readUint16LE()) != 0 && !res->eos())
-					info += c;
+			delete versionMap;
+			delete res;
 
-				while (res->pos() % 4 && !res->eos()) // Pad to 4
-					res->readByte();
-
-				if (res->eos())
-					break;
-
-				if (type != 0) {	// text
-					Common::U32String value;
-					for (int j = 0; j < valLen; j++)
-						value += res->readUint16LE();
-
-					warning("info <%s>: <%s>", info.encode().c_str(), value.encode().c_str());
-				} else {
-					if (info == "VS_VERSION_INFO") {
-						uint16 pos2 = res->pos() + valLen;
-
-						res->readUint32LE();
-						res->readUint32LE();
-						uint16 fileB = res->readUint16LE();
-						uint16 fileA = res->readUint16LE();
-						uint16 fileD = res->readUint16LE();
-						uint16 fileC = res->readUint16LE();
-						uint16 prodB = res->readUint16LE();
-						uint16 prodA = res->readUint16LE();
-						uint16 prodD = res->readUint16LE();
-						uint16 prodC = res->readUint16LE();
-						warning("\tFile: %d.%d.%d.%d", fileA, fileB, fileC, fileD);
-						warning("\tProd: %d.%d.%d.%d", prodA, prodB, prodC, prodD);
-
-						while (res->pos() != pos2 && !res->eos())
-							res->readByte();
-					}
-				}
-			}
 		}
 		delete exe;
 
