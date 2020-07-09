@@ -64,11 +64,16 @@ Stage::~Stage() {
 }
 
 void Stage::invertChannel(Channel *channel) {
+	const Graphics::Surface *mask = channel->getMask(true);
 	Common::Rect destRect = channel->getBbox();
+
 	for (int i = 0; i < destRect.height(); i++) {
 		byte *src = (byte *)_surface.getBasePtr(destRect.left, destRect.top + i);
+		const byte *msk = mask ? (const byte *)mask->getBasePtr(0, i) : nullptr;
+
 		for (int j = 0; j < destRect.width(); j++, src++)
-			*src = ~(*src);
+			if (!mask || (msk && !(*msk++)))
+				*src = ~(*src);
 	}
 }
 
