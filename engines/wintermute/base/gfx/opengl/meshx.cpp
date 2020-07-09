@@ -41,18 +41,20 @@
 
 namespace Wintermute {
 
+// define constant to make it available to the linker
+const uint32 MeshX::kNullIndex;
+
 //////////////////////////////////////////////////////////////////////////
 MeshX::MeshX(BaseGame *inGame) : BaseNamedObject(inGame),
                                  _BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
                                  _numAttrs(0), _maxFaceInfluence(0),
                                  _vertexData(nullptr), _vertexPositionData(nullptr),
                                  _vertexCount(0), _indexData(nullptr), _indexCount(0),
-                                 _skinAdjacency(nullptr), _adjacency(nullptr), _skinnedMesh(false) {
+                                 _skinAdjacency(nullptr), _skinnedMesh(false) {
 }
 
 //////////////////////////////////////////////////////////////////////////
 MeshX::~MeshX() {
-	delete[] _adjacency;
 	delete[] _skinAdjacency;
 	delete[] _vertexData;
 	delete[] _vertexPositionData;
@@ -140,6 +142,9 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer) {
 			lexer.advanceToNextToken(); // skip closed braces
 		} else if (lexer.reachedClosedBraces()) {
 			lexer.advanceToNextToken(); // skip closed braces
+
+			generateAdjacency();
+
 			return true;
 		} else {
 			warning("MeshX::loadFromX unknown token %i encountered", lexer.getTypeOfToken());
@@ -147,12 +152,54 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer) {
 		}
 	}
 
+	generateAdjacency();
+
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::generateMesh() {
+bool MeshX::generateAdjacency() {
+	_adjacency = Common::Array<uint32>(_indexCount, kNullIndex);
+
+	for (uint32 i = 0; i < _indexCount / 3; ++i) {
+		for (uint32 j = i + 1; j < _indexCount / 3; ++j) {
+			for (int edge1 = 0; edge1 < 3; ++edge1) {
+				uint16 index1 = _indexData[i * 3 + edge1];
+				uint16 index2 = _indexData[i * 3 + (edge1 + 1) % 3];
+
+				for (int edge2 = 0; edge2 < 3; ++edge2) {
+					uint16 index3 = _indexData[j * 3 + edge2];
+					uint16 index4 = _indexData[j * 3 + (edge2 + 1) % 3];
+
+					if (_adjacency[i * 3 + edge1] == kNullIndex && _adjacency[j * 3 + edge2] == kNullIndex && adjacentEdge(index1, index2, index3, index4)) {
+						_adjacency[i * 3 + edge1] = j;
+						_adjacency[j * 3 + edge2] = i;
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	return true;
+}
+
+bool MeshX::adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4) {
+	Math::Vector3d vertex1(_vertexPositionData + 3 * index1);
+	Math::Vector3d vertex2(_vertexPositionData + 3 * index2);
+	Math::Vector3d vertex3(_vertexPositionData + 3 * index3);
+	Math::Vector3d vertex4(_vertexPositionData + 3 * index4);
+
+	// wme uses a function from the D3DX library, which takes in an epsilon for floating point comparison
+	// wme passes in zero, so we just do a direct comparison
+	if (vertex1 == vertex3 && vertex2 == vertex4) {
+		return true;
+	} else if (vertex1 == vertex4 && vertex2 == vertex3) {
+		return true;
+	}
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -253,7 +300,7 @@ bool MeshX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 		return false;
 	}
 
-	return shadow->addMesh(_adjacency, modelMat, light, extrusionDepth);
+	return shadow->addMesh(_adjacency.data(), modelMat, light, extrusionDepth);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -357,7 +404,7 @@ bool MeshX::restoreDeviceObjects() {
 	}
 
 	if (_skinnedMesh) {
-		return generateMesh();
+		return generateAdjacency();
 	} else {
 		return true;
 	}
