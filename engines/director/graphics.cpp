@@ -817,18 +817,43 @@ void inkDrawPixel(int x, int y, int color, void *data) {
 		Graphics::macDrawPixel(x, y, color, p->macPlot);
 		src = *dst;
 
-		if (p->ink == kInkTypeReverse)
-			src = 0;
-
 		*dst = tmpDst;
 	} else if (!p->src) {
 			error("Director::inkDrawPixel(): No source surface");
 			return;
 	} else {
 		src = *((const byte *)p->src->getBasePtr(p->srcPoint.x, p->srcPoint.y));
+
+		if (p->manualInk) {
+			switch(p->ink) {
+			case kInkTypeMask:
+				src = (src == p->backColor ? 0xff : p->foreColor);
+				break;
+			case kInkTypeReverse:
+				src = (src == p->foreColor ? 0 : p->numColors - 1);
+				break;
+			case kInkTypeNotReverse:
+				src = (src == p->backColor ? p->numColors - 1 : 0);
+				break;
+			case kInkTypeGhost:
+				src = (src == p->foreColor ? p->backColor : p->numColors - 1);
+				break;
+			case kInkTypeNotGhost:
+				src = (src == p->backColor ? p->numColors - 1 : p->backColor);
+				break;
+			case kInkTypeNotCopy:
+				src = (src == p->foreColor ? p->backColor : p->foreColor);
+				break;
+			case kInkTypeNotTrans:
+				src = (src == p->foreColor ? p->backColor : p->numColors - 1);
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
-	switch (p->ink) {
+ 	switch (p->ink) {
 	case kInkTypeBackgndTrans:
 		if (src == p->backColor)
 			break;

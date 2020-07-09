@@ -108,6 +108,7 @@ struct DirectorPlotData {
 	Common::Point srcPoint;
 
 	bool ignoreSrc;
+	bool manualInk;
 	bool applyColor;
 	InkType ink;
 	int numColors;
@@ -120,6 +121,7 @@ struct DirectorPlotData {
 		src(s), dst(ds), ink(i), backColor(b), foreColor(f), destRect(dr), macPlot(nullptr), numColors(n), _wm(wm) {
 		ignoreSrc = false;
 		applyColor = false;
+		manualInk = false;
 	}
 };
 

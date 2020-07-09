@@ -52,7 +52,7 @@ Graphics::ManagedSurface *Channel::getSurface() {
 }
 
 const Graphics::Surface *Channel::getMask(bool forceMatte) {
-	if (!_sprite->_cast)
+	if (!_sprite->_cast || _sprite->_spriteType == kTextSprite)
 		return nullptr;
 
 	bool needsMatte = _sprite->_ink == kInkTypeMatte ||
@@ -194,7 +194,7 @@ Common::Point Channel::getPosition() {
 }
 
 MacShape *Channel::getShape() {
-	if (!_sprite->isQDShape() || (_sprite->_cast && _sprite->_cast->_type != kCastShape))
+	if (!_sprite->isQDShape() && (_sprite->_cast && _sprite->_cast->_type != kCastShape))
 		return nullptr;
 
 	MacShape *shape = new MacShape();

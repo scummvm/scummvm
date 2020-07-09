@@ -194,10 +194,13 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 	if (ms) {
 		inkBlitShape(&pd, srcRect, ms);
 	} else if (pd.src) {
-		if (!(channel->_sprite->_cast &&
-				(channel->_sprite->_cast->_type == kCastText ||
-				 channel->_sprite->_cast->_type == kCastButton))) {
-			pd.applyColor = needsAppliedColor(&pd);
+		pd.applyColor = needsAppliedColor(&pd);
+		if (channel->_sprite->_spriteType == kTextSprite) {
+			// Copy colourization is already applied to text by default
+			if (pd.ink != kInkTypeCopy)
+				pd.manualInk = true;
+			else
+				pd.applyColor = false;
 		}
 
 		inkBlitSurface(&pd, srcRect, channel->getMask());
