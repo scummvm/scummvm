@@ -265,6 +265,8 @@ public:
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);
 
+	void removeMarked();
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
@@ -283,7 +285,6 @@ public:
 private:
 	void drawDesktop();
 
-	void removeMarked();
 	void removeFromStack(BaseMacWindow *target);
 	void removeFromWindowList(BaseMacWindow *target);
 

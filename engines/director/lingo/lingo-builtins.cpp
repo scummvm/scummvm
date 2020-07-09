@@ -2198,6 +2198,9 @@ void LB::b_window(int nargs) {
 	Graphics::MacWindowManager *wm = g_director->getMacWindowManager();
 	Stage *window = new Stage(wm->getNextId(), false, false, false, wm, g_director);
 	window->setName(windowName);
+	window->resize(640, 480); // FIXME: remove this
+	window->setVisible(false);
+	wm->addWindowInitialized(window);
 	windowList->push_back(window);
 	g_lingo->push(window);
 }
