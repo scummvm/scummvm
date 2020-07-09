@@ -24,9 +24,11 @@
 
 #include "director/director.h"
 #include "director/stage.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/xlibs/fileio.h"
 
@@ -317,9 +319,42 @@ void LM::m_respondsTo(int nargs) {
 
 // Window
 
+bool Stage::hasProp(const Common::String &propName) {
+	return g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow;
+}
+
+Datum Stage::getProp(const Common::String &propName) {
+	if (g_lingo->_theEntityFields.contains(propName)) {
+		switch (g_lingo->_theEntityFields[propName]->field) {
+		case kTheVisible:
+			return isVisible();
+		default:
+			break;
+		}
+	}
+	
+	warning("Stage::getProp: unhandled property '%s'", propName.c_str());
+	return Datum();
+}
+
+bool Stage::setProp(const Common::String &propName, const Datum &value) {
+	if (g_lingo->_theEntityFields.contains(propName)) {
+		switch (g_lingo->_theEntityFields[propName]->field) {
+		case kTheVisible:
+			setVisible(value.asInt());
+			return true;
+		default:
+			break;
+		}
+	}
+	
+	warning("Stage::getProp: unhandled property '%s'", propName.c_str());
+	return false;
+}
+
 void LM::m_close(int nargs) {
-	g_lingo->printSTUBWithArglist("m_close", nargs);
-	g_lingo->dropStack(nargs);
+	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	me->setVisible(false);
 }
 
 void LM::m_forget(int nargs) {
@@ -328,8 +363,8 @@ void LM::m_forget(int nargs) {
 }
 
 void LM::m_open(int nargs) {
-	g_lingo->printSTUBWithArglist("m_open", nargs);
-	g_lingo->dropStack(nargs);
+	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	me->setVisible(true);
 }
 
 void LM::m_moveToBack(int nargs) {

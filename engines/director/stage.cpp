@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/system.h"
 #include "common/macresman.h"
 
@@ -71,6 +72,9 @@ void Stage::invertChannel(Channel *channel) {
 }
 
 bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
+	if (!_currentMovie)
+		return false;
+
 	if (!blitTo)
 		blitTo = &_surface;
 
@@ -89,7 +93,7 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		const Common::Rect &r = *i;
 		blitTo->fillRect(r, _stageColor);
 
-		_dirtyChannels = g_director->getCurrentMovie()->getScore()->getSpriteIntersections(r);
+		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
 		for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
 			if ((*j)->_visible)
 				inkBlitFrom(*j, r, blitTo);
@@ -268,6 +272,59 @@ void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Gr
 
 Common::Point Stage::getMousePos() {
 	return g_system->getEventManager()->getMousePos() - Common::Point(_innerDims.left, _innerDims.top);
+}
+
+void Stage::setVisible(bool visible) {
+	// setting visible triggers movie load
+	if (!_currentMovie) {
+		Common::String movieName = getName();
+		setNextMovie(movieName);
+	}
+
+	BaseMacWindow::setVisible(visible);
+}
+
+bool Stage::setNextMovie(Common::String &movieFilenameRaw) {
+	Common::String movieFilename = pathMakeRelative(movieFilenameRaw);
+	Common::String cleanedFilename;
+
+	bool fileExists = false;
+
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		Common::MacResManager resMan;
+
+		for (const byte *p = (const byte *)movieFilename.c_str(); *p; p++)
+			if (*p >= 0x20 && *p <= 0x7f)
+				cleanedFilename += (char) *p;
+
+		if (resMan.open(movieFilename)) {
+			fileExists = true;
+			cleanedFilename = movieFilename;
+		} else if (!movieFilename.equals(cleanedFilename) && resMan.open(cleanedFilename)) {
+			fileExists = true;
+		}
+	} else {
+		Common::File file;
+		cleanedFilename = movieFilename + ".MMM";
+
+		if (file.open(movieFilename)) {
+			fileExists = true;
+			cleanedFilename = movieFilename;
+		} else if (!movieFilename.equals(cleanedFilename) && file.open(cleanedFilename)) {
+			fileExists = true;
+		}
+	}
+
+	debug(1, "Stage::setNextMovie: '%s' -> '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(),
+			movieFilename.c_str(), cleanedFilename.c_str());
+
+	if (!fileExists) {
+		warning("Movie %s does not exist", movieFilename.c_str());
+		return false;
+	}
+
+	_nextMovie.movie = cleanedFilename;
+	return true;
 }
 
 bool Stage::step() {

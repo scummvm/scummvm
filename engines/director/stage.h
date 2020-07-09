@@ -114,6 +114,9 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }
 
+	virtual void setVisible(bool visible);
+	bool setNextMovie(Common::String &movieFilenameRaw);
+
 	bool step();
 
 	// tests.cpp
@@ -134,6 +137,11 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac(const Common::String movie);
+
+	// lingo/lingo-object.cpp
+	virtual bool hasProp(const Common::String &propName);
+	virtual Datum getProp(const Common::String &propName);
+	virtual bool setProp(const Common::String &propName, const Datum &value);
 
 public:
 	Common::List<Common::Rect> _dirtyRects;
