@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
+#include "common/winexe.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -172,6 +173,61 @@ void Stage::loadEXE(const Common::String movie) {
 		if (!_mainArchive->openStream(exeStream, 0))
 			error("Failed to load RIFF");
 	} else {
+		Common::WinResources *exe = Common::WinResources::createFromEXE(movie);
+		const Common::Array<Common::WinResourceID> versions = exe->getIDList(Common::kWinVersion);
+		for (uint i = 0; i < versions.size(); i++) {
+			Common::SeekableReadStream *res = exe->getResource(Common::kWinVersion, versions[i]);
+
+			while (res->pos() < res->size() && !res->eos()) {
+				while (res->pos() % 4 && !res->eos()) // Pad to 4
+					res->readByte();
+
+				/* uint16 len = */ res->readUint16LE();
+				uint16 valLen = res->readUint16LE();
+				uint16 type = res->readUint16LE();
+				uint16 c;
+
+				Common::U32String info;
+				while ((c = res->readUint16LE()) != 0 && !res->eos())
+					info += c;
+
+				while (res->pos() % 4 && !res->eos()) // Pad to 4
+					res->readByte();
+
+				if (res->eos())
+					break;
+
+				if (type != 0) {	// text
+					Common::U32String value;
+					for (int j = 0; j < valLen; j++)
+						value += res->readUint16LE();
+
+					warning("info <%s>: <%s>", info.encode().c_str(), value.encode().c_str());
+				} else {
+					if (info == "VS_VERSION_INFO") {
+						uint16 pos2 = res->pos() + valLen;
+
+						res->readUint32LE();
+						res->readUint32LE();
+						uint16 fileB = res->readUint16LE();
+						uint16 fileA = res->readUint16LE();
+						uint16 fileD = res->readUint16LE();
+						uint16 fileC = res->readUint16LE();
+						uint16 prodB = res->readUint16LE();
+						uint16 prodA = res->readUint16LE();
+						uint16 prodD = res->readUint16LE();
+						uint16 prodC = res->readUint16LE();
+						warning("\tFile: %d.%d.%d.%d", fileA, fileB, fileC, fileD);
+						warning("\tProd: %d.%d.%d.%d", prodA, prodB, prodC, prodD);
+
+						while (res->pos() != pos2 && !res->eos())
+							res->readByte();
+					}
+				}
+			}
+		}
+		delete exe;
+
 		exeStream->seek(-4, SEEK_END);
 		exeStream->seek(exeStream->readUint32LE());
 
