@@ -960,9 +960,10 @@ bool DirectorPlotData::setNeedsColor() {
 		return false;
 
 	// TODO: Is colour white always last entry in palette?
-	uint numColors = g_director->getPaletteColorCount() - 1;
+	uint colorBlack = 0;
+	uint colorWhite = g_director->getPaletteColorCount() - 1;
 
-	if (foreColor == 0 && backColor == numColors)
+	if (foreColor == colorBlack && backColor == colorWhite)
 		return false;
 
 	switch (ink) {
@@ -980,12 +981,12 @@ bool DirectorPlotData::setNeedsColor() {
 		break;
 	}
 
-	if (foreColor != 0) {
+	if (foreColor != colorBlack) {
 		if (ink != kInkTypeGhost && ink != kInkTypeNotGhost)
 			return true;
 	}
 
-	if (backColor != numColors) {
+	if (backColor != colorWhite) {
 		if (ink != kInkTypeTransparent &&
 				ink != kInkTypeNotTrans)
 			return true;
