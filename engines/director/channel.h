@@ -40,6 +40,7 @@ public:
 	const Graphics::Surface *getMask(bool forceMatte = false);
 	Common::Rect getBbox();
 
+	bool isStretched();
 	bool isDirty(Sprite *nextSprite = nullptr);
 	void setClean(Sprite *nextSprite, int spriteId);
 

@@ -122,6 +122,11 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	return isDirty;
 }
 
+bool Channel::isStretched() {
+	return _sprite->_puppet && _sprite->_stretch &&
+		(_sprite->_width != _width || _sprite->_height != _height);
+}
+
 Common::Rect Channel::getBbox() {
 	Common::Rect result(_width, _height);
 	result.moveTo(getPosition());
