@@ -1406,7 +1406,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Life In 3 Minutes
 	WME_WINENTRY("lifein3minutes", "",
-		WME_ENTRY1s("data.dcp", "c6368950e37a95bf098b02b4eaa5b929", 141787214), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp", "c6368950e37a95bf098b02b4eaa5b929", 141787214), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Looky Demo (English)
 	WME_WINENTRY("looky", "Demo",
