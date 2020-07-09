@@ -358,8 +358,31 @@ void LM::m_close(int nargs) {
 }
 
 void LM::m_forget(int nargs) {
-	g_lingo->printSTUBWithArglist("m_forget", nargs);
-	g_lingo->dropStack(nargs);
+	Stage *me = static_cast<Stage *>(g_lingo->_currentMe.u.obj);
+	DatumArray *windowList = g_lingo->_windowList.u.farr;
+
+	uint i;
+	for (i = 0; i < windowList->size(); i++) {
+		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+			continue;
+		
+		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		if (window == me)
+			break;
+	}
+
+	if (i < windowList->size())
+		windowList->remove_at(i);
+
+	// remove me from global vars
+	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); ++it) {
+		if (it->_value.type != OBJECT || it->_value.u.obj->getObjType() != kWindowObj)
+			continue;
+		
+		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
+		if (window == me)
+			g_lingo->_globalvars[it->_key] = 0;
+	}
 }
 
 void LM::m_open(int nargs) {
