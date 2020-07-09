@@ -136,14 +136,14 @@ struct Datum {	/* interpreter stack type */
 	}
 
 	Datum eval();
-	double asFloat();
-	int asInt();
-	Common::String asString(bool printonly = false);
+	double asFloat() const;
+	int asInt() const;
+	Common::String asString(bool printonly = false) const;
 
-	const char *type2str(bool isk = false);
+	const char *type2str(bool isk = false) const;
 
-	int equalTo(Datum &d, bool ignoreCase = false);
-	int compareTo(Datum &d, bool ignoreCase = false);
+	int equalTo(Datum &d, bool ignoreCase = false) const;
+	int compareTo(Datum &d, bool ignoreCase = false) const;
 };
 
 struct PCell {
@@ -287,7 +287,7 @@ public:
 	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
 	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr);
 
-	int getAlignedType(Datum &d1, Datum &d2);
+	int getAlignedType(const Datum &d1, const Datum &d2);
 
 	void printAllVars();
 
