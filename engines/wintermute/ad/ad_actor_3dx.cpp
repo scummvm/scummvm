@@ -377,13 +377,13 @@ bool AdActor3DX::display() {
 		_gameRef->_renderer3D->setAmbientLightColor(_ambientLightColor);
 	}
 
-	// TODO: display shadow
-	//	TShadowType ShadowType = _gameRef->GetMaxShadowType(this);
-	//	if (ShadowType==SHADOW_STENCIL) {
-	//		DisplayShadowVolume();
-	//	} else if  (ShadowType > SHADOW_NONE) {
-	//		m_Renderer->DisplayShadow(this, Math::Vector3d(_shadowLightPos.x() * _scale3D, _shadowLightPos.y() * _scale3D, _shadowLightPos.z() * _scale3D), NULL, true);
-	//	}
+	TShadowType ShadowType = _gameRef->getMaxShadowType(this);
+
+	if (ShadowType == SHADOW_STENCIL) {
+		displayShadowVolume();
+	} else if  (ShadowType > SHADOW_NONE) {
+		//m_Renderer->DisplayShadow(this, Math::Vector3d(_shadowLightPos.x() * _scale3D, _shadowLightPos.y() * _scale3D, _shadowLightPos.z() * _scale3D), NULL, true);
+	}
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);
 	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
