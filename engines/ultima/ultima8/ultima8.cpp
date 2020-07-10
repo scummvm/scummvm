@@ -93,6 +93,7 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/split_item_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/snap_process.h"
 #include "ultima/ultima8/world/crosshair_process.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
@@ -104,6 +105,7 @@
 #include "ultima/ultima8/world/actors/cru_healer_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/guard_process.h"
 #include "ultima/ultima8/world/fireball_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
@@ -288,6 +290,10 @@ void Ultima8Engine::startup() {
 		ProcessLoader<BatteryChargerProcess>::load);
 	_kernel->addProcessLoader("CycleProcess",
 		ProcessLoader<CycleProcess>::load);
+	_kernel->addProcessLoader("GuardProcess",
+		ProcessLoader<GuardProcess>::load);
+	_kernel->addProcessLoader("SnapProcess",
+		ProcessLoader<SnapProcess>::load);
 
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();
@@ -1042,7 +1048,7 @@ void Ultima8Engine::resetEngine() {
 }
 
 void Ultima8Engine::setupCoreGumps() {
-	debugN(MM_INFO, "Setting up core _game gumps...\n");
+	debugN(MM_INFO, "Setting up core game gumps...\n");
 
 	Rect dims;
 	_screen->GetSurfaceDims(dims);
@@ -1053,7 +1059,7 @@ void Ultima8Engine::setupCoreGumps() {
 	_desktopGump->MakeFocus();
 
 	if (GAME_IS_U8) {
-		debugN(MM_INFO, "Creating _scalerGump...\n");
+		debugN(MM_INFO, "Creating ScalerGump...\n");
 		_scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
 		_scalerGump->InitGump(0);
 
@@ -1130,6 +1136,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 		_kernel->addProcess(new TargetReticleProcess());
 		_kernel->addProcess(new CrosshairProcess());
 		_kernel->addProcess(new CycleProcess());
+		_kernel->addProcess(new SnapProcess());
 	}
 
 	if (saveSlot == -1)

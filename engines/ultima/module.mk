@@ -542,6 +542,7 @@ MODULE_OBJS := \
 	ultima8/world/map_glob.o \
 	ultima8/world/missile_tracker.o \
 	ultima8/world/monster_egg.o \
+	ultima8/world/snap_process.o \
 	ultima8/world/split_item_process.o \
 	ultima8/world/sprite_process.o \
 	ultima8/world/target_reticle_process.o \

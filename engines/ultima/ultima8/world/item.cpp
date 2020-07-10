@@ -58,6 +58,7 @@
 #include "ultima/ultima8/usecode/uc_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/snap_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -65,6 +66,8 @@
 
 namespace Ultima {
 namespace Ultima8 {
+
+static const uint32 SNAP_EGG_SHAPE = 0x4fe;
 
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(Item)
@@ -1308,6 +1311,11 @@ void Item::destroy(bool delnow) {
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio)
 			audio->stopSFX(-1, _objId);
+		if (_shape == SNAP_EGG_SHAPE) {
+			SnapProcess *snap = SnapProcess::get_instance();
+			if (snap)
+				snap->removeEgg(this);
+		}
 	}
 
 	if (_extendedFlags & Item::EXT_CAMERA)
@@ -1463,6 +1471,11 @@ void Item::enterFastArea() {
 		if ((si->_flags & ShapeInfo::SI_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
 			World::get_instance()->getCurrentMap()->addTargetItem(this);
 		}
+		if (_shape == SNAP_EGG_SHAPE) {
+			SnapProcess *snap = SnapProcess::get_instance();
+			if (snap)
+				snap->addEgg(this);
+		}
 	}
 
 	// We're fast!
@@ -1487,6 +1500,11 @@ void Item::leaveFastArea() {
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
 		World::get_instance()->getCurrentMap()->removeTargetItem(this);
+		if (_shape == SNAP_EGG_SHAPE) {
+			SnapProcess *snap = SnapProcess::get_instance();
+			if (snap)
+				snap->removeEgg(this);
+		}
 	}
 
 	// CHECKME: what do we need to do exactly?
@@ -2937,6 +2955,8 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 		point.setY(point.getY() * 2);
 	}
 
+	if (!item)
+		return 0;
 	//! What should this do to ethereal items?
 
 //	if (item->canExistAt(point.getX(), point.getY(), point.getZ())) {
