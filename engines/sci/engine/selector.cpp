@@ -171,6 +171,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(setMotion);
 	FIND_SELECTOR(cycleSpeed);
 	FIND_SELECTOR(owner);
+	FIND_SELECTOR(curPos);
+	FIND_SELECTOR(update);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
@@ -213,8 +215,6 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(reSyncVol);
 	FIND_SELECTOR(set);
 	FIND_SELECTOR(clear);
-	FIND_SELECTOR(curPos);
-	FIND_SELECTOR(update);
 	FIND_SELECTOR(show);
 	FIND_SELECTOR(position);
 	FIND_SELECTOR(musicVolume);

@@ -137,6 +137,9 @@ struct SelectorCache {
 	Selector cycleSpeed;
 	Selector owner;
 
+	Selector curPos; // for LSL6 volume sync
+	Selector update; // for LSL6 volume sync
+
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
@@ -170,8 +173,6 @@ struct SelectorCache {
 	Selector reSyncVol; // for Torin volume sync on restore
 	Selector set; // for LSL6hires subtitle sync
 	Selector clear; // for LSL6hires subtitle sync
-	Selector curPos; // for LSL6hires volume sync
-	Selector update; // for LSL6hires volume sync
 	Selector show; // for GK1 volume sync
 	Selector position; // for GK1 volume sync
 	Selector musicVolume; // for GK1 volume sync

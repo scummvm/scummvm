@@ -575,6 +575,7 @@ bool GameFeatures::audioVolumeSyncUsesGlobals() const {
 	case GID_GK1:
 	case GID_GK2:
 	case GID_HOYLE5:
+	case GID_LSL6:
 	case GID_LSL6HIRES:
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA:
