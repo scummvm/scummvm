@@ -1465,16 +1465,35 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
 
 	switch (field) {
-	case kTheBackColor: {
-		int color = _vm->transformColor(d.asInt());
-		member->setColors(nullptr, &color);
-		break;
-	}
+	case kTheBackColor:
+		{
+			int color = _vm->transformColor(d.asInt());
+			member->setColors(nullptr, &color);
+			break;
+		}
 	case kTheCastType:
 		// TODO: You can actually switch the cast type!?
 		warning("Lingo::setTheCast(): Tried to switch cast type of %d", id);
 		//cast->type = static_cast<CastType>(d.u.i);
 		//cast->modified = 1;
+		break;
+	case kTheCenter:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheController:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheCrop:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheDepth:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheDirectToStage:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheDuration:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheFileName:
 		if (!castInfo) {
@@ -1483,11 +1502,15 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		castInfo->fileName = d.asString();
 		break;
-	case kTheForeColor: {
-		int color = _vm->transformColor(d.asInt());
-		member->setColors(&color, nullptr);
+	case kTheForeColor:
+		{
+			int color = _vm->transformColor(d.asInt());
+			member->setColors(&color, nullptr);
+			break;
+		}
+	case kTheFrameRate:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
-	}
 	case kTheHeight:
 		cast->getCastMemberInitialRect(id).setHeight(d.asInt());
 		cast->setCastMemberModified(id);
@@ -1504,12 +1527,36 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast: Attempted to set hilite of unsupported cast type");
 		}
 		break;
+	case kTheLoop:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
 	case kTheName:
 		if (!castInfo) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
 		castInfo->name = d.asString();
+		break;
+	case kThePausedAtStart:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePreLoad:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheRect:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheRegPoint:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePalette:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePicture:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePurgePriority:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheScriptText:
 		if (!castInfo) {
@@ -1518,6 +1565,9 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		cast->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, id);
 		castInfo->script = d.asString();
+		break;
+	case kTheSound:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheText:
 		if (castType == kCastText) {
@@ -1530,6 +1580,9 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		} else {
 			warning("Lingo::setTheCast(): Unprocessed setting text of cast %d type %d", id, castType);
 		}
+		break;
+	case kTheVideo:
+		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheWidth:
 		cast->getCastMemberInitialRect(id).setWidth(d.asInt());
