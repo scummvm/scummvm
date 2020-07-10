@@ -181,6 +181,7 @@ enum LEvent {
 	kEventEndSprite,
 
 	kEventNone,
+	kEventScript,
 	kEventEnterFrame,
 	kEventPrepareFrame,
 	kEventIdle,

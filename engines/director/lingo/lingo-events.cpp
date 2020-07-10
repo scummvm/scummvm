@@ -73,7 +73,9 @@ struct EventHandlerType {
 
 	{ kEventStartUp,			"startUp" },
 
-	{ kEventNone,				0 },
+	{ kEventScript,				"scummvm_script" },
+
+	{ kEventNone, 0 }
 };
 
 void Lingo::initEventHandlerTypes() {
@@ -134,7 +136,7 @@ void Lingo::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 			// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
 			if ((event == kEventMouseDown && sprite->_immediate)
 					|| (event == kEventMouseUp && !sprite->_immediate)) {
-				_eventQueue.push(LingoEvent(kEventNone, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
+				_eventQueue.push(LingoEvent(kEventScript, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
 			}
 		} else {
 			ScriptContext *script = movie->getScriptContext(kScoreScript, sprite->_scriptId);
@@ -171,7 +173,7 @@ void Lingo::queueFrameEvent(LEvent event, int eventId) {
 
 	if (scriptId) {
 		if (event == kEventEnterFrame && _vm->getVersion() <= 3) {
-			_eventQueue.push(LingoEvent(kEventNone, eventId, kScoreScript, scriptId, false));
+			_eventQueue.push(LingoEvent(kEventScript, eventId, kScoreScript, scriptId, false));
 		} else {
 			ScriptContext *script = movie->getScriptContext(kScoreScript, scriptId);
 			if (script && script->_eventHandlers.contains(event)) {
@@ -234,7 +236,7 @@ void Lingo::registerEvent(LEvent event, int spriteId) {
 	case kEventKeyDown:
 	case kEventTimeout:
 		if (g_director->getCurrentMovie()->getScriptContext(kGlobalScript, event)) {
-			_eventQueue.push(LingoEvent(kEventNone, eventId, kGlobalScript, event, true));
+			_eventQueue.push(LingoEvent(kEventScript, eventId, kGlobalScript, event, true));
 		}
 		break;
 	default:
