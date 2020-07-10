@@ -324,32 +324,42 @@ bool Stage::hasProp(const Common::String &propName) {
 }
 
 Datum Stage::getProp(const Common::String &propName) {
-	if (g_lingo->_theEntityFields.contains(propName)) {
-		switch (g_lingo->_theEntityFields[propName]->field) {
-		case kTheVisible:
-			return isVisible();
-		default:
-			break;
-		}
+	if (g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow) {
+		return getField(g_lingo->_theEntityFields[propName]->field);
 	}
 	
-	warning("Stage::getProp: unhandled property '%s'", propName.c_str());
+	warning("Stage::getProp: unknown property '%s'", propName.c_str());
 	return Datum();
 }
 
 bool Stage::setProp(const Common::String &propName, const Datum &value) {
-	if (g_lingo->_theEntityFields.contains(propName)) {
-		switch (g_lingo->_theEntityFields[propName]->field) {
-		case kTheVisible:
-			setVisible(value.asInt());
-			return true;
-		default:
-			break;
-		}
+	if (g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow) {
+		return setField(g_lingo->_theEntityFields[propName]->field, value);
 	}
 	
-	warning("Stage::getProp: unhandled property '%s'", propName.c_str());
+	warning("Stage::setProp: unknown property '%s'", propName.c_str());
 	return false;
+}
+
+Datum Stage::getField(int field) {
+	switch (field) {
+	case kTheVisible:
+		return isVisible();
+	default:
+		warning("Stage::getField: unhandled field '%s'", g_lingo->field2str(field));
+		return Datum();
+	}
+}
+
+bool Stage::setField(int field, const Datum &value) {
+	switch (field) {
+	case kTheVisible:
+		setVisible(value.asInt());
+		return true;
+	default:
+		warning("Stage::setField: unhandled field '%s'", g_lingo->field2str(field));
+		return false;
+	}
 }
 
 void LM::m_close(int nargs) {

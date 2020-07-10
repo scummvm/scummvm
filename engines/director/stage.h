@@ -142,6 +142,8 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 	virtual bool hasProp(const Common::String &propName);
 	virtual Datum getProp(const Common::String &propName);
 	virtual bool setProp(const Common::String &propName, const Datum &value);
+	virtual Datum getField(int field);
+	virtual bool setField(int field, const Datum &value);
 
 public:
 	Common::List<Common::Rect> _dirtyRects;

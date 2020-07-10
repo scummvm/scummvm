@@ -56,6 +56,8 @@ public:
 	virtual bool hasProp(const Common::String &propName) = 0;
 	virtual Datum getProp(const Common::String &propName) = 0;
 	virtual bool setProp(const Common::String &propName, const Datum &value) = 0;
+	virtual Datum getField(int field) = 0;
+	virtual bool setField(int field, const Datum &value) = 0;
 };
 
 template <typename Derived>
@@ -155,6 +157,12 @@ public:
 		return Datum();
 	};
 	virtual bool setProp(const Common::String &propName, const Datum &value) {
+		return false;
+	};
+	virtual Datum getField(int field) {
+		return Datum();
+	};
+	virtual bool setField(int field, const Datum &value) {
 		return false;
 	};
 

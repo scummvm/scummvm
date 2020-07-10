@@ -32,6 +32,7 @@
 #include "director/score.h"
 #include "director/stage.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
@@ -149,7 +150,7 @@ TheEntity entities[] = {
 	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//				D4 p
 	{ kTheTraceLogFile,		"traceLogFile",		false, 4 },	//				D4 p
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//				D4 p
-	// { kTheWindow,			"window",			true,  4 },	//				D4
+	{ kTheWindow,			"window",			true,  4 },	//				D4
 	{ kTheWindowList,		"windowList",		false, 4 },	//				D4 p
 	{ kTheNOEntity, NULL, false, 0 }
 };
@@ -578,6 +579,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastTimerReset;
 		break;
+	case kTheWindow:
+		g_lingo->push(id);
+		LB::b_window(1);
+		d = g_lingo->pop().u.obj->getField(field);
+		break;
 	case kTheWindowList:
 		d = g_lingo->_windowList;
 		break;
@@ -665,6 +671,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheTimeoutScript:
 		setPrimaryEventHandler(kEventTimeout, d.asString());
+		break;
+	case kTheWindow:
+		g_lingo->push(id);
+		LB::b_window(1);
+		g_lingo->pop().u.obj->setField(field, d);
 		break;
 	case kTheWindowList:
 		if (d.type == ARRAY) {
