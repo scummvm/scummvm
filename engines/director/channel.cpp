@@ -184,12 +184,29 @@ void Channel::setHeight(int h) {
 	}
 }
 
-void Channel::addRegistrationOffset(Common::Point &pos) {
+void Channel::setBbox(int l, int t, int r, int b) {
+	if (_sprite->_puppet && _sprite->_stretch) {
+		_width = r - l;
+		_height = b - t;
+
+		_currentPoint.x = l;
+		_currentPoint.y = t;
+
+		addRegistrationOffset(_currentPoint, true);
+	}
+}
+
+void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
 	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
 		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
 
-		pos += Common::Point(bc->_initialRect.left - bc->_regX,
-												 bc->_initialRect.top - bc->_regY);
+		if (subtract) {
+			pos -= Common::Point(bc->_initialRect.left - bc->_regX,
+													 bc->_initialRect.top - bc->_regY);
+		} else {
+			pos += Common::Point(bc->_initialRect.left - bc->_regX,
+													 bc->_initialRect.top - bc->_regY);
+		}
 	}
 }
 

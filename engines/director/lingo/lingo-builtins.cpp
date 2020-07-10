@@ -1813,9 +1813,21 @@ void LB::b_rollOver(int nargs) {
 }
 
 void LB::b_spriteBox(int nargs) {
-	g_lingo->printSTUBWithArglist("b_spriteBox", nargs);
+	ARGNUMCHECK(5);
 
-	g_lingo->dropStack(nargs);
+	int b = g_lingo->pop().asInt();
+	int r = g_lingo->pop().asInt();
+	int t = g_lingo->pop().asInt();
+	int l = g_lingo->pop().asInt();
+	int spriteId = g_lingo->pop().asInt();
+	Channel *channel = g_director->getCurrentMovie()->getScore()->getChannelById(spriteId);
+
+	if (!channel)
+		return;
+
+	g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+	channel->setBbox(l, t, r, b);
+	channel->_dirty = true;
 }
 
 void LB::b_unLoad(int nargs) {
@@ -2192,7 +2204,7 @@ void LB::b_window(int nargs) {
 	for (uint i = 0; i < windowList->size(); i++) {
 		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
 			continue;
-		
+
 		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
 		if (window->getName().equalsIgnoreCase(windowName)) {
 			g_lingo->push(window);

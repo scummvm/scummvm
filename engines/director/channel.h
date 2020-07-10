@@ -45,6 +45,7 @@ public:
 
 	void setWidth(int w);
 	void setHeight(int h);
+	void setBbox(int l, int t, int r, int b);
 	void setClean(Sprite *nextSprite, int spriteId);
 
 	void addDelta(Common::Point pos);
@@ -68,7 +69,7 @@ private:
 	uint getForeColor();
 	uint getBackColor();
 
-	void addRegistrationOffset(Common::Point &pos);
+	void addRegistrationOffset(Common::Point &pos, bool subtract = false);
 };
 
 } // End of namespace Director
