@@ -857,7 +857,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	debugC(1, kDebugCompile, "Script flags:");
 	debugC(1, kDebugCompile, "unk0: %d global: %d unk2: %d unk3: %d", (scriptFlags & kScriptFlagUnk0) != 0, (scriptFlags & kScriptFlagGlobal) != 0, (scriptFlags & kScriptFlagUnk2) != 0, (scriptFlags & kScriptFlagUnk3) != 0);
 	debugC(1, kDebugCompile, "factoryDef: %d unk5: %d unk6: %d unk7: %d", (scriptFlags & kScriptFlagFactoryDef) != 0, (scriptFlags & kScriptFlagUnk5) != 0, (scriptFlags & kScriptFlagUnk6) != 0, (scriptFlags & kScriptFlagUnk7) != 0);
-	debugC(1, kDebugCompile, "hasFactory: %d unk9: %d unkA: %d unkB: %d", (scriptFlags & kScriptFlagHasFactory) != 0, (scriptFlags & kScriptFlagUnk9) != 0, (scriptFlags & kScriptFlagUnkA) != 0, (scriptFlags & kScriptFlagUnkB) != 0);
+	debugC(1, kDebugCompile, "hasFactory: %d eventScript: %d eventScript2: %d unkB: %d", (scriptFlags & kScriptFlagHasFactory) != 0, (scriptFlags & kScriptFlagEventScript) != 0, (scriptFlags & kScriptFlagEventScript2) != 0, (scriptFlags & kScriptFlagUnkB) != 0);
 	debugC(1, kDebugCompile, "unkC: %d unkD: %d unkE: %d unkF: %d", (scriptFlags & kScriptFlagUnkC) != 0, (scriptFlags & kScriptFlagUnkD) != 0, (scriptFlags & kScriptFlagUnkE) != 0, (scriptFlags & kScriptFlagUnkF) != 0);
 	// unk4
 	for (uint32 i = 0; i < 0x4; i++) {
@@ -1392,10 +1392,19 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		}
 
 		// Attach to handlers
-		Symbol sym;
+		
+		Common::String functionName;
 		if (0 <= nameIndex && nameIndex < (int16)archive->names.size()) {
-			debugC(5, kDebugLoading, "Function %d binding: %s()", i, archive->names[nameIndex].c_str());
-			sym = _assemblyContext->define(archive->names[nameIndex], argCount, _currentAssembly, argNames, varNames);
+			functionName = archive->names[nameIndex];
+		} else if (i == 0 && (scriptFlags & kScriptFlagEventScript)) {
+			// event script (lingo not contained within a handler)
+			functionName = "scummvm_script";
+		}
+
+		Symbol sym;
+		if (!functionName.empty()) {
+			debugC(5, kDebugLoading, "Function %d binding: %s()", i, functionName.c_str());
+			sym = _assemblyContext->define(functionName, argCount, _currentAssembly, argNames, varNames);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
 			sym.name = new Common::String();
