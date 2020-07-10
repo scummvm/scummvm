@@ -28,10 +28,12 @@
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -69,13 +71,21 @@ void AvatarDeathProcess::run() {
 	Kernel::get_instance()->addProcess(menuproc);
 
 	if (GAME_IS_U8) {
-		// TODO: What should this do in crusader?
+		// Show the avatar gravestone
 		ReadableGump *gump = new ReadableGump(1, 27, 11,
 											  _TL_("HERE LIES*THE AVATAR*REST IN PEACE"));
 		gump->InitGump(0);
 		gump->setRelativePosition(Gump::CENTER);
 		Process *gumpproc = gump->GetNotifyProcess();
 		menuproc->waitFor(gumpproc);
+	} else {
+		// Play "Silencer Terminated" audio and wait
+		// a couple of seconds before showing menu
+		AudioProcess *ap = AudioProcess::get_instance();
+		ap->playSFX(9, 0x10, 0, 1);
+		DelayProcess *delayproc = new DelayProcess(60);
+		Kernel::get_instance()->addProcess(delayproc);
+		menuproc->waitFor(delayproc);
 	}
 
 	// done
