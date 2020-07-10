@@ -355,80 +355,80 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 			begin = end;
 		} while ((end = findNextDefinition(begin + 1)));
 
-		debugC(1, kDebugCompile, "Last code chunk:\n#####\n%s\n#####", begin);
-		parse(begin);
+		_inFactory = false;
+		_assemblyContext = mainContext;
 
+		debugC(1, kDebugCompile, "Last code chunk:\n#####\n%s\n#####", begin);
+	}
+
+	parse(begin);
+
+	// for D4 and above, there usually won't be any code left.
+	// all scoped methods will be defined and stored by the code parser
+	// however D3 and below allow scopeless functions!
+	// and these can show up in D4 when imported from other movies
+
+	if (!_currentAssembly->empty()) {
 		// end of script, add a c_procret so stack frames work as expected
 		code1(LC::c_procret);
 		code1(STOP);
-	} else {
-		parse(code);
 
-		code1(LC::c_procret);
-		code1(STOP);
-	}
+		if (debugChannelSet(3, kDebugCompile)) {
+			if (_currentAssembly->size() && !_hadError)
+				Common::hexdump((byte *)&_currentAssembly->front(), _currentAssembly->size() * sizeof(inst));
 
-	_inFactory = false;
-	_assemblyContext = mainContext;
-
-	if (debugChannelSet(3, kDebugCompile)) {
-		if (_currentAssembly->size() && !_hadError)
-			Common::hexdump((byte *)&_currentAssembly->front(), _currentAssembly->size() * sizeof(inst));
-
-		debugC(2, kDebugCompile, "<resulting code>");
-		uint pc = 0;
-		while (pc < _currentAssembly->size()) {
-			uint spc = pc;
-			Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
-			debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
+			debugC(2, kDebugCompile, "<resulting code>");
+			uint pc = 0;
+			while (pc < _currentAssembly->size()) {
+				uint spc = pc;
+				Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
+				debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
+			}
+			debugC(2, kDebugCompile, "<end code>");
 		}
-		debugC(2, kDebugCompile, "<end code>");
+
+		Symbol currentFunc;
+
+		currentFunc.type = HANDLER;
+		currentFunc.u.defn = _currentAssembly;
+		Common::String typeStr = Common::String(scriptType2str(type));
+		currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
+		currentFunc.ctx = _assemblyContext;
+		currentFunc.archive = archive;
+		currentFunc.anonymous = anonymous;
+		// arg names should be empty, but just in case
+		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+		for (uint i = 0; i < _argstack.size(); i++) {
+			argNames->push_back(Common::String(_argstack[i]->c_str()));
+		}
+		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
+		for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
+			if (it->_value == kVarLocal)
+				varNames->push_back(Common::String(it->_key));
+		}
+
+		if (debugChannelSet(1, kDebugCompile)) {
+			debug("Function vars");
+			debugN("  Args: ");
+			for (uint i = 0; i < argNames->size(); i++) {
+				debugN("%s, ", (*argNames)[i].c_str());
+			}
+			debugN("\n");
+			debugN("  Local vars: ");
+			for (uint i = 0; i < varNames->size(); i++) {
+				debugN("%s, ", (*varNames)[i].c_str());
+			}
+			debugN("\n");
+		}
+
+		currentFunc.argNames = argNames;
+		currentFunc.varNames = varNames;
+		_assemblyContext->_eventHandlers[kEventScript] = currentFunc;
 	}
 
-	// for D4 and above, there won't be any code left. all scoped methods
-	// will be defined and stored by the code parser, and this function we save
-	// will be blank.
-	// however D3 and below allow scopeless functions!
-	Symbol currentFunc;
-
-	currentFunc.type = HANDLER;
-	currentFunc.u.defn = _currentAssembly;
-	Common::String typeStr = Common::String(scriptType2str(type));
-	currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
-	currentFunc.ctx = _assemblyContext;
-	currentFunc.archive = archive;
-	currentFunc.anonymous = anonymous;
-	// arg names should be empty, but just in case
-	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
-	for (uint i = 0; i < _argstack.size(); i++) {
-		argNames->push_back(Common::String(_argstack[i]->c_str()));
-	}
-	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-		if (it->_value == kVarLocal)
-			varNames->push_back(Common::String(it->_key));
-	}
 	delete _methodVars;
 	_methodVars = nullptr;
-
-	if (debugChannelSet(1, kDebugCompile)) {
-		debug("Function vars");
-		debugN("  Args: ");
-		for (uint i = 0; i < argNames->size(); i++) {
-			debugN("%s, ", (*argNames)[i].c_str());
-		}
-		debugN("\n");
-		debugN("  Local vars: ");
-		for (uint i = 0; i < varNames->size(); i++) {
-			debugN("%s, ", (*varNames)[i].c_str());
-		}
-		debugN("\n");
-	}
-
-	currentFunc.argNames = argNames;
-	currentFunc.varNames = varNames;
 	_currentAssembly = nullptr;
-	_assemblyContext->_eventHandlers[kEventScript] = currentFunc;
 	_assemblyContext = nullptr;
 	_assemblyArchive = nullptr;
 	return mainContext;
