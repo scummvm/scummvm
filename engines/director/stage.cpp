@@ -377,49 +377,21 @@ bool Stage::setNextMovie(Common::String &movieFilenameRaw) {
 }
 
 bool Stage::step() {
-	if (_currentMovie) {
+	// finish last movie
+	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
 		debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		debug(0, "@@@@   Movie name '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
 		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-		switch (_currentMovie->getScore()->_playState) {
-		case kPlayNotStarted:
-			{
-				bool goodMovie = _currentMovie->loadArchive();
+		_currentMovie->getScore()->stopPlay();
+		debugC(1, kDebugEvents, "Finished playback of movie '%s'", _currentMovie->getMacName().c_str());
 
-				// If we came in a loop, then skip as requested
-				if (!_nextMovie.frameS.empty()) {
-					_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
-					_nextMovie.frameS.clear();
-				}
-
-				if (_nextMovie.frameI != -1) {
-					_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
-					_nextMovie.frameI = -1;
-				}
-
-				if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
-					debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
-					_currentMovie->getScore()->startPlay();
-				} else {
-					return false;
-				}
-			}
-			return true;
-		case kPlayStarted:
-			_currentMovie->getScore()->step();
-			return true;
-		case kPlayStopped:
-			_currentMovie->getScore()->stopPlay();
-			debugC(1, kDebugEvents, "Finished playback of movie '%s'", _currentMovie->getMacName().c_str());
+		if (_vm->getGameGID() == GID_TESTALL) {
+			_nextMovie = getNextMovieFromQueue();
 		}
 	}
 
-	if (_vm->getGameGID() == GID_TESTALL) {
-		_nextMovie = getNextMovieFromQueue();
-	}
-
-	// If a loop was requested, do it
+	// prepare next movie
 	if (!_nextMovie.movie.empty()) {
 		_newMovieStarted = true;
 
@@ -460,7 +432,44 @@ bool Stage::step() {
 		}
 
 		_nextMovie.movie.clear();
-		return true;
+	}
+
+	// play current movie
+	if (_currentMovie) {
+		debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		debug(0, "@@@@   Movie name '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
+		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+		switch (_currentMovie->getScore()->_playState) {
+		case kPlayNotStarted:
+			{
+				bool goodMovie = _currentMovie->loadArchive();
+
+				// If we came in a loop, then skip as requested
+				if (!_nextMovie.frameS.empty()) {
+					_currentMovie->getScore()->setStartToLabel(_nextMovie.frameS);
+					_nextMovie.frameS.clear();
+				}
+
+				if (_nextMovie.frameI != -1) {
+					_currentMovie->getScore()->setCurrentFrame(_nextMovie.frameI);
+					_nextMovie.frameI = -1;
+				}
+
+				if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
+					debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
+					_currentMovie->getScore()->startPlay();
+				} else {
+					return false;
+				}
+			}
+			// fall through
+		case kPlayStarted:
+			_currentMovie->getScore()->step();
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	return false;
