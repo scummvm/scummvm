@@ -331,8 +331,8 @@ const char *Lingo::field2str(int id) {
 	return (const char *)buf;
 }
 
-#define getTheEntitySTUB(entity, field) \
-	warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+#define getTheEntitySTUB(entity) \
+	warning("Lingo::getTheEntity(): Unprocessed getting entity %s", entity2str(entity));
 
 
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
@@ -353,16 +353,31 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 
 	switch (entity) {
 	case kTheActorList:
-		getTheEntitySTUB(kTheActorList, 0);
+		getTheEntitySTUB(kTheActorList);
 		break;
 	case kTheBeepOn:
-		getTheEntitySTUB(kTheBeepOn, 0);
+		getTheEntitySTUB(kTheBeepOn);
 		break;
 	case kTheButtonStyle:
-		getTheEntitySTUB(kTheButtonStyle, 0);
+		getTheEntitySTUB(kTheButtonStyle);
 		break;
 	case kTheCast:
 		d = getTheCast(id, field);
+		break;
+	case kTheCastMembers:
+		getTheEntitySTUB(kTheCastMembers);
+		break;
+	case kTheCenterStage:
+		getTheEntitySTUB(kTheCenterStage);
+		break;
+	case kTheCheckBoxAccess:
+		getTheEntitySTUB(kTheCheckBoxAccess);
+		break;
+	case kTheCheckBoxType:
+		getTheEntitySTUB(kTheCheckBoxType);
+		break;
+	case kTheClickLoc:
+		getTheEntitySTUB(kTheClickLoc);
 		break;
 	case kTheClickOn:
 		d.type = INT;
@@ -377,8 +392,23 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = 1;
 		break;
+	case kTheCommandDown:
+		getTheEntitySTUB(kTheCommandDown);
+		break;
+	case kTheControlDown:
+		getTheEntitySTUB(kTheControlDown);
+		break;
 	case kTheDate:
 		d = getTheDate(field);
+		break;
+	case kTheDoubleClick:
+		getTheEntitySTUB(kTheDoubleClick);
+		break;
+	case kTheExitLock:
+		getTheEntitySTUB(kTheExitLock);
+		break;
+	case kTheFixStageSize:
+		getTheEntitySTUB(kTheFixStageSize);
 		break;
 	case kTheFloatPrecision:
 		d.type = INT;
@@ -387,6 +417,33 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheFrame:
 		d.type = INT;
 		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
+		break;
+	case kTheFrameLabel:
+		getTheEntitySTUB(kTheFrameLabel);
+		break;
+	case kTheFrameScript:
+		getTheEntitySTUB(kTheFrameScript);
+		break;
+	case kTheFramePalette:
+		getTheEntitySTUB(kTheFramePalette);
+		break;
+	case kTheFrameTempo:
+		getTheEntitySTUB(kTheFrameTempo);
+		break;
+	case kTheFreeBlock:
+		getTheEntitySTUB(kTheFreeBlock);
+		break;
+	case kTheFreeBytes:
+		getTheEntitySTUB(kTheFreeBytes);
+		break;
+	case kTheFullColorPermit:
+		getTheEntitySTUB(kTheFullColorPermit);
+		break;
+	case kTheImageDirect:
+		getTheEntitySTUB(kTheImageDirect);
+		break;
+	case kTheItemDelimiter:
+		getTheEntitySTUB(kTheItemDelimiter);
 		break;
 	case kTheKey:
 		d.type = STRING;
@@ -409,6 +466,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			d.u.s = new Common::String(mainArchive->primaryEventHandlers[kEventKeyUp]);
 		else
 			d.u.s = new Common::String();
+		break;
+	case kTheLabelList:
+		getTheEntitySTUB(kTheLabelList);
 		break;
 	case kTheLastClick:
 		d.type = INT;
