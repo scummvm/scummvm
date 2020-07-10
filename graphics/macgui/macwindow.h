@@ -102,7 +102,7 @@ public:
 	 * Mutator to change the visible state of the window.
 	 * @param visible Target state.
 	 */
-	virtual void setVisible(bool visible);
+	virtual void setVisible(bool visible, bool silent = false);
 	/**
 	 * Accessor to determine whether a window is active.
 	 * @return True if the window is active.
