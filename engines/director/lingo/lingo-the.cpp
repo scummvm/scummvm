@@ -1607,6 +1607,9 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 	}
 
 	switch (field) {
+	case kTheText:
+		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
+		break;
 	case kTheTextAlign:
 		d.type = STRING;
 		switch (((Graphics::MacText *)member->_widget)->getAlign()) {
@@ -1624,6 +1627,18 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 			warning("Lingo::getTheField: Invalid text align spec");
 			break;
 		}
+		break;
+	case kTheTextFont:
+		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
+		break;
+	case kTheTextHeight:
+		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
+		break;
+	case kTheTextSize:
+		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
+		break;
+	case kTheTextStyle:
+		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
 		break;
 	default:
 		warning("Lingo::getTheField(): Unprocessed getting field \"%s\" of field %d", field2str(field), id);
@@ -1651,27 +1666,43 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 	}
 
 	switch (field) {
-	case kTheTextAlign: {
-		Common::String select = d.asString(true);
-		select.toLowercase();
+	case kTheText:
+		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
+		break;
+	case kTheTextAlign:
+		{
+			Common::String select = d.asString(true);
+			select.toLowercase();
 
-		Graphics::TextAlign align;
-		if (select == "\"left\"") {
-			align = Graphics::kTextAlignLeft;
-		} else if (select == "\"center\"") {
-			align = Graphics::kTextAlignCenter;
-		} else if (select == "\"right\"") {
-			align = Graphics::kTextAlignRight;
-		} else {
-			warning("Lingo::setTheField: Unknown text align spec: %s", d.asString(true).c_str());
+			Graphics::TextAlign align;
+			if (select == "\"left\"") {
+				align = Graphics::kTextAlignLeft;
+			} else if (select == "\"center\"") {
+				align = Graphics::kTextAlignCenter;
+			} else if (select == "\"right\"") {
+				align = Graphics::kTextAlignRight;
+			} else {
+				warning("Lingo::setTheField: Unknown text align spec: %s", d.asString(true).c_str());
+				break;
+			}
+
+			((Graphics::MacText *)member->_widget)->setAlignOffset(align);
+			((Graphics::MacText *)member->_widget)->draw();
+			member->_modified = true;
 			break;
 		}
-
-		((Graphics::MacText *)member->_widget)->setAlignOffset(align);
-		((Graphics::MacText *)member->_widget)->draw();
-		member->_modified = true;
+	case kTheTextFont:
+		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
 		break;
-	}
+	case kTheTextHeight:
+		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
+		break;
+	case kTheTextSize:
+		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
+		break;
+	case kTheTextStyle:
+		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
+		break;
 	default:
 		warning("Lingo::setTheField(): Unprocessed setting field \"%s\" of field %d", field2str(field), id);
 	}
