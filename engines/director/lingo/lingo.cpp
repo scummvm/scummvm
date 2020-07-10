@@ -284,8 +284,10 @@ void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const c
 		contextName = Common::String::format("%d", id);
 
 	ScriptContext *sc = g_lingo->compileLingo(code, this, type, id, contextName);
-	scriptContexts[type][id] = sc;
-	*sc->_refCount += 1;
+	if (sc) {
+		scriptContexts[type][id] = sc;
+		*sc->_refCount += 1;
+	}
 }
 
 ScriptContext *Lingo::compileAnonymous(const char *code) {
