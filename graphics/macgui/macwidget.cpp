@@ -43,14 +43,8 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 	if (parent)
 		parent->_children.push_back(this);
 
-	_composeSurface = nullptr;
-	_maskSurface = nullptr;
-
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height());
 	_composeSurface->clear(_bgcolor);
-
-	_maskSurface = new ManagedSurface(_dims.width(), _dims.height());
-	_maskSurface->clear(1);
 
 	_active = false;
 	_editable = false;
@@ -63,11 +57,6 @@ MacWidget::~MacWidget() {
 	if (_composeSurface) {
 		_composeSurface->free();
 		delete _composeSurface;
-	}
-
-	if (_maskSurface) {
-		_maskSurface->free();
-		delete _maskSurface;
 	}
 }
 

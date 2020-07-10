@@ -57,7 +57,6 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	_alignOffset.x += offset;
 	_dims.right += offset;
 	_composeSurface->create(_dims.width(), _dims.height());
-	_maskSurface->create(_dims.width(), _dims.height());
 }
 
 void MacButton::setActive(bool active) {
@@ -112,11 +111,10 @@ bool MacButton::draw(bool forceRedraw) {
 	if ((!_contentIsDirty && !forceRedraw) || _active)
 		return false;
 
-	_maskSurface->clear(1);
 	MacText::draw();
 
 	Common::Rect r(_dims.width() - 1, _dims.height() - 1);
-	Graphics::MacPlotData pd(_composeSurface, _maskSurface, &_wm->getPatterns(), 1, 0, 0, 1, 0);
+	Graphics::MacPlotData pd(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0);
 
 	switch (_buttonType) {
 	case kCheckBox: {
