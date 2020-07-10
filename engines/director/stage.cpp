@@ -165,7 +165,12 @@ void Stage::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Manag
 	if (pd.ms) {
 		inkBlitShape(&pd, srcRect);
 	} else if (pd.srf) {
-		inkBlitSurface(&pd, srcRect, channel->getMask());
+		if (channel->isStretched()) {
+			srcRect = channel->getBbox(true);
+			inkBlitStretchSurface(&pd, srcRect, channel->getMask());
+		} else {
+			inkBlitSurface(&pd, srcRect, channel->getMask());
+		}
 	} else {
 		warning("Stage::inkBlitFrom: No source surface");
 	}
@@ -253,6 +258,29 @@ void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Gr
 				inkDrawPixel(pd->destRect.left + j, pd->destRect.top + i,
 										 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
 			}
+	}
+}
+
+void Stage::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Graphics::Surface *mask) {
+	if (!pd->srf)
+		return;
+
+	// TODO: Determine why colourization causes problems in Warlock
+	if (pd->sprite == kTextSprite)
+		pd->applyColor = false;
+
+	int scaleX = SCALE_THRESHOLD * srcRect.width() / pd->destRect.width();
+	int scaleY = SCALE_THRESHOLD * srcRect.height() / pd->destRect.height();
+
+	pd->srcPoint.y = MAX(abs(srcRect.top - pd->destRect.top), 0);
+
+	for (int i = 0, scaleYCtr = 0; i < pd->destRect.height(); i++, scaleYCtr += scaleY, pd->srcPoint.y++) {
+		pd->srcPoint.x = MAX(abs(srcRect.left - pd->destRect.left), 0);
+
+		for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
+			inkDrawPixel(pd->destRect.left + xCtr, pd->destRect.top + i,
+									 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
+		}
 	}
 }
 

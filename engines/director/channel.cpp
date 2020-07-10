@@ -127,8 +127,10 @@ bool Channel::isStretched() {
 		(_sprite->_width != _width || _sprite->_height != _height);
 }
 
-Common::Rect Channel::getBbox() {
-	Common::Rect result(_width, _height);
+Common::Rect Channel::getBbox(bool unstretched) {
+
+	Common::Rect result(unstretched ? _sprite->_width : _width,
+											unstretched ? _sprite->_height : _height);
 	result.moveTo(getPosition());
 
 	return result;
@@ -167,6 +169,18 @@ void Channel::setClean(Sprite *nextSprite, int spriteId) {
 		_sprite->_cast->_widget->_priority = spriteId;
 		_sprite->_cast->_widget->draw();
 		_sprite->_cast->_widget->_contentIsDirty = false;
+	}
+}
+
+void Channel::setWidth(int w) {
+	if (_sprite->_puppet && _sprite->_stretch) {
+		_width = w;
+	}
+}
+
+void Channel::setHeight(int h) {
+	if (_sprite->_puppet && _sprite->_stretch) {
+		_height = h;
 	}
 }
 

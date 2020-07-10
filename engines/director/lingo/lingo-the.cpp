@@ -883,10 +883,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_foreColor = d.asInt();
 		break;
 	case kTheHeight:
-		if (sprite->_puppet && sprite->_stretch) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-			channel->_height = d.asInt();
-		}
+		g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+		channel->setHeight(d.asInt());
 		break;
 	case kTheImmediate:
 		sprite->_immediate = d.asInt();
@@ -942,6 +940,13 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheStretch:
 		sprite->_stretch = d.asInt();
+
+		if (!d.asInt()) {
+			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+
+			channel->_width = sprite->_width;
+			channel->_height = sprite->_height;
+		}
 		break;
 	case kTheTrails:
 		sprite->_trails = d.asInt();
@@ -957,10 +962,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_volume = d.asInt();
 		break;
 	case kTheWidth:
-		if (sprite->_puppet && sprite->_stretch) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-			channel->_width = d.asInt();
-		}
+		g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+		channel->setWidth(d.asInt());
 		break;
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));

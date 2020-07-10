@@ -38,10 +38,13 @@ public:
 
 	DirectorPlotData getPlotData();
 	const Graphics::Surface *getMask(bool forceMatte = false);
-	Common::Rect getBbox();
+	Common::Rect getBbox(bool unstretched = false);
 
 	bool isStretched();
 	bool isDirty(Sprite *nextSprite = nullptr);
+
+	void setWidth(int w);
+	void setHeight(int h);
 	void setClean(Sprite *nextSprite, int spriteId);
 
 	void addDelta(Common::Point pos);
