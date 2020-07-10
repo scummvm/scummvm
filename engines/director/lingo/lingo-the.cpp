@@ -56,7 +56,7 @@ TheEntity entities[] = {
 	{ kTheColorQD,			"colorQD",			false, 2 },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false, 2 },	// D2 f
 	{ kTheControlDown,		"controlDown",		false, 2 },	// D2 f
-	{ kTheDate,				"date",				false, 3 },	//		 D3
+	{ kTheDate,				"date",				false, 3 },	//		 D3 f
 	{ kTheDoubleClick,		"doubleClick",		false, 2 },	// D2 f
 	{ kTheExitLock,			"exitLock",			false, 2 },	// D2 p
 	{ kTheField,			"field",			true,  3 },	//		 D3
@@ -126,8 +126,8 @@ TheEntity entities[] = {
 	{ kTheSelStart,			"selStart",			false, 2 },	// D2 p
 	{ kTheShiftDown,		"shiftDown",		false, 2 },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false, 2 },	// D2 p
-	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
 	{ kTheSoundEntity,		"sound",			true,  4 },	// D4
+	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
 	{ kTheSprite,			"sprite",			true,  2 },	// D4 p
 	{ kTheStage,			"stage",			false, 4 },	//				D4 p
 	{ kTheStageBottom,		"stageBottom",		false, 2 },	// D2 f
@@ -334,7 +334,6 @@ const char *Lingo::field2str(int id) {
 #define getTheEntitySTUB(entity) \
 	warning("Lingo::getTheEntity(): Unprocessed getting entity %s", entity2str(entity));
 
-
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
 		debugC(3, kDebugLingoExec, "Lingo::getTheEntity(%s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field));
@@ -365,7 +364,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheCast(id, field);
 		break;
 	case kTheCastMembers:
-		getTheEntitySTUB(kTheCastMembers);
+		warning("Lingo::getTheEntity(): Unprocessed getting field %s of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheCenterStage:
 		getTheEntitySTUB(kTheCenterStage);
@@ -682,9 +681,6 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheSoundEnabled:
 		getTheEntitySTUB(kTheSoundEnabled);
 		break;
-	case kTheSoundLevel:
-		getTheEntitySTUB(kTheSoundLevel);
-		break;
 	case kTheSoundEntity:
 		{
 			switch (field) {
@@ -702,6 +698,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 				break;
 			}
 		}
+		break;
+	case kTheSoundLevel:
+		getTheEntitySTUB(kTheSoundLevel);
 		break;
 	case kTheSprite:
 		d = getTheSprite(id, field);
@@ -795,12 +794,21 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	return d;
 }
 
+#define setTheEntitySTUB(entity) \
+	warning("Lingo::setTheEntity(): Unprocessed setting entity %s", entity2str(entity));
+
 void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
 		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
 	}
 
 	switch (entity) {
+	case kTheActorList:
+		setTheEntitySTUB(kTheActorList);
+		break;
+	case kTheBeepOn:
+		setTheEntitySTUB(kTheBeepOn);
+		break;
 	case kTheButtonStyle:
 		if (d.asInt())
 			g_director->_wm->_mode = Director::wmMode | Graphics::kWMModeButtonDialogStyle;
@@ -810,11 +818,26 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheCast:
 		setTheCast(id, field, d);
 		break;
+	case kTheCenterStage:
+		setTheEntitySTUB(kTheCenterStage);
+		break;
+	case kTheCheckBoxAccess:
+		setTheEntitySTUB(kTheCheckBoxAccess);
+		break;
+	case kTheCheckBoxType:
+		setTheEntitySTUB(kTheCheckBoxType);
+		break;
 	case kTheColorDepth:
 		_vm->_colorDepth = d.asInt();
 
 		// bpp. 1, 2, 4, 8, 32
 		warning("STUB: Lingo::setTheEntity(): Set color depth to %d", _vm->_colorDepth);
+		break;
+	case kTheExitLock:
+		setTheEntitySTUB(kTheExitLock);
+		break;
+	case kTheFixStageSize:
+		setTheEntitySTUB(kTheFixStageSize);
 		break;
 	case kTheField:
 		setTheField(id, field, d);
@@ -824,11 +847,35 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_floatPrecision = MAX(0, MIN(_floatPrecision, 19)); // 0 to 19
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		break;
+	case kTheFrameLabel:
+		setTheEntitySTUB(kTheFrameLabel);
+		break;
+	case kTheFrameScript:
+		setTheEntitySTUB(kTheFrameScript);
+		break;
+	case kTheFramePalette:
+		setTheEntitySTUB(kTheFramePalette);
+		break;
+	case kTheFullColorPermit:
+		setTheEntitySTUB(kTheFullColorPermit);
+		break;
+	case kTheImageDirect:
+		setTheEntitySTUB(kTheImageDirect);
+		break;
+	case kTheItemDelimiter:
+		setTheEntitySTUB(kTheItemDelimiter);
+		break;
 	case kTheKeyDownScript:
 		setPrimaryEventHandler(kEventKeyDown, d.asString());
 		break;
 	case kTheKeyUpScript:
 		setPrimaryEventHandler(kEventKeyUp, d.asString());
+		break;
+	case kTheMenu:
+		setTheEntitySTUB(kTheMenu);
+		break;
+	case kTheMenuItem:
+		setTheEntitySTUB(kTheMenuItem);
 		break;
 	case kTheMouseDownScript:
 		setPrimaryEventHandler(kEventMouseDown, d.asString());
@@ -838,6 +885,27 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kThePerFrameHook:
 		_perFrameHook = d;
+		break;
+	case kThePreloadEventAbort:
+		setTheEntitySTUB(kThePreloadEventAbort);
+		break;
+	case kThePreLoadRAM:
+		setTheEntitySTUB(kThePreLoadRAM);
+		break;
+	case kTheRandomSeed:
+		setTheEntitySTUB(kTheRandomSeed);
+		break;
+	case kTheRomanLingo:
+		setTheEntitySTUB(kTheRomanLingo);
+		break;
+	case kTheSelEnd:
+		setTheEntitySTUB(kTheSelEnd);
+		break;
+	case kTheSelStart:
+		setTheEntitySTUB(kTheSelStart);
+		break;
+	case kTheSoundEnabled:
+		setTheEntitySTUB(kTheSoundEnabled);
 		break;
 	case kTheSoundEntity:
 		{
@@ -856,14 +924,53 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 			}
 		}
 		break;
-	case kTheStageColor:
-		g_director->getCurrentStage()->setStageColor(d.asInt());
+	case kTheSoundLevel:
+		setTheEntitySTUB(kTheSoundLevel);
 		break;
 	case kTheSprite:
 		setTheSprite(id, field, d);
 		break;
+	case kTheStage:
+		setTheEntitySTUB(kTheStage);
+		break;
+	case kTheStageColor:
+		g_director->getCurrentStage()->setStageColor(d.asInt());
+		break;
+	case kTheSwitchColorDepth:
+		setTheEntitySTUB(kTheSwitchColorDepth);
+		break;
+	case kTheTimeoutKeyDown:
+		setTheEntitySTUB(kTheTimeoutKeyDown);
+		break;
+	case kTheTimeoutLapsed:
+		setTheEntitySTUB(kTheTimeoutLapsed);
+		break;
+	case kTheTimeoutLength:
+		setTheEntitySTUB(kTheTimeoutLength);
+		break;
+	case kTheTimeoutMouse:
+		setTheEntitySTUB(kTheTimeoutMouse);
+		break;
+	case kTheTimeoutPlay:
+		setTheEntitySTUB(kTheTimeoutPlay);
+		break;
 	case kTheTimeoutScript:
 		setPrimaryEventHandler(kEventTimeout, d.asString());
+		break;
+	case kTheTimer:
+		setTheEntitySTUB(kTheTimer);
+		break;
+	case kTheTrace:
+		setTheEntitySTUB(kTheTrace);
+		break;
+	case kTheTraceLoad:
+		setTheEntitySTUB(kTheTraceLoad);
+		break;
+	case kTheTraceLogFile:
+		setTheEntitySTUB(kTheTraceLogFile);
+		break;
+	case kTheUpdateMovieEnabled:
+		setTheEntitySTUB(kTheUpdateMovieEnabled);
 		break;
 	case kTheWindow:
 		g_lingo->push(id);
