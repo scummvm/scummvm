@@ -397,17 +397,11 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 	if (asButton) {
 		_type = kCastButton;
 
-		if (version < 4) {
+		if (version <= 4) {
 			_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 		} else {
-			stream.readByte();
-			stream.readByte();
-
-			// This has already been populated in the super TextCastMember constructor
-			//initialRect = Score::readRect(stream);
-			//boundingRect = Score::readRect(stream);
-
-			_buttonType = static_cast<ButtonType>(stream.readUint16BE());
+			warning("TextCastMember(): Attempting to initialize >D4 button castmember");
+			_buttonType = kTypeButton;
 		}
 	}
 
