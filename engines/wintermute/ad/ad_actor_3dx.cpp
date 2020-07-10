@@ -970,6 +970,8 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_LIGHT_POSITION:
 			parser.scanStr((char *)params, "%f,%f,%f", &_shadowLightPos.x(), &_shadowLightPos.y(), &_shadowLightPos.z());
+			// invert z coordinate since wme uses a Direct3D coordinate system but we use OpenGL
+			_shadowLightPos.z() *= -1.0f;
 			break;
 
 		case TOKEN_SHADOW: {
