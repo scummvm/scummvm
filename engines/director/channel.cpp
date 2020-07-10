@@ -108,15 +108,20 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	// When a sprite is puppeted setTheSprite ensures that the dirty flag here is
 	// set. Otherwise, we need to rerender when the position, bounding box, or
 	// cast of the sprite changes.
+	if (!nextSprite)
+		return false;
+
 	bool isDirty = _dirty ||
 		_delta != Common::Point(0, 0) ||
+		_sprite->_castId != nextSprite->_castId ||
+		_sprite->_ink != nextSprite->_ink ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
-	if (nextSprite) {
-		isDirty |= _sprite->_castId != nextSprite->_castId ||
-			_sprite->_ink != nextSprite->_ink ||
-			(_currentPoint != nextSprite->_startPoint &&
-			 !_sprite->_puppet && !_sprite->_moveable);
+	if (!_sprite->_puppet) {
+		if (!_sprite->_moveable)
+			isDirty |= _currentPoint != nextSprite->_startPoint;
+		if (!_sprite->_stretch)
+			isDirty |= _width != nextSprite->_width || _height != nextSprite->_height;
 	}
 
 	return isDirty;
