@@ -399,15 +399,15 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga)
 		snd_playSoundEffect(104);
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 32; i++) {
 		for (int ii = first; ii <= last; ii++) {
 			if (!testCharacter(ii, 1) || (_currentControlMode && ii != _updateCharNum))
 				continue;
 
-			gui_drawCharPortraitWithStats(ii);
+			gui_drawCharPortraitWithStats(ii, false);
 
 			for (int iii = 0; iii < 4; iii++) {
-				int shpIndex = ((_sparkEffectDefSteps[i] & _sparkEffectDefSubSteps[iii]) >> _sparkEffectDefShift[iii]);
+				int shpIndex = ((_sparkEffectDefSteps[i >> 2] & _sparkEffectDefSubSteps[iii]) >> _sparkEffectDefShift[iii]);
 				if (!shpIndex)
 					continue;
 				int x = _sparkEffectDefAdd[iii * 2] - 8;
@@ -420,10 +420,11 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 					y += _sparkEffectDefY[ii];
 				}
 				_screen->drawShape(0, _sparkShapes[shpIndex - 1], x, y, 0);
-				_screen->updateScreen();
 			}
 		}
-		delay(2 * _tickLength);
+		updateAnimTimers();
+		_screen->updateScreen();
+		delay(_tickLength >> 1);
 	}
 
 	for (int i = first; i < last; i++)
@@ -438,18 +439,31 @@ void EoBCoreEngine::sparkEffectOffensive() {
 	for (int i = 0; i < 16; i++)
 		_screen->copyRegionToBuffer(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << sh]);
 
-	for (int i = 0; i < 11; i++) {
-		for (int ii = 0; ii < 16; ii++)
-			_screen->copyBlockToPage(2, _sparkEffectOfX[ii], _sparkEffectOfY[ii], 16, 16, &_spellAnimBuffer[ii << sh]);
+	for (int i = 0; i < 44; i++) {
+		bool sceneShake = _sceneShakeCountdown;
+		updateAnimTimers();
+		if (sceneShake) {
+			_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 2, Screen::CR_NO_P_CHECK);
+			if (!_sceneShakeCountdown) {
+				for (int i = 0; i < 16; i++)
+					_screen->copyRegionToBuffer(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << sh]);
+			}
+		}
+
+		if (!sceneShake) {
+			for (int ii = 0; ii < 16; ii++)
+				_screen->copyBlockToPage(2, _sparkEffectOfX[ii], _sparkEffectOfY[ii], 16, 16, &_spellAnimBuffer[ii << sh]);
+		}
 
 		for (int ii = 0; ii < 16; ii++) {
-			int shpIndex = (_sparkEffectOfFlags1[i] & _sparkEffectOfFlags2[ii]) >> _sparkEffectOfShift[ii];
+			int shpIndex = (_sparkEffectOfFlags1[i >> 2] & _sparkEffectOfFlags2[ii]) >> _sparkEffectOfShift[ii];
 			if (shpIndex)
 				_screen->drawShape(2, _sparkShapes[shpIndex - 1], _sparkEffectOfX[ii], _sparkEffectOfY[ii], 0);
 		}
-		delay(2 * _tickLength);
+
 		_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
+		delay(_tickLength >> 1);
 	}
 
 	for (int i = 0; i < 16; i++)

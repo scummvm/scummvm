@@ -736,7 +736,7 @@ protected:
 	virtual void gui_setupPlayFieldHelperPages(bool keepText = false);
 	void gui_restorePlayField();
 	void gui_drawAllCharPortraitsWithStats();
-	void gui_drawCharPortraitWithStats(int index);
+	void gui_drawCharPortraitWithStats(int index, bool screenUpdt = true);
 	void gui_drawFaceShape(int index);
 	void gui_drawWeaponSlot(int charIndex, int slot);
 	virtual void gui_drawWeaponSlotStatus(int x, int y, int status);

@@ -89,7 +89,7 @@ void EoBCoreEngine::gui_drawAllCharPortraitsWithStats() {
 		gui_drawCharPortraitWithStats(i);
 }
 
-void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
+void EoBCoreEngine::gui_drawCharPortraitWithStats(int index, bool screenUpdt) {
 	if (!testCharacter(index, 1))
 		return;
 
@@ -154,7 +154,8 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 				_screen->drawShape(0, _redSplatShape, guiSettings()->charBoxCoords.boxX[index & 1] + guiSettings()->charBoxCoords.redSplatOffsetX, y2 + guiSettings()->charBoxCoords.redSplatOffsetY, 0);
 				gui_printInventoryDigits(guiSettings()->charBoxCoords.boxX[index & 1] + guiSettings()->charBoxCoords.redSplatOffsetX + 12, y2 + guiSettings()->charBoxCoords.redSplatOffsetY + 10, c->damageTaken);
 			}
-			_screen->updateScreen();
+			if (screenUpdt)
+				_screen->updateScreen();
 		}
 	} else if ((_currentControlMode == 1 || _currentControlMode == 2) && index == _updateCharNum) {
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 2, 2, Screen::CR_NO_P_CHECK);
