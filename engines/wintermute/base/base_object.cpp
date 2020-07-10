@@ -113,8 +113,8 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_shadowImage = nullptr;
 	_shadowSize = 10.0f;
 	_shadowType = SHADOW_NONE;
-	// rgba value
-	_shadowColor = 0x00000080;
+	// argb value
+	_shadowColor = 0x80000000;
 	_shadowLightPos = Math::Vector3d(-40.0f, 200.0f, -40.0f);
 	_drawBackfaces = true;
 #endif
