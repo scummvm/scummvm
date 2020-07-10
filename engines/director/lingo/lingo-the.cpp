@@ -1335,23 +1335,83 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheCastType:
 		d.u.i = castType;
 		break;
+	case kTheCenter:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheController:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheCrop:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheDepth:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheDirectToStage:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheDuration:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
 	case kTheFileName:
 		d = Datum(castInfo->fileName);
 		break;
 	case kTheForeColor:
 		d.u.i = member->getForeColor();
 		break;
+	case kTheFrameRate:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
 	case kTheHeight:
 		d.u.i = cast->getCastMemberInitialRect(id).height();
+		break;
+	case kTheHilite:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheLoaded:
 		d.u.i = 1; //Not loaded handled above
 		break;
+	case kTheLoop:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheModified:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
 	case kTheName:
 		d = Datum(castInfo->name);
 		break;
+	case kTheNumber:
+		d.u.i = id;
+		break;
+	case kThePausedAtStart:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePreLoad:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheRect:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheRegPoint:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePalette:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePicture:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kThePurgePriority:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
 	case kTheScriptText:
 		d = Datum(castInfo->script);
+		break;
+	case kTheSize:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
+	case kTheSound:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheText:
 		{
@@ -1368,11 +1428,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 			d = Datum(text);
 		}
 		break;
+	case kTheVideo:
+		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		break;
 	case kTheWidth:
 		d.u.i = cast->getCastMemberInitialRect(id).width();
-		break;
-	case kTheNumber:
-		d.u.i = id;
 		break;
 	default:
 		warning("Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
