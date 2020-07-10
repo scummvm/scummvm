@@ -364,7 +364,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheCast(id, field);
 		break;
 	case kTheCastMembers:
-		warning("Lingo::getTheEntity(): Unprocessed getting field %s of entity %s", field2str(field), entity2str(entity));
+		warning("STUB: Lingo::getTheEntity(): Unprocessed getting field %s of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheCenterStage:
 		getTheEntitySTUB(kTheCenterStage);
@@ -1044,6 +1044,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheConstraint:
 		d.u.i = channel->_constraint;
 		break;
+	case kTheCursor:
+		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		break;
 	case kTheEditableText:
 		d.u.i = sprite->_cast ? sprite->_cast->isEditable() : 0;
 		break;
@@ -1064,6 +1067,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	case kTheLineSize:
 		d.u.i = sprite->_thickness & 0x3;
+		break;
+	case kTheLoc:
+		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
 		break;
 	case kTheLocH:
 		d.u.i = channel->_currentPoint.x;
@@ -1086,8 +1092,17 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kThePuppet:
 		d.u.i = sprite->_puppet;
 		break;
+	case kTheRect:
+		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		break;
 	case kTheRight:
 		d.u.i = channel->getBbox().right;
+		break;
+	case kTheScoreColor:
+		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		break;
+	case kTheScriptNum:
+		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
 		break;
 	case kTheStartTime:
 		d.u.i = sprite->_startTime;
@@ -1176,6 +1191,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 		channel->_constraint = d.u.i;
 		break;
+	case kTheCursor:
+		warning("STUB: Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
+		break;
 	case kTheEditableText:
 		sprite->_cast ? sprite->_cast->setEditable(d.asInt()) : false;
 		break;
@@ -1194,6 +1212,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLineSize:
 		sprite->_thickness = d.asInt();
+		break;
+	case kTheLoc:
+		warning("STUB: Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 		break;
 	case kTheLocH:
 		if (!sprite->_moveable) {
