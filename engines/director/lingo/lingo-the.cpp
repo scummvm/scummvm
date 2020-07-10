@@ -331,6 +331,10 @@ const char *Lingo::field2str(int id) {
 	return (const char *)buf;
 }
 
+#define getTheEntitySTUB(entity, field) \
+	warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+
+
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
 		debugC(3, kDebugLingoExec, "Lingo::getTheEntity(%s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field));
@@ -348,6 +352,15 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	LingoArchive *mainArchive = _vm->getCurrentMovie()->getMainLingoArch();
 
 	switch (entity) {
+	case kTheActorList:
+		getTheEntitySTUB(kTheActorList, 0);
+		break;
+	case kTheBeepOn:
+		getTheEntitySTUB(kTheBeepOn, 0);
+		break;
+	case kTheButtonStyle:
+		getTheEntitySTUB(kTheButtonStyle, 0);
+		break;
 	case kTheCast:
 		d = getTheCast(id, field);
 		break;
@@ -575,6 +588,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheTime:
 		d = getTheTime(field);
 		break;
+	case kTheTimeoutScript:
+		d.type = STRING;
+		if (mainArchive->primaryEventHandlers.contains(kEventTimeout))
+			d.u.s = new Common::String(mainArchive->primaryEventHandlers[kEventTimeout]);
+		else
+			d.u.s = new Common::String();
+		break;
 	case kTheTimer:
 		d.type = INT;
 		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastTimerReset;
@@ -586,13 +606,6 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheWindowList:
 		d = g_lingo->_windowList;
-		break;
-	case kTheTimeoutScript:
-		d.type = STRING;
-		if (mainArchive->primaryEventHandlers.contains(kEventTimeout))
-			d.u.s = new Common::String(mainArchive->primaryEventHandlers[kEventTimeout]);
-		else
-			d.u.s = new Common::String();
 		break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field \"%s\" of entity %s", field2str(field), entity2str(entity));
