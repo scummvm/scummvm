@@ -607,7 +607,12 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	ScriptContext *sc = movie->getScriptContext(type, id);
 
 	if (!sc) {
-		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
+		debugC(3, kDebugLingoExec, "Request to execute non-existent script type %d id %d", type, id);
+		return;
+	}
+
+	if (!sc->_eventHandlers.contains(kEventScript)) {
+		debugC(3, kDebugLingoExec, "Request to execute script type %d id %d with no scopeless lingo", type, id);
 		return;
 	}
 
