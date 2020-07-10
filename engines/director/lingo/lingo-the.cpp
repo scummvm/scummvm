@@ -109,10 +109,10 @@ TheEntity entities[] = {
 	{ kTheParamCount,		"paramCount",		false, 4 },	//				D4 f
 	{ kThePathName,			"pathName",			false, 2 },	// D2 f
 	{ kThePauseState,		"pauseState",		false, 2 },	// D2 f
-	{ kThePi,				"pi",				false, 4 },	//				D4 f
 	{ kThePerFrameHook,		"perFrameHook",		false, 2 },	// D2 p
 	{ kThePreloadEventAbort,"preloadEventAbort",false, 4 },	//				D4 p
 	{ kThePreLoadRAM,		"preLoadRAM",		false, 4 },	//				D4 p
+	{ kThePi,				"pi",				false, 4 },	//				D4 f
 	{ kTheQuickTimePresent,	"quickTimePresent",	false, 3 },	//		D3.1 f
 	{ kTheRandomSeed,		"randomSeed",		false, 4 },	//				D4 p
 	{ kTheResult,			"result",			false, 2 },	// D2 f
@@ -138,13 +138,13 @@ TheEntity entities[] = {
 	{ kTheStillDown,		"stillDown",		false, 2 },	// D2 f
 	{ kTheSwitchColorDepth,	"switchColorDepth",	false, 2 },	// D2 p
 	{ kTheTicks,			"ticks",			false, 2 },	// D2 f
+	{ kTheTime,				"time",				false, 3 },	// 		D3 f
 	{ kTheTimeoutKeyDown,	"timeoutKeyDown",	false, 2 },	// D2 p
 	{ kTheTimeoutLapsed,	"timeoutLapsed",	false, 2 },	// D2 p
 	{ kTheTimeoutLength,	"timeoutLength",	false, 2 },	// D2 p
 	{ kTheTimeoutMouse,		"timeoutMouse",		false, 2 },	// D2 p
 	{ kTheTimeoutPlay,		"timeoutPlay",		false, 2 },	// D2 p
 	{ kTheTimeoutScript,	"timeoutScript",	false, 2 },	// D2 p
-	{ kTheTime,				"time",				false, 3 },	// 		D3 f
 	{ kTheTimer,			"timer",			false, 2 },	// D2 p
 	{ kTheTrace,			"trace",			false, 4 },	//				D4 p
 	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//				D4 p
@@ -533,15 +533,20 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_machineType;
 		break;
-	case kTheMovie:
-	case kTheMovieName:
-		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentMovie()->getMacName());
+	case kTheMaxInteger:
+		getTheEntitySTUB(kTheMaxInteger);
 		break;
-	case kTheMoviePath:
-	case kThePathName:
-		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentPath());
+	case kTheMemorySize:
+		getTheEntitySTUB(kTheMemorySize);
+		break;
+	case kTheMenu:
+		getTheEntitySTUB(kTheMenu);
+		break;
+	case kTheMenuItem:
+		getTheEntitySTUB(kTheMenuItem);
+		break;
+	case kTheMenuItems:
+		getTheEntitySTUB(kTheMenuItems);
 		break;
 	case kTheMouseCast:
 		{
@@ -553,6 +558,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			if (d.u.i == 0)
 				d.u.i = -1;
 		}
+		break;
+	case kTheMouseChar:
+		getTheEntitySTUB(kTheMouseChar);
 		break;
 	case kTheMouseDown:
 		d.type = INT;
@@ -569,9 +577,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = g_director->getCurrentStage()->getMousePos().x;
 		break;
-	case kTheMouseV:
-		d.type = INT;
-		d.u.i = g_director->getCurrentStage()->getMousePos().y;
+	case kTheMouseItem:
+		getTheEntitySTUB(kTheMouseItem);
+		break;
+	case kTheMouseLine:
+		getTheEntitySTUB(kTheMouseLine);
 		break;
 	case kTheMouseUp:
 		d.type = INT;
@@ -584,13 +594,48 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		else
 			d.u.s = new Common::String();
 		break;
+	case kTheMouseV:
+		d.type = INT;
+		d.u.i = g_director->getCurrentStage()->getMousePos().y;
+		break;
+	case kTheMouseWord:
+		getTheEntitySTUB(kTheMouseWord);
+		break;
+	case kTheMovie:
+	case kTheMovieName:
+		d.type = STRING;
+		d.u.s = new Common::String(_vm->getCurrentMovie()->getMacName());
+		break;
+	case kTheMovieFileFreeSize:
+		getTheEntitySTUB(kTheMovieFileFreeSize);
+		break;
+	case kTheMovieFileSize:
+		getTheEntitySTUB(kTheMovieFileSize);
+		break;
+	case kTheMoviePath:
+	case kThePathName:
+		d.type = STRING;
+		d.u.s = new Common::String(_vm->getCurrentPath());
+		break;
 	case kTheMultiSound:
 		// We always support multiple sound channels!
 		d.type = INT;
 		d.u.i = 1;
 		break;
+	case kTheOptionDown:
+		getTheEntitySTUB(kTheOptionDown);
+		break;
+	case kThePauseState:
+		getTheEntitySTUB(kThePauseState);
+		break;
 	case kThePerFrameHook:
 		d = _perFrameHook;
+		break;
+	case kThePreloadEventAbort:
+		getTheEntitySTUB(kThePreloadEventAbort);
+		break;
+	case kThePreLoadRAM:
+		getTheEntitySTUB(kThePreLoadRAM);
 		break;
 	case kThePi:
 		d.type = FLOAT;
@@ -600,6 +645,45 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		// QuickTime is always present for scummvm
 		d.type = INT;
 		d.u.i = 1;
+		break;
+	case kTheRandomSeed:
+		getTheEntitySTUB(kTheRandomSeed);
+		break;
+	case kTheResult:
+		getTheEntitySTUB(kTheResult);
+		break;
+	case kTheRightMouseDown:
+		getTheEntitySTUB(kTheRightMouseDown);
+		break;
+	case kTheRightMouseUp:
+		getTheEntitySTUB(kTheRightMouseUp);
+		break;
+	case kTheRomanLingo:
+		getTheEntitySTUB(kTheRomanLingo);
+		break;
+	case kTheSearchCurrentFolder:
+		getTheEntitySTUB(kTheSearchCurrentFolder);
+		break;
+	case kTheSearchPath:
+		getTheEntitySTUB(kTheSearchPath);
+		break;
+	case kTheSelection:
+		getTheEntitySTUB(kTheSelection);
+		break;
+	case kTheSelEnd:
+		getTheEntitySTUB(kTheSelEnd);
+		break;
+	case kTheSelStart:
+		getTheEntitySTUB(kTheSelStart);
+		break;
+	case kTheShiftDown:
+		getTheEntitySTUB(kTheShiftDown);
+		break;
+	case kTheSoundEnabled:
+		getTheEntitySTUB(kTheSoundEnabled);
+		break;
+	case kTheSoundLevel:
+		getTheEntitySTUB(kTheSoundLevel);
 		break;
 	case kTheSoundEntity:
 		{
@@ -629,6 +713,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->getCurrentMovie()->_movieRect.bottom;
 		break;
+	case kTheStageColor:
+		getTheEntitySTUB(kTheStageColor);
+		break;
 	case kTheStageLeft:
 		d.type = INT;
 		d.u.i = _vm->getCurrentMovie()->_movieRect.left;
@@ -645,8 +732,29 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_wm->_mouseDown;
 		break;
+	case kTheSwitchColorDepth:
+		getTheEntitySTUB(kTheSwitchColorDepth);
+		break;
+	case kTheTicks:
+		getTheEntitySTUB(kTheTicks);
+		break;
 	case kTheTime:
 		d = getTheTime(field);
+		break;
+	case kTheTimeoutKeyDown:
+		getTheEntitySTUB(kTheTimeoutKeyDown);
+		break;
+	case kTheTimeoutLapsed:
+		getTheEntitySTUB(kTheTimeoutLapsed);
+		break;
+	case kTheTimeoutLength:
+		getTheEntitySTUB(kTheTimeoutLength);
+		break;
+	case kTheTimeoutMouse:
+		getTheEntitySTUB(kTheTimeoutMouse);
+		break;
+	case kTheTimeoutPlay:
+		getTheEntitySTUB(kTheTimeoutPlay);
 		break;
 	case kTheTimeoutScript:
 		d.type = STRING;
@@ -658,6 +766,18 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheTimer:
 		d.type = INT;
 		d.u.i = _vm->getMacTicks() - _vm->getCurrentMovie()->_lastTimerReset;
+		break;
+	case kTheTrace:
+		getTheEntitySTUB(kTheTrace);
+		break;
+	case kTheTraceLoad:
+		getTheEntitySTUB(kTheTraceLoad);
+		break;
+	case kTheTraceLogFile:
+		getTheEntitySTUB(kTheTraceLogFile);
+		break;
+	case kTheUpdateMovieEnabled:
+		getTheEntitySTUB(kTheUpdateMovieEnabled);
 		break;
 	case kTheWindow:
 		g_lingo->push(id);
