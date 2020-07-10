@@ -114,7 +114,7 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }
 
-	virtual void setVisible(bool visible);
+	virtual void setVisible(bool visible, bool silent = false);
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
 	bool step();

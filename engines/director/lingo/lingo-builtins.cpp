@@ -2199,7 +2199,7 @@ void LB::b_window(int nargs) {
 	Stage *window = new Stage(wm->getNextId(), false, false, false, wm, g_director);
 	window->setName(windowName);
 	window->resize(1, 1, true);
-	window->setVisible(false);
+	window->setVisible(false, true);
 	wm->addWindowInitialized(window);
 	windowList->push_back(window);
 	g_lingo->push(window);

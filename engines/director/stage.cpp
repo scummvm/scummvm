@@ -290,9 +290,9 @@ Common::Point Stage::getMousePos() {
 	return g_system->getEventManager()->getMousePos() - Common::Point(_innerDims.left, _innerDims.top);
 }
 
-void Stage::setVisible(bool visible) {
+void Stage::setVisible(bool visible, bool silent) {
 	// setting visible triggers movie load
-	if (!_currentMovie) {
+	if (!_currentMovie && !silent) {
 		Common::String movieName = getName();
 		setNextMovie(movieName);
 	}
