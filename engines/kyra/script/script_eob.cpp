@@ -634,15 +634,19 @@ int EoBInfProcessor::oeob_setFlags(int8 *data) {
 
 int EoBInfProcessor::oeob_playSoundEffect(int8 *data) {
 	int8 *pos = data;
-	uint16 block = READ_LE_UINT16(pos + 1);
+	uint16 snd = (uint8)*pos++;
+	uint16 block = READ_LE_UINT16(pos);
+	pos += 2;
+
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD && (snd == 28 || snd == 133))
+		snd |= 0x1000;
 
 	if (block) {
-		_vm->snd_processEnvironmentalSoundEffect(pos[0], block);
+		_vm->snd_processEnvironmentalSoundEffect(snd, block);
 	} else {
-		_vm->snd_playSoundEffect(pos[0]);
+		_vm->snd_playSoundEffect(snd);
 	}
 
-	pos += 3;
 	return pos - data;
 }
 

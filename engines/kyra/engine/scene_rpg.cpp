@@ -677,7 +677,7 @@ void KyraRpgEngine::openCloseDoor(int block, int openClose) {
 			_levelBlockProperties[block].walls[c] += openClose;
 			_levelBlockProperties[block].walls[c ^ 2] += openClose;
 
-			int snd = (openClose == -1) ? 4 : 3;
+			int snd = (openClose == -1) ? 4 : (isSpecialDoor(block) ? 126 : 3);
 			if (_flags.gameID == GI_LOL) {
 				snd_processEnvironmentalSoundEffect(snd + 28, _currentBlock);
 				if (!checkSceneUpdateNeed(block))
@@ -712,6 +712,20 @@ void KyraRpgEngine::completeDoorOperations() {
 
 		_openDoorState[i].block = 0;
 	}
+}
+
+bool KyraRpgEngine::isSpecialDoor(int block) {
+	if (_flags.platform != Common::kPlatformSegaCD || _currentLevel != 2)
+		return false;
+
+	static const uint16 specialBlocks[4] = { 0x122, 0x275, 0x3C8, 0x1E7 };
+
+	for (int i = 0; i < 4; ++i) {
+		if (block == specialBlocks[i])
+			return true;
+	}
+
+	return false;
 }
 
 } // End of namespace Kyra

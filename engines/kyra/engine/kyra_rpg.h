@@ -276,6 +276,7 @@ protected:
 	void processDoorSwitch(uint16 block, int openClose);
 	void openCloseDoor(int block, int openClose);
 	void completeDoorOperations();
+	bool isSpecialDoor(int block);
 
 	uint8 *_wllVmpMap;
 	int8 *_wllShapeMap;

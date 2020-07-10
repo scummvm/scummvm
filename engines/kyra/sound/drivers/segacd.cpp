@@ -30,7 +30,7 @@
 #include "common/endian.h"
 #include "common/ptr.h"
 
-#define SEGA_SND_DEBUG_EXT	1
+#define SEGA_SND_DEBUG_EXT	0
 
 namespace Kyra {
 

@@ -1214,8 +1214,9 @@ bool EoBCoreEngine::walkMonsterNextStep(EoBMonsterInPlay *m, int destBlock, int 
 		m->dir = direction;
 
 	checkSceneUpdateNeed(obl);
+	uint16 prioFlag = (_flags.platform == Common::kPlatformSegaCD) ? 0x2000 : 0;
 	if (!_partyResting && p->sound2 > 0)
-		snd_processEnvironmentalSoundEffect(p->sound2, m->block);
+		snd_processEnvironmentalSoundEffect(p->sound2 | prioFlag, m->block);
 
 	return true;
 }

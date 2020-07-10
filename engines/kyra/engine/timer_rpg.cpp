@@ -77,7 +77,8 @@ void KyraRpgEngine::timerProcessDoors(int timerNum) {
 			}
 		} else {
 			checkSceneUpdateNeed(b);
-			snd_updateEnvironmentalSfx(snd);
+			if (!isSpecialDoor(b))
+				snd_updateEnvironmentalSfx(snd);
 		}
 
 		if (flg & 0x30)

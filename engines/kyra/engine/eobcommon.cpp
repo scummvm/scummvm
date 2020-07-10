@@ -31,6 +31,7 @@
 #include "kyra/gui/debugger.h"
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/translation.h"
 
 #include "gui/error.h"
@@ -450,7 +451,7 @@ Common::Error EoBCoreEngine::init() {
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);
-	syncSoundSettings();	
+	syncSoundSettings();
 
 	if (!_screen->init())
 		error("screen()->init() failed");
@@ -1527,7 +1528,7 @@ void EoBCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
 
 	gui_drawCharPortraitWithStats(charIndex);
 	_txt->printMessage(_levelGainStrings[0], -1, _characters[charIndex].name);
-	snd_playSoundEffect(23);
+	snd_playSoundEffect(_flags.platform == Common::kPlatformSegaCD ? 0x1017 : 0x17);
 }
 
 void EoBCoreEngine::setWeaponSlotStatus(int charIndex, int mode, int slot) {
@@ -2213,10 +2214,13 @@ void EoBCoreEngine::inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool g
 		}
 	}
 
-	if (m->hitPointsCur <= 0)
+	if (m->hitPointsCur <= 0) {
+		if (_flags.platform == Common::kPlatformSegaCD)
+			snd_playSoundEffect(0x1082);
 		killMonster(m, giveExperience);
-	else if (getBlockDistance(m->block, _currentBlock) < 4)
+	} else if (getBlockDistance(m->block, _currentBlock) < 4) {
 		m->dest = _currentBlock;
+	}
 }
 
 void EoBCoreEngine::calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
@@ -2710,8 +2714,12 @@ void EoBCoreEngine::snd_playSoundEffect(int track, int volume) {
 	if ((track < 1) || (_flags.gameID == GI_EOB2 && track > 119) || shouldQuit())
 		return;
 
-	if (_flags.platform == Common::kPlatformSegaCD && volume == 0xFF)
-		volume = 0x0E;
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		if (volume == 0xFF)
+			volume = 0x0E;
+		if (track == 23 || track == 28)
+			track |= 0x1000;
+	}
 
 	_sound->playSoundEffect(track, volume);
 }
