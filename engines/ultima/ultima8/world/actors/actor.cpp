@@ -69,7 +69,8 @@ Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 		_hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
 		_lastAnim(Animation::stand), _animFrame(0), _direction(0),
 		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
-		_homeX(0), _homeY(0), _homeZ(0) {
+		_homeX(0), _homeY(0), _homeZ(0), _currentActivityNo(0),
+		_lastActivityNo(0) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
 	_defaultActivity[2] = 0;
@@ -572,6 +573,9 @@ uint16 Actor::setActivityU8(int activity) {
 uint16 Actor::setActivityCru(int activity) {
 	if (isDead())
 		return 0;
+
+	_lastActivityNo = _currentActivityNo;
+	_currentActivityNo = activity;
 
 	switch (activity) {
 	case 1: // stand
@@ -1241,6 +1245,8 @@ void Actor::saveData(Common::WriteStream *ws) {
 		ws->writeUint32LE(_homeX);
 		ws->writeUint32LE(_homeY);
 		ws->writeUint32LE(_homeZ);
+		ws->writeUint16LE(_currentActivityNo);
+		ws->writeUint16LE(_lastActivityNo);
 	}
 }
 
@@ -1269,6 +1275,8 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 		_homeX = rs->readUint32LE();
 		_homeY = rs->readUint32LE();
 		_homeZ = rs->readUint32LE();
+		_currentActivityNo = rs->readUint16LE();
+		_lastActivityNo = rs->readUint16LE();
 	}
 
 	return true;
@@ -1959,7 +1967,19 @@ uint32 Actor::I_setCombatTactic(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
+uint32 Actor::I_getCurrentActivityNo(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
 
+	return actor->getCurrentActivityNo();
+}
+
+uint32 Actor::I_getLastActivityNo(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getLastActivityNo();
+}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

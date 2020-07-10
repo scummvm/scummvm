@@ -120,7 +120,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getQHi,  // based on same coff set as 026
 	// 0x050
-	0, // TODO: int16 Actor::I_getCurrentActivityNo // void Intrinsic050(4 bytes)
+	Actor::I_getCurrentActivityNo, // void Intrinsic050(4 bytes)
 	Actor::I_clrInCombat, // void Intrinsic051(4 bytes)
 	Actor::I_setDefaultActivity0, // void Intrinsic052(6 bytes)
 	Actor::I_setDefaultActivity1, // void Intrinsic053(6 bytes)
@@ -269,7 +269,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // TODO: PaletteFaderProcess::I_setPalToAllGrey // sets all colors to 0x3F3F3F
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
-	0, // TODO: Actor::I_getLastActivityNo void Intrinsic0DD(4 bytes)
+	Actor::I_getLastActivityNo, // void Intrinsic0DD(4 bytes)
 	Actor::I_setCombatTactic, // void Intrinsic0DE(6 bytes)
 	Actor::I_getEquip, // void Intrinsic0DF(6 bytes)
 	// 0x0E0

@@ -210,6 +210,18 @@ public:
 	//! \return processID of process handling the activity or zero
 	uint16 setActivity(int activity);
 
+	uint16 getCurrentActivityNo() const {
+		return _currentActivityNo;
+	}
+
+	uint16 getLastActivityNo() const {
+		return _lastActivityNo;
+	}
+
+	void clearLastActivityNo() {
+		_lastActivityNo = 0;
+	}
+
 	//! run the given animation
 	//! \return the PID of the ActorAnimProcess
 	uint16 doAnim(Animation::Sequence anim, int dir, unsigned int steps = 0);
@@ -302,6 +314,8 @@ public:
 	INTRINSIC(I_setCombatTactic);
 	INTRINSIC(I_setUnkByte);
 	INTRINSIC(I_getUnkByte);
+	INTRINSIC(I_getLastActivityNo);
+	INTRINSIC(I_getCurrentActivityNo);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B
@@ -354,6 +368,10 @@ protected:
 	int32 _homeX;
 	int32 _homeY;
 	int32 _homeZ;
+
+	//! Current and last activity (only used in Crusader)
+	uint16 _currentActivityNo;
+	uint16 _lastActivityNo;
 
 	//! starts an activity (Ultima 8 version)
 	//! \return processID of process handling the activity or zero
