@@ -538,8 +538,9 @@ bool Item::isOn(const Item &item2) const {
 }
 
 bool Item::isCompletelyOn(const Item &item2) const {
-	warning("TODO: Properly implement Item::isCompletelyOn");
-	// FIXME: this is just a copy of isOn at the moment
+	if (hasFlags(FLG_CONTAINED) || item2.hasFlags(FLG_CONTAINED))
+		return false;
+
 	int32 x1a, y1a, z1a, x1b, y1b;
 	int32 x2a, y2a, z2a, x2b, y2b, z2b;
 	getLocation(x1b, y1b, z1a);
@@ -555,10 +556,9 @@ bool Item::isCompletelyOn(const Item &item2) const {
 	y2a = y2b - yd;
 	z2b = z2a + zd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
-	if (z2b == z1a) return true;
-	return false;
+	return ((x1b <= x2b && x2a <= x1a) &&
+			(y1b <= y2b && y2a <= y1a) &&
+			(z2b == z1a));
 }
 
 bool Item::isCentreOn(const Item &item2) const {
@@ -1279,11 +1279,13 @@ uint32 Item::use() {
 	Actor *actor = dynamic_cast<Actor *>(this);
 	if (actor) {
 		if (actor->isDead()) {
-			// dead actor, so open/close the dead-body-_gump
-			if (hasFlags(FLG_GUMP_OPEN)) {
-				closeGump();
-			} else {
-				openGump(12); // CONSTANT!!
+			if (GAME_IS_U8) {
+				// dead actor, so open/close the dead-body-gump
+				if (hasFlags(FLG_GUMP_OPEN)) {
+					closeGump();
+				} else {
+					openGump(12); // CONSTANT!!
+				}
 			}
 			return 0;
 		}
@@ -1457,11 +1459,17 @@ void Item::enterFastArea() {
 
 	// Call usecode
 	if (!(_flags & FLG_FASTAREA)) {
-
 		Actor *actor = dynamic_cast<Actor *>(this);
-		if (actor && actor->isDead()) {
+		// Crusader special-cases a few shapes even when they are dead.
+		bool call_even_if_dead = (_shape == 0x576 || _shape == 0x596 ||
+								  _shape == 0x59c || _shape == 0x58f) && GAME_IS_CRUSADER;
+		if (actor && actor->isDead() && !call_even_if_dead) {
 			// dead actor, don't call the usecode
 		} else {
+			if (actor && GAME_IS_CRUSADER) {
+				actor->clearLastActivityNo();
+				actor->clearInCombat();
+			}
 			callUsecodeEvent_enterFastArea();
 		}
 	}
