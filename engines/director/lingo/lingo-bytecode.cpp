@@ -77,10 +77,12 @@ static LingoV4Bytecode lingoV4[] = {
 	// 0x44, push a constant
 	{ 0x45, LC::c_namepush,		"b" },
 	{ 0x46, LC::cb_objectpush,  "b" },
+	{ 0x48, LC::cb_globalpush,	"b" }, // used in event scripts
 	{ 0x49, LC::cb_globalpush,	"b" },
 	{ 0x4a, LC::cb_thepush,		"b" },
 	{ 0x4b, LC::cb_varpush,		"bpa" },
 	{ 0x4c, LC::cb_varpush,		"bpv" },
+	{ 0x4e, LC::cb_globalassign,"b" }, // used in event scripts
 	{ 0x4f, LC::cb_globalassign,"b" },
 	{ 0x50, LC::cb_theassign,	"b" },
 	{ 0x51, LC::cb_varassign,	"bpa" },
@@ -110,10 +112,12 @@ static LingoV4Bytecode lingoV4[] = {
 	// 0x84, push a constant
 	{ 0x85, LC::c_namepush,		"w" },
 	{ 0x86, LC::cb_objectpush,  "w" },
+	{ 0x88, LC::cb_globalpush,	"w" }, // used in event scripts
 	{ 0x89, LC::cb_globalpush,	"w" },
 	{ 0x8a, LC::cb_thepush,		"w" },
 	{ 0x8b, LC::cb_varpush,		"wpa" },
 	{ 0x8c, LC::cb_varpush,		"wpv" },
+	{ 0x8e, LC::cb_globalassign,"w" }, // used in event scripts
 	{ 0x8f, LC::cb_globalassign,"w" },
 	{ 0x90, LC::cb_theassign, 	"w" },
 	{ 0x91, LC::cb_varassign,	"wpa" },
@@ -855,7 +859,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	/* uint16 unk3 = */ stream.readUint16();
 	uint32 scriptFlags = stream.readUint32();
 	debugC(1, kDebugCompile, "Script flags:");
-	debugC(1, kDebugCompile, "unk0: %d global: %d unk2: %d unk3: %d", (scriptFlags & kScriptFlagUnk0) != 0, (scriptFlags & kScriptFlagGlobal) != 0, (scriptFlags & kScriptFlagUnk2) != 0, (scriptFlags & kScriptFlagUnk3) != 0);
+	debugC(1, kDebugCompile, "unk0: %d funcsGlobal: %d varsGlobal: %d unk3: %d", (scriptFlags & kScriptFlagUnk0) != 0, (scriptFlags & kScriptFlagFuncsGlobal) != 0, (scriptFlags & kScriptFlagVarsGlobal) != 0, (scriptFlags & kScriptFlagUnk3) != 0);
 	debugC(1, kDebugCompile, "factoryDef: %d unk5: %d unk6: %d unk7: %d", (scriptFlags & kScriptFlagFactoryDef) != 0, (scriptFlags & kScriptFlagUnk5) != 0, (scriptFlags & kScriptFlagUnk6) != 0, (scriptFlags & kScriptFlagUnk7) != 0);
 	debugC(1, kDebugCompile, "hasFactory: %d eventScript: %d eventScript2: %d unkB: %d", (scriptFlags & kScriptFlagHasFactory) != 0, (scriptFlags & kScriptFlagEventScript) != 0, (scriptFlags & kScriptFlagEventScript2) != 0, (scriptFlags & kScriptFlagUnkB) != 0);
 	debugC(1, kDebugCompile, "unkC: %d unkD: %d unkE: %d unkF: %d", (scriptFlags & kScriptFlagUnkC) != 0, (scriptFlags & kScriptFlagUnkD) != 0, (scriptFlags & kScriptFlagUnkE) != 0, (scriptFlags & kScriptFlagUnkF) != 0);
