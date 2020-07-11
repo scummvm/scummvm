@@ -274,13 +274,13 @@ void LoadFile(MEMHANDLE *pH) {
 	Common::File f;
 	char szFilename[sizeof(pH->szName) + 1];
 
-	if (pH->filesize & fCompressed) {
-		error("Compression handling has been removed");
-	}
-
 	// extract and zero terminate the filename
 	memcpy(szFilename, pH->szName, sizeof(pH->szName));
 	szFilename[sizeof(pH->szName)] = 0;
+
+	if (pH->filesize & fCompressed) {
+		error("Compression handling has been removed - %s", szFilename);
+	}
 
 	if (f.open(szFilename)) {
 		// read the data
