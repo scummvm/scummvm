@@ -384,12 +384,12 @@ static const TinselGameDescription gameDescriptions[] = {
 			"CD",
 			{
 				{"dw.scn", 0, "70955425870c7720d6eebed903b2ef41", 776188},
-				{"english.smp", 0, NULL, -1},
+				{"japanese.smp", 0, NULL, -1},
 				AD_LISTEND
 			},
-			Common::EN_ANY,
+			Common::JA_JPN,
 			Common::kPlatformDOS,
-			ADGF_CD,
+			ADGF_CD | ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GID_DW1,
