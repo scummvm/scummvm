@@ -86,13 +86,7 @@ void Comprehend::initialize() {
 
 	showGraphics();
 	_topWindow->fillRect(0, Rect(0, 0, _topWindow->_w, _topWindow->_h));
-/*
-	const Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	_bottomWindow->_stream->setZColors(
-		pixelFormat.RGBToColor(0xff, 0xff, 0xff),
-		pixelFormat.RGBToColor(0, 0, 0)
-	);
-*/
+
 	// Initialize drawing surface, and the archive that abstracts
 	// the room and item graphics as as individual files
 	_drawSurface = new DrawSurface();
