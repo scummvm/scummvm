@@ -24,7 +24,6 @@
 #include "glk/utils.h"
 #include "glk/windows.h"
 #include "common/config-manager.h"
-#include "common/system.h"
 
 namespace Glk {
 
@@ -64,17 +63,17 @@ WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
 Conf *g_conf;
 
 Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true),
-		_rows(25), _cols(60), _lockRows(0), _lockCols(0), _wPaddingX(0),
-		_wPaddingY(0), _wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7),
-		_gamma(1.0), _borderColor(0), _borderSave(0),
+		_width(640), _height(400), _screenFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+		_rows(25), _cols(60), _lockRows(0), _lockCols(0), _wPaddingX(0), _wPaddingY(0),
+		_wBorderX(0), _wBorderY(0), _tMarginX(7), _tMarginY(7), _gamma(1.0),
+		_borderColor(0), _borderSave(0),
 		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
 		_sound(true), _speak(false), _speakInput(false), _styleHint(1),
 		_scrollBg(parseColor(SCROLL_BG)), _scrollFg(parseColor(SCROLL_FG)),
-		_lcd(1), _scrollWidth(0), _safeClicks(false)
-{
+		_lcd(1), _scrollWidth(0), _safeClicks(false) {
 	g_conf = this;
-	_imageW = g_system->getWidth();
-	_imageH = g_system->getHeight();
+	_imageW = _width;
+	_imageH = _height;
 
 	_propInfo._morePrompt = "\207 more \207";
 	_propInfo._moreColor = 0;
@@ -105,7 +104,7 @@ Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true
 	_wMarginY = _wMarginSaveY = DEFAULT_MARGIN_Y;
 
 	// For simplicity's sake, only allow graphics when in non-paletted graphics modes
-	if (g_system->getScreenFormat().bytesPerPixel == 1)
+	if (_screenFormat.bytesPerPixel == 1)
 		_graphics = false;
 
 	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
@@ -116,6 +115,8 @@ Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true
 }
 
 void Conf::load() {
+	get("width", _width);
+	get("height", _height);
 	get("moreprompt", _propInfo._morePrompt);
 	get("morecolor", _propInfo._moreColor);
 	get("morecolor", _propInfo._moreSave);
@@ -127,6 +128,9 @@ void Conf::load() {
 	get("propsize", _propInfo._size);
 	get("rows", _rows);
 	get("cols", _cols);
+
+	_imageW = _width;
+	_imageH = _height;
 
 	if (ConfMan.hasKey("leading"))
 		_monoInfo._leading = _propInfo._leading = static_cast<int>(atof(ConfMan.get("leading").c_str()) + 0.5);
@@ -285,14 +289,14 @@ uint Conf::parseColor(const Common::String &str) {
 		rv = strtol(r, nullptr, 16);
 		gv = strtol(g, nullptr, 16);
 		bv = strtol(b, nullptr, 16);
-		return g_system->getScreenFormat().RGBToColor(rv, gv, bv);
+		return _screenFormat.RGBToColor(rv, gv, bv);
 	}
 
 	return 0;
 }
 
 uint Conf::parseColor(const byte *rgb) {
-	return g_system->getScreenFormat().RGBToColor(rgb[0], rgb[1], rgb[2]);
+	return _screenFormat.RGBToColor(rgb[0], rgb[1], rgb[2]);
 }
 
 } // End of namespace Glk

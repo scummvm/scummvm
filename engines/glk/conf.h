@@ -26,6 +26,7 @@
 #include "glk/glk_types.h"
 #include "glk/fonts.h"
 #include "glk/windows.h"
+#include "graphics/pixelformat.h"
 
 namespace Glk {
 
@@ -70,14 +71,16 @@ public:
 	/**
 	 * Parse a color
 	 */
-	static uint parseColor(const Common::String &str);
+	uint parseColor(const Common::String &str);
 
 	/**
 	 * Convert an RGB tuplet to a color
 	 */
-	static uint parseColor(const byte *rgb);
+	uint parseColor(const byte *rgb);
 
 public:
+	uint _width, _height;
+	Graphics::PixelFormat _screenFormat;
 	MonoFontInfo _monoInfo;
 	PropFontInfo _propInfo;
 	int _cols, _rows;

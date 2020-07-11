@@ -81,11 +81,11 @@ GlkEngine::~GlkEngine() {
 }
 
 void GlkEngine::initialize() {
-	initGraphicsMode();
-	createDebugger();
-
 	createConfiguration();
 	_conf->load();
+
+	initGraphicsMode();
+	createDebugger();
 
 	_screen = createScreen();
 	_screen->initialize();
@@ -107,19 +107,7 @@ Screen *GlkEngine::createScreen() {
 }
 
 void GlkEngine::initGraphicsMode() {
-	uint width = ConfMan.hasKey("width") ? ConfMan.getInt("width") : 640;
-	uint height = ConfMan.hasKey("height") ? ConfMan.getInt("height") : 480;
-	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
-	Graphics::PixelFormat format = formats.front();
-
-	for (Common::List<Graphics::PixelFormat>::iterator i = formats.begin(); i != formats.end(); ++i) {
-		if ((*i).bytesPerPixel > 1) {
-			format = *i;
-			break;
-		}
-	}
-
-	initGraphics(width, height, &format);
+	initGraphics(_conf->_width, _conf->_height, &_conf->_screenFormat);
 }
 
 void GlkEngine::createDebugger() {
@@ -287,8 +275,8 @@ void GlkEngine::beep() {
 }
 
 void GlkEngine::switchToWhiteOnBlack() {
-	const uint WHITE = Conf::parseColor("ffffff");
-	const uint BLACK = Conf::parseColor("000000");
+	const uint WHITE = _conf->parseColor("ffffff");
+	const uint BLACK = _conf->parseColor("000000");
 
 	_conf->_wMarginX = 0;
 	_conf->_wMarginY = 0;
