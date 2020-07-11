@@ -793,6 +793,11 @@ void DirectorEngine::setCursor(int type) {
 	}
 }
 
+void DirectorEngine::draw() {
+	_wm->renderZoomBox(true);
+	_wm->draw();
+}
+
 void inkDrawPixel(int x, int y, int src, void *data) {
 	DirectorPlotData *p = (DirectorPlotData *)data;
 

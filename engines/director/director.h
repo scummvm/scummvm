@@ -165,6 +165,8 @@ public:
 	Stage *getCurrentStage() const { return _currentStage; }
 	Movie *getCurrentMovie() const;
 	Common::String getCurrentPath() const;
+
+	// graphics.cpp
 	void setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const override;
@@ -174,7 +176,8 @@ public:
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
-	void setCursor(int type); // graphics.cpp
+	void setCursor(int type);
+	void draw();
 
 	void loadKeyCodes();
 
