@@ -1347,19 +1347,35 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = castType;
 		break;
 	case kTheCenter:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_center ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheController:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_showControls ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheCrop:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_crop ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheDepth:
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheDirectToStage:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_directToStage ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheDuration:
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
@@ -1371,7 +1387,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = member->getForeColor();
 		break;
 	case kTheFrameRate:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_frameRate;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheHeight:
 		d.u.i = cast->getCastMemberInitialRect(id).height();
@@ -1383,7 +1403,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = 1; //Not loaded handled above
 		break;
 	case kTheLoop:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_looping ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheModified:
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
@@ -1395,10 +1419,18 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = id;
 		break;
 	case kThePausedAtStart:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_pausedAtStart ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kThePreLoad:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_preload ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheRect:
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
@@ -1422,7 +1454,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheSound:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_enableSound ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheText:
 		{
@@ -1440,7 +1476,11 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		}
 		break;
 	case kTheVideo:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			d.u.i = ((DigitalVideoCastMember *)member)->_enableVideo ? 1 : 0;
+		} else {
+			warning("Lingo::getTheCast(): Unsupported getting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheWidth:
 		d.u.i = cast->getCastMemberInitialRect(id).width();
@@ -1489,19 +1529,35 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		//cast->modified = 1;
 		break;
 	case kTheCenter:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_center = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheController:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_showControls = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheCrop:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_crop = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheDepth:
 		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheDirectToStage:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_directToStage = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheDuration:
 		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
@@ -1520,7 +1576,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			break;
 		}
 	case kTheFrameRate:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_frameRate = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheHeight:
 		cast->getCastMemberInitialRect(id).setHeight(d.asInt());
@@ -1539,7 +1599,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheLoop:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_looping = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheName:
 		if (!castInfo) {
@@ -1549,10 +1613,18 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		castInfo->name = d.asString();
 		break;
 	case kThePausedAtStart:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_pausedAtStart = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kThePreLoad:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_preload = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheRect:
 		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
@@ -1578,7 +1650,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		castInfo->script = d.asString();
 		break;
 	case kTheSound:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_enableSound = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheText:
 		if (castType == kCastText) {
@@ -1593,7 +1669,11 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheVideo:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (castType == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)member)->_enableVideo = (bool)d.asInt();
+		} else {
+			warning("Lingo::setTheCast(): Unsupported setting kCastDigitalVideo field \"%s\" of cast %d", field2str(field), id);
+		}
 		break;
 	case kTheWidth:
 		cast->getCastMemberInitialRect(id).setWidth(d.asInt());

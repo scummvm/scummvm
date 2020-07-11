@@ -229,16 +229,16 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 
 		_preload = false;
 		_enableVideo = false;
-		_pauseAtStart = false;
+		_pausedAtStart = false;
 		_showControls = false;
 		_looping = false;
 		_enableSound = false;
-		_enableCrop = false;
+		_crop = false;
 		_center = false;
+		_directToStage = true;
 	} else {
-		for (int i = 0; i < 5; i++) {
-			stream.readUint16();
-		}
+		stream.readByte();
+		_initialRect = Movie::readRect(stream);
 		_frameRate = stream.readByte();
 		stream.readByte();
 
@@ -249,15 +249,20 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 		}
 		_preload = flags1 & 0x04;
 		_enableVideo = !(flags1 & 0x02);
-		_pauseAtStart = flags1 & 0x01;
+		_pausedAtStart = flags1 & 0x01;
 
 		byte flags2 = stream.readByte();
 		_showControls = flags2 & 0x40;
 		_looping = flags2 & 0x10;
 		_enableSound = flags2 & 0x08;
-		_enableCrop = !(flags2 & 0x02);
+		_crop = !(flags2 & 0x02);
 		_center = flags2 & 0x01;
+		_directToStage = true;
 	}
+}
+
+DigitalVideoCastMember::~DigitalVideoCastMember() {
+
 }
 
 SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version)

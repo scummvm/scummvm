@@ -112,15 +112,17 @@ public:
 class DigitalVideoCastMember : public CastMember {
 public:
 	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	~DigitalVideoCastMember();
 
 	bool _looping;
-	bool _pauseAtStart;
+	bool _pausedAtStart;
 	bool _enableVideo;
 	bool _enableSound;
-	bool _enableCrop;
+	bool _crop;
 	bool _center;
 	bool _preload;
 	bool _showControls;
+	bool _directToStage;
 	FrameRateType _frameRateType;
 
 	uint16 _frameRate;
