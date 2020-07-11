@@ -612,9 +612,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.s = new Common::String(_vm->getCurrentMovie()->getMacName());
 		break;
 	case kTheMovieFileFreeSize:
-		getTheEntitySTUB(kTheMovieFileFreeSize);
+		d.type = INT;
+		d.u.i = 0;	// Let's pretend the movie is compactified
 		break;
 	case kTheMovieFileSize:
+		d.type = INT;
+		d.u.i = _vm->getCurrentMovie()->getArchive()->getFileSize();
 		getTheEntitySTUB(kTheMovieFileSize);
 		break;
 	case kTheMoviePath:

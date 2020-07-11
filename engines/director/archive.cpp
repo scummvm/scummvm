@@ -70,6 +70,13 @@ void Archive::close() {
 	_stream = 0;
 }
 
+int Archive::getFileSize() {
+	if (!_stream)
+		return 0;
+
+	return _stream->size();
+}
+
 bool Archive::hasResource(uint32 tag, int id) const {
 	if (!_types.contains(tag))
 		return false;

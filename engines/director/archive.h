@@ -54,6 +54,7 @@ public:
 
 	Common::String getFileName() const { return _fileName; }
 	void setFileName(const Common::String &name) { _fileName = name; }
+	int getFileSize();
 
 	bool isOpen() const { return _stream != 0; }
 
