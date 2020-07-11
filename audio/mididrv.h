@@ -47,6 +47,7 @@ enum MusicType {
 	MT_APPLEIIGS,		// Apple IIGS
 	MT_TOWNS,			// FM-TOWNS
 	MT_PC98,			// PC98
+	MT_SEGACD,			// SegaCD
 	MT_GM,				// General MIDI
 	MT_MT32,			// MT-32
 	MT_GS				// Roland GS
@@ -77,11 +78,12 @@ enum MidiDriverFlags {
 	MDT_AMIGA       = 1 << 5,
 	MDT_APPLEIIGS   = 1 << 6,
 	MDT_TOWNS       = 1 << 7,		// FM-TOWNS: Maps to MT_TOWNS
-	MDT_PC98        = 1 << 8,		// FM-TOWNS: Maps to MT_PC98
-	MDT_MIDI        = 1 << 9,		// Real MIDI
-	MDT_PREFER_MT32 = 1 << 10,		// MT-32 output is preferred
-	MDT_PREFER_GM   = 1 << 11,		// GM output is preferred
-	MDT_PREFER_FLUID= 1 << 12		// FluidSynth driver is preferred
+	MDT_PC98        = 1 << 8,		// PC-98: Maps to MT_PC98
+	MDT_SEGACD		= 1 << 9,
+	MDT_MIDI        = 1 << 10,		// Real MIDI
+	MDT_PREFER_MT32 = 1 << 11,		// MT-32 output is preferred
+	MDT_PREFER_GM   = 1 << 12,		// GM output is preferred
+	MDT_PREFER_FLUID= 1 << 13		// FluidSynth driver is preferred
 };
 
 /**

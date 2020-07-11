@@ -109,6 +109,7 @@ static const struct {
 	{ MT_APPLEIIGS,	GUIO_MIDIAPPLEIIGS },
 	{ MT_TOWNS,		GUIO_MIDITOWNS },
 	{ MT_PC98,		GUIO_MIDIPC98 },
+	{ MT_SEGACD,	GUIO_MIDISEGACD },
 	{ MT_GM,		GUIO_MIDIGM },
 	{ MT_MT32,		GUIO_MIDIMT32 },
 	{ 0,			0 },
@@ -228,6 +229,11 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_PC98)
 			reslt = hdl;
 		break;
+
+	case MT_SEGACD:
+	if (flags & MDT_SEGACD)
+		reslt = hdl;
+	break;
 
 	case MT_GM:
 	case MT_GS:
@@ -363,6 +369,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		} else if (flags & MDT_PC98) {
 			tp = MT_PC98;
 			flags &= ~MDT_PC98;
+		} else if (flags & MDT_SEGACD) {
+			tp = MT_SEGACD;
+			flags &= ~MDT_SEGACD;
 		} else if (flags & MDT_ADLIB) {
 			tp = MT_ADLIB;
 			flags &= ~MDT_ADLIB;

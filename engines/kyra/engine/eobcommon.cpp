@@ -434,7 +434,7 @@ Common::Error EoBCoreEngine::init() {
 		_sound = new SoundAmiga_EoB(this, _mixer);
 		break;
 	case Common::kPlatformSegaCD:
-		dev = MidiDriver::detectDevice(/*MDT_SEGACD*/MDT_TOWNS);
+		dev = MidiDriver::detectDevice(MDT_SEGACD);
 		_sound = new SoundSegaCD_EoB(this, _mixer);
 		break;
 	default:
