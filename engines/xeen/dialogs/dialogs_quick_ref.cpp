@@ -72,6 +72,9 @@ void QuickReferenceDialog::execute() {
 	bool windowOpen = w._enabled;
 	if (!windowOpen)
 		w.open();
+
+	// Turn off reduced font mode and then print everything
+	w.writeString("\1");
 	w.writeString(msg);
 	w.update();
 
