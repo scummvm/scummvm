@@ -132,7 +132,7 @@ bool Introduction::show() {
 				Sound.musicInterface_KillAll();
 
 			currentSound = curr_anim->soundNumber;
-			Sound.musicInterface_Play(currentSound, 0);
+			Sound.musicInterface_Play(currentSound, 0, true);
 		}
 
 		bool fadeIn = curr_anim == anim_screens;

@@ -46,9 +46,9 @@ static const uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list
 
 // Details used for co-ordination of sounds during the endgame sequence
 static const AnimSoundSequence soundList[] = {
-	{9, 0x45, 2, 0}, {27, 0x48, 5, 0}, {24, 0x46, 3, 0}, {24, 0x37, 1, 0}, {3, 0x37, 1, 1},
-	{3, 0x37, 1, 2}, {3, 0x37, 1, 3}, {3, 0x37, 1, 4}, {4, 0x37, 1, 5}, {7, 0x47, 4, 6},
-	{31, 0x00, 6, 0}, {0, 0, 0, 0}
+	{9, 0x45, 2, 0, true}, {27, 0x48, 5, 0, false}, {24, 0x46, 3, 0, false}, {24, 0x37, 1, 0, false}, {3, 0x37, 1, 1, false},
+	{3, 0x37, 1, 2, false}, {3, 0x37, 1, 3, false}, {3, 0x37, 1, 4, false}, {4, 0x37, 1, 5, false}, {7, 0x47, 4, 6, false},
+	{31, 0x00, 6, 0, true}, {0, 0, 0, 0}
 };
 
 /*------------------------------------------------------------------------*/
@@ -207,7 +207,7 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	delete anim;
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(6, 0);
+	Sound.musicInterface_Play(6, 0, true);
 
 	anim = new AnimationSequence(ENDGAME_ANIM_ID + 2, p, false);
 	anim->show();

@@ -34,6 +34,7 @@ struct AnimSoundSequence {
 	uint8 adlibSoundId;
 	uint8 rolandSoundId;
 	uint8 channelNum;
+	bool music;
 };
 
 class AnimationSequence {
