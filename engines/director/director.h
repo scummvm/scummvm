@@ -23,7 +23,6 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
-#include "common/random.h"
 #include "common/rect.h"
 #include "common/str-array.h"
 
@@ -31,6 +30,7 @@
 #include "engines/engine.h"
 
 #include "director/types.h"
+#include "director/util.h"
 
 namespace Common {
 class MacResManager;
@@ -191,7 +191,7 @@ public:
 	void waitForClick();
 
 public:
-	Common::RandomSource _rnd;
+	RandomState _rnd;
 	Graphics::ManagedSurface *_surface;
 	Graphics::MacWindowManager *_wm;
 

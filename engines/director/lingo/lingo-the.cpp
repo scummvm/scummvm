@@ -656,7 +656,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = 1;
 		break;
 	case kTheRandomSeed:
-		getTheEntitySTUB(kTheRandomSeed);
+		d.type = INT;
+		d.u.i = g_director->_rnd.getSeed();
 		break;
 	case kTheResult:
 		getTheEntitySTUB(kTheResult);
@@ -904,7 +905,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kThePreLoadRAM);
 		break;
 	case kTheRandomSeed:
-		setTheEntitySTUB(kTheRandomSeed);
+		g_director->_rnd.setSeed(d.asInt());
 		break;
 	case kTheRomanLingo:
 		setTheEntitySTUB(kTheRomanLingo);

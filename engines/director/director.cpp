@@ -45,8 +45,7 @@ uint32 wmMode = 0;
 
 DirectorEngine *g_director;
 
-DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
-		_rnd("director") {
+DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
 	DebugMan.addDebugChannel(kDebugCompile, "compile", "Lingo Compilation");
 	DebugMan.addDebugChannel(kDebugParse, "parse", "Lingo code parsing");

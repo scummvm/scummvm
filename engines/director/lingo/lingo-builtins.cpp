@@ -396,7 +396,7 @@ void LB::b_power(int nargs) {
 
 void LB::b_random(int nargs) {
 	Datum max = g_lingo->pop();
-	Datum res((int)(g_lingo->_vm->_rnd.getRandomNumber(max.asInt() - 1) + 1));
+	Datum res((int)(g_director->_rnd.getRandom(max.asInt()) + 1));
 	g_lingo->push(res);
 }
 

@@ -537,5 +537,61 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	return Common::String::format("./dumps/%s-%s-%d.%s", prefix, typeName.c_str(), id, ext);
 }
 
+void RandomState::setSeed(int seed) {
+	init(32);
+
+	_seed = seed ? seed : 1;
+}
+
+int32 RandomState::getRandom(int32 range) {
+	int32 res;
+
+	if (_seed == 0)
+		init(32);
+
+	res = perlin(genNextRandom() * 71);
+
+	if (range > 0)
+		res = ((res & 0x7fffffff) % range);
+
+	return res;
+}
+
+static const uint32 masks[31] = {
+	0x00000003, 0x00000006, 0x0000000c, 0x00000014, 0x00000030, 0x00000060, 0x000000b8, 0x00000110,
+	0x00000240, 0x00000500, 0x00000ca0, 0x00001b00, 0x00003500, 0x00006000, 0x0000b400, 0x00012000,
+	0x00020400, 0x00072000, 0x00090000, 0x00140000, 0x00300000, 0x00400000, 0x00d80000, 0x01200000,
+	0x03880000, 0x07200000, 0x09000000, 0x14000000, 0x32800000, 0x48000000, 0xa3000000
+};
+
+void RandomState::init(int len) {
+	if (len < 2 || len > 32)
+		len = 32;
+
+	_seed = 1;
+	_len = (1 << len) - 1;
+	_mask = masks[len - 2];
+}
+
+int32 RandomState::genNextRandom() {
+	if (_seed & 1)
+		_seed = (_seed >> 1) ^ _mask;
+	else
+		_seed >>= 1;
+
+	return _seed;
+}
+
+int32 RandomState::perlin(int32 val) {
+	int32 res;
+
+	val = ((val << 13) ^ val) - (val >> 21);
+
+	res = (val * (val * val * 15731 + 789221) + 1376312589) & 0x7fffffff;
+	res += val;
+	res = ((res << 13) ^ res) - (res >> 21);
+
+	return res;
+}
 
 } // End of namespace Director

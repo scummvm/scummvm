@@ -48,6 +48,26 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 
 bool processQuitEvent(bool click = false); // events.cpp
 
+class RandomState {
+public:
+    uint32 _seed;
+    uint32 _mask;
+    uint32 _len;
+
+    RandomState() {
+        _seed = _mask = _len = 0;
+    }
+
+    void setSeed(int seed);
+    uint32 getSeed() { return _seed; }
+    int32 getRandom(int32 range);
+
+private:
+    void init(int len);
+    int32 genNextRandom();
+    int32 perlin(int32 val);
+};
+
 } // End of namespace Director
 
 #endif
