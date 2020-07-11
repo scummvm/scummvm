@@ -111,6 +111,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				m->_lastEventTime = g_director->getMacTicks();
 				m->_lastClickTime = m->_lastEventTime;
+				m->_lastClickPos = pos;
 
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->registerEvent(kEventMouseDown, spriteId);

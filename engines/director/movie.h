@@ -83,6 +83,7 @@ public:
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;
 	uint32 _lastClickTime;
+	Common::Point _lastClickPos;
 	uint32 _lastKeyTime;
 	uint32 _lastTimerReset;
 	uint16 _stageColor;

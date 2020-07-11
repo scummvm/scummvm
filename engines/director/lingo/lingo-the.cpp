@@ -376,7 +376,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheCheckBoxType);
 		break;
 	case kTheClickLoc:
-		getTheEntitySTUB(kTheClickLoc);
+		d.u.farr = new DatumArray;
+
+		d.u.farr->push_back(_vm->getCurrentMovie()->_lastClickPos.x);
+		d.u.farr->push_back(_vm->getCurrentMovie()->_lastClickPos.y);
+		d.type = POINT;
 		break;
 	case kTheClickOn:
 		d.type = INT;
