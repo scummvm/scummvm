@@ -234,7 +234,7 @@ AnimAbortType AnimationSequence::show() {
 		if ((soundFrame != NULL) && (frameCtr == 0))
 			Sound.musicInterface_Play(
 				Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId,
-				soundFrame->channelNum);
+				soundFrame->channelNum, soundFrame->music);
 
 		if (_isEGA)
 			egaDecodeFrame(_pPixels);

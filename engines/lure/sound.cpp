@@ -348,7 +348,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 
 	_activeSounds.push_back(SoundList::value_type(newEntry));
 
-	musicInterface_Play(rec.soundNumber, channelCtr, numChannels);
+	musicInterface_Play(rec.soundNumber, channelCtr, false, numChannels);
 	musicInterface_SetVolume(channelCtr, newEntry->volume);
 }
 
@@ -487,7 +487,7 @@ void SoundManager::restoreSounds() {
 		if ((rec.numChannels != 0) && ((rec.flags & SF_RESTORE) != 0)) {
 			Common::fill(_channelsInUse + rec.channel, _channelsInUse + rec.channel + rec.numChannels, true);
 
-			musicInterface_Play(rec.soundNumber, rec.channel, rec.numChannels);
+			musicInterface_Play(rec.soundNumber, rec.channel, false, rec.numChannels);
 			musicInterface_SetVolume(rec.channel, rec.volume);
 		}
 
@@ -529,7 +529,7 @@ void SoundManager::fadeOut() {
 // musicInterface_Play
 // Play the specified sound
 
-void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, uint8 numChannels) {
+void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic, uint8 numChannels) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d",
 		soundNumber, channelNumber);
 	Game &game = Game::getReference();
@@ -545,7 +545,8 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, u
 		// Only play sounds if a sound driver is active
 		return;
 
-	bool isMusic = (soundNumber & 0x80) != 0;
+	// TODO Figure out what this represents
+	//bool isMusic = (soundNumber & 0x80) != 0;
 
 	if (!game.soundFlag())
 		// Don't play sounds if sound is turned off
