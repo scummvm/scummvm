@@ -199,6 +199,7 @@ public:
 	int _colorDepth;
 	unsigned char _key;
 	int _keyCode;
+	byte _keyFlags;
 	Common::HashMap<int, int> _macKeyCodes;
 	int _machineType;
 	bool _playbackPaused;

@@ -396,10 +396,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = 1;
 		break;
 	case kTheCommandDown:
-		getTheEntitySTUB(kTheCommandDown);
+		d.type = INT;
+		d.u.i = (g_director->_keyFlags & Common::KBD_META) ? 1 : 0;
 		break;
 	case kTheControlDown:
-		getTheEntitySTUB(kTheControlDown);
+		d.type = INT;
+		d.u.i = (g_director->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
 		break;
 	case kTheDate:
 		d = getTheDate(field);
@@ -626,7 +628,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = 1;
 		break;
 	case kTheOptionDown:
-		getTheEntitySTUB(kTheOptionDown);
+		d.type = INT;
+		d.u.i = (g_director->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
 	case kThePauseState:
 		getTheEntitySTUB(kThePauseState);
@@ -680,7 +683,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheSelStart);
 		break;
 	case kTheShiftDown:
-		getTheEntitySTUB(kTheShiftDown);
+		d.type = INT;
+		d.u.i = (g_director->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
 		break;
 	case kTheSoundEnabled:
 		getTheEntitySTUB(kTheSoundEnabled);

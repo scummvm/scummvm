@@ -103,6 +103,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_colorDepth = 8;	// 256-color
 	_key = 0;
 	_keyCode = 0;
+	_keyFlags = 0;
 	_machineType = 9; // Macintosh IIci
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
@@ -137,7 +138,7 @@ Common::Error DirectorEngine::run() {
 	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
 	_wm->setEngine(this);
 
-	
+
 	_mainStage = new Stage(_wm->getNextId(), false, false, false, _wm, this);
 	*_mainStage->_refCount += 1;
 
@@ -192,7 +193,7 @@ Common::Error DirectorEngine::run() {
 			for (uint i = 0; i < windowList->size(); i++) {
 				if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
 					continue;
-				
+
 				_currentStage = static_cast<Stage *>((*windowList)[i].u.obj);
 				_currentStage->step();
 			}

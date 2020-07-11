@@ -152,12 +152,17 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 			case Common::EVENT_KEYDOWN:
 				_keyCode = _macKeyCodes.contains(event.kbd.keycode) ? _macKeyCodes[event.kbd.keycode] : 0;
 				_key = (unsigned char)(event.kbd.ascii & 0xff);
+				_keyFlags = event.kbd.flags;
 
 				debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 
 				m->_lastEventTime = g_director->getMacTicks();
 				m->_lastKeyTime = m->_lastEventTime;
 				_lingo->registerEvent(kEventKeyDown);
+				break;
+
+			case Common::EVENT_KEYUP:
+				_keyFlags = event.kbd.flags;
 				break;
 
 			default:
