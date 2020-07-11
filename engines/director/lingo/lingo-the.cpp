@@ -436,10 +436,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheFrameTempo);
 		break;
 	case kTheFreeBlock:
-		getTheEntitySTUB(kTheFreeBlock);
-		break;
 	case kTheFreeBytes:
-		getTheEntitySTUB(kTheFreeBytes);
+		d.type = INT;
+		d.u.i = 32 * 1024 * 1024;	// Let's have 32 Mbytes
 		break;
 	case kTheFullColorPermit:
 		getTheEntitySTUB(kTheFullColorPermit);
@@ -542,7 +541,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheMaxInteger);
 		break;
 	case kTheMemorySize:
-		getTheEntitySTUB(kTheMemorySize);
+		d.type = INT;
+		d.u.i = 32 * 1024 * 1024;	// Let's have 32 Mbytes
 		break;
 	case kTheMenu:
 		getTheEntitySTUB(kTheMenu);
