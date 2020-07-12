@@ -441,10 +441,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = 32 * 1024 * 1024;	// Let's have 32 Mbytes
 		break;
 	case kTheFullColorPermit:
-		getTheEntitySTUB(kTheFullColorPermit);
+		d.type = INT;
+		d.u.i = 1;					// We always allow it in ScummVM
 		break;
 	case kTheImageDirect:
-		getTheEntitySTUB(kTheImageDirect);
+		d.type = INT;
+		d.u.i = 1;					// We always allow it in ScummVM
 		break;
 	case kTheItemDelimiter:
 		getTheEntitySTUB(kTheItemDelimiter);
@@ -747,7 +749,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheSwitchColorDepth);
 		break;
 	case kTheTicks:
-		getTheEntitySTUB(kTheTicks);
+		d.type = INT;
+		d.u.i = _vm->getMacTicks();
 		break;
 	case kTheTime:
 		d = getTheTime(field);
@@ -869,10 +872,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheFramePalette);
 		break;
 	case kTheFullColorPermit:
-		setTheEntitySTUB(kTheFullColorPermit);
+		// No op in ScummVM. We always allow it
 		break;
 	case kTheImageDirect:
-		setTheEntitySTUB(kTheImageDirect);
+		// No op in ScummVM. We always allow it
 		break;
 	case kTheItemDelimiter:
 		setTheEntitySTUB(kTheItemDelimiter);
