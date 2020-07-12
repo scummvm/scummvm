@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-10 00:43+0000\n"
+"PO-Revision-Date: 2020-07-13 03:43+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6564,11 +6564,11 @@ msgstr "Abspann des Spieles anzeigen"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Play selected music record"
-msgstr ""
+msgstr "Ausgewählte Musikaufzeichnung abspielen"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Select next music record"
-msgstr ""
+msgstr "Nächste Musikaufzeichnung auswählen"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Play note 1: A"
