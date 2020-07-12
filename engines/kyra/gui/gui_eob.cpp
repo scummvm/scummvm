@@ -1510,7 +1510,8 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _n
 		_saveSlotStringsTemp[i] = new char[26];
 		memset(_saveSlotStringsTemp[i], 0, 26);
 	}
-	_saveSlotIdTemp = new int16[6];
+	_saveSlotIdTemp = new int16[7];
+	memset(_saveSlotIdTemp, 0xFF, sizeof(int16) * 7);
 	_savegameOffset = 0;
 	_saveSlotX = _saveSlotY = 0;
 
@@ -3215,7 +3216,7 @@ int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 		bool clickedButton = false;
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
-			runLoop = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _saveSlotIdTemp[newHighlight] == -1 && id == 1);
+			runLoop = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _saveSlotIdTemp[newHighlight] == -1 && newHighlight < _numSlotsVisible && id == 1);
 			clickedButton = true;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
 			newHighlight = _numSlotsVisible;
@@ -3264,7 +3265,7 @@ int GUI_EoB::selectSaveSlotDialog(int x, int y, int id) {
 			if (slot != -1) {
 				newHighlight = slot;
 				if (inputFlag == 199) {
-					runLoop = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _saveSlotIdTemp[newHighlight] == -1 && id == 1);
+					runLoop = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _saveSlotIdTemp[newHighlight] == -1 && slot < _numSlotsVisible && id == 1);
 					clickedButton = true;
 				}
 			}

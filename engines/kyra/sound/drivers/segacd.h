@@ -47,7 +47,7 @@ public:
 
 	enum PrioFlags {
 		kPrioHigh = 0x10,
-		kPrioLow = 0x20,
+		kPrioLow = 0x20
 	};
 
 	void startFMSound(const uint8 *trackData, uint8 volume, PrioFlags prioFlags);

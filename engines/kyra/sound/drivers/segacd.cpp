@@ -227,7 +227,7 @@ private:
 		kAttack,
 		kSustain,
 		kRelease,
-		kReady,
+		kReady
 	};
 
 	int _envState;
