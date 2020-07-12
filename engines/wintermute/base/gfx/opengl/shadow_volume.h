@@ -36,6 +36,20 @@
 
 namespace Wintermute {
 
+#include "common/pack-start.h"
+
+struct ShadowVertex {
+	uint8 r;
+	uint8 g;
+	uint8 b;
+	uint8 a;
+	float x;
+	float y;
+	float z;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"
+
 class ShadowVolume : public BaseClass {
 public:
 	ShadowVolume(BaseGame *inGame);
@@ -51,6 +65,7 @@ public:
 
 private:
 	bool render();
+	ShadowVertex _shadowMask[4];
 	uint32 _color;
 	bool initMask();
 	BaseArray<Math::Vector3d> _vertices; // Vertex data for rendering shadow volume

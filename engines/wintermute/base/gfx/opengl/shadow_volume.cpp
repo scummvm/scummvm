@@ -26,8 +26,11 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume.h"
 #include "engines/wintermute/dcgf.h"
+#include "graphics/opengl/system_headers.h"
 
 namespace Wintermute {
 
@@ -41,7 +44,7 @@ ShadowVolume::~ShadowVolume() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolume::reset() {
-	// nothing to do here at the moment
+	_vertices.clear();
 	return true;
 }
 
@@ -52,141 +55,137 @@ void ShadowVolume::addVertex(const Math::Vector3d &vertex) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolume::render() {
-	warning("ShadowVolume::render not implemented yet");
-	//	CBRenderD3D* Rend = (CBRenderD3D*)Game->m_Renderer;
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//	Rend->m_LastTexture = NULL;
-	//	Rend->m_Device->SetTexture(0, NULL);
-
-	//	C3DUtils::SetFixedVertexShader(Rend->m_Device, D3DFVF_XYZ);
-	//	Rend->m_Device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_NumVertices / 3, m_Vertices, sizeof(Math::Vector3d));
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, _vertices.data());
+	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolume::renderToStencilBuffer() {
-	warning("ShadowVolume::renderToStencilBuffer not implemented yet");
-	//	CBRenderD3D* Rend = (CBRenderD3D*)Game->m_Renderer;
+	// Disable z-buffer writes (note: z-testing still occurs), and enable the
+	// stencil-buffer
+	glDepthMask(GL_FALSE);
+	glEnable(GL_STENCIL_TEST);
+	glEnable(GL_CULL_FACE);
 
-	//	// Disable z-buffer writes (note: z-testing still occurs), and enable the
-	//	// stencil-buffer
-	//	Rend->m_Device->SetRenderState(D3DRS_ZWRITEENABLE,  FALSE);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+	// Set up stencil compare fuction, reference value, and masks.
+	// Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
+	// Note: since we set up the stencil-test to always pass, the STENCILFAIL
+	// renderstate is really not needed.
+	glStencilFunc(GL_ALWAYS, 0x1, 0xFFFFFFFF);
 
-	//	// Set up stencil compare fuction, reference value, and masks.
-	//	// Stencil test passes if ((ref & mask) cmpfn (stencil & mask)) is true.
-	//	// Note: since we set up the stencil-test to always pass, the STENCILFAIL
-	//	// renderstate is really not needed.
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILFUNC,  D3DCMP_ALWAYS);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILFAIL,  D3DSTENCILOP_KEEP);
+	glShadeModel(GL_FLAT);
+	glDisable(GL_LIGHTING);
 
-	//	Rend->m_Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_FLAT);
-	//	Rend->m_Device->SetRenderState(D3DRS_LIGHTING, FALSE);
+	// Make sure that no pixels get drawn to the frame buffer
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ZERO, GL_ONE);
 
-	//	// If z-test passes, inc/decrement stencil buffer value
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILREF,       0x1);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILMASK,      0xffffffff);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILWRITEMASK, 0xffffffff);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
-	//	// Make sure that no pixels get drawn to the frame buffer
-	//	Rend->m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	//	Rend->m_Device->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ZERO);
-	//	Rend->m_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILPASS,      D3DSTENCILOP_INCR);
-
-	//	// Draw back-side of shadow volume in stencil/z only
-	//	Rend->m_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	//	Render();
+	// Draw back-side of shadow volume in stencil/z only
+	glCullFace(GL_FRONT);
+	render();
 
 	//	// Decrement stencil buffer value
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILPASS,      D3DSTENCILOP_DECR);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
-	//	// Draw front-side of shadow volume in stencil/z only
-	//	Rend->m_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-	//	Render();
+	// Draw front-side of shadow volume in stencil/z only
+	glCullFace(GL_BACK);
+	render();
 
 	//	// Restore render states
-	//	Rend->m_Device->SetRenderState(D3DRS_LIGHTING, TRUE);
-	//	Rend->m_Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
-	//	Rend->m_Device->SetRenderState(D3DRS_CULLMODE,  D3DCULL_CCW);
-	//	Rend->m_Device->SetRenderState(D3DRS_ZWRITEENABLE,     TRUE) ;
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILENABLE,    FALSE);
-	//	Rend->m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	glEnable(GL_LIGHTING);
+	glFrontFace(GL_CCW);
+	glShadeModel(GL_SMOOTH);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_BLEND);
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolume::renderToScene() {
-	warning("ShadowVolume::renderToScene not implemented yet");
-	//	if(!m_StencilMaskVB) InitMask();
+	initMask();
 
-	//	CBRenderD3D* Rend = (CBRenderD3D*)Game->m_Renderer;
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//	Rend->m_Device->SetRenderState(D3DRS_ZENABLE,          FALSE);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILENABLE,    TRUE);
-	//	Rend->m_Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	//	Rend->m_Device->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA);
-	//	Rend->m_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	// Only write where stencil val >= 1 (count indicates # of shadows that overlap that pixel)
+	glStencilFunc(GL_LEQUAL, 0x1, 0xFFFFFFFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-	//	Rend->m_Device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-	//	Rend->m_Device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-	//	Rend->m_Device->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_MODULATE);
-	//	Rend->m_Device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	//	Rend->m_Device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	//	Rend->m_Device->SetTextureStageState(0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE);
+	glDisable(GL_FOG);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_ALPHA_TEST);
 
-	//	// Only write where stencil val >= 1 (count indicates # of shadows that
-	//	// overlap that pixel)
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILREF,  0x1 );
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_LESSEQUAL);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+	_gameRef->_renderer3D->setProjection2D();
 
-	//	Rend->m_Device->SetRenderState(D3DRS_FOGENABLE,          FALSE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//	// Draw a big, gray square
-	//	Rend->m_Device->SetRenderState(D3DRS_COLORVERTEX, TRUE);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//	C3DUtils::SetFixedVertexShader(Rend->m_Device, D3DFVF_SHADOWVOLVERTEX);
-	//	C3DUtils::SetStreamSource(Rend->m_Device, 0, m_StencilMaskVB, sizeof(SHADOWVOLVERTEX));
-	//	Rend->m_Device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	// Draw a big, gray square
+	glInterleavedArrays(GL_C4UB_V3F, 0, _shadowMask);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	//	// Restore render states
-	//	Rend->m_Device->SetRenderState(D3DRS_ZENABLE,          TRUE);
-	//	Rend->m_Device->SetRenderState(D3DRS_STENCILENABLE,    FALSE);
+	// Restore render states
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_STENCIL_TEST);
 
-	//	Rend->Setup3D(NULL, true);
+	_gameRef->_renderer3D->setup3D(nullptr, true);
 
-	//	// clear stencil buffer
-	//	Rend->m_Device->Clear(0, NULL, D3DCLEAR_STENCIL, 0x00, 1.0f, 0);
+	// clear stencil buffer
+	glClearStencil(0);
+	glClear(GL_STENCIL_BUFFER_BIT);
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolume::initMask() {
-	warning("ShadowVolume::initMask not implemented yet");
-	//	CBRenderD3D* Rend = (CBRenderD3D*)Game->m_Renderer;
+	Rect32 viewport = _gameRef->_renderer->getViewPort();
 
-	//	RELEASE(m_StencilMaskVB);
+	_shadowMask[0].x = viewport.left;
+	_shadowMask[0].y = viewport.bottom;
+	_shadowMask[0].z = 0.0f;
 
-	//	Rend->m_Device->CreateVertexBufferUni(4 * sizeof(SHADOWVOLVERTEX),	D3DUSAGE_WRITEONLY, D3DFVF_SHADOWVOLVERTEX,	D3DPOOL_MANAGED, &m_StencilMaskVB);
-	//	SHADOWVOLVERTEX* v;
-	//	m_StencilMaskVB->LockVB(0, 0, &v, 0);
-	//	{
-	//		v[0].p = D3DXVECTOR4(0.0f, Rend->m_RealHeight, 0.0f, 1.0f);
-	//		v[1].p = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);
-	//		v[2].p = D3DXVECTOR4(Rend->m_RealWidth, Rend->m_RealHeight, 0.0f, 1.0f);
-	//		v[3].p = D3DXVECTOR4(Rend->m_RealWidth, 0.0f, 0.0f, 1.0f);
-	//		v[0].color = m_Color;
-	//		v[1].color = m_Color;
-	//		v[2].color = m_Color;
-	//		v[3].color = m_Color;
-	//	}
-	//	m_StencilMaskVB->Unlock();
+	_shadowMask[1].x = viewport.left;
+	_shadowMask[1].y = viewport.top;
+	_shadowMask[1].z = 0.0f;
+
+	_shadowMask[2].x = viewport.right;
+	_shadowMask[2].y = viewport.bottom;
+	_shadowMask[2].z = 0.0f;
+
+	_shadowMask[3].x = viewport.right;
+	_shadowMask[3].y = viewport.top;
+	_shadowMask[3].z = 0.0f;
+
+	byte a = RGBCOLGetA(_color);
+	byte r = RGBCOLGetR(_color);
+	byte g = RGBCOLGetG(_color);
+	byte b = RGBCOLGetB(_color);
+
+	for (int i = 0; i < 4; ++i) {
+		_shadowMask[i].r = r;
+		_shadowMask[i].g = g;
+		_shadowMask[i].b = b;
+		_shadowMask[i].a = a;
+	}
 
 	return true;
 }
