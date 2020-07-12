@@ -1476,14 +1476,13 @@ void LingoArchive::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 	stream.readUint16();
 	stream.readUint16();
 	stream.readUint16();
-	stream.readUint16();
-	stream.readUint16();
-	stream.readUint16();
-	stream.readUint16();
+
+	uint32 size = stream.readUint32(); // size of Lnam
+	stream.readUint32(); // size of Lnam again
 	uint16 offset = stream.readUint16();
 	uint16 count = stream.readUint16();
 
-	if (stream.size() < offset) {
+	if (stream.size() != size) {
 		warning("Lnam content missing");
 		return;
 	}
