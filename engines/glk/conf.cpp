@@ -70,7 +70,7 @@ Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true
 		_windowColor(parseColor(WHITE)), _windowSave(parseColor(WHITE)),
 		_sound(true), _speak(false), _speakInput(false), _styleHint(1),
 		_scrollBg(parseColor(SCROLL_BG)), _scrollFg(parseColor(SCROLL_FG)),
-		_lcd(1), _scrollWidth(0), _safeClicks(false) {
+		_scrollWidth(0), _safeClicks(false) {
 	g_conf = this;
 	_imageW = _width;
 	_imageH = _height;
@@ -176,7 +176,6 @@ void Conf::synchronize() {
 	syncAsColor("bordercolor", _borderSave);
 	syncAsColor("windowcolor", _windowColor);
 	syncAsColor("windowcolor", _windowSave);
-	syncAsInt("lcd", _lcd);
 
 	syncAsColor("caretcolor", _propInfo._caretColor);
 	syncAsInt("caretshape", _propInfo._caretShape);

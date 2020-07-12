@@ -86,7 +86,6 @@ public:
 	double _gamma;
 	uint _borderColor, _borderSave;
 	uint _windowColor, _windowSave;
-	int _lcd;
 	int _scrollWidth;
 	uint _scrollBg, _scrollFg;
 	bool _graphics;
