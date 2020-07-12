@@ -62,6 +62,7 @@ bool loadPrc(const char *pPrcName) {
 		(!scumm_stricmp(pPrcName, BOOT_PRC_NAME) || !scumm_stricmp(pPrcName, "demo.prc"))) {
 		scriptPtr = dataPtr = readFile(pPrcName, (g_cine->getFeatures() & GF_CRYPTED_BOOT_PRC) != 0);
 	} else {
+		checkDataDisk(-1);
 		scriptPtr = dataPtr = readBundleFile(findFileInBundle(pPrcName));
 	}
 

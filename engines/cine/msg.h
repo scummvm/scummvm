@@ -29,7 +29,7 @@ namespace Cine {
 
 #define NUM_MAX_MESSAGE 255
 
-void loadMsg(char *pMsgName);
+int16 loadMsg(char *pMsgName);
 
 } // End of namespace Cine
 

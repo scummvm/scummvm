@@ -29,12 +29,19 @@
 
 namespace Cine {
 
-void loadMsg(char *pMsgName) {
+int16 loadMsg(char *pMsgName) {
 	uint32 sourceSize;
 
 	checkDataDisk(-1);
 	g_cine->_messageTable.clear();
-	byte *dataPtr = readBundleFile(findFileInBundle(pMsgName), &sourceSize);
+
+	int16 foundFileIdx = findFileInBundle(pMsgName);
+	if (foundFileIdx < 0) {
+		warning("loadMsg(\"%s\"): Could not find file in bundle.", pMsgName);
+		return -1;
+	}
+
+	byte *dataPtr = readBundleFile(foundFileIdx, &sourceSize);
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -67,6 +74,7 @@ void loadMsg(char *pMsgName) {
 	}
 
 	free(dataPtr);
+	return 0;
 }
 
 } // End of namespace Cine

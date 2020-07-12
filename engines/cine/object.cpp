@@ -39,7 +39,7 @@ void resetObjectTable() {
 	}
 }
 
-void loadObject(char *pObjectName) {
+int16 loadObject(char *pObjectName) {
 	debug(5, "loadObject(\"%s\")", pObjectName);
 	uint16 numEntry;
 	uint16 entrySize;
@@ -48,7 +48,12 @@ void loadObject(char *pObjectName) {
 
 	checkDataDisk(-1);
 
-	ptr = dataPtr = readBundleFile(findFileInBundle(pObjectName));
+	int16 foundFileIdx = findFileInBundle(pObjectName);
+	if (foundFileIdx < 0) {
+		return -1;
+	}
+
+	ptr = dataPtr = readBundleFile(foundFileIdx);
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -59,7 +64,19 @@ void loadObject(char *pObjectName) {
 	assert(numEntry <= NUM_MAX_OBJECT);
 
 	for (i = 0; i < numEntry; i++) {
-		if (g_cine->_objectTable[i].costume != -2 && g_cine->_objectTable[i].costume != -3) { // flag is keep?
+		bool overwrite =
+			(g_cine->getGameType() == Cine::GType_FW && g_cine->_objectTable[i].costume != -2) ||
+			(g_cine->getGameType() == Cine::GType_OS && g_cine->_objectTable[i].costume != -3);
+
+		// HACK: Fix handling of electric razor and cable in Amiga version of Operation Stealth
+		// when entering the Dr. Why's control room.
+		if (hacksEnabled && g_cine->getPlatform() == Common::kPlatformAmiga &&
+			g_cine->getGameType() == Cine::GType_OS && (i == 231 || i == 232) &&
+			scumm_stricmp(pObjectName, "SALLE59.REL") == 0) {
+			overwrite = false;
+		}
+
+		if (overwrite) {
 			Common::MemoryReadStream readS(ptr, entrySize);
 
 			g_cine->_objectTable[i].x = readS.readSint16BE();
@@ -80,6 +97,7 @@ void loadObject(char *pObjectName) {
 	}
 
 	free(dataPtr);
+	return 0;
 }
 
 /**

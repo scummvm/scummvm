@@ -23,12 +23,17 @@
 #include "common/debug.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "cine/cine.h"
 #include "cine/bg_list.h"
 #include "cine/saveload.h"
 #include "cine/sound.h"
 #include "cine/various.h"
+
+#include "engines/metaengine.h"
+
+#include "gui/message.h"
 
 namespace Cine {
 
@@ -69,13 +74,20 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 	// First check for the temporary Operation Stealth savegame format.
 	fHandle.seek(0);
 	ChunkHeader hdr;
-	loadChunkHeader(fHandle, hdr);
+	bool loadedHeader = loadChunkHeader(fHandle, hdr);
 	fHandle.seek(prevStreamPos);
-	if (hdr.id == TEMP_OS_FORMAT_ID) {
+
+	if (!loadedHeader) {
+		return ANIMSIZE_UNKNOWN;
+	} else if (hdr.id == TEMP_OS_FORMAT_ID) {
 		return TEMP_OS_FORMAT;
+	} else if (hdr.id == VERSIONED_FW_FORMAT_ID) {
+		return VERSIONED_FW_FORMAT;
+	} else if (hdr.id == VERSIONED_OS_FORMAT_ID) {
+		return VERSIONED_OS_FORMAT;
 	}
 
-	// Ok, so the savegame isn't using the temporary Operation Stealth savegame format.
+	// Ok, so the savegame isn't using the newer savegame formats.
 	// Let's check for the plain Future Wars savegame format and its different versions then.
 	// The animDataTable begins at savefile position 0x2315.
 	// Each animDataTable entry takes 23 bytes in older saves (Revisions 21772-31443)
@@ -246,7 +258,7 @@ bool loadObjectTable(Common::SeekableReadStream &in) {
 
 bool loadZoneData(Common::SeekableReadStream &in) {
 	for (int i = 0; i < 16; i++) {
-		g_cine->_zoneData[i] = in.readUint16BE();
+		g_cine->_zoneData[i] = in.readSint16BE();
 	}
 	return !(in.eos() || in.err());
 }
@@ -340,7 +352,7 @@ void saveObjectTable(Common::OutSaveFile &out) {
 
 void saveZoneData(Common::OutSaveFile &out) {
 	for (int i = 0; i < 16; i++) {
-		out.writeUint16BE(g_cine->_zoneData[i]);
+		out.writeSint16BE(g_cine->_zoneData[i]);
 	}
 }
 
@@ -427,6 +439,10 @@ void saveBgIncrustList(Common::OutSaveFile &out) {
 		out.writeUint16BE(it->y);
 		out.writeUint16BE(it->frame);
 		out.writeUint16BE(it->part);
+
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			out.writeUint16BE(it->bgIdx);
+		}
 	}
 }
 
@@ -471,7 +487,7 @@ bool CineEngine::loadSaveDirectory() {
 	// then the missing ones are correctly set to empty strings.
 	memset(currentSaveName, 0, sizeof(currentSaveName));
 
-	fHandle->read(currentSaveName, 10 * 20);
+	fHandle->read(currentSaveName, sizeof(currentSaveName));
 	delete fHandle;
 
 	// Make sure all savegames' descriptions end with a trailing zero.
@@ -481,32 +497,53 @@ bool CineEngine::loadSaveDirectory() {
 	return true;
 }
 
-bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
-	char musicName[13];
-	char bgNames[8][13];
-
-	// First check the temporary Operation Stealth savegame format header.
-	ChunkHeader hdr;
-	loadChunkHeader(in, hdr);
-	if (hdr.id != TEMP_OS_FORMAT_ID) {
-		warning("loadTempSaveOS: File has incorrect identifier. Not loading savegame");
+bool CineEngine::checkSaveHeaderData(const ChunkHeader& hdr) {
+	if (hdr.version > CURRENT_SAVE_VER) {
+		warning("checkSaveHeader: Detected newer format version. Not loading savegame");
 		return false;
-	} else if (hdr.version > CURRENT_OS_SAVE_VER) {
-		warning("loadTempSaveOS: Detected newer format version. Not loading savegame");
-		return false;
-	} else if ((int)hdr.version < (int)CURRENT_OS_SAVE_VER) {
-		warning("loadTempSaveOS: Detected older format version. Trying to load nonetheless. Things may break");
-	} else { // hdr.id == TEMP_OS_FORMAT_ID && hdr.version == CURRENT_OS_SAVE_VER
-		debug(3, "loadTempSaveOS: Found correct header (Both the identifier and version number match).");
+	} else if (hdr.version < CURRENT_SAVE_VER) {
+		debug(3, "checkSaveHeader: Loading older format version (%d < %d).", hdr.version, CURRENT_SAVE_VER);
+	} else {
+		debug(3, "checkSaveHeader: Found correct header (Both the identifier and version number match).");
 	}
 
 	// There shouldn't be any data in the header's chunk currently so it's an error if there is.
 	if (hdr.size > 0) {
-		warning("loadTempSaveOS: Format header's chunk seems to contain data so format is incorrect. Not loading savegame");
+		warning("checkSaveHeader: Format header's chunk seems to contain data so format is incorrect. Not loading savegame");
 		return false;
 	}
 
-	// Ok, so we've got a correct header for a temporary Operation Stealth savegame.
+	return true;
+}
+
+bool CineEngine::loadVersionedSaveFW(Common::SeekableReadStream &in) {
+	ChunkHeader hdr;
+	loadChunkHeader(in, hdr);
+	if (hdr.id != VERSIONED_FW_FORMAT_ID) {
+		warning("loadVersionedSaveFW: File has incorrect identifier. Not loading savegame");
+		return false;
+	} else if (!checkSaveHeaderData(hdr)) {
+		warning("loadVersionedSaveFW: Detected incompatible savegame. Not loading savegame");
+		return false;
+	}
+
+	return loadPlainSaveFW(in, ANIMSIZE_30_PTRS_INTACT, hdr.version);
+}
+
+bool CineEngine::loadVersionedSaveOS(Common::SeekableReadStream &in) {
+	char bgNames[8][13];
+
+	ChunkHeader hdr;
+	loadChunkHeader(in, hdr);
+	if (hdr.id != VERSIONED_OS_FORMAT_ID && hdr.id != TEMP_OS_FORMAT_ID) {
+		warning("loadVersionedSaveOS: File has incorrect identifier. Not loading savegame");
+		return false;
+	} else if (!checkSaveHeaderData(hdr)) {
+		warning("loadVersionedSaveOS: Detected incompatible savegame. Not loading savegame");
+		return false;
+	}
+
+	// Ok, so we've got a correct header for an Operation Stealth savegame.
 	// Let's start loading the plain savegame data then.
 	currentDisk = in.readUint16BE();
 	in.read(currentPartName, 13);
@@ -532,24 +569,12 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	// semantic differences result in having to do things
 	// in a different order).
 	{
-		// Not sure if this is needed with Operation Stealth...
-		checkDataDisk(currentDisk);
-
 		if (strlen(currentPrcName)) {
 			loadPrc(currentPrcName);
 		}
 
 		if (strlen(currentRelName)) {
 			loadRel(currentRelName);
-		}
-
-		// Reset background music in CD version of Future Wars
-		if (getGameType() == GType_FW && (getFeatures() & GF_CD)) {
-			if (strlen(bgNames[0])) {
-				char buffer[20];
-				removeExtention(buffer, bgNames[0]);
-				g_sound->setBgMusic(atoi(buffer + 1));
-			}
 		}
 
 		// Load first background (Uses loadBg)
@@ -560,7 +585,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 		// Add backgrounds 1-7 (Uses addBackground)
 		for (int i = 1; i < 8; i++) {
 			if (strlen(bgNames[i])) {
-				addBackground(bgNames[i], i);
+				renderer->addBackground(bgNames[i], i);
 			}
 		}
 
@@ -580,44 +605,39 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	renderer->setCommand(g_cine->_commandBuffer);
 	loadZoneQuery(in);
 
-	// TODO: Use the loaded string (Current music name (String, 13 bytes)).
-	in.read(musicName, 13);
+	// Current music name (String, 13 bytes).
+	in.read(currentDatName, 13);
 
 	// TODO: Use the loaded value (Is music loaded? (Uint16BE, Boolean)).
 	in.readUint16BE();
 
-	// TODO: Use the loaded value (Is music playing? (Uint16BE, Boolean)).
-	in.readUint16BE();
+	// Is music playing? (Uint16BE, Boolean).
+	musicIsPlaying = in.readUint16BE();
 
 	renderer->_cmdY      = in.readUint16BE();
-	in.readUint16BE(); // Some unknown variable that seems to always be zero
+	bgVar0               = in.readUint16BE();
 	allowPlayerInput     = in.readUint16BE();
 	playerCommand        = in.readUint16BE();
 	commandVar1          = in.readUint16BE();
 	isDrawCommandEnabled = in.readUint16BE();
-	var5                 = in.readUint16BE();
+	lastType20OverlayBgIdx = in.readUint16BE();
 	var4                 = in.readUint16BE();
 	var3                 = in.readUint16BE();
 	var2                 = in.readUint16BE();
 	commandVar2          = in.readUint16BE();
 	renderer->_messageBg = in.readUint16BE();
 
-	// TODO: Use the loaded value (adBgVar1 (Uint16BE)).
-	in.readUint16BE();
+	reloadBgPalOnNextFlip = in.readUint16BE(); // From Operation Stealth's disassembly
 
-	currentAdditionalBgIdx = in.readSint16BE();
-	currentAdditionalBgIdx2 = in.readSint16BE();
-
-	// TODO: Check whether the scroll value really gets used correctly after this.
-	// Note that the backgrounds are loaded only later than this value is set.
+	renderer->selectBg(in.readSint16BE());
+	renderer->selectScrollBg(in.readSint16BE());
 	renderer->setScroll(in.readUint16BE());
 
-	// TODO: Use the loaded value (adBgVar0 (Uint16BE). Maybe this means bgVar0?).
-	in.readUint16BE();
+	forbidBgPalReload = in.readUint16BE();
 
 	disableSystemMenu = in.readUint16BE();
 
-	// TODO: adBgVar1 = 1 here
+	reloadBgPalOnNextFlip = 1; // From Operation Stealth's disassembly
 
 	// Load the animDataTable entries
 	in.readUint16BE(); // Entry count (255 in the PC version of Operation Stealth).
@@ -629,7 +649,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	loadObjectScripts(in);
 	loadSeqList(in);
 	loadOverlayList(in);
-	loadBgIncrustFromSave(in);
+	loadBgIncrustFromSave(in, (int)hdr.version >= 2);
 
 	// Left this here instead of moving it earlier in this function with
 	// the other current value loadings (e.g. loading of current procedure,
@@ -639,19 +659,17 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 		loadMsg(currentMsgName);
 	}
 
-	// TODO: Add current music loading and playing here
-	// TODO: Palette handling?
-
-	if (in.pos() == in.size()) {
-		debug(3, "loadTempSaveOS: Loaded the whole savefile.");
-	} else {
-		warning("loadTempSaveOS: Loaded the savefile but didn't exhaust it completely. Something was left over");
+	if (strlen(currentDatName)) {
+		g_sound->loadMusic(currentDatName);
+		if (musicIsPlaying) {
+			g_sound->playMusic();
+		}
 	}
 
 	return !(in.eos() || in.err());
 }
 
-bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat) {
+bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat, uint32 version) {
 	char bgName[13];
 
 	// At savefile position 0x0000:
@@ -707,7 +725,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	loadObjectTable(in);
 
 	// At 0x2043 (i.e. 0x005F + 2 * 2 + 255 * 32):
-	renderer->restorePalette(in, 0);
+	renderer->restorePalette(in, version);
 
 	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
 	g_cine->_globalVars.load(in, NUM_MAX_VAR);
@@ -738,7 +756,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	// At 0x2303:
 	isDrawCommandEnabled = in.readUint16BE();
 	// At 0x2305:
-	var5 = in.readUint16BE();
+	lastType20OverlayBgIdx = in.readUint16BE();
 	// At 0x2307:
 	var4 = in.readUint16BE();
 	// At 0x2309:
@@ -764,6 +782,8 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	loadObjectScripts(in);
 	loadOverlayList(in);
 	loadBgIncrustFromSave(in);
+
+	disableSystemMenu = ((version >= 4) ? in.readUint16BE() : 0);
 
 	if (strlen(currentMsgName)) {
 		loadMsg(currentMsgName);
@@ -831,18 +851,30 @@ bool CineEngine::makeLoad(const Common::String &saveName) {
 		// then let's try the default format and hope for the best.
 		warning("Couldn't detect the used savegame format, trying default savegame format. Things may break");
 		saveGameFormat = ANIMSIZE_30_PTRS_INTACT;
+	} else if (saveGameFormat == TEMP_OS_FORMAT) {
+		GUI::MessageDialog alert(_("WARNING: The savegame you are loading is using "
+			"a temporary broken format. Things will be broken. Please consider starting "
+			"Operation Stealth from beginning using new savegames."),
+			_("Load anyway"), _("Cancel"));
+		load = (alert.runModal() == GUI::kMessageOK);
 	}
 
 	if (load) {
 		// Reset the engine's state
 		resetEngine();
 
-		if (saveGameFormat == TEMP_OS_FORMAT) {
-			// Load the temporary Operation Stealth savegame format
-			result = loadTempSaveOS(*in);
+		if (saveGameFormat == VERSIONED_FW_FORMAT) {
+			result = loadVersionedSaveFW(*in);
+		} else if (saveGameFormat == VERSIONED_OS_FORMAT || saveGameFormat == TEMP_OS_FORMAT) {
+			result = loadVersionedSaveOS(*in);
 		} else {
-			// Load the plain Future Wars savegame format
-			result = loadPlainSaveFW(*in, saveGameFormat);
+			// Load the plain Future Wars savegame format using version number 0
+			result = loadPlainSaveFW(*in, saveGameFormat, 0);
+		}
+
+		ExtendedSavegameHeader header;
+		if (MetaEngine::readSavegameHeader(saveFile.get(), &header)) {
+			setTotalPlayTime(header.playtime);
 		}
 	}
 
@@ -851,7 +883,19 @@ bool CineEngine::makeLoad(const Common::String &saveName) {
 	return result;
 }
 
+void CineEngine::writeSaveHeader(Common::OutSaveFile &out, uint32 headerId) {
+	ChunkHeader header;
+	header.id = headerId;
+	header.version = CURRENT_SAVE_VER;
+	header.size = 0; // No data is currently put inside the chunk, all the plain data comes right after it.
+	writeChunkHeader(out, header);
+}
+
 void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
+	// Make a Future Wars savegame format chunk header and save it.
+	writeSaveHeader(out, VERSIONED_FW_FORMAT_ID);
+
+	// Start outputting the plain savegame data right after the chunk header.
 	out.writeUint16BE(currentDisk);
 	out.write(currentPartName, 13);
 	out.write(currentDatName, 13);
@@ -875,7 +919,7 @@ void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
 	out.writeUint16BE(playerCommand);
 	out.writeUint16BE(commandVar1);
 	out.writeUint16BE(isDrawCommandEnabled);
-	out.writeUint16BE(var5);
+	out.writeUint16BE(lastType20OverlayBgIdx);
 	out.writeUint16BE(var4);
 	out.writeUint16BE(var3);
 	out.writeUint16BE(var2);
@@ -892,23 +936,11 @@ void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
 }
 
 /**
- * Save an Operation Stealth type savegame. WIP!
- *
- * NOTE: This is going to be very much a work in progress so the Operation Stealth's
- *       savegame formats that are going to be tried are extremely probably not going
- *       to be supported at all after Operation Stealth becomes officially supported.
- *       This means that the savegame format will hopefully change to something nicer
- *       when official support for Operation Stealth begins.
+ * Save an Operation Stealth type savegame.
  */
 void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
-	int i;
-
-	// Make a temporary Operation Stealth savegame format chunk header and save it.
-	ChunkHeader header;
-	header.id = TEMP_OS_FORMAT_ID;
-	header.version = CURRENT_OS_SAVE_VER;
-	header.size = 0; // No data is currently put inside the chunk, all the plain data comes right after it.
-	writeChunkHeader(out, header);
+	// Make an Operation Stealth savegame format chunk header and save it.
+	writeSaveHeader(out, VERSIONED_OS_FORMAT_ID);
 
 	// Start outputting the plain savegame data right after the chunk header.
 	out.writeUint16BE(currentDisk);
@@ -927,42 +959,36 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	saveCommandBuffer(out);
 	saveZoneQuery(out);
 
-	// FIXME: Save a proper name here, saving an empty string currently.
 	// 0x2925: Current music name (String, 13 bytes).
-	for (i = 0; i < 13; i++) {
-		out.writeByte(0);
-	}
+	out.write(currentDatName, 13);
+
 	// FIXME: Save proper value for this variable, currently writing zero
 	// 0x2932: Is music loaded? (Uint16BE, Boolean).
 	out.writeUint16BE(0);
-	// FIXME: Save proper value for this variable, currently writing zero
+
 	// 0x2934: Is music playing? (Uint16BE, Boolean).
-	out.writeUint16BE(0);
+	out.writeUint16BE(musicIsPlaying);
 
 	out.writeUint16BE(renderer->_cmdY);
-	out.writeUint16BE(0); // Some unknown variable that seems to always be zero
+	out.writeUint16BE(bgVar0);
 	out.writeUint16BE(allowPlayerInput);
 	out.writeUint16BE(playerCommand);
 	out.writeUint16BE(commandVar1);
 	out.writeUint16BE(isDrawCommandEnabled);
-	out.writeUint16BE(var5);
+	out.writeUint16BE(lastType20OverlayBgIdx);
 	out.writeUint16BE(var4);
 	out.writeUint16BE(var3);
 	out.writeUint16BE(var2);
 	out.writeUint16BE(commandVar2);
 	out.writeUint16BE(renderer->_messageBg);
 
-	// FIXME: Save proper value for this variable, currently writing zero.
-	// An unknown variable at 0x295E: adBgVar1 (Uint16BE).
-	out.writeUint16BE(0);
-	out.writeSint16BE(currentAdditionalBgIdx);
-	out.writeSint16BE(currentAdditionalBgIdx2);
-	// FIXME: Save proper value for this variable, currently writing zero.
+	out.writeUint16BE(reloadBgPalOnNextFlip);
+	out.writeSint16BE(renderer->currentBg());
+	out.writeSint16BE(renderer->scrollBg());
+
 	// 0x2954: additionalBgVScroll (Uint16BE). This probably means renderer->_bgShift.
-	out.writeUint16BE(0);
-	// FIXME: Save proper value for this variable, currently writing zero.
-	// An unknown variable at 0x2956: adBgVar0 (Uint16BE). Maybe this means bgVar0?
-	out.writeUint16BE(0);
+	out.writeUint16BE(renderer->getScroll());
+	out.writeUint16BE(forbidBgPalReload);
 	out.writeUint16BE(disableSystemMenu);
 
 	saveAnimDataTable(out);
@@ -974,7 +1000,8 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 	saveBgIncrustList(out);
 }
 
-void CineEngine::makeSave(const Common::String &saveFileName) {
+void CineEngine::makeSave(const Common::String &saveFileName, uint32 playtime,
+	Common::String desc, bool isAutosave) {
 	Common::SharedPtr<Common::OutSaveFile> fHandle(_saveFileMan->openForSaving(saveFileName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
@@ -991,6 +1018,15 @@ void CineEngine::makeSave(const Common::String &saveFileName) {
 			makeSaveOS(*fHandle);
 		}
 	}
+
+	renderer->saveBackBuffer(BEFORE_TAKING_THUMBNAIL);
+	if (renderer->hasSavedBackBuffer(BEFORE_OPENING_MENU)) {
+		renderer->popSavedBackBuffer(BEFORE_OPENING_MENU);
+	}
+
+	MetaEngine::appendExtendedSave(fHandle.get(), playtime, desc, isAutosave);
+
+	renderer->restoreSavedBackBuffer(BEFORE_TAKING_THUMBNAIL);
 
 	setMouseCursor(MOUSE_CURSOR_NORMAL);
 }

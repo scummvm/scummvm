@@ -26,12 +26,17 @@
 namespace Cine {
 
 bool labyrinthCheat;
+bool hacksEnabled;
 
 CineConsole::CineConsole(CineEngine *vm) : GUI::Debugger(), _vm(vm) {
 	assert(_vm);
 	registerCmd("labyrinthCheat", WRAP_METHOD(CineConsole, Cmd_LabyrinthCheat));
+	registerCmd("disableLabyrinthCheat", WRAP_METHOD(CineConsole, Cmd_DisableLabyrinthCheat));
+	registerCmd("disableHacks", WRAP_METHOD(CineConsole, Cmd_DisableHacks));
+	registerCmd("enableHacks", WRAP_METHOD(CineConsole, Cmd_EnableHacks));
 
 	labyrinthCheat = false;
+	hacksEnabled = true;
 }
 
 CineConsole::~CineConsole() {
@@ -41,6 +46,21 @@ CineConsole::~CineConsole() {
 // This puzzle is hard, especially without save/load so this will aid playtesting.
 bool CineConsole::Cmd_LabyrinthCheat(int argc, const char **argv) {
 	labyrinthCheat = true;
+	return true;
+}
+
+bool CineConsole::Cmd_DisableLabyrinthCheat(int argc, const char **argv) {
+	labyrinthCheat = false;
+	return true;
+}
+
+bool CineConsole::Cmd_DisableHacks(int argc, const char **argv) {
+	hacksEnabled = false;
+	return true;
+}
+
+bool CineConsole::Cmd_EnableHacks(int argc, const char **argv) {
+	hacksEnabled = true;
 	return true;
 }
 

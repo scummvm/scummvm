@@ -67,7 +67,7 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
 	}
 	_restartRequested = false;
 	_preLoad = false;
-	_timerDelayMultiplier = 12;
+	setDefaultGameSpeed();
 }
 
 CineEngine::~CineEngine() {
@@ -124,7 +124,7 @@ Common::Error CineEngine::run() {
 		_restartRequested = false;
 
 		CursorMan.showMouse(true);
-		mainLoop(1);
+		mainLoop(BOOT_SCRIPT_INDEX);
 
 		delete renderer;
 		delete[] collisionPage;
@@ -135,7 +135,7 @@ Common::Error CineEngine::run() {
 	return Common::kNoError;
 }
 
-int CineEngine::getTimerDelay() const {
+uint32 CineEngine::getTimerDelay() const {
 	return (10923000 * _timerDelayMultiplier) / 1193180;
 }
 
@@ -150,7 +150,12 @@ int CineEngine::modifyGameSpeed(int speedChange) {
 	return _timerDelayMultiplier;
 }
 
+void CineEngine::setDefaultGameSpeed() {
+	_timerDelayMultiplier = 12;
+}
+
 void CineEngine::initialize() {
+	setTotalPlayTime(0); // Reset total play time
 	_globalVars.reinit(NUM_MAX_VAR + 1);
 
 	// Initialize all savegames' descriptions to empty strings
@@ -172,7 +177,7 @@ void CineEngine::initialize() {
 	g_cine->_zoneQuery.resize(NUM_MAX_ZONE);
 	Common::fill(g_cine->_zoneQuery.begin(), g_cine->_zoneQuery.end(), 0);
 
-	_timerDelayMultiplier = 12; // Set default speed
+	setDefaultGameSpeed();
 	setupOpcodes();
 
 	initLanguage(getLanguage());
@@ -184,6 +189,11 @@ void CineEngine::initialize() {
 	}
 
 	renderer->initialize();
+	forbidBgPalReload = 0;
+	reloadBgPalOnNextFlip = 0;
+	gfxFadeOutCompleted = 0;
+	gfxFadeInRequested = 0;
+	currentDisk = 1;
 
 	collisionPage = new byte[320 * 200];
 	memset(collisionPage, 0, 320 * 200);
@@ -213,6 +223,7 @@ void CineEngine::initialize() {
 	g_cine->_overlayList.clear();
 	g_cine->_messageTable.clear();
 	resetObjectTable();
+	g_cine->_seqList.clear();
 
 	if (getGameType() == Cine::GType_OS) {
 		disableSystemMenu = 1;
@@ -228,21 +239,32 @@ void CineEngine::initialize() {
 	}
 
 	var8 = 0;
-
-	var2 = var3 = var4 = var5 = 0;
-
+	bgVar0 = 0;
+	var2 = var3 = var4 = lastType20OverlayBgIdx = 0;
 	musicIsPlaying = 0;
 	currentDatName[0] = 0;
+	_keyInputList.clear();
+
+	// Used for making sound effects work using Roland MT-32 and AdLib in
+	// Operation Stealth after loading a savegame. The sound effects are loaded
+	// in AUTO00.PRC using a combination of o2_loadAbs and o2_playSample(1, ...)
+	// before checking if _globalVars[255] == 0. In the original game AUTO00.PRC
+	// was run when starting or restarting the game and one could not load a savegame
+	// before passing the copy protection. Thus, we try to emulate that behaviour by
+	// running at least part of AUTO00.PRC before loading a savegame.
+	if (getGameType() == Cine::GType_OS && !(getFeatures() & GF_DEMO)) {
+		loadPrc(BOOT_PRC_NAME);
+		strcpy(currentPrcName, BOOT_PRC_NAME);
+		addScriptToGlobalScripts(BOOT_SCRIPT_INDEX);
+		runOnlyUntilCopyProtectionCheck = true;
+		executeGlobalScripts();
+	}
 
 	_preLoad = false;
 	if (ConfMan.hasKey("save_slot") && !_restartRequested) {
-		char saveNameBuffer[256];
+		Common::Error loadError = loadGameState(ConfMan.getInt("save_slot"));
 
-		sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), ConfMan.getInt("save_slot"));
-
-		bool res = makeLoad(saveNameBuffer);
-
-		if (res)
+		if (loadError.getCode() == Common::kNoError)
 			_preLoad = true;
 	}
 
