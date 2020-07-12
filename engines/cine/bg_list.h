@@ -37,16 +37,18 @@ struct BGIncrust {
 	int16 y;
 	int16 frame;
 	int16 part;
+	int16 bgIdx;
 };
 
 extern uint32 var8;
 
 void addToBGList(int16 objIdx);
 void addSpriteFilledToBGList(int16 idx);
+void removeBgIncrustsWithBgIdx(int16 bgIdx);
 
 void createBgIncrustListElement(int16 objIdx, int16 param);
 void resetBgIncrustList();
-void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle);
+void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle, bool hasBgIdx = false);
 
 } // End of namespace Cine
 

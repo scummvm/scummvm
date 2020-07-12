@@ -75,7 +75,7 @@ void OSScript::setupTable() {
 		{ &FWScript::o1_loadMask4, "b" },
 		{ &FWScript::o1_unloadMask4, "b" },
 		{ &FWScript::o1_addSpriteFilledToBgList, "b" },
-		{ &FWScript::o1_op1B, "" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o1_clearBgIncrustList, "" },
 		/* 1C */
 		{ 0, 0 },
 		{ &FWScript::o1_label, "l" },
@@ -203,7 +203,7 @@ void OSScript::setupTable() {
 		{ &FWScript::o2_addSeqListElement, "bbbbwww" },
 		/* 80 */
 		{ &FWScript::o2_removeSeq, "bb" },
-		{ &FWScript::o2_op81, "" }, /* TODO: Name this opcode properly. */
+		{ &FWScript::o2_clearSeqList, "" },
 		{ &FWScript::o2_modifySeqListElement, "bbwwb" },
 		{ &FWScript::o2_isSeqRunning, "bb" },
 		/* 84 */
@@ -385,6 +385,7 @@ int FWScript::o2_loadCt() {
 
 	debugC(5, kCineDebugScript, "Line: %d: loadCt(\"%s\")", _line, param);
 	loadCtOS(param);
+	removeBgIncrustsWithBgIdx(kCollisionPageBgIdxAlias);
 	return 0;
 }
 
@@ -406,15 +407,42 @@ int FWScript::o2_playSample() {
 		getNextWord();
 		return 0;
 	}
-	return o1_playSample();
+
+	debugC(5, kCineDebugScript, "Line: %d: o2_playSample()", _line);
+
+	byte mode = getNextByte();
+	byte channel = getNextByte();
+
+	int16 param3 = getNextWord();
+	int16 param4 = getNextByte();
+
+	int16 param5 = getNextWord();
+	uint16 size = getNextWord();
+
+	if (mode == 2) {
+		switch (param4) {
+		case 0:
+			param4 = param5;
+			break;
+		case 1:
+			param4 = _localVars[param5];
+			break;
+		case 2:
+			param4 = _globalVars[param5];
+			break;
+		}
+	}
+
+	g_sound->playSound(mode, channel, param3, param4, param5, size);
+	return 0;
 }
 
 int FWScript::o2_playSampleAlt() {
 	byte num = getNextByte();
 	byte channel = getNextByte();
 	uint16 frequency = getNextWord();
-	getNextByte();
-	getNextWord();
+	byte param4 = getNextByte();
+	uint16 param5 = getNextWord();
 	uint16 size = getNextWord();
 
 	if (size == 0xFFFF) {
@@ -451,18 +479,17 @@ int FWScript::o2_removeSeq() {
 	byte a = getNextByte();
 	byte b = getNextByte();
 
-	debugC(5, kCineDebugScript, "Line: %d: removeSeq(%d,%d) -> TODO", _line, a, b);
+	debugC(5, kCineDebugScript, "Line: %d: removeSeq(%d,%d)", _line, a, b);
 	removeSeq(a, 0, b);
 	return 0;
 }
 
 /**
- * @todo Implement this instruction
  * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
-int FWScript::o2_op81() {
-	warning("STUB: o2_op81()");
-	// freeUnkList();
+int FWScript::o2_clearSeqList() {
+	debugC(5, kCineDebugScript, "Line: %d: clearSeqList()", _line);
+	g_cine->_seqList.clear();
 	return 0;
 }
 
@@ -639,7 +666,8 @@ int FWScript::o2_addBackground() {
 	const char *param2 = getNextString();
 
 	debugC(5, kCineDebugScript, "Line: %d: addBackground(%s,%d)", _line, param2, param1);
-	addBackground(param2, param1);
+	renderer->addBackground(param2, param1);
+	removeBgIncrustsWithBgIdx(param1);
 	return 0;
 }
 
@@ -651,6 +679,7 @@ int FWScript::o2_removeBackground() {
 	debugC(5, kCineDebugScript, "Line: %d: removeBackground(%d)", _line, param);
 
 	renderer->removeBg(param);
+	removeBgIncrustsWithBgIdx(param);
 	return 0;
 }
 
@@ -687,11 +716,11 @@ int FWScript::o2_loadAbs() {
 int FWScript::o2_loadBg() {
 	byte param = getNextByte();
 
-	assert(param < 9);
-
 	debugC(5, kCineDebugScript, "Line: %d: useBg(%d)", _line, param);
 
-	renderer->selectBg(param);
+	if (param <= 8) {
+		renderer->selectBg(param);
+	}
 	return 0;
 }
 
@@ -705,6 +734,7 @@ int FWScript::o2_wasZoneChecked() {
 /**
  * @todo Implement this instruction
  * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
+ * @note In Operation Stealth 16 color DOS version this calculates temporary values and discards them.
  */
 int FWScript::o2_op9B() {
 	uint16 a = getNextWord();
@@ -722,6 +752,7 @@ int FWScript::o2_op9B() {
 /**
  * @todo Implement this instruction
  * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
+ * @note In Operation Stealth 16 color DOS version this calculates temporary values and discards them.
  */
 int FWScript::o2_op9C() {
 	uint16 a = getNextWord();
@@ -739,35 +770,64 @@ int FWScript::o2_useBgScroll() {
 
 	debugC(5, kCineDebugScript, "Line: %d: useBgScroll(%d)", _line, param);
 
-	renderer->selectScrollBg(param);
+	if (param <= 8)	{
+		renderer->selectScrollBg(param);
+	}
 	return 0;
 }
 
 int FWScript::o2_setAdditionalBgVScroll() {
+	uint16 mouseX, mouseY;
+	unsigned int scroll = renderer->getScroll();
 	byte param1 = getNextByte();
 
 	if (param1) {
 		byte param2 = getNextByte();
 
-		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = var[%d]", _line, param2);
-		renderer->setScroll(_localVars[param2]);
+		switch (param1)	{
+		case 1:
+			debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = var[%d]", _line, param2);
+			scroll = _localVars[param2];
+			break;
+		case 2:
+			debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = globalVar[%d]", _line, param2);
+			scroll = _globalVars[param2];
+			break;
+		case 3:
+			debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = mouseX", _line);
+			getMouseData(mouseUpdateStatus, &dummyU16, &mouseX, &mouseY);
+			scroll = mouseX;
+			break;
+		case 4:
+			debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = mouseY", _line);
+			getMouseData(mouseUpdateStatus, &dummyU16, &mouseX, &mouseY);
+			scroll = mouseY;
+			break;
+		case 5:
+			debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = rand() %% %d", _line, param2);
+			scroll = ((param2 == 0) ? 0 : g_cine->_rnd.getRandomNumber(param2 - 1));
+			break;
+		}
 	} else {
 		uint16 param2 = getNextWord();
 
 		debugC(5, kCineDebugScript, "Line: %d: additionalBgVScroll = %d", _line, param2);
-		renderer->setScroll(param2);
+		scroll = param2;
 	}
+
+	renderer->setScroll(scroll);
 	return 0;
 }
 
 /**
  * @todo Implement this instruction
  * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
+ * @note In Operation Stealth 16 color DOS version this calculates temporary values and discards them.
  */
 int FWScript::o2_op9F() {
 	warning("o2_op9F()");
-	getNextWord();
-	getNextWord();
+	uint16 param1 = getNextWord();
+	uint16 param2 = getNextWord();	
 	return 0;
 }
 

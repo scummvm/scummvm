@@ -27,6 +27,8 @@
 
 namespace Cine {
 
+extern int16 currentDisk;
+
 /**
  * Cine engine's save game formats.
  * Enumeration entries (Excluding the one used as an error)
@@ -64,14 +66,31 @@ enum CineSaveGameFormat {
 	ANIMSIZE_23,
 	ANIMSIZE_30_PTRS_BROKEN,
 	ANIMSIZE_30_PTRS_INTACT,
-	TEMP_OS_FORMAT
+	TEMP_OS_FORMAT,
+	VERSIONED_FW_FORMAT,
+	VERSIONED_OS_FORMAT
 };
 
 /** Identifier for the temporary Operation Stealth savegame format. */
 static const uint32 TEMP_OS_FORMAT_ID = MKTAG('T', 'E', 'M', 'P');
 
-/** The current version number of Operation Stealth's savegame format. */
-static const uint32 CURRENT_OS_SAVE_VER = 1;
+/** Identifiers for versioned Future Wars and Operation Stealth savegame formats. */
+static const uint32 VERSIONED_FW_FORMAT_ID = MKTAG('C', '1', 'F', 'W');
+static const uint32 VERSIONED_OS_FORMAT_ID = MKTAG('C', '2', 'O', 'S');
+
+/** The current version number of versioned Future Wars and Operation Stealth savegame formats.
+Version 4: First version used. Added disableSystemMenu to Future Wars savegame format.
+*/
+static const uint32 CURRENT_SAVE_VER = 4;
+
+/** The last version number of temporary Operation Stealth's savegame format.
+Version 0: Color count was not saved, was assumed to be 256. BGIncrust.bgIdx does not exist, _currentBg was used.
+Version 1: Saving of real color count was added but still 256 colors were always saved.
+Version 2: BGIncrust.bgIdx was added.
+Version 3: Saving real values for current music name, music playing status, current background index,
+           scroll background index and background scrolling was added.
+*/
+static const uint32 LAST_TEMP_OS_SAVE_VER = 3;
 
 /** Chunk header used by the temporary Operation Stealth savegame format. */
 struct ChunkHeader {

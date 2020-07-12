@@ -28,6 +28,7 @@
 namespace Cine {
 
 extern bool labyrinthCheat;
+extern bool hacksEnabled;
 
 class CineEngine;
 
@@ -40,6 +41,9 @@ private:
 	CineEngine *_vm;
 
 	bool Cmd_LabyrinthCheat(int argc, const char **argv);
+	bool Cmd_DisableLabyrinthCheat(int argc, const char **argv);
+	bool Cmd_DisableHacks(int argc, const char **argv);
+	bool Cmd_EnableHacks(int argc, const char **argv);
 };
 
 } // End of namespace Cine

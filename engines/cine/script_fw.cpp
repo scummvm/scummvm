@@ -79,7 +79,7 @@ void FWScript::setupTable() {
 		{ &FWScript::o1_loadMask4, "b" },
 		{ &FWScript::o1_unloadMask4, "b" },
 		{ &FWScript::o1_addSpriteFilledToBgList, "b" },
-		{ &FWScript::o1_op1B, "" },
+		{ &FWScript::o1_clearBgIncrustList, "" },
 		/* 1C */
 		{ 0, 0 },
 		{ &FWScript::o1_label, "l" },
@@ -947,7 +947,7 @@ int FWScript::o1_loadVar() {
 			_localVars[varIdx] = _localVars[dataIdx];
 			break;
 		case 2:
-			debugC(5, kCineDebugScript, "Line: %d: var[%d] = globalVars[%d]", _line, varIdx, dataIdx);
+			debugC(5, kCineDebugScript, "Line: %d: var[%d] = globalVars[%d] (= %d)", _line, varIdx, dataIdx, _globalVars[dataIdx]);
 			_localVars[varIdx] = _globalVars[dataIdx];
 			break;
 		case 3:
@@ -1196,7 +1196,7 @@ int FWScript::o1_addSpriteFilledToBgList() {
 	return 0;
 }
 
-int FWScript::o1_op1B() {
+int FWScript::o1_clearBgIncrustList() {
 	debugC(5, kCineDebugScript, "Line: %d: freeBgIncrustList", _line);
 	g_cine->_bgIncrustList.clear();
 	return 0;
@@ -1349,6 +1349,7 @@ int FWScript::o1_startGlobalScript() {
 	}
 
 	addScriptToGlobalScripts(param);
+
 	return 0;
 }
 
@@ -1389,7 +1390,11 @@ int FWScript::o1_loadBg() {
 	}
 
 	loadBg(param);
-	g_cine->_bgIncrustList.clear();
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		removeBgIncrustsWithBgIdx(0);
+	} else {
+		g_cine->_bgIncrustList.clear();
+	}
 	bgVar0 = 0;
 	return 0;
 }
@@ -1455,11 +1460,18 @@ int FWScript::o1_requestCheckPendingDataLoad() {
 
 int FWScript::o1_blitAndFade() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadein", _line);
-	// TODO: use real code
 
-//	fadeFromBlack();
+	// HACK: This section is not present in disassembly
+	// but this is an attempt to prevent flashing a
+	// normally illuminated screen and then fading it in by
+	// setting the palette initially to black.
+	if (hacksEnabled) {
+		renderer->setBlackPalette(false); // Does not update _changePal
+		renderer->setPalette();
+		g_system->updateScreen();
+	}
 
-	renderer->reloadPalette();
+	gfxFadeInRequested = 1;
 	return 0;
 }
 
@@ -1543,6 +1555,11 @@ int FWScript::o1_break() {
 		return 0;
 	}
 
+	// Jump over breaks when running only until copy protection check
+	if (runOnlyUntilCopyProtectionCheck) {
+		return 0;
+	}
+
 	return 1;
 }
 
@@ -1623,6 +1640,16 @@ int FWScript::o1_compareGlobalVar() {
 			_compare = kCmpEQ;
 		} else {
 			_compare = compareVars(_globalVars[varIdx], value);
+
+			// Used for bailing out early from AUTO00.PRC before loading a savegame.
+			// Used for making sound effects work using Roland MT-32 and AdLib in
+			// Operation Stealth after loading a savegame. The sound effects are loaded
+			// in AUTO00.PRC using a combination of o2_loadAbs and o2_playSample(1, ...)
+			// before checking if _globalVars[255] == 0.
+			if (varIdx == 255 && value == 0 && runOnlyUntilCopyProtectionCheck) {
+				runOnlyUntilCopyProtectionCheck = false;
+				return o1_endScript();
+			}
 		}
 	}
 
@@ -1685,10 +1712,18 @@ int FWScript::o1_initializeZoneData() {
 
 int FWScript::o1_setZoneDataEntry() {
 	byte zoneIdx = getNextByte();
-	uint16 var = getNextWord();
+	int16 var = getNextWord();
 
+	// HACK: Fix storage room's door animation on Dr. Why's island.
+	if (hacksEnabled && g_cine->getGameType() == Cine::GType_OS && zoneIdx == 2 && var == 8 &&
+		_script._size >= 10 && _script.getByte(9) == 0 &&
+		scumm_stricmp(_script.getString(0), "Z012_INIT") == 0 && _line == 34) {
+		return 0;
+	}
 	debugC(5, kCineDebugScript, "Line: %d: setZone[%d] = %d", _line, zoneIdx, var);
-	g_cine->_zoneData[zoneIdx] = var;
+	if (zoneIdx < NUM_MAX_ZONE) {
+		g_cine->_zoneData[zoneIdx] = var;
+	}
 	return 0;
 }
 
@@ -1697,6 +1732,7 @@ int FWScript::o1_getZoneDataEntry() {
 	byte var = getNextByte();
 
 	_localVars[var] = g_cine->_zoneData[zoneIdx];
+	debugC(5, kCineDebugScript, "Line: %d: SET localVars[%d] = zoneData[%d] (= %d)", _line, var, zoneIdx, g_cine->_zoneData[zoneIdx]);
 	return 0;
 }
 
@@ -1966,7 +2002,7 @@ int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
 	return zoneVar;
 }
 
-int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
+byte getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
 	// WORKAROUND for bug #2848940 ("ScummVM crashes with Future wars"):
 	// Vertical positions outside the 320x200 screen (e.g. in range 200-232)
 	// are accessed after teleporting Lo'Ann to the future using the pendant
@@ -1989,44 +2025,60 @@ int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
 	return zoneVar;
 }
 
-int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
-	debugC(1, kCineDebugCollision, "checkCollision(objIdx: %d x: %d y:%d numZones:%d zoneIdx: %d)", objIdx, x, y, numZones, zoneIdx);
+int16 checkCollisionFW(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
 	int16 lx = g_cine->_objectTable[objIdx].x + x;
 	int16 ly = g_cine->_objectTable[objIdx].y + y;
-	int16 idx;
+
+	for (int16 i = 0; i < numZones; i++, lx++) {
+		int16 idx = getZoneFromPositionRaw(collisionPage, lx, ly, 320);
+
+		if (idx < NUM_MAX_ZONE && g_cine->_zoneData[idx] == zoneIdx) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+int16 checkCollisionOS(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
+	int16 lx = g_cine->_objectTable[objIdx].x + x;
+	int16 ly = g_cine->_objectTable[objIdx].y + y;
 	int16 result = 0;
 
-	for (int16 i = 0; i < numZones; i++) {
-		// Don't try to read data in Operation Stealth if position isn't in 320x200 screen bounds.
-		if (g_cine->getGameType() == Cine::GType_OS) {
-			if ((lx + i) < 0 || (lx + i) > 319 || ly < 0 || ly > 199) {
-				continue;
-			}
+	if (ly < 0 || ly > 199) {
+		return result;
+	}
+
+	for (int16 i = 0; i < numZones; i++, lx++) {
+		if (lx < 0 || lx > 319) {
+			continue;
 		}
 
-		idx = getZoneFromPositionRaw(collisionPage, lx + i, ly, 320);
+		int16 idx = getZoneFromPositionRaw(collisionPage, lx, ly, 320);
 
-		assert(idx >= 0 && idx < NUM_MAX_ZONE);
-
-		// The zoneQuery table is updated here only in Operation Stealth
-		if (g_cine->getGameType() == Cine::GType_OS) {
-			if (g_cine->_zoneData[idx] < NUM_MAX_ZONE) {
-				g_cine->_zoneQuery[g_cine->_zoneData[idx]]++;
-			}
+		if (idx < NUM_MAX_ZONE) {
+			idx = g_cine->_zoneData[idx];
 		}
 
-		if (g_cine->_zoneData[idx] == zoneIdx) {
+		if (idx >= 0 && idx < NUM_MAX_ZONE) {
+			g_cine->_zoneQuery[idx]++;
+		}
+
+		if (idx == zoneIdx) {
 			result = 1;
-			// Future Wars breaks out early on the first match, but
-			// Operation Stealth doesn't because it needs to update
-			// the zoneQuery table for the whole loop's period.
-			if (g_cine->getGameType() == Cine::GType_FW) {
-				break;
-			}
 		}
 	}
 
 	return result;
+}
+
+int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx) {
+	debugC(1, kCineDebugCollision, "checkCollision(objIdx: %d x: %d y:%d numZones:%d zoneIdx: %d)", objIdx, x, y, numZones, zoneIdx);
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		return checkCollisionOS(objIdx, x, y, numZones, zoneIdx);
+	} else {
+		return checkCollisionFW(objIdx, x, y, numZones, zoneIdx);
+	}
 }
 
 uint16 compareVars(int16 a, int16 b) {
@@ -2589,6 +2641,23 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 
 			break;
 		}
+
+		case 0x4A: {
+			byte param1, param2, param3;
+
+			param1 = *(localScriptPtr + position);
+			position++;
+
+			param2 = *(localScriptPtr + position);
+			position++;
+
+			param3 = *(localScriptPtr + position);
+			position++;
+
+			sprintf(lineBuffer, "palRotate(%d,%d,%d)\n", param1, param2, param3);
+			break;
+		}
+
 		case 0x4F: {
 			sprintf(lineBuffer, "break()\n");
 			exitScript = 1;
@@ -3066,33 +3135,59 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			break;
 		}
 		case 0xA0: { // OS only
-			byte param1;
-			byte param2;
+			uint16 param1;
+			uint16 param2;
 
-			param1 = *(localScriptPtr + position);
-			position++;
+			param1 = READ_BE_UINT16(localScriptPtr + position);
+			position += 2;
 
-			param2 = *(localScriptPtr + position);
-			position++;
+			param2 = READ_BE_UINT16(localScriptPtr + position);
+			position += 2;
 
 			sprintf(lineBuffer, "OP_A0(%d,%d)\n", param1, param2);
 
 			break;
 		}
 		case 0xA1: { // OS only
-			byte param1;
-			byte param2;
+			uint16 param1;
+			uint16 param2;
 
-			param1 = *(localScriptPtr + position);
-			position++;
+			param1 = READ_BE_UINT16(localScriptPtr + position);
+			position += 2;
 
-			param2 = *(localScriptPtr + position);
-			position++;
+			param2 = READ_BE_UINT16(localScriptPtr + position);
+			position += 2;
 
 			sprintf(lineBuffer, "OP_A1(%d,%d)\n", param1, param2);
 
 			break;
 		}
+		case 0xA2: { // OS only
+			uint16 param1;
+			uint16 param2;
+
+			param1 = READ_BE_UINT16(localScriptPtr + position);
+			position += 2;
+
+			param2 = READ_BE_UINT16(localScriptPtr + position);
+			position += 2;
+
+			sprintf(lineBuffer, "OP_A2(%d,%d)\n", param1, param2);
+
+			break;
+		}
+
+		case 0x9A: { // OS only
+			byte param1;
+
+			param1 = *(localScriptPtr + position);
+			position++;
+
+			sprintf(lineBuffer, "o2_wasZoneChecked(%d)\n", param1);
+			
+			break;
+		}
+
 		default: {
 			sprintf(lineBuffer, "Unsupported opcode %X in decompileScript\n\n", opcode - 1);
 			position = scriptSize;

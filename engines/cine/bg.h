@@ -24,16 +24,11 @@
 #define CINE_BG_H
 
 namespace Cine {
-byte loadBg(const char *bgName);
-byte loadCtFW(const char *bgName);
-byte loadCtOS(const char *bgName);
-
-void addBackground(const char *bgName, uint16 bgIdx);
+int16 loadBg(const char *bgName);
+int16 loadCtFW(const char *bgName);
+int16 loadCtOS(const char *bgName);
 
 extern uint16 bgVar0;
-
-extern int16 currentAdditionalBgIdx;
-extern int16 currentAdditionalBgIdx2;
 
 } // End of namespace Cine
 

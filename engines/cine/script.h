@@ -177,7 +177,7 @@ protected:
 	int o1_loadMask4();
 	int o1_unloadMask4();
 	int o1_addSpriteFilledToBgList();
-	int o1_op1B();
+	int o1_clearBgIncrustList();
 	int o1_label();
 	int o1_goto();
 	int o1_gotoIfSup();
@@ -239,7 +239,7 @@ protected:
 	int o2_removeSeq();
 	int o2_playSample();
 	int o2_playSampleAlt();
-	int o2_op81();
+	int o2_clearSeqList();
 	int o2_modifySeqListElement();
 	int o2_isSeqRunning();
 	int o2_gotoIfSupNearest();
