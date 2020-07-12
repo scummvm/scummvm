@@ -27,6 +27,7 @@
 #include "glk/fonts.h"
 #include "glk/windows.h"
 #include "graphics/pixelformat.h"
+#include "common/config-manager.h"
 
 namespace Glk {
 
@@ -34,39 +35,27 @@ namespace Glk {
  * Engine configuration
  */
 class Conf {
+	typedef uint Color;
 private:
 	InterpreterType _interpType;
+	bool _isLoading;
+
+	bool exists(const Common::String &key) const {
+		return ConfMan.hasKey(key);
+	}
+
+	void syncAsString(const Common::String &name, Common::String &val);
+	void syncAsInt(const Common::String &name, int &val);
+	void syncAsInt(const Common::String &name, uint &val);
+	void syncAsDouble(const Common::String &name, double &val);
+	void syncAsBool(const Common::String &name, bool &val);
+	void syncAsColor(const Common::String &name, uint &val);
+	void syncAsFont(const Common::String &name, FACES &val);
 
 	/**
-	 * Get a string
+	 * Loads or saves the settings
 	 */
-	void get(const Common::String &key, Common::String &field);
-
-	/**
-	 * Get a color
-	 */
-	void get(const Common::String &key, uint &color);
-
-	/**
-	 * Get a font name into a font Id
-	 */
-	void get(const Common::String &key, FACES &field);
-
-	/**
-	 * Get a numeric value
-	 */
-	void get(const Common::String &key, int &field);
-
-	/**
-	 * Get a numeric value
-	 */
-	void get(const Common::String &key, bool &field);
-
-	/**
-	 * Get a double
-	 */
-	void get(const Common::String &key, double &field);
-
+	void synchronize();
 public:
 	/**
 	 * Parse a color
@@ -78,6 +67,10 @@ public:
 	 */
 	uint parseColor(const byte *rgb);
 
+	/**
+	 * Encode a color to an 6-character RGB hex string
+	 */
+	Common::String encodeColor(uint color);
 public:
 	uint _width, _height;
 	Graphics::PixelFormat _screenFormat;
@@ -119,6 +112,13 @@ public:
 	 * Loads the configuration from the ScummVM configuration
 	 */
 	void load();
+
+	/**
+	 * The first time a game is played, flushes all the settings to game's
+	 * entry in scummvm.ini. This will make it easier for users to manually
+	 * modify scummvm.ini later on to see what options are available
+	 */
+	void flush();
 };
 
 extern Conf *g_conf;

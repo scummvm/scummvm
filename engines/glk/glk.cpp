@@ -83,6 +83,7 @@ GlkEngine::~GlkEngine() {
 void GlkEngine::initialize() {
 	createConfiguration();
 	_conf->load();
+	_conf->flush();
 
 	initGraphicsMode();
 	createDebugger();

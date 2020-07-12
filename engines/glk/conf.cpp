@@ -114,105 +114,118 @@ Conf::Conf(InterpreterType interpType) : _interpType(interpType), _graphics(true
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
 }
 
-void Conf::load() {
-	get("width", _width);
-	get("height", _height);
-	get("moreprompt", _propInfo._morePrompt);
-	get("morecolor", _propInfo._moreColor);
-	get("morecolor", _propInfo._moreSave);
-	get("morefont", _propInfo._moreFont);
-	get("morealign", _propInfo._moreAlign);
-	get("monoaspect", _monoInfo._aspect);
-	get("propaspect", _propInfo._aspect);
-	get("monosize", _monoInfo._size);
-	get("propsize", _propInfo._size);
-	get("rows", _rows);
-	get("cols", _cols);
+void Conf::synchronize() {
+	syncAsInt("width", _width);
+	syncAsInt("height", _height);
+	syncAsString("moreprompt", _propInfo._morePrompt);
+	syncAsColor("morecolor", _propInfo._moreColor);
+	syncAsColor("morecolor", _propInfo._moreSave);
+	syncAsFont("morefont", _propInfo._moreFont);
+	syncAsInt("morealign", _propInfo._moreAlign);
+	syncAsDouble("monoaspect", _monoInfo._aspect);
+	syncAsDouble("propaspect", _propInfo._aspect);
+	syncAsDouble("monosize", _monoInfo._size);
+	syncAsDouble("propsize", _propInfo._size);
+	syncAsInt("rows", _rows);
+	syncAsInt("cols", _cols);
 
 	_imageW = _width;
 	_imageH = _height;
 
-	if (ConfMan.hasKey("leading"))
-		_monoInfo._leading = _propInfo._leading = static_cast<int>(atof(ConfMan.get("leading").c_str()) + 0.5);
-	if (ConfMan.hasKey("baseline"))
-		_propInfo._baseLine = static_cast<int>(atof(ConfMan.get("baseline").c_str()) + 0.5);
+	syncAsInt("leading", _monoInfo._leading);
+	syncAsInt("leading", _propInfo._leading);
+	syncAsInt("baseline", _propInfo._baseLine);
 
-	if (ConfMan.hasKey("minrows"))
-		_rows = MAX(_rows, strToInt(ConfMan.get("minrows").c_str()));
-	if (ConfMan.hasKey("maxrows"))
-		_rows = MIN(_rows, strToInt(ConfMan.get("maxrows").c_str()));
-	if (ConfMan.hasKey("mincols"))
-		_cols = MAX(_cols, strToInt(ConfMan.get("mincols").c_str()));
-	if (ConfMan.hasKey("maxcols"))
-		_cols = MIN(_cols, strToInt(ConfMan.get("maxcols").c_str()));
+	if (_isLoading) {
+		if (exists("minrows"))
+			_rows = MAX(_rows, ConfMan.getInt("minrows"));
+		if (exists("maxrows"))
+			_rows = MIN(_rows, ConfMan.getInt("maxrows"));
+		if (exists("mincols"))
+			_cols = MAX(_cols, ConfMan.getInt("mincols"));
+		if (exists("maxcols"))
+			_cols = MIN(_cols, ConfMan.getInt("maxcols"));
+	} else {
+		ConfMan.setInt("minrows", 0);
+		ConfMan.setInt("maxrows", 999);
+		ConfMan.setInt("mincols", 0);
+		ConfMan.setInt("maxcols", 999);
+	}
 
-	get("lockrows", _lockRows);
-	get("lockcols", _lockCols);
-	get("wmarginx", _wMarginX);
-	get("wmarginy", _wMarginY);
+	syncAsInt("lockrows", _lockRows);
+	syncAsInt("lockcols", _lockCols);
+	syncAsInt("wmarginx", _wMarginX);
+	syncAsInt("wmarginy", _wMarginY);
+
 	_wMarginSaveX = _wMarginX;
 	_wMarginSaveY = _wMarginY;
 
-	get("wpaddingx", _wPaddingX);
-	get("wpaddingy", _wPaddingY);
-	get("wborderx", _wBorderX);
-	get("wbordery", _wBorderY);
-	get("tmarginx", _tMarginX);
-	get("tmarginy", _tMarginY);
-	get("gamma", _gamma);
+	syncAsInt("wpaddingx", _wPaddingX);
+	syncAsInt("wpaddingy", _wPaddingY);
+	syncAsInt("wborderx", _wBorderX);
+	syncAsInt("wbordery", _wBorderY);
+	syncAsInt("tmarginx", _tMarginX);
+	syncAsInt("tmarginy", _tMarginY);
+	syncAsDouble("gamma", _gamma);
 
-	get("linkcolor", _propInfo._linkColor);
+	syncAsColor("linkcolor", _propInfo._linkColor);
 	_monoInfo._linkColor = _propInfo._linkColor;
 	_propInfo._linkSave = _propInfo._linkColor;
 
-	get("bordercolor", _borderColor);
-	get("bordercolor", _borderSave);
-	get("windowcolor", _windowColor);
-	get("windowcolor", _windowSave);
-	get("lcd", _lcd);
-	get("caretcolor", _propInfo._caretColor);
-	get("caretcolor", _propInfo._caretSave);
-	get("caretshape", _propInfo._caretShape);
+	syncAsColor("bordercolor", _borderColor);
+	syncAsColor("bordercolor", _borderSave);
+	syncAsColor("windowcolor", _windowColor);
+	syncAsColor("windowcolor", _windowSave);
+	syncAsInt("lcd", _lcd);
 
-	if (ConfMan.hasKey("linkstyle"))
-		_propInfo._linkStyle = _monoInfo._linkStyle = 
-			!strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;
+	syncAsColor("caretcolor", _propInfo._caretColor);
+	syncAsInt("caretshape", _propInfo._caretShape);
+	syncAsInt("linkstyle", _propInfo._linkStyle);
+	if (_isLoading) {
+		_propInfo._caretSave = _propInfo._caretColor;
 
-	get("scrollwidth", _scrollWidth);
-	get("scrollbg", _scrollBg);
-	get("scrollfg", _scrollFg);
-	get("justify", _propInfo._justify);
-	get("quotes", _propInfo._quotes);
-	get("dashes", _propInfo._dashes);
-	get("spaces", _propInfo._spaces);
-	get("caps", _propInfo._caps);
-	get("graphics", _graphics);
-	get("sound", _sound);
-	get("speak", _speak);
-	get("speak_input", _speakInput);
-	get("speak_language", _speakLanguage);
-	get("stylehint", _styleHint);
-	get("safeclicks", _safeClicks);
+		_monoInfo._caretColor = _propInfo._caretColor;
+		_monoInfo._caretSave = _propInfo._caretSave;
+		_monoInfo._caretShape = _propInfo._caretShape;
+		_monoInfo._linkStyle = _propInfo._linkStyle;
+	}
+	 
+	syncAsInt("scrollwidth", _scrollWidth);
+	syncAsColor("scrollbg", _scrollBg);
+	syncAsColor("scrollfg", _scrollFg);
+	syncAsInt("justify", _propInfo._justify);
+	syncAsInt("quotes", _propInfo._quotes);
+	syncAsInt("dashes", _propInfo._dashes);
+	syncAsInt("spaces", _propInfo._spaces);
+	syncAsInt("caps", _propInfo._caps);
 
-	char buffer[256];
+	syncAsBool("graphics", _graphics);
+	syncAsBool("sound", _sound);
+	syncAsBool("speak", _speak);
+	syncAsBool("speak_input", _speakInput);
+	syncAsString("speak_language", _speakLanguage);
+	syncAsInt("stylehint", _styleHint);
+	syncAsBool("safeclicks", _safeClicks);
+
 	const char *const TG_COLOR[2] = { "tcolor_%d", "gcolor_%d" };
 	for (int tg = 0; tg < 2; ++tg) {
 		for (int style = 0; style <= 10; ++style) {
 			Common::String key = Common::String::format(TG_COLOR[tg], style);
-			if (!ConfMan.hasKey(key))
-				continue;
 
-			strncpy(buffer, ConfMan.get(key).c_str(), 254);
-			buffer[255] = '\0';
-			char *fg = strtok(buffer, "\r\n\t ");
-			char *bg = strtok(nullptr, "\r\n\t ");
-
-			if (tg == 0) {
-				_tStyles[style].fg = parseColor(fg);
-				_tStyles[style].bg = parseColor(bg);
+			if (_isLoading) {
+				if (exists(key)) {
+					Common::String line = ConfMan.get(key);
+					if (line.find(',') == 6) {
+						_tStyles[style].fg = parseColor(Common::String(line.c_str(), 6));
+						_tStyles[style].bg = parseColor(Common::String(line.c_str() + 7));
+					}
+				}
 			} else {
-				_gStyles[style].fg = parseColor(fg);
-				_gStyles[style].bg = parseColor(bg);
+				Common::String line = Common::String::format("%s,%s",
+					encodeColor(_tStyles[style].fg).c_str(),
+					encodeColor(_tStyles[style].bg).c_str()
+				);
+				ConfMan.set(key, line);
 			}
 		}
 	}
@@ -221,54 +234,38 @@ void Conf::load() {
 	for (int tg = 0; tg < 2; ++tg) {
 		for (int style = 0; style <= 10; ++style) {
 			Common::String key = Common::String::format(TG_FONT[tg], style);
-			if (!ConfMan.hasKey(key))
-				continue;
 
-			strncpy(buffer, ConfMan.get(key).c_str(), 254);
-			buffer[255] = '\0';
-			char *font = strtok(buffer, "\r\n\t ");
-
-			if (tg == 0)
-				_tStyles[style].font = Screen::getFontId(font);
-			else
-				_gStyles[style].font = Screen::getFontId(font);
+			if (_isLoading) {
+				if (exists(key)) {
+					FACES font = Screen::getFontId(ConfMan.get(key));
+					if (tg == 0)
+						_tStyles[style].font = font;
+					else
+						_gStyles[style].font = font;
+				}
+			} else {
+				FACES font = (tg == 0) ? _tStyles[style].font : _gStyles[style].font;
+				ConfMan.set(key, Screen::getFontName(font));
+			}
 		}
 	}
+}
+
+void Conf::load() {
+	_isLoading = true;
+	synchronize();
 
 	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
 	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
 }
 
-void Conf::get(const Common::String &key, Common::String &field) {
-	if (ConfMan.hasKey(key)) {
-		field = ConfMan.get(key);
-		field.trim();
+void Conf::flush() {
+	// Default settings are only saved if they're not already present
+	if (!exists("width") || !exists("height")) {
+		_isLoading = false;
+		synchronize();
+		ConfMan.flushToDisk();
 	}
-}
-
-void Conf::get(const Common::String &key, uint &color) {
-	if (ConfMan.hasKey(key))
-		color = parseColor(ConfMan.get(key));
-}
-
-void Conf::get(const Common::String &key, int &field) {
-	if (ConfMan.hasKey(key))
-		field = strToInt(ConfMan.get(key).c_str());
-}
-
-void Conf::get(const Common::String &key, bool &field) {
-	if (ConfMan.hasKey(key))
-		Common::parseBool(ConfMan.get(key), field);
-}
-
-void Conf::get(const Common::String &key, FACES &field) {
-	if (ConfMan.hasKey(key))
-		field = Screen::getFontId(ConfMan.get(key));
-}
-
-void Conf::get(const Common::String &key, double &field) {
-	if (ConfMan.hasKey(key))
-		field = atof(ConfMan.get(key).c_str());
 }
 
 uint Conf::parseColor(const Common::String &str) {
@@ -295,8 +292,63 @@ uint Conf::parseColor(const Common::String &str) {
 	return 0;
 }
 
+Common::String Conf::encodeColor(uint color) {
+	byte r, g, b;
+	_screenFormat.colorToRGB(color, r, g, b);
+	return Common::String::format("%.2x%.2x%.2x", (int)r, (int)g, (int)b);
+}
+
 uint Conf::parseColor(const byte *rgb) {
 	return _screenFormat.RGBToColor(rgb[0], rgb[1], rgb[2]);
+}
+
+void Conf::syncAsString(const Common::String &name, Common::String &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.get(name);
+	else if (!_isLoading)
+		ConfMan.set(name, val);
+}
+
+void Conf::syncAsInt(const Common::String &name, int &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.getInt(name);
+	else if (!_isLoading)
+		ConfMan.setInt(name, val);
+}
+
+void Conf::syncAsInt(const Common::String &name, uint &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.getInt(name);
+	else if (!_isLoading)
+		ConfMan.setInt(name, val);
+}
+
+void Conf::syncAsDouble(const Common::String &name, double &val) {
+	if (_isLoading && exists(name))
+		val = atof(ConfMan.get(name).c_str());
+	else if (!_isLoading)
+		ConfMan.set(name, Common::String::format("%f", (float)val).c_str());
+}
+
+void Conf::syncAsBool(const Common::String &name, bool &val) {
+	if (_isLoading && exists(name))
+		val = ConfMan.getBool(name);
+	else if (!_isLoading)
+		ConfMan.setBool(name, val);
+}
+
+void Conf::syncAsColor(const Common::String &name, uint &val) {
+	if (_isLoading && exists(name))
+		val = parseColor(ConfMan.get(name));
+	else if (!_isLoading)
+		ConfMan.set(name, encodeColor(val));
+}
+
+void Conf::syncAsFont(const Common::String &name, FACES &val) {
+	if (_isLoading && exists(name))
+		val = Screen::getFontId(ConfMan.get(name));
+	else if (!_isLoading)
+		ConfMan.set(name, Screen::getFontName(val));
 }
 
 } // End of namespace Glk
