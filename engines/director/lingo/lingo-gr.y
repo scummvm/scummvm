@@ -581,13 +581,18 @@ simpleexpr: INT		{
 	}
 
 expr: simpleexpr { $$ = $simpleexpr; }
-	| reference
 	| FBLTIN '(' arglist ')' {
 		g_lingo->codeFunc($FBLTIN, $arglist);
 		delete $FBLTIN; }
 	| FBLTIN arglist	{
 		g_lingo->codeFunc($FBLTIN, $arglist);
 		delete $FBLTIN; }
+	| RBLTIN '(' arglist ')' {
+		g_lingo->codeFunc($RBLTIN, $arglist);
+		delete $RBLTIN; }
+	| RBLTIN arglist	{
+		g_lingo->codeFunc($RBLTIN, $arglist);
+		delete $RBLTIN; }
 	| ID[func] '(' ID[method] ')' {
 			g_lingo->code1(LC::c_lazyeval);
 			g_lingo->codeString($method->c_str());
