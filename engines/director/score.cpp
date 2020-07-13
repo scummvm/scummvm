@@ -442,12 +442,18 @@ void Score::screenShot() {
 	newSurface->free();
 }
 
-uint16 Score::getSpriteIDFromPos(Common::Point pos, bool onlyActive) {
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->getBbox().contains(pos) && (!onlyActive || _channels[i]->_sprite->isFocusable()))
-			return i;
+uint16 Score::getSpriteIDFromPos(Common::Point pos, bool firstActive) {
+	int unfocusableSprite = 0;
 
-	return 0;
+	for (int i = _channels.size() - 1; i >= 0; i--)
+		if (_channels[i]->getBbox().contains(pos)) {
+			if (!firstActive || _channels[i]->_sprite->isFocusable())
+				return i;
+			else if (unfocusableSprite == 0)
+				unfocusableSprite = i;
+		}
+
+	return unfocusableSprite;
 }
 
 bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
