@@ -112,6 +112,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
+	delete _windowList;
 	delete _soundManager;
 	delete _lingo;
 	delete _wm;
