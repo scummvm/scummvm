@@ -693,15 +693,15 @@ uint32 MainActor::I_teleportToEgg(const uint8 *args, unsigned int argsize) {
 		ARG_UINT16(map);
 		mapnum = map;
 	} else {
-		// TODO: Confirm this works right.
-		// Crusader teleport uses main actor map.
+		// Crusader teleport intrinsic 096 uses main actor map.
+		// Intrinsic 079 provides a map argument.
 		assert(argsize == 8);
 		MainActor *av = getMainActor();
 		mapnum = av->getMapNum();
 	}
 
 	ARG_UINT16(teleport_id);
-	ARG_UINT16(unknown); // 0/1
+	ARG_UINT16(put_in_stasis); // 0/1
 
 	return Kernel::get_instance()->addProcess(
 	           new TeleportToEggProcess(mapnum, teleport_id));
