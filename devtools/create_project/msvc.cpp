@@ -40,11 +40,18 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 	_disableEditAndContinue   = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
 
 	// NASM not supported for Windows on AMD64 target
-	_arch_disabled_features[ARCH_AMD64] = {"nasm"};
+	StringList amd64_disabled_features;
+	amd64_disabled_features.push_back("nasm");
+	_arch_disabled_features[ARCH_AMD64] = amd64_disabled_features;
 	// NASM not supported for WoA target
 	// No OpenGL, OpenGL ES on Windows on ARM
 	// https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
-	_arch_disabled_features[ARCH_ARM64] = {"nasm", "opengl", "opengles", "fribidi"};
+	StringList arm64_disabled_features;
+	arm64_disabled_features.push_back("nasm");
+	arm64_disabled_features.push_back("opengl");
+	arm64_disabled_features.push_back("opengles");
+	arm64_disabled_features.push_back("fribidi");
+	_arch_disabled_features[ARCH_ARM64] = arm64_disabled_features;
 }
 
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {

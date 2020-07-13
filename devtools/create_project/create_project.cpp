@@ -1201,8 +1201,12 @@ StringList getFeatureLibraries(const FeatureList &features) {
 	StringList libraries;
 
 	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i) {
-		libraries.merge(getFeatureLibraries(*i));
+		StringList fl = getFeatureLibraries(*i);
+		for (StringList::const_iterator flit = fl.begin(); flit != fl.end(); ++flit) {
+			libraries.push_back(*flit);
+		}
 	}
+	libraries.sort();
 
 	return libraries;
 }
@@ -1227,7 +1231,8 @@ bool getFeatureBuildState(const std::string &name, FeatureList &features) {
 }
 
 BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature) {
-	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+	// TODO: use const_iterator in C++11
+	for (FeatureList::iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
 		if (i->enable && feature == i->name) {
 			StringList feature_libs = getFeatureLibraries(*i);
 			for (StringList::iterator lib = feature_libs.begin(); lib != feature_libs.end(); ++lib) {
