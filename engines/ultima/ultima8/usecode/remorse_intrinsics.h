@@ -49,7 +49,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getUnkByte, // get something about npcdata - struct byte 0x63 (99)
 	Ultima8Engine::I_setAvatarInStasis, // void Intrinsic00C(2 bytes)
 	Item::I_getDirToItem, // byte Intrinsic00D(6 bytes)
-	0, // TODO: Actor::I_turnToward(Actor *, direction, unk)
+	Actor::I_turnToward, // TODO: Actor::I_turnToward(Actor *, direction, unk)
 	0, // TODO: VideoGump::I_playVideo(item, vidname, int16 sizex, int16 sizey)
 	// 0x010
 	Item::I_getQLo, // Based on having same coff as 02B

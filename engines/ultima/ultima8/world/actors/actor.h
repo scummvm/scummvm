@@ -242,6 +242,10 @@ public:
 	int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	                  ObjId *hititem = 0, uint8 *dirs = 0) override;
 
+	//! Turn one step toward the given direction. If the current direction is already the same,
+	//! do nothing. Returns an anim process or 0 if no move needed.
+	uint16 turnTowardDir(uint16 dir);
+
 	//! create an actor, assign objid, make it ethereal and load monster stats.
 	static Actor *createActor(uint32 shape, uint32 frame);
 
@@ -316,6 +320,7 @@ public:
 	INTRINSIC(I_getUnkByte);
 	INTRINSIC(I_getLastActivityNo);
 	INTRINSIC(I_getCurrentActivityNo);
+	INTRINSIC(I_turnToward);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B

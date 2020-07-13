@@ -542,6 +542,41 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	return Animation::END_OFF_LAND;
 }
 
+uint16 Actor::turnTowardDir(uint16 targetdir) {
+	uint16 curdir = _direction;
+	if (targetdir == curdir)
+		return 0;
+
+	// TODO; this should support 16 dirs too
+	int stepDelta;
+	Animation::Sequence turnanim;
+	if ((curdir - targetdir + 8) % 8 < 4) {
+		stepDelta = -1;
+		turnanim = Animation::lookLeft;
+	} else {
+		stepDelta = 1;
+		turnanim = Animation::lookRight;
+	}
+
+	ProcId prevpid = 0;
+
+	// Create a sequence of turn animations from
+	// our current direction to the new one
+	for (int dir = curdir; dir != targetdir;) {
+		ProcId animpid = doAnim(turnanim, dir);
+		if (prevpid) {
+			Process *proc = Kernel::get_instance()->getProcess(animpid);
+			assert(proc);
+			proc->waitFor(prevpid);
+		}
+
+		prevpid = animpid;
+		dir = (dir + stepDelta + 8) % 8;
+	}
+
+	return prevpid;
+}
+
 uint16 Actor::setActivity(int activity) {
 	if (GAME_IS_CRUSADER)
 		return setActivityCru(activity);
@@ -1980,6 +2015,18 @@ uint32 Actor::I_getLastActivityNo(const uint8 *args, unsigned int /*argsize*/) {
 
 	return actor->getLastActivityNo();
 }
+
+uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	ARG_UINT16(dir);
+	ARG_UINT16(unk);
+
+	// TODO: This is hacked to be the 8 dir version..
+	return actor->turnTowardDir(dir / 2);
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

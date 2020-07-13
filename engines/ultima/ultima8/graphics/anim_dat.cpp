@@ -101,9 +101,9 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action) {
 			return 46; // 47 is knee with a larger weapon
 		// 48 is nothing for avatar
 		case Animation::lookLeft:
-			return 14;
+			return 0x3c;
 		case Animation::lookRight:
-			return 14;
+			return 0x3c;
 		default:
 			return static_cast<uint32>(action);;
 		}
