@@ -41,12 +41,13 @@ static const int INVENTORY_TEXT_FONT = 12;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruInventoryGump)
 CruInventoryGump::CruInventoryGump() : CruStatGump(), _inventoryShape(nullptr),
-	_inventoryItemGump(nullptr) {
+	_inventoryItemGump(nullptr), _inventoryText(nullptr) {
 
 }
 
 CruInventoryGump::CruInventoryGump(Shape *shape, int x)
-	: CruStatGump(shape, x), _inventoryShape(nullptr), _inventoryItemGump(nullptr) {
+	: CruStatGump(shape, x), _inventoryShape(nullptr), _inventoryItemGump(nullptr),
+		_inventoryText(nullptr) {
 	_frameNum = 0;
 }
 

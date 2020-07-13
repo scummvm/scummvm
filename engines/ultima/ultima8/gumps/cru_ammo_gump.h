@@ -52,8 +52,6 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 private:
-	Shape *_ammoShape;
-
 	TextWidget *_bulletsText;
 	TextWidget *_clipsText;
 };

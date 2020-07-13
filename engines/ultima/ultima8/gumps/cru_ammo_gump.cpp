@@ -37,12 +37,12 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruAmmoGump)
 
-CruAmmoGump::CruAmmoGump() : CruStatGump() {
+CruAmmoGump::CruAmmoGump() : CruStatGump(), _clipsText(nullptr), _bulletsText(nullptr) {
 
 }
 
-CruAmmoGump::CruAmmoGump(Shape *shape, int x)
-	: CruStatGump(shape, x), _ammoShape(nullptr) {
+CruAmmoGump::CruAmmoGump(Shape *shape, int x) : CruStatGump(shape, x),
+		_clipsText(nullptr), _bulletsText(nullptr) {
 	_frameNum = 1;
 }
 
