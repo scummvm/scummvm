@@ -565,11 +565,14 @@ static const uint32 masks[31] = {
 };
 
 void RandomState::init(int len) {
-	if (len < 2 || len > 32)
+	if (len < 2 || len > 32) {
 		len = 32;
+		_len = (uint32)-1; // Since we cannot shift 32 bits
+	} else {
+		_len = (1 << len) - 1;
+	}
 
 	_seed = 1;
-	_len = (1 << len) - 1;
 	_mask = masks[len - 2];
 }
 
