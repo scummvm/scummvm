@@ -57,6 +57,8 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 	_flags1 = 0;
 	_flags2 = 0;
 	_regX = _regY = 0;
+	_clut = kClutSystemMac;
+	_bitsPerPixel = 0;
 
 	if (version < 4) {
 		_flags1 = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
