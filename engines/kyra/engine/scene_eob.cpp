@@ -42,6 +42,8 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 	disableSysTimer(2);
 	uint32 end = _system->getMillis() + 500;
 
+	resetWallData();
+
 	readLevelFileData(level);
 
 	Common::String gfxFile;
@@ -526,6 +528,24 @@ void EoBCoreEngine::releaseDoorShapes() {
 	}
 }
 
+void EoBCoreEngine::resetWallData() {
+	memset(_wllVmpMap, 0, 256);
+	_wllVmpMap[1] = 1;
+	_wllVmpMap[2] = 2;
+	memset(&_wllVmpMap[3], 3, 20);
+	_wllVmpMap[23] = 4;
+	_wllVmpMap[24] = 5;
+	memset(_wllShapeMap, 0, 256);
+	memset(&_wllShapeMap[3], -1, 5);
+	memset(&_wllShapeMap[13], -1, 5);
+	memset(_wllWallFlags, 0, 256);
+	memcpy(_wllWallFlags, _wllFlagPreset, _wllFlagPresetSize);
+	memset(_specialWallTypes, 0, 256);
+	memset(&_specialWallTypes[3], 1, 5);
+	memset(&_specialWallTypes[13], 1, 5);
+	_specialWallTypes[8] = _specialWallTypes[18] = 6;
+}
+
 void EoBCoreEngine::toggleWallState(int wall, int toggle) {
 	wall = wall * 10 + 3;
 
@@ -536,7 +556,7 @@ void EoBCoreEngine::toggleWallState(int wall, int toggle) {
 		if (toggle)
 			_wllWallFlags[wall + i] |= 2;
 		else
-			_wllWallFlags[wall + i] &= 0xFD;
+			_wllWallFlags[wall + i] &= ~2;
 	}
 }
 

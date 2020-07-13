@@ -636,6 +636,7 @@ protected:
 	void assignWallsAndDecorations(int wallIndex, int vmpIndex, int decDataIndex, int specialType, int flags);
 	void releaseDecorations();
 	void releaseDoorShapes();
+	void resetWallData();
 	void toggleWallState(int wall, int flags);
 	virtual void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) = 0;
 	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) = 0;
