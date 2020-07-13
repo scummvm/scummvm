@@ -203,8 +203,8 @@ int Palette::findMinBrightnessColorIndex(uint minColorIndex) {
 bool Palette::ensureContrast(byte &minBrightnessColorIndex) {
 	minBrightnessColorIndex = findMinBrightnessColorIndex();
 	if (_colors.size() >= 3 && isEqual(2, minBrightnessColorIndex)) {
-		Color black{ 0, 0, 0 };
-		Color white{_format.rMax(), _format.gMax(), _format.bMax()	};
+		Color black = {0, 0, 0};
+		Color white = {_format.rMax(), _format.gMax(), _format.bMax()};
 
 		_colors[2] = white;
 		if (isEqual(2, minBrightnessColorIndex)) {
