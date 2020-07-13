@@ -259,9 +259,9 @@ void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
 		_mainArchive = new RIFFArchive();
 
 		if (!_mainArchive->openStream(stream, riffOffset))
-			error("Failed to load RIFF from EXE");
-
-		return;
+			warning("Failed to load RIFF from EXE");
+		else
+			return;
 	}
 
 	openMainArchive(mmmFileName);
