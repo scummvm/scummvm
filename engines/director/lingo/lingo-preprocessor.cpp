@@ -29,7 +29,6 @@ Common::String preprocessWhen(Common::String in, bool *changed);
 Common::String preprocessReturn(Common::String in);
 Common::String preprocessPlay(Common::String in);
 Common::String preprocessSound(Common::String in);
-Common::String preprocessSimpleMacro(Common::String in);
 
 bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
@@ -247,7 +246,6 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 			res1 = preprocessReturn(res1);
 			res1 = preprocessPlay(res1);
 			res1 = preprocessSound(res1);
-			res1 = preprocessSimpleMacro(res1);
 		}
 
 		res += res1;
@@ -638,24 +636,6 @@ Common::String preprocessSound(Common::String in) {
 		debugC(2, kDebugParse | kDebugPreprocess, "SOUND: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
-}
-
-// <macro> '\n' -> <macro>() '\n'
-Common::String preprocessSimpleMacro(Common::String in) {
-	const char *second;
-	Common::String next = nexttok(in.c_str(), &second);
-
-	if (!next.empty() && Common::isAlpha(next[0]))
-		if (nexttok(second).empty() && // Filter out possible standalone tokens
-				!next.equalsIgnoreCase("end") &&
-				!next.equalsIgnoreCase("exit") &&
-				!next.equalsIgnoreCase("else")) {
-			debugC(2, kDebugParse | kDebugPreprocess, "MACRO: in: %s\nout: %s()", in.c_str(), in.c_str());
-
-			return in + "()";
-		}
-
-	return in;
 }
 
 } // End of namespace Director

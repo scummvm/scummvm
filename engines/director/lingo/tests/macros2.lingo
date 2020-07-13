@@ -9,3 +9,9 @@ put y
 check(1, 2, 3)
 check 4, 5, 6
 check 7, 8
+
+test
+test()
+put test
+put test()
+if test then test end if

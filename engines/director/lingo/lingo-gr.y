@@ -194,7 +194,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn lbl expr if chunkexpr
+%type<code> asgn lbl expr if chunkexpr funccall
 %type<code> stmtlist tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
@@ -339,7 +339,8 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $expr; }
 
 stmtoneliner: macro
-	| expr
+	| funccall
+	| asgn
 	| proc
 
 stmt: stmtoneliner
@@ -580,9 +581,7 @@ simpleexpr: INT		{
 		}
 	}
 
-expr: simpleexpr { $$ = $simpleexpr; }
-	| chunkexpr
-	| FBLTIN '(' arglist ')' {
+funccall: FBLTIN '(' arglist ')' {
 		g_lingo->codeFunc($FBLTIN, $arglist);
 		delete $FBLTIN; }
 	| FBLTIN arglist	{
@@ -608,6 +607,10 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
+
+expr: simpleexpr { $$ = $simpleexpr; }
+	| chunkexpr
+	| funccall
 	| THEFBLTIN tOF simpleexpr	{
 		$$ = g_lingo->codeFunc($THEFBLTIN, 1);
 		delete $THEFBLTIN; }
@@ -617,7 +620,6 @@ expr: simpleexpr { $$ = $simpleexpr; }
 		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
 		delete $THEOBJECTPROP.obj;
 		delete $THEOBJECTPROP.prop; }
-	| asgn
 	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
 	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }
 	| expr '*' expr				{ g_lingo->code1(LC::c_mul); }
@@ -682,6 +684,9 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| tOPEN expr 				{
 		Common::String open("open");
 		g_lingo->codeFunc(&open, 1); }
+	| ID						{
+		g_lingo->codeFunc($ID, 0);
+		delete $ID; }
 
 globallist: ID					{
 		mVar($ID, kVarGlobal);
