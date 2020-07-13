@@ -81,24 +81,26 @@ Symbol::Symbol(const Symbol &s) {
 }
 
 Symbol& Symbol::operator=(const Symbol &s) {
-	if (this != &s) {
-		reset();
-		name = s.name;
-		type = s.type;
-		u = s.u;
-		refCount = s.refCount;
-		*refCount += 1;
-		nargs = s.nargs;
-		maxArgs = s.maxArgs;
-		parens = s.parens;
-		targetType = s.targetType;
-		argNames = s.argNames;
-		varNames = s.varNames;
-		ctx = s.ctx;
-		archive = s.archive;
-		target = s.target;
-		anonymous = s.anonymous;
-	}
+	if (this == &s)
+		return *this;
+
+	reset();
+	name = s.name;
+	type = s.type;
+	u = s.u;
+	refCount = s.refCount;
+	*refCount += 1;
+	nargs = s.nargs;
+	maxArgs = s.maxArgs;
+	parens = s.parens;
+	targetType = s.targetType;
+	argNames = s.argNames;
+	varNames = s.varNames;
+	ctx = s.ctx;
+	archive = s.archive;
+	target = s.target;
+	anonymous = s.anonymous;
+
 	return *this;
 }
 
