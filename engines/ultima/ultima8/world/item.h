@@ -226,7 +226,7 @@ public:
 		return _mapNum;
 	}
 
-	//! Set the 'NpcNum' of this Item. Note that this can represent various
+	//! Set the 'MapNum' of this Item. Note that this can represent various
 	//! things depending on the family of this Item.
 	void setMapNum(uint16 mapnum_) {
 		_mapNum = mapnum_;
