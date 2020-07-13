@@ -34,6 +34,9 @@ namespace CreateProjectTool {
 
 VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
 	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
+
+	_archs.push_back(ARCH_X86);
+	_archs.push_back(ARCH_AMD64);
 }
 
 const char *VisualStudioProvider::getProjectExtension() {
@@ -63,10 +66,11 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 	project << "\tTargetFrameworkVersion=\"131072\"\n";
 
 	project << "\t>\n"
-	           "\t<Platforms>\n"
-	           "\t\t<Platform Name=\"Win32\" />\n"
-	           "\t\t<Platform Name=\"x64\" />\n"
-	           "\t</Platforms>\n"
+	           "\t<Platforms>\n";
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		project << "\t\t<Platform Name=\"" << getMSVCConfigName(*arch) << "\" />\n";
+	}
+	project << "\t</Platforms>\n"
 	           "\t<Configurations>\n";
 
 	// Check for project-specific warnings:
@@ -78,20 +82,15 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += ' ' + *i + ".lib";
 
-		// Win32
-		outputConfiguration(project, setup, libraries, "Debug", ARCH_X86);
-		outputConfiguration(project, setup, libraries, "Analysis", ARCH_X86);
-		outputConfiguration(project, setup, libraries, "LLVM", ARCH_X86);
-		outputConfiguration(project, setup, libraries, "Release", ARCH_X86);
-
-		// x64
 		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
 		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		outputConfiguration(project, setup, libraries, "Debug", ARCH_AMD64);
-		outputConfiguration(project, setup, libraries, "Analysis", ARCH_AMD64);
-		outputConfiguration(project, setup, libraries, "LLVM", ARCH_AMD64); // NOTE: it was win32-x64 here
-		outputConfiguration(project, setup, libraries, "Release", ARCH_AMD64);
+		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+			outputConfiguration(project, setup, libraries, "Debug", *arch);
+			outputConfiguration(project, setup, libraries, "Analysis", *arch);
+			outputConfiguration(project, setup, libraries, "LLVM", *arch);
+			outputConfiguration(project, setup, libraries, "Release", *arch);
+		}
 
 	} else {
 		bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
@@ -107,15 +106,13 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		toolConfig += (disableEditAndContinue   ? "DebugInformationFormat=\"3\" " : "");
 		toolConfig += (enableLanguageExtensions ? "DisableLanguageExtensions=\"false\" " : "");
 
-		// Win32
-		outputConfiguration(setup, project, toolConfig, "Debug", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "Analysis", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "LLVM", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "Release", "Win32", "");
-		outputConfiguration(setup, project, toolConfig, "Debug", "x64", "64");
-		outputConfiguration(setup, project, toolConfig, "Analysis", "x64", "64");
-		outputConfiguration(setup, project, toolConfig, "LLVM", "x64", "64");
-		outputConfiguration(setup, project, toolConfig, "Release", "x64", "64");
+		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+			const std::string outputBitness = (*arch == ARCH_X86 ? "" : "64");
+			outputConfiguration(setup, project, toolConfig, "Debug", getMSVCConfigName(*arch), outputBitness);
+			outputConfiguration(setup, project, toolConfig, "Analysis", getMSVCConfigName(*arch), outputBitness);
+			outputConfiguration(setup, project, toolConfig, "LLVM", getMSVCConfigName(*arch), outputBitness);
+			outputConfiguration(setup, project, toolConfig, "Release", getMSVCConfigName(*arch), outputBitness);
+		}
 	}
 
 	project << "\t</Configurations>\n"
@@ -336,6 +333,7 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 				name += ".o";
 				std::transform(name.begin(), name.end(), name.begin(), tolower);
 				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name) != duplicate.end());
+				std::string filePath = convertPathToWin(filePrefix + node->name);
 
 				if (ext == "asm") {
 					std::string objFileName = "$(IntDir)\\";
@@ -346,41 +344,14 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 					const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCustomBuildTool\" CommandLine=\"nasm.exe -f win32 -g -o &quot;" + objFileName + "&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;\" Outputs=\"" + objFileName + "\" />\n";
 
 					// NASM is not supported for x64, thus we do not need to add additional entries here :-).
-					projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-					            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "</File>\n";
+					writeFileToProject(projectFile, filePath, ARCH_X86, indentString, toolLine);
 				} else {
 					if (isDuplicate) {
 						const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCLCompilerTool\" ObjectFile=\"$(IntDir)\\" + objPrefix + "$(InputName).obj\" XMLDocumentationFileName=\"$(IntDir)\\" + objPrefix + "$(InputName).xdc\" />\n";
 
-						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-						            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Analysis|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Debug|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Analysis|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Release|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "</File>\n";
+						for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+							writeFileToProject(projectFile, filePath, *arch, indentString, toolLine);
+						}
 					} else {
 						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
 					}
@@ -393,6 +364,24 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 
 	if (indentation)
 		projectFile << getIndent(indentation + 1) << "</Filter>\n";
+}
+
+void VisualStudioProvider::writeFileToProject(std::ofstream &projectFile, const std::string &filePath, MSVC_Architecture arch,
+											  const std::string &indentString, const std::string &toolLine) {
+	projectFile << indentString << "<File RelativePath=\"" << filePath << "\">\n"
+	            << indentString << "\t<FileConfiguration Name=\"Debug|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "\t<FileConfiguration Name=\"Analysis|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "\t<FileConfiguration Name=\"LLVM|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "\t<FileConfiguration Name=\"Release|" << getMSVCConfigName(arch) << "\">\n"
+	            << toolLine
+	            << indentString << "\t</FileConfiguration>\n"
+	            << indentString << "</File>\n";
 }
 
 } // End of CreateProjectTool namespace
