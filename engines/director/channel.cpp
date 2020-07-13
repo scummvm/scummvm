@@ -50,6 +50,7 @@ DirectorPlotData Channel::getPlotData() {
 	DirectorPlotData pd(g_director->_wm, _sprite->_spriteType, _sprite->_ink, getBackColor(), getForeColor());
 	pd.colorWhite = pd._wm->_colorWhite;
 	pd.colorBlack = pd._wm->_colorBlack;
+	pd.dst = nullptr;
 
 	pd.srf = getSurface();
 	if (!pd.srf) {
