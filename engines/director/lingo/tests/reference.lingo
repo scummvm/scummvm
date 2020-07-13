@@ -12,6 +12,7 @@ put "asdf" into field 1
 -- the property of reference
 put the text of cast "castname"
 put the visible of window "windowname"
+put line 1 to 5 of field the number of cast "MasterList" into field the number of cast "InventoryList"
 
 -- user-defined handlers/factories w/ reference name
 -- (mainly to test grammar, so no factory definition)

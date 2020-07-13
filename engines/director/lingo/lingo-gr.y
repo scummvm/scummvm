@@ -581,6 +581,7 @@ simpleexpr: INT		{
 	}
 
 expr: simpleexpr { $$ = $simpleexpr; }
+	| chunkexpr
 	| FBLTIN '(' arglist ')' {
 		g_lingo->codeFunc($FBLTIN, $arglist);
 		delete $FBLTIN; }
