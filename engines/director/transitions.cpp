@@ -151,11 +151,11 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		t.duration = 250;
 
 	// Cache a copy of the frame before the transition.
-	Graphics::ManagedSurface *currentFrame = new Graphics::ManagedSurface(_surface.w, _surface.h);
-	currentFrame->copyFrom(_surface);
+	Graphics::ManagedSurface currentFrame(Graphics::ManagedSurface(_surface.w, _surface.h));
+	currentFrame.copyFrom(_surface);
 
 	// If a transition is being played, render the frame after the transition.
-	Graphics::ManagedSurface *nextFrame = new Graphics::ManagedSurface(_surface.w, _surface.h);
+	Graphics::ManagedSurface nextFrame(Graphics::ManagedSurface(_surface.w, _surface.h));
 
 	Common::Rect clipRect;
 	if (t.area) {
@@ -183,11 +183,11 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		clipRect.clip(Common::Rect(_innerDims.width(), _innerDims.height()));
 		_dirtyRects.push_back(clipRect);
 
-		render(false, nextFrame);
+		render(false, &nextFrame);
 	} else {
 		// Full stage transition
 		g_director->getCurrentMovie()->getScore()->renderSprites(t.frame, kRenderForceUpdate);
-		render(true, nextFrame);
+		render(true, &nextFrame);
 
 		clipRect = _innerDims;
 		clipRect.moveTo(0, 0);
@@ -203,36 +203,36 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 	switch (transProps[t.type].algo) {
 	case kTransAlgoDissolve:
 		if (t.type == kTransDissolvePatterns)
-			dissolvePatternsTrans(t, clipRect, nextFrame);
+			dissolvePatternsTrans(t, clipRect, &nextFrame);
 		else
-			dissolveTrans(t, clipRect, nextFrame);
+			dissolveTrans(t, clipRect, &nextFrame);
 		return;
 
 	case kTransAlgoChecker:
 	case kTransAlgoStrips:
 	case kTransAlgoBlinds:
-		transMultiPass(t, clipRect, nextFrame);
+		transMultiPass(t, clipRect, &nextFrame);
 		return;
 
 	case kTransAlgoZoom:
-		transZoom(t, clipRect, nextFrame);
+		transZoom(t, clipRect, &nextFrame);
 		return;
 
 	case kTransAlgoCenterOut:
 	case kTransAlgoCover:
 	case kTransAlgoWipe:
-		blitFrom = nextFrame;
+		blitFrom = &nextFrame;
 		break;
 
  	case kTransAlgoEdgesIn:
 	case kTransAlgoReveal:
 	case kTransAlgoPush:
-		blitFrom = currentFrame;
+		blitFrom = &currentFrame;
 		fullredraw = true;
 		break;
 
 	default:
-		blitFrom = nextFrame;
+		blitFrom = &nextFrame;
 		break;
 	}
 
@@ -246,7 +246,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 		if (transProps[t.type].algo == kTransAlgoReveal ||
  				transProps[t.type].algo == kTransAlgoEdgesIn) {
-			_surface.copyRectToSurface(*nextFrame, clipRect.left, clipRect.top, clipRect);
+			_surface.copyRectToSurface(nextFrame, clipRect.left, clipRect.top, clipRect);
 		}
 
 		switch (t.type) {
@@ -318,7 +318,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 			rto.translate(w - t.xStepSize * i, 0);
 			rfrom.right -= w - clipRect.findIntersectingRect(rto).width();
 			rto.clip(clipRect);
-			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			_surface.blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.translate(t.xStepSize * i, 0);
 			rfrom.setWidth(w - t.xStepSize * i);
@@ -328,7 +328,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		case kTransPushRight:								// 12
 			rfrom.translate(w - t.xStepSize * i, 0);
 			rfrom.setWidth(t.xStepSize * i);
-			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			_surface.blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setWidth(w - t.xStepSize * i);
 			rto.translate(t.xStepSize * i, 0);
@@ -339,7 +339,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		case kTransPushDown:								// 13
 			rfrom.translate(0, h - t.yStepSize * i);
 			rfrom.setHeight(t.yStepSize * i);
-			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			_surface.blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rto.setHeight(h - t.yStepSize * i);
 			rto.translate(0, t.yStepSize * i);
@@ -349,7 +349,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 		case kTransPushUp:									// 14
 			rto.translate(0, h - t.yStepSize * i);
-			_surface.blitFrom(*nextFrame, rfrom, Common::Point(rto.left, rto.top));
+			_surface.blitFrom(nextFrame, rfrom, Common::Point(rto.left, rto.top));
 
 			rfrom.translate(0, t.yStepSize * i);
 			rfrom.setHeight(h - t.yStepSize * i);
@@ -511,7 +511,7 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true)) {
-			exitTransition(nextFrame, clipRect);
+			exitTransition(&nextFrame, clipRect);
 			break;
 		}
 
@@ -528,9 +528,6 @@ void Stage::playTransition(uint16 transDuration, uint8 transArea, uint8 transChu
 		g_system->updateScreen();
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
-
-	delete currentFrame;
-	delete nextFrame;
 }
 
 static int getLog2(int n) {
