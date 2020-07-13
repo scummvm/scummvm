@@ -42,7 +42,7 @@ namespace Director {
 class Sprite;
 
 TheEntity entities[] = {
-	{ kTheActorList,		"actorList",		false, 4 },	//				D4 property
+	{ kTheActorList,		"actorList",		false, 4 },	//			D4 property
 	{ kTheBeepOn,			"beepOn",			false, 2 },	// D2 p
 	{ kTheButtonStyle,		"buttonStyle",		false, 2 },	// D2 p
 	{ kTheCast,				"cast",				true,  2 },	// D2
@@ -50,44 +50,44 @@ TheEntity entities[] = {
 	{ kTheCenterStage,		"centerStage",		false, 2 },	// D2 p
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 2 },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false, 2 },	// D2 p
-	{ kTheClickLoc,			"clickLoc",			false, 4 },	// 				D4 function
+	{ kTheClickLoc,			"clickLoc",			false, 4 },	// 			D4 function
 	{ kTheClickOn,			"clickOn",			false, 2 },	// D2 f
 	{ kTheColorDepth,		"colorDepth",		false, 2 },	// D2 p
 	{ kTheColorQD,			"colorQD",			false, 2 },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false, 2 },	// D2 f
 	{ kTheControlDown,		"controlDown",		false, 2 },	// D2 f
-	{ kTheDate,				"date",				false, 3 },	//		 D3 f
+	{ kTheDate,				"date",				false, 3 },	//		D3 f
 	{ kTheDoubleClick,		"doubleClick",		false, 2 },	// D2 f
 	{ kTheExitLock,			"exitLock",			false, 2 },	// D2 p
-	{ kTheField,			"field",			true,  3 },	//		 D3
+	{ kTheField,			"field",			true,  3 },	//		D3
 	{ kTheFixStageSize,		"fixStageSize",		false, 2 },	// D2 p
 	{ kTheFloatPrecision,	"floatPrecision",	false, 3 },	//		D3 p
 	{ kTheFrame,			"frame",			false, 2 },	// D2 f
-	{ kTheFrameLabel,		"frameLabel",		false, 4 },	//				D4 p
-	{ kTheFrameScript,		"frameScript",		false, 4 },	//				D4 p
-	{ kTheFramePalette,		"framePalette",		false, 4 },	//				D4 p
-	{ kTheFrameTempo,		"frameTempo",		false, 4 },	//				D4 f
+	{ kTheFrameLabel,		"frameLabel",		false, 4 },	//			D4 p
+	{ kTheFrameScript,		"frameScript",		false, 4 },	//			D4 p
+	{ kTheFramePalette,		"framePalette",		false, 4 },	//			D4 p
+	{ kTheFrameTempo,		"frameTempo",		false, 4 },	//			D4 f
 	{ kTheFreeBlock,		"freeBlock",		false, 2 },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false, 2 },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false, 2 },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false, 2 },	// D2 p
-	{ kTheItemDelimiter,	"itemDelimiter",	false, 4 },	//				D4 p
+	{ kTheItemDelimiter,	"itemDelimiter",	false, 4 },	//			D4 p
 	{ kTheKey,				"key",				false, 2 },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false, 2 },	// D2 f
 	{ kTheKeyDownScript,	"keyDownScript",	false, 2 },	// D2 p
-	{ kTheKeyUpScript,		"keyUpScript",		false, 4 },	//				D4 p
+	{ kTheKeyUpScript,		"keyUpScript",		false, 4 },	//			D4 p
 	{ kTheLabelList,		"labelList",		false, 3 },	//		D3 f
 	{ kTheLastClick,		"lastClick",		false, 2 },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false, 2 },	// D2 f
-	{ kTheLastFrame,		"lastFrame",		false, 4 },	//				D4 p
+	{ kTheLastFrame,		"lastFrame",		false, 4 },	//			D4 p
 	{ kTheLastKey,			"lastKey",			false, 2 },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false, 2 },	// D2 f
 	{ kTheMachineType,		"machineType",		false, 2 },	// D2 f
 	{ kTheMaxInteger,		"maxInteger",		false, 3 },	//		D3.1 f
 	{ kTheMemorySize,		"memorySize",		false, 2 },	// D2 f
-	{ kTheMenu,				"menu",				true,  3 },	//		 D3 p
-	{ kTheMenuItem,			"menuitem",			true,  3 },	//		 D3 p
-	{ kTheMenuItems,		"menuitems",		false, 3 },	//		 D3 f
+	{ kTheMenu,				"menu",				true,  3 },	//		D3 p
+	{ kTheMenuItem,			"menuitem",			true,  3 },	//		D3 p
+	{ kTheMenuItems,		"menuitems",		false, 3 },	//		D3 f
 	{ kTheMouseCast,		"mouseCast",		false, 3 },	//		D3 f
 	{ kTheMouseChar,		"mouseChar",		false, 3 },	//		D3 f
 	{ kTheMouseDown,		"mouseDown",		false, 2 },	// D2 f
@@ -100,27 +100,27 @@ TheEntity entities[] = {
 	{ kTheMouseV,			"mouseV",			false, 2 },	// D2 f
 	{ kTheMouseWord,		"mouseWord",		false, 3 },	//		D3 f
 	{ kTheMovie,			"movie",			false, 2 },	// D2 f
-	{ kTheMovieFileFreeSize,"movieFileFreeSize",false, 4 },	//				D4 f
-	{ kTheMovieFileSize,	"movieFileSize",	false, 4 },	//				D4 f
-	{ kTheMovieName,		"movieName",		false, 4 },	//				D4 f
-	{ kTheMoviePath,		"moviePath",		false, 4 },	//				D4 f
+	{ kTheMovieFileFreeSize,"movieFileFreeSize",false, 4 },	//			D4 f
+	{ kTheMovieFileSize,	"movieFileSize",	false, 4 },	//			D4 f
+	{ kTheMovieName,		"movieName",		false, 4 },	//			D4 f
+	{ kTheMoviePath,		"moviePath",		false, 4 },	//			D4 f
 	{ kTheMultiSound,		"multiSound",		false, 3 },	//		D3.1 f
 	{ kTheOptionDown,		"optionDown",		false, 2 },	// D2 f
-	{ kTheParamCount,		"paramCount",		false, 4 },	//				D4 f
+	{ kTheParamCount,		"paramCount",		false, 4 },	//			D4 f
 	{ kThePathName,			"pathName",			false, 2 },	// D2 f
 	{ kThePauseState,		"pauseState",		false, 2 },	// D2 f
 	{ kThePerFrameHook,		"perFrameHook",		false, 2 },	// D2 p
-	{ kThePreloadEventAbort,"preloadEventAbort",false, 4 },	//				D4 p
-	{ kThePreLoadRAM,		"preLoadRAM",		false, 4 },	//				D4 p
-	{ kThePi,				"pi",				false, 4 },	//				D4 f
+	{ kThePreloadEventAbort,"preloadEventAbort",false, 4 },	//			D4 p
+	{ kThePreLoadRAM,		"preLoadRAM",		false, 4 },	//			D4 p
+	{ kThePi,				"pi",				false, 4 },	//			D4 f
 	{ kTheQuickTimePresent,	"quickTimePresent",	false, 3 },	//		D3.1 f
-	{ kTheRandomSeed,		"randomSeed",		false, 4 },	//				D4 p
+	{ kTheRandomSeed,		"randomSeed",		false, 4 },	//			D4 p
 	{ kTheResult,			"result",			false, 2 },	// D2 f
-	{ kTheRightMouseDown,	"rightMouseDown",	false, 5 },	//						D5 f
-	{ kTheRightMouseUp,		"rightMouseUp",		false, 5 },	//						D5 f
+	{ kTheRightMouseDown,	"rightMouseDown",	false, 5 },	//					D5 f
+	{ kTheRightMouseUp,		"rightMouseUp",		false, 5 },	//					D5 f
 	{ kTheRomanLingo,		"romanLingo",		false, 3 },	//		D3.1 p
-	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,4 },//			D4 f
-	{ kTheSearchPath,		"searchPath",		false, 4 },	//				D4 f
+	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,4 },//		D4 f
+	{ kTheSearchPath,		"searchPath",		false, 4 },	//			D4 f
 	{ kTheSelection,		"selection",		false, 2 },	// D2 f
 	{ kTheSelEnd,			"selEnd",			false, 2 },	// D2 p
 	{ kTheSelStart,			"selStart",			false, 2 },	// D2 p
@@ -128,8 +128,8 @@ TheEntity entities[] = {
 	{ kTheSoundEnabled,		"soundEnabled",		false, 2 },	// D2 p
 	{ kTheSoundEntity,		"sound",			true,  3 },	// 		D3 p
 	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
-	{ kTheSprite,			"sprite",			true,  2 },	// D4 p
-	{ kTheStage,			"stage",			false, 4 },	//				D4 p
+	{ kTheSprite,			"sprite",			true,  2 },	// 			D4 p
+	{ kTheStage,			"stage",			false, 4 },	//			D4 p
 	{ kTheStageBottom,		"stageBottom",		false, 2 },	// D2 f
 	{ kTheStageColor,		"stageColor",		false, 3 },	//		D3 p
 	{ kTheStageLeft,		"stageLeft",		false, 2 },	// D2 f
@@ -146,12 +146,12 @@ TheEntity entities[] = {
 	{ kTheTimeoutPlay,		"timeoutPlay",		false, 2 },	// D2 p
 	{ kTheTimeoutScript,	"timeoutScript",	false, 2 },	// D2 p
 	{ kTheTimer,			"timer",			false, 2 },	// D2 p
-	{ kTheTrace,			"trace",			false, 4 },	//				D4 p
-	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//				D4 p
-	{ kTheTraceLogFile,		"traceLogFile",		false, 4 },	//				D4 p
-	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//				D4 p
-	{ kTheWindow,			"window",			true,  4 },	//				D4
-	{ kTheWindowList,		"windowList",		false, 4 },	//				D4 p
+	{ kTheTrace,			"trace",			false, 4 },	//			D4 p
+	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//			D4 p
+	{ kTheTraceLogFile,		"traceLogFile",		false, 4 },	//			D4 p
+	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//			D4 p
+	{ kTheWindow,			"window",			true,  4 },	//			D4
+	{ kTheWindowList,		"windowList",		false, 4 },	//			D4 p
 	{ kTheNOEntity, NULL, false, 0 }
 };
 
