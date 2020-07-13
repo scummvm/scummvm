@@ -50,6 +50,7 @@ public:
 	~MainShapeArchive() override;
 
 	void loadTypeFlags(Common::SeekableReadStream *rs);
+	void loadDamageDat(Common::SeekableReadStream *rs);
 	ShapeInfo *getShapeInfo(uint32 shapenum);
 
 	void loadAnimDat(Common::SeekableReadStream *rs);

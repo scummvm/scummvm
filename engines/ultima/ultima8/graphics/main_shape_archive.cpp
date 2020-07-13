@@ -49,6 +49,11 @@ void MainShapeArchive::loadTypeFlags(Common::SeekableReadStream *rs) {
 	_typeFlags->load(rs);
 }
 
+void MainShapeArchive::loadDamageDat(Common::SeekableReadStream *rs) {
+	assert(_typeFlags);
+	_typeFlags->loadDamageDat(rs);
+}
+
 ShapeInfo *MainShapeArchive::getShapeInfo(uint32 shapenum) {
 	assert(_typeFlags);
 

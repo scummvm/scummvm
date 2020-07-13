@@ -633,11 +633,10 @@ void GameData::loadRemorseData() {
 		error("Unable to load static/damage.flx");
 
 	RawArchive *damageflex = new RawArchive(damageds);
+	if (damageflex->getCount() != 1)
+		error("static/damage.flx appears corrupted");
 
-	// TODO: What's in this flex file?
-	// 1 object of 12288 bytes, mostly 0s
-	//_damage = new DamageDat();
-	//_damage->load(damageflex);
+	_mainShapes->loadDamageDat(damageflex->get_datasource(0));
 
 	delete damageflex;
 

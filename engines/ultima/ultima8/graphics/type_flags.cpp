@@ -51,10 +51,6 @@ ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {
 
 
 void TypeFlags::load(Common::SeekableReadStream *rs) {
-	// TODO: detect U8/crusader format somehow?!
-	// (Or probably pass it as parameter)
-	// The 'parsing' below is only for U8
-
 	unsigned int blocksize = 8;
 	if (GAME_IS_CRUSADER) {
 		blocksize = 9;
@@ -266,7 +262,12 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_displayGumpShape = 3;
 
-		assert(wi->_shape < _shapeInfo.size());
+		if (wi->_shape > _shapeInfo.size()) {
+			warning("ignoring weapon info for shape %d beyond size %d.",
+					wi->_shape, _shapeInfo.size());
+			delete wi;
+			continue;
+		}
 		_shapeInfo[wi->_shape]._weaponInfo = wi;
 	}
 }
@@ -415,6 +416,24 @@ void TypeFlags::loadMonsterInfo() {
 		_shapeInfo[mi->_shape]._monsterInfo = mi;
 	}
 }
+
+void TypeFlags::loadDamageDat(Common::SeekableReadStream *rs) {
+	uint32 count = rs->size() / 6;
+	if (_shapeInfo.size() < count) {
+		warning("more damage info than shape info");
+		return;
+	}
+	for (uint32 i = 0; i < count; i++) {
+		byte damagedata[6];
+		rs->read(damagedata, 6);
+		if (damagedata[0] == 0)
+			continue;
+
+		DamageInfo *di = new DamageInfo(damagedata);
+		_shapeInfo[i]._damageInfo = di;
+	}
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

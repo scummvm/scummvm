@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/world/weapon_info.h"
 #include "ultima/ultima8/world/armour_info.h"
+#include "ultima/ultima8/world/damage_info.h"
 #include "ultima/ultima8/world/actors/monster_info.h"
 
 namespace Ultima {
@@ -97,6 +98,7 @@ public:
 	WeaponInfo *_weaponInfo;
 	ArmourInfo *_armourInfo;
 	MonsterInfo *_monsterInfo;
+	DamageInfo *_damageInfo;
 
 	inline bool is_fixed() const {
 		return (_flags & SI_FIXED) != 0;
@@ -145,6 +147,10 @@ public:
 		return (_family == SF_QUANTITY || _family == SF_REAGENT);
 	}
 
+	bool takesDamage() const {
+		return (_damageInfo && _damageInfo->takesDamage());
+	}
+
 	bool getTypeFlag(int typeFlag);
 	bool getTypeFlagU8(int typeFlag);
 	bool getTypeFlagCrusader(int typeFlag);
@@ -156,12 +162,13 @@ public:
 		_family(0), _equipType(0), _animType(0), _animData(0),
 		_unknown(0), _weight(0), _volume(0),
 		_weaponInfo(nullptr), _armourInfo(nullptr),
-		_monsterInfo(nullptr) { }
+		_monsterInfo(nullptr), _damageInfo(nullptr) { }
 
 	~ShapeInfo() {
 		delete _weaponInfo;
 		delete[] _armourInfo;
 		delete _monsterInfo;
+		delete _damageInfo;
 	}
 
 };

@@ -35,6 +35,7 @@ public:
 	~TypeFlags();
 
 	void load(Common::SeekableReadStream *rs);
+	void loadDamageDat(Common::SeekableReadStream *rs);
 	ShapeInfo *getShapeInfo(uint32 shape);
 
 private:
