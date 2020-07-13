@@ -135,6 +135,10 @@ struct DirectorPlotData {
 	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s,InkType i, uint b, uint f) : _wm(w), sprite(s), ink(i), backColor(b), foreColor(f) {
 		srf = nullptr;
 		ms = nullptr;
+		dst = nullptr;
+		colorWhite = 255;
+		colorBlack = 0;
+		applyColor = false;
 	}
 
 	~DirectorPlotData() {
