@@ -1597,11 +1597,8 @@ void LB::b_installMenu(int nargs) {
 			continue;
 		}
 
-		// We have either '=' or \xc5 as a separator
-		const char *p = strchr(line.c_str(), '=');
-
-		if (!p)
-			p = strchr(line.c_str(), '\xc5');
+		// We have \xc5 as a separator
+		const char *p = strchr(line.c_str(), '\xc5');
 
 		Common::String text;
 
