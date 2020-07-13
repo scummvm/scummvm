@@ -2027,6 +2027,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x5B: {
 			ui16a = cs.readUint16LE(); // source line number
 			debug(10, "ignore debug opcode %02X: line offset %d", opcode, ui16a);
+			LOGPF(("line number %d\n", ui16a));
 			break;
 		}
 		case 0x5C: {
@@ -2036,6 +2037,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				// skip over class name and null terminator
 				name[x] = cs.readByte();
 			}
+			LOGPF(("line number %s %d\n", name, ui16a));
 			debug(10, "ignore debug opcode %02X: %s line offset %d", opcode, name, ui16a);
 			break;
 		}
@@ -2454,8 +2456,8 @@ uint32 UCMachine::I_rndRange(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_SINT16(hi);
 
 	// return random integer between lo (incl.) to hi (incl.)
-
-	if (hi <= lo) return lo;
+	if (hi <= lo)
+		return lo;
 
 	return (lo + (getRandom() % (hi - lo + 1)));
 }
