@@ -198,6 +198,8 @@ static const PlainGameDescriptor directorGames[] = {
 
 static const char *directoryGlobs[] = {
 	"install",
+	"l_zone",
+	"win_data",	// L-ZONE
 	0
 };
 

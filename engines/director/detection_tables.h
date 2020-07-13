@@ -154,7 +154,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("kyoto", "v1.01", "Cosmology of KYOTO", "f5277c53bacd27936158dd3867e587e2", 392505, 3),
 
 	MACGAME("lzone", "", "L-ZONE", "276bee761e48a6fd709df77d5c2f60dd", 395344, 3),
-	WINGAME("lzone", "", "L_ZONE.EXE", "65d06b5fef155a2473434571aff5bc29", 370009, 3),
+	{
+		{
+			"lzone", "",
+			{
+				{"L_ZONE.EXE", 0, "65d06b5fef155a2473434571aff5bc29", 370009},
+				{"SYNER_01.MMM", 0, "56b6f1c68e85a96bcdd01028bdec2d35", 460594},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+
 
 	MACGAME("maze", "", "Maze", "c4917547b9d9fda87567a9b3544489c4", 384534, 3),
 
@@ -299,7 +315,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("9worlds", "", "Nine Worlds", "3930940b5b4b2ae2563cc29b812855a6", 482838, 4),
 	WINGAME("9worlds", "", "9WORLDS.EXE", "9da9df906149916b340a0a8fbee5ca52", 741994, 4),
 	MACGAME_l("9worlds", "", "Neun Welten", "3930940b5b4b2ae2563cc29b812855a6", 483774, Common::DE_DEU, 4),
-	WINGAME_l("9worlds", "", "9WORLDS.EXE", "054e5af279a05ab64627ef664631fe37", 742002, Common::DE_DEU, 4),	
+	WINGAME_l("9worlds", "", "9WORLDS.EXE", "054e5af279a05ab64627ef664631fe37", 742002, Common::DE_DEU, 4),
 
 	MACGAME("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304714, 4),
 	WINGAME("alice", "", "ALICE.EXE", "c67ece9b657ee80355520ac37a25fe55", 684733, 4),
@@ -443,7 +459,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// original file name is La Máquina del Tiempo
 	MACGAME_l("hamsterland2", "", "La Mquina del Tiempo", "2c7d0c0d55cbe3f622c7d68cedb671e0", 483774, Common::ES_ESP, 4),
-	WINGAME_l("hamsterland2", "", "HL2SP.EXE", "8dd22b8bde300c9fb5b66808905300f7", 875665, Common::ES_ESP, 4),	
+	WINGAME_l("hamsterland2", "", "HL2SP.EXE", "8dd22b8bde300c9fb5b66808905300f7", 875665, Common::ES_ESP, 4),
 	MACGAME("hamsterland2", "", "The Time Machine", "2c7d0c0d55cbe3f622c7d68cedb671e0", 483774, 4),
 	WINGAME("hamsterland2", "", "HL2EN.EXE", "4c812a63165c1f50242e879aae62718d", 859681, 4),
 
@@ -569,10 +585,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO("jman2", "Overview", "BIT Overview", "01be45e7241194dad07938e7059b88e3", 484284, 4),
 
 	MACGAME("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 4),
-	WINGAME("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047, 4),	
+	WINGAME("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047, 4),
 
 	MACGAME("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484370, 4),
-	WINGAME("kyoto", "", "PLAY_E.EXE", "84cc8880f8c46b4da121b4c9f184418a", 691269, 4),	
+	WINGAME("kyoto", "", "PLAY_E.EXE", "84cc8880f8c46b4da121b4c9f184418a", 691269, 4),
 	MACGAME_l("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484445, Common::JA_JPN, 4),
 	WINGAME_l("kyoto", "", "PLAY.EXE", "865b1b59e32e51a6670b9105ac8501ec", 741137, Common::JA_JPN, 4),
 
