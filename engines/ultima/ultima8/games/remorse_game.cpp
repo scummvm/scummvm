@@ -123,7 +123,8 @@ bool RemorseGame::startGame() {
 
 	if (GAME_IS_REMORSE) {
 		// Some useful points to warp into for testing..
-		actor->setLocation(60716, 59400, 16); // Map 1 (mission 1)
+		actor->setLocation(0, 0, 0); // Map 1 (mission 1)
+		//actor->setLocation(60716, 59400, 16); // Map 1 (mission 1)
 		//actor->setLocation(42493, 26621, 16); // Map 2 (mission 1 / level 4)
 		//actor->setLocation(34302, 32254, 16); // Map 3 (mission 2)
 		//actor->setLocation(34813, 33789, 16); // Map 4
@@ -138,7 +139,7 @@ bool RemorseGame::startGame() {
 		actor->setLocation(58174, 56606, 16);
 	}
 
-	World::get_instance()->switchMap(1);
+	World::get_instance()->switchMap(0);
 
 	return true;
 }
