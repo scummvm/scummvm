@@ -424,7 +424,7 @@ void MacWindowManager::draw() {
 			continue;
 
 		bool forceRedraw = _fullRefresh;
-		if (!forceRedraw) {
+		if (!forceRedraw && dirtyRects.size()) {
 			for (Common::Array<Common::Rect>::iterator dirty = dirtyRects.begin(); dirty != dirtyRects.end(); dirty++) {
 				if (clip.intersects(*dirty)) {
 					forceRedraw = true;
