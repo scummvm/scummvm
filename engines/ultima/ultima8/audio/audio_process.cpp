@@ -532,7 +532,7 @@ uint32 AudioProcess::I_playSFXCru(const uint8 *args, unsigned int argsize) {
 	ARG_SINT16(sfxNum);
 
 	if (!item) {
-		warning("I_playSFXCru: Couldn't get item");
+		warning("I_playSFXCru: Couldn't get item %d", id_item);
 	} else {
 		AudioProcess *ap = AudioProcess::get_instance();
 		if (ap) {
@@ -553,7 +553,7 @@ uint32 AudioProcess::I_playAmbientSFXCru(const uint8 *args, unsigned int argsize
 	ARG_SINT16(sfxNum);
 
 	if (!item) {
-		warning("I_playAmbientSFXCru: Couldn't get item");
+		warning("I_playAmbientSFXCru: Couldn't get item %d", id_item);
 	} else {
 		AudioProcess *ap = AudioProcess::get_instance();
 		if (ap)
