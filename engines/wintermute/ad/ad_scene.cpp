@@ -65,6 +65,7 @@
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/light3d.h"
 #endif
 
 namespace Wintermute {
@@ -1933,7 +1934,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EnableLight") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+
+		const char *name = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			stack->pushBool(false);
+		} else {
+			bool res = _sceneGeometry->enableLight(name);
+			stack->pushBool(res);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1942,7 +1952,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableLight") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+
+		const char *name = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			stack->pushBool(false);
+		} else {
+			bool res = _sceneGeometry->enableLight(name, false);
+			stack->pushBool(res);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1951,7 +1970,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsLightEnabled") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+
+		const char *name = stack->pop()->getString();
+
+		if (_sceneGeometry) {
+			bool res = _sceneGeometry->isLightEnabled(name);
+			stack->pushBool(res);
+		} else {
+			stack->pushBool(false);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1960,7 +1988,15 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightName") == 0) {
 		stack->correctParams(1);
-		stack->pushNULL();
+
+		int index = stack->pop()->getInt();
+
+		if (_sceneGeometry && index >= 0 && static_cast<uint>(index) < _sceneGeometry->_lights.size()) {
+			stack->pushString(_sceneGeometry->_lights[index]->getName());
+		} else {
+			stack->pushNULL();
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1968,8 +2004,18 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	// SetLightColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetLightColor") == 0) {
-		stack->correctParams(1);
-		stack->pushBool(false);
+		stack->correctParams(2);
+
+		const char *name = stack->pop()->getString();
+		uint32 color = static_cast<uint32>(stack->pop()->getInt());
+
+		if (!_sceneGeometry) {
+			stack->pushBool(false);
+		} else {
+			bool ret = _sceneGeometry->setLightColor(name, color);
+			stack->pushBool(ret);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1978,7 +2024,14 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightColor") == 0) {
 		stack->correctParams(1);
-		stack->pushInt(0);
+		const char *name = stack->pop()->getString();
+
+		if (_sceneGeometry) {
+			stack->pushInt(_sceneGeometry->getLightColor(name));
+		} else {
+			stack->pushInt(0);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1987,7 +2040,22 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightPosition") == 0) {
 		stack->correctParams(1);
-		stack->pushInt(0);
+		const char *name = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			stack->pushInt(0);
+		} else {
+			Math::Vector3d pos = _sceneGeometry->getLightPos(name);
+			ScValue *val = stack->getPushValue();
+
+			if (val) {
+				val->setProperty("X", pos.x());
+				val->setProperty("Y", pos.y());
+				// invert z coordinate to change to OpenGL coordinate system
+				val->setProperty("Z", -pos.z());
+			}
+		}
+
 		return STATUS_OK;
 	}
 
@@ -2359,6 +2427,19 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "AmbientLightColor") {
 		_scValue->setInt(0);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// NumLights
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "NumLights") {
+		if (_sceneGeometry) {
+			_scValue->setInt(_sceneGeometry->_lights.size());
+		} else {
+			_scValue->setInt(0);
+		}
+
 		return _scValue;
 	}
 #endif
