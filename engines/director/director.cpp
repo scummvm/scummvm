@@ -99,6 +99,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
 	SearchMan.addSubDirectoryMatching(gameDataDir, "l_zone");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "win_data", 0, 2);	// L-ZONE
 
 	_colorDepth = 8;	// 256-color
 	_key = 0;
