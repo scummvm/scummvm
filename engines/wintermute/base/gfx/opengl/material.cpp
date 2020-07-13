@@ -155,11 +155,13 @@ bool Material::loadFromX(XFileLexer &lexer, const Common::String &filename) {
 	_specular.r() = readFloat(lexer);
 	_specular.g() = readFloat(lexer);
 	_specular.b() = readFloat(lexer);
+	_specular.a() = 1.0f;
 	lexer.advanceToNextToken(); // skip semicolon
 
 	_emissive.r() = readFloat(lexer);
 	_emissive.g() = readFloat(lexer);
 	_emissive.b() = readFloat(lexer);
+	_emissive.a() = 1.0f;
 	lexer.advanceToNextToken();
 
 	while (!lexer.eof()) {
