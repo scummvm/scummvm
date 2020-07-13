@@ -58,8 +58,10 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	std::string solutionUUID = createUUID(setup.projectName + ".sln");
 
 	std::ofstream solution((setup.outputDir + '/' + setup.projectName + ".sln").c_str());
-	if (!solution)
+	if (!solution || !solution.is_open()) {
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".sln\" for writing");
+		return;
+	}
 
 	solution << "Microsoft Visual Studio Solution File, Format Version " << _msvcVersion.solutionFormat << "\n";
 	solution << "# Visual Studio " << _msvcVersion.solutionVersion << "\n";

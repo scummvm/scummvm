@@ -51,8 +51,10 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
                                              const StringList &includeList, const StringList &excludeList) {
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
-	if (!project)
+	if (!project || !project.is_open()) {
 		error("Could not open \"" + projectFile + "\" for writing");
+		return;
+	}
 
 	project << "<?xml version=\"1.0\" encoding=\"windows-1252\"?>\n"
 	           "<VisualStudioProject\n"
@@ -259,8 +261,10 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) {
 
 	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCConfigName(arch) + getPropertiesExtension()).c_str());
-	if (!properties)
+	if (!properties || !properties.is_open()) {
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCConfigName(arch) + getPropertiesExtension() + "\" for writing");
+		return;
+	}
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
