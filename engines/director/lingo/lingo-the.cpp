@@ -1334,11 +1334,6 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	}
 	Cast *cast = member->getCast();
 
-	if (field == kTheHilite) {
-		d.u.i = member->_hilite;
-		return d;
-	}
-
 	CastType castType = member->_type;
 	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
 	if (!castInfo) {
@@ -1404,7 +1399,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = cast->getCastMemberInitialRect(id).height();
 		break;
 	case kTheHilite:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		d.u.i = member->_hilite;
 		break;
 	case kTheLoaded:
 		d.u.i = 1; //Not loaded handled above
