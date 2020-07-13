@@ -1182,6 +1182,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	if (!sprite->_enabled)
 		sprite->_enabled = true;
 
+	channel->_dirty = true;
 	switch (field) {
 	case kTheBackColor:
 		sprite->_backColor = d.asInt();
@@ -1241,7 +1242,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			sprite->_moveable = true;
 		}
 
-		channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.x, 0));
+		if (d.asInt() != channel->_currentPoint.x) {
+			channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.x, 0));
+		} else {
+			channel->_dirty = false;
+		}
 		break;
 	case kTheLocV:
 		if (!sprite->_moveable) {
@@ -1250,7 +1255,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			sprite->_moveable = true;
 		}
 
-		channel->addDelta(Common::Point(0, d.asInt() - channel->_currentPoint.y));
+		if (d.asInt() != channel->_currentPoint.y) {
+			channel->addDelta(Common::Point(0, d.asInt() - channel->_currentPoint.y));
+		} else {
+			channel->_dirty = false;
+		}
 		break;
 	case kTheMoveableSprite:
 		sprite->_moveable = d.asInt();
@@ -1307,7 +1316,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 	}
-	channel->_dirty = true;
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {
