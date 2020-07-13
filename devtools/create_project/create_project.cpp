@@ -45,6 +45,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iterator>
+#include <utility>
 
 #include <cstring>
 #include <cstdlib>
@@ -1123,46 +1124,40 @@ const MSVCVersion s_msvc[] = {
 	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        }
 };
 
-const std::map<std::string, std::string> s_canonical_lib_name_map = {
-	{ "jpeg-static", "jpeg" },
-	{ "libfaad", "faad" },
-	{ "libFLAC_static", "FLAC" },
-	{ "libfluidsynth", "fluidsynth" },
-	{ "libmad", "mad" },
-	{ "libmpeg2", "mpeg2" },
-	{ "libogg_static", "ogg" },
-	{ "libtheora_static", "theora" },
-	{ "libvorbis_static", "vorbis" },
-	{ "libvorbisfile_static", "vorbisfile" },
-	{ "SDL_net", "SDL2_net" }, // Only support SDL2
-	{ "win_utf8_io_static", "FLAC" }, // This is some FLAC-specific library not needed with vcpkg, but as there's '.lib' appended to each library, we can't set it to empty, so set it to FLAC again instead
+const std::pair<std::string, std::string> s_canonical_lib_name_map[] = {
+	std::make_pair("jpeg-static", "jpeg"),
+	std::make_pair("libfaad", "faad"),
+	std::make_pair("libFLAC_static", "FLAC"),
+	std::make_pair("libfluidsynth", "fluidsynth"),
+	std::make_pair("libmad", "mad"),
+	std::make_pair("libmpeg2", "mpeg2"),
+	std::make_pair("libogg_static", "ogg"),
+	std::make_pair("libtheora_static", "theora"),
+	std::make_pair("libvorbis_static", "vorbis"),
+	std::make_pair("libvorbisfile_static", "vorbisfile"),
+	std::make_pair("SDL_net", "SDL2_net"), // Only support SDL2
+	std::make_pair("win_utf8_io_static", "FLAC") // This is some FLAC-specific library not needed with vcpkg, but as there's '.lib' appended to each library, we can't set it to empty, so set it to FLAC again instead
 };
 
-const std::map<MSVC_Architecture, std::string> s_msvc_arch_names = {
-	{ MSVC_Architecture::ARCH_ARM64, "arm64" },
-	{   MSVC_Architecture::ARCH_X86,   "x86" },
-	{ MSVC_Architecture::ARCH_AMD64,   "x64" },
-};
-
-const std::map<MSVC_Architecture, std::string> s_msvc_config_names = {
-	{ MSVC_Architecture::ARCH_ARM64, "arm64" },
-	{   MSVC_Architecture::ARCH_X86, "Win32" },
-	{ MSVC_Architecture::ARCH_AMD64,   "x64" },
-};
+const char *s_msvc_arch_names[] = {"arm64", "x86", "x64"};
+const char *s_msvc_config_names[] = {"arm64", "Win32", "x64"};
 } // End of anonymous namespace
 
 std::string getMSVCArchName(MSVC_Architecture arch) {
-	return s_msvc_arch_names.at(arch);
+	return s_msvc_arch_names[arch];
 }
 
 std::string getMSVCConfigName(MSVC_Architecture arch) {
-	return s_msvc_config_names.at(arch);
+	return s_msvc_config_names[arch];
 }
 
-std::string getCanonicalLibName(std::string lib) {
-	std::map<std::string, std::string>::const_iterator it = s_canonical_lib_name_map.find(lib);
-	if (it != s_canonical_lib_name_map.cend()) {
-		return it->second;
+std::string getCanonicalLibName(const std::string &lib) {
+	const size_t libCount = sizeof(s_canonical_lib_name_map) / sizeof(s_canonical_lib_name_map[0]);
+
+	for (size_t i = 0; i < libCount; ++i) {
+		if (s_canonical_lib_name_map[i].first == lib) {
+			return s_canonical_lib_name_map[i].second;
+		}
 	}
 	return lib;
 }

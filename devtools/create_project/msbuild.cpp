@@ -34,6 +34,11 @@ namespace CreateProjectTool {
 
 MSBuildProvider::MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
 	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
+
+	// NOTE: different order
+	_archs.push_back(ARCH_X86);
+	_archs.push_back(ARCH_AMD64);
+	_archs.push_back(ARCH_ARM64);
 }
 
 const char *MSBuildProvider::getProjectExtension() {
@@ -80,17 +85,11 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
-	std::list<MSVC_Architecture> archs;
-	archs.push_back(MSVC_Architecture::ARCH_X86);
-	archs.push_back(MSVC_Architecture::ARCH_AMD64);
-	archs.push_back(MSVC_Architecture::ARCH_ARM64);
-
-	for (const auto& arch : archs) {
-		// NOTE: different order
-		outputConfiguration(project, "Debug", getMSVCConfigName(arch));
-		outputConfiguration(project, "Analysis", getMSVCConfigName(arch));
-		outputConfiguration(project, "LLVM", getMSVCConfigName(arch));
-		outputConfiguration(project, "Release", getMSVCConfigName(arch));
+	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
+		outputConfiguration(project, "Debug", getMSVCConfigName(*i));
+		outputConfiguration(project, "Analysis", getMSVCConfigName(*i));
+		outputConfiguration(project, "LLVM", getMSVCConfigName(*i));
+		outputConfiguration(project, "Release", getMSVCConfigName(*i));
 	}
 	project << "\t</ItemGroup>\n";
 
@@ -101,8 +100,8 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		"\t\t<Keyword>Win32Proj</Keyword>\n"
 		"\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n";
 
-	for (const auto& arch : archs) {
-		project << "\t\t<VcpkgTriplet Condition=\"'$(Platform)' == '" << getMSVCConfigName(arch) << "'\">" << getMSVCArchName(arch) << "-windows</VcpkgTriplet>";
+	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
+		project << "\t\t<VcpkgTriplet Condition=\"'$(Platform)' == '" << getMSVCConfigName(*i) << "'\">" << getMSVCArchName(*i) << "-windows</VcpkgTriplet>";
 	}
 
 	project << "\t</PropertyGroup>\n";
@@ -110,39 +109,39 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	for (const auto& arch : archs) {
-		outputConfigurationType(setup, project, name, "Release|" + getMSVCConfigName(arch), _msvcVersion.toolsetMSVC);
-		outputConfigurationType(setup, project, name, "Analysis" + getMSVCConfigName(arch), _msvcVersion.toolsetMSVC);
-		outputConfigurationType(setup, project, name, "LLVM|" + getMSVCConfigName(arch), _msvcVersion.toolsetLLVM);
-		outputConfigurationType(setup, project, name, "Debug|" + getMSVCConfigName(arch), _msvcVersion.toolsetMSVC);
+	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
+		outputConfigurationType(setup, project, name, "Release|" + getMSVCConfigName(*i), _msvcVersion.toolsetMSVC);
+		outputConfigurationType(setup, project, name, "Analysis" + getMSVCConfigName(*i), _msvcVersion.toolsetMSVC);
+		outputConfigurationType(setup, project, name, "LLVM|" + getMSVCConfigName(*i), _msvcVersion.toolsetLLVM);
+		outputConfigurationType(setup, project, name, "Debug|" + getMSVCConfigName(*i), _msvcVersion.toolsetMSVC);
 	}
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
 	           "\t</ImportGroup>\n";
 
-	for (const auto& arch : archs) {
-		outputProperties(project, "Release|" + getMSVCConfigName(arch), setup.projectDescription + "_Release" + getMSVCArchName(arch) + ".props");
-		outputProperties(project, "Analysis|" + getMSVCConfigName(arch), setup.projectDescription + "_Analysis" + getMSVCArchName(arch) + ".props");
-		outputProperties(project, "LLVM|" + getMSVCConfigName(arch), setup.projectDescription + "_LLVM" + getMSVCArchName(arch) + ".props");
-		outputProperties(project, "Debug|" + getMSVCConfigName(arch), setup.projectDescription + "_Debug" + getMSVCArchName(arch) + ".props");
+	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
+		outputProperties(project, "Release|" + getMSVCConfigName(*i), setup.projectDescription + "_Release" + getMSVCArchName(*i) + ".props");
+		outputProperties(project, "Analysis|" + getMSVCConfigName(*i), setup.projectDescription + "_Analysis" + getMSVCArchName(*i) + ".props");
+		outputProperties(project, "LLVM|" + getMSVCConfigName(*i), setup.projectDescription + "_LLVM" + getMSVCArchName(*i) + ".props");
+		outputProperties(project, "Debug|" + getMSVCConfigName(*i), setup.projectDescription + "_Debug" + getMSVCArchName(*i) + ".props");
 	}
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
 	// Project-specific settings (analysis uses debug properties)
-	for (const auto &arch : archs) {
+	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
 		BuildSetup archsetup = setup;
-		auto disabled_features_it = s_arch_disabled_features.find(arch);
-		if (disabled_features_it != s_arch_disabled_features.end()) {
-			for (auto feature : disabled_features_it->second) {
-				archsetup = removeFeatureFromSetup(archsetup, feature);
+		std::map<MSVC_Architecture, StringList>::const_iterator disabled_features_it = _arch_disabled_features.find(*i);
+		if (disabled_features_it != _arch_disabled_features.end()) {
+			for (StringList::const_iterator j = disabled_features_it->second.begin(); j != disabled_features_it->second.end(); ++j) {
+				archsetup = removeFeatureFromSetup(archsetup, *j);
 			}
 		}
-		outputProjectSettings(project, name, archsetup, false, arch, "Debug");
-		outputProjectSettings(project, name, archsetup, false, arch, "Analysis");
-		outputProjectSettings(project, name, archsetup, false, arch, "LLVM");
-		outputProjectSettings(project, name, archsetup, true, arch, "Release");
+		outputProjectSettings(project, name, archsetup, false, *i, "Debug");
+		outputProjectSettings(project, name, archsetup, false, *i, "Analysis");
+		outputProjectSettings(project, name, archsetup, false, *i, "LLVM");
+		outputProjectSettings(project, name, archsetup, true, *i, "Release");
 	}
 
 	// Files
@@ -397,7 +396,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 }
 
 void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) {
-	const std::string outputBitness = (arch == MSVC_Architecture::ARCH_X86 ? "32" : "64");
+	const std::string outputBitness = (arch == ARCH_X86 ? "32" : "64");
 
 	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension()).c_str());
 	if (!properties)
@@ -442,10 +441,10 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
 		if (_version >= 14) {
 			// Since MSVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
-			properties << "\t\t\t<DebugInformationFormat>" << (arch != MSVC_Architecture::ARCH_ARM64 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
+			properties << "\t\t\t<DebugInformationFormat>" << (arch != ARCH_ARM64 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
 		} else {
 			// Older MSVC versions did not support Edit and Continue for x64, thus we do not use it.
-			properties << "\t\t\t<DebugInformationFormat>" << (arch == MSVC_Architecture::ARCH_X86 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
+			properties << "\t\t\t<DebugInformationFormat>" << (arch == ARCH_X86 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
 		}
 		properties << "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 
