@@ -1051,6 +1051,9 @@ bool PCSoundFxPlayer::load(const char *song) {
 				data && instrumentSize > 0x16) {
 				instrumentSize -= 0x16;
 				byte *tmp = (byte *)calloc(instrumentSize, 1);
+				if (tmp == NULL) {
+					error("PCSoundFxPlayer::load('%s'): Out of memory (%d bytes)", song, instrumentSize);
+				}
 				memcpy(tmp, data + 0x16, instrumentSize);
 				free(data);
 				data = tmp;
