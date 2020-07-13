@@ -1336,10 +1336,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	CastType castType = member->_type;
 	CastMemberInfo *castInfo = cast->getCastMemberInfo(id);
-	if (!castInfo) {
+	if (!castInfo)
 		warning("Lingo::getTheCast(): CastMember info for %d not found", id);
-		return d;
-	}
 
 	switch (field) {
 	case kTheBackColor:
@@ -1383,7 +1381,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheFileName:
-		d = Datum(castInfo->fileName);
+		if (castInfo)
+			d = Datum(castInfo->fileName);
 		break;
 	case kTheForeColor:
 		d.u.i = member->getForeColor();
@@ -1415,7 +1414,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheName:
-		d = Datum(castInfo->name);
+		if (castInfo)
+			d = Datum(castInfo->name);
 		break;
 	case kTheNumber:
 		d.u.i = id;
@@ -1450,7 +1450,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kTheScriptText:
-		d = Datum(castInfo->script);
+		if (castInfo)
+			d = Datum(castInfo->script);
 		break;
 	case kTheSize:
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
