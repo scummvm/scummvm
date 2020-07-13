@@ -1396,7 +1396,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		}
 
 		// Attach to handlers
-		
+
 		Common::String functionName;
 		if (0 <= nameIndex && nameIndex < (int16)archive->names.size()) {
 			functionName = archive->names[nameIndex];
@@ -1492,11 +1492,8 @@ void LingoArchive::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 	names.clear();
 
 	for (uint32 i = 0; i < count; i++) {
-		uint8 size = stream.readByte();
-		Common::String name;
-		for (uint8 j = 0; j < size; j++) {
-			name += stream.readByte();
-		}
+		Common::String name = stream.readPascalString();
+
 		names.push_back(name);
 		debugC(5, kDebugLoading, "%d: \"%s\"", i, name.c_str());
 	}
