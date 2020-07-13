@@ -211,7 +211,8 @@ void Stage::loadEXE(const Common::String movie) {
 		}
 	}
 
-	_mainArchive->setFileName(movie);
+	if (_mainArchive)
+		_mainArchive->setFileName(movie);
 }
 
 void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
