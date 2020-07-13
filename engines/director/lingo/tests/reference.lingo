@@ -1,0 +1,18 @@
+-- basic references
+set a = cast 1
+set a = cast "castname"
+set a = field 1
+set a = field "castname"
+set a = script "scriptname"
+set a = window "windowname"
+
+-- assign to field reference
+put "asdf" into field 1
+
+-- the property of reference
+put the text of cast "castname"
+put the visible of window "windowname"
+
+-- user-defined handlers/factories w/ reference name
+-- (mainly to test grammar, so no factory definition)
+set theWindow = Window(mNew,#noGrowDoc,"Window " & windowNumber)
