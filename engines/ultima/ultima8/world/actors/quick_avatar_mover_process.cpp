@@ -26,8 +26,10 @@
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 
@@ -124,6 +126,10 @@ void QuickAvatarMoverProcess::run() {
 	// Yes, i know, not entirely correct
 	avatar->collideMove(x + dxv, y + dyv, z + dzv, false, true);
 
+	if (GAME_IS_CRUSADER) {
+		// Keep the camera on the avatar while we're quick-moving.
+		CameraProcess::SetCameraProcess(new CameraProcess(x + dxv, y + dyv, z + dzv));
+	}
 
 	// Prevent avatar from running an idle animation while moving around
 	Ultima8Engine::get_instance()->getAvatarMoverProcess()->resetIdleTime();
