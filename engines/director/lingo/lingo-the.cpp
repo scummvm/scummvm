@@ -1192,7 +1192,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheCastNum:
 		if (d.asInt() != sprite->_castId) {
 			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+
 			sprite->setCast(d.asInt());
+			channel->_width = sprite->_width;
+			channel->_height = sprite->_height;
 		}
 		break;
 	case kTheConstraint:
