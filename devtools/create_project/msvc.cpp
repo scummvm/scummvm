@@ -85,47 +85,29 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	}
 
 	solution << "Global\n"
-	            "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n"
-	            "\t\tDebug|Win32 = Debug|Win32\n"
-	            "\t\tAnalysis|Win32 = Analysis|Win32\n"
-	            "\t\tLLVM|Win32 = LLVM|Win32\n"
-	            "\t\tRelease|Win32 = Release|Win32\n"
-	            "\t\tDebug|x64 = Debug|x64\n"
-	            "\t\tAnalysis|x64 = Analysis|x64\n"
-	            "\t\tLLVM|x64 = LLVM|x64\n"
-	            "\t\tRelease|x64 = Release|x64\n"
-	            "\t\tDebug|arm64 = Debug|arm64\n"
-	            "\t\tAnalysis|arm64 = Analysis|arm64\n"
-	            "\t\tLLVM|arm64 = LLVM|arm64\n"
-	            "\t\tRelease|arm64 = Release|arm64\n"
-	            "\tEndGlobalSection\n"
+	            "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n";
+
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		solution << "\t\tDebug|" << getMSVCConfigName(*arch) << " = Debug|" << getMSVCConfigName(*arch) << "\n"
+					"\t\tAnalysis|" << getMSVCConfigName(*arch) << " = Analysis|" << getMSVCConfigName(*arch) << "\n"
+					"\t\tLLVM|" << getMSVCConfigName(*arch) << " = LLVM|" << getMSVCConfigName(*arch) << "\n"
+					"\t\tRelease|" << getMSVCConfigName(*arch) << " = Release|" << getMSVCConfigName(*arch) << "\n";
+	}
+
+	solution << "\tEndGlobalSection\n"
 	            "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
 
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		solution << "\t\t{" << i->second << "}.Debug|Win32.ActiveCfg = Debug|Win32\n"
-		            "\t\t{" << i->second << "}.Debug|Win32.Build.0 = Debug|Win32\n"
-		            "\t\t{" << i->second << "}.Analysis|Win32.ActiveCfg = Analysis|Win32\n"
-		            "\t\t{" << i->second << "}.Analysis|Win32.Build.0 = Analysis|Win32\n"
-		            "\t\t{" << i->second << "}.LLVM|Win32.ActiveCfg = LLVM|Win32\n"
-		            "\t\t{" << i->second << "}.LLVM|Win32.Build.0 = LLVM|Win32\n"
-		            "\t\t{" << i->second << "}.Release|Win32.ActiveCfg = Release|Win32\n"
-		            "\t\t{" << i->second << "}.Release|Win32.Build.0 = Release|Win32\n"
-		            "\t\t{" << i->second << "}.Debug|x64.ActiveCfg = Debug|x64\n"
-		            "\t\t{" << i->second << "}.Debug|x64.Build.0 = Debug|x64\n"
-		            "\t\t{" << i->second << "}.Analysis|x64.ActiveCfg = Analysis|x64\n"
-		            "\t\t{" << i->second << "}.Analysis|x64.Build.0 = Analysis|x64\n"
-		            "\t\t{" << i->second << "}.LLVM|x64.ActiveCfg = LLVM|x64\n"
-		            "\t\t{" << i->second << "}.LLVM|x64.Build.0 = LLVM|x64\n"
-		            "\t\t{" << i->second << "}.Release|x64.ActiveCfg = Release|x64\n"
-		            "\t\t{" << i->second << "}.Release|x64.Build.0 = Release|x64\n"
-		            "\t\t{" << i->second << "}.Debug|arm64.ActiveCfg = Debug|arm64\n"
-		            "\t\t{" << i->second << "}.Debug|arm64.Build.0 = Debug|arm64\n"
-		            "\t\t{" << i->second << "}.Analysis|arm64.ActiveCfg = Analysis|arm64\n"
-		            "\t\t{" << i->second << "}.Analysis|arm64.Build.0 = Analysis|arm64\n"
-		            "\t\t{" << i->second << "}.LLVM|arm64.ActiveCfg = LLVM|arm64\n"
-		            "\t\t{" << i->second << "}.LLVM|arm64.Build.0 = LLVM|arm64\n"
-		            "\t\t{" << i->second << "}.Release|arm64.ActiveCfg = Release|arm64\n"
-		            "\t\t{" << i->second << "}.Release|arm64.Build.0 = Release|arm64\n";
+		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+			solution << "\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".ActiveCfg = Debug|" << getMSVCConfigName(*arch) << "\n"
+						"\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".Build.0 = Debug|" << getMSVCConfigName(*arch) << "\n"
+						"\t\t{" << i->second << "}.Analysis|" << getMSVCConfigName(*arch) << ".ActiveCfg = Analysis|" << getMSVCConfigName(*arch) << "\n"
+						"\t\t{" << i->second << "}.Analysis|" << getMSVCConfigName(*arch) << ".Build.0 = Analysis|" << getMSVCConfigName(*arch) << "\n"
+						"\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".ActiveCfg = LLVM|" << getMSVCConfigName(*arch) << "\n"
+						"\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".Build.0 = LLVM|" << getMSVCConfigName(*arch) << "\n"
+						"\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".ActiveCfg = Release|" << getMSVCConfigName(*arch) << "\n"
+						"\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".Build.0 = Release|" << getMSVCConfigName(*arch) << "\n";
+		}
 	}
 
 	solution << "\tEndGlobalSection\n"
@@ -141,18 +123,12 @@ void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 
 	// Create the configuration property files (for Debug and Release with 32 and 64bits versions)
 	// Note: we use the debug properties for the analysis configuration
-	createBuildProp(setup, true, ARCH_AMD64, "Release");
-	createBuildProp(setup, true, ARCH_X86, "Release");
-	createBuildProp(setup, true, ARCH_ARM64, "Release");
-	createBuildProp(setup, false, ARCH_AMD64, "Debug");
-	createBuildProp(setup, false, ARCH_X86, "Debug");
-	createBuildProp(setup, false, ARCH_ARM64, "Debug");
-	createBuildProp(setup, false, ARCH_AMD64, "Analysis");
-	createBuildProp(setup, false, ARCH_X86, "Analysis");
-	createBuildProp(setup, false, ARCH_ARM64, "Analysis");
-	createBuildProp(setup, false, ARCH_AMD64, "LLVM");
-	createBuildProp(setup, false, ARCH_X86, "LLVM");
-	createBuildProp(setup, false, ARCH_ARM64, "LLVM");
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		createBuildProp(setup, true, *arch, "Release");
+		createBuildProp(setup, false, *arch, "Debug");
+		createBuildProp(setup, false, *arch, "Analysis");
+		createBuildProp(setup, false, *arch, "LLVM");
+	}
 }
 
 void MSVCProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
@@ -161,41 +137,22 @@ void MSVCProvider::addResourceFiles(const BuildSetup &setup, StringList &include
 }
 
 void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
-	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(ARCH_X86) + getPropertiesExtension()).c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(ARCH_X86) + getPropertiesExtension() + "\" for writing");
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(*arch) + getPropertiesExtension()).c_str());
+		if (!properties)
+			error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(*arch) + getPropertiesExtension() + "\" for writing");
 
-	outputGlobalPropFile(setup, properties, ARCH_X86, setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(ARCH_AMD64) + getPropertiesExtension()).c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(ARCH_AMD64) + getPropertiesExtension() + "\" for writing");
-
-	BuildSetup amd64setup = setup;
-	std::map<MSVC_Architecture, StringList>::const_iterator amd64_disabled_features_it = _arch_disabled_features.find(ARCH_AMD64);
-	if (amd64_disabled_features_it != _arch_disabled_features.end()) {
-		for (StringList::const_iterator feature = amd64_disabled_features_it->second.begin(); feature != amd64_disabled_features_it->second.end(); ++feature) {
-			amd64setup = removeFeatureFromSetup(amd64setup, *feature);
+		BuildSetup archSetup = setup;
+		std::map<MSVC_Architecture, StringList>::const_iterator arch_disabled_features_it = _arch_disabled_features.find(*arch);
+		if (arch_disabled_features_it != _arch_disabled_features.end()) {
+			for (StringList::const_iterator feature = arch_disabled_features_it->second.begin(); feature != arch_disabled_features_it->second.end(); ++feature) {
+				archSetup = removeFeatureFromSetup(archSetup, *feature);
+			}
 		}
+
+		outputGlobalPropFile(archSetup, properties, *arch, archSetup.defines, convertPathToWin(archSetup.filePrefix), archSetup.runBuildEvents);
+		properties.close();
 	}
-
-	outputGlobalPropFile(amd64setup, properties, ARCH_AMD64, amd64setup.defines, convertPathToWin(amd64setup.filePrefix), amd64setup.runBuildEvents);
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(ARCH_ARM64) + getPropertiesExtension()).c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(ARCH_ARM64) + getPropertiesExtension() + "\" for writing");
-
-	BuildSetup arm64setup = setup;
-	std::map<MSVC_Architecture, StringList>::const_iterator arm64_disabled_features_it = _arch_disabled_features.find(ARCH_ARM64);
-	if (arm64_disabled_features_it != _arch_disabled_features.end()) {
-		for (StringList::const_iterator feature = arm64_disabled_features_it->second.begin(); feature != arm64_disabled_features_it->second.end(); ++feature) {
-			arm64setup = removeFeatureFromSetup(arm64setup, *feature);
-		}
-	}
-	outputGlobalPropFile(arm64setup, properties, ARCH_ARM64, arm64setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
-	properties.close();
 }
 
 std::string MSVCProvider::getPreBuildEvent() const {

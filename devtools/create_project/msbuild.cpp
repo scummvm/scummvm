@@ -35,7 +35,6 @@ namespace CreateProjectTool {
 MSBuildProvider::MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
 	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
 
-	// NOTE: different order
 	_archs.push_back(ARCH_X86);
 	_archs.push_back(ARCH_AMD64);
 	_archs.push_back(ARCH_ARM64);
@@ -85,23 +84,23 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
-		outputConfiguration(project, "Debug", getMSVCConfigName(*i));
-		outputConfiguration(project, "Analysis", getMSVCConfigName(*i));
-		outputConfiguration(project, "LLVM", getMSVCConfigName(*i));
-		outputConfiguration(project, "Release", getMSVCConfigName(*i));
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		outputConfiguration(project, "Debug", getMSVCConfigName(*arch));
+		outputConfiguration(project, "Analysis", getMSVCConfigName(*arch));
+		outputConfiguration(project, "LLVM", getMSVCConfigName(*arch));
+		outputConfiguration(project, "Release", getMSVCConfigName(*arch));
 	}
 	project << "\t</ItemGroup>\n";
 
 	// Project name & Guid
 	project << "\t<PropertyGroup Label=\"Globals\">\n"
-		"\t\t<ProjectGuid>{" << uuid << "}</ProjectGuid>\n"
-		"\t\t<RootNamespace>" << name << "</RootNamespace>\n"
-		"\t\t<Keyword>Win32Proj</Keyword>\n"
-		"\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n";
+			   "\t\t<ProjectGuid>{" << uuid << "}</ProjectGuid>\n"
+			   "\t\t<RootNamespace>" << name << "</RootNamespace>\n"
+			   "\t\t<Keyword>Win32Proj</Keyword>\n"
+			   "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
-		project << "\t\t<VcpkgTriplet Condition=\"'$(Platform)' == '" << getMSVCConfigName(*i) << "'\">" << getMSVCArchName(*i) << "-windows</VcpkgTriplet>";
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		project << "\t\t<VcpkgTriplet Condition=\"'$(Platform)' == '" << getMSVCConfigName(*arch) << "'\">" << getMSVCArchName(*arch) << "-windows</VcpkgTriplet>";
 	}
 
 	project << "\t</PropertyGroup>\n";
@@ -109,39 +108,39 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
-		outputConfigurationType(setup, project, name, "Release|" + getMSVCConfigName(*i), _msvcVersion.toolsetMSVC);
-		outputConfigurationType(setup, project, name, "Analysis" + getMSVCConfigName(*i), _msvcVersion.toolsetMSVC);
-		outputConfigurationType(setup, project, name, "LLVM|" + getMSVCConfigName(*i), _msvcVersion.toolsetLLVM);
-		outputConfigurationType(setup, project, name, "Debug|" + getMSVCConfigName(*i), _msvcVersion.toolsetMSVC);
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		outputConfigurationType(setup, project, name, "Release|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
+		outputConfigurationType(setup, project, name, "Analysis" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
+		outputConfigurationType(setup, project, name, "LLVM|" + getMSVCConfigName(*arch), _msvcVersion.toolsetLLVM);
+		outputConfigurationType(setup, project, name, "Debug|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
 	}
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
 	           "\t</ImportGroup>\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
-		outputProperties(project, "Release|" + getMSVCConfigName(*i), setup.projectDescription + "_Release" + getMSVCArchName(*i) + ".props");
-		outputProperties(project, "Analysis|" + getMSVCConfigName(*i), setup.projectDescription + "_Analysis" + getMSVCArchName(*i) + ".props");
-		outputProperties(project, "LLVM|" + getMSVCConfigName(*i), setup.projectDescription + "_LLVM" + getMSVCArchName(*i) + ".props");
-		outputProperties(project, "Debug|" + getMSVCConfigName(*i), setup.projectDescription + "_Debug" + getMSVCArchName(*i) + ".props");
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
+		outputProperties(project, "Release|" + getMSVCConfigName(*arch), setup.projectDescription + "_Release" + getMSVCArchName(*arch) + ".props");
+		outputProperties(project, "Analysis|" + getMSVCConfigName(*arch), setup.projectDescription + "_Analysis" + getMSVCArchName(*arch) + ".props");
+		outputProperties(project, "LLVM|" + getMSVCConfigName(*arch), setup.projectDescription + "_LLVM" + getMSVCArchName(*arch) + ".props");
+		outputProperties(project, "Debug|" + getMSVCConfigName(*arch), setup.projectDescription + "_Debug" + getMSVCArchName(*arch) + ".props");
 	}
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
 
 	// Project-specific settings (analysis uses debug properties)
-	for (std::list<MSVC_Architecture>::const_iterator i = _archs.begin(); i != _archs.end(); ++i) {
+	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 		BuildSetup archsetup = setup;
-		std::map<MSVC_Architecture, StringList>::const_iterator disabled_features_it = _arch_disabled_features.find(*i);
+		std::map<MSVC_Architecture, StringList>::const_iterator disabled_features_it = _arch_disabled_features.find(*arch);
 		if (disabled_features_it != _arch_disabled_features.end()) {
 			for (StringList::const_iterator j = disabled_features_it->second.begin(); j != disabled_features_it->second.end(); ++j) {
 				archsetup = removeFeatureFromSetup(archsetup, *j);
 			}
 		}
-		outputProjectSettings(project, name, archsetup, false, *i, "Debug");
-		outputProjectSettings(project, name, archsetup, false, *i, "Analysis");
-		outputProjectSettings(project, name, archsetup, false, *i, "LLVM");
-		outputProjectSettings(project, name, archsetup, true, *i, "Release");
+		outputProjectSettings(project, name, archsetup, false, *arch, "Debug");
+		outputProjectSettings(project, name, archsetup, false, *arch, "Analysis");
+		outputProjectSettings(project, name, archsetup, false, *arch, "LLVM");
+		outputProjectSettings(project, name, archsetup, true, *arch, "Release");
 	}
 
 	// Files
