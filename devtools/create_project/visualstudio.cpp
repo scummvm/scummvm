@@ -79,19 +79,19 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 			libraries += ' ' + *i + ".lib";
 
 		// Win32
-		outputConfiguration(project, setup, libraries, "Debug", MSVC_Architecture::ARCH_X86);
-		outputConfiguration(project, setup, libraries, "Analysis", MSVC_Architecture::ARCH_X86);
-		outputConfiguration(project, setup, libraries, "LLVM", MSVC_Architecture::ARCH_X86);
-		outputConfiguration(project, setup, libraries, "Release", MSVC_Architecture::ARCH_X86);
+		outputConfiguration(project, setup, libraries, "Debug", ARCH_X86);
+		outputConfiguration(project, setup, libraries, "Analysis", ARCH_X86);
+		outputConfiguration(project, setup, libraries, "LLVM", ARCH_X86);
+		outputConfiguration(project, setup, libraries, "Release", ARCH_X86);
 
 		// x64
 		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
 		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		outputConfiguration(project, setup, libraries, "Debug", MSVC_Architecture::ARCH_AMD64);
-		outputConfiguration(project, setup, libraries, "Analysis", MSVC_Architecture::ARCH_AMD64);
-		outputConfiguration(project, setup, libraries, "LLVM", MSVC_Architecture::ARCH_AMD64); // NOTE: it was win32-x64 here
-		outputConfiguration(project, setup, libraries, "Release", MSVC_Architecture::ARCH_AMD64);
+		outputConfiguration(project, setup, libraries, "Debug", ARCH_AMD64);
+		outputConfiguration(project, setup, libraries, "Analysis", ARCH_AMD64);
+		outputConfiguration(project, setup, libraries, "LLVM", ARCH_AMD64); // NOTE: it was win32-x64 here
+		outputConfiguration(project, setup, libraries, "Release", ARCH_AMD64);
 
 	} else {
 		bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
@@ -299,7 +299,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 		              "\t\tRuntimeLibrary=\"1\"\n"
 		              "\t\tEnableFunctionLevelLinking=\"true\"\n"
 		              "\t\tWarnAsError=\"false\"\n"
-		              "\t\tDebugInformationFormat=\"" << (arch == MSVC_Architecture::ARCH_X86 ? "3" : "4") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
+		              "\t\tDebugInformationFormat=\"" << (arch == ARCH_X86 ? "3" : "4") << "\"\n" // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
 		              "\t\tAdditionalOption=\"" << (configuration == "Analysis" ? "/analyze" : "") << "\"\n"
 		              "\t/>\n"
 		              "\t<Tool\n"

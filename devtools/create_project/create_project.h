@@ -304,7 +304,7 @@ struct MSVCVersion {
 };
 typedef std::list<MSVCVersion> MSVCList;
 
-enum class MSVC_Architecture {
+enum MSVC_Architecture {
 	ARCH_ARM64,
 	ARCH_X86,
 	ARCH_AMD64
@@ -341,7 +341,7 @@ int getInstalledMSVC();
  * @param lib The link library as provided by ScummVM libs.
  * @return Canonical link library.
  */
-std::string getCanonicalLibName(std::string lib);
+std::string getCanonicalLibName(const std::string &lib);
 
 /**
  * Removes given feature from setup.

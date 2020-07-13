@@ -25,8 +25,6 @@
 
 #include "create_project.h"
 
-extern std::map<MSVC_Architecture, StringList> s_arch_disabled_features;
-
 namespace CreateProjectTool {
 
 class MSVCProvider : public ProjectProvider {
@@ -38,6 +36,9 @@ protected:
 
 	StringList _enableLanguageExtensions;
 	StringList _disableEditAndContinue;
+
+	std::list<MSVC_Architecture> _archs;
+	std::map<MSVC_Architecture, StringList> _arch_disabled_features;
 
 	void createWorkspace(const BuildSetup &setup);
 
