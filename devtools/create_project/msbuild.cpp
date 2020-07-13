@@ -77,8 +77,10 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
                                         const StringList &includeList, const StringList &excludeList) {
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
-	if (!project)
+	if (!project || !project.is_open()) {
 		error("Could not open \"" + projectFile + "\" for writing");
+		return;
+	}
 
 	project << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
@@ -207,8 +209,10 @@ void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::stri
 
 	const std::string filtersFile = setup.outputDir + '/' + name + getProjectExtension() + ".filters";
 	std::ofstream filters(filtersFile.c_str());
-	if (!filters)
+	if (!filters || !filters.is_open()) {
 		error("Could not open \"" + filtersFile + "\" for writing");
+		return;
+	}
 
 	filters << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	           "<Project ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n";
@@ -398,8 +402,10 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	const std::string outputBitness = (arch == ARCH_X86 ? "32" : "64");
 
 	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension()).c_str());
-	if (!properties)
+	if (!properties || !properties.is_open()) {
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension() + "\" for writing");
+		return;
+	}
 
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
