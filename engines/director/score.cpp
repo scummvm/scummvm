@@ -409,15 +409,16 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		Sprite *currentSprite = channel->_sprite;
 		Sprite *nextSprite = _frames[frameId]->_sprites[i];
 
-		bool needsUpdate = channel->isDirty(nextSprite) || mode == kRenderForceUpdate;
+		if (channel->isDirty(nextSprite) || mode == kRenderForceUpdate) {
+			if (!currentSprite->_trails)
+				_stage->addDirtyRect(channel->getBbox());
 
-		if (needsUpdate && !currentSprite->_trails)
+			channel->setClean(nextSprite, i);
 			_stage->addDirtyRect(channel->getBbox());
-
-		channel->setClean(nextSprite, i);
-
-		if (needsUpdate)
-			_stage->addDirtyRect(channel->getBbox());
+		} else if (!channel->_sprite->_puppet) {
+			// Updating scripts, etc. does not require a full re-render
+			channel->_sprite->_scriptId = nextSprite->_scriptId;
+		}
 	}
 }
 
