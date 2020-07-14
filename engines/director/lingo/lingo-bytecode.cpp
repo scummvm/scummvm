@@ -914,14 +914,13 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		}
 		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", lctxIndex, factoryName.c_str());
 
-		sc = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
+		sc = _assemblyContext = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
 		codeFactory(factoryName);
 	} else {
 		debugC(1, kDebugCompile, "Add V4 script %d: maybe %s %d", lctxIndex, scriptType2str(scriptType), castId);
 
-		sc = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
+		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
 	}
-	_assemblyContext = sc;
 
 	// initialise each property
 	if ((uint32)stream.size() < propertiesOffset + propertiesCount * 2) {
