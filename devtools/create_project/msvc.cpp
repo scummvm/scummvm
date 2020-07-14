@@ -20,13 +20,12 @@
  *
  */
 
-#include "config.h"
 #include "msvc.h"
+#include "config.h"
 
-#include <fstream>
 #include <algorithm>
 #include <cstring>
-
+#include <fstream>
 
 namespace CreateProjectTool {
 
@@ -34,10 +33,10 @@ namespace CreateProjectTool {
 // MSVC Provider (Base class)
 //////////////////////////////////////////////////////////////////////////
 MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
-	: ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
+    : ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
 
 	_enableLanguageExtensions = tokenize(ENABLE_LANGUAGE_EXTENSIONS, ',');
-	_disableEditAndContinue   = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
+	_disableEditAndContinue = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
 
 	// NASM not supported for Windows on AMD64 target
 	StringList amd64_disabled_features;
@@ -98,9 +97,9 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 		solution << "\t\tDebug|" << getMSVCConfigName(*arch) << " = Debug|" << getMSVCConfigName(*arch) << "\n"
-					"\t\tAnalysis|" << getMSVCConfigName(*arch) << " = Analysis|" << getMSVCConfigName(*arch) << "\n"
-					"\t\tLLVM|" << getMSVCConfigName(*arch) << " = LLVM|" << getMSVCConfigName(*arch) << "\n"
-					"\t\tRelease|" << getMSVCConfigName(*arch) << " = Release|" << getMSVCConfigName(*arch) << "\n";
+		         << "\t\tAnalysis|" << getMSVCConfigName(*arch) << " = Analysis|" << getMSVCConfigName(*arch) << "\n"
+		         << "\t\tLLVM|" << getMSVCConfigName(*arch) << " = LLVM|" << getMSVCConfigName(*arch) << "\n"
+		         << "\t\tRelease|" << getMSVCConfigName(*arch) << " = Release|" << getMSVCConfigName(*arch) << "\n";
 	}
 
 	solution << "\tEndGlobalSection\n"
@@ -109,21 +108,21 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
 			solution << "\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".ActiveCfg = Debug|" << getMSVCConfigName(*arch) << "\n"
-						"\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".Build.0 = Debug|" << getMSVCConfigName(*arch) << "\n"
-						"\t\t{" << i->second << "}.Analysis|" << getMSVCConfigName(*arch) << ".ActiveCfg = Analysis|" << getMSVCConfigName(*arch) << "\n"
-						"\t\t{" << i->second << "}.Analysis|" << getMSVCConfigName(*arch) << ".Build.0 = Analysis|" << getMSVCConfigName(*arch) << "\n"
-						"\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".ActiveCfg = LLVM|" << getMSVCConfigName(*arch) << "\n"
-						"\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".Build.0 = LLVM|" << getMSVCConfigName(*arch) << "\n"
-						"\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".ActiveCfg = Release|" << getMSVCConfigName(*arch) << "\n"
-						"\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".Build.0 = Release|" << getMSVCConfigName(*arch) << "\n";
+			         << "\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".Build.0 = Debug|" << getMSVCConfigName(*arch) << "\n"
+			         << "\t\t{" << i->second << "}.Analysis|" << getMSVCConfigName(*arch) << ".ActiveCfg = Analysis|" << getMSVCConfigName(*arch) << "\n"
+			         << "\t\t{" << i->second << "}.Analysis|" << getMSVCConfigName(*arch) << ".Build.0 = Analysis|" << getMSVCConfigName(*arch) << "\n"
+			         << "\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".ActiveCfg = LLVM|" << getMSVCConfigName(*arch) << "\n"
+			         << "\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".Build.0 = LLVM|" << getMSVCConfigName(*arch) << "\n"
+			         << "\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".ActiveCfg = Release|" << getMSVCConfigName(*arch) << "\n"
+			         << "\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".Build.0 = Release|" << getMSVCConfigName(*arch) << "\n";
 		}
 	}
 
 	solution << "\tEndGlobalSection\n"
-	            "\tGlobalSection(SolutionProperties) = preSolution\n"
-	            "\t\tHideSolutionNode = FALSE\n"
-	            "\tEndGlobalSection\n"
-	            "EndGlobal\n";
+	         << "\tGlobalSection(SolutionProperties) = preSolution\n"
+	         << "\t\tHideSolutionNode = FALSE\n"
+	         << "\tEndGlobalSection\n"
+	         << "EndGlobal\n";
 }
 
 void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
@@ -209,4 +208,4 @@ std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildS
 	return cmdLine;
 }
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool

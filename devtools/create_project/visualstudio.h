@@ -29,7 +29,7 @@ namespace CreateProjectTool {
 
 class VisualStudioProvider : public MSVCProvider {
 public:
-	VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc);
+	VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc);
 
 protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
@@ -39,7 +39,7 @@ protected:
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 
 	void writeFileToProject(std::ofstream &projectFile, const std::string &filePath, MSVC_Architecture arch,
-							const std::string &indentString, const std::string &toolLine);
+	                        const std::string &indentString, const std::string &toolLine);
 
 	void writeReferences(const BuildSetup &setup, std::ofstream &output);
 
@@ -55,6 +55,6 @@ protected:
 	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const MSVC_Architecture arch);
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_VISUALSTUDIO_H

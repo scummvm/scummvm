@@ -107,6 +107,6 @@ protected:
 	std::string getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup) const;
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_MSVC_H

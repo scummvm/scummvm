@@ -56,8 +56,8 @@ private:
 		std::string filter;
 		std::string prefix;
 
-		bool operator<(const FileEntry& rhs) const {
-			return path.compare(rhs.path) == -1;   // Not exactly right for alphabetical order, but good enough
+		bool operator<(const FileEntry &rhs) const {
+			return path.compare(rhs.path) == -1; // Not exactly right for alphabetical order, but good enough
 		}
 	};
 	typedef std::list<FileEntry> FileEntries;
@@ -76,6 +76,6 @@ private:
 	void outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action);
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_MSBUILD_H
