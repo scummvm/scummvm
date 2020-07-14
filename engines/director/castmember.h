@@ -219,6 +219,8 @@ struct CastMemberInfo {
 	Common::String directory;
 	Common::String fileName;
 	Common::String type;
+	Common::String modifiedBy;
+	Common::String comments;
 };
 
 struct Label {

@@ -833,6 +833,12 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		default:
 			warning("Cast::loadCastData(): extra %d strings", castStrings.size() - 5);
 			// fallthrough
+		case 7:
+			ci->comments = castStrings[6];
+			// fallthrough
+		case 6:
+			ci->modifiedBy = castStrings[5];
+			// fallthrough
 		case 5:
 			ci->type = castStrings[4];
 			// fallthrough
