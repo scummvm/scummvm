@@ -186,7 +186,7 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
 	Common::Array<DataEntry> fileInfoStrings = Movie::loadDataEntries(stream);
-	_script = fileInfoStrings[0].readString();
+	_script = Common::String((const char *)fileInfoStrings[0].data, fileInfoStrings[0].len);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		_cast->dumpScript(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
@@ -197,7 +197,25 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	_cast->_movieScriptCount++;
 	_changedBy = fileInfoStrings[1].readString();
 	_createdBy = fileInfoStrings[2].readString();
-	_directory = fileInfoStrings[3].readString();
+	_createdBy = fileInfoStrings[3].readString();
+	uint16 preload;
+	if (stream.isBE())
+		preload = READ_BE_INT16(fileInfoStrings[4].data);
+	else
+		preload = READ_LE_INT16(fileInfoStrings[4].data);
+
+	if (debugChannelSet(3, kDebugLoading)) {
+		debug("VWFI: script: '%s'", _script.c_str());
+		debug("VWFI: changed by: '%s'", _changedBy.c_str());
+		debug("VWFI: created by: '%s'", _createdBy.c_str());
+		debug("VWFI: directory: '%s'", _createdBy.c_str());
+		debug("VWFI: preload: %d (0x%x)", preload, preload);
+
+		for (uint i = 5; i < fileInfoStrings.size(); i++) {
+			debug("VWFI: entry %d (%d bytes)", i, fileInfoStrings[i].len);
+			Common::hexdump(fileInfoStrings[i].data, fileInfoStrings[i].len);
+		}
+	}
 }
 
 void Movie::clearSharedCast() {
