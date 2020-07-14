@@ -91,7 +91,8 @@ Common::Error WaynesWorldEngine::run() {
 	// g_system->copyRectToScreen(pcx->getSurface()->getPixels(), pcx->getSurface()->pitch, 0, 0, pcx->getSurface()->w, pcx->getSurface()->h);
 	// delete pcx;
 
-	drawImageToScreen("m00/winter", 0, 151);
+	// drawImageToScreen("m00/winter", 0, 151);
+	drawInterface(4);
 	drawImageToScreen("r00/backg", 0, 0);
 
 	while (!shouldQuit()) {
@@ -258,6 +259,78 @@ void WaynesWorldEngine::drawRoomImageToScreen(const char *filename, int x, int y
 
 void WaynesWorldEngine::drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y) {
     drawImageToSurfaceIntern(filename, destSurface, x, y, false, true);
+}
+
+void WaynesWorldEngine::drawInterface(int verbNum) {
+    if (_currentActorNum != 0) {
+        drawImageToScreen("m00/winter", 0, 151);
+    } else {
+        drawImageToScreen("m00/ginter", 0, 151);
+    }
+    selectVerbNumber2(_verbNumber2 * 24 + 3);
+    _verbNumber = verbNum;
+    selectVerbNumber(_verbNumber * 24 + 3);
+}
+
+void WaynesWorldEngine::selectVerbNumber2(int x) {
+    // sysMouseDriver(2);
+    _screen->frameRect(_verbNumber2 * 24 + 3, 165, _verbNumber2 * 24 + 3 + 23, 198, 0);
+    _verbNumber2 = (x - 3) / 24;
+    _screen->frameRect(_verbNumber2 * 24 + 3, 165, _verbNumber2 * 24 + 3 + 23, 198, 10);
+    // sysMouseDriver(1);
+}
+
+void WaynesWorldEngine::selectVerbNumber(int x) {
+    int selectedButtonIndex = (x - 3) / 24;
+    _firstObjectNumber = -1;
+    if (selectedButtonIndex > 10) {
+        if (_mouseClickY > 182) {
+            if (x < 290) {
+                drawInventory();
+                refreshActors();
+            } else {
+                // TODO r0_handleRoomEvent1();
+            }
+        }
+    } else if (selectedButtonIndex == 0) {
+        changeActor();
+    } else {
+        _verbNumber = selectedButtonIndex;
+        drawVerbLine(_verbNumber, -4, 0);
+        if (_verbNumber == 8 && _inventoryItemsCount == 0) {
+            drawInventory();
+            refreshActors();
+        }
+    }
+}
+
+void WaynesWorldEngine::changeActor() {
+    if (_currentRoomNumber == 31)
+        return;
+    if (_currentActorNum != 0) {
+        _currentActorNum = 0;
+    } else {
+        _currentActorNum = 1;
+    }
+    drawInterface(_verbNumber);
+    _isTextVisible = false;
+    refreshInventory(true);
+}
+
+void WaynesWorldEngine::drawVerbLine(int verbNumber, int objectNumber, const char *objectName) {
+	// TODO
+}
+
+void WaynesWorldEngine::refreshInventory(bool doRefresh) {
+	// TODO
+}
+
+void WaynesWorldEngine::drawInventory() {
+	// TODO
+}
+
+void WaynesWorldEngine::refreshActors() {
+	// TODO
 }
 
 } // End of namespace WaynesWorld

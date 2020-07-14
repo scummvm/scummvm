@@ -69,10 +69,6 @@ private:
 public:
 	Common::RandomSource *_random;
 
-	int _mouseX, _mouseY;
-	uint _mouseButtons;
-	Common::KeyCode _keyCode;
-
 	void updateEvents();
 	int getRandom(int max);
 
@@ -83,6 +79,35 @@ public:
 
 	// Room
 	Common::String _roomName;
+
+	// Input
+	int _mouseX, _mouseY;
+	int _mouseClickY, _mouseClickX;
+	// uint _mouseButtons;
+	uint _mouseClickButtons;
+	Common::KeyCode _keyCode;
+
+	// Text
+	int _currentTextX, _currentTextY;
+	bool _isTextVisible;
+
+	// Game
+	int _gameState;
+	int _currentActorNum;
+	int _currentRoomNumber;
+	int _verbNumber;
+	int _verbNumber2;
+	int _objectNumber;
+	int _hoverObjectNumber;
+	int _firstObjectNumber;
+	char _firstObjectName[50];
+	int _roomEventNum;
+
+	// Inventory
+	int _inventoryItemsCount;
+	int _inventoryItemsObjectMap[50];
+	int _wayneInventory[50];
+	int _garthInventory[50];
 
 	// Image loading
 	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
@@ -102,6 +127,20 @@ public:
 	void drawRoomImageToBackgroundTransparent(const char *filename, int x, int y);
 	void drawRoomImageToScreen(const char *filename, int x, int y);
 	void drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y);
+
+	// Interface
+	void drawInterface(int verbNum);
+	void selectVerbNumber2(int x);
+	void selectVerbNumber(int x);
+	void changeActor();
+	void drawVerbLine(int verbNumber, int objectNumber, const char *objectName);
+
+	// Inventory
+	void refreshInventory(bool doRefresh);
+	void drawInventory();
+
+	// Actors and animations
+	void refreshActors();
 
 	// Savegame API
 
