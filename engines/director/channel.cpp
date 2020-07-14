@@ -133,6 +133,10 @@ bool Channel::isStretched() {
 		(_sprite->_width != _width || _sprite->_height != _height);
 }
 
+bool Channel::isEmpty() {
+	return (_sprite->_spriteType == kInactiveSprite);
+}
+
 Common::Rect Channel::getBbox(bool unstretched) {
 
 	Common::Rect result(unstretched ? _sprite->_width : _width,

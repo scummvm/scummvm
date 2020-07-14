@@ -467,9 +467,10 @@ bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
 Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
 	Common::List<Channel *>intersections;
 
-	for (uint i = 0; i < _channels.size(); i++)
-		if (!r.findIntersectingRect(_channels[i]->getBbox()).isEmpty())
+	for (uint i = 0; i < _channels.size(); i++) {
+		if (!_channels[i]->isEmpty() && !r.findIntersectingRect(_channels[i]->getBbox()).isEmpty())
 			intersections.push_back(_channels[i]);
+	}
 
 	return intersections;
 }
