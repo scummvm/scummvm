@@ -1072,7 +1072,7 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 	Common::Array<DataEntry> castStrings = Movie::loadDataEntries(stream);
 	CastMemberInfo *ci = new CastMemberInfo();
 
-	ci->script = castStrings[0].readString();
+	ci->script = Common::String((const char *)castStrings[0].data, castStrings[0].len);
 
 	if (!ci->script.empty() && ConfMan.getBool("dump_scripts"))
 		dumpScript(ci->script.c_str(), kCastScript, id);
