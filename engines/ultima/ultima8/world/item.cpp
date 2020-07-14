@@ -1227,17 +1227,17 @@ uint32 Item::callUsecodeEvent_release() {                       // event 9
 	return callUsecodeEvent(9);     // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_equip() {                           // event A
+uint32 Item::callUsecodeEvent_equip() {                         // event A
 	return callUsecodeEvent(0xA); // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_npcNearby(ObjId npc) {                           // event A
+uint32 Item::callUsecodeEvent_equipWithParam(ObjId param) {     // event A
 	DynamicUCStack  arg_stack(2);
-	arg_stack.push2(npc);
+	arg_stack.push2(param);
 	return callUsecodeEvent(0xA, arg_stack.access(), 2);
 }
 
-uint32 Item::callUsecodeEvent_unequip() {                           // event B
+uint32 Item::callUsecodeEvent_unequip() {                       // event B
 	return callUsecodeEvent(0xB); // CONSTANT
 }
 
@@ -2488,9 +2488,10 @@ uint32 Item::I_gotHit(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_equip(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
+	ARG_UINT16(unk);
 	if (!item) return 0;
 
-	return item->callUsecodeEvent_equip();
+	return item->callUsecodeEvent_equipWithParam(unk);
 }
 
 uint32 Item::I_unequip(const uint8 *args, unsigned int /*argsize*/) {

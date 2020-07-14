@@ -401,7 +401,7 @@ public:
 	uint32 callUsecodeEvent_schedule(uint32 time);              // event 8
 	uint32 callUsecodeEvent_release();                          // event 9
 	uint32 callUsecodeEvent_equip();                            // event A
-	uint32 callUsecodeEvent_npcNearby(ObjId npc);               // event A
+	uint32 callUsecodeEvent_equipWithParam(ObjId param);        // event A
 	uint32 callUsecodeEvent_unequip();                          // event B
 	uint32 callUsecodeEvent_combine();                          // event C
 	uint32 callUsecodeEvent_enterFastArea();                    // event F

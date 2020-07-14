@@ -1172,6 +1172,7 @@ void Actor::notifyNearbyItems() {
 	For now this is a temporary hack to trigger some usecode events so we can
 	debug more of the game.
 	 */
+	/*
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
@@ -1181,9 +1182,9 @@ void Actor::notifyNearbyItems() {
 		Item *item = getItem(uclist.getuint16(i));
 		if (_notifiedItems.find(item->getObjId()) != _notifiedItems.end())
 			continue;
-		item->callUsecodeEvent_npcNearby(_objId);
+		item->callUsecodeEvent_equipWithParam(_objId);
 		_notifiedItems.insert(item->getObjId());
-	}
+	}*/
 }
 
 bool Actor::areEnemiesNear() {
