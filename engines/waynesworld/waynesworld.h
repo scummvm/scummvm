@@ -100,7 +100,7 @@ public:
 	int _objectNumber;
 	int _hoverObjectNumber;
 	int _firstObjectNumber;
-	char _firstObjectName[50];
+	Common::String _firstObjectName;
 	int _roomEventNum;
 
 	// Inventory

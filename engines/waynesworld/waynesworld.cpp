@@ -318,7 +318,60 @@ void WaynesWorldEngine::changeActor() {
 }
 
 void WaynesWorldEngine::drawVerbLine(int verbNumber, int objectNumber, const char *objectName) {
-	// TODO
+
+	// TODO Move to StaticData class/file
+	static const char *kVerbStrings[] = {
+		"",
+		"pick up"
+		"look at"
+		"use"
+		"talk to"
+		"push"
+		"pull"
+		"extreme closeup of"
+		"give"
+		"open"
+		"close"
+	};
+
+	if (_hoverObjectNumber == objectNumber || verbNumber == -1)
+		return;
+
+	_hoverObjectNumber = objectNumber;
+
+	Common::String verbLine;
+
+	if (objectName) {
+		if (verbNumber == 8) {
+			if (_firstObjectNumber == -1) {
+				verbLine = Common::String::format("give %s to", objectName);
+			} else {
+				verbLine = Common::String::format("give %s to %s", _firstObjectName.c_str(), objectName);
+			}
+		} else if (verbNumber == 3) {
+			if (_firstObjectNumber == -1) {
+				verbLine = Common::String::format("use %s", objectName);
+			} else {
+				verbLine = Common::String::format("use %s on %s", _firstObjectName.c_str(), objectName);
+			}
+		} else {
+			verbLine = Common::String::format("%s %s", kVerbStrings[verbNumber], objectName);
+		}
+	} else {
+		if (_firstObjectNumber == -1) {
+			verbLine = Common::String::format("%s", kVerbStrings[verbNumber]);
+		} else if (verbNumber == 8) {
+			verbLine = Common::String::format("give %s to", _firstObjectName.c_str());
+		} else if (verbNumber == 3) {
+			verbLine = Common::String::format("use %s", _firstObjectName.c_str());
+		}
+	}
+
+	_screen->fillRect(3, 162, 316, 153, 0);
+	// TODO Implement text drawing and draw it
+	// txSetColor(0, 6);
+	// txOutTextXY(154, 5, verbLine);
+	debug("verbLine: [%s]", verbLine.c_str());
 }
 
 void WaynesWorldEngine::refreshInventory(bool doRefresh) {
