@@ -444,12 +444,12 @@ Graphics::TextAlign TextCastMember::getAlignment() {
 }
 
 void TextCastMember::importStxt(const Stxt *stxt) {
-	_fontId = stxt->_fontId;
-	_textSlant = stxt->_textSlant;
-	_fontSize = stxt->_fontSize;
-	_fgpalinfo1 = stxt->_palinfo1;
-	_fgpalinfo2 = stxt->_palinfo2;
-	_fgpalinfo3 = stxt->_palinfo3;
+	_fontId = stxt->_style.fontId;
+	_textSlant = stxt->_style.textSlant;
+	_fontSize = stxt->_style.fontSize;
+	_fgpalinfo1 = stxt->_style.r;
+	_fgpalinfo2 = stxt->_style.g;
+	_fgpalinfo3 = stxt->_style.b;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
 
