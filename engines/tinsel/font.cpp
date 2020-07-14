@@ -36,6 +36,12 @@ void Font::SetTagFontHandle(SCNHANDLE hFont) {
 		SetTalkFontHandle(hFont);	// Also re-use for talk text
 }
 
+SCNHANDLE Font::GetTalkFontHandle() {
+	// FIXME: Mac Discworld 1 was rendering the talk font as black.
+	// Currently hacking around it by simply using the tooltip font
+	return TinselV1Mac ? _hTagFont : _hTalkFont;
+}
+
 void Font::FettleFontPal(SCNHANDLE fontPal) {
 	const FONT *pFont;
 	IMAGE *pImg;
