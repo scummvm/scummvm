@@ -51,7 +51,7 @@ protected:
 	const char *getPropertiesExtension();
 
 	void outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const MSVC_Architecture arch);
-	void outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props);
+	void outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch);
 	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const MSVC_Architecture arch);
 };
 

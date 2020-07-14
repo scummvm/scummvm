@@ -102,7 +102,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 			   "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n";
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		project << "\t\t<VcpkgTriplet Condition=\"'$(Platform)' == '" << getMSVCConfigName(*arch) << "'\">" << getMSVCArchName(*arch) << "-windows</VcpkgTriplet>";
+		project << "\t\t<VcpkgTriplet Condition=\"'$(Platform)' == '" << getMSVCConfigName(*arch) << "'\">" << getMSVCArchName(*arch) << "-windows</VcpkgTriplet>\n";
 	}
 
 	project << "\t</PropertyGroup>\n";
@@ -399,8 +399,6 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 }
 
 void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) {
-	const std::string outputBitness = (arch == ARCH_X86 ? "32" : "64");
-
 	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension()).c_str());
 	if (!properties || !properties.is_open()) {
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension() + "\" for writing");
@@ -455,6 +453,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 
 		if (configuration == "LLVM") {
 			// FIXME The LLVM cl wrapper does not seem to work properly with the $(TargetDir) path so we hard-code the build folder until the issue is resolved
+			const std::string outputBitness = (arch == ARCH_X86 ? "32" : "64");
 			properties << "\t\t\t<AdditionalIncludeDirectories>" << configuration << outputBitness <<";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 		                  "\t\t\t<AdditionalOptions>-Wno-microsoft -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder -Wpointer-arith -Wcast-qual -Wshadow -Wnon-virtual-dtor -Wwrite-strings -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants -Wno-nested-anon-types -Qunused-arguments %(AdditionalOptions)</AdditionalOptions>\n";
 		}
