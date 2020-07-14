@@ -81,19 +81,19 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (!_currentMovie)
 		return false;
 
-	if (!blitTo)
-		blitTo = &_surface;
-
 	if (forceRedraw) {
 		blitTo->clear(_stageColor);
 		_dirtyRects.clear();
 		_dirtyRects.push_back(Common::Rect(_surface.w, _surface.h));
 	} else {
 		if (_dirtyRects.size() == 0)
-			return true;
+			return false;
 
 		mergeDirtyRects();
 	}
+
+	if (!blitTo)
+		blitTo = &_surface;
 
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); i++) {
 		const Common::Rect &r = *i;

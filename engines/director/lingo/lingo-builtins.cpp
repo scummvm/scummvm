@@ -1918,8 +1918,9 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-	movie->getCurrentStage()->render();
-	g_director->draw();
+	if (movie->getCurrentStage()->render())
+		g_director->draw();
+
 	g_director->processEvents(true);
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
