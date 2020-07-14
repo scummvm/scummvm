@@ -5046,6 +5046,47 @@ static const uint16 kq6PatchTalkingInventory[] = {
 	PATCH_END
 };
 
+// Exiting the pawnshop while the Genie's eye is glinting locks up the game.
+//  Unlike the bookstore, the pawnshop script fails to dispose the "eye" object
+//  if it's in the middle of animating, causing the door animation in the next
+//  room to loop forever. Sierra added a simple workaround to the CD version to
+//  prevent this: the eye no longer glints when ego is close the pawnshop exit.
+//  We apply this same workaround to vulnerable versions.
+//
+// Applies to: English, French, and German PC Floppy, English Mac Floppy
+// Responsible method: genieBrowseScr:changeState(3)
+static const uint16 kq6SignaturePawnshopGenieEye[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x37,                         // bnt 37
+	0x39, 0x03,                         // pushi 03
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x43, 0x3c, 0x04,                   // callk Random [ Random 0 2 ]
+	0x36,                               // push
+	0x76,                               // push0
+	0x78,                               // push1
+	0x46, SIG_UINT16(0x03e7),           // calle proc999_5 [ OneOf (Random 0 2) 0 1 ]
+	      SIG_UINT16(0x0005), 0x06,
+	SIG_END
+};
+
+static const uint16 kq6PatchPawnshopGenieEye[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x43,                         // pushi 43
+	0x78,                               // push1 [ x ]
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego x? ]
+	0x22,                               // lt?     [ 67 < ego:x ]
+	0x31, 0x06,                         // bnt 06  [ skip glint ]
+	0x7a,                               // push2
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x43, 0x3c, 0x04,                   // callk Random [ Random 0 2 ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5489,6 +5530,7 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
+	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
