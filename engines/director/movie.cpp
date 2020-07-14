@@ -160,14 +160,17 @@ Common::Array<DataEntry> Movie::loadDataEntries(Common::SeekableSubReadStreamEnd
 
 	uint16 count = stream.readUint16() + 1;
 
-	debugC(3, kDebugLoading, "Movie::loadDataEntry(): DataEntry: %d entries", count);
+	debugC(3, kDebugLoading, "Movie::loadDataEntries(): DataEntry: %d entries", count - 1);
+
+	if (count == 1)
+		return strings;
 
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 
 	for (uint i = 0; i < count; i++)
 		entries[i] = stream.readUint32();
 
-	strings.resize(count);
+	strings.resize(count - 1);
 
 	for (uint16 i = 0; i < count - 1; i++) {
 		strings[i].len = entries[i + 1] - entries[i];
