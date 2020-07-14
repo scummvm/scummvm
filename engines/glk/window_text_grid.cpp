@@ -362,7 +362,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 	int ix;
 	void *inbuf;
 	int inmax;
-	int unicode = _lineRequestUni;
+	bool unicode = _lineRequestUni;
 	gidispatch_rock_t inarrayrock;
 	TextGridRow *ln = &_lines[_inOrgY];
 	Event dummyEv;
@@ -454,7 +454,7 @@ void TextGridWindow::acceptLine(uint32 keycode) {
 	int inmax;
 	gidispatch_rock_t inarrayrock;
 	TextGridRow *ln = &(_lines[_inOrgY]);
-	int unicode = _lineRequestUni;
+	bool unicode = _lineRequestUni;
 
 	if (!_inBuf)
 		return;
