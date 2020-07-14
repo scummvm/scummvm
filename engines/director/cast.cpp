@@ -902,11 +902,10 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		/* uint32 nameTableId = */ stream.readUint32();
 		/* int16 validCount = */ stream.readSint16();
 		/* uint16 flags = */ stream.readUint16();
-		int16 firstUnused = stream.readSint16();
+		/* int16 firstUnused = */ stream.readSint16();
 
 		Common::Array<int16> lscr;
 		stream.seek(itemsOffset);
-		int16 skip = firstUnused;
 		for (int16 i = 1; i <= itemCount; i++) {
 			if (debugChannelSet(5, kDebugLoading)) {
 				debugC(5, kDebugLoading, "Context entry %d:", i);
@@ -915,22 +914,9 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 
 			stream.readUint32();
 			int32 index = stream.readSint32();
-			uint16 entryFlags = stream.readUint16();
-			int16 nextUnused = stream.readSint16();
-
-			// There are 2 ways to identify unused scripts:
-			// 1) entryFlags & (1 << 2)
-			// 2) The entry is in a linked list of unused scripts
-			if (i == skip) {
-				debugC(1, kDebugCompile, "Cast::loadLingoContext: Script %d is in unused list", i);
-				skip = nextUnused;
-				lscr.push_back(-1);
-			} else if (entryFlags & (1 << 2)) {
-				debugC(1, kDebugCompile, "Cast::loadLingoContext: Script %d has unused flag", i);
-				lscr.push_back(-1);
-			} else {
-				lscr.push_back(index);
-			}
+			/* uint16 entryFlags = */ stream.readUint16();
+			/* int16 nextUnused = */ stream.readSint16();
+			lscr.push_back(index);
 		}
 
 		for (int16 i = 0; i < (int16)lscr.size(); i++) {
