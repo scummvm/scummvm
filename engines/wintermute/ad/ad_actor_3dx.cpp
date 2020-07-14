@@ -456,8 +456,6 @@ bool AdActor3DX::displayShadowVolume() {
 		return false;
 	}
 
-	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
-
 	Math::Vector3d lightVector = Math::Vector3d(_shadowLightPos.x() * _scale3D,
 	                                            _shadowLightPos.y() * _scale3D,
 	                                            _shadowLightPos.z() * _scale3D);
@@ -489,8 +487,13 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		at->displayShadowVol(*boneMat, lightVector, extrusionDepth, true);
+		Math::Matrix4 transposedWorldMatrix = _worldMatrix;
+		transposedWorldMatrix.transpose();
+
+		at->displayShadowVol(transposedWorldMatrix * (*boneMat), lightVector, extrusionDepth, true);
 	}
+
+	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
 
 	getShadowVolume()->renderToStencilBuffer();
 

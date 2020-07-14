@@ -109,7 +109,8 @@ bool AdAttach3DX::displayAttachable(const Math::Matrix4 &viewMat, bool registerO
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayShadowVol(const Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth, bool update) {
-	Math::Matrix4 finalMat = _worldMatrix * modelMat;
+	Math::Matrix4 finalMat = modelMat * _worldMatrix;
+	finalMat.transpose();
 
 	if (_modelX) {
 		if (update) {
