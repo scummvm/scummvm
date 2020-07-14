@@ -165,9 +165,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Point *)", // see PEPSIEW::use
 	"void Item::I_getPoint(Item *, Point *)",
-	"void I_mouseSomethingOffMaybe05D(void)",
+	"void I_mouseSomethingOffMaybe05D(void)", // Probably hides gumps at the bottom, among other things.
 	"int16 I_playFlicsomething(uint32, char *, int16 a, int16 b)", // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
-	"void I_mouseSomethingResume05F(void)",
+	"void I_mouseSomethingResume05F(void)",  // Probably shows gumps at the bottom, among other things.
 	// 0060
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void Actor::I_create(8 bytes)",
@@ -218,7 +218,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_setIsBroken(Item *)", // same coff as 119, 12A
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void PaletteFaderProcess::I_setPalToAllBlack(void)",
+	"void PaletteFaderProcess::I_jumpToAllBlack(void)",
 	// 0090
 	"void MusicProcess::I_musicStop(void)",
 	"void I_setSomeMovieGlobal(void)", // sets some global (cleared by 93)
@@ -227,7 +227,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Game::I_playCredits(void)",
 	"byte Kernel::I_getCurrentKeyDown(void)", // get global - something about keyboard (by disasm)
 	"int16 MainActor::I_teleportToEgg(int, int)", // a bit different to the U8 one - uses main actor map by default.
-	"void PaletteFaderProcess:I_setScreenGreyscale(void)", // TODO: Implement this - converts all colors to their Y values on each channel.
+	"void PaletteFaderProcess:I_jumpToGreyScale(void)",
 	"void I_resetVargasHealthTo500(void)", // TODO: look how this is used in disasm and usecode .. seems weird.
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void PaletteFaderProcess::I_stopFadesAndResetToGamePal(void)", // TODO: Implement this.

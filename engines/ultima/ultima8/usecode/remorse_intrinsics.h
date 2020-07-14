@@ -186,19 +186,19 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setBroken, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	0, // TODO: PaletteFaderProcess::I_setPalToAllBlack - should also resume cycle process.
+	PaletteFaderProcess::I_jumpToAllBlack, // TODO: PaletteFaderProcess::I_setPalToAllBlack - should also resume cycle process.
 	// 0x090
 	MusicProcess::I_musicStop, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
 	0, // TODO: I_playFlic(char *)? void Intrinsic092(void)
 	0, // void Intrinsic093(void)
 	Game::I_playCredits, // TODO: Implement this
-	0, // TODO: Kernel::I_getCurrentKeyDown
+	Ultima8Engine::I_moveKeyDownRecently,
 	MainActor::I_teleportToEgg, // void Intrinsic096(4 bytes)
-	0, // TODO: PaletteFaderProcess:I_setScreenGreyscale(void) (converts all colors to their Y values on each channel)
+	PaletteFaderProcess::I_jumpToGreyScale,
 	0, // void Intrinsic098(void) // TODO: reset vargas health to 500.. weird.
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
-	0, // TODO: PaletteFaderProcess::I_stopFadesAndResetToGamePal(void), - should also stop cycle process.
+	PaletteFaderProcess::I_jumpToNormalPalette, // TODO: should also stop cycle process?
 	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
 	0, // TODO: PaletteFaderProcess::I_fadeFromBlackWithParam
 	PaletteFaderProcess::I_fadeToBlack, // fade to black with number of steps

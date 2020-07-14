@@ -45,7 +45,7 @@ public:
 	PaletteFaderProcess();
 	PaletteFaderProcess(PalTransforms trans, int priority, int frames);
 	PaletteFaderProcess(uint32 rgba, bool from, int priority, int frames, bool current);
-	PaletteFaderProcess(int16 from[12], int16 to[12], int priority, int frames);
+	PaletteFaderProcess(const int16 from[12], const int16 to[12], int priority, int frames);
 	~PaletteFaderProcess(void) override;
 
 	void run() override;
@@ -56,6 +56,10 @@ public:
 	INTRINSIC(I_fadeToWhite);
 	INTRINSIC(I_fadeFromBlack);
 	INTRINSIC(I_lightningBolt);
+	INTRINSIC(I_fadeToGreyScale);
+	INTRINSIC(I_jumpToGreyScale);
+	INTRINSIC(I_jumpToAllBlack);
+	INTRINSIC(I_jumpToNormalPalette);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
