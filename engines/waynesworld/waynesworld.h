@@ -91,6 +91,18 @@ public:
 	WWSurface *loadRoomSurface(const char *filename);
 	void loadPalette(const char *filename);
 
+	// Image drawing
+	void drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName);
+	void drawImageToScreenIntern(const char *filename, int x, int y, bool transparent, bool appendRoomName);
+	void drawImageToBackground(const char *filename, int x, int y);
+	void drawImageToBackgroundTransparent(const char *filename, int x, int y);
+	void drawImageToScreen(const char *filename, int x, int y);
+	void drawImageToSurface(const char *filename, WWSurface *destSurface, int x, int y);
+	void drawRoomImageToBackground(const char *filename, int x, int y);
+	void drawRoomImageToBackgroundTransparent(const char *filename, int x, int y);
+	void drawRoomImageToScreen(const char *filename, int x, int y);
+	void drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y);
+
 	// Savegame API
 
 	enum kReadSaveHeaderError {

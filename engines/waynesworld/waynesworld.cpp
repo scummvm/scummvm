@@ -91,10 +91,13 @@ Common::Error WaynesWorldEngine::run() {
 	// g_system->copyRectToScreen(pcx->getSurface()->getPixels(), pcx->getSurface()->pitch, 0, 0, pcx->getSurface()->w, pcx->getSurface()->h);
 	// delete pcx;
 
+	drawImageToScreen("m00/winter", 0, 151);
+	drawImageToScreen("r00/backg", 0, 0);
+
 	while (!shouldQuit()) {
 		updateEvents();
-		_screen->clear(0);
-		_screen->drawSurface(wayne, _mouseX - 10, _mouseY - 10);
+		// _screen->clear(0);
+		_screen->drawSurfaceTransparent(wayne, _mouseX - 10, _mouseY - 10);
 		g_system->updateScreen();
 	}
 
@@ -203,6 +206,58 @@ void WaynesWorldEngine::loadPalette(const char *filename) {
 		memcpy(_palette2, imageDecoder->getPalette(), imageDecoder->getPaletteColorCount() * 3);
 	}
     delete imageDecoder;
+}
+
+void WaynesWorldEngine::drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName) {
+    Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
+	if (transparent) {
+		destSurface->drawSurface(imageDecoder->getSurface(), x, y);
+	} else {
+		destSurface->drawSurfaceTransparent(imageDecoder->getSurface(), x, y);
+	}
+    delete imageDecoder;
+}
+
+void WaynesWorldEngine::drawImageToScreenIntern(const char *filename, int x, int y, bool transparent, bool appendRoomName) {
+    Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
+	if (transparent) {
+		_screen->drawSurface(imageDecoder->getSurface(), x, y);
+	} else {
+		_screen->drawSurfaceTransparent(imageDecoder->getSurface(), x, y);
+	}
+    delete imageDecoder;
+}
+
+void WaynesWorldEngine::drawImageToBackground(const char *filename, int x, int y) {
+    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, false, false);
+}
+
+void WaynesWorldEngine::drawImageToBackgroundTransparent(const char *filename, int x, int y) {
+    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, true, false);
+}
+
+void WaynesWorldEngine::drawImageToScreen(const char *filename, int x, int y) {
+    drawImageToScreenIntern(filename, x, y, false, false);
+}
+
+void WaynesWorldEngine::drawImageToSurface(const char *filename, WWSurface *destSurface, int x, int y) {
+    drawImageToSurfaceIntern(filename, destSurface, x, y, false, false);
+}
+
+void WaynesWorldEngine::drawRoomImageToBackground(const char *filename, int x, int y) {
+    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, false, true);
+}
+
+void WaynesWorldEngine::drawRoomImageToBackgroundTransparent(const char *filename, int x, int y) {
+    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, true, true);
+}
+
+void WaynesWorldEngine::drawRoomImageToScreen(const char *filename, int x, int y) {
+    drawImageToScreenIntern(filename, x, y, false, true);
+}
+
+void WaynesWorldEngine::drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y) {
+    drawImageToSurfaceIntern(filename, destSurface, x, y, false, true);
 }
 
 } // End of namespace WaynesWorld
