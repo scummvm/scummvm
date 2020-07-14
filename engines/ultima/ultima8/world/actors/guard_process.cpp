@@ -43,7 +43,7 @@ GuardProcess::GuardProcess() : Process() {
 GuardProcess::GuardProcess(Actor *actor) {
 	assert(actor);
 	_itemNum = actor->getObjId();
-	_type = 0x255;
+	_type = 0x25e;
 }
 
 void GuardProcess::run() {
@@ -54,6 +54,7 @@ void GuardProcess::run() {
 		return;
 	}
 
+	// Do nothing if busy
 	int activeanim = Kernel::get_instance()->getNumProcesses(a->getObjId(), ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
 	if (activeanim > 0)
 		return;
@@ -71,6 +72,7 @@ void GuardProcess::run() {
 			return;
 		} else {
 			// TODO: What animation happens in here?
+			//int animno = (getRandom() % 2 ? 0x1e : 0x1f);
 			//a->tryAnim(0x1e, a->getDir());
 		}
 		return;
