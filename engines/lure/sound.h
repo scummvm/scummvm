@@ -115,8 +115,8 @@ private:
 	Common::Mutex _soundMutex;
 	bool _paused;
 
-	uint _musicVolume;
-	uint _sfxVolume;
+	uint16 _musicVolume;
+	uint16 _sfxVolume;
 
 	// Internal support methods
 	void bellsBodge();
@@ -152,8 +152,8 @@ public:
 	bool getPaused() const { return _paused; }
 	bool hasNativeMT32() const { return _nativeMT32; }
 	bool isRoland() const { return _isRoland; }
-	uint musicVolume() const { return _musicVolume; }
-	uint sfxVolume() const { return _sfxVolume; }
+	uint16 musicVolume() const { return _musicVolume; }
+	uint16 sfxVolume() const { return _sfxVolume; }
 
 	// The following methods implement the external sound player module
 	void musicInterface_Initialize();
