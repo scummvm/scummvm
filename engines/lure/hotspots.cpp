@@ -2909,21 +2909,21 @@ void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
 		h.setOccupied(true);
 
 		++rs.currentFrame;
-		if ((rs.currentFrame == rs.destFrame) && (h.hotspotId() == room.roomNumber()))
+		if ((rs.currentFrame == rs.destFrame) && (h.roomNumber() == room.roomNumber()))
 			Sound.addSound(rs.closeSound);
 
 	} else if ((rec->blocked == 0) && (rs.currentFrame != 0)) {
 		// Opening the door
 		h.setOccupied(false);
 
-		--rs.currentFrame;
-		if ((rs.currentFrame == rs.destFrame) && (h.hotspotId() == room.roomNumber())) {
+		if ((rs.currentFrame == rs.destFrame) && (h.roomNumber() == room.roomNumber())) {
 			Sound.addSound(rs.openSound);
 
 			// If in the outside village, trash reverb
 			if (fields.getField(AREA_FLAG) == 1)
 				Sound.musicInterface_TrashReverb();
 		}
+		--rs.currentFrame;
 	}
 
 	h.setFrameNumber(rs.currentFrame);
