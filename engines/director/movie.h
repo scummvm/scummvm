@@ -41,13 +41,36 @@ class ScriptContext;
 class Stage;
 struct Symbol;
 
+struct DataEntry {
+	uint32 len;
+	byte *data;
+
+	DataEntry() { len = 0; data = nullptr; }
+
+	~DataEntry() {
+		free(data);
+	}
+
+	Common::String readString() {
+		Common::String res;
+
+		for (uint i = 1; i < len; i++)
+			if (data[i] == '\r')
+				res += '\n';
+			else if (data[i] >= 0x20)
+				res += data[i];
+
+		return res;
+	}
+};
+
 class Movie {
 public:
 	Movie(Stage *stage);
 	~Movie();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
-	static Common::Array<Common::String> loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader = true);
+	static Common::Array<DataEntry> loadDataEntries(Common::SeekableSubReadStreamEndian &stream, bool hasHeader = true);
 
 	bool loadArchive();
 	void setArchive(Archive *archive);

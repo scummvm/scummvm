@@ -146,47 +146,37 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-Common::Array<Common::String> Movie::loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader) {
-	Common::Array<Common::String> strings;
+Common::Array<DataEntry> Movie::loadDataEntries(Common::SeekableSubReadStreamEndian &stream, bool hasHeader) {
+	Common::Array<DataEntry> strings;
 	uint32 offset = 0;
 
 	if (hasHeader) {
 		offset = stream.readUint32();
 		/*uint32 unk1 = */ stream.readUint32();
 		/*uint32 unk2 = */ stream.readUint32();
-		entryType = stream.readUint32();
+		/*entryType = */ stream.readUint32();
 		stream.seek(offset);
 	}
 
 	uint16 count = stream.readUint16() + 1;
 
-	debugC(3, kDebugLoading, "Movie::loadStrings(): Strings: %d entries", count);
+	debugC(3, kDebugLoading, "Movie::loadDataEntry(): DataEntry: %d entries", count);
 
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 
 	for (uint i = 0; i < count; i++)
 		entries[i] = stream.readUint32();
 
-	byte *data = (byte *)malloc(entries[count - 1]);
-	stream.read(data, entries[count - 1]);
+	strings.resize(count);
 
 	for (uint16 i = 0; i < count - 1; i++) {
-		Common::String entryString;
+		strings[i].len = entries[i + 1] - entries[i];
+		strings[i].data = (byte *)malloc(strings[i].len);
+		stream.read(strings[i].data, strings[i].len);
 
-		uint start = i == 1 ? entries[i] + 1 : entries[i]; // Skip first byte which is string length
-
-		for (uint j = start; j < entries[i + 1]; j++)
-			if (data[j] == '\r')
-				entryString += '\n';
-			else if (data[j] >= 0x20)
-				entryString += data[j];
-
-		strings.push_back(entryString);
-
-		debugC(6, kDebugLoading, "String %d:\n%s\n", i, Common::toPrintable(entryString).c_str());
+		debugC(6, kDebugLoading, "DataEntry %d: %d bytes", i, strings[i].len);
 	}
 
-	free(data);
 	free(entries);
 
 	return strings;
@@ -195,8 +185,8 @@ Common::Array<Common::String> Movie::loadStrings(Common::SeekableSubReadStreamEn
 void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
-	Common::Array<Common::String> fileInfoStrings = Movie::loadStrings(stream, _flags);
-	_script = fileInfoStrings[0];
+	Common::Array<DataEntry> fileInfoStrings = Movie::loadDataEntries(stream);
+	_script = fileInfoStrings[0].readString();
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		_cast->dumpScript(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
@@ -205,9 +195,9 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 		_cast->_lingoArchive->addCode(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
 
 	_cast->_movieScriptCount++;
-	_changedBy = fileInfoStrings[1];
-	_createdBy = fileInfoStrings[2];
-	_directory = fileInfoStrings[3];
+	_changedBy = fileInfoStrings[1].readString();
+	_createdBy = fileInfoStrings[2].readString();
+	_directory = fileInfoStrings[3].readString();
 }
 
 void Movie::clearSharedCast() {

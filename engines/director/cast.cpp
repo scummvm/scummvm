@@ -798,13 +798,12 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 	free(data);
 
 	if (size2 && _vm->getVersion() < 5) {
-		uint32 entryType = 0;
-		Common::Array<Common::String> castStrings = Movie::loadStrings(stream, entryType, false);
+		Common::Array<DataEntry> castStrings = Movie::loadDataEntries(stream, false);
 
 		debugCN(4, kDebugLoading, "Cast::loadCastData(): str(%d): '", castStrings.size());
 
 		for (uint i = 0; i < castStrings.size(); i++) {
-			debugCN(4, kDebugLoading, "%s'", castStrings[i].c_str());
+			debugCN(4, kDebugLoading, "%s'", castStrings[i].readString().c_str());
 			if (i != castStrings.size() - 1)
 				debugCN(4, kDebugLoading, ", '");
 		}
@@ -819,29 +818,29 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 			warning("Cast::loadCastData(): extra %d strings", castStrings.size() - 5);
 			// fallthrough
 		case 7:
-			ci->comments = castStrings[6];
+			ci->comments = castStrings[6].readString();
 			// fallthrough
 		case 6:
-			ci->modifiedBy = castStrings[5];
+			ci->modifiedBy = castStrings[5].readString();
 			// fallthrough
 		case 5:
-			ci->type = castStrings[4];
+			ci->type = castStrings[4].readString();
 			// fallthrough
 		case 4:
-			ci->fileName = castStrings[3];
+			ci->fileName = castStrings[3].readString();
 			// fallthrough
 		case 3:
-			ci->directory = castStrings[2];
+			ci->directory = castStrings[2].readString();
 			// fallthrough
 		case 2:
-			ci->name = castStrings[1];
+			ci->name = castStrings[1].readString();
 
 			if (!ci->name.empty()) {
 				_castsNames[ci->name] = id;
 			}
 			// fallthrough
 		case 1:
-			ci->script = castStrings[0];
+			ci->script = castStrings[0].readString();
 			// fallthrough
 		case 0:
 			break;
@@ -973,7 +972,7 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 				script->_id = it->_key;
 			}
 		}
-		
+
 		// actually define scripts
 		for (ScriptContextHash::iterator it = _lingoArchive->lctxContexts.begin(); it != _lingoArchive->lctxContexts.end(); ++it) {
 			ScriptContext *script = it->_value;
@@ -1037,11 +1036,10 @@ void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 }
 
 void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
-	uint32 entryType = 0;
-	Common::Array<Common::String> castStrings = Movie::loadStrings(stream, entryType);
+	Common::Array<DataEntry> castStrings = Movie::loadDataEntries(stream);
 	CastMemberInfo *ci = new CastMemberInfo();
 
-	ci->script = castStrings[0];
+	ci->script = castStrings[0].readString();
 
 	if (!ci->script.empty() && ConfMan.getBool("dump_scripts"))
 		dumpScript(ci->script.c_str(), kCastScript, id);
@@ -1049,10 +1047,10 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 	if (!ci->script.empty())
 		_lingoArchive->addCode(ci->script.c_str(), kCastScript, id, ci->name.c_str());
 
-	ci->name = getString(castStrings[1]);
-	ci->directory = getString(castStrings[2]);
-	ci->fileName = getString(castStrings[3]);
-	ci->type = castStrings[4];
+	ci->name = castStrings[1].readString();
+	ci->directory = castStrings[2].readString();
+	ci->fileName = castStrings[3].readString();
+	ci->type = castStrings[4].readString();
 
 	castStrings.clear();
 
