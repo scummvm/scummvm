@@ -879,6 +879,17 @@ void Cast::loadLingoNames(Common::SeekableSubReadStreamEndian &stream) {
 	}
 }
 
+struct LingoContextEntry {
+	int32 index;
+	int16 nextUnused;
+	bool unused;
+
+	LingoContextEntry(int32 i, int16 n);
+};
+
+LingoContextEntry::LingoContextEntry(int32 i, int16 n)
+	: index(i), nextUnused(n), unused(false) {}
+
 void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 	if (_vm->getVersion() >= 4) {
 		debugC(1, kDebugCompile, "Add V4 script context");
@@ -902,9 +913,9 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		/* uint32 nameTableId = */ stream.readUint32();
 		/* int16 validCount = */ stream.readSint16();
 		/* uint16 flags = */ stream.readUint16();
-		/* int16 firstUnused = */ stream.readSint16();
+		int16 firstUnused = stream.readSint16();
 
-		Common::Array<int16> lscr;
+		Common::Array<LingoContextEntry> entries;
 		stream.seek(itemsOffset);
 		for (int16 i = 1; i <= itemCount; i++) {
 			if (debugChannelSet(5, kDebugLoading)) {
@@ -915,16 +926,36 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			stream.readUint32();
 			int32 index = stream.readSint32();
 			/* uint16 entryFlags = */ stream.readUint16();
-			/* int16 nextUnused = */ stream.readSint16();
-			lscr.push_back(index);
+			int16 nextUnused = stream.readSint16();
+			entries.push_back(LingoContextEntry(index, nextUnused));
 		}
 
-		for (int16 i = 0; i < (int16)lscr.size(); i++) {
-			if (lscr[i] >= 0) {
-				Common::SeekableSubReadStreamEndian *r;
-				_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), lscr[i])), i + 1, _macName);
-				delete r;
+		// mark unused entries
+		int16 nextUnused = firstUnused ;
+		while (0 <= nextUnused && nextUnused < (int16)entries.size()) {
+			LingoContextEntry &entry = entries[nextUnused];
+			entry.unused = true;
+			nextUnused = entry.nextUnused;
+		}
+
+		// compile scripts
+		for (int16 i = 1; i <= (int16)entries.size(); i++) {
+			LingoContextEntry &entry = entries[i - 1];
+			if (entry.unused && entry.index < 0) {
+				debugC(1, kDebugCompile, "Cast::loadLingoContext: Script %d is unused and empty", i);
+				continue;
 			}
+			if (entry.unused) {
+				debugC(1, kDebugCompile, "Cast::loadLingoContext: Script %d is unused but not empty", i);
+				continue;
+			}
+			if (entry.index < 0) {
+				debugC(1, kDebugCompile, "Cast::loadLingoContext: Script %d is used but empty", i);
+				continue;
+			}
+			Common::SeekableSubReadStreamEndian *r;
+			_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), entry.index)), i, _macName);
+			delete r;
 		}
 
 		// repair script type + cast ID
