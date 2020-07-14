@@ -312,7 +312,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	int numChannels;
 
 	if (_isRoland)
-		numChannels = (rec.numChannels & 3) + 1;
+		numChannels = (rec.numChannels & 3);
 	else
 		numChannels = ((rec.numChannels >> 2) & 3) + 1;
 
@@ -801,7 +801,13 @@ void MidiMusic::send(uint32 b) {
 		if ((b & 0xF) >= _numChannels) return;
 		channel = _channelNumber + (byte)(b & 0x0F);
 #else
+		if (Sound.isRoland()) {
+			// Roland channels start at 1
+			channel = _channelNumber + (((byte)(b & 0x0F) - 1) % _numChannels);
+		} else {
+			// AdLib channels start at 0
 			channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
+		}
 #endif
 
 		if ((channel >= NUM_CHANNELS) || (_channels[channel].midiChannel == NULL))
