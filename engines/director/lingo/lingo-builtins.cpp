@@ -1911,7 +1911,6 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	Movie *movie = g_director->getCurrentMovie();
-
 	if (!movie) {
 		warning("b_updateStage: no movie");
 
@@ -1919,8 +1918,7 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-
-	score->renderFrame(score->getCurrentFrame(), kRenderUpdateStageOnly);
+	movie->getCurrentStage()->render();
 	g_director->draw();
 	g_director->processEvents(true);
 
