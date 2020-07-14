@@ -151,7 +151,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_ttfOverrides(false), _audioMixer(0), _scalerGump(nullptr),
 		_inverterGump(nullptr), _lerpFactor(256), _inBetweenFrame(false),
-		_unkCrusaderFlag(false) {
+		_unkCrusaderFlag(false), _moveKeyFrame(0) {
 	_application = this;
 }
 
@@ -1353,6 +1353,14 @@ uint32 Ultima8Engine::getGameTimeInSeconds() {
 	return (Kernel::get_instance()->getFrameNum() + _timeOffset) / 30; // constant!
 }
 
+void Ultima8Engine::moveKeyEvent() {
+	_moveKeyFrame = Kernel::get_instance()->getFrameNum();
+}
+
+bool Ultima8Engine::moveKeyDownRecently() {
+	uint32 nowframe = Kernel::get_instance()->getFrameNum();
+	return (nowframe - _moveKeyFrame) < 60;
+}
 
 void Ultima8Engine::save(Common::WriteStream *ws) {
 	uint8 s = (_avatarInStasis ? 1 : 0);
@@ -1499,6 +1507,11 @@ uint32 Ultima8Engine::I_closeItemGumps(const uint8 *args, unsigned int /*argsize
 	g->getDesktopGump()->CloseItemDependents();
 
 	return 0;
+}
+
+uint32 Ultima8Engine::I_moveKeyDownRecently(const uint8 *args, unsigned int /*argsize*/) {
+	Ultima8Engine *g = Ultima8Engine::get_instance();
+	return g->moveKeyDownRecently() ? 1 : 0;
 }
 
 bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {

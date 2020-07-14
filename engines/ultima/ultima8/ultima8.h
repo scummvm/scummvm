@@ -122,6 +122,7 @@ private:
 	bool _cheatsEnabled;
 	unsigned int _inversion;
 	bool _unkCrusaderFlag; //!< not sure what this is but it's only used in usecode for crusader, so just keep track of it..
+	uint32 _moveKeyFrame; //!< An imperfect way for the Crusader usecode to stop remote camera viewing.
 private:
 	/**
 	 * Does engine deinitialization
@@ -226,6 +227,7 @@ public:
 	INTRINSIC(I_closeItemGumps);
 	INTRINSIC(I_setCruStasis);
 	INTRINSIC(I_clrCruStasis);
+	INTRINSIC(I_moveKeyDownRecently);
 
 	void setAvatarInStasis(bool stat) {
 		_avatarInStasis = stat;
@@ -255,6 +257,9 @@ public:
 	void setUnkCrusaderFlag(bool flag) {
 		_unkCrusaderFlag = flag;
 	}
+
+	void moveKeyEvent();
+	bool moveKeyDownRecently();
 
 	uint32 getGameTimeInSeconds();
 
