@@ -97,21 +97,6 @@ Cast::~Cast() {
 
 	delete _loadedStxts;
 	delete _loadedCast;
-
-	for (int i = 0; i <= kMaxScriptType; i++) {
-		for (ScriptContextHash::iterator it = _lingoArchive->scriptContexts[i].begin(); it != _lingoArchive->scriptContexts[i].end(); ++it) {
-			if (!it->_value)
-				continue;
-
-			it->_value->_eventHandlers.clear();
-			it->_value->_functionHandlers.clear();
-			delete it->_value;
-		}
-
-		_lingoArchive->scriptContexts[i].clear();
-	}
-	_lingoArchive->names.clear();
-	_lingoArchive->functionHandlers.clear();
 	delete _lingoArchive;
 }
 

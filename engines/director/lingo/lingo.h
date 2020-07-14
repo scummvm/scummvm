@@ -201,6 +201,8 @@ struct LingoEvent {
 
 
 struct LingoArchive {
+	~LingoArchive();
+
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
 	Common::HashMap<uint32, Common::String> primaryEventHandlers;

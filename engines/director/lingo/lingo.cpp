@@ -198,6 +198,14 @@ Lingo::~Lingo() {
 	cleanupBuiltins();
 }
 
+LingoArchive::~LingoArchive() {
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
+			delete it->_value;
+		}
+	}
+}
+
 ScriptContext *LingoArchive::getScriptContext(ScriptType type, uint16 id) {
 	if (!scriptContexts[type].contains(id)) {
 		return nullptr;
