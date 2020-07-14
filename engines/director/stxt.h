@@ -23,6 +23,10 @@
 #ifndef DIRECTOR_STXT_H
 #define DIRECTOR_STXT_H
 
+namespace Common {
+class ReadStreamEndian;
+}
+
 namespace Director {
 
 struct FontStyle {

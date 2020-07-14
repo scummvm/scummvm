@@ -123,10 +123,8 @@ void FontStyle::read(Common::ReadStreamEndian &stream) {
 	g = stream.readUint16();
 	b = stream.readUint16();
 
-	debugC(3, kDebugText, "FontStyle::read(): formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d",
-			formatStartOffset, height, ascent, fontId, textSlant);
-
-	debugC(3, kDebugText, "        fontSize: %d, r: %x g: %x b: %x", fontSize, r, g, b);
+	debugC(3, kDebugLoading, "FontStyle::read(): formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d, fontSize: %d, r: %x g: %x b: %x",
+			formatStartOffset, height, ascent, fontId, textSlant, fontSize, r, g, b);
 }
 
 } // End of namespace Director

@@ -26,6 +26,7 @@
 #include "graphics/font.h"
 
 #include "director/archive.h"
+#include "director/stxt.h"
 
 namespace Graphics {
 struct Surface;
@@ -228,7 +229,7 @@ struct CastMemberInfo {
 	Common::String fileName;
 	Common::String type;
 	EditInfo scriptEditInfo;
-	// scriptStyle
+	FontStyle scriptStyle;
 	EditInfo textEditInfo;
 	Common::String modifiedBy;
 	Common::String comments;

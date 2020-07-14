@@ -840,8 +840,13 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 			// fallthrough
 		case 7:
 			if (castStrings[6].len) {
-				warning("Cast::loadCastData(): STUB: scriptStyle (%d bytes)", castStrings[6].len);
-				Common::hexdump(castStrings[6].data, castStrings[6].len);
+				entryStream = new Common::MemoryReadStreamEndian(castStrings[6].data, castStrings[6].len, stream.isBE());
+
+				int16 count = entryStream->readUint16();
+
+				for (uint i = 0; i < count; i++)
+					ci->scriptStyle.read(*entryStream);
+				delete entryStream;
 			}
 			// fallthrough
 		case 6:
