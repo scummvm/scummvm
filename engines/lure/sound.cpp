@@ -410,12 +410,14 @@ void SoundManager::syncSounds() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
-	_musicVolume = mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
-	_sfxVolume = mute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
+	_musicVolume = mute ? 0 : MIN(256, ConfMan.getInt("music_volume"));
+	_sfxVolume = mute ? 0 : MIN(256, ConfMan.getInt("sfx_volume"));
 
 	_soundMutex.lock();
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
+		// FIXME This should not override the sound resource volume
+		// on the MidiMusic object.
 		if ((*i)->isMusic())
 			(*i)->setVolume(_musicVolume);
 		else
@@ -714,10 +716,9 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	_numChannels = numChannels;
 	_volume = 0;
 
-	if (_isMusic)
-		setVolume(Sound.musicVolume());
-	else
-		setVolume(Sound.sfxVolume());
+	// Default sound resource volume: 80h (neutral).
+	// TODO AdLib does not use sound resource volume, so use fixed 240.
+	setVolume(Sound.isRoland() ? 0x80 : 240);
 
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
@@ -768,13 +769,17 @@ void MidiMusic::setVolume(int volume) {
 
 	_volume = volume;
 
-	volume *= _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
+	// MT-32 MIDI data sets channel volume using control change,
+	// so this is only needed for AdLib.
+	if (!Sound.isRoland()) {
+		volume *= _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
 
-	for (int i = 0; i < _numChannels; ++i) {
-		if (_channels[_channelNumber + i].midiChannel != NULL)
-			_channels[_channelNumber + i].midiChannel->volume(
-				_channels[_channelNumber + i].volume *
-				volume / 65025);
+		for (int i = 0; i < _numChannels; ++i) {
+			if (_channels[_channelNumber + i].midiChannel != NULL)
+				_channels[_channelNumber + i].midiChannel->volume(
+					_channels[_channelNumber + i].volume *
+					volume / 65025);
+		}
 	}
 }
 
@@ -796,7 +801,7 @@ void MidiMusic::send(uint32 b) {
 		if ((b & 0xF) >= _numChannels) return;
 		channel = _channelNumber + (byte)(b & 0x0F);
 #else
-		channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
+			channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
 #endif
 
 		if ((channel >= NUM_CHANNELS) || (_channels[channel].midiChannel == NULL))
@@ -807,8 +812,16 @@ void MidiMusic::send(uint32 b) {
 		// Adjust volume changes by song and master volume
 		byte volume = (byte)((b >> 16) & 0x7F);
 		_channels[channel].volume = volume;
-		int master_volume = _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
-		volume = volume * _volume * master_volume / 65025;
+		uint16 master_volume = _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
+		if (Sound.isRoland()) {
+			// MT-32 sound resource volume is applied to note velocity,
+			// so scale MIDI data volume only with ScummVM master volume.
+			volume = (volume * master_volume) >> 8;
+		} else {
+			// TODO AdLib might use velocity for sound resource volume
+			// as well.
+			volume = volume * _volume * master_volume / 65025;
+		}
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0) {
 		if (Sound.isRoland() && !Sound.hasNativeMT32() && channel != 9) {
@@ -816,6 +829,15 @@ void MidiMusic::send(uint32 b) {
 		}
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// No implementation
+	} else if (((b & 0xF0) == 0x90)) {
+		// Note On
+		if (Sound.isRoland()) {
+			// Scale velocity with sound resource volume
+			byte velocity = (b >> 16) & 0x7F;
+			velocity = (velocity * _volume) >> 7;
+			if (velocity > 0x7F) velocity = 0x7F;
+			b = (b & 0xFF00FFFF) | (velocity << 16);
+		}
 	}
 
 	if (Sound.isRoland() && _isMusic) {
