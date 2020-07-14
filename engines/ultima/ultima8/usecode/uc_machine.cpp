@@ -94,9 +94,13 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 		_convUse = new ConvertUsecodeU8();
 	} else if (GAME_IS_REMORSE) {
 		_globals = new ByteSet(0x1000);
+		// slight hack: set global 003C to start as avatar number.
+		_globals->setEntries(0x3C, 2, 1);
 		_convUse = new ConvertUsecodeCrusader();
 	} else {
 		_globals = new ByteSet(0x1000);
+		// slight hack: set global 003C to start as avatar number.
+		_globals->setEntries(0x3C, 2, 1);
 		// TODO: Need a separate convertor for Regret
 		_convUse = new ConvertUsecodeCrusader();
 	}
@@ -128,6 +132,11 @@ void UCMachine::reset() {
 
 	// clear _globals
 	_globals->setSize(0x1000);
+
+	if (GAME_IS_CRUSADER) {
+		// slight hack: set global 003C to start as avatar number.
+		_globals->setEntries(0x3C, 2, 1);
+	}
 
 	// clear strings, lists
 	Std::map<uint16, UCList *>::iterator iter;
@@ -1983,7 +1992,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// assigns item number and ProcessType
 			p->setItemNum(p->_stack.pop2());
 			p->setType(p->_stack.pop2());
-			LOGPF(("set info\n"));
+			LOGPF(("set info itemno: %d type: %d\n", p->getItemNum(), p->getType()));
 			break;
 
 		case 0x78:
@@ -2013,6 +2022,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16a = cs.readUint16LE(); // global address
 			ui32a = globalToPtr(ui16a);
 			p->_stack.push4(ui32a);
+			LOGPF(("push global 0x%x (value: %x)\n", ui16a, ui32a));
 			break;
 
 		case 0x7A:
@@ -2308,8 +2318,10 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		} else {
 			return proc->_stack.access2(offset);
 		}
-	} else if (segment == SEG_OBJ || segment == SEG_STRING || segment == SEG_GLOBAL) {
+	} else if (segment == SEG_OBJ || segment == SEG_STRING) {
 		return offset;
+	} else if (segment == SEG_GLOBAL) {
+		return get_instance()->_globals->getEntries(offset, 2);
 	} else {
 		perr << "Trying to access segment " << Std::hex
 		     << segment << Std::dec << Std::endl;
