@@ -1185,7 +1185,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	channel->_dirty = true;
 	switch (field) {
 	case kTheBackColor:
-		sprite->_backColor = d.asInt();
+		if (d.asInt() != sprite->_backColor) {
+			sprite->_backColor = d.asInt();
+		} else {
+			channel->_dirty = false;
+		}
 		break;
 	case kTheBlend:
 		sprite->_blend = d.asInt();
@@ -1197,6 +1201,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			sprite->setCast(d.asInt());
 			channel->_width = sprite->_width;
 			channel->_height = sprite->_height;
+		} else {
+			channel->_dirty = false;
 		}
 		break;
 	case kTheConstraint:
@@ -1217,11 +1223,19 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_cast ? sprite->_cast->setEditable(d.asInt()) : false;
 		break;
 	case kTheForeColor:
-		sprite->_foreColor = d.asInt();
+		if (d.asInt() != sprite->_foreColor) {
+			sprite->_foreColor = d.asInt();
+		} else {
+			channel->_dirty = false;
+		}
 		break;
 	case kTheHeight:
-		g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-		channel->setHeight(d.asInt());
+		if (d.asInt() != channel->_height) {
+			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			channel->setHeight(d.asInt());
+		} else {
+			channel->_dirty = false;
+		}
 		break;
 	case kTheImmediate:
 		sprite->_immediate = d.asInt();
@@ -1243,7 +1257,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 
 		if (d.asInt() != channel->_currentPoint.x) {
-			channel->addDelta(Common::Point(d.asInt() - channel->_currentPoint.x, 0));
+			g_director->getCurrentMovie()->getCurrentStage()->addDirtyRect(channel->getBbox());
+			channel->_currentPoint.x = d.asInt();
 		} else {
 			channel->_dirty = false;
 		}
@@ -1256,7 +1271,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 
 		if (d.asInt() != channel->_currentPoint.y) {
-			channel->addDelta(Common::Point(0, d.asInt() - channel->_currentPoint.y));
+			g_director->getCurrentMovie()->getCurrentStage()->addDirtyRect(channel->getBbox());
+			channel->_currentPoint.y = d.asInt();
 		} else {
 			channel->_dirty = false;
 		}
@@ -1310,18 +1326,19 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_volume = d.asInt();
 		break;
 	case kTheWidth:
-		g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-		channel->setWidth(d.asInt());
+		if (d.asInt() != channel->_width) {
+			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			channel->setWidth(d.asInt());
+		} else {
+			channel->_dirty = false;
+		}
 		break;
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 	}
 
-	if (channel->_dirty) {
-		Movie *movie = g_director->getCurrentMovie();
-		if (movie)
-			movie->getCurrentStage()->addDirtyRect(channel->getBbox());
-	}
+	if (channel->_dirty && g_director->getCurrentMovie())
+		g_director->getCurrentMovie()->getCurrentStage()->addDirtyRect(channel->getBbox());
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {
