@@ -58,6 +58,7 @@ private:
 	MidiParser *_parser;
 	ChannelEntry *_channels;
 	bool _isMusic;
+	bool _loop;
 	bool _isPlaying;
 
 	void queueUpdatePos();
@@ -67,7 +68,7 @@ private:
 
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-		 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
+		 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic() override;
 	void setVolume(int volume);
 	int getVolume() const { return _volume; }
