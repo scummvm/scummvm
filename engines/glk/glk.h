@@ -146,16 +146,12 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	bool canLoadGameStateCurrently() override {
-		return true;
-	}
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	bool canSaveGameStateCurrently() override {
-		return true;
-	}
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Returns the language

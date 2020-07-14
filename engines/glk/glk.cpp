@@ -159,6 +159,18 @@ Common::Error GlkEngine::run() {
 	return Common::kNoError;
 }
 
+bool GlkEngine::canLoadGameStateCurrently() {
+	// Only allow savegames by default when sub-engines are waiting for a line
+	Window *win = _windows->getFocusWindow();
+	return win && (win->_lineRequest || win->_lineRequestUni);
+}
+
+bool GlkEngine::canSaveGameStateCurrently() {
+	// Only allow savegames by default when sub-engines are waiting for a line
+	Window *win = _windows->getFocusWindow();
+	return win && (win->_lineRequest || win->_lineRequestUni);
+}
+
 Common::Error GlkEngine::loadGame() {
 	frefid_t ref = _streams->createByPrompt(fileusage_BinaryMode | fileusage_SavedGame,
 		filemode_Read, 0);
