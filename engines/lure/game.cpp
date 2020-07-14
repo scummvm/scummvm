@@ -274,12 +274,19 @@ void Game::execute() {
 
 		// If Skorl catches player, show the catching animation
 		if ((_state & GS_CAUGHT) != 0) {
+			if (!engine.isEGA())
+				screen.paletteFadeOut();
+
 			Palette palette(SKORL_CATCH_PALETTE_ID);
-			AnimationSequence *anim = new AnimationSequence(SKORL_CATCH_ANIM_ID, palette, false);
 			mouse.cursorOff();
-			Sound.addSound(0x33);
+
+			static const AnimSoundSequence catchSound[] = { { 12, 0xFF, 0xFF, 1, false }, { 1, 41, 41, 1, false } };
+			AnimationSequence *anim = new AnimationSequence(SKORL_CATCH_ANIM_ID, palette, true, 5, catchSound);
 			anim->show();
 			delete anim;
+
+			if (!engine.isEGA())
+				screen.paletteFadeOut();
 		}
 
 		// If the Restart/Restore dialog is needed, show it

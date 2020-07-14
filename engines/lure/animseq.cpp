@@ -231,7 +231,7 @@ AnimAbortType AnimationSequence::show() {
 
 	// Loop through displaying the animations
 	while (_pPixels < _pPixelsEnd) {
-		if ((soundFrame != NULL) && (frameCtr == 0))
+		if ((soundFrame != NULL) && (soundFrame->rolandSoundId != 0xFF) && (frameCtr == 0))
 			Sound.musicInterface_Play(
 				Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId,
 				soundFrame->channelNum, soundFrame->music);
