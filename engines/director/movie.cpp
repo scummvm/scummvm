@@ -201,11 +201,14 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	_changedBy = fileInfoStrings[1].readString();
 	_createdBy = fileInfoStrings[2].readString();
 	_createdBy = fileInfoStrings[3].readString();
-	uint16 preload;
-	if (stream.isBE())
-		preload = READ_BE_INT16(fileInfoStrings[4].data);
-	else
-		preload = READ_LE_INT16(fileInfoStrings[4].data);
+
+	uint16 preload = 0;
+	if (fileInfoStrings[4].len) {
+		if (stream.isBE())
+			preload = READ_BE_INT16(fileInfoStrings[4].data);
+		else
+			preload = READ_LE_INT16(fileInfoStrings[4].data);
+	}
 
 	if (debugChannelSet(3, kDebugLoading)) {
 		debug("VWFI: script: '%s'", _script.c_str());
