@@ -849,7 +849,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	/* uint32 length = */ stream.readUint32();
 	/* uint32 length2 = */ stream.readUint32();
 	uint16 codeStoreOffset = stream.readUint16();
-	/* uint16 lctxIndex = */ stream.readUint16();
+	uint16 lctxIndex = stream.readUint16();
 	// unk2
 	for (uint32 i = 0; i < 0x10; i++) {
 		stream.readByte();
@@ -897,6 +897,8 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		CastMemberInfo *info = g_director->getCurrentMovie()->getCastMemberInfo(castId);
 		if (info)
 			castName = info->name;
+	} else {
+		warning("Script %d has invalid cast member %d", lctxIndex, castId);
 	}
 
 	_assemblyArchive = archive;
@@ -907,25 +909,19 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 		if (0 <= factoryNameId && factoryNameId < (int16)archive->names.size()) {
 			factoryName = archive->names[factoryNameId];
 		} else {
-			warning("Factory %d has unknown name id %d, skipping define", castId, factoryNameId);
+			warning("Factory %d has unknown name id %d, skipping define", lctxIndex, factoryNameId);
 			return nullptr;
 		}
-		debugC(1, kDebugCompile, "Add V4 bytecode for factory '%s' with id %d", factoryName.c_str(), castId);
+		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", lctxIndex, factoryName.c_str());
 
-		_assemblyContext = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
+		sc = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
 		codeFactory(factoryName);
 	} else {
-		debugC(1, kDebugCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(scriptType), castId);
+		debugC(1, kDebugCompile, "Add V4 script %d: maybe %s %d", lctxIndex, scriptType2str(scriptType), castId);
 
-		if (archive->getScriptContext(scriptType, castId)) {
-			// We can't undefine context data because it could be used in e.g. symbols.
-			// Abort on double definitions.
-			error("Script already defined for type %d, id %d", scriptType, castId);
-			return nullptr;
-		}
-
-		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
+		sc = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
 	}
+	_assemblyContext = sc;
 
 	// initialise each property
 	if ((uint32)stream.size() < propertiesOffset + propertiesCount * 2) {
@@ -1450,10 +1446,10 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	return sc;
 }
 
-void LingoArchive::addCodeV4(Common::SeekableSubReadStreamEndian &stream, const Common::String &archName) {
+void LingoArchive::addCodeV4(Common::SeekableSubReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName) {
 	ScriptContext *ctx = g_lingo->compileLingoV4(stream, this, archName);
 	if (ctx) {
-		scriptContexts[ctx->_scriptType][ctx->_id] = ctx;
+		lctxContexts[lctxIndex] = ctx;
 		*ctx->_refCount += 1;
 	}
 }

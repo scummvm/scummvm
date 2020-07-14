@@ -915,11 +915,38 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			stream.readUint16();
 		}
 
-		for (Common::Array<int16>::iterator iterator = lscr.begin(); iterator != lscr.end(); ++iterator) {
-			if (*iterator >= 0) {
+		for (uint16 i = 0; i < lscr.size(); i++) {
+			if (lscr[i] >= 0) {
 				Common::SeekableSubReadStreamEndian *r;
-				_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), *iterator)), _macName);
+				_lingoArchive->addCodeV4(*(r = _castArchive->getResource(MKTAG('L', 's', 'c', 'r'), lscr[i])), i, _macName);
 				delete r;
+			}
+		}
+
+		// repair script type + cast ID
+		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it) {
+			if (it->_value->_type == kCastLingoScript) {
+				ScriptCastMember *member = static_cast<ScriptCastMember *>(it->_value);
+				if (!_lingoArchive->lctxContexts.contains(member->_id - 1)) {
+					warning("%s %d has invalid script ID %d", scriptType2str(member->_scriptType), it->_key, member->_id);
+					continue;
+				}
+
+				ScriptContext *script = _lingoArchive->lctxContexts[member->_id - 1];
+				debugC(1, kDebugCompile, "Repairing script %d: %s %d -> %s %d", member->_id, scriptType2str(script->_scriptType), script->_id, scriptType2str(member->_scriptType), it->_key);
+				script->_scriptType = member->_scriptType;
+				script->_id = it->_key;
+			}
+		}
+		
+		// actually define scripts
+		for (ScriptContextHash::iterator it = _lingoArchive->lctxContexts.begin(); it != _lingoArchive->lctxContexts.end(); ++it) {
+			ScriptContext *script = it->_value;
+			if (!script->isFactory()) {
+				if (_lingoArchive->getScriptContext(script->_scriptType, script->_id)) {
+					error("Script already defined for type %s, id %d", scriptType2str(script->_scriptType), script->_id);
+				}
+				_lingoArchive->scriptContexts[script->_scriptType][script->_id] = script;
 			}
 		}
 	} else {

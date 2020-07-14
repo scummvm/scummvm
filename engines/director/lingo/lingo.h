@@ -203,6 +203,7 @@ struct LingoEvent {
 struct LingoArchive {
 	~LingoArchive();
 
+	ScriptContextHash lctxContexts;
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
 	Common::HashMap<uint32, Common::String> primaryEventHandlers;
@@ -212,7 +213,7 @@ struct LingoArchive {
 	Common::String getName(uint16 id);
 
 	void addCode(const char *code, ScriptType type, uint16 id, const char *scriptName = nullptr);
-	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, const Common::String &archName);
+	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
 };
 
