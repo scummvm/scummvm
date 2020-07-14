@@ -844,6 +844,12 @@ void MidiMusic::send(uint32 b) {
 			if (velocity > 0x7F) velocity = 0x7F;
 			b = (b & 0xFF00FFFF) | (velocity << 16);
 		}
+	} else if (((b & 0xF0) == 0x80)) {
+		// Note Off
+		if (Sound.isRoland()) {
+			// Strip velocity
+			b &= 0xFF00FFFF;
+		}
 	}
 
 	if (Sound.isRoland() && _isMusic) {
