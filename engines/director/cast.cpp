@@ -667,6 +667,19 @@ void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 	}
 }
 
+static void readEditInfo(EditInfo *info, Common::ReadStreamEndian *stream) {
+	info->rect = Movie::readRect(*stream);
+	info->selStart = stream->readUint32();
+	info->selEnd = stream->readUint32();
+	info->version = stream->readByte();
+	info->rulerFlag = stream->readByte();
+
+	if (debugChannelSet(3, kDebugLoading)) {
+		info->rect.debugPrint(0, "EditInfo: ");
+		debug("selStart: %d  selEnd: %d  version: %d  rulerFlag: %d", info->selStart,info->selEnd, info->version, info->rulerFlag);
+	}
+}
+
 void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res) {
 	// IDs are stored as relative to the start of the cast array.
 	id += _castArrayStart;
@@ -810,18 +823,33 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		debugC(4, kDebugLoading, "'");
 
 		CastMemberInfo *ci = new CastMemberInfo();
+		Common::MemoryReadStreamEndian *entryStream;
 
 		// We have here variable number of strings. Thus, instead of
 		// adding tons of ifs, we use this switch()
 		switch (castStrings.size()) {
 		default:
-			warning("Cast::loadCastData(): extra %d strings", castStrings.size() - 5);
+			warning("Cast::loadCastData(): extra %d strings", castStrings.size() - 8);
+			// fallthrough
+		case 8:
+			if (castStrings[7].len) {
+				entryStream = new Common::MemoryReadStreamEndian(castStrings[7].data, castStrings[7].len, stream.isBE());
+				readEditInfo(&ci->textEditInfo, entryStream);
+				delete entryStream;
+			}
 			// fallthrough
 		case 7:
-			ci->comments = castStrings[6].readString();
+			if (castStrings[6].len) {
+				warning("Cast::loadCastData(): STUB: scriptStyle (%d bytes)", castStrings[6].len);
+				Common::hexdump(castStrings[6].data, castStrings[6].len);
+			}
 			// fallthrough
 		case 6:
-			ci->modifiedBy = castStrings[5].readString();
+			if (castStrings[5].len) {
+				entryStream = new Common::MemoryReadStreamEndian(castStrings[5].data, castStrings[5].len, stream.isBE());
+				readEditInfo(&ci->scriptEditInfo, entryStream);
+				delete entryStream;
+			}
 			// fallthrough
 		case 5:
 			ci->type = castStrings[4].readString();
@@ -840,7 +868,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 			}
 			// fallthrough
 		case 1:
-			ci->script = castStrings[0].readString();
+			ci->script = Common::String((const char *)castStrings[0].data, castStrings[0].len);
 			// fallthrough
 		case 0:
 			break;

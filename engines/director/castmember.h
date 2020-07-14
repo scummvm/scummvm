@@ -213,12 +213,23 @@ public:
 	void loadChunks();
 };
 
+struct EditInfo {
+	Common::Rect rect;
+	int32 selStart;
+	int32 selEnd;
+	byte version;
+	byte rulerFlag;
+};
+
 struct CastMemberInfo {
 	Common::String script;
 	Common::String name;
 	Common::String directory;
 	Common::String fileName;
 	Common::String type;
+	EditInfo scriptEditInfo;
+	// scriptStyle
+	EditInfo textEditInfo;
 	Common::String modifiedBy;
 	Common::String comments;
 };
