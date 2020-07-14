@@ -34,7 +34,7 @@
 namespace Graphics {
 
 MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor) :
-	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment) {
+	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
 
 	_buttonType = buttonType;
 
@@ -74,14 +74,14 @@ void MacButton::invertOuter() {
 	switch (_buttonType) {
 	case kCheckBox: {
 		Common::Rect c = Common::Rect(r.left + 1, r.top + 3, r.left + 9, r.top + 11);
-		Graphics::drawRect(c, 0, Graphics::macInvertPixel, _composeSurface);
+		Graphics::drawRect(c, 0, Graphics::macDrawPixel, &_pd);
 	}
 		break;
 	case kRound:
-		Graphics::drawRoundRect(r, 4, 0, true, Graphics::macInvertPixel, _composeSurface);
+		Graphics::drawRoundRect(r, 4, 0, true, Graphics::macDrawPixel, &_pd);
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, Graphics::macInvertPixel, _composeSurface);
+		Graphics::drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, Graphics::macDrawPixel, &_pd);
 		break;
 	}
 
@@ -93,14 +93,14 @@ void MacButton::invertInner() {
 
 	switch (_buttonType) {
 	case kCheckBox:
-		Graphics::drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, Graphics::macInvertPixel, _composeSurface);
-		Graphics::drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, Graphics::macInvertPixel, _composeSurface);
-		Graphics::macInvertPixel(5, 7, 0, _composeSurface);
+		Graphics::drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, Graphics::macDrawPixel, &_pd);
+		Graphics::drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, Graphics::macDrawPixel, &_pd);
+		Graphics::macDrawPixel(5, 7, 0, &_pd);
 		break;
 	case kRound:
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left + 3, r.top + 5, r.left + 8, r.top + 10, 0, true, Graphics::macInvertPixel, _composeSurface);
+		Graphics::drawEllipse(r.left + 3, r.top + 5, r.left + 8, r.top + 10, 0, true, Graphics::macDrawPixel, &_pd);
 		break;
 	}
 

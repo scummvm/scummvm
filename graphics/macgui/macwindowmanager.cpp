@@ -348,9 +348,8 @@ void macDrawPixel(int x, int y, int color, void *data) {
 			uint xu = (uint)x; // for letting compiler optimize it
 			uint yu = (uint)y;
 
-			*((byte *)p->surface->getBasePtr(xu, yu)) =
-				(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
-				color : (p->invert ? 255 - *((byte *)p->surface->getBasePtr(xu, yu)) : p->bgColor);
+			*((byte *)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((byte *)p->surface->getBasePtr(xu, yu))) :
+				(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ? color : p->bgColor;
 
 			if (p->mask)
 				*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
@@ -366,24 +365,12 @@ void macDrawPixel(int x, int y, int color, void *data) {
 				if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
 					uint xu = (uint)x; // for letting compiler optimize it
 					uint yu = (uint)y;
-					*((byte *)p->surface->getBasePtr(xu, yu)) =
-						(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ?
-						color : (p->invert ? 255 - *((byte *)p->surface->getBasePtr(xu, yu)) : p->bgColor);
+					*((byte *)p->surface->getBasePtr(xu, yu)) = p->invert ? ~(*((byte *)p->surface->getBasePtr(xu, yu))) :
+						(pat[(yu - p->fillOriginY) % 8] & (1 << (7 - (xu - p->fillOriginX) % 8))) ? color : p->bgColor;
 
 					if (p->mask)
 						*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
 				}
-	}
-}
-
-void macInvertPixel(int x, int y, int color, void *data) {
-	// Argument color is unused; we just invert the colors as they are in the surface.
-	Graphics::ManagedSurface *surface = (Graphics::ManagedSurface *)data;
-
-	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
-		byte *p = (byte *)surface->getBasePtr(x, y);
-
-		*p = abs(255 - *p);
 	}
 }
 

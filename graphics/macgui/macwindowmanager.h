@@ -114,7 +114,6 @@ struct ZoomBox {
 };
 
 void macDrawPixel(int x, int y, int color, void *data);
-void macInvertPixel(int x, int y, int color, void *data);
 
 /**
  * A manager class to handle window creation, destruction,

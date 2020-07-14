@@ -310,7 +310,8 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 				int ry2 = ry1 + _dims.height() * _scrollSize;
 				Common::Rect rr(rx1, ry1, rx2, ry2);
 
-				Graphics::drawFilledRect(rr, _wm->_colorBlack, Graphics::macInvertPixel, g);
+				MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, true);
+				Graphics::drawFilledRect(rr, _wm->_colorBlack, Graphics::macDrawPixel, &pd);
 			}
 		}
 		if (closeable) {
