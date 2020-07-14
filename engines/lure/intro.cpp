@@ -38,11 +38,11 @@ struct AnimRecord {
 
 static const uint16 start_screens[] = {0x18, 0x1A, 0x1E, 0x1C, 0};
 static const AnimRecord anim_screens[] = {
-	{0x40, 0, 0x35A, 0x2C8, 0x80},		// The kingdom was at peace
-	{0x42, 1, 0, 0x5FA, 0x81},			// Cliff overhang
-	{0x44, 2, 0, 0, 0x82},				// Siluette in moonlight
+	{0x40, 0, 0x35A, 0x2C8, 0x00},		// The kingdom was at peace
+	{0x42, 1, 0, 0x5FA, 0x01},			// Cliff overhang
+	{0x44, 2, 0, 0, 0x02},				// Siluette in moonlight
 	{0x24, 3, 0, 0x328 + 0x24, 0xff},	// Exposition of reaching town
-	{0x46, 3, 0, 0, 0x83},				// Skorl approaches
+	{0x46, 3, 0, 0, 0x03},				// Skorl approaches
 	{0, 0, 0, 0, 0xff}};
 
 // showScreen

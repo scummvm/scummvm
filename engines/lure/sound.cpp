@@ -547,8 +547,8 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, b
 		// Only play sounds if a sound driver is active
 		return;
 
-	// TODO Figure out what this represents
-	//bool isMusic = (soundNumber & 0x80) != 0;
+	// Most significant bit indicates if the track should loop or not
+	bool loop = (soundNumber & 0x80) != 0;
 
 	if (!game.soundFlag())
 		// Don't play sounds if sound is turned off
@@ -567,7 +567,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, b
 
 	_soundMutex.lock();
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
-		isMusic, numChannels, soundStart, dataSize);
+		isMusic, loop, numChannels, soundStart, dataSize);
 	_playingSounds.push_back(MusicList::value_type(sound));
 	_soundMutex.unlock();
 }
@@ -705,13 +705,14 @@ void SoundManager::doTimer() {
 /*------------------------------------------------------------------------*/
 
 MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-					 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size) {
+					 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, uint8 numChannels, void *soundData, uint32 size) {
 	_driver = driver;
 	assert(_driver);
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
 	_isMusic = isMus;
+	_loop = loop;
 
 	_numChannels = numChannels;
 	_volume = 0;
@@ -725,6 +726,7 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	_parser->setTimerRate(_driver->getBaseTempo());
 	// All Notes Off on all channels does not work with multiple MIDI sources
 	_parser->property(MidiParser::mpDisableAllNotesOffMidiEvents, 1);
+	_parser->property(MidiParser::mpAutoLoop, _loop);
 
 	_soundData = (uint8 *)soundData;
 	_soundSize = size;
