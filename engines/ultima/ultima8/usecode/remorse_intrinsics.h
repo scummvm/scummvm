@@ -249,7 +249,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getDirFromItem, // int Intrinsic0C7(6 bytes)
 	Item::I_hurl, // void Intrinsic0C8(12 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
-	Actor::I_setHp, // int Intrinsic0CA(6 bytes)
+	Actor::I_addHp, // int Intrinsic0CA(6 bytes)
 	0, // 0CB void I_createMapJumpProcess(int16 mapnum)", // TODO: Implement me
 	Actor::I_isInCombat, // int Intrinsic0CC(4 bytes)
 	Actor::I_setActivity, // void Intrinsic0CD(6 bytes)
