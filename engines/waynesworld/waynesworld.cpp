@@ -21,6 +21,7 @@
  */
 
 #include "waynesworld/waynesworld.h"
+#include "waynesworld/graphics.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
@@ -70,11 +71,39 @@ Common::Error WaynesWorldEngine::run() {
 
 	_isSaveAllowed = false;
 
-	initGraphics(320, 240);
+	initGraphics(320, 200);
+	_screen = new Screen();
+	_backgroundSurface = new WWSurface(320, 150);
 
+#if 0
 	while (!shouldQuit()) {
 		updateEvents();
 	}
+#endif
+
+#if 1
+	loadPalette("m01/wstand0");
+	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
+
+	WWSurface *wayne = loadSurface("m01/wstand0");
+
+	// Image::PCXDecoder *pcx = loadImage("m00/winter", false);
+	// g_system->copyRectToScreen(pcx->getSurface()->getPixels(), pcx->getSurface()->pitch, 0, 0, pcx->getSurface()->w, pcx->getSurface()->h);
+	// delete pcx;
+
+	while (!shouldQuit()) {
+		updateEvents();
+		_screen->clear(0);
+		_screen->drawSurface(wayne, _mouseX - 10, _mouseY - 10);
+		g_system->updateScreen();
+	}
+
+	delete wayne;
+
+#endif
+
+	delete _backgroundSurface;
+	delete _screen;
 
 	return Common::kNoError;
 }
@@ -128,6 +157,52 @@ void WaynesWorldEngine::updateEvents() {
 
 int WaynesWorldEngine::getRandom(int max) {
 	return max == 0 ? 0 : _random->getRandomNumber(max - 1);
+}
+
+Image::PCXDecoder *WaynesWorldEngine::loadImage(const char *filename, bool appendRoomName) {
+	Common::String tempFilename = appendRoomName
+		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)
+		: Common::String::format("%s.pcx", filename);
+
+	Common::File pcxFile;
+	if (!pcxFile.open(tempFilename)) {
+		warning("loadImage() Could not open '%s'", tempFilename.c_str());
+		return nullptr;
+	}
+
+	Image::PCXDecoder *pcx = new Image::PCXDecoder();
+	if (!pcx->loadStream(pcxFile)) {
+		warning("loadImage() Could not process '%s'", tempFilename.c_str());
+		delete pcx;
+		return nullptr;
+	}
+
+	return pcx;
+}
+
+WWSurface *WaynesWorldEngine::loadSurfaceIntern(const char *filename, bool appendRoomName) {
+    Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
+	WWSurface *surface = new WWSurface(imageDecoder->getSurface());
+    delete imageDecoder;
+    return surface;
+}
+
+WWSurface *WaynesWorldEngine::loadSurface(const char *filename) {
+	return loadSurfaceIntern(filename, false);
+}
+
+WWSurface *WaynesWorldEngine::loadRoomSurface(const char *filename) {
+	return loadSurfaceIntern(filename, true);
+}
+
+void WaynesWorldEngine::loadPalette(const char *filename) {
+    Image::PCXDecoder *imageDecoder = loadImage(filename, false);
+	if (imageDecoder->getPaletteColorCount() != 256) {
+		warning("loadPalette() Could not load palette from '%s'", filename);
+	} else {
+		memcpy(_palette2, imageDecoder->getPalette(), imageDecoder->getPaletteColorCount() * 3);
+	}
+    delete imageDecoder;
 }
 
 } // End of namespace WaynesWorld

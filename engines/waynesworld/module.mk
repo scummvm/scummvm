@@ -2,7 +2,8 @@ MODULE := engines/waynesworld
 
 MODULE_OBJS := \
 	waynesworld.o \
-	detection.o
+	detection.o \
+	graphics.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_WAYNESWORLD), DYNAMIC_PLUGIN)

@@ -34,6 +34,8 @@
 #include "common/system.h"
 #include "engines/engine.h"
 
+#include "image/pcx.h"
+
 struct ADGameDescription;
 
 namespace WaynesWorld {
@@ -43,6 +45,9 @@ namespace WaynesWorld {
 enum {
 	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
 };
+
+class Screen;
+class WWSurface;
 
 class WaynesWorldEngine : public Engine {
 protected:
@@ -70,6 +75,21 @@ public:
 
 	void updateEvents();
 	int getRandom(int max);
+
+	// Graphics
+	byte _palette2[768];
+	Screen *_screen;
+	WWSurface *_backgroundSurface;
+
+	// Room
+	Common::String _roomName;
+
+	// Image loading
+	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
+	WWSurface *loadSurfaceIntern(const char *filename, bool appendRoomName);
+	WWSurface *loadSurface(const char *filename);
+	WWSurface *loadRoomSurface(const char *filename);
+	void loadPalette(const char *filename);
 
 	// Savegame API
 
