@@ -22,6 +22,8 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/gumps/message_box_gump.h"
+#include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
@@ -48,12 +50,13 @@ void TargetReticleProcess::run() {
 	Kernel *kernel = Kernel::get_instance();
 	assert(kernel);
 	uint32 frameno = kernel->getFrameNum();
+	Actor *mainactor = getMainActor();
 	Process *spriteProc = nullptr;
 	if (_reticleSpriteProcess != 0) {
 		spriteProc = kernel->getProcess(_reticleSpriteProcess);
 	}
 
-	if (!_reticleEnabled) {
+	if (!_reticleEnabled || (mainactor && !mainactor->isInCombat())) {
 		if (spriteProc) {
 			spriteProc->terminate();
 		}
@@ -130,9 +133,6 @@ void TargetReticleProcess::putTargetReticleOnItem(Item *item) {
 void TargetReticleProcess::itemMoved(Item *item) {
 	assert(item);
 	if (!_reticleSpriteProcess || item->getObjId() != _lastTargetItem) {
-		// Shouldn't happen, but to be sure..
-		warning("TargetReticleProcess: no active reticle or notified by the wrong item (%d, expected %d, process %d)",
-				item->getObjId(), _lastTargetItem, _reticleSpriteProcess);
 		clearSprite();
 		return;
 	}
@@ -170,6 +170,13 @@ void TargetReticleProcess::clearSprite() {
 	}
 	_lastTargetItem = 0;
 	_lastTargetDir = 0x10;
+}
+
+void TargetReticleProcess::toggle() {
+	bool newstate = !getEnabled();
+	Std::string msg = newstate ? _TL_("TARGETING RETICLE ACTIVE") : _TL_("TARGETING RETICLE INACTIVE");
+	MessageBoxGump::Show("", msg, 0xFF707070);
+	setEnabled(newstate);
 }
 
 void TargetReticleProcess::saveData(Common::WriteStream *ws) {

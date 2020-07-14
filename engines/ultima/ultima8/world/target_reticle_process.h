@@ -57,6 +57,19 @@ public:
 		return _instance;
 	}
 
+	void setEnabled(bool val) {
+		_reticleEnabled = val;
+	}
+	bool getEnabled() const {
+		return _reticleEnabled;
+	}
+
+	void toggle();
+
+	static TargetReticleProcess *get_instance() {
+		return _instance;
+	}
+
 private:
 	bool findTargetItem();
 	void putTargetReticleOnItem(Item *);

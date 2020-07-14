@@ -47,6 +47,7 @@
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 
@@ -1145,7 +1146,14 @@ bool Debugger::cmdUseInventory(int argc, const char **argv) {
 
 bool Debugger::cmdUseRecall(int argc, const char **argv) {
 	MainActor *av = getMainActor();
-	av->useInventoryItem(833);
+	if (GAME_IS_U8)
+		av->useInventoryItem(833);
+	else {
+		TargetReticleProcess *reticle = TargetReticleProcess::get_instance();
+		if (reticle) {
+			reticle->toggle();
+		}
+	}
 	return false;
 }
 
