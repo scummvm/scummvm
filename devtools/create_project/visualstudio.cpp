@@ -109,11 +109,10 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 		toolConfig += (enableLanguageExtensions ? "DisableLanguageExtensions=\"false\" " : "");
 
 		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-			const std::string outputBitness = (*arch == ARCH_X86 ? "" : "64");
-			outputConfiguration(setup, project, toolConfig, "Debug", getMSVCConfigName(*arch), outputBitness);
-			outputConfiguration(setup, project, toolConfig, "Analysis", getMSVCConfigName(*arch), outputBitness);
-			outputConfiguration(setup, project, toolConfig, "LLVM", getMSVCConfigName(*arch), outputBitness);
-			outputConfiguration(setup, project, toolConfig, "Release", getMSVCConfigName(*arch), outputBitness);
+			outputConfiguration(setup, project, toolConfig, "Debug", *arch);
+			outputConfiguration(setup, project, toolConfig, "Analysis", *arch);
+			outputConfiguration(setup, project, toolConfig, "LLVM", *arch);
+			outputConfiguration(setup, project, toolConfig, "Release", *arch);
 		}
 	}
 
@@ -151,8 +150,8 @@ void VisualStudioProvider::outputConfiguration(std::ostream &project, const Buil
 	project << "\t\t</Configuration>\n";
 }
 
-void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props) {
-	project << "\t\t<Configuration Name=\"" << config << "|" << platform << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << props << ".vsprops\">\n"
+void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch) {
+	project << "\t\t<Configuration Name=\"" << config << "|" << getMSVCConfigName(arch) << "\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\" << setup.projectDescription << "_" << config << getMSVCArchName(arch) << ".vsprops\">\n"
 	           "\t\t\t<Tool Name=\"VCCLCompilerTool\" "<< toolConfig << "/>\n"
 	           "\t\t</Configuration>\n";
 }
@@ -260,9 +259,9 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 
 void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration) {
 
-	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCConfigName(arch) + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension()).c_str());
 	if (!properties || !properties.is_open()) {
-		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCConfigName(arch) + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_" + configuration + getMSVCArchName(arch) + getPropertiesExtension() + "\" for writing");
 		return;
 	}
 
@@ -270,8 +269,8 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"" << setup.projectDescription << "_" << configuration << getMSVCConfigName(arch) << "\"\n"
-	              "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << getMSVCConfigName(arch) << ".vsprops\"\n"
+	              "\tName=\"" << setup.projectDescription << "_" << configuration << getMSVCArchName(arch) << "\"\n"
+	              "\tInheritedPropertySheets=\".\\" << setup.projectDescription << "_Global" << getMSVCArchName(arch) << ".vsprops\"\n"
 	              "\t>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCCLCompilerTool\"\n";
