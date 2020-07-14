@@ -104,6 +104,7 @@ public:
 	int _roomEventNum;
 
 	// Inventory
+	WWSurface *_inventorySprite;
 	int _inventoryItemsCount;
 	int _inventoryItemsObjectMap[50];
 	int _wayneInventory[50];
@@ -136,6 +137,7 @@ public:
 	void drawVerbLine(int verbNumber, int objectNumber, const char *objectName);
 
 	// Inventory
+	void redrawInventory();
 	void refreshInventory(bool doRefresh);
 	void drawInventory();
 

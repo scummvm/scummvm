@@ -374,12 +374,47 @@ void WaynesWorldEngine::drawVerbLine(int verbNumber, int objectNumber, const cha
 	debug("verbLine: [%s]", verbLine.c_str());
 }
 
+void WaynesWorldEngine::redrawInventory() {
+    // NOTE This seems to hide the inventory
+    _inventoryItemsCount = 1;
+    drawInventory();
+    refreshActors();
+}
+
 void WaynesWorldEngine::refreshInventory(bool doRefresh) {
-	// TODO
+    // NOTE This seems to show the inventory
+    if (_inventoryItemsCount != 0) {
+        drawInventory();
+        drawInventory();
+    }
+    if (doRefresh) {
+        refreshActors();
+    }
 }
 
 void WaynesWorldEngine::drawInventory() {
-	// TODO
+    if (_inventoryItemsCount != 0) {
+        _inventoryItemsCount = 0;
+        return;
+    }
+    int iconX = 0;
+    int iconY = 0;
+    _inventorySprite->clear(0);
+    for (int inventoryItemIndex = 0; inventoryItemIndex < 50; inventoryItemIndex++) {
+        int objectRoomNumber = 0; // TODO getObjectRoom(inventoryItemIndex + 28);
+        if ((_currentActorNum != 0 && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
+            (_currentActorNum == 0 && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
+            Common::String filename = Common::String::format("m03/icon%02d", inventoryItemIndex + 1);
+            drawImageToSurface(filename.c_str(), _inventorySprite, iconX, iconY);
+            iconX += 26;
+            if (iconX > 300) {
+                iconX = 0;
+                iconY += 20;
+            }
+            _inventoryItemsObjectMap[_inventoryItemsCount] = inventoryItemIndex + 28;
+            _inventoryItemsCount++;
+        }
+    }
 }
 
 void WaynesWorldEngine::refreshActors() {
