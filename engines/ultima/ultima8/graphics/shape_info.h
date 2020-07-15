@@ -151,9 +151,9 @@ public:
 		return (_damageInfo && _damageInfo->takesDamage());
 	}
 
-	bool getTypeFlag(int typeFlag);
-	bool getTypeFlagU8(int typeFlag);
-	bool getTypeFlagCrusader(int typeFlag);
+	bool getTypeFlag(int typeFlag) const;
+	bool getTypeFlagU8(int typeFlag) const;
+	bool getTypeFlagCrusader(int typeFlag) const;
 
 	inline void getFootpadWorld(int32 &x, int32 &y, int32 &z, uint16 flipped) const;
 

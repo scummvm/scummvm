@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-bool ShapeInfo::getTypeFlag(int typeFlag) {
+bool ShapeInfo::getTypeFlag(int typeFlag) const {
 	if (GAME_IS_U8)
 		return getTypeFlagU8(typeFlag);
 	else if (GAME_IS_CRUSADER)
@@ -37,7 +37,7 @@ bool ShapeInfo::getTypeFlag(int typeFlag) {
 	return false;
 }
 
-bool ShapeInfo::getTypeFlagU8(int typeFlag) {
+bool ShapeInfo::getTypeFlagU8(int typeFlag) const {
 	// This is not nice. The Typeflags in U8 were stored in an 8 byte array
 	// and they could access them with a number from 0 to 63
 	// Problem: We don't store them in an 8 byte array so we can't access
@@ -74,7 +74,7 @@ bool ShapeInfo::getTypeFlagU8(int typeFlag) {
 	return false;
 }
 
-bool ShapeInfo::getTypeFlagCrusader(int typeFlag) {
+bool ShapeInfo::getTypeFlagCrusader(int typeFlag) const {
 	if (typeFlag <= 11) {       // _flags        Byte 0, 1:0-3   Bits  0-11
 		return (_flags >> typeFlag) & 1;
 	} else if (typeFlag <= 16) { // _family       Byte 1:4-7,2:0  Bits 12-16
