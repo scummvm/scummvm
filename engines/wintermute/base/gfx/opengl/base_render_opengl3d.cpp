@@ -442,10 +442,6 @@ BaseSurface *Wintermute::BaseRenderOpenGL3D::createSurface() {
 	return new BaseSurfaceOpenGL3D(_gameRef, this);
 }
 
-void BaseRenderOpenGL3D::endSaveLoad() {
-	warning("BaseRenderOpenGL3D::endLoad not yet implemented");
-}
-
 bool BaseRenderOpenGL3D::drawSprite(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
                                     float zoomX, float zoomY, const Wintermute::Vector2 &pos,
                                     uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
