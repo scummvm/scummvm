@@ -36,7 +36,7 @@ namespace Ultima8 {
 
 class AVIPlayer : public MoviePlayer {
 public:
-	AVIPlayer(Common::SeekableReadStream *rs, int width, int height);
+	AVIPlayer(Common::SeekableReadStream *rs, int width, int height, const byte *overridePal);
 	~AVIPlayer();
 
 	void run() override;
@@ -44,7 +44,7 @@ public:
 
 	void start() override;
 	void stop() override;
-	bool isPlaying() const override{
+	bool isPlaying() const override {
 		return _playing;
 	}
 
@@ -60,6 +60,7 @@ private:
 	uint32 _xoff;
 	uint32 _yoff;
 	bool _doubleSize;
+	const byte *_overridePal;
 
 };
 
