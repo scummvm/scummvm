@@ -30,7 +30,7 @@ namespace Graphics {
 
 class MacWidget;
 class MacText;
-class MacPlotData;
+struct MacPlotData;
 
 enum MacButtonType {
 	kRound,
