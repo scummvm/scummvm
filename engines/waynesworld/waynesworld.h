@@ -79,6 +79,7 @@ public:
 	// Room
 	Common::String _roomName;
 	int _word_306DB;
+	int _byte_306E7;
 
 	// Input
 	int _mouseX, _mouseY;
@@ -171,8 +172,16 @@ public:
 	void refreshActors();
 
 	// Room
-	void changeRoomScrolling();
+	void openRoomLibrary(int roomNum);
 	void loadRoomBackground(int roomNum);
+	void changeRoom(int roomNum);
+	void refreshRoomBackground(int roomNum);
+	void changeRoomScrolling();
+	void loadRoomMask(int roomNum);
+
+	void loadStaticRoomObjects(int roomNum);
+	void unloadStaticRoomObjects();
+	void drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface);
 
 	// Room objects
 	void moveObjectToRoom(int objectId, int roomNum);
@@ -208,6 +217,7 @@ public:
 	int logic_handleVerbGive();
 	void logic_handleDialogReply(int index, int x, int y);
 	int logic_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
+	void logic_refreshRoomBackground(int roomNum);
 
 	// Savegame API
 

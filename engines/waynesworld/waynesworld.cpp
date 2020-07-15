@@ -533,11 +533,53 @@ void WaynesWorldEngine::refreshActors() {
 	// TODO
 }
 
+void WaynesWorldEngine::openRoomLibrary(int roomNum) {
+    _roomName = Common::String::format("r%02d", roomNum);
+}
+
+void WaynesWorldEngine::loadRoomBackground(int roomNum) {
+    drawRoomImageToSurface("backg", _backgroundSurface, 0, 0);
+    refreshRoomBackground(roomNum);
+    refreshActors();
+}
+
+void WaynesWorldEngine::changeRoom(int roomNum) {
+    if (_currentRoomNumber != -1) {
+        // NOTE Not needed gxCloseLib(roomLib);
+        unloadStaticRoomObjects();
+    }
+    openRoomLibrary(roomNum);
+    if (_wayneSpriteX != -1) {
+        loadRoomMask(roomNum);
+        loadStaticRoomObjects(roomNum);
+    }
+    _actorSpriteValue = 0;
+    _currentRoomNumber = roomNum;
+    _byte_306E7++;
+    loadRoomBackground(roomNum);
+}
+
+void WaynesWorldEngine::refreshRoomBackground(int roomNum) {
+	logic_refreshRoomBackground(roomNum);
+}
+
 void WaynesWorldEngine::changeRoomScrolling() {
 	// TODO
 }
 
-void WaynesWorldEngine::loadRoomBackground(int roomNum) {
+void WaynesWorldEngine::loadRoomMask(int roomNum) {
+	// TODO
+}
+
+void WaynesWorldEngine::loadStaticRoomObjects(int roomNum) {
+	// TODO
+}
+
+void WaynesWorldEngine::unloadStaticRoomObjects() {
+	// TODO
+}
+
+void WaynesWorldEngine::drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface) {
 	// TODO
 }
 
@@ -1071,6 +1113,10 @@ void WaynesWorldEngine::logic_handleDialogReply(int index, int x, int y) {
 int WaynesWorldEngine::logic_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3) {
 	// TODO
 	return 0;
+}
+
+void WaynesWorldEngine::logic_refreshRoomBackground(int roomNum) {
+	// TODO
 }
 
 } // End of namespace WaynesWorld
