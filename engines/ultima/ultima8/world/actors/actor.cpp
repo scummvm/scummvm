@@ -1157,7 +1157,7 @@ int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	int32 result = Item::collideMove(x, y, z, teleport, force, hititem, dirs);
 	if (_objId == 1 && GAME_IS_CRUSADER) {
 		notifyNearbyItems();
-		TargetReticleProcess::getProcess()->avatarMoved();
+		TargetReticleProcess::get_instance()->avatarMoved();
 	}
 	return result;
 }

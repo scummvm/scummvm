@@ -53,10 +53,6 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	static TargetReticleProcess *getProcess() {
-		return _instance;
-	}
-
 	void setEnabled(bool val) {
 		_reticleEnabled = val;
 	}

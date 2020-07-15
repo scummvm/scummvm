@@ -538,6 +538,7 @@ MODULE_OBJS := \
 	ultima8/world/gravity_process.o \
 	ultima8/world/item.o \
 	ultima8/world/item_factory.o \
+	ultima8/world/item_selection_process.o \
 	ultima8/world/item_sorter.o \
 	ultima8/world/map.o \
 	ultima8/world/map_glob.o \

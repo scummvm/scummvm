@@ -246,7 +246,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 		CameraProcess::GetCameraProcess()->ItemMoved();
 
 	if (_extendedFlags & EXT_TARGET)
-		TargetReticleProcess::getProcess()->itemMoved(this);
+		TargetReticleProcess::get_instance()->itemMoved(this);
 }
 
 bool Item::moveToContainer(Container *container, bool checkwghtvol) {
