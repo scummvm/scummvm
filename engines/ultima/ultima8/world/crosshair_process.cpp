@@ -36,32 +36,33 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(CrosshairProcess)
 
-const uint32 CROSSHAIR_SHAPE = 0x4CC;
-const float CROSSHAIR_DIST = 400.0;
+static const uint32 CROSSHAIR_SHAPE = 0x4CC;
+static const float CROSSHAIR_DIST = 400.0;
 
 CrosshairProcess::CrosshairProcess() : Process() {
 }
 
 void CrosshairProcess::run() {
-	Kernel *kernel = Kernel::get_instance();
-	assert(kernel);
 	MainActor *mainactor = getMainActor();
-	int32 cx, cy, cz, ax, ay, az;
-	mainactor->getCentre(cx, cy, cz);
-	mainactor->getFootpadWorld(ax, ay, az);
-	// TODO: Make a fine adjustment for avatar height (eg, when crouching)
-	// for now just put it at 3/4 avatar height which is about right.
-	cz += az / 4;
-	// TODO: Get the fine angle of the avatar once that is implemented.
-	uint16 dir = (mainactor->getDir() + 2) % 8;
-	// Dir is 0~7, convert to 0~15/8*pi
-	float angle = (3.14 * dir / 4.0);
-	float xoff = CROSSHAIR_DIST * cos(angle);
-	float yoff = CROSSHAIR_DIST * sin(angle);
-	cx -= static_cast<int32>(xoff);
-	cy -= static_cast<int32>(yoff);
-
+	assert(mainactor);
 	if (mainactor->isInCombat()) {
+		Kernel *kernel = Kernel::get_instance();
+		assert(kernel);
+		int32 cx, cy, cz, ax, ay, az;
+		mainactor->getCentre(cx, cy, cz);
+		mainactor->getFootpadWorld(ax, ay, az);
+		// TODO: Make a fine adjustment for avatar height (eg, when crouching)
+		// for now just put it at 3/4 avatar height which is about right.
+		cz += az / 4;
+		// TODO: Get the fine angle of the avatar once that is implemented.
+		uint16 dir = (mainactor->getDir() + 2) % 8;
+		// Dir is 0~7, convert to 0~15/8*pi
+		float angle = (3.14 * dir / 4.0);
+		float xoff = CROSSHAIR_DIST * cos(angle);
+		float yoff = CROSSHAIR_DIST * sin(angle);
+		cx -= static_cast<int32>(xoff);
+		cy -= static_cast<int32>(yoff);
+
 		Item *item;
 		if (_itemNum) {
 			item = getItem(_itemNum);
@@ -81,7 +82,6 @@ void CrosshairProcess::run() {
 			_itemNum = 0;
 		}
 	}
-
 }
 
 void CrosshairProcess::saveData(Common::WriteStream *ws) {
