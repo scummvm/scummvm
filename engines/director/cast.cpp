@@ -829,7 +829,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		// adding tons of ifs, we use this switch()
 		switch (castStrings.size()) {
 		default:
-			warning("Cast::loadCastData(): extra %d strings", castStrings.size() - 8);
+			warning("Cast::loadCastData(): BUILDBOT: extra %d strings", castStrings.size() - 8);
 			// fallthrough
 		case 8:
 			if (castStrings[7].len) {
