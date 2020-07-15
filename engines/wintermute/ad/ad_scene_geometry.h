@@ -93,7 +93,7 @@ public:
 
 	Math::Matrix4 *getViewMatrix();
 	Math::Matrix4 _viewMatrix;
-	bool setActiveCamera(char *camera, float fov, float nearClipPlane, float farClipPlane);
+	bool setActiveCamera(const char *camera, float fov, float nearClipPlane, float farClipPlane);
 	bool setActiveCamera(int camera, float fow, float nearClipPlane, float farClipPlane);
 	//bool SetActiveCameraTwin(char* Camera);
 	//bool SetActiveCameraTwin(int Camera);

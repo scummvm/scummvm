@@ -2085,7 +2085,21 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetActiveCamera") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+
+		const char *cameraName = stack->pop()->getString();
+
+		if (_sceneGeometry) {
+			bool res = _sceneGeometry->setActiveCamera(cameraName, _fov, _nearPlane, _farPlane);
+
+			if (!res) {
+				script->runtimeError("Scene.SetActiveCamera failed");
+				stack->pushBool(res);
+			}
+		} else {
+			script->runtimeError("Scene.SetActiveCamera: Scene doesn't contain any geometry");
+			stack->pushBool(false);
+		}
+
 		return STATUS_OK;
 	}
 
