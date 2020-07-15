@@ -100,7 +100,32 @@ void WWSurface::drawSurfaceTransparent(const Graphics::Surface *surface, int x, 
 }
 
 void WWSurface::scaleSurface(const Graphics::Surface *surface) {
-	// TODO
+	const int xIncr = surface->w / w;
+	const int xIncrErr = surface->w % w;
+	const int yIncr = (surface->h / h) * surface->pitch;
+	const int yIncrErr = surface->h % h;
+	int errY = 0;
+	byte *source = (byte*)surface->getBasePtr(0, 0);
+	for (int yc = 0; yc < h; yc++) {
+		byte *sourceRow = source;
+		byte *destRow = (byte*)getBasePtr(0, yc);
+		int errX = 0;
+		for (int xc = 0; xc < w; xc++) {
+			*destRow++ = *sourceRow;
+			sourceRow += xIncr;
+			errX += xIncrErr;
+			if (errX >= w) {
+				errX -= w;
+				sourceRow++;
+			}
+		}
+		source += yIncr;
+		errY += yIncrErr;
+		if (errY >= h) {
+			errY -= h;
+			source += surface->pitch;
+		}
+	}
 }
 
 void WWSurface::frameRect(int x1, int y1, int x2, int y2, byte color) {

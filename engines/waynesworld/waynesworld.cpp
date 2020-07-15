@@ -87,6 +87,9 @@ Common::Error WaynesWorldEngine::run() {
 	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
 
 	WWSurface *wayne = loadSurface("m01/wstand0");
+	WWSurface *wayneS = new WWSurface(wayne->w * 0.75f, wayne->h * 0.75f);
+
+	wayneS->scaleSurface(wayne);
 
 	// Image::PCXDecoder *pcx = loadImage("m00/winter", false);
 	// g_system->copyRectToScreen(pcx->getSurface()->getPixels(), pcx->getSurface()->pitch, 0, 0, pcx->getSurface()->w, pcx->getSurface()->h);
@@ -99,10 +102,12 @@ Common::Error WaynesWorldEngine::run() {
 	while (!shouldQuit()) {
 		updateEvents();
 		// _screen->clear(0);
-		_screen->drawSurfaceTransparent(wayne, _mouseX - 10, _mouseY - 10);
+		// _screen->drawSurfaceTransparent(wayne, _mouseX - 10, _mouseY - 10);
+		_screen->drawSurfaceTransparent(wayneS, _mouseX - 10, _mouseY - 10);
 		g_system->updateScreen();
 	}
 
+	delete wayneS;
 	delete wayne;
 
 #endif
