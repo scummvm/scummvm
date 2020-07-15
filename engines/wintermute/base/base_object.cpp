@@ -38,6 +38,8 @@
 
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/wintermute.h"
 #endif
 
@@ -502,6 +504,43 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	}
 
 #ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// SetShadowImage
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetShadowImage") == 0) {
+		stack->correctParams(1);
+		ScValue *val = stack->pop();
+
+		if (_shadowImage) {
+			_gameRef->_surfaceStorage->removeSurface(_shadowImage);
+			_shadowImage = nullptr;
+		}
+
+		if (val->isString()) {
+			_shadowImage = _gameRef->_surfaceStorage->addSurface(val->getString());
+			stack->pushBool(_shadowImage != nullptr);
+		} else {
+			stack->pushBool(true);
+		}
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetShadowImage
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetShadowImage") == 0) {
+		stack->correctParams(0);
+
+		if (_shadowImage) {
+			stack->pushString(_shadowImage->getFileName());
+		} else {
+			stack->pushNULL();
+		}
+
+		return STATUS_OK;
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// SetLightPosition
 	//////////////////////////////////////////////////////////////////////////
