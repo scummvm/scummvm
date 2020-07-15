@@ -24,6 +24,7 @@
 #define ULTIMA8_GUMPS_CRUSTATUSGUMP_H
 
 #include "ultima/ultima8/gumps/gump.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -38,8 +39,6 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	CruStatusGump();
-	CruStatusGump(int x, int y, uint32 flags = 0,
-	              int32 layer = LAYER_NORMAL);
 	~CruStatusGump() override;
 
 	// Init the gump, call after construction
@@ -50,6 +49,16 @@ public:
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
+
+	static CruStatusGump *get_instance() {
+		return _instance;
+	}
+
+	INTRINSIC(I_hideStatusGump);
+	INTRINSIC(I_showStatusGump);
+
+private:
+	static CruStatusGump *_instance;
 };
 
 } // End of namespace Ultima8
