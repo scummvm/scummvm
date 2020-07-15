@@ -86,7 +86,7 @@ endif
 endif
 
 # The build rule for the ScummVM executable
-$(EXECUTABLE): $(OBJS)
+$(EXECUTABLE): $(OBJS) $(DETECT_OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 ifdef SPLIT_DWARF
@@ -99,7 +99,7 @@ distclean: clean clean-devtools
 
 clean:
 	$(RM_REC) $(DEPDIRS)
-	$(RM) $(OBJS) $(EXECUTABLE)
+	$(RM) $(OBJS) $(DETECT_OBJS) $(EXECUTABLE)
 ifdef SPLIT_DWARF
 	$(RM) $(OBJS:.o=.dwo)
 	$(RM) $(EXECUTABLE).dwp
