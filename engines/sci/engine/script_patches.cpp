@@ -5115,6 +5115,52 @@ static const uint16 kq6PatchWeddingGenieLampMessage[] = {
 	PATCH_END
 };
 
+// Clicking Look on the first catacombs room (405) or the dead-end room (407)
+//  while in text-mode breaks the CD and Spanish versions. The message boxes
+//  never leave the screen, even after restarting. The doVerb methods in these
+//  rooms are missing the necessary "return true" statements that were added to
+//  all other rooms in the CD version. In earlier versions, Messager:say always
+//  set the accumulator to non-zero and these statements weren't necessary.
+//
+// Applies to: PC CD, Spanish PC Floppy
+// Responsible: rm405:doVerb(1), rm407:doVerb(1)
+static const uint16 kq6SignatureRoom405LookMessage[] = {
+	0x33, 0x1f,                         // jmp 1f
+	SIG_ADDTOOFFSET(+18),
+	0x33, 0x0b,                         // jmp 0b
+	SIG_ADDTOOFFSET(+8),
+	SIG_MAGICDWORD,
+	0x57, 0x93, 0x06,                   // super LabRoom 06 [ super doVerb: param1 &rest ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 kq6PatchRoom405LookMessage[] = {
+	0x14,                               // or [ acc |= 1  ]
+	0x48,                               // ret
+	PATCH_ADDTOOFFSET(+18),
+	0x14,                               // or [ acc |= 1  ]
+	0x48,                               // ret
+	PATCH_END
+};
+
+static const uint16 kq6SignatureRoom407LookMessage[] = {
+	0x33, 0x0b,                         // jmp 0b
+	SIG_ADDTOOFFSET(+8),
+	SIG_MAGICDWORD,
+	0x57, 0x93, 0x06,                   // super LabRoom 06 [ super doVerb: param1 &rest ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 kq6PatchRoom407LookMessage[] = {
+	0x14,                               // or [ acc |= 1  ]
+	0x48,                               // ret
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5560,6 +5606,8 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
+	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
+	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
