@@ -5123,7 +5123,7 @@ static const uint16 kq6PatchWeddingGenieLampMessage[] = {
 //  set the accumulator to non-zero and these statements weren't necessary.
 //
 // Applies to: PC CD, Spanish PC Floppy
-// Responsible: rm405:doVerb(1), rm407:doVerb(1)
+// Responsible methods: rm405:doVerb(1), rm407:doVerb(1)
 static const uint16 kq6SignatureRoom405LookMessage[] = {
 	0x33, 0x1f,                         // jmp 1f
 	SIG_ADDTOOFFSET(+18),
