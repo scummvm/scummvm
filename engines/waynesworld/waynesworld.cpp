@@ -163,6 +163,10 @@ int WaynesWorldEngine::getRandom(int max) {
 	return max == 0 ? 0 : _random->getRandomNumber(max - 1);
 }
 
+void WaynesWorldEngine::waitMillis(uint millis) {
+	// TODO
+}
+
 Image::PCXDecoder *WaynesWorldEngine::loadImage(const char *filename, bool appendRoomName) {
 	Common::String tempFilename = appendRoomName
 		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)
@@ -259,6 +263,81 @@ void WaynesWorldEngine::drawRoomImageToScreen(const char *filename, int x, int y
 
 void WaynesWorldEngine::drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y) {
     drawImageToSurfaceIntern(filename, destSurface, x, y, false, true);
+}
+
+void WaynesWorldEngine::loadString(const char *filename, int index, int flag) {
+	// TODO Load the string
+}
+
+void WaynesWorldEngine::drawCurrentTextToSurface(WWSurface *destSurface, int x, int y) {
+    drawCurrentText(x, y, destSurface);
+}
+
+void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
+    int textWidth, textCenterX, textX, textY, textColor, actorY;
+    // WWSurface *textSurface = destSurface ? destSurface : _screen;
+    // txSetFont(font_wwinv);
+    // textWidth = txStrWidth(txtString);
+    if (x != -1) {
+        textCenterX = x;
+        textY = y;
+        textColor = 15;
+    } else if (_currentActorNum != 0) {
+        textCenterX = _wayneSpriteX;
+        actorY = _wayneSpriteY;
+        textColor = 4;
+    } else {
+        textCenterX = _garthSpriteX;
+        actorY = _garthSpriteY;
+        textColor = 119;
+    }
+    textX = textCenterX - 75;
+    if (textX < 0) {
+        textX = 5;
+    } else if (textX + 150 > 319) {
+        textX -= textX - 165;
+    }
+    if (x == -1) {
+        textY = (actorY - 48) - (textWidth / 150 + 1) * 15;
+        if (textY < 0) {
+            textY = actorY + 15;
+        }
+    }
+	// TODO Draw the text
+    // txSetViewPort(textX, 0, textX + 150, 199);
+    // tx_sub_2B2D2(32);
+    // txSetColor(0, 0);
+    // sysMouseDriver(2);
+    // txWrapText(txtString, textX, textY);
+    // txSetFont(font_ww);
+    // tx_sub_2B2D2(32);
+    // txSetColor(textColor, 0);
+    // txWrapText(txtString, clippedTextXCpy, textYCpy);
+    // sysMouseDriver(1);
+    // txSetViewPort(0, 0, 319, 199);
+    // txSetFont(font_bit5x7);
+    _isTextVisible = true;
+    _currentTextX = x;
+    _currentTextY = y;
+}
+
+void WaynesWorldEngine::displayText(const char *filename, int index, int flag, int x, int y, int drawToVirtual) {
+    loadString(filename, index, flag);
+    drawCurrentText(x, y, nullptr);
+}
+
+void WaynesWorldEngine::displayTextLines(const char *filename, int baseIndex, int x, int y, int count) {
+    int ticks = 3000;
+    if (count < 0) {
+        ticks = -count;
+        count = 1;
+    }
+    for (int textIndex = 0; textIndex < count; textIndex++) {
+        displayText(filename, baseIndex + textIndex, 0, x, y, 0);
+        _isTextVisible = false;
+        waitMillis(ticks);
+        refreshActors();
+    }
 }
 
 void WaynesWorldEngine::drawInterface(int verbNum) {

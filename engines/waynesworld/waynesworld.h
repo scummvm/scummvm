@@ -70,7 +70,6 @@ public:
 	Common::RandomSource *_random;
 
 	void updateEvents();
-	int getRandom(int max);
 
 	// Graphics
 	byte _palette2[768];
@@ -103,12 +102,22 @@ public:
 	Common::String _firstObjectName;
 	int _roomEventNum;
 
+	// Actors
+	int _wayneSpriteX, _wayneSpriteY, _wayneKind, _wayneActorScale;
+	int _garthSpriteX, _garthSpriteY, _garthKind, _garthActorScale;
+	int _actorSpriteValue;
+	int _actorSpriteIndex;
+
 	// Inventory
 	WWSurface *_inventorySprite;
 	int _inventoryItemsCount;
 	int _inventoryItemsObjectMap[50];
 	int _wayneInventory[50];
 	int _garthInventory[50];
+
+	// Utils
+	int getRandom(int max);
+	void waitMillis(uint millis);
 
 	// Image loading
 	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
@@ -128,6 +137,13 @@ public:
 	void drawRoomImageToBackgroundTransparent(const char *filename, int x, int y);
 	void drawRoomImageToScreen(const char *filename, int x, int y);
 	void drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y);
+
+	// Text
+	void loadString(const char *filename, int index, int flag);
+	void drawCurrentTextToSurface(WWSurface *destSurface, int x, int y);
+	void drawCurrentText(int x, int y, WWSurface *destSurface);
+	void displayText(const char *filename, int index, int flag, int x, int y, int drawToVirtual);
+	void displayTextLines(const char *filename, int baseIndex, int x, int y, int count);
 
 	// Interface
 	void drawInterface(int verbNum);
