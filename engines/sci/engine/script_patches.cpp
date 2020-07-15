@@ -121,6 +121,7 @@ static const char *const selectorNameTable[] = {
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"add",          // King's Quest 6
 	"givePoints",   // King's Quest 6
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
@@ -240,6 +241,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
+	SELECTOR_add,
 	SELECTOR_givePoints,
 	SELECTOR_has,
 	SELECTOR_modeless,
@@ -5087,6 +5089,32 @@ static const uint16 kq6PatchPawnshopGenieEye[] = {
 	PATCH_END
 };
 
+// During the wedding close-up with the Vizier and the Genie in room 740,
+//  clicking almost any of the wrong lamps on the Genie results in the wrong
+//  message sequence. Alexander says "I have this lamp, 'princess'" twice
+//  instead of the Genie responding after the first message. The script passes
+//  the wrong sequence number in the second message tuple.
+//
+// Applies to: All versions
+// Responsible method: genieHead:doVerb
+static const uint16 kq6SignatureWeddingGenieLampMessage[] = {
+	0x39, SIG_SELECTOR8(add),           // pushi add
+	0x39, 0x05,                         // pushi 05
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos modNum
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos noun
+	SIG_MAGICDWORD,
+	0x39, 0x39,                         // pushi 39 [ verb ]
+	0x76,                               // push0    [ cond ]
+	0x78,                               // push1    [ wrong seq ]
+	SIG_END
+};
+
+static const uint16 kq6PatchWeddingGenieLampMessage[] = {
+	PATCH_ADDTOOFFSET(+11),
+	0x7a,                               // push2 [ correct seq ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5536,6 +5564,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
+	{  true,   745, "fix wedding genie lamp message",                 1, kq6SignatureWeddingGenieLampMessage,      kq6PatchWeddingGenieLampMessage },
 	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
