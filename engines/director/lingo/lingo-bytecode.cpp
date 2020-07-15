@@ -871,10 +871,18 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	int16 factoryNameId = stream.readSint16();
 
 	// offset 50 - contents map
-	// TODO: I believe the handler vectors map handlers to some sort of identifier
-	/* uint16 handlerVectorsCount = */ stream.readUint16();
-	/* uint32 handlerVectorsOffset = */ stream.readUint32();
-	/* uint32 handlerVectorFlags = */ stream.readUint32();
+
+	/* uint16 eventMapCount = */ stream.readUint16();
+	/* uint32 eventMapOffset = */ stream.readUint32();
+	/* uint32 eventMapFlags = */ stream.readUint32();
+	// The event map is an int16 array used to quickly access events.
+	// Its first item is the index of the mouseDown handler or -1,
+	// its second item is the index of the mouseUp handler or -1, etc.
+	// eventMapFlags & (1 << 0) indicates there is a mouseDown handler,
+	// eventMapFlags & (1 << 1) indicates there is a mouseUp handler, etc.
+	// We probably don't need to read this since we already did something
+	// similar with _eventHandlers.
+
 	uint16 propertiesCount = stream.readUint16();
 	uint32 propertiesOffset = stream.readUint32();
 	uint16 globalsCount = stream.readUint16();
