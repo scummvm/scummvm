@@ -177,6 +177,8 @@ public:
 	void drawActorReachObject(int objectId, int spriteIndex);
 	int drawActors(int direction, int wayneKind, int garthKind, int spriteIndex, int wayneX, int wayneY, int garthX, int garthY);
 	void refreshActors();
+	void pickupObject(int objectId, byte &flags, byte flagsSet, int inventoryObjectId);
+	void playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks);
 
 	// Room
 	void openRoomLibrary(int roomNum);

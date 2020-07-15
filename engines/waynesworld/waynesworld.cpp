@@ -99,11 +99,14 @@ Common::Error WaynesWorldEngine::run() {
 	drawInterface(4);
 	drawImageToScreen("r00/backg", 0, 0);
 
+	openRoomLibrary(6);
+
 	while (!shouldQuit()) {
 		updateEvents();
 		// _screen->clear(0);
 		// _screen->drawSurfaceTransparent(wayne, _mouseX - 10, _mouseY - 10);
-		_screen->drawSurfaceTransparent(wayneS, _mouseX - 10, _mouseY - 10);
+		//_screen->drawSurfaceTransparent(wayneS, _mouseX - 10, _mouseY - 10);
+		// playAnimation("wdog", 0, 9, 64, 111, 0, 150);
 		g_system->updateScreen();
 	}
 
@@ -171,6 +174,7 @@ int WaynesWorldEngine::getRandom(int max) {
 
 void WaynesWorldEngine::waitMillis(uint millis) {
 	// TODO
+	_system->delayMillis(millis);
 }
 
 void WaynesWorldEngine::waitSeconds(uint seconds) {
@@ -669,7 +673,50 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
 }
 
 void WaynesWorldEngine::refreshActors() {
-	// TODO
+	drawActors(_actorSpriteValue, _wayneKind, _garthKind, _actorSpriteIndex, _wayneSpriteX, _wayneSpriteY, _garthSpriteX, _garthSpriteY);
+}
+
+void WaynesWorldEngine::pickupObject(int objectId, byte &flags, byte flagsSet, int inventoryObjectId) {
+    drawActorReachObject(objectId, 0);
+    for (int index = 0; index < 20; index++) {
+        waitMillis(50);
+        updateRoomAnimations(true);
+    }
+    _garthKind = 1;
+    _wayneKind = 1;
+    moveObjectToNowhere(objectId);
+    flags |= flagsSet;
+    moveObjectToRoom(inventoryObjectId, 99);
+    refreshInventory(false);
+    loadRoomBackground(_currentRoomNumber);
+}
+
+void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks) {
+    char filename[32];
+    // sysMouseDriver(2);
+    if (count > 0) {
+        for (int index = startIndex; index < startIndex + count; index++) {
+            updateRoomAnimations(true);
+            sprintf(filename, "%s%d", prefix, index);
+            drawRoomImageToScreen(filename, x, y);
+            drawRoomImageToBackground(filename, x, y);
+            waitMillis(ticks);
+        }
+    } else {
+        for (int index = startIndex; index > startIndex + count; index++) {
+            updateRoomAnimations(true);
+            sprintf(filename, "%s%d", prefix, index);
+            drawRoomImageToScreen(filename, x, y);
+            drawRoomImageToBackground(filename, x, y);
+            waitMillis(ticks);
+        }
+    }
+    if (flag) {
+        sprintf(filename, "%s%d", prefix, startIndex);
+        drawRoomImageToScreen(filename, x, y);
+        drawRoomImageToBackground(filename, x, y);
+    }
+    // sysMouseDriver(1)
 }
 
 void WaynesWorldEngine::openRoomLibrary(int roomNum) {
