@@ -414,6 +414,25 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// UnloadActor3D
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "UnloadActor3D") == 0) {
+		// this does the same as UnloadActor etc. ..
+		// even WmeLite has this script call in AdScene
+		stack->correctParams(1);
+		ScValue *val = stack->pop();
+		AdObject *obj = static_cast<AdObject *>(val->getNative());
+
+		removeObject(obj);
+		if (val->getType() == VAL_VARIABLE_REF) {
+			val->setNULL();
+		}
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
