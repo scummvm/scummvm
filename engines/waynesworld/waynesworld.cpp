@@ -529,6 +529,140 @@ void WaynesWorldEngine::drawInventory() {
     }
 }
 
+int WaynesWorldEngine::getActorScaleFromY(int actorY) {
+	// TODO
+    return 100;
+}
+
+void WaynesWorldEngine::drawActorReachObject(int objectId, int spriteIndex) {
+    int direction = getObjectDirection(objectId);
+    if (_currentActorNum != 0) {
+        drawActors(direction, 2, 1, spriteIndex, _wayneSpriteX, _wayneSpriteY, _garthSpriteX, _garthSpriteY);
+    } else {
+        drawActors(direction, 1, 2, spriteIndex, _wayneSpriteX, _wayneSpriteY, _garthSpriteX, _garthSpriteY);
+    }
+}
+
+int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, int spriteIndex, int wayneX, int wayneY, int garthX, int garthY) {
+    updateRoomAnimations(true);
+
+    if (_wayneSpriteX == -1 && _garthSpriteX == -1) {
+        WWSurface *tempBackground = new WWSurface(320, 150);
+        tempBackground->drawSurface(_backgroundSurface, 0, 0);
+        if (_inventoryItemsCount > 0) {
+            tempBackground->drawSurfaceTransparent(_inventorySprite, 0, 0);
+        }
+        _screen->drawSurface(tempBackground, 0, 0);
+        delete tempBackground;
+        return 100;
+    }
+
+    int wayneHeight = 0, wayneWidth = 0;
+    int garthHeight = 0, garthWidth = 0;
+    WWSurface *wayneSprite = nullptr;
+    WWSurface *garthSprite = nullptr;
+
+    if (_wayneSpriteX != -1) {
+        _wayneActorScale = getActorScaleFromY(wayneY);
+        wayneHeight = (100 - _wayneActorScale) * 48 / 90;
+        wayneWidth = _wayneActorScale * 13 / 100;
+        int scaledWayneWidth = _wayneActorScale * 27 / 100;
+        int scaledWayneHeight = _wayneActorScale * 48 / 100;
+        wayneSprite = new WWSurface(scaledWayneWidth, scaledWayneHeight);
+        if (wayneKind == 0) {
+            wayneSprite->scaleSurface(_wayneWalkSprites[direction][spriteIndex]);
+        } else if (wayneKind == 1) {
+            wayneSprite->scaleSurface(_wayneSprites[direction]);
+        } else if (wayneKind == 2) {
+            if (direction < 5) {
+                wayneSprite->scaleSurface(_wayneReachRightSprite);
+            } else {
+                wayneSprite->scaleSurface(_wayneReachLeftSprite);
+            }
+        }
+        if (_from_x1 == 0) {
+            drawStaticRoomObjects(_currentRoomNumber, wayneX, wayneY, wayneHeight, wayneWidth, wayneSprite);
+        }
+    }
+
+    if (_garthSpriteX != -1) {
+        _garthActorScale = getActorScaleFromY(garthY);
+        garthHeight = (100 - _garthActorScale) * 48 / 100;
+        garthWidth = _garthActorScale * 13 / 100;
+        int scaledGarthWidth = _garthActorScale * 27 / 100;
+        int scaledGarthHeight = _garthActorScale * 48 / 100;
+        garthSprite = new WWSurface(scaledGarthWidth, scaledGarthHeight);
+        if (garthKind == 0) {
+            garthSprite->scaleSurface(_garthWalkSprites[direction][spriteIndex]);
+        } else if (garthKind == 1) {
+            garthSprite->scaleSurface(_garthSprites[direction]);
+        } else if (garthKind == 2) {
+            if (direction < 5) {
+                garthSprite->scaleSurface(_garthReachRightSprite);
+            } else {
+                garthSprite->scaleSurface(_garthReachLeftSprite);
+            }
+        }
+        if (_from_x1 == 0) {
+            drawStaticRoomObjects(_currentRoomNumber, garthX, garthY, garthHeight, garthWidth, garthSprite);
+        }
+    }
+
+    WWSurface *tempBackground = new WWSurface(320, 150);
+    tempBackground->drawSurface(_backgroundSurface, 0, 0);
+
+    if (wayneY <= garthY) {
+        if (_wayneSpriteX != -1) {
+            tempBackground->drawSurfaceTransparent(wayneSprite, wayneX - wayneWidth, wayneY + wayneHeight - 48);
+        }
+        if (_garthSpriteX != -1) {
+            tempBackground->drawSurfaceTransparent(garthSprite, garthX - garthWidth, garthY + garthHeight - 48);
+        }
+    } else {
+        if (_garthSpriteX != -1) {
+            tempBackground->drawSurfaceTransparent(garthSprite, garthX - garthWidth, garthY + garthHeight - 48);
+        }
+        if (_wayneSpriteX != -1) {
+            tempBackground->drawSurfaceTransparent(wayneSprite, wayneX - wayneWidth, wayneY + wayneHeight - 48);
+        }
+    }
+
+    if (_from_x1 != 0) {
+        // drawStaticRoomObjects2(tempBackground);
+    }
+
+    if (_inventoryItemsCount > 0) {
+        tempBackground->drawSurfaceTransparent(_inventorySprite, 0, 0);
+    }
+
+    if (_isTextVisible) {
+        drawCurrentTextToSurface(tempBackground, _currentTextX, _currentTextY);
+    }
+
+    _screen->drawSurface(tempBackground, 0, 0);
+
+    _wayneSpriteX = wayneX;
+    _wayneSpriteY = wayneY;
+    _garthSpriteX = garthX;
+    _garthSpriteY = garthY;
+    _actorSpriteValue = direction;
+    _wayneKind = wayneKind;
+    _garthKind = garthKind;
+    _actorSpriteIndex = spriteIndex;
+
+    if (_wayneSpriteX != -1) {
+        delete wayneSprite;
+    }
+
+    if (_garthSpriteX != -1) {
+        delete garthSprite;
+    }
+
+    delete tempBackground;
+
+    return _wayneActorScale;
+}
+
 void WaynesWorldEngine::refreshActors() {
 	// TODO
 }
@@ -571,6 +705,10 @@ void WaynesWorldEngine::loadRoomMask(int roomNum) {
 	// TODO
 }
 
+void WaynesWorldEngine::updateRoomAnimations(bool doUpdate) {
+	// TODO
+}
+
 void WaynesWorldEngine::loadStaticRoomObjects(int roomNum) {
 	// TODO
 }
@@ -589,6 +727,11 @@ void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
 
 void WaynesWorldEngine::moveObjectToNowhere(int objectId) {
 	// TODO
+}
+
+int WaynesWorldEngine::getObjectDirection(int objectId) {
+	// TODO
+	return 0;
 }
 
 void WaynesWorldEngine::startDialog() {

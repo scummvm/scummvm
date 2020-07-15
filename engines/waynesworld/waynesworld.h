@@ -80,6 +80,8 @@ public:
 	Common::String _roomName;
 	int _word_306DB;
 	int _byte_306E7;
+	int _from_x1;
+	bool _doScrollRight;
 
 	// Input
 	int _mouseX, _mouseY;
@@ -109,6 +111,8 @@ public:
 	int _garthSpriteX, _garthSpriteY, _garthKind, _garthActorScale;
 	int _actorSpriteValue;
 	int _actorSpriteIndex;
+	WWSurface *_wayneSprites[8], *_wayneWalkSprites[8][4], *_wayneReachRightSprite, *_wayneReachLeftSprite;
+	WWSurface *_garthSprites[8], *_garthWalkSprites[8][4], *_garthReachRightSprite, *_garthReachLeftSprite;
 
 	// Inventory
 	WWSurface *_inventorySprite;
@@ -169,6 +173,9 @@ public:
 	void drawInventory();
 
 	// Actors and animations
+	int getActorScaleFromY(int actorY);
+	void drawActorReachObject(int objectId, int spriteIndex);
+	int drawActors(int direction, int wayneKind, int garthKind, int spriteIndex, int wayneX, int wayneY, int garthX, int garthY);
 	void refreshActors();
 
 	// Room
@@ -179,6 +186,8 @@ public:
 	void changeRoomScrolling();
 	void loadRoomMask(int roomNum);
 
+	void updateRoomAnimations(bool doUpdate);
+
 	void loadStaticRoomObjects(int roomNum);
 	void unloadStaticRoomObjects();
 	void drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface);
@@ -186,6 +195,7 @@ public:
 	// Room objects
 	void moveObjectToRoom(int objectId, int roomNum);
 	void moveObjectToNowhere(int objectId);
+	int getObjectDirection(int objectId);
 
 	// Dialog
 	void startDialog();
