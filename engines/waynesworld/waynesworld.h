@@ -49,6 +49,16 @@ enum {
 class Screen;
 class WWSurface;
 
+struct RoomObject {
+    int roomNumber;
+    const char *name;
+    int x1, y1, x2, y2;
+    int direction;
+    int walkX, walkY;
+};
+
+const uint kRoomObjectsCount = 404;
+
 class WaynesWorldEngine : public Engine {
 protected:
 	Common::Error run() override;
@@ -125,6 +135,11 @@ public:
 	int _selectedDialogChoice;
 	int _dialogChoices[5];
 
+	// Room objects
+	static const RoomObject kRoomObjects[kRoomObjectsCount];
+	// _roomObjects is a writable copy of kRoomObjects
+	RoomObject _roomObjects[kRoomObjectsCount];
+
 	// Utils
 	int getRandom(int max);
 	void waitMillis(uint millis);
@@ -179,6 +194,7 @@ public:
 	void refreshActors();
 	void pickupObject(int objectId, byte &flags, byte flagsSet, int inventoryObjectId);
 	void playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks);
+	bool walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY);
 
 	// Room
 	void openRoomLibrary(int roomNum);
@@ -186,6 +202,7 @@ public:
 	void changeRoom(int roomNum);
 	void refreshRoomBackground(int roomNum);
 	void changeRoomScrolling();
+	void loadScrollSprite();
 	void loadRoomMask(int roomNum);
 
 	void updateRoomAnimations(bool doUpdate);
@@ -197,7 +214,12 @@ public:
 	// Room objects
 	void moveObjectToRoom(int objectId, int roomNum);
 	void moveObjectToNowhere(int objectId);
+	const RoomObject *getRoomObject(int objectId);
+	const char *getRoomObjectName(int objectId);
+	int getObjectRoom(int objectId);
 	int getObjectDirection(int objectId);
+	int findRoomObjectIdAtPoint(int x, int y);
+	void walkToObject();
 
 	// Dialog
 	void startDialog();

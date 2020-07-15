@@ -486,12 +486,12 @@ void WaynesWorldEngine::rememberFirstObjectName(int objectId) {
             inventoryItemQuantity = _garthInventory[inventoryIndex];
         }
         if (inventoryItemQuantity == 1) {
-            _firstObjectName = "TODO";//getRoomObjectName(objectId);
+            _firstObjectName = getRoomObjectName(objectId);
         } else {
-            _firstObjectName = "TODO";//Common::String::format("%d %s", inventoryItemQuantity, getRoomObjectName(objectId));
+            _firstObjectName = Common::String::format("%d %s", inventoryItemQuantity, getRoomObjectName(objectId));
         }
     } else {
-        _firstObjectName = "TODO";//getRoomObjectName(objectId);
+        _firstObjectName = getRoomObjectName(objectId);
     }
 }
 
@@ -522,7 +522,7 @@ void WaynesWorldEngine::drawInventory() {
     int iconY = 0;
     _inventorySprite->clear(0);
     for (int inventoryItemIndex = 0; inventoryItemIndex < 50; inventoryItemIndex++) {
-        int objectRoomNumber = 0; // TODO getObjectRoom(inventoryItemIndex + 28);
+        int objectRoomNumber = getObjectRoom(inventoryItemIndex + 28);
         if ((_currentActorNum != 0 && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
             (_currentActorNum == 0 && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
             Common::String filename = Common::String::format("m03/icon%02d", inventoryItemIndex + 1);
@@ -719,6 +719,10 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
     // sysMouseDriver(1)
 }
 
+bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY) {
+	// TODO
+}
+
 void WaynesWorldEngine::openRoomLibrary(int roomNum) {
     _roomName = Common::String::format("r%02d", roomNum);
 }
@@ -753,6 +757,10 @@ void WaynesWorldEngine::changeRoomScrolling() {
 	// TODO
 }
 
+void WaynesWorldEngine::loadScrollSprite() {
+	// TODO
+}
+
 void WaynesWorldEngine::loadRoomMask(int roomNum) {
 	// TODO
 }
@@ -774,16 +782,73 @@ void WaynesWorldEngine::drawStaticRoomObjects(int roomNumber, int x, int y, int 
 }
 
 void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
-	// TODO
+    _roomObjects[objectId].roomNumber = roomNum;
+    if (objectId <= 77) {
+        int inventoryIndex = objectId - 28;
+        if (_currentActorNum != 0) {
+            _wayneInventory[inventoryIndex]++;
+        } else {
+            _garthInventory[inventoryIndex]++;
+        }
+    }
 }
 
 void WaynesWorldEngine::moveObjectToNowhere(int objectId) {
-	// TODO
+    if (objectId <= 77) {
+        int inventoryIndex = objectId - 28;
+        if (_currentActorNum != 0) {
+            _wayneInventory[inventoryIndex]--;
+        } else {
+            _garthInventory[inventoryIndex]--;
+        }
+        if (_wayneInventory[inventoryIndex] == 0 && _garthInventory[inventoryIndex] == 0) {
+            _roomObjects[objectId].roomNumber = -2;
+        }
+    } else {
+        _roomObjects[objectId].roomNumber = -2;
+    }
+}
+
+const RoomObject *WaynesWorldEngine::getRoomObject(int objectId) {
+    return &_roomObjects[objectId];
+}
+
+const char *WaynesWorldEngine::getRoomObjectName(int objectId) {
+    return _roomObjects[objectId].name;
+}
+
+int WaynesWorldEngine::getObjectRoom(int objectId) {
+    return _roomObjects[objectId].roomNumber;
 }
 
 int WaynesWorldEngine::getObjectDirection(int objectId) {
-	// TODO
-	return 0;
+    return _roomObjects[objectId].direction;
+}
+
+int WaynesWorldEngine::findRoomObjectIdAtPoint(int x, int y) {
+    for (uint index = 0; index < kRoomObjectsCount; index++) {
+        const RoomObject *roomObject = getRoomObject(_hoverObjectNumber);
+        if (roomObject->roomNumber == _currentRoomNumber &&
+            x >= roomObject->x1 && x <= roomObject->x2 &&
+            y >= roomObject->y1 && y <= roomObject->y2) {
+            return (int)index;
+        }
+    }
+    return -1;
+}
+
+void WaynesWorldEngine::walkToObject() {
+    loadScrollSprite();
+    if (_hoverObjectNumber == -2) {
+        walkTo(_garthSpriteX, _garthSpriteY, _actorSpriteValue, -1, -1);
+    } else if (_hoverObjectNumber == -3) {
+        walkTo(_wayneSpriteX, _wayneSpriteY, _actorSpriteValue, -1, -1);
+    } else if (_hoverObjectNumber > 77) {
+        const RoomObject *roomObject = getRoomObject(_hoverObjectNumber);
+        walkTo(roomObject->walkX, roomObject->walkY, roomObject->direction, -1, -1);
+    } else {
+        refreshActors();
+    }
 }
 
 void WaynesWorldEngine::startDialog() {
