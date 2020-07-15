@@ -48,6 +48,7 @@
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 
@@ -145,6 +146,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::useInventoryItem", WRAP_METHOD(Debugger, cmdUseInventoryItem));
 	registerCmd("MainActor::useMedikit", WRAP_METHOD(Debugger, cmdUseMedikit));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
+	registerCmd("ItemSelectionProcess::startSelection", WRAP_METHOD(Debugger, cmdStartSelection));
+	registerCmd("ItemSelectionProcess::useSelectedItem", WRAP_METHOD(Debugger, cmdUseSelection));
 
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
@@ -1500,7 +1503,6 @@ bool Debugger::cmdStopMoveStep(int argc, const char **argv) {
 	return false;
 }
 
-
 bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't toggle combat: avatarInStasis\n");
@@ -1509,6 +1511,30 @@ bool Debugger::cmdToggleCombat(int argc, const char **argv) {
 
 	MainActor *av = getMainActor();
 	av->toggleInCombat();
+	return false;
+}
+
+bool Debugger::cmdStartSelection(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't select items: avatarInStasis\n");
+		return false;
+	}
+
+	ItemSelectionProcess *proc = ItemSelectionProcess::get_instance();
+	if (proc)
+		proc->selectNextItem();
+	return false;
+}
+
+bool Debugger::cmdUseSelection(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't use items: avatarInStasis\n");
+		return false;
+	}
+
+	ItemSelectionProcess *proc = ItemSelectionProcess::get_instance();
+	if (proc)
+		proc->useSelectedItem();
 	return false;
 }
 

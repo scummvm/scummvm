@@ -51,6 +51,7 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
+#include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -1158,6 +1159,7 @@ int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	if (_objId == 1 && GAME_IS_CRUSADER) {
 		notifyNearbyItems();
 		TargetReticleProcess::get_instance()->avatarMoved();
+		ItemSelectionProcess::get_instance()->clearSelection();
 	}
 	return result;
 }

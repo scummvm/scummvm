@@ -140,7 +140,7 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._weight = data[7];
 
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
-			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
+			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_SELECTABLE;
 			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
 			if (data[6] & 0x08) si._flags |= ShapeInfo::SI_CRUSUNK63;
 			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_TARGETABLE;

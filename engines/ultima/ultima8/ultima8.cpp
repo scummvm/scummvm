@@ -93,6 +93,7 @@
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/item_selection_process.h"
 #include "ultima/ultima8/world/split_item_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/snap_process.h"
@@ -295,6 +296,10 @@ void Ultima8Engine::startup() {
 		ProcessLoader<GuardProcess>::load);
 	_kernel->addProcessLoader("SnapProcess",
 		ProcessLoader<SnapProcess>::load);
+	_kernel->addProcessLoader("CrosshairProcess",
+		ProcessLoader<CrosshairProcess>::load);
+	_kernel->addProcessLoader("ItemSelectionProcess",
+		ProcessLoader<ItemSelectionProcess>::load);
 
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();
@@ -1135,6 +1140,7 @@ bool Ultima8Engine::newGame(int saveSlot) {
 
 	if (GAME_IS_CRUSADER) {
 		_kernel->addProcess(new TargetReticleProcess());
+		_kernel->addProcess(new ItemSelectionProcess());
 		_kernel->addProcess(new CrosshairProcess());
 		_kernel->addProcess(new CycleProcess());
 		_kernel->addProcess(new SnapProcess());
