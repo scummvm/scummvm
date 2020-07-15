@@ -17,3 +17,5 @@
 #else
 	#define PLUGIN_ENABLED_DYNAMIC(ID) 0
 #endif
+
+#define PLUGIN_ENABLED(ID) (ENABLE_##ID)
