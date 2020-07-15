@@ -78,6 +78,7 @@ public:
 
 	// Room
 	Common::String _roomName;
+	int _word_306DB;
 
 	// Input
 	int _mouseX, _mouseY;
@@ -115,9 +116,14 @@ public:
 	int _wayneInventory[50];
 	int _garthInventory[50];
 
+	// Dialog
+	int _selectedDialogChoice;
+	int _dialogChoices[5];
+
 	// Utils
 	int getRandom(int max);
 	void waitMillis(uint millis);
+	void waitSeconds(uint seconds);
 
 	// Image loading
 	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
@@ -145,12 +151,16 @@ public:
 	void displayText(const char *filename, int index, int flag, int x, int y, int drawToVirtual);
 	void displayTextLines(const char *filename, int baseIndex, int x, int y, int count);
 
+	// Audio
+	void playSound(const char *filename, int flag);
+
 	// Interface
 	void drawInterface(int verbNum);
 	void selectVerbNumber2(int x);
 	void selectVerbNumber(int x);
 	void changeActor();
 	void drawVerbLine(int verbNumber, int objectNumber, const char *objectName);
+	void rememberFirstObjectName(int objectId);
 
 	// Inventory
 	void redrawInventory();
@@ -159,6 +169,45 @@ public:
 
 	// Actors and animations
 	void refreshActors();
+
+	// Room
+	void changeRoomScrolling();
+	void loadRoomBackground(int roomNum);
+
+	// Room objects
+	void moveObjectToRoom(int objectId, int roomNum);
+	void moveObjectToNowhere(int objectId);
+
+	// Dialog
+	void startDialog();
+	void setDialogChoices(int choice1, int choice2, int choice3, int choice4, int choice5);
+	void drawDialogChoices(int choiceIndex);
+	void handleDialogMouseClick();
+
+	// Verb handlers
+	void handleVerb(int verbFlag);
+	void handleVerbPickUp();
+	void handleVerbLookAt();
+	void handleVerbUse();
+	void handleVerbTalkTo();
+	void handleVerbPush();
+	void handleVerbPull();
+	void handleVerbExtremeCloseupOf();
+	void handleVerbGive();
+	void handleVerbOpen();
+	void handleVerbClose();
+
+	// Game logic
+	int logic_handleVerbPickUp();
+	int logic_handleVerbUse();
+	void logic_handleVerbTalkTo();
+	int logic_handleVerbPush();
+	int logic_handleVerbPull();
+	int logic_handleVerbOpen();
+	int logic_handleVerbClose();
+	int logic_handleVerbGive();
+	void logic_handleDialogReply(int index, int x, int y);
+	int logic_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
 
 	// Savegame API
 
