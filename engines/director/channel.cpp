@@ -37,8 +37,8 @@ Channel::Channel(Sprite *sp) {
 	_delta = Common::Point(0, 0);
 	_constraint = 0;
 
-	_width = 0;
-	_height = 0;
+	_width = _sprite->_width;
+	_height = _sprite->_height;
 
 	_visible = true;
 	_dirty = true;
