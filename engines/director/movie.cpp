@@ -189,7 +189,7 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
 	Common::Array<DataEntry> fileInfoStrings = Movie::loadDataEntries(stream);
-	_script = Common::String((const char *)fileInfoStrings[0].data, fileInfoStrings[0].len);
+	_script = fileInfoStrings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		_cast->dumpScript(_script.c_str(), kMovieScript, _cast->_movieScriptCount);

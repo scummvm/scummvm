@@ -51,10 +51,15 @@ struct DataEntry {
 		free(data);
 	}
 
-	Common::String readString() {
+	Common::String readString(bool pascal = true) {
 		Common::String res;
 
-		for (uint i = 1; i < len; i++)
+		if (len == 0)
+			return res;
+
+		int start = pascal ? 1 : 0;
+
+		for (uint i = start; i < len; i++)
 			if (data[i] == '\r')
 				res += '\n';
 			else if (data[i] >= 0x20)
