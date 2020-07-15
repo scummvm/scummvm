@@ -133,9 +133,9 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getLastAnimSet, // void Intrinsic05A(4 bytes)
 	Item::I_legalCreateAtPoint, // probably. see PEPSIEW::use
 	Item::I_getPoint, // void Intrinsic05C(8 bytes)
-	0, // void Intrinsic05D(void)
-	0, // int16 Intrinsic05E(uint32, char *, int16 a, int16 b)  // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
-	0, // void Intrinsic05F(void)
+	CruStatusGump::I_hideStatusGump, // void Intrinsic05D(void)
+	MovieGump::I_playMovieOverlay, // int16 Intrinsic05E(uint32, char *, int16 a, int16 b)
+	CruStatusGump::I_showStatusGump, // void Intrinsic05F(void)
 	// 0x060
 	Actor::I_setDead, // void Intrinsic060(4 bytes)
 	Actor::I_createActor, // void Intrinsic061(8 bytes)

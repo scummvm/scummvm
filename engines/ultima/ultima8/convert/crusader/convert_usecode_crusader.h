@@ -165,9 +165,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
 	"byte Item::I_legalCreateAtPoint(Item *, int16 shape, int16 frame, Point *)", // see PEPSIEW::use
 	"void Item::I_getPoint(Item *, Point *)",
-	"void I_mouseSomethingOffMaybe05D(void)", // Probably hides gumps at the bottom, among other things.
-	"int16 I_playFlicsomething(uint32, char *, int16 a, int16 b)", // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
-	"void I_mouseSomethingResume05F(void)",  // Probably shows gumps at the bottom, among other things.
+	"void StatusGump::I_hideStatusGump(void)", // Probably hides gumps at the bottom, among other things.
+	"int16 MovieGump::I_playMovieOverlay(uint32, char *, int16 a, int16 b)", // Play video (as texture? parameters like (150, 250, "MVA11A") and other mvas)
+	"void StatusGump::I_showStatusGump(void)",  // Probably shows gumps at the bottom, among other things.
 	// 0060
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void Actor::I_create(8 bytes)",

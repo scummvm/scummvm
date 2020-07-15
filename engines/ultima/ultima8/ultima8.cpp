@@ -61,6 +61,8 @@
 #include "ultima/ultima8/gumps/minimap_gump.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
+#include "ultima/ultima8/gumps/cru_status_gump.h"
+#include "ultima/ultima8/gumps/movie_gump.h"
 
 // For gump positioning... perhaps shouldn't do it this way....
 #include "ultima/ultima8/gumps/bark_gump.h"
@@ -110,15 +112,14 @@
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
-#include "ultima/ultima8/gumps/movie_gump.h"
-#include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
-#include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
 #include "ultima/ultima8/audio/remorse_music_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/gumps/shape_viewer_gump.h"
+#include "ultima/ultima8/graphics/xform_blend.h"
+#include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/meta_engine.h"
 
 namespace Ultima {
