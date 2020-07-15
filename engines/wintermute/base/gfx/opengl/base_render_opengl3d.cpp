@@ -383,6 +383,25 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
 		}
 
+		bool fogEnabled;
+		uint32 fogColor;
+		float fogStart;
+		float fogEnd;
+
+		_gameRef->getFogParams(&fogEnabled, &fogColor, &fogStart, &fogEnd);
+
+		if (fogEnabled) {
+			glEnable(GL_FOG);
+			glFogi(GL_FOG_MODE, GL_LINEAR);
+			glFogf(GL_FOG_START, fogStart);
+			glFogf(GL_FOG_END, fogEnd);
+
+			GLfloat color[4] = { RGBCOLGetR(fogColor) / 255.0f, RGBCOLGetG(fogColor) / 255.0f, RGBCOLGetB(fogColor) / 255.0f, RGBCOLGetA(fogColor) / 255.0f };
+			glFogfv(GL_FOG_COLOR, color);
+		} else {
+			glDisable(GL_FOG);
+		}
+
 		setProjection();
 	}
 

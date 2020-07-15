@@ -1697,6 +1697,19 @@ Wintermute::TShadowType Wintermute::AdGame::getMaxShadowType(Wintermute::BaseObj
 
 	return MIN(ret, _scene->_maxShadowType);
 }
+
+bool Wintermute::AdGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd) {
+	if (_scene) {
+		*fogEnabled = _scene->_fogEnabled;
+		*fogColor = _scene->_fogColor;
+		*fogStart = _scene->_fogStart;
+		*fogEnd = _scene->_fogEnd;
+
+		return true;
+	} else {
+		return BaseGame::getFogParams(fogEnabled, fogColor, fogStart, fogEnd);
+	}
+}
 #endif
 
 

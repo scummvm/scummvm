@@ -97,6 +97,8 @@ public:
 	uint32 getAmbientLightColor() override;
 
 	TShadowType getMaxShadowType(BaseObject *object) override;
+
+	bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd) override;
 #endif
 
 	bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const override;

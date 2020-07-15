@@ -105,6 +105,11 @@ void AdScene::setDefaults() {
 
 	_maxShadowType = SHADOW_FLAT;
 	_ambientLightColor = 0x00000000;
+
+	_fogEnabled = false;
+	_fogColor = 0x00FFFFFF;
+	_fogStart = 0.0f;
+	_fogEnd = 0.0f;
 #endif
 
 	_pfPointsNum = 0;
@@ -2083,6 +2088,31 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->pushBool(false);
 		return STATUS_OK;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// EnableFog
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "EnableFog") == 0) {
+		stack->correctParams(3);
+		_fogEnabled = true;
+		_fogColor = stack->pop()->getInt();
+		_fogStart = stack->pop()->getFloat();
+		_fogEnd = stack->pop()->getFloat();
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// DisableFog
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DisableFog") == 0) {
+		stack->correctParams(0);
+		_fogEnabled = false;
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2915,8 +2945,13 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_farPlane));
 		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
 		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
+		persistMgr->transferBool(TMEMBER(_fogEnabled));
+		persistMgr->transferUint32(TMEMBER(_fogColor));
+		persistMgr->transferFloat(TMEMBER(_fogStart));
+		persistMgr->transferFloat(TMEMBER(_fogEnd));
 	} else {
 		_sceneGeometry = nullptr;
+		_fogEnabled = false;
 	}
 #endif
 

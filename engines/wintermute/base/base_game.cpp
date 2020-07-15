@@ -610,6 +610,11 @@ TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
 uint32 BaseGame::getAmbientLightColor() {
 	return 0x00000000;
 }
+
+bool BaseGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *fogStart, float *fogEnd) {
+	*fogEnabled = false;
+	return true;
+}
 #endif
 
 //////////////////////////////////////////////////////////////////////////
