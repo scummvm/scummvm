@@ -130,10 +130,9 @@ ActionChangeLocation::ActionChangeLocation(ZVision *engine, int32 slotKey, const
 }
 
 bool ActionChangeLocation::execute() {
-	// We can't directly call ScriptManager::ChangeLocationIntern() because doing so clears all the Puzzles, and thus would corrupt the current puzzle checking
+	// We can't directly call ScriptManager::ChangeLocationReal() because doing so clears all the Puzzles, and thus would corrupt the current puzzle checking
 	_scriptManager->changeLocation(_world, _room, _node, _view, _offset);
-	// Tell the puzzle system to stop checking any more puzzles
-	return false;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
