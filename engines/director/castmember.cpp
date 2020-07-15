@@ -118,7 +118,9 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 			tail++;
 		}
 
-		warning("BitmapCastMember: %d bytes left", tail);
+		if (tail > 8) {
+			warning("BitmapCastMember: %d bytes left", tail);
+		}
 	} else if (version == 5) {
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
