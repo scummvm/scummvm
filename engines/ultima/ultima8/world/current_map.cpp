@@ -28,9 +28,11 @@
 #include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/world_point.h"
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/egg_hatcher_process.h"
@@ -1298,6 +1300,30 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int /*argsize*/) {
 	else
 		return 0;
 }
+
+uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_UINT16(unk1);
+	ARG_UINT16(unk2);
+	ARG_UINT16(shape);
+	ARG_WORLDPOINT(pt);
+
+	if (shape > 0x800)
+		return 0;
+
+	if (GAME_IS_CRUSADER) {
+		pt.setX(pt.getX());
+		pt.setY(pt.getY());
+	}
+
+	const CurrentMap *cm = World::get_instance()->getCurrentMap();
+	bool valid = cm->isValidPosition(pt.getX(), pt.getY(), pt.getZ(), shape, 0, 0, 0);
+
+	if (valid)
+		return 1;
+	else
+		return 0;
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

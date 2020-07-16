@@ -84,7 +84,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_inFastArea, // byte Intrinsic02C(4 bytes) // based on disassembly - checks for flag 0x2000
 	Item::I_setQHi,
 	Item::I_legalMoveToPoint, // byte Intrinsic02E(12 bytes)
-	0, // byte Intrinsic02F(10 bytes)
+	CurrentMap::I_canExistAtPoint, // byte Intrinsic02F(10 bytes)
 	// 0x030
 	Item::I_pop,
 	Item::I_andStatus,

@@ -210,6 +210,7 @@ public:
 	bool load(Common::ReadStream *rs, uint32 version);
 
 	INTRINSIC(I_canExistAt);
+	INTRINSIC(I_canExistAtPoint);
 
 private:
 	void loadItems(Std::list<Item *> itemlist, bool callCacheIn);

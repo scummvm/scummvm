@@ -103,8 +103,8 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 0020
 	"void Item::I_popToCoords(Item *, uint16 x, uint16 y, uint16 z)", // set coords, used after creating blood spills in NPCDEATH
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
-	"void I_push(Item *)", // same code as U8
-	"int16 Item::I_getEtherealTop(void)", // from disasmww
+	"void Item::I_push(Item *)", // same code as U8
+	"int16 Item::I_getEtherealTop(void)", // based on disasm
 	"void Item::I_setShape(Item *, int16 shapeno)", // probably. See PEPSIEW::gotHit.
 	"void Item::I_touch(Item *)", // same code as U8
 	"int16 Item::I_getQHi(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
@@ -115,8 +115,8 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getQLo(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"byte Item::I_inFastArea(Item *)",
 	"void Item::I_setQHi(Item *, uint16 qhi)", // probably setQHi, see usage in FREE::ordinal2E where object position is copied
-	"byte I_legalMoveToPoint(Item *, Point *, int16 force)", // based on disasm
-	"byte Intrinsic02F(int, int, shapeno, Point *)", // no idea what this does..
+	"byte Item::I_legalMoveToPoint(Item *, Point *, int16 force)", // based on disasm
+	"byte CurrentMap::I_canExistAtPoint(int, int, shapeno, Point *)",
 	// 0030
 	"void Item::I_pop(Item *)", // same code as U8
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
@@ -247,7 +247,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Egg::I_getEggXRange(Egg *)", // based on disasm
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void I_playFlic0A9(char *)", // same coff as 092
-	"void I_playSFX(2 bytes)", // same coff as 0D4
+	"void AudioProcess::I_playSFX(2 bytes)", // same coff as 0D4
 	"byte Actor::I_NPCGetField0x59Flag1_0AB(Actor *)",
 	"int16 Item::I_getFamilyOfType(Item *)", // per pentagram notes, matches disasm.
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
