@@ -174,6 +174,8 @@ public:
 	SizeType _borderSize;
 	SizeType _gutterSize;
 	SizeType _boxShadow;
+	uint16 _maxHeight;
+	uint16 _textHeight;
 
 	byte _flags;
 	uint32 _fontId;
@@ -181,6 +183,7 @@ public:
 	TextType _textType;
 	TextAlignType _textAlign;
 	SizeType _textShadow;
+	uint16 _scroll;
 	byte _textSlant;
 	byte _textFlags;
 	uint16 _bgpalinfo1, _bgpalinfo2, _bgpalinfo3;

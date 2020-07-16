@@ -298,13 +298,15 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
 	_buttonType = kTypeButton;
+	_maxHeight = _textHeight = 0;
 
 	_bgcolor = 0;
 	_fgcolor = 0;
 
 	_flags = 0;
 	_textFlags = 0;
-	_fontId = 0;
+	_scroll = 0;
+	_fontId = 1;
 	_fontSize = 12;
 	_textType = kTextTypeFixed;
 	_textAlign = kTextAlignLeft;
@@ -369,23 +371,22 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 		_bgpalinfo1 = stream.readUint16();
 		_bgpalinfo2 = stream.readUint16();
 		_bgpalinfo3 = stream.readUint16();
-		stream.readUint16();
+		_scroll = stream.readUint16();
 
 		_fontId = 1; // this is in STXT
 
 		_initialRect = Movie::readRect(stream);
-		stream.readUint16();
+		_maxHeight = stream.readUint16();
 		_textShadow = static_cast<SizeType>(stream.readByte());
-		byte flags2 = stream.readByte();
+		_textFlags = stream.readByte();
 
-		if (flags || flags2)
-			warning("BUILDBOT: Unprocessed text cast flags: %x, flags:2 %x", flags, flags2);
+		if (flags)
+			warning("BUILDBOT: Unprocessed text cast flags: %x", flags);
 
-		_fontSize = stream.readUint16();
+		_textHeight = stream.readUint16();
 		_textSlant = 0;
 	} else {
 		_fontId = 1;
-		_fontSize = 12;
 
 		stream.readUint32();
 		stream.readUint32();
