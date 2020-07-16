@@ -66,8 +66,6 @@
 
 extern int yylex();
 extern int yyparse();
-extern void lex_unput(int c);
-extern bool lex_check_parens();
 
 using namespace Director;
 

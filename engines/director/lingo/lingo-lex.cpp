@@ -2693,11 +2693,6 @@ void yyfree (void * ptr )
 
 extern int yydebug;
 
-void lex_unput(int c) {
-	unput(c);
-	g_lingo->_linenumber--;
-}
-
 static const char *inputbuffer;
 
 namespace Director {
