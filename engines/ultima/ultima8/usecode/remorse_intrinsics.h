@@ -78,7 +78,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getQHi, // int16 Intrinsic026(Item *)
 	Item::I_getClosestDirectionInRange, // int Intrinsic027(14 bytes)
 	Item::I_hurl, // int Intrinsic028(12 bytes)
-	UCMachine::I_true, // TODO: This is actually game difficulty level.  Make an intrinsic for that once it's implemented (for now return 1, easiest difficulty).
+	World::I_gameDifficulty,
 	AudioProcess::I_playAmbientSFXCru,
 	Item::I_getQLo, // int16 Intrinsic02B(4 bytes)
 	Item::I_inFastArea, // byte Intrinsic02C(4 bytes) // based on disassembly - checks for flag 0x2000

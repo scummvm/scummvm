@@ -50,7 +50,7 @@ namespace Ultima8 {
 
 World *World::_world = nullptr;
 
-World::World() : _currentMap(nullptr),  _alertActive(false) {
+World::World() : _currentMap(nullptr), _alertActive(false), _difficulty(1) {
 	debugN(MM_INFO, "Creating World...\n");
 
 	_world = this;
@@ -341,6 +341,7 @@ void World::save(Common::WriteStream *ws) {
 
 	if (GAME_IS_CRUSADER) {
 		ws->writeByte(_alertActive ? 0 : 1);
+		ws->writeByte(_difficulty);
 	}
 
 	uint16 es = static_cast<uint16>(_ethereal.size());
@@ -370,6 +371,7 @@ bool World::load(Common::ReadStream *rs, uint32 version) {
 
 	if (GAME_IS_CRUSADER) {
 		_alertActive = (rs->readByte() != 0);
+		_difficulty = rs->readByte();
 	}
 
 	uint32 etherealcount = rs->readUint32LE();
@@ -457,6 +459,10 @@ uint32 World::I_clrAlertActive(const uint8 * /*args*/,
 	return 0;
 }
 
+uint32 World::I_gameDifficulty(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	return get_instance()->_world->getGameDifficulty();
+}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

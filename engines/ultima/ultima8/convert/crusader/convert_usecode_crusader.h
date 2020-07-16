@@ -110,7 +110,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_getQHi(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"int16 I_getClosestDirectionInRange(x1, y1, x2, y2, numdirs, mindir, maxdir)",
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
-	"int16 Game::I_getDifficultyLevel(void)",
+	"int16 World::I_gameDifficulty(void)",
 	"void AudioProcess::I_playAmbientSFXCru(Item *, sndno)",
 	"int16 Item::I_getQLo(Item *)", // guess, based on variable name in BOUNCBOX::gotHit
 	"byte Item::I_inFastArea(Item *)",
