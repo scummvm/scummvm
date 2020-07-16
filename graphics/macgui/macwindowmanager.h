@@ -279,7 +279,6 @@ public:
 	int _colorBlack, _colorWhite;
 
 	MacWidget *_hoveredWidget;
-	MacWidget *_mouseDownWidget;
 
 private:
 	void drawDesktop();

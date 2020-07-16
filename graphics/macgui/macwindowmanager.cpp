@@ -161,7 +161,6 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_activeWidget = nullptr;
 	_mouseDown = false;
 	_hoveredWidget = nullptr;
-	_mouseDownWidget = nullptr;
 
 	_mode = mode;
 
@@ -329,7 +328,6 @@ void MacWindowManager::removeWindow(MacWindow *target) {
 	_windowsToRemove.push_back(target);
 	_needsRemoval = true;
 	_hoveredWidget = nullptr;
-	_mouseDownWidget = nullptr;
 
 	if (target->getId() == _activeWindow)
 		_activeWindow = -1;

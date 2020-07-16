@@ -551,7 +551,6 @@ bool MacWindow::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 		_beingDragged = false;
 		_beingResized = false;
-		_wm->_mouseDownWidget = nullptr;
 
 		setHighlight(kBorderNone);
 		break;
@@ -569,12 +568,9 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return false;
 	}
 
-	MacWidget *w = _wm->_mouseDownWidget ? _wm->_mouseDownWidget : findEventHandler(event, _dims.left, _dims.top);
+	MacWidget *w = findEventHandler(event, _dims.left, _dims.top);
 	if (w && w != this) {
 		_wm->_hoveredWidget = w;
-
-		if (event.type == Common::EVENT_LBUTTONDOWN)
-			_wm->_mouseDownWidget = w;
 
 		if (w->processEvent(event))
 			return true;
