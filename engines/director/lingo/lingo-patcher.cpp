@@ -67,6 +67,8 @@ struct ScriptPatch {
 	// Unbalanced 'end if' at the end of the script
 	{"jman", kPlatformWindows, "mmm/TSA RR 06", kScoreScript, 26,
 			17, "end if", ""},
+	{"jman", kPlatformWindows, "mmm/Mars Space Game 05", kMovieScript, 3,
+			68, "set DamageParameter = (gProcessorSpeed/2) + 7)", "set DamageParameter = (gProcessorSpeed/2) + 7"},
 
 	{nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr, nullptr}
 };
