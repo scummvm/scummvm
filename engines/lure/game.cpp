@@ -391,23 +391,31 @@ void Game::displayChuteAnimation() {
 	ValueTableData &fields = res.fieldList();
 	Palette palette(CHUTE_PALETTE_ID);
 
+	mouse.setCursorNum(CursorType::CURSOR_DISK);
+	if (!LureEngine::getReference().isEGA())
+		Screen::getReference().paletteFadeOut();
+
 	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting chute animation");
 	mouse.cursorOff();
 
 	Sound.killSounds();
+
+	AnimationSequence *anim = new AnimationSequence(CHUTE_ANIM_ID, palette, true);
 	Sound.musicInterface_Play(0x40, 0, true);
-
-	AnimationSequence *anim = new AnimationSequence(CHUTE_ANIM_ID, palette, false);
-	anim->show();
+	AnimAbortType result = anim->show();
 	delete anim;
 
-	anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, false);
-	anim->show();
-	delete anim;
+	if (result != ABORT_END_INTRO) {
+		anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, true, 5, NULL, 4);
+		result = anim->show();
+		delete anim;
+	}
 
-	anim = new AnimationSequence(CHUTE3_ANIM_ID, palette, false);
-	anim->show();
-	delete anim;
+	if (result != ABORT_END_INTRO) {
+		anim = new AnimationSequence(CHUTE3_ANIM_ID, palette, false);
+		anim->show();
+		delete anim;
+	}
 
 	Sound.killSounds();
 	mouse.cursorOn();

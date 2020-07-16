@@ -329,8 +329,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 
 	_activeSounds.push_back(SoundList::value_type(newEntry));
 
-	musicInterface_Play(rec.soundNumber, channelCtr, false, numChannels);
-	musicInterface_SetVolume(channelCtr, newEntry->volume);
+	musicInterface_Play(rec.soundNumber, channelCtr, false, numChannels, newEntry->volume);
 }
 
 void SoundManager::addSound2(uint8 soundIndex) {
@@ -474,8 +473,7 @@ void SoundManager::restoreSounds() {
 		if ((rec.numChannels != 0) && ((rec.flags & SF_RESTORE) != 0)) {
 			Common::fill(_channelsInUse + rec.channel, _channelsInUse + rec.channel + rec.numChannels, true);
 
-			musicInterface_Play(rec.soundNumber, rec.channel, false, rec.numChannels);
-			musicInterface_SetVolume(rec.channel, rec.volume);
+			musicInterface_Play(rec.soundNumber, rec.channel, false, rec.numChannels, rec.volume);
 		}
 
 		++i;
@@ -545,7 +543,7 @@ void SoundManager::resume() {
 // musicInterface_Play
 // Play the specified sound
 
-void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic, uint8 numChannels) {
+void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic, uint8 numChannels, uint8 volume) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d",
 		soundNumber, channelNumber);
 	Game &game = Game::getReference();
@@ -598,7 +596,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, b
 			_sourcesInUse[source] = true;
 	}
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
-		isMusic, loop, source, numChannels, soundStart, dataSize);
+		isMusic, loop, source, numChannels, soundStart, dataSize, volume);
 	_playingSounds.push_back(MusicList::value_type(sound));
 	_soundMutex.unlock();
 }
@@ -788,7 +786,7 @@ void SoundManager::doTimer() {
 /*------------------------------------------------------------------------*/
 
 MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-					 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size) {
+					 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size, uint8 volume) {
 	_driver = driver;
 	assert(_driver);
 	_mt32Driver = dynamic_cast<MidiDriver_MT32GM *>(_driver);
@@ -803,9 +801,9 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	_numChannels = numChannels;
 	_volume = 0;
 
-	// Default sound resource volume: 80h (neutral).
-	// TODO AdLib does not use sound resource volume, so use fixed 240.
-	setVolume(Sound.isRoland() ? 0x80 : 240);
+	// Set sound resource volume (default is 80h - neutral).
+	// TODO AdLib currently does not use sound resource volume, so use fixed 240.
+	setVolume(Sound.isRoland() ? volume : 240);
 
 	_parser = MidiParser::createParser_SMF(source);
 	_parser->setMidiDriver(this);
