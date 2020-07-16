@@ -462,8 +462,6 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_fgpalinfo3 = stxt->_style.b;
 	_ftext = stxt->_ftext;
 	_ptext = stxt->_ptext;
-
-	_fgcolor = g_director->_wm->findBestColor(_fgpalinfo1 & 0xff, _fgpalinfo2 & 0xff, _fgpalinfo3 & 0xff);
 }
 
 void TextCastMember::createWidget() {
