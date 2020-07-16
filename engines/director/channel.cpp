@@ -146,32 +146,39 @@ Common::Rect Channel::getBbox(bool unstretched) {
 	return result;
 }
 
-void Channel::setClean(Sprite *nextSprite, int spriteId) {
+void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	if (!nextSprite)
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 	_dirty = false;
 
-	if (!_sprite->_puppet) {
-		_sprite = nextSprite;
-		_sprite->updateCast();
+	if (nextSprite) {
+		if (!_sprite->_puppet) {
+			if (partial) {
+				// Updating scripts, etc. does not require a full re-render
+				_sprite->_scriptId = nextSprite->_scriptId;
+			} else {
+				_sprite = nextSprite;
 
-		// Sprites marked moveable are constrained to the same bounding box until
-		// the moveable is disabled
-		if (!_sprite->_moveable || newSprite)
-			_currentPoint = _sprite->_startPoint;
+				// Sprites marked moveable are constrained to the same bounding box until
+				// the moveable is disabled
+				if (!_sprite->_moveable || newSprite)
+					_currentPoint = _sprite->_startPoint;
 
-		if (!_sprite->_stretch) {
-			_width = _sprite->_width;
-			_height = _sprite->_height;
+				if (!_sprite->_stretch) {
+					_width = _sprite->_width;
+					_height = _sprite->_height;
+				}
+			}
 		}
+
+		_currentPoint += _delta;
+		_delta = Common::Point(0, 0);
 	}
 
-	_currentPoint += _delta;
-	_delta = Common::Point(0, 0);
-
 	if (_sprite->_cast && _sprite->_cast->_widget) {
+		_sprite->updateCast();
 		Common::Point p(getPosition());
 		_sprite->_cast->_modified = false;
 		_sprite->_cast->_widget->_dims.moveTo(p.x, p.y);

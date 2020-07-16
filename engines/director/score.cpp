@@ -415,10 +415,8 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 
 			channel->setClean(nextSprite, i);
 			_stage->addDirtyRect(channel->getBbox());
-		} else if (!channel->_sprite->_puppet) {
-			// Updating scripts, etc. does not require a full re-render
-			channel->_sprite->updateCast();
-			channel->_sprite->_scriptId = nextSprite->_scriptId;
+		} else {
+			channel->setClean(nextSprite, i, true);
 		}
 	}
 }
