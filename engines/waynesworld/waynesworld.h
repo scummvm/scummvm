@@ -57,7 +57,19 @@ struct RoomObject {
     int walkX, walkY;
 };
 
+struct WalkPoint {
+    int x, y, direction;
+};
+
+enum {
+	kLeftButtonClicked = 1 << 0,
+	kRightButtonClicked = 1 << 1,
+	kKeyPressed = 1 << 2
+};
+
 const uint kRoomObjectsCount = 404;
+const int kWalkPointsCount = 300;
+const uint kWalkMapSize = (320 * 150) / 8;
 
 class WaynesWorldEngine : public Engine {
 protected:
@@ -88,7 +100,9 @@ public:
 
 	// Room
 	Common::String _roomName;
+	byte *_walkMap;
 	int _word_306DB;
+	int _word_306DD;
 	int _byte_306E7;
 	int _from_x1;
 	bool _doScrollRight;
@@ -96,7 +110,6 @@ public:
 	// Input
 	int _mouseX, _mouseY;
 	int _mouseClickY, _mouseClickX;
-	// uint _mouseButtons;
 	uint _mouseClickButtons;
 	Common::KeyCode _keyCode;
 
@@ -123,6 +136,8 @@ public:
 	int _actorSpriteIndex;
 	WWSurface *_wayneSprites[8], *_wayneWalkSprites[8][4], *_wayneReachRightSprite, *_wayneReachLeftSprite;
 	WWSurface *_garthSprites[8], *_garthWalkSprites[8][4], *_garthReachRightSprite, *_garthReachLeftSprite;
+	WalkPoint _wayneWalkPoints[kWalkPointsCount];
+	WalkPoint _garthWalkPoints[kWalkPointsCount];
 
 	// Inventory
 	WWSurface *_inventorySprite;
@@ -197,12 +212,26 @@ public:
 	void drawInventory();
 
 	// Actors and animations
+	void loadMainActorSprites();
+	void unloadMainActorSprites();
 	int getActorScaleFromY(int actorY);
 	void drawActorReachObject(int objectId, int spriteIndex);
 	int drawActors(int direction, int wayneKind, int garthKind, int spriteIndex, int wayneX, int wayneY, int garthX, int garthY);
 	void refreshActors();
 	void pickupObject(int objectId, byte &flags, byte flagsSet, int inventoryObjectId);
 	void playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks);
+
+	// Pathfinding
+	bool walkIsPixelWalkable(int x, int y);
+	bool walkAdjustDestPoint(int &x, int &y);
+	void walkGetNextPoint(int sourceX, int sourceY, int destX, int destY, int &nextX, int &nextY);
+	void walkCalcOtherActorDest(int flag, int &x, int &y);
+	int walkCalcPath(int flag, int sourceX, int sourceY, int destX, int destY, int pointsCount);
+	bool walkFindPoint(int flag, int &sourceX, int &sourceY, int &nextSourceX, int &nextSourceY, int destX, int destY, int pointsCount);
+	int walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int pointsCount);
+	bool walkTestPoint(int sourceX, int sourceY, int nextSourceX, int nextSourceY, int destX, int destY);
+	bool walkIsLineWalkable(int sourceX, int sourceY, int destX, int destY);
+	int walkCalcDirection(int deltaX, int deltaY);
 	bool walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY);
 
 	// Room
@@ -221,6 +250,7 @@ public:
 	void drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface);
 
 	// Room objects
+	void initRoomObjects();
 	void moveObjectToRoom(int objectId, int roomNum);
 	void moveObjectToNowhere(int objectId);
 	const RoomObject *getRoomObject(int objectId);

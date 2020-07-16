@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	waynesworld.o \
 	detection.o \
 	graphics.o \
+	pathfinding.o \
 	staticdata.o
 
 # This module can be built as a plugin

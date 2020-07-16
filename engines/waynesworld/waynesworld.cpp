@@ -76,6 +76,42 @@ Common::Error WaynesWorldEngine::run() {
 	initMouseCursor();
 	_screen = new Screen();
 	_backgroundSurface = new WWSurface(320, 150);
+	_inventorySprite = new WWSurface(312, 52);
+	_walkMap = new byte[kWalkMapSize];
+
+	_wayneSpriteX = 94;
+	_wayneSpriteY = 112;
+	_garthSpriteX = 147;
+	_garthSpriteY = 111;
+	_wayneActorScale = 100;
+	_garthActorScale = 100;
+	_actorSpriteValue = 0;
+	_wayneKind = 1;
+	_garthKind = 1;
+	_actorSpriteIndex = 0;
+	_currentActorNum = 1;
+	_inventoryItemsCount = 0;
+	_currentRoomNumber = -1;
+	_hoverObjectNumber = -1;
+	_objectNumber = -1;
+	_verbNumber = -1;
+	_verbNumber2 = 2;
+	_firstObjectNumber = -1;
+	_isTextVisible = false;
+	_currentTextX = -1;
+	_currentTextY = -1;
+	_from_x1 = 0;
+	_selectedDialogChoice = 0;
+	_gameState = 7;
+
+	loadMainActorSprites();
+
+	initRoomObjects();
+	memset(_wayneInventory, 0, sizeof(_wayneInventory));
+	memset(_garthInventory, 0, sizeof(_garthInventory));
+
+    _wayneInventory[kObjectIdInventoryDollar - 28] = 5;
+    _garthInventory[kObjectIdInventoryDrumstick - 28] = 1;
 
 #if 0
 	while (!shouldQuit()) {
@@ -87,37 +123,41 @@ Common::Error WaynesWorldEngine::run() {
 	loadPalette("m01/wstand0");
 	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
 
-	WWSurface *wayne = loadSurface("m01/wstand0");
-	WWSurface *wayneS = new WWSurface(wayne->w * 0.75f, wayne->h * 0.75f);
-
-	wayneS->scaleSurface(wayne);
-
-	// Image::PCXDecoder *pcx = loadImage("m00/winter", false);
-	// g_system->copyRectToScreen(pcx->getSurface()->getPixels(), pcx->getSurface()->pitch, 0, 0, pcx->getSurface()->w, pcx->getSurface()->h);
-	// delete pcx;
-
-	// drawImageToScreen("m00/winter", 0, 151);
-	drawInterface(4);
-	drawImageToScreen("r00/backg", 0, 0);
-
-	openRoomLibrary(6);
-
 	CursorMan.showMouse(true);
 
+	drawImageToScreen("r00/backg", 0, 0);
+
+	drawInterface(2);
+	changeRoom(0);
+
+	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
+
 	while (!shouldQuit()) {
+		_mouseClickButtons = 0;
+		// _keyInput = 0;
 		updateEvents();
-		// _screen->clear(0);
-		// _screen->drawSurfaceTransparent(wayne, _mouseX - 10, _mouseY - 10);
-		//_screen->drawSurfaceTransparent(wayneS, _mouseX - 10, _mouseY - 10);
-		// playAnimation("wdog", 0, 9, 64, 111, 0, 150);
+		updateMouseMove();
+		if (_mouseClickButtons != 0) {
+			debug("_mouseClickButtons: %d", _mouseClickButtons);
+			handleMouseClick();
+		}
+		/* TODO
+		if (_roomEventNum != 0) {
+			handleRoomEvent();
+		}
+		*/
+		if (_gameState == 1 && _currentRoomNumber < 100) {
+			// TODO gameMapOpen();
+		}
 		g_system->updateScreen();
 	}
 
-	delete wayneS;
-	delete wayne;
-
 #endif
 
+	unloadMainActorSprites();
+
+	delete[] _walkMap;
+	delete _inventorySprite;
 	delete _backgroundSurface;
 	delete _screen;
 
@@ -149,18 +189,24 @@ void WaynesWorldEngine::updateEvents() {
   			_mouseY = event.mouse.y;
   			break;
 		case Common::EVENT_LBUTTONDOWN:
-			//_mouseButtons |= kLeftButtonClicked;
-			//_mouseButtons |= kLeftButtonDown;
+			debug("EVENT_LBUTTONDOWN");
+			_mouseClickButtons |= kLeftButtonClicked;
+			_mouseClickX = event.mouse.x;
+			_mouseClickY = event.mouse.y;
+			//_mouseClickButtons |= kLeftButtonDown;
   			break;
 		case Common::EVENT_LBUTTONUP:
-			//_mouseButtons &= ~kLeftButtonDown;
+			//_mouseClickButtons &= ~kLeftButtonDown;
   			break;
 		case Common::EVENT_RBUTTONDOWN:
-			//_mouseButtons |= kRightButtonClicked;
-			//_mouseButtons |= kRightButtonDown;
+			debug("EVENT_RBUTTONDOWN");
+			_mouseClickButtons |= kRightButtonClicked;
+			_mouseClickX = event.mouse.x;
+			_mouseClickY = event.mouse.y;
+			//_mouseClickButtons |= kRightButtonDown;
   			break;
 		case Common::EVENT_RBUTTONUP:
-			//_mouseButtons &= ~kRightButtonDown;
+			//_mouseClickButtons &= ~kRightButtonDown;
   			break;
 		case Common::EVENT_QUIT:
 			quitGame();
@@ -177,7 +223,13 @@ int WaynesWorldEngine::getRandom(int max) {
 
 void WaynesWorldEngine::waitMillis(uint millis) {
 	// TODO
-	_system->delayMillis(millis);
+	// _system->delayMillis(millis);
+	uint32 waitTime = _system->getMillis() + millis;
+	while (_system->getMillis() < waitTime && !shouldQuit()) {
+		updateEvents();
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
 }
 
 void WaynesWorldEngine::waitSeconds(uint seconds) {
@@ -297,13 +349,13 @@ void WaynesWorldEngine::updateMouseMove() {
 }
 
 void WaynesWorldEngine::handleMouseClick() {
-    if (_mouseClickButtons & 1) {
+    if (_mouseClickButtons & kLeftButtonClicked) {
         handleMouseLeftClick();
     }
-    if (_mouseClickButtons & 2) {
+    if (_mouseClickButtons & kRightButtonClicked) {
         handleMouseRightClick();
     }
-    if (_mouseClickButtons & 4) {
+    if (_mouseClickButtons & kKeyPressed) {
         // TODO handleKeyInput();
     }
 }
@@ -470,6 +522,7 @@ void WaynesWorldEngine::drawRoomImageToSurface(const char *filename, WWSurface *
 
 void WaynesWorldEngine::loadString(const char *filename, int index, int flag) {
 	// TODO Load the string
+	debug("loadString(%s, %d)", filename, index);
 }
 
 void WaynesWorldEngine::drawCurrentTextToSurface(WWSurface *destSurface, int x, int y) {
@@ -608,15 +661,15 @@ void WaynesWorldEngine::drawVerbLine(int verbNumber, int objectNumber, const cha
 	// TODO Move to StaticData class/file
 	static const char *kVerbStrings[] = {
 		"",
-		"pick up"
-		"look at"
-		"use"
-		"talk to"
-		"push"
-		"pull"
-		"extreme closeup of"
-		"give"
-		"open"
+		"pick up",
+		"look at",
+		"use",
+		"talk to",
+		"push",
+		"pull",
+		"extreme closeup of",
+		"give",
+		"open",
 		"close"
 	};
 
@@ -714,6 +767,7 @@ void WaynesWorldEngine::drawInventory() {
         if ((_currentActorNum != 0 && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
             (_currentActorNum == 0 && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
             Common::String filename = Common::String::format("m03/icon%02d", inventoryItemIndex + 1);
+			debug("filename: [%s]", filename.c_str());
             drawImageToSurface(filename.c_str(), _inventorySprite, iconX, iconY);
             iconX += 26;
             if (iconX > 300) {
@@ -723,6 +777,37 @@ void WaynesWorldEngine::drawInventory() {
             _inventoryItemsObjectMap[_inventoryItemsCount] = inventoryItemIndex + 28;
             _inventoryItemsCount++;
         }
+    }
+}
+
+void WaynesWorldEngine::loadMainActorSprites() {
+    // _inventorySprite = new WWSurface(312, 52);
+	_wayneReachRightSprite = loadSurface("m01/wreachr");
+	_wayneReachLeftSprite = loadSurface("m01/wreachl");
+	_garthReachRightSprite = loadSurface("m01/greachr");
+	_garthReachLeftSprite = loadSurface("m01/greachl");
+    for (int direction = 0; direction < 8; direction++) {
+		_wayneSprites[direction] = loadSurface(Common::String::format("m01/wstand%d", direction).c_str());
+		_garthSprites[direction] = loadSurface(Common::String::format("m01/gstand%d", direction).c_str());
+		for (int frameNum = 0; frameNum < 4; frameNum++) {			
+			_wayneWalkSprites[direction][frameNum] = loadSurface(Common::String::format("m01/wwalk%d%d", direction, frameNum).c_str());
+			_garthWalkSprites[direction][frameNum] = loadSurface(Common::String::format("m01/gwalk%d%d", direction, frameNum).c_str());
+		}
+    }
+}
+
+void WaynesWorldEngine::unloadMainActorSprites() {
+	delete _wayneReachRightSprite;
+	delete _wayneReachLeftSprite;
+	delete _garthReachRightSprite;
+	delete _garthReachLeftSprite;
+    for (int direction = 0; direction < 8; direction++) {
+		delete _wayneSprites[direction];
+		delete _garthSprites[direction];
+		for (int frameNum = 0; frameNum < 4; frameNum++) {
+			delete _wayneWalkSprites[direction][frameNum];
+			delete _garthWalkSprites[direction][frameNum];
+		}
     }
 }
 
@@ -807,6 +892,14 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
 
     WWSurface *tempBackground = new WWSurface(320, 150);
     tempBackground->drawSurface(_backgroundSurface, 0, 0);
+
+#if 0 // DEBUG Draw room mask to background
+	for (int yc = 0; yc < 150; yc++) {
+		for (int xc = 0; xc < 320; xc++) {
+			 *(byte*)tempBackground->getBasePtr(xc, yc) = walkIsPixelWalkable(xc, yc) ? 15 : 0;
+		}
+	}
+#endif
 
     if (wayneY <= garthY) {
         if (_wayneSpriteX != -1) {
@@ -907,10 +1000,6 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
     // sysMouseDriver(1)
 }
 
-bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY) {
-	// TODO
-}
-
 void WaynesWorldEngine::openRoomLibrary(int roomNum) {
     _roomName = Common::String::format("r%02d", roomNum);
 }
@@ -950,7 +1039,13 @@ void WaynesWorldEngine::loadScrollSprite() {
 }
 
 void WaynesWorldEngine::loadRoomMask(int roomNum) {
-	// TODO
+	Common::String filename = Common::String::format("r%02d.msk", roomNum);
+	Common::File fd;
+	if (!fd.open(filename))
+		error("WaynesWorldEngine::loadRoomMask() Could not open %s", filename.c_str());
+	if (fd.size() != kWalkMapSize)
+		error("WaynesWorldEngine::loadRoomMask() Wrong file size in %s", filename.c_str());
+	fd.read(_walkMap, kWalkMapSize);
 }
 
 void WaynesWorldEngine::updateRoomAnimations(bool doUpdate) {
@@ -967,6 +1062,11 @@ void WaynesWorldEngine::unloadStaticRoomObjects() {
 
 void WaynesWorldEngine::drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface) {
 	// TODO
+}
+
+void WaynesWorldEngine::initRoomObjects() {
+	for  (uint i = 0; i < kRoomObjectsCount; i++)
+		_roomObjects[i] = kRoomObjects[i];
 }
 
 void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
@@ -1015,7 +1115,7 @@ int WaynesWorldEngine::getObjectDirection(int objectId) {
 
 int WaynesWorldEngine::findRoomObjectIdAtPoint(int x, int y) {
     for (uint index = 0; index < kRoomObjectsCount; index++) {
-        const RoomObject *roomObject = getRoomObject(_hoverObjectNumber);
+        const RoomObject *roomObject = getRoomObject(index);
         if (roomObject->roomNumber == _currentRoomNumber &&
             x >= roomObject->x1 && x <= roomObject->x2 &&
             y >= roomObject->y1 && y <= roomObject->y2) {
