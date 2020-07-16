@@ -145,6 +145,8 @@ public:
 	void waitMillis(uint millis);
 	void waitSeconds(uint seconds);
 
+	void initMouseCursor();
+
 	// Image loading
 	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
 	WWSurface *loadSurfaceIntern(const char *filename, bool appendRoomName);
