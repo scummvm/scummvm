@@ -225,7 +225,7 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 		}
 		debugC(2, kDebugParse | kDebugPreprocess, "line: %d                         '%s'", iflevel, line.c_str());
 
-		if (!defFound && type == kMovieScript && (_vm->getVersion() <= 3 || _vm->getCurrentMovie()->_allowOutdatedLingo)) {
+		if (!defFound && (type == kMovieScript || type == kCastScript) && (_vm->getVersion() <= 3 || _vm->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
 			if (tok.equals("macro") || tok.equals("factory") || tok.equals("on")) {
 				defFound = true;
