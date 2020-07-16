@@ -72,7 +72,7 @@ private:
 
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-		 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size);
+		 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size, uint8 volume);
 	~MidiMusic() override;
 	void setVolume(int volume);
 	int getVolume() const { return _volume; }
@@ -168,7 +168,7 @@ public:
 
 	// The following methods implement the external sound player module
 	//void musicInterface_Initialize();
-	void musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic = false, uint8 numChannels = 4);
+	void musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic = false, uint8 numChannels = 4, uint8 volume = 0x80);
 	void musicInterface_Stop(uint8 soundNumber);
 	bool musicInterface_CheckPlaying(uint8 soundNumber);
 	void musicInterface_SetVolume(uint8 channelNum, uint8 volume);
