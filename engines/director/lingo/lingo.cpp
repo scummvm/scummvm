@@ -158,8 +158,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_indef = kStateNone;
 	_immediateMode = false;
 
-	_linenumber = _colnumber = _bytenumber = _lastbytenumber = _errorbytenumber = 0;
-	_ignoreError = false;
+	_linenumber = _colnumber = 0;
 
 	_hadError = false;
 

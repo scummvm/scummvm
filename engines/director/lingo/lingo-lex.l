@@ -48,8 +48,6 @@ static void count() {
 		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
 
 	char *p = yytext;
-	g_lingo->_lasttoken = yytext;
-	g_lingo->_lastbytenumber = g_lingo->_bytenumber;
 
 	while (*p) {
 		if (*p == '\n' || *p == '\xC2') {
@@ -59,7 +57,6 @@ static void count() {
 			g_lingo->_colnumber++;
 		}
 		p++;
-		g_lingo->_bytenumber++;
 	}
 }
 
@@ -446,38 +443,15 @@ extern int yydebug;
 
 void lex_unput(int c) {
 	unput(c);
-	g_lingo->_bytenumber--;
 	g_lingo->_linenumber--;
 }
 
 static const char *inputbuffer;
 
-bool lex_check_parens() {
-	// D2 and D3 were forgiving for trailing braces, so
-	// set a = 1)))()))))))  --   is a valid Lingo!
-	if (g_director->getVersion() > 3)
-		return false;
-
-	if (!g_lingo->_lasttoken.equals(")"))
-		return false;
-
-	const char *ptr = &inputbuffer[g_lingo->_lastbytenumber];
-
-	while (*ptr && *ptr != '\n') {
-		if (*ptr != ')' && *ptr != '(' && *ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
-			return false;
-
-		ptr++;
-	}
-
-	return true;
-}
-
 namespace Director {
 
 int Lingo::parse(const char *code) {
 	inputbuffer = code;
-	g_lingo->_bytenumber = 0;
 
 	YY_BUFFER_STATE bp;
 

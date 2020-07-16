@@ -570,16 +570,7 @@ simpleexpr: INT		{
 		g_lingo->code2(e, f); }
 	| '(' expr[arg] ')'			{ $$ = $arg; }
 	| list
-	| error	'\n'		{
-		// Director parser till D3 was forgiving for any hanging parentheses
-		if (g_lingo->_ignoreError) {
-			warning("# LINGO: Ignoring trailing paren before %d:%d", g_lingo->_linenumber, g_lingo->_colnumber);
-			g_lingo->_ignoreError = false;
-			lex_unput('\n');	// We ate '\n', so put it back, otherwise lines will be joined
-		} else {
-			yyerrok;
-		}
-	}
+	| error	'\n'		{ yyerrok; }
 
 funccall: FBLTIN '(' arglist ')' {
 		g_lingo->codeFunc($FBLTIN, $arglist);
@@ -862,11 +853,6 @@ proppair: SYMBOL ':' expr {
 
 int yyreport_syntax_error(const yypcontext_t *ctx) {
 	int res = 0;
-
-	if (lex_check_parens()) {
-		g_lingo->_ignoreError = true;
-		return 0;
-	}
 
 	Common::String msg = "syntax error, ";
 
