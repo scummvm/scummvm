@@ -62,6 +62,7 @@ class Lingo;
 class Movie;
 class Stage;
 class Score;
+class Channel;
 class CastMember;
 class Stxt;
 
@@ -189,8 +190,6 @@ public:
 
 	// events.cpp
 	void processEvents(bool bufferLingoEvents = false);
-	void setDraggedSprite(uint16 id);
-	void releaseDraggedSprite();
 	uint32 getMacTicks();
 	void waitForClick();
 
@@ -231,8 +230,7 @@ private:
 
 	Common::HashMap<int, PaletteV4 *> _director4Palettes;
 
-	bool _draggingSprite;
-	uint16 _draggingSpriteId;
+	Channel *_currentDraggedChannel;
 	Common::Point _draggingSpritePos;
 };
 

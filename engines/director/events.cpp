@@ -84,15 +84,14 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				m->_lastEventTime = g_director->getMacTicks();
 				m->_lastRollTime =	 m->_lastEventTime;
 
-				if (_draggingSprite) {
-					Sprite *draggedSprite = sc->getSpriteById(_draggingSpriteId);
-					if (draggedSprite->_moveable) {
+				if (_currentDraggedChannel) {
+					if (_currentDraggedChannel->_sprite->_moveable) {
 						pos = getCurrentStage()->getMousePos();
 
-						sc->_channels[_draggingSpriteId]->addDelta(pos - _draggingSpritePos);
+						_currentDraggedChannel->addDelta(pos - _draggingSpritePos);
 						_draggingSpritePos = pos;
 					} else {
-						releaseDraggedSprite();
+						_currentDraggedChannel = nullptr;
 					}
 				}
 				break;
@@ -116,8 +115,10 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->registerEvent(kEventMouseDown, spriteId);
 
-				if (sc->getSpriteById(spriteId)->_moveable)
-					g_director->setDraggedSprite(spriteId);
+				if (sc->_channels[spriteId]->_sprite->_moveable) {
+					_draggingSpritePos = _currentStage->getMousePos();
+					_currentDraggedChannel = sc->_channels[spriteId];
+				}
 
 				break;
 
@@ -137,7 +138,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 
 				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 
-				releaseDraggedSprite();
+				_currentDraggedChannel = nullptr;
 
 				{
 					CastMember *cast = g_director->getCurrentMovie()->getCastMember(sc->getSpriteById(spriteId)->_castId);
@@ -182,17 +183,6 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 		if (!bufferLingoEvents)
 			_lingo->processEvents();
 	}
-}
-
-void DirectorEngine::setDraggedSprite(uint16 id) {
-	_draggingSprite = true;
-	_draggingSpriteId = id;
-	_draggingSpritePos = _currentStage->getMousePos();
-}
-
-void DirectorEngine::releaseDraggedSprite() {
-	_draggingSprite = false;
-	_draggingSpriteId = 0;
 }
 
 void DirectorEngine::waitForClick() {

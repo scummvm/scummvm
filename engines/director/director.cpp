@@ -109,8 +109,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
 
-	_draggingSprite = false;
-	_draggingSpriteId = 0;
+	_currentDraggedChannel = nullptr;
 }
 
 DirectorEngine::~DirectorEngine() {
