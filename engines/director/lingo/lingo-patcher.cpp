@@ -93,7 +93,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, ScriptType type, uint
 		}
 
 		// Now do a safeguard
-		if (line.compareToIgnoreCase(patch->orig)) {
+		if (!line.contains(patch->orig)) {
 			warning("Lingo::patchLingoCode(): Unmatched patch for '%s', '%s' %s:%d @ %d. Expecting '%s' but got '%s'",
 					patch->gameId, patch->movie, scriptType2str(type), id, linenum,
 					patch->orig, line.c_str());
