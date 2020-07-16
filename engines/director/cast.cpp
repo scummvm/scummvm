@@ -993,6 +993,9 @@ void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 }
 
 void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
+	if (!_loadedCast->contains(id))
+		return;
+
 	InfoEntries castInfo = Movie::loadInfoEntries(stream);
 
 	debugCN(4, kDebugLoading, "Cast::loadCastInfo(): str(%d): '", castInfo.strings.size());
