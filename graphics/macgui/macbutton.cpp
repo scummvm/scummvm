@@ -38,7 +38,7 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 
 	_buttonType = buttonType;
 
-	int offset;
+	int offset = 0;
 	switch (buttonType) {
 	case kCheckBox:
 		offset = 16;
