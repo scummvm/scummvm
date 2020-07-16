@@ -915,19 +915,25 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		}
 
 		// repair script type + cast ID
-		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it) {
-			if (it->_value->_type == kCastLingoScript) {
-				ScriptCastMember *member = static_cast<ScriptCastMember *>(it->_value);
-				if (!_lingoArchive->lctxContexts.contains(member->_id)) {
-					warning("Cast::loadLingoContext: %s %d has invalid script ID %d", scriptType2str(member->_scriptType), it->_key, member->_id);
-					continue;
-				}
-
-				ScriptContext *script = _lingoArchive->lctxContexts[member->_id];
-				debugC(1, kDebugCompile, "Cast::loadLingoContext: Repairing script %d: %s %d -> %s %d", member->_id, scriptType2str(script->_scriptType), script->_id, scriptType2str(member->_scriptType), it->_key);
-				script->_scriptType = member->_scriptType;
-				script->_id = it->_key;
+		for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it) {
+			if (it->_value->scriptId == 0)
+				continue;
+			
+			ScriptType type = kCastScript;
+			CastMember *member = _loadedCast->getVal(it->_key);
+			if (member->_type == kCastLingoScript) {
+				type = static_cast<ScriptCastMember *>(member)->_scriptType;
 			}
+
+			if (!_lingoArchive->lctxContexts.contains(it->_value->scriptId)) {
+				warning("Cast::loadLingoContext: %s %d has invalid script ID %d", scriptType2str(type), it->_key, it->_value->scriptId);
+				continue;
+			}
+
+			ScriptContext *script = _lingoArchive->lctxContexts[it->_value->scriptId];
+			debugC(1, kDebugCompile, "Cast::loadLingoContext: Repairing script %d: %s %d -> %s %d", it->_value->scriptId, scriptType2str(script->_scriptType), script->_id, scriptType2str(type), it->_key);
+			script->_scriptType = type;
+			script->_id = it->_key;
 		}
 
 		// actually define scripts
@@ -1080,6 +1086,8 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 			_lingoArchive->addCode(ci->script.c_str(), scriptType, id, ci->name.c_str());
 		}
 	}
+
+	ci->scriptId = castInfo.scriptId;
 
 	_castsInfo[id] = ci;
 }

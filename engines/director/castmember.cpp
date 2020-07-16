@@ -624,12 +624,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStream
 			error("ScriptCastMember: Unprocessed script type: %d", type);
 		}
 
-		_initialRect = Movie::readRect(stream);
-		_boundingRect = Movie::readRect(stream);
-
-		_id = stream.readUint32();
-
-		debugC(3, kDebugLoading, "CASt: Script id: %d type: %s (%d), flags: (%x), unk1: %d", _id, scriptType2str(_scriptType), type, flags, unk1);
+		debugC(3, kDebugLoading, "CASt: Script type: %s (%d), flags: (%x), unk1: %d", scriptType2str(_scriptType), type, flags, unk1);
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
@@ -637,12 +632,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStream
 		stream.readByte();
 		stream.readByte();
 
-		_initialRect = Movie::readRect(stream);
-		_boundingRect = Movie::readRect(stream);
-
-		_id = stream.readUint32();
-
-		debugC(4, kDebugLoading, "CASt: Script id: %d", _id);
+		debugC(4, kDebugLoading, "CASt: Script");
 
 		// WIP need to complete this!
 	}

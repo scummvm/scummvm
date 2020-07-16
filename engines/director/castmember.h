@@ -203,7 +203,6 @@ class ScriptCastMember : public CastMember {
 public:
 	ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
 
-	uint32 _id;
 	ScriptType _scriptType;
 };
 
@@ -223,6 +222,7 @@ struct EditInfo {
 };
 
 struct CastMemberInfo {
+	uint32 scriptId;
 	Common::String script;
 	Common::String name;
 	Common::String directory;
