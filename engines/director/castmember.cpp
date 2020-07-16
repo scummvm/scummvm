@@ -112,14 +112,21 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 		_autoHilite = (_flags2 % 4 != 0);
 
 		int tail = 0;
+		byte buf[256];
 
 		while (!stream.eos()) {
-			stream.readByte();
+			byte c = stream.readByte();
+			if (tail < 256)
+				buf[tail] = c;
 			tail++;
 		}
 
-		if (tail > 8) {
-			warning("BitmapCastMember: %d bytes left", tail);
+		if (tail)
+			warning("BUILDBOT: BitmapCastMember: %d bytes left", tail);
+
+		if (tail && debugChannelSet(2, kDebugLoading)) {
+			debug("BitmapCastMember: tail");
+			Common::hexdump(buf, tail);
 		}
 	} else if (version == 5) {
 		uint16 count = stream.readUint16();
@@ -372,7 +379,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndi
 		byte flags2 = stream.readByte();
 
 		if (flags || flags2)
-			warning("Unprocessed text cast flags: %x, flags:2 %x", flags, flags2);
+			warning("BUILDBOT: Unprocessed text cast flags: %x, flags:2 %x", flags, flags2);
 
 		_fontSize = stream.readUint16();
 		_textSlant = 0;
