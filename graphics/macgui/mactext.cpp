@@ -211,6 +211,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 void MacText::init() {
 	_defaultFormatting.wm = _wm;
 	_currentFormatting = _defaultFormatting;
+	_composeSurface->clear(_bgcolor);
 
 	splitString(_str);
 	recalcDims();
@@ -851,7 +852,6 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 }
 
 bool MacText::draw(bool forceRedraw) {
-
 	if (!_contentIsDirty && !_cursorDirty && !forceRedraw)
 		return false;
 
@@ -860,8 +860,7 @@ bool MacText::draw(bool forceRedraw) {
 		return false;
 	}
 
-	_composeSurface->clear(_bgcolor);
-
+	// TODO: Clear surface fully when background colour changes.
 	_contentIsDirty = false;
 	_cursorDirty = false;
 

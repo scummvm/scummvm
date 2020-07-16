@@ -57,6 +57,7 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	_alignOffset.x += offset;
 	_dims.right += offset;
 	_composeSurface->create(_dims.width(), _dims.height());
+	_composeSurface->clear(_bgcolor);
 }
 
 void MacButton::setActive(bool active) {
@@ -130,7 +131,6 @@ bool MacButton::draw(bool forceRedraw) {
 		break;
 	}
 
-	_contentIsDirty = false;
 	return true;
 }
 
