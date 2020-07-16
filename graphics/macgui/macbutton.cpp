@@ -149,6 +149,8 @@ bool MacButton::processEvent(Common::Event &event) {
 		if (_wm->_mouseDown) {
 			if (_wm->_mode & kWMModeButtonDialogStyle)
 				return true;
+			else if (!_dims.contains(_wm->_lastClickPos))
+				return false;
 
 			setActive(true);
 		}

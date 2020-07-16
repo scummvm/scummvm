@@ -270,6 +270,7 @@ public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
 
+	Common::Point _lastClickPos;
 	Common::Point _lastMousePos;
 	Common::Rect _menuHotzone;
 

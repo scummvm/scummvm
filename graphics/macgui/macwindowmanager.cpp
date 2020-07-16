@@ -451,6 +451,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		_mouseDown = true;
+		_lastClickPos = event.mouse;
 		break;
 	case Common::EVENT_LBUTTONUP:
 		_mouseDown = false;
