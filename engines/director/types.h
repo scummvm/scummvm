@@ -25,6 +25,10 @@
 
 namespace Director {
 
+enum MovieFlag {
+	kMovieFlagAllowOutdatedLingo	= (1 << 8)
+};
+
 enum CastType {
 	kCastTypeNull = 0,
 	kCastBitmap = 1,

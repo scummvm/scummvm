@@ -419,7 +419,7 @@ void LC::c_varpush() {
 	}
 
 	// Looking for the cast member constants
-	if (g_director->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
+	if (g_director->getVersion() < 4 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
 		int val = castNumToNum(name.c_str());
 
 		if (val != -1) {

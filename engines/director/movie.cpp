@@ -52,6 +52,8 @@ Movie::Movie(Stage *stage) {
 	_lastRollTime = _lastEventTime;
 	_lastTimerReset = _lastEventTime;
 
+	_allowOutdatedLingo = false;
+
 	_movieArchive = nullptr;
 
 	_cast = new Cast(this);
@@ -190,6 +192,9 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
 	InfoEntries fileInfo = Movie::loadInfoEntries(stream);
+
+	_allowOutdatedLingo = (fileInfo.flags & kMovieFlagAllowOutdatedLingo) != 0;
+
 	_script = fileInfo.strings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
@@ -212,6 +217,8 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	}
 
 	if (debugChannelSet(3, kDebugLoading)) {
+		debug("VWFI: flags: %d", fileInfo.flags);
+		debug("VWFI: allow outdated lingo: %d", _allowOutdatedLingo);
 		debug("VWFI: script: '%s'", _script.c_str());
 		debug("VWFI: changed by: '%s'", _changedBy.c_str());
 		debug("VWFI: created by: '%s'", _createdBy.c_str());
