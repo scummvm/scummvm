@@ -41,13 +41,13 @@ class ScriptContext;
 class Stage;
 struct Symbol;
 
-struct DataEntry {
+struct InfoEntry {
 	uint32 len;
 	byte *data;
 
-	DataEntry() { len = 0; data = nullptr; }
+	InfoEntry() { len = 0; data = nullptr; }
 
-	~DataEntry() {
+	~InfoEntry() {
 		free(data);
 	}
 
@@ -69,13 +69,23 @@ struct DataEntry {
 	}
 };
 
+struct InfoEntries {
+	uint32 unk1;
+	uint32 unk2;
+	uint32 flags;
+	uint32 scriptId;
+	Common::Array<InfoEntry> strings;
+
+	InfoEntries() : unk1(0), unk2(0), flags(0), scriptId(0) {}
+};
+
 class Movie {
 public:
 	Movie(Stage *stage);
 	~Movie();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
-	static Common::Array<DataEntry> loadDataEntries(Common::SeekableSubReadStreamEndian &stream, bool hasHeader = true);
+	static InfoEntries loadInfoEntries(Common::SeekableSubReadStreamEndian &stream);
 
 	bool loadArchive();
 	void setArchive(Archive *archive);

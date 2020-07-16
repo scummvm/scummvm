@@ -146,50 +146,51 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-Common::Array<DataEntry> Movie::loadDataEntries(Common::SeekableSubReadStreamEndian &stream, bool hasHeader) {
-	Common::Array<DataEntry> strings;
-	uint32 offset = 0;
+InfoEntries Movie::loadInfoEntries(Common::SeekableSubReadStreamEndian &stream) {
+	uint32 offset = stream.pos();
+	offset += stream.readUint32();
 
-	if (hasHeader) {
-		offset = stream.readUint32();
-		/*uint32 unk1 = */ stream.readUint32();
-		/*uint32 unk2 = */ stream.readUint32();
-		/*entryType = */ stream.readUint32();
-		stream.seek(offset);
-	}
+	InfoEntries res;
+	res.unk1 = stream.readUint32();
+	res.unk2 = stream.readUint32();
+	res.flags = stream.readUint32();
 
+	if (g_director->getVersion() >= 4)
+		res.scriptId = stream.readUint32();
+
+	stream.seek(offset);
 	uint16 count = stream.readUint16() + 1;
 
-	debugC(3, kDebugLoading, "Movie::loadDataEntries(): DataEntry: %d entries", count - 1);
+	debugC(3, kDebugLoading, "Movie::loadInfoEntries(): InfoEntry: %d entries", count - 1);
 
 	if (count == 1)
-		return strings;
+		return res;
 
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 
 	for (uint i = 0; i < count; i++)
 		entries[i] = stream.readUint32();
 
-	strings.resize(count - 1);
+	res.strings.resize(count - 1);
 
 	for (uint16 i = 0; i < count - 1; i++) {
-		strings[i].len = entries[i + 1] - entries[i];
-		strings[i].data = (byte *)malloc(strings[i].len);
-		stream.read(strings[i].data, strings[i].len);
+		res.strings[i].len = entries[i + 1] - entries[i];
+		res.strings[i].data = (byte *)malloc(res.strings[i].len);
+		stream.read(res.strings[i].data, res.strings[i].len);
 
-		debugC(6, kDebugLoading, "DataEntry %d: %d bytes", i, strings[i].len);
+		debugC(6, kDebugLoading, "InfoEntry %d: %d bytes", i, res.strings[i].len);
 	}
 
 	free(entries);
 
-	return strings;
+	return res;
 }
 
 void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
-	Common::Array<DataEntry> fileInfoStrings = Movie::loadDataEntries(stream);
-	_script = fileInfoStrings[0].readString(false);
+	InfoEntries fileInfo = Movie::loadInfoEntries(stream);
+	_script = fileInfo.strings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
 		_cast->dumpScript(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
@@ -198,16 +199,16 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 		_cast->_lingoArchive->addCode(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
 
 	_cast->_movieScriptCount++;
-	_changedBy = fileInfoStrings[1].readString();
-	_createdBy = fileInfoStrings[2].readString();
-	_createdBy = fileInfoStrings[3].readString();
+	_changedBy = fileInfo.strings[1].readString();
+	_createdBy = fileInfo.strings[2].readString();
+	_createdBy = fileInfo.strings[3].readString();
 
 	uint16 preload = 0;
-	if (fileInfoStrings[4].len) {
+	if (fileInfo.strings[4].len) {
 		if (stream.isBE())
-			preload = READ_BE_INT16(fileInfoStrings[4].data);
+			preload = READ_BE_INT16(fileInfo.strings[4].data);
 		else
-			preload = READ_LE_INT16(fileInfoStrings[4].data);
+			preload = READ_LE_INT16(fileInfo.strings[4].data);
 	}
 
 	if (debugChannelSet(3, kDebugLoading)) {
@@ -217,9 +218,9 @@ void Movie::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
 		debug("VWFI: directory: '%s'", _createdBy.c_str());
 		debug("VWFI: preload: %d (0x%x)", preload, preload);
 
-		for (uint i = 5; i < fileInfoStrings.size(); i++) {
-			debug("VWFI: entry %d (%d bytes)", i, fileInfoStrings[i].len);
-			Common::hexdump(fileInfoStrings[i].data, fileInfoStrings[i].len);
+		for (uint i = 5; i < fileInfo.strings.size(); i++) {
+			debug("VWFI: entry %d (%d bytes)", i, fileInfo.strings[i].len);
+			Common::hexdump(fileInfo.strings[i].data, fileInfo.strings[i].len);
 		}
 	}
 }

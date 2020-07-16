@@ -700,9 +700,11 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 	if (debugChannelSet(5, kDebugLoading) && stream.size() < 2048)
 		stream.hexdump(stream.size());
 
-	uint32 size1, size2, size3, castType, sizeToRead;
+	uint32 castSize, castInfoSize, size3, castType, castSizeToRead;
 	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
+	// D2-3 cast members should be loaded in loadCastDataVWCR
+#if 0
 	if (_vm->getVersion() <= 3) {
 		size1 = stream.readUint16();
 		sizeToRead = size1 +16; // 16 is for bounding rects
@@ -712,36 +714,41 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		unk1 = stream.readByte();
 		unk2 = stream.readByte();
 		unk3 = stream.readByte();
-	} else if (_vm->getVersion() == 4) {
-		size1 = stream.readUint16();
-		sizeToRead = size1 + 2 + 16 + 1; // 16 is for bounding rects + 1 is for moved _flag
-		size2 = stream.readUint32();
+	}
+#endif
+
+	if (_vm->getVersion() == 4) {
+		castSize = stream.readUint16();
+		castSizeToRead = castSize - 1; // the first byte is castType
+		castInfoSize = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
 	} else if (_vm->getVersion() == 5) {
 		castType = stream.readUint32();
 		size3 = stream.readUint32();
-		size2 = stream.readUint32();
-		size1 = stream.readUint32();
+		castInfoSize = stream.readUint32();
+		castSize = stream.readUint32();
 		if (castType == 1) {
 			if (size3 == 0)
 				return;
-			for (uint32 skip = 0; skip < (size1 - 4) / 4; skip++)
+			for (uint32 skip = 0; skip < (castSize - 4) / 4; skip++)
 				stream.readUint32();
 		}
 
-		sizeToRead = stream.size();
+		castSizeToRead = stream.size();
 	} else {
 		error("Cast::loadCastData: unsupported Director version (%d)", _vm->getVersion());
 	}
 
-	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
-		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
+	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castSize: %d castInfoSize: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
+		id, castType, castSize, castInfoSize, castInfoSize, size3, unk1, unk2, unk3);
 
-	byte *data = (byte *)calloc(sizeToRead, 1);
-	stream.read(data, sizeToRead);
+	// read the cast member itself
 
-	Common::MemoryReadStreamEndian castStream(data, sizeToRead, stream.isBE());
+	byte *data = (byte *)calloc(castSizeToRead, 1);
+	stream.read(data, castSizeToRead);
+
+	Common::MemoryReadStreamEndian castStream(data, castSizeToRead, stream.isBE());
 
 	switch (castType) {
 	case kCastBitmap:
@@ -778,24 +785,24 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		break;
 	case kCastFilmLoop:
 		warning("STUB: Cast::loadCastData(): kCastFilmLoop (%d children)", res->children.size());
-		size2 = 0;
+		castInfoSize = 0;
 		break;
 	case kCastPalette:
 		warning("STUB: Cast::loadCastData(): kCastPalette (%d children)", res->children.size());
-		size2 = 0;
+		castInfoSize = 0;
 		break;
 	case kCastPicture:
 		warning("STUB: Cast::loadCastData(): kCastPicture (%d children)", res->children.size());
-		size2 = 0;
+		castInfoSize = 0;
 		break;
 	case kCastMovie:
 		warning("STUB: Cast::loadCastData(): kCastMovie (%d children)", res->children.size());
-		size2 = 0;
+		castInfoSize = 0;
 		break;
 	default:
 		warning("Cast::loadCastData(): Unhandled cast type: %d [%s] (%d children)", castType, tag2str(castType), res->children.size());
 		// also don't try and read the strings... we don't know what this item is.
-		size2 = 0;
+		castInfoSize = 0;
 		break;
 	}
 
@@ -810,93 +817,10 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 
 	free(data);
 
-	if (size2 && _vm->getVersion() < 5) {
-		Common::Array<DataEntry> castStrings = Movie::loadDataEntries(stream, false);
+	// read the cast member info
 
-		debugCN(4, kDebugLoading, "Cast::loadCastData(): str(%d): '", castStrings.size());
-
-		for (uint i = 0; i < castStrings.size(); i++) {
-			debugCN(4, kDebugLoading, "%s'", castStrings[i].readString().c_str());
-			if (i != castStrings.size() - 1)
-				debugCN(4, kDebugLoading, ", '");
-		}
-		debugC(4, kDebugLoading, "'");
-
-		CastMemberInfo *ci = new CastMemberInfo();
-		Common::MemoryReadStreamEndian *entryStream;
-
-		// We have here variable number of strings. Thus, instead of
-		// adding tons of ifs, we use this switch()
-		switch (castStrings.size()) {
-		default:
-			warning("Cast::loadCastData(): BUILDBOT: extra %d strings", castStrings.size() - 8);
-			// fallthrough
-		case 8:
-			if (castStrings[7].len) {
-				entryStream = new Common::MemoryReadStreamEndian(castStrings[7].data, castStrings[7].len, stream.isBE());
-				readEditInfo(&ci->textEditInfo, entryStream);
-				delete entryStream;
-			}
-			// fallthrough
-		case 7:
-			if (castStrings[6].len) {
-				entryStream = new Common::MemoryReadStreamEndian(castStrings[6].data, castStrings[6].len, stream.isBE());
-
-				int16 count = entryStream->readUint16();
-
-				for (uint i = 0; i < count; i++)
-					ci->scriptStyle.read(*entryStream);
-				delete entryStream;
-			}
-			// fallthrough
-		case 6:
-			if (castStrings[5].len) {
-				entryStream = new Common::MemoryReadStreamEndian(castStrings[5].data, castStrings[5].len, stream.isBE());
-				readEditInfo(&ci->scriptEditInfo, entryStream);
-				delete entryStream;
-			}
-			// fallthrough
-		case 5:
-			ci->type = castStrings[4].readString();
-			// fallthrough
-		case 4:
-			ci->fileName = castStrings[3].readString();
-			// fallthrough
-		case 3:
-			ci->directory = castStrings[2].readString();
-			// fallthrough
-		case 2:
-			ci->name = castStrings[1].readString();
-
-			if (!ci->name.empty()) {
-				_castsNames[ci->name] = id;
-			}
-			// fallthrough
-		case 1:
-			ci->script = castStrings[0].readString(false);
-			// fallthrough
-		case 0:
-			break;
-		}
-
-		CastMember *member = _loadedCast->getVal(id);
-		// For D4+ we may force Lingo scripts
-		if (_vm->getVersion() < 4 || debugChannelSet(-1, kDebugNoBytecode)) {
-			if (!ci->script.empty()) {
-				ScriptType scriptType = kCastScript;
-				// the script type here could be wrong!
-				if (member->_type == kCastLingoScript) {
-					scriptType = ((ScriptCastMember *)member)->_scriptType;
-				}
-
-				if (ConfMan.getBool("dump_scripts"))
-					dumpScript(ci->script.c_str(), scriptType, id);
-
-				_lingoArchive->addCode(ci->script.c_str(), scriptType, id, ci->name.c_str());
-			}
-		}
-
-		_castsInfo[id] = ci;
+	if (castInfoSize && _vm->getVersion() < 5) {
+		loadCastInfo(stream, id);
 	}
 
 	if (size3)
@@ -1069,29 +993,90 @@ void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 }
 
 void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
-	Common::Array<DataEntry> castStrings = Movie::loadDataEntries(stream);
+	InfoEntries castInfo = Movie::loadInfoEntries(stream);
+
+	debugCN(4, kDebugLoading, "Cast::loadCastInfo(): str(%d): '", castInfo.strings.size());
+
+	for (uint i = 0; i < castInfo.strings.size(); i++) {
+		debugCN(4, kDebugLoading, "%s'", castInfo.strings[i].readString().c_str());
+		if (i != castInfo.strings.size() - 1)
+			debugCN(4, kDebugLoading, ", '");
+	}
+	debugC(4, kDebugLoading, "'");
+
 	CastMemberInfo *ci = new CastMemberInfo();
+	Common::MemoryReadStreamEndian *entryStream;
 
-	ci->script = castStrings[0].readString(false);
+	// We have here variable number of strings. Thus, instead of
+	// adding tons of ifs, we use this switch()
+	switch (castInfo.strings.size()) {
+	default:
+		warning("Cast::loadCastInfo(): BUILDBOT: extra %d strings", castInfo.strings.size() - 8);
+		// fallthrough
+	case 8:
+		if (castInfo.strings[7].len) {
+			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[7].data, castInfo.strings[7].len, stream.isBE());
+			readEditInfo(&ci->textEditInfo, entryStream);
+			delete entryStream;
+		}
+		// fallthrough
+	case 7:
+		if (castInfo.strings[6].len) {
+			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[6].data, castInfo.strings[6].len, stream.isBE());
 
-	if (!ci->script.empty() && ConfMan.getBool("dump_scripts"))
-		dumpScript(ci->script.c_str(), kCastScript, id);
+			int16 count = entryStream->readUint16();
 
-	if (!ci->script.empty())
-		_lingoArchive->addCode(ci->script.c_str(), kCastScript, id, ci->name.c_str());
+			for (uint i = 0; i < count; i++)
+				ci->scriptStyle.read(*entryStream);
+			delete entryStream;
+		}
+		// fallthrough
+	case 6:
+		if (castInfo.strings[5].len) {
+			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[5].data, castInfo.strings[5].len, stream.isBE());
+			readEditInfo(&ci->scriptEditInfo, entryStream);
+			delete entryStream;
+		}
+		// fallthrough
+	case 5:
+		ci->type = castInfo.strings[4].readString();
+		// fallthrough
+	case 4:
+		ci->fileName = castInfo.strings[3].readString();
+		// fallthrough
+	case 3:
+		ci->directory = castInfo.strings[2].readString();
+		// fallthrough
+	case 2:
+		ci->name = castInfo.strings[1].readString();
 
-	ci->name = castStrings[1].readString();
-	ci->directory = castStrings[2].readString();
-	ci->fileName = castStrings[3].readString();
-	ci->type = castStrings[4].readString();
+		if (!ci->name.empty()) {
+			_castsNames[ci->name] = id;
+		}
+		// fallthrough
+	case 1:
+		ci->script = castInfo.strings[0].readString(false);
+		// fallthrough
+	case 0:
+		break;
+	}
 
-	castStrings.clear();
+	CastMember *member = _loadedCast->getVal(id);
+	// For D4+ we may force Lingo scripts
+	if (_vm->getVersion() < 4 || debugChannelSet(-1, kDebugNoBytecode)) {
+		if (!ci->script.empty()) {
+			ScriptType scriptType = kCastScript;
+			// the script type here could be wrong!
+			if (member->_type == kCastLingoScript) {
+				scriptType = ((ScriptCastMember *)member)->_scriptType;
+			}
 
-	debugC(5, kDebugLoading, "Cast::loadCastInfo(): CastMemberInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
-				ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
+			if (ConfMan.getBool("dump_scripts"))
+				dumpScript(ci->script.c_str(), scriptType, id);
 
-	if (!ci->name.empty())
-		_castsNames[ci->name] = id;
+			_lingoArchive->addCode(ci->script.c_str(), scriptType, id, ci->name.c_str());
+		}
+	}
 
 	_castsInfo[id] = ci;
 }
