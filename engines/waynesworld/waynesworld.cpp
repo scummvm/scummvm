@@ -204,6 +204,172 @@ void WaynesWorldEngine::initMouseCursor() {
 	CursorMan.replaceCursor(kCursorData, kCursorWidth, kCursorHeight, kCursorHotspotX, kCursorHotspotY, 0);
 }
 
+bool WaynesWorldEngine::isPointAtWayne(int x, int y) {
+    int x1 = _wayneSpriteX - (_wayneActorScale * 13) / 100;
+    int x2 = _wayneSpriteX + (_wayneActorScale * 13) / 100;
+    int y1 = _wayneSpriteY - (_wayneActorScale * 48) / 100;
+    int y2 = _wayneSpriteY;
+    return x >= x1 && y >= y1 && x <= x2 && y <= y2;
+}
+
+bool WaynesWorldEngine::isPointAtGarth(int x, int y) {
+    int x1 = _garthSpriteX - (_garthActorScale * 13) / 100;
+    int x2 = _garthSpriteX + (_garthActorScale * 13) / 100;
+    int y1 = _garthSpriteY - (_garthActorScale * 48) / 100;
+    int y2 = _garthSpriteY;
+    return x >= x1 && y >= y1 && x <= x2 && y <= y2;
+}
+
+void WaynesWorldEngine::updateMouseMove() {
+
+    // Yet unknown
+    if (_gameState == 4)
+        return;
+
+    // Dialog
+    if (_gameState == 2) {
+        int newDialogChoiceIndex = -10;
+        if (_mouseY > 186) {
+            newDialogChoiceIndex = -15;
+        } else if (_mouseY > 177) {
+            newDialogChoiceIndex = -14;
+        } else if (_mouseY > 168) {
+            newDialogChoiceIndex = -13;
+        } else if (_mouseY > 159) {
+            newDialogChoiceIndex = -12;
+        } else if (_mouseY > 150) {
+            newDialogChoiceIndex = -11;
+        }
+        if (_selectedDialogChoice != newDialogChoiceIndex) {
+            drawDialogChoices(newDialogChoiceIndex);
+        }
+        return;
+    }
+
+    // Unused ticket
+    if (_gameState == 3) {
+        // TODO unusedTicketHandleMouseMove();
+        return;
+    }
+
+    // Inventory
+    if (_gameState == 0 && _inventoryItemsCount > 0 && _mouseX < 312) {
+        int inventorySlotIndex = _mouseY / 20 * 12 + _mouseX / 26;
+        if (inventorySlotIndex < _inventoryItemsCount) {
+            int inventoryObjectId = _inventoryItemsObjectMap[inventorySlotIndex];
+            int itemCount;
+            if (_currentActorNum != 0) {
+                itemCount = _wayneInventory[inventoryObjectId - 28];
+            } else {
+                itemCount = _garthInventory[inventoryObjectId - 28];
+            }
+            const char *roomObjectName = getRoomObjectName(inventoryObjectId);
+            char objectName[32];
+            if (itemCount == 1) {
+                sprintf(objectName, "%s", roomObjectName);
+            } else {
+                sprintf(objectName, "%d %ss", itemCount, roomObjectName);
+            }
+            drawVerbLine(_verbNumber, inventoryObjectId, objectName);
+            return;
+        }
+    }
+
+    // Wayne and Garth
+    if (_gameState == 0 && _currentActorNum != 0 && isPointAtGarth(_mouseX, _mouseY)) {
+        drawVerbLine(_verbNumber, -3, "Garth");
+    } else if (_gameState == 0 && _currentActorNum == 0 && isPointAtWayne(_mouseX, _mouseY)) {
+        drawVerbLine(_verbNumber, -2, "Wayne");
+    } else {
+        // Room objects
+        int objectIdAtPoint = findRoomObjectIdAtPoint(_mouseX, _mouseY);
+        if (_gameState == 0) {
+            if (objectIdAtPoint != -1) {
+                drawVerbLine(_verbNumber, objectIdAtPoint, getRoomObjectName(objectIdAtPoint));
+            } else {
+                drawVerbLine(_verbNumber, -1, 0);
+            }
+        } else if (_gameState == 1) {
+            // TODO gameMapHandleMouseMove(objectIdAtPoint);
+        }
+    }
+
+}
+
+void WaynesWorldEngine::handleMouseClick() {
+    if (_mouseClickButtons & 1) {
+        handleMouseLeftClick();
+    }
+    if (_mouseClickButtons & 2) {
+        handleMouseRightClick();
+    }
+    if (_mouseClickButtons & 4) {
+        // TODO handleKeyInput();
+    }
+}
+
+void WaynesWorldEngine::handleMouseLeftClick() {
+    switch (_gameState) {
+    case 0:
+        if (_mouseClickY < 150) {
+            _objectNumber = _hoverObjectNumber;
+            if (_objectNumber != -1) {
+                walkToObject();
+                handleVerb(1);
+            } else {
+                walkTo(_mouseClickX, _mouseClickY, -1, -1, -1);
+            }
+        } else if (_mouseClickX > 2 && _mouseClickX < 315 && _mouseClickY > 164) {
+            selectVerbNumber(_mouseClickX);
+        }
+        break;
+    case 1:
+        // TODO gameMapHandleMouseClick();
+        break;
+    case 2:
+        handleDialogMouseClick();
+        break;
+    case 3:
+        // TODO unusedTicketHandleMouseClick();
+        break;
+    case 4:
+        // TODO handleMouseClickState4();
+        break;
+    case 5:
+        // TODO handleMouseClickState5();
+        break;
+    }
+}
+
+void WaynesWorldEngine::handleMouseRightClick() {
+    switch (_gameState) {
+    case 0:
+        if (_mouseClickX > 2 && _mouseClickX < 268 && _mouseClickY > 164) {
+            selectVerbNumber2(_mouseClickX);
+        } else if (_hoverObjectNumber != -1) {
+            _objectNumber = _hoverObjectNumber;
+            walkToObject();
+            handleVerb(2);
+        }
+        break;
+    case 1:
+        // TODO gameMapHandleMouseClick();
+        break;
+    case 2:
+        handleDialogMouseClick();
+        break;
+    case 3:
+        // TODO unusedTicketHandleMouseClick();
+        break;
+    case 4:
+        // TODO handleMouseClickState4();
+        break;
+    case 5:
+        // TODO handleMouseClickState5();
+        break;
+    }
+}
+
 Image::PCXDecoder *WaynesWorldEngine::loadImage(const char *filename, bool appendRoomName) {
 	Common::String tempFilename = appendRoomName
 		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)

@@ -105,7 +105,7 @@ public:
 	bool _isTextVisible;
 
 	// Game
-	int _gameState;
+	int _gameState; // TODO Use enum
 	int _currentActorNum;
 	int _currentRoomNumber;
 	int _verbNumber;
@@ -145,7 +145,14 @@ public:
 	void waitMillis(uint millis);
 	void waitSeconds(uint seconds);
 
+	// Input handling
 	void initMouseCursor();
+	bool isPointAtWayne(int x, int y);
+	bool isPointAtGarth(int x, int y);
+	void updateMouseMove();
+	void handleMouseClick();
+	void handleMouseLeftClick();
+	void handleMouseRightClick();
 
 	// Image loading
 	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
