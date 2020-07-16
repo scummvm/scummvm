@@ -100,6 +100,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_str = s;
 	_fullRefresh = true;
 
+	_wm = wm;
 	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
