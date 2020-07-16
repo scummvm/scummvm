@@ -4816,6 +4816,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
 
+	// Space Quest 3 - Hebrew DOS (based on English provided by richiefs in bug report #2670691)
+	// SCI interpreter version 0.000.453
+	// This translation is still a work in progress
+	{ "sq3", "", {
+		{"resource.map", 0, "fee82d211c3918a90ce3b476d3dbb245", 5484},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 485158},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 720244},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 688367},
+		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
+
 	// Space Quest 3 - English DOS (from the Space Quest Collection)
 	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
 	{"sq3", "", {
@@ -4838,7 +4850,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
 
-
 	// Space Quest 3 - English DOS 6 x 360k Floppy (from misterhands, bug report Trac #10677 and goodoldgeorge, bug report Trac #10636)
 	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
 	{"sq3", "", {
@@ -4849,6 +4860,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 325779},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Space Quest 3 - Hebrew DOS 6 x 360k Floppy (based on English from misterhands, bug report Trac #10677 and goodoldgeorge, bug report Trac #10636)
+	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
+	{ "sq3", "", {
+		{"resource.map", 0, "590ed699f9a4789e9357c1e55ba4b1eb", 6078},
+		{"resource.001", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 175038},
+		{"resource.002", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 316877},
+		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 330305},
+		{"resource.004", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 325779},
+		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
 	// Space Quest 3 - English DOS (from telanus, bug report Trac#9626)
 	// Game version 1.0P 1989-03-22
@@ -4864,6 +4887,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
+	// Space Quest 3 - Hebrew DOS (based on English from telanus, bug report Trac#9626)
+	// Game version 1.0P 1989-03-22
+	// SCI interpreter version 0.000.453
+	{"sq3", "", {
+		{"resource.map", 0, "6dd8f59dd8a0c8131f34b159044e645e", 5598},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 170496},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 312537},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 325576},
+		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 321377},
+		{"resource.005", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 328162},
+		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356560},
+		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// Space Quest 3 - English DOS (from darksoul42, bug report Trac#10245)
 	// Game version 1.0P 1989-03-22
 	// SCI interpreter version 0.000.453
@@ -4874,6 +4912,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 688294},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Space Quest 3 - Hebrew DOS (based on English from darksoul42, bug report Trac#10245)
+	// Game version 1.0P 1989-03-22
+	// SCI interpreter version 0.000.453
+	{"sq3", "", {
+		{"resource.map", 0, "876445bb0085a62d5966f4153e2ddf52", 5484},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 485059},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 720133},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 688294},
+		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Space Quest 3 - English DOS (from abevi, bug report #2612718)
 	{"sq3", "", {
@@ -4886,6 +4936,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356702},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Space Quest 3 - Hebrew DOS (based on English from abevi, bug report #2612718)
+	{ "sq3", "", {
+		{"resource.map", 0, "eca165515c6b62b05fa86b7d8f727660", 5598},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 170494},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 312557},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 325581},
+		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 321222},
+		{"resource.005", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 328278},
+		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356702},
+		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
+
 
 	// Space Quest 3 - English Mac (from Fingolfin)
 	{"sq3", "", {
