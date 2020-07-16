@@ -595,7 +595,7 @@ void AvatarMoverProcess::handleNormalMode() {
 		}
 		return;
 	}
-	
+
 	if (hasMovementFlags(MOVE_MOUSE_DIRECTION)) {
 		Animation::Sequence nextanim = Animation::step;
 
