@@ -43,8 +43,11 @@ enum Direction {
 /*
  * Tables to map a Direction to x/y deltas
  */
-const int x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
-const int y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
+static const int x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
+static const int y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
+
+static const int x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
+static const int y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
 
 /*
  *  Return the direction for a given slope (0-7).
