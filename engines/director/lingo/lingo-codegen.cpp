@@ -98,7 +98,8 @@ Symbol ScriptContext::define(Common::String &name, int nargs, ScriptData *code, 
 }
 
 Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, int end, bool removeCode) {
-	debugC(1, kDebugCompile, "codeDefine(\"%s\"(len: %d), %d, %d, %d)",
+	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
+		debug("codeDefine(\"%s\"(len: %d), %d, %d, %d)",
 			name.c_str(), _currentAssembly->size() - 1, start, nargs, end);
 
 	if (end == -1)
