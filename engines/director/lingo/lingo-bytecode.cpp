@@ -507,7 +507,7 @@ void LC::cb_call() {
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		LC::call(name, nargs.u.i);
+		LC::call(name, nargs.u.i, nargs.type == ARGC ? FBLTIN : CBLTIN);
 
 	} else {
 		warning("cb_call: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
