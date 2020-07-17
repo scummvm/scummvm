@@ -324,6 +324,7 @@ private:
 	PauseToken _screenCopyPauseToken;
 
 	Common::Array<ZoomBox *> _zoomBoxes;
+	Common::HashMap<uint32, uint> _colorHash;
 };
 
 } // End of namespace Graphics

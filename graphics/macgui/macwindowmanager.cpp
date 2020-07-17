@@ -679,6 +679,8 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	_palette = (byte *)malloc(size * 3);
 	_paletteSize = size;
 
+	_colorHash.clear();
+
 	_colorWhite = -1;
 	_colorBlack = -1;
 
@@ -728,6 +730,11 @@ uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	uint bestColor = 0;
 	double min = 0xFFFFFFFF;
 
+	uint32 color = cr << 16 | cg << 8 | cb;
+
+	if (_colorHash.contains(color))
+		return _colorHash[color];
+
 	for (uint i = 0; i < _paletteSize; ++i) {
 		int rmean = (*(_palette + 3 * i + 0) + cr) / 2;
 		int r = *(_palette + 3 * i + 0) - cr;
@@ -740,6 +747,8 @@ uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 			min = dist;
 		}
 	}
+
+	_colorHash[color] = bestColor;
 
 	return bestColor;
 }
