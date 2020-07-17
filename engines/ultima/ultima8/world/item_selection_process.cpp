@@ -82,7 +82,11 @@ bool ItemSelectionProcess::selectNextItem() {
 		// but this is how the game does it..
 		if (item->hasFlags(Actor::FLG_HANGING))
 			continue;
-		if (item->getShape() == 0x4ed || item->getFamily() == 10 || item->getFamily() == 11 || item->getFamily() == 12 || item->getFamily() == 13 || (info && info->_flags & ShapeInfo::SI_SELECTABLE)) {
+		uint16 family = item->getFamily();
+		if (item->getShape() == 0x4ed || family == ShapeInfo::SF_CRUWEAPON ||
+			family == ShapeInfo::SF_CRUAMMO || family == ShapeInfo::SF_CRUBOMB ||
+			family == ShapeInfo::SF_CRUINVITEM ||
+			(info && info->_flags & ShapeInfo::SI_SELECTABLE)) {
 
 			int32 cx, cy, cz;
 			item->getCentre(cx, cy, cz);
