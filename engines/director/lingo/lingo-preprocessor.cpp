@@ -27,7 +27,6 @@
 namespace Director {
 
 Common::String preprocessWhen(Common::String in, bool *changed);
-Common::String preprocessReturn(Common::String in);
 Common::String preprocessPlay(Common::String in);
 Common::String preprocessSound(Common::String in);
 
@@ -244,7 +243,6 @@ Common::String Lingo::codePreprocessor(const char *s, ScriptType type, uint16 id
 		res1 = preprocessWhen(res1, &changed);
 
 		if (!changed) {
-			res1 = preprocessReturn(res1);
 			res1 = preprocessPlay(res1);
 			res1 = preprocessSound(res1);
 		}
@@ -488,50 +486,6 @@ Common::String preprocessWhen(Common::String in, bool *changed) {
 
 	if (in.size() != res.size())
 		debugC(2, kDebugParse | kDebugPreprocess, "WHEN: in: %s\nout: %s", in.c_str(), res.c_str());
-
-	return res;
-}
-
-// "hello" & return && "world" -> "hello" & scummvm_return && "world"
-//
-// This is to let the grammar not confuse RETURN constant with
-// return command
-Common::String preprocessReturn(Common::String in) {
-	Common::String res, prev, next;
-	const char *ptr = in.c_str();
-	const char *beg = ptr;
-
-	while ((ptr = scumm_strcasestr(beg, "return")) != NULL) {
-		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
-			res += *beg++;
-			continue;
-		}
-
-		res += Common::String(beg, ptr);
-
-		if (ptr == beg)
-			prev = "";
-		else
-			prev = prevtok(ptr - 1, beg);
-
-		next = nexttok(ptr + 6); // end of 'return'
-
-		debugC(2, kDebugParse | kDebugPreprocess, "RETURN: prevtok: %s nexttok: %s", prev.c_str(), next.c_str());
-
-		if (prev.hasSuffix("&") || prev.hasSuffix("&&") || prev.hasSuffix("=") ||
-				next.hasPrefix("&") || next.hasPrefix("&&") || prev.hasSuffix(",") ||
-				next.hasPrefix(")") || prev.equalsIgnoreCase("put")) {
-			res += "scummvm_"; // Turn it into scummvm_return
-		}
-
-		res += *ptr++; // We advance one character, so 'eturn' is left
-		beg = ptr;
-	}
-
-	res += Common::String(beg);
-
-	if (in.size() != res.size())
-		debugC(2, kDebugParse | kDebugPreprocess, "RETURN: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
