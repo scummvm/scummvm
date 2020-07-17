@@ -2370,6 +2370,7 @@ void GlobalOptionsDialog::apply() {
 #endif
 
 	if (isRebuildNeeded) {
+		g_gui.setLanguageRTL();
 		if (_launcher != nullptr)
 			_launcher->rebuild();
 		rebuild();
