@@ -191,9 +191,9 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 
 	_fontMan = new MacFontManager(mode);
 
+	_cursorType = kMacCursorArrow;
 	CursorMan.replaceCursorPalette(palette, 0, ARRAYSIZE(palette) / 3);
 	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-	_cursorIsArrow = true;
 	CursorMan.showMouse(true);
 }
 
@@ -479,15 +479,13 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 				 ((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) ||
 				(_activeWidget && _activeWidget->isEditable() &&
 				 _activeWidget->getDimensions().contains(event.mouse.x, event.mouse.y))) {
-			if (_cursorIsArrow) {
-				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
-				_cursorIsArrow = false;
+			if (_cursorType != kMacCursorBeam) {
+				_tempType = _cursorType;
+				replaceCursor(kMacCursorBeam);
 			}
 		} else {
-			if (_cursorIsArrow == false) {
-				CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-				_cursorIsArrow = true;
-			}
+			if (_cursorType == kMacCursorBeam)
+				replaceCursor(_tempType, _cursor);
 		}
 	}
 
@@ -645,6 +643,77 @@ void MacWindowManager::pushCrossBarCursor() {
 void MacWindowManager::pushWatchCursor() {
 	CursorMan.pushCursor(macCursorWatch, 11, 16, 1, 1, 3);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+}
+
+void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
+	if (_cursorType == kMacCursorOff && _cursorType != type)
+		CursorMan.showMouse(true);
+
+	switch (type) {
+	case kMacCursorOff:
+		CursorMan.showMouse(false);
+		break;
+	case kMacCursorArrow:
+		pushArrowCursor();
+		break;
+	case kMacCursorBeam:
+		pushBeamCursor();
+		break;
+	case kMacCursorCrossHair:
+		pushCrossHairCursor();
+		break;
+	case kMacCursorCrossBar:
+		pushCrossBarCursor();
+		break;
+	case kMacCursorWatch:
+		pushWatchCursor();
+		break;
+	case kMacCursorCustom:
+		if (!cursor) {
+			warning("MacWindowManager::pushCursor(): Custom cursor signified but not provided");
+			return;
+		}
+
+		pushCustomCursor(cursor);
+	}
+
+	_cursorType = type;
+}
+
+void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
+	if (_cursorType == kMacCursorOff && _cursorType != type)
+		CursorMan.showMouse(true);
+
+	switch (type) {
+	case kMacCursorOff:
+		CursorMan.showMouse(false);
+		break;
+	case kMacCursorArrow:
+		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+		break;
+	case kMacCursorBeam:
+		CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+		break;
+	case kMacCursorCrossHair:
+		CursorMan.replaceCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
+		break;
+	case kMacCursorCrossBar:
+		CursorMan.replaceCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
+		break;
+	case kMacCursorWatch:
+		CursorMan.replaceCursor(macCursorWatch, 11, 16, 1, 1, 3);
+		break;
+	case kMacCursorCustom:
+		if (!cursor) {
+			warning("MacWindowManager::replaceCursor(): Custom cursor signified but not provided");
+			return;
+		}
+
+		CursorMan.replaceCursor(cursor);
+		break;
+	}
+
+	_cursorType = type;
 }
 
 void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor) {

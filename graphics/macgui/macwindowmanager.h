@@ -58,6 +58,16 @@ enum {
 	kPatternDarkGray = 6
 };
 
+enum MacCursorType {
+ kMacCursorArrow,
+ kMacCursorBeam,
+ kMacCursorCrossHair,
+ kMacCursorCrossBar,
+ kMacCursorWatch,
+ kMacCursorCustom,
+ kMacCursorOff
+};
+
 enum {
 	kWMModeNone         	= 0,
 	kWMModeNoDesktop    	= (1 << 0),
@@ -77,6 +87,7 @@ class Cursor;
 
 class ManagedSurface;
 
+class MacCursor;
 class MacMenu;
 class MacTextWindow;
 class MacWidget;
@@ -241,11 +252,15 @@ public:
 
 	MacWidget *getActiveWidget() { return _activeWidget; }
 
+	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
+	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
+
 	void pushArrowCursor();
 	void pushBeamCursor();
 	void pushCrossHairCursor();
 	void pushCrossBarCursor();
 	void pushWatchCursor();
+
 	void pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
 	void pushCustomCursor(const Graphics::Cursor *cursor);
 	void popCursor();
@@ -317,7 +332,9 @@ private:
 	void *_engineR;
 	void (*_redrawEngineCallback)(void *engine);
 
-	bool _cursorIsArrow;
+	MacCursorType _tempType;
+	MacCursorType _cursorType;
+	Cursor *_cursor;
 
 	MacWidget *_activeWidget;
 
