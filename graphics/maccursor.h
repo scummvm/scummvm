@@ -65,7 +65,7 @@ public:
 	/** Read the cursor's data out of a stream. */
 	bool readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome = false, byte monochromeInvertedPixelColor = 0xff);
 
-private:
+protected:
 	bool readFromCURS(Common::SeekableReadStream &stream, byte monochromeInvertedPixelColor);
 	bool readFromCRSR(Common::SeekableReadStream &stream, bool forceMonochrome, byte monochromeInvertedPixelColor);
 
