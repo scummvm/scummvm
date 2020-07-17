@@ -1408,6 +1408,13 @@ void save_sound_desc_data(byte *&data, uint16 &totalSize) {
 	totalSize = SOUND_DESCS_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
+
+	// WORKAROUND Sounds 0 and 12 (running water) use 3 channels
+	// on MT-32, but sound resource lists 2.
+	if ((data[2] & 3) == 2) {
+		data[2] |= 3;
+		data[(12 * 5) + 2] |= 3;
+	}
 }
 
 struct DecoderEntry {
