@@ -741,6 +741,16 @@ void MacText::setEditable(bool editable) {
 	if (editable) {
 		// TODO: Select whole region. This is done every time the text is set from
 		// uneditable to editable.
+		_selectedText.startX = 0;
+		_selectedText.startY = 0;
+		_selectedText.startCol = 0;
+		_selectedText.startRow = 0;
+
+		_selectedText.endX = getLineWidth(getLineCount() - 1);;
+		_selectedText.endY = getTextHeight();
+		_selectedText.endCol = getLineCharWidth(getLineCount() - 1);
+		_selectedText.endRow = getLineCount() - 1;
+
 		setActive(editable);
 		_wm->setActiveWidget(this);
 	} else {
