@@ -577,6 +577,15 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, b
 		dataSize = nextDataOfs - dataOfs;
 	}
 
+	// Note: the original interpreter seems to keep track of the "volume"
+	// (velocity) adjustment last used for each MIDI channel. The volume
+	// is not set in the few instances where musicInterface_Play is used
+	// directly to play a sound instead of addSound (mostly cutscenes).
+	// As a result, the volume adjustment is used that was last set on
+	// the MIDI channel by whatever sound played there previously.
+	// I think this is unintentional, so in ScummVM volume is set to 80h
+	// (neutral) by default when calling musicInterface_Play without
+	// specifying volume.
 	_soundMutex.lock();
 	int8 source = -1;
 	if (_isRoland) {
