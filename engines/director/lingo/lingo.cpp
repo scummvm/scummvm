@@ -46,7 +46,7 @@ Lingo *g_lingo;
 
 Symbol::Symbol() {
 	name = nullptr;
-	type = VOID;
+	type = VOIDSYM;
 	u.s = nullptr;
 	refCount = new int;
 	*refCount = 1;
@@ -116,8 +116,6 @@ void Symbol::reset() {
 
 		if (type == HANDLER)
 			delete u.defn;
-		else if (type == STRING)
-			delete u.s;
 
 		if (argNames)
 			delete argNames;
@@ -227,11 +225,8 @@ Symbol Lingo::getHandler(const Common::String &name) {
 			return _currentScriptContext->_functionHandlers[name];
 
 		Symbol sym = g_director->getCurrentMovie()->getHandler(name);
-		if (sym.type != VOID)
+		if (sym.type != VOIDSYM)
 			return sym;
-
-		if (_builtins.contains(name))
-			return _builtins[name];
 	}
 	return Symbol();
 }
@@ -461,7 +456,7 @@ void Lingo::printCallStack(uint pc) {
 		if (i < (int)g_lingo->_callstack.size() - 1)
 			framePc = g_lingo->_callstack[i + 1]->retpc;
 
-		if (frame->sp.type != VOID) {
+		if (frame->sp.type != VOIDSYM) {
 			debugC(5, kDebugLingoExec, "#%d %s:%d", i + 1,
 				g_lingo->_callstack[i]->sp.name->c_str(),
 				framePc
@@ -1147,7 +1142,7 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 void Lingo::executePerFrameHook(int frame, int subframe) {
 	if (_perFrameHook.type == OBJECT) {
 		Symbol method = _perFrameHook.u.obj->getMethod("mAtFrame");
-		if (method.type != VOID) {
+		if (method.type != VOIDSYM) {
 			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
 			push(Datum(frame));
 			push(Datum(subframe));

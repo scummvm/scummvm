@@ -170,6 +170,11 @@ static void mVar(Common::String *s, VarType type) {
 		Common::String *obj;
 		Common::String *prop;
 	} objectprop;
+
+	struct {
+		Common::String *s;
+		int i;
+	} ref;
 }
 
 %token UNARY
@@ -180,10 +185,11 @@ static void mVar(Common::String *s, VarType type) {
 
 %token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY THEMENUITEMSENTITY
 %token<f> FLOAT
-%token<s> BLTIN FBLTIN RBLTIN THEFBLTIN
-%token<s> ID STRING HANDLER SYMBOL
+%token<s> THEFUNC THEFUNCINOF
+%token<s> ID STRING SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token<objectprop> THEOBJECTPROP
+%token<ref> CAST FIELD SCRIPT WINDOW
 %token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tGOLOOP tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
@@ -192,7 +198,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn lbl expr if chunkexpr funccall
+%type<code> asgn lbl expr if chunkexpr
 %type<code> stmtlist tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
@@ -223,7 +229,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
-	| tPUT expr tINTO reference 		{
+	| tPUT expr tINTO chunkexpr 		{
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr; }
 	// {put the number of menuItems of} menu into <expr>
@@ -245,7 +251,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_after);
 		$$ = $expr;
 		delete $ID; }		// D3
-	| tPUT expr tAFTER reference 		{
+	| tPUT expr tAFTER chunkexpr 		{
 		g_lingo->code1(LC::c_after);
 		$$ = $expr; }
 	| tPUT expr tBEFORE ID 		{
@@ -255,7 +261,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_before);
 		$$ = $expr;
 		delete $ID; }		// D3
-	| tPUT expr tBEFORE reference 		{
+	| tPUT expr tBEFORE chunkexpr 		{
 		g_lingo->code1(LC::c_before);
 		$$ = $expr; }
 	| tSET ID tEQ expr			{
@@ -336,9 +342,7 @@ asgn: tPUT expr tINTO ID 		{
 		delete $THEOBJECTPROP.prop;
 		$$ = $expr; }
 
-stmtoneliner: macro
-	| funccall
-	| asgn
+stmtoneliner: asgn
 	| proc
 
 stmt: stmtoneliner
@@ -549,7 +553,11 @@ simpleexpr: INT		{
 		g_lingo->codeString($STRING->c_str());
 		delete $STRING; }
 	| ID		{
-		$$ = g_lingo->code1(LC::c_eval);
+		if (g_lingo->_builtinConsts.contains(*$ID)) {
+			$$ = g_lingo->code1(LC::c_constpush);
+		} else {
+			$$ = g_lingo->code1(LC::c_eval);
+		}
 		g_lingo->codeString($ID->c_str());
 		delete $ID; }
 	| THEENTITY	{
@@ -570,18 +578,8 @@ simpleexpr: INT		{
 	| list
 	| error	'\n'		{ yyerrok; }
 
-funccall: FBLTIN '(' arglist ')' {
-		g_lingo->codeFunc($FBLTIN, $arglist);
-		delete $FBLTIN; }
-	| FBLTIN arglist	{
-		g_lingo->codeFunc($FBLTIN, $arglist);
-		delete $FBLTIN; }
-	| RBLTIN '(' arglist ')' {
-		g_lingo->codeFunc($RBLTIN, $arglist);
-		delete $RBLTIN; }
-	| RBLTIN arglist	{
-		g_lingo->codeFunc($RBLTIN, $arglist);
-		delete $RBLTIN; }
+expr: simpleexpr { $$ = $simpleexpr; }
+	| reference
 	| ID[func] '(' ID[method] ')' {
 			g_lingo->code1(LC::c_lazyeval);
 			g_lingo->codeString($method->c_str());
@@ -596,13 +594,12 @@ funccall: FBLTIN '(' arglist ')' {
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
-
-expr: simpleexpr { $$ = $simpleexpr; }
-	| chunkexpr
-	| funccall
-	| THEFBLTIN tOF simpleexpr	{
-		$$ = g_lingo->codeFunc($THEFBLTIN, 1);
-		delete $THEFBLTIN; }
+	| THEFUNCINOF simpleexpr	{
+		$$ = g_lingo->codeFunc($THEFUNCINOF, 1);
+		delete $THEFUNCINOF; }
+	| THEFUNC tOF simpleexpr	{
+		$$ = g_lingo->codeFunc($THEFUNC, 1);
+		delete $THEFUNC; }
 	| THEOBJECTPROP {
 		g_lingo->code1(LC::c_objectproppush);
 		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
@@ -632,7 +629,18 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| tSPRITE expr tINTERSECTS expr { g_lingo->code1(LC::c_intersects); }
 	| tSPRITE expr tWITHIN expr		{ g_lingo->code1(LC::c_within); }
 
-chunkexpr: 	tCHAR expr tOF expr		{ g_lingo->code1(LC::c_charOf); }
+chunkexpr: 	FIELD				{
+		if ($FIELD.s) {
+			$$ = g_lingo->code1(LC::c_stringpush);
+			g_lingo->codeString($FIELD.s->c_str());
+			delete $FIELD.s;
+		} else {
+			$$ = g_lingo->code1(LC::c_intpush);
+			g_lingo->codeInt($FIELD.i);
+		}
+		Common::String field("field");
+		g_lingo->codeFunc(&field, 1); }
+	|  tCHAR expr tOF expr		{ g_lingo->code1(LC::c_charOf); }
 	| tCHAR expr tTO expr tOF expr	{ g_lingo->code1(LC::c_charToOf); }
 	| tITEM expr tOF expr			{ g_lingo->code1(LC::c_itemOf); }
 	| tITEM expr tTO expr tOF expr	{ g_lingo->code1(LC::c_itemToOf); }
@@ -641,10 +649,41 @@ chunkexpr: 	tCHAR expr tOF expr		{ g_lingo->code1(LC::c_charOf); }
 	| tWORD expr tOF expr			{ g_lingo->code1(LC::c_wordOf); }
 	| tWORD expr tTO expr tOF expr	{ g_lingo->code1(LC::c_wordToOf); }
 
-reference: 	RBLTIN simpleexpr	{
-		g_lingo->codeFunc($RBLTIN, 1);
-		delete $RBLTIN; }
-	| chunkexpr
+reference: 	chunkexpr
+	| CAST				{
+		if ($CAST.s) {
+			$$ = g_lingo->code1(LC::c_stringpush);
+			g_lingo->codeString($CAST.s->c_str());
+			delete $CAST.s;
+		} else {
+			$$ = g_lingo->code1(LC::c_intpush);
+			g_lingo->codeInt($CAST.i);
+		}
+		Common::String cast("cast");
+		g_lingo->codeFunc(&cast, 1); }
+	| SCRIPT			{
+		if ($SCRIPT.s) {
+			$$ = g_lingo->code1(LC::c_stringpush);
+			g_lingo->codeString($SCRIPT.s->c_str());
+			delete $SCRIPT.s;
+		} else {
+			$$ = g_lingo->code1(LC::c_intpush);
+			g_lingo->codeInt($SCRIPT.i);
+		}
+		Common::String script("script");
+		g_lingo->codeFunc(&script, 1); }
+	| WINDOW			{
+		if ($WINDOW.s) {
+			$$ = g_lingo->code1(LC::c_stringpush);
+			g_lingo->codeString($WINDOW.s->c_str());
+			delete $WINDOW.s;
+		} else {
+			$$ = g_lingo->code1(LC::c_intpush);
+			g_lingo->codeInt($WINDOW.i);
+		}
+		Common::String window("window");
+		g_lingo->codeFunc(&window, 1); }
+
 
 proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| gotofunc
@@ -661,20 +700,28 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| tGLOBAL					{ inArgs(); } globallist { inLast(); }
 	| tPROPERTY					{ inArgs(); } propertylist { inLast(); }
 	| tINSTANCE					{ inArgs(); } instancelist { inLast(); }
-	| BLTIN '(' arglist ')'		{
-		g_lingo->codeFunc($BLTIN, $arglist);
-		delete $BLTIN; }
-	| BLTIN arglist				{
-		g_lingo->codeFunc($BLTIN, $arglist);
-		delete $BLTIN; }
 	| tOPEN expr tWITH expr		{
 		Common::String open("open");
 		g_lingo->codeFunc(&open, 2); }
 	| tOPEN expr 				{
 		Common::String open("open");
 		g_lingo->codeFunc(&open, 1); }
-	| ID						{
-		g_lingo->codeFunc($ID, 0);
+	| ID[func] '(' ID[method] ')' {
+			g_lingo->code1(LC::c_lazyeval);
+			g_lingo->codeString($method->c_str());
+			g_lingo->codeCmd($func, 1);
+			delete $func;
+			delete $method; }
+	| ID[func] '(' ID[method] ',' { g_lingo->code1(LC::c_lazyeval); g_lingo->codeString($method->c_str()); }
+				nonemptyarglist ')' {
+			g_lingo->codeCmd($func, $nonemptyarglist + 1);
+			delete $func;
+			delete $method; }
+	| ID '(' arglist ')'		{
+		g_lingo->codeCmd($ID, $arglist);
+		delete $ID; }
+	| ID arglist				{
+		g_lingo->codeCmd($ID, $arglist);
 		delete $ID; }
 
 globallist: ID					{
@@ -804,14 +851,6 @@ endargdef:	/* nothing */
 	| endargdef ',' ID			{ delete $ID; }
 
 argstore:	  /* nothing */		{ inDef(); }
-
-macro: ID nonemptyarglist		{
-		g_lingo->code1(LC::c_call);
-		g_lingo->codeString($ID->c_str());
-		inst numpar = 0;
-		WRITE_UINT32(&numpar, $nonemptyarglist);
-		g_lingo->code1(numpar);
-		delete $ID; }
 
 arglist:  /* nothing */ 		{ $$ = 0; }
 	| expr						{ $$ = 1; }

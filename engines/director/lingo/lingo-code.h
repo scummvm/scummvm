@@ -66,6 +66,7 @@ namespace LC {
 	void c_wordOf();
 	void c_wordToOf();
 
+	void c_constpush();
 	void c_intpush();
 	void c_voidpush();
 	void c_floatpush();
@@ -112,10 +113,11 @@ namespace LC {
 	void c_le();
 	void c_jump();
 	void c_jumpifz();
-	void c_call();
+	void c_callcmd();
+	void c_callfunc();
 
 	void call(const Symbol &targetSym, int nargs);
-	void call(const Common::String &name, int nargs);
+	void call(const Common::String &name, int nargs, SymbolType bltinType = VOIDSYM);
 
 	void c_procret();
 

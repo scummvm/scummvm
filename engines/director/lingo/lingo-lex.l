@@ -116,6 +116,28 @@ spc [ \t\xC2]
 after		{ count(); return varCheck(tAFTER, "after"); }		// D3
 and			{ count(); return varCheck(tAND, "and"); }
 before		{ count(); return varCheck(tBEFORE, "before"); }	// D3
+cast{spc}+{conststring}	{
+		count();
+
+		const char *ptr = &yytext[5]; // Skip 'cast '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = cleanupString(ptr + 1);
+		yylval.s->deleteLastChar();
+		return CAST;
+	}
+cast{spc}+{constinteger}	{
+		count();
+
+		const char *ptr = &yytext[5]; // Skip 'cast '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = NULL;
+		yylval.i = strtol(yytext, NULL, 10);
+		return CAST;
+	}
 char		{ count(); return varCheck(tCHAR, "char"); }		// D3
 contains	{ count(); return varCheck(tCONTAINS, "contains"); }
 down		{ count(); return varCheck(tDOWN, "down"); }
@@ -147,6 +169,28 @@ end({spc}+{identifier})?	{
 	}
 ^{spc}*factory { count(); return tFACTORY; }
 exit		{ count(); return varCheck(tEXIT, "exit"); }
+field{spc}+{conststring}	{
+		count();
+
+		const char *ptr = &yytext[6]; // Skip 'field '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = cleanupString(ptr + 1);
+		yylval.s->deleteLastChar();
+		return FIELD;
+	}
+field{spc}+{constinteger}	{
+		count();
+
+		const char *ptr = &yytext[6]; // Skip 'field '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = NULL;
+		yylval.i = strtol(yytext, NULL, 10);
+		return FIELD;
+	}
 global		{ count(); return varCheck(tGLOBAL, "global"); }
 go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
@@ -184,6 +228,28 @@ previous	{ count(); return varCheck(tPREVIOUS, "previous"); }
 property	{ count(); return varCheck(tPROPERTY, "property"); }	// D4
 put			{ count(); return varCheck(tPUT, "put"); }
 repeat		{ count(); return checkImmediate(tREPEAT); }
+script{spc}+{conststring}	{
+		count();
+
+		const char *ptr = &yytext[7]; // Skip 'script '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = cleanupString(ptr + 1);
+		yylval.s->deleteLastChar();
+		return SCRIPT;
+	}
+script{spc}+{constinteger}	{
+		count();
+
+		const char *ptr = &yytext[7]; // Skip 'script '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = NULL;
+		yylval.i = strtol(yytext, NULL, 10);
+		return SCRIPT;
+	}
 set			{ count(); return varCheck(tSET, "set"); }
 starts		{ count(); return varCheck(tSTARTS, "starts"); }
 tell		{ count(); return varCheck(tTELL, "tell"); }
@@ -215,8 +281,8 @@ the{spc}+number{spc}+of{spc}+[[:alpha:]]+{spc}+(in|of){spc}+ {
 
 		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
 
-		if (g_lingo->_builtins.contains(*yylval.s)) {
-			return FBLTIN;
+		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
+			return THEFUNCINOF;
 		} else {
 			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 			return LEXERROR;
@@ -237,8 +303,8 @@ the{spc}+last{spc}+[[:alpha:]]+{spc}+(in|of){spc}+	{
 
 		yylval.s = new Common::String(Common::String::format("last%sOf", field.c_str()));
 
-		if (g_lingo->_builtins.contains(*yylval.s)) {
-			return FBLTIN;
+		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
+			return THEFUNCINOF;
 		} else {
 			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 			return LEXERROR;
@@ -295,9 +361,8 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 				yylval.objectprop.prop = new Common::String(field);
 
 				return THEOBJECTPROP;
-			} else if (g_lingo->_builtins.contains(field)) { // Let's hope they don't do it in D4+
-				if (g_lingo->_builtins[field].type == FBLTIN &&
-						g_lingo->_builtins[field].nargs == 1 && g_lingo->_builtins[field].maxArgs == 1) {
+			} else if (g_lingo->_builtinFuncs.contains(field)) { // Let's hope they don't do it in D4+
+				if (g_lingo->_builtinFuncs[field].nargs == 1 && g_lingo->_builtinFuncs[field].maxArgs == 1) {
 					yylval.s = new Common::String(field);
 					Common::String rest(ptr);
 
@@ -311,7 +376,7 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 
 					unput(' '); unput('f'); unput('o');
 
-					return THEFBLTIN;
+					return THEFUNC;
 				}
 			}
 		}
@@ -369,11 +434,10 @@ the{spc}+[[:alpha:]]+		{
 				return THEENTITY;
 		}
 
-		if (g_lingo->_builtins.contains(ptr)) {
-			if (g_lingo->_builtins[ptr].type == FBLTIN &&
-					g_lingo->_builtins[ptr].nargs == 1 && g_lingo->_builtins[ptr].maxArgs == 1) {
+		if (g_lingo->_builtinFuncs.contains(ptr)) {
+			if (g_lingo->_builtinFuncs[ptr].nargs == 1 && g_lingo->_builtinFuncs[ptr].maxArgs == 1) {
 				yylval.s = new Common::String(ptr);
-				return THEFBLTIN;
+				return THEFUNC;
 			}
 		}
 
@@ -386,6 +450,28 @@ with			{ count(); return varCheck(tWITH, "with"); }
 within			{ count(); return varCheck(tWITHIN, "within"); }
 when			{ count(); return varCheck(tWHEN, "when"); }
 while			{ count(); return varCheck(tWHILE, "while"); }
+window{spc}+{conststring}	{
+		count();
+
+		const char *ptr = &yytext[7]; // Skip 'window '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = cleanupString(ptr + 1);
+		yylval.s->deleteLastChar();
+		return WINDOW;
+	}
+window{spc}+{constinteger}	{
+		count();
+
+		const char *ptr = &yytext[7]; // Skip 'window '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
+			ptr++;
+
+		yylval.s = NULL;
+		yylval.i = strtol(yytext, NULL, 10);
+		return WINDOW;
+	}
 word			{ count(); return varCheck(tWORD, "word"); }
 
 [<][>]			{ count(); return tNEQ; }
@@ -397,36 +483,6 @@ word			{ count(); return varCheck(tWORD, "word"); }
 {identifier}		{
 		count();
 		yylval.s = new Common::String(yytext);
-
-		// When we are defining arguments, allow any string
-		if (g_lingo->_indef == kStateInArgs)
-			return ID;
-
-		// Check that this is one of locally used names:
-		// argument, property, instance or global
-		if (g_lingo->_methodVars->contains(yytext))
-			return ID;
-
-		// First of all, match against argument list
-		if (g_lingo->_indef == kStateInDef)
-			if (g_lingo->isInArgStack(yylval.s))
-				return ID;
-
-		if (g_lingo->_builtins.contains(yytext)) {
-			int type = g_lingo->_builtins[yytext].type;
-			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext].parens == false) {
-				if (type == RBLTIN) {
-					if (g_lingo->_builtins[yytext].nargs != 1 || g_lingo->_builtins[yytext].maxArgs != 1) {
-						warning("Incorrectly set RBLTIN %s", yytext);
-						return LEXERROR;
-					}
-
-					return RBLTIN;
-				}
-
-				return type;
-			}
-		}
 
 		return ID;
 	}

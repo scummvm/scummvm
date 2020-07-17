@@ -93,7 +93,7 @@ public:
 
 			Symbol sym;
 			sym.name = new Common::String(mtd->name);
-			sym.type = FBLTIN;
+			sym.type = HBLTIN;
 			sym.nargs = mtd->minArgs;
 			sym.maxArgs = mtd->maxArgs;
 			sym.u.bltin = mtd->func;

@@ -213,8 +213,20 @@ int Lingo::codeSetImmediate(bool state) {
 	return res;
 }
 
+int Lingo::codeCmd(Common::String *s, int numpar) {
+	int ret = g_lingo->code1(LC::c_callcmd);
+
+	g_lingo->codeString(s->c_str());
+
+	inst num = 0;
+	WRITE_UINT32(&num, numpar);
+	g_lingo->code1(num);
+
+	return ret;
+}
+
 int Lingo::codeFunc(Common::String *s, int numpar) {
-	int ret = g_lingo->code1(LC::c_call);
+	int ret = g_lingo->code1(LC::c_callfunc);
 
 	g_lingo->codeString(s->c_str());
 

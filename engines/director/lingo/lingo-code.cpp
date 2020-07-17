@@ -72,10 +72,12 @@ static struct FuncDescr {
 	{ LC::c_arraypush,		"c_arraypush",		"i" },
 	{ LC::c_assign,			"c_assign",			""  },
 	{ LC::c_before,			"c_before",			"" },	// D3
-	{ LC::c_call,			"c_call",			"si" },
+	{ LC::c_callcmd,		"c_callcmd",		"si" },
+	{ LC::c_callfunc,		"c_callfunc",		"si" },
 	{ LC::c_charOf,			"c_charOf",			"" },	// D3
 	{ LC::c_charToOf,		"c_charToOf",		"" },	// D3
 	{ LC::c_concat,			"c_concat",			"" },
+	{ LC::c_constpush,		"c_constpush",		"s" },
 	{ LC::c_contains,		"c_contains",		"" },
 	{ LC::c_div,			"c_div",			"" },
 	{ LC::c_eq,				"c_eq",				"" },
@@ -316,6 +318,17 @@ void LC::c_printtop(void) {
 	default:
 		warning("--unknown--");
 	}
+}
+
+void LC::c_constpush() {
+	Common::String name(g_lingo->readString());
+
+	Symbol funcSym;
+	if (g_lingo->_builtinConsts.contains(name)) {
+		funcSym = g_lingo->_builtinConsts[name];
+	}
+
+	LC::call(funcSym, 0);
 }
 
 void LC::c_intpush() {
@@ -1314,15 +1327,23 @@ void LC::c_play() {
 	g_lingo->func_play(frame, movie);
 }
 
-void LC::c_call() {
+void LC::c_callcmd() {
 	Common::String name(g_lingo->readString());
 
 	int nargs = g_lingo->readInt();
 
-	LC::call(name, nargs);
+	LC::call(name, nargs, CBLTIN);
 }
 
-void LC::call(const Common::String &name, int nargs) {
+void LC::c_callfunc() {
+	Common::String name(g_lingo->readString());
+
+	int nargs = g_lingo->readInt();
+
+	LC::call(name, nargs, FBLTIN);
+}
+
+void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
 	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
@@ -1338,7 +1359,7 @@ void LC::call(const Common::String &name, int nargs) {
 				target = target->clone();
 			}
 			funcSym = target->getMethod(name);
-			if (funcSym.type != VOID) {
+			if (funcSym.type != VOIDSYM) {
 				if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
 					// For kScriptObj handlers the target is the first argument
 					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
@@ -1357,7 +1378,7 @@ void LC::call(const Common::String &name, int nargs) {
 	funcSym = g_lingo->getHandler(name);
 
 	// Factory/XObject method call
-	if (funcSym.type == VOID) {
+	if (funcSym.type == VOIDSYM) {
 		Datum objName(name);
 		objName.type = VAR;
 		Datum d = g_lingo->varFetch(objName);
@@ -1380,18 +1401,35 @@ void LC::call(const Common::String &name, int nargs) {
 		}
 	}
 
+	// Builtin
+	if (funcSym.type == VOIDSYM) {
+		switch (bltinType) {
+		case CBLTIN:
+			if (g_lingo->_builtinCmds.contains(name)) {
+				funcSym = g_lingo->_builtinCmds[name];
+			}
+			break;
+		case FBLTIN:
+			if (g_lingo->_builtinFuncs.contains(name)) {
+				funcSym = g_lingo->_builtinFuncs[name];
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
 	call(funcSym, nargs);
 }
 
 void LC::call(const Symbol &funcSym, int nargs) {
 	bool dropArgs = false;
 
-	if (funcSym.type == VOID) {
+	if (funcSym.type == VOIDSYM) {
 		warning("Call to undefined handler. Dropping %d stack items", nargs);
 		dropArgs = true;
 	} else {
-		if ((funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN)
-				&& funcSym.nargs != -1 && funcSym.nargs != nargs && funcSym.maxArgs != nargs) {
+		if (funcSym.type != HANDLER && funcSym.nargs != -1 && funcSym.nargs != nargs && funcSym.maxArgs != nargs) {
 			if (funcSym.nargs == funcSym.maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", funcSym.name->c_str(), funcSym.nargs, nargs);
 			else
@@ -1418,7 +1456,7 @@ void LC::call(const Symbol &funcSym, int nargs) {
 			g_lingo->pop();
 	}
 
-	if (funcSym.type == BLTIN || funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
+	if (funcSym.type != HANDLER) {
 		int stackSize = g_lingo->_stack.size() - nargs;
 
 		if (funcSym.target) {
@@ -1434,10 +1472,10 @@ void LC::call(const Symbol &funcSym, int nargs) {
 
 		int stackNewSize = g_lingo->_stack.size();
 
-		if (funcSym.type == FBLTIN || funcSym.type == RBLTIN) {
+		if (funcSym.type != HANDLER && funcSym.type != CBLTIN) {
 			if (stackNewSize - stackSize != 1)
 				warning("built-in function %s did not return value", funcSym.name->c_str());
-		} else {
+		} else if (funcSym.type == CBLTIN) {
 			if (stackNewSize - stackSize != 0)
 				warning("built-in procedure %s returned extra %d values", funcSym.name->c_str(), stackNewSize - stackSize);
 		}

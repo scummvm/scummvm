@@ -371,7 +371,7 @@ void LC::cb_objectcall() {
 			Datum varTest(arg);
 			varTest.type = VAR;
 			varTest = g_lingo->varFetch(varTest);
-			if (varTest.type != VOID)
+			if (varTest.type != VOIDSYM)
 				arg = varTest;
 		}
 		args.push_back(arg);
@@ -384,7 +384,7 @@ void LC::cb_objectcall() {
 			target = target->clone();
 		}
 		Symbol method = target->getMethod(methodName.asString());
-		if (method.type != VOID) {
+		if (method.type != VOIDSYM) {
 			if (target->getObjType() == kFactoryObj && method.type == HANDLER) {
 				// For kFactoryObj handlers the target is the first argument
 				g_lingo->push(method.target);
@@ -403,7 +403,7 @@ void LC::cb_objectcall() {
 
 	// if there's nothing, try calling a function with that name
 	Symbol func = g_lingo->getHandler(*d.u.s);
-	if (func.type != VOID) {
+	if (func.type != VOIDSYM) {
 		if (target) {
 			g_lingo->push(methodName);
 		}

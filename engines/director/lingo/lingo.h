@@ -78,7 +78,7 @@ typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
 struct Symbol {	/* symbol table entry */
 	Common::String *name;
-	int type;
+	SymbolType type;
 	union {
 		ScriptData	*defn;	/* HANDLER */
 		void (*func)();		/* OPCODE */
@@ -370,6 +370,7 @@ public:
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
 	void codeArg(Common::String *s);
+	int codeCmd(Common::String *s, int numpar);
 	Symbol codeDefine(Common::String &s, int start, int nargs, int end = -1, bool removeCode = true);
 	void codeFactory(Common::String &s);
 	int codeFloat(double f);
@@ -412,7 +413,9 @@ public:
 
 	Common::Array<int> _labelstack;
 
-	SymbolHash _builtins;
+	SymbolHash _builtinCmds;
+	SymbolHash _builtinFuncs;
+	SymbolHash _builtinConsts;
 	SymbolHash _methods;
 	SymbolHash _xlibInitializers;
 

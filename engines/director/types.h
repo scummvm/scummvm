@@ -294,6 +294,16 @@ enum PlayState {
 	kPlayStopped
 };
 
+enum SymbolType {
+	VOIDSYM,
+	OPCODE,
+	CBLTIN,	// builtin command
+	FBLTIN,	// builtin function
+	HBLTIN,	// builtin handler (can be called as either command or func)
+	KBLTIN,	// builtin constant
+	HANDLER	// user-defined handler
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;

@@ -79,7 +79,7 @@ void Lingo::initMethods() {
 
 		Symbol sym;
 		sym.name = new Common::String(mtd->name);
-		sym.type = FBLTIN;
+		sym.type = HBLTIN;
 		sym.nargs = mtd->minArgs;
 		sym.maxArgs = mtd->maxArgs;
 		sym.targetType = mtd->type;
@@ -106,7 +106,7 @@ void Lingo::initXLibs() {
 
 		Symbol sym;
 		sym.name = new Common::String(lib->name);
-		sym.type = FBLTIN;
+		sym.type = HBLTIN;
 		sym.nargs = 0;
 		sym.maxArgs = 0;
 		sym.targetType = lib->type;
@@ -177,7 +177,7 @@ Symbol ScriptContext::getMethod(const Common::String &methodName) {
 	}
 
 	sym = Object::getMethod(methodName);
-	if (sym.type != VOID)
+	if (sym.type != VOIDSYM)
 		return sym;
 
 	if (_objType == kScriptObj) {
@@ -287,7 +287,7 @@ void LM::m_instanceRespondsTo(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
-	if (me->getMethod(methodName).type != VOID) {
+	if (me->getMethod(methodName).type != VOIDSYM) {
 		g_lingo->push(Datum(1));
 	} else {
 		g_lingo->push(Datum(0));
@@ -310,7 +310,7 @@ void LM::m_respondsTo(int nargs) {
 	Common::String methodName = d.asString();
 
 	// TODO: Check inheritance level
-	if (me->getMethod(methodName).type != VOID) {
+	if (me->getMethod(methodName).type != VOIDSYM) {
 		g_lingo->push(Datum(1));
 	} else {
 		g_lingo->push(Datum(0));
