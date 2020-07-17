@@ -39,48 +39,61 @@ class DamageInfo {
 public:
 	DamageInfo(uint8 data[6]);
 	~DamageInfo() {};
-	
-	void applyToItem(Item *item);
-	
-	bool takesDamage() {
-		return _flags != 0;
-	}
 
-protected:
-	bool replaceItem() const {
-		return (_flags & 0x40) != 0;
-	}
-	bool explode() const {
-		return (_flags & 0x06) != 0;
-	}
-	bool explosionType() const{
-		assert(explode());
-		return ((_flags & 0x06) >> 1) - 1;
+	//! apply this damage info to the given item.  Returns true if the item was destroyed in the process.
+	bool applyToItem(Item *item, uint16 points) const;
+
+	bool frameDataIsAbsolute() const {
+		return (_flags >> 7) & 1;
 	}
 	bool explodeDestroysItem() const {
-		return (_flags >> 5) & 1;
+		return (_flags >> 6) & 1;
+	}
+	bool replaceItem() const {
+		return (_flags >> 4) & 1;
 	}
 	bool explodeWithDamage() const {
 		return (_flags >> 3) & 1;
 	}
-	
+	bool takesDamage() const {
+		return _flags & 1;
+	}
+
+	uint8 damagePoints() const {
+		return _damagePoints;
+	}
+
+protected:
+	bool explode() const {
+		return (_flags & 0x06) != 0;
+	}
+	int explosionType() const {
+		assert(explode());
+		return ((_flags & 0x06) >> 1) - 1;
+	}
+
 	uint16 getReplacementShape() const {
 		assert(replaceItem());
-		return static_cast<uint16>(_data[1]) << 16 | _data[0];
+		return static_cast<uint16>(_data[1]) << 8 | _data[0];
 	}
-	
+
 	uint16 getReplacementFrame() const {
 		assert(replaceItem());
 		return static_cast<uint16>(_data[2]);
 	}
-	
-	bool frameDataIsAbsolute() const {
-		return (_flags & 0x80) != 0;
-	}
 
+
+	// Flags are ABxCDEEF
+	// A = frame data is absolute (not relative to current)
+	// B = item destroyed after explosion
+	// C = item is replaced when destroyed
+	// D = explosion damages surrounding items
+	// EE = 2 bits for explosion type
+	// F = item takes damage
 	uint8 _flags;
 	uint8 _sound;
-	uint8 _data[4];
+	uint8 _data[3];
+	uint8 _damagePoints;
 };
 
 } // End of namespace Ultima8

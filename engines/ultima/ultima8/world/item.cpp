@@ -78,7 +78,7 @@ Item::Item()
 	  _extendedFlags(0), _parent(0),
 	  _cachedShape(nullptr), _cachedShapeInfo(nullptr),
 	  _gump(0), _gravityPid(0), _lastSetup(0),
-	  _ix(0), _iy(0), _iz(0) {
+	  _ix(0), _iy(0), _iz(0), _damagePoints(1) {
 }
 
 
@@ -1777,6 +1777,13 @@ uint16 Item::getDamageType() const {
 }
 
 void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
+	if (GAME_IS_U8)
+		receiveHitU8(other, dir, damage, type);
+	else
+		receiveHitCru(other, dir, damage, type);
+}
+
+void Item::receiveHitU8(uint16 other, int dir, int damage, uint16 type) {
 	// first, check if the item has a 'gotHit' usecode event
 	if (callUsecodeEvent_gotHit(other, 0)) //!! TODO: what should the 0 be??
 		return;
@@ -1803,6 +1810,41 @@ void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
 	// TODO: hurl item in direction, with speed depending on damage
 	hurl(-16 * x_fact[dir], -16 * y_fact[dir], 16, 4); //!! constants
 }
+
+
+void Item::receiveHitCru(uint16 other, int dir, int damage, uint16 type) {
+	damage = scaleReceivedDamageCru(damage, type);
+	const ShapeInfo *shapeInfo = getShapeInfo();
+	if (!shapeInfo)
+		return;
+	const DamageInfo *damageInfo = shapeInfo->_damageInfo;
+
+	// TODO: work out how this flag is decided.
+	uint8 shouldCallUsecode = 1;
+
+	if (shouldCallUsecode)
+		callUsecodeEvent_gotHit(other, 0);
+
+	if (damageInfo) {
+		bool wasbroken = damageInfo->applyToItem(this, damage);
+		if (wasbroken) {
+			Kernel::get_instance()->killProcesses(_objId, 0xc, true);
+		}
+	}
+
+	if (shapeInfo->is_fixed() || shapeInfo->_weight == 0) {
+		// can't move
+		return;
+	}
+
+	int xhurl = 10 + getRandom() % 15;
+	int yhurl = 10 + getRandom() % 15;
+
+	// nothing special, so just hurl the item
+	// TODO: hurl item in direction, with speed depending on damage
+	hurl(-xhurl * x_fact[dir], -yhurl * y_fact[dir], 16, 4); //!! constants
+}
+
 
 bool Item::canDrag() {
 	ShapeInfo *si = getShapeInfo();
@@ -2014,6 +2056,44 @@ bool Item::canMergeWith(Item *other) {
 		}*/
 	}
 	return false;
+}
+
+bool Item::isRobotCru() const {
+	uint32 shape = getShape();
+	return (shape == 0x4c8 || shape == 0x338 || shape == 0x45d ||
+			shape == 0x2cb || shape == 0x4e6 || shape == 899 ||
+			shape == 0x385);
+}
+
+int Item::scaleReceivedDamageCru(int damage, uint16 type) const {
+	uint8 difficulty = World::get_instance()->getGameDifficulty();
+	const Actor *actor = dynamic_cast<const Actor *>(this);
+	//
+	// TODO: this should check for current controlled NPC *or* avatar.
+	//
+	// For difficulty 1 and 2, we scale damage to others *up* and damage
+	// to avatar *down*.
+	//
+	if (!actor || getObjId() != 1) {
+		if (difficulty == 1) {
+			damage *= 5;
+		} else if (difficulty == 2) {
+			damage *= 3;
+		}
+	} else {
+		if (difficulty == 1) {
+			damage /= 5;
+		} else if (difficulty == 2) {
+			damage /= 3;
+		}
+	}
+
+	if (isRobotCru() && (type == 1 || type == 2 || type == 0xb || type == 0xd)) {
+		damage /= 3;
+	}
+
+	damage = CLIP(damage, 1, 0xfa);
+	return damage;
 }
 
 

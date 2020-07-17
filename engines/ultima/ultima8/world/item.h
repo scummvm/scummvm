@@ -375,6 +375,16 @@ public:
 	//! \param type The type of damage done. Zero for default
 	virtual void receiveHit(ObjId other, int dir, int damage, uint16 type);
 
+	//! get damage points, used in Crusader for item damage.
+	uint8 getDamagePoints() const {
+		return _damagePoints;
+	}
+
+	//! set damage points, used in Crusader for item damage.
+	void setDamagePoints(uint8 points) {
+		_damagePoints = points;
+	}
+
 	//! count nearby objects of a given shape
 	unsigned int countNearby(uint32 shape_, uint16 range);
 
@@ -597,6 +607,15 @@ protected:
 	ObjId _gump;             // Item's gump
 	ProcId _gravityPid;      // Item's GravityTracker (or 0)
 
+	uint8 _damagePoints;	// Damage points, used for item damage in Crusader
+
+	//! True if this is a Robot shape (in a fixed list)
+	bool isRobotCru() const;
+
+	//! Scale a received damage value based on the current difficulty level
+	//! and the type of object this is.
+	int scaleReceivedDamageCru(int damage, uint16 type) const;
+
 private:
 
 	//! Call a Usecode Event. Use the separate functions instead!
@@ -607,6 +626,12 @@ private:
 
 	//! Animate the item (called by setupLerp)
 	void animateItem();
+
+	//! The U8 version of receiveHit
+	void receiveHitU8(ObjId other, int dir, int damage, uint16 type);
+
+	//! The Crusader version of receiveHit
+	void receiveHitCru(ObjId other, int dir, int damage, uint16 type);
 
 public:
 	enum statusflags {

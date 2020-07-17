@@ -79,7 +79,7 @@ static Item *getItemForFamily(uint32 family) {
 
 Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
                               uint16 flags, uint16 npcnum, uint16 mapnum,
-                              uint32 extendedflags, bool _objId) {
+                              uint32 extendedflags, bool objId) {
 	// check what class to create
 	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 	                  getShapeInfo(shape);
@@ -101,8 +101,14 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		item->_npcNum = npcnum;
 		item->_mapNum = mapnum;
 		item->_extendedFlags = extendedflags;
-		if (_objId)
+		if (objId)
 			item->assignObjId();
+		if (GAME_IS_CRUSADER) {
+			ShapeInfo *info = item->getShapeInfo();
+			if (info && info->_damageInfo && info->_damageInfo->takesDamage()) {
+				item->setDamagePoints(info->_damageInfo->damagePoints());
+			}
+		}
 	}
 
 	return item;
@@ -118,7 +124,7 @@ static Actor *getActorForNpcNum(uint32 npcnum) {
 
 Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
                                 uint16 flags, uint16 npcnum, uint16 mapnum,
-                                uint32 extendedflags, bool _objId) {
+                                uint32 extendedflags, bool objId) {
 	/*
 	    // This makes it rather hard to create new NPCs...
 	    if (npcnum == 0) // or do monsters have npcnum 0? we'll see...
@@ -137,7 +143,7 @@ Actor *ItemFactory::createActor(uint32 shape, uint32 frame, uint16 quality,
 	actor->_mapNum = mapnum;
 	if (npcnum != 0) {
 		actor->_objId = static_cast<uint16>(npcnum);
-	} else if (_objId) {
+	} else if (objId) {
 		actor->assignObjId();
 	}
 	actor->_extendedFlags = extendedflags;

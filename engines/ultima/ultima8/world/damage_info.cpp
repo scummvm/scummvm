@@ -36,12 +36,26 @@ DamageInfo::DamageInfo(uint8 data[6]) {
 	_data[0] = data[2];
 	_data[1] = data[3];
 	_data[2] = data[4];
-	_data[3] = data[5];
+	_damagePoints = data[5];
 }
 
-void DamageInfo::applyToItem(Item *item) {
+bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 	if (!item)
-		return;
+		return false;
+
+	// The game does this.. it seems to be used to mean
+	// "destroyed" (as distinct from broken?)
+	if (item->hasFlags(Item::FLG_GUMP_OPEN))
+		return false;
+
+	uint8 itemPts = item->getDamagePoints();
+	if (points < itemPts) {
+		item->setDamagePoints(itemPts - points);
+		return false;
+	}
+	item->setDamagePoints(0);
+	item->setFlag(Item::FLG_GUMP_OPEN | Item::FLG_BROKEN);
+
 	if (explode()) {
 		item->explode(explosionType(), explodeDestroysItem());
 	}
@@ -80,6 +94,7 @@ void DamageInfo::applyToItem(Item *item) {
 			}
 		}
 	}
+	return true;
 }
 
 
