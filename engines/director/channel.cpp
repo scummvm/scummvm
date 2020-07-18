@@ -272,8 +272,9 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_sprite->updateCast();
 		Common::Point p(getPosition());
 		_sprite->_cast->_modified = false;
-		if (_widget)
+		if (_widget) {
 			delete _widget;
+		}
 		_widget = _sprite->_cast->createWidget();
 		if (_widget) {
 			_widget->_dims.moveTo(p.x, p.y);

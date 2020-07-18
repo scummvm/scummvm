@@ -252,6 +252,8 @@ public:
 
 	MacWidget *getActiveWidget() { return _activeWidget; }
 
+	void clearWidgetRefs(MacWidget *widget);
+
 	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
 	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
 
