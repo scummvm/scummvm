@@ -75,7 +75,7 @@ extern int yydebug;
     FLOAT = 276,                   /* FLOAT  */
     THEFUNC = 277,                 /* THEFUNC  */
     THEFUNCINOF = 278,             /* THEFUNCINOF  */
-    ID = 279,                      /* ID  */
+    VARID = 279,                   /* VARID  */
     STRING = 280,                  /* STRING  */
     SYMBOL = 281,                  /* SYMBOL  */
     ENDCLAUSE = 282,               /* ENDCLAUSE  */
@@ -138,7 +138,11 @@ extern int yydebug;
     tON = 339,                     /* tON  */
     tENDIF = 340,                  /* tENDIF  */
     tENDREPEAT = 341,              /* tENDREPEAT  */
-    tENDTELL = 342                 /* tENDTELL  */
+    tENDTELL = 342,                /* tENDTELL  */
+    tCAST = 343,                   /* tCAST  */
+    tFIELD = 344,                  /* tFIELD  */
+    tSCRIPT = 345,                 /* tSCRIPT  */
+    tWINDOW = 346                  /* tWINDOW  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -162,12 +166,7 @@ union YYSTYPE
 		Common::String *prop;
 	} objectprop;
 
-	struct {
-		Common::String *s;
-		int i;
-	} ref;
-
-#line 171 "engines/director/lingo/lingo-gr.h"
+#line 170 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

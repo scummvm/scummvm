@@ -65,7 +65,7 @@ static int checkImmediate(int token) {
 			g_lingo->_methodVars->contains(yytext)) {
 		yylval.s = new Common::String(yytext);
 
-		return ID;
+		return VARID;
 	}
 
 	return token;
@@ -91,7 +91,7 @@ static int varCheck(int token, const char *name) {
 	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars->contains(name)) {
 		yylval.s = new Common::String(name);
 
-		return ID;
+		return VARID;
 	}
 
 	return token;
@@ -116,28 +116,7 @@ spc [ \t\xC2]
 after		{ count(); return varCheck(tAFTER, "after"); }		// D3
 and			{ count(); return varCheck(tAND, "and"); }
 before		{ count(); return varCheck(tBEFORE, "before"); }	// D3
-cast{spc}+{conststring}	{
-		count();
-
-		const char *ptr = &yytext[5]; // Skip 'cast '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = cleanupString(ptr + 1);
-		yylval.s->deleteLastChar();
-		return CAST;
-	}
-cast{spc}+{constinteger}	{
-		count();
-
-		const char *ptr = &yytext[5]; // Skip 'cast '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = NULL;
-		yylval.i = strtol(yytext, NULL, 10);
-		return CAST;
-	}
+cast		{ count(); return tCAST; }
 char		{ count(); return varCheck(tCHAR, "char"); }		// D3
 contains	{ count(); return varCheck(tCONTAINS, "contains"); }
 down		{ count(); return varCheck(tDOWN, "down"); }
@@ -159,8 +138,8 @@ end({spc}+{identifier})?	{
 			return tENDTELL;
 
 		if (!*ptr) {	// If it is stale "end", check it
-			if (varCheck(ENDCLAUSE, "end") == ID)
-				return ID;
+			if (varCheck(ENDCLAUSE, "end") == VARID)
+				return VARID;
 		}
 
 		yylval.s = new Common::String(ptr);
@@ -169,28 +148,7 @@ end({spc}+{identifier})?	{
 	}
 ^{spc}*factory { count(); return tFACTORY; }
 exit		{ count(); return varCheck(tEXIT, "exit"); }
-field{spc}+{conststring}	{
-		count();
-
-		const char *ptr = &yytext[6]; // Skip 'field '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = cleanupString(ptr + 1);
-		yylval.s->deleteLastChar();
-		return FIELD;
-	}
-field{spc}+{constinteger}	{
-		count();
-
-		const char *ptr = &yytext[6]; // Skip 'field '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = NULL;
-		yylval.i = strtol(yytext, NULL, 10);
-		return FIELD;
-	}
+field		{ count(); return tFIELD; }
 global		{ count(); return varCheck(tGLOBAL, "global"); }
 go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
@@ -228,28 +186,7 @@ previous	{ count(); return varCheck(tPREVIOUS, "previous"); }
 property	{ count(); return varCheck(tPROPERTY, "property"); }	// D4
 put			{ count(); return varCheck(tPUT, "put"); }
 repeat		{ count(); return checkImmediate(tREPEAT); }
-script{spc}+{conststring}	{
-		count();
-
-		const char *ptr = &yytext[7]; // Skip 'script '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = cleanupString(ptr + 1);
-		yylval.s->deleteLastChar();
-		return SCRIPT;
-	}
-script{spc}+{constinteger}	{
-		count();
-
-		const char *ptr = &yytext[7]; // Skip 'script '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = NULL;
-		yylval.i = strtol(yytext, NULL, 10);
-		return SCRIPT;
-	}
+script		{ count(); return tSCRIPT; }
 set			{ count(); return varCheck(tSET, "set"); }
 starts		{ count(); return varCheck(tSTARTS, "starts"); }
 tell		{ count(); return varCheck(tTELL, "tell"); }
@@ -367,9 +304,9 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 					Common::String rest(ptr);
 
 					// It is the dreaded 'the <builtin> of <expr>'
-					// with 'expr' starting with ID, which leads to clash
+					// with 'expr' starting with VARID, which leads to clash
 					//
-					// put 'of ID' back.
+					// put 'of VARID' back.
 
 					for (int i = rest.size() - 1; i >= 0; i--)
 						unput(rest[i]);
@@ -450,28 +387,7 @@ with			{ count(); return varCheck(tWITH, "with"); }
 within			{ count(); return varCheck(tWITHIN, "within"); }
 when			{ count(); return varCheck(tWHEN, "when"); }
 while			{ count(); return varCheck(tWHILE, "while"); }
-window{spc}+{conststring}	{
-		count();
-
-		const char *ptr = &yytext[7]; // Skip 'window '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = cleanupString(ptr + 1);
-		yylval.s->deleteLastChar();
-		return WINDOW;
-	}
-window{spc}+{constinteger}	{
-		count();
-
-		const char *ptr = &yytext[7]; // Skip 'window '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = NULL;
-		yylval.i = strtol(yytext, NULL, 10);
-		return WINDOW;
-	}
+window			{ count(); return tWINDOW; }
 word			{ count(); return varCheck(tWORD, "word"); }
 
 [<][>]			{ count(); return tNEQ; }
@@ -484,7 +400,7 @@ word			{ count(); return varCheck(tWORD, "word"); }
 		count();
 		yylval.s = new Common::String(yytext);
 
-		return ID;
+		return VARID;
 	}
 {constfloat}	{ count(); yylval.f = atof(yytext); return FLOAT; }
 {constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }

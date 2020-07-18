@@ -170,11 +170,6 @@ static void mVar(Common::String *s, VarType type) {
 		Common::String *obj;
 		Common::String *prop;
 	} objectprop;
-
-	struct {
-		Common::String *s;
-		int i;
-	} ref;
 }
 
 %token UNARY
@@ -186,7 +181,7 @@ static void mVar(Common::String *s, VarType type) {
 %token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY THEMENUITEMSENTITY
 %token<f> FLOAT
 %token<s> THEFUNC THEFUNCINOF
-%token<s> ID STRING SYMBOL
+%token<s> VARID STRING SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token<objectprop> THEOBJECTPROP
 %token<ref> CAST FIELD SCRIPT WINDOW
@@ -198,18 +193,19 @@ static void mVar(Common::String *s, VarType type) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn lbl expr if chunkexpr
+%type<code> asgn lbl expr if chunkexpr simpleexprnoparens
 %type<code> stmtlist tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
-%type<s> on
+%type<s> ID on
 
 %left tAND tOR
 %left '<' tLE '>' tGE tEQ tNEQ tCONTAINS tSTARTS
 %left '&' tCONCAT
 %left '+' '-'
 %left '*' '/' '%' tMOD
-%right UNARY
+%right UNARY tCAST tFIELD tSCRIPT tWINDOW
+%nonassoc VARID
 
 %destructor { delete $$; } <s>
 
@@ -221,6 +217,12 @@ program: programline
 programline: /* empty */
 	| defn
 	| stmt
+
+ID: VARID
+	| tCAST			{ $$ = new Common::String("cast"); }
+	| tFIELD		{ $$ = new Common::String("field"); }
+	| tSCRIPT		{ $$ = new Common::String("script"); }
+	| tWINDOW		{ $$ = new Common::String("window"); }
 
 asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_varpush);
@@ -538,12 +540,14 @@ stmtlist: 					{ $$ = g_lingo->_currentAssembly->size(); }
 	| stmtlist '\n'
 	| stmtlist stmt
 
-simpleexpr: INT		{
+simpleexprnoparens: INT		{
 		$$ = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt($INT); }
 	| FLOAT		{
 		$$ = g_lingo->code1(LC::c_floatpush);
 		g_lingo->codeFloat($FLOAT); }
+	| '+' simpleexpr[arg]  %prec UNARY	{ $$ = $arg; }
+	| '-' simpleexpr[arg]  %prec UNARY	{ $$ = $arg; g_lingo->code1(LC::c_negate); }
 	| SYMBOL	{											// D3
 		$$ = g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString($SYMBOL->c_str());
@@ -552,14 +556,7 @@ simpleexpr: INT		{
 		$$ = g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString($STRING->c_str());
 		delete $STRING; }
-	| ID		{
-		if (g_lingo->_builtinConsts.contains(*$ID)) {
-			$$ = g_lingo->code1(LC::c_constpush);
-		} else {
-			$$ = g_lingo->code1(LC::c_eval);
-		}
-		g_lingo->codeString($ID->c_str());
-		delete $ID; }
+	| reference
 	| THEENTITY	{
 		$$ = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
@@ -574,12 +571,21 @@ simpleexpr: INT		{
 		WRITE_UINT32(&e, $THEENTITYWITHID[0]);
 		WRITE_UINT32(&f, $THEENTITYWITHID[1]);
 		g_lingo->code2(e, f); }
-	| '(' expr[arg] ')'			{ $$ = $arg; }
+	| THEFUNCINOF simpleexpr	{
+		$$ = g_lingo->codeFunc($THEFUNCINOF, 1);
+		delete $THEFUNCINOF; }
+	| THEFUNC tOF simpleexpr	{
+		$$ = g_lingo->codeFunc($THEFUNC, 1);
+		delete $THEFUNC; }
+	| THEOBJECTPROP {
+		g_lingo->code1(LC::c_objectproppush);
+		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
+		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
+		delete $THEOBJECTPROP.obj;
+		delete $THEOBJECTPROP.prop; }
+	| tSPRITE expr tINTERSECTS expr	{ g_lingo->code1(LC::c_intersects); }
+	| tSPRITE expr tWITHIN expr		{ g_lingo->code1(LC::c_within); }
 	| list
-	| error	'\n'		{ yyerrok; }
-
-expr: simpleexpr { $$ = $simpleexpr; }
-	| reference
 	| ID[func] '(' ID[method] ')' {
 			g_lingo->code1(LC::c_lazyeval);
 			g_lingo->codeString($method->c_str());
@@ -594,18 +600,20 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
-	| THEFUNCINOF simpleexpr	{
-		$$ = g_lingo->codeFunc($THEFUNCINOF, 1);
-		delete $THEFUNCINOF; }
-	| THEFUNC tOF simpleexpr	{
-		$$ = g_lingo->codeFunc($THEFUNC, 1);
-		delete $THEFUNC; }
-	| THEOBJECTPROP {
-		g_lingo->code1(LC::c_objectproppush);
-		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
-		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
-		delete $THEOBJECTPROP.obj;
-		delete $THEOBJECTPROP.prop; }
+	| ID		{
+		if (g_lingo->_builtinConsts.contains(*$ID)) {
+			$$ = g_lingo->code1(LC::c_constpush);
+		} else {
+			$$ = g_lingo->code1(LC::c_eval);
+		}
+		g_lingo->codeString($ID->c_str());
+		delete $ID; }
+	| error	'\n'		{ yyerrok; }
+
+simpleexpr: simpleexprnoparens
+	| '(' expr[arg] ')'			{ $$ = $arg; }
+
+expr: simpleexpr { $$ = $simpleexpr; }
 	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
 	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }
 	| expr '*' expr				{ g_lingo->code1(LC::c_mul); }
@@ -624,20 +632,8 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| expr tCONCAT expr			{ g_lingo->code1(LC::c_concat); }
 	| expr tCONTAINS expr		{ g_lingo->code1(LC::c_contains); }
 	| expr tSTARTS expr			{ g_lingo->code1(LC::c_starts); }
-	| '+' expr[arg]  %prec UNARY	{ $$ = $arg; }
-	| '-' expr[arg]  %prec UNARY	{ $$ = $arg; g_lingo->code1(LC::c_negate); }
-	| tSPRITE expr tINTERSECTS expr { g_lingo->code1(LC::c_intersects); }
-	| tSPRITE expr tWITHIN expr		{ g_lingo->code1(LC::c_within); }
 
-chunkexpr: 	FIELD				{
-		if ($FIELD.s) {
-			$$ = g_lingo->code1(LC::c_stringpush);
-			g_lingo->codeString($FIELD.s->c_str());
-			delete $FIELD.s;
-		} else {
-			$$ = g_lingo->code1(LC::c_intpush);
-			g_lingo->codeInt($FIELD.i);
-		}
+chunkexpr:  tFIELD simpleexprnoparens	{
 		Common::String field("field");
 		g_lingo->codeFunc(&field, 1); }
 	|  tCHAR expr tOF expr		{ g_lingo->code1(LC::c_charOf); }
@@ -650,40 +646,15 @@ chunkexpr: 	FIELD				{
 	| tWORD expr tTO expr tOF expr	{ g_lingo->code1(LC::c_wordToOf); }
 
 reference: 	chunkexpr
-	| CAST				{
-		if ($CAST.s) {
-			$$ = g_lingo->code1(LC::c_stringpush);
-			g_lingo->codeString($CAST.s->c_str());
-			delete $CAST.s;
-		} else {
-			$$ = g_lingo->code1(LC::c_intpush);
-			g_lingo->codeInt($CAST.i);
-		}
+	| tCAST simpleexprnoparens		{
 		Common::String cast("cast");
 		g_lingo->codeFunc(&cast, 1); }
-	| SCRIPT			{
-		if ($SCRIPT.s) {
-			$$ = g_lingo->code1(LC::c_stringpush);
-			g_lingo->codeString($SCRIPT.s->c_str());
-			delete $SCRIPT.s;
-		} else {
-			$$ = g_lingo->code1(LC::c_intpush);
-			g_lingo->codeInt($SCRIPT.i);
-		}
+	| tSCRIPT simpleexprnoparens	{
 		Common::String script("script");
 		g_lingo->codeFunc(&script, 1); }
-	| WINDOW			{
-		if ($WINDOW.s) {
-			$$ = g_lingo->code1(LC::c_stringpush);
-			g_lingo->codeString($WINDOW.s->c_str());
-			delete $WINDOW.s;
-		} else {
-			$$ = g_lingo->code1(LC::c_intpush);
-			g_lingo->codeInt($WINDOW.i);
-		}
+	| tWINDOW simpleexprnoparens	{
 		Common::String window("window");
 		g_lingo->codeFunc(&window, 1); }
-
 
 proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| gotofunc
