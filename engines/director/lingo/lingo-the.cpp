@@ -919,16 +919,16 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
 			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
 
-			if (channel->_sprite->_cast->_widget)
-				(((Graphics::MacText *)channel->_sprite->_cast->_widget)->setSelection(d.asInt(), false));
+			if (channel->_widget)
+				(((Graphics::MacText *)channel->_widget)->setSelection(d.asInt(), false));
 		}
 		break;
 	case kTheSelStart:
 		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
 			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
 
-			if (channel->_sprite->_cast->_widget)
-				(((Graphics::MacText *)channel->_sprite->_cast->_widget)->setSelection(d.asInt(), true));
+			if (channel->_widget)
+				(((Graphics::MacText *)channel->_widget)->setSelection(d.asInt(), true));
 		}
 		break;
 	case kTheSoundEnabled:
@@ -1244,7 +1244,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheEditableText:
-		sprite->_cast ? sprite->_cast->setEditable(d.asInt()) : false;
+		sprite->_cast->setEditable(d.asInt());
 		break;
 	case kTheForeColor:
 		if (d.asInt() != sprite->_foreColor) {
@@ -1649,7 +1649,6 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		if (member->_type == kCastButton) {
 			TextCastMember *button = (TextCastMember *)member;
 			if ((bool)d.asInt() !=  member->_hilite) {
-				((Graphics::MacButton *) button->_widget)->invertInner();
 				button->_hilite = !!d.asInt();
 			}
 		} else {
@@ -1761,17 +1760,16 @@ Datum Lingo::getTheField(Datum &id1, int field) {
 		break;
 	case kTheTextAlign:
 		d.type = STRING;
-		switch (((Graphics::MacText *)member->_widget)->getAlign()) {
-		case Graphics::kTextAlignLeft:
+		switch (((TextCastMember *)member)->_textAlign) {
+		case kTextAlignLeft:
 			d.u.s = new Common::String("left");
 			break;
-		case Graphics::kTextAlignCenter:
+		case kTextAlignCenter:
 			d.u.s = new Common::String("center");
 			break;
-		case Graphics::kTextAlignRight:
+		case kTextAlignRight:
 			d.u.s = new Common::String("right");
 			break;
-		case Graphics::kTextAlignInvalid:
 		default:
 			warning("Lingo::getTheField: Invalid text align spec");
 			break;
@@ -1823,20 +1821,19 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 			Common::String select = d.asString(true);
 			select.toLowercase();
 
-			Graphics::TextAlign align;
+			TextAlignType align;
 			if (select == "\"left\"") {
-				align = Graphics::kTextAlignLeft;
+				align = kTextAlignLeft;
 			} else if (select == "\"center\"") {
-				align = Graphics::kTextAlignCenter;
+				align = kTextAlignCenter;
 			} else if (select == "\"right\"") {
-				align = Graphics::kTextAlignRight;
+				align = kTextAlignRight;
 			} else {
 				warning("Lingo::setTheField: Unknown text align spec: %s", d.asString(true).c_str());
 				break;
 			}
 
-			((Graphics::MacText *)member->_widget)->setAlignOffset(align);
-			((Graphics::MacText *)member->_widget)->draw();
+			((TextCastMember *)member)->_textAlign = align;
 			member->_modified = true;
 			break;
 		}

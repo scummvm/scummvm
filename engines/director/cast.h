@@ -67,7 +67,6 @@ public:
 	void loadSpriteSounds();
 
 	void copyCastStxts();
-	void createCastWidgets();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
 	CastMember *getCastMember(int castId);

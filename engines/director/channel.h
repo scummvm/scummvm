@@ -26,6 +26,7 @@
 namespace Graphics {
 	struct Surface;
 	class ManagedSurface;
+	class MacWidget;
 }
 
 namespace Director {
@@ -36,6 +37,7 @@ class Cursor;
 class Channel {
 public:
 	Channel(Sprite *sp);
+	~Channel();
 
 	DirectorPlotData getPlotData();
 	const Graphics::Surface *getMask(bool forceMatte = false);
@@ -59,6 +61,7 @@ public:
 public:
 	Sprite *_sprite;
 	Cursor _cursor;
+	Graphics::MacWidget *_widget;
 
 	bool _dirty;
 	bool _visible;

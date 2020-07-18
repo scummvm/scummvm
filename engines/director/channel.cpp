@@ -34,6 +34,7 @@ namespace Director {
 
 Channel::Channel(Sprite *sp) {
 	_sprite = sp;
+	_widget = nullptr;
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
 	_constraint = 0;
@@ -45,6 +46,11 @@ Channel::Channel(Sprite *sp) {
 	_dirty = true;
 
 	_sprite->updateCast();
+}
+
+Channel::~Channel() {
+	if (_widget)
+		delete _widget;
 }
 
 DirectorPlotData Channel::getPlotData() {
@@ -66,8 +72,8 @@ DirectorPlotData Channel::getPlotData() {
 }
 
 Graphics::ManagedSurface *Channel::getSurface() {
-	if (_sprite->_cast && _sprite->_cast->_widget) {
-		return  _sprite->_cast->_widget->getSurface();
+	if (_widget) {
+		return  _widget->getSurface();
 	} else {
 		return nullptr;
 	}
@@ -96,7 +102,10 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(_sprite->_castId + 1);
 
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
-			return &member->_widget->getSurface()->rawSurface();
+			Graphics::MacWidget *widget = member->createWidget();
+			Graphics::Surface *result = new Graphics::Surface(widget->getSurface()->rawSurface());
+			delete widget;
+			return result;
 		} else {
 			warning("Channel::getMask(): Requested cast mask, but no matching mask was found");
 			return nullptr;
@@ -144,7 +153,7 @@ bool Channel::isActiveText() {
 	if (_sprite->_spriteType != kTextSprite)
 		return false;
 
-	if (_sprite->_cast && _sprite->_cast->_widget && _sprite->_cast->_widget->hasAllFocus())
+	if (_widget && _widget->hasAllFocus())
 		return true;
 
 	return false;
@@ -259,15 +268,17 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_delta = Common::Point(0, 0);
 	}
 
-	if (_sprite->_cast && _sprite->_cast->_widget) {
+	if (_sprite->_cast) {
 		_sprite->updateCast();
 		Common::Point p(getPosition());
 		_sprite->_cast->_modified = false;
-		_sprite->_cast->_widget->_dims.moveTo(p.x, p.y);
-
-		_sprite->_cast->_widget->_priority = spriteId;
-		_sprite->_cast->_widget->draw();
-		_sprite->_cast->_widget->_contentIsDirty = false;
+		if (_widget)
+			delete _widget;
+		_widget = _sprite->_cast->createWidget();
+		_widget->_dims.moveTo(p.x, p.y);
+		_widget->_priority = spriteId;
+		_widget->draw();
+		_widget->_contentIsDirty = false;
 	}
 }
 

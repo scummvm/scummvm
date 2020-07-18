@@ -65,10 +65,23 @@ void DirectorEngine::processEvents() {
 
 	uint endTime = g_system->getMillis() + 10;
 
+	Movie *m = getCurrentMovie();
+	Score *sc = m->getScore();
+	if (sc->getCurrentFrame() >= sc->_frames.size()) {
+		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
+		return;
+	}
+
+	uint16 spriteId = 0;
+
+	Common::Point pos;
+
 	while (g_system->getMillis() < endTime) {
 		while (g_system->getEventManager()->pollEvent(event)) {
-			if (_wm->processEvent(event))
+			if (_wm->processEvent(event)) {
+				// window manager has done something! update the channels
 				continue;
+			}
 
 			switch (event.type) {
 			case Common::EVENT_QUIT:

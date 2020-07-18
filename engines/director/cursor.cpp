@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "image/image_decoder.h"
+
 #include "director/director.h"
 #include "director/cursor.h"
 #include "director/movie.h"
@@ -52,10 +54,10 @@ void Cursor::readFromCast(uint cursorId, uint maskId) {
 	CastMember *cursorCast = g_director->getCurrentMovie()->getCastMember(cursorId);
 	CastMember *maskCast = g_director->getCurrentMovie()->getCastMember(maskId);
 
-	if (!cursorCast || !cursorCast->_widget || cursorCast->_type != kCastBitmap) {
+	if (!cursorCast || cursorCast->_type != kCastBitmap) {
 		warning("Cursor::readFromCast: No bitmap cast for cursor");
 		return;
-	} else if (!maskCast || !maskCast->_widget || maskCast->_type != kCastBitmap) {
+	} else if (!maskCast || maskCast->_type != kCastBitmap) {
 		warning("Cursor::readFromCast: No bitmap mask for cursor");
 		return;
 	}
@@ -65,21 +67,24 @@ void Cursor::readFromCast(uint cursorId, uint maskId) {
 
 	resetCursor(Graphics::kMacCursorCustom, true, 0, cursorId, maskId);
 
+	BitmapCastMember *cursorBitmap = (BitmapCastMember *)cursorCast;
+	BitmapCastMember *maskBitmap = (BitmapCastMember *)maskCast;
+
 	_surface = new byte[getWidth() * getHeight()];
 	byte *dst = _surface;
 
 	for (int y = 0; y < 16; y++) {
 		const byte *cursor = nullptr, *mask = nullptr;
 
-		if (y < cursorCast->_widget->getSurface()->h &&
-				y < maskCast->_widget->getSurface()->h) {
-			cursor = (const byte *)cursorCast->_widget->getSurface()->getBasePtr(0, y);
-			mask = (const byte *)maskCast->_widget->getSurface()->getBasePtr(0, y);
+		if (y < cursorBitmap->_img->getSurface()->h &&
+				y < maskBitmap->_img->getSurface()->h) {
+			cursor = (const byte *)cursorBitmap->_img->getSurface()->getBasePtr(0, y);
+			mask = (const byte *)maskBitmap->_img->getSurface()->getBasePtr(0, y);
 		}
 
 		for (int x = 0; x < 16; x++) {
-			if (x >= cursorCast->_widget->getSurface()->w ||
-					x >= maskCast->_widget->getSurface()->w) {
+			if (x >= cursorBitmap->_img->getSurface()->w ||
+					x >= maskBitmap->_img->getSurface()->w) {
 				cursor = mask = nullptr;
 			}
 

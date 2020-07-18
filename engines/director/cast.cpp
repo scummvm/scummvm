@@ -345,7 +345,6 @@ bool Cast::loadArchive() {
 
 	loadSpriteImages();
 	loadSpriteSounds();
-	createCastWidgets();
 
 	return true;
 }
@@ -430,15 +429,6 @@ void Cast::copyCastStxts() {
 			tc->importStxt(stxt);
 			tc->_size = stxt->_size;
 		}
-	}
-}
-
-void Cast::createCastWidgets() {
-	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
-		if (!c->_value)
-			continue;
-
-		c->_value->createWidget();
 	}
 }
 
