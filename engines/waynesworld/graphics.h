@@ -37,7 +37,7 @@ public:
 	void drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y);
 	void scaleSurface(const Graphics::Surface *surface);
 	void frameRect(int x1, int y1, int x2, int y2, byte color);
-	void borderSquare(int x, int y, int length, byte frameColor, byte fillColor);
+	void fillSquare(int x, int y, int length, byte color);
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void clear(byte color);
 };
@@ -67,7 +67,7 @@ public:
 	void drawSurface(const Graphics::Surface *surface, int x, int y);
 	void drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y);
 	void frameRect(int x1, int y1, int x2, int y2, byte color);
-	void borderSquare(int x, int y, int length, byte frameColor, byte fillColor);
+	void fillSquare(int x, int y, int length, byte color);
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void clear(byte color);
 	void drawText(GFTFont *font, const char *text, int x, int y, byte color);

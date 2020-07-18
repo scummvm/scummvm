@@ -133,8 +133,8 @@ void WWSurface::frameRect(int x1, int y1, int x2, int y2, byte color) {
 	Graphics::Surface::frameRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-void WWSurface::borderSquare(int x, int y, int length, byte frameColor, byte fillColor) {
-	Graphics::Surface::frameRect(Common::Rect(x, y, x + length, y + length), frameColor);
+void WWSurface::fillSquare(int x, int y, int length, byte color) {
+	Graphics::Surface::fillRect(Common::Rect(x, y, x + length, y + length), color);
 }
 
 void WWSurface::fillRect(int x1, int y1, int x2, int y2, byte color) {
@@ -278,8 +278,8 @@ void Screen::frameRect(int x1, int y1, int x2, int y2, byte color) {
 	updateScreen();
 }
 
-void Screen::borderSquare(int x, int y, int length, byte frameColor, byte fillColor) {
-	_surface->borderSquare(x, y, length, frameColor, fillColor);
+void Screen::fillSquare(int x, int y, int length, byte color) {
+	_surface->fillSquare(x, y, length, color);
 	updateScreen();
 }
 
