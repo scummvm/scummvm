@@ -110,6 +110,7 @@ Common::Error WaynesWorldEngine::run() {
 	_from_x1 = 0;
 	_selectedDialogChoice = 0;
 	_gameState = 7;
+	_currentMapItemIndex = -1;
 
 	loadMainActorSprites();
 
@@ -138,6 +139,7 @@ Common::Error WaynesWorldEngine::run() {
 	changeRoom(0);
 
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
+	// _gameState = 1; // DEBUG Open map
 
 	while (!shouldQuit()) {
 		_mouseClickButtons = 0;
@@ -154,7 +156,7 @@ Common::Error WaynesWorldEngine::run() {
 		}
 		*/
 		if (_gameState == 1 && _currentRoomNumber < 100) {
-			// TODO gameMapOpen();
+			gameMapOpen();
 		}
 		g_system->updateScreen();
 	}
@@ -353,7 +355,7 @@ void WaynesWorldEngine::updateMouseMove() {
                 drawVerbLine(_verbNumber, -1, 0);
             }
         } else if (_gameState == 1) {
-            // TODO gameMapHandleMouseMove(objectIdAtPoint);
+            gameMapHandleMouseMove(objectIdAtPoint);
         }
     }
 
@@ -387,7 +389,7 @@ void WaynesWorldEngine::handleMouseLeftClick() {
         }
         break;
     case 1:
-        // TODO gameMapHandleMouseClick();
+        gameMapHandleMouseClick();
         break;
     case 2:
         handleDialogMouseClick();
@@ -416,7 +418,7 @@ void WaynesWorldEngine::handleMouseRightClick() {
         }
         break;
     case 1:
-        // TODO gameMapHandleMouseClick();
+        gameMapHandleMouseClick();
         break;
     case 2:
         handleDialogMouseClick();
@@ -477,6 +479,14 @@ void WaynesWorldEngine::loadPalette(const char *filename) {
 		memcpy(_palette2, imageDecoder->getPalette(), imageDecoder->getPaletteColorCount() * 3);
 	}
     delete imageDecoder;
+}
+
+void WaynesWorldEngine::paletteFadeIn(int index, int count, int stepsSize) {
+	// TODO
+}
+
+void WaynesWorldEngine::paletteFadeOut(int index, int count, int stepsSize) {
+	// TODO
 }
 
 void WaynesWorldEngine::drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName) {
@@ -615,6 +625,10 @@ void WaynesWorldEngine::displayTextLines(const char *filename, int baseIndex, in
 }
 
 void WaynesWorldEngine::playSound(const char *filename, int flag) {
+	// TODO
+}
+
+void WaynesWorldEngine::changeMusic() {
 	// TODO
 }
 

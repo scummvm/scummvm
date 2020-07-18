@@ -122,6 +122,9 @@ public:
 	int _currentTextX, _currentTextY;
 	bool _isTextVisible;
 
+	// Audio
+	int _musicIndex;
+
 	// Game
 	int _gameState; // TODO Use enum
 	int _currentActorNum;
@@ -160,6 +163,13 @@ public:
 	// _roomObjects is a writable copy of kRoomObjects
 	RoomObject _roomObjects[kRoomObjectsCount];
 
+	// Game map
+	int _gameMapRoomNumber;
+	int _gameMapWayneSpriteX, _gameMapGarthSpriteX;
+	int _currentMapItemIndex;
+	int _gameMapDestinationRoomNum;
+	bool _gameMapFlag;
+
 	// Utils
 	int getRandom(int max);
 	void waitMillis(uint millis);
@@ -180,6 +190,9 @@ public:
 	WWSurface *loadSurface(const char *filename);
 	WWSurface *loadRoomSurface(const char *filename);
 	void loadPalette(const char *filename);
+
+	void paletteFadeIn(int index, int count, int stepsSize);
+	void paletteFadeOut(int index, int count, int stepsSize);
 
 	// Image drawing
 	void drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName);
@@ -202,6 +215,7 @@ public:
 
 	// Audio
 	void playSound(const char *filename, int flag);
+	void changeMusic();
 
 	// Interface
 	void drawInterface(int verbNum);
@@ -283,6 +297,12 @@ public:
 	void handleVerbGive();
 	void handleVerbOpen();
 	void handleVerbClose();
+
+	void gameMapOpen();
+	void gameMapFinish();
+	void gameMapHandleMouseMove(int objectNumber);
+	void gameMapHandleMouseClick();
+	void gameMapSelectItem(const char *prefix, int animX, int animY);
 
 	// Game logic
 	int logic_handleVerbPickUp();
