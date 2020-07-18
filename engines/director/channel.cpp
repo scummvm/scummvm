@@ -275,10 +275,12 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		if (_widget)
 			delete _widget;
 		_widget = _sprite->_cast->createWidget();
-		_widget->_dims.moveTo(p.x, p.y);
-		_widget->_priority = spriteId;
-		_widget->draw();
-		_widget->_contentIsDirty = false;
+		if (_widget) {
+			_widget->_dims.moveTo(p.x, p.y);
+			_widget->_priority = spriteId;
+			_widget->draw();
+			_widget->_contentIsDirty = false;
+		}
 	}
 }
 

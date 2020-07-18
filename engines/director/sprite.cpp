@@ -171,9 +171,11 @@ void Sprite::setCast(uint16 castId) {
 		}
 
 		Graphics::MacWidget *widget = _cast->createWidget();
-		_width = widget->_dims.width();
-		_height = widget->_dims.height();
-		delete widget;
+		if (widget) {
+			_width = widget->_dims.width();
+			_height = widget->_dims.height();
+			delete widget;
+		}
 	} else {
 		warning("Sprite::setCast(): CastMember id %d has null member", castId);
 	}
