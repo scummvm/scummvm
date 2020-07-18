@@ -118,6 +118,7 @@ public:
 	Common::KeyCode _keyCode;
 
 	// Text
+	Common::String _currentText;
 	int _currentTextX, _currentTextY;
 	bool _isTextVisible;
 
@@ -193,7 +194,7 @@ public:
 	void drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y);
 
 	// Text
-	void loadString(const char *filename, int index, int flag);
+	Common::String loadString(const char *filename, int index, int flag);
 	void drawCurrentTextToSurface(WWSurface *destSurface, int x, int y);
 	void drawCurrentText(int x, int y, WWSurface *destSurface);
 	void displayText(const char *filename, int index, int flag, int x, int y, int drawToVirtual);

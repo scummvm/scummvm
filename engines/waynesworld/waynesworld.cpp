@@ -531,9 +531,24 @@ void WaynesWorldEngine::drawRoomImageToSurface(const char *filename, WWSurface *
     drawImageToSurfaceIntern(filename, destSurface, x, y, false, true);
 }
 
-void WaynesWorldEngine::loadString(const char *filename, int index, int flag) {
-	// TODO Load the string
-	debug("loadString(%s, %d)", filename, index);
+Common::String WaynesWorldEngine::loadString(const char *filename, int index, int flag) {
+	const uint kMaxStringLen = 60;
+	char textBuffer[kMaxStringLen];
+	Common::File fd;
+	Common::String tempFilename = Common::String::format("%s.txt", filename);
+	if (!fd.open(tempFilename))
+		error("WaynesWorldEngine::loadString() Could not open %s", tempFilename.c_str());
+	fd.seek(index * kMaxStringLen);
+	fd.read(textBuffer, kMaxStringLen);
+	// Decrypt the string
+	uint i = 0;
+	for (; i < kMaxStringLen; i++) {
+		textBuffer[i] += 0x80;
+		if (textBuffer[i] == 0x2b)
+			break;
+	}
+	textBuffer[i] = 0;
+	return Common::String(textBuffer);
 }
 
 void WaynesWorldEngine::drawCurrentTextToSurface(WWSurface *destSurface, int x, int y) {
@@ -589,7 +604,7 @@ void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
 }
 
 void WaynesWorldEngine::displayText(const char *filename, int index, int flag, int x, int y, int drawToVirtual) {
-    loadString(filename, index, flag);
+    _currentText = loadString(filename, index, flag);
     drawCurrentText(x, y, nullptr);
 }
 
@@ -1171,9 +1186,8 @@ void WaynesWorldEngine::drawDialogChoices(int choiceIndex) {
     byte selectedTextColor = 13;
     for (int index = 0; index < 5 && _dialogChoices[index] != -1; index++) {
         byte textColor = index + choiceIndex + 11 == 0 ? selectedTextColor : choiceTextColor;
-        loadString("c04", _dialogChoices[index], 0);
-        // TODO Draw the text
-        // txOutTextXY(txtString, 3, 152 + index * 9);
+        Common::String dialogText = loadString("c04", _dialogChoices[index], 0);
+		_screen->drawText(_fontBit5x7, dialogText.c_str(), 3, 152 + index * 9, textColor);
     }
     // sysMouseDriver(1);
     _selectedDialogChoice = choiceIndex;
@@ -1320,10 +1334,16 @@ void WaynesWorldEngine::handleVerbLookAt() {
     if (_objectNumber == kObjectIdInventoryUnusedTicket) {
         // TODO lookAtUnusedTicket();
     } else {
+		int textIndex;
+		if (_objectNumber == -2 || _objectNumber == -3) {
+			textIndex = 0;
+		} else {
+			textIndex = _objectNumber - 27;
+		}
         if (_currentActorNum != 0) {
-            displayText("c02w", _objectNumber, 1, -1, -1, 1);
+            displayText("c02w", textIndex, 1, -1, -1, 1);
         } else {
-            displayText("c02g", _objectNumber, 1, -1, -1, 1);
+            displayText("c02g", textIndex, 1, -1, -1, 1);
         }
     }
 }
