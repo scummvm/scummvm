@@ -193,6 +193,33 @@ void GFTFont::drawText(Graphics::Surface *surface, const char *text, int x, int 
 	}
 }
 
+void GFTFont::drawWrappedText(Graphics::Surface *surface, const char *text, int x, int y, int maxWidth, byte color) {
+    const char *textP = text;
+    const char *lineP = text, *lastSpaceP = nullptr;
+	int textX = x;
+    int lineWidth = 0;
+    while (*textP) {
+        if (textP[1] == 32 || textP[1] == 0)
+            lastSpaceP = textP + 1;
+        int charWidth = getCharWidth(*textP);
+        if (lineWidth + charWidth > maxWidth || textP[1] == 0) {
+			for (const char *p = lineP; p < lastSpaceP; p++) {
+				x += drawChar(surface, (byte)*p, x, y, color);
+			}
+            if (textP[1] == 0)
+                break;
+            lineP = lastSpaceP + 1;
+            textP = lastSpaceP + 1;
+            lineWidth = 0;
+			x = textX;
+            y += _formHeight;
+        } else {
+            lineWidth += charWidth;
+            textP++;
+        }
+    }
+}
+
 int GFTFont::drawChar(Graphics::Surface *surface, byte ch, int x, int y, byte color) {
 	if (ch < _firstChar || ch > _lastChar)
 		return 0;
@@ -268,6 +295,11 @@ void Screen::clear(byte color) {
 
 void Screen::drawText(GFTFont *font, const char *text, int x, int y, byte color) {
 	font->drawText(_surface, text, x, y, color);
+	updateScreen();
+}
+
+void Screen::drawWrappedText(GFTFont *font, const char *text, int x, int y, int maxWidth, byte color) {
+	font->drawWrappedText(_surface, text, x, y, maxWidth, color);
 	updateScreen();
 }
 

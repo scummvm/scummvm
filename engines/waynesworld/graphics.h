@@ -48,6 +48,7 @@ public:
 	~GFTFont();
 	void loadFromFile(const char *filename);
 	void drawText(Graphics::Surface *surface, const char *text, int x, int y, byte color);
+	void drawWrappedText(Graphics::Surface *surface, const char *text, int x, int y, int maxWidth, byte color);
 	int drawChar(Graphics::Surface *surface, byte ch, int x, int y, byte color);
 	int getTextWidth(const char *text) const;
 	int getCharWidth(byte ch) const;
@@ -70,6 +71,7 @@ public:
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void clear(byte color);
 	void drawText(GFTFont *font, const char *text, int x, int y, byte color);
+	void drawWrappedText(GFTFont *font, const char *text, int x, int y, int maxWidth, byte color);
 protected:
 	WWSurface *_surface;
 	void updateScreen();

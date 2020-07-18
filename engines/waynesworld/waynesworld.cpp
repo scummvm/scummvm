@@ -556,10 +556,8 @@ void WaynesWorldEngine::drawCurrentTextToSurface(WWSurface *destSurface, int x, 
 }
 
 void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
-    int textWidth, textCenterX, textX, textY, textColor, actorY;
-    // WWSurface *textSurface = destSurface ? destSurface : _screen;
-    // txSetFont(font_wwinv);
-    // textWidth = txStrWidth(txtString);
+    int textCenterX, textX, textY, textColor, actorY;
+    int textWidth = _fontWWInv->getTextWidth(_currentText.c_str());
     if (x != -1) {
         textCenterX = x;
         textY = y;
@@ -585,19 +583,13 @@ void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
             textY = actorY + 15;
         }
     }
-	// TODO Draw the text
-    // txSetViewPort(textX, 0, textX + 150, 199);
-    // tx_sub_2B2D2(32);
-    // txSetColor(0, 0);
-    // sysMouseDriver(2);
-    // txWrapText(txtString, textX, textY);
-    // txSetFont(font_ww);
-    // tx_sub_2B2D2(32);
-    // txSetColor(textColor, 0);
-    // txWrapText(txtString, clippedTextXCpy, textYCpy);
-    // sysMouseDriver(1);
-    // txSetViewPort(0, 0, 319, 199);
-    // txSetFont(font_bit5x7);
+	if (destSurface) {
+		_fontWWInv->drawWrappedText(destSurface, _currentText.c_str(), textX, textY, 150, 0);
+		_fontWW->drawWrappedText(destSurface, _currentText.c_str(), textX, textY, 150, textColor);
+	} else {
+		_screen->drawWrappedText(_fontWWInv, _currentText.c_str(), textX, textY, 150, 0);
+		_screen->drawWrappedText(_fontWW, _currentText.c_str(), textX, textY, 150, textColor);
+	}
     _isTextVisible = true;
     _currentTextX = x;
     _currentTextY = y;
