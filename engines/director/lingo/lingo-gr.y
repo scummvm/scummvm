@@ -194,7 +194,7 @@ static void mVar(Common::String *s, VarType type) {
 %token tON tENDIF tENDREPEAT tENDTELL
 
 %type<code> asgn lbl expr if chunkexpr simpleexprnoparens
-%type<code> stmtlist tellstart reference simpleexpr list valuelist
+%type<code> tellstart reference simpleexpr list valuelist
 %type<code> jump jumpifz varassign
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
 %type<s> ID on
@@ -536,9 +536,11 @@ if:	  tIF					{
 
 lbl:	  /* nothing */		{ $$ = g_lingo->_currentAssembly->size(); }
 
-stmtlist: 					{ $$ = g_lingo->_currentAssembly->size(); }
-	| stmtlist '\n'
-	| stmtlist stmt
+stmtlist: stmtlistline
+	| stmtlistline '\n' stmtlist
+
+stmtlistline: /* empty */
+	| stmt
 
 simpleexprnoparens: INT		{
 		$$ = g_lingo->code1(LC::c_intpush);
