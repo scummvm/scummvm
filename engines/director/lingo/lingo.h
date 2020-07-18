@@ -422,8 +422,6 @@ public:
 
 	bool _inCond;
 
-	bool _cursorOnStack;
-
 private:
 	int parse(const char *code);
 	void parseMenu(const char *code);

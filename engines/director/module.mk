@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	cast.o \
 	castmember.o \
 	channel.o \
+	cursor.o \
 	detection.o \
 	director.o \
 	events.o \
