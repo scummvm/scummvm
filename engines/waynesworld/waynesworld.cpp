@@ -79,6 +79,13 @@ Common::Error WaynesWorldEngine::run() {
 	_inventorySprite = new WWSurface(312, 52);
 	_walkMap = new byte[kWalkMapSize];
 
+	_fontWW = new GFTFont();
+	_fontWWInv = new GFTFont();
+	_fontBit5x7 = new GFTFont();
+	_fontWW->loadFromFile("ww.gft");
+	_fontWWInv->loadFromFile("wwinv.gft");
+	_fontBit5x7->loadFromFile("bit5x7.gft");
+
 	_wayneSpriteX = 94;
 	_wayneSpriteY = 112;
 	_garthSpriteX = 147;
@@ -155,6 +162,10 @@ Common::Error WaynesWorldEngine::run() {
 #endif
 
 	unloadMainActorSprites();
+
+	delete _fontWW;
+	delete _fontWWInv;
+	delete _fontBit5x7;
 
 	delete[] _walkMap;
 	delete _inventorySprite;
@@ -706,11 +717,8 @@ void WaynesWorldEngine::drawVerbLine(int verbNumber, int objectNumber, const cha
 		}
 	}
 
-	_screen->fillRect(3, 162, 316, 153, 0);
-	// TODO Implement text drawing and draw it
-	// txSetColor(0, 6);
-	// txOutTextXY(154, 5, verbLine);
-	debug("verbLine: [%s]", verbLine.c_str());
+	_screen->fillRect(0, 153, 316, 162, 0);
+	_screen->drawText(_fontBit5x7, verbLine.c_str(), 5, 154, 6);
 }
 
 void WaynesWorldEngine::rememberFirstObjectName(int objectId) {

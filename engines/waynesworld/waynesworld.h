@@ -48,6 +48,7 @@ enum {
 
 class Screen;
 class WWSurface;
+class GFTFont;
 
 struct RoomObject {
     int roomNumber;
@@ -97,6 +98,9 @@ public:
 	byte _palette2[768];
 	Screen *_screen;
 	WWSurface *_backgroundSurface;
+	GFTFont *_fontWW;
+	GFTFont *_fontWWInv;
+	GFTFont *_fontBit5x7;
 
 	// Room
 	Common::String _roomName;

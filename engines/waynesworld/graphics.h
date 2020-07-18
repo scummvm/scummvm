@@ -42,6 +42,23 @@ public:
 	void clear(byte color);
 };
 
+class GFTFont {
+public:
+	GFTFont();
+	~GFTFont();
+	void loadFromFile(const char *filename);
+	void drawText(Graphics::Surface *surface, const char *text, int x, int y, byte color);
+	int drawChar(Graphics::Surface *surface, byte ch, int x, int y, byte color);
+	int getTextWidth(const char *text) const;
+	int getCharWidth(byte ch) const;
+protected:
+	byte _firstChar;
+	byte _lastChar;
+	uint16 *_charTable;
+	byte *_fontData;
+	int16 _formWidth, _formHeight;
+};
+
 class Screen {
 public:
 	Screen();
@@ -52,6 +69,7 @@ public:
 	void borderSquare(int x, int y, int length, byte frameColor, byte fillColor);
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void clear(byte color);
+	void drawText(GFTFont *font, const char *text, int x, int y, byte color);
 protected:
 	WWSurface *_surface;
 	void updateScreen();

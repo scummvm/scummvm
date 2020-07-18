@@ -21,6 +21,7 @@
  */
 
 #include "waynesworld/graphics.h"
+#include "common/file.h"
 #include "common/rect.h"
 #include "common/system.h"
 
@@ -105,9 +106,9 @@ void WWSurface::scaleSurface(const Graphics::Surface *surface) {
 	const int yIncr = (surface->h / h) * surface->pitch;
 	const int yIncrErr = surface->h % h;
 	int errY = 0;
-	byte *source = (byte*)surface->getBasePtr(0, 0);
+	const byte *source = (const byte*)surface->getBasePtr(0, 0);
 	for (int yc = 0; yc < h; yc++) {
-		byte *sourceRow = source;
+		const byte *sourceRow = source;
 		byte *destRow = (byte*)getBasePtr(0, yc);
 		int errX = 0;
 		for (int xc = 0; xc < w; xc++) {
@@ -129,19 +130,100 @@ void WWSurface::scaleSurface(const Graphics::Surface *surface) {
 }
 
 void WWSurface::frameRect(int x1, int y1, int x2, int y2, byte color) {
-	// TODO
+	Graphics::Surface::frameRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
 void WWSurface::borderSquare(int x, int y, int length, byte frameColor, byte fillColor) {
-	// TODO
+	Graphics::Surface::frameRect(Common::Rect(x, y, x + length, y + length), frameColor);
 }
 
 void WWSurface::fillRect(int x1, int y1, int x2, int y2, byte color) {
-	// TODO
+	Graphics::Surface::fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
 void WWSurface::clear(byte color) {
 	Graphics::Surface::fillRect(Common::Rect(w, h), color);
+}
+
+// GFTFont
+
+GFTFont::GFTFont() : _charTable(nullptr), _fontData(nullptr) {
+}
+
+GFTFont::~GFTFont() {
+	delete[] _charTable;
+	delete[] _fontData;
+}
+
+void GFTFont::loadFromFile(const char *filename) {
+	Common::File fd;
+	if (!fd.open(filename))
+		error("GFTFont::loadFromFile() Could not open %s", filename);
+	fd.seek(0x24);
+	_firstChar = fd.readUint16LE();
+	_lastChar = fd.readUint16LE();
+	uint16 charCount = _lastChar - _firstChar + 2;
+	fd.seek(0x48);
+	uint32 charTableOfs = fd.readUint32LE();
+	uint32 charDataOfs = fd.readUint32LE();
+	_formWidth = fd.readSint16LE();
+	_formHeight = fd.readSint16LE();
+	fd.seek(charTableOfs);
+	_charTable = new uint16[charCount];
+	for (uint16 i = 0; i < charCount; i++)
+		_charTable[i] = fd.readUint16LE();
+	fd.seek(charDataOfs);
+	_fontData = new byte[_formWidth * 8 * _formHeight];
+    for (int y = 0; y < _formHeight; y++) {
+        int x = 0;
+        for (int formPos = 0; formPos < _formWidth; formPos++) {
+            byte charByte = fd.readByte();
+            for (int bitNum = 0; bitNum < 8; bitNum++) {
+                _fontData[x + y * _formWidth * 8] = ((charByte & (1 << (7 - bitNum))) != 0) ? 1 : 0;
+                x++;
+            }
+        }
+    }
+}
+
+void GFTFont::drawText(Graphics::Surface *surface, const char *text, int x, int y, byte color) {
+	while (*text) {
+		byte ch = (byte)*text++;
+		x += drawChar(surface, ch, x, y, color);
+	}
+}
+
+int GFTFont::drawChar(Graphics::Surface *surface, byte ch, int x, int y, byte color) {
+	if (ch < _firstChar || ch > _lastChar)
+		return 0;
+	const uint charIndex = ch - _firstChar;
+	byte *charData = _fontData + _charTable[charIndex];
+	int charWidth = getCharWidth(ch);
+	for (int yc = 0; yc < _formHeight; yc++) {
+		byte *destRow = (byte*)surface->getBasePtr(x, y + yc);
+		for (int xc = 0; xc < charWidth; xc++) {
+			if (charData[xc] != 0)
+				*destRow = color;
+			destRow++;
+		}
+		charData += _formWidth * 8;
+	}
+	return charWidth;
+}
+
+int GFTFont::getTextWidth(const char *text) const {
+	int textWidth = 0;
+	while (*text) {
+		textWidth += getCharWidth(*text++);
+	}
+	return textWidth;
+}
+
+int GFTFont::getCharWidth(byte ch) const {
+	if (ch < _firstChar || ch > _lastChar)
+		return 0;
+	const uint charIndex = ch - _firstChar;
+	return _charTable[charIndex + 1] - _charTable[charIndex];
 }
 
 // Screen
@@ -181,6 +263,11 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, byte color) {
 
 void Screen::clear(byte color) {
 	_surface->clear(color);
+	updateScreen();
+}
+
+void Screen::drawText(GFTFont *font, const char *text, int x, int y, byte color) {
+	font->drawText(_surface, text, x, y, color);
 	updateScreen();
 }
 
