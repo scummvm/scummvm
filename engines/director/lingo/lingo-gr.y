@@ -585,8 +585,8 @@ simpleexprnoparens: INT		{
 		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
 		delete $THEOBJECTPROP.obj;
 		delete $THEOBJECTPROP.prop; }
-	| tSPRITE expr tINTERSECTS expr	{ g_lingo->code1(LC::c_intersects); }
-	| tSPRITE expr tWITHIN expr		{ g_lingo->code1(LC::c_within); }
+    | tSPRITE expr tINTERSECTS simpleexpr	{ g_lingo->code1(LC::c_intersects); }
+    | tSPRITE expr tWITHIN simpleexpr		{ g_lingo->code1(LC::c_within); }
 	| list
 	| ID[func] '(' ID[method] ')' {
 			g_lingo->code1(LC::c_lazyeval);
@@ -638,14 +638,14 @@ expr: simpleexpr { $$ = $simpleexpr; }
 chunkexpr:  tFIELD simpleexprnoparens	{
 		Common::String field("field");
 		g_lingo->codeFunc(&field, 1); }
-	|  tCHAR expr tOF expr		{ g_lingo->code1(LC::c_charOf); }
-	| tCHAR expr tTO expr tOF expr	{ g_lingo->code1(LC::c_charToOf); }
-	| tITEM expr tOF expr			{ g_lingo->code1(LC::c_itemOf); }
-	| tITEM expr tTO expr tOF expr	{ g_lingo->code1(LC::c_itemToOf); }
-	| tLINE expr tOF expr			{ g_lingo->code1(LC::c_lineOf); }
-	| tLINE expr tTO expr tOF expr	{ g_lingo->code1(LC::c_lineToOf); }
-	| tWORD expr tOF expr			{ g_lingo->code1(LC::c_wordOf); }
-	| tWORD expr tTO expr tOF expr	{ g_lingo->code1(LC::c_wordToOf); }
+	| tCHAR expr tOF simpleexpr				{ g_lingo->code1(LC::c_charOf); }
+	| tCHAR expr tTO expr tOF simpleexpr	{ g_lingo->code1(LC::c_charToOf); }
+	| tITEM expr tOF simpleexpr				{ g_lingo->code1(LC::c_itemOf); }
+	| tITEM expr tTO expr tOF simpleexpr	{ g_lingo->code1(LC::c_itemToOf); }
+	| tLINE expr tOF simpleexpr				{ g_lingo->code1(LC::c_lineOf); }
+	| tLINE expr tTO expr tOF simpleexpr	{ g_lingo->code1(LC::c_lineToOf); }
+	| tWORD expr tOF simpleexpr				{ g_lingo->code1(LC::c_wordOf); }
+	| tWORD expr tTO expr tOF simpleexpr	{ g_lingo->code1(LC::c_wordToOf); }
 
 reference: 	chunkexpr
 	| tCAST simpleexprnoparens		{
