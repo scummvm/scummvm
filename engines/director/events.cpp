@@ -27,6 +27,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/stage.h"
@@ -81,8 +82,12 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
+				pos = _currentStage->getMousePos();
+
 				m->_lastEventTime = g_director->getMacTicks();
 				m->_lastRollTime =	 m->_lastEventTime;
+
+				sc->renderCursor(sc->getSpriteIDFromPos(pos));
 
 				if (_currentDraggedChannel) {
 					if (_currentDraggedChannel->_sprite->_moveable) {
@@ -147,6 +152,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				}
 
 				_lingo->registerEvent(kEventMouseUp, spriteId);
+				sc->renderCursor(sc->getSpriteIDFromPos(pos));
 				m->_currentMouseDownSpriteId = 0;
 				break;
 

@@ -23,6 +23,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/castmember.h"

@@ -48,6 +48,7 @@ class Frame;
 struct Label;
 class Movie;
 struct Resource;
+class Cursor;
 class Channel;
 class Sprite;
 class CastMember;
@@ -94,6 +95,7 @@ public:
 	bool renderTransition(uint16 frameId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderCursor(uint spriteId);
 
 private:
 	void update();
@@ -116,6 +118,7 @@ public:
 	byte _puppetTempo;
 	PlayState _playState;
 	uint32 _nextFrameTime;
+	Cursor *_currentCursor;
 
 	int _numChannelsDisplayed;
 

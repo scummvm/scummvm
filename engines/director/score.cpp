@@ -38,6 +38,7 @@
 #include "director/frame.h"
 #include "director/movie.h"
 #include "director/sound.h"
+#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/stage.h"
@@ -56,6 +57,7 @@ Score::Score(Movie *movie) {
 	_puppetTempo = 0x00;
 
 	_labels = nullptr;
+	_currentCursor = nullptr;
 
 	_currentFrameRate = 20;
 	_currentFrame = 0;
@@ -418,6 +420,25 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		} else {
 			channel->setClean(nextSprite, i, true);
 		}
+	}
+}
+
+void Score::renderCursor(uint spriteId) {
+	if (_channels[spriteId]->_cursor.isEmpty()) {
+		if (_currentCursor) {
+			_vm->_wm->popCursor();
+			_currentCursor = nullptr;
+		}
+	} else {
+		if (_currentCursor) {
+			if (*_currentCursor == _channels[spriteId]->_cursor)
+				return;
+
+			_vm->_wm->popCursor();
+		}
+
+		_currentCursor = &_channels[spriteId]->_cursor;
+		_vm->_wm->pushCursor(_currentCursor->_cursorType, ((Graphics::Cursor *)_currentCursor));
 	}
 }
 

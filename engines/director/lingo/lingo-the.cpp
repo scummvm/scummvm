@@ -25,6 +25,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember.h"
+#include "director/cursor.h"
 #include "director/channel.h"
 #include "director/movie.h"
 #include "director/sound.h"
@@ -1060,7 +1061,15 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = channel->_constraint;
 		break;
 	case kTheCursor:
-		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		if (channel->_cursor._cursorResId) {
+			d.u.i = channel->_cursor._cursorResId;
+		} else {
+			d.type = ARRAY;
+			d.u.farr = new DatumArray(2);
+
+			d.u.farr->operator[](0) = (int)channel->_cursor._cursorCastId;
+			d.u.farr->operator[](1) = (int)channel->_cursor._cursorMaskId;
+		}
 		break;
 	case kTheEditableText:
 		d.u.i = sprite->_cast ? sprite->_cast->isEditable() : 0;
@@ -1217,7 +1226,11 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		channel->_constraint = d.u.i;
 		break;
 	case kTheCursor:
-		warning("STUB: Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
+		if (d.type == INT) {
+			channel->_cursor.readFromResource(d.asInt());
+		} else if (d.type == ARRAY && d.u.farr->size() == 2) {
+			channel->_cursor.readFromCast(d.u.farr->operator[](0).asInt(), d.u.farr->operator[](1).asInt());
+		}
 		break;
 	case kTheEditableText:
 		sprite->_cast ? sprite->_cast->setEditable(d.asInt()) : false;

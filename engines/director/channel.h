@@ -31,6 +31,7 @@ namespace Graphics {
 namespace Director {
 
 class Sprite;
+class Cursor;
 
 class Channel {
 public:
@@ -53,6 +54,7 @@ public:
 
 public:
 	Sprite *_sprite;
+	Cursor _cursor;
 
 	bool _dirty;
 	bool _visible;
