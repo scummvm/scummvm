@@ -212,7 +212,7 @@ static void mVar(Common::String *s, VarType type) {
 %%
 
 program: programline
-	| programline '\n' program
+	| program '\n' programline
 
 programline: /* empty */
 	| defn
