@@ -3,6 +3,7 @@ MODULE := engines/waynesworld
 MODULE_OBJS := \
 	waynesworld.o \
 	detection.o \
+	gamelogic.o \
 	gamemap.o \
 	graphics.o \
 	pathfinding.o \

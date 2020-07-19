@@ -21,6 +21,7 @@
  */
 
 #include "waynesworld/waynesworld.h"
+#include "waynesworld/gamelogic.h"
 #include "waynesworld/graphics.h"
 #include "waynesworld/objectids.h"
 
@@ -86,6 +87,8 @@ Common::Error WaynesWorldEngine::run() {
 	_fontWWInv->loadFromFile("wwinv.gft");
 	_fontBit5x7->loadFromFile("bit5x7.gft");
 
+	_logic = new GameLogic(this);
+
 	_wayneSpriteX = 94;
 	_wayneSpriteY = 112;
 	_garthSpriteX = 147;
@@ -136,7 +139,8 @@ Common::Error WaynesWorldEngine::run() {
 	drawImageToScreen("r00/backg", 0, 0);
 
 	drawInterface(2);
-	changeRoom(0);
+	// changeRoom(0);
+	changeRoom(1); // DEBUG
 
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	// _gameState = 1; // DEBUG Open map
@@ -147,14 +151,12 @@ Common::Error WaynesWorldEngine::run() {
 		updateEvents();
 		updateMouseMove();
 		if (_mouseClickButtons != 0) {
-			debug("_mouseClickButtons: %d", _mouseClickButtons);
+			// debug("_mouseClickButtons: %d", _mouseClickButtons);
 			handleMouseClick();
 		}
-		/* TODO
 		if (_roomEventNum != 0) {
 			handleRoomEvent();
 		}
-		*/
 		if (_gameState == 1 && _currentRoomNumber < 100) {
 			gameMapOpen();
 		}
@@ -164,6 +166,8 @@ Common::Error WaynesWorldEngine::run() {
 #endif
 
 	unloadMainActorSprites();
+
+	delete _logic;
 
 	delete _fontWW;
 	delete _fontWWInv;
@@ -202,7 +206,6 @@ void WaynesWorldEngine::updateEvents() {
   			_mouseY = event.mouse.y;
   			break;
 		case Common::EVENT_LBUTTONDOWN:
-			debug("EVENT_LBUTTONDOWN");
 			_mouseClickButtons |= kLeftButtonClicked;
 			_mouseClickX = event.mouse.x;
 			_mouseClickY = event.mouse.y;
@@ -212,7 +215,6 @@ void WaynesWorldEngine::updateEvents() {
 			//_mouseClickButtons &= ~kLeftButtonDown;
   			break;
 		case Common::EVENT_RBUTTONDOWN:
-			debug("EVENT_RBUTTONDOWN");
 			_mouseClickButtons |= kRightButtonClicked;
 			_mouseClickX = event.mouse.x;
 			_mouseClickY = event.mouse.y;
@@ -492,9 +494,9 @@ void WaynesWorldEngine::paletteFadeOut(int index, int count, int stepsSize) {
 void WaynesWorldEngine::drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName) {
     Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
 	if (transparent) {
-		destSurface->drawSurface(imageDecoder->getSurface(), x, y);
-	} else {
 		destSurface->drawSurfaceTransparent(imageDecoder->getSurface(), x, y);
+	} else {
+		destSurface->drawSurface(imageDecoder->getSurface(), x, y);
 	}
     delete imageDecoder;
 }
@@ -502,9 +504,9 @@ void WaynesWorldEngine::drawImageToSurfaceIntern(const char *filename, WWSurface
 void WaynesWorldEngine::drawImageToScreenIntern(const char *filename, int x, int y, bool transparent, bool appendRoomName) {
     Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
 	if (transparent) {
-		_screen->drawSurface(imageDecoder->getSurface(), x, y);
-	} else {
 		_screen->drawSurfaceTransparent(imageDecoder->getSurface(), x, y);
+	} else {
+		_screen->drawSurface(imageDecoder->getSurface(), x, y);
 	}
     delete imageDecoder;
 }
@@ -1013,7 +1015,7 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
             waitMillis(ticks);
         }
     } else {
-        for (int index = startIndex; index > startIndex + count; index++) {
+        for (int index = startIndex; index > startIndex + count; index--) {
             updateRoomAnimations(true);
             sprintf(filename, "%s%d", prefix, index);
             drawRoomImageToScreen(filename, x, y);
@@ -1027,6 +1029,16 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
         drawRoomImageToBackground(filename, x, y);
     }
     // sysMouseDriver(1)
+}
+
+void WaynesWorldEngine::setWaynePosition(int x, int y) {
+    _wayneSpriteX = x;
+    _wayneSpriteY = y;
+}
+
+void WaynesWorldEngine::setGarthPosition(int x, int y) {
+    _garthSpriteX = x;
+    _garthSpriteY = y;
 }
 
 void WaynesWorldEngine::openRoomLibrary(int roomNum) {
@@ -1051,12 +1063,20 @@ void WaynesWorldEngine::changeRoom(int roomNum) {
     }
     _actorSpriteValue = 0;
     _currentRoomNumber = roomNum;
-    _byte_306E7++;
+    _roomChangeCtr++;
     loadRoomBackground(roomNum);
 }
 
 void WaynesWorldEngine::refreshRoomBackground(int roomNum) {
-	logic_refreshRoomBackground(roomNum);
+	_logic->refreshRoomBackground(roomNum);
+}
+
+void WaynesWorldEngine::handleRoomEvent() {
+    if (_roomEventNum != 0) {
+		int eventNum = _roomEventNum;
+		_roomEventNum = 0;
+		_logic->handleRoomEvent(eventNum);
+	}
 }
 
 void WaynesWorldEngine::changeRoomScrolling() {
@@ -1077,7 +1097,34 @@ void WaynesWorldEngine::loadRoomMask(int roomNum) {
 	fd.read(_walkMap, kWalkMapSize);
 }
 
+void WaynesWorldEngine::fillRoomMaskArea(int x1, int y1, int x2, int y2, int enabled) {
+	// TODO
+}
+
+void WaynesWorldEngine::loadAnimationSpriteRange(int baseIndex, const char *filename, int count) {
+	// TODO
+}
+
+void WaynesWorldEngine::loadAnimationSprite(int index, const char *filename) {
+	// TODO
+}
+
+void WaynesWorldEngine::drawAnimationSpriteToBackground(int index, int x, int y) {
+	// TODO
+}
+
 void WaynesWorldEngine::updateRoomAnimations(bool doUpdate) {
+	if (_hasRoomAnimationCallback) {
+		_logic->updateRoomAnimations(doUpdate);
+	}
+}
+
+void WaynesWorldEngine::startRoomAnimations() {
+	_animationsCtr = 0;
+	_hasRoomAnimationCallback = true;
+}
+
+void WaynesWorldEngine::stopRoomAnimations() {
 	// TODO
 }
 
@@ -1086,6 +1133,10 @@ void WaynesWorldEngine::loadStaticRoomObjects(int roomNum) {
 }
 
 void WaynesWorldEngine::unloadStaticRoomObjects() {
+	// TODO
+}
+
+void WaynesWorldEngine::setStaticRoomObjectPosition(int roomNum, int fromIndex, int toIndex, int x, int y) {
 	// TODO
 }
 
@@ -1215,14 +1266,14 @@ void WaynesWorldEngine::handleDialogMouseClick() {
     _isTextVisible = false;
     refreshActors();
 
-    continueDialog = logic_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+    continueDialog = _logic->handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 
     if (replyTextIndex1 != -1) {
-        logic_handleDialogReply(replyTextIndex1, replyTextX, replyTextY);
+        _logic->handleDialogReply(replyTextIndex1, replyTextX, replyTextY);
         if (replyTextIndex2 != -1) {
-            logic_handleDialogReply(replyTextIndex2, replyTextX, replyTextY);
+            _logic->handleDialogReply(replyTextIndex2, replyTextX, replyTextY);
             if (replyTextIndex3 != -1) {
-                logic_handleDialogReply(replyTextIndex3, replyTextX, replyTextY);
+                _logic->handleDialogReply(replyTextIndex3, replyTextX, replyTextY);
             }
         }
     }
@@ -1283,7 +1334,7 @@ void WaynesWorldEngine::handleVerbPickUp() {
         refreshActors();
     }
 
-    actionTextIndex = logic_handleVerbPickUp();
+    actionTextIndex = _logic->handleVerbPickUp();
 
     if (_objectNumber == -3) {
         actionTextIndex = 29;
@@ -1388,13 +1439,13 @@ void WaynesWorldEngine::handleVerbUse() {
     }
 
     if (_firstObjectNumber == kObjectIdInventoryBeakerOfAcid && _objectNumber == kObjectIdInventorySquirtGun) {
-        // TODO _byte_3070E |= 0x01;
+        _logic->_r39_flags |= 0x01;
         moveObjectToNowhere(kObjectIdInventoryBeakerOfAcid);
         refreshInventory(true);
         return;
     }
 
-    actionTextIndex = logic_handleVerbUse();
+    actionTextIndex = _logic->handleVerbUse();
 
     if (_firstObjectNumber == kObjectIdInventoryPlungers && _objectNumber != kObjectIdLampPost) {
         actionTextIndex = 44;
@@ -1409,14 +1460,12 @@ void WaynesWorldEngine::handleVerbUse() {
     if (_objectNumber == -3) {
         actionTextIndex = 31;
     } else if (_objectNumber == -2) {
-		/* TODO
-        if (_currentRoomNumber == 38 && (_byte_3070A & 0x01)) {
-            r38_atrap();
+        if (_currentRoomNumber == 38 && (_logic->_r35_flags & 0x01)) {
+            _logic->r38_atrap();
             actionTextIndex = -1;
         } else {
             actionTextIndex = 32;
         }
-		*/
     }
 
     _firstObjectNumber = -1;
@@ -1454,7 +1503,7 @@ void WaynesWorldEngine::handleVerbTalkTo() {
     _dialogChoices[0] = -1;
 
     if (_objectNumber == -3 || _objectNumber == -2) {
-        bool room1Special = false; // TODO !(_byte_306FC & 0x10) && _currentActorNum != 0 && _currentRoomNumber == 1 && (_byte_306FD & 0x01);
+        bool room1Special = !(_logic->_r1_flags1 & 0x10) && _currentActorNum != 0 && _currentRoomNumber == 1 && (_logic->_r1_flags2 & 0x01);
         if (room1Special) {
             actionTextIndex = 14;
         } else {
@@ -1490,7 +1539,7 @@ void WaynesWorldEngine::handleVerbTalkTo() {
         return;
     }
 
-	logic_handleVerbTalkTo();
+	_logic->handleVerbTalkTo();
 
     if (_dialogChoices[0] != -1) {
         startDialog();
@@ -1506,7 +1555,7 @@ void WaynesWorldEngine::handleVerbPush() {
         refreshActors();
     }
 
-    actionTextIndex = logic_handleVerbPush();
+    actionTextIndex = _logic->handleVerbPush();
 
     if (actionTextIndex != -1) {
         displayText("c05", actionTextIndex, 0, -1, -1, 0);
@@ -1531,7 +1580,7 @@ void WaynesWorldEngine::handleVerbPull() {
         refreshActors();
     }
 
-    actionTextIndex = logic_handleVerbPull();
+    actionTextIndex = _logic->handleVerbPull();
 
     if (actionTextIndex != -1) {
         displayText("c06", actionTextIndex, 0, -1, -1, 0);
@@ -1574,7 +1623,7 @@ void WaynesWorldEngine::handleVerbGive() {
         return;
     }
 
-    actionTextIndex = logic_handleVerbGive();
+    actionTextIndex = _logic->handleVerbGive();
 
     _firstObjectNumber = -1;
 
@@ -1592,7 +1641,7 @@ void WaynesWorldEngine::handleVerbOpen() {
         refreshActors();
     }
 
-    actionTextIndex = logic_handleVerbOpen();
+    actionTextIndex = _logic->handleVerbOpen();
 
     if (actionTextIndex != -1) {
         displayText("c09", actionTextIndex, 0, -1, -1, 0);
@@ -1632,7 +1681,7 @@ void WaynesWorldEngine::handleVerbClose() {
         refreshActors();
     }
 
-    actionTextIndex = logic_handleVerbClose();
+    actionTextIndex = _logic->handleVerbClose();
 
     if (actionTextIndex != -1) {
         displayText("c10", actionTextIndex, 0, -1, -1, 0);
@@ -1649,55 +1698,7 @@ void WaynesWorldEngine::handleVerbClose() {
 
 }
 
-int WaynesWorldEngine::logic_handleVerbPickUp() {
-	// TODO
-	return 0;
-}
-
-int WaynesWorldEngine::logic_handleVerbUse() {
-	// TODO
-	return 0;
-}
-
-void WaynesWorldEngine::logic_handleVerbTalkTo() {
-	// TODO
-}
-
-int WaynesWorldEngine::logic_handleVerbPush() {
-	// TODO
-	return 0;
-}
-
-int WaynesWorldEngine::logic_handleVerbPull() {
-	// TODO
-	return 0;
-}
-
-int WaynesWorldEngine::logic_handleVerbOpen() {
-	// TODO
-	return 0;
-}
-
-int WaynesWorldEngine::logic_handleVerbClose() {
-	// TODO
-	return 0;
-}
-
-int WaynesWorldEngine::logic_handleVerbGive() {
-	// TODO
-	return 0;
-}
-
-void WaynesWorldEngine::logic_handleDialogReply(int index, int x, int y) {
-	// TODO
-}
-
-int WaynesWorldEngine::logic_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3) {
-	// TODO
-	return 0;
-}
-
-void WaynesWorldEngine::logic_refreshRoomBackground(int roomNum) {
+void WaynesWorldEngine::setGameFlag(int flagNum) {
 	// TODO
 }
 

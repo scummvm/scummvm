@@ -49,6 +49,7 @@ enum {
 class Screen;
 class WWSurface;
 class GFTFont;
+class GameLogic;
 
 struct RoomObject {
     int roomNumber;
@@ -91,6 +92,7 @@ private:
 
 public:
 	Common::RandomSource *_random;
+	GameLogic *_logic;
 
 	void updateEvents();
 
@@ -107,9 +109,10 @@ public:
 	byte *_walkMap;
 	int _word_306DB;
 	int _word_306DD;
-	int _byte_306E7;
+	int _roomChangeCtr;
 	int _from_x1;
 	bool _doScrollRight;
+	bool _hasRoomAnimationCallback;
 
 	// Input
 	int _mouseX, _mouseY;
@@ -136,6 +139,7 @@ public:
 	int _firstObjectNumber;
 	Common::String _firstObjectName;
 	int _roomEventNum;
+	int _animationsCtr;
 
 	// Actors
 	int _wayneSpriteX, _wayneSpriteY, _wayneKind, _wayneActorScale;
@@ -239,6 +243,8 @@ public:
 	void refreshActors();
 	void pickupObject(int objectId, byte &flags, byte flagsSet, int inventoryObjectId);
 	void playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks);
+	void setWaynePosition(int x, int y);
+	void setGarthPosition(int x, int y);
 
 	// Pathfinding
 	bool walkIsPixelWalkable(int x, int y);
@@ -258,14 +264,22 @@ public:
 	void loadRoomBackground(int roomNum);
 	void changeRoom(int roomNum);
 	void refreshRoomBackground(int roomNum);
+	void handleRoomEvent();
 	void changeRoomScrolling();
 	void loadScrollSprite();
 	void loadRoomMask(int roomNum);
+	void fillRoomMaskArea(int x1, int y1, int x2, int y2, int enabled);
 
+	void loadAnimationSpriteRange(int baseIndex, const char *filename, int count);
+	void loadAnimationSprite(int index, const char *filename);
+	void drawAnimationSpriteToBackground(int index, int x, int y);
 	void updateRoomAnimations(bool doUpdate);
+	void startRoomAnimations();
+	void stopRoomAnimations();
 
 	void loadStaticRoomObjects(int roomNum);
 	void unloadStaticRoomObjects();
+	void setStaticRoomObjectPosition(int roomNum, int fromIndex, int toIndex, int x, int y);
 	void drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface);
 
 	// Room objects
@@ -298,24 +312,13 @@ public:
 	void handleVerbOpen();
 	void handleVerbClose();
 
+	void setGameFlag(int flagNum);
+
 	void gameMapOpen();
 	void gameMapFinish();
 	void gameMapHandleMouseMove(int objectNumber);
 	void gameMapHandleMouseClick();
 	void gameMapSelectItem(const char *prefix, int animX, int animY);
-
-	// Game logic
-	int logic_handleVerbPickUp();
-	int logic_handleVerbUse();
-	void logic_handleVerbTalkTo();
-	int logic_handleVerbPush();
-	int logic_handleVerbPull();
-	int logic_handleVerbOpen();
-	int logic_handleVerbClose();
-	int logic_handleVerbGive();
-	void logic_handleDialogReply(int index, int x, int y);
-	int logic_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
-	void logic_refreshRoomBackground(int roomNum);
 
 	// Savegame API
 
