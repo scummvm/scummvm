@@ -524,7 +524,7 @@ Common::String TextCastMember::getText() {
 }
 
 bool TextCastMember::isModified() {
-	return _modified || (_widget ? ((Graphics::MacText *)_widget)->_contentIsDirty : false);
+	return _modified || (_widget ? ((Graphics::MacText *)_widget)->_contentIsDirty || ((Graphics::MacText *)_widget)->_cursorDirty: false);
 }
 
 bool TextCastMember::isEditable() {
