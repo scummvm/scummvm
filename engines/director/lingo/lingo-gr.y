@@ -490,6 +490,7 @@ stmt: stmtoneliner
 		g_lingo->codeString($ID->c_str()); }
 	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL { g_lingo->code1(LC::c_telldone); }
 	| tTELL expr tTO tellstart stmtoneliner lbl { g_lingo->code1(LC::c_telldone); }
+	| error	'\n'			{ yyerrok; }
 
 startrepeat:	/* nothing */	{ startRepeat(); }
 
@@ -611,7 +612,6 @@ simpleexprnoparens: INT		{
 		}
 		g_lingo->codeString($ID->c_str());
 		delete $ID; }
-	| error	'\n'		{ yyerrok; }
 
 simpleexpr: simpleexprnoparens
 	| '(' expr[arg] ')'			{ $$ = $arg; }
