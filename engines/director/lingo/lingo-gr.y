@@ -548,8 +548,6 @@ simpleexprnoparens: INT		{
 	| FLOAT		{
 		$$ = g_lingo->code1(LC::c_floatpush);
 		g_lingo->codeFloat($FLOAT); }
-	| '+' simpleexpr[arg]  %prec UNARY	{ $$ = $arg; }
-	| '-' simpleexpr[arg]  %prec UNARY	{ $$ = $arg; g_lingo->code1(LC::c_negate); }
 	| SYMBOL	{											// D3
 		$$ = g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString($SYMBOL->c_str());
@@ -558,6 +556,9 @@ simpleexprnoparens: INT		{
 		$$ = g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString($STRING->c_str());
 		delete $STRING; }
+	| '+' simpleexpr[arg]  %prec UNARY	{ $$ = $arg; }
+	| '-' simpleexpr[arg]  %prec UNARY	{ $$ = $arg; g_lingo->code1(LC::c_negate); }
+	| tNOT simpleexpr  %prec UNARY		{ g_lingo->code1(LC::c_not); }
 	| reference
 	| THEENTITY	{
 		$$ = g_lingo->code1(LC::c_intpush);
@@ -629,7 +630,6 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| expr tLE expr				{ g_lingo->code1(LC::c_le); }
 	| expr tAND expr			{ g_lingo->code1(LC::c_and); }
 	| expr tOR expr				{ g_lingo->code1(LC::c_or); }
-	| tNOT expr  %prec UNARY	{ g_lingo->code1(LC::c_not); }
 	| expr '&' expr				{ g_lingo->code1(LC::c_ampersand); }
 	| expr tCONCAT expr			{ g_lingo->code1(LC::c_concat); }
 	| expr tCONTAINS expr		{ g_lingo->code1(LC::c_contains); }
