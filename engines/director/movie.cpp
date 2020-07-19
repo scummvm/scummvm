@@ -46,6 +46,7 @@ Movie::Movie(Stage *stage) {
 
 	_currentMouseDownSpriteId = 0;
 	_currentClickOnSpriteId = 0;
+	_currentEditableTextChannel = 0;
 	_lastEventTime = _vm->getMacTicks();
 	_lastKeyTime = _lastEventTime;
 	_lastClickTime = _lastEventTime;

@@ -118,6 +118,7 @@ public:
 	Common::Rect _movieRect;
 	uint16 _currentMouseDownSpriteId;
 	uint16 _currentClickOnSpriteId;
+	uint16 _currentEditableTextChannel;
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;
 	uint32 _lastClickTime;

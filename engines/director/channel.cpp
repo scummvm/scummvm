@@ -138,6 +138,16 @@ bool Channel::isEmpty() {
 	return (_sprite->_spriteType == kInactiveSprite);
 }
 
+bool Channel::isActiveText() {
+	if (_sprite->_spriteType != kTextSprite)
+		return false;
+
+	if (_sprite->_cast->_widget && _sprite->_cast->_widget->hasAllFocus())
+		return true;
+
+	return false;
+}
+
 Common::Rect Channel::getBbox(bool unstretched) {
 
 	Common::Rect result(unstretched ? _sprite->_width : _width,

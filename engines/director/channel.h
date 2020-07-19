@@ -44,6 +44,7 @@ public:
 	bool isStretched();
 	bool isDirty(Sprite *nextSprite = nullptr);
 	bool isEmpty();
+	bool isActiveText();
 
 	void setWidth(int w);
 	void setHeight(int h);
