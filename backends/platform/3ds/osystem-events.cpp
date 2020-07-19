@@ -168,16 +168,20 @@ static void eventThreadFunc(void *arg) {
 		hidCircleRead(&circle);
 
 		if (circle.dx != lastCircle.dx) {
+			int32 position = (int32)circle.dx * Common::JOYAXIS_MAX / CIRCLE_MAX;
+
 			event.type              = Common::EVENT_JOYAXIS_MOTION;
 			event.joystick.axis     = Common::JOYSTICK_AXIS_LEFT_STICK_X;
-			event.joystick.position = (int32)circle.dx * Common::JOYAXIS_MAX / CIRCLE_MAX;
+			event.joystick.position = CLIP<int32>(position, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
 			pushEventQueue(eventQueue, event);
 		}
 
 		if (circle.dy != lastCircle.dy) {
+			int32 position = -(int32)circle.dy * Common::JOYAXIS_MAX / CIRCLE_MAX;
+
 			event.type              = Common::EVENT_JOYAXIS_MOTION;
 			event.joystick.axis     = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
-			event.joystick.position = -(int32)circle.dy * Common::JOYAXIS_MAX / CIRCLE_MAX;
+			event.joystick.position = CLIP<int32>(position, Common::JOYAXIS_MIN, Common::JOYAXIS_MAX);
 			pushEventQueue(eventQueue, event);
 		}
 
