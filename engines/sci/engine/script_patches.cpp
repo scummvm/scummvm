@@ -4897,6 +4897,27 @@ static const uint16 kq6PatchDuplicateBabyTearsPoint[] = {
 	PATCH_END
 };
 
+// Clicking the lamp on the Baby Tears when the lamp already contains the sacred
+//  water awards the tears even if the babies aren't crying, allowing the puzzle
+//  to be bypassed. The script tests for the sacred water, even though the water
+//  shouldn't affect this sequence, and its only function is to skip the crying
+//  test which is always necessary. We fix this by disabling the water test.
+//
+// Applies to: All versions
+// Responsible method: Brat:doVerb
+static const uint16 kq6SignatureGetBabyTears[] = {
+	SIG_MAGICDWORD,
+	0x89, 0xa1,                         // lsg a1 [ lamp flags ]
+	0x35, 0x02,                         // ldi 02 [ sacred water ]
+	0x12,                               // and    [ is sacred water in lamp? ]
+	SIG_END
+};
+
+static const uint16 kq6PatchGetBabyTears[] = {
+	0x39, 0x00,                         // pushi 00 [ disable sacred water test ]
+	PATCH_END
+};
+
 // KQ6 truncates messages longer than 400 characters in the CD and Mac versions.
 //  This is most prominent when reading Cassima's letter to Alexander. When the
 //  Messager class was upgraded to support audio, a 400 character buffer was
@@ -5609,6 +5630,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
+	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
