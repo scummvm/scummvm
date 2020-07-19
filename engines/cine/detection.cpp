@@ -331,7 +331,7 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	delete out;
 
 	// Delete save file
-	const char * saveFileName = getSavegameFile(slot, target);
+	const char *saveFileName = getSavegameFile(slot, target);
 
 	g_system->getSavefileManager()->removeSavefile(saveFileName);
 }

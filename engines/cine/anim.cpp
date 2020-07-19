@@ -820,19 +820,18 @@ int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 	if (g_cine->getGameType() == Cine::GType_OS &&
 		g_cine->getPlatform() == Common::kPlatformDOS &&
 		g_sound->musicType() != MT_MT32 &&
-		(strstr(resourceName, ".SPL") || strstr(resourceName, ".H32")))
-	{
+		(strstr(resourceName, ".SPL") || strstr(resourceName, ".H32"))) {
 		char base[20];
 		removeExtention(base, resourceName);
 
-		for (int i = 0; i < ARRAYSIZE(resNameMapping); i++) {
+		for (uint i = 0; i < ARRAYSIZE(resNameMapping); i++) {
 			if (scumm_stricmp(base, resNameMapping[i].from) == 0) {
-				strncpy(base, resNameMapping[i].to, sizeof(base));
+				Common::strlcpy(base, resNameMapping[i].to, sizeof(base));
 				break;
 			}
 		}
 
-		const char* ext = (g_sound->musicType() == MT_ADLIB) ? ".ADL" : ".HP";
+		const char *ext = (g_sound->musicType() == MT_ADLIB) ? ".ADL" : ".HP";
 		strcat(base, ext);
 		return loadResource(base, idx, frameIndex);
 	}
