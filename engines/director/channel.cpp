@@ -142,7 +142,7 @@ bool Channel::isActiveText() {
 	if (_sprite->_spriteType != kTextSprite)
 		return false;
 
-	if (_sprite->_cast->_widget && _sprite->_cast->_widget->hasAllFocus())
+	if (_sprite->_cast && _sprite->_cast->_widget && _sprite->_cast->_widget->hasAllFocus())
 		return true;
 
 	return false;
