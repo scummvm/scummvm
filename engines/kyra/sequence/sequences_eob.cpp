@@ -2690,7 +2690,7 @@ void EoBEngine::seq_segaShowStats() {
 			++specialSearches;
 	}
 
-	_txt->printShadedText(Common::String::format("%u:%02u:%02u", _totalPlaySecs / 3600, _totalPlaySecs / 60, _totalPlaySecs).c_str(), 148, 28, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadedText(Common::String::format("%u:%02u:%02u", _totalPlaySecs / 3600, (_totalPlaySecs % 3600) / 60, (_totalPlaySecs % 3600) % 60).c_str(), 148, 28, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u", _totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u", _totalSteps).c_str(), 148, 52, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u(%u%%)", partyArrows, partyArrows * 100 / 26).c_str(), 148, 64, 0xFF, 0x00, -1, -1, 0, false);

@@ -797,7 +797,7 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 
 void EoBCoreEngine::updateAnimTimers() {
 	uint32 curTime = _system->getMillis();
-	if (_lastVIntTick + 1000 <= curTime) {
+	if (_lastSecTick + 1000 <= curTime) {
 		_lastSecTick = curTime;
 		_totalPlaySecs++;
 	}
