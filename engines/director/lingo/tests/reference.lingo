@@ -17,3 +17,12 @@ put line 1 to 5 of field the number of cast "MasterList" into field the number o
 -- user-defined handlers/factories w/ reference name
 -- (mainly to test grammar, so no factory definition)
 set theWindow = Window(mNew,#noGrowDoc,"Window " & windowNumber)
+
+-- other weird stuff with reference name
+put window("test")
+set window = 1
+put window
+window("test")
+window "test"
+window cast
+put cast cast
