@@ -195,25 +195,30 @@ void GFTFont::drawText(Graphics::Surface *surface, const char *text, int x, int 
 
 void GFTFont::drawWrappedText(Graphics::Surface *surface, const char *text, int x, int y, int maxWidth, byte color) {
     const char *textP = text;
-    const char *lineP = text, *lastSpaceP = nullptr;
+    const char *lineStartP = text, *lastSpaceP = nullptr;
 	int textX = x;
     int lineWidth = 0;
     while (*textP) {
-        if (textP[1] == 32 || textP[1] == 0)
-            lastSpaceP = textP + 1;
+        if (textP > text && textP[-1] == 32)
+            lastSpaceP = textP - 1;
         int charWidth = getCharWidth(*textP);
-        if (lineWidth + charWidth > maxWidth || textP[1] == 0) {
-			for (const char *p = lineP; p < lastSpaceP; p++) {
+        if (lineWidth + charWidth > maxWidth) {
+			const char *lineEndP = lastSpaceP ? lastSpaceP : textP + 1;
+			for (const char *p = lineStartP; p < lineEndP; p++) {
 				x += drawChar(surface, (byte)*p, x, y, color);
 			}
-            if (textP[1] == 0)
-                break;
-            lineP = lastSpaceP + 1;
+            lineStartP = lastSpaceP + 1;
             textP = lastSpaceP + 1;
             lineWidth = 0;
 			x = textX;
             y += _formHeight;
-        } else {
+        } else if (textP[1] == 0) {
+			const char *lineEndP = textP + 1;
+			for (const char *p = lineStartP; p < lineEndP; p++) {
+				x += drawChar(surface, (byte)*p, x, y, color);
+			}
+			break;
+		} else {
             lineWidth += charWidth;
             textP++;
         }
