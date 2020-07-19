@@ -741,15 +741,8 @@ void MacText::setEditable(bool editable) {
 	if (editable) {
 		// TODO: Select whole region. This is done every time the text is set from
 		// uneditable to editable.
-		_selectedText.startX = 0;
-		_selectedText.startY = 0;
-		_selectedText.startCol = 0;
-		_selectedText.startRow = 0;
-
-		_selectedText.endX = getLineWidth(getLineCount() - 1);;
-		_selectedText.endY = getTextHeight();
-		_selectedText.endCol = getLineCharWidth(getLineCount() - 1);
-		_selectedText.endRow = getLineCount() - 1;
+		setSelection(0, true);
+		setSelection(-1, false);
 
 		setActive(editable);
 		_wm->setActiveWidget(this);
@@ -1016,6 +1009,61 @@ Common::U32String MacText::getSelection(bool formatted, bool newlines) {
 
 void MacText::clearSelection() {
 	_selectedText.endY = _selectedText.startY = -1;
+}
+
+void MacText::setSelection(int pos, bool start) {
+	int row = 0, col = 0;
+	int colX = 0;
+
+	while (pos > 0) {
+		if (pos < getLineCharWidth(row)) {
+			for (int i = 0; i < _textLines[row].chunks.size(); i++) {
+				if (pos < _textLines[row].chunks[i].text.size()) {
+					colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text.c_str(), pos));
+					col += pos;
+					pos = 0;
+					break;
+				} else {
+					colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text));
+					pos -= _textLines[row].chunks[i].text.size();
+					col += _textLines[row].chunks[i].text.size();
+				}
+			}
+			break;
+		} else {
+			pos -= getLineCharWidth(row);
+		}
+
+		row++;
+		if (row >= _textLines.size()) {
+			colX = _surface->w;
+			col = getLineCharWidth(row);
+
+			break;
+		}
+	}
+
+	if (pos == -1) {
+		row = _textLines.size() - 1;
+		colX = _surface->w;
+		col = getLineCharWidth(row);
+	}
+
+	int rowY = _textLines[row].y;
+
+	if (start) {
+		_selectedText.startX = colX;
+		_selectedText.startY = rowY;
+		_selectedText.startCol = col;
+		_selectedText.startRow = row;
+	} else {
+		_selectedText.endX = colX;
+		_selectedText.endY = rowY;
+		_selectedText.endCol = col;
+		_selectedText.endRow = row;
+	}
+
+	_contentIsDirty = true;
 }
 
 bool MacText::isCutAllowed() {

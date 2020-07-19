@@ -191,6 +191,8 @@ public:
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
+	void setSelection(int pos, bool start);
+
 	Common::U32String getEditedString();
 
 private:
