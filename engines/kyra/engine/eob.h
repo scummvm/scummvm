@@ -102,6 +102,7 @@ private:
 	void seq_segaSetupSequence(int sequenceId);
 	void seq_segaRestoreAfterSequence();
 	bool seq_segaPlaySequence(int sequenceId, bool setupScreen = false);
+	void seq_segaPausePlayer(bool pause) override;
 
 	const char *const *_finBonusStrings;
 	SegaSequencePlayer *_seqPlayer;

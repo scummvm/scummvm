@@ -903,13 +903,15 @@ protected:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false) override;
+	void pauseEngineIntern(bool pause) override;
 
 	virtual void displayParchment(int id);
 	int countResurrectionCandidates();
 
 	void seq_portal();
 	virtual const uint8 **makePortalShapes();
-	bool seq_playSegaSequence(int id) { return true; }
+	//bool seq_playSegaSequence(int id) { return true; }
+	virtual void seq_segaPausePlayer(bool pause) {}
 	bool checkPassword();
 
 	Common::String convertAsciiToSjis(Common::String str);

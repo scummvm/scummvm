@@ -1820,6 +1820,11 @@ void EoBCoreEngine::delay(uint32 millis, bool, bool) {
 	}
 }
 
+void EoBCoreEngine::pauseEngineIntern(bool pause) {
+	KyraEngine_v1::pauseEngineIntern(pause);
+	seq_segaPausePlayer(pause);
+}
+
 void EoBCoreEngine::displayParchment(int id) {
 	_txt->setWaitButtonMode(1);
 	_txt->resetPageBreakString();

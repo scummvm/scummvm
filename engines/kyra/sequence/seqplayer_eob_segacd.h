@@ -41,7 +41,7 @@ public:
 	~SegaSequencePlayer();
 
 	bool play(int id);
-	void setWaitFlag(bool enable);
+	void pause(bool pause);
 
 private:
 	void run(const uint8 *data);
@@ -73,8 +73,9 @@ private:
 	uint16 _playSpeechAnimation;
 	uint16 _speechAnimType;
 	uint16 _speechAnimDrawOps[14];
+	uint32 _frameTimer;
+	uint32 _pauseStart;
 
-	bool _waitFlag;
 	int _waterdeepSceneTimer, _speechAnimTimer;
 	uint16 _speechAnimNo, _speechAnimFrame;
 	int _playingID;

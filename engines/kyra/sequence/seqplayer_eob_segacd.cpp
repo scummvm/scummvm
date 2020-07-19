@@ -33,8 +33,8 @@
 namespace Kyra {
 
 SegaSequencePlayer::SegaSequencePlayer(EoBEngine *vm, Screen_EoB *screen, SegaCDResource *res) : _vm(vm), _screen(screen), _res(res), _tileSets(0), _debugResyncCnt(0), _speechAnimType(0),
-	_playingID(1), _waterdeepScene(0), _playSpeechAnimation(0), _waitFlag(false), _waterdeepSceneTimer(0), _speechAnimTimer(0), _speechAnimNo(0), _speechAnimFrame(0),
-	_newTrack(-1), _renderer(_screen->sega_getRenderer()), _animator(_screen->sega_getAnimator()) {
+	_playingID(1), _waterdeepScene(0), _playSpeechAnimation(0), _frameTimer(0), _waterdeepSceneTimer(0), _speechAnimTimer(0), _speechAnimNo(0), _speechAnimFrame(0),
+	_newTrack(-1), _pauseStart(0), _renderer(_screen->sega_getRenderer()), _animator(_screen->sega_getAnimator()) {
 #define SQOPC(x) _opcodes.push_back(new SQOpcode(this, &SegaSequencePlayer::x, #x))
 	SQOPC(s_initDrawObject);
 	SQOPC(s_drawTileSet);
@@ -233,14 +233,16 @@ bool SegaSequencePlayer::play(int id) {
 	return true;
 }
 
-void SegaSequencePlayer::setWaitFlag(bool enable) {
-	_waitFlag = enable;
+void SegaSequencePlayer::pause(bool pause) {
+	if (pause)
+		_pauseStart = _vm->_system->getMillis();
+	else
+		_frameTimer += (_vm->_system->getMillis() - _pauseStart);
 }
 
 void SegaSequencePlayer::run(const uint8 *data) {
 	_waterdeepScene = _playSpeechAnimation = false;
-	uint32 frameCounter = 0;
-	uint32 nextFrame = 0;
+	_frameTimer = _vm->_system->getMillis();
 
 	for (bool runLoop = true; runLoop && !(_vm->shouldQuit() || _vm->skipFlag()); ) {
 		uint16 frameSize = READ_BE_UINT16(data);
@@ -249,12 +251,10 @@ void SegaSequencePlayer::run(const uint8 *data) {
 
 		uint32 frameStart = _vm->_system->getMillis();
 		uint16 timeStamp = READ_BE_UINT16(data + 2);
-		uint32 lastFrame = nextFrame;
-		nextFrame = timeStamp * 16;
-		if (nextFrame < lastFrame)
-			frameCounter = 0;
+		uint32 nextFrame = _frameTimer + (timeStamp * 16667) / 1000;
+		bool insertDelay = false;
 
-		if (frameCounter >= nextFrame) {
+		if (_vm->_system->getMillis() >= nextFrame) {
 			debugC(5, kDebugLevelSequence, "SeqPlayer: Timestamp %08d", timeStamp);
 			for (uint16 timeStamp2 = timeStamp; timeStamp2 == timeStamp; ) {
 				uint16 op = READ_BE_UINT16(data + 4);
@@ -266,6 +266,8 @@ void SegaSequencePlayer::run(const uint8 *data) {
 
 				timeStamp2 = READ_BE_UINT16(data + 2);
 			}
+		} else {
+			insertDelay = true;
 		}
 
 		if (_waterdeepScene)
@@ -280,27 +282,11 @@ void SegaSequencePlayer::run(const uint8 *data) {
 		_screen->sega_updatePaletteFaders(-1);
 		_screen->updateScreen();
 
-		uint32 now = _vm->_system->getMillis();
-		int diff = now - (frameStart + 16);
-		if (diff < 0)
-			_vm->delay((uint32)-diff);
-		else if (diff) {
-			frameCounter += diff;
-			// This will be triggered with higher values whenever there is a palette fading and the code waits for it
-			// to finish (the code will wait for s_fadeToBlack() and s_fadeToNeutral() but not for s_paletteOps(), unless
-			// followed by s_waitForPaletteFade()). This doesn't cause issues, since it is the intended original behavior,
-			// but it needs to be compensated in the timing. The original does that automatically, since the frameCounter
-			// comes from the vblank interrupt vector. I don't use _system->getMillis directly for the frame timer, since
-			// it will be messed up when activating the GMM during sequence playback.
-			debugC(4, kDebugLevelSequence, "    Out of Sync. Catching up millis: %d", diff);
-			_debugResyncCnt += diff;
+		if (insertDelay) {
+			int diff = _vm->_system->getMillis() - (frameStart + 16);
+			if (diff < 0)
+				_vm->delay((uint32)-diff);
 		}
-		frameCounter += 16;
-
-		/*if (_finFlag & 0x80) {
-			if (_waitFlag || _curVis == 55 || _curVis == 56)
-				return true;
-		}*/
 	}
 }
 
@@ -592,11 +578,6 @@ void SegaSequencePlayer::s_playCD(const uint8 *pos) {
 	if (track)
 		_newTrack = track;
 	_vm->snd_stopSound();
-
-	if (_waitFlag) {
-		while (!(_vm->shouldQuit() || _vm->skipFlag()))
-			_vm->delay(20);
-	}
 }
 
 void SegaSequencePlayer::s_displayTextEn(const uint8 *pos) {
