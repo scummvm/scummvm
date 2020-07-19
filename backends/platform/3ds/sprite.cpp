@@ -64,7 +64,6 @@ void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode) {
 	if (width && height) {
 		pixels = linearAlloc(h * pitch);
 		C3D_TexInit(&texture, w, h, mode->textureFormat);
-		C3D_TexSetFilter(&texture, GPU_LINEAR, GPU_LINEAR);
 		assert(pixels && texture.data);
 		clear();
 	}
@@ -147,6 +146,11 @@ C3D_Mtx* Sprite::getMatrix() {
 		Mtx_Translate(&modelview, posX - offsetX, posY - offsetY, 0, true);
 	}
 	return &modelview;
+}
+
+void Sprite::setFilteringMode(bool enableLinearFiltering) {
+	GPU_TEXTURE_FILTER_PARAM filteringMode = enableLinearFiltering ? GPU_LINEAR : GPU_NEAREST;
+	C3D_TexSetFilter(&texture, filteringMode, filteringMode);
 }
 
 } // namespace _3DS

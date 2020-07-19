@@ -79,6 +79,7 @@ OSystem_3DS::OSystem_3DS():
 	_magWidth(400),
 	_magHeight(240),
 	_gameTextureDirty(false),
+	_filteringEnabled(true),
 	_overlayVisible(false),
 	_screenChangeId(0),
 	_magnifyMode(MODE_MAGOFF),
@@ -127,6 +128,7 @@ void OSystem_3DS::initBackend() {
 	loadConfig();
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("filtering", true);
 	if (!ConfMan.hasKey("vkeybd_pack_name")) {
 		ConfMan.set("vkeybd_pack_name", "vkeybd_small");
 	}
