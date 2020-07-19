@@ -1244,7 +1244,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheEditableText:
-		sprite->_cast->setEditable(d.asInt());
+		if (sprite->_cast)
+			sprite->_cast->setEditable(d.asInt());
 		break;
 	case kTheForeColor:
 		if (d.asInt() != sprite->_foreColor) {
