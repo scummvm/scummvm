@@ -82,10 +82,10 @@ extern int yydebug;
     tPLAYACCEL = 283,              /* tPLAYACCEL  */
     tMETHOD = 284,                 /* tMETHOD  */
     THEOBJECTPROP = 285,           /* THEOBJECTPROP  */
-    CAST = 286,                    /* CAST  */
-    FIELD = 287,                   /* FIELD  */
-    SCRIPT = 288,                  /* SCRIPT  */
-    WINDOW = 289,                  /* WINDOW  */
+    tCAST = 286,                   /* tCAST  */
+    tFIELD = 287,                  /* tFIELD  */
+    tSCRIPT = 288,                 /* tSCRIPT  */
+    tWINDOW = 289,                 /* tWINDOW  */
     tDOWN = 290,                   /* tDOWN  */
     tELSE = 291,                   /* tELSE  */
     tELSIF = 292,                  /* tELSIF  */
@@ -138,11 +138,7 @@ extern int yydebug;
     tON = 339,                     /* tON  */
     tENDIF = 340,                  /* tENDIF  */
     tENDREPEAT = 341,              /* tENDREPEAT  */
-    tENDTELL = 342,                /* tENDTELL  */
-    tCAST = 343,                   /* tCAST  */
-    tFIELD = 344,                  /* tFIELD  */
-    tSCRIPT = 345,                 /* tSCRIPT  */
-    tWINDOW = 346                  /* tWINDOW  */
+    tENDTELL = 342                 /* tENDTELL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -166,7 +162,7 @@ union YYSTYPE
 		Common::String *prop;
 	} objectprop;
 
-#line 170 "engines/director/lingo/lingo-gr.h"
+#line 166 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
