@@ -922,7 +922,6 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 				(((Graphics::MacText *)channel->_sprite->_cast->_widget)->setSelection(d.asInt(), false));
 		}
 		break;
-		break;
 	case kTheSelStart:
 		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
 			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
