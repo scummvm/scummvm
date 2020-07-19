@@ -543,8 +543,8 @@ bool TextCastMember::setEditable(bool editable) {
 	}
 
 	Graphics::MacText *text = (Graphics::MacText *)_widget;
-	text->_focusable = editable;
 	text->setEditable(editable);
+	text->_focusable = editable;
 	text->_selectable = editable;
 	// text->setActive(editable);
 
