@@ -26,10 +26,20 @@
 #include <3ds.h>
 #include <malloc.h>
 
+enum {
+	SYSTEM_MODEL_2DS = 3
+};
+
 int main(int argc, char *argv[]) {
 	// Initialize basic libctru stuff
-	gfxInitDefault();
 	cfguInit();
+	gfxInitDefault();
+
+	// 800px wide top screen is not available on old 2DS systems
+	u8 systemModel = 0;
+	CFGU_GetSystemModel(&systemModel);
+	gfxSetWide(systemModel != SYSTEM_MODEL_2DS);
+
 	romfsInit();
 	osSetSpeedupEnable(true);
 // 	consoleInit(GFX_TOP, NULL);
@@ -64,7 +74,7 @@ int main(int argc, char *argv[]) {
 #endif
 	gdbHioDevExit();
 	romfsExit();
-	cfguExit();
 	gfxExit();
+	cfguExit();
 	return res;
 }
