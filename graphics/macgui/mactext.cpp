@@ -738,13 +738,14 @@ void MacText::setEditable(bool editable) {
 	_editable = editable;
 	_cursorOff = !editable;
 
+	setActive(editable);
+	_active = editable;
 	if (editable) {
 		// TODO: Select whole region. This is done every time the text is set from
 		// uneditable to editable.
 		setSelection(0, true);
 		setSelection(-1, false);
 
-		setActive(editable);
 		_wm->setActiveWidget(this);
 	} else {
 		undrawCursor();
