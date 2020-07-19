@@ -145,7 +145,7 @@ Palette &Palette::rotateRight(byte firstIndex, byte lastIndex) {
 
 	const Color lastColor = _colors[lastIndex];
 
-	for (int i = lastIndex; i > firstIndex; i--)
+	for (uint i = lastIndex; i > firstIndex; i--)
 		_colors[i] = _colors[i - 1];
 
 	_colors[firstIndex] = lastColor;
@@ -158,7 +158,7 @@ Palette &Palette::rotateLeft(byte firstIndex, byte lastIndex) {
 
 	const Color firstColor = _colors[firstIndex];
 
-	for (int i = firstIndex; i < lastIndex; i++)
+	for (uint i = firstIndex; i < lastIndex; i++)
 		_colors[i] = _colors[i + 1];
 
 	_colors[lastIndex] = firstColor;
