@@ -139,7 +139,7 @@ void LM::m_dispose(int nargs) {
 /* ScriptContext */
 
 ScriptContext::ScriptContext(Common::String name, LingoArchive *archive, ScriptType type, uint16 id)
-	: Object(name), _archive(archive), _scriptType(type), _id(id) {
+	: Object<ScriptContext>(name), _archive(archive), _scriptType(type), _id(id) {
 	_objType = kScriptObj;
 }
 
@@ -327,7 +327,7 @@ Datum Stage::getProp(const Common::String &propName) {
 	if (g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow) {
 		return getField(g_lingo->_theEntityFields[propName]->field);
 	}
-	
+
 	warning("Stage::getProp: unknown property '%s'", propName.c_str());
 	return Datum();
 }
@@ -336,7 +336,7 @@ bool Stage::setProp(const Common::String &propName, const Datum &value) {
 	if (g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow) {
 		return setField(g_lingo->_theEntityFields[propName]->field, value);
 	}
-	
+
 	warning("Stage::setProp: unknown property '%s'", propName.c_str());
 	return false;
 }
@@ -375,7 +375,7 @@ void LM::m_forget(int nargs) {
 	for (i = 0; i < windowList->size(); i++) {
 		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
 			continue;
-		
+
 		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
 		if (window == me)
 			break;
@@ -388,7 +388,7 @@ void LM::m_forget(int nargs) {
 	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); ++it) {
 		if (it->_value.type != OBJECT || it->_value.u.obj->getObjType() != kWindowObj)
 			continue;
-		
+
 		Stage *window = static_cast<Stage *>((*windowList)[i].u.obj);
 		if (window == me)
 			g_lingo->_globalvars[it->_key] = 0;
