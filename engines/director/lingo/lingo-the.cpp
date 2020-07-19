@@ -915,10 +915,21 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheRomanLingo);
 		break;
 	case kTheSelEnd:
-		setTheEntitySTUB(kTheSelEnd);
+		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
+			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
+
+			if (channel->_sprite->_cast->_widget)
+				(((Graphics::MacText *)channel->_sprite->_cast->_widget)->setSelection(d.asInt(), false));
+		}
+		break;
 		break;
 	case kTheSelStart:
-		setTheEntitySTUB(kTheSelStart);
+		if (_vm->getCurrentMovie()->_currentEditableTextChannel != 0) {
+			Channel *channel = _vm->getCurrentMovie()->getScore()->getChannelById(_vm->getCurrentMovie()->_currentEditableTextChannel);
+
+			if (channel->_sprite->_cast->_widget)
+				(((Graphics::MacText *)channel->_sprite->_cast->_widget)->setSelection(d.asInt(), true));
+		}
 		break;
 	case kTheSoundEnabled:
 		setTheEntitySTUB(kTheSoundEnabled);
