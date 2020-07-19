@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Escape from Monkey Island.
    - Added support for The Longest Journey.
    - Added support for Myst 3: Exile.
+   - Added support for Hades' Challenge.
 
  General:
    - Switched ScummVM GUI output to UTF-32.

@@ -1540,7 +1540,14 @@ begin_credits("Credits");
 				add_person("", "Faalagorn", "Few code improvements");
 				add_person("", "orangeforest11", "Few engine improvements");
 			end_persons();
+                end_section();
+
+		begin_section("Hades' Challenge", "hadesch_contrib");
+			begin_persons();
+				add_person("Vladimir Serbinenko/Google", "phcoder", "Engine implementation");
+			end_persons();
 		end_section();
+
 
 		add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");
 
