@@ -496,6 +496,44 @@ U32String operator+(const U32String &x, const U32String &y) {
 	return temp;
 }
 
+void U32String::wordWrap(const uint32 maxLength) {
+	if (_size < maxLength) {
+		return;
+	}
+
+	makeUnique();
+
+	const uint32 kNoSpace = 0xFFFFFFFF;
+
+	uint32 i = 0;
+	while (i < _size) {
+		uint32 lastSpace = kNoSpace;
+		uint32 x = 0;
+		while (i < _size && x <= maxLength) {
+			const char c = _str[i];
+			if (c == '\n') {
+				lastSpace = kNoSpace;
+				x = 0;
+			} else {
+				if (Common::isSpace(c)) {
+					lastSpace = i;
+				}
+				++x;
+			}
+			++i;
+		}
+
+		if (x > maxLength) {
+			if (lastSpace == kNoSpace) {
+				insertChar('\n', i - 1);
+			} else {
+				setChar('\n', lastSpace);
+				i = lastSpace + 1;
+			}
+		}
+	}
+}
+
 uint64 U32String::asUint64() const {
 	uint64 result = 0;
 	for (uint32 i = 0; i < _size; ++i) {
