@@ -27,11 +27,11 @@
 
 namespace GUI {
 
-const Common::String EditRecordDialog::getAuthor() {
+const Common::U32String EditRecordDialog::getAuthor() {
 	return _authorEdit->getEditString();
 }
 
-void EditRecordDialog::setAuthor(const Common::String &author) {
+void EditRecordDialog::setAuthor(const Common::U32String &author) {
 	_authorEdit->setEditString(author);
 }
 
@@ -54,13 +54,13 @@ void EditRecordDialog::setName(const Common::String &name) {
 EditRecordDialog::~EditRecordDialog() {
 }
 
-EditRecordDialog::EditRecordDialog(const Common::String author, const Common::String name, const Common::String notes) : Dialog("EditRecordDialog") {
-	new StaticTextWidget(this,"EditRecordDialog.AuthorLabel",_("Author:"));
-	new StaticTextWidget(this,"EditRecordDialog.NameLabel",_("Name:"));
-	new StaticTextWidget(this,"EditRecordDialog.NotesLabel",_("Notes:"));
-	_authorEdit = new EditTextWidget(this, "EditRecordDialog.AuthorEdit","");
-	_notesEdit = new EditTextWidget(this, "EditRecordDialog.NotesEdit","");
-	_nameEdit = new EditTextWidget(this, "EditRecordDialog.NameEdit","");
+EditRecordDialog::EditRecordDialog(const Common::U32String author, const Common::String name, const Common::String notes) : Dialog("EditRecordDialog") {
+	new StaticTextWidget(this, "EditRecordDialog.AuthorLabel" , _("Author:"));
+	new StaticTextWidget(this, "EditRecordDialog.NameLabel", _("Name:"));
+	new StaticTextWidget(this, "EditRecordDialog.NotesLabel", _("Notes:"));
+	_authorEdit = new EditTextWidget(this, "EditRecordDialog.AuthorEdit", Common::U32String(""));
+	_notesEdit = new EditTextWidget(this, "EditRecordDialog.NotesEdit", Common::U32String(""));
+	_nameEdit = new EditTextWidget(this, "EditRecordDialog.NameEdit", Common::U32String(""));
 	_authorEdit->setEditString(author);
 	_notesEdit->setEditString(notes);
 	_nameEdit->setEditString(name);

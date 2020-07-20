@@ -60,9 +60,9 @@ private:
 	void updateSelection(bool redraw);
 	void updateScreenshot();
 public:
-	Common::String _author;
-	Common::String _name;
-	Common::String _notes;
+	Common::U32String _author;
+	Common::String    _name;
+	Common::String    _notes;
 	enum DialogResult {
 		kRecordDialogClose,
 		kRecordDialogRecord,
