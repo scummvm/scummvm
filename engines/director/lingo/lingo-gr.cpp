@@ -2191,7 +2191,7 @@ yyreduce:
 
   case 12:
 #line 227 "engines/director/lingo/lingo-gr.y"
-                                        {
+                                                {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
 		mVar((yyvsp[0].s), globalCheck());
@@ -2203,7 +2203,7 @@ yyreduce:
 
   case 13:
 #line 234 "engines/director/lingo/lingo-gr.y"
-                                                {
+                                        {
 		g_lingo->code1(LC::c_assign);
 		(yyval.code) = (yyvsp[-2].code); }
 #line 2210 "engines/director/lingo/lingo-gr.cpp"
@@ -2227,7 +2227,7 @@ yyreduce:
 
   case 15:
 #line 249 "engines/director/lingo/lingo-gr.y"
-                                        {
+                                                {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
 		mVar((yyvsp[0].s), globalCheck());
@@ -2239,7 +2239,7 @@ yyreduce:
 
   case 16:
 #line 256 "engines/director/lingo/lingo-gr.y"
-                                                {
+                                        {
 		g_lingo->code1(LC::c_after);
 		(yyval.code) = (yyvsp[-2].code); }
 #line 2246 "engines/director/lingo/lingo-gr.cpp"
@@ -2247,7 +2247,7 @@ yyreduce:
 
   case 17:
 #line 259 "engines/director/lingo/lingo-gr.y"
-                                        {
+                                                {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
 		mVar((yyvsp[0].s), globalCheck());
@@ -2259,7 +2259,7 @@ yyreduce:
 
   case 18:
 #line 266 "engines/director/lingo/lingo-gr.y"
-                                                {
+                                        {
 		g_lingo->code1(LC::c_before);
 		(yyval.code) = (yyvsp[-2].code); }
 #line 2266 "engines/director/lingo/lingo-gr.cpp"
@@ -2267,7 +2267,7 @@ yyreduce:
 
   case 19:
 #line 269 "engines/director/lingo/lingo-gr.y"
-                                                {
+                                                        {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[-2].s)->c_str());
 		mVar((yyvsp[-2].s), globalCheck());
@@ -2279,7 +2279,7 @@ yyreduce:
 
   case 20:
 #line 276 "engines/director/lingo/lingo-gr.y"
-                                        {
+                                                {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentityassign);
@@ -2291,7 +2291,7 @@ yyreduce:
 
   case 21:
 #line 283 "engines/director/lingo/lingo-gr.y"
-                                                {
+                                                        {
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[-2].s)->c_str());
 		mVar((yyvsp[-2].s), globalCheck());
@@ -2303,7 +2303,7 @@ yyreduce:
 
   case 22:
 #line 290 "engines/director/lingo/lingo-gr.y"
-                                        {
+                                                {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentityassign);
@@ -2369,7 +2369,7 @@ yyreduce:
 
   case 27:
 #line 332 "engines/director/lingo/lingo-gr.y"
-                                        {
+                                                {
 		g_lingo->code1(LC::c_objectpropassign);
 		g_lingo->codeString((yyvsp[-2].objectprop).obj->c_str());
 		g_lingo->codeString((yyvsp[-2].objectprop).prop->c_str());
@@ -2381,7 +2381,7 @@ yyreduce:
 
   case 28:
 #line 339 "engines/director/lingo/lingo-gr.y"
-                                        {
+                                                {
 		g_lingo->code1(LC::c_objectpropassign);
 		g_lingo->codeString((yyvsp[-2].objectprop).obj->c_str());
 		g_lingo->codeString((yyvsp[-2].objectprop).prop->c_str());
@@ -2557,7 +2557,7 @@ yyreduce:
 
   case 46:
 #line 480 "engines/director/lingo/lingo-gr.y"
-                        {
+                                        {
 		if (g_lingo->_repeatStack.size()) {
 			g_lingo->code2(LC::c_jump, 0);
 			int pos = g_lingo->_currentAssembly->size() - 1;
@@ -2570,7 +2570,7 @@ yyreduce:
 
   case 47:
 #line 488 "engines/director/lingo/lingo-gr.y"
-                              {
+                                {
 		g_lingo->code1(LC::c_whencode);
 		g_lingo->codeString((yyvsp[-2].s)->c_str()); }
 #line 2577 "engines/director/lingo/lingo-gr.cpp"
@@ -2731,7 +2731,7 @@ yyreduce:
 
   case 75:
 #line 564 "engines/director/lingo/lingo-gr.y"
-                        {
+                                                        {
 		(yyval.code) = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentitypush);
@@ -2771,7 +2771,7 @@ yyreduce:
 
   case 79:
 #line 584 "engines/director/lingo/lingo-gr.y"
-                        {
+                                                {
 		g_lingo->code1(LC::c_objectproppush);
 		g_lingo->codeString((yyvsp[0].objectprop).obj->c_str());
 		g_lingo->codeString((yyvsp[0].objectprop).prop->c_str());
@@ -2820,7 +2820,7 @@ yyreduce:
 
   case 86:
 #line 604 "engines/director/lingo/lingo-gr.y"
-                                {
+                                        {
 		(yyval.code) = g_lingo->codeFunc((yyvsp[-3].s), (yyvsp[-1].narg));
 		delete (yyvsp[-3].s); }
 #line 2827 "engines/director/lingo/lingo-gr.cpp"
@@ -2828,7 +2828,7 @@ yyreduce:
 
   case 87:
 #line 607 "engines/director/lingo/lingo-gr.y"
-                        {
+                                                        {
 		if (g_lingo->_builtinConsts.contains(*(yyvsp[0].s))) {
 			(yyval.code) = g_lingo->code1(LC::c_constpush);
 		} else {

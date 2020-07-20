@@ -224,14 +224,14 @@ ID: VARID
 	| tSCRIPT		{ $$ = new Common::String("script"); }
 	| tWINDOW		{ $$ = new Common::String("window"); }
 
-asgn: tPUT expr tINTO ID 		{
+asgn: tPUT expr tINTO ID 			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
-	| tPUT expr tINTO chunkexpr 		{
+	| tPUT expr tINTO chunkexpr 	{
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr; }
 	// {put the number of menuItems of} menu into <expr>
@@ -246,48 +246,48 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEMENUITEMSENTITY[1]);
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr; }
-	| tPUT expr tAFTER ID 		{
+	| tPUT expr tAFTER ID 			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_after);
 		$$ = $expr;
 		delete $ID; }		// D3
-	| tPUT expr tAFTER chunkexpr 		{
+	| tPUT expr tAFTER chunkexpr	{
 		g_lingo->code1(LC::c_after);
 		$$ = $expr; }
-	| tPUT expr tBEFORE ID 		{
+	| tPUT expr tBEFORE ID 			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_before);
 		$$ = $expr;
 		delete $ID; }		// D3
-	| tPUT expr tBEFORE chunkexpr 		{
+	| tPUT expr tBEFORE chunkexpr 	{
 		g_lingo->code1(LC::c_before);
 		$$ = $expr; }
-	| tSET ID tEQ expr			{
+	| tSET ID tEQ expr				{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
-	| tSET THEENTITY tEQ expr	{
+	| tSET THEENTITY tEQ expr		{
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($THEENTITY[0]);
 		g_lingo->codeInt($THEENTITY[1]);
 		$$ = $expr; }
-	| tSET ID tTO expr			{
+	| tSET ID tTO expr				{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		mVar($ID, globalCheck());
 		g_lingo->code1(LC::c_assign);
 		$$ = $expr;
 		delete $ID; }
-	| tSET THEENTITY tTO expr	{
+	| tSET THEENTITY tTO expr		{
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentityassign);
@@ -329,14 +329,14 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($THEMENUITEMENTITY[0]);
 		g_lingo->codeInt($THEMENUITEMENTITY[1]);
 		$$ = $expr; }
-	| tSET THEOBJECTPROP tTO expr	{
+	| tSET THEOBJECTPROP tTO expr		{
 		g_lingo->code1(LC::c_objectpropassign);
 		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
 		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
 		delete $THEOBJECTPROP.obj;
 		delete $THEOBJECTPROP.prop;
 		$$ = $expr; }
-	| tSET THEOBJECTPROP tEQ expr	{
+	| tSET THEOBJECTPROP tEQ expr		{
 		g_lingo->code1(LC::c_objectpropassign);
 		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
 		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
@@ -477,7 +477,7 @@ stmt: stmtoneliner
 		(*g_lingo->_currentAssembly)[$jumpifz] = end;		/* end, if cond fails */
 		endRepeat(end2, nextPos); }	/* code any exit/next repeats */
 
-	| tNEXT tREPEAT {
+	| tNEXT tREPEAT 		{
 		if (g_lingo->_repeatStack.size()) {
 			g_lingo->code2(LC::c_jump, 0);
 			int pos = g_lingo->_currentAssembly->size() - 1;
@@ -485,7 +485,7 @@ stmt: stmtoneliner
 		} else {
 			warning("# LINGO: next repeat not inside repeat block");
 		} }
-	| tWHEN ID tTHEN expr {
+	| tWHEN ID tTHEN expr	{
 		g_lingo->code1(LC::c_whencode);
 		g_lingo->codeString($ID->c_str()); }
 	| tTELL expr '\n' tellstart stmtlist lbl tENDTELL { g_lingo->code1(LC::c_telldone); }
@@ -561,7 +561,7 @@ simpleexprnoparens: INT		{
 	| '-' simpleexpr[arg]  %prec UNARY	{ $$ = $arg; g_lingo->code1(LC::c_negate); }
 	| tNOT simpleexpr  %prec UNARY		{ g_lingo->code1(LC::c_not); }
 	| reference
-	| THEENTITY	{
+	| THEENTITY					{
 		$$ = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentitypush);
@@ -581,7 +581,7 @@ simpleexprnoparens: INT		{
 	| THEFUNC tOF simpleexpr	{
 		$$ = g_lingo->codeFunc($THEFUNC, 1);
 		delete $THEFUNC; }
-	| THEOBJECTPROP {
+	| THEOBJECTPROP				{
 		g_lingo->code1(LC::c_objectproppush);
 		g_lingo->codeString($THEOBJECTPROP.obj->c_str());
 		g_lingo->codeString($THEOBJECTPROP.prop->c_str());
@@ -601,10 +601,10 @@ simpleexprnoparens: INT		{
 			g_lingo->codeFunc($func, $nonemptyarglist + 1);
 			delete $func;
 			delete $method; }
-	| ID '(' arglist ')'	{
+	| ID '(' arglist ')'		{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
-	| ID		{
+	| ID						{
 		if (g_lingo->_builtinConsts.contains(*$ID)) {
 			$$ = g_lingo->code1(LC::c_constpush);
 		} else {
