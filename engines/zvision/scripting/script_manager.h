@@ -194,6 +194,7 @@ private:
 
 	Location _currentLocation;
 	Location _nextLocation;
+	int _changeLocationDelayCycles;
 
 	uint32 _currentlyFocusedControl;
 
