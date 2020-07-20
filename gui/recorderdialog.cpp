@@ -78,9 +78,9 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 	_container = new GUI::ContainerWidget(this, "RecorderDialog.Thumbnail");
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
-		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", Common::U32String(""), kPrevScreenshotCmd);
-		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", Common::U32String(""), kNextScreenshotCmd);
-		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", "0/0");
+		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", Common::U32String("<"), Common::U32String(""), kPrevScreenshotCmd);
+		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", Common::U32String(">"), Common::U32String(""), kNextScreenshotCmd);
+		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", Common::U32String("0/0"));
 		_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
 		_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));
 	}
@@ -168,7 +168,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		TimeDate t;
 		QualifiedGameDescriptor desc = EngineMan.findTarget(_target);
 		g_system->getTimeAndDate(t);
-		EditRecordDialog editDlg(_("Unknown Author"), Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description, Common::U32String(""));
+		EditRecordDialog editDlg(_("Unknown Author"), Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description, "");
 		if (editDlg.runModal() != kOKCmd) {
 			return;
 		}
@@ -197,7 +197,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void RecorderDialog::updateList() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String pattern(_target+".r??");
+	Common::String pattern(_target + ".r??");
 	Common::StringArray files = saveFileMan->listSavefiles(pattern);
 	Common::PlaybackFile file;
 	Common::StringArray namesList;
@@ -237,8 +237,8 @@ void RecorderDialog::updateSelection(bool redraw) {
 	_currentScreenshot = 0;
 	updateScreenShotsText();
 	if (_list->getSelected() >= 0) {
-		_authorText->setLabel(_("Author: ") + _fileHeaders[_list->getSelected()].author);
-		_notesText->setLabel(_("Notes: ") + _fileHeaders[_list->getSelected()].notes);
+		_authorText->setLabel(_("Author: ") + Common::U32String(_fileHeaders[_list->getSelected()].author));
+		_notesText->setLabel(_("Notes: ") + Common::U32String(_fileHeaders[_list->getSelected()].notes));
 
 		_firstScreenshotUpdate = true;
 		updateScreenshot();
