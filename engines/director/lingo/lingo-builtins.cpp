@@ -1037,8 +1037,9 @@ void LB::b_closeDA(int nargs) {
 
 void LB::b_closeResFile(int nargs) {
 	Datum d = g_lingo->pop();
+	Common::String resFileName = g_director->getCurrentStage()->getCurrentPath() + d.asString();
 
-	warning("STUB: b_closeResFile(%s)", d.asString().c_str());
+	g_director->_openResFiles.erase(resFileName);
 }
 
 void LB::b_closeXlib(int nargs) {
@@ -1069,8 +1070,15 @@ void LB::b_openDA(int nargs) {
 
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
+	Common::String resPath = g_director->getCurrentStage()->getCurrentPath() + d.asString();
 
-	warning("STUB: BUILDBOT: b_openResFile(%s)", d.asString().c_str());
+	if (!g_director->_openResFiles.contains(resPath)) {
+		MacArchive *resFile = new MacArchive();
+
+		if (resFile->openFile(resPath)) {
+			g_director->_openResFiles.setVal(resPath, resFile);
+		}
+	}
 }
 
 void LB::b_openXlib(int nargs) {

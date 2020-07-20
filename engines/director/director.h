@@ -29,6 +29,9 @@
 #include "common/hashmap.h"
 #include "engines/engine.h"
 
+#include "common/hash-ptr.h"
+#include "common/hash-str.h"
+
 #include "director/types.h"
 #include "director/util.h"
 
@@ -208,6 +211,7 @@ public:
 	bool _playbackPaused;
 	bool _skipFrameAdvance;
 
+	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
 	Common::String _sharedCastFile;
 
 protected:

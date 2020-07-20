@@ -118,6 +118,10 @@ DirectorEngine::~DirectorEngine() {
 	delete _lingo;
 	delete _wm;
 	delete _surface;
+
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
+		delete it->_value;
+	}
 }
 
 Archive *DirectorEngine::getMainArchive() const { return _currentStage->getMainArchive(); }
