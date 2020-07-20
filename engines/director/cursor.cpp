@@ -129,7 +129,18 @@ void Cursor::readFromResource(int resourceId) {
 	default:
 		_cursorType = Graphics::kMacCursorCustom;
 
-		// TODO: Load custom cursors from resource
+		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+			Common::SeekableSubReadStreamEndian *cursorStream;
+
+			cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId);
+			if (!cursorStream)
+				cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId);
+
+			if (cursorStream) {
+				readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0);
+				break;
+			}
+		}
 	}
 
 }
