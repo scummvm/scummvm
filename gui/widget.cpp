@@ -812,13 +812,13 @@ int SliderWidget::posToValue(int pos) {
 
 #pragma mark -
 
-GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, Common::U32String tooltip)
+GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip)
 	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(255), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
-GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, Common::U32String tooltip)
+GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip)
 	: Widget(boss, name, tooltip), _gfx(), _alpha(255), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;

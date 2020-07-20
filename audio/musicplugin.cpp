@@ -25,12 +25,12 @@
 #include "common/translation.h"
 
 MusicDevice::MusicDevice(MusicPluginObject const *musicPlugin, Common::String name, MusicType mt) :
-	_musicDriverName(_(musicPlugin->getName())), _musicDriverId(musicPlugin->getId()),
-	_name(_(name)), _type(mt) {
+	_musicDriverName(musicPlugin->getName()), _musicDriverId(musicPlugin->getId()),
+	_name(name), _type(mt) {
 }
 
-Common::U32String MusicDevice::getCompleteName() {
-	Common::U32String name;
+Common::String MusicDevice::getCompleteName() {
+	Common::String name;
 
 	if (_name.empty()) {
 		// Default device, just show the driver name
@@ -38,18 +38,18 @@ Common::U32String MusicDevice::getCompleteName() {
 	} else {
 		// Show both device and driver names
 		name = _name;
-		name += Common::U32String(" [");
+		name += " [";
 		name += _musicDriverName;
-		name += Common::U32String("]");
+		name += "]";
 	}
 
 	return name;
 }
 
-Common::U32String MusicDevice::getCompleteId() {
-	Common::U32String id = _musicDriverId;
+Common::String MusicDevice::getCompleteId() {
+	Common::String id = _musicDriverId;
 	if (!_name.empty()) {
-		id += Common::U32String("_");
+		id += "_";
 		id += _name;
 	}
 
@@ -57,5 +57,5 @@ Common::U32String MusicDevice::getCompleteId() {
 }
 
 MidiDriver::DeviceHandle MusicDevice::getHandle() {
-	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId().encode().c_str());
+	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId());
 }

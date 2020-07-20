@@ -70,8 +70,8 @@ enum {
 PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	new StaticTextWidget(this, "Predictive.Headline", Common::U32String("Enter Text"));
 
-	_button[kCancelAct] =  new ButtonWidget(this, "Predictive.Cancel",  (_("Cancel"))   , Common::U32String(""), kCancelCmd);
-	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      (_("Ok"))       , Common::U32String(""), kOkCmd);
+	_button[kCancelAct] =  new ButtonWidget(this, "Predictive.Cancel",  _("Cancel")   , Common::U32String(""), kCancelCmd);
+	_button[kOkAct] =      new ButtonWidget(this, "Predictive.OK",      _("Ok")       , Common::U32String(""), kOkCmd);
 
 	if (g_gui.useRTL()) {
 		/** If using RTL, swap the internal name of odd columns, to be flipped again when drawing.
@@ -103,8 +103,8 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	}
 
 	// I18N: You must leave "#" as is, only word 'next' is translatable
-	_button[kNextAct] =    new ButtonWidget(this, "Predictive.Next",    (_("#  next"))  , Common::U32String(""), kNextCmd);
-	_button[kAddAct] =     new ButtonWidget(this, "Predictive.Add",     (_("add"))      , Common::U32String(""), kAddCmd);
+	_button[kNextAct] =    new ButtonWidget(this, "Predictive.Next",    _("#  next")  , Common::U32String(""), kNextCmd);
+	_button[kAddAct]  =    new ButtonWidget(this, "Predictive.Add",     _("add")      , Common::U32String(""), kAddCmd);
 	_button[kAddAct]->setEnabled(false);
 
 #ifndef DISABLE_FANCY_THEMES
@@ -114,7 +114,7 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
 	} else
 #endif
-		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , (_("<")) , Common::U32String(""), kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , Common::U32String(""), kDelCmd);
 	// I18N: Pre means 'Predictive', leave '*' as is
 	_button[kModeAct] = new ButtonWidget(this, "Predictive.Pre", _("*  Pre"), Common::U32String(""), kModeCmd);
 	_editText = new EditTextWidget(this, "Predictive.Word", _search, Common::U32String(""), 0, 0);
@@ -190,7 +190,7 @@ void PredictiveDialog::reflowLayout() {
 		((PicButtonWidget *)_button[kDelAct])->useThemeTransparency(true);
 		((PicButtonWidget *)_button[kDelAct])->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageDelButton));
 	} else {
-		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , (_("<")) , Common::U32String(""), kDelCmd);
+		_button[kDelAct] = new ButtonWidget(this, "Predictive.Delete" , _("<") , Common::U32String(""), kDelCmd);
 	}
 #endif
 

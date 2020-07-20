@@ -163,7 +163,7 @@ void LauncherDialog::build() {
 			new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
 		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "Launcher.AddGameButton", (_c("~A~dd Game...", "lowres")), _("Add games to the list"), kAddGameCmd);
+			new DropdownButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
 		_addButton = addButton;
 

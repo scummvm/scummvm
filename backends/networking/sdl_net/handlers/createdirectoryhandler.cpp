@@ -57,7 +57,7 @@ void CreateDirectoryHandler::handle(Client &client) {
 
 	// check that <path> is not an absolute root
 	if (path == "" || path == "/") {
-		handleError(client, Common::convertFromU32String(_("Can't create directory here!")).c_str());
+		handleError(client, Common::convertFromU32String(_("Can't create directory here!")));
 		return;
 	}
 

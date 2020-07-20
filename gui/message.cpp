@@ -39,7 +39,7 @@ enum {
 
 // TODO: The default button should be visibly distinct from the alternate button
 
-MessageDialog::MessageDialog(const Common::U32String &message, Common::U32String defaultButton, Common::U32String altButton, Graphics::TextAlign alignment, const char *url)
+MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url)
 	: Dialog(30, 20, 260, 124) {
 
 	_url = url;
@@ -93,11 +93,15 @@ MessageDialog::MessageDialog(const Common::U32String &message, Common::U32String
 		okButtonPos = cancelButtonPos = (_w - buttonWidth) / 2;
 	}
 
-	if (!defaultButton.empty())
-		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(""), kOkCmd, Common::ASCII_RETURN);	// Confirm dialog
+	if (!defaultButton.empty()) {
+		// Confirm dialog
+		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(""), kOkCmd, Common::ASCII_RETURN);
+	}
 
-	if (!altButton.empty())
-		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(""), kCancelCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	if (!altButton.empty()) {
+		// Cancel dialog
+		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(""), kCancelCmd, Common::ASCII_ESCAPE);
+	}
 }
 
 MessageDialog::MessageDialog(const char *message, const char *defaultButton, const char *altButton, Graphics::TextAlign alignment)

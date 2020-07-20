@@ -33,7 +33,7 @@ void displayErrorDialog(const Common::U32String &text) {
 	alert.runModal();
 }
 
-void displayErrorDialog(const Common::Error &error, Common::U32String extraText) {
+void displayErrorDialog(const Common::Error &error, const Common::U32String &extraText) {
 	Common::U32String errorText(extraText);
 	errorText += Common::U32String(" ");
 	errorText += _(error.getDesc());
