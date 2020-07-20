@@ -74,10 +74,11 @@ bool ItemSelectionProcess::selectNextItem() {
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		ObjId itemid = uclist.getuint16(i);
 		Item *item = getItem(itemid);
-		const ShapeInfo *info = item->getShapeInfo();
-
 		if (!item)
 			continue;
+
+		const ShapeInfo *info = item->getShapeInfo();
+
 		// Maybe this can be done with a loopscript,
 		// but this is how the game does it..
 		if (item->hasFlags(Actor::FLG_HANGING))

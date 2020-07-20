@@ -67,10 +67,6 @@ private:
 	void putItemSelectionOnItem(Item *item);
 
 	uint16 _selectedItem;
-    int32 _ax;
-    int32 _ay;
-    int32 _az;
-    uint16 _adir;
 
 	static ItemSelectionProcess *_instance;
 };
