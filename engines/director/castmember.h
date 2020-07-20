@@ -77,6 +77,7 @@ public:
 	bool _modified;
 	bool _hilite;
 	bool _autoHilite;
+	int _purgePriority;
 
 	Graphics::MacWidget *_widget;
 

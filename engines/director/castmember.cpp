@@ -38,6 +38,7 @@ CastMember::CastMember(Cast* cast, uint16 castId) {
 	_widget = nullptr;
 	_hilite = false;
 	_autoHilite = false;
+	_purgePriority = 3;
 
 	_modified = true;
 }

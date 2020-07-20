@@ -1501,7 +1501,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kThePurgePriority:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		d.u.i = member->_purgePriority;
 		break;
 	case kTheScriptText:
 		if (castInfo)
@@ -1696,7 +1696,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kThePurgePriority:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		member->_purgePriority = CLIP<int>(d.asInt(), 0, 3);
 		break;
 	case kTheScriptText:
 		if (!castInfo) {
