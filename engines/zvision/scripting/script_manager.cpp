@@ -65,6 +65,8 @@ void ScriptManager::initialize() {
 	_currentLocation.room = 0;
 	_currentLocation.view = 0;
 
+	_changeLocationDelayCycles = 0;
+
 	parseScrFile("universe.scr", universe);
 	changeLocation('g', 'a', 'r', 'y', 0);
 
@@ -73,7 +75,17 @@ void ScriptManager::initialize() {
 
 void ScriptManager::update(uint deltaTimeMillis) {
 	if (_currentLocation != _nextLocation) {
-		ChangeLocationReal(false);
+		// The location is changing. The script that did that may have
+		// triggered other scripts, so give them all one extra cycle to
+		// run. This fixes some missing scoring in ZGI, and quite
+		// possibly other minor glitches as well.
+		//
+		// Another idea would be to change if there are pending scripts
+		// in the exec queues, but that could cause this to hang
+		// indefinitely.
+		if (_changeLocationDelayCycles-- <= 0) {
+			ChangeLocationReal(false);
+		}
 	}
 
 	updateNodes(deltaTimeMillis);
@@ -538,6 +550,8 @@ void ScriptManager::changeLocation(const Location &_newLocation) {
 }
 
 void ScriptManager::changeLocation(char _world, char _room, char _node, char _view, uint32 offset) {
+	_changeLocationDelayCycles = 1;
+
 	_nextLocation.world = _world;
 	_nextLocation.room = _room;
 	_nextLocation.node = _node;
