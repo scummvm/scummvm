@@ -176,7 +176,7 @@ Symbol ScriptContext::getMethod(const Common::String &methodName) {
 		return sym;
 	}
 
-	sym = Object::getMethod(methodName);
+	sym = Object<ScriptContext>::getMethod(methodName);
 	if (sym.type != VOIDSYM)
 		return sym;
 
