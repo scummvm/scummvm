@@ -27,6 +27,7 @@
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/ultima8.h"
@@ -506,10 +507,15 @@ ProcId MainActor::die(uint16 damageType) {
 	deathproc->waitFor(delayproc);
 
 	MusicProcess *music = MusicProcess::get_instance();
-	if (music) {
+	if (GAME_IS_U8 && music) {
 		music->unqueueMusic();
 		music->playCombatMusic(44); // CONSTANT!!
-	};
+	}
+
+	if (GAME_IS_CRUSADER) {
+		// Force a reticle update
+		TargetReticleProcess::get_instance()->avatarMoved();
+	}
 
 	return animprocid;
 }
