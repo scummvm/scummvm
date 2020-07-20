@@ -1356,7 +1356,7 @@ void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
 		if (firstArg.lazy) { // first arg could be method name
 			Datum objName(name);
 			objName.type = VAR;
-			Datum obj = g_lingo->varFetch(objName);
+			Datum obj = g_lingo->varFetch(objName, false, nullptr, true);
 			if (obj.type == OBJECT && (obj.u.obj->getObjType() & (kFactoryObj | kXObj))) {
 				debugC(3, kDebugLingoExec, "Method called on object: <%s>", obj.asString(true).c_str());
 				AbstractObject *target = obj.u.obj;

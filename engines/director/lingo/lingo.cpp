@@ -1269,7 +1269,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 	}
 }
 
-Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
+Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
@@ -1307,7 +1307,8 @@ Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars) {
 			return _globalvars[name];
 		}
 
-		warning("varFetch: variable %s not found", name.c_str());
+		if (!silent)
+			warning("varFetch: variable %s not found", name.c_str());
 		return result;
 	} else if (var.type == FIELDREF) {
 		CastMember *cast = _vm->getCurrentMovie()->getCastMember(var.u.i);
