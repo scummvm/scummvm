@@ -27,6 +27,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -41,6 +42,8 @@ Archive::~Archive() {
 	close();
 }
 
+Common::String Archive::getFileName() const { return Director::getFileName(_pathName); }
+
 bool Archive::openFile(const Common::String &fileName) {
 	Common::File *file = new Common::File();
 
@@ -50,7 +53,7 @@ bool Archive::openFile(const Common::String &fileName) {
 		return false;
 	}
 
-	_fileName = fileName;
+	_pathName = fileName;
 
 	if (!openStream(file)) {
 		warning("Archive::openFile(): Error loading stream from file %s", fileName.c_str());
@@ -225,10 +228,10 @@ bool MacArchive::openFile(const Common::String &fileName) {
 		return false;
 	}
 
-	_fileName = _resFork->getBaseFileName();
-	if (_fileName.hasSuffix(".bin")) {
+	_pathName = _resFork->getBaseFileName();
+	if (_pathName.hasSuffix(".bin")) {
 		for (int i = 0; i < 4; i++)
-			_fileName.deleteLastChar();
+			_pathName.deleteLastChar();
 	}
 
 	readTags();
@@ -251,8 +254,8 @@ bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffs
 		return false;
 	}
 
-	_fileName = "<stream>";
-	_resFork->setBaseFileName(_fileName);
+	_pathName = "<stream>";
+	_resFork->setBaseFileName(_pathName);
 
 	readTags();
 
@@ -534,8 +537,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 				dataSize = resources[i]->size;
 			}
 			Common::String prepend;
-			if (_fileName.size() != 0)
-				prepend = _fileName;
+			if (_pathName.size() != 0)
+				prepend = _pathName;
 			else
 				prepend = "stream";
 

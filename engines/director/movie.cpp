@@ -254,7 +254,7 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 
 		return;
 	}
-	sharedCast->setFileName(filename);
+	sharedCast->setPathName(filename);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debug(0, "@@@@   Loading shared cast '%s'", filename.c_str());

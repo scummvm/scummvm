@@ -40,6 +40,8 @@ Common::String getPath(Common::String path, Common::String cwd);
 
 Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true);
 
+Common::String getFileName(Common::String path);
+
 Common::String stripMacPath(const char *name);
 
 Common::String convertMacFilename(const char *name);

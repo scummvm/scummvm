@@ -40,15 +40,15 @@ struct ScriptPatch {
 	const char *replace;
 } const scriptPatches[] = {
 	// Garbage at end of script
-	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kScoreScript, 12,
+	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
-	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kScoreScript, 12,
+	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			3, "Channels 17 to 18", ""},
-	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/WARLOCKSHIP/UpForeECall", kScoreScript, 12,
+	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			4, "Frames 150 to 160", ""},
 
 	// Unbalanced 'end if' at the end of the script
-	{"warlock", kPlatformMacintosh, "STAMBUL/STAMBUL/DRUNK", kMovieScript, 5,
+	{"warlock", kPlatformMacintosh, "STAMBUL/DRUNK", kMovieScript, 5,
 			5, "end if", ""},
 
 	// Garbage at end of script

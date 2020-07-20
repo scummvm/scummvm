@@ -214,7 +214,7 @@ void Stage::loadEXE(const Common::String movie) {
 	}
 
 	if (_mainArchive)
-		_mainArchive->setFileName(movie);
+		_mainArchive->setPathName(movie);
 }
 
 void Stage::loadEXEv3(Common::SeekableReadStream *stream) {
@@ -344,7 +344,7 @@ void Stage::loadMac(const Common::String movie) {
 
 		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
 		_mainArchive = new RIFXArchive();
-		_mainArchive->setFileName(movie);
+		_mainArchive->setPathName(movie);
 
 		// First we need to detect PPC vs. 68k
 

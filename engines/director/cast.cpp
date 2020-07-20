@@ -224,7 +224,7 @@ bool Cast::loadArchive() {
 	if (_castArchive->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
 		debug("Cast::loadArchive(): Movie has fonts. Loading....");
 
-		_vm->_wm->_fontMan->loadFonts(_castArchive->getFileName());
+		_vm->_wm->_fontMan->loadFonts(_castArchive->getPathName());
 	}
 
 	// CastMember Information Array

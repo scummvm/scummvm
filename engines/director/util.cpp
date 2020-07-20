@@ -402,6 +402,14 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		return initialPath;
 }
 
+Common::String getFileName(Common::String path) {
+	while (path.contains('/')) {
+		int pos = path.find('/');
+		path = Common::String(&path.c_str()[pos + 1]);
+	}
+	return path;
+}
+
 //////////////////
 ////// Mac --> Windows filename conversion
 //////////////////

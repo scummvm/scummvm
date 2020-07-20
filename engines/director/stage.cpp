@@ -428,7 +428,7 @@ bool Stage::step() {
 
 		g_lingo->resetLingo();
 		if (sharedCast && sharedCast->_castArchive
-				&& sharedCast->_castArchive->getFileName().equalsIgnoreCase(_currentPath + _vm->_sharedCastFile)) {
+				&& sharedCast->_castArchive->getPathName().equalsIgnoreCase(_currentPath + _vm->_sharedCastFile)) {
 			_currentMovie->_sharedCast = sharedCast;
 		} else {
 			delete sharedCast;
