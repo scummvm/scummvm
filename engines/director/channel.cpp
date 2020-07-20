@@ -242,6 +242,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
+	bool replaceWidget = isDirty(nextSprite) && _sprite->_cast;
 
 	if (nextSprite) {
 		if (!_sprite->_puppet) {
@@ -267,7 +268,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_delta = Common::Point(0, 0);
 	}
 
-	if (_dirty && _sprite->_cast) {
+	if (replaceWidget) {
 		_sprite->updateCast();
 		Common::Point p(getPosition());
 		_sprite->_cast->_modified = false;
