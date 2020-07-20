@@ -51,6 +51,11 @@ struct ScriptPatch {
 	{"warlock", kPlatformMacintosh, "STAMBUL/DRUNK", kMovieScript, 5,
 			5, "end if", ""},
 
+	// Missing '&'
+	{"warlock", kPlatformMacintosh, "DATA/NAV/A1 Reactor", kMovieScript, 1,
+			19, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
+				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
+
 	// Garbage at end of script
 	{"warlock", kPlatformWindows, "WRLCKSHP/UpForeECall", kScoreScript, 12,
 			2, "SS Warlock:DATA:WARLOCKSHIP:Up.GCGunner", ""},
@@ -62,6 +67,11 @@ struct ScriptPatch {
 	// Unbalanced 'end if' at the end of the script
 	{"warlock", kPlatformWindows, "STAMBUL/DRUNK", kMovieScript, 5,
 			5, "end if", ""},
+
+	// Missing '&'
+	{"warlock", kPlatformWindows, "NAV/A1 Reactor", kMovieScript, 0,
+			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
+				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
 
 	// Unbalanced 'end if' at the end of the script
