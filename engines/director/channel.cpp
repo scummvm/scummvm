@@ -242,7 +242,6 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
-	_dirty = false;
 
 	if (nextSprite) {
 		if (!_sprite->_puppet) {
@@ -268,7 +267,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_delta = Common::Point(0, 0);
 	}
 
-	if (_sprite->_cast) {
+	if (_dirty && _sprite->_cast) {
 		_sprite->updateCast();
 		Common::Point p(getPosition());
 		_sprite->_cast->_modified = false;
@@ -283,6 +282,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 			_widget->_contentIsDirty = false;
 		}
 	}
+	_dirty = false;
 }
 
 void Channel::setWidth(int w) {
@@ -307,6 +307,15 @@ void Channel::setBbox(int l, int t, int r, int b) {
 
 		addRegistrationOffset(_currentPoint, true);
 	}
+}
+
+bool Channel::updateWidget() {
+	if (_widget && _widget->_contentIsDirty) {
+		_widget->draw();
+		return true;
+	}
+
+	return false;
 }
 
 void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {

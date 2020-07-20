@@ -55,6 +55,7 @@ public:
 	void setHeight(int h);
 	void setBbox(int l, int t, int r, int b);
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
+	bool updateWidget();
 
 	void addDelta(Common::Point pos);
 

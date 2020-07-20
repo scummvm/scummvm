@@ -438,10 +438,12 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		Sprite *currentSprite = channel->_sprite;
 		Sprite *nextSprite = _frames[frameId]->_sprites[i];
 
+		bool widgetRedrawn = channel->updateWidget();
+
 		if (channel->isActiveText())
 			_movie->_currentEditableTextChannel = i;
 
-		if (channel->isDirty(nextSprite) || mode == kRenderForceUpdate) {
+		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
 			if (!currentSprite->_trails)
 				_stage->addDirtyRect(channel->getBbox());
 
