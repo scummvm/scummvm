@@ -143,7 +143,7 @@ ScriptContext::ScriptContext(Common::String name, LingoArchive *archive, ScriptT
 	_objType = kScriptObj;
 }
 
-ScriptContext::ScriptContext(const ScriptContext &sc) : Object(sc) {
+ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc) {
 	_scriptType = sc._scriptType;
 	_functionNames = sc._functionNames;
 	for (SymbolHash::iterator it = sc._functionHandlers.begin(); it != sc._functionHandlers.end(); ++it) {

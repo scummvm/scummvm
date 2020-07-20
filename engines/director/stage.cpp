@@ -42,7 +42,7 @@
 namespace Director {
 
 Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm)
-	: MacWindow(id, scrollable, resizable, editable, wm), Object("Stage") {
+	: MacWindow(id, scrollable, resizable, editable, wm), Object<Stage>("Stage") {
 	_vm = vm;
 	_stageColor = 0;
 	_puppetTransition = nullptr;
