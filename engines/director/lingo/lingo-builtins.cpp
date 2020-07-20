@@ -1070,7 +1070,7 @@ void LB::b_openDA(int nargs) {
 void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
-	warning("STUB: b_openResFile(%s)", d.asString().c_str());
+	warning("STUB: BUILDBOT: b_openResFile(%s)", d.asString().c_str());
 }
 
 void LB::b_openXlib(int nargs) {
