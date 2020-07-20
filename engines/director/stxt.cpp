@@ -27,7 +27,7 @@
 
 namespace Director {
 
-Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
+Stxt::Stxt(Cast *cast, Common::SeekableSubReadStreamEndian &textStream) : _cast(cast) {
 	// TODO: Side effects on textStream make this a little hard to understand in context?
 
 	_textType = kTextTypeFixed;

@@ -201,8 +201,10 @@ struct LingoEvent {
 
 
 struct LingoArchive {
+	LingoArchive(Cast *c) : cast(c) {};
 	~LingoArchive();
 
+	Cast *cast;
 	ScriptContextHash lctxContexts;
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
@@ -251,10 +253,10 @@ public:
 
 	// lingo-preprocessor.cpp
 public:
-	Common::String codePreprocessor(const char *s, ScriptType type, uint16 id, bool simple = false);
+	Common::String codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple = false);
 
 	// lingo-patcher.cpp
-	Common::String patchLingoCode(Common::String &line, ScriptType type, uint16 id, int linenumber);
+	Common::String patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenumber);
 
 	// lingo.cpp
 private:

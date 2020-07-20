@@ -21,6 +21,7 @@
  */
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/lingo/lingo.h"
 
@@ -52,7 +53,7 @@ struct ScriptPatch {
 			5, "end if", ""},
 
 	// Missing '&'
-	{"warlock", kPlatformMacintosh, "DATA/NAV/A1 Reactor", kMovieScript, 1,
+	{"warlock", kPlatformMacintosh, "DATA/NAV/Shared Cast", kMovieScript, 1,
 			19, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
@@ -69,7 +70,7 @@ struct ScriptPatch {
 			5, "end if", ""},
 
 	// Missing '&'
-	{"warlock", kPlatformWindows, "NAV/A1 Reactor", kMovieScript, 0,
+	{"warlock", kPlatformWindows, "NAV/Shared Cast", kMovieScript, 0,
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
@@ -83,12 +84,12 @@ struct ScriptPatch {
 	{nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr, nullptr}
 };
 
-Common::String Lingo::patchLingoCode(Common::String &line, ScriptType type, uint16 id, int linenum) {
-	if (!_vm->getCurrentMovie())
+Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenum) {
+	if (!archive)
 		return line;
 
 	const ScriptPatch *patch = scriptPatches;
-	Common::String movie = _vm->getCurrentPath() + _vm->getCurrentMovie()->getMacName();
+	Common::String movie = _vm->getCurrentPath() + archive->cast->getMacName();
 
 	// So far, we have not many patches, so do linear lookup
 	while (patch->gameId) {

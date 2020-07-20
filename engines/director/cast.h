@@ -54,6 +54,7 @@ public:
 	bool loadArchive();
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _castArchive; };
+	Common::String getMacName() const { return _macName; }
 
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);

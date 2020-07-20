@@ -47,9 +47,10 @@ struct FontStyle {
 
 class Stxt {
 public:
-	Stxt(Common::SeekableSubReadStreamEndian &textStream);
+	Stxt(Cast *cast, Common::SeekableSubReadStreamEndian &textStream);
 
 public:
+	Cast *_cast;
 	Common::String _ftext;
 	Common::String _ptext;
 	TextType _textType;

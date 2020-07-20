@@ -269,8 +269,8 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const char *scriptName) {
-	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d\n"
-			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
+	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
+			"***********\n%s\n\n***********", scriptType2str(type), type, id, g_director->getCurrentPath().c_str(), cast->getMacName().c_str(), code);
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
@@ -318,7 +318,7 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 	}
 
 	// Preprocess the code for ease of the parser
-	Common::String codeNorm = codePreprocessor(code, type, id);
+	Common::String codeNorm = codePreprocessor(code, archive, type, id);
 	code = codeNorm.c_str();
 	begin = code;
 

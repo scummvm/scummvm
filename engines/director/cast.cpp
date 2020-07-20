@@ -67,7 +67,7 @@ Cast::Cast(Movie *movie, bool isShared) {
 
 	_isShared = isShared;
 
-	_lingoArchive = new LingoArchive;
+	_lingoArchive = new LingoArchive(this);
 
 	_movieScriptCount = 0;
 	_castArrayStart = _castArrayEnd = 0;
@@ -328,7 +328,7 @@ bool Cast::loadArchive() {
 
 	for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 		_loadedStxts->setVal(*iterator - _castIDoffset,
-				 new Stxt(*(r = _castArchive->getResource(MKTAG('S','T','X','T'), *iterator))));
+				 new Stxt(this, *(r = _castArchive->getResource(MKTAG('S','T','X','T'), *iterator))));
 
 		delete r;
 
