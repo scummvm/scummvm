@@ -63,7 +63,7 @@ Intrinsic RemorseIntrinsics[] = {
 	UCMachine::I_rndRange, // int16 Intrinsic018(4 bytes) // probably.. always called with 2 constants, then result compared to some number between
 	Item::I_legalCreateAtCoords, // byte Intrinsic019(14 bytes)
 	Item::I_andStatus, // void Intrinsic01A(6 bytes)
-	UCMachine::I_true, // FIXME: get the num of some npc - maybe currently controlled NPC? For now default to 1 (avatar).
+	World::I_getControlledNPCNum,  // int16 Intrinsic01B(void)
 	Actor::I_getDir, // byte Intrinsic01C(4 bytes)
 	Actor::I_getLastAnimSet, // int Intrinsic01D(4 bytes)
 	0, // int Intrinsic01E(16 bytes)
@@ -126,7 +126,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setDefaultActivity1, // void Intrinsic053(6 bytes)
 	Actor::I_setDefaultActivity2, // void Intrinsic054(6 bytes)
 	Actor::I_setActivity, // void Intrinsic055(6 bytes)
-	0, // void Intrinsic056(2 bytes)
+	World::I_setControlledNPCNum, // void Intrinsic056(2 bytes)
 	Item::I_getSurfaceWeight, // void Intrinsic057(4 bytes)
 	Item::I_isCentreOn, // int Intrinsic058(6 bytes)
 	Item::I_setFrame, // based on same coff as 002

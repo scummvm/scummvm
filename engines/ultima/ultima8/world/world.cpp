@@ -42,6 +42,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -50,7 +51,8 @@ namespace Ultima8 {
 
 World *World::_world = nullptr;
 
-World::World() : _currentMap(nullptr), _alertActive(false), _difficulty(1) {
+World::World() : _currentMap(nullptr), _alertActive(false), _difficulty(1),
+				 _controlledNPCNum(1) {
 	debugN(MM_INFO, "Creating World...\n");
 
 	_world = this;
@@ -442,6 +444,10 @@ void World::setAlertActive(bool active)
 	}
 }
 
+void World::setControlledNPCNum(uint16 num) {
+	warning("TODO: World::setControlledNPCNum(%d): IMPLEMENT ME", num);
+}
+
 uint32 World::I_getAlertActive(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
 	return get_instance()->_world->isAlertActive() ? 1 : 0;
@@ -462,6 +468,18 @@ uint32 World::I_clrAlertActive(const uint8 * /*args*/,
 uint32 World::I_gameDifficulty(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
 	return get_instance()->_world->getGameDifficulty();
+}
+
+uint32 World::I_getControlledNPCNum(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	return get_instance()->_world->getControlledNPCNum();
+}
+
+uint32 World::I_setControlledNPCNum(const uint8 *args,
+	unsigned int /*argsize*/) {
+	ARG_UINT16(num);
+	get_instance()->_world->setControlledNPCNum(num);
+	return 0;
 }
 
 } // End of namespace Ultima8
