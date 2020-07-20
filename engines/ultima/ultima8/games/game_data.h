@@ -41,6 +41,7 @@ class MusicFlex;
 class WpnOvlayDat;
 class NPCDat;
 class CombatDat;
+class FireType;
 class ShapeFrame;
 class SoundFlex;
 class SpeechFlex;
@@ -97,6 +98,8 @@ public:
 	const NPCDat *getNPCDataForShape(uint16 shapeno) const;
 
 	const CombatDat *getCombatDat(uint16 entry) const;
+
+	const FireType *getFireType(uint16 type) const;
 
 	Std::string translate(const Std::string &text);
 	FrameID translate(FrameID frame);

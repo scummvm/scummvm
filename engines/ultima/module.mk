@@ -533,6 +533,8 @@ MODULE_OBJS := \
 	ultima8/world/egg.o \
 	ultima8/world/egg_hatcher_process.o \
 	ultima8/world/fireball_process.o \
+	ultima8/world/fire_type.o \
+	ultima8/world/fire_type_table.o \
 	ultima8/world/get_object.o \
 	ultima8/world/glob_egg.o \
 	ultima8/world/gravity_process.o \
