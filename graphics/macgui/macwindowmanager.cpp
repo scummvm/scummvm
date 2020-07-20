@@ -647,9 +647,6 @@ void MacWindowManager::pushWatchCursor() {
 }
 
 void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
-	if (_cursorType == kMacCursorOff && _cursorType != type)
-		CursorMan.showMouse(true);
-
 	switch (type) {
 	case kMacCursorOff:
 		CursorMan.showMouse(false);
@@ -682,9 +679,6 @@ void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
 }
 
 void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
-	if (_cursorType == kMacCursorOff && _cursorType != type)
-		CursorMan.showMouse(true);
-
 	switch (type) {
 	case kMacCursorOff:
 		CursorMan.showMouse(false);
@@ -733,8 +727,12 @@ void MacWindowManager::pushCustomCursor(const Graphics::Cursor *cursor) {
 }
 
 void MacWindowManager::popCursor() {
-	CursorMan.popCursor();
-	CursorMan.popCursorPalette();
+	if (_cursorType == kMacCursorOff) {
+		CursorMan.showMouse(true);
+	} else {
+		CursorMan.popCursor();
+		CursorMan.popCursorPalette();
+	}
 }
 
 ///////////////////
