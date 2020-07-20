@@ -177,7 +177,7 @@ ProcId RemorseGame::playEndgameMovie(bool fade) {
 }
 
 void RemorseGame::playCredits() {
-	warning("TODO: Implement Crusader credits..");
+	warning("TODO: RemorseGame::playCredits: Implement Crusader credits");
 }
 
 void RemorseGame::writeSaveInfo(Common::WriteStream *ws) {

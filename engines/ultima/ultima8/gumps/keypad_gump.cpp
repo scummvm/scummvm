@@ -129,14 +129,13 @@ void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 bool KeypadGump::OnTextInput(int unicode) {
 	if (!(unicode & 0xFF80)) {
 		//char c = unicode & 0x7F;
-		// TODO: Accept numeric inputs
+		// TODO: Accept numeric keyboard inputs
 	}
 	return true;
 }
 
 uint32 KeypadGump::I_showKeypad(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(target)
-	 // TODO: what's this parameter?
 	ModalGump *gump = new KeypadGump(target);
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);

@@ -101,6 +101,7 @@ void CruPickupGump::InitGump(Gump *newparent, bool take_focus) {
 	// Paint a semi-transparent background
 	const FrameID bfgrameid(GameData::GUMPS, PICKUP_GUMP_SHAPE, 0);
 	// TODO: The game uses a variable number of these depending on the text length
+	// For now 5 is ok.
 	for (int i = 0; i < 5; i++) {
 		Gump *gump = new TranslucentGump(i * bgframe->_width, 0, bgframe->_width, bgframe->_height);
 		gump->SetShape(bfgrameid, false);

@@ -95,10 +95,10 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 UCMachine::I_rndRange(uint16 x, uint16 y)", // // probably.. always called with 2 constants, then result often compared to some number between
 	"byte Item::I_legalCreateAtCoords(Item *, int16 shapeno, int16 frame, int16 x, int16 y, int16 z)", // probably, see usage in DOOR2::ordinal37
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132. Always associated with a bitwise-not or bitmask
-	"int16 I_getTargetNPCNumMaybe(void)",
+	"int16 World::I_getControlledNPCNum()",
 	"byte Actor::I_getDir(4 bytes)", // based on disasm. same coff as 112, 121
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // based on disasm. part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"int16 Actor::I_maybeFire(Actor *, x, y, z, byte, int, byte)", // TODO: investigate more
+	"int16 Actor::I_maybeFire(Actor *, x, y, z, byte, int, byte)",
 	"byte Item::I_create(Item *, uint16 shapenum, uint16 framenum)", // probably - used in MISS1EGG referencing keycards and NPCDEATH in creating blood spills
 	// 0020
 	"void Item::I_popToCoords(Item *, uint16 x, uint16 y, uint16 z)", // set coords, used after creating blood spills in NPCDEATH
@@ -158,7 +158,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Actor::I_setDefaultActivity1(Actor *, int)",
 	"void Actor::I_setDefaultActivity2(Actor *, int)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
-	"void I_setControlledNPCTo(int itemno)", // when you take over the Thermatron etc.
+	"void World::I_setControlledNPCNum(int itemno)", // when you take over the Thermatron etc.
 	"int16 Item::I_getSurfaceWeight(Item *)",
 	"byte Item::I_isCentreOn(Item *, uint16 other)",
 	"void Item::I_setFrame(Item *, frame)", // based on same coff as 002
@@ -198,7 +198,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 MainActor::I_teleportToEgg(int, int, int)",
 	"int16 PaletteFaderProcess::I_fadeFromBlack(void)", // from black, no arg (40 frames)
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 130
-	"int16 Actor::I_getHp(Actor *)", // TODO: double-check whether field 0 of NPC data is HP or *max* HP.
+	"int16 Actor::I_getHp(Actor *)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Item::I_getQuality(Item *)", // based on disassembly
 	"void Item::I_setQuality(Item *, int)", // based on disassembly. same coff as 0BA, 125

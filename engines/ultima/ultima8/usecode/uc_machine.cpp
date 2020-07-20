@@ -366,7 +366,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// (includes this pointer, if present)
 			// NB: do not actually pop these argument bytes
 		{
-			//! TODO
 			uint16 arg_bytes = cs.readByte();
 			uint16 func = cs.readUint16LE();
 			LOGPF(("calli\t\t%04Xh (%02Xh arg bytes) %s\n", func, arg_bytes, _convUse->intrinsics()[func]));
@@ -1235,8 +1234,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// push global xxxx size yy bits
 			ui16a = cs.readUint16LE();
 			ui16b = cs.readByte();
-			// TODO: get flagname for output?
-
 			ui32a = _globals->getEntries(ui16a, ui16b);
 			p->_stack.push2(static_cast<uint16>(ui32a));
 			LOGPF(("push\t\tglobal [%04X %02X] = %02X\n", ui16a, ui16b, ui32a));
@@ -1247,7 +1244,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// pop value into global xxxx size yy bits
 			ui16a = cs.readUint16LE();
 			ui16b = cs.readByte();
-			// TODO: get flagname for output?
 			ui32a = p->_stack.pop2();
 			_globals->setEntries(ui16a, ui16b, ui32a);
 
@@ -1271,7 +1267,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// return from function
 
 			if (p->ret()) { // returning from process
-				// TODO
 				LOGPF(("ret\t\tfrom process\n"));
 				p->terminateDeferred();
 

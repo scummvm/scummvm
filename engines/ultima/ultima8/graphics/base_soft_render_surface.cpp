@@ -267,8 +267,7 @@ bool BaseSoftRenderSurface::BeginPainting() {
 	_lockCount++;
 
 	if (_pixels00 == nullptr) {
-		// TODO: SetLastError(GR_SOFT_ERROR_LOCKED_NULL_PIXELS, "Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!");
-		perr << "Error: Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!" << Std::endl;
+		error("Error: Surface Locked with NULL BaseSoftRenderSurface::_pixels pointer!");
 		return false;
 	}
 
@@ -289,8 +288,7 @@ bool BaseSoftRenderSurface::BeginPainting() {
 bool BaseSoftRenderSurface::EndPainting() {
 	// Already Unlocked
 	if (!_lockCount) {
-		// TODO: SetLastError(GR_SOFT_ERROR_BEGIN_END_MISMATCH, "BeginPainting()/EndPainting() Mismatch!");
-		perr << "Error: BeginPainting()/EndPainting() Mismatch!" << Std::endl;
+		error("Error: BeginPainting()/EndPainting() Mismatch!");
 		return false;
 	}
 

@@ -264,22 +264,6 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	if (!_settingMan->get("work", work, SettingManager::DOM_GAME))
 		work = "@home/" + game + "-work";
 
-#if 0
-	// force creation if it doesn't exist
-
-	// TODO: I don't like these being created here.
-	//       I'd prefer them to be created when needed. (-wjp)
-
-	_fileSystem->AddVirtualPath("@work", work, true);
-	debugN(MM_INFO, "U8 Workdir: %s\n", work.c_str()); //!!FIXME (u8)
-
-	// make sure we've got a minimal sane _fileSystem under there...
-	_fileSystem->MkDir("@work/usecode");
-	_fileSystem->MkDir("@work/usecode/obj");
-	_fileSystem->MkDir("@work/usecode/src");
-	_fileSystem->MkDir("@work/usecode/asm");
-#endif
-
 	// load savegame path. Default is @home/game-save
 	Std::string save;
 	if (!_settingMan->get("save", save, SettingManager::DOM_GAME))
