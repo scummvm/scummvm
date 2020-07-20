@@ -1349,12 +1349,39 @@ void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
 
 	Symbol funcSym;
 
-	// Script/Xtra method call
 	if (nargs > 0) {
-		Datum d = g_lingo->peek(nargs - 1);
-		if (d.type == OBJECT && !(d.u.obj->getObjType() & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
-			AbstractObject *target = d.u.obj;
+		Datum firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs];
+
+		// Factory/XObject method call
+		if (firstArg.lazy) { // first arg could be method name
+			Datum objName(name);
+			objName.type = VAR;
+			Datum obj = g_lingo->varFetch(objName);
+			if (obj.type == OBJECT && (obj.u.obj->getObjType() & (kFactoryObj | kXObj))) {
+				debugC(3, kDebugLingoExec, "Method called on object: <%s>", obj.asString(true).c_str());
+				AbstractObject *target = obj.u.obj;
+				if (firstArg.u.s->equalsIgnoreCase("mNew")) {
+					target = target->clone();
+				}
+				funcSym = target->getMethod(*firstArg.u.s);
+				if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
+					// For kFactoryObj handlers the target is the first argument
+					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
+				} else {
+					// Otherwise, take the method name out of the stack
+					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
+					nargs -= 1;
+				}
+				call(funcSym, nargs);
+				return;
+			}
+			firstArg = firstArg.eval();
+		}
+
+		// Script/Xtra method call
+		if (firstArg.type == OBJECT && !(firstArg.u.obj->getObjType() & (kFactoryObj | kXObj))) {
+			debugC(3, kDebugLingoExec, "Method called on object: <%s>", firstArg.asString(true).c_str());
+			AbstractObject *target = firstArg.u.obj;
 			if (name.equalsIgnoreCase("birth") || name.equalsIgnoreCase("new")) {
 				target = target->clone();
 			}
@@ -1374,32 +1401,8 @@ void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
 		}
 	}
 
-	// Normal handler call
+	// Handler
 	funcSym = g_lingo->getHandler(name);
-
-	// Factory/XObject method call
-	if (funcSym.type == VOIDSYM) {
-		Datum objName(name);
-		objName.type = VAR;
-		Datum d = g_lingo->varFetch(objName);
-		if (d.type == OBJECT && (d.u.obj->getObjType() & (kFactoryObj | kXObj))) {
-			debugC(3, kDebugLingoExec, "Method called on object: <%s>", d.asString(true).c_str());
-			AbstractObject *target = d.u.obj;
-			Datum methodName = g_lingo->_stack[g_lingo->_stack.size() - nargs];
-			if (methodName.u.s->equalsIgnoreCase("mNew")) {
-				target = target->clone();
-			}
-			funcSym = target->getMethod(*methodName.u.s);
-			if (target->getObjType() == kScriptObj && funcSym.type == HANDLER) {
-				// For kFactoryObj handlers the target is the first argument
-				g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target;
-			} else {
-				// Otherwise, take the methodName out of the stack
-				g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
-				nargs -= 1;
-			}
-		}
-	}
 
 	// Builtin
 	if (funcSym.type == VOIDSYM) {
