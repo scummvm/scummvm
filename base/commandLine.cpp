@@ -961,7 +961,7 @@ static void listAudioDevices() {
 		const MusicPluginObject &musicObject = (*i)->get<MusicPluginObject>();
 		MusicDevices deviceList = musicObject.getDevices();
 		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
-			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().encode().c_str()).c_str(), j->getCompleteName().encode().c_str());
+			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
 		}
 	}
 }

@@ -72,7 +72,7 @@ BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Checkbox for the "show hidden files" state.
-	_showHiddenWidget = new CheckboxWidget(this, "Browser.Hidden", (_("Show hidden files")), _("Show files marked with the hidden attribute"), kHiddenCmd);
+	_showHiddenWidget = new CheckboxWidget(this, "Browser.Hidden", _("Show hidden files"), _("Show files marked with the hidden attribute"), kHiddenCmd);
 
 	// Buttons
 	if (g_system->getOverlayWidth() > 320)

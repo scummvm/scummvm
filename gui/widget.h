@@ -172,6 +172,7 @@ public:
 	bool hasTooltip() const { return !_tooltip.empty(); }
 	const Common::U32String &getTooltip() const { return _tooltip; }
 	void setTooltip(const Common::U32String &tooltip) { _tooltip = tooltip; }
+	void setTooltip(const Common::String &tooltip) { _tooltip = Common::U32String(tooltip); }
 
 	virtual bool containsWidget(Widget *) const { return false; }
 
@@ -413,8 +414,8 @@ protected:
 /* GraphicsWidget */
 class GraphicsWidget : public Widget {
 public:
-	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, Common::U32String tooltip = Common::U32String(""));
-	GraphicsWidget(GuiObject *boss, const Common::String &name, Common::U32String tooltip = Common::U32String(""));
+	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(""));
+	GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(""));
 	~GraphicsWidget() override;
 
 	void setGfx(const Graphics::Surface *gfx);

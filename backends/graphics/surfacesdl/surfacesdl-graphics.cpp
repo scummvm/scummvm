@@ -2237,9 +2237,9 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 
 	// Split the message into separate lines.
 	Common::Array<Common::U32String> lines;
-	Common::U32String::const_iterator itr = msg.begin(), strLineItrBegin = msg.begin();
+	Common::U32String::const_iterator strLineItrBegin = msg.begin();
 
-	for ( ; itr != msg.end(); itr++) {
+	for (Common::U32String::const_iterator itr = msg.begin(); itr != msg.end(); itr++) {
 		if (*itr == '\n') {
 			lines.push_back(Common::U32String(strLineItrBegin, itr));
 			strLineItrBegin = itr + 1;

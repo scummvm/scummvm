@@ -579,6 +579,7 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 
 				output.insertString(buffer, pos);
 				pos += len - 1;
+				break;
 			case 'i':
 				int_temp = va_arg(args, uint16);
 				itoa(int_temp, buffer, 10);
@@ -587,6 +588,7 @@ int U32String::vformat(U32String::const_iterator fmt, const U32String::const_ite
 
 				output.insertString(buffer, pos);
 				pos += len - 1;
+				break;
 			default:
 				warning("Unexpected formatting type for U32String::Format.");
 				break;

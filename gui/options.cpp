@@ -1155,13 +1155,13 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			}
 
 			CheckboxWidget *checkBox;
-			checkBox = new CheckboxWidget(scrollContainer, lineHeight, yPos, width, yStep, Common::convertToU32String(info.descriptions[idx].title));
+			checkBox = new CheckboxWidget(scrollContainer, lineHeight, yPos, width, yStep, Common::U32String(info.descriptions[idx].title));
 			checkBox->setEnabled(false);
 			checkBox->setState(isAchieved);
 			yPos += yStep;
 
 	        if (info.descriptions[idx].comment && strlen(info.descriptions[idx].comment) > 0) {
-				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, Common::convertToU32String(info.descriptions[idx].comment), Graphics::kTextAlignStart, Common::U32String(""), ThemeEngine::kFontStyleNormal);
+				new StaticTextWidget(scrollContainer, lineHeight + descrDelta, yPos, width - descrDelta, yStep, Common::U32String(info.descriptions[idx].comment), Graphics::kTextAlignStart, Common::U32String(""), ThemeEngine::kFontStyleNormal);
 				yPos += yStep;
 			}
 
@@ -1486,7 +1486,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		return true;
 
 	if (_domain != Common::ConfigManager::kApplicationDomain || ConfMan.hasKey(setting, _domain) || preferredType) {
-		const Common::U32String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain);
+		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain);
 		const PluginList p = MusicMan.getPlugins();
 
 		for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
@@ -1513,7 +1513,7 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getHandle() == popup->getSelectedTag()) {
-				ConfMan.set(setting, d->getCompleteId().encode().c_str(), _domain);
+				ConfMan.set(setting, d->getCompleteId(), _domain);
 				found = true;
 				break;
 			}
@@ -1851,24 +1851,24 @@ void GlobalOptionsDialog::build() {
 
 #if !defined(__DC__)
 	// Set _savePath to the current save path
-	Common::U32String savePath(ConfMan.get("savepath", _domain));
-	Common::U32String themePath(ConfMan.get("themepath", _domain));
-	Common::U32String extraPath(ConfMan.get("extrapath", _domain));
+	Common::String savePath(ConfMan.get("savepath", _domain));
+	Common::String themePath(ConfMan.get("themepath", _domain));
+	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel((_("Default")));
+		_savePath->setLabel(_("Default"));
 	} else {
 		_savePath->setLabel(savePath);
 	}
 
 	if (themePath.empty() || !ConfMan.hasKey("themepath", _domain)) {
-		_themePath->setLabel((_c("None", "path")));
+		_themePath->setLabel(_c("None", "path"));
 	} else {
 		_themePath->setLabel(themePath);
 	}
 
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPath->setLabel((_c("None", "path")));
+		_extraPath->setLabel(_c("None", "path"));
 	} else {
 		_extraPath->setLabel(extraPath);
 	}
@@ -1900,7 +1900,7 @@ void GlobalOptionsDialog::build() {
 #ifdef USE_SDL_NET
 	Common::String rootPath(ConfMan.get("rootpath", "cloud"));
 	if (rootPath.empty() || !ConfMan.hasKey("rootpath", "cloud")) {
-		_rootPath->setLabel((_c("None", "path")));
+		_rootPath->setLabel(_c("None", "path"));
 	} else {
 		_rootPath->setLabel(rootPath);
 	}
@@ -1982,10 +1982,10 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 
 	if (!lowres) {
 		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-			_rendererPopUp->appendEntry((_(GUI::ThemeEngine::_rendererModes[i].name)), GUI::ThemeEngine::_rendererModes[i].mode);
+			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].name), GUI::ThemeEngine::_rendererModes[i].mode);
 	} else {
 		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-			_rendererPopUp->appendEntry((_(GUI::ThemeEngine::_rendererModes[i].shortname)), GUI::ThemeEngine::_rendererModes[i].mode);
+			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].shortname), GUI::ThemeEngine::_rendererModes[i].mode);
 	}
 
 	if (!lowres)
@@ -2011,12 +2011,12 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 #ifdef USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
 #endif // USE_DETECTLANG
-	_guiLanguagePopUp->appendEntry(Common::U32String("English"), Common::kTranslationBuiltinId);
-	_guiLanguagePopUp->appendEntry(Common::U32String(""), 0);
+	_guiLanguagePopUp->appendEntry("English", Common::kTranslationBuiltinId);
+	_guiLanguagePopUp->appendEntry("", 0);
 	Common::TLangArray languages = TransMan.getSupportedLanguageNames();
 	Common::TLangArray::iterator lang = languages.begin();
 	while (lang != languages.end()) {
-		_guiLanguagePopUp->appendEntry(Common::convertToU32String(lang->name), lang->id);
+		_guiLanguagePopUp->appendEntry(lang->name, lang->id);
 		lang++;
 	}
 
@@ -2168,7 +2168,7 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 #ifdef USE_TTS
 void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common::String &prefix) {
 	_ttsCheckbox = new CheckboxWidget(boss, prefix + "TTSCheckbox",
-		_("Use Text to speech"), _("Will read text in gui on mouse over."));
+			_("Use Text to speech"), _("Will read text in gui on mouse over."));
 	if (ConfMan.hasKey("tts_enabled"))
 		_ttsCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
 	else
@@ -2486,7 +2486,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (Common::convertToU32String(file.getPath().c_str()) != _c("None", "path")))
+			if (!file.getPath().empty() && (file.getPath().decode() != _c("None", "path")))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);
@@ -2572,9 +2572,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kConnectStorageCmd: {
-		Common::U32String code("");
+		Common::String code = "";
 		if (_storageWizardCodeBox)
-			code = _storageWizardCodeBox->getEditString();
+			code = _storageWizardCodeBox->getEditString().encode();
 		if (code.size() == 0)
 			return;
 
@@ -2605,7 +2605,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (_storageWizardConnectionStatusHint)
 			_storageWizardConnectionStatusHint->setLabel(_("Connecting..."));
 		CloudMan.connectStorage(
-			_selectedStorageIndex, Common::convertFromU32String(code),
+			_selectedStorageIndex, code,
 			new Common::Callback<GlobalOptionsDialog, Networking::ErrorResponse>(this, &GlobalOptionsDialog::storageConnectionCallback)
 		);
 		_connectingStorage = true;

@@ -226,6 +226,10 @@ bool SpeechDispatcherManager::say(const Common::U32String &str, Action action, C
 	return false;
 }
 
+bool SpeechDispatcherManager::say(const Common::String &str, Action action, Common::String charset) {
+	return say(Common::U32String(str), action, charset);
+}
+
 bool SpeechDispatcherManager::stop() {
 	if (_speechState == READY || _speechState == BROKEN)
 		return true;

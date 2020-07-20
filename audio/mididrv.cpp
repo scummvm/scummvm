@@ -146,7 +146,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 	return MT_INVALID;
 }
 
-Common::U32String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType type) {
+Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType type) {
 	if (handle) {
 		const PluginList p = MusicMan.getPlugins();
 		for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
@@ -173,11 +173,11 @@ Common::U32String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringT
 
 MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// Query the selected music device (defaults to MT_AUTO device).
-	Common::U32String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
 	if ((flags & MDT_PREFER_FLUID) && selDevStr == "auto") {
 		selDevStr = "fluidsynth";
 	}
-	DeviceHandle hdl = getDeviceHandle(selDevStr.empty() ? Common::U32String("auto") : selDevStr);
+	DeviceHandle hdl = getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
 	DeviceHandle reslt = 0;
 
 	_forceTypeMT32 = false;
@@ -250,14 +250,14 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		break;
 	}
 
-	Common::U32String failedDevStr;
+	Common::String failedDevStr;
 	if (getMusicType(hdl) == MT_INVALID) {
 		// If the expressly selected driver or device cannot be found (no longer compiled in, turned off, etc.)
 		// we display a warning and continue.
 		failedDevStr = selDevStr;
 		Common::U32String warningMsg = Common::U32String::format(
-			_("The selected audio device '%s' was not found (e.g. might be turned off or disconnected)."),
-			(failedDevStr + Common::U32String(" ") + _("Attempting to fall back to the next available device...")).encode().c_str());
+			_("The selected audio device '%s' was not found (e.g. might be turned off or disconnected)."), failedDevStr.c_str())
+			+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
 		GUI::MessageDialog dialog(warningMsg);
 		dialog.runModal();
 	}
@@ -270,8 +270,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			// If the expressly selected device cannot be used we display a warning and continue.
 			failedDevStr = getDeviceString(hdl, MidiDriver::kDeviceName);
 			Common::U32String warningMsg = Common::U32String::format(
-				_("The selected audio device '%s' cannot be used. See log file for more information."),
-				(failedDevStr + Common::U32String(" ") + _("Attempting to fall back to the next available device...")).encode().c_str());
+				_("The selected audio device '%s' cannot be used. See log file for more information."), failedDevStr.c_str())
+				+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
 			GUI::MessageDialog dialog(warningMsg);
 			dialog.runModal();
 		}
@@ -286,7 +286,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	while (flags != MDT_NONE) {
 		if ((flags & MDT_MIDI) && !skipMidi) {
 			// If a preferred MT32 or GM device has been selected that device gets returned if available.
-			Common::U32String devStr;
+			Common::String devStr;
 			if (flags & MDT_PREFER_MT32)
 				devStr = ConfMan.hasKey("mt32_device") ? ConfMan.get("mt32_device") : Common::String("null");
 			else if (flags & MDT_PREFER_GM)
@@ -296,7 +296,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 			// Default to Null device here, since we also register a default null setting for
 			// the MT32 or GM device in the config manager.
-			hdl = getDeviceHandle(devStr.empty() ? Common::U32String("null") : devStr);
+			hdl = getDeviceHandle(devStr.empty() ? Common::String("null") : devStr);
 			const MusicType type = getMusicType(hdl);
 
 			// If we have a "Don't use GM/MT-32" setting we skip this part and jump
@@ -308,8 +308,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					// missing device is selected as preferred device and also as GM or MT-32 device).
 					if (failedDevStr != devStr) {
 						Common::U32String warningMsg = Common::U32String::format(
-							_("The preferred audio device '%s' was not found (e.g. might be turned off or disconnected)."),
-							(devStr + Common::U32String(" ") + _("Attempting to fall back to the next available device...")).encode().c_str());
+							_("The preferred audio device '%s' was not found (e.g. might be turned off or disconnected)."), devStr.c_str())
+							+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
 						GUI::MessageDialog dialog(warningMsg);
 						dialog.runModal();
 					}
@@ -325,8 +325,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						// device is selected as preferred device and also as GM or MT-32 device).
 						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {
 							Common::U32String warningMsg = Common::U32String::format(
-								_("The preferred audio device '%s' cannot be used. See log file for more information."),
-								(getDeviceString(hdl, MidiDriver::kDeviceName) + Common::U32String(" ") + _("Attempting to fall back to the next available device...")).encode().c_str());
+								_("The preferred audio device '%s' cannot be used. See log file for more information."), getDeviceString(hdl, MidiDriver::kDeviceName).c_str())
+								+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
 						}
@@ -446,7 +446,7 @@ bool MidiDriver::checkDevice(MidiDriver::DeviceHandle handle) {
 	return false;
 }
 
-MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::U32String &identifier) {
+MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &identifier) {
 	const PluginList p = MusicMan.getPlugins();
 
 	if (p.begin() == p.end())

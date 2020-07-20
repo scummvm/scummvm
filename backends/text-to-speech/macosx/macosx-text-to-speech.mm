@@ -119,6 +119,10 @@ bool MacOSXTextToSpeechManager::say(const Common::U32String &text, Action action
 	return true;
 }
 
+bool MacOSXTextToSpeechManager::say(const Common::String &text, Action action, Common::String encoding) {
+	return say(Common::U32String(text), action, encoding);
+}
+
 bool MacOSXTextToSpeechManager::startNextSpeech() {
 	_currentSpeech.clear();
 	if (_messageQueue.empty())

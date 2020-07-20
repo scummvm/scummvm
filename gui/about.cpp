@@ -147,8 +147,7 @@ void AboutDialog::addLine(const U32String &str) {
 	if (*strBeginItr == 0) {
 		_lines.push_back(U32String(""));
 	} else {
-		U32String dupliStr = str;
-		Common::U32String format(dupliStr.encode().c_str(), 2);
+		Common::U32String format(str.begin(), str.begin() + 2);
 		strBeginItr += 2;
 		U32String renderStr(strBeginItr, str.end());
 

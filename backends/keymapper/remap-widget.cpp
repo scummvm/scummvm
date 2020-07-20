@@ -219,8 +219,8 @@ void RemapWidget::startRemapping(uint actionIndex) {
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
 	_remapInputWatcher->startWatching();
 
-	_actions[actionIndex].keyButton->setLabel(U32String("..."));
-	_actions[actionIndex].keyButton->setTooltip(U32String(""));
+	_actions[actionIndex].keyButton->setLabel("...");
+	_actions[actionIndex].keyButton->setTooltip("");
 	_actions[actionIndex].keyButton->markAsDirty();
 }
 
@@ -297,8 +297,8 @@ void RemapWidget::refreshKeymap() {
 			row.keyButton->setLabel(keysLabel);
 			row.keyButton->setTooltip(keysLabel);
 		} else {
-			row.keyButton->setLabel(U32String("-"));
-			row.keyButton->setTooltip(U32String(""));
+			row.keyButton->setLabel("-");
+			row.keyButton->setTooltip("");
 		}
 
 		KeymapTitleRow &keymapTitle = _keymapSeparators[row.keymap];

@@ -49,7 +49,7 @@ enum {
 };
 
 SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground): Dialog("SaveLoadCloudSyncProgress"), _close(false) {
-	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", Common::U32String("Downloading saves..."));
+	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", _("Downloading saves..."));
 	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
 	_progressBar = new SliderWidget(this, "SaveLoadCloudSyncProgress.ProgressBar");
 	_progressBar->setMinValue(0);
@@ -57,8 +57,8 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.PercentText", Common::String::format("%u %%", progress));
-	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", Common::U32String("Cancel"), Common::U32String(""), kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
-	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", Common::U32String("Run in background"), Common::U32String(""), kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
+	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", _("Cancel"), Common::U32String(""), kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", _("Run in background"), Common::U32String(""), kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
 	g_gui.scheduleTopDialogRedraw();
 }
@@ -348,7 +348,7 @@ void SaveLoadChooserDialog::addChooserButtons() {
 	}
 }
 
-ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &name, Common::U32String desc, Common::U32String tooltip, const char *image, uint32 cmd) {
+ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd) {
 	ButtonWidget *button;
 
 #ifndef DISABLE_FANCY_THEMES
@@ -683,7 +683,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 		saveSlot = x->getSaveSlot();
 		if (curSlot < saveSlot) {
 			while (curSlot < saveSlot) {
-				SaveStateDescriptor dummySave(curSlot, Common::U32String(""));
+				SaveStateDescriptor dummySave(curSlot, "");
 				_saveList.insert_at(curSlot, dummySave);
 				saveNames.push_back(dummySave.getDescription());
 				colors.push_back(ThemeEngine::kFontColorNormal);
@@ -727,7 +727,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	Common::String emptyDesc;
 	for (int i = curSlot; i <= maximumSaveSlots; i++) {
 		saveNames.push_back(emptyDesc);
-		SaveStateDescriptor dummySave(i, Common::U32String(""));
+		SaveStateDescriptor dummySave(i, "");
 		_saveList.push_back(dummySave);
 		colors.push_back(ThemeEngine::kFontColorNormal);
 	}
@@ -1102,7 +1102,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		} else {
 			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
 		}
-		curButton.description->setLabel(Common::String::format("%d. %s", saveSlot, desc.getDescription().encode().c_str()));
+		curButton.description->setLabel(Common::U32String(Common::String::format("%d. ", saveSlot)) + desc.getDescription());
 
 		Common::U32String tooltip(_("Name: "));
 		tooltip += desc.getDescription();
@@ -1165,7 +1165,7 @@ SavenameDialog::SavenameDialog()
 	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
 	new ButtonWidget(this, "SavenameDialog.Ok", _("OK"), Common::U32String(""), kOKCmd);
 
-	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::String(), Common::U32String(""), 0, kOKCmd);
+	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::U32String(), Common::U32String(""), 0, kOKCmd);
 
 	_targetSlot = 0;
 }

@@ -88,7 +88,7 @@ enum {
 */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text, U32String tooltip = U32String(""))
+	DomainEditTextWidget(GuiObject *boss, const String &name, const U32String &text, const U32String &tooltip = U32String(""))
 		: EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
@@ -152,11 +152,11 @@ EditGameDialog::EditGameDialog(const String &domain)
 	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
 	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
 	_langPopUp->appendEntry(_("<default>"), (uint32)Common::UNK_LANG);
-	_langPopUp->appendEntry(Common::U32String(""), (uint32)Common::UNK_LANG);
+	_langPopUp->appendEntry("", (uint32)Common::UNK_LANG);
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
 		if (checkGameGUIOptionLanguage(l->id, _guioptionsString))
-			_langPopUp->appendEntry(Common::convertToU32String(l->description), l->id);
+			_langPopUp->appendEntry(l->description, l->id);
 	}
 
 	// Platform popup
@@ -166,10 +166,10 @@ EditGameDialog::EditGameDialog(const String &domain)
 		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _c("Platform:", "lowres"), _("Platform the game was originally designed for"));
 	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup", _("Platform the game was originally designed for"));
 	_platformPopUp->appendEntry(_("<default>"));
-	_platformPopUp->appendEntry(Common::U32String(""));
+	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
 	for (; p->code; ++p) {
-		_platformPopUp->appendEntry(Common::convertToU32String(p->description), p->id);
+		_platformPopUp->appendEntry(p->description, p->id);
 	}
 
 	//
@@ -237,7 +237,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 4) The audio tab
 	//
-	tab->addTab((_("Audio")), "GameOptions_Audio");
+	tab->addTab(_("Audio"), "GameOptions_Audio");
 
 	if (g_system->getOverlayWidth() > 320)
 		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), Common::U32String(""), kCmdGlobalAudioOverride);
@@ -307,9 +307,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	// GUI:  Button + Label for the game path
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", (_("Game Path:")), Common::U32String(""), kCmdGameBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), Common::U32String(""), kCmdGameBrowser);
 	else
-		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", (_c("Game Path:", "lowres")), Common::U32String(""), kCmdGameBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), Common::U32String(""), kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
@@ -337,7 +337,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
 		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
 		if (achievementsInfo.descriptions.size() > 0) {
-			tab->addTab((_("Achievements")), "GameOptions_Achievements");
+			tab->addTab(_("Achievements"), "GameOptions_Achievements");
 			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);
 		}
 	}
@@ -438,7 +438,7 @@ void EditGameDialog::open() {
 }
 
 void EditGameDialog::apply() {
-	ConfMan.set("description", Common::convertFromU32String(_descriptionWidget->getEditString()), _domain);
+	ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
 
 	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 	if (lang < 0)
@@ -448,17 +448,17 @@ void EditGameDialog::apply() {
 
 	U32String gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
-		ConfMan.set("path", gamePath.encode(), _domain);
+		ConfMan.set("path", gamePath, _domain);
 
 	U32String extraPath(_extraPathWidget->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
-		ConfMan.set("extrapath", extraPath.encode(), _domain);
+		ConfMan.set("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
 
 	U32String savePath(_savePathWidget->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
-		ConfMan.set("savepath", savePath.encode(), _domain);
+		ConfMan.set("savepath", savePath, _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
 

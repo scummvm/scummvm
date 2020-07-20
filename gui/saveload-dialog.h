@@ -126,7 +126,7 @@ protected:
 	ButtonWidget *_gridButton;
 
 	void addChooserButtons();
-	ButtonWidget *createSwitchButton(const Common::String &name, Common::U32String desc, Common::U32String tooltip, const char *image, uint32 cmd = 0);
+	ButtonWidget *createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd = 0);
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 };
 
