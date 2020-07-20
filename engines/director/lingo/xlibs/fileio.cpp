@@ -67,7 +67,7 @@ void FileIO::initialize(int type) {
 
 // Initialization/disposal
 
-FileObject::FileObject(ObjectType objType) : Object("FileIO") {
+FileObject::FileObject(ObjectType objType) : Object<FileObject>("FileIO") {
 	_objType = objType;
 	_filename = nullptr;
 	_inFile = nullptr;
@@ -76,7 +76,7 @@ FileObject::FileObject(ObjectType objType) : Object("FileIO") {
 	_outStream = nullptr;
 }
 
-FileObject::FileObject(const FileObject &obj) : Object(obj) {
+FileObject::FileObject(const FileObject &obj) : Object<FileObject>(obj) {
 	_filename = nullptr;
 	_inFile = nullptr;
 	_inStream = nullptr;
