@@ -232,6 +232,8 @@ public:
     /** Python-like method **/
     String encode(CodePage page = kUtf8) const;
 
+	void wordWrap(const uint32 maxLength);
+
 	uint64 asUint64() const;
 
 	void trim();

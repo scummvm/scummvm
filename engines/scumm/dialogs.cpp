@@ -509,7 +509,7 @@ void ConfirmDialog::handleKeyDown(Common::KeyState state) {
 
 #pragma mark -
 
-ValueDisplayDialog::ValueDisplayDialog(const Common::U32String& label, int minVal, int maxVal,
+ValueDisplayDialog::ValueDisplayDialog(const Common::U32String &label, int minVal, int maxVal,
 		int val, uint16 incKey, uint16 decKey)
 	: GUI::Dialog(0, 0, 0, 0),
 	_label(label), _min(minVal), _max(maxVal),

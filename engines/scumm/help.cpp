@@ -22,8 +22,6 @@
 
 
 
-#include "common/str.h"
-#include "common/ustr.h"
 #include "common/util.h"
 
 #include "scumm/help.h"

@@ -1134,19 +1134,26 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// unknown MD5, or with a medium debug level in case of a known MD5 (for
 	// debugging purposes).
 	if (!findInMD5Table(res.md5.c_str())) {
-		Common::U32String md5Warning;
+		Common::String md5Warning;
+		Common::String additionalInfo;
+		// Common::U32String md5WarningTranslated;
 
-		md5Warning = _("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
+		md5Warning = ("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 		               "version (in particular, not a fan-made translation), please, report the\n"
 		               "following data to the ScummVM team along with the name of the game you tried\n"
 		               "to add and its version, language, etc.:\n");
 
-		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
+		// md5WarningTranslated = _(md5Warning);
+
+		additionalInfo = Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
 				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod, res.game.platform).c_str(),
 				res.md5.c_str());
 
-		g_system->logMessage(LogMessageType::kWarning, md5Warning.encode().c_str());
+		md5Warning += additionalInfo;
+		// md5WarningTranslated += additionalInfo;
+
+		g_system->logMessage(LogMessageType::kWarning, md5Warning.c_str());
 	} else {
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}

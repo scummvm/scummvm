@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "common/str-array.h"
 #include "common/language.h"
 #include "common/platform.h"
@@ -233,7 +234,7 @@ public:
 	 *
 	 * @see ::generateUnknownGameReport
 	 */
-	Common::String generateUnknownGameReport(bool translate, uint32 wordwrapAt = 0) const;
+	Common::U32String generateUnknownGameReport(bool translate, uint32 wordwrapAt = 0) const;
 
 private:
 	DetectedGames _detectedGames;
@@ -248,7 +249,7 @@ private:
  *                 of last component of the path is included
  * @param wordwrapAt word wrap the text part of the report after a number of characters
  */
-Common::String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt = 0);
-Common::String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt = 0);
+Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt = 0);
+Common::U32String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt = 0);
 
 #endif
