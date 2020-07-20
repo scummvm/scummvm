@@ -514,6 +514,12 @@ void TextCastMember::setEditable(bool editable) {
 	_editable = editable;
 }
 
+void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
+	if (widget && _type == kCastText) {
+		_ptext = ((Graphics::MacText *)widget)->getEditedString().encode();
+	}
+}
+
 ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastShape;

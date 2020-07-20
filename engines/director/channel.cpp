@@ -312,6 +312,9 @@ void Channel::setBbox(int l, int t, int r, int b) {
 
 bool Channel::updateWidget() {
 	if (_widget && _widget->_contentIsDirty) {
+		if (_sprite->_cast) {
+			_sprite->_cast->updateFromWidget(_widget);
+		}
 		_widget->draw();
 		return true;
 	}

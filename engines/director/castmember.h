@@ -64,6 +64,7 @@ public:
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
 	virtual Graphics::MacWidget *createWidget() { return nullptr; }
+	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
 
 	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
 	virtual uint getForeColor() { return 0; }
@@ -167,6 +168,7 @@ public:
 	virtual bool isModified() override;
 	virtual bool isEditable() override;
 	virtual void setEditable(bool editable) override;
+	virtual void updateFromWidget(Graphics::MacWidget *widget);
 	Graphics::TextAlign getAlignment();
 
 	virtual uint getBackColor() override { return _bgcolor; }
