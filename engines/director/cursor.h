@@ -49,6 +49,9 @@ class Cursor : public Graphics::MacCursor {
 
 	uint _cursorCastId;
 	uint _cursorMaskId;
+
+private:
+	void resetCursor(Graphics::MacCursorType type, bool shouldClear = false, int resId = 0, uint castId = 0, uint maskId = 0);
 };
 
 } // end of namespace Director

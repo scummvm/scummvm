@@ -56,12 +56,8 @@ void Cursor::readFromCast(uint cursorId, uint maskId) {
 		return;
 	}
 
-	_cursorType = Graphics::kMacCursorCustom;
-	_cursorResId = 0;
-	_cursorCastId = cursorId;
-	_cursorMaskId = maskId;
+	resetCursor(Graphics::kMacCursorCustom, 0, cursorId, maskId);
 
-	clear();
 	_surface = new byte[getWidth() * getHeight()];
 	byte *dst = _surface;
 
@@ -100,35 +96,26 @@ void Cursor::readFromResource(int resourceId) {
 	if (resourceId == _cursorResId)
 		return;
 
-	clear();
-
-	_cursorCastId = 0;
-	_cursorMaskId = 0;
-
-	_cursorResId = resourceId;
-
 	switch(resourceId) {
 	case -1:
-		_cursorType = Graphics::kMacCursorArrow;
+		resetCursor(Graphics::kMacCursorArrow, true, resourceId);
 		break;
 	case 1:
-		_cursorType = Graphics::kMacCursorBeam;
+		resetCursor(Graphics::kMacCursorBeam, true, resourceId);
 		break;
 	case 2:
-		_cursorType = Graphics::kMacCursorCrossHair;
+		resetCursor(Graphics::kMacCursorCrossHair, true, resourceId);
 		break;
 	case 3:
-		_cursorType = Graphics::kMacCursorCrossBar;
+		resetCursor(Graphics::kMacCursorCrossBar, true, resourceId);
 		break;
 	case 4:
-		_cursorType = Graphics::kMacCursorWatch;
+		resetCursor(Graphics::kMacCursorWatch, true, resourceId);
 		break;
 	case 200:
-		_cursorType = Graphics::kMacCursorOff;
+		resetCursor(Graphics::kMacCursorOff, true, resourceId);
 		break;
 	default:
-		_cursorType = Graphics::kMacCursorCustom;
-
 		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
 			Common::SeekableSubReadStreamEndian *cursorStream;
 
@@ -136,13 +123,23 @@ void Cursor::readFromResource(int resourceId) {
 			if (!cursorStream)
 				cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId);
 
-			if (cursorStream) {
-				readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0);
+			if (cursorStream && readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0)) {
+				resetCursor(Graphics::kMacCursorCustom, false, resourceId);
 				break;
 			}
 		}
 	}
+}
 
+void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int resId, uint castId, uint maskId) {
+	if (shouldClear)
+		clear();
+
+	_cursorType = type;
+	_cursorResId = resId;
+
+	_cursorCastId = castId;
+	_cursorMaskId = maskId;
 }
 
 } // end of namespace Director
