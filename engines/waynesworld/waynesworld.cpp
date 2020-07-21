@@ -143,7 +143,8 @@ Common::Error WaynesWorldEngine::run() {
 
 	drawInterface(2);
 	// changeRoom(0);
-	changeRoom(9); // DEBUG
+	// _wayneSpriteX = -1; _garthSpriteX = -1;
+	changeRoom(39); // DEBUG
 
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	// _gameState = 1; // DEBUG Open map
@@ -481,6 +482,7 @@ void WaynesWorldEngine::loadPalette(const char *filename) {
 		warning("loadPalette() Could not load palette from '%s'", filename);
 	} else {
 		memcpy(_palette2, imageDecoder->getPalette(), imageDecoder->getPaletteColorCount() * 3);
+		g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
 	}
     delete imageDecoder;
 }

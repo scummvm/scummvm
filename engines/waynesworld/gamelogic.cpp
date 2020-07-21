@@ -3011,7 +3011,7 @@ void GameLogic::r6_handleRoomEvent2() {
 
 void GameLogic::r6_handleRoomEvent3() {
 	_vm->waitSeconds(1);
-	_vm->playSound("ss10.snd", 1);
+	_vm->playSound("ss10", 1);
 	_vm->walkTo(110, 107, 4, 135, 107);
 	_vm->playAnimation("dad", 0, 3, 119, 79, 0, 100);
 	if ((_r6_flags & 0x40) && !(_r6_flags & 0x20)) {
@@ -4612,7 +4612,7 @@ void GameLogic::r11_pickUpExtensionCord() {
 void GameLogic::r11_useSuckCutWithFountain() {
 	r11_uninitRoomAnimations();
 	_vm->playAnimation("suckwt", 0, 5, 45, 92, 0, 200);
-	_vm->playSound("ss40.snd", 0);
+	_vm->playSound("ss40", 0);
 	for (int i = 5; i < 15; i++) {
 		_vm->playAnimation("elec", i - 5, 1, 176, 61, 0, 1);
 		_vm->playAnimation("suckwt", i, 1, 45, 92, 0, 150);
@@ -5457,13 +5457,13 @@ void GameLogic::r17_handleRoomEvent1() {
 
 void GameLogic::r17_handleRoomEvent2() {
 	_vm->walkTo(71, 117, 0, 90, 117);
-	_vm->playSound("ss13.snd", 0);
+	_vm->playSound("ss13", 0);
 	_vm->playAnimation("beam", 0, 13, 62, 51, 0, 150);
 	_vm->changeRoom(37);
 }
 
 void GameLogic::r17_handleRoomEvent3() {
-	_vm->playSound("ss13.snd", 0);
+	_vm->playSound("ss13", 0);
 	_vm->playAnimation("beam", 12, -13, 62, 51, 0, 150);
 	_r37_flags &= ~0x20;
 	_vm->setWaynePosition(71, 117);
@@ -5751,7 +5751,7 @@ void GameLogic::r20_refreshRoomBackground() {
 void GameLogic::r20_handleRoomEvent() {
 	_vm->waitSeconds(1);
 	_vm->playAnimation("expl", 0, 36, 40, 32, 0, 150);
-	_vm->playSound("ss17.snd", 0);
+	_vm->playSound("ss17", 0);
 	_vm->playAnimation("expl", 37, 66, 40, 32, 0, 150);
 	_r19_flags &= ~0x01;
 	_r19_flags |= 0x08;
@@ -5868,6 +5868,7 @@ int GameLogic::r24_handleVerbUse() {
 			_vm->changeRoom(24);
 			break;
 		}
+		break;
 	default:
 		actionTextIndex = 0;
 		break;
@@ -6239,9 +6240,9 @@ void GameLogic::r28_handleRoomEvent1() {
 		_vm->refreshActors();
 	}
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
-	_vm->playSound("ss13.snd", 0);
+	_vm->playSound("ss13", 0);
 	_vm->playAnimation("zapwg", 0, 11, 107, 53, 0, 70);
-	_vm->playSound("sv08.snd", 1);
+	_vm->playSound("sv08", 1);
 	_vm->playAnimation("scepter", 3, -4, 26, 42, 0, 150);
 	_vm->displayText("c04r", 30, 0, 150, 10, 0);
 	_vm->playAnimation("reptalk", 0, 6, 26, 51, 0, 150);
@@ -6266,11 +6267,11 @@ void GameLogic::r28_handleRoomEvent1() {
 }
 
 void GameLogic::r28_handleRoomEvent2() {
-	_vm->playSound("ss12.snd", 0);
+	_vm->playSound("ss12", 0);
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
 	_vm->playAnimation("repxit", 0, 11, 0, 33, 0, 100);
 	_vm->waitSeconds(2);
-	_vm->playSound("ss12.snd", 0);
+	_vm->playSound("ss12", 0);
 	_vm->playAnimation("repxit", 10, -11, 0, 33, 0, 100);
 	_vm->playAnimation("scepter", 3, -4, 26, 42, 0, 150);
 	_vm->displayText("c04r", 38, 0, 150, 10, 0);
@@ -6278,7 +6279,7 @@ void GameLogic::r28_handleRoomEvent2() {
 	_vm->waitSeconds(2);
 	_vm->_isTextVisible = false;
 	_vm->refreshActors();
-	_vm->playSound("ss12.snd", 0);
+	_vm->playSound("ss12", 0);
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
 	_vm->playAnimation("repxit", 0, 11, 0, 33, 0, 100);
 	_vm->waitSeconds(2);
@@ -6597,7 +6598,7 @@ void GameLogic::r30_runLudwigCutscene() {
 	_vm->playAnimation("ludwig", 42, 20, 185, 34, 0, 150);
 	_vm->displayTextLines("lws", 27, 50, 10, 1);
 	_vm->playAnimation("ludwig", 62, 4, 185, 34, 0, 150);
-	_vm->playSound("ss17.snd", 0);
+	_vm->playSound("ss17", 0);
 	_vm->playAnimation("ludwig", 66, 4, 186, 22, 0, 150);
 	_vm->playAnimation("ludwig", 70, 3, 185, 34, 0, 150);
 	_vm->displayTextLines("lws", 28, 50, 10, 5);
@@ -6766,7 +6767,7 @@ void GameLogic::r31_handleRoomEvent4() {
 
 		_vm->displayText("gms", _r31_categoryIndex * 5 + _r31_questionIndex, 0, 50, 10, 0);
 		_vm->playAnimation("rdcard", 0, 6, 155, 30, 0, 300);
-		_vm->playAnimation("rdcard", 1, 6, 155, 30, 0, 300);
+		_vm->playAnimation("rdcard", 1, 5, 155, 30, 0, 300); // NOTE This had 6 as count in the original which is a bug
 		_vm->playAnimation("rdcard", 5, -6, 155, 30, 0, 300);
 		_r31_questionsAsked++;
 		_vm->_isTextVisible = false;
@@ -6833,21 +6834,15 @@ void GameLogic::r31_handleRoomEvent5() {
 }
 
 void GameLogic::r31_drawDBuzzer() {
-	WWSurface *local128 = new WWSurface(48, 27);
-	// TODO copySpriteRect(_vm->_backgroundSurface, 247, 78, 294, 104, local128);
 	_vm->drawRoomImageToScreen("dbuzzer", 247, 78);
 	_vm->waitSeconds(2);
-	_vm->_screen->drawSurface(local128, 247, 78);
-	delete local128;
+	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 }
 
 void GameLogic::r31_drawMBuzzer() {
-	WWSurface *local128 = new WWSurface(29, 18);
-	// TODO copySpriteRect(_vm->_backgroundSurface, 210, 61, 238, 78, local128);
 	_vm->drawRoomImageToScreen("mbuzzer", 210, 61);
 	_vm->waitSeconds(2);
-	_vm->_screen->drawSurface(local128, 210, 61);
-	delete local128;
+	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 }
 
 void GameLogic::r31_playTalkAnim(int talkerIndex) {
@@ -6866,12 +6861,9 @@ void GameLogic::r31_playTalkAnim(int talkerIndex) {
 }
 
 void GameLogic::r31_useBuzzer() {
-	WWSurface *local128 = new WWSurface(48, 40);
-	// TODO copySpriteRect(_vm->_backgroundSurface, 131, 106, 178, 145, local128);
 	_vm->drawRoomImageToScreen("buzzer", 131, 106);
-	_vm->playSound("ss04.snd", 1);
-	_vm->_screen->drawSurface(local128, 131, 106);
-	delete local128;
+	_vm->playSound("ss04", 1);
+	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 	if (!(_r31_flags & 0x01)) {
 		r31_handleRoomEvent3();
 		_r31_flags |= 0x01;
@@ -6885,6 +6877,7 @@ void GameLogic::r31_displayCategories() {
 	// TODO fxSetGrain(4, 4, 1);
 	// TODO fxSetEffect(8); // Spiral Effect
 	// TODO fxVirtualDisplay(screenImage, 0, 0, 0, 0, 319, 199, 1);
+	_vm->_screen->drawSurface(screenImage, 0, 0); // TODO Until effects drawing is done
 	delete screenImage;
 	for (int categoryIndex = 0; categoryIndex < 5; categoryIndex++) {
 		Common::String categoryFilename = Common::String::format("cat%d", categoryIndex);
@@ -6892,6 +6885,7 @@ void GameLogic::r31_displayCategories() {
 		// TODO fxSetGrain(1, 1, 1);
 		// TODO fxSetEffect(5); // Random Effect
 		// TODO fxVirtualDisplay(categoryImage, 0, 0, 17, 61, 300, 140, 0);
+		_vm->_screen->drawSurface(categoryImage, 17, 61); // TODO Until effects drawing is done
 		delete categoryImage;
 		_vm->waitSeconds(3);
 	}
@@ -6935,13 +6929,13 @@ void GameLogic::r31_drawCurrentPlayerScore() {
 		Common::String numberFilename = Common::String::format("n%d", score / 100);
 		_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX, numberY);
 	} else {
-		_vm->_backgroundSurface->fillRect(numberX, numberY, numberX + 3, numberY + 6, 2);
+		_vm->_backgroundSurface->fillRect(numberX, numberY, numberX + 3, numberY + 6, 0);
 	}
 	if (score > 9) {
 		Common::String numberFilename = Common::String::format("n%d", (score % 100) / 10);
 		_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX + 5, numberY);
 	} else {
-		_vm->_backgroundSurface->fillRect(numberX + 5, numberY, numberX + 8, numberY + 6, 2);
+		_vm->_backgroundSurface->fillRect(numberX + 5, numberY, numberX + 8, numberY + 6, 0);
 	}
 	Common::String numberFilename = Common::String::format("n%d", score % 10);
 	_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX + 10, numberY);
@@ -7856,7 +7850,7 @@ void GameLogic::r37_useLadder2() {
 		if (climbCtr < 12) {
 			workBackground->drawSurfaceTransparent(_vm->_garthSprites[0], 135, garthLadderY);
 		} else if (climbCtr <= 14) {
-			workBackground->drawSurfaceTransparent(wgetldlSprites[14 - climbCtr], 168, 26);
+			workBackground->drawSurfaceTransparent(ggetldlSprites[climbCtr - 12], 168, 26);
 		} else {
 			workBackground->drawSurfaceTransparent(gclimbSprites[climbCtr % 4], 187, garthLadderY);
 		} 
