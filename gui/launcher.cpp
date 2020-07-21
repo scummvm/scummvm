@@ -323,7 +323,7 @@ void LauncherDialog::updateListing() {
 
 	// Update the filter settings, those are lost when "setList"
 	// is called.
-	_list->setFilter(Common::convertFromU32String(_searchWidget->getEditString()));
+	_list->setFilter(_searchWidget->getEditString());
 }
 
 void LauncherDialog::addGame() {
@@ -673,12 +673,12 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchCmd:
 		// Update the active search filter.
-		_list->setFilter(Common::convertFromU32String(_searchWidget->getEditString()));
+		_list->setFilter(_searchWidget->getEditString());
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
 		_searchWidget->setEditString(Common::U32String(""));
-		_list->setFilter("");
+		_list->setFilter(Common::U32String(""));
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);

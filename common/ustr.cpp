@@ -229,6 +229,29 @@ bool U32String::contains(value_type x) const {
 	return false;
 }
 
+bool U32String::contains(const U32String &otherString) const {
+	if (empty() || otherString.empty() || _size < otherString.size()) {
+		return false;
+	}
+
+	int size = 0;
+	U32String::const_iterator itr = otherString.begin();
+
+	for (U32String::const_iterator itr2 = begin(); itr != otherString.end() && itr2 != end(); itr2++) {
+		if (*itr == *itr2) {
+			itr++;
+			size++;
+			if (size == otherString.size())
+				return true;
+		} else {
+			size = 0;
+			itr = otherString.begin();
+		}
+	}
+
+	return false;
+}
+
 void U32String::insertChar(value_type c, uint32 p) {
 	assert(p <= _size);
 

@@ -150,6 +150,11 @@ public:
 
 	bool contains(value_type x) const;
 
+	/**
+	 * Checks if a given string is present in the internal string or not.
+	 */
+	bool contains(const U32String &otherString) const;
+
 	inline const value_type *c_str() const { return _str; }
 	inline uint32 size() const             { return _size; }
 
