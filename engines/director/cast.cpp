@@ -429,6 +429,7 @@ void Cast::copyCastStxts() {
 			TextCastMember *tc = (TextCastMember *)c->_value;
 
 			tc->importStxt(stxt);
+			tc->_size = stxt->_size;
 		}
 	}
 }
@@ -521,9 +522,11 @@ void Cast::loadSpriteImages() {
 
 		img->loadStream(*pic);
 
-		delete pic;
-
 		bitmapCast->_img = img;
+		const Graphics::Surface *surf = img->getSurface();
+		bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
+
+		delete pic;
 
 		debugC(4, kDebugImages, "Cast::loadSpriteImages(): id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, w, h, bitmapCast->_flags1, bitmapCast->_flags2, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
 	}
@@ -574,6 +577,7 @@ void Cast::loadSpriteSounds() {
 				SNDDecoder *audio = new SNDDecoder();
 				audio->loadStream(*sndData);
 				soundCast->_audio = audio;
+				soundCast->_size = sndData->size();
 			}
 			delete sndData;
 		}
@@ -915,7 +919,7 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 		for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it) {
 			if (it->_value->scriptId == 0)
 				continue;
-			
+
 			ScriptType type = kCastScript;
 			CastMember *member = _loadedCast->getVal(it->_key);
 			if (member->_type == kCastLingoScript) {

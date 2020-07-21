@@ -57,6 +57,8 @@ public:
 	TextAlignType _textAlign;
 	SizeType _textShadow;
 
+	uint32 _size;
+
 	FontStyle _style;
 	uint16 _unk1f;
 	uint16 _unk2f;

@@ -35,6 +35,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableSubReadStreamEndian &textStream) : _cast(
 	_textShadow = kSizeNone;
 	_unk1f = _unk2f = 0;
 	_unk3f = 0;
+	_size = textStream.size();
 
 	// D4+ variant
 	if (textStream.size() == 0)
