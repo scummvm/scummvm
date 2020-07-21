@@ -45,6 +45,7 @@ public:
 	bool isDirty(Sprite *nextSprite = nullptr);
 	bool isEmpty();
 	bool isActiveText();
+	bool isMouseIn(const Common::Point &pos, bool onlyMatte);
 
 	void setWidth(int w);
 	void setHeight(int h);
