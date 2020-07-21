@@ -1508,7 +1508,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 			d = Datum(castInfo->script);
 		break;
 	case kTheSize:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		d.u.i = member->_size;
 		break;
 	case kTheSound:
 		if (castType == kCastDigitalVideo) {
