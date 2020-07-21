@@ -25,6 +25,7 @@
 #include "lure/memory.h"
 #include "lure/res.h"
 #include "lure/room.h"
+#include "lure/surface.h"
 
 #include "common/algorithm.h"
 #include "common/config-manager.h"
@@ -165,6 +166,9 @@ void SoundManager::initCustomTimbres() {
 	}
 	byte *timbreData = _soundData->data() + timbreDataOffset;
 
+	AudioInitIcon *icon = new AudioInitIcon();
+	icon->show();
+
 	// Send SysExes
 
 	// System Area
@@ -207,6 +211,9 @@ void SoundManager::initCustomTimbres() {
 		address += sysexLength;
 		timbreData += sysexLength;
 	}
+
+	icon->hide();
+	delete icon;
 }
 
 void SoundManager::mt32SysEx(const uint32 targetAddress, const byte *dataPtr, uint8 length) {

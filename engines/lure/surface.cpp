@@ -1435,4 +1435,47 @@ void CopyProtectionDialog::chooseCharacters() {
 	screen.update();
 }
 
+AudioInitIcon::AudioInitIcon() {
+	if (LureEngine::getReference().isEGA()) {
+		// The icon is not shown on EGA
+		_iconSurface = 0;
+	} else {
+		// Load icon
+		_iconSurface = new Surface(Disk::getReference().getEntry(AUDIO_INIT_ICON_RESOURCE_ID), 14, 14);
+
+		Screen &screen = Screen::getReference();
+
+		// Add the colors needed for displaying the icon to the current palette
+		Palette combinedPalette;
+		Palette defaultPalette(GAME_PALETTE_RESOURCE_ID);
+		combinedPalette.palette()->copyFrom(screen.getPalette().palette(), 0, 0, 4 * 0xF8);
+		combinedPalette.palette()->copyFrom(defaultPalette.palette(), 4 * 0xF8, 4 * 0xF8, 4 * 6);
+		screen.setPalette(&combinedPalette);
+	}
+}
+
+AudioInitIcon::~AudioInitIcon() {
+	if (_iconSurface)
+		delete _iconSurface;
+}
+
+void AudioInitIcon::show() {
+	// TODO The icon should blink
+	if (!LureEngine::getReference().isEGA()) {
+		Screen &screen = Screen::getReference();
+
+		_iconSurface->copyTo(&screen.screen(), 0, 185);
+		screen.update();
+	}
+}
+
+void AudioInitIcon::hide() {
+	if (!LureEngine::getReference().isEGA()) {
+		Screen &screen = Screen::getReference();
+
+		screen.screen().fillRect(Common::Rect(0, 185, 14, 199), 0);
+		screen.update();
+	}
+}
+
 } // End of namespace Lure
