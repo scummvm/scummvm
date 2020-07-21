@@ -35,25 +35,19 @@
 
 #include <gtk/gtk.h>
 
-Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const char *title, Common::FSNode &choice, bool isDirBrowser) {
+Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 	if (!gtk_init_check(NULL, NULL))
 		return kDialogError;
 
 	DialogResult result = kDialogCancel;
 
-	// Get current encoding
-	Common::String guiEncoding = "ASCII";
-#ifdef USE_TRANSLATION
-	guiEncoding = TransMan.getCurrentCharset();
-#endif
-	Common::Encoding utf8("utf-8", guiEncoding);
+	Common::U32String choose = _("Choose");
+	Common::U32String cancel = _("Cancel");
 
 	// Convert labels to UTF-8
-	char *utf8Title = utf8.convert(title, strlen(title));
-	Common::String choose = _("Choose");
-	char *utf8Choose = utf8.convert(choose.c_str(), choose.size());
-	Common::String cancel = _("Cancel");
-	char* utf8Cancel = utf8.convert(cancel.c_str(), cancel.size());
+	char *utf8Title = (char *)title.encode().c_str();
+	char *utf8Choose = (char *)choose.encode().c_str();
+	char* utf8Cancel = (char *)cancel.encode().c_str();
 
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 	if (isDirBrowser) {
