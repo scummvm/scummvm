@@ -171,7 +171,7 @@ void GameLogic::initVariables() {
 	_r36_flags = 0;
 	_r38_flags = 0;
 	_r39_flags = 0;
-	_r10_selectedDialogChoice = -1;
+	_r10_selectedItemToBuy = -1;
 	_r9_dialogFlag = 0;
 	_r1_eventFlag = 0;
 	_r1_eventCtr = 1;
@@ -342,6 +342,9 @@ void GameLogic::handleVerbTalkTo() {
         break;
     case 9:
         r9_handleVerbTalkTo();
+        break;
+	case 10:
+		r10_handleVerbTalkTo();
         break;
     case 19:
     case 20:
@@ -4169,10 +4172,10 @@ void GameLogic::r10_handleVerbGiveWinningTicketToSalesgirl() {
 	_vm->displayText("c04r", 9, 0, 320, 70, 0);
 }
 
-void GameLogic::r10_handleDialogSelect_6() {
+void GameLogic::r10_buyItem() {
 	r10_refreshObject(1);
 	_vm->waitSeconds(1);
-	if (_r10_selectedDialogChoice == 0) {
+	if (_r10_selectedItemToBuy == 0) {
 		_vm->playAnimation("getmon", 0, 5, 98, 7, 0, 100);
 		_r10_flags |= 0x02;
 		_vm->moveObjectToRoom(kObjectIdTicket, 10);
@@ -4182,7 +4185,7 @@ void GameLogic::r10_handleDialogSelect_6() {
 		_vm->displayText("c04r", 8, 0, 320, 115, 0);
 		_vm->playAnimation("gest", 0, 7, 127, 7, 0, 200);
 		_vm->playAnimation("getmon", 4, 2, 98, 7, 0, 100);
-		if (_r10_selectedDialogChoice == 1) {
+		if (_r10_selectedItemToBuy == 1) {
 			_r10_flags |= 0x08;
 		} else {
 			_r10_flags |= 0x04;
@@ -4190,7 +4193,7 @@ void GameLogic::r10_handleDialogSelect_6() {
 	}
 	_vm->moveObjectToNowhere(kObjectIdInventoryDollar);
 	_vm->loadRoomBackground(_vm->_currentRoomNumber);
-	_r10_selectedDialogChoice = 255;
+	_r10_selectedItemToBuy = -1;
 }
 
 int GameLogic::r10_handleVerbUse() {
@@ -4316,10 +4319,10 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 				replyTextIndex2 = 2;
 				break;
 			case 0: case 1: case 2:
-				_r10_selectedDialogChoice = _vm->_selectedDialogChoice;
-				if (_vm->_currentActorNum != 0 && _vm->_wayneInventory[kObjectIdInventoryDollar] == 0) {
+				_r10_selectedItemToBuy = _vm->_selectedDialogChoice;
+				if (_vm->_currentActorNum != 0 && _vm->_wayneInventory[kObjectIdInventoryDollar - 28] == 0) {
 					_vm->setDialogChoices(8, -1, -1, -1, -1);
-				} else if (_vm->_currentActorNum == 0 && _vm->_garthInventory[kObjectIdInventoryDollar] == 0) {
+				} else if (_vm->_currentActorNum == 0 && _vm->_garthInventory[kObjectIdInventoryDollar - 28] == 0) {
 					_vm->setDialogChoices(8, -1, -1, -1, -1);
 				} else {
 					_vm->setDialogChoices(6, 7, -1, -1, -1);
@@ -4328,14 +4331,14 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 				continueDialog = true;
 				break;
 			case 6:
-				r10_handleDialogSelect_6();
+				r10_buyItem();
 			case 4:
 				_vm->_gameState = 0;
 				break;
 			case 8:
 				replyTextIndex1 = 4;
 			case 7:
-				_r10_selectedDialogChoice = 255;
+				_r10_selectedItemToBuy = -1;
 				handleVerbTalkTo();
 				break;
 			}

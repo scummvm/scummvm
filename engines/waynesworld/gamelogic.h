@@ -83,7 +83,7 @@ public:
 	byte _r36_flags;
 	byte _r38_flags;
 	byte _r39_flags;
-	int _r10_selectedDialogChoice;
+	int _r10_selectedItemToBuy;
 	byte _r9_dialogFlag;
 	byte _r1_eventFlag;
 	byte _r1_eventCtr;
@@ -250,7 +250,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r10_handleVerbPickUpTicket();
 	void r10_handleVerbPickUpGum();
 	void r10_handleVerbGiveWinningTicketToSalesgirl();
-	void r10_handleDialogSelect_6();
+	void r10_buyItem();
 	void r10_handleVerbPickUpJawbreakers();
 	void r10_refreshObject(int value);
 
