@@ -69,7 +69,7 @@ void Stage::invertChannel(Channel *channel) {
 	Common::Rect destRect = channel->getBbox();
 
 	for (int i = 0; i < destRect.height(); i++) {
-		byte *src = (byte *)_surface.getBasePtr(destRect.left, destRect.top + i);
+		byte *src = (byte *)_composeSurface->getBasePtr(destRect.left, destRect.top + i);
 		const byte *msk = mask ? (const byte *)mask->getBasePtr(0, i) : nullptr;
 
 		for (int j = 0; j < destRect.width(); j++, src++)
@@ -85,7 +85,7 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	if (forceRedraw) {
 		blitTo->clear(_stageColor);
 		_dirtyRects.clear();
-		_dirtyRects.push_back(Common::Rect(_surface.w, _surface.h));
+		_dirtyRects.push_back(Common::Rect(_composeSurface->w, _composeSurface->h));
 	} else {
 		if (_dirtyRects.size() == 0)
 			return false;
@@ -94,7 +94,7 @@ bool Stage::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	}
 
 	if (!blitTo)
-		blitTo = &_surface;
+		blitTo = _composeSurface;
 
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); i++) {
 		const Common::Rect &r = *i;
@@ -121,7 +121,7 @@ void Stage::setStageColor(uint stageColor) {
 }
 
 void Stage::reset() {
-	_surface.clear(_stageColor);
+	_composeSurface->clear(_stageColor);
 	_contentIsDirty = true;
 }
 

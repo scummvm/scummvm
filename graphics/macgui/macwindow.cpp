@@ -105,7 +105,7 @@ void MacWindow::setActive(bool active) {
 bool MacWindow::isActive() { return _active; }
 
 void MacWindow::resize(int w, int h, bool inner) {
-	if (_surface.w == w && _surface.h == h)
+	if (_composeSurface->w == w && _composeSurface->h == h)
 		return;
 
 	if (inner) {
@@ -118,16 +118,14 @@ void MacWindow::resize(int w, int h, bool inner) {
 		updateInnerDims();
 	}
 
-	_surface.free();
-	_surface.create(_innerDims.width(), _innerDims.height(), PixelFormat::createFormatCLUT8());
+	_composeSurface->free();
+	_composeSurface->create(_innerDims.width(), _innerDims.height(), PixelFormat::createFormatCLUT8());
 
 	if (_hasPattern)
 		drawPattern();
 
 	_borderSurface.free();
 	_borderSurface.create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
-	_composeSurface->free();
-	_composeSurface->create(_dims.width(), _dims.height(), PixelFormat::createFormatCLUT8());
 
 	_contentIsDirty = true;
 	_borderIsDirty = true;
@@ -167,10 +165,6 @@ bool MacWindow::draw(bool forceRedraw) {
 
 	_contentIsDirty = false;
 
-	// Compose
-	_composeSurface->blitFrom(_surface, Common::Rect(0, 0, _surface.w, _surface.h), Common::Point(_innerDims.left - _dims.left, _innerDims.top - _dims.top));
-	_composeSurface->transBlitFrom(_borderSurface, kColorGreen);
-
 	return true;
 }
 
@@ -178,12 +172,14 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left, _dims.top), kColorGreen2);
+	g->blitFrom(*_composeSurface, Common::Rect(0, 0, _composeSurface->w, _composeSurface->h), Common::Point(_innerDims.left, _innerDims.top));
+	g->transBlitFrom(_borderSurface, Common::Rect(0, 0, _borderSurface.w, _borderSurface.h), Common::Point(_dims.left, _dims.top), kColorGreen);
 
 	return true;
 }
 
 void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
+	// Only the inner surface is blitted here
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, kColorGreen2);
 }
 
@@ -338,9 +334,9 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 
 void MacWindow::drawPattern() {
 	byte *pat = _wm->getPatterns()[_pattern - 1];
-	for (int y = 0; y < _surface.h; y++) {
-		for (int x = 0; x < _surface.w; x++) {
-			byte *dst = (byte *)_surface.getBasePtr(x, y);
+	for (int y = 0; y < _composeSurface->h; y++) {
+		for (int x = 0; x < _composeSurface->w; x++) {
+			byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
 			if (pat[y % 8] & (1 << (7 - (x % 8))))
 				*dst = _wm->_colorBlack;
 			else

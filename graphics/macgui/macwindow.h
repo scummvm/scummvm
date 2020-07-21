@@ -110,10 +110,10 @@ public:
 	bool isVisible();
 
 	/**
-	 * Method to access the entire surface of the window (e.g. to draw an image).
-	 * @return A pointer to the entire surface of the window.
+	 * Method to access the entire interior surface of the window (e.g. to draw an image).
+	 * @return A pointer to the entire interior surface of the window.
 	 */
-	ManagedSurface *getWindowSurface() { return &_surface; }
+	ManagedSurface *getWindowSurface() { return _composeSurface; }
 
 	/**
 	 * Method called to draw the window into the target surface.
@@ -147,8 +147,6 @@ protected:
 	WindowType _type;
 
 	bool _editable;
-
-	ManagedSurface _surface;
 
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
