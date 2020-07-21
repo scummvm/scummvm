@@ -341,4 +341,23 @@ int Lingo::func_marker(int m) 	{
 	return labelNumber;
 }
 
+uint16 Lingo::func_label(Datum &label) {
+	Score *score = _vm->getCurrentMovie()->getScore();
+
+	if (!score->_labels)
+		return 0;
+
+	if (label.type == STRING)
+		return score->getLabel(*label.u.s);
+
+	int num = CLIP<int>(label.asInt() - 1, 0, score->_labels->size() - 1);
+
+	uint16 res = score->getNextLabelNumber(0);
+
+	while (--num > 0)
+		res = score->getNextLabelNumber(res);
+
+	return res;
+}
+
 }

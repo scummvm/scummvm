@@ -336,6 +336,7 @@ public:
 	void func_playdone();
 	void func_cursor(int cursorId, int maskId);
 	int func_marker(int m);
+	uint16 func_label(Datum &label);
 
 	// lingo-the.cpp
 public:

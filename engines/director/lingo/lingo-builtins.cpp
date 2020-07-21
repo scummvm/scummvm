@@ -1680,9 +1680,9 @@ Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
 
 void LB::b_label(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_label(%d)", d.asInt());
+	uint16 label = g_lingo->func_label(d);
 
-	g_lingo->push(Datum(0));
+	g_lingo->push(label);
 }
 
 void LB::b_marker(int nargs) {
