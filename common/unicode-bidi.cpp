@@ -64,7 +64,7 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 	FriBidiChar *visual_str = new FriBidiChar[buff_length * sizeof(FriBidiChar)];
 	_log_to_vis_index = new uint32[input_size];
 	_vis_to_log_index = new uint32[input_size];
-	FriBidiCharType pbase_dir = FRIBIDI_TYPE_ON;
+	FriBidiParType pbase_dir = FRIBIDI_PAR_ON;
 
 	if (!fribidi_log2vis(
 		/* input */
