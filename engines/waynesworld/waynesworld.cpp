@@ -143,7 +143,7 @@ Common::Error WaynesWorldEngine::run() {
 
 	drawInterface(2);
 	// changeRoom(0);
-	changeRoom(7); // DEBUG
+	changeRoom(9); // DEBUG
 
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	// _gameState = 1; // DEBUG Open map
@@ -879,8 +879,7 @@ void WaynesWorldEngine::unloadMainActorSprites() {
 }
 
 int WaynesWorldEngine::getActorScaleFromY(int actorY) {
-	// TODO
-    return 100;
+	return _logic->getActorScaleFromY(actorY);
 }
 
 void WaynesWorldEngine::drawActorReachObject(int objectId, int spriteIndex) {

@@ -45,6 +45,7 @@ public:
 	void refreshRoomBackground(int roomNum);
 	void updateRoomAnimations(bool doUpdate);
 	void handleRoomEvent(int eventNum);
+	int getActorScaleFromY(int actorY);
 	void r38_atrap();
 public:
 	int _word_34464;

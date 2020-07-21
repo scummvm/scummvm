@@ -960,6 +960,105 @@ void GameLogic::handleRoomEvent(int eventNum) {
     }
 }
 
+int GameLogic::getActorScaleFromY(int actorY) {
+	int scale = 100;
+	switch (_vm->_currentRoomNumber) {
+	case 0:
+		scale = actorY - 10;
+		break;
+	case 1:
+		scale = actorY - 27;
+		break;
+	case 2:
+		scale = actorY * 2 - 130;
+		break;
+	case 3:
+		scale = actorY * 2 - 124;
+		break;
+	case 4:
+		scale = actorY * 2 - 84;
+		break;
+	case 5:
+		scale = actorY;
+		break;
+	case 6:
+		scale = actorY / 3 - 91;
+		break;
+	case 7:
+		scale = actorY - 41;
+		break;
+	case 8:
+	case 22:
+		scale = actorY - 20;
+		break;
+	case 11:
+		scale = actorY - 60;
+		break;
+	case 12:
+		scale = actorY * 2 - 155;
+		break;
+	case 13:
+		scale = actorY * 2 - 116;
+		break;
+	case 14:
+	case 19:
+	case 25:
+		scale = actorY - 30;
+		break;
+	case 16:
+		scale = actorY * 2 - 100;
+		break;
+	case 9:
+	case 15:
+		scale = actorY * 2 - 115;
+		break;
+	case 18:
+		scale = actorY - 15;
+		break;
+	case 20:
+		scale = actorY * 3 - 242;
+		break;
+	case 26:
+		scale = actorY * 3 / 2 - 95;
+		break;
+	case 27:
+		scale = actorY * 3 / 2 - 100;
+		break;
+	case 28:
+		scale = actorY - 25;
+		break;
+	case 29:
+		scale = actorY - 20;
+		break;
+	case 30:
+		scale = actorY / 2 + 23;
+		break;
+	case 32:
+	case 33:
+		scale = actorY * 1.5 - 97;
+		break;
+	case 34:
+		scale = actorY * 2 - 127;
+		break;
+	case 35:
+		scale = actorY * 1.5 - 98;
+		break;
+	case 36:
+		scale = actorY * 1.4 - 83;
+		break;
+	case 37:
+		scale = actorY * 2 - 41;
+		break;
+	case 38:
+		scale = actorY - 31;
+		break;
+	case 17:
+		scale = actorY * 1.5 - 100;
+		break;
+	}
+    return CLIP(scale, 20, 100);
+}
+
 int GameLogic::r0_handleVerbPickUp() {
 	int actionTextIndex = -1;
 	switch (_vm->_objectNumber) {
@@ -3930,7 +4029,7 @@ void GameLogic::r9_uninitRoomAnimations() {
 void GameLogic::r9_updateRoomAnimations(bool doUpdate) {
 	_vm->_animationsCtr = (_vm->_animationsCtr + 1) % 3000;
 	if (doUpdate) {
-		_vm->_animationsCtr = (_vm->_animationsCtr + 200) % 5000;
+		_vm->_animationsCtr = (_vm->_animationsCtr + 200) % 3000;
 	}
 	if (_vm->_animationsCtr % 1000 == 0 || doUpdate) {
 		_vm->drawAnimationSprite(_vm->_animationsCtr / 1000, 124, 27);
