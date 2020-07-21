@@ -108,7 +108,6 @@ bool Introduction::show() {
 	if (showScreen(start_screens[3], start_screens[3] + 1, 5000, false))
 		return true;
 
-	// TODO Original interpreter flashes a note icon in the lower left corner while doing this
 	Sound.initCustomTimbres();
 
 	// Fade out title screen

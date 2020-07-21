@@ -1640,6 +1640,20 @@ void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 	*pDest = (char) 0xff;
 }
 
+void save_audio_init_icon(byte *&data, uint16 &totalSize) {
+	uint32 dataStart = 0x131E0;
+	if (language == IT_ITA) dataStart = 0x132A0;
+	else if (language == FR_FRA) dataStart = 0x132C0;
+	else if (language == DE_DEU) dataStart = 0x132F0;
+	else if (language == ES_ESP) dataStart = 0x132C0;
+	else if (language != EN_ANY) errorExit("save_audio_init_icon: Unknown language");
+	lureExe.seek(dataSegment + dataStart);
+
+	totalSize = AUDIO_INIT_ICON_SIZE;
+	data = (byte *)malloc(totalSize);
+	lureExe.read(data, totalSize);
+}
+
 void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
 	resourceId = 0x3f01 + entryIndex;
 	printf("Get resource #%d\n", entryIndex);
@@ -1767,6 +1781,11 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
 	case 24:
 		// Save the decoder sequence list
 		save_string_decoder_data(data, size);
+		break;
+
+	case 25:
+		// Save the audio init icon
+		save_audio_init_icon(data, size);
 		break;
 
 	default:
