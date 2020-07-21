@@ -49,7 +49,7 @@ namespace Director {
 
 Score::Score(Movie *movie) {
 	_movie = movie;
-	_stage = movie->getCurrentStage();
+	_stage = movie->getStage();
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
 

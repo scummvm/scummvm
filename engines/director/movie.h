@@ -91,7 +91,7 @@ public:
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _movieArchive; };
 	Common::String getMacName() const { return _macName; }
-	Stage *getCurrentStage() const { return _stage; }
+	Stage *getStage() const { return _stage; }
 	DirectorEngine *getVM() const { return _vm; }
 	Cast *getCast() const { return _cast; }
 	Cast *getSharedCast() const { return _sharedCast; }

@@ -1280,7 +1280,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 
 		if (d.asInt() != channel->_currentPoint.x) {
-			g_director->getCurrentMovie()->getCurrentStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.x = d.asInt();
 		} else {
 			channel->_dirty = false;
@@ -1294,7 +1294,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 
 		if (d.asInt() != channel->_currentPoint.y) {
-			g_director->getCurrentMovie()->getCurrentStage()->addDirtyRect(channel->getBbox());
+			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.y = d.asInt();
 		} else {
 			channel->_dirty = false;
@@ -1361,7 +1361,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	}
 
 	if (channel->_dirty && g_director->getCurrentMovie())
-		g_director->getCurrentMovie()->getCurrentStage()->addDirtyRect(channel->getBbox());
+		g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {
