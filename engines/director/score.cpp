@@ -124,7 +124,7 @@ Common::String *Score::getLabelList() {
 }
 
 void Score::setStartToLabel(Common::String &label) {
-	uint16 num = getLabel("label");
+	uint16 num = getLabel(label);
 
 	if (num == 0)
 		warning("Label %s not found", label.c_str());
