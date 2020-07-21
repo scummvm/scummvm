@@ -488,11 +488,45 @@ void WaynesWorldEngine::loadPalette(const char *filename) {
 }
 
 void WaynesWorldEngine::paletteFadeIn(int index, int count, int stepsSize) {
-	// TODO
+	byte fadePalette[768];
+	int fadeStartIndex = index * 3;
+	int fadeEndIndex = (index + count) * 3;
+	bool isDone = false;
+	// CHECKME Assume we're always fading in from black for now
+	memset(fadePalette, 0, 768);
+	while (!isDone) {
+		isDone = true;
+		for (int fadeIndex = fadeStartIndex; fadeIndex < fadeEndIndex; fadeIndex++) {
+			byte destValue = _palette2[fadeIndex];
+			if (fadePalette[fadeIndex] < destValue) {
+				fadePalette[fadeIndex] = MIN<int>(fadePalette[fadeIndex] + stepsSize, destValue);
+				isDone = false;
+			}
+		}
+		g_system->getPaletteManager()->setPalette(fadePalette, 0, 256);
+		g_system->updateScreen();
+		g_system->delayMillis(20);
+	}
 }
 
 void WaynesWorldEngine::paletteFadeOut(int index, int count, int stepsSize) {
-	// TODO
+	byte fadePalette[768];
+	int fadeStartIndex = index * 3;
+	int fadeEndIndex = (index + count) * 3;
+	bool isDone = false;
+	memcpy(fadePalette, _palette2, 768);
+	while (!isDone) {
+		isDone = true;
+		for (int fadeIndex = fadeStartIndex; fadeIndex < fadeEndIndex; fadeIndex++) {
+			if (fadePalette[fadeIndex] > 0) {
+				fadePalette[fadeIndex] = MAX<int>(fadePalette[fadeIndex] - stepsSize, 0);
+				isDone = false;
+			}
+		}
+		g_system->getPaletteManager()->setPalette(fadePalette, 0, 256);
+		g_system->updateScreen();
+		g_system->delayMillis(20);
+	}
 }
 
 void WaynesWorldEngine::drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName) {
