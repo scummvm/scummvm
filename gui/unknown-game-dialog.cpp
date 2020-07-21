@@ -119,8 +119,8 @@ void UnknownGameDialog::rebuild() {
 	}
 }
 
-Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) {
-	Common::String encoded;
+Common::U32String UnknownGameDialog::encodeUrlString(const Common::U32String &string) {
+	Common::U32String encoded;
 	for (uint i = 0 ; i < string.size() ; ++i) {
 		char c = string[i];
 		if ((c >= 'a' && c <= 'z') || (c >= 'A'  && c <= 'Z') || (c >= '0' && c <= '9') ||
@@ -132,24 +132,27 @@ Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) 
 	return encoded;
 }
 
-Common::String UnknownGameDialog::generateBugtrackerURL() {
-	Common::String report = generateUnknownGameReport(_detectedGame, false, false);
+Common::U32String UnknownGameDialog::generateBugtrackerURL() {
+	Common::U32String report = generateUnknownGameReport(_detectedGame, false, false);
 	report = encodeUrlString(report);
 
 	Common::String engineId = encodeUrlString(_detectedGame.engineId);
 
-	return Common::String::format(
+	Common::String preFinalReport = Common::String::format(
 		"https://www.scummvm.org/unknowngame?"
-		"engine=%s"
-		"&description=%s",
-		engineId.c_str(),
-		report.c_str());
+		"engine=%s",
+		engineId.c_str());
+
+	Common::U32String repDesc("&description=");
+	repDesc += report;
+
+	return Common::U32String(preFinalReport) + repDesc;
 }
 
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kCopyToClipboard: {
-		Common::String report = generateUnknownGameReport(_detectedGame, false, false);
+		Common::U32String report = generateUnknownGameReport(_detectedGame, false, false);
 
 		if (g_system->setTextInClipboard(report)) {
 			g_system->displayMessageOnOSD(

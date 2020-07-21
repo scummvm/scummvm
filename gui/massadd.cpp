@@ -187,8 +187,8 @@ void MassAddDialog::handleTickle() {
 		DetectionResults detectionResults = EngineMan.detectGames(files);
 
 		if (detectionResults.foundUnknownGames()) {
-			Common::String report = detectionResults.generateUnknownGameReport(false, 80);
-			g_system->logMessage(LogMessageType::kInfo, report.c_str());
+			Common::U32String report = detectionResults.generateUnknownGameReport(false, 80);
+			g_system->logMessage(LogMessageType::kInfo, report.encode().c_str());
 		}
 
 		// Just add all detected games / game variants. If we get more than one,
