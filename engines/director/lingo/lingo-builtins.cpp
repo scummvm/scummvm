@@ -1680,8 +1680,20 @@ Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
 
 void LB::b_label(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_label(%d)", d.asInt());
 
+	Common::String label = d.asString();
+	Common::SortedArray<Label *>::iterator i;
+	Common::SortedArray<Label *> *labels;
+	labels = g_director->getCurrentMovie()->getScore()->_labels;
+
+	for (i = labels->begin(); i != labels->end(); ++i) {
+		if ((*i)->name.equalsIgnoreCase(label)) {
+			g_lingo->push(Datum((*i)->number));
+			return;
+		}
+	}
+	
+	warning("BUILDBOT: b_label not found: (%s)", d.asString().c_str());
 	g_lingo->push(Datum(0));
 }
 
