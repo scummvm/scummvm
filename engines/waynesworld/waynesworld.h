@@ -72,6 +72,7 @@ enum {
 const uint kRoomObjectsCount = 404;
 const int kWalkPointsCount = 300;
 const uint kWalkMapSize = (320 * 150) / 8;
+const uint kRoomAnimationsCount = 20;
 
 class WaynesWorldEngine : public Engine {
 protected:
@@ -103,6 +104,7 @@ public:
 	GFTFont *_fontWW;
 	GFTFont *_fontWWInv;
 	GFTFont *_fontBit5x7;
+	WWSurface *_roomAnimations[kRoomAnimationsCount];
 
 	// Room
 	Common::String _roomName;

@@ -73,6 +73,9 @@ Common::Error WaynesWorldEngine::run() {
 
 	_isSaveAllowed = false;
 
+	for (uint i = 0; i < kRoomAnimationsCount; i++)
+		_roomAnimations[i] = nullptr;
+
 	initGraphics(320, 200);
 	initMouseCursor();
 	_screen = new Screen();
@@ -160,6 +163,7 @@ Common::Error WaynesWorldEngine::run() {
 		if (_gameState == 1 && _currentRoomNumber < 100) {
 			gameMapOpen();
 		}
+		updateRoomAnimations(false);
 		g_system->updateScreen();
 	}
 
@@ -1102,15 +1106,19 @@ void WaynesWorldEngine::fillRoomMaskArea(int x1, int y1, int x2, int y2, int ena
 }
 
 void WaynesWorldEngine::loadAnimationSpriteRange(int baseIndex, const char *filename, int count) {
-	// TODO
+	for (int index = 0; index < count; index++) {
+		Common::String tempFilename = Common::String::format("%s%d", filename, index);
+		loadAnimationSprite(baseIndex + index, tempFilename.c_str());
+	}
 }
 
 void WaynesWorldEngine::loadAnimationSprite(int index, const char *filename) {
-	// TODO
+	delete _roomAnimations[index];
+	_roomAnimations[index] = loadRoomSurface(filename);
 }
 
 void WaynesWorldEngine::drawAnimationSpriteToBackground(int index, int x, int y) {
-	// TODO
+	_backgroundSurface->drawSurface(_roomAnimations[index], x, y);
 }
 
 void WaynesWorldEngine::updateRoomAnimations(bool doUpdate) {
@@ -1125,7 +1133,11 @@ void WaynesWorldEngine::startRoomAnimations() {
 }
 
 void WaynesWorldEngine::stopRoomAnimations() {
-	// TODO
+	for (uint i = 0; i < kRoomAnimationsCount; i++) {
+		delete _roomAnimations[i];
+		_roomAnimations[i] = nullptr;
+	}
+	_hasRoomAnimationCallback = false;
 }
 
 void WaynesWorldEngine::loadStaticRoomObjects(int roomNum) {
