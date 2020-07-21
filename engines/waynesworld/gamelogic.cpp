@@ -1392,13 +1392,13 @@ void GameLogic::r1_uninitRoomAnimations() {
 void GameLogic::r1_updateRoomAnimations(bool doUpdate) {
 	_vm->_animationsCtr = (_vm->_animationsCtr + 1) % 5000;
 	if (_vm->_animationsCtr % 500 == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(_vm->_animationsCtr / 500, 270, 47);
+		_vm->drawAnimationSprite(_vm->_animationsCtr / 500, 270, 47);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	}
 	if (!(_r1_flags1 & 0x10) && (_vm->_animationsCtr % 200 == 55 || doUpdate)) {
-		_vm->drawAnimationSpriteToBackground(10 + _vm->getRandom(5), 179, 67);
+		_vm->drawAnimationSprite(10 + _vm->getRandom(5), 179, 67);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -2347,22 +2347,22 @@ void GameLogic::r4_updateRoomAnimations(bool doUpdate) {
 		_vm->_animationsCtr = (_vm->_animationsCtr + 125) % 1000;
 	}
 	if (_vm->_animationsCtr % 350 == 0 && _vm->getRandom(10) < 3) {
-		_vm->drawAnimationSpriteToBackground(1, 8, 48);
+		_vm->drawAnimationSprite(1, 8, 48);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	} else if (_vm->_animationsCtr % 400 == 0 && _vm->getRandom(10) < 8) {
-		_vm->drawAnimationSpriteToBackground(0, 8, 48);
+		_vm->drawAnimationSprite(0, 8, 48);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	} else if (_vm->_animationsCtr == 100 && _vm->getRandom(10) < 1) {
-		_vm->drawAnimationSpriteToBackground(3, 11, 67);
+		_vm->drawAnimationSprite(3, 11, 67);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	} else if (_vm->_animationsCtr == 150 && _vm->getRandom(10) < 2) {
-		_vm->drawAnimationSpriteToBackground(2, 11, 67);
+		_vm->drawAnimationSprite(2, 11, 67);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -2834,7 +2834,7 @@ void GameLogic::r6_updateRoomAnimations(bool doUpdate) {
 		_vm->_animationsCtr = (_vm->_animationsCtr + 200) % 1200;
 	}
 	if (!(_r6_flags & 0x01) && (_vm->_animationsCtr % 400 == 0 || doUpdate)) {
-		_vm->drawAnimationSpriteToBackground(_vm->_animationsCtr / 400, 49, 111);
+		_vm->drawAnimationSprite(_vm->_animationsCtr / 400, 49, 111);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -3205,15 +3205,15 @@ void GameLogic::r7_updateRoomAnimations(bool doUpdate) {
 	_vm->_animationsCtr = (_vm->_animationsCtr + 1) % 4000;
 	if (_vm->_animationsCtr % 500 == 0) {
 		_r7_cloudsPositionX = (_r7_cloudsPositionX + 1) % 230;
-		_vm->drawAnimationSpriteToBackground(2, 0, 0);
-		_vm->drawAnimationSpriteToBackground(0, _r7_cloudsPositionX - 125, 13);
-		_vm->drawAnimationSpriteToBackground(1, 0, 13);
+		_vm->drawAnimationSprite(2, 0, 0);
+		_vm->drawAnimationSpriteTransparent(0, _r7_cloudsPositionX - 125, 13);
+		_vm->drawAnimationSpriteTransparent(1, 0, 13);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	}
 	if (_vm->_animationsCtr % 2000 == 0) {
-		_vm->drawAnimationSpriteToBackground(3 + (_vm->_animationsCtr / 2000), 197, 68);
+		_vm->drawAnimationSprite(3 + (_vm->_animationsCtr / 2000), 197, 68);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -3558,7 +3558,7 @@ void GameLogic::r8_updateRoomAnimations(bool doUpdate) {
 		_vm->_animationsCtr = (_vm->_animationsCtr + 125) % 4500;
 	}
 	if (_vm->_animationsCtr % 500 == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(_vm->_animationsCtr / 500, 85, 38);
+		_vm->drawAnimationSprite(_vm->_animationsCtr / 500, 85, 38);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -3933,7 +3933,7 @@ void GameLogic::r9_updateRoomAnimations(bool doUpdate) {
 		_vm->_animationsCtr = (_vm->_animationsCtr + 200) % 5000;
 	}
 	if (_vm->_animationsCtr % 1000 == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(_vm->_animationsCtr / 1000, 124, 27);
+		_vm->drawAnimationSprite(_vm->_animationsCtr / 1000, 124, 27);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -4437,9 +4437,9 @@ void GameLogic::r11_updateRoomAnimations(bool doUpdate) {
 		_vm->_animationsCtr = (_vm->_animationsCtr + 125) % 2000;
 	}
 	if (_vm->_animationsCtr % 500 == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(_vm->_animationsCtr / 500, 45, 92);
+		_vm->drawAnimationSprite(_vm->_animationsCtr / 500, 45, 92);
 		if (_r11_flags & 0x04) {
-			_vm->drawAnimationSpriteToBackground(4, 116, 125);
+			_vm->drawAnimationSprite(4, 116, 125);
 		}
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
@@ -6254,17 +6254,17 @@ void GameLogic::r29_updateRoomAnimations(bool doUpdate) {
 		_vm->_animationsCtr = (_vm->_animationsCtr + 125) % 5000;
 	}
 	if (_vm->_animationsCtr % 500 == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(_vm->_animationsCtr / 500, 134, 0);
+		_vm->drawAnimationSprite(_vm->_animationsCtr / 500, 134, 0);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	} else if (_vm->_animationsCtr % 200 == 150 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(10 + _vm->getRandom(4), 0, 16);
+		_vm->drawAnimationSprite(10 + _vm->getRandom(4), 0, 16);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	} else if (_vm->_animationsCtr % 500 == 350 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(14 + _vm->getRandom(4), 172, 46);
+		_vm->drawAnimationSprite(14 + _vm->getRandom(4), 172, 46);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -7046,14 +7046,14 @@ void GameLogic::r32_updateRoomAnimations(bool doUpdate) {
 	_vm->_animationsCtr = (_vm->_animationsCtr + 1) % 3600;
 	if (_r32_flags & 0x04) {
 		if (_vm->_animationsCtr % 900 == 0 || doUpdate) {
-			_vm->drawAnimationSpriteToBackground(3 + (_vm->_animationsCtr / 900), 262, 83);
+			_vm->drawAnimationSprite(3 + (_vm->_animationsCtr / 900), 262, 83);
 			_vm->_hasRoomAnimationCallback = false;
 			_vm->refreshActors();
 			_vm->_hasRoomAnimationCallback = true;
 		}
 	} else {
 		if (_vm->_animationsCtr % 400 == 0 || doUpdate) {
-			_vm->drawAnimationSpriteToBackground(_vm->getRandom(3), 263, 84);
+			_vm->drawAnimationSprite(_vm->getRandom(3), 263, 84);
 			_vm->_hasRoomAnimationCallback = false;
 			_vm->refreshActors();
 			_vm->_hasRoomAnimationCallback = true;
@@ -7261,7 +7261,7 @@ void GameLogic::r34_uninitRoomAnimations() {
 void GameLogic::r34_updateRoomAnimations(bool doUpdate) {
 	_vm->_animationsCtr = (_vm->_animationsCtr + 1) % 3000;
 	if (_vm->_animationsCtr == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(_vm->getRandom(4), 198, 68);
+		_vm->drawAnimationSprite(_vm->getRandom(4), 198, 68);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -7498,12 +7498,12 @@ void GameLogic::r36_uninitRoomAnimations() {
 void GameLogic::r36_updateRoomAnimations(bool doUpdate) {
 	_vm->_animationsCtr = (_vm->_animationsCtr + 1) % 4000;
 	if (_vm->_animationsCtr == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(0, 263, 82);
+		_vm->drawAnimationSprite(0, 263, 82);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
 	} else if (_vm->_animationsCtr == 2000 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(1, 263, 82);
+		_vm->drawAnimationSprite(1, 263, 82);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;
@@ -8109,7 +8109,7 @@ void GameLogic::r38_updateRoomAnimations(bool doUpdate) {
 		_vm->_animationsCtr = (_vm->_animationsCtr + 125) % 8000;
 	}
 	if (_vm->_animationsCtr % 400 == 0 || doUpdate) {
-		_vm->drawAnimationSpriteToBackground(_vm->_animationsCtr / 400, 8, 38);
+		_vm->drawAnimationSprite(_vm->_animationsCtr / 400, 8, 38);
 		_vm->_hasRoomAnimationCallback = false;
 		_vm->refreshActors();
 		_vm->_hasRoomAnimationCallback = true;

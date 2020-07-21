@@ -143,7 +143,7 @@ Common::Error WaynesWorldEngine::run() {
 
 	drawInterface(2);
 	// changeRoom(0);
-	changeRoom(1); // DEBUG
+	changeRoom(7); // DEBUG
 
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	// _gameState = 1; // DEBUG Open map
@@ -154,7 +154,6 @@ Common::Error WaynesWorldEngine::run() {
 		updateEvents();
 		updateMouseMove();
 		if (_mouseClickButtons != 0) {
-			// debug("_mouseClickButtons: %d", _mouseClickButtons);
 			handleMouseClick();
 		}
 		if (_roomEventNum != 0) {
@@ -165,6 +164,7 @@ Common::Error WaynesWorldEngine::run() {
 		}
 		updateRoomAnimations(false);
 		g_system->updateScreen();
+		// g_system->delayMillis(20);
 	}
 
 #endif
@@ -241,8 +241,6 @@ int WaynesWorldEngine::getRandom(int max) {
 }
 
 void WaynesWorldEngine::waitMillis(uint millis) {
-	// TODO
-	// _system->delayMillis(millis);
 	uint32 waitTime = _system->getMillis() + millis;
 	while (_system->getMillis() < waitTime && !shouldQuit()) {
 		updateEvents();
@@ -252,8 +250,8 @@ void WaynesWorldEngine::waitMillis(uint millis) {
 }
 
 void WaynesWorldEngine::waitSeconds(uint seconds) {
-	// TODO
-	// Replace calls with waitMillis
+	// TODO Replace calls with waitMillis
+	waitMillis(seconds * 1000);
 }
 
 void WaynesWorldEngine::initMouseCursor() {
@@ -1151,8 +1149,12 @@ void WaynesWorldEngine::loadAnimationSprite(int index, const char *filename) {
 	_roomAnimations[index] = loadRoomSurface(filename);
 }
 
-void WaynesWorldEngine::drawAnimationSpriteToBackground(int index, int x, int y) {
+void WaynesWorldEngine::drawAnimationSprite(int index, int x, int y) {
 	_backgroundSurface->drawSurface(_roomAnimations[index], x, y);
+}
+
+void WaynesWorldEngine::drawAnimationSpriteTransparent(int index, int x, int y) {
+	_backgroundSurface->drawSurfaceTransparent(_roomAnimations[index], x, y);
 }
 
 void WaynesWorldEngine::updateRoomAnimations(bool doUpdate) {

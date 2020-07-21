@@ -274,7 +274,8 @@ public:
 
 	void loadAnimationSpriteRange(int baseIndex, const char *filename, int count);
 	void loadAnimationSprite(int index, const char *filename);
-	void drawAnimationSpriteToBackground(int index, int x, int y);
+	void drawAnimationSprite(int index, int x, int y);
+	void drawAnimationSpriteTransparent(int index, int x, int y);
 	void updateRoomAnimations(bool doUpdate);
 	void startRoomAnimations();
 	void stopRoomAnimations();
