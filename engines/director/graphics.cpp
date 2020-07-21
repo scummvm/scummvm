@@ -796,6 +796,7 @@ void DirectorEngine::setCursor(int type) {
 void DirectorEngine::draw() {
 	_wm->renderZoomBox(true);
 	_wm->draw();
+	g_system->updateScreen();
 }
 
 void inkDrawPixel(int x, int y, int src, void *data) {

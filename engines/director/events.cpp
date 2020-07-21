@@ -180,7 +180,6 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 		if (!bufferLingoEvents)
 			_lingo->processEvents();
 
-		g_system->updateScreen();
 		g_system->delayMillis(10);
 
 		if (getVersion() >= 3 && sc->getCurrentFrame() > 0 && sc->_playState != kPlayStopped && _lingo->getEventCount() == 0)
