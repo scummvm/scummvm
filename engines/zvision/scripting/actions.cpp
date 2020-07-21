@@ -60,13 +60,15 @@ ResultAction::ResultAction(ZVision *engine, int32 slotKey) :
 ActionAdd::ActionAdd(ZVision *engine, int32 slotKey, const Common::String &line) :
 	ResultAction(engine, slotKey) {
 	_key = 0;
-	_value = 0;
 
-	sscanf(line.c_str(), "%u,%d", &_key, &_value);
+	char buf[64];
+	memset(buf, 0, 64);
+	sscanf(line.c_str(), "%u,%s", &_key, buf);
+	_value = new ValueSlot(_scriptManager, buf);
 }
 
 bool ActionAdd::execute() {
-	_scriptManager->setStateValue(_key, _scriptManager->getStateValue(_key) + _value);
+	_scriptManager->setStateValue(_key, _scriptManager->getStateValue(_key) + _value->getValue());
 	return true;
 }
 

@@ -63,7 +63,7 @@ public:
 
 private:
 	uint32 _key;
-	int _value;
+	ValueSlot *_value;
 };
 
 class ActionAssign : public ResultAction {
