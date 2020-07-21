@@ -730,12 +730,12 @@ void ListWidget::reflowLayout() {
 	}
 }
 
-void ListWidget::setFilter(const String &filter, bool redraw) {
+void ListWidget::setFilter(const U32String &filter, bool redraw) {
 	// FIXME: This method does not deal correctly with edit mode!
 	// Until we fix that, let's make sure it isn't called while editing takes place
 	assert(!_editMode);
 
-	String filt = filter;
+	U32String filt = filter;
 	filt.toLowercase();
 
 	if (_filter == filt) // Filter was not changed
@@ -751,15 +751,15 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		// Restrict the list to everything which contains all words in _filter
 		// as substrings, ignoring case.
 
-		Common::StringTokenizer tok(_filter);
-		String tmp;
+		Common::U32StringTokenizer tok(_filter);
+		U32String tmp;
 		int n = 0;
 
 		_list.clear();
 		_listIndex.clear();
 
 		for (U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
-			tmp = Common::convertFromU32String(*i);
+			tmp = *i;
 			tmp.toLowercase();
 			bool matches = true;
 			tok.reset();

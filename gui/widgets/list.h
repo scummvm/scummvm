@@ -81,7 +81,7 @@ protected:
 	int				_bottomPadding;
 	int				_scrollBarWidth;
 
-	String			_filter;
+	U32String		_filter;
 	bool			_quickSelect;
 	bool			_dictionarySelect;
 
@@ -128,7 +128,7 @@ public:
 	void startEditMode() override;
 	void endEditMode() override;
 
-	void setFilter(const String &filter, bool redraw = true);
+	void setFilter(const U32String &filter, bool redraw = true);
 
 	void handleTickle() override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
