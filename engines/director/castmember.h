@@ -39,7 +39,7 @@ class MacWidget;
 
 namespace Common {
 class SeekableReadStream;
-class ReadStreamEndian;
+class SeekableReadStreamEndian;
 }
 
 namespace Image {
@@ -54,7 +54,7 @@ struct Resource;
 
 class CastMember {
 public:
-	CastMember(Cast *cast, uint16 castId);
+	CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream);
 	virtual ~CastMember();
 
 	Cast *getCast() { return _cast; }
@@ -78,6 +78,7 @@ public:
 	bool _hilite;
 	bool _autoHilite;
 	int _purgePriority;
+	uint32 _size;
 
 	Graphics::MacWidget *_widget;
 
@@ -88,7 +89,7 @@ private:
 
 class BitmapCastMember : public CastMember {
 public:
-	BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
+	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version);
 	~BitmapCastMember();
 	virtual void createWidget() override;
 
@@ -113,7 +114,7 @@ public:
 
 class DigitalVideoCastMember : public CastMember {
 public:
-	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	DigitalVideoCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~DigitalVideoCastMember();
 
 	bool _looping;
@@ -132,7 +133,7 @@ public:
 
 class SoundCastMember : public CastMember {
 public:
-	SoundCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 
 	bool _looping;
 	AudioDecoder *_audio;
@@ -140,7 +141,7 @@ public:
 
 class ShapeCastMember : public CastMember {
 public:
-	ShapeCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	virtual uint getForeColor() override { return _fgCol; }
 	virtual uint getBackColor() override { return _bgCol; }
 
@@ -158,7 +159,7 @@ private:
 
 class TextCastMember : public CastMember {
 public:
-	TextCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version, bool asButton = false);
+	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, bool asButton = false);
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);
@@ -205,14 +206,14 @@ private:
 
 class ScriptCastMember : public CastMember {
 public:
-	ScriptCastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 
 	ScriptType _scriptType;
 };
 
 class RTECastMember : public TextCastMember {
 public:
-	RTECastMember(Cast *cast, uint16 castId, Common::ReadStreamEndian &stream, uint16 version);
+	RTECastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 
 	void loadChunks();
 };
