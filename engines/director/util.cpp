@@ -301,6 +301,14 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
 
+	// Strip the leading whitespace from the path
+	if (initialPath.hasPrefix(" ")) {
+		Common::String newPath = "";
+		for (uint i = 1; i < initialPath.size(); i++)
+			newPath += initialPath[i];
+		initialPath = newPath;
+	}
+
 	if (f.open(initialPath))
 		return initialPath;
 
