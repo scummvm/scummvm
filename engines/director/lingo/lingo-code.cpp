@@ -1432,7 +1432,7 @@ void LC::call(const Symbol &funcSym, int nargs) {
 		warning("Call to undefined handler. Dropping %d stack items", nargs);
 		dropArgs = true;
 	} else {
-		if (funcSym.type != HANDLER && funcSym.nargs != -1 && funcSym.nargs != nargs && funcSym.maxArgs != nargs) {
+		if (funcSym.type != HANDLER && funcSym.nargs != -1 && (funcSym.nargs > nargs || funcSym.maxArgs < nargs)) {
 			if (funcSym.nargs == funcSym.maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", funcSym.name->c_str(), funcSym.nargs, nargs);
 			else
