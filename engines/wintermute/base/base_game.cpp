@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #ifdef ENABLE_WME3D
-#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
 #endif
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
@@ -495,8 +495,8 @@ bool BaseGame::initialize1() {
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	g_system->setupScreen(_settings->getResWidth(), _settings->getResHeight(), false, true);
-	_renderer = makeOpenGL3DRenderer(this);
-	_renderer3D = static_cast<BaseRenderOpenGL3D *>(_renderer);
+	_renderer3D = makeOpenGL3DRenderer(this);
+	_renderer = _renderer3D;
 #else
 	_renderer = makeOSystemRenderer(this);
 #endif

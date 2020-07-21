@@ -29,11 +29,11 @@
 namespace Wintermute {
 
 class BaseGame;
-class BaseRenderOpenGL3D;
+class BaseRenderer3D;
 
 class BaseSurfaceOpenGL3D : public BaseSurface {
 public:
-	BaseSurfaceOpenGL3D(BaseGame* game, BaseRenderOpenGL3D* renderer);
+	BaseSurfaceOpenGL3D(BaseGame* game, BaseRenderer3D* renderer);
 	~BaseSurfaceOpenGL3D();
 
 	bool invalidate() override;
@@ -66,7 +66,7 @@ public:
 
 private:
 	GLuint _tex;
-	BaseRenderOpenGL3D *_renderer;
+	BaseRenderer3D *_renderer;
 	uint8 *_imageData;
 	uint _texWidth;
 	uint _texHeight;

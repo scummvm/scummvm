@@ -24,16 +24,18 @@
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
+#include "engines/wintermute/base/gfx/opengl/mesh3ds_opengl.h"
+#include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
 namespace Wintermute {
-BaseRenderer *makeOpenGL3DRenderer(BaseGame *inGame) {
+BaseRenderer3D *makeOpenGL3DRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3D(inGame);
 }
 
 BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
-	: BaseRenderer(inGame), _overrideAmbientLightColor(false), _spriteBatchMode(false) {
+	: BaseRenderer3D(inGame), _spriteBatchMode(false)  {
 	setDefaultAmbientLightColor();
 }
 
@@ -580,6 +582,14 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	}
 
 	return true;
+}
+
+Mesh3DS *BaseRenderOpenGL3D::createMesh3DS() {
+	return new Mesh3DSOpenGL();
+}
+
+MeshX *BaseRenderOpenGL3D::createMeshX() {
+	return new MeshXOpenGL(_gameRef);
 }
 
 } // namespace Wintermute

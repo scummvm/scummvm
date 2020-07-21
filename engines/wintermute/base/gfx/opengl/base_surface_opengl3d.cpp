@@ -52,7 +52,7 @@ void applyColorKey(Graphics::Surface &surf, byte ckRed, byte ckGreen, byte ckBlu
 	}
 }
 
-BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderOpenGL3D *renderer)
+BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderer3D *renderer)
 	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _texWidth(0), _texHeight(0) {
 }
 

@@ -237,8 +237,10 @@ private:
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
 #ifdef ENABLE_WME3D
+class BaseRenderer3D;
+
 BaseRenderer *makeOpenGLTextureRenderer(BaseGame *inGame);
-BaseRenderer *makeOpenGL3DRenderer(BaseGame* inGame);
+BaseRenderer3D *makeOpenGL3DRenderer(BaseGame* inGame);
 #endif
 
 } // End of namespace Wintermute

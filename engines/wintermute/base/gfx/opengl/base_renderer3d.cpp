@@ -20,11 +20,14 @@
  *
  */
 
-#include "engines/wintermute/base/gfx/opengl/mesh3ds.h"
+#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
 
 namespace Wintermute {
 
-Mesh3DS::~Mesh3DS() {
+BaseRenderer3D::BaseRenderer3D(Wintermute::BaseGame *inGame) : BaseRenderer(inGame), _overrideAmbientLightColor(false) {
+}
+
+BaseRenderer3D::~BaseRenderer3D() {
 }
 
 } // namespace Wintermute

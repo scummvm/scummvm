@@ -69,7 +69,7 @@ class VideoTheoraPlayer;
 class SaveThumbHelper;
 
 #ifdef ENABLE_WME3D
-class BaseRenderOpenGL3D;
+class BaseRenderer3D;
 #endif
 
 class BaseGame: public BaseObject {
@@ -159,7 +159,7 @@ public:
 
 	BaseRenderer *_renderer;
 #ifdef ENABLE_WME3D
-	BaseRenderOpenGL3D *_renderer3D;
+	BaseRenderer3D *_renderer3D;
 	bool _playing3DGame;
 
 	bool _supportsRealTimeShadows;

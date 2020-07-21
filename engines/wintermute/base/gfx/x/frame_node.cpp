@@ -27,6 +27,7 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
 #include "engines/wintermute/base/gfx/x/frame_node.h"
 #include "engines/wintermute/base/gfx/x/modelx.h"
 #include "engines/wintermute/base/gfx/x/loader_x.h"
@@ -116,7 +117,7 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, Mod
 			}
 		} else if (lexer.tokenIsIdentifier("Mesh")) {
 			lexer.advanceToNextToken();
-			MeshX *mesh = new MeshX(_gameRef);
+			MeshX *mesh = _gameRef->_renderer3D->createMeshX();
 
 			if (mesh->loadFromX(filename, lexer)) {
 				_meshes.add(mesh);
@@ -180,7 +181,7 @@ bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexe
 			}
 		} else if (lexer.tokenIsIdentifier("Mesh")) {
 			lexer.advanceToNextToken();
-			MeshX *mesh = new MeshX(_gameRef);
+			MeshX *mesh = _gameRef->_renderer3D->createMeshX();
 
 			if (mesh->loadFromX(filename, lexer)) {
 				_meshes.add(mesh);

@@ -22,6 +22,8 @@
 
 #include "common/memstream.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
 #include "engines/wintermute/base/gfx/opengl/light3d.h"
 #include "engines/wintermute/base/gfx/opengl/loader3ds.h"
@@ -48,7 +50,7 @@ bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::M
 
 		switch (chunkId) {
 		case MESH:
-			mesh = new Mesh3DS;
+			mesh = gameRef->_renderer3D->createMesh3DS();
 			if (mesh->loadFrom3DS(fileStream)) {
 				meshNames.add(name);
 				meshes.add(mesh);

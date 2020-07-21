@@ -39,84 +39,32 @@ namespace Wintermute {
 
 class BaseSprite;
 class FrameNode;
-class Material;
 class ModelX;
 class ShadowVolume;
 class VideoTheoraPlayer;
 class XFileLexer;
-
-struct SkinWeights {
-	Common::String _boneName;
-	Math::Matrix4 _offsetMatrix;
-	BaseArray<uint32> _vertexIndices;
-	BaseArray<float> _vertexWeights;
-};
 
 class MeshX : public BaseNamedObject {
 public:
 	MeshX(BaseGame *inGame);
 	virtual ~MeshX();
 
-	bool loadFromX(const Common::String &filename, XFileLexer &lexer);
-	bool findBones(FrameNode *rootFrame);
-	bool update(FrameNode *parentFrame);
-	bool render(ModelX *model);
-	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
+	virtual bool loadFromX(const Common::String &filename, XFileLexer &lexer) = 0;
+	virtual bool findBones(FrameNode *rootFrame) = 0;
+	virtual bool update(FrameNode *parentFrame) = 0;
+	virtual bool render(ModelX *model) = 0;
+	virtual bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth) = 0;
 
-	bool pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir);
+	virtual bool pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) = 0;
 
 	Math::Vector3d _BBoxStart;
 	Math::Vector3d _BBoxEnd;
 
-	bool setMaterialSprite(const Common::String &matName, BaseSprite *sprite);
-	bool setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora);
+	virtual bool setMaterialSprite(const Common::String &matName, BaseSprite *sprite) = 0;
+	virtual bool setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora) = 0;
 
-	bool invalidateDeviceObjects();
-	bool restoreDeviceObjects();
-
-protected:
-	static const int kVertexComponentCount = 8;
-	static const int kPositionOffset = 5;
-	static const int kTextureCoordOffset = 0;
-	static const int kNormalOffset = 2;
-
-	// anything which does not fit into 16 bits would we fine
-	static const uint32 kNullIndex = 0xFFFFFFFF;
-
-	bool parsePositionCoords(XFileLexer &lexer);
-	bool parseFaces(XFileLexer &lexer, int faceCount);
-	bool parseTextureCoords(XFileLexer &lexer);
-	bool parseNormalCoords(XFileLexer &lexer);
-	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename);
-	bool parseSkinWeights(XFileLexer &lexer);
-
-	void updateBoundingBox();
-
-	bool generateAdjacency();
-	bool adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4);
-	uint32 _numAttrs;
-	uint32 _maxFaceInfluence;
-
-	float *_vertexData;
-	float *_vertexPositionData;
-	float *_vertexNormalData;
-	uint32 _vertexCount;
-	uint16 *_indexData;
-	uint32 _indexCount;
-
-	BaseArray<Math::Matrix4 *> _boneMatrices;
-	BaseArray<SkinWeights> skinWeightsList;
-
-	uint32 *_skinAdjacency;
-	Common::Array<uint32> _adjacency;
-
-	BaseArray<Material *> _materials;
-	BaseArray<int> _indexRanges;
-
-	// Wintermute3D used the ID3DXSKININFO interface
-	// we will only store, whether this mesh is skinned at all
-	// and factor out the necessary computations into some functions
-	bool _skinnedMesh;
+	virtual bool invalidateDeviceObjects() = 0;
+	virtual bool restoreDeviceObjects() = 0;
 };
 
 } // namespace Wintermute

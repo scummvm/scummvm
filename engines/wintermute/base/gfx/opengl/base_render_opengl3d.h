@@ -23,7 +23,7 @@
 #ifndef WINTERMUTE_BASE_RENDER_OPENGL3D_H
 #define WINTERMUTE_BASE_RENDER_OPENGL3D_H
 
-#include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/opengl/base_renderer3d.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
 #include "engines/wintermute/dctypes.h"
@@ -37,27 +37,24 @@ namespace Wintermute {
 
 class BaseSurfaceOpenGL3D;
 
-class BaseRenderOpenGL3D : public BaseRenderer {
+class BaseRenderOpenGL3D : public BaseRenderer3D {
 public:
 	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
 	~BaseRenderOpenGL3D() override;
 
-	bool setAmbientLightColor(uint32 color);
-	bool setDefaultAmbientLightColor();
-	void setAmbientLight();
+	bool setAmbientLightColor(uint32 color) override;
+	bool setDefaultAmbientLightColor() override;
+	void setAmbientLight() override;
 
-	uint32 _ambientLightColor;
-	bool _overrideAmbientLightColor;
+	int maximumLightsCount() override;
+	void enableLight(int index) override;
+	void disableLight(int index) override;
 
-	int maximumLightsCount();
-	void enableLight(int index);
-	void disableLight(int index);
+	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) override;
 
-	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode);
-
-	bool enableShadows();
-	bool disableShadows();
-	bool stencilSupported();
+	bool enableShadows() override;
+	bool disableShadows() override;
+	bool stencilSupported() override;
 
 	void dumpData(const char *filename) override {}
 	/**
@@ -94,10 +91,10 @@ public:
 	bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1) override; 	// Unused outside indicator-display
 
 	bool setProjection() override;
-	bool setProjection2D();
-	void resetModelViewTransform();
-	void pushWorldTransform(const Math::Matrix4 &transform);
-	void popWorldTransform();
+	bool setProjection2D() override;
+	void resetModelViewTransform() override;
+	void pushWorldTransform(const Math::Matrix4 &transform) override;
+	void popWorldTransform() override;
 
 	bool windowedBlt() override;
 	/**
@@ -128,10 +125,10 @@ public:
 	bool setup3D(Camera3D *camera, bool force = false) override;
 	bool setupLines() override;
 
-	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y);
-	Math::Ray rayIntoScene(int x, int y);
+	void project(const Math::Matrix4 &worldMatrix, const Math::Vector3d &point, int &x, int &y) override;
+	Math::Ray rayIntoScene(int x, int y) override;
 
-	Math::Matrix4 lastProjectionMatrix() {
+	Math::Matrix4 lastProjectionMatrix()  override {
 		return _lastProjectionMatrix;
 	}
 
@@ -175,9 +172,12 @@ public:
 	};
 
 	bool drawSprite(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
-	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+					uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) override;
 	bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
-	                  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
+					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) override;
+
+	Mesh3DS *createMesh3DS() override;
+	MeshX *createMeshX() override;
 
 private:
 	Math::Matrix4 _lastProjectionMatrix;
