@@ -27,6 +27,7 @@
 
 #include "common/fs.h"
 #include "common/dialogs.h"
+#include "common/ustr.h"
 
 class SdlWindow_Win32;
 
@@ -34,7 +35,7 @@ class Win32DialogManager : public Common::DialogManager {
 public:
 	Win32DialogManager(SdlWindow_Win32 *window);
 	virtual ~Win32DialogManager();
-	virtual DialogResult showFileBrowser(const char *title, Common::FSNode &choice, bool isDirBrowser);
+	virtual DialogResult showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser);
 
 private:
 	SdlWindow_Win32 *_window;
