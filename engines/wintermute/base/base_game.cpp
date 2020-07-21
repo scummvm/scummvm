@@ -79,6 +79,7 @@
 
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
+#include "graphics/renderer.h"
 #endif
 
 namespace Wintermute {
@@ -495,7 +496,16 @@ bool BaseGame::initialize1() {
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	g_system->setupScreen(_settings->getResWidth(), _settings->getResHeight(), false, true);
-	_renderer3D = makeOpenGL3DRenderer(this);
+
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+
+	if (desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		_renderer3D = makeOpenGL3DShaderRenderer(this);
+	} else {
+		_renderer3D = makeOpenGL3DRenderer(this);
+	}
+
 	_renderer = _renderer3D;
 #else
 	_renderer = makeOSystemRenderer(this);

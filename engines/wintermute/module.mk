@@ -74,14 +74,17 @@ MODULE_OBJS := \
 	base/gfx/opengl/base_render_opengl_texture.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
+	base/gfx/opengl/base_render_opengl3d_shader.o \
 	base/gfx/opengl/render_ticket.o \
 	base/gfx/opengl/light3d.o \
 	base/gfx/opengl/camera3d.o \
 	base/gfx/opengl/material.o \
 	base/gfx/opengl/meshx.o \
 	base/gfx/opengl/meshx_opengl.o \
+	base/gfx/opengl/meshx_opengl_shader.o \
 	base/gfx/opengl/mesh3ds.o \
 	base/gfx/opengl/mesh3ds_opengl.o \
+	base/gfx/opengl/mesh3ds_opengl_shader.o \
 	base/gfx/opengl/loader3ds.o \
 	base/gfx/opengl/shadow_volume.o \
 	base/gfx/x/active_animation.o \
