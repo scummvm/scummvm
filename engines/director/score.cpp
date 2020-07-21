@@ -64,6 +64,7 @@ Score::Score(Movie *movie) {
 	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
+	_waitForChannel = 0;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
@@ -253,6 +254,13 @@ void Score::stopPlay() {
 }
 
 void Score::update() {
+	if (_waitForChannel) {
+		if (_soundManager->isChannelActive(_waitForChannel))
+			return;
+		
+		_waitForChannel = 0;
+	}
+
 	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
 		return;
 	}
@@ -357,14 +365,10 @@ void Score::update() {
 			_vm->waitForClick();
 		} else if (tempo == 135) {
 			// Wait for sound channel 1
-			while (_soundManager->isChannelActive(1)) {
-				_vm->processEvents();
-			}
+			_waitForChannel = 1;
 		} else if (tempo == 134) {
 			// Wait for sound channel 2
-			while (_soundManager->isChannelActive(2)) {
-				_vm->processEvents();
-			}
+			_waitForChannel = 2;
 		}
 	}
 

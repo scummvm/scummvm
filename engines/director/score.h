@@ -118,6 +118,7 @@ public:
 	byte _puppetTempo;
 	PlayState _playState;
 	uint32 _nextFrameTime;
+	int _waitForChannel;
 	Cursor *_currentCursor;
 
 	int _numChannelsDisplayed;
