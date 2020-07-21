@@ -797,7 +797,7 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	// Split up the lines.
 	Common::Array<Common::U32String> osdLines;
-	Common::StringTokenizer tokenizer(Common::convertFromU32String(_osdMessageNextData), "\n");
+	Common::U32StringTokenizer tokenizer(_osdMessageNextData, "\n");
 	while (!tokenizer.empty()) {
 		osdLines.push_back(tokenizer.nextToken());
 	}
