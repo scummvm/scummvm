@@ -185,7 +185,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			stream->read(unk, 3);
 	} else if (_vm->getVersion() == 4) {
 		// Sound/Tempo/Transition
-		_actionId = stream->readByte();
+		int unk1 = stream->readByte();
 		_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
 		uint8 transFlags = stream->readByte(); // 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
 
