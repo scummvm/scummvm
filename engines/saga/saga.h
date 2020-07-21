@@ -457,7 +457,8 @@ public:
 class ByteArrayReadStreamEndian : public Common::MemoryReadStreamEndian {
 public:
 	ByteArrayReadStreamEndian(const ByteArray & byteArray, bool bigEndian = false)
-		: Common::MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian) {
+		: Common::MemoryReadStreamEndian(byteArray.getBuffer(), byteArray.size(), bigEndian),
+		ReadStreamEndian(bigEndian) {
 	}
 };
 

@@ -30,7 +30,7 @@ namespace Kyra {
 
 class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
 public:
-	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
+	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), Common::ReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
 	~EndianAwareStreamWrapper() override { if (_dispose) delete _stream; }
 
 	// Common::Stream interface
@@ -44,7 +44,7 @@ public:
 	int32 pos() const override { return _stream->pos(); }
 	int32 size() const override { return _stream->size(); }
 	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
-	
+
 private:
 	Common::SeekableReadStream *_stream;
 	bool _dispose;
