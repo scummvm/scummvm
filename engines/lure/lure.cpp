@@ -160,10 +160,9 @@ Common::Error LureEngine::go() {
 	if (!shouldQuit()) {
 		_screen->empty();
 
-		if (Sound.hasNativeMT32()) {
+		if (Sound.isRoland() && Sound.hasNativeMT32()) {
 			// Initialize Roland MT-32 timbres
 			Sound.loadSection(ROLAND_MAIN_SYSEX_RESOURCE_ID);
-			// TODO Original interpreter flashes a note icon in the lower left corner while doing this
 			Sound.initCustomTimbres();
 		}
 
