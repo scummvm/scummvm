@@ -171,7 +171,7 @@ Common::Error SkyEngine::go() {
 	uint16 result = 0;
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 0 && saveSlot <= 999)
+		if (saveSlot >= 0 && saveSlot <= MAX_SAVE_GAMES)
 			result = _skyControl->quickXRestore(ConfMan.getInt("save_slot"));
 	}
 

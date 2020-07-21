@@ -385,6 +385,13 @@ Common::Error SkyEngine::loadGameState(int slot) {
 }
 
 Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	// prevent writing to autosave slot when user selects it manually
+	// ie. from the ScummVM in-game menu Save panel
+	// This also secures _selectedGame which is unsigned integer (uint16)
+	// from overflowing in the subtraction below
+	if (!isAutosave && slot <= 0) {
+		return Common::kWritePermissionDenied;
+	}
 	// Set the save slot and save the game
 	_skyControl->_selectedGame = isAutosave ? 0 : slot - 1;
 	if (_skyControl->saveGameToFile(false, nullptr, isAutosave) != GAME_SAVED)

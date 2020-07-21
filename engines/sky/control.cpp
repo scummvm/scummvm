@@ -1140,7 +1140,7 @@ void Control::saveDescriptions(const Common::StringArray &list) {
 
 	outf = _saveFileMan->openForSaving("SKY-VM.SAV");
 	bool ioFailed = true;
-	if (outf) {
+	if (outf != nullptr) {
 		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
 			outf->write(list[cnt].c_str(), list[cnt].size() + 1);
 		}
@@ -1162,7 +1162,7 @@ uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename, bool
 
 	Common::OutSaveFile *outf;
 	outf = _saveFileMan->openForSaving(filename);
-	if (outf == NULL)
+	if (outf == nullptr)
 		return NO_DISK_SPACE;
 
 	if (!fromControlPanel) {
