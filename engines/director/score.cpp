@@ -97,21 +97,29 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	return false;
 }
 
-void Score::setStartToLabel(Common::String label) {
+uint16 Score::getLabel(Common::String label) {
 	if (!_labels) {
-		warning("setStartToLabel: No labels set");
-		return;
+		warning("Score::getLabel: No labels set");
+		return 0;
 	}
-
 	Common::SortedArray<Label *>::iterator i;
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
 		if ((*i)->name.equalsIgnoreCase(label)) {
-			_nextFrame = (*i)->number;
-			return;
+			return (*i)->number;
 		}
 	}
-	warning("Label %s not found", label.c_str());
+
+	return 0;
+}
+
+void Score::setStartToLabel(Common::String label) {
+	uint16 num = getLabel("label");
+
+	if (num == 0)
+		warning("Label %s not found", label.c_str());
+	else
+		_nextFrame = num;
 }
 
 void Score::gotoLoop() {

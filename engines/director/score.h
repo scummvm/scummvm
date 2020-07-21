@@ -70,6 +70,7 @@ public:
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);
 
 	static int compareLabels(const void *a, const void *b);
+	uint16 getLabel(Common::String label);
 	void setStartToLabel(Common::String label);
 	void gotoLoop();
 	void gotoNext();
