@@ -475,7 +475,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			d.u.s = new Common::String();
 		break;
 	case kTheLabelList:
-		getTheEntitySTUB(kTheLabelList);
+		d.type = STRING;
+		d.u.s = _vm->getCurrentMovie()->getScore()->getLabelList();
 		break;
 	case kTheLastClick:
 		d.type = INT;

@@ -102,15 +102,25 @@ uint16 Score::getLabel(Common::String label) {
 		warning("Score::getLabel: No labels set");
 		return 0;
 	}
-	Common::SortedArray<Label *>::iterator i;
 
-	for (i = _labels->begin(); i != _labels->end(); ++i) {
+	for (Common::SortedArray<Label *>::iterator i = _labels->begin(); i != _labels->end(); ++i) {
 		if ((*i)->name.equalsIgnoreCase(label)) {
 			return (*i)->number;
 		}
 	}
 
 	return 0;
+}
+
+Common::String *Score::getLabelList() {
+	Common::String *res = new Common::String;
+
+	for (Common::SortedArray<Label *>::iterator i = _labels->begin(); i != _labels->end(); ++i) {
+		*res += (*i)->name;
+		*res += '\n';
+	}
+
+	return res;
 }
 
 void Score::setStartToLabel(Common::String label) {
