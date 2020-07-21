@@ -97,7 +97,7 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	return false;
 }
 
-uint16 Score::getLabel(Common::String label) {
+uint16 Score::getLabel(Common::String &label) {
 	if (!_labels) {
 		warning("Score::getLabel: No labels set");
 		return 0;
@@ -123,7 +123,7 @@ Common::String *Score::getLabelList() {
 	return res;
 }
 
-void Score::setStartToLabel(Common::String label) {
+void Score::setStartToLabel(Common::String &label) {
 	uint16 num = getLabel("label");
 
 	if (num == 0)
@@ -275,7 +275,7 @@ void Score::update() {
 	if (_waitForChannel) {
 		if (_soundManager->isChannelActive(_waitForChannel))
 			return;
-		
+
 		_waitForChannel = 0;
 	}
 
