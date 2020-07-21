@@ -1072,6 +1072,11 @@ void LB::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String resPath = g_director->getCurrentStage()->getCurrentPath() + d.asString();
 
+	if (g_director->getPlatform() == Common::kPlatformWindows) {
+		warning("STUB: BUILDBOT: b_openResFile(%s) on Windows", d.asString().c_str());
+		return;
+	}
+
 	if (!g_director->_openResFiles.contains(resPath)) {
 		MacArchive *resFile = new MacArchive();
 
