@@ -95,21 +95,27 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::ReadStream
 		_regX = stream.readUint16();
 
 		_bitsPerPixel = stream.readUint16();
+
+		if (stream.eos()) {
+			_bitsPerPixel = 0;
+		} else {
+			_clut = (PaletteType)stream.readUint16();
+			stream.readUint16();
+			/* uint16 unk1 = */ stream.readUint16();
+			stream.readUint16();
+
+			stream.readUint32();
+			stream.readUint32();
+
+			_flags2 = stream.readUint16();
+		}
+
 		if (_bitsPerPixel == 0)
 			_bitsPerPixel = 1;
 
 		if (_bitsPerPixel == 1)
 			_pitch *= 8;
 
-		_clut = (PaletteType)stream.readUint16();
-		stream.readUint16();
-		/* uint16 unk1 = */ stream.readUint16();
-		stream.readUint16();
-
-		stream.readUint32();
-		stream.readUint32();
-
-		_flags2 = stream.readUint16();
 		_autoHilite = (_flags2 % 4 != 0);
 
 		int tail = 0;
