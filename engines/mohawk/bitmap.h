@@ -167,7 +167,7 @@ public:
 	LivingBooksBitmap_v1() : MohawkBitmap() {}
 	~LivingBooksBitmap_v1() override {}
 
-	MohawkSurface *decodeImage(Common::SeekableReadStream *stream) override;
+	MohawkSurface *decodeImageLB(Common::SeekableReadStreamEndian *stream);
 
 protected:
 	byte getBitsPerPixel() override { return 8; }

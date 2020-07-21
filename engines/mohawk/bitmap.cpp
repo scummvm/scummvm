@@ -677,9 +677,7 @@ MohawkSurface *MystBitmap::decodeImage(Common::SeekableReadStream *stream) {
 
 #endif
 
-MohawkSurface *LivingBooksBitmap_v1::decodeImage(Common::SeekableReadStream *stream) {
-	Common::SeekableSubReadStreamEndian *endianStream = (Common::SeekableSubReadStreamEndian *)stream;
-
+MohawkSurface *LivingBooksBitmap_v1::decodeImageLB(Common::SeekableReadStreamEndian *endianStream) {
 	// 12 bytes header for the image
 	_header.format = endianStream->readUint16();
 	_header.bytesPerRow = endianStream->readUint16();
@@ -709,7 +707,7 @@ MohawkSurface *LivingBooksBitmap_v1::decodeImage(Common::SeekableReadStream *str
 		if (lengthBits != LEN_BITS)
 			error("Length bits modified to %d", lengthBits);
 
-		_data = decompressLZ(stream, uncompressedSize);
+		_data = decompressLZ(endianStream, uncompressedSize);
 
 		if (endianStream->pos() != endianStream->size())
 			error("LivingBooksBitmap_v1 decompression failed");
@@ -728,8 +726,8 @@ MohawkSurface *LivingBooksBitmap_v1::decodeImage(Common::SeekableReadStream *str
 		if (!endianStream->isBE())
 			leRLE8 = true;
 
-		_data = stream;
-		stream = nullptr;
+		_data = endianStream;
+		endianStream = nullptr;
 	}
 
 	Graphics::Surface *surface = createSurface(_header.width, _header.height);
@@ -740,7 +738,7 @@ MohawkSurface *LivingBooksBitmap_v1::decodeImage(Common::SeekableReadStream *str
 		drawRaw(surface);
 
 	delete _data;
-	delete stream;
+	delete endianStream;
 
 	MohawkSurface *mhkSurface = new MohawkSurface(surface);
 	mhkSurface->setOffsetX(offsetX);
