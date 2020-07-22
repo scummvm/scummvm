@@ -1794,10 +1794,6 @@ void WaynesWorldEngine::handleVerbClose() {
 
 }
 
-void WaynesWorldEngine::setGameFlag(int flagNum) {
-	// TODO
-}
-
 void WaynesWorldEngine::lookAtUnusedTicket() {
     // sysMouseDriver(2);
     _gameState = 3;

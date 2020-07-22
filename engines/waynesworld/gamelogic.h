@@ -47,6 +47,7 @@ public:
 	void updateRoomAnimations(bool doUpdate);
 	void handleRoomEvent(int eventNum);
 	int getActorScaleFromY(int actorY);
+	void setPizzathonStatus(int flagNum);
 	void r38_atrap();
 public:
 	int _word_34464;

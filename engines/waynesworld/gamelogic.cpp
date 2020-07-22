@@ -1097,6 +1097,48 @@ int GameLogic::getActorScaleFromY(int actorY) {
     return CLIP(scale, 20, 100);
 }
 
+void GameLogic::setPizzathonStatus(int flagNum) {
+    switch (flagNum) {
+    case 1:
+        _pizzathonListFlags1 |= 0x08;
+        break;
+    case 2:
+        _pizzathonListFlags1 |= 0x40;
+        break;
+    case 3:
+        _pizzathonListFlags1 |= 0x80;
+        break;
+    case 4:
+        _pizzathonListFlags2 |= 0x01;
+        break;
+    case 5:
+        _pizzathonListFlags2 |= 0x02;
+        break;
+    case 6:
+        _pizzathonListFlags1 |= 0x02;
+        break;
+    case 7:
+        _pizzathonListFlags1 |= 0x04;
+        break;
+    case 8:
+        _pizzathonListFlags1 |= 0x10;
+        break;
+    case 9:
+        _pizzathonListFlags1 |= 0x01;
+        break;
+    case 10:
+        _pizzathonListFlags1 |= 0x20;
+        break;
+    }
+    // _byte_306C8++; Never used
+    if ((_pizzathonListFlags1 & 0x08) && (_pizzathonListFlags1 & 0x40) && (_pizzathonListFlags1 & 0x80) &&
+        (_pizzathonListFlags2 & 0x01) && (_pizzathonListFlags2 & 0x02) && (_pizzathonListFlags1 & 0x02) &&
+        (_pizzathonListFlags1 & 0x04) && (_pizzathonListFlags1 & 0x10) && (_pizzathonListFlags1 & 0x01) &&
+        (_pizzathonListFlags1 & 0x20)) {
+        _pizzathonListFlags2 |= 0x04;
+    }
+}
+
 void GameLogic::displayExtremeCloseupOfPizzathonList() {
     _vm->stopRoomAnimations();
     _vm->_gameState = 5;
@@ -2072,7 +2114,7 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		break;
 	case 298:
 		if (_r2_flags & 0x01) {
-			_vm->setGameFlag(3);
+			setPizzathonStatus(3);
 			replyTextIndex1 = 294;
 		} else {
 			replyTextIndex1 = 286;
@@ -2400,7 +2442,7 @@ bool GameLogic::r3_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 			_vm->displayTextLines("c04r", 168, 50, 35, 2);
 			_vm->displayTextLines("c04r", 173, 50, 35, 2);
 			_vm->displayTextLines("c04", 230, -1, -1, 1);
-			_vm->setGameFlag(4);
+			setPizzathonStatus(4);
 			replyTextIndex1 = 175;
 		}
 		continueDialog = true;
@@ -2651,7 +2693,7 @@ void GameLogic::r4_handleRoomEvent() {
 	_vm->changeRoom(_vm->_currentRoomNumber);
 	_vm->displayTextLines("c04r", 248, 200, 20, 3);
 	_vm->displayTextLines("c04", 289, -1, -1, 1);
-	_vm->setGameFlag(1);
+	setPizzathonStatus(1);
 }
 
 int GameLogic::r4_useDrumstickWithCastleDoor() {
@@ -4104,7 +4146,7 @@ bool GameLogic::r9_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		break;
 	case 241:
 		replyTextIndex1 = 189;
-		_vm->setGameFlag(6);
+		setPizzathonStatus(6);
 	case 242:
 		_vm->_gameState = 0;
 		break;
@@ -4122,7 +4164,7 @@ bool GameLogic::r9_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		} else if (_r9_flags & 0x04) {
 			replyTextIndex1 = 204;
 		} else {
-			_vm->setGameFlag(9);
+			setPizzathonStatus(9);
 			_r9_flags |= 0x04;
 			replyTextIndex1 = 203;
 		}
@@ -4982,7 +5024,7 @@ bool GameLogic::r12_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		break;
 	case 279:
 		_vm->displayTextLines("c04r", 230, 50, 30, 1);
-		_vm->setGameFlag(10);
+		setPizzathonStatus(10);
 		r12_talkToLawyer();
 		break;
 	}
@@ -5029,7 +5071,7 @@ void GameLogic::r12_talkToLawyer() {
 		_vm->moveObjectToRoom(kObjectIdInventoryFinalContract, 99);
 		_vm->refreshInventory(true);
 		_r12_flags |= 0x01;
-		_vm->setGameFlag(8);
+		setPizzathonStatus(8);
 	} else {
 		_vm->displayTextLines("c04", 282, -1, -1, 1);
 		_vm->displayTextLines("c04r", 231, 50, 30, 2);
@@ -5044,7 +5086,7 @@ void GameLogic::r12_talkToLawyer() {
 void GameLogic::r12_givePotatoChipToCecil() {
 	_vm->moveObjectToNowhere(kObjectIdInventoryPotatoChip);
 	_vm->refreshInventory(true);
-	_vm->setGameFlag(5);
+	setPizzathonStatus(5);
 	for (int textIndex = 361; textIndex < 363; textIndex++) {
 		for (int i = 0; i < 4; i++) {
 			_vm->playAnimation("ctalk", 0, 2, 203, 85, 0, 100);
@@ -5324,7 +5366,7 @@ void GameLogic::r13_giveTicketToRomeToPepe() {
 	_r13_flags |= 0x04;
 	_vm->playAnimation("pepego", 0, 10, 60, 58, 0, 100);
 	_vm->moveObjectToNowhere(kObjectIdPepe13);
-	_vm->setGameFlag(2);
+	setPizzathonStatus(2);
 	_vm->refreshActors();
 }
 
@@ -5906,7 +5948,7 @@ void GameLogic::r20_handleRoomEvent() {
 	_vm->displayTextLines("c04r", 221, 275, 30, 3);
 	_vm->playAnimation("gillgo", 0, 9, 273, 79, 0, 100);
 	_vm->moveObjectToNowhere(kObjectIdGilligan);
-	_vm->setGameFlag(7);
+	setPizzathonStatus(7);
 	_vm->loadRoomBackground(_vm->_currentRoomNumber);
 }
 

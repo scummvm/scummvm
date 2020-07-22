@@ -336,8 +336,6 @@ public:
 	void handleVerbOpen();
 	void handleVerbClose();
 
-	void setGameFlag(int flagNum);
-
 	void lookAtUnusedTicket();
 	void unusedTicketHandleMouseMove();
 	void unusedTicketHandleMouseClick();
