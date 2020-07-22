@@ -125,10 +125,10 @@ static struct BuiltinProto {
 	{ "listP",			LB::b_listP,		1, 1, true,  4, FBLTIN },	//			D4 f
 	{ "max",			LB::b_max,			-1,0, true,  4, FBLTIN },	//			D4 f
 	{ "min",			LB::b_min,			-1,0, true,  4, FBLTIN },	//			D4 f
-	{ "setaProp",		LB::b_setaProp,		3, 3, false, 4, CBLTIN },	//			D4 c
-	{ "setAt",			LB::b_setAt,		3, 3, false, 4, CBLTIN },	//			D4 c
-	{ "setProp",		LB::b_setProp,		3, 3, false, 4, CBLTIN },	//			D4 c
-	{ "sort",			LB::b_sort,			1, 1, false, 4, CBLTIN },	//			D4 c
+	{ "setaProp",		LB::b_setaProp,		3, 3, false, 4, HBLTIN },	//			D4 h
+	{ "setAt",			LB::b_setAt,		3, 3, false, 4, HBLTIN },	//			D4 h
+	{ "setProp",		LB::b_setProp,		3, 3, false, 4, HBLTIN },	//			D4 h
+	{ "sort",			LB::b_sort,			1, 1, false, 4, HBLTIN },	//			D4 h
 	// Files
 	{ "closeDA",	 	LB::b_closeDA, 		0, 0, false, 2, CBLTIN },	// D2 c
 	{ "closeResFile",	LB::b_closeResFile,	0, 1, false, 2, CBLTIN },	// D2 c
