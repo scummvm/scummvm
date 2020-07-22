@@ -115,11 +115,13 @@ bool Channel::isDirty(Sprite *nextSprite) {
 
 	bool isDirty = _dirty ||
 		_delta != Common::Point(0, 0) ||
-		_sprite->_castId != nextSprite->_castId ||
-		_sprite->_ink != nextSprite->_ink ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
 	if (!_sprite->_puppet) {
+		// When puppet is set, the overall dirty flag should be set when sprite is
+		// modified.
+		isDirty |= _sprite->_castId != nextSprite->_castId ||
+			_sprite->_ink != nextSprite->_ink;
 		if (!_sprite->_moveable)
 			isDirty |= _currentPoint != nextSprite->_startPoint;
 		if (!_sprite->_stretch)
