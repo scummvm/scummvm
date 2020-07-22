@@ -31,7 +31,7 @@
 
 namespace Director {
 
-CastMember::CastMember(Cast* cast, uint16 castId, Common::SeekableReadStreamEndian &stream) {
+CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream) {
 	_type = kCastTypeNull;
 	_cast = cast;
 	_castId = castId;
@@ -40,6 +40,7 @@ CastMember::CastMember(Cast* cast, uint16 castId, Common::SeekableReadStreamEndi
 	_autoHilite = false;
 	_purgePriority = 3;
 	_size = stream.size();
+	_flags1 = 0;
 
 	_modified = true;
 }
@@ -57,7 +58,6 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_noMatte = false;
 	_bytes = 0;
 	_pitch = 0;
-	_flags1 = 0;
 	_flags2 = 0;
 	_regX = _regY = 0;
 	_clut = kClutSystemMac;
@@ -314,7 +314,6 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_bgcolor = 0;
 	_fgcolor = 0;
 
-	_flags = 0;
 	_textFlags = 0;
 	_scroll = 0;
 	_fontId = 1;
@@ -327,7 +326,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
 
 	if (version <= 3) {
-		_flags = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
+		_flags1 = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -366,14 +365,14 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		}
 
 		debugC(2, kDebugLoading, "TextCastMember(): flags1: %d, border: %d gutter: %d shadow: %d pad1: %x align: %04x",
-				_flags, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
+				_flags1, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
 		debugC(2, kDebugLoading, "TextCastMember(): background rgb: 0x%04x 0x%04x 0x%04x, pad2: %x pad3: %d pad4: %d shadow: %d flags: %d totHeight: %d",
 				_bgpalinfo1, _bgpalinfo2, _bgpalinfo3, pad2, pad3, pad4, _textShadow, _textFlags, totalTextHeight);
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
 	} else if (version == 4) {
-		byte flags = stream.readByte();
+		_flags1 = stream.readByte();
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -390,9 +389,6 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		_maxHeight = stream.readUint16();
 		_textShadow = static_cast<SizeType>(stream.readByte());
 		_textFlags = stream.readByte();
-
-		if (flags)
-			warning("BUILDBOT: Unprocessed text cast flags: %x", flags);
 
 		_textHeight = stream.readUint16();
 		_textSlant = 0;

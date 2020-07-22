@@ -79,6 +79,7 @@ public:
 	bool _autoHilite;
 	int _purgePriority;
 	uint32 _size;
+	uint8 _flags1;
 
 	Graphics::MacWidget *_widget;
 
@@ -102,7 +103,6 @@ public:
 	uint16 _pitch;
 	uint16 _regX;
 	uint16 _regY;
-	uint8 _flags1;
 	uint16 _flags2;
 	uint16 _bytes;
 	PaletteType _clut;
@@ -180,7 +180,6 @@ public:
 	uint16 _maxHeight;
 	uint16 _textHeight;
 
-	byte _flags;
 	uint32 _fontId;
 	uint16 _fontSize;
 	TextType _textType;
