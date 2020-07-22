@@ -32,6 +32,8 @@ Cursor::Cursor() {
 
 	_cursorCastId = 0;
 	_cursorMaskId = 0;
+
+	_usePalette = false;
 }
 
 bool Cursor::operator==(const Cursor &c) {
@@ -56,6 +58,7 @@ void Cursor::readFromCast(uint cursorId, uint maskId) {
 		return;
 	}
 
+	_usePalette = false;
 	resetCursor(Graphics::kMacCursorCustom, true, 0, cursorId, maskId);
 
 	_surface = new byte[getWidth() * getHeight()];
@@ -116,6 +119,7 @@ void Cursor::readFromResource(int resourceId) {
 		resetCursor(Graphics::kMacCursorOff, true, resourceId);
 		break;
 	default:
+		_usePalette = true;
 		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
 			Common::SeekableSubReadStreamEndian *cursorStream;
 
@@ -136,6 +140,9 @@ void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int res
 		clear();
 
 	_cursorType = type;
+	if (_cursorType != Graphics::kMacCursorCustom)
+		_usePalette = false;
+
 	_cursorResId = resId;
 
 	_cursorCastId = castId;

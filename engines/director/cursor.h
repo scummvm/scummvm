@@ -43,6 +43,8 @@ class Cursor : public Graphics::MacCursor {
 	bool isEmpty() { return !(_cursorResId || _cursorCastId); }
 	bool operator==(const Cursor &c);
 
+	virtual const byte *getPalette() const override { return _usePalette ? _palette : nullptr; }
+
  public:
 	Graphics::MacCursorType _cursorType;
 	int _cursorResId;
@@ -52,6 +54,9 @@ class Cursor : public Graphics::MacCursor {
 
 private:
 	void resetCursor(Graphics::MacCursorType type, bool shouldClear = false, int resId = 0, uint castId = 0, uint maskId = 0);
+
+private:
+	bool _usePalette;
 };
 
 } // end of namespace Director
