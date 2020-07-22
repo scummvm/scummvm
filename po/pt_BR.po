@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-22 16:32+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -296,12 +296,11 @@ msgstr "Sobrepor configuração global de shader"
 #: gui/editgamedialog.cpp:219
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Sobrepõe configuração global de sombreamento"
+msgstr "Sobrepor configuração global de sombreamento"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1739 engines/dialogs.cpp:329
-#, fuzzy
 msgid "Keymaps"
-msgstr "Mapa de Teclas:"
+msgstr "Mapeamento de Teclas"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1746 engines/dialogs.cpp:304
 msgid "Audio"
@@ -571,7 +570,7 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "Interface"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
@@ -936,12 +935,12 @@ msgstr "Zona Morta:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d conquistas ocultas restantes"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Conquistas alcançadas: %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -1287,9 +1286,8 @@ msgid "Keys"
 msgstr "Teclas"
 
 #: gui/options.cpp:2005
-#, fuzzy
 msgid "GUI language:"
-msgstr "Idioma do GUI:"
+msgstr "Idioma da interface:"
 
 #: gui/options.cpp:2005
 msgid "Language of ScummVM GUI"
@@ -1416,9 +1414,8 @@ msgid "Sync now"
 msgstr "Sincronizar agora"
 
 #: gui/options.cpp:2098
-#, fuzzy
 msgid "Start saved games sync"
-msgstr "Iniciar jogo selecionado"
+msgstr "Iniciar sincronização de jogos salvos"
 
 #: gui/options.cpp:2101
 msgctxt "lowres"
@@ -1507,30 +1504,26 @@ msgid "Run local webserver"
 msgstr "Executar servidor da web local"
 
 #: gui/options.cpp:2134 gui/options.cpp:2927
-#, fuzzy
 msgid "Not running"
-msgstr "Erro ao executar o jogo:"
+msgstr "Não está em execução"
 
 #: gui/options.cpp:2138
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Pasta de Extras"
+msgstr "Caminho /root/:"
 
 #: gui/options.cpp:2138 gui/options.cpp:2140 gui/options.cpp:2141
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Especifique onde guardar seus jogos salvos"
+msgstr ""
+"Selecione qual diretório será exibido como /root/ no Gerenciador de Arquivos"
 
 #: gui/options.cpp:2140
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Pasta de Extras"
+msgstr "Caminho /root/:"
 
 #: gui/options.cpp:2146
-#, fuzzy
 msgid "Server's port:"
-msgstr "Servidor:"
+msgstr "Porta do servidor:"
 
 #: gui/options.cpp:2146
 msgid "Port for server to use"
@@ -1565,9 +1558,8 @@ msgid "Will read text in gui on mouse over."
 msgstr "Irá ler o texto no gui ao passar o mouse."
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
-msgstr "Nenhum(a)"
+msgstr "Nenhum"
 
 #: gui/options.cpp:2253
 msgid "Failed to change cloud storage!"
