@@ -89,7 +89,11 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 		delete[] visual_str;
 	}
 #else
-	warning("initWithU32String: Fribidi not available, using input string as fallback");
+	static bool fribidiWarning = true;
+	if (fribidiWarning) {
+		warning("initWithU32String: Fribidi not available, will use input strings as fallback.");
+		fribidiWarning = false;
+	}
 	visual = input;
 #endif
 
