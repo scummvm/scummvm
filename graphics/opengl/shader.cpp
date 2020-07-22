@@ -39,12 +39,14 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.addDirectory("GRIM_SHADERS", "engines/grim", 0, 2);
 	SearchMan.addDirectory("MYST3_SHADERS", "engines/myst3", 0, 2);
 	SearchMan.addDirectory("STARK_SHADERS", "engines/stark", 0, 2);
+	SearchMan.addDirectory("WINTERMUTE_SHADERS", "engines/wintermute/base/gfx/opengl", 0, 5);
 	file.open(Common::String("shaders/") + filename);
 	if (!file.isOpen())
 		error("Could not open shader %s!", filename.c_str());
 	SearchMan.remove("GRIM_SHADERS");
 	SearchMan.remove("MYST3_SHADERS");
 	SearchMan.remove("STARK_SHADERS");
+	SearchMan.remove("WINTERMUTE_SHADERS");
 
 	const int32 size = file.size();
 	GLchar *shaderSource = new GLchar[size + 1];
