@@ -463,7 +463,7 @@ void Score::renderCursor(uint spriteId) {
 		}
 
 		_currentCursor = &_channels[spriteId]->_cursor;
-		_vm->_wm->pushCursor(_currentCursor->_cursorType, ((Graphics::Cursor *)_currentCursor));
+		_vm->_wm->pushCursor(_currentCursor->_cursorType, _currentCursor);
 	}
 }
 
