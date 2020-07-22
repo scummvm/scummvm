@@ -39,6 +39,7 @@ public:
 	int handleVerbPull();
 	int handleVerbOpen();
 	int handleVerbClose();
+	void handleVerbExtremeCloseupOf();
 	int handleVerbGive();
 	void handleDialogReply(int index, int x, int y);
 	bool handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
@@ -109,6 +110,14 @@ public:
 // protected:
 public://DEBUG So logic functions can be called from the engine class for testing
 	WaynesWorldEngine *_vm;
+
+	void displayExtremeCloseupOfPizzathonList();
+	void displayExtremeCloseupOfSign15();
+	void displayExtremeCloseupOfObjectPictures22();
+	void displayExtremeCloseupOfMemo();
+	void displayExtremeCloseupOfSewerMap();
+	void displayExtremeCloseupOfBillboard1();
+	void displayExtremeCloseupOfBillboard2();
 
 	int r0_handleVerbPickUp();
 	int r0_handleVerbUse();

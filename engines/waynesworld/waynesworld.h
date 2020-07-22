@@ -342,6 +342,8 @@ public:
 	void unusedTicketHandleMouseMove();
 	void unusedTicketHandleMouseClick();
 
+	void extremeCloseUpHandleMouseClick();
+
 	void gameMapOpen();
 	void gameMapFinish();
 	void gameMapHandleMouseMove(int objectNumber);

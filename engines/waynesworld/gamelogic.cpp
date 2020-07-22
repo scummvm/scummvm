@@ -456,6 +456,41 @@ int GameLogic::handleVerbClose() {
 	return 0;
 }
 
+void GameLogic::handleVerbExtremeCloseupOf() {
+    switch (_vm->_objectNumber) {
+    case kObjectIdInventoryPizzathonList:
+        displayExtremeCloseupOfPizzathonList();
+        break;
+    case kObjectIdSign15_1:
+        displayExtremeCloseupOfSign15();
+        break;
+    case kObjectIdInventorySewerMap:
+    case kObjectIdMap:
+        displayExtremeCloseupOfSewerMap();
+        break;
+    case kObjectIdPictures22:
+        displayExtremeCloseupOfObjectPictures22();
+        break;
+    case kObjectIdInventoryMemo:
+    case kObjectIdMemo:
+        displayExtremeCloseupOfMemo();
+        break;
+    case kObjectIdBillboard7:
+    case kObjectIdBillboard14:
+    case kObjectIdBillboard19:
+        displayExtremeCloseupOfBillboard1();
+        break;
+    case kObjectIdBillboard_0:
+    case kObjectIdBillboard_1:
+    case kObjectIdBillboard_2:
+        displayExtremeCloseupOfBillboard2();
+        break;
+    default:
+        _vm->displayText("c00", 3, 0, -1, -1, 0);
+        break;
+    }
+}
+
 int GameLogic::handleVerbGive() {
     switch (_vm->_currentRoomNumber) {
     case 2:
@@ -1060,6 +1095,115 @@ int GameLogic::getActorScaleFromY(int actorY) {
 		break;
 	}
     return CLIP(scale, 20, 100);
+}
+
+void GameLogic::displayExtremeCloseupOfPizzathonList() {
+    _vm->stopRoomAnimations();
+    _vm->_gameState = 5;
+    _vm->paletteFadeOut(0, 256, 16);
+    // sysMouseDriver(2);
+    _vm->drawImageToScreen("m05/list", 0, 0);
+    _vm->playSound("sv14", 1);
+    if (_pizzathonListFlags1 & 0x08) {
+        _vm->drawImageToScreen("m05/adline", 72, 22);
+    }
+    if (_pizzathonListFlags1 & 0x40) {
+        _vm->drawImageToScreen("m05/locline", 72, 42);
+    }
+    if (_pizzathonListFlags1 & 0x80) {
+        _vm->drawImageToScreen("m05/volline", 74, 59);
+    }
+    if (_pizzathonListFlags2 & 0x01) {
+        _vm->drawImageToScreen("m05/timeline", 66, 76);
+    }
+    if (_pizzathonListFlags2 & 0x02) {
+        _vm->drawImageToScreen("m05/totline", 73, 94);
+    }
+    if (_pizzathonListFlags1 & 0x02) {
+        _vm->drawImageToScreen("m05/vidline", 80, 111);
+    }
+    if (_pizzathonListFlags1 & 0x04) {
+        _vm->drawImageToScreen("m05/ingline", 72, 129);
+    }
+    if (_pizzathonListFlags1 & 0x10) {
+        _vm->drawImageToScreen("m05/musline", 78, 148);
+    }
+    if (_pizzathonListFlags1 & 0x01) {
+        _vm->drawImageToScreen("m05/magline", 61, 164);
+    }
+    if (_pizzathonListFlags1 & 0x20) {
+        _vm->drawImageToScreen("m05/comline", 68, 100);
+    }
+    _vm->paletteFadeIn(0, 256, 16);
+    // sysMouseDriver(1);
+}
+
+void GameLogic::displayExtremeCloseupOfSign15() {
+    _vm->stopRoomAnimations();
+    _vm->_gameState = 5;
+    // sysMouseDriver(2);
+    _vm->paletteFadeOut(0, 256, 16);
+    _vm->playSound("sv14", 1);
+    _vm->drawRoomImageToScreen("sign", 0, 0);
+    _vm->paletteFadeIn(0, 256, 16);
+    // sysMouseDriver(1);
+}
+
+void GameLogic::displayExtremeCloseupOfObjectPictures22() {
+    _vm->stopRoomAnimations();
+    _vm->_gameState = 5;
+    // sysMouseDriver(2);
+    _vm->paletteFadeOut(0, 256, 16);
+    _vm->playSound("sv14", 1);
+    _vm->drawImageToScreen("m05/oldmap", 0, 0);
+    _vm->paletteFadeIn(0, 256, 16);
+    // sysMouseDriver(1);
+}
+
+void GameLogic::displayExtremeCloseupOfMemo() {
+    _vm->stopRoomAnimations();
+    _vm->_gameState = 5;
+    // sysMouseDriver(2);
+    _vm->paletteFadeOut(0, 256, 16);
+    _vm->playSound("sv14", 1);
+    _vm->drawImageToScreen("m05/memo", 0, 0);
+    _vm->paletteFadeIn(0, 256, 16);
+    // sysMouseDriver(1);
+}
+
+void GameLogic::displayExtremeCloseupOfSewerMap() {
+    _vm->stopRoomAnimations();
+    _vm->_gameState = 5;
+    // sysMouseDriver(2);
+    _vm->paletteFadeOut(0, 256, 16);
+    _vm->playSound("sv14", 1);
+    _vm->drawImageToScreen("m05/sewermap", 0, 0);
+    _vm->paletteFadeIn(0, 256, 16);
+    // sysMouseDriver(1);
+}
+
+void GameLogic::displayExtremeCloseupOfBillboard1() {
+    _vm->stopRoomAnimations();
+    _vm->_gameState = 5;
+    // sysMouseDriver(2);
+    _vm->paletteFadeOut(0, 256, 16);
+    _vm->playSound("sv14", 1);
+    _vm->_screen->clear(0);
+    _vm->drawImageToScreen("m05/fboard", 51, 18);
+    _vm->paletteFadeIn(0, 256, 16);
+    // sysMouseDriver(1);
+}
+
+void GameLogic::displayExtremeCloseupOfBillboard2() {
+    _vm->stopRoomAnimations();
+    _vm->_gameState = 5;
+    // sysMouseDriver(2);
+    _vm->paletteFadeOut(0, 256, 16);
+    _vm->playSound("sv14", 1);
+    _vm->_screen->clear(0);
+    _vm->drawImageToScreen("m05/pboard", 51, 18);
+    _vm->paletteFadeIn(0, 256, 16);
+    // sysMouseDriver(1);
 }
 
 int GameLogic::r0_handleVerbPickUp() {

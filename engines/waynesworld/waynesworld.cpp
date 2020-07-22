@@ -413,7 +413,7 @@ void WaynesWorldEngine::handleMouseLeftClick() {
         // TODO handleMouseClickState4();
         break;
     case 5:
-        // TODO handleMouseClickState5();
+        extremeCloseUpHandleMouseClick();
         break;
     }
 }
@@ -442,7 +442,7 @@ void WaynesWorldEngine::handleMouseRightClick() {
         // TODO handleMouseClickState4();
         break;
     case 5:
-        // TODO handleMouseClickState5();
+        extremeCloseUpHandleMouseClick();
         break;
     }
 }
@@ -1399,7 +1399,7 @@ void WaynesWorldEngine::handleVerb(int verbFlag) {
         handleVerbPull();
         break;
     case 7:
-        // TODO handleVerbExtremeCloseupOf();
+        handleVerbExtremeCloseupOf();
         break;
     case 8:
         handleVerbGive();
@@ -1686,6 +1686,10 @@ void WaynesWorldEngine::handleVerbPull() {
 
 }
 
+void WaynesWorldEngine::handleVerbExtremeCloseupOf() {
+	_logic->handleVerbExtremeCloseupOf();
+}
+
 void WaynesWorldEngine::handleVerbGive() {
     int actionTextIndex = -1;
 
@@ -1844,6 +1848,17 @@ void WaynesWorldEngine::unusedTicketHandleMouseClick() {
     changeRoom(_currentRoomNumber);
     drawInterface(_verbNumber);
     displayText("c00", textIndex, 0, -1, -1, 0);
+}
+
+void WaynesWorldEngine::extremeCloseUpHandleMouseClick() {
+    _gameState = 0;
+    // sysMouseDriver(2);
+    paletteFadeOut(0, 256, 16);
+    _screen->clear(0);
+    paletteFadeIn(0, 256, 16);
+    drawInterface(_verbNumber);
+    loadRoomBackground(_currentRoomNumber);
+    // sysMouseDriver(1);
 }
 
 } // End of namespace WaynesWorld
