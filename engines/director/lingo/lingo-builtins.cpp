@@ -1268,19 +1268,27 @@ void LB::b_playAccel(int nargs) {
 }
 
 void LB::b_preLoad(int nargs) {
-	g_lingo->printSTUBWithArglist("b_preLoad", nargs);
+	// We always pretend we preloaded all frames
+	// Returning the number of the last frame successfully "loaded"
+	if (nargs == 0) {
+		g_lingo->_theResult = Datum((int)g_director->getCurrentMovie()->getScore()->_frames.size());
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
-}
-
-void LB::b_preLoadCast(int nargs) {
 	g_lingo->_theResult = g_lingo->pop();
 
 	if (nargs == 2)
-		g_lingo->_theResult = g_lingo->pop();
+		g_lingo->pop();
+}
 
+void LB::b_preLoadCast(int nargs) {
 	// We always pretend we preloaded all cast
-	// Returning the number of the last case successfully "loaded"
+	// Returning the number of the last cast successfully "loaded"
+
+	g_lingo->_theResult = g_lingo->pop();
+
+	if (nargs == 2)
+		g_lingo->pop();
 }
 
 void LB::b_framesToHMS(int nargs) {
