@@ -1326,7 +1326,8 @@ void LB::b_return(int nargs) {
 		g_lingo->pop();
 	}
 
-	g_lingo->_theResult = g_lingo->peek(0);	// Store result for possible reference
+	if (!g_lingo->_stack.empty())
+		g_lingo->_theResult = g_lingo->peek(0);	// Store result for possible reference
 
 	LC::c_procret();
 }
