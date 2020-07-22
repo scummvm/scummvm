@@ -166,8 +166,61 @@ bool Channel::isMouseIn(const Common::Point &pos) {
 	return true;
 }
 
-Common::Rect Channel::getBbox(bool unstretched) {
+bool Channel::isMatteIntersect(Channel *channel) {
+	Common::Rect myBbox = getBbox();
+	Common::Rect yourBbox = channel->getBbox();
+	Common::Rect intersectRect = myBbox.findIntersectingRect(yourBbox);
 
+	if (intersectRect.isEmpty() || !_sprite->_cast || _sprite->_cast->_type != kCastBitmap ||
+			!channel->_sprite->_cast || channel->_sprite->_cast->_type != kCastBitmap)
+		return false;
+
+	Graphics::Surface *myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
+	Graphics::Surface *yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+
+	if (myMatte && yourMatte) {
+		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
+			const byte *my = (const byte *)myMatte->getBasePtr(intersectRect.left - myBbox.left, i - myBbox.top);
+			const byte *your = (const byte *)yourMatte->getBasePtr(intersectRect.left - yourBbox.left, i - yourBbox.top);
+
+			for (int j = intersectRect.left; j < intersectRect.right; j++, my++, your++)
+				if (!*my && !*your)
+					return true;
+		}
+	}
+
+	return false;
+}
+
+bool Channel::isMatteWithin(Channel *channel) {
+	Common::Rect myBbox = getBbox();
+	Common::Rect yourBbox = channel->getBbox();
+	Common::Rect intersectRect = myBbox.findIntersectingRect(yourBbox);
+
+	if (!myBbox.contains(yourBbox) || !_sprite->_cast || _sprite->_cast->_type != kCastBitmap ||
+			!channel->_sprite->_cast || channel->_sprite->_cast->_type != kCastBitmap)
+		return false;
+
+	Graphics::Surface *myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
+	Graphics::Surface *yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+
+	if (myMatte && yourMatte) {
+		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
+			const byte *my = (const byte *)myMatte->getBasePtr(intersectRect.left - myBbox.left, i - myBbox.top);
+			const byte *your = (const byte *)yourMatte->getBasePtr(intersectRect.left - yourBbox.left, i - yourBbox.top);
+
+			for (int j = intersectRect.left; j < intersectRect.right; j++, my++, your++)
+				if (*my && !*your)
+					return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+Common::Rect Channel::getBbox(bool unstretched) {
 	Common::Rect result(unstretched ? _sprite->_width : _width,
 											unstretched ? _sprite->_height : _height);
 	result.moveTo(getPosition());

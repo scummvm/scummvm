@@ -46,6 +46,8 @@ public:
 	bool isEmpty();
 	bool isActiveText();
 	bool isMouseIn(const Common::Point &pos);
+	bool isMatteIntersect(Channel *channel);
+	bool isMatteWithin(Channel *channel);
 
 	void setWidth(int w);
 	void setHeight(int h);

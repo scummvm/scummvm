@@ -46,6 +46,7 @@
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/sprite.h"
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/util.h"
@@ -903,7 +904,11 @@ void LC::c_intersects() {
 		return;
 	}
 
-	g_lingo->push(Datum(sprite1->getBbox().intersects(sprite2->getBbox())));
+	if (sprite1->_sprite->_ink == kInkTypeMatte && sprite2->_sprite->_ink == kInkTypeMatte) {
+		g_lingo->push(Datum(sprite2->isMatteIntersect(sprite1)));
+	} else {
+		g_lingo->push(Datum(sprite2->getBbox().intersects(sprite1->getBbox())));
+	}
 }
 
 void LC::c_within() {
@@ -919,7 +924,11 @@ void LC::c_within() {
 		return;
 	}
 
-	g_lingo->push(Datum(sprite2->getBbox().contains(sprite1->getBbox())));
+	if (sprite1->_sprite->_ink == kInkTypeMatte && sprite2->_sprite->_ink == kInkTypeMatte) {
+		g_lingo->push(Datum(sprite2->isMatteWithin(sprite1)));
+	} else {
+		g_lingo->push(Datum(sprite1->getBbox().contains(sprite2->getBbox())));
+	}
 }
 
 void LC::c_of() {
