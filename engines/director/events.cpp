@@ -87,7 +87,7 @@ void DirectorEngine::processEvents(bool bufferLingoEvents) {
 				m->_lastEventTime = g_director->getMacTicks();
 				m->_lastRollTime =	 m->_lastEventTime;
 
-				sc->renderCursor(sc->getSpriteIDFromPos(pos, false, true));
+				sc->renderCursor(sc->getSpriteIDFromPos(pos));
 
 				if (_currentDraggedChannel) {
 					if (_currentDraggedChannel->_sprite->_moveable) {

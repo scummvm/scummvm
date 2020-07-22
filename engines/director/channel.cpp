@@ -150,13 +150,13 @@ bool Channel::isActiveText() {
 	return false;
 }
 
-bool Channel::isMouseIn(const Common::Point &pos, bool onlyMatte) {
+bool Channel::isMouseIn(const Common::Point &pos) {
 	Common::Rect bbox = getBbox();
 
 	if (!bbox.contains(pos))
 		return false;
 
-	if (onlyMatte) {
+	if (_sprite->_ink == kInkTypeMatte) {
 		if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
 			Graphics::Surface *matte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
 			return matte ? !(*(byte *)(matte->getBasePtr(pos.x - bbox.left, pos.y - bbox.top))) : true;
