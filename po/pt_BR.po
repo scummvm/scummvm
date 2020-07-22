@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-22 16:33+0000\n"
-"Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -1602,9 +1602,8 @@ msgid "Select directory for plugins"
 msgstr "Selecione a pasta para os plugins"
 
 #: gui/options.cpp:2437
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Selecione a pasta para os arquivos extras"
+msgstr "Selecione o diretório para /root/ do Gerenciador de Arquivos"
 
 #: gui/options.cpp:2549
 msgid ""
