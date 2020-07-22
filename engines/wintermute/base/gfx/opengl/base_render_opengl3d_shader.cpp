@@ -237,20 +237,26 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	float farPlane = 10000.0f;
 	float top = nearPlane * tanf(verticalViewAngle * 0.5f);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
 	glFrustum(-top * aspectRatio, top * aspectRatio, -top, top, nearPlane, farPlane);
-	glGetFloatv(GL_PROJECTION_MATRIX, _lastProjectionMatrix.getData());
-	glMatrixMode(GL_MODELVIEW);
 	return true;
 }
 
 bool BaseRenderOpenGL3DShader::setProjection2D() {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _viewportRect.width(), 0, _viewportRect.height(), -1.0, 100.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	float viewportWidth = _viewportRect.right - _viewportRect.left;
+	float viewportHeight = _viewportRect.bottom - _viewportRect.top;
+
+	float nearPlane = -1.0f;
+	float farPlane = 100.0f;
+
+	_projectionMatrix2d.setToIdentity();
+
+	_projectionMatrix2d(0, 0) = 2.0f / viewportWidth;
+	_projectionMatrix2d(1, 1) = 2.0f / viewportHeight;
+	_projectionMatrix2d(2, 2) = 2.0f / (farPlane - nearPlane);
+
+	_projectionMatrix2d(3, 0) = -1.0f;
+	_projectionMatrix2d(3, 1) = -1.0f;
+	_projectionMatrix2d(3, 2) = -(farPlane + nearPlane) / (farPlane - nearPlane);
 	return true;
 }
 
@@ -420,15 +426,15 @@ void BaseRenderOpenGL3DShader::project(const Math::Matrix4 &worldMatrix, const M
 	Math::Matrix4 modelMatrix = worldMatrix * _lastViewMatrix;
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	Math::gluMathProject(point, modelMatrix.getData(), _lastProjectionMatrix.getData(), viewport, windowCoords);
+	Math::gluMathProject(point, modelMatrix.getData(), _projectionMatrix3d.getData(), viewport, windowCoords);
 	x = windowCoords.x();
 	// The Wintermute script code will expect a Direct3D viewport
 	y = viewport[3] - windowCoords.y();
 }
 
 Math::Ray BaseRenderOpenGL3DShader::rayIntoScene(int x, int y) {
-	Math::Vector3d direction((((2.0f * x) / _viewportRect.width()) - 1) / _lastProjectionMatrix(0, 0),
-	                         -(((2.0f * y) / _viewportRect.height()) - 1) / _lastProjectionMatrix(1, 1),
+	Math::Vector3d direction((((2.0f * x) / _viewportRect.width()) - 1) / _projectionMatrix3d(0, 0),
+							 -(((2.0f * y) / _viewportRect.height()) - 1) / _projectionMatrix3d(1, 1),
 	                         -1.0f);
 
 	Math::Matrix4 m = _lastViewMatrix;

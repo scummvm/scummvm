@@ -129,7 +129,7 @@ public:
 	Math::Ray rayIntoScene(int x, int y) override;
 
 	Math::Matrix4 lastProjectionMatrix() override {
-		return _lastProjectionMatrix;
+		return _projectionMatrix3d;
 	}
 
 	/**
@@ -180,8 +180,11 @@ public:
 	MeshX *createMeshX() override;
 
 private:
-	Math::Matrix4 _lastProjectionMatrix;
 	Math::Matrix4 _lastViewMatrix;
+
+	Math::Matrix4 _projectionMatrix3d;
+	Math::Matrix4 _projectionMatrix2d;
+
 	float _fov;
 	bool _spriteBatchMode;
 	bool _state3D;
