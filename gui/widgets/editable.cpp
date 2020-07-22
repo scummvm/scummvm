@@ -163,8 +163,9 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_END:
 		// Move caret to end
-		dirty = setCaretPos(_editString.size());
+		setCaretPos(_editString.size());
 		forcecaret = true;
+		dirty = true;
 		break;
 
 	case Common::KEYCODE_LEFT:
@@ -188,8 +189,9 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_HOME:
 		// Move caret to start
-		dirty = setCaretPos(0);
+		setCaretPos(0);
 		forcecaret = true;
+		dirty = true;
 		break;
 
 	case Common::KEYCODE_v:
