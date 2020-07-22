@@ -623,7 +623,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
 	Symbol sym = sc->_eventHandlers[kEventScript];
-	LC::call(sym, 0);
+	LC::call(sym, 0, false);
 	execute(_pc);
 }
 

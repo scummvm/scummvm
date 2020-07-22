@@ -273,7 +273,7 @@ void LM::m_perform(int nargs) {
 	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 	nargs -= 1;
 	Symbol funcSym = me->getMethod(*methodName.u.s);
-	LC::call(funcSym, nargs);
+	LC::call(funcSym, nargs, true);
 }
 
 // XObject

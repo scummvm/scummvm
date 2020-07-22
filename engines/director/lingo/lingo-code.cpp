@@ -389,7 +389,7 @@ void LC::c_constpush() {
 		funcSym = g_lingo->_builtinConsts[name];
 	}
 
-	LC::call(funcSym, 0);
+	LC::call(funcSym, 0, true);
 }
 
 void LC::c_intpush() {
