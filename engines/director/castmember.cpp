@@ -466,7 +466,9 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 		break;
 
 	case kCastButton:
-		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		// note that we use _initialRect for the dimensions of the button;
+		// the values provided in the sprite bounding box are ignored
+		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentStage(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
 		((Graphics::MacButton *)widget)->draw();
 		widget->_focusable = true;
 

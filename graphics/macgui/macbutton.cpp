@@ -38,24 +38,23 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 
 	_buttonType = buttonType;
 
-	int offset = 0;
 	switch (buttonType) {
 	case kCheckBox:
-		offset = 16;
+		_alignOffset.x += 16;
+		_dims.right += 16;
 		break;
 	case kRound:
-		offset = 4;
-		_dims.top -= 2;
-		_dims.bottom += 2;
+		_alignOffset.x += 2;
 		_alignOffset.y += 2;
+		_dims.right += 2;
+		_dims.bottom += 4;
 		break;
 	case kRadio:
-		offset = 16;
+		_alignOffset.x += 16;
+		_dims.right += 16;
 		break;
 	}
 
-	_alignOffset.x += offset;
-	_dims.right += offset;
 	_composeSurface->create(_dims.width(), _dims.height());
 	_composeSurface->clear(_bgcolor);
 }
