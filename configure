@@ -1875,11 +1875,11 @@ esac
 case $_host_os in
 android)
 	if test -z "$ANDROID_SDK_ROOT"; then
-		echo "Please set ANDROID_SDK_ROOT in your environment. export ANDROID_SDK_ROOT=<path to Android SDK>"
+		echo "Please set ANDROID_SDK_ROOT in your environment: export ANDROID_SDK_ROOT=<path to Android SDK>"
  		exit 1
 	fi
 	if test -z "$ANDROID_NDK_ROOT"; then
-		echo "Please set ANDROID_NDK_ROOT in your environment. export ANDROID_NDK_ROOT=<path to Android NDK>"
+		echo "Please set ANDROID_NDK_ROOT in your environment: export ANDROID_NDK_ROOT=<path to Android NDK>"
  		exit 1
  	fi
 	;;
@@ -2040,7 +2040,7 @@ if test "$_host_os" = android; then
 		esac
 
 		CXX="$_android_toolchain/bin/clang++"
-		# If CXX is defined don't alter CXXFLAGS and LDFLAGS as the user can do it himself
+		# If CXX is defined, don't alter CXXFLAGS and LDFLAGS as it can be done by the user explicitly
 		append_var CXXFLAGS "-target ${_android_target}"
 		append_var LDFLAGS "-target ${_android_target}"
 	fi
