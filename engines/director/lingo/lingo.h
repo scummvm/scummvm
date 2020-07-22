@@ -461,6 +461,8 @@ public:
 
 	int _floatPrecision;
 
+	Datum _theResult;
+
 	// events
 	bool _passEvent;
 	Datum _perFrameHook;

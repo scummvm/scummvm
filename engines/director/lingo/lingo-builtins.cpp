@@ -1274,9 +1274,13 @@ void LB::b_preLoad(int nargs) {
 }
 
 void LB::b_preLoadCast(int nargs) {
-	g_lingo->printSTUBWithArglist("b_preLoadCast", nargs);
+	g_lingo->_theResult = g_lingo->pop();
 
-	g_lingo->dropStack(nargs);
+	if (nargs == 2)
+		g_lingo->_theResult = g_lingo->pop();
+
+	// We always pretend we preloaded all cast
+	// Returning the number of the last case successfully "loaded"
 }
 
 void LB::b_framesToHMS(int nargs) {
