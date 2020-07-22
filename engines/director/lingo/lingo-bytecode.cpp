@@ -222,6 +222,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x09, 0x01, kTheCast,				kTheName,			true, kTEAItemId },
 	{ 0x09, 0x02, kTheCast,				kTheText,			true, kTEAItemId },
 	{ 0x09, 0x08, kTheCast,				kThePicture,		true, kTEAItemId },
+	{ 0x09, 0x09, kTheCast,				kTheHilite,			true, kTEAItemId },
 	{ 0x09, 0x0a, kTheCast,				kTheNumber,			true, kTEAItemId },
 	{ 0x09, 0x0b, kTheCast,				kTheSize,			true, kTEAItemId },
 	{ 0x09, 0x11, kTheCast,				kTheForeColor,		true, kTEAItemId },
