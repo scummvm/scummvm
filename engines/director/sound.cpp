@@ -133,6 +133,39 @@ void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRep
 	}
 }
 
+void DirectorSound::playFade(uint8 soundChannel, bool fadeIn, int ticks) {
+	Audio::SoundHandle handle = _channels[soundChannel - 1].handle;
+
+	if (!isChannelActive(soundChannel))
+			return;
+
+	float startVolume = fadeIn ? 0 :  _channels[soundChannel - 1].volume;
+	float targetVolume = fadeIn ? _channels[soundChannel - 1].volume : 0;
+	int lastVolume = 0;
+
+	_mixer->setChannelVolume(handle, startVolume);
+
+	int startTicks = _vm->getMacTicks();
+	int lapsedTicks = 0, lastTicks = 0;
+
+	while (lapsedTicks < ticks) {
+		lapsedTicks = _vm->getMacTicks() - startTicks;
+		if (lapsedTicks == lastTicks)
+			continue;
+
+		lastTicks = lapsedTicks;
+		if (fadeIn) {
+			lastVolume = MIN(lapsedTicks * (targetVolume / ticks), (float)Audio::Mixer::kMaxChannelVolume);
+		} else {
+			lastVolume = MAX((ticks - lapsedTicks) * (startVolume / ticks), (float)0);
+		}
+
+		_mixer->setChannelVolume(handle, lastVolume);
+	}
+
+	_mixer->setChannelVolume(handle, targetVolume);
+}
+
 bool DirectorSound::isChannelActive(uint8 soundChannel) {
 	if (soundChannel == 0 || soundChannel > _channels.size()) {
 		warning("Invalid sound channel %d", soundChannel);

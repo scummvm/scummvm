@@ -2087,6 +2087,7 @@ void LB::b_sound(int nargs) {
 		return;
 	}
 
+	int ticks;
 	Datum secondArg = g_lingo->pop();
 	Datum firstArg = g_lingo->pop();
 	Datum verb;
@@ -2109,13 +2110,30 @@ void LB::b_sound(int nargs) {
 		}
 
 		TYPECHECK(firstArg, INT);
-
 		g_director->getSoundManager()->stopSound(firstArg.u.i);
 	} else if (verb.u.s->equalsIgnoreCase("fadeIn")) {
-		warning("STUB: sound fadeIn");
+		// TODO: Check for case when sound channel changes while sound is being played.
+		if (nargs > 2) {
+			TYPECHECK(secondArg, INT);
+			ticks = secondArg.u.i;
+		} else {
+			ticks = 15 * (60 / g_director->getCurrentMovie()->getScore()->_currentFrameRate);
+		}
+
+		TYPECHECK(firstArg, INT);
+		g_director->getSoundManager()->playFade(firstArg.u.i, true, ticks);
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
-		warning("STUB: sound fadeOut");
+		// TODO: Check for case when sound channel changes while sound is being played.
+		if (nargs > 2) {
+			TYPECHECK(secondArg, INT);
+			ticks = secondArg.u.i;
+		} else {
+			ticks = 15 * (60 / g_director->getCurrentMovie()->getScore()->_currentFrameRate);
+		}
+
+		TYPECHECK(firstArg, INT);
+		g_director->getSoundManager()->playFade(firstArg.u.i, false, ticks);
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
 		ARGNUMCHECK(3)

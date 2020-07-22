@@ -61,7 +61,9 @@ public:
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
 	void playCastMember(int castId, uint8 soundChannel, bool allowRepeat = true);
+	void playFade(uint8 soundChannel, bool fadeIn, int ticks);
 	void systemBeep();
+
 	bool isChannelActive(uint8 soundChannel);
 	int lastPlayingCast(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
