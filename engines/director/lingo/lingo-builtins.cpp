@@ -1328,14 +1328,19 @@ void LB::b_quit(int nargs) {
 
 void LB::b_return(int nargs) {
 	CFrame *fp = g_lingo->_callstack.back();
-	// Do not allow a factory's mNew method to return a value
-	// Otherwise do not touch the top of the stack, it will be returned
-	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
-		g_lingo->pop();
-	}
 
-	if (!g_lingo->_stack.empty())
-		g_lingo->_theResult = g_lingo->peek(0);	// Store result for possible reference
+	Datum retVal = g_lingo->pop();
+	g_lingo->_theResult = retVal;	// Store result for possible reference
+
+	// clear any temp values from loops
+	while (g_lingo->_stack.size() > fp->stackSizeBefore)
+		g_lingo->pop();
+
+	// Do not allow a factory's mNew method to return a value
+	if (!(g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj
+			&& fp->sp.name->equalsIgnoreCase("mNew"))) {
+		g_lingo->push(retVal);
+	}
 
 	LC::c_procret();
 }
