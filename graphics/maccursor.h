@@ -54,11 +54,11 @@ public:
 	/** Return the cursor's hotspot's y coordinate. */
 	uint16 getHotspotY() const { return _hotspotY; }
 	/** Return the cursor's transparent key. */
-	byte getKeyColor() const { return 0xFF; }
+	virtual byte getKeyColor() const { return 0xFF; }
 
 	const byte *getSurface() const { return _surface; }
 
-	const byte *getPalette() const { return _palette; }
+	virtual const byte *getPalette() const { return _palette; }
 	byte getPaletteStartIndex() const { return 0; }
 	uint16 getPaletteCount() const { return 256; }
 
