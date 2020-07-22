@@ -439,9 +439,7 @@ void LC::cb_v4assign() {
 			LB::b_field(1);
 			Datum field = g_lingo->pop();
 			g_lingo->push(field);
-			LC::c_after();
-			g_lingo->push(field);
-			LC::c_assign();
+			LC::c_putafter();
 		}
 		break;
 	case 0x36:
@@ -450,9 +448,7 @@ void LC::cb_v4assign() {
 			LB::b_field(1);
 			Datum field = g_lingo->pop();
 			g_lingo->push(field);
-			LC::c_before();
-			g_lingo->push(field);
-			LC::c_assign();
+			LC::c_putbefore();
 		}
 		break;
 	default:

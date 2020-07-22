@@ -66,14 +66,14 @@ static struct FuncDescr {
 } funcDescr[] = {
 	{ 0,					"STOP",				""  },
 	{ LC::c_add,			"c_add",			"" },
-	{ LC::c_after,			"c_after",			"" },	// D3
+	{ LC::c_putafter,		"c_putafter",		"" },	// D3
 	{ LC::c_ampersand,		"c_ampersand",		"" },
 	{ LC::c_and,			"c_and",			"" },
 	{ LC::c_argcnoretpush,	"c_argcnoretpush",	"i" },
 	{ LC::c_argcpush,		"c_argcpush",		"i" },
 	{ LC::c_arraypush,		"c_arraypush",		"i" },
 	{ LC::c_assign,			"c_assign",			""  },
-	{ LC::c_before,			"c_before",			"" },	// D3
+	{ LC::c_putbefore,		"c_putbefore",		"" },	// D3
 	{ LC::c_callcmd,		"c_callcmd",		"si" },
 	{ LC::c_callfunc,		"c_callfunc",		"si" },
 	{ LC::c_charOf,			"c_charOf",			"" },	// D3
@@ -826,30 +826,18 @@ void LC::c_ampersand() {
 	g_lingo->push(res);
 }
 
-void LC::c_before() {
+void LC::c_putbefore() {
 	Datum var = g_lingo->pop();
 	Datum a = g_lingo->pop();
-
-	if (var.type != VAR) {
-		warning("STUB: c_before(%s, %s)", a.asString(true).c_str(), var.asString(true).c_str());
-		return;
-	}
-
 	Datum b = g_lingo->varFetch(var);
 
 	Datum res(a.asString() + b.asString());
 	g_lingo->varAssign(var, res);
 }
 
-void LC::c_after() {
+void LC::c_putafter() {
 	Datum var = g_lingo->pop();
 	Datum a = g_lingo->pop();
-
-	if (var.type != VAR) {
-		warning("STUB: c_after(%s, %s)", a.asString(true).c_str(), var.asString(true).c_str());
-		return;
-	}
-
 	Datum b = g_lingo->varFetch(var);
 
 	Datum res(b.asString() + a.asString());

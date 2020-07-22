@@ -48,8 +48,8 @@ namespace LC {
 	void c_not();
 
 	void c_ampersand();
-	void c_after();
-	void c_before();
+	void c_putafter();
+	void c_putbefore();
 	void c_concat();
 	void c_contains();
 	void c_starts();

@@ -250,21 +250,21 @@ asgn: tPUT expr tINTO ID 			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		mVar($ID, globalCheck());
-		g_lingo->code1(LC::c_after);
+		g_lingo->code1(LC::c_putafter);
 		$$ = $expr;
 		delete $ID; }		// D3
 	| tPUT expr tAFTER chunkexpr	{
-		g_lingo->code1(LC::c_after);
+		g_lingo->code1(LC::c_putafter);
 		$$ = $expr; }
 	| tPUT expr tBEFORE ID 			{
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($ID->c_str());
 		mVar($ID, globalCheck());
-		g_lingo->code1(LC::c_before);
+		g_lingo->code1(LC::c_putbefore);
 		$$ = $expr;
 		delete $ID; }		// D3
 	| tPUT expr tBEFORE chunkexpr 	{
-		g_lingo->code1(LC::c_before);
+		g_lingo->code1(LC::c_putbefore);
 		$$ = $expr; }
 	| tSET ID tEQ expr				{
 		g_lingo->code1(LC::c_varpush);

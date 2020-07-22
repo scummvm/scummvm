@@ -2231,7 +2231,7 @@ yyreduce:
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
 		mVar((yyvsp[0].s), globalCheck());
-		g_lingo->code1(LC::c_after);
+		g_lingo->code1(LC::c_putafter);
 		(yyval.code) = (yyvsp[-2].code);
 		delete (yyvsp[0].s); }
 #line 2238 "engines/director/lingo/lingo-gr.cpp"
@@ -2240,7 +2240,7 @@ yyreduce:
   case 16:
 #line 256 "engines/director/lingo/lingo-gr.y"
                                         {
-		g_lingo->code1(LC::c_after);
+		g_lingo->code1(LC::c_putafter);
 		(yyval.code) = (yyvsp[-2].code); }
 #line 2246 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -2251,7 +2251,7 @@ yyreduce:
 		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString((yyvsp[0].s)->c_str());
 		mVar((yyvsp[0].s), globalCheck());
-		g_lingo->code1(LC::c_before);
+		g_lingo->code1(LC::c_putbefore);
 		(yyval.code) = (yyvsp[-2].code);
 		delete (yyvsp[0].s); }
 #line 2258 "engines/director/lingo/lingo-gr.cpp"
@@ -2260,7 +2260,7 @@ yyreduce:
   case 18:
 #line 266 "engines/director/lingo/lingo-gr.y"
                                         {
-		g_lingo->code1(LC::c_before);
+		g_lingo->code1(LC::c_putbefore);
 		(yyval.code) = (yyvsp[-2].code); }
 #line 2266 "engines/director/lingo/lingo-gr.cpp"
     break;
