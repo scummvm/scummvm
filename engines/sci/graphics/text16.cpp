@@ -597,7 +597,7 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 		if (g_sci->isLanguageRTL()) {
 			const char *curTextLineOrig = curTextLine;
 			Common::String textLogical = Common::String(curTextLineOrig, (uint32)charCount);
-			textString = Common::convertBiDiString(textLogical, g_sci->getLanguage());		//TODO: maybe move to Draw()?
+			textString = Common::convertBiDiString(textLogical, g_sci->getLanguage());
 			curTextLine = textString.c_str();
 		}
 
@@ -633,9 +633,15 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 	}
 }
 
-void GfxText16::DrawString(const Common::String &text) {
+void GfxText16::DrawString(const Common::String &textOrig) {
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
+
+	Common::String text;
+	if (!g_sci->isLanguageRTL())
+		text = textOrig;
+	else
+		text = Common::convertBiDiString(textOrig, g_sci->getLanguage());
 
 	Draw(text.c_str(), 0, text.size(), previousFontId, previousPenColor);
 	SetFont(previousFontId);
