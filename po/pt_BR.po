@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-22 16:20+0000\n"
-"Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
+"PO-Revision-Date: 2020-07-22 16:32+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -575,9 +575,8 @@ msgstr ""
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "Interpolação:"
+msgstr "Interagir"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -1571,18 +1570,16 @@ msgid "None"
 msgstr "Nenhum(a)"
 
 #: gui/options.cpp:2253
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Falha ao salvar o jogo"
+msgstr "Falha ao alterar armazenamento em nuvem!"
 
 #: gui/options.cpp:2256
 msgid "Another cloud storage is already active."
 msgstr "Outro armazenamento em nuvem já está ativo."
 
 #: gui/options.cpp:2331
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "O programa atual não suporta salvar o progresso do jogo"
+msgstr "Tema não suporte idioma selecionado!"
 
 #: gui/options.cpp:2334
 #, fuzzy
