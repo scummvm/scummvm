@@ -95,8 +95,8 @@ void Cursor::readFromCast(uint cursorId, uint maskId) {
 	}
 
 	BitmapCastMember *bc = (BitmapCastMember *)(cursorCast);
-	_hotspotX = bc->_initialRect.left - bc->_regX;
-	_hotspotY = bc->_initialRect.top - bc->_regY;
+	_hotspotX = bc->_regX - bc->_initialRect.left;
+	_hotspotY = bc->_regY - bc->_initialRect.top;
 }
 
 void Cursor::readFromResource(int resourceId) {
@@ -153,6 +153,9 @@ void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int res
 
 	_cursorCastId = castId;
 	_cursorMaskId = maskId;
+
+	_hotspotX = 0;
+	_hotspotY = 0;
 }
 
 } // end of namespace Director
