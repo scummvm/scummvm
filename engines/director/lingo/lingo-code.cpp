@@ -295,14 +295,20 @@ void Lingo::popContext() {
 	CFrame *fp = g_lingo->_callstack.back();
 	g_lingo->_callstack.pop_back();
 
-	uint maxRetVals = fp->allowRetVal ? 1 : 0;
-	if (_stack.size() > fp->stackSizeBefore + maxRetVals) {
+	if (_stack.size() == fp->stackSizeBefore + 1) {
+		if (!fp->allowRetVal) {
+			warning("dropping return value");
+			g_lingo->pop();
+		}
+	} else if (_stack.size() == fp->stackSizeBefore) {
+		if (fp->allowRetVal) {
+			warning("handler %s did not return value", fp->sp.name->c_str());
+			g_lingo->push(fp->defaultRetVal);
+		}
+	} else if (_stack.size() > fp->stackSizeBefore) {
 		error("handler %s returned extra %d values", fp->sp.name->c_str(), _stack.size() - fp->stackSizeBefore);
-	} else if (_stack.size() < fp->stackSizeBefore) {
+	} else {
 		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _stack.size());
-	} else if (fp->allowRetVal && _stack.size() == fp->stackSizeBefore) {
-		warning("handler %s did not return value", fp->sp.name->c_str());
-		g_lingo->push(fp->defaultRetVal);
 	}
 
 	// Destroy anonymous function context
@@ -1524,14 +1530,18 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		uint stackSize = g_lingo->_stack.size();
 
 		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_returnNumber && funcSym.u.bltin != LB::b_value) {
-			uint maxRetVals = allowRetVal ? 1 : 0;
-			if (stackSize > stackSizeBefore + maxRetVals) {
+			if (stackSize == stackSizeBefore + 1) {
+				if (!allowRetVal) {
+					warning("dropping return value");
+					g_lingo->pop();
+				}
+			} else if (stackSize == stackSizeBefore) {
+				if (allowRetVal)
+					error("builtin function %s did not return value", funcSym.name->c_str());
+			} else if (stackSize > stackSizeBefore) {
 				error("builtin %s returned extra %d values", funcSym.name->c_str(), stackSize - stackSizeBefore);
-			} else if (stackSize < stackSizeBefore) {
+			} else {
 				error("builtin %s popped extra %d values", funcSym.name->c_str(), stackSizeBefore - stackSize);
-			} else if (allowRetVal && stackSize == stackSizeBefore) {
-				error("builtin function %s did not return value", funcSym.name->c_str());
-				g_lingo->push(Datum());
 			}
 		}
 		return;
