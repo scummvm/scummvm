@@ -2112,7 +2112,6 @@ void LB::b_sound(int nargs) {
 		TYPECHECK(firstArg, INT);
 		g_director->getSoundManager()->stopSound(firstArg.u.i);
 	} else if (verb.u.s->equalsIgnoreCase("fadeIn")) {
-		// TODO: Check for case when sound channel changes while sound is being played.
 		if (nargs > 2) {
 			TYPECHECK(secondArg, INT);
 			ticks = secondArg.u.i;
@@ -2121,10 +2120,10 @@ void LB::b_sound(int nargs) {
 		}
 
 		TYPECHECK(firstArg, INT);
-		g_director->getSoundManager()->playFade(firstArg.u.i, true, ticks);
+		g_director->getSoundManager()->registerFade(firstArg.u.i, true, ticks);
+		g_director->getCurrentMovie()->getScore()->_activeFade = firstArg.u.i;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
-		// TODO: Check for case when sound channel changes while sound is being played.
 		if (nargs > 2) {
 			TYPECHECK(secondArg, INT);
 			ticks = secondArg.u.i;
@@ -2133,7 +2132,8 @@ void LB::b_sound(int nargs) {
 		}
 
 		TYPECHECK(firstArg, INT);
-		g_director->getSoundManager()->playFade(firstArg.u.i, false, ticks);
+		g_director->getSoundManager()->registerFade(firstArg.u.i, false, ticks);
+		g_director->getCurrentMovie()->getScore()->_activeFade = firstArg.u.i;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
 		ARGNUMCHECK(3)

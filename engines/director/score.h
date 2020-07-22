@@ -121,6 +121,7 @@ public:
 	PlayState _playState;
 	uint32 _nextFrameTime;
 	int _waitForChannel;
+	int _activeFade;
 	Cursor *_currentCursor;
 
 	int _numChannelsDisplayed;

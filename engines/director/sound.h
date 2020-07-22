@@ -34,12 +34,25 @@ namespace Audio {
 
 namespace Director {
 
+struct FadeParams {
+	int startVol;
+	int targetVol;
+	int totalTicks;
+	int startTicks;
+	int lapsedTicks;
+	bool fadeIn;
+
+	FadeParams(int sv, int tv, int tt, int st, bool f) :
+		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f) {}
+};
+
 struct SoundChannel {
 	Audio::SoundHandle handle;
 	int lastPlayingCast;
 	byte volume;
+	FadeParams *fade;
 
-	SoundChannel(): handle(), lastPlayingCast(0), volume(255) {}
+	SoundChannel(): handle(), lastPlayingCast(0), volume(255), fade(nullptr) {}
 };
 
 class DirectorSound {
@@ -61,13 +74,18 @@ public:
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
 	void playCastMember(int castId, uint8 soundChannel, bool allowRepeat = true);
-	void playFade(uint8 soundChannel, bool fadeIn, int ticks);
 	void systemBeep();
+
+	void registerFade(uint8 soundChannel, bool fadeIn, int ticks);
+	bool fadeChannel(uint8 soundChannel);
 
 	bool isChannelActive(uint8 soundChannel);
 	int lastPlayingCast(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
 	void stopSound();
+
+private:
+	void cancelFade(uint8 soundChannel);
 };
 
 class AudioDecoder {

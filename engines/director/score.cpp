@@ -279,6 +279,11 @@ void Score::update() {
 		_waitForChannel = 0;
 	}
 
+	if (_activeFade) {
+		if (!_soundManager->fadeChannel(_activeFade))
+			_activeFade = 0;
+	}
+
 	if (g_system->getMillis() < _nextFrameTime && !debugChannelSet(-1, kDebugFast)) {
 		return;
 	}
