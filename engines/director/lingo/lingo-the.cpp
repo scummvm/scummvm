@@ -1218,9 +1218,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (d.asInt() != sprite->_castId) {
 			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
 
-			sprite->setCast(d.asInt());
-			channel->_width = sprite->_width;
-			channel->_height = sprite->_height;
+			channel->setCast(d.asInt());
 		} else {
 			channel->_dirty = false;
 		}

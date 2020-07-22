@@ -32,13 +32,14 @@
 
 namespace Director {
 
-Channel::Channel(Sprite *sp) {
+Channel::Channel(Sprite *sp, int priority) {
 	_sprite = sp;
 	_widget = nullptr;
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
 	_constraint = 0;
 
+	_priority = priority;
 	_width = _sprite->_width;
 	_height = _sprite->_height;
 
@@ -238,12 +239,19 @@ Common::Rect Channel::getBbox(bool unstretched) {
 	return result;
 }
 
+void Channel::setCast(uint16 castId) {
+	_sprite->setCast(castId);
+	_width = _sprite->_width;
+	_height = _sprite->_height;
+	replaceWidget();
+}
+
 void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	if (!nextSprite)
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
-	bool replaceWidget = isDirty(nextSprite);
+	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
 		if (!_sprite->_puppet) {
@@ -262,7 +270,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 					_width = _sprite->_width;
 					_height = _sprite->_height;
 				}
-				replaceWidget = true;
+				replace = true;
 			}
 		}
 
@@ -270,19 +278,9 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_delta = Common::Point(0, 0);
 	}
 
-	if (replaceWidget && _sprite->_cast) {
+	if (replace && _sprite->_cast) {
 		_sprite->updateCast();
-		Common::Rect bbox(getBbox());
-		_sprite->_cast->_modified = false;
-		if (_widget) {
-			delete _widget;
-		}
-		_widget = _sprite->_cast->createWidget(bbox);
-		if (_widget) {
-			_widget->_priority = spriteId;
-			_widget->draw();
-			_widget->_contentIsDirty = false;
-		}
+		replaceWidget();
 	}
 	_dirty = false;
 }
@@ -308,6 +306,22 @@ void Channel::setBbox(int l, int t, int r, int b) {
 		_currentPoint.y = t;
 
 		addRegistrationOffset(_currentPoint, true);
+	}
+}
+
+void Channel::replaceWidget() {
+	if (_sprite && _sprite->_cast) {
+		Common::Rect bbox(getBbox());
+		_sprite->_cast->_modified = false;
+		if (_widget) {
+			delete _widget;
+		}
+		_widget = _sprite->_cast->createWidget(bbox);
+		if (_widget) {
+			_widget->_priority = _priority;
+			_widget->draw();
+			_widget->_contentIsDirty = false;
+		}
 	}
 }
 
