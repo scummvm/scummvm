@@ -664,7 +664,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = g_director->_rnd.getSeed();
 		break;
 	case kTheResult:
-		getTheEntitySTUB(kTheResult);
+		d = g_lingo->_theResult;
 		break;
 	case kTheRightMouseDown:
 		getTheEntitySTUB(kTheRightMouseDown);

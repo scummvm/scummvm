@@ -1325,6 +1325,9 @@ void LB::b_return(int nargs) {
 	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
 		g_lingo->pop();
 	}
+
+	g_lingo->_theResult = g_lingo->peek(0);	// Store result for possible reference
+
 	LC::c_procret();
 }
 
