@@ -1873,13 +1873,13 @@ void LB::b_spriteBox(int nargs) {
 }
 
 void LB::b_unLoad(int nargs) {
-	g_lingo->printSTUBWithArglist("b_unLoad", nargs);
+	// No op for us, we do not unload casts
 
 	g_lingo->dropStack(nargs);
 }
 
 void LB::b_unLoadCast(int nargs) {
-	g_lingo->printSTUBWithArglist("b_unLoadCast", nargs);
+	// No op for us, we do not unload casts
 
 	g_lingo->dropStack(nargs);
 }
