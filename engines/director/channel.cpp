@@ -38,6 +38,7 @@ Channel::Channel(Sprite *sp, int priority) {
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
 	_constraint = 0;
+	_mask = nullptr;
 
 	_priority = priority;
 	_width = _sprite->_width;
@@ -52,6 +53,8 @@ Channel::Channel(Sprite *sp, int priority) {
 Channel::~Channel() {
 	if (_widget)
 		delete _widget;
+	if (_mask)
+		delete _mask;
 }
 
 DirectorPlotData Channel::getPlotData() {
@@ -105,9 +108,12 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
 			Common::Rect bbox(getBbox());
 			Graphics::MacWidget *widget = member->createWidget(bbox);
-			Graphics::Surface *result = new Graphics::Surface(widget->getSurface()->rawSurface());
+			if (_mask)
+				delete _mask;
+			_mask = new Graphics::ManagedSurface();
+			_mask->copyFrom(*widget->getSurface());
 			delete widget;
-			return result;
+			return &_mask->rawSurface();
 		} else {
 			warning("Channel::getMask(): Requested cast mask, but no matching mask was found");
 			return nullptr;

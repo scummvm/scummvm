@@ -71,6 +71,7 @@ public:
 	uint _constraint;
 	Common::Point _currentPoint;
 	Common::Point _delta;
+	Graphics::ManagedSurface *_mask;
 
 	int _priority;
 	int _width;
