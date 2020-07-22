@@ -134,6 +134,11 @@ void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRep
 }
 
 void DirectorSound::playFade(uint8 soundChannel, bool fadeIn, int ticks) {
+	if (soundChannel == 0 || soundChannel > _channels.size()) {
+		warning("Invalid sound channel %d", soundChannel);
+		return;
+	}
+
 	Audio::SoundHandle handle = _channels[soundChannel - 1].handle;
 
 	if (!isChannelActive(soundChannel))
