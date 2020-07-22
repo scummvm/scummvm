@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-22 16:33+0000\n"
+"PO-Revision-Date: 2020-07-23 05:43+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1623,7 +1623,7 @@ msgstr "Aguarde até o armazenamento atual terminar e tente novamente."
 
 #: gui/options.cpp:2596
 msgid "Connecting..."
-msgstr ""
+msgstr "Conectando..."
 
 #: gui/options.cpp:2612
 msgid "This Storage is working now. Do you want to interrupt it?"
@@ -1631,7 +1631,7 @@ msgstr ""
 
 #: gui/options.cpp:2810 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
-msgstr ""
+msgstr "<agora>"
 
 #: gui/options.cpp:2919
 #, fuzzy
@@ -1644,7 +1644,7 @@ msgstr ""
 
 #: gui/options.cpp:2972
 msgid "Storage connected."
-msgstr ""
+msgstr "Armazenamento conectado."
 
 #: gui/options.cpp:2974
 #, fuzzy
@@ -1665,11 +1665,11 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
 msgid "#  next"
-msgstr ""
+msgstr "#  próximo"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr ""
+msgstr "adicionar"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:169
 #, fuzzy
@@ -1678,22 +1678,22 @@ msgstr "Excluir"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:173
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:586
 msgid "*  Pre"
-msgstr ""
+msgstr "*  Pré"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:589
 msgid "*  Num"
-msgstr ""
+msgstr "*  Nº"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:592
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:63
 msgid "Recorder or Playback Gameplay"
@@ -1706,7 +1706,7 @@ msgstr "Excluir"
 
 #: gui/recorderdialog.cpp:70
 msgid "Record"
-msgstr ""
+msgstr "Gravar"
 
 #: gui/recorderdialog.cpp:71
 #, fuzzy
@@ -1715,17 +1715,17 @@ msgstr "Jogar"
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
 msgid "Author: "
-msgstr ""
+msgstr "Autor: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Notes: "
-msgstr ""
+msgstr "Notas: "
 
 #: gui/recorderdialog.cpp:155
 #, fuzzy
@@ -1744,11 +1744,11 @@ msgstr "ScummVM não conseguiu abrir a pasta especificada!"
 
 #: gui/saveload-dialog.cpp:343
 msgid "List view"
-msgstr ""
+msgstr "Visualização em lista"
 
 #: gui/saveload-dialog.cpp:344
 msgid "Grid view"
-msgstr ""
+msgstr "Visualização em grade"
 
 #: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:567
 msgid "No date saved"
@@ -1785,21 +1785,19 @@ msgstr "Não-titulado arquivo de save"
 
 #: gui/saveload-dialog.cpp:768
 msgid "Next"
-msgstr ""
+msgstr "Próximo"
 
 #: gui/saveload-dialog.cpp:771
 msgid "Prev"
-msgstr ""
+msgstr "Anterior"
 
 #: gui/saveload-dialog.cpp:975
-#, fuzzy
 msgid "New Save"
-msgstr "Salvar"
+msgstr "Novo salvamento"
 
 #: gui/saveload-dialog.cpp:975
-#, fuzzy
 msgid "Create a new saved game"
-msgstr "Falha ao salvar o jogo"
+msgstr "Criar um novo jogo salvo"
 
 #: gui/saveload-dialog.cpp:1104
 #, fuzzy
