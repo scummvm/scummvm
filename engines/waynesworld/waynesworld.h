@@ -59,6 +59,15 @@ struct RoomObject {
     int walkX, walkY;
 };
 
+struct StaticRoomObjectMapEntry {
+	int index, count;
+};
+
+struct StaticRoomObject {
+	const char *name;
+	int x1, y1, x2, y2;
+};
+
 struct WalkPoint {
     int x, y, direction;
 };
@@ -73,6 +82,9 @@ const uint kRoomObjectsCount = 404;
 const int kWalkPointsCount = 300;
 const uint kWalkMapSize = (320 * 150) / 8;
 const uint kRoomAnimationsCount = 20;
+const uint kStaticRoomObjectsMapCount = 40;
+const uint kStaticRoomObjectsCount = 58;
+const uint kStaticRoomObjectSpritesCount = 4;
 
 class WaynesWorldEngine : public Engine {
 protected:
@@ -168,6 +180,13 @@ public:
 	static const RoomObject kRoomObjects[kRoomObjectsCount];
 	// _roomObjects is a writable copy of kRoomObjects
 	RoomObject _roomObjects[kRoomObjectsCount];
+
+	// Static room objects
+	static const StaticRoomObjectMapEntry kStaticRoomObjectsMap[kStaticRoomObjectsMapCount];
+	static const StaticRoomObject kStaticRoomObjects[kStaticRoomObjectsCount];
+	// _staticRoomObjects is a writable copy of kStaticRoomObjects
+	StaticRoomObject _staticRoomObjects[kStaticRoomObjectsCount];
+	WWSurface *_staticRoomObjectSprites[kStaticRoomObjectSpritesCount];
 
 	// Game map
 	int _gameMapRoomNumber;
@@ -280,10 +299,12 @@ public:
 	void startRoomAnimations();
 	void stopRoomAnimations();
 
+	// Static room objects
+	void initStaticRoomObjects();
 	void loadStaticRoomObjects(int roomNum);
 	void unloadStaticRoomObjects();
 	void setStaticRoomObjectPosition(int roomNum, int fromIndex, int toIndex, int x, int y);
-	void drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface);
+	void drawStaticRoomObjects(int roomNum, int x, int y, int actorHeight, int actorWidth, WWSurface *surface);
 
 	// Room objects
 	void initRoomObjects();

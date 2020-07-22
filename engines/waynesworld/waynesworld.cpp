@@ -76,6 +76,9 @@ Common::Error WaynesWorldEngine::run() {
 	for (uint i = 0; i < kRoomAnimationsCount; i++)
 		_roomAnimations[i] = nullptr;
 
+	for (uint i = 0; i < kStaticRoomObjectSpritesCount; i++)
+		_staticRoomObjectSprites[i] = nullptr;
+
 	initGraphics(320, 200);
 	initMouseCursor();
 	_screen = new Screen();
@@ -121,6 +124,7 @@ Common::Error WaynesWorldEngine::run() {
 	loadMainActorSprites();
 
 	initRoomObjects();
+	initStaticRoomObjects();
 	memset(_wayneInventory, 0, sizeof(_wayneInventory));
 	memset(_garthInventory, 0, sizeof(_garthInventory));
 
@@ -144,7 +148,7 @@ Common::Error WaynesWorldEngine::run() {
 	drawInterface(2);
 	// changeRoom(0);
 	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	changeRoom(39); // DEBUG
+	changeRoom(9); // DEBUG
 
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	// _gameState = 1; // DEBUG Open map
@@ -170,6 +174,7 @@ Common::Error WaynesWorldEngine::run() {
 
 #endif
 
+	unloadStaticRoomObjects();
 	unloadMainActorSprites();
 
 	delete _logic;
@@ -1177,20 +1182,56 @@ void WaynesWorldEngine::stopRoomAnimations() {
 	_hasRoomAnimationCallback = false;
 }
 
+void WaynesWorldEngine::initStaticRoomObjects() {
+	for  (uint i = 0; i < kStaticRoomObjectsCount; i++)
+		_staticRoomObjects[i] = kStaticRoomObjects[i];
+}
+
 void WaynesWorldEngine::loadStaticRoomObjects(int roomNum) {
-	// TODO
+	int startIndex = kStaticRoomObjectsMap[roomNum].index;
+	int count = kStaticRoomObjectsMap[roomNum].count;
+	for (int index = 0; index < count; index++) {
+		const StaticRoomObject &roomObject = _staticRoomObjects[startIndex + index];
+		if (roomObject.x1 != -1) {
+			debug("%s", roomObject.name);
+			_staticRoomObjectSprites[index] = loadRoomSurface(roomObject.name);
+			_backgroundSurface->drawSurfaceTransparent(_staticRoomObjectSprites[index], roomObject.x1, roomObject.y1);
+		}
+	}
 }
 
 void WaynesWorldEngine::unloadStaticRoomObjects() {
-	// TODO
+	for (uint i = 0; i < kStaticRoomObjectSpritesCount; i++) {
+		delete _staticRoomObjectSprites[i];
+		_staticRoomObjectSprites[i] = nullptr;
+	}
 }
 
 void WaynesWorldEngine::setStaticRoomObjectPosition(int roomNum, int fromIndex, int toIndex, int x, int y) {
-	// TODO
+	int startIndex = kStaticRoomObjectsMap[roomNum].index + fromIndex;
+	int endIndex = kStaticRoomObjectsMap[roomNum].index + toIndex;
+	unloadStaticRoomObjects();
+	for (int index = startIndex; index < endIndex; index++) {
+		StaticRoomObject &roomObject = _staticRoomObjects[index];
+		roomObject.x1 = x;
+		roomObject.y1 = y;
+	}
+	loadStaticRoomObjects(roomNum);
 }
 
-void WaynesWorldEngine::drawStaticRoomObjects(int roomNumber, int x, int y, int actorHeight, int actorWidth, WWSurface *surface) {
-	// TODO
+void WaynesWorldEngine::drawStaticRoomObjects(int roomNum, int x, int y, int actorHeight, int actorWidth, WWSurface *surface) {
+	int x1 = x - actorWidth;
+	int x2 = x + actorWidth;
+	int y2 = y + actorHeight - 48;
+	int startIndex = kStaticRoomObjectsMap[roomNum].index;
+	int count = kStaticRoomObjectsMap[roomNum].count;
+	for (int index = 0; index < count; index++) {
+		const StaticRoomObject &roomObject = _staticRoomObjects[startIndex + index];
+		if (roomObject.x1 != -1 && roomObject.y2 > y &&
+			((roomObject.x1 <= x1 && roomObject.x2 >= x1) || (roomObject.x1 <= x2 && roomObject.x2 >= x2) || (roomObject.x1 >= x1 && roomObject.x2 <= x2))) {
+			surface->drawSurfaceTransparent(_staticRoomObjectSprites[index], roomObject.x1 - x1, roomObject.y1 - y2);
+		}
+	}
 }
 
 void WaynesWorldEngine::initRoomObjects() {
