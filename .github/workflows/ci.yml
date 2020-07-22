@@ -8,15 +8,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: win32
-            triplet: x86-windows
-            arch: x86
-            vcpkgPackages: 'curl faad2 fluidsynth freetype fribidi libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
-            useNasm: 'true'
-          - platform: x64
-            arch: x64
-            triplet: x64-windows
-            vcpkgPackages: 'curl faad2 fluidsynth freetype fribidi libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
           - platform: arm64
             arch: arm64
             triplet: arm64-windows
