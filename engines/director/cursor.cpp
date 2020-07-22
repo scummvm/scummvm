@@ -27,6 +27,8 @@
 namespace Director {
 
 Cursor::Cursor() {
+	_keyColor = 0xff;
+
 	_cursorResId = 0;
 	_cursorType = Graphics::kMacCursorArrow;
 
@@ -59,6 +61,8 @@ void Cursor::readFromCast(uint cursorId, uint maskId) {
 	}
 
 	_usePalette = false;
+	_keyColor = 3;
+
 	resetCursor(Graphics::kMacCursorCustom, true, 0, cursorId, maskId);
 
 	_surface = new byte[getWidth() * getHeight()];
@@ -120,6 +124,8 @@ void Cursor::readFromResource(int resourceId) {
 		break;
 	default:
 		_usePalette = true;
+		_keyColor = 0xff;
+
 		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
 			Common::SeekableSubReadStreamEndian *cursorStream;
 

@@ -43,6 +43,7 @@ class Cursor : public Graphics::MacCursor {
 	bool isEmpty() { return !(_cursorResId || _cursorCastId); }
 	bool operator==(const Cursor &c);
 
+	virtual byte getKeyColor() const override { return _keyColor; }
 	virtual const byte *getPalette() const override { return _usePalette ? _palette : nullptr; }
 
  public:
@@ -57,6 +58,7 @@ private:
 
 private:
 	bool _usePalette;
+	byte _keyColor;
 };
 
 } // end of namespace Director
