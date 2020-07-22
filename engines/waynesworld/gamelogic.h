@@ -105,6 +105,7 @@ public:
 	int _r31_currentPlayer;
 	int _r31_scores[3];
 	bool _r31_askedQuestions[25];
+	bool _didScratchTicket;
 // protected:
 public://DEBUG So logic functions can be called from the engine class for testing
 	WaynesWorldEngine *_vm;

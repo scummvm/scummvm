@@ -153,6 +153,8 @@ Common::Error WaynesWorldEngine::run() {
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	// _gameState = 1; // DEBUG Open map
 
+	// lookAtUnusedTicket();
+
 	while (!shouldQuit()) {
 		_mouseClickButtons = 0;
 		// _keyInput = 0;
@@ -323,7 +325,7 @@ void WaynesWorldEngine::updateMouseMove() {
 
     // Unused ticket
     if (_gameState == 3) {
-        // TODO unusedTicketHandleMouseMove();
+        unusedTicketHandleMouseMove();
         return;
     }
 
@@ -405,7 +407,7 @@ void WaynesWorldEngine::handleMouseLeftClick() {
         handleDialogMouseClick();
         break;
     case 3:
-        // TODO unusedTicketHandleMouseClick();
+        unusedTicketHandleMouseClick();
         break;
     case 4:
         // TODO handleMouseClickState4();
@@ -434,7 +436,7 @@ void WaynesWorldEngine::handleMouseRightClick() {
         handleDialogMouseClick();
         break;
     case 3:
-        // TODO unusedTicketHandleMouseClick();
+        unusedTicketHandleMouseClick();
         break;
     case 4:
         // TODO handleMouseClickState4();
@@ -1479,7 +1481,7 @@ void WaynesWorldEngine::handleVerbLookAt() {
         moveObjectToRoom(kObjectIdCindi, 103);
     }
     if (_objectNumber == kObjectIdInventoryUnusedTicket) {
-        // TODO lookAtUnusedTicket();
+        lookAtUnusedTicket();
     } else {
 		int textIndex;
 		if (_objectNumber == -2 || _objectNumber == -3) {
@@ -1790,6 +1792,58 @@ void WaynesWorldEngine::handleVerbClose() {
 
 void WaynesWorldEngine::setGameFlag(int flagNum) {
 	// TODO
+}
+
+void WaynesWorldEngine::lookAtUnusedTicket() {
+    // sysMouseDriver(2);
+    _gameState = 3;
+    _logic->_didScratchTicket = false;
+    stopRoomAnimations();    
+    if (!(_logic->_r10_flags & 0x80)) {
+        _roomAnimations[19] = loadSurface("r10/win");
+    } else {
+        _roomAnimations[19] = loadSurface("r10/nowin");
+    }
+    paletteFadeOut(0, 256, 64);
+    _screen->clear(0);
+    playSound("sv14", 0);
+    drawImageToScreen("r10/ticket", 0, 13);
+    paletteFadeIn(0, 256, 64);
+    // sysMouseDriver(1);
+}
+
+void WaynesWorldEngine::unusedTicketHandleMouseMove() {
+    if (_mouseX > 157 && _mouseY > 38 && _mouseX < 297 && _mouseY < 129) {
+        _logic->_didScratchTicket = true;
+        // Reveal partial image
+		int scratchX = _mouseX - 158;
+		int scratchY = _mouseY - 39;
+		Graphics::Surface scratchSurface = _roomAnimations[19]->getSubArea(Common::Rect(scratchX, scratchY, scratchX + 4, scratchY + 4));
+		_screen->drawSurface(&scratchSurface, _mouseX - 2, _mouseY - 2);
+    }
+}
+
+void WaynesWorldEngine::unusedTicketHandleMouseClick() {
+    int objectId = kObjectIdInventoryLosingTicket;
+    int textIndex = 1;
+    _gameState = 0;
+    delete _roomAnimations[19];
+	_roomAnimations[19] = nullptr;
+    if (!((_logic->_r10_flags & 0x80))) {
+        objectId = kObjectIdInventoryWinningTicket;
+        textIndex = 0;
+    }
+    if (_logic->_didScratchTicket) {
+        moveObjectToRoom(objectId, 99);
+        moveObjectToNowhere(29);
+        refreshInventory(false);
+        _logic->_r10_flags |= 0x80;
+    } else {
+        textIndex = 2;
+    }
+    changeRoom(_currentRoomNumber);
+    drawInterface(_verbNumber);
+    displayText("c00", textIndex, 0, -1, -1, 0);
 }
 
 } // End of namespace WaynesWorld

@@ -338,6 +338,10 @@ public:
 
 	void setGameFlag(int flagNum);
 
+	void lookAtUnusedTicket();
+	void unusedTicketHandleMouseMove();
+	void unusedTicketHandleMouseClick();
+
 	void gameMapOpen();
 	void gameMapFinish();
 	void gameMapHandleMouseMove(int objectNumber);

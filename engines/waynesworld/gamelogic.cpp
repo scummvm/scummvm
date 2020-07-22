@@ -4138,7 +4138,7 @@ void GameLogic::r10_handleVerbPickUpTicket() {
 	_vm->moveObjectToNowhere(kObjectIdTicket);
 	_vm->moveObjectToRoom(kObjectIdInventoryUnusedTicket, 99);
 	_vm->refreshInventory(false);
-	// TODO lookAtUnusedTicket();
+	_vm->lookAtUnusedTicket();
 }
 
 void GameLogic::r10_handleVerbPickUpJawbreakers() {
