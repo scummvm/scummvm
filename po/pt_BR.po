@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-22 16:32+0000\n"
-"Last-Translator: DinoWattz <dinowattz@hotmail.com>\n"
+"PO-Revision-Date: 2020-07-22 16:33+0000\n"
+"Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -1571,12 +1571,11 @@ msgstr "Outro armazenamento em nuvem já está ativo."
 
 #: gui/options.cpp:2331
 msgid "Theme does not support selected language!"
-msgstr "Tema não suporte idioma selecionado!"
+msgstr "O tema não suporte idioma selecionado!"
 
 #: gui/options.cpp:2334
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "O jogo NÃO foi carregado"
+msgstr "O tema não pôde ser carregado!"
 
 #: gui/options.cpp:2337
 msgid ""
