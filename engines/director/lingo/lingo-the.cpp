@@ -648,7 +648,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kThePreloadEventAbort);
 		break;
 	case kThePreLoadRAM:
-		getTheEntitySTUB(kThePreLoadRAM);
+		d.u.i = 0;		// We always have unlimited RAM
 		break;
 	case kThePi:
 		d.type = FLOAT;
@@ -907,7 +907,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kThePreloadEventAbort);
 		break;
 	case kThePreLoadRAM:
-		setTheEntitySTUB(kThePreLoadRAM);
+		// We always have the unlimited RAM, ignore
 		break;
 	case kTheRandomSeed:
 		g_director->_rnd.setSeed(d.asInt());
