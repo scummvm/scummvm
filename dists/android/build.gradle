@@ -38,6 +38,7 @@ android {
         versionName "2.2.0git"
         versionCode 45
         // versioncode must be incremented for each market upload
+		// ScummVM 2.2.2: 45-48 (arm-v7a, arm64-v8a, x86, x86_64 respectively -- armeabi was dropped)
         // Historical version codes:
         // ScummVM 2.1.1: 40-44 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.1.0: 35-39 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
