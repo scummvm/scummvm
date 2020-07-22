@@ -126,6 +126,9 @@ void Stage::reset() {
 }
 
 void Stage::addDirtyRect(const Common::Rect &r) {
+	if (!r.isValidRect())
+		return;
+
 	Common::Rect bounds = r;
 	bounds.clip(Common::Rect(_innerDims.width(), _innerDims.height()));
 
