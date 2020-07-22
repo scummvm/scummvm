@@ -1,0 +1,15 @@
+in vec2 position;
+in vec2 texcoord;
+in vec4 color;
+
+uniform highp mat4 projMatrix;
+
+out vec2 Texcoord;
+out vec4 Color;
+
+void main()
+{
+	gl_Position = projMatrix * vec4(position, 0.9f, 1.0f);
+	Texcoord = texcoord;
+	Color = color;
+}
