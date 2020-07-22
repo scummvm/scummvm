@@ -27,6 +27,7 @@
 #include "engines/wintermute/dctypes.h"
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
+#include "graphics/opengl/shader.h"
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/transform_struct.h"
@@ -188,6 +189,9 @@ private:
 	float _fov;
 	bool _spriteBatchMode;
 	bool _state3D;
+
+	GLuint _spriteVBO;
+	OpenGL::Shader *_spriteShader;
 };
 
 } // namespace Wintermute

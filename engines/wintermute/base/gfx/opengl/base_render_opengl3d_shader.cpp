@@ -34,12 +34,28 @@ BaseRenderer3D *makeOpenGL3DShaderRenderer(BaseGame *inGame) {
 	return new BaseRenderOpenGL3DShader(inGame);
 }
 
+#include "common/pack-start.h"
+
+struct SpriteVertexShader {
+	float x;
+	float y;
+	float u;
+	float v;
+	float r;
+	float g;
+	float b;
+	float a;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"
+
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame)
     : BaseRenderer3D(inGame), _spriteBatchMode(false) {
 	setDefaultAmbientLightColor();
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
+	glDeleteBuffers(1, &_spriteVBO);
 }
 
 bool BaseRenderOpenGL3DShader::setAmbientLightColor(uint32 color) {
@@ -290,6 +306,18 @@ void Wintermute::BaseRenderOpenGL3DShader::onWindowChange() {
 }
 
 bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed) {
+	glGenBuffers(1, &_spriteVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(SpriteVertexShader), nullptr, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	static const char *spriteAttributes[] = {"position", "texcoord", "color", nullptr};
+	_spriteShader = OpenGL::Shader::fromFiles("sprite", spriteAttributes);
+
+	_spriteShader->enableVertexAttribute("position", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 0);
+	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 8);
+	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertexShader), 16);
+
 	_windowed = windowed;
 	_width = width;
 	_height = height;
@@ -328,34 +356,15 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 
 		// some states are still missing here
 
-		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_STENCIL_TEST);
 		glDisable(GL_CLIP_PLANE0);
-		glDisable(GL_FOG);
-		glLightModeli(GL_LIGHT_MODEL_AMBIENT, 0);
 
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CCW);
-		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
-		glAlphaFunc(GL_GEQUAL, 0.0f);
 		glPolygonMode(GL_FRONT, GL_FILL);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glActiveTexture(GL_TEXTURE0);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_TEXTURE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PRIMARY_COLOR);
-		glTexEnvf(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_TEXTURE);
-		glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PRIMARY_COLOR);
-
-		glActiveTexture(GL_TEXTURE1);
-		glDisable(GL_TEXTURE_2D);
-
-		glActiveTexture(GL_TEXTURE0);
 
 		setProjection2D();
 	}
@@ -458,31 +467,11 @@ bool BaseRenderOpenGL3DShader::drawSprite(BaseSurfaceOpenGL3D &tex, const Winter
 	return drawSpriteEx(tex, rect, pos, Vector2(0.0f, 0.0f), scale, 0.0f, color, alphaDisable, blendMode, mirrorX, mirrorY);
 }
 
-#include "common/pack-start.h"
-
-struct SpriteVertex {
-	float u;
-	float v;
-	uint8 r;
-	uint8 g;
-	uint8 b;
-	uint8 a;
-	float x;
-	float y;
-	float z;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
-
 bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
                                             const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
                                             float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
                                             bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
-
-	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
-	// Reset it!
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	if (_forceAlphaColor != 0) {
 		color = _forceAlphaColor;
@@ -521,7 +510,7 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 		warning("BaseRenderOpenGL3DShader::SpriteEx y mirroring is not yet implemented");
 	}
 
-	SpriteVertex vertices[4] = {};
+	SpriteVertexShader vertices[4] = {};
 
 	// texture coords
 	vertices[0].u = texLeft;
@@ -539,19 +528,15 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	// position coords
 	vertices[0].x = pos.x - 0.5f;
 	vertices[0].y = correctedYPos - 0.5f;
-	vertices[0].z = -0.9f;
 
 	vertices[1].x = pos.x - 0.5f;
 	vertices[1].y = correctedYPos - height - 0.5f;
-	vertices[1].z = -0.9f;
 
 	vertices[2].x = pos.x + width - 0.5f;
 	vertices[2].y = correctedYPos - 0.5f;
-	vertices[2].z = -0.9f;
 
 	vertices[3].x = pos.x + width - 0.5f;
 	vertices[3].y = correctedYPos - height - 0.5;
-	vertices[3].z = -0.9f;
 
 	// not exactly sure about the color format, but this seems to work
 	byte a = RGBCOLGetA(color);
@@ -560,10 +545,10 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	byte b = RGBCOLGetB(color);
 
 	for (int i = 0; i < 4; ++i) {
-		vertices[i].r = r;
-		vertices[i].g = g;
-		vertices[i].b = b;
-		vertices[i].a = a;
+		vertices[i].r = r / 255.0f;
+		vertices[i].g = g / 255.0f;
+		vertices[i].b = b / 255.0f;
+		vertices[i].a = a / 255.0f;
 	}
 
 	// transform vertices here if necessary, add offset
@@ -572,15 +557,15 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 		glDisable(GL_ALPHA_TEST);
 	}
 
+	_spriteShader->use();
+	_spriteShader->setUniform("alphaTest", !alphaDisable);
+	_spriteShader->setUniform("projMatrix", _projectionMatrix2d);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _spriteVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(SpriteVertexShader), vertices);
+
 	setSpriteBlendMode(blendMode);
 
-	glEnable(GL_TEXTURE_2D);
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	if (alphaDisable) {
