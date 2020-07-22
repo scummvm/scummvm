@@ -68,6 +68,7 @@ struct SciKernelMapSubEntry {
 #define SIG_SINCE_SCI11      SCI_VERSION_1_1, SCI_VERSION_NONE
 #define SIG_SCI2             SCI_VERSION_2, SCI_VERSION_2
 #define SIG_SCI21EARLY       SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
+#define SIG_SCI21MID         SCI_VERSION_2_1_MIDDLE, SCI_VERSION_2_1_MIDDLE
 #define SIG_SCI21MID_LATE    SCI_VERSION_2_1_MIDDLE, SCI_VERSION_2_1_LATE
 #define SIG_THRU_SCI21EARLY  SCI_VERSION_2, SCI_VERSION_2_1_EARLY
 #define SIG_THRU_SCI21MID    SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
@@ -238,8 +239,8 @@ static const SciKernelMapSubEntry kDoAudio_subops[] = {
 	{ SIG_SINCE_SCI21MID, 17, MAP_CALL(DoAudioHasSignal),          "",                     NULL },
 	{ SIG_SINCE_SCI21MID, 18, MAP_EMPTY(DoAudioCritical),          "(i)",                  NULL },
 	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(DoAudioSetLoop),            "iii(o)",               NULL },
-	{ SIG_SCI3,           20, MAP_CALL(DoAudioPan),                "ii(i)(iii)",           NULL },
-	{ SIG_SCI3,           21, MAP_CALL(DoAudioPanOff),             "i(i)(iii)",            NULL },
+	{ SIG_SINCE_SCI21LATE,20, MAP_CALL(DoAudioPan),                "ii(i)(iii)",           NULL },
+	{ SIG_SINCE_SCI21LATE,21, MAP_CALL(DoAudioPanOff),             "i(i)(iii)",            NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 #endif
@@ -328,8 +329,8 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SINCE_SCI21MID, 13, MAP_CALL(FileIOReadByte),            "i",                    NULL },
 	{ SIG_SINCE_SCI21MID, 14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
 	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
-	{ SIG_SCI21MID_LATE,  16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
-	{ SIG_SCI3,           16, MAP_CALL(FileIOWriteWord),           "i[.!]",                NULL },
+	{ SIG_SCI21MID,       16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
+	{ SIG_SINCE_SCI21LATE,16, MAP_CALL(FileIOWriteWord),           "i[.!]",                NULL },
 	{ SIG_SINCE_SCI21MID, 17, "FileIOCheckFreeSpace", kCheckFreeSpace, "i(r)",             kFileIOCheckFreeSpace_workarounds },
 	{ SIG_SINCE_SCI21MID, 18, MAP_CALL(FileIOGetCWD),              "r",                    NULL },
 	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(FileIOIsValidDirectory),    "[ro]",                 NULL },
@@ -397,7 +398,7 @@ static const SciKernelMapSubEntry kBitmap_subops[] = {
 	{ SIG_SINCE_SCI21MID, 11, MAP_DUMMY(BitmapClone),              "r",                    NULL },
 	{ SIG_SINCE_SCI21MID, 12, MAP_CALL(BitmapGetInfo),             "r(i)(i)",              NULL },
 	{ SIG_SINCE_SCI21LATE,13, MAP_DUMMY(BitmapScale),              "r...ii",               NULL },
-	{ SIG_SCI3,           14, MAP_DUMMY(BitmapCreateFromUnknown),  "......",               NULL },
+	{ SIG_SINCE_SCI21LATE,14, MAP_DUMMY(BitmapCreateFromUnknown),  "......",               NULL },
 	{ SIG_SCI3,           15, MAP_DUMMY(Bitmap),                   "(.*)",                 NULL },
 	{ SIG_SCI3,           16, MAP_DUMMY(Bitmap),                   "(.*)",                 NULL },
 	SCI_SUBOPENTRY_TERMINATOR
@@ -476,9 +477,9 @@ static const SciKernelMapSubEntry kPlayVMD_subops[] = {
 	{ SIG_SINCE_SCI21,    20, MAP_CALL(PlayVMDDeleteBlob),         "i",                    NULL },
 	{ SIG_SINCE_SCI21,    21, MAP_CALL(PlayVMDSetBlackoutArea),    "iiii",                 NULL },
 	{ SIG_SINCE_SCI21,    23, MAP_CALL(PlayVMDRestrictPalette),    "ii",                   NULL },
-	{ SIG_SCI3,           27, MAP_CALL(PlayVMDSetPlane),           "i(i)",                 NULL },
-	{ SIG_SCI3,           28, MAP_EMPTY(PlayVMDSetPreload),        "i",                    NULL },
-	{ SIG_SCI3,           31, MAP_EMPTY(PlayVMDSetFrameRate),      "i",                    NULL },
+	{ SIG_SINCE_SCI21LATE,27, MAP_CALL(PlayVMDSetPlane),           "i(i)",                 NULL },
+	{ SIG_SINCE_SCI21LATE,28, MAP_EMPTY(PlayVMDSetPreload),        "i",                    NULL },
+	{ SIG_SINCE_SCI21LATE,31, MAP_EMPTY(PlayVMDSetFrameRate),      "i",                    NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -908,8 +909,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// our garbage collector (i.e. the SCI0-SCI1.1 semantics).
 	{ "Purge", kFlushResources,    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(SetShowStyle),      SIG_THRU_SCI21MID, SIGFOR_ALL, "ioiiiii([ri])(i)", NULL,            NULL },
-	{ MAP_CALL(SetShowStyle),      SIG_SCI21LATE,     SIGFOR_ALL, "ioiiiii([ri])([ri])(i)", NULL,      NULL },
-	{ MAP_CALL(SetShowStyle),      SIG_SCI3,          SIGFOR_ALL, "ioiiiiii(r)(i)",   NULL,            NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_SCI21LATE,     SIGFOR_PC,  "ioiiiii([ri])([ri])(i)", NULL,      NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_SINCE_SCI21LATE, SIGFOR_ALL, "ioiiiiii(r)(i)", NULL,            NULL },
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  kString_subops,  NULL },
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
