@@ -341,7 +341,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int scriptId, int channelI
 
 	if (script && script->_eventHandlers.contains(event)) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d): executing event handler", _eventHandlerTypes[event], scriptType2str(st), scriptId);
-		LC::call(script->_eventHandlers[event], 0);
+		LC::call(script->_eventHandlers[event], 0, false);
 		execute(_pc);
 	} else {
 		debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d): no handler", _eventHandlerTypes[event], scriptType2str(st), scriptId);

@@ -116,8 +116,8 @@ namespace LC {
 	void c_callcmd();
 	void c_callfunc();
 
-	void call(const Symbol &targetSym, int nargs);
-	void call(const Common::String &name, int nargs, SymbolType bltinType = VOIDSYM);
+	void call(const Symbol &targetSym, int nargs, bool allowRetVal = true);
+	void call(const Common::String &name, int nargs, bool allowRetVal = true);
 
 	void c_procret();
 

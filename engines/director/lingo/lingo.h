@@ -179,6 +179,9 @@ struct CFrame {	/* proc/func call stack frame */
 	LingoArchive *retarchive;	/* which archive to use after return */
 	DatumHash *localvars;
 	Datum retMe; /* which me obj to use after return */
+	uint stackSizeBefore;
+	bool allowRetVal;			/* whether to allow a return value */
+	Datum defaultRetVal;		/* default return value */
 };
 
 struct LingoEvent {
@@ -285,7 +288,7 @@ public:
 
 public:
 	void execute(uint pc);
-	void pushContext(const Symbol funcSym, bool preserveVarFrame = false);
+	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
 	int castIdFetch(Datum &var);

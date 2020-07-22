@@ -50,6 +50,7 @@
 #include "director/channel.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
@@ -212,7 +213,7 @@ void LC::c_xpop() {
 	g_lingo->pop();
 }
 
-void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
+void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal) {
 	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
@@ -223,6 +224,8 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 	fp->localvars = g_lingo->_localvars;
 	fp->retMe = g_lingo->_currentMe;
 	fp->sp = funcSym;
+	fp->allowRetVal = allowRetVal;
+	fp->defaultRetVal = defaultRetVal;
 
 	g_lingo->_currentScript = funcSym.u.defn;
 
@@ -234,9 +237,51 @@ void Lingo::pushContext(const Symbol funcSym, bool preserveVarFrame) {
 
 	g_lingo->_currentArchive = funcSym.archive;
 
-	// Execute anonymous functions within the current var frame.
-	if (!preserveVarFrame && !funcSym.anonymous)
-		g_lingo->_localvars = new DatumHash;
+	DatumHash *localvars = g_lingo->_localvars;
+	if (!funcSym.anonymous) {
+		// Execute anonymous functions within the current var frame.
+		localvars = new DatumHash;
+	}
+
+	if (funcSym.argNames) {
+		int symNArgs = funcSym.nargs;
+		if ((int)funcSym.argNames->size() < symNArgs) {
+			int dropSize = symNArgs - funcSym.argNames->size();
+			warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
+			for (int i = 0; i < dropSize; i++) {
+				g_lingo->pop();
+				symNArgs -= 1;
+			}
+		} else if ((int)funcSym.argNames->size() > symNArgs) {
+			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
+		}
+		for (int i = symNArgs - 1; i >= 0; i--) {
+			Common::String name = (*funcSym.argNames)[i];
+			if (!localvars->contains(name)) {
+				g_lingo->varCreate(name, false, localvars);
+				Datum arg(name);
+				arg.type = VAR;
+				Datum value = g_lingo->pop();
+				g_lingo->varAssign(arg, value, false, localvars);
+			} else {
+				warning("Argument %s already defined", name.c_str());
+				g_lingo->pop();
+			}
+		}
+	}
+	if (funcSym.varNames) {
+		for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
+			Common::String name = *it;
+			if (!localvars->contains(name)) {
+				(*localvars)[name] = Datum();
+			} else {
+				warning("Variable %s already defined", name.c_str());
+			}
+		}
+	}
+	g_lingo->_localvars = localvars;
+
+	fp->stackSizeBefore = _stack.size();
 
 	g_lingo->_callstack.push_back(fp);
 
@@ -249,6 +294,16 @@ void Lingo::popContext() {
 	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size());
 	CFrame *fp = g_lingo->_callstack.back();
 	g_lingo->_callstack.pop_back();
+
+	uint maxRetVals = fp->allowRetVal ? 1 : 0;
+	if (_stack.size() > fp->stackSizeBefore + maxRetVals) {
+		error("handler %s returned extra %d values", fp->sp.name->c_str(), _stack.size() - fp->stackSizeBefore);
+	} else if (_stack.size() < fp->stackSizeBefore) {
+		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _stack.size());
+	} else if (fp->allowRetVal && _stack.size() == fp->stackSizeBefore) {
+		warning("handler %s did not return value", fp->sp.name->c_str());
+		g_lingo->push(fp->defaultRetVal);
+	}
 
 	// Destroy anonymous function context
 	if (fp->sp.anonymous) {
@@ -1332,7 +1387,7 @@ void LC::c_callcmd() {
 
 	int nargs = g_lingo->readInt();
 
-	LC::call(name, nargs, CBLTIN);
+	LC::call(name, nargs, false);
 }
 
 void LC::c_callfunc() {
@@ -1340,10 +1395,10 @@ void LC::c_callfunc() {
 
 	int nargs = g_lingo->readInt();
 
-	LC::call(name, nargs, FBLTIN);
+	LC::call(name, nargs, true);
 }
 
-void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
+void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
@@ -1372,7 +1427,7 @@ void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
 					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
 					nargs -= 1;
 				}
-				call(funcSym, nargs);
+				call(funcSym, nargs, allowRetVal);
 				return;
 			}
 			firstArg = firstArg.eval();
@@ -1395,7 +1450,7 @@ void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
 					g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs);
 					nargs -= 1;
 				}
-				call(funcSym, nargs);
+				call(funcSym, nargs, allowRetVal);
 				return;
 			}
 		}
@@ -1405,27 +1460,20 @@ void LC::call(const Common::String &name, int nargs, SymbolType bltinType) {
 	funcSym = g_lingo->getHandler(name);
 
 	// Builtin
-	if (funcSym.type == VOIDSYM) {
-		switch (bltinType) {
-		case CBLTIN:
-			if (g_lingo->_builtinCmds.contains(name)) {
-				funcSym = g_lingo->_builtinCmds[name];
-			}
-			break;
-		case FBLTIN:
-			if (g_lingo->_builtinFuncs.contains(name)) {
-				funcSym = g_lingo->_builtinFuncs[name];
-			}
-			break;
-		default:
-			break;
+	if (allowRetVal) {
+		if (g_lingo->_builtinFuncs.contains(name)) {
+			funcSym = g_lingo->_builtinFuncs[name];
+		}
+	} else {
+		if (g_lingo->_builtinCmds.contains(name)) {
+			funcSym = g_lingo->_builtinCmds[name];
 		}
 	}
 
-	call(funcSym, nargs);
+	call(funcSym, nargs, allowRetVal);
 }
 
-void LC::call(const Symbol &funcSym, int nargs) {
+void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	bool dropArgs = false;
 
 	if (funcSym.type == VOIDSYM) {
@@ -1460,7 +1508,7 @@ void LC::call(const Symbol &funcSym, int nargs) {
 	}
 
 	if (funcSym.type != HANDLER) {
-		int stackSize = g_lingo->_stack.size() - nargs;
+		uint stackSizeBefore = g_lingo->_stack.size() - nargs;
 
 		if (funcSym.target) {
 			// Only need to update the me obj
@@ -1473,14 +1521,18 @@ void LC::call(const Symbol &funcSym, int nargs) {
 			(*funcSym.u.bltin)(nargs);
 		}
 
-		int stackNewSize = g_lingo->_stack.size();
+		uint stackSize = g_lingo->_stack.size();
 
-		if (funcSym.type != HANDLER && funcSym.type != CBLTIN) {
-			if (stackNewSize - stackSize != 1)
-				warning("built-in function %s did not return value", funcSym.name->c_str());
-		} else if (funcSym.type == CBLTIN) {
-			if (stackNewSize - stackSize != 0)
-				warning("built-in procedure %s returned extra %d values", funcSym.name->c_str(), stackNewSize - stackSize);
+		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_returnNumber && funcSym.u.bltin != LB::b_value) {
+			uint maxRetVals = allowRetVal ? 1 : 0;
+			if (stackSize > stackSizeBefore + maxRetVals) {
+				error("builtin %s returned extra %d values", funcSym.name->c_str(), stackSize - stackSizeBefore);
+			} else if (stackSize < stackSizeBefore) {
+				error("builtin %s popped extra %d values", funcSym.name->c_str(), stackSizeBefore - stackSize);
+			} else if (allowRetVal && stackSize == stackSizeBefore) {
+				error("builtin function %s did not return value", funcSym.name->c_str());
+				g_lingo->push(Datum());
+			}
 		}
 		return;
 	}
@@ -1493,53 +1545,12 @@ void LC::call(const Symbol &funcSym, int nargs) {
 		g_lingo->push(d);
 	}
 
-	g_lingo->pushContext(funcSym, true);
-
-	DatumHash *localvars = g_lingo->_localvars;
-	if (!funcSym.anonymous) {
-		// Create new set of local variables
-		// g_lingo->_localvars is not set until later so any lazy arguments
-		// can be evaluated within the current variable frame
-		localvars = new DatumHash;
+	Datum defaultRetVal;
+	if (funcSym.target && funcSym.target->getObjType() == kFactoryObj && funcSym.name->equalsIgnoreCase("mNew")) {
+		defaultRetVal = funcSym.target; // return me
 	}
 
-	if (funcSym.argNames) {
-		int symNArgs = funcSym.nargs;
-		if ((int)funcSym.argNames->size() < symNArgs) {
-			int dropSize = symNArgs - funcSym.argNames->size();
-			warning("%d arg names defined for %d args! Dropping the last %d values", funcSym.argNames->size(), symNArgs, dropSize);
-			for (int i = 0; i < dropSize; i++) {
-				g_lingo->pop();
-				symNArgs -= 1;
-			}
-		} else if ((int)funcSym.argNames->size() > symNArgs) {
-			warning("%d arg names defined for %d args! Ignoring the last %d names", funcSym.argNames->size(), symNArgs, funcSym.argNames->size() - symNArgs);
-		}
-		for (int i = symNArgs - 1; i >= 0; i--) {
-			Common::String name = (*funcSym.argNames)[i];
-			if (!localvars->contains(name)) {
-				g_lingo->varCreate(name, false, localvars);
-				Datum arg(name);
-				arg.type = VAR;
-				Datum value = g_lingo->pop();
-				g_lingo->varAssign(arg, value, false, localvars);
-			} else {
-				warning("Argument %s already defined", name.c_str());
-				g_lingo->pop();
-			}
-		}
-	}
-	if (funcSym.varNames) {
-		for (Common::Array<Common::String>::iterator it = funcSym.varNames->begin(); it != funcSym.varNames->end(); ++it) {
-			Common::String name = *it;
-			if (!localvars->contains(name)) {
-				(*localvars)[name] = Datum();
-			} else {
-				warning("Variable %s already defined", name.c_str());
-			}
-		}
-	}
-	g_lingo->_localvars = localvars;
+	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal);
 
 	g_lingo->_pc = 0;
 }
@@ -1549,12 +1560,6 @@ void LC::c_procret() {
 		warning("c_procret: Call stack underflow");
 		g_lingo->_abort = true;
 		return;
-	}
-
-	CFrame *fp = g_lingo->_callstack.back();
-	if (g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj && fp->sp.name->equalsIgnoreCase("mNew")) {
-		// Return the newly created object after executing mNew
-		g_lingo->push(g_lingo->_currentMe);
 	}
 
 	g_lingo->popContext();

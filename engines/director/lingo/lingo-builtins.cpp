@@ -1569,7 +1569,7 @@ void LB::b_importFileInto(int nargs) {
 void menuCommandsCallback(int action, Common::String &text, void *data) {
 	Common::String name = Common::String::format("scummvmMenu%d", action);
 
-	LC::call(name, 0);
+	LC::call(name, 0, false);
 }
 
 void LB::b_installMenu(int nargs) {

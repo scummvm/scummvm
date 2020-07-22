@@ -630,7 +630,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 void Lingo::executeHandler(const Common::String &name) {
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
 	Symbol sym = getHandler(name);
-	LC::call(sym, 0);
+	LC::call(sym, 0, false);
 	execute(_pc);
 }
 
@@ -1146,7 +1146,7 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 			debugC(1, kDebugLingoExec, "Executing perFrameHook : <%s>(mAtFrame, %d, %d)", _perFrameHook.asString(true).c_str(), frame, subframe);
 			push(Datum(frame));
 			push(Datum(subframe));
-			LC::call(method, 2);
+			LC::call(method, 2, false);
 			execute(_pc);
 		}
 	}
