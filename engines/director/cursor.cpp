@@ -56,7 +56,7 @@ void Cursor::readFromCast(uint cursorId, uint maskId) {
 		return;
 	}
 
-	resetCursor(Graphics::kMacCursorCustom, 0, cursorId, maskId);
+	resetCursor(Graphics::kMacCursorCustom, true, 0, cursorId, maskId);
 
 	_surface = new byte[getWidth() * getHeight()];
 	byte *dst = _surface;
