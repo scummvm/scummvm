@@ -675,10 +675,10 @@ proc: tPUT expr					{ g_lingo->code1(LC::c_printtop); }
 	| tINSTANCE					{ inArgs(); } instancelist { inLast(); }
 	| tOPEN expr tWITH expr		{
 		Common::String open("open");
-		g_lingo->codeFunc(&open, 2); }
+		g_lingo->codeCmd(&open, 2); }
 	| tOPEN expr 				{
 		Common::String open("open");
-		g_lingo->codeFunc(&open, 1); }
+		g_lingo->codeCmd(&open, 1); }
 	| ID[func] '(' ID[method] ')' {
 			g_lingo->code1(LC::c_lazyeval);
 			g_lingo->codeString($method->c_str());
@@ -758,7 +758,7 @@ playfunc: tPLAY expr 			{ // "play #done" is also caught by this
 		g_lingo->code1(LC::c_play); }
 	| tPLAYACCEL { g_lingo->codeSetImmediate(true); } arglist {
 		g_lingo->codeSetImmediate(false);
-		g_lingo->codeFunc($tPLAYACCEL, $arglist);
+		g_lingo->codeCmd($tPLAYACCEL, $arglist);
 		delete $tPLAYACCEL; }
 
 // macro

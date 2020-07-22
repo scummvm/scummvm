@@ -3098,7 +3098,7 @@ yyreduce:
 #line 676 "engines/director/lingo/lingo-gr.y"
                                         {
 		Common::String open("open");
-		g_lingo->codeFunc(&open, 2); }
+		g_lingo->codeCmd(&open, 2); }
 #line 3103 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -3106,7 +3106,7 @@ yyreduce:
 #line 679 "engines/director/lingo/lingo-gr.y"
                                                 {
 		Common::String open("open");
-		g_lingo->codeFunc(&open, 1); }
+		g_lingo->codeCmd(&open, 1); }
 #line 3111 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -3282,7 +3282,7 @@ yyreduce:
 #line 759 "engines/director/lingo/lingo-gr.y"
                                                                   {
 		g_lingo->codeSetImmediate(false);
-		g_lingo->codeFunc((yyvsp[-2].s), (yyvsp[0].narg));
+		g_lingo->codeCmd((yyvsp[-2].s), (yyvsp[0].narg));
 		delete (yyvsp[-2].s); }
 #line 3288 "engines/director/lingo/lingo-gr.cpp"
     break;
