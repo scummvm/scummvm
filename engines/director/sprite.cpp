@@ -170,7 +170,7 @@ void Sprite::setCast(uint16 castId) {
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 		}
 
-		Graphics::MacWidget *widget = _cast->createWidget();
+		Graphics::MacWidget *widget = _cast->createWidget(_cast->_initialRect);
 		if (widget) {
 			_width = widget->_dims.width();
 			_height = widget->_dims.height();

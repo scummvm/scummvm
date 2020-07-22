@@ -438,6 +438,8 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		Sprite *currentSprite = channel->_sprite;
 		Sprite *nextSprite = _frames[frameId]->_sprites[i];
 
+		// widget content has changed and needs a redraw.
+		// this doesn't include changes in dimension or position!
 		bool widgetRedrawn = channel->updateWidget();
 
 		if (channel->isActiveText())

@@ -63,7 +63,7 @@ public:
 	virtual bool isEditable() { return false; }
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
-	virtual Graphics::MacWidget *createWidget() { return nullptr; }
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) { return nullptr; }
 	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
 
 	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
@@ -91,7 +91,7 @@ class BitmapCastMember : public CastMember {
 public:
 	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
 	~BitmapCastMember();
-	virtual Graphics::MacWidget *createWidget() override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
 
 	void createMatte();
 	Graphics::Surface *getMatte();
@@ -163,7 +163,7 @@ public:
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);
-	virtual Graphics::MacWidget *createWidget() override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
 
 	virtual bool isModified() override;
 	virtual bool isEditable() override;

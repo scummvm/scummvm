@@ -102,7 +102,8 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(_sprite->_castId + 1);
 
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
-			Graphics::MacWidget *widget = member->createWidget();
+			Common::Rect bbox(getBbox());
+			Graphics::MacWidget *widget = member->createWidget(bbox);
 			Graphics::Surface *result = new Graphics::Surface(widget->getSurface()->rawSurface());
 			delete widget;
 			return result;
@@ -261,6 +262,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 					_width = _sprite->_width;
 					_height = _sprite->_height;
 				}
+				replaceWidget = true;
 			}
 		}
 
@@ -270,14 +272,13 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 	if (replaceWidget && _sprite->_cast) {
 		_sprite->updateCast();
-		Common::Point p(getPosition());
+		Common::Rect bbox(getBbox());
 		_sprite->_cast->_modified = false;
 		if (_widget) {
 			delete _widget;
 		}
-		_widget = _sprite->_cast->createWidget();
+		_widget = _sprite->_cast->createWidget(bbox);
 		if (_widget) {
-			_widget->_dims.moveTo(p.x, p.y);
 			_widget->_priority = spriteId;
 			_widget->draw();
 			_widget->_contentIsDirty = false;
