@@ -110,6 +110,7 @@ public:
 	uint16 _bitsPerPixel;
 
 	uint32 _tag;
+	bool _noMatte;
 };
 
 class DigitalVideoCastMember : public CastMember {

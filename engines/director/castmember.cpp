@@ -54,6 +54,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_type = kCastBitmap;
 	_img = nullptr;
 	_matte = nullptr;
+	_noMatte = false;
 	_bytes = 0;
 	_pitch = 0;
 	_flags1 = 0;
@@ -204,6 +205,7 @@ void BitmapCastMember::createMatte() {
 
 	if (whiteColor == -1) {
 		debugC(1, kDebugImages, "BitmapCastMember::createMatte(): No white color for matte image");
+		_noMatte = true;
 	} else {
 		delete _matte;
 
@@ -220,6 +222,7 @@ void BitmapCastMember::createMatte() {
 		}
 
 		_matte->fillMask();
+		_noMatte = false;
 	}
 
 	tmp.free();
@@ -227,7 +230,7 @@ void BitmapCastMember::createMatte() {
 
 Graphics::Surface *BitmapCastMember::getMatte() {
 	// Lazy loading of mattes
-	if (!_matte) {
+	if (!_matte && !_noMatte) {
 		createMatte();
 	}
 
