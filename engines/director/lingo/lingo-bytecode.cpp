@@ -307,7 +307,7 @@ void LC::cb_localcall() {
 		if (debugChannelSet(3, kDebugLingoExec))
 			g_lingo->printSTUBWithArglist(name.c_str(), nargs.u.i, "localcall:");
 
-		LC::call(name, nargs.u.i);
+		LC::call(name, nargs.u.i, nargs.type == ARGC);
 
 	} else {
 		warning("cb_localcall: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
@@ -394,7 +394,7 @@ void LC::cb_objectcall() {
 				g_lingo->push(args.back());
 				args.pop_back();
 			}
-			LC::call(method, nargs.u.i);
+			LC::call(method, nargs.u.i, nargs.type == ARGC);
 			return;
 		}
 
@@ -412,7 +412,7 @@ void LC::cb_objectcall() {
 			args.pop_back();
 		}
 
-		LC::call(func, nargs.u.i);
+		LC::call(func, nargs.u.i, nargs.type == ARGC);
 	} else {
 		warning("cb_objectcall: could not find object or function with name %s", d.u.s->c_str());
 		// Push a VOID to the stack if function is supposed to return
