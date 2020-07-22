@@ -1501,7 +1501,8 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 			g_lingo->pop();
 
 		// Push dummy value
-		g_lingo->pushVoid();
+		if (allowRetVal)
+			g_lingo->pushVoid();
 
 		return;
 	}
