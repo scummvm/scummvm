@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:39+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1371,12 +1371,10 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Ilo¶æ miejsca zajmowana przez gry zapisane przez ScummVM w tej us³udze"
 
 #: gui/options.cpp:2092
-#, fuzzy
 msgid "Last sync:"
 msgstr "Ostatnia synchronizacja:"
 
 #: gui/options.cpp:2092
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Czas ostatniej synchronizacji zapisanych stanów gry z t± us³ug±"
 
@@ -1397,7 +1395,7 @@ msgstr ""
 
 #: gui/options.cpp:2098
 msgid "Sync now"
-msgstr ""
+msgstr "Zsynchronizuj teraz "
 
 #: gui/options.cpp:2098
 msgid "Start saved games sync"
