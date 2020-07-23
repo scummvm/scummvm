@@ -170,12 +170,9 @@ void Sprite::setCast(uint16 castId) {
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 		}
 
-		Graphics::MacWidget *widget = _cast->createWidget(_cast->_initialRect);
-		if (widget) {
-			_width = widget->_dims.width();
-			_height = widget->_dims.height();
-			delete widget;
-		}
+		Common::Rect dims = _cast->getWidgetRect();
+		_width = dims.width();
+		_height = dims.height();
 	} else {
 		warning("Sprite::setCast(): CastMember id %d has null member", castId);
 	}

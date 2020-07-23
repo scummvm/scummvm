@@ -65,6 +65,7 @@ public:
 	virtual bool isModified() { return _modified; }
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) { return nullptr; }
 	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
+	virtual Common::Rect getWidgetRect() { return _initialRect; }
 
 	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
 	virtual uint getForeColor() { return 0; }
@@ -164,6 +165,7 @@ public:
 
 	void setText(const char *text);
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
+	virtual Common::Rect getWidgetRect() override;
 
 	virtual bool isModified() override;
 	virtual bool isEditable() override;

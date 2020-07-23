@@ -483,6 +483,16 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 	return widget;
 }
 
+Common::Rect TextCastMember::getWidgetRect() {
+	Graphics::MacWidget *widget = createWidget(_initialRect);
+	Common::Rect result = _initialRect;
+	if (widget) {
+		result = widget->_dims;
+		delete widget;
+	}
+	return result;
+}
+
 void TextCastMember::importRTE(byte *text) {
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
