@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-23 07:26+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-07-23 07:30+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -929,7 +929,7 @@ msgstr "Mrtvá zóna Joysticku:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr "Zbývá %d  skrytých úkolù"
+msgstr "Zbývá %d skrytých úkolù"
 
 #: gui/options.cpp:1174
 #, c-format
@@ -1299,7 +1299,7 @@ msgstr ""
 
 #: gui/options.cpp:2045
 msgid "Use native system file browser"
-msgstr "Pou¾ít systémový prohlí¾eè souborù."
+msgstr "Pou¾ít systémový prohlí¾eè souborù"
 
 #: gui/options.cpp:2046
 msgid ""
@@ -1535,7 +1535,7 @@ msgstr "Zavøení dialogu mo¾ností zastaví server."
 
 #: gui/options.cpp:2167
 msgid "Use Text to speech"
-msgstr "Pou¾ít Text ke ètení:"
+msgstr "Pou¾ít Text ke ètení"
 
 #: gui/options.cpp:2167
 msgid "Will read text in gui on mouse over."
@@ -1833,7 +1833,7 @@ msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
-" Pou¾ijte toto tlaèítko pro zkopírování potøebných herních dat do schránky."
+"Pou¾ijte toto tlaèítko pro zkopírování potøebných herních dat do schránky."
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
