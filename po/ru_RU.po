@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:18+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -3148,7 +3148,7 @@ msgstr "Режим Увеличения выключен. Переключение в режим протягивания..."
 
 #: backends/platform/3ds/osystem-events.cpp:421
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Режим Увеличения Выключен"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
