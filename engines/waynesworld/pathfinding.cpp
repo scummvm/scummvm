@@ -462,14 +462,18 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
         }
     }
 
-    if (direction != -1) {
-        actor1Points[actor1PointsCount - 1].direction = direction;
+    if (direction == -1) {
+        if (actor1PointsCount > 0) {
+            direction = actor1Points[actor1PointsCount - 1].direction;
+        } else {
+            direction = 0;
+        }
     }
 
     if (_currentActorNum != 0) {
-        drawActors(actor1Points[actor1PointsCount - 1].direction, 1, 1, 0, actor1_destX - _from_x1, actor1_destY, actor2WalkDestX - _from_x1, actor2WalkDestY);
+        drawActors(direction, 1, 1, 0, actor1_destX - _from_x1, actor1_destY, actor2WalkDestX - _from_x1, actor2WalkDestY);
     } else {
-        drawActors(actor1Points[actor1PointsCount - 1].direction, 1, 1, 0, actor2WalkDestX - _from_x1, actor2WalkDestY, actor1_destX - _from_x1, actor1_destY);
+        drawActors(direction, 1, 1, 0, actor2WalkDestX - _from_x1, actor2WalkDestY, actor1_destX - _from_x1, actor1_destY);
     }
 
     // TODO
