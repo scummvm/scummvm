@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:42+0000\n"
-"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1449,7 +1449,7 @@ msgstr ""
 
 #: gui/options.cpp:2116
 msgid "1. Open this link:"
-msgstr ""
+msgstr "1. Otwórz ten link:"
 
 #: gui/options.cpp:2117
 msgid "Open URL"
@@ -1458,7 +1458,7 @@ msgstr "Otwórz URL"
 #: gui/options.cpp:2119
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr ""
+msgstr "2. Wpisz kod który dosta³e¶ tutaj:"
 
 #: gui/options.cpp:2121
 msgid "2. Get the code and enter it here:"
@@ -1470,15 +1470,15 @@ msgstr "Wklej"
 
 #: gui/options.cpp:2123
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Wklej kod ze schowka"
 
 #: gui/options.cpp:2124
 msgid "3. Connect"
-msgstr "3. Po³±cz"
+msgstr "Po³±cz"
 
 #: gui/options.cpp:2124
 msgid "Connect your cloud storage account"
-msgstr "Po³±cz z kontem przechowywania danych w chmurze"
+msgstr "Otwórz asystenta po³±czenia z us³ug± przechowywania danych w chmurze"
 
 #: gui/options.cpp:2133
 msgid "Run server"
@@ -1540,9 +1540,8 @@ msgid "Will read text in gui on mouse over."
 msgstr ""
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
-msgstr "Brak"
+msgstr "¯aden"
 
 #: gui/options.cpp:2253
 msgid "Failed to change cloud storage!"
@@ -1816,7 +1815,7 @@ msgstr "Wyg³adzany"
 
 #: gui/unknown-game-dialog.cpp:49
 msgid "Add anyway"
-msgstr "Dodaj mimo tego"
+msgstr "Dodaj mimo tego "
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
