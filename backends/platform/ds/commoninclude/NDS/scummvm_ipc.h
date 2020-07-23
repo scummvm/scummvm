@@ -64,61 +64,13 @@ typedef struct {
 //////////////////////////////////////////////////////////////////////
 
 typedef struct scummvmTransferRegion {
-  uint32 heartbeat;          // counts frames
-
-   int16 touchX,   touchY;   // TSC X, Y
-   int16 touchXpx, touchYpx; // TSC X, Y pixel values
-   int16 touchZ1,  touchZ2;  // TSC x-panel measurements
-  uint16 tdiode1,  tdiode2;  // TSC temperature diodes
-  uint32 temperature;        // TSC computed temperature
-
-  uint16 buttons;            // X, Y, /PENIRQ buttons
-
-  union {
-    uint8 curtime[8];        // current time response from RTC
-
-    struct {
-      u8 command;
-      u8 year;           //add 2000 to get 4 digit year
-      u8 month;          //1 to 12
-      u8 day;            //1 to (days in month)
-
-      u8 incr;
-      u8 hours;          //0 to 11 for AM, 52 to 63 for PM
-      u8 minutes;        //0 to 59
-      u8 seconds;        //0 to 59
-    } rtc;
-  };
-
-  uint16 battery;            // battery life ??  hopefully.  :)
-  uint16 aux;                // i have no idea...
-
   TransferSound *soundData;
 
   adpcmBuffer adpcm;
 
-
-  // Don't rely on these below, will change or be removed in the future
-  vuint32 mailAddr;
-  vuint32 mailData;
-  vuint8 mailRead;
-  vuint8 mailBusy;
-  vuint32 mailSize;
-
-  bool performArm9SleepMode;
-
-  u32 test;
-  int tweak;
-  bool tweakChanged;
-
-//  bool fillSoundFirstHalf;
-//  bool fillSoundSecondHalf;
-
   // These are used for ScummVMs sound output
   bool fillNeeded[4];
   int playingSection;
-
-  bool reset;
 
   // Streaming sound
   bool streamFillNeeded[4];

@@ -96,7 +96,6 @@
 #include "user_debugger.h"
 #endif
 #include "blitters.h"
-#include "keys.h"
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
 #endif
@@ -736,37 +735,6 @@ void setGameID(int id) {
 	gameID = id;
 }
 
-void dummyHandler() {
-	REG_IF = IRQ_VBLANK;
-}
-
-void checkSleepMode() {
-	if (IPC->performArm9SleepMode) {
-
-		consolePrintf("ARM9 Entering sleep mode\n");
-
-		int intSave = REG_IE;
-		irqSet(IRQ_VBLANK, dummyHandler);
-//		int irqHandlerSave = (int) IRQ_HANDLER;
-		REG_IE = IRQ_VBLANK;
-		//IRQ_HANDLER = dummyHandler;
-
-		int powerSave = POWER_CR;
-		POWER_CR &= ~POWER_ALL;
-
-		while (IPC->performArm9SleepMode) {
-			swiWaitForVBlank();
-		}
-
-		POWER_CR = powerSave;
-//		IRQ_HANDLER = (void (*)()) irqHandlerSave;
-		irqSet(IRQ_VBLANK, VBlankHandler);
-		REG_IE = intSave;
-
-		consolePrintf("ARM9 Waking from sleep mode\n");
-	}
-}
-
 void setShowCursor(bool enable) {
 	if ((s_currentGame) && (s_currentGame->control == CONT_SCUMM_SAMNMAX)) {
 		if (cursorEnable) {
@@ -1091,7 +1059,6 @@ void soundUpdate() {
 	if ((bufferFrame == 0)) {
 //		playSound(soundBuffer, (bufferSamples * 2), true);
 	}
-//	consolePrintf("%x\n", IPC->test);
 
 
 	if (bufferFrame == 0) {
@@ -1513,20 +1480,6 @@ void addEventsToQueue() {
 
 	if (system->isEventQueueEmpty()) {
 
-/*
-		if (getKeysDown() & KEY_L) {
-			tweak--;
-			consolePrintf("Tweak: %d\n", tweak);
-			IPC->tweakChanged = true;
-		}
-
-
-		if (getKeysDown() & KEY_R) {
-			tweak++;
-			consolePrintf("Tweak: %d\n", tweak);
-			IPC->tweakChanged = true;
-		}
-	*/
 		if ((keysHeld() & KEY_L) && (keysHeld() & KEY_R)) {
 			memoryReport();
 		}
@@ -2005,7 +1958,6 @@ void VBlankHandler(void) {
 	}
 */
 
-	IPC->tweak = tweak;
 	soundUpdate();
 
 
@@ -2410,8 +2362,6 @@ void initHardware() {
 	//consolePrintSet(0, 6);
 
 	//irqs are nice
-	irqInit();
-	irqInitHandler(OurIntrMain);
 	irqSet(IRQ_VBLANK, VBlankHandler);
 	irqSet(IRQ_TIMER0, timerTickHandler);
 	irqSet(IRQ_TIMER2, soundBufferEmptyHandler);
@@ -2489,9 +2439,10 @@ void penInit() {
 
 void penUpdate() {
 
-//	if (getKeysHeld() & KEY_L) consolePrintf("%d, %d   penX=%d, penY=%d tz=%d\n", IPC->touchXpx, IPC->touchYpx, penX, penY, IPC->touchZ1);
+	touchPosition touchPos;
+	touchRead(&touchPos);
 
-	bool penDownThisFrame = (!(IPC->buttons & 0x40)) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0);
+	bool penDownThisFrame = (keysCurrent() & KEY_TOUCH) && (touchPos.px > 0) && (touchPos.py > 0);
 	static bool moved = false;
 
 	if (( (tapScreenClicks) || getKeyboardEnable() ) && (getIsDisplayMode8Bit())) {
@@ -2533,9 +2484,10 @@ void penUpdate() {
 				if (penDownThisFrame) {
 					if (penDownFrames >= 2) {
 
-						if ((!keyboardEnable) || (!isInsideKeyboard(IPC->touchXpx, IPC->touchYpx))) {
-							int diffX = IPC->touchXpx - penDownX;
-							int diffY = IPC->touchYpx - penDownY;
+						touchRead(&touchPos);
+						if ((!keyboardEnable) || (!isInsideKeyboard(touchPos.px, touchPos.py))) {
+							int diffX = touchPos.px - penDownX;
+							int diffY = touchPos.py - penDownY;
 
 							int speed = ABS(diffX) + ABS(diffY);
 
@@ -2569,11 +2521,9 @@ void penUpdate() {
 									penY = 0;
 								}
 							}
-
-	//						consolePrintf("x: %d y: %d\n", IPC->touchYpx - penDownY, IPC->touchYpx - penDownY);
 						}
-						penDownX = IPC->touchXpx;
-						penDownY = IPC->touchYpx;
+						penDownX = touchPos.px;
+						penDownY = touchPos.py;
 
 					}
 				}
@@ -2585,8 +2535,9 @@ void penUpdate() {
 
 				// First frame, so save pen positions
 				if (penDownThisFrame) {
-					penDownX = IPC->touchXpx;
-					penDownY = IPC->touchYpx;
+					touchRead(&touchPos);
+					penDownX = touchPos.px;
+					penDownY = touchPos.py;
 				}
 			}
 		} else {
@@ -2610,17 +2561,19 @@ void penUpdate() {
 				penDown = false;
 			} else {
 				if (penDownFrames == 2) {
-					penDownX = IPC->touchXpx;
-					penDownY = IPC->touchYpx;
+					touchRead(&touchPos);
+					penDownX = touchPos.px;
+					penDownY = touchPos.py;
 				}
 				penDown = true;
 				penHeld = true;
 				penDownSaved = true;
 			}
 
-			if ((!(IPC->buttons & 0x40)) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0)) {
-				penX = IPC->touchXpx + touchXOffset;
-				penY = IPC->touchYpx + touchYOffset;
+			touchRead(&touchPos);
+			if ((keysCurrent() & KEY_TOUCH) && (touchPos.px > 0) && (touchPos.py > 0)) {
+				penX = touchPos.px + touchXOffset;
+				penY = touchPos.py + touchYOffset;
 				moved = true;
 			}
 
@@ -2640,7 +2593,7 @@ void penUpdate() {
 
 
 
-	if ((!(IPC->buttons & 0x40)) || ((penDownFrames == 2)) ) {
+	if ((keysCurrent() & KEY_TOUCH) || ((penDownFrames == 2)) ) {
 		penDownLastFrame = true;
 		penDownFrames++;
 	} else {
@@ -2821,26 +2774,6 @@ void debug_print_stub(char *string) {
 }
 #endif
 
-
-void powerOff() {
-	while (keysHeld() != 0) {		// Wait for all keys to be released.
-		swiWaitForVBlank();			// Allow you to read error before the power
-	}								// is turned off.
-
-	for (int r = 0; r < 60; r++) {
-		swiWaitForVBlank();
-	}
-
-	if (ConfMan.hasKey("disablepoweroff", "ds") && ConfMan.getBool("disablepoweroff", "ds")) {
-		while (true);
-	} else {
-
-		IPC->reset = true;				// Send message to ARM7 to turn power off
-		while (true) {
-			// Stop the program from continuing beyond this point
-		}
-	}
-}
 
 /////////////////
 // Main
@@ -3103,11 +3036,7 @@ int main(void) {
 	PluginManager::instance().addPluginProvider(new DSPluginProvider());
 #endif
 
-	while (1) {
-		scummvm_main(ARRAYSIZE(argv), (char **) &argv);
-		powerOff();
-	}
-
+	scummvm_main(ARRAYSIZE(argv), (char **) &argv);
 
 	return 0;
 }

@@ -21,7 +21,6 @@
  */
 
 #include <nds.h>
-#include "NDS/scummvm_ipc.h"
 #include "touchkeyboard.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"
@@ -468,11 +467,11 @@ void addKeyboardEvents() {
 	}
 
 	if (DS::getPenDown()) {
-		int x = IPC->touchXpx;
-		int y = IPC->touchYpx;
+		touchPosition touchPos;
+		touchRead(&touchPos);
 
-		int tx = (x >> 3);
-		int ty = (y >> 3);
+		int tx = (touchPos.px >> 3);
+		int ty = (touchPos.py >> 3);
 
 		if (ty >= 12) {
 			int current = -1;
