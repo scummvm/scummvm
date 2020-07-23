@@ -74,6 +74,10 @@ struct ScriptPatch {
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
+	{"warlock", kPlatformWindows, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
+			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
+				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
+
 
 	// Unbalanced 'end if' at the end of the script
 	{"jman", kPlatformWindows, "mmm/TSA RR 06", kScoreScript, 26,
