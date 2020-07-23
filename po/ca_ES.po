@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:34+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Andrea G <andreagswaterloo@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -911,7 +911,7 @@ msgstr "Velocitat del punter:"
 
 #: gui/options.cpp:1080 gui/options.cpp:1082 gui/options.cpp:1083
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Control de velocitat per teclat/joystick"
 
 #: gui/options.cpp:1082
 msgctxt "lowres"
