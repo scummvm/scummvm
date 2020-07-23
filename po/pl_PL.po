@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:42+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1411,6 +1411,7 @@ msgstr "Mo¿esz pobraæ pliki gry z twojego folderu ScummVM w chmurze:"
 #: gui/options.cpp:2103
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
+"Mo¿esz pobraæ pliki gry z twojego folderu ScummVM znajduj±cego siê w chmurze:"
 
 #: gui/options.cpp:2104
 msgid "Download game files"
@@ -1423,7 +1424,7 @@ msgstr "Otwiera okno dialogowe zarz±dzania pobieraniem"
 #: gui/options.cpp:2107
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
+msgstr "Aby zmieniæ konto przechowywania, roz³±cz i po³±cz ponownie:"
 
 #: gui/options.cpp:2109
 msgid "To change account for this storage, disconnect and connect again:"
@@ -1435,12 +1436,12 @@ msgstr "Roz³±cz"
 
 #: gui/options.cpp:2110
 msgid "Stop using this storage on this device"
-msgstr ""
+msgstr "Przestañ u¿ywaæ przechowywania na tym urz±dzeniu"
 
 #: gui/options.cpp:2113
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
-msgstr ""
+msgstr "Przechowywanie jest wy³±czone! Aby po³±czyæ,"
 
 #: gui/options.cpp:2115
 msgid "This storage is not connected yet! To connect,"
@@ -1524,7 +1525,7 @@ msgstr ""
 
 #: gui/options.cpp:2154
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Uruchom serwer aby zarz±dzaæ plikami ( w tej samej sieci)."
 
 #: gui/options.cpp:2155
 msgid "Closing options dialog will stop the server."
@@ -1833,7 +1834,7 @@ msgstr "U¿yj przycisku poni¿ej ¿eby skopiowaæ wymagan± informacje o grze."
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Mo¿esz równie¿ zg³osiæ swoj± grê do systemu ¶ledzenia b³êdów."
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
@@ -2391,12 +2392,10 @@ msgid "Quit"
 msgstr "Zakoñcz"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Globalny)"
+msgstr "Globalny"
 
 #: backends/events/default/default-events.cpp:296
-#, fuzzy
 msgid "Global Main Menu"
 msgstr "Menu globalne"
 
@@ -2405,14 +2404,12 @@ msgid "Display keyboard"
 msgstr "Wy¶wietl klawiaturê"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "W³±cz/wy³±cz przechwytywanie myszy"
+msgstr "Wycisz d¼wiêk"
 
 #: backends/events/default/default-events.cpp:336
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Debugger"
+msgstr "Otwórz Debugger"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2500,9 +2497,8 @@ msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:81
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Wycentrowany"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
@@ -2541,15 +2537,13 @@ msgstr "Wy³±czono korekcjê formatu obrazu"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:632
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2563
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Klikanie w³±czone"
+msgstr "Filtrowanie w³±czone"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:634
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2565
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Klikanie wy³±czone"
+msgstr "Filtrowanie wy³±czone"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:663
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2593
@@ -2592,10 +2586,9 @@ msgstr "W³±cz/wy³±cz przechwytywanie myszy"
 #: engines/wintermute/keymapper_tables.h:1258
 #: engines/wintermute/keymapper_tables.h:1289
 msgid "Save screenshot"
-msgstr ""
+msgstr "Zapisz zrzut ekranu"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "W³±cz/wy³±cz korekcjê formatu obrazu"
 
@@ -2610,14 +2603,12 @@ msgid "Cycle through stretch modes"
 msgstr "Nie uda³o siê prze³±czyæ w tryb wideo: '"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Zwiêksz / zmniejsz wspó³czynnik skalowania"
+msgstr "Zwiêksz wspó³czynnik skalowania"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Zwiêksz / zmniejsz wspó³czynnik skalowania"
+msgstr " Zmniejsz wspó³czynnik skalowania"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
