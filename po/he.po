@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-04-27 16:15+0000\n"
-"Last-Translator: Zvika <haramaty.zvika@gmail.com>\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 3.11\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Hebrew\n"
 
 #: gui/about.cpp:102
@@ -40,21 +40,18 @@ msgstr "הצגת קבצים נסתרים"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "הצגת קבצים שסומנו כנסתרים"
+msgstr "הצגת קבצים עם תכונת הסתרה"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
-#, fuzzy
 msgid "Go up"
 msgstr "תיקיה למעלה"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
-#, fuzzy
 msgid "Go to previous directory level"
 msgstr "חזרה אל התיקיה הקודמת"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
-#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
 msgstr "תיקיה למעלה"
@@ -124,7 +121,7 @@ msgstr "הסתרה"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "נראה כי החיבור שלך מוגבל. האם באמת להוריד קבצים?"
+msgstr "נראה כי החיבור מוגבל. האם להמשיך בהורדת קבצים?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -154,8 +151,7 @@ msgstr "ScummVM לא הצליח לפתוח את התיקייה שנבחרה!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
-"לא ניתן ליצור תיקייה להורדות - ישנו קובץ עם אותו שם בתוך התיקייה שנבחרה."
+msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו שם כבר קיים בתיקייה שנבחרה."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:351
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:38 gui/launcher.cpp:487
@@ -695,7 +691,7 @@ msgstr "ה~ו~ספת משחק..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "הוספת משחקים לרשימה"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
@@ -723,7 +719,6 @@ msgid "~A~dd Game..."
 msgstr "ה~ו~ספת משחק..."
 
 #: gui/launcher.cpp:167
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "הוספה המונית..."
@@ -1220,7 +1215,7 @@ msgstr "נגישות"
 
 #: gui/options.cpp:1835
 msgid "Apply"
-msgstr "החל"
+msgstr "החלת הגדרות"
 
 #: gui/options.cpp:1925
 msgid "FluidSynth Settings"
@@ -2979,13 +2974,12 @@ msgid "Snap to edges"
 msgstr "הצמד לקצוות"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "מתחים לחלון"
+msgstr "מתיחה"
 
 #: backends/platform/3ds/options-dialog.cpp:56
 msgid "Use Screen:"
-msgstr ""
+msgstr "שימוש במסך:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgctxt "3ds-screen"
@@ -3098,17 +3092,19 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "מצב זכוכית מגדלת אינו זמין בתפריטים."
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"מצב זכוכית מגדלת ניתן להפעלה רק\n"
+"כאשר שני המסכים פעילים."
 
 #: backends/platform/3ds/osystem-events.cpp:404
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "הפרדת משחק קטנה מכדי להפעיל זכוכית מגדלת."
 
 #: backends/platform/3ds/osystem-events.cpp:410
 msgid "Magnify Mode On. Switching to Hover Mode..."
