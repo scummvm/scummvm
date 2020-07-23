@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:25+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -1531,20 +1531,19 @@ msgstr "Spustit server pro správu souborù pomocí prohlí¾eèe (ve stejné síti)."
 
 #: gui/options.cpp:2155
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Zavøení dialogu mo¾ností zastaví server."
 
 #: gui/options.cpp:2167
 msgid "Use Text to speech"
-msgstr "Pou¾ít pøevod textu na øeè"
+msgstr "Pou¾ít Text ke ètení:"
 
 #: gui/options.cpp:2167
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "Bude èíst text GUI pøi najetí my¹i."
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
-msgstr "®ádné"
+msgstr "Prázdné"
 
 #: gui/options.cpp:2253
 msgid "Failed to change cloud storage!"
@@ -1599,9 +1598,8 @@ msgstr ""
 "Prosím pøejdìte na tuto stránku sami."
 
 #: gui/options.cpp:2574
-#, fuzzy
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr "Jiné úlo¾i¹tì je aktivní. Chcete ho pøeru¹it?"
+msgstr "Jiné úlo¾i¹tì právì pracuje. Chcete ho pøeru¹it?"
 
 #: gui/options.cpp:2583 gui/options.cpp:2621
 msgid "Wait until current Storage finishes up and try again."
@@ -1610,14 +1608,12 @@ msgstr ""
 "znova."
 
 #: gui/options.cpp:2596
-#, fuzzy
 msgid "Connecting..."
-msgstr "Pøipojit"
+msgstr "Pøipojování..."
 
 #: gui/options.cpp:2612
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Jiné úlo¾i¹tì je aktivní. Chcete ho pøeru¹it?"
+msgstr "Toto úlo¾i¹tì právì pracuje. Chcete ho pøeru¹it?"
 
 #: gui/options.cpp:2810 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -1632,19 +1628,16 @@ msgid "Stop local webserver"
 msgstr "Zastavit místní internetový server"
 
 #: gui/options.cpp:2972
-#, fuzzy
 msgid "Storage connected."
-msgstr "Prùvodce pøipojením k úlo¾i¹ti %s"
+msgstr "Úlo¾i¹tì pøipojeno."
 
 #: gui/options.cpp:2974
-#, fuzzy
 msgid "Failed to connect storage."
-msgstr "Nelze zmìnit cloudové úlo¾i¹tì!"
+msgstr "Pøipojení úlo¾i¹tì selhalo."
 
 #: gui/options.cpp:2976
-#, fuzzy
 msgid "Failed to connect storage: "
-msgstr "Nelze zmìnit cloudové úlo¾i¹tì!"
+msgstr "Pøipojení k úlo¾i¹ti selhalo:"
 
 #: gui/options.cpp:2996
 msgid ""
