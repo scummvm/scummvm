@@ -745,7 +745,7 @@ void LC::cb_v4theentitypush() {
 			break;
 		}
 	} else {
-		warning("cb_v4theentitypush: unhandled mapping 0x%02x 0x%02x", bank, firstArg);
+		warning("cb_v4theentitypush: BUILDBOT: unhandled mapping 0x%02x 0x%02x", bank, firstArg);
 	}
 
 	g_lingo->push(result);
