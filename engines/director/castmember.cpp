@@ -292,13 +292,6 @@ SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_type = kCastSound;
 	_audio = nullptr;
 	_looping = 0;
-
-	if (version == 4) {
-		for (int i = 0; i < 0xf; i++) {
-			stream.readByte();
-		}
-		_looping = stream.readByte() & 0x10 ? 0 : 1;
-	}
 }
 
 TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, bool asButton)
