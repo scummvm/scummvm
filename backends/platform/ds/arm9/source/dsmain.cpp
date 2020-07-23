@@ -73,8 +73,6 @@
 
 #include <nds.h>
 #include <nds/registers_alt.h>
-#include <nds/arm9/exceptions.h>
-#include <nds/arm9/console.h>
 #include <filesystem.h>
 
 #include <stdlib.h>
@@ -92,16 +90,9 @@
 #include "engines/engine.h"
 
 #include "backends/plugins/ds/ds-provider.h"
+#include "base/main.h"
 #include "base/version.h"
 #include "common/util.h"
-
-extern "C" void OurIntrMain(void);
-extern "C" u32 getExceptionAddress(u32 opcodeAddress, u32 thumbState);
-
-extern const char __itcm_start[];
-static const char *registerNames[] =
-	{	"r0","r1","r2","r3","r4","r5","r6","r7",
-		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc" };
 
 namespace DS {
 
@@ -267,8 +258,6 @@ static int triggeredIconTimeout = 0;
 
 static u16 savedPalEntry255 = RGB15(31, 31, 31);
 
-
-extern "C" int scummvm_main(int argc, char *argv[]);
 Common::EventType getKeyEvent(int key);
 int getKeysChanged();
 
@@ -1872,6 +1861,11 @@ void uploadSpriteGfx() {
 
 void initHardware() {
 	penInit();
+	indyFightState = false;
+	indyFightRight = true;
+
+	lastEventFrame = 0;
+	mouseMode = MOUSE_LEFT;
 
 	powerOn(POWER_ALL);
 	vramSetBankD(VRAM_D_SUB_SPRITE);
@@ -2285,123 +2279,26 @@ void fastRamReset() {
 	fastRamPointer = &fastRamData[0];
 }
 
+} // End of namespace DS
 
 /////////////////
 // Main
 /////////////////
 
+int main(int argc, char **argv) {
+#ifndef DISABLE_TEXT_CONSOLE
+	consoleDebugInit(DebugDevice_NOCASH);
+	nocashMessage("startup\n");
+#endif
 
+	DS::initHardware();
 
-void dsExceptionHandler() {
-	printf("Blue screen of death");
-	setExceptionHandler(NULL);
+	defaultExceptionHandler();
 
-	u32	currentMode = getCPSR() & 0x1f;
-	u32 thumbState = ((*(u32 *)0x027FFD90) & 0x20);
-
-	u32 codeAddress, exceptionAddress = 0;
-
-	int offset = 8;
-
-	if (currentMode == 0x17) {
-		printf("\x1b[10Cdata abort!\n\n");
-		codeAddress = exceptionRegisters[15] - offset;
-		if (	(codeAddress > 0x02000000 && codeAddress < 0x02400000) ||
-				(codeAddress > (u32)__itcm_start && codeAddress < (u32)(__itcm_start + 32768)) )
-			exceptionAddress = getExceptionAddress( codeAddress, thumbState);
-		else
-			exceptionAddress = codeAddress;
-
-	} else {
-		if (thumbState)
-			offset = 2;
-		else
-			offset = 4;
-		printf("\x1b[5Cundefined instruction!\n\n");
-		codeAddress = exceptionRegisters[15] - offset;
-		exceptionAddress = codeAddress;
-	}
-
-	printf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
-
-
-	int i;
-	for (i = 0; i < 8; i++) {
-		printf("  %s: %08X   %s: %08X\n",
-					registerNames[i], exceptionRegisters[i],
-					registerNames[i+8],exceptionRegisters[i+8]);
-	}
-
-	while(1)
-		;	// endles loop
-
-	u32 *stack = (u32 *)exceptionRegisters[13];
-
-
-	for (i = 0; i < 10; i++) {
-		printf("%08X %08X %08X\n", stack[i*3], stack[i*3+1], stack[(i*3)+2] );
-	}
-
-	memoryReport();
-
-	while(1);
-}
-
-
-
-
-int main(void) {
-
-	initHardware();
-
-	setExceptionHandler(dsExceptionHandler);
-
-	// Let arm9 read cartridge
-	*((u16 *) (0x04000204)) &= ~0x0080;
-
-	indyFightState = false;
-	indyFightRight = true;
-
-
-	lastEventFrame = 0;
-	mouseMode = MOUSE_LEFT;
-
-	//2372
 	printf("-------------------------------\n");
 	printf("ScummVM DS\n");
 	printf("Ported by Neil Millstone\n");
 	printf("Version %s ", gScummVMVersion);
-#if defined(DS_BUILD_A)
-	printf("build A\n");
-	printf("Lucasarts SCUMM games (SCUMM)\n");
-#elif defined(DS_BUILD_B)
-	printf("build B\n");
-	printf("BASS, QUEEN\n");
-#elif defined(DS_BUILD_C)
-	printf("build C\n");
-	printf("Simon/Elvira/Waxworks (AGOS)\n");
-#elif defined(DS_BUILD_D)
-	printf("build D\n");
-	printf("AGI, CINE, GOB\n");
-#elif defined(DS_BUILD_E)
-	printf("build E\n");
-	printf("Inherit the Earth (SAGA)\n");
-#elif defined(DS_BUILD_F)
-	printf("build F\n");
-	printf("The Legend of Kyrandia (KYRA)\n");
-#elif defined(DS_BUILD_G)
-	printf("build G\n");
-	printf("Lure of the Tempress (LURE)\n");
-#elif defined(DS_BUILD_H)
-	printf("build H\n");
-	printf("Nippon Safes (PARALLATION)\n");
-#elif defined(DS_BUILD_I)
-	printf("build I\n");
-	printf("Activision Games (MADE)\n");
-#elif defined(DS_BUILD_K)
-	printf("build K\n");
-	printf("Cruise for a Corpse (Cruise)\n");
-#endif
 	printf("-------------------------------\n");
 	printf("L/R + D-pad/pen:    Scroll view\n");
 	printf("D-pad left:   Left mouse button\n");
@@ -2414,72 +2311,27 @@ int main(void) {
 	printf("X:              Toggle keyboard\n");
 	printf("A:                 Swap screens\n");
 	printf("L+R (on start):      Clear SRAM\n");
-
-
-#if defined(DS_BUILD_A)
-	printf("For a complete key list see the\n");
-	printf("help screen.\n\n");
-#else
 	printf("\n");
-#endif
-
 
 	if (!nitroFSInit(NULL)) {
 		printf("nitroFSInit failure: terminating\n");
 		return(1);
 	}
 
-
-	updateStatus();
+	DS::updateStatus();
 
 	g_system = new OSystem_DS();
 	assert(g_system);
-
-#if defined(DS_BUILD_A)
-	const char *argv[] = {"/scummvmds"};
-#elif defined(DS_BUILD_B)
-	const char *argv[] = {"/scummvmds", "--config=scummvmb.ini"};
-#elif defined(DS_BUILD_C)
-	const char *argv[] = {"/scummvmds", "--config=scummvmc.ini"};
-#elif defined(DS_BUILD_D)
-	const char *argv[] = {"/scummvmds", "--config=scummvmd.ini"};
-#elif defined(DS_BUILD_E)
-	const char *argv[] = {"/scummvmds", "--config=scummvme.ini"};
-#elif defined(DS_BUILD_F)
-	const char *argv[] = {"/scummvmds", "--config=scummvmf.ini"};
-#elif defined(DS_BUILD_G)
-	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
-#elif defined(DS_BUILD_H)
-	const char *argv[] = {"/scummvmds", "--config=scummvmh.ini"};
-#elif defined(DS_BUILD_I)
-	const char *argv[] = {"/scummvmds", "--config=scummvmi.ini"};
-#elif defined(DS_BUILD_J)
-	const char *argv[] = {"/scummvmds", "--config=scummvmj.ini"};
-#elif defined(DS_BUILD_K)
-	const char *argv[] = {"/scummvmds", "--config=scummvmk.ini"};
-#else
-	// Use the default config file if no build was specified. This currently
-	// only happens with builds made using the regular ScummVM build system (as
-	// opposed to the nds specific build system).
-	const char *argv[] = {"/scummvmds"};
-#endif
 
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new DSPluginProvider());
 #endif
 
-	scummvm_main(ARRAYSIZE(argv), (char **) &argv);
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
 
-	return 0;
-}
+	// Free OSystem
+	g_system->destroy();
 
-} // End of namespace DS
-
-
-int main() {
-#ifndef DISABLE_TEXT_CONSOLE
-	consoleDebugInit(DebugDevice_NOCASH);
-	nocashMessage("startup\n");
-#endif
-	DS::main();
+	return res;
 }
