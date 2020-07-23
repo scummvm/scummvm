@@ -94,7 +94,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 	// So far, we have not many patches, so do linear lookup
 	while (patch->gameId) {
 		// First, we do cheap comparisons
-		if (patch->type != type || patch->id != id || patch->linenum != linenum) {
+		if (patch->type != type || patch->id != id || patch->linenum != linenum || patch->platform != _vm->getPlatform()) {
 			patch++;
 			continue;
 		}
@@ -114,7 +114,7 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 		}
 
 		// Now everything matched
-		debugC(1, kDebugParse, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
+		debugC(1, kDebugParse | kDebugPreprocess, "Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%d @ %d. \"%s\" -> \"%s\"",
 				patch->gameId, patch->movie, scriptType2str(type), id, linenum,
 				patch->orig, patch->replace);
 		return patch->replace;
