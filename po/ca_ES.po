@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -947,7 +947,7 @@ msgstr "Ombrejador HW:"
 
 #: gui/options.cpp:1193 gui/options.cpp:1195
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Diferents hardware shaders donen diferents efectes visuals"
 
 #: gui/options.cpp:1195
 msgctxt "lowres"
@@ -956,7 +956,7 @@ msgstr "Ombrejador HW:"
 
 #: gui/options.cpp:1196
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Diferents shaders donen diferents efectes visuals"
 
 #: gui/options.cpp:1216
 msgid "Graphics mode:"
@@ -984,7 +984,7 @@ msgstr "Filtres de gràfics"
 
 #: gui/options.cpp:1257
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Utilitza filtratge lineal quan s'escalin els gràfics"
 
 #: gui/options.cpp:1260
 msgid "Aspect ratio correction"
@@ -1011,7 +1011,6 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Especifica el dispositiu de so o l'emulador de tarja de so de sortida"
 
 #: gui/options.cpp:1270
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Disp. preferit:"
@@ -1030,7 +1029,6 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib s'utilitza per la música de molts jocs"
 
 #: gui/options.cpp:1311
-#, fuzzy
 msgid "GM device:"
 msgstr "Dispositiu GM:"
 
@@ -1100,7 +1098,6 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 real (sense emulació GM)"
 
 #: gui/options.cpp:1376
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Dispositiu Roland GS (activar conversió MT-32)"
 
@@ -1109,6 +1106,8 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Comprova si vols activar conversió de patch per emular MT-32 en un "
+"dispositiu Roland GS"
 
 #: gui/options.cpp:1385
 msgid "Don't use Roland MT-32 music"
@@ -1216,25 +1215,25 @@ msgstr "Núvol"
 
 #: gui/options.cpp:1813
 msgid "LAN"
-msgstr ""
+msgstr "Xarxa Local"
 
 #: gui/options.cpp:1815
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "Xarxa Local"
 
 #: gui/options.cpp:1823
 msgid "Accessibility"
-msgstr ""
+msgstr "Accessibilitat"
 
 #: gui/options.cpp:1825
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Accessibilitat"
 
 #: gui/options.cpp:1835
 msgid "Apply"
-msgstr ""
+msgstr "Aplicar"
 
 #: gui/options.cpp:1925
 msgid "FluidSynth Settings"
