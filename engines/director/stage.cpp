@@ -280,10 +280,13 @@ void Stage::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, c
 
 	for (int i = 0, scaleYCtr = 0; i < pd->destRect.height(); i++, scaleYCtr += scaleY, pd->srcPoint.y++) {
 		pd->srcPoint.x = MAX(abs(srcRect.left - pd->destRect.left), 0);
+		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 		for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
+			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
 			inkDrawPixel(pd->destRect.left + xCtr, pd->destRect.top + i,
 									 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
+			}
 		}
 	}
 }
