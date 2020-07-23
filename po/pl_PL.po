@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:39+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1401,12 +1401,12 @@ msgstr "Zsynchronizuj teraz"
 
 #: gui/options.cpp:2098
 msgid "Start saved games sync"
-msgstr "Zsynchronizuj zapisane gry"
+msgstr "Rozpocznij synchronizacjê zapisanych gier."
 
 #: gui/options.cpp:2101
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
+msgstr "Mo¿esz pobraæ pliki gry z twojego folderu ScummVM w chmurze."
 
 #: gui/options.cpp:2103
 msgid "You can download game files from your cloud ScummVM folder:"
