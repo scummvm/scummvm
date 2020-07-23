@@ -63,7 +63,6 @@ protected:
 	GUI::CheckboxWidget *_150PercentCheckbox;
 	GUI::CheckboxWidget *_200PercentCheckbox;
 	GUI::CheckboxWidget *_indyFightCheckbox;
-	GUI::CheckboxWidget *_highQualityAudioCheckbox;
 	GUI::CheckboxWidget *_disablePowerOff;
 	GUI::CheckboxWidget *_showCursorCheckbox;
 	GUI::CheckboxWidget *_snapToBorderCheckbox;

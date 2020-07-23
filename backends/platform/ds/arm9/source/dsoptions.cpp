@@ -118,7 +118,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab->addTab(_("General"), "");
 
-	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, _("High quality audio (slower) (reboot)"), U32String(), 0, 'T');
 	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, _("Disable power off"), U32String(), 0, 'T');
 
 	_tab->setActiveTab(0);
@@ -172,7 +171,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_gammaCorrection->setValue(0);
 	}
 
-	_highQualityAudioCheckbox->setState(confGetBool("22khzaudio", false));
 	_disablePowerOff->setState(confGetBool("disablepoweroff", false));
 
     #ifdef ALLOW_CPU_SCALER
@@ -208,7 +206,6 @@ DSOptionsDialog::~DSOptionsDialog() {
 void DSOptionsDialog::updateConfigManager() {
 	ConfMan.setBool("lefthanded", _leftHandedCheckbox->getState(), "ds");
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
-	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
 #ifdef ALLOW_CPU_SCALER
 	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");

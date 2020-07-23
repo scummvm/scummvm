@@ -69,7 +69,6 @@ protected:
 	int _gammaValue;
 
 public:
-	typedef void (*SoundProc)(byte *buf, int len);
 	typedef int  (*TimerProc)(int interval);
 
 	OSystem_DS();
@@ -137,7 +136,6 @@ public:
 	virtual void unlockScreen();
 
 	virtual Audio::Mixer *getMixer() { return _mixer; }
-	Audio::MixerImpl *getMixerImpl() { return _mixer; }
 
 	static int timerHandler(int t);
 

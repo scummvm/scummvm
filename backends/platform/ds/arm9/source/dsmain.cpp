@@ -80,7 +80,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "NDS/scummvm_ipc.h"
 #include "dsmain.h"
 #include "osystem_ds.h"
 #include "icons_raw.h"
@@ -144,25 +143,10 @@ static int subScreenHeight = SCUMM_GAME_HEIGHT;
 static int subScreenScale = 256;
 
 
-
-// Sound
-static int bufferSize;
-static s16 *soundBuffer;
-static int bufferFrame;
-static int bufferRate;
-static int bufferSamples;
-static bool soundHiPart;
-static int soundFrequency;
-
 // Events
 static int lastEventFrame;
 static bool indyFightState;
 static bool indyFightRight;
-
-static OSystem_DS::SoundProc soundCallback;
-static int lastCallbackFrame;
-static bool bufferFirstHalf;
-static bool bufferSecondHalf;
 
 // Saved buffers
 static bool highBuffer;
@@ -185,7 +169,6 @@ static int storedMouseY = 0;
 // Sprites
 static SpriteEntry sprites[128];
 static SpriteEntry spritesMain[128];
-static int tweak;
 
 // Shake
 static int s_shakeXOffset = 0;
@@ -295,8 +278,6 @@ void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
 void uploadSpriteGfx();
 
-static TransferSound soundControl;
-
 static bool isScrollingWithDPad() {
 	return (getKeysHeld() & (KEY_L | KEY_R)) != 0;
 }
@@ -337,31 +318,6 @@ void setTopScreenZoom(int percentage) {
 
 controlType getControlType() {
 	return s_currentGame->control;
-}
-
-
-//plays an 8 bit mono sample at 11025Hz
-void playSound(const void *data, u32 length, bool loop, bool adpcm, int rate) {
-
-	if (!IPC->soundData) {
-		soundControl.count = 0;
-	}
-
-	soundControl.data[soundControl.count].data   = data;
-	soundControl.data[soundControl.count].len    = length | (loop ? 0x80000000 : 0x00000000);
-	soundControl.data[soundControl.count].rate   = rate; // 367 samples per frame
-	soundControl.data[soundControl.count].pan    = 64;
-	soundControl.data[soundControl.count].vol    = 127;
-	soundControl.data[soundControl.count].format = adpcm ? 2 : 0;
-
-	soundControl.count++;
-
-	DC_FlushAll();
-	IPC->soundData = &soundControl;
-}
-
-void stopSound(int channel) {
-	playSound(NULL, 0, false, false, -channel);
 }
 
 void updateOAM() {
@@ -417,44 +373,6 @@ void saveGameBackBuffer() {
 
 	OSystem_DS::instance()->lockScreen();
 	OSystem_DS::instance()->unlockScreen();
-}
-
-
-
-void startSound(int freq, int buffer) {
-	bufferRate = freq * 2;
-	bufferFrame = 0;
-	bufferSamples = 4096;
-
-	bufferFirstHalf = false;
-	bufferSecondHalf = true;
-
-	int bytes = (2 * (bufferSamples)) + 100;
-
-	soundBuffer = (s16 *) malloc(bytes * 2);
-	if (!soundBuffer)
-		consolePrintf("Sound buffer alloc failed\n");
-
-
-	soundHiPart = true;
-
-	for (int r = 0; r < bytes; r++) {
-		soundBuffer[r] = 0;
-	}
-
-	soundFrequency = freq;
-
-
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	playSound(soundBuffer, (bufferSamples * 2), true, false, freq * 2);
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-	swiWaitForVBlank();
-}
-
-int getSoundFrequency() {
-	return soundFrequency;
 }
 
 void exitGame() {
@@ -889,51 +807,12 @@ u16 *get8BitBackBuffer() {
 		return BG_GFX + 0x10000;		// 16bit qty!
 }
 
-// The sound system in ScummVM seems to always return stereo interleaved samples.
-// Here, I'm treating an 11Khz stereo stream as a 22Khz mono stream, which works sorta ok, but is
-// a horrible bodge.  Any advice on how to change the engine to output mono would be greatly
-// appreciated.
-void doSoundCallback() {
-	#ifdef HEAVY_LOGGING
-	consolePrintf("doSoundCallback...");
-	#endif
-
-	if (OSystem_DS::instance())
-	if (OSystem_DS::instance()->getMixerImpl()) {
-		lastCallbackFrame = frameCount;
-
-		for (int r = IPC->playingSection; r < IPC->playingSection + 4; r++) {
-			int chunk = r & 3;
-
-			if (IPC->fillNeeded[chunk]) {
-				IPC->fillNeeded[chunk] = false;
-				DC_FlushAll();
-				OSystem_DS::instance()->getMixerImpl()->mixCallback((byte *) (soundBuffer + ((bufferSamples >> 2) * chunk)), bufferSamples >> 1);
-				IPC->fillNeeded[chunk] = false;
-				DC_FlushAll();
-			}
-
-		}
-
-	}
-	#ifdef HEAVY_LOGGING
-	consolePrintf("done\n");
-	#endif
-}
-
 void doTimerCallback() {
 	if (callback) {
 		if (callbackTimer <= 0) {
 			callbackTimer += callbackInterval;
 			callback(callbackInterval);
 		}
-	}
-}
-
-void soundUpdate() {
-	bufferFrame++;
-	if (bufferFrame == bufferSize) {
-		bufferFrame = 0;
 	}
 }
 
@@ -1649,19 +1528,6 @@ void updateStatus() {
 
 }
 
-void soundBufferEmptyHandler() {
-	REG_IF = IRQ_TIMER2;
-
-// TIMER0
-	if ((callback) && (callbackTimer > 0)) {
-		callbackTimer--;
-	}
-	currentTimeMillis++;
-// TIMER0 end
-
-	soundHiPart = !soundHiPart;
-}
-
 void setMainScreenScroll(int x, int y) {
 		BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
 		BG3_CY = y;
@@ -1715,9 +1581,6 @@ void setZoomedScreenScale(int x, int y) {
 }
 
 void VBlankHandler(void) {
-	soundUpdate();
-
-
 	if ((!gameScreenSwap) && !isScrollingWithDPad()) {
 		if (s_currentGame) {
 			if (s_currentGame->control != CONT_SCUMM_SAMNMAX) {
@@ -2051,7 +1914,6 @@ void initHardware() {
 	//irqs are nice
 	irqSet(IRQ_VBLANK, VBlankHandler);
 	irqSet(IRQ_TIMER0, timerTickHandler);
-	irqSet(IRQ_TIMER2, soundBufferEmptyHandler);
 
 	irqEnable(IRQ_VBLANK);
 	irqEnable(IRQ_TIMER0);
@@ -2490,17 +2352,12 @@ void dsExceptionHandler() {
 
 int main(void) {
 
-	soundCallback = NULL;
-
 	initHardware();
 
 	setExceptionHandler(dsExceptionHandler);
 
 	// Let arm9 read cartridge
 	*((u16 *) (0x04000204)) &= ~0x0080;
-
-	lastCallbackFrame = 0;
-	tweak = 0;
 
 	indyFightState = false;
 	indyFightRight = true;
@@ -2577,8 +2434,6 @@ int main(void) {
 
 	g_system = new OSystem_DS();
 	assert(g_system);
-
-	IPC->adpcm.semaphore = false;
 
 #if defined(DS_BUILD_A)
 	const char *argv[] = {"/scummvmds"};
