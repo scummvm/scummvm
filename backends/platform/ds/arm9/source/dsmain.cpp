@@ -383,7 +383,7 @@ void initGame() {
 	// This is a good time to check for left handed mode since the mode change is done as the game starts.
 	// There's probably a better way, but hey.
 	#ifdef HEAVY_LOGGING
-	consolePrintf("initing game...");
+	printf("initing game...");
 	#endif
 
 	setOptions();
@@ -402,7 +402,7 @@ void initGame() {
 	}
 
 	#ifdef HEAVY_LOGGING
-	consolePrintf("done\n");
+	printf("done\n");
 	#endif
 
 }
@@ -434,7 +434,7 @@ void setUnscaledMode(bool enable) {
 void displayMode8Bit() {
 
 #ifdef HEAVY_LOGGING
-	consolePrintf("displayMode8Bit...");
+	printf("displayMode8Bit...");
 #endif
 	u16 buffer[32 * 32];
 
@@ -508,7 +508,7 @@ void displayMode8Bit() {
 	videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 
 	// Move the cursor to the bottom of the screen using ANSI escape code
-	consolePrintf("\033[23;0f");
+	printf("\033[23;0f");
 
 
 	for (int r = 0; r < 32 * 32; r++) {
@@ -521,7 +521,7 @@ void displayMode8Bit() {
 	}
 
 	#ifdef HEAVY_LOGGING
-	consolePrintf("done\n");
+	printf("done\n");
 	#endif
 
 	if (gameScreenSwap) {
@@ -649,7 +649,7 @@ void setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, 
 
 void displayMode16Bit() {
 	#ifdef HEAVY_LOGGING
-	consolePrintf("displayMode16Bit...");
+	printf("displayMode16Bit...");
 	#endif
 
 	u16 buffer[32 * 32 * 2];
@@ -716,7 +716,7 @@ void displayMode16Bit() {
 	BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	#ifdef HEAVY_LOGGING
-	consolePrintf("done\n");
+	printf("done\n");
 	#endif
 
 	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
@@ -726,7 +726,7 @@ void displayMode16Bit() {
 
 void displayMode16BitFlipBuffer() {
 	#ifdef HEAVY_LOGGING
-	consolePrintf("Flip %s...", displayModeIs8Bit ? "8bpp" : "16bpp");
+	printf("Flip %s...", displayModeIs8Bit ? "8bpp" : "16bpp");
 	#endif
 	if (!displayModeIs8Bit) {
 		u16 *back = get16BitBackBuffer();
@@ -770,7 +770,7 @@ void displayMode16BitFlipBuffer() {
 		#endif
 	}
 	#ifdef HEAVY_LOGGING
-	consolePrintf("done\n");
+	printf("done\n");
 	#endif
 }
 
@@ -836,7 +836,7 @@ void memoryReport() {
 		free(block[q]);
 	}
 
-	consolePrintf("Free: %dK, Largest: %dK\n", t * 4, r * 8);
+	printf("Free: %dK, Largest: %dK\n", t * 4, r * 8);
 }
 
 
@@ -1186,7 +1186,7 @@ void doButtonSelectMode(OSystem_DS *system) {
 
 void addEventsToQueue() {
 	#ifdef HEAVY_LOGGING
-	consolePrintf("addEventsToQueue\n");
+	printf("addEventsToQueue\n");
 	#endif
 	OSystem_DS *system = OSystem_DS::instance();
 	Common::Event event;
@@ -1225,7 +1225,7 @@ void addEventsToQueue() {
 
 			if ((!getIndyFightState()) && (getKeysDown() & KEY_Y)) {
 				consoleEnable = !consoleEnable;
-				consolePrintf("Console enable: %d\n", consoleEnable);
+				printf("Console enable: %d\n", consoleEnable);
 				if (displayModeIs8Bit) {
 					displayMode8Bit();
 				} else {
@@ -1347,7 +1347,7 @@ void addEventsToQueue() {
 				if (s_currentGame->control == CONT_AGI) {
 					// Extra controls for Leisure Suit Larry and KQ4
 					if ((getKeysHeld() & KEY_UP) && (getKeysHeld() & KEY_START)) {
-						consolePrintf("Cheat key!\n");
+						printf("Cheat key!\n");
 						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = (Common::KeyCode)'X';		// Skip age test in LSL
 						event.kbd.ascii = 'X';
@@ -1920,14 +1920,14 @@ void initHardware() {
 
 	// Set up a millisecond timer
 	#ifdef HEAVY_LOGGING
-	consolePrintf("Setting up timer...");
+	printf("Setting up timer...");
 	#endif
 	TIMER0_CR = 0;
 	TIMER0_DATA = (u32) TIMER_FREQ(1000);
 	TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;
 	REG_IME = 1;
 	#ifdef HEAVY_LOGGING
-	consolePrintf("done\n");
+	printf("done\n");
 	#endif
 
 	BG_PALETTE[255] = RGB15(0,0,31);
@@ -2275,7 +2275,7 @@ void *fastRamAlloc(int size) {
 	void *result = (void *) fastRamPointer;
 	fastRamPointer += size;
 	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
-		consolePrintf("FastRam (ITCM) allocation failed!\n");
+		printf("FastRam (ITCM) allocation failed!\n");
 		return malloc(size);
 	}
 	return result;
@@ -2293,7 +2293,7 @@ void fastRamReset() {
 
 
 void dsExceptionHandler() {
-	consolePrintf("Blue screen of death");
+	printf("Blue screen of death");
 	setExceptionHandler(NULL);
 
 	u32	currentMode = getCPSR() & 0x1f;
@@ -2304,7 +2304,7 @@ void dsExceptionHandler() {
 	int offset = 8;
 
 	if (currentMode == 0x17) {
-		consolePrintf("\x1b[10Cdata abort!\n\n");
+		printf("\x1b[10Cdata abort!\n\n");
 		codeAddress = exceptionRegisters[15] - offset;
 		if (	(codeAddress > 0x02000000 && codeAddress < 0x02400000) ||
 				(codeAddress > (u32)__itcm_start && codeAddress < (u32)(__itcm_start + 32768)) )
@@ -2317,17 +2317,17 @@ void dsExceptionHandler() {
 			offset = 2;
 		else
 			offset = 4;
-		consolePrintf("\x1b[5Cundefined instruction!\n\n");
+		printf("\x1b[5Cundefined instruction!\n\n");
 		codeAddress = exceptionRegisters[15] - offset;
 		exceptionAddress = codeAddress;
 	}
 
-	consolePrintf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
+	printf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
 
 
 	int i;
 	for (i = 0; i < 8; i++) {
-		consolePrintf("  %s: %08X   %s: %08X\n",
+		printf("  %s: %08X   %s: %08X\n",
 					registerNames[i], exceptionRegisters[i],
 					registerNames[i+8],exceptionRegisters[i+8]);
 	}
@@ -2339,7 +2339,7 @@ void dsExceptionHandler() {
 
 
 	for (i = 0; i < 10; i++) {
-		consolePrintf("%08X %08X %08X\n", stack[i*3], stack[i*3+1], stack[(i*3)+2] );
+		printf("%08X %08X %08X\n", stack[i*3], stack[i*3+1], stack[(i*3)+2] );
 	}
 
 	memoryReport();
@@ -2367,65 +2367,65 @@ int main(void) {
 	mouseMode = MOUSE_LEFT;
 
 	//2372
-	consolePrintf("-------------------------------\n");
-	consolePrintf("ScummVM DS\n");
-	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version %s ", gScummVMVersion);
+	printf("-------------------------------\n");
+	printf("ScummVM DS\n");
+	printf("Ported by Neil Millstone\n");
+	printf("Version %s ", gScummVMVersion);
 #if defined(DS_BUILD_A)
-	consolePrintf("build A\n");
-	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
+	printf("build A\n");
+	printf("Lucasarts SCUMM games (SCUMM)\n");
 #elif defined(DS_BUILD_B)
-	consolePrintf("build B\n");
-	consolePrintf("BASS, QUEEN\n");
+	printf("build B\n");
+	printf("BASS, QUEEN\n");
 #elif defined(DS_BUILD_C)
-	consolePrintf("build C\n");
-	consolePrintf("Simon/Elvira/Waxworks (AGOS)\n");
+	printf("build C\n");
+	printf("Simon/Elvira/Waxworks (AGOS)\n");
 #elif defined(DS_BUILD_D)
-	consolePrintf("build D\n");
-	consolePrintf("AGI, CINE, GOB\n");
+	printf("build D\n");
+	printf("AGI, CINE, GOB\n");
 #elif defined(DS_BUILD_E)
-	consolePrintf("build E\n");
-	consolePrintf("Inherit the Earth (SAGA)\n");
+	printf("build E\n");
+	printf("Inherit the Earth (SAGA)\n");
 #elif defined(DS_BUILD_F)
-	consolePrintf("build F\n");
-	consolePrintf("The Legend of Kyrandia (KYRA)\n");
+	printf("build F\n");
+	printf("The Legend of Kyrandia (KYRA)\n");
 #elif defined(DS_BUILD_G)
-	consolePrintf("build G\n");
-	consolePrintf("Lure of the Tempress (LURE)\n");
+	printf("build G\n");
+	printf("Lure of the Tempress (LURE)\n");
 #elif defined(DS_BUILD_H)
-	consolePrintf("build H\n");
-	consolePrintf("Nippon Safes (PARALLATION)\n");
+	printf("build H\n");
+	printf("Nippon Safes (PARALLATION)\n");
 #elif defined(DS_BUILD_I)
-	consolePrintf("build I\n");
-	consolePrintf("Activision Games (MADE)\n");
+	printf("build I\n");
+	printf("Activision Games (MADE)\n");
 #elif defined(DS_BUILD_K)
-	consolePrintf("build K\n");
-	consolePrintf("Cruise for a Corpse (Cruise)\n");
+	printf("build K\n");
+	printf("Cruise for a Corpse (Cruise)\n");
 #endif
-	consolePrintf("-------------------------------\n");
-	consolePrintf("L/R + D-pad/pen:    Scroll view\n");
-	consolePrintf("D-pad left:   Left mouse button\n");
-	consolePrintf("D-pad right: Right mouse button\n");
-	consolePrintf("D-pad up:           Hover mouse\n");
-	consolePrintf("B button:        Skip cutscenes\n");
-	consolePrintf("Select:         DS Options menu\n");
-	consolePrintf("Start:   Game menu (some games)\n");
-	consolePrintf("Y (in game):     Toggle console\n");
-	consolePrintf("X:              Toggle keyboard\n");
-	consolePrintf("A:                 Swap screens\n");
-	consolePrintf("L+R (on start):      Clear SRAM\n");
+	printf("-------------------------------\n");
+	printf("L/R + D-pad/pen:    Scroll view\n");
+	printf("D-pad left:   Left mouse button\n");
+	printf("D-pad right: Right mouse button\n");
+	printf("D-pad up:           Hover mouse\n");
+	printf("B button:        Skip cutscenes\n");
+	printf("Select:         DS Options menu\n");
+	printf("Start:   Game menu (some games)\n");
+	printf("Y (in game):     Toggle console\n");
+	printf("X:              Toggle keyboard\n");
+	printf("A:                 Swap screens\n");
+	printf("L+R (on start):      Clear SRAM\n");
 
 
 #if defined(DS_BUILD_A)
-	consolePrintf("For a complete key list see the\n");
-	consolePrintf("help screen.\n\n");
+	printf("For a complete key list see the\n");
+	printf("help screen.\n\n");
 #else
-	consolePrintf("\n");
+	printf("\n");
 #endif
 
 
 	if (!nitroFSInit(NULL)) {
-		consolePrintf("nitroFSInit failure: terminating\n");
+		printf("nitroFSInit failure: terminating\n");
 		return(1);
 	}
 
@@ -2482,12 +2482,4 @@ int main() {
 	nocashMessage("startup\n");
 #endif
 	DS::main();
-}
-
-
-extern "C" void consolePrintf(const char * format, ...) {
-	va_list args;
-	va_start(args, format);
-	vprintf(format, args);
-	va_end(args);
 }
