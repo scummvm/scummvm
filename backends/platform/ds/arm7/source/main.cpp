@@ -26,8 +26,6 @@
 // -- modified by Darkain and others
 //////////////////////////////////////////////////////////////////////
 
-// #define USE_LIBCARTRESET
-
 #include <nds.h>
 
 #include <bios.h>
@@ -44,8 +42,6 @@
 #include <dswifi7.h>
 #endif
 
-#include "cartreset_nolibfat.h"
-
 vu8 *soundData;
 
 vu8 *soundBuffer;
@@ -58,25 +54,7 @@ int temp;
 
 int adpcmBufferNum = 0;
 
-/*
-void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, u8 vol = 0x7F, u8 pan = 63, u8 format = 0) {
-	SCHANNEL_TIMER(channel)  = SOUND_FREQ(sampleRate);
-	SCHANNEL_SOURCE(channel) = (uint32)data;
-	SCHANNEL_LENGTH(channel) = bytes;
-	SCHANNEL_CR(channel)     = SOUND_ENABLE | SOUND_ONE_SHOT | SOUND_VOL(vol) | SOUND_PAN(pan) | (format==1?SOUND_8BIT:SOUND_16BIT);
-}
-
 s8 getFreeSoundChannel() {
-	for (int i = 0; i < 16; i++) {
-		if ( (SCHANNEL_CR(i) & SOUND_ENABLE) == 0 )
-			return i;
-	}
-	return -1;
-}
-*/
-
-s8 getFreeSoundChannel() {
-	// return 0;
 	for (int i = 0; i < 16; i++) {
 		if ( (SCHANNEL_CR(i) & SCHANNEL_ENABLE) == 0 )
 			return i;
@@ -85,22 +63,12 @@ s8 getFreeSoundChannel() {
 }
 
 void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, u8 vol = 0x7F, u8 pan = 63, u8 format = 0) {
-	// REG_IME = IME_DISABLE;
-
 	channel = getFreeSoundChannel();
-	/*
-	if (format == 2) {
-		channel = 1;
-	} else {
-		channel = 0;
-	}
-	*/
 
 	if (channel > 1)
 		channel = 1;
 
 	bytes &= ~7; // Multiple of 4 bytes!
-	// bytes += 4;
 
 	SCHANNEL_CR(channel) = 0;
 	SCHANNEL_TIMER(channel)  = SOUND_FREQ(sampleRate);
@@ -119,22 +87,21 @@ void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, 
 	switch (format) {
 	case 1: {
 		flags |= SOUND_FORMAT_8BIT;
-		flags |= SOUND_REPEAT; // | (1 << 15);
+		flags |= SOUND_REPEAT;
 		break;
 	}
 
 	case 0: {
 		flags |= SOUND_FORMAT_16BIT;
-		flags |= SOUND_REPEAT; // | (1 << 15);
+		flags |= SOUND_REPEAT;
 		break;
 	}
 
 	case 2: {
 		flags |= SOUND_FORMAT_ADPCM;
-		flags |= SOUND_ONE_SHOT; // | (1 << 15);
+		flags |= SOUND_ONE_SHOT;
 
 		SCHANNEL_SOURCE(channel) = (unsigned int)IPC->adpcm.buffer[0];
-		// bytes += 32;
 		SCHANNEL_LENGTH(channel) = ((bytes + 4) & 0x7FFFFFFF) >> 2;
 
 		SCHANNEL_CR(channel + 1) = 0;
@@ -148,13 +115,6 @@ void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, 
 		break;
 	}
 	}
-
-	/*
-	if (bytes & 0x80000000) {
-		flags |= SOUND_REPEAT;
-	} else {
-	}
-	*/
 
 	soundData = (vu8 *)data;
 
@@ -188,18 +148,8 @@ void startSound(int sampleRate, const void *data, uint32 bytes, u8 channel = 0, 
 		TIMER3_DATA = 65536 - ((bytes & 0x7FFFFFFF) >> 3); // Trigger four times during the length of the buffer
 		TIMER3_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_CASCADE;
 
-		for (int r = 0; r < 4; r++) {
-			// IPC->streamFillNeeded[r] = true;
-		}
-
 		IPC->streamPlayingSection = 0;
 	}
-
-	// IPC->fillSoundFirstHalf = true;
-	// IPC->fillSoundSecondHalf = true;
-	// soundFirstHalf = true;
-
-	// REG_IME = IME_ENABLE;
 }
 
 void stopSound(int chan) {
@@ -211,36 +161,12 @@ void InterruptTimer1() {
 	soundFilled[playingSection] = false;
 
 	if (playingSection == 3) {
-		// IME = IME_DISABLED;
-
-		// while (SCHANNEL_CR(0) & SCHANNEL_ENABLE) {
-		// }
-		// SCHANNEL_CR(0) &= ~SCHANNEL_ENABLE;
-
-		// SCHANNEL_CR(0) |= SCHANNEL_ENABLE;
-		// TIMER1_CR = 0;
-		// TIMER1_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_CASCADE;
-
 		playingSection = 0;
-
-		// IME = IME_ENABLED;
 	} else {
 		playingSection++;
 	}
 
 	IPC->playingSection = playingSection;
-
-/*	for (int r = 0; r < 4; r++) {
-		//if ((!soundFilled[r]) && (!IPC->fillNeeded[playingSection])) {
-			memcpy((void *) (soundBuffer + (r * 1024)), (void *) (arm9Buffer + (r * 1024)), 1024);
-
-			vu16 *p = (vu16 *) (soundBuffer);
-			//for (int t = 0; t < 2048; t++) {
-		//		*(p + t) = (t & 1)? 0xF000: 0x0000;
-			//}
-			soundFilled[r] = true;
-		//}
-	}*/
 }
 
 void InterruptTimer3() {
@@ -274,10 +200,6 @@ void VblankHandler() {
 			}
 		}
 	}
-
-#ifdef USE_DEBUGGER
-	Wifi_Update(); // update wireless in vblank
-#endif
 }
 
 //---------------------------------------------------------------------------------
@@ -294,67 +216,8 @@ void powerButtonCB() {
 	exitflag = true;
 }
 
-#ifdef USE_DEBUGGER
-// callback to allow wifi library to notify arm9
-void arm7_synctoarm9() { // send fifo message
-	REG_IPC_FIFO_TX = 0x87654321;
-}
-
-// interrupt handler to allow incoming notifications from arm9
-void arm7_fifo() { // check incoming fifo messages
-	u32 msg = REG_IPC_FIFO_RX;
-	if (msg == 0x87654321)
-		Wifi_Sync();
-}
-
-void initDebugger() {
-	// set up the wifi irq
-	irqSet(IRQ_WIFI, Wifi_Interrupt); // set up wifi interrupt
-	irqEnable(IRQ_WIFI);
-
-	// get them talking together
-
-	// sync with arm9 and init wifi
-	u32 fifo_temp;
-
-	while (1) { // wait for magic number
-		while (REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
-			swiWaitForVBlank();
-
-		fifo_temp = REG_IPC_FIFO_RX;
-
-		if (fifo_temp == 0x12345678)
-			break;
-	}
-
-	while (REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY)
-		swiWaitForVBlank();
-
-	fifo_temp = REG_IPC_FIFO_RX; // give next value to wifi_init
-	Wifi_Init(fifo_temp);
-
-	irqSet(IRQ_FIFO_NOT_EMPTY,arm7_fifo); // set up fifo irq
-	irqEnable(IRQ_FIFO_NOT_EMPTY);
-	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
-
-	Wifi_SetSyncHandler(arm7_synctoarm9); // allow wifi lib to notify arm9
-	// arm7 wifi init complete
-}
-#endif
-
-#ifdef USE_LIBCARTRESET
-void reboot() {
-	cartExecute();
-}
-#endif
-
 int main(int argc, char ** argv) {
-#ifdef USE_DEBUGGER
-	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
-#endif
-
 	// enable sound
-	// powerOn(POWER_SOUND);
 	SOUND_CR = SOUND_ENABLE | SOUND_VOL(0x7F);
 	IPC->soundData = 0;
 
@@ -395,19 +258,6 @@ int main(int argc, char ** argv) {
 	irqSet(IRQ_TIMER3, InterruptTimer3);
 	irqEnable(IRQ_TIMER3);
 
-	/*
-	REG_IME = 0;
-	IRQ_HANDLER = &InterruptHandler;
-	REG_IE = IRQ_VBLANK | IRQ_TIMER1 | IRQ_TIMER3;
-	REG_IF = ~0;
-	DISP_SR = DISP_VBLANK_IRQ;
-	REG_IME = 1;
-	*/
-
-#ifdef USE_DEBUGGER
-	initDebugger();
-#endif
-
 	setPowerButtonCB(powerButtonCB);
 
 	// Keep the ARM7 mostly idle
@@ -415,11 +265,6 @@ int main(int argc, char ** argv) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-#ifdef USE_LIBCARTRESET
-		if (passmeloopQuery()) {
-			reboot();
-		}
-#endif
 
 		swiWaitForVBlank();
 	}

@@ -37,7 +37,6 @@
 #include "osystem_ds.h"
 #include "nds.h"
 #include "dsmain.h"
-#include "nds/registers_alt.h"
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "graphics/surface.h"
@@ -89,12 +88,7 @@ OSystem_DS::OSystem_DS()
 	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _frameBufferExists(false),
 	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
 {
-//	eventNum = 0;
-//	lastPenFrame = 0;
-//	queuePos = 0;
 	_instance = this;
-//	_mixer = NULL;
-	//_frameBufferExists = false;
 	_fsFactory = new DevoptabFilesystemFactory();
 }
 
@@ -171,8 +165,6 @@ int16 OSystem_DS::getWidth() {
 }
 
 void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
-//	consolePrintf("Setpal %d, %d\n", start, num);
-
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
 		int green = *(colors + 1);
@@ -182,7 +174,6 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 
-//		if (r != 255)
 		{
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
@@ -197,7 +188,6 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 
 			_palette[r] = paletteValue;
 		}
-	//	if (num == 255) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 
 		colors += 3;
 	}
@@ -217,7 +207,6 @@ void OSystem_DS::restoreHardwarePalette() {
 
 void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 
-//	consolePrintf("Cursor palette set: start: %d, cols: %d\n", start, num);
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
 		int green = *(colors + 1);
@@ -238,8 +227,6 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const {
-//	consolePrintf("Grabpalette");
-
 	for (unsigned int r = start; r < start + num; r++) {
 		*colors++ = (BG_PALETTE[r] & 0x001F) << 3;
 		*colors++ = (BG_PALETTE[r] & 0x03E0) >> 5 << 3;
@@ -255,8 +242,6 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 	if (w <= 1) return;
 	if (h < 0) return;
 	if (!DS::getIsDisplayMode8Bit()) return;
-
-//	consolePrintf("CopyRectToScreen %d\n", w * h);
 
 	u16 *bg;
 	s32 stride;
@@ -391,9 +376,6 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 			}
 		}
 
-//		consolePrintf("Slow method used!\n");
-
-
 	} else {
 
 		// Stuff is aligned to 16-bit boundaries, so it's safe to do DMA.
@@ -435,13 +417,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 			}
 		}
 	}
-//	consolePrintf("Done\n");
 }
 
 void OSystem_DS::updateScreen() {
-//	static int cnt = 0;
-//	consolePrintf("updatescr %d\n", cnt++);
-
 	if ((_frameBufferExists) && (DS::getIsDisplayMode8Bit())) {
 		_frameBufferExists = false;
 
@@ -451,7 +429,6 @@ void OSystem_DS::updateScreen() {
 
 	DS::displayMode16BitFlipBuffer();
 	DS::doSoundCallback();
-//	DS::doTimerCallback();
 	DS::addEventsToQueue();
 
 	// FIXME: Evil game specific hack.
@@ -466,7 +443,6 @@ void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 }
 
 void OSystem_DS::showOverlay() {
-//	consolePrintf("showovl\n");
 	DS::displayMode16Bit();
 }
 
@@ -480,11 +456,9 @@ bool OSystem_DS::isOverlayVisible() const {
 
 void OSystem_DS::clearOverlay() {
 	memset((u16 *) DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
-//	consolePrintf("clearovl\n");
 }
 
 void OSystem_DS::grabOverlay(void *buf, int pitch) {
-//	consolePrintf("grabovl\n")
 	u16 *start = DS::get16BitBackBuffer();
 
 	for (int y = 0; y < 200; y++) {
@@ -502,46 +476,22 @@ void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int
 	u16 *bg = (u16 *) DS::get16BitBackBuffer();
 	const u8 *source = (const u8 *)buf;
 
-//	if (x + w > 256) w = 256 - x;
-	//if (x + h > 256) h = 256 - y;
-
-//	consolePrintf("Copy rect ovl %d, %d   %d, %d  %d\n", x, y, w, h, pitch);
-
-
-
 	for (int dy = y; dy < y + h; dy++) {
 		const u16 *src = (const u16 *)source;
 
-		// Slow but save copy:
 		for (int dx = x; dx < x + w; dx++) {
-
 			*(bg + (dy * 512) + dx) = *src;
-			//if ((*src) != 0) consolePrintf("%d,%d: %d   ", dx, dy, *src);
-			//consolePrintf("%d,", *src);
 			src++;
 		}
 		source += pitch;
-
-		// Fast but broken copy: (why?)
-		/*
-		REG_IME = 0;
-		dmaCopy(src, bg + (dy << 9) + x, w * 2);
-		REG_IME = 1;
-
-		src += pitch;*/
 	}
-
-//	consolePrintf("Copy rect ovl done");
-
 }
 
 int16 OSystem_DS::getOverlayHeight() {
-//	consolePrintf("getovlheight\n");
 	return getHeight();
 }
 
 int16 OSystem_DS::getOverlayWidth() {
-//	consolePrintf("getovlwid\n");
 	return getWidth();
 }
 
@@ -590,42 +540,12 @@ bool OSystem_DS::pollEvent(Common::Event &event) {
 			event.kbd.ascii = 0;
 			event.kbd.keycode = Common::KEYCODE_INVALID;
 			event.kbd.flags = 0;
-//			consolePrintf("type: %d\n", event.type);
 			return false;
 		} else {
 			event = eventQueue[eventNum++];
-//			consolePrintf("type: %d\n", event.type);
 			return true;
 		}
 	}
-
-	return false;
-
-/*	if (lastPenFrame != DS::getMillis()) {
-		if ((eventNum == 0)) {
-			event.type = Common::EVENT_MOUSEMOVE;
-			event.mouse = Common::Point(DS::getPenX(), DS::getPenY());
-			eventNum = 1;
-			return true;
-		}
-		if (eventNum == 1) {
-			eventNum = 0;
-			lastPenFrame = DS::getMillis();
-			if (DS::getPenDown()) {
-				event.type = Common::EVENT_LBUTTONDOWN;
-				event.mouse = Common::Point(DS::getPenX(), DS::getPenY());
-				consolePrintf("Down %d, %d  ", event.mouse.x, event.mouse.y);
-				return true;
-			} else if (DS::getPenReleased()) {
-				event.type = Common::EVENT_LBUTTONUP;
-				event.mouse = Common::Point(DS::getPenX(), DS::getPenY());
-				consolePrintf("Up %d, %d ", event.mouse.x, event.mouse.y);
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}*/
 
 	return false;
 }
@@ -722,19 +642,6 @@ Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 
 	_frameBufferExists = true;
 
-/*
-	size_t imageStrideInBytes = DS::get8BitBackBufferStride();
-	size_t imageStrideInWords = imageStrideInBytes / 2;
-
-	u16 *image = (u16 *) DS::get8BitBackBuffer();
-	for (int y = 0; y <  DS::getGameHeight(); y++) {
-		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
-		for (int x = 0; x < DS::getGameWidth() >> 1; x++) {
-			*(((u16 *) (_framebuffer.getPixels())) + y * (DS::getGameWidth() >> 1) + x) = image[(y * imageStrideInWords) + x];
-//			*(((u16 *) (surf->getPixels())) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
-		}
-	}*/
-
 	return &_framebuffer;
 }
 
@@ -779,8 +686,8 @@ Common::String OSystem_DS::getDefaultConfigFileName() {
 void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {
 #ifndef DISABLE_TEXT_CONSOLE
 	nocashMessage((char *)message);
-//	consolePrintf((char *)message);
 #endif
+	printf("%s", message);
 }
 
 u16 OSystem_DS::applyGamma(u16 color) {

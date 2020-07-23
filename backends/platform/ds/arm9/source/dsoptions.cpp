@@ -125,14 +125,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_radioButtonMode = false;
 
-//	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", Graphics::kTextAlignCenter);
-
-
-//#ifdef ALLOW_CPU_SCALER
-//	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 0, 'T');
-//#endif
-
-
 #ifdef DS_BUILD_D
 	_snapToBorderCheckbox->setState(confGetBool("snaptoborder", true));
 #else
@@ -216,7 +208,6 @@ DSOptionsDialog::~DSOptionsDialog() {
 void DSOptionsDialog::updateConfigManager() {
 	ConfMan.setBool("lefthanded", _leftHandedCheckbox->getState(), "ds");
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
-//	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
 #ifdef ALLOW_CPU_SCALER

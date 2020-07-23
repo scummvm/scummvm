@@ -36,7 +36,6 @@ enum {
 void createKeyEvent(int keyNum, Common::Event& event);
 
 void drawKeyboard(int tileBase, int mapBase, u16 *saveSpace);
-void restoreVRAM(int tileBase, int mapBase, u16 *saveSpace);
 void addKeyboardEvents();
 bool getKeyboardClosed();
 bool isInsideKeyboard(int x, int y);
