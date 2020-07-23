@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:06+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -407,7 +407,7 @@ msgstr "Путь сохр:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Достижения"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -569,13 +569,12 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "Графический Интерфейс"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "Интерполяция:"
+msgstr "Взаимодействие"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -930,12 +929,12 @@ msgstr "Мёртвая зона джойстика:"
 #: gui/options.cpp:1169
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "Осталось %d скрытых достижений"
 
 #: gui/options.cpp:1174
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Достижений разблокировано: %d/%d"
 
 #: gui/options.cpp:1193
 msgid "HW Shader:"
@@ -1557,7 +1556,6 @@ msgid "Will read text in gui on mouse over."
 msgstr "Будет читать текст в GUI при наведении мыши."
 
 #: gui/options.cpp:2183
-#, fuzzy
 msgid "None"
 msgstr "Не задан"
 
@@ -2015,7 +2013,7 @@ msgstr "<Неправильное значение>"
 
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
-msgstr ""
+msgstr "Обнаружена нелегальная копия. Мы не поддерживает такие игры."
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2176,9 +2174,8 @@ msgstr ""
 "файле README."
 
 #: engines/engine.cpp:510 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Автосохранение:"
+msgstr "Автосохранение"
 
 #: engines/engine.cpp:512
 #, fuzzy
@@ -2617,9 +2614,8 @@ msgid "Toggle linear filtered scaling"
 msgstr "Использовать линейную фильтрацию для увеличения разрешения"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Не удалось переключиться в режим растяжения '%s'."
+msgstr "Переключение режима растягивания"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
 #, fuzzy
@@ -3115,7 +3111,7 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:320
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "Открыть настройки 3DS"
 
 #: backends/platform/3ds/osystem-events.cpp:350
 msgid ""
