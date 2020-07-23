@@ -176,6 +176,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x06, 0x06, kTheSprite,			kTheCursor,			true, kTEAItemId },
 	{ 0x06, 0x07, kTheSprite,			kTheForeColor,		true, kTEAItemId },
 	{ 0x06, 0x08, kTheSprite,			kTheHeight,			true, kTEAItemId },
+	{ 0x06, 0x09, kTheSprite,			kTheImmediate,		true, kTEAItemId },
 	{ 0x06, 0x0a, kTheSprite,			kTheInk,			true, kTEAItemId },
 	{ 0x06, 0x0b, kTheSprite,			kTheLeft,			true, kTEAItemId },
 	{ 0x06, 0x0c, kTheSprite,			kTheLineSize,		true, kTEAItemId },
