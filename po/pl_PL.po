@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:38+0000\n"
-"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1209,7 +1209,7 @@ msgstr "Chmura"
 
 #: gui/options.cpp:1813
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:1815
 msgctxt "lowres"
@@ -1223,7 +1223,7 @@ msgstr "U³atwienia dostêpu"
 #: gui/options.cpp:1825
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Dostêpno¶æ"
 
 #: gui/options.cpp:1835
 msgid "Apply"
@@ -1294,6 +1294,9 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"Podczas w³±czania gry zmieñ jêzyk interfejsu na jêzyk gry. W ten sposób "
+"je¿eli gra u¿ywa ScummVM zapisze i za³aduje dialogi w tym samym jêzyku co "
+"gra."
 
 #: gui/options.cpp:2045
 msgid "Use native system file browser"
@@ -1304,6 +1307,8 @@ msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"U¿yj systemowego programu do przegl±dania plików zamiast programu od SummVM "
+"¿eby wybieraæ plik lub folder."
 
 #: gui/options.cpp:2053 gui/updates-dialog.cpp:86
 msgid "Update check:"
