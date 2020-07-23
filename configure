@@ -2999,8 +2999,8 @@ EOF
 		append_var CXXFLAGS "-isystem $DEVKITPRO/libnds/include"
 		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/nds/include"
 		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/armv5te/include"
-		append_var CXXFLAGS "-mcpu=arm9tdmi"
-		append_var CXXFLAGS "-mtune=arm9tdmi"
+		append_var CXXFLAGS "-march=armv5te"
+		append_var CXXFLAGS "-mtune=arm946e-s"
 		append_var CXXFLAGS "-fomit-frame-pointer"
 		append_var CXXFLAGS "-mthumb-interwork"
 		append_var CXXFLAGS "-ffunction-sections"
@@ -3010,13 +3010,6 @@ EOF
 		append_var LDFLAGS "-mthumb-interwork"
 		append_var LDFLAGS "-mfloat-abi=soft"
 		append_var LDFLAGS "-Wl,-Map,map.txt"
-		if test "$_dynamic_modules" = no ; then
-			append_var LDFLAGS "-Wl,--gc-sections"
-		else
-			append_var LDFLAGS "-Wl,--no-gc-sections"
-			# TODO automate this required 2 step linking phase
-			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
-		fi
 		append_var LDFLAGS "-L$DEVKITPRO/libnds/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/nds/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/armv5te/lib"
@@ -6050,6 +6043,16 @@ case $_host_os in
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -lGLESv1_CM"
+		;;
+	ds)
+		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks
+		if test "$_dynamic_modules" = no ; then
+			append_var LDFLAGS "-Wl,--gc-sections"
+		else
+			append_var LDFLAGS "-Wl,--no-gc-sections"
+			# TODO automate this required 2 step linking phase
+			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
+		fi
 		;;
 	riscos)
 		append_var CXXFLAGS "-mno-poke-function-name"
