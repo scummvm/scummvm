@@ -53,35 +53,6 @@
 
 #include <time.h>
 
-#if defined(DS_BUILD_A)
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-#elif defined(DS_BUILD_B)
-#define DEFAULT_CONFIG_FILE "scummvmb.ini"
-#elif defined(DS_BUILD_C)
-#define DEFAULT_CONFIG_FILE "scummvmc.ini"
-#elif defined(DS_BUILD_D)
-#define DEFAULT_CONFIG_FILE "scummvmd.ini"
-#elif defined(DS_BUILD_E)
-#define DEFAULT_CONFIG_FILE "scummvme.ini"
-#elif defined(DS_BUILD_F)
-#define DEFAULT_CONFIG_FILE "scummvmf.ini"
-#elif defined(DS_BUILD_G)
-#define DEFAULT_CONFIG_FILE "scummvmg.ini"
-#elif defined(DS_BUILD_H)
-#define DEFAULT_CONFIG_FILE "scummvmh.ini"
-#elif defined(DS_BUILD_I)
-#define DEFAULT_CONFIG_FILE "scummvmi.ini"
-#elif defined(DS_BUILD_J)
-#define DEFAULT_CONFIG_FILE "scummvmj.ini"
-#elif defined(DS_BUILD_K)
-#define DEFAULT_CONFIG_FILE "scummvmk.ini"
-#else
-	// Use the "scummvm.ini" as config file if no build was specified. This
-	// currently only happens with builds made using the regular ScummVM build
-	// system (as opposed to the nds specific build system).
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-#endif
-
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
@@ -667,10 +638,6 @@ void OSystem_DS::clearAutoComplete() {
 
 void OSystem_DS::setCharactersEntered(int count) {
 	DS::setCharactersEntered(count);
-}
-
-Common::String OSystem_DS::getDefaultConfigFileName() {
-	return DEFAULT_CONFIG_FILE;
 }
 
 void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {

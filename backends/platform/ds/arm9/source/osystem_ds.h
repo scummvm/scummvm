@@ -151,8 +151,6 @@ public:
 
 	void refreshCursor();
 
-	virtual Common::String getDefaultConfigFileName();
-
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 	u16 applyGamma(u16 color);
