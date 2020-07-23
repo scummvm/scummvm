@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:25+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -1817,18 +1817,16 @@ msgid "Antialiased"
 msgstr "S vyhlazenými hranami"
 
 #: gui/unknown-game-dialog.cpp:49
-#, fuzzy
 msgid "Add anyway"
-msgstr "Pøesto spustit"
+msgstr "Pøesto pøidat"
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
 msgstr "Zkopírovat do schránky"
 
 #: gui/unknown-game-dialog.cpp:64
-#, fuzzy
 msgid "Report game"
-msgstr "Obnovit hru:"
+msgstr "Nahlásit hru:"
 
 #: gui/unknown-game-dialog.cpp:101
 msgid ""
