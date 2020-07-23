@@ -44,7 +44,7 @@ public:
 	void handleDialogReply(int index, int x, int y);
 	bool handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
 	void refreshRoomBackground(int roomNum);
-	void updateRoomAnimations(bool doUpdate);
+	void updateRoomAnimations();
 	void handleRoomEvent(int eventNum);
 	int getActorScaleFromY(int actorY);
 	void setPizzathonStatus(int flagNum);
@@ -93,7 +93,6 @@ public:
 	byte _r17_eventFlag;
 	byte _r2_backgroundValue1;
 	byte _r2_backgroundValue2;
-	int _r7_cloudsPositionX;
 	int _r19_wayneSpriteX;
 	int _r19_garthSpriteX;
 	int _r24_mazeRoomNumber;
@@ -142,7 +141,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r1_handleRoomEvent(bool arg6);
 	void r1_initRoomAnimations();
 	void r1_uninitRoomAnimations();
-	void r1_updateRoomAnimations(bool doUpdate);
+	void r1_updateRoomAnimations();
 	void r1_useDayOldDonutWithMachine();
 	void r1_checkDrGadget();
 	void r1_pullScreen();
@@ -176,7 +175,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r4_handleRoomEvent();
 	void r4_initRoomAnimations();
 	void r4_uninitRoomAnimations();
-	void r4_updateRoomAnimations(bool doUpdate);
+	void r4_updateRoomAnimations();
 	int r4_useCheesePizzaWithCastle();
 	int r4_useDrumstickWithCastleDoor();
 	void r4_useChainWithObject(bool arg6, bool arg8);
@@ -203,7 +202,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r6_handleRoomEvent4();
 	void r6_initRoomAnimations();
 	void r6_uninitRoomAnimations();
-	void r6_updateRoomAnimations(bool doUpdate);
+	void r6_updateRoomAnimations();
 	void r6_useRopeWithBeam();
 	void r6_useHockeyStickWithRope();
 	void r6_useSeat();
@@ -218,7 +217,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r7_refreshRoomBackground();
 	void r7_initRoomAnimations();
 	void r7_uninitRoomAnimations();
-	void r7_updateRoomAnimations(bool doUpdate);
+	void r7_updateRoomAnimations();
 	void r7_openCloseFrontDoor(bool isOpen);
 
 	int r8_handleVerbPickUp();
@@ -228,7 +227,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	bool r8_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
 	void r8_refreshRoomBackground();
 	void r8_initRoomAnimations();
-	void r8_updateRoomAnimations(bool doUpdate);
+	void r8_updateRoomAnimations();
 	void r8_handleRoomEvent1();
 	void r8_handleRoomEvent2();
 	void r8_handleRoomEvent3();
@@ -246,7 +245,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r9_refreshRoomBackground();
 	void r9_initRoomAnimations();
 	void r9_uninitRoomAnimations();
-	void r9_updateRoomAnimations(bool doUpdate);
+	void r9_updateRoomAnimations();
 	void r9_giveCoatOrTopHatToMan();
 
 	int r10_handleVerbPickUp();
@@ -271,7 +270,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r11_refreshRoomBackground();
 	void r11_initRoomAnimations();
 	void r11_uninitRoomAnimations();
-	void r11_updateRoomAnimations(bool doUpdate);
+	void r11_updateRoomAnimations();
 	void r11_pickUpExtensionCord();
 	void r11_usePlungersWithLampPost();
 	void r11_useExtensionCordWithOutlet();
@@ -318,7 +317,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r18_refreshRoomBackground();
 	void r18_initRoomAnimations();
 	void r18_uninitRoomAnimations();
-	void r18_updateRoomAnimations(bool doUpdate);
+	void r18_updateRoomAnimations();
 
 	void r19_handleVerbTalkTo();
 	bool r19_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
@@ -352,7 +351,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r29_handleRoomEvent();
 	void r29_initRoomAnimations();
 	void r29_uninitRoomAnimations();
-	void r29_updateRoomAnimations(bool doUpdate);
+	void r29_updateRoomAnimations();
 
 	int r30_handleVerbPickUp();
 	int r30_handleVerbUse();
@@ -391,7 +390,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r32_handleRoomEvent();
 	void r32_initRoomAnimations();
 	void r32_uninitRoomAnimations();
-	void r32_updateRoomAnimations(bool doUpdate);
+	void r32_updateRoomAnimations();
 	void r32_pickUpMemo();
 
 	void r33_refreshRoomBackground();
@@ -405,7 +404,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r34_refreshRoomBackground();
 	void r34_initRoomAnimations();
 	void r34_uninitRoomAnimations();
-	void r34_updateRoomAnimations(bool doUpdate);
+	void r34_updateRoomAnimations();
 
 	int r35_handleVerbUse();
 	void r35_handleVerbTalkTo();
@@ -420,7 +419,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r36_handleRoomEvent();
 	void r36_initRoomAnimations();
 	void r36_uninitRoomAnimations();
-	void r36_updateRoomAnimations(bool doUpdate);
+	void r36_updateRoomAnimations();
 
 	int r37_handleVerbPickUp();
 	int r37_handleVerbUse();
@@ -439,7 +438,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r38_refreshRoomBackground();
 	void r38_initRoomAnimations();
 	void r38_uninitRoomAnimations();
-	void r38_updateRoomAnimations(bool doUpdate);
+	void r38_updateRoomAnimations();
 	void r38_useCassandra();
 	void r38_pullRag();
 

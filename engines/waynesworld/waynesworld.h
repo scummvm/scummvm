@@ -72,6 +72,14 @@ struct WalkPoint {
     int x, y, direction;
 };
 
+struct AnimationTimer {
+	uint32 nextUpdateTicks;
+	uint32 delay;
+	int counter;
+	bool expired;
+	AnimationTimer() : nextUpdateTicks(0), delay(0), counter(0), expired(false) {}
+};
+
 enum {
 	kLeftButtonClicked = 1 << 0,
 	kRightButtonClicked = 1 << 1,
@@ -85,6 +93,7 @@ const uint kRoomAnimationsCount = 20;
 const uint kStaticRoomObjectsMapCount = 40;
 const uint kStaticRoomObjectsCount = 58;
 const uint kStaticRoomObjectSpritesCount = 4;
+const uint kAnimationTimersCount = 4;
 
 class WaynesWorldEngine : public Engine {
 protected:
@@ -128,6 +137,9 @@ public:
 	bool _doScrollRight;
 	bool _hasRoomAnimationCallback;
 
+	// Room animations
+	AnimationTimer _animationTimers[kAnimationTimersCount];
+
 	// Input
 	int _mouseX, _mouseY;
 	int _mouseClickY, _mouseClickX;
@@ -154,6 +166,7 @@ public:
 	Common::String _firstObjectName;
 	int _roomEventNum;
 	int _animationsCtr;
+	bool _animationsRedrawBackground;
 
 	// Actors
 	int _wayneSpriteX, _wayneSpriteY, _wayneKind, _wayneActorScale;
@@ -291,13 +304,18 @@ public:
 	void loadRoomMask(int roomNum);
 	void fillRoomMaskArea(int x1, int y1, int x2, int y2, int enabled);
 
+	// Room animations
 	void loadAnimationSpriteRange(int baseIndex, const char *filename, int count);
 	void loadAnimationSprite(int index, const char *filename);
 	void drawAnimationSprite(int index, int x, int y);
 	void drawAnimationSpriteTransparent(int index, int x, int y);
-	void updateRoomAnimations(bool doUpdate);
+	void updateRoomAnimations();
 	void startRoomAnimations();
 	void stopRoomAnimations();
+	void updateAnimationTimers();
+	void setAnimationTimer(uint index, uint32 delay, int initialCounter = 0);
+	bool isAnimationTimerExpired(uint index);
+	int getAnimationTimerCounter(uint index);
 
 	// Static room objects
 	void initStaticRoomObjects();

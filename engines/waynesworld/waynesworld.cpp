@@ -148,7 +148,9 @@ Common::Error WaynesWorldEngine::run() {
 	drawInterface(2);
 	// changeRoom(0);
 	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	changeRoom(9); // DEBUG
+	changeRoom(38); // DEBUG
+	// _logic->_r1_eventFlag = 1;
+	// _logic->_r1_eventCtr = 3;
 
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	// _gameState = 1; // DEBUG Open map
@@ -169,7 +171,7 @@ Common::Error WaynesWorldEngine::run() {
 		if (_gameState == 1 && _currentRoomNumber < 100) {
 			gameMapOpen();
 		}
-		updateRoomAnimations(false);
+		updateRoomAnimations();
 		g_system->updateScreen();
 		// g_system->delayMillis(20);
 	}
@@ -901,7 +903,7 @@ void WaynesWorldEngine::drawActorReachObject(int objectId, int spriteIndex) {
 }
 
 int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, int spriteIndex, int wayneX, int wayneY, int garthX, int garthY) {
-    updateRoomAnimations(true);
+    updateRoomAnimations();
 
     if (_wayneSpriteX == -1 && _garthSpriteX == -1) {
         WWSurface *tempBackground = new WWSurface(320, 150);
@@ -1036,7 +1038,7 @@ void WaynesWorldEngine::pickupObject(int objectId, byte &flags, byte flagsSet, i
     drawActorReachObject(objectId, 0);
     for (int index = 0; index < 20; index++) {
         waitMillis(50);
-        updateRoomAnimations(true);
+        updateRoomAnimations();
     }
     _garthKind = 1;
     _wayneKind = 1;
@@ -1052,7 +1054,7 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
     // sysMouseDriver(2);
     if (count > 0) {
         for (int index = startIndex; index < startIndex + count; index++) {
-            updateRoomAnimations(true);
+            updateRoomAnimations();
             sprintf(filename, "%s%d", prefix, index);
             drawRoomImageToScreen(filename, x, y);
             drawRoomImageToBackground(filename, x, y);
@@ -1060,7 +1062,7 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
         }
     } else {
         for (int index = startIndex; index > startIndex + count; index--) {
-            updateRoomAnimations(true);
+            updateRoomAnimations();
             sprintf(filename, "%s%d", prefix, index);
             drawRoomImageToScreen(filename, x, y);
             drawRoomImageToBackground(filename, x, y);
@@ -1158,16 +1160,25 @@ void WaynesWorldEngine::loadAnimationSprite(int index, const char *filename) {
 }
 
 void WaynesWorldEngine::drawAnimationSprite(int index, int x, int y) {
+	_animationsRedrawBackground = true;
 	_backgroundSurface->drawSurface(_roomAnimations[index], x, y);
 }
 
 void WaynesWorldEngine::drawAnimationSpriteTransparent(int index, int x, int y) {
+	_animationsRedrawBackground = true;
 	_backgroundSurface->drawSurfaceTransparent(_roomAnimations[index], x, y);
 }
 
-void WaynesWorldEngine::updateRoomAnimations(bool doUpdate) {
+void WaynesWorldEngine::updateRoomAnimations() {
 	if (_hasRoomAnimationCallback) {
-		_logic->updateRoomAnimations(doUpdate);
+		_animationsRedrawBackground = false;
+		updateAnimationTimers();
+		_logic->updateRoomAnimations();
+		if (_animationsRedrawBackground) {
+			_hasRoomAnimationCallback = false;
+			refreshActors();
+			_hasRoomAnimationCallback = true;
+		}
 	}
 }
 
@@ -1182,6 +1193,36 @@ void WaynesWorldEngine::stopRoomAnimations() {
 		_roomAnimations[i] = nullptr;
 	}
 	_hasRoomAnimationCallback = false;
+}
+
+void WaynesWorldEngine::updateAnimationTimers() {
+	uint32 currentTicks = _system->getMillis();
+	for (uint i = 0; i < kAnimationTimersCount; i++) {
+		AnimationTimer &animationTimer = _animationTimers[i];
+		animationTimer.expired = animationTimer.nextUpdateTicks == 0 || currentTicks >= animationTimer.nextUpdateTicks;
+		if (animationTimer.expired) {
+			if (animationTimer.nextUpdateTicks > 0) {
+				++animationTimer.counter;
+			}
+			animationTimer.nextUpdateTicks = currentTicks + animationTimer.delay;
+		}
+	}
+}
+
+void WaynesWorldEngine::setAnimationTimer(uint index, uint32 delay, int initialCounter) {
+	AnimationTimer &animationTimer = _animationTimers[index];
+	animationTimer.nextUpdateTicks = 0;
+	animationTimer.delay = delay;
+	animationTimer.counter = initialCounter;
+	animationTimer.expired = false;
+}
+
+bool WaynesWorldEngine::isAnimationTimerExpired(uint index) {
+	return _animationTimers[index].expired;
+}
+
+int WaynesWorldEngine::getAnimationTimerCounter(uint index) {
+	return _animationTimers[index].counter;
 }
 
 void WaynesWorldEngine::initStaticRoomObjects() {
