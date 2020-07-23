@@ -280,7 +280,7 @@ void drawAutoComplete() {
 
 	} else {
 
-		consolePrintf("time: %d\n", typingTimeout);
+		printf("time: %d\n", typingTimeout);
 
 		// Otherwise, draw autocompletions if one isn't being entered and there are
 		// some available.
