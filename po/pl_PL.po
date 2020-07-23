@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:38+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1340,7 +1340,7 @@ msgstr "4. Przechowywanie jest wy³±czone. Zweryfikuj nazwê u¿ytkownika i w³±cz:"
 #: gui/options.cpp:2083
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "Przechowywanie jest wy³±czone. Zweryfikuj nazwê u¿ytkownika i w³±cz:"
 
 #: gui/options.cpp:2084
 msgid "Enable storage"
