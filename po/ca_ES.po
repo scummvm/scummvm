@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Andrea G <andreagswaterloo@gmail.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -1268,9 +1268,8 @@ msgid "Theme:"
 msgstr "Tema:"
 
 #: gui/options.cpp:1976
-#, fuzzy
 msgid "GUI renderer:"
-msgstr "Pintat GUI:"
+msgstr "Render GUI:"
 
 #: gui/options.cpp:1988
 msgid "Autosave:"
@@ -1286,9 +1285,8 @@ msgid "Keys"
 msgstr "Tecles"
 
 #: gui/options.cpp:2005
-#, fuzzy
 msgid "GUI language:"
-msgstr "Idioma GUI:"
+msgstr "Idioma de la  interfície:"
 
 #: gui/options.cpp:2005
 msgid "Language of ScummVM GUI"
