@@ -1829,7 +1829,9 @@ void LB::b_puppetTransition(int nargs) {
 
 void LB::b_ramNeeded(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_ramNeeded(%d)", d.u.i);
+	Datum d2 = g_lingo->pop();
+
+	// We do not need RAM, we have it all
 
 	g_lingo->push(Datum(0));
 }
