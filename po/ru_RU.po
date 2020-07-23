@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2019-12-18 20:26+0000\n"
+"PO-Revision-Date: 2020-07-23 07:06+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,9 +15,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.9.1\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Russian\n"
 
 #: gui/about.cpp:102
@@ -277,32 +277,29 @@ msgstr "Грф"
 
 #: gui/editgamedialog.cpp:202
 msgid "Override global graphic settings"
-msgstr "Перекрыть глобальные установки графики"
+msgstr "Перекрыть глобальные настройки графики"
 
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Перекрыть глобальные установки графики"
+msgstr "Перекрыть глобальные настройки графики"
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1705
 msgid "Shader"
 msgstr "Шейдер"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки шейдера"
 
 #: gui/editgamedialog.cpp:219
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки шейдера"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1739 engines/dialogs.cpp:329
-#, fuzzy
 msgid "Keymaps"
-msgstr "Таблица клавиш:"
+msgstr "Таблица клавиш"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1746 engines/dialogs.cpp:304
 msgid "Audio"
@@ -310,12 +307,12 @@ msgstr "Аудио"
 
 #: gui/editgamedialog.cpp:243
 msgid "Override global audio settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки аудио"
 
 #: gui/editgamedialog.cpp:245
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "Перекрыть глобальные установки аудио"
+msgstr "Перекрыть глобальные настройки аудио"
 
 #: gui/editgamedialog.cpp:254 gui/options.cpp:1751
 msgid "Volume"
@@ -328,12 +325,12 @@ msgstr "Громк"
 
 #: gui/editgamedialog.cpp:259
 msgid "Override global volume settings"
-msgstr "Перекрыть глобальные установки громкости"
+msgstr "Перекрыть глобальные настройки громкости"
 
 #: gui/editgamedialog.cpp:261
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Перекрыть глобальные установки громкости"
+msgstr "Перекрыть глобальные настройки громкости"
 
 #: gui/editgamedialog.cpp:272 gui/options.cpp:1761
 msgid "MIDI"
@@ -341,12 +338,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:275
 msgid "Override global MIDI settings"
-msgstr "Перекрыть глобальные установки MIDI"
+msgstr "Перекрыть глобальные настройки MIDI"
 
 #: gui/editgamedialog.cpp:277
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Перекрыть глобальные установки MIDI"
+msgstr "Перекрыть глобальные настройки MIDI"
 
 #: gui/editgamedialog.cpp:287 gui/options.cpp:1767
 msgid "MT-32"
@@ -354,12 +351,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:290
 msgid "Override global MT-32 settings"
-msgstr "Перекрыть глобальные установки MT-32"
+msgstr "Перекрыть глобальные настройки MT-32"
 
 #: gui/editgamedialog.cpp:292
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Перекрыть глобальные установки MT-32"
+msgstr "Перекрыть глобальные настройки MT-32"
 
 #: gui/editgamedialog.cpp:301 gui/options.cpp:1774
 msgid "Paths"
@@ -561,13 +558,13 @@ msgstr "Сброс"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Сбросить все установки FluidSynth в значения по умолчанию."
+msgstr "Сбросить все настройки FluidSynth в значения по умолчанию."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
-"Вы действительно хотите сбросить все установки FluidSynth в значения по "
+"Вы действительно хотите сбросить все настройки FluidSynth в значения по "
 "умолчанию?"
 
 #: gui/gui-manager.cpp:116
@@ -2410,9 +2407,8 @@ msgid "Quit"
 msgstr "Выход"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Глобальная)"
+msgstr "Глобальная"
 
 #: backends/events/default/default-events.cpp:296
 #, fuzzy
@@ -4896,9 +4892,8 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2577
-#, fuzzy
 msgid "Save Game"
-msgstr "Сохранить игру:"
+msgstr "Сохранить игру"
 
 #: engines/pegasus/pegasus.cpp:2583
 #, fuzzy
@@ -6181,14 +6176,14 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Не удалось найти файл движка %s."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Не удалось найти файл движка %s."
+msgstr "Не удалось найти файл движка %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "Неверная версия файла движка %s. Ожидается %d.%d, а найдена %d.%d."
+msgstr "Неверная версия файла движка. Ожидается %d.%d, а найдена %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6533,9 +6528,8 @@ msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:602
-#, fuzzy
 msgid "Save game"
-msgstr "Сохранить игру:"
+msgstr "Сохранить игру"
 
 #: engines/wintermute/keymapper_tables.h:612
 #, fuzzy
@@ -6594,39 +6588,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Время игры: "
+msgstr "Нота 1: Ля"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Время игры: "
+msgstr "Нота 2: Фа-диез"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Время игры: "
+msgstr "Нота 3: Ре-диез"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Время игры: "
+msgstr "Нота 4: До-диез"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Время игры: "
+msgstr "Нота 5: Ми-диез"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Время игры: "
+msgstr "Нота 6: Соль-диез"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Время игры: "
+msgstr "Нота 7: Си"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
@@ -6714,7 +6701,7 @@ msgstr "~П~ред"
 #: engines/wintermute/keymapper_tables.h:1128
 #: engines/wintermute/keymapper_tables.h:1263
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: engines/wintermute/keymapper_tables.h:1133
 msgid "Dialogue answer 1"
@@ -6756,9 +6743,8 @@ msgid "Show journal"
 msgstr "Показать все"
 
 #: engines/wintermute/keymapper_tables.h:1356
-#, fuzzy
 msgid "Music menu"
-msgstr "Громк. музыки:"
+msgstr "Меню музыки"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Rotate"
