@@ -321,7 +321,7 @@ void Score::update() {
 			return;
 		}
 
-		_currentFrame = 0;
+		_currentFrame = 1;
 	}
 
 	Common::SortedArray<Label *>::iterator i;
