@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-23 07:25+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-07-23 07:26+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -1826,7 +1826,7 @@ msgstr "Zkopírovat do schránky"
 
 #: gui/unknown-game-dialog.cpp:64
 msgid "Report game"
-msgstr "Nahlásit hru:"
+msgstr "Nahlásit hru"
 
 #: gui/unknown-game-dialog.cpp:101
 msgid ""
