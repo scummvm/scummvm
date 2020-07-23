@@ -295,7 +295,7 @@ public:
 
 	// Room
 	void openRoomLibrary(int roomNum);
-	void loadRoomBackground(int roomNum);
+	void loadRoomBackground();
 	void changeRoom(int roomNum);
 	void refreshRoomBackground(int roomNum);
 	void handleRoomEvent();

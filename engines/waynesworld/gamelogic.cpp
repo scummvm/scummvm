@@ -1527,7 +1527,7 @@ int GameLogic::r1_handleVerbPush() {
 			actionTextIndex = 1;
 		} else {
 			_r1_flags1 &= ~0x20;
-			_vm->loadRoomBackground(_vm->_currentRoomNumber);
+			_vm->loadRoomBackground();
 		}
 		break;
 	default:
@@ -1855,7 +1855,7 @@ void GameLogic::r1_handleRoomEvent(bool arg6) {
 		_r1_eventCtr = -1;
 		_vm->_garthSpriteX = 146;
 		_vm->loadRoomMask(_vm->_currentRoomNumber);
-		_vm->loadRoomBackground(_vm->_currentRoomNumber);
+		_vm->loadRoomBackground();
 		if ((_r1_flags1 & 0x10) && !(_r1_flags1 & 0x40)) {
 			r1_drGadgetLeaves();
 		}
@@ -1878,7 +1878,7 @@ void GameLogic::r1_pullScreen() {
 	_vm->moveObjectToNowhere(kObjectIdScreen);
 	_vm->moveObjectToRoom(kObjectIdSafe_0, 1);
 	_r1_flags1 |= 0x01;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r1_openSafe() {
@@ -1887,14 +1887,14 @@ void GameLogic::r1_openSafe() {
 		_vm->moveObjectToRoom(kObjectIdRemoteControl, 1);
 	}
 	_r1_flags1 |= 0x02;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r1_closeSafe() {
 	_vm->drawActorReachObject(kObjectIdSafe_0, 0);
 	_vm->moveObjectToNowhere(kObjectIdRemoteControl);
 	_r1_flags1 &= ~0x02;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r1_pullLever() {
@@ -1907,7 +1907,7 @@ void GameLogic::r1_pullLever() {
 		_vm->_wayneSpriteX = 236;
 	}
 	_r1_flags1 |= 0x20;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r1_checkDrGadget() {
@@ -1921,7 +1921,7 @@ void GameLogic::r1_checkDrGadget() {
 		_r1_flags2 |= 0x01;
 		_vm->moveObjectToRoom(kObjectIdDrGadget_1, 1);
 		_vm->setStaticRoomObjectPosition(1, 1, 1, 91, 78);
-		_vm->loadRoomBackground(_vm->_currentRoomNumber);
+		_vm->loadRoomBackground();
 	}
 	_vm->displayText("c04r", 137, 0, 170, 30, 0);
 }
@@ -1948,7 +1948,7 @@ void GameLogic::r1_drGadgetLeaves() {
 		_vm->playAnimation("scout", 0, 21, 3, 68, 0, 100);
 	}
 	_vm->setStaticRoomObjectPosition(1, 1, 1, -1, 78);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 int GameLogic::r2_handleVerbPickUp() {
@@ -2599,7 +2599,7 @@ bool GameLogic::r4_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 			_vm->moveObjectToRoom(kObjectIdInventoryBusinessCards, 99);
 			_vm->refreshInventory(true);
 		}
-		_vm->loadRoomBackground(_vm->_currentRoomNumber);
+		_vm->loadRoomBackground();
 		_vm->_gameState = 0;
 		break;
 	case 285:
@@ -2685,7 +2685,7 @@ int GameLogic::r4_useDrumstickWithCastleDoor() {
 	_vm->moveObjectToNowhere(kObjectIdInventoryDrumstick);
 	_vm->moveObjectToRoom(kObjectIdDrumstick_1, 4);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	return 57;
 }
 
@@ -2694,7 +2694,7 @@ int GameLogic::r4_useCheesePizzaWithCastle() {
 	_vm->moveObjectToNowhere(kObjectIdInventoryCheesePizza);
 	_vm->moveObjectToRoom(kObjectIdCheese, 4);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	return 58;
 }
 
@@ -2708,7 +2708,7 @@ void GameLogic::r4_useChainWithObject(bool arg6, bool arg8) {
 	_vm->moveObjectToNowhere(kObjectIdInventoryChain);
 	_vm->moveObjectToRoom(kObjectIdChain_1, 4);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 int GameLogic::r4_useTubeWithShade() {
@@ -2730,7 +2730,7 @@ int GameLogic::r4_useTubeWithShade() {
 		_vm->_garthSpriteX = -1;
 	}
 	_vm->displayTextLines("c03", 62, -1, -1, 1);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->waitSeconds(2);
 	_r4_flags &= ~0x20;
 	_r4_flags &= ~0x40;
@@ -2754,7 +2754,7 @@ int GameLogic::r4_useTubeWithShade() {
 	_r4_flags &= ~0x02;
 	_r4_flags &= ~0x04;
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->_roomEventNum = 1;
 	return 60;
 }
@@ -3161,11 +3161,11 @@ void GameLogic::r6_handleRoomEvent2() {
 	_vm->_garthSpriteX = 155;
 	_vm->_wayneSpriteX = 150;
 	_vm->_currentActorNum = 1;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_r6_flags &= ~0x08;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_r6_flags &= ~0x04;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->moveObjectToNowhere(kObjectIdRope_1);
 	_vm->moveObjectToRoom(kObjectIdInventoryRope, 99);
 	_vm->moveObjectToRoom(kObjectIdInventoryHockeyStick, 99);
@@ -3195,7 +3195,7 @@ void GameLogic::r6_handleRoomEvent3() {
 
 void GameLogic::r6_handleRoomEvent4() {
 	_vm->playAnimation("dad", 3, 2, 119, 79, 0, 100);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r6_giveLuckySausageToDog() {
@@ -3229,7 +3229,7 @@ void GameLogic::r6_useHockeyStickWithRope() {
 	_vm->moveObjectToNowhere(kObjectIdRope_1);
 	_vm->moveObjectToNowhere(kObjectIdInventoryHockeyStick);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r6_useSeat() {
@@ -3237,7 +3237,7 @@ void GameLogic::r6_useSeat() {
 	_vm->_garthSpriteX = -1;
 	_vm->moveObjectToNowhere(kObjectIdSeat);
 	_vm->moveObjectToRoom(kObjectIdRope_1, 6);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r6_pullRope() {
@@ -3508,7 +3508,7 @@ void GameLogic::r7_openCloseFrontDoor(bool isOpen) {
 		_vm->waitMillis(500);
 		_r7_flags &= ~0x04;
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 int GameLogic::r8_handleVerbClose() {
@@ -3907,7 +3907,7 @@ void GameLogic::r8_openCloseDoor(bool isOpen) {
 	} else {
 		_r8_flags |= 0x01;
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r8_openCloseCabinetDoor1(bool isOpen) {
@@ -3917,7 +3917,7 @@ void GameLogic::r8_openCloseCabinetDoor1(bool isOpen) {
 	} else {
 		_r8_flags &= ~0x02;
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r8_openCloseCabinetDoor2(bool isOpen) {
@@ -3927,7 +3927,7 @@ void GameLogic::r8_openCloseCabinetDoor2(bool isOpen) {
 	} else {
 		_r8_flags &= ~0x04;
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 int GameLogic::r9_handleVerbPickUp() {
@@ -4012,7 +4012,7 @@ void GameLogic::r9_handleVerbTalkTo() {
 			for (int i = 0; i < 8; i++) {
 				_vm->playAnimation("utrick", 0, 2, 206, 58, 0, 100);
 			}
-			_vm->loadRoomBackground(_vm->_currentRoomNumber);
+			_vm->loadRoomBackground();
 			_vm->displayTextLines("c04r", 193, 250, 25, 1);
 			_vm->setDialogChoices(246, 247, 248, 249, 250);
 		} else {
@@ -4209,7 +4209,7 @@ void GameLogic::r9_giveCoatOrTopHatToMan() {
 			_vm->playAnimation("strick", 16, -2, 191, 32, 0, 100);
 		}
 		_vm->playAnimation("strick", 14, -15, 191, 32, 0, 100);
-		_vm->loadRoomBackground(_vm->_currentRoomNumber);
+		_vm->loadRoomBackground();
 		_vm->displayTextLines("c04r", 202, 250, 25, 1);
 		_vm->setDialogChoices(246, 253, 254, 249, 255);
 		_vm->startDialog();
@@ -4275,7 +4275,7 @@ void GameLogic::r10_handleVerbPickUpCandyBar() {
 	_vm->moveObjectToNowhere(kObjectIdCandyBar);
 	_vm->moveObjectToRoom(kObjectIdInventoryCandyBar, 99);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r10_handleVerbPickUpTicket() {
@@ -4291,7 +4291,7 @@ void GameLogic::r10_handleVerbPickUpJawbreakers() {
 	_r10_flags &= ~0x08;
 	_vm->moveObjectToRoom(kObjectIdInventoryJawbreakers, 99);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r10_handleVerbPickUpGum() {
@@ -4299,7 +4299,7 @@ void GameLogic::r10_handleVerbPickUpGum() {
 	_r10_flags &= ~0x04;
 	_vm->moveObjectToRoom(kObjectIdInventoryGum, 99);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r10_handleVerbGiveWinningTicketToSalesgirl() {
@@ -4313,7 +4313,7 @@ void GameLogic::r10_handleVerbGiveWinningTicketToSalesgirl() {
 	_vm->moveObjectToRoom(kObjectIdCandyBar, 10);
 	_vm->moveObjectToNowhere(kObjectIdInventoryWinningTicket);
 	_vm->refreshInventory(false);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->displayText("c04r", 9, 0, 320, 70, 0);
 }
 
@@ -4337,7 +4337,7 @@ void GameLogic::r10_buyItem() {
 		}
 	}
 	_vm->moveObjectToNowhere(kObjectIdInventoryDollar);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_r10_selectedItemToBuy = -1;
 }
 
@@ -4512,7 +4512,7 @@ void GameLogic::r10_refreshRoomBackground() {
 
 void GameLogic::r10_refreshObject(int arg4) {
 	_r10_flags = _r10_flags + arg4;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_r10_flags &= (255 - arg4);
 }
 
@@ -4716,7 +4716,7 @@ void GameLogic::r11_useCar1() {
 	}
 	_r11_flags &= ~0x01;
 	_vm->setGarthPosition(205, 148);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r11_useCar2() {
@@ -4731,7 +4731,7 @@ void GameLogic::r11_useCar2() {
 	_r11_flags &= ~0x04;
 	_vm->setWaynePosition(136, 146);
 	_vm->_hasRoomAnimationCallback = true;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r11_pickUpExtensionCord() {
@@ -4745,7 +4745,7 @@ void GameLogic::r11_pickUpExtensionCord() {
 	_vm->moveObjectToNowhere(kObjectIdExtensionCord_1);
 	_vm->moveObjectToRoom(kObjectIdInventoryExtensionCord, 99);
 	_vm->refreshInventory(true);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r11_useSuckCutWithFountain() {
@@ -4767,7 +4767,7 @@ void GameLogic::r11_useSuckCutWithFountain() {
 	_vm->fillRoomMaskArea(117, 110, 140, 130, 0);
 	_vm->fillRoomMaskArea(81, 131, 119, 148, 1);
 	r11_useCar1();
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r11_useSuckCutWithExtensionCord() {
@@ -4783,7 +4783,7 @@ void GameLogic::r11_useSuckCutWithExtensionCord() {
 	_r11_flags |= 0x04;
 	_vm->setWaynePosition(136, 146);
 	_vm->_hasRoomAnimationCallback = true;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r11_useExtensionCordWithOutlet() {
@@ -5608,7 +5608,7 @@ void GameLogic::r17_handleRoomEvent3() {
 	_vm->setWaynePosition(71, 117);
 	_vm->setGarthPosition(90, 117);
 	_r17_eventFlag = 1;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_r17_eventFlag = 0;
 }
 
@@ -5896,7 +5896,7 @@ void GameLogic::r20_handleRoomEvent() {
 	_vm->playAnimation("gillgo", 0, 9, 273, 79, 0, 100);
 	_vm->moveObjectToNowhere(kObjectIdGilligan);
 	setPizzathonStatus(7);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r22_refreshRoomBackground() {
@@ -6386,7 +6386,7 @@ void GameLogic::r28_handleRoomEvent1() {
 	_vm->playAnimation("crysgun", 0, 4, 0, 0, 0, 200);
 	_vm->playAnimation("crysgun", 2, -3, 0, 0, 0, 200);
 	_vm->moveObjectToRoom(kObjectIdInventorySquirtGun, 99);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	for (int textIndex = 31; textIndex < 35; textIndex++) {
 		_vm->displayText("c04r", textIndex, 0, 150, 10, 0);
 		_vm->playAnimation("reptalk", 0, 6, 26, 51, 0, 150);
@@ -6435,7 +6435,7 @@ void GameLogic::r28_handleRoomEvent2() {
 	}
 	_vm->waitSeconds(1);
 	_vm->_isTextVisible = false;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 int GameLogic::r29_handleVerbPickUp() {
@@ -6940,17 +6940,17 @@ void GameLogic::r31_handleRoomEvent5() {
 	_vm->refreshInventory(false);
 	_vm->setWaynePosition(237, 51);
 	_r30_flags |= 0x04;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->walkTo(230, 140, 0, _vm->_garthSpriteX, _vm->_garthSpriteY);
 	_vm->displayText("c04", 164, 0, -1, -1, 0);
 	_vm->waitSeconds(2);
 	_vm->_currentActorNum = 0;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->displayText("c04", 165, 0, -1, -1, 0);
 	_vm->_currentActorNum = 1;
 	_vm->waitSeconds(2);
 	_vm->_isTextVisible = false;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_r30_flags |= 0x01;
 	_vm->_roomChangeCtr = 0;
 	_vm->setWaynePosition(208, 75);
@@ -7014,7 +7014,7 @@ void GameLogic::r31_displayCategories() {
 		delete categoryImage;
 		_vm->waitSeconds(3);
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->drawInterface(_vm->_verbNumber);
 	CursorMan.showMouse(true);
 }
@@ -7331,13 +7331,13 @@ int GameLogic::r34_handleVerbPickUp() {
 		_r34_flags &= ~0x08;
 		_vm->moveObjectToRoom(kObjectIdInventoryLunchBox, 99);
 		_vm->refreshInventory(false);
-		_vm->loadRoomBackground(_vm->_currentRoomNumber);
+		_vm->loadRoomBackground();
 		break;
 	case kObjectIdPasscard:
 		_r34_flags |= 0x01;
 		_vm->moveObjectToRoom(kObjectIdInventoryPassCard, 99);
 		_vm->refreshInventory(false);
-		_vm->loadRoomBackground(_vm->_currentRoomNumber);
+		_vm->loadRoomBackground();
 		break;
 	default:
 		actionTextIndex = 0;
@@ -7360,12 +7360,12 @@ int GameLogic::r34_handleVerbUse() {
 			_vm->moveObjectToNowhere(kObjectIdInventoryLunchBox);
 			_r34_flags |= 0x08;
 			_vm->refreshInventory(false);
-			_vm->loadRoomBackground(_vm->_currentRoomNumber);
+			_vm->loadRoomBackground();
 		} else if (_vm->_firstObjectNumber == kObjectIdInventoryPassCard) {
 			_vm->moveObjectToNowhere(kObjectIdInventoryPassCard);
 			_r34_flags &= ~0x01;
 			_vm->refreshInventory(false);
-			_vm->loadRoomBackground(_vm->_currentRoomNumber);
+			_vm->loadRoomBackground();
 		} else {
 			actionTextIndex = 0;
 		}
@@ -7401,7 +7401,7 @@ int GameLogic::r34_handleVerbOpen() {
 			actionTextIndex = 1;
 		} else {
 			_r34_flags |= 0x02;
-			_vm->loadRoomBackground(_vm->_currentRoomNumber);
+			_vm->loadRoomBackground();
 		}
 		break;
 	default:
@@ -7419,7 +7419,7 @@ int GameLogic::r34_handleVerbClose() {
 			actionTextIndex = 1;
 		} else {
 			_r34_flags &= ~0x02;
-			_vm->loadRoomBackground(_vm->_currentRoomNumber);
+			_vm->loadRoomBackground();
 		}
 		break;
 	default:
@@ -8154,7 +8154,7 @@ void GameLogic::r37_pushPullLock(bool isPull) {
 		_r37_safeCombinationIndex = 0;
 		_r37_flags |= 0x02;
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r37_pullHandle() {
@@ -8165,7 +8165,7 @@ void GameLogic::r37_pullHandle() {
 	_vm->moveObjectToRoom(kObjectIdMagazines, 37);
 	_vm->moveObjectToRoom(kObjectIdKeys, 37);
 	_vm->moveObjectToRoom(kObjectIdMoney, 37);
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r37_handleRoomEvent() {
@@ -8364,7 +8364,7 @@ void GameLogic::r38_pullRag() {
 	_vm->setWaynePosition(126, 137);
 	_vm->setGarthPosition(209, 132);
 	_vm->_actorSpriteValue = 5;
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->displayTextLines("c04r", 344, 180, 35, 5);
 }
 
@@ -8447,7 +8447,7 @@ void GameLogic::r39_useSquirtGunWithHinges() {
 		_vm->_garthSpriteX = -1;
 		_r39_flags |= 0x08;
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 	_vm->playAnimation("shoot", 0, 14, 108, 49, 0, 100);
 	_r39_flags |= 0x02;
 	_vm->moveObjectToNowhere(kObjectIdDoor39);
@@ -8461,7 +8461,7 @@ void GameLogic::r39_useSquirtGunWithHinges() {
 	} else {
 		_vm->_garthSpriteX = oldSpriteX;
 	}
-	_vm->loadRoomBackground(_vm->_currentRoomNumber);
+	_vm->loadRoomBackground();
 }
 
 void GameLogic::r39_useExit39() {

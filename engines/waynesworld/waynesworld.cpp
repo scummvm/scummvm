@@ -1046,7 +1046,7 @@ void WaynesWorldEngine::pickupObject(int objectId, byte &flags, byte flagsSet, i
     flags |= flagsSet;
     moveObjectToRoom(inventoryObjectId, 99);
     refreshInventory(false);
-    loadRoomBackground(_currentRoomNumber);
+    loadRoomBackground();
 }
 
 void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks) {
@@ -1091,9 +1091,9 @@ void WaynesWorldEngine::openRoomLibrary(int roomNum) {
     _roomName = Common::String::format("r%02d", roomNum);
 }
 
-void WaynesWorldEngine::loadRoomBackground(int roomNum) {
+void WaynesWorldEngine::loadRoomBackground() {
     drawRoomImageToSurface("backg", _backgroundSurface, 0, 0);
-    refreshRoomBackground(roomNum);
+    refreshRoomBackground(_currentRoomNumber);
     refreshActors();
 }
 
@@ -1110,7 +1110,7 @@ void WaynesWorldEngine::changeRoom(int roomNum) {
     _actorSpriteValue = 0;
     _currentRoomNumber = roomNum;
     _roomChangeCtr++;
-    loadRoomBackground(roomNum);
+    loadRoomBackground();
 }
 
 void WaynesWorldEngine::refreshRoomBackground(int roomNum) {
@@ -1656,7 +1656,7 @@ void WaynesWorldEngine::handleVerbTalkTo() {
         } else {
             _currentActorNum = 0;
         }
-        loadRoomBackground(_currentRoomNumber);
+        loadRoomBackground();
         displayText("c11", actionTextIndex, 0, -1, -1, 0);
         if (_currentActorNum != 0) {
             _currentActorNum = 1;
@@ -1665,7 +1665,7 @@ void WaynesWorldEngine::handleVerbTalkTo() {
         }
         waitSeconds(2);
         _isTextVisible = false;
-        loadRoomBackground(_currentRoomNumber);
+        loadRoomBackground();
         if (room1Special) {
             // TODO r1_handleRoomEvent(true);
         }
@@ -1894,7 +1894,7 @@ void WaynesWorldEngine::extremeCloseUpHandleMouseClick() {
     _screen->clear(0);
     paletteFadeIn(0, 256, 16);
     drawInterface(_verbNumber);
-    loadRoomBackground(_currentRoomNumber);
+    loadRoomBackground();
     // sysMouseDriver(1);
 }
 
