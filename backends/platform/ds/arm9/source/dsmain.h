@@ -117,9 +117,6 @@ void 	setShakePos(int shakeXOffset, int shakeYOffset);
 // Reports
 void 	memoryReport();
 
-// Sleep (I'd like some of that right now)
-void 	checkSleepMode();
-
 // Virtual keyboard
 void 	setKeyboardIcon(bool enable);
 bool 	getKeyboardIcon();

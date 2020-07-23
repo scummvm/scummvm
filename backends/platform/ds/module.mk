@@ -11,9 +11,7 @@ PORT_OBJS := \
 	arm9/source/osystem_ds.o \
 	arm9/source/touchkeyboard.o \
 	arm9/source/dsoptions.o \
-	arm9/source/keys.o \
-	arm9/source/wordcompletion.o \
-	arm9/source/interrupt.o
+	arm9/source/wordcompletion.o
 
 DATA_OBJS := \
 	arm9/data/icons.o \

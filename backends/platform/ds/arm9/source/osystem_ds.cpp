@@ -644,7 +644,6 @@ void OSystem_DS::delayMillis(uint msecs) {
 	}
 
 	DS::doTimerCallback();
-	DS::checkSleepMode();
 	DS::addEventsToQueue();
 }
 
@@ -680,12 +679,6 @@ void OSystem_DS::deleteMutex(MutexRef mutex) {
 }
 
 void OSystem_DS::quit() {
-/*	consolePrintf("Soft resetting...");
-	IPC->reset = 1;
-	REG_IE = 0;
-
-	asm("swi 0x26\n");
-	swiSoftReset();*/
 }
 
 Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
