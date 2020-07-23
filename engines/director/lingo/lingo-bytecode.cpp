@@ -263,6 +263,8 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x0b, 0x06, kTheField,			kTheTextAlign,		true, kTEAItemId },
 	{ 0x0b, 0x07, kTheField,			kTheTextSize,		true, kTEAItemId },
 
+	{ 0x0d, 0x0c, kTheCast,				kTheLoop,			true, kTEAItemId },
+	{ 0x0d, 0x0d, kTheCast,				kTheDuration,		true, kTEAItemId },
 	{ 0x0d, 0x0f, kTheCast,				kTheDirectToStage,	true, kTEAItemId },
 	{ 0x0d, 0x10, kTheCast,				kTheSound,			true, kTEAItemId },
 
