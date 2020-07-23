@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -6572,37 +6572,31 @@ msgstr "Nächste Musikaufzeichnung auswählen"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Play note 1: A"
-msgstr "Spiele Note 1: A"
+msgstr "Note 1: A"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Spieldauer: "
+msgstr "Note 2: F#"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Spieldauer: "
+msgstr "Note 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Spieldauer: "
+msgstr "Note 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Spieldauer: "
+msgstr "Note 5: E"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Spieldauer: "
+msgstr "Note 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Spieldauer: "
+msgstr "Note 7: B"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
