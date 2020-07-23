@@ -180,28 +180,12 @@ void drawText(int tx, int ty, const char *string, bool highlight) {
 
 }
 
-
-
-void restoreVRAM(int tileBase, int mapBase, u16 *saveSpace) {
-/*	for (int r = 0; r < 32 * 32; r++) {
-		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = *saveSpace++;
-	}
-
-	for (int r = 0; r < 4096; r++) {
-		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r]	= *saveSpace++;
-	}*/
-}
-
 void drawKeyboard(int tileBase, int mapBase, u16 *saveSpace) {
- 	/* int keyboardDataSize = 4736 * 2; */
-
 	for (int r = 0; r < 32 * 32; r++) {
-//		*saveSpace++ = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r];
 		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = 0;
 	}
 
 	for (int r = 0; r < KEYBOARD_DATA_SIZE / 2; r++) {
-//		*saveSpace++ = ((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r];
 		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r] = ((u16 *) (::keyboard_raw))[r];
 	}
 
@@ -354,32 +338,9 @@ void clearAutoComplete() {
 
 void typeCompletion(int current) {
 	Common::Event event;
-	/* OSystem_DS *system = OSystem_DS::instance(); */
 
 	strcat(autoCompleteBuffer, &autoCompleteWord[current][charactersEntered]);
 	strcat(autoCompleteBuffer, " ");
-
-/*	consolePrintf("Typing word: %s\n", autoCompleteWord[current]);
-
-	for (int r = charactersEntered; r < strlen(autoCompleteWord[current]); r++) {
-		event.kbd.keycode = autoCompleteWord[current][r];
-		event.kbd.ascii = autoCompleteWord[current][r];
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.flags = 0;
-		system->addEvent(event);
-
-		event.type = Common::EVENT_KEYUP;
-		system->addEvent(event);
-	}
-
-	event.kbd.keycode = ' ';
-	event.kbd.ascii = ' ';
-
-	event.type = Common::EVENT_KEYDOWN;
-	system->addEvent(event);
-
-	event.type = Common::EVENT_KEYUP;
-	system->addEvent(event);*/
 }
 
 void updateTypeEvents() {
@@ -411,7 +372,7 @@ void createKeyEvent(int keyNum, Common::Event& event) {
 
 		if (!DS::shiftState) {
 			event.kbd.ascii = keys[keyNum].character;
-			event.kbd.keycode = (Common::KeyCode) keys[keyNum].character; //Common::KEYCODE_INVALID;
+			event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
 		} else {
 			event.kbd.keycode = (Common::KeyCode) (Common::KEYCODE_F1 - (keys[keyNum].character - '1'));
 			event.kbd.ascii = 0;
@@ -496,29 +457,18 @@ void addKeyboardEvents() {
 		tx -= keyboardX;
 		ty -= keyboardY;
 
-//		consolePrintf("x=%d y=%d\n", tx, ty);
-
 		for (int r = 0; r < DS_NUM_KEYS; r++) {
 			if (( (tx >= keys[r].x) && (tx <= keys[r].x + 1)) &&
 				   (ty >= keys[r].y) && (ty <= keys[r].y + 1)) {
 				OSystem_DS *system = OSystem_DS::instance();
 				Common::Event event;
 
-//				consolePrintf("Key: %d\n", r);
-				if ((keys[r].character == Common::KEYCODE_INVALID)) {
-					// Close button
-					//DS::closed = true;
-				} else {
+				if ((keys[r].character != Common::KEYCODE_INVALID)) {
 					createKeyEvent(r, event);
 				}
 
-				//event.kbd.keycode = keys[r].character;
-				//event.kbd.ascii = keys[r].character;
 				event.type = Common::EVENT_KEYDOWN;
 				system->addEvent(event);
-
-//				event.type = Common::EVENT_KEYUP;
-//				system->addEvent(event);
 
 				switch (keys[r].character) {
 					case DS_SHIFT: {

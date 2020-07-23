@@ -36,9 +36,6 @@ void asmDrawStripToScreen(int height, int width, byte const *text, byte const *s
 		return;
 
 	width &= ~4;
-//	src = (const byte *) (((int) (src)) & (~4));
-//	dst = (byte *) (((int) (dst)) & (~4));
-//	text = (const byte *) (((int) (text)) & (~4));
 
 	asm (	"mov r5, %0\n"				// Height
 			"yLoop:\n"

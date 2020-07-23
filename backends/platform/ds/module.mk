@@ -1,8 +1,7 @@
 MODULE := backends/platform/ds
 
 ARM7_MODULE_OBJS := \
-	arm7/source/main.o \
-	arm7/source/libcartreset/cartreset.o \
+	arm7/source/main.o
 
 PORT_OBJS := \
 	arm9/source/blitters_arm.o \
@@ -75,8 +74,7 @@ $(MODULE)/arm9/source/touchkeyboard.o: \
 
 
 MODULE_DIRS += \
-	backends/platform/ds/arm7/source/ \
-	backends/platform/ds/arm7/source/libcartreset/ \
+	backends/platform/ds/arm7/source/
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))

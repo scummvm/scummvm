@@ -24,49 +24,9 @@
 #   DEFAULT_CONFIG_FILE).
 #   There are a few game specific hacks which are currently controlled by this,
 #   too; we need to investigate those.
-# * No support for USE_DEBUGGER and USE_PROFILER yet. I envision that we would
-#  integrate them with the --enable-debug and --enable-profiling configure options,
-#  I simply haven't gotten around to do that yet.
-# * ...
 
 # Set location of ndsdir so that we can easily refer to files in it
 ndsdir = backends/platform/ds
-
-# Uncomment the following line to enable support for the
-# ace DS Debugger (remembering to make the same change in the arm7 makefile):
-#USE_DEBUGGER = 1
-# TODO: Need to reimplement this (for arm9 and arm7).
-#ifdef USE_DEBUGGER
-#	DEFINES += -DUSE_DEBUGGER
-#	CFLAGS += -g
-#endif
-
-# Uncomment the following line to enable the profiler
-#USE_PROFILER = 1
-# TODO: Need to reimplement this; and maybe replace it by the --enable-profiling
-#       configure directive. Below is USE_PROFILER related code from the old NDS
-#       build system:
-#ifdef USE_PROFILER
-#	CFLAGS += -mpoke-function-name -finstrument-functions -g
-#	DEFINES += -DUSE_PROFILER
-#endif
-# And this for module.mk:
-#ifdef USE_PROFILER
-#	PORT_OBJS += arm9/source/profiler/cyg-profile.o
-#endif
-
-
-
-# NOTE: The header and libs for the debugger is assumed to be in the libnds
-# folder.
-
-
-ifdef WRAP_MALLOC
-	LDFLAGS += -Wl,--wrap,malloc
-	DEFINES += -DWRAP_MALLOC
-endif
-
-
 
 # Compiler options for files which should be optimised for speed
 OPT_SPEED := -O3 -marm
@@ -128,13 +88,12 @@ engines/teenagent/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
 #
 #############################################################################
 
-# FIXME: Newer versions of devkitARM don't include dsbuild, which is needed to create scummvm.ds.gba
-all: scummvm.nds # scummvm.ds.gba
+all: scummvm.nds
 
 clean: dsclean
 
 dsclean:
-	$(RM) $(addprefix $(ndsdir)/, $(ARM7_MODULE_OBJS)) scummvm.nds scummvm.ds.gba
+	$(RM) $(addprefix $(ndsdir)/, $(ARM7_MODULE_OBJS)) scummvm.nds
 	$(RM_REC) romfs
 
 .PHONY: dsclean
@@ -143,10 +102,6 @@ dsclean:
 
 %.nds: %.elf $(ndsdir)/arm7/arm7.elf romfs
 	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.elf -b $(srcdir)/$(ndsdir)/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
-
-%.ds.gba: %.nds
-	dsbuild $< -o $@ -l $(srcdir)/$(ndsdir)/arm9/ndsloader.bin
-	padbin 16 $@
 
 romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(PLUGINS)
 	@rm -rf romfs
@@ -179,10 +134,6 @@ endif
 #
 #############################################################################
 
-# HACK/FIXME: C compiler, for cartreset.c -- we should switch this to use CXX
-# as soon as possible.
-CC := $(DEVKITPRO)/devkitARM/bin/arm-none-eabi-gcc
-
 #
 # Set various flags
 #
@@ -194,7 +145,6 @@ ARM7_CFLAGS	:=	-g -Wall -O2\
 		-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
 		-ffast-math \
 		$(ARM7_ARCH) \
-		-I$(srcdir)/$(ndsdir)/arm7/source/libcartreset \
 		-I$(srcdir)/$(ndsdir)/commoninclude \
 		-I$(DEVKITPRO)/libnds/include \
 		-I$(DEVKITPRO)/libnds/include/nds \
@@ -204,34 +154,14 @@ ARM7_CXXFLAGS	:= $(ARM7_CFLAGS) -fno-exceptions -fno-rtti
 
 ARM7_LDFLAGS	:= -g $(ARM7_ARCH) -mfloat-abi=soft
 
-# HACK/FIXME: Define a custom build rule for cartreset.c.
-# We do this because it is a .c file, not a .cpp file and so is outside our
-# regular build system anyway. But this is *bad*. It should be changed into a
-# .cpp file and this rule be removed.
-# Redefining -std there as we are using CXXFLAGS which specifies -ansi or -std=c++11
-# Using gnu90 as library code doesn't conform to standards
-%.o: %.c
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CC) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -std=gnu90 -c $(<) -o $*.o
-
-# Set custom build flags for cartreset.o
-$(ndsdir)/arm7/source/libcartreset/cartreset.o: CXXFLAGS=$(ARM7_CFLAGS)
-$(ndsdir)/arm7/source/libcartreset/cartreset.o: CPPFLAGS=
-
 # Set custom build flags for main.o
 $(ndsdir)/arm7/source/main.o: CXXFLAGS=$(ARM7_CXXFLAGS)
 $(ndsdir)/arm7/source/main.o: CPPFLAGS=
 
 # Rule for creating ARM7 .elf files by linking .o files together with a special linker script
 $(ndsdir)/arm7/arm7.elf: \
-	$(ndsdir)/arm7/source/libcartreset/cartreset.o \
 	$(ndsdir)/arm7/source/main.o
 	+$(LD) $(ARM7_LDFLAGS) -specs=ds_arm7.specs $+ -L$(DEVKITPRO)/libnds/lib -lnds7  -o $@
-
-
-
-
-
 
 
 # Command to build libmad is:

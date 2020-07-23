@@ -139,16 +139,10 @@ bool findWordCompletions(const char *input) {
 			// We're too early, so change the maximum position
 			max = position - 1;
 		}
-
-//		consolePrintf("Word: %s, (%d, %d) result: %d\n", word, min, max, result);
-
 	} while (max - min > 0);
 
 	position = min;
 	word = wordBufferPtr[position];
-	//consolePrintf("Final word: %s\n", word);
-
-
 
 	system->setCharactersEntered(strlen(partialWord));
 
@@ -168,7 +162,6 @@ bool findWordCompletions(const char *input) {
 		if (position == wordBufferPtrPos)
 			return false;
 		word = wordBufferPtr[position];
-//		consolePrintf("Final word: %s\n", word);
 	}
 
 
