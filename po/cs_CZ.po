@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-23 07:30+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -1842,7 +1842,7 @@ msgstr "Také je mo¾no pøímo nahlásit chybu ve høe do Bug Trackeru."
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr "V¹echna potøebná data o høe byla zkopírována do schránky."
+msgstr "V¹echna potøebná data o høe byla zkopírována do schránky"
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
@@ -2104,7 +2104,7 @@ msgstr "~K~lávesy"
 #: engines/engine.cpp:318
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Nelze pøepnout na re¾im obrazu: '%dx%d'"
+msgstr "Nelze pøepnout na re¾im obrazu: '%dx%d'."
 
 #: engines/engine.cpp:327
 msgid "Could not initialize color format."
@@ -4578,14 +4578,12 @@ msgid "Open main menu"
 msgstr ""
 
 #: engines/mohawk/myst.cpp:591 engines/mohawk/riven.cpp:860
-#, fuzzy
 msgid "Load game state"
-msgstr "Nahrát hru:"
+msgstr "Nahrát hru"
 
 #: engines/mohawk/myst.cpp:596 engines/mohawk/riven.cpp:865
-#, fuzzy
 msgid "Save game state"
-msgstr "Ulo¾it hru:"
+msgstr "Ulo¾it hru"
 
 #: engines/mohawk/myst.cpp:601 engines/mohawk/riven.cpp:870
 msgid "Show options menu"
@@ -4853,14 +4851,12 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2577
-#, fuzzy
 msgid "Save Game"
-msgstr "Ulo¾it hru:"
+msgstr "Ulo¾it hru"
 
 #: engines/pegasus/pegasus.cpp:2583
-#, fuzzy
 msgid "Load Game"
-msgstr "Nahrát hru:"
+msgstr "Nahrát hru"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -6105,15 +6101,14 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Nelze najít datové soubory jádra '%s'."
+msgstr "Nelze najít datové soubory jádra %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
-"Nalezena data jádra '%s' s nesprávnou verzí. Oèekávána %d.%d, ale byla %d.%d."
+msgstr "Nalezena data jádra. Oèekávána %d.%d, ale byla %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6452,9 +6447,8 @@ msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:602
-#, fuzzy
 msgid "Save game"
-msgstr "Ulo¾it hru:"
+msgstr "Ulo¾it hru"
 
 #: engines/wintermute/keymapper_tables.h:612
 #, fuzzy
@@ -6513,39 +6507,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Doba hraní: "
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
@@ -6674,9 +6661,8 @@ msgid "Show journal"
 msgstr "Zobrazit V¹e"
 
 #: engines/wintermute/keymapper_tables.h:1356
-#, fuzzy
 msgid "Music menu"
-msgstr "Hlasitost hudby:"
+msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Rotate"
