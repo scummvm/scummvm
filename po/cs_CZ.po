@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:30+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -1837,16 +1837,16 @@ msgstr ""
 
 #: gui/unknown-game-dialog.cpp:106
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Také je mo¾no pøímo nahlásit chybu ve høe do Bug Trackeru."
 
 #: gui/unknown-game-dialog.cpp:156
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "V¹echna potøebná data o høe byla zkopírována do schránky."
 
 #: gui/unknown-game-dialog.cpp:158
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Kopírování herních dat do schránky selhalo!"
 
 #: gui/updates-dialog.cpp:49
 msgid ""
@@ -1905,7 +1905,7 @@ msgstr "Nepodporovaný barevný re¾im"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Automatické rozpoznání zaøízení selhalo"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
@@ -2001,6 +2001,7 @@ msgstr "<©patná hodnota>"
 #: engines/advancedDetector.cpp:139
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
+"Rozpoznána nelegální kopie hry. V tìchto pøípadech ¾ádnou podporu nenabízíme"
 
 #: engines/dialogs.cpp:73
 msgid "~R~esume"
@@ -2101,9 +2102,9 @@ msgid "~K~eys"
 msgstr "~K~lávesy"
 
 #: engines/engine.cpp:318
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Nelze pøepnout na re¾im obrazu: '"
+msgstr "Nelze pøepnout na re¾im obrazu: '%dx%d'"
 
 #: engines/engine.cpp:327
 msgid "Could not initialize color format."
@@ -2160,14 +2161,12 @@ msgstr ""
 "Pro podrobnosti si pøeètìte README."
 
 #: engines/engine.cpp:510 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Autoukládání:"
+msgstr "Automatické ukládání"
 
 #: engines/engine.cpp:512
-#, fuzzy
 msgid "Error occurred making autosave"
-msgstr "Chyba pøi spu¹tìní hry:"
+msgstr "Pøi ukládání se vyskytla chyba"
 
 #: engines/engine.cpp:584
 #, c-format
@@ -2195,11 +2194,11 @@ msgstr "Pøesto spustit"
 
 #: engines/engine.cpp:744
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "Naètení hry je momentálnì nedostupné"
 
 #: engines/engine.cpp:773
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "Ulo¾ení hry je momentálnì nedostupné"
 
 #: engines/game.cpp:171
 #, c-format
@@ -2215,14 +2214,13 @@ msgstr ""
 "kterou jste chtìli pøidat, a její verzí, jazykem, atd.:"
 
 #: engines/game.cpp:175
-#, fuzzy, c-format
+#, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "Shodné ID hry:"
+msgstr "Odpovídající herní ID pro engine %s:"
 
 #: audio/adlib.cpp:2293
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "AdLib emulátor:"
+msgstr "AdLib emulátor"
 
 #: audio/fmopl.cpp:72
 msgid "MAME OPL emulator"
@@ -2294,23 +2292,20 @@ msgid "Starting MIDI dump"
 msgstr ""
 
 #: audio/mods/paula.cpp:303
-#, fuzzy
 msgid "Amiga Audio emulator"
-msgstr "Emulátor zvuku Amiga"
+msgstr "Emulátor zvuku pro Amiga"
 
 #: audio/null.h:44
 msgid "No music"
 msgstr "Bez hudby"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr "Apple II GS Emulátor (NENÍ ZAVEDEN)"
+msgstr "Apple II GS Emulátor (NENÍ IMPLEMENTOVÁN)"
 
 #: audio/softsynth/cms.cpp:351
-#, fuzzy
 msgid "Creative Music System emulator"
-msgstr "Emulátor hudebního systému Creative"
+msgstr "Emulátor pro Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -2325,29 +2320,24 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Zavádím MT-32 Emulátor"
 
 #: audio/softsynth/mt32.cpp:442
-#, fuzzy
 msgid "MT-32 emulator"
-msgstr "MT-32 Emulátor"
+msgstr "MT-32 emulátor"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
-msgstr "PC Speaker Emulátor"
+msgstr "PC Speaker emulátor"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
-msgstr "IBM PCjr Emulátor"
+msgstr "IBM PCjr emulátor"
 
 #: audio/softsynth/sid.cpp:1434
-#, fuzzy
 msgid "C64 Audio emulator"
 msgstr "Emulátor zvuku C64"
 
 #: backends/cloud/cloudmanager.cpp:156
-#, fuzzy
 msgid "<syncing...>"
-msgstr "Pøipojit"
+msgstr "<synchronizace...>"
 
 #: backends/cloud/storage.cpp:242
 msgid "Saved games sync was cancelled."
@@ -2400,9 +2390,8 @@ msgid "Quit"
 msgstr "Ukonèit"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Globální)"
+msgstr "Globální"
 
 #: backends/events/default/default-events.cpp:296
 #, fuzzy
@@ -2419,9 +2408,8 @@ msgid "Toggle mute"
 msgstr "Povolit zachycování my¹i"
 
 #: backends/events/default/default-events.cpp:336
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Ladící program"
+msgstr "Otevøít ladící program"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2509,29 +2497,28 @@ msgstr "OpenGL"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:81
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Vystøedit"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Pixelovì pøesné ¹kálování"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:239
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
 msgid "Fit to window"
-msgstr ""
+msgstr "Pøizpùsobit oknu"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:240
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgid "Stretch to window"
-msgstr ""
+msgstr "Roztáhnout do okna"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:241
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "Pøizpùsobit oknu (4:3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:586
 #, c-format
@@ -2599,48 +2586,43 @@ msgstr "Povolit zachycování my¹i"
 #: engines/wintermute/keymapper_tables.h:1258
 #: engines/wintermute/keymapper_tables.h:1289
 msgid "Save screenshot"
-msgstr ""
+msgstr "Ulo¾it snímek obrazovky"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
-msgstr "Povolit korekci pomìru stran"
+msgstr "Pøepnout korekci pomìru stran"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Pro ¹kálování grafiky pou¾ít lineární filtrování"
+msgstr "Pou¾ít lineární ¹kálování"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Nelze pøepnout na re¾im rozta¾ení '%s'."
+msgstr "Pøepínat mezi re¾imy rozta¾ení"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Zvìt¹it / Zmen¹it faktor zmìny velikosti"
+msgstr "Zvìt¹it faktor zmìny velikosti"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Zvìt¹it / Zmen¹it faktor zmìny velikosti"
+msgstr "Zmen¹it faktor zmìny velikosti"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Pøepnout na nejbli¾¹í ¹kálování"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Pøepnout na velikost AdvMama 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Pøepnout na ¹kálování HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Pøepnout na ¹kálování 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
