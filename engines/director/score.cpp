@@ -232,23 +232,13 @@ void Score::startPlay() {
 			_channels.push_back(new Channel(_frames[1]->_sprites[i]));
 
 	if (_vm->getVersion() >= 3)
-		_lingo->processEvent(kEventStartMovie);
+		_movie->processEvent(kEventStartMovie);
 }
 
 void Score::step() {
-	if (_currentFrame >= _frames.size()) {
-		if (debugChannelSet(-1, kDebugNoLoop)) {
-			_playState = kPlayStopped;
-			return;
-		}
-
-		_currentFrame = 0;
-	}
+	_lingo->processEvents();
 
 	update();
-
-	if (_currentFrame < _frames.size())
-		_vm->processEvents();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(-1, kDebugScreenshot)) {
 		warning("Score::startLoop(): ran frame %0d", _framesRan);
@@ -267,7 +257,7 @@ void Score::step() {
 
 void Score::stopPlay() {
 	if (_vm->getVersion() >= 3)
-		_lingo->processEvent(kEventStopMovie);
+		_movie->processEvent(kEventStopMovie);
 	_lingo->executePerFrameHook(-1, 0);
 }
 
@@ -300,11 +290,11 @@ void Score::update() {
 		if (_vm->_skipFrameAdvance) {
 			uint16 nextFrameCache = _nextFrame;
 			if (_vm->getVersion() >= 4)
-				_lingo->processEvent(kEventExitFrame);
+				_movie->processEvent(kEventExitFrame);
 			_nextFrame = nextFrameCache;
 		} else {
 			if (_vm->getVersion() >= 4)
-				_lingo->processEvent(kEventExitFrame);
+				_movie->processEvent(kEventExitFrame);
 		}
 
 		// If there is a transition, the perFrameHook is called
@@ -325,8 +315,14 @@ void Score::update() {
 
 	_vm->_skipFrameAdvance = false;
 
-	if (_currentFrame >= _frames.size())
-		return;
+	if (_currentFrame >= _frames.size()) {
+		if (debugChannelSet(-1, kDebugNoLoop)) {
+			_playState = kPlayStopped;
+			return;
+		}
+
+		_currentFrame = 0;
+	}
 
 	Common::SortedArray<Label *>::iterator i;
 	if (_labels != NULL) {
@@ -342,9 +338,9 @@ void Score::update() {
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
 	if (_vm->getVersion() >= 6) {
-		// _lingo->processEvent(kEventBeginSprite);
+		// _movie->processEvent(kEventBeginSprite);
 		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
-		// _lingo->processEvent(kEventPrepareFrame);
+		// _movie->processEvent(kEventPrepareFrame);
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
 
@@ -354,12 +350,12 @@ void Score::update() {
 
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
-		_lingo->processEvent(kEventEnterFrame); // Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
+		_movie->processEvent(kEventEnterFrame); // Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
 		if (_vm->getVersion() == 3) {
 			// Movie version of enterFrame, for D3 only. The Lingo Dictionary claims
 			// "This handler executes before anything else when the playback head moves."
 			// but this is incorrect. The frame script is executed first.
-			_lingo->processEvent(kEventStepMovie);
+			_movie->processEvent(kEventStepMovie);
 		}
 	}
 	// TODO Director 6 - another order

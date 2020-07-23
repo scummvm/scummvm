@@ -268,23 +268,13 @@ private:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
-	void setPrimaryEventHandler(LEvent event, const Common::String &code);
-	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
-	void queueFrameEvent(LEvent event, int eventId);
-	void queueMovieEvent(LEvent event, int eventId);
 	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
-
-	int _nextEventId;
-	Common::Queue<LingoEvent> _eventQueue;
 
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
-	int getEventCount();
-	void processEvent(LEvent event, int spriteId = 0);
 	void processEvents();
-	void registerEvent(LEvent event, int spriteId = 0);
 
 public:
 	void execute(uint pc);

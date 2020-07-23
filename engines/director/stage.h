@@ -121,6 +121,9 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 
 	bool step();
 
+	// events.cpp
+	virtual bool processEvent(Common::Event &event);
+
 	// tests.cpp
 	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
 	void testFontScaling();

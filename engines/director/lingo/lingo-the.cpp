@@ -398,11 +398,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheCommandDown:
 		d.type = INT;
-		d.u.i = (g_director->_keyFlags & Common::KBD_META) ? 1 : 0;
+		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_META) ? 1 : 0;
 		break;
 	case kTheControlDown:
 		d.type = INT;
-		d.u.i = (g_director->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
+		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_CTRL) ? 1 : 0;
 		break;
 	case kTheDate:
 		d = getTheDate(field);
@@ -454,11 +454,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheKey:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->_key);
+		d.u.s = new Common::String(_vm->getCurrentMovie()->_key);
 		break;
 	case kTheKeyCode:
 		d.type = INT;
-		d.u.i = _vm->_keyCode;
+		d.u.i = _vm->getCurrentMovie()->_keyCode;
 		break;
 	case kTheKeyDownScript:
 		d.type = STRING;
@@ -636,7 +636,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheOptionDown:
 		d.type = INT;
-		d.u.i = (g_director->_keyFlags & Common::KBD_ALT) ? 1 : 0;
+		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
 	case kThePauseState:
 		getTheEntitySTUB(kThePauseState);
@@ -692,7 +692,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheShiftDown:
 		d.type = INT;
-		d.u.i = (g_director->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
+		d.u.i = (_vm->getCurrentMovie()->_keyFlags & Common::KBD_SHIFT) ? 1 : 0;
 		break;
 	case kTheSoundEnabled:
 		getTheEntitySTUB(kTheSoundEnabled);
@@ -883,10 +883,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheItemDelimiter);
 		break;
 	case kTheKeyDownScript:
-		setPrimaryEventHandler(kEventKeyDown, d.asString());
+		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventKeyDown, d.asString());
 		break;
 	case kTheKeyUpScript:
-		setPrimaryEventHandler(kEventKeyUp, d.asString());
+		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventKeyUp, d.asString());
 		break;
 	case kTheMenu:
 		setTheEntitySTUB(kTheMenu);
@@ -895,10 +895,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheMenuItem);
 		break;
 	case kTheMouseDownScript:
-		setPrimaryEventHandler(kEventMouseDown, d.asString());
+		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventMouseDown, d.asString());
 		break;
 	case kTheMouseUpScript:
-		setPrimaryEventHandler(kEventMouseUp, d.asString());
+		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventMouseUp, d.asString());
 		break;
 	case kThePerFrameHook:
 		_perFrameHook = d;
@@ -982,7 +982,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheTimeoutPlay);
 		break;
 	case kTheTimeoutScript:
-		setPrimaryEventHandler(kEventTimeout, d.asString());
+		_vm->getCurrentMovie()->setPrimaryEventHandler(kEventTimeout, d.asString());
 		break;
 	case kTheTimer:
 		setTheEntitySTUB(kTheTimer);

@@ -52,6 +52,13 @@ Movie::Movie(Stage *stage) {
 	_lastClickTime = _lastEventTime;
 	_lastRollTime = _lastEventTime;
 	_lastTimerReset = _lastEventTime;
+	_nextEventId = 0;
+
+	_key = 0;
+	_keyCode = 0;
+	_keyFlags = 0;
+
+	_currentDraggedChannel = nullptr;
 
 	_allowOutdatedLingo = false;
 

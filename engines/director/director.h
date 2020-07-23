@@ -172,6 +172,7 @@ public:
 	Stage *getMainStage() const { return _mainStage; }
 	Stage *getCurrentStage() const { return _currentStage; }
 	Movie *getCurrentMovie() const;
+	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
 
 	// graphics.cpp
@@ -192,7 +193,7 @@ public:
 	Archive *createArchive();
 
 	// events.cpp
-	void processEvents(bool bufferLingoEvents = false);
+	void processEvents();
 	uint32 getMacTicks();
 	void waitForClick();
 
@@ -203,9 +204,6 @@ public:
 
 public:
 	int _colorDepth;
-	unsigned char _key;
-	int _keyCode;
-	byte _keyFlags;
 	Common::HashMap<int, int> _macKeyCodes;
 	int _machineType;
 	bool _playbackPaused;
@@ -233,9 +231,6 @@ private:
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::HashMap<int, PaletteV4 *> _director4Palettes;
-
-	Channel *_currentDraggedChannel;
-	Common::Point _draggingSpritePos;
 };
 
 extern DirectorEngine *g_director;

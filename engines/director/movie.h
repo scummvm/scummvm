@@ -24,6 +24,7 @@
 #define DIRECTOR_MOVIE_H
 
 namespace Common {
+struct Event;
 class ReadStreamEndian;
 class SeekableSubReadStreamEndian;
 }
@@ -37,6 +38,7 @@ class CastMember;
 class DirectorEngine;
 class Lingo;
 struct LingoArchive;
+struct LingoEvent;
 class ScriptContext;
 class Stage;
 struct Symbol;
@@ -110,8 +112,21 @@ public:
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
 	Symbol getHandler(const Common::String &name);
 
+	// events.cpp
+	bool processEvent(Common::Event &event);
+
+	// lingo/lingo-events.cpp
+	void setPrimaryEventHandler(LEvent event, const Common::String &code);
+	int getEventCount();
+	void processEvent(LEvent event, int spriteId = 0);
+	void registerEvent(LEvent event, int spriteId = 0);
+
 private:
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
+
+	void queueSpriteEvent(LEvent event, int eventId, int spriteId);
+	void queueFrameEvent(LEvent event, int eventId);
+	void queueMovieEvent(LEvent event, int eventId);
 
 public:
 	Archive *_movieArchive;
@@ -129,6 +144,13 @@ public:
 	Cast *_sharedCast;
 	bool _allowOutdatedLingo;
 
+	int _nextEventId;
+	Common::Queue<LingoEvent> _eventQueue;
+
+	unsigned char _key;
+	int _keyCode;
+	byte _keyFlags;
+
 private:
 	Stage *_stage;
 	DirectorEngine *_vm;
@@ -143,6 +165,9 @@ private:
 	Common::String _changedBy;
 	Common::String _script;
 	Common::String _directory;
+
+	Channel *_currentDraggedChannel;
+	Common::Point _draggingSpritePos;
 };
 
 } // End of namespace Director

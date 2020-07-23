@@ -152,7 +152,7 @@ void Stage::loadEXE(const Common::String movie) {
 
 		_currentMovie = new Movie(this);
 		_currentMovie->getMainLingoArch()->addCode(script, kMovieScript, 0);
-		g_lingo->processEvent(kEventStartUp);
+		_currentMovie->processEvent(kEventStartUp);
 		delete _currentMovie;
 		_currentMovie = nullptr;
 

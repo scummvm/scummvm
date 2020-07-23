@@ -169,7 +169,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_localvars = NULL;
 
 	// events
-	_nextEventId = 0;
 	_passEvent = false;
 	_perFrameHook = Datum();
 

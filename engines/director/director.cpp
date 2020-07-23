@@ -102,14 +102,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "win_data", 0, 2);	// L-ZONE
 
 	_colorDepth = 8;	// 256-color
-	_key = 0;
-	_keyCode = 0;
-	_keyFlags = 0;
 	_machineType = 9; // Macintosh IIci
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
-
-	_currentDraggedChannel = nullptr;
 }
 
 DirectorEngine::~DirectorEngine() {
@@ -129,6 +124,10 @@ Movie *DirectorEngine::getCurrentMovie() const { return _currentStage->getCurren
 Common::String DirectorEngine::getCurrentPath() const { return _currentStage->getCurrentPath(); }
 
 static void buildbotErrorHandler(const char *msg) { }
+
+void DirectorEngine::setCurrentMovie(Movie *movie) {
+	_currentStage = movie->getStage();
+}
 
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
@@ -196,6 +195,8 @@ Common::Error DirectorEngine::run() {
 	bool loop = true;
 
 	while (loop) {
+		processEvents();
+
 		_currentStage = _mainStage;
 		loop = _currentStage->step();
 
