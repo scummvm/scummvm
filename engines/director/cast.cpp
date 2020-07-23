@@ -668,8 +668,7 @@ void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			break;
 		default:
 			warning("Cast::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
-			stream.skip(size - 1);
-			continue;
+			break;
 		}
 		stream.seek(returnPos);
 	}
