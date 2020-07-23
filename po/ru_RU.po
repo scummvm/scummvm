@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:15+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -2416,14 +2416,12 @@ msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Переключение перехвата мыши"
+msgstr "Вкл/выкл звук"
 
 #: backends/events/default/default-events.cpp:336
-#, fuzzy
 msgid "Open Debugger"
-msgstr "Отладчик"
+msgstr "Открыть отладчик"
 
 #: backends/events/gph/gph-events.cpp:423
 #: backends/events/gph/gph-events.cpp:466
@@ -2600,86 +2598,79 @@ msgstr "Переключение перехвата мыши"
 #: engines/wintermute/keymapper_tables.h:1258
 #: engines/wintermute/keymapper_tables.h:1289
 msgid "Save screenshot"
-msgstr ""
+msgstr "Сохранить скриншот"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:387
-#, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Переключение коррекции соотношения сторон"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:394
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "Использовать линейную фильтрацию для увеличения разрешения"
+msgstr "Использовать линейное сглаживание при масштабировании"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
 msgid "Cycle through stretch modes"
 msgstr "Переключение режима растягивания"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
-#, fuzzy
 msgid "Increase the scale factor"
-msgstr "Увеличить / уменьшить масштаб"
+msgstr "Увеличить масштаб"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
-#, fuzzy
 msgid "Decrease the scale factor"
-msgstr "Увеличить / уменьшить масштаб"
+msgstr "Уменьшить масштаб"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
-msgstr ""
+msgstr "Переключить масштабирование на nearest neighbour"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
+msgstr "Переключить масштабирование на AdvMame 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:428
 msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
+msgstr "Переключить масштабирование на HQ 2x/3x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Switch to 2xSai scaling"
-msgstr ""
+msgstr "Переключить масштабирование на 2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Переключить масштабирование на Super2xSai"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:432
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "Переключить масштабирование на SuperEagle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:433
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "Переключить масштабирование на TV 2x"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "Переключить масштабирование на DotMatrix"
 
 #: backends/keymapper/hardware-input.cpp:245
-#, fuzzy
 msgid "Left Mouse Button"
-msgstr "Эмуляция нажатия левой клавиши мыши"
+msgstr "Левая кнопка мыши"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
 msgid "Right Mouse Button"
-msgstr "Эмуляция правой клавиши мыши"
+msgstr "Правая кнопка мыши"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
 msgid "Middle Mouse Button"
-msgstr "Эмуляция нажатия левой клавиши мыши"
+msgstr "Средняя кнопка мыши"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "Колесо мыши вверх"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "Колесо мыши вниз"
 
 #: backends/keymapper/hardware-input.cpp:250
 #, fuzzy
@@ -2693,118 +2684,108 @@ msgstr "Эмуляция нажатия левой клавиши мыши"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
-msgstr ""
+msgstr "Джойстик A"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr ""
+msgstr "Джойстик B"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr ""
+msgstr "Джойстик X"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr ""
+msgstr "Джойстик Y"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
 msgid "Joy Back"
-msgstr "Идти назад"
+msgstr "Джойстик назад"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr ""
+msgstr "Джойстик меню"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
 msgid "Joy Start"
-msgstr "П~у~ск"
+msgstr "Джойстик старт"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
 msgid "Left Stick"
-msgstr "Левый щелчок"
+msgstr "Левый стик"
 
 #: backends/keymapper/hardware-input.cpp:264
-#, fuzzy
 msgid "Right Stick"
-msgstr "Правый щелчок"
+msgstr "Правый стик"
 
 #: backends/keymapper/hardware-input.cpp:265
 msgid "Left Shoulder"
-msgstr ""
+msgstr "Левый курок"
 
 #: backends/keymapper/hardware-input.cpp:266
 msgid "Right Shoulder"
-msgstr ""
+msgstr "Правый курок"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52
 msgid "D-pad Up"
-msgstr ""
+msgstr "Стрелка вверх"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53
 msgid "D-pad Down"
-msgstr ""
+msgstr "Стрелка вниз"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54
-#, fuzzy
 msgid "D-pad Left"
-msgstr "Скользить влево"
+msgstr "Стрелка влево"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55
-#, fuzzy
 msgid "D-pad Right"
-msgstr "Скользить вправо"
+msgstr "Стрелка вправо"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
-msgstr ""
+msgstr "Левый курок"
 
 #: backends/keymapper/hardware-input.cpp:276
 msgid "Right Trigger"
-msgstr ""
+msgstr "Правый курок"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62
-#, fuzzy
 msgid "Left Stick X"
-msgstr "Левый щелчок"
+msgstr "Левый стик ось X"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63
-#, fuzzy
 msgid "Left Stick Y"
-msgstr "Левый щелчок"
+msgstr "Левый стик ось Y"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64
-#, fuzzy
 msgid "Right Stick X"
-msgstr "Правый щелчок"
+msgstr "Правый стик ось X"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65
-#, fuzzy
 msgid "Right Stick Y"
-msgstr "Правый щелчок"
+msgstr "Правый стик ось Y"
 
 #: backends/keymapper/remap-widget.cpp:281
 #: backends/keymapper/remap-widget.cpp:311
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Сбросить к исходным"
 
 #: backends/keymapper/remap-widget.cpp:282
 msgid "Clear mapping"
-msgstr ""
+msgstr "Очистить раскладку"
 
 #: backends/keymapper/virtual-mouse.cpp:154
 msgid "Virtual mouse up"
@@ -2929,7 +2910,7 @@ msgstr "Или выберите каталог (работает только в Chrome):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr "Индекс "
+msgstr "Порядковый номер "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -2953,11 +2934,11 @@ msgstr "ScummVM не может перечислить каталог, который вы указали."
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
-msgstr "Индекс чего-либо"
+msgstr "Порядковый номер"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr "Это страница индекса локального веб-сервера."
+msgstr "Это главная страница локального веб-сервера."
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
 msgid "Open Files manager"
@@ -3045,19 +3026,19 @@ msgstr "Оба"
 
 #: backends/platform/3ds/osystem-events.cpp:48
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/sdl/ps3/ps3.cpp:45
@@ -3073,40 +3054,39 @@ msgstr "П~у~ск"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "C-пад X"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "C-пад Y"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
-msgstr ""
+msgstr "Касание"
 
 #: backends/platform/3ds/osystem-events.cpp:310
-#, fuzzy
 msgid "Toggle Drag Mode"
-msgstr "Режим протягивания"
+msgstr "Вкл/выкл режим перетаскивания"
 
 #: backends/platform/3ds/osystem-events.cpp:315
 msgid "Toggle Magnify Mode"
-msgstr ""
+msgstr "Вкл/выкл режим увеличения"
 
 #: backends/platform/3ds/osystem-events.cpp:320
 msgid "Open 3DS Settings"
@@ -3117,40 +3097,46 @@ msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Режим увеличения выключен. Возврат к режиму перетаскивания.\n"
+"Переходим в лаунчер..."
 
 #: backends/platform/3ds/osystem-events.cpp:352
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Режим увеличения выключен. Переходим в лаунчер..."
 
 #: backends/platform/3ds/osystem-events.cpp:386
 msgid "Hover Mode"
-msgstr "Режим скольжения"
+msgstr "Режим парения"
 
 #: backends/platform/3ds/osystem-events.cpp:390
 msgid "Drag Mode"
-msgstr "Режим протягивания"
+msgstr "Режим перетаскивания"
 
 #: backends/platform/3ds/osystem-events.cpp:392
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
+"Невозможно переключиться в режим перетаскивания при включенном режиме "
+"увеличения"
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "Режим увеличения не может быть активирован в меню."
 
 #: backends/platform/3ds/osystem-events.cpp:402
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"Режим увеличения можно активировать только \n"
+"когда оба экрана включены.\n"
 
 #: backends/platform/3ds/osystem-events.cpp:404
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "Внутриигровое разрешение слишком мало для увеличения."
 
 #: backends/platform/3ds/osystem-events.cpp:410
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Режим Увеличения Включен. Переключение в режим ожидания..."
 
 #: backends/platform/3ds/osystem-events.cpp:412
 msgid "Magnify Mode On"
