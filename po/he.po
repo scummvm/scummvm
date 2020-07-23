@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -232,7 +232,6 @@ msgid "Language:"
 msgstr "שפה:"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:153
-#, fuzzy
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
@@ -251,7 +250,7 @@ msgstr "פלטפורמה:"
 #: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:166
 #: gui/editgamedialog.cpp:167
 msgid "Platform the game was originally designed for"
-msgstr "פלטפורמה שהמשחק נבנה לה במקור"
+msgstr "הפלטפורמה עבורה עיצבו את המשחק במקור"
 
 #: gui/editgamedialog.cpp:166
 msgctxt "lowres"
@@ -273,12 +272,12 @@ msgstr "תצוגה"
 
 #: gui/editgamedialog.cpp:202
 msgid "Override global graphic settings"
-msgstr "ביטול הגדרות תצוגה גלובליות"
+msgstr "ביטול הגדרות תצוגה מקיפות"
 
 #: gui/editgamedialog.cpp:204
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "בטל הגדרות תצוגה גלובליות"
+msgstr "ביטול הגדרות תצוגה מקיפות"
 
 #: gui/editgamedialog.cpp:214 gui/options.cpp:1705
 msgid "Shader"
@@ -306,12 +305,12 @@ msgstr "שמע"
 
 #: gui/editgamedialog.cpp:243
 msgid "Override global audio settings"
-msgstr "בטל הגדרות שמע גלובליות"
+msgstr "ביטול הגדרות שמע מקיפות"
 
 #: gui/editgamedialog.cpp:245
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "בטל הגדרות שמע גלובליות"
+msgstr "ביטול הגדרות שמע מקיפות"
 
 #: gui/editgamedialog.cpp:254 gui/options.cpp:1751
 msgid "Volume"
@@ -324,12 +323,12 @@ msgstr "עוצמת שמע"
 
 #: gui/editgamedialog.cpp:259
 msgid "Override global volume settings"
-msgstr "בטל הגדרות עוצמת שמע גלובליות"
+msgstr "ביטול הגדרות עוצמת שמע מקיפות"
 
 #: gui/editgamedialog.cpp:261
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "בטל הגדרות עוצמת שמע גלובליות"
+msgstr "ביטול הגדרות עוצמת שמע מקיפות"
 
 #: gui/editgamedialog.cpp:272 gui/options.cpp:1761
 msgid "MIDI"
@@ -337,12 +336,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:275
 msgid "Override global MIDI settings"
-msgstr "בטל הגדרות MIDI גלובליות"
+msgstr "ביטול הגדרות MIDI מקיפות"
 
 #: gui/editgamedialog.cpp:277
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "בטל הגדרות MIDI גלובליות"
+msgstr "ביטול הגדרות MIDI מקיפות"
 
 #: gui/editgamedialog.cpp:287 gui/options.cpp:1767
 msgid "MT-32"
@@ -406,7 +405,7 @@ msgstr "נתיב שמירה:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "הישגים"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -435,7 +434,7 @@ msgstr "בחר תיקיה על קבצי משחק נוספים"
 
 #: gui/editgamedialog.cpp:561 gui/options.cpp:2387
 msgid "Select directory for saved games"
-msgstr "בחר תיקיה לשמירת משחקים"
+msgstr "בחירת תיקיה לשמירת משחקים"
 
 #: gui/editgamedialog.cpp:567
 msgid ""
@@ -2539,7 +2538,7 @@ msgstr "מצב חלון"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:369 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr "הפעל/בטל מסך מלא"
+msgstr "מיתוג מסך מלא"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:376 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:642
