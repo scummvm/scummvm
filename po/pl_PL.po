@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-23 07:42+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -2607,7 +2607,7 @@ msgstr "Zwiêksz wspó³czynnik skalowania"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:413
 msgid "Decrease the scale factor"
-msgstr " Zmniejsz wspó³czynnik skalowania"
+msgstr "Zmniejsz wspó³czynnik skalowania"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Switch to nearest neighbour scaling"
