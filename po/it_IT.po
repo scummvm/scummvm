@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 21:43+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: bababoombatman <nonsochenomemetter@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
 "Language: it_IT\n"
@@ -993,7 +993,7 @@ msgstr "Correzione proporzioni"
 
 #: gui/options.cpp:1260
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corregge il rapporto d'aspetto dei giochi con risoluzione a 320x200"
+msgstr "Correggi il rapporto d'aspetto dei giochi con  320x200"
 
 #: gui/options.cpp:1268
 msgid "Preferred device:"
@@ -2417,7 +2417,7 @@ msgstr "Generali"
 
 #: backends/events/default/default-events.cpp:296
 msgid "Global Main Menu"
-msgstr "Menù Principale"
+msgstr "Menu globale"
 
 #: backends/events/default/default-events.cpp:303
 msgid "Display keyboard"
