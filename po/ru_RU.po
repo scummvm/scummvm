@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-23 07:18+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -3128,7 +3128,7 @@ msgid ""
 " when both screens are enabled."
 msgstr ""
 "Режим увеличения можно активировать только \n"
-"когда оба экрана включены.\n"
+" когда оба экрана включены."
 
 #: backends/platform/3ds/osystem-events.cpp:404
 msgid "In-game resolution too small to magnify."
@@ -3148,7 +3148,7 @@ msgstr "Режим Увеличения выключен. Переключение в режим протягивания..."
 
 #: backends/platform/3ds/osystem-events.cpp:421
 msgid "Magnify Mode Off"
-msgstr "Режим Увеличения Выключен"
+msgstr "Режим увеличения выключен"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
