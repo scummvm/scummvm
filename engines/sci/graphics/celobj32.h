@@ -336,6 +336,12 @@ public:
 	bool _mirrorX;
 
 	/**
+	 * If true, the source for this cel is a Mac pic or view whose pixels for
+	 * entries 0 and 255 must be swapped when drawing since we use the PC palette.
+	 */
+	bool _isMacSource;
+
+	/**
 	 * Initialises static CelObj members.
 	 */
 	static void init();
