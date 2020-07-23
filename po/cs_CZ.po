@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:25+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -1637,7 +1637,7 @@ msgstr "Pøipojení úlo¾i¹tì selhalo."
 
 #: gui/options.cpp:2976
 msgid "Failed to connect storage: "
-msgstr "Pøipojení k úlo¾i¹ti selhalo:"
+msgstr "Pøipojení k úlo¾i¹ti selhalo: "
 
 #: gui/options.cpp:2996
 msgid ""
