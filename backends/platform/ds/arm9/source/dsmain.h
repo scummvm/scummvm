@@ -93,14 +93,6 @@ void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a ca
 int 	getMillis(bool skipRecord = false);								// Return the current runtime in milliseconds
 void 	doTimerCallback();												// Call callback function if required
 
-// Sound
-void 	doSoundCallback();
-void 	startSound(int freq, int buffer);	// Start sound hardware
-// Call function if sound buffers need more data
-void 	playSound(const void *data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
-void 	stopSound(int channel);
-int		getSoundFrequency();
-
 // Event queue
 void 	addEventsToQueue();
 void 	VBlankHandler();

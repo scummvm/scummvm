@@ -111,13 +111,7 @@ void OSystem_DS::initBackend() {
 	_timerManager = new DefaultTimerManager();
     DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
-	if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
-		DS::startSound(22050, 8192);
-	} else {
-		DS::startSound(11025, 4096);
-	}
-
-	_mixer = new Audio::MixerImpl(DS::getSoundFrequency());
+	_mixer = new Audio::MixerImpl(11025);
 	_mixer->setReady(true);
 
 	EventsBaseBackend::initBackend();
@@ -428,7 +422,6 @@ void OSystem_DS::updateScreen() {
 	}
 
 	DS::displayMode16BitFlipBuffer();
-	DS::doSoundCallback();
 	DS::addEventsToQueue();
 
 	// FIXME: Evil game specific hack.
@@ -558,10 +551,7 @@ void OSystem_DS::delayMillis(uint msecs) {
 	int st = getMillis();
 	DS::addEventsToQueue();
 
-	DS::doSoundCallback();
-	while (st + msecs >= getMillis()) {
-		DS::doSoundCallback();
-	}
+	while (st + msecs >= getMillis());
 
 	DS::doTimerCallback();
 	DS::addEventsToQueue();

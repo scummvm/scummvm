@@ -93,15 +93,15 @@ all: scummvm.nds
 clean: dsclean
 
 dsclean:
-	$(RM) $(addprefix $(ndsdir)/, $(ARM7_MODULE_OBJS)) scummvm.nds
+	$(RM) scummvm.nds
 	$(RM_REC) romfs
 
 .PHONY: dsclean
 
 # TODO: Add a 'dsdist' target ?
 
-%.nds: %.elf $(ndsdir)/arm7/arm7.elf romfs
-	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.elf -b $(srcdir)/$(ndsdir)/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
+%.nds: %.elf romfs
+	ndstool -c $@ -9 $< -b $(srcdir)/$(ndsdir)/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
 
 romfs: $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(PLUGINS)
 	@rm -rf romfs
@@ -120,48 +120,6 @@ ifeq ($(DYNAMIC_MODULES),1)
 	@mkdir -p romfs/plugins
 	@for i in $(PLUGINS); do $(STRIP) --strip-debug $$i -o romfs/plugins/`basename $$i`; done
 endif
-
-#############################################################################
-#############################################################################
-#############################################################################
-
-
-#############################################################################
-#
-# ARM7 rules.
-# For ARM7 files, we need different compiler flags, which leads to the
-# extra rules for .o files below
-#
-#############################################################################
-
-#
-# Set various flags
-#
-ARM7_ARCH	:=	-mthumb-interwork
-
-# note: arm7tdmi isn't the correct CPU arch, but anything newer and LD
-# *insists* it has a FPU or VFP, and it won't take no for an answer!
-ARM7_CFLAGS	:=	-g -Wall -O2\
-		-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
-		-ffast-math \
-		$(ARM7_ARCH) \
-		-I$(srcdir)/$(ndsdir)/commoninclude \
-		-I$(DEVKITPRO)/libnds/include \
-		-I$(DEVKITPRO)/libnds/include/nds \
-		-DARM7
-
-ARM7_CXXFLAGS	:= $(ARM7_CFLAGS) -fno-exceptions -fno-rtti
-
-ARM7_LDFLAGS	:= -g $(ARM7_ARCH) -mfloat-abi=soft
-
-# Set custom build flags for main.o
-$(ndsdir)/arm7/source/main.o: CXXFLAGS=$(ARM7_CXXFLAGS)
-$(ndsdir)/arm7/source/main.o: CPPFLAGS=
-
-# Rule for creating ARM7 .elf files by linking .o files together with a special linker script
-$(ndsdir)/arm7/arm7.elf: \
-	$(ndsdir)/arm7/source/main.o
-	+$(LD) $(ARM7_LDFLAGS) -specs=ds_arm7.specs $+ -L$(DEVKITPRO)/libnds/lib -lnds7  -o $@
 
 
 # Command to build libmad is:

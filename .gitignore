@@ -69,12 +69,7 @@ lib*.a
 /backends/platform/dc/SCUMMVM.BIN
 /backends/platform/dc/*.PLG
 
-/backends/platform/ds/arm7/arm7.bin
-/backends/platform/ds/arm7/build
-/backends/platform/ds/arm7/source/libcartreset/*.bak
-/backends/platform/ds/arm7/source/libcartreset/*.d
 /backends/platform/ds/arm9/data/*.h
-/backends/platform/ds/arm9/scummvm-?
 
 /backends/platform/maemo/scummvm
 
