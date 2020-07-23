@@ -1973,8 +1973,6 @@ void LB::b_updateStage(int nargs) {
 	if (movie->getStage()->render())
 		g_director->draw();
 
-	g_director->processEvents(true);
-
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
 		score->_framesRan++;
 
