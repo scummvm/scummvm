@@ -252,16 +252,17 @@ void Stage::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const Gr
 	if (pd->sprite == kTextSprite)
 		pd->applyColor = false;
 
-	pd->srcPoint.y = MAX(abs(srcRect.top - pd->destRect.top), 0);
+	pd->srcPoint.y = abs(srcRect.top - pd->destRect.top);
 	for (int i = 0; i < pd->destRect.height(); i++, pd->srcPoint.y++) {
-		pd->srcPoint.x = MAX(abs(srcRect.left - pd->destRect.left), 0);
+		pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
 		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
-		for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++)
+		for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
 			if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
 				inkDrawPixel(pd->destRect.left + j, pd->destRect.top + i,
 										 preprocessColor(pd, *((byte *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
 			}
+		}
 	}
 }
 
@@ -276,10 +277,10 @@ void Stage::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, c
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / pd->destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / pd->destRect.height();
 
-	pd->srcPoint.y = MAX(abs(srcRect.top - pd->destRect.top), 0);
+	pd->srcPoint.y = abs(srcRect.top - pd->destRect.top);
 
 	for (int i = 0, scaleYCtr = 0; i < pd->destRect.height(); i++, scaleYCtr += scaleY, pd->srcPoint.y++) {
-		pd->srcPoint.x = MAX(abs(srcRect.left - pd->destRect.left), 0);
+		pd->srcPoint.x = abs(srcRect.left - pd->destRect.left);
 		const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 		for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
