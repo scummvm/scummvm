@@ -128,8 +128,14 @@ Archive *DirectorEngine::getMainArchive() const { return _currentStage->getMainA
 Movie *DirectorEngine::getCurrentMovie() const { return _currentStage->getCurrentMovie(); }
 Common::String DirectorEngine::getCurrentPath() const { return _currentStage->getCurrentPath(); }
 
+static void buildbotErrorHandler(const char *msg) { }
+
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
+
+	// We want to avoid GUI errors for buildbot, because they hang it
+	if (debugChannelSet(-1, kDebugFewFramesOnly))
+		Common::setErrorHandler(buildbotErrorHandler);
 
 	if (!_mixer->isReady()) {
 		return Common::kAudioDeviceInitFailed;
