@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-23 21:43+0000\n"
+"PO-Revision-Date: 2020-07-24 05:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1271,12 +1271,12 @@ msgstr "Render. de Interface:"
 
 #: gui/options.cpp:1988
 msgid "Autosave:"
-msgstr "Auto-salvar:"
+msgstr "Salvar Autom.:"
 
 #: gui/options.cpp:1990
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Auto-salvar:"
+msgstr "Salvar Autom.:"
 
 #: gui/options.cpp:1998
 msgid "Keys"
