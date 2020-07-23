@@ -90,7 +90,7 @@ private:
 
 class BitmapCastMember : public CastMember {
 public:
-	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version);
+	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
 	~BitmapCastMember();
 	virtual void createWidget() override;
 
@@ -160,7 +160,7 @@ private:
 
 class TextCastMember : public CastMember {
 public:
-	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, bool asButton = false);
+	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);

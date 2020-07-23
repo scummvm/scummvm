@@ -50,7 +50,7 @@ CastMember::~CastMember() {
 		delete _widget;
 }
 
-BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version)
+BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1)
 		: CastMember(cast, castId, stream) {
 	_type = kCastBitmap;
 	_img = nullptr;
@@ -64,7 +64,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_bitsPerPixel = 0;
 
 	if (version < 4) {
-		_flags1 = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
+		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
 		if (_flags1 >> 4 == 0x0)
 			_autoHilite = true;
 
@@ -87,7 +87,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			_pitch += 16 - (_initialRect.width() % 16);
 
 	} else if (version == 4) {
-		_flags1 = stream.readByte();
+		_flags1 = flags1;
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
@@ -243,7 +243,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 
 	if (version < 4) {
 		warning("STUB: DigitalVideoCastMember: unhandled properties data");
-		for (int i = 0; i < 0xd; i++) {
+		for (int i = 0; i < 0xc; i++) {
 			stream.readByte();
 		}
 		_frameRate = 12;
@@ -294,7 +294,7 @@ SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_looping = 0;
 }
 
-TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, bool asButton)
+TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1, bool asButton)
 		: CastMember(cast, castId, stream) {
 	_type = kCastText;
 
@@ -319,7 +319,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
 
 	if (version <= 3) {
-		_flags1 = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
+		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -365,7 +365,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
 	} else if (version == 4) {
-		_flags1 = stream.readByte();
+		_flags1 = flags1;
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -560,7 +560,6 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_ink = kInkTypeCopy;
 
 	if (version < 4) {
-		flags = stream.readByte();
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -573,7 +572,6 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else if (version == 4) {
-		flags = stream.readByte();
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -585,7 +583,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {
-		flags = stream.readByte();
+		flags = stream.readByte(); // FIXME: Was this copied from D4 by mistake?
 		unk1 = stream.readByte();
 
 		_initialRect = Movie::readRect(stream);
@@ -615,7 +613,6 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	if (version < 4) {
 		error("Unhandled Script cast");
 	} else if (version == 4) {
-		byte flags = stream.readByte();
 		byte unk1 = stream.readByte();
 		byte type = stream.readByte();
 
@@ -630,7 +627,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			error("ScriptCastMember: Unprocessed script type: %d", type);
 		}
 
-		debugC(3, kDebugLoading, "CASt: Script type: %s (%d), flags: (%x), unk1: %d", scriptType2str(_scriptType), type, flags, unk1);
+		debugC(3, kDebugLoading, "CASt: Script type: %s (%d), unk1: %d", scriptType2str(_scriptType), type, unk1);
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
