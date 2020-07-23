@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -1523,11 +1523,11 @@ msgstr "Spustit server pro správu souborù v prohlí¾eèi (ve stejné síti)."
 #: gui/options.cpp:2152
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "Zavøení okna mo¾ností zastaví server."
 
 #: gui/options.cpp:2154
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Spustit server pro správu souborù pomocí prohlí¾eèe (ve stejné síti)"
 
 #: gui/options.cpp:2155
 msgid "Closing options dialog will stop the server."
