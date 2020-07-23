@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2020-07-23 05:43+0000\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -370,16 +370,16 @@ msgstr "Caminhos"
 
 #: gui/editgamedialog.cpp:310
 msgid "Game Path:"
-msgstr "Caminho do Jogo:"
+msgstr "Jogo:"
 
 #: gui/editgamedialog.cpp:312
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "Caminho do Jogo:"
+msgstr "Jogo:"
 
 #: gui/editgamedialog.cpp:317 gui/options.cpp:1952
 msgid "Extra Path:"
-msgstr "Caminho de Extras:"
+msgstr "Extras:"
 
 #: gui/editgamedialog.cpp:317 gui/editgamedialog.cpp:319
 #: gui/editgamedialog.cpp:320
@@ -389,11 +389,11 @@ msgstr "Especifique o caminho para dados adicionais utilizados pelo jogo"
 #: gui/editgamedialog.cpp:319 gui/options.cpp:1954
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Caminho de Extras:"
+msgstr "Extras:"
 
 #: gui/editgamedialog.cpp:326 gui/options.cpp:1936
 msgid "Save Path:"
-msgstr "Caminho para Salvar:"
+msgstr "Salvar Progresso:"
 
 #: gui/editgamedialog.cpp:326 gui/editgamedialog.cpp:328
 #: gui/editgamedialog.cpp:329 gui/options.cpp:1936 gui/options.cpp:1938
@@ -404,7 +404,7 @@ msgstr "Especifique onde guardar seus jogos salvos"
 #: gui/editgamedialog.cpp:328 gui/options.cpp:1938
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "Caminho para Salvar:"
+msgstr "Salvar Progresso:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
@@ -559,8 +559,7 @@ msgstr "Reset"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
-"Redefina todas as configurações do FluidSynth para seus valores padrão."
+msgstr "Redefine todas as configurações do FluidSynth para seus valores padrão."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
@@ -700,7 +699,7 @@ msgstr "Adicionar jogos à lista"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr "Adicionar em Massa..."
+msgstr "Adição em Massa..."
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
@@ -726,7 +725,7 @@ msgstr "~A~dicionar Jogo..."
 #: gui/launcher.cpp:167
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Adicionar em Massa..."
+msgstr "Adição em Massa..."
 
 #: gui/launcher.cpp:171
 msgctxt "lowres"
@@ -964,7 +963,7 @@ msgstr "Modo gráfico:"
 
 #: gui/options.cpp:1230
 msgid "Render mode:"
-msgstr "Modo de Renderização:"
+msgstr "Renderização:"
 
 #: gui/options.cpp:1230 gui/options.cpp:1231
 msgid "Special dithering modes supported by some games"
@@ -972,7 +971,7 @@ msgstr "Modos especiais de pontilhado suportados por alguns jogos"
 
 #: gui/options.cpp:1243
 msgid "Stretch mode:"
-msgstr "Modo de preenchimento:"
+msgstr "Redimensionamento:"
 
 #: gui/options.cpp:1254 backends/graphics/sdl/sdl-graphics.cpp:356
 msgid "Fullscreen mode"
@@ -980,11 +979,11 @@ msgstr "Modo de Tela Cheia"
 
 #: gui/options.cpp:1257
 msgid "Filter graphics"
-msgstr "Filtros gráficos"
+msgstr "Gráficos com filtro"
 
 #: gui/options.cpp:1257
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtragem linear quando redimensionar gráficos"
+msgstr "Utiliza filtragem linear quando redimensionar gráficos"
 
 #: gui/options.cpp:1260
 msgid "Aspect ratio correction"
@@ -996,7 +995,7 @@ msgstr "Corrige proporção para jogos de 320x200"
 
 #: gui/options.cpp:1268
 msgid "Preferred device:"
-msgstr "Dispositivo preferido:"
+msgstr "Dispositivo pref.:"
 
 #: gui/options.cpp:1268
 msgid "Music device:"
@@ -1034,11 +1033,11 @@ msgstr "Dispositivo GM:"
 
 #: gui/options.cpp:1311
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Especifique o dispositivo de som padrão para a saída MIDI Geral"
+msgstr "Especifique o dispositivo de som padrão para a saída General MIDI"
 
 #: gui/options.cpp:1322
 msgid "Don't use General MIDI music"
-msgstr "Não usar música MIDI Geral"
+msgstr "Não utilizar música General MIDI"
 
 #: gui/options.cpp:1333 gui/options.cpp:1395
 msgid "Use first available device"
@@ -1067,7 +1066,7 @@ msgstr "Usar MIDI e AdLib juntos na geração de som"
 
 #: gui/options.cpp:1356
 msgid "MIDI gain:"
-msgstr "Ganho MIDI:"
+msgstr "Ganho de MIDI:"
 
 #: gui/options.cpp:1366
 msgid "MT-32 Device:"
@@ -1076,12 +1075,12 @@ msgstr "Dispositivo MT-32:"
 #: gui/options.cpp:1366
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Especifique o dispositivo de som padrão para a saída Roland MT-32/LAPC1/"
-"CM32l/CM64"
+"Especifica o dispositivo de som padrão para a saída Roland MT-32/LAPC1/CM32l/"
+"CM64"
 
 #: gui/options.cpp:1371
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Roland MT-32 real (desabilita emulação GM)"
+msgstr "Roland MT-32 real (desabilita emulação de GM)"
 
 #: gui/options.cpp:1371 gui/options.cpp:1373
 msgid ""
@@ -1094,31 +1093,31 @@ msgstr ""
 #: gui/options.cpp:1373
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr "Roland MT-32 real (sem emulação GM)"
+msgstr "Roland MT-32 real (sem emulação de GM)"
 
 #: gui/options.cpp:1376
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr "Dispositivo Roland GS (ativa mapeamentos MT-32)"
+msgstr "Dispositivo Roland GS (ativa mapeamentos de MT-32)"
 
 #: gui/options.cpp:1376
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Verifique se deseja ativar correção de mapeamento para emular um MT-32 em um "
-"dispositivo Roland GS"
+"Marque esta caixa se deseja ativar correção de mapeamento para emular um MT-"
+"32 em um dispositivo Roland GS"
 
 #: gui/options.cpp:1385
 msgid "Don't use Roland MT-32 music"
-msgstr "Não usar música Roland MT-32"
+msgstr "Não utilizar música Roland MT-32"
 
 #: gui/options.cpp:1412
 msgid "Text and speech:"
-msgstr "Texto e voz:"
+msgstr "Texto e fala:"
 
 #: gui/options.cpp:1416 gui/options.cpp:1426
 msgid "Speech"
-msgstr "Voz"
+msgstr "Fala"
 
 #: gui/options.cpp:1417 gui/options.cpp:1427
 msgid "Subtitles"
@@ -1130,12 +1129,12 @@ msgstr "Ambos"
 
 #: gui/options.cpp:1420
 msgid "Subtitle speed:"
-msgstr "Velocidade das legendas:"
+msgstr "Vel. das legendas:"
 
 #: gui/options.cpp:1422
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr "Texto e voz:"
+msgstr "Texto e fala:"
 
 #: gui/options.cpp:1426
 msgid "Spch"
@@ -1157,7 +1156,7 @@ msgstr "Exibe legendas e reproduz diálogo"
 #: gui/options.cpp:1430
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Velocidade das legendas:"
+msgstr "Vel. das legendas:"
 
 #: gui/options.cpp:1446
 msgid "Music volume:"
@@ -1170,7 +1169,7 @@ msgstr "Volume da Música:"
 
 #: gui/options.cpp:1455
 msgid "Mute all"
-msgstr "Silenciar tudo"
+msgstr "Sem som"
 
 #: gui/options.cpp:1458
 msgid "SFX volume:"
@@ -1187,12 +1186,12 @@ msgstr "Volume dos efeitos:"
 
 #: gui/options.cpp:1468
 msgid "Speech volume:"
-msgstr "Volume do diálogo:"
+msgstr "Volume da fala:"
 
 #: gui/options.cpp:1470
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Volume do diálogo:"
+msgstr "Volume da fala:"
 
 #: gui/options.cpp:1717
 msgid "Control"
@@ -1236,7 +1235,7 @@ msgstr "Aplicar"
 
 #: gui/options.cpp:1925
 msgid "FluidSynth Settings"
-msgstr "Configurações FluidSynth"
+msgstr "Configurações do FluidSynth"
 
 #: gui/options.cpp:1944
 msgid "Theme Path:"
@@ -1268,16 +1267,16 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1976
 msgid "GUI renderer:"
-msgstr "Renderizador da Interface:"
+msgstr "Render. de Interface:"
 
 #: gui/options.cpp:1988
 msgid "Autosave:"
-msgstr "Salvamento automático:"
+msgstr "Auto-salvar:"
 
 #: gui/options.cpp:1990
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Salvamento automático:"
+msgstr "Auto-salvar:"
 
 #: gui/options.cpp:1998
 msgid "Keys"
@@ -1331,7 +1330,7 @@ msgstr "Verificar agora"
 
 #: gui/options.cpp:2072
 msgid "Active storage:"
-msgstr "Armazenamento ativo:"
+msgstr "Armazen. Ativo:"
 
 #: gui/options.cpp:2072
 msgid "Active cloud storage"
@@ -1462,7 +1461,7 @@ msgstr "Este armazenamento ainda não está conectado! Para conectar,"
 
 #: gui/options.cpp:2116
 msgid "1. Open this link:"
-msgstr "1. Abrir este link:"
+msgstr "1. Abra este link:"
 
 #: gui/options.cpp:2117
 msgid "Open URL"
@@ -1487,7 +1486,7 @@ msgstr "Colar código da área de transferência"
 
 #: gui/options.cpp:2124
 msgid "3. Connect"
-msgstr "3. Conectar"
+msgstr "3. Conecte"
 
 #: gui/options.cpp:2124
 msgid "Connect your cloud storage account"
@@ -1495,7 +1494,7 @@ msgstr "Conecte sua conta de armazenamento em nuvem"
 
 #: gui/options.cpp:2133
 msgid "Run server"
-msgstr "Executar servidor"
+msgstr "Iniciar servidor"
 
 #: gui/options.cpp:2133
 msgid "Run local webserver"
@@ -1503,7 +1502,7 @@ msgstr "Executar servidor da web local"
 
 #: gui/options.cpp:2134 gui/options.cpp:2927
 msgid "Not running"
-msgstr "Não está em execução"
+msgstr "Parado"
 
 #: gui/options.cpp:2138
 msgctxt "lowres"
@@ -1530,8 +1529,7 @@ msgstr "Porta que o servidor utilizará"
 #: gui/options.cpp:2151
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Execute o servidor para gerenciar arquivos com o navegador (na mesma rede)."
+msgstr "Execute o servidor para gerir arquivos com o navegador (na mesma rede)."
 
 #: gui/options.cpp:2152
 msgctxt "lowres"
@@ -1633,7 +1631,7 @@ msgstr "<agora>"
 
 #: gui/options.cpp:2919
 msgid "Stop server"
-msgstr "Interromper servidor"
+msgstr "Parar servidor"
 
 #: gui/options.cpp:2920
 msgid "Stop local webserver"
@@ -1878,7 +1876,7 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
-"Você pode mudar esta configuração mais tarde na aba Diversos\n"
+"Você pode mudar esta configuração mais tarde na aba Outros\n"
 "na caixa de Opções."
 
 #: gui/updates-dialog.cpp:116
@@ -2240,15 +2238,15 @@ msgstr "Emulador de AdLib"
 
 #: audio/fmopl.cpp:72
 msgid "MAME OPL emulator"
-msgstr "Emulador MAME OPL"
+msgstr "Emulador de MAME OPL"
 
 #: audio/fmopl.cpp:74
 msgid "DOSBox OPL emulator"
-msgstr "Emulador DOSBox OPL"
+msgstr "Emulador de DOSBox OPL"
 
 #: audio/fmopl.cpp:77
 msgid "Nuked OPL emulator"
-msgstr "Emulador Nuked OPL"
+msgstr "Emulador de Nuked OPL"
 
 #: audio/fmopl.cpp:80
 msgid "ALSA Direct FM"
@@ -2333,7 +2331,7 @@ msgstr "Áudio PC-98"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
-msgstr "Inicializando Emulador MT-32"
+msgstr "Inicializando Emulador de MT-32"
 
 #: audio/softsynth/mt32.cpp:442
 msgid "MT-32 emulator"
@@ -2512,7 +2510,7 @@ msgstr "OpenGL"
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:81
 msgid "Center"
-msgstr "Centralizar"
+msgstr "Centralizado"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:238
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
@@ -5289,11 +5287,11 @@ msgstr "~P~róximo"
 
 #: engines/scumm/dialogs.cpp:602
 msgid "Speech Only"
-msgstr "Somente Vozes"
+msgstr "Somente Fala"
 
 #: engines/scumm/dialogs.cpp:603
 msgid "Speech and Subtitles"
-msgstr "Vozes e Legendas"
+msgstr "Fala e Legendas"
 
 #: engines/scumm/dialogs.cpp:604
 msgid "Subtitles Only"
@@ -5302,7 +5300,7 @@ msgstr "Somente Legendas"
 #: engines/scumm/dialogs.cpp:612
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Vozes e Legendas"
+msgstr "Fala e Legendas"
 
 #: engines/scumm/dialogs.cpp:658
 msgid "Select a Proficiency Level."
@@ -5864,7 +5862,7 @@ msgstr "Volume da música: "
 
 #: engines/scumm/input.cpp:595
 msgid "Subtitle speed: "
-msgstr "Velocidade da legenda: "
+msgstr "Vel. das legendas: "
 
 #: engines/scumm/scumm.cpp:1898
 #, c-format
