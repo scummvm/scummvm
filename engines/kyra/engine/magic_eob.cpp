@@ -445,8 +445,8 @@ void EoBCoreEngine::sparkEffectOffensive() {
 		if (sceneShake) {
 			_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 2, Screen::CR_NO_P_CHECK);
 			if (!_sceneShakeCountdown) {
-				for (int i = 0; i < 16; i++)
-					_screen->copyRegionToBuffer(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << sh]);
+				for (int ii = 0; ii < 16; ii++)
+					_screen->copyRegionToBuffer(0, _sparkEffectOfX[ii], _sparkEffectOfY[ii], 16, 16, &_spellAnimBuffer[ii << sh]);
 			}
 		}
 
