@@ -77,7 +77,7 @@ DirectorPlotData Channel::getPlotData() {
 
 Graphics::ManagedSurface *Channel::getSurface() {
 	if (_widget) {
-		return  _widget->getSurface();
+		return _widget->getSurface();
 	} else {
 		return nullptr;
 	}
@@ -284,7 +284,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_delta = Common::Point(0, 0);
 	}
 
-	if (replace && _sprite->_cast) {
+	if (replace) {
 		_sprite->updateCast();
 		replaceWidget();
 	}
@@ -316,12 +316,15 @@ void Channel::setBbox(int l, int t, int r, int b) {
 }
 
 void Channel::replaceWidget() {
+	if (_widget) {
+		delete _widget;
+		_widget = nullptr;
+	}
+
 	if (_sprite && _sprite->_cast) {
 		Common::Rect bbox(getBbox());
 		_sprite->_cast->_modified = false;
-		if (_widget) {
-			delete _widget;
-		}
+
 		_widget = _sprite->_cast->createWidget(bbox);
 		if (_widget) {
 			_widget->_priority = _priority;
