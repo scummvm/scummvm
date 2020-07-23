@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
 "PO-Revision-Date: 2020-07-23 07:39+0000\n"
-"Last-Translator: Krzysztof G³odo <krzysiek9106@wp.pl>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1397,7 +1397,7 @@ msgstr ""
 
 #: gui/options.cpp:2098
 msgid "Sync now"
-msgstr "Zsynchronizuj teraz "
+msgstr "Zsynchronizuj teraz"
 
 #: gui/options.cpp:2098
 msgid "Start saved games sync"
