@@ -555,7 +555,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		: CastMember(cast, castId, stream) {
 	_type = kCastShape;
 
-	byte flags, unk1;
+	byte unk1;
 
 	_ink = kInkTypeCopy;
 
@@ -583,7 +583,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {
-		flags = stream.readByte(); // FIXME: Was this copied from D4 by mistake?
+		stream.readByte(); // FIXME: Was this copied from D4 by mistake?
 		unk1 = stream.readByte();
 
 		_initialRect = Movie::readRect(stream);
@@ -598,8 +598,8 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	}
 	_modified = false;
 
-	debugC(3, kDebugLoading, "ShapeCastMember: fl: %x unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
-		flags, unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
+	debugC(3, kDebugLoading, "ShapeCastMember: unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
+		unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
 
 	if (debugChannelSet(3, kDebugLoading))
 		_initialRect.debugPrint(0, "ShapeCastMember: rect:");
