@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-06-07 14:22+0200\n"
-"PO-Revision-Date: 2019-12-18 20:26+0000\n"
+"PO-Revision-Date: 2020-07-23 21:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,9 +17,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.9.1\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Ukrainian\n"
 
 #: gui/about.cpp:102
@@ -292,20 +292,17 @@ msgid "Shader"
 msgstr "Шейдер"
 
 #: gui/editgamedialog.cpp:217
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Перекрити глобальні налаштування аудіо"
+msgstr "Перекрити глобальні налаштування шейдерів"
 
 #: gui/editgamedialog.cpp:219
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Перекрити глобальні налаштування аудіо"
+msgstr "Перекрити глобальні налаштування шейдерів"
 
 #: gui/editgamedialog.cpp:233 gui/options.cpp:1739 engines/dialogs.cpp:329
-#, fuzzy
 msgid "Keymaps"
-msgstr "Мапа клавіш:"
+msgstr "Мапа клавіш"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1746 engines/dialogs.cpp:304
 msgid "Audio"
@@ -413,7 +410,7 @@ msgstr "Шлях збер.:"
 
 #: gui/editgamedialog.cpp:340 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "Досягнення"
 
 #: gui/editgamedialog.cpp:364 gui/editgamedialog.cpp:454
 #: gui/editgamedialog.cpp:516 gui/editgamedialog.cpp:577 gui/options.cpp:1861
@@ -575,13 +572,12 @@ msgstr ""
 
 #: gui/gui-manager.cpp:116
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:120 engines/mohawk/myst.cpp:585
 #: engines/mohawk/riven.cpp:854
-#, fuzzy
 msgid "Interact"
-msgstr "Інтерполяція:"
+msgstr "Взаємодія"
 
 #: gui/gui-manager.cpp:125 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -2180,9 +2176,8 @@ msgstr ""
 "Дивіться файл README для подальших інструкцій."
 
 #: engines/engine.cpp:510 engines/sky/detection.cpp:316
-#, fuzzy
 msgid "Autosave"
-msgstr "Автозбереження:"
+msgstr "Автозбереження"
 
 #: engines/engine.cpp:512
 #, fuzzy
@@ -2411,9 +2406,8 @@ msgid "Quit"
 msgstr "Вихід"
 
 #: backends/events/default/default-events.cpp:293
-#, fuzzy
 msgid "Global"
-msgstr " (Глобальна)"
+msgstr "Глобальна"
 
 #: backends/events/default/default-events.cpp:296
 #, fuzzy
@@ -2425,9 +2419,8 @@ msgid "Display keyboard"
 msgstr "Показати клавіатуру"
 
 #: backends/events/default/default-events.cpp:310
-#, fuzzy
 msgid "Toggle mute"
-msgstr "Перекоючення захоплення миші"
+msgstr "Перемкнути звук"
 
 #: backends/events/default/default-events.cpp:336
 #, fuzzy
@@ -2622,9 +2615,8 @@ msgid "Toggle linear filtered scaling"
 msgstr "Використовувати лінійну фільтрацію для збільшення графіки"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:401
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "Не вдалося переключитися до відеорежиму з розтягуванням  '%s'."
+msgstr "Переключитися між режимів розтягування"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:407
 #, fuzzy
@@ -4901,9 +4893,8 @@ msgid "???"
 msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2577
-#, fuzzy
 msgid "Save Game"
-msgstr "Зберегти гру:"
+msgstr "Зберегти гру"
 
 #: engines/pegasus/pegasus.cpp:2583
 #, fuzzy
@@ -6183,15 +6174,15 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Не вдалося знайти файл даних движка %s."
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Не вдалося знайти файл даних движка %s."
+msgstr "Не вдалося знайти файл даних движка %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
-#, fuzzy, c-format
+#, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Знайдено невірну версію даних движка %s. Очікувана %d.%d, але знайдено %d.%d."
+"Знайдено невірну версію даних движка. Очікувана %d.%d, але знайдено %d.%d"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 #, fuzzy
@@ -6536,9 +6527,8 @@ msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:602
-#, fuzzy
 msgid "Save game"
-msgstr "Зберегти гру:"
+msgstr "Зберегти гру"
 
 #: engines/wintermute/keymapper_tables.h:612
 #, fuzzy
@@ -6597,39 +6587,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:690
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Час гри: "
+msgstr "Нота 1: Ля"
 
 #: engines/wintermute/keymapper_tables.h:695
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Час гри: "
+msgstr "Нота 2: Фа-діез"
 
 #: engines/wintermute/keymapper_tables.h:700
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Час гри: "
+msgstr "Нота 3: Ре-діез"
 
 #: engines/wintermute/keymapper_tables.h:705
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Час гри: "
+msgstr "Нота 4: До-діез"
 
 #: engines/wintermute/keymapper_tables.h:710
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Час гри: "
+msgstr "Нота 5: Мі-діез"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Час гри: "
+msgstr "Нота 6: Соль-діез"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Час гри: "
+msgstr "Нота 7: Сі"
 
 #: engines/wintermute/keymapper_tables.h:733
 msgid "Ability: Telekinesis"
@@ -6759,9 +6742,8 @@ msgid "Show journal"
 msgstr "Показати Все"
 
 #: engines/wintermute/keymapper_tables.h:1356
-#, fuzzy
 msgid "Music menu"
-msgstr "Гучність музики:"
+msgstr "Меню музики"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Rotate"
