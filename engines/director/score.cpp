@@ -236,6 +236,9 @@ void Score::startPlay() {
 }
 
 void Score::step() {
+	if (_playState == kPlayStopped)
+		return;
+
 	_lingo->processEvents();
 
 	update();
