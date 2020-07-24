@@ -96,6 +96,11 @@ struct MovieReference {
 	MovieReference() { frameI = -1; }
 };
 
+struct StartMovie {
+	Common::String startMovie;
+	int16 startFrame;
+};
+
 struct PaletteV4 {
 	int id;
 	byte *palette;
@@ -165,6 +170,7 @@ public:
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 	Common::String getEXEName() const;
+	StartMovie getStartMovie() const;
 	DirectorSound *getSoundManager() const { return _soundManager; }
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const;

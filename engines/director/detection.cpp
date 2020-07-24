@@ -59,10 +59,26 @@ Common::Language DirectorEngine::getLanguage() const {
 }
 
 Common::String DirectorEngine::getEXEName() const {
-	if (ConfMan.hasKey("start_movie"))
-		return ConfMan.get("start_movie");
+	StartMovie startMovie = getStartMovie();
+	if (startMovie.startMovie.size() > 0)
+		return startMovie.startMovie;
 
 	return _gameDescription->desc.filesDescriptions[0].fileName;
+}
+
+StartMovie DirectorEngine::getStartMovie() const {
+	StartMovie startMovie;
+	startMovie.startFrame = -1;
+
+	if (ConfMan.hasKey("start_movie")) {
+		Common::String option = ConfMan.get("start_movie");
+		int colonPos = option.findLastOf("@");
+		startMovie.startMovie = option.substr(0, colonPos);
+		Common::String tail = option.substr(colonPos + 1, option.size());
+		if (tail.size() > 0)
+			startMovie.startFrame = atoi(tail.c_str());
+	}
+	return startMovie;
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {

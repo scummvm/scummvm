@@ -169,6 +169,7 @@ private:
 	Movie *_currentMovie;
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;
+	int16 _startFrame;
 
 private:
 	int preprocessColor(DirectorPlotData *p, int src);
