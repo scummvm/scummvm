@@ -107,8 +107,8 @@ bool Sprite::isFocusable() {
 bool Sprite::shouldHilite() {
 	if (isFocusable() && ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte)))
 		if (g_director->getVersion() < 4 && !_moveable)
-			if (g_director->getCurrentMovie()->getScriptContext(kScoreScript, _scriptId) ||
-					g_director->getCurrentMovie()->getScriptContext(kCastScript, _castId))
+			if (_movie->getScriptContext(kScoreScript, _scriptId) ||
+					_movie->getScriptContext(kCastScript, _castId))
 				return true;
 
 	return false;
@@ -149,7 +149,7 @@ void Sprite::setPattern(uint16 pattern) {
 }
 
 void Sprite::setCast(uint16 castId) {
-	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
+	CastMember *member = _movie->getCastMember(castId);
 	_castId = castId;
 
 	if (castId == 0)
