@@ -663,12 +663,58 @@ void SoundManager::musicInterface_ContinuePlaying() {
 	// No implementation needed
 }
 
+/*
+ * TL;DR: TrashReverb does not seem to work correctly in the original interpreter
+ * and I don't know what the developer's intentions were, so I've disabled it in
+ * ScummVM.
+ *
+ * In the original interpreter, TrashReverb sends a SysEx to the MT-32 which sets
+ * the reverb parameters to mode Room, time 1, level 0. This practically turns off
+ * reverb. It is triggered by opening a door in an outdoors location in the town.
+ * The SysEx is sent when the door sound starts, and again 40ms after the first
+ * one. TrashReverb also seems to be triggered when a door is opened offscreen (by
+ * an NPC).
+ * This means that, as soon as you enter town, reverb is turned off when the first
+ * door is opened. It is not turned back on. Reverb is restored only when you quit
+ * and restart the game (during MT-32 initialization); it is then turned off again
+ * when the first door outside in town is opened. Turning off the reverb
+ * repeatedly (twice whenever a door is opened) does not seem to accomplish
+ * anything.
+ * The best explanation for this behavior I can come up with is that the developer
+ * intended to disable reverb while playing a door opening sound outdoors. The
+ * second SysEx when opening a door was meant to turn reverb back on, but turns it
+ * off again because of a bug. Also, TrashReverb being triggered by doors opening
+ * offscreen would be a bug. There is a third problem: the door opening sound lasts
+ * much longer than 40 ms, so turning reverb back on 40 ms after starting the door
+ * opening sound still results in a noticable reverb. All in all this explanation
+ * is not entirely convicing.
+ * Another explanation would be that reverb was only meant to be on for the first
+ * part of the game and should be turned off from the town onwards (this is what
+ * the implementation in the original interpreter effectively does). However, why
+ * disable reverb when opening a door, and not f.e. when the player first enters
+ * a town screen? And why is it not immediately turned off when a player loads a
+ * savegame of a point later in the game? And why is reverb repeatedly disabled?
+ * This does not make much sense either.
+ * All in all, I am convinced that this functionality does not work correctly in
+ * the original interpreter, but I don't know what the developer's intentions
+ * were either. So I can't make a proper implementation for this, and I think it
+ * is best left disabled.
+ */
+
 // musicInterface_TrashReverb
 // Trashes reverb on actively playing sounds
 
 void SoundManager::musicInterface_TrashReverb() {
-	// TODO: Handle support for trashing reverb
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_TrashReverb");
+
+	/*
+	// TODO Should this do anything on AdLib? It does not have reverb AFAIK
+	if (_isRoland) {
+		// Set reverb parameters to mode Room, time 1, level 0
+		static const byte sysExData[] = { 0x00, 0x00, 0x00 };
+		mt32SysEx(0x10 << 14 | 0x00 << 7 | 0x01, sysExData, 3);
+	}
+	*/
 }
 
 // musicInterface_KillAll
