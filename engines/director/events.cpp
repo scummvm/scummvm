@@ -94,8 +94,6 @@ bool Stage::processEvent(Common::Event &event) {
 }
 
 bool Movie::processEvent(Common::Event &event) {
-	_vm->setCurrentMovie(this);
-
 	Score *sc = getScore();
 	if (sc->getCurrentFrame() >= sc->_frames.size()) {
 		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
