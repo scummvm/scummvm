@@ -235,9 +235,25 @@ public:
 
 	/**
 	 * Mutator to change the title of the window.
-	 * @param title Target title of the window.
+	 * @param title Target title.
 	 */
-	void setTitle(Common::String &title) { _title = title; }
+	void setTitle(const Common::String &title) { _title = title; _borderIsDirty = true; }
+	/**
+	 * Accessor to get the title of the window.
+	 * @return Title.
+	 */
+	Common::String getTitle() { return _title; };
+	/**
+	 * Mutator to change the visible state of the title.
+	 * @param active Target state.
+	 */
+	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; _borderIsDirty = true; };
+	/**
+	 * Accessor to determine whether the title is visible.
+	 * @return True if the title is visible.
+	 */
+	bool isTitleVisible() { return _titleVisible; };
+
 	/**
 	 * Highlight the target part of the window.
 	 * Used for the default borders.
@@ -322,6 +338,7 @@ private:
 	float _scrollPos, _scrollSize;
 
 	Common::String _title;
+	bool _titleVisible;
 };
 
 

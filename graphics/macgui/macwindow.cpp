@@ -68,6 +68,8 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_closeable = false;
 
 	_borderWidth = kBorderWidth;
+
+	_titleVisible = true;
 }
 
 static const byte noborderData[3][3] = {
@@ -258,7 +260,7 @@ void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
 
 void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 
-	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = !_title.empty();
+	bool active = _active, scrollable = _scrollable, closeable = _active, drawTitle = _titleVisible && !_title.empty();
 	const int size = kBorderWidth;
 	int x = 0;
 	int y = 0;
