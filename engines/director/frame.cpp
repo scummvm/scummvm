@@ -51,8 +51,6 @@ Frame::Frame(Score *score, int numChannels) {
 	_skipFrameFlag = 0;
 	_blend = 0;
 
-	_palette = NULL;
-
 	_colorTempo = 0;
 	_colorSound1 = 0;
 	_colorSound2 = 0;
@@ -89,7 +87,7 @@ Frame::Frame(const Frame &frame) {
 	_colorScript = frame._colorScript;
 	_colorTrans = frame._colorTrans;
 
-	_palette = new PaletteInfo();
+	_palette = frame._palette;
 
 	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
 
@@ -101,8 +99,6 @@ Frame::Frame(const Frame &frame) {
 }
 
 Frame::~Frame() {
-	delete _palette;
-
 	for (uint16 i = 0; i < _sprites.size(); i++)
 		delete _sprites[i];
 }
@@ -165,24 +161,17 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		}
 
 		// palette
-		uint16 palette = stream->readUint16();
-
-		if (palette) {
-			warning("Frame::readChannels(): STUB: Palette info");
-		}
-
-		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
-
-		_palette = new PaletteInfo();
-		_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
-		_palette->lastColor = stream->readByte();
-		_palette->flags = stream->readByte();
-		_palette->speed = stream->readByte();
-		_palette->frameCount = stream->readUint16();
-
-		_palette->cycleCount = stream->readUint16();
+		_palette.paletteId = stream->readUint16();
+		_palette.firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
+		_palette.lastColor = stream->readByte();
+		_palette.flags = stream->readByte();
+		_palette.speed = stream->readByte();
+		_palette.frameCount = stream->readUint16();
+		_palette.cycleCount = stream->readUint16();
 
 		stream->read(unk, 6);
+
+		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 
 		if (_vm->getPlatform() == Common::kPlatformMacintosh)
 			stream->read(unk, 3);
@@ -222,32 +211,26 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		_colorTrans = stream->readByte();
 
 		// palette
-		uint16 palette = stream->readUint16();
+		_palette.paletteId = stream->readUint16();
+		_palette.firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
+		_palette.lastColor = stream->readByte();
+		_palette.flags = stream->readByte();
+		_palette.speed = stream->readByte();
+		_palette.frameCount = stream->readUint16();
+		_palette.cycleCount = stream->readUint16();
+		_palette.fade = stream->readByte();
+		_palette.delay = stream->readByte();
+		_palette.style = stream->readByte();
 
-		if (palette) {
-			warning("Frame::readChannels(): STUB: Palette info");
-		}
+		stream->readByte();
+		stream->readUint16();
+		stream->readUint16();
+
+		_palette.colorCode = stream->readByte();
+
+		stream->readByte();
 
 		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
-
-		_palette = new PaletteInfo();
-		_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
-		_palette->lastColor = stream->readByte();
-		_palette->flags = stream->readByte();
-		_palette->speed = stream->readByte();
-		_palette->frameCount = stream->readUint16();
-
-		_palette->cycleCount = stream->readUint16();
-		_palette->fade = stream->readByte();
-		_palette->delay = stream->readByte();
-		_palette->style = stream->readByte();
-
-		stream->readByte();
-		stream->readUint16();
-		stream->readUint16();
-
-		_palette->colorCode = stream->readByte();
-		stream->readByte();
 	} else if (_vm->getVersion() == 5) {
 		// Sound/Tempo/Transition channel
 		stream->read(unk, 24);
@@ -453,11 +436,11 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 }
 
 void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
-	_palette->firstColor = stream.readByte();
-	_palette->lastColor = stream.readByte();
-	_palette->flags = stream.readByte();
-	_palette->speed = stream.readByte();
-	_palette->frameCount = stream.readUint16();
+	_palette.firstColor = stream.readByte();
+	_palette.lastColor = stream.readByte();
+	_palette.flags = stream.readByte();
+	_palette.speed = stream.readByte();
+	_palette.frameCount = stream.readUint16();
 	stream.skip(8); // unknown
 }
 

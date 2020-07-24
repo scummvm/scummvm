@@ -47,6 +47,8 @@ enum {
 };
 
 struct PaletteInfo {
+	uint16 paletteId;
+
 	byte firstColor;
 	byte lastColor;
 	byte flags;
@@ -86,7 +88,7 @@ private:
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
 	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCastMember *textCast);
 
-	
+
 public:
 	int _numChannels;
 	byte _channelData[kChannelDataSize];
@@ -95,7 +97,7 @@ public:
 	uint8 _transArea; // 1 - Whole Stage, 0 - Changing Area
 	uint8 _transChunkSize;
 	TransitionType _transType;
-	PaletteInfo *_palette;
+	PaletteInfo _palette;
 	uint8 _tempo;
 
 	uint16 _sound1;
