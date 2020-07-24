@@ -211,7 +211,9 @@ enum LEvent {
 	kEventMouseUpOutSide,
 	kEventMouseWithin,
 
-	kEventStartUp
+	kEventStartUp,
+
+	kEventMenuCallback
 };
 
 enum TransitionType {

@@ -426,9 +426,6 @@ private:
 	void parseMenu(const char *code);
 
 public:
-	Common::String genMenuHandler(int *commandId, Common::String &command);
-
-public:
 	void push(Datum d);
 	Datum pop(void);
 	Datum peek(uint offset);

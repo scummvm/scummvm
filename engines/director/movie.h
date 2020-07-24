@@ -118,8 +118,8 @@ public:
 	// lingo/lingo-events.cpp
 	void setPrimaryEventHandler(LEvent event, const Common::String &code);
 	int getEventCount();
-	void processEvent(LEvent event, int spriteId = 0);
-	void registerEvent(LEvent event, int spriteId = 0);
+	void processEvent(LEvent event, int targetId = 0);
+	void registerEvent(LEvent event, int targetId = 0);
 
 private:
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);

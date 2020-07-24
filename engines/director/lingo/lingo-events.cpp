@@ -204,7 +204,7 @@ void Movie::queueMovieEvent(LEvent event, int eventId) {
 	}
 }
 
-void Movie::registerEvent(LEvent event, int spriteId) {
+void Movie::registerEvent(LEvent event, int targetId) {
 	int eventId = _nextEventId++;
 	if (_nextEventId < 0)
 		_nextEventId = 0;
@@ -232,6 +232,11 @@ void Movie::registerEvent(LEvent event, int spriteId) {
 			_eventQueue.push(LingoEvent(kEventGeneric, eventId, kEventScript, event, true));
 		}
 		break;
+	case kEventMenuCallback:
+		if (getScriptContext(kEventScript, targetId)) {
+			_eventQueue.push(LingoEvent(kEventGeneric, eventId, kEventScript, targetId, true));
+		}
+		break;
 	default:
 		break;
 	}
@@ -241,8 +246,8 @@ void Movie::registerEvent(LEvent event, int spriteId) {
 		switch(event) {
 		case kEventMouseUp:
 		case kEventMouseDown:
-			if (spriteId) {
-				queueSpriteEvent(event, eventId, spriteId);
+			if (targetId) {
+				queueSpriteEvent(event, eventId, targetId);
 			}
 			break;
 
@@ -273,8 +278,8 @@ void Movie::registerEvent(LEvent event, int spriteId) {
 		case kEventMouseUp:
 		case kEventMouseDown:
 		case kEventBeginSprite:
-			if (spriteId) {
-				queueSpriteEvent(event, eventId, spriteId);
+			if (targetId) {
+				queueSpriteEvent(event, eventId, targetId);
 			}
 			// fall through
 
@@ -302,8 +307,8 @@ void Movie::registerEvent(LEvent event, int spriteId) {
 	}
 }
 
-void Movie::processEvent(LEvent event, int spriteId) {
-	registerEvent(event, spriteId);
+void Movie::processEvent(LEvent event, int targetId) {
+	registerEvent(event, targetId);
 	_vm->setCurrentMovie(this);
 	_lingo->processEvents();
 }

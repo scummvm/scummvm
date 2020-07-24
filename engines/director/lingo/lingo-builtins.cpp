@@ -1572,9 +1572,7 @@ void LB::b_importFileInto(int nargs) {
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
-	Common::String name = Common::String::format("scummvmMenu%d", action);
-
-	LC::call(name, 0, false);
+	g_director->getCurrentMovie()->registerEvent(kEventMenuCallback, action);
 }
 
 void LB::b_installMenu(int nargs) {
@@ -1600,11 +1598,11 @@ void LB::b_installMenu(int nargs) {
 	Common::String command;
 	int commandId = 100;
 
-	Common::String handlers;
-
 	menu->setCommandsCallback(menuCommandsCallback, g_director);
 
 	debugC(3, kDebugLingoExec, "installMenu: '%s'", Common::toPrintable(menuStxt).c_str());
+
+	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
 
 	for (const byte *s = (const byte *)menuStxt.c_str(); *s; s++) {
 		// Get next line
@@ -1667,7 +1665,10 @@ void LB::b_installMenu(int nargs) {
 
 		if (!submenuText.empty()) {
 			if (!command.empty()) {
-				handlers += g_lingo->genMenuHandler(&commandId, command);
+				while (mainArchive->getScriptContext(kEventScript, commandId)) {
+					commandId++;
+				}
+				mainArchive->addCode(command.c_str(), kEventScript, commandId);
 				submenuText += Common::String::format("[%d];", commandId);
 			} else {
 				submenuText += ';';
@@ -1681,22 +1682,6 @@ void LB::b_installMenu(int nargs) {
 	if (!submenuText.empty()) {
 		menu->createSubMenuFromString(submenu, submenuText.c_str(), 0);
 	}
-
-	// TODO: Menu callbacks should probably not be defined as a movie script
-	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
-	mainArchive->addCode(handlers.c_str(), kMovieScript, 1337);
-}
-
-Common::String Lingo::genMenuHandler(int *commandId, Common::String &command) {
-	Common::String name;
-
-	do {
-		(*commandId)++;
-
-		name = Common::String::format("scummvmMenu%d", *commandId);
-	} while (getHandler(name).type != VOIDSYM);
-
-	return Common::String::format("on %s\n  %s\nend %s\n\n", name.c_str(), command.c_str(), name.c_str());
 }
 
 void LB::b_label(int nargs) {
