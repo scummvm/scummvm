@@ -625,7 +625,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 channelSize;
 	uint16 channelOffset;
 
-	Frame *initial = new Frame(_vm, _numChannelsDisplayed);
+	Frame *initial = new Frame(this, _numChannelsDisplayed);
 	// Push a frame at frame#0 position.
 	// This makes all indexing simpler
 	_frames.push_back(initial);
@@ -642,7 +642,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		debugC(8, kDebugLoading, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 
 		if (frameSize > 0) {
-			Frame *frame = new Frame(_vm, _numChannelsDisplayed);
+			Frame *frame = new Frame(this, _numChannelsDisplayed);
 			size -= frameSize;
 			frameSize -= 2;
 

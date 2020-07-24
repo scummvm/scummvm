@@ -25,6 +25,7 @@
 
 namespace Director {
 
+class Frame;
 class BitmapCastMember;
 class ShapeCastMember;
 class TextCastMember;
@@ -58,8 +59,11 @@ enum MainChannelsPosition {
 
 class Sprite {
 public:
-	Sprite();
+	Sprite(Frame *frame);
 	~Sprite();
+
+	Frame *getFrame() const { return _frame; }
+	Score *getScore() const { return _score; }
 
 	void updateCast();
 
@@ -71,6 +75,10 @@ public:
 
 	void setCast(uint16 castid);
 	bool isQDShape();
+
+	Frame *_frame;
+	Score *_score;
+	Movie *_movie;
 
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;

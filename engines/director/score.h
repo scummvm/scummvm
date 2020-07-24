@@ -65,6 +65,8 @@ public:
 	Score(Movie *movie);
 	~Score();
 
+	Movie *getMovie() const { return _movie; }
+
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);

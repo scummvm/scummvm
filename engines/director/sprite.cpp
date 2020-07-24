@@ -24,13 +24,19 @@
 
 #include "director/director.h"
 #include "director/castmember.h"
+#include "director/frame.h"
 #include "director/movie.h"
+#include "director/score.h"
 #include "director/sprite.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
 
-Sprite::Sprite() {
+Sprite::Sprite(Frame *frame) {
+	_frame = frame;
+	_score = _frame->getScore();
+	_movie = _score->getMovie();
+
 	_scriptId = 0;
 	_scriptCastIndex = 0;
 	_colorcode = 0;

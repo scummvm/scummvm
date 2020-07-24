@@ -67,9 +67,12 @@ struct FrameEntity {
 
 class Frame {
 public:
-	Frame(DirectorEngine *vm, int numChannels);
+	Frame(Score *score, int numChannels);
 	Frame(const Frame &frame);
 	~Frame();
+
+	Score *getScore() const { return _score; }
+
 	void readChannels(Common::ReadStreamEndian *stream);
 	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 
@@ -109,6 +112,7 @@ public:
 	uint8 _skipFrameFlag;
 	uint8 _blend;
 	Common::Array<Sprite *> _sprites;
+	Score *_score;
 	DirectorEngine *_vm;
 };
 

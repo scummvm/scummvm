@@ -24,13 +24,16 @@
 
 #include "director/director.h"
 #include "director/frame.h"
+#include "director/score.h"
+#include "director/movie.h"
 #include "director/sprite.h"
 #include "director/util.h"
 
 namespace Director {
 
-Frame::Frame(DirectorEngine *vm, int numChannels) {
-	_vm = vm;
+Frame::Frame(Score *score, int numChannels) {
+	_score = score;
+	_vm = score->getMovie()->getVM();;
 	_transDuration = 0;
 	_transType = kTransNone;
 	_transArea = 0;
@@ -59,7 +62,7 @@ Frame::Frame(DirectorEngine *vm, int numChannels) {
 	_sprites.resize(_numChannels + 1);
 
 	for (uint16 i = 0; i < _sprites.size(); i++) {
-		Sprite *sp = new Sprite();
+		Sprite *sp = new Sprite(this);
 		_sprites[i] = sp;
 	}
 }
