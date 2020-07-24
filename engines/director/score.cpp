@@ -65,6 +65,7 @@ Score::Score(Movie *movie) {
 	_currentLabel = 0;
 	_nextFrameTime = 0;
 	_waitForChannel = 0;
+	_activeFade = 0;
 	_playState = kPlayNotStarted;
 
 	_numChannelsDisplayed = 0;
