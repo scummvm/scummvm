@@ -1783,25 +1783,24 @@ void LB::b_puppetTransition(int nargs) {
 	// puppetTransition whichTransition [, time] [, chunkSize] [, changeArea]
 	Stage *stage = g_director->getCurrentStage();
 	uint16 duration = 250, area = 1, chunkSize = 1, type = 0;
-	if (nargs == 4) {
+
+	switch (nargs) {
+	case 4:
 		area = g_lingo->pop().asInt();
-		nargs--;
-	}
-
-	if (nargs == 3) {
+		// fall through
+	case 3:
 		chunkSize = g_lingo->pop().asInt();
-		nargs--;
-	}
-
-	if (nargs == 2) {
-	  duration = g_lingo->pop().asInt();
-		nargs--;
-	}
-
-	if (nargs == 1) {
+		// fall through
+	case 2:
+		duration = g_lingo->pop().asInt();
+		// fall through
+	case 1:
 		type = ((TransitionType)(g_lingo->pop().asInt()));
-	} else {
+		break;
+	default:
 		ARGNUMCHECK(1);
+		g_lingo->dropStack(nargs);
+		return;
 	}
 
 	if (stage->_puppetTransition) {
