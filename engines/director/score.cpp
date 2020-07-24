@@ -639,7 +639,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 	while (size != 0 && !stream.eos()) {
 		uint16 frameSize = stream.readUint16();
-		debugC(8, kDebugLoading, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
+		debugC(3, kDebugLoading, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 
 		if (frameSize > 0) {
 			Frame *frame = new Frame(this, _numChannelsDisplayed);
