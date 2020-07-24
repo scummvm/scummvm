@@ -205,19 +205,18 @@ bool Cast::loadArchive() {
 		_movie->_stageColor = 1;
 	}
 
-	if (clutList.size() > 1)
-		warning("More than one palette was found (%d)", clutList.size());
-
 	if (clutList.size() == 0) {
 		warning("CLUT resource not found, using default Mac palette");
 		_vm->setPalette(-1);
 	} else {
-		Common::SeekableSubReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
+		for (int i = 0; i < clutList.size(); i++) {
+			Common::SeekableSubReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
 
-		debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[0]);
-		loadPalette(*pal);
+			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
+			loadPalette(*pal);
 
-		delete pal;
+			delete pal;
+		}
 	}
 
 	// Font Directory
@@ -607,7 +606,6 @@ void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readByte();
 		index -= 3;
 	}
-	_vm->setPalette(_palette, steps);
 }
 
 void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
