@@ -1019,7 +1019,7 @@ int GameLogic::getActorScaleFromY(int actorY) {
 		scale = actorY;
 		break;
 	case 6:
-		scale = actorY / 3 - 91;
+		scale = actorY + actorY / 3 - 91;
 		break;
 	case 7:
 		scale = actorY - 41;
