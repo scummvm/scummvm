@@ -537,8 +537,8 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	case kCastScript:
 		typeName = "cast";
 		break;
-	case kGlobalScript:
-		typeName = "global";
+	case kEventScript:
+		typeName = "event";
 		break;
 	case kScoreScript:
 		typeName = "score";

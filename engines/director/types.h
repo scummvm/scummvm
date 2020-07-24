@@ -50,7 +50,7 @@ enum ScriptType {
 	kScoreScript = 0,
 	kCastScript = 1,
 	kMovieScript = 2,
-	kGlobalScript = 3,
+	kEventScript = 3,
 	kMaxScriptType = 3	// Sync with score-loading.cpp:45, array scriptTypes[]
 };
 
@@ -185,7 +185,7 @@ enum LEvent {
 	kEventEndSprite,
 
 	kEventNone,
-	kEventScript,
+	kEventGeneric,
 	kEventEnterFrame,
 	kEventPrepareFrame,
 	kEventIdle,

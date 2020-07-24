@@ -426,7 +426,7 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 
 		currentFunc.argNames = argNames;
 		currentFunc.varNames = varNames;
-		_assemblyContext->_eventHandlers[kEventScript] = currentFunc;
+		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
 	}
 
 	delete _methodVars;
@@ -621,14 +621,14 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 		return;
 	}
 
-	if (!sc->_eventHandlers.contains(kEventScript)) {
+	if (!sc->_eventHandlers.contains(kEventGeneric)) {
 		debugC(3, kDebugLingoExec, "Request to execute script type %d id %d with no scopeless lingo", type, id);
 		return;
 	}
 
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
-	Symbol sym = sc->_eventHandlers[kEventScript];
+	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	LC::call(sym, 0, false);
 	execute(_pc);
 }
@@ -1138,7 +1138,7 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 5)
-				g_lingo->processEvent(kEventScript, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				g_lingo->processEvent(kEventGeneric, kScoreScript, frame->_sprites[i]->_scriptId, i);
 			else
 				g_lingo->processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);
 		}

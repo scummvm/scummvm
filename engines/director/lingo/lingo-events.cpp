@@ -73,7 +73,7 @@ struct EventHandlerType {
 
 	{ kEventStartUp,			"startUp" },
 
-	{ kEventScript,				"scummvm_script" },
+	{ kEventGeneric,			"scummvm_generic" },
 
 	{ kEventNone, 0 }
 };
@@ -109,7 +109,7 @@ void Movie::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	debugC(3, kDebugLingoExec, "setting primary event handler (%s)", _lingo->_eventHandlerTypes[event]);
 	LingoArchive *mainArchive = getMainLingoArch();
 	mainArchive->primaryEventHandlers[event] = code;
-	mainArchive->addCode(code.c_str(), kGlobalScript, event);
+	mainArchive->addCode(code.c_str(), kEventScript, event);
 }
 
 void Movie::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
@@ -134,8 +134,8 @@ void Movie::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 			// In D3 the event lingo is not contained in a handler
 			// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
 			if (((event == kEventMouseDown && sprite->_immediate) || (event == kEventMouseUp && !sprite->_immediate))
-					&& script->_eventHandlers.contains(kEventScript)) {
-				_eventQueue.push(LingoEvent(kEventScript, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
+					&& script->_eventHandlers.contains(kEventGeneric)) {
+				_eventQueue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
 			} else if (script->_eventHandlers.contains(event)) {
 				_eventQueue.push(LingoEvent(event, eventId, kScoreScript, sprite->_scriptId, false, spriteId));
 			}
@@ -170,8 +170,8 @@ void Movie::queueFrameEvent(LEvent event, int eventId) {
 	if (!script)
 		return;
 
-	if (event == kEventEnterFrame && script->_eventHandlers.contains(kEventScript)) {
-		_eventQueue.push(LingoEvent(kEventScript, eventId, kScoreScript, scriptId, false));
+	if (event == kEventEnterFrame && script->_eventHandlers.contains(kEventGeneric)) {
+		_eventQueue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, scriptId, false));
 	} else if (script->_eventHandlers.contains(event)) {
 		_eventQueue.push(LingoEvent(event, eventId, kScoreScript, scriptId, false));
 	}
@@ -228,8 +228,8 @@ void Movie::registerEvent(LEvent event, int spriteId) {
 	case kEventKeyUp:
 	case kEventKeyDown:
 	case kEventTimeout:
-		if (getScriptContext(kGlobalScript, event)) {
-			_eventQueue.push(LingoEvent(kEventScript, eventId, kGlobalScript, event, true));
+		if (getScriptContext(kEventScript, event)) {
+			_eventQueue.push(LingoEvent(kEventGeneric, eventId, kEventScript, event, true));
 		}
 		break;
 	default:
