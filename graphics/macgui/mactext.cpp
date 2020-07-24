@@ -357,13 +357,6 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 	D(9, "** splitString(\"%s\")", toPrintable(str.encode()).c_str());
 
-	if (str.empty()) {
-		debug(9, "** splitString, empty line");
-		return;
-	}
-
-	Common::U32String paragraph, tmp;
-
 	if (_textLines.empty()) {
 		_textLines.resize(1);
 		_textLines[0].chunks.push_back(_defaultFormatting);
@@ -371,6 +364,13 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 	} else {
 		D(9, "** splitString, continuing, %d lines", _textLines.size());
 	}
+
+	if (str.empty()) {
+		debug(9, "** splitString, empty line");
+		return;
+	}
+
+	Common::U32String paragraph, tmp;
 
 	if (curLine == -1)
 		curLine = _textLines.size() - 1;
@@ -395,7 +395,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			paragraph += *l++;
 		}
 
-		D(9, "** splitString, paragraph: \"%s\"", Common::toPrintable(line.encode()).c_str());
+		D(9, "** splitString, paragraph: \"%s\"", Common::toPrintable(paragraph.encode()).c_str());
 
 		// Now process whole paragraph
 		const Common::U32String::value_type *s = paragraph.c_str();

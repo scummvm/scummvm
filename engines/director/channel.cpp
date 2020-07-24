@@ -276,7 +276,6 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 					_width = _sprite->_width;
 					_height = _sprite->_height;
 				}
-				replace = true;
 			}
 		}
 
