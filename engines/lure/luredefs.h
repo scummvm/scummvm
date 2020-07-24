@@ -271,7 +271,9 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 
 // Milliseconds delay between game frames
 #define GAME_FRAME_DELAY 80
-#define GAME_TICK_DELAY 20
+
+// Milliseconds delay between clock ticks in shop
+#define GAME_TICK_DELAY 1000
 
 // Tick proc constants
 #define NULL_TICK_PROC_ID 1
