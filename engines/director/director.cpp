@@ -195,7 +195,8 @@ Common::Error DirectorEngine::run() {
 	bool loop = true;
 
 	while (loop) {
-		processEvents();
+		if (_mainStage->getCurrentMovie())
+			processEvents();
 
 		_currentStage = _mainStage;
 		loop = _currentStage->step();
