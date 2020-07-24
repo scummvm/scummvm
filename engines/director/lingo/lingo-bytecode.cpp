@@ -575,8 +575,8 @@ void LC::cb_globalassign() {
 void LC::cb_objectfieldassign() {
 	int fieldNameId = g_lingo->readInt();
 	Common::String fieldName = g_lingo->_currentArchive->getName(fieldNameId);
-	Datum object = g_lingo->pop();
 	Datum value = g_lingo->pop();
+	Datum object = g_lingo->pop();
 	g_lingo->setObjectProp(object, fieldName, value);
 }
 
