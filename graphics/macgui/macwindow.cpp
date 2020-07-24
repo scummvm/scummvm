@@ -43,7 +43,7 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 	_visible = true;
 }
 
-void BaseMacWindow::setVisible(bool visible, bool silent) { _visible = visible; }
+void BaseMacWindow::setVisible(bool visible, bool silent) { _visible = visible; _wm->setFullRefresh(true); }
 
 bool BaseMacWindow::isVisible() { return _visible; }
 
