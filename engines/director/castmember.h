@@ -55,7 +55,7 @@ struct Resource;
 class CastMember {
 public:
 	CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream);
-	virtual ~CastMember();
+	virtual ~CastMember() {}
 
 	Cast *getCast() { return _cast; }
 	uint16 getID() { return _castId; }
