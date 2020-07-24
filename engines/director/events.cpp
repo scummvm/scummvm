@@ -66,10 +66,13 @@ void DirectorEngine::processEvents() {
 	uint endTime = g_system->getMillis() + 10;
 
 	Movie *m = getCurrentMovie();
-	Score *sc = m->getScore();
-	if (sc->getCurrentFrame() >= sc->_frames.size()) {
-		warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
-		return;
+	if (m) {
+		Score *sc = m->getScore();
+
+		if (sc && sc->getCurrentFrame() >= sc->_frames.size()) {
+			warning("processEvents: request to access frame %d of %d", sc->getCurrentFrame(), sc->_frames.size() - 1);
+			return;
+		}
 	}
 
 	uint16 spriteId = 0;
