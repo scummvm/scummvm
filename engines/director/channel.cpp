@@ -349,6 +349,10 @@ void Channel::addDelta(Common::Point pos) {
 Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
 	addRegistrationOffset(res);
+
+	res.x += (_sprite->_width - _width) / 2;
+	res.y += (_sprite->_height - _height) / 2;
+
 	return res;
 }
 
