@@ -250,7 +250,7 @@ public:
 	void initBytecode();
 	void initMethods();
 	void initXLibs();
-	void openXLib(const Common::String &name, ObjectType type);
+	void openXLib(Common::String name, ObjectType type);
 
 	void runTests();
 

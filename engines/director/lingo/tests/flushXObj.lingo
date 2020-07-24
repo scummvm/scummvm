@@ -1,0 +1,8 @@
+openXlib("FlushXObj")
+put FlushXObj
+set flush = FlushXObj(mNew)
+flush(mClearMask)
+flush(mAddToMask, 0, 0)
+flush(mFlush)
+flush(mFlushEvents, 0, 0)
+
