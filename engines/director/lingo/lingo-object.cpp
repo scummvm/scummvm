@@ -350,6 +350,10 @@ bool Stage::setProp(const Common::String &propName, const Datum &value) {
 
 Datum Stage::getField(int field) {
 	switch (field) {
+	case kTheTitle:
+		return getTitle();
+	case kTheTitleVisible:
+		return isTitleVisible();
 	case kTheVisible:
 		return isVisible();
 	default:
@@ -360,6 +364,12 @@ Datum Stage::getField(int field) {
 
 bool Stage::setField(int field, const Datum &value) {
 	switch (field) {
+	case kTheTitle:
+		setTitle(value.asString());
+		return true;
+	case kTheTitleVisible:
+		setTitleVisible(value.asInt());
+		return true;
 	case kTheVisible:
 		setVisible(value.asInt());
 		return true;
