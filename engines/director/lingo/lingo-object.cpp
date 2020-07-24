@@ -319,6 +319,10 @@ void LM::m_respondsTo(int nargs) {
 
 // Window
 
+Common::String Stage::asString() {
+	return "window \"" + getName() + "\"";
+}
+
 bool Stage::hasProp(const Common::String &propName) {
 	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
 	return g_lingo->_theEntityFields.contains(fieldName);

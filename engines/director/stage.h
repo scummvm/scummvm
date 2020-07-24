@@ -144,6 +144,7 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 	void loadMac(const Common::String movie);
 
 	// lingo/lingo-object.cpp
+	virtual Common::String asString();
 	virtual bool hasProp(const Common::String &propName);
 	virtual Datum getProp(const Common::String &propName);
 	virtual bool setProp(const Common::String &propName, const Datum &value);
