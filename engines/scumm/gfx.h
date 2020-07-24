@@ -69,10 +69,11 @@ struct CameraData {
 
 /** Virtual screen identifiers */
 enum VirtScreenNumber {
-	kMainVirtScreen = 0,	// The 'stage'
-	kTextVirtScreen = 1,	// In V0-V3 games: the area where text is printed
-	kVerbVirtScreen = 2,	// The verb area
-	kUnkVirtScreen = 3		// ?? Not sure what this one is good for...
+	kMainVirtScreen,	// The 'stage'
+	kTextVirtScreen,	// In V0-V3 games: the area where text is printed
+	kVerbVirtScreen,	// The verb area
+	kUnkVirtScreen,		// ?? Not sure what this one is good for...
+	kNumVirtScreens
 };
 
 /**
@@ -155,6 +156,12 @@ struct VirtScreen : Graphics::Surface {
 	 * the screen.
 	 */
 	uint16 bdirty[80 + 1];
+
+	/**
+	 * The size of the allocated memory area in bytes.
+	 * Mostly useful to avoid unnecessary re-allocations of the buffer.
+	 */
+	int byte_size;
 
 	/**
 	 * Convenience method to set the whole tdirty and bdirty arrays to one

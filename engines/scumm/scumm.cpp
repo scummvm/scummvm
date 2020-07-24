@@ -651,6 +651,15 @@ ScummEngine::~ScummEngine() {
 
 	free(_16BitPalette);
 
+	for (int i = 0; i < kNumVirtScreens; i++) {
+		if (_virtscr[i].getBasePtr(0,0)) {
+			free(_virtscr[i].getBasePtr(0,0));
+			_virtscr[i].setPixels((void *)0);
+		}
+		if (_virtscr[i].backBuf)
+			free(_virtscr[i].backBuf);
+	}
+
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
 #ifdef USE_RGB_COLOR

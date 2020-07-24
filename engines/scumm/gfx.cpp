@@ -323,13 +323,7 @@ void GdiV2::roomChanged(byte *roomptr) {
 
 
 void ScummEngine::initScreens(int b, int h) {
-	int i;
 	int adj = 0;
-
-	for (i = 0; i < 3; i++) {
-		_res->nukeResource(rtBuffer, i + 1);
-		_res->nukeResource(rtBuffer, i + 5);
-	}
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_townsScreen) {
@@ -343,7 +337,7 @@ void ScummEngine::initScreens(int b, int h) {
 	}
 #endif
 
-	if (!getResourceAddress(rtBuffer, 4)) {
+	if (!_virtscr[kUnkVirtScreen].getBasePtr(0,0)) {
 		// Since the size of screen 3 is fixed, there is no need to reallocate
 		// it if its size changed.
 		// Not sure what it is good for, though. I think it may have been used
@@ -380,7 +374,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	int size;
 
 	assert(height >= 0);
-	assert((int)slot >= 0 && (int)slot < 4);
+	assert((int)slot >= 0 && (int)slot < kNumVirtScreens);
 
 	if (_game.version >= 7) {
 		if (slot == kMainVirtScreen && (_roomHeight != 0))
@@ -393,7 +387,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	vs->h = height;
 	vs->hasTwoBuffers = twobufs;
 	vs->xstart = 0;
-	vs->backBuf = NULL;
+
 	if (_game.features & GF_16BIT_COLOR)
 		vs->format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	else
@@ -421,16 +415,27 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 		}
 	}
 
-	_res->createResource(rtBuffer, slot + 1, size);
-	vs->setPixels(getResourceAddress(rtBuffer, slot + 1));
+	// No need to reallocate the memory if the allocated screen is the same
+	// size in bytes as before.
+	if (size != vs->byte_size) {
+		if (vs->getBasePtr(0,0))
+			free(vs->getBasePtr(0,0));
+		byte *ptr = (byte *)malloc(size);
+		vs->setPixels(ptr);
+
+		if (vs->backBuf)
+			free(vs->backBuf);
+
+		if (twobufs)
+			vs->backBuf = (byte *)malloc(size);
+		else
+			vs->backBuf = NULL;
+	}
+
 	if (_game.platform == Common::kPlatformNES)
 		memset(vs->getBasePtr(0, 0), 0x1d, size);	// reset background (MM NES)
 	else
 		memset(vs->getBasePtr(0, 0), 0, size);		// reset background
-
-	if (twobufs) {
-		vs->backBuf = _res->createResource(rtBuffer, slot + 5, size);
-	}
 
 	if (slot != 3) {
 		vs->setDirtyRange(0, height);
