@@ -597,8 +597,11 @@ void Lingo::execute(uint pc) {
 		}
 
 		// process events every so often
-		if (counter % 100 == 0)
+		if (counter % 100 == 0) {
 			_vm->processEvents();
+			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped)
+				break;
+		}
 	}
 
 	_abort = false;
