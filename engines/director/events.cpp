@@ -169,7 +169,7 @@ bool Movie::processEvent(Common::Event &event) {
 		_currentDraggedChannel = nullptr;
 
 		{
-			CastMember *cast = g_director->getCurrentMovie()->getCastMember(sc->getSpriteById(spriteId)->_castId);
+			CastMember *cast = getCastMember(sc->getSpriteById(spriteId)->_castId);
 			if (cast && cast->_type == kCastButton)
 				cast->_hilite = !cast->_hilite;
 		}

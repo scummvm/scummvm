@@ -123,15 +123,13 @@ void Movie::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 	 * When more than one movie script [...]
 	 * [D4 docs] */
 
-	Movie *movie = _vm->getCurrentMovie();
-	Score *score = movie->getScore();
-	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
+	Frame *currentFrame = _score->_frames[_score->getCurrentFrame()];
 	assert(currentFrame != nullptr);
-	Sprite *sprite = score->getSpriteById(spriteId);
+	Sprite *sprite = _score->getSpriteById(spriteId);
 
 	// Sprite (score) script
 	if (sprite->_scriptId) {
-		ScriptContext *script = movie->getScriptContext(kScoreScript, sprite->_scriptId);
+		ScriptContext *script = getScriptContext(kScoreScript, sprite->_scriptId);
 		if (script) {
 			// In D3 the event lingo is not contained in a handler
 			// If sprite is immediate, its script is run on mouseDown, otherwise on mouseUp
@@ -145,7 +143,7 @@ void Movie::queueSpriteEvent(LEvent event, int eventId, int spriteId) {
 	}
 
 	// Cast script
-	ScriptContext *script = movie->getScriptContext(kCastScript, sprite->_castId);
+	ScriptContext *script = getScriptContext(kCastScript, sprite->_castId);
 	if (script && script->_eventHandlers.contains(event)) {
 		_eventQueue.push(LingoEvent(event, eventId, kCastScript, sprite->_castId, false, spriteId));
 	}
@@ -159,19 +157,16 @@ void Movie::queueFrameEvent(LEvent event, int eventId) {
 	 * [p.81 of D4 docs]
 	 */
 
-	Movie *movie = _vm->getCurrentMovie();
-	Score *score = movie->getScore();
-
 	// if (event == kEventPrepareFrame || event == kEventIdle) {
 	// 	entity = score->getCurrentFrame();
 	// } else {
 
-	assert(score->_frames[score->getCurrentFrame()] != nullptr);
-	int scriptId = score->_frames[score->getCurrentFrame()]->_actionId;
+	assert(_score->_frames[_score->getCurrentFrame()] != nullptr);
+	int scriptId = _score->_frames[_score->getCurrentFrame()]->_actionId;
 	if (!scriptId)
 		return;
 
-	ScriptContext *script = movie->getScriptContext(kScoreScript, scriptId);
+	ScriptContext *script = getScriptContext(kScoreScript, scriptId);
 	if (!script)
 		return;
 
@@ -189,8 +184,7 @@ void Movie::queueMovieEvent(LEvent event, int eventId) {
 	 */
 
 	// FIXME: shared cast movie scripts could come before main movie ones
-	Movie *movie = g_director->getCurrentMovie();
-	LingoArchive *mainArchive = movie->getMainLingoArch();
+	LingoArchive *mainArchive = getMainLingoArch();
 	for (ScriptContextHash::iterator it = mainArchive->scriptContexts[kMovieScript].begin();
 			it != mainArchive->scriptContexts[kMovieScript].end(); ++it) {
 		if (it->_value->_eventHandlers.contains(event)) {
@@ -198,7 +192,7 @@ void Movie::queueMovieEvent(LEvent event, int eventId) {
 			return;
 		}
 	}
-	LingoArchive *sharedArchive = movie->getSharedLingoArch();
+	LingoArchive *sharedArchive = getSharedLingoArch();
 	if (sharedArchive) {
 		for (ScriptContextHash::iterator it = sharedArchive->scriptContexts[kMovieScript].begin();
 				it != sharedArchive->scriptContexts[kMovieScript].end(); ++it) {
@@ -234,7 +228,7 @@ void Movie::registerEvent(LEvent event, int spriteId) {
 	case kEventKeyUp:
 	case kEventKeyDown:
 	case kEventTimeout:
-		if (g_director->getCurrentMovie()->getScriptContext(kGlobalScript, event)) {
+		if (getScriptContext(kGlobalScript, event)) {
 			_eventQueue.push(LingoEvent(kEventScript, eventId, kGlobalScript, event, true));
 		}
 		break;
