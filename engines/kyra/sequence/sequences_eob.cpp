@@ -2772,6 +2772,10 @@ void EoBEngine::seq_segaRestoreAfterSequence() {
 	r->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
 	r->fillRectWithTiles(0, 0, 0, 40, 28, 0x2000);
 	r->fillRectWithTiles(1, 0, 0, 40, 28, 0x2000);
+	r->writeUint16VSRAM(0, 0);
+	r->writeUint16VSRAM(2, 0);
+	r->writeUint16VRAM(0xD800, 0);
+	r->writeUint16VRAM(0xD802, 0);
 	_screen->clearPage(0);
 }
 
