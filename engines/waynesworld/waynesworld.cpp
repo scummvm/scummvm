@@ -85,6 +85,7 @@ Common::Error WaynesWorldEngine::run() {
 	_backgroundSurface = new WWSurface(320, 150);
 	_inventorySprite = new WWSurface(312, 52);
 	_walkMap = new byte[kWalkMapSize];
+	_backgroundScrollSurface = nullptr;
 
 	_fontWW = new GFTFont();
 	_fontWWInv = new GFTFont();
@@ -116,7 +117,7 @@ Common::Error WaynesWorldEngine::run() {
 	_isTextVisible = false;
 	_currentTextX = -1;
 	_currentTextY = -1;
-	_from_x1 = 0;
+	_scrollPosition = 0;
 	_selectedDialogChoice = 0;
 	_gameState = 7;
 	_currentMapItemIndex = -1;
@@ -148,7 +149,7 @@ Common::Error WaynesWorldEngine::run() {
 	drawInterface(2);
 	// changeRoom(0);
 	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	changeRoom(38); // DEBUG
+	changeRoom(32); // DEBUG
 	// _logic->_r1_eventFlag = 1;
 	// _logic->_r1_eventCtr = 3;
 
@@ -187,6 +188,7 @@ Common::Error WaynesWorldEngine::run() {
 	delete _fontWWInv;
 	delete _fontBit5x7;
 
+	delete _backgroundScrollSurface;
 	delete[] _walkMap;
 	delete _inventorySprite;
 	delete _backgroundSurface;
@@ -939,7 +941,7 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
                 wayneSprite->scaleSurface(_wayneReachLeftSprite);
             }
         }
-        if (_from_x1 == 0) {
+        if (_scrollPosition == 0) {
             drawStaticRoomObjects(_currentRoomNumber, wayneX, wayneY, wayneHeight, wayneWidth, wayneSprite);
         }
     }
@@ -962,7 +964,7 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
                 garthSprite->scaleSurface(_garthReachLeftSprite);
             }
         }
-        if (_from_x1 == 0) {
+        if (_scrollPosition == 0) {
             drawStaticRoomObjects(_currentRoomNumber, garthX, garthY, garthHeight, garthWidth, garthSprite);
         }
     }
@@ -994,7 +996,7 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
         }
     }
 
-    if (_from_x1 != 0) {
+    if (_scrollPosition != 0) {
         // drawStaticRoomObjects2(tempBackground);
     }
 
@@ -1126,11 +1128,165 @@ void WaynesWorldEngine::handleRoomEvent() {
 }
 
 void WaynesWorldEngine::changeRoomScrolling() {
-	// TODO
+    int roomNumber = -1;
+    _scrollPosition = 0;
+    _scrollWidth = 0;
+    _scrollRemaining = 0;
+    switch (_currentRoomNumber) {
+    case 14:
+        roomNumber = 19;
+        break;
+    case 19:
+        roomNumber = 14;
+        break;
+    case 8:
+        if (_currentActorNum != 0) {
+            _garthSpriteX = 319;
+            _garthSpriteY = 131;
+        } else {
+            _wayneSpriteX = 319;
+            _wayneSpriteY = 131;
+        }
+        roomNumber = 21;
+        break;
+    case 22:
+        if (_currentActorNum != 0) {
+            _garthSpriteX = 2;
+            _garthSpriteY = 131;
+        } else {
+            _wayneSpriteX = 2;
+            _wayneSpriteY = 131;
+        }
+        roomNumber = 21;
+        break;
+    case 21:
+        if (_hoverObjectNumber == kObjectIdFoyer) {
+            if (_currentActorNum != 0) {
+                _garthSpriteX = 5;
+                _garthSpriteY = 130;
+            } else {
+                _wayneSpriteX = 5;
+                _wayneSpriteY = 130;
+            }
+            roomNumber = 8;
+        } else {
+            if (_currentActorNum != 0) {
+                _garthSpriteX = 319;
+                _garthSpriteY = 131;
+            } else {
+                _wayneSpriteX = 319;
+                _wayneSpriteY = 131;
+            }
+            roomNumber = 22;
+        }
+        break;
+    case 32:
+        roomNumber = 33;
+        break;
+    case 33:
+        roomNumber = 32;
+        break;
+    }
+    unloadStaticRoomObjects();
+    openRoomLibrary(roomNumber);
+    loadRoomMask(roomNumber);
+    loadStaticRoomObjects(roomNumber);
+    _currentRoomNumber = roomNumber;
 }
 
 void WaynesWorldEngine::loadScrollSprite() {
-	// TODO
+    if (_currentRoomNumber == 14 && _hoverObjectNumber == kObjectIdLoadingDock) {
+        _backgroundScrollSurface = new WWSurface(112, 150);
+        drawRoomImageToSurface("scroll", _backgroundScrollSurface, 0, 0);
+        if ((_logic->_r1_flags1 & 0x10) && !(_logic->_pizzathonListFlags1 & 0x04)) {
+            drawRoomImageToSurface("gill0", _backgroundScrollSurface, 65, 84);
+        }
+        _scrollRemaining = 112;
+        _scrollWidth = 112;
+        _doScrollRight = true;
+    } else if (_currentRoomNumber == 19 && _hoverObjectNumber == kObjectIdStore) {
+        _backgroundScrollSurface = new WWSurface(112, 150);
+        drawImageToSurface("r14/backg", _backgroundScrollSurface, 0, 0);
+        _scrollRemaining = 112;
+        _scrollWidth = 112;
+        _doScrollRight = false;
+    } else if (_currentRoomNumber == 8 && _hoverObjectNumber == kObjectIdHallway8) {
+        stopRoomAnimations();
+        _backgroundScrollSurface = new WWSurface(320, 150);
+        drawImageToSurface("r21/backg", _backgroundScrollSurface, 0, 0);
+        _scrollRemaining = 320;
+        _scrollWidth = 320;
+        _doScrollRight = false;
+    } else if (_currentRoomNumber == 21 && _hoverObjectNumber == kObjectIdFoyer) {
+        _backgroundScrollSurface = new WWSurface(320, 150);
+        drawImageToSurface("r08/backg", _backgroundScrollSurface, 0, 0);
+        _scrollRemaining = 320;
+        _scrollWidth = 320;
+        _doScrollRight = true;
+    } else if (_currentRoomNumber == 21 && _hoverObjectNumber == kObjectIdOffice21) {
+        _backgroundScrollSurface = new WWSurface(320, 150);
+        drawImageToSurface("r22/backg", _backgroundScrollSurface, 0, 0);
+        _scrollRemaining = 320;
+        _scrollWidth = 320;
+        _doScrollRight = false;
+    } else if (_currentRoomNumber == 22 && _hoverObjectNumber == kObjectIdHallway22) {
+        _backgroundScrollSurface = new WWSurface(320, 150);
+        drawImageToSurface("r21/backg", _backgroundScrollSurface, 0, 0);
+        _scrollRemaining = 320;
+        _scrollWidth = 320;
+        _doScrollRight = true;
+    } else if (_currentRoomNumber == 32 && _hoverObjectNumber == kObjectIdOffice) {
+        if (!(_logic->_r32_flags & 0x04)) {
+            displayTextLines("c04r", 452, 300, 20, 1);
+            _scrollPosition = 0;
+        } else {
+            walkTo(150, 140, 6, 160, 140);
+            stopRoomAnimations();
+            _backgroundScrollSurface = new WWSurface(168, 150);
+            drawImageToSurface("r33/backg", _backgroundScrollSurface, 0, 0);
+            _scrollRemaining = 168;
+            _scrollWidth = 168;
+            _doScrollRight = false;
+        }
+    } else if (_currentRoomNumber == 33 && _hoverObjectNumber == kObjectIdHallway33) {
+        _backgroundScrollSurface = new WWSurface(168, 150);
+        drawRoomImageToSurface("scroll", _backgroundScrollSurface, 0, 0);
+        if (_logic->_r32_flags & 0x02) {
+            drawRoomImageToSurface("noplunge", _backgroundScrollSurface, 141, 94);
+        }
+        _scrollRemaining = 168;
+        _scrollWidth = 168;
+        _doScrollRight = true;
+    } else {
+        _scrollPosition = 0;
+    }
+}
+
+void WaynesWorldEngine::scrollRoom() {
+	const int kScrollStripWidth = 8;
+	int stripSourceX, stripDestX;
+	if (_doScrollRight) {
+		_scrollPosition = _scrollWidth - _scrollRemaining;
+		_backgroundSurface->move(-kScrollStripWidth, 0, _backgroundSurface->h);
+		stripSourceX = _scrollPosition;
+		stripDestX = 320 - kScrollStripWidth;
+		_wayneSpriteX -= kScrollStripWidth;
+		_garthSpriteX -= kScrollStripWidth;
+	} else {
+		_scrollPosition = _scrollRemaining - _scrollWidth;
+		_backgroundSurface->move(kScrollStripWidth, 0, _backgroundSurface->h);
+		stripSourceX = _scrollWidth + _scrollPosition - kScrollStripWidth;
+		stripDestX = 0;
+		_wayneSpriteX += kScrollStripWidth;
+		_garthSpriteX += kScrollStripWidth;
+	}
+	Graphics::Surface scrollStripSurface = _backgroundScrollSurface->getSubArea(Common::Rect(stripSourceX, 0, stripSourceX + kScrollStripWidth, 150));
+	_backgroundSurface->drawSurface(&scrollStripSurface, stripDestX, 0);
+	_scrollRemaining -= kScrollStripWidth;
+	if (_scrollRemaining <= 0) {
+		delete _backgroundScrollSurface;
+		_backgroundScrollSurface = nullptr;
+	}
 }
 
 void WaynesWorldEngine::loadRoomMask(int roomNum) {
@@ -1453,7 +1609,7 @@ void WaynesWorldEngine::handleVerb(int verbFlag) {
         break;
     }
 
-    if (_word_306DB != 0) {
+    if (_scrollWidth != 0) {
         changeRoomScrolling();
     }
 

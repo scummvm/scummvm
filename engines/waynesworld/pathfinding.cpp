@@ -433,28 +433,29 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
 
     for (int pointIndex = 0, walkIncr = 0; pointIndex < actor1PointsCount || pointIndex < actor2PointsCount; pointIndex += 2, walkIncr += 2) {
         int scale = 0;
-        if (_word_306DD > 0) {
-            // TODO scrollRoom(false);
+        if (_scrollRemaining > 0) {
+            scrollRoom();
         }
         if (pointIndex < actor2PointsCount && pointIndex < actor1PointsCount) {
-            scale = drawActors(actor1Points[pointIndex].direction, 0, 0, (walkIncr % 8) / 2, _wayneWalkPoints[pointIndex].x - _from_x1, _wayneWalkPoints[pointIndex].y, _garthWalkPoints[pointIndex].x - _from_x1, _garthWalkPoints[pointIndex].y);
+            scale = drawActors(actor1Points[pointIndex].direction, 0, 0, (walkIncr % 8) / 2, _wayneWalkPoints[pointIndex].x - _scrollPosition, _wayneWalkPoints[pointIndex].y, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);
         } else if (pointIndex < actor1PointsCount) {
             if (flag1 == 0) {
-                scale = drawActors(actor1Points[pointIndex].direction, 0, 1, (walkIncr % 8) / 2, _wayneWalkPoints[pointIndex].x - _from_x1, _wayneWalkPoints[pointIndex].y, _garthSpriteX, _garthSpriteY);
+                scale = drawActors(actor1Points[pointIndex].direction, 0, 1, (walkIncr % 8) / 2, _wayneWalkPoints[pointIndex].x - _scrollPosition, _wayneWalkPoints[pointIndex].y, _garthSpriteX, _garthSpriteY);
             } else {
-                scale = drawActors(actor1Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _from_x1, _garthWalkPoints[pointIndex].y);            
+                scale = drawActors(actor1Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);            
             }
         } else {
             if (flag2 == 0) {
-                scale = drawActors(actor2Points[pointIndex].direction, 0, 1, (walkIncr % 8) / 2, _wayneWalkPoints[pointIndex].x - _from_x1, _wayneWalkPoints[pointIndex].y, _garthSpriteX, _garthSpriteY);
+                scale = drawActors(actor2Points[pointIndex].direction, 0, 1, (walkIncr % 8) / 2, _wayneWalkPoints[pointIndex].x - _scrollPosition, _wayneWalkPoints[pointIndex].y, _garthSpriteX, _garthSpriteY);
             } else {
-                scale = drawActors(actor2Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _from_x1, _garthWalkPoints[pointIndex].y);            
+                scale = drawActors(actor2Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);
             }
         }
-        if (_inventoryItemsCount == 0 && _from_x1 == 0) {
-            waitMillis(10000 / (scale * scale) * 10);
-        }
-        if (_word_306DD == 0) {
+        // if (_inventoryItemsCount == 0 && _scrollPosition == 0) {
+        //     waitMillis(10000 / (scale * scale) * 10);
+        // }
+        waitMillis(100); // TODO Fix this
+        if (_scrollRemaining == 0) {
             // TOOD
             // if (updateGame()) {
             //     return true;
@@ -471,16 +472,17 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
     }
 
     if (_currentActorNum != 0) {
-        drawActors(direction, 1, 1, 0, actor1_destX - _from_x1, actor1_destY, actor2WalkDestX - _from_x1, actor2WalkDestY);
+        drawActors(direction, 1, 1, 0, actor1_destX - _scrollPosition, actor1_destY, actor2WalkDestX - _scrollPosition, actor2WalkDestY);
     } else {
-        drawActors(direction, 1, 1, 0, actor2WalkDestX - _from_x1, actor2WalkDestY, actor1_destX - _from_x1, actor1_destY);
+        drawActors(direction, 1, 1, 0, actor2WalkDestX - _scrollPosition, actor2WalkDestY, actor1_destX - _scrollPosition, actor1_destY);
     }
 
-    // TODO
     // Finish background scrolling
-    // while (_word_306DD > 0) {
-    //     scrollRoom(true);
-    // }
+    while (_scrollRemaining > 0) {
+        scrollRoom();
+        drawActors(_actorSpriteValue, 1, 1, 0, _wayneSpriteX, _wayneSpriteY, _garthSpriteX, _garthSpriteY);
+        waitMillis(50);
+    }
 
     return true;
 }

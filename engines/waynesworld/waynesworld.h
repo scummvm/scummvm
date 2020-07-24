@@ -122,6 +122,7 @@ public:
 	byte _palette2[768];
 	Screen *_screen;
 	WWSurface *_backgroundSurface;
+	WWSurface *_backgroundScrollSurface;
 	GFTFont *_fontWW;
 	GFTFont *_fontWWInv;
 	GFTFont *_fontBit5x7;
@@ -130,10 +131,10 @@ public:
 	// Room
 	Common::String _roomName;
 	byte *_walkMap;
-	int _word_306DB;
-	int _word_306DD;
+	int _scrollWidth;
+	int _scrollRemaining;
 	int _roomChangeCtr;
-	int _from_x1;
+	int _scrollPosition;
 	bool _doScrollRight;
 	bool _hasRoomAnimationCallback;
 
@@ -301,6 +302,7 @@ public:
 	void handleRoomEvent();
 	void changeRoomScrolling();
 	void loadScrollSprite();
+	void scrollRoom();
 	void loadRoomMask(int roomNum);
 	void fillRoomMaskArea(int x1, int y1, int x2, int y2, int enabled);
 
