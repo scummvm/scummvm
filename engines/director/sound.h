@@ -85,6 +85,7 @@ public:
 	void stopSound();
 
 private:
+	bool isChannelValid(uint8 soundChannel);
 	void cancelFade(uint8 soundChannel);
 };
 
