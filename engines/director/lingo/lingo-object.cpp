@@ -320,12 +320,14 @@ void LM::m_respondsTo(int nargs) {
 // Window
 
 bool Stage::hasProp(const Common::String &propName) {
-	return g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow;
+	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
+	return g_lingo->_theEntityFields.contains(fieldName);
 }
 
 Datum Stage::getProp(const Common::String &propName) {
-	if (g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow) {
-		return getField(g_lingo->_theEntityFields[propName]->field);
+	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
+	if (g_lingo->_theEntityFields.contains(fieldName)) {
+		return getField(g_lingo->_theEntityFields[fieldName]->field);
 	}
 
 	warning("Stage::getProp: unknown property '%s'", propName.c_str());
@@ -333,8 +335,9 @@ Datum Stage::getProp(const Common::String &propName) {
 }
 
 bool Stage::setProp(const Common::String &propName, const Datum &value) {
-	if (g_lingo->_theEntityFields.contains(propName) && g_lingo->_theEntityFields[propName]->entity == kTheWindow) {
-		return setField(g_lingo->_theEntityFields[propName]->field, value);
+	Common::String fieldName = Common::String::format("%d%s", kTheWindow, propName.c_str());
+	if (g_lingo->_theEntityFields.contains(fieldName)) {
+		return setField(g_lingo->_theEntityFields[fieldName]->field, value);
 	}
 
 	warning("Stage::setProp: unknown property '%s'", propName.c_str());
