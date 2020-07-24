@@ -676,17 +676,7 @@ int MidiPlayer_Amiga0::open(ResourceManager *resMan) {
 	if (_isOpen)
 		return MidiDriver::MERR_ALREADY_OPEN;
 
-	switch (g_sci->getGameId()) {
-	case GID_HOYLE1:
-	case GID_LSL2:
-	case GID_LSL3:
-	case GID_SQ3:
-	case GID_QFG1:
-		_isEarlyDriver = true;
-		break;
-	default:
-		_isEarlyDriver = false;
-	}
+	_isEarlyDriver = g_sci->getGameId() == GID_LSL2 || g_sci->getGameId() == GID_SQ3;
 
 	Common::File file;
 
