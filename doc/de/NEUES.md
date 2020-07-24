@@ -9,6 +9,12 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Ultima IV - Quest of the Avatar hinzugefügt.
    - Unterstützung für Ultima VI - The False Prophet hinzugefügt.
    - Unterstützung für Ultima VIII - Pagan hinzugefügt.
+   - Unterstützung für Spiele von Interactive Fiction hinzugefügt, basierend auf folgenden Engines:
+     ADRIFT (außer Version 5), AdvSys, AGT, Alan 2 & 3
+     Archetype (neu implementiert für Glk, basierend auf dem originalen Pascal-Quellcode)
+     Hugo, JACL, Level 9, Magnetic Scrolls, Quest, Scott Adams,
+     ZCode (alle ZCode-Spiele, außer Infocom graphical version 6).
+     Aktuell werden mehr als 1600 Spiele erkannt und unterstützt.
 
  Allgemein:
    - Alle Engines unterstützen nun automatisch gespeicherte Spielstände.
