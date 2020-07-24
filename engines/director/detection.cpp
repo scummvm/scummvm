@@ -72,9 +72,9 @@ StartMovie DirectorEngine::getStartMovie() const {
 
 	if (ConfMan.hasKey("start_movie")) {
 		Common::String option = ConfMan.get("start_movie");
-		int colonPos = option.findLastOf("@");
-		startMovie.startMovie = option.substr(0, colonPos);
-		Common::String tail = option.substr(colonPos + 1, option.size());
+		int atPos = option.findLastOf("@");
+		startMovie.startMovie = option.substr(0, atPos);
+		Common::String tail = option.substr(atPos + 1, option.size());
 		if (tail.size() > 0)
 			startMovie.startFrame = atoi(tail.c_str());
 	}
