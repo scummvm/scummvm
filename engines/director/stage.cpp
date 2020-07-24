@@ -54,6 +54,7 @@ Stage::Stage(int id, bool scrollable, bool resizable, bool editable, Graphics::M
 	_newMovieStarted = true;
 
 	_objType = kWindowObj;
+	_startFrame = _vm->getStartMovie().startFrame;
 }
 
 Stage::~Stage() {
@@ -470,6 +471,10 @@ bool Stage::step() {
 				if (!debugChannelSet(-1, kDebugCompileOnly) && goodMovie) {
 					debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
 					_currentMovie->getScore()->startPlay();
+					if (_startFrame != -1) {
+						_currentMovie->getScore()->setCurrentFrame(_startFrame);
+						_startFrame = -1;
+					}
 				} else {
 					return false;
 				}

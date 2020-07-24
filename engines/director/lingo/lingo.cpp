@@ -1090,9 +1090,9 @@ void Lingo::runTests() {
 
 	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
 
-	// Repurpose commandline option --start-movie to run a specific lingo script.
-	if (ConfMan.hasKey("start_movie")) {
-		fileList.push_back(ConfMan.get("start_movie"));
+	Common::String startMovie = _vm->getStartMovie().startMovie;
+	if (startMovie.size() > 0) {
+		fileList.push_back(startMovie);
 	} else {
 		for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
 			fileList.push_back((*it)->getName());

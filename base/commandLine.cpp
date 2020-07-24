@@ -169,7 +169,8 @@ static const char HELP_STRING[] =
 	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
 #endif
 #if defined(ENABLE_DIRECTOR)
-	"  --start-movie=NAME       Start movie for Director\n"
+	"  --start-movie=NAME@NUM   Start movie at frame for Director\n"
+	"							Either can be specified without the other.\n"
 #endif
 #ifdef ENABLE_SCUMM
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
