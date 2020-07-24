@@ -105,6 +105,8 @@ struct PaletteV4 {
 	int id;
 	byte *palette;
 	int length;
+
+	PaletteV4(int i, byte *p, int l) : id(i), palette(p), length(l) {}
 };
 
 struct MacShape {

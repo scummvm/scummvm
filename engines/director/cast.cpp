@@ -95,6 +95,9 @@ Cast::~Cast() {
 		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			delete it->_value;
 
+	for (uint i = 0; i < _loadedPalettes.size(); i++)
+		delete[] _loadedPalettes[i].palette;
+
 	delete _loadedStxts;
 	delete _loadedCast;
 	delete _lingoArchive;
@@ -192,10 +195,23 @@ void Cast::setArchive(Archive *archive) {
 }
 
 bool Cast::loadArchive() {
+	// Palette Information
 	Common::Array<uint16> clutList = _castArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
-	Common::SeekableSubReadStreamEndian *r = nullptr;
+	if (clutList.size() == 0) {
+		debugC(2, kDebugLoading, "CLUT resource not found, using default Mac palette");
+	} else {
+		for (uint i = 0; i < clutList.size(); i++) {
+			Common::SeekableSubReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
+
+			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
+			loadPalette(*pal, i);
+
+			delete pal;
+		}
+	}
 
 	// Configuration Information
+	Common::SeekableSubReadStreamEndian *r = nullptr;
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F'))));
 		delete r;
@@ -203,20 +219,6 @@ bool Cast::loadArchive() {
 		// TODO: Source this from somewhere!
 		_movie->_movieRect = Common::Rect(0, 0, 639, 479);
 		_movie->_stageColor = 1;
-	}
-
-	if (clutList.size() == 0) {
-		warning("CLUT resource not found, using default Mac palette");
-		_vm->setPalette(-1);
-	} else {
-		for (int i = 0; i < clutList.size(); i++) {
-			Common::SeekableSubReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
-
-			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
-			loadPalette(*pal);
-
-			delete pal;
-		}
 	}
 
 	// Font Directory
@@ -395,8 +397,18 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 			stream.readByte();
 		}
 
-		int palette = (int16)stream.readUint16();
-		_vm->setPalette(palette - 1);
+		int palette = (int16)stream.readUint16() - 1;
+		if (palette <= 0) {
+			// Builtin palette
+			_vm->setPalette(palette);
+		} else if ((uint)palette - 1 < _loadedPalettes.size()) {
+			// Loaded palette
+			PaletteV4 pal = _loadedPalettes[palette - 1];
+			_vm->setPalette(pal.palette, pal.length);
+		} else {
+			// Default palette
+			_vm->setPalette(-1);
+		}
 
 		for (int i = 0; i < 0x08; i++) {
 			stream.readByte();
@@ -573,7 +585,7 @@ void Cast::loadSpriteSounds() {
 	}
 }
 
-void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
+void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream, int id) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
 	byte *_palette = new byte[index + 1];
@@ -596,6 +608,8 @@ void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readByte();
 		index -= 3;
 	}
+
+	_loadedPalettes.push_back(PaletteV4(id, _palette, steps));
 }
 
 void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {

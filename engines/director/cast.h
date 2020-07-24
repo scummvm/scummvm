@@ -77,7 +77,7 @@ public:
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 
 private:
-	void loadPalette(Common::SeekableSubReadStreamEndian &stream);
+	void loadPalette(Common::SeekableSubReadStreamEndian &stream, int id);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
 	Common::String getString(Common::String str);
@@ -88,6 +88,7 @@ public:
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
+	Common::Array<PaletteV4> _loadedPalettes;
 	uint16 _castIDoffset;
 	uint16 _castArrayStart;
 	uint16 _castArrayEnd;

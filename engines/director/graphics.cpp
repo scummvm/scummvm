@@ -564,15 +564,15 @@ static byte winPalette[768] = {
 
 
 static PaletteV4 director4Palettes[] = {
-	{-1, macPalette, 256},
-	{-2, rainbowPalette, 256},
-	{-3, grayscalePalette, 256},
-	{-4, pastelsPalette, 256},
-	{-5, vividPalette, 256},
-	{-6, ntscPalette, 256},
-	{-7, metallicPalette, 256},
-	{-101, winPalette, 256},
-	{0, nullptr, 0}
+	PaletteV4(-1, macPalette, 256),
+	PaletteV4(-2, rainbowPalette, 256),
+	PaletteV4(-3, grayscalePalette, 256),
+	PaletteV4(-4, pastelsPalette, 256),
+	PaletteV4(-5, vividPalette, 256),
+	PaletteV4(-6, ntscPalette, 256),
+	PaletteV4(-7, metallicPalette, 256),
+	PaletteV4(-101, winPalette, 256),
+	PaletteV4(0, nullptr, 0)
 };
 
 
