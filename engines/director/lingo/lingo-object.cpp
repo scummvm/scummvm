@@ -31,6 +31,7 @@
 #include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "director/lingo/xlibs/flushxobj.h"
 
 namespace Director {
 
@@ -96,6 +97,7 @@ static struct XLibProto {
 	int version;
 } xlibs[] = {
 	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	2 },	// D2
+	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					4 },	// D4
 	{ 0, 0, 0, 0 }
 };
 
@@ -115,7 +117,12 @@ void Lingo::initXLibs() {
 	}
 }
 
-void Lingo::openXLib(const Common::String &name, ObjectType type) {
+void Lingo::openXLib(Common::String name, ObjectType type) {
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		int pos = name.findLastOf(':');
+		name = name.substr(pos + 1, name.size());
+	}
+
 	if (_xlibInitializers.contains(name)) {
 		Symbol sym = _xlibInitializers[name];
 		(*sym.u.bltin)(type);
