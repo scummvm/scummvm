@@ -241,6 +241,9 @@ bool MeshX::update(FrameNode *parentFrame) {
 			finalBoneMatrices[i] = *_boneMatrices[i] * skinWeightsList[i]._offsetMatrix;
 		}
 
+		// the new vertex coordinates are the weighted sum of the product
+		// of the combined bone transformation matrices and the static pose coordinates
+		// to be able too add the weighted summands together, we reset everything to zero first
 		for (uint32 i = 0; i < _vertexCount; ++i) {
 			for (int j = 0; j < 3; ++j) {
 				_vertexData[i * kVertexComponentCount + kPositionOffset + j] = 0.0f;
@@ -248,6 +251,10 @@ bool MeshX::update(FrameNode *parentFrame) {
 		}
 
 		for (uint boneIndex = 0; boneIndex < skinWeightsList.size(); ++boneIndex) {
+			// to every vertex which is affected by the bone, we add the product
+			// of the bone transformation with the coordinates of the static pose,
+			// weighted by the weight for the particular vertex
+			// repeating this procedure for all bones gives the new pose
 			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
 				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
 				Math::Vector3d pos;
@@ -261,11 +268,13 @@ bool MeshX::update(FrameNode *parentFrame) {
 			}
 		}
 
+		// now we have to update the vertex normals as well, so prepare the bone transformations
 		for (uint i = 0; i < skinWeightsList.size(); ++i) {
 			finalBoneMatrices[i].transpose();
 			finalBoneMatrices[i].inverse();
 		}
 
+		// reset so we can form the weighted sums
 		for (uint32 i = 0; i < _vertexCount; ++i) {
 			for (int j = 0; j < 3; ++j) {
 				_vertexData[i * kVertexComponentCount + kNormalOffset + j] = 0.0f;
