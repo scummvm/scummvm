@@ -38,9 +38,11 @@ namespace Audio {
 
 #define MILES_MT32_SYSEX_TERMINATOR 0xFF
 
+/*
 const byte milesMT32SysExResetParameters[] = {
 	0x01, MILES_MT32_SYSEX_TERMINATOR
 };
+*/
 
 const byte milesMT32SysExChansSetup[] = {
 	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, MILES_MT32_SYSEX_TERMINATOR
@@ -63,7 +65,7 @@ MidiDriver_Miles_Midi::MidiDriver_Miles_Midi(MusicType midiType, MilesMT32Instru
 		_baseFreq(250),
 		_timerRate(0),
 		_noteCounter(0),
-		_sysExDelay(0), 
+		_sysExDelay(0),
 		_timer_param(0),
 		_timer_proc(0) {
 	switch (midiType) {
@@ -387,7 +389,7 @@ void MidiDriver_Miles_Midi::send(int8 source, uint32 b) {
 	case 0xe0: // pitch bend change
 		if (command == 0xe0)
 			controlData.pitchWheel = ((uint16)op2 << 7) | (uint16)op1;
-		
+
 		_noteCounter++;
 		if (controlData.usingCustomTimbre) {
 			// Remember that this timbre got used now
