@@ -1463,6 +1463,10 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	return res;
 }
 
+/**
+* @param slot The slot index in the ScummVM Save file manager. "0" is the auto-save slot.
+* @return The result of the restore attempt. A value from "onClick return codes" eg GAME_RESTORED, RESTORE_FAILED etc
+*/
 uint16 Control::quickXRestore(uint16 slot) {
 	uint16 result;
 	if (!_controlPanel)
