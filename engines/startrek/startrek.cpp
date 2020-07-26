@@ -53,7 +53,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_spockActor(&_actorList[1]),
 	_mccoyActor(&_actorList[2]),
 	_redshirtActor(&_actorList[3]),
-	_sineTable(1024) {
+	_sineTable(1024),
+	_cosineTable(1024) {
 
 	if (getPlatform() != Common::kPlatformDOS)
 		error("Only DOS versions of Star Trek: 25th Anniversary are currently supported");
@@ -190,7 +191,7 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 			// Cleanup previous game mode
 			switch (_lastGameMode) {
 			case GAMEMODE_BRIDGE:
-				//cleanupBridge();
+				cleanupBridge();
 				break;
 
 			case GAMEMODE_AWAYMISSION:
@@ -209,7 +210,7 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 			switch (_gameMode) {
 			case GAMEMODE_BRIDGE:
 				_sound->loadMusicFile("bridge");
-				//initBridge();
+				initBridge(false);	// TODO: param
 				break;
 
 			case GAMEMODE_AWAYMISSION:
