@@ -406,7 +406,7 @@ void LC::cb_objectcall() {
 			Datum varTest(arg);
 			varTest.type = VAR;
 			varTest = g_lingo->varFetch(varTest);
-			if (varTest.type != VOIDSYM)
+			if (varTest.type != VOID)
 				arg = varTest;
 		}
 		args.push_back(arg);
