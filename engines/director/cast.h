@@ -71,6 +71,7 @@ public:
 	void setCastMemberModified(int castId);
 	CastMember *getCastMember(int castId);
 	CastMember *getCastMemberByName(const Common::String &name);
+	CastMember *getCastMemberByScriptId(int scriptId);
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
 
@@ -107,6 +108,7 @@ private:
 
 	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
+	Common::HashMap<uint16, int> _castsScriptIds;
 };
 
 } // End of namespace Director

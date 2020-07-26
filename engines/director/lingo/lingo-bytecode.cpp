@@ -898,7 +898,10 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
 	}
-	uint16 castId = stream.readUint16();
+	/* uint16 castId = */ stream.readUint16();
+	// The script is coupled with to a Cast via the script ID.
+	// This castId isn't always correct.
+
 	int16 factoryNameId = stream.readSint16();
 
 	// offset 50 - contents map
@@ -928,15 +931,18 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableSubReadStreamEndian &stream
 	// initialise the script
 	ScriptType scriptType = kCastScript;
 	Common::String castName;
-	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
+	CastMember *member = g_director->getCurrentMovie()->getCastMemberByScriptId(lctxIndex + 1);
+	uint16 castId;
 	if (member) {
 		if (member->_type == kCastLingoScript)
 			scriptType = ((ScriptCastMember *)member)->_scriptType;
 
+		castId = member->getID();
 		CastMemberInfo *info = g_director->getCurrentMovie()->getCastMemberInfo(castId);
 		if (info)
 			castName = info->name;
 	} else {
+		castId = -1;
 		warning("Script %d has invalid cast member %d", lctxIndex, castId);
 	}
 

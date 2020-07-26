@@ -104,6 +104,7 @@ public:
 
 	CastMember *getCastMember(int castId);
 	CastMember *getCastMemberByName(const Common::String &name);
+	CastMember *getCastMemberByScriptId(int scriptId);
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
 
