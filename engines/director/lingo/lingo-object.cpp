@@ -31,6 +31,7 @@
 #include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/xlibs/fileio.h"
+#include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/flushxobj.h"
 
 namespace Director {
@@ -97,6 +98,7 @@ static struct XLibProto {
 	int version;
 } xlibs[] = {
 	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	2 },	// D2
+	{ "PalXObj",				PalXObj:: initialize,				kXObj,					4 }, 	// D4
 	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					4 },	// D4
 	{ 0, 0, 0, 0 }
 };
