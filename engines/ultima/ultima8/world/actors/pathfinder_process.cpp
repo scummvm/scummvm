@@ -33,6 +33,8 @@ namespace Ultima8 {
 static const unsigned int PATH_OK = 1;
 static const unsigned int PATH_FAILED = 0;
 
+const uint16 PathfinderProcess::PATHFINDER_PROC_TYPE = 0x204;
+
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess)
 
@@ -46,7 +48,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId item_, bool hit) :
 		_targetX(0), _targetY(0), _targetZ(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
-	_type = 0x0204; // CONSTANT !
+	_type = PATHFINDER_PROC_TYPE; // CONSTANT !
 
 	Item *item = getItem(item_);
 	if (!item) {
