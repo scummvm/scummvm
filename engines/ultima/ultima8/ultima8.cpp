@@ -1084,8 +1084,6 @@ void Ultima8Engine::setupCoreGumps() {
 		_gameMapGump->InitGump(0);
 	}
 
-
-
 	// TODO: clean this up
 	if (GAME_IS_U8) {
 		assert(_desktopGump->getObjId() == 256);
