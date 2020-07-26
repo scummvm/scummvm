@@ -41,18 +41,20 @@
 
 namespace Wintermute {
 
+// define constant to make it available to the linker
+const uint32 MeshX::kNullIndex;
+
 //////////////////////////////////////////////////////////////////////////
 MeshX::MeshX(BaseGame *inGame) : BaseNamedObject(inGame),
                                  _BBoxStart(0.0f, 0.0f, 0.0f), _BBoxEnd(0.0f, 0.0f, 0.0f),
                                  _numAttrs(0), _maxFaceInfluence(0),
                                  _vertexData(nullptr), _vertexPositionData(nullptr),
                                  _vertexCount(0), _indexData(nullptr), _indexCount(0),
-                                 _skinAdjacency(nullptr), _adjacency(nullptr), _skinnedMesh(false) {
+                                 _skinAdjacency(nullptr), _skinnedMesh(false) {
 }
 
 //////////////////////////////////////////////////////////////////////////
 MeshX::~MeshX() {
-	delete[] _adjacency;
 	delete[] _skinAdjacency;
 	delete[] _vertexData;
 	delete[] _vertexPositionData;
@@ -140,6 +142,9 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer) {
 			lexer.advanceToNextToken(); // skip closed braces
 		} else if (lexer.reachedClosedBraces()) {
 			lexer.advanceToNextToken(); // skip closed braces
+
+			generateAdjacency();
+
 			return true;
 		} else {
 			warning("MeshX::loadFromX unknown token %i encountered", lexer.getTypeOfToken());
@@ -147,12 +152,54 @@ bool MeshX::loadFromX(const Common::String &filename, XFileLexer &lexer) {
 		}
 	}
 
+	generateAdjacency();
+
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool MeshX::generateMesh() {
+bool MeshX::generateAdjacency() {
+	_adjacency = Common::Array<uint32>(_indexCount, kNullIndex);
+
+	for (uint32 i = 0; i < _indexCount / 3; ++i) {
+		for (uint32 j = i + 1; j < _indexCount / 3; ++j) {
+			for (int edge1 = 0; edge1 < 3; ++edge1) {
+				uint16 index1 = _indexData[i * 3 + edge1];
+				uint16 index2 = _indexData[i * 3 + (edge1 + 1) % 3];
+
+				for (int edge2 = 0; edge2 < 3; ++edge2) {
+					uint16 index3 = _indexData[j * 3 + edge2];
+					uint16 index4 = _indexData[j * 3 + (edge2 + 1) % 3];
+
+					if (_adjacency[i * 3 + edge1] == kNullIndex && _adjacency[j * 3 + edge2] == kNullIndex && adjacentEdge(index1, index2, index3, index4)) {
+						_adjacency[i * 3 + edge1] = j;
+						_adjacency[j * 3 + edge2] = i;
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	return true;
+}
+
+bool MeshX::adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4) {
+	Math::Vector3d vertex1(_vertexPositionData + 3 * index1);
+	Math::Vector3d vertex2(_vertexPositionData + 3 * index2);
+	Math::Vector3d vertex3(_vertexPositionData + 3 * index3);
+	Math::Vector3d vertex4(_vertexPositionData + 3 * index4);
+
+	// wme uses a function from the D3DX library, which takes in an epsilon for floating point comparison
+	// wme passes in zero, so we just do a direct comparison
+	if (vertex1 == vertex3 && vertex2 == vertex4) {
+		return true;
+	} else if (vertex1 == vertex4 && vertex2 == vertex3) {
+		return true;
+	}
+
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -194,6 +241,9 @@ bool MeshX::update(FrameNode *parentFrame) {
 			finalBoneMatrices[i] = *_boneMatrices[i] * skinWeightsList[i]._offsetMatrix;
 		}
 
+		// the new vertex coordinates are the weighted sum of the product
+		// of the combined bone transformation matrices and the static pose coordinates
+		// to be able too add the weighted summands together, we reset everything to zero first
 		for (uint32 i = 0; i < _vertexCount; ++i) {
 			for (int j = 0; j < 3; ++j) {
 				_vertexData[i * kVertexComponentCount + kPositionOffset + j] = 0.0f;
@@ -201,6 +251,10 @@ bool MeshX::update(FrameNode *parentFrame) {
 		}
 
 		for (uint boneIndex = 0; boneIndex < skinWeightsList.size(); ++boneIndex) {
+			// to every vertex which is affected by the bone, we add the product
+			// of the bone transformation with the coordinates of the static pose,
+			// weighted by the weight for the particular vertex
+			// repeating this procedure for all bones gives the new pose
 			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
 				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
 				Math::Vector3d pos;
@@ -210,6 +264,33 @@ bool MeshX::update(FrameNode *parentFrame) {
 
 				for (uint j = 0; j < 3; ++j) {
 					_vertexData[vertexIndex * kVertexComponentCount + kPositionOffset + j] += pos.getData()[j];
+				}
+			}
+		}
+
+		// now we have to update the vertex normals as well, so prepare the bone transformations
+		for (uint i = 0; i < skinWeightsList.size(); ++i) {
+			finalBoneMatrices[i].transpose();
+			finalBoneMatrices[i].inverse();
+		}
+
+		// reset so we can form the weighted sums
+		for (uint32 i = 0; i < _vertexCount; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				_vertexData[i * kVertexComponentCount + kNormalOffset + j] = 0.0f;
+			}
+		}
+
+		for (uint boneIndex = 0; boneIndex < skinWeightsList.size(); ++boneIndex) {
+			for (uint i = 0; i < skinWeightsList[boneIndex]._vertexIndices.size(); ++i) {
+				uint32 vertexIndex = skinWeightsList[boneIndex]._vertexIndices[i];
+				Math::Vector3d pos;
+				pos.setData(_vertexNormalData + vertexIndex * 3);
+				finalBoneMatrices[boneIndex].transform(&pos, true);
+				pos *= skinWeightsList[boneIndex]._vertexWeights[i];
+
+				for (uint j = 0; j < 3; ++j) {
+					_vertexData[vertexIndex * kVertexComponentCount + kNormalOffset + j] += pos.getData()[j];
 				}
 			}
 		}
@@ -228,7 +309,87 @@ bool MeshX::updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const
 		return false;
 	}
 
-	return shadow->addMesh(_adjacency, modelMat, light, extrusionDepth);
+	Math::Vector3d invLight = light;
+	Math::Matrix4 matInverseModel = modelMat;
+	matInverseModel.transpose();
+	matInverseModel.inverse();
+	matInverseModel.transform(&invLight, false);
+
+	uint32 numEdges = 0;
+
+	Common::Array<bool> isFront(_indexCount / 3, false);
+
+	// First pass : for each face, record if it is front or back facing the light
+	for (uint32 i = 0; i < _indexCount / 3; i++) {
+		uint16 index0 = _indexData[3 * i + 0];
+		uint16 index1 = _indexData[3 * i + 1];
+		uint16 index2 = _indexData[3 * i + 2];
+
+		Math::Vector3d v0(_vertexData + index0 * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v1(_vertexData + index1 * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v2(_vertexData + index2 * kVertexComponentCount + kPositionOffset);
+
+		// Transform vertices or transform light?
+		Math::Vector3d vNormal = Math::Vector3d::crossProduct(v2 - v1, v1 - v0);
+
+		if (Math::Vector3d::dotProduct(vNormal, invLight) >= 0.0f) {
+			isFront[i] = false; // back face
+		} else {
+			isFront[i] = true; // front face
+		}
+	}
+
+	// Allocate a temporary edge list
+	Common::Array<uint16> edges(_indexCount * 2, 0);
+
+	// First pass : for each face, record if it is front or back facing the light
+	for (uint32 i = 0; i < _indexCount / 3; i++) {
+		if (isFront[i]) {
+			uint16 wFace0 = _indexData[3 * i + 0];
+			uint16 wFace1 = _indexData[3 * i + 1];
+			uint16 wFace2 = _indexData[3 * i + 2];
+
+			uint32 adjacent0 = _adjacency[3 * i + 0];
+			uint32 adjacent1 = _adjacency[3 * i + 1];
+			uint32 adjacent2 = _adjacency[3 * i + 2];
+
+			if (adjacent0 == kNullIndex || isFront[adjacent0] == false) {
+				//	add edge v0-v1
+				edges[2 * numEdges + 0] = wFace0;
+				edges[2 * numEdges + 1] = wFace1;
+				numEdges++;
+			}
+			if (adjacent1 == kNullIndex || isFront[adjacent1] == false) {
+				//	add edge v1-v2
+				edges[2 * numEdges + 0] = wFace1;
+				edges[2 * numEdges + 1] = wFace2;
+				numEdges++;
+			}
+			if (adjacent2 == kNullIndex || isFront[adjacent2] == false) {
+				//	add edge v2-v0
+				edges[2 * numEdges + 0] = wFace2;
+				edges[2 * numEdges + 1] = wFace0;
+				numEdges++;
+			}
+		}
+	}
+
+	for (uint32 i = 0; i < numEdges; i++) {
+		Math::Vector3d v1(_vertexData + edges[2 * i + 0] * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v2(_vertexData + edges[2 * i + 1] * kVertexComponentCount + kPositionOffset);
+		Math::Vector3d v3 = v1 - invLight * extrusionDepth;
+		Math::Vector3d v4 = v2 - invLight * extrusionDepth;
+
+		// Add a quad (two triangles) to the vertex list
+		shadow->addVertex(v1);
+		shadow->addVertex(v2);
+		shadow->addVertex(v3);
+		shadow->addVertex(v2);
+		shadow->addVertex(v4);
+		shadow->addVertex(v3);
+	}
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -242,6 +403,7 @@ bool MeshX::render(ModelX *model) {
 	// is this correct?
 	for (uint32 i = 0; i < _numAttrs; i++) {
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _materials[i]->_diffuse.data);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, _materials[i]->_diffuse.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, _materials[i]->_specular.data);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, _materials[i]->_emissive.data);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, _materials[i]->_shininess);
@@ -250,7 +412,6 @@ bool MeshX::render(ModelX *model) {
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glEnable(GL_TEXTURE_2D);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		static_cast<BaseSurfaceOpenGL3D *>(_materials[i]->getSurface())->setTexture();
 		glInterleavedArrays(GL_T2F_N3F_V3F, 0, _vertexData);
 		glDrawElements(GL_TRIANGLES, _indexRanges[i + 1] - _indexRanges[i], GL_UNSIGNED_SHORT, _indexData + _indexRanges[i]);
@@ -332,7 +493,7 @@ bool MeshX::restoreDeviceObjects() {
 	}
 
 	if (_skinnedMesh) {
-		return generateMesh();
+		return generateAdjacency();
 	} else {
 		return true;
 	}
@@ -401,11 +562,16 @@ bool MeshX::parseNormalCoords(XFileLexer &lexer) {
 	uint vertexNormalCount = readInt(lexer);
 	assert(vertexNormalCount == _vertexCount);
 
+	_vertexNormalData = new float[3 * _vertexCount]();
+
 	for (uint i = 0; i < vertexNormalCount; ++i) {
 		_vertexData[i * kVertexComponentCount + kNormalOffset] = readFloat(lexer);
+		_vertexNormalData[i * 3 + 0] = _vertexData[i * kVertexComponentCount + kNormalOffset];
 		_vertexData[i * kVertexComponentCount + kNormalOffset + 1] = readFloat(lexer);
+		_vertexNormalData[i * 3 + 1] = _vertexData[i * kVertexComponentCount + kNormalOffset + 1];
 		// mirror z coordinate to change to OpenGL coordinate system
 		_vertexData[i * kVertexComponentCount + kNormalOffset + 2] = -readFloat(lexer);
+		_vertexNormalData[i * 3 + 2] = _vertexData[i * kVertexComponentCount + kNormalOffset + 2];
 		lexer.advanceToNextToken(); // skip semicolon
 	}
 

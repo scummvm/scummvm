@@ -26,10 +26,13 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/light3d.h"
 #include "engines/wintermute/base/gfx/opengl/loader3ds.h"
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/wintypes.h"
+#include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
 namespace Wintermute {
@@ -47,45 +50,33 @@ Light3D::~Light3D() {
 
 //////////////////////////////////////////////////////////////////////////
 bool Light3D::setLight(int index) {
-	warning("Light3D::setLight not implemented yet");
+	_gameRef->_renderer3D->resetModelViewTransform();
 
-	//	LPDIRECT3DDEVICE Device = ((CBRenderD3D*)Game->m_Renderer)->m_Device;
+	float zero[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	float diffuse[4] = { RGBCOLGetR(_diffuseColor) / 256.0f, RGBCOLGetG(_diffuseColor) / 256.0f, RGBCOLGetB(_diffuseColor) / 256.0f, 1.0f };
+	float position[4] = { _position.x(), _position.y(), _position.z(), 1.0f };
 
-	//	D3DLIGHT d3dLight;
-	//	ZeroMemory(&d3dLight, sizeof(D3DLIGHT));
+	glLightfv(GL_LIGHT0 + index, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0 + index, GL_AMBIENT, zero);
+	glLightfv(GL_LIGHT0 + index, GL_SPECULAR, zero);
+	glLightfv(GL_LIGHT0 + index, GL_POSITION, position);
 
-	//	d3dLight.Type = m_IsSpotlight ? D3DLIGHT_SPOT : D3DLIGHT_POINT;
-	//	d3dLight.Diffuse.r = (float)D3DCOLGetR(m_DiffuseColor) / 256.0f;
-	//	d3dLight.Diffuse.g = (float)D3DCOLGetG(m_DiffuseColor) / 256.0f;
-	//	d3dLight.Diffuse.b = (float)D3DCOLGetB(m_DiffuseColor) / 256.0f;
+	if (_isSpotlight) {
+		Math::Vector3d dir = _target - _position;
+		glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, dir.getData());
 
-	//	d3dLight.Position.x = m_Pos.x;
-	//	d3dLight.Position.y = m_Pos.y;
-	//	d3dLight.Position.z = m_Pos.z;
+		glLightf(GL_LIGHT0 + index, GL_SPOT_EXPONENT, 1.0f);
+		// wme sets the phi angle to 1.0 (in radians)
+		// so either 180/pi or (180/pi)/2 should give the same result
+		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 0.5f * (180.0f / M_PI));
+	} else {
+		glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, 180.0f);
+	}
 
-	//	if(m_IsSpotlight)
-	//	{
-	//		Math::Vector3d Dir = m_Target - m_Pos;
-	//		d3dLight.Direction = Dir;
-	//		d3dLight.Range = D3DXVec3Length(&Dir);
+	if (_active) {
+		_gameRef->_renderer3D->enableLight(index);
+	}
 
-	//		d3dLight.Theta        = 0.5f;
-	//		d3dLight.Phi          = 1.0f;
-	//		d3dLight.Falloff      = 1.0f;
-	//		d3dLight.Attenuation0 = 1.0f;
-	//	}
-	//	else
-	//	{
-	//		d3dLight.Range = 100000.0f;
-	//		d3dLight.Attenuation0 = 1.0f;
-	//	}
-
-	//	bool ret = Device->SetLight(Index, &d3dLight);
-
-	//	if(m_Active)
-	//		Device->LightEnable(Index, TRUE);
-
-	//	return ret;
 	return true;
 }
 
@@ -123,9 +114,9 @@ bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 			byte g = fileStream.readByte();
 			byte b = fileStream.readByte();
 
-			_diffuseColor = r;
+			_diffuseColor = r << 16;
 			_diffuseColor |= g << 8;
-			_diffuseColor |= b << 16;
+			_diffuseColor |= b;
 			_diffuseColor |= 255 << 24;
 			break;
 		}
@@ -135,9 +126,9 @@ bool Light3D::loadFrom3DS(Common::MemoryReadStream &fileStream) {
 			float g = fileStream.readFloatLE();
 			float b = fileStream.readFloatLE();
 
-			_diffuseColor = static_cast<int32>(r * 255);
+			_diffuseColor = static_cast<int32>(r * 255) << 16;
 			_diffuseColor |= static_cast<int32>(g * 255) << 8;
-			_diffuseColor |= static_cast<int32>(b * 255) << 16;
+			_diffuseColor |= static_cast<int32>(b * 255);
 			_diffuseColor |= 255 << 24;
 			break;
 		}

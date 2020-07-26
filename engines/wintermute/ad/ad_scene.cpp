@@ -65,6 +65,7 @@
 #include "engines/wintermute/ad/ad_actor_3dx.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
+#include "engines/wintermute/base/gfx/opengl/light3d.h"
 #endif
 
 namespace Wintermute {
@@ -101,6 +102,9 @@ void AdScene::setDefaults() {
 	_fov = -1.0f;
 	_nearPlane = -1.0f;
 	_farPlane = -1.0f;
+
+	_maxShadowType = SHADOW_FLAT;
+	_ambientLightColor = 0x00000000;
 #endif
 
 	_pfPointsNum = 0;
@@ -831,6 +835,18 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_FAR_CLIPPING_PLANE:
 			parser.scanStr(params, "%f", &_farPlane);
 			break;
+
+		case TOKEN_MAX_SHADOW_TYPE: {
+			int maxShadowType = SHADOW_NONE;
+			parser.scanStr(params, "%d", &maxShadowType);
+			setMaxShadowType(static_cast<TShadowType>(maxShadowType));
+		}
+		break;
+
+		case TOKEN_AMBIENT_LIGHT_COLOR:
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
+			_ambientLightColor = BYTETORGBA(ar, ag, ab, 255);
+			break;
 #endif
 		case TOKEN_CAMERA:
 			Common::strlcpy(camera, params, MAX_PATH_LENGTH);
@@ -1139,8 +1155,9 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 #ifdef ENABLE_WME3D
 		if (!doUpdate && _sceneGeometry && _layers[j]->_main) {
-			// TODO: render shadow geometry in case of
-			// shadow type being stencil
+			if (_gameRef->getMaxShadowType(nullptr) >= SHADOW_STENCIL) {
+				_sceneGeometry->renderShadowGeometry();
+			}
 		}
 #endif
 
@@ -1933,7 +1950,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EnableLight") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+
+		const char *name = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			stack->pushBool(false);
+		} else {
+			bool res = _sceneGeometry->enableLight(name);
+			stack->pushBool(res);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1942,7 +1968,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DisableLight") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+
+		const char *name = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			stack->pushBool(false);
+		} else {
+			bool res = _sceneGeometry->enableLight(name, false);
+			stack->pushBool(res);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1951,7 +1986,16 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IsLightEnabled") == 0) {
 		stack->correctParams(1);
-		stack->pushBool(false);
+
+		const char *name = stack->pop()->getString();
+
+		if (_sceneGeometry) {
+			bool res = _sceneGeometry->isLightEnabled(name);
+			stack->pushBool(res);
+		} else {
+			stack->pushBool(false);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1960,7 +2004,15 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightName") == 0) {
 		stack->correctParams(1);
-		stack->pushNULL();
+
+		int index = stack->pop()->getInt();
+
+		if (_sceneGeometry && index >= 0 && static_cast<uint>(index) < _sceneGeometry->_lights.size()) {
+			stack->pushString(_sceneGeometry->_lights[index]->getName());
+		} else {
+			stack->pushNULL();
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1968,8 +2020,18 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	// SetLightColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetLightColor") == 0) {
-		stack->correctParams(1);
-		stack->pushBool(false);
+		stack->correctParams(2);
+
+		const char *name = stack->pop()->getString();
+		uint32 color = static_cast<uint32>(stack->pop()->getInt());
+
+		if (!_sceneGeometry) {
+			stack->pushBool(false);
+		} else {
+			bool ret = _sceneGeometry->setLightColor(name, color);
+			stack->pushBool(ret);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1978,7 +2040,14 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightColor") == 0) {
 		stack->correctParams(1);
-		stack->pushInt(0);
+		const char *name = stack->pop()->getString();
+
+		if (_sceneGeometry) {
+			stack->pushInt(_sceneGeometry->getLightColor(name));
+		} else {
+			stack->pushInt(0);
+		}
+
 		return STATUS_OK;
 	}
 
@@ -1987,7 +2056,22 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetLightPosition") == 0) {
 		stack->correctParams(1);
-		stack->pushInt(0);
+		const char *name = stack->pop()->getString();
+
+		if (!_sceneGeometry) {
+			stack->pushInt(0);
+		} else {
+			Math::Vector3d pos = _sceneGeometry->getLightPos(name);
+			ScValue *val = stack->getPushValue();
+
+			if (val) {
+				val->setProperty("X", pos.x());
+				val->setProperty("Y", pos.y());
+				// invert z coordinate to change to OpenGL coordinate system
+				val->setProperty("Z", -pos.z());
+			}
+		}
+
 		return STATUS_OK;
 	}
 
@@ -2350,7 +2434,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	// MaxShadowType
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "MaxShadowType") {
-		_scValue->setInt(0);
+		_scValue->setInt(_maxShadowType);
 		return _scValue;
 	}
 
@@ -2358,7 +2442,20 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	// AmbientLightColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "AmbientLightColor") {
-		_scValue->setInt(0);
+		_scValue->setInt(_ambientLightColor);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// NumLights
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "NumLights") {
+		if (_sceneGeometry) {
+			_scValue->setInt(_sceneGeometry->_lights.size());
+		} else {
+			_scValue->setInt(0);
+		}
+
 		return _scValue;
 	}
 #endif
@@ -2501,28 +2598,34 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	// WaypointsHeight
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WaypointsHeight") == 0) {
+		if (_sceneGeometry) {
+			_sceneGeometry->_waypointHeight = value->getFloat();
+			_sceneGeometry->dropWaypoints();
+		}
 
-		return _scValue;
+		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// MaxShadowType
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MaxShadowType") == 0) {
-		return _scValue;
+		setMaxShadowType(static_cast<TShadowType>(value->getInt()));
+		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// AmbientLightColor
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmbientLightColor") == 0) {
-		return _scValue;
-	} else {
-		return BaseObject::scSetProperty(name, value);
+		_ambientLightColor = value->getInt();
+		return STATUS_OK;
 	}
 #endif
+
+	else {
+		return BaseObject::scSetProperty(name, value);
+	}
 }
 
 
@@ -2810,6 +2913,8 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_fov));
 		persistMgr->transferFloat(TMEMBER(_nearPlane));
 		persistMgr->transferFloat(TMEMBER(_farPlane));
+		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
+		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
 	} else {
 		_sceneGeometry = nullptr;
 	}
@@ -3461,6 +3566,20 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 	return STATUS_OK;
 }
 
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+void Wintermute::AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
+	if (shadowType > SHADOW_STENCIL) {
+		shadowType = SHADOW_STENCIL;
+	}
+
+	if (shadowType < 0) {
+		shadowType = SHADOW_NONE;
+	}
+
+	_maxShadowType = shadowType;
+}
+#endif
 
 Common::String AdScene::debuggerToString() const {
 	return Common::String::format("%p: Scene \"%s\", paralax: %d, autoscroll: %d", (const void *)this, getName(), _paralaxScrolling, _autoScroll);

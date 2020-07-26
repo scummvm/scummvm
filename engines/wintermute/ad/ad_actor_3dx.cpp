@@ -377,13 +377,14 @@ bool AdActor3DX::display() {
 		_gameRef->_renderer3D->setAmbientLightColor(_ambientLightColor);
 	}
 
-	// TODO: display shadow
-	//	TShadowType ShadowType = _gameRef->GetMaxShadowType(this);
-	//	if (ShadowType==SHADOW_STENCIL) {
-	//		DisplayShadowVolume();
-	//	} else if  (ShadowType > SHADOW_NONE) {
-	//		m_Renderer->DisplayShadow(this, Math::Vector3d(_shadowLightPos.x() * _scale3D, _shadowLightPos.y() * _scale3D, _shadowLightPos.z() * _scale3D), NULL, true);
-	//	}
+	TShadowType ShadowType = _gameRef->getMaxShadowType(this);
+
+	if (ShadowType == SHADOW_STENCIL) {
+		displayShadowVolume();
+	} else if  (ShadowType > SHADOW_NONE) {
+		warning("AdActor3DX::display simple or flat shadows are not implemented yet");
+		//m_Renderer->DisplayShadow(this, Math::Vector3d(_shadowLightPos.x() * _scale3D, _shadowLightPos.y() * _scale3D, _shadowLightPos.z() * _scale3D), NULL, true);
+	}
 
 	_gameRef->_renderer3D->setSpriteBlendMode(_blendMode);
 	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
@@ -456,8 +457,6 @@ bool AdActor3DX::displayShadowVolume() {
 		return false;
 	}
 
-	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
-
 	Math::Vector3d lightVector = Math::Vector3d(_shadowLightPos.x() * _scale3D,
 	                                            _shadowLightPos.y() * _scale3D,
 	                                            _shadowLightPos.z() * _scale3D);
@@ -489,8 +488,13 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		at->displayShadowVol(*boneMat, lightVector, extrusionDepth, true);
+		Math::Matrix4 transposedWorldMatrix = _worldMatrix;
+		transposedWorldMatrix.transpose();
+
+		at->displayShadowVol(transposedWorldMatrix * (*boneMat), lightVector, extrusionDepth, true);
 	}
+
+	_gameRef->_renderer3D->pushWorldTransform(_worldMatrix);
 
 	getShadowVolume()->renderToStencilBuffer();
 
@@ -970,6 +974,8 @@ bool AdActor3DX::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_LIGHT_POSITION:
 			parser.scanStr((char *)params, "%f,%f,%f", &_shadowLightPos.x(), &_shadowLightPos.y(), &_shadowLightPos.z());
+			// invert z coordinate since wme uses a Direct3D coordinate system but we use OpenGL
+			_shadowLightPos.z() *= -1.0f;
 			break;
 
 		case TOKEN_SHADOW: {

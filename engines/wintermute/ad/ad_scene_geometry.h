@@ -52,13 +52,13 @@ class AdSceneGeometry : public BaseObject {
 public:
 	bool _maxLightsWarning;
 	bool dropWaypoints();
-	bool setLightColor(char *lightName, uint32 color);
-	uint32 getLightColor(char *lightName);
-	Math::Vector3d getLightPos(char *lightName);
+	bool setLightColor(const char *lightName, uint32 color);
+	uint32 getLightColor(const char *lightName);
+	Math::Vector3d getLightPos(const char *lightName);
 	bool enableNode(const char *nodeName, bool enable = true);
 	bool isNodeEnabled(const char *nodeName);
-	bool enableLight(char *lightName, bool enable = true);
-	bool isLightEnabled(char *lightName);
+	bool enableLight(const char *lightName, bool enable = true);
+	bool isLightEnabled(const char *lightName);
 	DECLARE_PERSISTENT(AdSceneGeometry, BaseObject)
 	bool correctTargetPoint(const Math::Vector3d &source, Math::Vector3d *target);
 

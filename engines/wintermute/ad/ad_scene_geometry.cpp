@@ -27,6 +27,7 @@
  */
 
 #include "common/math.h"
+#include "common/util.h"
 #include "engines/wintermute/ad/ad_block.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_generic.h"
@@ -193,7 +194,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	BaseArray<Mesh3DS *> meshes;
 	BaseArray<Common::String> meshNames;
 
-	if (!load3DSFile(filename, meshes, meshNames, _lights, _cameras)) {
+	if (!load3DSFile(filename, meshes, meshNames, _lights, _cameras, _gameRef)) {
 		delete geomExt;
 		return false;
 	}
@@ -215,7 +216,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			plane->_mesh = meshes[i];
 			plane->_mesh->computeNormals();
 			// TODO: These constants are endianness dependent
-			plane->_mesh->fillVertexBuffer(0xFFFF0000);
+			plane->_mesh->fillVertexBuffer(0xFF0000FF);
 			plane->_receiveShadows = ExtNode->_receiveShadows;
 			_planes.add(plane);
 			} break;
@@ -225,7 +226,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			block->setName(meshNames[i].c_str());
 			block->_mesh = meshes[i];
 			block->_mesh->computeNormals();
-			block->_mesh->fillVertexBuffer(0xFF0000FF);
+			block->_mesh->fillVertexBuffer(0xFFFF0000);
 			block->_receiveShadows = ExtNode->_receiveShadows;
 			_blocks.add(block);
 			} break;
@@ -414,7 +415,7 @@ bool AdSceneGeometry::render(bool render) {
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CCW);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -432,7 +433,7 @@ bool AdSceneGeometry::render(bool render) {
 	// render walk planes
 	for (i = 0; i < _planes.size(); i++) {
 		if (!_planes[i]->_active) {
-			//			continue;
+			continue;
 		}
 
 		_planes[i]->_mesh->render();
@@ -443,7 +444,7 @@ bool AdSceneGeometry::render(bool render) {
 	// render blocks
 	for (i = 0; i < _blocks.size(); i++) {
 		if (!_blocks[i]->_active) {
-			//			continue;
+			continue;
 		}
 
 		_blocks[i]->_mesh->render();
@@ -454,12 +455,43 @@ bool AdSceneGeometry::render(bool render) {
 	// render generic objects
 	for (i = 0; i < _generics.size(); i++) {
 		if (!_generics[i]->_active) {
-			//			continue;
+			continue;
 		}
 
 		_generics[i]->_mesh->render();
 
 		//		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
+	}
+
+	_gameRef->_renderer3D->resetModelViewTransform();
+
+	for (i = 0; i < _lights.size(); ++i) {
+		if (!_lights[i]->_active) {
+			continue;
+		}
+
+		glBegin(GL_LINES);
+		glColor3f(1.0f, 1.0f, 0.0f);
+		Math::Vector3d right = _lights[i]->_position + Math::Vector3d(1000.0f, 0.0f, 0.0f);
+		Math::Vector3d up = _lights[i]->_position + Math::Vector3d(0.0f, 1000.0f, 0.0f);
+		Math::Vector3d backward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, 1000.0f);
+		Math::Vector3d left = _lights[i]->_position + Math::Vector3d(-1000.0f, 0.0f, 0.0f);
+		Math::Vector3d down = _lights[i]->_position + Math::Vector3d(0.0f, -1000.0f, 0.0f);
+		Math::Vector3d forward = _lights[i]->_position + Math::Vector3d(0.0f, 0.0f, -1000.0f);
+
+		glVertex3fv(_lights[i]->_position.getData());
+		glVertex3fv(right.getData());
+		glVertex3fv(_lights[i]->_position.getData());
+		glVertex3fv(up.getData());
+		glVertex3fv(_lights[i]->_position.getData());
+		glVertex3fv(backward.getData());
+		glVertex3fv(_lights[i]->_position.getData());
+		glVertex3fv(left.getData());
+		glVertex3fv(_lights[i]->_position.getData());
+		glVertex3fv(down.getData());
+		glVertex3fv(_lights[i]->_position.getData());
+		glVertex3fv(forward.getData());
+		glEnd();
 	}
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -496,74 +528,40 @@ bool AdSceneGeometry::render(bool render) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::renderShadowGeometry() {
-	storeDrawingParams();
+	_gameRef->_renderer3D->resetModelViewTransform();
+	_gameRef->_renderer3D->setup3D(getActiveCamera(), true);
 
-	warning("AdSceneGeometry::renderShadowGeometry not yet implemented");
+	// disable color write
+	glBlendFunc(GL_ZERO, GL_ONE);
 
-	// implement this later
+	glFrontFace(GL_CCW);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
-	//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
+	// render walk planes
+	for (uint i = 0; i < _planes.size(); i++) {
+		if (_planes[i]->_active && _planes[i]->_receiveShadows) {
+			_planes[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
+		}
+	}
 
-	//	// render the geometry
-	//	Math::Matrix4 matIdentity;
-	//	matIdentity.setToIdentity();
+	// render blocks
+	for (uint i = 0; i < _blocks.size(); i++) {
+		if (_blocks[i]->_active && _blocks[i]->_receiveShadows) {
+			_blocks[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
+		}
+	}
 
-	//	if(m_ActiveCamera>=0 && m_ActiveCamera<_cameras.size())
-	//		m_Renderer->Setup3D(_cameras[m_ActiveCamera]);
+	// render generic objects
+	for (uint i = 0; i < _generics.size(); i++) {
+		if (_generics[i]->_active && _generics[i]->_receiveShadows) {
+			_generics[i]->_mesh->render();
+			//m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
+		}
+	}
 
-	//	m_Renderer->m_Device->SetTransform(D3DTS_WORLD, &matIdentity);
-
-	//	// disable color write
-	//	m_Renderer->SetSpriteBlendMode(BLEND_UNKNOWN);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ZERO);
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-
-	//	m_Renderer->m_Device->SetTransform(D3DTS_WORLD, &matIdentity);
-	//	C3DUtils::SetFixedVertexShader(m_Renderer->m_Device, D3DFVF_MODELVERTEXCOLOR);
-
-	//	// no texture
-	//	m_Renderer->m_LastTexture = NULL;
-	//	m_Renderer->m_Device->SetTexture(0, NULL);
-
-	//	m_Renderer->m_Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
-	//	// render blocks
-	//	for(int i=0; i<_blocks.size(); i++)
-	//	{
-	//		if(!_blocks[i]->m_Active) continue;
-	//		if(!_blocks[i]->m_Mesh->m_VB) continue;
-	//		if(!_blocks[i]->m_ReceiveShadows) continue;
-	//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _blocks[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-	//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _blocks[i]->m_Mesh->m_NumFaces);
-
-	//		m_Renderer->m_NumPolygons += _blocks[i]->m_Mesh->m_NumFaces;
-	//	}
-
-	//	// render walkplanes
-	//	for(int i=0; i<_planes.size(); i++)
-	//	{
-	//		if(!_planes[i]->m_Active) continue;
-	//		if(!_planes[i]->m_Mesh->m_VB) continue;
-	//		if(!_planes[i]->m_ReceiveShadows) continue;
-	//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _planes[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-	//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _planes[i]->m_Mesh->m_NumFaces);
-
-	//		m_Renderer->m_NumPolygons += _planes[i]->m_Mesh->m_NumFaces;
-	//	}
-
-	//	// render generic meshes
-	//	for(int i=0; i<_generics.size(); i++)
-	//	{
-	//		if(!_generics[i]->m_Active) continue;
-	//		if(!_generics[i]->m_Mesh->m_VB) continue;
-	//		if(!_generics[i]->m_ReceiveShadows) continue;
-	//		C3DUtils::SetStreamSource(m_Renderer->m_Device, 0, _generics[i]->m_Mesh->m_VB, sizeof(MODELVERTEXCOLOR));
-	//		m_Renderer->m_Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _generics[i]->m_Mesh->m_NumFaces);
-
-	//		m_Renderer->m_NumPolygons += _generics[i]->m_Mesh->m_NumFaces;
-	//	}
-
-	//	m_Renderer->SetSpriteBlendMode(BLEND_NORMAL);
+	_gameRef->_renderer3D->setSpriteBlendMode(Graphics::BLEND_NORMAL);
 
 	return true;
 }
@@ -974,140 +972,116 @@ bool AdSceneGeometry::initLoop() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::createLights() {
-	warning("AdSceneGeometry::createLights");
+	// disable all lights
+	for (int i = 0; i < _gameRef->_renderer3D->maximumLightsCount(); i++) {
+		_gameRef->_renderer3D->disableLight(i);
+	}
 
-	//	int i;
+	int lightCount = MIN(static_cast<int>(_lights.size()), _gameRef->_renderer3D->maximumLightsCount());
 
-	//	// disable all lights
-	//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
-	//	int MaxLights = m_Renderer->GetMaxActiveLights();
-
-	//	for(i=0; i<100; i++)
-	//		m_Renderer->m_Device->LightEnable(i, FALSE);
-
-	//	for(i=0; i<_lights.size(); i++)
-	//	{
-	//		if(i >= 100) break;
-	//		_lights[i]->SetLight(i);
-	//	}
+	for (int i = 0; i < lightCount; i++) {
+		_lights[i]->setLight(i);
+	}
 
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool compareLights(const Light3D *light1, const Light3D *light2) {
+	return light1->_distance < light2->_distance;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::enableLights(Math::Vector3d point, BaseArray<char *> &ignoreLights) {
-	warning("AdScene::enableLights not yet implemented");
+	const int maxLightCount = 100;
 
-	//	CBRenderD3D* m_Renderer = (CBRenderD3D*)_gameRef->m_Renderer;
-	//	int MaxLights = m_Renderer->GetMaxActiveLights();
+	int activeLightCount = 0;
+	for (uint i = 0; i < _lights.size(); i++) {
+		_lights[i]->_isAvailable = false;
+		if (_lights[i]->_active) {
+			++activeLightCount;
+		}
+	}
 
-	//	int NumActiveLights = 0;
-	//	for(int i=0; i<_lights.size(); i++)
-	//	{
-	//		_lights[i]->m_IsAvailable = false;
-	//		if(_lights[i]->m_Active) NumActiveLights++;
-	//	}
-	//	if(NumActiveLights <= MaxLights)
-	//	{
-	//		for(int i=0; i<_lights.size(); i++)
-	//		{
-	//			_lights[i]->m_IsAvailable = true;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		if(!m_MaxLightsWarning)
-	//		{
-	//			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", MaxLights);
-	//			m_MaxLightsWarning = true;
-	//		}
+	if (activeLightCount <= _gameRef->_renderer3D->maximumLightsCount()) {
+		for (uint i = 0; i < _lights.size(); i++) {
+			_lights[i]->_isAvailable = true;
+		}
+	} else {
+		if (!_maxLightsWarning) {
+			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", _gameRef->_renderer3D->maximumLightsCount());
+			_maxLightsWarning = true;
+		}
 
-	//		BaseArray<Light3D*> ActiveLights;
+		Common::Array<Light3D *> activeLights;
 
-	//		// compute distance to point
-	//		for(int i=0; i<_lights.size(); i++)
-	//		{
-	//			if(!_lights[i]->m_Active) continue;
+		// compute distance to point
+		for (uint i = 0; i < _lights.size(); i++) {
+			if (!_lights[i]->_active) {
+				continue;
+			}
 
-	//			Math::Vector3d Dif;
-	//			if(_lights[i]->m_IsSpotlight)
-	//			{
-	//				//Dif = _lights[i]->m_Target - Point;
-	//				Math::Vector3d Dir = _lights[i]->m_Target - _lights[i]->m_Pos;
-	//				Dif = (_lights[i]->m_Pos + Dir * 0.75f) - Point;
-	//			}
-	//			else
-	//				Dif = _lights[i]->m_Pos - Point;
+			Math::Vector3d dif;
 
-	//			_lights[i]->m_Distance = fabs(D3DXVec3Length(&Dif));
+			if (_lights[i]->_isSpotlight) {
+				Math::Vector3d dir = _lights[i]->_target - _lights[i]->_position;
+				dif = (_lights[i]->_position + dir * 0.75f) - point;
+			} else {
+				dif = _lights[i]->_position - point;
+			}
 
-	//			ActiveLights.add(_lights[i]);
-	//		}
+			_lights[i]->_distance = dif.getMagnitude();
 
-	//		// sort by distance
-	//		if(ActiveLights.size() > 0)
-	//		{
-	//			qsort(ActiveLights.GetData(), ActiveLights.size(), sizeof(Light3D*), AdSceneGeometry::CompareLights);
+			activeLights.push_back(_lights[i]);
+		}
 
-	//			for(int i=0; i<ActiveLights.size(); i++)
-	//			{
-	//				ActiveLights[i]->m_IsAvailable = i < MaxLights;
-	//			}
-	//		}
-	//	}
+		// sort by distance
+		if (activeLights.size() > 0) {
+			Common::sort(activeLights.begin(), activeLights.end(), compareLights);
 
-	//	// light all available lights
-	//	for(int i=0; i<100; i++)
-	//	{
-	//		m_Renderer->m_Device->LightEnable(i, FALSE);
-	//	}
+			for (uint i = 0; i < activeLights.size(); i++) {
+				activeLights[i]->_isAvailable = static_cast<int>(i) < _gameRef->_renderer3D->maximumLightsCount();
+			}
+		}
+	}
 
-	//	NumActiveLights = 0;
-	//	for(int i=0; i<_lights.size(); i++)
-	//	{
-	//		if(NumActiveLights >= MaxLights) break;
+	// light all available lights
+	for (int i = 0; i < maxLightCount; i++) {
+		_gameRef->_renderer3D->disableLight(i);
+	}
 
-	//		if(IgnoreLights.size())
-	//		{
-	//			bool Ignore = false;
-	//			for(int j=0; j<IgnoreLights.size(); j++)
-	//			{
-	//				char* c1 = _lights[i]->m_Name;
-	//				char* c2 = IgnoreLights[j];
-	//				if(stricmp(_lights[i]->m_Name, IgnoreLights[j])==0)
-	//				{
-	//					Ignore = true;
-	//					break;
-	//				}
-	//			}
-	//			if(Ignore) continue; // ship this light
-	//		}
+	activeLightCount = 0;
 
-	//		if(_lights[i]->m_IsAvailable)
-	//		{
-	//			m_Renderer->m_Device->LightEnable(i, _lights[i]->m_Active);
-	//			if(_lights[i]->m_Active) NumActiveLights++;
-	//		}
-	//	}
+	for (uint i = 0; i < _lights.size(); i++) {
+		if (activeLightCount >= _gameRef->_renderer3D->maximumLightsCount()) {
+			break;
+		}
+
+		if (ignoreLights.size()) {
+			bool ignore = false;
+
+			for (uint j = 0; j < ignoreLights.size(); j++) {
+				if (scumm_stricmp(_lights[i]->getName(), ignoreLights[j]) == 0) {
+					ignore = true;
+					break;
+				}
+			}
+
+			if (ignore) {
+				continue; // skip this light
+			}
+		}
+
+		if (_lights[i]->_isAvailable) {
+			if (_lights[i]->_active) {
+				_gameRef->_renderer3D->enableLight(i);
+				++activeLightCount;
+			}
+		}
+	}
 
 	return true;
 }
-
-//////////////////////////////////////////////////////////////////////////
-// keep this commented out for later, although we are going to
-// use a different siganture anyways since we want to use ScummVM's sort
-//int AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
-//	Light3D *Light1 = *(Light3D **)obj1;
-//	Light3D *Light2 = *(Light3D **)obj2;
-
-//	if (Light1->_distance < Light2->_distance) {
-//		return -1;
-//	} else if (Light1->_distance > Light2->_distance) {
-//		return 1;
-//	} else {
-//		return 0;
-//	}
-//}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::correctTargetPoint(const Math::Vector3d &source, Math::Vector3d *target) {
@@ -1254,7 +1228,7 @@ bool AdSceneGeometry::isNodeEnabled(const char *nodeName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::enableLight(char *lightName, bool enable) {
+bool AdSceneGeometry::enableLight(const char *lightName, bool enable) {
 	bool ret = false;
 
 	uint i;
@@ -1270,7 +1244,7 @@ bool AdSceneGeometry::enableLight(char *lightName, bool enable) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::isLightEnabled(char *lightName) {
+bool AdSceneGeometry::isLightEnabled(const char *lightName) {
 	for (uint i = 0; i < _lights.size(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_active;
@@ -1280,7 +1254,7 @@ bool AdSceneGeometry::isLightEnabled(char *lightName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdSceneGeometry::setLightColor(char *lightName, uint32 color) {
+bool AdSceneGeometry::setLightColor(const char *lightName, uint32 color) {
 	bool ret = false;
 
 	uint i;
@@ -1296,7 +1270,7 @@ bool AdSceneGeometry::setLightColor(char *lightName, uint32 color) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 AdSceneGeometry::getLightColor(char *lightName) {
+uint32 AdSceneGeometry::getLightColor(const char *lightName) {
 	for (uint i = 0; i < _lights.size(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_diffuseColor;
@@ -1306,7 +1280,7 @@ uint32 AdSceneGeometry::getLightColor(char *lightName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Math::Vector3d AdSceneGeometry::getLightPos(char *lightName) {
+Math::Vector3d AdSceneGeometry::getLightPos(const char *lightName) {
 	for (uint i = 0; i < _lights.size(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_position;

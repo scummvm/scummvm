@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/camera3d.h"
@@ -32,26 +33,63 @@ BaseRenderer *makeOpenGL3DRenderer(BaseGame *inGame) {
 }
 
 BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
-	: BaseRenderer(inGame), _spriteBatchMode(false) {
+	: BaseRenderer(inGame), _overrideAmbientLightColor(false), _spriteBatchMode(false) {
+	setDefaultAmbientLightColor();
 }
 
 BaseRenderOpenGL3D::~BaseRenderOpenGL3D() {
 }
 
 bool BaseRenderOpenGL3D::setAmbientLightColor(uint32 color) {
-	byte a = RGBCOLGetA(color);
-	byte r = RGBCOLGetR(color);
-	byte g = RGBCOLGetG(color);
-	byte b = RGBCOLGetB(color);
-
-	float value[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
+	_ambientLightColor = color;
+	_overrideAmbientLightColor = true;
+	setAmbientLight();
 	return true;
 }
 
 bool BaseRenderOpenGL3D::setDefaultAmbientLightColor() {
-	setAmbientLightColor(0x00000000);
+	_ambientLightColor = 0x00000000;
+	_overrideAmbientLightColor = false;
+	setAmbientLight();
 	return true;
+}
+
+void BaseRenderOpenGL3D::setAmbientLight() {
+	byte a = 0;
+	byte r = 0;
+	byte g = 0;
+	byte b = 0;
+
+	if (_overrideAmbientLightColor) {
+		a = RGBCOLGetA(_ambientLightColor);
+		r = RGBCOLGetR(_ambientLightColor);
+		g = RGBCOLGetG(_ambientLightColor);
+		b = RGBCOLGetB(_ambientLightColor);
+	} else {
+		uint32 color = _gameRef->getAmbientLightColor();
+
+		a = RGBCOLGetA(color);
+		r = RGBCOLGetR(color);
+		g = RGBCOLGetG(color);
+		b = RGBCOLGetB(color);
+	}
+
+	float value[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, value);
+}
+
+int BaseRenderOpenGL3D::maximumLightsCount() {
+	GLint maxLightCount = 0;
+	glGetIntegerv(GL_MAX_LIGHTS, &maxLightCount);
+	return maxLightCount;
+}
+
+void BaseRenderOpenGL3D::enableLight(int index) {
+	glEnable(GL_LIGHT0 + index);
+}
+
+void BaseRenderOpenGL3D::disableLight(int index) {
+	glDisable(GL_LIGHT0 + index);
 }
 
 void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
@@ -72,6 +110,21 @@ void BaseRenderOpenGL3D::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode
 	default:
 		error("BaseRenderOpenGL3D::setSpriteBlendMode unsupported blend mode %i", blendMode);
 	}
+}
+
+bool BaseRenderOpenGL3D::enableShadows() {
+	warning("BaseRenderOpenGL3D::enableShadows not implemented yet");
+	return true;
+}
+
+bool BaseRenderOpenGL3D::disableShadows() {
+	warning("BaseRenderOpenGL3D::disableDhadows not implemented yet");
+	return true;
+}
+
+bool BaseRenderOpenGL3D::stencilSupported() {
+	// assume that we have a stencil buffer
+	return true;
 }
 
 BaseImage *BaseRenderOpenGL3D::takeScreenshot() {
@@ -307,24 +360,30 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 	return true;
 }
 
-bool BaseRenderOpenGL3D::setup3D(Camera3D* camera, bool force) {
+bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 	if (!_state3D || force) {
 		_state3D = true;
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
 		glEnable(GL_BLEND);
 		glAlphaFunc(GL_GEQUAL, 0x08);
 
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		setAmbientLight();
 
-		_fov = camera->_fov;
+		glEnable(GL_NORMALIZE);
+
+		if (camera) {
+			_fov = camera->_fov;
+
+			Math::Matrix4 viewMatrix;
+			camera->getViewMatrix(&viewMatrix);
+			glMultMatrixf(viewMatrix.getData());
+			glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
+			glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
+		}
+
 		setProjection();
-
-		Math::Matrix4 viewMatrix;
-		camera->getViewMatrix(&viewMatrix);
-		glMultMatrixf(viewMatrix.getData());
-		glTranslatef(-camera->_position.x(), -camera->_position.y(), -camera->_position.z());
-		glGetFloatv(GL_MODELVIEW_MATRIX, _lastViewMatrix.getData());
 	}
 
 	return true;

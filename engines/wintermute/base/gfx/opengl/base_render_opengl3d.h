@@ -44,8 +44,20 @@ public:
 
 	bool setAmbientLightColor(uint32 color);
 	bool setDefaultAmbientLightColor();
+	void setAmbientLight();
+
+	uint32 _ambientLightColor;
+	bool _overrideAmbientLightColor;
+
+	int maximumLightsCount();
+	void enableLight(int index);
+	void disableLight(int index);
 
 	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode);
+
+	bool enableShadows();
+	bool disableShadows();
+	bool stencilSupported();
 
 	void dumpData(const char *filename) override {}
 	/**

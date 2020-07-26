@@ -80,6 +80,9 @@ protected:
 	static const int kTextureCoordOffset = 0;
 	static const int kNormalOffset = 2;
 
+	// anything which does not fit into 16 bits would we fine
+	static const uint32 kNullIndex = 0xFFFFFFFF;
+
 	bool parsePositionCoords(XFileLexer &lexer);
 	bool parseFaces(XFileLexer &lexer, int faceCount);
 	bool parseTextureCoords(XFileLexer &lexer);
@@ -89,12 +92,14 @@ protected:
 
 	void updateBoundingBox();
 
-	bool generateMesh();
+	bool generateAdjacency();
+	bool adjacentEdge(uint16 index1, uint16 index2, uint16 index3, uint16 index4);
 	uint32 _numAttrs;
 	uint32 _maxFaceInfluence;
 
 	float *_vertexData;
 	float *_vertexPositionData;
+	float *_vertexNormalData;
 	uint32 _vertexCount;
 	uint16 *_indexData;
 	uint32 _indexCount;
@@ -103,7 +108,7 @@ protected:
 	BaseArray<SkinWeights> skinWeightsList;
 
 	uint32 *_skinAdjacency;
-	uint32 *_adjacency;
+	Common::Array<uint32> _adjacency;
 
 	BaseArray<Material *> _materials;
 	BaseArray<int> _indexRanges;

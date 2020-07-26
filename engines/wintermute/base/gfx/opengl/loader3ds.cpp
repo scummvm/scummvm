@@ -30,7 +30,7 @@
 namespace Wintermute {
 
 bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
-                   BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras) {
+                   BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras, BaseGame *gameRef) {
 	uint32 wholeChunkSize = fileStream.readUint32LE();
 	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
@@ -58,7 +58,7 @@ bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::M
 			break;
 
 		case LIGHT:
-			light = new Light3D(nullptr);
+			light = new Light3D(gameRef);
 			if (light->loadFrom3DS(fileStream)) {
 				light->setName(name.c_str());
 				lights.add(light);
@@ -68,7 +68,7 @@ bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::M
 			break;
 
 		case CAMERA:
-			camera = new Camera3D(nullptr);
+			camera = new Camera3D(gameRef);
 			if (camera->loadFrom3DS(fileStream)) {
 				camera->setName(name.c_str());
 				cameras.add(camera);
@@ -86,7 +86,7 @@ bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::M
 }
 
 bool load3DSFile(const char *filename, BaseArray<Wintermute::Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
-                 BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras) {
+                 BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras, BaseGame *gameRef) {
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &fileSize);
 
@@ -107,7 +107,7 @@ bool load3DSFile(const char *filename, BaseArray<Wintermute::Mesh3DS *> &meshes,
 			break;
 
 		case OBJECT:
-			load3DSObject(fileStream, meshes, meshNames, lights, cameras);
+			load3DSObject(fileStream, meshes, meshNames, lights, cameras, gameRef);
 			break;
 
 		default:

@@ -38,6 +38,8 @@
 
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_surface_storage.h"
+#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/wintermute.h"
 #endif
 
@@ -113,8 +115,8 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_shadowImage = nullptr;
 	_shadowSize = 10.0f;
 	_shadowType = SHADOW_NONE;
-	// rgba value
-	_shadowColor = 0x00000080;
+	// argb value
+	_shadowColor = 0x80000000;
 	_shadowLightPos = Math::Vector3d(-40.0f, 200.0f, -40.0f);
 	_drawBackfaces = true;
 #endif
@@ -500,6 +502,61 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_WME3D
+	//////////////////////////////////////////////////////////////////////////
+	// SetShadowImage
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetShadowImage") == 0) {
+		stack->correctParams(1);
+		ScValue *val = stack->pop();
+
+		if (_shadowImage) {
+			_gameRef->_surfaceStorage->removeSurface(_shadowImage);
+			_shadowImage = nullptr;
+		}
+
+		if (val->isString()) {
+			_shadowImage = _gameRef->_surfaceStorage->addSurface(val->getString());
+			stack->pushBool(_shadowImage != nullptr);
+		} else {
+			stack->pushBool(true);
+		}
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetShadowImage
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetShadowImage") == 0) {
+		stack->correctParams(0);
+
+		if (_shadowImage) {
+			stack->pushString(_shadowImage->getFileName());
+		} else {
+			stack->pushNULL();
+		}
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SetLightPosition
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetLightPosition") == 0) {
+		stack->correctParams(3);
+
+		double x = stack->pop()->getFloat();
+		double y = stack->pop()->getFloat();
+		double z = stack->pop()->getFloat();
+		// invert z coordinate because of OpenGL coordinate system
+		_shadowLightPos = Math::Vector3d(x, y, -z);
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 #ifdef ENABLE_FOXTAIL
 	//////////////////////////////////////////////////////////////////////////
