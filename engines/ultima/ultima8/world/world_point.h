@@ -23,6 +23,10 @@
 #ifndef ULTIMA8_WORLD_WORLDPOINT_H
 #define ULTIMA8_WORLD_WORLDPOINT_H
 
+/**
+ * A 3D point in the format needed for passing back and forth to usecode.
+ * Not intended for general engine use, as it has a sort of clunky interface.
+ */
 struct WorldPoint {
 	uint8 _buf[5];
 
