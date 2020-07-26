@@ -683,7 +683,7 @@ const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shape,
                                  ObjId item, const Item **support,
-                                 ObjId *roof) const {
+                                 ObjId *roof, const Item **blocker) const {
 	const ShapeInfo *si = GameData::get_instance()->
 	                getMainShapes()->getShapeInfo(shape);
 	int32 xd, yd, zd;
@@ -693,18 +693,18 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	return isValidPosition(x, y, z,
 	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
 	                       xd, yd, zd,
-	                       si->_flags, item, support, roof);
+	                       si->_flags, item, support, roof, blocker);
 }
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  int xd, int yd, int zd,
                                  uint32 shapeflags,
-                                 ObjId item_, const Item **support_,
-                                 ObjId *roof_) const {
+                                 ObjId item, const Item **support,
+                                 ObjId *roof, const Item **blocker) const {
 	return isValidPosition(x, y, z,
 	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
 	                       xd, yd, zd,
-	                       shapeflags, item_, support_, roof_);
+	                       shapeflags, item, support, roof, blocker);
 }
 
 
@@ -713,13 +713,14 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  int xd, int yd, int zd,
                                  uint32 shapeflags,
                                  ObjId item_, const Item **support_,
-                                 ObjId *roof_) const {
+                                 ObjId *roof_, const Item **blocker_) const {
 	const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
 	                         ShapeInfo::SI_ROOF);
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	bool valid = true;
 	const Item *support = nullptr;
+	const Item *blocker = nullptr;
 	ObjId roof = 0;
 	int32 roofz = INT_MAX_VALUE;
 
@@ -772,6 +773,9 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 #if 0
 					item->dumpInfo();
 #endif
+					if (blocker == nullptr) {
+						blocker = item;
+					}
 					valid = false;
 				}
 
@@ -796,6 +800,8 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 	if (support_)
 		*support_ = support;
+	if (blocker_)
+		*blocker_ = blocker;
 	if (roof_)
 		*roof_ = roof;
 
@@ -1311,8 +1317,8 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 		return 0;
 
 	if (GAME_IS_CRUSADER) {
-		pt.setX(pt.getX());
-		pt.setY(pt.getY());
+		pt.setX(pt.getX() * 2);
+		pt.setY(pt.getY() * 2);
 	}
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();

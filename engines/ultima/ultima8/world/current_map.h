@@ -107,30 +107,33 @@ public:
 
 	// Collision detection. Returns true if the box [x,y,z]-[x-xd,y-yd,z+zd]
 	// does not collide with any solid items.
-	// Additionally, if support is not NULL, *support is set to the item
-	// supporting the given box, or 0 if it isn't supported.
-	// If under_roof is not NULL, *roof is set to the roof item with the lowest
-	// z coordinate that's over the box, or 0 if there is no roof above box.
+	// Additionally:
+	// * If support is not NULL, *support is set to the item supporting
+	//   the given box, or 0 if it isn't supported.
+	// * If roof is not NULL, *roof is set to the roof item with the lowest
+	//   z coordinate that's over the box, or 0 if there is no roof above box.
+	// * If blocker is not NULL, *blocker will be set to an item blocking
+	//   the whole box if there is one, or 0 if there is no such item.
 	// Ignores collisions which were already occurring at the start position.
 	// NB: isValidPosition doesn't consider item 'item'.
 	bool isValidPosition(int32 x, int32 y, int32 z,
 	                     int32 startx, int32 starty, int32 startz,
 	                     int xd, int yd, int zd, uint32 shapeflags,
-	                     ObjId item,
-	                     const Item **support = 0, ObjId *roof = 0) const;
+	                     ObjId item, const Item **support = 0,
+	                     ObjId *roof = 0, const Item **blocker = 0) const;
 
 	// Note that this version of isValidPosition does not look for start
 	// position collisions.
 	bool isValidPosition(int32 x, int32 y, int32 z,
 	                     int xd, int yd, int zd, uint32 shapeflags,
-	                     ObjId item,
-	                     const Item **support = 0, ObjId *roof = 0) const;
+	                     ObjId item, const Item **support = 0,
+						 ObjId *roof = 0, const Item **blocker = 0) const;
 
 	// Note that this version of isValidPosition can not take 'flipped'
 	// into account!
 	bool isValidPosition(int32 x, int32 y, int32 z, uint32 shape,
 	                     ObjId item, const Item **support = 0,
-                         ObjId *roof = 0) const;
+                         ObjId *roof = 0, const Item **blocker = 0) const;
 
 	//! Scan for a valid position for item in directions orthogonal to movedir
 	bool scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
