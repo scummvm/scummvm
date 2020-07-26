@@ -170,7 +170,7 @@ public:
 	virtual bool isModified() override;
 	virtual bool isEditable() override;
 	virtual void setEditable(bool editable) override;
-	virtual void updateFromWidget(Graphics::MacWidget *widget);
+	virtual void updateFromWidget(Graphics::MacWidget *widget) override;
 	Graphics::TextAlign getAlignment();
 
 	virtual uint getBackColor() override { return _bgcolor; }
