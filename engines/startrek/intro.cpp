@@ -120,19 +120,19 @@ void StarTrekEngine::playIntro() {
 		}
 
 		switch (frame) {
-		case 0:
+		case 0:    // Starfield is shown
 			starfieldZoomSpeed = 10;
 			_sound->playMidiMusicTracks(MIDITRACK_0, -1);
 			_byte_45b3c = 0;
 			break;
 
-		case 30:
+		case 30:   // Kirk starts narrating
 			_sound->playVoc("kirkintr");
-			loadSubtitleSprite(0, &subtitleSprite);
+			loadSubtitleSprite(0, &subtitleSprite);	// "Space..."
 			break;
 
 		case 36:
-			loadSubtitleSprite(1, &subtitleSprite);
+			loadSubtitleSprite(1, &subtitleSprite);	// "The final frontier"
 			break;
 
 		case 42: // Enterprise moves toward camera
@@ -157,9 +157,91 @@ void StarTrekEngine::playIntro() {
 			starfieldZoomSpeed = 0;
 			break;
 
+		case 90:
+			loadSubtitleSprite(3, &subtitleSprite);
+			planetR3.field22 = 5000;
+			planetR3.field24 = 5000 / _starfieldPointDivisor;
+			// TODO: planet x/y
+			initIntroR3ObjectToMove(&_enterpriseR3, -30, 450, 45, 540, 54);
+			break;
+
+		case 108:
+			loadSubtitleSprite(4, &subtitleSprite);
+			break;
+
+		case 126:
+			loadSubtitleSprite(5, &subtitleSprite);
+			break;
+
+		case 144:
+			break;
+
+		case 150:
+			break;
+
+		case 162:
+			break;
+
+		case 168:
+			break;
+
 		case 186:
 			delR3(&_enterpriseR3);
 			// TODO: the rest
+			break;
+
+		case 204:
+			break;
+
+		case 216:
+			break;
+
+		case 222:
+			break;
+
+		case 228:
+			break;
+
+		case 240:
+			break;
+
+		case 252:
+			break;
+
+		case 264:
+			break;
+
+		case 276:
+			break;
+
+		case 288:
+			break;
+
+		case 300:
+			break;
+
+		case 312:
+			break;
+
+		case 324:
+			break;
+
+		case 330:
+			break;
+
+		case 336:
+			break;
+
+		case 342:
+			break;
+
+		case 348:
+			break;
+
+		case 354:
+			break;
+
+		case 360:
 			break;
 
 		case 366:
