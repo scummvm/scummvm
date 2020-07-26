@@ -21,7 +21,7 @@
  */
 
 /* FlushXObj is a Mac only XObject to call the underlying FlushEvents function
- * from the Macintosh Toolbox. Its purpose is to flush, i.e. remove, events 
+ * from the Macintosh Toolbox. Its purpose is to flush, i.e. remove, events
  * that happened while loading code.
  *
  * Implemented as a no-op, there's no need to flush events because:
@@ -31,7 +31,7 @@
  * More information about the Toolbox and the flush events can be found here:
  * https://en.wikipedia.org/wiki/Macintosh_Toolbox
  * https://developer.apple.com/legacy/library/documentation/mac/pdf/MacintoshToolboxEssentials.pdf
- * 
+ *
  */
 
 #include "director/director.h"
@@ -48,13 +48,13 @@ static MethodProto xlibMethods[] = {
 	{ "new",				FlushXObj::m_new,				 0, 0,	4 },	// D4
 	{ "AddToMask",			FlushXObj::m_addToMask,			 2, 2,	4 },	// D4
 	{ "ClearMask",			FlushXObj::m_clearMask,			 0, 0,	4 },	// D4
-    { "Flush",              FlushXObj::m_flush,              0, 0,  4 },    // D4
-    { "FlushEvents",        FlushXObj::m_flushEvents,        2, 2,  4 },    // D4
+	{ "Flush",				FlushXObj::m_flush,				 0, 0,  4 },	// D4
+	{ "FlushEvents",		FlushXObj::m_flushEvents,		 2, 2,  4 },	// D4
 	{ 0, 0, 0, 0, 0 }
 };
 
 void FlushXObj::initialize(int type) {
-    FlushXObject::initMethods(xlibMethods);
+	FlushXObject::initMethods(xlibMethods);
 	if (type & kXObj) {
 		if (!g_lingo->_globalvars.contains(xlibName)) {
 			FlushXObject *xobj = new FlushXObject(kXObj);
@@ -67,32 +67,32 @@ void FlushXObj::initialize(int type) {
 
 
 FlushXObject::FlushXObject(ObjectType ObjectType) :Object<FlushXObject>("FlushXObj") {
-    _objType = ObjectType;
+	_objType = ObjectType;
 }
 
 void FlushXObj::m_new(int nargs) {
-    g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_currentMe);
 }
 
 void FlushXObj::m_clearMask(int nargs) {
-    debug(5, "FlushXobj::m_clearMask: no-op");
+	debug(5, "FlushXobj::m_clearMask: no-op");
 }
 
 void FlushXObj::m_addToMask(int nargs) {
-    g_lingo->pop();
-    g_lingo->pop();
+	g_lingo->pop();
+	g_lingo->pop();
 
-    debug(5, "FlushXobj::m_addToMask: no-op");
+	debug(5, "FlushXobj::m_addToMask: no-op");
 }
 
 void FlushXObj::m_flush(int nargs) {
-    debug(5, "FlushXobj::m_flush: no-op");
+	debug(5, "FlushXobj::m_flush: no-op");
 }
 
 void FlushXObj::m_flushEvents(int nargs) {
-    g_lingo->pop();
-    g_lingo->pop();
-    debug(5, "FlushXobj::m_flush: no-op");
+	g_lingo->pop();
+	g_lingo->pop();
+	debug(5, "FlushXobj::m_flush: no-op");
 }
 
 } // End of namespace Director

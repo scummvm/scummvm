@@ -25,15 +25,15 @@
  * this XObject can be used to patch this problem
  * use mPatchIt message on the same frame as the palette switch
  * pass in the stage window coordinates when creating the XObject
- * 
+ *
  * From: http://www.zeusprod.com/technote/patchpal.html
- * The FixPalette XObject is needed when using QuickTime movies with 
- * more than one custom palette. If it not used on the PC, nor is it 
- * needed if you are only using one custom palette. If the first 
- * QuickTime you play looks fine, but the second QuickTime video 
- * that is played looks funky or psychedelic, then there is a good 
+ * The FixPalette XObject is needed when using QuickTime movies with
+ * more than one custom palette. If it not used on the PC, nor is it
+ * needed if you are only using one custom palette. If the first
+ * QuickTime you play looks fine, but the second QuickTime video
+ * that is played looks funky or psychedelic, then there is a good
  * chance that the FixPaletet XObject will solve your problem.
- * 
+ *
  * It's only necessary on Mac.
  */
 
@@ -50,12 +50,12 @@ static const char *xlibName = "FixPalette";
 
 static MethodProto xlibMethods[] = {
 	{ "new",				PalXObj::m_new,				 4, 4,	4 },	// D4
-    { "PatchIt",            PalXObj::m_patchIt,          0, 0,  4 },    // D4
+	{ "PatchIt",			PalXObj::m_patchIt,			 0, 0,  4 },	// D4
 	{ 0, 0, 0, 0, 0 }
 };
 
 void PalXObj::initialize(int type) {
-    PalXObject::initMethods(xlibMethods);
+	PalXObject::initMethods(xlibMethods);
 	if (type & kXObj) {
 		if (!g_lingo->_globalvars.contains(xlibName)) {
 			PalXObject *xobj = new PalXObject(kXObj);
@@ -68,24 +68,24 @@ void PalXObj::initialize(int type) {
 
 
 PalXObject::PalXObject(ObjectType ObjectType) :Object<PalXObject>("PalXObj") {
-    _objType = ObjectType;
+	_objType = ObjectType;
 }
 
 void PalXObj::m_new(int nargs) {
-    PalXObject *me = static_cast<PalXObject *>(g_lingo->_currentMe.u.obj);
+	PalXObject *me = static_cast<PalXObject *>(g_lingo->_currentMe.u.obj);
 
-    Common::Rect rect;
-    rect.bottom = g_lingo->pop().asInt(); 
-    rect.right = g_lingo->pop().asInt();
-    rect.top = g_lingo->pop().asInt(); 
-    rect.left  = g_lingo->pop().asInt(); 
-    me->_stageWindowCoordinates = rect;
+	Common::Rect rect;
+	rect.bottom = g_lingo->pop().asInt();
+	rect.right = g_lingo->pop().asInt();
+	rect.top = g_lingo->pop().asInt();
+	rect.left  = g_lingo->pop().asInt();
+	me->_stageWindowCoordinates = rect;
 
-    g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_currentMe);
 }
 
 void PalXObj::m_patchIt(int nargs) {
-    warning("STUB: PalXObj::m_patchIt");
+	warning("STUB: PalXObj::m_patchIt");
 }
 
 } // End of namespace Director

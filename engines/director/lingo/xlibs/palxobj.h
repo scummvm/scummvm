@@ -27,17 +27,17 @@ namespace Director {
 
 class PalXObject : public Object<PalXObject> {
 public:
-    Common::Rect _stageWindowCoordinates;
+	Common::Rect _stageWindowCoordinates;
 
 public:
-    PalXObject(ObjectType objType);
+	PalXObject(ObjectType objType);
 };
 
 namespace PalXObj {
-    void initialize(int type);
+	void initialize(int type);
 
-    void m_new(int nargs);
-    void m_patchIt(int nargs);
+	void m_new(int nargs);
+	void m_patchIt(int nargs);
 } // End of namespace PalXObj
 
 } // End of namespace Director
