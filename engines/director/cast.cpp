@@ -118,6 +118,13 @@ CastMember *Cast::getCastMemberByName(const Common::String &name) {
 	return result;
 }
 
+CastMember *Cast::getCastMemberByScriptId(int scriptId) {
+	CastMember *result = nullptr;
+	if (_castsScriptIds.contains(scriptId))
+		result = _loadedCast->getVal(_castsScriptIds[scriptId]);
+	return result;
+}
+
 CastMemberInfo *Cast::getCastMemberInfo(int castId) {
 	CastMemberInfo *result = nullptr;
 
@@ -916,28 +923,6 @@ void Cast::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
 			delete r;
 		}
 
-		// repair script type + cast ID
-		for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it) {
-			if (it->_value->scriptId == 0)
-				continue;
-
-			ScriptType type = kCastScript;
-			CastMember *member = _loadedCast->getVal(it->_key);
-			if (member->_type == kCastLingoScript) {
-				type = static_cast<ScriptCastMember *>(member)->_scriptType;
-			}
-
-			if (!_lingoArchive->lctxContexts.contains(it->_value->scriptId)) {
-				warning("Cast::loadLingoContext: %s %d has invalid script ID %d", scriptType2str(type), it->_key, it->_value->scriptId);
-				continue;
-			}
-
-			ScriptContext *script = _lingoArchive->lctxContexts[it->_value->scriptId];
-			debugC(1, kDebugCompile, "Cast::loadLingoContext: Repairing script %d: %s %d -> %s %d", it->_value->scriptId, scriptType2str(script->_scriptType), script->_id, scriptType2str(type), it->_key);
-			script->_scriptType = type;
-			script->_id = it->_key;
-		}
-
 		// actually define scripts
 		for (ScriptContextHash::iterator it = _lingoArchive->lctxContexts.begin(); it != _lingoArchive->lctxContexts.end(); ++it) {
 			ScriptContext *script = it->_value;
@@ -1090,6 +1075,8 @@ void Cast::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id) 
 	}
 
 	ci->scriptId = castInfo.scriptId;
+	if (ci->scriptId != 0)
+		_castsScriptIds[ci->scriptId] = id;
 
 	_castsInfo[id] = ci;
 }
