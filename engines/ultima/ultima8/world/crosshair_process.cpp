@@ -39,7 +39,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(CrosshairProcess)
 static const uint32 CROSSHAIR_SHAPE = 0x4CC;
 static const float CROSSHAIR_DIST = 400.0;
 
+CrosshairProcess *CrosshairProcess::_instance = nullptr;
+
 CrosshairProcess::CrosshairProcess() : Process() {
+	_instance = this;
 }
 
 void CrosshairProcess::run() {

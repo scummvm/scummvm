@@ -45,6 +45,13 @@ public:
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
+
+	static CrosshairProcess *get_instance() {
+		return _instance;
+	}
+
+private:
+	static CrosshairProcess *_instance;
 };
 
 } // End of namespace Ultima8
