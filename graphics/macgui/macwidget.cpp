@@ -54,6 +54,9 @@ MacWidget::~MacWidget() {
 	if (_parent)
 		_parent->removeWidget(this, false);
 
+	if (_wm)
+		_wm->clearWidgetRefs(this);
+
 	if (_composeSurface) {
 		_composeSurface->free();
 		delete _composeSurface;

@@ -230,7 +230,7 @@ void Score::startPlay() {
 	// All frames in the same movie have the same number of channels
 	if (_playState != kPlayStopped)
 		for (uint i = 0; i < _frames[1]->_sprites.size(); i++)
-			_channels.push_back(new Channel(_frames[1]->_sprites[i]));
+			_channels.push_back(new Channel(_frames[1]->_sprites[i], i));
 
 	if (_vm->getVersion() >= 3)
 		_movie->processEvent(kEventStartMovie);
@@ -438,10 +438,14 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		Sprite *currentSprite = channel->_sprite;
 		Sprite *nextSprite = _frames[frameId]->_sprites[i];
 
+		// widget content has changed and needs a redraw.
+		// this doesn't include changes in dimension or position!
+		bool widgetRedrawn = channel->updateWidget();
+
 		if (channel->isActiveText())
 			_movie->_currentEditableTextChannel = i;
 
-		if (channel->isDirty(nextSprite) || mode == kRenderForceUpdate) {
+		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
 			if (!currentSprite->_trails)
 				_stage->addDirtyRect(channel->getBbox());
 

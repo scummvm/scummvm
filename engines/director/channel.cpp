@@ -32,12 +32,15 @@
 
 namespace Director {
 
-Channel::Channel(Sprite *sp) {
+Channel::Channel(Sprite *sp, int priority) {
 	_sprite = sp;
+	_widget = nullptr;
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
 	_constraint = 0;
+	_mask = nullptr;
 
+	_priority = priority;
 	_width = _sprite->_width;
 	_height = _sprite->_height;
 
@@ -45,6 +48,13 @@ Channel::Channel(Sprite *sp) {
 	_dirty = true;
 
 	_sprite->updateCast();
+}
+
+Channel::~Channel() {
+	if (_widget)
+		delete _widget;
+	if (_mask)
+		delete _mask;
 }
 
 DirectorPlotData Channel::getPlotData() {
@@ -66,8 +76,8 @@ DirectorPlotData Channel::getPlotData() {
 }
 
 Graphics::ManagedSurface *Channel::getSurface() {
-	if (_sprite->_cast && _sprite->_cast->_widget) {
-		return  _sprite->_cast->_widget->getSurface();
+	if (_widget) {
+		return _widget->getSurface();
 	} else {
 		return nullptr;
 	}
@@ -96,7 +106,14 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(_sprite->_castId + 1);
 
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
-			return &member->_widget->getSurface()->rawSurface();
+			Common::Rect bbox(getBbox());
+			Graphics::MacWidget *widget = member->createWidget(bbox);
+			if (_mask)
+				delete _mask;
+			_mask = new Graphics::ManagedSurface();
+			_mask->copyFrom(*widget->getSurface());
+			delete widget;
+			return &_mask->rawSurface();
 		} else {
 			warning("Channel::getMask(): Requested cast mask, but no matching mask was found");
 			return nullptr;
@@ -144,7 +161,7 @@ bool Channel::isActiveText() {
 	if (_sprite->_spriteType != kTextSprite)
 		return false;
 
-	if (_sprite->_cast && _sprite->_cast->_widget && _sprite->_cast->_widget->hasAllFocus())
+	if (_widget && _widget->hasAllFocus())
 		return true;
 
 	return false;
@@ -228,12 +245,19 @@ Common::Rect Channel::getBbox(bool unstretched) {
 	return result;
 }
 
+void Channel::setCast(uint16 castId) {
+	_sprite->setCast(castId);
+	_width = _sprite->_width;
+	_height = _sprite->_height;
+	replaceWidget();
+}
+
 void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	if (!nextSprite)
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
-	_dirty = false;
+	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
 		if (!_sprite->_puppet) {
@@ -259,16 +283,11 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_delta = Common::Point(0, 0);
 	}
 
-	if (_sprite->_cast && _sprite->_cast->_widget) {
+	if (replace) {
 		_sprite->updateCast();
-		Common::Point p(getPosition());
-		_sprite->_cast->_modified = false;
-		_sprite->_cast->_widget->_dims.moveTo(p.x, p.y);
-
-		_sprite->_cast->_widget->_priority = spriteId;
-		_sprite->_cast->_widget->draw();
-		_sprite->_cast->_widget->_contentIsDirty = false;
+		replaceWidget();
 	}
+	_dirty = false;
 }
 
 void Channel::setWidth(int w) {
@@ -293,6 +312,37 @@ void Channel::setBbox(int l, int t, int r, int b) {
 
 		addRegistrationOffset(_currentPoint, true);
 	}
+}
+
+void Channel::replaceWidget() {
+	if (_widget) {
+		delete _widget;
+		_widget = nullptr;
+	}
+
+	if (_sprite && _sprite->_cast) {
+		Common::Rect bbox(getBbox());
+		_sprite->_cast->_modified = false;
+
+		_widget = _sprite->_cast->createWidget(bbox);
+		if (_widget) {
+			_widget->_priority = _priority;
+			_widget->draw();
+			_widget->_contentIsDirty = false;
+		}
+	}
+}
+
+bool Channel::updateWidget() {
+	if (_widget && _widget->_contentIsDirty) {
+		if (_sprite->_cast) {
+			_sprite->_cast->updateFromWidget(_widget);
+		}
+		_widget->draw();
+		return true;
+	}
+
+	return false;
 }
 
 void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {

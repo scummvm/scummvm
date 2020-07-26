@@ -35,7 +35,6 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_type = kCastTypeNull;
 	_cast = cast;
 	_castId = castId;
-	_widget = nullptr;
 	_hilite = false;
 	_autoHilite = false;
 	_purgePriority = 3;
@@ -46,7 +45,7 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 }
 
 BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1)
-	: CastMember(cast, castId, stream) {
+		: CastMember(cast, castId, stream) {
 	_type = kCastBitmap;
 	_img = nullptr;
 	_matte = nullptr;
@@ -163,16 +162,15 @@ BitmapCastMember::~BitmapCastMember() {
 		delete _matte;
 }
 
-void BitmapCastMember::createWidget() {
-	CastMember::createWidget();
-
+Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox) {
 	if (!_img) {
 		warning("BitmapCastMember::createWidget: No image decoder");
-		return;
+		return nullptr;
 	}
 
-	_widget = new Graphics::MacWidget(g_director->getCurrentStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, false);
-	_widget->getSurface()->blitFrom(*_img->getSurface());
+	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
+	widget->getSurface()->blitFrom(*_img->getSurface());
+	return widget;
 }
 
 void BitmapCastMember::createMatte() {
@@ -297,6 +295,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
 	_buttonType = kTypeButton;
+	_editable = false;
 	_maxHeight = _textHeight = 0;
 
 	_bgcolor = 0;
@@ -423,17 +422,11 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 }
 
 void TextCastMember::setColors(int *fgcolor, int *bgcolor) {
-	if (!_widget)
-		return;
-
 	if (fgcolor)
 		_fgcolor = *fgcolor;
 
 	if (bgcolor)
 		_bgcolor = *bgcolor;
-
-	_widget->setColors(_fgcolor, _bgcolor);
-	((Graphics::MacText *)_widget)->_fullRefresh = true;
 }
 
 Graphics::TextAlign TextCastMember::getAlignment() {
@@ -459,24 +452,27 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_ptext = stxt->_ptext;
 }
 
-void TextCastMember::createWidget() {
-	CastMember::createWidget();
-
+Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
+	Graphics::MacWidget *widget = nullptr;
 
 	switch (_type) {
 	case kCastText:
-		_widget = new Graphics::MacText(g_director->getCurrentStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
-
-		((Graphics::MacText *)_widget)->draw();
+		widget = new Graphics::MacText(g_director->getCurrentStage(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), bbox.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		((Graphics::MacText *)widget)->draw();
+		((Graphics::MacText *)widget)->_focusable = _editable;
+		((Graphics::MacText *)widget)->setEditable(_editable);
+		((Graphics::MacText *)widget)->_selectable = _editable;
 		break;
 
 	case kCastButton:
-		_widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentStage(), 0, 0, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
-		((Graphics::MacButton *)_widget)->draw();
-		_widget->_focusable = true;
+		// note that we use _initialRect for the dimensions of the button;
+		// the values provided in the sprite bounding box are ignored
+		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentStage(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		((Graphics::MacButton *)widget)->draw();
+		widget->_focusable = true;
 
-		((Graphics::MacButton *)(_widget))->draw();
+		((Graphics::MacButton *)widget)->draw();
 		break;
 
 	default:
@@ -484,6 +480,17 @@ void TextCastMember::createWidget() {
 	}
 
 	delete macFont;
+	return widget;
+}
+
+Common::Rect TextCastMember::getWidgetRect() {
+	Graphics::MacWidget *widget = createWidget(_initialRect);
+	Common::Rect result = _initialRect;
+	if (widget) {
+		result = widget->_dims;
+		delete widget;
+	}
+	return result;
 }
 
 void TextCastMember::importRTE(byte *text) {
@@ -500,50 +507,29 @@ void TextCastMember::setText(const char *text) {
 		return;
 
 	_ptext = _ftext = text;
-
-	if (_widget) {
-		Graphics::MacText *wtext = (Graphics::MacText *)_widget;
-		wtext->clearText();
-		wtext->appendTextDefault(_ftext);
-		wtext->draw();
-	}
-
 	_modified = true;
 }
 
 Common::String TextCastMember::getText() {
-	if (_widget)
-		_ptext = ((Graphics::MacText *)_widget)->getEditedString().encode();
-
 	return _ptext;
 }
 
 bool TextCastMember::isModified() {
-	return _modified || (_widget ? ((Graphics::MacText *)_widget)->_contentIsDirty || ((Graphics::MacText *)_widget)->_cursorDirty: false);
+	return _modified;
 }
 
 bool TextCastMember::isEditable() {
-	if (!_widget) {
-		warning("TextCastMember::setEditable: Attempt to set editable of null widget");
-		return false;
-	}
-
-	return (Graphics::MacText *)_widget->_editable;
+	return _editable;
 }
 
-bool TextCastMember::setEditable(bool editable) {
-	if (!_widget) {
-		warning("TextCastMember::setEditable: Attempt to set editable of null widget");
-		return false;
+void TextCastMember::setEditable(bool editable) {
+	_editable = editable;
+}
+
+void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
+	if (widget && _type == kCastText) {
+		_ptext = ((Graphics::MacText *)widget)->getEditedString().encode();
 	}
-
-	Graphics::MacText *text = (Graphics::MacText *)_widget;
-	text->setEditable(editable);
-	text->_focusable = editable;
-	text->_selectable = editable;
-	// text->setActive(editable);
-
-	return true;
 }
 
 ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)

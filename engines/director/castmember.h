@@ -61,9 +61,11 @@ public:
 	uint16 getID() { return _castId; }
 
 	virtual bool isEditable() { return false; }
-	virtual bool setEditable(bool editable) { return false; }
+	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
-	virtual void createWidget() {}
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) { return nullptr; }
+	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
+	virtual Common::Rect getWidgetRect() { return _initialRect; }
 
 	virtual void setColors(int *fgcolor, int *bgcolor) { return; }
 	virtual uint getForeColor() { return 0; }
@@ -81,8 +83,6 @@ public:
 	uint32 _size;
 	uint8 _flags1;
 
-	Graphics::MacWidget *_widget;
-
 private:
 	Cast *_cast;
 	uint16 _castId;
@@ -92,7 +92,7 @@ class BitmapCastMember : public CastMember {
 public:
 	BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint32 castTag, uint16 version, uint8 flags1 = 0);
 	~BitmapCastMember();
-	virtual void createWidget() override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
 
 	void createMatte();
 	Graphics::Surface *getMatte();
@@ -164,11 +164,13 @@ public:
 	virtual void setColors(int *fgcolor, int *bgcolor) override;
 
 	void setText(const char *text);
-	virtual void createWidget() override;
+	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox) override;
+	virtual Common::Rect getWidgetRect() override;
 
 	virtual bool isModified() override;
 	virtual bool isEditable() override;
-	virtual bool setEditable(bool editable) override;
+	virtual void setEditable(bool editable) override;
+	virtual void updateFromWidget(Graphics::MacWidget *widget);
 	Graphics::TextAlign getAlignment();
 
 	virtual uint getBackColor() override { return _bgcolor; }
@@ -191,6 +193,7 @@ public:
 	uint16 _bgpalinfo1, _bgpalinfo2, _bgpalinfo3;
 	uint16 _fgpalinfo1, _fgpalinfo2, _fgpalinfo3;
 	ButtonType _buttonType;
+	bool _editable;
 
 	Common::String _ftext;
 	Common::String _ptext;

@@ -228,6 +228,14 @@ void MacWindowManager::setActiveWidget(MacWidget *widget) {
 		_activeWidget->setActive(true);
 }
 
+void MacWindowManager::clearWidgetRefs(MacWidget *widget) {
+	if (widget == _hoveredWidget)
+		_hoveredWidget = nullptr;
+
+	if (widget == _activeWidget)
+		_activeWidget = nullptr;
+}
+
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
 	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 

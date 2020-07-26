@@ -166,16 +166,13 @@ void Sprite::setCast(uint16 castId) {
 			// information set in the sprite.
 			warning("Sprite::setCast(): Working around D2/3 button glitch");
 
-			delete _cast->_widget;
 			_cast->_type = kCastButton;
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
-			((TextCastMember *)_cast)->createWidget();
 		}
 
-		if (_cast->_widget) {
-			_width = _cast->_widget->_dims.width();
-			_height = _cast->_widget->_dims.height();
-		}
+		Common::Rect dims = _cast->getWidgetRect();
+		_width = dims.width();
+		_height = dims.height();
 	} else {
 		warning("Sprite::setCast(): CastMember id %d has null member", castId);
 	}

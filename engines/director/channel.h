@@ -26,6 +26,7 @@
 namespace Graphics {
 	struct Surface;
 	class ManagedSurface;
+	class MacWidget;
 }
 
 namespace Director {
@@ -35,7 +36,8 @@ class Cursor;
 
 class Channel {
 public:
-	Channel(Sprite *sp);
+	Channel(Sprite *sp, int priority = 0);
+	~Channel();
 
 	DirectorPlotData getPlotData();
 	const Graphics::Surface *getMask(bool forceMatte = false);
@@ -52,20 +54,26 @@ public:
 	void setWidth(int w);
 	void setHeight(int h);
 	void setBbox(int l, int t, int r, int b);
+	void setCast(uint16 castId);
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
+	void replaceWidget();
+	bool updateWidget();
 
 	void addDelta(Common::Point pos);
 
 public:
 	Sprite *_sprite;
 	Cursor _cursor;
+	Graphics::MacWidget *_widget;
 
 	bool _dirty;
 	bool _visible;
 	uint _constraint;
 	Common::Point _currentPoint;
 	Common::Point _delta;
+	Graphics::ManagedSurface *_mask;
 
+	int _priority;
 	int _width;
 	int _height;
 
