@@ -75,8 +75,6 @@ void DirectorEngine::processEvents() {
 		}
 	}
 
-	uint16 spriteId = 0;
-
 	Common::Point pos;
 
 	while (g_system->getMillis() < endTime) {
@@ -102,10 +100,10 @@ void DirectorEngine::processEvents() {
 bool Stage::processEvent(Common::Event &event) {
 	if (MacWindow::processEvent(event))
 		return true;
-	
+
 	if (_currentMovie && _currentMovie->processEvent(event))
 		return true;
-	
+
 	return false;
 }
 
