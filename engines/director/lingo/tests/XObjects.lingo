@@ -1,8 +1,11 @@
 openXlib("FlushXObj")
-put FlushXObj
 set flush = FlushXObj(mNew)
 flush(mClearMask)
 flush(mAddToMask, 0, 0)
 flush(mFlush)
 flush(mFlushEvents, 0, 0)
+
+openXlib("PalXObj")
+set fixpal = FixPalette(mNew, 0, 20, 512, 20)
+fixpal(mPatchIt)
 
