@@ -236,7 +236,8 @@ void EoBEngine::gui_displayMap() {
 	disableSysTimer(2);
 
 	_screen->sega_fadeToBlack(2);
-
+	Button b;
+	clickedSpellbookAbort(&b);
 	gui_resetAnimations();
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))

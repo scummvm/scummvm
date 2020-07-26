@@ -1029,6 +1029,9 @@ void EoBEngine::displayParchment(int id) {
 
 	_screen->sega_fadeToBlack(2);
 
+	Button b;
+	clickedSpellbookAbort(&b);
+
 	int temp = 0;
 	const char *const *strings = _staticres->loadStrings(kEoB1ParchmentStrings, temp);
 
