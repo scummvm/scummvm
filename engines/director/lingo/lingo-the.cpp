@@ -435,7 +435,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentPalette();
 		break;
 	case kTheFrameTempo:
-		getTheEntitySTUB(kTheFrameTempo);
+		d.type = INT;
+		d.u.i = _vm->getCurrentMovie()->getScore()->_currentFrameRate;
 		break;
 	case kTheFreeBlock:
 	case kTheFreeBytes:
@@ -875,6 +876,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheFrameScript);
 		break;
 	case kTheFramePalette:
+		setTheEntityReadOnly(kTheFramePalette);
+		break;
+	case kTheFrameTempo:
 		setTheEntityReadOnly(kTheFramePalette);
 		break;
 	case kTheFullColorPermit:
