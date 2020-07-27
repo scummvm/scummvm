@@ -260,22 +260,20 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
-		if (!_sprite->_puppet) {
-			if (partial) {
-				// Updating scripts, etc. does not require a full re-render
-				_sprite->_scriptId = nextSprite->_scriptId;
-			} else {
-				_sprite = nextSprite;
+		if (_sprite->_puppet || partial) {
+			// Updating scripts, etc. does not require a full re-render
+			_sprite->_scriptId = nextSprite->_scriptId;
+		} else {
+			_sprite = nextSprite;
 
-				// Sprites marked moveable are constrained to the same bounding box until
-				// the moveable is disabled
-				if (!_sprite->_moveable || newSprite)
-					_currentPoint = _sprite->_startPoint;
+			// Sprites marked moveable are constrained to the same bounding box until
+			// the moveable is disabled
+			if (!_sprite->_moveable || newSprite)
+				_currentPoint = _sprite->_startPoint;
 
-				if (!_sprite->_stretch) {
-					_width = _sprite->_width;
-					_height = _sprite->_height;
-				}
+			if (!_sprite->_stretch) {
+				_width = _sprite->_width;
+				_height = _sprite->_height;
 			}
 		}
 
