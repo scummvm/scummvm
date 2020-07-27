@@ -65,6 +65,8 @@ class Screen {
 public:
 	Screen();
 	~Screen();
+	void beginUpdate();
+	void endUpdate();
 	void drawSurface(const Graphics::Surface *surface, int x, int y);
 	void drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y);
 	void frameRect(int x1, int y1, int x2, int y2, byte color);
@@ -75,6 +77,7 @@ public:
 	void drawWrappedText(GFTFont *font, const char *text, int x, int y, int maxWidth, byte color);
 protected:
 	WWSurface *_surface;
+	int _lockCtr;
 	void updateScreen();
 };
 
@@ -89,6 +92,7 @@ protected:
 	int _x, _y;
 	int _grainWidth, _grainHeight;
 	int _blockCountW, _blockCountH;
+	int _blockCtr, _blockUpdateCtr;
 	void drawBlock(int blockX, int blockY);
 	uint getBitCount(int value) const;
 	uint getSeed(uint bitCount) const;

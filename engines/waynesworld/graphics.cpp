@@ -260,12 +260,25 @@ int GFTFont::getCharWidth(byte ch) const {
 
 // Screen
 
-Screen::Screen() {
+Screen::Screen() : _lockCtr(0) {
 	_surface = new WWSurface(320, 200);
 }
 
 Screen::~Screen() {
 	delete _surface;
+}
+
+void Screen::beginUpdate() {
+	_lockCtr++;
+}
+
+void Screen::endUpdate() {
+	if (_lockCtr > 0) {
+		--_lockCtr;
+		if (_lockCtr == 0) {
+			updateScreen();
+		}
+	}
 }
 
 void Screen::drawSurface(const Graphics::Surface *surface, int x, int y) {
@@ -310,19 +323,19 @@ void Screen::drawWrappedText(GFTFont *font, const char *text, int x, int y, int 
 
 void Screen::updateScreen() {
 	// TODO Use dirty rectangles or similar
-	g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->w, _surface->h);
-	g_system->updateScreen();
+	if (_lockCtr == 0) {
+		g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->w, _surface->h);
+		g_system->updateScreen();
+	}
 }
 
 // ScreenEffect
 
-// TODO Currently effects are quite slow because the screen is updated for each block.
-// Add beginUpdate/endUpdate to Screen class and only update each X blocks.
-
 ScreenEffect::ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight)
-	: _vm(vm), _surface(surface), _x(x), _y(y), _grainWidth(grainWidth), _grainHeight(grainHeight) {
+	: _vm(vm), _surface(surface), _x(x), _y(y), _grainWidth(grainWidth), _grainHeight(grainHeight), _blockCtr(0) {
     _blockCountW = _surface->w / _grainWidth + (_surface->w % _grainWidth > 0 ? 1 : 0);
 	_blockCountH = _surface->h / _grainHeight + (_surface->h % _grainHeight > 0 ? 1 : 0);
+	_blockUpdateCtr = _blockCountW * _blockCountH / 1000;
 }
 
 void ScreenEffect::drawSpiralEffect() {
@@ -331,6 +344,7 @@ void ScreenEffect::drawSpiralEffect() {
 	int startBlock = (middleBlockW < middleBlockH ? middleBlockW : middleBlockH) - 1;
 	int sideLenW = _blockCountW - startBlock;
 	int sideLenH = _blockCountH - startBlock;
+	_vm->_screen->beginUpdate();
 	while (startBlock >= 0 && !_vm->shouldQuit()) {
 		int blockX, blockY;
 		blockX = startBlock;
@@ -357,6 +371,7 @@ void ScreenEffect::drawSpiralEffect() {
 		sideLenH++;
 		startBlock--;
 	}
+	_vm->_screen->endUpdate();
 }
 
 void ScreenEffect::drawRandomEffect() {
@@ -365,6 +380,7 @@ void ScreenEffect::drawRandomEffect() {
 	uint bitCount = bitCountW + bitCountH;
 	uint mask = (1 << bitCountW) - 1;
 	uint rvalue = getSeed(bitCount), value = 1;
+	_vm->_screen->beginUpdate();
 	do {
 		int blockX = value & mask;
 		int blockY = value >> bitCountW;
@@ -377,6 +393,7 @@ void ScreenEffect::drawRandomEffect() {
 		}
 	} while (value != 1 && !_vm->shouldQuit());
 	drawBlock(0, 0);
+	_vm->_screen->endUpdate();
 }
 
 void ScreenEffect::drawBlock(int blockX, int blockY) {
@@ -389,6 +406,11 @@ void ScreenEffect::drawBlock(int blockX, int blockY) {
 		Graphics::Surface blockSurface = _surface->getSubArea(r);
 		_vm->_screen->drawSurface(&blockSurface, _x + sourceLeft, _y + sourceTop);
 		_vm->updateEvents();
+		// Update the screen only each _blockUpdateCtr blocks
+		if (++_blockCtr % _blockUpdateCtr == 0) {
+			_vm->_screen->endUpdate();
+			_vm->_screen->beginUpdate();
+		}
 	}
 }
 
