@@ -33,6 +33,7 @@
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/flushxobj.h"
+#include "director/lingo/xlibs/winxobj.h"
 
 namespace Director {
 
@@ -98,9 +99,11 @@ static struct XLibProto {
 	int version;
 } xlibs[] = {
 	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	2 },	// D2
-	{ "PalXObj",				PalXObj:: initialize,				kXObj,					4 }, 	// D4
 	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					4 },	// D4
+	{ "PalXObj",				PalXObj:: initialize,				kXObj,					4 }, 	// D4
+	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					4 },	// D4
 	{ 0, 0, 0, 0 }
+
 };
 
 void Lingo::initXLibs() {

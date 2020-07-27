@@ -38,7 +38,8 @@ MODULE_OBJS = \
 	lingo/lingo-the.o \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/flushxobj.o \
-	lingo/xlibs/palxobj.o
+	lingo/xlibs/palxobj.o \
+	lingo/xlibs/winxobj.o
 
 director-grammar:
 	`brew --prefix flex`/bin/flex engines/director/lingo/lingo-lex.l
