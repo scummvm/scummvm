@@ -1281,12 +1281,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		warning("STUB: Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 		break;
 	case kTheLocH:
-		if (!sprite->_moveable) {
-			// WORKAROUND: Chop Suey moon cursor is marked neither puppet nor moveable
-			warning("Lingo::setTheSprite(): Attempting to set \"%s\" of non-moveable sprite. Enabling moveable for now", field2str(field));
-			sprite->_moveable = true;
-		}
-
 		if (d.asInt() != channel->_currentPoint.x) {
 			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.x = d.asInt();
@@ -1295,12 +1289,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheLocV:
-		if (!sprite->_moveable) {
-			// WORKAROUND: Chop Suey moon cursor is marked neither puppet nor moveable
-			warning("Lingo::setTheSprite(): Attempting to set \"%s\" of non-moveable sprite. Enabling moveable for now", field2str(field));
-			sprite->_moveable = true;
-		}
-
 		if (d.asInt() != channel->_currentPoint.y) {
 			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.y = d.asInt();
