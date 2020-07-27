@@ -37,7 +37,7 @@ MODULE_OBJS = \
 	lingo/lingo-preprocessor.o \
 	lingo/lingo-the.o \
 	lingo/xlibs/fileio.o \
-	lingo/xlibs/flushxobj.o\
+	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/palxobj.o
 
 director-grammar:
