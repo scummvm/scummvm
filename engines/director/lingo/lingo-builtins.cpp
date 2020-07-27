@@ -1723,10 +1723,62 @@ void LB::b_pasteClipBoardInto(int nargs) {
 
 void LB::b_puppetPalette(int nargs) {
 	g_lingo->convertVOIDtoString(0, nargs);
+	int numFrames = 0, speed = 0, palette = 0;
+	Datum d;
 
-	g_lingo->printSTUBWithArglist("b_puppetPalette", nargs);
+	switch (nargs) {
+	case 3:
+		numFrames = g_lingo->pop().asInt();
+		// fall through
+	case 2:
+		speed = g_lingo->pop().asInt();
+		// fall through
+	case 1:
+		d = g_lingo->pop();
 
-	g_lingo->dropStack(nargs);
+		if (d.type == STRING) {
+			// TODO: It seems that there are not strings for Mac and Win system palette
+			Common::String palStr = d.asString();
+			if (palStr.equalsIgnoreCase("Rainbow")) {
+				palette = kClutRainbow;
+			} else if (palStr.equalsIgnoreCase("Grayscale")) {
+				palette = kClutGrayscale;
+			} else if (palStr.equalsIgnoreCase("Pastels")) {
+				palette = kClutPastels;
+			} else if (palStr.equalsIgnoreCase("Vivid")) {
+				palette = kClutVivid;
+			} else if (palStr.equalsIgnoreCase("NTSC")) {
+				palette = kClutMetallic;
+			} else if (palStr.equalsIgnoreCase("Metallic")) {
+				palette = kClutSystemWin;
+			} else {
+				CastMember *member = g_director->getCurrentMovie()->getCastMemberByName(palStr);
+
+				if (member && member->_type == kCastPalette)
+					palette = member->getID();
+			}
+		} else {
+			palette = d.asInt();
+		}
+		break;
+	default:
+		ARGNUMCHECK(1);
+		g_lingo->dropStack(nargs);
+		return;
+	}
+
+	if (palette) {
+		g_director->setPalette(palette);
+		g_director->getCurrentMovie()->getScore()->_puppetPalette = true;
+	} else {
+		// Setting puppetPalette to 0 disables it (Lingo Dictionary, 226)
+		g_director->setPalette(g_director->getCurrentMovie()->getScore()->_lastPalette);
+		g_director->getCurrentMovie()->getScore()->_puppetPalette = false;
+	}
+
+	// TODO: Implement advanced features that use these.
+	if (numFrames || speed)
+		warning("b_puppetPalette: Skipping extra features");
 }
 
 void LB::b_puppetSound(int nargs) {

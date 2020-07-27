@@ -54,7 +54,10 @@ Score::Score(Movie *movie) {
 	_lingo = _vm->getLingo();
 
 	_soundManager = _vm->getSoundManager();
+
 	_puppetTempo = 0x00;
+	_puppetPalette = false;
+	_lastPalette = 0;
 
 	_labels = nullptr;
 	_currentCursor = nullptr;
@@ -404,6 +407,12 @@ void Score::update() {
 void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (!renderTransition(frameId))
 		renderSprites(frameId, mode);
+
+	int currentPalette = _frames[frameId]->_palette.paletteId;
+	if (!_puppetPalette && currentPalette != _lastPalette) {
+		_lastPalette = currentPalette;
+		g_director->setPalette(currentPalette);
+	}
 
 	_stage->render();
 

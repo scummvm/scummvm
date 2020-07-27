@@ -120,6 +120,9 @@ public:
 	byte _currentFrameRate;
 
 	byte _puppetTempo;
+	bool _puppetPalette;
+	int _lastPalette;
+
 	PlayState _playState;
 	uint32 _nextFrameTime;
 	int _waitForChannel;
