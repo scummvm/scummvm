@@ -832,7 +832,7 @@ int loadResource(const char *resourceName, int16 idx, int16 frameIndex) {
 		}
 
 		const char *ext = (g_sound->musicType() == MT_ADLIB) ? ".ADL" : ".HP";
-		strcat(base, ext);
+		Common::strlcat(base, ext, sizeof(base));
 		return loadResource(base, idx, frameIndex);
 	}
 
