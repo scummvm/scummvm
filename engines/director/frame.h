@@ -47,7 +47,7 @@ enum {
 };
 
 struct PaletteInfo {
-	uint16 paletteId;
+	int paletteId;
 
 	byte firstColor;
 	byte lastColor;
