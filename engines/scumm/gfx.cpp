@@ -49,6 +49,7 @@ extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height
 namespace Scumm {
 
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, uint8 bitDepth);
+static void masked_blit(byte *dst, int dstPitch, byte *src, int srcPitch, int w, int h, uint8 bitDepth, uint32 mask_color, uint16 *_16bitpal = NULL);
 static void fill(byte *dst, int dstPitch, uint16 color, int w, int h, uint8 bitDepth);
 #ifndef USE_ARM_GFX_ASM
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8 bitDepth);
@@ -1192,6 +1193,41 @@ static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 			dst += dstPitch;
 			src += srcPitch;
 		} while (--h);
+	}
+}
+
+static void masked_blit(byte *dst, int dstPitch, byte *src, int srcPitch, int w, int h, uint8 bitDepth, uint32 mask_color, uint16 *_16bitpal) {
+	assert(w > 0);
+	assert(h > 0);
+	assert(src != NULL);
+	assert(dst != NULL);
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			switch(bitDepth) {
+			case 1:
+				if (src[x] == mask_color)
+					continue;
+				dst[x] = src[x];
+				break;
+			case 2:
+				if (src[x] == mask_color)
+					continue;
+				// Avoid endian issues by using memcpy.
+				memcpy(((uint16 *)dst)+x, _16bitpal + src[x], 2);
+				break;
+			case 4:
+				// I'm not even sure if this is used for anything?
+				if (((uint32 *)src)[x] == mask_color)
+					continue;
+				((uint32 *)dst)[x] = ((uint32 *)src)[x];
+				break;
+			default:
+				break;
+			}
+		}
+		src += srcPitch;
+		dst += dstPitch;
 	}
 }
 
