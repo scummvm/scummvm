@@ -1577,10 +1577,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			break;
 		}
 	case kTheCastType:
-		// TODO: You can actually switch the cast type!?
-		warning("Lingo::setTheCast(): Tried to switch cast type of %d", id);
-		//cast->type = static_cast<CastType>(d.u.i);
-		//cast->modified = 1;
+		warning("Lingo::setTheCast(): Attempt to set read-only field %s of cast %d", entity2str(field), id);
 		break;
 	case kTheCenter:
 		if (castType == kCastDigitalVideo) {
