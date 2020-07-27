@@ -338,31 +338,50 @@ void ScummEngine::initScreens(int b, int h) {
 	}
 #endif
 
-	if (!_virtscr[kUnkVirtScreen].getBasePtr(0,0)) {
-		// Since the size of screen 3 is fixed, there is no need to reallocate
-		// it if its size changed.
-		// Not sure what it is good for, though. I think it may have been used
-		// in pre-V7 for the games messages (like 'Pause', Yes/No dialogs,
-		// version display, etc.). I don't know about V7, maybe the same is the
-		// case there. If so, we could probably just remove it completely.
+	if (_game.version >= 6) {
+		Common::Rect clear_rect(0, 0, _screenWidth, _screenHeight);
+
+		// Use the mostly unused Unk virtual screen for blast objects for V6+.
+		initVirtScreen(kUnkVirtScreen, adj, _screenWidth, _screenHeight, false, false); // Use for blast objects
+		_virtscr[kUnkVirtScreen].fillRect(clear_rect, CHARSET_MASK_TRANSPARENCY);
+
 		if (_game.version >= 7) {
-			initVirtScreen(kUnkVirtScreen, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
-		} else {
-			initVirtScreen(kUnkVirtScreen, 80, _screenWidth, 13, false, false);
+			// V7+ games only used the main virtual screen, so let's repurpose these
+			// three "unused" screens as blast text and verb coin layers.
+			
+			initVirtScreen(kTextVirtScreen, adj, _screenWidth, _screenHeight, false, false);
+			initVirtScreen(kVerbVirtScreen, adj, _screenWidth, _screenHeight, false, false);
+			_virtscr[kTextVirtScreen].fillRect(clear_rect, CHARSET_MASK_TRANSPARENCY);
+			_virtscr[kVerbVirtScreen].fillRect(clear_rect, CHARSET_MASK_TRANSPARENCY);
 		}
 	}
+	else {
+		if (!_virtscr[kUnkVirtScreen].getBasePtr(0,0)) {
+			// Since the size of screen 3 is fixed, there is no need to reallocate
+			// it if its size changed.
+			// Not sure what it is good for, though. I think it may have been used
+			// in pre-V7 for the games messages (like 'Pause', Yes/No dialogs,
+			// version display, etc.). I don't know about V7, maybe the same is the
+			// case there. If so, we could probably just remove it completely.
+			if (_game.version >= 7) {
+				initVirtScreen(kUnkVirtScreen, (_screenHeight / 2) - 10, _screenWidth, 13, false, false);
+			} else {
+				initVirtScreen(kUnkVirtScreen, 80, _screenWidth, 13, false, false);
+			}
+		}
 
-	if ((_game.platform == Common::kPlatformNES) && (h != _screenHeight)) {
-		// This is a hack to shift the whole screen downwards to match the original.
-		// Otherwise we would have to do lots of coordinate adjustments all over
-		// the code.
-		adj = 16;
-		initVirtScreen(kUnkVirtScreen, 0, _screenWidth, adj, false, false);
+		if ((_game.platform == Common::kPlatformNES) && (h != _screenHeight)) {
+			// This is a hack to shift the whole screen downwards to match the original.
+			// Otherwise we would have to do lots of coordinate adjustments all over
+			// the code.
+			adj = 16;
+			initVirtScreen(kUnkVirtScreen, 0, _screenWidth, adj, false, false);
+		}
+		initVirtScreen(kTextVirtScreen, adj, _screenWidth, b, false, false);
+		initVirtScreen(kVerbVirtScreen, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
 	}
-
 	initVirtScreen(kMainVirtScreen, b + adj, _screenWidth, h - b, true, true);
-	initVirtScreen(kTextVirtScreen, adj, _screenWidth, b, false, false);
-	initVirtScreen(kVerbVirtScreen, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
+
 	_screenB = b;
 	_screenH = h;
 
@@ -507,6 +526,28 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 	}
 }
 
+// Just to avoid unecessary code duplication, since this part seems pretty
+// final as it is.
+#define DRAW_DIRTY_SCREEN_FUNCTION_BODY  \
+	/* Update game area ("stage") */ \
+	if (camera._last.x != camera._cur.x || (_game.version >= 7 && (camera._cur.y != camera._last.y))) { \
+		/* Camera moved: redraw everything */ \
+		VirtScreen *vs = &_virtscr[kMainVirtScreen]; \
+		drawStripToScreen(vs, 0, vs->w, 0, vs->h); \
+		vs->setDirtyRange(vs->h, 0); \
+	} else { \
+		updateDirtyScreen(kMainVirtScreen); \
+	} \
+	\
+	/* Handle shaking */ \
+	if (_shakeEnabled) { \
+		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS; \
+		_system->setShakePos(0, shake_positions[_shakeFrame]); \
+	} else if (!_shakeEnabled &&_shakeFrame != 0) { \
+		_shakeFrame = 0; \
+		_system->setShakePos(0, 0); \
+	}
+
 /**
  * Update all dirty screen areas. This method blits all of the internal engine
  * graphics to the actual display, as needed. In addition, the 'shaking'
@@ -519,57 +560,48 @@ void ScummEngine::drawDirtyScreenParts() {
 	// Update the conversation area (at the top of the screen)
 	updateDirtyScreen(kTextVirtScreen);
 
-	// Update game area ("stage")
-	if (camera._last.x != camera._cur.x || (_game.version >= 7 && (camera._cur.y != camera._last.y))) {
-		// Camera moved: redraw everything
-		VirtScreen *vs = &_virtscr[kMainVirtScreen];
-		drawStripToScreen(vs, 0, vs->w, 0, vs->h);
-		vs->setDirtyRange(vs->h, 0);
-	} else {
-		updateDirtyScreen(kMainVirtScreen);
-	}
-
-	// Handle shaking
-	if (_shakeEnabled) {
-		_shakeFrame = (_shakeFrame + 1) % NUM_SHAKE_POSITIONS;
-		_system->setShakePos(0, shake_positions[_shakeFrame]);
-	} else if (!_shakeEnabled &&_shakeFrame != 0) {
-		_shakeFrame = 0;
-		_system->setShakePos(0, 0);
-	}
+	DRAW_DIRTY_SCREEN_FUNCTION_BODY
 }
 
 void ScummEngine_v6::drawDirtyScreenParts() {
-	// For the Full Throttle credits to work properly, the blast
-	// texts have to be drawn before the blast objects. Unless
-	// someone can think of a better way to achieve this effect.
+	_layers[1] = &_textSurface;
+	_layers[0] = (!_blastObjectQueuePos) ? NULL : &_virtscr[kUnkVirtScreen];
+	int processed_upper_actors = 0;
 
+	// For the Full Throttle credits to work properly, the blast
+	// texts have to be drawn before the blast objects.
 	if (_game.version >= 7 && VAR(VAR_BLAST_ABOVE_TEXT) == 1) {
-		drawBlastTexts();
-		drawBlastObjects();
-		if (_game.version == 8) {
-			// Does this case ever happen? We need to draw the
-			// actor over the blast object, so we're forced to
-			// also draw it over the subtitles.
-			processUpperActors();
-		}
-	} else {
-		drawBlastObjects();
-		if (_game.version == 8) {
-			// Do this before drawing blast texts. Subtitles go on
-			// top of the CoMI verb coin, e.g. when Murray is
-			// talking to himself early in the game.
-			processUpperActors();
-		}
-		drawBlastTexts();
+		_layers[0] = (!_blastTextQueuePos) ? NULL : &_virtscr[kTextVirtScreen];
+		_layers[1] = (!_blastObjectQueuePos) ? NULL : &_virtscr[kUnkVirtScreen];
+		_layers[3] = NULL;
+	} else if (_game.version >= 7) {
+		_layers[0] = (!_blastObjectQueuePos) ? NULL : &_virtscr[kUnkVirtScreen];
+		_layers[1] = NULL;
+		_layers[3] = (!_blastTextQueuePos) ? NULL : &_virtscr[kTextVirtScreen];
+	}
+	else {
+		updateDirtyScreen(kVerbVirtScreen);
+		updateDirtyScreen(kTextVirtScreen);
 	}
 
-	// Call the original method.
-	ScummEngine::drawDirtyScreenParts();
+	// 
+	if (_game.version == 8) {
+		processed_upper_actors = processUpperActors();
+		_layers[2] = (!processed_upper_actors) ? NULL : &_virtscr[kVerbVirtScreen];
+	}
+
+	// Render any blast objects/texts to their respective layers.
+	drawBlastObjects();
+	drawBlastTexts();
+
+	DRAW_DIRTY_SCREEN_FUNCTION_BODY
 
 	// Remove all blasted objects/text again.
 	removeBlastTexts();
 	removeBlastObjects();
+
+	if (processed_upper_actors)
+		removeUpperActors();
 }
 
 /**
@@ -733,6 +765,66 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 		}
 	}
+
+	// Finally blit the whole thing to the screen
+	_system->copyRectToScreen(src, pitch, x, y, width, height);
+}
+
+void ScummEngine_v6::drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom) {
+
+	// Short-circuit if nothing has to be drawn
+	if (bottom <= top || top >= vs->h)
+		return;
+
+	// Some paranoia checks
+	assert(top >= 0 && bottom <= vs->h);
+	assert(x >= 0 && width <= vs->pitch);
+	assert(_textSurface.getBasePtr(0, 0));
+
+	// Perform some clipping
+	if (width > vs->w - x)
+		width = vs->w - x;
+	if (top < _screenTop)
+		top = _screenTop;
+	if (bottom > _screenTop + _screenHeight)
+		bottom = _screenTop + _screenHeight;
+
+	// Convert the vertical coordinates to real screen coords
+	int y = vs->topline + top - _screenTop;
+	int height = bottom - top;
+
+	if (width <= 0 || height <= 0)
+		return;
+
+	const void *src = vs->getPixels(x, top);
+	int pitch = vs->pitch;
+
+	byte *srcPtr = (byte *)((size_t)src);
+	byte bpp = vs->format.bytesPerPixel;
+	byte *dst = _compositeBuf;
+
+#ifdef USE_ARM_GFX_ASM
+	asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
+#else
+	blit(dst, width * bpp, srcPtr, vs->pitch, width, height, bpp);
+#endif
+	for (int i = 0; i < kNumVirtScreens; i++) {
+		if (!_layers[i])
+			continue;
+		
+		if (_layers[i]->number == kTextVirtScreen) {
+			if (_game.heversion == 0) {
+				masked_blit(dst, width * bpp, (byte *)_layers[i]->getBasePtr(x, y), _layers[i]->pitch,
+					width, height, bpp, (bpp == 4) ? CHARSET_MASK_TRANSPARENCY_32 : CHARSET_MASK_TRANSPARENCY, _16BitPalette);
+			}
+		} else {
+			masked_blit(dst, width * bpp, (byte *)_layers[i]->getBasePtr(x, y), _layers[i]->pitch,
+				width, height, bpp, (bpp == 4) ? CHARSET_MASK_TRANSPARENCY_32 : CHARSET_MASK_TRANSPARENCY, _16BitPalette);
+		}
+	}
+
+	src = _compositeBuf;
+	pitch = width * vs->format.bytesPerPixel;
 
 	// Finally blit the whole thing to the screen
 	_system->copyRectToScreen(src, pitch, x, y, width, height);

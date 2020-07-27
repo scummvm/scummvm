@@ -903,7 +903,8 @@ protected:
 	void resetV1ActorTalkColor();
 	void resetActorBgs();
 	virtual void processActors();
-	void processUpperActors();
+	int processUpperActors();
+	void removeUpperActors();
 	virtual int getActorFromPos(int x, int y);
 
 public:
@@ -916,6 +917,10 @@ public:
 	int16 _talkDelay;
 	int _NES_lastTalkingActor;
 	int _NES_talkColor;
+
+	int _upperActorQueuePos;
+	Common::Rect _upperActorQueue[10];
+	bool _processing_upper_actors;
 
 	virtual void actorTalk(const byte *msg);
 	void stopTalk();
@@ -1049,7 +1054,7 @@ protected:
 
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
-	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
+	virtual void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 
 public:
@@ -1187,8 +1192,9 @@ public:
 
 	/**
 	 * All text is normally rendered into this overlay surface. Then later
-	 * drawStripToScreen() composits it over the game graphics.
+	 * drawStripToScreen() composites it over the game graphics.
 	 */
+	VirtScreen _textSurface;
 	int _textSurfaceMultiplier;
 
 protected:

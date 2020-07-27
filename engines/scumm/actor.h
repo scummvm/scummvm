@@ -220,7 +220,7 @@ public:
 	void faceToObject(int obj);
 	void turnToDirection(int newdir);
 	virtual void walkActor();
-	void drawActorCostume(bool hitTestMode = false);
+	void drawActorCostume(bool hitTestMode = false, VirtScreen *vs = NULL);
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
 	virtual void animateCostume();
 	virtual void setActorCostume(int c);

@@ -601,7 +601,7 @@ void CharsetRendererPCE::setColor(byte color) {
 }
 #endif
 
-void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
+void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask, VirtScreen *_vs) {
 	// WORKAROUND for bug #1509509: Indy3 Mac does not show black
 	// characters (such as in the grail diary) if ignoreCharsetMask
 	// is true. See also patch #1851568.
@@ -719,7 +719,7 @@ void CharsetRenderer::saveLoadWithSerializer(Common::Serializer &ser) {
 	}
 }
 
-void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
+void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask, VirtScreen *vs_) {
 	VirtScreen *vs;
 	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
 
@@ -770,9 +770,15 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	if (_top < _str.top)
 		_str.top = _top;
 
+	if (vs_)
+		vs = vs_;
+
 	int drawTop = _top - vs->topline;
 
-	_vm->markRectAsDirty(vs->number, _left, _left + _width, drawTop, drawTop + _height);
+	if (_vm->_game.version >= 7)
+		_vm->markRectAsDirty(kMainVirtScreen, _left, _left + _width, drawTop, drawTop + _height);
+	else
+		_vm->markRectAsDirty(vs->number, _left, _left + _width, drawTop, drawTop + _height);
 
 	// This check for kPlatformFMTowns and kMainVirtScreen is at least required for the chat with
 	// the navigator's head in front of the ghost ship in Monkey Island 1
@@ -1251,7 +1257,7 @@ int CharsetRendererNut::getFontHeight() {
 	return _current->getCharHeight('|');
 }
 
-void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
+void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask, VirtScreen *vs_) {
 	Common::Rect shadow;
 
 	assert(_current);
@@ -1287,7 +1293,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 
 	int drawTop = _top;
 	if (ignoreCharsetMask) {
-		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+		VirtScreen *vs = (vs_) ? vs_ : &_vm->_virtscr[kMainVirtScreen];
 		s = *vs;
 		s.setPixels(vs->getPixels(0, 0));
 	} else {
@@ -1318,7 +1324,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 }
 #endif
 
-void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
+void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask, VirtScreen *_vs) {
 	int width, height, origWidth, origHeight;
 	VirtScreen *vs;
 	byte *charPtr;

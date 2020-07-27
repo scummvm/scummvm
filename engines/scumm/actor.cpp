@@ -2209,18 +2209,35 @@ void ScummEngine_v90he::processActors() {
 
 // Used in Scumm v8, to allow the verb coin to be drawn over the inventory
 // chest. I'm assuming that draw order won't matter here.
-void ScummEngine::processUpperActors() {
+int ScummEngine::processUpperActors() {
 	int i;
+	_upperActorQueuePos = 0;
 
+	_processing_upper_actors = true;
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i]->isInCurrentRoom() && _actors[i]->_costume && _actors[i]->_layer < 0) {
-			_actors[i]->drawActorCostume();
+			_actors[i]->drawActorCostume(false, &_virtscr[kVerbVirtScreen]);
 			_actors[i]->animateCostume();
 		}
 	}
+	_processing_upper_actors = false;
+
+	return _upperActorQueuePos;
 }
 
-void Actor::drawActorCostume(bool hitTestMode) {
+void ScummEngine::removeUpperActors() {
+	int i;
+
+	for (i = 0; i < _upperActorQueuePos; i++) {
+		//restoreBackground(_blastTextQueue[i].rect);
+		_virtscr[kVerbVirtScreen].fillRect(_upperActorQueue[i], CHARSET_MASK_TRANSPARENCY);
+		markRectAsDirty(kMainVirtScreen, _upperActorQueue[i]);
+	}
+
+	_upperActorQueuePos = 0;
+}
+
+void Actor::drawActorCostume(bool hitTestMode, VirtScreen *vs) {
 	if (_costume == 0)
 		return;
 
@@ -2237,7 +2254,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	prepareDrawActorCostume(bcr);
 
 	// If the actor is partially hidden, redraw it next frame.
-	if (bcr->drawCostume(_vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
+	if (bcr->drawCostume((vs) ? *vs : _vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
 		_needRedraw = (_vm->_game.version <= 6);
 	}
 

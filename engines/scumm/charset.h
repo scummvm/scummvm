@@ -72,7 +72,7 @@ public:
 	CharsetRenderer(ScummEngine *vm);
 	virtual ~CharsetRenderer();
 
-	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
+	virtual void printChar(int chr, bool ignoreCharsetMask, VirtScreen *vs_ = NULL) = 0;
 	virtual void drawChar(int chr, Graphics::Surface &s, int x, int y) {}
 
 	int getStringWidth(int a, const byte *str);
@@ -142,7 +142,7 @@ protected:
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererPC(vm) {}
 
-	void printChar(int chr, bool ignoreCharsetMask) override;
+	void printChar(int chr, bool ignoreCharsetMask, VirtScreen *_vs = NULL) override;
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 
 	int getCharWidth(uint16 chr) override;
@@ -179,7 +179,7 @@ public:
 	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
 	void setCurID(int32 id) override {}
-	void printChar(int chr, bool ignoreCharsetMask) override;
+	void printChar(int chr, bool ignoreCharsetMask, VirtScreen *_vs = NULL) override;
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 
 	int getFontHeight() override { return 8; }
@@ -197,7 +197,7 @@ protected:
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererPC(vm) {}
 
-	void printChar(int chr, bool ignoreCharsetMask) override;
+	void printChar(int chr, bool ignoreCharsetMask, VirtScreen *_vs = NULL) override;
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 	void setCurID(int32 id) override;
 	void setColor(byte color) override;
@@ -262,7 +262,7 @@ public:
 	CharsetRendererNut(ScummEngine *vm);
 	~CharsetRendererNut() override;
 
-	void printChar(int chr, bool ignoreCharsetMask) override;
+	void printChar(int chr, bool ignoreCharsetMask, VirtScreen *vs_ = NULL) override;
 
 	void setCurID(int32 id) override;
 

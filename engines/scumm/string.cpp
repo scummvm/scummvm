@@ -199,7 +199,7 @@ void ScummEngine_v6::drawBlastTexts() {
 							c += *buf++ * 256;
 						}
 					}
-					_charset->printChar(c, true);
+					_charset->printChar(c, true, &_virtscr[kTextVirtScreen]);
 				}
 			} while (c && c != '\n');
 
@@ -214,7 +214,9 @@ void ScummEngine_v6::removeBlastTexts() {
 	int i;
 
 	for (i = 0; i < _blastTextQueuePos; i++) {
-		restoreBackground(_blastTextQueue[i].rect);
+		//restoreBackground(_blastTextQueue[i].rect);
+		_virtscr[kTextVirtScreen].fillRect(_blastTextQueue[i].rect, CHARSET_MASK_TRANSPARENCY);
+		markRectAsDirty(kMainVirtScreen, _blastTextQueue[i].rect);
 	}
 	_blastTextQueuePos = 0;
 }

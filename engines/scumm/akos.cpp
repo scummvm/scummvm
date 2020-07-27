@@ -930,8 +930,13 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (_actorHitMode) {
 		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
 			return 0;
-	} else
+	} else {
 		markRectAsDirty(rect);
+		if (_vm->_processing_upper_actors) {
+			_vm->_upperActorQueue[_vm->_upperActorQueuePos] = rect;
+			_vm->_upperActorQueuePos++;
+		}
+	}
 
 	if (rect.top >= v1.boundsRect.bottom || rect.bottom <= v1.boundsRect.top)
 		return 0;
