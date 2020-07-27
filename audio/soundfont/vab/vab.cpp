@@ -133,7 +133,7 @@ bool Vab::GetInstrPointers() {
 				vagSize = GetShort(offVAGOffsets + (i + 1) * 2) * 8;
 			}
 
-			sprintf(name, "VAG Size /8 #%u", i + 1);
+			snprintf(name, sizeof(name), "VAG Size /8 #%u", i + 1);
 			vagOffsetHdr->AddSimpleItem(offVAGOffsets + (i + 1) * 2, 2, name);
 
 			if (vagOffset + vagSize <= nEndOffset) {
@@ -173,7 +173,7 @@ VabInstr::VabInstr(VGMInstrSet *instrSet, uint32 offset, uint32 length, uint32 t
 VabInstr::~VabInstr(void) {}
 
 bool VabInstr::LoadInstr() {
-	int8_t numRgns = _tones;
+	int8 numRgns = _tones;
 	for (int i = 0; i < numRgns; i++) {
 		VabRgn *rgn = new VabRgn(this, _dwOffset + i * 0x20);
 		if (!rgn->LoadRgn()) {
@@ -234,9 +234,9 @@ bool VabRgn::LoadRgn() {
 	// least) I am not sure if the interpretation of this value depends on a driver or VAB version.
 	// The following code takes the byte as signed, since it could be a typical extended
 	// implementation.
-	int8_t ft = (int8_t) GetByte(_dwOffset + 5);
+	int8 ft = (int8) GetByte(_dwOffset + 5);
 	double cents = ft * 100.0 / 128.0;
-	SetFineTune((int16_t) cents);
+	SetFineTune((int16) cents);
 
 	PSXConvADSR<VabRgn>(this, _ADSR1, _ADSR2, false);
 	return true;

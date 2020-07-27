@@ -201,7 +201,7 @@ SynthFile *VGMColl::CreateSynthFile(VGMInstrSet *theInstrSet) {
 				} else
 					sampInfo->SetLoopInfo(rgn->_loop, samp);
 
-				int8_t realUnityKey = -1;
+				int8 realUnityKey = -1;
 				if (rgn->_unityKey == -1)
 					realUnityKey = samp->unityKey;
 				else

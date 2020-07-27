@@ -194,7 +194,7 @@ struct sfPresetBag {
 struct sfModList {
 	SFModulator sfModSrcOper;
 	SFGenerator sfModDestOper;
-	int16_t modAmount;
+	int16 modAmount;
 	SFModulator sfModAmtSrcOper;
 	SFTransform sfModTransOper;
 };
@@ -213,7 +213,7 @@ typedef struct {
 
 typedef union {
 	rangesType ranges;
-	int16_t shAmount;
+	int16 shAmount;
 	uint16 wAmount;
 
 	//TODO fix union.
@@ -244,7 +244,7 @@ struct sfGenList {
 struct sfInstModList {
 	SFModulator sfModSrcOper;
 	SFGenerator sfModDestOper;
-	int16_t modAmount;
+	int16 modAmount;
 	SFModulator sfModAmtSrcOper;
 	SFTransform sfModTransOper;
 };
