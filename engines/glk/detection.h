@@ -97,9 +97,9 @@ struct GameDescriptor {
 
 	GameDescriptor(const char *gameId, const char *description, uint options) :
 		_gameId(gameId), _description(description), _options(options),
-		_supportLevel(kTestingGame) {}
+		_supportLevel(kStableGame) {}
 	GameDescriptor(const PlainGameDescriptor &gd) : _gameId(gd.gameId),
-		_description(gd.description), _options(0), _supportLevel(kTestingGame) {}
+		_description(gd.description), _options(0), _supportLevel(kStableGame) {}
 
 	static PlainGameDescriptor empty() {
 		return GameDescriptor(nullptr, nullptr, 0);
@@ -119,14 +119,14 @@ struct GameDescriptor {
 class GlkDetectedGame : public DetectedGame {
 public:
 	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		GameSupportLevel supportLevel = kTestingGame);
+		GameSupportLevel supportLevel = kStableGame);
 	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		Common::Language lang, GameSupportLevel supportLevel = kTestingGame);
+		Common::Language lang, GameSupportLevel supportLevel = kStableGame);
 	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		const Common::String &md5, size_t filesize, GameSupportLevel supportLevel = kTestingGame);
+		const Common::String &md5, size_t filesize, GameSupportLevel supportLevel = kStableGame);
 	GlkDetectedGame(const char *id, const char *desc, const char *extra,
 		const Common::String &filename, Common::Language lang,
-		GameSupportLevel supportLevel = kTestingGame);
+		GameSupportLevel supportLevel = kStableGame);
 
 	static Common::String getGlkGUIOptions();
 };
