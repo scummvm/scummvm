@@ -711,7 +711,7 @@ public:
  */
 class SeekableReadStreamEndian : virtual public SeekableReadStream, virtual public ReadStreamEndian {
 public:
-	SeekableReadStreamEndian(bool bigEndian) : ReadStreamEndian(bigEndian) {}
+	SeekableReadStreamEndian(bool bigEndian) {}
 };
 
 
