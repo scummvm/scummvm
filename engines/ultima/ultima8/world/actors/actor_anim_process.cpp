@@ -357,6 +357,10 @@ void ActorAnimProcess::doSpecial() {
 	Actor *a = getActor(_itemNum);
 	assert(a);
 
+	// All this stuff is U8 specific.
+	if (!GAME_IS_U8)
+		return;
+
 	// play SFX when Avatar draws/sheathes weapon
 	if (_itemNum == 1 && (_action == Animation::readyWeapon ||
 	                      _action == Animation::unreadyWeapon) &&
@@ -417,7 +421,7 @@ void ActorAnimProcess::doSpecial() {
 	}
 
 	// ghost's fireball
-	if (a->getShape() == 0x19d && GAME_IS_U8) {
+	if (a->getShape() == 0x19d) {
 		Actor *av = getMainActor();
 		if (a->getRange(*av) < 96) {
 			a->setActorFlag(Actor::ACT_DEAD);
