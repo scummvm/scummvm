@@ -126,11 +126,11 @@ public:
 	virtual bool LoadRgn() { return true; }
 
 	void AddGeneralItem(uint32 offset, uint32 length, const Common::String &name);
-	void SetFineTune(int16_t relativePitchCents) { _fineTune = relativePitchCents; }
+	void SetFineTune(int16 relativePitchCents) { _fineTune = relativePitchCents; }
 	void SetPan(uint8 pan);
 	void AddPan(uint8 pan, uint32 offset, uint32 length = 1);
 	void AddVolume(double volume, uint32 offset, uint32 length = 1);
-	void AddUnityKey(int8_t unityKey, uint32 offset, uint32 length = 1);
+	void AddUnityKey(int8 unityKey, uint32 offset, uint32 length = 1);
 	void AddKeyLow(uint8 keyLow, uint32 offset, uint32 length = 1);
 	void AddKeyHigh(uint8 keyHigh, uint32 offset, uint32 length = 1);
 	void AddSampNum(int sampNum, uint32 offset, uint32 length = 1);
@@ -141,7 +141,7 @@ public:
 	uint8 _velLow;
 	uint8 _velHigh;
 
-	int8_t _unityKey;
+	int8 _unityKey;
 	short _fineTune;
 
 	Loop _loop;

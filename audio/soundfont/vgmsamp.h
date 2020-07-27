@@ -46,7 +46,7 @@ public:
 	bool bPSXLoopInfoPrioritizing;
 	Loop loop;
 
-	int8_t unityKey;
+	int8 unityKey;
 	short fineTune;
 	double volume;  // as percent of full volume.  This will be converted to attenuation for SynthFile
 

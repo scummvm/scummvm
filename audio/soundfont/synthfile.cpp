@@ -179,9 +179,9 @@ void SynthWave::ConvertTo16bitSigned() {
 		this->wBlockAlign = 16 / 8 * this->wChannels;
 		this->dwAveBytesPerSec *= 2;
 
-		int16_t *newData = new int16_t[this->dataSize];
+		int16 *newData = new int16[this->dataSize];
 		for (unsigned int i = 0; i < this->dataSize; i++)
-			newData[i] = ((int16_t) this->data[i] - 128) << 8;
+			newData[i] = ((int16) this->data[i] - 128) << 8;
 		delete[] this->data;
 		this->data = (uint8 *) newData;
 		this->dataSize *= 2;

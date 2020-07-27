@@ -172,7 +172,7 @@ void VGMRgn::AddVolume(double vol, uint32 offset, uint32 length) {
 	_items.push_back(new VGMRgnItem(this, VGMRgnItem::RIT_VOL, offset, length, "Volume"));
 }
 
-void VGMRgn::AddUnityKey(int8_t uk, uint32 offset, uint32 length) {
+void VGMRgn::AddUnityKey(int8 uk, uint32 offset, uint32 length) {
 	this->_unityKey = uk;
 	_items.push_back(new VGMRgnItem(this, VGMRgnItem::RIT_UNITYKEY, offset, length, "Unity Key"));
 }

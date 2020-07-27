@@ -291,14 +291,14 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->name, "sfbk") {
 
 			// initialAttenuation
 			instGenList.sfGenOper = initialAttenuation;
-			instGenList.genAmount.shAmount = (int16_t) (rgn->sampinfo->attenuation * 10);
+			instGenList.genAmount.shAmount = (int16) (rgn->sampinfo->attenuation * 10);
 			memcpy(igenCk->data + dataPtr, &instGenList, sizeof(sfInstGenList));
 			dataPtr += sizeof(sfInstGenList);
 
 			// pan
 			instGenList.sfGenOper = pan;
 			instGenList.genAmount.shAmount =
-					(int16_t) ConvertPercentPanTo10thPercentUnits(rgn->art->pan);
+					(int16) ConvertPercentPanTo10thPercentUnits(rgn->art->pan);
 			memcpy(igenCk->data + dataPtr, &instGenList, sizeof(sfInstGenList));
 			dataPtr += sizeof(sfInstGenList);
 
@@ -335,7 +335,7 @@ SF2File::SF2File(SynthFile *synthfile) : RiffFile(synthfile->name, "sfbk") {
 			instGenList.sfGenOper = sustainVolEnv;
 			if (rgn->art->sustain_lev > 100.0)
 				rgn->art->sustain_lev = 100.0;
-			instGenList.genAmount.shAmount = (int16_t) (rgn->art->sustain_lev * 10);
+			instGenList.genAmount.shAmount = (int16) (rgn->art->sustain_lev * 10);
 			memcpy(igenCk->data + dataPtr, &instGenList, sizeof(sfInstGenList));
 			dataPtr += sizeof(sfInstGenList);
 
