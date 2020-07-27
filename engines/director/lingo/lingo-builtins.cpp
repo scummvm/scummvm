@@ -1755,10 +1755,13 @@ void LB::b_puppetPalette(int nargs) {
 				CastMember *member = g_director->getCurrentMovie()->getCastMemberByName(palStr);
 
 				if (member && member->_type == kCastPalette)
-					palette = member->getID();
+					palette = ((PaletteCastMember *)member)->getPaletteId();
 			}
 		} else {
-			palette = d.asInt();
+			CastMember *member = g_director->getCurrentMovie()->getCastMember(d.asInt());
+
+			if (member && member->_type == kCastPalette)
+				palette = ((PaletteCastMember *)member)->getPaletteId();
 		}
 		break;
 	default:

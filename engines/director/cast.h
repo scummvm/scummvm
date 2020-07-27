@@ -78,7 +78,7 @@ public:
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 
 private:
-	void loadPalette(Common::SeekableSubReadStreamEndian &stream, int id);
+	PaletteV4 loadPalette(Common::SeekableSubReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
 	Common::String getString(Common::String str);
@@ -92,6 +92,8 @@ public:
 	uint16 _castIDoffset;
 	uint16 _castArrayStart;
 	uint16 _castArrayEnd;
+
+	int _defaultPalette;
 
 	uint16 _movieScriptCount;
 	LingoArchive *_lingoArchive;

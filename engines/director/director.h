@@ -185,15 +185,18 @@ public:
 	Common::String getCurrentPath() const;
 
 	// graphics.cpp
+	bool hasFeature(EngineFeature f) const override;
+
 	void addPalette(int id, byte *palette, int length);
 	bool setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
 	void clearPalettes();
-	bool hasFeature(EngineFeature f) const override;
+	PaletteV4 *getPalette(int id);
 	void loadDefaultPalettes();
+
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
-	int getPaletteId() const { return _currentPaletteId; }
+
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
@@ -233,7 +236,6 @@ private:
 	DirectorSound *_soundManager;
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
-	int _currentPaletteId;
 	Lingo *_lingo;
 
 	Stage *_mainStage;

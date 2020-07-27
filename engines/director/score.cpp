@@ -94,6 +94,15 @@ int Score::getCurrentPalette() {
 	return _frames[_currentFrame]->_palette.paletteId;
 }
 
+int Score::resolvePaletteId(int id) {
+	if (id > 0) {
+		CastMember *member = _movie->getCastMember(id);
+		id = (member && member->_type == kCastPalette) ? ((PaletteCastMember *)member)->getPaletteId() : 0;
+	}
+
+	return id;
+}
+
 bool Score::processImmediateFrameScript(Common::String s, int id) {
 	s.trim();
 
@@ -228,7 +237,9 @@ void Score::startPlay() {
 	_currentFrame = 0;
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
-	_lastPalette = _vm->getPaletteId();
+
+	_lastPalette = _movie->getCast()->_defaultPalette;
+	_vm->setPalette(resolvePaletteId(_lastPalette));
 
 	if (_frames.size() <= 1) {	// We added one empty sprite
 		warning("Score::startLoop(): Movie has no frames");
@@ -416,7 +427,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	int currentPalette = _frames[frameId]->_palette.paletteId;
 	if (!_puppetPalette && currentPalette != 0 && currentPalette != _lastPalette) {
 		_lastPalette = currentPalette;
-		g_director->setPalette(currentPalette);
+		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
 
 	_stage->render();

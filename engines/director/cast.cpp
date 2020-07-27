@@ -78,6 +78,8 @@ Cast::Cast(Movie *movie, bool isShared) {
 
 	_loadedStxts = nullptr;
 	_loadedCast = nullptr;
+
+	_defaultPalette = -1;
 }
 
 Cast::~Cast() {
@@ -208,8 +210,8 @@ bool Cast::loadArchive() {
 			Common::SeekableSubReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
 
 			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
-			loadPalette(*pal, i + 1);
-
+			PaletteV4 p = loadPalette(*pal);
+			g_director->addPalette(clutList[i], p.palette, p.length);
 			delete pal;
 		}
 	}
@@ -396,19 +398,15 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readByte();
 	}
 
-	int palette = -1;
 	if (_vm->getVersion() >= 4) {
 		for (int i = 0; i < 0x16; i++)
 			stream.readByte();
 
-		palette = (int16)stream.readUint16() - 1;
+		_defaultPalette = (int16)stream.readUint16();
 
 		for (int i = 0; i < 0x08; i++)
 			stream.readByte();
 	}
-
-	if (!_vm->setPalette(palette))
-		_vm->setPalette(-1);
 
 	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
 			", style: %d", len, ver1, currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
@@ -448,9 +446,22 @@ void Cast::loadSpriteImages() {
 		if (!c->_value)
 			continue;
 
-		if (c->_value->_type != kCastBitmap)
-			continue;
+		// First, handle palettes
+		if (c->_value->_type != kCastBitmap) {
+			if (c->_value->_type == kCastPalette) {
+				PaletteCastMember *member = ((PaletteCastMember *)c->_value);
+				if (member->_children.size() != 1) {
+					warning("Cast::loadSpriteChildren: Expected 1 child for palette cast, got %d", member->_children.size());
+					continue;
+				}
 
+				member->_palette = g_director->getPalette(member->_children[0].index);
+			}
+
+			continue;
+		}
+
+		// Then handle bitmaps
 		BitmapCastMember *bitmapCast = (BitmapCastMember *)c->_value;
 		uint32 tag = bitmapCast->_tag;
 		uint16 imgId = c->_key;
@@ -580,7 +591,7 @@ void Cast::loadSpriteSounds() {
 	}
 }
 
-void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream, int id) {
+PaletteV4 Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
 	byte *_palette = new byte[index + 1];
@@ -604,7 +615,7 @@ void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream, int id) {
 		index -= 3;
 	}
 
-	g_director->addPalette(id, _palette, steps);
+	return PaletteV4(0, _palette, steps);
 }
 
 void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
@@ -799,8 +810,8 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		castInfoSize = 0;
 		break;
 	case kCastPalette:
-		warning("STUB: Cast::loadCastData(): kCastPalette (%d children)", res->children.size());
-		castInfoSize = 0;
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastPalette (%d children)", res->children.size());
+		_loadedCast->setVal(id, new PaletteCastMember(this, id, castStream, _vm->getVersion()));
 		break;
 	case kCastPicture:
 		warning("STUB: Cast::loadCastData(): kCastPicture (%d children)", res->children.size());

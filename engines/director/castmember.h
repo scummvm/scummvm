@@ -249,6 +249,15 @@ struct Label {
 	Label(Common::String name1, uint16 number1) { name = name1; number = number1; }
 };
 
+class PaletteCastMember : public CastMember {
+public:
+	PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	int getPaletteId() { return _palette ? _palette->id : 0; }
+	void activatePalette() { if (_palette) g_director->setPalette(_palette->id); }
+
+	PaletteV4 *_palette;
+};
+
 } // End of namespace Director
 
 #endif

@@ -80,7 +80,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
-	_currentPaletteId = 0;
 	_mainStage = nullptr;
 	_windowList = new Datum;
 	_windowList->type = ARRAY;
@@ -162,6 +161,8 @@ Common::Error DirectorEngine::run() {
 	_wm->setScreen(_surface);
 	_wm->addWindowInitialized(_mainStage);
 	_wm->setActiveWindow(_mainStage->getId());
+	setPalette(-1);
+
 	_currentStage = _mainStage;
 
 	_lingo = new Lingo(this);

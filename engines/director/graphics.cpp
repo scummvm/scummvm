@@ -752,6 +752,15 @@ void DirectorEngine::loadDefaultPalettes() {
 	_loadedPalettes[kClutSystemWin] = PaletteV4(kClutSystemWin, winPalette, 256);
 }
 
+PaletteV4 *DirectorEngine::getPalette(int id) {
+	if (!_loadedPalettes.contains(id)) {
+		warning("DirectorEngine::addPalette(): Palette %d not found", id);
+		return nullptr;
+	}
+
+	return &_loadedPalettes[id];
+}
+
 void DirectorEngine::addPalette(int id, byte *palette, int length) {
 	if (id < 0) {
 		warning("DirectorEngine::addPalette(): Negative palette ids reserved for default palettes");
@@ -766,14 +775,16 @@ void DirectorEngine::addPalette(int id, byte *palette, int length) {
 }
 
 bool DirectorEngine::setPalette(int id) {
-	if (!_loadedPalettes.contains(id)) {
+	if (id == 0) {
+		// Palette id of 0 is unused
+		return false;
+	} else if (!_loadedPalettes.contains(id)) {
 		warning("setPalette(): no palette with matching id %d", id);
 		return false;
 	}
 
 	PaletteV4 pal = _loadedPalettes[id];
 	setPalette(pal.palette, pal.length);
-	_currentPaletteId = id;
 
 	return true;
 }
@@ -787,8 +798,6 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 }
 
 void DirectorEngine::clearPalettes() {
-	_currentPaletteId = 0;
-
 	for (Common::HashMap<int, PaletteV4>::iterator it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
 		if (it->_value.id > 0)
 			delete[] it->_value.palette;

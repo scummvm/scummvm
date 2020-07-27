@@ -85,6 +85,7 @@ public:
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
 	int getCurrentPalette();
+	int resolvePaletteId(int id);
 
 	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);

@@ -642,4 +642,10 @@ void RTECastMember::loadChunks() {
 #endif
 }
 
-} // End of namespace Director
+PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
+	: CastMember(cast, castId, stream) {
+	_type = kCastPalette;
+	_palette = nullptr;
+}
+
+} // end of namespace Director
