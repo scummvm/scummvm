@@ -28,6 +28,7 @@
 
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/box.h"
+#include "ultima/ultima8/misc/point3.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -73,6 +74,9 @@ public:
 	//! CurrentMap and fastArea if necessary.
 	void move(int32 x, int32 y, int32 z);
 
+	//! Move, but with a point struct.
+	void move(const Point3 &pt);
+
 	//! Move an item. This moves an item to a container and  updates
 	//! CurrentMap and fastArea if necessary.
 	//! \param container The container this item should be placed in
@@ -95,6 +99,9 @@ public:
 	//! Get this Item's location. Note that this does not return
 	//! 'usable' coordinates if the Item is contained or equipped.
 	inline void getLocation(int32 &x, int32 &y, int32 &z) const;
+
+	//! Get the Item's location using a Point3 struct.
+	inline void getLocation(Point3 &pt) const;
 
 	//! Get this Item's Z coordinate.
 	int32 getZ() const;
@@ -287,6 +294,9 @@ public:
 	//! Undefined if either item is contained or equipped.
 	int getDirToItemCentre(const Item &item2) const;
 
+	//! Same as above, but from a fixed point.
+	int getDirToItemCentre(const Point3 &pt) const;
+
 	//! get 'distance' to other item. This is the maximum of the differences
 	//! between the x, y (and possibly z) coordinates of the items.
 	int getRange(const Item &item2, bool checkz = false) const;
@@ -374,6 +384,9 @@ public:
 	//! \param damage The force of the hit. Zero for default
 	//! \param type The type of damage done. Zero for default
 	virtual void receiveHit(ObjId other, int dir, int damage, uint16 type);
+
+	//! fire the given weapon type in the given direction from location x, y, z.
+	uint16 fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char someflag);
 
 	//! get damage points, used in Crusader for item damage.
 	uint8 getDamagePoints() const {
@@ -573,6 +586,7 @@ public:
 	INTRINSIC(I_unequip);
 	INTRINSIC(I_avatarStoleSomething);
 	INTRINSIC(I_isOnScreen);
+	INTRINSIC(I_fireWeapon);
 
 private:
 	uint32 _shape;   // DO NOT modify this directly! Always use setShape()!
@@ -695,6 +709,12 @@ inline void Item::getLocation(int32 &X, int32 &Y, int32 &Z) const {
 	X = _x;
 	Y = _y;
 	Z = _z;
+}
+
+inline void Item::getLocation(Point3 &pt) const {
+	pt.x = _x;
+	pt.y = _y;
+	pt.z = _z;
 }
 
 } // End of namespace Ultima8

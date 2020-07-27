@@ -98,7 +98,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 World::I_getControlledNPCNum()",
 	"byte Actor::I_getDir(4 bytes)", // based on disasm. same coff as 112, 121
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // based on disasm. part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"int16 Actor::I_maybeFire(Actor *, x, y, z, byte, int, byte)",
+	"int16 Item::I_fireWeapon(Item *, x, y, z, byte, int, byte)",
 	"byte Item::I_create(Item *, uint16 shapenum, uint16 framenum)", // probably - used in MISS1EGG referencing keycards and NPCDEATH in creating blood spills
 	// 0020
 	"void Item::I_popToCoords(Item *, uint16 x, uint16 y, uint16 z)", // set coords, used after creating blood spills in NPCDEATH

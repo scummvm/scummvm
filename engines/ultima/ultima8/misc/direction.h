@@ -96,6 +96,44 @@ inline Direction Get_WorldDirection(int deltay, int deltax) {
 		return dydx >= -424 ? west : dydx >= -2472 ? southwest : south;
 }
 
+inline Direction Get_WorldDirectionClosestInRange(int deltay, int deltax, uint16 ndirs, uint16 mindir, uint16 maxdir) {
+	// TODO: Implement proper 16 directions here.
+	uint32 dir = static_cast<uint32>(Get_WorldDirection(deltay, deltax));
+	if (ndirs == 16) {
+		dir *= 2;
+	}
+
+	if ((dir < mindir) || (dir > maxdir)) {
+		int32 dmin1 = dir - mindir;
+		int32 dmin2 = mindir - dir;
+		if (dmin1 < 0) {
+			dmin1 = dmin1 + ndirs;
+		}
+		if (dmin2 < 0) {
+			dmin2 = dmin2 + ndirs;
+		}
+		int32 dist_to_min = MIN(dmin1, dmin2);
+
+		int dmax1 = dir - maxdir;
+		int dmax2 = maxdir - dir;
+		if (dmax1 < 0) {
+			dmax1 = dmax1 + ndirs;
+		}
+		if (dmax2 < 0) {
+			dmax2 = dmax2 + ndirs;
+		}
+		int32 dist_to_max = MIN(dmax1, dmax2);
+
+		if (dist_to_min < dist_to_max) {
+			return static_cast<Direction>(mindir);
+		} else {
+			return static_cast<Direction>(maxdir);
+		}
+	}
+
+	return static_cast<Direction>(dir);
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

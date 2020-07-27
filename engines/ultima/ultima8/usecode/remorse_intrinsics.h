@@ -66,7 +66,7 @@ Intrinsic RemorseIntrinsics[] = {
 	World::I_getControlledNPCNum,  // int16 Intrinsic01B(void)
 	Actor::I_getDir, // byte Intrinsic01C(4 bytes)
 	Actor::I_getLastAnimSet, // int Intrinsic01D(4 bytes)
-	0, // int Intrinsic01E(16 bytes)
+	Item::I_fireWeapon, // int Intrinsic01E(16 bytes)
 	Item::I_create,
 	// 0x020
 	Item::I_popToCoords, // void Intrinsic020(10 bytes)

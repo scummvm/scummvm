@@ -132,6 +132,9 @@ public:
 	//!< Swap to the next inventory item (in Crusader)
 	void nextInvItem();
 
+	//! Check if we can absorb a hit with the shield. Returns the modified damage value.
+	int receiveShieldHit(int damage, uint16 damage_type) override;
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
@@ -169,6 +172,9 @@ protected:
 	uint16 _activeInvItem;
 
 	Std::string _name;
+
+	uint16 _shieldSpriteProc;
+	uint16 _shieldType;
 
 };
 

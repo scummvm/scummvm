@@ -256,6 +256,15 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
+	//! take a hit and optionally adjust it with the shields for this NPC.
+	virtual int receiveShieldHit(int damage, uint16 damage_type) {
+		return damage;
+	}
+
+	virtual uint8 getShieldType() const {
+		return 0;
+	}
+
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);
@@ -389,6 +398,8 @@ protected:
 	bool loadMonsterStatsU8();
 	bool loadMonsterStatsCru();
 
+	void receiveHitU8(uint16 other, int dir, int damage, uint16 type);
+	void receiveHitCru(uint16 other, int dir, int damage, uint16 type);
 };
 
 } // End of namespace Ultima8

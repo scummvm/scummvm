@@ -45,6 +45,8 @@
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/fire_type.h"
+#include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 
@@ -56,7 +58,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor)
 
 MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
 	_accumInt(0), _cruBatteryType(ChemicalBattery), _keycards(0),
-	_activeWeapon(0), _activeInvItem(0) {
+	_activeWeapon(0), _activeInvItem(0), _shieldType(0), _shieldSpriteProc(0) {
 }
 
 MainActor::~MainActor() {
@@ -661,6 +663,8 @@ void MainActor::saveData(Common::WriteStream *ws) {
 		ws->writeUint32LE(_keycards);
 		ws->writeUint16LE(_activeWeapon);
 		ws->writeUint16LE(_activeInvItem);
+		ws->writeUint16LE(_shieldType);
+		ws->writeUint16LE(_shieldSpriteProc);
 	}
 
 	uint8 namelength = static_cast<uint8>(_name.size());
@@ -683,6 +687,8 @@ bool MainActor::loadData(Common::ReadStream *rs, uint32 version) {
 		_keycards = rs->readUint32LE();
 		_activeWeapon = rs->readUint16LE();
 		_activeInvItem = rs->readUint16LE();
+		_shieldType = rs->readUint16LE();
+		_shieldSpriteProc = rs->readUint16LE();
 	}
 
 	uint8 namelength = rs->readByte();
@@ -853,6 +859,72 @@ void MainActor::useInventoryItem(Item *item) {
 		}
 	}
 }
+
+int MainActor::receiveShieldHit(int damage, uint16 damage_type) {
+	uint8 shieldtype = getShieldType();
+	if (shieldtype == 3) {
+		shieldtype = 4;
+	}
+
+	const FireType *firetype = GameData::get_instance()->getFireType(damage_type);
+	int energy = getMana();
+	Kernel *kernel = Kernel::get_instance();
+
+	if (shieldtype && firetype && firetype->getShieldCost() && (firetype->getShieldMask() & shieldtype) && damage < energy) {
+		setMana(energy - damage);
+		damage = 0;
+		AudioProcess *audio = AudioProcess::get_instance();
+		audio->playSFX(0x48, 0x10, _objId, 1, true);
+
+		// If there's no active shield sprite, create a new one.
+		if (!_shieldSpriteProc || kernel->getProcess(_shieldSpriteProc) == nullptr) {
+			// Create the shield damage sprite
+			uint16 shieldsprite;
+			uint16 shieldstartframe;
+			uint16 shieldendframe;
+			bool remembersprite;
+			int32 x, y, z;
+
+			switch (shieldtype) {
+			case 1:
+				shieldsprite = 0x5a9;
+				shieldstartframe = 7;
+				shieldendframe = 0xd;
+				remembersprite = false;
+				// NOTE: In the game, this is put in the location of the
+				// hit.  For now just put in centre.
+				getCentre(x, y, z);
+				break;
+			case 2:
+				shieldsprite = 0x5a9;
+				shieldstartframe = 0;
+				shieldendframe = 6;
+				remembersprite = false;
+				getCentre(x, y, z);
+				break;
+			default:
+				shieldsprite = 0x52b;
+				shieldstartframe = 0;
+				shieldendframe = 8;
+				getLocation(x, y, z);
+				x += 0x10;
+				y += 0x18;
+				remembersprite = false;
+				break;
+			}
+			Process *p = new SpriteProcess(shieldsprite, shieldstartframe,
+										   shieldendframe, 1, 4, x, y, z);
+			kernel->addProcess(p);
+			if (remembersprite) {
+				_shieldSpriteProc = p->getPid();
+			} else {
+				_shieldSpriteProc = 0;
+			}
+		}
+	}
+	return damage;
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

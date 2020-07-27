@@ -24,7 +24,15 @@
 
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/fire_type.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/point3.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
 namespace Ultima {
@@ -112,15 +120,18 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 	case 0x56b:
 		firstframe = (getRandom() % 3) * 6;
 		lastframe = firstframe + 5;
-			break;
+		break;
 	case 0x537:
 		lastframe = 10;
+		break;
 	case 0x578:
 		firstframe = (getRandom() % 3) * 6;
 		lastframe = firstframe + 4;
+		break;
 	case 0x59b:
 		firstframe = (getRandom() % 2) * 4;
 		lastframe = firstframe + 3;
+		break;
 	case 0x1d8: {
 		switch (getRandom() % 4) {
 			case 0:
@@ -149,6 +160,44 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 	AudioProcess *audio = AudioProcess::get_instance();
 	if (sfxno && audio) {
 		audio->playSFX(sfxno, 0x10, 0, 1, false);
+	}
+}
+
+void FireType::applySplashDamageAround(const Point3 &pt, int damage, const Item *exclude, const Item *src) const {
+	if (!getRange())
+		return;
+	static const uint32 BULLET_SPLASH_SHAPE = 0x1d9;
+
+	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+
+	//
+	// Find items in range and apply splash damage
+	//
+	UCList uclist(2);
+	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
+	currentmap->areaSearch(&uclist, script, sizeof(script), nullptr,
+						   getRange() * 16, true);
+	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
+		Item *splashitem = getItem(uclist.getuint16(i));
+		assert(splashitem);
+		//
+		// Other items don't get splash damage from their own fire.. but the
+		// player does.  Life is not fair..
+		//
+		if (splashitem == exclude || (splashitem == src && src != getControlledActor()) ||
+			splashitem->getShape() == BULLET_SPLASH_SHAPE)
+			continue;
+		int splashitemdamage = damage;
+		if (_typeNo == 3 || _typeNo == 4 || _typeNo == 10) {
+			Point3 pt2;
+			splashitem->getLocation(pt2);
+			int splashrange = pt.maxDistXYZ(pt2);
+			splashrange = (splashrange / 16) / 3;
+			if (splashrange)
+				splashitemdamage /= splashrange;
+		}
+		int splashdir = src->getDirToItemCentre(pt);
+		splashitem->receiveHit(0, splashdir, splashitemdamage, _typeNo);
 	}
 }
 

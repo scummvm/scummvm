@@ -57,6 +57,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/fire_type.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -156,16 +157,16 @@ bool Actor::loadMonsterStatsU8() {
 
 bool Actor::giveTreasure() {
 	MainShapeArchive *mainshapes = GameData::get_instance()->getMainShapes();
-	ShapeInfo *shapeinfo = getShapeInfo();
+	const ShapeInfo *shapeinfo = getShapeInfo();
 	MonsterInfo *mi = nullptr;
 	if (shapeinfo) mi = shapeinfo->_monsterInfo;
 	if (!mi)
 		return false;
 
-	Std::vector<TreasureInfo> &treasure = mi->_treasure;
+	const Std::vector<TreasureInfo> &treasure = mi->_treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
-		TreasureInfo &ti = treasure[i];
+		const TreasureInfo &ti = treasure[i];
 		Item *item;
 
 		// check map
@@ -193,7 +194,7 @@ bool Actor::giveTreasure() {
 
 				// NB: this is rather biased towards weapons with low _shapes...
 				for (unsigned int s = 0; s < mainshapes->getCount(); ++s) {
-					ShapeInfo *si = mainshapes->getShapeInfo(s);
+					const ShapeInfo *si = mainshapes->getShapeInfo(s);
 					if (!si->_weaponInfo) continue;
 
 					int chance = si->_weaponInfo->_treasureChance;
@@ -319,7 +320,7 @@ bool Actor::giveTreasure() {
 
 		if (ti._shapes.size() == 1) {
 			uint32 shapeNum = ti._shapes[0];
-			ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
+			const ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
 			if (!si) {
 				perr << "Trying to create treasure with an invalid shapeNum ("
 				     << shapeNum << ")" << Std::endl;
@@ -727,7 +728,121 @@ void Actor::getHomePosition(int32 &x, int32 &y, int32 &z) const {
 	z = _homeZ;
 }
 
+
 void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
+	if (GAME_IS_U8) {
+		receiveHitU8(other, dir, damage, damage_type);
+	} else {
+		receiveHitCru(other, dir, damage, damage_type);
+	}
+}
+
+void Actor::receiveHitCru(uint16 other, int dir, int damage, uint16 damage_type) {
+	//
+	// This is a big stack of constants and hard-coded things.
+	// It's like that in the original game.
+	//
+	Actor *attacker = getActor(other);
+	AudioProcess *audio = AudioProcess::get_instance();
+	Kernel *kernel = Kernel::get_instance();
+	uint32 shape = getShape();
+
+	if (shape == 0x3ac && _hitPoints > 0) {
+		// TODO: Finish special case for Vargas.  Should not do any damage
+		// if there is a particular anim process running.  Also, check if the
+		// same special case exists in REGRET.
+		doAnim(static_cast<Animation::Sequence>(0x21), getDir());
+		doAnim(static_cast<Animation::Sequence>(0x20), getDir());
+		_hitPoints -= damage;
+		return;
+	}
+
+	if (isDead())
+		return;
+
+	if (shape != 1 && this != getControlledActor()) {
+		//Actor *controlled = getControlledActor();
+		if (!isInCombat()) {
+			setActivity(getDefaultActivity(2)); // get activity from field 0xA
+			if (!isInCombat()) {
+				setInCombat();
+				// TODO: attack the currently controlled NPC.
+			}
+		} else {
+			if (getCurrentActivityNo() == 8) {
+				setActivity(5);
+			}
+			// TODO: attack the currently controlled NPC.
+		}
+
+		// If the attacker is the controlled npc and this actor is not pathfinding
+		if (attacker && attacker == getControlledActor() &&
+			kernel->findProcess(_objId, PathfinderProcess::PATHFINDER_PROC_TYPE) != nullptr) {
+			int32 x, y, z;
+			int32 ox, oy, oz;
+			getLocation(x, y, z);
+			attacker->getLocation(ox, oy, oz);
+			int32 maxdiff = MAX(MAX(abs(x - ox), abs(y - oy)), abs(z - oz));
+			if (maxdiff < 641 && isOnScreen()) {
+				// TODO: implement the equivalent of this function.  For now, we always
+				// cancel pathfinding for the NPC.
+				// uint32 direction = static_cast<uint32>(Get_WorldDirection(y - oy, x - ox));
+				// int result = FUN_1128_1755(this, attacker, direction, 0, 0, 0);
+				// if (result) {
+					kernel->killProcesses(_objId, PathfinderProcess::PATHFINDER_PROC_TYPE, true);
+				// }
+			}
+		}
+	} else {
+		damage = receiveShieldHit(damage, damage_type);
+	}
+
+	if (hasActorFlags(ACT_IMMORTAL))
+		damage = 0;
+
+	if (damage > _hitPoints)
+		damage = _hitPoints;
+
+	setHP(static_cast<uint16>(_hitPoints - damage));
+
+	if (_hitPoints == 0) {
+		// Die!
+		die(damage_type);
+	} else if (damage) {
+		// Not dead yet.
+		if (!isRobotCru()) {
+			uint16 sfxno;
+			if (hasExtFlags(EXT_FEMALE)) {
+				sfxno = 0xd8; // female scream
+			} else {
+				sfxno = 0x8f; // male scream
+			}
+			if (audio && !audio->isSFXPlayingForObject(sfxno, other)) {
+				audio->playSFX(sfxno, 0x10, other, 1, false);
+			}
+		}
+		if (damage_type == 0xf || damage_type == 7) {
+			if (shape == 1) {
+				kernel->killProcesses(_objId, 0x204, true);
+				doAnim(static_cast<Animation::Sequence>(0x37), getDir());
+			} else if (shape == 0x4e6 || shape == 0x338 || shape == 0x385 || shape == 899) {
+				if (!(getRandom() % 3)) {
+					// Randomly stun the NPC for these damage types.
+					// CHECK ME: is this time accurate?
+					Process *attack = kernel->findProcess(_objId, 0x259);
+					uint stun = ((getRandom() % 10) + 8) * 60;
+					if (attack && stun) {
+						Process *delay = new DelayProcess(stun);
+						kernel->addProcess(delay);
+						attack->waitFor(delay);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Actor::receiveHitU8(uint16 other, int dir, int damage, uint16 damage_type) {
 	if (isDead())
 		return; // already dead, so don't bother
 
@@ -885,7 +1000,7 @@ ProcId Actor::die(uint16 damageType) {
 
 	MainActor *avatar = getMainActor();
 	// if hostile to avatar
-	if (getEnemyAlignment() & avatar->getAlignment()) {
+	if (GAME_IS_U8 && (getEnemyAlignment() & avatar->getAlignment())) {
 		if (avatar->isInCombat()) {
 			// play victory fanfare
 			MusicProcess::get_instance()->playCombatMusic(109);
@@ -893,7 +1008,6 @@ ProcId Actor::die(uint16 damageType) {
 			MusicProcess::get_instance()->queueMusic(98);
 		}
 	}
-
 
 	destroyContents();
 	giveTreasure();
@@ -1799,8 +1913,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 	if (!item || !other)
 		return 0;
 
-	// TODO: get game difficulty here.
-	static const int gameDifficulty = 1;
+	const int gameDifficulty = World::get_instance()->getGameDifficulty();
 	int npcDifficulty = (item->getMapNum() & 3) + 1;
 
 	if (gameDifficulty < npcDifficulty)
@@ -1851,10 +1964,10 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 
 	uint16 wpntype = npcData->getWpnType();
 	Item *weapon = ItemFactory::createItem(wpntype, 0, 0, 0, 0, newactor->getMapNum(), 0, true);
-	/* TODO:
-	if (gameDifficulty == 4) {
-	   wpntype = randomlyGetHigherWeaponType(shape, wpntype);
-	}*/
+	if (World::get_instance()->getGameDifficulty() == 4) {
+	   wpntype = NPCDat::randomlyGetStrongerWeaponTypes(shape);
+	}
+
 	// TODO: should this be addItemCru? If so need to move it from MainActor.
 	weapon->moveToContainer(newactor, false);
 	newactor->setCombatTactic(0);
