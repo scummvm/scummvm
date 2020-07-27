@@ -351,7 +351,7 @@ bool Cast::loadArchive() {
 	}
 	copyCastStxts();
 
-	loadSpriteImages();
+	loadCastChildren();
 	loadSpriteSounds();
 
 	return true;
@@ -437,8 +437,8 @@ void Cast::copyCastStxts() {
 	}
 }
 
-void Cast::loadSpriteImages() {
-	debugC(1, kDebugLoading, "****** Preloading sprite images");
+void Cast::loadCastChildren() {
+	debugC(1, kDebugLoading, "****** Preloading sprite palettes and images");
 
 	Cast *sharedCast = _movie ? _movie->getSharedCast() : nullptr;
 
@@ -451,7 +451,7 @@ void Cast::loadSpriteImages() {
 			if (c->_value->_type == kCastPalette) {
 				PaletteCastMember *member = ((PaletteCastMember *)c->_value);
 				if (member->_children.size() != 1) {
-					warning("Cast::loadSpriteChildren: Expected 1 child for palette cast, got %d", member->_children.size());
+					warning("Cast::loadSpriteChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
 					continue;
 				}
 
@@ -491,7 +491,7 @@ void Cast::loadSpriteImages() {
 		}
 
 		if (pic == NULL) {
-			warning("Cast::loadSpriteImages(): Image %d not found", imgId);
+			warning("Cast::loadCastChildren(): Bitmap image %d not found", imgId);
 			continue;
 		}
 
@@ -514,13 +514,13 @@ void Cast::loadSpriteImages() {
 					img = new Image::BitmapDecoder();
 				}
 			} else {
-				warning("Cast::loadSpriteImages(): Image %d not found", imgId);
+				warning("Cast::loadCastChildren(): Bitmap image %d not found", imgId);
 			}
 
 			break;
 
 		default:
-			warning("Cast::loadSpriteImages(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
+			warning("Cast::loadCastChildren(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
 			break;
 		}
 
@@ -535,7 +535,7 @@ void Cast::loadSpriteImages() {
 
 		delete pic;
 
-		debugC(4, kDebugImages, "Cast::loadSpriteImages(): id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, w, h, bitmapCast->_flags1, bitmapCast->_flags2, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
+		debugC(4, kDebugImages, "Cast::loadCastChildren(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, w, h, bitmapCast->_flags1, bitmapCast->_flags2, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
 	}
 }
 

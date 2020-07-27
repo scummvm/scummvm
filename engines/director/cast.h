@@ -63,7 +63,7 @@ public:
 	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 
-	void loadSpriteImages();
+	void loadCastChildren();
 	void loadSpriteSounds();
 
 	void copyCastStxts();
