@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "audio/mididrv.h"
+#include "audio/mt32gm.h"
 
 #include "sci/resource.h"
 #include "sci/engine/features.h"
@@ -418,7 +419,7 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 		// Some GM devices support the GS drumkits as well.
 
 		// Apply drumkit fallback to correct invalid drumkit numbers.
-		patchToSend = patch < 128 ? _driver->_gsDrumkitFallbackMap[patch] : 0;
+		patchToSend = patch < 128 ? MidiDriver_MT32GM::GS_DRUMKIT_FALLBACK_MAP[patch] : 0;
 		_channels[channel].patch = patchToSend;
 		debugC(kDebugLevelSound, "[Midi] Selected drumkit %i (requested %i)", patchToSend, patch);
 	}

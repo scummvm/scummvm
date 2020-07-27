@@ -91,6 +91,44 @@ enum MidiDriverFlags {
  */
 class MidiDriver_BASE {
 public:
+	static const uint8 MIDI_CHANNEL_COUNT = 16;
+	static const uint8 MIDI_RHYTHM_CHANNEL = 9;
+
+	static const byte MIDI_COMMAND_NOTE_OFF = 0x80;
+	static const byte MIDI_COMMAND_NOTE_ON = 0x90;
+	static const byte MIDI_COMMAND_POLYPHONIC_AFTERTOUCH = 0xA0;
+	static const byte MIDI_COMMAND_CONTROL_CHANGE = 0xB0;
+	static const byte MIDI_COMMAND_PROGRAM_CHANGE = 0xC0;
+	static const byte MIDI_COMMAND_CHANNEL_AFTERTOUCH = 0xD0;
+	static const byte MIDI_COMMAND_PITCH_BEND = 0xE0;
+	static const byte MIDI_COMMAND_SYSTEM = 0xF0;
+
+	static const byte MIDI_CONTROLLER_BANK_SELECT_MSB = 0x00;
+	static const byte MIDI_CONTROLLER_MODULATION = 0x01;
+	static const byte MIDI_CONTROLLER_DATA_ENTRY_MSB = 0x06;
+	static const byte MIDI_CONTROLLER_VOLUME = 0x07;
+	static const byte MIDI_CONTROLLER_PANNING = 0x0A;
+	static const byte MIDI_CONTROLLER_EXPRESSION = 0x0B;
+	static const byte MIDI_CONTROLLER_BANK_SELECT_LSB = 0x20;
+	static const byte MIDI_CONTROLLER_DATA_ENTRY_LSB = 0x26;
+	static const byte MIDI_CONTROLLER_SUSTAIN = 0x40;
+	static const byte MIDI_CONTROLLER_REVERB = 0x5B;
+	static const byte MIDI_CONTROLLER_CHORUS = 0x5D;
+	static const byte MIDI_CONTROLLER_RPN_LSB = 0x64;
+	static const byte MIDI_CONTROLLER_RPN_MSB = 0x65;
+	static const byte MIDI_CONTROLLER_RESET_ALL_CONTROLLERS = 0x79;
+	static const byte MIDI_CONTROLLER_ALL_NOTES_OFF = 0x7B;
+	static const byte MIDI_CONTROLLER_OMNI_ON = 0x7C;
+	static const byte MIDI_CONTROLLER_OMNI_OFF = 0x7D;
+	static const byte MIDI_CONTROLLER_MONO_ON = 0x7E;
+	static const byte MIDI_CONTROLLER_POLY_ON = 0x7F;
+
+	static const byte MIDI_RPN_PITCH_BEND_SENSITIVITY_MSB = 0x00;
+	static const byte MIDI_RPN_PITCH_BEND_SENSITIVITY_LSB = 0x00;
+	static const byte MIDI_RPN_NULL = 0x7F;
+
+	static const uint16 MIDI_PITCH_BEND_DEFAULT = 0x2000;
+
 	MidiDriver_BASE();
 
 	virtual ~MidiDriver_BASE();
@@ -270,14 +308,6 @@ public:
 	/** Common operations to be done by all drivers on start of sysEx */
 	void midiDriverCommonSysEx(const byte *msg, uint16 length);
 
-protected:
-	// True if stereo panning should be reversed.
-	bool _reversePanning;
-	// True if GS percussion channel volume should be scaled to match MT-32 volume.
-	bool _scaleGSPercussionVolumeToMT32;
-	// The currently selected GS instrument bank / variation for each channel.
-	byte _gsBank[16];
-
 private:
 	// If detectDevice() detects MT32 and we have a preferred MT32 device
 	// we use this to force getMusicType() to return MT_MT32 so that we don't
@@ -287,18 +317,10 @@ private:
 	static bool _forceTypeMT32;
 
 public:
-	MidiDriver() : _reversePanning(false),
-					_scaleGSPercussionVolumeToMT32(false) {
-		memset(_gsBank, 0, sizeof(_gsBank));
-	}
 	virtual ~MidiDriver() { }
 
 	static const byte _mt32ToGm[128];
 	static const byte _gmToMt32[128];
-	static const byte _mt32DefaultInstruments[8];
-	static const byte _mt32DefaultPanning[8];
-	// Map for correcting Roland GS drumkit numbers.
-	static const uint8 _gsDrumkitFallbackMap[128];
 
 	/**
 	 * Error codes returned by open.
@@ -316,7 +338,36 @@ public:
 		PROP_OLD_ADLIB = 2,
 		PROP_CHANNEL_MASK = 3,
 		// HACK: Not so nice, but our SCUMM AdLib code is in audio/
-		PROP_SCUMM_OPL3 = 4
+		PROP_SCUMM_OPL3 = 4,
+		/**
+		 * Set this to enable or disable scaling of the MIDI channel
+		 * volume with the user volume settings (including setting it
+		 * to 0 when Mute All is selected). This is currently
+		 * implemented in the MT-32/GM drivers (regular and Miles AIL).
+		 *
+		 * Default is enabled for the regular driver, and disabled for
+		 * the Miles AIL driver.
+		 */
+		PROP_USER_VOLUME_SCALING = 5,
+		/**
+		 * Set this property to indicate that the MIDI data used by the
+		 * game has reversed stereo panning compared to its intended
+		 * device. The MT-32 has reversed stereo panning compared to
+		 * the MIDI specification and some game developers chose to
+		 * stick to the MIDI specification.
+		 *
+		 * Do not confuse this with the _midiDeviceReversePanning flag,
+		 * which indicates that the output MIDI device has reversed
+		 * stereo panning compared to the intended MIDI device targeted
+		 * by the MIDI data. This is set by the MT-32/GM driver when
+		 * MT-32 data is played on a GM device or the other way around.
+		 * Both flags can be set, which results in no change to the
+		 * panning.
+		 *
+		 * Set this property before opening the driver, to make sure
+		 * that the default panning is set correctly.
+		 */
+		 PROP_MIDI_DATA_REVERSE_PANNING = 6
 	};
 
 	/**
@@ -341,35 +392,18 @@ public:
 
 	// HIGH-LEVEL SEMANTIC METHODS
 	virtual void setPitchBendRange(byte channel, uint range) {
-		send(0xB0 | channel, 101, 0);
-		send(0xB0 | channel, 100, 0);
-		send(0xB0 | channel,   6, range);
-		send(0xB0 | channel,  38, 0);
-		send(0xB0 | channel, 101, 127);
-		send(0xB0 | channel, 100, 127);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_PITCH_BEND_SENSITIVITY_MSB);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_PITCH_BEND_SENSITIVITY_LSB);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_DATA_ENTRY_MSB, range); // Semi-tones
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_DATA_ENTRY_LSB, 0); // Cents
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_NULL);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_NULL);
 	}
-
-	/**
-	 * Initializes the MT-32 MIDI device. The device will be reset and, 
-	 * if the parameter is specified, set up for General MIDI data.
-	 * @param initForGM True if the MT-32 should be initialized for GM mapping
-	 */
-	void initMT32(bool initForGM);
 
 	/**
 	 * Send a Roland MT-32 reset sysEx to the midi device.
 	 */
 	void sendMT32Reset();
-
-	/**
-	 * Initializes the General MIDI device. The device will be reset.
-	 * If the initForMT32 parameter is specified, the device will be set up for
-	 * MT-32 MIDI data. If the device supports Roland GS, the enableGS
-	 * parameter can be specified for enhanced GS MT-32 compatiblity.
-	 * @param initForMT32 True if the device should be initialized for MT-32 mapping
-	 * @param enableGS True if the device should be initialized for GS MT-32 mapping
-	 */
-	void initGM(bool initForMT32, bool enableGS);
 
 	/**
 	 * Send a General MIDI reset sysEx to the midi device.
@@ -393,18 +427,6 @@ public:
 
 	// Does this driver accept soundFont data?
 	virtual bool acceptsSoundFontData() { return false; }
-
-protected:
-	/**
-	 * Checks if the currently selected GS bank / instrument variation
-	 * on the specified channel is valid for the specified patch.
-	 * If this is not the case, the correct bank will be returned which
-	 * can be set by sending a bank select message. If no correction is
-	 * needed, 0xFF will be returned.
-	 * This emulates the fallback functionality of the Roland SC-55 v1.2x,
-	 * on which some games rely to correct wrong bank selects.
-	 */
-	byte correctInstrumentBank(byte outputChannel, byte patchId);
 };
 
 class MidiChannel {
@@ -425,17 +447,17 @@ public:
 
 	// Control Change messages
 	virtual void controlChange(byte control, byte value) = 0;
-	virtual void modulationWheel(byte value) { controlChange(1, value); }
-	virtual void volume(byte value) { controlChange(7, value); }
-	virtual void panPosition(byte value) { controlChange(10, value); }
+	virtual void modulationWheel(byte value) { controlChange(MidiDriver::MIDI_CONTROLLER_MODULATION, value); }
+	virtual void volume(byte value) { controlChange(MidiDriver::MIDI_CONTROLLER_VOLUME, value); }
+	virtual void panPosition(byte value) { controlChange(MidiDriver::MIDI_CONTROLLER_PANNING, value); }
 	virtual void pitchBendFactor(byte value) = 0;
 	virtual void transpose(int8 value) {}
 	virtual void detune(byte value) { controlChange(17, value); }
 	virtual void priority(byte value) { }
-	virtual void sustain(bool value) { controlChange(64, value ? 1 : 0); }
-	virtual void effectLevel(byte value) { controlChange(91, value); }
-	virtual void chorusLevel(byte value) { controlChange(93, value); }
-	virtual void allNotesOff() { controlChange(123, 0); }
+	virtual void sustain(bool value) { controlChange(MidiDriver::MIDI_CONTROLLER_SUSTAIN, value ? 1 : 0); }
+	virtual void effectLevel(byte value) { controlChange(MidiDriver::MIDI_CONTROLLER_REVERB, value); }
+	virtual void chorusLevel(byte value) { controlChange(MidiDriver::MIDI_CONTROLLER_CHORUS, value); }
+	virtual void allNotesOff() { controlChange(MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0); }
 
 	// SysEx messages
 	virtual void sysEx_customInstrument(uint32 type, const byte *instr) = 0;
