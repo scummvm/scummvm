@@ -763,7 +763,7 @@ void FWRenderer::drawFrame(bool wait) {
 	for (int i = 0; i < menus; ++i)
 		_menuStack[i]->drawMenu(*this, (i == menus - 1));
 
-	blit();	
+	blit();
 
 	if (gfxFadeInRequested) {
 		fadeFromBlack();
@@ -1403,7 +1403,7 @@ void OSRenderer::incrustMask(const BGIncrust &incrust, uint8 color) {
 }
 
 const Cine::Palette& OSRenderer::getFadeInSourcePalette() {
-	assert(_currentBg >= 0 && _currentBg <= 8);
+	assert(_currentBg <= 8);
 
 	if (_currentBg == 0) {
 		return _backupPal;
