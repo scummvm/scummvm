@@ -1503,7 +1503,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kThePalette:
-		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
+		if (member->_type == kCastBitmap)
+			d.u.i = ((BitmapCastMember *)member)->_clut;
 		break;
 	case kThePicture:
 		warning("STUB: Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
@@ -1697,7 +1698,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
 		break;
 	case kThePalette:
-		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);
+		if (member->_type == kCastBitmap)
+			((BitmapCastMember *)member)->_clut = d.asInt();
 		break;
 	case kThePicture:
 		warning("STUB: Lingo::setTheCast(): Unprocessed setting field \"%s\" of cast %d", field2str(field), id);

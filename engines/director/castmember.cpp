@@ -70,7 +70,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		if (_bytes & 0x8000) {
 			_bitsPerPixel = stream.readUint16();
-			_clut = (PaletteType)stream.readUint16();
+			_clut = stream.readSint16() - 1;
 		} else {
 			_bitsPerPixel = 1;
 			_clut = kClutSystemMac;
@@ -95,7 +95,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		if (stream.eos()) {
 			_bitsPerPixel = 0;
 		} else {
-			_clut = (PaletteType)stream.readUint16();
+			_clut = stream.readSint16() - 1;
 			stream.readUint16();
 			/* uint16 unk1 = */ stream.readUint16();
 			stream.readUint16();

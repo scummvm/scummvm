@@ -105,7 +105,7 @@ public:
 	uint16 _regY;
 	uint16 _flags2;
 	uint16 _bytes;
-	PaletteType _clut;
+	int _clut;
 
 	uint16 _bitsPerPixel;
 
