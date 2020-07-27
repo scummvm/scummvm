@@ -479,12 +479,14 @@ int MainActor::getDamageAmount() const {
 
 void MainActor::setInCombat() {
 	setActorFlag(ACT_INCOMBAT);
-	MusicProcess::get_instance()->playCombatMusic(98); // CONSTANT!
+	if (GAME_IS_U8)
+		MusicProcess::get_instance()->playCombatMusic(98); // CONSTANT!
 }
 
 void MainActor::clearInCombat() {
 	clearActorFlag(ACT_INCOMBAT);
-	MusicProcess::get_instance()->restoreMusic();
+	if (GAME_IS_U8)
+		MusicProcess::get_instance()->restoreMusic();
 }
 
 ProcId MainActor::die(uint16 damageType) {
