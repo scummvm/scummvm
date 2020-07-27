@@ -641,9 +641,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 	const void *src = vs->getPixels(x, top);
 	int m = _textSurfaceMultiplier;
-	int vsPitch;
 	int pitch = vs->pitch;
-	vsPitch = vs->pitch - width * vs->format.bytesPerPixel;
 
 	// In MM NES If we're repainting the entire screen, just make everything black
 	if ((_game.platform == Common::kPlatformNES) && width == 256 && height == 240) {
@@ -672,65 +670,24 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		if (_game.platform == Common::kPlatformFMTowns) {
 			towns_drawStripToScreen(vs, x, y, x, top, width, height);
 			return;
-		} else
-#endif
-		if (_outputPixelFormat.bytesPerPixel == 2) {
-			const byte *srcPtr = (const byte *)src;
-			const byte *textPtr = (byte *)_textSurface.getBasePtr(x * m, y * m);
-			byte *dstPtr = _compositeBuf;
-
-			for (int h = 0; h < height * m; ++h) {
-				for (int w = 0; w < width * m; ++w) {
-					uint16 tmp = *textPtr++;
-					if (tmp == CHARSET_MASK_TRANSPARENCY) {
-						tmp = READ_UINT16(srcPtr);
-						WRITE_UINT16(dstPtr, tmp); dstPtr += 2;
-					} else if (_game.heversion != 0) {
-						error ("16Bit Color HE Game using old charset");
-					} else {
-						WRITE_UINT16(dstPtr, _16BitPalette[tmp]); dstPtr += 2;
-					}
-					srcPtr += vs->format.bytesPerPixel;
-				}
-				srcPtr += vsPitch;
-				textPtr += _textSurface.pitch - width * m;
-			}
-		} else {
-#ifdef USE_ARM_GFX_ASM
-			asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
-#else
-			// We blit four pixels at a time, for improved performance.
-			const uint32 *src32 = (const uint32 *)src;
-			uint32 *dst32 = (uint32 *)_compositeBuf;
-
-			vsPitch >>= 2;
-
-			const uint32 *text32 = (const uint32 *)text;
-			const int textPitch = (_textSurface.pitch - width * m) >> 2;
-			for (int h = height * m; h > 0; --h) {
-				for (int w = width * m; w > 0; w -= 4) {
-					uint32 temp = *text32++;
-
-					// Generate a byte mask for those text pixels (bytes) with
-					// value CHARSET_MASK_TRANSPARENCY. In the end, each byte
-					// in mask will be either equal to 0x00 or 0xFF.
-					// Doing it this way avoids branches and bytewise operations,
-					// at the cost of readability ;).
-					uint32 mask = temp ^ CHARSET_MASK_TRANSPARENCY_32;
-					mask = (((mask & 0x7f7f7f7f) + 0x7f7f7f7f) | mask) & 0x80808080;
-					mask = ((mask >> 7) + 0x7f7f7f7f) ^ 0x80808080;
-
-					// The following line is equivalent to this code:
-					//   *dst32++ = (*src32++ & mask) | (temp & ~mask);
-					// However, some compilers can generate somewhat better
-					// machine code for this equivalent statement:
-					*dst32++ = ((temp ^ *src32++) & mask) ^ temp;
-				}
-				src32 += vsPitch;
-				text32 += textPitch;
-			}
-#endif
 		}
+#endif
+#ifdef USE_ARM_GFX_ASM
+		asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
+#else
+		byte *srcPtr = (byte *)((size_t)src);
+		byte *textPtr = (byte *)_textSurface.getBasePtr(x * m, y * m);
+		byte bpp = vs->format.bytesPerPixel;
+		byte *dst = _compositeBuf;
+
+		blit(dst, width * bpp, srcPtr, vs->pitch, width, height, bpp);
+	
+#endif
+		if (_game.heversion == 0) { // If 16-bit color HE game using old charset, draw nothing.
+		masked_blit(dst, width * bpp, textPtr, vs->pitch, width, height, bpp,
+			(bpp == 4) ? CHARSET_MASK_TRANSPARENCY_32 : CHARSET_MASK_TRANSPARENCY, _16BitPalette);
+		}
+
 		src = _compositeBuf;
 		pitch = width * vs->format.bytesPerPixel;
 
