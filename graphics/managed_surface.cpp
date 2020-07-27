@@ -519,7 +519,7 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 		}
 	}
 
-	delete lookup;
+	delete[] lookup;
 }
 
 #define HANDLE_BLIT(SRC_BYTES, DEST_BYTES, SRC_TYPE, DEST_TYPE) \
