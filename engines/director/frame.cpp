@@ -89,6 +89,8 @@ Frame::Frame(const Frame &frame) {
 
 	_palette = frame._palette;
 
+	_score = frame._score;
+
 	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
 
 	_sprites.resize(_numChannels + 1);
