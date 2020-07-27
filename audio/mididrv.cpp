@@ -57,45 +57,6 @@ const byte MidiDriver::_gmToMt32[128] = {
 	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
 };
 
-// These are the power-on default instruments of the Roland MT-32 family.
-const byte MidiDriver::_mt32DefaultInstruments[8] = {
-	0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A
-};
-
-// These are the power-on default panning settings for channels 2-9 of the Roland MT-32 family.
-// Internally, the MT-32 has 15 panning positions (0-E with 7 being center).
-// This has been translated to the equivalent MIDI panning values (0-127).
-// These are used for setting default panning on GM devices when using them with MT-32 data.
-// Note that MT-32 panning is reversed compared to the MIDI specification. This is not reflected
-// here; the driver is expected to flip these values based on the _reversePanning variable.
-const byte MidiDriver::_mt32DefaultPanning[8] = {
-	// 7,    8,    7,    8,    4,    A,    0,    E 
-	0x40, 0x49,	0x40, 0x49, 0x25, 0x5B, 0x00, 0x7F
-};
-
-// This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism 
-// to correct invalid drumkit selections. Some games rely on this mechanism to select the 
-// correct Roland GS drumkit. Use this map to emulate this mechanism.
-// E.g. correct invalid drumkit 50: _gsDrumkitFallbackMap[50] == 48
-const uint8 MidiDriver::_gsDrumkitFallbackMap[128] = {
-	 0,  0,  0,  0,  0,  0,  0,  0, // STANDARD
-	 8,  8,  8,  8,  8,  8,  8,  8, // ROOM
-	16, 16, 16, 16, 16, 16, 16, 16, // POWER
-	24, 25, 24, 24, 24, 24, 24, 24, // ELECTRONIC; TR-808 (25)
-	32, 32, 32, 32, 32, 32, 32, 32, // JAZZ
-	40, 40, 40, 40, 40, 40, 40, 40, // BRUSH
-	48, 48, 48, 48, 48, 48, 48, 48, // ORCHESTRA
-	56, 56, 56, 56, 56, 56, 56, 56, // SFX
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined (fall back to STANDARD)
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0, 127 // No drumkit defined; CM-64/32L (127)
-};
-
 static const struct {
 	uint32      type;
 	const char *guio;
@@ -467,169 +428,10 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	return 0;
 }
 
-void MidiDriver::initMT32(bool initForGM) {
-	sendMT32Reset();
-
-	if (initForGM) {
-		// Set up MT-32 for GM data.
-		// This is based on Roland's GM settings for MT-32.
-		debug("Initializing MT-32 for General MIDI data");
-
-		byte buffer[17];
-
-		// Roland MT-32 SysEx for system area
-		memcpy(&buffer[0], "\x41\x10\x16\x12\x10\x00", 6);
-
-		// Set reverb parameters:
-		// - Mode 2 (Plate)
-		// - Time 3
-		// - Level 4
-		memcpy(&buffer[6], "\x01\x02\x03\x04\x66", 5);
-		sysEx(buffer, 11);
-
-		// Set partial reserve to match SC-55
-		memcpy(&buffer[6], "\x04\x08\x04\x04\x03\x03\x03\x03\x02\x02\x4C", 11);
-		sysEx(buffer, 17);
-
-		// Use MIDI instrument channels 1-8 instead of 2-9
-		memcpy(&buffer[6], "\x0D\x00\x01\x02\x03\x04\x05\x06\x07\x09\x3E", 11);
-		sysEx(buffer, 17);
-
-		// The MT-32 has reversed stereo panning compared to the MIDI spec.
-		// GM does use panning as specified by the MIDI spec.
-		_reversePanning = true;
-
-		int i;
-
-		// Set default GM panning (center on all channels)
-		for (i = 0; i < 8; ++i) {
-			send((0x40 << 16) | (10 << 8) | (0xB0 | i));
-		}
-
-		// Set default GM instruments (0 on all channels).
-		// This is expected to be mapped to the MT-32 equivalent by the driver.
-		for (i = 0; i < 8; ++i) {
-			send((0 << 8) | (0xC0 | i));
-		}
-
-		// Set Pitch Bend Sensitivity to 2 semitones.
-		for (i = 0; i < 8; ++i) {
-			setPitchBendRange(i, 2);
-		}
-		setPitchBendRange(9, 2);
-	}
-}
-
 void MidiDriver::sendMT32Reset() {
 	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
 	sysEx(resetSysEx, sizeof(resetSysEx));
 	g_system->delayMillis(100);
-}
-
-void MidiDriver::initGM(bool initForMT32, bool enableGS) {
-	sendGMReset();
-
-	if (initForMT32) {
-		// Set up the GM device for MT-32 MIDI data.
-		// Based on iMuse implementation (which is based on Roland's MT-32 settings for GS)
-		debug("Initializing GM device for MT-32 MIDI data");
-
-		// The MT-32 has reversed stereo panning compared to the MIDI spec.
-		// GM does use panning as specified by the MIDI spec.
-		_reversePanning = true;
-
-		int i;
-
-		// Set the default panning for the MT-32 instrument channels.
-		for (i = 1; i < 9; ++i) {
-			send((_mt32DefaultPanning[i - 1] << 16) | (10 << 8) | (0xB0 | i));
-		}
-
-		// Set Channels 1-16 Reverb to 64, which is the
-		// equivalent of MT-32 default Reverb Level 5
-		for (i = 0; i < 16; ++i)
-			send((64 << 16) | (91 << 8) | (0xB0 | i));
-
-		// Set Channels 1-16 Chorus to 0. The MT-32 has no chorus capability.
-		// (This is probably the default for many GM devices with chorus anyway.)
-		for (i = 0; i < 16; ++i)
-			send((0 << 16) | (93 << 8) | (0xB0 | i));
-
-		// Set Channels 1-16 Pitch Bend Sensitivity to 12 semitones.
-		for (i = 0; i < 16; ++i) {
-			setPitchBendRange(i, 12);
-		}
-
-		if (enableGS) {
-			// GS specific settings for MT-32 instrument mapping.
-			debug("Additional initialization of GS device for MT-32 MIDI data");
-
-			// Note: All Roland GS devices support CM-64/32L maps
-
-			// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
-			// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
-			// Bank select MSB: bank 0
-			getPercussionChannel()->controlChange(0, 0);
-			// Bank select LSB: map 1 (SC-55)
-			getPercussionChannel()->controlChange(32, 1);
-			// Patch change: 127 (CM-64/32L)
-			send(127 << 8 | 0xC0 | 9);
-
-			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
-			for (i = 0; i < 16; ++i) {
-				if (i == getPercussionChannel()->getNumber())
-					continue;
-				// Bank select MSB: bank 127 (CM-64/32L)
-				send((127 << 16) | (0 << 8) | (0xB0 | i));
-				// Bank select LSB: map 1 (SC-55)
-				send((1 << 16) | (32 << 8) | (0xB0 | i));
-				// Patch change: 0 (causes bank select to take effect)
-				send((0 << 16) | (0 << 8) | (0xC0 | i));
-			}
-
-			byte buffer[12];
-
-			// Roland GS SysEx ID
-			memcpy(&buffer[0], "\x41\x10\x42\x12", 4);
-
-			// Set channels 1-16 Mod. LFO1 Pitch Depth to 4
-			memcpy(&buffer[4], "\x40\x20\x04\x04\x18", 5);
-			for (i = 0; i < 16; ++i) {
-				buffer[5] = 0x20 + i;
-				buffer[8] = 0x18 - i;
-				sysEx(buffer, 9);
-			}
-
-			// In Roland's GS MT-32 emulation settings, percussion channel expression
-			// is locked at 80. This corrects a difference in volume of the SC-55 MT-32
-			// drum kit vs the drums of the MT-32. However, this approach has a problem:
-			// the MT-32 supports expression on the percussion channel, so MIDI data
-			// which uses this will play incorrectly. So instead, percussion channel
-			// volume will be scaled by the driver by a factor 80/127.
-			// Strangely, the regular GM drum kit does have a volume that matches the
-			// MT-32 drums, so scaling is only necessary when using GS MT-32 emulation.
-			_scaleGSPercussionVolumeToMT32 = true;
-
-			// Change Reverb settings (as used by Roland):
-			// - Character: 0
-			// - Pre-LPF: 4
-			// - Level: 35h
-			// - Time: 6Ah
-			memcpy(&buffer[4], "\x40\x01\x31\x00\x04\x35\x6A\x6B", 8);
-			sysEx(buffer, 12);
-		}
-
-		// Set the default MT-32 patches. For non-GS devices these are expected to be
-		// mapped to the GM equivalents by the driver.
-		for (i = 1; i < 9; ++i) {
-			send((_mt32DefaultInstruments[i - 1] << 8) | (0xC0 | i));
-		}
-
-		// Regarding Master Tune: 442 kHz was intended for the MT-32 family, but
-		// apparently due to a firmware bug the master tune was actually 440 kHz for
-		// all models (see MUNT source code for more details). So master tune is left
-		// at 440 kHz for GM devices playing MT-32 MIDI data.
-	}
 }
 
 void MidiDriver::sendGMReset() {
@@ -646,79 +448,6 @@ void MidiDriver::sendGMReset() {
 	static const byte gsResetSysEx[] = { 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41 };
 	sysEx(gsResetSysEx, sizeof(gsResetSysEx));
 	g_system->delayMillis(100);
-}
-
-byte MidiDriver::correctInstrumentBank(byte outputChannel, byte patchId) {
-	if (_gsBank[outputChannel] == 0 || patchId >= 120 || _gsBank[outputChannel] >= 64)
-		// Usually, no bank select has been sent and no correction is
-		// necessary.
-		// No correction is performed on banks 64-127 or on the SFX
-		// instruments (120-127).
-		return 0xFF;
-
-	// Determine the intended bank. This emulates the behavior of the
-	// Roland SC-55 v1.2x. Instruments have 2, 1 or 0 sub-capital tones.
-	// Depending on the selected bank and the selected instrument, the
-	// bank will "fall back" to a sub-capital tone or to the capital
-	// tone (bank 0).
-	byte correctedBank = 0xFF;
-
-	switch (patchId) {
-	case 25:  // Steel-String Guitar / 12-string Guitar / Mandolin
-		// This instrument has 2 sub-capital tones. Bank selects 17-63 
-		// are corrected to the second sub-capital tone at 16.
-		if (_gsBank[outputChannel] >= 16) {
-			correctedBank = 16;
-			break;
-		}
-		// Corrections for values below 16 are handled below.
-
-		// fall through
-	case 4:   // Electric Piano 1 / Detuned Electric Piano 1
-	case 5:   // Electric Piano 2 / Detuned Electric Piano 2
-	case 6:   // Harpsichord / Coupled Harpsichord
-	case 14:  // Tubular-bell / Church Bell
-	case 16:  // Organ 1 / Detuned Organ 1
-	case 17:  // Organ 2 / Detuned Organ 2
-	case 19:  // Church Organ 1 / Church Organ 2
-	case 21:  // Accordion Fr / Accordion It
-	case 24:  // Nylon-string Guitar / Ukelele
-	case 26:  // Jazz Guitar / Hawaiian Guitar
-	case 27:  // Clean Guitar / Chorus Guitar
-	case 28:  // Muted Guitar / Funk Guitar
-	case 30:  // Distortion Guitar / Feedback Guitar
-	case 31:  // Guitar Harmonics / Guitar Feedback
-	case 38:  // Synth Bass 1 / Synth Bass 3
-	case 39:  // Synth Bass 2 / Synth Bass 4
-	case 48:  // Strings / Orchestra
-	case 50:  // Synth Strings 1 / Synth Strings 3
-	case 61:  // Brass 1 / Brass 2
-	case 62:  // Synth Brass 1 / Synth Brass 3
-	case 63:  // Synth Brass 2 / Synth Brass 4
-	case 80:  // Square Wave / Sine Wave
-	case 107: // Koto / Taisho Koto
-	case 115: // Woodblock / Castanets
-	case 116: // Taiko / Concert BD
-	case 117: // Melodic Tom 1 / Melodic Tom 2
-	case 118: // Synth Drum / 808 Tom
-		// These instruments have one sub-capital tone. Bank selects 9-63
-		// are corrected to the sub-capital tone at 8.
-		if (_gsBank[outputChannel] >= 8) {
-			correctedBank = 8;
-			break;
-		}
-		// Corrections for values below 8 are handled below.
-
-		// fall through
-	default:
-		// The other instruments only have a capital tone. Bank selects
-		// 1-63 are corrected to the capital tone.
-		correctedBank = 0;
-		break;
-	}
-
-	// Return the corrected bank, or 0xFF if no correction is needed.
-	return _gsBank[outputChannel] != correctedBank ? correctedBank : 0xFF;
 }
 
 void MidiDriver_BASE::midiDumpInit() {
@@ -837,9 +566,9 @@ void MidiDriver_BASE::send(int8 source, byte status, byte firstOp, byte secondOp
 
 void MidiDriver_BASE::stopAllNotes(bool stopSustainedNotes) {
 	for (int i = 0; i < 16; ++i) {
-		send(0xB0 | i, 0x7B, 0); // All notes off
+		send(0xB0 | i, MIDI_CONTROLLER_ALL_NOTES_OFF, 0);
 		if (stopSustainedNotes)
-			send(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)
+			send(0xB0 | i, MIDI_CONTROLLER_SUSTAIN, 0); // Also send a sustain off event (bug #3116608)
 	}
 }
 
