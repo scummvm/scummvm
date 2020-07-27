@@ -59,6 +59,14 @@ struct PaletteInfo {
 	byte delay;
 	byte style;
 	byte colorCode;
+
+	PaletteInfo() {
+		paletteId = 0;
+		firstColor = lastColor = 0;
+		flags = 0; speed = 0;
+		frameCount = cycleCount = 0;
+		fade = delay = style = colorCode = 0;
+	}
 };
 
 struct FrameEntity {
