@@ -420,6 +420,9 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 		for (int i = 0; i < 0x08; i++) {
 			stream.readByte();
 		}
+	} else {
+		// Set default palette for earlier versions
+		_vm->setPalette(-1);
 	}
 
 	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
