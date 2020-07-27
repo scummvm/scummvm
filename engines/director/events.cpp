@@ -143,7 +143,7 @@ bool Movie::processEvent(Common::Event &event) {
 
 		// D3 doesn't have both mouse up and down.
 		// But we still want to know if the mouse is down for press effects.
-		spriteId = sc->getSpriteIDFromPos(pos, true);
+		spriteId = sc->getSpriteIDFromPos(pos, kEventMouseDown);
 		_currentMouseDownSpriteId = spriteId;
 		_currentClickOnSpriteId = spriteId;
 
@@ -167,7 +167,7 @@ bool Movie::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 		pos = _stage->getMousePos();
 
-		spriteId = sc->getSpriteIDFromPos(pos, true);
+		spriteId = sc->getSpriteIDFromPos(pos, kEventMouseUp);
 
 		if (!sc->getChannelById(_currentMouseDownSpriteId)->getBbox().contains(pos))
 			_currentMouseDownSpriteId = 0;

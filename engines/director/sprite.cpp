@@ -29,6 +29,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Director {
 
@@ -97,15 +98,28 @@ void Sprite::updateCast() {
 		_cast->setEditable(_editable);
 }
 
-bool Sprite::isFocusable() {
-	if (_moveable || _puppet || _scriptId)
+bool Sprite::respondsToEvent(LEvent event) {
+	if (_moveable && (event == kEventMouseDown || event == kEventMouseUp))
+		return true;
+
+	ScriptContext *spriteScript = _movie->getScriptContext(kScoreScript, _scriptId);
+	if (spriteScript) {
+		if (((event == kEventMouseDown && _immediate) || (event == kEventMouseUp && !_immediate))
+				&& spriteScript->_eventHandlers.contains(kEventGeneric))
+					return true;
+		if (spriteScript->_eventHandlers.contains(event))
+			return true;
+	}
+
+	ScriptContext *castScript = _movie->getScriptContext(kCastScript, _castId);
+	if (castScript && castScript->_eventHandlers.contains(event))
 		return true;
 
 	return false;
 }
 
 bool Sprite::shouldHilite() {
-	if (isFocusable() && ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte)))
+	if ((_cast && _cast->_autoHilite) || (isQDShape() && _ink == kInkTypeMatte))
 		if (g_director->getVersion() < 4 && !_moveable)
 			if (_movie->getScriptContext(kScoreScript, _scriptId) ||
 					_movie->getScriptContext(kCastScript, _castId))

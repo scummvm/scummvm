@@ -95,7 +95,7 @@ public:
 	int getCurrentLabelNumber();
 	int getNextLabelNumber(int referenceFrame);
 
-	uint16 getSpriteIDFromPos(Common::Point pos, bool firstActive = false);
+	uint16 getSpriteIDFromPos(Common::Point pos, LEvent respondsToEvent = kEventNone);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 	Common::List<Channel *> getSpriteIntersections(const Common::Rect &r);
 

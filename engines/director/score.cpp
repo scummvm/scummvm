@@ -511,12 +511,12 @@ void Score::screenShot() {
 	newSurface->free();
 }
 
-uint16 Score::getSpriteIDFromPos(Common::Point pos, bool firstActive) {
+uint16 Score::getSpriteIDFromPos(Common::Point pos, LEvent respondsToEvent) {
 	int unfocusableSprite = 0;
 
 	for (int i = _channels.size() - 1; i >= 0; i--)
 		if (_channels[i]->isMouseIn(pos)) {
-			if (!firstActive || _channels[i]->_sprite->isFocusable())
+			if (respondsToEvent == kEventNone || _channels[i]->_sprite->respondsToEvent(respondsToEvent))
 				return i;
 			else if (unfocusableSprite == 0)
 				unfocusableSprite = i;

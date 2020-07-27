@@ -67,7 +67,7 @@ public:
 
 	void updateCast();
 
-	bool isFocusable();
+	bool respondsToEvent(LEvent event);
 	bool shouldHilite();
 
 	uint16 getPattern();
