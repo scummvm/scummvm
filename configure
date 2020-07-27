@@ -4647,10 +4647,6 @@ if test "$_vorbis" = no && test "$_tremor" = no ; then
 	echo "skipping. no vorbis"
 	_theoradec=notsupported
 fi
-if test "$_ogg" = no ; then
-	echo "skipping. no ogg"
-	_theoradec=notsupported
-fi
 if test "$_theoradec" = auto ; then
 	_theoradec=no
 	cat > $TMPC << EOF
