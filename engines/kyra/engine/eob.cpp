@@ -475,7 +475,8 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 		if (!checkScriptFlags(0x100000)) {
 			if (deletePartyItems(6, -1)) {
 				_npcSequenceSub = 0;
-				drawNpcScene(npcIndex);
+				if (_flags.platform != Common::kPlatformSegaCD)
+					drawNpcScene(npcIndex);
 				TXT(28);
 				createItemOnCurrentBlock(32);
 				setScriptFlags(0x100000);

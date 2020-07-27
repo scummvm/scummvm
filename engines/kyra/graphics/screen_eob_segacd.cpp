@@ -36,7 +36,7 @@ void Screen_EoB::sega_initGraphics() {
 	_segaRenderer->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xC000);
 	_segaRenderer->setPlaneTableLocation(SegaRenderer::kPlaneB, 0xE000);
 	_segaRenderer->setPlaneTableLocation(SegaRenderer::kWindowPlane, 0xF000);
-	_segaRenderer->setupPlaneAB(1024, 256);
+	_segaRenderer->setupPlaneAB(512, 512);
 	_segaRenderer->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
 	_segaRenderer->setHScrollTableLocation(0xD800);
 	_segaRenderer->setSpriteTableLocation(0xDC00);
@@ -1030,7 +1030,7 @@ void SegaAnimator::update() {
 		*dst++ = (uint16)(s->x + 128);
 	}
 
-	for ( ; dst < &_tempBuffer[320]; dst += 4)
+	for (; dst < &_tempBuffer[320]; dst += 4)
 		*dst = 0;
 
 	_renderer->loadToVRAM(_tempBuffer, 640, 0xDC00);
@@ -1204,7 +1204,7 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 	return res;
 }
 
-ScrollManager::ScrollManager(SegaRenderer *renderer) :_renderer(renderer) {
+ScrollManager::ScrollManager(SegaRenderer *renderer) : _renderer(renderer) {
 	_vScrollTimers = new ScrollTimer[2];
 	assert(_vScrollTimers);
 	_hScrollTimers = new ScrollTimer[2];
