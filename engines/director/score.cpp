@@ -228,6 +228,7 @@ void Score::startPlay() {
 	_currentFrame = 0;
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
+	_lastPalette = _vm->getPaletteId();
 
 	if (_frames.size() <= 1) {	// We added one empty sprite
 		warning("Score::startLoop(): Movie has no frames");

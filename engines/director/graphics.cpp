@@ -773,6 +773,7 @@ bool DirectorEngine::setPalette(int id) {
 
 	PaletteV4 pal = _loadedPalettes[id];
 	setPalette(pal.palette, pal.length);
+	_currentPaletteId = id;
 
 	return true;
 }
@@ -786,6 +787,8 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 }
 
 void DirectorEngine::clearPalettes() {
+	_currentPaletteId = 0;
+
 	for (Common::HashMap<int, PaletteV4>::iterator it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
 		if (it->_value.id > 0)
 			delete[] it->_value.palette;

@@ -80,6 +80,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
+	_currentPaletteId = 0;
 	_mainStage = nullptr;
 	_windowList = new Datum;
 	_windowList->type = ARRAY;

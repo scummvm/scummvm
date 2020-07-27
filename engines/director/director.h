@@ -193,6 +193,7 @@ public:
 	void loadDefaultPalettes();
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
+	int getPaletteId() const { return _currentPaletteId; }
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
@@ -232,6 +233,7 @@ private:
 	DirectorSound *_soundManager;
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
+	int _currentPaletteId;
 	Lingo *_lingo;
 
 	Stage *_mainStage;
