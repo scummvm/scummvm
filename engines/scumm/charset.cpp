@@ -818,7 +818,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
 		} else {
-			dstPtr = (byte *)_vm->_textSurface.getPixels();
+			dstPtr = (byte *)_vm->_textSurface.getBasePtr(0, 0);
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {

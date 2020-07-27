@@ -785,6 +785,11 @@ int ScummEngine_v0::DelayCalculateDelta() {
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine(syst, dr) {
+	
+	for (int i = 0; i < kNumVirtScreens; i++) {
+		_layers[i] = NULL;
+	}
+
 	_blastObjectQueuePos = 0;
 	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
 	_blastTextQueuePos = 0;
@@ -1785,6 +1790,9 @@ void ScummEngine_v4::resetScumm() {
 
 void ScummEngine_v6::resetScumm() {
 	ScummEngine::resetScumm();
+	for (int i = 0; i < kNumVirtScreens; i++) {
+		_layers[i] = NULL;
+	}
 	setDefaultCursor();
 }
 

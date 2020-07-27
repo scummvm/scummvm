@@ -92,6 +92,8 @@ protected:
 	bool _forcedWaitForMessage;
 	bool _skipVideo;
 
+	VirtScreen *_layers[kNumVirtScreens];
+
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
 

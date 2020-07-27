@@ -931,7 +931,7 @@ protected:
 public:
 	int _roomHeight, _roomWidth;
 	int _screenHeight, _screenWidth;
-	VirtScreen _virtscr[4];		// Virtual screen areas
+	VirtScreen _virtscr[kNumVirtScreens];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
 
 	int _screenStartStrip, _screenEndStrip;
@@ -1189,7 +1189,6 @@ public:
 	 * All text is normally rendered into this overlay surface. Then later
 	 * drawStripToScreen() composits it over the game graphics.
 	 */
-	Graphics::Surface _textSurface;
 	int _textSurfaceMultiplier;
 
 protected:
