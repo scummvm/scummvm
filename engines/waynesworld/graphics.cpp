@@ -314,4 +314,104 @@ void Screen::updateScreen() {
 	g_system->updateScreen();
 }
 
+// ScreenEffect
+
+// TODO Currently effects are quite slow because the screen is updated for each block.
+// Add beginUpdate/endUpdate to Screen class and only update each X blocks.
+
+ScreenEffect::ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight)
+	: _vm(vm), _surface(surface), _x(x), _y(y), _grainWidth(grainWidth), _grainHeight(grainHeight) {
+    _blockCountW = _surface->w / _grainWidth + (_surface->w % _grainWidth > 0 ? 1 : 0);
+	_blockCountH = _surface->h / _grainHeight + (_surface->h % _grainHeight > 0 ? 1 : 0);
+}
+
+void ScreenEffect::drawSpiralEffect() {
+	int middleBlockW = _blockCountW / 2 + (_blockCountW % 2 > 0 ? 1 : 0);
+	int middleBlockH = _blockCountH / 2 + (_blockCountH % 2 > 0 ? 1 : 0);
+	int startBlock = (middleBlockW < middleBlockH ? middleBlockW : middleBlockH) - 1;
+	int sideLenW = _blockCountW - startBlock;
+	int sideLenH = _blockCountH - startBlock;
+	while (startBlock >= 0 && !_vm->shouldQuit()) {
+		int blockX, blockY;
+		blockX = startBlock;
+		blockY = startBlock;
+		while (++blockX < sideLenW) {
+			drawBlock(blockX, blockY);
+		}
+		blockX = sideLenW - 1;
+		blockY = startBlock;
+		while (++blockY < sideLenH) {
+			drawBlock(blockX, blockY);
+		}
+		blockX = sideLenW - 1;
+		blockY = sideLenH - 1;
+		while (--blockX >= startBlock) {
+			drawBlock(blockX, blockY);
+		}
+		blockX = startBlock;
+		blockY = sideLenH;
+		while (--blockY >= startBlock) {
+			drawBlock(blockX, blockY);
+		}
+		sideLenW++;
+		sideLenH++;
+		startBlock--;
+	}
+}
+
+void ScreenEffect::drawRandomEffect() {
+	uint bitCountW = getBitCount(_blockCountW);
+	uint bitCountH = getBitCount(_blockCountH);
+	uint bitCount = bitCountW + bitCountH;
+	uint mask = (1 << bitCountW) - 1;
+	uint rvalue = getSeed(bitCount), value = 1;
+	do {
+		int blockX = value & mask;
+		int blockY = value >> bitCountW;
+		drawBlock(blockX, blockY);
+		if (value & 1) {
+			value >>= 1;
+			value ^= rvalue;
+		} else {
+			value >>= 1;
+		}
+	} while (value != 1 && !_vm->shouldQuit());
+	drawBlock(0, 0);
+}
+
+void ScreenEffect::drawBlock(int blockX, int blockY) {
+	if (blockX < _blockCountW && blockY < _blockCountH) {
+		int sourceLeft = blockX * _grainWidth, sourceTop = blockY * _grainHeight;
+		int sourceRight = sourceLeft + _grainWidth, sourceBottom = sourceTop + _grainHeight;
+		sourceRight = MIN<int>(_surface->w, sourceRight);
+		sourceBottom = MIN<int>(_surface->h, sourceBottom);
+		Common::Rect r(sourceLeft, sourceTop, sourceRight, sourceBottom);
+		Graphics::Surface blockSurface = _surface->getSubArea(r);
+		_vm->_screen->drawSurface(&blockSurface, _x + sourceLeft, _y + sourceTop);
+		_vm->updateEvents();
+	}
+}
+
+uint ScreenEffect::getBitCount(int value) const {
+	int bitCount = 0;
+	while ((value >> bitCount) != 0) {
+		bitCount++;
+	}
+	return bitCount;
+}
+
+uint ScreenEffect::getSeed(uint bitCount) const {
+	// Only used values are implemented
+	switch (bitCount) {
+	case 13:
+		return 0x3500;
+	case 15:
+		return 0xB400;
+	case 16:
+		return 0x12000;
+	default:
+		return 1;
+	}
+}
+
 } // End of namespace WaynesWorld

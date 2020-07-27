@@ -6998,19 +6998,12 @@ void GameLogic::r31_useBuzzer() {
 void GameLogic::r31_displayCategories() {
 	CursorMan.showMouse(false);
 	WWSurface *screenImage = _vm->loadRoomSurface("screen");
-	// TODO fxSetDelay(0);
-	// TODO fxSetGrain(4, 4, 1);
-	// TODO fxSetEffect(8); // Spiral Effect
-	// TODO fxVirtualDisplay(screenImage, 0, 0, 0, 0, 319, 199, 1);
-	_vm->_screen->drawSurface(screenImage, 0, 0); // TODO Until effects drawing is done
+	_vm->drawSpiralEffect(screenImage, 0, 0, 4, 4);
 	delete screenImage;
 	for (int categoryIndex = 0; categoryIndex < 5; categoryIndex++) {
 		Common::String categoryFilename = Common::String::format("cat%d", categoryIndex);
 		WWSurface *categoryImage = _vm->loadRoomSurface(categoryFilename.c_str());
-		// TODO fxSetGrain(1, 1, 1);
-		// TODO fxSetEffect(5); // Random Effect
-		// TODO fxVirtualDisplay(categoryImage, 0, 0, 17, 61, 300, 140, 0);
-		_vm->_screen->drawSurface(categoryImage, 17, 61); // TODO Until effects drawing is done
+		_vm->drawRandomEffect(categoryImage, 17, 61, 1, 1);
 		delete categoryImage;
 		_vm->waitSeconds(3);
 	}

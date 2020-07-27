@@ -23,6 +23,7 @@
 #ifndef WAYNESWORLD_GRAPHICS_H
 #define WAYNESWORLD_GRAPHICS_H
 
+#include "waynesworld/waynesworld.h"
 #include "graphics/surface.h"
 
 namespace WaynesWorld {
@@ -75,6 +76,22 @@ public:
 protected:
 	WWSurface *_surface;
 	void updateScreen();
+};
+
+class ScreenEffect {
+public:
+	ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
+	void drawSpiralEffect();
+	void drawRandomEffect();
+protected:
+	WaynesWorldEngine *_vm;
+	Graphics::Surface *_surface;
+	int _x, _y;
+	int _grainWidth, _grainHeight;
+	int _blockCountW, _blockCountH;
+	void drawBlock(int blockX, int blockY);
+	uint getBitCount(int value) const;
+	uint getSeed(uint bitCount) const;
 };
 
 } // End of namespace WaynesWorld

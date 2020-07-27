@@ -148,8 +148,9 @@ Common::Error WaynesWorldEngine::run() {
 
 	drawInterface(2);
 	// changeRoom(0);
-	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	changeRoom(32); // DEBUG
+	_wayneSpriteX = -1; _garthSpriteX = -1;
+	changeRoom(31); // DEBUG
+	_logic->r31_displayCategories();
 	// _logic->_r1_eventFlag = 1;
 	// _logic->_r1_eventCtr = 3;
 
@@ -590,6 +591,16 @@ void WaynesWorldEngine::drawRoomImageToScreen(const char *filename, int x, int y
 
 void WaynesWorldEngine::drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y) {
     drawImageToSurfaceIntern(filename, destSurface, x, y, false, true);
+}
+
+void WaynesWorldEngine::drawSpiralEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight) {
+	ScreenEffect screenEffect(this, surface, x, y, grainWidth, grainHeight);
+	screenEffect.drawSpiralEffect();
+}
+
+void WaynesWorldEngine::drawRandomEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight) {
+	ScreenEffect screenEffect(this, surface, x, y, grainWidth, grainHeight);
+	screenEffect.drawRandomEffect();
 }
 
 Common::String WaynesWorldEngine::loadString(const char *filename, int index, int flag) {

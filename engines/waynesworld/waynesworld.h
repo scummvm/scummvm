@@ -245,6 +245,9 @@ public:
 	void drawRoomImageToScreen(const char *filename, int x, int y);
 	void drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y);
 
+	void drawSpiralEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
+	void drawRandomEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
+
 	// Text
 	Common::String loadString(const char *filename, int index, int flag);
 	void drawCurrentTextToSurface(WWSurface *destSurface, int x, int y);
