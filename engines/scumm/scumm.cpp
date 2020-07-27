@@ -286,6 +286,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_hePalettes = NULL;
 	_hePaletteSlot = 0;
 	_16BitPalette = NULL;
+	_compositeBuf = NULL;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_townsScreen = 0;
 #ifdef USE_RGB_COLOR
@@ -574,12 +575,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		sizeMult = 2;
 #endif
 #endif
-
-	// Allocate gfx compositing buffer (not needed for V7/V8 games).
-	if (_game.version < 7)
-		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * sizeMult);
-	else
-		_compositeBuf = 0;
 
 	_herculesBuf = 0;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
@@ -1455,8 +1450,12 @@ void ScummEngine::setupScumm() {
 
 	_res->setHeapThreshold(minHeapThreshold, maxHeapThreshold);
 
-	free(_compositeBuf);
-	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _outputPixelFormat.bytesPerPixel);
+	if (_compositeBuf)
+		free(_compositeBuf);
+	if (_game.version < 7)
+		_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _outputPixelFormat.bytesPerPixel);
+	else
+		_compositeBuf = (byte *)malloc((_screenWidth * 2) * _textSurfaceMultiplier * (_screenHeight * 2) * _textSurfaceMultiplier * _outputPixelFormat.bytesPerPixel);
 }
 
 #ifdef ENABLE_SCUMM_7_8
