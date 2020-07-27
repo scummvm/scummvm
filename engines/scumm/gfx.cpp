@@ -344,11 +344,14 @@ void ScummEngine::initScreens(int b, int h) {
 		// Use the mostly unused Unk virtual screen for blast objects for V6+.
 		initVirtScreen(kUnkVirtScreen, adj, _screenWidth, _screenHeight, false, false); // Use for blast objects
 		_virtscr[kUnkVirtScreen].fillRect(clear_rect, CHARSET_MASK_TRANSPARENCY);
-
-		if (_game.version >= 7) {
+		if (_game.version == 6) {
+			// Initialize these like the previous version screens for DoTT.
+			initVirtScreen(kTextVirtScreen, adj, _screenWidth, b, false, false);
+			initVirtScreen(kVerbVirtScreen, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
+		}
+		else if (_game.version >= 7) {
 			// V7+ games only used the main virtual screen, so let's repurpose these
 			// three "unused" screens as blast text and verb coin layers.
-			
 			initVirtScreen(kTextVirtScreen, adj, _screenWidth, _screenHeight, false, false);
 			initVirtScreen(kVerbVirtScreen, adj, _screenWidth, _screenHeight, false, false);
 			_virtscr[kTextVirtScreen].fillRect(clear_rect, CHARSET_MASK_TRANSPARENCY);
@@ -450,6 +453,8 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 			vs->backBuf = (byte *)malloc(size);
 		else
 			vs->backBuf = NULL;
+
+		vs->byte_size = size;
 	}
 
 	if (_game.platform == Common::kPlatformNES)
