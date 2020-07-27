@@ -814,7 +814,7 @@ void Cast::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, 
 		_loadedCast->setVal(id, new PaletteCastMember(this, id, castStream, _vm->getVersion()));
 		break;
 	case kCastPicture:
-		warning("STUB: Cast::loadCastData(): kCastPicture (%d children)", res->children.size());
+		warning("BUILDBOT: STUB: Cast::loadCastData(): kCastPicture (%d children)", res->children.size());
 		castInfoSize = 0;
 		break;
 	case kCastMovie:
