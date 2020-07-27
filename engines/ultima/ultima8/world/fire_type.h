@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Item;
-class Point3;
+struct Point3;
 
 /**
  * A structure to hold data about the fire that comes from various weapons
