@@ -98,24 +98,26 @@ void Sprite::updateCast() {
 		_cast->setEditable(_editable);
 }
 
-bool Sprite::respondsToEvent(LEvent event) {
-	if (_moveable && (event == kEventMouseDown || event == kEventMouseUp))
+bool Sprite::respondsToMouse() {
+	if (_moveable)
 		return true;
 
 	ScriptContext *spriteScript = _movie->getScriptContext(kScoreScript, _scriptId);
-	if (spriteScript) {
-		if (((event == kEventMouseDown && _immediate) || (event == kEventMouseUp && !_immediate))
-				&& spriteScript->_eventHandlers.contains(kEventGeneric))
-					return true;
-		if (spriteScript->_eventHandlers.contains(event))
-			return true;
-	}
+	if (spriteScript && (spriteScript->_eventHandlers.contains(kEventGeneric)
+					  || spriteScript->_eventHandlers.contains(kEventMouseDown)
+					  || spriteScript->_eventHandlers.contains(kEventMouseUp)))
+		return true;
 
 	ScriptContext *castScript = _movie->getScriptContext(kCastScript, _castId);
-	if (castScript && castScript->_eventHandlers.contains(event))
+	if (castScript && (castScript->_eventHandlers.contains(kEventMouseDown)
+					|| castScript->_eventHandlers.contains(kEventMouseUp)))
 		return true;
 
 	return false;
+}
+
+bool Sprite::isActive() {
+	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr;
 }
 
 bool Sprite::shouldHilite() {

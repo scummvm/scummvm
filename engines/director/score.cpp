@@ -511,18 +511,28 @@ void Score::screenShot() {
 	newSurface->free();
 }
 
-uint16 Score::getSpriteIDFromPos(Common::Point pos, LEvent respondsToEvent) {
-	int unfocusableSprite = 0;
-
+uint16 Score::getSpriteIDFromPos(Common::Point pos) {
 	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos)) {
-			if (respondsToEvent == kEventNone || _channels[i]->_sprite->respondsToEvent(respondsToEvent))
-				return i;
-			else if (unfocusableSprite == 0)
-				unfocusableSprite = i;
-		}
+		if (_channels[i]->isMouseIn(pos))
+			return i;
 
-	return unfocusableSprite;
+	return 0;
+}
+
+uint16 Score::getMouseSpriteIDFromPos(Common::Point pos) {
+	for (int i = _channels.size() - 1; i >= 0; i--)
+		if (_channels[i]->isMouseIn(pos) && _channels[i]->_sprite->respondsToMouse())
+			return i;
+
+	return 0;
+}
+
+uint16 Score::getActiveSpriteIDFromPos(Common::Point pos) {
+	for (int i = _channels.size() - 1; i >= 0; i--)
+		if (_channels[i]->isMouseIn(pos) && _channels[i]->_sprite->isActive())
+			return i;
+
+	return 0;
 }
 
 bool Score::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {

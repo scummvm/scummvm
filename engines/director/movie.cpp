@@ -44,7 +44,6 @@ Movie::Movie(Stage *stage) {
 	_flags = 0;
 	_stageColor = 0xFF;
 
-	_currentMouseDownSpriteId = 0;
 	_currentClickOnSpriteId = 0;
 	_currentEditableTextChannel = 0;
 	_lastEventTime = _vm->getMacTicks();

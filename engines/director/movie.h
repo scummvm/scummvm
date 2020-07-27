@@ -132,7 +132,6 @@ private:
 public:
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
-	uint16 _currentMouseDownSpriteId;
 	uint16 _currentClickOnSpriteId;
 	uint16 _currentEditableTextChannel;
 	uint32 _lastEventTime;

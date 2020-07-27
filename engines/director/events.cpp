@@ -143,9 +143,8 @@ bool Movie::processEvent(Common::Event &event) {
 
 		// D3 doesn't have both mouse up and down.
 		// But we still want to know if the mouse is down for press effects.
-		spriteId = sc->getSpriteIDFromPos(pos, kEventMouseDown);
-		_currentMouseDownSpriteId = spriteId;
-		_currentClickOnSpriteId = spriteId;
+		spriteId = sc->getMouseSpriteIDFromPos(pos);
+		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
 		if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
 			g_director->getCurrentStage()->invertChannel(sc->_channels[spriteId]);
@@ -167,16 +166,11 @@ bool Movie::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 		pos = _stage->getMousePos();
 
-		spriteId = sc->getSpriteIDFromPos(pos, kEventMouseUp);
-
-		if (!sc->getChannelById(_currentMouseDownSpriteId)->getBbox().contains(pos))
-			_currentMouseDownSpriteId = 0;
+		spriteId = sc->getMouseSpriteIDFromPos(pos);
+		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
 		if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
 			g_director->getCurrentStage()->invertChannel(sc->_channels[spriteId]);
-
-		if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle))
-			_currentMouseDownSpriteId = spriteId;
 
 		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
 
@@ -190,7 +184,6 @@ bool Movie::processEvent(Common::Event &event) {
 
 		registerEvent(kEventMouseUp, spriteId);
 		sc->renderCursor(sc->getSpriteIDFromPos(pos));
-		_currentMouseDownSpriteId = 0;
 		return true;
 
 	case Common::EVENT_KEYDOWN:

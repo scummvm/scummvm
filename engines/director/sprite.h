@@ -67,7 +67,8 @@ public:
 
 	void updateCast();
 
-	bool respondsToEvent(LEvent event);
+	bool respondsToMouse();
+	bool isActive();
 	bool shouldHilite();
 
 	uint16 getPattern();
