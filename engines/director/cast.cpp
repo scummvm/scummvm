@@ -95,9 +95,6 @@ Cast::~Cast() {
 		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			delete it->_value;
 
-	for (uint i = 0; i < _loadedPalettes.size(); i++)
-		delete[] _loadedPalettes[i].palette;
-
 	delete _loadedStxts;
 	delete _loadedCast;
 	delete _lingoArchive;
@@ -211,7 +208,7 @@ bool Cast::loadArchive() {
 			Common::SeekableSubReadStreamEndian *pal = _castArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[i]);
 
 			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
-			loadPalette(*pal, i);
+			loadPalette(*pal, i + 1);
 
 			delete pal;
 		}
@@ -399,31 +396,19 @@ void Cast::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readByte();
 	}
 
+	int palette = -1;
 	if (_vm->getVersion() >= 4) {
-		for (int i = 0; i < 0x16; i++) {
+		for (int i = 0; i < 0x16; i++)
 			stream.readByte();
-		}
 
-		int palette = (int16)stream.readUint16() - 1;
-		if (palette <= 0) {
-			// Builtin palette
-			_vm->setPalette(palette);
-		} else if ((uint)palette - 1 < _loadedPalettes.size()) {
-			// Loaded palette
-			PaletteV4 pal = _loadedPalettes[palette - 1];
-			_vm->setPalette(pal.palette, pal.length);
-		} else {
-			// Default palette
-			_vm->setPalette(-1);
-		}
+		palette = (int16)stream.readUint16() - 1;
 
-		for (int i = 0; i < 0x08; i++) {
+		for (int i = 0; i < 0x08; i++)
 			stream.readByte();
-		}
-	} else {
-		// Set default palette for earlier versions
-		_vm->setPalette(-1);
 	}
+
+	if (!_vm->setPalette(palette))
+		_vm->setPalette(-1);
 
 	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
 			", style: %d", len, ver1, currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
@@ -619,7 +604,7 @@ void Cast::loadPalette(Common::SeekableSubReadStreamEndian &stream, int id) {
 		index -= 3;
 	}
 
-	_loadedPalettes.push_back(PaletteV4(id, _palette, steps));
+	g_director->addPalette(id, _palette, steps);
 }
 
 void Cast::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {

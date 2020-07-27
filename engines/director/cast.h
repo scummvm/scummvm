@@ -89,7 +89,6 @@ public:
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
-	Common::Array<PaletteV4> _loadedPalettes;
 	uint16 _castIDoffset;
 	uint16 _castArrayStart;
 	uint16 _castArrayEnd;

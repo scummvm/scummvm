@@ -107,6 +107,7 @@ struct PaletteV4 {
 	int length;
 
 	PaletteV4(int i, byte *p, int l) : id(i), palette(p), length(l) {}
+	PaletteV4() : id(0), palette(nullptr), length(0) {}
 };
 
 struct MacShape {
@@ -184,10 +185,12 @@ public:
 	Common::String getCurrentPath() const;
 
 	// graphics.cpp
-	void setPalette(int id);
+	void addPalette(int id, byte *palette, int length);
+	bool setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
+	void clearPalettes();
 	bool hasFeature(EngineFeature f) const override;
-	void loadPalettes();
+	void loadDefaultPalettes();
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadPatterns();
@@ -238,7 +241,7 @@ private:
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
-	Common::HashMap<int, PaletteV4 *> _director4Palettes;
+	Common::HashMap<int, PaletteV4> _loadedPalettes;
 };
 
 extern DirectorEngine *g_director;

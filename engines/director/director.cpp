@@ -69,7 +69,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	syncSoundSettings();
 
 	// Load Palettes
-	loadPalettes();
+	loadDefaultPalettes();
 
 	// Load Patterns
 	loadPatterns();
@@ -117,6 +117,8 @@ DirectorEngine::~DirectorEngine() {
 	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
 		delete it->_value;
 	}
+
+	clearPalettes();
 }
 
 Archive *DirectorEngine::getMainArchive() const { return _currentStage->getMainArchive(); }

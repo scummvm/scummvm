@@ -563,19 +563,6 @@ static byte winPalette[768] = {
 };
 
 
-static PaletteV4 director4Palettes[] = {
-	PaletteV4(-1, macPalette, 256),
-	PaletteV4(-2, rainbowPalette, 256),
-	PaletteV4(-3, grayscalePalette, 256),
-	PaletteV4(-4, pastelsPalette, 256),
-	PaletteV4(-5, vividPalette, 256),
-	PaletteV4(-6, ntscPalette, 256),
-	PaletteV4(-7, metallicPalette, 256),
-	PaletteV4(-101, winPalette, 256),
-	PaletteV4(0, nullptr, 0)
-};
-
-
 static byte director3Patterns[][8] = {
 	{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
 	{ 0xFF, 0xFF, 0x77, 0xFF, 0xFF, 0xFF, 0x77, 0xFF },
@@ -754,19 +741,40 @@ Graphics::MacPatterns &DirectorEngine::getPatterns() {
 	return _director3QuickDrawPatterns;
 }
 
-void DirectorEngine::loadPalettes() {
-	for (PaletteV4 *pal = director4Palettes; pal->id != 0; pal++) {
-		_director4Palettes[pal->id] = pal;
-	}
+void DirectorEngine::loadDefaultPalettes() {
+	_loadedPalettes[kClutSystemMac] = PaletteV4(kClutSystemMac, macPalette, 256);
+	_loadedPalettes[kClutRainbow] = PaletteV4(kClutRainbow, rainbowPalette, 256);
+	_loadedPalettes[kClutGrayscale] = PaletteV4(kClutGrayscale, grayscalePalette, 256);
+	_loadedPalettes[kClutPastels] = PaletteV4(kClutPastels, pastelsPalette, 256);
+	_loadedPalettes[kClutVivid] = PaletteV4(kClutVivid, vividPalette, 256);
+	_loadedPalettes[kClutNTSC] = PaletteV4(kClutNTSC, ntscPalette, 256);
+	_loadedPalettes[kClutMetallic] = PaletteV4(kClutMetallic, metallicPalette, 256);
+	_loadedPalettes[kClutSystemWin] = PaletteV4(kClutSystemWin, winPalette, 256);
 }
 
-void DirectorEngine::setPalette(int id) {
-	if (!_director4Palettes.contains(id)) {
-		warning("setPalette(): no palette with matching id %d", id);
+void DirectorEngine::addPalette(int id, byte *palette, int length) {
+	if (id < 0) {
+		warning("DirectorEngine::addPalette(): Negative palette ids reserved for default palettes");
+		return;
+	} else if (_loadedPalettes.contains(id)) {
+		// TODO: Can castmember palettes conflict with those in the cast config?
+		warning("DirectorEngine::addPalette(): Attempting to replace palette %d", id);
 		return;
 	}
-	PaletteV4 *pal = _director4Palettes[id];
-	setPalette(pal->palette, pal->length);
+
+	_loadedPalettes[id] = PaletteV4(id, palette, length);
+}
+
+bool DirectorEngine::setPalette(int id) {
+	if (!_loadedPalettes.contains(id)) {
+		warning("setPalette(): no palette with matching id %d", id);
+		return false;
+	}
+
+	PaletteV4 pal = _loadedPalettes[id];
+	setPalette(pal.palette, pal.length);
+
+	return true;
 }
 
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
@@ -775,6 +783,13 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPaletteLength = count;
 
 	_wm->passPalette(palette, count);
+}
+
+void DirectorEngine::clearPalettes() {
+	for (Common::HashMap<int, PaletteV4>::iterator it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
+		if (it->_value.id > 0)
+			delete[] it->_value.palette;
+	}
 }
 
 void DirectorEngine::setCursor(int type) {

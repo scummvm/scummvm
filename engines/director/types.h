@@ -274,14 +274,14 @@ enum TransitionType {
 
 // TODO: Can there be any more built-in palette types?
 enum PaletteType {
- kClutSystemMac = 0x0000,
- kClutSystemWin = 0xff9c,
- kClutRainbow = 0xffff,
- kClutGrayscale = 0xfffe,
- kClutPastels = 0xfffd,
- kClutVivid = 0xfffc,
- kClutNTSC = 0xfffb,
- kClutMetallic = 0xfffa
+ kClutSystemMac = -1,
+ kClutRainbow = -2,
+ kClutGrayscale = -3,
+ kClutPastels = -4,
+ kClutVivid = -5,
+ kClutNTSC = -6,
+ kClutMetallic = -7,
+ kClutSystemWin = -101
 };
 
 enum {
