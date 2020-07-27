@@ -60,6 +60,8 @@ public:
 		_movementFlags &= ~mask;
 	}
 
+	void tryAttack();
+
 	enum MovementFlags {
 		MOVE_MOUSE_DIRECTION = 0x001,
 		MOVE_RUN = 0x002,

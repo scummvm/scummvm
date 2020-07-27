@@ -109,6 +109,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AvatarMoverProcess::stopMoveRun", WRAP_METHOD(Debugger, cmdStopMoveRun));
 	registerCmd("AvatarMoverProcess::startMoveStep", WRAP_METHOD(Debugger, cmdStartMoveStep));
 	registerCmd("AvatarMoverProcess::stopMoveStep", WRAP_METHOD(Debugger, cmdStopMoveStep));
+	registerCmd("AvatarMoverProcess::tryAttack", WRAP_METHOD(Debugger, cmdAttack));
 
 	registerCmd("AudioProcess::listSFX", WRAP_METHOD(Debugger, cmdListSFX));
 	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
@@ -143,6 +144,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::useBedroll", WRAP_METHOD(Debugger, cmdUseBedroll));
 	registerCmd("MainActor::useKeyring", WRAP_METHOD(Debugger, cmdUseKeyring));
 	registerCmd("MainActor::nextWeapon", WRAP_METHOD(Debugger, cmdNextWeapon));
+	registerCmd("MainActor::nextInvItem", WRAP_METHOD(Debugger, cmdNextInventory));
 	registerCmd("MainActor::useInventoryItem", WRAP_METHOD(Debugger, cmdUseInventoryItem));
 	registerCmd("MainActor::useMedikit", WRAP_METHOD(Debugger, cmdUseMedikit));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
@@ -1091,13 +1093,19 @@ bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 		return false;
 	}
 	MainActor *av = getMainActor();
-	if (GAME_IS_U8) {
-		Item *backpack = getItem(av->getEquip(7));
-		if (backpack)
-			backpack->callUsecodeEvent_use();
-	} else {
-		av->nextInvItem();
+	Item *backpack = getItem(av->getEquip(7));
+	if (backpack)
+		backpack->callUsecodeEvent_use();
+	return false;
+}
+
+bool Debugger::cmdNextInventory(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't use inventory: avatarInStasis\n");
+		return false;
 	}
+	MainActor *av = getMainActor();
+	av->nextInvItem();
 	return false;
 }
 
@@ -1169,6 +1177,19 @@ bool Debugger::cmdUseBedroll(int argc, const char **argv) {
 bool Debugger::cmdUseKeyring(int argc, const char **argv) {
 	MainActor *av = getMainActor();
 	av->useInventoryItem(79);
+	return false;
+}
+
+bool Debugger::cmdAttack(int argc, const char **argv) {
+	Ultima8Engine *engine = Ultima8Engine::get_instance();
+	if (engine->isAvatarInStasis()) {
+		debugPrintf("Can't attack: avatarInStasis\n");
+		return false;
+	}
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
+	if (proc) {
+		proc->tryAttack();
+	}
 	return false;
 }
 

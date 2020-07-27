@@ -931,7 +931,26 @@ bool AvatarMoverProcess::checkTurn(int direction, bool moving) {
 
 bool AvatarMoverProcess::canAttack() {
 	MainActor *avatar = getMainActor();
+	if (GAME_IS_CRUSADER)
+		return avatar->isInCombat();
 	return (_lastFrame > _lastAttack + (25 - avatar->getDex()));
+}
+
+void AvatarMoverProcess::tryAttack() {
+	MainActor *avatar = getMainActor();
+	uint16 dir = avatar->getDir();
+	if (!avatar->isInCombat()) {
+		avatar->setInCombat();
+		waitFor(avatar->doAnim(Animation::readyWeapon, dir));
+	} else {
+		if (canAttack()) {
+			waitFor(avatar->doAnim(Animation::attack, dir));
+			if (GAME_IS_CRUSADER) {
+				// FIXME: put some real values in here.
+				avatar->fireWeapon(0, 0, 16, dir, 1, 1);
+			}
+		}
+	}
 }
 
 void AvatarMoverProcess::onMouseDown(int button, int32 mx, int32 my) {
