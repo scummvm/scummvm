@@ -102,7 +102,7 @@ protected:
 	// These are specific for each type of music
 	virtual void updateVolume() = 0;
 	virtual bool load(uint32 fileref, bool loop) = 0;
-	virtual void unload();
+	virtual void unload(bool updateState = true);
 };
 
 class MusicPlayerMidi : public MusicPlayer, public MidiDriver_BASE {
@@ -130,7 +130,7 @@ protected:
 
 	void onTimerInternal() override;
 	void updateVolume() override;
-	void unload() override;
+	void unload(bool updateState = true) override;
 	void endTrack();
 
 	bool loadParser(Common::SeekableReadStream *stream, bool loop);
@@ -153,7 +153,7 @@ public:
 protected:
 	void updateVolume() override;
 	bool load(uint32 fileref, bool loop) override;
-	void unload() override;
+	void unload(bool updateState = true) override;
 
 private:
 	// Output music type
@@ -189,7 +189,7 @@ public:
 protected:
 	void updateVolume() override;
 	bool load(uint32 fileref, bool loop) override;
-	void unload() override;
+	void unload(bool updateState = true) override;
 
 private:
 	Audio::SoundHandle _handle;
