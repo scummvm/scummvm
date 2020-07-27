@@ -1428,6 +1428,7 @@ void ScummEngine::setupScumm() {
 	}
 
 	int maxHeapThreshold = -1;
+	int minHeapThreshold = 400000;
 
 	if (_game.features & GF_16BIT_COLOR) {
 		// 16bit color games require double the memory, due to increased resource sizes.
@@ -1436,11 +1437,23 @@ void ScummEngine::setupScumm() {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
 		// to constantly reload stuff from the data files.
 		maxHeapThreshold = 6 * 1024 * 1024;
+		if (_game.id == GID_CMI) {
+			// A minimum heap threshold of 400000 causes COMI to very often swap out and
+			// reload resources when something in the current room is animating, can be
+			// observed for instance when Wally cries in the very first scene.
+			// The game is also very often over the max heap threshold due to loaded
+			// resources that can't be easily discarded. This will obviously not work very
+			// well on a host with less than 6MB of RAM, but it would've broken on there
+			// regardless since resource usage is very often above 6MB even with resources
+			// being discarded too often.
+			maxHeapThreshold = 12 * 1024 * 1024;
+			minHeapThreshold = 6 * 1024 * 1024;
+		}
 	} else {
 		maxHeapThreshold = 550000;
 	}
 
-	_res->setHeapThreshold(400000, maxHeapThreshold);
+	_res->setHeapThreshold(minHeapThreshold, maxHeapThreshold);
 
 	free(_compositeBuf);
 	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _outputPixelFormat.bytesPerPixel);
