@@ -185,6 +185,11 @@ bool MusicPlayer::play(uint32 fileref, bool loop) {
 	return load(fileref, loop);
 }
 
+void MusicPlayer::stop() {
+	_backgroundFileRef = 0;
+	unload();
+}
+
 void MusicPlayer::applyFading() {
 	debugC(6, kDebugMIDI, "Groovie::Music: applyFading() _fadingStartTime = %d, _fadingDuration = %d, _fadingStartVolume = %d, _fadingEndVolume = %d", _fadingStartTime, _fadingDuration, _fadingStartVolume, _fadingEndVolume);
 	Common::StackLock lock(_mutex);

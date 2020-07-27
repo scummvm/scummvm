@@ -41,6 +41,9 @@ public:
 	virtual ~MusicPlayer();
 
 	void playSong(uint32 fileref);
+	// Stops all music playback. Clears the current
+	// background song.
+	void stop();
 	void setBackgroundSong(uint32 fileref);
 	void playCD(uint8 track);
 	void startBackground();

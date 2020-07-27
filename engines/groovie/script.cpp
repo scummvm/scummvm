@@ -445,6 +445,8 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 }
 
 void Script::loadgame(uint slot) {
+	_vm->_musicPlayer->stop();
+
 	Common::InSaveFile *file = SaveLoad::openForLoading(ConfMan.getActiveDomainName(), slot);
 
 	// Loading the variables. It is endian safe because they're byte variables
