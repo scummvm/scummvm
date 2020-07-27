@@ -1748,9 +1748,9 @@ void LB::b_puppetPalette(int nargs) {
 			} else if (palStr.equalsIgnoreCase("Vivid")) {
 				palette = kClutVivid;
 			} else if (palStr.equalsIgnoreCase("NTSC")) {
-				palette = kClutMetallic;
+				palette = kClutNTSC;
 			} else if (palStr.equalsIgnoreCase("Metallic")) {
-				palette = kClutSystemWin;
+				palette = kClutMetallic;
 			} else {
 				CastMember *member = g_director->getCurrentMovie()->getCastMemberByName(palStr);
 
