@@ -431,7 +431,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheFrameScript);
 		break;
 	case kTheFramePalette:
-		getTheEntitySTUB(kTheFramePalette);
+		d.type = INT;
+		d.u.i = _vm->getCurrentMovie()->getScore()->getCurrentPalette();
 		break;
 	case kTheFrameTempo:
 		getTheEntitySTUB(kTheFrameTempo);
@@ -814,6 +815,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 #define setTheEntitySTUB(entity) \
 	warning("Lingo::setTheEntity(): Unprocessed setting entity %s", entity2str(entity));
 
+#define setTheEntityReadOnly(entity) \
+	warning("Lingo::setTheEntity: Attempt to set read-only entity %s", entity2str(entity));
+
 void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	if (debugChannelSet(3, kDebugLingoExec)) {
 		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
@@ -871,7 +875,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheFrameScript);
 		break;
 	case kTheFramePalette:
-		setTheEntitySTUB(kTheFramePalette);
+		setTheEntityReadOnly(kTheFramePalette);
 		break;
 	case kTheFullColorPermit:
 		// No op in ScummVM. We always allow it

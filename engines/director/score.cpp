@@ -90,6 +90,10 @@ Score::~Score() {
 	delete _labels;
 }
 
+int Score::getCurrentPalette() {
+	return _frames[_currentFrame]->_palette.paletteId;
+}
+
 bool Score::processImmediateFrameScript(Common::String s, int id) {
 	s.trim();
 

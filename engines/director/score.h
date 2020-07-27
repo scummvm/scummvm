@@ -81,8 +81,11 @@ public:
 	void startPlay();
 	void step();
 	void stopPlay();
+
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
+	int getCurrentPalette();
+
 	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);
 
