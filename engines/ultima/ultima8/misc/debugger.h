@@ -178,6 +178,8 @@ private:
 	bool cmdStopMoveStep(int argc, const char **argv);
 	bool cmdAttack(int argc, const char **argv);
 
+	bool cmdCameraOnAvatar(int argc, const char **argv);
+
 	// Audio Process
 	bool cmdListSFX(int argc, const char **argv);
 	bool cmdStopSFX(int argc, const char **argv);

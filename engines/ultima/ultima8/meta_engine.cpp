@@ -82,6 +82,7 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", "Select Item", "ItemSelectionProcess::startSelection", nullptr, "s", nullptr },
 	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", "ItemSelectionProcess::useSelectedItem", nullptr, "RETURN", nullptr },
 	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::tryAttack", nullptr, "SPACE", nullptr },
+	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", "CameraProcess::moveToAvatar", nullptr, "z", nullptr },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 

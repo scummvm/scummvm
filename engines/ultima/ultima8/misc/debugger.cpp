@@ -43,6 +43,7 @@
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/bit_set.h"
 #include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
@@ -110,6 +111,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AvatarMoverProcess::startMoveStep", WRAP_METHOD(Debugger, cmdStartMoveStep));
 	registerCmd("AvatarMoverProcess::stopMoveStep", WRAP_METHOD(Debugger, cmdStopMoveStep));
 	registerCmd("AvatarMoverProcess::tryAttack", WRAP_METHOD(Debugger, cmdAttack));
+
+	registerCmd("CameraProcess::moveToAvatar", WRAP_METHOD(Debugger, cmdCameraOnAvatar));
 
 	registerCmd("AudioProcess::listSFX", WRAP_METHOD(Debugger, cmdListSFX));
 	registerCmd("AudioProcess::playSFX", WRAP_METHOD(Debugger, cmdPlaySFX));
@@ -1189,6 +1192,16 @@ bool Debugger::cmdAttack(int argc, const char **argv) {
 	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
 		proc->tryAttack();
+	}
+	return false;
+}
+
+bool Debugger::cmdCameraOnAvatar(int argc, const char **argv) {
+	MainActor *actor = getMainActor();
+	if (actor) {
+		int32 x, y, z;
+		actor->getLocation(x, y, z);
+		CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
 	}
 	return false;
 }
