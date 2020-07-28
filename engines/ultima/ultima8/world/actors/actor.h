@@ -110,10 +110,10 @@ public:
 	void setLastAnim(Animation::Sequence anim) {
 		_lastAnim = anim;
 	}
-	uint16 getDir() const {
+	Direction getDir() const {
 		return _direction;
 	}
-	void setDir(uint16 dir) {
+	void setDir(Direction dir) {
 		_direction = dir;
 	}
 	int32 getFallStart() const {
@@ -186,7 +186,7 @@ public:
 	//! receive a hit
 	//! \param damage base damage (or zero to use attacker's default damage)
 	//! \param type damage type (or zero to use attacker's default type)
-	void receiveHit(uint16 other, int dir, int damage, uint16 type) override;
+	void receiveHit(uint16 other, Direction dir, int damage, uint16 type) override;
 
 	//! die
 	//! \param damageType damage type that caused the death
@@ -224,7 +224,7 @@ public:
 
 	//! run the given animation
 	//! \return the PID of the ActorAnimProcess
-	uint16 doAnim(Animation::Sequence anim, int dir, unsigned int steps = 0);
+	uint16 doAnim(Animation::Sequence anim, Direction dir, unsigned int steps = 0);
 
 	//! check if this actor has a specific animation
 	bool hasAnim(Animation::Sequence anim);
@@ -234,9 +234,9 @@ public:
 	//! state will be updated to after the animation. If unsuccessful,
 	//! the contents of state are undefined.
 	//! \param anim Action to try
-	//! \param dir _direction to walk in
+	//! \param dir direction to walk in
 	//! \param state the state to start from, or 0 to use the current state
-	Animation::Result tryAnim(Animation::Sequence anim, int dir, unsigned int steps = 0, PathfindingState *state = 0);
+	Animation::Result tryAnim(Animation::Sequence anim, Direction dir, unsigned int steps = 0, PathfindingState *state = 0);
 
 	//! overrides the standard item collideMove so we  can notify nearby objects.
 	int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
@@ -244,7 +244,7 @@ public:
 
 	//! Turn one step toward the given direction. If the current direction is already the same,
 	//! do nothing. Returns an anim process or 0 if no move needed.
-	uint16 turnTowardDir(uint16 dir);
+	uint16 turnTowardDir(Direction dir);
 
 	//! create an actor, assign objid, make it ethereal and load monster stats.
 	static Actor *createActor(uint32 shape, uint32 frame);
@@ -362,7 +362,7 @@ protected:
 
 	Animation::Sequence _lastAnim;
 	uint16 _animFrame;
-	uint16 _direction;
+	Direction _direction;
 
 	int32 _fallStart;
 
@@ -398,8 +398,8 @@ protected:
 	bool loadMonsterStatsU8();
 	bool loadMonsterStatsCru();
 
-	void receiveHitU8(uint16 other, int dir, int damage, uint16 type);
-	void receiveHitCru(uint16 other, int dir, int damage, uint16 type);
+	void receiveHitU8(uint16 other, Direction dir, int damage, uint16 type);
+	void receiveHitCru(uint16 other, Direction dir, int damage, uint16 type);
 };
 
 } // End of namespace Ultima8

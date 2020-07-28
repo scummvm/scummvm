@@ -24,6 +24,7 @@
 #define WORLD_ACTORS_COMBATPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -55,9 +56,9 @@ protected:
 	bool isValidTarget(Actor *target_);
 	bool isEnemy(Actor *target_);
 	bool inAttackRange();
-	int getTargetDirection();
+	Direction getTargetDirection();
 
-	void turnToDirection(int direction);
+	void turnToDirection(Direction direction);
 	void waitForTarget();
 
 	ObjId _target;

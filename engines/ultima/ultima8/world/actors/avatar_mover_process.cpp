@@ -35,6 +35,7 @@
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -130,14 +131,14 @@ void AvatarMoverProcess::handleCombatMode() {
 	Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
-	int32 direction = avatar->getDir();
+	Direction direction = avatar->getDir();
 	bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 
 	int32 mx, my;
 	mouse->getMouseCoords(mx, my);
 	unsigned int mouselength = mouse->getMouseLength(mx, my);
 
-	int32 mousedir = mouse->getMouseDirectionWorld(mx, my);
+	Direction mousedir = mouse->getMouseDirectionWorld(mx, my);
 
 	// never idle when in combat
 	_idleTime = 0;
@@ -255,7 +256,7 @@ void AvatarMoverProcess::handleCombatMode() {
 			return;
 
 		//!! TODO: check if you can actually take this step
-		int32 nextdir = mousedir;
+		Direction nextdir = mousedir;
 		Animation::Sequence nextanim;
 
 		if (lastanim == Animation::run) {
@@ -292,11 +293,11 @@ void AvatarMoverProcess::handleCombatMode() {
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
 		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = (direction + 7) % 8;
+			direction = Direction_OneLeft(direction);
 		}
 
 		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = (direction + 1) % 8;
+			direction = Direction_OneRight(direction);
 		}
 	}
 
@@ -343,7 +344,7 @@ void AvatarMoverProcess::handleCombatMode() {
 	}
 
 	if (x != 0 || y != 0) {
-		int32 nextdir =  Get_direction(y, x);
+		Direction nextdir = Direction_Get(y, x);
 
 		if (checkTurn(nextdir, true))
 			return;
@@ -390,14 +391,14 @@ void AvatarMoverProcess::handleNormalMode() {
 	Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
-	int32 direction = avatar->getDir();
+	Direction direction = avatar->getDir();
 	bool stasis = guiapp->isAvatarInStasis();
 	bool combatRun = avatar->hasActorFlags(Actor::ACT_COMBATRUN);
 
 	int32 mx, my;
 	mouse->getMouseCoords(mx, my);
 	unsigned int mouselength = mouse->getMouseLength(mx, my);
-	int32 mousedir = mouse->getMouseDirectionWorld(mx, my);
+	Direction mousedir = mouse->getMouseDirectionWorld(mx, my);
 
 	// Store current idle time. (Also see end of function.)
 	uint32 currentIdleTime = _idleTime;
@@ -623,11 +624,11 @@ void AvatarMoverProcess::handleNormalMode() {
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
 		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = (direction + 7) % 8;
+			direction = Direction_OneLeft(direction);
 		}
 
 		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = (direction + 1) % 8;
+			direction = Direction_OneRight(direction);
 		}
 	}
 
@@ -650,7 +651,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	}
 
 	if (hasMovementFlags(MOVE_BACK)) {
-		step(nextanim, (direction + 4) % 8);
+		step(nextanim, Direction_Invert(direction));
 
 		// flip to move forward once turned
 		setMovementFlag(MOVE_FORWARD);
@@ -673,7 +674,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	}
 
 	if (x != 0 || y != 0) {
-		direction = Get_direction(y, x);
+		direction = Direction_Get(y, x);
 		step(nextanim, direction);
 		return;
 	}
@@ -721,7 +722,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	}
 }
 
-void AvatarMoverProcess::step(Animation::Sequence action, int direction,
+void AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
                               bool adjusted) {
 	assert(action == Animation::step || action == Animation::walk ||
 	       action == Animation::run);
@@ -731,13 +732,13 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 
 	Animation::Result res = avatar->tryAnim(action, direction);
 
-	int stepdir = direction;
+	Direction stepdir = direction;
 
 	if (res == Animation::FAILURE ||
 	        (action == Animation::step && res == Animation::END_OFF_LAND)) {
 		debug(6, "Step: end off land dir %d, try other dir", stepdir);
-		int altdir1 = (stepdir + 1) % 8;
-		int altdir2 = (stepdir + 7) % 8;
+		Direction altdir1 = Direction_OneRight(stepdir);
+		Direction altdir2 = Direction_OneLeft(stepdir);
 
 		res = avatar->tryAnim(action, altdir1);
 		if (res == Animation::FAILURE ||
@@ -793,7 +794,7 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 	waitFor(avatar->doAnim(action, stepdir));
 }
 
-void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
+void AvatarMoverProcess::jump(Animation::Sequence action, Direction direction) {
 	MainActor *avatar = getMainActor();
 
 	// running jump
@@ -845,21 +846,18 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 	}
 }
 
-void AvatarMoverProcess::turnToDirection(int direction) {
+void AvatarMoverProcess::turnToDirection(Direction direction) {
 	MainActor *avatar = getMainActor();
 	bool combatRun = avatar->hasActorFlags(Actor::ACT_COMBATRUN);
-	int curdir = avatar->getDir();
-	int stepDelta;
+	Direction curdir = avatar->getDir();
 	bool combat = avatar->isInCombat() && !combatRun;
-	Animation::Sequence turnanim;
 	Animation::Sequence standanim = Animation::stand;
 
-	// note curdir-direction can be negative, hence + 8 % 8
-	if ((curdir - direction + 8) % 8 < 4) {
-		stepDelta = -1;
+	int stepDelta = Direction_GetShorterTurnDelta(curdir, direction);
+	Animation::Sequence turnanim;
+	if (stepDelta == -1) {
 		turnanim = Animation::lookLeft;
 	} else {
-		stepDelta = 1;
 		turnanim = Animation::lookRight;
 	}
 
@@ -872,7 +870,7 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 
 	// Create a sequence of turn animations from
 	// our current direction to the new one
-	for (int dir = curdir; dir != direction;) {
+	for (Direction dir = curdir; dir != direction; dir = Direction_TurnByDelta(dir, stepDelta)) {
 		ProcId animpid = avatar->doAnim(turnanim, dir);
 
 		if (prevpid) {
@@ -882,8 +880,6 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 		}
 
 		prevpid = animpid;
-
-		dir = (dir + stepDelta + 8) % 8;
 	}
 
 	ProcId animpid = avatar->doAnim(standanim, direction);
@@ -897,9 +893,9 @@ void AvatarMoverProcess::turnToDirection(int direction) {
 	waitFor(animpid);
 }
 
-bool AvatarMoverProcess::checkTurn(int direction, bool moving) {
+bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
 	MainActor *avatar = getMainActor();
-	int curdir = avatar->getDir();
+	Direction curdir = avatar->getDir();
 	bool combat = avatar->isInCombat() && !avatar->hasActorFlags(Actor::ACT_COMBATRUN);
 
 	// Note: don't need to turn if moving backward in combat stance
@@ -938,7 +934,7 @@ bool AvatarMoverProcess::canAttack() {
 
 void AvatarMoverProcess::tryAttack() {
 	MainActor *avatar = getMainActor();
-	uint16 dir = avatar->getDir();
+	Direction dir = avatar->getDir();
 	if (!avatar->isInCombat()) {
 		avatar->setInCombat();
 		waitFor(avatar->doAnim(Animation::readyWeapon, dir));

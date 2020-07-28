@@ -55,7 +55,7 @@ void AvatarGravityProcess::run() {
 
 	// right mouse button down, so see if we can cling to a ledge
 	MainActor *avatar = getMainActor();
-	int32 direction = avatar->getDir();
+	Direction direction = avatar->getDir();
 	if (avatar->tryAnim(Animation::climb40, direction) == Animation::SUCCESS) {
 
 		// we can, so perform a hang animation

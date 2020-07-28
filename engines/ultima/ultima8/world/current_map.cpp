@@ -29,7 +29,6 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/world_point.h"
-#include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
@@ -42,6 +41,8 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
+#include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -310,7 +311,7 @@ void CurrentMap::removeTargetItem(const Item *item) {
 }
 
 
-Item *CurrentMap::findBestTargetItem(int32 x, int32 y, uint8 dir) {
+Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir) {
 	// "best" means:
 	// Shape info SI_OCCL
 	// isNPC
@@ -337,7 +338,7 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, uint8 dir) {
 
 		int32 ix, iy, iz;
 		item->getLocation(ix, iy, iz);
-		Direction itemdir = Get_WorldDirection(iy - y, ix - x);
+		Direction itemdir = Direction_GetWorldDir(iy - y, ix - x);
 		if (itemdir != dir)
 			continue;
 

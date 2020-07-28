@@ -42,7 +42,7 @@ TargetReticleProcess *TargetReticleProcess::_instance = nullptr;
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetReticleProcess)
 
 TargetReticleProcess::TargetReticleProcess() : Process(), _reticleEnabled(true),
-		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(0x10), _lastTargetItem(0) {
+		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(dir_current), _lastTargetItem(0) {
 	_instance = this;
 }
 
@@ -83,7 +83,7 @@ bool TargetReticleProcess::findTargetItem() {
 	if (!mainactor || !currentmap)
 		return false;
 
-	int dir = mainactor->getDir();
+	Direction dir = mainactor->getDir();
 
 	int32 x, y, z;
 	mainactor->getCentre(x, y, z);
@@ -171,7 +171,7 @@ void TargetReticleProcess::clearSprite() {
 		}
 	}
 	_lastTargetItem = 0;
-	_lastTargetDir = 0x10;
+	_lastTargetDir = dir_current;
 }
 
 void TargetReticleProcess::toggle() {

@@ -108,7 +108,7 @@ void StartCrusaderProcess::run() {
 		miss1egg->assignObjId();
 		miss1egg->callUsecodeEvent_hatch();
 
-		avatar->setDir(2);
+		avatar->setDir(dir_east);
 
 		// TODO: The game actually teleports to egg 0x1f (31) which has another
 		// egg to teleport to egg 99.  Is there any purpose to that?

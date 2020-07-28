@@ -21,6 +21,8 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
@@ -431,8 +433,10 @@ void Pathfinder::expandNode(PathNode *node) {
 	if (_actor->isInCombat())
 		walkanim = Animation::advance;
 
-	// try walking in all 8 directions
-	for (uint32 dir = 0; dir < 8; ++dir) {
+	// try walking in all 8 directions - TODO: should this support 16 dirs?
+	Direction dir = dir_north;
+	for (int i = 0; i < 8; i++) {
+		dir = Direction_OneRight(dir);
 		state = node->state;
 		state._lastAnim = walkanim;
 		state._direction = dir;

@@ -268,7 +268,7 @@ bool PathfinderProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_path.resize(pathsize);
 	for (unsigned int i = 0; i < pathsize; ++i) {
 		_path[i]._action = static_cast<Animation::Sequence>(rs->readUint16LE());
-		_path[i]._direction = rs->readUint16LE();
+		_path[i]._direction = static_cast<Direction>(rs->readUint16LE());
 	}
 
 	return true;

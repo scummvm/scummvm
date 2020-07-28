@@ -30,6 +30,7 @@
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
@@ -170,7 +171,7 @@ int Mouse::getMouseLength(int mx, int my) {
 	}
 }
 
-int Mouse::getMouseDirectionWorld(int mx, int my) {
+Direction Mouse::getMouseDirectionWorld(int mx, int my) {
 	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
@@ -179,7 +180,7 @@ int Mouse::getMouseDirectionWorld(int mx, int my) {
 	int dx = mx - dims.w / 2;
 	int dy = (dims.h / 2 + (dims.h * 14 / 200)) - my; //! constant
 
-	return Get_direction(dy * 2, dx);
+	return Direction_Get(dy * 2, dx);
 }
 
 int Mouse::getMouseDirectionScreen(int mx, int my) {

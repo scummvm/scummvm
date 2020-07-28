@@ -25,6 +25,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -75,7 +76,7 @@ public:
 	//! Remove an item from the list of possible targets (in Crusader)
 	void removeTargetItem(const Item *item);
 	//! Find the best target item in the given direction
-	Item *findBestTargetItem(int32 x, int32 y, uint8 dir);
+	Item *findBestTargetItem(int32 x, int32 y, Direction dir);
 
 	//! Update the fast area for the cameras position
 	void updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 to_x, int32 to_y, int32 to_z);

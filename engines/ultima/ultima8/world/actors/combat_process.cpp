@@ -35,6 +35,7 @@
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/actors/monster_info.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
@@ -91,7 +92,7 @@ void CombatProcess::run() {
 		_combatMode = CM_WAITING;
 	}
 
-	int targetdir = getTargetDirection();
+	Direction targetdir = getTargetDirection();
 	if (a->getDir() != targetdir) {
 		turnToDirection(targetdir);
 		return;
@@ -235,28 +236,27 @@ ObjId CombatProcess::seekTarget() {
 	return 0;
 }
 
-int CombatProcess::getTargetDirection() {
+Direction CombatProcess::getTargetDirection() {
 	Actor *a = getActor(_itemNum);
 	Actor *t = getActor(_target);
 	if (!a || !t)
-		return 0; // shouldn't happen
+		return dir_north; // shouldn't happen
 
 	return a->getDirToItemCentre(*t);
 }
 
-void CombatProcess::turnToDirection(int direction) {
+void CombatProcess::turnToDirection(Direction direction) {
 	Actor *a = getActor(_itemNum);
 	if (!a)
 		return;
-	int curdir = a->getDir();
-	int step = 1;
-	if ((curdir - direction + 8) % 8 < 4) step = -1;
+	Direction curdir = a->getDir();
+	int stepDelta = Direction_GetShorterTurnDelta(curdir, direction);
 	Animation::Sequence turnanim = Animation::combatStand;
 
 	ProcId prevpid = 0;
 	bool done = false;
 
-	for (int dir = curdir; !done;) {
+	for (Direction dir = curdir; !done;	dir = Direction_TurnByDelta(dir, stepDelta)) {
 		ProcId animpid = a->doAnim(turnanim, dir);
 
 		if (dir == direction) done = true;
@@ -268,8 +268,6 @@ void CombatProcess::turnToDirection(int direction) {
 		}
 
 		prevpid = animpid;
-
-		dir = (dir + step + 8) % 8;
 	}
 
 	if (prevpid) waitFor(prevpid);

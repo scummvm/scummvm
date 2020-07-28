@@ -112,7 +112,7 @@ void GrantPeaceProcess::run() {
 
 			// undead?
 			if (t->getDefenseType() & WeaponInfo::DMG_UNDEAD) {
-				t->receiveHit(_itemNum, 8, target->getHP(),
+				t->receiveHit(_itemNum, dir_current, target->getHP(),
 				              (WeaponInfo::DMG_MAGIC |
 				               WeaponInfo::DMG_PIERCE |
 				               WeaponInfo::DMG_FIRE));
@@ -153,7 +153,7 @@ void GrantPeaceProcess::run() {
 								   Actor::ACT_IMMORTAL |
 								   Actor::ACT_INVINCIBLE)) {
 			if (getRandom() % 10 == 0) {
-				target->receiveHit(_itemNum, 8, target->getHP(),
+				target->receiveHit(_itemNum, dir_current, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
 				                    WeaponInfo::DMG_PIERCE |
 				                    WeaponInfo::DMG_FIRE));

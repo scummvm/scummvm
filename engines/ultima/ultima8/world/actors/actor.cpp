@@ -31,6 +31,7 @@
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
@@ -69,7 +70,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Actor)
 
 Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 		_hitPoints(0), _mana(0), _alignment(0), _enemyAlignment(0),
-		_lastAnim(Animation::stand), _animFrame(0), _direction(0),
+		_lastAnim(Animation::stand), _animFrame(0), _direction(dir_north),
 		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
 		_homeX(0), _homeY(0), _homeZ(0), _currentActivityNo(0),
 		_lastActivityNo(0) {
@@ -462,7 +463,7 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 		notifyNearbyItems();
 }
 
-uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
+uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps) {
 	if (dir < 0 || dir > 16) {
 		perr << "Actor::doAnim: Invalid _direction (" << dir << ")" << Std::endl;
 		return 0;
@@ -484,10 +485,10 @@ uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
 bool Actor::hasAnim(Animation::Sequence anim) {
 	AnimationTracker tracker;
 
-	return tracker.init(this, anim, 0);
+	return tracker.init(this, anim, dir_north);
 }
 
-Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
+Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
                                  unsigned int steps, PathfindingState *state) {
 	if (dir < 0 || dir > 16) return Animation::FAILURE;
 
@@ -545,19 +546,16 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, int dir,
 	return Animation::END_OFF_LAND;
 }
 
-uint16 Actor::turnTowardDir(uint16 targetdir) {
-	uint16 curdir = _direction;
+uint16 Actor::turnTowardDir(Direction targetdir) {
+	Direction curdir = _direction;
 	if (targetdir == curdir)
 		return 0;
 
-	// TODO; this should support 16 dirs too
-	int stepDelta;
+	int stepDelta = Direction_GetShorterTurnDelta(curdir, targetdir);
 	Animation::Sequence turnanim;
-	if ((curdir - targetdir + 8) % 8 < 4) {
-		stepDelta = -1;
+	if (stepDelta == -1) {
 		turnanim = Animation::lookLeft;
 	} else {
-		stepDelta = 1;
 		turnanim = Animation::lookRight;
 	}
 
@@ -565,7 +563,7 @@ uint16 Actor::turnTowardDir(uint16 targetdir) {
 
 	// Create a sequence of turn animations from
 	// our current direction to the new one
-	for (int dir = curdir; dir != targetdir;) {
+	for (Direction dir = curdir; dir != targetdir; dir = Direction_TurnByDelta(dir, stepDelta)) {
 		ProcId animpid = doAnim(turnanim, dir);
 		if (prevpid) {
 			Process *proc = Kernel::get_instance()->getProcess(animpid);
@@ -574,7 +572,6 @@ uint16 Actor::turnTowardDir(uint16 targetdir) {
 		}
 
 		prevpid = animpid;
-		dir = (dir + stepDelta + 8) % 8;
 	}
 
 	return prevpid;
@@ -730,7 +727,7 @@ void Actor::getHomePosition(int32 &x, int32 &y, int32 &z) const {
 }
 
 
-void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
+void Actor::receiveHit(uint16 other, Direction dir, int damage, uint16 damage_type) {
 	if (GAME_IS_U8) {
 		receiveHitU8(other, dir, damage, damage_type);
 	} else {
@@ -738,7 +735,7 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	}
 }
 
-void Actor::receiveHitCru(uint16 other, int dir, int damage, uint16 damage_type) {
+void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage_type) {
 	//
 	// This is a big stack of constants and hard-coded things.
 	// It's like that in the original game.
@@ -843,7 +840,7 @@ void Actor::receiveHitCru(uint16 other, int dir, int damage, uint16 damage_type)
 	}
 }
 
-void Actor::receiveHitU8(uint16 other, int dir, int damage, uint16 damage_type) {
+void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_type) {
 	if (isDead())
 		return; // already dead, so don't bother
 
@@ -1415,7 +1412,7 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 	_enemyAlignment = rs->readUint16LE();
 	_lastAnim = static_cast<Animation::Sequence>(rs->readUint16LE());
 	_animFrame = rs->readUint16LE();
-	_direction = rs->readUint16LE();
+	_direction = static_cast<Direction>(rs->readUint16LE());
 	_fallStart = rs->readUint32LE();
 	_actorFlags = rs->readUint32LE();
 	_unkByte = rs->readByte();
@@ -1470,7 +1467,7 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (!actor) return 0;
 
-	return actor->doAnim(static_cast<Animation::Sequence>(anim), dir);
+	return actor->doAnim(static_cast<Animation::Sequence>(anim), static_cast<Direction>(dir));
 }
 
 uint32 Actor::I_getDir(const uint8 *args, unsigned int /*argsize*/) {
@@ -1951,7 +1948,7 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 
-	newactor->setDir(dir);
+	newactor->setDir(static_cast<Direction>(dir));
 
 	int32 x, y, z;
 	item->getLocation(x, y, z);
@@ -2140,8 +2137,8 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(dir);
 	ARG_UINT16(unk);
 
-	// TODO: This is hacked to be the 8 dir version..
-	return actor->turnTowardDir(dir / 2);
+	// FIXME: This is hacked to be the 8 dir version..
+	return actor->turnTowardDir(static_cast<Direction>(dir / 2));
 }
 
 

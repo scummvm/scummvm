@@ -21,6 +21,8 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
@@ -76,20 +78,20 @@ void SurrenderProcess::run() {
 		return;
 	}
 
-	int16 curdir = a->getDir();
-	int16 direction = a->getDirToItemCentre(*main);
+	Direction curdir = a->getDir();
+	Direction direction = a->getDirToItemCentre(*main);
 
 	if (curdir != direction) {
-		int stepDelta;
 		Animation::Sequence turnanim;
-		if ((curdir - direction + 8) % 8 < 4) {
-			stepDelta = -1;
+		Direction nextdir;
+		if (Direction_GetShorterTurnDelta(curdir, direction) == -1) {
+			nextdir = Direction_OneLeft(curdir);
 			turnanim = Animation::lookLeft;
 		} else {
-			stepDelta = 1;
+			nextdir = Direction_OneRight(curdir);
 			turnanim = Animation::lookRight;
 		}
-		ProcId animpid = a->doAnim(turnanim, curdir + stepDelta);
+		ProcId animpid = a->doAnim(turnanim, nextdir);
 		waitFor(animpid);
 		return;
 	}

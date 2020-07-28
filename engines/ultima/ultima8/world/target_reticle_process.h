@@ -74,7 +74,7 @@ private:
     bool _reticleEnabled;
 	int32 _lastUpdate;
 	uint16 _reticleSpriteProcess;
-	uint16 _lastTargetDir;
+	Direction _lastTargetDir;
 	uint16 _lastTargetItem;
 
 	static TargetReticleProcess *_instance;

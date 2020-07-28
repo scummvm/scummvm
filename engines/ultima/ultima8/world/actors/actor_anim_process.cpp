@@ -29,6 +29,7 @@
 #include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/gravity_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -61,13 +62,13 @@ static const int watchactor = WATCHACTOR;
 DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess)
 
 ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
-	_dir(0), _action(Animation::walk), _steps(0), _firstFrame(true),
+	_dir(dir_north), _action(Animation::walk), _steps(0), _firstFrame(true),
 	_currentStep(0), _repeatCounter(0), _animAborted(false),
 	_attackedSomething(false) {
 }
 
 ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
-                                   uint32 dir, uint32 steps) :
+                                   Direction dir, uint32 steps) :
 		_dir(dir), _action(action), _steps(steps), _tracker(nullptr),
 		_firstFrame(true), _currentStep(0), _repeatCounter(0),
 		_animAborted(false), _attackedSomething(false)  {
@@ -279,7 +280,7 @@ void ActorAnimProcess::run() {
 				_attackedSomething = true;
 				Item *hit_item = getItem(hit);
 				assert(hit_item);
-				hit_item->receiveHit(_itemNum, (_dir + 4) % 8, 0, 0);
+				hit_item->receiveHit(_itemNum, Direction_Invert(_dir), 0, 0);
 				doHitSpecial(hit_item);
 			}
 		}
@@ -405,7 +406,7 @@ void ActorAnimProcess::doSpecial() {
 				return;
 			}
 			ghoul->move(x, y, z);
-			ghoul->doAnim(Animation::standUp, 0);
+			ghoul->doAnim(Animation::standUp, dir_north);
 			hostile = ghoul;
 		}
 
@@ -664,7 +665,7 @@ bool ActorAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_firstFrame = (rs->readByte() != 0);
 	_animAborted = (rs->readByte() != 0);
 	_attackedSomething = (rs->readByte() != 0);
-	_dir = rs->readByte();
+	_dir = static_cast<Direction>(rs->readByte());
 	_action = static_cast<Animation::Sequence>(rs->readUint16LE());
 	_steps = rs->readUint16LE();
 	_repeatCounter = rs->readUint16LE();

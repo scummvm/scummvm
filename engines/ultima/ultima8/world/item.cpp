@@ -43,6 +43,7 @@
 #include "ultima/ultima8/world/fire_type.h"
 #include "ultima/ultima8/usecode/uc_stack.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
@@ -621,21 +622,21 @@ bool Item::canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport) const {
 	return valid && (!needsupport || support);
 }
 
-int Item::getDirToItemCentre(const Item &item2) const {
+Direction Item::getDirToItemCentre(const Item &item2) const {
 	int32 xv, yv, zv;
 	getCentre(xv, yv, zv);
 
 	int32 i2x, i2y, i2z;
 	item2.getCentre(i2x, i2y, i2z);
 
-	return Get_WorldDirection(i2y - yv, i2x - xv);
+	return Direction_GetWorldDir(i2y - yv, i2x - xv);
 }
 
-int Item::getDirToItemCentre(const Point3 &pt) const {
+Direction Item::getDirToItemCentre(const Point3 &pt) const {
 	int32 xv, yv, zv;
 	getCentre(xv, yv, zv);
 
-	return Get_WorldDirection(pt.y - yv, pt.x - xv);
+	return Direction_GetWorldDir(pt.y - yv, pt.x - xv);
 }
 
 
@@ -1152,7 +1153,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	return 0;
 }
 
-uint16 Item::fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char someflag) {
+uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char someflag) {
 	int32 ix, iy, iz;
 	getLocation(ix, iy, iz);
 
@@ -1179,7 +1180,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char s
 		Item *block = getItem(blocker->getObjId());
 		Point3 blockpt;
 		block->getLocation(blockpt);
-		int damagedir = Get_WorldDirection(blockpt.y - iy, blockpt.x - ix);
+		Direction damagedir = Direction_GetWorldDir(blockpt.y - iy, blockpt.x - ix);
 		block->receiveHit(getObjId(), damagedir, damage, firetype);
 		int splashdamage = firetypedat->getRandomDamage();
 		firetypedat->applySplashDamageAround(blockpt, splashdamage, block, this);
@@ -1918,7 +1919,7 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 		if (getRange(*item, true) > 160) continue; // check vertical distance
 
 		item->getLocation(xv, yv, zv);
-		int dir = Get_WorldDirection(xv - xv, yv - yv); //!! CHECKME
+		Direction dir = Direction_GetWorldDir(xv - xv, yv - yv); //!! CHECKME
 		item->receiveHit(0, dir, 6 + (getRandom() % 6),
 		                 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
 	}
@@ -1933,14 +1934,14 @@ uint16 Item::getDamageType() const {
 	return 0;
 }
 
-void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
+void Item::receiveHit(uint16 other, Direction dir, int damage, uint16 type) {
 	if (GAME_IS_U8)
 		receiveHitU8(other, dir, damage, type);
 	else
 		receiveHitCru(other, dir, damage, type);
 }
 
-void Item::receiveHitU8(uint16 other, int dir, int damage, uint16 type) {
+void Item::receiveHitU8(uint16 other, Direction dir, int damage, uint16 type) {
 	// first, check if the item has a 'gotHit' usecode event
 	if (callUsecodeEvent_gotHit(other, 0)) //!! TODO: what should the 0 be??
 		return;
@@ -1969,7 +1970,7 @@ void Item::receiveHitU8(uint16 other, int dir, int damage, uint16 type) {
 }
 
 
-void Item::receiveHitCru(uint16 other, int dir, int damage, uint16 type) {
+void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 	damage = scaleReceivedDamageCru(damage, type);
 	const ShapeInfo *shapeInfo = getShapeInfo();
 	if (!shapeInfo)
@@ -3275,7 +3276,7 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(y - iy, x - ix));
+	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(y - iy, x - ix));
 	if (GAME_IS_CRUSADER)
 		retval *= 2;
 	return retval;
@@ -3295,7 +3296,7 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
 
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(iy - y, ix - x));
+	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(iy - y, ix - x));
 	if (GAME_IS_CRUSADER)
 		retval *= 2;
 	return retval;
@@ -3313,7 +3314,7 @@ uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(i2y - iy, i2x - ix));
+	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(i2y - iy, i2x - ix));
 	if (GAME_IS_CRUSADER)
 		retval *= 2;
 	return retval;
@@ -3331,7 +3332,7 @@ uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
 	int32 i2x, i2y, i2z;
 	item2->getLocationAbsolute(i2x, i2y, i2z);
 
-	uint32 retval = static_cast<uint32>((Get_WorldDirection(i2y - iy, i2x - ix) + 4) % 8);
+	uint32 retval = static_cast<uint32>(Direction_Invert(Direction_GetWorldDir(i2y - iy, i2x - ix)));
 	if (GAME_IS_CRUSADER)
 		retval *= 2;
 	return retval;
@@ -3347,7 +3348,7 @@ uint32 Item::I_getDirFromTo16(const uint8 *args, unsigned int /*argsize*/) {
 		return 16;
 
 	// TODO: Implement proper 16 directions here.
-	uint32 retval = static_cast<uint32>(Get_WorldDirection(y2 - y1, x2 - x1));
+	uint32 retval = static_cast<uint32>(Direction_GetWorldDir(y2 - y1, x2 - x1));
 	return retval * 2;
 }
 
@@ -3360,7 +3361,7 @@ uint32 Item::I_getClosestDirectionInRange(const uint8 *args, unsigned int /*args
 	ARG_UINT16(mindir);
 	ARG_UINT16(maxdir);
 
-	return Get_WorldDirectionClosestInRange(y2 - y1, x2 - x1, ndirs, mindir, maxdir);
+	return Direction_GetWorldDirInRange(y2 - y1, x2 - x1, ndirs, mindir, maxdir);
 }
 
 uint32 Item::I_hurl(const uint8 *args, unsigned int /*argsize*/) {
@@ -3489,7 +3490,7 @@ uint32 Item::I_receiveHit(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(type); // hit type
 	if (!item) return 0;
 
-	item->receiveHit(other, dir, damage, type);
+	item->receiveHit(other, static_cast<Direction>(dir), damage, type);
 
 	return 0;
 }
@@ -3628,7 +3629,7 @@ uint32 Item::I_fireWeapon(const uint8 *args, unsigned int /*argsize*/) {
 
 	if (!item) return 0;
 
-	return item->fireWeapon(x * 2, y * 2, z, dir, firetype, unkflag);
+	return item->fireWeapon(x * 2, y * 2, z, static_cast<Direction>(dir), firetype, unkflag);
 }
 
 } // End of namespace Ultima8

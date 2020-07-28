@@ -30,6 +30,7 @@
 #include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/loop_script.h"
@@ -47,7 +48,7 @@ static const int watchactor = WATCHACTOR;
 
 AnimationTracker::AnimationTracker() : _firstFrame(true), _done(false),
 	_blocked(false), _unsupported(false), _hitObject(0), _mode(NormalMode),
-	_actor(0), _dir(0), _animAction(nullptr), _x(0), _y(0), _z(0),
+	_actor(0), _dir(dir_north), _animAction(nullptr), _x(0), _y(0), _z(0),
 	_prevX(0), _prevY(0), _prevZ(0), _startX(0), _startY(0), _startZ(0),
 	_targetDx(0), _targetDy(0), _targetDz(0), _targetOffGroundLeft(0),
 	_firstStep(false), _shapeFrame(0), _currentFrame(0), _startFrame(0),
@@ -59,7 +60,7 @@ AnimationTracker::~AnimationTracker() {
 
 
 bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
-                            uint32 dir, const PathfindingState *state) {
+                            Direction dir, const PathfindingState *state) {
 	assert(actor);
 	_actor = actor->getObjId();
 	uint32 shape = actor->getShape();
@@ -137,7 +138,7 @@ bool AnimationTracker::stepFrom(int32 x_, int32 y_, int32 z_) {
 	return step();
 }
 
-void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, uint32 dir_) {
+void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, Direction dir) {
 	max_endx = _x;
 	max_endy = _y;
 
@@ -153,10 +154,10 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, u
 		testframe = getNextFrame(_currentFrame);
 
 	for (;;) {
-		AnimFrame &f = _animAction->frames[dir_][testframe];
+		AnimFrame &f = _animAction->frames[dir][testframe];
 		// determine movement for this frame
-		int32 dx = 4 * x_fact[dir_] * f._deltaDir;
-		int32 dy = 4 * y_fact[dir_] * f._deltaDir;
+		int32 dx = 4 * x_fact[dir] * f._deltaDir;
+		int32 dy = 4 * y_fact[dir] * f._deltaDir;
 		max_endx += dx;
 		max_endy += dy;
 		testframe = getNextFrame(testframe);
@@ -629,7 +630,7 @@ bool AnimationTracker::load(Common::ReadStream *rs, uint32 version) {
 	_currentFrame = rs->readUint32LE();
 
 	_actor = rs->readUint16LE();
-	_dir = rs->readByte();
+	_dir = static_cast<Direction>(rs->readByte());
 
 	uint32 shapenum = rs->readUint32LE();
 	uint32 action = rs->readUint32LE();

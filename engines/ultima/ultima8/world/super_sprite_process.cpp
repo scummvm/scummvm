@@ -29,6 +29,7 @@
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/current_map.h"
@@ -199,7 +200,7 @@ void SuperSpriteProcess::run() {
 
 		if (_fireType == 9 && !_expired) {
 			if (_nowpt.x != newpt.x || _nowpt.y != newpt.y) {
-				uint8 dir = Get_WorldDirection(_nowpt.y - newpt.y, _nowpt.x - newpt.x);
+				Direction dir = Direction_GetWorldDir(_nowpt.y - newpt.y, _nowpt.x - newpt.x);
 				Item *item;
 				if (_itemNum == 0) {
 					item = getItem(_spriteNo);
@@ -317,7 +318,7 @@ void SuperSpriteProcess::hitAndFinish() {
 		// it should work? See disasm 1138:1384, lines 142 ~ 172
 		// There is some random factor added for non-actor items
 		// which needs checking
-		int dir = Get_WorldDirection(iy - _nowpt.y, ix - _nowpt.x);
+		Direction dir = Direction_GetWorldDir(iy - _nowpt.y, ix - _nowpt.x);
 		item->receiveHit(_itemNum, dir, _damage, _fireType);
 	}
 	makeBulletSplash(pt);

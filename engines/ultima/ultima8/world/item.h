@@ -29,6 +29,7 @@
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/box.h"
 #include "ultima/ultima8/misc/point3.h"
+#include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -292,10 +293,10 @@ public:
 
 	//! Get direction from centre to another item's centre.
 	//! Undefined if either item is contained or equipped.
-	int getDirToItemCentre(const Item &item2) const;
+	Direction getDirToItemCentre(const Item &item2) const;
 
 	//! Same as above, but from a fixed point.
-	int getDirToItemCentre(const Point3 &pt) const;
+	Direction getDirToItemCentre(const Point3 &pt) const;
 
 	//! get 'distance' to other item. This is the maximum of the differences
 	//! between the x, y (and possibly z) coordinates of the items.
@@ -384,10 +385,10 @@ public:
 	//! \param dir The direction the hit is coming from (or inverse? CHECKME!)
 	//! \param damage The force of the hit. Zero for default
 	//! \param type The type of damage done. Zero for default
-	virtual void receiveHit(ObjId other, int dir, int damage, uint16 type);
+	virtual void receiveHit(ObjId other, Direction dir, int damage, uint16 type);
 
 	//! fire the given weapon type in the given direction from location x, y, z.
-	uint16 fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char someflag);
+	uint16 fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char someflag);
 
 	//! get damage points, used in Crusader for item damage.
 	uint8 getDamagePoints() const {
@@ -643,10 +644,10 @@ private:
 	void animateItem();
 
 	//! The U8 version of receiveHit
-	void receiveHitU8(ObjId other, int dir, int damage, uint16 type);
+	void receiveHitU8(ObjId other, Direction dir, int damage, uint16 type);
 
 	//! The Crusader version of receiveHit
-	void receiveHitCru(ObjId other, int dir, int damage, uint16 type);
+	void receiveHitCru(ObjId other, Direction dir, int damage, uint16 type);
 
 public:
 	enum statusflags {

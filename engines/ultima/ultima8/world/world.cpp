@@ -280,7 +280,7 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 		actor->setDex(npcds->readByte()); // 0x01: dexterity
 		actor->setInt(npcds->readByte()); // 0x02: intelligence
 		actor->setHP(npcds->readByte());  // 0x03: hitpoints
-		actor->setDir(npcds->readByte()); // 0x04: direction
+		actor->setDir(static_cast<Direction>(npcds->readByte())); // 0x04: direction
 		uint16 la = npcds->readUint16LE();    // 0x05,0x06: last anim
 		actor->setLastAnim(static_cast<Animation::Sequence>(la));
 		npcds->skip(1); // 0x07: high byte of framenum

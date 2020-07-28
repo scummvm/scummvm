@@ -88,10 +88,10 @@ private:
 	void handleCombatMode();
 	void handleNormalMode();
 
-	void step(Animation::Sequence action, int direction, bool adjusted = false);
-	void jump(Animation::Sequence action, int direction);
-	void turnToDirection(int direction);
-	bool checkTurn(int direction, bool moving);
+	void step(Animation::Sequence action, Direction direction, bool adjusted = false);
+	void jump(Animation::Sequence action, Direction direction);
+	void turnToDirection(Direction direction);
+	bool checkTurn(Direction direction, bool moving);
 	bool canAttack();
 
 	uint32 _lastFrame;
