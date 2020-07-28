@@ -6038,7 +6038,7 @@ void GameLogic::r24_refreshRoomBackground() {
 				_vm->fillRoomMaskArea(58, 128, 147, 146, 1);
 			}
 		} else {
-			_vm->moveObjectToNowhere(holeIndex + 306);
+			_vm->moveObjectToNowhere(kObjectIdOpening_0 + holeIndex);
 		}
 	}
 	_vm->setWaynePosition(kRoom24MazeWaynePositionsX[_r24_mazeHoleNumber], kRoom24MazeWaynePositionsY[_r24_mazeHoleNumber]);
@@ -6273,12 +6273,12 @@ void GameLogic::r25_refreshRoomBackground() {
 }
 
 void GameLogic::r25_updateMazeRoomHole(int mazeRoomNumber) {
-	_vm->moveObjectToNowhere(314);
-	_vm->moveObjectToNowhere(315);
-	_vm->moveObjectToNowhere(317);
-	_vm->moveObjectToNowhere(318);
-	_vm->moveObjectToNowhere(320);
-	_vm->moveObjectToNowhere(321);
+	_vm->moveObjectToNowhere(kObjectIdOpening_7);
+	_vm->moveObjectToNowhere(kObjectIdOpening_8);
+	_vm->moveObjectToNowhere(kObjectIdOpening_9);
+	_vm->moveObjectToNowhere(kObjectIdOpening_10);
+	_vm->moveObjectToNowhere(kObjectIdOpening_11);
+	_vm->moveObjectToNowhere(kObjectIdOpening_12);
 	switch (mazeRoomNumber) {
 	case 3:
 	case 10:
@@ -6286,27 +6286,27 @@ void GameLogic::r25_updateMazeRoomHole(int mazeRoomNumber) {
 		_r25_holeIndex = -1;
 		break;
 	case 23:
-		_vm->moveObjectToRoom(314, 25);
+		_vm->moveObjectToRoom(kObjectIdOpening_7, 25);
 		_r25_holeIndex = 0;
 		break;
 	case 17:
-		_vm->moveObjectToRoom(315, 25);
+		_vm->moveObjectToRoom(kObjectIdOpening_8, 25);
 		_r25_holeIndex = 1;
 		break;
 	case 47:
-		_vm->moveObjectToRoom(317, 26);
+		_vm->moveObjectToRoom(kObjectIdOpening_9, 26);
 		_r25_holeIndex = 2;
 		break;
 	case 20:
-		_vm->moveObjectToRoom(318, 26);
+		_vm->moveObjectToRoom(kObjectIdOpening_10, 26);
 		_r25_holeIndex = 3;
 		break;
 	case 11:
-		_vm->moveObjectToRoom(320, 27);
+		_vm->moveObjectToRoom(kObjectIdOpening_11, 27);
 		_r25_holeIndex = 4;
 		break;
 	case 40:
-		_vm->moveObjectToRoom(321, 27);
+		_vm->moveObjectToRoom(kObjectIdOpening_12, 27);
 		_r25_holeIndex = 5;
 		break;
 	}
