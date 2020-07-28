@@ -194,7 +194,9 @@ private:
 	bool _state3D;
 
 	GLuint _spriteVBO;
+	GLuint _fadeVBO;
 	OpenGL::Shader *_spriteShader;
+	OpenGL::Shader *_fadeShader;
 	OpenGL::Shader *_modelXShader;
 };
 

@@ -213,54 +213,23 @@ void BaseRenderOpenGL3DShader::fade(uint16 alpha) {
 }
 
 void BaseRenderOpenGL3DShader::fadeToColor(byte r, byte g, byte b, byte a) {
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	setProjection2D();
 
-	const int vertexSize = 16;
-	byte vertices[4 * vertexSize];
-	float *vertexCoords = reinterpret_cast<float *>(vertices);
-
-	vertexCoords[0 * 4 + 1] = _viewportRect.left;
-	vertexCoords[0 * 4 + 2] = _viewportRect.bottom;
-	vertexCoords[0 * 4 + 3] = 0.0f;
-	vertexCoords[1 * 4 + 1] = _viewportRect.left;
-	vertexCoords[1 * 4 + 2] = _viewportRect.top;
-	vertexCoords[1 * 4 + 3] = 0.0f;
-	vertexCoords[2 * 4 + 1] = _viewportRect.right;
-	vertexCoords[2 * 4 + 2] = _viewportRect.bottom;
-	vertexCoords[2 * 4 + 3] = 0.0f;
-	vertexCoords[3 * 4 + 1] = _viewportRect.right;
-	vertexCoords[3 * 4 + 2] = _viewportRect.top;
-	vertexCoords[3 * 4 + 3] = 0.0f;
-
-	vertices[0 * vertexSize + 0] = r;
-	vertices[0 * vertexSize + 1] = g;
-	vertices[0 * vertexSize + 2] = b;
-	vertices[0 * vertexSize + 3] = a;
-	vertices[1 * vertexSize + 0] = r;
-	vertices[1 * vertexSize + 1] = g;
-	vertices[1 * vertexSize + 2] = b;
-	vertices[1 * vertexSize + 3] = a;
-	vertices[2 * vertexSize + 0] = r;
-	vertices[2 * vertexSize + 1] = g;
-	vertices[2 * vertexSize + 2] = b;
-	vertices[2 * vertexSize + 3] = a;
-	vertices[3 * vertexSize + 0] = r;
-	vertices[3 * vertexSize + 1] = g;
-	vertices[3 * vertexSize + 2] = b;
-	vertices[3 * vertexSize + 3] = a;
+	Math::Vector4d color;
+	color.x() = r / 255.0f;
+	color.y() = g / 255.0f;
+	color.z() = b / 255.0f;
+	color.w() = a / 255.0f;
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, vertexSize, vertices + 4);
-	glColorPointer(4, GL_UNSIGNED_BYTE, vertexSize, vertices);
+	_fadeShader->use();
+	_fadeShader->setUniform("color", color);
+	_fadeShader->setUniform("projMatrix", _projectionMatrix2d);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -396,6 +365,27 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_height = height;
 
 	setViewport(0, 0, width, height);
+
+	float fadeVertexCoords[8];
+
+	fadeVertexCoords[0 * 2 + 0] = _viewportRect.left;
+	fadeVertexCoords[0 * 2 + 1] = _viewportRect.bottom;
+	fadeVertexCoords[1 * 2 + 0] = _viewportRect.left;
+	fadeVertexCoords[1 * 2 + 1] = _viewportRect.top;
+	fadeVertexCoords[2 * 2 + 0] = _viewportRect.right;
+	fadeVertexCoords[2 * 2 + 1] = _viewportRect.bottom;
+	fadeVertexCoords[3 * 2 + 0] = _viewportRect.right;
+	fadeVertexCoords[3 * 2 + 1] = _viewportRect.top;
+
+	glGenBuffers(1, &_fadeVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _fadeVBO);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 8, fadeVertexCoords, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	static const char *fadeAttributes[] = { "position" };
+	_fadeShader = OpenGL::Shader::fromFiles("fade", fadeAttributes);
+
+	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, false, 8, 0);
 
 	_active = true;
 	// setup a proper state
