@@ -53,7 +53,7 @@ public:
 	int _word_34464;
 	int _word_34466;
 	int _r37_safeCombinationLockIndex;
-	int _r37_word_35CEC;
+	int _r37_safeCombinationDirection;
 	int _r37_safeCombinationIndex;
 	int _r37_safeCombinationCurrentNumber;
 	int _r12_talkObjectNumber;
@@ -426,11 +426,11 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	int r37_handleVerbPush();
 	int r37_handleVerbPull();
 	void r37_refreshRoomBackground();
-	void r37_handleRoomEvent();
-	void r37_useLadder1();
-	void r37_useLadder2();
-	void r37_useLadder3();
-	void r37_pushPullLock(bool isPull);
+	void r37_climbEnterLadderDown();
+	void r37_climbExitLadderUp();
+	void r37_climbLadderDown();
+	void r37_climbLadderUp();
+	void r37_pushPullSafeLock(bool isPull);
 	void r37_pullHandle();
 
 	int r38_handleVerbUse();

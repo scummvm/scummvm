@@ -139,7 +139,7 @@ void GameLogic::initVariables() {
 	_word_34464 = 0;
 	_word_34466 = 0;
 	_r37_safeCombinationLockIndex = 0;
-	_r37_word_35CEC = 0;
+	_r37_safeCombinationDirection = 0;
 	_r37_safeCombinationIndex = 0;
 	_r37_safeCombinationCurrentNumber = 0;
 	_r12_talkObjectNumber = 0;
@@ -976,7 +976,7 @@ void GameLogic::handleRoomEvent(int eventNum) {
         r35_talkToCassandra();
         break;
     case 37:
-        r37_handleRoomEvent();
+        r37_climbEnterLadderDown();
         break;
     case 36:
         r36_handleRoomEvent();
@@ -7757,15 +7757,15 @@ int GameLogic::r37_handleVerbUse() {
 	int actionTextIndex = -1;
 	switch (_vm->_objectNumber) {
 	case kObjectIdLadder37_0:
-		r37_useLadder1();
+		r37_climbExitLadderUp();
 		_r37_flags |= 0x20;
 		_vm->changeRoom(17);
 		break;
 	case kObjectIdLadder37_1:
-		r37_useLadder2();
+		r37_climbLadderDown();
 		break;
 	case kObjectIdLadder:
-		r37_useLadder3();
+		r37_climbLadderUp();
 		break;
 	default:
 		actionTextIndex = 0;
@@ -7778,7 +7778,7 @@ int GameLogic::r37_handleVerbPush() {
 	int actionTextIndex = -1;
 	switch (_vm->_objectNumber) {
 	case kObjectIdLock_1:
-		r37_pushPullLock(0);
+		r37_pushPullSafeLock(false);
 		break;
 	default:
 		actionTextIndex = 0;
@@ -7791,7 +7791,7 @@ int GameLogic::r37_handleVerbPull() {
 	int actionTextIndex = -1;
 	switch (_vm->_objectNumber) {
 	case kObjectIdLock_1:
-		r37_pushPullLock(1);
+		r37_pushPullSafeLock(true);
 		break;
 	case kObjectIdHandle:
 		if (!(_r37_flags & 0x02)) {
@@ -7827,7 +7827,7 @@ void GameLogic::r37_refreshRoomBackground() {
 	}
 }
 
-void GameLogic::r37_useLadder1() {
+void GameLogic::r37_climbExitLadderUp() {
 	Common::String tempFilename;
 	WWSurface *workBackground;
 	WWSurface *wclimbSprites[4];
@@ -7903,7 +7903,7 @@ void GameLogic::r37_useLadder1() {
 	delete workBackground;
 }
 
-void GameLogic::r37_useLadder2() {
+void GameLogic::r37_climbLadderDown() {
 	Common::String tempFilename;
 
 	WWSurface *workBackground;
@@ -7997,8 +7997,8 @@ void GameLogic::r37_useLadder2() {
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdSafe_1);
 		_vm->moveObjectToNowhere(kObjectIdLock_1);
-		_vm->moveObjectToNowhere(kObjectIdMagazines); // TODO CHECKME Another Turbo C++ compiler bug?
 		_vm->moveObjectToNowhere(kObjectIdHandle);
+		_vm->moveObjectToRoom(kObjectIdMagazines, 37); // TODO CHECKME Another Turbo C++ compiler bug?
 		if (!(_r37_flags & 0x08)) {
 			_vm->moveObjectToRoom(kObjectIdKeys, 37);
 		}
@@ -8012,7 +8012,7 @@ void GameLogic::r37_useLadder2() {
 	_vm->refreshActors();
 }
 
-void GameLogic::r37_useLadder3() {
+void GameLogic::r37_climbLadderUp() {
 	Common::String tempFilename;
 	WWSurface *workBackground;
 	WWSurface *wclimbSprites[4];
@@ -8108,36 +8108,36 @@ void GameLogic::r37_useLadder3() {
 	_vm->refreshActors();
 }
 
-void GameLogic::r37_pushPullLock(bool isPull) {
+void GameLogic::r37_pushPullSafeLock(bool isPull) {
 	if (isPull) {
-		if (_r37_word_35CEC == 0 ||
+		if (_r37_safeCombinationDirection == 0 ||
 			(_r37_safeCombinationCurrentNumber == 0 && _r37_safeCombinationIndex == 0 && _r37_safeCombinationLockIndex != 0)) {
 			_r37_flags &= ~0x02;
 			_r37_safeCombinationIndex = 0;
 			_r37_safeCombinationCurrentNumber = 0;
-			_r37_word_35CEC = 0;
+			_r37_safeCombinationDirection = 0;
 		} else {
 			_r37_safeCombinationCurrentNumber = _r37_safeCombinationCurrentNumber + 1;
 			if (kRoom37CorrectSafeCombination[_r37_safeCombinationIndex] == _r37_safeCombinationCurrentNumber) {
 				_r37_safeCombinationIndex++;
 				_r37_safeCombinationCurrentNumber = 0;
-				_r37_word_35CEC = (_r37_word_35CEC + 1) % 2;
+				_r37_safeCombinationDirection = (_r37_safeCombinationDirection + 1) % 2;
 			}
 		}
 		_r37_safeCombinationLockIndex = (_r37_safeCombinationLockIndex + 1) % 8;
 	} else {
-		if (_r37_word_35CEC != 0 ||
+		if (_r37_safeCombinationDirection != 0 ||
 			(_r37_safeCombinationCurrentNumber == 0 && _r37_safeCombinationIndex == 0 && _r37_safeCombinationLockIndex != 0)) {
 			_r37_flags &= ~0x02;
 			_r37_safeCombinationIndex = 0;
 			_r37_safeCombinationCurrentNumber = 0;
-			_r37_word_35CEC = 0;
+			_r37_safeCombinationDirection = 0;
 		} else {
 			_r37_safeCombinationCurrentNumber = _r37_safeCombinationCurrentNumber + 1;
 			if (kRoom37CorrectSafeCombination[_r37_safeCombinationIndex] == _r37_safeCombinationCurrentNumber) {
 				_r37_safeCombinationIndex++;
 				_r37_safeCombinationCurrentNumber = 0;
-				_r37_word_35CEC = (_r37_word_35CEC + 1) % 2;
+				_r37_safeCombinationDirection = (_r37_safeCombinationDirection + 1) % 2;
 			}
 		}
 		_r37_safeCombinationLockIndex = (_r37_safeCombinationLockIndex + 7) % 8;
@@ -8161,7 +8161,7 @@ void GameLogic::r37_pullHandle() {
 	_vm->loadRoomBackground();
 }
 
-void GameLogic::r37_handleRoomEvent() {
+void GameLogic::r37_climbEnterLadderDown() {
 	Common::String tempFilename;
 	WWSurface *workBackground;
 	WWSurface *wclimbSprites[4];
