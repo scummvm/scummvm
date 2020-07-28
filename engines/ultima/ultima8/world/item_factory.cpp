@@ -104,8 +104,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 		if (objId)
 			item->assignObjId();
 		if (GAME_IS_CRUSADER) {
-			ShapeInfo *info = item->getShapeInfo();
-			if (info && info->_damageInfo && info->_damageInfo->takesDamage()) {
+			if (info->_damageInfo && info->_damageInfo->takesDamage()) {
 				item->setDamagePoints(info->_damageInfo->damagePoints());
 			}
 		}
