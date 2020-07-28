@@ -134,6 +134,7 @@ class Stage : public Graphics::MacWindow, public Object<Stage> {
 
 	// resource.cpp
 	Common::Error loadInitialMovie();
+	void probeProjector(const Common::String &movie);
 	Archive *openMainArchive(const Common::String movie);
 	void loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
