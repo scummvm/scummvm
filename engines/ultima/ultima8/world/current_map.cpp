@@ -810,16 +810,16 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 }
 
 bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
-                                      int movedir, bool wantsupport,
+                                      Direction movedir, bool wantsupport,
                                       int32 &tx, int32 &ty, int32 &tz) {
 	// TODO: clean this up. Currently the mask arrays are filled with more
 	// data than is actually used.
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING) & item->getShapeInfo()->_flags;
 
-	int searchdir = (movedir + 2) % 4;
+	Direction searchdir = static_cast<Direction>(((int)movedir + 2) % 4);
 
-	bool xdir = (x_fact[searchdir] != 0);
-	bool ydir = (y_fact[searchdir] != 0);
+	bool xdir = (Direction_XFactor(searchdir) != 0);
+	bool ydir = (Direction_YFactor(searchdir) != 0);
 
 	// mark everything as valid, but without support
 	uint32 validmask[17];
@@ -837,7 +837,6 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 	// the positive  x/y directions, with the exception of searchdir 1,
 	// in which case positive horiz points in the (positive x, negative y)
 	// direction.
-
 
 	// next, we'll loop over all objects in the area, and mark the areas
 	// overlapped and supported by each object

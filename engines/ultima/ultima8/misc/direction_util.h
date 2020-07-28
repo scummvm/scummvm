@@ -32,11 +32,19 @@ namespace Ultima8 {
 /*
  * Tables to map a Direction to x/y deltas
  */
-static const int x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
-static const int y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
 
-static const int x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
-static const int y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
+
+inline int Direction_XFactor(Direction dir) {
+	static const int _x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
+	//static const int _x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
+	return _x_fact[dir];
+}
+
+inline int Direction_YFactor(Direction dir) {
+	static const int _y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
+	//static const int _y_fact16[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
+	return _y_fact[dir];
+}
 
 /**
  *  Return the direction for a given slope (0-7).
@@ -121,16 +129,23 @@ inline Direction Direction_GetWorldDirInRange(int deltay, int deltax, uint16 ndi
 
 inline Direction Direction_Invert(Direction dir) {
 	assert(dir != dir_current);
-	// TODO: Will need to add more cases for 16 dir support.
 	switch (dir) {
 		case dir_north:		return dir_south;
+		case dir_nne:		return dir_ssw;
 		case dir_northeast:	return dir_southwest;
+		case dir_ene:		return dir_wsw;
 		case dir_east:		return dir_west;
+		case dir_ese:		return dir_wnw;
 		case dir_southeast:	return dir_northwest;
+		case dir_sse:		return dir_nnw;
 		case dir_south:		return dir_north;
+		case dir_ssw:		return dir_nne;
 		case dir_southwest:	return dir_northeast;
+		case dir_wsw:		return dir_ene;
 		case dir_west:		return dir_east;
+		case dir_wnw:		return dir_ese;
 		case dir_northwest:	return dir_southeast;
+		case dir_nnw:		return dir_sse;
 		default:			return dir_north;
 	}
 }

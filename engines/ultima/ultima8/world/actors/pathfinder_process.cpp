@@ -26,6 +26,7 @@
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -250,7 +251,7 @@ void PathfinderProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(static_cast<uint16>(_path.size()));
 	for (unsigned int i = 0; i < _path.size(); ++i) {
 		ws->writeUint16LE(static_cast<uint16>(_path[i]._action));
-		ws->writeUint16LE(static_cast<uint16>(_path[i]._direction));
+		ws->writeUint16LE(static_cast<uint16>(Direction_ToUsecodeDir(_path[i]._direction)));
 	}
 }
 
@@ -268,7 +269,7 @@ bool PathfinderProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_path.resize(pathsize);
 	for (unsigned int i = 0; i < pathsize; ++i) {
 		_path[i]._action = static_cast<Animation::Sequence>(rs->readUint16LE());
-		_path[i]._direction = static_cast<Direction>(rs->readUint16LE());
+		_path[i]._direction = Direction_FromUsecodeDir(rs->readUint16LE());
 	}
 
 	return true;

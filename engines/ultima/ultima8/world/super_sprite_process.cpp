@@ -208,7 +208,7 @@ void SuperSpriteProcess::run() {
 					item = getItem(_itemNum);
 				}
 				if (item) {
-					item->setFrame(dir + 0x11);
+					item->setFrame(Direction_ToUsecodeDir(dir) + 0x11);
 				}
 			}
 		}

@@ -103,8 +103,8 @@ void FireballProcess::run() {
 	Direction targetdir = item->getDirToItemCentre(*t);
 
 	if (_xSpeed == 0 && _ySpeed == 0 && dx / 64 == 0 && dy / 64 == 0) {
-		_xSpeed += 2 * x_fact[targetdir];
-		_ySpeed += 2 * y_fact[targetdir];
+		_xSpeed += 2 * Direction_XFactor(targetdir);
+		_ySpeed += 2 * Direction_YFactor(targetdir);
 	} else {
 		_xSpeed += (dx / 64);
 		_ySpeed += (dy / 64);
@@ -131,7 +131,8 @@ void FireballProcess::run() {
 	}
 
 	Item *tailitem = getItem(_tail[2]);
-	tailitem->setFrame(Direction_GetWorldDir(_ySpeed, _xSpeed));
+	Direction movedir = Direction_GetWorldDir(_ySpeed, _xSpeed);
+	tailitem->setFrame(Direction_ToUsecodeDir(movedir));
 	tailitem->move(x, y, z);
 
 	_tail[2] = _tail[1];

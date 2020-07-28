@@ -138,7 +138,7 @@ public:
 
 	//! Scan for a valid position for item in directions orthogonal to movedir
 	bool scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
-	                          int movedir, bool wantsupport,
+	                          Direction movedir, bool wantsupport,
 	                          int32 &tx, int32 &ty, int32 &tz);
 
 	struct SweepItem {

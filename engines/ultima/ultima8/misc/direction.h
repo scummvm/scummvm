@@ -38,7 +38,15 @@ enum Direction {
 	dir_southwest = 5,
 	dir_west = 6,
 	dir_northwest = 7,
-	dir_current = 16
+	dir_current = 16,
+	dir_nne,
+	dir_ene,
+	dir_ese,
+	dir_sse,
+	dir_ssw,
+	dir_wsw,
+	dir_wnw,
+	dir_nnw
 };
 
 } // End of namespace Ultima8

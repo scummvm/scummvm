@@ -1382,7 +1382,7 @@ void Actor::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_enemyAlignment);
 	ws->writeUint16LE(_lastAnim);
 	ws->writeUint16LE(_animFrame);
-	ws->writeUint16LE(_direction);
+	ws->writeUint16LE(Direction_ToUsecodeDir(_direction));
 	ws->writeUint32LE(_fallStart);
 	ws->writeUint32LE(_actorFlags);
 	ws->writeByte(_unkByte);
@@ -1412,7 +1412,7 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 	_enemyAlignment = rs->readUint16LE();
 	_lastAnim = static_cast<Animation::Sequence>(rs->readUint16LE());
 	_animFrame = rs->readUint16LE();
-	_direction = static_cast<Direction>(rs->readUint16LE());
+	_direction = Direction_FromUsecodeDir(rs->readUint16LE());
 	_fallStart = rs->readUint32LE();
 	_actorFlags = rs->readUint32LE();
 	_unkByte = rs->readByte();

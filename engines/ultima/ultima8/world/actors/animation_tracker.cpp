@@ -156,8 +156,8 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, D
 	for (;;) {
 		AnimFrame &f = _animAction->frames[dir][testframe];
 		// determine movement for this frame
-		int32 dx = 4 * x_fact[dir] * f._deltaDir;
-		int32 dy = 4 * y_fact[dir] * f._deltaDir;
+		int32 dx = 4 * Direction_XFactor(dir) * f._deltaDir;
+		int32 dy = 4 * Direction_YFactor(dir) * f._deltaDir;
 		max_endx += dx;
 		max_endy += dy;
 		testframe = getNextFrame(testframe);
@@ -206,8 +206,8 @@ bool AnimationTracker::step() {
 	_flipped = f.is_flipped();
 
 	// determine movement for this frame
-	int32 dx = 4 * x_fact[_dir] * f._deltaDir;
-	int32 dy = 4 * y_fact[_dir] * f._deltaDir;
+	int32 dx = 4 * Direction_XFactor(_dir) * f._deltaDir;
+	int32 dy = 4 * Direction_YFactor(_dir) * f._deltaDir;
 	int32 dz = f._deltaZ;
 
 	if (_mode == TargetMode && !(f._flags & AnimFrame::AFF_ONGROUND)) {
@@ -445,8 +445,8 @@ void AnimationTracker::setTargetedMode(int32 x_, int32 y_, int32 z_) {
 			++offGround;
 	}
 
-	end_dx = 4 * x_fact[_dir] * totaldir;
-	end_dy = 4 * y_fact[_dir] * totaldir;
+	end_dx = 4 * Direction_XFactor(_dir) * totaldir;
+	end_dy = 4 * Direction_YFactor(_dir) * totaldir;
 	end_dz = totalz;
 
 	if (offGround) {
@@ -475,7 +475,7 @@ void AnimationTracker::checkWeaponHit() {
 
 	Box abox = a->getWorldBox();
 	abox.MoveAbs(_x, _y, _z);
-	abox.MoveRel(x_fact[_dir] * 32 * range, y_fact[_dir] * 32 * range, 0);
+	abox.MoveRel(Direction_XFactor(_dir) * 32 * range, Direction_YFactor(_dir) * 32 * range, 0);
 
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor) {
@@ -584,7 +584,7 @@ void AnimationTracker::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_currentFrame);
 
 	ws->writeUint16LE(_actor);
-	ws->writeByte(static_cast<uint8>(_dir));
+	ws->writeByte(static_cast<uint8>(Direction_ToUsecodeDir(_dir)));
 
 	if (_animAction) {
 		ws->writeUint32LE(_animAction->_shapeNum);
@@ -630,7 +630,7 @@ bool AnimationTracker::load(Common::ReadStream *rs, uint32 version) {
 	_currentFrame = rs->readUint32LE();
 
 	_actor = rs->readUint16LE();
-	_dir = static_cast<Direction>(rs->readByte());
+	_dir = Direction_FromUsecodeDir(rs->readByte());
 
 	uint32 shapenum = rs->readUint32LE();
 	uint32 action = rs->readUint32LE();

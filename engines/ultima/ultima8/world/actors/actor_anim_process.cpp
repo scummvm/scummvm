@@ -385,8 +385,8 @@ void ActorAnimProcess::doSpecial() {
 			skull->setFlag(Item::FLG_FAST_ONLY);
 			int32 x, y, z;
 			a->getLocation(x, y, z);
-			int dirNum = a->getDir();
-			skull->move(x + 32 * x_fact[dirNum], y + 32 * y_fact[dirNum], z);
+			Direction dirNum = a->getDir();
+			skull->move(x + 32 * Direction_XFactor(dirNum), y + 32 * Direction_XFactor(dirNum), z);
 			hostile = skull;
 		} else if (a->getMapNum() != 54) { // Khumash-Gor doesn't summon ghouls
 			// otherwise, summon ghoul
@@ -553,8 +553,8 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			Kernel *kernel = Kernel::get_instance();
 
 			int32 fx, fy, fz;
-			fx = x + 96 * x_fact[_dir];
-			fy = y + 96 * y_fact[_dir];
+			fx = x + 96 * Direction_XFactor(_dir);
+			fy = y + 96 * Direction_YFactor(_dir);
 			fz = z;
 
 			// CONSTANTS!! (lots of them)
@@ -646,7 +646,7 @@ void ActorAnimProcess::saveData(Common::WriteStream *ws) {
 	ws->writeByte(ab);
 	uint8 attacked = _attackedSomething ? 1 : 0;
 	ws->writeByte(attacked);
-	ws->writeByte(static_cast<uint8>(_dir));
+	ws->writeByte(static_cast<uint8>(Direction_ToUsecodeDir(_dir)));
 	ws->writeUint16LE(static_cast<uint16>(_action));
 	ws->writeUint16LE(static_cast<uint16>(_steps));
 	ws->writeUint16LE(static_cast<uint16>(_repeatCounter));
@@ -665,7 +665,7 @@ bool ActorAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_firstFrame = (rs->readByte() != 0);
 	_animAborted = (rs->readByte() != 0);
 	_attackedSomething = (rs->readByte() != 0);
-	_dir = static_cast<Direction>(rs->readByte());
+	_dir = Direction_FromUsecodeDir(rs->readByte());
 	_action = static_cast<Animation::Sequence>(rs->readUint16LE());
 	_steps = rs->readUint16LE();
 	_repeatCounter = rs->readUint16LE();

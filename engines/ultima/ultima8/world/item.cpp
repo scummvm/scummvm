@@ -1279,8 +1279,8 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 				// Just send the projectile off into the distance
 				// CHECKME: This is not how the game does it - it has different
 				// tables (at 1478:129b and 1478:12ac). Check the logic here.
-				ssx = ix + x_fact[dir] * 0x500;
-				ssy = iy + x_fact[dir] * 0x500;
+				ssx = ix + Direction_XFactor(dir) * 0x500;
+				ssy = iy + Direction_YFactor(dir) * 0x500;
 				ssz = iz;
 			}
 
@@ -1966,7 +1966,7 @@ void Item::receiveHitU8(uint16 other, Direction dir, int damage, uint16 type) {
 
 	// nothing special, so just hurl the item
 	// TODO: hurl item in direction, with speed depending on damage
-	hurl(-16 * x_fact[dir], -16 * y_fact[dir], 16, 4); //!! constants
+	hurl(-16 * Direction_XFactor(dir), -16 * Direction_YFactor(dir), 16, 4); //!! constants
 }
 
 
@@ -1999,7 +1999,7 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 	int yhurl = 10 + getRandom() % 15;
 
 	// nothing special, so just hurl the item
-	hurl(-xhurl * x_fact[dir], -yhurl * y_fact[dir], 16, 4); //!! constants
+	hurl(-xhurl * Direction_XFactor(dir), -yhurl * Direction_YFactor(dir), 16, 4); //!! constants
 }
 
 
