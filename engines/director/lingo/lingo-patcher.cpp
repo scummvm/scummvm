@@ -32,7 +32,7 @@ using namespace Common;
 
 struct ScriptPatch {
 	const char *gameId;
-	Common::Platform platform;
+	Common::Platform platform; // Specify kPlatformUnknown for skipping platform check
 	const char *movie;
 	ScriptType type;
 	uint16 id;
@@ -86,11 +86,11 @@ struct ScriptPatch {
 			5, "end if", ""},
 
 	// Missing '&'
-	{"warlock", kPlatformWindows, "NAV/Shared Cast", kMovieScript, 0,
+	{"warlock", kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 0,
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
-	{"warlock", kPlatformWindows, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
+	{"warlock", kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
@@ -114,7 +114,8 @@ Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive
 	// So far, we have not many patches, so do linear lookup
 	while (patch->gameId) {
 		// First, we do cheap comparisons
-		if (patch->type != type || patch->id != id || patch->linenum != linenum || patch->platform != _vm->getPlatform()) {
+		if (patch->type != type || patch->id != id || patch->linenum != linenum ||
+				(patch->platform != kPlatformUnknown && patch->platform != _vm->getPlatform())) {
 			patch++;
 			continue;
 		}
