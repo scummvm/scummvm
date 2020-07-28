@@ -60,7 +60,8 @@
 #define PLUGIN_VERSION 1
 
 enum PluginType {
-	PLUGIN_TYPE_ENGINE = 0,
+	PLUGIN_TYPE_METAENGINE = 0,
+	PLUGIN_TYPE_ENGINE,
 	PLUGIN_TYPE_MUSIC,
 	/* PLUGIN_TYPE_SCALER, */	// TODO: Add graphics scaler plugins
 
@@ -69,6 +70,7 @@ enum PluginType {
 
 // TODO: Make the engine API version depend on ScummVM's version
 // because of the backlinking (posibly from the checkout revision)
+#define PLUGIN_TYPE_METAENGINE_VERSION 1
 #define PLUGIN_TYPE_ENGINE_VERSION 1
 #define PLUGIN_TYPE_MUSIC_VERSION 1
 
