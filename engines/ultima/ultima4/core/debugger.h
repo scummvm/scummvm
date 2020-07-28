@@ -304,7 +304,7 @@ private:
 	/**
 	 * Help.. sends the party to Lord British
 	 */
-	bool cmdHelp(int argc, const char **argv);
+	bool cmdLorddBritish(int argc, const char **argv);
 
 	/**
 	 * Grant karma

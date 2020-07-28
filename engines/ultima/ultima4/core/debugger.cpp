@@ -101,11 +101,11 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("fullstats", WRAP_METHOD(Debugger, cmdFullStats));
 	registerCmd("gate", WRAP_METHOD(Debugger, cmdGate));
 	registerCmd("goto", WRAP_METHOD(Debugger, cmdGoto));
-	registerCmd("help", WRAP_METHOD(Debugger, cmdHelp));
 	registerCmd("items", WRAP_METHOD(Debugger, cmdItems));
 	registerCmd("karma", WRAP_METHOD(Debugger, cmdKarma));
 	registerCmd("leave", WRAP_METHOD(Debugger, cmdLeave));
 	registerCmd("location", WRAP_METHOD(Debugger, cmdLocation));
+	registerCmd("lordbritish", WRAP_METHOD(Debugger, cmdLorddBritish));
 	registerCmd("mixtures", WRAP_METHOD(Debugger, cmdMixtures));
 	registerCmd("moon", WRAP_METHOD(Debugger, cmdMoon));
 	registerCmd("opacity", WRAP_METHOD(Debugger, cmdOpacity));
@@ -1456,9 +1456,9 @@ bool Debugger::cmdGoto(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::cmdHelp(int argc, const char **argv) {
+bool Debugger::cmdLorddBritish(int argc, const char **argv) {
 	if (!isDebuggerActive()) {
-		print("Help!");
+		print("Help me LB!");
 		g_screen->screenPrompt();
 	}
 
