@@ -47,6 +47,7 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/stage.h"
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/util.h"
@@ -148,7 +149,6 @@ static struct FuncDescr {
 	{ LC::cb_objectfieldassign, "cb_objectfieldassign", "N" },
 	{ LC::cb_objectfieldpush, "cb_objectfieldpush", "N" },
 	{ LC::cb_objectpush,	"cb_objectpush",	"N" },
-	{ LC::cb_tellcall,		"cb_tellcall",		"N" },
 	{ LC::cb_theassign,		"cb_theassign",		"N" },
 	{ LC::cb_theassign2,	"cb_theassign2",	"N" },
 	{ LC::cb_thepush,		"cb_thepush",		"N" },
@@ -1335,12 +1335,24 @@ void LC::c_whencode() {
 }
 
 void LC::c_tell() {
-	Datum d1 = g_lingo->pop();
-	warning("STUB: c_tell %d", d1.u.i);
+	// swap out current stage
+	Datum window = g_lingo->pop();
+	g_lingo->push(g_director->getCurrentStage());
+	if (window.type != OBJECT || window.u.obj->getObjType() != kWindowObj) {
+		warning("c_tell(): wrong argument type: %s", window.type2str());
+		return;
+	}
+	g_director->setCurrentStage(static_cast<Stage *>(window.u.obj));
+
 }
 
 void LC::c_telldone() {
-	warning("STUB: c_telldone");
+	Datum returnWindow = g_lingo->pop();
+	if (returnWindow.type != OBJECT || returnWindow.u.obj->getObjType() != kWindowObj) {
+		warning("c_tell(): wrong return window type: %s", returnWindow.type2str());
+		return;
+	}
+	g_director->setCurrentStage(static_cast<Stage *>(returnWindow.u.obj));
 }
 
 

@@ -180,6 +180,7 @@ public:
 	Lingo *getLingo() const { return _lingo; }
 	Stage *getMainStage() const { return _mainStage; }
 	Stage *getCurrentStage() const { return _currentStage; }
+	void setCurrentStage(Stage *stage) { _currentStage = stage; };
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
