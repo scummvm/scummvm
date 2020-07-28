@@ -244,7 +244,7 @@ Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':')) {
+	if (!path.contains(':') && !path.contains('/') && !path.contains('\\')) {
 		return path;
 	}
 
@@ -252,10 +252,10 @@ Common::String convertPath(Common::String &path) {
 	uint32 idx = 0;
 
 	if (path.hasPrefix("::")) {
-		res = "../";
+		res = "..\\";
 		idx = 2;
 	} else {
-		res = "./";
+		res = ".\\";
 
 		if (path[0] == ':')
 			idx = 1;
@@ -263,14 +263,24 @@ Common::String convertPath(Common::String &path) {
 
 	while (idx != path.size()) {
 		if (path[idx] == ':')
-			res += '/';
+			res += '\\';
+		else if (path[idx] == '/')
+			res += ':';
 		else
 			res += path[idx];
 
 		idx++;
 	}
 
-	return res;
+	// And now convert everything to Unix style paths
+	Common::String res1;
+	for (idx = 0; idx < res.size(); idx++)
+		if (res[idx] == '\\')
+			res1 += '/';
+		else
+			res1 += res[idx];
+
+	return res1;
 }
 
 Common::String getPath(Common::String path, Common::String cwd) {
@@ -285,17 +295,12 @@ Common::String getPath(Common::String path, Common::String cwd) {
 Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts) {
 	Common::String initialPath(path);
 
-	// First, convert Windows-style separators
-	if (g_director->getPlatform() == Common::kPlatformWindows) {
-		if (initialPath.contains('\\'))
-			for (uint i = 0; i < initialPath.size(); i++)
-				if (initialPath[i] == '\\')
-					initialPath.setChar('/', i);
-	}
+	if (recursive) // first level
+		initialPath = convertPath(initialPath);
 
 	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
-	initialPath = Common::normalizePath(g_director->getCurrentPath() + convertPath(initialPath), '/');
+	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, '/');
 	Common::File f;
 	Common::String convPath = initialPath;
 
@@ -303,7 +308,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 	// Strip the leading whitespace from the path
 	initialPath.trim();
-	
+
 	if (f.open(initialPath))
 		return initialPath;
 
