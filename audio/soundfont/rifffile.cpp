@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
 /*
  * VGMTrans (c) 2002-2019
  * Licensed under the zlib license,
@@ -9,55 +30,55 @@
 using namespace std;
 
 uint32 Chunk::GetSize() {
-	return 8 + GetPaddedSize(size);
+	return 8 + GetPaddedSize(_size);
 }
 
 void Chunk::SetData(const void *src, uint32 datasize) {
-	size = datasize;
+	_size = datasize;
 
 	// set the size and copy from the data source
-	datasize = GetPaddedSize(size);
-	if (data != NULL) {
-		delete[] data;
-		data = NULL;
+	datasize = GetPaddedSize(_size);
+	if (_data != NULL) {
+		delete[] _data;
+		_data = NULL;
 	}
-	data = new uint8[datasize];
-	memcpy(data, src, size);
+	_data = new uint8[datasize];
+	memcpy(_data, src, _size);
 
 	// Add pad byte
-	uint32 padsize = datasize - size;
+	uint32 padsize = datasize - _size;
 	if (padsize != 0) {
-		memset(data + size, 0, padsize);
+		memset(_data + _size, 0, padsize);
 	}
 }
 
 void Chunk::Write(uint8 *buffer) {
-	uint32 padsize = GetPaddedSize(size) - size;
-	memcpy(buffer, id, 4);
+	uint32 padsize = GetPaddedSize(_size) - _size;
+	memcpy(buffer, _id, 4);
 	*(uint32 * )(buffer + 4) =
-			size + padsize;  // Microsoft says the chunkSize doesn't contain padding size, but many
+			_size + padsize;  // Microsoft says the chunkSize doesn't contain padding size, but many
 	// software cannot handle the alignment.
-	memcpy(buffer + 8, data, GetPaddedSize(size));
+	memcpy(buffer + 8, _data, GetPaddedSize(_size));
 }
 
 Chunk *ListTypeChunk::AddChildChunk(Chunk *ck) {
-	childChunks.push_back(ck);
+	_childChunks.push_back(ck);
 	return ck;
 }
 
 uint32 ListTypeChunk::GetSize() {
 	uint32 listChunkSize = 12;  // id + size + "LIST"
-	for (Common::List<Chunk *>::iterator iter = this->childChunks.begin(); iter != childChunks.end(); iter++)
+	for (Common::List<Chunk *>::iterator iter = this->_childChunks.begin(); iter != _childChunks.end(); iter++)
 		listChunkSize += (*iter)->GetSize();
 	return GetPaddedSize(listChunkSize);
 }
 
 void ListTypeChunk::Write(uint8 *buffer) {
-	memcpy(buffer, this->id, 4);
-	memcpy(buffer + 8, this->type, 4);
+	memcpy(buffer, this->_id, 4);
+	memcpy(buffer + 8, this->_type, 4);
 
 	uint32 bufOffset = 12;
-	for (Common::List<Chunk *>::iterator iter = this->childChunks.begin(); iter != childChunks.end(); iter++) {
+	for (Common::List<Chunk *>::iterator iter = this->_childChunks.begin(); iter != _childChunks.end(); iter++) {
 		(*iter)->Write(buffer + bufOffset);
 		bufOffset += (*iter)->GetSize();
 	}
@@ -70,8 +91,8 @@ void ListTypeChunk::Write(uint8 *buffer) {
 
 	// Add pad byte
 	if (padsize != 0) {
-		memset(data + unpaddedSize, 0, padsize);
+		memset(_data + unpaddedSize, 0, padsize);
 	}
 }
 
-RiffFile::RiffFile(const Common::String &file_name, const Common::String &form) : RIFFChunk(form), name(file_name) {}
+RiffFile::RiffFile(const Common::String &file_name, const Common::String &form) : RIFFChunk(form), _name(file_name) {}
