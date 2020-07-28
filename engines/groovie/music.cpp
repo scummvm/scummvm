@@ -236,6 +236,10 @@ void MusicPlayer::onTimer(void *refCon) {
 		music->applyFading();
 	}
 
+	// If the game is accepting user input, start the background music if necessary
+	if (music->_vm->isWaitingForInput())
+		music->startBackground();
+
 	// Handle internal timed events
 	music->onTimerInternal();
 }

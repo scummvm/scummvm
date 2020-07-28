@@ -768,8 +768,6 @@ void Script::o_inputloopstart() {	//0x0B
 	// Save the current pressed character for the whole loop
 	_kbdChar = _eventKbdChar;
 	_eventKbdChar = 0;
-
-	_vm->_musicPlayer->startBackground();
 }
 
 void Script::o_keyboardaction() {
