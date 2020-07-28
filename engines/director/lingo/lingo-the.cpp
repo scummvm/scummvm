@@ -1210,37 +1210,39 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	if (!sprite->_enabled)
 		sprite->_enabled = true;
 
-	channel->_dirty = true;
 	switch (field) {
 	case kTheBackColor:
 		if (d.asInt() != sprite->_backColor) {
 			sprite->_backColor = d.asInt();
-		} else {
-			channel->_dirty = false;
+			channel->_dirty = true;
 		}
 		break;
 	case kTheBlend:
-		sprite->_blend = d.asInt();
+		if (d.asInt() != sprite->_blend) {
+			sprite->_blend = d.asInt();
+			channel->_dirty = true;
+		}
 		break;
 	case kTheCastNum:
 		if (d.asInt() != sprite->_castId) {
 			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
-
 			channel->setCast(d.asInt());
-		} else {
-			channel->_dirty = false;
+			channel->_dirty = true;
 		}
 		break;
 	case kTheConstraint:
-		if (d.type == CASTREF) {
-			// Reference: CastMember ID
-			// Find the first channel that uses this cast.
-			for (uint i = 0; i < score->_channels.size(); i++)
-				if (score->_channels[i]->_sprite->_castId == d.u.i)
-					d.u.i = i;
-		}
+		if (d.asInt() != (int)channel->_constraint) {
+			if (d.type == CASTREF) {
+				// Reference: CastMember ID
+				// Find the first channel that uses this cast.
+				for (uint i = 0; i < score->_channels.size(); i++)
+					if (score->_channels[i]->_sprite->_castId == d.u.i)
+						d.u.i = i;
+			}
 
-		channel->_constraint = d.u.i;
+			channel->_constraint = d.u.i;
+			channel->_dirty = true;
+		}
 		break;
 	case kTheCursor:
 		if (d.type == INT) {
@@ -1256,26 +1258,30 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheForeColor:
 		if (d.asInt() != sprite->_foreColor) {
 			sprite->_foreColor = d.asInt();
-		} else {
-			channel->_dirty = false;
+			channel->_dirty = true;
 		}
 		break;
 	case kTheHeight:
 		if (d.asInt() != channel->_height) {
 			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
 			channel->setHeight(d.asInt());
-		} else {
-			channel->_dirty = false;
+			channel->_dirty = true;
 		}
 		break;
 	case kTheImmediate:
 		sprite->_immediate = d.asInt();
 		break;
 	case kTheInk:
-		sprite->_ink = static_cast<InkType>(d.asInt());
+		if (d.asInt() != sprite->_ink) {
+			sprite->_ink = static_cast<InkType>(d.asInt());
+			channel->_dirty = true;
+		}
 		break;
 	case kTheLineSize:
-		sprite->_thickness = d.asInt();
+		if (d.asInt() != sprite->_thickness) {
+			sprite->_thickness = d.asInt();
+			channel->_dirty = true;
+		}
 		break;
 	case kTheLoc:
 		warning("STUB: Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
@@ -1284,16 +1290,14 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (d.asInt() != channel->_currentPoint.x) {
 			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.x = d.asInt();
-		} else {
-			channel->_dirty = false;
+			channel->_dirty = true;
 		}
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->_currentPoint.y) {
 			g_director->getCurrentMovie()->getStage()->addDirtyRect(channel->getBbox());
 			channel->_currentPoint.y = d.asInt();
-		} else {
-			channel->_dirty = false;
+			channel->_dirty = true;
 		}
 		break;
 	case kTheMoveableSprite:
@@ -1306,7 +1310,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_movieTime = d.asInt();
 		break;
 	case kThePattern:
-		sprite->setPattern(d.asInt());
+		if (d.asInt() != sprite->getPattern()){
+			sprite->setPattern(d.asInt());
+			channel->_dirty = true;
+		}
 		break;
 	case kThePuppet:
 		sprite->_puppet = d.asInt();
@@ -1322,34 +1329,43 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_stopTime = d.asInt();
 		break;
 	case kTheStretch:
-		sprite->_stretch = d.asInt();
+		if (d.asInt() != sprite->_stretch) {
+			sprite->_stretch = d.asInt();
+			channel->_dirty = true;
 
-		if (!d.asInt()) {
-			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
+			if (sprite->_stretch) {
+				g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
 
-			channel->_width = sprite->_width;
-			channel->_height = sprite->_height;
+				channel->_width = sprite->_width;
+				channel->_height = sprite->_height;
+			}
 		}
 		break;
 	case kTheTrails:
 		sprite->_trails = d.asInt();
 		break;
 	case kTheType:
-		sprite->_spriteType = static_cast<SpriteType>(d.asInt());
+		if (d.asInt() != sprite->_spriteType) {
+			sprite->_spriteType = static_cast<SpriteType>(d.asInt());
+			channel->_dirty = true;
+		}
 		break;
 	case kTheVisibility:
 	case kTheVisible:
-		channel->_visible = (d.asInt() == 0 ? false : true);
+		if (d.asInt() != channel->_visible) {
+			channel->_visible = d.asInt();
+			channel->_dirty = true;
+		}
 		break;
 	case kTheVolume:
+		// TODO: Should changing digital video flags mark as dirty?
 		sprite->_volume = d.asInt();
 		break;
 	case kTheWidth:
 		if (d.asInt() != channel->_width) {
 			g_director->getCurrentStage()->addDirtyRect(channel->getBbox());
 			channel->setWidth(d.asInt());
-		} else {
-			channel->_dirty = false;
+			channel->_dirty = true;
 		}
 		break;
 	default:
