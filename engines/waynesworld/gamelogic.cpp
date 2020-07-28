@@ -173,8 +173,8 @@ void GameLogic::initVariables() {
 	_r39_flags = 0;
 	_r10_selectedItemToBuy = -1;
 	_r9_dialogFlag = 0;
-	_r1_eventFlag = 0;
-	_r1_eventCtr = 1;
+	_r1_tongueTrickActive = false;
+	_r1_tongueTrickCtr = 1;
 	_r17_dialogCtr = 0;
 	_r17_eventFlag = 0;
 	_r2_backgroundValue1 = 0;
@@ -1539,12 +1539,12 @@ int GameLogic::r1_handleVerbPush() {
 
 int GameLogic::r1_handleVerbPull() {
 	int actionTextIndex = -1;
-	if (!(_r1_flags1 & 0x40) || _r1_eventFlag == 0) {
+	if (!(_r1_flags1 & 0x40) && !_r1_tongueTrickActive) {
 		r1_checkDrGadget();
 	} else {
 		switch (_vm->_objectNumber) {
 		case kObjectIdScreen:
-			if (_r1_eventFlag != 0) {
+			if (_r1_tongueTrickActive) {
 				actionTextIndex = 6;
 			} else {
 				r1_pullScreen();
@@ -1670,7 +1670,7 @@ void GameLogic::r1_initRoomAnimations() {
 	_vm->loadAnimationSpriteRange(10, "mice", 5);
 	_vm->setAnimationTimer(0, 1000);
 	_vm->setAnimationTimer(1, 400);
-	_vm->setAnimationTimer(2, 6000);
+	_vm->setAnimationTimer(2, 5000);
 	_vm->startRoomAnimations();
 }
 
@@ -1686,8 +1686,8 @@ void GameLogic::r1_updateRoomAnimations() {
 	if (!(_r1_flags1 & 0x10) && _vm->isAnimationTimerExpired(1)) {
 		_vm->drawAnimationSprite(10 + _vm->getRandom(5), 179, 67);
 	}
-	if (_r1_eventFlag != 0 && _vm->isAnimationTimerExpired(2)) {
-		_vm->_roomEventNum = _r1_eventCtr;
+	if (_r1_tongueTrickActive && _vm->isAnimationTimerExpired(2)) {
+		_vm->_roomEventNum = _r1_tongueTrickCtr;
 	}
 }
 
@@ -1760,8 +1760,8 @@ void GameLogic::r1_refreshRoomBackground() {
 		if (_r1_flags1 & 0x80) {
 			_vm->drawRoomImageToBackground("norobot", 64, 68);
 		}
-		if (_r1_eventFlag != 0) {
-			switch (_r1_eventCtr) {
+		if (_r1_tongueTrickActive) {
+			switch (_r1_tongueTrickCtr) {
 			case 2: case 9:
 				_vm->drawRoomImageToBackground("tt011", 119, 81);
 				break;
@@ -1792,67 +1792,67 @@ void GameLogic::r1_refreshRoomBackground() {
 	}
 }
 
-void GameLogic::r1_handleRoomEvent(bool arg6) {
-	if (arg6) {
-		_r1_eventCtr = -1;
+void GameLogic::r1_handleRoomEvent(bool startTongueTrick) {
+	if (startTongueTrick) {
+		_r1_tongueTrickCtr = -1;
 	}
-	switch (_r1_eventCtr) {
-	case 1:
-		_r1_eventFlag = 1;
-		_r1_eventCtr = 0;
+	switch (_r1_tongueTrickCtr) {
+	case -1:
+		_r1_tongueTrickActive = true;
+		_r1_tongueTrickCtr = 0;
 		break;
-	case 3:
+	case 1:
 		_vm->walkTo(209, 120, 7, 151, 127);
 		_vm->fillRoomMaskArea(0, 0, 180, 149, 1);
 		_vm->_garthSpriteX = -1;
 		_vm->playAnimation("tt0", 0, 12, 119, 81, 0, 150);
 		break;
-	case 4:
+	case 2:
 		_vm->playAnimation("tt1", 0, 12, 119, 81, 0, 150);
 		break;
-	case 5:
+	case 3:
 		_vm->playAnimation("tt2", 0, 12, 119, 81, 0, 150);
 		break;
-	case 6:
+	case 4:
 		_vm->playAnimation("tt3", 0, 12, 119, 81, 0, 150);
 		_vm->playAnimation("tt3", 8, 4, 119, 81, 0, 150);
 		break;
-	case 7:
+	case 5:
 		_vm->playAnimation("tt4", 0, 7, 119, 81, 0, 150);
 		_vm->playAnimation("tt4", 3, 4, 119, 81, 0, 150);
 		break;
-	case 8:
+	case 6:
 		_vm->playAnimation("tt5", 0, 7, 119, 81, 0, 150);
 		_vm->playAnimation("tt5", 3, 4, 119, 81, 0, 150);
 		break;
-	case 9:
+	case 7:
 		_vm->playAnimation("tt6", 0, 19, 119, 81, 0, 150);
 		_vm->playAnimation("tt6", 7, 7, 119, 81, 0, 150);
 		_vm->playAnimation("tt6", 6, 1, 119, 81, 0, 150);
 		break;
-	case 10:
+	case 8:
 		_vm->playAnimation("tt7", 0, 9, 119, 81, 0, 150);
 		_vm->playAnimation("tt7", 1, 6, 119, 81, 0, 150);
 		_vm->playAnimation("tt0", 11, 1, 119, 81, 0, 150);
 		break;
-	case 11:
+	case 9:
 		_vm->playAnimation("tt0", 10, -11, 119, 81, 0, 150);
 		break;
 	default:
 		break;
 	}
-	if (_r1_eventCtr > 0) {
-		_vm->displayText("c04r", _r1_eventCtr + 124, 0, 170, 30, 0);
+	if (_r1_tongueTrickCtr > 0) {
+		_vm->displayText("c04r", _r1_tongueTrickCtr + 124, 0, 170, 30, 0);
 		_vm->waitSeconds(2);
 		_vm->_isTextVisible = false;
 	}
-	if (_r1_eventCtr == 9) {
+	if (_r1_tongueTrickCtr == 9) {
 		_vm->refreshActors();
 		_vm->_currentActorNum = 0;
 		_vm->displayTextLines("c04", 199, -1, -1, 3);
 		_vm->_currentActorNum = 1;
-		_r1_eventFlag = 0;
-		_r1_eventCtr = -1;
+		_r1_tongueTrickActive = false;
+		_r1_tongueTrickCtr = -1;
 		_vm->_garthSpriteX = 146;
 		_vm->loadRoomMask(_vm->_currentRoomNumber);
 		_vm->loadRoomBackground();
@@ -1860,7 +1860,7 @@ void GameLogic::r1_handleRoomEvent(bool arg6) {
 			r1_drGadgetLeaves();
 		}
 	}
-	_r1_eventCtr = _r1_eventCtr + 1;
+	_r1_tongueTrickCtr++;
 }
 
 void GameLogic::r1_pullScreen() {

@@ -87,8 +87,8 @@ public:
 	byte _r39_flags;
 	int _r10_selectedItemToBuy;
 	byte _r9_dialogFlag;
-	byte _r1_eventFlag;
-	byte _r1_eventCtr;
+	bool _r1_tongueTrickActive;
+	int _r1_tongueTrickCtr;
 	byte _r17_dialogCtr;
 	byte _r17_eventFlag;
 	byte _r2_backgroundValue1;
@@ -138,7 +138,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	int r1_handleVerbClose();
 	bool r1_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
 	void r1_refreshRoomBackground();
-	void r1_handleRoomEvent(bool arg6);
+	void r1_handleRoomEvent(bool startTongueTrick);
 	void r1_initRoomAnimations();
 	void r1_uninitRoomAnimations();
 	void r1_updateRoomAnimations();

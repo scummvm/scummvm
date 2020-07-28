@@ -147,10 +147,10 @@ Common::Error WaynesWorldEngine::run() {
 	drawImageToScreen("r00/backg", 0, 0);
 
 	drawInterface(2);
-	// changeRoom(0);
-	_wayneSpriteX = -1; _garthSpriteX = -1;
-	changeRoom(31); // DEBUG
-	_logic->r31_displayCategories();
+	changeRoom(1);
+	// _wayneSpriteX = -1; _garthSpriteX = -1;
+	// changeRoom(31); // DEBUG
+	// _logic->r31_displayCategories();
 	// _logic->_r1_eventFlag = 1;
 	// _logic->_r1_eventCtr = 3;
 
@@ -1813,28 +1813,30 @@ void WaynesWorldEngine::handleVerbTalkTo() {
         }
         displayText("c11", actionTextIndex, 0, -1, -1, 0);
         waitSeconds(2);
+		// Not in the original but without it the old text will be drawn as well
+		_isTextVisible = false;
         if (room1Special) {
             actionTextIndex = 15;
         } else {
             actionTextIndex += 10;
         }
         if (_currentActorNum != 0) {
-            _currentActorNum = 1;
-        } else {
             _currentActorNum = 0;
+        } else {
+            _currentActorNum = 1;
         }
         loadRoomBackground();
         displayText("c11", actionTextIndex, 0, -1, -1, 0);
         if (_currentActorNum != 0) {
-            _currentActorNum = 1;
-        } else {
             _currentActorNum = 0;
+        } else {
+            _currentActorNum = 1;
         }
         waitSeconds(2);
         _isTextVisible = false;
         loadRoomBackground();
         if (room1Special) {
-            // TODO r1_handleRoomEvent(true);
+            _logic->r1_handleRoomEvent(true);
         }
         return;
     }
