@@ -1342,6 +1342,10 @@ void LC::c_tell() {
 		warning("c_tell(): wrong argument type: %s", window.type2str());
 		return;
 	}
+	if (static_cast<Stage *>(window.u.obj)->getCurrentMovie() == nullptr) {
+		warning("c_tell: window has no movie");
+		return;
+	}
 	g_director->setCurrentStage(static_cast<Stage *>(window.u.obj));
 
 }
