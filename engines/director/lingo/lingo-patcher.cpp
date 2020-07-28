@@ -48,6 +48,14 @@ struct ScriptPatch {
 	{"warlock", kPlatformMacintosh, "WARLOCKSHIP/UpForeECall", kScoreScript, 12,
 			4, "Frames 150 to 160", ""},
 
+	// Garbage at end of script
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
+			2, "SS Warlock:DATA:WARLOCKSHIP:HangStairsFore", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
+			3, "Channels 4 to 5", ""},
+	{"warlock", kPlatformMacintosh, "DATA/WARLOCKSHIP/HE.Aft", kScoreScript, 8,
+			4, "Frames 20 to 20", ""},
+
 	// Unbalanced 'end if' at the end of the script
 	{"warlock", kPlatformMacintosh, "STAMBUL/DRUNK", kMovieScript, 5,
 			5, "end if", ""},
