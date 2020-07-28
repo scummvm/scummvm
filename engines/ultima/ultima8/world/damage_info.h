@@ -46,11 +46,11 @@ public:
 	bool frameDataIsAbsolute() const {
 		return (_flags >> 7) & 1;
 	}
-	bool explodeDestroysItem() const {
+	bool replaceItem() const {
 		return (_flags >> 6) & 1;
 	}
-	bool replaceItem() const {
-		return (_flags >> 4) & 1;
+	bool explodeDestroysItem() const {
+		return (_flags >> 5) & 1;
 	}
 	bool explodeWithDamage() const {
 		return (_flags >> 3) & 1;
@@ -83,10 +83,10 @@ protected:
 	}
 
 
-	// Flags are ABxCDEEF
+	// Flags are ABCxDEEF
 	// A = frame data is absolute (not relative to current)
-	// B = item destroyed after explosion
-	// C = item is replaced when destroyed
+	// B = item is replaced when destroyed
+	// C = item destroyed after explosion
 	// D = explosion damages surrounding items
 	// EE = 2 bits for explosion type
 	// F = item takes damage

@@ -107,7 +107,8 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 	}
 
 	float travel = _destpt.maxDistXYZ(_nextpt);
-	float speed = firetypedat->getCellsPerRound() * 32.0f;
+	// FIXME: how to get this scaled correctly?
+	float speed = firetypedat->getCellsPerRound() * 128.0f;
 	float rounds = travel / speed;
 	if (rounds < 1)
 		rounds = 1;
@@ -288,7 +289,11 @@ void SuperSpriteProcess::hitAndFinish() {
 									_source, true, &hits);
 
 	if (collision && hits.size()) {
-		_item0x77 = hits.front()._item;
+		const CurrentMap::SweepItem &firsthit = hits.front();
+		_item0x77 = firsthit._item;
+		int32 hitpt[3] = {pt.x, pt.y, pt.z};
+		firsthit.GetInterpolatedCoords(hitpt, start, end);
+		pt = Point3(hitpt[0], hitpt[1], hitpt[2]);
 	}
 
 	Item *item = getItem(_item0x77);

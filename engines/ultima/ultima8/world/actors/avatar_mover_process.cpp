@@ -947,7 +947,9 @@ void AvatarMoverProcess::tryAttack() {
 			waitFor(avatar->doAnim(Animation::attack, dir));
 			if (GAME_IS_CRUSADER) {
 				// FIXME: put some real values in here.
-				avatar->fireWeapon(0, 0, 16, dir, 1, 1);
+				int32 xs, ys, zs;
+				avatar->getFootpadWorld(xs, ys, zs);
+				avatar->fireWeapon(xs / 2, ys / 2, zs / 2, dir, 1, 1);
 			}
 		}
 	}

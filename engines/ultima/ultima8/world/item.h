@@ -372,8 +372,9 @@ public:
 	//! Get the volume this item takes up in a container
 	virtual uint32 getVolume() const;
 
-	//! explode with explosion type (0,1,2) and flag of whether to destroy the item.
-	void explode(int explosion_type, bool destroy_item);
+	//! explode with explosion type (0,1,2), whether to destroy the item,
+	//! and whether to cause splash damage.
+	void explode(int explosion_type, bool destroy_item, bool cause_damage = true);
 
 	//! get the damage type this object does when hitting something
 	virtual uint16 getDamageType() const;

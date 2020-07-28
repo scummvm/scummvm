@@ -1216,14 +1216,18 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char s
 			// animation here (lines 185~208 of disasm)
 		}
 
-		Item *target;
+		Item *target = nullptr;
 		if (someflag) {
-			target = getControlledActor();
-		} else {
-			target = currentmap->findBestTargetItem(x, y, dir);
+			if (this != getControlledActor()) {
+				target = getControlledActor();
+			} else {
+				target = currentmap->findBestTargetItem(ix, iy, dir);
+			}
 		}
 
-		int32 tx, ty, tz;
+		int32 tx = -1;
+		int32 ty = 0;
+		int32 tz = 0;
 		if (target) {
 			int32 tsx, tsy, tsz;
 			target->getCentre(tx, ty, tz);
@@ -1248,8 +1252,6 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char s
 					}
 				}
 			}
-		} else {
-			tx = -1;
 		}
 
 		// TODO: check if we need the equivalent of FUN_1130_0299 here..
@@ -1271,6 +1273,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char s
 			} else if (this == getControlledActor() && crosshair) {
 				// Shoot toward the crosshair
 				crosshair->getLocation(ssx, ssy, ssz);
+				ssz = iz;
 			} else {
 				// Just send the projectile off into the distance
 				// CHECKME: This is not how the game does it - it has different
@@ -1280,9 +1283,10 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, int dir, int firetype, char s
 				ssz = iz;
 			}
 
+			uint16 targetid = (target ? target->getObjId() : 0);
 			ssp = new SuperSpriteProcess(BULLET_SPLASH_SHAPE, spriteframe,
 										 ix, iy, iz, ssx, ssy, ssz, firetype,
-										 damage, _objId, target->getObjId(), someflag);
+										 damage, _objId, targetid, someflag);
 			Kernel::get_instance()->addProcess(ssp);
 		}
 	}
@@ -1647,7 +1651,7 @@ void Item::leaveFastArea() {
 	        (_flags & FLG_FASTAREA))
 		callUsecodeEvent_leaveFastArea();
 
-	// If we have a _gump open, close it (unless we're in a container)
+	// If we have a gump open, close it (unless we're in a container)
 	if (!_parent && (_flags & FLG_GUMP_OPEN)) {
 		Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
 		if (g) g->Close();
@@ -1719,10 +1723,10 @@ void Item::closeGump() {
 	if (!(_flags & FLG_GUMP_OPEN)) return;
 
 	Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
-	assert(g);
-	g->Close();
+	if (g)
+		g->Close();
 
-	// can we already clear _gump here, or do we need to wait for the _gump
+	// can we already clear gump here, or do we need to wait for the gump
 	// to really close??
 	clearGump();
 }
@@ -1846,14 +1850,14 @@ void Item::hurl(int xs, int ys, int zs, int grav) {
 }
 
 
-void Item::explode(int explosion_type, bool destroy_item) {
+void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 	Process *p;
 
 	if (GAME_IS_CRUSADER) {
 		setFlag(FLG_BROKEN);
 		// TODO: original game puts them at cx/cy/cz, but that looks wrong..
-		//int32 cx, cy, cz;
-		//getCentre(cx, cy, cz);
+		int32 cx, cy, cz;
+		getCentre(cx, cy, cz);
 		static const int expshapes[] = {0x31C, 0x31F, 0x326, 0x320, 0x321, 0x324, 0x323, 0x325};
 		int rnd = getRandom();
 		int spriteno;
@@ -1872,7 +1876,7 @@ void Item::explode(int explosion_type, bool destroy_item) {
 			break;
 		}
 		p = new SpriteProcess(spriteno, 0, 39, 1, 1, //!! constants
-	                               _x, _y, _z);
+	                               _x, _y, cz);
 	} else {
 		p = new SpriteProcess(578, 20, 34, 1, 1, //!! constants
 	                               _x, _y, _z);
@@ -1898,6 +1902,9 @@ void Item::explode(int explosion_type, bool destroy_item) {
 		destroy(); // delete self
 		// WARNING: we are deleted at this point
 	}
+
+	if (!cause_damage)
+		return;
 
 	UCList itemlist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items

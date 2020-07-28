@@ -56,8 +56,15 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 	item->setDamagePoints(0);
 	item->setFlag(Item::FLG_GUMP_OPEN | Item::FLG_BROKEN);
 
+	// Get some data out of the item before we potentially delete
+	// it by explosion
+	uint16 q = item->getQuality();
+	int32 x, y , z;
+	item->getLocation(x, y, z);
+	int32 mapnum = item->getMapNum();
+
 	if (explode()) {
-		item->explode(explosionType(), explodeDestroysItem());
+		item->explode(explosionType(), explodeDestroysItem(), explodeWithDamage());
 	}
 	if (_sound) {
 		AudioProcess *audio = AudioProcess::get_instance();
@@ -66,14 +73,12 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 		}
 	}
 	if (replaceItem()) {
-		uint16 q = item->getQuality();
-		int32 x, y, z;
-		item->getLocation(x, y, z);
 		uint16 replacementShape = getReplacementShape();
 		uint8 replacementFrame = getReplacementFrame();
-		Item *newitem = ItemFactory::createItem(replacementShape, replacementFrame, q, 0, 0, 0, 0, true);
-		newitem->setLocation(x, y, z);
-	} else {
+		Item *newitem = ItemFactory::createItem(replacementShape, replacementFrame, q, 0, 0, mapnum, 0, true);
+		newitem->move(x, y, z);
+	} else if (!explodeDestroysItem()) {
+		assert(!explodeDestroysItem());
 		if (frameDataIsAbsolute()) {
 			int frameval = 1;
 			if (_data[1])

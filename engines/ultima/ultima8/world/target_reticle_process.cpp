@@ -119,8 +119,10 @@ void TargetReticleProcess::putTargetReticleOnItem(Item *item) {
 	int32 x, y, z;
 
 	// TODO: the game does a bunch of other maths here to pick the right location.
-	// This is an over-simplification.
+	// This is an over-simplification and is usually too high so it's
+	// hacked a little lower.
 	item->getCentre(x, y, z);
+	z -= 8;
 
 	Process *p = new SpriteProcess(0x59a, 0, 5, 1, 10, x, y, z, false);
 
